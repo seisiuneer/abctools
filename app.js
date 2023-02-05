@@ -916,25 +916,25 @@ function Notenmachen(tune, instrument) {
         } else if (Tspans[x].innerHTML == "29") {
           Tspans[x].innerHTML = "c'";
         } else if (Tspans[x].innerHTML == "30") {
-          Tspans[x].innerHTML = "db'";
+          Tspans[x].innerHTML = "d♭'";
         } else if (Tspans[x].innerHTML == "31") {
           Tspans[x].innerHTML = "d'";
         } else if (Tspans[x].innerHTML == "32") {
-          Tspans[x].innerHTML = "eb'";
+          Tspans[x].innerHTML = "e♭'";
         } else if (Tspans[x].innerHTML == "33") {
           Tspans[x].innerHTML = "e'";
         } else if (Tspans[x].innerHTML == "34") {
           Tspans[x].innerHTML = "f'";
         } else if (Tspans[x].innerHTML == "35") {
-          Tspans[x].innerHTML = "gb'";
+          Tspans[x].innerHTML = "g♭'";
         } else if (Tspans[x].innerHTML == "36") {
           Tspans[x].innerHTML = "g'";
         } else if (Tspans[x].innerHTML == "37") {
-          Tspans[x].innerHTML = "ab'";
+          Tspans[x].innerHTML = "a♭'";
         } else if (Tspans[x].innerHTML == "38") {
           Tspans[x].innerHTML = "a'";
         } else if (Tspans[x].innerHTML == "39") {
-          Tspans[x].innerHTML = "bb'";
+          Tspans[x].innerHTML = "b♭'";
         } else if (Tspans[x].innerHTML == "40") {
           Tspans[x].innerHTML = "b'";
         } else {
