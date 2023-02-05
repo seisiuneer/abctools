@@ -769,83 +769,83 @@ function Notenmachen(tune, instrument) {
          if (Tspans[x].innerHTML == "0") {
           Tspans[x].innerHTML = "G,";
         } else if (Tspans[x].innerHTML == "1") {
-          Tspans[x].innerHTML = "G#,";
+          Tspans[x].innerHTML = "G♯,";
         } else if (Tspans[x].innerHTML == "2") {
           Tspans[x].innerHTML = "A,";
         } else if (Tspans[x].innerHTML == "3") {
-          Tspans[x].innerHTML = "A#,";
+          Tspans[x].innerHTML = "A♯,";
         } else if (Tspans[x].innerHTML == "4") {
           Tspans[x].innerHTML = "B,";
         } else if (Tspans[x].innerHTML == "5") {
           Tspans[x].innerHTML = "C";
         } else if (Tspans[x].innerHTML == "6") {
-          Tspans[x].innerHTML = "C#";
+          Tspans[x].innerHTML = "C♯";
         } else if (Tspans[x].innerHTML == "7") {
           Tspans[x].innerHTML = "D";
         } else if (Tspans[x].innerHTML == "8") {
-          Tspans[x].innerHTML = "D#";
+          Tspans[x].innerHTML = "D♯";
         } else if (Tspans[x].innerHTML == "9") {
           Tspans[x].innerHTML = "E";
         } else if (Tspans[x].innerHTML == "10") {
           Tspans[x].innerHTML = "F";
         } else if (Tspans[x].innerHTML == "11") {
-          Tspans[x].innerHTML = "F#";
+          Tspans[x].innerHTML = "F♯";
         } else if (Tspans[x].innerHTML == "12") {
           Tspans[x].innerHTML = "G";
         } else if (Tspans[x].innerHTML == "13") {
-          Tspans[x].innerHTML = "G#";
+          Tspans[x].innerHTML = "G♯";
         } else if (Tspans[x].innerHTML == "14") {
           Tspans[x].innerHTML = "A";
         } else if (Tspans[x].innerHTML == "15") {
-          Tspans[x].innerHTML = "A#";
+          Tspans[x].innerHTML = "A♯";
         } else if (Tspans[x].innerHTML == "16") {
           Tspans[x].innerHTML = "B";
         } else if (Tspans[x].innerHTML == "17") {
           Tspans[x].innerHTML = "c";
         } else if (Tspans[x].innerHTML == "18") {
-          Tspans[x].innerHTML = "c#";
+          Tspans[x].innerHTML = "c♯";
         } else if (Tspans[x].innerHTML == "19") {
           Tspans[x].innerHTML = "d";
         } else if (Tspans[x].innerHTML == "20") {
-          Tspans[x].innerHTML = "d#";
+          Tspans[x].innerHTML = "d♯";
         } else if (Tspans[x].innerHTML == "21") {
           Tspans[x].innerHTML = "e";
         } else if (Tspans[x].innerHTML == "22") {
           Tspans[x].innerHTML = "f";
         } else if (Tspans[x].innerHTML == "23") {
-          Tspans[x].innerHTML = "f#";
+          Tspans[x].innerHTML = "f♯";
         } else if (Tspans[x].innerHTML == "24") {
           Tspans[x].innerHTML = "g";
         } else if (Tspans[x].innerHTML == "25") {
-          Tspans[x].innerHTML = "g#";
+          Tspans[x].innerHTML = "g♯";
         } else if (Tspans[x].innerHTML == "26") {
           Tspans[x].innerHTML = "a";
         } else if (Tspans[x].innerHTML == "27") {
-          Tspans[x].innerHTML = "a#";
+          Tspans[x].innerHTML = "a♯";
         } else if (Tspans[x].innerHTML == "28") {
           Tspans[x].innerHTML = "b";
         } else if (Tspans[x].innerHTML == "29") {
           Tspans[x].innerHTML = "c'";
         } else if (Tspans[x].innerHTML == "30") {
-          Tspans[x].innerHTML = "c#'";
+          Tspans[x].innerHTML = "c♯'";
         } else if (Tspans[x].innerHTML == "31") {
           Tspans[x].innerHTML = "d'";
         } else if (Tspans[x].innerHTML == "32") {
-          Tspans[x].innerHTML = "d#'";
+          Tspans[x].innerHTML = "d♯'";
         } else if (Tspans[x].innerHTML == "33") {
           Tspans[x].innerHTML = "e'";
         } else if (Tspans[x].innerHTML == "34") {
           Tspans[x].innerHTML = "f'";
         } else if (Tspans[x].innerHTML == "35") {
-          Tspans[x].innerHTML = "f#'";
+          Tspans[x].innerHTML = "f♯'";
         } else if (Tspans[x].innerHTML == "36") {
           Tspans[x].innerHTML = "g'";
         } else if (Tspans[x].innerHTML == "37") {
-          Tspans[x].innerHTML = "g#'";
+          Tspans[x].innerHTML = "g♯'";
         } else if (Tspans[x].innerHTML == "38") {
           Tspans[x].innerHTML = "a'";
         } else if (Tspans[x].innerHTML == "39") {
-          Tspans[x].innerHTML = "a#'";
+          Tspans[x].innerHTML = "a♯'";
         } else if (Tspans[x].innerHTML == "40") {
           Tspans[x].innerHTML = "b'";
         } else {
@@ -858,59 +858,59 @@ function Notenmachen(tune, instrument) {
          if (Tspans[x].innerHTML == "0") {
           Tspans[x].innerHTML = "G,";
         } else if (Tspans[x].innerHTML == "1") {
-          Tspans[x].innerHTML = "Ab,";
+          Tspans[x].innerHTML = "A♭,";
         } else if (Tspans[x].innerHTML == "2") {
           Tspans[x].innerHTML = "A,";
         } else if (Tspans[x].innerHTML == "3") {
-          Tspans[x].innerHTML = "Bb,";
+          Tspans[x].innerHTML = "B♭,";
         } else if (Tspans[x].innerHTML == "4") {
           Tspans[x].innerHTML = "B,";
         } else if (Tspans[x].innerHTML == "5") {
           Tspans[x].innerHTML = "C";
         } else if (Tspans[x].innerHTML == "6") {
-          Tspans[x].innerHTML = "Db";
+          Tspans[x].innerHTML = "D♭";
         } else if (Tspans[x].innerHTML == "7") {
           Tspans[x].innerHTML = "D";
         } else if (Tspans[x].innerHTML == "8") {
-          Tspans[x].innerHTML = "Eb";
+          Tspans[x].innerHTML = "E♭";
         } else if (Tspans[x].innerHTML == "9") {
           Tspans[x].innerHTML = "E";
         } else if (Tspans[x].innerHTML == "10") {
           Tspans[x].innerHTML = "F";
         } else if (Tspans[x].innerHTML == "11") {
-          Tspans[x].innerHTML = "Gb";
+          Tspans[x].innerHTML = "G♭";
         } else if (Tspans[x].innerHTML == "12") {
           Tspans[x].innerHTML = "G";
         } else if (Tspans[x].innerHTML == "13") {
-          Tspans[x].innerHTML = "Ab";
+          Tspans[x].innerHTML = "A♭";
         } else if (Tspans[x].innerHTML == "14") {
           Tspans[x].innerHTML = "A";
         } else if (Tspans[x].innerHTML == "15") {
-          Tspans[x].innerHTML = "Bb";
+          Tspans[x].innerHTML = "B♭";
         } else if (Tspans[x].innerHTML == "16") {
           Tspans[x].innerHTML = "B";
         } else if (Tspans[x].innerHTML == "17") {
           Tspans[x].innerHTML = "c";
         } else if (Tspans[x].innerHTML == "18") {
-          Tspans[x].innerHTML = "db";
+          Tspans[x].innerHTML = "d♭";
         } else if (Tspans[x].innerHTML == "19") {
           Tspans[x].innerHTML = "d";
         } else if (Tspans[x].innerHTML == "20") {
-          Tspans[x].innerHTML = "eb";
+          Tspans[x].innerHTML = "e♭";
         } else if (Tspans[x].innerHTML == "21") {
           Tspans[x].innerHTML = "e";
         } else if (Tspans[x].innerHTML == "22") {
           Tspans[x].innerHTML = "f";
         } else if (Tspans[x].innerHTML == "23") {
-          Tspans[x].innerHTML = "gb";
+          Tspans[x].innerHTML = "g♭";
         } else if (Tspans[x].innerHTML == "24") {
           Tspans[x].innerHTML = "g";
         } else if (Tspans[x].innerHTML == "25") {
-          Tspans[x].innerHTML = "ab";
+          Tspans[x].innerHTML = "a♭";
         } else if (Tspans[x].innerHTML == "26") {
           Tspans[x].innerHTML = "a";
         } else if (Tspans[x].innerHTML == "27") {
-          Tspans[x].innerHTML = "bb";
+          Tspans[x].innerHTML = "b♭";
         } else if (Tspans[x].innerHTML == "28") {
           Tspans[x].innerHTML = "b";
         } else if (Tspans[x].innerHTML == "29") {
