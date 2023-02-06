@@ -1050,6 +1050,12 @@ function Render() {
       // Strip out D: annotation
       theNotes = theNotes.replace(searchRegExp, "% comment");
 
+      // Strip out H: annotation
+      searchRegExp = /^H:.*$/gm
+
+      // Strip out H: annotation
+      theNotes = theNotes.replace(searchRegExp, "% comment");
+
     }
 
     if (gStripTextAnnotations){
