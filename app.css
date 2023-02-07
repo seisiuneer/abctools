@@ -1,0 +1,139 @@
+body {
+padding:20px;
+}
+
+.whistle {
+font-family: 'TinWhistleFingering';
+font-size: 50px;
+}
+
+.tabstrich {
+display:none;
+}
+
+svg {
+color:black;
+}
+
+.hidebutton {
+display: none;
+}
+
+.toggle-buttons input[type="radio"] {
+display: none;
+}
+
+.toggle-buttons label {
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+padding: .6em;
+margin-right:10px;
+}
+
+.toggle-buttons input:checked + label {
+background: #ebf5d7;
+color: #5a9900;
+box-shadow: none;
+}
+
+input:hover + label,
+input:focus + label {
+background: #ffebe6;
+}
+
+#notation {
+margin-bottom:50px;
+}
+
+#abc {
+font-size: 10pt;
+margin-top: 24px;
+}
+
+.transpose, .saveaspdf{
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+padding: 0.6em;
+margin-right:10px;
+}
+
+.abcupload {
+font-family:"Helvetica";
+font-size:11pt;
+outline-color: black;
+outline-width: 1px;
+outline-style: solid;
+background-color: white;
+color: black;
+padding: 0.6rem;
+font-family: sans-serif;
+border-radius: 0.3rem;
+cursor: pointer;
+margin-right: 16px;
+}
+
+#safariuser{
+display:none;
+background-color:yellow;
+padding-top:12px;
+padding-bottom:12px
+}
+
+#notenrechts{
+margin-top:18px;
+display:none;
+}
+
+#notation-holder{
+display:none;
+}
+
+#inputarea{
+margin-top:24px;
+}
+
+#tabs-selection{
+margin-top:20px;
+}
+
+#render-width{
+margin-top:20px;	
+}
+
+#pdf-controls{
+margin-top:20px;	
+}
+
+#offscreenrender{
+position:absolute; 
+left:-2100px;
+}
+
+#advanced-controls{
+display:none;
+margin-top:20px;
+}
+
+#staff-spacing{
+width:75px;
+margin-top:6px;
+}
+
+.staff-spacing {
+font-family:"Helvetica";
+font-size:11pt;
+}
+
+#transpose-controls, #tabs-selection, #render-width{
+display:flex;
+}
+
+p{
+font-size:11pt;
+font-family:"Helvetica";
+}
+

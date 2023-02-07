@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  
+  <title>Michael Eskin's ABC Tools</title>
+  
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <meta content="ABC transposer ABCtransposer transpose jig reel folk" name="keywords">
+  <meta content="A simple-to-use ABC to standard music notation converter featuring transposition, tab generation, and PDF export." name="description">
+  <meta content="A simple-to-use ABC to standard music notation converter featuring transposition, tab generation, and PDF export." name="abstract">
+  <meta property="og:locale" content="en_US" />
+  <meta name="description" content="A simple-to-use ABC to standard music notation converter" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Michael Eskin's ABC Transcription Tools" />
+  <meta property="og:description" content="A simple-to-use ABC to standard music notation converter featuring transposition, tab generation, and PDF export." />
+  <meta property="og:url" content="http://michaeleskin.com/abctools/abctools.html" />
+  <meta property="og:site_name" content="Michael Eskin's ABC Transcription Tools" />
+  <meta property="og:image" content="http://michaeleskin.com/img/favicon5.png" />  
+  <link rel="icon" href="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5-32x32.png" sizes="32x32" />
+  <link rel="icon" href="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5-192x192.png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5-180x180.png" />
+  
+  <link href="app.css?v=18" media="all" rel="stylesheet" type="text/css">
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5C74XEDW40"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-5C74XEDW40');
+  </script>
+
+</head>
+<body>
+
+  <div id="notenlinks">
+    
+    <font size="5" face="Comic Sans MS">ABC Transcription Tools</font>
+    
+    <p><a href="instructions.html" target="_blank">Instructions</a>&nbsp;-&nbsp;<a href="credits.html" target="_blank">Open Source Credits and Thanks</a>&nbsp;-&nbsp;<a href="releasenotes.html" target="_blank">Release Notes</a></p>
+
+    <div id="safariuser">  
+      <p>I see you are using Safari or mobile Safari.<br/><br/>This converter works best with Chrome or Firefox and often has rendering issues on Safari.</p>
+    </div>
+
+    <!--default html file upload button-->
+
+    <div id="inputarea">
+
+      <input type="file" id="selectabcfile" accept=".abc,.txt,.ABC,*.TXT" hidden/>
+
+      <!--our custom abc file upload button-->
+      <label class="abcupload" for="selectabcfile">Select .ABC File</label>
+
+      <!-- name of abc file selected -->
+      <span id="abc-selected">No .ABC file selected</span>
+
+      <br>
+
+      <textarea id="abc" rows="16" cols="100" onkeyup="Render()" onpaste="DelayedRender()" placeholder="Enter ABC notation for one tune here"></textarea>
+
+    </div>
+
+  </div>
+
+  <div id="notenrechts">
+
+    <div id="transpose-controls">
+      <input class="transpose" id="t1" onclick="TransposeDown()" type="button" value="-2 Semitones">
+      <input class="transpose" id="t2" onclick="TransposeUp()" type="button" value="+2 Semitones">
+      <input class="transpose" id="t3" onclick="Clear()" type="button" value="Clear">
+      <input class="transpose" id="t4" onclick="ToggleAdvancedControls()" type="button" value="Advanced Controls">
+    </div>
+
+    <div id="advanced-controls">
+      <input class="transpose" onclick="ToggleAnnotations()" type="button" value="Toggle Annotations">
+      <input class="transpose" onclick="ToggleTextAnnotations()" type="button" value="Toggle Text">
+      <input class="transpose" onclick="ToggleChords()" type="button" value="Toggle Chords">
+      <label class="staff-spacing" for="staff-spacing">
+          Staff spacing:  
+          <input type="number" name="staff-spacing" id="staff-spacing"
+              min="50" max="100" step="5" value="50" onchange="SetStaffSpacing()">
+      </label>
+    </div>
+ 
+    <div id="tabs-selection" class="toggle-buttons">
+      <input type="radio" id="b1" value="noten" name="notenodertab" class="hidebutton" checked="checked" onclick="Render()">
+      <label for="b1">Sheet Music</label>
+      <input type="radio" id="b2" value="notenames" name="notenodertab" class="hidebutton" onclick="Render()">
+      <label for="b2">Note Names Tab</label>
+      <input type="radio" id="b3" value="mandolin" name="notenodertab" class="hidebutton" onclick="Render()">
+      <label for="b3">Mandolin Tab</label>
+      <input type="radio" id="b4" value="guitare" name="notenodertab" class="hidebutton" onclick="Render()">
+      <label for="b4">Guitar EADGBE</label>
+      <input type="radio" id="b5" value="guitard" name="notenodertab" class="hidebutton" onclick="Render()">
+      <label for="b5">Guitar DADGAD</label>
+      <input type="radio" id="b6" value="whistle" name="notenodertab" class="hidebutton" onclick="Render()">
+      <label for="b6">Whistle Tab</label>
+    </div>
+
+    <div id="render-width" class="toggle-buttons">
+      <input type="radio" id="wb0" value="40%" name="renderwidth" class="hidebutton" onclick="Render()">
+      <label for="wb0">Mini</label>
+      <input type="radio" id="wb1" value="50%" name="renderwidth" class="hidebutton" checked="checked" onclick="Render()">
+      <label for="wb1">Small</label>
+      <input type="radio" id="wb2" value="75%" name="renderwidth" class="hidebutton" onclick="Render()">
+      <label for="wb2">Medium</label>
+      <input type="radio" id="wb3" value="100%" name="renderwidth" class="hidebutton" onclick="Render()">
+      <label for="wb3">Large</label>
+      <input type="button" class="saveaspdf" onclick="CreatePDFfromHTML()" value="Export as PDF" style="margin-left:20px">
+    </div>
+
+    <div id="pdf-controls">
+      <div id="statusanzeigetext" style="margin-right:20px;margin-top:10px"></div>
+      <div id="nebenstatusanzeigetext" style="float:left;margin-right:20px;margin-top:10px"></div>
+      <div id="nebennebenstatusanzeigetext" style="float:left;margin-right:20px;margin-top:10px"></div>
+    </div>
+
+  </div>
+
+  <div id="notation-holder">
+    <div id="notation"></div>
+  <div>
+
+
+<div id="offscreenrender"></div>
+
+</body>
+
+<script type="text/javascript" src="abcjs-basic-min.js"></script><!-- um ABC in Noten svg umzuwandeln mit Tabulatur-, Transpositions und Audio-Abspielmöglichkeiten -->
+<script type="text/javascript" src="jspdf.min.js"></script><!-- um mit Javascript ein PDF zu generieren -->
+<script type="text/javascript" src="html2canvas.js"></script><!-- um die styles beizubehalten - z.B. versteckte Linien -->
+<script type="text/javascript" src="app.js?v=18"></script>
+</html>
