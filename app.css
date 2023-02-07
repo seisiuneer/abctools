@@ -30,6 +30,7 @@ border: 1px solid #333;
 border-radius: 0.3em;
 padding: .6em;
 margin-right:10px;
+-webkit-appearance:none;
 }
 
 .toggle-buttons input:checked + label {
@@ -59,6 +60,7 @@ border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
 margin-right:10px;
+-webkit-appearance:none;
 }
 
 .abcupload {
@@ -74,6 +76,7 @@ font-family: sans-serif;
 border-radius: 0.3rem;
 cursor: pointer;
 margin-right: 16px;
+-webkit-appearance:none;
 }
 
 #safariuser{
