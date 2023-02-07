@@ -79,6 +79,11 @@ margin-right: 16px;
 -webkit-appearance:none;
 }
 
+#abc-selected{
+font-family:"Helvetica";
+font-size:11pt;
+}
+
 #safariuser{
 display:none;
 background-color:yellow;
@@ -139,4 +144,3 @@ p{
 font-size:11pt;
 font-family:"Helvetica";
 }
-
