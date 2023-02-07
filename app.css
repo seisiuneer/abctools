@@ -24,6 +24,8 @@ display: none;
 }
 
 .toggle-buttons label {
+font-family:"Helvetica";
+font-size:11pt;
 border: 1px solid #333;
 border-radius: 0.5em;
 padding: 0.5em;
@@ -121,3 +123,9 @@ margin-top:5px;
 #transpose-controls, #tabs-selection, #render-width{
 display:flex;
 }
+
+p{
+font-size:12pt;
+font-family:"Helvetica";
+}
+
