@@ -380,7 +380,7 @@ function CreatePDFfromHTML() {
   // document.getElementById("notation").style.overflow = "visible";
   var title = Titelholen();
 
-  qualitaet = 2000;
+  qualitaet = 1200;
 
   document.getElementById("statusanzeigetext").innerHTML = "Generating <font color=\"red\">" + title + ".pdf </font> - Please don't press the button twice!";
 
