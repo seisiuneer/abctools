@@ -79,7 +79,7 @@ margin-right: 16px;
 -webkit-appearance:none;
 }
 
-#abc-selected{
+#abc-selected,#abc-selectedios{
 font-family:"Helvetica";
 font-size:11pt;
 }
@@ -154,4 +154,3 @@ display:none;
     display: none !important;
   }
 }
-
