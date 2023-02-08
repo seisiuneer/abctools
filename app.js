@@ -7,6 +7,9 @@ var STAFFSPACEMIN = 50;
 var STAFFSPACEMAX = 100;
 var gStaffSpacing = STAFFSPACEMIN;
 
+var gIsIOS = false;
+var gIsSafari = false;
+
 var theABC = document.getElementById("abc");
 
 function Notenames() {
@@ -325,7 +328,7 @@ function Clear() {
   var fileSelected = document.getElementById('abc-selected');
 
   fileSelected.innerText = "No .ABC file selected"; 
-
+  
   RestoreDefaults();
 
   Render();
@@ -1149,49 +1152,6 @@ function ensureABCFile(filename) {
 }
 
 //
-// Handles file import selector
-//
-document.getElementById("selectabcfile").onchange = () => {
-
-  let fileElement = document.getElementById('selectabcfile');
-
-  // check if user had selected a file
-  if (fileElement.files.length === 0) {
-
-    alert("Please select an ABC file");
-    
-    return;
-
-  }
-
-  let file = fileElement.files[0];
-  
-  // Check the filename extension
-  if (ensureABCFile(file.name)){
-
-    var fileSelected = document.getElementById('abc-selected');
-
-    fileSelected.innerText = file.name; 
-
-    const reader = new FileReader();
-
-      reader.addEventListener('load', (event) => {
-
-        theABC.value = event.target.result;
-
-        // Reset the annotation strip flags
-  		  RestoreDefaults();
-
-        Render();
-
-      });
-
-      reader.readAsText(file);
-  }
-  
-}
-
-//
 // Hide the advanced controls
 //
 function HideAdvancedControls(){
@@ -1255,7 +1215,7 @@ function RestoreDefaults(){
 
   gStaffSpacing = STAFFSPACEMIN;
 
-  // Reset file selector
+  // Reset file selectors
   let fileElement = document.getElementById('selectabcfile');
 
   fileElement.value = "";
@@ -1495,6 +1455,37 @@ window.addEventListener('resize', function() {
 
 });
 
+
+//
+// Fade out and hide an element
+//
+function fadeOutAndHide(fadeTarget) {
+  var fadeEffect = setInterval(function () {
+    if (!fadeTarget.style.opacity) {
+        fadeTarget.style.opacity = 1;
+    }
+    if (fadeTarget.style.opacity > 0) {
+        fadeTarget.style.opacity -= 0.1;
+    } else {
+        clearInterval(fadeEffect);
+        fadeTarget.style.display = "none";
+    }
+  },100);
+}
+
+//
+// Are we on iOS?
+//
+function isIOS() {
+  if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+    return true;
+  } else {
+    return navigator.maxTouchPoints &&
+      navigator.maxTouchPoints > 2 &&
+      /MacIntel/.test(navigator.platform);
+  }
+}
+
 function doStartup(){
 
   // Init global state
@@ -1507,13 +1498,75 @@ function doStartup(){
   const uA = navigator.userAgent;
   const vendor = navigator.vendor;
 
-  var isSafari = false;
+  gIsSafari = false;
   if (/Safari/i.test(uA) && /Apple Computer/.test(vendor)) {
-    isSafari = true; 
+    gIsSafari = true; 
   }
 
-  if (isSafari){
-    document.getElementById("safariuser").style.display = "block";
+  gIsIOS = false;
+  if (isIOS()){
+    gIsIOS = true;
+  }
+
+  // Fade out and hide the safari warning after 5 seconds
+  if (gIsSafari){
+
+    var safariuser = document.getElementById("safariuser");
+    safariuser.style.display = "block";
+    
+    setTimeout(
+
+      function(){
+        
+        fadeOutAndHide(safariuser);
+
+      },4000);
+  }
+
+  if (gIsIOS){
+
+    document.getElementById("selectabcfile").removeAttribute("accept");
+  
+  }
+
+  document.getElementById("selectabcfile").onchange = () => {
+
+    let fileElement = document.getElementById("selectabcfile");
+
+    // check if user had selected a file
+    if (fileElement.files.length === 0) {
+
+      alert("Please select an ABC file");
+      
+      return;
+
+    }
+
+    let file = fileElement.files[0];
+    
+    // Check the filename extension
+    if (ensureABCFile(file.name)){
+
+      var fileSelected = document.getElementById("abc-selected");
+
+      fileSelected.innerText = file.name; 
+
+      const reader = new FileReader();
+
+        reader.addEventListener('load', (event) => {
+
+          theABC.value = event.target.result;
+
+          // Reset the annotation strip flags
+          RestoreDefaults();
+
+          Render();
+
+        });
+
+        reader.readAsText(file);
+    }
+    
   }
 
   // Set the initial tab to notation
