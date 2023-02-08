@@ -52,7 +52,7 @@ function Notenames() {
   theABC.value = insfeld;
   Render();
 }
-
+ 
 
 function TransposeUp() {
 
