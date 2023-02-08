@@ -1,5 +1,5 @@
 var gShowAdvancedControls = false;
-var gStripAnnotations = true;
+var gStripAnnotations = false;
 var gStripTextAnnotations = false;
 var gStripChords = false;
 
@@ -357,7 +357,7 @@ function Titelholen() {
       titel = titel.trim();
       titel = titel.replace(" ", "_");
       titel = titel.replace("'", "");
-      console.log(titel);
+      //console.log(titel);
       break;
     }
   }
@@ -387,21 +387,26 @@ function CreatePDFfromHTML() {
   var pdf = new jsPDF('p', 'pt', 'letter');
 
   var running_height = 30;
-  
+
   theBlocks = document.querySelectorAll('div[class="block"]');
 
   // In order to process promise chains with .then( one after the other within a for loop, the for loop itself must form a promise.
   const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
   var seitenzahl = 1;
+
+  var isFirstPage = true;
+
   for (let u = 0, p = Promise.resolve(); u < theBlocks.length; u++) {
     // p = p.then(() => delay(Math.random() * 1000))
     p = p.then(() => delay(125)) // he makes a delay of 125 ms at the top - just show, so that the whole thing works here
 
       // .then(() => console.log(u))
       .then(function() {
-        druckselector = "div[id='block" + u + "'] > svg";
-        svg = document.querySelector(druckselector);
+
+        var theBlock = theBlocks[u];
+
+        svg = theBlock.querySelector("svg");
 
         svg.setAttribute("width", qualitaet);
 
@@ -416,6 +421,28 @@ function CreatePDFfromHTML() {
 
           var imgData = canvas.toDataURL("image/jpeg", 1.0);
 
+          var theBlockID = theBlock.id + ".block";
+
+          // Insert a new page for each tune
+          if (theBlockID.indexOf("_0.block") != -1){
+
+            if (!isFirstPage){
+
+              running_height = 30;
+
+              seitenzahl++; // for the status display.
+              
+              pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
+              document.getElementById("nebennebenstatusanzeigetext").innerHTML = "Saving <font color=\"red\">" + seitenzahl + "</font> pages.";
+
+            }
+            else
+            {
+              isFirstPage = false;
+            }
+
+          }
+
           console.log(u + " height: " + canvas.height + "breite: " + canvas.width);
 
           height = parseInt(canvas.height * 535 / canvas.width);
@@ -425,6 +452,7 @@ function CreatePDFfromHTML() {
 
           // hilft vielleicht gegen unscharf...
           pdf.internal.scaleFactor = 1.55;
+
           if (running_height + height + 30 <= 842 - 30) // i.e. if a block of notes would get in the way with the bottom margin (30 pt), then a new one please...
           {
             pdf.addImage(imgData, 'JPG', 30, running_height, 535, height);
@@ -434,7 +462,7 @@ function CreatePDFfromHTML() {
           } else {
             running_height = 30;
             seitenzahl++; // for the status display.
-            pdf.addPage(595, 842); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
+            pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
             pdf.addImage(imgData, 'JPG', 30, running_height, 535, height);
             document.getElementById("nebennebenstatusanzeigetext").innerHTML = "Saving <font color=\"red\">" + seitenzahl + "</font> pages.";
 
@@ -482,6 +510,10 @@ function Notenmachen(tune, instrument) {
   // console.log("breite: " + screen.width);
   // console.log("dings" + parseInt(document.getElementById('notenlinks').style.width));
   //rechtswidth = window.innerWidth - parseInt(document.getElementById("notenlinks").style.width);
+  
+  var nTunes = CountTunes();
+
+  //console.log("nTunes ="+nTunes);
 
   // Damit er bei außreichend großem Bildschirm die Noten rechts vom Textfeld ausgibt - dem rechten div eine feste Größe geben, in die das svg dann wegen der Angabe
   // responsive: 'resize' reingequetscht wird. Sonst rutscht es nach unten.
@@ -642,333 +674,351 @@ function Notenmachen(tune, instrument) {
   // Avoid jump scroll on render
   var scrollTop = window.pageYOffset;
 
-  var visualObj = ABCJS.renderAbc('notation', tune, params)[0];
+  // Create the render div ID array
+  var renderDivs = [];
 
-  // Bei Whistle rendert er zunächst erst eine Linie mit Mandolinentabs, also Zahlen.
-  // Diese werden hier anschließend ersetzt durch Buchstaben. 
-  // Die Elemente, wo die drin sind heißen tspan - die kriegen zusätzlich die Klasse "whistle", die wir über CSS vordefinieren.
-  if (instrument == "whistle") {
-
-    // Im Style-Sheet innerhalb des SVGs muss der Tin Whistle Font als base64 String definiert werden, damit er bei der Erstellung des PDFs auch übernommen wird. 
-
-    var Svgs = document.querySelectorAll('div[id="notation"] > div > svg > style');
-    for (x = 0; x < Svgs.length; x++) {
-      Svgs[x].innerHTML += "@font-face { font-family: 'TinWhistleFingering'; src: url(data:font/truetype;charset=utf-8;base64,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) format('truetype'); font-weight: normal; font-style: normal; }";
-    }
-
-    // hiermit findet er alle g's, die eine Tabzahl sind. 
-    var Tabstriche = document.querySelectorAll('g > path[class="abcjs-top-line"]');
-
-    for (x = 0; x < Tabstriche.length; x++) {
-      // Wenn es nur Note und Tab geht - nur beim Tab die Linien ausblenden.
-      if (x % 2 != 0) {
-        Tabstriche[x].setAttribute("class", "tabstrich");
-
-        var Geschwisterstriche = getNextSiblings(Tabstriche[x]);
-        for (y = 0; y < Geschwisterstriche.length; y++) {
-          Geschwisterstriche[y].setAttribute("class", "tabstrich");
-        }
-      }
-    }
-
-    var Tspans = document.querySelectorAll('g[data-name="tabNumber"] > text > tspan');
-
-    // console.log(Tspans.length);
-
-    // Sämtliche Tspan Tags, die zu Tags und nicht Noten gehören, haben jetzt Zahlen auf einem String (D). Diese können jetzt in Whistle Tags umgewandelt werden.
-    // Dazu werden die Buchstaben mit dem jeweiligen Unicode Buchstaben des TinWhistleFingering Fonts ersetzt.
-    for (x = 0; x < Tspans.length; x++) {
-      Tspans[x].setAttribute("class", "whistle");
-      if (Tspans[x].innerHTML == "0") {
-        Tspans[x].innerHTML = "d";
-      } else if (Tspans[x].innerHTML == "1") {
-        Tspans[x].innerHTML = "k";
-      } else if (Tspans[x].innerHTML == "2") {
-        Tspans[x].innerHTML = "e";
-      } else if (Tspans[x].innerHTML == "3") {
-        Tspans[x].innerHTML = "f";
-      } else if (Tspans[x].innerHTML == "4") {
-        Tspans[x].innerHTML = "l";
-      } else if (Tspans[x].innerHTML == "5") {
-        Tspans[x].innerHTML = "g";
-      } else if (Tspans[x].innerHTML == "6") {
-        Tspans[x].innerHTML = "m";
-      } else if (Tspans[x].innerHTML == "7") {
-        Tspans[x].innerHTML = "a";
-      } else if (Tspans[x].innerHTML == "8") {
-        Tspans[x].innerHTML = "i";
-      } else if (Tspans[x].innerHTML == "9") {
-        Tspans[x].innerHTML = "b";
-      } else if (Tspans[x].innerHTML == "10") {
-        Tspans[x].innerHTML = "c";
-      } else if (Tspans[x].innerHTML == "11") {
-        Tspans[x].innerHTML = "j";
-      } else if (Tspans[x].innerHTML == "12") {
-        Tspans[x].innerHTML = "D";
-      } else if (Tspans[x].innerHTML == "13") {
-        Tspans[x].innerHTML = "K";
-      } else if (Tspans[x].innerHTML == "14") {
-        Tspans[x].innerHTML = "E";
-      } else if (Tspans[x].innerHTML == "15") {
-        Tspans[x].innerHTML = "F";
-      } else if (Tspans[x].innerHTML == "16") {
-        Tspans[x].innerHTML = "L";
-      } else if (Tspans[x].innerHTML == "17") {
-        Tspans[x].innerHTML = "G";
-      } else if (Tspans[x].innerHTML == "18") {
-        Tspans[x].innerHTML = "M";
-      } else if (Tspans[x].innerHTML == "19") {
-        Tspans[x].innerHTML = "A";
-      } else if (Tspans[x].innerHTML == "20") {
-        Tspans[x].innerHTML = "I";
-      } else if (Tspans[x].innerHTML == "21") {
-        Tspans[x].innerHTML = "B";
-      } else if (Tspans[x].innerHTML == "22") {
-        Tspans[x].innerHTML = "C";
-      } else if (Tspans[x].innerHTML == "23") {
-        Tspans[x].innerHTML = "J";
-      }
-    }
+  for (var i=0;i<nTunes;++i){
+    renderDivs.push("notation"+i);
   }
 
-  if (instrument == "notenames") {
-
-    var useSharps = true;
-
-    // hiermit findet er alle g's, die eine Tabzahl sind. 
-    var Tabstriche = document.querySelectorAll('g > path[class="abcjs-top-line"]');
-
-    for (x = 0; x < Tabstriche.length; x++) {
-      // Wenn es nur Note und Tab geht - nur beim Tab die Linien ausblenden.
-      if (x % 2 != 0) {
-        Tabstriche[x].setAttribute("class", "tabstrich");
-
-        var Geschwisterstriche = getNextSiblings(Tabstriche[x]);
-        for (y = 0; y < Geschwisterstriche.length; y++) {
-          Geschwisterstriche[y].setAttribute("class", "tabstrich");
-        }
-      }
-    }
-    
-    // Walk the SVGs
-    var Svgs = document.querySelectorAll('div[id="notation"] > div > svg');
-
-    if (Svgs && (Svgs.length > 1)){
-
-      for (var i=1;i<Svgs.length;++i){
-
-        useSharps = true;
-
-        var theSVG = Svgs[i];
-
-        // Find the key signature group
-        var keySignatures = theSVG.querySelectorAll('g[data-name="staff-extra key-signature"]');
-
-        // Look for the flat glyph in the key signature group
-        if (keySignatures && (keySignatures.length>=1)){
-
-          var inner = keySignatures[0].innerHTML;
-          
-          if (inner.indexOf("accidentals.flat") != -1){
-
-            useSharps = false;
-
-          }
-
-        }
-
-        var Tspans = theSVG.querySelectorAll('g[data-name="tabNumber"] > text > tspan');
-
-        // console.log(Tspans.length);
-
-        if (useSharps){
-          // Sämtliche Tspan Tags, die zu Tags und nicht Noten gehören, haben jetzt Zahlen auf einem String (D). Diese können jetzt in Whistle Tags umgewandelt werden.
-          // Dazu werden die Buchstaben mit dem jeweiligen Unicode Buchstaben des TinWhistleFingering Fonts ersetzt.
-          for (x = 0; x < Tspans.length; x++) {
-             if (Tspans[x].innerHTML == "0") {
-              Tspans[x].innerHTML = "G,";
-            } else if (Tspans[x].innerHTML == "1") {
-              Tspans[x].innerHTML = "G♯,";
-            } else if (Tspans[x].innerHTML == "2") {
-              Tspans[x].innerHTML = "A,";
-            } else if (Tspans[x].innerHTML == "3") {
-              Tspans[x].innerHTML = "A♯,";
-            } else if (Tspans[x].innerHTML == "4") {
-              Tspans[x].innerHTML = "B,";
-            } else if (Tspans[x].innerHTML == "5") {
-              Tspans[x].innerHTML = "C";
-            } else if (Tspans[x].innerHTML == "6") {
-              Tspans[x].innerHTML = "C♯";
-            } else if (Tspans[x].innerHTML == "7") {
-              Tspans[x].innerHTML = "D";
-            } else if (Tspans[x].innerHTML == "8") {
-              Tspans[x].innerHTML = "D♯";
-            } else if (Tspans[x].innerHTML == "9") {
-              Tspans[x].innerHTML = "E";
-            } else if (Tspans[x].innerHTML == "10") {
-              Tspans[x].innerHTML = "F";
-            } else if (Tspans[x].innerHTML == "11") {
-              Tspans[x].innerHTML = "F♯";
-            } else if (Tspans[x].innerHTML == "12") {
-              Tspans[x].innerHTML = "G";
-            } else if (Tspans[x].innerHTML == "13") {
-              Tspans[x].innerHTML = "G♯";
-            } else if (Tspans[x].innerHTML == "14") {
-              Tspans[x].innerHTML = "A";
-            } else if (Tspans[x].innerHTML == "15") {
-              Tspans[x].innerHTML = "A♯";
-            } else if (Tspans[x].innerHTML == "16") {
-              Tspans[x].innerHTML = "B";
-            } else if (Tspans[x].innerHTML == "17") {
-              Tspans[x].innerHTML = "c";
-            } else if (Tspans[x].innerHTML == "18") {
-              Tspans[x].innerHTML = "c♯";
-            } else if (Tspans[x].innerHTML == "19") {
-              Tspans[x].innerHTML = "d";
-            } else if (Tspans[x].innerHTML == "20") {
-              Tspans[x].innerHTML = "d♯";
-            } else if (Tspans[x].innerHTML == "21") {
-              Tspans[x].innerHTML = "e";
-            } else if (Tspans[x].innerHTML == "22") {
-              Tspans[x].innerHTML = "f";
-            } else if (Tspans[x].innerHTML == "23") {
-              Tspans[x].innerHTML = "f♯";
-            } else if (Tspans[x].innerHTML == "24") {
-              Tspans[x].innerHTML = "g";
-            } else if (Tspans[x].innerHTML == "25") {
-              Tspans[x].innerHTML = "g♯";
-            } else if (Tspans[x].innerHTML == "26") {
-              Tspans[x].innerHTML = "a";
-            } else if (Tspans[x].innerHTML == "27") {
-              Tspans[x].innerHTML = "a♯";
-            } else if (Tspans[x].innerHTML == "28") {
-              Tspans[x].innerHTML = "b";
-            } else if (Tspans[x].innerHTML == "29") {
-              Tspans[x].innerHTML = "c'";
-            } else if (Tspans[x].innerHTML == "30") {
-              Tspans[x].innerHTML = "c♯'";
-            } else if (Tspans[x].innerHTML == "31") {
-              Tspans[x].innerHTML = "d'";
-            } else if (Tspans[x].innerHTML == "32") {
-              Tspans[x].innerHTML = "d♯'";
-            } else if (Tspans[x].innerHTML == "33") {
-              Tspans[x].innerHTML = "e'";
-            } else if (Tspans[x].innerHTML == "34") {
-              Tspans[x].innerHTML = "f'";
-            } else if (Tspans[x].innerHTML == "35") {
-              Tspans[x].innerHTML = "f♯'";
-            } else if (Tspans[x].innerHTML == "36") {
-              Tspans[x].innerHTML = "g'";
-            } else if (Tspans[x].innerHTML == "37") {
-              Tspans[x].innerHTML = "g♯'";
-            } else if (Tspans[x].innerHTML == "38") {
-              Tspans[x].innerHTML = "a'";
-            } else if (Tspans[x].innerHTML == "39") {
-              Tspans[x].innerHTML = "a♯'";
-            } else if (Tspans[x].innerHTML == "40") {
-              Tspans[x].innerHTML = "b'";
-            } else {
-              Tspans[x].innerHTML = "?";
-            } 
-          }
-        }
-        else {
-          for (x = 0; x < Tspans.length; x++) {
-             if (Tspans[x].innerHTML == "0") {
-              Tspans[x].innerHTML = "G,";
-            } else if (Tspans[x].innerHTML == "1") {
-              Tspans[x].innerHTML = "A♭,";
-            } else if (Tspans[x].innerHTML == "2") {
-              Tspans[x].innerHTML = "A,";
-            } else if (Tspans[x].innerHTML == "3") {
-              Tspans[x].innerHTML = "B♭,";
-            } else if (Tspans[x].innerHTML == "4") {
-              Tspans[x].innerHTML = "B,";
-            } else if (Tspans[x].innerHTML == "5") {
-              Tspans[x].innerHTML = "C";
-            } else if (Tspans[x].innerHTML == "6") {
-              Tspans[x].innerHTML = "D♭";
-            } else if (Tspans[x].innerHTML == "7") {
-              Tspans[x].innerHTML = "D";
-            } else if (Tspans[x].innerHTML == "8") {
-              Tspans[x].innerHTML = "E♭";
-            } else if (Tspans[x].innerHTML == "9") {
-              Tspans[x].innerHTML = "E";
-            } else if (Tspans[x].innerHTML == "10") {
-              Tspans[x].innerHTML = "F";
-            } else if (Tspans[x].innerHTML == "11") {
-              Tspans[x].innerHTML = "G♭";
-            } else if (Tspans[x].innerHTML == "12") {
-              Tspans[x].innerHTML = "G";
-            } else if (Tspans[x].innerHTML == "13") {
-              Tspans[x].innerHTML = "A♭";
-            } else if (Tspans[x].innerHTML == "14") {
-              Tspans[x].innerHTML = "A";
-            } else if (Tspans[x].innerHTML == "15") {
-              Tspans[x].innerHTML = "B♭";
-            } else if (Tspans[x].innerHTML == "16") {
-              Tspans[x].innerHTML = "B";
-            } else if (Tspans[x].innerHTML == "17") {
-              Tspans[x].innerHTML = "c";
-            } else if (Tspans[x].innerHTML == "18") {
-              Tspans[x].innerHTML = "d♭";
-            } else if (Tspans[x].innerHTML == "19") {
-              Tspans[x].innerHTML = "d";
-            } else if (Tspans[x].innerHTML == "20") {
-              Tspans[x].innerHTML = "e♭";
-            } else if (Tspans[x].innerHTML == "21") {
-              Tspans[x].innerHTML = "e";
-            } else if (Tspans[x].innerHTML == "22") {
-              Tspans[x].innerHTML = "f";
-            } else if (Tspans[x].innerHTML == "23") {
-              Tspans[x].innerHTML = "g♭";
-            } else if (Tspans[x].innerHTML == "24") {
-              Tspans[x].innerHTML = "g";
-            } else if (Tspans[x].innerHTML == "25") {
-              Tspans[x].innerHTML = "a♭";
-            } else if (Tspans[x].innerHTML == "26") {
-              Tspans[x].innerHTML = "a";
-            } else if (Tspans[x].innerHTML == "27") {
-              Tspans[x].innerHTML = "b♭";
-            } else if (Tspans[x].innerHTML == "28") {
-              Tspans[x].innerHTML = "b";
-            } else if (Tspans[x].innerHTML == "29") {
-              Tspans[x].innerHTML = "c'";
-            } else if (Tspans[x].innerHTML == "30") {
-              Tspans[x].innerHTML = "d♭'";
-            } else if (Tspans[x].innerHTML == "31") {
-              Tspans[x].innerHTML = "d'";
-            } else if (Tspans[x].innerHTML == "32") {
-              Tspans[x].innerHTML = "e♭'";
-            } else if (Tspans[x].innerHTML == "33") {
-              Tspans[x].innerHTML = "e'";
-            } else if (Tspans[x].innerHTML == "34") {
-              Tspans[x].innerHTML = "f'";
-            } else if (Tspans[x].innerHTML == "35") {
-              Tspans[x].innerHTML = "g♭'";
-            } else if (Tspans[x].innerHTML == "36") {
-              Tspans[x].innerHTML = "g'";
-            } else if (Tspans[x].innerHTML == "37") {
-              Tspans[x].innerHTML = "a♭'";
-            } else if (Tspans[x].innerHTML == "38") {
-              Tspans[x].innerHTML = "a'";
-            } else if (Tspans[x].innerHTML == "39") {
-              Tspans[x].innerHTML = "b♭'";
-            } else if (Tspans[x].innerHTML == "40") {
-              Tspans[x].innerHTML = "b'";
-            } else {
-              Tspans[x].innerHTML = "?";
-            } 
-          }
-        }
-      }
-    }
-  }
-
-  Svgs = document.querySelectorAll('div[id="notation"] > div > svg');
+  var visualObj = ABCJS.renderAbc(renderDivs, tune, params)[0];
+  
   document.getElementById("offscreenrender").innerHTML = ""; // must be, otherwise it somehow generates the abc twice...
-  for (x = 0; x < Svgs.length; x++) {
-    document.getElementById("offscreenrender").innerHTML = document.getElementById("offscreenrender").innerHTML + "<div id=\"block" + x + "\" class=\"block\">" + Svgs[x].outerHTML + "</div>";
+
+  for (var tuneIndex=0;tuneIndex<nTunes;++tuneIndex){
+
+    var renderDivID = "notation"+tuneIndex;
+
+    // Bei Whistle rendert er zunächst erst eine Linie mit Mandolinentabs, also Zahlen.
+    // Diese werden hier anschließend ersetzt durch Buchstaben. 
+    // Die Elemente, wo die drin sind heißen tspan - die kriegen zusätzlich die Klasse "whistle", die wir über CSS vordefinieren.
+    if (instrument == "whistle") {
+
+      // Im Style-Sheet innerhalb des SVGs muss der Tin Whistle Font als base64 String definiert werden, damit er bei der Erstellung des PDFs auch übernommen wird. 
+
+      var Svgs = document.querySelectorAll('div[id="'+renderDivID+'"] > div > svg > style');
+      for (x = 0; x < Svgs.length; x++) {
+        Svgs[x].innerHTML += "@font-face { font-family: 'TinWhistleFingering'; src: url(data:font/truetype;charset=utf-8;base64,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) format('truetype'); font-weight: normal; font-style: normal; }";
+      }
+
+      // hiermit findet er alle g's, die eine Tabzahl sind. 
+      var Tabstriche = document.querySelectorAll('div[id="'+renderDivID+'"] > div > svg > g > g > path[class="abcjs-top-line"]');
+
+      for (x = 0; x < Tabstriche.length; x++) {
+
+        // Wenn es nur Note und Tab geht - nur beim Tab die Linien ausblenden.
+        if (x % 2 != 0) {
+
+          Tabstriche[x].setAttribute("class", "tabstrich");
+
+          var Geschwisterstriche = getNextSiblings(Tabstriche[x]);
+          
+          for (y = 0; y < Geschwisterstriche.length; y++) {
+            Geschwisterstriche[y].setAttribute("class", "tabstrich");
+          }
+
+        }
+      }
+
+      var Tspans = document.querySelectorAll('div[id="'+renderDivID+'"] > div > svg > g > g[data-name="tabNumber"] > text > tspan');
+
+      // console.log(Tspans.length);
+
+      // Sämtliche Tspan Tags, die zu Tags und nicht Noten gehören, haben jetzt Zahlen auf einem String (D). Diese können jetzt in Whistle Tags umgewandelt werden.
+      // Dazu werden die Buchstaben mit dem jeweiligen Unicode Buchstaben des TinWhistleFingering Fonts ersetzt.
+      for (x = 0; x < Tspans.length; x++) {
+        Tspans[x].setAttribute("class", "whistle");
+        if (Tspans[x].innerHTML == "0") {
+          Tspans[x].innerHTML = "d";
+        } else if (Tspans[x].innerHTML == "1") {
+          Tspans[x].innerHTML = "k";
+        } else if (Tspans[x].innerHTML == "2") {
+          Tspans[x].innerHTML = "e";
+        } else if (Tspans[x].innerHTML == "3") {
+          Tspans[x].innerHTML = "f";
+        } else if (Tspans[x].innerHTML == "4") {
+          Tspans[x].innerHTML = "l";
+        } else if (Tspans[x].innerHTML == "5") {
+          Tspans[x].innerHTML = "g";
+        } else if (Tspans[x].innerHTML == "6") {
+          Tspans[x].innerHTML = "m";
+        } else if (Tspans[x].innerHTML == "7") {
+          Tspans[x].innerHTML = "a";
+        } else if (Tspans[x].innerHTML == "8") {
+          Tspans[x].innerHTML = "i";
+        } else if (Tspans[x].innerHTML == "9") {
+          Tspans[x].innerHTML = "b";
+        } else if (Tspans[x].innerHTML == "10") {
+          Tspans[x].innerHTML = "c";
+        } else if (Tspans[x].innerHTML == "11") {
+          Tspans[x].innerHTML = "j";
+        } else if (Tspans[x].innerHTML == "12") {
+          Tspans[x].innerHTML = "D";
+        } else if (Tspans[x].innerHTML == "13") {
+          Tspans[x].innerHTML = "K";
+        } else if (Tspans[x].innerHTML == "14") {
+          Tspans[x].innerHTML = "E";
+        } else if (Tspans[x].innerHTML == "15") {
+          Tspans[x].innerHTML = "F";
+        } else if (Tspans[x].innerHTML == "16") {
+          Tspans[x].innerHTML = "L";
+        } else if (Tspans[x].innerHTML == "17") {
+          Tspans[x].innerHTML = "G";
+        } else if (Tspans[x].innerHTML == "18") {
+          Tspans[x].innerHTML = "M";
+        } else if (Tspans[x].innerHTML == "19") {
+          Tspans[x].innerHTML = "A";
+        } else if (Tspans[x].innerHTML == "20") {
+          Tspans[x].innerHTML = "I";
+        } else if (Tspans[x].innerHTML == "21") {
+          Tspans[x].innerHTML = "B";
+        } else if (Tspans[x].innerHTML == "22") {
+          Tspans[x].innerHTML = "C";
+        } else if (Tspans[x].innerHTML == "23") {
+          Tspans[x].innerHTML = "J";
+        }
+      }
+    }
+
+    if (instrument == "notenames") {
+
+      var useSharps = true;
+
+      // hiermit findet er alle g's, die eine Tabzahl sind. 
+      var Tabstriche = document.querySelectorAll('div[id="'+renderDivID+'"] > div > svg > g > g > path[class="abcjs-top-line"]');
+
+      for (x = 0; x < Tabstriche.length; x++) {
+        // Wenn es nur Note und Tab geht - nur beim Tab die Linien ausblenden.
+        if (x % 2 != 0) {
+          Tabstriche[x].setAttribute("class", "tabstrich");
+
+          var Geschwisterstriche = getNextSiblings(Tabstriche[x]);
+          for (y = 0; y < Geschwisterstriche.length; y++) {
+            Geschwisterstriche[y].setAttribute("class", "tabstrich");
+          }
+        }
+      }
+
+      // Walk the SVGs
+      var Svgs = document.querySelectorAll('div[id="'+renderDivID+'"] > div > svg');
+
+      if (Svgs && (Svgs.length > 1)){
+
+        for (var i=1;i<Svgs.length;++i){
+
+          useSharps = true;
+
+          var theSVG = Svgs[i];
+
+          // Find the key signature group
+          var keySignatures = theSVG.querySelectorAll('g[data-name="staff-extra key-signature"]');
+
+          // Look for the flat glyph in the key signature group
+          if (keySignatures && (keySignatures.length>=1)){
+
+            var inner = keySignatures[0].innerHTML;
+            
+            if (inner.indexOf("accidentals.flat") != -1){
+
+              useSharps = false;
+
+            }
+
+          }
+          var Tspans = theSVG.querySelectorAll('g[data-name="tabNumber"] > text > tspan');
+
+          // console.log(Tspans.length);
+
+          if (useSharps){
+            // Sämtliche Tspan Tags, die zu Tags und nicht Noten gehören, haben jetzt Zahlen auf einem String (D). Diese können jetzt in Whistle Tags umgewandelt werden.
+            // Dazu werden die Buchstaben mit dem jeweiligen Unicode Buchstaben des TinWhistleFingering Fonts ersetzt.
+            for (x = 0; x < Tspans.length; x++) {
+               if (Tspans[x].innerHTML == "0") {
+                Tspans[x].innerHTML = "G,";
+              } else if (Tspans[x].innerHTML == "1") {
+                Tspans[x].innerHTML = "G♯,";
+              } else if (Tspans[x].innerHTML == "2") {
+                Tspans[x].innerHTML = "A,";
+              } else if (Tspans[x].innerHTML == "3") {
+                Tspans[x].innerHTML = "A♯,";
+              } else if (Tspans[x].innerHTML == "4") {
+                Tspans[x].innerHTML = "B,";
+              } else if (Tspans[x].innerHTML == "5") {
+                Tspans[x].innerHTML = "C";
+              } else if (Tspans[x].innerHTML == "6") {
+                Tspans[x].innerHTML = "C♯";
+              } else if (Tspans[x].innerHTML == "7") {
+                Tspans[x].innerHTML = "D";
+              } else if (Tspans[x].innerHTML == "8") {
+                Tspans[x].innerHTML = "D♯";
+              } else if (Tspans[x].innerHTML == "9") {
+                Tspans[x].innerHTML = "E";
+              } else if (Tspans[x].innerHTML == "10") {
+                Tspans[x].innerHTML = "F";
+              } else if (Tspans[x].innerHTML == "11") {
+                Tspans[x].innerHTML = "F♯";
+              } else if (Tspans[x].innerHTML == "12") {
+                Tspans[x].innerHTML = "G";
+              } else if (Tspans[x].innerHTML == "13") {
+                Tspans[x].innerHTML = "G♯";
+              } else if (Tspans[x].innerHTML == "14") {
+                Tspans[x].innerHTML = "A";
+              } else if (Tspans[x].innerHTML == "15") {
+                Tspans[x].innerHTML = "A♯";
+              } else if (Tspans[x].innerHTML == "16") {
+                Tspans[x].innerHTML = "B";
+              } else if (Tspans[x].innerHTML == "17") {
+                Tspans[x].innerHTML = "c";
+              } else if (Tspans[x].innerHTML == "18") {
+                Tspans[x].innerHTML = "c♯";
+              } else if (Tspans[x].innerHTML == "19") {
+                Tspans[x].innerHTML = "d";
+              } else if (Tspans[x].innerHTML == "20") {
+                Tspans[x].innerHTML = "d♯";
+              } else if (Tspans[x].innerHTML == "21") {
+                Tspans[x].innerHTML = "e";
+              } else if (Tspans[x].innerHTML == "22") {
+                Tspans[x].innerHTML = "f";
+              } else if (Tspans[x].innerHTML == "23") {
+                Tspans[x].innerHTML = "f♯";
+              } else if (Tspans[x].innerHTML == "24") {
+                Tspans[x].innerHTML = "g";
+              } else if (Tspans[x].innerHTML == "25") {
+                Tspans[x].innerHTML = "g♯";
+              } else if (Tspans[x].innerHTML == "26") {
+                Tspans[x].innerHTML = "a";
+              } else if (Tspans[x].innerHTML == "27") {
+                Tspans[x].innerHTML = "a♯";
+              } else if (Tspans[x].innerHTML == "28") {
+                Tspans[x].innerHTML = "b";
+              } else if (Tspans[x].innerHTML == "29") {
+                Tspans[x].innerHTML = "c'";
+              } else if (Tspans[x].innerHTML == "30") {
+                Tspans[x].innerHTML = "c♯'";
+              } else if (Tspans[x].innerHTML == "31") {
+                Tspans[x].innerHTML = "d'";
+              } else if (Tspans[x].innerHTML == "32") {
+                Tspans[x].innerHTML = "d♯'";
+              } else if (Tspans[x].innerHTML == "33") {
+                Tspans[x].innerHTML = "e'";
+              } else if (Tspans[x].innerHTML == "34") {
+                Tspans[x].innerHTML = "f'";
+              } else if (Tspans[x].innerHTML == "35") {
+                Tspans[x].innerHTML = "f♯'";
+              } else if (Tspans[x].innerHTML == "36") {
+                Tspans[x].innerHTML = "g'";
+              } else if (Tspans[x].innerHTML == "37") {
+                Tspans[x].innerHTML = "g♯'";
+              } else if (Tspans[x].innerHTML == "38") {
+                Tspans[x].innerHTML = "a'";
+              } else if (Tspans[x].innerHTML == "39") {
+                Tspans[x].innerHTML = "a♯'";
+              } else if (Tspans[x].innerHTML == "40") {
+                Tspans[x].innerHTML = "b'";
+              } else {
+                Tspans[x].innerHTML = "?";
+              } 
+            }
+          }
+          else {
+            for (x = 0; x < Tspans.length; x++) {
+               if (Tspans[x].innerHTML == "0") {
+                Tspans[x].innerHTML = "G,";
+              } else if (Tspans[x].innerHTML == "1") {
+                Tspans[x].innerHTML = "A♭,";
+              } else if (Tspans[x].innerHTML == "2") {
+                Tspans[x].innerHTML = "A,";
+              } else if (Tspans[x].innerHTML == "3") {
+                Tspans[x].innerHTML = "B♭,";
+              } else if (Tspans[x].innerHTML == "4") {
+                Tspans[x].innerHTML = "B,";
+              } else if (Tspans[x].innerHTML == "5") {
+                Tspans[x].innerHTML = "C";
+              } else if (Tspans[x].innerHTML == "6") {
+                Tspans[x].innerHTML = "D♭";
+              } else if (Tspans[x].innerHTML == "7") {
+                Tspans[x].innerHTML = "D";
+              } else if (Tspans[x].innerHTML == "8") {
+                Tspans[x].innerHTML = "E♭";
+              } else if (Tspans[x].innerHTML == "9") {
+                Tspans[x].innerHTML = "E";
+              } else if (Tspans[x].innerHTML == "10") {
+                Tspans[x].innerHTML = "F";
+              } else if (Tspans[x].innerHTML == "11") {
+                Tspans[x].innerHTML = "G♭";
+              } else if (Tspans[x].innerHTML == "12") {
+                Tspans[x].innerHTML = "G";
+              } else if (Tspans[x].innerHTML == "13") {
+                Tspans[x].innerHTML = "A♭";
+              } else if (Tspans[x].innerHTML == "14") {
+                Tspans[x].innerHTML = "A";
+              } else if (Tspans[x].innerHTML == "15") {
+                Tspans[x].innerHTML = "B♭";
+              } else if (Tspans[x].innerHTML == "16") {
+                Tspans[x].innerHTML = "B";
+              } else if (Tspans[x].innerHTML == "17") {
+                Tspans[x].innerHTML = "c";
+              } else if (Tspans[x].innerHTML == "18") {
+                Tspans[x].innerHTML = "d♭";
+              } else if (Tspans[x].innerHTML == "19") {
+                Tspans[x].innerHTML = "d";
+              } else if (Tspans[x].innerHTML == "20") {
+                Tspans[x].innerHTML = "e♭";
+              } else if (Tspans[x].innerHTML == "21") {
+                Tspans[x].innerHTML = "e";
+              } else if (Tspans[x].innerHTML == "22") {
+                Tspans[x].innerHTML = "f";
+              } else if (Tspans[x].innerHTML == "23") {
+                Tspans[x].innerHTML = "g♭";
+              } else if (Tspans[x].innerHTML == "24") {
+                Tspans[x].innerHTML = "g";
+              } else if (Tspans[x].innerHTML == "25") {
+                Tspans[x].innerHTML = "a♭";
+              } else if (Tspans[x].innerHTML == "26") {
+                Tspans[x].innerHTML = "a";
+              } else if (Tspans[x].innerHTML == "27") {
+                Tspans[x].innerHTML = "b♭";
+              } else if (Tspans[x].innerHTML == "28") {
+                Tspans[x].innerHTML = "b";
+              } else if (Tspans[x].innerHTML == "29") {
+                Tspans[x].innerHTML = "c'";
+              } else if (Tspans[x].innerHTML == "30") {
+                Tspans[x].innerHTML = "d♭'";
+              } else if (Tspans[x].innerHTML == "31") {
+                Tspans[x].innerHTML = "d'";
+              } else if (Tspans[x].innerHTML == "32") {
+                Tspans[x].innerHTML = "e♭'";
+              } else if (Tspans[x].innerHTML == "33") {
+                Tspans[x].innerHTML = "e'";
+              } else if (Tspans[x].innerHTML == "34") {
+                Tspans[x].innerHTML = "f'";
+              } else if (Tspans[x].innerHTML == "35") {
+                Tspans[x].innerHTML = "g♭'";
+              } else if (Tspans[x].innerHTML == "36") {
+                Tspans[x].innerHTML = "g'";
+              } else if (Tspans[x].innerHTML == "37") {
+                Tspans[x].innerHTML = "a♭'";
+              } else if (Tspans[x].innerHTML == "38") {
+                Tspans[x].innerHTML = "a'";
+              } else if (Tspans[x].innerHTML == "39") {
+                Tspans[x].innerHTML = "b♭'";
+              } else if (Tspans[x].innerHTML == "40") {
+                Tspans[x].innerHTML = "b'";
+              } else {
+                Tspans[x].innerHTML = "?";
+              } 
+            }
+          }
+        }
+      }
+    }
+
+    Svgs = document.querySelectorAll('div[id="'+renderDivID+'"] > div > svg');
+
+    for (x = 0; x < Svgs.length; x++) {
+      document.getElementById("offscreenrender").innerHTML = document.getElementById("offscreenrender").innerHTML + "<div id=\"block_"+tuneIndex+"_"+ x + "\" class=\"block\">" + Svgs[x].outerHTML + "</div>";
+    }
+
   }
 
   // Reset the scroll position after render
@@ -1004,28 +1054,11 @@ function Render() {
     
     radiovalue = Welchetabs("notenodertab");
 
-    // If more than one tune, show the autoformat button
+    // Generate the rendering divs
     var nTunes = CountTunes();
-
-    if (nTunes > 1){
-
-      document.getElementById("autoformat").style.display = "block";     
-    
-    }
-    else{
-
-      document.getElementById("autoformat").style.display = "none";     
-
-    }
+    GenerateRenderingDivs(nTunes);
 
     var theNotes = theABC.value;
-
-    // Find the first tune
-    theNotes = theNotes.split("X:")[1];
-    theNotes = "X:" + theNotes;
-
-    // Strip whitespace
-    theNotes = theNotes.trim();
 
     var searchRegExp = "";
 
@@ -1073,6 +1106,12 @@ function Render() {
       // Strip out H: annotation
       theNotes = theNotes.replace(searchRegExp, "% comment");
 
+      // Strip out B: annotation
+      searchRegExp = /^B:.*$/gm
+
+      // Strip out B: annotation
+      theNotes = theNotes.replace(searchRegExp, "% comment");
+
     }
 
     if (gStripTextAnnotations){
@@ -1106,9 +1145,14 @@ function Render() {
     theNotes = theNotes.replace(searchRegExp, "%%vskip 12\n%%center");
 
     // Add some title and staffspace
-    theNotes = theNotes + "\n%%musicspace 20\n";
-    theNotes = theNotes + "%%staffsep "+gStaffSpacing+"\n";
+    //theNotes = theNotes + "\n%%musicspace 20\n";
+    // theNotes = theNotes + "%%staffsep "+gStaffSpacing+"\n";
 
+    // Inject %%staffsep 
+    searchRegExp = /^X:.*$/gm
+
+    theNotes = theNotes.replace(searchRegExp,"X:1\n%%musicspace 20\n%%staffsep "+gStaffSpacing);
+ 
     if (radiovalue == "noten") {
 
       Notenmachen(theNotes);
@@ -1125,7 +1169,6 @@ function Render() {
 
     document.getElementById("notenrechts").style.display = "none";
     document.getElementById("notation-holder").style.display = "none";
-    document.getElementById("autoformat").style.display = "none";     
 
   }
 }
@@ -1206,7 +1249,7 @@ function RestoreDefaults(){
 	HideAdvancedControls();
 
   // Reset the annotation strip flags
-  gStripAnnotations = true;
+  gStripAnnotations = false;
   gStripTextAnnotations = false;
   gStripChords = false;
   gShowAdvancedControls = false;
@@ -1286,167 +1329,6 @@ function CountTunes(){
 
 }
 
-//
-// Detect multiple tunes and reformat 
-//
-function AutoFormatTuneSet(){
-
-  var newTitle = "";
-
-  // Count the tunes in the text area
-  var theNotes = theABC.value;
-
-  var theTunes = theNotes.split(/^X:.*$/gm);
-
-  var nTunes = theTunes.length;
-
-  // Has to be at least two tunes
-  if (nTunes < 3){
-
-    alert("Only one tune in the set, no reformatting required.");
-
-    return;
-  
-  }
- 
-  var isFirstTune = true;
-
-  var curTune = "";
-
-  for (var i=1;i<nTunes;++i){
-
-    curTune = theTunes[i];
-
-    curTune = curTune.trim();
-
-    var searchRegExp = /^T:.*$/gm
-
-    var theTitles = curTune.match(searchRegExp);
-
-    if ((theTitles) && (theTitles.length)){
-
-      var theTitle = theTitles[0];
-
-      theTitle = theTitle.replace("T: ","");
-      theTitle = theTitle.replace("T:","");
-
-      console.log("theTitle = "+theTitle);
-
-      if (isFirstTune){
-
-        newTitle = theTitle;
-        isFirstTune = false;
-      
-      }
-      else{
-
-        newTitle = newTitle +" - "+theTitle;
-
-      } 
-    }
-  }
-
-  var newTunes = "";
-
-  for (var i=1;i<nTunes;++i){
-
-    curTune = theTunes[i];
-
-    curTune = curTune.trim();
-
-    // Strip out tempo markings
-    var searchRegExp = /^Q:.*$/gm
-
-    // Strip out tempo markings
-    curTune = curTune.replace(searchRegExp, "% comment");
-
-    // Strip out Z: annotation
-    searchRegExp = /^Z:.*$/gm
-
-    // Strip out Z: annotation
-    curTune = curTune.replace(searchRegExp, "% comment");
-
-    // Strip out R: annotation
-    searchRegExp = /^R:.*$/gm
-
-    // Strip out R: annotation
-    curTune = curTune.replace(searchRegExp, "% comment");
-
-    // Strip out S: annotation
-    searchRegExp = /^S:.*$/gm
-
-    // Strip out S: annotation
-    curTune = curTune.replace(searchRegExp, "% comment");
-
-    // Strip out N: annotation
-    searchRegExp = /^N:.*$/gm
-
-    // Strip out N: annotation
-    curTune = curTune.replace(searchRegExp, "% comment");
-
-    // Strip out D: annotation
-    searchRegExp = /^D:.*$/gm
-
-    // Strip out D: annotation
-    curTune = curTune.replace(searchRegExp, "% comment");
-
-    // Strip out H: annotation
-    searchRegExp = /^H:.*$/gm
-
-    // Strip out H: annotation
-    curTune = curTune.replace(searchRegExp, "% comment");
-
-    // Strip out C: annotation
-    searchRegExp = /^C:.*$/gm
-
-    // Strip out C: annotation
-    curTune = curTune.replace(searchRegExp, "% comment");
-
-    // Find the titles
-    searchRegExp = /^T:.*$/gm
-
-    var theTitles = curTune.match(searchRegExp);
-
-    var theNewTitle = theTitles[0];
-
-    // Special handling of first tune for title spacing
-    if (i==1){
-
-      theNewTitle = theNewTitle.replace("T: ","%%center ");
-      theNewTitle = theNewTitle.replace("T:","%%center ");
-
-      curTune = curTune.replace(theTitles[0],"%%vskip 25");
-
-      curTune = "X: 1\nT: "+newTitle+"\n"+theNewTitle+"\n"+curTune;
-    }
-    else{
-
-      theNewTitle = theNewTitle.replace("T: ","\n%%center ");
-      theNewTitle = theNewTitle.replace("T:","\n%%center ");
-
-      curTune = curTune.replace(theTitles[0],theNewTitle);
-
-    }    
-
-    newTunes += curTune;
-
-    newTunes += "\n";
-
-    if (i!=nTunes-1){
-
-      newTunes += "%%vskip 25";
-
-    }
-
-  }
-
-  // Replace the tune ABC with the modified tunes
-  theABC.value = newTunes;
-
-  // and re-render
-  Render();
-   
-}
 
 // Re-render on window size change
 window.addEventListener('resize', function() {
@@ -1455,6 +1337,27 @@ window.addEventListener('resize', function() {
 
 });
 
+
+// 
+// Generate the rendering divs
+//
+function GenerateRenderingDivs(nTunes){
+
+  // Clear the div
+  var notationHolder = document.getElementById("notation-holder");
+  notationHolder.innerHTML = "";
+
+  for (var i=0;i<nTunes;++i){
+
+    var el = document.createElement('div');
+    
+    el.id = "notation"+i;
+    
+    notationHolder.appendChild(el);
+
+  }
+
+}
 
 //
 // Fade out and hide an element
@@ -1490,7 +1393,7 @@ function doStartup(){
 
   // Init global state
   gShowAdvancedControls = false;
-  gStripAnnotations = true;
+  gStripAnnotations = false;
   gStripTextAnnotations = false;
   gStripChords = false;
 
