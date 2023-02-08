@@ -149,3 +149,9 @@ font-family:"Helvetica";
 display:none;
 }
 
+@media print {
+  .hidden-print {
+    display: none !important;
+  }
+}
+
