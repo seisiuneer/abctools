@@ -21,12 +21,12 @@
   <link rel="icon" href="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5-192x192.png" sizes="192x192" />
   <link rel="apple-touch-icon" href="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5-180x180.png" />
   
-  <link href="app.css?v=21" media="all" rel="stylesheet" type="text/css">
+  <link href="app.css?v=22" media="all" rel="stylesheet" type="text/css">
 
 </head>
 <body>
 
-  <div id="notenlinks">
+  <div id="notenlinks" class="hidden-print">
     
     <font size="5" face="Comic Sans MS">ABC Transcription Tools</font>
     
@@ -56,7 +56,7 @@
 
   </div>
 
-  <div id="notenrechts">
+  <div id="notenrechts" class="hidden-print">
 
     <div id="transpose-controls">
       <input class="transpose" id="t1" onclick="TransposeDown()" type="button" value="Transpose Down">
@@ -117,12 +117,13 @@
   <div>
 
 
-<div id="offscreenrender"></div>
+<div id="offscreenrender" class="hidden-print"></div>
 
 </body>
 
 <script type="text/javascript" src="abcjs-basic-min.js"></script><!-- um ABC in Noten svg umzuwandeln mit Tabulatur-, Transpositions und Audio-Abspielmöglichkeiten -->
 <script type="text/javascript" src="jspdf.min.js"></script><!-- um mit Javascript ein PDF zu generieren -->
 <script type="text/javascript" src="html2canvas.js"></script><!-- um die styles beizubehalten - z.B. versteckte Linien -->
-<script type="text/javascript" src="app.js?v=21"></script>
+<script type="text/javascript" src="app.js?v=22"></script>
+
 </html>
