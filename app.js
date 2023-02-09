@@ -375,8 +375,114 @@ function Titelholen() {
 }
 
 
-//Create PDf from HTML...
+//
+// PDF conversion shared globals
+//
+
+var running_height = 30;
+
+var seitenzahl = 1;
+
+var isFirstPage = true;
+
+var pdf;
+
+//
+// Render a single SVG block to PDF and callback when done
+//
+function RenderPDFBlock(theBlock,blockIndex,callback){
+
+  var svg = theBlock.querySelector("svg");
+
+  svg.setAttribute("width", qualitaet);
+
+  // scale improves the subsequent PDF quality.
+  html2canvas(theBlock, {
+    width: qualitaet,
+    // height: Math.floor(svg.height.baseVal.value),
+    scale: 2
+  }).then(function(canvas) {
+
+    var imgData = canvas.toDataURL("image/jpeg", 1.0);
+
+    var theBlockID = theBlock.id + ".block";
+
+    // Insert a new page for each tune
+    if (theBlockID.indexOf("_0.block") != -1){
+
+      if (!isFirstPage){
+
+        running_height = 30;
+
+        seitenzahl++; // for the status display.
+        
+        pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
+        document.getElementById("nebennebenstatusanzeigetext").innerHTML = "Saving <font color=\"red\">" + seitenzahl + "</font> pages.";
+
+      }
+      else
+      {
+        isFirstPage = false;
+      }
+
+    }
+
+    height = parseInt(canvas.height * 535 / canvas.width);
+
+    // the first two values mean x,y coordinates for the upper left corner. Enlarge to get larger margin.
+    // then comes width, then height. The second value can be freely selected - then it leaves more space at the top.
+
+    // hilft vielleicht gegen unscharf...
+    pdf.internal.scaleFactor = 1.55;
+
+    if (running_height + height + 30 <= 842 - 30) // i.e. if a block of notes would get in the way with the bottom margin (30 pt), then a new one please...
+    {
+
+      pdf.addImage(imgData, 'JPG', 30, running_height, 535, height);
+
+      document.getElementById("nebenstatusanzeigetext").innerHTML = "Staff <font color=\"red\">" + (blockIndex + 1) + "</font> rendered.";
+
+    } else {
+
+      running_height = 30;
+
+      seitenzahl++; // for the status display.
+
+      pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
+
+      pdf.addImage(imgData, 'JPG', 30, running_height, 535, height);
+
+      document.getElementById("nebennebenstatusanzeigetext").innerHTML = "Saving <font color=\"red\">" + seitenzahl + "</font> pages.";
+
+    }
+
+    // so that it starts the new one exactly one pt behind the current one.
+    running_height = running_height + height + 1;
+
+    // Callback after a short delay
+    //setTimeout(function(){
+
+      callback();
+
+    //},150); 
+
+  });
+
+}
+
+//
+// Create PDF from HTML...
+//
 function CreatePDFfromHTML() {
+
+  // Init the shared globals
+  seitenzahl = 1;
+
+  isFirstPage = true;
+
+  running_height = 30;
+
+  var nBlocksProcessed = 0;
 
   // overflow must be visible, otherwise it cuts off something in the PDF.
   // document.getElementById("notation").style.overflow = "visible";
@@ -390,112 +496,58 @@ function CreatePDFfromHTML() {
 
     // Render first copying the SVGs to the shadow DOM
     gCopySVGs = true;
+
     Render();
+    
     gCopySVGs = false;
 
-    var pdf = new jsPDF('p', 'pt', 'letter');
+    pdf = new jsPDF('p', 'pt', 'letter');
 
     var running_height = 30;
 
     theBlocks = document.querySelectorAll('div[class="block"]');
 
-    // In order to process promise chains with .then( one after the other within a for loop, the for loop itself must form a promise.
-    const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+    var nBlocks = theBlocks.length;
 
-    var seitenzahl = 1;
+    document.getElementById("statusanzeigetext").innerHTML = "Preparing <font color=\"red\">" + (nBlocksProcessed+1) + " / " + theBlocks.length + "</font> staves for PDF rendering. Please be patient!";
 
-    var isFirstPage = true;
+    // Kick off the rendering loop
+    var theBlock = theBlocks[0];
 
-    for (let u = 0, p = Promise.resolve(); u < theBlocks.length; u++) {
-      // p = p.then(() => delay(Math.random() * 1000))
-      p = p.then(() => delay(125)) // he makes a delay of 125 ms at the top - just show, so that the whole thing works here
+    // Render and stamp one block
+    RenderPDFBlock(theBlock,0,callback);
 
-        // .then(() => console.log(u))
-        .then(function() {
+    function callback(){
 
-          var theBlock = theBlocks[u];
+      nBlocksProcessed++;
 
-          svg = theBlock.querySelector("svg");
+      document.getElementById("statusanzeigetext").innerHTML = "Preparing <font color=\"red\">" + (nBlocksProcessed+1) + " / " + theBlocks.length + "</font> staves for PDF rendering. Please be patient!";
 
-          svg.setAttribute("width", qualitaet);
+      if (nBlocksProcessed == nBlocks) {
 
-          document.getElementById("statusanzeigetext").innerHTML = "Preparing <font color=\"red\">" + (u + 1) + " / " + theBlocks.length + "</font> staves for PDF rendering. Please be patient!";
+        document.getElementById("statusanzeigetext").innerHTML = "";
+        
+        document.getElementById("nebenstatusanzeigetext").innerHTML = "";
+        
+        document.getElementById("nebennebenstatusanzeigetext").innerHTML = "";
+        
+        pdf.save(title + ".pdf");
 
-          // scale improves the subsequent PDF quality.
-          html2canvas(theBlocks[u], {
-            width: qualitaet,
-            // height: Math.floor(svg.height.baseVal.value),
-            scale: 2
-          }).then(function(canvas) {
+      }
+      else{
 
-            var imgData = canvas.toDataURL("image/jpeg", 1.0);
+        theBlock = theBlocks[nBlocksProcessed];
 
-            var theBlockID = theBlock.id + ".block";
+        setTimeout(function(){
+        
+          RenderPDFBlock(theBlock,nBlocksProcessed,callback);
 
-            // Insert a new page for each tune
-            if (theBlockID.indexOf("_0.block") != -1){
+        },100);
+       
+      }
 
-              if (!isFirstPage){
+    }
 
-                running_height = 30;
-
-                seitenzahl++; // for the status display.
-                
-                pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
-                document.getElementById("nebennebenstatusanzeigetext").innerHTML = "Saving <font color=\"red\">" + seitenzahl + "</font> pages.";
-
-              }
-              else
-              {
-                isFirstPage = false;
-              }
-
-            }
-
-            console.log(u + " height: " + canvas.height + "breite: " + canvas.width);
-
-            height = parseInt(canvas.height * 535 / canvas.width);
-
-            // the first two values mean x,y coordinates for the upper left corner. Enlarge to get larger margin.
-            // then comes width, then height. The second value can be freely selected - then it leaves more space at the top.
-
-            // hilft vielleicht gegen unscharf...
-            pdf.internal.scaleFactor = 1.55;
-
-            if (running_height + height + 30 <= 842 - 30) // i.e. if a block of notes would get in the way with the bottom margin (30 pt), then a new one please...
-            {
-              pdf.addImage(imgData, 'JPG', 30, running_height, 535, height);
-              console.log(u);
-              document.getElementById("nebenstatusanzeigetext").innerHTML = "Staff <font color=\"red\">" + (u + 1) + "</font> rendered.";
-
-            } else {
-              running_height = 30;
-              seitenzahl++; // for the status display.
-              pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
-              pdf.addImage(imgData, 'JPG', 30, running_height, 535, height);
-              document.getElementById("nebennebenstatusanzeigetext").innerHTML = "Saving <font color=\"red\">" + seitenzahl + "</font> pages.";
-
-              console.log(u + "neue seite: " + seitenzahl);
-            }
-
-            // pdf.addPage(595, 842);
-            // so that it starts the new one exactly one pt behind the current one.
-            running_height = running_height + height + 1;
-
-            if (u + 1 == theBlocks.length) {
-              document.getElementById("statusanzeigetext").innerHTML = "";
-              document.getElementById("nebenstatusanzeigetext").innerHTML = "";
-              document.getElementById("nebennebenstatusanzeigetext").innerHTML = "";
-
-
-              pdf.save(titel + ".pdf");
-            }
-          });
-
-        }); // before for loop end.
-
-    } // for end of loop   
-    
   },250);
 
 }
