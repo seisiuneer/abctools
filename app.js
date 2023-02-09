@@ -419,7 +419,7 @@ function CreatePDFfromHTML() {
 
           svg.setAttribute("width", qualitaet);
 
-          document.getElementById("statusanzeigetext").innerHTML = "Preparing <font color=\"red\">" + (u + 1) + " / " + theBlocks.length + "</font> blocks for PDF rendering. Please be patient!";
+          document.getElementById("statusanzeigetext").innerHTML = "Preparing <font color=\"red\">" + (u + 1) + " / " + theBlocks.length + "</font> staves for PDF rendering. Please be patient!";
 
           // scale improves the subsequent PDF quality.
           html2canvas(theBlocks[u], {
@@ -466,7 +466,7 @@ function CreatePDFfromHTML() {
             {
               pdf.addImage(imgData, 'JPG', 30, running_height, 535, height);
               console.log(u);
-              document.getElementById("nebenstatusanzeigetext").innerHTML = "Block <font color=\"red\">" + (u + 1) + "</font> rendered.";
+              document.getElementById("nebenstatusanzeigetext").innerHTML = "Staff <font color=\"red\">" + (u + 1) + "</font> rendered.";
 
             } else {
               running_height = 30;
