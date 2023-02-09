@@ -70,7 +70,16 @@
 <p>PDF Format - Select whether you want one tune per page or multiple tunes per page in the PDF</p>
 <p>Note: Selecting multiple tunes per page may result in tunes staves crossing page boundaries</p>
 <hr>
-<p><strong>Printing:</strong>
+<p><strong>Forcing a Tune to a New Page for Multiple Tunes / Page Format PDFs</strong></p>
+<p>If you want to add extra space at the bottom of the tune to force the next tune to a new page,</p>
+<p>the easiest way is to add the following ABC at the bottom of the tune before the page break:</p>
+<p></p>
+<p>%%vskip 100 (play with this value until you get the results you need)</p>
+<p>%%center .</p> 
+<p></p>
+<p>Note that the . will display in the PDF, but this is the only I've found so far to add space reliably below a tune</p>
+<hr>
+<p><strong>Printing:</strong></p>
 <p>When printing the page using your browser's Print command, only the generated notation is printed</p>
 <p>Setting the Display Size to Large and then printing from your browser can achieve some nice results</p>
 <hr>
