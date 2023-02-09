@@ -390,7 +390,7 @@ var pdf;
 //
 // Render a single SVG block to PDF and callback when done
 //
-function RenderPDFBlock(theBlock,blockIndex,callback){
+function RenderPDFBlock(theBlock,blockIndex,doSinglePage,callback){
 
   var svg = theBlock.querySelector("svg");
 
@@ -414,12 +414,21 @@ function RenderPDFBlock(theBlock,blockIndex,callback){
 
       if (!isFirstPage){
 
-        running_height = 30;
+        if (doSinglePage){
 
-        seitenzahl++; // for the status display.
-        
-        pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
-        document.getElementById("nebennebenstatusanzeigetext").innerHTML = "Saving <font color=\"red\">" + seitenzahl + "</font> pages.";
+          running_height = 30;
+
+          seitenzahl++; // for the status display.
+       
+          pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
+          document.getElementById("nebennebenstatusanzeigetext").innerHTML = "Saving <font color=\"red\">" + seitenzahl + "</font> pages.";
+
+        }
+        else{
+          
+          running_height += 20;
+
+        }
 
       }
       else
@@ -477,6 +486,11 @@ function RenderPDFBlock(theBlock,blockIndex,callback){
 //
 function CreatePDFfromHTML() {
 
+  // Get the page format
+  var elem = document.getElementById("pdfformat");
+
+  var doSinglePage =  elem.options[elem.selectedIndex].value == "true";
+
   // Init the shared globals
   seitenzahl = 1;
 
@@ -517,7 +531,7 @@ function CreatePDFfromHTML() {
     var theBlock = theBlocks[0];
 
     // Render and stamp one block
-    RenderPDFBlock(theBlock,0,callback);
+    RenderPDFBlock(theBlock,0,doSinglePage,callback);
 
     function callback(){
 
@@ -542,7 +556,7 @@ function CreatePDFfromHTML() {
 
         setTimeout(function(){
         
-          RenderPDFBlock(theBlock,nBlocksProcessed,callback);
+          RenderPDFBlock(theBlock,nBlocksProcessed,doSinglePage,callback);
 
         },100);
        
@@ -1559,6 +1573,10 @@ function doStartup(){
 
   // Set the initial size
   document.getElementById("wb1").checked = true;
+
+  // Reset the paging control
+  document.getElementById("pdfformat").value = "true";
+
 
   // Clear the text entry area
   Clear();
