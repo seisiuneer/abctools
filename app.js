@@ -397,11 +397,13 @@ function RenderPDFBlock(theBlock,blockIndex,callback){
   svg.setAttribute("width", qualitaet);
 
   // scale improves the subsequent PDF quality.
-  html2canvas(theBlock, {
-    width: qualitaet,
-    // height: Math.floor(svg.height.baseVal.value),
-    scale: 2
-  }).then(function(canvas) {
+  htmlToImage.toCanvas(theBlock,{
+      backgroundColor:"white",
+      style: { background: "white" },
+      pixelRatio: 2
+    }
+  )
+  .then(function(canvas) {
 
     var imgData = canvas.toDataURL("image/jpeg", 1.0);
 
@@ -1082,14 +1084,14 @@ function Notenmachen(tune, instrument) {
     //
     if (gCopySVGs){
 
-    	//console.log("copying SVGs");
+      //console.log("copying SVGs");
 
-	    Svgs = document.querySelectorAll('div[id="'+renderDivID+'"] > div > svg');
+      Svgs = document.querySelectorAll('div[id="'+renderDivID+'"] > div > svg');
 
-	    for (x = 0; x < Svgs.length; x++) {
-	      document.getElementById("offscreenrender").innerHTML = document.getElementById("offscreenrender").innerHTML + "<div id=\"block_"+tuneIndex+"_"+ x + "\" class=\"block\">" + Svgs[x].outerHTML + "</div>";
-	    }
-	}
+      for (x = 0; x < Svgs.length; x++) {
+        document.getElementById("offscreenrender").innerHTML = document.getElementById("offscreenrender").innerHTML + "<div id=\"block_"+tuneIndex+"_"+ x + "\" class=\"block\">" + Svgs[x].outerHTML + "</div>";
+      }
+  }
 
   }
 
@@ -1121,7 +1123,7 @@ function Render() {
   
   if (theABC.value != "") {
 
-  	//console.log("Render()");
+    //console.log("Render()");
 
     document.getElementById("notenrechts").style.display = "block";
     document.getElementById("notation-holder").style.display = "block";
@@ -1273,7 +1275,7 @@ function ensureABCFile(filename) {
 //
 function HideAdvancedControls(){
 
-	document.getElementById('advanced-controls').style.display="none";
+  document.getElementById('advanced-controls').style.display="none";
 
 }
 
@@ -1282,7 +1284,7 @@ function HideAdvancedControls(){
 //
 function ShowAdvancedControls(){
 
-	document.getElementById('advanced-controls').style.display="flex";
+  document.getElementById('advanced-controls').style.display="flex";
 
 }
 
@@ -1291,18 +1293,18 @@ function ShowAdvancedControls(){
 //
 function ToggleAdvancedControls(){
 
-	gShowAdvancedControls = !gShowAdvancedControls;
+  gShowAdvancedControls = !gShowAdvancedControls;
 
-	if (gShowAdvancedControls){
+  if (gShowAdvancedControls){
 
-		ShowAdvancedControls();
+    ShowAdvancedControls();
 
-	}
-	else{
+  }
+  else{
 
-		HideAdvancedControls();
+    HideAdvancedControls();
 
-	}
+  }
 }
 
 //
@@ -1310,9 +1312,9 @@ function ToggleAdvancedControls(){
 //
 function SetStaffSpacing(){
 
-	gStaffSpacing = document.getElementById('staff-spacing').value;
+  gStaffSpacing = document.getElementById('staff-spacing').value;
 
-	Render();
+  Render();
 }
 
 //
@@ -1320,7 +1322,7 @@ function SetStaffSpacing(){
 //
 function RestoreDefaults(){
 
-	HideAdvancedControls();
+  HideAdvancedControls();
 
   // Reset the annotation strip flags
   gStripAnnotations = false;
@@ -1347,7 +1349,7 @@ function DelayedRender(){
 
   setTimeout(function(){
 
-  	RestoreDefaults();
+    RestoreDefaults();
 
     Render();
 
@@ -1538,10 +1540,10 @@ function doStartup(){
 
           setTimeout(function(){
 
-          	// Reset the annotation strip flags
-          	RestoreDefaults();
+            // Reset the annotation strip flags
+            RestoreDefaults();
 
-          	Render();
+            Render();
 
           },100);
 
