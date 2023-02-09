@@ -10,6 +10,8 @@ var gStaffSpacing = STAFFSPACEMIN;
 var gIsIOS = false;
 var gIsSafari = false;
 
+var gCopySVGs = false;
+
 var theABC = document.getElementById("abc");
 
 function Notenames() {
@@ -52,7 +54,7 @@ function Notenames() {
   theABC.value = insfeld;
   Render();
 }
- 
+
 
 function TransposeUp() {
 
@@ -375,6 +377,11 @@ function Titelholen() {
 
 //Create PDf from HTML...
 function CreatePDFfromHTML() {
+
+  // Render first copying the SVGs to the shadow DOM
+  gCopySVGs = true;
+  Render();
+  gCopySVGs = false;
 
   // overflow must be visible, otherwise it cuts off something in the PDF.
   // document.getElementById("notation").style.overflow = "visible";
@@ -1013,11 +1020,19 @@ function Notenmachen(tune, instrument) {
       }
     }
 
-    Svgs = document.querySelectorAll('div[id="'+renderDivID+'"] > div > svg');
+    //
+    // Only copy the SVGs if rendering for PDF
+    //
+    if (gCopySVGs){
 
-    for (x = 0; x < Svgs.length; x++) {
-      document.getElementById("offscreenrender").innerHTML = document.getElementById("offscreenrender").innerHTML + "<div id=\"block_"+tuneIndex+"_"+ x + "\" class=\"block\">" + Svgs[x].outerHTML + "</div>";
-    }
+    	//console.log("copying SVGs");
+
+	    Svgs = document.querySelectorAll('div[id="'+renderDivID+'"] > div > svg');
+
+	    for (x = 0; x < Svgs.length; x++) {
+	      document.getElementById("offscreenrender").innerHTML = document.getElementById("offscreenrender").innerHTML + "<div id=\"block_"+tuneIndex+"_"+ x + "\" class=\"block\">" + Svgs[x].outerHTML + "</div>";
+	    }
+	}
 
   }
 
@@ -1048,6 +1063,8 @@ function Render() {
   // wenn Textfeld leer, keine Noten anzeigen.
   
   if (theABC.value != "") {
+
+  	//console.log("Render()");
 
     document.getElementById("notenrechts").style.display = "block";
     document.getElementById("notation-holder").style.display = "block";
@@ -1253,6 +1270,7 @@ function RestoreDefaults(){
   gStripTextAnnotations = false;
   gStripChords = false;
   gShowAdvancedControls = false;
+  gCopySVGs = false;
 
   document.getElementById('staff-spacing').value = STAFFSPACEMIN;
 
@@ -1396,6 +1414,7 @@ function doStartup(){
   gStripAnnotations = false;
   gStripTextAnnotations = false;
   gStripChords = false;
+  gCopySVGs = false;
 
   // Warn Safari users
   const uA = navigator.userAgent;
@@ -1460,10 +1479,14 @@ function doStartup(){
 
           theABC.value = event.target.result;
 
-          // Reset the annotation strip flags
-          RestoreDefaults();
+          setTimeout(function(){
 
-          Render();
+          	// Reset the annotation strip flags
+          	RestoreDefaults();
+
+          	Render();
+
+          },100);
 
         });
 
