@@ -53,7 +53,7 @@ font-size: 10pt;
 margin-top: 24px;
 }
 
-.transpose, .saveaspdf{
+.transpose, .saveaspdf {
 font-family:"Helvetica";
 font-size:11pt;
 border: 1px solid #333;
@@ -148,6 +148,31 @@ font-family:"Helvetica";
 #statusanzeigetext,#nebenstatusanzeigetext,#nebennebenstatusanzeigetext{
 font-family:"Helvetica";
 font-size:11pt;
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+  background-size: 12px;
+  background-position: calc(100% - 10px) center;
+  background-repeat: no-repeat;
+  background-color: #efefef;
+}
+
+#pdfformatlabel{
+font-size:11pt;
+font-family:"Helvetica";
+padding-top: 12px;
+margin-left:5px;
+margin-right:5px;
+}
+
+#pdfformat{
+font-size:11pt;
+font-family:"Helvetica";
+width:190px;
 }
 
 @media print {
