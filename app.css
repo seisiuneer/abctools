@@ -145,8 +145,14 @@ font-size:11pt;
 font-family:"Helvetica";
 }
 
+#statusanzeigetext,#nebenstatusanzeigetext,#nebennebenstatusanzeigetext{
+font-family:"Helvetica";
+font-size:11pt;
+}
+
 @media print {
   .hidden-print {
     display: none !important;
   }
 }
+
