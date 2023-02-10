@@ -1144,6 +1144,18 @@ function Notenmachen(tune, instrument) {
 
 }
 
+function SetRadioValue(radiowert, value) {
+  const mitradiowert = "input[name=\"" + radiowert + "\"]";
+  const radioButtons = document.querySelectorAll(mitradiowert);
+
+  for (const radioButton of radioButtons) {
+    if (radioButton.value == value) {
+      radioButton.checked = true;
+    } else {
+      radioButton.checked = false;
+    }
+  }
+}
 
 function Welchetabs(radiowert) {
 
@@ -1172,7 +1184,10 @@ function Render() {
 	if (theABC.value != "") {
 
 		//console.log("Render()");
-
+	    if (document.getElementById("urlarea").style.display != "none") {
+	      FillUrlBoxWithAbcInBase64();
+	    }
+ 
 		document.getElementById("notenrechts").style.display = "block";
 		document.getElementById("notation-holder").style.display = "block";
 
@@ -1321,6 +1336,10 @@ function ensureABCFile(filename) {
 function HideAdvancedControls() {
 
 	document.getElementById('advanced-controls').style.display = "none";
+
+
+	// Also hide the share url area
+	document.getElementById('urlarea').style.display = "none";
 
 }
 
@@ -1510,6 +1529,106 @@ function isIOS() {
 	}
 }
 
+//
+// Share URL related code provided by Philip McGarvey
+//
+function getUrlWithoutParams() {
+  return window.location.protocol + "//" + window.location.host + window.location.pathname;
+}
+
+function encodeToUrlSafeBase64(text) {
+  const encodedValue = btoa(text);
+  return encodedValue.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function FillUrlBoxWithAbcInBase64() {
+  abcText = theABC.value;
+  //const abcInBase64 = encodeToUrlSafeBase64(abcText);
+  const abcInBase64 = utf8tob64(abcText);
+  format = Welchetabs("notenodertab");
+  url = getUrlWithoutParams() + "?base64="+abcInBase64 + "&format="+format;
+  urltextbox = document.getElementById("urltextbox");
+  urltextbox.value = url;
+  urltextbox.rows = url.length / 100 + 1;
+}
+
+function CreateURLfromHTML() {
+  FillUrlBoxWithAbcInBase64();
+  urlarea = document.getElementById("urlarea");
+  urlarea.style.display = "block";
+  urltextbox = document.getElementById("urltextbox");
+  urltextbox.focus();
+  urltextbox.setSelectionRange(0, urltextbox.value.length);
+}
+
+function SetAbcText(txt) {
+  
+  theABC.value = txt;
+
+  RestoreDefaults();
+
+  Render();
+  
+}
+
+function utf8tob64 (str) {
+    var retval;
+
+    try {
+        retval = btoa(escape(str));
+    }
+    catch(error){
+        retval = "";
+    }
+    return retval;
+};
+
+function b64toutf8(str) {
+
+    var retval;
+
+    try {
+        retval = unescape(atob(str));
+    }
+    catch(error){
+	    retval = "";
+    }
+    return retval;
+};
+
+// 
+// Check for a share link and process it
+//
+function processShareLink(){
+	
+	var doRender = false;
+
+	const urlParams = new URLSearchParams(window.location.search);
+
+	if(urlParams.has("base64")) {
+
+		const abcInBase64 = urlParams.get("base64");
+		//const abcText = atob(abcInBase64);
+
+		const abcText = b64toutf8(abcInBase64);
+		
+		if (abcText.length > 0) {
+		  SetAbcText(abcText);
+		  FillUrlBoxWithAbcInBase64();
+		  doRender = true;
+		}
+	}
+
+	if(urlParams.has("format")) {
+		const format = urlParams.get("format");
+		SetRadioValue("notenodertab", format);
+	}
+
+	if (doRender){
+		Render()
+	}
+}
+
 function doStartup() {
 
 	// Init global state
@@ -1611,6 +1730,9 @@ function doStartup() {
 
 	// Clear the text entry area
 	Clear();
+
+	// Check for and process URL share link
+	processShareLink();
 
 }
 
