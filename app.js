@@ -12,329 +12,347 @@ var gIsSafari = false;
 
 var gCopySVGs = false;
 
+var gRenderingPDF = false;
+
 var theABC = document.getElementById("abc");
 
 function Notenames() {
-  verarbeiten = theABC.value;
-  neu = escape(verarbeiten);
 
-  Reihe = neu.split("%0D%0A");
-  Reihe = neu.split("%0A");
+	verarbeiten = theABC.value;
+	neu = escape(verarbeiten);
 
-  for (i = 0; i < Reihe.length; ++i) {
-    Reihe[i] = unescape(Reihe[i]); /* Macht die Steuerzeichen wieder weg */
-    Aktuellereihe = Reihe[i].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
-    if ((Aktuellereihe[0] == "w" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "A" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "B" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "C" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "D" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "E" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "F" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "G" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "H" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "I" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "J" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "L" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "M" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "N" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "O" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "P" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "Q" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "R" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "S" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "U" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "V" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "W" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "w" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "X" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "Y" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "Z" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "K" && Aktuellereihe[1] == ":")) {
-      /* Alle ausser Melodieteile werden hier ignoriert. */
-    } else {
-      var re = /("([^"]+)")/gi; // Suchabfrage zum Entfernen aller Griffe
-      grifferaus = Reihe[i].replace(re, ""); // macht alles, was "irgendwas" ist weg - d.h. alle Griffe.
+	Reihe = neu.split("%0D%0A");
+	Reihe = neu.split("%0A");
 
-      var re = /("([^!]+)")/gi; // Suchabfrage zum Entfernen aller Griffe
-      grifferaus = grifferaus.replace(re, ""); // macht alles, was "irgendwas" ist weg - d.h. alle Griffe.
-      grifferaus = grifferaus.replace(/!(.*)!/gi, "");
-      grifferaus = grifferaus.replace(/O/gi, "");
+	for (i = 0; i < Reihe.length; ++i) {
+		Reihe[i] = unescape(Reihe[i]); /* Macht die Steuerzeichen wieder weg */
+		Aktuellereihe = Reihe[i].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
+		if ((Aktuellereihe[0] == "w" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "A" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "B" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "C" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "D" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "E" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "F" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "G" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "H" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "I" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "J" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "L" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "M" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "N" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "O" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "P" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "Q" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "R" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "S" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "U" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "V" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "W" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "w" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "X" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "Y" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "Z" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "K" && Aktuellereihe[1] == ":")) {
+			/* Alle ausser Melodieteile werden hier ignoriert. */
+		} else {
+			var re = /("([^"]+)")/gi; // Suchabfrage zum Entfernen aller Griffe
+			grifferaus = Reihe[i].replace(re, ""); // macht alles, was "irgendwas" ist weg - d.h. alle Griffe.
 
-      Drin = grifferaus.split("");
-      papp = "";
-      for (x = 0; x < Drin.length; ++x) {
-        moin = Drin[x].search(/[A-Z]|[a-z]/g);
-        if (moin != -1) {
-          if (Drin[x + 1] != "\"") {
-            papp = papp + Drin[x] + " ";
-          }
-        }
-      }
-      Reihe[i] = Reihe[i] + "\r\n" + "w:" + papp;
+			var re = /("([^!]+)")/gi; // Suchabfrage zum Entfernen aller Griffe
+			grifferaus = grifferaus.replace(re, ""); // macht alles, was "irgendwas" ist weg - d.h. alle Griffe.
+			grifferaus = grifferaus.replace(/!(.*)!/gi, "");
+			grifferaus = grifferaus.replace(/O/gi, "");
 
-    }
-  }
+			Drin = grifferaus.split("");
+			papp = "";
+			for (x = 0; x < Drin.length; ++x) {
+				moin = Drin[x].search(/[A-Z]|[a-z]/g);
+				if (moin != -1) {
+					if (Drin[x + 1] != "\"") {
+						papp = papp + Drin[x] + " ";
+					}
+				}
+			}
+			Reihe[i] = Reihe[i] + "\r\n" + "w:" + papp;
 
-  insfeld = Reihe.join("\n");
-  theABC.value = insfeld;
-  Render();
+		}
+	}
+
+	insfeld = Reihe.join("\n");
+	theABC.value = insfeld;
+	Render();
 }
 
 
 function TransposeUp() {
 
-  verarbeiten = theABC.value;
-  neu = escape(verarbeiten);
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF){
+		return;
+	}	
 
-  Reihe = neu.split("%0D%0A");
-  Reihe = neu.split("%0A");
+	verarbeiten = theABC.value;
+	neu = escape(verarbeiten);
 
-  for (i = 0; i < Reihe.length; ++i) {
-    Reihe[i] = unescape(Reihe[i]); /* Macht die Steuerzeichen wieder weg */
-    Aktuellereihe = Reihe[i].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
-    if ((Aktuellereihe[0] == "%" && Aktuellereihe[1] == "%") ||(Aktuellereihe[0] == "w" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "A" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "B" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "C" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "D" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "E" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "F" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "G" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "H" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "I" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "J" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "L" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "M" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "N" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "O" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "P" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "Q" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "R" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "S" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "U" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "V" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "W" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "X" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "Y" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "Z" && Aktuellereihe[1] == ":")) {
-      /* Alle ausser K: und Melodieteile werden hier ignoriert. */
-    } else if (Aktuellereihe[0] == "K" && Aktuellereihe[1] == ":") /* k: Feld wird hier behandelt */ {
-      Leerzeichenweg = Reihe[i].split(" "); /* weil manchmal Leerzeichen nachm k */
-      sindweg = Leerzeichenweg.join("");
-      Aktuellereihe = sindweg.split(""); /* den dritten ersetzen durch aktuellen Ton */
-      if (Aktuellereihe[2] == "C") {
-        Aktuellereihe[2] = "D";
-        Reihe[i] = Aktuellereihe.join("");
-      } else if (Aktuellereihe[2] == "D") {
-        Aktuellereihe[2] = "E";
-        Reihe[i] = Aktuellereihe.join("");
-      } else if (Aktuellereihe[2] == "E") {
-        Aktuellereihe[2] = "F";
-        Reihe[i] = Aktuellereihe.join("");
-      } else if (Aktuellereihe[2] == "F") {
-        Aktuellereihe[2] = "G";
-        Reihe[i] = Aktuellereihe.join("");
-      } else if (Aktuellereihe[2] == "G") {
-        Aktuellereihe[2] = "A";
-        Reihe[i] = Aktuellereihe.join("");
-      } else if (Aktuellereihe[2] == "A") {
-        Aktuellereihe[2] = "B";
-        Reihe[i] = Aktuellereihe.join("");
-      } else if (Aktuellereihe[2] == "B") {
-        Aktuellereihe[2] = "C";
-        Reihe[i] = Aktuellereihe.join("");
-      } else {
-        /* nur für den Fall, falls korrupt */
-      }
-    } else /* hier die Melodieabschnitte bearbeiten */ {
-      Derarray = Reihe[i].split("");
-      for (x = 0; x < Derarray.length; ++x) /* zum Erstellen von a'' oder A,, -Klumpen */ {
-        allefertig = false;
-        mitzaehl = 0;
-        if ((Derarray[x + 1] == "'") || (Derarray[x + 1] == ",")) {
-          do {
-            mitzaehl = mitzaehl + 1;
-            if (Derarray[x + mitzaehl] == "'") {
-              Derarray[x] = Derarray[x] + "'";
-              Derarray[x + mitzaehl] = ""; /* Arrays mit ' löschen */
-            } else if (Derarray[x + mitzaehl] == ",") {
-              Derarray[x] = Derarray[x] + ",";
-              Derarray[x + mitzaehl] = ""; /* Arrays mit ' löschen */
-            } else {
-              allefertig = true; /* wenn alle ' in dem Abschnitt fertig sind - Ende. */
-            }
-          }
-          while (allefertig == false);
-        } else {
-          /* wenn es kein Klumpen ist, hier erstmal nix verändern */
-        }
-      }
-      for (y = 0; y < Derarray.length; ++y) /* Tonhöhe ändern */ {
-        Miniarray = Derarray[y].split("");
-        if (Miniarray[0] == "B" && Miniarray[1] == ",") /* Ausnahmefall 1 (, löschen) */ {
-          Miniarray[0] = "C";
-          Miniarray[1] = "";
-        } else if (Miniarray[0] == "b" && Miniarray[1] == "'") /* Ausnahmefall 2 (' hinzufügen) */ {
-          Miniarray[0] = "c";
-          Miniarray[1] = "''";
-        } else if (Miniarray[0] == "C") {
-          Miniarray[0] = "D";
-        } else if (Miniarray[0] == "D") {
-          Miniarray[0] = "E";
-        } else if (Miniarray[0] == "E") {
-          Miniarray[0] = "F";
-        } else if (Miniarray[0] == "F") {
-          Miniarray[0] = "G";
-        } else if (Miniarray[0] == "G") {
-          Miniarray[0] = "A";
-        } else if (Miniarray[0] == "A") {
-          Miniarray[0] = "B";
-        } else if (Miniarray[0] == "B") {
-          Miniarray[0] = "c";
-        } else if (Miniarray[0] == "c") {
-          Miniarray[0] = "d";
-        } else if (Miniarray[0] == "d") {
-          Miniarray[0] = "e";
-        } else if (Miniarray[0] == "e") {
-          Miniarray[0] = "f";
-        } else if (Miniarray[0] == "f") {
-          Miniarray[0] = "g";
-        } else if (Miniarray[0] == "g") {
-          Miniarray[0] = "a";
-        } else if (Miniarray[0] == "a") {
-          Miniarray[0] = "b";
-        } else if (Miniarray[0] == "b") {
-          Miniarray[0] = "c'";
-        }
-        Derarray[y] = Miniarray.join("");
-      }
+	Reihe = neu.split("%0D%0A");
+	Reihe = neu.split("%0A");
 
-      alleszusammen = Derarray.join("");
-      Haukommaingriffweg = alleszusammen.split("\"");
-      for (m = 0; m < Haukommaingriffweg.length; ++m) /* Sonderzeichen NUR innerhalb von " und " wegmachen - also jeden 2. wenn array durchgegangen wird. */ {
-        if (m % 2 == 0) // wenn Zahl gerade ist nichts machen - die ungeraden sollten innerhalb der anführungszeichen sein.
-        {
+	for (i = 0; i < Reihe.length; ++i) {
+		Reihe[i] = unescape(Reihe[i]); /* Macht die Steuerzeichen wieder weg */
+		Aktuellereihe = Reihe[i].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
+		if ((Aktuellereihe[0] == "%" && Aktuellereihe[1] == "%") || (Aktuellereihe[0] == "w" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "A" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "B" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "C" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "D" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "E" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "F" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "G" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "H" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "I" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "J" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "L" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "M" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "N" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "O" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "P" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "Q" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "R" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "S" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "U" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "V" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "W" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "X" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "Y" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "Z" && Aktuellereihe[1] == ":")) {
+			/* Alle ausser K: und Melodieteile werden hier ignoriert. */
+		} else if (Aktuellereihe[0] == "K" && Aktuellereihe[1] == ":") /* k: Feld wird hier behandelt */ {
+			Leerzeichenweg = Reihe[i].split(" "); /* weil manchmal Leerzeichen nachm k */
+			sindweg = Leerzeichenweg.join("");
+			Aktuellereihe = sindweg.split(""); /* den dritten ersetzen durch aktuellen Ton */
+			if (Aktuellereihe[2] == "C") {
+				Aktuellereihe[2] = "D";
+				Reihe[i] = Aktuellereihe.join("");
+			} else if (Aktuellereihe[2] == "D") {
+				Aktuellereihe[2] = "E";
+				Reihe[i] = Aktuellereihe.join("");
+			} else if (Aktuellereihe[2] == "E") {
+				Aktuellereihe[2] = "F";
+				Reihe[i] = Aktuellereihe.join("");
+			} else if (Aktuellereihe[2] == "F") {
+				Aktuellereihe[2] = "G";
+				Reihe[i] = Aktuellereihe.join("");
+			} else if (Aktuellereihe[2] == "G") {
+				Aktuellereihe[2] = "A";
+				Reihe[i] = Aktuellereihe.join("");
+			} else if (Aktuellereihe[2] == "A") {
+				Aktuellereihe[2] = "B";
+				Reihe[i] = Aktuellereihe.join("");
+			} else if (Aktuellereihe[2] == "B") {
+				Aktuellereihe[2] = "C";
+				Reihe[i] = Aktuellereihe.join("");
+			} else {
+				/* nur für den Fall, falls korrupt */
+			}
+		} else /* hier die Melodieabschnitte bearbeiten */ {
+			Derarray = Reihe[i].split("");
+			for (x = 0; x < Derarray.length; ++x) /* zum Erstellen von a'' oder A,, -Klumpen */ {
+				allefertig = false;
+				mitzaehl = 0;
+				if ((Derarray[x + 1] == "'") || (Derarray[x + 1] == ",")) {
+					do {
+						mitzaehl = mitzaehl + 1;
+						if (Derarray[x + mitzaehl] == "'") {
+							Derarray[x] = Derarray[x] + "'";
+							Derarray[x + mitzaehl] = ""; /* Arrays mit ' löschen */
+						} else if (Derarray[x + mitzaehl] == ",") {
+							Derarray[x] = Derarray[x] + ",";
+							Derarray[x + mitzaehl] = ""; /* Arrays mit ' löschen */
+						} else {
+							allefertig = true; /* wenn alle ' in dem Abschnitt fertig sind - Ende. */
+						}
+					}
+					while (allefertig == false);
+				} else {
+					/* wenn es kein Klumpen ist, hier erstmal nix verändern */
+				}
+			}
+			for (y = 0; y < Derarray.length; ++y) /* Tonhöhe ändern */ {
+				Miniarray = Derarray[y].split("");
+				if (Miniarray[0] == "B" && Miniarray[1] == ",") /* Ausnahmefall 1 (, löschen) */ {
+					Miniarray[0] = "C";
+					Miniarray[1] = "";
+				} else if (Miniarray[0] == "b" && Miniarray[1] == "'") /* Ausnahmefall 2 (' hinzufügen) */ {
+					Miniarray[0] = "c";
+					Miniarray[1] = "''";
+				} else if (Miniarray[0] == "C") {
+					Miniarray[0] = "D";
+				} else if (Miniarray[0] == "D") {
+					Miniarray[0] = "E";
+				} else if (Miniarray[0] == "E") {
+					Miniarray[0] = "F";
+				} else if (Miniarray[0] == "F") {
+					Miniarray[0] = "G";
+				} else if (Miniarray[0] == "G") {
+					Miniarray[0] = "A";
+				} else if (Miniarray[0] == "A") {
+					Miniarray[0] = "B";
+				} else if (Miniarray[0] == "B") {
+					Miniarray[0] = "c";
+				} else if (Miniarray[0] == "c") {
+					Miniarray[0] = "d";
+				} else if (Miniarray[0] == "d") {
+					Miniarray[0] = "e";
+				} else if (Miniarray[0] == "e") {
+					Miniarray[0] = "f";
+				} else if (Miniarray[0] == "f") {
+					Miniarray[0] = "g";
+				} else if (Miniarray[0] == "g") {
+					Miniarray[0] = "a";
+				} else if (Miniarray[0] == "a") {
+					Miniarray[0] = "b";
+				} else if (Miniarray[0] == "b") {
+					Miniarray[0] = "c'";
+				}
+				Derarray[y] = Miniarray.join("");
+			}
 
-        } else {
-          Haukommaingriffweg[m] = Haukommaingriffweg[m].replace(/'/g, "");
-          Haukommaingriffweg[m] = Haukommaingriffweg[m].replace(/,/g, "");
-          Doof = Haukommaingriffweg[m].split(""); // Damit Gitarrengriffe immer groß anfangen
-          Doof[0] = Doof[0].toUpperCase();
-          Haukommaingriffweg[m] = Doof.join("");
-        }
-      }
-      alleszusammen = Haukommaingriffweg.join("\"");
-      Reihe[i] = alleszusammen;
+			alleszusammen = Derarray.join("");
+			Haukommaingriffweg = alleszusammen.split("\"");
+			for (m = 0; m < Haukommaingriffweg.length; ++m) /* Sonderzeichen NUR innerhalb von " und " wegmachen - also jeden 2. wenn array durchgegangen wird. */ {
+				if (m % 2 == 0) // wenn Zahl gerade ist nichts machen - die ungeraden sollten innerhalb der anführungszeichen sein.
+				{
 
-    }
+				} else {
+					Haukommaingriffweg[m] = Haukommaingriffweg[m].replace(/'/g, "");
+					Haukommaingriffweg[m] = Haukommaingriffweg[m].replace(/,/g, "");
+					Doof = Haukommaingriffweg[m].split(""); // Damit Gitarrengriffe immer groß anfangen
+					Doof[0] = Doof[0].toUpperCase();
+					Haukommaingriffweg[m] = Doof.join("");
+				}
+			}
+			alleszusammen = Haukommaingriffweg.join("\"");
+			Reihe[i] = alleszusammen;
 
-  }
+		}
 
-  insfeld = Reihe.join("\n");
-  theABC.value = insfeld;
+	}
 
-  Render();
+	insfeld = Reihe.join("\n");
+	theABC.value = insfeld;
+
+	Render();
 
 }
 
 
 function TransposeDown() {
 
-  verarbeiten = theABC.value;
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF){
+		return;
+	}	
 
-  neu = escape(verarbeiten);
+	verarbeiten = theABC.value;
 
-  Reihe = neu.split("%0D%0A");
-  Reihe = neu.split("%0A");
+	neu = escape(verarbeiten);
 
-  for (i = 0; i < Reihe.length; ++i) {
-    Reihe[i] = unescape(Reihe[i]); /* Macht die Steuerzeichen wieder weg */
+	Reihe = neu.split("%0D%0A");
+	Reihe = neu.split("%0A");
 
-    Aktuellereihe = Reihe[i].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
-    if ((Aktuellereihe[0] == "%" && Aktuellereihe[1] == "%") || (Aktuellereihe[0] == "w" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "A" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "B" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "C" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "D" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "E" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "F" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "G" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "H" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "I" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "J" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "L" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "M" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "N" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "O" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "P" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "Q" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "R" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "S" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "U" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "V" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "W" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "X" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "Y" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "Z" && Aktuellereihe[1] == ":")) {
-      /* Alle ausser K: und Melodieteile werden hier ignoriert. */
-    } else if (Aktuellereihe[0] == "K" && Aktuellereihe[1] == ":") /* k: Feld wird hier behandelt */ {
-      Leerzeichenweg = Reihe[i].split(" "); /* weil manchmal Leerzeichen nachm k */
-      sindweg = Leerzeichenweg.join("");
-      Aktuellereihe = sindweg.split(""); /* den dritten ersetzen durch aktuellen Ton */
-      if (Aktuellereihe[2] == "C") {
-        Aktuellereihe[2] = "B";
-        Reihe[i] = Aktuellereihe.join("");
-      } else if (Aktuellereihe[2] == "D") {
-        Aktuellereihe[2] = "C";
-        Reihe[i] = Aktuellereihe.join("");
-      } else if (Aktuellereihe[2] == "E") {
-        Aktuellereihe[2] = "D";
-        Reihe[i] = Aktuellereihe.join("");
-      } else if (Aktuellereihe[2] == "F") {
-        Aktuellereihe[2] = "E";
-        Reihe[i] = Aktuellereihe.join("");
-      } else if (Aktuellereihe[2] == "G") {
-        Aktuellereihe[2] = "F";
-        Reihe[i] = Aktuellereihe.join("");
-      } else if (Aktuellereihe[2] == "A") {
-        Aktuellereihe[2] = "G";
-        Reihe[i] = Aktuellereihe.join("");
-      } else if (Aktuellereihe[2] == "B") {
-        Aktuellereihe[2] = "A";
-        Reihe[i] = Aktuellereihe.join("");
-      } else {
-        /* nur für den Fall, falls korrupt */
-      }
-    } else /* hier die Melodieabschnitte bearbeiten */ {
-      Derarray = Reihe[i].split("");
-      for (x = 0; x < Derarray.length; ++x) /* zum Erstellen von a'' oder A,, -Klumpen */ {
-        allefertig = false;
-        mitzaehl = 0;
-        if ((Derarray[x + 1] == "'") || (Derarray[x + 1] == ",")) {
-          do {
-            mitzaehl = mitzaehl + 1;
-            if (Derarray[x + mitzaehl] == "'") {
-              Derarray[x] = Derarray[x] + "'";
-              Derarray[x + mitzaehl] = ""; /* Arrays mit ' löschen */
-            } else if (Derarray[x + mitzaehl] == ",") {
-              Derarray[x] = Derarray[x] + ",";
-              Derarray[x + mitzaehl] = ""; /* Arrays mit ' löschen */
-            } else {
-              allefertig = true; /* wenn alle ' in dem Abschnitt fertig sind - Ende. */
-            }
-          }
-          while (allefertig == false);
-        } else {
-          /* wenn es kein Klumpen ist, hier erstmal nix verändern */
-        }
-      }
-      for (y = 0; y < Derarray.length; ++y) /* Tonhöhe ändern */ {
-        Miniarray = Derarray[y].split("");
-        if (Miniarray[0] == "C" && Miniarray[1] == ",") /* Ausnahmefall 1 (, hinzufügen) */ {
-          Miniarray[0] = "B";
-          Miniarray[1] = ",,";
-        } else if (Miniarray[0] == "c" && Miniarray[1] == "'") /* Ausnahmefall 2 (' hinzufügen) */ {
-          Miniarray[0] = "b";
-          Miniarray[1] = "";
-        } else if (Miniarray[0] == "C") {
-          Miniarray[0] = "B,";
-        } else if (Miniarray[0] == "D") {
-          Miniarray[0] = "C";
-        } else if (Miniarray[0] == "E") {
-          Miniarray[0] = "D";
-        } else if (Miniarray[0] == "F") {
-          Miniarray[0] = "E";
-        } else if (Miniarray[0] == "G") {
-          Miniarray[0] = "F";
-        } else if (Miniarray[0] == "A") {
-          Miniarray[0] = "G";
-        } else if (Miniarray[0] == "B") {
-          Miniarray[0] = "A";
-        } else if (Miniarray[0] == "c") {
-          Miniarray[0] = "B";
-        } else if (Miniarray[0] == "d") {
-          Miniarray[0] = "c";
-        } else if (Miniarray[0] == "e") {
-          Miniarray[0] = "d";
-        } else if (Miniarray[0] == "f") {
-          Miniarray[0] = "e";
-        } else if (Miniarray[0] == "g") {
-          Miniarray[0] = "f";
-        } else if (Miniarray[0] == "a") {
-          Miniarray[0] = "g";
-        } else if (Miniarray[0] == "b") {
-          Miniarray[0] = "a";
-        }
-        Derarray[y] = Miniarray.join("");
-      }
-      alleszusammen = Derarray.join("");
-      Haukommaingriffweg = alleszusammen.split("\"");
-      for (m = 0; m < Haukommaingriffweg.length; ++m) /* Sonderzeichen NUR innerhalb von " und " wegmachen - also jeden 2. wenn array durchgegangen wird. */ {
-        if (m % 2 == 0) // wenn Zahl gerade ist nichts machen - die ungeraden sollten innerhalb der anführungszeichen sein.
-        {
+	for (i = 0; i < Reihe.length; ++i) {
+		Reihe[i] = unescape(Reihe[i]); /* Macht die Steuerzeichen wieder weg */
 
-        } else {
-          Haukommaingriffweg[m] = Haukommaingriffweg[m].replace(/'/g, "");
-          Haukommaingriffweg[m] = Haukommaingriffweg[m].replace(/,/g, "");
-          Doof = Haukommaingriffweg[m].split(""); // Damit Gitarrengriffe immer groß anfangen
-          Doof[0] = Doof[0].toUpperCase();
-          Haukommaingriffweg[m] = Doof.join("");
-        }
-      }
-      alleszusammen = Haukommaingriffweg.join("\"");
+		Aktuellereihe = Reihe[i].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
+		if ((Aktuellereihe[0] == "%" && Aktuellereihe[1] == "%") || (Aktuellereihe[0] == "w" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "A" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "B" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "C" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "D" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "E" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "F" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "G" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "H" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "I" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "J" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "L" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "M" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "N" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "O" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "P" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "Q" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "R" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "S" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "U" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "V" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "W" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "X" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "Y" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "Z" && Aktuellereihe[1] == ":")) {
+			/* Alle ausser K: und Melodieteile werden hier ignoriert. */
+		} else if (Aktuellereihe[0] == "K" && Aktuellereihe[1] == ":") /* k: Feld wird hier behandelt */ {
+			Leerzeichenweg = Reihe[i].split(" "); /* weil manchmal Leerzeichen nachm k */
+			sindweg = Leerzeichenweg.join("");
+			Aktuellereihe = sindweg.split(""); /* den dritten ersetzen durch aktuellen Ton */
+			if (Aktuellereihe[2] == "C") {
+				Aktuellereihe[2] = "B";
+				Reihe[i] = Aktuellereihe.join("");
+			} else if (Aktuellereihe[2] == "D") {
+				Aktuellereihe[2] = "C";
+				Reihe[i] = Aktuellereihe.join("");
+			} else if (Aktuellereihe[2] == "E") {
+				Aktuellereihe[2] = "D";
+				Reihe[i] = Aktuellereihe.join("");
+			} else if (Aktuellereihe[2] == "F") {
+				Aktuellereihe[2] = "E";
+				Reihe[i] = Aktuellereihe.join("");
+			} else if (Aktuellereihe[2] == "G") {
+				Aktuellereihe[2] = "F";
+				Reihe[i] = Aktuellereihe.join("");
+			} else if (Aktuellereihe[2] == "A") {
+				Aktuellereihe[2] = "G";
+				Reihe[i] = Aktuellereihe.join("");
+			} else if (Aktuellereihe[2] == "B") {
+				Aktuellereihe[2] = "A";
+				Reihe[i] = Aktuellereihe.join("");
+			} else {
+				/* nur für den Fall, falls korrupt */
+			}
+		} else /* hier die Melodieabschnitte bearbeiten */ {
+			Derarray = Reihe[i].split("");
+			for (x = 0; x < Derarray.length; ++x) /* zum Erstellen von a'' oder A,, -Klumpen */ {
+				allefertig = false;
+				mitzaehl = 0;
+				if ((Derarray[x + 1] == "'") || (Derarray[x + 1] == ",")) {
+					do {
+						mitzaehl = mitzaehl + 1;
+						if (Derarray[x + mitzaehl] == "'") {
+							Derarray[x] = Derarray[x] + "'";
+							Derarray[x + mitzaehl] = ""; /* Arrays mit ' löschen */
+						} else if (Derarray[x + mitzaehl] == ",") {
+							Derarray[x] = Derarray[x] + ",";
+							Derarray[x + mitzaehl] = ""; /* Arrays mit ' löschen */
+						} else {
+							allefertig = true; /* wenn alle ' in dem Abschnitt fertig sind - Ende. */
+						}
+					}
+					while (allefertig == false);
+				} else {
+					/* wenn es kein Klumpen ist, hier erstmal nix verändern */
+				}
+			}
+			for (y = 0; y < Derarray.length; ++y) /* Tonhöhe ändern */ {
+				Miniarray = Derarray[y].split("");
+				if (Miniarray[0] == "C" && Miniarray[1] == ",") /* Ausnahmefall 1 (, hinzufügen) */ {
+					Miniarray[0] = "B";
+					Miniarray[1] = ",,";
+				} else if (Miniarray[0] == "c" && Miniarray[1] == "'") /* Ausnahmefall 2 (' hinzufügen) */ {
+					Miniarray[0] = "b";
+					Miniarray[1] = "";
+				} else if (Miniarray[0] == "C") {
+					Miniarray[0] = "B,";
+				} else if (Miniarray[0] == "D") {
+					Miniarray[0] = "C";
+				} else if (Miniarray[0] == "E") {
+					Miniarray[0] = "D";
+				} else if (Miniarray[0] == "F") {
+					Miniarray[0] = "E";
+				} else if (Miniarray[0] == "G") {
+					Miniarray[0] = "F";
+				} else if (Miniarray[0] == "A") {
+					Miniarray[0] = "G";
+				} else if (Miniarray[0] == "B") {
+					Miniarray[0] = "A";
+				} else if (Miniarray[0] == "c") {
+					Miniarray[0] = "B";
+				} else if (Miniarray[0] == "d") {
+					Miniarray[0] = "c";
+				} else if (Miniarray[0] == "e") {
+					Miniarray[0] = "d";
+				} else if (Miniarray[0] == "f") {
+					Miniarray[0] = "e";
+				} else if (Miniarray[0] == "g") {
+					Miniarray[0] = "f";
+				} else if (Miniarray[0] == "a") {
+					Miniarray[0] = "g";
+				} else if (Miniarray[0] == "b") {
+					Miniarray[0] = "a";
+				}
+				Derarray[y] = Miniarray.join("");
+			}
+			alleszusammen = Derarray.join("");
+			Haukommaingriffweg = alleszusammen.split("\"");
+			for (m = 0; m < Haukommaingriffweg.length; ++m) /* Sonderzeichen NUR innerhalb von " und " wegmachen - also jeden 2. wenn array durchgegangen wird. */ {
+				if (m % 2 == 0) // wenn Zahl gerade ist nichts machen - die ungeraden sollten innerhalb der anführungszeichen sein.
+				{
 
-      Reihe[i] = alleszusammen;
+				} else {
+					Haukommaingriffweg[m] = Haukommaingriffweg[m].replace(/'/g, "");
+					Haukommaingriffweg[m] = Haukommaingriffweg[m].replace(/,/g, "");
+					Doof = Haukommaingriffweg[m].split(""); // Damit Gitarrengriffe immer groß anfangen
+					Doof[0] = Doof[0].toUpperCase();
+					Haukommaingriffweg[m] = Doof.join("");
+				}
+			}
+			alleszusammen = Haukommaingriffweg.join("\"");
 
-    }
+			Reihe[i] = alleszusammen;
+
+		}
 
 
-  }
+	}
 
-  insfeld = Reihe.join("\n");
-  theABC.value = insfeld;
+	insfeld = Reihe.join("\n");
+	theABC.value = insfeld;
 
-  Render();
+	Render();
 }
 
 function Clear() {
-  
-  theABC.value = "";
-  
-  var fileSelected = document.getElementById('abc-selected');
 
-  fileSelected.innerText = "No .ABC file selected"; 
-  
-  RestoreDefaults();
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF){
+		return;
+	}	
 
-  Render();
-  
+	theABC.value = "";
+
+	var fileSelected = document.getElementById('abc-selected');
+
+	fileSelected.innerText = "No .ABC file selected";
+
+	RestoreDefaults();
+
+	Render();
+
 }
 
 
@@ -342,36 +360,37 @@ function Clear() {
 
 
 function Titelholen() {
-  // Mit For Schleife Titel für Dateinamen extrahieren und Leerzeichen ersetzen und Apostrophe entfernen.
-  verarbeiten = theABC.value;
 
-  neu = escape(verarbeiten);
+	// Mit For Schleife Titel für Dateinamen extrahieren und Leerzeichen ersetzen und Apostrophe entfernen.
+	verarbeiten = theABC.value;
 
-  Reihe = neu.split("%0D%0A");
-  Reihe = neu.split("%0A");
+	neu = escape(verarbeiten);
 
-  for (i = 0; i < Reihe.length; ++i) {
-    Reihe[i] = unescape(Reihe[i]); /* Macht die Steuerzeichen wieder weg */
+	Reihe = neu.split("%0D%0A");
+	Reihe = neu.split("%0A");
 
-    Aktuellereihe = Reihe[i].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
-    if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
-      titel = Reihe[i].slice(2);
-      titel = titel.trim();
-      titel = titel.replace(" ", "_");
-      titel = titel.replace("'", "");
-      //console.log(titel);
-      break;
-    }
-  }
+	for (i = 0; i < Reihe.length; ++i) {
+		Reihe[i] = unescape(Reihe[i]); /* Macht die Steuerzeichen wieder weg */
 
-  // Wenn es Tabs gibt - Tabname an Dateinamen anhängen.
-  tabs = Welchetabs("notenodertab");
-  if (tabs != "noten") {
-    titel += "_" + tabs;
-  }
-  // Ende Dateinamen aus Titel generieren.
+		Aktuellereihe = Reihe[i].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
+		if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
+			titel = Reihe[i].slice(2);
+			titel = titel.trim();
+			titel = titel.replace(" ", "_");
+			titel = titel.replace("'", "");
+			//console.log(titel);
+			break;
+		}
+	}
 
-  return titel;
+	// Wenn es Tabs gibt - Tabname an Dateinamen anhängen.
+	tabs = Welchetabs("notenodertab");
+	if (tabs != "noten") {
+		titel += "_" + tabs;
+	}
+	// Ende Dateinamen aus Titel generieren.
+
+	return titel;
 }
 
 
@@ -390,94 +409,92 @@ var pdf;
 //
 // Render a single SVG block to PDF and callback when done
 //
-function RenderPDFBlock(theBlock,blockIndex,doSinglePage,callback){
+function RenderPDFBlock(theBlock, blockIndex, doSinglePage, callback) {
 
-  var svg = theBlock.querySelector("svg");
+	var svg = theBlock.querySelector("svg");
 
-  svg.setAttribute("width", qualitaet);
+	svg.setAttribute("width", qualitaet);
 
-  // scale improves the subsequent PDF quality.
-  htmlToImage.toCanvas(theBlock,{
-      backgroundColor:"white",
-      style: { background: "white" },
-      pixelRatio: 2
-    }
-  )
-  .then(function(canvas) {
+	// scale improves the subsequent PDF quality.
+	htmlToImage.toCanvas(theBlock, {
+			backgroundColor: "white",
+			style: {
+				background: "white"
+			},
+			pixelRatio: 2
+		})
+		.then(function(canvas) {
 
-    var imgData = canvas.toDataURL("image/jpeg", 1.0);
+			var imgData = canvas.toDataURL("image/jpeg", 1.0);
 
-    var theBlockID = theBlock.id + ".block";
+			var theBlockID = theBlock.id + ".block";
 
-    // Insert a new page for each tune
-    if (theBlockID.indexOf("_0.block") != -1){
+			// Insert a new page for each tune
+			if (theBlockID.indexOf("_0.block") != -1) {
 
-      if (!isFirstPage){
+				if (!isFirstPage) {
 
-        if (doSinglePage){
+					if (doSinglePage) {
 
-          running_height = 30;
+						running_height = 30;
 
-          seitenzahl++; // for the status display.
-       
-          pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
-          document.getElementById("nebennebenstatusanzeigetext").innerHTML = "Saving <font color=\"red\">" + seitenzahl + "</font> pages.";
+						seitenzahl++; // for the status display.
 
-        }
-        else{
-          
-          running_height += 20;
+						pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
+						document.getElementById("nebennebenstatusanzeigetext").innerHTML = "Saving <font color=\"red\">" + seitenzahl + "</font> pages.";
 
-        }
+					} else {
 
-      }
-      else
-      {
-        isFirstPage = false;
-      }
+						running_height += 20;
 
-    }
+					}
 
-    height = parseInt(canvas.height * 535 / canvas.width);
+				} else {
+					isFirstPage = false;
+				}
 
-    // the first two values mean x,y coordinates for the upper left corner. Enlarge to get larger margin.
-    // then comes width, then height. The second value can be freely selected - then it leaves more space at the top.
+			}
 
-    // hilft vielleicht gegen unscharf...
-    pdf.internal.scaleFactor = 1.55;
+			height = parseInt(canvas.height * 535 / canvas.width);
 
-    if (running_height + height + 30 <= 842 - 30) // i.e. if a block of notes would get in the way with the bottom margin (30 pt), then a new one please...
-    {
+			// the first two values mean x,y coordinates for the upper left corner. Enlarge to get larger margin.
+			// then comes width, then height. The second value can be freely selected - then it leaves more space at the top.
 
-      pdf.addImage(imgData, 'JPG', 30, running_height, 535, height);
+			// hilft vielleicht gegen unscharf...
+			pdf.internal.scaleFactor = 1.55;
 
-      document.getElementById("nebenstatusanzeigetext").innerHTML = "Staff <font color=\"red\">" + (blockIndex + 1) + "</font> rendered.";
+			if (running_height + height + 30 <= 842 - 30) // i.e. if a block of notes would get in the way with the bottom margin (30 pt), then a new one please...
+			{
 
-    } else {
+				pdf.addImage(imgData, 'JPG', 30, running_height, 535, height);
 
-      running_height = 30;
+				document.getElementById("nebenstatusanzeigetext").innerHTML = "Staff <font color=\"red\">" + (blockIndex + 1) + "</font> rendered.";
 
-      seitenzahl++; // for the status display.
+			} else {
 
-      pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
+				running_height = 30;
 
-      pdf.addImage(imgData, 'JPG', 30, running_height, 535, height);
+				seitenzahl++; // for the status display.
 
-      document.getElementById("nebennebenstatusanzeigetext").innerHTML = "Saving <font color=\"red\">" + seitenzahl + "</font> pages.";
+				pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
 
-    }
+				pdf.addImage(imgData, 'JPG', 30, running_height, 535, height);
 
-    // so that it starts the new one exactly one pt behind the current one.
-    running_height = running_height + height + 1;
+				document.getElementById("nebennebenstatusanzeigetext").innerHTML = "Saving <font color=\"red\">" + seitenzahl + "</font> pages.";
 
-    // Callback after a short delay
-    //setTimeout(function(){
+			}
 
-      callback();
+			// so that it starts the new one exactly one pt behind the current one.
+			running_height = running_height + height + 1;
 
-    //},150); 
+			// Callback after a short delay
+			//setTimeout(function(){
 
-  });
+			callback();
+
+			//},150); 
+
+		});
 
 }
 
@@ -486,781 +503,796 @@ function RenderPDFBlock(theBlock,blockIndex,doSinglePage,callback){
 //
 function CreatePDFfromHTML() {
 
-  // Get the page format
-  var elem = document.getElementById("pdfformat");
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF){
+		return;
+	}	
 
-  var doSinglePage =  elem.options[elem.selectedIndex].value == "true";
+	// Get the page format
+	var elem = document.getElementById("pdfformat");
 
-  // Init the shared globals
-  seitenzahl = 1;
+	var doSinglePage = elem.options[elem.selectedIndex].value == "true";
 
-  isFirstPage = true;
+	// Init the shared globals
+	seitenzahl = 1;
 
-  running_height = 30;
+	isFirstPage = true;
 
-  var nBlocksProcessed = 0;
+	running_height = 30;
 
-  // overflow must be visible, otherwise it cuts off something in the PDF.
-  // document.getElementById("notation").style.overflow = "visible";
-  var title = Titelholen();
+	var nBlocksProcessed = 0;
 
-  qualitaet = 1200;
+	// overflow must be visible, otherwise it cuts off something in the PDF.
+	// document.getElementById("notation").style.overflow = "visible";
+	var title = Titelholen();
 
-  document.getElementById("statusanzeigetext").innerHTML = "Generating <font color=\"red\">" + title + ".pdf </font> - Please don't press the button twice!";
+	qualitaet = 1200;
 
-  setTimeout(function(){
+	document.getElementById("statusanzeigetext").innerHTML = "Generating <font color=\"red\">" + title + ".pdf </font>";
 
-    // Render first copying the SVGs to the shadow DOM
-    gCopySVGs = true;
+	setTimeout(function() {
 
-    Render();
-    
-    gCopySVGs = false;
+		// Render first copying the SVGs to the shadow DOM
+		gCopySVGs = true;
 
-    pdf = new jsPDF('p', 'pt', 'letter');
+		Render();
 
-    var running_height = 30;
+		// Set the global PDF rendering flag
+		gRenderingPDF = true;
 
-    theBlocks = document.querySelectorAll('div[class="block"]');
+		gCopySVGs = false;
 
-    var nBlocks = theBlocks.length;
+		pdf = new jsPDF('p', 'pt', 'letter');
 
-    document.getElementById("statusanzeigetext").innerHTML = "Preparing <font color=\"red\">" + (nBlocksProcessed+1) + " / " + theBlocks.length + "</font> staves for PDF rendering. Please be patient!";
+		var running_height = 30;
 
-    // Kick off the rendering loop
-    var theBlock = theBlocks[0];
+		theBlocks = document.querySelectorAll('div[class="block"]');
 
-    // Render and stamp one block
-    RenderPDFBlock(theBlock,0,doSinglePage,callback);
+		var nBlocks = theBlocks.length;
 
-    function callback(){
+		document.getElementById("statusanzeigetext").innerHTML = "Preparing <font color=\"red\">" + (nBlocksProcessed + 1) + " / " + theBlocks.length + "</font> staves for PDF rendering.";
 
-      nBlocksProcessed++;
+		// Kick off the rendering loop
+		var theBlock = theBlocks[0];
 
-      document.getElementById("statusanzeigetext").innerHTML = "Preparing <font color=\"red\">" + (nBlocksProcessed+1) + " / " + theBlocks.length + "</font> staves for PDF rendering. Please be patient!";
+		// Render and stamp one block
+		RenderPDFBlock(theBlock, 0, doSinglePage, callback);
 
-      if (nBlocksProcessed == nBlocks) {
+		function callback() {
 
-        document.getElementById("statusanzeigetext").innerHTML = "";
-        
-        document.getElementById("nebenstatusanzeigetext").innerHTML = "";
-        
-        document.getElementById("nebennebenstatusanzeigetext").innerHTML = "";
-        
-        pdf.save(title + ".pdf");
+			nBlocksProcessed++;
 
-      }
-      else{
+			document.getElementById("statusanzeigetext").innerHTML = "Preparing <font color=\"red\">" + (nBlocksProcessed + 1) + " / " + theBlocks.length + "</font> staves for PDF rendering.";
 
-        theBlock = theBlocks[nBlocksProcessed];
+			if (nBlocksProcessed == nBlocks) {
 
-        setTimeout(function(){
-        
-          RenderPDFBlock(theBlock,nBlocksProcessed,doSinglePage,callback);
+				document.getElementById("statusanzeigetext").innerHTML = "";
 
-        },100);
-       
-      }
+				document.getElementById("nebenstatusanzeigetext").innerHTML = "";
 
-    }
+				document.getElementById("nebennebenstatusanzeigetext").innerHTML = "";
 
-  },250);
+				pdf.save(title + ".pdf");
+
+				gRenderingPDF = false;
+
+				// Catch up on any UI changes during the PDF rendering
+				Render();
+
+
+			} else {
+
+				theBlock = theBlocks[nBlocksProcessed];
+
+				setTimeout(function() {
+
+					RenderPDFBlock(theBlock, nBlocksProcessed, doSinglePage, callback);
+
+				}, 100);
+
+			}
+
+		}
+
+	}, 250);
 
 }
 
 
 function getNextSiblings(el, filter) {
-  var siblings = [];
-  while (el = el.nextSibling) {
-    if (!filter || filter(el)) siblings.push(el);
-  }
-  return siblings;
+	var siblings = [];
+	while (el = el.nextSibling) {
+		if (!filter || filter(el)) siblings.push(el);
+	}
+	return siblings;
 }
 
 
 
 function getStyleProp(elem, prop) {
-  if (window.getComputedStyle)
-    return window.getComputedStyle(elem, null).getPropertyValue(prop);
-  else if (elem.currentStyle) return elem.currentStyle[prop]; //IE
+	if (window.getComputedStyle)
+		return window.getComputedStyle(elem, null).getPropertyValue(prop);
+	else if (elem.currentStyle) return elem.currentStyle[prop]; //IE
 }
 
 
 function Notenmachen(tune, instrument) {
-  // console.log("breite: " + screen.width);
-  // console.log("dings" + parseInt(document.getElementById('notenlinks').style.width));
-  //rechtswidth = window.innerWidth - parseInt(document.getElementById("notenlinks").style.width);
-  
-  var nTunes = CountTunes();
 
-  //console.log("nTunes ="+nTunes);
+	// console.log("breite: " + screen.width);
+	// console.log("dings" + parseInt(document.getElementById('notenlinks').style.width));
+	//rechtswidth = window.innerWidth - parseInt(document.getElementById("notenlinks").style.width);
 
-  // Damit er bei außreichend großem Bildschirm die Noten rechts vom Textfeld ausgibt - dem rechten div eine feste Größe geben, in die das svg dann wegen der Angabe
-  // responsive: 'resize' reingequetscht wird. Sonst rutscht es nach unten.
-  // die Technik kannn auch genutzt werden, um das svg kurz vorm speichern riesig zu machen - ev. ausserhalb des viewports - dann höhere auflösung im pdf.
-  var radiovalue = Welchetabs("renderwidth");
+	var nTunes = CountTunes();
 
-  document.getElementById("notation-holder").style.width = radiovalue;
- 
-  // console.log("rechtswidth" + rechtswidth);
+	//console.log("nTunes ="+nTunes);
 
-  if (!instrument) {
-    params = {
-      responsive: 'resize',
-      oneSvgPerLine: 'true',
-      format: {
-        titlefont: "Times-Roman 18",
-        subtitlefont: "Verdana 12",
-        infofont:  "Verdana 12",
-        partsfont: "Verdana 12",
-        tempofont: "Verdana 12",
-        textfont:  "Verdana 12",
-        composerfont: "Verdana 12",
-        annotationfont: "Verdana 12",
-        partsfont: "Verdana 12",
-        gchordfont: "Verdana 12",
-        vocalfont: "Verdana 12",
-        wordsfont:"Verdana 12"
-      }
-    };
-    instrument = ""; // damit er unten keinen Error macht...
-  } else if (instrument == "mandolin") {
-    var params = {
-      tablature: [{
-        instrument: 'violin',
-        label: '',
-        tuning: ['G,', 'D', 'A', 'e'],
-        highestNote: "f'"
-      }],
-      responsive: 'resize',
-      oneSvgPerLine: 'true',
-      format: {
-        titlefont: "Times-Roman 18",
-        subtitlefont: "Verdana 12",
-        infofont:  "Verdana 12",
-        partsfont: "Verdana 12",
-        tempofont: "Verdana 12",
-        textfont:  "Verdana 12",
-        composerfont: "Verdana 12",
-        annotationfont: "Verdana 12",
-        partsfont: "Verdana 12",
-        gchordfont: "Verdana 12",
-        vocalfont: "Verdana 12",
-        wordsfont:"Verdana 12"
-      }
-    }
-  } else if (instrument == "guitare") {
-    var params = {
-      tablature: [{
-        instrument: 'guitar',
-        label: '',
-        tuning: ['E,', 'A,', 'D', 'G', 'B', 'e'],
-        highestNote: "f'"
-      }],
-      responsive: 'resize',
-      oneSvgPerLine: 'true',
-      format: {
-        titlefont: "Times-Roman 18",
-        subtitlefont: "Verdana 12",
-        infofont:  "Verdana 12",
-        partsfont: "Verdana 12",
-        tempofont: "Verdana 12",
-        textfont:  "Verdana 12",
-        composerfont: "Verdana 12",
-        annotationfont: "Verdana 12",
-        partsfont: "Verdana 12",
-        gchordfont: "Verdana 12",
-        vocalfont: "Verdana 12",
-        wordsfont:"Verdana 12"
-      }
-    }
-  } else if (instrument == "guitard") {
-    var params = {
-      tablature: [{
-        instrument: 'guitar',
-        label: '',
-        tuning: ['D,', 'A,', 'D', 'G', 'A', 'd'],
-        highestNote: "f'"
-      }],
-      responsive: 'resize',
-      oneSvgPerLine: 'true',
-      format: {
-        titlefont: "Times-Roman 18",
-        subtitlefont: "Verdana 12",
-        infofont:  "Verdana 12",
-        partsfont: "Verdana 12",
-        tempofont: "Verdana 12",
-        textfont:  "Verdana 12",
-        composerfont: "Verdana 12",
-        annotationfont: "Verdana 12",
-        partsfont: "Verdana 12",
-        gchordfont: "Verdana 12",
-        vocalfont: "Verdana 12",
-        wordsfont:"Verdana 12"
-      }
-    }
-  } else if (instrument == "notenames") {
-    var params = {
-      tablature: [{
-        instrument: 'violin',
-        label: '',
-        tuning: ['G,'],
-        highestNote: "b'"
-      }],
-      responsive: 'resize',
-      oneSvgPerLine: 'true',
-      format: {
-        titlefont: "Times-Roman 18",
-        subtitlefont: "Verdana 12",
-        infofont:  "Verdana 12",
-        partsfont: "Verdana 12",
-        tempofont: "Verdana 12",
-        textfont:  "Verdana 12",
-        composerfont: "Verdana 12",
-        annotationfont: "Verdana 12",
-        partsfont: "Verdana 12",
-        gchordfont: "Verdana 12",
-        vocalfont: "Verdana 12",
-        wordsfont:"Verdana 12"
-      }
-    }
-  } else if (instrument == "whistle") {
-    var params = {
-      tablature: [{
-        instrument: 'violin',
-        label: '',
-        tuning: ['D'],
-        highestNote: "c'"
-      }],
-      responsive: 'resize',
-      oneSvgPerLine: 'true',
-      format: {
-        titlefont: "Times-Roman 18",
-        subtitlefont: "Verdana 12",
-        infofont:  "Verdana 12",
-        partsfont: "Verdana 12",
-        tempofont: "Verdana 12",
-        textfont:  "Verdana 12",
-        composerfont: "Verdana 12",
-        annotationfont: "Verdana 12",
-        partsfont: "Verdana 12",
-        gchordfont: "Verdana 12",
-        vocalfont: "Verdana 12",
-        wordsfont:"Verdana 12"
-      }
-    }
-  }
+	// Damit er bei außreichend großem Bildschirm die Noten rechts vom Textfeld ausgibt - dem rechten div eine feste Größe geben, in die das svg dann wegen der Angabe
+	// responsive: 'resize' reingequetscht wird. Sonst rutscht es nach unten.
+	// die Technik kannn auch genutzt werden, um das svg kurz vorm speichern riesig zu machen - ev. ausserhalb des viewports - dann höhere auflösung im pdf.
+	var radiovalue = Welchetabs("renderwidth");
 
-  // Avoid jump scroll on render
-  var scrollTop = window.pageYOffset;
+	document.getElementById("notation-holder").style.width = radiovalue;
 
-  // Create the render div ID array
-  var renderDivs = [];
+	// console.log("rechtswidth" + rechtswidth);
 
-  for (var i=0;i<nTunes;++i){
-    renderDivs.push("notation"+i);
-  }
+	if (!instrument) {
+		params = {
+			responsive: 'resize',
+			oneSvgPerLine: 'true',
+			format: {
+				titlefont: "Times-Roman 18",
+				subtitlefont: "Verdana 12",
+				infofont: "Verdana 12",
+				partsfont: "Verdana 12",
+				tempofont: "Verdana 12",
+				textfont: "Verdana 12",
+				composerfont: "Verdana 12",
+				annotationfont: "Verdana 12",
+				partsfont: "Verdana 12",
+				gchordfont: "Verdana 12",
+				vocalfont: "Verdana 12",
+				wordsfont: "Verdana 12"
+			}
+		};
+		instrument = ""; // damit er unten keinen Error macht...
+	} else if (instrument == "mandolin") {
+		var params = {
+			tablature: [{
+				instrument: 'violin',
+				label: '',
+				tuning: ['G,', 'D', 'A', 'e'],
+				highestNote: "f'"
+			}],
+			responsive: 'resize',
+			oneSvgPerLine: 'true',
+			format: {
+				titlefont: "Times-Roman 18",
+				subtitlefont: "Verdana 12",
+				infofont: "Verdana 12",
+				partsfont: "Verdana 12",
+				tempofont: "Verdana 12",
+				textfont: "Verdana 12",
+				composerfont: "Verdana 12",
+				annotationfont: "Verdana 12",
+				partsfont: "Verdana 12",
+				gchordfont: "Verdana 12",
+				vocalfont: "Verdana 12",
+				wordsfont: "Verdana 12"
+			}
+		}
+	} else if (instrument == "guitare") {
+		var params = {
+			tablature: [{
+				instrument: 'guitar',
+				label: '',
+				tuning: ['E,', 'A,', 'D', 'G', 'B', 'e'],
+				highestNote: "f'"
+			}],
+			responsive: 'resize',
+			oneSvgPerLine: 'true',
+			format: {
+				titlefont: "Times-Roman 18",
+				subtitlefont: "Verdana 12",
+				infofont: "Verdana 12",
+				partsfont: "Verdana 12",
+				tempofont: "Verdana 12",
+				textfont: "Verdana 12",
+				composerfont: "Verdana 12",
+				annotationfont: "Verdana 12",
+				partsfont: "Verdana 12",
+				gchordfont: "Verdana 12",
+				vocalfont: "Verdana 12",
+				wordsfont: "Verdana 12"
+			}
+		}
+	} else if (instrument == "guitard") {
+		var params = {
+			tablature: [{
+				instrument: 'guitar',
+				label: '',
+				tuning: ['D,', 'A,', 'D', 'G', 'A', 'd'],
+				highestNote: "f'"
+			}],
+			responsive: 'resize',
+			oneSvgPerLine: 'true',
+			format: {
+				titlefont: "Times-Roman 18",
+				subtitlefont: "Verdana 12",
+				infofont: "Verdana 12",
+				partsfont: "Verdana 12",
+				tempofont: "Verdana 12",
+				textfont: "Verdana 12",
+				composerfont: "Verdana 12",
+				annotationfont: "Verdana 12",
+				partsfont: "Verdana 12",
+				gchordfont: "Verdana 12",
+				vocalfont: "Verdana 12",
+				wordsfont: "Verdana 12"
+			}
+		}
+	} else if (instrument == "notenames") {
+		var params = {
+			tablature: [{
+				instrument: 'violin',
+				label: '',
+				tuning: ['G,'],
+				highestNote: "b'"
+			}],
+			responsive: 'resize',
+			oneSvgPerLine: 'true',
+			format: {
+				titlefont: "Times-Roman 18",
+				subtitlefont: "Verdana 12",
+				infofont: "Verdana 12",
+				partsfont: "Verdana 12",
+				tempofont: "Verdana 12",
+				textfont: "Verdana 12",
+				composerfont: "Verdana 12",
+				annotationfont: "Verdana 12",
+				partsfont: "Verdana 12",
+				gchordfont: "Verdana 12",
+				vocalfont: "Verdana 12",
+				wordsfont: "Verdana 12"
+			}
+		}
+	} else if (instrument == "whistle") {
+		var params = {
+			tablature: [{
+				instrument: 'violin',
+				label: '',
+				tuning: ['D'],
+				highestNote: "c'"
+			}],
+			responsive: 'resize',
+			oneSvgPerLine: 'true',
+			format: {
+				titlefont: "Times-Roman 18",
+				subtitlefont: "Verdana 12",
+				infofont: "Verdana 12",
+				partsfont: "Verdana 12",
+				tempofont: "Verdana 12",
+				textfont: "Verdana 12",
+				composerfont: "Verdana 12",
+				annotationfont: "Verdana 12",
+				partsfont: "Verdana 12",
+				gchordfont: "Verdana 12",
+				vocalfont: "Verdana 12",
+				wordsfont: "Verdana 12"
+			}
+		}
+	}
 
-  var visualObj = ABCJS.renderAbc(renderDivs, tune, params)[0];
-  
-  document.getElementById("offscreenrender").innerHTML = ""; // must be, otherwise it somehow generates the abc twice...
+	// Avoid jump scroll on render
+	var scrollTop = window.pageYOffset;
 
-  for (var tuneIndex=0;tuneIndex<nTunes;++tuneIndex){
+	// Create the render div ID array
+	var renderDivs = [];
 
-    var renderDivID = "notation"+tuneIndex;
+	for (var i = 0; i < nTunes; ++i) {
+		renderDivs.push("notation" + i);
+	}
 
-    // Bei Whistle rendert er zunächst erst eine Linie mit Mandolinentabs, also Zahlen.
-    // Diese werden hier anschließend ersetzt durch Buchstaben. 
-    // Die Elemente, wo die drin sind heißen tspan - die kriegen zusätzlich die Klasse "whistle", die wir über CSS vordefinieren.
-    if (instrument == "whistle") {
+	var visualObj = ABCJS.renderAbc(renderDivs, tune, params)[0];
 
-      // Im Style-Sheet innerhalb des SVGs muss der Tin Whistle Font als base64 String definiert werden, damit er bei der Erstellung des PDFs auch übernommen wird. 
+	document.getElementById("offscreenrender").innerHTML = ""; // must be, otherwise it somehow generates the abc twice...
 
-      var Svgs = document.querySelectorAll('div[id="'+renderDivID+'"] > div > svg > style');
-      for (x = 0; x < Svgs.length; x++) {
-        Svgs[x].innerHTML += "@font-face { font-family: 'TinWhistleFingering'; src: url(data:font/truetype;charset=utf-8;base64,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) format('truetype'); font-weight: normal; font-style: normal; }";
-      }
+	for (var tuneIndex = 0; tuneIndex < nTunes; ++tuneIndex) {
 
-      // hiermit findet er alle g's, die eine Tabzahl sind. 
-      var Tabstriche = document.querySelectorAll('div[id="'+renderDivID+'"] > div > svg > g > g > path[class="abcjs-top-line"]');
+		var renderDivID = "notation" + tuneIndex;
 
-      for (x = 0; x < Tabstriche.length; x++) {
+		// Bei Whistle rendert er zunächst erst eine Linie mit Mandolinentabs, also Zahlen.
+		// Diese werden hier anschließend ersetzt durch Buchstaben. 
+		// Die Elemente, wo die drin sind heißen tspan - die kriegen zusätzlich die Klasse "whistle", die wir über CSS vordefinieren.
+		if (instrument == "whistle") {
 
-        // Wenn es nur Note und Tab geht - nur beim Tab die Linien ausblenden.
-        if (x % 2 != 0) {
+			// Im Style-Sheet innerhalb des SVGs muss der Tin Whistle Font als base64 String definiert werden, damit er bei der Erstellung des PDFs auch übernommen wird. 
 
-          Tabstriche[x].setAttribute("class", "tabstrich");
+			var Svgs = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > style');
+			for (x = 0; x < Svgs.length; x++) {
+				Svgs[x].innerHTML += "@font-face { font-family: 'TinWhistleFingering'; src: url(data:font/truetype;charset=utf-8;base64,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) format('truetype'); font-weight: normal; font-style: normal; }";
+			}
 
-          var Geschwisterstriche = getNextSiblings(Tabstriche[x]);
-          
-          for (y = 0; y < Geschwisterstriche.length; y++) {
-            Geschwisterstriche[y].setAttribute("class", "tabstrich");
-          }
+			// hiermit findet er alle g's, die eine Tabzahl sind. 
+			var Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g > path[class="abcjs-top-line"]');
 
-        }
-      }
+			for (x = 0; x < Tabstriche.length; x++) {
 
-      var Tspans = document.querySelectorAll('div[id="'+renderDivID+'"] > div > svg > g > g[data-name="tabNumber"] > text > tspan');
+				// Wenn es nur Note und Tab geht - nur beim Tab die Linien ausblenden.
+				if (x % 2 != 0) {
 
-      // console.log(Tspans.length);
+					Tabstriche[x].setAttribute("class", "tabstrich");
 
-      // Sämtliche Tspan Tags, die zu Tags und nicht Noten gehören, haben jetzt Zahlen auf einem String (D). Diese können jetzt in Whistle Tags umgewandelt werden.
-      // Dazu werden die Buchstaben mit dem jeweiligen Unicode Buchstaben des TinWhistleFingering Fonts ersetzt.
-      for (x = 0; x < Tspans.length; x++) {
-        Tspans[x].setAttribute("class", "whistle");
-        if (Tspans[x].innerHTML == "0") {
-          Tspans[x].innerHTML = "d";
-        } else if (Tspans[x].innerHTML == "1") {
-          Tspans[x].innerHTML = "k";
-        } else if (Tspans[x].innerHTML == "2") {
-          Tspans[x].innerHTML = "e";
-        } else if (Tspans[x].innerHTML == "3") {
-          Tspans[x].innerHTML = "f";
-        } else if (Tspans[x].innerHTML == "4") {
-          Tspans[x].innerHTML = "l";
-        } else if (Tspans[x].innerHTML == "5") {
-          Tspans[x].innerHTML = "g";
-        } else if (Tspans[x].innerHTML == "6") {
-          Tspans[x].innerHTML = "m";
-        } else if (Tspans[x].innerHTML == "7") {
-          Tspans[x].innerHTML = "a";
-        } else if (Tspans[x].innerHTML == "8") {
-          Tspans[x].innerHTML = "i";
-        } else if (Tspans[x].innerHTML == "9") {
-          Tspans[x].innerHTML = "b";
-        } else if (Tspans[x].innerHTML == "10") {
-          Tspans[x].innerHTML = "c";
-        } else if (Tspans[x].innerHTML == "11") {
-          Tspans[x].innerHTML = "j";
-        } else if (Tspans[x].innerHTML == "12") {
-          Tspans[x].innerHTML = "D";
-        } else if (Tspans[x].innerHTML == "13") {
-          Tspans[x].innerHTML = "K";
-        } else if (Tspans[x].innerHTML == "14") {
-          Tspans[x].innerHTML = "E";
-        } else if (Tspans[x].innerHTML == "15") {
-          Tspans[x].innerHTML = "F";
-        } else if (Tspans[x].innerHTML == "16") {
-          Tspans[x].innerHTML = "L";
-        } else if (Tspans[x].innerHTML == "17") {
-          Tspans[x].innerHTML = "G";
-        } else if (Tspans[x].innerHTML == "18") {
-          Tspans[x].innerHTML = "M";
-        } else if (Tspans[x].innerHTML == "19") {
-          Tspans[x].innerHTML = "A";
-        } else if (Tspans[x].innerHTML == "20") {
-          Tspans[x].innerHTML = "I";
-        } else if (Tspans[x].innerHTML == "21") {
-          Tspans[x].innerHTML = "B";
-        } else if (Tspans[x].innerHTML == "22") {
-          Tspans[x].innerHTML = "C";
-        } else if (Tspans[x].innerHTML == "23") {
-          Tspans[x].innerHTML = "J";
-        }
-      }
-    }
+					var Geschwisterstriche = getNextSiblings(Tabstriche[x]);
 
-    if (instrument == "notenames") {
+					for (y = 0; y < Geschwisterstriche.length; y++) {
+						Geschwisterstriche[y].setAttribute("class", "tabstrich");
+					}
 
-      var useSharps = true;
+				}
+			}
 
-      // hiermit findet er alle g's, die eine Tabzahl sind. 
-      var Tabstriche = document.querySelectorAll('div[id="'+renderDivID+'"] > div > svg > g > g > path[class="abcjs-top-line"]');
+			var Tspans = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g[data-name="tabNumber"] > text > tspan');
 
-      for (x = 0; x < Tabstriche.length; x++) {
-        // Wenn es nur Note und Tab geht - nur beim Tab die Linien ausblenden.
-        if (x % 2 != 0) {
-          Tabstriche[x].setAttribute("class", "tabstrich");
+			// console.log(Tspans.length);
 
-          var Geschwisterstriche = getNextSiblings(Tabstriche[x]);
-          for (y = 0; y < Geschwisterstriche.length; y++) {
-            Geschwisterstriche[y].setAttribute("class", "tabstrich");
-          }
-        }
-      }
+			// Sämtliche Tspan Tags, die zu Tags und nicht Noten gehören, haben jetzt Zahlen auf einem String (D). Diese können jetzt in Whistle Tags umgewandelt werden.
+			// Dazu werden die Buchstaben mit dem jeweiligen Unicode Buchstaben des TinWhistleFingering Fonts ersetzt.
+			for (x = 0; x < Tspans.length; x++) {
+				Tspans[x].setAttribute("class", "whistle");
+				if (Tspans[x].innerHTML == "0") {
+					Tspans[x].innerHTML = "d";
+				} else if (Tspans[x].innerHTML == "1") {
+					Tspans[x].innerHTML = "k";
+				} else if (Tspans[x].innerHTML == "2") {
+					Tspans[x].innerHTML = "e";
+				} else if (Tspans[x].innerHTML == "3") {
+					Tspans[x].innerHTML = "f";
+				} else if (Tspans[x].innerHTML == "4") {
+					Tspans[x].innerHTML = "l";
+				} else if (Tspans[x].innerHTML == "5") {
+					Tspans[x].innerHTML = "g";
+				} else if (Tspans[x].innerHTML == "6") {
+					Tspans[x].innerHTML = "m";
+				} else if (Tspans[x].innerHTML == "7") {
+					Tspans[x].innerHTML = "a";
+				} else if (Tspans[x].innerHTML == "8") {
+					Tspans[x].innerHTML = "i";
+				} else if (Tspans[x].innerHTML == "9") {
+					Tspans[x].innerHTML = "b";
+				} else if (Tspans[x].innerHTML == "10") {
+					Tspans[x].innerHTML = "c";
+				} else if (Tspans[x].innerHTML == "11") {
+					Tspans[x].innerHTML = "j";
+				} else if (Tspans[x].innerHTML == "12") {
+					Tspans[x].innerHTML = "D";
+				} else if (Tspans[x].innerHTML == "13") {
+					Tspans[x].innerHTML = "K";
+				} else if (Tspans[x].innerHTML == "14") {
+					Tspans[x].innerHTML = "E";
+				} else if (Tspans[x].innerHTML == "15") {
+					Tspans[x].innerHTML = "F";
+				} else if (Tspans[x].innerHTML == "16") {
+					Tspans[x].innerHTML = "L";
+				} else if (Tspans[x].innerHTML == "17") {
+					Tspans[x].innerHTML = "G";
+				} else if (Tspans[x].innerHTML == "18") {
+					Tspans[x].innerHTML = "M";
+				} else if (Tspans[x].innerHTML == "19") {
+					Tspans[x].innerHTML = "A";
+				} else if (Tspans[x].innerHTML == "20") {
+					Tspans[x].innerHTML = "I";
+				} else if (Tspans[x].innerHTML == "21") {
+					Tspans[x].innerHTML = "B";
+				} else if (Tspans[x].innerHTML == "22") {
+					Tspans[x].innerHTML = "C";
+				} else if (Tspans[x].innerHTML == "23") {
+					Tspans[x].innerHTML = "J";
+				}
+			}
+		}
 
-      // Walk the SVGs
-      var Svgs = document.querySelectorAll('div[id="'+renderDivID+'"] > div > svg');
+		if (instrument == "notenames") {
 
-      if (Svgs && (Svgs.length > 1)){
+			var useSharps = true;
 
-        for (var i=1;i<Svgs.length;++i){
+			// hiermit findet er alle g's, die eine Tabzahl sind. 
+			var Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g > path[class="abcjs-top-line"]');
 
-          useSharps = true;
+			for (x = 0; x < Tabstriche.length; x++) {
+				// Wenn es nur Note und Tab geht - nur beim Tab die Linien ausblenden.
+				if (x % 2 != 0) {
+					Tabstriche[x].setAttribute("class", "tabstrich");
 
-          var theSVG = Svgs[i];
+					var Geschwisterstriche = getNextSiblings(Tabstriche[x]);
+					for (y = 0; y < Geschwisterstriche.length; y++) {
+						Geschwisterstriche[y].setAttribute("class", "tabstrich");
+					}
+				}
+			}
 
-          // Find the key signature group
-          var keySignatures = theSVG.querySelectorAll('g[data-name="staff-extra key-signature"]');
+			// Walk the SVGs
+			var Svgs = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg');
 
-          // Look for the flat glyph in the key signature group
-          if (keySignatures && (keySignatures.length>=1)){
+			if (Svgs && (Svgs.length > 1)) {
 
-            var inner = keySignatures[0].innerHTML;
-            
-            if (inner.indexOf("accidentals.flat") != -1){
+				for (var i = 1; i < Svgs.length; ++i) {
 
-              useSharps = false;
+					useSharps = true;
 
-            }
+					var theSVG = Svgs[i];
 
-          }
-          var Tspans = theSVG.querySelectorAll('g[data-name="tabNumber"] > text > tspan');
+					// Find the key signature group
+					var keySignatures = theSVG.querySelectorAll('g[data-name="staff-extra key-signature"]');
 
-          // console.log(Tspans.length);
+					// Look for the flat glyph in the key signature group
+					if (keySignatures && (keySignatures.length >= 1)) {
 
-          if (useSharps){
-            // Sämtliche Tspan Tags, die zu Tags und nicht Noten gehören, haben jetzt Zahlen auf einem String (D). Diese können jetzt in Whistle Tags umgewandelt werden.
-            // Dazu werden die Buchstaben mit dem jeweiligen Unicode Buchstaben des TinWhistleFingering Fonts ersetzt.
-            for (x = 0; x < Tspans.length; x++) {
-               if (Tspans[x].innerHTML == "0") {
-                Tspans[x].innerHTML = "G,";
-              } else if (Tspans[x].innerHTML == "1") {
-                Tspans[x].innerHTML = "G♯,";
-              } else if (Tspans[x].innerHTML == "2") {
-                Tspans[x].innerHTML = "A,";
-              } else if (Tspans[x].innerHTML == "3") {
-                Tspans[x].innerHTML = "A♯,";
-              } else if (Tspans[x].innerHTML == "4") {
-                Tspans[x].innerHTML = "B,";
-              } else if (Tspans[x].innerHTML == "5") {
-                Tspans[x].innerHTML = "C";
-              } else if (Tspans[x].innerHTML == "6") {
-                Tspans[x].innerHTML = "C♯";
-              } else if (Tspans[x].innerHTML == "7") {
-                Tspans[x].innerHTML = "D";
-              } else if (Tspans[x].innerHTML == "8") {
-                Tspans[x].innerHTML = "D♯";
-              } else if (Tspans[x].innerHTML == "9") {
-                Tspans[x].innerHTML = "E";
-              } else if (Tspans[x].innerHTML == "10") {
-                Tspans[x].innerHTML = "F";
-              } else if (Tspans[x].innerHTML == "11") {
-                Tspans[x].innerHTML = "F♯";
-              } else if (Tspans[x].innerHTML == "12") {
-                Tspans[x].innerHTML = "G";
-              } else if (Tspans[x].innerHTML == "13") {
-                Tspans[x].innerHTML = "G♯";
-              } else if (Tspans[x].innerHTML == "14") {
-                Tspans[x].innerHTML = "A";
-              } else if (Tspans[x].innerHTML == "15") {
-                Tspans[x].innerHTML = "A♯";
-              } else if (Tspans[x].innerHTML == "16") {
-                Tspans[x].innerHTML = "B";
-              } else if (Tspans[x].innerHTML == "17") {
-                Tspans[x].innerHTML = "c";
-              } else if (Tspans[x].innerHTML == "18") {
-                Tspans[x].innerHTML = "c♯";
-              } else if (Tspans[x].innerHTML == "19") {
-                Tspans[x].innerHTML = "d";
-              } else if (Tspans[x].innerHTML == "20") {
-                Tspans[x].innerHTML = "d♯";
-              } else if (Tspans[x].innerHTML == "21") {
-                Tspans[x].innerHTML = "e";
-              } else if (Tspans[x].innerHTML == "22") {
-                Tspans[x].innerHTML = "f";
-              } else if (Tspans[x].innerHTML == "23") {
-                Tspans[x].innerHTML = "f♯";
-              } else if (Tspans[x].innerHTML == "24") {
-                Tspans[x].innerHTML = "g";
-              } else if (Tspans[x].innerHTML == "25") {
-                Tspans[x].innerHTML = "g♯";
-              } else if (Tspans[x].innerHTML == "26") {
-                Tspans[x].innerHTML = "a";
-              } else if (Tspans[x].innerHTML == "27") {
-                Tspans[x].innerHTML = "a♯";
-              } else if (Tspans[x].innerHTML == "28") {
-                Tspans[x].innerHTML = "b";
-              } else if (Tspans[x].innerHTML == "29") {
-                Tspans[x].innerHTML = "c'";
-              } else if (Tspans[x].innerHTML == "30") {
-                Tspans[x].innerHTML = "c♯'";
-              } else if (Tspans[x].innerHTML == "31") {
-                Tspans[x].innerHTML = "d'";
-              } else if (Tspans[x].innerHTML == "32") {
-                Tspans[x].innerHTML = "d♯'";
-              } else if (Tspans[x].innerHTML == "33") {
-                Tspans[x].innerHTML = "e'";
-              } else if (Tspans[x].innerHTML == "34") {
-                Tspans[x].innerHTML = "f'";
-              } else if (Tspans[x].innerHTML == "35") {
-                Tspans[x].innerHTML = "f♯'";
-              } else if (Tspans[x].innerHTML == "36") {
-                Tspans[x].innerHTML = "g'";
-              } else if (Tspans[x].innerHTML == "37") {
-                Tspans[x].innerHTML = "g♯'";
-              } else if (Tspans[x].innerHTML == "38") {
-                Tspans[x].innerHTML = "a'";
-              } else if (Tspans[x].innerHTML == "39") {
-                Tspans[x].innerHTML = "a♯'";
-              } else if (Tspans[x].innerHTML == "40") {
-                Tspans[x].innerHTML = "b'";
-              } else {
-                Tspans[x].innerHTML = "?";
-              } 
-            }
-          }
-          else {
-            for (x = 0; x < Tspans.length; x++) {
-               if (Tspans[x].innerHTML == "0") {
-                Tspans[x].innerHTML = "G,";
-              } else if (Tspans[x].innerHTML == "1") {
-                Tspans[x].innerHTML = "A♭,";
-              } else if (Tspans[x].innerHTML == "2") {
-                Tspans[x].innerHTML = "A,";
-              } else if (Tspans[x].innerHTML == "3") {
-                Tspans[x].innerHTML = "B♭,";
-              } else if (Tspans[x].innerHTML == "4") {
-                Tspans[x].innerHTML = "B,";
-              } else if (Tspans[x].innerHTML == "5") {
-                Tspans[x].innerHTML = "C";
-              } else if (Tspans[x].innerHTML == "6") {
-                Tspans[x].innerHTML = "D♭";
-              } else if (Tspans[x].innerHTML == "7") {
-                Tspans[x].innerHTML = "D";
-              } else if (Tspans[x].innerHTML == "8") {
-                Tspans[x].innerHTML = "E♭";
-              } else if (Tspans[x].innerHTML == "9") {
-                Tspans[x].innerHTML = "E";
-              } else if (Tspans[x].innerHTML == "10") {
-                Tspans[x].innerHTML = "F";
-              } else if (Tspans[x].innerHTML == "11") {
-                Tspans[x].innerHTML = "G♭";
-              } else if (Tspans[x].innerHTML == "12") {
-                Tspans[x].innerHTML = "G";
-              } else if (Tspans[x].innerHTML == "13") {
-                Tspans[x].innerHTML = "A♭";
-              } else if (Tspans[x].innerHTML == "14") {
-                Tspans[x].innerHTML = "A";
-              } else if (Tspans[x].innerHTML == "15") {
-                Tspans[x].innerHTML = "B♭";
-              } else if (Tspans[x].innerHTML == "16") {
-                Tspans[x].innerHTML = "B";
-              } else if (Tspans[x].innerHTML == "17") {
-                Tspans[x].innerHTML = "c";
-              } else if (Tspans[x].innerHTML == "18") {
-                Tspans[x].innerHTML = "d♭";
-              } else if (Tspans[x].innerHTML == "19") {
-                Tspans[x].innerHTML = "d";
-              } else if (Tspans[x].innerHTML == "20") {
-                Tspans[x].innerHTML = "e♭";
-              } else if (Tspans[x].innerHTML == "21") {
-                Tspans[x].innerHTML = "e";
-              } else if (Tspans[x].innerHTML == "22") {
-                Tspans[x].innerHTML = "f";
-              } else if (Tspans[x].innerHTML == "23") {
-                Tspans[x].innerHTML = "g♭";
-              } else if (Tspans[x].innerHTML == "24") {
-                Tspans[x].innerHTML = "g";
-              } else if (Tspans[x].innerHTML == "25") {
-                Tspans[x].innerHTML = "a♭";
-              } else if (Tspans[x].innerHTML == "26") {
-                Tspans[x].innerHTML = "a";
-              } else if (Tspans[x].innerHTML == "27") {
-                Tspans[x].innerHTML = "b♭";
-              } else if (Tspans[x].innerHTML == "28") {
-                Tspans[x].innerHTML = "b";
-              } else if (Tspans[x].innerHTML == "29") {
-                Tspans[x].innerHTML = "c'";
-              } else if (Tspans[x].innerHTML == "30") {
-                Tspans[x].innerHTML = "d♭'";
-              } else if (Tspans[x].innerHTML == "31") {
-                Tspans[x].innerHTML = "d'";
-              } else if (Tspans[x].innerHTML == "32") {
-                Tspans[x].innerHTML = "e♭'";
-              } else if (Tspans[x].innerHTML == "33") {
-                Tspans[x].innerHTML = "e'";
-              } else if (Tspans[x].innerHTML == "34") {
-                Tspans[x].innerHTML = "f'";
-              } else if (Tspans[x].innerHTML == "35") {
-                Tspans[x].innerHTML = "g♭'";
-              } else if (Tspans[x].innerHTML == "36") {
-                Tspans[x].innerHTML = "g'";
-              } else if (Tspans[x].innerHTML == "37") {
-                Tspans[x].innerHTML = "a♭'";
-              } else if (Tspans[x].innerHTML == "38") {
-                Tspans[x].innerHTML = "a'";
-              } else if (Tspans[x].innerHTML == "39") {
-                Tspans[x].innerHTML = "b♭'";
-              } else if (Tspans[x].innerHTML == "40") {
-                Tspans[x].innerHTML = "b'";
-              } else {
-                Tspans[x].innerHTML = "?";
-              } 
-            }
-          }
-        }
-      }
-    }
+						var inner = keySignatures[0].innerHTML;
 
-    //
-    // Only copy the SVGs if rendering for PDF
-    //
-    if (gCopySVGs){
+						if (inner.indexOf("accidentals.flat") != -1) {
 
-      //console.log("copying SVGs");
+							useSharps = false;
 
-      Svgs = document.querySelectorAll('div[id="'+renderDivID+'"] > div > svg');
+						}
 
-      for (x = 0; x < Svgs.length; x++) {
-        document.getElementById("offscreenrender").innerHTML = document.getElementById("offscreenrender").innerHTML + "<div id=\"block_"+tuneIndex+"_"+ x + "\" class=\"block\">" + Svgs[x].outerHTML + "</div>";
-      }
-  }
+					}
+					var Tspans = theSVG.querySelectorAll('g[data-name="tabNumber"] > text > tspan');
 
-  }
+					// console.log(Tspans.length);
 
-  // Reset the scroll position after render
-  window.scrollTo(0,scrollTop);
+					if (useSharps) {
+						// Sämtliche Tspan Tags, die zu Tags und nicht Noten gehören, haben jetzt Zahlen auf einem String (D). Diese können jetzt in Whistle Tags umgewandelt werden.
+						// Dazu werden die Buchstaben mit dem jeweiligen Unicode Buchstaben des TinWhistleFingering Fonts ersetzt.
+						for (x = 0; x < Tspans.length; x++) {
+							if (Tspans[x].innerHTML == "0") {
+								Tspans[x].innerHTML = "G,";
+							} else if (Tspans[x].innerHTML == "1") {
+								Tspans[x].innerHTML = "G♯,";
+							} else if (Tspans[x].innerHTML == "2") {
+								Tspans[x].innerHTML = "A,";
+							} else if (Tspans[x].innerHTML == "3") {
+								Tspans[x].innerHTML = "A♯,";
+							} else if (Tspans[x].innerHTML == "4") {
+								Tspans[x].innerHTML = "B,";
+							} else if (Tspans[x].innerHTML == "5") {
+								Tspans[x].innerHTML = "C";
+							} else if (Tspans[x].innerHTML == "6") {
+								Tspans[x].innerHTML = "C♯";
+							} else if (Tspans[x].innerHTML == "7") {
+								Tspans[x].innerHTML = "D";
+							} else if (Tspans[x].innerHTML == "8") {
+								Tspans[x].innerHTML = "D♯";
+							} else if (Tspans[x].innerHTML == "9") {
+								Tspans[x].innerHTML = "E";
+							} else if (Tspans[x].innerHTML == "10") {
+								Tspans[x].innerHTML = "F";
+							} else if (Tspans[x].innerHTML == "11") {
+								Tspans[x].innerHTML = "F♯";
+							} else if (Tspans[x].innerHTML == "12") {
+								Tspans[x].innerHTML = "G";
+							} else if (Tspans[x].innerHTML == "13") {
+								Tspans[x].innerHTML = "G♯";
+							} else if (Tspans[x].innerHTML == "14") {
+								Tspans[x].innerHTML = "A";
+							} else if (Tspans[x].innerHTML == "15") {
+								Tspans[x].innerHTML = "A♯";
+							} else if (Tspans[x].innerHTML == "16") {
+								Tspans[x].innerHTML = "B";
+							} else if (Tspans[x].innerHTML == "17") {
+								Tspans[x].innerHTML = "c";
+							} else if (Tspans[x].innerHTML == "18") {
+								Tspans[x].innerHTML = "c♯";
+							} else if (Tspans[x].innerHTML == "19") {
+								Tspans[x].innerHTML = "d";
+							} else if (Tspans[x].innerHTML == "20") {
+								Tspans[x].innerHTML = "d♯";
+							} else if (Tspans[x].innerHTML == "21") {
+								Tspans[x].innerHTML = "e";
+							} else if (Tspans[x].innerHTML == "22") {
+								Tspans[x].innerHTML = "f";
+							} else if (Tspans[x].innerHTML == "23") {
+								Tspans[x].innerHTML = "f♯";
+							} else if (Tspans[x].innerHTML == "24") {
+								Tspans[x].innerHTML = "g";
+							} else if (Tspans[x].innerHTML == "25") {
+								Tspans[x].innerHTML = "g♯";
+							} else if (Tspans[x].innerHTML == "26") {
+								Tspans[x].innerHTML = "a";
+							} else if (Tspans[x].innerHTML == "27") {
+								Tspans[x].innerHTML = "a♯";
+							} else if (Tspans[x].innerHTML == "28") {
+								Tspans[x].innerHTML = "b";
+							} else if (Tspans[x].innerHTML == "29") {
+								Tspans[x].innerHTML = "c'";
+							} else if (Tspans[x].innerHTML == "30") {
+								Tspans[x].innerHTML = "c♯'";
+							} else if (Tspans[x].innerHTML == "31") {
+								Tspans[x].innerHTML = "d'";
+							} else if (Tspans[x].innerHTML == "32") {
+								Tspans[x].innerHTML = "d♯'";
+							} else if (Tspans[x].innerHTML == "33") {
+								Tspans[x].innerHTML = "e'";
+							} else if (Tspans[x].innerHTML == "34") {
+								Tspans[x].innerHTML = "f'";
+							} else if (Tspans[x].innerHTML == "35") {
+								Tspans[x].innerHTML = "f♯'";
+							} else if (Tspans[x].innerHTML == "36") {
+								Tspans[x].innerHTML = "g'";
+							} else if (Tspans[x].innerHTML == "37") {
+								Tspans[x].innerHTML = "g♯'";
+							} else if (Tspans[x].innerHTML == "38") {
+								Tspans[x].innerHTML = "a'";
+							} else if (Tspans[x].innerHTML == "39") {
+								Tspans[x].innerHTML = "a♯'";
+							} else if (Tspans[x].innerHTML == "40") {
+								Tspans[x].innerHTML = "b'";
+							} else {
+								Tspans[x].innerHTML = "?";
+							}
+						}
+					} else {
+						for (x = 0; x < Tspans.length; x++) {
+							if (Tspans[x].innerHTML == "0") {
+								Tspans[x].innerHTML = "G,";
+							} else if (Tspans[x].innerHTML == "1") {
+								Tspans[x].innerHTML = "A♭,";
+							} else if (Tspans[x].innerHTML == "2") {
+								Tspans[x].innerHTML = "A,";
+							} else if (Tspans[x].innerHTML == "3") {
+								Tspans[x].innerHTML = "B♭,";
+							} else if (Tspans[x].innerHTML == "4") {
+								Tspans[x].innerHTML = "B,";
+							} else if (Tspans[x].innerHTML == "5") {
+								Tspans[x].innerHTML = "C";
+							} else if (Tspans[x].innerHTML == "6") {
+								Tspans[x].innerHTML = "D♭";
+							} else if (Tspans[x].innerHTML == "7") {
+								Tspans[x].innerHTML = "D";
+							} else if (Tspans[x].innerHTML == "8") {
+								Tspans[x].innerHTML = "E♭";
+							} else if (Tspans[x].innerHTML == "9") {
+								Tspans[x].innerHTML = "E";
+							} else if (Tspans[x].innerHTML == "10") {
+								Tspans[x].innerHTML = "F";
+							} else if (Tspans[x].innerHTML == "11") {
+								Tspans[x].innerHTML = "G♭";
+							} else if (Tspans[x].innerHTML == "12") {
+								Tspans[x].innerHTML = "G";
+							} else if (Tspans[x].innerHTML == "13") {
+								Tspans[x].innerHTML = "A♭";
+							} else if (Tspans[x].innerHTML == "14") {
+								Tspans[x].innerHTML = "A";
+							} else if (Tspans[x].innerHTML == "15") {
+								Tspans[x].innerHTML = "B♭";
+							} else if (Tspans[x].innerHTML == "16") {
+								Tspans[x].innerHTML = "B";
+							} else if (Tspans[x].innerHTML == "17") {
+								Tspans[x].innerHTML = "c";
+							} else if (Tspans[x].innerHTML == "18") {
+								Tspans[x].innerHTML = "d♭";
+							} else if (Tspans[x].innerHTML == "19") {
+								Tspans[x].innerHTML = "d";
+							} else if (Tspans[x].innerHTML == "20") {
+								Tspans[x].innerHTML = "e♭";
+							} else if (Tspans[x].innerHTML == "21") {
+								Tspans[x].innerHTML = "e";
+							} else if (Tspans[x].innerHTML == "22") {
+								Tspans[x].innerHTML = "f";
+							} else if (Tspans[x].innerHTML == "23") {
+								Tspans[x].innerHTML = "g♭";
+							} else if (Tspans[x].innerHTML == "24") {
+								Tspans[x].innerHTML = "g";
+							} else if (Tspans[x].innerHTML == "25") {
+								Tspans[x].innerHTML = "a♭";
+							} else if (Tspans[x].innerHTML == "26") {
+								Tspans[x].innerHTML = "a";
+							} else if (Tspans[x].innerHTML == "27") {
+								Tspans[x].innerHTML = "b♭";
+							} else if (Tspans[x].innerHTML == "28") {
+								Tspans[x].innerHTML = "b";
+							} else if (Tspans[x].innerHTML == "29") {
+								Tspans[x].innerHTML = "c'";
+							} else if (Tspans[x].innerHTML == "30") {
+								Tspans[x].innerHTML = "d♭'";
+							} else if (Tspans[x].innerHTML == "31") {
+								Tspans[x].innerHTML = "d'";
+							} else if (Tspans[x].innerHTML == "32") {
+								Tspans[x].innerHTML = "e♭'";
+							} else if (Tspans[x].innerHTML == "33") {
+								Tspans[x].innerHTML = "e'";
+							} else if (Tspans[x].innerHTML == "34") {
+								Tspans[x].innerHTML = "f'";
+							} else if (Tspans[x].innerHTML == "35") {
+								Tspans[x].innerHTML = "g♭'";
+							} else if (Tspans[x].innerHTML == "36") {
+								Tspans[x].innerHTML = "g'";
+							} else if (Tspans[x].innerHTML == "37") {
+								Tspans[x].innerHTML = "a♭'";
+							} else if (Tspans[x].innerHTML == "38") {
+								Tspans[x].innerHTML = "a'";
+							} else if (Tspans[x].innerHTML == "39") {
+								Tspans[x].innerHTML = "b♭'";
+							} else if (Tspans[x].innerHTML == "40") {
+								Tspans[x].innerHTML = "b'";
+							} else {
+								Tspans[x].innerHTML = "?";
+							}
+						}
+					}
+				}
+			}
+		}
+
+		//
+		// Only copy the SVGs if rendering for PDF
+		//
+		if (gCopySVGs) {
+
+			//console.log("copying SVGs");
+
+			Svgs = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg');
+
+			for (x = 0; x < Svgs.length; x++) {
+				document.getElementById("offscreenrender").innerHTML = document.getElementById("offscreenrender").innerHTML + "<div id=\"block_" + tuneIndex + "_" + x + "\" class=\"block\">" + Svgs[x].outerHTML + "</div>";
+			}
+		}
+
+	}
+
+	// Reset the scroll position after render
+	window.scrollTo(0, scrollTop);
 
 }
 
 
 function Welchetabs(radiowert) {
-  const mitradiowert = "input[name=\"" + radiowert + "\"]";
-  const radioButtons = document.querySelectorAll(mitradiowert);
 
-  let radiovalue;
-  for (const radioButton of radioButtons) {
-    if (radioButton.checked) {
-      radiovalue = radioButton.value;
-      break;
-    }
-  }
-  // console.log(radiovalue);
-  return radiovalue;
+	const mitradiowert = "input[name=\"" + radiowert + "\"]";
+	const radioButtons = document.querySelectorAll(mitradiowert);
+
+	let radiovalue;
+	for (const radioButton of radioButtons) {
+		if (radioButton.checked) {
+			radiovalue = radioButton.value;
+			break;
+		}
+	}
+	// console.log(radiovalue);
+	return radiovalue;
 }
 
 
 function Render() {
-  
-  // wenn Textfeld leer, keine Noten anzeigen.
-  
-  if (theABC.value != "") {
 
-    //console.log("Render()");
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF){
+		return;
+	}	
 
-    document.getElementById("notenrechts").style.display = "block";
-    document.getElementById("notation-holder").style.display = "block";
-    
-    radiovalue = Welchetabs("notenodertab");
+	if (theABC.value != "") {
 
-    // Generate the rendering divs
-    var nTunes = CountTunes();
-    GenerateRenderingDivs(nTunes);
+		//console.log("Render()");
 
-    var theNotes = theABC.value;
+		document.getElementById("notenrechts").style.display = "block";
+		document.getElementById("notation-holder").style.display = "block";
 
-    var searchRegExp = "";
+		radiovalue = Welchetabs("notenodertab");
 
-    if (gStripAnnotations){
+		// Generate the rendering divs
+		var nTunes = CountTunes();
+		GenerateRenderingDivs(nTunes);
 
-      // Strip out tempo markings
-      searchRegExp = /^Q:.*$/gm
+		var theNotes = theABC.value;
 
-      // Strip out tempo markings
-      theNotes = theNotes.replace(searchRegExp, "% comment");
+		var searchRegExp = "";
 
-      // Strip out Z: annotation
-      searchRegExp = /^Z:.*$/gm
+		if (gStripAnnotations) {
 
-      // Strip out Z: annotation
-      theNotes = theNotes.replace(searchRegExp, "% comment");
+			// Strip out tempo markings
+			searchRegExp = /^Q:.*$/gm
 
-      // Strip out R: annotation
-      searchRegExp = /^R:.*$/gm
+			// Strip out tempo markings
+			theNotes = theNotes.replace(searchRegExp, "% comment");
 
-      // Strip out R: annotation
-      theNotes = theNotes.replace(searchRegExp, "% comment");
+			// Strip out Z: annotation
+			searchRegExp = /^Z:.*$/gm
 
-      // Strip out S: annotation
-      searchRegExp = /^S:.*$/gm
+			// Strip out Z: annotation
+			theNotes = theNotes.replace(searchRegExp, "% comment");
 
-      // Strip out S: annotation
-      theNotes = theNotes.replace(searchRegExp, "% comment");
+			// Strip out R: annotation
+			searchRegExp = /^R:.*$/gm
 
-      // Strip out N: annotation
-      searchRegExp = /^N:.*$/gm
+			// Strip out R: annotation
+			theNotes = theNotes.replace(searchRegExp, "% comment");
 
-      // Strip out N: annotation
-      theNotes = theNotes.replace(searchRegExp, "% comment");
+			// Strip out S: annotation
+			searchRegExp = /^S:.*$/gm
 
-      // Strip out D: annotation
-      searchRegExp = /^D:.*$/gm
+			// Strip out S: annotation
+			theNotes = theNotes.replace(searchRegExp, "% comment");
 
-      // Strip out D: annotation
-      theNotes = theNotes.replace(searchRegExp, "% comment");
+			// Strip out N: annotation
+			searchRegExp = /^N:.*$/gm
 
-      // Strip out H: annotation
-      searchRegExp = /^H:.*$/gm
+			// Strip out N: annotation
+			theNotes = theNotes.replace(searchRegExp, "% comment");
 
-      // Strip out H: annotation
-      theNotes = theNotes.replace(searchRegExp, "% comment");
+			// Strip out D: annotation
+			searchRegExp = /^D:.*$/gm
 
-      // Strip out B: annotation
-      searchRegExp = /^B:.*$/gm
+			// Strip out D: annotation
+			theNotes = theNotes.replace(searchRegExp, "% comment");
 
-      // Strip out B: annotation
-      theNotes = theNotes.replace(searchRegExp, "% comment");
+			// Strip out H: annotation
+			searchRegExp = /^H:.*$/gm
 
-    }
+			// Strip out H: annotation
+			theNotes = theNotes.replace(searchRegExp, "% comment");
 
-    if (gStripTextAnnotations){
+			// Strip out B: annotation
+			searchRegExp = /^B:.*$/gm
 
-      // Strip out text markings
-      searchRegExp = /%%text.*$/gm
+			// Strip out B: annotation
+			theNotes = theNotes.replace(searchRegExp, "% comment");
 
-      // Strip out text markings
-      theNotes = theNotes.replace(searchRegExp, "% comment");
+		}
 
-      // Strip out %%center annotation
-      searchRegExp = /%%center.*$/gm
+		if (gStripTextAnnotations) {
 
-      // Strip out %%center annotation
-      theNotes = theNotes.replace(searchRegExp, "% comment");
+			// Strip out text markings
+			searchRegExp = /%%text.*$/gm
 
-    }
+			// Strip out text markings
+			theNotes = theNotes.replace(searchRegExp, "% comment");
 
-    if (gStripChords){
+			// Strip out %%center annotation
+			searchRegExp = /%%center.*$/gm
 
-      // Strip out chord markings
-      searchRegExp = /"[^"]*"/gm
+			// Strip out %%center annotation
+			theNotes = theNotes.replace(searchRegExp, "% comment");
 
-      // Strip out chord markings
-      theNotes = theNotes.replace(searchRegExp, "");
-    }
+		}
 
-    // Replace standalone %%center directives with %%vskip 12
-    searchRegExp = /%%center$/gm;
+		if (gStripChords) {
 
-    theNotes = theNotes.replace(searchRegExp, "%%vskip 12\n%%center");
+			// Strip out chord markings
+			searchRegExp = /"[^"]*"/gm
 
-    // Add some title and staffspace
-    //theNotes = theNotes + "\n%%musicspace 20\n";
-    // theNotes = theNotes + "%%staffsep "+gStaffSpacing+"\n";
+			// Strip out chord markings
+			theNotes = theNotes.replace(searchRegExp, "");
+		}
 
-    // Inject %%staffsep 
-    searchRegExp = /^X:.*$/gm
+		// Replace standalone %%center directives with %%vskip 12
+		searchRegExp = /%%center$/gm;
 
-    theNotes = theNotes.replace(searchRegExp,"X:1\n%%musicspace 20\n%%staffsep "+gStaffSpacing);
- 
-    if (radiovalue == "noten") {
+		theNotes = theNotes.replace(searchRegExp, "%%vskip 12\n%%center");
 
-      Notenmachen(theNotes);
-    
-    }
-    else // wenn was anderes als "noten" angegeben - Tabs machen. Den Wert aus dem Radiobutton übergeben - muss gleich sein wie instrument in Notenmachen.
-    {
+		// Add some title and staffspace
+		//theNotes = theNotes + "\n%%musicspace 20\n";
+		// theNotes = theNotes + "%%staffsep "+gStaffSpacing+"\n";
 
-      Notenmachen(theNotes, radiovalue);
+		// Inject %%staffsep 
+		searchRegExp = /^X:.*$/gm
 
-    }
-  } 
-  else {
+		theNotes = theNotes.replace(searchRegExp, "X:1\n%%musicspace 20\n%%staffsep " + gStaffSpacing);
 
-    document.getElementById("notenrechts").style.display = "none";
-    document.getElementById("notation-holder").style.display = "none";
+		if (radiovalue == "noten") {
 
-  }
+			Notenmachen(theNotes);
+
+		} else // wenn was anderes als "noten" angegeben - Tabs machen. Den Wert aus dem Radiobutton übergeben - muss gleich sein wie instrument in Notenmachen.
+		{
+
+			Notenmachen(theNotes, radiovalue);
+
+		}
+	} else {
+
+		document.getElementById("notenrechts").style.display = "none";
+		document.getElementById("notation-holder").style.display = "none";
+
+	}
 }
 
 
@@ -1269,154 +1301,152 @@ function Render() {
 //
 function ensureABCFile(filename) {
 
-    var fileExtension = "";
+	var fileExtension = "";
 
-    if (filename.lastIndexOf(".") > 0) {
-        fileExtension = filename.substring(filename.lastIndexOf(".") + 1, filename.length);
-    }
-    
-    if ((fileExtension.toLowerCase() == "abc") || (fileExtension.toLowerCase() == "txt"))  {
-        return true;
-    }
-    else {
-        alert("You must select a .ABC file for upload");
-        return false;
-    }
+	if (filename.lastIndexOf(".") > 0) {
+		fileExtension = filename.substring(filename.lastIndexOf(".") + 1, filename.length);
+	}
+
+	if ((fileExtension.toLowerCase() == "abc") || (fileExtension.toLowerCase() == "txt")) {
+		return true;
+	} else {
+		alert("You must select a .ABC file for upload");
+		return false;
+	}
 }
 
 //
 // Hide the advanced controls
 //
-function HideAdvancedControls(){
+function HideAdvancedControls() {
 
-  document.getElementById('advanced-controls').style.display="none";
+	document.getElementById('advanced-controls').style.display = "none";
 
 }
 
 //
 // Show the advanced controls
 //
-function ShowAdvancedControls(){
+function ShowAdvancedControls() {
 
-  document.getElementById('advanced-controls').style.display="flex";
+	document.getElementById('advanced-controls').style.display = "flex";
 
 }
 
 //
 // Toggle the advanced controls
 //
-function ToggleAdvancedControls(){
+function ToggleAdvancedControls() {
 
-  gShowAdvancedControls = !gShowAdvancedControls;
+	gShowAdvancedControls = !gShowAdvancedControls;
 
-  if (gShowAdvancedControls){
+	if (gShowAdvancedControls) {
 
-    ShowAdvancedControls();
+		ShowAdvancedControls();
 
-  }
-  else{
+	} else {
 
-    HideAdvancedControls();
+		HideAdvancedControls();
 
-  }
+	}
 }
 
 //
 // Handle the spacing control
 //
-function SetStaffSpacing(){
+function SetStaffSpacing() {
 
-  gStaffSpacing = document.getElementById('staff-spacing').value;
+	gStaffSpacing = document.getElementById('staff-spacing').value;
 
-  Render();
+	Render();
 }
 
 //
 // Set the defaults
 //
-function RestoreDefaults(){
+function RestoreDefaults() {
 
-  HideAdvancedControls();
+	HideAdvancedControls();
 
-  // Reset the annotation strip flags
-  gStripAnnotations = false;
-  gStripTextAnnotations = false;
-  gStripChords = false;
-  gShowAdvancedControls = false;
-  gCopySVGs = false;
+	// Reset the annotation strip flags
+	gStripAnnotations = false;
+	gStripTextAnnotations = false;
+	gStripChords = false;
+	gShowAdvancedControls = false;
+	gCopySVGs = false;
 
-  document.getElementById('staff-spacing').value = STAFFSPACEMIN;
+	document.getElementById('staff-spacing').value = STAFFSPACEMIN;
 
-  gStaffSpacing = STAFFSPACEMIN;
+	gStaffSpacing = STAFFSPACEMIN;
 
-  // Reset file selectors
-  let fileElement = document.getElementById('selectabcfile');
+	// Reset file selectors
+	let fileElement = document.getElementById('selectabcfile');
 
-  fileElement.value = "";
+	fileElement.value = "";
 
 }
 
 //
 // Delayed render for paste
 //
-function DelayedRender(){
+function DelayedRender() {
 
-  setTimeout(function(){
+	setTimeout(function() {
 
-    RestoreDefaults();
+		RestoreDefaults();
 
-    Render();
+		Render();
 
-  },250)
+	}, 250)
 
 }
 
 //
 // Toggle annotations
 //
-function ToggleAnnotations(){
+function ToggleAnnotations() {
 
-  gStripAnnotations = !gStripAnnotations;
+	gStripAnnotations = !gStripAnnotations;
 
-  Render();
+	Render();
 
 }
 
 //
 // Toggle text
 //
-function ToggleTextAnnotations(){
+function ToggleTextAnnotations() {
 
-  gStripTextAnnotations = !gStripTextAnnotations;
+	gStripTextAnnotations = !gStripTextAnnotations;
 
-  Render();
+	Render();
 
 }
 
 //
 // Toggle chords
 //
-function ToggleChords(){
+function ToggleChords() {
 
-  gStripChords = !gStripChords;
+	gStripChords = !gStripChords;
 
-  Render();
+	Render();
 
 }
 
 //
 // Count the tunes in the text area
 //
-function CountTunes(){
+function CountTunes() {
 
-  // Count the tunes in the text area
-  var theNotes = theABC.value;
+	// Count the tunes in the text area
+	var theNotes = theABC.value;
 
-  var theTunes = theNotes.split(/^X:.*$/gm);
+	var theTunes = theNotes.split(/^X:.*$/gm);
 
-  var nTunes = theTunes.length - 1;
+	var nTunes = theTunes.length - 1;
 
-  return nTunes;
+	return nTunes;
 
 }
 
@@ -1424,7 +1454,7 @@ function CountTunes(){
 // Re-render on window size change
 window.addEventListener('resize', function() {
 
-  Render();
+	Render();
 
 });
 
@@ -1432,21 +1462,21 @@ window.addEventListener('resize', function() {
 // 
 // Generate the rendering divs
 //
-function GenerateRenderingDivs(nTunes){
+function GenerateRenderingDivs(nTunes) {
 
-  // Clear the div
-  var notationHolder = document.getElementById("notation-holder");
-  notationHolder.innerHTML = "";
+	// Clear the div
+	var notationHolder = document.getElementById("notation-holder");
+	notationHolder.innerHTML = "";
 
-  for (var i=0;i<nTunes;++i){
+	for (var i = 0; i < nTunes; ++i) {
 
-    var el = document.createElement('div');
-    
-    el.id = "notation"+i;
-    
-    notationHolder.appendChild(el);
+		var el = document.createElement('div');
 
-  }
+		el.id = "notation" + i;
+
+		notationHolder.appendChild(el);
+
+	}
 
 }
 
@@ -1454,135 +1484,135 @@ function GenerateRenderingDivs(nTunes){
 // Fade out and hide an element
 //
 function fadeOutAndHide(fadeTarget) {
-  var fadeEffect = setInterval(function () {
-    if (!fadeTarget.style.opacity) {
-        fadeTarget.style.opacity = 1;
-    }
-    if (fadeTarget.style.opacity > 0) {
-        fadeTarget.style.opacity -= 0.1;
-    } else {
-        clearInterval(fadeEffect);
-        fadeTarget.style.display = "none";
-    }
-  },100);
+	var fadeEffect = setInterval(function() {
+		if (!fadeTarget.style.opacity) {
+			fadeTarget.style.opacity = 1;
+		}
+		if (fadeTarget.style.opacity > 0) {
+			fadeTarget.style.opacity -= 0.1;
+		} else {
+			clearInterval(fadeEffect);
+			fadeTarget.style.display = "none";
+		}
+	}, 100);
 }
 
 //
 // Are we on iOS?
 //
 function isIOS() {
-  if (/iPad|iPhone|iPod/.test(navigator.platform)) {
-    return true;
-  } else {
-    return navigator.maxTouchPoints &&
-      navigator.maxTouchPoints > 2 &&
-      /MacIntel/.test(navigator.platform);
-  }
+	if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+		return true;
+	} else {
+		return navigator.maxTouchPoints &&
+			navigator.maxTouchPoints > 2 &&
+			/MacIntel/.test(navigator.platform);
+	}
 }
 
-function doStartup(){
+function doStartup() {
 
-  // Init global state
-  gShowAdvancedControls = false;
-  gStripAnnotations = false;
-  gStripTextAnnotations = false;
-  gStripChords = false;
-  gCopySVGs = false;
+	// Init global state
+	gShowAdvancedControls = false;
+	gStripAnnotations = false;
+	gStripTextAnnotations = false;
+	gStripChords = false;
+	gCopySVGs = false;
+	gRenderingPDF = false;
 
-  // Warn Safari users
-  const uA = navigator.userAgent;
-  const vendor = navigator.vendor;
+	// Warn Safari users
+	const uA = navigator.userAgent;
+	const vendor = navigator.vendor;
 
-  gIsSafari = false;
-  if (/Safari/i.test(uA) && /Apple Computer/.test(vendor)) {
-    gIsSafari = true; 
-  }
+	gIsSafari = false;
+	if (/Safari/i.test(uA) && /Apple Computer/.test(vendor)) {
+		gIsSafari = true;
+	}
 
-  gIsIOS = false;
-  if (isIOS()){
-    gIsIOS = true;
-  }
+	gIsIOS = false;
+	if (isIOS()) {
+		gIsIOS = true;
+	}
 
-  // Fade out and hide the safari warning after 5 seconds
-  if (gIsSafari){
+	// Fade out and hide the safari warning after 5 seconds
+	if (gIsSafari) {
 
-    var safariuser = document.getElementById("safariuser");
-    safariuser.style.display = "block";
-    
-    setTimeout(
+		var safariuser = document.getElementById("safariuser");
+		safariuser.style.display = "block";
 
-      function(){
-        
-        fadeOutAndHide(safariuser);
+		setTimeout(
 
-      },4000);
-  }
+			function() {
 
-  if (gIsIOS){
+				fadeOutAndHide(safariuser);
 
-    document.getElementById("selectabcfile").removeAttribute("accept");
-  
-  }
+			}, 4000);
+	}
 
-  document.getElementById("selectabcfile").onchange = () => {
+	if (gIsIOS) {
 
-    let fileElement = document.getElementById("selectabcfile");
+		document.getElementById("selectabcfile").removeAttribute("accept");
 
-    // check if user had selected a file
-    if (fileElement.files.length === 0) {
+	}
 
-      alert("Please select an ABC file");
-      
-      return;
+	document.getElementById("selectabcfile").onchange = () => {
 
-    }
+		let fileElement = document.getElementById("selectabcfile");
 
-    let file = fileElement.files[0];
-    
-    // Check the filename extension
-    if (ensureABCFile(file.name)){
+		// check if user had selected a file
+		if (fileElement.files.length === 0) {
 
-      var fileSelected = document.getElementById("abc-selected");
+			alert("Please select an ABC file");
 
-      fileSelected.innerText = file.name; 
+			return;
 
-      const reader = new FileReader();
+		}
 
-        reader.addEventListener('load', (event) => {
+		let file = fileElement.files[0];
 
-          theABC.value = event.target.result;
+		// Check the filename extension
+		if (ensureABCFile(file.name)) {
 
-          setTimeout(function(){
+			var fileSelected = document.getElementById("abc-selected");
 
-            // Reset the annotation strip flags
-            RestoreDefaults();
+			fileSelected.innerText = file.name;
 
-            Render();
+			const reader = new FileReader();
 
-          },100);
+			reader.addEventListener('load', (event) => {
 
-        });
+				theABC.value = event.target.result;
 
-        reader.readAsText(file);
-    }
-    
-  }
+				setTimeout(function() {
 
-  // Set the initial tab to notation
-  document.getElementById("b1").checked = true;
+					// Reset the annotation strip flags
+					RestoreDefaults();
 
-  // Set the initial size
-  document.getElementById("wb1").checked = true;
+					Render();
 
-  // Reset the paging control
-  document.getElementById("pdfformat").value = "true";
+				}, 100);
+
+			});
+
+			reader.readAsText(file);
+		}
+
+	}
+
+	// Set the initial tab to notation
+	document.getElementById("b1").checked = true;
+
+	// Set the initial size
+	document.getElementById("wb1").checked = true;
+
+	// Reset the paging control
+	document.getElementById("pdfformat").value = "true";
 
 
-  // Clear the text entry area
-  Clear();
+	// Clear the text entry area
+	Clear();
 
 }
 
 // Startup
 doStartup();
-
