@@ -1548,6 +1548,11 @@ function FillUrlBoxWithAbcInBase64() {
   format = Welchetabs("notenodertab");
   url = getUrlWithoutParams() + "?base64="+abcInBase64 + "&format="+format;
   urltextbox = document.getElementById("urltextbox");
+
+  if (url.length > 8100){
+  	url = "The resulting URL link would be too long to share. Please try sharing fewer tunes..."
+  }
+
   urltextbox.value = url;
   urltextbox.rows = url.length / 100 + 1;
 }
