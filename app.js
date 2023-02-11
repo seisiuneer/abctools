@@ -1776,9 +1776,13 @@ function doStartup() {
 	const vendor = navigator.vendor;
 
 	gIsSafari = false;
-	if (/Safari/i.test(uA) && /Apple Computer/.test(vendor)) {
-		gIsSafari = true;
-	}
+
+	// 
+	// Removing Safari banner warning
+	//
+	// if (/Safari/i.test(uA) && /Apple Computer/.test(vendor)) {
+	// 	gIsSafari = true;
+	// }
 
 	gIsIOS = false;
 	if (isIOS()) {
