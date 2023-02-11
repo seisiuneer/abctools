@@ -9,4 +9,4 @@
 <p><a href="https://github.com/parallax/jsPDF">jsPDF</a> is used to actually create the PDF.</p>
 <p><a href="https://github.com/OMerkel/tin_whistle/tree/master/res/font">Tin Whistle Fingering Font</a> by Paul Merke is used to generate the whistle tabs.</p> 
 <p>Without these free resources this project would not have been possible.</p>
-
+<p> Thank you to Philip McGarvey for the new URL sharing feature!</p>
