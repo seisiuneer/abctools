@@ -175,6 +175,11 @@ font-family:"Helvetica";
 width:190px;
 }
 
+#qrcode{
+position:absolute; 
+left:-3000px;
+}
+
 @media print {
   .hidden-print {
     display: none !important;
