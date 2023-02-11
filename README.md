@@ -1,4 +1,5 @@
 # abctools
+<p><strong>Developer Info:</strong></p>
 <p>This single tune ABC to notation converter was developed by <a href="http://michaeleskin.com" target="_blank">Michael Eskin</a>.</p>
 <p>The converter can generate standard notation as well as tab output for mandolin, note names, standard tuned guitar, DADGAD guitar, and tin whistle.</p>
 <hr>
