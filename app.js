@@ -1780,9 +1780,9 @@ function doStartup() {
 	// 
 	// Removing Safari banner warning
 	//
-	// if (/Safari/i.test(uA) && /Apple Computer/.test(vendor)) {
-	// 	gIsSafari = true;
-	// }
+	if (/Safari/i.test(uA) && /Apple Computer/.test(vendor)) {
+		gIsSafari = true;
+	}
 
 	gIsIOS = false;
 	if (isIOS()) {
@@ -1790,7 +1790,7 @@ function doStartup() {
 	}
 
 	// Fade out and hide the safari warning after 5 seconds
-	if (gIsSafari) {
+	if (gIsSafari && (!gIsIOS)) {
 
 		var safariuser = document.getElementById("safariuser");
 		safariuser.style.display = "block";
