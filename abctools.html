@@ -21,7 +21,7 @@
   <link rel="icon" href="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5-192x192.png" sizes="192x192" />
   <link rel="apple-touch-icon" href="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5-180x180.png" />
   
-  <link href="app.css?v=41" media="all" rel="stylesheet" type="text/css">
+  <link href="app.css?v=42" media="all" rel="stylesheet" type="text/css">
 
 </head>
 <body>
@@ -112,9 +112,10 @@
 
     <div id="urlarea" style="display:none">
       <br>
-      <p>URL to Share:</p>
+      <p>URL to Share:<input id="generateqrcode" class="transpose" onclick="GenerateQRCode()" type="button" style="margin-left:20px" value="Generate QR Code"></p>
       <textarea id="urltextbox" rows="4" cols="100" placeholder="URL for sharing will appear here">
       </textarea>
+      <div id="qrcode"></div>
     </div>
 
     <div id="pdf-controls">
@@ -132,9 +133,10 @@
 
 </body>
 
-<script type="text/javascript" src="abcjs-basic-min.js"></script><!-- um ABC in Noten svg umzuwandeln mit Tabulatur-, Transpositions und Audio-Abspielmöglichkeiten -->
-<script type="text/javascript" src="jspdf.min.js"></script><!-- um mit Javascript ein PDF zu generieren -->
-<script type="text/javascript" src="html2image.js"></script><!-- um die styles beizubehalten - z.B. versteckte Linien -->
-<script type="text/javascript" src="app.js?v=41"></script>
+<script type="text/javascript" src="abcjs-basic-min.js"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
+<script type="text/javascript" src="jspdf.min.js"></script><!-- to generate PDF using Javscript -->
+<script type="text/javascript" src="html2image.js"></script><!-- to convert HTML elements to bitmaps -->
+<script type="text/javascript" src="qrcode.min.js"></script><!-- to generate QR codes for the share links -->
+<script type="text/javascript" src="app.js?v=42"></script><!-- main application business logic -->
 
 </html>
