@@ -14,6 +14,8 @@ var gCopySVGs = false;
 
 var gRenderingPDF = false;
 
+var gTheQRCode = null;
+
 var theABC = document.getElementById("abc");
 
 function Notenames() {
@@ -1403,6 +1405,9 @@ function RestoreDefaults() {
 
 	fileElement.value = "";
 
+	// Clear the QR code
+	clearQRCode();
+
 }
 
 //
@@ -1530,40 +1535,162 @@ function isIOS() {
 }
 
 //
+// Get all the tune titles
+//
+function GetAllTuneTitles() {
+
+	theTitles = [];
+
+	// Mit For Schleife Titel für Dateinamen extrahieren und Leerzeichen ersetzen und Apostrophe entfernen.
+	verarbeiten = theABC.value;
+
+	neu = escape(verarbeiten);
+
+	Reihe = neu.split("%0D%0A");
+	Reihe = neu.split("%0A");
+
+	for (i = 0; i < Reihe.length; ++i) {
+		Reihe[i] = unescape(Reihe[i]); /* Macht die Steuerzeichen wieder weg */
+
+		Aktuellereihe = Reihe[i].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
+		if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
+			titel = Reihe[i].slice(2);
+
+			titel = titel.trim();
+
+			theTitles.push(titel);
+
+		}
+	}
+	
+	var nTitles = theTitles.length;
+
+	var allTitles = "";
+
+	if (nTitles > 0){
+
+		for (i=0;i<nTitles;++i){
+
+			allTitles += theTitles[i];
+
+			if (i!=nTitles-1){
+				allTitles += " - ";
+			}
+		}
+	}
+
+	return allTitles;
+}
+
+//
 // Share URL related code provided by Philip McGarvey
 //
 function getUrlWithoutParams() {
-  return window.location.protocol + "//" + window.location.host + window.location.pathname;
-}
 
-function encodeToUrlSafeBase64(text) {
-  const encodedValue = btoa(text);
-  return encodedValue.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  return window.location.protocol + "//" + window.location.host + window.location.pathname;
+
 }
 
 function FillUrlBoxWithAbcInBase64() {
+
   abcText = theABC.value;
-  //const abcInBase64 = encodeToUrlSafeBase64(abcText);
   const abcInBase64 = utf8tob64(abcText);
   format = Welchetabs("notenodertab");
   url = getUrlWithoutParams() + "?base64="+abcInBase64 + "&format="+format;
+  
   urltextbox = document.getElementById("urltextbox");
 
   if (url.length > 8100){
-  	url = "The resulting URL link would be too long to share. Please try sharing fewer tunes..."
+  	url = "The resulting URL link would be too long to share. Please try sharing fewer tunes...";
+  	document.getElementById("generateqrcode").style.display = "none";
   }
+  else{
+  	// If fits in a QR code, show the QR code button
+  	if (url.length < 1250){
+  		document.getElementById("generateqrcode").style.display = "inline"; 
+  	}
+  	else{
+  		document.getElementById("generateqrcode").style.display = "none"; 
+  	} 	
+  }
+  
+  // Hide the QR code
+  document.getElementById("qrcode").style.display = "none"; 
 
   urltextbox.value = url;
   urltextbox.rows = url.length / 100 + 1;
+
 }
 
 function CreateURLfromHTML() {
+
   FillUrlBoxWithAbcInBase64();
   urlarea = document.getElementById("urlarea");
   urlarea.style.display = "block";
   urltextbox = document.getElementById("urltextbox");
   urltextbox.focus();
   urltextbox.setSelectionRange(0, urltextbox.value.length);
+
+  // Clear the QR code
+  clearQRCode();
+
+}
+
+//
+// Generate a QR code from the share URL
+//
+
+function clearQRCode(){
+
+	if (gTheQRCode){
+		gTheQRCode.clear();
+	}
+	
+}
+
+function GenerateQRCode() {
+
+	if (gTheQRCode == null){
+
+		gTheQRCode = new QRCode(document.getElementById("qrcode"), {
+		    text: document.getElementById("urltextbox").value,
+		    width: 512,
+		    height: 512,
+		    colorDark : "#000000",
+		    colorLight : "#ffffff"
+		});
+
+	}
+	else{
+
+		gTheQRCode.clear();
+
+		gTheQRCode.makeCode(document.getElementById("urltextbox").value);
+
+	}
+
+	document.getElementById("qrcode").style.display = "block"; 
+
+	// Find the image
+	theQRCodeImage = document.querySelectorAll('div[id="qrcode"] > img');
+
+	if (theQRCodeImage && (theQRCodeImage.length > 0)){
+
+		// Get all the titles of the tunes in the text area
+		var theTitles = GetAllTuneTitles();
+
+		theQRCodeImage = theQRCodeImage[0];
+		
+		var w = window.open("");
+
+		setTimeout(function(){
+ 		
+ 			w.document.write(theQRCodeImage.outerHTML+'<p style="font-family:helvetica;font-size:12pt">Save or print this QR Code to share: "'+theTitles+'"</p><p></p><p style="font-family:helvetica;font-size:12pt">Scanning the code will open up the ABC Transcription Tool with the tune set</p>');
+ 
+ 		},1000);
+
+	}
+
 }
 
 function SetAbcText(txt) {
