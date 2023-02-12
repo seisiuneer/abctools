@@ -1853,7 +1853,18 @@ function processShareLink() {
 	}
 
 	if (doRender) {
-		Render()
+
+		Render();
+
+		// Scroll the music into view
+		const element = document.querySelector('#notation-holder')
+		const topPos = element.getBoundingClientRect().top + window.pageYOffset
+
+		window.scrollTo({
+		  top: topPos, // scroll so that the element is at the top of the view
+		  behavior: 'smooth' // smooth scroll
+		})
+
 	}
 }
 
@@ -1886,7 +1897,8 @@ function doStartup() {
 	}
 
 	// Fade out and hide the safari warning after 5 seconds
-	if (gIsSafari && (!gIsIOS)) {
+	// Disabling this for now
+	if (false){  //(gIsSafari && (!gIsIOS)) {
 
 		var safariuser = document.getElementById("safariuser");
 		safariuser.style.display = "block";
