@@ -9,6 +9,7 @@ var gStaffSpacing = STAFFSPACEMIN;
 
 var gIsIOS = false;
 var gIsSafari = false;
+var gIsAndroid = false;
 
 var gCopySVGs = false;
 
@@ -64,9 +65,9 @@ function Notenames() {
 function TransposeUp() {
 
 	// If currently rendering PDF, exit immediately
-	if (gRenderingPDF){
+	if (gRenderingPDF) {
 		return;
-	}	
+	}
 
 	verarbeiten = theABC.value;
 	neu = escape(verarbeiten);
@@ -202,9 +203,9 @@ function TransposeUp() {
 function TransposeDown() {
 
 	// If currently rendering PDF, exit immediately
-	if (gRenderingPDF){
+	if (gRenderingPDF) {
 		return;
-	}	
+	}
 
 	verarbeiten = theABC.value;
 
@@ -341,9 +342,9 @@ function TransposeDown() {
 function Clear() {
 
 	// If currently rendering PDF, exit immediately
-	if (gRenderingPDF){
+	if (gRenderingPDF) {
 		return;
-	}	
+	}
 
 	theABC.value = "";
 
@@ -506,9 +507,9 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, callback) {
 function CreatePDFfromHTML() {
 
 	// If currently rendering PDF, exit immediately
-	if (gRenderingPDF){
+	if (gRenderingPDF) {
 		return;
-	}	
+	}
 
 	// Get the page format
 	var elem = document.getElementById("pdfformat");
@@ -1147,16 +1148,16 @@ function Notenmachen(tune, instrument) {
 }
 
 function SetRadioValue(radiowert, value) {
-  const mitradiowert = "input[name=\"" + radiowert + "\"]";
-  const radioButtons = document.querySelectorAll(mitradiowert);
+	const mitradiowert = "input[name=\"" + radiowert + "\"]";
+	const radioButtons = document.querySelectorAll(mitradiowert);
 
-  for (const radioButton of radioButtons) {
-    if (radioButton.value == value) {
-      radioButton.checked = true;
-    } else {
-      radioButton.checked = false;
-    }
-  }
+	for (const radioButton of radioButtons) {
+		if (radioButton.value == value) {
+			radioButton.checked = true;
+		} else {
+			radioButton.checked = false;
+		}
+	}
 }
 
 function Welchetabs(radiowert) {
@@ -1179,17 +1180,17 @@ function Welchetabs(radiowert) {
 function Render() {
 
 	// If currently rendering PDF, exit immediately
-	if (gRenderingPDF){
+	if (gRenderingPDF) {
 		return;
-	}	
+	}
 
 	if (theABC.value != "") {
 
 		//console.log("Render()");
-	    if (document.getElementById("urlarea").style.display != "none") {
-	      FillUrlBoxWithAbcInBase64();
-	    }
- 
+		if (document.getElementById("urlarea").style.display != "none") {
+			FillUrlBoxWithAbcInBase64();
+		}
+
 		document.getElementById("notenrechts").style.display = "block";
 		document.getElementById("notation-holder").style.display = "block";
 
@@ -1562,18 +1563,18 @@ function GetAllTuneTitles() {
 
 		}
 	}
-	
+
 	var nTitles = theTitles.length;
 
 	var allTitles = "";
 
-	if (nTitles > 0){
+	if (nTitles > 0) {
 
-		for (i=0;i<nTitles;++i){
+		for (i = 0; i < nTitles; ++i) {
 
 			allTitles += theTitles[i];
 
-			if (i!=nTitles-1){
+			if (i != nTitles - 1) {
 				allTitles += " - ";
 			}
 		}
@@ -1587,52 +1588,66 @@ function GetAllTuneTitles() {
 //
 function getUrlWithoutParams() {
 
-  return window.location.protocol + "//" + window.location.host + window.location.pathname;
+	return window.location.protocol + "//" + window.location.host + window.location.pathname;
 
 }
 
 function FillUrlBoxWithAbcInBase64() {
 
-  abcText = theABC.value;
-  const abcInBase64 = utf8tob64(abcText);
-  format = Welchetabs("notenodertab");
-  url = getUrlWithoutParams() + "?base64="+abcInBase64 + "&format="+format;
-  
-  urltextbox = document.getElementById("urltextbox");
+	var abcText = theABC.value;
 
-  if (url.length > 8100){
-  	url = "The resulting URL link would be too long to share. Please try sharing fewer tunes...";
-  	document.getElementById("generateqrcode").style.display = "none";
-  }
-  else{
-  	// If fits in a QR code, show the QR code button
-  	if (url.length < 1250){
-  		document.getElementById("generateqrcode").style.display = "inline"; 
-  	}
-  	else{
-  		document.getElementById("generateqrcode").style.display = "none"; 
-  	} 	
-  }
-  
-  // Hide the QR code
-  document.getElementById("qrcode").style.display = "none"; 
+	const abcInBase64 = utf8tob64(abcText);
 
-  urltextbox.value = url;
-  urltextbox.rows = url.length / 100 + 1;
+	var format = Welchetabs("notenodertab");
+
+	var theWidth = Welchetabs("renderwidth");
+
+	// Strip the percent sign
+	theWidth = theWidth.replace("%","");
+
+	var url = getUrlWithoutParams() + "?base64=" + abcInBase64 + "&w=" + theWidth + "&format=" + format;
+
+	var urltextbox = document.getElementById("urltextbox");
+
+	if (url.length > 8100) {
+
+		url = "The resulting URL link would be too long to share. Please try sharing fewer tunes...";
+
+		document.getElementById("generateqrcode").style.display = "none";
+
+	} else {
+
+		// If fits in a QR code, show the QR code button
+		if (url.length < 1250) {
+
+			document.getElementById("generateqrcode").style.display = "inline";
+
+		} else {
+
+			document.getElementById("generateqrcode").style.display = "none";
+
+		}
+	}
+
+	// Hide the QR code
+	document.getElementById("qrcode").style.display = "none";
+
+	urltextbox.value = url;
+	urltextbox.rows = url.length / 100 + 1;
 
 }
 
 function CreateURLfromHTML() {
 
-  FillUrlBoxWithAbcInBase64();
-  urlarea = document.getElementById("urlarea");
-  urlarea.style.display = "block";
-  urltextbox = document.getElementById("urltextbox");
-  urltextbox.focus();
-  urltextbox.setSelectionRange(0, urltextbox.value.length);
+	FillUrlBoxWithAbcInBase64();
+	urlarea = document.getElementById("urlarea");
+	urlarea.style.display = "block";
+	urltextbox = document.getElementById("urltextbox");
+	urltextbox.focus();
+	urltextbox.setSelectionRange(0, urltextbox.value.length);
 
-  // Clear the QR code
-  clearQRCode();
+	// Clear the QR code
+	clearQRCode();
 
 }
 
@@ -1640,28 +1655,27 @@ function CreateURLfromHTML() {
 // Generate a QR code from the share URL
 //
 
-function clearQRCode(){
+function clearQRCode() {
 
-	if (gTheQRCode){
+	if (gTheQRCode) {
 		gTheQRCode.clear();
 	}
-	
+
 }
 
 function GenerateQRCode() {
 
-	if (gTheQRCode == null){
+	if (gTheQRCode == null) {
 
 		gTheQRCode = new QRCode(document.getElementById("qrcode"), {
-		    text: document.getElementById("urltextbox").value,
-		    width: 512,
-		    height: 512,
-		    colorDark : "#000000",
-		    colorLight : "#ffffff"
+			text: document.getElementById("urltextbox").value,
+			width: 512,
+			height: 512,
+			colorDark: "#000000",
+			colorLight: "#ffffff"
 		});
 
-	}
-	else{
+	} else {
 
 		gTheQRCode.clear();
 
@@ -1669,94 +1683,103 @@ function GenerateQRCode() {
 
 	}
 
-	document.getElementById("qrcode").style.display = "block"; 
+	document.getElementById("qrcode").style.display = "block";
 
 	// Find the image
 	theQRCodeImage = document.querySelectorAll('div[id="qrcode"] > img');
 
-	if (theQRCodeImage && (theQRCodeImage.length > 0)){
+	if (theQRCodeImage && (theQRCodeImage.length > 0)) {
 
 		// Get all the titles of the tunes in the text area
 		var theTitles = GetAllTuneTitles();
 
 		theQRCodeImage = theQRCodeImage[0];
-		
+
 		var w = window.open("");
 
-		setTimeout(function(){
- 		
- 			w.document.write(theQRCodeImage.outerHTML+'<p style="font-family:helvetica;font-size:12pt">Save or print this QR Code to share: "'+theTitles+'"</p><p></p><p style="font-family:helvetica;font-size:12pt">Scanning the code will open up the ABC Transcription Tool with the tune set</p>');
- 
- 		},1000);
+		setTimeout(function() {
+
+			w.document.write(theQRCodeImage.outerHTML + '<p style="font-family:helvetica;font-size:12pt">Save or print this QR Code to share: "' + theTitles + '"</p><p></p><p style="font-family:helvetica;font-size:12pt">Scanning the code will open up the ABC Transcription Tool with the tune set</p>');
+
+		}, 1000);
 
 	}
 
 }
 
 function SetAbcText(txt) {
-  
-  theABC.value = txt;
 
-  RestoreDefaults();
+	theABC.value = txt;
 
-  Render();
-  
+	RestoreDefaults();
+
+	Render();
+
 }
 
-function utf8tob64 (str) {
-    var retval;
+function utf8tob64(str) {
+	var retval;
 
-    try {
-        retval = btoa(escape(str));
-    }
-    catch(error){
-        retval = "";
-    }
-    return retval;
+	try {
+		retval = btoa(escape(str));
+	} catch (error) {
+		retval = "";
+	}
+	return retval;
 };
 
 function b64toutf8(str) {
 
-    var retval;
+	var retval;
 
-    try {
-        retval = unescape(atob(str));
-    }
-    catch(error){
-	    retval = "";
-    }
-    return retval;
+	try {
+		retval = unescape(atob(str));
+	} catch (error) {
+		retval = "";
+	}
+	return retval;
 };
 
 // 
 // Check for a share link and process it
 //
-function processShareLink(){
-	
+function processShareLink() {
+
+
 	var doRender = false;
 
 	const urlParams = new URLSearchParams(window.location.search);
 
-	if(urlParams.has("base64")) {
+	if (urlParams.has("base64")) {
 
 		const abcInBase64 = urlParams.get("base64");
-		//const abcText = atob(abcInBase64);
 
 		const abcText = b64toutf8(abcInBase64);
-		
+
 		if (abcText.length > 0) {
-		  SetAbcText(abcText);
-		  FillUrlBoxWithAbcInBase64();
-		  doRender = true;
+			SetAbcText(abcText);
+			FillUrlBoxWithAbcInBase64();
+			doRender = true;
 		}
 	}
 
-	if(urlParams.has("format")) {
-		const format = urlParams.get("format");
+	if (urlParams.has("format")) {
+		var format = urlParams.get("format");
 		SetRadioValue("notenodertab", format);
 	}
 
-	if (doRender){
+	// For mobile, default to full width output
+	if (!(gIsIOS || gIsAndroid)) {
+		if (urlParams.has("w")) {
+			var theSize = urlParams.get("w");
+			theSize += "%";
+			SetRadioValue("renderwidth", theSize);
+		}
+	} else {
+		SetRadioValue("renderwidth", "100%");
+	}
+
+	if (doRender) {
 		Render()
 	}
 }
@@ -1808,6 +1831,15 @@ function doStartup() {
 
 		document.getElementById("selectabcfile").removeAttribute("accept");
 
+	}
+
+	gIsAndroid = false;
+
+	// 
+	// Are we on Android?
+	//
+	if (/Android/i.test(navigator.userAgent)) {
+		gIsAndroid = true;
 	}
 
 	document.getElementById("selectabcfile").onchange = () => {
