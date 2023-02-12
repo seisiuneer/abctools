@@ -66,38 +66,26 @@
 <hr>
 <p><strong>Display Size Options:</strong></p>
 <p>These can be useful if you just want to screen capture the generated notation or review your work:</p>
-<p>Mini </p>
+<p>Mini</p>
 <p>Small</p>
 <p>Medium</p>
 <p>Large - Perfect for printing</p>
 <hr>
 <p><strong>PDF Export:</strong></p>
 <p>Export PDF - Exports the currently displayed score as a high quality PDF file</p>
-<p>PDF Format - Select whether you want one tune per page or multiple tunes per page in the PDF</p>
+<p>PDF Format - Select whether you want One Tune / Page or Multiple Tunes / Page in the PDF:</p>
+<p>One Tune / Page - Each tune is placed on a new page in the PDF</p>
+<p>Multiple Tunes / Page - Tunes are added one after another vertically down each page in the PDF</p>
+<p></p>
 <p>Note: Selecting multiple tunes per page may result in tunes staves crossing page boundaries</p>
 <hr>
-<p><strong>Forcing a Tune to a New Page for Multiple Tunes / Page Format PDFs</strong></p>
-<p>If you want to add extra space at the bottom of the tune to force the next tune to a new page,</p>
-<p>the easiest way is to add the following ABC at the bottom of the tune before the page break:</p>
+<p><strong>Forcing a Page Break After a Tune for Multiple Tunes / Page Format PDFs</strong></p>
 <p></p>
-<p>%%vskip 100 (play with this value until you get the results you need)</p>
-<p>%%center .</p>
+<p>To force a page break after a specific tune during PDF generation, add the following ABC at the bottom of the tune:</p>
 <p></p>
-<p>Another possibility:</p>
+<p>%%newpage</p>
 <p></p>
-<p>%%vskip 100 (play with this value until you get the results you need)</p>
-<p>%%text .</p>
-<p></p>
-<p>There must a a character after the %%center or %%text for this to work</p>
-<p></p>
-<p>Alternatively, this also works:</p>
-<p>W:</p>
-<p>W:<p>
-<p>(as many W: as you need to get the vertical space you need)</p>
-<p>W: .</p>
-<p>Again, as above, the final W: must contain a character for this to work</p>
-<p></p>
-<p>Note that the . will display in the PDF, but this is the only I've found so far to add space reliably below a tune</p>
+<p>This will allow you to easily format a tune book where you want multiple tunes per page, but some tunes to not be split between pages</p>
 <hr>
 <p><strong>Printing:</strong></p>
 <p>When printing the page using your browser's Print command, only the generated notation is printed</p>
