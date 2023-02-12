@@ -1258,7 +1258,7 @@ function Render() {
 
 		//console.log("Render()");
 		if (document.getElementById("urlarea").style.display != "none") {
-			FillUrlBoxWithAbcInBase64();
+			FillUrlBoxWithAbcInLZW();
 		}
 
 		document.getElementById("notenrechts").style.display = "block";
@@ -1709,9 +1709,56 @@ function FillUrlBoxWithAbcInBase64() {
 
 }
 
+function FillUrlBoxWithAbcInLZW() {
+
+	var abcText = theABC.value;
+
+	var abcInLZW = LZString.compressToEncodedURIComponent(abcText);
+
+	var format = Welchetabs("notenodertab");
+
+	var theWidth = Welchetabs("renderwidth");
+
+	// Strip the percent sign
+	theWidth = theWidth.replace("%","");
+
+	var url = getUrlWithoutParams() + "?lzw=" + abcInLZW + "&w=" + theWidth + "&format=" + format;
+
+	var urltextbox = document.getElementById("urltextbox");
+
+	if (url.length > 8100) {
+
+		url = "The resulting URL link would be too long to share. Please try sharing fewer tunes...";
+
+		document.getElementById("generateqrcode").style.display = "none";
+
+	} else {
+
+		// If fits in a QR code, show the QR code button
+		var maxURLLength = 1650;
+	
+		if (url.length < maxURLLength) {
+
+			document.getElementById("generateqrcode").style.display = "inline";
+
+		} else {
+
+			document.getElementById("generateqrcode").style.display = "none";
+
+		}
+	}
+
+	// Hide the QR code
+	document.getElementById("qrcode").style.display = "none";
+
+	urltextbox.value = url;
+	urltextbox.rows = url.length / 100 + 1;
+
+}
+
 function CreateURLfromHTML() {
 
-	FillUrlBoxWithAbcInBase64();
+	FillUrlBoxWithAbcInLZW();
 	urlarea = document.getElementById("urlarea");
 	urlarea.style.display = "block";
 	urltextbox = document.getElementById("urltextbox");
@@ -1831,7 +1878,22 @@ function processShareLink() {
 
 		if (abcText.length > 0) {
 			SetAbcText(abcText);
-			FillUrlBoxWithAbcInBase64();
+			FillUrlBoxWithAbcInLZW();
+			doRender = true;
+		}
+	}
+
+	if (urlParams.has("lzw")) {
+
+		var abcInLZW = urlParams.get("lzw");
+
+		abcInLZW = LZString.decompressFromEncodedURIComponent(abcInLZW);
+
+		const abcText = abcInLZW;
+
+		if (abcText.length > 0) {
+			SetAbcText(abcText);
+			FillUrlBoxWithAbcInLZW();
 			doRender = true;
 		}
 	}
