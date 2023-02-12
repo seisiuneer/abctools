@@ -1857,13 +1857,17 @@ function processShareLink() {
 		Render();
 
 		// Scroll the music into view
-		const element = document.querySelector('#notation-holder')
-		const topPos = element.getBoundingClientRect().top + window.pageYOffset
+		setTimeout(function(){
 
-		window.scrollTo({
-		  top: topPos, // scroll so that the element is at the top of the view
-		  behavior: 'smooth' // smooth scroll
-		})
+			const element = document.querySelector('#notation-holder')
+			const topPos = element.getBoundingClientRect().top + window.pageYOffset
+
+			window.scrollTo({
+			  top: topPos, // scroll so that the element is at the top of the view
+			  behavior: 'smooth' // smooth scroll
+			})
+
+		},250);
 
 	}
 }
