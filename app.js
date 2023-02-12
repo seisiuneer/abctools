@@ -407,12 +407,50 @@ var seitenzahl = 1;
 
 var isFirstPage = true;
 
+var tunesProcessed = 0;
+
 var pdf;
+
+//
+// Scan the tune and return an array that indicates if a tune as %%newpage under X:
+//
+
+function scanTunesForPageBreaks(){
+
+	var pageBreakRequested = [];
+
+	// Count the tunes in the text area
+	var theNotes = theABC.value;
+
+	var theTunes = theNotes.split(/^X:.*$/gm);
+
+	var nTunes = theTunes.length - 1;
+
+	// Exit out if no tunes
+	if (nTunes == 0){
+		return pageBreakRequested;
+	}
+
+	for (var i=1;i<=nTunes;++i){
+
+		if (theTunes[i].indexOf("%%newpage") != -1){
+			pageBreakRequested.push(true);
+		}
+		else{
+			pageBreakRequested.push(false);
+		}
+
+	}
+
+	return pageBreakRequested;
+}
+
+
 
 //
 // Render a single SVG block to PDF and callback when done
 //
-function RenderPDFBlock(theBlock, blockIndex, doSinglePage, callback) {
+function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, callback) {
 
 	var svg = theBlock.querySelector("svg");
 
@@ -448,13 +486,36 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, callback) {
 
 					} else {
 
-						running_height += 20;
+						// 
+						// Does this tune have a forced page break?
+						//
+						if (pageBreakList[tunesProcessed-1]){
+
+							// Yes, force it to a new page
+
+							running_height = 30;
+
+							seitenzahl++; // for the status display.
+
+							pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
+							document.getElementById("nebennebenstatusanzeigetext").innerHTML = "Saving <font color=\"red\">" + seitenzahl + "</font> pages.";
+
+						}
+						else{
+
+							// Otherwise, move it down the current page a bit
+							running_height += 20;
+
+						}
 
 					}
 
 				} else {
 					isFirstPage = false;
 				}
+
+				// Bump the tune processed counter
+				tunesProcessed++;
 
 			}
 
@@ -516,8 +577,17 @@ function CreatePDFfromHTML() {
 
 	var doSinglePage = elem.options[elem.selectedIndex].value == "true";
 
+	// If not doing single page, find any tunes that have page break requests
+	var pageBreakList = [];
+
+	if (!doSinglePage){
+		pageBreakList = scanTunesForPageBreaks();
+	}
+
 	// Init the shared globals
 	seitenzahl = 1;
+
+	tunesProcessed = 0;
 
 	isFirstPage = true;
 
@@ -559,7 +629,7 @@ function CreatePDFfromHTML() {
 		var theBlock = theBlocks[0];
 
 		// Render and stamp one block
-		RenderPDFBlock(theBlock, 0, doSinglePage, callback);
+		RenderPDFBlock(theBlock, 0, doSinglePage, pageBreakList, callback);
 
 		function callback() {
 
@@ -589,7 +659,7 @@ function CreatePDFfromHTML() {
 
 				setTimeout(function() {
 
-					RenderPDFBlock(theBlock, nBlocksProcessed, doSinglePage, callback);
+					RenderPDFBlock(theBlock, nBlocksProcessed, doSinglePage, pageBreakList, callback);
 
 				}, 100);
 
