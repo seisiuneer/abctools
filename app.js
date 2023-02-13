@@ -1549,7 +1549,9 @@ function CountTunes() {
 // Re-render on window size change
 window.addEventListener('resize', function() {
 
-	Render();
+	if (!(gIsIOS || gIsAndroid)){
+		Render();
+	}
 
 });
 
