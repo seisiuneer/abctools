@@ -1,1 +1,0 @@
-Favicons and other images go in this folder.
