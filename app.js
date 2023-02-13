@@ -1690,7 +1690,7 @@ function FillUrlBoxWithAbcInBase64() {
 	} else {
 
 		// If fits in a QR code, show the QR code button
-		var maxURLLength = 1650;
+		var maxURLLength = 2300;
 	
 		if (url.length < maxURLLength) {
 
@@ -1737,7 +1737,7 @@ function FillUrlBoxWithAbcInLZW() {
 	} else {
 
 		// If fits in a QR code, show the QR code button
-		var maxURLLength = 1650;
+		var maxURLLength = 2300;
 	
 		if (url.length < maxURLLength) {
 
@@ -1794,7 +1794,7 @@ function GenerateQRCode() {
 			height: 512,
 			colorDark: "#000000",
 			colorLight: "#ffffff",
-    		correctLevel : QRCode.CorrectLevel.Q
+    		correctLevel : QRCode.CorrectLevel.M
 		});
 
 	} else {
