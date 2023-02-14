@@ -36,7 +36,7 @@
   <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
   <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
   <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-  <link href="app.css?v=60" media="all" rel="stylesheet" type="text/css">
+  <link href="app.css?v=61" media="all" rel="stylesheet" type="text/css">
 
 </head>
 <body>
@@ -128,7 +128,7 @@
 
     <div id="urlarea" style="display:none">
       <br>
-      <p>URL to Share:<input id="generateqrcode" class="transpose" onclick="GenerateQRCode()" type="button" style="margin-left:20px" value="Generate QR Code"></p>
+      <p>URL to Share:<input id="testurl" class="transpose" onclick="TestShareURL()" type="button" style="margin-left:10px;margin-right:0px" value="Test Share URL"><input id="generateqrcode" class="transpose" onclick="GenerateQRCode()" type="button" style="margin-left:10px" value="Generate QR Code"></p>
       <textarea id="urltextbox" rows="4" cols="100" placeholder="URL for sharing will appear here">
       </textarea>
       <div id="qrcode"></div>
@@ -154,6 +154,6 @@
 <script type="text/javascript" src="html2image.js"></script><!-- to convert HTML elements to bitmaps -->
 <script type="text/javascript" src="qrcode.js"></script><!-- to generate QR codes for the share links -->
 <script type="text/javascript" src="lz-string.min.js"></script><!-- to generate QR codes for the share links -->
-<script type="text/javascript" src="app.js?v=60"></script><!-- main application business logic -->
+<script type="text/javascript" src="app.js?v=61"></script><!-- main application business logic -->
 
 </html>
