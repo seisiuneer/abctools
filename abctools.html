@@ -36,7 +36,7 @@
   <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
   <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
   <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-  <link href="app.css?v=63" media="all" rel="stylesheet" type="text/css">
+  <link href="app.css?v=68" media="all" rel="stylesheet" type="text/css">
 
 </head>
 <body>
@@ -76,8 +76,8 @@
     <div id="transpose-controls">
       <input class="transpose" id="t1" onclick="TransposeDown()" type="button" value="Transpose Down">
       <input class="transpose" id="t2" onclick="TransposeUp()" type="button" value="Transpose Up">
-      <input class="transpose" id="t3" onclick="Clear()" type="button" value="Clear">
-      <input class="transpose" id="t4" onclick="ToggleAdvancedControls()" type="button" value="Advanced Controls">
+      <input class="clearbutton" id="t3" onclick="Clear()" type="button" value="Clear">
+      <input class="advancedcontrols" id="t4" onclick="ToggleAdvancedControls()" type="button" value="Advanced Controls">
     </div>
  
     <div id="tabs-selection" class="toggle-buttons">
@@ -115,10 +115,11 @@
     </div>
 
     <div id="advanced-controls">
-      <input class="transpose" onclick="CreateURLfromHTML()" type="button" value="Create Share URL">
-      <input class="transpose" onclick="ToggleAnnotations()" type="button" value="Toggle Annotations">
-      <input class="transpose" onclick="ToggleTextAnnotations()" type="button" value="Toggle Text">
-      <input class="transpose" onclick="ToggleChords()" type="button" value="Toggle Chords">
+      <input class="advancedcontrols" onclick="CreateURLfromHTML()" type="button" value="Create Share URL">
+      <input class="advancedcontrols" onclick="ToggleAnnotations()" type="button" value="Toggle Annotations">
+      <input class="advancedcontrols" onclick="ToggleTextAnnotations()" type="button" value="Toggle Text">
+      <input class="advancedcontrols" onclick="ToggleChords()" type="button" value="Toggle Chords">
+      <tspan></tspan>
       <label class="staff-spacing" for="staff-spacing">
           Staff spacing:  
           <input type="number" name="staff-spacing" id="staff-spacing"
@@ -127,7 +128,7 @@
     </div>
 
     <div id="urlarea" style="display:none">
-      <p>URL to Share:<input id="testurl" class="transpose" onclick="TestShareURL()" type="button" style="margin-left:10px;margin-right:0px" value="Test Share URL"><input id="generateqrcode" class="transpose" onclick="GenerateQRCode()" type="button" style="margin-left:10px" value="Generate QR Code"></p>
+      <p>URL to Share:<input id="testurl" class="advancedcontrols" onclick="TestShareURL()" type="button" style="margin-left:10px;margin-right:0px" value="Test Share URL"><input id="generateqrcode" class="advancedcontrols" onclick="GenerateQRCode()" type="button" style="margin-left:10px" value="Generate QR Code"></p>
       <textarea id="urltextbox" rows="4" cols="100" placeholder="URL for sharing will appear here">
       </textarea>
       <div id="qrcode"></div>
@@ -153,6 +154,6 @@
 <script type="text/javascript" src="html2image.js"></script><!-- to convert HTML elements to bitmaps -->
 <script type="text/javascript" src="qrcode.js"></script><!-- to generate QR codes for the share links -->
 <script type="text/javascript" src="lz-string.min.js"></script><!-- to generate QR codes for the share links -->
-<script type="text/javascript" src="app.js?v=63"></script><!-- main application business logic -->
+<script type="text/javascript" src="app.js?v=68"></script><!-- main application business logic -->
 
 </html>
