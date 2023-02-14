@@ -161,7 +161,7 @@ select {
   background-color: #efefef;
 }
 
-#pdfformatlabel{
+#pdfformatlabel,#displayformatlabel{
 font-size:11pt;
 font-family:"Helvetica";
 padding-top: 12px;
@@ -172,7 +172,7 @@ margin-right:5px;
 #pdfformat{
 font-size:11pt;
 font-family:"Helvetica";
-width:190px;
+width:185px;
 }
 
 #qrcode{
