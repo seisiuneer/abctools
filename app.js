@@ -8,6 +8,7 @@ var STAFFSPACEMAX = 100;
 var gStaffSpacing = STAFFSPACEMIN;
 
 var gIsIOS = false;
+var gIsIPad = false;
 var gIsSafari = false;
 var gIsAndroid = false;
 
@@ -1625,6 +1626,16 @@ function isIOS() {
 }
 
 //
+// Are we on an iPad?
+//
+function isIPad() {
+	return navigator.maxTouchPoints &&
+			navigator.maxTouchPoints > 2 &&
+			/MacIntel/.test(navigator.platform);
+}
+
+
+//
 // Get all the tune titles
 //
 function GetAllTuneTitles() {
@@ -1962,6 +1973,11 @@ function doStartup() {
 		gIsIOS = true;
 	}
 
+	gIsIPad = false;
+	if (isIPad()) {
+		gIsIPad = true;
+	}
+
 	// Fade out and hide the safari warning after 5 seconds
 	// Disabling this for now
 	if (false){  //(gIsSafari && (!gIsIOS)) {
@@ -1981,6 +1997,12 @@ function doStartup() {
 	if (gIsIOS) {
 
 		document.getElementById("selectabcfile").removeAttribute("accept");
+	}
+
+	// On iPad make the abc area a bit narrower so it doesn't get cut off
+	if (gIsIPad) {
+
+		document.getElementById("abc").cols = 92;
 
 	}
 
