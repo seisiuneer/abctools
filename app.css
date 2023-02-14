@@ -180,6 +180,10 @@ position:absolute;
 left:-3000px;
 }
 
+#urlarea{
+margin-top:20px;
+}
+
 @media print {
   .hidden-print {
     display: none !important;
