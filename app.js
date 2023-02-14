@@ -1738,6 +1738,11 @@ function FillUrlBoxWithAbcInLZW() {
 	}
 
 	urltextbox.rows = urlTextRows;
+
+	// Scroll to the top
+	setTimeout(function(){
+		urltextbox.scrollTo(0,0);
+	},100); 
 }
 
 function CreateURLfromHTML() {
