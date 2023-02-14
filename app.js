@@ -869,9 +869,12 @@ function Notenmachen(tune, instrument) {
 
 	document.getElementById("offscreenrender").innerHTML = ""; // must be, otherwise it somehow generates the abc twice...
 
+	var svgTextArray = [];
+
 	for (var tuneIndex = 0; tuneIndex < nTunes; ++tuneIndex) {
 
 		var renderDivID = "notation" + tuneIndex;
+
 
 		// Bei Whistle rendert er zunächst erst eine Linie mit Mandolinentabs, also Zahlen.
 		// Diese werden hier anschließend ersetzt durch Buchstaben. 
@@ -1204,11 +1207,25 @@ function Notenmachen(tune, instrument) {
 			//console.log("copying SVGs");
 
 			Svgs = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg');
-
+			
 			for (x = 0; x < Svgs.length; x++) {
-				document.getElementById("offscreenrender").innerHTML = document.getElementById("offscreenrender").innerHTML + "<div id=\"block_" + tuneIndex + "_" + x + "\" class=\"block\">" + Svgs[x].outerHTML + "</div>";
+				svgTextArray.push("<div id=\"block_" + tuneIndex + "_" + x + "\" class=\"block\">" + Svgs[x].outerHTML + "</div>");
 			}
+
 		}
+
+	}
+
+	// Join all the SVG text and stuff in the offscreen rendering div
+
+	if (gCopySVGs){
+
+		var allSVGText = svgTextArray.join();
+
+		document.getElementById("offscreenrender").innerHTML = allSVGText;
+
+		// Early GC
+		svgTextArray = null;
 
 	}
 
@@ -1794,7 +1811,7 @@ function GenerateQRCode() {
 			height: 512,
 			colorDark: "#000000",
 			colorLight: "#ffffff",
-    		correctLevel : QRCode.CorrectLevel.M
+    		correctLevel : QRCode.CorrectLevel.M 
 		});
 
 	} else {
