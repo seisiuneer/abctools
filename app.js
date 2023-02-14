@@ -1681,53 +1681,6 @@ function getUrlWithoutParams() {
 
 }
 
-function FillUrlBoxWithAbcInBase64() {
-
-	var abcText = theABC.value;
-
-	const abcInBase64 = utf8tob64(abcText);
-
-	var format = Welchetabs("notenodertab");
-
-	var theWidth = Welchetabs("renderwidth");
-
-	// Strip the percent sign
-	theWidth = theWidth.replace("%","");
-
-	var url = getUrlWithoutParams() + "?base64=" + abcInBase64 + "&w=" + theWidth + "&format=" + format;
-
-	var urltextbox = document.getElementById("urltextbox");
-
-	if (url.length > 8100) {
-
-		url = "The resulting URL link would be too long to share. Please try sharing fewer tunes...";
-
-		document.getElementById("generateqrcode").style.display = "none";
-
-	} else {
-
-		// If fits in a QR code, show the QR code button
-		var maxURLLength = 2300;
-	
-		if (url.length < maxURLLength) {
-
-			document.getElementById("generateqrcode").style.display = "inline";
-
-		} else {
-
-			document.getElementById("generateqrcode").style.display = "none";
-
-		}
-	}
-
-	// Hide the QR code
-	document.getElementById("qrcode").style.display = "none";
-
-	urltextbox.value = url;
-	urltextbox.rows = url.length / 100 + 1;
-
-}
-
 function FillUrlBoxWithAbcInLZW() {
 
 	var abcText = theABC.value;
@@ -1776,8 +1729,15 @@ function FillUrlBoxWithAbcInLZW() {
 	document.getElementById("qrcode").style.display = "none";
 
 	urltextbox.value = url;
-	urltextbox.rows = url.length / 100 + 1;
 
+	// Resize URL link holder
+	var urlTextRows = url.length / 100 + 1;
+
+	if (urlTextRows > 10){
+		urlTextRows = 10;
+	}
+
+	urltextbox.rows = urlTextRows;
 }
 
 function CreateURLfromHTML() {
