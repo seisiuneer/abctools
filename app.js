@@ -1751,7 +1751,12 @@ function FillUrlBoxWithAbcInLZW() {
 
 		document.getElementById("generateqrcode").style.display = "none";
 
+		document.getElementById("testurl").style.display = "none";
+
+
 	} else {
+
+		document.getElementById("testurl").style.display = "inline";
 
 		// If fits in a QR code, show the QR code button
 		var maxURLLength = 2300;
@@ -1843,6 +1848,17 @@ function GenerateQRCode() {
 		}, 1000);
 
 	}
+
+}
+
+//
+// Test the share URL
+// 
+function TestShareURL(){
+
+	var theURL = document.getElementById("urltextbox").value;
+
+	var w = window.open(theURL);
 
 }
 
