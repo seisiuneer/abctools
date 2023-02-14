@@ -36,7 +36,7 @@
   <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
   <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
   <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-  <link href="app.css?v=61" media="all" rel="stylesheet" type="text/css">
+  <link href="app.css?v=62" media="all" rel="stylesheet" type="text/css">
 
 </head>
 <body>
@@ -79,18 +79,6 @@
       <input class="transpose" id="t3" onclick="Clear()" type="button" value="Clear">
       <input class="transpose" id="t4" onclick="ToggleAdvancedControls()" type="button" value="Advanced Controls">
     </div>
-
-    <div id="advanced-controls">
-      <input class="transpose" onclick="ToggleAnnotations()" type="button" value="Toggle Annotations">
-      <input class="transpose" onclick="ToggleTextAnnotations()" type="button" value="Toggle Text">
-      <input class="transpose" onclick="ToggleChords()" type="button" value="Toggle Chords">
-      <input class="transpose" onclick="CreateURLfromHTML()" type="button" value="Create URL to Share">
-      <label class="staff-spacing" for="staff-spacing">
-          Staff spacing:  
-          <input type="number" name="staff-spacing" id="staff-spacing"
-              min="50" max="100" step="5" value="50" onchange="SetStaffSpacing()">
-      </label>
-    </div>
  
     <div id="tabs-selection" class="toggle-buttons">
       <input type="radio" id="b1" value="noten" name="notenodertab" class="hidebutton" checked="checked" onclick="Render()">
@@ -126,8 +114,19 @@
 
     </div>
 
+    <div id="advanced-controls">
+      <input class="transpose" onclick="CreateURLfromHTML()" type="button" value="Create Share URL">
+      <input class="transpose" onclick="ToggleAnnotations()" type="button" value="Toggle Annotations">
+      <input class="transpose" onclick="ToggleTextAnnotations()" type="button" value="Toggle Text">
+      <input class="transpose" onclick="ToggleChords()" type="button" value="Toggle Chords">
+      <label class="staff-spacing" for="staff-spacing">
+          Staff spacing:  
+          <input type="number" name="staff-spacing" id="staff-spacing"
+              min="50" max="100" step="5" value="50" onchange="SetStaffSpacing()">
+      </label>
+    </div>
+
     <div id="urlarea" style="display:none">
-      <br>
       <p>URL to Share:<input id="testurl" class="transpose" onclick="TestShareURL()" type="button" style="margin-left:10px;margin-right:0px" value="Test Share URL"><input id="generateqrcode" class="transpose" onclick="GenerateQRCode()" type="button" style="margin-left:10px" value="Generate QR Code"></p>
       <textarea id="urltextbox" rows="4" cols="100" placeholder="URL for sharing will appear here">
       </textarea>
@@ -154,6 +153,6 @@
 <script type="text/javascript" src="html2image.js"></script><!-- to convert HTML elements to bitmaps -->
 <script type="text/javascript" src="qrcode.js"></script><!-- to generate QR codes for the share links -->
 <script type="text/javascript" src="lz-string.min.js"></script><!-- to generate QR codes for the share links -->
-<script type="text/javascript" src="app.js?v=61"></script><!-- main application business logic -->
+<script type="text/javascript" src="app.js?v=62"></script><!-- main application business logic -->
 
 </html>
