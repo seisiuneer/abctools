@@ -30,18 +30,19 @@ border: 1px solid #333;
 border-radius: 0.3em;
 padding: .6em;
 margin-right:10px;
+color:black;
 -webkit-appearance:none;
 }
 
 .toggle-buttons input:checked + label {
 background: #ebf5d7;
-color: #5a9900;
+color: black;
 box-shadow: none;
 }
 
 input:hover + label,
 input:focus + label {
-background: #ffebe6;
+background: palegreen;
 }
 
 #notation-holder {
@@ -60,7 +61,49 @@ border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
 margin-right:10px;
+background-color: #EEEEEE;
+color:black;
 -webkit-appearance:none;
+}
+
+.transpose:hover{
+background: palegreen;
+}
+
+.saveaspdf:hover{
+background: palegreen;
+}
+
+.advancedcontrols{
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+padding: 0.6em;
+margin-right:10px;
+background-color: #E8FFFF;
+color:black;
+-webkit-appearance:none;
+}
+
+.advancedcontrols:hover{
+background: palegreen;
+}
+
+.clearbutton{
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+padding: 0.6em;
+margin-right:10px;
+background-color: #FFCCCC;
+color:black;
+-webkit-appearance:none;
+}
+
+.clearbutton:hover{
+background: tomato;
 }
 
 .abcupload {
@@ -151,14 +194,15 @@ font-size:11pt;
 }
 
 select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
-  background-size: 12px;
-  background-position: calc(100% - 10px) center;
-  background-repeat: no-repeat;
-  background-color: #efefef;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
 }
 
 #pdfformatlabel,#displayformatlabel{
