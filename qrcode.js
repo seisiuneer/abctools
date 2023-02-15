@@ -374,24 +374,34 @@ var QRCode;
 		 * @param {QRCode} oQRCode 
 		 */
 		Drawing.prototype.draw = function (oQRCode) {
+
             var _elImage = this._elImage;
             var _oContext = this._oContext;
             var _htOption = this._htOption;
+
+			var borderOffset = _htOption.border;
             
 			var nCount = oQRCode.getModuleCount();
-			var nWidth = _htOption.width / nCount;
-			var nHeight = _htOption.height / nCount;
+			var nWidth = (_htOption.width - (2*borderOffset)) / nCount;
+			var nHeight = (_htOption.height - (2*borderOffset)) / nCount;
 			var nRoundedWidth = Math.round(nWidth);
 			var nRoundedHeight = Math.round(nHeight);
 
 			_elImage.style.display = "none";
+
 			this.clear();
+
+			// Fill the background with white
+			_oContext.strokeStyle = "#FFFFFF";
+			_oContext.lineWidth = 1;
+			_oContext.fillStyle = "#FFFFFF";					
+			_oContext.fillRect(0, 0, _htOption.width, _htOption.height);
 			
 			for (var row = 0; row < nCount; row++) {
 				for (var col = 0; col < nCount; col++) {
 					var bIsDark = oQRCode.isDark(row, col);
-					var nLeft = col * nWidth;
-					var nTop = row * nHeight;
+					var nLeft = col * nWidth + borderOffset;
+					var nTop = row * nHeight + borderOffset;
 					_oContext.strokeStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;
 					_oContext.lineWidth = 1;
 					_oContext.fillStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;					
@@ -539,7 +549,8 @@ var QRCode;
 			typeNumber : 4,
 			colorDark : "#000000",
 			colorLight : "#ffffff",
-			correctLevel : QRErrorCorrectLevel.H
+			correctLevel : QRErrorCorrectLevel.H,
+			border: 8
 		};
 		
 		if (typeof vOption === 'string') {
