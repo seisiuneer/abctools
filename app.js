@@ -602,7 +602,7 @@ function CreatePDFfromHTML() {
 
 	qualitaet = 1200;
 
-	document.getElementById("statusanzeigetext").innerHTML = "Generating <font color=\"red\">" + title + ".pdf </font>";
+	document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"red\">" + title + ".pdf </font>";
 
 	setTimeout(function() {
 
@@ -639,6 +639,8 @@ function CreatePDFfromHTML() {
 			document.getElementById("statusanzeigetext").innerHTML = "Preparing <font color=\"red\">" + (nBlocksProcessed + 1) + " / " + theBlocks.length + "</font> staves for PDF rendering.";
 
 			if (nBlocksProcessed == nBlocks) {
+
+				document.getElementById("statuspdfname").innerHTML = "";
 
 				document.getElementById("statusanzeigetext").innerHTML = "";
 
@@ -706,6 +708,26 @@ function Notenmachen(tune, instrument) {
 	var radiovalue = Welchetabs("renderwidth");
 
 	document.getElementById("notation-holder").style.width = radiovalue;
+
+	var leftOffset = 0;
+
+	// Set the left offset
+	switch (radiovalue){
+		case "40%":
+		leftOffset = "30%";
+		break;
+		case "50%":
+		leftOffset = "25%";
+		break;
+		case "75%":
+		leftOffset = "12.5%";
+		break;
+		case "100%":
+		leftOffset = "0";
+		break;
+	}
+
+	document.getElementById("notation-holder").style.marginLeft = leftOffset;
 
 	// console.log("rechtswidth" + rechtswidth);
 
@@ -1279,7 +1301,7 @@ function Render() {
 			FillUrlBoxWithAbcInLZW();
 		}
 
-		document.getElementById("notenrechts").style.display = "block";
+		document.getElementById("notenrechts").style.display = "inline-block";
 		document.getElementById("notation-holder").style.display = "block";
 
 		radiovalue = Welchetabs("notenodertab");
@@ -1744,8 +1766,8 @@ function FillUrlBoxWithAbcInLZW() {
 	// Resize URL link holder
 	var urlTextRows = url.length / 100 + 1;
 
-	if (urlTextRows > 10){
-		urlTextRows = 10;
+	if (urlTextRows > 8){
+		urlTextRows = 8;
 	}
 
 	urltextbox.rows = urlTextRows;
@@ -1760,7 +1782,7 @@ function CreateURLfromHTML() {
 
 	FillUrlBoxWithAbcInLZW();
 	urlarea = document.getElementById("urlarea");
-	urlarea.style.display = "block";
+	urlarea.style.display = "inline-block";
 	urltextbox = document.getElementById("urltextbox");
 	urltextbox.focus();
 	urltextbox.setSelectionRange(0, urltextbox.value.length);
@@ -1803,7 +1825,7 @@ function GenerateQRCode() {
 
 	}
 
-	document.getElementById("qrcode").style.display = "block";
+	document.getElementById("qrcode").style.display = "inline-block";
 
 	// Find the image
 	theQRCodeImage = document.querySelectorAll('div[id="qrcode"] > img');
@@ -1819,7 +1841,9 @@ function GenerateQRCode() {
 
 		setTimeout(function() {
 
-			w.document.write(theQRCodeImage.outerHTML + '<p style="font-family:helvetica;font-size:12pt">Save or print this QR Code to share: "' + theTitles + '"</p><p></p><p style="font-family:helvetica;font-size:12pt">Scanning the code will open up the ABC Transcription Tool with the tune set</p>');
+			var theImageHTML = theQRCodeImage.outerHTML.replace("display: block;","");
+
+			w.document.write('<div style="text-align:center;padding:24px;">'+ theImageHTML + '<p></p><p style="font-family:helvetica;font-size:14pt;margin-top:32px;">Save or print this QR Code to share:</p><p></p><p style="font-family:helvetica;font-size:14pt">' + theTitles + '</p><p></p><p style="font-family:helvetica;font-size:14pt">Scanning the code will open up the ABC Transcription Tool with the tune set</p></div>');
 
 		}, 1000);
 
@@ -1923,6 +1947,7 @@ function processShareLink() {
 		}
 	} else {
 		SetRadioValue("renderwidth", "100%");
+
 	}
 
 	if (doRender) {
@@ -1983,7 +2008,7 @@ function doStartup() {
 	if (false){  //(gIsSafari && (!gIsIOS)) {
 
 		var safariuser = document.getElementById("safariuser");
-		safariuser.style.display = "block";
+		safariuser.style.display = "inline-block";
 
 		setTimeout(
 
@@ -2002,7 +2027,7 @@ function doStartup() {
 	// On iPad make the abc area a bit narrower so it doesn't get cut off
 	if (gIsIPad) {
 
-		document.getElementById("abc").cols = 92;
+		document.getElementById("abc").cols = 82;
 
 	}
 
