@@ -1810,10 +1810,11 @@ function GenerateQRCode() {
 
 		gTheQRCode = new QRCode(document.getElementById("qrcode"), {
 			text: document.getElementById("urltextbox").value,
-			width: 512,
-			height: 512,
+			width: 548,
+			height: 548,
 			colorDark: "#000000",
 			colorLight: "#ffffff",
+			border: 16,
     		correctLevel : QRCode.CorrectLevel.M 
 		});
 
@@ -1838,12 +1839,13 @@ function GenerateQRCode() {
 		theQRCodeImage = theQRCodeImage[0];
 
 		var w = window.open("");
+		w.document.title = "ABC Tools Sharing QR Code";
 
 		setTimeout(function() {
 
 			var theImageHTML = theQRCodeImage.outerHTML.replace("display: block;","");
 
-			w.document.write('<div style="text-align:center;padding:24px;">'+ theImageHTML + '<p></p><p style="font-family:helvetica;font-size:14pt;margin-top:32px;">Save or print this QR Code to share:</p><p></p><p style="font-family:helvetica;font-size:14pt">' + theTitles + '</p><p></p><p style="font-family:helvetica;font-size:14pt">Scanning the code will open up the ABC Transcription Tool with the tune set</p></div>');
+			w.document.write('<div style="text-align:center;padding:24px;margin-top:36px;">'+ theImageHTML + '<p></p><p style="font-family:helvetica;font-size:14pt;margin-top:32px;">Save or print this QR Code to share:</p><p></p><p style="font-family:helvetica;font-size:14pt">' + theTitles + '</p><p></p><p style="font-family:helvetica;font-size:14pt">Scanning the code will open up the ABC Transcription Tool with the tune set</p></div>');
 
 		}, 1000);
 
