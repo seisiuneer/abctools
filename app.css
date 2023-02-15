@@ -2,6 +2,10 @@ body {
 padding:20px;
 }
 
+#app-container{
+text-align: center;
+}
+
 .whistle {
 font-family: 'TinWhistleFingering';
 font-size: 50px;
@@ -46,12 +50,17 @@ background: palegreen;
 }
 
 #notation-holder {
+text-align: center;
 margin-bottom:50px;
 }
 
 #abc {
-font-size: 10pt;
-margin-top: 24px;
+font-size: 11pt;
+padding: 5px;
+margin-top: 25px;
+margin-bottom: 6px;
+-webkit-appearance: none;
+-moz-appearance: none;
 }
 
 .transpose, .saveaspdf {
@@ -70,7 +79,27 @@ color:black;
 background: palegreen;
 }
 
+.saveaspdf{
+margin-left:14px;
+}
+
 .saveaspdf:hover{
+background: palegreen;
+}
+
+.toggleadvancedcontrols{
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+padding: 0.6em;
+margin-left:30px;
+background-color: #E8FFFF;
+color:black;
+-webkit-appearance:none;
+}
+
+.toggleadvancedcontrols:hover{
 background: palegreen;
 }
 
@@ -80,13 +109,29 @@ font-size:11pt;
 border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
-margin-right:10px;
 background-color: #E8FFFF;
 color:black;
 -webkit-appearance:none;
 }
 
 .advancedcontrols:hover{
+background: palegreen;
+}
+
+.urlcontrols{
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+padding: 0.6em;
+margin-right:10px;
+margin-left:30px;
+background-color: #E8FFFF;
+color:black;
+-webkit-appearance:none;
+}
+
+.urlcontrols:hover{
 background: palegreen;
 }
 
@@ -100,6 +145,7 @@ margin-right:10px;
 background-color: #FFCCCC;
 color:black;
 -webkit-appearance:none;
+margin-left: 208px;
 }
 
 .clearbutton:hover{
@@ -179,6 +225,7 @@ font-family:"Helvetica";
 font-size:11pt;
 }
 
+
 #transpose-controls, #tabs-selection, #render-width{
 display:flex;
 }
@@ -225,8 +272,57 @@ left:-3000px;
 }
 
 #urlarea{
-margin-top:20px;
+display:none;
+margin-top:13px;
 }
+
+#urltextbox{
+margin-top:10px;
+font-size:11pt;
+-webkit-appearance: none;
+-moz-appearance: none;
+}
+
+#testurl{
+margin-right:10px	
+}
+
+#generateqrcode{
+margin-left:10px;	
+}
+
+#statuspdfname{
+margin-top:10px;
+}
+
+#statusanzeigetext{
+margin-top:5px;
+}
+
+#nebenstatusanzeigetext{
+margin-top:5px;	
+}
+
+#nebennebenstatusanzeigetext{
+margin-top:6px;	
+}
+
+#createshareurl, #testurl, #generateqrcode{
+background-color: lavender;
+}
+
+#createshareurl{
+margin-right:26px;
+}
+
+#toggleannotations, #toggletext{
+margin-right:10px;
+}
+
+#togglechords{
+margin-right:16px;
+}
+
 
 @media print {
   .hidden-print {
