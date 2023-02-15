@@ -387,13 +387,34 @@ function Titelholen() {
 		}
 	}
 
-	// Wenn es Tabs gibt - Tabname an Dateinamen anhängen.
+	// Get the current instrument setting
 	tabs = Welchetabs("notenodertab");
-	if (tabs != "noten") {
-		titel += "_" + tabs;
-	}
-	// Ende Dateinamen aus Titel generieren.
 
+	var postfix = "";
+
+	switch (tabs){
+		case "noten":
+			postfix = "";
+			break;
+		case "notenames":
+			postfix = "_Note_Names";
+			break;
+		case "mandolin":
+			postfix = "_Mandolin";
+			break;
+		case "guitare":
+			postfix = "_Guitar_EADGBE";
+			break;
+		case "guitard":
+			postfix = "_Guitar_DADGAD";
+			break;
+		case "whistle":
+			postfix = "_Whistle";
+			break;
+	}
+	
+	titel += postfix;
+	
 	return titel;
 }
 
