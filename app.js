@@ -1860,7 +1860,7 @@ function GenerateQRCode() {
 		theQRCodeImage = theQRCodeImage[0];
 
 		var w = window.open("");
-		w.document.title = "ABC Tools Sharing QR Code";
+		w.document.title = "ABC Tools Tune Sharing QR Code";
 
 		setTimeout(function() {
 
