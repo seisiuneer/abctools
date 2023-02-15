@@ -367,7 +367,7 @@ var QRCode;
 			this._el.appendChild(this._elImage);
 			this._bSupportDataURI = null;
 		};
-			
+
 		/**
 		 * Draw the QRCode
 		 * 
@@ -392,35 +392,112 @@ var QRCode;
 			this.clear();
 
 			// Fill the background with white
+			_oContext.imageSmoothingEnabled = false;
 			_oContext.strokeStyle = "#FFFFFF";
 			_oContext.lineWidth = 1;
 			_oContext.fillStyle = "#FFFFFF";					
 			_oContext.fillRect(0, 0, _htOption.width, _htOption.height);
-			
+
+			//
+			// Draw a rectangle in a canvas without aliasing
+			//
+			function drawRectangleNoAliasing(ctx,left,top,width,height){
+
+				function drawHorizontalLineNoAliasing(ctx, startX, startY, endX, endY) {
+
+					// Always draw in increasing X
+					if (endX < startX){
+						var tmp = startX;
+						startX = endX;
+						endX = tmp;
+					}
+
+					var dist = endX - startX;
+				
+				    for(var i=0;i<dist;i++) {
+
+				        ctx.fillRect(startX+i, startY, 1, 1);
+
+				    }
+				}
+
+				function drawVerticalLineNoAliasing(ctx, startX, startY, endX, endY) {	
+
+					// Always draw in increasing Y
+					if (endY < startY){
+						var tmp = startY;
+						startY = endY;
+						endY = tmp;
+					}
+
+					var dist = endY - startY;
+				
+				    for(var i=0;i<dist;i++) {
+
+				        ctx.fillRect(startX, startY+i, 1, 1);
+
+				    }
+				}
+
+				drawHorizontalLineNoAliasing(ctx,left,top,left+width,top);
+
+				drawVerticalLineNoAliasing(ctx,left+width,top,left+width,top+height);
+
+				drawHorizontalLineNoAliasing(ctx,left,top+height,left+width,top+height);
+
+				drawVerticalLineNoAliasing(ctx,left,top,left,top+height);
+
+			}	
+
 			for (var row = 0; row < nCount; row++) {
+
 				for (var col = 0; col < nCount; col++) {
+				
 					var bIsDark = oQRCode.isDark(row, col);
+				
 					var nLeft = col * nWidth + borderOffset;
 					var nTop = row * nHeight + borderOffset;
+				
 					_oContext.strokeStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;
+					
 					_oContext.lineWidth = 1;
+
 					_oContext.fillStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;					
 					_oContext.fillRect(nLeft, nTop, nWidth, nHeight);
-					
-					// 안티 앨리어싱 방지 처리
-					_oContext.strokeRect(
+
+					// 
+					// New improved anti-aliasing
+					//
+					drawRectangleNoAliasing(
+						_oContext,
 						Math.floor(nLeft) + 0.5,
 						Math.floor(nTop) + 0.5,
 						nRoundedWidth,
 						nRoundedHeight
 					);
 					
-					_oContext.strokeRect(
+					drawRectangleNoAliasing(
+						_oContext,
 						Math.ceil(nLeft) - 0.5,
 						Math.ceil(nTop) - 0.5,
 						nRoundedWidth,
 						nRoundedHeight
 					);
+
+					// Original Anti-aliasing
+					// _oContext.strokeRect(
+					// 	Math.floor(nLeft) + 0.5,
+					// 	Math.floor(nTop) + 0.5,
+					// 	nRoundedWidth,
+					// 	nRoundedHeight
+					// );
+					
+					// _oContext.strokeRect(
+					// 	Math.ceil(nLeft) - 0.5,
+					// 	Math.ceil(nTop) - 0.5,
+					// 	nRoundedWidth,
+					// 	nRoundedHeight
+					// );
 				}
 			}
 			
@@ -550,7 +627,7 @@ var QRCode;
 			colorDark : "#000000",
 			colorLight : "#ffffff",
 			correctLevel : QRErrorCorrectLevel.H,
-			border: 8
+			border: 16
 		};
 		
 		if (typeof vOption === 'string') {
