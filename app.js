@@ -18,6 +18,8 @@ var gRenderingPDF = false;
 
 var gTheQRCode = null;
 
+var gShowShareControls = false;
+
 var theABC = document.getElementById("abc");
 
 function Notenames() {
@@ -1471,11 +1473,8 @@ function HideAdvancedControls() {
 
 	document.getElementById('advanced-controls').style.display = "none";
 
-
-	// Also hide the share url area
-	document.getElementById('urlarea').style.display = "none";
-
 }
+
 
 //
 // Show the advanced controls
@@ -1483,6 +1482,24 @@ function HideAdvancedControls() {
 function ShowAdvancedControls() {
 
 	document.getElementById('advanced-controls').style.display = "flex";
+}
+
+//
+// Hide the share controls
+//
+function HideShareControls() {
+
+	// Also hide the share url area
+	document.getElementById('urlarea').style.display = "none";
+
+}
+
+//
+// Show the share controls
+//
+function ShowShareControls() {
+
+	CreateURLfromHTML();
 
 }
 
@@ -1505,6 +1522,24 @@ function ToggleAdvancedControls() {
 }
 
 //
+// Toggle the share controls
+//
+function ToggleShareControls() {
+
+	gShowShareControls = !gShowShareControls;
+
+	if (gShowShareControls) {
+
+		ShowShareControls();
+
+	} else {
+
+		HideShareControls();
+
+	}
+}
+
+//
 // Handle the spacing control
 //
 function SetStaffSpacing() {
@@ -1519,13 +1554,13 @@ function SetStaffSpacing() {
 //
 function RestoreDefaults() {
 
-	HideAdvancedControls();
+	// HideAdvancedControls();
+	// HideShareControls();
 
 	// Reset the annotation strip flags
 	gStripAnnotations = false;
 	gStripTextAnnotations = false;
 	gStripChords = false;
-	gShowAdvancedControls = false;
 	gCopySVGs = false;
 
 	document.getElementById('staff-spacing').value = STAFFSPACEMIN;
@@ -1754,7 +1789,7 @@ function FillUrlBoxWithAbcInLZW() {
 
 	if (url.length > 8100) {
 
-		url = "The resulting URL link would be too long to share. Please try sharing fewer tunes...";
+		url = "     The URL link would be too long to share. Please try sharing fewer tunes.";
 
 		document.getElementById("generateqrcode").style.display = "none";
 
@@ -1785,7 +1820,7 @@ function FillUrlBoxWithAbcInLZW() {
 	urltextbox.value = url;
 
 	// Resize URL link holder
-	var urlTextRows = url.length / 100 + 1;
+	var urlTextRows = url.length / 80 + 1;
 
 	if (urlTextRows > 8){
 		urlTextRows = 8;
@@ -1997,6 +2032,7 @@ function doStartup() {
 
 	// Init global state
 	gShowAdvancedControls = false;
+	gShowShareControls = false;
 	gStripAnnotations = false;
 	gStripTextAnnotations = false;
 	gStripChords = false;
