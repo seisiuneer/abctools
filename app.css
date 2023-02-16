@@ -44,9 +44,11 @@ color: black;
 box-shadow: none;
 }
 
-input:hover + label,
-input:focus + label {
-background: palegreen;
+@media (hover: hover) {
+	input:hover + label,
+	input:focus + label {
+	background: palegreen;
+	}
 }
 
 #notation-holder {
@@ -55,7 +57,8 @@ margin-bottom:50px;
 }
 
 #abc {
-font-size: 11pt;
+font-family:"Courier";
+font-size: 12pt;
 padding: 5px;
 margin-top: 25px;
 margin-bottom: 0px;
@@ -75,16 +78,20 @@ color:black;
 -webkit-appearance:none;
 }
 
-.transpose:hover{
-background: palegreen;
+@media (hover: hover) {
+	.transpose:hover{
+	background: palegreen;
+	}
 }
 
 .saveaspdf{
 margin-left:14px;
 }
 
-.saveaspdf:hover{
-background: palegreen;
+@media (hover: hover) {
+	.saveaspdf:hover{
+	background: palegreen;
+	}
 }
 
 .toggleadvancedcontrols{
@@ -99,8 +106,10 @@ color:black;
 -webkit-appearance:none;
 }
 
-.toggleadvancedcontrols:hover{
-background: palegreen;
+@media (hover: hover) {
+	.toggleadvancedcontrols:hover{
+	background: palegreen;
+	}
 }
 
 .togglesharecontrols{
@@ -115,8 +124,10 @@ color:black;
 -webkit-appearance:none;
 }
 
-.togglesharecontrols:hover{
-background: palegreen;
+@media (hover: hover) {
+	.togglesharecontrols:hover{
+	background: palegreen;
+	}
 }
 
 .advancedcontrols{
@@ -130,8 +141,10 @@ color:black;
 -webkit-appearance:none;
 }
 
-.advancedcontrols:hover{
-background: palegreen;
+@media (hover: hover) {
+	.advancedcontrols:hover{
+	background: palegreen;
+	}
 }
 
 .urlcontrols{
@@ -147,8 +160,10 @@ color:black;
 -webkit-appearance:none;
 }
 
-.urlcontrols:hover{
-background: palegreen;
+@media (hover: hover) {
+	.urlcontrols:hover{
+	background: palegreen;
+	}
 }
 
 .clearbutton{
@@ -163,8 +178,10 @@ color:black;
 margin-left: 45px;
 }
 
-.clearbutton:hover{
-background: tomato;
+@media (hover: hover) {
+	.clearbutton:hover{
+	background: tomato;
+	}
 }
 
 .abcupload {
@@ -298,6 +315,7 @@ margin-top:9px;
 }
 
 #urltextbox{
+font-family:"Courier";
 margin-top:8px;
 font-size:11pt;
 -webkit-appearance: none;
