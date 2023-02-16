@@ -1,5 +1,5 @@
 body {
-padding:20px;
+padding:10px;
 }
 
 #app-container{
@@ -58,7 +58,7 @@ margin-bottom:50px;
 font-size: 11pt;
 padding: 5px;
 margin-top: 25px;
-margin-bottom: 6px;
+margin-bottom: 0px;
 -webkit-appearance: none;
 -moz-appearance: none;
 }
@@ -93,13 +93,29 @@ font-size:11pt;
 border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
-margin-left:30px;
+margin-left:35px;
 background-color: #E8FFFF;
 color:black;
 -webkit-appearance:none;
 }
 
 .toggleadvancedcontrols:hover{
+background: palegreen;
+}
+
+.togglesharecontrols{
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+padding: 0.6em;
+margin-left:28px;
+background-color: lavender;
+color:black;
+-webkit-appearance:none;
+}
+
+.togglesharecontrols:hover{
 background: palegreen;
 }
 
@@ -117,22 +133,6 @@ color:black;
 .advancedcontrols:hover{
 background: palegreen;
 }
-
-.createshareurl{
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
-background-color: lavender;
-color:black;
--webkit-appearance:none;
-}
-
-.createshareurl:hover{
-background: palegreen;
-}
-
 
 .urlcontrols{
 font-family:"Helvetica";
@@ -157,11 +157,10 @@ font-size:11pt;
 border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
-margin-right:10px;
 background-color: #FFCCCC;
 color:black;
 -webkit-appearance:none;
-margin-left: 208px;
+margin-left: 45px;
 }
 
 .clearbutton:hover{
@@ -231,6 +230,11 @@ display:none;
 margin-top:20px;
 }
 
+#share-controls{
+display:none;
+margin-top:20px;
+}
+
 #staff-spacing{
 width:75px;
 margin-top:6px;
@@ -290,11 +294,11 @@ left:-3000px;
 
 #urlarea{
 display:none;
-margin-top:13px;
+margin-top:9px;
 }
 
 #urltextbox{
-margin-top:10px;
+margin-top:8px;
 font-size:11pt;
 -webkit-appearance: none;
 -moz-appearance: none;
@@ -324,17 +328,16 @@ margin-top:5px;
 margin-top:6px;	
 }
 
-
-#createshareurl{
-margin-right:26px;
-}
-
 #toggleannotations, #toggletext{
 margin-right:10px;
 }
 
 #togglechords{
 margin-right:16px;
+}
+
+#shareurlcaption{
+margin-top:8px;
 }
 
 @media print {
