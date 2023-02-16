@@ -2086,7 +2086,7 @@ function doStartup() {
 	// On iPad make the abc area a bit narrower so it doesn't get cut off
 	if (gIsIPad) {
 
-		document.getElementById("abc").cols = 82;
+		document.getElementById("abc").cols = 75;
 
 	}
 
