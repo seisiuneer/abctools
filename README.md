@@ -3,6 +3,8 @@
 <p>This single tune ABC to notation converter was developed by <a href="http://michaeleskin.com" target="_blank">Michael Eskin</a>.</p>
 <p>The converter can generate standard notation as well as tab output for mandolin, note names, standard tuned guitar, DADGAD guitar, and tin whistle.</p>
 <p>It can also share tunes sets via share URL generation and QR codes.</p>
+<p>Try it out here:</p>
+<p><a href="http://michaeleskin.com/abc" target="_blank">ABC Transcription Tools</a>http://michaeleskin.com/abc</p> 
 <hr>
 <p><strong>Open Source Info:</strong></p>
 <p>The converter uses open source Javascript libraries and forks of other projects:</p>
