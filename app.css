@@ -60,7 +60,7 @@ margin-bottom:50px;
 font-family:"Courier";
 font-size: 12pt;
 padding: 5px;
-margin-top: 25px;
+margin-top: 0px;
 margin-bottom: 0px;
 -webkit-appearance: none;
 -moz-appearance: none;
@@ -200,7 +200,7 @@ margin-right: 16px;
 -webkit-appearance:none;
 }
 
-#abc-selected,#abc-selectedios{
+#abc-selected{
 font-family:"Helvetica";
 font-size:11pt;
 }
@@ -222,7 +222,7 @@ display:none;
 }
 
 #inputarea{
-margin-top:24px;
+margin-top:18px;
 }
 
 #tabs-selection{
@@ -261,7 +261,6 @@ margin-top:6px;
 font-family:"Helvetica";
 font-size:11pt;
 }
-
 
 #transpose-controls, #tabs-selection, #render-width{
 display:flex;
@@ -323,11 +322,15 @@ font-size:11pt;
 }
 
 #testurl{
-margin-right:10px	
+margin-right:20px	
+}
+
+#saveurl{
+margin-left:20px	
 }
 
 #generateqrcode{
-margin-left:10px;	
+margin-left:25px;
 }
 
 #statuspdfname{
@@ -356,6 +359,42 @@ margin-right:16px;
 
 #shareurlcaption{
 margin-top:8px;
+}
+
+.saveabcfile{
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+padding: 0.6em;
+margin-left:16px;
+background-color: #FFFFFF;
+color:black;
+-webkit-appearance:none;
+opacity:1.0;
+}
+
+.saveabcfiledisabled{
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+padding: 0.6em;
+margin-left:16px;
+background-color: #FFFFFF;
+color:black;
+-webkit-appearance:none;
+opacity:0.4;
+}
+
+#fileoperations{
+text-align:center;
+}
+
+@media (hover: hover) {
+	.saveabcfile:hover{
+	background: palegreen;
+	}
 }
 
 @media print {
