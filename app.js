@@ -20,6 +20,10 @@ var gTheQRCode = null;
 
 var gShowShareControls = false;
 
+var gAllowSave = false;
+
+var gAllowURLSave = false;
+
 var theABC = document.getElementById("abc");
 
 function Notenames() {
@@ -1327,6 +1331,11 @@ function Render() {
 		document.getElementById("notenrechts").style.display = "inline-block";
 		document.getElementById("notation-holder").style.display = "block";
 
+		// Enable the save button
+		document.getElementById("saveabcfile").classList.remove("saveabcfiledisabled");
+		document.getElementById("saveabcfile").classList.add("saveabcfile");
+		gAllowSave = true;
+
 		radiovalue = Welchetabs("notenodertab");
 
 		// Generate the rendering divs
@@ -1440,8 +1449,18 @@ function Render() {
 		}
 	} else {
 
+		// Hide all the buttons and notation
 		document.getElementById("notenrechts").style.display = "none";
 		document.getElementById("notation-holder").style.display = "none";
+
+		// Disable the save button
+		document.getElementById("saveabcfile").classList.remove("saveabcfile");
+		document.getElementById("saveabcfile").classList.add("saveabcfiledisabled");
+		gAllowSave = false;
+
+		var fileSelected = document.getElementById('abc-selected');
+
+		fileSelected.innerText = "No .ABC file selected";
 
 	}
 }
@@ -1795,10 +1814,18 @@ function FillUrlBoxWithAbcInLZW() {
 
 		document.getElementById("testurl").style.display = "none";
 
+		document.getElementById("saveurl").style.display = "none";
+
+		gAllowURLSave = false;
+
 
 	} else {
 
 		document.getElementById("testurl").style.display = "inline";
+
+		document.getElementById("saveurl").style.display = "inline";
+
+		gAllowURLSave = true;
 
 		// If fits in a QR code, show the QR code button
 		var maxURLLength = 2300;
@@ -1907,6 +1934,79 @@ function GenerateQRCode() {
 
 	}
 
+}
+
+//
+// Save a text file
+//
+function saveTextFile(thePrompt, thePlaceholder, theData){
+
+	var fname = prompt(thePrompt, thePlaceholder);
+
+	// If the user pressed Cancel, exit
+	if (fname == null){
+	  return null;
+	}
+
+	// Strip out any naughty HTML tag characters
+	fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+	if (fname.length == 0){
+	  return null;
+	}      
+
+	// Give it a good extension
+	if ((!fname.endsWith(".abc")) && (!fname.endsWith(".txt"))){
+	  fname = fname + ".abc";
+	}
+
+	var a = document.createElement("a");
+
+	document.body.appendChild(a);
+
+	a.style = "display: none";
+
+	var blob = new Blob([theData], {type: "text/plain"}),
+
+	url = window.URL.createObjectURL(blob);
+	a.href = url;
+	a.download = fname;
+	a.click();
+
+	document.body.removeChild(a);
+
+	setTimeout(function() {
+	  window.URL.revokeObjectURL(url);
+	}, 1000);
+
+}
+
+//
+// Save the ABC
+//
+function SaveABC(){
+
+	if (gAllowSave){
+
+		var theData = theABC.value;
+		if (theData.length != 0){
+			saveTextFile("Please enter a filename for your ABC file:","newtune.abc",theData);
+		}
+	}
+}
+
+//
+// Save the ShareURL
+//
+function SaveShareURL(){
+
+	if (gAllowURLSave){
+
+		var theData = urltextbox.value;
+		if (theData.length != 0){
+			saveTextFile("Please enter a filename for your ShareURL file:","shareurl.txt",theData);
+		}
+	}
 }
 
 //
@@ -2038,6 +2138,8 @@ function doStartup() {
 	gStripChords = false;
 	gCopySVGs = false;
 	gRenderingPDF = false;
+	gAllowSave = false;
+	gAllowURLSave = false;
 
 	// Warn Safari users
 	const uA = navigator.userAgent;
@@ -2151,7 +2253,6 @@ function doStartup() {
 
 	// Reset the paging control
 	document.getElementById("pdfformat").value = "true";
-
 
 	// Clear the text entry area
 	Clear();
