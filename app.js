@@ -34,6 +34,10 @@ var gShowAllControls = true;
 
 var gAllowControlToggle = false
 
+var gAllowFilterAnnotations = false;
+var gAllowFilterText = false;
+var gAllowFilterChords = false;
+
 var theABC = document.getElementById("abc");
 
 function Notenames() {
@@ -1208,6 +1212,9 @@ function Render() {
 		document.getElementById("toggleallcontrols").classList.add("toggleallcontrols");
 		gAllowControlToggle = true;
 
+		// Idle the advanced controls
+		IdleAdvancedControls();
+
 		var radiovalue = Welchetabs("notenodertab");
 
 		// Generate the rendering divs
@@ -1379,6 +1386,226 @@ function HideAdvancedControls() {
 function ShowAdvancedControls() {
 
 	document.getElementById('advanced-controls').style.display = "flex";
+
+	// Idle the controls
+	IdleAdvancedControls();
+}
+
+//
+// Idle the advanced controls
+//
+function IdleAdvancedControls(){
+
+	if (gShowAllControls && gShowAdvancedControls){
+
+		var theNotes = theABC.value;
+
+		var searchRegExp = "";
+
+		var EnableAnnotations = false;
+		var EnableText = false;
+		var EnableChords = false;
+
+		var gotMatch = false;
+
+		// Detect tempo markings
+		searchRegExp = /^Q:.*$/gm
+
+		// Detect tempo markings
+		gotMatch = theNotes.search(searchRegExp) != -1;
+
+		if (!gotMatch){
+
+			// Detect Z: annotation
+			searchRegExp = /^Z:.*$/gm
+
+			// Detect Z: annotation
+			gotMatch = theNotes.search(searchRegExp) != -1;
+
+		}
+
+		if (!gotMatch){
+
+			// Detect R: annotation
+			searchRegExp = /^R:.*$/gm
+
+			// Detect R: annotation
+			gotMatch = theNotes.search(searchRegExp) != -1;
+
+		}
+
+		if (!gotMatch){
+
+			// Detect S: annotation
+			searchRegExp = /^S:.*$/gm
+
+			// Detect S: annotation
+			gotMatch = theNotes.search(searchRegExp) != -1;
+
+		}
+
+		if (!gotMatch){
+
+			// Detect N: annotation
+			searchRegExp = /^N:.*$/gm
+
+			// Detect N: annotation
+			gotMatch = theNotes.search(searchRegExp) != -1;
+
+		}
+
+		if (!gotMatch){
+
+			// Detect D: annotation
+			searchRegExp = /^D:.*$/gm
+
+			// Detect D: annotation
+			gotMatch = theNotes.search(searchRegExp) != -1;
+
+		}
+
+		if (!gotMatch){
+
+			// Detect H: annotation
+			searchRegExp = /^H:.*$/gm
+
+			// Detect H: annotation
+			gotMatch = theNotes.search(searchRegExp) != -1;
+
+		}
+
+		if (!gotMatch){
+
+			// Detect B: annotation
+			searchRegExp = /^B:.*$/gm
+
+			// Detect B: annotation
+			gotMatch = theNotes.search(searchRegExp) != -1;
+
+		}
+
+		EnableAnnotations = gotMatch;
+
+		gotMatch = false;
+
+		// Detect text markings
+		searchRegExp = /%%text.*$/gm
+
+		// Detect text markings
+		gotMatch = theNotes.search(searchRegExp) != -1;
+
+		if (!gotMatch){
+
+			// Detect %%center annotation
+			searchRegExp = /%%center.*$/gm
+
+			// Detect %%center annotation
+			gotMatch = theNotes.search(searchRegExp) != -1;
+
+		}
+
+		EnableText = gotMatch;
+
+		gotMatch = false;
+
+		// Detect chord markings
+		searchRegExp = /"[^"]*"/gm
+
+		// Detect chord markings
+		gotMatch = theNotes.search(searchRegExp) != -1;
+
+		EnableChords = gotMatch;
+
+		// Now set the button styling based on the results
+		if (EnableAnnotations){
+
+			gAllowFilterAnnotations = true;
+
+			// Enable the Toggle Annotations button
+			document.getElementById("toggleannotations").classList.remove("advancedcontrolsdisabled");
+			document.getElementById("toggleannotations").classList.add("advancedcontrols");	
+		}
+		else{
+
+			gAllowFilterAnnotations = false;
+
+			// Disable the Toggle Annotations button
+			document.getElementById("toggleannotations").classList.remove("advancedcontrols");
+			document.getElementById("toggleannotations").classList.add("advancedcontrolsdisabled");				
+		}
+
+		if (EnableText){
+
+			gAllowFilterText = true;
+
+			// Enable the Toggle Text button
+			document.getElementById("toggletext").classList.remove("advancedcontrolsdisabled");
+			document.getElementById("toggletext").classList.add("advancedcontrols");	
+		}
+		else{
+
+			gAllowFilterText = false;
+
+			// Disable the Toggle Text button
+			document.getElementById("toggletext").classList.remove("advancedcontrols");
+			document.getElementById("toggletext").classList.add("advancedcontrolsdisabled");				
+		}
+
+		if (EnableChords){
+
+			gAllowFilterChords = true;
+
+			// Enable the Toggle Chords button
+			document.getElementById("togglechords").classList.remove("advancedcontrolsdisabled");
+			document.getElementById("togglechords").classList.add("advancedcontrols");	
+		}
+		else{
+
+			gAllowFilterChords = false;
+
+			// Disable the Toggle Chords button
+			document.getElementById("togglechords").classList.remove("advancedcontrols");
+			document.getElementById("togglechords").classList.add("advancedcontrolsdisabled");				
+		}
+
+		// Now idle the button labels based on the global states
+
+		if (gStripAnnotations){
+
+			document.getElementById("toggleannotations").value = "Show Annotations";
+
+		}
+		else{
+
+			document.getElementById("toggleannotations").value = "Hide Annotations";
+
+		}
+
+		if (gStripTextAnnotations){
+
+			document.getElementById("toggletext").value = "Show Text";
+
+		}
+		else{
+
+			document.getElementById("toggletext").value = "Hide Text";
+
+		}
+
+		if (gStripChords){
+
+			document.getElementById("togglechords").value = "Show Chords";
+
+		}
+		else{
+
+			document.getElementById("togglechords").value = "Hide Chords";
+
+		}
+
+
+
+	}
 }
 
 //
@@ -2097,6 +2324,9 @@ function doStartup() {
 	gAllowURLSave = false;
 	gShowAllControls = true;
 	gAllowControlToggle = false
+	gAllowFilterAnnotations = false;
+	gAllowFilterText = false;
+	gAllowFilterChords = false;
 
 	// Warn Safari users
 	const uA = navigator.userAgent;
