@@ -2030,6 +2030,13 @@ function processShareLink() {
 
 	if (doRender) {
 
+		// Hide the controls if coming in from a share link
+		document.getElementById("notenrechts").style.display = "none";
+		document.getElementById("notation-holder").style.marginTop = "0px";
+		document.getElementById("toggleallcontrols").value = "Show Controls";
+
+		gShowAllControls = false;
+
 		Render();
 
 		// Scroll the music into view
