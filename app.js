@@ -1,6 +1,6 @@
 /**
  * 
- * app.js - All code for the ABC Transcription Tools
+ * app.js  -  All code for the ABC Transcription Tools
  *
  */
 
