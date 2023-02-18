@@ -38,6 +38,8 @@ var gAllowFilterAnnotations = false;
 var gAllowFilterText = false;
 var gAllowFilterChords = false;
 
+var gCapo = 0;
+
 var theABC = document.getElementById("abc");
 
 function Notenames() {
@@ -596,7 +598,8 @@ function GetABCJSParams(instrument){
 				instrument: 'violin',
 				label: '',
 				tuning: ['G,', 'D', 'A', 'e'],
-				highestNote: "f'"
+				highestNote: "f'",
+				capo: gCapo
 			}],
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
@@ -613,7 +616,7 @@ function GetABCJSParams(instrument){
 				gchordfont: "Verdana 12",
 				vocalfont: "Verdana 12",
 				wordsfont: "Verdana 12"
-			}
+			},
 		}
 	} else if (instrument == "guitare") {
 		params = {
@@ -621,7 +624,8 @@ function GetABCJSParams(instrument){
 				instrument: 'guitar',
 				label: '',
 				tuning: ['E,', 'A,', 'D', 'G', 'B', 'e'],
-				highestNote: "f'"
+				highestNote: "f'",
+				capo: gCapo
 			}],
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
@@ -646,7 +650,8 @@ function GetABCJSParams(instrument){
 				instrument: 'guitar',
 				label: '',
 				tuning: ['D,', 'A,', 'D', 'G', 'A', 'd'],
-				highestNote: "f'"
+				highestNote: "f'",
+				capo: gCapo
 			}],
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
@@ -1212,6 +1217,9 @@ function Render() {
 		// Idle the advanced controls
 		IdleAdvancedControls();
 
+		// Idle the capo control
+		IdleCapoControl();
+
 		var radiovalue = Welchetabs("notenodertab");
 
 		// Generate the rendering divs
@@ -1674,6 +1682,53 @@ function SetStaffSpacing() {
 }
 
 //
+// Handle the capo control
+//
+function SetCapo() {
+
+	gCapo = document.getElementById('capo').value;
+
+	Render();
+}
+
+//
+// Idle the capo control
+//
+function IdleCapoControl(){
+
+	var format = Welchetabs("notenodertab");
+
+	var enableCapo = false;
+
+	switch (format){
+
+		case "noten":
+		case "notenames":
+		case "whistle":
+			break;
+
+		case "mandolin":
+		case "guitare":
+		case "guitard":
+			enableCapo = true;
+			break;
+
+	}
+
+	if (enableCapo){
+
+		// Enable the capo control
+		document.getElementById("capo").disabled = false;
+
+	}
+	else{
+		// Disable the capo control
+		document.getElementById("capo").disabled = true;
+	}
+
+}
+
+//
 // Set the defaults
 //
 function RestoreDefaults() {
@@ -1687,6 +1742,10 @@ function RestoreDefaults() {
 	document.getElementById('staff-spacing').value = STAFFSPACEMIN;
 
 	gStaffSpacing = STAFFSPACEMIN;
+
+	document.getElementById('capo').value = 0;
+
+	gCapo = 0;
 
 	// Reset file selectors
 	let fileElement = document.getElementById('selectabcfile');
@@ -1904,10 +1963,32 @@ function FillUrlBoxWithAbcInLZW() {
 
 	var theWidth = Welchetabs("renderwidth");
 
+	var capo = document.getElementById("capo").value;
+
 	// Strip the percent sign
 	theWidth = theWidth.replace("%","");
 
 	var url = getUrlWithoutParams() + "?lzw=" + abcInLZW + "&w=" + theWidth + "&format=" + format;
+
+	// Add a capo parameter for mandolin and guitar
+	var postfix = "";
+
+	switch (format){
+
+		case "noten":
+		case "notenames":
+		case "whistle":
+			break;
+
+		case "mandolin":
+		case "guitare":
+		case "guitard":
+			postfix = "&capo=" + capo;
+			break;
+
+	}
+
+	url += postfix;
 
 	var urltextbox = document.getElementById("urltextbox");
 
@@ -2044,13 +2125,25 @@ function GenerateQRCode() {
 				postfix = "<br/><br/>(Note Names Tab)";
 				break;
 			case "mandolin":
-				postfix = "<br/><br/>(Mandolin Tab)";
+				postfix = "<br/><br/>(Mandolin Tab";
+				if (gCapo != 0){
+					postfix += " - Capo on "+gCapo;
+				}
+				postfix += ")";
 				break;
 			case "guitare":
-				postfix = "<br/><br/>(Standard Guitar Tab)";
+				postfix = "<br/><br/>(Standard Guitar Tab";
+				if (gCapo != 0){
+					postfix += " - Capo on "+gCapo;
+				}
+				postfix += ")";
 				break;
 			case "guitard":
-				postfix = "<br/><br/>(DADGAD Guitar Tab)";
+				postfix = "<br/><br/>(DADGAD Guitar Tab";
+				if (gCapo != 0){
+					postfix += " - Capo on "+gCapo;
+				}
+				postfix += ")";
 				break;
 			case "whistle":
 				postfix = "<br/><br/>(Whistle Tab)";
@@ -2236,10 +2329,11 @@ function b64toutf8(str) {
 //
 function processShareLink() {
 
-
 	var doRender = false;
 
 	const urlParams = new URLSearchParams(window.location.search);
+
+	// Process URL params
 
 	if (urlParams.has("base64")) {
 
@@ -2272,6 +2366,16 @@ function processShareLink() {
 	if (urlParams.has("format")) {
 		var format = urlParams.get("format");
 		SetRadioValue("notenodertab", format);
+		IdleCapoControl();
+	}
+
+	if (urlParams.has("capo")) {
+		var capo = urlParams.get("capo");
+		document.getElementById("capo").value = capo;
+		gCapo = capo;
+	}
+	else{
+		gCapo = 0;
 	}
 
 	// For mobile, default to full width output
@@ -2287,6 +2391,11 @@ function processShareLink() {
 	}
 
 	if (doRender) {
+
+		// Set the title
+		var fileSelected = document.getElementById("abc-selected");
+
+		fileSelected.innerText = "Shared Tune Set";
 
 		// Hide the controls if coming in from a share link
 		document.getElementById("notenrechts").style.display = "none";
@@ -2330,6 +2439,7 @@ function doStartup() {
 	gAllowFilterAnnotations = false;
 	gAllowFilterText = false;
 	gAllowFilterChords = false;
+	gCapo = 0;
 
 	// Warn Safari users
 	const uA = navigator.userAgent;
