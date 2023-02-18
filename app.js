@@ -1801,6 +1801,34 @@ function GenerateQRCode() {
 		// Get all the titles of the tunes in the text area
 		var theTitles = GetAllTuneTitles();
 
+		// Get the current instrument setting
+		var theTab = Welchetabs("notenodertab");
+
+		var postfix = "";
+
+		switch (theTab){
+			case "noten":
+				postfix = "<br/><br/>(Standard Notation)";
+				break;
+			case "notenames":
+				postfix = "<br/><br/>(Note Names Tab)";
+				break;
+			case "mandolin":
+				postfix = "<br/><br/>(Mandolin Tab)";
+				break;
+			case "guitare":
+				postfix = "<br/><br/>(Standard Guitar Tab)";
+				break;
+			case "guitard":
+				postfix = "<br/><br/>(DADGAD Guitar Tab)";
+				break;
+			case "whistle":
+				postfix = "<br/><br/>(Whistle Tab)";
+				break;
+		}
+
+		theTitles += postfix;
+
 		theQRCodeImage = theQRCodeImage[0];
 
 		var w = window.open("");
