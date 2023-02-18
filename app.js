@@ -1653,20 +1653,25 @@ function FillUrlBoxWithAbcInLZW() {
 
 		url = "     The URL link would be too long to share. Please try sharing fewer tunes.";
 
-		document.getElementById("generateqrcode").style.display = "none";
+		document.getElementById("generateqrcode").classList.remove("urlcontrols");
+		document.getElementById("generateqrcode").classList.add("urlcontrolsdisabled");
 
-		document.getElementById("testurl").style.display = "none";
+		document.getElementById("testurl").classList.remove("urlcontrols");
+		document.getElementById("testurl").classList.add("urlcontrolsdisabled");
 
-		document.getElementById("saveurl").style.display = "none";
+		document.getElementById("saveurl").classList.remove("urlcontrols");
+		document.getElementById("saveurl").classList.add("urlcontrolsdisabled");
 
 		gAllowURLSave = false;
 
 
 	} else {
 
-		document.getElementById("testurl").style.display = "inline";
+		document.getElementById("testurl").classList.remove("urlcontrolsdisabled");
+		document.getElementById("testurl").classList.add("urlcontrols");
 
-		document.getElementById("saveurl").style.display = "inline";
+		document.getElementById("saveurl").classList.remove("urlcontrolsdisabled");
+		document.getElementById("saveurl").classList.add("urlcontrols");
 
 		gAllowURLSave = true;
 
@@ -1675,11 +1680,13 @@ function FillUrlBoxWithAbcInLZW() {
 	
 		if (url.length < maxURLLength) {
 
-			document.getElementById("generateqrcode").style.display = "inline";
+			document.getElementById("generateqrcode").classList.remove("urlcontrolsdisabled");
+			document.getElementById("generateqrcode").classList.add("urlcontrols");
 
 		} else {
 
-			document.getElementById("generateqrcode").style.display = "none";
+			document.getElementById("generateqrcode").classList.remove("urlcontrols");
+			document.getElementById("generateqrcode").classList.add("urlcontrolsdisabled");
 
 		}
 	}
