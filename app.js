@@ -1696,6 +1696,9 @@ function RestoreDefaults() {
 	// Clear the QR code
 	clearQRCode();
 
+	// Idle the advanced controls
+	IdleAdvancedControls();
+
 }
 
 //
