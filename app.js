@@ -1,3 +1,9 @@
+/**
+ * 
+ * app.js - All code for the ABC Transcription Tools
+ *
+ */
+
 var gShowAdvancedControls = false;
 var gStripAnnotations = false;
 var gStripTextAnnotations = false;
@@ -23,6 +29,10 @@ var gShowShareControls = false;
 var gAllowSave = false;
 
 var gAllowURLSave = false;
+
+var gShowAllControls = true;
+
+var gAllowControlToggle = false
 
 var theABC = document.getElementById("abc");
 
@@ -752,7 +762,7 @@ function Notenmachen(tune, instrument) {
 
 	// Avoid jump scroll on render
 	var scrollTop = window.pageYOffset;
-
+	
 	// Create the render div ID array
 	var renderDivs = [];
 
@@ -1112,6 +1122,8 @@ function Notenmachen(tune, instrument) {
 
 	}
 
+	//
+
 	// Join all the SVG text and stuff in the offscreen rendering div
 
 	if (gCopySVGs){
@@ -1127,7 +1139,7 @@ function Notenmachen(tune, instrument) {
 
 	// Reset the scroll position after render
 	window.scrollTo(0, scrollTop);
-
+	
 }
 
 function SetRadioValue(radiowert, value) {
@@ -1174,13 +1186,27 @@ function Render() {
 			FillUrlBoxWithAbcInLZW();
 		}
 
-		document.getElementById("notenrechts").style.display = "inline-block";
+		// Show the notation block
 		document.getElementById("notation-holder").style.display = "block";
+
+		if (gShowAllControls){
+			document.getElementById("notenrechts").style.display = "inline-block";
+			document.getElementById("notation-holder").style.marginTop = "-20px";
+		}
+		else{
+			document.getElementById("notenrechts").style.display = "none";
+			document.getElementById("notation-holder").style.marginTop = "0px";
+		}
 
 		// Enable the save button
 		document.getElementById("saveabcfile").classList.remove("saveabcfiledisabled");
 		document.getElementById("saveabcfile").classList.add("saveabcfile");
 		gAllowSave = true;
+
+		// Enable the control display toggle
+		document.getElementById("toggleallcontrols").classList.remove("toggleallcontrolsdisabled");
+		document.getElementById("toggleallcontrols").classList.add("toggleallcontrols");
+		gAllowControlToggle = true;
 
 		var radiovalue = Welchetabs("notenodertab");
 
@@ -1293,6 +1319,7 @@ function Render() {
 			Notenmachen(theNotes, radiovalue);
 
 		}
+
 	} else {
 
 		// Hide all the buttons and notation
@@ -1303,6 +1330,11 @@ function Render() {
 		document.getElementById("saveabcfile").classList.remove("saveabcfile");
 		document.getElementById("saveabcfile").classList.add("saveabcfiledisabled");
 		gAllowSave = false;
+
+		// Disable the control display toggle
+		document.getElementById("toggleallcontrols").classList.remove("toggleallcontrols");
+		document.getElementById("toggleallcontrols").classList.add("toggleallcontrolsdisabled");
+		gAllowControlToggle = false;
 
 		var fileSelected = document.getElementById('abc-selected');
 
@@ -1870,6 +1902,9 @@ function TestShareURL(){
 
 }
 
+//
+// Set the ABC text and re-render
+//
 function SetAbcText(txt) {
 
 	theABC.value = txt;
@@ -1880,6 +1915,38 @@ function SetAbcText(txt) {
 
 }
 
+//
+// Toggle the control display
+//
+function ToggleAllControls(){
+
+	// Check if OK to toggle the controls
+	if (!gAllowControlToggle){
+		return;
+	}
+
+	if (gShowAllControls){
+
+		document.getElementById("notenrechts").style.display = "none";
+		document.getElementById("notation-holder").style.marginTop = "0px";
+		document.getElementById("toggleallcontrols").value = "Show Controls";
+
+		gShowAllControls = false;
+	}
+	else{
+		
+		document.getElementById("notenrechts").style.display = "inline-block";
+		document.getElementById("notation-holder").style.marginTop = "-20px";
+		document.getElementById("toggleallcontrols").value = "Hide Controls";
+
+		gShowAllControls = true;
+
+	}
+}
+
+// 
+// Utility function for convertering UTF-8 to Base64
+//
 function utf8tob64(str) {
 	var retval;
 
@@ -1891,6 +1958,9 @@ function utf8tob64(str) {
 	return retval;
 };
 
+// 
+// Utility function for convertering Base64 to UTF-8
+//
 function b64toutf8(str) {
 
 	var retval;
@@ -1990,6 +2060,8 @@ function doStartup() {
 	gRenderingPDF = false;
 	gAllowSave = false;
 	gAllowURLSave = false;
+	gShowAllControls = true;
+	gAllowControlToggle = false
 
 	// Warn Safari users
 	const uA = navigator.userAgent;
