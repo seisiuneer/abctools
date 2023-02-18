@@ -763,9 +763,6 @@ function Notenmachen(tune, instrument) {
 
 	// Get the rendering params
 	var params = GetABCJSParams(instrument);
-
-	// Avoid jump scroll on render
-	var scrollTop = window.pageYOffset;
 	
 	// Create the render div ID array
 	var renderDivs = [];
@@ -1140,9 +1137,6 @@ function Notenmachen(tune, instrument) {
 		svgTextArray = null;
 
 	}
-
-	// Reset the scroll position after render
-	window.scrollTo(0, scrollTop);
 	
 }
 
@@ -1184,6 +1178,9 @@ function Render() {
 	}
 
 	if (theABC.value != "") {
+
+		// Avoid jump scroll on render
+		var scrollTop = window.pageYOffset;
 
 		//console.log("Render()");
 		if (document.getElementById("urlarea").style.display != "none") {
@@ -1326,6 +1323,9 @@ function Render() {
 			Notenmachen(theNotes, radiovalue);
 
 		}
+
+		// Maintain scroll position after render
+		window.scrollTo(0, scrollTop);
 
 	} else {
 
