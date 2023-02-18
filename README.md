@@ -9,6 +9,9 @@
 <p>For example here is the tool pre-loaded with "The Kesh" and "The Lilting Banshee":</p>
 <p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuMAsCmYDSSDOCoCVwCsBLAcygGFwApEqAWXADYB6ADigBlwJWpVwBxALYBDfFACk4gMZIAdgBckAJygAfEPwCC-MFoBCqzXs1gjAE1VIzZsMWuWzesI82qoWnfsPHTei1Zs7A20AMV0AZhA3dWMnR39iFBdVWOc9fm8TbVcoVPjLRLSLYgAzYjBhYmFVMAAjYnLiSNUAXTAoKFAwACZYeGQwdkIAG3lCWXK9YVksJCRcAhoKMGpSejBmNk5IHj5TMwB7FXUAUU0TM9dU-m6rubArAxddE4ARN0uwS5SjXVuU+6PVQQNJZZrdUGmboWaIgJDCYQVRKqZ43VxgPSAxwopAlWxlNzwxGVJAonxogEoIEg56aaFRCG08KtdpAA&w=50&format=noten)" target="_blank">Open the tool with "The Kesh" and "The Lilting Banshee"</a></p> 
 <hr>
+<p><strong>Sample Tune Set QR Codes</strong></p>
+<p>I have an album of tune set Share URL QR codes up at <a href="https://flic.kr/s/aHBqjArRJZ">ABC Tune Set QR Codes</a> that you can try scanning with your phone.</p>
+<hr>
 <p><strong>Open Source Info:</strong></p>
 <p>The converter uses open source Javascript libraries and forks of other projects:</p>
 <p><a href="http://www.franziskaludwig.de/abctransposer/" target="_blank">Jens Wollschlager's abc transposer</a> My code is a fork of Jens Wollschlager's original version.</p> 
@@ -24,3 +27,4 @@
 <p><strong>Project Contributors:</strong></p>
 <p>Thank you to Philip McGarvey for the share link export feature addition!</p>
 <hr>
+
