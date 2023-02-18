@@ -289,6 +289,17 @@ font-family:"Helvetica";
 font-size:11pt;
 }
 
+#capo{
+width:75px;
+margin-top:6px;
+margin-right:20px;
+}
+
+.capo {
+font-family:"Helvetica";
+font-size:11pt;
+}
+
 #transpose-controls, #tabs-selection, #render-width{
 display:flex;
 }
@@ -384,7 +395,7 @@ margin-right:10px;
 }
 
 #togglechords{
-margin-right:16px;
+margin-right:30px;
 }
 
 #shareurlcaption{
