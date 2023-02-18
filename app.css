@@ -166,6 +166,19 @@ color:black;
 	}
 }
 
+.urlcontrolsdisabled{
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+padding: 0.6em;
+margin-left:16px;
+background-color: #FFFFFF;
+color:black;
+-webkit-appearance:none;
+opacity:0.4;
+}
+
 .clearbutton{
 font-family:"Helvetica";
 font-size:11pt;
@@ -322,14 +335,17 @@ font-size:11pt;
 }
 
 #testurl{
+display:inline;
 margin-right:20px	
 }
 
 #saveurl{
+display:inline;
 margin-left:20px	
 }
 
 #generateqrcode{
+display:inline;
 margin-left:25px;
 }
 
