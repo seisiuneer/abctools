@@ -143,6 +143,18 @@ color:black;
 -webkit-appearance:none;
 }
 
+.advancedcontrolsdisabled{
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+padding: 0.6em;
+background-color: #E8FFFF;
+color:black;
+-webkit-appearance:none;
+opacity:0.4;
+}
+
 @media (hover: hover) {
 	.advancedcontrols:hover{
 	background: palegreen;
