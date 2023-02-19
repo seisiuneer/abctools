@@ -192,7 +192,7 @@ function Clear() {
 
 	var fileSelected = document.getElementById('abc-selected');
 
-	fileSelected.innerText = "No .ABC file selected";
+	fileSelected.innerText = "No ABC file selected";
 
 	RestoreDefaults();
 
@@ -1366,7 +1366,7 @@ function Render() {
 
 		var fileSelected = document.getElementById('abc-selected');
 
-		fileSelected.innerText = "No .ABC file selected";
+		fileSelected.innerText = "No ABC file selected";
 	}
 }
 
@@ -1385,7 +1385,7 @@ function ensureABCFile(filename) {
 	if ((fileExtension.toLowerCase() == "abc") || (fileExtension.toLowerCase() == "txt")) {
 		return true;
 	} else {
-		alert("You must select a .ABC file for upload");
+		alert("You must select a .abc or .txt file for upload");
 		return false;
 	}
 }
