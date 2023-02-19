@@ -36,112 +36,122 @@
 		<link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 		<link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-		<link href="app.css?v=102" media="all" rel="stylesheet" type="text/css">
+		<link href="app.css?v=105" media="all" rel="stylesheet" type="text/css">
 		
 	</head>
 	<body>
 		<div id="app-container">
-			<div id="notenlinks" class="hidden-print">				
-				<font size="5" face="Comic Sans MS">ABC Transcription Tools</font>
-				<p><a href="instructions.html" target="_blank">Instructions</a>&nbsp;-&nbsp;<a href="credits.html" target="_blank">Credits and Thanks</a>&nbsp;-&nbsp;<a href="releasenotes.html" target="_blank">Release Notes</a>&nbsp;-&nbsp;<a href="tunesources.html" target="_blank">Tune Sources</a>&nbsp;-&nbsp;<a href="support.html" target="_blank">Support</a>&nbsp;-&nbsp;<a href="http://michaeleskin.com" target="_blank">About Me</a></p>
-				<div id="safariuser">
-					<p>I see you are using Safari.<br/><br/>This converter works best with Chrome or Firefox and often has rendering issues on Safari.</p>
-				</div>
-				<!--default html file upload button-->
-				<div id="fileoperations">
-					<input type="file" id="selectabcfile" accept=".abc,.txt,.ABC,.TXT" hidden/>
-					<!--our custom abc file upload button-->
-					<label class="abcupload" for="selectabcfile">Open .ABC File</label>
-					<!-- name of abc file selected -->
-					<span id="abc-selected">No .ABC file selected</span>
-					<input class="saveabcfiledisabled" id="saveabcfile" onclick="SaveABC();" type="button" value="Save .ABC File">
-					<input class="toggleallcontrolsdisabled" id="toggleallcontrols" onclick="ToggleAllControls();" type="button" value="Hide Controls">
+			<div id="uioverlay" class="hidden-print">
+				<img id="zoombutton" class="zoombutton" src="img/zoomout.png"/>
+			</div>
+			<div id="noscroller" class="noscroller">
+				<div id="notenlinks" class="hidden-print">				
+					<font size="5" face="Comic Sans MS">ABC Transcription Tools</font>
+					<p><a href="instructions.html" target="_blank">Instructions</a>&nbsp;-&nbsp;<a href="credits.html" target="_blank">Credits</a>&nbsp;-&nbsp;<a href="releasenotes.html" target="_blank">Release Notes</a>&nbsp;-&nbsp;<a href="tunesources.html" target="_blank">Tune Sources</a>&nbsp;-&nbsp;<a href="support.html" target="_blank">Support</a>&nbsp;-&nbsp;<a href="http://michaeleskin.com" target="_blank">About Me</a></p>
+					<div id="safariuser">
+						<p>I see you are using Safari.<br/><br/>This converter works best with Chrome or Firefox and often has rendering issues on Safari.</p>
+					</div>
+					<!--default html file upload button-->
+					<div id="fileoperations">
+						<input type="file" id="selectabcfile" accept=".abc,.txt,.ABC,.TXT" hidden/>
+						<!--our custom abc file upload button-->
+						<label class="abcupload" for="selectabcfile">Open .ABC File</label>
+						<!-- name of abc file selected -->
+						<span id="abc-selected">No .ABC file selected</span>
+						<input class="saveabcfiledisabled" id="saveabcfile" onclick="SaveABC();" type="button" value="Save .ABC File">
+						<input class="toggleallcontrolsdisabled" id="toggleallcontrols" onclick="ToggleAllControls();" type="button" value="Hide Controls">
 
+					</div>
+					<div id="inputarea">
+						<textarea id="abc" rows="16" cols="80" onkeyup="Render()" onpaste="DelayedRender()" placeholder="Enter ABC notation for your tunes here"></textarea>
+					</div>
 				</div>
-				<div id="inputarea">
-					<textarea id="abc" rows="16" cols="80" onkeyup="Render()" onpaste="DelayedRender()" placeholder="Enter ABC notation for your tunes here"></textarea>
+				<div id="notenrechts" class="hidden-print">
+					<div id="transpose-controls">
+						<input class="transpose" id="t1" onclick="TransposeDown()" type="button" value="Transpose Down">
+						<input class="transpose" id="t2" onclick="TransposeUp()" type="button" value="Transpose Up">
+						<input class="toggleadvancedcontrols" id="t3" onclick="ToggleAdvancedControls()" type="button" value="Advanced Controls">
+						<input class="togglesharecontrols" id="t4" onclick="ToggleShareControls()" type="button" value="Sharing Controls">
+						<input class="clearbutton" id="t5" onclick="Clear()" type="button" value="Clear ABC">
+					</div>
+					<div id="advanced-controls">
+						<input id="toggleannotations" class="advancedcontrolsdisabled" onclick="ToggleAnnotations()" type="button" value="Hide Annotations">
+						<input id="toggletext" class="advancedcontrolsdisabled" onclick="ToggleTextAnnotations()" type="button" value="Hide Text">
+						<input id="togglechords" class="advancedcontrolsdisabled" onclick="ToggleChords()" type="button" value="Hide Chords">
+						<tspan></tspan>
+						<label class="capo" for="capo">
+							Capo:
+							<input type="number" name="capo" id="capo"
+							min="0" max="12" step="1" value="0" onchange="SetCapo()" disabled>
+						</label>
+						<tspan></tspan>
+						<label class="staff-spacing" for="staff-spacing">
+							Staff spacing:
+							<input type="number" name="staff-spacing" id="staff-spacing"
+							min="50" max="100" step="5" value="50" onchange="SetStaffSpacing()">
+						</label>
+					</div>
+					<div id="tabs-selection" class="toggle-buttons">
+						<input type="radio" id="b1" value="noten" name="notenodertab" class="hidebutton" checked="checked" onclick="Render()">
+						<label for="b1">Sheet Music</label>
+						<input type="radio" id="b2" value="notenames" name="notenodertab" class="hidebutton" onclick="Render()">
+						<label for="b2">Note Names Tab</label>
+						<input type="radio" id="b3" value="mandolin" name="notenodertab" class="hidebutton" onclick="Render()">
+						<label for="b3">Mandolin Tab</label>
+						<input type="radio" id="b4" value="guitare" name="notenodertab" class="hidebutton" onclick="Render()">
+						<label for="b4">Guitar EADGBE</label>
+						<input type="radio" id="b5" value="guitard" name="notenodertab" class="hidebutton" onclick="Render()">
+						<label for="b5">Guitar DADGAD</label>
+						<input type="radio" id="b6" value="whistle" name="notenodertab" class="hidebutton" onclick="Render()">
+						<label for="b6">Whistle Tab</label>
+					</div>
+					<div id="render-width" class="toggle-buttons">
+						<tspan id="displayformatlabel">Display:</tspan>
+						<input type="radio" id="wb0" value="40%" name="renderwidth" class="hidebutton" onclick="Render()">
+						<label for="wb0">Mini</label>
+						<input type="radio" id="wb1" value="50%" name="renderwidth" class="hidebutton" checked="checked" onclick="Render()">
+						<label for="wb1">Small</label>
+						<input type="radio" id="wb2" value="75%" name="renderwidth" class="hidebutton" onclick="Render()">
+						<label for="wb2">Medium</label>
+						<input type="radio" id="wb3" value="100%" name="renderwidth" class="hidebutton" onclick="Render()">
+						<label for="wb3">Large</label>
+						<input type="button" class="saveaspdf" onclick="CreatePDFfromHTML()" value="Export PDF">
+						<tspan id="pdfformatlabel">PDF Format:</tspan>
+						<select id="pdfformat" name="pdfformat">
+							<option value = "true">&nbsp;One Tune / Page</option>
+							<option value = "false">&nbsp;Multiple Tunes / Page</option>
+						</select>
+					</div>
+					<div id="urlarea">
+						<p><input id="testurl" class="urlcontrols" onclick="TestShareURL()" type="button" value="Test Share URL"><input id="saveurl" class="urlcontrols" onclick="SaveShareURL()" type="button" value="Save Share URL"><input id="generateqrcode" class="urlcontrols" onclick="GenerateQRCode()" type="button" value="Generate QR Code"></p>
+						<textarea id="urltextbox" rows="8" cols="80" placeholder="URL for sharing will appear here" >
+						</textarea>
+						<p id="shareurlcaption">Share URL</p>
+					</div>
+					<div id="pdf-controls">
+						<div id="statuspdfname"></div>
+						<div id="statusanzeigetext"></div>
+						<div id="nebenstatusanzeigetext"></div>
+						<div id="nebennebenstatusanzeigetext"></div>
+					</div>
 				</div>
 			</div>
-			<div id="notenrechts" class="hidden-print">
-				<div id="transpose-controls">
-					<input class="transpose" id="t1" onclick="TransposeDown()" type="button" value="Transpose Down">
-					<input class="transpose" id="t2" onclick="TransposeUp()" type="button" value="Transpose Up">
-					<input class="toggleadvancedcontrols" id="t3" onclick="ToggleAdvancedControls()" type="button" value="Advanced Controls">
-					<input class="togglesharecontrols" id="t4" onclick="ToggleShareControls()" type="button" value="Sharing Controls">
-					<input class="clearbutton" id="t5" onclick="Clear()" type="button" value="Clear ABC">
-				</div>
-				<div id="advanced-controls">
-					<input id="toggleannotations" class="advancedcontrolsdisabled" onclick="ToggleAnnotations()" type="button" value="Hide Annotations">
-					<input id="toggletext" class="advancedcontrolsdisabled" onclick="ToggleTextAnnotations()" type="button" value="Hide Text">
-					<input id="togglechords" class="advancedcontrolsdisabled" onclick="ToggleChords()" type="button" value="Hide Chords">
-					<tspan></tspan>
-					<label class="capo" for="capo">
-						Capo:
-						<input type="number" name="capo" id="capo"
-						min="0" max="12" step="1" value="0" onchange="SetCapo()" disabled>
-					</label>
-					<tspan></tspan>
-					<label class="staff-spacing" for="staff-spacing">
-						Staff spacing:
-						<input type="number" name="staff-spacing" id="staff-spacing"
-						min="50" max="100" step="5" value="50" onchange="SetStaffSpacing()">
-					</label>
-				</div>
-				<div id="tabs-selection" class="toggle-buttons">
-					<input type="radio" id="b1" value="noten" name="notenodertab" class="hidebutton" checked="checked" onclick="Render()">
-					<label for="b1">Sheet Music</label>
-					<input type="radio" id="b2" value="notenames" name="notenodertab" class="hidebutton" onclick="Render()">
-					<label for="b2">Note Names Tab</label>
-					<input type="radio" id="b3" value="mandolin" name="notenodertab" class="hidebutton" onclick="Render()">
-					<label for="b3">Mandolin Tab</label>
-					<input type="radio" id="b4" value="guitare" name="notenodertab" class="hidebutton" onclick="Render()">
-					<label for="b4">Guitar EADGBE</label>
-					<input type="radio" id="b5" value="guitard" name="notenodertab" class="hidebutton" onclick="Render()">
-					<label for="b5">Guitar DADGAD</label>
-					<input type="radio" id="b6" value="whistle" name="notenodertab" class="hidebutton" onclick="Render()">
-					<label for="b6">Whistle Tab</label>
-				</div>
-				<div id="render-width" class="toggle-buttons">
-					<tspan id="displayformatlabel">Display:</tspan>
-					<input type="radio" id="wb0" value="40%" name="renderwidth" class="hidebutton" onclick="Render()">
-					<label for="wb0">Mini</label>
-					<input type="radio" id="wb1" value="50%" name="renderwidth" class="hidebutton" checked="checked" onclick="Render()">
-					<label for="wb1">Small</label>
-					<input type="radio" id="wb2" value="75%" name="renderwidth" class="hidebutton" onclick="Render()">
-					<label for="wb2">Medium</label>
-					<input type="radio" id="wb3" value="100%" name="renderwidth" class="hidebutton" onclick="Render()">
-					<label for="wb3">Large</label>
-					<input type="button" class="saveaspdf" onclick="CreatePDFfromHTML()" value="Export PDF">
-					<tspan id="pdfformatlabel">PDF Format:</tspan>
-					<select id="pdfformat" name="pdfformat">
-						<option value = "true">&nbsp;One Tune / Page</option>
-						<option value = "false">&nbsp;Multiple Tunes / Page</option>
-					</select>
-				</div>
-				<div id="urlarea">
-					<p><input id="testurl" class="urlcontrols" onclick="TestShareURL()" type="button" value="Test Share URL"><input id="saveurl" class="urlcontrols" onclick="SaveShareURL()" type="button" value="Save Share URL"><input id="generateqrcode" class="urlcontrols" onclick="GenerateQRCode()" type="button" value="Generate QR Code"></p>
-					<textarea id="urltextbox" rows="8" cols="80" placeholder="URL for sharing will appear here" >
-					</textarea>
-					<p id="shareurlcaption">Share URL</p>
-				</div>
-				<div id="pdf-controls">
-					<div id="statuspdfname"></div>
-					<div id="statusanzeigetext"></div>
-					<div id="nebenstatusanzeigetext"></div>
-					<div id="nebennebenstatusanzeigetext"></div>
-				</div>
-			</div>
+
+			<div id="notation-spacer" class="hidden-print"></div>
+
 			<div id="notation-holder">
 			</div>
+
 		</div>
-		<div id="offscreenrender" class="hidden-print"></div>
-		
-		<div id="qrcode"></div>
+		<div id="offscreenrender" class="hidden-print">
+		</div>
+		<div id="qrcode">
+		</div>
 	</body>
 	<script type="text/javascript" src="abcjs-basic-min.js"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
 	<script type="text/javascript" src="jspdf.min.js"></script><!-- to generate PDF using Javscript -->
 	<script type="text/javascript" src="html2image.js"></script><!-- to convert HTML elements to bitmaps -->
-	<script type="text/javascript" src="qrcode.js?v=102"></script><!-- to generate QR codes for the share links -->
+	<script type="text/javascript" src="qrcode.js?v=105"></script><!-- to generate QR codes for the share links -->
 	<script type="text/javascript" src="lz-string.min.js"></script><!-- to generate QR codes for the share links -->
-	<script type="text/javascript" src="app.js?v=102"></script><!-- main application business logic -->
+	<script type="text/javascript" src="app.js?v=105"></script><!-- main application business logic -->
 </html>
