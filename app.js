@@ -1201,6 +1201,9 @@ function Render() {
 			FillUrlBoxWithAbcInLZW();
 		}
 
+		// Hide the notation placeholder
+		document.getElementById("notation-placeholder").style.display = "none";
+
 		// Show the notation block
 		document.getElementById("notation-holder").style.display = "block";
 
@@ -1357,6 +1360,9 @@ function Render() {
 		document.getElementById("toggleallcontrols").classList.remove("toggleallcontrols");
 		document.getElementById("toggleallcontrols").classList.add("toggleallcontrolsdisabled");
 		gAllowControlToggle = false;
+
+		// Show the notation placeholder
+		document.getElementById("notation-placeholder").style.display = "block";
 
 		var fileSelected = document.getElementById('abc-selected');
 
@@ -1869,6 +1875,19 @@ function CountTunes() {
 	var nTunes = theTunes.length - 1;
 
 	return nTunes;
+
+}
+
+//
+// Create a template for a new ABC file
+//
+function NewABC(){
+
+	theABC.value = "X: 1\nT: My New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%%comment\n%%comment Write your tune ABC below\n%%comment\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|";
+
+	Render();
+
+	UpdateNotationTopPosition();
 
 }
 
