@@ -21,6 +21,7 @@
 <p><a href="https://github.com/OMerkel/tin_whistle/tree/master/res/font">Tin Whistle Fingering Font</a> by Paul Merke is used to generate the whistle tabs.</p> 
 <p><a href="https://davidshimjs.github.io/qrcodejs/">qrcode.js</a> is used to generate the QR codes.</p> 
 <p><a href="https://github.com/pieroxy/lz-string">lz-string.js</a> is used to for LZW compression of the tunes for share links.</p> 
+<p>Ui icons created by <a href="https://www.flaticon.com/free-icons/ui" title="ui icons"> Karacis - Flaticon</a>.</p>
 <p>Without these free resources this project would not have been possible.</p>
 <p></p>
 <hr>
