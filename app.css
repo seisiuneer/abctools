@@ -375,23 +375,27 @@ margin-left:25px;
 #statuspdfname{
 margin-top:10px;
 font-family:"Helvetica";
-font-size:12pt;}
+font-size:12pt;
+}
 
 #statusanzeigetext{
 margin-top:5px;
 font-family:"Helvetica";
-font-size:12pt;}
+font-size:12pt;
+}
 
 #nebenstatusanzeigetext{
 margin-top:5px;	
 font-family:"Helvetica";
-font-size:12pt;}
+font-size:12pt;
+}
 
 #nebennebenstatusanzeigetext{
 margin-top:6px;
 margin-bottom:12px;	
 font-family:"Helvetica";
-font-size:12pt;}
+font-size:12pt;
+}
 
 #toggleannotations, #toggletext{
 margin-right:10px;
@@ -457,6 +461,19 @@ color:black;
 opacity:0.4;
 }
 
+.newabcfile{
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+padding: 0.6em;
+margin-right:16px;
+background-color: #FFFFFF;
+color:black;
+-webkit-appearance:none;
+opacity:1.0;
+}
+
 #fileoperations{
 text-align:center;
 }
@@ -497,6 +514,12 @@ right:24px;
 top:16px;
 padding:4px;
 z-index:101;
+}
+
+#notation-placeholder{
+margin-top: 12px;
+font-family:"Helvetica";
+font-size:12pt;
 }
 
 @media (hover: hover) {
