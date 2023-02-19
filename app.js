@@ -15,6 +15,7 @@ var gStaffSpacing = STAFFSPACEMIN;
 
 var gIsIOS = false;
 var gIsIPad = false;
+var gIsIPhone = false;
 var gIsSafari = false;
 var gIsAndroid = false;
 
@@ -1957,6 +1958,18 @@ function isIOS() {
 }
 
 //
+// Are we on an iPhone?
+//
+function isIPhone() {
+	if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+		return true;
+	} 
+	else{
+		return false;
+	}
+}
+
+//
 // Are we on an iPad?
 //
 function isIPad() {
@@ -2682,6 +2695,11 @@ function doStartup() {
 		gIsIPad = true;
 	}
 
+	gIsIPhone = false;
+	if (isIPhone()) {
+		gIsIPhone = true;
+	}
+
 	// Fade out and hide the safari warning after 5 seconds
 	// Disabling this for now
 	if (false){  //(gIsSafari && (!gIsIOS)) {
@@ -2701,6 +2719,7 @@ function doStartup() {
 	if (gIsIOS) {
 
 		document.getElementById("selectabcfile").removeAttribute("accept");
+
 	}
 
 	// On iPad make the abc area a bit narrower so it doesn't get cut off
@@ -2708,6 +2727,12 @@ function doStartup() {
 
 		document.getElementById("abc").cols = 75;
 
+	}
+
+	// On iPhone and Android, move the zoom button over a bit
+	if (gIsIPhone || gIsAndroid){
+
+		document.getElementById("zoombutton").style.right = "36px";
 	}
 
 	gIsAndroid = false;
@@ -2808,8 +2833,7 @@ function doStartup() {
 	// Initially hide the controls
 	//
 	HideAllControls();
-
-
+	
 }
 
 // Startup
