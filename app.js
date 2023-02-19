@@ -1,6 +1,6 @@
 /**
  * 
- * app.js  -  All code for the ABC Transcription Tools
+ * app.js - All code for the ABC Transcription Tools
  *
  */
 
@@ -30,7 +30,7 @@ var gAllowSave = false;
 
 var gAllowURLSave = false;
 
-var gShowAllControls = true;
+var gShowAllControls = false;
 
 var gAllowControlToggle = false
 
@@ -39,6 +39,8 @@ var gAllowFilterText = false;
 var gAllowFilterChords = false;
 
 var gCapo = 0;
+
+var gIsMaximized = false;
 
 var theABC = document.getElementById("abc");
 
@@ -433,6 +435,10 @@ function CreatePDFfromHTML() {
 		return;
 	}
 
+	// Show the PDF status block
+	var pdfstatus = document.getElementById("pdf-controls");
+	pdfstatus.style.display = "block";
+
 	// Get the page format
 	var elem = document.getElementById("pdfformat");
 
@@ -507,6 +513,10 @@ function CreatePDFfromHTML() {
 				document.getElementById("nebenstatusanzeigetext").innerHTML = "";
 
 				document.getElementById("nebennebenstatusanzeigetext").innerHTML = "";
+
+				// Show the PDF status block
+				var pdfstatus = document.getElementById("pdf-controls");
+				pdfstatus.style.display = "none";
 
 				pdf.save(title + ".pdf");
 
@@ -1116,8 +1126,6 @@ function Notenmachen(tune, instrument) {
 		//
 		if (gCopySVGs) {
 
-			//console.log("copying SVGs");
-
 			Svgs = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg');
 			
 			for (x = 0; x < Svgs.length; x++) {
@@ -1187,7 +1195,6 @@ function Render() {
 		// Avoid jump scroll on render
 		var scrollTop = window.pageYOffset;
 
-		//console.log("Render()");
 		if (document.getElementById("urlarea").style.display != "none") {
 			FillUrlBoxWithAbcInLZW();
 		}
@@ -1197,11 +1204,9 @@ function Render() {
 
 		if (gShowAllControls){
 			document.getElementById("notenrechts").style.display = "inline-block";
-			document.getElementById("notation-holder").style.marginTop = "-20px";
 		}
 		else{
 			document.getElementById("notenrechts").style.display = "none";
-			document.getElementById("notation-holder").style.marginTop = "0px";
 		}
 
 		// Enable the save button
@@ -1354,7 +1359,6 @@ function Render() {
 		var fileSelected = document.getElementById('abc-selected');
 
 		fileSelected.innerText = "No .ABC file selected";
-
 	}
 }
 
@@ -1385,6 +1389,9 @@ function HideAdvancedControls() {
 
 	document.getElementById('advanced-controls').style.display = "none";
 
+	// Recalculate the notation top position
+	UpdateNotationTopPosition();
+
 }
 
 
@@ -1397,6 +1404,10 @@ function ShowAdvancedControls() {
 
 	// Idle the controls
 	IdleAdvancedControls();
+
+	// Recalculate the notation top position
+	UpdateNotationTopPosition();
+
 }
 
 //
@@ -1624,6 +1635,10 @@ function HideShareControls() {
 	// Also hide the share url area
 	document.getElementById('urlarea').style.display = "none";
 
+	// Recalculate the notation top position
+	UpdateNotationTopPosition();
+
+
 }
 
 //
@@ -1632,6 +1647,10 @@ function HideShareControls() {
 function ShowShareControls() {
 
 	CreateURLfromHTML();
+
+	// Recalculate the notation top position
+	UpdateNotationTopPosition();
+
 
 }
 
@@ -1651,6 +1670,10 @@ function ToggleAdvancedControls() {
 		HideAdvancedControls();
 
 	}
+
+	// Recalculate the notation top position
+	UpdateNotationTopPosition();
+
 }
 
 //
@@ -1669,6 +1692,10 @@ function ToggleShareControls() {
 		HideShareControls();
 
 	}
+
+	// Recalculate the notation top position
+	UpdateNotationTopPosition();
+
 }
 
 //
@@ -1729,6 +1756,22 @@ function IdleCapoControl(){
 }
 
 //
+// Recalculate and update the top position for the music
+//
+function UpdateNotationTopPosition(){
+
+	// Position the notation block
+	var noscroller = document.getElementById("noscroller");
+
+	var noscroller_height = noscroller.offsetHeight;
+
+	// Position the notation holder under the controls
+	var notation_spacer = document.getElementById("notation-spacer");
+
+	notation_spacer.style.height = noscroller_height+"px";
+}
+
+//
 // Set the defaults
 //
 function RestoreDefaults() {
@@ -1757,6 +1800,9 @@ function RestoreDefaults() {
 
 	// Idle the advanced controls
 	IdleAdvancedControls();
+
+	// Recalculate the notation top position
+	UpdateNotationTopPosition();
 
 }
 
@@ -1829,7 +1875,10 @@ function CountTunes() {
 window.addEventListener('resize', function() {
 
 	if (!(gIsIOS || gIsAndroid)){
+
 		Render();
+
+		UpdateNotationTopPosition();
 	}
 
 });
@@ -2267,8 +2316,39 @@ function SetAbcText(txt) {
 }
 
 //
+// 
+//
+
+//
 // Toggle the control display
 //
+
+function ShowAllControls(){
+
+	document.getElementById("notenrechts").style.display = "inline-block";
+	//document.getElementById("notation-holder").style.marginTop = "-20px";
+	document.getElementById("toggleallcontrols").value = "Hide Controls";
+
+	gShowAllControls = true;
+
+	// Recalculate the notation top position
+	UpdateNotationTopPosition();
+
+}
+
+function HideAllControls(){
+
+	document.getElementById("notenrechts").style.display = "none";
+	//document.getElementById("notation-holder").style.marginTop = "0px";
+	document.getElementById("toggleallcontrols").value = "Show Controls";
+
+	gShowAllControls = false;
+
+	// Recalculate the notation top position
+	UpdateNotationTopPosition();
+
+}
+
 function ToggleAllControls(){
 
 	// Check if OK to toggle the controls
@@ -2277,22 +2357,65 @@ function ToggleAllControls(){
 	}
 
 	if (gShowAllControls){
-
-		document.getElementById("notenrechts").style.display = "none";
-		document.getElementById("notation-holder").style.marginTop = "0px";
-		document.getElementById("toggleallcontrols").value = "Show Controls";
-
-		gShowAllControls = false;
+		HideAllControls();
 	}
 	else{
-		
-		document.getElementById("notenrechts").style.display = "inline-block";
-		document.getElementById("notation-holder").style.marginTop = "-20px";
-		document.getElementById("toggleallcontrols").value = "Hide Controls";
+		ShowAllControls();
+	}
 
-		gShowAllControls = true;
+
+}
+
+//
+// Handle the minimize/maximize button
+//
+
+function ShowMaximizeButton(){
+
+	document.getElementById("zoombutton").style.display = "block";
+
+}
+
+function HideMaximizeButton(){
+
+	document.getElementById("zoombutton").style.display = "none";
+
+}
+
+function DoMaximize(){
+
+	document.getElementById("noscroller").style.display = "none";
+	document.getElementById("notation-spacer").style.display = "none";
+
+	document.getElementById("zoombutton").src = "img/zoomin.png"
+
+	gIsMaximized = true
+
+}
+
+function DoMinimize(){
+
+	document.getElementById("noscroller").style.display = "block";
+	document.getElementById("notation-spacer").style.display = "block";
+	document.getElementById("zoombutton").src = "img/zoomout.png"
+
+	gIsMaximized = false
+
+}
+
+function ToggleMaximize(){
+
+	if (gIsMaximized){
+
+		DoMinimize();
 
 	}
+	else{
+
+		DoMaximize();
+
+	}
+
 }
 
 // 
@@ -2399,25 +2522,19 @@ function processShareLink() {
 
 		// Hide the controls if coming in from a share link
 		document.getElementById("notenrechts").style.display = "none";
-		document.getElementById("notation-holder").style.marginTop = "0px";
+		//document.getElementById("notation-holder").style.marginTop = "0px";
 		document.getElementById("toggleallcontrols").value = "Show Controls";
+
+		// Recalculate the notation top position
+		UpdateNotationTopPosition();
 
 		gShowAllControls = false;
 
+		// Render the tune
 		Render();
 
-		// Scroll the music into view
-		setTimeout(function(){
-
-			const element = document.querySelector('#notation-holder')
-			const topPos = element.getBoundingClientRect().top + window.pageYOffset
-
-			window.scrollTo({
-			  top: topPos, // scroll so that the element is at the top of the view
-			  behavior: 'smooth' // smooth scroll
-			})
-
-		},250);
+		// Maximize the notation
+		DoMaximize();
 
 	}
 }
@@ -2434,11 +2551,12 @@ function doStartup() {
 	gRenderingPDF = false;
 	gAllowSave = false;
 	gAllowURLSave = false;
-	gShowAllControls = true;
+	gShowAllControls = false;
 	gAllowControlToggle = false
 	gAllowFilterAnnotations = false;
 	gAllowFilterText = false;
 	gAllowFilterChords = false;
+	gIsMaximized = false;
 	gCapo = 0;
 
 	// Warn Safari users
@@ -2534,7 +2652,18 @@ function doStartup() {
 					// Reset the annotation strip flags
 					RestoreDefaults();
 
+					// Reset the window scroll
+					window.scrollTo(
+						{
+						  top: 0,
+						}
+					)
+
+					// Render the notation
 					Render();
+
+					// Recalculate the notation top position
+					UpdateNotationTopPosition();
 
 				}, 100);
 
@@ -2554,11 +2683,32 @@ function doStartup() {
 	// Reset the paging control
 	document.getElementById("pdfformat").value = "true";
 
+	// Hook up the zoom
+	document.getElementById("zoombutton").onclick = 
+		function() {
+			ToggleMaximize();
+		};
+
 	// Clear the text entry area
 	Clear();
 
 	// Check for and process URL share link
 	processShareLink();
+
+	// Recalculate the notation top position
+	UpdateNotationTopPosition();
+
+	// Force recalculation of the notation top position on ABC text area resize
+
+	var theABCText = document.getElementById("abc");
+
+	new ResizeObserver(UpdateNotationTopPosition).observe(theABCText);
+
+	// 
+	// Initially hide the controls
+	//
+	HideAllControls();
+
 
 }
 
