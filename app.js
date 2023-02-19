@@ -196,6 +196,8 @@ function Clear() {
 
 	RestoreDefaults();
 
+	HideAllControls();
+
 	Render();
 
 }
@@ -2219,9 +2221,9 @@ function GenerateQRCode() {
 }
 
 //
-// Save a text file
+// Save the ABC file
 //
-function saveTextFile(thePrompt, thePlaceholder, theData){
+function saveABCFile(thePrompt, thePlaceholder, theData){
 
 	var fname = prompt(thePrompt, thePlaceholder);
 
@@ -2238,8 +2240,80 @@ function saveTextFile(thePrompt, thePlaceholder, theData){
 	}      
 
 	// Give it a good extension
-	if ((!fname.endsWith(".abc")) && (!fname.endsWith(".txt"))){
-	  fname = fname + ".abc";
+	if ((!gIsAndroid) && (!gIsIOS)){
+
+		if ((!fname.endsWith(".abc")) && (!fname.endsWith(".txt")) && (!fname.endsWith(".ABC")) && (!fname.endsWith(".TXT"))){
+
+			// Give it a good extension
+			fname = fname.replace(/\..+$/, '');
+			fname = fname + ".abc";
+
+		}
+	}
+	else{
+		// iOS and Android have odd rules about text file saving
+		// Give it a good extension
+		fname = fname.replace(/\..+$/, '');
+		fname = fname + ".txt";
+
+	}
+
+	var a = document.createElement("a");
+
+	document.body.appendChild(a);
+
+	a.style = "display: none";
+
+	var blob = new Blob([theData], {type: "text/plain"}),
+
+	url = window.URL.createObjectURL(blob);
+	a.href = url;
+	a.download = fname;
+	a.click();
+
+	document.body.removeChild(a);
+
+	setTimeout(function() {
+	  window.URL.revokeObjectURL(url);
+	}, 1000);
+
+}
+
+//
+// Save the ShareURL file
+//
+function saveShareURLFile(thePrompt, thePlaceholder, theData){
+
+	var fname = prompt(thePrompt, thePlaceholder);
+
+	// If the user pressed Cancel, exit
+	if (fname == null){
+	  return null;
+	}
+
+	// Strip out any naughty HTML tag characters
+	fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+	if (fname.length == 0){
+	  return null;
+	}      
+
+	// Give it a good extension
+	if ((!gIsAndroid) && (!gIsIOS)){
+
+		if ((!fname.endsWith(".txt")) && (!fname.endsWith(".TXT"))){
+
+			// Give it a good extension
+			fname = fname.replace(/\..+$/, '');
+			fname = fname + ".txt";
+
+		}
+	}
+	else{
+		// iOS and Android have odd rules about text file saving
+		// Give it a good extension
+		fname = fname.replace(/\..+$/, '');
+		fname = fname + ".txt";
 	}
 
 	var a = document.createElement("a");
@@ -2271,8 +2345,14 @@ function SaveABC(){
 	if (gAllowSave){
 
 		var theData = theABC.value;
+
 		if (theData.length != 0){
-			saveTextFile("Please enter a filename for your ABC file:","newtune.abc",theData);
+			if ((!gIsAndroid) && (!gIsIOS)){
+				saveABCFile("Please enter a filename for your ABC file:","newtune.abc",theData);
+			}
+			else{
+				saveABCFile("Please enter a filename for your ABC file:","newtune.txt",theData);
+			}
 		}
 	}
 }
@@ -2285,8 +2365,9 @@ function SaveShareURL(){
 	if (gAllowURLSave){
 
 		var theData = urltextbox.value;
+
 		if (theData.length != 0){
-			saveTextFile("Please enter a filename for your ShareURL file:","shareurl.txt",theData);
+			saveShareURLFile("Please enter a filename for your ShareURL file:","shareurl.txt",theData);
 		}
 	}
 }
@@ -2510,10 +2591,12 @@ function processShareLink() {
 		}
 	} else {
 		SetRadioValue("renderwidth", "100%");
-
 	}
 
 	if (doRender) {
+		
+		// Maximize the notation
+		DoMaximize();
 
 		// Set the title
 		var fileSelected = document.getElementById("abc-selected");
@@ -2522,7 +2605,6 @@ function processShareLink() {
 
 		// Hide the controls if coming in from a share link
 		document.getElementById("notenrechts").style.display = "none";
-		//document.getElementById("notation-holder").style.marginTop = "0px";
 		document.getElementById("toggleallcontrols").value = "Show Controls";
 
 		// Recalculate the notation top position
@@ -2533,8 +2615,7 @@ function processShareLink() {
 		// Render the tune
 		Render();
 
-		// Maximize the notation
-		DoMaximize();
+
 
 	}
 }
