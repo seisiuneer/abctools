@@ -53,7 +53,6 @@ box-shadow: none;
 
 #notation-holder {
 text-align: center;
-margin-top:-20px;
 margin-bottom:50px;
 height:100%;
 }
@@ -261,6 +260,7 @@ margin-top:20px;
 }
 
 #pdf-controls{
+display:none;
 margin-top:20px;	
 }
 
@@ -355,6 +355,7 @@ margin-top:9px;
 font-family:"Courier";
 margin-top:8px;
 font-size:11pt;
+resize: none;
 -webkit-appearance: none;
 -moz-appearance: none;
 }
@@ -376,19 +377,24 @@ margin-left:25px;
 
 #statuspdfname{
 margin-top:10px;
-}
+font-family:"Helvetica";
+font-size:12pt;}
 
 #statusanzeigetext{
 margin-top:5px;
-}
+font-family:"Helvetica";
+font-size:12pt;}
 
 #nebenstatusanzeigetext{
 margin-top:5px;	
-}
+font-family:"Helvetica";
+font-size:12pt;}
 
 #nebennebenstatusanzeigetext{
-margin-top:6px;	
-}
+margin-top:6px;
+margin-bottom:12px;	
+font-family:"Helvetica";
+font-size:12pt;}
 
 #toggleannotations, #toggletext{
 margin-right:10px;
@@ -463,6 +469,46 @@ text-align:center;
 	background: palegreen;
 	}
 }
+
+.noscroller{
+background-color: #FAFAFF;
+position:fixed;
+top: 0px;
+width:100%;
+z-index: 100;
+margin-left:-20px;
+padding-bottom: 16px;
+}
+
+#notation-spacer{
+background-color: white;
+}
+
+#shareurlcaption{
+margin-bottom:-16px;
+}
+
+#notenlinks{
+padding-top:20px;
+}
+
+.zoombutton{
+position:fixed;
+width:48px;
+height:48px;
+right:24px;
+top:16px;
+padding:4px;
+z-index:101;
+}
+
+
+@media (hover: hover) {
+	.zoombutton:hover{
+	background: palegreen;
+	}
+}
+
 
 @media print {
   .hidden-print {
