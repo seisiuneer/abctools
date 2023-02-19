@@ -55,6 +55,7 @@ box-shadow: none;
 text-align: center;
 margin-bottom:50px;
 height:100%;
+display:none;
 }
 
 #abc {
@@ -240,10 +241,6 @@ padding-bottom:12px
 
 #notenrechts{
 margin-top:18px;
-display:none;
-}
-
-#notation-holder{
 display:none;
 }
 
@@ -502,7 +499,6 @@ padding:4px;
 z-index:101;
 }
 
-
 @media (hover: hover) {
 	.zoombutton:hover{
 	background: palegreen;
@@ -511,8 +507,17 @@ z-index:101;
 
 
 @media print {
-  .hidden-print {
+  	.hidden-print {
     display: none !important;
   }
 }
 
+@media print {
+	.notation-holder{
+	text-align: center !important;
+	margin-bottom:0px !important;
+	height:100% !important;
+	width:100% !important;
+	margin-left:0px !important;
+
+}
