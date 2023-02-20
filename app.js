@@ -569,6 +569,7 @@ function GetABCJSParams(instrument){
 	var params = {
 		responsive: 'resize',
 		oneSvgPerLine: 'true',
+		selectTypes: false,
 		format: {
 			titlefont: "Times-Roman 18",
 			subtitlefont: "Verdana 12",
@@ -589,6 +590,7 @@ function GetABCJSParams(instrument){
 		params = {
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
+			selectTypes: false,
 			format: {
 				titlefont: "Times-Roman 18",
 				subtitlefont: "Verdana 12",
@@ -616,6 +618,7 @@ function GetABCJSParams(instrument){
 			}],
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
+			selectTypes: false,
 			format: {
 				titlefont: "Times-Roman 18",
 				subtitlefont: "Verdana 12",
@@ -642,6 +645,7 @@ function GetABCJSParams(instrument){
 			}],
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
+			selectTypes: false,
 			format: {
 				titlefont: "Times-Roman 18",
 				subtitlefont: "Verdana 12",
@@ -668,6 +672,7 @@ function GetABCJSParams(instrument){
 			}],
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
+			selectTypes: false,
 			format: {
 				titlefont: "Times-Roman 18",
 				subtitlefont: "Verdana 12",
@@ -693,6 +698,7 @@ function GetABCJSParams(instrument){
 			}],
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
+			selectTypes: false,
 			format: {
 				titlefont: "Times-Roman 18",
 				subtitlefont: "Verdana 12",
@@ -718,6 +724,7 @@ function GetABCJSParams(instrument){
 			}],
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
+			selectTypes: false,
 			format: {
 				titlefont: "Times-Roman 18",
 				subtitlefont: "Verdana 12",
@@ -2840,7 +2847,7 @@ function doStartup() {
 	// Initially hide the controls
 	//
 	HideAllControls();
-	
+
 }
 
 // Startup
