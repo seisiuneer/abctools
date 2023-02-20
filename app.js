@@ -246,6 +246,12 @@ function Titelholen() {
 		case "mandolin":
 			postfix = "_Mandolin";
 			break;
+		case "gdad":
+			postfix = "_Bouzouki_GDAD";
+			break;
+		case "mandola":
+			postfix = "_Mandola";
+			break;
 		case "guitare":
 			postfix = "_Guitar_EADGBE";
 			break;
@@ -634,6 +640,60 @@ function GetABCJSParams(instrument){
 				wordsfont: "Verdana 12"
 			},
 		}
+	} else if (instrument == "gdad") {
+		params = {
+			tablature: [{
+				instrument: 'violin',
+				label: '',
+				tuning: ['G,', 'D', 'A', 'd'],
+				highestNote: "f'",
+				capo: gCapo
+			}],
+			responsive: 'resize',
+			oneSvgPerLine: 'true',
+			selectTypes: false,
+			format: {
+				titlefont: "Times-Roman 18",
+				subtitlefont: "Verdana 12",
+				infofont: "Verdana 12",
+				partsfont: "Verdana 12",
+				tempofont: "Verdana 12",
+				textfont: "Verdana 12",
+				composerfont: "Verdana 12",
+				annotationfont: "Verdana 12",
+				partsfont: "Verdana 12",
+				gchordfont: "Verdana 12",
+				vocalfont: "Verdana 12",
+				wordsfont: "Verdana 12"
+			},
+		}	
+	} else if (instrument == "mandola") {
+		params = {
+			tablature: [{
+				instrument: 'violin',
+				label: '',
+				tuning: ['C,', 'G,', 'D', 'A'],
+				highestNote: "f'",
+				capo: gCapo
+			}],
+			responsive: 'resize',
+			oneSvgPerLine: 'true',
+			selectTypes: false,
+			format: {
+				titlefont: "Times-Roman 18",
+				subtitlefont: "Verdana 12",
+				infofont: "Verdana 12",
+				partsfont: "Verdana 12",
+				tempofont: "Verdana 12",
+				textfont: "Verdana 12",
+				composerfont: "Verdana 12",
+				annotationfont: "Verdana 12",
+				partsfont: "Verdana 12",
+				gchordfont: "Verdana 12",
+				vocalfont: "Verdana 12",
+				wordsfont: "Verdana 12"
+			},
+		}		
 	} else if (instrument == "guitare") {
 		params = {
 			tablature: [{
@@ -1757,6 +1817,8 @@ function IdleCapoControl(){
 			break;
 
 		case "mandolin":
+		case "gdad":
+		case "mandola":
 		case "guitare":
 		case "guitard":
 			enableCapo = true;
@@ -2077,6 +2139,8 @@ function FillUrlBoxWithAbcInLZW() {
 			break;
 
 		case "mandolin":
+		case "gdad":
+		case "mandola":
 		case "guitare":
 		case "guitard":
 			postfix = "&capo=" + capo;
@@ -2222,6 +2286,20 @@ function GenerateQRCode() {
 				break;
 			case "mandolin":
 				postfix = "<br/><br/>(Mandolin Tab";
+				if (gCapo != 0){
+					postfix += " - Capo on "+gCapo;
+				}
+				postfix += ")";
+				break;
+			case "gdad":
+				postfix = "<br/><br/>(Bouzouki GDAD Tab";
+				if (gCapo != 0){
+					postfix += " - Capo on "+gCapo;
+				}
+				postfix += ")";
+				break;
+			case "mandola":
+				postfix = "<br/><br/>(Mandola Tab";
 				if (gCapo != 0){
 					postfix += " - Capo on "+gCapo;
 				}
