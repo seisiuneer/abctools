@@ -1208,6 +1208,9 @@ function Render() {
 		// Show the notation block
 		document.getElementById("notation-holder").style.display = "block";
 
+		// Show the zoom control
+		document.getElementById("zoombutton").style.display = "block";
+
 		if (gShowAllControls){
 			document.getElementById("notenrechts").style.display = "inline-block";
 		}
@@ -1364,6 +1367,10 @@ function Render() {
 
 		// Show the notation placeholder
 		document.getElementById("notation-placeholder").style.display = "block";
+
+		// Hide the zoom control
+		document.getElementById("zoombutton").style.display = "none";
+
 
 		var fileSelected = document.getElementById('abc-selected');
 
