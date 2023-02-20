@@ -232,7 +232,7 @@ function Titelholen() {
 	}
 
 	// Get the current instrument setting
-	tabs = Welchetabs("notenodertab");
+	tabs = GetRadioValue("notenodertab");
 
 	var postfix = "";
 
@@ -746,21 +746,12 @@ function GetABCJSParams(instrument){
 
 }
 
+//
+// Center the notation div based on the selected size
+//
+function PositionNotation(){
 
-function Notenmachen(tune, instrument) {
-
-	// console.log("breite: " + screen.width);
-	// console.log("dings" + parseInt(document.getElementById('notenlinks').style.width));
-	//rechtswidth = window.innerWidth - parseInt(document.getElementById("notenlinks").style.width);
-
-	var nTunes = CountTunes();
-
-	//console.log("nTunes ="+nTunes);
-
-	// Damit er bei außreichend großem Bildschirm die Noten rechts vom Textfeld ausgibt - dem rechten div eine feste Größe geben, in die das svg dann wegen der Angabe
-	// responsive: 'resize' reingequetscht wird. Sonst rutscht es nach unten.
-	// die Technik kannn auch genutzt werden, um das svg kurz vorm speichern riesig zu machen - ev. ausserhalb des viewports - dann höhere auflösung im pdf.
-	var radiovalue = Welchetabs("renderwidth");
+	var radiovalue = GetRadioValue("renderwidth");
 
 	document.getElementById("notation-holder").style.width = radiovalue;
 
@@ -783,8 +774,16 @@ function Notenmachen(tune, instrument) {
 	}
 
 	document.getElementById("notation-holder").style.marginLeft = leftOffset;
+}
 
-	// console.log("rechtswidth" + rechtswidth);
+function Notenmachen(tune, instrument) {
+
+	var nTunes = CountTunes();
+
+	//console.log("nTunes ="+nTunes);
+
+	// Center the notation div
+	PositionNotation();
 
 	// Get the rendering params
 	var params = GetABCJSParams(instrument);
@@ -1163,9 +1162,9 @@ function Notenmachen(tune, instrument) {
 	
 }
 
-function SetRadioValue(radiowert, value) {
-	const mitradiowert = "input[name=\"" + radiowert + "\"]";
-	const radioButtons = document.querySelectorAll(mitradiowert);
+function SetRadioValue(radioName, value) {
+	const theRadioElemSelector = "input[name=\"" + radioName + "\"]";
+	const radioButtons = document.querySelectorAll(theRadioElemSelector);
 
 	for (const radioButton of radioButtons) {
 		if (radioButton.value == value) {
@@ -1176,10 +1175,10 @@ function SetRadioValue(radiowert, value) {
 	}
 }
 
-function Welchetabs(radiowert) {
+function GetRadioValue(radioName) {
 
-	const mitradiowert = "input[name=\"" + radiowert + "\"]";
-	const radioButtons = document.querySelectorAll(mitradiowert);
+	const theRadioElemSelector = "input[name=\"" + radioName + "\"]";
+	const radioButtons = document.querySelectorAll(theRadioElemSelector);
 
 	let radiovalue;
 	for (const radioButton of radioButtons) {
@@ -1241,7 +1240,7 @@ function Render() {
 		// Idle the capo control
 		IdleCapoControl();
 
-		var radiovalue = Welchetabs("notenodertab");
+		var radiovalue = GetRadioValue("notenodertab");
 
 		// Generate the rendering divs
 		var nTunes = CountTunes();
@@ -1746,7 +1745,7 @@ function SetCapo() {
 //
 function IdleCapoControl(){
 
-	var format = Welchetabs("notenodertab");
+	var format = GetRadioValue("notenodertab");
 
 	var enableCapo = false;
 
@@ -1907,17 +1906,17 @@ function NewABC(){
 }
 
 
-// Re-render on window size change
-window.addEventListener('resize', function() {
+// // Re-render on window size change
+// window.addEventListener('resize', function() {
 
-	if (!(gIsIOS || gIsAndroid)){
+// 	if (!(gIsIOS || gIsAndroid)){
 
-		Render();
+// 		Render();
 
-		UpdateNotationTopPosition();
-	}
+// 		UpdateNotationTopPosition();
+// 	}
 
-});
+// });
 
 
 // 
@@ -2056,9 +2055,9 @@ function FillUrlBoxWithAbcInLZW() {
 
 	var abcInLZW = LZString.compressToEncodedURIComponent(abcText);
 
-	var format = Welchetabs("notenodertab");
+	var format = GetRadioValue("notenodertab");
 
-	var theWidth = Welchetabs("renderwidth");
+	var theWidth = GetRadioValue("renderwidth");
 
 	var capo = document.getElementById("capo").value;
 
@@ -2210,7 +2209,7 @@ function GenerateQRCode() {
 		var theTitles = GetAllTuneTitles();
 
 		// Get the current instrument setting
-		var theTab = Welchetabs("notenodertab");
+		var theTab = GetRadioValue("notenodertab");
 
 		var postfix = "";
 
@@ -2436,15 +2435,7 @@ function SetAbcText(txt) {
 
 	theABC.value = txt;
 
-	RestoreDefaults();
-
-	Render();
-
 }
-
-//
-// 
-//
 
 //
 // Toggle the control display
@@ -2593,7 +2584,7 @@ function processShareLink() {
 
 		if (abcText.length > 0) {
 			SetAbcText(abcText);
-			FillUrlBoxWithAbcInLZW();
+			RestoreDefaults();
 			doRender = true;
 		}
 	}
@@ -2608,7 +2599,7 @@ function processShareLink() {
 
 		if (abcText.length > 0) {
 			SetAbcText(abcText);
-			FillUrlBoxWithAbcInLZW();
+			RestoreDefaults();
 			doRender = true;
 		}
 	}
@@ -2660,8 +2651,6 @@ function processShareLink() {
 
 		// Render the tune
 		Render();
-
-
 
 	}
 }
