@@ -2655,7 +2655,7 @@ function processShareLink() {
 	}
 }
 
-function doStartup() {
+function DoStartup() {
 
 	// Init global state
 	gShowAdvancedControls = false;
@@ -2839,5 +2839,21 @@ function doStartup() {
 
 }
 
-// Startup
-doStartup();
+//
+// Wait for the document to be ready, then fire a function
+//
+
+function WaitForReady(fn) {
+  if (document.readyState !== 'loading') {
+    fn();
+    return;
+  }
+  document.addEventListener('DOMContentLoaded', fn);
+}
+
+//
+// Wait for the document to be ready, then startup
+//
+
+WaitForReady(DoStartup);
+
