@@ -1,10 +1,11 @@
 # abctools
 <p>This single tune ABC to notation converter was developed by <a href="http://michaeleskin.com" target="_blank">Michael Eskin</a>.</p>
-<p>The converter can generate standard notation as well as with note names or tablature for mandolin, GDAD bouzouki, mandola, standard tuned guitar, DADGAD guitar, and tin whistle.</p>
-<p>It can also share tunes sets via share URL generation and QR codes.</p>
+<p>This converter can generate standard music notation from ABC files, show note names along with notation, and also create tablature for mandolin, bouzouki, mandola, standard guitar, DADGAD guitar, or whistle.</p>
+<p>It can also transpose ABC up or down in semitone increments.</p>
+<p>It can generate PDF files in tune-per-page or multiple-tunes-per page formats.</p>
 <p>Try it out here:</p>
 <p><a href="http://michaeleskin.com/abc" target="_blank">http://michaeleskin.com/abc</a></p> 
-<p>You can also use Share URLs to open the tool with tune sets pre-loaded.</p>
+<p>You can also use Share URLs or QR codes to open the tool with tune sets pre-loaded.</p>
 <p>The ABC for the tunes is encoded in URL parameters</p>
 <p>For example here is the tool pre-loaded with "The Kesh" and "The Lilting Banshee":</p>
 <p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuMAsCmYDSSDOCoCVwCsBLAcygGFwApEqAWXADYB6ADigBlwJWpVwBxALYBDfFACk4gMZIAdgBckAJygAfEPwCC-MFoBCqzXs1gjAE1VIzZsMWuWzesI82qoWnfsPHTei1Zs7A20AMV0AZhA3dWMnR39iFBdVWOc9fm8TbVcoVPjLRLSLYgAzYjBhYmFVMAAjYnLiSNUAXTAoKFAwACZYeGQwdkIAG3lCWXK9YVksJCRcAhoKMGpSejBmNk5IHj5TMwB7FXUAUU0TM9dU-m6rubArAxddE4ARN0uwS5SjXVuU+6PVQQNJZZrdUGmboWaIgJDCYQVRKqZ43VxgPSAxwopAlWxlNzwxGVJAonxogEoIEg56aaFRCG08KtdpAA&w=50&format=noten)" target="_blank">Open the tool with "The Kesh" and "The Lilting Banshee"</a></p> 
