@@ -2632,9 +2632,6 @@ function processShareLink() {
 
 	if (doRender) {
 		
-		// Maximize the notation
-		DoMaximize();
-
 		// Set the title
 		var fileSelected = document.getElementById("abc-selected");
 
@@ -2652,10 +2649,15 @@ function processShareLink() {
 		// Render the tune
 		Render();
 
+		return true;
+
 	}
+
+	return false;
 }
 
 function DoStartup() {
+
 
 	// Init global state
 	gShowAdvancedControls = false;
@@ -2674,6 +2676,11 @@ function DoStartup() {
 	gAllowFilterChords = false;
 	gIsMaximized = false;
 	gCapo = 0;
+
+	// Startup in blank screen
+	
+	HideMaximizeButton();
+	DoMaximize();
 
 	// Warn Safari users
 	const uA = navigator.userAgent;
@@ -2821,7 +2828,14 @@ function DoStartup() {
 	Clear();
 
 	// Check for and process URL share link
-	processShareLink();
+	var isFromShare = processShareLink();
+
+	// Not from a share, show the UI
+	if (!isFromShare){
+
+		DoMinimize();
+
+	}
 
 	// Recalculate the notation top position
 	UpdateNotationTopPosition();
