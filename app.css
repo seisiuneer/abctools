@@ -75,6 +75,7 @@ border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
 margin-right:10px;
+margin-left:0px;
 background-color: #EEEEEE;
 color:black;
 -webkit-appearance:none;
@@ -87,7 +88,7 @@ color:black;
 }
 
 .saveaspdf{
-margin-left:14px;
+margin-left:17px;
 }
 
 @media (hover: hover) {
@@ -103,6 +104,7 @@ border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
 margin-left:35px;
+margin-right:0px;
 background-color: #E8FFFF;
 color:black;
 -webkit-appearance:none;
@@ -120,7 +122,8 @@ font-size:11pt;
 border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
-margin-left:28px;
+margin-left:40px;
+margin-right:0px;
 background-color: lavender;
 color:black;
 -webkit-appearance:none;
@@ -202,7 +205,8 @@ padding: 0.6em;
 background-color: #FFCCCC;
 color:black;
 -webkit-appearance:none;
-margin-left: 45px;
+margin-left: 37px;
+margin-right: 0px;
 }
 
 @media (hover: hover) {
