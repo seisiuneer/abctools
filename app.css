@@ -493,6 +493,7 @@ width:100%;
 z-index: 100;
 margin-left:-20px;
 padding-bottom: 16px;
+display:none;
 }
 
 #notation-spacer{
@@ -515,12 +516,14 @@ right:24px;
 top:16px;
 padding:4px;
 z-index:101;
+display:none;
 }
 
 #notation-placeholder{
 margin-top: 12px;
 font-family:"Helvetica";
 font-size:12pt;
+display:none;
 }
 
 @media (hover: hover) {
