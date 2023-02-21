@@ -103,7 +103,7 @@ font-size:11pt;
 border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
-margin-left:35px;
+margin-left:5px;
 margin-right:0px;
 background-color: #E8FFFF;
 color:black;
@@ -122,7 +122,7 @@ font-size:11pt;
 border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
-margin-left:40px;
+margin-left:12px;
 margin-right:0px;
 background-color: lavender;
 color:black;
@@ -205,7 +205,7 @@ padding: 0.6em;
 background-color: #FFCCCC;
 color:black;
 -webkit-appearance:none;
-margin-left: 37px;
+margin-left: 15px;
 margin-right: 0px;
 }
 
