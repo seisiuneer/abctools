@@ -218,16 +218,13 @@ margin-right: 0px;
 .abcupload {
 font-family:"Helvetica";
 font-size:11pt;
-outline-color: black;
-outline-width: 1px;
-outline-style: solid;
-background-color: white;
-color: black;
-padding: 0.6rem;
-font-family: sans-serif;
-border-radius: 0.3rem;
-cursor: pointer;
-margin-right: 16px;
+border: 1px solid #333;
+border-radius: 0.3em;
+padding: 0.6em;
+margin-left:0px;
+margin-right:8px;
+background-color: #FFFFFF;
+color:black;
 -webkit-appearance:none;
 }
 
@@ -367,6 +364,11 @@ display:inline;
 margin-right:20px	
 }
 
+#copyurl{
+display:inline;
+margin-right:20px	
+}
+
 #saveurl{
 display:inline;
 margin-left:20px	
@@ -414,7 +416,9 @@ font-size:11pt;
 border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
-margin-left:16px;
+margin-right:0px;
+margin-left:8px;
+margin-right:0px;
 background-color: #FFFFFF;
 color:black;
 -webkit-appearance:none;
@@ -427,7 +431,8 @@ font-size:11pt;
 border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
-margin-left:16px;
+margin-left:8px;
+margin-right:0px;
 background-color: #FFFFFF;
 color:black;
 -webkit-appearance:none;
@@ -440,7 +445,8 @@ font-size:11pt;
 border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
-margin-left:16px;
+margin-left:10px;
+margin-right:0px;
 background-color: #FFF4E6;
 color:black;
 -webkit-appearance:none;
@@ -453,7 +459,8 @@ font-size:11pt;
 border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
-margin-left:16px;
+margin-left:10px;
+margin-right:0px;
 background-color: #FFFFFF;
 color:black;
 -webkit-appearance:none;
@@ -466,13 +473,48 @@ opacity:0.4;
 	}
 }
 
+.copybutton{
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+margin-left:10px;
+margin-right:0px;
+padding: 0.6em;
+background-color: #FFFFFF;
+color:black;
+-webkit-appearance:none;
+opacity:1.0;
+}
+
+.copybuttondisabled{
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+margin-left:10px;
+margin-right:0px;
+padding: 0.6em;
+background-color: #FFFFFF;
+color:black;
+-webkit-appearance:none;
+opacity:0.4;
+}
+
+@media (hover: hover) {
+	.copybutton:hover{
+	background: palegreen;
+	}
+}
+
 .newabcfile{
 font-family:"Helvetica";
 font-size:11pt;
 border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
-margin-right:16px;
+margin-right:10px;
+margin-left:0px;
 background-color: #FFFFFF;
 color:black;
 -webkit-appearance:none;
@@ -487,6 +529,7 @@ opacity:1.0;
 
 #fileoperations{
 text-align:center;
+margin-top:16px;
 }
 
 @media (hover: hover) {
