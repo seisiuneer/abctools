@@ -1509,7 +1509,7 @@ function Render() {
 		gAllowCopy = false;
 
 		// Show the notation placeholder
-		document.getElementById("notation-placeholder").style.display = "inline";
+		document.getElementById("notation-placeholder").style.display = "block";
 
 		// Hide the zoom control
 		document.getElementById("zoombutton").style.display = "none";
