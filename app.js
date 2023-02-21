@@ -2023,7 +2023,7 @@ function CountTunes() {
 //
 function NewABC(){
 
-	theABC.value = "X: 1\nT: My New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%%comment\n%%comment Write your tune ABC below\n%%comment\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|";
+	theABC.value = "X: 1\nT: My New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%\n% Enter the ABC for your tunes below:\n%\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|";
 
 	Render();
 
