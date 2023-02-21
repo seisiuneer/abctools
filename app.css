@@ -312,7 +312,7 @@ font-size:11pt;
 font-family:"Helvetica";
 }
 
-#statusanzeigetext,#nebenstatusanzeigetext,#nebennebenstatusanzeigetext{
+#pagestatustext{
 font-family:"Helvetica";
 font-size:11pt;
 }
@@ -378,25 +378,19 @@ margin-left:25px;
 }
 
 #statuspdfname{
-margin-top:10px;
+margin-top:22px;
 font-family:"Helvetica";
 font-size:12pt;
 }
 
-#statusanzeigetext{
-margin-top:5px;
+#statustunecount{
+margin-top:12px;
 font-family:"Helvetica";
 font-size:12pt;
 }
 
-#nebenstatusanzeigetext{
-margin-top:5px;	
-font-family:"Helvetica";
-font-size:12pt;
-}
-
-#nebennebenstatusanzeigetext{
-margin-top:6px;
+#pagestatustext{
+margin-top:12px;
 margin-bottom:12px;	
 font-family:"Helvetica";
 font-size:12pt;
