@@ -43,6 +43,8 @@ var gCapo = 0;
 
 var gIsMaximized = false;
 
+var gABCFromFile = false;
+
 var theABC = document.getElementById("abc");
 
 function Notenames() {
@@ -195,6 +197,8 @@ function Clear() {
 
 	fileSelected.innerText = "No ABC file selected";
 
+	gABCFromFile = false;
+
 	RestoreDefaults();
 
 	HideAllControls();
@@ -204,12 +208,10 @@ function Clear() {
 }
 
 
-// Ab hier: abc, um Noten zu generieren, PDF draus machen, etc.
-
+// Get the title of the first tune
 
 function Titelholen() {
 
-	// Mit For Schleife Titel für Dateinamen extrahieren und Leerzeichen ersetzen und Apostrophe entfernen.
 	verarbeiten = theABC.value;
 
 	neu = escape(verarbeiten);
@@ -222,48 +224,23 @@ function Titelholen() {
 
 		Aktuellereihe = Reihe[i].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
 		if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
+
 			titel = Reihe[i].slice(2);
+			
 			titel = titel.trim();
-			titel = titel.replace(" ", "_");
-			titel = titel.replace("'", "");
-			//console.log(titel);
+
+			// Strip out any naughty HTML tag characters
+			titel = titel.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+			// Replace any spaces
+			titel = titel.replace(/\s/g, '_');
+
+			// Replace any quotes
+			titel = titel.replace(/\'/g, '_');
+
 			break;
 		}
 	}
-
-	// Get the current instrument setting
-	tabs = GetRadioValue("notenodertab");
-
-	var postfix = "";
-
-	switch (tabs){
-		case "noten":
-			postfix = "";
-			break;
-		case "notenames":
-			postfix = "_Note_Names";
-			break;
-		case "mandolin":
-			postfix = "_Mandolin";
-			break;
-		case "gdad":
-			postfix = "_Bouzouki_GDAD";
-			break;
-		case "mandola":
-			postfix = "_Mandola";
-			break;
-		case "guitare":
-			postfix = "_Guitar_EADGBE";
-			break;
-		case "guitard":
-			postfix = "_Guitar_DADGAD";
-			break;
-		case "whistle":
-			postfix = "_Whistle";
-			break;
-	}
-	
-	titel += postfix;
 	
 	return titel;
 }
@@ -280,6 +257,8 @@ var seitenzahl = 1;
 var isFirstPage = true;
 
 var tunesProcessed = 0;
+
+var totalTunes = 0;
 
 var pdf;
 
@@ -354,7 +333,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, callb
 						seitenzahl++; // for the status display.
 
 						pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
-						document.getElementById("nebennebenstatusanzeigetext").innerHTML = "Saving <font color=\"red\">" + seitenzahl + "</font> pages.";
+						document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + seitenzahl + "</font> pages";
 
 					} else {
 
@@ -370,7 +349,8 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, callb
 							seitenzahl++; // for the status display.
 
 							pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
-							document.getElementById("nebennebenstatusanzeigetext").innerHTML = "Saving <font color=\"red\">" + seitenzahl + "</font> pages.";
+
+							document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + seitenzahl + "</font> pages";
 
 						}
 						else{
@@ -389,6 +369,10 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, callb
 				// Bump the tune processed counter
 				tunesProcessed++;
 
+				if (tunesProcessed < totalTunes){
+					document.getElementById("statustunecount").innerHTML = "Rendering tune <font color=\"red\">"+(tunesProcessed+1)+"</font>" + " of  <font color=\"red\">"+totalTunes+"</font>"
+				}
+
 			}
 
 			height = parseInt(canvas.height * 535 / canvas.width);
@@ -404,8 +388,6 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, callb
 
 				pdf.addImage(imgData, 'JPG', 30, running_height, 535, height);
 
-				document.getElementById("nebenstatusanzeigetext").innerHTML = "Staff <font color=\"red\">" + (blockIndex + 1) + "</font> rendered.";
-
 			} else {
 
 				running_height = 30;
@@ -416,7 +398,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, callb
 
 				pdf.addImage(imgData, 'JPG', 30, running_height, 535, height);
 
-				document.getElementById("nebennebenstatusanzeigetext").innerHTML = "Saving <font color=\"red\">" + seitenzahl + "</font> pages.";
+				document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + seitenzahl + "</font> pages";
 
 			}
 
@@ -465,19 +447,93 @@ function CreatePDFfromHTML() {
 
 	tunesProcessed = 0;
 
+	// Count the tunes
+	totalTunes = CountTunes();
+
 	isFirstPage = true;
 
 	running_height = 30;
 
 	var nBlocksProcessed = 0;
 
-	// overflow must be visible, otherwise it cuts off something in the PDF.
-	// document.getElementById("notation").style.overflow = "visible";
-	var title = Titelholen();
+	var title = "";
+
+	if (gABCFromFile){
+
+		// If this was from a file, use the filename for the PDF
+		var fileSelected = document.getElementById("abc-selected");
+		title = fileSelected.innerText;
+
+		// Clean up the filename
+
+		// Trim any whitespace
+		title = title.trim();
+
+		// Strip out any naughty HTML tag characters
+		title = title.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+		// Replace any spaces
+		title = title.replace(/\s/g, '_');
+
+		// Strip the extension
+		title = title.replace(/\..+$/, '');
+
+	}
+	else{
+
+		// Get the title from the first tune in the ABC
+		title = Titelholen();
+
+		// If there is more than one tune, make the name reflect that it is a set
+		if (totalTunes > 1){
+
+			title += "_Set";
+
+		}
+	}
+
+	// Now append any tablature style postfix
+
+	// Get the current instrument setting
+	var tabs = GetRadioValue("notenodertab");
+
+	var postfix = "";
+
+	switch (tabs){
+		case "noten":
+			postfix = "";
+			break;
+		case "notenames":
+			postfix = "_Note_Names";
+			break;
+		case "mandolin":
+			postfix = "_Mandolin";
+			break;
+		case "gdad":
+			postfix = "_GDAD";
+			break;
+		case "mandola":
+			postfix = "_Mandola";
+			break;
+		case "guitare":
+			postfix = "_Guitar";
+			break;
+		case "guitard":
+			postfix = "_DADGAD";
+			break;
+		case "whistle":
+			postfix = "_Whistle";
+			break;
+	}
+	
+	title += postfix;
+
 
 	qualitaet = 1200;
 
 	document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"red\">" + title + ".pdf </font>";
+
+	document.getElementById("statustunecount").innerHTML = "Rendering tune <font color=\"red\"> 1</font> of <font color=\"red\">"+totalTunes+"</font>"
 
 	setTimeout(function() {
 
@@ -499,8 +555,6 @@ function CreatePDFfromHTML() {
 
 		var nBlocks = theBlocks.length;
 
-		document.getElementById("statusanzeigetext").innerHTML = "Preparing <font color=\"red\">" + (nBlocksProcessed + 1) + " / " + theBlocks.length + "</font> staves for PDF rendering.";
-
 		// Kick off the rendering loop
 		var theBlock = theBlocks[0];
 
@@ -511,28 +565,38 @@ function CreatePDFfromHTML() {
 
 			nBlocksProcessed++;
 
-			document.getElementById("statusanzeigetext").innerHTML = "Preparing <font color=\"red\">" + (nBlocksProcessed + 1) + " / " + theBlocks.length + "</font> staves for PDF rendering.";
-
 			if (nBlocksProcessed == nBlocks) {
 
-				document.getElementById("statuspdfname").innerHTML = "";
+				document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Rendering Complete!</font>";
 
-				document.getElementById("statusanzeigetext").innerHTML = "";
+				setTimeout(function(){
 
-				document.getElementById("nebenstatusanzeigetext").innerHTML = "";
+					document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"red\">" + title + ".pdf </font>";
 
-				document.getElementById("nebennebenstatusanzeigetext").innerHTML = "";
+					// Save the status up for a bit before saving
+					setTimeout(function(){
 
-				// Show the PDF status block
-				var pdfstatus = document.getElementById("pdf-controls");
-				pdfstatus.style.display = "none";
+						// Start the PDF save
+						pdf.save(title + ".pdf");
+						
+						document.getElementById("statuspdfname").innerHTML = "";
 
-				pdf.save(title + ".pdf");
+						document.getElementById("statustunecount").innerHTML = "";
 
-				gRenderingPDF = false;
+						document.getElementById("pagestatustext").innerHTML = "";
 
-				// Catch up on any UI changes during the PDF rendering
-				Render();
+						// Show the PDF status block
+						var pdfstatus = document.getElementById("pdf-controls");
+						pdfstatus.style.display = "none";
+
+						gRenderingPDF = false;
+
+						// Catch up on any UI changes during the PDF rendering
+						Render();
+
+					},1000);
+
+				},1500);
 
 
 			} else {
@@ -1437,10 +1501,12 @@ function Render() {
 		// Hide the zoom control
 		document.getElementById("zoombutton").style.display = "none";
 
-
 		var fileSelected = document.getElementById('abc-selected');
 
 		fileSelected.innerText = "No ABC file selected";
+
+		gABCFromFile = false;
+
 	}
 }
 
@@ -1703,8 +1769,6 @@ function IdleAdvancedControls(){
 			document.getElementById("togglechords").value = "Hide Chords";
 
 		}
-
-
 
 	}
 }
@@ -2754,6 +2818,7 @@ function DoStartup() {
 	gAllowFilterChords = false;
 	gIsMaximized = false;
 	gCapo = 0;
+	gABCFromFile = false;
 
 	// Startup in blank screen
 	
@@ -2877,6 +2942,9 @@ function DoStartup() {
 
 					// Recalculate the notation top position
 					UpdateNotationTopPosition();
+
+					// Mark that this ABC was from a file
+					gABCFromFile = true;
 
 				}, 100);
 
