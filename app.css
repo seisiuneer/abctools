@@ -215,9 +215,13 @@ margin-right: 0px;
 	}
 }
 
+#selectabcfile{
+-webkit-appearance:none !important;
+}
+
 .abcupload {
-font-family:"Helvetica";
-font-size:11pt;
+font-family:"Helvetica" !important;
+font-size:11pt !important;
 border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
@@ -225,12 +229,13 @@ margin-left:0px;
 margin-right:8px;
 background-color: #FFFFFF;
 color:black;
--webkit-appearance:none;
+-webkit-appearance:none !important;
 }
 
 #abc-selected{
-font-family:"Helvetica";
-font-size:11pt;
+font-family:"Helvetica" !important;
+font-size:11pt !important;
+-webkit-appearance: none !important;
 }
 
 #safariuser{
