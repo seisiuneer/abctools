@@ -45,6 +45,8 @@ var gIsMaximized = false;
 
 var gABCFromFile = false;
 
+var gAllowCopy = false;
+
 var theABC = document.getElementById("abc");
 
 function Notenames() {
@@ -1358,6 +1360,12 @@ function Render() {
 		document.getElementById("toggleallcontrols").classList.add("toggleallcontrols");
 		gAllowControlToggle = true;
 
+		// Enable the copy button
+		document.getElementById("copybutton").classList.remove("copybuttondisabled");
+		document.getElementById("copybutton").classList.add("copybutton");
+		
+		gAllowCopy = true;
+
 		// Idle the advanced controls
 		IdleAdvancedControls();
 
@@ -1495,8 +1503,13 @@ function Render() {
 		document.getElementById("toggleallcontrols").classList.add("toggleallcontrolsdisabled");
 		gAllowControlToggle = false;
 
+		// Disable the copy button
+		document.getElementById("copybutton").classList.remove("copybutton");
+		document.getElementById("copybutton").classList.add("copybuttondisabled");
+		gAllowCopy = false;
+
 		// Show the notation placeholder
-		document.getElementById("notation-placeholder").style.display = "block";
+		document.getElementById("notation-placeholder").style.display = "inline";
 
 		// Hide the zoom control
 		document.getElementById("zoombutton").style.display = "none";
@@ -2031,20 +2044,6 @@ function NewABC(){
 
 }
 
-
-// // Re-render on window size change
-// window.addEventListener('resize', function() {
-
-// 	if (!(gIsIOS || gIsAndroid)){
-
-// 		Render();
-
-// 		UpdateNotationTopPosition();
-// 	}
-
-// });
-
-
 // 
 // Generate the rendering divs
 //
@@ -2226,6 +2225,9 @@ function FillUrlBoxWithAbcInLZW() {
 		document.getElementById("testurl").classList.remove("urlcontrols");
 		document.getElementById("testurl").classList.add("urlcontrolsdisabled");
 
+		document.getElementById("copyurl").classList.remove("urlcontrols");
+		document.getElementById("copyurl").classList.add("urlcontrolsdisabled");
+
 		document.getElementById("saveurl").classList.remove("urlcontrols");
 		document.getElementById("saveurl").classList.add("urlcontrolsdisabled");
 
@@ -2239,6 +2241,10 @@ function FillUrlBoxWithAbcInLZW() {
 
 		document.getElementById("saveurl").classList.remove("urlcontrolsdisabled");
 		document.getElementById("saveurl").classList.add("urlcontrols");
+
+		document.getElementById("copyurl").classList.remove("urlcontrolsdisabled");
+		document.getElementById("copyurl").classList.add("urlcontrols");
+
 
 		gAllowURLSave = true;
 
@@ -2525,6 +2531,103 @@ function saveShareURLFile(thePrompt, thePlaceholder, theData){
 }
 
 //
+// Copy to Clipboard Polyfill
+//
+function CopyToClipboard(textToCopy) {
+
+	//
+	// Put this in a try/catch just to be safe
+	//
+	try {
+
+	    // navigator clipboard api needs a secure context (https)
+	    if (navigator.clipboard && window.isSecureContext) {
+	    
+	        // navigator clipboard api method'
+	        return navigator.clipboard.writeText(textToCopy);
+	    
+	    } else {
+	    
+	        // text area method
+	    
+	        let textArea = document.createElement("textarea");
+	    
+	        textArea.value = textToCopy;
+	    
+	        // make the textarea out of viewport
+	        textArea.style.position = "fixed";
+	        textArea.style.left = "-999999px";
+	        textArea.style.top = "-999999px";
+	    
+	        document.body.appendChild(textArea);
+	    
+	        textArea.focus();
+	        textArea.select();
+	    
+	        return new Promise((res, rej) => {
+	            // here the magic happens
+	            document.execCommand('copy') ? res() : rej();
+	            textArea.remove();
+	        });
+	    }
+	} 
+	catch (error){
+
+		console.log("CopyToClipboard error: "+error);
+
+	}
+}
+
+//
+// Copy the ABC to the clipboard
+//
+function CopyABC(){
+
+	if (gAllowCopy){
+
+		var theData = theABC.value;
+		
+		// Copy the abc to the clipboard
+		CopyToClipboard(theData);
+
+  		// Give some feedback
+  		document.getElementById("copybutton").value = "Copied!";
+
+  		setTimeout(function(){
+
+  			document.getElementById("copybutton").value = "Copy All";
+
+  		},750);
+
+	}
+
+}
+
+//
+// Copy the ShareURL to the clipboard
+//
+function CopyShareURL(){
+
+	var theURL = document.getElementById("urltextbox");
+
+	var theData = theURL.value;
+	
+	// Copy the abc to the clipboard
+	CopyToClipboard(theData);
+
+	// Give some feedback
+	document.getElementById("copyurl").value = "Share URL Copied!";
+
+	setTimeout(function(){
+
+		document.getElementById("copyurl").value = "Copy Share URL";
+		
+	},750);
+
+}
+
+
+//
 // Save the ABC
 //
 function SaveABC(){
@@ -2798,8 +2901,16 @@ function processShareLink() {
 	return false;
 }
 
-function DoStartup() {
+// 
+// Handle changes to the text box size
+//
+function TextBoxResizeHandler(){
 
+	// Resize the notation spacer
+	UpdateNotationTopPosition();
+}
+
+function DoStartup() {
 
 	// Init global state
 	gShowAdvancedControls = false;
@@ -2819,6 +2930,7 @@ function DoStartup() {
 	gIsMaximized = false;
 	gCapo = 0;
 	gABCFromFile = false;
+	gAllowCopy = false;
 
 	// Startup in blank screen
 	
@@ -2990,12 +3102,13 @@ function DoStartup() {
 
 	var theABCText = document.getElementById("abc");
 
-	new ResizeObserver(UpdateNotationTopPosition).observe(theABCText);
+	new ResizeObserver(TextBoxResizeHandler).observe(theABCText);
 
 	// 
 	// Initially hide the controls
 	//
 	HideAllControls();
+
 
 }
 
