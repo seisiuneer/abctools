@@ -65,7 +65,7 @@
 <p>The ABC will be converted to notation in realtime and displayed below a set of control buttons:</p>
 <p>Save ABC File - Saves the contents of the ABC editor to a file</p>
 <p>The saved file will be in your browser's Downloads directory</p>
-<p>Copy All - Copies all the ABC text to the system clipboard so you can easily paste it into other tools</p>
+<p>Copy All - Copies all the ABC text to the system clipboard so you can easily paste it into social media posts, emails, or other tools</p>
 <p>Hide Controls / Show Controls - Hides/Shows the control buttons</p>
 <hr>
 <p><strong>Notation Maximize/Minimize Arrows</strong></p>
@@ -79,8 +79,8 @@
 <p>For now, I suggest you use the following site to play your ABC files:</p>
 <p><a href="https://editor.drawthedots.com/" target="_blank">https://editor.drawthedots.com/</a></p>
 <p>It can also export MIDI and audio files of tunes</p>
-<p>Using the "Copy All" command can copy your ABC from this tool and paste it in the drawthedots tool to test playback</p>
-<p>Once you are happy with the playback, copy the ABC from the drawthedots tool and paste it back into this tool</p>
+<p>Using the "Copy All" command you can easily copy your ABC from this tool and paste it in the drawthedots tool to test playback</p>
+<p>Once you are happy with the playback, copy the ABC from the drawthedots tool, clear the ABC in this tool using the "Clear" button, then paste the edited ABC back in the tool for further editing</p>
 <hr>
 <p><strong>Basic Controls</strong></p>
 <p>Transpose Down - Transposes the tune down one semitone</p>
@@ -125,6 +125,14 @@
 <p>Multiple Tunes / Page - Tunes are added one after another vertically down each page in the PDF</p>
 <p></p>
 <p>Note: Selecting multiple tunes per page may result in tunes staves crossing page boundaries</p>
+<p></p>
+<p>To manually force a tune to a new page in the PDF, add:</p>
+<p></p>
+<p>%%newpage</p>
+<p></p>
+<p>on a new line immediately at the end of tunes after which you want to force a page break</p>
+<p></p>
+<p>This will allow you to easily format a tune book where you want multiple tunes per page, but some tunes to not be split between pages</p>
 <hr>
 <p><strong>Sharing Controls</strong></p>
 <p>Share URL: Copying and pasting this link in a browser address bar will open the editor website and copy in the tune set ABC and tab settings</p>
@@ -132,7 +140,7 @@
 <p>If the share URL link is too long to work in most browsers, the Share URL buttons will be disabled and you will see a message suggesting sharing fewer tunes</p>
 <p>Test Share URL - Opens the Share URL in a new browser tab</p>
 <p>Copy Share URL - Copies the Share URL to the system clipboard so you can easily paste it into social media posts, emails, or other tools</p>
-<p>Save Share URL - Saves the Share URL to a file</p>
+<p>Save Share URL - Saves the Share URL to a text file</p>
 <p>The saved file will be in your browser's Downloads directory</p>
 <p>Generate QR Code - Once a share URL is generated, if it is short enough to fit in a QR code, this button is activated</p>
 <p>Clicking the button will generate a QR code in .PNG format for the share URL and open it in a new browser tab where it can be saved or printed</p>
@@ -163,17 +171,8 @@
 <p><a href="https://play.google.com/store/apps/details?id=com.google.ar.lens&hl=en_US&gl=US" target="_blank">Google Lens</a></p>
 <p></p>
 <hr>
-<p><strong>Forcing a Page Break After a Tune for Multiple Tunes / Page Format PDFs</strong></p>
-<p></p>
-<p>To force a page break after a specific tune during PDF generation, add the following ABC at the bottom of the tune:</p>
-<p></p>
-<p>%%newpage</p>
-<p></p>
-<p>This will allow you to easily format a tune book where you want multiple tunes per page, but some tunes to not be split between pages</p>
-<hr>
 <p><strong>Printing</strong></p>
 <p>When printing the page using your browser's Print command, only the generated notation is printed</p>
-<p>Setting the Display Size to Large and then printing from your browser can achieve some nice results</p>
 <hr>
 <p><strong>iPhone/iPad Chord Entry Issue Fix</strong></p>
 <p>If you are trying to enter ABC chords, for example "D" or "Am", on an iPhone or iPad, iOS will, by default stick in "smart quotes" instead of standard double quotes</p>
