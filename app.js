@@ -1520,6 +1520,9 @@ function Render() {
 
 		gABCFromFile = false;
 
+		// Recalculate the notation top position
+		UpdateNotationTopPosition();
+
 	}
 }
 
@@ -1548,6 +1551,8 @@ function ensureABCFile(filename) {
 //
 function HideAdvancedControls() {
 
+	document.getElementById('toggleadvancedcontrols').value = "Show Advanced Controls";
+
 	document.getElementById('advanced-controls').style.display = "none";
 
 	// Recalculate the notation top position
@@ -1560,6 +1565,8 @@ function HideAdvancedControls() {
 // Show the advanced controls
 //
 function ShowAdvancedControls() {
+
+	document.getElementById('toggleadvancedcontrols').value = "Hide Advanced Controls";
 
 	document.getElementById('advanced-controls').style.display = "flex";
 
@@ -1791,6 +1798,8 @@ function IdleAdvancedControls(){
 //
 function HideShareControls() {
 
+	document.getElementById('togglesharecontrols').value = "Show Share Controls";
+
 	// Also hide the share url area
 	document.getElementById('urlarea').style.display = "none";
 
@@ -1804,6 +1813,8 @@ function HideShareControls() {
 // Show the share controls
 //
 function ShowShareControls() {
+
+	document.getElementById('togglesharecontrols').value = "Hide Share Controls";
 
 	CreateURLfromHTML();
 
