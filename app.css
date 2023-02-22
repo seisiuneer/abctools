@@ -7,7 +7,6 @@ html {
   font: inherit; /* 2 */
 }
 
-
 body {
 padding:10px;
 }
@@ -78,7 +77,7 @@ margin-bottom: 0px;
 -moz-appearance: none;
 }
 
-.transpose, .saveaspdf {
+.transpose {
 font-family:"Helvetica";
 font-size:11pt;
 border: 1px solid #333;
@@ -97,8 +96,17 @@ color:black;
 	}
 }
 
-.saveaspdf{
-margin-left:17px;
+.saveaspdf {
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+padding: 0.6em;
+margin-left:8px;
+margin-right:6px;
+background-color: #EEEEEE;
+color:black;
+-webkit-appearance:none;
 }
 
 @media (hover: hover) {
@@ -248,12 +256,6 @@ font-size:11pt !important;
 -webkit-appearance: none !important;
 }
 
-#safariuser{
-display:none;
-background-color:yellow;
-padding-top:12px;
-padding-bottom:12px
-}
 
 #notenrechts{
 margin-top:18px;
@@ -354,7 +356,8 @@ margin-right:5px;
 #pdfformat{
 font-size:11pt;
 font-family:"Helvetica";
-width:185px;
+width:195px;
+margin-left:2px;
 }
 
 #qrcode{
