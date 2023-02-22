@@ -2,6 +2,8 @@
  * 
  * app.js - All code for the ABC Transcription Tools
  *
+ * Project repo at: https://github.com/seisiuneer/abctools
+ *
  */
 
 var gShowAdvancedControls = false;
@@ -298,12 +300,25 @@ function scanTunesForPageBreaks(){
 	return pageBreakRequested;
 }
 
+//
+// Add a page number to the current PDF page
+//
+function addPageNumber(thePDF,pageNumber){
 
+	// Add page number
+	var str = "" + pageNumber;
+	
+	thePDF.setFontSize(11);
+
+	// Division accounts for the PDF internal scaling
+	thePDF.text(str, (thePDF.internal.pageSize.getWidth()/3.10), thePDF.internal.pageSize.getHeight()-10 , {align:"center"});
+
+}
 
 //
 // Render a single SVG block to PDF and callback when done
 //
-function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, callback) {
+function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPageNumbers, callback) {
 
 	var svg = theBlock.querySelector("svg");
 
@@ -318,6 +333,9 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, callb
 			pixelRatio: 2
 		})
 		.then(function(canvas) {
+
+			// Creates a sharper image
+			pdf.internal.scaleFactor = 1.55;
 
 			var imgData = canvas.toDataURL("image/jpeg", 1.0);
 
@@ -337,6 +355,12 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, callb
 						pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
 						document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + seitenzahl + "</font> pages";
 
+						// Add page number?
+						if (addPageNumbers){
+							addPageNumber(pdf,seitenzahl)						
+						}
+
+
 					} else {
 
 						// 
@@ -352,6 +376,11 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, callb
 
 							pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
 
+							// Add page number?
+							if (addPageNumbers){
+								addPageNumber(pdf,seitenzahl)						
+							}
+
 							document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + seitenzahl + "</font> pages";
 
 						}
@@ -365,7 +394,13 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, callb
 					}
 
 				} else {
+
 					isFirstPage = false;
+
+					// Add page number?
+					if (addPageNumbers){
+						addPageNumber(pdf,seitenzahl)						
+					}
 				}
 
 				// Bump the tune processed counter
@@ -382,13 +417,11 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, callb
 			// the first two values mean x,y coordinates for the upper left corner. Enlarge to get larger margin.
 			// then comes width, then height. The second value can be freely selected - then it leaves more space at the top.
 
-			// hilft vielleicht gegen unscharf...
-			pdf.internal.scaleFactor = 1.55;
-
 			if (running_height + height + 30 <= 842 - 30) // i.e. if a block of notes would get in the way with the bottom margin (30 pt), then a new one please...
 			{
 
 				pdf.addImage(imgData, 'JPG', 30, running_height, 535, height);
+
 
 			} else {
 
@@ -397,11 +430,15 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, callb
 				seitenzahl++; // for the status display.
 
 				pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
+				
+				// Add page number?
+				if (addPageNumbers){
+					addPageNumber(pdf,seitenzahl)						
+				}
 
 				pdf.addImage(imgData, 'JPG', 30, running_height, 535, height);
 
 				document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + seitenzahl + "</font> pages";
-
 			}
 
 			// so that it starts the new one exactly one pt behind the current one.
@@ -435,7 +472,12 @@ function CreatePDFfromHTML() {
 	// Get the page format
 	var elem = document.getElementById("pdfformat");
 
-	var doSinglePage = elem.options[elem.selectedIndex].value == "true";
+	var thePageOptions = elem.options[elem.selectedIndex].value;
+
+	var doSinglePage = (thePageOptions == "one") || (thePageOptions == "onenp");
+
+	// Add page numbers?
+	var addPageNumbers = (thePageOptions == "one") || (thePageOptions == "multi");
 
 	// If not doing single page, find any tunes that have page break requests
 	var pageBreakList = [];
@@ -561,7 +603,7 @@ function CreatePDFfromHTML() {
 		var theBlock = theBlocks[0];
 
 		// Render and stamp one block
-		RenderPDFBlock(theBlock, 0, doSinglePage, pageBreakList, callback);
+		RenderPDFBlock(theBlock, 0, doSinglePage, pageBreakList, addPageNumbers, callback);
 
 		function callback() {
 
@@ -607,7 +649,7 @@ function CreatePDFfromHTML() {
 
 				setTimeout(function() {
 
-					RenderPDFBlock(theBlock, nBlocksProcessed, doSinglePage, pageBreakList, callback);
+					RenderPDFBlock(theBlock, nBlocksProcessed, doSinglePage, pageBreakList, addPageNumbers, callback);
 
 				}, 100);
 
@@ -2976,22 +3018,6 @@ function DoStartup() {
 		gIsIPhone = true;
 	}
 
-	// Fade out and hide the safari warning after 5 seconds
-	// Disabling this for now
-	if (false){  //(gIsSafari && (!gIsIOS)) {
-
-		var safariuser = document.getElementById("safariuser");
-		safariuser.style.display = "inline-block";
-
-		setTimeout(
-
-			function() {
-
-				fadeOutAndHide(safariuser);
-
-			}, 4000);
-	}
-
 	if (gIsIOS) {
 
 		document.getElementById("selectabcfile").removeAttribute("accept");
@@ -3017,7 +3043,9 @@ function DoStartup() {
 	// Are we on Android?
 	//
 	if (/Android/i.test(navigator.userAgent)) {
+
 		gIsAndroid = true;
+
 	}
 
 	document.getElementById("selectabcfile").onchange = () => {
@@ -3085,7 +3113,7 @@ function DoStartup() {
 	document.getElementById("wb1").checked = true;
 
 	// Reset the paging control
-	document.getElementById("pdfformat").value = "true";
+	document.getElementById("pdfformat").value = "one";
 
 	// Hook up the zoom
 	document.getElementById("zoombutton").onclick = 
@@ -3119,7 +3147,6 @@ function DoStartup() {
 	// Initially hide the controls
 	//
 	HideAllControls();
-
 
 }
 
