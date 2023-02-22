@@ -738,7 +738,7 @@ function GetABCJSParams(instrument){
 			tablature: [{
 				instrument: 'violin',
 				label: '',
-				tuning: ['C,', 'G,', 'D', 'A'],
+				tuning: ['C', 'G', 'd', 'a'],
 				highestNote: "f'",
 				capo: gCapo
 			}],
