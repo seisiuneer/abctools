@@ -420,7 +420,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 			if (running_height + height + 30 <= 842 - 30) // i.e. if a block of notes would get in the way with the bottom margin (30 pt), then a new one please...
 			{
 
-				pdf.addImage(imgData, 'JPG', 30, running_height, 535, height);
+				pdf.addImage(imgData, 'JPG', 37, running_height, 535, height);
 
 
 			} else {
@@ -436,7 +436,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 					addPageNumber(pdf,seitenzahl)						
 				}
 
-				pdf.addImage(imgData, 'JPG', 30, running_height, 535, height);
+				pdf.addImage(imgData, 'JPG', 37, running_height, 535, height);
 
 				document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + seitenzahl + "</font> pages";
 			}
@@ -944,7 +944,7 @@ function PositionNotation(){
 	document.getElementById("notation-holder").style.marginLeft = leftOffset;
 }
 
-function Notenmachen(tune, instrument) {
+function Notenmachen(tune, instrument) {	
 
 	var nTunes = CountTunes();
 
