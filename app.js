@@ -311,7 +311,7 @@ function addPageNumber(thePDF,pageNumber){
 	thePDF.setFontSize(11);
 
 	// Division accounts for the PDF internal scaling
-	thePDF.text(str, (thePDF.internal.pageSize.getWidth()/3.10), thePDF.internal.pageSize.getHeight()-10 , {align:"center"});
+	thePDF.text(str, (thePDF.internal.pageSize.getWidth()/3.10), thePDF.internal.pageSize.getHeight()-11 , {align:"center"});
 
 }
 
