@@ -1798,7 +1798,7 @@ function IdleAdvancedControls(){
 //
 function HideShareControls() {
 
-	document.getElementById('togglesharecontrols').value = "Show Share Controls";
+	document.getElementById('togglesharecontrols').value = "Show Sharing Controls";
 
 	// Also hide the share url area
 	document.getElementById('urlarea').style.display = "none";
@@ -1814,7 +1814,7 @@ function HideShareControls() {
 //
 function ShowShareControls() {
 
-	document.getElementById('togglesharecontrols').value = "Hide Share Controls";
+	document.getElementById('togglesharecontrols').value = "Hide Sharing Controls";
 
 	CreateURLfromHTML();
 
