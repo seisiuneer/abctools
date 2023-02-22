@@ -1,3 +1,13 @@
+html {
+  -webkit-text-size-adjust: 100%; /* 2 */
+}
+
+::-webkit-file-upload-button {
+  -webkit-appearance: button; /* 1 */
+  font: inherit; /* 2 */
+}
+
+
 body {
 padding:10px;
 }
