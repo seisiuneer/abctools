@@ -69,7 +69,8 @@ display:none;
 
 #abc {
 font-family:"Courier";
-font-size: 12pt;
+font-size: 13pt;
+line-height: 16pt;
 padding: 5px;
 margin-top: 0px;
 margin-bottom: 0px;
@@ -578,7 +579,7 @@ margin-bottom:-16px;
 }
 
 #notenlinks{
-padding-top:20px;
+padding-top:12px;
 }
 
 .zoombutton{
