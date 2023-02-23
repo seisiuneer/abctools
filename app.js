@@ -254,7 +254,10 @@ function Titelholen() {
 // PDF conversion shared globals
 //
 
-var running_height = 30;
+var PAGETOPOFFSET = 32;
+var PAGELEFTOFFSET = 37;
+
+var running_height = PAGETOPOFFSET;
 
 var seitenzahl = 1;
 
@@ -265,6 +268,114 @@ var tunesProcessed = 0;
 var totalTunes = 0;
 
 var pdf;
+
+//
+// Get a good filename for the PDF or share name either from the current filename or tunes themselves
+//
+function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
+
+	var title = "";
+
+	if (gABCFromFile){
+
+		// If this was from a file, use the filename for the PDF
+		var fileSelected = document.getElementById("abc-selected");
+		title = fileSelected.innerText;
+
+		// Clean up the filename
+
+		// Trim any whitespace
+		title = title.trim();
+
+		// Strip out any naughty HTML tag characters
+		title = title.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+		// Replace any spaces
+		title = title.replace(/\s/g, '_');
+
+		// Strip the extension
+		title = title.replace(/\..+$/, '');
+
+	}
+	else{
+
+		// Get the title from the first tune in the ABC
+		title = Titelholen();
+
+		// If there is more than one tune, make the name reflect that it is a set
+		if (tuneCount > 1){
+
+			title += "_Set";
+
+		}
+	}
+
+	// If additional tab info suffix requested, add them
+	if (bIncludeTabInfo){
+
+		// Now append any tablature style postfix
+
+		// Get the current instrument setting
+		var tabs = GetRadioValue("notenodertab");
+
+		var postfix = "";
+
+		switch (tabs){
+			case "noten":
+				postfix = "";
+				break;
+			case "notenames":
+				postfix = "_Note_Names";
+				break;
+			case "mandolin":
+				postfix = "_Mandolin";
+				break;
+			case "gdad":
+				postfix = "_GDAD";
+				break;
+			case "mandola":
+				postfix = "_Mandola";
+				break;
+			case "guitare":
+				postfix = "_Guitar";
+				break;
+			case "guitard":
+				postfix = "_DADGAD";
+				break;
+			case "whistle":
+				postfix = "_Whistle";
+				break;
+		}
+
+		title += postfix;
+
+		postfix = "";
+		
+		// Let's add some capo information to the stringed instrument tab
+		switch (tabs){
+
+			case "noten":
+			case "notenames":
+			case "whistle":
+				break;
+
+			case "mandolin":
+			case "gdad":
+			case "mandola":
+			case "guitare":
+			case "guitard":
+				if (gCapo > 0){
+					postfix = "_Capo_" + gCapo;
+				}
+				break;
+		}
+
+		title += postfix;
+
+	}
+
+	return title;
+}
 
 //
 // Scan the tune and return an array that indicates if a tune as %%newpage under X:
@@ -300,6 +411,15 @@ function scanTunesForPageBreaks(){
 	return pageBreakRequested;
 }
 
+var thePageNumberPosition = 0;
+
+//
+// Calculate and cache the page number position
+//
+function calcPageNumberPosition(thePDF){
+	thePageNumberPosition = thePDF.internal.pageSize.getHeight()-11;
+}
+
 //
 // Add a page number to the current PDF page
 //
@@ -311,7 +431,7 @@ function addPageNumber(thePDF,pageNumber){
 	thePDF.setFontSize(11);
 
 	// Division accounts for the PDF internal scaling
-	thePDF.text(str, (thePDF.internal.pageSize.getWidth()/3.10), thePDF.internal.pageSize.getHeight()-11 , {align:"center"});
+	thePDF.text(str, (thePDF.internal.pageSize.getWidth()/3.10), thePageNumberPosition , {align:"center"});
 
 }
 
@@ -348,18 +468,19 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 					if (doSinglePage) {
 
-						running_height = 30;
+						if (seitenzahl != 0){
+							// Add page number?
+							if (addPageNumbers){
+								addPageNumber(pdf,seitenzahl)						
+							}
+						}
+
+						running_height = PAGETOPOFFSET;
 
 						seitenzahl++; // for the status display.
 
 						pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
 						document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + seitenzahl + "</font> pages";
-
-						// Add page number?
-						if (addPageNumbers){
-							addPageNumber(pdf,seitenzahl)						
-						}
-
 
 					} else {
 
@@ -368,18 +489,18 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 						//
 						if (pageBreakList[tunesProcessed-1]){
 
-							// Yes, force it to a new page
-
-							running_height = 30;
-
-							seitenzahl++; // for the status display.
-
-							pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
-
 							// Add page number?
 							if (addPageNumbers){
 								addPageNumber(pdf,seitenzahl)						
 							}
+
+							// Yes, force it to a new page
+
+							running_height = PAGETOPOFFSET;
+
+							seitenzahl++; // for the status display.
+
+							pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
 
 							document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + seitenzahl + "</font> pages";
 
@@ -397,10 +518,9 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 					isFirstPage = false;
 
-					// Add page number?
-					if (addPageNumbers){
-						addPageNumber(pdf,seitenzahl)						
-					}
+					// Get the position for future page numbers
+					calcPageNumberPosition(pdf);
+
 				}
 
 				// Bump the tune processed counter
@@ -417,26 +537,28 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 			// the first two values mean x,y coordinates for the upper left corner. Enlarge to get larger margin.
 			// then comes width, then height. The second value can be freely selected - then it leaves more space at the top.
 
-			if (running_height + height + 30 <= 842 - 30) // i.e. if a block of notes would get in the way with the bottom margin (30 pt), then a new one please...
+			if (running_height + height + PAGETOPOFFSET <= 842 - PAGETOPOFFSET) // i.e. if a block of notes would get in the way with the bottom margin (30 pt), then a new one please...
 			{
 
-				pdf.addImage(imgData, 'JPG', 37, running_height, 535, height);
+				pdf.addImage(imgData, 'JPG', PAGELEFTOFFSET, running_height, 535, height);
 
 
 			} else {
 
-				running_height = 30;
+				running_height = PAGETOPOFFSET;
+
+				if (seitenzahl != 0){
+					// Add page number?
+					if (addPageNumbers){
+						addPageNumber(pdf,seitenzahl)						
+					}
+				}
 
 				seitenzahl++; // for the status display.
 
 				pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
-				
-				// Add page number?
-				if (addPageNumbers){
-					addPageNumber(pdf,seitenzahl)						
-				}
 
-				pdf.addImage(imgData, 'JPG', 37, running_height, 535, height);
+				pdf.addImage(imgData, 'JPG', PAGELEFTOFFSET, running_height, 535, height);
 
 				document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + seitenzahl + "</font> pages";
 			}
@@ -444,12 +566,8 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 			// so that it starts the new one exactly one pt behind the current one.
 			running_height = running_height + height + 1;
 
-			// Callback after a short delay
-			//setTimeout(function(){
-
 			callback();
 
-			//},150); 
 
 		});
 
@@ -496,105 +614,11 @@ function CreatePDFfromHTML() {
 
 	isFirstPage = true;
 
-	running_height = 30;
+	running_height = PAGETOPOFFSET;
 
 	var nBlocksProcessed = 0;
 
-	var title = "";
-
-	if (gABCFromFile){
-
-		// If this was from a file, use the filename for the PDF
-		var fileSelected = document.getElementById("abc-selected");
-		title = fileSelected.innerText;
-
-		// Clean up the filename
-
-		// Trim any whitespace
-		title = title.trim();
-
-		// Strip out any naughty HTML tag characters
-		title = title.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
-
-		// Replace any spaces
-		title = title.replace(/\s/g, '_');
-
-		// Strip the extension
-		title = title.replace(/\..+$/, '');
-
-	}
-	else{
-
-		// Get the title from the first tune in the ABC
-		title = Titelholen();
-
-		// If there is more than one tune, make the name reflect that it is a set
-		if (totalTunes > 1){
-
-			title += "_Set";
-
-		}
-	}
-
-	// Now append any tablature style postfix
-
-	// Get the current instrument setting
-	var tabs = GetRadioValue("notenodertab");
-
-	var postfix = "";
-
-	switch (tabs){
-		case "noten":
-			postfix = "";
-			break;
-		case "notenames":
-			postfix = "_Note_Names";
-			break;
-		case "mandolin":
-			postfix = "_Mandolin";
-			break;
-		case "gdad":
-			postfix = "_GDAD";
-			break;
-		case "mandola":
-			postfix = "_Mandola";
-			break;
-		case "guitare":
-			postfix = "_Guitar";
-			break;
-		case "guitard":
-			postfix = "_DADGAD";
-			break;
-		case "whistle":
-			postfix = "_Whistle";
-			break;
-	}
-
-	title += postfix;
-
-	postfix = "";
-	
-	// Let's add some capo information to the stringed instrument tab
-	switch (tabs){
-
-		case "noten":
-		case "notenames":
-		case "whistle":
-			break;
-
-		case "mandolin":
-		case "gdad":
-		case "mandola":
-		case "guitare":
-		case "guitard":
-			if (gCapo > 0){
-				postfix = "_Capo_" + gCapo;
-			}
-			break;
-	}
-
-	title += postfix;
-
+	var title = getDescriptiveFileName(totalTunes,true);
 
 	qualitaet = 1200;
 
@@ -616,8 +640,6 @@ function CreatePDFfromHTML() {
 
 		pdf = new jsPDF('p', 'pt', 'letter');
 
-		var running_height = 30;
-
 		theBlocks = document.querySelectorAll('div[class="block"]');
 
 		var nBlocks = theBlocks.length;
@@ -633,6 +655,11 @@ function CreatePDFfromHTML() {
 			nBlocksProcessed++;
 
 			if (nBlocksProcessed == nBlocks) {
+
+				// Add final page number
+				if (addPageNumbers){
+					addPageNumber(pdf,seitenzahl)						
+				}
 
 				document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Rendering Complete!</font>";
 
@@ -989,6 +1016,12 @@ function PositionNotation(){
 	}
 
 	document.getElementById("notation-holder").style.marginLeft = leftOffset;
+
+	// Since this is a Share URL parameter, update URL if required
+	if (document.getElementById("urlarea").style.display != "none") {
+		FillUrlBoxWithAbcInLZW();
+	}
+
 }
 
 function Notenmachen(tune, instrument) {	
@@ -2137,7 +2170,13 @@ function CountTunes() {
 function NewABC(){
 
 	theABC.value = "X: 1\nT: My New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%\n% Enter the ABC for your tunes below:\n%\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|";
+	
+	var fileSelected = document.getElementById('abc-selected');
 
+	fileSelected.innerText = "No ABC file selected";
+
+	gABCFromFile = false;
+	
 	Render();
 
 	UpdateNotationTopPosition();
@@ -2284,10 +2323,10 @@ function FillUrlBoxWithAbcInLZW() {
 
 	var theWidth = GetRadioValue("renderwidth");
 
-	var capo = document.getElementById("capo").value;
-
 	// Strip the percent sign
 	theWidth = theWidth.replace("%","");
+
+	var capo = document.getElementById("capo").value;
 
 	var url = getUrlWithoutParams() + "?lzw=" + abcInLZW + "&w=" + theWidth + "&format=" + format;
 
@@ -2312,6 +2351,13 @@ function FillUrlBoxWithAbcInLZW() {
 	}
 
 	url += postfix;
+
+	// Add the tune set name
+	var theTuneCount = CountTunes();
+
+	var theName = getDescriptiveFileName(theTuneCount,false);
+
+	url += "&name=" + theName;
 
 	var urltextbox = document.getElementById("urltextbox");
 
@@ -2737,11 +2783,18 @@ function SaveABC(){
 		var theData = theABC.value;
 
 		if (theData.length != 0){
+
+			var theTuneCount = CountTunes();
+
+			// Derive a suggested name from the ABC
+			var theName = getDescriptiveFileName(theTuneCount,false);
+
 			if ((!gIsAndroid) && (!gIsIOS)){
-				saveABCFile("Please enter a filename for your ABC file:","newtune.abc",theData);
+
+				saveABCFile("Please enter a filename for your ABC file:",theName+".abc",theData);
 			}
 			else{
-				saveABCFile("Please enter a filename for your ABC file:","newtune.txt",theData);
+				saveABCFile("Please enter a filename for your ABC file:",theName+".txt",theData);
 			}
 		}
 	}
@@ -2757,7 +2810,13 @@ function SaveShareURL(){
 		var theData = urltextbox.value;
 
 		if (theData.length != 0){
-			saveShareURLFile("Please enter a filename for your ShareURL file:","shareurl.txt",theData);
+
+			var theTuneCount = CountTunes();
+
+			// Derive a suggested name from the ABC
+			var theName = getDescriptiveFileName(theTuneCount,false);
+
+			saveShareURLFile("Please enter a filename for your Share URL file:",theName+"_Share_URL.txt",theData);
 		}
 	}
 }
@@ -2976,11 +3035,34 @@ function processShareLink() {
 	}
 
 	if (doRender) {
-		
+
 		// Set the title
+		var theName = "";
+		
+		if (urlParams.has("name")) {
+
+			theName = urlParams.get("name");
+
+		}
+		else{
+
+			var theTuneCount = CountTunes();
+
+			// Derive the name from the ABC
+			theName = getDescriptiveFileName(theTuneCount,false);
+			
+		}
+
+		// Strip out underscores and replace them with spaces
+		var searchRegExp = /_/gm;
+		theName = theName.replace(searchRegExp, " ");
+
+		// We can use this name for PDF naming and sharing name param
+		gABCFromFile = true;
+
 		var fileSelected = document.getElementById("abc-selected");
 
-		fileSelected.innerText = "Shared Tune Set";
+		fileSelected.innerText = theName;
 
 		// Hide the controls if coming in from a share link
 		document.getElementById("notenrechts").style.display = "none";
@@ -3135,14 +3217,15 @@ function DoStartup() {
 						}
 					)
 
+					// Mark that this ABC was from a file
+					gABCFromFile = true;
+
 					// Render the notation
 					Render();
 
 					// Recalculate the notation top position
 					UpdateNotationTopPosition();
 
-					// Mark that this ABC was from a file
-					gABCFromFile = true;
 
 				}, 100);
 
