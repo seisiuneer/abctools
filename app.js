@@ -569,7 +569,30 @@ function CreatePDFfromHTML() {
 			postfix = "_Whistle";
 			break;
 	}
+
+	title += postfix;
+
+	postfix = "";
 	
+	// Let's add some capo information to the stringed instrument tab
+	switch (tabs){
+
+		case "noten":
+		case "notenames":
+		case "whistle":
+			break;
+
+		case "mandolin":
+		case "gdad":
+		case "mandola":
+		case "guitare":
+		case "guitard":
+			if (gCapo > 0){
+				postfix = "_Capo_" + gCapo;
+			}
+			break;
+	}
+
 	title += postfix;
 
 
@@ -680,6 +703,30 @@ function getStyleProp(elem, prop) {
 
 function GetABCJSParams(instrument){
 
+	var postfix = "";
+
+	// Let's add some capo information to the stringed instrument tab
+	if (instrument){
+
+		switch (instrument){
+
+			case "noten":
+			case "notenames":
+			case "whistle":
+				break;
+
+			case "mandolin":
+			case "gdad":
+			case "mandola":
+			case "guitare":
+			case "guitard":
+				if (gCapo > 0){
+					postfix = " (Capo " + gCapo + ")";
+				}
+				break;
+		}
+	}
+
 	var params = {
 		responsive: 'resize',
 		oneSvgPerLine: 'true',
@@ -725,7 +772,7 @@ function GetABCJSParams(instrument){
 		params = {
 			tablature: [{
 				instrument: 'violin',
-				label: '',
+				label: 'Mandolin'+postfix,
 				tuning: ['G,', 'D', 'A', 'e'],
 				highestNote: "f'",
 				capo: gCapo
@@ -752,7 +799,7 @@ function GetABCJSParams(instrument){
 		params = {
 			tablature: [{
 				instrument: 'violin',
-				label: '',
+				label: 'GDAD'+postfix,
 				tuning: ['G,', 'D', 'A', 'd'],
 				highestNote: "f'",
 				capo: gCapo
@@ -779,7 +826,7 @@ function GetABCJSParams(instrument){
 		params = {
 			tablature: [{
 				instrument: 'violin',
-				label: '',
+				label: 'CGDA'+postfix,
 				tuning: ['C', 'G', 'd', 'a'],
 				highestNote: "f'",
 				capo: gCapo
@@ -806,7 +853,7 @@ function GetABCJSParams(instrument){
 		params = {
 			tablature: [{
 				instrument: 'guitar',
-				label: '',
+				label: 'Guitar'+postfix,
 				tuning: ['E,', 'A,', 'D', 'G', 'B', 'e'],
 				highestNote: "f'",
 				capo: gCapo
@@ -833,7 +880,7 @@ function GetABCJSParams(instrument){
 		params = {
 			tablature: [{
 				instrument: 'guitar',
-				label: '',
+				label: 'DADGAD'+postfix,
 				tuning: ['D,', 'A,', 'D', 'G', 'A', 'd'],
 				highestNote: "f'",
 				capo: gCapo
@@ -860,7 +907,7 @@ function GetABCJSParams(instrument){
 		params = {
 			tablature: [{
 				instrument: 'violin',
-				label: '',
+				label: ' ',
 				tuning: ['G,'],
 				highestNote: "b'"
 			}],
@@ -886,7 +933,7 @@ function GetABCJSParams(instrument){
 		params = {
 			tablature: [{
 				instrument: 'violin',
-				label: '',
+				label: ' ',
 				tuning: ['D'],
 				highestNote: "c'"
 			}],
