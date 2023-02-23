@@ -3147,16 +3147,56 @@ function DoStartup() {
 		gIsIPhone = true;
 	}
 
+	// 
+	// iOS Styling adaptation
+	//
 	if (gIsIOS) {
 
 		document.getElementById("selectabcfile").removeAttribute("accept");
 
+		// Fix the title font
+		var elem = document.getElementById("toolpagetitle");
+		elem.size = 4;
+		elem.style.fontFamily = "Helvetica";
+
+		// Add little extra room at the top
+		elem = document.getElementById("notenlinks");
+		elem.style.paddingTop = "20px";
+
 	}
 
-	// On iPad make the abc area a bit narrower so it doesn't get cut off
-	if (gIsIPad) {
+	// iPhone
+	if (gIsIPhone){
 
-		document.getElementById("abc").cols = 75;
+		var elem = document.getElementById("abc");
+		elem.cols = 80;
+		elem.style.fontSize = "13pt";
+		elem.style.lineHeight = "15pt";
+	
+	}
+
+	// iPad
+	if (gIsIPad){
+
+		var elem = document.getElementById("abc");
+		elem.cols = 72;
+		elem.lines = 11;
+		elem.style.fontSize = "13pt";
+		elem.style.lineHeight = "15pt";
+
+	}
+
+	// Android
+	if (gIsAndroid){
+
+		// Fix the title font
+		var elem = document.getElementById("toolpagetitle");
+		elem.size = 4;
+		elem.style.fontFamily = "Helvetica";
+
+		// Add little extra room at the top
+		elem = document.getElementById("notenlinks");
+		elem.style.paddingTop = "20px";
 
 	}
 
