@@ -3076,10 +3076,6 @@ function processShareLink() {
 			
 		}
 
-		// Strip out underscores and replace them with spaces
-		var searchRegExp = /_/gm;
-		theName = theName.replace(searchRegExp, " ");
-
 		// We can use this name for PDF naming and sharing name param
 		gABCFromFile = true;
 
