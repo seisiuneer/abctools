@@ -49,6 +49,12 @@ var gABCFromFile = false;
 
 var gAllowCopy = false;
 
+// If rendering takes longer than this in milliseconds, put up a warning banner
+var LONGOPERATIONTHRESHOLDMS = 1500;
+
+// OK to show the long operations warning banner
+var gOKShowOperationsBanner = true;
+
 var theABC = document.getElementById("abc");
 
 function Notenames() {
@@ -200,6 +206,9 @@ function Clear() {
 	var fileSelected = document.getElementById('abc-selected');
 
 	fileSelected.innerText = "No ABC file selected";
+
+	// Hide the slow operation banner
+	hideSlowOperationsBanner();
 
 	gABCFromFile = false;
 
@@ -631,7 +640,12 @@ function CreatePDFfromHTML() {
 		// Render first copying the SVGs to the shadow DOM
 		gCopySVGs = true;
 
+		// Suppress the operations banner
+		gOKShowOperationsBanner = false;
+
 		Render();
+
+		gOKShowOperationsBanner = true;
 
 		// Set the global PDF rendering flag
 		gRenderingPDF = true;
@@ -1024,11 +1038,55 @@ function PositionNotation(){
 
 }
 
-function Notenmachen(tune, instrument) {	
+//
+// Show the slow operations warning banner
+//
+function showSlowOperationsBanner(){
+
+	if (gOKShowOperationsBanner){
+
+		var elem = document.getElementById("slowoperation");
+
+		elem.innerHTML = "<p>Editing all these tunes at once may be slow on your system.&nbsp;&nbsp;Consider working with fewer tunes at one time.</p>";
+		
+		elem.style.display = "block";
+
+		// Recalculate the notation top position
+		UpdateNotationTopPosition();
+
+	}
+
+}
+
+//
+// Hide the slow operations banner
+//
+function hideSlowOperationsBanner(){
+
+	if (gOKShowOperationsBanner){
+
+		var elem = document.getElementById("slowoperation");
+
+		elem.innerHTML = "";
+		
+		elem.style.display = "none";
+
+		// Recalculate the notation top position
+		UpdateNotationTopPosition();
+
+	}
+
+}
+
+//
+// Main routine for rendering the notation
+//
+function Notenmachen(tune, instrument) {
+
+	// Used for long operation banner timing
+	var currentTime;
 
 	var nTunes = CountTunes();
-
-	//console.log("nTunes ="+nTunes);
 
 	// Center the notation div
 	PositionNotation();
@@ -1043,7 +1101,29 @@ function Notenmachen(tune, instrument) {
 		renderDivs.push("notation" + i);
 	}
 
+	//
+	// Keep track of how long it takes to render the notation 
+	//
+
+	// Get the current time for possible progress banner display
+	currentTime = Date.now();
+
 	var visualObj = ABCJS.renderAbc(renderDivs, tune, params);
+
+	// How long have we been rendering?
+	var deltaTime = Date.now() - currentTime;
+
+	// If long operation, put up the banner
+	if (deltaTime > LONGOPERATIONTHRESHOLDMS){
+
+		showSlowOperationsBanner();
+	
+	}
+	else{
+
+		hideSlowOperationsBanner();
+
+	}
 
 	document.getElementById("offscreenrender").innerHTML = ""; // must be, otherwise it somehow generates the abc twice...
 
@@ -1087,8 +1167,6 @@ function Notenmachen(tune, instrument) {
 			}
 
 			var Tspans = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g[data-name="tabNumber"] > text > tspan');
-
-			// console.log(Tspans.length);
 
 			// Sämtliche Tspan Tags, die zu Tags und nicht Noten gehören, haben jetzt Zahlen auf einem String (D). Diese können jetzt in Whistle Tags umgewandelt werden.
 			// Dazu werden die Buchstaben mit dem jeweiligen Unicode Buchstaben des TinWhistleFingering Fonts ersetzt.
@@ -1192,8 +1270,6 @@ function Notenmachen(tune, instrument) {
 
 					}
 					var Tspans = theSVG.querySelectorAll('g[data-name="tabNumber"] > text > tspan');
-
-					// console.log(Tspans.length);
 
 					if (useSharps) {
 						// Sämtliche Tspan Tags, die zu Tags und nicht Noten gehören, haben jetzt Zahlen auf einem String (D). Diese können jetzt in Whistle Tags umgewandelt werden.
@@ -1435,7 +1511,7 @@ function GetRadioValue(radioName) {
 			break;
 		}
 	}
-	// console.log(radiovalue);
+
 	return radiovalue;
 }
 
@@ -1635,6 +1711,9 @@ function Render() {
 
 		// Hide the zoom control
 		document.getElementById("zoombutton").style.display = "none";
+
+		// Hide the slow operation banner
+		document.getElementById("slowoperation").style.display = "none";
 
 		var fileSelected = document.getElementById('abc-selected');
 
@@ -2097,21 +2176,6 @@ function RestoreDefaults() {
 
 	// Recalculate the notation top position
 	UpdateNotationTopPosition();
-
-}
-
-//
-// Delayed render for paste
-//
-function DelayedRender() {
-
-	setTimeout(function() {
-
-		RestoreDefaults();
-
-		Render();
-
-	}, 250)
 
 }
 
@@ -3111,6 +3175,16 @@ function TextBoxResizeHandler(){
 	UpdateNotationTopPosition();
 }
 
+//
+// Text change handler
+//
+
+function OnABCTextInput(){
+
+	Render();
+
+}
+
 function DoStartup() {
 
 	// Init global state
@@ -3132,6 +3206,7 @@ function DoStartup() {
 	gCapo = 0;
 	gABCFromFile = false;
 	gAllowCopy = false;
+	gOKShowOperationsBanner = true;
 
 	// Startup in blank screen
 	
@@ -3236,6 +3311,14 @@ function DoStartup() {
 
 	}
 
+	//
+	// Hook up the text area text change callback
+	//
+	document.getElementById('abc').oninput = OnABCTextInput;
+
+	//
+	// Setup the file import control
+	//
 	document.getElementById("selectabcfile").onchange = () => {
 
 		let fileElement = document.getElementById("selectabcfile");
