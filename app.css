@@ -600,6 +600,15 @@ font-size:12pt;
 display:none;
 }
 
+#slowoperation{
+display:none;
+font-family:"Helvetica";
+font-size:12pt;
+background-color:khaki;
+padding:4px;
+margin-top:8px;
+}
+
 @media (hover: hover) {
 	.zoombutton:hover{
 	background: palegreen;
