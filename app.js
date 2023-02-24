@@ -2544,14 +2544,37 @@ function GenerateQRCode() {
 
 		theQRCodeImage = theQRCodeImage[0];
 
+		var theTuneCount = CountTunes();
+
+		// Derive a suggested name from the ABC
+		var theImageName = getDescriptiveFileName(theTuneCount,true);
+
 		var w = window.open("");
-		w.document.title = "ABC Tools Tune Sharing QR Code";
 
 		setTimeout(function() {
 
+			var theImageSource = theQRCodeImage.src;
+
 			var theImageHTML = theQRCodeImage.outerHTML.replace("display: block;","");
 
-			w.document.write('<div style="text-align:center;padding:24px;margin-top:36px;">'+ theImageHTML + '<p></p><p style="font-family:helvetica;font-size:14pt;margin-top:32px;">Save or print this QR Code to share:</p><p></p><p style="font-family:helvetica;font-size:14pt">' + theTitles + '</p><p></p><p style="font-family:helvetica;font-size:14pt">Scanning the code will open up the ABC Transcription Tool with the tune set</p></div>');
+			var theOutputHTML = '<div style="text-align:center;padding:24px;margin-top:36px;margin-bottom:0px;">';
+			theOutputHTML +=    '<a href="'+theImageSource+'" download="'+theImageName+'.png">' + theImageHTML + '</a>';
+			theOutputHTML +=    '<p style="font-family:helvetica;font-size:14pt;margin-top:24px;margin-bottom:0px;">' + theTitles + '</p>';			
+			theOutputHTML +=    '<p style="font-family:helvetica;font-size:14pt;margin-top:48px;margin-bottom:0px;"><strong>-- Get It --</strong></p>';
+			theOutputHTML +=    '<p style="font-family:helvetica;font-size:14pt;margin-top:32px;margin-bottom:0px;">Click the QR Code to save <strong>' + theImageName +'.png</strong> to your browser'+"'"+'s Downloads directory.</p>';
+			theOutputHTML +=    '<p style="font-family:helvetica;font-size:14pt;margin-top:48px;margin-bottom:0px;"><strong>-- Use It --</strong></p>';
+			theOutputHTML +=    '<p style="font-family:helvetica;font-size:14pt;margin-top:32px;margin-bottom:0px;">Share QR Codes on social media or email them to friends like any other photo.</p>';
+			theOutputHTML +=    '<p style="font-family:helvetica;font-size:14pt;margin-top:24px;margin-bottom:0px;">Scanning the code with the Camera app on any smartphone will load the</p>';
+			theOutputHTML +=    '<p style="font-family:helvetica;font-size:14pt;margin-top:6px;margin-bottom:0px;">ABC Transcription Tool with your tune set into the browser on the device.</p>';
+			theOutputHTML +=    '</div>';
+
+			w.document.write(theOutputHTML);
+
+			setTimeout(function(){
+
+	        	w.document.title = "ABC Tools Tune Sharing QR Code";
+
+	        }, 100);
 
 		}, 1000);
 
