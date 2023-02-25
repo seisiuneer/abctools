@@ -49,6 +49,8 @@ var gABCFromFile = false;
 
 var gAllowCopy = false;
 
+var gAllowPDF = false;
+
 var gDisplayedName = "";
 
 // If rendering takes longer than this in milliseconds, put up a warning banner
@@ -589,6 +591,11 @@ function CreatePDFfromHTML() {
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
+		return;
+	}
+
+	// If disabled, return
+	if (!gAllowPDF){
 		return;
 	}
 
@@ -1574,10 +1581,14 @@ function Render() {
 		document.getElementById("toggleallcontrols").classList.add("toggleallcontrols");
 		gAllowControlToggle = true;
 
+		// Enable the PDF generation button
+		document.getElementById("saveaspdf").classList.remove("saveaspdfdisabled");
+		document.getElementById("saveaspdf").classList.add("saveaspdf");
+		gAllowPDF = true;
+
 		// Enable the copy button
 		document.getElementById("copybutton").classList.remove("copybuttondisabled");
 		document.getElementById("copybutton").classList.add("copybutton");
-		
 		gAllowCopy = true;
 
 		// Idle the advanced controls
@@ -1710,6 +1721,11 @@ function Render() {
 		document.getElementById("saveabcfile").classList.remove("saveabcfile");
 		document.getElementById("saveabcfile").classList.add("saveabcfiledisabled");
 		gAllowSave = false;
+
+		// Disable the generate PDF button
+		document.getElementById("saveaspdf").classList.remove("saveaspdf");
+		document.getElementById("saveaspdf").classList.add("saveaspdfdisabled");
+		gAllowPDF = false;
 
 		// Disable the control display toggle
 		document.getElementById("toggleallcontrols").classList.remove("toggleallcontrols");
@@ -3222,6 +3238,7 @@ function DoStartup() {
 	gABCFromFile = false;
 	gAllowCopy = false;
 	gOKShowOperationsBanner = true;
+	gAllowPDF = false;
 
 	// Startup in blank screen
 	
