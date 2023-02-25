@@ -36,7 +36,7 @@
 		<link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 		<link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-		<link href="app.css?v=165" media="all" rel="stylesheet" type="text/css">
+		<link href="app.css?v=166" media="all" rel="stylesheet" type="text/css">
 
 	</head>
 	<body>
@@ -56,8 +56,14 @@
 						<!--our custom abc file upload button-->
 						<label class="abcupload" for="selectabcfile">Open ABC File</label>
 						<input class="saveabcfiledisabled" id="saveabcfile" onclick="SaveABC();" type="button" value="Save ABC File">
+						<input class="saveaspdfdisabled" id="saveaspdf" onclick="CreatePDFfromHTML()" type="button" value="Export PDF">
 						<input class="copybuttondisabled" id="copybutton" onclick="CopyABC();" type="button" value="Copy All">
 						<input class="toggleallcontrolsdisabled" id="toggleallcontrols" onclick="ToggleAllControls();" type="button" value="Hide Controls">
+					</div>
+					<div id="pdf-controls">
+						<div id="statuspdfname"></div>
+						<div id="statustunecount"></div>
+						<div id="pagestatustext"></div>
 					</div>
 					<div id="inputarea">
 						<textarea id="abc" rows="12" cols="80" placeholder="Enter the ABC for your tunes here" spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
@@ -116,13 +122,12 @@
 						<label for="wb2">Medium</label>
 						<input type="radio" id="wb3" value="100%" name="renderwidth" class="hidebutton" onclick="PositionNotation()">
 						<label for="wb3">Large</label>
-						<input type="button" class="saveaspdf" onclick="CreatePDFfromHTML()" value="Export PDF">
 						<tspan id="pdfformatlabel">PDF Format:</tspan>
 						<select id="pdfformat" name="pdfformat">
-							<option value = "one">&nbsp;One Tune / Page</option>
-							<option value = "multi">&nbsp;Multiple Tunes / Page</option>
-							<option value = "onenp">&nbsp;One Tune - No Page #</option>
-							<option value = "multinp">&nbsp;Multiple - No Page #</option>
+							<option value = "one">&nbsp;&nbsp;One Tune / Page - With Page #</option>
+							<option value = "multi">&nbsp;&nbsp;Multiple Tunes / Page - With Page #</option>
+							<option value = "onenp">&nbsp;&nbsp;One Tune / Page - No Page #</option>
+							<option value = "multinp">&nbsp;&nbsp;Multiple Tunes / Page - No Page #</option>
 						</select>
 					</div>
 					<div id="urlarea">
@@ -130,11 +135,6 @@
 						<textarea id="urltextbox" rows="8" cols="80" placeholder="URL for sharing will appear here" >
 						</textarea>
 						<p id="shareurlcaption">Share URL</p>
-					</div>
-					<div id="pdf-controls">
-						<div id="statuspdfname"></div>
-						<div id="statustunecount"></div>
-						<div id="pagestatustext"></div>
 					</div>
 				</div>
 				<div id="slowoperation">
@@ -152,10 +152,10 @@
 		<div id="qrcode">
 		</div>
 	</body>
-	<script type="text/javascript" src="abcjs-basic-tabs-min.js?v=165"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
+	<script type="text/javascript" src="abcjs-basic-tabs-min.js?v=166"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
 	<script type="text/javascript" src="jspdf.min.js"></script><!-- to generate PDF using Javscript -->
 	<script type="text/javascript" src="html2image.js"></script><!-- to convert HTML elements to bitmaps -->
-	<script type="text/javascript" src="qrcode.js?v=165"></script><!-- to generate QR codes for the share links -->
+	<script type="text/javascript" src="qrcode.js?v=166"></script><!-- to generate QR codes for the share links -->
 	<script type="text/javascript" src="lz-string.min.js"></script><!-- to generate QR codes for the share links -->
-	<script type="text/javascript" src="app.js?v=165"></script><!-- main application business logic -->
+	<script type="text/javascript" src="app.js?v=166"></script><!-- main application business logic -->
 </html>
