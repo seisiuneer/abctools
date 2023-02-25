@@ -56,6 +56,9 @@ var gDisplayedName = "";
 // If rendering takes longer than this in milliseconds, put up a warning banner
 var LONGOPERATIONTHRESHOLDMS = 1500;
 
+// Debounce time for text area change render requests
+var DEBOUNCEMS = 280;
+
 // OK to show the long operations warning banner
 var gOKShowOperationsBanner = true;
 
@@ -1127,6 +1130,8 @@ function Notenmachen(tune, instrument) {
 
 	// How long have we been rendering?
 	var deltaTime = Date.now() - currentTime;
+
+	//console.log("deltaTime = "+deltaTime);
 
 	// If long operation, put up the banner
 	if (deltaTime > LONGOPERATIONTHRESHOLDMS){
@@ -3218,14 +3223,21 @@ function TextBoxResizeHandler(){
 // Text change handler
 //
 
+//
+// General purpose repeated event debouncer
+// Used here to avoid flooding the renderer with requests
+//
+function debounce(callback, wait) {
+  let timeout;
+  return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(function () { callback.apply(this, args); }, wait);
+  };
+}
+
 function OnABCTextInput(){
-
-	// Seem like the textbox isn't updating before the ABC is rendering
-	setTimeout(function(){
-
-		Render();
-
-	},10);
+	
+	Render();
 
 }
 
@@ -3357,9 +3369,14 @@ function DoStartup() {
 	}
 
 	//
-	// Hook up the text area text change callback
+	// Hook up the text area text change callback with debounce
 	//
-	document.getElementById('abc').oninput = OnABCTextInput;
+	document.getElementById('abc').oninput = 
+		debounce( () => {
+
+		    OnABCTextInput();
+
+		}, DEBOUNCEMS);
 
 	//
 	// Setup the file import control
