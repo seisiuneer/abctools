@@ -54,7 +54,7 @@ var gAllowPDF = false;
 var gDisplayedName = "";
 
 // If rendering takes longer than this in milliseconds, put up a warning banner
-var LONGOPERATIONTHRESHOLDMS = 1500;
+var LONGOPERATIONTHRESHOLDMS = 1750;
 
 // Debounce time for text area change render requests
 var DEBOUNCEMS = 280;
