@@ -49,6 +49,8 @@ var gABCFromFile = false;
 
 var gAllowCopy = false;
 
+var gDisplayedName = "";
+
 // If rendering takes longer than this in milliseconds, put up a warning banner
 var LONGOPERATIONTHRESHOLDMS = 1500;
 
@@ -203,9 +205,8 @@ function Clear() {
 
 	theABC.value = "";
 
-	var fileSelected = document.getElementById('abc-selected');
-
-	fileSelected.innerText = "No ABC file selected";
+	// Save it for the status update display
+	gDisplayedName = "No ABC file selected";
 
 	// Hide the slow operation banner
 	hideSlowOperationsBanner();
@@ -288,8 +289,7 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
 	if (gABCFromFile){
 
 		// If this was from a file, use the filename for the PDF
-		var fileSelected = document.getElementById("abc-selected");
-		title = fileSelected.innerText;
+		title = gDisplayedName;
 
 		// Clean up the filename
 
@@ -1525,6 +1525,22 @@ function Render() {
 
 	if (theABC.value != "") {
 
+		// Idle the file status display
+		var nTunes = CountTunes();
+		
+		var fileSelected = document.getElementById('abc-selected');
+
+		if (nTunes == 1){
+
+			fileSelected.innerText = gDisplayedName + "  (" + nTunes + " Tune)";
+
+		}
+		else{
+
+			fileSelected.innerText = gDisplayedName + "  (" + nTunes + " Tunes)";
+
+		}
+
 		// Avoid jump scroll on render
 		var scrollTop = window.pageYOffset;
 
@@ -1573,7 +1589,6 @@ function Render() {
 		var radiovalue = GetRadioValue("notenodertab");
 
 		// Generate the rendering divs
-		var nTunes = CountTunes();
 		GenerateRenderingDivs(nTunes);
 
 		var theNotes = theABC.value;
@@ -1718,6 +1733,8 @@ function Render() {
 		var fileSelected = document.getElementById('abc-selected');
 
 		fileSelected.innerText = "No ABC file selected";
+
+		gDisplayedName = "No ABC file selected";
 
 		gABCFromFile = false;
 
@@ -2235,9 +2252,8 @@ function NewABC(){
 
 	theABC.value = "X: 1\nT: My New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%\n% Enter the ABC for your tunes below:\n%\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|";
 	
-	var fileSelected = document.getElementById('abc-selected');
-
-	fileSelected.innerText = "No ABC file selected";
+	// Reset the displayed name base
+	gDisplayedName = "No ABC file selected";
 
 	gABCFromFile = false;
 	
@@ -3143,9 +3159,8 @@ function processShareLink() {
 		// We can use this name for PDF naming and sharing name param
 		gABCFromFile = true;
 
-		var fileSelected = document.getElementById("abc-selected");
-
-		fileSelected.innerText = theName;
+		// Save the displayed name
+		gDisplayedName = theName;
 
 		// Hide the controls if coming in from a share link
 		document.getElementById("notenrechts").style.display = "none";
@@ -3337,9 +3352,8 @@ function DoStartup() {
 		// Check the filename extension
 		if (ensureABCFile(file.name)) {
 
-			var fileSelected = document.getElementById("abc-selected");
-
-			fileSelected.innerText = file.name;
+			// Save the filename
+			gDisplayedName = file.name;
 
 			const reader = new FileReader();
 
