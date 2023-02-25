@@ -1054,8 +1054,16 @@ function showSlowOperationsBanner(){
 
 		var elem = document.getElementById("slowoperation");
 
-		elem.innerHTML = "<p>Editing all these tunes at once may be slow on your system.&nbsp;&nbsp;Consider working with fewer tunes at one time.</p>";
-		
+		if (gIsAndroid || gIsIOS){
+
+			elem.innerHTML = "<p>Editing all these tunes at once may be slow on your system.&nbsp;&nbsp;Consider working with fewer tunes at one time.</p>";
+		}
+		else{
+
+			elem.innerHTML = "<p>Editing all these tunes at once may be slow on your system.&nbsp;&nbsp;Consider working with fewer tunes at one time.&nbsp;&nbsp;Export PDF may still work fine.</p>";
+
+		}
+
 		elem.style.display = "block";
 
 		// Recalculate the notation top position
