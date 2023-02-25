@@ -3220,7 +3220,12 @@ function TextBoxResizeHandler(){
 
 function OnABCTextInput(){
 
-	Render();
+	// Seem like the textbox isn't updating before the ABC is rendering
+	setTimeout(function(){
+
+		Render();
+
+	},10);
 
 }
 
