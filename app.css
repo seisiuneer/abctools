@@ -103,11 +103,25 @@ font-size:11pt;
 border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
-margin-left:8px;
-margin-right:6px;
-background-color: #EEEEEE;
+margin-left:0px;
+margin-right:16px;
+background-color: #FFFFFF;
 color:black;
 -webkit-appearance:none;
+}
+
+.saveaspdfdisabled {
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+padding: 0.6em;
+margin-left:0px;
+margin-right:16px;
+background-color: #FFFFFF;
+color:black;
+-webkit-appearance:none;
+opacity: 0.4;
 }
 
 @media (hover: hover) {
@@ -348,18 +362,26 @@ background-color: #efefef;
 color:black;
 }
 
-#pdfformatlabel,#displayformatlabel{
+#pdfformatlabel{
 font-size:11pt;
 font-family:"Helvetica";
 padding-top: 12px;
-margin-left:5px;
+margin-left:21px;
+margin-right:5px;
+}
+
+#displayformatlabel{
+font-size:11pt;
+font-family:"Helvetica";
+padding-top: 12px;
+margin-left:18px;
 margin-right:5px;
 }
 
 #pdfformat{
 font-size:11pt;
 font-family:"Helvetica";
-width:195px;
+width:275px;
 margin-left:2px;
 }
 
@@ -371,6 +393,7 @@ left:-3000px;
 #urlarea{
 display:none;
 margin-top:9px;
+margin-left: -11px;
 }
 
 #urltextbox{
