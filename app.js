@@ -476,6 +476,47 @@ function addPageNumber(thePDF,pageNumber,pageNumberLocation){
 			// Bottom right
 			thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, thePageNumberPosition , {align:"center"});
 			break;
+		case "tlr":
+			if ((pageNumber % 2) == 1){
+				// Top left
+				thePDF.text(str, 13, 295, {align:"center"});
+			}
+			else{
+				// Top right
+				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, 295 , {align:"center"});
+			}
+			break;
+		case "trl":
+			if ((pageNumber % 2) == 1){
+				// Top right
+				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, 295 , {align:"center"});
+			}
+			else{
+				// Top left
+				thePDF.text(str, 13, 295, {align:"center"});
+			}
+			break;
+		case "blr":
+			if ((pageNumber % 2) == 1){
+				// Bottom left
+				thePDF.text(str, 13, thePageNumberPosition , {align:"center"});
+			}
+			else{
+				// Bottom right
+				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, thePageNumberPosition , {align:"center"});
+			}
+			break;
+		case "brl":
+			if ((pageNumber % 2) == 1){
+				// Bottom right
+				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, thePageNumberPosition , {align:"center"});
+			}
+			else{
+				// Bottom left
+				thePDF.text(str, 13, thePageNumberPosition , {align:"center"});
+			}
+			break;
+
 	}	
 }
 
