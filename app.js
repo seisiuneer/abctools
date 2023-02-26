@@ -11,9 +11,11 @@ var gStripAnnotations = false;
 var gStripTextAnnotations = false;
 var gStripChords = false;
 
-var STAFFSPACEMIN = 50;
-var STAFFSPACEMAX = 100;
-var gStaffSpacing = STAFFSPACEMIN;
+var STAFFSPACEMIN = 0;
+var STAFFSPACEDEFAULT = 10;
+var STAFFSPACEMAX = 200;
+var STAFFSPACEOFFSET = 40;
+var gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
 
 var gIsIOS = false;
 var gIsIPad = false;
@@ -52,6 +54,9 @@ var gAllowCopy = false;
 var gAllowPDF = false;
 
 var gDisplayedName = "";
+
+var gShowTabNames = true;
+var gAllowShowTabNames = false;
 
 // If rendering takes longer than this in milliseconds, put up a warning banner
 var LONGOPERATIONTHRESHOLDMS = 1750;
@@ -756,25 +761,50 @@ function GetABCJSParams(instrument){
 
 	var postfix = "";
 
+	var theLabel = "";
+
 	// Let's add some capo information to the stringed instrument tab
 	if (instrument){
 
-		switch (instrument){
+		if (gShowTabNames){
 
-			case "noten":
-			case "notenames":
-			case "whistle":
-				break;
+			if (gCapo > 0){
+				postfix = " (Capo " + gCapo + ")";
+			}
 
-			case "mandolin":
-			case "gdad":
-			case "mandola":
-			case "guitare":
-			case "guitard":
-				if (gCapo > 0){
-					postfix = " (Capo " + gCapo + ")";
-				}
-				break;
+			switch (instrument){
+
+				case "noten":
+					break;
+
+				case "notenames":
+					theLabel = " ";
+					break;
+
+				case "whistle":
+					theLabel = " ";
+					break;
+
+				case "mandolin":
+					theLabel = 'Mandolin'+postfix;
+					break;
+
+				case "gdad":
+					theLabel = 'GDAD'+postfix;
+					break;
+
+				case "mandola":
+					theLabel = 'GCDA'+postfix;
+					break;
+
+				case "guitare":
+					theLabel = "Guitar"+postfix;
+					break;
+
+				case "guitard":
+					theLabel = "DADGAD"+postfix;
+					break;
+			}
 		}
 	}
 
@@ -823,7 +853,7 @@ function GetABCJSParams(instrument){
 		params = {
 			tablature: [{
 				instrument: 'violin',
-				label: 'Mandolin'+postfix,
+				label: theLabel,
 				tuning: ['G,', 'D', 'A', 'e'],
 				highestNote: "f'",
 				capo: gCapo
@@ -850,7 +880,7 @@ function GetABCJSParams(instrument){
 		params = {
 			tablature: [{
 				instrument: 'violin',
-				label: 'GDAD'+postfix,
+				label: theLabel,
 				tuning: ['G,', 'D', 'A', 'd'],
 				highestNote: "f'",
 				capo: gCapo
@@ -877,7 +907,7 @@ function GetABCJSParams(instrument){
 		params = {
 			tablature: [{
 				instrument: 'violin',
-				label: 'CGDA'+postfix,
+				label: theLabel,
 				tuning: ['C', 'G', 'd', 'a'],
 				highestNote: "f'",
 				capo: gCapo
@@ -904,7 +934,7 @@ function GetABCJSParams(instrument){
 		params = {
 			tablature: [{
 				instrument: 'guitar',
-				label: 'Guitar'+postfix,
+				label: theLabel,
 				tuning: ['E,', 'A,', 'D', 'G', 'B', 'e'],
 				highestNote: "f'",
 				capo: gCapo
@@ -931,7 +961,7 @@ function GetABCJSParams(instrument){
 		params = {
 			tablature: [{
 				instrument: 'guitar',
-				label: 'DADGAD'+postfix,
+				label: theLabel,
 				tuning: ['D,', 'A,', 'D', 'G', 'A', 'd'],
 				highestNote: "f'",
 				capo: gCapo
@@ -958,7 +988,7 @@ function GetABCJSParams(instrument){
 		params = {
 			tablature: [{
 				instrument: 'violin',
-				label: ' ',
+				label: theLabel,
 				tuning: ['G,'],
 				highestNote: "b'"
 			}],
@@ -984,7 +1014,7 @@ function GetABCJSParams(instrument){
 		params = {
 			tablature: [{
 				instrument: 'violin',
-				label: ' ',
+				label: theLabel,
 				tuning: ['D'],
 				highestNote: "c'"
 			}],
@@ -1610,6 +1640,9 @@ function Render() {
 		// Idle the capo control
 		IdleCapoControl();
 
+		// Idle the show tab names control
+		IdleShowTabNamesControl();
+
 		var radiovalue = GetRadioValue("notenodertab");
 
 		// Generate the rendering divs
@@ -2053,7 +2086,6 @@ function HideShareControls() {
 	// Recalculate the notation top position
 	UpdateNotationTopPosition();
 
-
 }
 
 //
@@ -2067,7 +2099,6 @@ function ShowShareControls() {
 
 	// Recalculate the notation top position
 	UpdateNotationTopPosition();
-
 
 }
 
@@ -2120,7 +2151,11 @@ function ToggleShareControls() {
 //
 function SetStaffSpacing() {
 
-	gStaffSpacing = document.getElementById('staff-spacing').value;
+	var newSpacing = document.getElementById('staff-spacing').value;
+	
+	newSpacing = parseInt(newSpacing);
+
+	gStaffSpacing = newSpacing + STAFFSPACEOFFSET;
 
 	Render();
 }
@@ -2201,9 +2236,9 @@ function RestoreDefaults() {
 	gStripChords = false;
 	gCopySVGs = false;
 
-	document.getElementById('staff-spacing').value = STAFFSPACEMIN;
+	document.getElementById('staff-spacing').value = STAFFSPACEDEFAULT;
 
-	gStaffSpacing = STAFFSPACEMIN;
+	gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
 
 	document.getElementById('capo').value = 0;
 
@@ -2437,7 +2472,9 @@ function FillUrlBoxWithAbcInLZW() {
 
 	var capo = document.getElementById("capo").value;
 
-	var url = getUrlWithoutParams() + "?lzw=" + abcInLZW + "&w=" + theWidth + "&format=" + format;
+	var ssp = document.getElementById("staff-spacing").value;
+
+	var url = getUrlWithoutParams() + "?lzw=" + abcInLZW + "&w=" + theWidth + "&format=" + format + "&ssp=" + ssp;
 
 	// Add a capo parameter for mandolin and guitar
 	var postfix = "";
@@ -2454,9 +2491,22 @@ function FillUrlBoxWithAbcInLZW() {
 		case "mandola":
 		case "guitare":
 		case "guitard":
-			postfix = "&capo=" + capo;
-			break;
 
+			postfix = "&capo=" + capo;
+
+			// Convey show tab names status
+			if (gShowTabNames){
+
+				postfix += "&showtabnames=true";
+
+			}
+			else{
+
+				postfix += "&showtabnames=false";
+				
+			}
+
+			break;
 	}
 
 	url += postfix;
@@ -3072,6 +3122,84 @@ function ToggleMaximize(){
 
 }
 
+
+//
+// Idle the show tab names control
+//
+function IdleShowTabNamesControl(){
+
+	var format = GetRadioValue("notenodertab");
+
+	var allowShowTabs = false;
+
+	switch (format){
+
+		case "noten":
+		case "notenames":
+		case "whistle":
+			break;
+
+		case "mandolin":
+		case "gdad":
+		case "mandola":
+		case "guitare":
+		case "guitard":
+			allowShowTabs = true;
+			break;
+
+	}
+
+	if (allowShowTabs){
+
+		// Enable the Toggle Tag Names button
+		document.getElementById("toggletabnames").classList.remove("toggletabnamesdisabled");
+		document.getElementById("toggletabnames").classList.add("toggletabnames");	
+
+		gAllowShowTabNames = true;
+
+	}
+	else{
+
+		// Disable the Toggle Tag Names button
+		document.getElementById("toggletabnames").classList.remove("toggletabnames");	
+		document.getElementById("toggletabnames").classList.add("toggletabnamesdisabled");
+
+		gAllowShowTabNames = false;
+	}
+
+}
+
+//
+// Toggle the display of tab names
+//
+function ToggleTabNames(){
+
+	if (!gAllowShowTabNames){
+
+		return;
+
+	}
+
+	if (gShowTabNames){
+
+		gShowTabNames = false;
+
+		document.getElementById('toggletabnames').value = "Show Tab Names";
+
+
+	}
+	else{
+
+		gShowTabNames = true;
+
+		document.getElementById('toggletabnames').value = "Hide Tab Names";
+
+	}
+
+	Render();
+
+}
+
 // 
 // Utility function for convertering UTF-8 to Base64
 //
@@ -3140,12 +3268,15 @@ function processShareLink() {
 		}
 	}
 
+	// Handler for format parameter
 	if (urlParams.has("format")) {
 		var format = urlParams.get("format");
 		SetRadioValue("notenodertab", format);
 		IdleCapoControl();
 	}
 
+
+	// Handler for capo parameter
 	if (urlParams.has("capo")) {
 		var capo = urlParams.get("capo");
 		document.getElementById("capo").value = capo;
@@ -3153,6 +3284,45 @@ function processShareLink() {
 	}
 	else{
 		gCapo = 0;
+	}
+
+	// Handler for staffspacing ssp parameter
+	if (urlParams.has("ssp")) {
+		var ssp = urlParams.get("ssp");
+		document.getElementById("staff-spacing").value = ssp;
+		gStaffSpacing = STAFFSPACEOFFSET + parseInt(ssp);
+	}
+	else{
+		document.getElementById("staff-spacing").value = STAFFSPACEDEFAULT;
+		gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
+	}
+
+	// Handler for showtabnames parameter
+	if (urlParams.has("showtabnames")) {
+
+		var showtabnames = urlParams.get("showtabnames");
+
+		if (showtabnames == "true"){
+
+			gShowTabNames = true;
+			document.getElementById('toggletabnames').value = "Hide Tab Names";
+
+		}
+		else{
+
+			gShowTabNames = false;
+			document.getElementById('toggletabnames').value = "Show Tab Names";	
+
+		}
+
+		IdleShowTabNamesControl();
+
+	}
+	else{
+
+		gShowTabNames = true;
+
+		document.getElementById('toggletabnames').value = "Hide Tab Names";
 	}
 
 	// For mobile, default to full width output
@@ -3264,6 +3434,8 @@ function DoStartup() {
 	gAllowCopy = false;
 	gOKShowOperationsBanner = true;
 	gAllowPDF = false;
+	gShowTabNames = true;
+	gAllowShowTabNames = false;
 
 	// Startup in blank screen
 	
