@@ -436,13 +436,20 @@ var thePageNumberPosition = 0;
 // Calculate and cache the page number position
 //
 function calcPageNumberPosition(thePDF){
-	thePageNumberPosition = thePDF.internal.pageSize.getHeight()-8;
+	thePageNumberPosition = thePDF.internal.pageSize.getHeight()-9;
 }
 
 //
 // Add a page number to the current PDF page
 //
-function addPageNumber(thePDF,pageNumber,pageNumberLocation){
+function addPageNumber(thePDF,pageNumber,pageNumberLocation,hideFirstPageNumber){
+
+	// Hiding the first page number?
+	if (hideFirstPageNumber){
+		if (pageNumber == 1){
+			return;
+		}
+	}
 
 	// Add page number
 	var str = "" + pageNumber;
@@ -454,15 +461,15 @@ function addPageNumber(thePDF,pageNumber,pageNumberLocation){
 	switch (pageNumberLocation){
 		case "tl":
 			// Top left
-			thePDF.text(str, 13, 295, {align:"center"});
+			thePDF.text(str, 13, 296, {align:"center"});
 			break;
 		case "tc":
 			// Top center
-			thePDF.text(str, (thePDF.internal.pageSize.getWidth()/3.10), 295, {align:"center"});
+			thePDF.text(str, (thePDF.internal.pageSize.getWidth()/3.10), 296, {align:"center"});
 			break;
 		case "tr":
 			// Top right
-			thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, 295 , {align:"center"});
+			thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, 296 , {align:"center"});
 			break;
 		case "bl":
 			// Bottom left
@@ -483,13 +490,13 @@ function addPageNumber(thePDF,pageNumber,pageNumberLocation){
 			}
 			else{
 				// Top right
-				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, 295 , {align:"center"});
+				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, 296 , {align:"center"});
 			}
 			break;
 		case "trl":
 			if ((pageNumber % 2) == 1){
 				// Top right
-				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, 295 , {align:"center"});
+				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, 296 , {align:"center"});
 			}
 			else{
 				// Top left
@@ -523,7 +530,7 @@ function addPageNumber(thePDF,pageNumber,pageNumberLocation){
 //
 // Render a single SVG block to PDF and callback when done
 //
-function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, callback) {
+function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, callback) {
 
 	var svg = theBlock.querySelector("svg");
 
@@ -556,7 +563,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 						if (seitenzahl != 0){
 							// Add page number?
 							if (addPageNumbers){
-								addPageNumber(pdf,seitenzahl,pageNumberLocation);						
+								addPageNumber(pdf,seitenzahl,pageNumberLocation,hideFirstPageNumber);						
 							}
 						}
 
@@ -576,7 +583,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 							// Add page number?
 							if (addPageNumbers){
-								addPageNumber(pdf,seitenzahl,pageNumberLocation);						
+								addPageNumber(pdf,seitenzahl,pageNumberLocation,hideFirstPageNumber);						
 							}
 
 							// Yes, force it to a new page
@@ -635,7 +642,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 				if (seitenzahl != 0){
 					// Add page number?
 					if (addPageNumbers){
-						addPageNumber(pdf,seitenzahl,pageNumberLocation);						
+						addPageNumber(pdf,seitenzahl,pageNumberLocation,hideFirstPageNumber);						
 					}
 				}
 
@@ -661,7 +668,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 //
 // Create PDF from HTML...
 //
-function CreatePDFfromHTML() {
+function CreatePDFfromHTML(e) {
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
@@ -671,6 +678,13 @@ function CreatePDFfromHTML() {
 	// If disabled, return
 	if (!gAllowPDF){
 		return;
+	}
+
+	// A shift click on the button is a trick to suppressing the first page number
+	var hideFirstPageNumber = false;
+
+	if (e.shiftKey){
+		hideFirstPageNumber = true;
 	}
 
 	// Show the PDF status block
@@ -748,7 +762,7 @@ function CreatePDFfromHTML() {
 		var theBlock = theBlocks[0];
 
 		// Render and stamp one block
-		RenderPDFBlock(theBlock, 0, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, callback);
+		RenderPDFBlock(theBlock, 0, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, callback);
 
 		function callback() {
 
@@ -758,7 +772,7 @@ function CreatePDFfromHTML() {
 
 				// Add final page number
 				if (addPageNumbers){
-					addPageNumber(pdf,seitenzahl,pageNumberLocation);						
+					addPageNumber(pdf,seitenzahl,pageNumberLocation,hideFirstPageNumber);						
 				}
 
 				document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Rendering Complete!</font>";
@@ -799,7 +813,7 @@ function CreatePDFfromHTML() {
 
 				setTimeout(function() {
 
-					RenderPDFBlock(theBlock, nBlocksProcessed, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, callback);
+					RenderPDFBlock(theBlock, nBlocksProcessed, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, callback);
 
 				}, 100);
 
