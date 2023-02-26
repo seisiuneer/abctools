@@ -313,7 +313,7 @@ margin-top:20px;
 }
 
 #staff-spacing{
-width:75px;
+width:50px;
 margin-top:6px;
 margin-left:4px;
 }
@@ -324,9 +324,9 @@ font-size:11pt;
 }
 
 #capo{
-width:75px;
+width:35px;
 margin-top:6px;
-margin-right:20px;
+margin-right:10px;
 margin-left:4px;
 }
 
@@ -449,7 +449,7 @@ margin-right:10px;
 }
 
 #togglechords{
-margin-right:30px;
+margin-right:10px;
 }
 
 #shareurlcaption{
@@ -631,6 +631,39 @@ font-size:12pt;
 background-color:khaki;
 padding:2px;
 margin-top:11px;
+}
+
+.toggletabnames {
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+padding: 0.6em;
+margin-left:0px;
+margin-right:10px;
+background-color: #E8FFFF;
+color:black;
+-webkit-appearance:none;
+}
+
+.toggletabnamesdisabled {
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+padding: 0.6em;
+margin-left:0px;
+margin-right:10px;
+background-color: #E8FFFF;
+color:black;
+-webkit-appearance:none;
+opacity: 0.4;
+}
+
+@media (hover: hover) {
+	.toggletabnames:hover{
+	background: palegreen;
+	}
 }
 
 @media (hover: hover) {
