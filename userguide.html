@@ -1,263 +1,341 @@
 <!DOCTYPE html>
 <html>
-<head>
-  
-  <title>ABC Transcription Tools User Guide</title>
-  
-  <meta charset="UTF-8">
-  <meta http-equiv="Content-Type" content="text/html">
-  <meta content="ABC transposer ABCtransposer transpose jig reel folk" name="keywords">
-  <meta content="A simple-to-use ABC to standard music notation converter featuring transposition, tab generation, and PDF export." name="description">
-  <meta content="A simple-to-use ABC to standard music notation converter featuring transposition, tab generation, and PDF export." name="abstract">
-  <meta property="og:locale" content="en_US" />
-  <meta name="description" content="A simple-to-use ABC to standard music notation converter" />
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Michael Eskin's ABC Transcription Tools" />
-  <meta property="og:description" content="A simple-to-use ABC to standard music notation converter featuring transposition, tab generation, and PDF export." />
-  <meta property="og:url" content="http://michaeleskin.com/abctools/abctools.html" />
-  <meta property="og:site_name" content="Michael Eskin's ABC Transcription Tools" />
-  <meta property="og:image" content="http://michaeleskin.com/abctools/img/abc-icon.png" />  
-  <meta name="msapplication-TileColor" content="#ffffff">
-  <meta name="msapplication-TileImage" content="http://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
-  <meta name="theme-color" content="#ffffff">  
-  <meta name="apple-mobile-web-app-title" content="ABC Tools">
-  <meta name="application-name" content="ABC Tools">
-  <link rel="apple-touch-icon" sizes="57x57" href="http://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
-  <link rel="apple-touch-icon" sizes="60x60" href="http://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
-  <link rel="apple-touch-icon" sizes="72x72" href="http://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
-  <link rel="apple-touch-icon" sizes="76x76" href="http://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
-  <link rel="apple-touch-icon" sizes="114x114" href="http://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png">
-  <link rel="apple-touch-icon" sizes="120x120" href="http://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png">
-  <link rel="apple-touch-icon" sizes="144x144" href="http://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png">
-  <link rel="apple-touch-icon" sizes="152x152" href="http://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="http://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="http://michaeleskin.com/abctools/img/abc-android-icon-192x192.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="http://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
-  <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
+    <head>
+        
+        <title>ABC Transcription Tools User Guide</title>
+        
+        <meta charset="UTF-8">
+        <meta http-equiv="Content-Type" content="text/html">
+        <meta content="ABC transposer ABCtransposer transpose jig reel folk" name="keywords">
+        <meta content="A simple-to-use ABC to standard music notation converter featuring transposition, tab generation, and PDF export." name="description">
+        <meta content="A simple-to-use ABC to standard music notation converter featuring transposition, tab generation, and PDF export." name="abstract">
+        <meta property="og:locale" content="en_US" />
+        <meta name="description" content="A simple-to-use ABC to standard music notation converter" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Michael Eskin's ABC Transcription Tools" />
+        <meta property="og:description" content="A simple-to-use ABC to standard music notation converter featuring transposition, tab generation, and PDF export." />
+        <meta property="og:url" content="http://michaeleskin.com/abctools/abctools.html" />
+        <meta property="og:site_name" content="Michael Eskin's ABC Transcription Tools" />
+        <meta property="og:image" content="http://michaeleskin.com/abctools/img/abc-icon.png" />
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileImage" content="http://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
+        <meta name="theme-color" content="#ffffff">
+        <meta name="apple-mobile-web-app-title" content="ABC Tools">
+        <meta name="application-name" content="ABC Tools">
+        <link rel="apple-touch-icon" sizes="57x57" href="http://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="http://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="http://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="http://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="http://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="http://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="http://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="http://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="http://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
+        <link rel="icon" type="image/png" sizes="192x192" href="http://michaeleskin.com/abctools/img/abc-android-icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="http://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
+        <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
+        
+        <style>
+        p {
+        font-size:14pt;
+        font-family:"Helvetica";
+        line-height: 28px;
+        }
+        
+        h1 {
+        font-size:16pt;
+        font-family:"Helvetica";
+        margin-bottom:32px;
+        }
+        
+        hr {
+        margin-top:24px;
+        margin-bottom:24px;
+        }
+        
+        body {
+        padding:10px;
+        text-align: center;
+        }
+        
+        #maindiv{
+        position: absolute;
+        left: 50%;
+        margin-right: -50%;
+        transform: translate(-50%, 0%);
+        text-align: left;
+        width: 800px;
+        background-color: white;
+        }
 
-  <style>
-  p {
-    font-size:12pt;
-    font-family:"Helvetica";
-  }
-
-  h1 {
-    font-size:14pt;
-    font-family:"Helvetica";
-    margin-bottom:32px;
-  }
-
-  hr {
-    margin-top:24px;
-    margin-bottom:24px;
-  }
-  </style>
-
-</head>
-
-<body style="padding:10px">
-
-<div style="text-align: center;">
-<font face="Comic Sans MS" size="5">ABC Transcription Tools User Guide</font><br>
-<p>This ABC to notation converter was developed by <a href="http://michaeleskin.com" target="_blank">Michael Eskin</a>.</p>
-<p>Full project source may be found on: <a href="https://github.com/seisiuneer/abctools" target="_blank">GitHub</a>.</p>
-</div>
-<hr>
-<p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="800" height="450" src="https://www.youtube.com/embed/4kzXTcySKYc" title="ABC Transcription Tools Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-<hr>
-<h1>Introduction</h1>
-<p>ABC Transcription Tools is a free, web-based, open-source tool for converting music in ABC format to standard notation and tablature.</p>
-<p>It also includes the ability to share your tunes with others via ABC Share URLs and QR Codes.</p>
-<hr>
-<h1>Getting Started</h1>
-<div>
-<img src="img/ug1.jpg"/>
-</div>
-<p>The text on top shows currently loaded ABC file or Share URL name and the current number of tunes found in the ABC Editor.</p>
-<p>New ABC - Creates a simple example tune in ABC to get you started.</p>
-<p>Open ABC File - Opens an .abc or .txt file from your computer and loads it into the ABC Editor.</p>
-<p>Save ABC File - Saves the contents of the ABC editor to a file.</p>
-<p>The saved file will be in your browser's Downloads directory.</p>
-<p>Export PDF - Exports the currently displayed score as a high quality PDF file.</p>
-<p>Copy All - Copies all the ABC text to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
-<p>Page number settings are found in the settings panel.</p>
-<p>Show Controls / Hide Controls - Shows/Hides all the control buttons below.</p>
-<hr>
-<h1>ABC Editor</h1>
-<div>
-<img src="img/ug2.jpg"/>
-</div>
-<p>Type or paste your ABC notation here.</p>
-<p>Changes are reflected immediately in the displayed notation below the ABC Editor.</p>
-<p>You may also paste some ABC text into the ABC Editor or just start typing.</p>
-<p>On desktop systems, the text entry box can be resized by dragging the lower right corner.</p>
-<p>You may scroll through the notation below the ABC Editor</p>
-<hr>
-<h1>Viewing the Notation Full Screen</h1>
-<div>
-<img src="img/ug3.jpg"/>
-</div>
-<p>If any ABC is present in the ABC Editor, this double-arrow control shows up on the top right corner of the page.</p>
-<p>The control hides or shows the ABC Editor and all controls so you can view your notation fullscreen.</p>
-<p>Click once to hide the ABC Editor and all controls.</p>
-<p>Click again to show the ABC Editor and all controls.</p>
-<hr>
-<h1>Notation/Tablature Display Controls</h1>
-<div>
-<img src="img/ug4.jpg"/>
-</div>
-<p>These control how the notation is displayed.</p>
-<p>Sheet Music - Standard notation only.</p>
-<p>Note Names - Shows standard notation and note names below.</p>
-<p>Mandolin - Shows standard notation and tablature for Mandolin.</p>
-<p>Zouk GDAD - Shows standard notation and tablature for GDAD-tuned Bouzouki.</p>
-<p>Mandola - Shows standard notation and tablature for CGDA-tuned Mandola.</p>
-<p>Guitar - Shows standard notation and tablature for standard EADGBE-tuned guitar.</p>
-<p>DADGAD - Shows standard notation and tablature for DADGAD-tuned guitar.</p>
-<p>Whistle Tab - Shows standard notation and tablature for whistle in the key of D.</p>
-<hr>
-<h1>Basic Controls</h1>
-<div>
-<img src="img/ug5.jpg"/>
-</div>
-<p>Transpose Down - Transposes the tune down one semitone.</p>
-<p>Transpose Up - Transposes the tune up one semitone.</p>
-<p>Show/Hide Advanced Controls - Shows/Hides a new panel with several additional ABC filtering and display controls (described below).</p>
-<p>Show/Hide Sharing Controls - Shows/Hides a new panel (described below) with options for sharing your tune set via URL or QR code.</p>
-<p>Clear ABC - Clears the ABC Editor so you can start over.</p>
-<hr>
-<h1>Display Size Options</h1>
-<div>
-<img src="img/ug6.jpg"/>
-</div>
-<p>These set the width of the notation on the screen below the ABC Editor and controls.</p>
-<p>To see more notation at a time below the ABC Editor, try the different display size options, resize your browser window, and/or resize the ABC Editor text box.</p>
-<hr>
-<h1>PDF Settings</h1>
-<div>
-<img src="img/ug7.jpg"/>
-</div>
-<p>PDF Tunes/Page - Select whether you want One Tune/Page or Multiple Tunes/Page in the PDF:</p>
-<p>One - Each tune is placed on a new page in the PDF.</p>
-<p>Multiple - Tunes are added one after another down each page in the PDF.</p>
-<p>Default is: One Tune/Page.</p>
-<p></p>
-<p>Note: Selecting multiple tunes per page may result in tunes staves crossing page boundaries.</p>
-<p></p>
-<p>To manually force a tune to a new page in the PDF, add:</p>
-<p></p>
-<p>%%newpage</p>
-<p></p>
-<p>on a new line immediately at the end of tunes after which you want to force a page break.</p>
-<p></p>
-<p>This will allow you to easily format a tune book where you want multiple tunes per page, but some tunes to not be split between pages.</p>
-<p></p>
-<p>PDF Page Number Position Options:</p>
-<p>Choose between: None, Top Left, Top Center, Top Right, Bottom Left, Bottom Center, Bottom Right, Top L/R, Top R/L, Bottom L/R, and Bottom R/L.</p>
-<p>The L/R and R/L setting alternate the location between the left/right or right/left for printing on both sides of the paper.</p>
-<p>Default is: None.</p>
-<p>Hiding the page number on the first page of the PDF:</p>
-<p>If you hold down the Shift key while clicking the "Export PDF" button, the page number will be hidden on the first page of the PDF.</p>
-<hr>
-<h1>Advanced Controls</h1>
-<div>
-<img src="img/ug8.jpg"/>
-</div>
-<p>Hide/Show Annotations - Hides/Shows most ABC annotations like Discography, History, Tempo, etc.</p>
-<p>Hide/Show Text - Hides/Shows any %%center or %%text based text in the ABC.</p>
-<p>Hide/Show Chords - Hides/Shows any chords entered in the ABC.</p>
-<p>The ABC filtering buttons are enabled if Annotations, Text, or Chords are detected in the ABC.</p>
-<p>Tab Name Settings: (only enabled if Mandolin, Bouzouki, Mandola, or Guitar tablature is being displayed).</p>
-<p>Hide/Show Tab Names: Hides/Shows the instrument names and capo settings on the tablature.</p> 
-<p>When the tab instrument names are hidden, the spacing between the staves is somewhat reduced.</p> 
-<p>Hiding the tab names may, or may not, depending on the height of the staves, be useful for getting more staves on a single PDF page.</p>
-<p>Capo Settings: (only enabled if Mandolin, Bouzouki, Mandola, or Guitar tablature is being displayed).</p>
-<p>Capo - Allows you to set a capo setting from 0 to 12 frets for the Mandolin, Bouzouki, Mandola, or Guitar tablature.</p>
-<p>Staff Display Settings:</p>
-<p>Set Staff Spacing - Allows you to set a wider gap between the staffs.</p>
-<hr>
-<p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="800" height="450" src="https://www.youtube.com/embed/I8KcG4swmUQ" title="Sharing Tunes with ABC Share URLs and QR Codes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-<hr>
-<h1>Sharing Controls</h1>
-<div>
-<img src="img/ug9.jpg"/>
-</div>
-<p>ABC Share URLs and QR Codes are a quick and easy way to share your ABC tunes with friends or to post tunes on social media sites.</p>
-<p>Anyone with the ABC Share URL or QR Code can view, edit, save, and share their own copy of the tunes.</p>
-<p>Share URLs and QR Codes also include the instrument selected, display size, line spacing, PDF tunes/page setting, and page number position settings.
-<p>For Mandolin, Bouzouki, Mandola, and Guitar tablature, the link also includes the capo setting and whether or not to show the tablature name.</p>
-<p>Share URL: Copying and pasting this link in a browser address bar will open the ABC Tools website and copy in the tune set ABC and tablature settings.</p>
-<p>If the share URL link is too long to work in most browsers, the Share URL buttons will be disabled and you will see a message suggesting sharing fewer tunes.</p>
-<p>Test Share URL - Opens the ABC Share URL in a new browser tab.</p>
-<p>Copy Share URL - Copies the ABC Share URL to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
-<p>Save Share URL - Saves the ABC Share URL to a text file.</p>
-<p>The saved file will be in your browser's Downloads directory.</p>
-<p>Generate QR Code - Once an ABC Share URL is generated, if it is short enough to fit in a QR code (about 2600 characters), this button is activated.</p>
-<p>The QR Code is a visual representation of an ABC Share URL that you can scan with the Camera app on your iOS or Android device.</p>
-<p>Clicking the button will generate a QR code in .PNG format for the ABC Share URL and open it in a new browser tab.</p>
-<p>In the newly opened tab, you can click the link below the image to save the QR code to your system.</p>
-<hr>
-<h1>ABC Share URL Examples</h1>
-<p>Clicking these ABC Share URL links, created with the tool, will launch the tool and load the listed tune set you can start working with immediately:</p>
-<p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuMAsCmYDSSDOCoCVwCkBLAcygFlwA2AegA4oAZcCOqVcAcQFsBDAKygAfEBwCCHMGIBCg0VNFg5AE0FIlSsMXWqlUsLtGCoYidNnzFUlWo1aZ4gGKSAzCCPD5e3deIoDgz30pDnMFcUMoQO9VXyCVYgAzYjAeYh5BMAAjYmTiV0EAXTAoKFAwACZYeGQwBkIAGwAXQgA7ZKkeFqwkJFwCEnIqViZIVnZFJQB7ACchEABRUQVFw0COctWesDUZA0l5gBEjFbAVgLlJDYCtncEIILD88ofFcpV3ECQeHhTfQT31oYwFIbrp-kgEpokkYvj9Ukh-hZAdcULd7ntRG83M8Mc5CsUgA&w=50&format=noten" target="_blank">"The Kesh" and "The Lilting Banshee"</a></p>
-<p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgjAUAKiUBYFMAEUCGAnARgewDYBdsA7CAWRAGEAfCAaRAFEATbdCAIQQSaQQCZ2AQSoBxIQDEkI8Q3FUAIkyYBjJEz6CRVcZoZIZ8uRAZceCAGYBzBFXPdzvAcJGD2I-S7lvBkkQwZ8IDRUIJZ2DtaYNpHIYQjKVOrmPIJMyVTKTJr68rI0Lm4ePlQBFkhxTFTsmexIgnw6VZ5S-oE0EKB80LCISAAyxGGsPBR4uPGEbOTUdCAiEAB+IgDMgkjVTJZUCOwL7Hy8lkzsouIu6zVUgspCLbn5Z2sbWzt7B+oWVJZ8qBHcJ2A6jc1n5ckEDtdbqC+FRgqErKhytwXrt9mo+J9vr8kccrsC7jDFpZlojrJttqj3hjzF9MNiyQCgVCGPI2hD8aCGLCIABSHlEBAAdwADqhrBAOiBlt14MgAMqoACWuFYAHIAM7rYgC-BkSg0ejyCD1HRqcwLcwwtJlY5vK4NNZpOyJITucTyeQnY0Os0WmG-G2U+2mp02Y7Zd2s7khVB8BaxpC-NJUAMOW37WyYOlIOnmVBUTB5hx2T4QQt+xPmy0p8JqIMmx3mZ2A8OSQQetl1nx1D0ndpAA&w=50&format=noten" target="_blank">Michael Coleman set ("The Tarbolton" - "The Longford Collector" - "The Sailor's Bonnet")</a></p>
-<p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuCyBXAlgJwKYEMB22DkAzlAMLgByymANlWAGrVXpUCeUASuAFLIDmU8cADYA9AA4oAGXARxUANLgAQgFtk2KAB8QAEyUBBMAG8dAXwNLNO9ADNjN0+muaj6UzYBM6Y7cfObmHZYIjYi6JpQeoYWVrb2fuE2AEaYYDZOLm6e3kYOTkogEdoWxmboAMwuZiVGmO62mkopaRmu7l7x+RE1ZR6WJub6SmmVKXaYHkmaASFhnXqFWiAGAGLGAOKmAKIe6y76pisAIltgx1uaK-qGQ5ZKOjrzllADqxvbu-uHJ2cnl0Ngaw2TQQNKhdAiR65PwFTQeMFhSFgWy8TRFEC1ep2JLlESTERTTHpca4jyYESYabNdI6TLtHK+JzhKDEsBJDzAmzQuITAAU5QhoXJmjGYAmU1BoV4IQZeWshXhUplT00AF0wFAoEA&w=50&format=noten" target="_blank">"Muireann's" jig (by Niall Vallely) for Anglo Concertina</a></p>
-<hr>
-<h1>QR Code Example</h1>
-<p>Michael Coleman set ("The Tarbolton" - "The Longford Collector" - "The Sailor's Bonnet"):</p>
-<div>
-<img src="img/ug10.png"/>
-<p>Try scanning this code with the Camera app on your iOS or Android phone.</p>
-</div>
-<p>I have several example QR codes for tune sets on my Flickr account at:</p> 
-<p><a href="https://flic.kr/s/aHBqjArRJZ" target="_blank">ABC Tune Set QR Codes on Flickr</a></p>
-<hr>
-<h1>Reading the QR Codes</h1>
-<p>All devices should easily be able to read the simpler QR codes generated for sets of one to three tunes.</p>
-<p></p>
-<p>Most iOS devices are able to read even the most complex QR codes generated by this tool using the built-in Camera app.</p>
-<p></p>
-<p>Some Android devices may have trouble reading the most complex codes with their built-in Camera app.</p>
-<p></p>
-<p>I suggest trying the free Google Lens app, available on the Google Play Store:</p>
-<p></p>
-<p><a href="https://play.google.com/store/apps/details?id=com.google.ar.lens&hl=en_US&gl=US" target="_blank">Google Lens</a></p>
-<p></p>
-<hr>
-<h1>Shared Tunes Open Full Screen</h1>
-<p>Shared tunes, when opened from a Share URL or QR code, are initially displayed with the ABC Editor and controls hidden so you can see the music full-screen.</p>
-<p>Click the Maximize/Minimize arrow to show the ABC Editor and controls.</p>
-<hr>
-<h1>Slow Performance Warning Banner</h1>
-<p>If at any time, it takes more than 1.75 seconds to render all the tunes after a change, you will see a warning banner.</p>
-<p>The banner will suggest that you consider working with fewer tunes at one time.</p>
-<p>You can in many cases still export large tune sets to PDF, but editing the ABC may be sluggish to redraw.</p>
-<p>The number of tunes that the tool can handle at one time and still be responsive depends on your system and the complexity of the tunes.</p>
-<p>The current number of tunes found in the ABC Editor is shown in the top status bar next to the ABC file or Share URL name.</p>
-<hr>
-<h1>Playing the Tunes</h1>
-<p>This tool doesn't have the ability to play the tunes.</p>
-<p>For now, I suggest you use the following site to play your ABC files:</p>
-<p><a href="https://editor.drawthedots.com/" target="_blank">https://editor.drawthedots.com/</a></p>
-<p>It can also export MIDI and audio files of tunes.</p>
-<p>Using the "Copy All" command you can easily copy your ABC from this tool and paste it in the drawthedots tool to test playback.</p>
-<p>Once you are happy with the playback, copy the ABC from the drawthedots tool, clear the ABC in this tool using the "Clear" button, then paste the edited ABC back into this tool for further editing.</p>
-<hr>
-<h1>iPhone/iPad Chord Entry Issue Fix</h1>
-<p>If you are trying to enter ABC chords, for example "D" or "Am", on an iPhone or iPad, iOS will, by default stick in "smart quotes" instead of standard double quotes.</p>
-<p>To fix this, go into your device's Settings and under the General/Keyboard tab, and turn off "Smart Punctuation".</p>
-<p>After you do this, you will be able to add standard double quotes.</p>
-<hr>
-<h1>ABC Specification</h1>
-<p>The full specification for ABC notation can be found at <a href="http://abcnotation.com/wiki/abc:standard:v2.1" target="_blank">The ABC Music Standard 2.1 (Dec 2011)</a></p>
-<hr>
-<h1>Support</h1>
-<p>Have an issue with a specific tune, want to report a bug, or suggest a new feature?</p>
-<p>Click here: <a href="support.html" target="_blank">ABC Transcription Tools Support</a> to go to the support page for the tool.</p>
-<hr>
-
+        .image_holder{
+            text-align: center;
+        }
+        
+        </style>
+        
+    </head>
+    
+    <body style="padding:10px">
+        
+        <div id="maindiv">
+            
+            <div style="text-align: center;">
+                <font id="pagetitle" face="Comic Sans MS" size="5">ABC Transcription Tools User Guide</font><br/>
+                <p>This ABC to notation converter was developed by <a href="http://michaeleskin.com" target="_blank">Michael Eskin</a>.</p>
+                <p>Full project source may be found on: <a href="https://github.com/seisiuneer/abctools" target="_blank">GitHub</a>.</p>
+            </div>
+            <hr>
+            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/4kzXTcySKYc" title="ABC Transcription Tools Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <hr>
+            <h1>Introduction</h1>
+            <p>ABC Transcription Tools is a free, web-based, open-source tool for converting music in ABC format to standard notation and tablature.</p>
+            <p>It also includes the ability to share your tunes with others via ABC Share URLs and QR Codes.</p>
+            <hr>
+            <h1>Getting Started</h1>
+            <div class="image_holder">
+                <img src="img/ug1.jpg"/>
+            </div>
+            <p>The text on top shows currently loaded ABC file or Share URL name and the current number of tunes found in the ABC Editor.</p>
+            <p>New ABC - Creates a simple example tune in ABC to get you started.</p>
+            <p>Open ABC File - Opens an .abc or .txt file from your computer and loads it into the ABC Editor.</p>
+            <p>Save ABC File - Saves the contents of the ABC editor to a file.</p>
+            <p>The saved file will be in your browser's Downloads directory.</p>
+            <p>Export PDF - Exports the currently displayed score as a high quality PDF file.</p>
+            <p>Copy All - Copies all the ABC text to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
+            <p>Page number settings are found in the settings panel.</p>
+            <p>Show Controls / Hide Controls - Shows/Hides all the control buttons below.</p>
+            <hr>
+            <h1>ABC Editor</h1>
+            <div class="image_holder">
+                <img src="img/ug2.jpg"/>
+            </div>
+            <p>Type or paste your ABC notation here.</p>
+            <p>Changes are reflected immediately in the displayed notation below the ABC Editor.</p>
+            <p>You may also paste some ABC text into the ABC Editor or just start typing.</p>
+            <p>On desktop systems, the text entry box can be resized by dragging the lower right corner.</p>
+            <p>You may scroll through the notation below the ABC Editor</p>
+            <hr>
+            <h1>Viewing the Notation Full Screen</h1>
+            <div class="image_holder">
+                <img src="img/ug3.jpg"/>
+            </div>
+            <p>If any ABC is present in the ABC Editor, this double-arrow control shows up on the top right corner of the page.</p>
+            <p>The control hides or shows the ABC Editor and all controls so you can view your notation fullscreen.</p>
+            <p>Click once to hide the ABC Editor and all controls.</p>
+            <p>Click again to show the ABC Editor and all controls.</p>
+            <hr>
+            <h1>Notation/Tablature Display Controls</h1>
+            <div class="image_holder">
+                <img src="img/ug4.jpg"/>
+            </div>
+            <p>These control how the notation is displayed.</p>
+            <p>Sheet Music - Standard notation only.</p>
+            <p>Note Names - Shows standard notation and note names below.</p>
+            <p>Mandolin - Shows standard notation and tablature for Mandolin.</p>
+            <p>Zouk GDAD - Shows standard notation and tablature for GDAD-tuned Bouzouki.</p>
+            <p>Mandola - Shows standard notation and tablature for CGDA-tuned Mandola.</p>
+            <p>Guitar - Shows standard notation and tablature for standard EADGBE-tuned guitar.</p>
+            <p>DADGAD - Shows standard notation and tablature for DADGAD-tuned guitar.</p>
+            <p>Whistle Tab - Shows standard notation and tablature for whistle in the key of D.</p>
+            <hr>
+            <h1>Basic Controls</h1>
+            <div class="image_holder">
+                <img src="img/ug5.jpg"/>
+            </div>
+            <p>Transpose Down - Transposes the tune down one semitone.</p>
+            <p>Transpose Up - Transposes the tune up one semitone.</p>
+            <p>Show/Hide Advanced Controls - Shows/Hides a new panel with several additional ABC filtering and display controls (described below).</p>
+            <p>Show/Hide Sharing Controls - Shows/Hides a new panel (described below) with options for sharing your tune set via URL or QR code.</p>
+            <p>Clear ABC - Clears the ABC Editor so you can start over.</p>
+            <hr>
+            <h1>Display Size Options</h1>
+            <div class="image_holder">
+                <img src="img/ug6.jpg"/>
+            </div>
+            <p>These set the width of the notation on the screen below the ABC Editor and controls.</p>
+            <p>To see more notation at a time below the ABC Editor, try the different display size options, resize your browser window, and/or resize the ABC Editor text box.</p>
+            <hr>
+            <h1>PDF Settings</h1>
+            <div class="image_holder">
+                <img src="img/ug7.jpg"/>
+            </div>
+            <p>PDF Tunes/Page - Select whether you want One Tune/Page or Multiple Tunes/Page in the PDF:</p>
+            <p>One - Each tune is placed on a new page in the PDF.</p>
+            <p>Multiple - Tunes are added one after another down each page in the PDF.</p>
+            <p>Default is: One Tune/Page.</p>
+            <p></p>
+            <p>Note: Selecting multiple tunes per page may result in tunes staves crossing page boundaries.</p>
+            <p></p>
+            <p>To manually force a tune to a new page in the PDF, add:</p>
+            <p></p>
+            <p>%%newpage</p>
+            <p></p>
+            <p>on a new line immediately at the end of tunes after which you want to force a page break.</p>
+            <p></p>
+            <p>This will allow you to easily format a tune book where you want multiple tunes per page, but some tunes to not be split between pages.</p>
+            <p></p>
+            <p>PDF Page Number Position Options:</p>
+            <p>Choose between: None, Top Left, Top Center, Top Right, Bottom Left, Bottom Center, Bottom Right, Top L/R, Top R/L, Bottom L/R, and Bottom R/L.</p>
+            <p>The L/R and R/L setting alternate the location between the left/right or right/left for printing on both sides of the paper.</p>
+            <p>Default is: None.</p>
+            <p>Hiding the page number on the first page of the PDF:</p>
+            <p>If you hold down the Shift key while clicking the "Export PDF" button, the page number will be hidden on the first page of the PDF.</p>
+            <hr>
+            <h1>Advanced Controls</h1>
+            <div class="image_holder">
+                <img src="img/ug8.jpg"/>
+            </div>
+            <p>Hide/Show Annotations - Hides/Shows most ABC annotations like Discography, History, Tempo, etc.</p>
+            <p>Hide/Show Text - Hides/Shows any %%center or %%text based text in the ABC.</p>
+            <p>Hide/Show Chords - Hides/Shows any chords entered in the ABC.</p>
+            <p>The ABC filtering buttons are enabled if Annotations, Text, or Chords are detected in the ABC.</p>
+            <p>Tab Name Settings: (only enabled if Mandolin, Bouzouki, Mandola, or Guitar tablature is being displayed).</p>
+            <p>Hide/Show Tab Names: Hides/Shows the instrument names and capo settings on the tablature.</p>
+            <p>When the tab instrument names are hidden, the spacing between the staves is somewhat reduced.</p>
+            <p>Hiding the tab names may, or may not, depending on the height of the staves, be useful for getting more staves on a single PDF page.</p>
+            <p>Capo Settings: (only enabled if Mandolin, Bouzouki, Mandola, or Guitar tablature is being displayed).</p>
+            <p>Capo - Allows you to set a capo setting from 0 to 12 frets for the Mandolin, Bouzouki, Mandola, or Guitar tablature.</p>
+            <p>Staff Display Settings:</p>
+            <p>Set Staff Spacing - Allows you to set a wider gap between the staffs.</p>
+            <hr>
+            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/I8KcG4swmUQ" title="Sharing Tunes with ABC Share URLs and QR Codes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <hr>
+            <h1>Sharing Controls</h1>
+            <div class="image_holder">
+                <img src="img/ug9.jpg"/>
+            </div>
+            <p>ABC Share URLs and QR Codes are a quick and easy way to share your ABC tunes with friends or to post tunes on social media sites.</p>
+            <p>Anyone with the ABC Share URL or QR Code can view, edit, save, and share their own copy of the tunes.</p>
+            <p>Share URLs and QR Codes also include the instrument selected, display size, line spacing, PDF tunes/page setting, and page number position settings.</p>
+            <p>For Mandolin, Bouzouki, Mandola, and Guitar tablature, the link also includes the capo setting and whether or not to show the tablature name.</p>
+            <p>Share URL: Copying and pasting this link in a browser address bar will open the ABC Tools website and copy in the tune set ABC and tablature settings.</p>
+            <p>If the share URL link is too long to work in most browsers, the Share URL buttons will be disabled and you will see a message suggesting sharing fewer tunes.</p>
+            <p>Test Share URL - Opens the ABC Share URL in a new browser tab.</p>
+            <p>Copy Share URL - Copies the ABC Share URL to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
+            <p>Save Share URL - Saves the ABC Share URL to a text file.</p>
+            <p>The saved file will be in your browser's Downloads directory.</p>
+            <p>Generate QR Code - Once an ABC Share URL is generated, if it is short enough to fit in a QR code (about 2600 characters), this button is activated.</p>
+            <p>The QR Code is a visual representation of an ABC Share URL that you can scan with the Camera app on your iOS or Android device.</p>
+            <p>Clicking the button will generate a QR code in .PNG format for the ABC Share URL and open it in a new browser tab.</p>
+            <p>In the newly opened tab, you can click the link below the image to save the QR code to your system.</p>
+            <hr>
+            <h1>ABC Share URL Examples</h1>
+            <p>Clicking these ABC Share URL links, created with the tool, will launch the tool and load the listed tune set you can start working with immediately:</p>
+            <p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuMAsCmYDSSDOCoCVwCkBLAcygFlwA2AegA4oAZcCOqVcAcQFsBDAKygAfEBwCCHMGIBCg0VNFg5AE0FIlSsMXWqlUsLtGCoYidNnzFUlWo1aZ4gGKSAzCCPD5e3deIoDgz30pDnMFcUMoQO9VXyCVYgAzYjAeYh5BMAAjYmTiV0EAXTAoKFAwACZYeGQwBkIAGwAXQgA7ZKkeFqwkJFwCEnIqViZIVnZFJQB7ACchEABRUQVFw0COctWesDUZA0l5gBEjFbAVgLlJDYCtncEIILD88ofFcpV3ECQeHhTfQT31oYwFIbrp-kgEpokkYvj9Ukh-hZAdcULd7ntRG83M8Mc5CsUgA&w=50&format=noten" target="_blank">"The Kesh" and "The Lilting Banshee"</a></p>
+            <p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgjAUAKiUBYFMAEUCGAnARgewDYBdsA7CAWRAGEAfCAaRAFEATbdCAIQQSaQQCZ2AQSoBxIQDEkI8Q3FUAIkyYBjJEz6CRVcZoZIZ8uRAZceCAGYBzBFXPdzvAcJGD2I-S7lvBkkQwZ8IDRUIJZ2DtaYNpHIYQjKVOrmPIJMyVTKTJr68rI0Lm4ePlQBFkhxTFTsmexIgnw6VZ5S-oE0EKB80LCISAAyxGGsPBR4uPGEbOTUdCAiEAB+IgDMgkjVTJZUCOwL7Hy8lkzsouIu6zVUgspCLbn5Z2sbWzt7B+oWVJZ8qBHcJ2A6jc1n5ckEDtdbqC+FRgqErKhytwXrt9mo+J9vr8kccrsC7jDFpZlojrJttqj3hjzF9MNiyQCgVCGPI2hD8aCGLCIABSHlEBAAdwADqhrBAOiBlt14MgAMqoACWuFYAHIAM7rYgC-BkSg0ejyCD1HRqcwLcwwtJlY5vK4NNZpOyJITucTyeQnY0Os0WmG-G2U+2mp02Y7Zd2s7khVB8BaxpC-NJUAMOW37WyYOlIOnmVBUTB5hx2T4QQt+xPmy0p8JqIMmx3mZ2A8OSQQetl1nx1D0ndpAA&w=50&format=noten" target="_blank">Michael Coleman set ("The Tarbolton" - "The Longford Collector" - "The Sailor's Bonnet")</a></p>
+            <p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuCyBXAlgJwKYEMB22DkAzlAMLgByymANlWAGrVXpUCeUASuAFLIDmU8cADYA9AA4oAGXARxUANLgAQgFtk2KAB8QAEyUBBMAG8dAXwNLNO9ADNjN0+muaj6UzYBM6Y7cfObmHZYIjYi6JpQeoYWVrb2fuE2AEaYYDZOLm6e3kYOTkogEdoWxmboAMwuZiVGmO62mkopaRmu7l7x+RE1ZR6WJub6SmmVKXaYHkmaASFhnXqFWiAGAGLGAOKmAKIe6y76pisAIltgx1uaK-qGQ5ZKOjrzllADqxvbu-uHJ2cnl0Ngaw2TQQNKhdAiR65PwFTQeMFhSFgWy8TRFEC1ep2JLlESTERTTHpca4jyYESYabNdI6TLtHK+JzhKDEsBJDzAmzQuITAAU5QhoXJmjGYAmU1BoV4IQZeWshXhUplT00AF0wFAoEA&w=50&format=noten" target="_blank">"Muireann's" jig (by Niall Vallely) for Anglo Concertina</a></p>
+            <hr>
+            <h1>QR Code Example</h1>
+            <p>Michael Coleman set ("The Tarbolton" - "The Longford Collector" - "The Sailor's Bonnet"):</p>
+            <div class="image_holder">
+                <img src="img/ug10.png"/>
+                <p>Try scanning this code with the Camera app on your iOS or Android phone.</p>
+            </div>
+            <p>I have several example QR codes for tune sets on my Flickr account at:</p>
+            <p><a href="https://flic.kr/s/aHBqjArRJZ" target="_blank">ABC Tune Set QR Codes on Flickr</a></p>
+            <hr>
+            <h1>Reading the QR Codes</h1>
+            <p>All devices should easily be able to read the simpler QR codes generated for sets of one to three tunes.</p>
+            <p></p>
+            <p>Most iOS devices are able to read even the most complex QR codes generated by this tool using the built-in Camera app.</p>
+            <p></p>
+            <p>Some Android devices may have trouble reading the most complex codes with their built-in Camera app.</p>
+            <p></p>
+            <p>I suggest trying the free Google Lens app, available on the Google Play Store:</p>
+            <p></p>
+            <p><a href="https://play.google.com/store/apps/details?id=com.google.ar.lens&hl=en_US&gl=US" target="_blank">Google Lens</a></p>
+            <p></p>
+            <hr>
+            <h1>Shared Tunes Open Full Screen</h1>
+            <p>Shared tunes, when opened from a Share URL or QR code, are initially displayed with the ABC Editor and controls hidden so you can see the music full-screen.</p>
+            <p>Click the Maximize/Minimize arrow to show the ABC Editor and controls.</p>
+            <hr>
+            <h1>Slow Performance Warning Banner</h1>
+            <p>If at any time, it takes more than 1.75 seconds to render all the tunes after a change, you will see a warning banner.</p>
+            <p>The banner will suggest that you consider working with fewer tunes at one time.</p>
+            <p>You can in many cases still export large tune sets to PDF, but editing the ABC may be sluggish to redraw.</p>
+            <p>The number of tunes that the tool can handle at one time and still be responsive depends on your system and the complexity of the tunes.</p>
+            <p>The current number of tunes found in the ABC Editor is shown in the top status bar next to the ABC file or Share URL name.</p>
+            <hr>
+            <h1>Playing the Tunes</h1>
+            <p>This tool doesn't have the ability to play the tunes.</p>
+            <p>For now, I suggest you use the following site to play your ABC files:</p>
+            <p><a href="https://editor.drawthedots.com/" target="_blank">https://editor.drawthedots.com/</a></p>
+            <p>It can also export MIDI and audio files of tunes.</p>
+            <p>Using the "Copy All" command you can easily copy your ABC from this tool and paste it in the drawthedots tool to test playback.</p>
+            <p>Once you are happy with the playback, copy the ABC from the drawthedots tool, clear the ABC in this tool using the "Clear" button, then paste the edited ABC back into this tool for further editing.</p>
+            <hr>
+            <h1>iPhone/iPad Chord Entry Issue Fix</h1>
+            <p>If you are trying to enter ABC chords, for example "D" or "Am", on an iPhone or iPad, iOS will, by default stick in "smart quotes" instead of standard double quotes.</p>
+            <p>To fix this, go into your device's Settings and under the General/Keyboard tab, and turn off "Smart Punctuation".</p>
+            <p>After you do this, you will be able to add standard double quotes.</p>
+            <hr>
+            <h1>ABC Specification</h1>
+            <p>The full specification for ABC notation can be found at <a href="http://abcnotation.com/wiki/abc:standard:v2.1" target="_blank">The ABC Music Standard 2.1 (Dec 2011)</a></p>
+            <hr>
+            <h1>Support</h1>
+            <p>Have an issue with a specific tune, want to report a bug, or suggest a new feature?</p>
+            <p>Click here: <a href="support.html" target="_blank">ABC Transcription Tools Support</a> to go to the support page for the tool.</p>
+            <hr>
+        </div>
+    </div>
+    
 </body>
+    <script>
 
+        //
+        // Are we on iOS?
+        //
+        function isIOS() {
+
+            if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+                return true;
+            } else {
+                return navigator.maxTouchPoints &&
+                    navigator.maxTouchPoints > 2 &&
+                    /MacIntel/.test(navigator.platform);
+            }
+        }
+
+        function DoStartup() {
+
+            // 
+            // iOS Styling adaptation
+            //
+
+            var gIsIOS = isIOS();
+
+            if (gIsIOS) {
+                // Fix the title font
+                var elem = document.getElementById("pagetitle");
+                elem.size = 5;
+                elem.style.fontFamily = "Helvetica";
+            }
+
+        }
+
+        //
+        // Wait for the document to be ready, then fire a function
+        //
+
+        function WaitForReady(fn) {
+          if (document.readyState !== 'loading') {
+            fn();
+            return;
+          }
+
+          document.addEventListener('DOMContentLoaded', fn);
+
+        }
+
+        //
+        // Wait for the document to be ready, then startup
+        //
+
+        WaitForReady(DoStartup);  
+
+    </script>
 </html>
