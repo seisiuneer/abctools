@@ -36,8 +36,8 @@
 		<link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 		<link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-		<link href="app.css?v=177" media="all" rel="stylesheet" type="text/css">
-
+		<link href="app.css?v=178" media="all" rel="stylesheet" type="text/css">
+		
 	</head>
 	<body>
 		<div id="app-container">
@@ -122,12 +122,20 @@
 						<label for="wb2">Medium</label>
 						<input type="radio" id="wb3" value="100%" name="renderwidth" class="hidebutton" onclick="PositionNotation()">
 						<label for="wb3">Large</label>
-						<tspan id="pdfformatlabel">PDF Format:</tspan>
-						<select id="pdfformat" name="pdfformat">
-							<option value = "one">&nbsp;&nbsp;One Tune / Page - With Page #</option>
-							<option value = "multi">&nbsp;&nbsp;Multiple Tunes / Page - With Page #</option>
-							<option value = "onenp">&nbsp;&nbsp;One Tune / Page - No Page #</option>
-							<option value = "multinp">&nbsp;&nbsp;Multiple Tunes / Page - No Page #</option>
+						<tspan id="pdfformatlabel">PDF Tunes/Page:</tspan>
+						<select id="pdfformat" name="pdfformat" onchange="RecalcShareURLPDF()">
+							<option value = "one">&nbsp;One</option>
+							<option value = "multi">&nbsp;Multiple</option>
+						</select>
+						<tspan id="pagenumberslabel">Page #:</tspan>
+						<select id="pagenumbers" name="pagenumbers" onchange="RecalcShareURLPDF()">
+							<option value = "none">&nbsp;None</option>
+							<option value = "tl">&nbsp;Top Left</option>
+							<option value = "tc">&nbsp;Top Center</option>
+							<option value = "tr">&nbsp;Top Right</option>
+							<option value = "bl">&nbsp;Bot Left</option>
+							<option value = "bc">&nbsp;Bot Center</option>
+							<option value = "br">&nbsp;Bot Right</option>
 						</select>
 					</div>
 					<div id="urlarea">
@@ -152,10 +160,10 @@
 		<div id="qrcode">
 		</div>
 	</body>
-	<script type="text/javascript" src="abcjs-basic-tabs-min.js?v=177"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
+	<script type="text/javascript" src="abcjs-basic-tabs-min.js?v=178"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
 	<script type="text/javascript" src="jspdf.min.js"></script><!-- to generate PDF using Javscript -->
 	<script type="text/javascript" src="html2image.js"></script><!-- to convert HTML elements to bitmaps -->
-	<script type="text/javascript" src="qrcode.js?v=177"></script><!-- to generate QR codes for the share links -->
+	<script type="text/javascript" src="qrcode.js?v=178"></script><!-- to generate QR codes for the share links -->
 	<script type="text/javascript" src="lz-string.min.js"></script><!-- to generate QR codes for the share links -->
-	<script type="text/javascript" src="app.js?v=177"></script><!-- main application business logic -->
+	<script type="text/javascript" src="app.js?v=178"></script><!-- main application business logic -->
 </html>
