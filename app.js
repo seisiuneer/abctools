@@ -3422,7 +3422,7 @@ function processShareLink() {
 	}
 	else{
 		// Default is bottom center
-		document.getElementById("pagenumbers").value = "bc";
+		document.getElementById("pagenumbers").value = "none";
 	}
 
 	// For mobile, default to full width output
@@ -3721,7 +3721,7 @@ function DoStartup() {
 	document.getElementById("pdfformat").value = "one";
 
 	// Reset the page number control
-	document.getElementById("pagenumbers").value = "bc";
+	document.getElementById("pagenumbers").value = "none";
 
 	// Hook up the zoom
 	document.getElementById("zoombutton").onclick = 
