@@ -37,37 +37,126 @@
   <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
   <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
   <style>
-  p {
-    font-size:12pt;
+    p {
+    font-size:14pt;
     font-family:"Helvetica";
-  }
-  </style>
+    line-height: 28px;
+    }
+
+    h1 {
+    font-size:16pt;
+    font-family:"Helvetica";
+    margin-bottom:32px;
+    }
+
+    hr {
+    margin-top:24px;
+    margin-bottom:24px;
+    }
+
+    body {
+    padding:10px;
+    text-align: center;
+    }
+
+    #maindiv{
+    position: absolute;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, 0%);
+    text-align: left;
+    width: 800px;
+    background-color: white;
+    }
+
+    .image_holder{
+      text-align: center;
+  }  
+
+</style>
 
 </head>
-<body style="padding:10px">
-<div style="text-align: center;">
-<font face="Comic Sans MS" size="5">ABC Transcription Tools ABC Tune Sources and Specification</font><br>
-<p>This ABC to notation converter was developed by <a href="http://michaeleskin.com" target="_blank">Michael Eskin</a>.</p>
-<p>Full project source may be found on: <a href="https://github.com/seisiuneer/abctools" target="_blank">GitHub</a>.</p>
+<body>
+<div id="maindiv">
+  <div style="text-align: center;">
+  <font face="Comic Sans MS" size="5" id="pagetitle">ABC Transcription Tools ABC Tune Sources and Specification</font><br>
+  <p>This ABC to notation converter was developed by <a href="http://michaeleskin.com" target="_blank">Michael Eskin</a>.</p>
+  <p>Full project source may be found on: <a href="https://github.com/seisiuneer/abctools" target="_blank">GitHub</a>.</p>
+  </div>
+  <hr>
+  <br>
+  <p><strong>The following sites are great starting places for finding tunes in ABC format:</strong></p>
+  <br>
+  <p><a href="https://thesession.org/tunes" target="_blank">The Session</a> - Jeremy Keith's legendary site with thousands of tunes in multiple versions.</p>
+  <p><a href="https://abcnotation.com/tunes" target="_blank">ABC Notation</a> - Has a vast number of linked sites with collections of ABC files. It also has a <a href="https://abcnotation.com/search" target="_blank">tune search engine.</a></p>
+  <p><a href="http://john-chambers.us/~jc/cgi/abc/tunefind" target="_blank">JC's ABC Tune Finder</a> - John Chamber's comprehensive search engine for tunes.</p>
+  <p>Paul Gitlitz has his original tunes on Google drive. Old-timey tunes are <a href="https://drive.google.com/drive/folders/1UDjf1bdtqW519XTq_wXVJD_U-SwdinkX" target="_blank">here</a> and his original tunes are <a href="https://drive.google.com/drive/folders/1kXQz18z8GOhOiLLDiR7kAhD9L9TGPmhp" target="_blank">here</a></p>
+  <br>
+  <p>Happy tune hunting!</p>
+  <br>
+  <hr>
+  <br>
+  <p><strong>ABC Specification</strong></p>
+  <br>
+  <p>The full specification for ABC notation can be found at <a href="http://abcnotation.com/wiki/abc:standard:v2.1" target="_blank">The ABC Music Standard 2.1 (Dec 2011)</a></p>
+  <br>
+  <hr>
 </div>
-<hr>
-<br>
-<p><strong>The following sites are great starting places for finding tunes in ABC format:</strong></p>
-<br>
-<p><a href="https://thesession.org/tunes" target="_blank">The Session</a> - Jeremy Keith's legendary site with thousands of tunes in multiple versions.</p>
-<p><a href="https://abcnotation.com/tunes" target="_blank">ABC Notation</a> - Has a vast number of linked sites with collections of ABC files. It also has a <a href="https://abcnotation.com/search" target="_blank">tune search engine.</p>
-<p><a href="http://john-chambers.us/~jc/cgi/abc/tunefind" target="_blank">JC's ABC Tune Finder</a> - John Chamber's comprehensive search engine for tunes.</p>
-<p>Paul Gitlitz has his original tunes on Google drive. Old-timey tunes are <a href="https://drive.google.com/drive/folders/1UDjf1bdtqW519XTq_wXVJD_U-SwdinkX" target="_blank">here</a> and his original tunes are <a href="https://drive.google.com/drive/folders/1kXQz18z8GOhOiLLDiR7kAhD9L9TGPmhp" target="_blank">here</a></p>
-<br>
-<p>Happy tune hunting!</p>
-<br>
-<hr>
-<br>
-<p><strong>ABC Specification</strong></p>
-<br>
-<p>The full specification for ABC notation can be found at <a href="http://abcnotation.com/wiki/abc:standard:v2.1" target="_blank">The ABC Music Standard 2.1 (Dec 2011)</a></p>
-<br>
-<hr>
+
 </body>
 
+<script>
+
+    //
+    // Are we on iOS?
+    //
+    function isIOS() {
+
+        if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+            return true;
+        } else {
+            return navigator.maxTouchPoints &&
+                navigator.maxTouchPoints > 2 &&
+                /MacIntel/.test(navigator.platform);
+        }
+    }
+
+    function DoStartup() {
+
+        // 
+        // iOS Styling adaptation
+        //
+
+        var gIsIOS = isIOS();
+
+        if (gIsIOS) {
+            // Fix the title font
+            var elem = document.getElementById("pagetitle");
+            elem.size = 5;
+            elem.style.fontFamily = "Helvetica";
+        }
+
+    }
+
+    //
+    // Wait for the document to be ready, then fire a function
+    //
+
+    function WaitForReady(fn) {
+      if (document.readyState !== 'loading') {
+        fn();
+        return;
+      }
+
+      document.addEventListener('DOMContentLoaded', fn);
+
+    }
+
+    //
+    // Wait for the document to be ready, then startup
+    //
+
+    WaitForReady(DoStartup);  
+
+</script>
 </html>
