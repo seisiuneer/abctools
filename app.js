@@ -436,28 +436,53 @@ var thePageNumberPosition = 0;
 // Calculate and cache the page number position
 //
 function calcPageNumberPosition(thePDF){
-	thePageNumberPosition = thePDF.internal.pageSize.getHeight()-11;
+	thePageNumberPosition = thePDF.internal.pageSize.getHeight()-8;
 }
 
 //
 // Add a page number to the current PDF page
 //
-function addPageNumber(thePDF,pageNumber){
+function addPageNumber(thePDF,pageNumber,pageNumberLocation){
 
 	// Add page number
 	var str = "" + pageNumber;
-	
+
 	thePDF.setFontSize(11);
 
 	// Division accounts for the PDF internal scaling
-	thePDF.text(str, (thePDF.internal.pageSize.getWidth()/3.10), thePageNumberPosition , {align:"center"});
 
+	switch (pageNumberLocation){
+		case "tl":
+			// Top left
+			thePDF.text(str, 13, 295, {align:"center"});
+			break;
+		case "tc":
+			// Top center
+			thePDF.text(str, (thePDF.internal.pageSize.getWidth()/3.10), 295, {align:"center"});
+			break;
+		case "tr":
+			// Top right
+			thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, 295 , {align:"center"});
+			break;
+		case "bl":
+			// Bottom left
+			thePDF.text(str, 13, thePageNumberPosition , {align:"center"});
+			break;
+		case "bc":
+			// Bottom center
+			thePDF.text(str, (thePDF.internal.pageSize.getWidth()/3.10), thePageNumberPosition , {align:"center"});
+			break;
+		case "br":
+			// Bottom right
+			thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, thePageNumberPosition , {align:"center"});
+			break;
+	}	
 }
 
 //
 // Render a single SVG block to PDF and callback when done
 //
-function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPageNumbers, callback) {
+function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, callback) {
 
 	var svg = theBlock.querySelector("svg");
 
@@ -490,7 +515,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 						if (seitenzahl != 0){
 							// Add page number?
 							if (addPageNumbers){
-								addPageNumber(pdf,seitenzahl)						
+								addPageNumber(pdf,seitenzahl,pageNumberLocation);						
 							}
 						}
 
@@ -510,7 +535,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 							// Add page number?
 							if (addPageNumbers){
-								addPageNumber(pdf,seitenzahl)						
+								addPageNumber(pdf,seitenzahl,pageNumberLocation);						
 							}
 
 							// Yes, force it to a new page
@@ -569,7 +594,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 				if (seitenzahl != 0){
 					// Add page number?
 					if (addPageNumbers){
-						addPageNumber(pdf,seitenzahl)						
+						addPageNumber(pdf,seitenzahl,pageNumberLocation);						
 					}
 				}
 
@@ -616,10 +641,15 @@ function CreatePDFfromHTML() {
 
 	var thePageOptions = elem.options[elem.selectedIndex].value;
 
-	var doSinglePage = (thePageOptions == "one") || (thePageOptions == "onenp");
+	// Page number location
+	elem = document.getElementById("pagenumbers");
+
+	var pageNumberLocation = elem.options[elem.selectedIndex].value;
+
+	var doSinglePage = (thePageOptions == "one");
 
 	// Add page numbers?
-	var addPageNumbers = (thePageOptions == "one") || (thePageOptions == "multi");
+	var addPageNumbers = (pageNumberLocation != "none");
 
 	// If not doing single page, find any tunes that have page break requests
 	var pageBreakList = [];
@@ -677,7 +707,7 @@ function CreatePDFfromHTML() {
 		var theBlock = theBlocks[0];
 
 		// Render and stamp one block
-		RenderPDFBlock(theBlock, 0, doSinglePage, pageBreakList, addPageNumbers, callback);
+		RenderPDFBlock(theBlock, 0, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, callback);
 
 		function callback() {
 
@@ -687,7 +717,7 @@ function CreatePDFfromHTML() {
 
 				// Add final page number
 				if (addPageNumbers){
-					addPageNumber(pdf,seitenzahl)						
+					addPageNumber(pdf,seitenzahl,pageNumberLocation);						
 				}
 
 				document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Rendering Complete!</font>";
@@ -728,7 +758,7 @@ function CreatePDFfromHTML() {
 
 				setTimeout(function() {
 
-					RenderPDFBlock(theBlock, nBlocksProcessed, doSinglePage, pageBreakList, addPageNumbers, callback);
+					RenderPDFBlock(theBlock, nBlocksProcessed, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, callback);
 
 				}, 100);
 
@@ -1073,7 +1103,23 @@ function PositionNotation(){
 
 	// Since this is a Share URL parameter, update URL if required
 	if (document.getElementById("urlarea").style.display != "none") {
+
 		FillUrlBoxWithAbcInLZW();
+
+	}
+
+}
+
+//
+// Recalc URL on PDF settings change
+//
+function RecalcShareURLPDF(){
+
+	// Since this is a Share URL parameter, update URL if required
+	if (document.getElementById("urlarea").style.display != "none") {
+
+		FillUrlBoxWithAbcInLZW();
+
 	}
 
 }
@@ -2474,7 +2520,11 @@ function FillUrlBoxWithAbcInLZW() {
 
 	var ssp = document.getElementById("staff-spacing").value;
 
-	var url = getUrlWithoutParams() + "?lzw=" + abcInLZW + "&w=" + theWidth + "&format=" + format + "&ssp=" + ssp;
+	var pdfformat = document.getElementById("pdfformat").value;
+
+	var pagenumbers = document.getElementById("pagenumbers").value;
+
+	var url = getUrlWithoutParams() + "?lzw=" + abcInLZW + "&w=" + theWidth + "&format=" + format + "&ssp=" + ssp + "&pdf=" + pdfformat + "&pn=" + pagenumbers;
 
 	// Add a capo parameter for mandolin and guitar
 	var postfix = "";
@@ -2497,12 +2547,12 @@ function FillUrlBoxWithAbcInLZW() {
 			// Convey show tab names status
 			if (gShowTabNames){
 
-				postfix += "&showtabnames=true";
+				postfix += "&stn=true";
 
 			}
 			else{
 
-				postfix += "&showtabnames=false";
+				postfix += "&stn=false";
 				
 			}
 
@@ -3240,6 +3290,7 @@ function processShareLink() {
 
 	// Process URL params
 
+	// Handler for legacy base64 parameters
 	if (urlParams.has("base64")) {
 
 		const abcInBase64 = urlParams.get("base64");
@@ -3253,6 +3304,7 @@ function processShareLink() {
 		}
 	}
 
+	// Handler for lzw ABC data parameter
 	if (urlParams.has("lzw")) {
 
 		var abcInLZW = urlParams.get("lzw");
@@ -3297,7 +3349,7 @@ function processShareLink() {
 		gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
 	}
 
-	// Handler for showtabnames parameter
+	// Handler for legacy showtabnames parameter
 	if (urlParams.has("showtabnames")) {
 
 		var showtabnames = urlParams.get("showtabnames");
@@ -3323,6 +3375,54 @@ function processShareLink() {
 		gShowTabNames = true;
 
 		document.getElementById('toggletabnames').value = "Hide Tab Names";
+	}
+
+	// Handler for newer showtabnames stn parameter
+	if (urlParams.has("stn")) {
+
+		var showtabnames = urlParams.get("stn");
+
+		if (showtabnames == "true"){
+
+			gShowTabNames = true;
+			document.getElementById('toggletabnames').value = "Hide Tab Names";
+
+		}
+		else{
+
+			gShowTabNames = false;
+			document.getElementById('toggletabnames').value = "Show Tab Names";	
+
+		}
+
+		IdleShowTabNamesControl();
+
+	}
+	else{
+
+		gShowTabNames = true;
+
+		document.getElementById('toggletabnames').value = "Hide Tab Names";
+	}
+
+	// Handler for pdf format pdf parameter
+	if (urlParams.has("pdf")) {
+		var thePDF = urlParams.get("pdf");
+		document.getElementById("pdfformat").value = thePDF;
+	}
+	else{
+		// Default is one tune per page
+		document.getElementById("pdfformat").value = "one";
+	}
+
+	// Handler for page number pn parameter
+	if (urlParams.has("pn")) {
+		var thePN = urlParams.get("pn");
+		document.getElementById("pagenumbers").value = thePN;
+	}
+	else{
+		// Default is bottom center
+		document.getElementById("pagenumbers").value = "bc";
 	}
 
 	// For mobile, default to full width output
@@ -3619,6 +3719,9 @@ function DoStartup() {
 
 	// Reset the paging control
 	document.getElementById("pdfformat").value = "one";
+
+	// Reset the page number control
+	document.getElementById("pagenumbers").value = "bc";
 
 	// Hook up the zoom
 	document.getElementById("zoombutton").onclick = 
