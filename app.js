@@ -3625,6 +3625,17 @@ function DoStartup() {
 		gIsIPhone = true;
 	}
 
+	gIsAndroid = false;
+
+	// 
+	// Are we on Android?
+	//
+	if (/Android/i.test(navigator.userAgent)) {
+
+		gIsAndroid = true;
+
+	}
+	
 	// 
 	// iOS Styling adaptation
 	//
@@ -3684,16 +3695,6 @@ function DoStartup() {
 		document.getElementById("zoombutton").style.right = "36px";
 	}
 
-	gIsAndroid = false;
-
-	// 
-	// Are we on Android?
-	//
-	if (/Android/i.test(navigator.userAgent)) {
-
-		gIsAndroid = true;
-
-	}
 
 	//
 	// Hook up the text area text change callback with debounce
