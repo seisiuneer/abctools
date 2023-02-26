@@ -35,39 +35,125 @@
   <link rel="icon" type="image/png" sizes="32x32" href="http://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
   <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
-  <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">  <style>
-  p {
-    font-size:12pt;
+  <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">  
+  <style>
+    p {
+    font-size:14pt;
     font-family:"Helvetica";
+    line-height: 28px;
+    }
+
+    h1 {
+    font-size:16pt;
+    font-family:"Helvetica";
+    margin-bottom:32px;
+    }
+
+    hr {
+    margin-top:24px;
+    margin-bottom:24px;
+    }
+
+    body {
+    padding:10px;
+    text-align: center;
+    }
+
+    #maindiv{
+    position: absolute;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, 0%);
+    text-align: left;
+    width: 800px;
+    background-color: white;
+    }
+
+    .image_holder{
+      text-align: center;
   }
-  </style>
+
+</style>
 
 </head>
-<body style="padding:10px">
-
-<div style="text-align: center;">
-<font face="Comic Sans MS" size="5">ABC Transcription Tools Credits and Thanks</font><br>
-<p>This ABC to notation converter was developed by <a href="http://michaeleskin.com" target="_blank">Michael Eskin</a>.</p>
-<p>Full project source may be found on: <a href="https://github.com/seisiuneer/abctools" target="_blank">GitHub</a>.</p>
+<body style="padding">
+<div id="maindiv">
+  <div style="text-align: center;">
+  <font face="Comic Sans MS" size="5" id="pagetitle">ABC Transcription Tools Credits and Thanks</font><br>
+  <p>This ABC to notation converter was developed by <a href="http://michaeleskin.com" target="_blank">Michael Eskin</a>.</p>
+  <p>Full project source may be found on: <a href="https://github.com/seisiuneer/abctools" target="_blank">GitHub</a>.</p>
+  </div>
+  <hr>
+  <p><strong>Open Source Info:</strong></p>
+  <p>The converter uses open source Javascript libraries and forks of other projects:</p>
+  <p><a href="http://www.franziskaludwig.de/abctransposer/" target="_blank">Jens Wollschlager's abc transposer</a> My code is a fork of Jens Wollschlager's original version.</p> 
+  <p><a href="https://www.abcjs.net/" target="_blank">abcjs</a> by Paul Rosen and Gregory Dyke to convert abc to sheet music.</p>
+  <p><a href="https://www.npmjs.com/package/html-to-image" target="_blank">html-to-image</a> is used to prepare the html sheet music for PDF conversion.</p>
+  <p><a href="https://github.com/parallax/jsPDF" target="_blank">jsPDF</a> is used to actually create the PDF.</p>
+  <p><a href="https://github.com/OMerkel/tin_whistle/tree/master/res/font" target="_blank">Tin Whistle Fingering Font</a> by Paul Merke is used to generate the whistle tabs.</p> 
+  <p><a href="https://davidshimjs.github.io/qrcodejs" target="_blank">qrcode.js</a> is used to generate the QR codes.</p> 
+  <p><a href="https://github.com/pieroxy/lz-string" target="_blank">lz-string.js</a> is used to for LZW compression of the tunes for share links.</p> 
+  <p>Ui icons created by <a href="https://www.flaticon.com/free-icons/ui" title="ui icons" target="_blank"> Karacis - Flaticon</a>.</p>
+  <p>Without these free resources this project would not have been possible.</p>
+  <p></p>
+  <hr>
+  <p><strong>Project Contributors:</strong></p>
+  <p>Thank you to Philip McGarvey for the share link export feature addition!</p>
+  <hr>
 </div>
-<hr>
-<p><strong>Open Source Info:</strong></p>
-<p>The converter uses open source Javascript libraries and forks of other projects:</p>
-<p><a href="http://www.franziskaludwig.de/abctransposer/" target="_blank">Jens Wollschlager's abc transposer</a> My code is a fork of Jens Wollschlager's original version.</p> 
-<p><a href="https://www.abcjs.net/" target="_blank">abcjs</a> by Paul Rosen and Gregory Dyke to convert abc to sheet music.</p>
-<p><a href="https://www.npmjs.com/package/html-to-image" target="_blank">html-to-image</a> is used to prepare the html sheet music for PDF conversion.</p>
-<p><a href="https://github.com/parallax/jsPDF" target="_blank">jsPDF</a> is used to actually create the PDF.</p>
-<p><a href="https://github.com/OMerkel/tin_whistle/tree/master/res/font" target="_blank">Tin Whistle Fingering Font</a> by Paul Merke is used to generate the whistle tabs.</p> 
-<p><a href="https://davidshimjs.github.io/qrcodejs" target="_blank">qrcode.js</a> is used to generate the QR codes.</p> 
-<p><a href="https://github.com/pieroxy/lz-string" target="_blank">lz-string.js</a> is used to for LZW compression of the tunes for share links.</p> 
-<p>Ui icons created by <a href="https://www.flaticon.com/free-icons/ui" title="ui icons" target="_blank"> Karacis - Flaticon</a>.</p>
-<p>Without these free resources this project would not have been possible.</p>
-<p></p>
-<hr>
-<p><strong>Project Contributors:</strong></p>
-<p>Thank you to Philip McGarvey for the share link export feature addition!</p>
-<hr>
-
 </body>
+<script>
 
+    //
+    // Are we on iOS?
+    //
+    function isIOS() {
+
+        if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+            return true;
+        } else {
+            return navigator.maxTouchPoints &&
+                navigator.maxTouchPoints > 2 &&
+                /MacIntel/.test(navigator.platform);
+        }
+    }
+
+    function DoStartup() {
+
+        // 
+        // iOS Styling adaptation
+        //
+
+        var gIsIOS = isIOS();
+
+        if (gIsIOS) {
+            // Fix the title font
+            var elem = document.getElementById("pagetitle");
+            elem.size = 5;
+            elem.style.fontFamily = "Helvetica";
+        }
+
+    }
+
+    //
+    // Wait for the document to be ready, then fire a function
+    //
+
+    function WaitForReady(fn) {
+      if (document.readyState !== 'loading') {
+        fn();
+        return;
+      }
+
+      document.addEventListener('DOMContentLoaded', fn);
+
+    }
+
+    //
+    // Wait for the document to be ready, then startup
+    //
+
+    WaitForReady(DoStartup);  
+
+</script>
 </html>
