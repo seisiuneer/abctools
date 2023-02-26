@@ -366,23 +366,38 @@ color:black;
 font-size:11pt;
 font-family:"Helvetica";
 padding-top: 12px;
-margin-left:21px;
-margin-right:5px;
-}
-
-#displayformatlabel{
-font-size:11pt;
-font-family:"Helvetica";
-padding-top: 12px;
-margin-left:18px;
+margin-left:1px;
 margin-right:5px;
 }
 
 #pdfformat{
 font-size:11pt;
 font-family:"Helvetica";
-width:275px;
+width:100px;
 margin-left:2px;
+}
+
+#pagenumberslabel{
+font-size:11pt;
+font-family:"Helvetica";
+padding-top: 12px;
+margin-left:9px;
+margin-right:5px;
+}
+
+#pagenumbers{
+font-size:11pt;
+font-family:"Helvetica";
+width:115px;
+margin-left:2px;
+}
+
+#displayformatlabel{
+font-size:11pt;
+font-family:"Helvetica";
+padding-top: 12px;
+margin-left:0px;
+margin-right:5px;
 }
 
 #qrcode{
