@@ -274,8 +274,12 @@ function Titelholen() {
 // PDF conversion shared globals
 //
 
+// Rendering offsets based on paper size
+var PAGENUMBERTOP = 296;
+var PAGENUMBERTOPA4 = 313;
 var PAGETOPOFFSET = 32;
 var PAGELEFTOFFSET = 37;
+var PAGELEFTOFFSETA4 = 29;
 
 var running_height = PAGETOPOFFSET;
 
@@ -442,7 +446,7 @@ function calcPageNumberPosition(thePDF){
 //
 // Add a page number to the current PDF page
 //
-function addPageNumber(thePDF,pageNumber,pageNumberLocation,hideFirstPageNumber){
+function addPageNumber(thePDF,pageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle){
 
 	// Hiding the first page number?
 	if (hideFirstPageNumber){
@@ -456,20 +460,32 @@ function addPageNumber(thePDF,pageNumber,pageNumberLocation,hideFirstPageNumber)
 
 	thePDF.setFontSize(11);
 
+	// Calc offset for A4 paper
+	var voff = PAGENUMBERTOP;
+
+	if (paperStyle == "letter"){
+		// Letter offset
+		voff = PAGENUMBERTOP;
+	}
+	else{
+		// A4 offset
+		voff = PAGENUMBERTOPA4;
+	}
+
 	// Division accounts for the PDF internal scaling
 
 	switch (pageNumberLocation){
 		case "tl":
 			// Top left
-			thePDF.text(str, 13, 296, {align:"center"});
+			thePDF.text(str, 13, voff, {align:"center"});
 			break;
 		case "tc":
 			// Top center
-			thePDF.text(str, (thePDF.internal.pageSize.getWidth()/3.10), 296, {align:"center"});
+			thePDF.text(str, (thePDF.internal.pageSize.getWidth()/3.10), voff, {align:"center"});
 			break;
 		case "tr":
 			// Top right
-			thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, 296 , {align:"center"});
+			thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, voff, {align:"center"});
 			break;
 		case "bl":
 			// Bottom left
@@ -486,21 +502,21 @@ function addPageNumber(thePDF,pageNumber,pageNumberLocation,hideFirstPageNumber)
 		case "tlr":
 			if ((pageNumber % 2) == 1){
 				// Top left
-				thePDF.text(str, 13, 295, {align:"center"});
+				thePDF.text(str, 13, voff, {align:"center"});
 			}
 			else{
 				// Top right
-				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, 296 , {align:"center"});
+				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, voff , {align:"center"});
 			}
 			break;
 		case "trl":
 			if ((pageNumber % 2) == 1){
 				// Top right
-				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, 296 , {align:"center"});
+				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, voff , {align:"center"});
 			}
 			else{
 				// Top left
-				thePDF.text(str, 13, 295, {align:"center"});
+				thePDF.text(str, 13, voff, {align:"center"});
 			}
 			break;
 		case "blr":
@@ -530,7 +546,8 @@ function addPageNumber(thePDF,pageNumber,pageNumberLocation,hideFirstPageNumber)
 //
 // Render a single SVG block to PDF and callback when done
 //
-function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, callback) {
+function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, callback){
+
 
 	var svg = theBlock.querySelector("svg");
 
@@ -545,6 +562,15 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 			pixelRatio: 2
 		})
 		.then(function(canvas) {
+
+			// Select left offset based on paper style
+			var hoff = PAGELEFTOFFSET;
+
+			if (paperStyle == "a4"){
+
+				hoff = PAGELEFTOFFSETA4;
+
+			}
 
 			// Creates a sharper image
 			pdf.internal.scaleFactor = 1.55;
@@ -563,7 +589,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 						if (seitenzahl != 0){
 							// Add page number?
 							if (addPageNumbers){
-								addPageNumber(pdf,seitenzahl,pageNumberLocation,hideFirstPageNumber);						
+								addPageNumber(pdf,seitenzahl,pageNumberLocation,hideFirstPageNumber,paperStyle);						
 							}
 						}
 
@@ -571,7 +597,8 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 						seitenzahl++; // for the status display.
 
-						pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
+						pdf.addPage(paperStyle); //... create a page in letter or A4 format, then leave a 30 pt margin at the top and continue.
+
 						document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + seitenzahl + "</font> pages";
 
 					} else {
@@ -583,7 +610,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 							// Add page number?
 							if (addPageNumbers){
-								addPageNumber(pdf,seitenzahl,pageNumberLocation,hideFirstPageNumber);						
+								addPageNumber(pdf,seitenzahl,pageNumberLocation,hideFirstPageNumber,paperStyle);						
 							}
 
 							// Yes, force it to a new page
@@ -592,7 +619,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 							seitenzahl++; // for the status display.
 
-							pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
+							pdf.addPage(paperStyle); //... create a page in letter or a4 format, then leave a 30 pt margin at the top and continue.
 
 							document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + seitenzahl + "</font> pages";
 
@@ -632,7 +659,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 			if (running_height + height + PAGETOPOFFSET <= 842 - PAGETOPOFFSET) // i.e. if a block of notes would get in the way with the bottom margin (30 pt), then a new one please...
 			{
 
-				pdf.addImage(imgData, 'JPG', PAGELEFTOFFSET, running_height, 535, height);
+				pdf.addImage(imgData, 'JPG', hoff, running_height, 535, height);
 
 
 			} else {
@@ -642,15 +669,15 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 				if (seitenzahl != 0){
 					// Add page number?
 					if (addPageNumbers){
-						addPageNumber(pdf,seitenzahl,pageNumberLocation,hideFirstPageNumber);						
+						addPageNumber(pdf,seitenzahl,pageNumberLocation,hideFirstPageNumber,paperStyle);						
 					}
 				}
 
 				seitenzahl++; // for the status display.
 
-				pdf.addPage("letter"); //... create a page in letter format, then leave a 30 pt margin at the top and continue.
+				pdf.addPage(paperStyle); //... create a page in letter or a4 format, then leave a 30 pt margin at the top and continue.
 
-				pdf.addImage(imgData, 'JPG', PAGELEFTOFFSET, running_height, 535, height);
+				pdf.addImage(imgData, 'JPG', hoff, running_height, 535, height);
 
 				document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + seitenzahl + "</font> pages";
 			}
@@ -701,10 +728,17 @@ function CreatePDFfromHTML(e) {
 
 	var pageNumberLocation = elem.options[elem.selectedIndex].value;
 
-	var doSinglePage = (thePageOptions == "one");
+	var doSinglePage = ((thePageOptions == "one") || (thePageOptions == "one_a4"));
 
 	// Add page numbers?
 	var addPageNumbers = (pageNumberLocation != "none");
+
+	// What size paper? Letter or A4?
+	var paperStyle = "letter";
+
+	if ((thePageOptions == "one_a4") || (thePageOptions == "multi_a4")){
+		paperStyle = "a4";
+	}
 
 	// If not doing single page, find any tunes that have page break requests
 	var pageBreakList = [];
@@ -752,7 +786,7 @@ function CreatePDFfromHTML(e) {
 
 		gCopySVGs = false;
 
-		pdf = new jsPDF('p', 'pt', 'letter');
+		pdf = new jsPDF('p', 'pt', paperStyle);
 
 		theBlocks = document.querySelectorAll('div[class="block"]');
 
@@ -762,7 +796,7 @@ function CreatePDFfromHTML(e) {
 		var theBlock = theBlocks[0];
 
 		// Render and stamp one block
-		RenderPDFBlock(theBlock, 0, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, callback);
+		RenderPDFBlock(theBlock, 0, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, callback);
 
 		function callback() {
 
@@ -772,7 +806,7 @@ function CreatePDFfromHTML(e) {
 
 				// Add final page number
 				if (addPageNumbers){
-					addPageNumber(pdf,seitenzahl,pageNumberLocation,hideFirstPageNumber);						
+					addPageNumber(pdf,seitenzahl,pageNumberLocation,hideFirstPageNumber,paperStyle);						
 				}
 
 				document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Rendering Complete!</font>";
@@ -813,7 +847,7 @@ function CreatePDFfromHTML(e) {
 
 				setTimeout(function() {
 
-					RenderPDFBlock(theBlock, nBlocksProcessed, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, callback);
+					RenderPDFBlock(theBlock, nBlocksProcessed, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, callback);
 
 				}, 100);
 
