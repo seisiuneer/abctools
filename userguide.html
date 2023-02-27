@@ -191,6 +191,49 @@
             <p>Power User Tip:</p>
             <p>If you hold down the Shift key while clicking the "Export PDF" button, the page number will be hidden on the first page of the PDF.</p>
             <hr>
+            <h1>PDF Page Headers and Footers</h1>
+            <p>You may add custom page headers and footers to your exported PDF files by including the following ABC comment-based annotations anywhere in your ABC:</p>
+            <p></p>
+            <p>%pageheader (your header text goes here...)</p>
+            <p>%pagefooter (your footer text goes here...)</p>
+            <p></p>
+            <p>There are also several useful user macros you can include in your page header or footer text that will be expanded in the PDF:</p>
+            <p></p>
+            <p>$PDFNAME - Matches the saved PDF filename</p>
+            <p>$PAGENUMBER - Current page number</p>
+            <p>$DATEMDY - Current date in M-D-Y format</p>
+            <p>$DATEYMD - Current date in Y-M-D format</p>
+            <p>$TIME - Current time in HH:MM format</p>
+            <p></p>
+            <p>Example ABC with page header and page footer annotations that include user macros:</p> 
+            <p></p>
+            <p>%pageheader "The Tarbolton" from the Michael Coleman set - Saved on $DATEMDY at $TIME<br/>
+            %pagefooter $PDFNAME - Page $PAGENUMBER<br/>
+            X:1<br/>
+            T:The Tarbolton<br/>
+            M:4/4<br/>
+            K:Edor<br/>
+            Beed e2BA|GBAF GFEF|Dddc d2AG|FAGE FEDF|<br/>
+            Eeed efge|fedf e2BA|GABG FGAF|BGAF GEE2:|<br/>
+            |:gfef gebe|gebe gfec|d2fd Adfd|cdAG FDEF|<br/>
+            GABG FGAF|E2ef gfed|BcdB A2FA|BGAF GEE2:|</p>
+            <p></p>
+            <p>Results in a PDF that looks like this:</p>
+            <p></p>
+            <p></p>
+            <div class="image_holder">
+                <img src="img/ug11.jpg"/>
+            </div>
+            <p></p>
+            <p></p>
+            <p>Note: Only the first instance of the %pageheader or %pagefooter annotation is processed, any additional instances are ignored.</p>
+            <p></p>
+            <p>Page numbers can be added along with page headers and footers.</p>
+            <p>If you add a page header and you have selected top-centered page numbers, the page number will be hidden.</p>
+            <p>If you add a page footer and you have selected bottom-centered page numbers, the page number will be hidden.</p>
+            <p></p>
+            <p>Since these annotations are ABC comment-based, they will just appear to be normal comments in other ABC software.</p>
+            <hr>
             <h1>Advanced Controls</h1>
             <div class="image_holder">
                 <img src="img/ug8.jpg"/>
