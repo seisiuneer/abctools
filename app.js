@@ -305,16 +305,32 @@ var PAGETOPOFFSET = 32;
 var PAGELEFTOFFSET = 37;
 var PAGELEFTOFFSETA4 = 29;
 
+// Keeps track of where we are on the page
 var running_height = PAGETOPOFFSET;
 
-var seitenzahl = 1;
+// Page count
+var theCurrentPageNumber = 1;
 
+// True for the first page rendered
 var isFirstPage = true;
 
+// How many tunes processed so far
 var tunesProcessed = 0;
 
+// Total number of tunes being processed
 var totalTunes = 0;
 
+// Page header and footer
+var thePageHeader = "";
+var thePageFooter = "";
+
+// Need to cache the time, since you don't want it to change during the render from page to page
+var theRenderTime = ""; 
+
+// Page number vertical offset
+var thePageNumberVerticalOffset = 0;
+
+// PDF object to render to
 var pdf;
 
 //
@@ -458,29 +474,156 @@ function scanTunesForPageBreaks(){
 	return pageBreakRequested;
 }
 
-var thePageNumberPosition = 0;
+//
+// Date formatter for header/footers
+//
+function formatDate(format) {
+
+    var d = new Date(),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) 
+        month = '0' + month;
+
+    if (day.length < 2) 
+        day = '0' + day;
+
+    if (format == 0){
+
+      	return [month, day, year].join('-');
+
+    }else{
+
+      	return [year, month, day].join('-');
+
+    }
+
+}
+
+//
+// Time formatter for header/footers
+//
+function formatTime() {
+
+	// If this was called once already during a render, re-use the previous results
+	if (theRenderTime != ""){
+		return theRenderTime;
+	}
+
+    var d = new Date(),
+        hour = d.getHours(),
+        minute = d.getMinutes();
+
+    var postfix = " AM";
+
+    if (hour == 0){
+    	hour = 12;
+    }
+
+    if (hour > 12){
+    	hour -= 12;
+    	postfix = " PM";
+    }
+
+    hour = "" + hour;
+    minute = "" + minute;
+
+    if (minute.length < 2) 
+        minute = '0' + minute;
+
+    var str = [hour, minute].join(':');
+    str = str + postfix;
+
+    // Cache the rendering time
+    theRenderTime = str;
+
+    return str;
+
+}
+
+//
+// Parse the ABC and setup the header and footer if they are present
+//
+function ParseHeaderFooter(theNotes){
+	
+	// Clear the header and footer strings
+	thePageHeader = "";
+	thePageFooter = "";
+
+	// Search for a page header
+	var searchRegExp = /^%pageheader .*$/m
+
+	// Detect page header annotation
+	var allPageHeaders = theNotes.match(searchRegExp);
+
+	if ((allPageHeaders) && (allPageHeaders.length > 0)){
+		thePageHeader = allPageHeaders[0].replace("%pageheader ","");
+	}
+
+	// Search for a page footer
+	searchRegExp = /^%pagefooter .*$/m
+
+	// Detect page footer annotation
+	var allPageFooters = theNotes.match(searchRegExp);
+
+	if ((allPageFooters) && (allPageFooters.length > 0)){
+		thePageFooter = allPageFooters[0].replace("%pagefooter ","");
+	}
+
+}
+
+//
+// Process a header or footer and replace macros
+// 
+// Header/footer macros:
+//
+// $PDFNAME - Same as the saved PDF name
+// $PAGENUMBER - Current page number
+// $DATEMDY - Current date in M-D-Y format
+// $DATEYMD - Current date in Y-M-D format
+// $TIME - Current time in HH:MM format
+//
+// Examples: 
+// %pageheader My Awesome Tune Book - Saved at $TIME - Page: $PAGENUMBER
+// %pagefooter My Awesome Tune Book - Saved on $DATEMDY at $TIME - Page: $PAGENUMBER
+
+function ProcessHeaderFooter(str,pageNumber,pageCount){
+
+	//debugger;
+
+	var theFileName = getDescriptiveFileName(pageCount,true);
+
+	var workstr = str.replace("$PDFNAME",theFileName+".pdf");
+
+	workstr = workstr.replace("$PAGENUMBER",pageNumber);
+	
+	var dateFormatMDY = formatDate(0);
+	var dateFormatYMD = formatDate(1);
+
+	workstr = workstr.replace("$DATEMDY",dateFormatMDY);
+
+	workstr = workstr.replace("$DATEYMD",dateFormatYMD);
+
+	var theTime = formatTime();
+
+	workstr = workstr.replace("$TIME",theTime);
+
+	return workstr;
+}
 
 //
 // Calculate and cache the page number position
 //
-function calcPageNumberPosition(thePDF){
-	thePageNumberPosition = thePDF.internal.pageSize.getHeight()-9;
+function calcPageNumberVerticalOffset(thePDF){
+	thePageNumberVerticalOffset = thePDF.internal.pageSize.getHeight()-9;
 }
 
 //
-// Add a page number to the current PDF page
+// Add optional page numbers and header or footer on the current PDF page
 //
-function addPageNumber(thePDF,pageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle){
-
-	// Hiding the first page number?
-	if (hideFirstPageNumber){
-		if (pageNumber == 1){
-			return;
-		}
-	}
-
-	// Add page number
-	var str = "" + pageNumber;
+function AddPageHeaderFooter(thePDF,doAddPageNumber,pageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle){
 
 	thePDF.setFontSize(11);
 
@@ -496,6 +639,49 @@ function addPageNumber(thePDF,pageNumber,pageNumberLocation,hideFirstPageNumber,
 		voff = PAGENUMBERTOPA4;
 	}
 
+	var hasHeader = false;
+
+	if (thePageHeader && (thePageHeader != "")){
+
+		var thePageHeaderProcessed = ProcessHeaderFooter(thePageHeader,pageNumber,totalTunes);
+
+		// Add the header
+		thePDF.text(thePageHeaderProcessed, (thePDF.internal.pageSize.getWidth()/3.10), voff, {align:"center"});
+
+		// Hide page number in center of header
+		hasHeader = true;
+
+	}
+
+	var hasFooter = false;
+
+	if (thePageFooter && (thePageFooter != "")){
+
+		var thePageFooterProcessed = ProcessHeaderFooter(thePageFooter,pageNumber,totalTunes);
+
+		// Add the header
+		thePDF.text(thePageFooterProcessed, (thePDF.internal.pageSize.getWidth()/3.10), thePageNumberVerticalOffset , {align:"center"});
+
+		// Hide page number in the center of the footer
+		hasFooter = true;
+
+	}
+
+	// Only processing headers and footers
+	if (!doAddPageNumber){
+		return;
+	}
+
+	// Hiding the first page number?
+	if (hideFirstPageNumber ){
+		if (pageNumber == 1){
+			return;
+		}
+	}
+
+	// Add page number
+	var str = "" + pageNumber;
+
 	// Division accounts for the PDF internal scaling
 
 	switch (pageNumberLocation){
@@ -504,8 +690,10 @@ function addPageNumber(thePDF,pageNumber,pageNumberLocation,hideFirstPageNumber,
 			thePDF.text(str, 13, voff, {align:"center"});
 			break;
 		case "tc":
-			// Top center
-			thePDF.text(str, (thePDF.internal.pageSize.getWidth()/3.10), voff, {align:"center"});
+			// Top center - don't print if there is a header
+			if (!hasHeader){
+				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/3.10), voff, {align:"center"});
+			}
 			break;
 		case "tr":
 			// Top right
@@ -513,15 +701,17 @@ function addPageNumber(thePDF,pageNumber,pageNumberLocation,hideFirstPageNumber,
 			break;
 		case "bl":
 			// Bottom left
-			thePDF.text(str, 13, thePageNumberPosition , {align:"center"});
+			thePDF.text(str, 13, thePageNumberVerticalOffset , {align:"center"});
 			break;
 		case "bc":
-			// Bottom center
-			thePDF.text(str, (thePDF.internal.pageSize.getWidth()/3.10), thePageNumberPosition , {align:"center"});
+			// Bottom center - don't print if there is a footer
+			if (!hasFooter){
+				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/3.10), thePageNumberVerticalOffset , {align:"center"});
+			}
 			break;
 		case "br":
 			// Bottom right
-			thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, thePageNumberPosition , {align:"center"});
+			thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, thePageNumberVerticalOffset , {align:"center"});
 			break;
 		case "tlr":
 			if ((pageNumber % 2) == 1){
@@ -546,21 +736,21 @@ function addPageNumber(thePDF,pageNumber,pageNumberLocation,hideFirstPageNumber,
 		case "blr":
 			if ((pageNumber % 2) == 1){
 				// Bottom left
-				thePDF.text(str, 13, thePageNumberPosition , {align:"center"});
+				thePDF.text(str, 13, thePageNumberVerticalOffset , {align:"center"});
 			}
 			else{
 				// Bottom right
-				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, thePageNumberPosition , {align:"center"});
+				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, thePageNumberVerticalOffset , {align:"center"});
 			}
 			break;
 		case "brl":
 			if ((pageNumber % 2) == 1){
 				// Bottom right
-				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, thePageNumberPosition , {align:"center"});
+				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, thePageNumberVerticalOffset , {align:"center"});
 			}
 			else{
 				// Bottom left
-				thePDF.text(str, 13, thePageNumberPosition , {align:"center"});
+				thePDF.text(str, 13, thePageNumberVerticalOffset , {align:"center"});
 			}
 			break;
 
@@ -571,7 +761,6 @@ function addPageNumber(thePDF,pageNumber,pageNumberLocation,hideFirstPageNumber,
 // Render a single SVG block to PDF and callback when done
 //
 function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, callback){
-
 
 	var svg = theBlock.querySelector("svg");
 
@@ -610,20 +799,20 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 					if (doSinglePage) {
 
-						if (seitenzahl != 0){
-							// Add page number?
-							if (addPageNumbers){
-								addPageNumber(pdf,seitenzahl,pageNumberLocation,hideFirstPageNumber,paperStyle);						
-							}
+						if (theCurrentPageNumber != 0){
+
+							// Add page numbers, headers, and footers
+							AddPageHeaderFooter(pdf,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);
+
 						}
 
 						running_height = PAGETOPOFFSET;
 
-						seitenzahl++; // for the status display.
+						theCurrentPageNumber++; // for the status display.
 
 						pdf.addPage(paperStyle); //... create a page in letter or A4 format, then leave a 30 pt margin at the top and continue.
 
-						document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + seitenzahl + "</font> pages";
+						document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
 
 					} else {
 
@@ -632,20 +821,18 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 						//
 						if (pageBreakList[tunesProcessed-1]){
 
-							// Add page number?
-							if (addPageNumbers){
-								addPageNumber(pdf,seitenzahl,pageNumberLocation,hideFirstPageNumber,paperStyle);						
-							}
+							// Add page numbers, headers, and footers
+							AddPageHeaderFooter(pdf,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);						
 
 							// Yes, force it to a new page
 
 							running_height = PAGETOPOFFSET;
 
-							seitenzahl++; // for the status display.
+							theCurrentPageNumber++; // for the status display.
 
 							pdf.addPage(paperStyle); //... create a page in letter or a4 format, then leave a 30 pt margin at the top and continue.
 
-							document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + seitenzahl + "</font> pages";
+							document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
 
 						}
 						else{
@@ -662,7 +849,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 					isFirstPage = false;
 
 					// Get the position for future page numbers
-					calcPageNumberPosition(pdf);
+					calcPageNumberVerticalOffset(pdf);
 
 				}
 
@@ -670,7 +857,9 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 				tunesProcessed++;
 
 				if (tunesProcessed < totalTunes){
+
 					document.getElementById("statustunecount").innerHTML = "Rendering tune <font color=\"red\">"+(tunesProcessed+1)+"</font>" + " of  <font color=\"red\">"+totalTunes+"</font>"
+				
 				}
 
 			}
@@ -690,20 +879,20 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 				running_height = PAGETOPOFFSET;
 
-				if (seitenzahl != 0){
-					// Add page number?
-					if (addPageNumbers){
-						addPageNumber(pdf,seitenzahl,pageNumberLocation,hideFirstPageNumber,paperStyle);						
-					}
+				if (theCurrentPageNumber != 0){
+
+					// Add page numbers, headers, and footers
+					AddPageHeaderFooter(pdf,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);
+
 				}
 
-				seitenzahl++; // for the status display.
+				theCurrentPageNumber++; // for the status display.
 
 				pdf.addPage(paperStyle); //... create a page in letter or a4 format, then leave a 30 pt margin at the top and continue.
 
 				pdf.addImage(imgData, 'JPG', hoff, running_height, 535, height);
 
-				document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + seitenzahl + "</font> pages";
+				document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
 			}
 
 			// so that it starts the new one exactly one pt behind the current one.
@@ -761,8 +950,16 @@ function CreatePDFfromHTML(e) {
 	var paperStyle = "letter";
 
 	if ((thePageOptions == "one_a4") || (thePageOptions == "multi_a4")){
+
 		paperStyle = "a4";
+
 	}
+
+	// Process headers and footers
+	ParseHeaderFooter(theABC.value);
+
+	// Clear the render time
+	theRenderTime = "";
 
 	// If not doing single page, find any tunes that have page break requests
 	var pageBreakList = [];
@@ -772,7 +969,7 @@ function CreatePDFfromHTML(e) {
 	}
 
 	// Init the shared globals
-	seitenzahl = 1;
+	theCurrentPageNumber = 1;
 
 	tunesProcessed = 0;
 
@@ -828,10 +1025,8 @@ function CreatePDFfromHTML(e) {
 
 			if (nBlocksProcessed == nBlocks) {
 
-				// Add final page number
-				if (addPageNumbers){
-					addPageNumber(pdf,seitenzahl,pageNumberLocation,hideFirstPageNumber,paperStyle);						
-				}
+				// Add final page number, header, and footer
+				AddPageHeaderFooter(pdf,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);						
 
 				document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Rendering Complete!</font>";
 
@@ -883,7 +1078,6 @@ function CreatePDFfromHTML(e) {
 
 }
 
-
 function getNextSiblings(el, filter) {
 	var siblings = [];
 	while (el = el.nextSibling) {
@@ -891,8 +1085,6 @@ function getNextSiblings(el, filter) {
 	}
 	return siblings;
 }
-
-
 
 function getStyleProp(elem, prop) {
 	if (window.getComputedStyle)
