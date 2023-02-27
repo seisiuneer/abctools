@@ -3086,9 +3086,9 @@ function GenerateQRCode() {
 			var theOutputHTML = '<div style="text-align:center;padding:24px;margin-top:0px;margin-bottom:0px;">';
 			theOutputHTML +=    theImageHTML;
 			theOutputHTML +=    '<p style="font-family:helvetica;font-size:14pt;margin-top:18px;margin-bottom:0px;">' + theTitles + '</p>';			
-			theOutputHTML +=    '<p style="font-family:helvetica;font-size:18pt;margin-top:32px;margin-bottom:0px;"><strong>-- Get Your QR Code --</strong></p>';
-			theOutputHTML +=    '<p style="font-family:helvetica;font-size:18pt;margin-top:32px;margin-bottom:0px;"><a href="'+theImageSource+'" download="'+theImageName+'.png" style="text-decoration:none">Click here to download&nbsp;&nbsp;<strong>' + theImageName +'.png</strong>&nbsp;&nbsp;to your system.</a></p>';
-			theOutputHTML +=    '<p style="font-family:helvetica;font-size:18pt;margin-top:32px;margin-bottom:0px;"><strong>-- Use Your QR Code --</strong></p>';
+			theOutputHTML +=    '<p style="font-family:helvetica;font-size:16pt;margin-top:32px;margin-bottom:0px;"><strong>Get Your QR Code</strong></p>';
+			theOutputHTML +=    '<p style="font-family:helvetica;font-size:16pt;margin-top:32px;margin-bottom:0px;"><a href="'+theImageSource+'" download="'+theImageName+'.png" style="text-decoration:none;color:darkblue">Click here to download&nbsp;' + theImageName +'.png&nbsp;to your system.</a></p>';
+			theOutputHTML +=    '<p style="font-family:helvetica;font-size:16pt;margin-top:32px;margin-bottom:0px;"><strong>Use Your QR Code</strong></p>';
 			theOutputHTML +=    '<p style="font-family:helvetica;font-size:14pt;margin-top:30px;margin-bottom:0px;">Share QR Codes on social media or email them to friends like any other photo.</p>';
 			theOutputHTML +=    '<p style="font-family:helvetica;font-size:14pt;margin-top:24px;margin-bottom:0px;">Scanning the code with the Camera app on any smartphone will load the</p>';
 			theOutputHTML +=    '<p style="font-family:helvetica;font-size:14pt;margin-top:6px;margin-bottom:0px;">ABC Transcription Tool with your tune set into the browser on the device.</p>';
