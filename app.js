@@ -327,6 +327,9 @@ var thePageFooter = "";
 // Need to cache the time, since you don't want it to change during the render from page to page
 var theRenderTime = ""; 
 
+// Don't want to recalc this each time
+var theHeaderFooterTuneNames = "";
+
 // Page number vertical offset
 var thePageNumberVerticalOffset = 0;
 
@@ -584,6 +587,8 @@ function ParseHeaderFooter(theNotes){
 // $DATEMDY - Current date in M-D-Y format
 // $DATEYMD - Current date in Y-M-D format
 // $TIME - Current time in HH:MM format
+// $TUNECOUNT - Number of tunes in the ABC
+// $TUNENAMES - All the tune names in the ABC
 //
 // Examples: 
 // %pageheader My Awesome Tune Book - Saved at $TIME - Page: $PAGENUMBER
@@ -598,6 +603,10 @@ function ProcessHeaderFooter(str,pageNumber,pageCount){
 	var workstr = str.replace("$PDFNAME",theFileName+".pdf");
 
 	workstr = workstr.replace("$PAGENUMBER",pageNumber);
+
+	workstr = workstr.replace("$TUNECOUNT",totalTunes);
+
+	workstr = workstr.replace("$TUNENAMES",theHeaderFooterTuneNames);
 	
 	var dateFormatMDY = formatDate(0);
 	var dateFormatYMD = formatDate(1);
@@ -960,6 +969,9 @@ function CreatePDFfromHTML(e) {
 
 	// Clear the render time
 	theRenderTime = "";
+
+	// Cache the tune titles
+	theHeaderFooterTuneNames = GetAllTuneTitles();
 
 	// If not doing single page, find any tunes that have page break requests
 	var pageBreakList = [];
@@ -2791,7 +2803,7 @@ function GetAllTuneTitles() {
 			allTitles += theTitles[i];
 
 			if (i != nTitles - 1) {
-				allTitles += " - ";
+				allTitles += " / ";
 			}
 		}
 	}
