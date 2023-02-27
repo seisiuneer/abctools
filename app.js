@@ -3,8 +3,32 @@
  * app.js - All code for the ABC Transcription Tools
  *
  * Project repo at: https://github.com/seisiuneer/abctools
+ * 
+ * 
+ * MIT License
+ * 
+ * Copyright (c) 2023 Michael Eskin
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
- */
+ * 
+ **/
 
 var gShowAdvancedControls = false;
 var gStripAnnotations = false;
@@ -3686,27 +3710,18 @@ function DoStartup() {
 		elem = document.getElementById("notenlinks");
 		elem.style.paddingTop = "20px";
 
-	}
-
-	// iPhone
-	if (gIsIPhone){
-
 		var elem = document.getElementById("abc");
-		elem.cols = 80;
+		elem.cols = 74;
 		elem.style.fontSize = "13pt";
 		elem.style.lineHeight = "15pt";
-	
+
 	}
 
 	// iPad
 	if (gIsIPad){
 
 		var elem = document.getElementById("abc");
-		elem.cols = 72;
 		elem.lines = 11;
-		elem.style.fontSize = "13pt";
-		elem.style.lineHeight = "15pt";
-
 	}
 
 	// Android
