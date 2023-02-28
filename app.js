@@ -2988,7 +2988,7 @@ function GetAllTuneTitles() {
 			// Limit the length of the string to some maximum number of characters
 			if (allTitles.length > ALLTITLESMAXLENGTH){
 
-				allTitles = allTitles + " + "+(nTitles-i-1)+" more";
+				allTitles = allTitles + " + "+(nTitles-i-2)+" more";
 				
 				return allTitles;
 
