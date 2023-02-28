@@ -3540,6 +3540,9 @@ function PlayABC(){
 
 			document.getElementById("playbutton").value = "Play";
 
+			// Refocus back on the ABC
+			theABC.focus();
+
 		},750);
 
 	}
