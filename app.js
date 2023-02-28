@@ -3489,6 +3489,27 @@ function CopyToClipboard(textToCopy) {
 }
 
 //
+// Get the currently selected text in a textbox
+//
+function getSelectedText(id)
+{
+    // Obtain the object reference for the <textarea>
+    var txtarea = document.getElementById(id);
+
+    // Obtain the index of the first selected character
+    var start = txtarea.selectionStart;
+
+    // Obtain the index of the last selected character
+    var finish = txtarea.selectionEnd;
+
+    // Obtain the selected text
+    var sel = txtarea.value.substring(start, finish);
+
+    return sel;
+
+}
+
+//
 // Send the ABC to Paul Rosen's drawthedots site for playback
 //
 function PlayABC(){
@@ -3496,12 +3517,19 @@ function PlayABC(){
 	// Follows same semantics as Copy
 	if (gAllowCopy){
 
-		var theData = theABC.value;
+		// Is there a selection?
+		var theSelectedABC = getSelectedText("abc");
+
+		// No, use the whole ABC
+		if (theSelectedABC.length == 0){
+
+			theSelectedABC = theABC.value;
+		}
 		
 		// Copy the abc to the clipboard
-		CopyToClipboard(theData);
+		CopyToClipboard(theSelectedABC);
 
-		var theData = encodeURIComponent(theData);
+		var theData = encodeURIComponent(theSelectedABC);
 
 		var w = window.open("https://editor.drawthedots.com?t="+theData);
 
