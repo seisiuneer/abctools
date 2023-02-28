@@ -59,6 +59,12 @@ var MAXQRCODEURLLENGTH = 2300;
 // Maximum length of an all tune titles string before truncation
 var ALLTITLESMAXLENGTH = 70;
 
+// Font size for PDF headers and footers
+var HEADERFOOTERFONTSIZE = 11.0;
+
+// Font size for PDF QR code caption
+var QRCODECAPTIONPDFFONTSIZE = 11.0;
+
 var gShowShareControls = false;
 
 var gAllowSave = false;
@@ -412,7 +418,7 @@ function AppendQRCode(thePDF,paperStyle,callback){
 			thePDF.addImage(theImageSource, 'PNG', theHOffset, 150, 256, 256);
 			
 			// Set the font size
-			thePDF.setFontSize(10);
+			thePDF.setFontSize(QRCODECAPTIONPDFFONTSIZE);
 
 			// Different caption offset for letter vs a4
 			var captionOffset = 558;
@@ -749,8 +755,6 @@ function calcPageNumberVerticalOffset(thePDF){
 //
 function AddPageHeaderFooter(thePDF,doAddPageNumber,pageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle){
 
-	thePDF.setFontSize(10.5);
-
 	// Calc offset for A4 paper
 	var voff = PAGENUMBERTOP;
 
@@ -762,6 +766,8 @@ function AddPageHeaderFooter(thePDF,doAddPageNumber,pageNumber,pageNumberLocatio
 		// A4 offset
 		voff = PAGENUMBERTOPA4;
 	}
+
+	thePDF.setFontSize(HEADERFOOTERFONTSIZE);
 
 	var hasHeader = false;
 
@@ -802,6 +808,8 @@ function AddPageHeaderFooter(thePDF,doAddPageNumber,pageNumber,pageNumberLocatio
 			return;
 		}
 	}
+
+	thePDF.setFontSize(HEADERFOOTERFONTSIZE);
 
 	// Add page number
 	var str = "" + pageNumber;
@@ -2988,7 +2996,7 @@ function GetAllTuneTitles() {
 			// Limit the length of the string to some maximum number of characters
 			if (allTitles.length > ALLTITLESMAXLENGTH){
 
-				allTitles = allTitles + " + "+(nTitles-i-2)+" more";
+				allTitles = allTitles + " + "+(nTitles-i-1)+" more";
 				
 				return allTitles;
 
