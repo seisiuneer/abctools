@@ -2183,6 +2183,10 @@ function Render() {
 		// Enable the copy button
 		document.getElementById("copybutton").classList.remove("copybuttondisabled");
 		document.getElementById("copybutton").classList.add("copybutton");
+
+		// Enable the play button
+		document.getElementById("playbutton").classList.remove("playbuttondisabled");
+		document.getElementById("playbutton").classList.add("playbutton");
 		gAllowCopy = true;
 
 		// Idle the advanced controls
@@ -2332,6 +2336,11 @@ function Render() {
 		// Disable the copy button
 		document.getElementById("copybutton").classList.remove("copybutton");
 		document.getElementById("copybutton").classList.add("copybuttondisabled");
+
+		// Disable the play button
+		document.getElementById("playbutton").classList.remove("playbutton");
+		document.getElementById("playbutton").classList.add("playbuttondisabled");
+
 		gAllowCopy = false;
 
 		// Show the notation placeholder
@@ -3480,6 +3489,36 @@ function CopyToClipboard(textToCopy) {
 }
 
 //
+// Send the ABC to Paul Rosen's drawthedots site for playback
+//
+function PlayABC(){
+
+	// Follows same semantics as Copy
+	if (gAllowCopy){
+
+		var theData = theABC.value;
+		
+		// Copy the abc to the clipboard
+		CopyToClipboard(theData);
+
+		var theData = encodeURIComponent(theData);
+
+		var w = window.open("https://editor.drawthedots.com?t="+theData);
+
+		 // Give some feedback
+		document.getElementById("playbutton").value = "Sent!";
+
+		setTimeout(function(){
+
+			document.getElementById("playbutton").value = "Play";
+
+		},750);
+
+	}
+
+}
+
+//
 // Copy the ABC to the clipboard
 //
 // If shift key is pressed, copy the text and open the ABC in editor.drawthedots.com
@@ -3488,49 +3527,21 @@ function CopyABC(e){
 
 	if (gAllowCopy){
 
-		//
-		// Backdoor editor.drawthedots.com send ABC trick
-		// 
-		if (e.shiftKey){
+		var theData = theABC.value;
+		
+		// Copy the abc to the clipboard
+		CopyToClipboard(theData);
 
-			var theData = theABC.value;
+  		// Give some feedback
+  		document.getElementById("copybutton").value = "Copied!";
 
-			// Copy the abc to the clipboard
-			CopyToClipboard(theData);
+  		setTimeout(function(){
 
-			var theData = encodeURIComponent(theData);
+  			document.getElementById("copybutton").value = "Copy All";
 
-			var w = window.open("https://editor.drawthedots.com?t="+theData);
+  		},750);
 
-			 // Give some feedback
-	  		document.getElementById("copybutton").value = "Sent!";
-
-	  		setTimeout(function(){
-
-	  			document.getElementById("copybutton").value = "Copy All";
-
-	  		},750);
-
-		}
-		else{
-
-			var theData = theABC.value;
-			
-			// Copy the abc to the clipboard
-			CopyToClipboard(theData);
-
-	  		// Give some feedback
-	  		document.getElementById("copybutton").value = "Copied!";
-
-	  		setTimeout(function(){
-
-	  			document.getElementById("copybutton").value = "Copy All";
-
-	  		},750);
-	  	}
-
-	}
-
+  	}
 }
 
 //
