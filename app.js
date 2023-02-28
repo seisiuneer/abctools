@@ -3510,22 +3510,76 @@ function getSelectedText(id)
 }
 
 //
+// Find the tune around the selection point
+//
+function findSelectedTune(theNotes){
+
+    // Obtain the object reference for the <textarea>
+    var txtarea = document.getElementById("abc");
+
+    // Obtain the index of the first selected character
+    var start = txtarea.selectionStart;
+
+    // Now find all the X: items
+    var theTunes = theNotes.split(/^X:/gm);
+
+    var nTunes = theTunes.length;
+
+    var theOffset = 0;
+
+    for (i=0;i<nTunes;++i){
+
+    	theOffset += theTunes[i].length;
+
+    	// Is the offset in the last chunk?
+    	if (start < theOffset){
+
+    		return ("X:"+theTunes[i]);
+
+    	}
+
+    }
+
+    return "";
+
+}
+
+//
 // Send the ABC to Paul Rosen's drawthedots site for playback
 //
 function PlayABC(){
 
 	// Follows same semantics as Copy
 	if (gAllowCopy){
+    	
+    	var theNotes = theABC.value;
 
 		// Is there a selection?
 		var theSelectedABC = getSelectedText("abc");
 
-		// No, use the whole ABC
+		// No, try to find the tune
 		if (theSelectedABC.length == 0){
 
-			theSelectedABC = theABC.value;
+			// Try to find the current tune
+			theSelectedABC = findSelectedTune(theNotes);
+
+			if (theSelectedABC == ""){
+				// This should never happen
+				return;
+			}
+			
+			// Refocus back on the ABC
+			theABC.focus();
+
+    		// Select it
+			var start = theNotes.indexOf(theSelectedABC);
+			var end = start + theSelectedABC.length;
+
+    		theABC.selectionStart = start;
+    		theABC.selectionEnd = end;
+
 		}
-		
+
 		// Copy the abc to the clipboard
 		CopyToClipboard(theSelectedABC);
 
@@ -4265,6 +4319,12 @@ function DoStartup() {
 			reader.addEventListener('load', (event) => {
 
 				theABC.value = event.target.result;
+
+				// Refocus back on the ABC
+				theABC.focus();
+	    		theABC.selectionStart = 0;
+	    		theABC.selectionEnd = 0;
+	    		theABC.scrollTo(0,0);
 
 				setTimeout(function() {
 
