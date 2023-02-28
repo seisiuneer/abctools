@@ -53,6 +53,12 @@ var gRenderingPDF = false;
 
 var gTheQRCode = null;
 
+// Maximum number of characters that can be encoded in a QR Code
+var MAXQRCODEURLLENGTH = 2300;
+
+// Maximum length of an all tune titles string before truncation
+var ALLTITLESMAXLENGTH = 70;
+
 var gShowShareControls = false;
 
 var gAllowSave = false;
@@ -333,8 +339,104 @@ var theHeaderFooterTuneNames = "";
 // Page number vertical offset
 var thePageNumberVerticalOffset = 0;
 
+// Did they request a QR code
+var QRCodeRequested = false;
+
 // PDF object to render to
 var pdf;
+
+//
+// Generate and append a QR code to the current PDF
+//
+function AppendQRCode(thePDF,paperStyle,callback){
+	
+	// Need to have the share link available in the urltextbox
+	FillUrlBoxWithAbcInLZW();
+
+	// Can we make a QR code from the current share link URL?
+	var theURL = document.getElementById("urltextbox").value;
+
+	if (theURL.length > MAXQRCODEURLLENGTH){
+
+		//console.log("Share URL too long for QR Code, early exit...")
+		
+		// URL too long for QR code... early exit
+
+		callback(false);
+		
+		return;
+
+	}
+
+	// Generate the QR code
+	if (gTheQRCode == null) {
+
+		gTheQRCode = new QRCode(document.getElementById("qrcode"), {
+			text: theURL,
+			width: 548,
+			height: 548,
+			colorDark: "#000000",
+			colorLight: "#ffffff",
+			border: 16,
+    		correctLevel : QRCode.CorrectLevel.M 
+		});
+
+	} else {
+
+		gTheQRCode.clear();
+
+		gTheQRCode.makeCode(document.getElementById("urltextbox").value);
+
+	}
+
+	//
+	// Needs a page render cycle for the QR code image to show up
+	//
+	setTimeout(function(){
+
+		// Find the QR code image to rasterize
+		var theQRCodeImage = document.querySelectorAll('div[id="qrcode"] > img');
+
+		if (theQRCodeImage && theQRCodeImage[0]){
+
+			// Add a new page
+			thePDF.addPage(paperStyle); 
+
+			var theHOffset = (thePDF.internal.pageSize.getWidth()/3.10) - 18;
+
+			theQRCodeImage = theQRCodeImage[0];
+
+			var theImageSource = theQRCodeImage.src;
+
+			// Add the QR code
+			thePDF.addImage(theImageSource, 'PNG', theHOffset, 150, 256, 256);
+			
+			// Set the font size
+			thePDF.setFontSize(10);
+
+			// Different caption offset for letter vs a4
+			var captionOffset = 558;
+
+			if (paperStyle == "a4"){
+				captionOffset = 575;
+			}
+
+			// Add the tune names
+			thePDF.text(theHeaderFooterTuneNames, thePDF.internal.pageSize.getWidth()/3.10, captionOffset, {align:"center"});
+
+			// Call back to finalize the PDF
+			callback(true);
+
+		}
+		else{
+
+			// Something went wrong getting the QR code, just callback immediately
+			callback(false);
+
+		}
+
+	}, 1000);
+}
 
 //
 // Get a good filename for the PDF or share name either from the current filename or tunes themselves
@@ -555,6 +657,9 @@ function ParseHeaderFooter(theNotes){
 	thePageHeader = "";
 	thePageFooter = "";
 
+	// Did they request a QR code
+	QRCodeRequested = false;
+
 	// Search for a page header
 	var searchRegExp = /^%pageheader .*$/m
 
@@ -575,6 +680,17 @@ function ParseHeaderFooter(theNotes){
 		thePageFooter = allPageFooters[0].replace("%pagefooter ","");
 	}
 
+	// Search for a QR code request
+	searchRegExp = /^%qrcode.*$/m
+
+	// Detect page footer annotation
+	var addQRCode = theNotes.match(searchRegExp);
+
+	if ((addQRCode) && (addQRCode.length > 0)){
+		QRCodeRequested = true;
+	}
+
+
 }
 
 //
@@ -589,14 +705,13 @@ function ParseHeaderFooter(theNotes){
 // $TIME - Current time in HH:MM format
 // $TUNECOUNT - Number of tunes in the ABC
 // $TUNENAMES - All the tune names in the ABC
+// $QRCODE
 //
 // Examples: 
 // %pageheader My Awesome Tune Book - Saved at $TIME - Page: $PAGENUMBER
 // %pagefooter My Awesome Tune Book - Saved on $DATEMDY at $TIME - Page: $PAGENUMBER
 
 function ProcessHeaderFooter(str,pageNumber,pageCount){
-
-	//debugger;
 
 	var theFileName = getDescriptiveFileName(pageCount,true);
 
@@ -634,7 +749,7 @@ function calcPageNumberVerticalOffset(thePDF){
 //
 function AddPageHeaderFooter(thePDF,doAddPageNumber,pageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle){
 
-	thePDF.setFontSize(11);
+	thePDF.setFontSize(10.5);
 
 	// Calc offset for A4 paper
 	var voff = PAGENUMBERTOP;
@@ -1038,38 +1153,103 @@ function CreatePDFfromHTML(e) {
 			if (nBlocksProcessed == nBlocks) {
 
 				// Add final page number, header, and footer
-				AddPageHeaderFooter(pdf,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);						
+				AddPageHeaderFooter(pdf,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);	
 
-				document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Rendering Complete!</font>";
+				if (QRCodeRequested){
 
-				setTimeout(function(){
+					document.getElementById("statustunecount").innerHTML = "Adding QR Code";
 
-					document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"red\">" + title + ".pdf </font>";
+					// This needs the callback because the rasterizer is async
+					AppendQRCode(pdf,paperStyle,qrcode_callback);
 
-					// Save the status up for a bit before saving
+					function qrcode_callback(status){
+
+						if (!status){
+
+							document.getElementById("statustunecount").innerHTML = "Share URL too long for QR Code, try sharing fewer tunes";
+
+						}
+						else{
+
+							theCurrentPageNumber++;
+
+							document.getElementById("statustunecount").innerHTML = "QR Code Added!";
+							
+							document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+
+						}
+
+						// If the QR code generation failed, leave more time for a status update
+						var statusDelay = 1000;
+
+						if (!status){
+
+							statusDelay = 3000;
+						}
+
+						// Delay for final QR code UI status update
+						setTimeout(function(){
+
+							// Add page numbers, headers, and footers
+							AddPageHeaderFooter(pdf,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);	
+						
+							// Handle the status display for the new page
+							document.getElementById("statustunecount").innerHTML = "";
+
+							// And complete the PDF
+							finalize_pdf_export();
+
+						},statusDelay);
+
+						return;
+
+					}
+				}	
+				else{
+
+					// No QR code requested, just run the callback directly
+					finalize_pdf_export();
+					
+					return;
+
+				}
+
+				//
+				// Finalize the PDF document
+				//
+				function finalize_pdf_export(){				
+
+					document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Rendering Complete!</font>";
+
 					setTimeout(function(){
 
-						// Start the PDF save
-						pdf.save(title + ".pdf");
-						
-						document.getElementById("statuspdfname").innerHTML = "";
+						document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"red\">" + title + ".pdf </font>";
 
-						document.getElementById("statustunecount").innerHTML = "";
+						// Save the status up for a bit before saving
+						setTimeout(function(){
 
-						document.getElementById("pagestatustext").innerHTML = "";
+							// Start the PDF save
+							pdf.save(title + ".pdf");
+							
+							document.getElementById("statuspdfname").innerHTML = "";
 
-						// Show the PDF status block
-						var pdfstatus = document.getElementById("pdf-controls");
-						pdfstatus.style.display = "none";
+							document.getElementById("statustunecount").innerHTML = "";
 
-						gRenderingPDF = false;
+							document.getElementById("pagestatustext").innerHTML = "";
 
-						// Catch up on any UI changes during the PDF rendering
-						Render();
+							// Show the PDF status block
+							var pdfstatus = document.getElementById("pdf-controls");
+							pdfstatus.style.display = "none";
 
-					},1000);
+							gRenderingPDF = false;
 
-				},1500);
+							// Catch up on any UI changes during the PDF rendering
+							Render();
+
+						},1000);
+
+					},1500);
+				}
 
 
 			} else {
@@ -2677,8 +2857,11 @@ function CountTunes() {
 //
 function NewABC(){
 
-	theABC.value = "X: 1\nT: My New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%\n% Enter the ABC for your tunes below:\n%\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|";
-	
+	theABC.value = "X: 1\nT: New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%\n% Enter the ABC for your tune(s) below:\n%\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|\n\n% Try these custom PDF page annotations by removing the % and the space\n%\n% Add a PDF page header or footer:\n%\n% %pageheader My Tune Set:  $TUNENAMES\n% %pagefooter PDF named: $PDFNAME saved on: $DATEMDY at $TIME\n%\n% After the tunes, add a sharing QR code on a new page in the PDF:\n%\n% %qrcode\n%\n";
+
+	// Scroll it to the top
+	theABC.scrollTo(0,0);
+
 	// Reset the displayed name base
 	gDisplayedName = "No ABC file selected";
 
@@ -2802,11 +2985,21 @@ function GetAllTuneTitles() {
 
 			allTitles += theTitles[i];
 
+			// Limit the length of the string to some maximum number of characters
+			if (allTitles.length > ALLTITLESMAXLENGTH){
+
+				allTitles = allTitles + " + "+(nTitles-i-1)+" more";
+				
+				return allTitles;
+
+			}
+
 			if (i != nTitles - 1) {
 				allTitles += " / ";
 			}
 		}
 	}
+
 
 	return allTitles;
 }
@@ -2917,11 +3110,10 @@ function FillUrlBoxWithAbcInLZW() {
 		document.getElementById("copyurl").classList.remove("urlcontrolsdisabled");
 		document.getElementById("copyurl").classList.add("urlcontrols");
 
-
 		gAllowURLSave = true;
 
 		// If fits in a QR code, show the QR code button
-		var maxURLLength = 2300;
+		var maxURLLength = MAXQRCODEURLLENGTH;
 	
 		if (url.length < maxURLLength) {
 
