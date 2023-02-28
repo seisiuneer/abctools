@@ -567,6 +567,40 @@ opacity:0.4;
 	}
 }
 
+.playbutton{
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+margin-left:0px;
+margin-right:16px;
+padding: 0.6em;
+background-color: #C8ECFE;
+color:black;
+-webkit-appearance:none;
+opacity:1.0;
+}
+
+.playbuttondisabled{
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+margin-left:0px;
+margin-right:16px;
+padding: 0.6em;
+background-color: #FFFFFF;
+color:black;
+-webkit-appearance:none;
+opacity:0.4;
+}
+
+@media (hover: hover) {
+	.playbutton:hover{
+	background: palegreen;
+	}
+}
+
 .newabcfile{
 font-family:"Helvetica";
 font-size:11pt;
