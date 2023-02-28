@@ -3482,23 +3482,52 @@ function CopyToClipboard(textToCopy) {
 //
 // Copy the ABC to the clipboard
 //
-function CopyABC(){
+// If shift key is pressed, copy the text and open the ABC in editor.drawthedots.com
+//
+function CopyABC(e){
 
 	if (gAllowCopy){
 
-		var theData = theABC.value;
-		
-		// Copy the abc to the clipboard
-		CopyToClipboard(theData);
+		//
+		// Backdoor editor.drawthedots.com send ABC trick
+		// 
+		if (e.shiftKey){
 
-  		// Give some feedback
-  		document.getElementById("copybutton").value = "Copied!";
+			var theData = theABC.value;
 
-  		setTimeout(function(){
+			// Copy the abc to the clipboard
+			CopyToClipboard(theData);
 
-  			document.getElementById("copybutton").value = "Copy All";
+			var theData = encodeURIComponent(theData);
 
-  		},750);
+			var w = window.open("https://editor.drawthedots.com?t="+theData);
+
+			 // Give some feedback
+	  		document.getElementById("copybutton").value = "Sent!";
+
+	  		setTimeout(function(){
+
+	  			document.getElementById("copybutton").value = "Copy All";
+
+	  		},750);
+
+		}
+		else{
+
+			var theData = theABC.value;
+			
+			// Copy the abc to the clipboard
+			CopyToClipboard(theData);
+
+	  		// Give some feedback
+	  		document.getElementById("copybutton").value = "Copied!";
+
+	  		setTimeout(function(){
+
+	  			document.getElementById("copybutton").value = "Copy All";
+
+	  		},750);
+	  	}
 
 	}
 
