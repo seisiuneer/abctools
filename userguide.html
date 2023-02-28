@@ -206,6 +206,7 @@
             <p>$TIME - Current time in HH:MM format</p>
             <p>$TUNECOUNT - Number of tunes in the ABC</p>
             <p>$TUNENAMES - All of the tune names in the ABC separated by /</p>
+            <p>The tune names width is limited to about 70 characters before it will append "+ (remaining number of tunes) more" to the first few tune names.</p>
             <p></p>
             <p>Example ABC with page header and page footer annotations that include user macros:</p> 
             <p></p>
@@ -269,7 +270,7 @@
             <p>Copy Share URL - Copies the ABC Share URL to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
             <p>Save Share URL - Saves the ABC Share URL to a text file.</p>
             <p>The saved file will be in your browser's Downloads directory.</p>
-            <p>Generate QR Code - Once an ABC Share URL is generated, if it is short enough to fit in a QR code (about 2600 characters), this button is activated.</p>
+            <p>Generate QR Code - Once an ABC Share URL is generated, if it is short enough to fit in a QR code (less than 2600 characters), this button is activated.</p>
             <p>The QR Code is a visual representation of an ABC Share URL that you can scan with the Camera app on your iOS or Android device.</p>
             <p>Clicking the button will generate a QR code in .PNG format for the ABC Share URL and open it in a new browser tab.</p>
             <p>In the newly opened tab, you can click the link below the image to save the QR code to your system.</p>
@@ -286,8 +287,23 @@
                 <img src="img/ug10.png"/>
                 <p>Try scanning this code with the Camera app on your iOS or Android phone.</p>
             </div>
+            <hr>
             <p>I have several example QR codes for tune sets on my Flickr account at:</p>
             <p><a href="https://flic.kr/s/aHBqjArRJZ" target="_blank">ABC Tune Set QR Codes on Flickr</a></p>
+            <hr>
+            <h1 id="adding_a_qr_code_to_the_pdf_export">Adding a QR Code to the PDF Export</h1>
+            <p>To add a QR code for your tune set as a final page on your PDF, add the following comment-based annotation anywhere in the ABC:
+            <p></p>
+            <p>%qrcode
+            <p></p>
+            <p></p>
+            <p>Here is an example of a tune set QR code included in the exported PDF:</p>
+            <div class="image_holder">
+                 <img src="img/ug12.jpg"/>
+            </div>
+            <p></p>
+            <p>Note: If a QR code has been requested, and the Share URL for the set of tunes is too long to generate a QR code (more than 2600 characters), you will see an informative message at the end of the PDF export suggesting sharing fewer tunes.</p>
+            <p>If you are able to generate a QR code in the Sharing Controls, then the Share URL is short enough to embed a QR code in a PDF.</p>
             <hr>
             <h1 id="reading_the_qr_codes">Reading the QR Codes</h1>
             <p>All devices should easily be able to read the simpler QR codes generated for sets of one to three tunes.</p>
