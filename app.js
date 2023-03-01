@@ -2800,6 +2800,9 @@ function GenerateRenderingDivs(nTunes) {
 
 		el.id = "notation" + i;
 
+		// Space the tunes out a bit
+		el.classList.add("tunespacer");
+
 		notationHolder.appendChild(el);
 
 	}
