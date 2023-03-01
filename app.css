@@ -709,6 +709,13 @@ color:black;
 opacity: 0.4;
 }
 
+/* For better tune visual layout on the displayed version.
+   Has no effect on the PDF output.
+*/
+.tunespacer{
+	margin-bottom:32px;
+}
+
 @media (hover: hover) {
 	.toggletabnames:hover{
 	background: palegreen;
