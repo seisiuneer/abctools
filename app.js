@@ -100,14 +100,21 @@ var LONGOPERATIONTHRESHOLDMS = 1750;
 // Debounce time for text area change render requests
 var DEBOUNCEMS = 280;
 
+// Debounce time for tune autoscroll
+var AUTOSCROLLDEBOUNCEMS = 250;
+
 // OK to show the long operations warning banner
 var gOKShowOperationsBanner = true;
 
-var theABC = document.getElementById("abc");
+// For tune autoscroll state
+var gLastAutoScrolledTune = -1;
+
+// Global reference to the ABC editor
+var gTheABC = document.getElementById("abc");
 
 function Notenames() {
 
-	verarbeiten = theABC.value;
+	verarbeiten = gTheABC.value;
 	neu = escape(verarbeiten);
 
 	Reihe = neu.split("%0D%0A");
@@ -143,7 +150,7 @@ function Notenames() {
 	}
 
 	insfeld = Reihe.join("\n");
-	theABC.value = insfeld;
+	gTheABC.value = insfeld;
 	Render();
 }
 
@@ -160,7 +167,7 @@ function TransposeUp() {
 
 	var nTunes = CountTunes();
 	
-	var theNotes = theABC.value;
+	var theNotes = gTheABC.value;
 
 	// Get the rendering params
 	var params = GetABCJSParams();
@@ -188,7 +195,7 @@ function TransposeUp() {
 
 	}
 	
-	theABC.value = output;
+	gTheABC.value = output;
 
 	Render();
 	
@@ -208,7 +215,7 @@ function TransposeDown() {
 
 	var nTunes = CountTunes();
 	
-	var theNotes = theABC.value;
+	var theNotes = gTheABC.value;
 
 	// Get the rendering params
 	var params = GetABCJSParams();
@@ -236,7 +243,7 @@ function TransposeDown() {
 
 	}
 	
-	theABC.value = output;
+	gTheABC.value = output;
 
 	Render();
 	
@@ -249,7 +256,7 @@ function Clear() {
 		return;
 	}
 
-	theABC.value = "";
+	gTheABC.value = "";
 
 	// Save it for the status update display
 	gDisplayedName = "No ABC file selected";
@@ -272,7 +279,7 @@ function Clear() {
 
 function Titelholen() {
 
-	verarbeiten = theABC.value;
+	verarbeiten = gTheABC.value;
 
 	neu = escape(verarbeiten);
 
@@ -560,7 +567,7 @@ function scanTunesForPageBreaks(){
 	var pageBreakRequested = [];
 
 	// Count the tunes in the text area
-	var theNotes = theABC.value;
+	var theNotes = gTheABC.value;
 
 	var theTunes = theNotes.split(/^X:.*$/gm);
 
@@ -1088,7 +1095,7 @@ function CreatePDFfromHTML(e) {
 	}
 
 	// Process headers and footers
-	ParseHeaderFooter(theABC.value);
+	ParseHeaderFooter(gTheABC.value);
 
 	// Clear the render time
 	theRenderTime = "";
@@ -2019,7 +2026,7 @@ function Render() {
 		return;
 	}
 
-	if (theABC.value != "") {
+	if (gTheABC.value != "") {
 
 		// Idle the file status display
 		var nTunes = CountTunes();
@@ -2098,7 +2105,7 @@ function Render() {
 		// Generate the rendering divs
 		GenerateRenderingDivs(nTunes);
 
-		var theNotes = theABC.value;
+		var theNotes = gTheABC.value;
 
 		var searchRegExp = "";
 
@@ -2320,7 +2327,7 @@ function IdleAdvancedControls(){
 
 	if (gShowAllControls && gShowAdvancedControls){
 
-		var theNotes = theABC.value;
+		var theNotes = gTheABC.value;
 
 		var searchRegExp = "";
 
@@ -2691,6 +2698,9 @@ function RestoreDefaults() {
 	gStripChords = false;
 	gCopySVGs = false;
 
+	// Clear the autoscroll state
+	gLastAutoScrolledTune = -1;
+
 	document.getElementById('staff-spacing').value = STAFFSPACEDEFAULT;
 
 	gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
@@ -2754,7 +2764,7 @@ function ToggleChords() {
 function CountTunes() {
 
 	// Count the tunes in the text area
-	var theNotes = theABC.value;
+	var theNotes = gTheABC.value;
 
 	var theTunes = theNotes.split(/^X:.*$/gm);
 
@@ -2769,10 +2779,17 @@ function CountTunes() {
 //
 function NewABC(){
 
-	theABC.value = "X: 1\nT: New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%\n% Enter the ABC for your tune(s) below:\n%\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|\n\n% Try these custom PDF page annotations by removing the % and the space\n%\n% Add a PDF page header or footer:\n%\n% %pageheader My Tune Set:  $TUNENAMES\n% %pagefooter PDF named: $PDFNAME saved on: $DATEMDY at $TIME\n%\n% After the tunes, add a sharing QR code on a new page in the PDF:\n%\n% %qrcode\n%\n";
+	gTheABC.value = "X: 1\nT: New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%\n% Enter the ABC for your tune(s) below:\n%\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|\n\n% Try these custom PDF page annotations by removing the % and the space\n%\n% Add a PDF page header or footer:\n%\n% %pageheader My Tune Set:  $TUNENAMES\n% %pagefooter PDF named: $PDFNAME saved on: $DATEMDY at $TIME\n%\n% After the tunes, add a sharing QR code on a new page in the PDF:\n%\n% %qrcode\n%\n";
+
+	// Refocus back on the ABC
+	gTheABC.focus();
+
+	// Set the selection to the start of the tune
+	gTheABC.selectionStart = 0;
+	gTheABC.selectionEnd = 0;
 
 	// Scroll it to the top
-	theABC.scrollTo(0,0);
+	gTheABC.scrollTo(0,0);
 
 	// Reset the displayed name base
 	gDisplayedName = "No ABC file selected";
@@ -2869,7 +2886,7 @@ function GetAllTuneTitles() {
 	theTitles = [];
 
 	// Mit For Schleife Titel für Dateinamen extrahieren und Leerzeichen ersetzen und Apostrophe entfernen.
-	verarbeiten = theABC.value;
+	verarbeiten = gTheABC.value;
 
 	neu = escape(verarbeiten);
 
@@ -2936,7 +2953,7 @@ function getUrlWithoutParams() {
 
 function FillUrlBoxWithAbcInLZW() {
 
-	var abcText = theABC.value;
+	var abcText = gTheABC.value;
 
 	var abcInLZW = LZString.compressToEncodedURIComponent(abcText);
 
@@ -3410,10 +3427,12 @@ function getSelectedText(id)
 //
 // Find the tune around the selection point
 //
-function findSelectedTune(theNotes){
+function findSelectedTune(){
+
+	var theNotes = gTheABC.value;
 
     // Obtain the object reference for the <textarea>
-    var txtarea = document.getElementById("abc");
+    var txtarea = gTheABC;
 
     // Obtain the index of the first selected character
     var start = txtarea.selectionStart;
@@ -3473,8 +3492,6 @@ function PlayABC(){
 	// Follows same semantics as Copy
 	if (gAllowCopy){
     	
-    	var theNotes = theABC.value;
-
 		// Is there a selection?
 		var theSelectedABC = getSelectedText("abc");
 
@@ -3482,22 +3499,25 @@ function PlayABC(){
 		if (theSelectedABC.length == 0){
 
 			// Try to find the current tune
-			theSelectedABC = findSelectedTune(theNotes);
+			theSelectedABC = findSelectedTune();
 
 			if (theSelectedABC == ""){
 				// This should never happen
 				return;
 			}
 			
-			// Refocus back on the ABC
-			theABC.focus();
+			// Get the notes
+			var theNotes = gTheABC.value;
 
-    		// Select it
+			// Refocus back on the ABC
+			gTheABC.focus();
+
+    		// Select the whole tune
 			var start = theNotes.indexOf(theSelectedABC);
 			var end = start + theSelectedABC.length;
 
-    		theABC.selectionStart = start;
-    		theABC.selectionEnd = end;
+    		gTheABC.selectionStart = start;
+    		gTheABC.selectionEnd = end;
 
 		}
 
@@ -3516,7 +3536,7 @@ function PlayABC(){
 			document.getElementById("playbutton").value = "Play";
 
 			// Refocus back on the ABC
-			theABC.focus();
+			gTheABC.focus();
 
 		},750);
 
@@ -3533,7 +3553,7 @@ function CopyABC(e){
 
 	if (gAllowCopy){
 
-		var theData = theABC.value;
+		var theData = gTheABC.value;
 		
 		// Copy the abc to the clipboard
 		CopyToClipboard(theData);
@@ -3581,7 +3601,7 @@ function SaveABC(){
 
 	if (gAllowSave){
 
-		var theData = theABC.value;
+		var theData = gTheABC.value;
 
 		if (theData.length != 0){
 
@@ -3638,7 +3658,7 @@ function TestShareURL(){
 //
 function SetAbcText(txt) {
 
-	theABC.value = txt;
+	gTheABC.value = txt;
 
 }
 
@@ -3649,7 +3669,6 @@ function SetAbcText(txt) {
 function ShowAllControls(){
 
 	document.getElementById("notenrechts").style.display = "inline-block";
-	//document.getElementById("notation-holder").style.marginTop = "-20px";
 	document.getElementById("toggleallcontrols").value = "Hide Controls";
 
 	gShowAllControls = true;
@@ -3662,7 +3681,6 @@ function ShowAllControls(){
 function HideAllControls(){
 
 	document.getElementById("notenrechts").style.display = "none";
-	//document.getElementById("notation-holder").style.marginTop = "0px";
 	document.getElementById("toggleallcontrols").value = "Show Controls";
 
 	gShowAllControls = false;
@@ -4059,6 +4077,166 @@ function TextBoxResizeHandler(){
 }
 
 //
+// Returns the tune index for the current start of selection
+//
+
+//
+// Find the tune index around the selection point
+//
+function findSelectedTuneIndex(){
+
+	var theNotes = gTheABC.value;
+
+	// Now find all the X: items
+    var theTunes = theNotes.split(/^X:/gm);
+
+    var nTunes = theTunes.length;
+
+    // Never autoscroll the single tune case
+    if (nTunes < 3){
+
+    	//console.log("No autoscroll on single tunes");
+    	
+    	return -1;
+
+    }
+
+    // Obtain the index of the first selected character
+    var start = gTheABC.selectionStart;
+
+    if (start == 0) {
+
+	    // Common case where a set was just loaded and the cursor is at the start, go find the first position after an X:
+		start = theNotes.indexOf("X:")+2;
+
+	}
+
+	// Odd case where there isn't an X:, no tunes
+	if (start == 0){
+
+		return -1;
+
+	}
+
+    // First chunk is whatever is before the first X:
+    var theOffset = 0;
+
+    theOffset = theTunes[0].length;
+
+    for (i=1;i<nTunes;++i){
+
+    	// Account for the X: stripped in the length
+    	theOffset += theTunes[i].length+2;
+
+    	// Is the offset in the last chunk?
+    	if (start < theOffset){
+
+    		return (i-1);
+
+    	}
+
+    }
+
+    // Didn't find a tune, no autoscroll
+    return -1;
+
+}
+
+//
+// Scrolls the tune into view if it not visible
+//
+// Called on every click into the work area, with some debounce
+//
+
+function MakeTuneVisible(){
+
+	// Follows same enable semantics as copy
+
+	if (gAllowCopy){
+
+		//console.log("MakeTuneVisible()");
+
+		var tuneIndex = findSelectedTuneIndex();
+
+		//console.log("Selected tune index = " + tuneIndex);
+
+		if (tuneIndex != -1){
+
+			// Find the location of the corresponding rendering div
+			var theDivID = "notation"+tuneIndex;
+
+			var theTuneDiv = document.getElementById(theDivID);
+			var theTuneTop = theTuneDiv.offsetTop;
+			var theTuneHeight = theTuneDiv.offsetHeight;
+
+			var theNoScroller = document.getElementById("noscroller");
+			var theNoScrollerHeight = theNoScroller.offsetHeight;
+
+			var theWindowHeight = window.innerHeight;
+			var theWindowScrollY = window.scrollY;
+
+			var theVisibleHeight = theWindowHeight - theNoScrollerHeight;
+
+			// Find the position of the tune relative to the bottom of the UI
+			// 18 appears to be a margin offset
+			var theTuneOffsetFromSpacer = ((theTuneTop - theWindowScrollY) - theNoScrollerHeight) - 18;
+
+			// console.log("tune top= "+theTuneTop+ " tune height= "+theTuneHeight+" noscoller= "+theNoScrollerHeight);
+			// console.log(" window= "+theWindowHeight+" window scrolly= "+theWindowScrollY);
+			// console.log("theVisibleHeight= "+theVisibleHeight);
+			// console.log("theTuneOffsetFromSpacer = "+theTuneOffsetFromSpacer);
+
+			// Is the top of the tune visible?
+
+			var tuneTopVisible = (theTuneOffsetFromSpacer >= 0) && (theTuneOffsetFromSpacer < theVisibleHeight);
+
+			//console.log("tuneTopVisible = "+tuneTopVisible);
+
+			var tuneBottomOffset = theTuneOffsetFromSpacer + theTuneHeight;
+
+			//console.log("tuneBottomOffset = "+tuneBottomOffset)
+
+			var tuneBottomVisible = (tuneBottomOffset > 0) && (tuneBottomOffset < theVisibleHeight);
+
+			//console.log("tuneBottomVisible = "+tuneBottomVisible);
+
+			var tuneOverflowsVisible = (theTuneOffsetFromSpacer < 0) && ((theTuneOffsetFromSpacer + theTuneHeight) > theVisibleHeight);
+
+			//console.log("tuneOverflowsVisible = "+tuneOverflowsVisible);
+
+			// Handle case where the tune changed since an autoscroll, force a rescroll
+			if (tuneIndex != gLastAutoScrolledTune){
+
+				//console.log("Trigger autoscroll case #1 - selected a different tune");
+
+				var newScrollPos = theTuneTop-theNoScrollerHeight;
+
+				window.scrollTo(0,newScrollPos);
+
+				gLastAutoScrolledTune = tuneIndex;
+
+			}
+			else{
+
+				if (!(tuneTopVisible || tuneBottomVisible || tuneOverflowsVisible)){
+
+					//console.log("Trigger autoscroll case #2, tune completely invisible whether current or newly selected tune");
+
+					var newScrollPos = theTuneTop-theNoScrollerHeight;
+
+					window.scrollTo(0,newScrollPos);
+
+					// Save this as the last autoscrolled tune
+					gLastAutoScrolledTune = tuneIndex;
+
+				}
+			}
+		}
+
+	}
+}
+
+//
 // Text change handler
 //
 
@@ -4105,6 +4283,7 @@ function DoStartup() {
 	gAllowPDF = false;
 	gShowTabNames = true;
 	gAllowShowTabNames = false;
+	gLastAutoScrolledTune = -1;
 
 	// Startup in blank screen
 	
@@ -4166,7 +4345,7 @@ function DoStartup() {
 		elem = document.getElementById("notenlinks");
 		elem.style.paddingTop = "20px";
 
-		var elem = document.getElementById("abc");
+		var elem = gTheABC;
 		elem.cols = 74;
 		elem.style.fontSize = "13pt";
 		elem.style.lineHeight = "15pt";
@@ -4176,7 +4355,7 @@ function DoStartup() {
 	// iPad
 	if (gIsIPad){
 
-		var elem = document.getElementById("abc");
+		var elem = gTheABC;
 		elem.lines = 11;
 	}
 
@@ -4212,6 +4391,16 @@ function DoStartup() {
 		}, DEBOUNCEMS);
 
 	//
+	// Hook up the text area text change callback with debounce
+	//
+	document.getElementById('abc').onclick = 
+		debounce( () => {
+
+		    MakeTuneVisible();
+
+		}, AUTOSCROLLDEBOUNCEMS);
+
+	//
 	// Setup the file import control
 	//
 	document.getElementById("selectabcfile").onchange = () => {
@@ -4239,16 +4428,17 @@ function DoStartup() {
 
 			reader.addEventListener('load', (event) => {
 
-				theABC.value = event.target.result;
+				gTheABC.value = event.target.result;
 
 				// Refocus back on the ABC
-				theABC.focus();
+				gTheABC.focus();
 
-				theABC.selectionStart = 0;
-    			theABC.selectionEnd = 0;
+				// Set the selection to the start of the tune
+				gTheABC.selectionStart = 0;
+    			gTheABC.selectionEnd = 0;
 	    		
 	    		// Scroll to the top
-	    		theABC.scrollTo(0,0);
+	    		gTheABC.scrollTo(0,0);
 
 				setTimeout(function() {
 
@@ -4317,9 +4507,7 @@ function DoStartup() {
 
 	// Force recalculation of the notation top position on ABC text area resize
 
-	var theABCText = document.getElementById("abc");
-
-	new ResizeObserver(TextBoxResizeHandler).observe(theABCText);
+	new ResizeObserver(TextBoxResizeHandler).observe(gTheABC);
 
 	// 
 	// Initially hide the controls
