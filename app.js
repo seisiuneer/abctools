@@ -1343,47 +1343,33 @@ function GetABCJSParams(instrument){
 		}
 	}
 
-	var params = {
-		responsive: 'resize',
-		oneSvgPerLine: 'true',
-		selectTypes: false,
-		format: {
-			titlefont: "Times-Roman 18",
-			subtitlefont: "Verdana 12",
-			infofont: "Verdana 12",
-			partsfont: "Verdana 12",
-			tempofont: "Verdana 12",
-			textfont: "Verdana 12",
-			composerfont: "Verdana 12",
-			annotationfont: "Verdana 12",
-			partsfont: "Verdana 12",
-			gchordfont: "Verdana 12",
-			vocalfont: "Verdana 12",
-			wordsfont: "Verdana 12"
-		}
+	// Shared font format between all tab styles
+	var commonFontFormat = 
+	{
+		titlefont: "Times-Roman 18",
+		subtitlefont: "Verdana 12",
+		infofont: "Verdana 12",
+		partsfont: "Verdana 12",
+		tempofont: "Verdana 12",
+		textfont: "Verdana 12",
+		composerfont: "Verdana 12",
+		annotationfont: "Verdana 12",
+		partsfont: "Verdana 12",
+		gchordfont: "Verdana 12",
+		vocalfont: "Verdana 12",
+		wordsfont: "Verdana 12"
 	};
+
+	var params;
 
 	if (!instrument) {
 		params = {
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
 			selectTypes: false,
-			format: {
-				titlefont: "Times-Roman 18",
-				subtitlefont: "Verdana 12",
-				infofont: "Verdana 12",
-				partsfont: "Verdana 12",
-				tempofont: "Verdana 12",
-				textfont: "Verdana 12",
-				composerfont: "Verdana 12",
-				annotationfont: "Verdana 12",
-				partsfont: "Verdana 12",
-				gchordfont: "Verdana 12",
-				vocalfont: "Verdana 12",
-				wordsfont: "Verdana 12"
-			}
+			format: commonFontFormat
 		};
-		instrument = ""; // damit er unten keinen Error macht...
+		instrument = ""; 
 	} else if (instrument == "mandolin") {
 		params = {
 			tablature: [{
@@ -1396,20 +1382,7 @@ function GetABCJSParams(instrument){
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
 			selectTypes: false,
-			format: {
-				titlefont: "Times-Roman 18",
-				subtitlefont: "Verdana 12",
-				infofont: "Verdana 12",
-				partsfont: "Verdana 12",
-				tempofont: "Verdana 12",
-				textfont: "Verdana 12",
-				composerfont: "Verdana 12",
-				annotationfont: "Verdana 12",
-				partsfont: "Verdana 12",
-				gchordfont: "Verdana 12",
-				vocalfont: "Verdana 12",
-				wordsfont: "Verdana 12"
-			},
+			format: commonFontFormat
 		}
 	} else if (instrument == "gdad") {
 		params = {
@@ -1423,20 +1396,7 @@ function GetABCJSParams(instrument){
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
 			selectTypes: false,
-			format: {
-				titlefont: "Times-Roman 18",
-				subtitlefont: "Verdana 12",
-				infofont: "Verdana 12",
-				partsfont: "Verdana 12",
-				tempofont: "Verdana 12",
-				textfont: "Verdana 12",
-				composerfont: "Verdana 12",
-				annotationfont: "Verdana 12",
-				partsfont: "Verdana 12",
-				gchordfont: "Verdana 12",
-				vocalfont: "Verdana 12",
-				wordsfont: "Verdana 12"
-			},
+			format: commonFontFormat
 		}	
 	} else if (instrument == "mandola") {
 		params = {
@@ -1450,20 +1410,7 @@ function GetABCJSParams(instrument){
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
 			selectTypes: false,
-			format: {
-				titlefont: "Times-Roman 18",
-				subtitlefont: "Verdana 12",
-				infofont: "Verdana 12",
-				partsfont: "Verdana 12",
-				tempofont: "Verdana 12",
-				textfont: "Verdana 12",
-				composerfont: "Verdana 12",
-				annotationfont: "Verdana 12",
-				partsfont: "Verdana 12",
-				gchordfont: "Verdana 12",
-				vocalfont: "Verdana 12",
-				wordsfont: "Verdana 12"
-			},
+			format: commonFontFormat
 		}		
 	} else if (instrument == "guitare") {
 		params = {
@@ -1477,20 +1424,7 @@ function GetABCJSParams(instrument){
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
 			selectTypes: false,
-			format: {
-				titlefont: "Times-Roman 18",
-				subtitlefont: "Verdana 12",
-				infofont: "Verdana 12",
-				partsfont: "Verdana 12",
-				tempofont: "Verdana 12",
-				textfont: "Verdana 12",
-				composerfont: "Verdana 12",
-				annotationfont: "Verdana 12",
-				partsfont: "Verdana 12",
-				gchordfont: "Verdana 12",
-				vocalfont: "Verdana 12",
-				wordsfont: "Verdana 12"
-			}
+			format: commonFontFormat
 		}
 	} else if (instrument == "guitard") {
 		params = {
@@ -1504,20 +1438,7 @@ function GetABCJSParams(instrument){
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
 			selectTypes: false,
-			format: {
-				titlefont: "Times-Roman 18",
-				subtitlefont: "Verdana 12",
-				infofont: "Verdana 12",
-				partsfont: "Verdana 12",
-				tempofont: "Verdana 12",
-				textfont: "Verdana 12",
-				composerfont: "Verdana 12",
-				annotationfont: "Verdana 12",
-				partsfont: "Verdana 12",
-				gchordfont: "Verdana 12",
-				vocalfont: "Verdana 12",
-				wordsfont: "Verdana 12"
-			}
+			format: commonFontFormat
 		}
 	} else if (instrument == "notenames") {
 		params = {
@@ -1530,20 +1451,7 @@ function GetABCJSParams(instrument){
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
 			selectTypes: false,
-			format: {
-				titlefont: "Times-Roman 18",
-				subtitlefont: "Verdana 12",
-				infofont: "Verdana 12",
-				partsfont: "Verdana 12",
-				tempofont: "Verdana 12",
-				textfont: "Verdana 12",
-				composerfont: "Verdana 12",
-				annotationfont: "Verdana 12",
-				partsfont: "Verdana 12",
-				gchordfont: "Verdana 12",
-				vocalfont: "Verdana 12",
-				wordsfont: "Verdana 12"
-			}
+			format: commonFontFormat
 		}
 	} else if (instrument == "whistle") {
 		params = {
@@ -1556,20 +1464,7 @@ function GetABCJSParams(instrument){
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
 			selectTypes: false,
-			format: {
-				titlefont: "Times-Roman 18",
-				subtitlefont: "Verdana 12",
-				infofont: "Verdana 12",
-				partsfont: "Verdana 12",
-				tempofont: "Verdana 12",
-				textfont: "Verdana 12",
-				composerfont: "Verdana 12",
-				annotationfont: "Verdana 12",
-				partsfont: "Verdana 12",
-				gchordfont: "Verdana 12",
-				vocalfont: "Verdana 12",
-				wordsfont: "Verdana 12"
-			}
+			format: commonFontFormat
 		}
 	}
 
@@ -3529,12 +3424,18 @@ function findSelectedTune(theNotes){
 
     for (i=0;i<nTunes;++i){
 
-    	theOffset += theTunes[i].length;
+    	// Account for the X: stripped in the length
+    	theOffset += theTunes[i].length+2;
 
     	// Is the offset in the last chunk?
     	if (start < theOffset){
 
-    		return ("X:"+theTunes[i]);
+    		var finalTune = "X:"+theTunes[i];
+
+    		// Strip any trailing whitespace
+    		finalTune = finalTune.trimEnd();
+
+    		return (finalTune);
 
     	}
 
@@ -4322,8 +4223,27 @@ function DoStartup() {
 
 				// Refocus back on the ABC
 				theABC.focus();
-	    		theABC.selectionStart = 0;
-	    		theABC.selectionEnd = 0;
+
+				// Setup for a successful play by making sure the cursor is in a tune
+
+				var theFirstTuneX = theABC.value.indexOf("X:");
+
+				if (theFirstTuneX != -1){
+
+					// Put the cursor after the first X: tag
+	    			theABC.selectionStart = theFirstTuneX+2;
+	    			theABC.selectionEnd = theFirstTuneX+2;
+
+	    		}
+	    		else{
+
+	    			// Very odd case where there is no X: tag in the file
+	    			theABC.selectionStart = 0;
+	    			theABC.selectionEnd = 0;
+
+	    		}
+	    		
+	    		// Scroll to the top
 	    		theABC.scrollTo(0,0);
 
 				setTimeout(function() {
