@@ -3415,14 +3415,31 @@ function findSelectedTune(theNotes){
     // Obtain the index of the first selected character
     var start = txtarea.selectionStart;
 
+    if (start == 0) {
+
+	    // Common case where a set was just loaded and the cursor is at the start, go find the first position after an X:
+		start = theNotes.indexOf("X:")+2;
+
+	}
+
+	// Odd case where there isn't an X:, just return nothing to play
+	if (start == 0){
+
+		return "";
+
+	}
+
     // Now find all the X: items
     var theTunes = theNotes.split(/^X:/gm);
 
     var nTunes = theTunes.length;
 
+    // First chunk is whatever is before the first X:
     var theOffset = 0;
 
-    for (i=0;i<nTunes;++i){
+    theOffset = theTunes[0].length;
+
+    for (i=1;i<nTunes;++i){
 
     	// Account for the X: stripped in the length
     	theOffset += theTunes[i].length+2;
@@ -4224,24 +4241,8 @@ function DoStartup() {
 				// Refocus back on the ABC
 				theABC.focus();
 
-				// Setup for a successful play by making sure the cursor is in a tune
-
-				var theFirstTuneX = theABC.value.indexOf("X:");
-
-				if (theFirstTuneX != -1){
-
-					// Put the cursor after the first X: tag
-	    			theABC.selectionStart = theFirstTuneX+2;
-	    			theABC.selectionEnd = theFirstTuneX+2;
-
-	    		}
-	    		else{
-
-	    			// Very odd case where there is no X: tag in the file
-	    			theABC.selectionStart = 0;
-	    			theABC.selectionEnd = 0;
-
-	    		}
+				theABC.selectionStart = 0;
+    			theABC.selectionEnd = 0;
 	    		
 	    		// Scroll to the top
 	    		theABC.scrollTo(0,0);
