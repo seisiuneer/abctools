@@ -109,6 +109,9 @@ var gOKShowOperationsBanner = true;
 // For tune autoscroll state
 var gLastAutoScrolledTune = -1;
 
+// Top bar showing?
+var gTopBarShowing = true;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -2820,57 +2823,6 @@ function GenerateRenderingDivs(nTunes) {
 
 }
 
-//
-// Fade out and hide an element
-//
-function fadeOutAndHide(fadeTarget) {
-	var fadeEffect = setInterval(function() {
-		if (!fadeTarget.style.opacity) {
-			fadeTarget.style.opacity = 1;
-		}
-		if (fadeTarget.style.opacity > 0) {
-			fadeTarget.style.opacity -= 0.1;
-		} else {
-			clearInterval(fadeEffect);
-			fadeTarget.style.display = "none";
-		}
-	}, 100);
-}
-
-//
-// Are we on iOS?
-//
-function isIOS() {
-	if (/iPad|iPhone|iPod/.test(navigator.platform)) {
-		return true;
-	} else {
-		return navigator.maxTouchPoints &&
-			navigator.maxTouchPoints > 2 &&
-			/MacIntel/.test(navigator.platform);
-	}
-}
-
-//
-// Are we on an iPhone?
-//
-function isIPhone() {
-	if (/iPad|iPhone|iPod/.test(navigator.platform)) {
-		return true;
-	} 
-	else{
-		return false;
-	}
-}
-
-//
-// Are we on an iPad?
-//
-function isIPad() {
-	return navigator.maxTouchPoints &&
-			navigator.maxTouchPoints > 2 &&
-			/MacIntel/.test(navigator.platform);
-}
-
 
 //
 // Get all the tune titles
@@ -4271,6 +4223,127 @@ function FocusABC(){
 	gTheABC.scrollTo(0,0);
 }
 
+//
+// Fade out and hide an element
+//
+function fadeOutAndHide(fadeTarget,callback) {
+	var fadeEffect = setInterval(function() {
+		if (!fadeTarget.style.opacity) {
+			fadeTarget.style.opacity = 1;
+		}
+		if (fadeTarget.style.opacity > 0) {
+			fadeTarget.style.opacity -= 0.1;
+		} else {
+			clearInterval(fadeEffect);
+			fadeTarget.style.display = "none";
+			callback();
+		}
+	}, 100);
+}
+
+
+//
+// Toggle the top bar
+//
+//
+function ToggleTopBar(){
+
+	var elem = document.getElementById("topbar");
+
+	if (gTopBarShowing){
+
+		elem.style.display = "none";
+
+		gTopBarShowing = false;
+
+		// Move the title up a bit
+		var elem = document.getElementById("abc-selected");
+
+		if (gIsIPhone || gIsAndroid){
+			elem.style.marginTop = "18px";
+			elem.style.marginBottom = "38px";
+		}
+		else{
+			elem.style.marginTop = "4px";
+		}
+	}
+	else{
+
+		elem.style.display = "block";
+		elem.style.opacity = 1.0;
+
+		gTopBarShowing = true;
+
+		// Move the title down a bit
+		var elem = document.getElementById("abc-selected");
+		elem.style.marginTop = "15px";
+		elem.style.marginBottom = "1px";
+	}
+
+	// Resize the notation spacer
+	UpdateNotationTopPosition();
+
+}
+
+//
+// Are we on iOS?
+//
+function isIOS() {
+	if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+		return true;
+	} else {
+		return navigator.maxTouchPoints &&
+			navigator.maxTouchPoints > 2 &&
+			/MacIntel/.test(navigator.platform);
+	}
+}
+
+//
+// Are we on an iPhone?
+//
+function isIPhone() {
+	if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+		return true;
+	} 
+	else{
+		return false;
+	}
+}
+
+//
+// Are we on an iPad?
+//
+function isIPad() {
+	return navigator.maxTouchPoints &&
+		navigator.maxTouchPoints > 2 &&
+		/MacIntel/.test(navigator.platform);
+}
+
+//
+// Are we on Android?
+//
+function isAndroid(){
+	if (/Android/i.test(navigator.userAgent)) {
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
+//
+// Are we on Safari?
+//
+function isSafari(){
+
+	if (/Safari/i.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
 function DoStartup() {
 
 	// Init global state
@@ -4303,48 +4376,40 @@ function DoStartup() {
 	HideMaximizeButton();
 	DoMaximize();
 
-	// Warn Safari users
-	const uA = navigator.userAgent;
-	const vendor = navigator.vendor;
+	// Get platform info for later UI adaption
 
+	// Are we on Safari?
 	gIsSafari = false;
-
-	// 
-	// Removing Safari banner warning
-	//
-	if (/Safari/i.test(uA) && /Apple Computer/.test(vendor)) {
+	if (isSafari()){
 		gIsSafari = true;
 	}
 
+	// Are we on iOS?
 	gIsIOS = false;
 	if (isIOS()) {
 		gIsIOS = true;
 	}
 
+	// Are we on an iPad?
 	gIsIPad = false;
 	if (isIPad()) {
 		gIsIPad = true;
 	}
 
+	// Are we on an iPhone?
 	gIsIPhone = false;
 	if (isIPhone()) {
 		gIsIPhone = true;
 	}
 
+	// Are we on Android?
 	gIsAndroid = false;
 
-	// 
-	// Are we on Android?
-	//
-	if (/Android/i.test(navigator.userAgent)) {
-
+	if (isAndroid()){
 		gIsAndroid = true;
-
 	}
 	
-	// 
 	// iOS Styling adaptation
-	//
 	if (gIsIOS) {
 
 		document.getElementById("selectabcfile").removeAttribute("accept");
@@ -4365,13 +4430,6 @@ function DoStartup() {
 
 	}
 
-	// iPad
-	if (gIsIPad){
-
-		var elem = gTheABC;
-		elem.lines = 11;
-	}
-
 	// Android
 	if (gIsAndroid){
 
@@ -4384,6 +4442,12 @@ function DoStartup() {
 		elem = document.getElementById("notenlinks");
 		elem.style.paddingTop = "20px";
 
+		// Reduce the editor size a bit
+		var elem = gTheABC;
+		elem.cols = 74;
+		elem.style.fontSize = "13pt";
+		elem.style.lineHeight = "15pt";
+
 	}
 
 	// On iPhone and Android, move the zoom button over a bit
@@ -4392,6 +4456,15 @@ function DoStartup() {
 		document.getElementById("zoombutton").style.right = "36px";
 	}
 
+	// On iPad, resize the zoom button and edit area
+	if (gIsIPad){
+
+		document.getElementById("zoombutton").style.width = "36px";
+		document.getElementById("zoombutton").style.height = "36px";
+		document.getElementById("zoombutton").style.top = "8px";
+		document.getElementById("zoombutton").style.right = "6px";
+
+	}
 
 	//
 	// Hook up the text area text change callback with debounce
@@ -4523,6 +4596,7 @@ function DoStartup() {
 	// Initially hide the controls
 	//
 	HideAllControls();
+
 
 }
 
