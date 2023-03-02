@@ -4319,6 +4319,15 @@ function ToggleTopBar(){
 	// Resize the notation spacer
 	UpdateNotationTopPosition();
 
+	// Update the link if there is any ABC
+	if (gAllowCopy){
+
+		FillUrlBoxWithAbcInLZW();
+
+	}
+
+
+
 }
 
 //
