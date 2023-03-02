@@ -100,12 +100,15 @@
             <h1>Table of Contents</h1>
             <p class="toc"><a href="#introduction">Introduction</a></p>
             <p class="toc"><a href="#getting_started">Getting Started</a></p>
+            <p class="toc"><a href="#hiding_showing_the_top_title_and_links">Hiding/Showing the Top Page Title and Links</a></p>
+            <p class="toc"><a href="#getting_started">Getting Started</a></p>
             <p class="toc"><a href="#abc_editor">ABC Editor</a></p>
             <p class="toc"><a href="#viewing_the_notation_full_screen">Viewing the Notation Full Screen</a></p>
             <p class="toc"><a href="#notation_tablature_display_controls">Notation/Tablature Display Controls</a></p>
             <p class="toc"><a href="#basic_controls">Basic Controls</a></p>
             <p class="toc"><a href="#display_size_controls">Display Size Options</a></p>
             <p class="toc"><a href="#playing_your_tunes">Playing your Tunes</a></p>
+            <p class="toc"><a href="#selecting_the_instrument_for_playback">Selecting the Instrument for Playback</a></p>
             <p class="toc"><a href="#pdf_settings">PDF Settings</a></p>
             <p class="toc"><a href="#pdf_page_headers_and_footers">PDF Page Headers and Footers</a></p>
             <p class="toc"><a href="#advanced_controls">Advanced Controls</a></p>
@@ -135,6 +138,7 @@
             <p>The saved file will be in your browser's Downloads directory.</p>
             <p>Export PDF - Exports the currently displayed score as a high quality PDF file.</p>
             <p>Play - Copies one or more ABC tunes to the clipboard and then opens them in Paul Rosen's amazing <a href="https://editor.drawthedots.com/" target="_blank">abcjs Quick Editor</a> tool for playback.</p>
+            <p>You may select the instrument for the playback sound, see <a href="#selecting_the_instrument_for_playback">Selecting the Instrument for Playback</a> for more information.</p>
             <p>To play a specific tune, click once (don't select) anywhere in the ABC for the tune and then click "Play".</p>
             <p>The tool will automatically find the tune you've clicked on and send it to the abcjs Quick Editor for playback.</p>
             <p>If there is a text selection in the ABC area, whatever is selected will be sent.</p>
@@ -148,7 +152,13 @@
             <p>Copy All - Copies all the ABC text to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
             <p>Page number settings are found in the settings panel.</p>
             <p>Show Controls / Hide Controls - Shows/Hides all the control buttons below.</p>
-            <p>? - Hides/Shows the top page title and links so you can have more room to work on your music.</p>
+            <hr id="hiding_showing_the_top_title_and_links">
+            <h1>Hiding/Showing the Top Page Title and Links</h1>
+            <p>? - Click this to hide the header at the top so you can have more room to work on your music.</p>
+            <p>Click it again to show the header.</p>
+            <p>If you want to start the tool with the header hidden, you can visit (and bookmark):</p>
+            <p><a href="http://michaeleskin.com/abc?hide=1" target="_blank">http://michaeleskin.com/abc?hide=1</a></p>
+            <p>Any Share URLs or QR codes you create and share will include information on whether to show or hide the header when the link is opened.</p>            
             <hr id="abc_editor">
             <h1>ABC Editor</h1>
             <div class="image_holder">
@@ -206,6 +216,32 @@
             <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/40VPLxvCL9s" title="Playing your Tunes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p></p>
             <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/-JvOFaotgtY" title="Playing your Tunes (New and Improved)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <hr id="selecting_the_instrument_for_playback">
+            <h1>Selecting the Instrument for Playback</h1>
+            <p>You may select which instrument sound the abcjs Quick Editor uses for playback of your tunes.</p>
+            <p>By default, the instrument used is a piano.</p>
+            <p>To choose the sound when played, add an additional line to your ABC right after any headers and before the ABC notes, for example for a flute sound:</p>
+            <p></p>
+            <p><strong>%%MIDI program 74</strong></p>
+            <p></p>
+            <p>To change the instrument used for playback, change the MIDI program # above to one of:</p>
+            <p>74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano</p>
+            <p></p>
+            <p>For example:<br/>
+            <p>X: 1<br/>
+            T: The Kesh<br/>
+            R: Jig<br/>
+            M: 6/8<br/>
+            L: 1/8<br/>
+            K: Gmaj<br/>
+            <strong>%%MIDI program 74</strong><br/>
+            D|: GAG GAB | ABA ABd | edd gdd | edB dBA |<br/>
+            GAG GAB | ABA ABd | edd gdB |1 AGF G2D :|2 AGF G2A||<br/>
+            |: B2B dBd | ege dBA | BAB dBG | ABA AGA |<br/>
+            B2 B dBd | ege dBd | gfg aga |1 bgg g2A :|2 bgg g2D |]</p>
+            <p></p>
+            <p>Any General MIDI (level 1) instrument number can be selected.</p>
+            <p>Visit <a href="https://www.midi.org/specifications-old/item/gm-level-1-sound-set" target="_blank">General MIDI Sound List</a> for more information.<p>
             <hr id="pdf_settings">
             <h1>PDF Settings</h1>
             <p>PDF Tunes/Page - Select whether you want One Tune/Page or Multiple Tunes/Page in the PDF along with the paper size (Letter or A4):</p>
