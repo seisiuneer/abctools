@@ -104,7 +104,7 @@ border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
 margin-left:0px;
-margin-right:16px;
+margin-right:14px;
 background-color: #FFFFFF;
 color:black;
 -webkit-appearance:none;
@@ -117,7 +117,7 @@ border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
 margin-left:0px;
-margin-right:16px;
+margin-right:14px;
 background-color: #FFFFFF;
 color:black;
 -webkit-appearance:none;
@@ -259,7 +259,7 @@ border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
 margin-left:0px;
-margin-right:16px;
+margin-right:14px;
 background-color: #FFFFFF;
 color:black;
 -webkit-appearance:none !important;
@@ -478,7 +478,7 @@ border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
 margin-left:0px;
-margin-right:16px;
+margin-right:14px;
 background-color: #FFFFFF;
 color:black;
 -webkit-appearance:none;
@@ -492,7 +492,7 @@ border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
 margin-left:0px;
-margin-right:16px;
+margin-right:14px;
 background-color: #FFFFFF;
 color:black;
 -webkit-appearance:none;
@@ -506,7 +506,7 @@ border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
 margin-left:0px;
-margin-right:0px;
+margin-right:14px;
 background-color: #FFF4E6;
 color:black;
 -webkit-appearance:none;
@@ -520,7 +520,7 @@ border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
 margin-left:0px;
-margin-right:0px;
+margin-right:14px;
 background-color: #FFFFFF;
 color:black;
 -webkit-appearance:none;
@@ -539,7 +539,7 @@ font-size:11pt;
 border: 1px solid #333;
 border-radius: 0.3em;
 margin-left:0px;
-margin-right:16px;
+margin-right:14px;
 padding: 0.6em;
 background-color: #FFFFFF;
 color:black;
@@ -553,7 +553,7 @@ font-size:11pt;
 border: 1px solid #333;
 border-radius: 0.3em;
 margin-left:0px;
-margin-right:16px;
+margin-right:14px;
 padding: 0.6em;
 background-color: #FFFFFF;
 color:black;
@@ -573,7 +573,7 @@ font-size:11pt;
 border: 1px solid #333;
 border-radius: 0.3em;
 margin-left:0px;
-margin-right:16px;
+margin-right:14px;
 padding: 0.6em;
 background-color: #C8ECFE;
 color:black;
@@ -587,7 +587,7 @@ font-size:11pt;
 border: 1px solid #333;
 border-radius: 0.3em;
 margin-left:0px;
-margin-right:16px;
+margin-right:14px;
 padding: 0.6em;
 background-color: #FFFFFF;
 color:black;
@@ -608,7 +608,7 @@ border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
 margin-left:0px;
-margin-right:16px;
+margin-right:14px;
 background-color: #FFFFFF;
 color:black;
 -webkit-appearance:none;
@@ -617,6 +617,26 @@ opacity:1.0;
 
 @media (hover: hover) {
 	.newabcfile:hover{
+	background: palegreen;
+	}
+}
+
+.toggletopbar{
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+padding: 0.6em;
+margin-left:0px;
+margin-right:0px;
+background-color: #FFFFFF;
+color:black;
+-webkit-appearance:none;
+opacity:1.0;
+}
+
+@media (hover: hover) {
+	.toggletopbar:hover{
 	background: palegreen;
 	}
 }
