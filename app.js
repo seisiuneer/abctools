@@ -2781,15 +2781,9 @@ function NewABC(){
 
 	gTheABC.value = "X: 1\nT: New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%\n% Enter the ABC for your tune(s) below:\n%\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|\n\n% Try these custom PDF page annotations by removing the % and the space\n%\n% Add a PDF page header or footer:\n%\n% %pageheader My Tune Set:  $TUNENAMES\n% %pagefooter PDF named: $PDFNAME saved on: $DATEMDY at $TIME\n%\n% After the tunes, add a sharing QR code on a new page in the PDF:\n%\n% %qrcode\n%\n";
 
+
 	// Refocus back on the ABC
-	gTheABC.focus();
-
-	// Set the selection to the start of the tune
-	gTheABC.selectionStart = 0;
-	gTheABC.selectionEnd = 0;
-
-	// Scroll it to the top
-	gTheABC.scrollTo(0,0);
+	FocusABC();
 
 	// Reset the displayed name base
 	gDisplayedName = "No ABC file selected";
@@ -4057,6 +4051,9 @@ function processShareLink() {
 
 		gShowAllControls = false;
 
+		// Set the inital focus back to the ABC
+		FocusABC();
+
 		// Render the tune
 		Render();
 
@@ -4258,6 +4255,22 @@ function OnABCTextInput(){
 
 }
 
+//
+// Reset the focus back to the ABC and set an initial selection
+//
+function FocusABC(){
+
+	// Refocus back on the ABC
+	gTheABC.focus();
+
+	// Set the selection to the start of the tune
+	gTheABC.selectionStart = 0;
+	gTheABC.selectionEnd = 0;
+
+	// Scroll it to the top
+	gTheABC.scrollTo(0,0);
+}
+
 function DoStartup() {
 
 	// Init global state
@@ -4435,14 +4448,7 @@ function DoStartup() {
 				gTheABC.value = event.target.result;
 
 				// Refocus back on the ABC
-				gTheABC.focus();
-
-				// Set the selection to the start of the tune
-				gTheABC.selectionStart = 0;
-    			gTheABC.selectionEnd = 0;
-	    		
-	    		// Scroll to the top
-	    		gTheABC.scrollTo(0,0);
+				FocusABC();
 
 				setTimeout(function() {
 
