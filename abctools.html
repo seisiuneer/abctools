@@ -45,9 +45,11 @@
 				<img id="zoombutton" class="zoombutton" src="img/zoomout.png"/>
 			</div>
 			<div id="noscroller" class="noscroller">
-				<div id="notenlinks" class="hidden-print">				
-					<font size="5" face="Comic Sans MS" id="toolpagetitle">ABC Transcription Tools</font>
-					<p><a href="userguide.html" target="_blank">User Guide</a>&nbsp;-&nbsp;<a href="credits.html" target="_blank">Credits</a>&nbsp;-&nbsp;<a href="tunesources.html" target="_blank">Tune Sources</a>&nbsp;-&nbsp;<a href="http://abcnotation.com/wiki/abc:standard:v2.1" target="_blank">Spec</a>&nbsp;-&nbsp;<a href="support.html" target="_blank">Support</a>&nbsp;-&nbsp;<a href="http://michaeleskin.com" target="_blank">About Me</a></p>
+				<div id="notenlinks" class="hidden-print">	
+					<div id="topbar">			
+						<font size="5" face="Comic Sans MS" id="toolpagetitle">ABC Transcription Tools</font>
+						<p><a href="userguide.html" target="_blank">User Guide</a>&nbsp;-&nbsp;<a href="credits.html" target="_blank">Credits</a>&nbsp;-&nbsp;<a href="tunesources.html" target="_blank">Tune Sources</a>&nbsp;-&nbsp;<a href="http://abcnotation.com/wiki/abc:standard:v2.1" target="_blank">Spec</a>&nbsp;-&nbsp;<a href="support.html" target="_blank">Support</a>&nbsp;-&nbsp;<a href="http://michaeleskin.com" target="_blank">About Me</a></p>
+					</div>
 					<!-- name of abc file selected -->
 					<p id="abc-selected">No ABC file selected</p>
 					<div id="fileoperations">
@@ -60,6 +62,7 @@
 						<input class="copybuttondisabled" id="copybutton" onclick="CopyABC(event);" type="button" value="Copy All">
 						<input class="playbuttondisabled" id="playbutton" onclick="PlayABC();" type="button" value="Play">
 						<input class="toggleallcontrolsdisabled" id="toggleallcontrols" onclick="ToggleAllControls();" type="button" value="Hide Controls">
+						<input class="toggletopbar" id="toggletopbar" onclick="ToggleTopBar();" type="button" value="?">
 					</div>
 					<div id="pdf-controls">
 						<div id="statuspdfname"></div>
