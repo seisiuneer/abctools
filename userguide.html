@@ -121,6 +121,7 @@
             <p class="toc"><a href="#slow_performance_warning_banner">Slow Performance Warning Banner</a></p>
             <p class="toc"><a href="#iphone_ipad_chord_entry_issue_fix">iPhone/iPad Chord Entry Issue Fix</a></p>
             <p class="toc"><a href="#abc_specification">ABC Specification</a></p>
+            <p class="toc"><a href="#general_midi_instrument_list">General MIDI Instrument List</a></p>
             <p class="toc"><a href="#support">Support</a></p>
             <hr id="introduction">
             <h1>Introduction</h1>
@@ -158,7 +159,7 @@
             <p>Click it again to show the header.</p>
             <p>If you want to start the tool with the header hidden, you can visit (and bookmark):</p>
             <p><a href="http://michaeleskin.com/abc?hide=1" target="_blank">http://michaeleskin.com/abc?hide=1</a></p>
-            <p>Any Share URLs or QR codes you create and share will include information on whether to show or hide the header when the link is opened.</p>            
+            <p>Any Share URLs or QR codes you create and share will include information on whether to show or hide the header when the link is opened.</p>
             <hr id="abc_editor">
             <h1>ABC Editor</h1>
             <div class="image_holder">
@@ -218,6 +219,7 @@
             <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/-JvOFaotgtY" title="Playing your Tunes (New and Improved)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <hr id="selecting_the_instrument_for_playback">
             <h1>Selecting the Instrument for Playback</h1>
+            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/i6oKpGzS2lo" title="Playing your Tunes (New and Improved)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>You may select which instrument sound the abcjs Quick Editor uses for playback of your tunes.</p>
             <p>By default, the instrument used is a piano.</p>
             <p>To choose the sound when played, add an additional line to your ABC right after any headers and before the ABC notes, for example for a flute sound:</p>
@@ -228,258 +230,260 @@
             <p>74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano</p>
             <p></p>
             <p>For example:<br/>
-            <p>X: 1<br/>
-            T: The Kesh<br/>
-            R: Jig<br/>
-            M: 6/8<br/>
-            L: 1/8<br/>
-            K: Gmaj<br/>
-            <strong>%%MIDI program 74</strong><br/>
-            D|: GAG GAB | ABA ABd | edd gdd | edB dBA |<br/>
-            GAG GAB | ABA ABd | edd gdB |1 AGF G2D :|2 AGF G2A||<br/>
-            |: B2B dBd | ege dBA | BAB dBG | ABA AGA |<br/>
-            B2 B dBd | ege dBd | gfg aga |1 bgg g2A :|2 bgg g2D |]</p>
-            <p></p>
-            <p>Any General MIDI (level 1) instrument number can be selected.</p>
-            <p>Visit <a href="https://www.midi.org/specifications-old/item/gm-level-1-sound-set" target="_blank">General MIDI Sound List</a> for more information.<p>
-            <hr id="pdf_settings">
-            <h1>PDF Settings</h1>
-            <p>PDF Tunes/Page - Select whether you want One Tune/Page or Multiple Tunes/Page in the PDF along with the paper size (Letter or A4):</p>
-            <div class="image_holder">
-                <img src="img/ug7a.jpg"/>
-            </div>
-            <p>One - Ltr:&nbsp;&nbsp;Each tune is placed on a new page in the PDF.&nbsp;&nbsp;Paper size = Letter</p>
-            <p>Multi - Ltr:&nbsp;&nbsp;Tunes are added one after another down each page in the PDF.&nbsp;&nbsp;Paper size = Letter</p>
-            <p>One - A4:&nbsp;&nbsp;Each tune is placed on a new page in the PDF.&nbsp;&nbsp;Paper size = A4</p>
-            <p>Multi - A4:&nbsp;&nbsp;Tunes are added one after another down each page in the PDF.&nbsp;&nbsp;Paper size = A4</p>
-            <p>Default is:&nbsp;&nbsp;One - Ltr.</p>
-            <p></p>
-            <p>Note: Selecting multiple tunes per page may result in tunes staves crossing page boundaries.</p>
-            <p></p>
-            <p>To manually force a tune to a new page in the PDF, add:</p>
-            <p></p>
-            <p>%%newpage</p>
-            <p></p>
-            <p>on a new line immediately at the end of tunes after which you want to force a page break.</p>
-            <p></p>
-            <p>This will allow you to easily format a tune book where you want multiple tunes per page, but some tunes to not be split between pages.</p>
-            <p></p>
-            <p>PDF Page Number Position Options:</p>
-            <div class="image_holder">
-                <img src="img/ug7b.jpg"/>
-            </div>
-            <p>Choose between: None, Top Left, Top Center, Top Right, Bottom Left, Bottom Center, Bottom Right, Top L/R, Top R/L, Bottom L/R, and Bottom R/L.</p>
-            <p>The L/R and R/L setting alternate the location between the left/right or right/left for printing on both sides of the paper.</p>
-            <p>Default is: None.</p>
-            <p>Hiding the page number on the first page of the PDF:</p>
-            <p>Power User Tip:</p>
-            <p>If you hold down the Shift key while clicking the "Export PDF" button, the page number will be hidden on the first page of the PDF.</p>
-            <hr id="pdf_page_headers_and_footers">
-            <h1>PDF Page Headers and Footers</h1>
-            <p>You may add custom page headers and footers to your exported PDF files by including the following ABC comment-based annotations anywhere in your ABC:</p>
-            <p></p>
-            <p>%pageheader (your header text goes here...)</p>
-            <p>%pagefooter (your footer text goes here...)</p>
-            <p></p>
-            <p>There are also several useful user macros you can include in your page header or footer text that will be expanded in the PDF:</p>
-            <p></p>
-            <p>$PDFNAME - Matches the saved PDF filename</p>
-            <p>$PAGENUMBER - Current page number</p>
-            <p>$DATEMDY - Current date in M-D-Y format</p>
-            <p>$DATEYMD - Current date in Y-M-D format</p>
-            <p>$TIME - Current time in HH:MM format</p>
-            <p>$TUNECOUNT - Number of tunes in the ABC</p>
-            <p>$TUNENAMES - All of the tune names in the ABC separated by /</p>
-            <p>The tune names width is limited to about 70 characters before it will append "+ (remaining number of tunes) more" to the first few tune names.</p>
-            <p></p>
-            <p>Example ABC with page header and page footer annotations that include user macros:</p>
-            <p></p>
-            <p>%pageheader "The Tarbolton" from the Michael Coleman set - Saved on $DATEMDY at $TIME<br/>
-                %pagefooter $PDFNAME - Page $PAGENUMBER<br/>
-                X:1<br/>
-                T:The Tarbolton<br/>
-                M:4/4<br/>
-                K:Edor<br/>
-                Beed e2BA|GBAF GFEF|Dddc d2AG|FAGE FEDF|<br/>
-                Eeed efge|fedf e2BA|GABG FGAF|BGAF GEE2:|<br/>
-                |:gfef gebe|gebe gfec|d2fd Adfd|cdAG FDEF|<br/>
-            GABG FGAF|E2ef gfed|BcdB A2FA|BGAF GEE2:|</p>
-            <p></p>
-            <p>Results in a PDF that looks like this:</p>
-            <p></p>
-            <p></p>
-            <div class="image_holder">
-                <img src="img/ug11.jpg"/>
-            </div>
-            <p></p>
-            <p></p>
-            <p>Note: Only the first instance of the %pageheader or %pagefooter annotation is processed, any additional instances are ignored.</p>
-            <p></p>
-            <p>Page numbers can be added along with page headers and footers.</p>
-            <p>If you add a page header and you have selected top-centered page numbers, the page number will be hidden.</p>
-            <p>If you add a page footer and you have selected bottom-centered page numbers, the page number will be hidden.</p>
-            <p></p>
-            <p>Since these annotations are ABC comment-based, they will just appear to be normal comments in other ABC software.</p>
-            <hr id="advanced_controls">
-            <h1>Advanced Controls</h1>
-            <div class="image_holder">
-                <img src="img/ug8.jpg"/>
-            </div>
-            <p>Hide/Show Annotations - Hides/Shows most ABC annotations like Discography, History, Tempo, etc.</p>
-            <p>Hide/Show Text - Hides/Shows any %%center or %%text based text in the ABC.</p>
-            <p>Hide/Show Chords - Hides/Shows any chords entered in the ABC.</p>
-            <p>The ABC filtering buttons are enabled if Annotations, Text, or Chords are detected in the ABC.</p>
-            <p>Tab Name Settings: (only enabled if Mandolin, Bouzouki, Mandola, or Guitar tablature is being displayed).</p>
-            <p>Hide/Show Tab Names: Hides/Shows the instrument names and capo settings on the tablature.</p>
-            <p>When the tab instrument names are hidden, the spacing between the staves is somewhat reduced.</p>
-            <p>Hiding the tab names may, or may not, depending on the height of the staves, be useful for getting more staves on a single PDF page.</p>
-            <p>Capo Settings: (only enabled if Mandolin, Bouzouki, Mandola, or Guitar tablature is being displayed).</p>
-            <p>Capo - Allows you to set a capo setting from 0 to 12 frets for the Mandolin, Bouzouki, Mandola, or Guitar tablature.</p>
-            <p>Staff Display Settings:</p>
-            <p>Set Staff Spacing - Allows you to set a wider gap between the staffs.</p>
-            <hr>
-            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/I8KcG4swmUQ" title="Sharing Tunes with ABC Share URLs and QR Codes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <hr id="sharing_controls">
-            <h1>Sharing Controls</h1>
-            <div class="image_holder">
-                <img src="img/ug9.jpg"/>
-            </div>
-            <p>ABC Share URLs and QR Codes are a quick and easy way to share your ABC tunes with friends or to post tunes on social media sites.</p>
-            <p>Anyone with the ABC Share URL or QR Code can view, edit, save, and share their own copy of the tunes.</p>
-            <p>Share URLs and QR Codes also include the instrument selected, whether or not to show the top bar and links, display size, line spacing, PDF tunes/page setting, and page number position settings.</p>
-            <p>For Mandolin, Bouzouki, Mandola, and Guitar tablature, the link also includes the capo setting and whether or not to show the tablature name.</p>
-            <p>Share URL: Copying and pasting this link in a browser address bar will open the ABC Tools website and copy in the tune set ABC and tablature settings.</p>
-            <p>If the share URL link is too long to work in most browsers, the Share URL buttons will be disabled and you will see a message suggesting sharing fewer tunes.</p>
-            <p>Test Share URL - Opens the ABC Share URL in a new browser tab.</p>
-            <p>Copy Share URL - Copies the ABC Share URL to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
-            <p>Save Share URL - Saves the ABC Share URL to a text file.</p>
-            <p>The saved file will be in your browser's Downloads directory.</p>
-            <p>Generate QR Code - Once an ABC Share URL is generated, if it is short enough to fit in a QR code (less than 2600 characters), this button is activated.</p>
-            <p>The QR Code is a visual representation of an ABC Share URL that you can scan with the Camera app on your iOS or Android device.</p>
-            <p>Clicking the button will generate a QR code in .PNG format for the ABC Share URL and open it in a new browser tab.</p>
-            <p>In the newly opened tab, you can click the link below the image to save the QR code to your system.</p>
-            <hr id="abc_share_url_examples">
-            <h1>ABC Share URL Examples</h1>
-            <p>Clicking these ABC Share URL links, created with the tool, will launch the tool and load the listed tune set you can start working with immediately:</p>
-            <p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuMAsCmYDSSDOCoCVwCkBLAcygFlwA2AegA4oAZcCOqVcAcQFsBDAKygAfEBwCCHMGIBCg0VNFg5AE0FIlSsMXWqlUsLtGCoYidNnzFUlWo1aZ4gGKSAzCCPD5e3deIoDgz30pDnMFcUMoQO9VXyCVYgAzYjAeYh5BMAAjYmTiV0EAXTAoKFAwACZYeGQwBkIAGwAXQgA7ZKkeFqwkJFwCEnIqViZIVnZFJQB7ACchEABRUQVFw0COctWesDUZA0l5gBEjFbAVgLlJDYCtncEIILD88ofFcpV3ECQeHhTfQT31oYwFIbrp-kgEpokkYvj9Ukh-hZAdcULd7ntRG83M8Mc5CsUgA&w=50&format=noten" target="_blank">"The Kesh" and "The Lilting Banshee"</a></p>
-            <p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgjAUAKiUBYFMAEUCGAnARgewDYBdsA7CAWRAGEAfCAaRAFEATbdCAIQQSaQQCZ2AQSoBxIQDEkI8Q3FUAIkyYBjJEz6CRVcZoZIZ8uRAZceCAGYBzBFXPdzvAcJGD2I-S7lvBkkQwZ8IDRUIJZ2DtaYNpHIYQjKVOrmPIJMyVTKTJr68rI0Lm4ePlQBFkhxTFTsmexIgnw6VZ5S-oE0EKB80LCISAAyxGGsPBR4uPGEbOTUdCAiEAB+IgDMgkjVTJZUCOwL7Hy8lkzsouIu6zVUgspCLbn5Z2sbWzt7B+oWVJZ8qBHcJ2A6jc1n5ckEDtdbqC+FRgqErKhytwXrt9mo+J9vr8kccrsC7jDFpZlojrJttqj3hjzF9MNiyQCgVCGPI2hD8aCGLCIABSHlEBAAdwADqhrBAOiBlt14MgAMqoACWuFYAHIAM7rYgC-BkSg0ejyCD1HRqcwLcwwtJlY5vK4NNZpOyJITucTyeQnY0Os0WmG-G2U+2mp02Y7Zd2s7khVB8BaxpC-NJUAMOW37WyYOlIOnmVBUTB5hx2T4QQt+xPmy0p8JqIMmx3mZ2A8OSQQetl1nx1D0ndpAA&w=50&format=noten" target="_blank">Michael Coleman set ("The Tarbolton" - "The Longford Collector" - "The Sailor's Bonnet")</a></p>
-            <p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuCyBXAlgJwKYEMB22DkAzlAMLgByymANlWAGrVXpUCeUASuAFLIDmU8cADYA9AA4oAGXARxUANLgAQgFtk2KAB8QAEyUBBMAG8dAXwNLNO9ADNjN0+muaj6UzYBM6Y7cfObmHZYIjYi6JpQeoYWVrb2fuE2AEaYYDZOLm6e3kYOTkogEdoWxmboAMwuZiVGmO62mkopaRmu7l7x+RE1ZR6WJub6SmmVKXaYHkmaASFhnXqFWiAGAGLGAOKmAKIe6y76pisAIltgx1uaK-qGQ5ZKOjrzllADqxvbu-uHJ2cnl0Ngaw2TQQNKhdAiR65PwFTQeMFhSFgWy8TRFEC1ep2JLlESTERTTHpca4jyYESYabNdI6TLtHK+JzhKDEsBJDzAmzQuITAAU5QhoXJmjGYAmU1BoV4IQZeWshXhUplT00AF0wFAoEA&w=50&format=noten" target="_blank">"Muireann's" jig (by Niall Vallely) for Anglo Concertina</a></p>
-            <hr id="qr_code_example">
-            <h1>QR Code Example</h1>
-            <p>Michael Coleman set ("The Tarbolton" - "The Longford Collector" - "The Sailor's Bonnet"):</p>
-            <div class="image_holder">
-                <img src="img/ug10.png"/>
-                <p>Try scanning this code with the Camera app on your iOS or Android phone.</p>
-            </div>
-            <hr>
-            <p>I have several example QR codes for tune sets on my Flickr account at:</p>
-            <p><a href="https://flic.kr/s/aHBqjArRJZ" target="_blank">ABC Tune Set QR Codes on Flickr</a></p>
-            <hr id="adding_a_qr_code_to_the_pdf_export">
-            <h1>Adding a QR Code to the PDF Export</h1>
-            <p>To add a QR code for your tune set as a final page on your PDF, add the following comment-based annotation anywhere in the ABC:
+                <p>X: 1<br/>
+                    T: The Kesh<br/>
+                    R: Jig<br/>
+                    M: 6/8<br/>
+                    L: 1/8<br/>
+                    K: Gmaj<br/>
+                    <strong>%%MIDI program 74</strong><br/>
+                    D|: GAG GAB | ABA ABd | edd gdd | edB dBA |<br/>
+                    GAG GAB | ABA ABd | edd gdB |1 AGF G2D :|2 AGF G2A||<br/>
+                    |: B2B dBd | ege dBA | BAB dBG | ABA AGA |<br/>
+                B2 B dBd | ege dBd | gfg aga |1 bgg g2A :|2 bgg g2D |]</p>
                 <p></p>
-                <p>%qrcode
-                    <p></p>
-                    <p></p>
-                    <p>Here is an example of a tune set QR code included in the exported PDF:</p>
-                    <div class="image_holder">
-                        <img src="img/ug12.jpg"/>
-                    </div>
-                    <p></p>
-                    <p>Note: If a QR code has been requested, and the Share URL for the set of tunes is too long to generate a QR code (more than 2600 characters), you will see an informative message at the end of the PDF export suggesting sharing fewer tunes.</p>
-                    <p>If you are able to generate a QR code in the Sharing Controls, then the Share URL is short enough to embed a QR code in a PDF.</p>
-                    <hr id="reading_the_qr_codes">
-                    <h1>Reading the QR Codes</h1>
-                    <p>All devices should easily be able to read the simpler QR codes generated for sets of one to three tunes.</p>
-                    <p></p>
-                    <p>Most iOS devices are able to read even the most complex QR codes generated by this tool using the built-in Camera app.</p>
-                    <p></p>
-                    <p>Some Android devices may have trouble reading the most complex codes with their built-in Camera app.</p>
-                    <p></p>
-                    <p>I suggest trying the free Google Lens app, available on the Google Play Store:</p>
-                    <p></p>
-                    <p><a href="https://play.google.com/store/apps/details?id=com.google.ar.lens&hl=en_US&gl=US" target="_blank">Google Lens</a></p>
-                    <p></p>
-                    <hr id="shared_tunes_open_full_screen">
-                    <h1>Shared Tunes Open Full Screen</h1>
-                    <p>Shared tunes, when opened from a Share URL or QR code, are initially displayed with the ABC Editor and controls hidden so you can see the music full-screen.</p>
-                    <p>Click the Maximize/Minimize arrow to show the ABC Editor and controls.</p>
-                    <hr id="slow_performance_warning_banner">
-                    <h1>Slow Performance Warning Banner</h1>
-                    <p>If at any time, it takes more than 1.75 seconds to render all the tunes after a change, you will see a warning banner.</p>
-                    <p>The banner will suggest that you consider working with fewer tunes at one time.</p>
-                    <p>You can in many cases still export large tune sets to PDF, but editing the ABC may be sluggish to redraw.</p>
-                    <p>The number of tunes that the tool can handle at one time and still be responsive depends on your system and the complexity of the tunes.</p>
-                    <p>The current number of tunes found in the ABC Editor is shown in the top status bar next to the ABC file or Share URL name.</p>
-                    <hr id="iphone_ipad_chord_entry_issue_fix">
-                    <h1>iPhone/iPad Chord Entry Issue Fix</h1>
-                    <p>If you are trying to enter ABC chords, for example "D" or "Am", on an iPhone or iPad, iOS will, by default stick in "smart quotes" instead of standard double quotes.</p>
-                    <p>To fix this, go into your device's Settings and under the General/Keyboard tab, and turn off "Smart Punctuation".</p>
-                    <p>After you do this, you will be able to add standard double quotes.</p>
-                    <hr id="abc_specification">
-                    <h1>ABC Specification</h1>
-                    <p>The full specification for ABC notation can be found at <a href="http://abcnotation.com/wiki/abc:standard:v2.1" target="_blank">The ABC Music Standard 2.1 (Dec 2011)</a></p>
-                    <hr id="support">
-                    <h1>Support</h1>
-                    <p>Have an issue with a specific tune, want to report a bug, or suggest a new feature?</p>
-                    <p>Click here: <a href="support.html" target="_blank">ABC Transcription Tools Support</a> to go to the support page for the tool.</p>
-                    <hr>
+                <p>Any General MIDI (level 1) instrument number can be selected.</p>
+                <p>Visit <a href="https://www.midi.org/specifications-old/item/gm-level-1-sound-set" target="_blank">https://www.midi.org/specifications-old/item/gm-level-1-sound-set</a> for the full list of MIDI instruments and their program numbers.<p>
+                <hr id="pdf_settings">
+                <h1>PDF Settings</h1>
+                <p>PDF Tunes/Page - Select whether you want One Tune/Page or Multiple Tunes/Page in the PDF along with the paper size (Letter or A4):</p>
+                <div class="image_holder">
+                    <img src="img/ug7a.jpg"/>
                 </div>
+                <p>One - Ltr:&nbsp;&nbsp;Each tune is placed on a new page in the PDF.&nbsp;&nbsp;Paper size = Letter</p>
+                <p>Multi - Ltr:&nbsp;&nbsp;Tunes are added one after another down each page in the PDF.&nbsp;&nbsp;Paper size = Letter</p>
+                <p>One - A4:&nbsp;&nbsp;Each tune is placed on a new page in the PDF.&nbsp;&nbsp;Paper size = A4</p>
+                <p>Multi - A4:&nbsp;&nbsp;Tunes are added one after another down each page in the PDF.&nbsp;&nbsp;Paper size = A4</p>
+                <p>Default is:&nbsp;&nbsp;One - Ltr.</p>
+                <p></p>
+                <p>Note: Selecting multiple tunes per page may result in tunes staves crossing page boundaries.</p>
+                <p></p>
+                <p>To manually force a tune to a new page in the PDF, add:</p>
+                <p></p>
+                <p>%%newpage</p>
+                <p></p>
+                <p>on a new line immediately at the end of tunes after which you want to force a page break.</p>
+                <p></p>
+                <p>This will allow you to easily format a tune book where you want multiple tunes per page, but some tunes to not be split between pages.</p>
+                <p></p>
+                <p>PDF Page Number Position Options:</p>
+                <div class="image_holder">
+                    <img src="img/ug7b.jpg"/>
+                </div>
+                <p>Choose between: None, Top Left, Top Center, Top Right, Bottom Left, Bottom Center, Bottom Right, Top L/R, Top R/L, Bottom L/R, and Bottom R/L.</p>
+                <p>The L/R and R/L setting alternate the location between the left/right or right/left for printing on both sides of the paper.</p>
+                <p>Default is: None.</p>
+                <p>Hiding the page number on the first page of the PDF:</p>
+                <p>Power User Tip:</p>
+                <p>If you hold down the Shift key while clicking the "Export PDF" button, the page number will be hidden on the first page of the PDF.</p>
+                <hr id="pdf_page_headers_and_footers">
+                <h1>PDF Page Headers and Footers</h1>
+                <p>You may add custom page headers and footers to your exported PDF files by including the following ABC comment-based annotations anywhere in your ABC:</p>
+                <p></p>
+                <p>%pageheader (your header text goes here...)</p>
+                <p>%pagefooter (your footer text goes here...)</p>
+                <p></p>
+                <p>There are also several useful user macros you can include in your page header or footer text that will be expanded in the PDF:</p>
+                <p></p>
+                <p>$PDFNAME - Matches the saved PDF filename</p>
+                <p>$PAGENUMBER - Current page number</p>
+                <p>$DATEMDY - Current date in M-D-Y format</p>
+                <p>$DATEYMD - Current date in Y-M-D format</p>
+                <p>$TIME - Current time in HH:MM format</p>
+                <p>$TUNECOUNT - Number of tunes in the ABC</p>
+                <p>$TUNENAMES - All of the tune names in the ABC separated by /</p>
+                <p>The tune names width is limited to about 70 characters before it will append "+ (remaining number of tunes) more" to the first few tune names.</p>
+                <p></p>
+                <p>Example ABC with page header and page footer annotations that include user macros:</p>
+                <p></p>
+                <p>%pageheader "The Tarbolton" from the Michael Coleman set - Saved on $DATEMDY at $TIME<br/>
+                    %pagefooter $PDFNAME - Page $PAGENUMBER<br/>
+                    X:1<br/>
+                    T:The Tarbolton<br/>
+                    M:4/4<br/>
+                    K:Edor<br/>
+                    Beed e2BA|GBAF GFEF|Dddc d2AG|FAGE FEDF|<br/>
+                    Eeed efge|fedf e2BA|GABG FGAF|BGAF GEE2:|<br/>
+                    |:gfef gebe|gebe gfec|d2fd Adfd|cdAG FDEF|<br/>
+                GABG FGAF|E2ef gfed|BcdB A2FA|BGAF GEE2:|</p>
+                <p></p>
+                <p>Results in a PDF that looks like this:</p>
+                <p></p>
+                <p></p>
+                <div class="image_holder">
+                    <img src="img/ug11.jpg"/>
+                </div>
+                <p></p>
+                <p></p>
+                <p>Note: Only the first instance of the %pageheader or %pagefooter annotation is processed, any additional instances are ignored.</p>
+                <p></p>
+                <p>Page numbers can be added along with page headers and footers.</p>
+                <p>If you add a page header and you have selected top-centered page numbers, the page number will be hidden.</p>
+                <p>If you add a page footer and you have selected bottom-centered page numbers, the page number will be hidden.</p>
+                <p></p>
+                <p>Since these annotations are ABC comment-based, they will just appear to be normal comments in other ABC software.</p>
+                <hr id="advanced_controls">
+                <h1>Advanced Controls</h1>
+                <div class="image_holder">
+                    <img src="img/ug8.jpg"/>
+                </div>
+                <p>Hide/Show Annotations - Hides/Shows most ABC annotations like Discography, History, Tempo, etc.</p>
+                <p>Hide/Show Text - Hides/Shows any %%center or %%text based text in the ABC.</p>
+                <p>Hide/Show Chords - Hides/Shows any chords entered in the ABC.</p>
+                <p>The ABC filtering buttons are enabled if Annotations, Text, or Chords are detected in the ABC.</p>
+                <p>Tab Name Settings: (only enabled if Mandolin, Bouzouki, Mandola, or Guitar tablature is being displayed).</p>
+                <p>Hide/Show Tab Names: Hides/Shows the instrument names and capo settings on the tablature.</p>
+                <p>When the tab instrument names are hidden, the spacing between the staves is somewhat reduced.</p>
+                <p>Hiding the tab names may, or may not, depending on the height of the staves, be useful for getting more staves on a single PDF page.</p>
+                <p>Capo Settings: (only enabled if Mandolin, Bouzouki, Mandola, or Guitar tablature is being displayed).</p>
+                <p>Capo - Allows you to set a capo setting from 0 to 12 frets for the Mandolin, Bouzouki, Mandola, or Guitar tablature.</p>
+                <p>Staff Display Settings:</p>
+                <p>Set Staff Spacing - Allows you to set a wider gap between the staffs.</p>
+                <hr id="sharing_controls">
+                <h1>Sharing Controls</h1>
+                <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/I8KcG4swmUQ" title="Sharing Tunes with ABC Share URLs and QR Codes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+                <div class="image_holder">
+                    <img src="img/ug9.jpg"/>
+                </div>
+                <p>ABC Share URLs and QR Codes are a quick and easy way to share your ABC tunes with friends or to post tunes on social media sites.</p>
+                <p>Anyone with the ABC Share URL or QR Code can view, edit, save, and share their own copy of the tunes.</p>
+                <p>Share URLs and QR Codes also include the instrument selected, whether or not to show the top bar and links, display size, line spacing, PDF tunes/page setting, and page number position settings.</p>
+                <p>For Mandolin, Bouzouki, Mandola, and Guitar tablature, the link also includes the capo setting and whether or not to show the tablature name.</p>
+                <p>Share URL: Copying and pasting this link in a browser address bar will open the ABC Tools website and copy in the tune set ABC and tablature settings.</p>
+                <p>If the share URL link is too long to work in most browsers, the Share URL buttons will be disabled and you will see a message suggesting sharing fewer tunes.</p>
+                <p>Test Share URL - Opens the ABC Share URL in a new browser tab.</p>
+                <p>Copy Share URL - Copies the ABC Share URL to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
+                <p>Save Share URL - Saves the ABC Share URL to a text file.</p>
+                <p>The saved file will be in your browser's Downloads directory.</p>
+                <p>Generate QR Code - Once an ABC Share URL is generated, if it is short enough to fit in a QR code (less than 2600 characters), this button is activated.</p>
+                <p>The QR Code is a visual representation of an ABC Share URL that you can scan with the Camera app on your iOS or Android device.</p>
+                <p>Clicking the button will generate a QR code in .PNG format for the ABC Share URL and open it in a new browser tab.</p>
+                <p>In the newly opened tab, you can click the link below the image to save the QR code to your system.</p>
+                <hr id="abc_share_url_examples">
+                <h1>ABC Share URL Examples</h1>
+                <p>Clicking these ABC Share URL links, created with the tool, will launch the tool and load the listed tune set you can start working with immediately:</p>
+                <p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuMAsCmYDSSDOCoCVwCkBLAcygFlwA2AegA4oAZcCOqVcAcQFsBDAKygAfEBwCCHMGIBCg0VNFg5AE0FIlSsMXWqlUsLtGCoYidNnzFUlWo1aZ4gGKSAzCCPD5e3deIoDgz30pDnMFcUMoQO9VXyCVYgAzYjAeYh5BMAAjYmTiV0EAXTAoKFAwACZYeGQwBkIAGwAXQgA7ZKkeFqwkJFwCEnIqViZIVnZFJQB7ACchEABRUQVFw0COctWesDUZA0l5gBEjFbAVgLlJDYCtncEIILD88ofFcpV3ECQeHhTfQT31oYwFIbrp-kgEpokkYvj9Ukh-hZAdcULd7ntRG83M8Mc5CsUgA&w=50&format=noten" target="_blank">"The Kesh" and "The Lilting Banshee"</a></p>
+                <p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgjAUAKiUBYFMAEUCGAnARgewDYBdsA7CAWRAGEAfCAaRAFEATbdCAIQQSaQQCZ2AQSoBxIQDEkI8Q3FUAIkyYBjJEz6CRVcZoZIZ8uRAZceCAGYBzBFXPdzvAcJGD2I-S7lvBkkQwZ8IDRUIJZ2DtaYNpHIYQjKVOrmPIJMyVTKTJr68rI0Lm4ePlQBFkhxTFTsmexIgnw6VZ5S-oE0EKB80LCISAAyxGGsPBR4uPGEbOTUdCAiEAB+IgDMgkjVTJZUCOwL7Hy8lkzsouIu6zVUgspCLbn5Z2sbWzt7B+oWVJZ8qBHcJ2A6jc1n5ckEDtdbqC+FRgqErKhytwXrt9mo+J9vr8kccrsC7jDFpZlojrJttqj3hjzF9MNiyQCgVCGPI2hD8aCGLCIABSHlEBAAdwADqhrBAOiBlt14MgAMqoACWuFYAHIAM7rYgC-BkSg0ejyCD1HRqcwLcwwtJlY5vK4NNZpOyJITucTyeQnY0Os0WmG-G2U+2mp02Y7Zd2s7khVB8BaxpC-NJUAMOW37WyYOlIOnmVBUTB5hx2T4QQt+xPmy0p8JqIMmx3mZ2A8OSQQetl1nx1D0ndpAA&w=50&format=noten" target="_blank">Michael Coleman set ("The Tarbolton" - "The Longford Collector" - "The Sailor's Bonnet")</a></p>
+                <p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuCyBXAlgJwKYEMB22DkAzlAMLgByymANlWAGrVXpUCeUASuAFLIDmU8cADYA9AA4oAGXARxUANLgAQgFtk2KAB8QAEyUBBMAG8dAXwNLNO9ADNjN0+muaj6UzYBM6Y7cfObmHZYIjYi6JpQeoYWVrb2fuE2AEaYYDZOLm6e3kYOTkogEdoWxmboAMwuZiVGmO62mkopaRmu7l7x+RE1ZR6WJub6SmmVKXaYHkmaASFhnXqFWiAGAGLGAOKmAKIe6y76pisAIltgx1uaK-qGQ5ZKOjrzllADqxvbu-uHJ2cnl0Ngaw2TQQNKhdAiR65PwFTQeMFhSFgWy8TRFEC1ep2JLlESTERTTHpca4jyYESYabNdI6TLtHK+JzhKDEsBJDzAmzQuITAAU5QhoXJmjGYAmU1BoV4IQZeWshXhUplT00AF0wFAoEA&w=50&format=noten" target="_blank">"Muireann's" jig (by Niall Vallely) for Anglo Concertina</a></p>
+                <hr id="qr_code_example">
+                <h1>QR Code Example</h1>
+                <p>Michael Coleman set ("The Tarbolton" - "The Longford Collector" - "The Sailor's Bonnet"):</p>
+                <div class="image_holder">
+                    <img src="img/ug10.png"/>
+                    <p>Try scanning this code with the Camera app on your iOS or Android phone.</p>
+                </div>
+                <hr>
+                <p>I have several example QR codes for tune sets on my Flickr account at:</p>
+                <p><a href="https://flic.kr/s/aHBqjArRJZ" target="_blank">ABC Tune Set QR Codes on Flickr</a></p>
+                <hr id="adding_a_qr_code_to_the_pdf_export">
+                <h1>Adding a QR Code to the PDF Export</h1>
+                <p>To add a QR code for your tune set as a final page on your PDF, add the following comment-based annotation anywhere in the ABC:</p>
+                <p></p>
+                <p>%qrcode</p>
+                <p></p>
+                <p></p>
+                <p>Here is an example of a tune set QR code included in the exported PDF:</p>
+                <div class="image_holder">
+                    <img src="img/ug12.jpg"/>
+                </div>
+                <p></p>
+                <p>Note: If a QR code has been requested, and the Share URL for the set of tunes is too long to generate a QR code (more than 2600 characters), you will see an informative message at the end of the PDF export suggesting sharing fewer tunes.</p>
+                <p>If you are able to generate a QR code in the Sharing Controls, then the Share URL is short enough to embed a QR code in a PDF.</p>
+                <hr id="reading_the_qr_codes">
+                <h1>Reading the QR Codes</h1>
+                <p>All devices should easily be able to read the simpler QR codes generated for sets of one to three tunes.</p>
+                <p></p>
+                <p>Most iOS devices are able to read even the most complex QR codes generated by this tool using the built-in Camera app.</p>
+                <p></p>
+                <p>Some Android devices may have trouble reading the most complex codes with their built-in Camera app.</p>
+                <p></p>
+                <p>I suggest trying the free Google Lens app, available on the Google Play Store:</p>
+                <p></p>
+                <p><a href="https://play.google.com/store/apps/details?id=com.google.ar.lens&hl=en_US&gl=US" target="_blank">Google Lens</a></p>
+                <p></p>
+                <hr id="shared_tunes_open_full_screen">
+                <h1>Shared Tunes Open Full Screen</h1>
+                <p>Shared tunes, when opened from a Share URL or QR code, are initially displayed with the ABC Editor and controls hidden so you can see the music full-screen.</p>
+                <p>Click the Maximize/Minimize arrow to show the ABC Editor and controls.</p>
+                <hr id="slow_performance_warning_banner">
+                <h1>Slow Performance Warning Banner</h1>
+                <p>If at any time, it takes more than 1.75 seconds to render all the tunes after a change, you will see a warning banner.</p>
+                <p>The banner will suggest that you consider working with fewer tunes at one time.</p>
+                <p>You can in many cases still export large tune sets to PDF, but editing the ABC may be sluggish to redraw.</p>
+                <p>The number of tunes that the tool can handle at one time and still be responsive depends on your system and the complexity of the tunes.</p>
+                <p>The current number of tunes found in the ABC Editor is shown in the top status bar next to the ABC file or Share URL name.</p>
+                <hr id="iphone_ipad_chord_entry_issue_fix">
+                <h1>iPhone/iPad Chord Entry Issue Fix</h1>
+                <p>If you are trying to enter ABC chords, for example "D" or "Am", on an iPhone or iPad, iOS will, by default stick in "smart quotes" instead of standard double quotes.</p>
+                <p>To fix this, go into your device's Settings and under the General/Keyboard tab, and turn off "Smart Punctuation".</p>
+                <p>After you do this, you will be able to add standard double quotes.</p>
+                <hr id="abc_specification">
+                <h1>ABC Specification</h1>
+                <p>The full specification for ABC notation can be found at <a href="http://abcnotation.com/wiki/abc:standard:v2.1" target="_blank">The ABC Music Standard 2.1 (Dec 2011)</a></p>
+                <hr id="general_midi_instrument_list">
+                <h1>General MIDI Instrument List</h1>
+                <p>Visit <a href="https://www.midi.org/specifications-old/item/gm-level-1-sound-set" target="_blank">https://www.midi.org/specifications-old/item/gm-level-1-sound-set</a> for the full list of MIDI instruments and their program numbers to use for choosing instruments in the abcjs Quick Editor for playback.<p>
+                <hr id="support">
+                <h1>Support</h1>
+                <p>Have an issue with a specific tune, want to report a bug, or suggest a new feature?</p>
+                <p>Click here: <a href="support.html" target="_blank">ABC Transcription Tools Support</a> to go to the support page for the tool.</p>
+                <hr>
             </div>
-            
-        </body>
-        <script>
+        </div>
         
-        //
-        // Are we on iOS?
-        //
-        function isIOS() {
-        
-        if (/iPad|iPhone|iPod/.test(navigator.platform)) {
-        return true;
-        } else {
-        return navigator.maxTouchPoints &&
-        navigator.maxTouchPoints > 2 &&
-        /MacIntel/.test(navigator.platform);
-        }
-        }
-        
-        function DoStartup() {
-        
-        //
-        // iOS Styling adaptation
-        //
-        
-        var gIsIOS = isIOS();
-        
-        if (gIsIOS) {
-        // Fix the title font
-        var elem = document.getElementById("pagetitle");
-        elem.size = 5;
-        elem.style.fontFamily = "Helvetica";
-        }
-        
-        }
-        
-        //
-        // Wait for the document to be ready, then fire a function
-        //
-        
-        function WaitForReady(fn) {
-        if (document.readyState !== 'loading') {
-        fn();
-        return;
-        }
-        
-        document.addEventListener('DOMContentLoaded', fn);
-        
-        }
-        
-        //
-        // Wait for the document to be ready, then startup
-        //
-        
-        WaitForReady(DoStartup);
-        
-        </script>
-    </html>
+    </body>
+    <script>
+    
+    //
+    // Are we on iOS?
+    //
+    function isIOS() {
+    
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+    return true;
+    } else {
+    return navigator.maxTouchPoints &&
+    navigator.maxTouchPoints > 2 &&
+    /MacIntel/.test(navigator.platform);
+    }
+    }
+    
+    function DoStartup() {
+    
+    //
+    // iOS Styling adaptation
+    //
+    
+    var gIsIOS = isIOS();
+    
+    if (gIsIOS) {
+    // Fix the title font
+    var elem = document.getElementById("pagetitle");
+    elem.size = 5;
+    elem.style.fontFamily = "Helvetica";
+    }
+    
+    }
+    
+    //
+    // Wait for the document to be ready, then fire a function
+    //
+    
+    function WaitForReady(fn) {
+    if (document.readyState !== 'loading') {
+    fn();
+    return;
+    }
+    
+    document.addEventListener('DOMContentLoaded', fn);
+    
+    }
+    
+    //
+    // Wait for the document to be ready, then startup
+    //
+    
+    WaitForReady(DoStartup);
+    
+    </script>
+</html>
