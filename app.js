@@ -4392,13 +4392,17 @@ function DoStartup() {
 
 	//
 	// Hook up the text area text change callback with debounce
+	// Doesn't work well on iOS or Android, so disabling it there 
 	//
-	document.getElementById('abc').onclick = 
-		debounce( () => {
+	if (!(gIsIOS || gIsAndroid)){
 
-		    MakeTuneVisible();
+		document.getElementById('abc').onclick = 
+			debounce( () => {
 
-		}, AUTOSCROLLDEBOUNCEMS);
+			    MakeTuneVisible();
+
+			}, AUTOSCROLLDEBOUNCEMS);
+	}
 
 	//
 	// Setup the file import control
