@@ -2920,6 +2920,11 @@ function FillUrlBoxWithAbcInLZW() {
 
 	var url = getUrlWithoutParams() + "?lzw=" + abcInLZW + "&w=" + theWidth + "&format=" + format + "&ssp=" + ssp + "&pdf=" + pdfformat + "&pn=" + pagenumbers;
 
+	// Pass along the top bar status
+	if (!gTopBarShowing){
+		url+="&hide=1";
+	}
+
 	// Add a capo parameter for mandolin and guitar
 	var postfix = "";
 
@@ -3969,6 +3974,19 @@ function processShareLink() {
 		SetRadioValue("renderwidth", "100%");
 	}
 
+	// Hide the top bar?
+	if (urlParams.has("hide")) {
+		var theHide = urlParams.get("hide");
+		if (theHide == "1"){
+			HideTopBar();
+		}
+	}
+	else{
+		// Default is one tune per page
+		document.getElementById("pdfformat").value = "one";
+	}
+
+
 	if (doRender) {
 
 		// Set the title
@@ -4246,38 +4264,56 @@ function fadeOutAndHide(fadeTarget,callback) {
 // Toggle the top bar
 //
 //
-function ToggleTopBar(){
+
+function ShowTopBar(){
 
 	var elem = document.getElementById("topbar");
 
+	elem.style.display = "block";
+	elem.style.opacity = 1.0;
+
+	gTopBarShowing = true;
+
+	// Move the title down a bit
+	var elem = document.getElementById("abc-selected");
+	elem.style.marginTop = "15px";
+	elem.style.marginBottom = "1px";
+
+}
+
+function HideTopBar(){
+
+	var elem = document.getElementById("topbar");
+
+	elem.style.display = "none";
+
+	gTopBarShowing = false;
+
+	// Move the title up a bit
+	var elem = document.getElementById("abc-selected");
+
+	if (gIsIPhone || gIsAndroid){
+		elem.style.marginTop = "18px";
+		elem.style.marginBottom = "38px";
+	}
+	else{
+		elem.style.marginTop = "4px";
+	}
+
+}
+
+function ToggleTopBar(){
+
+
 	if (gTopBarShowing){
 
-		elem.style.display = "none";
+		HideTopBar();
 
-		gTopBarShowing = false;
-
-		// Move the title up a bit
-		var elem = document.getElementById("abc-selected");
-
-		if (gIsIPhone || gIsAndroid){
-			elem.style.marginTop = "18px";
-			elem.style.marginBottom = "38px";
-		}
-		else{
-			elem.style.marginTop = "4px";
-		}
 	}
 	else{
 
-		elem.style.display = "block";
-		elem.style.opacity = 1.0;
+		ShowTopBar();
 
-		gTopBarShowing = true;
-
-		// Move the title down a bit
-		var elem = document.getElementById("abc-selected");
-		elem.style.marginTop = "15px";
-		elem.style.marginBottom = "1px";
 	}
 
 	// Resize the notation spacer
@@ -4370,6 +4406,7 @@ function DoStartup() {
 	gShowTabNames = true;
 	gAllowShowTabNames = false;
 	gLastAutoScrolledTune = -1;
+	gTopBarShowing = true;
 
 	// Startup in blank screen
 	
