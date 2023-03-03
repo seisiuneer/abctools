@@ -4319,11 +4319,12 @@ function HandleWindowResize(){
 
 			var windowWidth = window.innerWidth;
 
-			if (windowWidth < 1698){
+			// Offset required to avoid left side stack
+			if (windowWidth < 1798){
 
 				// One column display
 
-				var marginLeft = (windowWidth - 846)/2;
+				var marginLeft = (windowWidth - 850)/2;
 
 				var elem = document.getElementById("app-container");
 				
@@ -4339,7 +4340,7 @@ function HandleWindowResize(){
 
 				var elem = document.getElementById("app-container");
 
-				var marginLeft = (windowWidth - 1698)/2;
+				var marginLeft = (windowWidth - 1700)/2;
 				
 				elem.style.marginLeft = marginLeft+"px";
 
