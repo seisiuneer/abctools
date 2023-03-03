@@ -22,7 +22,7 @@
 		<meta name="theme-color" content="#ffffff">
 		<meta name="apple-mobile-web-app-title" content="ABC Tools">
 		<meta name="application-name" content="ABC Tools">
-		<meta name="viewport" content="width=860">
+		<meta name="viewport" content="width=860" />
   		<link rel="apple-touch-icon" sizes="60x60" href="http://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
 		<link rel="apple-touch-icon" sizes="72x72" href="http://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
 		<link rel="apple-touch-icon" sizes="76x76" href="http://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
@@ -36,8 +36,8 @@
 		<link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 		<link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-		<link href="app.css?v=205" media="all" rel="stylesheet" type="text/css">
-
+		<link href="app.css?v=209" media="all" rel="stylesheet" type="text/css">
+		
 	</head>
 	<body>
 		<div id="app-container">
@@ -70,7 +70,7 @@
 						<div id="pagestatustext"></div>
 					</div>
 					<div id="inputarea">
-						<textarea id="abc" rows="12" cols="80" placeholder="Enter the ABC for your tunes here" spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
+						<textarea id="abc" rows="12" cols="70" placeholder="Enter the ABC for your tunes here" spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
 					</div>
 				</div>
 				<div id="notenrechts" class="hidden-print">
@@ -116,22 +116,13 @@
 						<input type="radio" id="b8" value="whistle" name="notenodertab" class="hidebutton" onclick="Render()">
 						<label for="b8">Whistle</label>
 					</div>
-					<div id="render-width" class="toggle-buttons">
-						<tspan id="displayformatlabel">Display:</tspan>
-						<input type="radio" id="wb0" value="40%" name="renderwidth" class="hidebutton" onclick="PositionNotation()">
-						<label for="wb0">Mini</label>
-						<input type="radio" id="wb1" value="50%" name="renderwidth" class="hidebutton" checked="checked" onclick="PositionNotation()">
-						<label for="wb1">Small</label>
-						<input type="radio" id="wb2" value="75%" name="renderwidth" class="hidebutton" onclick="PositionNotation()">
-						<label for="wb2">Medium</label>
-						<input type="radio" id="wb3" value="100%" name="renderwidth" class="hidebutton" onclick="PositionNotation()">
-						<label for="wb3">Large</label>
+					<div id="pdf-settings" class="toggle-buttons">
 						<tspan id="pdfformatlabel">PDF Tunes/Page:</tspan>
 						<select id="pdfformat" name="pdfformat" onchange="RecalcShareURLPDF()">
-							<option value = "one">&nbsp;One&nbsp;-&nbsp;Ltr</option>
-							<option value = "multi">&nbsp;Multi&nbsp;-&nbsp;Ltr</option>
+							<option value = "one">&nbsp;One&nbsp;-&nbsp;Letter</option>
+							<option value = "multi">&nbsp;Multiple&nbsp;-&nbsp;Letter</option>
 							<option value = "one_a4">&nbsp;One&nbsp;-&nbsp;A4</option>
-							<option value = "multi_a4">&nbsp;Multi&nbsp;-&nbsp;A4</option>
+							<option value = "multi_a4">&nbsp;Multiple&nbsp;-&nbsp;A4</option>
 						</select>
 						<tspan id="pagenumberslabel">Page #:</tspan>
 						<select id="pagenumbers" name="pagenumbers" onchange="RecalcShareURLPDF()">
@@ -139,13 +130,13 @@
 							<option value = "tl">&nbsp;Top Left</option>
 							<option value = "tc">&nbsp;Top Center</option>
 							<option value = "tr">&nbsp;Top Right</option>
-							<option value = "bl">&nbsp;Bot Left</option>
-							<option value = "bc">&nbsp;Bot Center</option>
-							<option value = "br">&nbsp;Bot Right</option>
-							<option value = "tlr">&nbsp;Top L/R</option>
-							<option value = "trl">&nbsp;Top R/L</option>
-							<option value = "blr">&nbsp;Bot L/R</option>
-							<option value = "brl">&nbsp;Bot R/L</option>
+							<option value = "bl">&nbsp;Bottom Left</option>
+							<option value = "bc">&nbsp;Bottom Center</option>
+							<option value = "br">&nbsp;Bottom Right</option>
+							<option value = "tlr">&nbsp;Top Left/Right</option>
+							<option value = "trl">&nbsp;Top Right/Left</option>
+							<option value = "blr">&nbsp;Bottom Left/Right</option>
+							<option value = "brl">&nbsp;Bottom Right/Left</option>
 						</select>
 					</div>
 					<div id="urlarea">
@@ -159,21 +150,21 @@
 				</div>
 			</div>
 
-			<div id="notation-spacer" class="hidden-print"></div>
-			<p id="notation-placeholder" class="hidden-print">Notation will appear here when you enter ABC above.<br><br>Click "New ABC" to create a new ABC tune template.<br><br>Click "Open ABC" to open an existing ABC file.</p>
-			<div id="notation-holder" class="notation-holder">
+			<div id="notation-spacer" class="hidden-print relativebox"></div>
+			<p id="notation-placeholder" class="hidden-print relativebox">Notation will appear here when you enter some ABC.<br><br>Click "New ABC" to create a new ABC tune template.<br><br>Click "Open ABC" to open an existing ABC file.</p>
+			<div id="notation-holder" class="notation-holder relativebox">
 			</div>
 
 		</div>
 		<div id="offscreenrender" class="hidden-print">
 		</div>
-		<div id="qrcode">
+		<div id="qrcode" class="hidden-print">
 		</div>
 	</body>
-	<script type="text/javascript" src="abcjs-basic-tabs-min.js?v=205"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
+	<script type="text/javascript" src="abcjs-basic-tabs-min.js?v=209"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
 	<script type="text/javascript" src="jspdf.min.js"></script><!-- to generate PDF using Javscript -->
 	<script type="text/javascript" src="html2image.js"></script><!-- to convert HTML elements to bitmaps -->
-	<script type="text/javascript" src="qrcode.js?v=205"></script><!-- to generate QR codes for the share links -->
+	<script type="text/javascript" src="qrcode.js?v=209"></script><!-- to generate QR codes for the share links -->
 	<script type="text/javascript" src="lz-string.min.js"></script><!-- to generate QR codes for the share links -->
-	<script type="text/javascript" src="app.js?v=205"></script><!-- main application business logic -->
+	<script type="text/javascript" src="app.js?v=209"></script><!-- main application business logic -->
 </html>
