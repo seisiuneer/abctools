@@ -372,7 +372,7 @@ color:black;
 font-size:11pt;
 font-family:"Helvetica";
 padding-top: 8px;
-margin-left:60px;
+margin-left:0px;
 margin-right:4px;
 }
 
@@ -388,7 +388,7 @@ margin-left:4px;
 font-size:11pt;
 font-family:"Helvetica";
 padding-top:8px;
-margin-left:18px;
+margin-left:14px;
 margin-right:8px;
 }
 
@@ -397,6 +397,22 @@ font-size:11pt;
 font-family:"Helvetica";
 height:32px;
 width:160px;
+margin-left:4px;
+}
+
+#firstpagelabel{
+font-size:11pt;
+font-family:"Helvetica";
+padding-top:8px;
+margin-left:14px;
+margin-right:8px;
+}
+
+#firstpage{
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:64px;
 margin-left:4px;
 }
 
