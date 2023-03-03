@@ -1483,44 +1483,6 @@ function GetABCJSParams(instrument){
 }
 
 //
-// Center the notation div based on the selected size
-//
-function PositionNotation(){
-
-	var radiovalue = GetRadioValue("renderwidth");
-
-	document.getElementById("notation-holder").style.width = radiovalue;
-
-	var leftOffset = 0;
-
-	// Set the left offset
-	switch (radiovalue){
-		case "40%":
-		leftOffset = "30%";
-		break;
-		case "50%":
-		leftOffset = "25%";
-		break;
-		case "75%":
-		leftOffset = "12.5%";
-		break;
-		case "100%":
-		leftOffset = "0";
-		break;
-	}
-
-	document.getElementById("notation-holder").style.marginLeft = leftOffset;
-
-	// Since this is a Share URL parameter, update URL if required
-	if (document.getElementById("urlarea").style.display != "none") {
-
-		FillUrlBoxWithAbcInLZW();
-
-	}
-
-}
-
-//
 // Recalc URL on PDF settings change
 //
 function RecalcShareURLPDF(){
@@ -1591,9 +1553,6 @@ function Notenmachen(tune, instrument) {
 	var currentTime;
 
 	var nTunes = CountTunes();
-
-	// Center the notation div
-	PositionNotation();
 
 	// Get the rendering params
 	var params = GetABCJSParams(instrument);
@@ -2057,8 +2016,22 @@ function Render() {
 		// Hide the notation placeholder
 		document.getElementById("notation-placeholder").style.display = "none";
 
-		// Show the notation block
-		document.getElementById("notation-holder").style.display = "block";
+		if (!(gIsIOS || gIsAndroid)){
+			// Show the notation block
+			if (gIsMaximized)
+				document.getElementById("notation-holder").style.display = "flex";
+			else
+				document.getElementById("notation-holder").style.display = "inline";
+		}
+		else{
+			// Show the notation block
+			if (gIsMaximized)
+				document.getElementById("notation-holder").style.display = "flex";
+			else
+				document.getElementById("notation-holder").style.display = "block";
+
+		}
+
 
 		// Show the zoom control
 		document.getElementById("zoombutton").style.display = "block";
@@ -2682,12 +2655,12 @@ function UpdateNotationTopPosition(){
 	// Position the notation block
 	var noscroller = document.getElementById("noscroller");
 
-	var noscroller_height = noscroller.offsetHeight;
+	var noscroller_height = noscroller.offsetHeight; 
 
 	// Position the notation holder under the controls
 	var notation_spacer = document.getElementById("notation-spacer");
 
-	notation_spacer.style.height = noscroller_height+"px";
+	notation_spacer.style.height = noscroller_height+"px"; 
 }
 
 //
@@ -2905,11 +2878,6 @@ function FillUrlBoxWithAbcInLZW() {
 
 	var format = GetRadioValue("notenodertab");
 
-	var theWidth = GetRadioValue("renderwidth");
-
-	// Strip the percent sign
-	theWidth = theWidth.replace("%","");
-
 	var capo = document.getElementById("capo").value;
 
 	var ssp = document.getElementById("staff-spacing").value;
@@ -2918,7 +2886,7 @@ function FillUrlBoxWithAbcInLZW() {
 
 	var pagenumbers = document.getElementById("pagenumbers").value;
 
-	var url = getUrlWithoutParams() + "?lzw=" + abcInLZW + "&w=" + theWidth + "&format=" + format + "&ssp=" + ssp + "&pdf=" + pdfformat + "&pn=" + pagenumbers;
+	var url = getUrlWithoutParams() + "?lzw=" + abcInLZW + "&format=" + format + "&ssp=" + ssp + "&pdf=" + pdfformat + "&pn=" + pagenumbers;
 
 	// Pass along the top bar status
 	if (!gTopBarShowing){
@@ -3676,12 +3644,19 @@ function HideMaximizeButton(){
 
 function DoMaximize(){
 
+	//debugger;
+
 	document.getElementById("noscroller").style.display = "none";
 	document.getElementById("notation-spacer").style.display = "none";
+	document.getElementById("notation-holder").style.display = "flex";
+	document.getElementById("notation-holder").style.float = "none";
 
 	document.getElementById("zoombutton").src = "img/zoomin.png"
 
-	gIsMaximized = true
+	gIsMaximized = true;
+
+	// Fix the display margins
+	HandleWindowResize();
 
 }
 
@@ -3691,7 +3666,15 @@ function DoMinimize(){
 	document.getElementById("notation-spacer").style.display = "block";
 	document.getElementById("zoombutton").src = "img/zoomout.png"
 
-	gIsMaximized = false
+	if (!(gIsIOS || gIsAndroid)){
+		document.getElementById("notation-holder").style.display = "inline";
+		document.getElementById("notation-holder").style.float = "left";
+	}
+
+	gIsMaximized = false;
+
+	// Fix the display margins
+	HandleWindowResize();
 
 }
 
@@ -3963,17 +3946,6 @@ function processShareLink() {
 		document.getElementById("pagenumbers").value = "none";
 	}
 
-	// For mobile, default to full width output
-	if (!(gIsIOS || gIsAndroid)) {
-		if (urlParams.has("w")) {
-			var theSize = urlParams.get("w");
-			theSize += "%";
-			SetRadioValue("renderwidth", theSize);
-		}
-	} else {
-		SetRadioValue("renderwidth", "100%");
-	}
-
 	// Hide the top bar?
 	if (urlParams.has("hide")) {
 		var theHide = urlParams.get("hide");
@@ -4176,6 +4148,9 @@ function MakeTuneVisible(){
 
 				//console.log("Trigger autoscroll case #1 - selected a different tune");
 
+				// Forcing the noscroller height to zero for responsive case
+				theNoScrollerHeight = 0;
+
 				var newScrollPos = theTuneTop-theNoScrollerHeight;
 
 				window.scrollTo(0,newScrollPos);
@@ -4188,6 +4163,9 @@ function MakeTuneVisible(){
 				if (!(tuneTopVisible || tuneBottomVisible || tuneOverflowsVisible)){
 
 					//console.log("Trigger autoscroll case #2, tune completely invisible whether current or newly selected tune");
+
+					// Forcing the noscroller height to zero for responsive case
+					theNoScrollerHeight = 0;
 
 					var newScrollPos = theTuneTop-theNoScrollerHeight;
 
@@ -4326,9 +4304,74 @@ function ToggleTopBar(){
 
 	}
 
-
-
 }
+
+//
+// Set the margins on window resize
+//
+function HandleWindowResize(){
+
+	// Only executed on responsive desktop browsers
+
+	if (!(gIsIOS || gIsAndroid)){
+
+		if (!gIsMaximized){
+
+			var windowWidth = window.innerWidth;
+
+			if (windowWidth < 1698){
+
+				// One column display
+
+				var marginLeft = (windowWidth - 846)/2;
+
+				var elem = document.getElementById("app-container");
+				
+				elem.style.marginLeft = marginLeft+"px";
+
+				// Reset the number of rows in the ABC editor
+				gTheABC.rows = 12;
+
+			}
+			else{
+				
+				// Two column display
+
+				var elem = document.getElementById("app-container");
+
+				var marginLeft = (windowWidth - 1698)/2;
+				
+				elem.style.marginLeft = marginLeft+"px";
+
+				// We should have more room, resize the editor
+				var windowHeight = window.innerHeight;
+
+				// Leave some room for tools
+				windowHeight -= 500;
+
+				// About 30 pixels/line
+				var nRows = windowHeight/30;
+
+				// Set a minimum
+				if (nRows < 12){
+					nRows = 12;
+				}
+
+				// Resize the text box
+				gTheABC.rows = nRows;
+
+			}
+		}
+		else{
+
+			var elem = document.getElementById("app-container");
+			
+			elem.style.marginLeft = "0px";
+
+		}
+	}
+}
+
 
 //
 // Are we on iOS?
@@ -4454,11 +4497,17 @@ function DoStartup() {
 	if (isAndroid()){
 		gIsAndroid = true;
 	}
-	
-	// iOS Styling adaptation
-	if (gIsIOS) {
 
+	if (gIsIOS){
 		document.getElementById("selectabcfile").removeAttribute("accept");
+	}	
+
+	//
+	// iOS and android styling adaptation
+	//
+	// Single column stacked blocks
+	//
+	if (gIsIOS || gIsAndroid) {
 
 		// Fix the title font
 		var elem = document.getElementById("toolpagetitle");
@@ -4469,30 +4518,50 @@ function DoStartup() {
 		elem = document.getElementById("notenlinks");
 		elem.style.paddingTop = "20px";
 
-		var elem = gTheABC;
+		elem = gTheABC;
 		elem.cols = 74;
 		elem.style.fontSize = "13pt";
 		elem.style.lineHeight = "15pt";
 
-	}
+		// Resize the app-container
+		elem = document.getElementById("app-container");
+		elem.style.width = "860px";
+		elem.style.display = "block";
+		elem.style.marginLeft = "0px";
 
-	// Android
-	if (gIsAndroid){
+		// Resize the notation placeholder
+		elem = document.getElementById("notation-placeholder");
+		elem.style.width = "860px";
+		elem.style.display = "block";
 
-		// Fix the title font
-		var elem = document.getElementById("toolpagetitle");
-		elem.size = 4;
-		elem.style.fontFamily = "Helvetica";
+		// Resize the UI div
+		elem = document.getElementById("noscroller");
+		elem.style.width = "860px";
+		elem.style.display = "none"; // Hidden at startup
 
-		// Add little extra room at the top
-		elem = document.getElementById("notenlinks");
-		elem.style.paddingTop = "20px";
+		// Resize the notation div
+		elem = document.getElementById("notation-holder");
+		elem.style.width = "820px";
+		elem.style.display = "block";
+		elem.style.marginLeft = "20px";
+		elem.style.marginRight = "0px";
+		elem.style.overlow = "hidden";
 
-		// Reduce the editor size a bit
-		var elem = gTheABC;
-		elem.cols = 74;
-		elem.style.fontSize = "13pt";
-		elem.style.lineHeight = "15pt";
+		// Resize the notation spacer
+		elem = document.getElementById("notation-spacer");
+		elem.style.width = "860px";
+		elem.style.display = "block";
+		elem.style.marginRight = "0px";
+
+		// Resize the slow operations banner
+		elem = document.getElementById("slowoperation");
+		elem.style.width = "860px";
+		elem.style.display = "block";
+
+		// Resize the slow operations banner
+		elem = document.getElementById("uioverlay");
+		elem.style.width = "860px";
+		elem.style.display = "block";
 
 	}
 
@@ -4508,8 +4577,7 @@ function DoStartup() {
 		document.getElementById("zoombutton").style.width = "36px";
 		document.getElementById("zoombutton").style.height = "36px";
 		document.getElementById("zoombutton").style.top = "8px";
-		document.getElementById("zoombutton").style.right = "6px";
-
+		document.getElementById("zoombutton").style.right = "8px"
 	}
 
 	//
@@ -4603,9 +4671,6 @@ function DoStartup() {
 	// Set the initial tab to notation
 	document.getElementById("b1").checked = true;
 
-	// Set the initial size
-	document.getElementById("wb1").checked = true;
-
 	// Reset the paging control
 	document.getElementById("pdfformat").value = "one";
 
@@ -4637,6 +4702,20 @@ function DoStartup() {
 	// Force recalculation of the notation top position on ABC text area resize
 
 	new ResizeObserver(TextBoxResizeHandler).observe(gTheABC);
+
+	if (!(gIsIOS || gIsAndroid)){
+
+		// Hook window resize events
+		window.onresize = function(){
+
+			HandleWindowResize();
+		
+		}
+
+	}
+
+	// And call it once for the initial setup
+	HandleWindowResize();
 
 	// 
 	// Initially hide the controls
