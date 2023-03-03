@@ -1062,12 +1062,6 @@ function CreatePDFfromHTML(e) {
 		return;
 	}
 
-	// A shift click on the button is a trick to suppressing the first page number
-	var hideFirstPageNumber = false;
-
-	if (e.shiftKey){
-		hideFirstPageNumber = true;
-	}
 
 	// Show the PDF status block
 	var pdfstatus = document.getElementById("pdf-controls");
@@ -1094,6 +1088,19 @@ function CreatePDFfromHTML(e) {
 	if ((thePageOptions == "one_a4") || (thePageOptions == "multi_a4")){
 
 		paperStyle = "a4";
+
+	}
+
+	// Hide page numbers on page 1?
+	var hideFirstPageNumber = false;
+
+	elem = document.getElementById("firstpage");
+
+	var firstPageNumbers = elem.options[elem.selectedIndex].value;
+
+	if (firstPageNumbers == "no"){
+
+		hideFirstPageNumber = true;
 
 	}
 
@@ -2886,7 +2893,9 @@ function FillUrlBoxWithAbcInLZW() {
 
 	var pagenumbers = document.getElementById("pagenumbers").value;
 
-	var url = getUrlWithoutParams() + "?lzw=" + abcInLZW + "&format=" + format + "&ssp=" + ssp + "&pdf=" + pdfformat + "&pn=" + pagenumbers;
+	var firstpage = document.getElementById("firstpage").value;
+
+	var url = getUrlWithoutParams() + "?lzw=" + abcInLZW + "&format=" + format + "&ssp=" + ssp + "&pdf=" + pdfformat + "&pn=" + pagenumbers + "&fp=" + firstpage;
 
 	// Pass along the top bar status
 	if (!gTopBarShowing){
@@ -3946,6 +3955,16 @@ function processShareLink() {
 		document.getElementById("pagenumbers").value = "none";
 	}
 
+	// Handler for first page fp parameter
+	if (urlParams.has("fp")) {
+		var theFP = urlParams.get("fp");
+		document.getElementById("firstpage").value = theFP;
+	}
+	else{
+		// Default is to put page numbers on page 1
+		document.getElementById("firstpage").value = "yes";
+	}
+
 	// Hide the top bar?
 	if (urlParams.has("hide")) {
 		var theHide = urlParams.get("hide");
@@ -3953,11 +3972,6 @@ function processShareLink() {
 			HideTopBar();
 		}
 	}
-	else{
-		// Default is one tune per page
-		document.getElementById("pdfformat").value = "one";
-	}
-
 
 	if (doRender) {
 
@@ -4677,6 +4691,10 @@ function DoStartup() {
 
 	// Reset the page number control
 	document.getElementById("pagenumbers").value = "none";
+
+	// Reset the first page page number control
+	document.getElementById("firstpage").value = "yes";
+
 
 	// Hook up the zoom
 	document.getElementById("zoombutton").onclick = 
