@@ -1511,7 +1511,7 @@ function showSlowOperationsBanner(){
 		}
 		else{
 
-			elem.innerHTML = "<p>Editing all these tunes at once may be slow on your system.&nbsp;&nbsp;Consider working with fewer tunes at one time.&nbsp;&nbsp;Export PDF may still work fine.</p>";
+			elem.innerHTML = "<p>Editing all these tunes at once may be slow on your system.&nbsp;&nbsp;Consider working with fewer tunes at one time.<br/><br/>Exporting to PDF may still work fine.</p>";
 
 		}
 
