@@ -358,6 +358,9 @@ var thePageNumberVerticalOffset = 0;
 // Did they request a QR code
 var QRCodeRequested = false;
 
+// PDF JPG quality (range is 0 to 1)
+var PDFJPGQUALITY = 0.8;
+
 // PDF object to render to
 var pdf;
 
@@ -914,7 +917,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 			style: {
 				background: "white"
 			},
-			pixelRatio: 2
+			pixelRatio: 2 
 		})
 		.then(function(canvas) {
 
@@ -930,7 +933,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 			// Creates a sharper image
 			pdf.internal.scaleFactor = 1.55;
 
-			var imgData = canvas.toDataURL("image/jpeg", 1.0);
+			var imgData = canvas.toDataURL("image/jpeg", PDFJPGQUALITY); 
 
 			var theBlockID = theBlock.id + ".block";
 
@@ -1136,7 +1139,7 @@ function CreatePDFfromHTML(e) {
 
 	var title = getDescriptiveFileName(totalTunes,true);
 
-	qualitaet = 1200;
+	qualitaet = 1200; 
 
 	document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"red\">" + title + ".pdf </font>";
 
