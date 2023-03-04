@@ -2800,6 +2800,9 @@ function GenerateRenderingDivs(nTunes) {
 		// Space the tunes out a bit
 		el.classList.add("tunespacer");
 
+		// Force page break between tunes when printing from the browser
+		el.classList.add("pagebreak");
+
 		notationHolder.appendChild(el);
 
 	}
