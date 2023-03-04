@@ -793,12 +793,43 @@ float:left;
   }
 }
 
+/* Browser-based print optimizations */
 @media print {
-	.notation-holder{
-	text-align: center !important;
-	margin-bottom:0px !important;
-	height:100% !important;
-	width:100% !important;
-	margin-left:0px !important;
 
+	#app-container{
+		width: 100% !important;
+		padding: 0px !important;
+		margin-left: 0% !important;
+		margin-right: 0% !important;
+	}
+
+	.notation-holder{
+		display: inline-block !important;
+		text-align: center !important;
+		margin-bottom:0px !important;
+		width:97% !important;
+		margin-left: 3% !important;
+		margin-right: 0% !important;
+		position:static !important;
+		left: 0% !important;
+		right: 0% !important;
+		flex-flow: unset !important;
+	}
+
+	.relativebox {
+		position:static !important;
+		float:none !important;
+		flex-flow:unset !important;
+	}
+
+    .pagebreak { 
+     	page-break-after:always !important; 
+		width:97% !important;
+		margin-left: 1% !important;
+		margin-right: 0% !important;
+     	position:static !important;
+     	display: block !important;
+      	flex-flow: unset;
+
+    } 
 }
