@@ -722,17 +722,6 @@ background-color:white;
 
 }
 
-#slowoperation{
-display:none;
-font-family:"Helvetica";
-font-size:12pt;
-background-color:khaki;
-padding:2px;
-margin-top:11px;
-width:850px;
-
-}
-
 .toggletabnames {
 font-family:"Helvetica";
 font-size:11pt;
@@ -760,11 +749,37 @@ color:black;
 opacity: 0.4;
 }
 
+/* Spinner */
+#loading-bar-spinner.spinner {
+left: 50%;
+margin-left: -23px;
+top: 25%;
+margin-top: -23px;
+position: fixed;
+z-index: 101 !important;
+animation: loading-bar-spinner 400ms linear infinite;
+display:none;
+}
+
+#loading-bar-spinner.spinner .spinner-icon {
+width: 46px;
+height: 46px;
+border:  solid 4px transparent;
+border-top-color:  #00C8B1 !important;
+border-left-color: #00C8B1 !important;
+border-radius: 50%;
+}
+
+@keyframes loading-bar-spinner {
+0%   { transform: rotate(0deg);   transform: rotate(0deg); }
+100% { transform: rotate(360deg); transform: rotate(360deg); }
+}
+
 /* For better tune visual layout on the displayed version.
    Has no effect on the PDF output.
 */
 .tunespacer{
-	margin-bottom:32px;
+margin-bottom:32px;
 }
 
 
