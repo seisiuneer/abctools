@@ -47,8 +47,6 @@ var gIsIPhone = false;
 var gIsSafari = false;
 var gIsAndroid = false;
 
-var gCopySVGs = false;
-
 var gRenderingPDF = false;
 
 var gTheQRCode = null;
@@ -94,17 +92,11 @@ var gDisplayedName = "";
 var gShowTabNames = true;
 var gAllowShowTabNames = false;
 
-// If rendering takes longer than this in milliseconds, put up a warning banner
-var LONGOPERATIONTHRESHOLDMS = 1750;
-
 // Debounce time for text area change render requests
 var DEBOUNCEMS = 280;
 
 // Debounce time for tune autoscroll
 var AUTOSCROLLDEBOUNCEMS = 250;
-
-// OK to show the long operations warning banner
-var gOKShowOperationsBanner = true;
 
 // For tune autoscroll state
 var gLastAutoScrolledTune = -1;
@@ -112,50 +104,23 @@ var gLastAutoScrolledTune = -1;
 // Top bar showing?
 var gTopBarShowing = true;
 
+// Current tune being rendered
+var gCurrentTune = 0;
+
+// Last tune count
+var gTotalTunes = 0;
+
+// Current tab display
+var gCurrentTab = "noten";
+
+// Did we just do a paste or other operation to programatically change the text area?
+var gForceFullRender = false;
+
+// How many tunes for a full render to put up a spinner?
+var SPINNERTUNECOUNT = 0; // FOOFOO
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
-
-function Notenames() {
-
-	verarbeiten = gTheABC.value;
-	neu = escape(verarbeiten);
-
-	Reihe = neu.split("%0D%0A");
-	Reihe = neu.split("%0A");
-
-	for (i = 0; i < Reihe.length; ++i) {
-		Reihe[i] = unescape(Reihe[i]); /* Macht die Steuerzeichen wieder weg */
-		Aktuellereihe = Reihe[i].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
-		if ((Aktuellereihe[0] == "w" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "A" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "B" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "C" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "D" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "E" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "F" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "G" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "H" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "I" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "J" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "L" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "M" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "N" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "O" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "P" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "Q" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "R" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "S" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "U" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "V" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "W" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "w" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "X" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "Y" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "Z" && Aktuellereihe[1] == ":") || (Aktuellereihe[0] == "K" && Aktuellereihe[1] == ":")) {
-			/* Alle ausser Melodieteile werden hier ignoriert. */
-		} else {
-			var re = /("([^"]+)")/gi; // Suchabfrage zum Entfernen aller Griffe
-			grifferaus = Reihe[i].replace(re, ""); // macht alles, was "irgendwas" ist weg - d.h. alle Griffe.
-
-			var re = /("([^!]+)")/gi; // Suchabfrage zum Entfernen aller Griffe
-			grifferaus = grifferaus.replace(re, ""); // macht alles, was "irgendwas" ist weg - d.h. alle Griffe.
-			grifferaus = grifferaus.replace(/!(.*)!/gi, "");
-			grifferaus = grifferaus.replace(/O/gi, "");
-
-			Drin = grifferaus.split("");
-			papp = "";
-			for (x = 0; x < Drin.length; ++x) {
-				moin = Drin[x].search(/[A-Z]|[a-z]/g);
-				if (moin != -1) {
-					if (Drin[x + 1] != "\"") {
-						papp = papp + Drin[x] + " ";
-					}
-				}
-			}
-			Reihe[i] = Reihe[i] + "\r\n" + "w:" + papp;
-
-		}
-	}
-
-	insfeld = Reihe.join("\n");
-	gTheABC.value = insfeld;
-	Render();
-}
 
 //
 // Tranpose the ABC up one semitone
@@ -169,38 +134,54 @@ function TransposeUp() {
 	}
 
 	var nTunes = CountTunes();
-	
-	var theNotes = gTheABC.value;
 
-	// Get the rendering params
-	var params = GetABCJSParams();
+	// Don't always put up the spinner, only on larger tune sets
+	if (nTunes > SPINNERTUNECOUNT){
 
-	var theTunes = theNotes.split(/^X:/gm);
-
-	// Create the render div ID array
-	var renderDivs = [];
-
-	for (var i = 0; i < nTunes; ++i) {
-		
-		renderDivs.push("notation" + i);
+		document.getElementById("loading-bar-spinner").style.display = "block";
 
 	}
 
-	var output = "";
+	// Need a timeout to allow the spinner to show before processing the ABC,
+	setTimeout(function(){
 
-	for (var i=1;i<=nTunes;++i){
+		var theNotes = gTheABC.value;
 
-		theTunes[i] = "X:"+theTunes[i];
+		// Get the rendering params
+		var params = GetABCJSParams();
 
-		var visualObj = ABCJS.renderAbc(renderDivs[i-1], theTunes[i], params);
+		// Find the tunes
+		var theTunes = theNotes.split(/^X:/gm);
 
-		output += ABCJS.strTranspose(theTunes[i], visualObj, 1);
+		// Create the render div ID array
+		var renderDivs = [];
 
-	}
+		for (var i = 0; i < nTunes; ++i) {
+			
+			renderDivs.push("notation" + i);
+
+		}
+
+		var output = "";
+
+		for (var i=1;i<=nTunes;++i){
+
+			theTunes[i] = "X:"+theTunes[i];
+
+			var visualObj = ABCJS.renderAbc(renderDivs[i-1], theTunes[i], params);
+
+			output += ABCJS.strTranspose(theTunes[i], visualObj, 1);
+
+		}
 	
-	gTheABC.value = output;
+		// Stuff in the transposed output
+		gTheABC.value = output;
 
-	Render();
+		// Force a full render
+		RenderAsync(true,null,false);
+
+
+	},100);
 	
 }
 
@@ -217,41 +198,60 @@ function TransposeDown() {
 	}
 
 	var nTunes = CountTunes();
-	
-	var theNotes = gTheABC.value;
 
-	// Get the rendering params
-	var params = GetABCJSParams();
+	// Don't always put up the spinner, only on larger tune sets
+	if (nTunes > SPINNERTUNECOUNT){
 
-	var theTunes = theNotes.split(/^X:/gm);
-
-	// Create the render div ID array
-	var renderDivs = [];
-
-	for (var i = 0; i < nTunes; ++i) {
+		document.getElementById("loading-bar-spinner").style.display = "block";
 		
-		renderDivs.push("notation" + i);
-
 	}
 
-	var output = "";
-
-	for (var i=1;i<=nTunes;++i){
-
-		theTunes[i] = "X:"+theTunes[i];
-
-		var visualObj = ABCJS.renderAbc(renderDivs[i-1], theTunes[i], params);
-
-		output += ABCJS.strTranspose(theTunes[i], visualObj, -1);
-
-	}
+	// Need a timeout to allow the spinner to show before processing the ABC,
+	setTimeout(function(){
 	
-	gTheABC.value = output;
+		var theNotes = gTheABC.value;
 
-	Render();
-	
+		// Get the rendering params
+		var params = GetABCJSParams();
+
+		// Find the tunes
+		var theTunes = theNotes.split(/^X:/gm);
+
+		// Create the render div ID array
+		var renderDivs = [];
+
+		for (var i = 0; i < nTunes; ++i) {
+			
+			renderDivs.push("notation" + i);
+
+		}
+
+		var output = "";
+
+		for (var i=1;i<=nTunes;++i){
+
+			theTunes[i] = "X:"+theTunes[i];
+
+			var visualObj = ABCJS.renderAbc(renderDivs[i-1], theTunes[i], params);
+
+			output += ABCJS.strTranspose(theTunes[i], visualObj, -1);
+
+		}
+
+		// Stuff in the transposed output
+		gTheABC.value = output;
+
+		// Force a full render
+		RenderAsync(true,null,false);
+
+
+	},100);
+
 }
 
+//
+// UI Clear command
+//
 function Clear() {
 
 	// If currently rendering PDF, exit immediately
@@ -259,13 +259,21 @@ function Clear() {
 		return;
 	}
 
+	ClearNoRender();
+
+	RenderAsync(true,null,false);
+
+}
+
+//
+// Clear the ABC area, but don't re-render
+//
+function ClearNoRender() {
+
 	gTheABC.value = "";
 
 	// Save it for the status update display
 	gDisplayedName = "No ABC file selected";
-
-	// Hide the slow operation banner
-	hideSlowOperationsBanner();
 
 	gABCFromFile = false;
 
@@ -273,10 +281,7 @@ function Clear() {
 
 	HideAllControls();
 
-	Render();
-
 }
-
 
 // Get the title of the first tune
 
@@ -1051,9 +1056,13 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 }
 
 //
-// Create PDF from HTML...
+// PDF Exporter
 //
-function CreatePDFfromHTML(e) {
+
+// 
+// Put up the spinner, then call the ExportPDF function
+//
+function ExportPDFAsync(){
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
@@ -1065,6 +1074,23 @@ function CreatePDFfromHTML(e) {
 		return;
 	}
 
+	// Show the spinner
+	document.getElementById("loading-bar-spinner").style.display = "block";
+
+	// Do the PDF export
+	ExportPDF(function(){
+
+		// Call back hides the spinner
+		document.getElementById("loading-bar-spinner").style.display = "none";
+
+	});
+
+}
+
+//
+// Export a PDF document
+//
+function ExportPDF(callback) {
 
 	// Show the PDF status block
 	var pdfstatus = document.getElementById("pdf-controls");
@@ -1147,20 +1173,10 @@ function CreatePDFfromHTML(e) {
 
 	setTimeout(function() {
 
-		// Render first copying the SVGs to the shadow DOM
-		gCopySVGs = true;
-
-		// Suppress the operations banner
-		gOKShowOperationsBanner = false;
-
-		Render();
-
-		gOKShowOperationsBanner = true;
+		Render(true,null,true);
 
 		// Set the global PDF rendering flag
 		gRenderingPDF = true;
-
-		gCopySVGs = false;
 
 		pdf = new jsPDF('p', 'pt', paperStyle);
 
@@ -1272,7 +1288,10 @@ function CreatePDFfromHTML(e) {
 							gRenderingPDF = false;
 
 							// Catch up on any UI changes during the PDF rendering
-							Render();
+							RenderAsync(true,null,false);
+
+							// All done!
+							callback();
 
 						},1000);
 
@@ -1390,7 +1409,16 @@ function GetABCJSParams(instrument){
 			format: commonFontFormat
 		};
 		instrument = ""; 
-	} else if (instrument == "mandolin") {
+	} else if (instrument == "noten"){
+		params = {
+			responsive: 'resize',
+			oneSvgPerLine: 'true',
+			selectTypes: false,
+			format: commonFontFormat
+		};
+		instrument = ""; 
+	}
+	else if (instrument == "mandolin") {
 		params = {
 			tablature: [{
 				instrument: 'violin',
@@ -1507,71 +1535,43 @@ function RecalcShareURLPDF(){
 }
 
 //
-// Show the slow operations warning banner
-//
-function showSlowOperationsBanner(){
-
-	if (gOKShowOperationsBanner){
-
-		var elem = document.getElementById("slowoperation");
-
-		if (gIsAndroid || gIsIOS){
-
-			elem.innerHTML = "<p>Editing all these tunes at once may be slow on your system.&nbsp;&nbsp;Consider working with fewer tunes at one time.</p>";
-		}
-		else{
-
-			elem.innerHTML = "<p>Editing all these tunes at once may be slow on your system.&nbsp;&nbsp;Consider working with fewer tunes at one time.<br/><br/>Exporting to PDF may still work fine.</p>";
-
-		}
-
-		elem.style.display = "block";
-
-		// Recalculate the notation top position
-		UpdateNotationTopPosition();
-
-	}
-
-}
-
-//
-// Hide the slow operations banner
-//
-function hideSlowOperationsBanner(){
-
-	if (gOKShowOperationsBanner){
-
-		var elem = document.getElementById("slowoperation");
-
-		elem.innerHTML = "";
-		
-		elem.style.display = "none";
-
-		// Recalculate the notation top position
-		UpdateNotationTopPosition();
-
-	}
-
-}
-
-//
 // Main routine for rendering the notation
 //
-function Notenmachen(tune, instrument) {
+function RenderTheNotes(tune, instrument, renderAll, tuneNumber, copySVGs) {
 
-	// Used for long operation banner timing
-	var currentTime;
-
-	var nTunes = CountTunes();
+	// Used for rendering time measurement
+	//var currentTime;
 
 	// Get the rendering params
 	var params = GetABCJSParams(instrument);
-	
+
 	// Create the render div ID array
 	var renderDivs = [];
 
-	for (var i = 0; i < nTunes; ++i) {
-		renderDivs.push("notation" + i);
+	var nTunes = 0;
+	var startTune = 0;
+	var endTune = 0;
+
+	// If rendering all, push all the divs
+	if (renderAll){
+
+		nTunes = CountTunes();
+		endTune = nTunes;
+		
+		for (var i = 0; i < nTunes; ++i) {
+			renderDivs.push("notation" + i);
+		}
+	}
+	else{
+
+		// Otherwise, just push the single div
+		nTunes = 1;
+		startTune = tuneNumber;
+		endTune = tuneNumber+1;
+		
+		// Just rendering one tune
+		renderDivs.push("notation" + tuneNumber);
+
 	}
 
 	//
@@ -1579,35 +1579,22 @@ function Notenmachen(tune, instrument) {
 	//
 
 	// Get the current time for possible progress banner display
-	currentTime = Date.now();
+	//currentTime = Date.now();
 
 	var visualObj = ABCJS.renderAbc(renderDivs, tune, params);
 
-	// How long have we been rendering?
-	var deltaTime = Date.now() - currentTime;
+	// How long did it take to render?
+	// var deltaTime = Date.now() - currentTime;
 
 	//console.log("deltaTime = "+deltaTime);
-
-	// If long operation, put up the banner
-	if (deltaTime > LONGOPERATIONTHRESHOLDMS){
-
-		showSlowOperationsBanner();
-	
-	}
-	else{
-
-		hideSlowOperationsBanner();
-
-	}
 
 	document.getElementById("offscreenrender").innerHTML = ""; // must be, otherwise it somehow generates the abc twice...
 
 	var svgTextArray = [];
 
-	for (var tuneIndex = 0; tuneIndex < nTunes; ++tuneIndex) {
+	for (var tuneIndex = startTune; tuneIndex < endTune; ++tuneIndex) {
 
 		var renderDivID = "notation" + tuneIndex;
-
 
 		// Bei Whistle rendert er zunächst erst eine Linie mit Mandolinentabs, also Zahlen.
 		// Diese werden hier anschließend ersetzt durch Buchstaben. 
@@ -1932,7 +1919,7 @@ function Notenmachen(tune, instrument) {
 		//
 		// Only copy the SVGs if rendering for PDF
 		//
-		if (gCopySVGs) {
+		if (copySVGs) {
 
 			Svgs = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg');
 			
@@ -1948,7 +1935,7 @@ function Notenmachen(tune, instrument) {
 
 	// Join all the SVG text and stuff in the offscreen rendering div
 
-	if (gCopySVGs){
+	if (copySVGs){
 
 		var allSVGText = svgTextArray.join();
 
@@ -1990,8 +1977,52 @@ function GetRadioValue(radioName) {
 	return radiovalue;
 }
 
+// 
+// Allow putting up a spiner before the synchronous Render() function
+//
+function RenderAsync(renderAll,tuneNumber,copySVGs){
+	
+	// Start with spinner hidden
+	document.getElementById("loading-bar-spinner").style.display = "none";
 
-function Render() {
+	// Show the spinner
+	if (renderAll){
+
+		// Idle the file status display
+		var nTunes = CountTunes();
+
+		// Don't always put up the spinner, only on larger tune sets
+		if (nTunes > SPINNERTUNECOUNT){
+
+			document.getElementById("loading-bar-spinner").style.display = "block";
+
+			// Render after a short delay
+			setTimeout(function(){
+
+				Render(renderAll,tuneNumber,copySVGs);
+
+				document.getElementById("loading-bar-spinner").style.display = "none";
+
+			}, 100);
+
+		}
+		else{
+
+			// Immediately render
+			Render(renderAll,tuneNumber,copySVGs);
+
+		}
+	}
+	else{
+
+		// Immediately render
+		Render(renderAll,tuneNumber,copySVGs);
+
+	}
+
+}
+
+function Render(renderAll,tuneNumber,copySVGs) {
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
@@ -2042,7 +2073,6 @@ function Render() {
 
 		}
 
-
 		// Show the zoom control
 		document.getElementById("zoombutton").style.display = "block";
 
@@ -2088,10 +2118,19 @@ function Render() {
 
 		var radiovalue = GetRadioValue("notenodertab");
 
-		// Generate the rendering divs
-		GenerateRenderingDivs(nTunes);
+		var theNotes;
 
-		var theNotes = gTheABC.value;
+		// Generate the rendering divs
+		// Only required if rendering all the tunes, otherwise will re-use an existing div
+		if (renderAll){
+			GenerateRenderingDivs(nTunes);
+			theNotes = gTheABC.value;
+		}
+		else{
+
+			// Just get the ABC for the current tune
+			theNotes = getTuneByIndex(tuneNumber);
+		}
 
 		var searchRegExp = "";
 
@@ -2186,16 +2225,8 @@ function Render() {
 
 		theNotes = theNotes.replace(searchRegExp, "X:1\n%%musicspace 20\n%%staffsep " + gStaffSpacing);
 
-		if (radiovalue == "noten") {
-
-			Notenmachen(theNotes);
-
-		} else // wenn was anderes als "noten" angegeben - Tabs machen. Den Wert aus dem Radiobutton übergeben - muss gleich sein wie instrument in Notenmachen.
-		{
-
-			Notenmachen(theNotes, radiovalue);
-
-		}
+		// Render the notes
+		RenderTheNotes(theNotes,radiovalue,renderAll,tuneNumber,copySVGs);
 
 		// Maintain scroll position after render
 		window.scrollTo(0, scrollTop);
@@ -2237,8 +2268,8 @@ function Render() {
 		// Hide the zoom control
 		document.getElementById("zoombutton").style.display = "none";
 
-		// Hide the slow operation banner
-		document.getElementById("slowoperation").style.display = "none";
+		// Hide the spinner
+		document.getElementById("loading-bar-spinner").style.display = "none";
 
 		var fileSelected = document.getElementById('abc-selected');
 
@@ -2252,6 +2283,7 @@ function Render() {
 		UpdateNotationTopPosition();
 
 	}
+
 }
 
 
@@ -2605,7 +2637,7 @@ function SetStaffSpacing() {
 
 	gStaffSpacing = newSpacing + STAFFSPACEOFFSET;
 
-	Render();
+	RenderAsync(true,null,false);
 }
 
 //
@@ -2615,7 +2647,7 @@ function SetCapo() {
 
 	gCapo = document.getElementById('capo').value;
 
-	Render();
+	RenderAsync(true,null,false);
 }
 
 //
@@ -2678,11 +2710,13 @@ function UpdateNotationTopPosition(){
 //
 function RestoreDefaults() {
 
-	// Reset the annotation strip flags
+	// Reset globals
 	gStripAnnotations = false;
 	gStripTextAnnotations = false;
 	gStripChords = false;
-	gCopySVGs = false;
+	gTotalTunes = 0;
+	gCurrentTune = 0;
+	gForceFullRender = false;
 
 	// Clear the autoscroll state
 	gLastAutoScrolledTune = -1;
@@ -2718,7 +2752,7 @@ function ToggleAnnotations() {
 
 	gStripAnnotations = !gStripAnnotations;
 
-	Render();
+	RenderAsync(true,null,false);
 
 }
 
@@ -2729,7 +2763,7 @@ function ToggleTextAnnotations() {
 
 	gStripTextAnnotations = !gStripTextAnnotations;
 
-	Render();
+	RenderAsync(true,null,false);
 
 }
 
@@ -2740,7 +2774,7 @@ function ToggleChords() {
 
 	gStripChords = !gStripChords;
 
-	Render();
+	RenderAsync(true,null,false);
 
 }
 
@@ -2755,6 +2789,9 @@ function CountTunes() {
 	var theTunes = theNotes.split(/^X:.*$/gm);
 
 	var nTunes = theTunes.length - 1;
+
+	// Save the global tune count anytime this is called
+	gTotalTunes = nTunes;
 
 	return nTunes;
 
@@ -2776,7 +2813,7 @@ function NewABC(){
 
 	gABCFromFile = false;
 	
-	Render();
+	RenderAsync(true,null,false);
 
 	UpdateNotationTopPosition();
 
@@ -3027,7 +3064,7 @@ function CreateURLfromHTML() {
 	urlarea.style.display = "inline-block";
 	urltextbox = document.getElementById("urltextbox");
 	urltextbox.focus();
-	urltextbox.setSelectionRange(0, urltextbox.value.length);
+	urltextbox.setSelectionRange(0, 0);
 
 	// Clear the QR code
 	clearQRCode();
@@ -3419,6 +3456,22 @@ function findSelectedTune(){
 }
 
 //
+// Return the tune ABC at a specific index
+//
+//
+function getTuneByIndex(tuneNumber){
+
+	var theNotes = gTheABC.value;
+
+    // Now find all the X: items
+    var theTunes = theNotes.split(/^X:/gm);
+
+ 	return ("X:"+theTunes[tuneNumber+1]);
+
+}
+
+
+//
 // Send the ABC to Paul Rosen's drawthedots site for playback
 //
 function PlayABC(){
@@ -3659,8 +3712,6 @@ function HideMaximizeButton(){
 
 function DoMaximize(){
 
-	//debugger;
-
 	document.getElementById("noscroller").style.display = "none";
 	document.getElementById("notation-spacer").style.display = "none";
 	document.getElementById("notation-holder").style.display = "flex";
@@ -3679,6 +3730,7 @@ function DoMinimize(){
 
 	document.getElementById("noscroller").style.display = "block";
 	document.getElementById("notation-spacer").style.display = "block";
+
 	document.getElementById("zoombutton").src = "img/zoomout.png"
 
 	if (!(gIsIOS || gIsAndroid)){
@@ -3782,7 +3834,7 @@ function ToggleTabNames(){
 
 	}
 
-	Render();
+	RenderAsync(true,null,false);
 
 }
 
@@ -4017,7 +4069,7 @@ function processShareLink() {
 		FocusABC();
 
 		// Render the tune
-		Render();
+		RenderAsync(true,null,false);
 
 		return true;
 
@@ -4049,14 +4101,14 @@ function findSelectedTuneIndex(){
 	// Now find all the X: items
     var theTunes = theNotes.split(/^X:/gm);
 
-    var nTunes = theTunes.length;
+    var nTunes = CountTunes();
 
     // Never autoscroll the single tune case
-    if (nTunes < 3){
+    if (nTunes < 2){
 
     	//console.log("No autoscroll on single tunes");
     	
-    	return -1;
+    	return 0;
 
     }
 
@@ -4082,7 +4134,7 @@ function findSelectedTuneIndex(){
 
     theOffset = theTunes[0].length;
 
-    for (i=1;i<nTunes;++i){
+    for (i=1;i<=nTunes;++i){
 
     	// Account for the X: stripped in the length
     	theOffset += theTunes[i].length+2;
@@ -4116,6 +4168,14 @@ function MakeTuneVisible(){
 		//console.log("MakeTuneVisible()");
 
 		var tuneIndex = findSelectedTuneIndex();
+
+		// Save the current tune index
+		gCurrentTune = tuneIndex;
+
+		// Only do the rest on desktop
+		if (gIsIOS || gIsAndroid){
+			return;
+		}
 
 		//console.log("Selected tune index = " + tuneIndex);
 
@@ -4217,9 +4277,47 @@ function debounce(callback, wait) {
   };
 }
 
-function OnABCTextInput(){
-	
-	Render();
+function OnABCTextChange(){
+
+	// If the total number of tunes has changed, render all the tunes
+	// Otherwise, just render the tune being worked on
+
+	var oldTuneCount = gTotalTunes;
+
+	var newTuneCount = CountTunes();
+
+	var renderAllTunes = (oldTuneCount != newTuneCount);
+
+	// Tune count changed, need to render all tunes
+	if (renderAllTunes){
+
+		RenderAsync(true,null,false);
+
+	}
+	else{
+
+		// Otherwise, just render the tune being worked on
+		Render(false,gCurrentTune,false);
+
+	}
+
+}
+
+//
+// Change the tab display
+//
+function ChangeTab(){
+
+	var theTab = GetRadioValue("notenodertab");
+
+	// If the tab changes, render all
+	if (theTab != gCurrentTab){
+		
+		RenderAsync(true,null,false);
+
+	}
+
+	gCurrentTab = theTab;
 
 }
 
@@ -4461,7 +4559,6 @@ function DoStartup() {
 	gStripAnnotations = false;
 	gStripTextAnnotations = false;
 	gStripChords = false;
-	gCopySVGs = false;
 	gRenderingPDF = false;
 	gAllowSave = false;
 	gAllowURLSave = false;
@@ -4474,12 +4571,15 @@ function DoStartup() {
 	gCapo = 0;
 	gABCFromFile = false;
 	gAllowCopy = false;
-	gOKShowOperationsBanner = true;
 	gAllowPDF = false;
 	gShowTabNames = true;
 	gAllowShowTabNames = false;
 	gLastAutoScrolledTune = -1;
 	gTopBarShowing = true;
+	gCurrentTune = 0;
+	gTotalTunes = 0;
+	gCurrentTab = "noten";
+	gForceFullRender = false;
 
 	// Startup in blank screen
 	
@@ -4553,7 +4653,7 @@ function DoStartup() {
 		// Resize the notation placeholder
 		elem = document.getElementById("notation-placeholder");
 		elem.style.width = "860px";
-		elem.style.display = "block";
+		elem.style.display = "none";
 
 		// Resize the UI div
 		elem = document.getElementById("noscroller");
@@ -4566,7 +4666,7 @@ function DoStartup() {
 		elem.style.display = "block";
 		elem.style.marginLeft = "20px";
 		elem.style.marginRight = "0px";
-		elem.style.overlow = "hidden";
+		elem.style.overflow = "hidden";
 
 		// Resize the notation spacer
 		elem = document.getElementById("notation-spacer");
@@ -4574,15 +4674,21 @@ function DoStartup() {
 		elem.style.display = "block";
 		elem.style.marginRight = "0px";
 
-		// Resize the slow operations banner
-		elem = document.getElementById("slowoperation");
-		elem.style.width = "860px";
-		elem.style.display = "block";
-
-		// Resize the slow operations banner
+		// Resize the UI overlay
 		elem = document.getElementById("uioverlay");
 		elem.style.width = "860px";
 		elem.style.display = "block";
+
+		// Move the spinner
+		elem = document.getElementById("loading-bar-spinner");
+		elem.style.top = "36px"
+		elem.style.left = "36px";	
+		elem.style.marginLeft = "-16px";	
+		elem.style.marginTop = "-16px";	
+
+		elem = document.getElementById("spinner-icon");
+		elem.style.width = "32px"
+		elem.style.height = "32px";	
 
 	}
 
@@ -4592,38 +4698,65 @@ function DoStartup() {
 		document.getElementById("zoombutton").style.right = "36px";
 	}
 
-	// On iPad, resize the zoom button and edit area
+	// On iPad, resize the zoom button
 	if (gIsIPad){
 
 		document.getElementById("zoombutton").style.width = "36px";
 		document.getElementById("zoombutton").style.height = "36px";
 		document.getElementById("zoombutton").style.top = "8px";
 		document.getElementById("zoombutton").style.right = "8px"
+
 	}
 
 	//
 	// Hook up the text area text change callback with debounce
+	// 
+	// If a paste was detected, force a full render because the tunes may have changed while
+	// the tune count has not
 	//
 	document.getElementById('abc').oninput = 
 		debounce( () => {
+			
+			if (!gForceFullRender){
 
-		    OnABCTextInput();
+		    	OnABCTextChange();
+
+		    }
+		    else{
+
+		    	RenderAsync(true,null,true);
+
+		    }
+
+		    gForceFullRender = false;
 
 		}, DEBOUNCEMS);
+
+
+	//
+	// Hook up the text area text paste callback to re-render
+	// Required because a paste might end up with the same number of tunes and
+	// the text change logic only re-renders if the number of tunes has changed
+	// because of a text entry event
+	//
+	// document.getElementById('abc').onpaste = 
+	// 	function(){
+			
+	// 		//gForceFullRender = true;
+
+	// 	};
 
 	//
 	// Hook up the text area text change callback with debounce
 	// Doesn't work well on iOS or Android, so disabling it there 
 	//
-	if (!(gIsIOS || gIsAndroid)){
 
-		document.getElementById('abc').onclick = 
-			debounce( () => {
+	document.getElementById('abc').onclick = 
+		debounce( () => {
 
-			    MakeTuneVisible();
+		    MakeTuneVisible();
 
-			}, AUTOSCROLLDEBOUNCEMS);
-	}
+		}, AUTOSCROLLDEBOUNCEMS);
 
 	//
 	// Setup the file import control
@@ -4660,7 +4793,7 @@ function DoStartup() {
 
 				setTimeout(function() {
 
-					// Reset the annotation strip flags
+					// Reset the defaults
 					RestoreDefaults();
 
 					// Reset the window scroll
@@ -4674,7 +4807,7 @@ function DoStartup() {
 					gABCFromFile = true;
 
 					// Render the notation
-					Render();
+					RenderAsync(true,null,false);
 
 					// Recalculate the notation top position
 					UpdateNotationTopPosition();
@@ -4708,8 +4841,8 @@ function DoStartup() {
 			ToggleMaximize();
 		};
 
-	// Clear the text entry area
-	Clear();
+	// Clear the text entry area, but don't render
+	ClearNoRender();
 
 	// Check for and process URL share link
 	var isFromShare = processShareLink();
@@ -4718,6 +4851,9 @@ function DoStartup() {
 	if (!isFromShare){
 
 		DoMinimize();
+
+		// Show the notation placeholder
+		document.getElementById("notation-placeholder").style.display = "block";
 
 	}
 
