@@ -116,8 +116,8 @@ var gCurrentTab = "noten";
 // Did we just do a paste or other operation to programatically change the text area?
 var gForceFullRender = false;
 
-// How many tunes for a full render to put up a spinner?
-var SPINNERTUNECOUNT = 0; // FOOFOO
+// Are we in single or dual column display mode?
+var gIsOneColumn = true;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -125,6 +125,26 @@ var gTheABC = document.getElementById("abc");
 //
 // Tranpose the ABC up one semitone
 //
+
+//
+// Support function for restoring the selection point after the transpose operation
+//
+function resetSelectionAfterTranspose(tuneNumber){
+	
+	// Get the tune
+	var theTune = getTuneByIndex(tuneNumber);
+	
+	// Get the tunes
+	var theTunes = gTheABC.value;
+
+	// Find the tune in the tunes
+	var theIndex = theTunes.indexOf(theTune);
+
+	// Set the select point
+	gTheABC.selectionStart = theIndex;
+    gTheABC.selectionEnd = theIndex;
+
+}
 
 function TransposeUp() {
 
@@ -135,12 +155,7 @@ function TransposeUp() {
 
 	var nTunes = CountTunes();
 
-	// Don't always put up the spinner, only on larger tune sets
-	if (nTunes > SPINNERTUNECOUNT){
-
-		document.getElementById("loading-bar-spinner").style.display = "block";
-
-	}
+	document.getElementById("loading-bar-spinner").style.display = "block";
 
 	// Need a timeout to allow the spinner to show before processing the ABC,
 	setTimeout(function(){
@@ -156,9 +171,18 @@ function TransposeUp() {
 		// Create the render div ID array
 		var renderDivs = [];
 
+		var id;
+
 		for (var i = 0; i < nTunes; ++i) {
+
+			id = "notation" + i;
 			
-			renderDivs.push("notation" + i);
+			renderDivs.push(id);
+
+			// Flash reduction
+			var elem = document.getElementById(id);
+
+			elem.style.opacity = 0.0;
 
 		}
 
@@ -177,8 +201,24 @@ function TransposeUp() {
 		// Stuff in the transposed output
 		gTheABC.value = output;
 
+		// Reset the selection point to the current tune
+		resetSelectionAfterTranspose(gCurrentTune);
+
 		// Force a full render
 		RenderAsync(true,null,false);
+
+		setTimeout(function(){
+
+			for (var i = 0; i < nTunes; ++i) {
+
+				// Flash reduction
+				var elem = document.getElementById(id);
+
+				elem.style.opacity = 1.0;
+
+			}
+
+		},100);
 
 
 	},100);
@@ -199,12 +239,7 @@ function TransposeDown() {
 
 	var nTunes = CountTunes();
 
-	// Don't always put up the spinner, only on larger tune sets
-	if (nTunes > SPINNERTUNECOUNT){
-
-		document.getElementById("loading-bar-spinner").style.display = "block";
-		
-	}
+	document.getElementById("loading-bar-spinner").style.display = "block";
 
 	// Need a timeout to allow the spinner to show before processing the ABC,
 	setTimeout(function(){
@@ -220,9 +255,18 @@ function TransposeDown() {
 		// Create the render div ID array
 		var renderDivs = [];
 
+		var id;
+
 		for (var i = 0; i < nTunes; ++i) {
+
+			id = "notation" + i;
 			
-			renderDivs.push("notation" + i);
+			renderDivs.push(id);
+
+			// Flash reduction
+			var elem = document.getElementById(id);
+
+			elem.style.opacity = 0.0;
 
 		}
 
@@ -241,8 +285,25 @@ function TransposeDown() {
 		// Stuff in the transposed output
 		gTheABC.value = output;
 
+		// Reset the selection point to the current tune
+		resetSelectionAfterTranspose(gCurrentTune);
+
 		// Force a full render
 		RenderAsync(true,null,false);
+
+		setTimeout(function(){
+
+			for (var i = 0; i < nTunes; ++i) {
+
+				// Flash reduction
+				var elem = document.getElementById(id);
+
+				elem.style.opacity = 1.0;
+
+			}
+
+		},100);
+
 
 
 	},100);
@@ -1981,6 +2042,8 @@ function GetRadioValue(radioName) {
 // Allow putting up a spiner before the synchronous Render() function
 //
 function RenderAsync(renderAll,tuneNumber,copySVGs){
+
+	//console.log("RenderAsync renderAll = "+renderAll+" tuneNumber = "+tuneNumber+" copySVGs = "+copySVGs);
 	
 	// Start with spinner hidden
 	document.getElementById("loading-bar-spinner").style.display = "none";
@@ -1988,34 +2051,34 @@ function RenderAsync(renderAll,tuneNumber,copySVGs){
 	// Show the spinner
 	if (renderAll){
 
-		// Idle the file status display
-		var nTunes = CountTunes();
+		document.getElementById("loading-bar-spinner").style.display = "block";
 
-		// Don't always put up the spinner, only on larger tune sets
-		if (nTunes > SPINNERTUNECOUNT){
+		// Render after a short delay
+		setTimeout(function(){
 
-			document.getElementById("loading-bar-spinner").style.display = "block";
-
-			// Render after a short delay
-			setTimeout(function(){
-
-				Render(renderAll,tuneNumber,copySVGs);
-
-				document.getElementById("loading-bar-spinner").style.display = "none";
-
-			}, 100);
-
-		}
-		else{
-
-			// Immediately render
 			Render(renderAll,tuneNumber,copySVGs);
 
-		}
+			document.getElementById("loading-bar-spinner").style.display = "none";
+
+			// Do do the rescroll in the PDF generation case
+			if (!copySVGs){
+
+				// Give some browser render time before doing the tune visibility update
+				//setTimeout(function(){
+
+					//console.log("RenderAsync maketunevisible");
+
+					// Recalc the top tune position and scroll it into view if required
+					MakeTuneVisible(true);
+
+				//},100);
+			}
+
+		}, 100);
 	}
 	else{
 
-		// Immediately render
+		// Immediately render just a single tune
 		Render(renderAll,tuneNumber,copySVGs);
 
 	}
@@ -2315,9 +2378,6 @@ function HideAdvancedControls() {
 
 	document.getElementById('advanced-controls').style.display = "none";
 
-	// Recalculate the notation top position
-	UpdateNotationTopPosition();
-
 }
 
 
@@ -2332,9 +2392,6 @@ function ShowAdvancedControls() {
 
 	// Idle the controls
 	IdleAdvancedControls();
-
-	// Recalculate the notation top position
-	UpdateNotationTopPosition();
 
 }
 
@@ -2554,35 +2611,6 @@ function IdleAdvancedControls(){
 }
 
 //
-// Hide the share controls
-//
-function HideShareControls() {
-
-	document.getElementById('togglesharecontrols').value = "Show Sharing Controls";
-
-	// Also hide the share url area
-	document.getElementById('urlarea').style.display = "none";
-
-	// Recalculate the notation top position
-	UpdateNotationTopPosition();
-
-}
-
-//
-// Show the share controls
-//
-function ShowShareControls() {
-
-	document.getElementById('togglesharecontrols').value = "Hide Sharing Controls";
-
-	CreateURLfromHTML();
-
-	// Recalculate the notation top position
-	UpdateNotationTopPosition();
-
-}
-
-//
 // Toggle the advanced controls
 //
 function ToggleAdvancedControls() {
@@ -2601,6 +2629,36 @@ function ToggleAdvancedControls() {
 
 	// Recalculate the notation top position
 	UpdateNotationTopPosition();
+
+	// Force a rescroll for one column view
+	if (gIsOneColumn){
+
+		MakeTuneVisible(true);
+
+	}
+
+}
+
+//
+// Hide the share controls
+//
+function HideShareControls() {
+
+	document.getElementById('togglesharecontrols').value = "Show Sharing Controls";
+
+	// Also hide the share url area
+	document.getElementById('urlarea').style.display = "none";
+
+}
+
+//
+// Show the share controls
+//
+function ShowShareControls() {
+
+	document.getElementById('togglesharecontrols').value = "Hide Sharing Controls";
+
+	CreateURLfromHTML();
 
 }
 
@@ -2623,6 +2681,13 @@ function ToggleShareControls() {
 
 	// Recalculate the notation top position
 	UpdateNotationTopPosition();
+
+	// Force a rescroll for one column view
+	if (gIsOneColumn){
+
+		MakeTuneVisible(true);
+		
+	}
 
 }
 
@@ -3660,9 +3725,6 @@ function ShowAllControls(){
 
 	gShowAllControls = true;
 
-	// Recalculate the notation top position
-	UpdateNotationTopPosition();
-
 }
 
 function HideAllControls(){
@@ -3671,9 +3733,6 @@ function HideAllControls(){
 	document.getElementById("toggleallcontrols").value = "Show Controls";
 
 	gShowAllControls = false;
-
-	// Recalculate the notation top position
-	UpdateNotationTopPosition();
 
 }
 
@@ -3689,6 +3748,16 @@ function ToggleAllControls(){
 	}
 	else{
 		ShowAllControls();
+	}
+
+	// Recalculate the notation top position
+	UpdateNotationTopPosition();
+
+	// Force a rescroll for one column view
+	if (gIsOneColumn){
+
+		MakeTuneVisible(true);
+		
 	}
 
 
@@ -4085,6 +4154,14 @@ function TextBoxResizeHandler(){
 
 	// Resize the notation spacer
 	UpdateNotationTopPosition();
+
+	// Force a rescroll for one column view
+	if (gIsOneColumn){
+
+		MakeTuneVisible(true);
+
+	}
+
 }
 
 //
@@ -4158,23 +4235,32 @@ function findSelectedTuneIndex(){
 //
 // Called on every click into the work area, with some debounce
 //
+// Set forceUpdate true to force a scroll even if the same tune is still visible
+// This is for global render cases, like a tablature style change
+//
 
-function MakeTuneVisible(){
+function MakeTuneVisible(forceUpdate){
 
 	// Follows same enable semantics as copy
 
 	if (gAllowCopy){
 
-		//console.log("MakeTuneVisible()");
-
 		var tuneIndex = findSelectedTuneIndex();
+
+		// console.log("------------------------------------");
+		// console.log("------------------------------------");
+
+		// console.log("MakeTuneVisible tuneIndex = "+tuneIndex+" forceUpdate = "+forceUpdate+" gCurrentTune before = "+gCurrentTune);
 
 		// Save the current tune index
 		gCurrentTune = tuneIndex;
 
-		// Only do the rest on desktop
-		if (gIsIOS || gIsAndroid){
-			return;
+		// Only do the rest on desktop, except in the force case after a global change
+
+		if (!forceUpdate){
+			if (gIsIOS || gIsAndroid){
+				return;
+			}
 		}
 
 		//console.log("Selected tune index = " + tuneIndex);
@@ -4188,22 +4274,36 @@ function MakeTuneVisible(){
 			var theTuneTop = theTuneDiv.offsetTop;
 			var theTuneHeight = theTuneDiv.offsetHeight;
 
-			var theNoScroller = document.getElementById("noscroller");
-			var theNoScrollerHeight = theNoScroller.offsetHeight;
+			var theNotationSpacer = document.getElementById("notation-spacer");
+			var theNotationSpacerHeight = theNotationSpacer.offsetHeight;
+
+			// No noscroller to be taken into account if in dual column mode
+			if (!gIsOneColumn){
+				//console.log("two colume case");
+				theNotationSpacerHeight = 0;
+			}
+			else{
+				//console.log("one column case");
+				theTuneTop += theNotationSpacerHeight;
+			}
 
 			var theWindowHeight = window.innerHeight;
+
 			var theWindowScrollY = window.scrollY;
 
-			var theVisibleHeight = theWindowHeight - theNoScrollerHeight;
+			var theVisibleHeight = theWindowHeight - theNotationSpacerHeight;
 
 			// Find the position of the tune relative to the bottom of the UI
 			// 18 appears to be a margin offset
-			var theTuneOffsetFromSpacer = ((theTuneTop - theWindowScrollY) - theNoScrollerHeight) - 18;
+			var theTuneOffsetFromSpacer = ((theTuneTop - theWindowScrollY) - theNotationSpacerHeight);
 
-			// console.log("tune top= "+theTuneTop+ " tune height= "+theTuneHeight+" noscoller= "+theNoScrollerHeight);
-			// console.log(" window= "+theWindowHeight+" window scrolly= "+theWindowScrollY);
+			// console.log("------------------------------------");
+
+			// console.log("tune top= "+theTuneTop+ " tune height= "+theTuneHeight+" notation spacer height = "+theNotationSpacerHeight);
+			// console.log("window height = "+theWindowHeight+" window scrolly= "+theWindowScrollY);
 			// console.log("theVisibleHeight= "+theVisibleHeight);
 			// console.log("theTuneOffsetFromSpacer = "+theTuneOffsetFromSpacer);
+			// console.log("------------------------------------");
 
 			// Is the top of the tune visible?
 
@@ -4217,21 +4317,20 @@ function MakeTuneVisible(){
 
 			var tuneBottomVisible = (tuneBottomOffset > 0) && (tuneBottomOffset < theVisibleHeight);
 
-			//console.log("tuneBottomVisible = "+tuneBottomVisible);
+			// console.log("tuneBottomVisible = "+tuneBottomVisible);
 
 			var tuneOverflowsVisible = (theTuneOffsetFromSpacer < 0) && ((theTuneOffsetFromSpacer + theTuneHeight) > theVisibleHeight);
 
-			//console.log("tuneOverflowsVisible = "+tuneOverflowsVisible);
+			// console.log("tuneOverflowsVisible = "+tuneOverflowsVisible);
+
+			// console.log("------------------------------------");
 
 			// Handle case where the tune changed since an autoscroll, force a rescroll
-			if (tuneIndex != gLastAutoScrolledTune){
+			if ((tuneIndex != gLastAutoScrolledTune) || forceUpdate){
 
-				//console.log("Trigger autoscroll case #1 - selected a different tune");
+				// console.log("Trigger autoscroll case #1 - selected a different tune or forceUpdate = "+forceUpdate);
 
-				// Forcing the noscroller height to zero for responsive case
-				theNoScrollerHeight = 0;
-
-				var newScrollPos = theTuneTop-theNoScrollerHeight;
+				var newScrollPos = theTuneTop-theNotationSpacerHeight;
 
 				window.scrollTo(0,newScrollPos);
 
@@ -4242,12 +4341,9 @@ function MakeTuneVisible(){
 
 				if (!(tuneTopVisible || tuneBottomVisible || tuneOverflowsVisible)){
 
-					//console.log("Trigger autoscroll case #2, tune completely invisible whether current or newly selected tune");
+					// console.log("Trigger autoscroll case #2, tune completely invisible whether current or newly selected tune");
 
-					// Forcing the noscroller height to zero for responsive case
-					theNoScrollerHeight = 0;
-
-					var newScrollPos = theTuneTop-theNoScrollerHeight;
+					var newScrollPos = theTuneTop-theNotationSpacerHeight;
 
 					window.scrollTo(0,newScrollPos);
 
@@ -4415,6 +4511,13 @@ function ToggleTopBar(){
 	// Resize the notation spacer
 	UpdateNotationTopPosition();
 
+	// Force a rescroll for one column view
+	if (gIsOneColumn){
+
+		MakeTuneVisible(true);
+
+	}
+
 	// Update the link if there is any ABC
 	if (gAllowCopy){
 
@@ -4451,6 +4554,8 @@ function HandleWindowResize(){
 				// Reset the number of rows in the ABC editor
 				gTheABC.rows = 12;
 
+				gIsOneColumn = true;
+
 			}
 			else{
 				
@@ -4478,6 +4583,8 @@ function HandleWindowResize(){
 
 				// Resize the text box
 				gTheABC.rows = nRows;
+
+				gIsOneColumn = false;
 
 			}
 		}
@@ -4580,6 +4687,7 @@ function DoStartup() {
 	gTotalTunes = 0;
 	gCurrentTab = "noten";
 	gForceFullRender = false;
+	gIsOneColumn = true;
 
 	// Startup in blank screen
 	
@@ -4624,7 +4732,7 @@ function DoStartup() {
 	}	
 
 	//
-	// iOS and android styling adaptation
+	// iOS and Android styling adaptation
 	//
 	// Single column stacked blocks
 	//
@@ -4754,7 +4862,7 @@ function DoStartup() {
 	document.getElementById('abc').onclick = 
 		debounce( () => {
 
-		    MakeTuneVisible();
+		    MakeTuneVisible(false);
 
 		}, AUTOSCROLLDEBOUNCEMS);
 
@@ -4835,7 +4943,7 @@ function DoStartup() {
 	document.getElementById("firstpage").value = "yes";
 
 
-	// Hook up the zoom
+	// Hook up the zoom button
 	document.getElementById("zoombutton").onclick = 
 		function() {
 			ToggleMaximize();
