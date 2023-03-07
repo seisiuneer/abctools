@@ -427,6 +427,13 @@ var thePageNumberVerticalOffset = 0;
 // Did they request a QR code
 var QRCodeRequested = false;
 
+// Did they request an index page
+var TuneIndexRequested = false;
+var theTuneIndexTitle = "";
+
+// Tune page map
+var theTunePageMap = [];
+
 // PDF JPG quality (range is 0 to 1)
 var PDFJPGQUALITY = 0.8;
 
@@ -435,6 +442,138 @@ var PDFSCALEFACTOR = 1.55;
 
 // PDF object to render to
 var pdf;
+
+//
+// Get the tune index titles
+//
+function GetTuneIndexTitles(){
+
+	var i;
+
+	var theTitles = [];
+
+	for (i=0;i<totalTunes;++i){
+
+		var thisTune = getTuneByIndex(i);
+
+		var neu = escape(thisTune);
+
+		var Reihe = neu.split("%0D%0A");
+
+		Reihe = neu.split("%0A");
+
+		for (j = 0; j < Reihe.length; ++j) {
+
+			Reihe[j] = unescape(Reihe[j]); /* Macht die Steuerzeichen wieder weg */
+
+			var Aktuellereihe = Reihe[j].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
+
+			if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
+
+				titel = Reihe[j].slice(2);
+
+				titel = titel.trim();
+
+				// Just grab the first title foiund
+				theTitles.push(titel);
+
+				break
+
+			}
+		}
+	}
+
+	return theTitles;
+}
+
+//
+// Tune index page layout constants
+//
+var INDEXTOPOFFSET = 330;
+var INDEXBOTTOMOFFSET = 330;
+var INDEXTITLEOFFSET = 35;
+var INDEXLEFTMARGIN = 95;
+var INDEXRIGHTMARGIN = 125;
+var INDEXTITLESIZE = 18;
+var INDEXFONTSIZE = 13;
+var INDEXLINESPACING = 15;
+
+//
+// Generate and append a tune index to the current PDF
+//
+function AppendTuneIndex(thePDF,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageNumberList,theTitle){
+
+	// Add a new page
+	thePDF.addPage(paperStyle); 
+
+	// Set the font size
+	thePDF.setFontSize(INDEXTITLESIZE);
+
+	if (theTitle != ""){
+
+		// Add the tune names
+		thePDF.text(theTitle, thePDF.internal.pageSize.getWidth()/3.10, INDEXTOPOFFSET, {align:"center"});
+
+	}
+
+	// Get all the tune titles (uses first T: tag found)
+	var theTitles = GetTuneIndexTitles();
+
+	var thePaperHeight = pdf.internal.pageSize.getHeight();;
+	var thePaperWidth = pdf.internal.pageSize.getWidth()/1.5;
+
+	var pageSizeWithMargins = thePaperHeight - (2 * PAGETOPOFFSET);
+
+	var curTop = INDEXTOPOFFSET + INDEXTITLEOFFSET;
+
+	var i;
+	var thePageNumber;
+
+	// Set the font size
+	thePDF.setFontSize(INDEXFONTSIZE);
+
+	// Add the tunes by name and page number
+	for (i=0;i<totalTunes;++i){
+
+		thePDF.text(theTitles[i], INDEXLEFTMARGIN, curTop, {align:"left"});
+
+		thePageNumber = theTunePageNumberList[i];
+
+		thePDF.text(""+thePageNumber, thePaperWidth-INDEXRIGHTMARGIN, curTop, {align:"left"});
+
+		curTop += INDEXLINESPACING;
+
+		if (i != (totalTunes - 1)){
+
+			if (curTop > pageSizeWithMargins){
+
+				// Bump the page count
+				theCurrentPageNumber++;
+
+				// Add the header and footer, suppress the page number
+				AddPageHeaderFooter(thePDF,false,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);
+
+				// Add a new page
+				thePDF.addPage(paperStyle); 
+
+				// Set the font size
+				thePDF.setFontSize(INDEXFONTSIZE);
+
+				// Start back at the top
+				curTop = INDEXTOPOFFSET + INDEXTITLEOFFSET;
+
+			}
+		}
+	}
+
+	// We're on a new page
+	theCurrentPageNumber++;
+
+	// Add the final page header and footer, suppress the page number
+	AddPageHeaderFooter(thePDF,false,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle,false);	
+
+}
+
 
 //
 // Generate and append a QR code to the current PDF
@@ -933,23 +1072,25 @@ function ParseHeaderFooter(theNotes){
 	QRCodeRequested = false;
 
 	// Search for a page header
-	var searchRegExp = /^%pageheader .*$/m
+	var searchRegExp = /^%pageheader.*$/m
 
 	// Detect page header annotation
 	var allPageHeaders = theNotes.match(searchRegExp);
 
 	if ((allPageHeaders) && (allPageHeaders.length > 0)){
 		thePageHeader = allPageHeaders[0].replace("%pageheader ","");
+		thePageHeader = allPageHeaders[0].replace("%pageheader","");
 	}
 
 	// Search for a page footer
-	searchRegExp = /^%pagefooter .*$/m
+	searchRegExp = /^%pagefooter.*$/m
 
 	// Detect page footer annotation
 	var allPageFooters = theNotes.match(searchRegExp);
 
 	if ((allPageFooters) && (allPageFooters.length > 0)){
 		thePageFooter = allPageFooters[0].replace("%pagefooter ","");
+		thePageFooter = allPageFooters[0].replace("%pagefooter","");
 	}
 
 	// Search for a QR code request
@@ -962,6 +1103,24 @@ function ParseHeaderFooter(theNotes){
 		QRCodeRequested = true;
 	}
 
+	// Clear the tune index and toc strings
+	theTuneIndexTitle = "";
+
+	// Did they request an index
+	TuneIndexRequested = false;
+
+	// Search for a tune index request
+	searchRegExp = /^%addindex.*$/m
+
+	// Detect tune index annotation
+	var addTuneIndex = theNotes.match(searchRegExp);
+
+	if ((addTuneIndex) && (addTuneIndex.length > 0)){
+		TuneIndexRequested = true;
+		theTuneIndexTitle = addTuneIndex[0].replace("%addindex ","");
+		theTuneIndexTitle = addTuneIndex[0].replace("%addindex","");
+
+	}
 
 }
 
@@ -1267,13 +1426,16 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 				}
 
+				// Save the tune page number
+				theTunePageMap[tunesProcessed] = theCurrentPageNumber;
+
 				// Bump the tune processed counter
 				tunesProcessed++;
 
 				if (tunesProcessed < totalTunes){
 
 					document.getElementById("statustunecount").innerHTML = "Rendering tune <font color=\"red\">"+(tunesProcessed+1)+"</font>" + " of  <font color=\"red\">"+totalTunes+"</font>"
-				
+
 				}
 
 			}
@@ -1411,6 +1573,9 @@ function ExportPDF(theCallback) {
 
 	tunesProcessed = 0;
 
+	// Init the page map
+	theTunePageMap = [];
+
 	// Count the tunes
 	totalTunes = CountTunes();
 
@@ -1433,6 +1598,9 @@ function ExportPDF(theCallback) {
 		Render(true,null,true);
 		
 		document.getElementById("statustunecount").innerHTML = "Rendering tune <font color=\"red\">1</font>" + " of  <font color=\"red\">"+totalTunes+"</font>"
+
+		// Save the first tune page number
+		theTunePageMap[0] = theCurrentPageNumber;
 
 		// Set the global PDF rendering flag
 		gRenderingPDF = true;
@@ -1468,6 +1636,20 @@ function ExportPDF(theCallback) {
 				// Add final page number, header, and footer
 				AddPageHeaderFooter(pdf,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);	
 
+				// Did they request a tune index?
+				if (TuneIndexRequested){
+					
+					document.getElementById("statustunecount").innerHTML = "Adding Tune Index";
+					
+					AppendTuneIndex(pdf,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTuneIndexTitle);
+
+					document.getElementById("statustunecount").innerHTML = "Tune Index Added!";
+					
+					document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+					
+				}
+
+				// Did they request a QR code?
 				if (QRCodeRequested){
 
 					document.getElementById("statustunecount").innerHTML = "Adding QR Code";
@@ -1503,8 +1685,8 @@ function ExportPDF(theCallback) {
 						// Delay for final QR code UI status update
 						setTimeout(function(){
 
-							// Add page numbers, headers, and footers
-							AddPageHeaderFooter(pdf,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);	
+							// Suppress page numbers on QR page, add headers, and footers
+							AddPageHeaderFooter(pdf,false,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);	
 						
 							// Handle the status display for the new page
 							document.getElementById("statustunecount").innerHTML = "";
@@ -3085,7 +3267,7 @@ function CountTunes() {
 function NewABC(){
 
 	// Stuff in some default ABC with additional options explained
-	gTheABC.value = "X: 1\nT: New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%%MIDI program 74\n%\n% Enter the ABC for your tune(s) below:\n%\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|\n\n%\n% To choose the sound when played, change the MIDI program # above to:\n%\n% 74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano\n%\n\n% Try these custom PDF page annotations by removing the % and the space\n%\n% Add a PDF page header or footer:\n%\n% %pageheader My Tune Set:  $TUNENAMES\n% %pagefooter PDF named: $PDFNAME saved on: $DATEMDY at $TIME\n%\n% After the tunes, add a sharing QR code on a new page in the PDF:\n%\n% %qrcode\n%\n";
+	gTheABC.value = "X: 1\nT: New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%%MIDI program 74\n%\n% Enter the ABC for your tune(s) below:\n%\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|\n\n%\n% To choose the sound when played, change the MIDI program # above to:\n%\n% 74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano\n%\n\n% Try these custom PDF page annotations by removing the % and the space\n%\n% Add a PDF page header or footer:\n%\n% %pageheader My Tune Set:  $TUNENAMES\n% %pagefooter PDF named: $PDFNAME saved on: $DATEMDY at $TIME\n%\n% After the tunes, add a tune index with a title:\n%\n% %addindex My Tune Index\n%\n% After the tunes, add a sharing QR code on a new page in the PDF:\n%\n% %qrcode\n%\n";
 
 	// Refocus back on the ABC
 	FocusABC();
