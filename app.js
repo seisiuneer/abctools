@@ -1426,11 +1426,13 @@ function ExportPDF(theCallback) {
 
 	document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"red\">" + title + ".pdf </font>";
 
-	document.getElementById("statustunecount").innerHTML = "Rendering tune <font color=\"red\"> 1</font> of <font color=\"red\">"+totalTunes+"</font>"
+	document.getElementById("statustunecount").innerHTML = "Processing notation for PDF generation";
 
 	setTimeout(function() {
 
 		Render(true,null,true);
+		
+		document.getElementById("statustunecount").innerHTML = "Rendering tune <font color=\"red\">1</font>" + " of  <font color=\"red\">"+totalTunes+"</font>"
 
 		// Set the global PDF rendering flag
 		gRenderingPDF = true;
@@ -2283,15 +2285,10 @@ function RenderAsync(renderAll,tuneNumber,copySVGs){
 			// Do do the rescroll in the PDF generation case
 			if (!copySVGs){
 
-				// Give some browser render time before doing the tune visibility update
-				//setTimeout(function(){
+				// Recalc the top tune position and scroll it into view if required
+				MakeTuneVisible(true);
 
-					//console.log("RenderAsync maketunevisible");
 
-					// Recalc the top tune position and scroll it into view if required
-					MakeTuneVisible(true);
-
-				//},100);
 			}
 
 		}, 100);
@@ -5106,6 +5103,15 @@ function DoStartup() {
 
 		// Check the filename extension
 		if (ensureABCFile(file.name)) {
+
+			// Clean up the notation while the new file is loading
+			gTheABC.value = "";
+
+			Render(true,null,false);
+
+			// Show the loading status
+			var fileSelected = document.getElementById('abc-selected');
+			fileSelected.innerText = "Loading: "+file.name;
 
 			// Save the filename
 			gDisplayedName = file.name;
