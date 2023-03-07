@@ -1164,7 +1164,6 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 	// Make sure we have a valid block
 	if ((theBlock == null) || (theBlock == undefined)){
-		debugger;
 		return;
 
 	}
