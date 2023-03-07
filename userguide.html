@@ -38,7 +38,6 @@
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
         
-       
         <style>
         p {
         font-size:14pt;
@@ -112,6 +111,7 @@
             <p class="toc"><a href="#printing_your_tunes">Printing Your Tunes</a></p>
             <p class="toc"><a href="#pdf_settings">PDF Settings</a></p>
             <p class="toc"><a href="#pdf_page_headers_and_footers">PDF Page Headers and Footers</a></p>
+            <p class="toc"><a href="#adding_a_pdf_tunebook_index">Adding a PDF Tunebook Index</a></p>
             <p class="toc"><a href="#advanced_controls">Advanced Controls</a></p>
             <p class="toc"><a href="#sharing_controls">Sharing Controls</a></p>
             <p class="toc"><a href="#abc_share_url_examples">ABC Share URL Examples</a></p>
@@ -364,6 +364,17 @@
             <p>If you add a page footer and you have selected bottom-centered page numbers, the page number will be hidden.</p>
             <p></p>
             <p>Since these annotations are ABC comment-based, they will just appear to be normal comments in other ABC software.</p>
+            <hr id="adding_a_pdf_tunebook_index">
+            <h1>Adding a PDF Tunebook Index</h1>
+            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/drtgh8_PRUY" title="PDF Tunebook Index Page" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p></p>
+            <p>To append a tune index to the end of your PDF tunebook listing each tune name and page number, simply add the following comment-based annotation anywhere in the ABC:</p>
+            <p></p>
+            <p>%addindex (your tune index title text goes here...)</p>
+            <p></p>
+            <p>Note that the tunebook index itself includes the PDF page header and footer but does not include page numbers so you can use it as a table of contents if required for a printed tunebook.</p>
+            <p>As with the %pageheader and %pagefooter annotation, only the first instance of the %addindex annotation is processed, any additional instances are ignored.</p>
+            <p></p>
             <hr id="advanced_controls">
             <h1>Advanced Controls</h1>
             <div class="image_holder">
@@ -419,10 +430,11 @@
             <p><a href="https://flic.kr/s/aHBqjArRJZ" target="_blank">ABC Tune Set QR Codes on Flickr</a></p>
             <hr id="adding_a_qr_code_to_the_pdf_export">
             <h1>Adding a QR Code to the PDF Export</h1>
-            <p>To add a QR code for your tune set as a final page on your PDF, add the following comment-based annotation anywhere in the ABC:</p>
+            <p>To append a QR code for your tune set as a final page on your PDF, add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
             <p>%qrcode</p>
             <p></p>
+            <p>Note that the QR code page itself includes the PDF page header and footer but does not include a page number.</p>
             <p></p>
             <p>Here is an example of a tune set QR code included in the exported PDF:</p>
             <div class="image_holder">
