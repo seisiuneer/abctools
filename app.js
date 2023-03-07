@@ -392,6 +392,9 @@ var PAGENUMBERTOPA4 = 313;
 var PAGETOPOFFSET = 32;
 var PAGELEFTOFFSET = 37;
 var PAGELEFTOFFSETA4 = 29;
+var PAGEHEIGHTLETTER = 792;
+var PAGEHEIGHTA4 = 842;
+var BETWEENTUNESPACE = 20;
 
 // Keeps track of where we are on the page
 var running_height = PAGETOPOFFSET;
@@ -426,6 +429,9 @@ var QRCodeRequested = false;
 
 // PDF JPG quality (range is 0 to 1)
 var PDFJPGQUALITY = 0.8;
+
+// Internal PDF scale factor
+var PDFSCALEFACTOR = 1.55;
 
 // PDF object to render to
 var pdf;
@@ -631,10 +637,188 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
 }
 
 //
+// Measure all the tunes for PDF layout
+//
+function ProcessTunesForContinuousLayout(pageBreakList,pageHeight){
+	
+	// Measure the tunes
+	var nTunes = pageBreakList.length;
+
+	// Doesn't matter for one tune
+	if (nTunes <= 1){
+		return pageBreakList;
+	}
+
+	var renderingDivs = [];
+
+	var i,j;
+	var theElem;
+	var theElemHeight;
+
+	for (i=0;i<nTunes;++i){
+
+		// Get each rendering div
+		theElem = document.getElementById("notation"+i);
+
+		// Get the height
+		theElemHeight = theElem.offsetHeight/PDFSCALEFACTOR;
+
+		// Get each staff height
+		var theStaffHeights = [];
+
+		// Get the children of the notation div, one block per staff
+		var theBlocks = theElem.children;
+
+		var nBlocks = theBlocks.length;
+
+		var theBlockHeight;
+		var currentBlock;
+
+		for (j=0;j<nBlocks;++j){
+
+			// Get the node from the HTML collection
+			currentBlock = theBlocks.item(j);
+
+			theBlockHeight = currentBlock.offsetHeight / PDFSCALEFACTOR;
+
+			theStaffHeights.push(theBlockHeight);
+
+		}
+
+		var tuneStruct = 
+		{	
+			theElement:theElem, 
+			height:theElemHeight, 
+			staffHeights:theStaffHeights
+		};
+
+		renderingDivs.push(tuneStruct);
+
+	}
+
+	// 
+	// Now layout the page breaks
+	//
+
+	// Keep track of the space left on the page with top and bottom margins
+	var pageSizeWithMargins = pageHeight - (2 * PAGETOPOFFSET);
+
+	var spaceAvailable = pageSizeWithMargins;
+
+	var thisTuneHeight;
+
+	var firstTuneOnPage = true;
+
+	for (i=0;i<nTunes;++i){
+
+		// If there is already a forced pagebreak on the tune, we can skip the space calculation
+		if (!pageBreakList[i]){
+
+			// The PDF generator adds one extra line per block it renders
+			var thisTuneHeight = renderingDivs[i].height + renderingDivs[i].staffHeights.length;
+
+			// Does this tune fit on the page?
+			if (thisTuneHeight > spaceAvailable){
+
+				// Put in a page break (not on the first tune)
+				if (i != 0){
+
+					pageBreakList[i-1] = true;
+
+				}
+
+				// Reset the page offset
+				spaceAvailable = pageSizeWithMargins;
+
+				// Is this a tune moved to a new page that takes up more than one page
+				if (thisTuneHeight > pageSizeWithMargins){
+					
+					// Then we have to walk the staffs
+					var nStaffs = renderingDivs[i].staffHeights.length;
+
+					var spaceTest;
+
+					var thisStaffHeight;
+
+					// How many staffs fit on this page?
+					for (j=0;j<nStaffs;++j){
+
+						// The +1 is an additional offset in the PDF generator
+						thisStaffHeight = renderingDivs[i].staffHeights[j] + 1;
+
+						spaceTest = spaceAvailable - thisStaffHeight;
+
+						// Out of room on this page, move to the next page
+						if (spaceTest < 0){
+
+							// This staff moves to a new page
+							spaceAvailable = pageSizeWithMargins;
+
+						}
+
+						spaceAvailable -= thisStaffHeight;
+
+					}
+
+					// Add the space below for the next tune
+					spaceAvailable -= BETWEENTUNESPACE;
+
+					// Try to layout next tune below this one
+					firstTuneOnPage = false;
+
+				}
+				else{
+
+					// Reset the page offset
+					spaceAvailable = pageSizeWithMargins;
+
+					// Place the tune on the page
+					spaceAvailable -= thisTuneHeight;
+
+					// With a space below
+					spaceAvailable -= BETWEENTUNESPACE;
+
+					// Flag this as the first tune on the page
+					firstTuneOnPage = true;
+
+				}
+
+			}
+			else{
+
+				// Only add in-between space after the first tune on the page
+				if (firstTuneOnPage){
+
+					firstTuneOnPage = false;
+
+				}
+
+				// Take space for the tune
+				spaceAvailable -= thisTuneHeight;
+
+				// And the spacer below
+				spaceAvailable -= BETWEENTUNESPACE;
+
+			}
+
+		}
+
+	}
+
+	// First, do no harm... 
+	return pageBreakList;
+
+}
+
+//
 // Scan the tune and return an array that indicates if a tune as %%newpage under X:
 //
 
-function scanTunesForPageBreaks(){
+function scanTunesForPageBreaks(pdf){
+
+	// Get the paper height at 72 dpi from the PDF generator
+
+	var thePaperHeight = pdf.internal.pageSize.getHeight();
 
 	var pageBreakRequested = [];
 
@@ -660,6 +844,9 @@ function scanTunesForPageBreaks(){
 		}
 
 	}
+
+	// Measure the tunes and insert any automatic page breaks
+	pageBreakRequested = ProcessTunesForContinuousLayout(pageBreakRequested,thePaperHeight);
 
 	return pageBreakRequested;
 }
@@ -826,7 +1013,9 @@ function ProcessHeaderFooter(str,pageNumber,pageCount){
 // Calculate and cache the page number position
 //
 function calcPageNumberVerticalOffset(thePDF){
+
 	thePageNumberVerticalOffset = thePDF.internal.pageSize.getHeight()-9;
+
 }
 
 //
@@ -973,6 +1162,13 @@ function AddPageHeaderFooter(thePDF,doAddPageNumber,pageNumber,pageNumberLocatio
 //
 function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, callback){
 
+	// Make sure we have a valid block
+	if ((theBlock == null) || (theBlock == undefined)){
+
+		return;
+
+	}
+
 	var svg = theBlock.querySelector("svg");
 
 	svg.setAttribute("width", qualitaet);
@@ -996,8 +1192,16 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 			}
 
+			var thePageHeight = PAGEHEIGHTLETTER;
+
+			if (paperStyle == "a4"){
+
+				thePageHeight = PAGEHEIGHTA4;
+
+			}
+
 			// Creates a sharper image
-			pdf.internal.scaleFactor = 1.55;
+			pdf.internal.scaleFactor = PDFSCALEFACTOR;
 
 			var imgData = canvas.toDataURL("image/jpeg", PDFJPGQUALITY); 
 
@@ -1049,7 +1253,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 						else{
 
 							// Otherwise, move it down the current page a bit
-							running_height += 20;
+							running_height += BETWEENTUNESPACE;
 
 						}
 
@@ -1080,7 +1284,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 			// the first two values mean x,y coordinates for the upper left corner. Enlarge to get larger margin.
 			// then comes width, then height. The second value can be freely selected - then it leaves more space at the top.
 
-			if (running_height + height + PAGETOPOFFSET <= 842 - PAGETOPOFFSET) // i.e. if a block of notes would get in the way with the bottom margin (30 pt), then a new one please...
+			if (running_height + height + PAGETOPOFFSET <= thePageHeight - PAGETOPOFFSET) // i.e. if a block of notes would get in the way with the bottom margin (30 pt), then a new one please...
 			{
 
 				pdf.addImage(imgData, 'JPG', hoff, running_height, 535, height);
@@ -1203,13 +1407,6 @@ function ExportPDF(callback) {
 	// Cache the tune titles
 	theHeaderFooterTuneNames = GetAllTuneTitles();
 
-	// If not doing single page, find any tunes that have page break requests
-	var pageBreakList = [];
-
-	if (!doSinglePage){
-		pageBreakList = scanTunesForPageBreaks();
-	}
-
 	// Init the shared globals
 	theCurrentPageNumber = 1;
 
@@ -1240,6 +1437,16 @@ function ExportPDF(callback) {
 		gRenderingPDF = true;
 
 		pdf = new jsPDF('p', 'pt', paperStyle);
+
+		// If not doing single page, find any tunes that have page break requests
+		var pageBreakList = [];
+
+		if (!doSinglePage){
+
+			// Process any automatic or manual page breaks
+			pageBreakList = scanTunesForPageBreaks(pdf);
+
+		}
 
 		theBlocks = document.querySelectorAll('div[class="block"]');
 
