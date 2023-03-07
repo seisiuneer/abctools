@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-      
+               
         <style>
         p {
         font-size:14pt;
@@ -275,6 +275,8 @@
             <p>Experiment with both the browser's print settings page orientation and "multiple page on one page" options to see what is possible.</p>
             <hr id="pdf_settings">
             <h1>PDF Settings</h1>
+            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/jtiVzXB8xhQ" title="PDF Generation Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p></p>
             <p>The tool has a built-in PDF generator that provides more flexibility than the browser's print feature, particularly in the area of custom page headers and footers.</p> 
             <p>While the browser's native print feature described above can easily deal with hundreds of tunes quickly, the tool's PDF generation is probably best used with tunebooks of 100 tunes or less.</p> 
             <p>It also includes an option to append a Share URL QR code to the end of the PDF document.</p>
@@ -289,7 +291,7 @@
             <p>Multiple - A4:&nbsp;&nbsp;Tunes are added one after another down each page in the PDF.&nbsp;&nbsp;Paper size = A4</p>
             <p>Default is:&nbsp;&nbsp;One - Letter</p>
             <p></p>
-            <p>Note: Selecting multiple tunes per page may result in tunes staves crossing page boundaries.</p>
+            <p>When exporting multiple tunes per page to PDF the tool will do its best to layout the output to not split tunes between pages, unless the tune itself is longer than one page.</p>
             <p></p>
             <p>To manually force a tune to a new page in the PDF, add:</p>
             <p></p>
@@ -297,7 +299,7 @@
             <p></p>
             <p>on a new line immediately at the end of tunes after which you want to force a page break.</p>
             <p></p>
-            <p>This will allow you to easily format a tune book where you want multiple tunes per page, but some tunes to not be split between pages.</p>
+            <p>This will allow you to easily format a tune book where you want to override the automatic tune layout.</p>
             <p></p>
             <p>PDF Page Number Position Options:</p>
             <div class="image_holder">
