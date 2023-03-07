@@ -1164,7 +1164,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 	// Make sure we have a valid block
 	if ((theBlock == null) || (theBlock == undefined)){
-
+		debugger;
 		return;
 
 	}
@@ -1355,7 +1355,7 @@ function ExportPDFAsync(){
 //
 // Export a PDF document
 //
-function ExportPDF(callback) {
+function ExportPDF(theCallback) {
 
 	// Show the PDF status block
 	var pdfstatus = document.getElementById("pdf-controls");
@@ -1559,7 +1559,7 @@ function ExportPDF(callback) {
 							RenderAsync(true,null,false);
 
 							// All done!
-							callback();
+							theCallback();
 
 						},1000);
 
@@ -1569,13 +1569,22 @@ function ExportPDF(callback) {
 
 			} else {
 
+				// Sanity check the block index
+				if (nBlocksProcessed > theBlocks.length){
+
+					return;
+
+				}
+
 				theBlock = theBlocks[nBlocksProcessed];
 
-				setTimeout(function() {
+
+				// Sanity check the block
+				if (theBlock){
 
 					RenderPDFBlock(theBlock, nBlocksProcessed, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, callback);
 
-				}, 100);
+				}
 
 			}
 
@@ -2249,6 +2258,11 @@ function GetRadioValue(radioName) {
 // Allow putting up a spiner before the synchronous Render() function
 //
 function RenderAsync(renderAll,tuneNumber,copySVGs){
+
+	// Don't allow a re-render during PDF generation
+	if (gRenderingPDF){
+		return;
+	}
 
 	//console.log("RenderAsync renderAll = "+renderAll+" tuneNumber = "+tuneNumber+" copySVGs = "+copySVGs);
 	
