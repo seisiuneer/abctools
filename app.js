@@ -440,6 +440,9 @@ var PDFJPGQUALITY = 0.8;
 // Internal PDF scale factor
 var PDFSCALEFACTOR = 1.55;
 
+// The offscreen render div
+var theOffscreen = null;
+
 // PDF object to render to
 var pdf;
 
@@ -1323,16 +1326,25 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 	// Make sure we have a valid block
 	if ((theBlock == null) || (theBlock == undefined)){
+
 		return;
 
 	}
 
+	// Get the SVG from the block
 	var svg = theBlock.querySelector("svg");
 
+	// Copy the SVG to the offscreen
+	theOffscreen.innerHTML = "<div>" + svg.outerHTML + "</div>";
+
+	// Find the SVG in the offscreen
+	svg = theOffscreen.querySelector("svg");
+
+	// Set the SVG width for high resolution rasterization
 	svg.setAttribute("width", qualitaet);
 
-	// scale improves the subsequent PDF quality.
-	htmlToImage.toCanvas(theBlock, {
+	// scale improves the subsequent PDF quality. was theBlock
+	htmlToImage.toCanvas(svg, {
 			backgroundColor: "white",
 			style: {
 				background: "white"
@@ -1593,6 +1605,9 @@ function ExportPDF(theCallback) {
 
 	document.getElementById("statustunecount").innerHTML = "Processing notation for PDF generation";
 
+	// Cache the offscreen rendering div
+	theOffscreen = document.getElementById("offscreenrender")
+
 	setTimeout(function() {
 
 		Render(true,null,true);
@@ -1617,7 +1632,7 @@ function ExportPDF(theCallback) {
 
 		}
 
-		theBlocks = document.querySelectorAll('div[class="block"]');
+		var theBlocks = document.querySelectorAll('div[class="block"]');
 
 		var nBlocks = theBlocks.length;
 
@@ -1756,6 +1771,13 @@ function ExportPDF(theCallback) {
 				if (nBlocksProcessed > theBlocks.length){
 
 					return;
+
+				}
+
+				// Early release of the last block
+				if (nBlocksProcessed > 0){
+					
+					theBlocks[nBlocksProcessed-1] = null;
 
 				}
 
@@ -2048,7 +2070,8 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber, copySVGs) {
 
 	//console.log("deltaTime = "+deltaTime);
 
-	document.getElementById("offscreenrender").innerHTML = ""; // must be, otherwise it somehow generates the abc twice...
+	// Clear the offscreen rendering div
+	document.getElementById("offscreenrender").innerHTML = ""; 
 
 	var svgTextArray = [];
 
@@ -2377,35 +2400,33 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber, copySVGs) {
 		}
 
 		//
-		// Only copy the SVGs if rendering for PDF
+		// Only setup the div labels and classes if rendering for PDF
 		//
-		if (copySVGs) {
+		if (copySVGs){
 
-			Svgs = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg');
-			
-			for (x = 0; x < Svgs.length; x++) {
-				svgTextArray.push("<div id=\"block_" + tuneIndex + "_" + x + "\" class=\"block\">" + Svgs[x].outerHTML + "</div>");
+			var svgDivs = document.querySelectorAll('div[id="' + renderDivID + '"] > div');
+
+			var nSVGs = svgDivs.length;
+
+			var i;
+
+			var elem;
+
+			for (i=0;i<nSVGs;++i){
+
+				elem = svgDivs.item(i);
+
+				// Add the "block" class
+				elem.classList.add("block");
+
+				// Add the incrementing block ID (used to find the start of tunes)
+				elem.id = "block_" + tuneIndex + "_" + i;
+
 			}
-
 		}
 
 	}
 
-	//
-
-	// Join all the SVG text and stuff in the offscreen rendering div
-
-	if (copySVGs){
-
-		var allSVGText = svgTextArray.join();
-
-		document.getElementById("offscreenrender").innerHTML = allSVGText;
-
-		// Early GC
-		svgTextArray = null;
-
-	}
-	
 }
 
 function SetRadioValue(radioName, value) {
