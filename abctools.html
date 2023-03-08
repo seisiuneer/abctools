@@ -36,7 +36,7 @@
 		<link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 		<link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-		<link href="app.css?v=224" media="all" rel="stylesheet" type="text/css">
+		<link href="app.css?v=225" media="all" rel="stylesheet" type="text/css">
 				
 	</head>
 	<body>
@@ -45,6 +45,14 @@
 				<img id="zoombutton" class="zoombutton" src="img/zoomout.png"/>
 				<div id="loading-bar-spinner" class="spinner">
 					<div id="spinner-icon" class="spinner-icon"></div>
+				</div>
+				<div id="pdf-controls" class="modal">
+					<div class="modal-content">
+						<div id="statuspdfname"></div>
+						<div id="statustunecount"></div>
+						<div id="pagestatustext"></div>
+						<input class="cancelpdf" id="cancelpdf" onclick="CancelPDF();" type="button" value="Cancel">
+					</div>
 				</div>
 			</div>
 			<div id="noscroller" class="noscroller">
@@ -61,16 +69,11 @@
 						<!--our custom abc file upload button-->
 						<label class="abcupload" for="selectabcfile">Open ABC</label>
 						<input class="saveabcfiledisabled" id="saveabcfile" onclick="SaveABC();" type="button" value="Save ABC">
-						<input class="saveaspdfdisabled" id="saveaspdf" onclick="ExportPDFAsync();" type="button" value="Export PDF">
+						<input class="saveaspdfdisabled" id="saveaspdf" onclick="ExportPDF();" type="button" value="Export PDF">
 						<input class="copybuttondisabled" id="copybutton" onclick="CopyABC(event);" type="button" value="Copy All">
 						<input class="playbuttondisabled" id="playbutton" onclick="PlayABC();" type="button" value="Play">
 						<input class="toggleallcontrolsdisabled" id="toggleallcontrols" onclick="ToggleAllControls();" type="button" value="Hide Controls">
 						<input class="toggletopbar" id="toggletopbar" onclick="ToggleTopBar();" type="button" value="?">
-					</div>
-					<div id="pdf-controls">
-						<div id="statuspdfname"></div>
-						<div id="statustunecount"></div>
-						<div id="pagestatustext"></div>
 					</div>
 					<div id="inputarea">
 						<textarea id="abc" rows="12" cols="70" placeholder="Enter the ABC for your tunes here" spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
@@ -173,10 +176,10 @@
 		</div>
 		
 	</body>
-	<script type="text/javascript" src="abcjs-basic-tabs-min.js?v=224"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
+	<script type="text/javascript" src="abcjs-basic-tabs-min.js?v=225"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
 	<script type="text/javascript" src="jspdf.min.js"></script><!-- to generate PDF using Javscript -->
 	<script type="text/javascript" src="html2image.js"></script><!-- to convert HTML elements to bitmaps -->
-	<script type="text/javascript" src="qrcode.js?v=224"></script><!-- to generate QR codes for the share links -->
+	<script type="text/javascript" src="qrcode.js?v=225"></script><!-- to generate QR codes for the share links -->
 	<script type="text/javascript" src="lz-string.min.js"></script><!-- to generate QR codes for the share links -->
-	<script type="text/javascript" src="app.js?v=224"></script><!-- main application business logic -->
+	<script type="text/javascript" src="app.js?v=225"></script><!-- main application business logic -->
 </html>
