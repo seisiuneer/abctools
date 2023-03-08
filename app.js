@@ -1755,9 +1755,11 @@ function ExportPDF() {
 		var theBlock = theBlocks[0];
 
 		// Render and stamp one block
-		RenderPDFBlock(theBlock, 0, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, callback());
+		RenderPDFBlock(theBlock, 0, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, callback);
 
 		function callback() {
+
+			console.log("nBlocksProcessed = "+nBlocksProcessed);
 
 			// Was a cancel requested?
 			if (gPDFCancelRequested){
