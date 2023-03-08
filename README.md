@@ -2,7 +2,7 @@
 <p>This ABC tunes-to-notation converter was developed by <a href="http://michaeleskin.com" target="_blank">Michael Eskin</a>.</p>
 <p>This converter can generate standard music notation from ABC files, show note names along with notation, and also create tablature for mandolin, bouzouki, mandola, standard guitar, DADGAD guitar, or whistle.</p>
 <p>It can also transpose ABC up or down in semitone increments.</p>
-<p>It can generate PDF files in tune-per-page or multiple-tunes-per-page formats.</p>
+<p>It can generate PDF tunebooks in tune-per-page or multiple-tunes-per-page formats.</p>
 <p>Try it out here:</p>
 <p><a href="http://michaeleskin.com/abc" target="_blank">http://michaeleskin.com/abc</a></p> 
 <p>User guide:</p>
