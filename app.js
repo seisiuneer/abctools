@@ -1759,7 +1759,7 @@ function ExportPDF() {
 
 		function callback() {
 
-			console.log("nBlocksProcessed = "+nBlocksProcessed);
+			//console.log("nBlocksProcessed = "+nBlocksProcessed);
 
 			// Was a cancel requested?
 			if (gPDFCancelRequested){
