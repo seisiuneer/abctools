@@ -68,6 +68,7 @@ var gShowShareControls = false;
 var gAllowSave = false;
 
 var gAllowURLSave = false;
+var gAllowQRCodeSave = false
 
 var gShowAllControls = false;
 
@@ -205,20 +206,22 @@ function TransposeUp() {
 		resetSelectionAfterTranspose(gCurrentTune);
 
 		// Force a full render
-		RenderAsync(true,null,false);
+		RenderAsync(true,null, function(){
 
-		setTimeout(function(){
+			setTimeout(function(){
 
-			for (var i = 0; i < nTunes; ++i) {
+				for (var i = 0; i < nTunes; ++i) {
 
-				// Flash reduction
-				var elem = document.getElementById(id);
+					// Flash reduction
+					var elem = document.getElementById(id);
 
-				elem.style.opacity = 1.0;
+					elem.style.opacity = 1.0;
 
-			}
+				}
 
-		},100);
+			},100);
+
+		});
 
 
 	},100);
@@ -289,21 +292,21 @@ function TransposeDown() {
 		resetSelectionAfterTranspose(gCurrentTune);
 
 		// Force a full render
-		RenderAsync(true,null,false);
+		RenderAsync(true,null,function(){
 
-		setTimeout(function(){
+			setTimeout(function(){
 
-			for (var i = 0; i < nTunes; ++i) {
+				for (var i = 0; i < nTunes; ++i) {
 
-				// Flash reduction
-				var elem = document.getElementById(id);
+					// Flash reduction
+					var elem = document.getElementById(id);
 
-				elem.style.opacity = 1.0;
+					elem.style.opacity = 1.0;
 
-			}
+				}
 
-		},100);
-
+			},100);
+		});
 
 
 	},100);
@@ -322,7 +325,7 @@ function Clear() {
 
 	ClearNoRender();
 
-	RenderAsync(true,null,false);
+	RenderAsync(true,null);
 
 }
 
@@ -427,9 +430,13 @@ var thePageNumberVerticalOffset = 0;
 // Did they request a QR code
 var QRCodeRequested = false;
 
-// Did they request an index page
-var TuneIndexRequested = false;
-var theTuneIndexTitle = "";
+// Did they request an tunebook index?
+var TunebookIndexRequested = false;
+var theTunebookIndexTitle = "";
+
+// Did they request an tunebook TOC?
+var TunebookTOCRequested = false;
+var theTunebookTOCTitle = "";
 
 // Tune page map
 var theTunePageMap = [];
@@ -443,13 +450,16 @@ var PDFSCALEFACTOR = 1.55;
 // The offscreen render div
 var theOffscreen = null;
 
+// PDF generation cancel requested
+var gPDFCancelRequested = false;
+
 // PDF object to render to
 var pdf;
 
 //
 // Get the tune index titles
 //
-function GetTuneIndexTitles(){
+function GetTunebookIndexTitles(){
 
 	var i;
 
@@ -504,7 +514,7 @@ var INDEXLINESPACING = 15;
 //
 // Generate and append a tune index to the current PDF
 //
-function AppendTuneIndex(thePDF,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageNumberList,theTitle){
+function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageNumberList,theTitle){
 
 	// Add a new page
 	thePDF.addPage(paperStyle); 
@@ -520,7 +530,7 @@ function AppendTuneIndex(thePDF,addPageNumbers,pageNumberLocation,hideFirstPageN
 	}
 
 	// Get all the tune titles (uses first T: tag found)
-	var theTitles = GetTuneIndexTitles();
+	var theTitles = GetTunebookIndexTitles();
 
 	var thePaperHeight = pdf.internal.pageSize.getHeight();;
 	var thePaperWidth = pdf.internal.pageSize.getWidth()/1.5;
@@ -569,6 +579,7 @@ function AppendTuneIndex(thePDF,addPageNumbers,pageNumberLocation,hideFirstPageN
 		}
 	}
 
+
 	// We're on a new page
 	theCurrentPageNumber++;
 
@@ -577,6 +588,96 @@ function AppendTuneIndex(thePDF,addPageNumbers,pageNumberLocation,hideFirstPageN
 
 }
 
+//
+// Generate and append a tune index to the current PDF
+//
+function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageNumberList,theTitle){
+
+	// Add a new page
+	thePDF.addPage(paperStyle); 
+
+	// Set the font size
+	thePDF.setFontSize(INDEXTITLESIZE);
+
+	if (theTitle != ""){
+
+		// Add the tune names
+		thePDF.text(theTitle, thePDF.internal.pageSize.getWidth()/3.10, INDEXTOPOFFSET, {align:"center"});
+
+	}
+
+	// Get all the tune titles (uses first T: tag found)
+	var theTitles = GetTunebookIndexTitles();
+
+	var thePaperHeight = pdf.internal.pageSize.getHeight();;
+	var thePaperWidth = pdf.internal.pageSize.getWidth()/1.5;
+
+	var pageSizeWithMargins = thePaperHeight - (2 * PAGETOPOFFSET);
+
+	var curTop = INDEXTOPOFFSET + INDEXTITLEOFFSET;
+
+	var i;
+	var thePageNumber;
+
+	var tocPageOffset = 1;
+
+	// Set the font size
+	thePDF.setFontSize(INDEXFONTSIZE);
+
+	// Add the tunes by name and page number
+	for (i=0;i<totalTunes;++i){
+
+		thePDF.text(theTitles[i], INDEXLEFTMARGIN, curTop, {align:"left"});
+
+		thePageNumber = theTunePageNumberList[i];
+
+		thePDF.text(""+thePageNumber, thePaperWidth-INDEXRIGHTMARGIN, curTop, {align:"left"});
+
+		curTop += INDEXLINESPACING;
+
+		if (i != (totalTunes - 1)){
+
+			if (curTop > pageSizeWithMargins){
+
+				// Bump the page count
+				theCurrentPageNumber++;
+
+				// Add the header and footer, suppress the page number
+				AddPageHeaderFooter(thePDF,false,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);
+
+				// Move the page to the top
+				thePDF.movePage(theCurrentPageNumber,tocPageOffset);
+
+				// Bump the page offset counter since we have to insert them in the proper order at the top
+				tocPageOffset++;
+
+				// Add a new page
+				thePDF.addPage(paperStyle); 
+
+				// Set the font size
+				thePDF.setFontSize(INDEXFONTSIZE);
+
+				// Start back at the top
+				curTop = INDEXTOPOFFSET + INDEXTITLEOFFSET;
+
+			}
+		}
+	}
+
+
+	// We're on a new page
+	theCurrentPageNumber++;
+
+	// Add the final page header and footer, suppress the page number
+	AddPageHeaderFooter(thePDF,false,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle,false);	
+
+	// Move the page to the top
+	thePDF.movePage(theCurrentPageNumber,tocPageOffset);
+
+	// Bump the page offset counter since we have to insert them in the proper order at the top
+	tocPageOffset++;
+
+}
 
 //
 // Generate and append a QR code to the current PDF
@@ -589,7 +690,7 @@ function AppendQRCode(thePDF,paperStyle,callback){
 	// Can we make a QR code from the current share link URL?
 	var theURL = document.getElementById("urltextbox").value;
 
-	if (theURL.length > MAXQRCODEURLLENGTH){
+	if (!gAllowQRCodeSave){
 
 		//console.log("Share URL too long for QR Code, early exit...")
 		
@@ -657,11 +758,17 @@ function AppendQRCode(thePDF,paperStyle,callback){
 			// Add the tune names
 			thePDF.text(theHeaderFooterTuneNames, thePDF.internal.pageSize.getWidth()/3.10, captionOffset, {align:"center"});
 
+			// Clear the QR code
+			gTheQRCode.clear();
+
 			// Call back to finalize the PDF
 			callback(true);
 
 		}
 		else{
+
+			// Clear the QR code
+			gTheQRCode.clear();
 
 			// Something went wrong getting the QR code, just callback immediately
 			callback(false);
@@ -1106,22 +1213,41 @@ function ParseHeaderFooter(theNotes){
 		QRCodeRequested = true;
 	}
 
-	// Clear the tune index and toc strings
-	theTuneIndexTitle = "";
+	// Clear the tunebook index string
+	theTunebookIndexTitle = "";
 
-	// Did they request an index
-	TuneIndexRequested = false;
+	// Did they request a tunebook index?
+	TunebookIndexRequested = false;
 
 	// Search for a tune index request
 	searchRegExp = /^%addindex.*$/m
 
 	// Detect tune index annotation
-	var addTuneIndex = theNotes.match(searchRegExp);
+	var addTunebookIndex = theNotes.match(searchRegExp);
 
-	if ((addTuneIndex) && (addTuneIndex.length > 0)){
-		TuneIndexRequested = true;
-		theTuneIndexTitle = addTuneIndex[0].replace("%addindex ","");
-		theTuneIndexTitle = addTuneIndex[0].replace("%addindex","");
+	if ((addTunebookIndex) && (addTunebookIndex.length > 0)){
+		TunebookIndexRequested = true;
+		theTunebookIndexTitle = addTunebookIndex[0].replace("%addindex ","");
+		theTunebookIndexTitle = addTunebookIndex[0].replace("%addindex","");
+
+	}
+
+	// Clear the tunebook toc string
+	theTunebookTOCTitle = "";
+
+	// Did they request a tunebook TOC?
+	TunebookTOCRequested = false;
+
+	// Search for a tunebook TOC request
+	searchRegExp = /^%addtoc.*$/m
+
+	// Detect tunebook TOC annotation
+	var addTunebookTOC = theNotes.match(searchRegExp);
+
+	if ((addTunebookTOC) && (addTunebookTOC.length > 0)){
+		TunebookTOCRequested = true;
+		theTunebookTOCTitle = addTunebookTOC[0].replace("%addtoc ","");
+		theTunebookTOCTitle = addTunebookTOC[0].replace("%addtoc","");
 
 	}
 
@@ -1497,10 +1623,10 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 // PDF Exporter
 //
 
-// 
-// Put up the spinner, then call the ExportPDF function
 //
-function ExportPDFAsync(){
+// Export a PDF document
+//
+function ExportPDF() {
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
@@ -1512,25 +1638,10 @@ function ExportPDFAsync(){
 		return;
 	}
 
-	// Show the spinner
-	document.getElementById("loading-bar-spinner").style.display = "block";
+	// Clear the cancel flag
+	gPDFCancelRequested = false;
 
-	// Do the PDF export
-	ExportPDF(function(){
-
-		// Call back hides the spinner
-		document.getElementById("loading-bar-spinner").style.display = "none";
-
-	});
-
-}
-
-//
-// Export a PDF document
-//
-function ExportPDF(theCallback) {
-
-	// Show the PDF status block
+	// Show the PDF status modal
 	var pdfstatus = document.getElementById("pdf-controls");
 	pdfstatus.style.display = "block";
 
@@ -1605,12 +1716,16 @@ function ExportPDF(theCallback) {
 
 	document.getElementById("statustunecount").innerHTML = "Processing notation for PDF generation";
 
+	document.getElementById("pagestatustext").innerHTML = "&nbsp;";
+
 	// Cache the offscreen rendering div
 	theOffscreen = document.getElementById("offscreenrender")
 
 	setTimeout(function() {
 
-		Render(true,null,true);
+		// Rather than do a full render, which should not be needed, 
+		// just mark the existing divs for later SVG scraping during PDF rasterization
+		PrepareSVGDivsForRasterization();
 		
 		document.getElementById("statustunecount").innerHTML = "Rendering tune <font color=\"red\">1</font>" + " of  <font color=\"red\">"+totalTunes+"</font>"
 
@@ -1640,9 +1755,31 @@ function ExportPDF(theCallback) {
 		var theBlock = theBlocks[0];
 
 		// Render and stamp one block
-		RenderPDFBlock(theBlock, 0, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, callback);
+		RenderPDFBlock(theBlock, 0, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, callback());
 
 		function callback() {
+
+			// Was a cancel requested?
+			if (gPDFCancelRequested){
+
+				// Hide the PDF status modal
+				var pdfstatus = document.getElementById("pdf-controls");
+				pdfstatus.style.display = "none";
+
+				gRenderingPDF = false;
+
+				// Catch up on any UI changes during the PDF rendering
+				RestoreSVGDivsAfterRasterization();
+
+				// Clean up a bit
+				pdf = null;
+				theBlocks = null;
+
+				// Exit early
+				return;
+
+			}
+
 
 			nBlocksProcessed++;
 
@@ -1651,14 +1788,36 @@ function ExportPDF(theCallback) {
 				// Add final page number, header, and footer
 				AddPageHeaderFooter(pdf,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);	
 
-				// Did they request a tune index?
-				if (TuneIndexRequested){
+				// Did they request a tune TOC?
+				if (TunebookTOCRequested){
 					
-					document.getElementById("statustunecount").innerHTML = "Adding Tune Index";
+					document.getElementById("statustunecount").innerHTML = "Adding Table of Contents";
 					
-					AppendTuneIndex(pdf,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTuneIndexTitle);
+					AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookTOCTitle);
 
-					document.getElementById("statustunecount").innerHTML = "Tune Index Added!";
+					document.getElementById("statustunecount").innerHTML = "Table of Contents Added!";
+					
+					document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+					
+				}
+
+				// Did they request a tunebook index?
+				if (TunebookIndexRequested){
+					
+					document.getElementById("statustunecount").innerHTML = "Adding Tunebook Index";
+					
+					AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookIndexTitle);
+
+					if (TunebookTOCRequested){
+
+						document.getElementById("statustunecount").innerHTML = "Table of Contents and Tunebook Index Added!";
+
+					}
+					else{
+
+						document.getElementById("statustunecount").innerHTML = "Tunebook Index Added!";
+
+					}
 					
 					document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
 					
@@ -1694,17 +1853,21 @@ function ExportPDF(theCallback) {
 
 						if (!status){
 
-							statusDelay = 3000;
+							statusDelay = 4000;
 						}
 
 						// Delay for final QR code UI status update
 						setTimeout(function(){
 
-							// Suppress page numbers on QR page, add headers, and footers
-							AddPageHeaderFooter(pdf,false,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);	
+							if (status){
+
+								// Suppress page numbers on QR page, add headers, and footers
+								AddPageHeaderFooter(pdf,false,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);
+
+							}	
 						
 							// Handle the status display for the new page
-							document.getElementById("statustunecount").innerHTML = "";
+							document.getElementById("statustunecount").innerHTML = "&nbsp;";
 
 							// And complete the PDF
 							finalize_pdf_export();
@@ -1741,27 +1904,26 @@ function ExportPDF(theCallback) {
 							// Start the PDF save
 							pdf.save(title + ".pdf");
 							
-							document.getElementById("statuspdfname").innerHTML = "";
+							document.getElementById("statuspdfname").innerHTML = "&nbsp;";
 
-							document.getElementById("statustunecount").innerHTML = "";
+							document.getElementById("statustunecount").innerHTML = "&nbsp;";
 
-							document.getElementById("pagestatustext").innerHTML = "";
+							document.getElementById("pagestatustext").innerHTML = "&nbsp;";
 
-							// Show the PDF status block
+							// Hide the PDF status modal
 							var pdfstatus = document.getElementById("pdf-controls");
 							pdfstatus.style.display = "none";
 
 							gRenderingPDF = false;
 
 							// Catch up on any UI changes during the PDF rendering
-							RenderAsync(true,null,false);
+							RestoreSVGDivsAfterRasterization();
 
-							// All done!
-							theCallback();
+							return;
 
-						},1000);
+						},1500);
 
-					},1500);
+					},2000);
 				}
 
 
@@ -1796,6 +1958,15 @@ function ExportPDF(theCallback) {
 		}
 
 	}, 250);
+
+}
+
+//
+// Cancel a PDF export
+//
+function CancelPDF(){
+	
+	gPDFCancelRequested = true;
 
 }
 
@@ -2017,9 +2188,86 @@ function RecalcShareURLPDF(){
 }
 
 //
+// Setup the notation divs for PDF rasterization
+// Each div is marked with the "block" class and incrementing block ids of the form block_<tuneindex>_<blockindex>
+//
+function PrepareSVGDivsForRasterization(){
+
+	// Clear the offscreen rendering div
+	document.getElementById("offscreenrender").innerHTML = ""; 
+
+	var nTunes = CountTunes();
+		
+	for (var i = 0; i < nTunes; ++i) {
+		
+		var renderDivID = "notation" + i;
+
+		var svgDivs = document.querySelectorAll('div[id="' + renderDivID + '"] > div');
+
+		var nSVGs = svgDivs.length;
+
+		var j;
+
+		var elem;
+
+		for (j=0;j<nSVGs;++j){
+
+			elem = svgDivs.item(j);
+
+			// Add the "block" class
+			elem.classList.add("block");
+
+			// Add the incrementing block ID (used to find the start of tunes)
+			elem.id = "block_" + i + "_" + j;
+
+		}
+	}
+
+}
+
+//
+// Clean up the SVG div tagging after rasterization
+// Each div is marked with the "block" class and incrementing block ids of the form block_<tuneindex>_<blockindex>
+//
+function RestoreSVGDivsAfterRasterization(){
+
+	// Clear the offscreen rendering div
+	document.getElementById("offscreenrender").innerHTML = ""; 
+
+	var nTunes = CountTunes();
+		
+	for (var i = 0; i < nTunes; ++i) {
+		
+		var renderDivID = "notation" + i;
+
+		var svgDivs = document.querySelectorAll('div[id="' + renderDivID + '"] > div');
+
+		var nSVGs = svgDivs.length;
+
+		var j;
+
+		var elem;
+
+		for (j=0;j<nSVGs;++j){
+
+			elem = svgDivs.item(j);
+
+			// Remove the class
+			elem.removeAttribute("class");
+
+			// Remove the block SVG id
+			elem.removeAttribute("id");
+
+		}
+	}
+
+}
+
+
+//
 // Main routine for rendering the notation
 //
-function RenderTheNotes(tune, instrument, renderAll, tuneNumber, copySVGs) {
+function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 
 	// Used for rendering time measurement
 	//var currentTime;
@@ -2069,9 +2317,6 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber, copySVGs) {
 	// var deltaTime = Date.now() - currentTime;
 
 	//console.log("deltaTime = "+deltaTime);
-
-	// Clear the offscreen rendering div
-	document.getElementById("offscreenrender").innerHTML = ""; 
 
 	var svgTextArray = [];
 
@@ -2398,35 +2643,7 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber, copySVGs) {
 				}
 			}
 		}
-
-		//
-		// Only setup the div labels and classes if rendering for PDF
-		//
-		if (copySVGs){
-
-			var svgDivs = document.querySelectorAll('div[id="' + renderDivID + '"] > div');
-
-			var nSVGs = svgDivs.length;
-
-			var i;
-
-			var elem;
-
-			for (i=0;i<nSVGs;++i){
-
-				elem = svgDivs.item(i);
-
-				// Add the "block" class
-				elem.classList.add("block");
-
-				// Add the incrementing block ID (used to find the start of tunes)
-				elem.id = "block_" + tuneIndex + "_" + i;
-
-			}
-		}
-
 	}
-
 }
 
 function SetRadioValue(radioName, value) {
@@ -2461,14 +2678,14 @@ function GetRadioValue(radioName) {
 // 
 // Allow putting up a spiner before the synchronous Render() function
 //
-function RenderAsync(renderAll,tuneNumber,copySVGs){
+function RenderAsync(renderAll,tuneNumber,callback){
 
 	// Don't allow a re-render during PDF generation
 	if (gRenderingPDF){
 		return;
 	}
 
-	//console.log("RenderAsync renderAll = "+renderAll+" tuneNumber = "+tuneNumber+" copySVGs = "+copySVGs);
+	//console.log("RenderAsync renderAll = "+renderAll+" tuneNumber = "+tuneNumber);
 	
 	// Start with spinner hidden
 	document.getElementById("loading-bar-spinner").style.display = "none";
@@ -2481,31 +2698,34 @@ function RenderAsync(renderAll,tuneNumber,copySVGs){
 		// Render after a short delay
 		setTimeout(function(){
 
-			Render(renderAll,tuneNumber,copySVGs);
+			Render(renderAll,tuneNumber);
 
 			document.getElementById("loading-bar-spinner").style.display = "none";
+			
+			// Recalc the top tune position and scroll it into view if required
+			MakeTuneVisible(true);
 
-			// Do do the rescroll in the PDF generation case
-			if (!copySVGs){
-
-				// Recalc the top tune position and scroll it into view if required
-				MakeTuneVisible(true);
-
-
+			if (callback && (callback != undefined)){
+				callback();
 			}
+
 
 		}, 100);
 	}
 	else{
 
 		// Immediately render just a single tune
-		Render(renderAll,tuneNumber,copySVGs);
+		Render(renderAll,tuneNumber);
+
+		if (callback && (callback != undefined)){
+			callback();
+		}
 
 	}
 
 }
 
-function Render(renderAll,tuneNumber,copySVGs) {
+function Render(renderAll,tuneNumber) {
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
@@ -2709,7 +2929,7 @@ function Render(renderAll,tuneNumber,copySVGs) {
 		theNotes = theNotes.replace(searchRegExp, "X:1\n%%musicspace 20\n%%staffsep " + gStaffSpacing);
 
 		// Render the notes
-		RenderTheNotes(theNotes,radiovalue,renderAll,tuneNumber,copySVGs);
+		RenderTheNotes(theNotes,radiovalue,renderAll,tuneNumber);
 
 		// Maintain scroll position after render
 		window.scrollTo(0, scrollTop);
@@ -3122,7 +3342,7 @@ function SetStaffSpacing() {
 
 	gStaffSpacing = newSpacing + STAFFSPACEOFFSET;
 
-	RenderAsync(true,null,false);
+	RenderAsync(true,null);
 }
 
 //
@@ -3132,7 +3352,7 @@ function SetCapo() {
 
 	gCapo = document.getElementById('capo').value;
 
-	RenderAsync(true,null,false);
+	RenderAsync(true,null);
 }
 
 //
@@ -3235,9 +3455,15 @@ function RestoreDefaults() {
 //
 function ToggleAnnotations() {
 
+	if (!gAllowFilterAnnotations){
+
+		return;
+
+	}
+
 	gStripAnnotations = !gStripAnnotations;
 
-	RenderAsync(true,null,false);
+	RenderAsync(true,null);
 
 }
 
@@ -3246,9 +3472,15 @@ function ToggleAnnotations() {
 //
 function ToggleTextAnnotations() {
 
+	if (!gAllowFilterText){
+
+		return;
+
+	}
+
 	gStripTextAnnotations = !gStripTextAnnotations;
 
-	RenderAsync(true,null,false);
+	RenderAsync(true,null);
 
 }
 
@@ -3257,9 +3489,16 @@ function ToggleTextAnnotations() {
 //
 function ToggleChords() {
 
+	if (!gAllowFilterChords){
+
+		return;
+	
+	}
+
+
 	gStripChords = !gStripChords;
 
-	RenderAsync(true,null,false);
+	RenderAsync(true,null);
 
 }
 
@@ -3288,7 +3527,7 @@ function CountTunes() {
 function NewABC(){
 
 	// Stuff in some default ABC with additional options explained
-	gTheABC.value = "X: 1\nT: New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%%MIDI program 74\n%\n% Enter the ABC for your tune(s) below:\n%\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|\n\n%\n% To choose the sound when played, change the MIDI program # above to:\n%\n% 74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano\n%\n\n% Try these custom PDF page annotations by removing the % and the space\n%\n% Add a PDF page header or footer:\n%\n% %pageheader My Tune Set:  $TUNENAMES\n% %pagefooter PDF named: $PDFNAME saved on: $DATEMDY at $TIME\n%\n% After the tunes, add a tune index with a title:\n%\n% %addindex My Tune Index\n%\n% After the tunes, add a sharing QR code on a new page in the PDF:\n%\n% %qrcode\n%\n";
+	gTheABC.value = "X: 1\nT: New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%%MIDI program 74\n%\n% Enter the ABC for your tune(s) below:\n%\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|\n\n%\n% To choose the sound when played, change the MIDI program # above to:\n%\n% 74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano\n%\n\n% Try these custom PDF page annotations by removing the % and the space\n%\n% Add a PDF page header or footer:\n%\n% %pageheader My Tune Set:  $TUNENAMES\n% %pagefooter PDF named: $PDFNAME saved on: $DATEMDY at $TIME\n%\n%\n% Before the tunes, add a table of contents with a title:\n%\n% %addtoc My Tunebook Table of Contents\n%\n% After the tunes, add a tunebook index with a title:\n%\n% %addindex My Tunebook Index\n%\n% After the tunes, add a sharing QR code on a new page in the PDF:\n%\n% %qrcode\n%\n";
 
 	// Refocus back on the ABC
 	FocusABC();
@@ -3298,9 +3537,12 @@ function NewABC(){
 
 	gABCFromFile = false;
 	
-	RenderAsync(true,null,false);
+	RenderAsync(true,null,function(){
 
-	UpdateNotationTopPosition();
+		UpdateNotationTopPosition();
+
+	});
+
 
 }
 
@@ -3474,6 +3716,10 @@ function FillUrlBoxWithAbcInLZW() {
 
 	var urltextbox = document.getElementById("urltextbox");
 
+	// First disallow all sharing until valid URL validated
+	gAllowURLSave = false;
+	gAllowQRCodeSave = false;
+
 	if (url.length > 8100) {
 
 		url = "     The URL link would be too long to share. Please try sharing fewer tunes.";
@@ -3511,10 +3757,14 @@ function FillUrlBoxWithAbcInLZW() {
 	
 		if (url.length < maxURLLength) {
 
+			gAllowQRCodeSave = true;
+
 			document.getElementById("generateqrcode").classList.remove("urlcontrolsdisabled");
 			document.getElementById("generateqrcode").classList.add("urlcontrols");
 
 		} else {
+
+			gAllowQRCodeSave = false;
 
 			document.getElementById("generateqrcode").classList.remove("urlcontrols");
 			document.getElementById("generateqrcode").classList.add("urlcontrolsdisabled");
@@ -3569,6 +3819,12 @@ function clearQRCode() {
 }
 
 function GenerateQRCode() {
+
+	if (!gAllowQRCodeSave){
+
+		return;
+	}
+
 
 	if (gTheQRCode == null) {
 
@@ -4047,6 +4303,10 @@ function CopyABC(e){
 //
 function CopyShareURL(){
 
+	if (!gAllowURLSave){
+		return;
+	}
+
 	var theURL = document.getElementById("urltextbox");
 
 	var theData = theURL.value;
@@ -4118,6 +4378,10 @@ function SaveShareURL(){
 // Test the share URL
 // 
 function TestShareURL(){
+
+	if (!gAllowURLSave){
+		return;
+	}
 
 	var theURL = document.getElementById("urltextbox").value;
 
@@ -4323,7 +4587,7 @@ function ToggleTabNames(){
 
 	}
 
-	RenderAsync(true,null,false);
+	RenderAsync(true,null);
 
 }
 
@@ -4558,7 +4822,7 @@ function processShareLink() {
 		FocusABC();
 
 		// Render the tune
-		RenderAsync(true,null,false);
+		RenderAsync(true,null);
 
 		return true;
 
@@ -4807,13 +5071,13 @@ function OnABCTextChange(){
 	// Tune count changed, need to render all tunes
 	if (renderAllTunes){
 
-		RenderAsync(true,null,false);
+		RenderAsync(true,null);
 
 	}
 	else{
 
 		// Otherwise, just render the tune being worked on
-		Render(false,gCurrentTune,false);
+		Render(false,gCurrentTune);
 
 	}
 
@@ -4829,7 +5093,7 @@ function ChangeTab(){
 	// If the tab changes, render all
 	if (theTab != gCurrentTab){
 		
-		RenderAsync(true,null,false);
+		RenderAsync(true,null);
 
 	}
 
@@ -5252,7 +5516,7 @@ function DoStartup() {
 		    }
 		    else{
 
-		    	RenderAsync(true,null,true);
+		    	RenderAsync(true,null);
 
 		    }
 
@@ -5310,7 +5574,7 @@ function DoStartup() {
 			// Clean up the notation while the new file is loading
 			gTheABC.value = "";
 
-			Render(true,null,false);
+			Render(true,null);
 
 			// Show the loading status
 			var fileSelected = document.getElementById('abc-selected');
@@ -5344,11 +5608,12 @@ function DoStartup() {
 					gABCFromFile = true;
 
 					// Render the notation
-					RenderAsync(true,null,false);
+					RenderAsync(true,null,function(){
 
-					// Recalculate the notation top position
-					UpdateNotationTopPosition();
+						// Recalculate the notation top position
+						UpdateNotationTopPosition();
 
+					});
 
 				}, 100);
 
