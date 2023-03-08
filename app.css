@@ -300,7 +300,6 @@ margin-top:20px;
 
 #pdf-controls{
 display:none;
-margin-top:20px;	
 }
 
 #offscreenrender{
@@ -471,7 +470,7 @@ font-size:12pt;
 }
 
 #statustunecount{
-margin-top:12px;
+margin-top:13px;
 font-family:"Helvetica";
 font-size:12pt;
 }
@@ -786,6 +785,47 @@ margin-bottom:32px;
 .relativebox {
 position:relative;
 float:left;
+}
+
+.modal {
+display: none; /* Hidden by default */
+position: fixed; /* Stay in place */
+z-index: 102; /* Sit on top */
+padding-top: 200px; /* Location of the box */
+left: 0;
+top: 0;
+width: 100%; /* Full width */
+height: 100%; /* Full height */
+overflow: auto; /* Enable scroll if needed */
+background-color: rgb(0,0,0); /* Fallback color */
+background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+background-color: #fefefe;
+margin: auto;
+padding: 20px;
+border: 1px solid #888;
+width: 600px;
+}
+
+.cancelpdf {
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+padding: 0.6em;
+margin-top: 12px;
+margin-bottom: 12px;
+background-color: #FFFFFF;
+color:black;
+-webkit-appearance:none;
+}
+
+@media (hover: hover) {
+	.cancelpdf:hover{
+	background: palegreen;
+	}
 }
 
 
