@@ -86,7 +86,6 @@
                 <p>Try it out here: <a href="http://michaeleskin.com/abc" target="_blank">ABC Transcription Tools</a>.</p>
             </div>
             <hr>
-            <br>
             <p><strong>If you have a problem with the ABC Transcription Tools on a specific tune or tune set:</strong></p>
             <p>First generate a Share URL for the problematic tune or tune set by first clicking on the "Sharing Controls" button (outlined in the image below):</p>
             <div class="image_holder">
@@ -106,8 +105,13 @@
         <p><strong>Tin Whistle Tunebooks</strong></p>
         <p>Rendering very large tunebooks with the tin whistle tablature can be extremely slow. No fix at this time.</p>
         <p>Appears to be an internal issue with html-to-image and the large embedded TrueType whistle fingering font.</p>
+        <p>The whistle tab is by far the most complex of the tabs using a very large embedded font for every notation staff. This is not the case for all the other tablatures.</p>
+        <p>As a result, it can be quite slow if you want to generate tunebooks of more than about 50-100 tunes using my built-in PDF export feature.</p>
+        <p>It can definitely deal with large whistle tunebooks, but it may take a while to get the job done.</p>
+        <p>I've done what I can to speed it up, but there are limits to what I can do, the slowness is in a 3rd party library I'm using to render the PDFs.</p>
+        <p>If you are creating a large whistle tunebook, then the browser print to PDF function for generating one-tune-per-page PDFs may be a better option than my own PDF generator. You wont get the ability to generate the table of contents, index, all that, but it will be much faster in my experience.</p>
         <p><strong>Safari Rendering Issues</strong></p>
-        <p>Occasionally, desktop Safari on Mac renders some ornamentation like grace notes incorrectly.</p> 
+        <p>Occasionally, desktop Safari on Mac renders some ornamentation like grace notes incorrectly.</p>
         <p>If this happens, try using Chrome or Firefox instead. No fix at this time.</p>
         <p><strong>URL Query String Length Limitations</strong></p>
         <p>The URL sharing feature uses URL query strings to send the ABC data and settings.  There may be a browser-specific limit for how long one of these strings can be.</p>
