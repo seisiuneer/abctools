@@ -453,6 +453,9 @@ var theOffscreen = null;
 // PDF generation cancel requested
 var gPDFCancelRequested = false;
 
+// Which instrument
+var gPDFTabselected = "noten";
+
 // PDF object to render to
 var pdf;
 
@@ -1445,6 +1448,109 @@ function AddPageHeaderFooter(thePDF,doAddPageNumber,pageNumber,pageNumberLocatio
 	}	
 }
 
+// 
+// Prime the whistle rendering
+//
+// This is a hack for SVG rendering latency for the Tin Whistle font seen on Safari and mobile Safari
+//
+function PrimeWhistleRender(theBlocks,callback){
+
+	if (theBlocks.length < 3){
+		callback();
+		return;
+	}
+
+	qualitaet = 1200; 
+
+	//console.log("PrimeWhistleRender 1");
+
+	var theBlock = theBlocks[0];
+
+	// Get the SVG from the block
+	var svg = theBlock.querySelector("svg");
+
+	// Copy the SVG to the offscreen
+	theOffscreen.innerHTML = "<div>" + svg.outerHTML + "</div>";
+
+	// Find the SVG in the offscreen
+	svg = theOffscreen.querySelector("svg");
+
+	// Set the SVG width for high resolution rasterization
+	svg.setAttribute("width", qualitaet);
+
+	// scale improves the subsequent PDF quality. was theBlock
+	htmlToImage.toCanvas(svg, {
+			backgroundColor: "white",
+			style: {
+				background: "white"
+			},
+			pixelRatio: 2 
+		})
+		.then(function(canvas){
+
+			//console.log("PrimeWhistleRender 2");
+
+			var theBlock = theBlocks[1];
+
+			// Get the SVG from the block
+			var svg = theBlock.querySelector("svg");
+
+			// Copy the SVG to the offscreen
+			theOffscreen.innerHTML = "<div>" + svg.outerHTML + "</div>";
+
+			// Find the SVG in the offscreen
+			svg = theOffscreen.querySelector("svg");
+
+			// Set the SVG width for high resolution rasterization
+			svg.setAttribute("width", qualitaet);
+
+			// scale improves the subsequent PDF quality. was theBlock
+			htmlToImage.toCanvas(svg, {
+					backgroundColor: "white",
+					style: {
+						background: "white"
+					},
+					pixelRatio: 2 
+				})
+				.then(function(canvas){
+
+					//console.log("PrimeWhistleRender 3");
+
+					var theBlock = theBlocks[2];
+
+					// Get the SVG from the block
+					var svg = theBlock.querySelector("svg");
+
+					// Copy the SVG to the offscreen
+					theOffscreen.innerHTML = "<div>" + svg.outerHTML + "</div>";
+
+					// Find the SVG in the offscreen
+					svg = theOffscreen.querySelector("svg");
+
+					// Set the SVG width for high resolution rasterization
+					svg.setAttribute("width", qualitaet);
+
+					// scale improves the subsequent PDF quality. was theBlock
+					htmlToImage.toCanvas(svg, {
+							backgroundColor: "white",
+							style: {
+								background: "white"
+							},
+							pixelRatio: 2 
+						})
+						.then(function(canvas){
+
+							//console.log("PrimeWhistleRender 4");
+
+							// And finally callback to the main render to allow it to proceed
+							callback();
+
+						});
+				});
+		});
+}
+
+
 //
 // Render a single SVG block to PDF and callback when done
 //
@@ -1612,7 +1718,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 			// so that it starts the new one exactly one pt behind the current one.
 			running_height = running_height + height + 1;
 
-			callback();
+			callback(true);
 
 
 		});
@@ -1640,6 +1746,9 @@ function ExportPDF() {
 
 	// Clear the cancel flag
 	gPDFCancelRequested = false;
+
+	// Cache the tab selected for adaptive rendering delay
+	gPDFTabselected = GetRadioValue("notenodertab");
 
 	// Show the PDF status modal
 	var pdfstatus = document.getElementById("pdf-controls");
@@ -1719,248 +1828,265 @@ function ExportPDF() {
 	document.getElementById("pagestatustext").innerHTML = "&nbsp;";
 
 	// Cache the offscreen rendering div
-	theOffscreen = document.getElementById("offscreenrender")
+	theOffscreen = document.getElementById("offscreenrender");
 
-	setTimeout(function() {
+	// Rather than do a full render, which should not be needed, 
+	// just mark the existing divs for later SVG scraping during PDF rasterization
+	PrepareSVGDivsForRasterization();
+	
+	document.getElementById("statustunecount").innerHTML = "Rendering tune <font color=\"red\">1</font>" + " of  <font color=\"red\">"+totalTunes+"</font>"
 
-		// Rather than do a full render, which should not be needed, 
-		// just mark the existing divs for later SVG scraping during PDF rasterization
-		PrepareSVGDivsForRasterization();
-		
-		document.getElementById("statustunecount").innerHTML = "Rendering tune <font color=\"red\">1</font>" + " of  <font color=\"red\">"+totalTunes+"</font>"
+	// Save the first tune page number
+	theTunePageMap[0] = theCurrentPageNumber;
 
-		// Save the first tune page number
-		theTunePageMap[0] = theCurrentPageNumber;
+	// Set the global PDF rendering flag
+	gRenderingPDF = true;
 
-		// Set the global PDF rendering flag
-		gRenderingPDF = true;
+	pdf = new jsPDF('p', 'pt', paperStyle);
 
-		pdf = new jsPDF('p', 'pt', paperStyle);
+	// If not doing single page, find any tunes that have page break requests
+	var pageBreakList = [];
 
-		// If not doing single page, find any tunes that have page break requests
-		var pageBreakList = [];
+	if (!doSinglePage){
 
-		if (!doSinglePage){
+		// Process any automatic or manual page breaks
+		pageBreakList = scanTunesForPageBreaks(pdf);
 
-			// Process any automatic or manual page breaks
-			pageBreakList = scanTunesForPageBreaks(pdf);
+	}
 
-		}
+	var theBlocks = document.querySelectorAll('div[class="block"]');
 
-		var theBlocks = document.querySelectorAll('div[class="block"]');
+	var nBlocks = theBlocks.length;
 
-		var nBlocks = theBlocks.length;
+	// Kick off the rendering loop
+	var theBlock = theBlocks[0];
 
-		// Kick off the rendering loop
-		var theBlock = theBlocks[0];
+	// If doing whistle, try async priming the HTML renderer
+	// This is to work around the issue where on Safari and mobile Safari, we often are missing the first line of whistle tab
+	// the first time the notation is rasterized
 
-		// Render and stamp one block
-		RenderPDFBlock(theBlock, 0, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, callback);
+	if (gPDFTabselected == "whistle") {
 
-		function callback() {
+		PrimeWhistleRender(theBlocks,Rasterize);
 
-			//console.log("nBlocksProcessed = "+nBlocksProcessed);
+	}
+	else{
 
-			// Was a cancel requested?
-			if (gPDFCancelRequested){
+		Rasterize();
 
-				// Hide the PDF status modal
-				var pdfstatus = document.getElementById("pdf-controls");
-				pdfstatus.style.display = "none";
+	}
 
-				gRenderingPDF = false;
+	function Rasterize(){
 
-				// Catch up on any UI changes during the PDF rendering
-				RestoreSVGDivsAfterRasterization();
+		setTimeout(function() {
 
-				// Clean up a bit
-				pdf = null;
-				theBlocks = null;
+			// Render and stamp one block
+			RenderPDFBlock(theBlock, 0, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, callback);
 
-				// Exit early
-				return;
+			function callback() {
 
-			}
+				//console.log("nBlocksProcessed = "+nBlocksProcessed);
 
+				// Was a cancel requested?
+				if (gPDFCancelRequested){
 
-			nBlocksProcessed++;
+					// Hide the PDF status modal
+					var pdfstatus = document.getElementById("pdf-controls");
+					pdfstatus.style.display = "none";
 
-			if (nBlocksProcessed == nBlocks) {
+					gRenderingPDF = false;
 
-				// Add final page number, header, and footer
-				AddPageHeaderFooter(pdf,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);	
+					// Catch up on any UI changes during the PDF rendering
+					RestoreSVGDivsAfterRasterization();
 
-				// Did they request a tune TOC?
-				if (TunebookTOCRequested){
-					
-					document.getElementById("statustunecount").innerHTML = "Adding Table of Contents";
-					
-					AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookTOCTitle);
+					// Clean up a bit
+					pdf = null;
+					theBlocks = null;
 
-					document.getElementById("statustunecount").innerHTML = "Table of Contents Added!";
-					
-					document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
-					
+					// Exit early
+					return;
+
 				}
 
-				// Did they request a tunebook index?
-				if (TunebookIndexRequested){
-					
-					document.getElementById("statustunecount").innerHTML = "Adding Tunebook Index";
-					
-					AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookIndexTitle);
 
+				nBlocksProcessed++;
+
+				if (nBlocksProcessed == nBlocks) {
+
+					// Add final page number, header, and footer
+					AddPageHeaderFooter(pdf,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);	
+
+					// Did they request a tune TOC?
 					if (TunebookTOCRequested){
+						
+						document.getElementById("statustunecount").innerHTML = "Adding Table of Contents";
+						
+						AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookTOCTitle);
 
-						document.getElementById("statustunecount").innerHTML = "Table of Contents and Tunebook Index Added!";
-
+						document.getElementById("statustunecount").innerHTML = "Table of Contents Added!";
+						
+						document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+						
 					}
-					else{
 
-						document.getElementById("statustunecount").innerHTML = "Tunebook Index Added!";
+					// Did they request a tunebook index?
+					if (TunebookIndexRequested){
+						
+						document.getElementById("statustunecount").innerHTML = "Adding Tunebook Index";
+						
+						AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookIndexTitle);
 
-					}
-					
-					document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
-					
-				}
+						if (TunebookTOCRequested){
 
-				// Did they request a QR code?
-				if (QRCodeRequested){
-
-					document.getElementById("statustunecount").innerHTML = "Adding QR Code";
-
-					// This needs the callback because the rasterizer is async
-					AppendQRCode(pdf,paperStyle,qrcode_callback);
-
-					function qrcode_callback(status){
-
-						if (!status){
-
-							document.getElementById("statustunecount").innerHTML = "Share URL too long for QR Code, try sharing fewer tunes";
+							document.getElementById("statustunecount").innerHTML = "Table of Contents and Tunebook Index Added!";
 
 						}
 						else{
 
-							theCurrentPageNumber++;
+							document.getElementById("statustunecount").innerHTML = "Tunebook Index Added!";
 
-							document.getElementById("statustunecount").innerHTML = "QR Code Added!";
+						}
+						
+						document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+						
+					}
+
+					// Did they request a QR code?
+					if (QRCodeRequested){
+
+						document.getElementById("statustunecount").innerHTML = "Adding QR Code";
+
+						// This needs the callback because the rasterizer is async
+						AppendQRCode(pdf,paperStyle,qrcode_callback);
+
+						function qrcode_callback(status){
+
+							if (!status){
+
+								document.getElementById("statustunecount").innerHTML = "Share URL too long for QR Code, try sharing fewer tunes";
+
+							}
+							else{
+
+								theCurrentPageNumber++;
+
+								document.getElementById("statustunecount").innerHTML = "QR Code Added!";
+								
+								document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+
+							}
+
+							// If the QR code generation failed, leave more time for a status update
+							var statusDelay = 1000;
+
+							if (!status){
+
+								statusDelay = 4000;
+							}
+
+							// Delay for final QR code UI status update
+							setTimeout(function(){
+
+								if (status){
+
+									// Suppress page numbers on QR page, add headers, and footers
+									AddPageHeaderFooter(pdf,false,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);
+
+								}	
 							
-							document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+								// Handle the status display for the new page
+								document.getElementById("statustunecount").innerHTML = "&nbsp;";
+
+								// And complete the PDF
+								finalize_pdf_export();
+
+							},statusDelay);
+
+							return;
 
 						}
+					}	
+					else{
 
-						// If the QR code generation failed, leave more time for a status update
-						var statusDelay = 1000;
+						// No QR code requested, just run the callback directly
+						finalize_pdf_export();
+						
+						return;
 
-						if (!status){
+					}
 
-							statusDelay = 4000;
-						}
+					//
+					// Finalize the PDF document
+					//
+					function finalize_pdf_export(){				
 
-						// Delay for final QR code UI status update
+						document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Rendering Complete!</font>";
+
 						setTimeout(function(){
 
-							if (status){
+							document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"red\">" + title + ".pdf </font>";
 
-								// Suppress page numbers on QR page, add headers, and footers
-								AddPageHeaderFooter(pdf,false,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);
+							// Save the status up for a bit before saving
+							setTimeout(function(){
 
-							}	
-						
-							// Handle the status display for the new page
-							document.getElementById("statustunecount").innerHTML = "&nbsp;";
+								// Start the PDF save
+								pdf.save(title + ".pdf");
+								
+								document.getElementById("statuspdfname").innerHTML = "&nbsp;";
 
-							// And complete the PDF
-							finalize_pdf_export();
+								document.getElementById("statustunecount").innerHTML = "&nbsp;";
 
-						},statusDelay);
+								document.getElementById("pagestatustext").innerHTML = "&nbsp;";
+
+								// Hide the PDF status modal
+								var pdfstatus = document.getElementById("pdf-controls");
+								pdfstatus.style.display = "none";
+
+								gRenderingPDF = false;
+
+								// Catch up on any UI changes during the PDF rendering
+								RestoreSVGDivsAfterRasterization();
+
+								return;
+
+							},1500);
+
+						},2000);
+					}
+
+
+				} else {
+
+					// Sanity check the block index
+					if (nBlocksProcessed > theBlocks.length){
 
 						return;
 
 					}
-				}	
-				else{
 
-					// No QR code requested, just run the callback directly
-					finalize_pdf_export();
-					
-					return;
+					// Early release of the last block
+					if (nBlocksProcessed > 0){
+						
+						theBlocks[nBlocksProcessed-1] = null;
 
-				}
+					}
 
-				//
-				// Finalize the PDF document
-				//
-				function finalize_pdf_export(){				
-
-					document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Rendering Complete!</font>";
-
-					setTimeout(function(){
-
-						document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"red\">" + title + ".pdf </font>";
-
-						// Save the status up for a bit before saving
-						setTimeout(function(){
-
-							// Start the PDF save
-							pdf.save(title + ".pdf");
-							
-							document.getElementById("statuspdfname").innerHTML = "&nbsp;";
-
-							document.getElementById("statustunecount").innerHTML = "&nbsp;";
-
-							document.getElementById("pagestatustext").innerHTML = "&nbsp;";
-
-							// Hide the PDF status modal
-							var pdfstatus = document.getElementById("pdf-controls");
-							pdfstatus.style.display = "none";
-
-							gRenderingPDF = false;
-
-							// Catch up on any UI changes during the PDF rendering
-							RestoreSVGDivsAfterRasterization();
-
-							return;
-
-						},1500);
-
-					},2000);
-				}
+					theBlock = theBlocks[nBlocksProcessed];
 
 
-			} else {
+					// Sanity check the block
+					if (theBlock){
 
-				// Sanity check the block index
-				if (nBlocksProcessed > theBlocks.length){
+						RenderPDFBlock(theBlock, nBlocksProcessed, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, callback);
 
-					return;
-
-				}
-
-				// Early release of the last block
-				if (nBlocksProcessed > 0){
-					
-					theBlocks[nBlocksProcessed-1] = null;
-
-				}
-
-				theBlock = theBlocks[nBlocksProcessed];
-
-
-				// Sanity check the block
-				if (theBlock){
-
-					RenderPDFBlock(theBlock, nBlocksProcessed, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, callback);
+					}
 
 				}
 
 			}
 
-		}
-
-	}, 250);
-
+		}, 250);
+	}
 }
 
 //
