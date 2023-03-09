@@ -1455,9 +1455,13 @@ function AddPageHeaderFooter(thePDF,doAddPageNumber,pageNumber,pageNumberLocatio
 //
 function PrimeWhistleRender(theBlocks,callback){
 
-	if (theBlocks.length < 3){
+	// Need at least a couple of lines, generally the first is the title, the second is the notation
+	if (theBlocks.length < 2){
+
 		callback();
+
 		return;
+
 	}
 
 	qualitaet = 1200; 
@@ -1516,7 +1520,20 @@ function PrimeWhistleRender(theBlocks,callback){
 
 					//console.log("PrimeWhistleRender 3");
 
-					var theBlock = theBlocks[2];
+					var theBlock;
+
+					// This allows the demo ABC created by the "New ABC" command to work, only has one line of notation
+					if (theBlocks.length < 3){
+
+						// Just re-render the second line
+						theBlock = theBlocks[1];
+
+					}
+					else{
+
+						theBlock = theBlocks[2];
+
+					}
 
 					// Get the SVG from the block
 					var svg = theBlock.querySelector("svg");
