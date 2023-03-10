@@ -441,6 +441,14 @@ var theTunebookIndexTitle = "";
 var TunebookTOCRequested = false;
 var theTunebookTOCTitle = "";
 
+// Did they request an tunebook title page?
+var TunebookTPRequested = false;
+var theTunebookTP = "";
+
+// Did they request an tunebook title page subtitle?
+var TunebookTPSTRequested = false;
+var theTunebookTPST = "";
+
 // Tune page map
 var theTunePageMap = [];
 
@@ -506,21 +514,77 @@ function GetTunebookIndexTitles(){
 }
 
 //
+// Tune title page font sizes
+//
+var TPTITLESIZE = 23;
+var TPSTTITLESIZE = 17;
+var TPTOPOFFSET = 435;
+var TPSTOFFSET = 24;
+
+//
+// Generate and append a tune index to the current PDF
+//
+function AppendTuneTitlePage(thePDF,paperStyle,theTitle,theSubtitle){
+
+	var a4offset = 0
+
+	if (paperStyle == "a4"){
+		a4offset = 20;
+	}
+
+	// Add a new page
+	thePDF.addPage(paperStyle); 
+
+	if (theTitle != ""){
+
+		// Set the font size
+		thePDF.setFontSize(TPTITLESIZE);
+
+		// Add the title
+		thePDF.text(theTitle, thePDF.internal.pageSize.getWidth()/3.10, TPTOPOFFSET+a4offset, {align:"center"});
+
+	}
+
+	if (theSubtitle != ""){
+
+		// Set the font size
+		thePDF.setFontSize(TPSTTITLESIZE);
+
+		// Add the subtitle
+		thePDF.text(theSubtitle, thePDF.internal.pageSize.getWidth()/3.10, TPTOPOFFSET+TPSTOFFSET+a4offset, {align:"center"});
+
+	}
+
+	// We're on a new page
+	theCurrentPageNumber++;
+
+	// Move the page to the top
+	thePDF.movePage(theCurrentPageNumber,1);
+
+}
+
+//
 // Tune index page layout constants
 //
 var INDEXTOPOFFSET = 330;
 var INDEXBOTTOMOFFSET = 330;
 var INDEXTITLEOFFSET = 35;
-var INDEXLEFTMARGIN = 95;
-var INDEXRIGHTMARGIN = 125;
+var INDEXLEFTMARGIN = 90;
+var INDEXRIGHTMARGIN = 120;
 var INDEXTITLESIZE = 18;
-var INDEXFONTSIZE = 13;
-var INDEXLINESPACING = 15;
+var INDEXFONTSIZE = 12;
+var INDEXLINESPACING = 13;
 
 //
 // Generate and append a tune index to the current PDF
 //
 function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageNumberList,theTitle){
+
+	var a4offset = 0
+
+	if (paperStyle == "a4"){
+		a4offset = 20;
+	}
 
 	// Add a new page
 	thePDF.addPage(paperStyle); 
@@ -531,7 +595,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 	if (theTitle != ""){
 
 		// Add the tune names
-		thePDF.text(theTitle, thePDF.internal.pageSize.getWidth()/3.10, INDEXTOPOFFSET, {align:"center"});
+		thePDF.text(theTitle, thePDF.internal.pageSize.getWidth()/3.10, INDEXTOPOFFSET+a4offset, {align:"center"});
 
 	}
 
@@ -543,7 +607,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 
 	var pageSizeWithMargins = thePaperHeight - (2 * PAGETOPOFFSET);
 
-	var curTop = INDEXTOPOFFSET + INDEXTITLEOFFSET;
+	var curTop = INDEXTOPOFFSET + INDEXTITLEOFFSET + a4offset;
 
 	var i;
 	var thePageNumber;
@@ -579,7 +643,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 				thePDF.setFontSize(INDEXFONTSIZE);
 
 				// Start back at the top
-				curTop = INDEXTOPOFFSET + INDEXTITLEOFFSET;
+				curTop = INDEXTOPOFFSET + INDEXTITLEOFFSET + a4offset;
 
 			}
 		}
@@ -599,6 +663,12 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 //
 function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageNumberList,theTitle){
 
+	var a4offset = 0
+
+	if (paperStyle == "a4"){
+		a4offset = 20;
+	}
+
 	// Add a new page
 	thePDF.addPage(paperStyle); 
 
@@ -608,7 +678,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 	if (theTitle != ""){
 
 		// Add the tune names
-		thePDF.text(theTitle, thePDF.internal.pageSize.getWidth()/3.10, INDEXTOPOFFSET, {align:"center"});
+		thePDF.text(theTitle, thePDF.internal.pageSize.getWidth()/3.10, INDEXTOPOFFSET+a4offset, {align:"center"});
 
 	}
 
@@ -620,7 +690,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 
 	var pageSizeWithMargins = thePaperHeight - (2 * PAGETOPOFFSET);
 
-	var curTop = INDEXTOPOFFSET + INDEXTITLEOFFSET;
+	var curTop = INDEXTOPOFFSET + INDEXTITLEOFFSET + a4offset;
 
 	var i;
 	var thePageNumber;
@@ -664,7 +734,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 				thePDF.setFontSize(INDEXFONTSIZE);
 
 				// Start back at the top
-				curTop = INDEXTOPOFFSET + INDEXTITLEOFFSET;
+				curTop = INDEXTOPOFFSET + INDEXTITLEOFFSET + a4offset;
 
 			}
 		}
@@ -679,9 +749,6 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 
 	// Move the page to the top
 	thePDF.movePage(theCurrentPageNumber,tocPageOffset);
-
-	// Bump the page offset counter since we have to insert them in the proper order at the top
-	tocPageOffset++;
 
 }
 
@@ -1194,8 +1261,8 @@ function ParseHeaderFooter(theNotes){
 	var allPageHeaders = theNotes.match(searchRegExp);
 
 	if ((allPageHeaders) && (allPageHeaders.length > 0)){
-		thePageHeader = allPageHeaders[0].replace("%pageheader ","");
 		thePageHeader = allPageHeaders[0].replace("%pageheader","");
+		thePageHeader = thePageHeader.trim();
 	}
 
 	// Search for a page footer
@@ -1205,8 +1272,8 @@ function ParseHeaderFooter(theNotes){
 	var allPageFooters = theNotes.match(searchRegExp);
 
 	if ((allPageFooters) && (allPageFooters.length > 0)){
-		thePageFooter = allPageFooters[0].replace("%pagefooter ","");
 		thePageFooter = allPageFooters[0].replace("%pagefooter","");
+		thePageFooter = thePageFooter.trim();
 	}
 
 	// Search for a QR code request
@@ -1233,9 +1300,8 @@ function ParseHeaderFooter(theNotes){
 
 	if ((addTunebookIndex) && (addTunebookIndex.length > 0)){
 		TunebookIndexRequested = true;
-		theTunebookIndexTitle = addTunebookIndex[0].replace("%addindex ","");
 		theTunebookIndexTitle = addTunebookIndex[0].replace("%addindex","");
-
+		theTunebookIndexTitle = theTunebookIndexTitle.trim();
 	}
 
 	// Clear the tunebook toc string
@@ -1252,9 +1318,44 @@ function ParseHeaderFooter(theNotes){
 
 	if ((addTunebookTOC) && (addTunebookTOC.length > 0)){
 		TunebookTOCRequested = true;
-		theTunebookTOCTitle = addTunebookTOC[0].replace("%addtoc ","");
 		theTunebookTOCTitle = addTunebookTOC[0].replace("%addtoc","");
+		theTunebookTOCTitle = theTunebookTOCTitle.trim();
+	}
 
+	// Clear the tunebook title page string
+	theTunebookTP = "";
+
+	// Did they request a tunebook title page?
+	TunebookTPRequested = false;
+
+	// Search for a tunebook title page request
+	searchRegExp = /^%addtitle.*$/m
+
+	// Detect tunebook title page annotation
+	var addTunebookTP = theNotes.match(searchRegExp);
+
+	if ((addTunebookTP) && (addTunebookTP.length > 0)){
+		TunebookTPRequested = true;
+		theTunebookTP = addTunebookTP[0].replace("%addtitle","");
+		theTunebookTP = theTunebookTP.trim();
+	}
+
+	// Clear the tunebook subtitle page string
+	theTunebookTPST = "";
+
+	// Did they request a tunebook subtitle page?
+	TunebookTPSTRequested = false;
+
+	// Search for a tunebook title page request
+	searchRegExp = /^%addsubtitle.*$/m
+
+	// Detect tunebook subtitle page annotation
+	var addTunebookTPST = theNotes.match(searchRegExp);
+
+	if ((addTunebookTPST) && (addTunebookTPST.length > 0)){
+		TunebookTPSTRequested = true;
+		theTunebookTPST = addTunebookTPST[0].replace("%addsubtitle","");
+		theTunebookTPST = theTunebookTPST.trim();
 	}
 
 }
@@ -1966,6 +2067,19 @@ function ExportPDF() {
 							document.getElementById("statustunecount").innerHTML = "Tunebook Index Added!";
 
 						}
+						
+						document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+						
+					}
+
+					// Did they request a tunebook title page?
+					if (TunebookTPRequested){
+						
+						document.getElementById("statustunecount").innerHTML = "Adding Title Page";
+						
+						AppendTuneTitlePage(pdf,paperStyle,theTunebookTP,theTunebookTPST);
+
+						document.getElementById("statustunecount").innerHTML = "Title Page Added!";
 						
 						document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
 						
@@ -3704,7 +3818,7 @@ function CountTunes() {
 function NewABC(){
 
 	// Stuff in some default ABC with additional options explained
-	gTheABC.value = "X: 1\nT: New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%%MIDI program 74\n%\n% Enter the ABC for your tune(s) below:\n%\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|\n\n%\n% To choose the sound when played, change the MIDI program # above to:\n%\n% 74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano\n%\n\n% Try these custom PDF page annotations by removing the % and the space\n%\n% Add a PDF page header or footer:\n%\n% %pageheader My Tune Set:  $TUNENAMES\n% %pagefooter PDF named: $PDFNAME saved on: $DATEMDY at $TIME\n%\n%\n% Before the tunes, add a table of contents with a title:\n%\n% %addtoc My Tunebook Table of Contents\n%\n% After the tunes, add a tunebook index with a title:\n%\n% %addindex My Tunebook Index\n%\n% After the tunes, add a sharing QR code on a new page in the PDF:\n%\n% %qrcode\n%\n";
+	gTheABC.value = "X: 1\nT: New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%%MIDI program 74\n%\n% Enter the ABC for your tune(s) below:\n%\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|\n\n%\n% To choose the sound when played, change the MIDI program # above to:\n%\n% 74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano\n%\n\n% Try these custom PDF page annotations by removing the % and the space\n%\n% Add a PDF page header or footer:\n%\n% %pageheader My Tune Set: $TUNENAMES\n% %pagefooter PDF named: $PDFNAME saved on: $DATEMDY at $TIME\n%\n% Before the tunes, add a title page with a title:\n%\n% %addtitle My Tunebook Title Page\n%\n% Optional subtitle for the title page:\n%\n% %addsubtitle Title Page Subtitle\n%\n% Before the tunes, add a table of contents with a title:\n%\n% %addtoc My Tunebook Table of Contents\n%\n% After the tunes, add a tunebook index with a title:\n%\n% %addindex My Tunebook Index\n%\n% After the tunes, add a sharing QR code on a new page in the PDF:\n%\n% %qrcode\n%\n";
 
 	// Refocus back on the ABC
 	FocusABC();
