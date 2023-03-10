@@ -822,6 +822,11 @@ color:black;
 -webkit-appearance:none;
 }
 
+#fontholder{
+position:absolute; 
+left:-5000px;
+}
+
 @media (hover: hover) {
 	.cancelpdf:hover{
 	background: palegreen;
