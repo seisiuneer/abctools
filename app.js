@@ -2307,8 +2307,8 @@ function GetABCJSParams(instrument){
 			tablature: [{
 				instrument: 'violin',
 				label: theLabel,
-				tuning: ['D'],
-				highestNote: "c'"
+				tuning: ['G,'],
+				highestNote: "^a'"
 			}],
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
@@ -2506,58 +2506,90 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 			// Sämtliche Tspan Tags, die zu Tags und nicht Noten gehören, haben jetzt Zahlen auf einem String (D). Diese können jetzt in Whistle Tags umgewandelt werden.
 			// Dazu werden die Buchstaben mit dem jeweiligen Unicode Buchstaben des TinWhistleFingering Fonts ersetzt.
 			for (x = 0; x < Tspans.length; x++) {
+				
 				Tspans[x].setAttribute("class", "whistle");
+
 				if (Tspans[x].innerHTML == "0") {
-					Tspans[x].innerHTML = "d";
-				} else if (Tspans[x].innerHTML == "1") {
-					Tspans[x].innerHTML = "k";
-				} else if (Tspans[x].innerHTML == "2") {
-					Tspans[x].innerHTML = "e";
-				} else if (Tspans[x].innerHTML == "3") {
-					Tspans[x].innerHTML = "f";
-				} else if (Tspans[x].innerHTML == "4") {
-					Tspans[x].innerHTML = "l";
-				} else if (Tspans[x].innerHTML == "5") {
 					Tspans[x].innerHTML = "g";
-				} else if (Tspans[x].innerHTML == "6") {
+				} else if (Tspans[x].innerHTML == "1") {
 					Tspans[x].innerHTML = "m";
-				} else if (Tspans[x].innerHTML == "7") {
+				} else if (Tspans[x].innerHTML == "2") {
 					Tspans[x].innerHTML = "a";
-				} else if (Tspans[x].innerHTML == "8") {
+				} else if (Tspans[x].innerHTML == "3") {
 					Tspans[x].innerHTML = "i";
-				} else if (Tspans[x].innerHTML == "9") {
+				} else if (Tspans[x].innerHTML == "4") {
 					Tspans[x].innerHTML = "b";
-				} else if (Tspans[x].innerHTML == "10") {
+				} else if (Tspans[x].innerHTML == "5") {
 					Tspans[x].innerHTML = "c";
-				} else if (Tspans[x].innerHTML == "11") {
+				} else if (Tspans[x].innerHTML == "6") {
 					Tspans[x].innerHTML = "j";
+				} else if (Tspans[x].innerHTML == "7") {
+					Tspans[x].innerHTML = "d";
+				} else if (Tspans[x].innerHTML == "8") {
+					Tspans[x].innerHTML = "k";
+				} else if (Tspans[x].innerHTML == "9") {
+					Tspans[x].innerHTML = "e";
+				} else if (Tspans[x].innerHTML == "10") {
+					Tspans[x].innerHTML = "f";
+				} else if (Tspans[x].innerHTML == "11") {
+					Tspans[x].innerHTML = "l";
 				} else if (Tspans[x].innerHTML == "12") {
-					Tspans[x].innerHTML = "D";
+					Tspans[x].innerHTML = "g";
 				} else if (Tspans[x].innerHTML == "13") {
-					Tspans[x].innerHTML = "K";
+					Tspans[x].innerHTML = "m";
 				} else if (Tspans[x].innerHTML == "14") {
-					Tspans[x].innerHTML = "E";
+					Tspans[x].innerHTML = "a";
 				} else if (Tspans[x].innerHTML == "15") {
-					Tspans[x].innerHTML = "F";
+					Tspans[x].innerHTML = "i";
 				} else if (Tspans[x].innerHTML == "16") {
-					Tspans[x].innerHTML = "L";
+					Tspans[x].innerHTML = "b";
 				} else if (Tspans[x].innerHTML == "17") {
-					Tspans[x].innerHTML = "G";
+					Tspans[x].innerHTML = "c";
 				} else if (Tspans[x].innerHTML == "18") {
-					Tspans[x].innerHTML = "M";
+					Tspans[x].innerHTML = "j";
 				} else if (Tspans[x].innerHTML == "19") {
-					Tspans[x].innerHTML = "A";
+					Tspans[x].innerHTML = "D";
 				} else if (Tspans[x].innerHTML == "20") {
-					Tspans[x].innerHTML = "I";
+					Tspans[x].innerHTML = "K";
 				} else if (Tspans[x].innerHTML == "21") {
-					Tspans[x].innerHTML = "B";
+					Tspans[x].innerHTML = "E";
 				} else if (Tspans[x].innerHTML == "22") {
-					Tspans[x].innerHTML = "C";
+					Tspans[x].innerHTML = "F";
 				} else if (Tspans[x].innerHTML == "23") {
+					Tspans[x].innerHTML = "L";
+				} else if (Tspans[x].innerHTML == "24") {
+					Tspans[x].innerHTML = "G";
+				} else if (Tspans[x].innerHTML == "25") {
+					Tspans[x].innerHTML = "M";
+				} else if (Tspans[x].innerHTML == "26") {
+					Tspans[x].innerHTML = "A";
+				} else if (Tspans[x].innerHTML == "27") {
+					Tspans[x].innerHTML = "I";
+				} else if (Tspans[x].innerHTML == "28") {
+					Tspans[x].innerHTML = "B";
+				} else if (Tspans[x].innerHTML == "29") {
+					Tspans[x].innerHTML = "C";
+				} else if (Tspans[x].innerHTML == "30") {
 					Tspans[x].innerHTML = "J";
+				} else if (Tspans[x].innerHTML == "31") {
+					Tspans[x].innerHTML = "D";
+				} else if (Tspans[x].innerHTML == "32") {
+					Tspans[x].innerHTML = "K";
+				} else if (Tspans[x].innerHTML == "33") {
+					Tspans[x].innerHTML = "E";
+				} else if (Tspans[x].innerHTML == "34") {
+					Tspans[x].innerHTML = "F";
+				} else if (Tspans[x].innerHTML == "35") {
+					Tspans[x].innerHTML = "L";
+				} else if (Tspans[x].innerHTML == "36") {
+					Tspans[x].innerHTML = "G";
+				} else if (Tspans[x].innerHTML == "37") {
+					Tspans[x].innerHTML = "M";
+				} else if (Tspans[x].innerHTML == "38") {
+					Tspans[x].innerHTML = "A";
 				}
 			}
-		}
+	  	}
 
 		if (instrument == "notenames") {
 
