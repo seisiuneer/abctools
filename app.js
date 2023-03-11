@@ -58,10 +58,10 @@ var MAXQRCODEURLLENGTH = 2300;
 var ALLTITLESMAXLENGTH = 70;
 
 // Font size for PDF headers and footers
-var HEADERFOOTERFONTSIZE = 11.0;
+var HEADERFOOTERFONTSIZE = 12.0;
 
 // Font size for PDF QR code caption
-var QRCODECAPTIONPDFFONTSIZE = 11.0;
+var QRCODECAPTIONPDFFONTSIZE = 12.0;
 
 var gShowShareControls = false;
 
@@ -516,8 +516,8 @@ function GetTunebookIndexTitles(){
 //
 // Tune title page font sizes
 //
-var TPTITLESIZE = 23;
-var TPSTTITLESIZE = 17;
+var TPTITLESIZE = 24;
+var TPSTTITLESIZE = 16;
 var TPTOPOFFSET = 435;
 var TPSTOFFSET = 24;
 
@@ -538,6 +538,7 @@ function AppendTuneTitlePage(thePDF,paperStyle,theTitle,theSubtitle){
 	if (theTitle != ""){
 
 		// Set the font size
+		thePDF.setFont("Times","","normal");
 		thePDF.setFontSize(TPTITLESIZE);
 
 		// Add the title
@@ -548,6 +549,7 @@ function AppendTuneTitlePage(thePDF,paperStyle,theTitle,theSubtitle){
 	if (theSubtitle != ""){
 
 		// Set the font size
+		thePDF.setFont("Times","","normal");
 		thePDF.setFontSize(TPSTTITLESIZE);
 
 		// Add the subtitle
@@ -572,8 +574,8 @@ var INDEXTITLEOFFSET = 35;
 var INDEXLEFTMARGIN = 90;
 var INDEXRIGHTMARGIN = 120;
 var INDEXTITLESIZE = 18;
-var INDEXFONTSIZE = 12;
-var INDEXLINESPACING = 13;
+var INDEXFONTSIZE = 13;
+var INDEXLINESPACING = 14;
 
 //
 // Generate and append a tune index to the current PDF
@@ -590,6 +592,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 	thePDF.addPage(paperStyle); 
 
 	// Set the font size
+	thePDF.setFont("Times","","normal");
 	thePDF.setFontSize(INDEXTITLESIZE);
 
 	if (theTitle != ""){
@@ -613,6 +616,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 	var thePageNumber;
 
 	// Set the font size
+	thePDF.setFont("Times","","normal");
 	thePDF.setFontSize(INDEXFONTSIZE);
 
 	// Add the tunes by name and page number
@@ -640,6 +644,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 				thePDF.addPage(paperStyle); 
 
 				// Set the font size
+				thePDF.setFont("Times","","normal");
 				thePDF.setFontSize(INDEXFONTSIZE);
 
 				// Start back at the top
@@ -673,6 +678,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 	thePDF.addPage(paperStyle); 
 
 	// Set the font size
+	thePDF.setFont("Times","","normal");
 	thePDF.setFontSize(INDEXTITLESIZE);
 
 	if (theTitle != ""){
@@ -698,6 +704,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 	var tocPageOffset = 1;
 
 	// Set the font size
+	thePDF.setFont("Times","","normal");
 	thePDF.setFontSize(INDEXFONTSIZE);
 
 	// Add the tunes by name and page number
@@ -731,6 +738,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 				thePDF.addPage(paperStyle); 
 
 				// Set the font size
+				thePDF.setFont("Times","","normal");
 				thePDF.setFontSize(INDEXFONTSIZE);
 
 				// Start back at the top
@@ -819,6 +827,7 @@ function AppendQRCode(thePDF,paperStyle,callback){
 			thePDF.addImage(theImageSource, 'PNG', theHOffset, 150, 256, 256);
 			
 			// Set the font size
+			thePDF.setFont("Times","","normal");
 			thePDF.setFontSize(QRCODECAPTIONPDFFONTSIZE);
 
 			// Different caption offset for letter vs a4
@@ -1430,6 +1439,7 @@ function AddPageHeaderFooter(thePDF,doAddPageNumber,pageNumber,pageNumberLocatio
 		voff = PAGENUMBERTOPA4;
 	}
 
+	thePDF.setFont("Times","","normal");
 	thePDF.setFontSize(HEADERFOOTERFONTSIZE);
 
 	var hasHeader = false;
@@ -1472,6 +1482,7 @@ function AddPageHeaderFooter(thePDF,doAddPageNumber,pageNumber,pageNumberLocatio
 		}
 	}
 
+	thePDF.setFont("Times","","normal");
 	thePDF.setFontSize(HEADERFOOTERFONTSIZE);
 
 	// Add page number
@@ -2298,20 +2309,23 @@ function GetABCJSParams(instrument){
 	}
 
 	// Shared font format between all tab styles
+	var tFont = "Times-Roman 18";
+	var pFont = "Times-Roman 13.5";
+
 	var commonFontFormat = 
 	{
-		titlefont: "Times-Roman 18",
-		subtitlefont: "Verdana 12",
-		infofont: "Verdana 12",
-		partsfont: "Verdana 12",
-		tempofont: "Verdana 12",
-		textfont: "Verdana 12",
-		composerfont: "Verdana 12",
-		annotationfont: "Verdana 12",
-		partsfont: "Verdana 12",
-		gchordfont: "Verdana 12",
-		vocalfont: "Verdana 12",
-		wordsfont: "Verdana 12"
+		titlefont: tFont,
+		subtitlefont: pFont,
+		infofont: pFont,
+		partsfont: pFont,
+		tempofont: pFont,
+		textfont: pFont,
+		composerfont: pFont,
+		annotationfont: pFont,
+		partsfont: pFont,
+		gchordfont: pFont,
+		vocalfont: pFont,
+		wordsfont: pFont
 	};
 
 	var params;
@@ -4218,13 +4232,13 @@ function GenerateQRCode() {
 
 			var theOutputHTML = '<div style="text-align:center;padding:24px;margin-top:0px;margin-bottom:0px;">';
 			theOutputHTML +=    theImageHTML;
-			theOutputHTML +=    '<p style="font-family:helvetica;font-size:14pt;margin-top:18px;margin-bottom:0px;">' + theTitles + '</p>';			
-			theOutputHTML +=    '<p style="font-family:helvetica;font-size:16pt;margin-top:32px;margin-bottom:0px;"><strong>Get Your QR Code</strong></p>';
-			theOutputHTML +=    '<p style="font-family:helvetica;font-size:16pt;margin-top:32px;margin-bottom:0px;"><a href="'+theImageSource+'" download="'+theImageName+'.png" style="text-decoration:none;color:darkblue">Click here to download&nbsp;' + theImageName +'.png&nbsp;to your system.</a></p>';
-			theOutputHTML +=    '<p style="font-family:helvetica;font-size:16pt;margin-top:32px;margin-bottom:0px;"><strong>Use Your QR Code</strong></p>';
-			theOutputHTML +=    '<p style="font-family:helvetica;font-size:14pt;margin-top:30px;margin-bottom:0px;">Share QR Codes on social media or email them to friends like any other photo.</p>';
-			theOutputHTML +=    '<p style="font-family:helvetica;font-size:14pt;margin-top:24px;margin-bottom:0px;">Scanning the code with the Camera app on any smartphone will load the</p>';
-			theOutputHTML +=    '<p style="font-family:helvetica;font-size:14pt;margin-top:6px;margin-bottom:0px;">ABC Transcription Tool with your tune set into the browser on the device.</p>';
+			theOutputHTML +=    '<p style="font-family:times;font-size:15pt;margin-top:18px;margin-bottom:0px;">' + theTitles + '</p>';			
+			theOutputHTML +=    '<p style="font-family:times;font-size:16pt;margin-top:32px;margin-bottom:0px;"><strong>Get Your QR Code</strong></p>';
+			theOutputHTML +=    '<p style="font-family:times;font-size:16pt;margin-top:32px;margin-bottom:0px;"><a href="'+theImageSource+'" download="'+theImageName+'.png" style="text-decoration:none;color:darkblue">Click here to download&nbsp;' + theImageName +'.png&nbsp;to your system.</a></p>';
+			theOutputHTML +=    '<p style="font-family:times;font-size:16pt;margin-top:32px;margin-bottom:0px;"><strong>Use Your QR Code</strong></p>';
+			theOutputHTML +=    '<p style="font-family:times;font-size:15pt;margin-top:30px;margin-bottom:0px;">Share QR Codes on social media or email them to friends like any other photo.</p>';
+			theOutputHTML +=    '<p style="font-family:times;font-size:15pt;margin-top:24px;margin-bottom:0px;">Scanning the code with the Camera app on any smartphone will load the</p>';
+			theOutputHTML +=    '<p style="font-family:times;font-size:15pt;margin-top:6px;margin-bottom:0px;">ABC Transcription Tool with your tune set into the browser on the device.</p>';
 			theOutputHTML +=    '</div>';
 
 			w.document.write(theOutputHTML);
