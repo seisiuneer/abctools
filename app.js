@@ -354,17 +354,19 @@ function ClearNoRender() {
 
 function Titelholen() {
 
-	verarbeiten = gTheABC.value;
+	var titel = "";
+	
+	var verarbeiten = gTheABC.value;
 
-	neu = escape(verarbeiten);
+	var neu = escape(verarbeiten);
 
-	Reihe = neu.split("%0D%0A");
+	var Reihe = neu.split("%0D%0A");
 	Reihe = neu.split("%0A");
 
 	for (i = 0; i < Reihe.length; ++i) {
 		Reihe[i] = unescape(Reihe[i]); /* Macht die Steuerzeichen wieder weg */
 
-		Aktuellereihe = Reihe[i].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
+		var Aktuellereihe = Reihe[i].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
 		if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
 
 			titel = Reihe[i].slice(2);
@@ -3037,11 +3039,11 @@ function Render(renderAll,tuneNumber) {
 		return;
 	}
 
-	if (gTheABC.value != "") {
+	// Idle the file status display
+	var nTunes = CountTunes();
 
-		// Idle the file status display
-		var nTunes = CountTunes();
-		
+	if ((gTheABC.value != "") && (nTunes > 0)) {
+
 		var fileSelected = document.getElementById('abc-selected');
 
 		if (nTunes == 1){
@@ -3139,6 +3141,7 @@ function Render(renderAll,tuneNumber) {
 			// Just get the ABC for the current tune
 			theNotes = getTuneByIndex(tuneNumber);
 		}
+
 
 		var searchRegExp = "";
 
@@ -3884,22 +3887,22 @@ function GenerateRenderingDivs(nTunes) {
 //
 function GetAllTuneTitles() {
 
-	theTitles = [];
+	var theTitles = [];
 
 	// Mit For Schleife Titel für Dateinamen extrahieren und Leerzeichen ersetzen und Apostrophe entfernen.
-	verarbeiten = gTheABC.value;
+	var verarbeiten = gTheABC.value;
 
-	neu = escape(verarbeiten);
+	var neu = escape(verarbeiten);
 
-	Reihe = neu.split("%0D%0A");
+	var Reihe = neu.split("%0D%0A");
 	Reihe = neu.split("%0A");
 
 	for (i = 0; i < Reihe.length; ++i) {
 		Reihe[i] = unescape(Reihe[i]); /* Macht die Steuerzeichen wieder weg */
 
-		Aktuellereihe = Reihe[i].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
+		var Aktuellereihe = Reihe[i].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
 		if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
-			titel = Reihe[i].slice(2);
+			var titel = Reihe[i].slice(2);
 
 			titel = titel.trim();
 
@@ -5268,6 +5271,7 @@ function MakeTuneVisible(forceUpdate){
 			var theDivID = "notation"+tuneIndex;
 
 			var theTuneDiv = document.getElementById(theDivID);
+
 			var theTuneTop = theTuneDiv.offsetTop;
 			var theTuneHeight = theTuneDiv.offsetHeight;
 
