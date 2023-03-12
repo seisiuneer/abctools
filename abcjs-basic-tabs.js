@@ -3544,7 +3544,7 @@ var parseDirective = {};
     };
     tune.formatting.tablabelfont = {
       face: "\"Trebuchet MS\"",
-      size: 16,
+      size: 14,
       weight: "normal",
       style: "normal",
       decoration: "none"
