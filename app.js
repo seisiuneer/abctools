@@ -3234,7 +3234,7 @@ function Render(renderAll,tuneNumber) {
 		// Inject %%staffsep 
 		searchRegExp = /^X:.*$/gm
 
-		theNotes = theNotes.replace(searchRegExp, "X:1\n%%musicspace 20\n%%staffsep " + gStaffSpacing);
+		theNotes = theNotes.replace(searchRegExp, "X:1\n%%musicspace 10\n%%staffsep " + gStaffSpacing);
 
 		// Render the notes
 		RenderTheNotes(theNotes,radiovalue,renderAll,tuneNumber);
