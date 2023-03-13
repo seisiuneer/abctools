@@ -3195,6 +3195,13 @@ function Render(renderAll,tuneNumber) {
 			// Strip out B: annotation
 			theNotes = theNotes.replace(searchRegExp, "% comment");
 
+			// Strip out C: annotation
+			searchRegExp = /^C:.*$/gm
+
+			// Strip out C: annotation
+			theNotes = theNotes.replace(searchRegExp, "% comment");
+
+
 		}
 
 		if (gStripTextAnnotations) {
@@ -3432,6 +3439,16 @@ function IdleAdvancedControls(){
 			searchRegExp = /^B:.*$/gm
 
 			// Detect B: annotation
+			gotMatch = theNotes.search(searchRegExp) != -1;
+
+		}
+
+		if (!gotMatch){
+
+			// Detect C: annotation
+			searchRegExp = /^C:.*$/gm
+
+			// Detect C: annotation
 			gotMatch = theNotes.search(searchRegExp) != -1;
 
 		}
