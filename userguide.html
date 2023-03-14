@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-       
+               
         <style>
         p {
         font-size:14pt;
@@ -271,17 +271,17 @@
             <p>Try experimenting with different %%musicspace values until you get the result you want.</p>
             <p><strong>All supported spacing parameters</strong></p>
             <p>Here is the full list of ABC spacing-related parameters available in abcjs:</p>
-            <p>%%topspace</p>
-            <p>%%titlespace</p> 
-            <p>%%subtitlespace</p> 
-            <p>%%composerspace</p> 
-            <p>%%musicspace</p>
-            <p>%%partsspace</p>
-            <p>%%vocalspace</p> 
-            <p>%%wordsspace</p> 
-            <p>%%textspace</p> 
-            <p>%%staffsep</p>
-            <p>%%sysstaffsep</p>
+            <p>%%topspace<br/>
+            %%titlespace<br/> 
+            %%subtitlespace<br/> 
+            %%composerspace<br/> 
+            %%musicspace<br/>
+            %%partsspace<br/>
+            %%vocalspace<br/> 
+            %%wordsspace<br/> 
+            %%textspace<br/> 
+            %%staffsep<br/>
+            %%sysstaffsep</p>
             <p>Please refer to the <a href="http://abcnotation.com/wiki/abc:standard:v2.1" target="_blank">official ABC 2.1 specification</a> for more details.</p>
             <p>Another good reference is this handy ABC 2.1 Quick Reference Card put together by Stephen Merrony: </p>
             <p><a href="http://michaeleskin.com/documents/ABCquickRefv0_6.pdf" target="_blank">ABC Quick Reference Card</a></p>
@@ -291,35 +291,56 @@
             </div>
             <hr id="custom_font_overrides">
             <h1>Custom Font Overrides</h1>
-            <p>As per the ABC 2.1 specification, the following font overrides should be possible by placing the override in the ABC just below the tune header:</p>
+            <p>As per the ABC 2.1 specification, custom font overrides are possible, giving you maximum control over the appearance of your notation.</p>
+            <p><strong>Available ABC Font Annotations:</strong></p>
+            <p>%%titlefont        font-style size<br/>
+            %%subtitlefont     font-style size<br/>
+            %%composerfont     font-style size<br/>
+            %%partsfont        font-style size<br/>
+            %%tempofont        font-style size<br/>
+            %%gchordfont       font-style size (used for chords symbols)<br/>
+            %%annotationfont   font-style size (used for "^..." annotations)<br/>
+            %%infofont         font-style size<br/>
+            %%textfont         font-style size<br/>
+            %%vocalfont        font-style size (used for for w:)<br/>
+            %%wordsfont        font-style size (used for W:)</p>
             <p>Generally, these will use the PostScript font-style naming convention, for example:</p>
             <p>Times, Helvetica, Courier, Verdana, Times-Bold, Helvetica-Italic, etc.</p> 
             <p>The size parameter should be an integer, but is optional.</p>
-            <p>%%titlefont        font-style size</p>
-            <p>%%subtitlefont     font-style size</p>
-            <p>%%composerfont     font-style size</p>
-            <p>%%partsfont        font-style size</p>
-            <p>%%tempofont        font-style size</p>
-            <p>%%gchordfont       font-style size (used for chords symbols)</p>
-            <p>%%annotationfont   font-style size (used for "^..." annotations)</p>
-            <p>%%infofont         font-style size</p>
-            <p>%%textfont         font-style size</p>
-            <p>%%vocalfont        font-style size (used for for w:)</p>
-            <p>%%wordsfont        font-style size (used for W:)</p>
+            <p>Place your font override annotations just below the X: and above the T: ABC tune headers.</p>
+            <p><strong>For example:</strong></p>
+            <p>X: 1<br/>
+            %%titlefont Palatino 30<br/>
+            %%infofont Palatino 18<br/>
+            %%gchordfont Palatino Bold 14<br/>
+            T: The Road to Lisdoonvarna<br/>
+            R: slide<br/>
+            M: 12/8<br/>
+            L: 1/8<br/>
+            K:Edor<br/>
+            D|:"Em"E2B B2A B2c d3|"D"F2A ABA D2E FED|<br/>
+            "Em"E2B B2A B2c d3|"D"cdc B2A "Em"B2E E3:|<br/>
+            |:"Em"e2f gfe "Bm"d2B Bcd|"A"c2A ABc "Bm"d2B B3|<br/>
+            "Em"e2f gfe "Bm"d2B Bcd|"A"cdc B2A "Em"B2E E3:|</p>
+            <p><strong>Result:</strong></p>
+            <div class="image_holder">
+                <img src="img/ug14.jpg"/>
+            </div>
+            <p><strong>Web Safe Fonts</strong></p>
             <p>The following "web safe" fonts at a minimum should be supported by all browsers:</p>
-            <p style="font-family: Helvetica">Helvetica (sans-serif)</p>
-            <p style="font-family: Trebuchet MS">Trebuchet MS (sans-serif)</p>
-            <p style="font-family: Gill Sans">Gill Sans (sans-serif)</p>
-            <p style="font-family: Verdana">Verdana (sans-serif)</p>
-            <p style="font-family: Times New Roman">Times New Roman (serif)</p>
-            <p style="font-family: Georgia">Georgia (serif)</p>
-            <p style="font-family: Palatino">Palatino (serif)</p>
-            <p style="font-family: Baskerville">Baskerville (serif)</p>
-            <p style="font-family: Courier">Courier (monospace)</p>
-            <p style="font-family: Monaco">Monaco (monospace)</p>
-            <p style="font-family: Bradley Hand">Bradley Hand (cursive)</p>
+            <p style="font-family: Helvetica;font-size: 16pt;">Helvetica (sans-serif)</p>
+            <p style="font-family: Trebuchet MS;font-size: 16pt;">Trebuchet MS (sans-serif)</p>
+            <p style="font-family: Gill Sans;font-size: 16pt;">Gill Sans (sans-serif)</p>
+            <p style="font-family: Verdana;font-size: 16pt;">Verdana (sans-serif)</p>
+            <p style="font-family: Times New Roman;font-size: 16pt;">Times New Roman (serif)</p>
+            <p style="font-family: Georgia;font-size: 16pt;">Georgia (serif)</p>
+            <p style="font-family: Palatino;font-size: 16pt;">Palatino (serif)</p>
+            <p style="font-family: Baskerville;font-size: 16pt;">Baskerville (serif)</p>
+            <p style="font-family: Courier;font-size: 16pt;">Courier (monospace)</p>
+            <p style="font-family: Monaco;font-size: 16pt;">Monaco (monospace)</p>
+            <p style="font-family: Bradley Hand;font-size: 16pt;">Bradley Hand (cursive)</p>
             <p>Font availability varies with browser and platform. Many other fonts may be available on your system.</p>
-            <p>More information is available here:</p>
+            <p><strong>More information is available here:</strong></p>
             <p><a href="https://blog.hubspot.com/website/web-safe-html-css-fonts" target="_blank">Web Safe CSS Fonts</a></p>
             <p><a href="http://iosfonts.com/" target="_blank">iOS Fonts</a></p>
             <hr id="playing_your_tunes">
@@ -337,7 +358,7 @@
             <p>To change the instrument used for playback, change the MIDI program # above to one of:</p>
             <p>74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano</p>
             <p></p>
-            <p>For example:</p>
+            <p><strong>For example:</strong></p>
             <p>X: 1<br/>
                 T: The Kesh<br/>
                 R: Jig<br/>
