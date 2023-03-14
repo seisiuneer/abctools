@@ -3201,6 +3201,11 @@ function Render(renderAll,tuneNumber) {
 			// Strip out C: annotation
 			theNotes = theNotes.replace(searchRegExp, "% comment");
 
+			// Strip out O: annotation
+			searchRegExp = /^O:.*$/gm
+
+			// Strip out O: annotation
+			theNotes = theNotes.replace(searchRegExp, "% comment");
 
 		}
 
@@ -3449,6 +3454,16 @@ function IdleAdvancedControls(){
 			searchRegExp = /^C:.*$/gm
 
 			// Detect C: annotation
+			gotMatch = theNotes.search(searchRegExp) != -1;
+
+		}
+
+		if (!gotMatch){
+
+			// Detect O: annotation
+			searchRegExp = /^O:.*$/gm
+
+			// Detect O: annotation
 			gotMatch = theNotes.search(searchRegExp) != -1;
 
 		}
