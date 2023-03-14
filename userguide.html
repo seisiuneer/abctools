@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-       
+        
         <style>
         p {
         font-size:14pt;
@@ -110,6 +110,7 @@
             <p class="toc"><a href="#basic_controls">Basic Controls</a></p>
             <p class="toc"><a href="#advanced_controls">Advanced Controls</a></p>
             <p class="toc"><a href="#staff_and_title_spacing_overrides">Staff and Title Spacing Overrides</a></p>
+            <p class="toc"><a href="#font_overrides">Font Overrides</a></p>
             <p class="toc"><a href="#playing_your_tunes">Playing Your Tunes</a></p>
             <p class="toc"><a href="#selecting_the_instrument_for_playback">Selecting the Instrument for Playback</a></p>
             <p class="toc"><a href="#printing_your_tunes">Printing Your Tunes</a></p>
@@ -288,6 +289,22 @@
             <div class="image_holder">
                 <img src="img/ug13a.jpg"/>
             </div>
+            <hr id="font_overrides">
+            <h1>Font Overrides</h1>
+            <p>As per the ABC 2.1 specification, the following font overrides should be possible by placing the override in the ABC just below the tune header:</p>
+            <p>Generally, these will use the PostScript font-style names, for example Times, Helvetica, Times-Bold, Helvetica-Italic, etc.</p> 
+            <p>The size parameter should be an integer, but is optional.</p>
+            <p>%%titlefont        fontname-style size</p>
+            <p>%%subtitlefont     fontname-style size</p>
+            <p>%%composerfont     fontname-style size</p>
+            <p>%%partsfont        fontname-style size</p>
+            <p>%%tempofont        fontname-style size</p>
+            <p>%%gchordfont       fontname-style size % for chords symbols</p>
+            <p>%%annotationfont   fontname-style size % for "^..." annotations</p>
+            <p>%%infofont         fontname-style size</p>
+            <p>%%textfont         fontname-style size</p>
+            <p>%%vocalfont        fontname-style size % for w:</p>
+            <p>%%wordsfont        fontname-style size % for W:</p>
             <hr id="playing_your_tunes">
             <h1>Playing Your Tunes</h1>
             <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/-JvOFaotgtY" title="Playing your Tunes (New and Improved)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
