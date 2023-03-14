@@ -2325,7 +2325,7 @@ function GetABCJSParams(instrument){
 		composerfont: pFont,
 		annotationfont: pFont,
 		partsfont: pFont,
-		gchordfont: pFont,
+		gchordfont: "Verdana 12",
 		vocalfont: pFont,
 		wordsfont: pFont
 	};
