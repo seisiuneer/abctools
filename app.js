@@ -127,30 +127,359 @@ var gIsOneColumn = true;
 var gTheABC = document.getElementById("abc");
 
 //
+// Tune utility functions
+// 
+
+//
+// Get the text area character offset to the start of a specific tune by index
+//
+function findTuneOffsetByIndex(tuneIndex){	
+	
+	if (tuneIndex == 0){
+		return 0;
+	}
+	
+	var theNotes = gTheABC.value;
+
+	// Find the tunes
+	var theTunes = theNotes.split(/^X:/gm);
+
+	var offset = theTunes[0].length;
+
+	for (var i = 1; i <= tuneIndex; ++i) {
+
+		offset += theTunes[i].length + 2; // For the X:
+		
+	}
+
+	return offset;
+	
+}
+
+//
+// Get the tune number at a character offset into the ABC
+//
+function findTuneByOffset(start){
+
+	var theNotes = gTheABC.value;
+
+    // Now find all the X: items
+    var theTunes = theNotes.split(/^X:/gm);
+
+    var nTunes = theTunes.length;
+
+    // First chunk is whatever is before the first X:
+    var theOffset = 0;
+
+    theOffset = theTunes[0].length;
+
+    for (i=1;i<nTunes;++i){
+
+    	// Account for the X: stripped in the length
+    	theOffset += theTunes[i].length+2;
+
+    	// Is the offset in the last chunk?
+    	if (start < theOffset){
+
+    		return i-1;
+
+    	}
+
+    }
+
+    // Off the end 
+    return nTunes-2;
+ }
+
+//
+// Return the tune ABC at a specific index
+//
+//
+function getTuneByIndex(tuneNumber){
+
+	var theNotes = gTheABC.value;
+
+    // Now find all the X: items
+    var theTunes = theNotes.split(/^X:/gm);
+
+ 	return ("X:"+theTunes[tuneNumber+1]);
+
+}
+
+//
+// Get the currently selected text in a textbox
+//
+function getSelectedText(id)
+{
+    // Obtain the object reference for the <textarea>
+    var txtarea = document.getElementById(id);
+
+    // Obtain the index of the first selected character
+    var start = txtarea.selectionStart;
+
+    // Obtain the index of the last selected character
+    var finish = txtarea.selectionEnd;
+
+    // Obtain the selected text
+    var sel = txtarea.value.substring(start, finish);
+
+    return sel;
+
+}
+
+//
+// Find the tune around the selection point
+//
+function findSelectedTune(){
+
+	var theNotes = gTheABC.value;
+
+    // Obtain the object reference for the <textarea>
+    var txtarea = gTheABC;
+
+    // Obtain the index of the first selected character
+    var start = txtarea.selectionStart;
+
+    if (start == 0) {
+
+	    // Common case where a set was just loaded and the cursor is at the start, go find the first position after an X:
+		start = theNotes.indexOf("X:")+2;
+
+	}
+
+	// Odd case where there isn't an X:, just return nothing to play
+	if (start == 0){
+
+		return "";
+
+	}
+
+    // Now find all the X: items
+    var theTunes = theNotes.split(/^X:/gm);
+
+    var nTunes = theTunes.length;
+
+    // First chunk is whatever is before the first X:
+    var theOffset = 0;
+
+    theOffset = theTunes[0].length;
+
+    for (i=1;i<nTunes;++i){
+
+    	// Account for the X: stripped in the length
+    	theOffset += theTunes[i].length+2;
+
+    	// Is the offset in the last chunk?
+    	if (start < theOffset){
+
+    		var finalTune = "X:"+theTunes[i];
+
+    		// Strip any trailing whitespace
+    		finalTune = finalTune.trimEnd();
+
+    		return (finalTune);
+
+    	}
+
+    }
+
+    return "";
+
+}
+			
+//
+// Get the title of the first tune
+//
+function GetFirstTuneTitle() {
+
+	var title = "";
+	
+	var theABC = gTheABC.value;
+
+	theABC = escape(theABC);
+
+	var theLines = theABC.split("%0A");
+
+	for (i = 0; i < theLines.length; ++i) {
+		
+		theLines[i] = unescape(theLines[i]); 
+
+		var theChars = theLines[i].split(""); 
+
+		if (theChars[0] == "T" && theChars[1] == ":") {
+
+			title = theLines[i].slice(2);
+			
+			title = title.trim();
+
+			// Strip out any naughty HTML tag characters
+			title = title.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+			// Replace any spaces
+			title = title.replace(/\s/g, '_');
+
+			// Replace any quotes
+			title = title.replace(/\'/g, '_');
+
+			break;
+		}
+	}
+	
+	return title;
+}
+
+//
+// Count the tunes in the text area
+//
+function CountTunes() {
+
+	// Count the tunes in the text area
+	var theNotes = gTheABC.value;
+
+	var theTunes = theNotes.split(/^X:.*$/gm);
+
+	var nTunes = theTunes.length - 1;
+
+	// Save the global tune count anytime this is called
+	gTotalTunes = nTunes;
+
+	return nTunes;
+
+}
+
+//
+// Get all the tune titles
+//
+function GetAllTuneTitles() {
+
+	var theTitles = [];
+
+	// Mit For Schleife Titel für Dateinamen extrahieren und Leerzeichen ersetzen und Apostrophe entfernen.
+	var verarbeiten = gTheABC.value;
+
+	var neu = escape(verarbeiten);
+
+	var Reihe = neu.split("%0D%0A");
+	Reihe = neu.split("%0A");
+
+	for (i = 0; i < Reihe.length; ++i) {
+		Reihe[i] = unescape(Reihe[i]); /* Macht die Steuerzeichen wieder weg */
+
+		var Aktuellereihe = Reihe[i].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
+		if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
+			var titel = Reihe[i].slice(2);
+
+			titel = titel.trim();
+
+			theTitles.push(titel);
+
+		}
+	}
+
+	var nTitles = theTitles.length;
+
+	var allTitles = "";
+
+	if (nTitles > 0) {
+
+		for (i = 0; i < nTitles; ++i) {
+
+			allTitles += theTitles[i];
+
+			// Limit the length of the string to some maximum number of characters
+			if (allTitles.length > ALLTITLESMAXLENGTH){
+
+				var nRemaining = (nTitles-i-1);
+
+				if (nRemaining > 0){
+
+					allTitles = allTitles + " + " + nRemaining + " more";
+
+				}
+				
+				return allTitles;
+
+			}
+
+			if (i != nTitles - 1) {
+				allTitles += " / ";
+			}
+		}
+	}
+
+
+	return allTitles;
+}
+
+
+//
 // Tranpose the ABC up one semitone
 //
 
 //
-// Support function for restoring the selection point after the transpose operation
+// Find the tune range for the current select
 //
-function resetSelectionAfterTranspose(tuneNumber){
-	
-	// Get the tune
-	var theTune = getTuneByIndex(tuneNumber);
-	
-	// Get the tunes
-	var theTunes = gTheABC.value;
+function getTuneRangeForTranspose(){
 
-	// Find the tune in the tunes
-	var theIndex = theTunes.indexOf(theTune);
+	var theNotes = gTheABC.value;
 
-	// Set the select point
-	gTheABC.selectionStart = theIndex;
-    gTheABC.selectionEnd = theIndex;
+    // Obtain the object reference for the <textarea>
+    var txtarea = gTheABC;
+
+    // Obtain the index of the first selected character
+    var theStart = txtarea.selectionStart;
+
+    if (theStart == 0) {
+
+	    // Common case where a set was just loaded and the cursor is at the start, go find the first position after an X:
+		theStart = theNotes.indexOf("X:")+2;
+
+	}
+
+	var theEnd = txtarea.selectionEnd
+
+    if (theEnd == 0) {
+
+	    // Common case where a set was just loaded and the cursor is at the start, go find the first position after an X:
+		theEnd = theNotes.indexOf("X:")+2;
+
+	}
+
+	var startTune = findTuneByOffset(theStart);
+
+    var endTune = findTuneByOffset(theEnd);
+
+    return {start:startTune,end:endTune};
 
 }
 
-function TransposeUp() {
+//
+// Support function for restoring the selection point after the transpose operation
+//
+function resetSelectionAfterTranspose(start,end){
+	
+	// Get the first tune index
+	var theStartIndex = findTuneOffsetByIndex(start);
+	
+	// Get the tune
+	var theTune = getTuneByIndex(end);
+	
+	// Find the last tune in the tunes
+	var theEndIndex = findTuneOffsetByIndex(end)+(theTune.length-1);
+
+	// Set the select point
+	gTheABC.selectionStart = theStartIndex;
+    gTheABC.selectionEnd = theEndIndex;
+
+    // And set the focus
+    gTheABC.focus();
+
+}
+
+//
+// General purpose tranposer for the currently selected tunes
+//
+function Transpose(transposeAmount) {
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
@@ -158,6 +487,10 @@ function TransposeUp() {
 	}
 
 	var nTunes = CountTunes();
+
+	var theTuneRange = getTuneRangeForTranspose();
+
+	//console.log("getTuneRangeForTranspose start = "+theTuneRange.start+" end = "+theTuneRange.end);
 
 	document.getElementById("loading-bar-spinner").style.display = "block";
 
@@ -196,9 +529,31 @@ function TransposeUp() {
 
 			theTunes[i] = "X:"+theTunes[i];
 
-			var visualObj = ABCJS.renderAbc(renderDivs[i-1], theTunes[i], params);
+			var visualObj = null;
 
-			output += ABCJS.strTranspose(theTunes[i], visualObj, 1);
+			if (((i-1) >= theTuneRange.start) && ((i-1) <= theTuneRange.end)){
+
+				// Wrap this in a try-catch since sometimes the transposer fails catastrophically
+				try {
+
+					//console.log("Transposing tune "+i);
+
+					visualObj = ABCJS.renderAbc(renderDivs[i-1], theTunes[i], params);
+
+					output += ABCJS.strTranspose(theTunes[i], visualObj, transposeAmount);
+				}
+				catch (error){
+
+					alert("Unable to tranpose one or more tunes.");
+					
+					output += theTunes[i];
+
+				}
+			}
+			else{
+
+				output += theTunes[i];
+			}
 
 		}
 	
@@ -206,10 +561,10 @@ function TransposeUp() {
 		gTheABC.value = output;
 
 		// Reset the selection point to the current tune
-		resetSelectionAfterTranspose(gCurrentTune);
+		resetSelectionAfterTranspose(theTuneRange.start,theTuneRange.end);
 
 		// Force a full render
-		RenderAsync(true,null, function(){
+		RenderAsync(true, null, function(){
 
 			setTimeout(function(){
 
@@ -229,6 +584,16 @@ function TransposeUp() {
 
 	},100);
 	
+}
+
+//
+// Tranpose the ABC up one semitone
+//
+
+function TransposeUp() {
+
+	Transpose(1);
+
 }
 
 //
@@ -237,82 +602,7 @@ function TransposeUp() {
 
 function TransposeDown() {
 
-
-	// If currently rendering PDF, exit immediately
-	if (gRenderingPDF) {
-		return;
-	}
-
-	var nTunes = CountTunes();
-
-	document.getElementById("loading-bar-spinner").style.display = "block";
-
-	// Need a timeout to allow the spinner to show before processing the ABC,
-	setTimeout(function(){
-	
-		var theNotes = gTheABC.value;
-
-		// Get the rendering params
-		var params = GetABCJSParams();
-
-		// Find the tunes
-		var theTunes = theNotes.split(/^X:/gm);
-
-		// Create the render div ID array
-		var renderDivs = [];
-
-		var id;
-
-		for (var i = 0; i < nTunes; ++i) {
-
-			id = "notation" + i;
-			
-			renderDivs.push(id);
-
-			// Flash reduction
-			var elem = document.getElementById(id);
-
-			elem.style.opacity = 0.0;
-
-		}
-
-		var output = "";
-
-		for (var i=1;i<=nTunes;++i){
-
-			theTunes[i] = "X:"+theTunes[i];
-
-			var visualObj = ABCJS.renderAbc(renderDivs[i-1], theTunes[i], params);
-
-			output += ABCJS.strTranspose(theTunes[i], visualObj, -1);
-
-		}
-
-		// Stuff in the transposed output
-		gTheABC.value = output;
-
-		// Reset the selection point to the current tune
-		resetSelectionAfterTranspose(gCurrentTune);
-
-		// Force a full render
-		RenderAsync(true,null,function(){
-
-			setTimeout(function(){
-
-				for (var i = 0; i < nTunes; ++i) {
-
-					// Flash reduction
-					var elem = document.getElementById(id);
-
-					elem.style.opacity = 1.0;
-
-				}
-
-			},100);
-		});
-
-
-	},100);
+	Transpose(-1);
 
 }
 
@@ -349,46 +639,6 @@ function ClearNoRender() {
 	HideAllControls();
 
 }
-
-// Get the title of the first tune
-
-function Titelholen() {
-
-	var titel = "";
-	
-	var verarbeiten = gTheABC.value;
-
-	var neu = escape(verarbeiten);
-
-	var Reihe = neu.split("%0D%0A");
-	Reihe = neu.split("%0A");
-
-	for (i = 0; i < Reihe.length; ++i) {
-		Reihe[i] = unescape(Reihe[i]); /* Macht die Steuerzeichen wieder weg */
-
-		var Aktuellereihe = Reihe[i].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
-		if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
-
-			titel = Reihe[i].slice(2);
-			
-			titel = titel.trim();
-
-			// Strip out any naughty HTML tag characters
-			titel = titel.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
-
-			// Replace any spaces
-			titel = titel.replace(/\s/g, '_');
-
-			// Replace any quotes
-			titel = titel.replace(/\'/g, '_');
-
-			break;
-		}
-	}
-	
-	return titel;
-}
-
 
 //
 // PDF conversion shared globals
@@ -892,7 +1142,7 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
 	else{
 
 		// Get the title from the first tune in the ABC
-		title = Titelholen();
+		title = GetFirstTuneTitle();
 
 		// If there is more than one tune, make the name reflect that it is a set
 		if (tuneCount > 1){
@@ -2541,7 +2791,6 @@ function RestoreSVGDivsAfterRasterization(){
 
 }
 
-
 //
 // Main routine for rendering the notation
 //
@@ -3842,24 +4091,7 @@ function ToggleChords() {
 
 }
 
-//
-// Count the tunes in the text area
-//
-function CountTunes() {
 
-	// Count the tunes in the text area
-	var theNotes = gTheABC.value;
-
-	var theTunes = theNotes.split(/^X:.*$/gm);
-
-	var nTunes = theTunes.length - 1;
-
-	// Save the global tune count anytime this is called
-	gTotalTunes = nTunes;
-
-	return nTunes;
-
-}
 
 //
 // Create a template for a new ABC file
@@ -3911,71 +4143,6 @@ function GenerateRenderingDivs(nTunes) {
 
 	}
 
-}
-
-
-//
-// Get all the tune titles
-//
-function GetAllTuneTitles() {
-
-	var theTitles = [];
-
-	// Mit For Schleife Titel für Dateinamen extrahieren und Leerzeichen ersetzen und Apostrophe entfernen.
-	var verarbeiten = gTheABC.value;
-
-	var neu = escape(verarbeiten);
-
-	var Reihe = neu.split("%0D%0A");
-	Reihe = neu.split("%0A");
-
-	for (i = 0; i < Reihe.length; ++i) {
-		Reihe[i] = unescape(Reihe[i]); /* Macht die Steuerzeichen wieder weg */
-
-		var Aktuellereihe = Reihe[i].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
-		if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
-			var titel = Reihe[i].slice(2);
-
-			titel = titel.trim();
-
-			theTitles.push(titel);
-
-		}
-	}
-
-	var nTitles = theTitles.length;
-
-	var allTitles = "";
-
-	if (nTitles > 0) {
-
-		for (i = 0; i < nTitles; ++i) {
-
-			allTitles += theTitles[i];
-
-			// Limit the length of the string to some maximum number of characters
-			if (allTitles.length > ALLTITLESMAXLENGTH){
-
-				var nRemaining = (nTitles-i-1);
-
-				if (nRemaining > 0){
-
-					allTitles = allTitles + " + " + nRemaining + " more";
-
-				}
-				
-				return allTitles;
-
-			}
-
-			if (i != nTitles - 1) {
-				allTitles += " / ";
-			}
-		}
-	}
-
-
-	return allTitles;
 }
 
 //
@@ -4455,101 +4622,6 @@ function CopyToClipboard(textToCopy) {
 	}
 }
 
-//
-// Get the currently selected text in a textbox
-//
-function getSelectedText(id)
-{
-    // Obtain the object reference for the <textarea>
-    var txtarea = document.getElementById(id);
-
-    // Obtain the index of the first selected character
-    var start = txtarea.selectionStart;
-
-    // Obtain the index of the last selected character
-    var finish = txtarea.selectionEnd;
-
-    // Obtain the selected text
-    var sel = txtarea.value.substring(start, finish);
-
-    return sel;
-
-}
-
-//
-// Find the tune around the selection point
-//
-function findSelectedTune(){
-
-	var theNotes = gTheABC.value;
-
-    // Obtain the object reference for the <textarea>
-    var txtarea = gTheABC;
-
-    // Obtain the index of the first selected character
-    var start = txtarea.selectionStart;
-
-    if (start == 0) {
-
-	    // Common case where a set was just loaded and the cursor is at the start, go find the first position after an X:
-		start = theNotes.indexOf("X:")+2;
-
-	}
-
-	// Odd case where there isn't an X:, just return nothing to play
-	if (start == 0){
-
-		return "";
-
-	}
-
-    // Now find all the X: items
-    var theTunes = theNotes.split(/^X:/gm);
-
-    var nTunes = theTunes.length;
-
-    // First chunk is whatever is before the first X:
-    var theOffset = 0;
-
-    theOffset = theTunes[0].length;
-
-    for (i=1;i<nTunes;++i){
-
-    	// Account for the X: stripped in the length
-    	theOffset += theTunes[i].length+2;
-
-    	// Is the offset in the last chunk?
-    	if (start < theOffset){
-
-    		var finalTune = "X:"+theTunes[i];
-
-    		// Strip any trailing whitespace
-    		finalTune = finalTune.trimEnd();
-
-    		return (finalTune);
-
-    	}
-
-    }
-
-    return "";
-
-}
-
-//
-// Return the tune ABC at a specific index
-//
-//
-function getTuneByIndex(tuneNumber){
-
-	var theNotes = gTheABC.value;
-
-    // Now find all the X: items
-    var theTunes = theNotes.split(/^X:/gm);
-
- 	return ("X:"+theTunes[tuneNumber+1]);
-
-}
 
 
 //
