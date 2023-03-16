@@ -3231,6 +3231,120 @@ function GetRadioValue(radioName) {
 	return radiovalue;
 }
 
+//
+// Strip all annotations in the ABC
+//
+function StripAnnotations(){
+
+	var theNotes = gTheABC.value;
+
+	// Strip out tempo markings
+	var searchRegExp = /^Q:.*[\r\n]*/gm 
+
+	// Strip out tempo markings
+	theNotes = theNotes.replace(searchRegExp, "");
+
+	// Strip out Z: annotation
+	searchRegExp = /^Z:.*[\r\n]*/gm
+
+	// Strip out Z: annotation
+	theNotes = theNotes.replace(searchRegExp, "");
+
+	// Strip out R: annotation
+	searchRegExp = /^R:.*[\r\n]*/gm
+
+	// Strip out R: annotation
+	theNotes = theNotes.replace(searchRegExp, "");
+
+	// Strip out S: annotation
+	searchRegExp = /^S:.*[\r\n]*/gm
+
+	// Strip out S: annotation
+	theNotes = theNotes.replace(searchRegExp, "");
+
+	// Strip out N: annotation
+	searchRegExp = /^N:.*[\r\n]*/gm
+
+	// Strip out N: annotation
+	theNotes = theNotes.replace(searchRegExp, "");
+
+	// Strip out D: annotation
+	searchRegExp = /^D:.*[\r\n]*/gm
+
+	// Strip out D: annotation
+	theNotes = theNotes.replace(searchRegExp, "");
+
+	// Strip out H: annotation
+	searchRegExp = /^H:.*[\r\n]*/gm
+
+	// Strip out H: annotation
+	theNotes = theNotes.replace(searchRegExp, "");
+
+	// Strip out B: annotation
+	searchRegExp = /^B:.*[\r\n]*/gm
+
+	// Strip out B: annotation
+	theNotes = theNotes.replace(searchRegExp, "");
+
+	// Strip out C: annotation
+	searchRegExp = /^C:.*[\r\n]*/gm
+
+	// Strip out C: annotation
+	theNotes = theNotes.replace(searchRegExp, "");
+
+	// Strip out O: annotation
+	searchRegExp = /^O:.*[\r\n]*/gm
+
+	// Strip out O: annotation
+	theNotes = theNotes.replace(searchRegExp, "");
+
+	// Replace the ABC
+	gTheABC.value = theNotes;
+}
+
+//
+// Strip all the text annotations in the ABC
+//
+function StripTextAnnotations(){
+
+	var theNotes = gTheABC.value;
+
+	// Strip out text markings
+	var searchRegExp = /%%text.*[\r\n]*/gm
+
+	// Strip out text markings
+	theNotes = theNotes.replace(searchRegExp, "");
+
+	// Strip out %%center annotation
+	searchRegExp = /%%center.*[\r\n]*/gm
+
+	// Strip out %%center annotation
+	theNotes = theNotes.replace(searchRegExp, "");
+
+	// Replace the ABC
+	gTheABC.value = theNotes;
+
+}
+
+
+// 
+// Strip all the chords in the ABC
+//
+function StripChords(){
+
+	var theNotes = gTheABC.value;
+
+	// Strip out chord markings
+	var searchRegExp = /"[^"]*"/gm
+
+	// Strip out chord markings
+	theNotes = theNotes.replace(searchRegExp, "");
+
+	// Replace the ABC
+	gTheABC.value = theNotes;
+
+}
+
 // 
 // Allow putting up a spiner before the synchronous Render() function
 //
@@ -4042,13 +4156,25 @@ function RestoreDefaults() {
 //
 // Toggle annotations
 //
-function ToggleAnnotations() {
+function ToggleAnnotations(e) {
 
 	if (!gAllowFilterAnnotations){
 
 		return;
 
 	}
+
+
+	// Shift-click strips the annotations in the actual ABC and re-renders
+	if (e.shiftKey){
+
+		StripAnnotations();
+		
+		RenderAsync(true,null);
+
+		return;
+	}
+
 
 	gStripAnnotations = !gStripAnnotations;
 
@@ -4059,13 +4185,24 @@ function ToggleAnnotations() {
 //
 // Toggle text
 //
-function ToggleTextAnnotations() {
+function ToggleTextAnnotations(e) {
 
 	if (!gAllowFilterText){
 
 		return;
 
 	}
+
+	// Shift-click strips the text annotations in the actual ABC and re-renders
+	if (e.shiftKey){
+
+		StripTextAnnotations();
+		
+		RenderAsync(true,null);
+
+		return;
+	}
+	
 
 	gStripTextAnnotations = !gStripTextAnnotations;
 
@@ -4076,12 +4213,22 @@ function ToggleTextAnnotations() {
 //
 // Toggle chords
 //
-function ToggleChords() {
+function ToggleChords(e) {
 
 	if (!gAllowFilterChords){
 
 		return;
 	
+	}
+
+	// Shift-click strips the text annotations in the actual ABC and re-renders
+	if (e.shiftKey){
+
+		StripChords();
+		
+		RenderAsync(true,null);
+
+		return;
 	}
 
 
