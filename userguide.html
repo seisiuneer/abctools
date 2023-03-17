@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-       
+               
         <style>
         p {
         font-size:14pt;
@@ -105,8 +105,6 @@
             <p class="toc"><a href="#responsive_design">Responsive Design</a></p>
             <p class="toc"><a href="#optimized_for_editing_large_tunebooks">Optimized for Editing Large Tunebooks</a></p>
             <p class="toc"><a href="#getting_started">Getting Started</a></p>
-            <p class="toc"><a href="#hiding_showing_the_top_title_and_links">Hiding/Showing the Top Page Title and Links</a></p>
-            <p class="toc"><a href="#getting_started">Getting Started</a></p>
             <p class="toc"><a href="#abc_editor">ABC Editor</a></p>
             <p class="toc"><a href="#viewing_the_notation_full_screen">Viewing the Notation Full Screen</a></p>
             <p class="toc"><a href="#notation_tablature_display_controls">Notation/Tablature Display Controls</a></p>
@@ -117,7 +115,7 @@
             <p class="toc"><a href="#playing_your_tunes">Playing Your Tunes</a></p>
             <p class="toc"><a href="#selecting_the_instrument_for_playback">Selecting the Instrument for Playback</a></p>
             <p class="toc"><a href="#printing_your_tunes">Printing Your Tunes</a></p>
-            <p class="toc"><a href="#pdf_settings">PDF Settings</a></p>
+            <p class="toc"><a href="#pdf_tunebook_settings">PDF Tunebook Settings</a></p>
             <p class="toc"><a href="#pdf_page_headers_and_footers">PDF Page Headers and Footers</a></p>
             <p class="toc"><a href="#adding_a_pdf_title_page">Adding a PDF Tunebook Title Page</a></p>
             <p class="toc"><a href="#adding_a_pdf_tunebook_table_of_contents_and_index">Adding a PDF Tunebook Table of Contents and Index</a></p>
@@ -156,28 +154,11 @@
             <p>Save ABC - Saves the contents of the ABC editor to a file.</p>
             <p>The saved file will be in your browser's Downloads directory.</p>
             <p>Export PDF - Exports the currently displayed score as a high quality PDF file.</p>
-            <p>Play - Copies one or more ABC tunes to the clipboard and then opens them in Paul Rosen's amazing <a href="https://editor.drawthedots.com/" target="_blank">abcjs Quick Editor</a> tool for playback.</p>
-            <p>You may select the instrument for the playback sound, see <a href="#selecting_the_instrument_for_playback">Selecting the Instrument for Playback</a> for more information.</p>
-            <p>To play a specific tune, click once (don't select) anywhere in the ABC for the tune and then click "Play".</p>
-            <p>The tool will automatically find the tune you've clicked on and send it to the abcjs Quick Editor for playback.</p>
-            <p>If there is a text selection in the ABC area, whatever is selected will be sent.</p>
-            <p>You can use this to send more than one tune to the abcjs Quick Editor</p>
-            <p>The abcjs Quick Editor only plays the first tune in it's own ABC editor.</p>
-            <p>If you select more than one tune in the ABC editor, and click "Play", you will need to edit the ABC in the abcjs Quick Editor editor to bring the tune you are interested in playing to the top.</p>
-            <p>The abcjs Quick Editor can also export MIDI and audio files of tunes.</p>
-            <p>Once you are happy with the playback, copy the ABC from the "abcjs Quick Editor tool, then paste the edited ABC back into this tool for further editing.</p>
-            <p>If you single-clicked and played one tune, the entire tune will be selected when you come back to the tool from the abcjs Quick Editor.</p>
-            <p>This makes it simple to paste any changes you might have made and copied from the abcjs Quick Editor.</p>
+            <p>Play - Copies one or more ABC tunes to the clipboard and then opens them in Paul Rosen's amazing <a href="https://editor.drawthedots.com/" target="_blank">abcjs Quick Editor</a> tool for playback. Full details below in the <a href="#playing_your_tunes">Playing Your Tunes</a> section.</p>
             <p>Copy All - Copies all the ABC text to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
             <p>Page number settings are found in the settings panel.</p>
             <p>Show Controls / Hide Controls - Shows/Hides all the control buttons below.</p>
-            <hr id="hiding_showing_the_top_title_and_links">
-            <h1>Hiding/Showing the Top Page Title and Links</h1>
-            <p>? - Click this to hide the header at the top so you can have more room to work on your music.</p>
-            <p>Click it again to show the header.</p>
-            <p>If you want to start the tool with the header hidden, you can visit (and bookmark):</p>
-            <p><a href="http://michaeleskin.com/abc?hide=1" target="_blank">http://michaeleskin.com/abc?hide=1</a></p>
-            <p>Any Share URLs or QR codes you create and share will include information on whether to show or hide the header when the link is opened.</p>
+            <p>? - Click this to hide the header at the top so you can have more room to work on your music. Click it again to show the header.</p>
             <hr id="abc_editor">
             <h1>ABC Editor</h1>
             <div class="image_holder">
@@ -187,9 +168,9 @@
             <p>Changes are reflected immediately in the displayed notation below the ABC Editor.</p>
             <p>You may also paste some ABC text into the ABC Editor or just start typing.</p>
             <p>On desktop systems, the text entry box can be resized by dragging the lower right corner.</p>
-            <p>Click on any tune in your ABC to have the notation scroll into view.</p>
-            <p><strong>Note:</strong> The tune autoscroll feature is <strong>not</strong> available on iOS or Android devices.</p>
-            <p>You may scroll through the notation below the ABC Editor</p>
+            <p>Click on any tune in the ABC to have the notation scroll into view. </p>
+            <p>Click in the notation for any tune and the ABC area will be autoscrolled so that the ABC for the tune is displayed (or within a few lines, browser dependent).</p>
+            <p><strong>Note:</strong> The tune autoscroll features are <strong>not</strong> available on iOS or Android devices.</p>
             <hr id="viewing_the_notation_full_screen">
             <h1>Viewing the Notation Full Screen</h1>
             <div class="image_holder">
@@ -341,9 +322,19 @@
             <hr id="playing_your_tunes">
             <h1>Playing Your Tunes</h1>
             <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/-JvOFaotgtY" title="Playing your Tunes (New and Improved)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p>To play a specific tune, click once (don't select) anywhere in the ABC for the tune and then click "Play".</p>
+            <p>The tool will automatically find the tune you've clicked on and send it to the abcjs Quick Editor for playback.</p>
+            <p>If there is a text selection in the ABC area, whatever is selected will be sent.</p>
+            <p>You can use this to send more than one tune to the abcjs Quick Editor</p>
+            <p>The abcjs Quick Editor only plays the first tune in it's own ABC editor.</p>
+            <p>If you select more than one tune in the ABC editor, and click "Play", you will need to edit the ABC in the abcjs Quick Editor editor to bring the tune you are interested in playing to the top.</p>
+            <p>The abcjs Quick Editor can also export MIDI and audio files of tunes.</p>
+            <p>Once you are happy with the playback, copy the ABC from the "abcjs Quick Editor tool, then paste the edited ABC back into this tool for further editing.</p>
+            <p>If you single-clicked and played one tune, the entire tune will be selected when you come back to the tool from the abcjs Quick Editor.</p>
+            <p>This makes it simple to paste any changes you might have made and copied from the abcjs Quick Editor.</p>
             <hr id="selecting_the_instrument_for_playback">
             <h1>Selecting the Instrument for Playback</h1>
-            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/i6oKpGzS2lo" title="Playing your Tunes (New and Improved)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/i6oKpGzS2lo" title="Playing your Tunes (New and Improved)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>            
             <p>You may select which instrument sound the abcjs Quick Editor uses for playback of your tunes.</p>
             <p>By default, the instrument used is a piano.</p>
             <p>To choose the sound when played, add an additional line to your ABC right after any headers and before the ABC notes, for example for a flute sound:</p>
@@ -379,12 +370,12 @@
             <p>Additional advanced settings such as printing multiple-pages per page and setting custom margins may be available in your browser's print settings dialog.</p>
             <p>Experiment with both the browser's print settings page orientation and "multiple page on one page" options to see what is possible.</p>
             <p><strong>Note:</strong>If you want to print a tunebook automatically formated with multiple tunes per page, you must use the tool's PDF Export feature described in the next section.</p>
-            <hr id="pdf_settings">
-            <h1>PDF Settings</h1>
+            <hr id="pdf_tunebook_settings">
+            <h1>PDF Tunebook Settings</h1>
             <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/jtiVzXB8xhQ" title="PDF Generation Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p></p>
-            <p>The tool has a powerful built-in PDF generator that provides more flexibility than the browser's print feature, particularly in the area of custom page headers and footers.</p> 
-            <p>It can also format PDF tunebooks with multiple tunes per page, something the native browser's Print command cannot accomplish.</p>
+            <p>The tool has a powerful built-in PDF tunebook generator that provides more flexibility than the browser's print feature, particularly in the area of adding custom page headers and footers, title page, table of contents, or a tune index.</p> 
+            <p>It can format PDF tunebooks with one or multiple tunes per page, something the native browser's Print command cannot accomplish.</p>
             <p></p>
             <p>The PDF generator also includes an option to append a Share URL QR code to the end of the PDF document.</p>
             <p>All of this is done using custom ABC comment-based annotation (described below).</p>
@@ -421,6 +412,9 @@
             <p>Tune incipits are generated stripping all ABC annotation and for tablature, hiding the tablature name to try and fit as many tunes on one page as possible.</p>
             <p></p>
             <p>Additionally, manually inserted %%newpage requests are ignored for incipit generation.</p>
+            <p></p>
+            <p><strong>How to get more tune incipits per page:</strong></p>
+            <p>Print the resulting PDF from this tool to another PDF using the browser's (or other PDF tool) print feature and select 2 or 4 pages per page.</p>
             <p></p>
             <p><strong>PDF Page Number Position Options:</strong></p>
             <div class="image_holder">
