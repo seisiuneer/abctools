@@ -1222,8 +1222,8 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
 //
 // Measure all the tunes for PDF layout
 //
-function ProcessTunesForContinuousLayout(pageBreakList,pageHeight){
-	
+function ProcessTunesForContinuousLayout(pageBreakList,pageHeight,doIncipits){
+
 	// Measure the tunes
 	var nTunes = pageBreakList.length;
 
@@ -1254,8 +1254,16 @@ function ProcessTunesForContinuousLayout(pageBreakList,pageHeight){
 
 		var nBlocks = theBlocks.length;
 
+		if (doIncipits){
+			if (nBlocks > 2){
+				nBlocks = 2;
+			}
+		}
+
 		var theBlockHeight;
 		var currentBlock;
+
+		var accumHeight = 0;
 
 		for (j=0;j<nBlocks;++j){
 
@@ -1266,6 +1274,13 @@ function ProcessTunesForContinuousLayout(pageBreakList,pageHeight){
 
 			theStaffHeights.push(theBlockHeight);
 
+			accumHeight += theBlockHeight;
+
+		}
+
+		// If doing incipits, the tune block height is only the height of the first two lines
+		if (doIncipits){
+			theElemHeight = accumHeight;
 		}
 
 		var tuneStruct = 
@@ -1397,13 +1412,14 @@ function ProcessTunesForContinuousLayout(pageBreakList,pageHeight){
 // Scan the tune and return an array that indicates if a tune as %%newpage under X:
 //
 
-function scanTunesForPageBreaks(pdf){
+function scanTunesForPageBreaks(pdf,doIncipits){
 
 	// Get the paper height at 72 dpi from the PDF generator
 
 	var thePaperHeight = pdf.internal.pageSize.getHeight();
 
 	var pageBreakRequested = [];
+
 
 	// Count the tunes in the text area
 	var theNotes = gTheABC.value;
@@ -1417,19 +1433,32 @@ function scanTunesForPageBreaks(pdf){
 		return pageBreakRequested;
 	}
 
-	for (var i=1;i<=nTunes;++i){
+	if (!doIncipits){
 
-		if (theTunes[i].indexOf("%%newpage") != -1){
-			pageBreakRequested.push(true);
+		for (var i=1;i<=nTunes;++i){
+
+			if (theTunes[i].indexOf("%%newpage") != -1){
+				pageBreakRequested.push(true);
+			}
+			else{
+				pageBreakRequested.push(false);
+			}
+
 		}
-		else{
+	}
+	else{
+
+		// No pagebreaks for incipits
+		for (var i=1;i<=nTunes;++i){
+
 			pageBreakRequested.push(false);
+
 		}
 
 	}
 
 	// Measure the tunes and insert any automatic page breaks
-	pageBreakRequested = ProcessTunesForContinuousLayout(pageBreakRequested,thePaperHeight);
+	pageBreakRequested = ProcessTunesForContinuousLayout(pageBreakRequested,thePaperHeight,doIncipits);
 
 	return pageBreakRequested;
 }
@@ -1504,9 +1533,9 @@ function formatTime() {
 }
 
 //
-// Parse the ABC and setup the header and footer if they are present
+// Parse the ABC looking for comment-based commands for page header, TOC, index, QR code, incipts, etc.
 //
-function ParseHeaderFooter(theNotes){
+function ParseCommentCommands(theNotes){
 	
 	// Clear the header and footer strings
 	thePageHeader = "";
@@ -1938,12 +1967,26 @@ function PrimeWhistleRender(theBlocks,callback){
 //
 // Render a single SVG block to PDF and callback when done
 //
-function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, callback){
+function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, doIncipits, callback){
 
 	// Make sure we have a valid block
 	if ((theBlock == null) || (theBlock == undefined)){
 
 		return;
+
+	}
+
+	if (doIncipits){
+
+		var theBlockID = theBlock.id + ".block";
+
+		// Only process the first two blocks of each tune if doing incipits
+		if ((theBlockID.indexOf("_0.block") == -1) && (theBlockID.indexOf("_1.block") == -1)) {
+
+			callback();
+
+			return;
+		}
 
 	}
 
@@ -2156,11 +2199,13 @@ function ExportPDF() {
 	// What size paper? Letter or A4?
 	var paperStyle = "letter";
 
-	if ((thePageOptions == "one_a4") || (thePageOptions == "multi_a4")){
+	if ((thePageOptions == "one_a4") || (thePageOptions == "multi_a4") || (thePageOptions == "incipits_a4")){
 
 		paperStyle = "a4";
 
 	}
+
+	var incipitsRequested = ((thePageOptions == "incipits") || (thePageOptions == "incipits_a4"));
 
 	// Hide page numbers on page 1?
 	var hideFirstPageNumber = false;
@@ -2175,8 +2220,8 @@ function ExportPDF() {
 
 	}
 
-	// Process headers and footers
-	ParseHeaderFooter(gTheABC.value);
+	// Process comment-based PDF commands
+	ParseCommentCommands(gTheABC.value);
 
 	// Clear the render time
 	theRenderTime = "";
@@ -2197,67 +2242,152 @@ function ExportPDF() {
 
 	isFirstPage = true;
 
-	running_height = PAGETOPOFFSET;
-
-	var nBlocksProcessed = 0;
-
 	var title = getDescriptiveFileName(totalTunes,true);
 
-	qualitaet = 1200; 
+	// Setup function scope shared vars
+	var nBlocksProcessed = 0;
 
-	document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"red\">" + title + ".pdf </font>";
-
-	document.getElementById("statustunecount").innerHTML = "Processing notation for PDF generation";
-
-	document.getElementById("pagestatustext").innerHTML = "&nbsp;";
-
-	// Cache the offscreen rendering div
-	theOffscreen = document.getElementById("offscreenrender");
-
-	// Rather than do a full render, which should not be needed, 
-	// just mark the existing divs for later SVG scraping during PDF rasterization
-	PrepareSVGDivsForRasterization();
-	
-	document.getElementById("statustunecount").innerHTML = "Rendering tune <font color=\"red\">1</font>" + " of  <font color=\"red\">"+totalTunes+"</font>"
-
-	// Save the first tune page number
-	theTunePageMap[0] = theCurrentPageNumber;
-
-	// Set the global PDF rendering flag
-	gRenderingPDF = true;
-
-	pdf = new jsPDF('p', 'pt', paperStyle);
-
-	// If not doing single page, find any tunes that have page break requests
 	var pageBreakList = [];
 
-	if (!doSinglePage){
+	var theBlocks = null;
 
-		// Process any automatic or manual page breaks
-		pageBreakList = scanTunesForPageBreaks(pdf);
+	var nBlocks = 0;
 
-	}
+	var theBlock = null;
 
-	var theBlocks = document.querySelectorAll('div[class="block"]');
+	// If doing incipits, force a render with striped annotations and text
+	// If the annotations or text aren't already stripped, render them stripped
+	var requirePostRender = false;
 
-	var nBlocks = theBlocks.length;
+	// Restore the default between-tune layout spacing
+	BETWEENTUNESPACE = 20;
 
-	// Kick off the rendering loop
-	var theBlock = theBlocks[0];
+	if (incipitsRequested){
 
-	// If doing whistle, try async priming the HTML renderer
-	// This is to work around the issue where on Safari and mobile Safari, we often are missing the first line of whistle tab
-	// the first time the notation is rasterized
+		// Reduce the space between tunes in the PDF for incipits
+		BETWEENTUNESPACE = 0;
 
-	if (gPDFTabselected == "whistle") {
+		// Tack on a suffix to the PDF name
+		title += "_Incipits";
 
-		PrimeWhistleRender(theBlocks,Rasterize);
+		// Force an idle on the advanced controls to determine if we need to hide the annotations or text annotations before incipit render
+		IdleAdvancedControls(true);
+
+		// Is annotation suppressed allowed, but not enabled, or is text annotation suppression allowed but not enabled, do a render
+		// If tabnames are being shown, hide them
+		if ((gAllowFilterAnnotations && (!gStripAnnotations)) || (gAllowFilterText && (!gStripTextAnnotations)) || (gAllowShowTabNames && (gShowTabNames))){
+
+			document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"red\">" + title + ".pdf </font>";
+
+			document.getElementById("statustunecount").innerHTML = "Processing incipits for PDF generation";
+
+			document.getElementById("pagestatustext").innerHTML = "&nbsp;";
+
+			// Need to provide time for the UI to update
+			setTimeout(function(){
+
+				var saveStripAnnotations = gStripAnnotations;
+				gStripAnnotations = true;
+
+				var saveStripTextAnnotations = gStripTextAnnotations;
+				gStripTextAnnotations = true;
+
+				var saveShowTabNames = gShowTabNames;
+				if (gAllowShowTabNames){
+					gShowTabNames = false;
+				}
+				
+				// Force a full render 
+				Render(true,null);
+
+				// Restore the advanced controls flags
+				gStripAnnotations = saveStripAnnotations;
+
+				gStripTextAnnotations = saveStripTextAnnotations;
+
+				if (gAllowShowTabNames){
+					gShowTabNames = saveShowTabNames;
+				}
+
+				// Going to need to clean up later
+				requirePostRender = true;
+
+				doPDFStepTwo();
+
+			},100);
+		}
+		else{
+
+			doPDFStepTwo();
+		}
 
 	}
 	else{
 
-		Rasterize();
+		doPDFStepTwo();
 
+	}
+
+	function doPDFStepTwo(){
+
+		running_height = PAGETOPOFFSET;
+
+		qualitaet = 1200; 
+
+		document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"red\">" + title + ".pdf </font>";
+
+		document.getElementById("statustunecount").innerHTML = "Processing notation for PDF generation";
+
+		document.getElementById("pagestatustext").innerHTML = "&nbsp;";
+
+		// Cache the offscreen rendering div
+		theOffscreen = document.getElementById("offscreenrender");
+
+		// Rather than do a full render, which should not be needed, 
+		// just mark the existing divs for later SVG scraping during PDF rasterization
+		PrepareSVGDivsForRasterization();
+		
+		document.getElementById("statustunecount").innerHTML = "Rendering tune <font color=\"red\">1</font>" + " of  <font color=\"red\">"+totalTunes+"</font>"
+
+		// Save the first tune page number
+		theTunePageMap[0] = theCurrentPageNumber;
+
+		// Set the global PDF rendering flag
+		gRenderingPDF = true;
+
+		pdf = new jsPDF('p', 'pt', paperStyle);
+
+		// If not doing single page, find any tunes that have page break requests
+		pageBreakList = [];
+
+		if (!doSinglePage){
+
+			// Process any automatic or manual page breaks
+			pageBreakList = scanTunesForPageBreaks(pdf,incipitsRequested);
+
+		}
+
+		theBlocks = document.querySelectorAll('div[class="block"]');
+
+		nBlocks = theBlocks.length;
+
+		// Kick off the rendering loop
+		theBlock = theBlocks[0];
+
+		// If doing whistle, try async priming the HTML renderer
+		// This is to work around the issue where on Safari and mobile Safari, we often are missing the first line of whistle tab
+		// the first time the notation is rasterized
+
+		if (gPDFTabselected == "whistle") {
+
+			PrimeWhistleRender(theBlocks,Rasterize);
+
+		}
+		else{
+
+			Rasterize();
+
+		}
 	}
 
 	function Rasterize(){
@@ -2265,7 +2395,7 @@ function ExportPDF() {
 		setTimeout(function() {
 
 			// Render and stamp one block
-			RenderPDFBlock(theBlock, 0, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, callback);
+			RenderPDFBlock(theBlock, 0, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, incipitsRequested, callback);
 
 			function callback() {
 
@@ -2274,18 +2404,39 @@ function ExportPDF() {
 				// Was a cancel requested?
 				if (gPDFCancelRequested){
 
-					// Hide the PDF status modal
-					var pdfstatus = document.getElementById("pdf-controls");
-					pdfstatus.style.display = "none";
-
 					gRenderingPDF = false;
-
-					// Catch up on any UI changes during the PDF rendering
-					RestoreSVGDivsAfterRasterization();
 
 					// Clean up a bit
 					pdf = null;
 					theBlocks = null;
+
+					// Did incipit generation require a re-render?
+					if (requirePostRender){
+						
+						document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Cleaning up incipit generation</font>";
+
+						RenderAsync(true,null,function(){
+
+							// Hide the PDF status modal
+							var pdfstatus = document.getElementById("pdf-controls");
+							pdfstatus.style.display = "none";
+
+							// Clear the offscreen rendering div
+							document.getElementById("offscreenrender").innerHTML = ""; 
+
+						});
+
+					}
+					else{
+
+						// Hide the PDF status modal
+						var pdfstatus = document.getElementById("pdf-controls");
+						pdfstatus.style.display = "none";
+
+						// Just clean up the div IDs and classes
+						RestoreSVGDivsAfterRasterization();
+
+					}
 
 					// Exit early
 					return;
@@ -2428,21 +2579,52 @@ function ExportPDF() {
 
 								// Start the PDF save
 								pdf.save(title + ".pdf");
-								
-								document.getElementById("statuspdfname").innerHTML = "&nbsp;";
 
-								document.getElementById("statustunecount").innerHTML = "&nbsp;";
+								// Did incipit generation require a re-render?
+								if (requirePostRender){
 
-								document.getElementById("pagestatustext").innerHTML = "&nbsp;";
+									document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Cleaning up after incipit generation</font>";
 
-								// Hide the PDF status modal
-								var pdfstatus = document.getElementById("pdf-controls");
-								pdfstatus.style.display = "none";
+									// Need some time for UI update
+									setTimeout(function(){
 
-								gRenderingPDF = false;
+										gRenderingPDF = false;
 
-								// Catch up on any UI changes during the PDF rendering
-								RestoreSVGDivsAfterRasterization();
+										Render(true,null);
+
+										// Clear the offscreen rendering div
+										document.getElementById("offscreenrender").innerHTML = ""; 
+
+										finalize_pdf_export_stage_2();
+
+									},100);
+									
+								}
+								else{
+
+									// Catch up on any UI changes during the PDF rendering
+									RestoreSVGDivsAfterRasterization();
+
+									finalize_pdf_export_stage_2();
+
+									gRenderingPDF = false;
+
+								}
+
+
+								function finalize_pdf_export_stage_2(){
+
+									document.getElementById("statuspdfname").innerHTML = "&nbsp;";
+
+									document.getElementById("statustunecount").innerHTML = "&nbsp;";
+
+									document.getElementById("pagestatustext").innerHTML = "&nbsp;";
+
+									// Hide the PDF status modal
+									var pdfstatus = document.getElementById("pdf-controls");
+									pdfstatus.style.display = "none";
+
+								}
 
 								return;
 
@@ -2474,7 +2656,7 @@ function ExportPDF() {
 					// Sanity check the block
 					if (theBlock){
 
-						RenderPDFBlock(theBlock, nBlocksProcessed, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, callback);
+						RenderPDFBlock(theBlock, nBlocksProcessed, doSinglePage, pageBreakList, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, incipitsRequested, callback);
 
 					}
 
@@ -3481,7 +3663,7 @@ function Render(renderAll,tuneNumber) {
 		gAllowCopy = true;
 
 		// Idle the advanced controls
-		IdleAdvancedControls();
+		IdleAdvancedControls(false);
 
 		// Idle the capo control
 		IdleCapoControl();
@@ -3714,16 +3896,16 @@ function ShowAdvancedControls() {
 	document.getElementById('advanced-controls').style.display = "flex";
 
 	// Idle the controls
-	IdleAdvancedControls();
+	IdleAdvancedControls(false);
 
 }
 
 //
 // Idle the advanced controls
 //
-function IdleAdvancedControls(){
+function IdleAdvancedControls(bForce){
 
-	if (gShowAllControls && gShowAdvancedControls){
+	if ((gShowAllControls && gShowAdvancedControls) || bForce){
 
 		var theNotes = gTheABC.value;
 
@@ -4146,7 +4328,7 @@ function RestoreDefaults() {
 	clearQRCode();
 
 	// Idle the advanced controls
-	IdleAdvancedControls();
+	IdleAdvancedControls(false);
 
 	// Recalculate the notation top position
 	UpdateNotationTopPosition();
