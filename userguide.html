@@ -388,19 +388,22 @@
             <p></p>
             <p>The PDF generator also includes an option to append a Share URL QR code to the end of the PDF document.</p>
             <p>All of this is done using custom ABC comment-based annotation (described below).</p>
-            <p>PDF Tunes/Page - Select whether you want One Tune/Page or Multiple Tunes/Page in the PDF along with the paper size (Letter or A4):</p>
+            <p><strong>PDF Tunes/Page</strong> - Select whether you want One Tune/Page, Multiple Tunes/Page, or Tune Incipits in the PDF along with the paper size (Letter or A4):</p>
+            <p>
             <div class="image_holder">
-                <img src="img/ug7a.jpg"/>
+                <img src="img/ug7a2.jpg"/>
             </div>
             <p>One - Letter:&nbsp;&nbsp;Each tune is placed on a new page in the PDF.&nbsp;&nbsp;Paper size = Letter</p>
             <p>Multiple - Letter:&nbsp;&nbsp;Tunes are added one after another down each page in the PDF.&nbsp;&nbsp;Paper size = Letter</p>
+            <p>Incipits - Letter:&nbsp;&nbsp;First line of each tune is added one after another down each page in the PDF.&nbsp;&nbsp;Paper size = Letter</p>
             <p>One - A4:&nbsp;&nbsp;Each tune is placed on a new page in the PDF.&nbsp;&nbsp;Paper size = A4</p>
             <p>Multiple - A4:&nbsp;&nbsp;Tunes are added one after another down each page in the PDF.&nbsp;&nbsp;Paper size = A4</p>
+            <p>Incipits - A4:&nbsp;&nbsp;First line of each tune is added one after another down each page in the PDF.&nbsp;&nbsp;Paper size = A4</p>
             <p>Default is:&nbsp;&nbsp;One - Letter</p>
             <p></p>
             <p>When exporting multiple tunes per page to PDF the tool will do its best to layout the output to not split tunes between pages, unless the tune itself is longer than one page.</p>
             <p></p>
-            <p>To manually force a tune to a new page in the PDF, add:</p>
+            <p>When exporting multiple tunes per page, if you want to manually force a tune to a new page in the PDF, add:</p>
             <p></p>
             <p>%%newpage</p>
             <p></p>
@@ -408,14 +411,25 @@
             <p></p>
             <p>This will allow you to easily format a tune book where you want to override the automatic tune layout.</p>
             <p></p>
-            <p>PDF Page Number Position Options:</p>
+            <p><strong>PDF Tunebook Incipits:</strong></p>
+            <p></p>            
+            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/R7kC5jc0ziY" title="PDF Tunebook Incipits" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p></p>            
+            <p>Exporting a PDF tunebook with incipits allow you create a "cheat sheet" for the tunebook that includes just the first line of each tune.</p>
+            <p>The incipits can be in standard notation or any of the available tablatures.</p>
+            <p></p>
+            <p>Tune incipits are generated stripping all ABC annotation and for tablature, hiding the tablature name to try and fit as many tunes on one page as possible.</p>
+            <p></p>
+            <p>Additionally, manually inserted %%newpage requests are ignored for incipit generation.</p>
+            <p></p>
+            <p><strong>PDF Page Number Position Options:</strong></p>
             <div class="image_holder">
                 <img src="img/ug7b.jpg"/>
             </div>
             <p>Choose between: None, Top Left, Top Center, Top Right, Bottom Left, Bottom Center, Bottom Right, Top Left/Right, Top Right/Left, Bottom Left/Right, and Bottom Right/Left.</p>
             <p>The Left/Right and Right/Left settings alternate the location between the left/right or right/left sides of the page for printing on both sides of the paper.</p>
             <p>Default is:&nbsp;&nbsp;None</p>
-            <p>Show or Hide Page Number on First Page Options:</p>
+            <p><strong>Show or Hide Page Number on First Page Options:</strong></p>
             <div class="image_holder">
                 <img src="img/ug7c.jpg"/>
             </div>
