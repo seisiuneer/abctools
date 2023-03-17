@@ -4447,6 +4447,45 @@ function NewABC(){
 
 }
 
+//
+// Click handler for render divs
+// Finds the tune by notation div id and then scrolls the ABC into view
+//
+function RenderDivClickHandler(e){
+
+	if (gRenderingPDF){
+		return;
+	}
+
+	var thisID = this.id;
+
+	if (thisID && (thisID != "") && (thisID.indexOf("notation")==0)){
+
+		var clickedTune = this.id.replace("notation","");
+
+		if (clickedTune != ""){
+
+			var clickedTuneIndex = parseInt(clickedTune);
+
+			var tuneOffset = findTuneOffsetByIndex(clickedTuneIndex);
+
+			//console.log("Tune index = "+clickedTuneIndex+" offset = "+tuneOffset);
+
+			// Scroll to the middle of the tune
+			var theTune = getTuneByIndex(clickedTuneIndex);
+
+			tuneOffset += (theTune.length / 2);
+
+			// Scroll the text into view
+		    gTheABC.selectionEnd = gTheABC.selectionStart = tuneOffset;
+	    	gTheABC.blur();
+	    	gTheABC.focus();
+
+		}
+	}
+
+}
+
 // 
 // Generate the rendering divs
 //
@@ -4467,6 +4506,14 @@ function GenerateRenderingDivs(nTunes) {
 
 		// Force page break between tunes when printing from the browser
 		el.classList.add("pagebreak");
+
+		// Only do this on desktop
+		if (!(gIsIOS || gIsAndroid)){
+
+			// Set up the click handler
+			el.onclick = RenderDivClickHandler;
+
+		}
 
 		notationHolder.appendChild(el);
 
@@ -6174,7 +6221,7 @@ function DoStartup() {
 	if (isIOS()) {
 		gIsIOS = true;
 	}
-
+	
 	// Are we on an iPad?
 	gIsIPad = false;
 	if (isIPad()) {
