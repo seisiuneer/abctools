@@ -123,6 +123,10 @@ var gForceFullRender = false;
 // Are we in single or dual column display mode?
 var gIsOneColumn = true;
 
+// For handling clicks in notation when maximized
+var	gGotRenderDivClick = false;
+var gRenderDivClickOffset = -1;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -4476,11 +4480,21 @@ function RenderDivClickHandler(e){
 
 			tuneOffset += (theTune.length / 2);
 
-			// Scroll the text into view
-		    gTheABC.selectionEnd = gTheABC.selectionStart = tuneOffset;
-	    	gTheABC.blur();
-	    	gTheABC.focus();
+			if (!gIsMaximized){
 
+				// Scroll the tune ABC into view
+			    gTheABC.selectionEnd = gTheABC.selectionStart = tuneOffset;
+		    	gTheABC.blur();
+		    	gTheABC.focus();
+
+		    }
+		    else{
+
+		    	// Save the click info for later minimize
+		    	gGotRenderDivClick = true;
+		    	gRenderDivClickOffset = tuneOffset;
+
+		    }
 		}
 	}
 
@@ -5265,6 +5279,15 @@ function DoMaximize(){
 	// Fix the display margins
 	HandleWindowResize();
 
+	if (!(gIsIOS || gIsAndroid)){
+
+		// Defer any notation clicks
+		gGotRenderDivClick = false;
+		gRenderDivClickOffset = -1;
+
+	}
+
+
 }
 
 function DoMinimize(){
@@ -5283,6 +5306,25 @@ function DoMinimize(){
 
 	// Fix the display margins
 	HandleWindowResize();
+
+	// Handle any deferred notation clicks
+	if (!(gIsIOS || gIsAndroid)){
+		if (gGotRenderDivClick){
+
+			if (gRenderDivClickOffset != -1){
+
+				// Scroll the tune ABC into view
+			    gTheABC.selectionEnd = gTheABC.selectionStart = gRenderDivClickOffset;
+		    	gTheABC.blur();
+		    	gTheABC.focus();
+
+		    }
+
+	    	gGotRenderDivClick = false;
+	    	gRenderDivClickOffset = -1;
+
+		}
+	}
 
 }
 
