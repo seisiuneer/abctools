@@ -2582,7 +2582,36 @@ function ExportPDF() {
 							setTimeout(function(){
 
 								// Start the PDF save
-								pdf.save(title + ".pdf");
+								// On mobile, have to use a different save strategy otherwise the PDF loads in the same tab
+								if (gIsAndroid || gIsIOS){
+
+									var theBlob = pdf.output('blob', { filename: (title + ".pdf") });
+								 	
+								 	var newBlob = new Blob([theBlob], { type: 'application/octet-stream' });
+
+									var a = document.createElement("a");
+        
+							        document.body.appendChild(a);
+							        
+							        a.style = "display: none";
+
+							        url = window.URL.createObjectURL(newBlob);
+							        a.href = url;
+							        a.download = (title + ".pdf");
+							        a.click();
+
+							        document.body.removeChild(a);
+
+							        setTimeout(function() {
+							          window.URL.revokeObjectURL(url);
+							        }, 1000);
+
+								}
+								else{
+
+									// This works fine on all desktop browsers
+								 	pdf.save(title + ".pdf");
+							 	}
 
 								// Did incipit generation require a re-render?
 								if (requirePostRender){
