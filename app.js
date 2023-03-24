@@ -652,6 +652,7 @@ function ClearNoRender() {
 var PAGENUMBERTOP = 296;
 var PAGENUMBERTOPA4 = 313;
 var PAGETOPOFFSET = 32;
+var PAGEBOTTOMOFFSET = 0;
 var PAGELEFTOFFSET = 37;
 var PAGELEFTOFFSETA4 = 29;
 var PAGEHEIGHTLETTER = 792;
@@ -867,7 +868,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 	var thePaperHeight = pdf.internal.pageSize.getHeight();;
 	var thePaperWidth = pdf.internal.pageSize.getWidth()/1.5;
 
-	var pageSizeWithMargins = thePaperHeight - (2 * PAGETOPOFFSET);
+	var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + PAGEBOTTOMOFFSET);
 
 	var curTop = INDEXTOPOFFSET + INDEXTITLEOFFSET + a4offset;
 
@@ -953,7 +954,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 	var thePaperHeight = pdf.internal.pageSize.getHeight();;
 	var thePaperWidth = pdf.internal.pageSize.getWidth()/1.5;
 
-	var pageSizeWithMargins = thePaperHeight - (2 * PAGETOPOFFSET);
+	var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + PAGEBOTTOMOFFSET);
 
 	var curTop = INDEXTOPOFFSET + INDEXTITLEOFFSET + a4offset;
 
@@ -1311,7 +1312,7 @@ function ProcessTunesForContinuousLayout(pageBreakList,pageHeight,doIncipits){
 	//
 
 	// Keep track of the space left on the page with top and bottom margins
-	var pageSizeWithMargins = pageHeight  - (2 * PAGETOPOFFSET);
+	var pageSizeWithMargins = pageHeight  - (PAGETOPOFFSET + PAGEBOTTOMOFFSET);
 
 	var spaceAvailable = pageSizeWithMargins;
 
@@ -2207,7 +2208,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 			// the first two values mean x,y coordinates for the upper left corner. Enlarge to get larger margin.
 			// then comes width, then height. The second value can be freely selected - then it leaves more space at the top.
 
-			if (running_height + height + PAGETOPOFFSET <= thePageHeight - PAGETOPOFFSET) // i.e. if a block of notes would get in the way with the bottom margin (30 pt), then a new one please...
+			if (running_height + height <= thePageHeight - PAGEBOTTOMOFFSET) // i.e. if a block of notes would get in the way with the bottom margin (30 pt), then a new one please...
 			{
 
 				pdf.addImage(imgData, 'JPG', hoff, running_height, (535 / scale_factor), height);
