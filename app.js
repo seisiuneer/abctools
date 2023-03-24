@@ -661,6 +661,9 @@ var BETWEENTUNESPACE = 20;
 // Keeps track of where we are on the page
 var running_height = PAGETOPOFFSET;
 
+// For incipits, which column
+var column_number = 0;
+
 // Page count
 var theCurrentPageNumber = 1;
 
@@ -1258,10 +1261,13 @@ function ProcessTunesForContinuousLayout(pageBreakList,pageHeight,doIncipits){
 
 		var nBlocks = theBlocks.length;
 
+		var scale_factor = 1.0;
+
 		if (doIncipits){
 			if (nBlocks > 2){
 				nBlocks = 2;
 			}
+			scale_factor = 2.0;
 		}
 
 		var theBlockHeight;
@@ -1275,6 +1281,8 @@ function ProcessTunesForContinuousLayout(pageBreakList,pageHeight,doIncipits){
 			currentBlock = theBlocks.item(j);
 
 			theBlockHeight = currentBlock.offsetHeight / PDFSCALEFACTOR;
+
+			theBlockHeight /= scale_factor;
 
 			theStaffHeights.push(theBlockHeight);
 
@@ -1303,7 +1311,7 @@ function ProcessTunesForContinuousLayout(pageBreakList,pageHeight,doIncipits){
 	//
 
 	// Keep track of the space left on the page with top and bottom margins
-	var pageSizeWithMargins = pageHeight - (2 * PAGETOPOFFSET);
+	var pageSizeWithMargins = pageHeight  - (2 * PAGETOPOFFSET);
 
 	var spaceAvailable = pageSizeWithMargins;
 
@@ -1311,21 +1319,37 @@ function ProcessTunesForContinuousLayout(pageBreakList,pageHeight,doIncipits){
 
 	var firstTuneOnPage = true;
 
+	var column_number = 0;
+
 	for (i=0;i<nTunes;++i){
 
 		// If there is already a forced pagebreak on the tune, we can skip the space calculation
 		if (!pageBreakList[i]){
 
 			// The PDF generator adds one extra line per block it renders
-			var thisTuneHeight = renderingDivs[i].height + renderingDivs[i].staffHeights.length;
+			var thisTuneHeight = renderingDivs[i].height + (renderingDivs[i].staffHeights.length / scale_factor);
 
 			// Does this tune fit on the page?
 			if (thisTuneHeight > spaceAvailable){
 
-				// Put in a page break (not on the first tune)
-				if (i != 0){
+				if (!doIncipits){
 
-					pageBreakList[i-1] = true;
+					// Put in a page break (not on the first tune)
+					if (i != 0){
+
+						pageBreakList[i-1] = true;
+
+					}
+
+				}
+				else{
+						
+					// Put in a page break (not on the first tune)
+					if (i != 0){
+
+						pageBreakList[i-1] = true;
+
+					}
 
 				}
 
@@ -1363,7 +1387,7 @@ function ProcessTunesForContinuousLayout(pageBreakList,pageHeight,doIncipits){
 					}
 
 					// Add the space below for the next tune
-					spaceAvailable -= BETWEENTUNESPACE;
+					spaceAvailable -= (BETWEENTUNESPACE/scale_factor);
 
 					// Try to layout next tune below this one
 					firstTuneOnPage = false;
@@ -1378,7 +1402,7 @@ function ProcessTunesForContinuousLayout(pageBreakList,pageHeight,doIncipits){
 					spaceAvailable -= thisTuneHeight;
 
 					// With a space below
-					spaceAvailable -= BETWEENTUNESPACE;
+					spaceAvailable -= (BETWEENTUNESPACE/scale_factor);
 
 					// Flag this as the first tune on the page
 					firstTuneOnPage = true;
@@ -1399,7 +1423,7 @@ function ProcessTunesForContinuousLayout(pageBreakList,pageHeight,doIncipits){
 				spaceAvailable -= thisTuneHeight;
 
 				// And the spacer below
-				spaceAvailable -= BETWEENTUNESPACE;
+				spaceAvailable -= (BETWEENTUNESPACE/scale_factor);
 
 			}
 
@@ -1416,14 +1440,18 @@ function ProcessTunesForContinuousLayout(pageBreakList,pageHeight,doIncipits){
 // Scan the tune and return an array that indicates if a tune as %%newpage under X:
 //
 
-function scanTunesForPageBreaks(pdf,doIncipits){
+function scanTunesForPageBreaks(pdf,paperStyle,doIncipits){
 
 	// Get the paper height at 72 dpi from the PDF generator
+	var thePaperHeight = PAGEHEIGHTLETTER;
 
-	var thePaperHeight = pdf.internal.pageSize.getHeight();
+	if (paperStyle == "a4"){
+
+		thePaperHeight = PAGEHEIGHTA4;
+		
+	}
 
 	var pageBreakRequested = [];
-
 
 	// Count the tunes in the text area
 	var theNotes = gTheABC.value;
@@ -1980,6 +2008,8 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 	}
 
+	var scale_factor = 1;
+
 	if (doIncipits){
 
 		var theBlockID = theBlock.id + ".block";
@@ -1991,6 +2021,8 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 			return;
 		}
+
+		scale_factor = 2;
 
 	}
 
@@ -2023,6 +2055,18 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 				hoff = PAGELEFTOFFSETA4;
 
+			}
+
+			// Calculate the column offsets
+			var col0_hoff = hoff;
+
+			var col1_hoff = hoff + (535/2);
+
+			// For second column incipits
+			if (column_number == 1){
+
+			 	hoff = col1_hoff;
+			
 			}
 
 			var thePageHeight = PAGEHEIGHTLETTER;
@@ -2069,24 +2113,65 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 						//
 						if (pageBreakList[tunesProcessed-1]){
 
-							// Add page numbers, headers, and footers
-							AddPageHeaderFooter(pdf,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);						
+							if (doIncipits){
 
-							// Yes, force it to a new page
+								if (column_number == 0){
 
-							running_height = PAGETOPOFFSET;
+									// Yes, force it to the second column
+									running_height = PAGETOPOFFSET;
 
-							theCurrentPageNumber++; // for the status display.
+									column_number = 1;
 
-							pdf.addPage(paperStyle); //... create a page in letter or a4 format, then leave a 30 pt margin at the top and continue.
+									// Place this tune in the second column
+									hoff = col1_hoff;
 
-							document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+								}
+								else{
+
+									// Filled the second column, generate a new page
+
+									// Add page numbers, headers, and footers
+									AddPageHeaderFooter(pdf,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);						
+
+									// Yes, force it to a new page
+									running_height = PAGETOPOFFSET;
+
+									theCurrentPageNumber++; // for the status display.
+
+									pdf.addPage(paperStyle); //... create a page in letter or a4 format, then leave a 30 pt margin at the top and continue.
+
+									document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+
+									// Reset column number
+									column_number = 0;
+
+									// Reset the offset
+									hoff = col0_hoff;
+
+								}
+
+							}
+							else{
+
+								// Add page numbers, headers, and footers
+								AddPageHeaderFooter(pdf,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);						
+
+								// Yes, force it to a new page
+
+								running_height = PAGETOPOFFSET;
+
+								theCurrentPageNumber++; // for the status display.
+
+								pdf.addPage(paperStyle); //... create a page in letter or a4 format, then leave a 30 pt margin at the top and continue.
+
+								document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+							}
 
 						}
 						else{
 
 							// Otherwise, move it down the current page a bit
-							running_height += BETWEENTUNESPACE;
+							running_height += (BETWEENTUNESPACE / scale_factor);
 
 						}
 
@@ -2117,18 +2202,21 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 			height = parseInt(canvas.height * 535 / canvas.width);
 
+			height /= scale_factor;
+
 			// the first two values mean x,y coordinates for the upper left corner. Enlarge to get larger margin.
 			// then comes width, then height. The second value can be freely selected - then it leaves more space at the top.
 
 			if (running_height + height + PAGETOPOFFSET <= thePageHeight - PAGETOPOFFSET) // i.e. if a block of notes would get in the way with the bottom margin (30 pt), then a new one please...
 			{
 
-				pdf.addImage(imgData, 'JPG', hoff, running_height, 535, height);
+				pdf.addImage(imgData, 'JPG', hoff, running_height, (535 / scale_factor), height);
 
 
 			} else {
 
 				running_height = PAGETOPOFFSET;
+
 
 				if (theCurrentPageNumber != 0){
 
@@ -2141,13 +2229,13 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 				pdf.addPage(paperStyle); //... create a page in letter or a4 format, then leave a 30 pt margin at the top and continue.
 
-				pdf.addImage(imgData, 'JPG', hoff, running_height, 535, height);
+				pdf.addImage(imgData, 'JPG', hoff, running_height, (535 / scale_factor), height);
 
 				document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
 			}
 
 			// so that it starts the new one exactly one pt behind the current one.
-			running_height = running_height + height + 1;
+			running_height = running_height + height + (1 / scale_factor);
 
 			callback(true);
 
@@ -2237,6 +2325,9 @@ function ExportPDF() {
 	theCurrentPageNumber = 1;
 
 	tunesProcessed = 0;
+
+	// Init two column incipit layout
+	column_number = 0;
 
 	// Init the page map
 	theTunePageMap = [];
@@ -2367,7 +2458,7 @@ function ExportPDF() {
 		if (!doSinglePage){
 
 			// Process any automatic or manual page breaks
-			pageBreakList = scanTunesForPageBreaks(pdf,incipitsRequested);
+			pageBreakList = scanTunesForPageBreaks(pdf,paperStyle,incipitsRequested);
 
 		}
 
