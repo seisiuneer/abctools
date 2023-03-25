@@ -110,8 +110,6 @@
             <p class="toc"><a href="#notation_tablature_display_controls">Notation/Tablature Display Controls</a></p>
             <p class="toc"><a href="#basic_controls">Basic Controls</a></p>
             <p class="toc"><a href="#advanced_controls">Advanced Controls</a></p>
-            <p class="toc"><a href="#staff_and_title_spacing_overrides">Staff and Title Spacing Overrides</a></p>
-            <p class="toc"><a href="#custom_font_overrides">Custom Font Overrides</a></p>
             <p class="toc"><a href="#playing_your_tunes">Playing Your Tunes</a></p>
             <p class="toc"><a href="#selecting_the_instrument_for_playback">Selecting the Instrument for Playback</a></p>
             <p class="toc"><a href="#pdf_tunebook_settings">PDF Tunebook Settings</a></p>
@@ -125,6 +123,8 @@
             <p class="toc"><a href="#adding_a_qr_code_to_the_pdf_export">Adding a QR Code to the PDF Export</a></p>
             <p class="toc"><a href="#reading_the_qr_codes">Reading the QR Codes</a></p>
             <p class="toc"><a href="#shared_tunes_open_full_screen">Shared Tunes Open Full Screen</a></p>
+            <p class="toc"><a href="#staff_and_title_spacing_overrides">Staff and Title Spacing Overrides</a></p>
+            <p class="toc"><a href="#custom_font_overrides">Custom Font Overrides</a></p>
             <p class="toc"><a href="#iphone_ipad_chord_entry_issue_fix">iPhone/iPad Chord Entry Issue Fix</a></p>
             <p class="toc"><a href="#abc_specification">ABC Specification</a></p>
             <p class="toc"><a href="#abc_21_quick_reference_card">ABC Quick Reference Card</a></p>
@@ -233,92 +233,6 @@
             <p>Staff Display Settings:</p>
             <p>Set Staff Spacing - Allows you to set a wider or narrower gap between the staffs.</p>
             <p>A value of 0 corresponds to an ABC %%staffsep of 40</p>
-            <hr id="staff_and_title_spacing_overrides">
-            <h1>Staff and Title Spacing Overrides</h1>
-            <p>The Staff Spacing value in the Advanced Controls can be easily overridden by setting a %%staffsep value in the ABC just below the tune header.</p>
-            <p>This can be very useful particularly for getting as much tab notation on a single page as possible.</p>
-            <p>Any spacing overrides must be applied on a tune-by-tune basis.</p>
-            <p>For the absolute minimum spacing between staffs, turn off the tab names, hide the tune annotations, and add the following just below the tune header:</p>
-            <p><strong>%%staffsep 0</strong></p>
-            <p>Try experimenting with different %%staffsep values until you get the result you want.</p>
-            <p>Setting the %%staffsep value manually too low may sometimes result in overlapping staff rendering.</p>
-            <p>To override the default space between the title and the first staff of music, you can add a custom %%musicspace value in the ABC just below the tune header, for example:</p>
-            <p><strong>%%musicspace 10</strong></p>
-            <p>Try experimenting with different %%musicspace values until you get the result you want.</p>
-            <p><strong>All supported spacing parameters</strong></p>
-            <p>Here is the full list of ABC spacing-related parameters available in abcjs:</p>
-            <p>%%topspace<br/>
-            %%titlespace<br/> 
-            %%subtitlespace<br/> 
-            %%composerspace<br/> 
-            %%musicspace<br/>
-            %%partsspace<br/>
-            %%vocalspace<br/> 
-            %%wordsspace<br/> 
-            %%textspace<br/> 
-            %%staffsep<br/>
-            %%sysstaffsep</p>
-            <p>Please refer to the <a href="http://abcnotation.com/wiki/abc:standard:v2.1" target="_blank">official ABC 2.1 specification</a> for more details.</p>
-            <p>Another good reference is this handy ABC 2.1 Quick Reference Card put together by Stephen Merrony: </p>
-            <p><a href="http://michaeleskin.com/documents/ABCquickRefv0_6.pdf" target="_blank">ABC Quick Reference Card</a></p>
-            <p><strong>Example of custom spacing:</strong></p>
-            <div class="image_holder">
-                <img src="img/ug13a.jpg"/>
-            </div>
-            <hr id="custom_font_overrides">
-            <h1>Custom Font Overrides</h1>
-            <p>As per the ABC 2.1 specification, custom font overrides are possible, giving you maximum control over the appearance of your notation.</p>
-            <p><strong>Available ABC Font Annotations:</strong></p>
-            <p>%%titlefont        font-style size<br/>
-            %%subtitlefont     font-style size<br/>
-            %%composerfont     font-style size<br/>
-            %%partsfont        font-style size<br/>
-            %%tempofont        font-style size<br/>
-            %%gchordfont       font-style size (used for chords symbols)<br/>
-            %%annotationfont   font-style size (used for "^..." annotations)<br/>
-            %%infofont         font-style size<br/>
-            %%textfont         font-style size<br/>
-            %%vocalfont        font-style size (used for for w:)<br/>
-            %%wordsfont        font-style size (used for W:)</p>
-            <p>Generally, these will use the PostScript font-style naming convention, for example:</p>
-            <p>Times, Helvetica, Courier, Verdana, Times-Bold, Helvetica-Italic, etc.</p> 
-            <p>The size parameter should be an integer, but is optional.</p>
-            <p>Place your font override annotations just below the X: and above the T: ABC tune headers.</p>
-            <p><strong>For example:</strong></p>
-            <p>X: 1<br/>
-            %%titlefont Palatino 30<br/>
-            %%infofont Palatino 18<br/>
-            %%gchordfont Palatino Bold 14<br/>
-            T: The Road to Lisdoonvarna<br/>
-            R: slide<br/>
-            M: 12/8<br/>
-            L: 1/8<br/>
-            K:Edor<br/>
-            D|:"Em"E2B B2A B2c d3|"D"F2A ABA D2E FED|<br/>
-            "Em"E2B B2A B2c d3|"D"cdc B2A "Em"B2E E3:|<br/>
-            |:"Em"e2f gfe "Bm"d2B Bcd|"A"c2A ABc "Bm"d2B B3|<br/>
-            "Em"e2f gfe "Bm"d2B Bcd|"A"cdc B2A "Em"B2E E3:|</p>
-            <p><strong>Result:</strong></p>
-            <div class="image_holder">
-                <img src="img/ug14.jpg"/>
-            </div>
-            <p><strong>Web Safe Fonts</strong></p>
-            <p>The following "web safe" fonts at a minimum should be supported by all browsers:</p>
-            <p style="font-family: Helvetica;font-size: 16pt;">Helvetica (sans-serif)</p>
-            <p style="font-family: Trebuchet MS;font-size: 16pt;">Trebuchet MS (sans-serif)</p>
-            <p style="font-family: Gill Sans;font-size: 16pt;">Gill Sans (sans-serif)</p>
-            <p style="font-family: Verdana;font-size: 16pt;">Verdana (sans-serif)</p>
-            <p style="font-family: Times New Roman;font-size: 16pt;">Times New Roman (serif)</p>
-            <p style="font-family: Georgia;font-size: 16pt;">Georgia (serif)</p>
-            <p style="font-family: Palatino;font-size: 16pt;">Palatino (serif)</p>
-            <p style="font-family: Baskerville;font-size: 16pt;">Baskerville (serif)</p>
-            <p style="font-family: Courier;font-size: 16pt;">Courier (monospace)</p>
-            <p style="font-family: Monaco;font-size: 16pt;">Monaco (monospace)</p>
-            <p style="font-family: Bradley Hand;font-size: 16pt;">Bradley Hand (cursive)</p>
-            <p>Font availability varies with browser and platform. Many other fonts may be available on your system.</p>
-            <p><strong>More information is available here:</strong></p>
-            <p><a href="https://blog.hubspot.com/website/web-safe-html-css-fonts" target="_blank">Web Safe CSS Fonts</a></p>
-            <p><a href="http://iosfonts.com/" target="_blank">iOS Fonts</a></p>
             <hr id="playing_your_tunes">
             <h1>Playing Your Tunes</h1>
             <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/-JvOFaotgtY" title="Playing your Tunes (New and Improved)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
@@ -569,6 +483,92 @@
             <h1>Shared Tunes Open Full Screen</h1>
             <p>Shared tunes, when opened from a Share URL or QR code, are initially displayed with the ABC Editor and controls hidden so you can see the music full-screen.</p>
             <p>Click the Maximize/Minimize arrow to show the ABC Editor and controls.</p>
+            <hr id="staff_and_title_spacing_overrides">
+            <h1>Staff and Title Spacing Overrides</h1>
+            <p>The Staff Spacing value in the Advanced Controls can be easily overridden by setting a %%staffsep value in the ABC just below the tune header.</p>
+            <p>This can be very useful particularly for getting as much tab notation on a single page as possible.</p>
+            <p>Any spacing overrides must be applied on a tune-by-tune basis.</p>
+            <p>For the absolute minimum spacing between staffs, turn off the tab names, hide the tune annotations, and add the following just below the tune header:</p>
+            <p><strong>%%staffsep 0</strong></p>
+            <p>Try experimenting with different %%staffsep values until you get the result you want.</p>
+            <p>Setting the %%staffsep value manually too low may sometimes result in overlapping staff rendering.</p>
+            <p>To override the default space between the title and the first staff of music, you can add a custom %%musicspace value in the ABC just below the tune header, for example:</p>
+            <p><strong>%%musicspace 10</strong></p>
+            <p>Try experimenting with different %%musicspace values until you get the result you want.</p>
+            <p><strong>All supported spacing parameters</strong></p>
+            <p>Here is the full list of ABC spacing-related parameters available in abcjs:</p>
+            <p>%%topspace<br/>
+            %%titlespace<br/> 
+            %%subtitlespace<br/> 
+            %%composerspace<br/> 
+            %%musicspace<br/>
+            %%partsspace<br/>
+            %%vocalspace<br/> 
+            %%wordsspace<br/> 
+            %%textspace<br/> 
+            %%staffsep<br/>
+            %%sysstaffsep</p>
+            <p>Please refer to the <a href="http://abcnotation.com/wiki/abc:standard:v2.1" target="_blank">official ABC 2.1 specification</a> for more details.</p>
+            <p>Another good reference is this handy ABC 2.1 Quick Reference Card put together by Stephen Merrony: </p>
+            <p><a href="http://michaeleskin.com/documents/ABCquickRefv0_6.pdf" target="_blank">ABC Quick Reference Card</a></p>
+            <p><strong>Example of custom spacing:</strong></p>
+            <div class="image_holder">
+                <img src="img/ug13a.jpg"/>
+            </div>
+            <hr id="custom_font_overrides">
+            <h1>Custom Font Overrides</h1>
+            <p>As per the ABC 2.1 specification, custom font overrides are possible, giving you maximum control over the appearance of your notation.</p>
+            <p><strong>Available ABC Font Annotations:</strong></p>
+            <p>%%titlefont        font-style size<br/>
+            %%subtitlefont     font-style size<br/>
+            %%composerfont     font-style size<br/>
+            %%partsfont        font-style size<br/>
+            %%tempofont        font-style size<br/>
+            %%gchordfont       font-style size (used for chords symbols)<br/>
+            %%annotationfont   font-style size (used for "^..." annotations)<br/>
+            %%infofont         font-style size<br/>
+            %%textfont         font-style size<br/>
+            %%vocalfont        font-style size (used for for w:)<br/>
+            %%wordsfont        font-style size (used for W:)</p>
+            <p>Generally, these will use the PostScript font-style naming convention, for example:</p>
+            <p>Times, Helvetica, Courier, Verdana, Times-Bold, Helvetica-Italic, etc.</p> 
+            <p>The size parameter should be an integer, but is optional.</p>
+            <p>Place your font override annotations just below the X: and above the T: ABC tune headers.</p>
+            <p><strong>For example:</strong></p>
+            <p>X: 1<br/>
+            %%titlefont Palatino 30<br/>
+            %%infofont Palatino 18<br/>
+            %%gchordfont Palatino Bold 14<br/>
+            T: The Road to Lisdoonvarna<br/>
+            R: slide<br/>
+            M: 12/8<br/>
+            L: 1/8<br/>
+            K:Edor<br/>
+            D|:"Em"E2B B2A B2c d3|"D"F2A ABA D2E FED|<br/>
+            "Em"E2B B2A B2c d3|"D"cdc B2A "Em"B2E E3:|<br/>
+            |:"Em"e2f gfe "Bm"d2B Bcd|"A"c2A ABc "Bm"d2B B3|<br/>
+            "Em"e2f gfe "Bm"d2B Bcd|"A"cdc B2A "Em"B2E E3:|</p>
+            <p><strong>Result:</strong></p>
+            <div class="image_holder">
+                <img src="img/ug14.jpg"/>
+            </div>
+            <p><strong>Web Safe Fonts</strong></p>
+            <p>The following "web safe" fonts at a minimum should be supported by all browsers:</p>
+            <p style="font-family: Helvetica;font-size: 16pt;">Helvetica (sans-serif)</p>
+            <p style="font-family: Trebuchet MS;font-size: 16pt;">Trebuchet MS (sans-serif)</p>
+            <p style="font-family: Gill Sans;font-size: 16pt;">Gill Sans (sans-serif)</p>
+            <p style="font-family: Verdana;font-size: 16pt;">Verdana (sans-serif)</p>
+            <p style="font-family: Times New Roman;font-size: 16pt;">Times New Roman (serif)</p>
+            <p style="font-family: Georgia;font-size: 16pt;">Georgia (serif)</p>
+            <p style="font-family: Palatino;font-size: 16pt;">Palatino (serif)</p>
+            <p style="font-family: Baskerville;font-size: 16pt;">Baskerville (serif)</p>
+            <p style="font-family: Courier;font-size: 16pt;">Courier (monospace)</p>
+            <p style="font-family: Monaco;font-size: 16pt;">Monaco (monospace)</p>
+            <p style="font-family: Bradley Hand;font-size: 16pt;">Bradley Hand (cursive)</p>
+            <p>Font availability varies with browser and platform. Many other fonts may be available on your system.</p>
+            <p><strong>More information is available here:</strong></p>
+            <p><a href="https://blog.hubspot.com/website/web-safe-html-css-fonts" target="_blank">Web Safe CSS Fonts</a></p>
+            <p><a href="http://iosfonts.com/" target="_blank">iOS Fonts</a></p>
             <hr id="iphone_ipad_chord_entry_issue_fix">
             <h1>iPhone/iPad Chord Entry Issue Fix</h1>
             <p>If you are trying to enter ABC chords, for example "D" or "Am", on an iPhone or iPad, iOS will, by default stick in "smart quotes" instead of standard double quotes.</p>
