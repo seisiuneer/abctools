@@ -8,7 +8,7 @@
 <p>User guide:</p>
 <p><a href="http://michaeleskin.com/abctools/userguide.html" target="_blank">http://michaeleskin.com/abctools/userguide.html</a></p> 
 <p>Demo video:</p>
-<p><a href="https://www.youtube.com/eVOLh2Z-GDU" target="_blank">https://www.youtube.com/eVOLh2Z-GDU</a></p>
+<p><a href="https://www.youtube.com/watch?v=eVOLh2Z-GDU" target="_blank">https://www.youtube.com/watch?v=eVOLh2Z-GDU</a></p>
 <p>You can also use Share URLs or QR codes to open the tool with tune sets pre-loaded.</p>
 <p>The full ABC for the tunes and tab settings are encoded in URL parameters on the share links.</p>
 <p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuMAsCmYDSSDOCoCVwCsBLAcygGFwApEqAWXADYB6ADigBlwJWpVwBxALYBDfFACk4gMZIAdgBckAJygAfEPwCC-MFoBCqzXs1gjAE1VIzZsMWuWzesI82qoWnfsPHTei1Zs7A20AMV0AZhA3dWMnR39iFBdVWOc9fm8TbVcoVPjLRLSLYgAzYjBhYmFVMAAjYnLiSNUAXTAoKFAwACZYeGQwdkIAG3lCWXK9YVksJCRcAhoKMGpSejBmNk5IHj5TMwB7FXUAUU0TM9dU-m6rubArAxddE4ARN0uwS5SjXVuU+6PVQQNJZZrdUGmboWaIgJDCYQVRKqZ43VxgPSAxwopAlWxlNzwxGVJAonxogEoIEg56aaFRCG08KtdpAA&w=50&format=noten)" target="_blank">Share URL Example #1: Open the tool with "The Kesh" and "The Lilting Banshee"</a></p> 
