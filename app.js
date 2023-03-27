@@ -825,11 +825,182 @@ function AppendTuneTitlePage(thePDF,paperStyle,theTitle,theSubtitle){
 
 }
 
+
+//
+// Text incipits page layout constants
+//
+var TEXTINCIPITTOPOFFSET = 330;
+var TEXTINCIPITBOTTOMOFFSET = 12;
+var TEXTINCIPITLEFTMARGIN = 80;
+var TEXTINCIPITRIGHTMARGIN = 210;
+var TEXTINCIPITFONTSIZE = 12;
+var TEXTINCIPITLINESPACING = 13;
+//
+// Generate a set of ABC text incipits
+//
+function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,tunePageMap){
+
+	// Adjust margins based on paper style
+ 	TEXTINCIPITRIGHTMARGIN = 210;
+
+	var a4offset = 0
+
+	if (paperStyle == "a4"){
+		a4offset = 20;
+		TEXTINCIPITRIGHTMARGIN = 200;
+	}
+
+	var thePaperHeight = thePDF.internal.pageSize.getHeight();;
+	var thePaperWidth = thePDF.internal.pageSize.getWidth()/1.5;
+
+	var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + TEXTINCIPITBOTTOMOFFSET);
+
+	var curTop = TEXTINCIPITTOPOFFSET + a4offset;
+
+	// Get all the tune titles (uses first T: tag found)
+	var theTitles = GetTunebookIndexTitles();
+
+	var i,j;
+
+	// Set the font size
+	thePDF.setFont("Times","","normal");
+	thePDF.setFontSize(TEXTINCIPITFONTSIZE);
+
+	var theTune;
+	var theTextIncipit;
+	var searchRegExp;
+	var theLines;
+	var nLines;
+	var nSplits;
+	var splitAcc;
+	var thisTitle;
+	var searchRegExp;
+
+	// Add the tunes by name and page number
+	for (i=0;i<totalTunes;++i){
+
+		// Get the raw tune ABC
+		theTune = getTuneByIndex(i);
+
+		// Strip out annotations
+		theTune = StripAnnotationsOne(theTune);
+
+		// Strip out atextnnotations
+		theTune = StripTextAnnotationsOne(theTune);
+
+		// Strip out chord markings
+		theTune = StripChordsOne(theTune);
+
+		// We also need to strip the meter markings:
+		searchRegExp = /^M:.*[\r\n]*/gm
+
+		// Strip out tempo markings
+		theTune = theTune.replace(searchRegExp, "");
+
+		tunePageMap.push(theCurrentPageNumber);
+
+		// Parse out the first few measures
+		theTune = escape(theTune);
+
+		theLines = theTune.split("%0A");
+
+		nLines = theLines.length;
+
+		// Find the first line of the tune that has measure separators
+		for (j=0;j<nLines;++j){
+
+			theTextIncipit = unescape(theLines[j]); 
+
+			if (theTextIncipit.indexOf("|")!= -1){
+				break;
+			}
+
+		}
+
+		// Strip out repeat marks
+		theTextIncipit = theTextIncipit.replace(":","");
+
+		// Strip out brackets
+		theTextIncipit = theTextIncipit.replace("[","");
+
+		// Split the incipit
+		theSplitIncipt = theTextIncipit.split("|");
+
+		// Use just the first few measures
+		nSplits = theSplitIncipt.length;
+
+		if (nSplits > 3){
+			nSplits = 3;
+		}
+
+		splitAcc = "";
+
+		for(j=0;j<nSplits;++j){
+
+			splitAcc += theSplitIncipt[j];
+
+			if (j != (nSplits - 1)){
+				splitAcc += " | ";
+			}
+		}
+
+		theTextIncipit = splitAcc;
+
+		// Strip initial bar line
+		if (theTextIncipit.indexOf(" | ") == 0){
+			theTextIncipit = theTextIncipit.substring(3,theTextIncipit.length);
+		}
+
+		thisTitle = theTitles[i];
+
+		// Limit the title length
+		if (thisTitle.length > 30){
+			thisTitle = thisTitle.substring(0,30);
+			thisTitle += "...";
+		}
+
+		thePDF.text(thisTitle, TEXTINCIPITLEFTMARGIN, curTop, {align:"left"});
+
+		thePDF.text(theTextIncipit, thePaperWidth-TEXTINCIPITRIGHTMARGIN, curTop, {align:"left"});
+
+		curTop += TEXTINCIPITLINESPACING;
+
+		if (i != (totalTunes - 1)){
+
+			if (curTop > pageSizeWithMargins){
+
+				// Add the header and footer
+				AddPageHeaderFooter(thePDF,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);
+
+				// Bump the page count
+				theCurrentPageNumber++;
+
+				// Add a new page
+				thePDF.addPage(paperStyle); 
+
+				// Set the font size
+				thePDF.setFont("Times","","normal");
+				thePDF.setFontSize(TEXTINCIPITFONTSIZE);
+
+				// Start back at the top
+				curTop = TEXTINCIPITTOPOFFSET + a4offset;
+
+			}
+		}
+	}
+
+	// Add the final page header and footer
+	AddPageHeaderFooter(thePDF,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);	
+
+	return (tunePageMap);
+}
+
+
 //
 // Tune index page layout constants
 //
 var INDEXTOPOFFSET = 330;
-var INDEXBOTTOMOFFSET = 330;
+var INDEXBOTTOMOFFSET = 16;
 var INDEXTITLEOFFSET = 35;
 var INDEXLEFTMARGIN = 90;
 var INDEXRIGHTMARGIN = 120;
@@ -868,7 +1039,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 	var thePaperHeight = pdf.internal.pageSize.getHeight();;
 	var thePaperWidth = pdf.internal.pageSize.getWidth()/1.5;
 
-	var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + PAGEBOTTOMOFFSET);
+	var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + INDEXBOTTOMOFFSET);
 
 	var curTop = INDEXTOPOFFSET + INDEXTITLEOFFSET + a4offset;
 
@@ -919,7 +1090,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 	theCurrentPageNumber++;
 
 	// Add the final page header and footer, suppress the page number
-	AddPageHeaderFooter(thePDF,false,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle,false);	
+	AddPageHeaderFooter(thePDF,false,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);	
 
 }
 
@@ -954,7 +1125,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 	var thePaperHeight = pdf.internal.pageSize.getHeight();;
 	var thePaperWidth = pdf.internal.pageSize.getWidth()/1.5;
 
-	var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + PAGEBOTTOMOFFSET);
+	var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + INDEXBOTTOMOFFSET);
 
 	var curTop = INDEXTOPOFFSET + INDEXTITLEOFFSET + a4offset;
 
@@ -1013,7 +1184,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 	theCurrentPageNumber++;
 
 	// Add the final page header and footer, suppress the page number
-	AddPageHeaderFooter(thePDF,false,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle,false);	
+	AddPageHeaderFooter(thePDF,false,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);	
 
 	// Move the page to the top
 	thePDF.movePage(theCurrentPageNumber,tocPageOffset);
@@ -1728,7 +1899,7 @@ function ProcessHeaderFooter(str,pageNumber,pageCount){
 }
 
 //
-// Calculate and cache the page number position
+// Calculate and cache the page number and footer position
 //
 function calcPageNumberVerticalOffset(thePDF){
 
@@ -2182,7 +2353,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 					isFirstPage = false;
 
-					// Get the position for future page numbers
+					// Get the position for future page numbers and footers
 					calcPageNumberVerticalOffset(pdf);
 
 				}
@@ -2248,11 +2419,320 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 //
 // PDF Exporter
 //
+function ExportPDF(){
+
+	// Get the page format
+	var elem = document.getElementById("pdfformat");
+
+	var thePageOptions = elem.options[elem.selectedIndex].value;
+
+	// Are we doing ABC incipits?
+	var textIncipitsRequested = ((thePageOptions == "incipits_abc") || (thePageOptions == "incipits_a4_abc"));
+
+	// No, use the normal PDF export path
+	if (textIncipitsRequested){
+
+		ExportTextIncipitsPDF();
+
+	}
+	else{
+
+		ExportNotationPDF();
+
+	}
+
+}
 
 //
-// Export a PDF document
+// Export the first few bars of each tune in ABC format
 //
-function ExportPDF() {
+function ExportTextIncipitsPDF(){
+	
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
+
+	// If disabled, return
+	if (!gAllowPDF){
+		return;
+	}
+
+	// Clear the cancel flag
+	gPDFCancelRequested = false;
+
+	// Get the page format
+	var elem = document.getElementById("pdfformat");
+
+	var thePageOptions = elem.options[elem.selectedIndex].value;
+
+	// Show the PDF status modal
+	var pdfstatus = document.getElementById("pdf-controls");
+	pdfstatus.style.display = "block";
+
+	// Page number location
+	elem = document.getElementById("pagenumbers");
+
+	var pageNumberLocation = elem.options[elem.selectedIndex].value;
+
+	// Add page numbers?
+	var addPageNumbers = (pageNumberLocation != "none");
+
+	// What size paper? Letter or A4?
+	var paperStyle = "letter";
+
+	if (thePageOptions == "incipits_a4_abc"){
+
+		paperStyle = "a4";
+
+	}
+
+	// Hide page numbers on page 1?
+	var hideFirstPageNumber = false;
+
+	elem = document.getElementById("firstpage");
+
+	var firstPageNumbers = elem.options[elem.selectedIndex].value;
+
+	if (firstPageNumbers == "no"){
+
+		hideFirstPageNumber = true;
+
+	}
+
+	// Process comment-based PDF commands
+	ParseCommentCommands(gTheABC.value);
+
+	// Clear the render time
+	theRenderTime = "";
+
+	// Cache the tune titles
+	theHeaderFooterTuneNames = GetAllTuneTitles();
+
+	// Init the shared globals
+	theCurrentPageNumber = 1;
+
+	// Count the tunes
+	totalTunes = CountTunes();
+
+	isFirstPage = true;
+
+	var title = getDescriptiveFileName(totalTunes,true);
+
+	title += "_Incipits";
+
+	// Setup function scope shared vars
+
+	document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"red\">" + title + ".pdf </font>";
+
+	document.getElementById("statustunecount").innerHTML = "";
+
+	document.getElementById("pagestatustext").innerHTML = "&nbsp;";
+
+	// Set the global PDF rendering flag
+	gRenderingPDF = true;
+
+	pdf = new jsPDF('p', 'pt', paperStyle);	
+
+	// Creates a sharper image
+	pdf.internal.scaleFactor = PDFSCALEFACTOR;
+
+	// Get the position for future page numbers and footers
+	calcPageNumberVerticalOffset(pdf);
+
+	setTimeout(function(){
+
+		var theTunePageMap = [];
+
+		theTunePageMap = GenerateTextIncipits(pdf,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap);
+
+		document.getElementById("statustunecount").innerHTML = "ABC Incipits Added!";
+
+		// Did they request a tune TOC?
+		if (TunebookTOCRequested){
+			
+			document.getElementById("statustunecount").innerHTML = "Adding Table of Contents";
+			
+			AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookTOCTitle);
+
+			document.getElementById("statustunecount").innerHTML = "Table of Contents Added!";
+			
+			document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+			
+		}
+
+		// Did they request a tunebook index?
+		if (TunebookIndexRequested){
+			
+			document.getElementById("statustunecount").innerHTML = "Adding Tunebook Index";
+
+			AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookIndexTitle);
+
+			if (TunebookTOCRequested){
+
+				document.getElementById("statustunecount").innerHTML = "Table of Contents and Tunebook Index Added!";
+
+			}
+			else{
+
+				document.getElementById("statustunecount").innerHTML = "Tunebook Index Added!";
+
+			}
+			
+			document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+			
+		}
+
+		// Did they request a tunebook title page?
+		if (TunebookTPRequested){
+			
+			document.getElementById("statustunecount").innerHTML = "Adding Title Page";
+			
+			AppendTuneTitlePage(pdf,paperStyle,theTunebookTP,theTunebookTPST);
+
+			document.getElementById("statustunecount").innerHTML = "Title Page Added!";
+			
+			document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+			
+		}
+
+		// Did they request a QR code?
+		if (QRCodeRequested){
+
+			document.getElementById("statustunecount").innerHTML = "Adding QR Code";
+
+			// This needs the callback because the rasterizer is async
+			AppendQRCode(pdf,paperStyle,qrcode_callback);
+
+			function qrcode_callback(status){
+
+				if (!status){
+
+					document.getElementById("statustunecount").innerHTML = "Share URL too long for QR Code, try sharing fewer tunes";
+
+				}
+				else{
+
+					theCurrentPageNumber++;
+
+					document.getElementById("statustunecount").innerHTML = "QR Code Added!";
+					
+					document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+
+				}
+
+				// If the QR code generation failed, leave more time for a status update
+				var statusDelay = 1000;
+
+				if (!status){
+
+					statusDelay = 4000;
+				}
+
+				// Delay for final QR code UI status update
+				setTimeout(function(){
+
+					if (status){
+
+						// Suppress page numbers on QR page, add headers, and footers
+						AddPageHeaderFooter(pdf,false,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);
+
+					}	
+				
+					// Handle the status display for the new page
+					document.getElementById("statustunecount").innerHTML = "&nbsp;";
+
+					// And complete the PDF
+					finalize_pdf_export();
+
+				},statusDelay);
+
+				return;
+
+			}
+		}	
+		else{
+
+			// No QR code requested, just run the callback directly
+			finalize_pdf_export();
+			
+			return;
+
+		}
+
+		//
+		// Finalize the PDF document
+		//
+		function finalize_pdf_export(){				
+
+			document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Rendering Complete!</font>";
+
+			setTimeout(function(){
+
+				document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"red\">" + title + ".pdf </font>";
+
+				// Save the status up for a bit before saving
+				setTimeout(function(){
+
+					// Start the PDF save
+					// On mobile, have to use a different save strategy otherwise the PDF loads in the same tab
+					if (gIsAndroid || gIsIOS){
+
+						var theBlob = pdf.output('blob', { filename: (title + ".pdf") });
+					 	
+					 	var newBlob = new Blob([theBlob], { type: 'application/octet-stream' });
+
+						var a = document.createElement("a");
+
+				        document.body.appendChild(a);
+				        
+				        a.style = "display: none";
+
+				        url = window.URL.createObjectURL(newBlob);
+				        a.href = url;
+				        a.download = (title + ".pdf");
+				        a.click();
+
+				        document.body.removeChild(a);
+
+				        setTimeout(function() {
+				          window.URL.revokeObjectURL(url);
+				        }, 1000);
+
+					}
+					else{
+
+						// This works fine on all desktop browsers
+					 	pdf.save(title + ".pdf");
+				 	}
+
+					document.getElementById("statuspdfname").innerHTML = "&nbsp;";
+
+					document.getElementById("statustunecount").innerHTML = "&nbsp;";
+
+					document.getElementById("pagestatustext").innerHTML = "&nbsp;";
+
+					// Hide the PDF status modal
+					var pdfstatus = document.getElementById("pdf-controls");
+					pdfstatus.style.display = "none";
+
+					// Clear the PDF rendering global
+					gRenderingPDF = false;
+
+
+				},1500);
+
+			},2000);
+		}
+
+	},250);
+}
+
+
+//
+// Export a PDF document with notation, either full or first line incipits
+//
+function ExportNotationPDF() {
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
@@ -2564,7 +3044,7 @@ function ExportPDF() {
 					if (TunebookIndexRequested){
 						
 						document.getElementById("statustunecount").innerHTML = "Adding Tunebook Index";
-						
+
 						AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookIndexTitle);
 
 						if (TunebookTOCRequested){
@@ -3545,6 +4025,17 @@ function StripAnnotations(){
 
 	var theNotes = gTheABC.value;
 
+	theNotes = StripAnnotationsOne(theNotes);
+
+	// Replace the ABC
+	gTheABC.value = theNotes;
+}
+
+//
+// Strip all annotations in a specific ABC
+//
+function StripAnnotationsOne(theNotes){
+
 	// Strip out tempo markings
 	var searchRegExp = /^Q:.*[\r\n]*/gm 
 
@@ -3605,9 +4096,9 @@ function StripAnnotations(){
 	// Strip out O: annotation
 	theNotes = theNotes.replace(searchRegExp, "");
 
-	// Replace the ABC
-	gTheABC.value = theNotes;
+	return theNotes
 }
+
 
 //
 // Strip all the text annotations in the ABC
@@ -3615,6 +4106,18 @@ function StripAnnotations(){
 function StripTextAnnotations(){
 
 	var theNotes = gTheABC.value;
+
+	theNotes = StripTextAnnotationsOne(theNotes);
+
+	// Replace the ABC
+	gTheABC.value = theNotes;
+
+}
+
+//
+// Strip all the text annotations in the ABC
+//
+function StripTextAnnotationsOne(theNotes){
 
 	// Strip out text markings
 	var searchRegExp = /%%text.*[\r\n]*/gm
@@ -3628,11 +4131,9 @@ function StripTextAnnotations(){
 	// Strip out %%center annotation
 	theNotes = theNotes.replace(searchRegExp, "");
 
-	// Replace the ABC
-	gTheABC.value = theNotes;
+	return theNotes;
 
 }
-
 
 // 
 // Strip all the chords in the ABC
@@ -3641,6 +4142,18 @@ function StripChords(){
 
 	var theNotes = gTheABC.value;
 
+	theNotes = StripChordsOne(theNotes);
+
+	// Replace the ABC
+	gTheABC.value = theNotes;
+
+}
+
+// 
+// Strip all the chords in the ABC
+//
+function StripChordsOne(theNotes){
+
 	// Strip out chord markings
 	var searchRegExp = /"[^"]*"/gm
 
@@ -3648,7 +4161,7 @@ function StripChords(){
 	theNotes = theNotes.replace(searchRegExp, "");
 
 	// Replace the ABC
-	gTheABC.value = theNotes;
+	return theNotes;
 
 }
 
