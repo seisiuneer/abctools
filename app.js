@@ -868,6 +868,8 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 
 	var theTune;
 	var theTextIncipit;
+	var theRawSplits;
+	var theSplitIncipit;
 	var searchRegExp;
 	var theLines;
 	var nLines;
@@ -924,10 +926,25 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		theTextIncipit = theTextIncipit.replace("[","");
 
 		// Split the incipit
-		theSplitIncipt = theTextIncipit.split("|");
+		theRawSplits = theTextIncipit.split("|");
+
+		theSplitIncipit = [];
+
+		nSplits = theRawSplits.length;
+
+		// Strip out any blank splits
+		for (j=0;j<nSplits;++j){
+
+			if (theRawSplits[j] != ""){
+
+				theSplitIncipit.push(theRawSplits[j]);
+
+			}
+
+		}
 
 		// Use just the first few measures
-		nSplits = theSplitIncipt.length;
+		nSplits = theSplitIncipit.length;
 
 		if (nSplits > 3){
 			nSplits = 3;
@@ -937,7 +954,7 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 
 		for(j=0;j<nSplits;++j){
 
-			splitAcc += theSplitIncipt[j];
+			splitAcc += theSplitIncipit[j];
 
 			if (j != (nSplits - 1)){
 				splitAcc += " | ";
