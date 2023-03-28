@@ -37,8 +37,8 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-               
-        <style>
+        
+       <style>
         p {
         font-size:14pt;
         font-family:"Helvetica";
@@ -407,11 +407,15 @@
             <p></p>
             <p>%addtoc (your tunebook table of contents title text goes here...)</p>
             <p></p>
-            <p>To append a tunebook index to the end of your PDF tunebook listing each tune name and page number, simply add the following comment-based annotation anywhere in the ABC:</p>
+            <p>To append an unsorted tunebook index to the end of your PDF tunebook listing each tune name and page number in the same order they are in the ABC, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p>%addindex (your tunebook index title text goes here...)</p>
+            <p>%addindex (your tunebook index unsorted title text goes here...)</p>
             <p></p>
-            <p>As with the %pageheader and %pagefooter annotation, only the first instance of the %addtoc and %addindex annotation is processed, any additional instances are ignored.</p>
+            <p>To append an sorted tunebook index to the end of your PDF tunebook listing each tune name and page number in alphabetical order by tune name, simply add the following comment-based annotation anywhere in the ABC:</p>
+            <p></p>
+            <p>%addsortedindex (your tunebook sorted index title text goes here...)</p>
+            <p></p>
+            <p>As with the %pageheader and %pagefooter annotation, only the first instance of the %addtoc, %addindex, and %addsortedindex annotation is processed, any additional instances are ignored.</p>
             <p></p>
             <hr id="printing_your_tunes">
             <h1>Printing Your Tunes</h1>
