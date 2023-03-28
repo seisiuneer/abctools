@@ -831,8 +831,8 @@ function AppendTuneTitlePage(thePDF,paperStyle,theTitle,theSubtitle){
 //
 var TEXTINCIPITTOPOFFSET = 330;
 var TEXTINCIPITBOTTOMOFFSET = 12;
-var TEXTINCIPITLEFTMARGIN = 80;
-var TEXTINCIPITRIGHTMARGIN = 210;
+var TEXTINCIPITLEFTMARGIN = 65;
+var TEXTINCIPITRIGHTMARGIN = 203;
 var TEXTINCIPITFONTSIZE = 12;
 var TEXTINCIPITLINESPACING = 13;
 //
@@ -841,13 +841,15 @@ var TEXTINCIPITLINESPACING = 13;
 function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,tunePageMap){
 
 	// Adjust margins based on paper style
- 	TEXTINCIPITRIGHTMARGIN = 210;
+ 	TEXTINCIPITLEFTMARGIN = 65;
+ 	TEXTINCIPITRIGHTMARGIN = 203;
 
 	var a4offset = 0
 
 	if (paperStyle == "a4"){
+ 		TEXTINCIPITLEFTMARGIN = 61;
+ 		TEXTINCIPITRIGHTMARGIN = 199;
 		a4offset = 20;
-		TEXTINCIPITRIGHTMARGIN = 200;
 	}
 
 	var thePaperHeight = thePDF.internal.pageSize.getHeight();;
@@ -877,6 +879,7 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 	var splitAcc;
 	var thisTitle;
 	var searchRegExp;
+	var theKey;
 
 	// Add the tunes by name and page number
 	for (i=0;i<totalTunes;++i){
@@ -907,6 +910,34 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		theLines = theTune.split("%0A");
 
 		nLines = theLines.length;
+
+		// Find the key
+		theKey = "";
+
+		// Find the first line of the tune that has measure separators
+		for (j=0;j<nLines;++j){
+
+			theKey = unescape(theLines[j]); 
+
+			if (theKey.indexOf("K:")!= -1){
+				break;
+			}
+
+		}
+
+		theKey = theKey.replace("K:","");
+		theKey = theKey.trim();
+
+		// Shorten the mode
+		theKey = theKey.replace("Major","maj");
+		theKey = theKey.replace("Minor","min");
+		theKey = theKey.replace("Dorian","dor");
+		theKey = theKey.replace("Mixolydian","mix");
+		theKey = theKey.replace("major","maj");
+		theKey = theKey.replace("minor","min");
+		theKey = theKey.replace("dorian","dor");
+		theKey = theKey.replace("mixolydian","mix");
+		theKey = theKey.replace(" ","");
 
 		// Find the first line of the tune that has measure separators
 		for (j=0;j<nLines;++j){
@@ -971,9 +1002,17 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		thisTitle = theTitles[i];
 
 		// Limit the title length
-		if (thisTitle.length > 30){
-			thisTitle = thisTitle.substring(0,30);
+		if (thisTitle.length > 29){
+			thisTitle = thisTitle.substring(0,29);
+			thisTitle = thisTitle.trim();
 			thisTitle += "...";
+		}
+		else{
+			thisTitle = thisTitle.trim();
+		}
+
+		if (theKey != ""){
+			thisTitle += " (" + theKey + ")";
 		}
 
 		thePDF.text(thisTitle, TEXTINCIPITLEFTMARGIN, curTop, {align:"left"});
