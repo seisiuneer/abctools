@@ -1125,7 +1125,23 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 
 	// Sorted index requested?
 	if (sortTunes){
-		
+
+		// Move "The" to the end
+		var thisTitle;
+
+		for (i=0;i<totalTunes;++i){
+
+			thisTitle = theTitles[i];
+
+			if (thisTitle.indexOf("The ")==0){
+
+				thisTitle = thisTitle.substring(4,thisTitle.length)+", The";
+
+				theTitles[i] = thisTitle;
+			}
+			
+		}
+
 		var tuneInfo = [];
 		
 		for (i=0;i<totalTunes;++i){
@@ -1264,7 +1280,23 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 
 	// Sorted TOC requested?
 	if (sortTunes){
-		
+
+		// Move "The" to the end
+		var thisTitle;
+
+		for (i=0;i<totalTunes;++i){
+
+			thisTitle = theTitles[i];
+
+			if (thisTitle.indexOf("The ")==0){
+
+				thisTitle = thisTitle.substring(4,thisTitle.length)+", The";
+
+				theTitles[i] = thisTitle;
+			}
+
+		}
+
 		var tuneInfo = [];
 		
 		for (i=0;i<totalTunes;++i){
@@ -1301,6 +1333,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 			localPageMap[i]= tuneInfo[i].pageNumber;
 
 		}
+
 	
 	}
 
@@ -1981,6 +2014,7 @@ function ParseCommentCommands(theNotes){
 		theTunebookSortedIndexTitle = addTunebookSortedIndex[0].replace("%addsortedindex","");
 		theTunebookSortedIndexTitle = theTunebookSortedIndexTitle.trim();
 	}
+
 
 	// Clear the tunebook toc string
 	theTunebookTOCTitle = "";
@@ -2776,6 +2810,7 @@ function ExportTextIncipitsPDF(){
 			
 		}
 
+
 		// Did they request a tunebook index?
 		if (TunebookIndexRequested){
 			
@@ -3297,7 +3332,7 @@ function ExportNotationPDF() {
 						document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
 						
 					}
-					
+				
 					// Did they request a tunebook title page?
 					if (TunebookTPRequested){
 						
