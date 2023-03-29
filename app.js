@@ -705,6 +705,10 @@ var theTunebookSortedIndexTitle = "";
 var TunebookTOCRequested = false;
 var theTunebookTOCTitle = "";
 
+// Did they request a sorted tunebook TOC?
+var TunebookSortedTOCRequested = false;
+var theTunebookSortedTOCTitle = "";
+
 // Did they request an tunebook title page?
 var TunebookTPRequested = false;
 var theTunebookTP = "";
@@ -1110,6 +1114,15 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 	thePDF.setFont("Times","","normal");
 	thePDF.setFontSize(INDEXFONTSIZE);
 
+	// Make a copy of the page map
+	var localPageMap = [];
+
+	for (i=0;i<totalTunes;++i){
+
+		localPageMap.push(theTunePageNumberList[i]);
+
+	}
+
 	// Sorted index requested?
 	if (sortTunes){
 		
@@ -1117,7 +1130,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 		
 		for (i=0;i<totalTunes;++i){
 
-			tuneInfo.push({name:theTitles[i],pageNumber:theTunePageNumberList[i]});
+			tuneInfo.push({name:theTitles[i],pageNumber:localPageMap[i]});
 
 		}
 
@@ -1146,7 +1159,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 
 			theTitles[i]= tuneInfo[i].name;
 
-			theTunePageNumberList[i]= tuneInfo[i].pageNumber;
+			localPageMap[i]= tuneInfo[i].pageNumber;
 
 		}
 	
@@ -1157,7 +1170,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 
 		thePDF.text(theTitles[i], INDEXLEFTMARGIN, curTop, {align:"left"});
 
-		thePageNumber = theTunePageNumberList[i];
+		thePageNumber = localPageMap[i];
 
 		thePDF.text(""+thePageNumber, thePaperWidth-INDEXRIGHTMARGIN, curTop, {align:"left"});
 
@@ -1199,7 +1212,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 //
 // Generate and append a tune index to the current PDF
 //
-function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageNumberList,theTitle){
+function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageNumberList,theTitle,sortTunes){
 
 	var a4offset = 0
 
@@ -1240,12 +1253,63 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 	thePDF.setFont("Times","","normal");
 	thePDF.setFontSize(INDEXFONTSIZE);
 
+	// Make a copy of the page map
+	var localPageMap = [];
+
+	for (i=0;i<totalTunes;++i){
+
+		localPageMap.push(theTunePageNumberList[i]);
+
+	}
+
+	// Sorted TOC requested?
+	if (sortTunes){
+		
+		var tuneInfo = [];
+		
+		for (i=0;i<totalTunes;++i){
+
+			tuneInfo.push({name:theTitles[i],pageNumber:localPageMap[i]});
+
+		}
+
+		// sort tunes by name
+		tuneInfo.sort((a, b) => {
+
+		  const nameA = a.name.toUpperCase(); // ignore upper and lowercase
+		  
+		  const nameB = b.name.toUpperCase(); // ignore upper and lowercase
+		  
+		  if (nameA < nameB) {
+		    return -1;
+		  }
+		  
+		  if (nameA > nameB) {
+		    return 1;
+		  }
+
+		  // names must be equal
+		  return 0;
+
+		});
+
+		// Copy the results into the normally consumed arrays
+		for (i=0;i<totalTunes;++i){
+
+			theTitles[i]= tuneInfo[i].name;
+
+			localPageMap[i]= tuneInfo[i].pageNumber;
+
+		}
+	
+	}
+
 	// Add the tunes by name and page number
 	for (i=0;i<totalTunes;++i){
 
 		thePDF.text(theTitles[i], INDEXLEFTMARGIN, curTop, {align:"left"});
 
-		thePageNumber = theTunePageNumberList[i];
+		thePageNumber = localPageMap[i];
 
 		thePDF.text(""+thePageNumber, thePaperWidth-INDEXRIGHTMARGIN, curTop, {align:"left"});
 
@@ -1900,7 +1964,7 @@ function ParseCommentCommands(theNotes){
 		theTunebookIndexTitle = theTunebookIndexTitle.trim();
 	}
 
-	// Clear the tunebook index string
+	// Clear the sorted tunebook index string
 	theTunebookSortedIndexTitle = "";
 
 	// Did they request a sorted tunebook index?
@@ -1934,6 +1998,24 @@ function ParseCommentCommands(theNotes){
 		TunebookTOCRequested = true;
 		theTunebookTOCTitle = addTunebookTOC[0].replace("%addtoc","");
 		theTunebookTOCTitle = theTunebookTOCTitle.trim();
+	}
+
+	// Clear the sorted tunebook TOC string
+	theTunebookSortedTOCTitle = "";
+
+	// Did they request a sorted tunebook TOC?
+	TunebookSortedTOCRequested = false;
+
+	// Search for a sorted tune TOC request
+	searchRegExp = /^%addsortedtoc.*$/m
+
+	// Detect sorted tune TOC annotation
+	var addTunebookSortedTOC = theNotes.match(searchRegExp);
+
+	if ((addTunebookSortedTOC) && (addTunebookSortedTOC.length > 0)){
+		TunebookSortedTOCRequested = true;
+		theTunebookSortedTOCTitle = addTunebookSortedTOC[0].replace("%addsortedtoc","");
+		theTunebookSortedTOCTitle = theTunebookSortedTOCTitle.trim();
 	}
 
 	// Clear the tunebook title page string
@@ -2673,9 +2755,22 @@ function ExportTextIncipitsPDF(){
 			
 			document.getElementById("statustunecount").innerHTML = "Adding Table of Contents";
 			
-			AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookTOCTitle);
+			AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookTOCTitle, false);
 
 			document.getElementById("statustunecount").innerHTML = "Table of Contents Added!";
+			
+			document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+			
+		}
+
+		// Did they request a sorted tune TOC?
+		if (TunebookSortedTOCRequested){
+			
+			document.getElementById("statustunecount").innerHTML = "Adding Sorted Table of Contents";
+			
+			AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedTOCTitle, true);
+
+			document.getElementById("statustunecount").innerHTML = "Sorted Table of Contents Added!";
 			
 			document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
 			
@@ -3156,12 +3251,25 @@ function ExportNotationPDF() {
 						
 						document.getElementById("statustunecount").innerHTML = "Adding Table of Contents";
 						
-						AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookTOCTitle);
+						AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookTOCTitle,false);
 
 						document.getElementById("statustunecount").innerHTML = "Table of Contents Added!";
 						
 						document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
 						
+					}
+
+					// Did they request a sorted tune TOC?
+					if (TunebookSortedTOCRequested){
+						
+						document.getElementById("statustunecount").innerHTML = "Adding Sorted Table of Contents";
+						
+						AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedTOCTitle,true);
+
+						document.getElementById("statustunecount").innerHTML = "Sorted Table of Contents Added!";
+						
+						document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+
 					}
 
 					// Did they request a tunebook index?
@@ -5194,7 +5302,7 @@ function ToggleChords(e) {
 function NewABC(){
 
 	// Stuff in some default ABC with additional options explained
-	gTheABC.value = "X: 1\nT: New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%%MIDI program 74\n%\n% Enter the ABC for your tune(s) below:\n%\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|\n\n%\n% To choose the sound when played, change the MIDI program # above to:\n%\n% 74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano\n%\n\n% Try these custom PDF page annotations by removing the % and the space\n%\n% Add a PDF page header or footer:\n%\n% %pageheader My Tune Set: $TUNENAMES\n% %pagefooter PDF named: $PDFNAME saved on: $DATEMDY at $TIME\n%\n% Before the tunes, add a title page with a title:\n%\n% %addtitle My Tunebook Title Page\n%\n% Optional subtitle for the title page:\n%\n% %addsubtitle Title Page Subtitle\n%\n% Before the tunes, add a table of contents with a title:\n%\n% %addtoc My Tunebook Table of Contents\n%\n% After the tunes, add an unsorted tunebook index with a title:\n%\n% %addindex My Tunebook Unsorted Index\n%\n% After the tunes, add a sorted tunebook index with a title:\n%\n% %addsortedindex My Tunebook Sorted Index\n%\n% After the tunes, add a sharing QR code on a new page in the PDF:\n%\n% %qrcode\n%\n";
+	gTheABC.value = "X: 1\nT: New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%%MIDI program 74\n%\n% Enter the ABC for your tune(s) below:\n%\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|\n\n%\n% To choose the sound when played, change the MIDI program # above to:\n%\n% 74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano\n%\n\n% Try these custom PDF page annotations by removing the % and the space\n%\n% Add a PDF page header or footer:\n%\n% %pageheader My Tune Set: $TUNENAMES\n% %pagefooter PDF named: $PDFNAME saved on: $DATEMDY at $TIME\n%\n% Before the tunes, add a title page with a title:\n%\n% %addtitle My Tunebook Title Page\n%\n% Optional subtitle for the title page:\n%\n% %addsubtitle My Tunebook Title Page Subtitle\n%\n% Before the tunes, add a table of contents with a title:\n%\n% %addtoc My Tunebook Table of Contents\n%\n% Before the tunes, add a sorted table of contents with a title:\n%\n% %addsortedtoc My Tunebook Table of Contents Sorted by Tune Name\n%\n% After the tunes, add an unsorted tunebook index with a title:\n%\n% %addindex My Tunebook Unsorted Index\n%\n% After the tunes, add a sorted tunebook index with a title:\n%\n% %addsortedindex My Tunebook Index Sorted by Tune Name\n%\n% After the tunes, add a sharing QR code on a new page in the PDF:\n%\n% %qrcode\n%\n";
 
 	// Refocus back on the ABC
 	FocusABC();
