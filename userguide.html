@@ -38,7 +38,7 @@
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
         
-       <style>
+        <style>
         p {
         font-size:14pt;
         font-family:"Helvetica";
@@ -403,9 +403,13 @@
             <h1>Adding a PDF Tunebook Table of Contents and Index</h1>
             <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/B1jJmxSQ36M" title="PDF Table of Contents and Tunebook Index" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p></p>
-            <p>To add a table of contents to the start of of your PDF tunebook listing each tune name and page number, simply add the following comment-based annotation anywhere in the ABC:</p>
+            <p>To add a table of contents to the start of of your PDF tunebook listing each tune name and page number in the same order the tunes appear in the ABC, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
             <p>%addtoc (your tunebook table of contents title text goes here...)</p>
+            <p></p>
+            <p>To append an sorted tunebook table of contents to the start of your PDF tunebook listing each tune name and page number in alphabetical order by tune name, simply add the following comment-based annotation anywhere in the ABC:</p>
+            <p></p>
+            <p>%addsortedtoc (your tunebook sorted table of contents title text goes here...)</p>
             <p></p>
             <p>To append an unsorted tunebook index to the end of your PDF tunebook listing each tune name and page number in the same order they are in the ABC, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
@@ -415,7 +419,7 @@
             <p></p>
             <p>%addsortedindex (your tunebook sorted index title text goes here...)</p>
             <p></p>
-            <p>As with the %pageheader and %pagefooter annotation, only the first instance of the %addtoc, %addindex, and %addsortedindex annotation is processed, any additional instances are ignored.</p>
+            <p>As with the %pageheader and %pagefooter annotation, only the first instance of the %addtoc, %addsortedtoc, %addindex, and %addsortedindex annotations are processed, any additional instances are ignored.</p>
             <p></p>
             <hr id="printing_your_tunes">
             <h1>Printing Your Tunes</h1>
