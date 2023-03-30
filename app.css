@@ -90,7 +90,7 @@ font-size:11pt;
 border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
-margin-right:10px;
+margin-right:15px;
 margin-left:0px;
 background-color: #EEEEEE;
 color:black;
@@ -161,7 +161,7 @@ font-size:11pt;
 border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
-margin-left:12px;
+margin-left:16px;
 margin-right:0px;
 background-color: lavender;
 color:black;
@@ -235,6 +235,25 @@ color:black;
 opacity:0.4;
 }
 
+.sortbutton{
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+padding: 0.6em;
+background-color: #EEEEEE;
+color:black;
+-webkit-appearance:none;
+margin-left: 7px;
+margin-right: 15px;
+}
+
+@media (hover: hover) {
+	.sortbutton:hover{
+	background: palegreen;
+	}
+}
+
 .clearbutton{
 font-family:"Helvetica";
 font-size:11pt;
@@ -244,7 +263,7 @@ padding: 0.6em;
 background-color: #FFCCCC;
 color:black;
 -webkit-appearance:none;
-margin-left: 15px;
+margin-left: 16px;
 margin-right: 0px;
 }
 
