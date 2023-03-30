@@ -846,7 +846,7 @@ var TEXTINCIPITLINESPACING = 13;
 //
 // Generate a set of ABC text incipits
 //
-function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,tunePageMap){
+function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,tunePageMap,sortTunes){
 
 	// Adjust margins based on paper style
  	TEXTINCIPITLEFTMARGIN = 65;
@@ -889,6 +889,8 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 	var searchRegExp;
 	var theKey;
 
+	var theIncipits = [];
+
 	// Add the tunes by name and page number
 	for (i=0;i<totalTunes;++i){
 
@@ -909,8 +911,6 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 
 		// Strip out tempo markings
 		theTune = theTune.replace(searchRegExp, "");
-
-		tunePageMap.push(theCurrentPageNumber);
 
 		// Parse out the first few measures
 		theTune = escape(theTune);
@@ -1019,9 +1019,75 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 			thisTitle = thisTitle.trim();
 		}
 
+		// If sorting incipits, do the The replacement before appending the key
+		if (sortTunes){
+
+			if (thisTitle.indexOf("The ")==0){
+
+				thisTitle = thisTitle.substring(4,thisTitle.length)+", The";
+
+			}
+
+		}
+			
 		if (theKey != ""){
 			thisTitle += " (" + theKey + ")";
 		}
+
+		theIncipits.push({title:thisTitle,incipit:theTextIncipit});
+	}
+
+	// Sorted incipipits requested?
+	if (sortTunes){
+
+		// Move "The" to the end
+		var thisTitle;
+
+		var tuneInfo = [];
+		
+		for (i=0;i<totalTunes;++i){
+
+			tuneInfo.push({title:theIncipits[i].title,incipit:theIncipits[i].incipit});
+
+		}
+
+		// sort tunes by name
+		tuneInfo.sort((a, b) => {
+
+		  const nameA = a.title.toUpperCase(); // ignore upper and lowercase
+		  
+		  const nameB = b.title.toUpperCase(); // ignore upper and lowercase
+		  
+		  if (nameA < nameB) {
+		    return -1;
+		  }
+		  
+		  if (nameA > nameB) {
+		    return 1;
+		  }
+
+		  // names must be equal
+		  return 0;
+
+		});
+
+		// Copy the results into the normally consumed arrays
+		for (i=0;i<totalTunes;++i){
+
+			theIncipits[i].title = tuneInfo[i].title;
+
+			theIncipits[i].incipit = tuneInfo[i].incipit;
+
+		}
+	}
+
+	for (i=0;i<totalTunes;++i){
+
+		thisTitle = theIncipits[i].title;
+
+		theTextIncipit = theIncipits[i].incipit;
+
+		tunePageMap.push(theCurrentPageNumber);
 
 		thePDF.text(thisTitle, TEXTINCIPITLEFTMARGIN, curTop, {align:"left"});
 
@@ -1075,7 +1141,7 @@ var INDEXLINESPACING = 14;
 //
 // Generate and append a tune index to the current PDF
 //
-function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageNumberList,theTitle,sortTunes){
+function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageNumberList,theTitle,sortTunes,isSortedABCIncipits){
 
 	var a4offset = 0
 
@@ -1175,7 +1241,10 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 
 			theTitles[i]= tuneInfo[i].name;
 
-			localPageMap[i]= tuneInfo[i].pageNumber;
+			if (!isSortedABCIncipits){
+
+				localPageMap[i]= tuneInfo[i].pageNumber;
+			}
 
 		}
 	
@@ -1228,7 +1297,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 //
 // Generate and append a tune index to the current PDF
 //
-function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageNumberList,theTitle,sortTunes){
+function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageNumberList,theTitle,sortTunes,isSortedABCIncipits){
 
 	var a4offset = 0
 
@@ -1330,7 +1399,11 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 
 			theTitles[i]= tuneInfo[i].name;
 
-			localPageMap[i]= tuneInfo[i].pageNumber;
+			if (!isSortedABCIncipits){
+
+				localPageMap[i]= tuneInfo[i].pageNumber;
+
+			}
 
 		}
 
@@ -2663,7 +2736,7 @@ function ExportPDF(){
 	var thePageOptions = elem.options[elem.selectedIndex].value;
 
 	// Are we doing ABC incipits?
-	var textIncipitsRequested = ((thePageOptions == "incipits_abc") || (thePageOptions == "incipits_a4_abc"));
+	var textIncipitsRequested = ((thePageOptions == "incipits_abc") || (thePageOptions == "incipits_a4_abc") || (thePageOptions == "incipits_abc_sort") || (thePageOptions == "incipits_a4_abc_sort"));
 
 	// No, use the normal PDF export path
 	if (textIncipitsRequested){
@@ -2717,9 +2790,18 @@ function ExportTextIncipitsPDF(){
 	// What size paper? Letter or A4?
 	var paperStyle = "letter";
 
-	if (thePageOptions == "incipits_a4_abc"){
+	if ((thePageOptions == "incipits_a4_abc") || (thePageOptions == "incipits_a4_abc_sort")) {
 
 		paperStyle = "a4";
+
+	}
+
+	// Requested sorted ABC incipits?
+	var TunebookABCSortedIncipitsRequested = false;
+
+	if ((thePageOptions == "incipits_abc_sort") || (thePageOptions == "incipits_a4_abc_sort")) {
+
+		TunebookABCSortedIncipitsRequested = true;
 
 	}
 
@@ -2780,7 +2862,7 @@ function ExportTextIncipitsPDF(){
 
 		var theTunePageMap = [];
 
-		theTunePageMap = GenerateTextIncipits(pdf,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap);
+		theTunePageMap = GenerateTextIncipits(pdf,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,TunebookABCSortedIncipitsRequested);
 
 		document.getElementById("statustunecount").innerHTML = "ABC Incipits Added!";
 
@@ -2789,7 +2871,7 @@ function ExportTextIncipitsPDF(){
 			
 			document.getElementById("statustunecount").innerHTML = "Adding Table of Contents";
 			
-			AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookTOCTitle, false);
+			AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookTOCTitle, TunebookABCSortedIncipitsRequested,TunebookABCSortedIncipitsRequested);
 
 			document.getElementById("statustunecount").innerHTML = "Table of Contents Added!";
 			
@@ -2802,7 +2884,7 @@ function ExportTextIncipitsPDF(){
 			
 			document.getElementById("statustunecount").innerHTML = "Adding Sorted Table of Contents";
 			
-			AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedTOCTitle, true);
+			AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedTOCTitle, true, TunebookABCSortedIncipitsRequested);
 
 			document.getElementById("statustunecount").innerHTML = "Sorted Table of Contents Added!";
 			
@@ -2816,7 +2898,7 @@ function ExportTextIncipitsPDF(){
 			
 			document.getElementById("statustunecount").innerHTML = "Adding Tunebook Index";
 
-			AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookIndexTitle,false);
+			AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookIndexTitle,TunebookABCSortedIncipitsRequested,TunebookABCSortedIncipitsRequested);
 
 			document.getElementById("statustunecount").innerHTML = "Tunebook Index Added!";
 			
@@ -2829,7 +2911,7 @@ function ExportTextIncipitsPDF(){
 			
 			document.getElementById("statustunecount").innerHTML = "Adding Tunebook Sorted Index";
 
-			AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedIndexTitle,true);
+			AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedIndexTitle,true,TunebookABCSortedIncipitsRequested);
 
 			document.getElementById("statustunecount").innerHTML = "Tunebook Sorted Index Added!";
 			
@@ -3286,7 +3368,7 @@ function ExportNotationPDF() {
 						
 						document.getElementById("statustunecount").innerHTML = "Adding Table of Contents";
 						
-						AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookTOCTitle,false);
+						AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookTOCTitle,false,false);
 
 						document.getElementById("statustunecount").innerHTML = "Table of Contents Added!";
 						
@@ -3299,7 +3381,7 @@ function ExportNotationPDF() {
 						
 						document.getElementById("statustunecount").innerHTML = "Adding Sorted Table of Contents";
 						
-						AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedTOCTitle,true);
+						AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedTOCTitle,true,false);
 
 						document.getElementById("statustunecount").innerHTML = "Sorted Table of Contents Added!";
 						
@@ -3312,7 +3394,7 @@ function ExportNotationPDF() {
 						
 						document.getElementById("statustunecount").innerHTML = "Adding Tunebook Index";
 
-						AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookIndexTitle,false);
+						AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookIndexTitle,false,false);
 
 						document.getElementById("statustunecount").innerHTML = "Tunebook Index Added!";
 						
@@ -3325,7 +3407,7 @@ function ExportNotationPDF() {
 						
 						document.getElementById("statustunecount").innerHTML = "Adding Tunebook Sorted Index";
 
-						AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedIndexTitle,true);
+						AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedIndexTitle,true,false);
 
 						document.getElementById("statustunecount").innerHTML = "Tunebook Sorted Index Added!";
 						
