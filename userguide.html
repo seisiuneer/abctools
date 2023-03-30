@@ -37,7 +37,16 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-               
+        
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-5C74XEDW40"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-5C74XEDW40');
+        </script>
+       
         <style>
         p {
         font-size:14pt;
@@ -282,19 +291,21 @@
             <p></p>
             <p>The PDF generator also includes an option to append a Share URL QR code to the end of the PDF document.</p>
             <p>All of this is done using custom ABC comment-based annotation (described below).</p>
-            <p><strong>PDF Tunes/Page</strong> - Select whether you want One Tune/Page, Multiple Tunes/Page, or Tune Incipits in the PDF along with the paper size (Letter or A4):</p>
+            <p><strong>PDF Tunes/Page</strong> - Select whether you want One Tune/Page, Multiple Tunes/Page, Tune Note Incipits, or ABC Incipits (unsorted or alphabetically sorted by tune name) in the PDF along with the paper size (Letter or A4):</p>
             <p>
             <div class="image_holder">
-                <img src="img/ug7a3.jpg"/>
+                <img src="img/ug7a4.jpg"/>
             </div>
             <p>One - Letter:&nbsp;&nbsp;Each tune is placed on a new page in the PDF.&nbsp;&nbsp;Paper size = Letter</p>
             <p>Multiple - Letter:&nbsp;&nbsp;Tunes are added one after another down each page in the PDF.&nbsp;&nbsp;Paper size = Letter</p>
             <p>Notes Incipits - Letter:&nbsp;&nbsp;Notation for the first line of each tune is added one after another down each page in the PDF.&nbsp;&nbsp;Paper size = Letter</p>
             <p>ABC Incipits - Letter:&nbsp;&nbsp;First few bars of the ABC each tune is added one after another down each page in the PDF.&nbsp;&nbsp;Paper size = Letter</p>
+            <p>ABC Incipits Sorted - Letter:&nbsp;&nbsp;First few bars of the ABC each tune is added one after another down each page in the PDF in tune name sorted order.&nbsp;&nbsp;Paper size = Letter</p>
             <p>One - A4:&nbsp;&nbsp;Each tune is placed on a new page in the PDF.&nbsp;&nbsp;Paper size = A4</p>
             <p>Multiple - A4:&nbsp;&nbsp;Tunes are added one after another down each page in the PDF.&nbsp;&nbsp;Paper size = A4</p>
             <p>Notes Incipits - A4:&nbsp;&nbsp;Notation for the first line of each tune is added one after another down each page in the PDF.&nbsp;&nbsp;Paper size = A4</p>
             <p>ABC Incipits - A4:&nbsp;&nbsp;First few bars of the ABC for each tune is added one after another down each page in the PDF.&nbsp;&nbsp;Paper size = A4</p>
+            <p>ABC Incipits Sorted - A4:&nbsp;&nbsp;First few bars of the ABC for each tune is added one after another down each page in the PDF in tune name sorted order.&nbsp;&nbsp;Paper size = A4</p>
             <p>Default is:&nbsp;&nbsp;One - Letter</p>
             <p></p>
             <p>When exporting multiple tunes per page to PDF the tool will do its best to layout the output to not split tunes between pages, unless the tune itself is longer than one page.</p>
@@ -333,7 +344,7 @@
             <p>Default is:&nbsp;&nbsp;None</p>
             <p><strong>Show or Hide Page Number on First Page Options:</strong></p>
             <div class="image_holder">
-                <img src="img/ug7c.jpg"/>
+                <img src="img/ug7c2.jpg"/>
             </div>
             <p>Choose whether the page number will be shown on the first page of the PDF.</p>
             <p>Default is:&nbsp;&nbsp;Yes</p>
