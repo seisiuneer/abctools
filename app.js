@@ -611,6 +611,142 @@ function TransposeDown() {
 }
 
 //
+// Sort the tunes in the ABC text area
+//
+function SortTunes(){
+
+	// Get all the tunes
+	var theNotes = gTheABC.value;
+
+	var theTunes = theNotes.split(/(^X:.*$)/gm);
+
+	var nTunes = (theTunes.length - 1)/2;
+
+	if (nTunes < 2){
+
+		return;
+		
+	}
+
+	var thePrefixABC = theTunes[0];
+
+	//console.log("thePrefixABC: "+thePrefixABC);
+
+	// Get all the tune titles (uses first T: tag found)
+	// Global totalTunes needs to be set for GetTunebookIndexTitles to work
+	totalTunes = nTunes;
+
+	var theTitles = GetTunebookIndexTitles();
+	
+	var i;
+
+	var tunesToProcess = [];
+	var nProcessed = 0;
+	var thisTitle;
+
+	for (i=0;i<nTunes;++i){
+
+		if (theTunes[(i*2)+1] != undefined){
+
+			thisTitle = theTitles[nProcessed];
+
+			if (thisTitle.indexOf("The ")==0){
+
+				thisTitle = thisTitle.substring(4,thisTitle.length)+", The";
+
+			}
+
+			nProcessed++;
+
+			//console.log("Tune #"+nProcessed+": "+theTunes[(i*2)+1]+theTunes[(i*2)+2]);
+
+			tunesToProcess.push({title:thisTitle,tune:theTunes[(i*2)+1]+theTunes[(i*2)+2]});
+
+		}
+
+	}
+
+	//console.log("Tunes processed: "+nProcessed);
+
+	// Sort tunes by name
+	tunesToProcess.sort((a, b) => {
+
+	  const nameA = a.title.toUpperCase(); // ignore upper and lowercase
+	  
+	  const nameB = b.title.toUpperCase(); // ignore upper and lowercase
+	  
+	  if (nameA < nameB) {
+	    return -1;
+	  }
+	  
+	  if (nameA > nameB) {
+	    return 1;
+	  }
+
+	  // names must be equal
+	  return 0;
+
+	});
+
+	theNotes = "";
+	theNotes += thePrefixABC;
+
+	// Aggregate the results
+	for (i=0;i<nProcessed;++i){
+
+		theNotes += tunesToProcess[i].tune;
+	}
+
+	// Put them back in the ABC area
+	gTheABC.value = theNotes; 
+
+	// Reset the selection
+	gTheABC.selectionStart = 0;
+    gTheABC.selectionEnd = 0;
+
+    // And set the focus
+    gTheABC.focus();
+
+}
+
+//
+// UI SortABC command
+//
+function SortABC() {
+
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
+
+	// Give some feedback
+	document.getElementById("sortbutton").value = "  Sorting  ";
+
+	setTimeout(function(){
+
+		// Sort the tunes
+		SortTunes();
+
+		document.getElementById("sortbutton").value = "Rendering";
+
+		// Redraw
+		RenderAsync(true,null,function(){
+
+			document.getElementById("sortbutton").value = "  Sorted!  ";
+		
+			setTimeout(function(){
+
+				document.getElementById("sortbutton").value = "Sort ABC";
+
+			},1500);
+
+		});
+
+	},750);
+
+}
+
+//
 // UI Clear command
 //
 function Clear() {
@@ -4870,7 +5006,7 @@ function ensureABCFile(filename) {
 //
 function HideAdvancedControls() {
 
-	document.getElementById('toggleadvancedcontrols').value = "Show Advanced Controls";
+	document.getElementById('toggleadvancedcontrols').value = "Show Advanced";
 
 	document.getElementById('advanced-controls').style.display = "none";
 
@@ -4882,7 +5018,7 @@ function HideAdvancedControls() {
 //
 function ShowAdvancedControls() {
 
-	document.getElementById('toggleadvancedcontrols').value = "Hide Advanced Controls";
+	document.getElementById('toggleadvancedcontrols').value = "Hide Advanced";
 
 	document.getElementById('advanced-controls').style.display = "flex";
 
@@ -5160,7 +5296,7 @@ function ToggleAdvancedControls() {
 //
 function HideShareControls() {
 
-	document.getElementById('togglesharecontrols').value = "Show Sharing Controls";
+	document.getElementById('togglesharecontrols').value = "Show Sharing";
 
 	// Also hide the share url area
 	document.getElementById('urlarea').style.display = "none";
@@ -5172,7 +5308,7 @@ function HideShareControls() {
 //
 function ShowShareControls() {
 
-	document.getElementById('togglesharecontrols').value = "Hide Sharing Controls";
+	document.getElementById('togglesharecontrols').value = "Hide Sharing";
 
 	CreateURLfromHTML();
 
