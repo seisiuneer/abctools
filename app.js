@@ -613,7 +613,7 @@ function TransposeDown() {
 //
 // Sort the tunes in the ABC text area
 //
-function SortTunes(){
+function SortTunes(stripAn){
 
 	// Get all the tunes
 	var theNotes = gTheABC.value;
@@ -653,6 +653,22 @@ function SortTunes(){
 			if (thisTitle.indexOf("The ")==0){
 
 				thisTitle = thisTitle.substring(4,thisTitle.length)+", The";
+
+			}
+
+			if (stripAn){
+
+				if (thisTitle.indexOf("An ")==0){
+
+					thisTitle = thisTitle.substring(3,thisTitle.length)+", An";
+
+				}
+
+				if (thisTitle.indexOf("A ")==0){
+
+					thisTitle = thisTitle.substring(2,thisTitle.length)+", A";
+
+				}
 
 			}
 
@@ -712,12 +728,19 @@ function SortTunes(){
 //
 // UI SortABC command
 //
-function SortABC() {
+function SortABC(e) {
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
 		return;
 	}
+
+	var stripAn = false;
+
+	if (e.shiftKey){
+		stripAn = true;
+	}
+
 
 	// Give some feedback
 	document.getElementById("sortbutton").value = "  Sorting  ";
@@ -725,7 +748,7 @@ function SortABC() {
 	setTimeout(function(){
 
 		// Sort the tunes
-		SortTunes();
+		SortTunes(stripAn);
 
 		document.getElementById("sortbutton").value = "Rendering";
 
