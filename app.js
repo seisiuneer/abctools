@@ -3162,21 +3162,32 @@ function ExportTextIncipitsPDF(){
 
 			document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Rendering Complete!</font>";
 
-			var fname = prompt("Please enter a filename for your PDF file:", title+".pdf");
+			DayPilot.Modal.prompt("Please enter a filename for your PDF file:", title+".pdf",{ theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
 
-			// If the user pressed Cancel, exit
-			if (fname != null){
+				var fname = args.result;
 
-				// Strip out any naughty HTML tag characters
-				fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+				// If the user pressed Cancel, exit
+				if (fname != null){
 
-				if (fname.length != 0){
+					// Strip out any naughty HTML tag characters
+					fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
 
-					// Give it a good extension
-					if ((!gIsAndroid) && (!gIsIOS)){
+					if (fname.length != 0){
 
-						if (!fname.endsWith(".pdf")){
+						// Give it a good extension
+						if ((!gIsAndroid) && (!gIsIOS)){
 
+							if (!fname.endsWith(".pdf")){
+
+								// Give it a good extension
+								fname = fname.replace(/\..+$/, '');
+								fname = fname + ".pdf";
+
+							}
+						}
+						else{
+
+							// iOS and Android have odd rules about text file saving
 							// Give it a good extension
 							fname = fname.replace(/\..+$/, '');
 							fname = fname + ".pdf";
@@ -3185,85 +3196,77 @@ function ExportTextIncipitsPDF(){
 					}
 					else{
 
-						// iOS and Android have odd rules about text file saving
-						// Give it a good extension
-						fname = fname.replace(/\..+$/, '');
-						fname = fname + ".pdf";
+						fname = null;
 
 					}
 				}
-				else{
 
-					fname = null;
+				title = fname;
 
-				}
-			}
-
-			title = fname;
-
-			setTimeout(function(){
-
-				if (title){
-					document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"red\">" + title + "</font>";
-				}
-
-				// Save the status up for a bit before saving
 				setTimeout(function(){
 
 					if (title){
-
-						// Start the PDF save
-						// On mobile, have to use a different save strategy otherwise the PDF loads in the same tab
-						if (gIsAndroid || gIsIOS){
-
-							var theBlob = pdf.output('blob', { filename: (title) });
-						 	
-						 	var newBlob = new Blob([theBlob], { type: 'application/octet-stream' });
-
-							var a = document.createElement("a");
-
-					        document.body.appendChild(a);
-					        
-					        a.style = "display: none";
-
-					        url = window.URL.createObjectURL(newBlob);
-					        a.href = url;
-					        a.download = (title);
-					        a.click();
-
-					        document.body.removeChild(a);
-
-					        setTimeout(function() {
-					          window.URL.revokeObjectURL(url);
-					        }, 1000);
-
-						}
-						else{
-
-							// This works fine on all desktop browsers
-						 	pdf.save(title);
-					 	}
-
+						document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"red\">" + title + "</font>";
 					}
 
-					document.getElementById("statuspdfname").innerHTML = "&nbsp;";
+					// Save the status up for a bit before saving
+					setTimeout(function(){
 
-					document.getElementById("statustunecount").innerHTML = "&nbsp;";
+						if (title){
 
-					document.getElementById("pagestatustext").innerHTML = "&nbsp;";
+							// Start the PDF save
+							// On mobile, have to use a different save strategy otherwise the PDF loads in the same tab
+							if (gIsAndroid || gIsIOS){
 
-					// Hide the PDF status modal
-					var pdfstatus = document.getElementById("pdf-controls");
-					pdfstatus.style.display = "none";
+								var theBlob = pdf.output('blob', { filename: (title) });
+							 	
+							 	var newBlob = new Blob([theBlob], { type: 'application/octet-stream' });
 
-					// Clear the PDF rendering global
-					gRenderingPDF = false;
+								var a = document.createElement("a");
+
+						        document.body.appendChild(a);
+						        
+						        a.style = "display: none";
+
+						        url = window.URL.createObjectURL(newBlob);
+						        a.href = url;
+						        a.download = (title);
+						        a.click();
+
+						        document.body.removeChild(a);
+
+						        setTimeout(function() {
+						          window.URL.revokeObjectURL(url);
+						        }, 1000);
+
+							}
+							else{
+
+								// This works fine on all desktop browsers
+							 	pdf.save(title);
+						 	}
+
+						}
+
+						document.getElementById("statuspdfname").innerHTML = "&nbsp;";
+
+						document.getElementById("statustunecount").innerHTML = "&nbsp;";
+
+						document.getElementById("pagestatustext").innerHTML = "&nbsp;";
+
+						// Hide the PDF status modal
+						var pdfstatus = document.getElementById("pdf-controls");
+						pdfstatus.style.display = "none";
+
+						// Clear the PDF rendering global
+						gRenderingPDF = false;
 
 
-				},1500);
+					},1500);
 
-			},2000);
-		}
+				},2000);
+			});
+		};
 
 	},250);
 }
@@ -3705,20 +3708,31 @@ function ExportNotationPDF() {
 
 						setTimeout(function(){
 
-							var fname = prompt("Please enter a filename for your PDF file:", title+".pdf");
+							DayPilot.Modal.prompt("Please enter a filename for your PDF file:", title+".pdf",{ theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
 
-							// If the user pressed Cancel, exit
-							if (fname != null){
+								var fname = args.result;
 
-								// Strip out any naughty HTML tag characters
-								fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+								// If the user pressed Cancel, exit
+								if (fname != null){
 
-								if (fname.length != 0){
-									// Give it a good extension
-									if ((!gIsAndroid) && (!gIsIOS)){
+									// Strip out any naughty HTML tag characters
+									fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
 
-										if (!fname.endsWith(".pdf")){
+									if (fname.length != 0){
+										// Give it a good extension
+										if ((!gIsAndroid) && (!gIsIOS)){
 
+											if (!fname.endsWith(".pdf")){
+
+												// Give it a good extension
+												fname = fname.replace(/\..+$/, '');
+												fname = fname + ".pdf";
+
+											}
+										}
+										else{
+
+											// iOS and Android have odd rules about text file saving
 											// Give it a good extension
 											fname = fname.replace(/\..+$/, '');
 											fname = fname + ".pdf";
@@ -3727,116 +3741,109 @@ function ExportNotationPDF() {
 									}
 									else{
 
-										// iOS and Android have odd rules about text file saving
-										// Give it a good extension
-										fname = fname.replace(/\..+$/, '');
-										fname = fname + ".pdf";
+										fname = null;
 
 									}
 								}
-								else{
 
-									fname = null;
-
-								}
-							}
-
-							title = fname;
-
-							if (title){
-
-								document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"red\">" + title + "</font>";
-
-							}
-
-							// Save the status up for a bit before saving
-							setTimeout(function(){
+								title = fname;
 
 								if (title){
 
-									// Start the PDF save
-									// On mobile, have to use a different save strategy otherwise the PDF loads in the same tab
-									if (gIsAndroid || gIsIOS){
+									document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"red\">" + title + "</font>";
 
-										var theBlob = pdf.output('blob', { filename: (title) });
-									 	
-									 	var newBlob = new Blob([theBlob], { type: 'application/octet-stream' });
+								}
 
-										var a = document.createElement("a");
-	        
-								        document.body.appendChild(a);
-								        
-								        a.style = "display: none";
+								// Save the status up for a bit before saving
+								setTimeout(function(){
 
-								        url = window.URL.createObjectURL(newBlob);
-								        a.href = url;
-								        a.download = (title);
-								        a.click();
+									if (title){
 
-								        document.body.removeChild(a);
+										// Start the PDF save
+										// On mobile, have to use a different save strategy otherwise the PDF loads in the same tab
+										if (gIsAndroid || gIsIOS){
 
-								        setTimeout(function() {
-								          window.URL.revokeObjectURL(url);
-								        }, 1000);
+											var theBlob = pdf.output('blob', { filename: (title) });
+										 	
+										 	var newBlob = new Blob([theBlob], { type: 'application/octet-stream' });
 
+											var a = document.createElement("a");
+		        
+									        document.body.appendChild(a);
+									        
+									        a.style = "display: none";
+
+									        url = window.URL.createObjectURL(newBlob);
+									        a.href = url;
+									        a.download = (title);
+									        a.click();
+
+									        document.body.removeChild(a);
+
+									        setTimeout(function() {
+									          window.URL.revokeObjectURL(url);
+									        }, 1000);
+
+										}
+										else{
+
+											// This works fine on all desktop browsers
+										 	pdf.save(title);
+									 	}
+
+									}
+
+									// Did incipit generation require a re-render?
+									if (requirePostRender){
+
+										document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Cleaning up after incipit generation</font>";
+
+										// Need some time for UI update
+										setTimeout(function(){
+
+											gRenderingPDF = false;
+
+											Render(true,null);
+
+											// Clear the offscreen rendering div
+											document.getElementById("offscreenrender").innerHTML = ""; 
+
+											finalize_pdf_export_stage_2();
+
+										},100);
+										
 									}
 									else{
 
-										// This works fine on all desktop browsers
-									 	pdf.save(title);
-								 	}
-
-								}
-
-								// Did incipit generation require a re-render?
-								if (requirePostRender){
-
-									document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Cleaning up after incipit generation</font>";
-
-									// Need some time for UI update
-									setTimeout(function(){
-
-										gRenderingPDF = false;
-
-										Render(true,null);
-
-										// Clear the offscreen rendering div
-										document.getElementById("offscreenrender").innerHTML = ""; 
+										// Catch up on any UI changes during the PDF rendering
+										RestoreSVGDivsAfterRasterization();
 
 										finalize_pdf_export_stage_2();
 
-									},100);
-									
-								}
-								else{
+										gRenderingPDF = false;
 
-									// Catch up on any UI changes during the PDF rendering
-									RestoreSVGDivsAfterRasterization();
-
-									finalize_pdf_export_stage_2();
-
-									gRenderingPDF = false;
-
-								}
+									}
 
 
-								function finalize_pdf_export_stage_2(){
+									function finalize_pdf_export_stage_2(){
 
-									document.getElementById("statuspdfname").innerHTML = "&nbsp;";
+										document.getElementById("statuspdfname").innerHTML = "&nbsp;";
 
-									document.getElementById("statustunecount").innerHTML = "&nbsp;";
+										document.getElementById("statustunecount").innerHTML = "&nbsp;";
 
-									document.getElementById("pagestatustext").innerHTML = "&nbsp;";
+										document.getElementById("pagestatustext").innerHTML = "&nbsp;";
 
-									// Hide the PDF status modal
-									var pdfstatus = document.getElementById("pdf-controls");
-									pdfstatus.style.display = "none";
+										// Hide the PDF status modal
+										var pdfstatus = document.getElementById("pdf-controls");
+										pdfstatus.style.display = "none";
 
-								}
+									}
 
-								return;
+									return;
 
-							},1500);
+								},1500);
+
+							});
 
 						},2000);
 					}
@@ -6089,58 +6096,61 @@ function GenerateQRCode() {
 //
 function saveABCFile(thePrompt, thePlaceholder, theData){
 
-	var fname = prompt(thePrompt, thePlaceholder);
+	DayPilot.Modal.prompt(thePrompt, thePlaceholder,{ theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
 
-	// If the user pressed Cancel, exit
-	if (fname == null){
-	  return null;
-	}
+		var fname = args.result;
 
-	// Strip out any naughty HTML tag characters
-	fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+		// If the user pressed Cancel, exit
+		if (fname == null){
+		  return null;
+		}
 
-	if (fname.length == 0){
-	  return null;
-	}      
+		// Strip out any naughty HTML tag characters
+		fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
 
-	// Give it a good extension
-	if ((!gIsAndroid) && (!gIsIOS)){
+		if (fname.length == 0){
+		  return null;
+		}      
 
-		if ((!fname.endsWith(".abc")) && (!fname.endsWith(".txt")) && (!fname.endsWith(".ABC")) && (!fname.endsWith(".TXT"))){
+		// Give it a good extension
+		if ((!gIsAndroid) && (!gIsIOS)){
 
+			if ((!fname.endsWith(".abc")) && (!fname.endsWith(".txt")) && (!fname.endsWith(".ABC")) && (!fname.endsWith(".TXT"))){
+
+				// Give it a good extension
+				fname = fname.replace(/\..+$/, '');
+				fname = fname + ".abc";
+
+			}
+		}
+		else{
+			// iOS and Android have odd rules about text file saving
 			// Give it a good extension
 			fname = fname.replace(/\..+$/, '');
-			fname = fname + ".abc";
+			fname = fname + ".txt";
 
 		}
-	}
-	else{
-		// iOS and Android have odd rules about text file saving
-		// Give it a good extension
-		fname = fname.replace(/\..+$/, '');
-		fname = fname + ".txt";
 
-	}
+		var a = document.createElement("a");
 
-	var a = document.createElement("a");
+		document.body.appendChild(a);
 
-	document.body.appendChild(a);
+		a.style = "display: none";
 
-	a.style = "display: none";
+		var blob = new Blob([theData], {type: "text/plain"}),
 
-	var blob = new Blob([theData], {type: "text/plain"}),
+		url = window.URL.createObjectURL(blob);
+		a.href = url;
+		a.download = fname;
+		a.click();
 
-	url = window.URL.createObjectURL(blob);
-	a.href = url;
-	a.download = fname;
-	a.click();
+		document.body.removeChild(a);
 
-	document.body.removeChild(a);
+		setTimeout(function() {
+		  window.URL.revokeObjectURL(url);
+		}, 1000);
 
-	setTimeout(function() {
-	  window.URL.revokeObjectURL(url);
-	}, 1000);
-
+	});
 }
 
 //
@@ -6148,56 +6158,60 @@ function saveABCFile(thePrompt, thePlaceholder, theData){
 //
 function saveShareURLFile(thePrompt, thePlaceholder, theData){
 
-	var fname = prompt(thePrompt, thePlaceholder);
+	DayPilot.Modal.prompt(thePrompt, thePlaceholder,{ theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
 
-	// If the user pressed Cancel, exit
-	if (fname == null){
-	  return null;
-	}
+		var fname = args.result;
 
-	// Strip out any naughty HTML tag characters
-	fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+		// If the user pressed Cancel, exit
+		if (fname == null){
+		  return null;
+		}
 
-	if (fname.length == 0){
-	  return null;
-	}      
+		// Strip out any naughty HTML tag characters
+		fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
 
-	// Give it a good extension
-	if ((!gIsAndroid) && (!gIsIOS)){
+		if (fname.length == 0){
+		  return null;
+		}      
 
-		if ((!fname.endsWith(".txt")) && (!fname.endsWith(".TXT"))){
+		// Give it a good extension
+		if ((!gIsAndroid) && (!gIsIOS)){
 
+			if ((!fname.endsWith(".txt")) && (!fname.endsWith(".TXT"))){
+
+				// Give it a good extension
+				fname = fname.replace(/\..+$/, '');
+				fname = fname + ".txt";
+
+			}
+		}
+		else{
+			// iOS and Android have odd rules about text file saving
 			// Give it a good extension
 			fname = fname.replace(/\..+$/, '');
 			fname = fname + ".txt";
-
 		}
-	}
-	else{
-		// iOS and Android have odd rules about text file saving
-		// Give it a good extension
-		fname = fname.replace(/\..+$/, '');
-		fname = fname + ".txt";
-	}
 
-	var a = document.createElement("a");
+		var a = document.createElement("a");
 
-	document.body.appendChild(a);
+		document.body.appendChild(a);
 
-	a.style = "display: none";
+		a.style = "display: none";
 
-	var blob = new Blob([theData], {type: "text/plain"}),
+		var blob = new Blob([theData], {type: "text/plain"}),
 
-	url = window.URL.createObjectURL(blob);
-	a.href = url;
-	a.download = fname;
-	a.click();
+		url = window.URL.createObjectURL(blob);
+		a.href = url;
+		a.download = fname;
+		a.click();
 
-	document.body.removeChild(a);
+		document.body.removeChild(a);
 
-	setTimeout(function() {
-	  window.URL.revokeObjectURL(url);
-	}, 1000);
+		setTimeout(function() {
+		  window.URL.revokeObjectURL(url);
+		}, 1000);
+
+	});
 
 }
 
