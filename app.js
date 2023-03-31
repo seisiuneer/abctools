@@ -3162,44 +3162,89 @@ function ExportTextIncipitsPDF(){
 
 			document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Rendering Complete!</font>";
 
+			var fname = prompt("Please enter a filename for your PDF file:", title+".pdf");
+
+			// If the user pressed Cancel, exit
+			if (fname != null){
+
+				// Strip out any naughty HTML tag characters
+				fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+				if (fname.length != 0){
+
+					// Give it a good extension
+					if ((!gIsAndroid) && (!gIsIOS)){
+
+						if (!fname.endsWith(".pdf")){
+
+							// Give it a good extension
+							fname = fname.replace(/\..+$/, '');
+							fname = fname + ".pdf";
+
+						}
+					}
+					else{
+
+						// iOS and Android have odd rules about text file saving
+						// Give it a good extension
+						fname = fname.replace(/\..+$/, '');
+						fname = fname + ".pdf";
+
+					}
+				}
+				else{
+
+					fname = null;
+
+				}
+			}
+
+			title = fname;
+
 			setTimeout(function(){
 
-				document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"red\">" + title + ".pdf </font>";
+				if (title){
+					document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"red\">" + title + "</font>";
+				}
 
 				// Save the status up for a bit before saving
 				setTimeout(function(){
 
-					// Start the PDF save
-					// On mobile, have to use a different save strategy otherwise the PDF loads in the same tab
-					if (gIsAndroid || gIsIOS){
+					if (title){
 
-						var theBlob = pdf.output('blob', { filename: (title + ".pdf") });
-					 	
-					 	var newBlob = new Blob([theBlob], { type: 'application/octet-stream' });
+						// Start the PDF save
+						// On mobile, have to use a different save strategy otherwise the PDF loads in the same tab
+						if (gIsAndroid || gIsIOS){
 
-						var a = document.createElement("a");
+							var theBlob = pdf.output('blob', { filename: (title) });
+						 	
+						 	var newBlob = new Blob([theBlob], { type: 'application/octet-stream' });
 
-				        document.body.appendChild(a);
-				        
-				        a.style = "display: none";
+							var a = document.createElement("a");
 
-				        url = window.URL.createObjectURL(newBlob);
-				        a.href = url;
-				        a.download = (title + ".pdf");
-				        a.click();
+					        document.body.appendChild(a);
+					        
+					        a.style = "display: none";
 
-				        document.body.removeChild(a);
+					        url = window.URL.createObjectURL(newBlob);
+					        a.href = url;
+					        a.download = (title);
+					        a.click();
 
-				        setTimeout(function() {
-				          window.URL.revokeObjectURL(url);
-				        }, 1000);
+					        document.body.removeChild(a);
+
+					        setTimeout(function() {
+					          window.URL.revokeObjectURL(url);
+					        }, 1000);
+
+						}
+						else{
+
+							// This works fine on all desktop browsers
+						 	pdf.save(title);
+					 	}
 
 					}
-					else{
-
-						// This works fine on all desktop browsers
-					 	pdf.save(title + ".pdf");
-				 	}
 
 					document.getElementById("statuspdfname").innerHTML = "&nbsp;";
 
@@ -3660,42 +3705,88 @@ function ExportNotationPDF() {
 
 						setTimeout(function(){
 
-							document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"red\">" + title + ".pdf </font>";
+							var fname = prompt("Please enter a filename for your PDF file:", title+".pdf");
+
+							// If the user pressed Cancel, exit
+							if (fname != null){
+
+								// Strip out any naughty HTML tag characters
+								fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+								if (fname.length != 0){
+									// Give it a good extension
+									if ((!gIsAndroid) && (!gIsIOS)){
+
+										if (!fname.endsWith(".pdf")){
+
+											// Give it a good extension
+											fname = fname.replace(/\..+$/, '');
+											fname = fname + ".pdf";
+
+										}
+									}
+									else{
+
+										// iOS and Android have odd rules about text file saving
+										// Give it a good extension
+										fname = fname.replace(/\..+$/, '');
+										fname = fname + ".pdf";
+
+									}
+								}
+								else{
+
+									fname = null;
+
+								}
+							}
+
+							title = fname;
+
+							if (title){
+
+								document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"red\">" + title + "</font>";
+
+							}
 
 							// Save the status up for a bit before saving
 							setTimeout(function(){
 
-								// Start the PDF save
-								// On mobile, have to use a different save strategy otherwise the PDF loads in the same tab
-								if (gIsAndroid || gIsIOS){
+								if (title){
 
-									var theBlob = pdf.output('blob', { filename: (title + ".pdf") });
-								 	
-								 	var newBlob = new Blob([theBlob], { type: 'application/octet-stream' });
+									// Start the PDF save
+									// On mobile, have to use a different save strategy otherwise the PDF loads in the same tab
+									if (gIsAndroid || gIsIOS){
 
-									var a = document.createElement("a");
-        
-							        document.body.appendChild(a);
-							        
-							        a.style = "display: none";
+										var theBlob = pdf.output('blob', { filename: (title) });
+									 	
+									 	var newBlob = new Blob([theBlob], { type: 'application/octet-stream' });
 
-							        url = window.URL.createObjectURL(newBlob);
-							        a.href = url;
-							        a.download = (title + ".pdf");
-							        a.click();
+										var a = document.createElement("a");
+	        
+								        document.body.appendChild(a);
+								        
+								        a.style = "display: none";
 
-							        document.body.removeChild(a);
+								        url = window.URL.createObjectURL(newBlob);
+								        a.href = url;
+								        a.download = (title);
+								        a.click();
 
-							        setTimeout(function() {
-							          window.URL.revokeObjectURL(url);
-							        }, 1000);
+								        document.body.removeChild(a);
+
+								        setTimeout(function() {
+								          window.URL.revokeObjectURL(url);
+								        }, 1000);
+
+									}
+									else{
+
+										// This works fine on all desktop browsers
+									 	pdf.save(title);
+								 	}
 
 								}
-								else{
-
-									// This works fine on all desktop browsers
-								 	pdf.save(title + ".pdf");
-							 	}
 
 								// Did incipit generation require a re-render?
 								if (requirePostRender){
