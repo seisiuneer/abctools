@@ -2885,37 +2885,58 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 }
 
 //
+// Prompt for PDF filename
+//
+function promptForPDFFilename(placeholder, callback){
+
+	DayPilot.Modal.prompt("Please enter a filename for your PDF file:", placeholder+".pdf",{ theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
+
+		var fname = args.result;
+
+		// If the user pressed Cancel, exit
+		if (fname != null){
+
+			// Strip out any naughty HTML tag characters
+			fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+			if (fname.length != 0){
+				// Give it a good extension
+				if ((!gIsAndroid) && (!gIsIOS)){
+
+					if (!fname.endsWith(".pdf")){
+
+						// Give it a good extension
+						fname = fname.replace(/\..+$/, '');
+						fname = fname + ".pdf";
+
+					}
+				}
+				else{
+
+					// iOS and Android have odd rules about text file saving
+					// Give it a good extension
+					fname = fname.replace(/\..+$/, '');
+					fname = fname + ".pdf";
+
+				}
+			}
+			else{
+
+				fname = null;
+
+			}
+		}
+
+		callback(fname);
+
+	});
+}
+
+//
 // PDF Exporter
 //
 function ExportPDF(){
 
-	// Get the page format
-	var elem = document.getElementById("pdfformat");
-
-	var thePageOptions = elem.options[elem.selectedIndex].value;
-
-	// Are we doing ABC incipits?
-	var textIncipitsRequested = ((thePageOptions == "incipits_abc") || (thePageOptions == "incipits_a4_abc") || (thePageOptions == "incipits_abc_sort") || (thePageOptions == "incipits_a4_abc_sort"));
-
-	// No, use the normal PDF export path
-	if (textIncipitsRequested){
-
-		ExportTextIncipitsPDF();
-
-	}
-	else{
-
-		ExportNotationPDF();
-
-	}
-
-}
-
-//
-// Export the first few bars of each tune in ABC format
-//
-function ExportTextIncipitsPDF(){
-	
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
 		return;
@@ -2925,6 +2946,65 @@ function ExportTextIncipitsPDF(){
 	if (!gAllowPDF){
 		return;
 	}
+
+	// Get the page format
+	var elem = document.getElementById("pdfformat");
+
+	var thePageOptions = elem.options[elem.selectedIndex].value;
+
+	// Are we doing ABC incipits?
+	var textIncipitsRequested = ((thePageOptions == "incipits_abc") || (thePageOptions == "incipits_a4_abc") || (thePageOptions == "incipits_abc_sort") || (thePageOptions == "incipits_a4_abc_sort"));
+	
+	// Count the tunes
+	totalTunes = CountTunes();
+	
+	var title = getDescriptiveFileName(totalTunes,true);
+
+	// No, use the normal PDF export path
+	if (textIncipitsRequested){
+
+		title += "_Incipits";
+
+		promptForPDFFilename(title,function(fname){
+
+			if (fname){
+
+				ExportTextIncipitsPDF(fname);
+			}
+		});
+
+	}
+	else{
+
+		// Get the page format
+		var elem = document.getElementById("pdfformat");
+
+		var thePageOptions = elem.options[elem.selectedIndex].value;
+
+		var incipitsRequested = ((thePageOptions == "incipits") || (thePageOptions == "incipits_a4"));
+		
+		if (incipitsRequested){
+
+			// Tack on a suffix to the PDF name
+			title += "_Incipits";
+		}
+
+		promptForPDFFilename(title,function(fname){
+
+			if (fname){
+
+				ExportNotationPDF(fname);
+			}
+		});
+
+	}
+
+}
+
+//
+// Export the first few bars of each tune in ABC format
+//
+function ExportTextIncipitsPDF(title){
 
 	// Clear the cancel flag
 	gPDFCancelRequested = false;
@@ -2994,13 +3074,9 @@ function ExportTextIncipitsPDF(){
 
 	isFirstPage = true;
 
-	var title = getDescriptiveFileName(totalTunes,true);
-
-	title += "_Incipits";
-
 	// Setup function scope shared vars
 
-	document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"red\">" + title + ".pdf </font>";
+	document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"red\">" + title + "</font>";
 
 	document.getElementById("statustunecount").innerHTML = "";
 
@@ -3162,110 +3238,62 @@ function ExportTextIncipitsPDF(){
 
 			document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Rendering Complete!</font>";
 
-			DayPilot.Modal.prompt("Please enter a filename for your PDF file:", title+".pdf",{ theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
+				setTimeout(function(){
 
-				var fname = args.result;
+				document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"red\">" + title + "</font>";
 
-				// If the user pressed Cancel, exit
-				if (fname != null){
+				// Save the status up for a bit before saving
+				setTimeout(function(){
 
-					// Strip out any naughty HTML tag characters
-					fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+					// Start the PDF save
+					// On mobile, have to use a different save strategy otherwise the PDF loads in the same tab
+					if (gIsAndroid || gIsIOS){
 
-					if (fname.length != 0){
+						var theBlob = pdf.output('blob', { filename: (title) });
+					 	
+					 	var newBlob = new Blob([theBlob], { type: 'application/octet-stream' });
 
-						// Give it a good extension
-						if ((!gIsAndroid) && (!gIsIOS)){
+						var a = document.createElement("a");
 
-							if (!fname.endsWith(".pdf")){
+				        document.body.appendChild(a);
+				        
+				        a.style = "display: none";
 
-								// Give it a good extension
-								fname = fname.replace(/\..+$/, '');
-								fname = fname + ".pdf";
+				        url = window.URL.createObjectURL(newBlob);
+				        a.href = url;
+				        a.download = (title);
+				        a.click();
 
-							}
-						}
-						else{
+				        document.body.removeChild(a);
 
-							// iOS and Android have odd rules about text file saving
-							// Give it a good extension
-							fname = fname.replace(/\..+$/, '');
-							fname = fname + ".pdf";
+				        setTimeout(function() {
+				          window.URL.revokeObjectURL(url);
+				        }, 1000);
 
-						}
 					}
 					else{
 
-						fname = null;
-
-					}
-				}
-
-				title = fname;
-
-				setTimeout(function(){
-
-					if (title){
-						document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"red\">" + title + "</font>";
-					}
-
-					// Save the status up for a bit before saving
-					setTimeout(function(){
-
-						if (title){
-
-							// Start the PDF save
-							// On mobile, have to use a different save strategy otherwise the PDF loads in the same tab
-							if (gIsAndroid || gIsIOS){
-
-								var theBlob = pdf.output('blob', { filename: (title) });
-							 	
-							 	var newBlob = new Blob([theBlob], { type: 'application/octet-stream' });
-
-								var a = document.createElement("a");
-
-						        document.body.appendChild(a);
-						        
-						        a.style = "display: none";
-
-						        url = window.URL.createObjectURL(newBlob);
-						        a.href = url;
-						        a.download = (title);
-						        a.click();
-
-						        document.body.removeChild(a);
-
-						        setTimeout(function() {
-						          window.URL.revokeObjectURL(url);
-						        }, 1000);
-
-							}
-							else{
-
-								// This works fine on all desktop browsers
-							 	pdf.save(title);
-						 	}
-
-						}
-
-						document.getElementById("statuspdfname").innerHTML = "&nbsp;";
-
-						document.getElementById("statustunecount").innerHTML = "&nbsp;";
-
-						document.getElementById("pagestatustext").innerHTML = "&nbsp;";
-
-						// Hide the PDF status modal
-						var pdfstatus = document.getElementById("pdf-controls");
-						pdfstatus.style.display = "none";
-
-						// Clear the PDF rendering global
-						gRenderingPDF = false;
+						// This works fine on all desktop browsers
+					 	pdf.save(title);
+				 	}
 
 
-					},1500);
+					document.getElementById("statuspdfname").innerHTML = "&nbsp;";
 
-				},2000);
-			});
+					document.getElementById("statustunecount").innerHTML = "&nbsp;";
+
+					document.getElementById("pagestatustext").innerHTML = "&nbsp;";
+
+					// Hide the PDF status modal
+					var pdfstatus = document.getElementById("pdf-controls");
+					pdfstatus.style.display = "none";
+
+					// Clear the PDF rendering global
+					gRenderingPDF = false;
+
+				},1500);
+
+			},2000);
 		};
 
 	},250);
@@ -3275,17 +3303,7 @@ function ExportTextIncipitsPDF(){
 //
 // Export a PDF document with notation, either full or first line incipits
 //
-function ExportNotationPDF() {
-
-	// If currently rendering PDF, exit immediately
-	if (gRenderingPDF) {
-		return;
-	}
-
-	// If disabled, return
-	if (!gAllowPDF){
-		return;
-	}
+function ExportNotationPDF(title) {
 
 	// Clear the cancel flag
 	gPDFCancelRequested = false;
@@ -3361,8 +3379,6 @@ function ExportNotationPDF() {
 
 	isFirstPage = true;
 
-	var title = getDescriptiveFileName(totalTunes,true);
-
 	// Setup function scope shared vars
 	var nBlocksProcessed = 0;
 
@@ -3386,9 +3402,6 @@ function ExportNotationPDF() {
 		// Reduce the space between tunes in the PDF for incipits
 		BETWEENTUNESPACE = 0;
 
-		// Tack on a suffix to the PDF name
-		title += "_Incipits";
-
 		// Force an idle on the advanced controls to determine if we need to hide the annotations or text annotations before incipit render
 		IdleAdvancedControls(true);
 
@@ -3396,7 +3409,7 @@ function ExportNotationPDF() {
 		// If tabnames are being shown, hide them
 		if ((gAllowFilterAnnotations && (!gStripAnnotations)) || (gAllowFilterText && (!gStripTextAnnotations)) || (gAllowShowTabNames && (gShowTabNames))){
 
-			document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"red\">" + title + ".pdf </font>";
+			document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"red\">" + title + "</font>";
 
 			document.getElementById("statustunecount").innerHTML = "Processing incipits for PDF generation";
 
@@ -3453,7 +3466,7 @@ function ExportNotationPDF() {
 
 		qualitaet = 1200; 
 
-		document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"red\">" + title + ".pdf </font>";
+		document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"red\">" + title + "</font>";
 
 		document.getElementById("statustunecount").innerHTML = "Processing notation for PDF generation";
 
@@ -3708,45 +3721,7 @@ function ExportNotationPDF() {
 
 						setTimeout(function(){
 
-							DayPilot.Modal.prompt("Please enter a filename for your PDF file:", title+".pdf",{ theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
 
-								var fname = args.result;
-
-								// If the user pressed Cancel, exit
-								if (fname != null){
-
-									// Strip out any naughty HTML tag characters
-									fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
-
-									if (fname.length != 0){
-										// Give it a good extension
-										if ((!gIsAndroid) && (!gIsIOS)){
-
-											if (!fname.endsWith(".pdf")){
-
-												// Give it a good extension
-												fname = fname.replace(/\..+$/, '');
-												fname = fname + ".pdf";
-
-											}
-										}
-										else{
-
-											// iOS and Android have odd rules about text file saving
-											// Give it a good extension
-											fname = fname.replace(/\..+$/, '');
-											fname = fname + ".pdf";
-
-										}
-									}
-									else{
-
-										fname = null;
-
-									}
-								}
-
-								title = fname;
 
 								if (title){
 
@@ -3757,41 +3732,38 @@ function ExportNotationPDF() {
 								// Save the status up for a bit before saving
 								setTimeout(function(){
 
-									if (title){
+									// Start the PDF save
+									// On mobile, have to use a different save strategy otherwise the PDF loads in the same tab
+									if (gIsAndroid || gIsIOS){
 
-										// Start the PDF save
-										// On mobile, have to use a different save strategy otherwise the PDF loads in the same tab
-										if (gIsAndroid || gIsIOS){
+										var theBlob = pdf.output('blob', { filename: (title) });
+									 	
+									 	var newBlob = new Blob([theBlob], { type: 'application/octet-stream' });
 
-											var theBlob = pdf.output('blob', { filename: (title) });
-										 	
-										 	var newBlob = new Blob([theBlob], { type: 'application/octet-stream' });
+										var a = document.createElement("a");
+	        
+								        document.body.appendChild(a);
+								        
+								        a.style = "display: none";
 
-											var a = document.createElement("a");
-		        
-									        document.body.appendChild(a);
-									        
-									        a.style = "display: none";
+								        url = window.URL.createObjectURL(newBlob);
+								        a.href = url;
+								        a.download = (title);
+								        a.click();
 
-									        url = window.URL.createObjectURL(newBlob);
-									        a.href = url;
-									        a.download = (title);
-									        a.click();
+								        document.body.removeChild(a);
 
-									        document.body.removeChild(a);
-
-									        setTimeout(function() {
-									          window.URL.revokeObjectURL(url);
-									        }, 1000);
-
-										}
-										else{
-
-											// This works fine on all desktop browsers
-										 	pdf.save(title);
-									 	}
+								        setTimeout(function() {
+								          window.URL.revokeObjectURL(url);
+								        }, 1000);
 
 									}
+									else{
+
+										// This works fine on all desktop browsers
+									 	pdf.save(title);
+								 	}
+
 
 									// Did incipit generation require a re-render?
 									if (requirePostRender){
@@ -3843,11 +3815,8 @@ function ExportNotationPDF() {
 
 								},1500);
 
-							});
-
 						},2000);
 					}
-
 
 				} else {
 
