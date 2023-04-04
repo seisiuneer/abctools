@@ -7167,13 +7167,147 @@ function PrepareWhistleFont(){
 
 }
 
+//
+// Inject note name lyrics into one tune
+//
+function InjectOneTuneABCNoteNameLyrics(theTune){
+
+	var theABC = escape(theTune);
+
+	var theLines = theABC.split("%0A");
+
+	var theOutput = "";
+
+	var thisLine = "";
+
+	for (i = 0; i < theLines.length; ++i) {
+		
+		thisLine = unescape(theLines[i]); 
+
+		var theChars = thisLine.split(""); 
+
+		// It's a normal ABC : directive, copy it as is
+		if (((theChars[0] != "|") && (theChars[0] != "[")) && (theChars[1] == ":")) {
+
+			theOutput += thisLine+"\n";
+
+		}
+		else
+		// It's a comment or an ABC directive, copy it as-is
+		if (theChars[0] == "%") {
+			theOutput += thisLine+"\n";
+		}
+		else{
+
+			thisLine = thisLine.trim();
+
+			if (thisLine != ""){
+
+				theOutput += thisLine+"\n";
+
+				// Strip out chord markings
+				var searchRegExp = /"[^"]*"/gm
+
+				// Strip out chord markings
+				thisLine = thisLine.replace(searchRegExp, "");
+
+				// Strip out ornaments
+				var searchRegExp = /{[^{]*}/gm
+
+				// Strip out ornaments
+				thisLine = thisLine.replace(searchRegExp, "");
+
+				// Now strip anything that isn't ABC note names
+				searchRegExp = /[^ABCDEFGabcdefg]*/gm
+				thisLine = thisLine.replace(searchRegExp,"");
+
+				// Now insert spaces between each character
+				theChars = thisLine.split(""); 
+				thisLine = theChars.join(" ");
+
+				theOutput += "w: "+thisLine+"\n";
+
+			}
+			else{
+
+				theOutput += thisLine;
+
+			}
+		}
+	}
+	
+	theOutput += "\n";
+
+	return theOutput;
+	
+}
+
+
+//
+// Inject note name lyrics in the selected tunes
+//
+function InjectABCNoteNameLyrics() {
+
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
+
+	var nTunes = CountTunes();
+
+	var theNotes = gTheABC.value;
+
+	// Find the tunes
+	var theTunes = theNotes.split(/^X:/gm);
+
+	var output = "";
+
+	for (var i=1;i<=nTunes;++i){
+
+		theTunes[i] = "X:"+theTunes[i];
+
+		output += InjectOneTuneABCNoteNameLyrics(theTunes[i]);
+
+	}
+
+	// Stuff in the transposed output
+	gTheABC.value = output;
+
+	// Force a full render
+	RenderAsync(true, null);
+
+	// Set the select point
+	gTheABC.selectionStart = 0;
+    gTheABC.selectionEnd = 0;
+
+    // And set the focus
+    gTheABC.focus();
+
+
+}
 
 //
 // Change the tab display
 //
-function ChangeTab(){
+function ChangeTab(e){
 
 	var theTab = GetRadioValue("notenodertab");
+
+	if (theTab == "notenames"){
+
+		if (e.shiftKey){
+
+			InjectABCNoteNameLyrics();
+
+			SetRadioValue("notenodertab", "noten");
+			
+			RenderAsync(true,null);
+
+			return;
+
+		}
+
+	}
 
 	// If first time using the whistle tab, prep the tin whistle font for embedded SVG styles
 	if (theTab == "whistle"){
