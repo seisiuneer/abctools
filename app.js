@@ -7287,27 +7287,29 @@ function InjectABCNoteNameLyrics() {
 }
 
 //
-// Change the tab display
+// Do ABC Notename Lyric inject
 //
-function ChangeTab(e){
+function DoInjectABCNoteNameLyrics(e){
 
-	var theTab = GetRadioValue("notenodertab");
+	if (e.shiftKey){
 
-	if (theTab == "notenames"){
+		e.preventDefault();
+		e.stopPropagation();
 
-		if (e.shiftKey){
+		InjectABCNoteNameLyrics();
+		
+		RenderAsync(true,null);
 
-			InjectABCNoteNameLyrics();
-
-			SetRadioValue("notenodertab", "noten");
-			
-			RenderAsync(true,null);
-
-			return;
-
-		}
 
 	}
+}
+
+//
+// Change the tab display
+//
+function ChangeTab(){
+
+	var theTab = GetRadioValue("notenodertab");
 
 	// If first time using the whistle tab, prep the tin whistle font for embedded SVG styles
 	if (theTab == "whistle"){
