@@ -38,6 +38,15 @@
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
         
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-5C74XEDW40"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-5C74XEDW40');
+        </script>
+       
         <style>
         p {
         font-size:14pt;
@@ -127,6 +136,7 @@
             <p class="toc"><a href="#shared_tunes_open_full_screen">Shared Tunes Open Full Screen</a></p>
             <p class="toc"><a href="#staff_and_title_spacing_overrides">Staff and Title Spacing Overrides</a></p>
             <p class="toc"><a href="#custom_font_overrides">Custom Font Overrides</a></p>
+            <p class="toc"><a href="#injecting_abc_lyric_based_note_names_experimental">Injecting ABC Lyric-based Note Names (Experimental)</a></p>
             <p class="toc"><a href="#iphone_ipad_chord_entry_issue_fix">iPhone/iPad Chord Entry Issue Fix</a></p>
             <p class="toc"><a href="#abc_specification">ABC Specification</a></p>
             <p class="toc"><a href="#abc_21_quick_reference_card">ABC Quick Reference Card</a></p>
@@ -601,7 +611,18 @@
             <p><strong>More information is available here:</strong></p>
             <p><a href="https://blog.hubspot.com/website/web-safe-html-css-fonts" target="_blank">Web Safe CSS Fonts</a></p>
             <p><a href="http://iosfonts.com/" target="_blank">iOS Fonts</a></p>
-            <hr id="iphone_ipad_chord_entry_issue_fix">
+            <hr id="injecting_abc_lyric_based_note_names_experimental">
+            <h1>Injecting ABC Lyric-based Note Names (Experimental)</h1>
+            <p><strong>Note: This feature does not work on Firefox due to it not passing through shift-clicks on radio-button selector elements. Please use Chrome or Safari instead for this feature.</strong></p>    
+            <p>If you find the "Note Names" tab too tall, you can try holding down the Shift key while clicking the "Note Names" tab selector.</p>
+            <p>This will inject an ABC lyrics line under each ABC line using the w: directive that will put the ABC note name under each note in the notation for all the tunes.</p>
+            <p>For example:<p>
+            <p>GAG GAB | ABA ABd | edd gdd | edB dBA | </p>
+            <p>w: G A G G A B A B A A B d e d d g d d e d B d B A</p>
+            <p>The injected ABC lyrics are literally the same as the ABC so has no idea about sharps or flats, just the note letters. You may have to fix those manually.</p>
+            <p>It is a destructive operation, so you might want to "Copy All" before trying this operation.</p>
+            <p>Also, it will in some circumstances mess up the notation formatting, so try it, if it works, great, hopefully it saves you some time compared to doing the work manually.</p>
+             <hr id="iphone_ipad_chord_entry_issue_fix">
             <h1>iPhone/iPad Chord Entry Issue Fix</h1>
             <p>If you are trying to enter ABC chords, for example "D" or "Am", on an iPhone or iPad, iOS will, by default stick in "smart quotes" instead of standard double quotes.</p>
             <p>To fix this, go into your device's Settings and under the General/Keyboard tab, and turn off "Smart Punctuation".</p>
