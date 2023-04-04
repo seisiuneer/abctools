@@ -47,18 +47,22 @@ padding: .6em;
 margin-right:10px;
 color:black;
 -webkit-appearance:none;
+user-select: none;
 }
 
 .toggle-buttons input:checked + label {
 background: #ebf5d7;
 color: black;
 box-shadow: none;
+user-select: none;
+
 }
 
 @media (hover: hover) {
 	input:hover + label,
 	input:focus + label {
 	background: palegreen;
+	user-select: none;
 	}
 }
 
