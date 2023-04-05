@@ -396,6 +396,7 @@ font-family:"Helvetica";
 padding-top: 8px;
 margin-left:0px;
 margin-right:4px;
+user-select: none;
 }
 
 #pdfformat{
@@ -412,6 +413,7 @@ font-family:"Helvetica";
 padding-top:8px;
 margin-left:11px;
 margin-right:8px;
+user-select: none;
 }
 
 #pagenumbers{
@@ -420,6 +422,7 @@ font-family:"Helvetica";
 height:32px;
 width:152px;
 margin-left:4px;
+
 }
 
 #firstpagelabel{
@@ -428,6 +431,7 @@ font-family:"Helvetica";
 padding-top:8px;
 margin-left:11px;
 margin-right:8px;
+user-select: none;
 }
 
 #firstpage{
