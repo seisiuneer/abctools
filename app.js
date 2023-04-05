@@ -7191,6 +7191,11 @@ function InjectOneTuneABCNoteNameLyrics(theTune){
 
 			theOutput += thisLine+"\n";
 
+			// Inject the font directive to save people time
+			if (theChars[0] == "X"){
+				theOutput += "%%vocalfont Times-Roman 13.5\n";
+			}
+
 		}
 		else
 		// It's a comment or an ABC directive, copy it as-is
