@@ -7168,6 +7168,48 @@ function PrepareWhistleFont(){
 }
 
 //
+// Inject PDF-related headers at the top of the file
+//
+function InjectPDFHeaders(e){
+
+	if (e.shiftKey){
+
+		// If currently rendering PDF, exit immediately
+		if (gRenderingPDF) {
+			return;
+		}
+
+		var theNotes = gTheABC.value;
+
+		var output = "";
+
+		output += "%addtitle Title Page\n";
+		output += "%addsubtitle Title Page Subtitle\n";
+		output += "%addtoc Table of Contents\n";
+		output += "%addsortedtoc Table of Contents Sorted by Tune Name\n";
+		output += "%pageheader Page Header\n"
+		output += "%pagefooter Page Footer\n"
+		output += "%addindex Unsorted Index\n"
+		output += "%addsortedindex Index Sorted by Tune Name\n"
+		output += "%qrcode\n";
+		output += "\n";
+		
+		output += theNotes;
+
+		// Stuff in the transposed output
+		gTheABC.value = output;
+
+		// Set the select point
+		gTheABC.selectionStart = 0;
+	    gTheABC.selectionEnd = 0;
+
+	    // And set the focus
+	    gTheABC.focus();	
+
+	}
+}
+
+//
 // Inject note name lyrics into one tune
 //
 function InjectOneTuneABCNoteNameLyrics(theTune){
