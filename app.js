@@ -6232,16 +6232,124 @@ function CopyToClipboard(textToCopy) {
 	}
 }
 
+//
+// Inject MIDI program number directive 
+//
+function InjectOneTuneMIDIProgram(theTune, progNum){
 
+	var theABC = escape(theTune);
+
+	var theLines = theABC.split("%0A");
+
+	var theOutput = "";
+
+	var thisLine = "";
+
+	for (i = 0; i < theLines.length; ++i) {
+		
+		thisLine = unescape(theLines[i]); 
+
+		var theChars = thisLine.split(""); 
+
+		// It's a normal ABC : directive, copy it as is
+		if (((theChars[0] != "|") && (theChars[0] != "[")) && (theChars[1] == ":")) {
+
+			theOutput += thisLine+"\n";
+
+			// Inject the font directive to save people time
+			if (theChars[0] == "X"){
+				theOutput += "%%MIDI program "+progNum+"\n";
+			}
+
+		}
+		else
+		{
+			theOutput += thisLine;
+
+			if (i != (theLines.length-1)){
+				theOutput += "\n";
+			}
+
+		}
+	}
+	
+	return theOutput;
+	
+}
+
+//
+// Inject a MIDI instrument directive after all the X: headers
+//
+function InjectMIDIInstrument() {
+
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
+
+	DayPilot.Modal.prompt("MIDI instrument program number to inject? (Suggested values: 74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, 0 - Piano)", "74",{ theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
+		
+		var progNumStr = args.result;
+
+		if (progNumStr == null){
+			return;
+		}
+
+		var progNum = parseInt(progNumStr);
+
+		if ((isNaN(progNum)) || (progNum == undefined)){
+			return;
+		}
+
+		if ((progNum < 0) || (progNum > 255)){
+			return;
+		}
+
+		var nTunes = CountTunes();
+
+		var theNotes = gTheABC.value;
+
+		// Find the tunes
+		var theTunes = theNotes.split(/^X:/gm);
+
+		var output = "";
+
+		for (var i=1;i<=nTunes;++i){
+
+			theTunes[i] = "X:"+theTunes[i];
+
+			output += InjectOneTuneMIDIProgram(theTunes[i],progNum);
+
+		}
+
+		// Stuff in the transposed output
+		gTheABC.value = output;
+
+		// Set the select point
+		gTheABC.selectionStart = 0;
+	    gTheABC.selectionEnd = 0;
+
+	    // And set the focus
+	    gTheABC.focus();
+
+	});
+
+}
 
 //
 // Send the ABC to Paul Rosen's drawthedots site for playback
 //
-function PlayABC(){
+function PlayABC(e){
 
 	// Follows same semantics as Copy
 	if (gAllowCopy){
     	
+
+    	if (e.shiftKey){
+    		InjectMIDIInstrument();
+    		return;
+    	}
+
 		// Is there a selection?
 		var theSelectedABC = getSelectedText("abc");
 
