@@ -127,6 +127,9 @@ var gIsOneColumn = true;
 var	gGotRenderDivClick = false;
 var gRenderDivClickOffset = -1;
 
+// For local storage of settings
+var gLocalStorageAvailable = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -4068,9 +4071,60 @@ function GetABCJSParams(instrument){
 }
 
 //
+// Update local storage
+//
+function UpdateLocalStorage(){
+
+	// 
+	// Centralized place to save local browser storage values
+	//
+	if (gLocalStorageAvailable){
+
+		var format = GetRadioValue("notenodertab");
+		localStorage.abcTab = format;
+
+		var capo = document.getElementById("capo").value;
+		localStorage.abcCapo = capo;
+
+		var ssp = document.getElementById("staff-spacing").value;
+		localStorage.abcStaffSpacing = ssp;
+
+		var pdfformat = document.getElementById("pdfformat").value;
+		localStorage.abcTunesPerPage = pdfformat;
+
+		var pagenumbers = document.getElementById("pagenumbers").value;
+		localStorage.abcPageNumberLocation = pagenumbers;
+
+		var firstpage = document.getElementById("firstpage").value;
+		localStorage.abcPageNumberOnPageOne = firstpage;
+
+		var topbar = gTopBarShowing;
+		if (!topbar){
+			localStorage.abcHideTopBar = "true";
+		}
+		else{
+			localStorage.abcHideTopBar = "false";
+		}
+
+		var showtabnames = gShowTabNames;
+		if (showtabnames){
+			localStorage.abcShowTabNames = "true";
+		}
+		else{
+			localStorage.abcShowTabNames = "false";
+		}
+
+	}
+
+}
+
+//
 // Recalc URL on PDF settings change
 //
 function RecalcShareURLPDF(){
+
+	// If available, save all the app settings to local storage
+	UpdateLocalStorage();
 
 	// Since this is a Share URL parameter, update URL if required
 	if (document.getElementById("urlarea").style.display != "none") {
@@ -4822,6 +4876,9 @@ function Render(renderAll,tuneNumber) {
 		// Avoid jump scroll on render
 		var scrollTop = window.pageYOffset;
 
+		// If available, save all the app settings to local storage
+		UpdateLocalStorage();
+
 		if (document.getElementById("urlarea").style.display != "none") {
 			FillUrlBoxWithAbcInLZW();
 		}
@@ -5444,6 +5501,7 @@ function SetStaffSpacing() {
 
 	gStaffSpacing = newSpacing + STAFFSPACEOFFSET;
 
+
 	RenderAsync(true,null);
 }
 
@@ -5527,14 +5585,6 @@ function RestoreDefaults() {
 
 	// Clear the autoscroll state
 	gLastAutoScrolledTune = -1;
-
-	document.getElementById('staff-spacing').value = STAFFSPACEDEFAULT;
-
-	gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
-
-	document.getElementById('capo').value = 0;
-
-	gCapo = 0;
 
 	// Reset file selectors
 	let fileElement = document.getElementById('selectabcfile');
@@ -6831,9 +6881,10 @@ function processShareLink() {
 			PrepareWhistleFont();
 			
 		}
+
+		gCurrentTab = format;
+
 	}
-
-
 
 	// Handler for capo parameter
 	if (urlParams.has("capo")) {
@@ -7584,6 +7635,9 @@ function ToggleTopBar(){
 		MakeTuneVisible(true);
 
 	}
+	
+	// If available, save all the app settings to local storage
+	UpdateLocalStorage();
 
 	// Update the link if there is any ABC
 	if (gAllowCopy){
@@ -7725,6 +7779,118 @@ function isSafari(){
 	}
 }
 
+// 
+// Restore the application state from local storage
+//
+function restoreStateFromLocalStorage(){
+
+	// Display mode
+	var theTab = localStorage.abcTab;
+
+	if (theTab){
+
+		SetRadioValue("notenodertab", theTab);
+
+		IdleCapoControl();
+
+		if (theTab == "whistle"){
+
+			// If first time using the whistle tab, prep the tin whistle font for embedded SVG styles
+			PrepareWhistleFont();
+			
+		}
+
+		gCurrentTab = theTab;
+
+	}
+
+	// PDF Tunes/page
+	var theTunesPerPage = localStorage.abcTunesPerPage;
+
+	if (theTunesPerPage){
+
+		document.getElementById("pdfformat").value = theTunesPerPage;
+
+	}
+
+	// Page number
+	var thePageNumberLocation = localStorage.abcPageNumberLocation;
+
+	if (thePageNumberLocation){
+
+		document.getElementById("pagenumbers").value = thePageNumberLocation;
+
+	}
+
+	// Page number on first page
+	var thePageNumberOnPageOne = localStorage.abcPageNumberOnPageOne;
+
+	if (thePageNumberOnPageOne){
+
+		document.getElementById("firstpage").value = thePageNumberOnPageOne;
+
+	}
+
+	// Capo
+	var theCapo = localStorage.abcCapo;
+
+	if (theCapo){
+
+		document.getElementById("capo").value = theCapo;
+
+		gCapo = theCapo;
+
+	}
+
+	// Staff spacing
+	var theStaffSpacing = localStorage.abcStaffSpacing;
+
+	if (theStaffSpacing){
+
+		document.getElementById("staff-spacing").value = theStaffSpacing;
+
+		gStaffSpacing = STAFFSPACEOFFSET + parseInt(theStaffSpacing);
+
+	}
+
+	// Top bar
+	var theHideTopBar = localStorage.abcHideTopBar;
+
+	if (theHideTopBar){
+
+		if (theHideTopBar == "true"){
+
+			HideTopBar();
+
+		}
+	}
+
+	// Show tab names
+	var theShowTabNames = localStorage.abcShowTabNames;
+
+	if (theShowTabNames){
+
+		if (theShowTabNames == "true"){
+
+			gShowTabNames = true;
+
+			document.getElementById('toggletabnames').value = "Hide Tab Names";
+
+		}
+		else{
+
+			gShowTabNames = false;
+
+			document.getElementById('toggletabnames').value = "Show Tab Names";	
+
+		}
+
+		IdleShowTabNamesControl();	
+
+	}
+
+}
+
 function DoStartup() {
 
 	// Init global state
@@ -7755,6 +7921,7 @@ function DoStartup() {
 	gCurrentTab = "noten";
 	gForceFullRender = false;
 	gIsOneColumn = true;
+	gLocalStorageAvailable = false;
 
 	// Startup in blank screen
 	
@@ -8008,7 +8175,8 @@ function DoStartup() {
 	}
 
 	// Set the initial tab to notation
-	document.getElementById("b1").checked = true;
+	//document.getElementById("b1").checked = true;
+	SetRadioValue("notenodertab", "noten");
 
 	// Reset the paging control
 	document.getElementById("pdfformat").value = "one";
@@ -8019,15 +8187,27 @@ function DoStartup() {
 	// Reset the first page page number control
 	document.getElementById("firstpage").value = "yes";
 
-
 	// Hook up the zoom button
 	document.getElementById("zoombutton").onclick = 
 		function() {
 			ToggleMaximize();
 		};
+	
+	document.getElementById('staff-spacing').value = STAFFSPACEDEFAULT;
+
+	gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
+
+	document.getElementById('capo').value = 0;
 
 	// Clear the text entry area, but don't render
 	ClearNoRender();
+
+	// Is local storage available
+	if (window.localStorage) {
+
+		gLocalStorageAvailable = true;
+
+	}
 
 	// Check for and process URL share link
 	var isFromShare = processShareLink();
@@ -8039,6 +8219,15 @@ function DoStartup() {
 
 		// Show the notation placeholder
 		document.getElementById("notation-placeholder").style.display = "block";
+
+		// Update the application state from local storage if available
+		restoreStateFromLocalStorage();
+
+	}
+	else{
+
+		// Save the state in the share link to local storage
+		UpdateLocalStorage();
 
 	}
 
