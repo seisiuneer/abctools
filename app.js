@@ -7951,9 +7951,6 @@ function DoStartup() {
 	gIsFirefox = false;
 	if (isFirefox112()){
 		gIsFirefox = true;
-		DayPilot.Modal.alert("<center><p><strong>Firefox Version 112 Notation Rendering Issue</strong></p><p>Firefox version 112 has issues with rendering the on-screen notation.<br/><br/>Note stems and staff lines may be missing.<br/><br/>PDF export is OK.<br/><br/>I suggest using Chrome instead until Firefox fixes the issue.</p></center>",{ theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
-		});
-
 	}
 
 	// Are we on Safari?
@@ -8233,6 +8230,35 @@ function DoStartup() {
 
 		gLocalStorageAvailable = true;
 
+	}
+
+	if (gIsFirefox){
+
+		var showFirefoxWarning = true;
+
+
+		// Only show the Firefox 112 warning one time
+		
+		if (gLocalStorageAvailable){
+
+			if (localStorage.firefoxWarning){
+
+				showFirefoxWarning = false;
+
+			}
+			else{
+
+				localStorage.firefoxWarning = true;
+
+			}
+		}
+
+		if (showFirefoxWarning)
+		{
+			DayPilot.Modal.alert("<center><p><strong>Firefox Version 112 Notation Rendering Issue</strong></p><p>Firefox version 112 has issues with rendering the on-screen notation.<br/><br/>Note stems and staff lines may be missing.<br/><br/>PDF export is OK.<br/><br/>I suggest using Chrome instead until Firefox fixes the issue.<br/><br/>This warning will only appear this one time.</p></center>",{ theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
+				localStorage.showedFirefoxWarning = true;
+			});
+		}
 	}
 
 	// Check for and process URL share link
