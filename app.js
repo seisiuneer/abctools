@@ -47,6 +47,9 @@ var gIsIPhone = false;
 var gIsSafari = false;
 var gIsAndroid = false;
 
+// For SVG render bug on version 112 of Firefox
+var gIsFirefox = false;
+
 var gRenderingPDF = false;
 
 var gTheQRCode = null;
@@ -7779,6 +7782,20 @@ function isSafari(){
 	}
 }
 
+//
+// Are we on Firefox?
+//
+function isFirefox112(){
+
+	if (/Firefox\/112.0/i.test(navigator.userAgent)) {
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
+
 // 
 // Restore the application state from local storage
 //
@@ -7929,6 +7946,15 @@ function DoStartup() {
 	DoMaximize();
 
 	// Get platform info for later UI adaption
+
+	// Are we on Firefox
+	gIsFirefox = false;
+	if (isFirefox112()){
+		gIsFirefox = true;
+		DayPilot.Modal.alert("<center><p><strong>Firefox Version 112 Notation Rendering Issue</strong></p><p>Firefox version 112 has issues with rendering the on-screen notation.<br/><br/>Note stems and staff lines may be missing.<br/><br/>PDF export is OK.<br/><br/>I suggest using Chrome instead until Firefox fixes the issue.</p></center>",{ theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
+		});
+
+	}
 
 	// Are we on Safari?
 	gIsSafari = false;
