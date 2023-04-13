@@ -1007,7 +1007,7 @@ var TEXTINCIPITBOTTOMOFFSET = 12;
 var TEXTINCIPITLEFTMARGIN = 65;
 var TEXTINCIPITRIGHTMARGIN = 203;
 var TEXTINCIPITFONTSIZE = 12;
-var TEXTINCIPITLINESPACING = 13;
+var TEXTINCIPITLINESPACING = 10;
 //
 // Generate a set of ABC text incipits
 //
@@ -1301,7 +1301,7 @@ var INDEXLEFTMARGIN = 90;
 var INDEXRIGHTMARGIN = 120;
 var INDEXTITLESIZE = 18;
 var INDEXFONTSIZE = 13;
-var INDEXLINESPACING = 14;
+var INDEXLINESPACING = 12;
 
 //
 // Generate and append a tune index to the current PDF
@@ -1460,6 +1460,19 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 }
 
 //
+// Tune table of contents page layout constants
+//
+
+var TOCTOPOFFSET = 330;
+var TOCBOTTOMOFFSET = 16;
+var TOCTITLEOFFSET = 35;
+var TOCLEFTMARGIN = 90;
+var TOCRIGHTMARGIN = 120;
+var TOCTITLESIZE = 18;
+var TOCFONTSIZE = 13;
+var TOCLINESPACING = 12;
+
+//
 // Generate and append a tune index to the current PDF
 //
 function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageNumberList,theTitle,sortTunes,isSortedABCIncipits){
@@ -1475,12 +1488,12 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 
 	// Set the font size
 	thePDF.setFont("Times","","normal");
-	thePDF.setFontSize(INDEXTITLESIZE);
+	thePDF.setFontSize(TOCTITLESIZE);
 
 	if (theTitle != ""){
 
 		// Add the tune names
-		thePDF.text(theTitle, thePDF.internal.pageSize.getWidth()/3.10, INDEXTOPOFFSET+a4offset, {align:"center"});
+		thePDF.text(theTitle, thePDF.internal.pageSize.getWidth()/3.10, TOCTOPOFFSET+a4offset, {align:"center"});
 
 	}
 
@@ -1490,9 +1503,9 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 	var thePaperHeight = pdf.internal.pageSize.getHeight();;
 	var thePaperWidth = pdf.internal.pageSize.getWidth()/1.5;
 
-	var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + INDEXBOTTOMOFFSET);
+	var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + TOCBOTTOMOFFSET);
 
-	var curTop = INDEXTOPOFFSET + INDEXTITLEOFFSET + a4offset;
+	var curTop = TOCTOPOFFSET + TOCTITLEOFFSET + a4offset;
 
 	var i;
 	var thePageNumber;
@@ -1501,7 +1514,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 
 	// Set the font size
 	thePDF.setFont("Times","","normal");
-	thePDF.setFontSize(INDEXFONTSIZE);
+	thePDF.setFontSize(TOCFONTSIZE);
 
 	// Make a copy of the page map
 	var localPageMap = [];
@@ -1578,13 +1591,13 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 	// Add the tunes by name and page number
 	for (i=0;i<totalTunes;++i){
 
-		thePDF.text(theTitles[i], INDEXLEFTMARGIN, curTop, {align:"left"});
+		thePDF.text(theTitles[i], TOCLEFTMARGIN, curTop, {align:"left"});
 
 		thePageNumber = localPageMap[i];
 
-		thePDF.text(""+thePageNumber, thePaperWidth-INDEXRIGHTMARGIN, curTop, {align:"left"});
+		thePDF.text(""+thePageNumber, thePaperWidth-TOCRIGHTMARGIN, curTop, {align:"left"});
 
-		curTop += INDEXLINESPACING;
+		curTop += TOCLINESPACING;
 
 		if (i != (totalTunes - 1)){
 
@@ -1607,10 +1620,10 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 
 				// Set the font size
 				thePDF.setFont("Times","","normal");
-				thePDF.setFontSize(INDEXFONTSIZE);
+				thePDF.setFontSize(TOCFONTSIZE);
 
 				// Start back at the top
-				curTop = INDEXTOPOFFSET + INDEXTITLEOFFSET + a4offset;
+				curTop = TOCTOPOFFSET + TOCTITLEOFFSET + a4offset;
 
 			}
 		}
@@ -2324,6 +2337,246 @@ function ParseCommentCommands(theNotes){
 		TunebookTPSTRequested = true;
 		theTunebookTPST = addTunebookTPST[0].replace("%addsubtitle","");
 		theTunebookTPST = theTunebookTPST.trim();
+	}
+
+	// Set the default tunebook index font size override
+	INDEXFONTSIZE = 13;
+
+	// Search for a tunebook index font size override request
+	searchRegExp = /^%indexfontsize.*$/m
+
+	// Detect tunebook index font size annotation
+	var overrideIndexFontSize = theNotes.match(searchRegExp);
+
+	if ((overrideIndexFontSize) && (overrideIndexFontSize.length > 0)){
+
+		var theFontSize = overrideIndexFontSize[0].replace("%indexfontsize","");
+
+		theFontSize = theFontSize.trim();
+		
+		var theFontSizeInt = parseInt(theFontSize);
+		
+		if ((!isNaN(theFontSizeInt)) && (theFontSizeInt > 0)){
+
+			INDEXFONTSIZE = theFontSizeInt;
+
+		}
+	}
+
+	// Set the default tunebook index line spacing 
+	INDEXLINESPACING = 12;
+
+	// Search for a tunebook index line spacing override request
+	searchRegExp = /^%indexlinespacing.*$/m
+
+	// Detect tunebook index line spacing annotation
+	var overrideIndexLineSpacing = theNotes.match(searchRegExp);
+
+	if ((overrideIndexLineSpacing) && (overrideIndexLineSpacing.length > 0)){
+
+		var theLineSpacing = overrideIndexLineSpacing[0].replace("%indexlinespacing","");
+
+		theLineSpacing = theLineSpacing.trim();
+		
+		var theLineSpacingInt = parseInt(theLineSpacing);
+		
+		if ((!isNaN(theLineSpacingInt)) && (theLineSpacingInt >= 0)){
+
+			INDEXLINESPACING = theLineSpacingInt;
+
+		}
+	}
+
+	// Set the default tunebook top offset override
+	INDEXTITLESIZE = 18;
+
+	// Search for a tunebook index title font size override request
+	searchRegExp = /^%indextitlefontsize.*$/m
+
+	// Detect tunebook index title font size annotation
+	var overrideIndexTitleFontSize = theNotes.match(searchRegExp);
+
+	if ((overrideIndexTitleFontSize) && (overrideIndexTitleFontSize.length > 0)){
+
+		var theFontSize = overrideIndexTitleFontSize[0].replace("%indextitlefontsize","");
+
+		theFontSize = theFontSize.trim();
+		
+		var theFontSizeInt = parseInt(theFontSize);
+		
+		if ((!isNaN(theFontSizeInt)) && (theFontSizeInt > 0)){
+
+			INDEXTITLESIZE = theFontSizeInt;
+
+		}
+	}
+
+	// Set the default tunebook title offset 
+	INDEXTITLEOFFSET = 35;
+
+	// Search for a tunebook index title offset override request
+	searchRegExp = /^%indextitleoffset.*$/m
+
+	// Detect tunebook index title offset annotation
+	var overrideIndexTitleOffset = theNotes.match(searchRegExp);
+
+	if ((overrideIndexTitleOffset) && (overrideIndexTitleOffset.length > 0)){
+
+		var theTitleOffset = overrideIndexTitleOffset[0].replace("%indextitleoffset","");
+
+		theTitleOffset = theTitleOffset.trim();
+		
+		var theTitleOffsetInt = parseInt(theTitleOffset);
+		
+		if ((!isNaN(theTitleOffsetInt)) && (theTitleOffsetInt >= 0)){
+
+			INDEXTITLEOFFSET = theTitleOffsetInt;
+
+		}
+	}
+
+	// Set the default tunebook index top offset 
+	INDEXTOPOFFSET = 330;
+
+	// Search for a tunebook index top offset override request
+	searchRegExp = /^%indextopoffset.*$/m
+
+	// Detect tunebook index top offset annotation
+	var overrideIndexTopOffset = theNotes.match(searchRegExp);
+
+	if ((overrideIndexTopOffset) && (overrideIndexTopOffset.length > 0)){
+
+		var theTopOffset = overrideIndexTopOffset[0].replace("%indextopoffset","");
+
+		theTopOffset = theTopOffset.trim();
+		
+		var theTopOffsetInt = parseInt(theTopOffset);
+		
+		if ((!isNaN(theTopOffsetInt)) && (theTopOffsetInt >= 0)){
+
+			INDEXTOPOFFSET = theTopOffsetInt + 300;
+
+		}
+	}
+
+	// Set the default tunebook TOC font size override
+	TOCFONTSIZE = 13;
+
+	// Search for a tunebook TOC font size override request
+	searchRegExp = /^%tocfontsize.*$/m
+
+	// Detect tunebook TOC font size annotation
+	var overrideTOCFontSize = theNotes.match(searchRegExp);
+
+	if ((overrideTOCFontSize) && (overrideTOCFontSize.length > 0)){
+
+		var theFontSize = overrideTOCFontSize[0].replace("%tocfontsize","");
+
+		theFontSize = theFontSize.trim();
+		
+		var theFontSizeInt = parseInt(theFontSize);
+		
+		if ((!isNaN(theFontSizeInt)) && (theFontSizeInt > 0)){
+
+			TOCFONTSIZE = theFontSizeInt;
+
+		}
+	}
+
+	// Set the default tunebook TOC line spacing 
+	TOCLINESPACING = 12;
+
+	// Search for a tunebook TOC line spacing override request
+	searchRegExp = /^%toclinespacing.*$/m
+
+	// Detect tunebook TOC line spacing annotation
+	var overrideTOCLineSpacing = theNotes.match(searchRegExp);
+
+	if ((overrideTOCLineSpacing) && (overrideTOCLineSpacing.length > 0)){
+
+		var theLineSpacing = overrideTOCLineSpacing[0].replace("%toclinespacing","");
+
+		theLineSpacing = theLineSpacing.trim();
+		
+		var theLineSpacingInt = parseInt(theLineSpacing);
+		
+		if ((!isNaN(theLineSpacingInt)) && (theLineSpacingInt >= 0)){
+
+			TOCLINESPACING = theLineSpacingInt;
+
+		}
+	}
+
+	// Set the default tunebook top offset override
+	TOCTITLESIZE = 18;
+
+	// Search for a tunebook TOC title font size override request
+	searchRegExp = /^%toctitlefontsize.*$/m
+
+	// Detect tunebook TOC title font size annotation
+	var overrideTOCTitleFontSize = theNotes.match(searchRegExp);
+
+	if ((overrideTOCTitleFontSize) && (overrideTOCTitleFontSize.length > 0)){
+
+		var theFontSize = overrideTOCTitleFontSize[0].replace("%toctitlefontsize","");
+
+		theFontSize = theFontSize.trim();
+		
+		var theFontSizeInt = parseInt(theFontSize);
+		
+		if ((!isNaN(theFontSizeInt)) && (theFontSizeInt > 0)){
+
+			TOCTITLESIZE = theFontSizeInt;
+
+		}
+	}
+
+	// Set the default tunebook title offset 
+	TOCTITLEOFFSET = 35;
+
+	// Search for a tunebook TOC title offset override request
+	searchRegExp = /^%toctitleoffset.*$/m
+
+	// Detect tunebook index title offset annotation
+	var overrideTOCTitleOffset = theNotes.match(searchRegExp);
+
+	if ((overrideTOCTitleOffset) && (overrideTOCTitleOffset.length > 0)){
+
+		var theTitleOffset = overrideTOCTitleOffset[0].replace("%toctitleoffset","");
+
+		theTitleOffset = theTitleOffset.trim();
+		
+		var theTitleOffsetInt = parseInt(theTitleOffset);
+		
+		if ((!isNaN(theTitleOffsetInt)) && (theTitleOffsetInt >= 0)){
+
+			TOCTITLEOFFSET = theTitleOffsetInt;
+
+		}
+	}
+
+	// Set the default tunebook TOC top offset 
+	TOCTOPOFFSET = 330;
+
+	// Search for a tunebook TOC top offset override request
+	searchRegExp = /^%toctopoffset.*$/m
+
+	// Detect tunebook TOC top offset annotation
+	var overrideTOCTopOffset = theNotes.match(searchRegExp);
+
+	if ((overrideTOCTopOffset) && (overrideTOCTopOffset.length > 0)){
+
+		var theTopOffset = overrideTOCTopOffset[0].replace("%toctopoffset","");
+
+		theTopOffset = theTopOffset.trim();
+		
+		var theTopOffsetInt = parseInt(theTopOffset);
+		
+		if ((!isNaN(theTopOffsetInt)) && (theTopOffsetInt >= 0)){
+
+			TOCTOPOFFSET = theTopOffsetInt + 300;
+
+		}
 	}
 
 }
@@ -7349,10 +7602,20 @@ function InjectPDFHeaders(e){
 		output += "%addsubtitle Title Page Subtitle\n";
 		output += "%addtoc Table of Contents\n";
 		output += "%addsortedtoc Table of Contents Sorted by Tune Name\n";
-		output += "%pageheader Page Header\n"
-		output += "%pagefooter Page Footer\n"
+		output += "%toctopoffset 30\n";
+        output += "%toctitleoffset 35\n";
+        output += "%toctitlefontsize 18\n";
+        output += "%tocfontsize 13\n";
+        output += "%toclinespacing 12\n";
 		output += "%addindex Unsorted Index\n"
 		output += "%addsortedindex Index Sorted by Tune Name\n"
+        output += "%indextopoffset 30\n";
+        output += "%indextitleoffset 35\n";
+        output += "%indextitlefontsize 18\n";
+        output += "%indexfontsize 13\n";
+        output += "%indexlinespacing 12\n";
+		output += "%pageheader Page Header\n"
+		output += "%pagefooter Page Footer\n"
 		output += "%qrcode\n";
 		output += "\n";
 		
