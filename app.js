@@ -7146,7 +7146,7 @@ function processShareLink() {
 	if (urlParams.has("capo")) {
 		var capo = urlParams.get("capo");
 		document.getElementById("capo").value = capo;
-		gCapo = capo;
+		gCapo = parseInt(capo);
 	}
 	else{
 		gCapo = 0;
@@ -8118,7 +8118,7 @@ function restoreStateFromLocalStorage(){
 
 		document.getElementById("capo").value = theCapo;
 
-		gCapo = theCapo;
+		gCapo = parseInt(theCapo);
 
 	}
 
