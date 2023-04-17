@@ -47,9 +47,6 @@ var gIsIPhone = false;
 var gIsSafari = false;
 var gIsAndroid = false;
 
-// For SVG render bug on version 112 of Firefox
-var gIsFirefox = false;
-
 var gRenderingPDF = false;
 
 var gTheQRCode = null;
@@ -4202,7 +4199,8 @@ function GetABCJSParams(instrument){
 		partsfont: pFont,
 		gchordfont: "Verdana 12",
 		vocalfont: pFont,
-		wordsfont: pFont
+		wordsfont: pFont,
+		tabnumberfont: "Arial 12"
 	};
 
 	var params;
@@ -4295,11 +4293,12 @@ function GetABCJSParams(instrument){
 			format: commonFontFormat
 		}
 	} else if (instrument == "notenames") {
+		commonFontFormat.tabnumberfont = "Arial 12";
 		params = {
 			tablature: [{
 				instrument: 'violin',
 				label: theLabel,
-				tuning: ['G,'],
+				tuning: ['G,,,','G,,','G,'],
 				highestNote: "b'"
 			}],
 			responsive: 'resize',
@@ -4538,7 +4537,7 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 		if (instrument == "whistle") {
 
 			// hiermit findet er alle g's, die eine Tabzahl sind. 
-			var Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g > path[class="abcjs-top-line"]');
+			var Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g > [class="abcjs-top-line"]');
 
 			for (x = 0; x < Tabstriche.length; x++) {
 
@@ -4651,7 +4650,7 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 			var useSharps = true;
 
 			// hiermit findet er alle g's, die eine Tabzahl sind. 
-			var Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g > path[class="abcjs-top-line"]');
+			var Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g > [class="abcjs-top-line"]');
 
 			for (x = 0; x < Tabstriche.length; x++) {
 				// Wenn es nur Note und Tab geht - nur beim Tab die Linien ausblenden.
@@ -4691,6 +4690,7 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 						}
 
 					}
+
 					var Tspans = theSVG.querySelectorAll('g[data-name="tabNumber"] > text > tspan');
 
 					if (useSharps) {
@@ -8045,20 +8045,6 @@ function isSafari(){
 	}
 }
 
-//
-// Are we on Firefox?
-//
-function isFirefox112(){
-
-	if (/Firefox\/112.0/i.test(navigator.userAgent)) {
-		return true;
-	}
-	else{
-		return false;
-	}
-}
-
-
 // 
 // Restore the application state from local storage
 //
@@ -8209,12 +8195,6 @@ function DoStartup() {
 	DoMaximize();
 
 	// Get platform info for later UI adaption
-
-	// Are we on Firefox
-	gIsFirefox = false;
-	if (isFirefox112()){
-		gIsFirefox = true;
-	}
 
 	// Are we on Safari?
 	gIsSafari = false;
@@ -8493,35 +8473,6 @@ function DoStartup() {
 
 		gLocalStorageAvailable = true;
 
-	}
-
-	if (gIsFirefox){
-
-		var showFirefoxWarning = true;
-
-
-		// Only show the Firefox 112 warning one time
-		
-		if (gLocalStorageAvailable){
-
-			if (localStorage.firefoxWarning){
-
-				showFirefoxWarning = false;
-
-			}
-			else{
-
-				localStorage.firefoxWarning = true;
-
-			}
-		}
-
-		if (showFirefoxWarning)
-		{
-			DayPilot.Modal.alert("<center><p><strong>Firefox Version 112 Notation Rendering Issue</strong></p><p>Firefox version 112 has issues with rendering the on-screen notation.<br/><br/>Note stems and staff lines may be missing.<br/><br/>PDF export is OK.<br/><br/>I suggest using Chrome instead until Firefox fixes the issue.<br/><br/>This warning will only appear this one time.</p></center>",{ theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
-				localStorage.showedFirefoxWarning = true;
-			});
-		}
 	}
 
 	// Check for and process URL share link
