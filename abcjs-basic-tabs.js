@@ -25070,7 +25070,7 @@ var Renderer = function Renderer(paper) {
   this.padding = {}; // renderer's padding is managed by the controller
   this.reset();
   // MAE FOOFOO Make this the case for all versions of Firefox
-  this.firefox112 = navigator.userAgent.indexOf('Firefox') >= 0;
+  this.firefox112 = false; //navigator.userAgent.indexOf('Firefox') >= 0;
 };
 Renderer.prototype.reset = function () {
   this.paper.clear();
