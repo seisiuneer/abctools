@@ -130,6 +130,9 @@ var gRenderDivClickOffset = -1;
 // For local storage of settings
 var gLocalStorageAvailable = false;
 
+// PDF oversampling for PDF rendering
+var gPDFQuality = 0.75;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -2576,6 +2579,29 @@ function ParseCommentCommands(theNotes){
 		}
 	}
 
+	// Set the default tunebook PDF quality for 2X oversampling
+	gPDFQuality = 0.75;
+
+	// Search for a tunebook PDF quality request
+	searchRegExp = /^%pdfquality.*$/m
+
+	// Detect tunebook pdf quality annotation
+	var overridePDFQuality = theNotes.match(searchRegExp);
+
+	if ((overridePDFQuality) && (overridePDFQuality.length > 0)){
+
+		var thePDFQuality = overridePDFQuality[0].replace("%pdfquality","");
+
+		thePDFQuality = thePDFQuality.trim();
+		
+		var thePDFQualityFloat = parseFloat(thePDFQuality);
+		
+		if ((!isNaN(thePDFQualityFloat)) && (thePDFQualityFloat >= 0)){
+
+			gPDFQuality = thePDFQualityFloat;
+
+		}
+	}
 }
 
 //
@@ -2812,7 +2838,7 @@ function PrimeWhistleRender(theBlocks,callback){
 			style: {
 				background: "white"
 			},
-			pixelRatio: 2 
+			pixelRatio: (gPDFQuality*2)
 		})
 		.then(function(canvas){
 
@@ -2838,7 +2864,7 @@ function PrimeWhistleRender(theBlocks,callback){
 					style: {
 						background: "white"
 					},
-					pixelRatio: 2 
+					pixelRatio: (gPDFQuality*2)
 				})
 				.then(function(canvas){
 
@@ -2877,7 +2903,7 @@ function PrimeWhistleRender(theBlocks,callback){
 							style: {
 								background: "white"
 							},
-							pixelRatio: 2 
+							pixelRatio: (gPDFQuality*2) 
 						})
 						.then(function(canvas){
 
@@ -2940,7 +2966,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 			style: {
 				background: "white"
 			},
-			pixelRatio: 2 
+			pixelRatio: (gPDFQuality*2) 
 		})
 		.then(function(canvas) {
 
@@ -5951,7 +5977,7 @@ function ToggleChords(e) {
 function NewABC(){
 
 	// Stuff in some default ABC with additional options explained
-	gTheABC.value = "X: 1\nT: New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%%MIDI program 74\n%\n% Enter the ABC for your tune(s) below:\n%\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|\n\n%\n% To choose the sound when played, change the MIDI program # above to:\n%\n% 74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano\n%\n\n% Try these custom PDF page annotations by removing the % and the space\n%\n% Add a PDF page header or footer:\n%\n% %pageheader My Tune Set: $TUNENAMES\n% %pagefooter PDF named: $PDFNAME saved on: $DATEMDY at $TIME\n%\n% Before the tunes, add a title page with a title:\n%\n% %addtitle My Tunebook Title Page\n%\n% Optional subtitle for the title page:\n%\n% %addsubtitle My Tunebook Title Page Subtitle\n%\n% Before the tunes, add a table of contents with a title:\n%\n% %addtoc My Tunebook Table of Contents\n%\n% Before the tunes, add a sorted table of contents with a title:\n%\n% %addsortedtoc My Tunebook Table of Contents Sorted by Tune Name\n%\n% After the tunes, add an unsorted tunebook index with a title:\n%\n% %addindex My Tunebook Unsorted Index\n%\n% After the tunes, add a sorted tunebook index with a title:\n%\n% %addsortedindex My Tunebook Index Sorted by Tune Name\n%\n% After the tunes, add a sharing QR code on a new page in the PDF:\n%\n% %qrcode\n%\n";
+	gTheABC.value = "X: 1\nT: New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%%MIDI program 74\n%\n% Enter the ABC for your tune(s) below:\n%\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|\n\n%\n% To choose the sound when played, change the MIDI program # above to:\n%\n% 74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano\n%\n\n% Try these custom PDF page annotations by removing the % and the space\n%\n% Set the PDF quality (1.0 is highest quality, 0.5 is good quality):\n%\n% %pdfquality 0.75\n%\n% Add a PDF page header or footer:\n%\n% %pageheader My Tune Set: $TUNENAMES\n% %pagefooter PDF named: $PDFNAME saved on: $DATEMDY at $TIME\n%\n% Before the tunes, add a title page with a title:\n%\n% %addtitle My Tunebook Title Page\n%\n% Optional subtitle for the title page:\n%\n% %addsubtitle My Tunebook Title Page Subtitle\n%\n% Before the tunes, add a table of contents with a title:\n%\n% %addtoc My Tunebook Table of Contents\n%\n% Before the tunes, add a sorted table of contents with a title:\n%\n% %addsortedtoc My Tunebook Table of Contents Sorted by Tune Name\n%\n% After the tunes, add an unsorted tunebook index with a title:\n%\n% %addindex My Tunebook Unsorted Index\n%\n% After the tunes, add a sorted tunebook index with a title:\n%\n% %addsortedindex My Tunebook Index Sorted by Tune Name\n%\n% After the tunes, add a sharing QR code on a new page in the PDF:\n%\n% %qrcode\n%\n";
 
 	// Refocus back on the ABC
 	FocusABC();
@@ -8188,6 +8214,7 @@ function DoStartup() {
 	gForceFullRender = false;
 	gIsOneColumn = true;
 	gLocalStorageAvailable = false;
+	gPDFQuality = 0.75;
 
 	// Startup in blank screen
 	
