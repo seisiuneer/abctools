@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-       
+      
         <style>
         p {
         font-size:14pt;
@@ -115,6 +115,7 @@
             <p class="toc"><a href="#playing_your_tunes">Playing Your Tunes</a></p>
             <p class="toc"><a href="#selecting_the_instrument_for_playback">Selecting the Instrument for Playback</a></p>
             <p class="toc"><a href="#pdf_tunebook_settings">PDF Tunebook Settings</a></p>
+            <p class="toc"><a href="#pdf_quality_setting">PDF Quality Setting</a></p>
             <p class="toc"><a href="#pdf_page_headers_and_footers">PDF Page Headers and Footers</a></p>
             <p class="toc"><a href="#adding_a_pdf_title_page">Adding a PDF Tunebook Title Page</a></p>
             <p class="toc"><a href="#adding_a_pdf_tunebook_table_of_contents_and_index">Adding a PDF Tunebook Table of Contents and Index</a></p>
@@ -356,6 +357,17 @@
             </div>
             <p>Choose whether the page number will be shown on the first page of the PDF.</p>
             <p>Default is:&nbsp;&nbsp;Yes</p>
+            <hr id="pdf_quality_setting">
+            <h1>PDF Quality Setting</h1>
+            <p>You may set the quality of the PDF output by adding the following ABC comment-based annotation anywhere in the ABC:</p>
+            <p></p>
+            <p>%pdfquality quality_value</p>
+            <p></p>
+            <p>Where quality_value is a floating point value, default is 0.75 (high quality)</p>
+            <p>Lower values will create lower resolution PDF notation output and smaller PDF file size.</p>
+            <p>A value of 1.0 will produce the maximum quality.</p>
+            <p>A value of 0.5 will still produce good-quality PDF notation at about half the PDF file size of the maximum quality.</p>
+            <p>A pdfquality value of 0.25 can be used to produce draft quality output with even smaller PDF file size.</p>
             <hr id="pdf_page_headers_and_footers">
             <h1>PDF Page Headers and Footers</h1>
             <p>You may add custom page headers and footers to your exported PDF files by including the following ABC comment-based annotations anywhere in your ABC:</p>
