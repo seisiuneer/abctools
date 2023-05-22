@@ -6449,7 +6449,17 @@ function saveABCFile(thePrompt, thePlaceholder, theData){
 
 		setTimeout(function() {
 		  window.URL.revokeObjectURL(url);
-		}, 1000);
+		}, 1000);		
+
+		// Update the displayed name
+		gDisplayedName = fname;
+
+		// Mark ABC as from a file
+		gABCFromFile = true;
+
+		// Update the displayed filename
+		var fileSelected = document.getElementById('abc-selected');
+		fileSelected.innerText = fname;
 
 	});
 }
@@ -6806,11 +6816,17 @@ function SaveABC(){
 
 			if ((!gIsAndroid) && (!gIsIOS)){
 
-				saveABCFile("Please enter a filename for your ABC file:",theName+".abc",theData);
+				theName += ".abc";
+
+				saveABCFile("Please enter a filename for your ABC file:",theName,theData);
 			}
 			else{
-				saveABCFile("Please enter a filename for your ABC file:",theName+".txt",theData);
+
+				theName += "txt";
+
+				saveABCFile("Please enter a filename for your ABC file:",theName,theData);
 			}
+
 		}
 	}
 }
