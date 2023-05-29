@@ -1309,7 +1309,7 @@ var INDEXLINESPACING = 12;
 //
 // Generate and append a tune index to the current PDF
 //
-function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageNumberList,theTitle,sortTunes,isSortedABCIncipits,doPageLinks,TPRequested){
+function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageNumberList,theTitle,sortTunes,isSortedABCIncipits,doPageLinks,pageDelta){
 
 	var a4offset = 0
 
@@ -1425,10 +1425,9 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 
 		var theFinalPageNumber = thePageNumber;
 
+		// Add title page and TOC page count offset to page links
 		if (doPageLinks){
-			if (TPRequested){
-				theFinalPageNumber++;
-			}
+			theFinalPageNumber += pageDelta;
 		}
 
 		if (doPageLinks){
@@ -3419,6 +3418,8 @@ function ExportTextIncipitsPDF(title){
 
 		document.getElementById("statustunecount").innerHTML = "ABC Incipits Added!";
 
+		var theDelta = theCurrentPageNumber;
+
 		// Did they request a tune TOC?
 		if (TunebookTOCRequested){
 			
@@ -3458,14 +3459,15 @@ function ExportTextIncipitsPDF(title){
 			
 		}
 
+		// How many pages were added before the tunes?
+		theDelta = theCurrentPageNumber - theDelta;
+
 		// Did they request a tunebook index?
 		if (TunebookIndexRequested){
 			
 			document.getElementById("statustunecount").innerHTML = "Adding Tunebook Index";
 
-			var doPageLinks = gIncludePageLinks && (!(TunebookSortedTOCRequested || TunebookTOCRequested));
-
-			AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookIndexTitle,TunebookABCSortedIncipitsRequested,TunebookABCSortedIncipitsRequested,doPageLinks, TunebookTPRequested);
+			AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookIndexTitle,TunebookABCSortedIncipitsRequested,TunebookABCSortedIncipitsRequested,gIncludePageLinks, theDelta);
 
 			document.getElementById("statustunecount").innerHTML = "Tunebook Index Added!";
 			
@@ -3478,9 +3480,7 @@ function ExportTextIncipitsPDF(title){
 			
 			document.getElementById("statustunecount").innerHTML = "Adding Tunebook Sorted Index";
 
-			var doPageLinks = gIncludePageLinks && (!(TunebookSortedTOCRequested || TunebookTOCRequested));
-
-			AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedIndexTitle,true,TunebookABCSortedIncipitsRequested,doPageLinks,TunebookTPRequested);
+			AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedIndexTitle,true,TunebookABCSortedIncipitsRequested,gIncludePageLinks,theDelta);
 
 			document.getElementById("statustunecount").innerHTML = "Tunebook Sorted Index Added!";
 			
@@ -3904,6 +3904,8 @@ function ExportNotationPDF(title) {
 					// Add final page number, header, and footer
 					AddPageHeaderFooter(pdf,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);	
 
+					var theDelta = theCurrentPageNumber;
+
 					// Did they request a tune TOC?
 					if (TunebookTOCRequested){
 						
@@ -3943,15 +3945,15 @@ function ExportNotationPDF(title) {
 						
 					}
 
+					// How many pages were added before the tunes?
+					theDelta = theCurrentPageNumber - theDelta;
 
 					// Did they request a tunebook index?
 					if (TunebookIndexRequested){
 						
 						document.getElementById("statustunecount").innerHTML = "Adding Tunebook Index";
 
-						var doPageLinks = gIncludePageLinks && (!(TunebookSortedTOCRequested || TunebookTOCRequested));
-
-						AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookIndexTitle,false,false,doPageLinks,TunebookTPRequested);
+						AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookIndexTitle,false,false,gIncludePageLinks,theDelta);
 
 						document.getElementById("statustunecount").innerHTML = "Tunebook Index Added!";
 						
@@ -3964,9 +3966,7 @@ function ExportNotationPDF(title) {
 						
 						document.getElementById("statustunecount").innerHTML = "Adding Tunebook Sorted Index";
 
-						var doPageLinks = gIncludePageLinks && (!(TunebookSortedTOCRequested || TunebookTOCRequested));
-
-						AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedIndexTitle,true,false,doPageLinks,TunebookTPRequested);
+						AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedIndexTitle,true,false,gIncludePageLinks,theDelta);
 
 						document.getElementById("statustunecount").innerHTML = "Tunebook Sorted Index Added!";
 						
@@ -6021,7 +6021,7 @@ function ToggleChords(e) {
 function NewABC(){
 
 	// Stuff in some default ABC with additional options explained
-	gTheABC.value = "X: 1\nT: New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%%MIDI program 74\n%\n% Enter the ABC for your tune(s) below:\n%\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|\n\n%\n% To choose the sound when played, change the MIDI program # above to:\n%\n% 74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano\n%\n\n% Try these custom PDF page annotations by removing the % and the space\n%\n% Set the PDF quality (1.0 is highest quality, 0.5 is good quality):\n%\n% %pdfquality 0.75\n%\n% Add a PDF page header or footer:\n%\n% %pageheader My Tune Set: $TUNENAMES\n% %pagefooter PDF named: $PDFNAME saved on: $DATEMDY at $TIME\n%\n% Before the tunes, add a title page with a title:\n%\n% %addtitle My Tunebook Title Page\n%\n% Optional subtitle for the title page:\n%\n% %addsubtitle My Tunebook Title Page Subtitle\n%\n% Before the tunes, add a table of contents with a title:\n%\n% %addtoc My Tunebook Table of Contents\n%\n% Before the tunes, add a sorted table of contents with a title:\n%\n% %addsortedtoc My Tunebook Table of Contents Sorted by Tune Name\n%\n% After the tunes, add an unsorted tunebook index with a title:\n%\n% %addindex My Tunebook Unsorted Index\n%\n% After the tunes, add a sorted tunebook index with a title:\n%\n% %addsortedindex My Tunebook Index Sorted by Tune Name\n%\n% After the tunes, add a sharing QR code on a new page in the PDF:\n%\n% %qrcode\n%\n";
+	gTheABC.value = "X: 1\nT: New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%%MIDI program 74\n%\n% Enter the ABC for your tune(s) below:\n%\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|\n\n%\n% To choose the sound when played, change the MIDI program # above to:\n%\n% 74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano\n%\n\n% Try these custom PDF page annotations by removing the % and the space\n%\n% Set the PDF quality (1.0 is highest quality, 0.5 is good quality):\n%\n% %pdfquality 0.75\n%\n% Add a PDF page header or footer:\n%\n% %pageheader My Tune Set: $TUNENAMES\n% %pagefooter PDF named: $PDFNAME saved on: $DATEMDY at $TIME\n%\n% Before the tunes, add a title page with a title:\n%\n% %addtitle My Tunebook Title Page\n%\n% Optional subtitle for the title page:\n%\n% %addsubtitle My Tunebook Title Page Subtitle\n%\n% Before the tunes, add a table of contents with a title:\n%\n% %addtoc My Tunebook Table of Contents\n%\n% Before the tunes, add a sorted table of contents with a title:\n%\n% %addsortedtoc My Tunebook Table of Contents Sorted by Tune Name\n%\n% After the tunes, add an unsorted tunebook index with a title:\n%\n% %addindex My Tunebook Unsorted Index\n%\n% After the tunes, add a sorted tunebook index with a title:\n%\n% %addsortedindex My Tunebook Index Sorted by Tune Name\n%\n% Add page links in the tune index back to the tunes\n%\n% %doindexpagelinks\n%\n% After the tunes, add a sharing QR code on a new page in the PDF:\n%\n% %qrcode\n%\n";
 
 	// Refocus back on the ABC
 	FocusABC();
@@ -7695,6 +7695,7 @@ function InjectPDFHeaders(e){
         output += "%toclinespacing 12\n";
 		output += "%addindex Unsorted Index\n"
 		output += "%addsortedindex Index Sorted by Tune Name\n"
+		output += "%doindexpagelinks\n"
         output += "%indextopoffset 30\n";
         output += "%indextitleoffset 35\n";
         output += "%indextitlefontsize 18\n";
