@@ -133,6 +133,9 @@ var gLocalStorageAvailable = false;
 // PDF oversampling for PDF rendering
 var gPDFQuality = 0.75;
 
+// Include page links on tunebook index pages
+var gIncludePageLinks = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -1306,7 +1309,7 @@ var INDEXLINESPACING = 12;
 //
 // Generate and append a tune index to the current PDF
 //
-function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageNumberList,theTitle,sortTunes,isSortedABCIncipits){
+function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageNumberList,theTitle,sortTunes,isSortedABCIncipits,doPageLinks,TPRequested){
 
 	var a4offset = 0
 
@@ -1418,11 +1421,29 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 	// Add the tunes by name and page number
 	for (i=0;i<totalTunes;++i){
 
-		thePDF.text(theTitles[i], INDEXLEFTMARGIN, curTop, {align:"left"});
-
 		thePageNumber = localPageMap[i];
 
-		thePDF.text(""+thePageNumber, thePaperWidth-INDEXRIGHTMARGIN, curTop, {align:"left"});
+		var theFinalPageNumber = thePageNumber;
+
+		if (doPageLinks){
+			if (TPRequested){
+				theFinalPageNumber++;
+			}
+		}
+
+		if (doPageLinks){
+			thePDF.textWithLink(theTitles[i], INDEXLEFTMARGIN, curTop, {align:"left",pageNumber:theFinalPageNumber});
+		}
+		else{
+			thePDF.text(theTitles[i], INDEXLEFTMARGIN, curTop, {align:"left"});
+		}
+
+		if (doPageLinks){
+			thePDF.textWithLink(""+thePageNumber, thePaperWidth-INDEXRIGHTMARGIN, curTop, {align:"left",pageNumber:theFinalPageNumber});
+		}
+		else{
+			thePDF.text(""+thePageNumber, thePaperWidth-INDEXRIGHTMARGIN, curTop, {align:"left"});
+		}
 
 		curTop += INDEXLINESPACING;
 
@@ -2602,6 +2623,21 @@ function ParseCommentCommands(theNotes){
 
 		}
 	}
+
+	// Include links to pages in the index
+	gIncludePageLinks = false;
+
+	// Search for a tunebook index page links request
+	searchRegExp = /^%doindexpagelinks.*$/m
+
+	// Detect tunebook page links annotation
+	var doIndexPageLinks = theNotes.match(searchRegExp);
+
+	if ((doIndexPageLinks) && (doIndexPageLinks.length > 0)){
+
+		gIncludePageLinks = true;
+
+	}
 }
 
 //
@@ -3409,13 +3445,27 @@ function ExportTextIncipitsPDF(title){
 			
 		}
 
+		// Did they request a tunebook title page?
+		if (TunebookTPRequested){
+			
+			document.getElementById("statustunecount").innerHTML = "Adding Title Page";
+			
+			AppendTuneTitlePage(pdf,paperStyle,theTunebookTP,theTunebookTPST);
+
+			document.getElementById("statustunecount").innerHTML = "Title Page Added!";
+			
+			document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+			
+		}
 
 		// Did they request a tunebook index?
 		if (TunebookIndexRequested){
 			
 			document.getElementById("statustunecount").innerHTML = "Adding Tunebook Index";
 
-			AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookIndexTitle,TunebookABCSortedIncipitsRequested,TunebookABCSortedIncipitsRequested);
+			var doPageLinks = gIncludePageLinks && (!(TunebookSortedTOCRequested || TunebookTOCRequested));
+
+			AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookIndexTitle,TunebookABCSortedIncipitsRequested,TunebookABCSortedIncipitsRequested,doPageLinks, TunebookTPRequested);
 
 			document.getElementById("statustunecount").innerHTML = "Tunebook Index Added!";
 			
@@ -3428,22 +3478,11 @@ function ExportTextIncipitsPDF(title){
 			
 			document.getElementById("statustunecount").innerHTML = "Adding Tunebook Sorted Index";
 
-			AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedIndexTitle,true,TunebookABCSortedIncipitsRequested);
+			var doPageLinks = gIncludePageLinks && (!(TunebookSortedTOCRequested || TunebookTOCRequested));
+
+			AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedIndexTitle,true,TunebookABCSortedIncipitsRequested,doPageLinks,TunebookTPRequested);
 
 			document.getElementById("statustunecount").innerHTML = "Tunebook Sorted Index Added!";
-			
-			document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
-			
-		}
-
-		// Did they request a tunebook title page?
-		if (TunebookTPRequested){
-			
-			document.getElementById("statustunecount").innerHTML = "Adding Title Page";
-			
-			AppendTuneTitlePage(pdf,paperStyle,theTunebookTP,theTunebookTPST);
-
-			document.getElementById("statustunecount").innerHTML = "Title Page Added!";
 			
 			document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
 			
@@ -3891,32 +3930,6 @@ function ExportNotationPDF(title) {
 
 					}
 
-					// Did they request a tunebook index?
-					if (TunebookIndexRequested){
-						
-						document.getElementById("statustunecount").innerHTML = "Adding Tunebook Index";
-
-						AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookIndexTitle,false,false);
-
-						document.getElementById("statustunecount").innerHTML = "Tunebook Index Added!";
-						
-						document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
-						
-					}
-
-					// Did they request a sorted tunebook index?
-					if (TunebookSortedIndexRequested){
-						
-						document.getElementById("statustunecount").innerHTML = "Adding Tunebook Sorted Index";
-
-						AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedIndexTitle,true,false);
-
-						document.getElementById("statustunecount").innerHTML = "Tunebook Sorted Index Added!";
-						
-						document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
-						
-					}
-				
 					// Did they request a tunebook title page?
 					if (TunebookTPRequested){
 						
@@ -3930,6 +3943,37 @@ function ExportNotationPDF(title) {
 						
 					}
 
+
+					// Did they request a tunebook index?
+					if (TunebookIndexRequested){
+						
+						document.getElementById("statustunecount").innerHTML = "Adding Tunebook Index";
+
+						var doPageLinks = gIncludePageLinks && (!(TunebookSortedTOCRequested || TunebookTOCRequested));
+
+						AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookIndexTitle,false,false,doPageLinks,TunebookTPRequested);
+
+						document.getElementById("statustunecount").innerHTML = "Tunebook Index Added!";
+						
+						document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+						
+					}
+
+					// Did they request a sorted tunebook index?
+					if (TunebookSortedIndexRequested){
+						
+						document.getElementById("statustunecount").innerHTML = "Adding Tunebook Sorted Index";
+
+						var doPageLinks = gIncludePageLinks && (!(TunebookSortedTOCRequested || TunebookTOCRequested));
+
+						AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedIndexTitle,true,false,doPageLinks,TunebookTPRequested);
+
+						document.getElementById("statustunecount").innerHTML = "Tunebook Sorted Index Added!";
+						
+						document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+						
+					}
+				
 					// Did they request a QR code?
 					if (QRCodeRequested){
 
@@ -8231,6 +8275,7 @@ function DoStartup() {
 	gIsOneColumn = true;
 	gLocalStorageAvailable = false;
 	gPDFQuality = 0.75;
+	gIncludePageLinks = false;
 
 	// Startup in blank screen
 	
