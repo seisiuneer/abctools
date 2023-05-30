@@ -136,6 +136,10 @@ var gPDFQuality = 0.75;
 // Include page links on tunebook index pages
 var gIncludePageLinks = true;
 
+// Force PDF file name
+var gDoForcePDFFilename = false;
+var gForcePDFFilename = "";
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -2763,6 +2767,34 @@ function ParseCommentCommands(theNotes){
 		gIncludePageLinks = false;
 
 	}
+
+	// Clear the tunebook forced PDF title
+	gForcePDFFilename = "";
+
+	// Did they request a tunebook title force
+	gDoForcePDFFilename = false;
+
+	// Search for a tunebook force PDF title request
+	searchRegExp = /^%pdfname.*$/m
+
+	// Detect force tunebook PDF title
+	var forcePDFFilename = theNotes.match(searchRegExp);
+
+	if ((forcePDFFilename) && (forcePDFFilename.length > 0)){
+
+		gDoForcePDFFilename = true;
+
+		gForcePDFFilename = forcePDFFilename[0].replace("%pdfname","");
+
+		gForcePDFFilename = gForcePDFFilename.trim();
+
+		// Must include a name after the directive
+		if (gForcePDFFilename == ""){
+			gDoForcePDFFilename = false;
+		}
+
+	}
+
 }
 
 //
@@ -2786,6 +2818,26 @@ function ParseCommentCommands(theNotes){
 function ProcessHeaderFooter(str,pageNumber,pageCount){
 
 	var theFileName = getDescriptiveFileName(pageCount,true);
+
+	// If forcing a specific PDF export name, inject it now.
+	if (gDoForcePDFFilename){
+
+		var originalFileName = theFileName;
+		
+		theFileName = gForcePDFFilename;
+
+		// Clean the forced PDF name
+		theFileName = theFileName.trim();
+
+		// Just in case they put .pdf in the forced name
+		theFileName = theFileName.replace(".pdf","");
+
+		// Make sure we actually have a placeholder after cleaning
+		if (theFileName == ""){
+			theFileName = originalFileName;
+		}
+
+	}
 
 	var workstr = str.replace("$PDFNAME",theFileName+".pdf");
 
@@ -3331,6 +3383,29 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 // Prompt for PDF filename
 //
 function promptForPDFFilename(placeholder, callback){
+
+	// Process comment-based PDF commands
+	ParseCommentCommands(gTheABC.value);
+
+	// If forcing a specific PDF export name, inject it now.
+	if (gDoForcePDFFilename){
+
+		var originalPlaceHolder = placeholder;
+		
+		placeholder = gForcePDFFilename;
+
+		// Clean the forced PDF name
+		placeholder = placeholder.trim();
+
+		// Just in case they put .pdf in the forced name
+		placeholder = placeholder.replace(".pdf","");
+
+		// Make sure we actually have a placeholder after cleaning
+		if (placeholder == ""){
+			placeholder = originalPlaceHolder;
+		}
+
+	}
 
 	DayPilot.Modal.prompt("Please enter a filename for your PDF file:", placeholder+".pdf",{ theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
 
@@ -7926,6 +8001,7 @@ function InjectPDFHeaders(e){
         output += "%indexlinespacing 12\n";
 		output += "%pageheader Page Header\n"
 		output += "%pagefooter Page Footer\n"
+		output += "%pdfname your_pdf_filename\n"
 		output += "%qrcode\n";
 		output += "\n";
 		
@@ -8500,6 +8576,8 @@ function DoStartup() {
 	gLocalStorageAvailable = false;
 	gPDFQuality = 0.75;
 	gIncludePageLinks = true;
+	gDoForcePDFFilename = false;
+	gForcePDFFilename = "";
 
 	// Startup in blank screen
 	
