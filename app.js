@@ -796,6 +796,9 @@ function Clear() {
 
 	RenderAsync(true,null);
 
+	// And set the focus
+    gTheABC.focus();
+
 }
 
 //
@@ -813,6 +816,7 @@ function ClearNoRender() {
 	RestoreDefaults();
 
 	HideAllControls();
+
 
 }
 
