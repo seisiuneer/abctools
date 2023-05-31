@@ -8917,6 +8917,8 @@ function DoStartup() {
 	//
 	HideAllControls();
 
+	// And set the focus
+    gTheABC.focus();
 
 }
 
