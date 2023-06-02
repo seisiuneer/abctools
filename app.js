@@ -856,6 +856,8 @@ var totalTunes = 0;
 // Page header and footer
 var thePageHeader = "";
 var thePageFooter = "";
+var thePageHeaderURL = "";
+var thePageFooterURL = "";
 
 // Need to cache the time, since you don't want it to change during the render from page to page
 var theRenderTime = ""; 
@@ -888,10 +890,12 @@ var theTunebookSortedTOCTitle = "";
 // Did they request an tunebook title page?
 var TunebookTPRequested = false;
 var theTunebookTP = "";
+var theTunebookTPURL = "";
 
 // Did they request an tunebook title page subtitle?
 var TunebookTPSTRequested = false;
 var theTunebookTPST = "";
+var theTunebookTPSTURL = "";
 
 // Tune page map
 var theTunePageMap = [];
@@ -985,8 +989,20 @@ function AppendTuneTitlePage(thePDF,paperStyle,theTitle,theSubtitle){
 		thePDF.setFont("Times","","normal");
 		thePDF.setFontSize(TPTITLESIZE);
 
-		// Add the title
-		thePDF.text(theTitle, thePDF.internal.pageSize.getWidth()/3.10, TPTOPOFFSET+a4offset, {align:"center"});
+		if (theTunebookTPURL && (theTunebookTPURL != "")){
+
+			var textWidth = thePDF.getTextWidth(theTitle);
+
+			// Add the title as a hyperlink			
+			thePDF.textWithLink(theTitle, (thePDF.internal.pageSize.getWidth()/3.10)  - (textWidth/2), TPTOPOFFSET+a4offset , {align:"center", url:theTunebookTPURL});
+
+		}
+		else{
+
+			// Add the title
+			thePDF.text(theTitle, thePDF.internal.pageSize.getWidth()/3.10, TPTOPOFFSET+a4offset, {align:"center"});
+
+		}
 
 	}
 
@@ -996,8 +1012,20 @@ function AppendTuneTitlePage(thePDF,paperStyle,theTitle,theSubtitle){
 		thePDF.setFont("Times","","normal");
 		thePDF.setFontSize(TPSTTITLESIZE);
 
-		// Add the subtitle
-		thePDF.text(theSubtitle, thePDF.internal.pageSize.getWidth()/3.10, TPTOPOFFSET+TPSTOFFSET+a4offset, {align:"center"});
+		if (theTunebookTPSTURL && (theTunebookTPSTURL != "")){
+
+			var textWidth = thePDF.getTextWidth(theSubtitle);
+
+			// Add the title as a hyperlink			
+			thePDF.textWithLink(theSubtitle, (thePDF.internal.pageSize.getWidth()/3.10)  - (textWidth/2), TPTOPOFFSET+TPSTOFFSET+a4offset , {align:"center", url:theTunebookTPSTURL});
+
+		}
+		else{
+
+			// Add the subtitle
+			thePDF.text(theSubtitle, thePDF.internal.pageSize.getWidth()/3.10, TPTOPOFFSET+TPSTOFFSET+a4offset, {align:"center"});
+
+		}
 
 	}
 
@@ -1269,8 +1297,6 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 
 			if (curTop > pageSizeWithMargins){
 
-				// Add the header and footer
-				AddPageHeaderFooter(thePDF,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);
 
 				// Bump the page count
 				theCurrentPageNumber++;
@@ -1288,9 +1314,6 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 			}
 		}
 	}
-
-	// Add the final page header and footer
-	AddPageHeaderFooter(thePDF,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);	
 
 	return (tunePageMap);
 }
@@ -1455,9 +1478,6 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 				// Bump the page count
 				theCurrentPageNumber++;
 
-				// Add the header and footer, suppress the page number
-				AddPageHeaderFooter(thePDF,false,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);
-
 				// Add a new page
 				thePDF.addPage(paperStyle); 
 
@@ -1476,8 +1496,21 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 	// We're on a new page
 	theCurrentPageNumber++;
 
-	// Add the final page header and footer, suppress the page number
-	AddPageHeaderFooter(thePDF,false,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);	
+}
+
+//
+// Post process page headers and footer
+//
+function PostProcessHeadersAndFooters(thePDF,addPageNumbers,startingPage,nPages,pageNumberLocation,hideFirstPageNumber,paperStyle){
+
+	for (var i=startingPage;i<startingPage+nPages;++i){
+		
+		// Set the page
+		thePDF.setPage(i);
+
+		// Add the header and footer
+		AddPageHeaderFooter(thePDF,addPageNumbers,(i-startingPage+1),pageNumberLocation,hideFirstPageNumber,paperStyle);
+	}
 
 }
 
@@ -1641,9 +1674,6 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 		if (i != (totalTunes - 1)){
 
 			if (curTop > pageSizeWithMargins){
-
-				// Add the header and footer, suppress the page number
-				AddPageHeaderFooter(thePDF,false,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);
 
 				TOCpage++;
 
@@ -2761,7 +2791,7 @@ function ParseCommentCommands(theNotes){
 	gIncludePageLinks = true;
 
 	// Search for a tunebook index page links request
-	searchRegExp = /^%nopagelinks.*$/m
+	searchRegExp = /^%no_toc_or_index_links.*$/m
 
 	// Detect tunebook page links annotation
 	var noPageLinks = theNotes.match(searchRegExp);
@@ -2798,6 +2828,129 @@ function ParseCommentCommands(theNotes){
 		}
 
 	}
+
+	// Clear the URL page header and footers
+	thePageHeaderURL = "";
+	thePageFooterURL = "";
+	
+	// Check for URL pageheader annotation
+	searchRegExp = /^%urlpageheader.*$/m
+
+	// Detect URL page header annotation
+	var urlPageHeader = theNotes.match(searchRegExp);
+
+	if ((urlPageHeader) && (urlPageHeader.length > 0)){
+
+		var theFullPageHeader = urlPageHeader[0].replace("%urlpageheader ","");
+		
+		theFullPageHeader = theFullPageHeader.trim();
+		
+		var theSplits = theFullPageHeader.split(" ");
+		
+		if (theSplits.length > 1){
+		
+			thePageHeaderURL = theSplits[0];
+		
+			thePageHeader = theFullPageHeader.replace(thePageHeaderURL,"");
+		
+			thePageHeader = thePageHeader.trim();
+		
+		}
+	}
+
+	// Check for URL page footer annotation
+	searchRegExp = /^%urlpagefooter.*$/m
+
+	// Detect URL page footer annotation
+	var urlPageFooter = theNotes.match(searchRegExp);
+
+	if ((urlPageFooter) && (urlPageFooter.length > 0)){
+
+		var theFullPageFooter = urlPageFooter[0].replace("%urlpagefooter ","");
+		
+		theFullPageFooter = theFullPageFooter.trim();
+		
+		var theSplits = theFullPageFooter.split(" ");
+		
+		if (theSplits.length > 1){
+		
+			thePageFooterURL = theSplits[0];
+		
+			thePageFooter = theFullPageFooter.replace(thePageFooterURL,"");
+		
+			thePageFooter = thePageFooter.trim();
+		
+		}
+	}
+
+	// Check my work
+	// console.log("thePageHeader = "+thePageHeader);
+	// console.log("thePageFooter = "+thePageFooter);
+	// console.log("thePageHeaderURL = "+thePageHeaderURL);
+	// console.log("thePageFooterURL = "+thePageFooterURL);
+
+	theTunebookTPURL = "";
+	theTunebookTPSTURL = "";
+
+	// Check for URL titlepage annotation
+	searchRegExp = /^%urladdtitle.*$/m
+
+	// Detect URL title page annotation
+	var urlTitlePage = theNotes.match(searchRegExp);
+
+	if ((urlTitlePage) && (urlTitlePage.length > 0)){
+
+		var theFullTitlePage = urlTitlePage[0].replace("%urladdtitle ","");
+		
+		theTunebookTP = theFullTitlePage.trim();
+		
+		var theSplits = theFullTitlePage.split(" ");
+		
+		if (theSplits.length > 1){
+		
+			theTunebookTPURL = theSplits[0];
+		
+			theTunebookTP = theFullTitlePage.replace(theTunebookTPURL,"");
+		
+			theTunebookTP = theTunebookTP.trim();
+
+			TunebookTPRequested = true;
+
+		}
+	}
+
+	// Check for URL subtitlepage annotation
+	searchRegExp = /^%urladdsubtitle.*$/m
+
+	// Detect URL subtitle page annotation
+	var urlSubTitlePage = theNotes.match(searchRegExp);
+
+	if ((urlSubTitlePage) && (urlSubTitlePage.length > 0)){
+
+		var theFullSubTitlePage = urlSubTitlePage[0].replace("%urladdsubtitle ","");
+		
+		theTunebookTPST = theFullSubTitlePage.trim();
+		
+		var theSplits = theFullSubTitlePage.split(" ");
+		
+		if (theSplits.length > 1){
+		
+			theTunebookTPSTURL = theSplits[0];
+		
+			theTunebookTPST = theFullSubTitlePage.replace(theTunebookTPSTURL,"");
+		
+			theTunebookTPST = theTunebookTPST.trim();
+
+			TunebookTPSTRequested = true;
+
+		}
+	}
+
+	// Check my work
+	// console.log("theTunebookTP = "+theTunebookTP);
+	// console.log("theTunebookTPST = "+theTunebookTPST);
+	// console.log("theTunebookTPURL = "+theTunebookTPURL);
+	// console.log("theTunebookTPSTURL = "+theTunebookTPSTURL);
 
 }
 
@@ -2900,8 +3053,20 @@ function AddPageHeaderFooter(thePDF,doAddPageNumber,pageNumber,pageNumberLocatio
 
 		var thePageHeaderProcessed = ProcessHeaderFooter(thePageHeader,pageNumber,totalTunes);
 
-		// Add the header
-		thePDF.text(thePageHeaderProcessed, (thePDF.internal.pageSize.getWidth()/3.10), voff, {align:"center"});
+		if (thePageHeaderURL && (thePageHeaderURL != "")){
+
+			var textWidth = thePDF.getTextWidth(thePageHeaderProcessed);
+
+			// Add the header as a hyperlink
+			thePDF.textWithLink(thePageHeaderProcessed, (thePDF.internal.pageSize.getWidth()/3.10) - (textWidth/2), voff, {align:"left", url:thePageHeaderURL});
+
+		}
+		else{
+
+			// Add the header
+			thePDF.text(thePageHeaderProcessed, (thePDF.internal.pageSize.getWidth()/3.10), voff, {align:"center"});
+
+		}
 
 		// Hide page number in center of header
 		hasHeader = true;
@@ -2914,8 +3079,20 @@ function AddPageHeaderFooter(thePDF,doAddPageNumber,pageNumber,pageNumberLocatio
 
 		var thePageFooterProcessed = ProcessHeaderFooter(thePageFooter,pageNumber,totalTunes);
 
-		// Add the header
-		thePDF.text(thePageFooterProcessed, (thePDF.internal.pageSize.getWidth()/3.10), thePageNumberVerticalOffset , {align:"center"});
+		if (thePageFooterURL && (thePageFooterURL != "")){
+
+			var textWidth = thePDF.getTextWidth(thePageFooterProcessed);
+
+			// Add the footer as a hyperlink
+			thePDF.textWithLink(thePageFooterProcessed, (thePDF.internal.pageSize.getWidth()/3.10)  - (textWidth/2), thePageNumberVerticalOffset , {align:"center", url:thePageFooterURL});
+
+		}
+		else{
+
+			// Add the footer
+			thePDF.text(thePageFooterProcessed, (thePDF.internal.pageSize.getWidth()/3.10), thePageNumberVerticalOffset , {align:"center"});
+
+		}
 
 		// Hide page number in the center of the footer
 		hasFooter = true;
@@ -3230,13 +3407,6 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 					if (doSinglePage) {
 
-						if (theCurrentPageNumber != 0){
-
-							// Add page numbers, headers, and footers
-							AddPageHeaderFooter(pdf,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);
-
-						}
-
 						running_height = PAGETOPOFFSET;
 
 						theCurrentPageNumber++; // for the status display.
@@ -3269,9 +3439,6 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 									// Filled the second column, generate a new page
 
-									// Add page numbers, headers, and footers
-									AddPageHeaderFooter(pdf,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);						
-
 									// Yes, force it to a new page
 									running_height = PAGETOPOFFSET;
 
@@ -3291,9 +3458,6 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 							}
 							else{
-
-								// Add page numbers, headers, and footers
-								AddPageHeaderFooter(pdf,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);						
 
 								// Yes, force it to a new page
 
@@ -3355,14 +3519,6 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 			} else {
 
 				running_height = PAGETOPOFFSET;
-
-
-				if (theCurrentPageNumber != 0){
-
-					// Add page numbers, headers, and footers
-					AddPageHeaderFooter(pdf,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);
-
-				}
 
 				theCurrentPageNumber++; // for the status display.
 
@@ -3622,6 +3778,8 @@ function ExportTextIncipitsPDF(title){
 		theTunePageMap = GenerateTextIncipits(pdf,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,TunebookABCSortedIncipitsRequested);
 
 		document.getElementById("statustunecount").innerHTML = "ABC Incipits Added!";
+		
+		var totalPages = theCurrentPageNumber;
 
 		if (TunebookTPRequested){
 
@@ -3715,6 +3873,9 @@ function ExportTextIncipitsPDF(title){
 			theDelta = theTOCDelta;
 		}
 
+		// Add all the headers and footers at once
+		PostProcessHeadersAndFooters(pdf,addPageNumbers,theDelta+1,totalPages,pageNumberLocation,hideFirstPageNumber,paperStyle);
+
 		// Did they request a tunebook index?
 		if (TunebookIndexRequested){
 			
@@ -3776,13 +3937,6 @@ function ExportTextIncipitsPDF(title){
 
 				// Delay for final QR code UI status update
 				setTimeout(function(){
-
-					if (status){
-
-						// Suppress page numbers on QR page, add headers, and footers
-						AddPageHeaderFooter(pdf,false,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);
-
-					}	
 				
 					// Handle the status display for the new page
 					document.getElementById("statustunecount").innerHTML = "&nbsp;";
@@ -4153,8 +4307,7 @@ function ExportNotationPDF(title) {
 
 				if (nBlocksProcessed == nBlocks) {
 
-					// Add final page number, header, and footer
-					AddPageHeaderFooter(pdf,addPageNumbers,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);	
+					var totalPages = theCurrentPageNumber;
 
 					if (TunebookTPRequested){
 
@@ -4165,6 +4318,7 @@ function ExportNotationPDF(title) {
 						pdf.movePage(theCurrentPageNumber,1);
 
 					} 
+
 
 					var theDelta = theCurrentPageNumber;
 					var theTOCStart = 1;
@@ -4240,6 +4394,8 @@ function ExportNotationPDF(title) {
 					// How many pages were added before the tunes?
 					theDelta = theCurrentPageNumber - theDelta;
 
+					var theTunePageCount = theDelta;
+
 					if (TunebookTPRequested){
 						theDelta++;
 					}
@@ -4247,6 +4403,10 @@ function ExportNotationPDF(title) {
 					if (TunebookTOCRequested || TunebookSortedTOCRequested){
 						theDelta = theTOCDelta;
 					}
+
+
+					// Add all the headers and footers at once
+					PostProcessHeadersAndFooters(pdf,addPageNumbers,theDelta+1,totalPages,pageNumberLocation,hideFirstPageNumber,paperStyle);
 
 					// Did they request a tunebook index?
 					if (TunebookIndexRequested){
@@ -4273,7 +4433,7 @@ function ExportNotationPDF(title) {
 						document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
 						
 					}
-				
+
 					// Did they request a QR code?
 					if (QRCodeRequested){
 
@@ -4309,13 +4469,6 @@ function ExportNotationPDF(title) {
 
 							// Delay for final QR code UI status update
 							setTimeout(function(){
-
-								if (status){
-
-									// Suppress page numbers on QR page, add headers, and footers
-									AddPageHeaderFooter(pdf,false,theCurrentPageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle);
-
-								}	
 							
 								// Handle the status display for the new page
 								document.getElementById("statustunecount").innerHTML = "&nbsp;";
@@ -6321,7 +6474,78 @@ function ToggleChords(e) {
 function NewABC(){
 
 	// Stuff in some default ABC with additional options explained
-	gTheABC.value = "X: 1\nT: New Tune\nR: Reel\nM: 4/4\nL: 1/8\nK: Gmaj\nC: Gan Ainm\n%%MIDI program 74\n%\n% Enter the ABC for your tune(s) below:\n%\n|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|\n\n%\n% To choose the sound when played, change the MIDI program # above to:\n%\n% 74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano\n%\n\n% Try these custom PDF page annotations by removing the % and the space\n%\n% Set the PDF quality (1.0 is highest quality, 0.5 is good quality):\n%\n% %pdfquality 0.75\n%\n% Add a PDF page header or footer:\n%\n% %pageheader My Tune Set: $TUNENAMES\n% %pagefooter PDF named: $PDFNAME saved on: $DATEMDY at $TIME\n%\n% Before the tunes, add a title page with a title:\n%\n% %addtitle My Tunebook Title Page\n%\n% Optional subtitle for the title page:\n%\n% %addsubtitle My Tunebook Title Page Subtitle\n%\n% Before the tunes, add a table of contents with a title:\n%\n% %addtoc My Tunebook Table of Contents\n%\n% Before the tunes, add a sorted table of contents with a title:\n%\n% %addsortedtoc My Tunebook Table of Contents Sorted by Tune Name\n%\n% After the tunes, add an unsorted tunebook index with a title:\n%\n% %addindex My Tunebook Unsorted Index\n%\n% After the tunes, add a sorted tunebook index with a title:\n%\n% %addsortedindex My Tunebook Index Sorted by Tune Name\n%\n% After the tunes, add a sharing QR code on a new page in the PDF:\n%\n% %qrcode\n%\n";
+	var theValue = "X: 1\n";
+	theValue += "T: New Tune\n";
+	theValue += "R: Reel\n";
+	theValue += "M: 4/4\n";
+	theValue += "L: 1/8\n";
+	theValue += "K: Gmaj\n";
+	theValue += "C: Gan Ainm\n";
+	theValue += "%%MIDI program 74\n";
+	theValue += "%\n";
+	theValue += "% Enter the ABC for your tune(s) below:\n";
+	theValue += "%\n";
+	theValue += "|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|\n\n";
+	theValue += "%\n";
+	theValue += "% To choose the sound when played, change the MIDI program # above to:\n";
+	theValue += "%\n";
+	theValue += "% 74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano\n";
+	theValue += "%\n";
+	theValue += "\n";
+	theValue += "% Try these custom PDF page annotations by removing the % and the space\n";
+	theValue += "%\n";
+	theValue += "% Set the PDF quality (1.0 is highest quality, 0.5 is good quality):\n";
+	theValue += "%\n";
+	theValue += "% %pdfquality 0.75\n";
+	theValue += "%\n";
+	theValue += "% Before the tunes, add a title page with a title:\n";
+	theValue += "%\n";
+	theValue += "% %addtitle My Tunebook Title Page Title\n";
+	theValue += "%\n";
+	theValue += "% Optional subtitle for the title page:\n";
+	theValue += "%\n";
+	theValue += "% %addsubtitle My Tunebook Title Page Subtitle\n";
+	theValue += "%\n";
+	theValue += "% Add a title page with a title as a hyperlink:\n";
+	theValue += "%\n";
+	theValue += "% %urladdtitle http://michaeleskin.com Title as Hyperlink\n";
+	theValue += "%\n";
+	theValue += "% Optional subtitle for the title page as a hyperlink:\n";
+	theValue += "%\n";	
+	theValue += "% %urladdsubtitle http://michaeleskin.com/abc Subtitle as Hyperlink\n";
+	theValue += "%\n";	
+	theValue += "% Before the tunes, add a table of contents with a title:\n";
+	theValue += "%\n";
+	theValue += "% %addtoc My Tunebook Table of Contents\n";
+	theValue += "%\n";
+	theValue += "% Before the tunes, add a sorted table of contents with a title:\n";
+	theValue += "%\n";
+	theValue += "% %addsortedtoc My Tunebook Table of Contents Sorted by Tune Name\n";
+	theValue += "%\n";
+	theValue += "% After the tunes, add an unsorted tunebook index with a title:\n";
+	theValue += "%\n";
+	theValue += "% %addindex My Tunebook Unsorted Index\n";
+	theValue += "%\n";
+	theValue += "% After the tunes, add a sorted tunebook index with a title:\n";
+	theValue += "%\n";
+	theValue += "% %addsortedindex My Tunebook Index Sorted by Tune Name\n";
+	theValue += "%\n";
+	theValue += "% Add a PDF page header or footer:\n";
+	theValue += "%\n";
+	theValue += "% %pageheader My Tune Set: $TUNENAMES\n";
+	theValue += "% %pagefooter PDF named: $PDFNAME saved on: $DATEMDY at $TIME\n";
+	theValue += "%\n";
+	theValue += "% Add a PDF page header or footer as a hyperlink:\n";
+	theValue += "%\n";
+	theValue += "% %urlpageheader http://michaeleskin.com Page Header as Hyperlink\n";
+	theValue += "% %urlpagefooter http://michaeleskin.com/abc Page Footer as Hyperlink\n";
+	theValue += "%\n";
+	theValue += "% After the tunes, add a sharing QR code on a new page in the PDF:\n";
+	theValue += "%\n";
+	theValue += "% %qrcode\n";
+	theValue += "%\n";
+
+	gTheABC.value = theValue;
 
 	// Refocus back on the ABC
 	FocusABC();
@@ -7986,8 +8210,10 @@ function InjectPDFHeaders(e){
 		output += "%\n";
 		output += "% Here are all available custom annotations:\n";
 		output += "%\n";
-		output += "%addtitle Title Page\n";
+		output += "%addtitle Title Page Title\n";
 		output += "%addsubtitle Title Page Subtitle\n";
+		output += "%urladdtitle http://michaeleskin.com Title Page Title as Hyperlink\n";
+		output += "%urladdsubtitle http://michaeleskin.com/abc Title Page Subtitle as Hyperlink\n";
 		output += "%addtoc Table of Contents\n";
 		output += "%addsortedtoc Table of Contents Sorted by Tune Name\n";
 		output += "%toctopoffset 30\n";
@@ -7997,14 +8223,16 @@ function InjectPDFHeaders(e){
         output += "%toclinespacing 12\n";
 		output += "%addindex Unsorted Index\n"
 		output += "%addsortedindex Index Sorted by Tune Name\n"
-		output += "%nopagelinks\n"
         output += "%indextopoffset 30\n";
         output += "%indextitleoffset 35\n";
         output += "%indextitlefontsize 18\n";
         output += "%indexfontsize 13\n";
         output += "%indexlinespacing 12\n";
+		output += "%no_toc_or_index_links\n"
 		output += "%pageheader Page Header\n"
 		output += "%pagefooter Page Footer\n"
+		output += "%urlpageheader http://michaeleskin.com Page Header as Hyperlink\n";
+		output += "%urlpagefooter http://michaeleskin.com/abc Page Footer as Hyperlink\n";
 		output += "%pdfname your_pdf_filename\n"
 		output += "%qrcode\n";
 		output += "\n";
