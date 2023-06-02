@@ -38,6 +38,8 @@
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
 
+        </script>
+       
         <style>
         p {
         font-size:14pt;
@@ -117,9 +119,9 @@
             <p class="toc"><a href="#selecting_the_instrument_for_playback">Selecting the Instrument for Playback</a></p>
             <p class="toc"><a href="#pdf_tunebook_settings">PDF Tunebook Settings</a></p>
             <p class="toc"><a href="#pdf_quality_setting">PDF Quality Setting</a></p>
-            <p class="toc"><a href="#pdf_page_headers_and_footers">PDF Page Headers and Footers</a></p>
             <p class="toc"><a href="#adding_a_pdf_title_page">Adding a PDF Tunebook Title Page</a></p>
             <p class="toc"><a href="#adding_a_pdf_tunebook_table_of_contents_and_index">Adding a PDF Tunebook Table of Contents and Index</a></p>
+            <p class="toc"><a href="#pdf_page_headers_and_footers">PDF Page Headers and Footers</a></p>
             <p class="toc"><a href="#table_of_contents_and_index_font_size_and_line_spacing_overrides">Table of Contents and Index Font Size and Line Spacing Overrides</a></p>
             <p class="toc"><a href="#printing_your_tunes">Printing Your Tunes</a></p>
             <p class="toc"><a href="#sharing_controls">Sharing Controls</a></p>
@@ -373,12 +375,97 @@
             <p>A value of 1.0 will produce the maximum quality.</p>
             <p>A value of 0.5 will still produce good-quality PDF notation at about half the PDF file size of the maximum quality.</p>
             <p>A pdfquality value of 0.25 can be used to produce draft quality output with even smaller PDF file size.</p>
+            <hr id="adding_a_pdf_title_page">
+            <h1>Adding a PDF Title Page</h1>
+            <p></p>
+            <p>To add a title page to your PDF tunebook, simply add the following comment-based annotation anywhere in the ABC:</p>
+            <p></p>
+            <p>%addtitle (your tunebook title text goes here...)</p>
+            <p></p>
+            <p>To add a smaller subtitle below the title on the title page, simply add the following comment-based annotation anywhere in the ABC:</p>
+            <p></p>
+            <p>%addsubtitle (your tunebook title page subtitle text goes here...)</p>
+            <p></p>
+            <p>Note: The subtitle only appears if a title page is requested.</p> 
+            <p>For a title page with just a subtitle and no subtitle, just enter %addtitle with no text after it and then add %addsubtitle with your subtitle text.</p>
+            <p>
+            <p>To add a title page to your PDF tunebook as a hyperlink, simply add the following comment-based annotation anywhere in the ABC:</p>
+            <p></p>
+            <p>%urladdtitle URL (your tunebook title text goes here...)</p>
+            <p></p>
+            <p>To add a smaller subtitle as a hyperlink below the title on the title page, simply add the following comment-based annotation anywhere in the ABC:</p>
+            <p></p>
+            <p>%urladdsubtitle URL (your tunebook title page subtitle text goes here...)</p>
+            <p></p>
+            <p>Examples:</p>
+            <p>%urladdtitle http://michaeleskin.com Tunebook Title with Hyperlink</p>
+            <p>%urladdsubtitle http://michaeleskin.com/abc Tunebook Subtitle with Hyperlink</p>
+            <p></p>
+            <p>Only the first instance of the %addtitle, %addsubtitle, %urladdtitle, and %urladdsubtitle annotations are processed, any additional instances are ignored.</p>
+            <p></p>            
+            <hr id="adding_a_pdf_tunebook_table_of_contents_and_index">
+            <h1>Adding a PDF Tunebook Table of Contents and Index</h1>
+            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/B1jJmxSQ36M" title="PDF Table of Contents and Tunebook Index" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p></p>
+            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/4mxMUuem-2o" title="PDF Table of Contents and Tunebook Index Hyperlinks" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p></p>
+            <p>To add a table of contents to the start of of your PDF tunebook listing each tune name and page number in the same order the tunes appear in the ABC along with hyperlinks to each tune, simply add the following comment-based annotation anywhere in the ABC:</p>
+            <p></p>
+            <p>%addtoc (your tunebook table of contents title text goes here...)</p>
+            <p></p>
+            <p>To append an sorted tunebook table of contents to the start of your PDF tunebook listing each tune name and page number in alphabetical order by tune name along with hyperlinks to each tune, simply add the following comment-based annotation anywhere in the ABC:</p>
+            <p></p>
+            <p>%addsortedtoc (your tunebook sorted table of contents title text goes here...)</p>
+            <p></p>
+            <p>Tune names that start with "The" will have the "The" moved to the end of the tune name before the sorting.</p>
+            <p></p>
+            <p>To append an unsorted tunebook index to the end of your PDF tunebook listing each tune name and page number in the same order they are in the ABC along with hyperlinks to each tune, simply add the following comment-based annotation anywhere in the ABC:</p>
+            <p></p>
+            <p>%addindex (your tunebook index unsorted title text goes here...)</p>
+            <p></p>
+            <p>To append an sorted tunebook index to the end of your PDF tunebook listing each tune name and page number in alphabetical order by tune name along with hyperlinks to each tune, simply add the following comment-based annotation anywhere in the ABC:</p>
+            <p></p>
+            <p>%addsortedindex (your tunebook sorted index title text goes here...)</p>
+            <p></p>
+            <p>Tune names that start with "The" will have the "The" moved to the end of the tune name before the sorting.</p>
+            <p></p>
+            <p>Only the first instance of the %addtoc, %addsortedtoc, %addindex, and %addsortedindex annotations are processed, any additional instances are ignored.</p>
+            <p></p>
+            <p>If you want to suppress having the hyperlinks added from the table of contents or index page entries to the tunes, simply add the following comment-based annotation anywhere in the ABC:</p>
+            <p></p>
+            <p>%no_toc_or_index_links</p>
+            <p></p>
+            <hr id="table_of_contents_and_index_font_size_and_line_spacing_overrides">
+            <h1>Table of Contents and Index Font Size and Line Spacing Overrides</h1>
+            <p>You may override the top offset to title, offset from title to the index or table of contents entries, default tune name font sizes and line spacing, by adding the following comment-based annotations anywhere in your ABC:</p>
+            <p><strong>Table of Contents offset and font overrides:</strong></p>
+            <p>%toctopoffset (your top offset goes here) - 72 dpi offset from the page header for the top of the table of contents title. Default is 30.</p>
+            <p>%toctitleoffset (your title offset goes here) - 72 dpi offset from the title to the first entry in the table of contents. Default is 35.</p>
+            <p>%toctitlefontsize (your font size goes here) - Font size for the table of contents title. Default is 18.</p>
+            <p>%tocfontsize (your font size goes here) - Font size for tune names in the table of contents. Default is 13.</p>
+            <p>%toclinespacing (your line spacing goes here) - Line spacing for tune names in the table of contents. Default is 12.</p>
+            <p><strong>Index offset and font overrides:</strong></p>
+            <p>%indextopoffset (your top offset goes here) - 72 dpi offset from the page header for the top of the index title. Default is 30.</p>
+            <p>%indextitleoffset (your title offset goes here) - 72 dpi offset from the title to the first entry in the index. Default is 35.</p>
+            <p>%indextitlefontsize (your font size goes here) - Font size for the index title. Default is 18.</p>
+            <p>%indexfontsize (your font size goes here) - Font size for tune names in the index. Default is 13.</p>
+            <p>%indexlinespacing (your line spacing goes here) - Line spacing for tune names in the index. Default is 12.</p>
+            <p>As with all previously described annotation, only the first instance these annotations are processed, any additional instances are ignored.</p>
             <hr id="pdf_page_headers_and_footers">
             <h1>PDF Page Headers and Footers</h1>
             <p>You may add custom page headers and footers to your exported PDF files by including the following ABC comment-based annotations anywhere in your ABC:</p>
             <p></p>
             <p>%pageheader (your header text goes here...)</p>
             <p>%pagefooter (your footer text goes here...)</p>
+            <p></p>
+            <p>If you'd like to link to a specific URL when users click in the PDF page header or footer, include either the following ABC comment-based annotations anywhere in your ABC:</p>
+            <p></p>
+            <p>%urlpageheader (URL) (your header text goes here...)</p>
+            <p>%urlpagefooter (URL) (your footer text goes here...)</p>
+            <p></p>
+            <p>Examples:</p>
+            <p>%urlpageheader http://michaeleskin.com/abc Click in this page header to visit my home page</p>
+            <p>%urlpagefooter http://michaeleskin.com/abc Click in this page footer to visit my home page</p>
             <p></p>
             <p>There are also several useful user macros you can include in your page header or footer text that will be expanded in the PDF:</p>
             <p></p>
@@ -419,70 +506,6 @@
             <p>If you add a page footer and you have selected bottom-centered page numbers, the page number will be hidden.</p>
             <p></p>
             <p>Since these annotations are ABC comment-based, they will just appear to be normal comments in other ABC software.</p>
-            <hr id="adding_a_pdf_title_page">
-            <h1>Adding a PDF Title Page</h1>
-            <p></p>
-            <p>To add a title page to your PDF tunebook, simply add the following comment-based annotation anywhere in the ABC:</p>
-            <p></p>
-            <p>%addtitle (your tunebook title text goes here...)</p>
-            <p></p>
-            <p>To add a smaller subtitle below the title on the title page, simply add the following comment-based annotation anywhere in the ABC:</p>
-            <p></p>
-            <p>%addsubtitle (your tunebook title page subtitle text goes here...)</p>
-            <p></p>
-            <p>Note: The subtitle only appears if a title page is requested.</p> 
-            <p>For a title page with just a subtitle and no subtitle, just enter %addtitle with no text after it and then add %addsubtitle with your subtitle text.</p>
-            <p></p>
-            <p>As with the %pageheader and %pagefooter annotation, only the first instance of the %addtitle and %addsubtitle annotation is processed, any additional instances are ignored.</p>
-            <p></p>
-            <hr id="adding_a_pdf_tunebook_table_of_contents_and_index">
-            <h1>Adding a PDF Tunebook Table of Contents and Index</h1>
-            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/B1jJmxSQ36M" title="PDF Table of Contents and Tunebook Index" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p></p>
-            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/4mxMUuem-2o" title="PDF Table of Contents and Tunebook Index Hyperlinks" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p></p>
-            <p>To add a table of contents to the start of of your PDF tunebook listing each tune name and page number in the same order the tunes appear in the ABC along with hyperlinks to each tune, simply add the following comment-based annotation anywhere in the ABC:</p>
-            <p></p>
-            <p>%addtoc (your tunebook table of contents title text goes here...)</p>
-            <p></p>
-            <p>To append an sorted tunebook table of contents to the start of your PDF tunebook listing each tune name and page number in alphabetical order by tune name along with hyperlinks to each tune, simply add the following comment-based annotation anywhere in the ABC:</p>
-            <p></p>
-            <p>%addsortedtoc (your tunebook sorted table of contents title text goes here...)</p>
-            <p></p>
-            <p>Tune names that start with "The" will have the "The" moved to the end of the tune name before the sorting.</p>
-            <p></p>
-            <p>To append an unsorted tunebook index to the end of your PDF tunebook listing each tune name and page number in the same order they are in the ABC along with hyperlinks to each tune, simply add the following comment-based annotation anywhere in the ABC:</p>
-            <p></p>
-            <p>%addindex (your tunebook index unsorted title text goes here...)</p>
-            <p></p>
-            <p>To append an sorted tunebook index to the end of your PDF tunebook listing each tune name and page number in alphabetical order by tune name along with hyperlinks to each tune, simply add the following comment-based annotation anywhere in the ABC:</p>
-            <p></p>
-            <p>%addsortedindex (your tunebook sorted index title text goes here...)</p>
-            <p></p>
-            <p>Tune names that start with "The" will have the "The" moved to the end of the tune name before the sorting.</p>
-            <p></p>
-            <p>As with the %pageheader and %pagefooter annotation, only the first instance of the %addtoc, %addsortedtoc, %addindex, and %addsortedindex annotations are processed, any additional instances are ignored.</p>
-            <p></p>
-            <p>If you want to suppress having the hyperlinks added from the table of contents or index page entries to the tunes, simply add the following comment-based annotation anywhere in the ABC:</p>
-            <p></p>
-            <p>%nopagelinks</p>
-            <p></p>
-            <hr id="table_of_contents_and_index_font_size_and_line_spacing_overrides">
-            <h1>Table of Contents and Index Font Size and Line Spacing Overrides</h1>
-            <p>You may override the top offset to title, offset from title to the index or table of contents entries, default tune name font sizes and line spacing, by adding the following comment-based annotations anywhere in your ABC:</p>
-            <p><strong>Table of Contents offset and font overrides:</strong></p>
-            <p>%toctopoffset (your top offset goes here) - 72 dpi offset from the page header for the top of the table of contents title. Default is 30.</p>
-            <p>%toctitleoffset (your title offset goes here) - 72 dpi offset from the title to the first entry in the table of contents. Default is 35.</p>
-            <p>%toctitlefontsize (your font size goes here) - Font size for the table of contents title. Default is 18.</p>
-            <p>%tocfontsize (your font size goes here) - Font size for tune names in the table of contents. Default is 13.</p>
-            <p>%toclinespacing (your line spacing goes here) - Line spacing for tune names in the table of contents. Default is 12.</p>
-            <p><strong>Index offset and font overrides:</strong></p>
-            <p>%indextopoffset (your top offset goes here) - 72 dpi offset from the page header for the top of the index title. Default is 30.</p>
-            <p>%indextitleoffset (your title offset goes here) - 72 dpi offset from the title to the first entry in the index. Default is 35.</p>
-            <p>%indextitlefontsize (your font size goes here) - Font size for the index title. Default is 18.</p>
-            <p>%indexfontsize (your font size goes here) - Font size for tune names in the index. Default is 13.</p>
-            <p>%indexlinespacing (your line spacing goes here) - Line spacing for tune names in the index. Default is 12.</p>
-            <p>As with all previously described annotation, only the first instance these annotations are processed, any additional instances are ignored.</p>
             <hr>
             <p><strong>Power User Tip:</strong></p>
             <p>Holding down the Shift key while clicking on the "PDF Tunes/Page" label will inject examples of all of the above PDF headers at the top of the ABC.</p>
