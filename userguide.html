@@ -102,7 +102,11 @@
             <p>It also has easy-to-use features to transpose and sort your ABC tunebooks.</p>
             <p>You can fully customize the look of your notation using the standard ABC spacing and font annotations.</p>
             <p>The tool also includes the ability to easily share your tunes with others via ABC Share URLs and QR Codes.</p>
-            <p>The underlying ABC rendering technology is Paul Rosen's incredible <a href="https://www.abcjs.net/" target="_blank">abcjs</a> Javascript library.</p>            <hr>                  
+            <p>The underlying ABC rendering technology is Paul Rosen's incredible <a href="https://www.abcjs.net/" target="_blank">abcjs</a> Javascript library.</p>            
+            <hr>
+            <h1>90-minute Overview Webinar and Q&A</h1>
+            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/qKu1IcSjfEQ" title="ABC Transcription Tools Webinar 10 June 2023" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>                      
+            <hr>                  
             <h1>Table of Contents</h1>
             <p class="toc"><a href="#responsive_design">Responsive Design</a></p>
             <p class="toc"><a href="#optimized_for_editing_large_tunebooks">Optimized for Editing Large Tunebooks</a></p>
@@ -419,6 +423,9 @@
             <p></p>
             <p>Tune names that start with "The" will have the "The" moved to the end of the tune name before the sorting.</p>
             <p></p>
+            <p>To add a hyperlink (displayed as <<) on the left side of each page that links back to the tunebook table of contents, simply add the following comment-based annotation anywhere in the ABC:</p>
+            <p></p>
+            <p>%addlinkbacktotoc</p>
             <p>To append an unsorted tunebook index to the end of your PDF tunebook listing each tune name and page number in the same order they are in the ABC along with hyperlinks to each tune, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
             <p>%addindex (your tunebook index unsorted title text goes here...)</p>
@@ -435,6 +442,12 @@
             <p></p>
             <p>%no_toc_or_index_links</p>
             <p></p>
+            <p>To add a hyperlink (displayed as <<) on the left side of each page that links back to the tunebook index, simply add the following comment-based annotation anywhere in the ABC:</p>
+            <p></p>
+            <p>%addlinkbacktoindex</p>
+            <p></p>
+            <p><strong>Note:</strong> If both %addlinkbacktotoc and %addlinkbacktoindex are present, the %addlinkbacktotoc takes precedence and the page links will be back to the table of contents.</p>
+            <p></p>            
             <hr id="table_of_contents_and_index_font_size_and_line_spacing_overrides">
             <h1>Table of Contents and Index Font Size and Line Spacing Overrides</h1>
             <p>You may override the top offset to title, offset from title to the index or table of contents entries, default tune name font sizes and line spacing, by adding the following comment-based annotations anywhere in your ABC:</p>
