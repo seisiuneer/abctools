@@ -140,6 +140,10 @@ var gIncludePageLinks = true;
 var gDoForcePDFFilename = false;
 var gForcePDFFilename = "";
 
+// Add link back to PDF index or TOC
+var gAddTOCLinkback = false;
+var gAddIndexLinkback = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -1510,6 +1514,34 @@ function PostProcessHeadersAndFooters(thePDF,addPageNumbers,startingPage,nPages,
 
 		// Add the header and footer
 		AddPageHeaderFooter(thePDF,addPageNumbers,(i-startingPage+1),pageNumberLocation,hideFirstPageNumber,paperStyle);
+	}
+
+}
+
+//
+// Post process any linkbacks to the TOC or 
+//
+function PostProcessTOCAndIndexLinks(pdf,startPage,endPage,theLinkPage){
+	
+	//debugger;
+
+	// console.log("PostProcessTOCAndIndexLinks");
+	// console.log("startPage = "+startPage);
+	// console.log("endPage = "+endPage);
+	// console.log("theLinkPage = "+theLinkPage);
+
+	for (var i=startPage;i<=endPage;++i){
+		
+		// Set the page
+		pdf.setPage(i);
+
+		// Set the font
+		pdf.setFont("Verdana","","normal");
+		pdf.setFontSize(18.0);
+
+		// Add the link
+		pdf.textWithLink("<<", 5, (pdf.internal.pageSize.getHeight()/1.5), {align:"left", pageNumber:theLinkPage});
+
 	}
 
 }
@@ -2946,11 +2978,43 @@ function ParseCommentCommands(theNotes){
 		}
 	}
 
+	// Include links to TOC on each page 
+	gAddTOCLinkback = false;
+
+	// Search for a TOC linkback 
+	searchRegExp = /^%addlinkbacktotoc.*$/m
+
+	// Detect TOC linkback annotation
+	var addTOCLinkback = theNotes.match(searchRegExp);
+
+	if ((addTOCLinkback) && (addTOCLinkback.length > 0)){
+
+		gAddTOCLinkback = true;
+
+	}
+
+	// Include links to the index on each page 
+	gAddIndexLinkback = false;
+
+	// Search for a TOC linkback request
+	searchRegExp = /^%addlinkbacktoindex.*$/m
+
+	// Detect Index linkback annotation
+	var addIndexLinkback = theNotes.match(searchRegExp);
+
+	if ((addIndexLinkback) && (addIndexLinkback.length > 0)){
+
+		gAddIndexLinkback = true;
+
+	}
+
 	// Check my work
 	// console.log("theTunebookTP = "+theTunebookTP);
 	// console.log("theTunebookTPST = "+theTunebookTPST);
 	// console.log("theTunebookTPURL = "+theTunebookTPURL);
 	// console.log("theTunebookTPSTURL = "+theTunebookTPSTURL);
+	// console.log("gAddTOCLinkback = "+gAddTOCLinkback);
+	// console.log("gAddIndexLinkback = "+gAddIndexLinkback);
 
 }
 
@@ -3902,6 +3966,30 @@ function ExportTextIncipitsPDF(title){
 			
 		}
 
+		// Add any link back requested to the index or TOC
+		var addTOCLinks = false;
+		var addIndexLinks = false;
+		var theLinkPage = 1;
+		var startPage = theTOCDelta+1;
+		var endPage = theTOCDelta + totalPages;
+
+		if (gAddTOCLinkback&& (TunebookTOCRequested || TunebookSortedTOCRequested)){
+			addTOCLinks = true;
+			if (TunebookTPRequested){
+				theLinkPage = 2;
+			}
+
+		}
+		else
+		if (gAddIndexLinkback&& (TunebookIndexRequested || TunebookSortedIndexRequested)){
+			addIndexLinks = true;
+			theLinkPage = totalPages + theTOCDelta + 1;
+		}
+
+		if (addTOCLinks || addIndexLinks){
+			PostProcessTOCAndIndexLinks(pdf,startPage,endPage,theLinkPage);
+		}
+
 		// Did they request a QR code?
 		if (QRCodeRequested){
 
@@ -4307,6 +4395,8 @@ function ExportNotationPDF(title) {
 
 				if (nBlocksProcessed == nBlocks) {
 
+					//debugger;
+
 					var totalPages = theCurrentPageNumber;
 
 					if (TunebookTPRequested){
@@ -4394,8 +4484,6 @@ function ExportNotationPDF(title) {
 					// How many pages were added before the tunes?
 					theDelta = theCurrentPageNumber - theDelta;
 
-					var theTunePageCount = theDelta;
-
 					if (TunebookTPRequested){
 						theDelta++;
 					}
@@ -4404,9 +4492,9 @@ function ExportNotationPDF(title) {
 						theDelta = theTOCDelta;
 					}
 
-
 					// Add all the headers and footers at once
 					PostProcessHeadersAndFooters(pdf,addPageNumbers,theDelta+1,totalPages,pageNumberLocation,hideFirstPageNumber,paperStyle);
+
 
 					// Did they request a tunebook index?
 					if (TunebookIndexRequested){
@@ -4432,6 +4520,30 @@ function ExportNotationPDF(title) {
 						
 						document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
 						
+					}
+
+					// Add any link back requested to the index or TOC
+					var addTOCLinks = false;
+					var addIndexLinks = false;
+					var theLinkPage = 1;
+					var startPage = theTOCDelta+1;
+					var endPage = theTOCDelta + totalPages;
+
+					if (gAddTOCLinkback&& (TunebookTOCRequested || TunebookSortedTOCRequested)){
+						addTOCLinks = true;
+						if (TunebookTPRequested){
+							theLinkPage = 2;
+						}
+
+					}
+					else
+					if (gAddIndexLinkback&& (TunebookIndexRequested || TunebookSortedIndexRequested)){
+						addIndexLinks = true;
+						theLinkPage = totalPages + theTOCDelta + 1;
+					}
+
+					if (addTOCLinks || addIndexLinks){
+						PostProcessTOCAndIndexLinks(pdf,startPage,endPage,theLinkPage);
 					}
 
 					// Did they request a QR code?
@@ -6522,6 +6634,10 @@ function NewABC(){
 	theValue += "%\n";
 	theValue += "% %addsortedtoc My Tunebook Table of Contents Sorted by Tune Name\n";
 	theValue += "%\n";
+	theValue += "% Add a << link on each page back to the Table of Contents:\n";
+	theValue += "%\n";
+	theValue += "% %addlinkbacktotoc\n";
+	theValue += "%\n";	
 	theValue += "% After the tunes, add an unsorted tunebook index with a title:\n";
 	theValue += "%\n";
 	theValue += "% %addindex My Tunebook Unsorted Index\n";
@@ -6530,6 +6646,10 @@ function NewABC(){
 	theValue += "%\n";
 	theValue += "% %addsortedindex My Tunebook Index Sorted by Tune Name\n";
 	theValue += "%\n";
+	theValue += "% Add a << link on each page back to the Index:\n";
+	theValue += "%\n";
+	theValue += "% %addlinkbacktoindex\n";
+	theValue += "%\n";	
 	theValue += "% Add a PDF page header or footer:\n";
 	theValue += "%\n";
 	theValue += "% %pageheader My Tune Set: $TUNENAMES\n";
@@ -8216,6 +8336,7 @@ function InjectPDFHeaders(e){
 		output += "%urladdsubtitle http://michaeleskin.com/abc Title Page Subtitle as Hyperlink\n";
 		output += "%addtoc Table of Contents\n";
 		output += "%addsortedtoc Table of Contents Sorted by Tune Name\n";
+		output += "%addlinkbacktotoc\n";		
 		output += "%toctopoffset 30\n";
         output += "%toctitleoffset 35\n";
         output += "%toctitlefontsize 18\n";
@@ -8223,6 +8344,7 @@ function InjectPDFHeaders(e){
         output += "%toclinespacing 12\n";
 		output += "%addindex Unsorted Index\n"
 		output += "%addsortedindex Index Sorted by Tune Name\n"
+		output += "%addlinkbacktoindex\n";		
         output += "%indextopoffset 30\n";
         output += "%indextitleoffset 35\n";
         output += "%indextitlefontsize 18\n";
