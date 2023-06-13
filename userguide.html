@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-               
+
         <style>
         p {
         font-size:14pt;
@@ -426,6 +426,7 @@
             <p>To add a hyperlink (displayed as <<) on the left side of each page that links back to the tunebook table of contents, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
             <p>%addlinkbacktotoc</p>
+            <p></p>            
             <p>To append an unsorted tunebook index to the end of your PDF tunebook listing each tune name and page number in the same order they are in the ABC along with hyperlinks to each tune, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
             <p>%addindex (your tunebook index unsorted title text goes here...)</p>
@@ -442,12 +443,10 @@
             <p></p>
             <p>%no_toc_or_index_links</p>
             <p></p>
-            <p>To add a hyperlink (displayed as <<) on the left side of each page that links back to the tunebook index, simply add the following comment-based annotation anywhere in the ABC:</p>
+            <p>To add a hyperlink (displayed as >>) on the right side of each page that links back to the tunebook index, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
             <p>%addlinkbacktoindex</p>
             <p></p>
-            <p><strong>Note:</strong> If both %addlinkbacktotoc and %addlinkbacktoindex are present, the %addlinkbacktotoc takes precedence and the page links will be back to the table of contents.</p>
-            <p></p>            
             <hr id="table_of_contents_and_index_font_size_and_line_spacing_overrides">
             <h1>Table of Contents and Index Font Size and Line Spacing Overrides</h1>
             <p>You may override the top offset to title, offset from title to the index or table of contents entries, default tune name font sizes and line spacing, by adding the following comment-based annotations anywhere in your ABC:</p>
