@@ -1521,14 +1521,17 @@ function PostProcessHeadersAndFooters(thePDF,addPageNumbers,startingPage,nPages,
 //
 // Post process any linkbacks to the TOC or 
 //
-function PostProcessTOCAndIndexLinks(pdf,startPage,endPage,theLinkPage){
+function PostProcessTOCAndIndexLinks(pdf,startPage,endPage,addTOCLinks,theTOCLinkPage,addIndexLinks,theIndexLinkPage){
 	
 	//debugger;
 
 	// console.log("PostProcessTOCAndIndexLinks");
 	// console.log("startPage = "+startPage);
 	// console.log("endPage = "+endPage);
-	// console.log("theLinkPage = "+theLinkPage);
+	// console.log("addTOCLinks = "+addTOCLinks);
+	// console.log("theTOCLinkPage = "+theTOCLinkPage);
+	// console.log("addIndexLinks = "+addIndexLinks);
+	// console.log("theIndexLinkPage = "+theIndexLinkPage);
 
 	for (var i=startPage;i<=endPage;++i){
 		
@@ -1539,13 +1542,24 @@ function PostProcessTOCAndIndexLinks(pdf,startPage,endPage,theLinkPage){
 		pdf.setFont("Verdana","","normal");
 		pdf.setFontSize(18.0);
 
-		// Add the link
-		pdf.textWithLink("<<", 5, (pdf.internal.pageSize.getHeight()/1.5), {align:"left", pageNumber:theLinkPage});
+		var pageWidth = pdf.internal.pageSize.getWidth();
+		var pageHeight = pdf.internal.pageSize.getHeight();
+
+		if (addTOCLinks){
+			// Add the TOC link
+			pdf.textWithLink("<<", 5, (pageHeight/1.55), {align:"left", pageNumber:theTOCLinkPage});
+		}
+
+		if (addIndexLinks){
+			// Add the Index link
+			var textWidth = pdf.getTextWidth(">>");
+			pdf.textWithLink(">>", (pageWidth/1.55)-(textWidth+5), (pageHeight/1.55), {align:"left", pageNumber:theIndexLinkPage});
+		}
+
 
 	}
 
 }
-
 //
 // Tune table of contents page layout constants
 //
@@ -3968,28 +3982,28 @@ function ExportTextIncipitsPDF(title){
 
 		// Add any link back requested to the index or TOC
 		var addTOCLinks = false;
+		var theTOCLinkPage = 1;
 		var addIndexLinks = false;
-		var theLinkPage = 1;
+		var theIndexLinkPage = 1;
 		var startPage = theTOCDelta+1;
 		var endPage = theTOCDelta + totalPages;
 
 		if (gAddTOCLinkback&& (TunebookTOCRequested || TunebookSortedTOCRequested)){
 			addTOCLinks = true;
 			if (TunebookTPRequested){
-				theLinkPage = 2;
+				theTOCLinkPage = 2;
 			}
-
 		}
-		else
+
 		if (gAddIndexLinkback&& (TunebookIndexRequested || TunebookSortedIndexRequested)){
 			addIndexLinks = true;
-			theLinkPage = totalPages + theTOCDelta + 1;
+			theIndexLinkPage = totalPages + theTOCDelta + 1;
 		}
 
 		if (addTOCLinks || addIndexLinks){
-			PostProcessTOCAndIndexLinks(pdf,startPage,endPage,theLinkPage);
+			PostProcessTOCAndIndexLinks(pdf,startPage,endPage,addTOCLinks,theTOCLinkPage,addIndexLinks,theIndexLinkPage);
 		}
-
+		
 		// Did they request a QR code?
 		if (QRCodeRequested){
 
@@ -4524,26 +4538,26 @@ function ExportNotationPDF(title) {
 
 					// Add any link back requested to the index or TOC
 					var addTOCLinks = false;
+					var theTOCLinkPage = 1;
 					var addIndexLinks = false;
-					var theLinkPage = 1;
+					var theIndexLinkPage = 1;
 					var startPage = theTOCDelta+1;
 					var endPage = theTOCDelta + totalPages;
 
 					if (gAddTOCLinkback&& (TunebookTOCRequested || TunebookSortedTOCRequested)){
 						addTOCLinks = true;
 						if (TunebookTPRequested){
-							theLinkPage = 2;
+							theTOCLinkPage = 2;
 						}
-
 					}
-					else
+
 					if (gAddIndexLinkback&& (TunebookIndexRequested || TunebookSortedIndexRequested)){
 						addIndexLinks = true;
-						theLinkPage = totalPages + theTOCDelta + 1;
+						theIndexLinkPage = totalPages + theTOCDelta + 1;
 					}
 
 					if (addTOCLinks || addIndexLinks){
-						PostProcessTOCAndIndexLinks(pdf,startPage,endPage,theLinkPage);
+						PostProcessTOCAndIndexLinks(pdf,startPage,endPage,addTOCLinks,theTOCLinkPage,addIndexLinks,theIndexLinkPage);
 					}
 
 					// Did they request a QR code?
