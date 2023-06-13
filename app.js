@@ -1042,7 +1042,7 @@ function AppendTuneTitlePage(thePDF,paperStyle,theTitle,theSubtitle){
 var TEXTINCIPITTOPOFFSET = 330;
 var TEXTINCIPITBOTTOMOFFSET = 12;
 var TEXTINCIPITLEFTMARGIN = 65;
-var TEXTINCIPITRIGHTMARGIN = 203;
+var TEXTINCIPITRIGHTMARGIN = 190; 
 var TEXTINCIPITFONTSIZE = 12;
 var TEXTINCIPITLINESPACING = 10;
 //
@@ -1052,18 +1052,18 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 
 	// Adjust margins based on paper style
  	TEXTINCIPITLEFTMARGIN = 65;
- 	TEXTINCIPITRIGHTMARGIN = 203;
+ 	TEXTINCIPITRIGHTMARGIN = 190; 
 
 	var a4offset = 0
 
 	if (paperStyle == "a4"){
  		TEXTINCIPITLEFTMARGIN = 61;
- 		TEXTINCIPITRIGHTMARGIN = 199;
+ 		TEXTINCIPITRIGHTMARGIN = 186; 
 		a4offset = 20;
 	}
 
 	var thePaperHeight = thePDF.internal.pageSize.getHeight();;
-	var thePaperWidth = thePDF.internal.pageSize.getWidth()/1.5;
+	var thePaperWidth = thePDF.internal.pageSize.getWidth()/1.55;
 
 	var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + TEXTINCIPITBOTTOMOFFSET);
 
@@ -1330,7 +1330,7 @@ var INDEXTOPOFFSET = 330;
 var INDEXBOTTOMOFFSET = 16;
 var INDEXTITLEOFFSET = 35;
 var INDEXLEFTMARGIN = 90;
-var INDEXRIGHTMARGIN = 120;
+var INDEXRIGHTMARGIN = 105;
 var INDEXTITLESIZE = 18;
 var INDEXFONTSIZE = 13;
 var INDEXLINESPACING = 12;
@@ -1364,7 +1364,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 	var theTitles = GetTunebookIndexTitles();
 
 	var thePaperHeight = pdf.internal.pageSize.getHeight();;
-	var thePaperWidth = pdf.internal.pageSize.getWidth()/1.5;
+	var thePaperWidth = pdf.internal.pageSize.getWidth()/1.55;
 
 	var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + INDEXBOTTOMOFFSET);
 
@@ -1568,7 +1568,7 @@ var TOCTOPOFFSET = 330;
 var TOCBOTTOMOFFSET = 16;
 var TOCTITLEOFFSET = 35;
 var TOCLEFTMARGIN = 90;
-var TOCRIGHTMARGIN = 120;
+var TOCRIGHTMARGIN = 105; 
 var TOCTITLESIZE = 18;
 var TOCFONTSIZE = 13;
 var TOCLINESPACING = 12;
@@ -1604,7 +1604,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 	var theTitles = GetTunebookIndexTitles();
 
 	var thePaperHeight = pdf.internal.pageSize.getHeight();;
-	var thePaperWidth = pdf.internal.pageSize.getWidth()/1.5;
+	var thePaperWidth = pdf.internal.pageSize.getWidth()/1.55;
 
 	var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + TOCBOTTOMOFFSET);
 
@@ -1756,7 +1756,7 @@ function DryRunAddTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperSty
 	var theTitles = GetTunebookIndexTitles();
 
 	var thePaperHeight = pdf.internal.pageSize.getHeight();;
-	var thePaperWidth = pdf.internal.pageSize.getWidth()/1.5;
+	var thePaperWidth = pdf.internal.pageSize.getWidth()/1.55;
 
 	var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + TOCBOTTOMOFFSET);
 
@@ -3210,7 +3210,7 @@ function AddPageHeaderFooter(thePDF,doAddPageNumber,pageNumber,pageNumberLocatio
 			break;
 		case "tr":
 			// Top right
-			thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, voff, {align:"center"});
+			thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.55)-12, voff, {align:"center"});
 			break;
 		case "bl":
 			// Bottom left
@@ -3224,7 +3224,7 @@ function AddPageHeaderFooter(thePDF,doAddPageNumber,pageNumber,pageNumberLocatio
 			break;
 		case "br":
 			// Bottom right
-			thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, thePageNumberVerticalOffset , {align:"center"});
+			thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.55)-12, thePageNumberVerticalOffset , {align:"center"});
 			break;
 		case "tlr":
 			if ((pageNumber % 2) == 1){
@@ -3233,13 +3233,13 @@ function AddPageHeaderFooter(thePDF,doAddPageNumber,pageNumber,pageNumberLocatio
 			}
 			else{
 				// Top right
-				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, voff , {align:"center"});
+				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.55)-12, voff , {align:"center"});
 			}
 			break;
 		case "trl":
 			if ((pageNumber % 2) == 1){
 				// Top right
-				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, voff , {align:"center"});
+				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.55)-12, voff , {align:"center"});
 			}
 			else{
 				// Top left
@@ -3253,13 +3253,13 @@ function AddPageHeaderFooter(thePDF,doAddPageNumber,pageNumber,pageNumberLocatio
 			}
 			else{
 				// Bottom right
-				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, thePageNumberVerticalOffset , {align:"center"});
+				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.55)-12, thePageNumberVerticalOffset , {align:"center"});
 			}
 			break;
 		case "brl":
 			if ((pageNumber % 2) == 1){
 				// Bottom right
-				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.5)-25, thePageNumberVerticalOffset , {align:"center"});
+				thePDF.text(str, (thePDF.internal.pageSize.getWidth()/1.55)-12, thePageNumberVerticalOffset , {align:"center"});
 			}
 			else{
 				// Bottom left
