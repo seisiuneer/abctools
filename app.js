@@ -144,6 +144,10 @@ var gForcePDFFilename = "";
 var gAddTOCLinkback = false;
 var gAddIndexLinkback = false;
 
+// Links to add at finalize time
+var gTuneHyperlinks = [];
+var gAddTheSessionHyperlinks = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -1515,6 +1519,142 @@ function PostProcessHeadersAndFooters(thePDF,addPageNumbers,startingPage,nPages,
 		// Add the header and footer
 		AddPageHeaderFooter(thePDF,addPageNumbers,(i-startingPage+1),pageNumberLocation,hideFirstPageNumber,paperStyle);
 	}
+
+}
+
+//
+// Get all the tune titles
+//
+function GetAllTuneHyperlinks(theLinks) {
+
+	var nTunes = CountTunes();
+
+	var theTitles;
+
+	if (gAddTheSessionHyperlinks){
+		
+		theTitles = GetTunebookIndexTitles();
+
+	}
+
+	// There must be a one-to-one coorespondence of tune count to hyperlink record count
+	if (nTunes != theLinks.length){
+
+		return false;
+
+	}
+
+	for (i = 0; i < nTunes; ++i) {
+
+		// Clear the tunebook toc string
+		var theHyperlink = "";
+
+		if (gAddTheSessionHyperlinks){
+
+			theLinks[i].url = "https://thesession.org/tunes/search?q="+encodeURIComponent(theTitles[i]);
+
+		}
+
+		// See if there is a hyperlink override for this tune
+
+		var thisTune = getTuneByIndex(i);
+
+
+		// Search for a hyperlink request
+		var searchRegExp = /^%hyperlink.*$/m
+
+		// Detect tunebook TOC annotation
+		var addTunebookHyperlink = thisTune.match(searchRegExp);
+
+		if ((addTunebookHyperlink) && (addTunebookHyperlink.length > 0)){
+
+			theHyperlink = addTunebookHyperlink[0].replace("%hyperlink","");
+			
+			theHyperlink = theHyperlink.trim();
+
+			theLinks[i].url = theHyperlink;
+
+		}
+
+	}
+
+	return true;
+
+}
+
+//
+// Post process any tune hyperlinks 
+//
+function PostProcessTuneHyperlinks(pdf,theLinks,paperStyle,startPage){
+
+	//debugger;
+
+	// Sanity check the links array
+	if (!theLinks){
+		return;
+	}
+
+	// First scan the ABC for all the tune hyperlinks
+	var res = GetAllTuneHyperlinks(theLinks);
+
+	//If there is a page to hyperlink count mismatch,early exit
+	if (!res){
+		return;
+	}
+	
+	var pageWidth = pdf.internal.pageSize.getWidth();
+	var pageHeight = pdf.internal.pageSize.getHeight();
+
+	pdf.setFont("Verdana","","normal");
+	pdf.setFontSize(18.0);
+
+	var nLinks = theLinks.length;
+
+	var curPage = -1;
+
+	for (var i=0;i<nLinks;++i){
+
+		var thisLink = theLinks[i];
+
+		if (thisLink.url != ""){
+		
+			var thisPage = thisLink.page;
+
+			if (thisPage != curPage){
+
+				// Set the page
+				pdf.setPage(thisPage+startPage-1);
+
+				curPage = thisPage;
+
+			}
+			
+			// Left and right side hyperlink markers
+			// var textWidth = pdf.getTextWidth("*");
+
+			// var h = 15;
+
+			var vOff = 307;
+
+			if (paperStyle == "a4"){
+				vOff = 327;
+			}
+
+			var v = vOff+(thisLink.y/1.55);
+			
+			// pdf.text("*", h, v, {align:"left"});
+
+			// h = (pageWidth/1.55)-(textWidth+15);
+
+			// pdf.text("*", h, v, {align:"left"});
+
+			// And the title link
+			pdf.link(thisLink.x/1.55, v-(thisLink.height/1.55), thisLink.width/1.55, thisLink.height/1.55, {url:thisLink.url});
+
+		}
+
+	}
+
 
 }
 
@@ -3022,6 +3162,21 @@ function ParseCommentCommands(theNotes){
 
 	}
 
+	// Include links to thesession for every tune
+	gAddTheSessionHyperlinks = false;
+
+	// Search for a thesession.org linkback request
+	searchRegExp = /^%addlinkstothesession.*$/m
+
+	// Detect thesession linkback annotation
+	var addSessionLinkback = theNotes.match(searchRegExp);
+
+	if ((addSessionLinkback) && (addSessionLinkback.length > 0)){
+
+		gAddTheSessionHyperlinks = true;
+
+	}
+
 	// Check my work
 	// console.log("theTunebookTP = "+theTunebookTP);
 	// console.log("theTunebookTPST = "+theTunebookTPST);
@@ -3029,6 +3184,7 @@ function ParseCommentCommands(theNotes){
 	// console.log("theTunebookTPSTURL = "+theTunebookTPSTURL);
 	// console.log("gAddTOCLinkback = "+gAddTOCLinkback);
 	// console.log("gAddIndexLinkback = "+gAddIndexLinkback);
+	// console.log("gAddTheSessionHyperlinks = "+gAddTheSessionHyperlinks);
 
 }
 
@@ -3478,8 +3634,12 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 			var theBlockID = theBlock.id + ".block";
 
+			var isFirstBlock = false;
+
 			// Insert a new page for each tune
 			if (theBlockID.indexOf("_0.block") != -1) {
+
+				isFirstBlock = true;
 
 				if (!isFirstPage) {
 
@@ -3591,10 +3751,22 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 			if (running_height + height <= thePageHeight - PAGEBOTTOMOFFSET) // i.e. if a block of notes would get in the way with the bottom margin (30 pt), then a new one please...
 			{
 
+				if (isFirstBlock){
+
+					gTuneHyperlinks.push({page:theCurrentPageNumber,x:hoff,y:running_height,width:(535 / scale_factor),height:height,url:""});
+
+				}
+
 				pdf.addImage(imgData, 'JPG', hoff, running_height, (535 / scale_factor), height);
 
 
 			} else {
+
+				if (isFirstBlock){
+
+					gTuneHyperlinks.push({page:theCurrentPageNumber,x:hoff,y:running_height,width:(535 / scale_factor),height:height,url:""});
+
+				}
 
 				running_height = PAGETOPOFFSET;
 
@@ -4224,6 +4396,9 @@ function ExportNotationPDF(title) {
 	// If the annotations or text aren't already stripped, render them stripped
 	var requirePostRender = false;
 
+	// Track tune hyperlinks
+	gTuneHyperlinks = [];
+
 	// Restore the default between-tune layout spacing
 	BETWEENTUNESPACE = 20;
 
@@ -4558,6 +4733,10 @@ function ExportNotationPDF(title) {
 
 					if (addTOCLinks || addIndexLinks){
 						PostProcessTOCAndIndexLinks(pdf,startPage,endPage,addTOCLinks,theTOCLinkPage,addIndexLinks,theIndexLinkPage);
+					}
+
+					if (gTuneHyperlinks.length > 0){
+						PostProcessTuneHyperlinks(pdf,gTuneHyperlinks,paperStyle,startPage);						
 					}
 
 					// Did they request a QR code?
@@ -6638,7 +6817,7 @@ function NewABC(){
 	theValue += "%\n";
 	theValue += "% Optional subtitle for the title page as a hyperlink:\n";
 	theValue += "%\n";	
-	theValue += "% %urladdsubtitle http://michaeleskin.com/abc Subtitle as Hyperlink\n";
+	theValue += "% %urladdsubtitle http://michaeleskin.com Subtitle as Hyperlink\n";
 	theValue += "%\n";	
 	theValue += "% Before the tunes, add a table of contents with a title:\n";
 	theValue += "%\n";
@@ -6672,8 +6851,16 @@ function NewABC(){
 	theValue += "% Add a PDF page header or footer as a hyperlink:\n";
 	theValue += "%\n";
 	theValue += "% %urlpageheader http://michaeleskin.com Page Header as Hyperlink\n";
-	theValue += "% %urlpagefooter http://michaeleskin.com/abc Page Footer as Hyperlink\n";
+	theValue += "% %urlpagefooter http://michaeleskin.com Page Footer as Hyperlink\n";
 	theValue += "%\n";
+	theValue += "% Add a PDF hyperlink from each tune back to thesession.org\n";
+	theValue += "%\n";
+	theValue += "% %addlinkstothesession\n";
+	theValue += "%\n";
+	theValue += "% Add a PDF hyperlink for this tune:\n";
+	theValue += "%\n";	
+	theValue += "% %hyperlink http://michaeleskin.com\n";	
+	theValue += "%\n";	
 	theValue += "% After the tunes, add a sharing QR code on a new page in the PDF:\n";
 	theValue += "%\n";
 	theValue += "% %qrcode\n";
@@ -8347,7 +8534,7 @@ function InjectPDFHeaders(e){
 		output += "%addtitle Title Page Title\n";
 		output += "%addsubtitle Title Page Subtitle\n";
 		output += "%urladdtitle http://michaeleskin.com Title Page Title as Hyperlink\n";
-		output += "%urladdsubtitle http://michaeleskin.com/abc Title Page Subtitle as Hyperlink\n";
+		output += "%urladdsubtitle http://michaeleskin.com Title Page Subtitle as Hyperlink\n";
 		output += "%addtoc Table of Contents\n";
 		output += "%addsortedtoc Table of Contents Sorted by Tune Name\n";
 		output += "%addlinkbacktotoc\n";		
@@ -8368,9 +8555,13 @@ function InjectPDFHeaders(e){
 		output += "%pageheader Page Header\n"
 		output += "%pagefooter Page Footer\n"
 		output += "%urlpageheader http://michaeleskin.com Page Header as Hyperlink\n";
-		output += "%urlpagefooter http://michaeleskin.com/abc Page Footer as Hyperlink\n";
+		output += "%urlpagefooter http://michaeleskin.com Page Footer as Hyperlink\n";
+		output += "%addlinkstothesession\n";
 		output += "%pdfname your_pdf_filename\n"
 		output += "%qrcode\n";
+		output += "\n";
+		output += "These can be in each tune:\n";
+		output += "%hyperlink http://michaeleskin.com\n";
 		output += "\n";
 		
 		output += theNotes;
