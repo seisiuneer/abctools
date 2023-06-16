@@ -147,6 +147,7 @@ var gAddIndexLinkback = false;
 // Links to add at finalize time
 var gTuneHyperlinks = [];
 var gAddTheSessionHyperlinks = false;
+var gAddPlaybackHyperlinks = false;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -1531,11 +1532,7 @@ function GetAllTuneHyperlinks(theLinks) {
 
 	var theTitles;
 
-	if (gAddTheSessionHyperlinks){
-		
-		theTitles = GetTunebookIndexTitles();
-
-	}
+	theTitles = GetTunebookIndexTitles();
 
 	// There must be a one-to-one coorespondence of tune count to hyperlink record count
 	if (nTunes != theLinks.length){
@@ -1546,22 +1543,56 @@ function GetAllTuneHyperlinks(theLinks) {
 
 	for (i = 0; i < nTunes; ++i) {
 
+		// See if there is a hyperlink override for this tune
+		var thisTune = getTuneByIndex(i);
+
 		// Clear the tunebook toc string
 		var theHyperlink = "";
 
+		// Add a playback hyperlink?
+		if (gAddPlaybackHyperlinks){
+
+			var theData = encodeURIComponent(thisTune);
+
+			theLinks[i].url = "https://editor.drawthedots.com?t="+theData;
+
+		}
+		else
+		// Add a thesession.org hyperlink?
 		if (gAddTheSessionHyperlinks){
 
 			theLinks[i].url = "https://thesession.org/tunes/search?q="+encodeURIComponent(theTitles[i]);
 
 		}
 
-		// See if there is a hyperlink override for this tune
+		// Search for a thesession hyperlink request
+		var searchRegExp = /^%add_link_to_thesession.*$/m
 
-		var thisTune = getTuneByIndex(i);
+		// Detect thesession hyperlink annotation
+		var addTheSessionHyperlink = thisTune.match(searchRegExp);
 
+		if ((addTheSessionHyperlink) && (addTheSessionHyperlink.length > 0)){
 
-		// Search for a hyperlink request
-		var searchRegExp = /^%hyperlink.*$/m
+			theLinks[i].url = "https://thesession.org/tunes/search?q="+encodeURIComponent(theTitles[i]);
+
+		}
+
+		// Search for a playback hyperlink request
+		searchRegExp = /^%add_playback_link.*$/m
+
+		// Detect playback hyperlink annotation
+		var addPlaybackHyperlink = thisTune.match(searchRegExp);
+
+		if ((addPlaybackHyperlink) && (addPlaybackHyperlink.length > 0)){
+
+			var theData = encodeURIComponent(thisTune);
+
+			theLinks[i].url = "https://editor.drawthedots.com?t="+theData;
+
+		}
+
+		// Search for a general purpose hyperlink request
+		searchRegExp = /^%hyperlink.*$/m
 
 		// Detect tunebook TOC annotation
 		var addTunebookHyperlink = thisTune.match(searchRegExp);
@@ -3166,7 +3197,7 @@ function ParseCommentCommands(theNotes){
 	gAddTheSessionHyperlinks = false;
 
 	// Search for a thesession.org linkback request
-	searchRegExp = /^%addlinkstothesession.*$/m
+	searchRegExp = /^%add_all_links_to_thesession.*$/m
 
 	// Detect thesession linkback annotation
 	var addSessionLinkback = theNotes.match(searchRegExp);
@@ -3177,6 +3208,33 @@ function ParseCommentCommands(theNotes){
 
 	}
 
+	// Legacy directive
+	// Search for a thesession.org linkback request
+	searchRegExp = /^%addlinkstothesession.*$/m
+
+	// Detect thesession linkback annotation
+	addSessionLinkback = theNotes.match(searchRegExp);
+
+	if ((addSessionLinkback) && (addSessionLinkback.length > 0)){
+
+		gAddTheSessionHyperlinks = true;
+
+	}
+
+	// Include playback links for every tune
+	gAddPlaybackHyperlinks = false;
+
+	// Search for a playback link request
+	searchRegExp = /^%add_all_playback_links.*$/m
+
+	// Detect playback link annotation
+	var addPlaybackHyperlinks = theNotes.match(searchRegExp);
+
+	if ((addPlaybackHyperlinks) && (addPlaybackHyperlinks.length > 0)){
+
+		gAddPlaybackHyperlinks = true;
+
+	}
 	// Check my work
 	// console.log("theTunebookTP = "+theTunebookTP);
 	// console.log("theTunebookTPST = "+theTunebookTPST);
@@ -3185,6 +3243,7 @@ function ParseCommentCommands(theNotes){
 	// console.log("gAddTOCLinkback = "+gAddTOCLinkback);
 	// console.log("gAddIndexLinkback = "+gAddIndexLinkback);
 	// console.log("gAddTheSessionHyperlinks = "+gAddTheSessionHyperlinks);
+	// console.log("gAddPlaybackHyperlinks = "+gAddPlaybackHyperlinks);
 
 }
 
@@ -6853,13 +6912,25 @@ function NewABC(){
 	theValue += "% %urlpageheader http://michaeleskin.com Page Header as Hyperlink\n";
 	theValue += "% %urlpagefooter http://michaeleskin.com Page Footer as Hyperlink\n";
 	theValue += "%\n";
-	theValue += "% Add a PDF hyperlink from each tune back to thesession.org\n";
+	theValue += "% Add a PDF hyperlink from every tune back to thesession.org\n";
 	theValue += "%\n";
-	theValue += "% %addlinkstothesession\n";
+	theValue += "% %add_all_links_to_thesession\n";
+	theValue += "%\n";
+	theValue += "% Add a PDF hyperlink from every tune back to Paul Rosen's ABC Quick Editor for playback\n";
+	theValue += "%\n";
+	theValue += "% %add_all_playback_links\n";
 	theValue += "%\n";
 	theValue += "% Add a PDF hyperlink for this tune:\n";
 	theValue += "%\n";	
 	theValue += "% %hyperlink http://michaeleskin.com\n";	
+	theValue += "%\n";	
+	theValue += "% Add a PDF hyperlink for this tune back to thesession.org\n";
+	theValue += "%\n";	
+	theValue += "% %add_link_to_thesession\n";	
+	theValue += "%\n";	
+	theValue += "% Add a PDF hyperlink for this tune back to Paul Rosen's ABC Quick Editor for playback\n";
+	theValue += "%\n";	
+	theValue += "% %add_playback_link\n";	
 	theValue += "%\n";	
 	theValue += "% After the tunes, add a sharing QR code on a new page in the PDF:\n";
 	theValue += "%\n";
@@ -6881,7 +6952,6 @@ function NewABC(){
 		UpdateNotationTopPosition();
 
 	});
-
 
 }
 
@@ -8556,12 +8626,15 @@ function InjectPDFHeaders(e){
 		output += "%pagefooter Page Footer\n"
 		output += "%urlpageheader http://michaeleskin.com Page Header as Hyperlink\n";
 		output += "%urlpagefooter http://michaeleskin.com Page Footer as Hyperlink\n";
-		output += "%addlinkstothesession\n";
+		output += "%add_all_links_to_thesession\n";
+		output += "%add_all_playback_links\n";
 		output += "%pdfname your_pdf_filename\n"
 		output += "%qrcode\n";
 		output += "\n";
-		output += "These can be in each tune:\n";
+		output += "These directives can be added to each tune:\n";
 		output += "%hyperlink http://michaeleskin.com\n";
+		output += "%add_link_to_thesession\n";
+		output += "%add_playback_link\n";
 		output += "\n";
 		
 		output += theNotes;
