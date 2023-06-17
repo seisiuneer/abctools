@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-       
+               
         <style>
         p {
         font-size:14pt;
@@ -532,7 +532,8 @@
             <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/Na4XwOKYP4A" title="Tune Hyperlinks and Automatic Hyperlinks to TheSession.org" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p></p>
             <p>Details on tune playback hyperlinks:</p>
-            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/2VrltCluodY" title="Tune Playback Hyperlinks" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>       
+            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/2VrltCluodY" title="Tune Playback Hyperlinks" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p> 
+            <p>Note: Since this video was made, I added the ability to have the tool automatically add a MIDI program number to the playback hyperlinks. Details below.</p>      
             <p></p>           
             <p>The tool can add hyperlinks to external websites to the tune notation in a PDF tunebook.</p>
             <p></p>
@@ -548,10 +549,19 @@
             <p>%hyperlink http://michaeleskin.com</p>
             <p>%hyperlink https://cnn.com</p>
             <p></p>
-            <p>To add a hyperlink to Paul Rosen's ABC Quick Editor for playing a specific tune, add the following comment-based annotation anywhere in the ABC for a specific tune:</p>
+            <p>To add a hyperlink to Paul Rosen's ABC Quick Editor for playing a specific tune with a specific General MIDI program number sound, add the following comment-based annotation anywhere in the ABC for a specific tune:</p>
             <p></p>
-            <p>%add_playback_link</p>
+            <p>%add_playback_link MIDI_PROGRAM_NUMBER</p>
             <p></p>
+            <p></p>
+            <p>The MIDI_PROGRAM_NUMBER is optional.</p>
+            <p></p>
+            <p>Some MIDI program numbers I recommend:</p>
+            <p>74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano</p>
+            <p></p>
+            <p>Example: To have a specific tune played with a fiddle sound</p>
+            <p>%add_playback_link 49</p>            
+            <p></p>           
             <p>To add a hyperlink to a specific tune to the thesession.org search page for the tune title, add the following comment-based annotation anywhere in the ABC for a specific tune:</p>
             <p></p>
             <p>%add_link_to_thesession</p>
@@ -560,9 +570,17 @@
             <p></p>
             <p><strong>Adding playback or thesession.org hyperlinks to every tune in a PDF tunebook:</strong></p>
             <p></p>           
-            <p>You may automatically add a hyperlink for every tune to Paul Rosen's ABC Quick Editor for playing the tune by adding the following comment-based annotation anywhere in the ABC file:</p>
+            <p>You may automatically add a hyperlink for every tune to Paul Rosen's ABC Quick Editor for playing the tune with a specific General MIDI program number sound by adding the following comment-based annotation anywhere in the ABC file:</p>
             <p></p>
-            <p>%add_all_playback_links</p>
+            <p>%add_all_playback_links MIDI_PROGRAM_NUMBER</p>
+            <p></p>
+            <p>The MIDI_PROGRAM_NUMBER is optional.</p>
+            <p></p>
+            <p>Some MIDI program numbers I recommend:</p>
+            <p>74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano</p>
+            <p></p>           
+            <p>Example: To have all tunes played with a flute sound</p>
+            <p>%add_all_playback_links 74</p>
             <p></p>
             <p>You may automatically add a hyperlink for every tune to the thesession.org search page for the tune title by adding the following comment-based annotation anywhere in the ABC file:</p>
             <p></p>
