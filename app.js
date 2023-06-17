@@ -148,6 +148,7 @@ var gAddIndexLinkback = false;
 var gTuneHyperlinks = [];
 var gAddTheSessionHyperlinks = false;
 var gAddPlaybackHyperlinks = false;
+var gPlaybackHyperlinkProgram = "";
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -1552,7 +1553,15 @@ function GetAllTuneHyperlinks(theLinks) {
 		// Add a playback hyperlink?
 		if (gAddPlaybackHyperlinks){
 
-			var theData = encodeURIComponent(thisTune);
+			var tuneWithPatch = thisTune;
+
+			if (gPlaybackHyperlinkProgram != ""){
+
+				tuneWithPatch = "%%MIDI program "+gPlaybackHyperlinkProgram+"\n"+tuneWithPatch;
+
+			}
+
+			var theData = encodeURIComponent(tuneWithPatch);
 
 			theLinks[i].url = "https://editor.drawthedots.com?t="+theData;
 
@@ -1576,7 +1585,7 @@ function GetAllTuneHyperlinks(theLinks) {
 			theLinks[i].url = "https://thesession.org/tunes/search?q="+encodeURIComponent(theTitles[i]);
 
 		}
-
+		
 		// Search for a playback hyperlink request
 		searchRegExp = /^%add_playback_link.*$/m
 
@@ -1585,7 +1594,19 @@ function GetAllTuneHyperlinks(theLinks) {
 
 		if ((addPlaybackHyperlink) && (addPlaybackHyperlink.length > 0)){
 
-			var theData = encodeURIComponent(thisTune);
+			var tuneWithPatch = thisTune;
+
+			var thePatch = addPlaybackHyperlink[0].replace("%add_playback_link","");
+				
+			thePatch = thePatch.trim();
+
+			if (thePatch != ""){
+
+				tuneWithPatch = "%%MIDI program "+thePatch+"\n"+tuneWithPatch;
+
+			}
+
+			var theData = encodeURIComponent(tuneWithPatch);
 
 			theLinks[i].url = "https://editor.drawthedots.com?t="+theData;
 
@@ -3223,6 +3244,7 @@ function ParseCommentCommands(theNotes){
 
 	// Include playback links for every tune
 	gAddPlaybackHyperlinks = false;
+	gPlaybackHyperlinkProgram = "";
 
 	// Search for a playback link request
 	searchRegExp = /^%add_all_playback_links.*$/m
@@ -3234,7 +3256,12 @@ function ParseCommentCommands(theNotes){
 
 		gAddPlaybackHyperlinks = true;
 
+		var thePatch = addPlaybackHyperlinks[0].replace("%add_all_playback_links","");
+		
+		gPlaybackHyperlinkProgram = thePatch.trim();
+		
 	}
+
 	// Check my work
 	// console.log("theTunebookTP = "+theTunebookTP);
 	// console.log("theTunebookTPST = "+theTunebookTPST);
@@ -3244,6 +3271,7 @@ function ParseCommentCommands(theNotes){
 	// console.log("gAddIndexLinkback = "+gAddIndexLinkback);
 	// console.log("gAddTheSessionHyperlinks = "+gAddTheSessionHyperlinks);
 	// console.log("gAddPlaybackHyperlinks = "+gAddPlaybackHyperlinks);
+	// console.log("gPlaybackHyperlinkProgram = "+gPlaybackHyperlinkProgram);
 
 }
 
@@ -6916,9 +6944,9 @@ function NewABC(){
 	theValue += "%\n";
 	theValue += "% %add_all_links_to_thesession\n";
 	theValue += "%\n";
-	theValue += "% Add a PDF hyperlink from every tune back to Paul Rosen's ABC Quick Editor for playback\n";
+	theValue += "% Add a PDF hyperlink from every tune back to Paul Rosen's ABC Quick Editor for playback. Use a flute sound for playback.\n";
 	theValue += "%\n";
-	theValue += "% %add_all_playback_links\n";
+	theValue += "% %add_all_playback_links 74\n";
 	theValue += "%\n";
 	theValue += "% Add a PDF hyperlink for this tune:\n";
 	theValue += "%\n";	
@@ -6928,9 +6956,9 @@ function NewABC(){
 	theValue += "%\n";	
 	theValue += "% %add_link_to_thesession\n";	
 	theValue += "%\n";	
-	theValue += "% Add a PDF hyperlink for this tune back to Paul Rosen's ABC Quick Editor for playback\n";
+	theValue += "% Add a PDF hyperlink for this tune back to Paul Rosen's ABC Quick Editor for playback. Use a fiddle sound for playback.\n";
 	theValue += "%\n";	
-	theValue += "% %add_playback_link\n";	
+	theValue += "% %add_playback_link 49\n";	
 	theValue += "%\n";	
 	theValue += "% After the tunes, add a sharing QR code on a new page in the PDF:\n";
 	theValue += "%\n";
@@ -8627,14 +8655,14 @@ function InjectPDFHeaders(e){
 		output += "%urlpageheader http://michaeleskin.com Page Header as Hyperlink\n";
 		output += "%urlpagefooter http://michaeleskin.com Page Footer as Hyperlink\n";
 		output += "%add_all_links_to_thesession\n";
-		output += "%add_all_playback_links\n";
+		output += "%add_all_playback_links 74\n";
 		output += "%pdfname your_pdf_filename\n"
 		output += "%qrcode\n";
 		output += "\n";
 		output += "These directives can be added to each tune:\n";
 		output += "%hyperlink http://michaeleskin.com\n";
 		output += "%add_link_to_thesession\n";
-		output += "%add_playback_link\n";
+		output += "%add_playback_link 49\n";
 		output += "\n";
 		
 		output += theNotes;
