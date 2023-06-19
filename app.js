@@ -8900,6 +8900,11 @@ function ShowTopBar(){
 	var elem = document.getElementById("abc-selected");
 	elem.style.marginTop = "15px";
 	elem.style.marginBottom = "1px";
+		
+	elem = document.getElementById("toggletopbar");
+
+	elem.value="▲";
+
 
 }
 
@@ -8922,6 +8927,10 @@ function HideTopBar(){
 		elem.style.marginTop = "4px";
 	}
 
+	elem = document.getElementById("toggletopbar");
+
+	elem.value="▼";
+
 }
 
 function ToggleTopBar(){
@@ -8935,7 +8944,7 @@ function ToggleTopBar(){
 	else{
 
 		ShowTopBar();
-
+		
 	}
 
 	// Resize the notation spacer
@@ -9228,7 +9237,7 @@ function restoreStateFromLocalStorage(){
 		   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Complete documentation and demo videos are available by clicking here: <a href="userguide.html" target="_blank">User Guide</a>';
 		   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Type or paste tunes in ABC format into the text area.</p>'; 
 		   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">All ABC tunes must begin with an X: tag.</p>'; 
-		   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Notation will appear instantly.</p>';
+		   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Notation will appear instantly. Click the zoom-out arrows at the upper-right to view the notation fullscreen.</p>';
 		   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click "New ABC" to generate a one-line sample tune with examples of all the available PDF tunebook annotations.</p>';
 		   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click "Open ABC" to open and import an existing ABC text file from your system.</p>';
 		   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Once ABC has been entered and notation is displayed:</p>';
