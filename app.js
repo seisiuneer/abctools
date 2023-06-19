@@ -7156,6 +7156,9 @@ function FillUrlBoxWithAbcInLZW() {
 		document.getElementById("generateqrcode").classList.remove("urlcontrols");
 		document.getElementById("generateqrcode").classList.add("urlcontrolsdisabled");
 
+		document.getElementById("shortenurl").classList.remove("urlcontrols");
+		document.getElementById("shortenurl").classList.add("urlcontrolsdisabled");
+
 		document.getElementById("testurl").classList.remove("urlcontrols");
 		document.getElementById("testurl").classList.add("urlcontrolsdisabled");
 
@@ -7178,6 +7181,9 @@ function FillUrlBoxWithAbcInLZW() {
 
 		document.getElementById("copyurl").classList.remove("urlcontrolsdisabled");
 		document.getElementById("copyurl").classList.add("urlcontrols");
+
+		document.getElementById("shortenurl").classList.remove("urlcontrolsdisabled");
+		document.getElementById("shortenurl").classList.add("urlcontrols");
 
 		gAllowURLSave = true;
 
@@ -7755,6 +7761,41 @@ function CopyABC(e){
   		},750);
 
   	}
+}
+
+//
+// Copy the ShareURL to the clipboard and then launch TinyURL
+//
+function ShortenURL(){
+
+	if (!gAllowURLSave){
+		return;
+	}
+
+	var theURL = document.getElementById("urltextbox");
+
+	var theData = theURL.value;
+	
+	// Copy the abc to the clipboard
+	CopyToClipboard(theData);
+
+	// Give some feedback
+	document.getElementById("shortenurl").value = "Share URL Copied!";
+
+	setTimeout(function(){
+
+		document.getElementById("shortenurl").value = "Launching TinyURL";
+
+		setTimeout(function(){
+
+			var w = window.open("https://tinyurl.com");
+
+			document.getElementById("shortenurl").value = "Shorten URL";
+			
+		},1000);
+
+	},2000);
+
 }
 
 //
