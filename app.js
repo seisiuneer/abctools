@@ -9224,21 +9224,21 @@ function restoreStateFromLocalStorage(){
 		
 		UpdateLocalStorage();
 
-		var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to my ABC Transcription Tools!</p>';
-		   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Complete documentation and demo videos are available by clicking here: <a href="userguide.html" target="_blank">User Guide</a>';
-		   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Type or paste tunes in ABC format into the text area.</p>'; 
-		   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">All ABC tunes must begin with an X: tag.</p>'; 
-		   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Notation will appear instantly.</p>';
-		   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Click "New ABC" to generate a one-line sample tune with examples of all the available PDF tunebook annotations.</p>';
-		   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Click "Open ABC" to open and import an existing ABC text file from your system.</p>';
-		   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Once ABC has been entered and notation is displayed:</p>';
-		   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Click "Save ABC" to save all the ABC text to an ABC text file.</p>';
-		   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Click "Export PDF" to export your tunebook in PDF format.</p>';
-		   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Click "Copy All" to copy all the ABC text to the clipboard.</p>';
-		   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Click "Play" to play the tune currently being edited.</p>';
-		   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Click "Show Controls" to show the tablature options, PDF tunebook settings (tunes-per-page, paper size, page numbers), sharing features, and other options.</p>';
+		var modal_msg = '<p style="text-align:center;font-size:16pt;font-family:helvetica">Welcome to my ABC Transcription Tools!</p>';
+		   modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Complete documentation and demo videos are available by clicking here: <a href="userguide.html" target="_blank">User Guide</a>';
+		   modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Type or paste tunes in ABC format into the text area.</p>'; 
+		   modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">All ABC tunes must begin with an X: tag.</p>'; 
+		   modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Notation will appear instantly.</p>';
+		   modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click "New ABC" to generate a one-line sample tune with examples of all the available PDF tunebook annotations.</p>';
+		   modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click "Open ABC" to open and import an existing ABC text file from your system.</p>';
+		   modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Once ABC has been entered and notation is displayed:</p>';
+		   modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click "Save ABC" to save all the ABC text to an ABC text file.</p>';
+		   modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click "Export PDF" to export your tunebook in PDF format.</p>';
+		   modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click "Copy All" to copy all the ABC text to the clipboard.</p>';
+		   modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click "Play" to play the tune currently being edited.</p>';
+		   modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click "Show Controls" to show the tablature options, PDF tunebook settings (tunes-per-page, paper size, page numbers), sharing features, and other options.</p>';
 
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 165 });
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 105 });
 
 	}
 
