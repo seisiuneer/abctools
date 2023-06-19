@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+ 
         <style>
         p {
         font-size:14pt;
@@ -85,7 +85,7 @@
     </head>
     
     <body style="padding:10px">
-        <div id="maindiv">  
+        <div id="maindiv">
             <div style="text-align: center;">
                 <font id="pagetitle" face="Comic Sans MS" size="5">ABC Transcription Tools User Guide</font><br/>
                 <p>This ABC to notation converter was developed by <a href="http://michaeleskin.com" target="_blank">Michael Eskin</a>.</p>
@@ -94,7 +94,7 @@
                 <p><strong>"I've used various ABC apps and Web tools for many years, and this is by far the best. Thanks for making my life easier." - Jim Besser</strong></p>
             </div>
             <hr>
-            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/eVOLh2Z-GDU" title="ABC Transcription Tools Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>                      
+            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/eVOLh2Z-GDU" title="ABC Transcription Tools Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <hr id="introduction">
             <h1>Introduction</h1>
             <p>ABC Transcription Tools is a free, web-based, open-source tool for converting music in ABC format to standard notation and tablature.</p>
@@ -102,11 +102,11 @@
             <p>It also has easy-to-use features to transpose and sort your ABC tunebooks.</p>
             <p>You can fully customize the look of your notation using the standard ABC spacing and font annotations.</p>
             <p>The tool also includes the ability to easily share your tunes with others via ABC Share URLs and QR Codes.</p>
-            <p>The underlying ABC rendering technology is Paul Rosen's incredible <a href="https://www.abcjs.net/" target="_blank">abcjs</a> Javascript library.</p>            
+            <p>The underlying ABC rendering technology is Paul Rosen's incredible <a href="https://www.abcjs.net/" target="_blank">abcjs</a> Javascript library.</p>
             <hr>
             <h1>90-minute Overview Webinar and Q&A</h1>
-            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/qKu1IcSjfEQ" title="ABC Transcription Tools Webinar 10 June 2023" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>                      
-            <hr>                  
+            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/qKu1IcSjfEQ" title="ABC Transcription Tools Webinar 10 June 2023" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <hr>
             <h1>Table of Contents</h1>
             <p class="toc"><a href="#responsive_design">Responsive Design</a></p>
             <p class="toc"><a href="#optimized_for_editing_large_tunebooks">Optimized for Editing Large Tunebooks</a></p>
@@ -125,10 +125,11 @@
             <p class="toc"><a href="#adding_a_pdf_tunebook_table_of_contents_and_index">Adding a PDF Tunebook Table of Contents and Index</a></p>
             <p class="toc"><a href="#pdf_page_headers_and_footers">PDF Page Headers and Footers</a></p>
             <p class="toc"><a href="#table_of_contents_and_index_font_size_and_line_spacing_overrides">Table of Contents and Index Font Size and Line Spacing Overrides</a></p>
-            <p class="toc"><a href="#tune_hyperlinks">Tune Hyperlinks</a></p>            
+            <p class="toc"><a href="#tune_hyperlinks">Tune Hyperlinks</a></p>
             <p class="toc"><a href="#printing_your_tunes">Printing Your Tunes</a></p>
             <p class="toc"><a href="#sharing_controls">Sharing Controls</a></p>
             <p class="toc"><a href="#abc_share_url_examples">ABC Share URL Examples</a></p>
+            <p class="toc"><a href="#shortening_abc_share_urls">Shortening ABC Share URLs</a></p>
             <p class="toc"><a href="#qr_code_example">QR Code Example</a></p>
             <p class="toc"><a href="#adding_a_qr_code_to_the_pdf_export">Adding a QR Code to the PDF Export</a></p>
             <p class="toc"><a href="#reading_the_qr_codes">Reading the QR Codes</a></p>
@@ -145,9 +146,9 @@
             <hr id="responsive_design">
             <h1>Responsive Design</h1>
             <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/3_g3xj6XOnY" title="Responsive Design" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p>On desktop browsers, the tool will dynamically adjust its layout based on window size and shape to allow you to most efficiently view and edit your ABC tunes.</p>  
+            <p>On desktop browsers, the tool will dynamically adjust its layout based on window size and shape to allow you to most efficiently view and edit your ABC tunes.</p>
             <p>If you are only seeing the single column view on your desktop browser, with the ABC on the top and the notation underneath, particularly on a smaller laptop screen, zoom your browser out one level (Ctrl-Minus on Windows, Cmd-Minus on Mac).</p>
-            <p>All tablature and PDF settings are saved in local browser storage and reloaded the next time you use the tool.</p>  
+            <p>All tablature and PDF settings are saved in local browser storage and reloaded the next time you use the tool.</p>
             <hr id="optimized_for_editing_large_tunebooks">
             <h1>Optimized for Editing Large Tunebooks</h1>
             <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/Jl2HRoCiPRU" title="Optimizations for Large Tune Books" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
@@ -218,7 +219,7 @@
             <div class="image_holder">
                 <img src="img/ug5a.jpg"/>
             </div>
-            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/b9BQEUb6XcI" title="Transposition" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>  
+            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/b9BQEUb6XcI" title="Transposition" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p></p>
             <p>Transpose Down - Transposes the selected tunes down one semitone.</p>
             <p>Transpose Up - Transposes the selected tunes up one semitone.</p>
@@ -229,7 +230,7 @@
             <p>Show/Hide Sharing - Shows/Hides a new panel (described below) with options for sharing your tune set via URL or QR code.</p>
             <p>Clear ABC - Clears the ABC Editor so you can start over.</p>
             <hr id="sorting_your_abc_tunes">
-            <h1>Sorting Your ABC Tunes</h1>            
+            <h1>Sorting Your ABC Tunes</h1>
             <p></p>
             <p>Sort ABC - Sorts all the tunes in the ABC area in alphabetical order by tune name.</p>
             <p>Tune names that start with "The" will have the "The" moved to the end of the tune name before the alphabetical sorting.</p>
@@ -239,7 +240,7 @@
             <div class="image_holder">
                 <img src="img/ug8.jpg"/>
             </div>
-            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/NbbX1BHVtyo" title="Stripping Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>  
+            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/NbbX1BHVtyo" title="Stripping Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p></p>
             <p>Hide/Show Annotations - Hides/Shows most ABC annotations like Composer, Discography, History, Tempo, etc. in the generated notation.</p>
             <p>Holding down the Shift key while clicking this button will strip the annotations from the ABC itself.</p>
@@ -272,7 +273,7 @@
             <p>This makes it simple to paste any changes you might have made and copied from the abcjs Quick Editor.</p>
             <hr id="selecting_the_instrument_for_playback">
             <h1>Selecting the Instrument for Playback</h1>
-            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/i6oKpGzS2lo" title="Playing your Tunes (New and Improved)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>            
+            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/i6oKpGzS2lo" title="Playing your Tunes (New and Improved)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>You may select which instrument sound the abcjs Quick Editor uses for playback of your tunes.</p>
             <p>By default, the instrument used is a piano.</p>
             <p>To choose the sound when played, add an additional line to your ABC right after any headers and before the ABC notes, for example for a flute sound:</p>
@@ -305,13 +306,13 @@
             <h1>PDF Tunebook Settings</h1>
             <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/jtiVzXB8xhQ" title="PDF Generation Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p></p>
-            <p>The tool has a powerful built-in PDF tunebook generator that provides more flexibility than the browser's print feature, particularly in the area of adding custom page headers and footers, title page, table of contents, or a tune index.</p> 
+            <p>The tool has a powerful built-in PDF tunebook generator that provides more flexibility than the browser's print feature, particularly in the area of adding custom page headers and footers, title page, table of contents, or a tune index.</p>
             <p>It can format PDF tunebooks with one or multiple tunes per page, something the native browser's Print command cannot accomplish.</p>
             <p></p>
             <p>The PDF generator also includes an option to append a Share URL QR code to the end of the PDF document.</p>
             <p>All of this is done using custom ABC comment-based annotation (described below).</p>
             <p><strong>PDF Tunes/Page</strong> - Select whether you want One Tune/Page, Multiple Tunes/Page, Tune Note Incipits, or ABC Incipits (unsorted or alphabetically sorted by tune name) in the PDF along with the paper size (Letter or A4):</p>
-            <p>
+            <p></p>
             <div class="image_holder">
                 <img src="img/ug7a4.jpg"/>
             </div>
@@ -338,9 +339,9 @@
             <p>This will allow you to easily format a tune book where you want to override the automatic tune layout.</p>
             <p></p>
             <p><strong>PDF Tunebook Notes Incipits:</strong></p>
-            <p></p>            
+            <p></p>
             <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/ik9ObQXlBLU" title="PDF Tunebook Notes Incipits" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p></p>            
+            <p></p>
             <p>Exporting a PDF tunebook with notes incipits allow you create a "cheat sheet" for the tunebook that includes just the notation for first line of each tune.</p>
             <p>The tune notes incipits can be in standard notation or any of the available tablatures.</p>
             <p></p>
@@ -349,9 +350,9 @@
             <p>Additionally, manually inserted %%newpage requests are ignored for incipit generation.</p>
             <p></p>
             <p><strong>PDF Tunebook ABC Incipits:</strong></p>
-            <p></p>            
+            <p></p>
             <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/OC5uFL2X6yQ " title="PDF Tunebook ABC Incipits" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p></p>            
+            <p></p>
             <p>Exporting a PDF tunebook with ABC incipits allow you create a "cheat sheet" for the tunebook that includes just the first few measures of the ABC for each tune.</p>
             <p></p>
             <p><strong>PDF Page Number Position Options:</strong></p>
@@ -389,9 +390,9 @@
             <p></p>
             <p>%addsubtitle (your tunebook title page subtitle text goes here...)</p>
             <p></p>
-            <p>Note: The subtitle only appears if a title page is requested.</p> 
+            <p>Note: The subtitle only appears if a title page is requested.</p>
             <p>For a title page with just a subtitle and no subtitle, just enter %addtitle with no text after it and then add %addsubtitle with your subtitle text.</p>
-            <p>
+            <p></p>
             <p>To add a title page to your PDF tunebook as a hyperlink, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
             <p>%urladdtitle URL (your tunebook title text goes here...)</p>
@@ -407,7 +408,7 @@
             <p>Note: The URL must begin with either http:// or https:// to be recognized as a hyperlink.</p>
             <p></p>
             <p>Only the first instance of the %addtitle, %addsubtitle, %urladdtitle, and %urladdsubtitle annotations are processed, any additional instances are ignored.</p>
-            <p></p>            
+            <p></p>
             <hr id="adding_a_pdf_tunebook_table_of_contents_and_index">
             <h1>Adding a PDF Tunebook Table of Contents and Index</h1>
             <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/B1jJmxSQ36M" title="PDF Table of Contents and Tunebook Index" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
@@ -427,7 +428,7 @@
             <p>To add a hyperlink (displayed as <<) on the left side of each page that links back to the tunebook table of contents, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
             <p>%addlinkbacktotoc</p>
-            <p></p>            
+            <p></p>
             <p>To append an unsorted tunebook index to the end of your PDF tunebook listing each tune name and page number in the same order they are in the ABC along with hyperlinks to each tune, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
             <p>%addindex (your tunebook index unsorted title text goes here...)</p>
@@ -532,8 +533,8 @@
             <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/Na4XwOKYP4A" title="Tune Hyperlinks and Automatic Hyperlinks to TheSession.org" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p></p>
             <p>Details on tune playback hyperlinks:</p>
-            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/EcSknrJOxBE" title="Tune Playback Hyperlinks" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p> 
-            <p></p>           
+            <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/EcSknrJOxBE" title="Tune Playback Hyperlinks" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p></p>
             <p>The tool can add hyperlinks to external websites to the tune notation in a PDF tunebook.</p>
             <p></p>
             <p>Tune hyperlinks are available for tune notation and tune incipits tunebooks, and are not available for ABC text incipit tunebooks.</p>
@@ -589,7 +590,7 @@
             <p>Precedence order for multiple manually added hyperlinks on one specific tune is website hyperlinks take highest priority, then playback hyperlinks, then thesession.org hyperlinks.</p>
             <p></p>
             <p><strong>Adding playback or thesession.org hyperlinks to every tune in a PDF tunebook:</strong></p>
-            <p></p>           
+            <p></p>
             <p>You may automatically add a hyperlink for every tune to Paul Rosen's ABC Quick Editor for playing the tune with a specific General MIDI program number sound by adding the following comment-based annotation anywhere in the ABC file:</p>
             <p></p>
             <p>%add_all_playback_links MIDI_PROGRAM_NUMBER</p>
@@ -598,7 +599,7 @@
             <p></p>
             <p>Some MIDI program numbers I recommend:</p>
             <p>74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano</p>
-            <p></p>           
+            <p></p>
             <p>Example: To have all tunes played with a flute sound</p>
             <p>%add_all_playback_links 74</p>
             <p></p>
@@ -616,7 +617,7 @@
             <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/6AlzAVNTRQA" title="Printing you Tunes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p></p>
             <p>You may quickly print your tunes or generate a PDF using your browser's built-in print and PDF export features.</p>
-            <p>Tunes printed or exported from the browser are limited to one tune per page.
+            <p>Tunes printed or exported from the browser are limited to one tune per page.</p>
             <p>You may choose portrait or landscape orientation from your browser's print settings.</p>
             <p>Additional advanced settings such as printing multiple-pages per page and setting custom margins may be available in your browser's print settings dialog.</p>
             <p>Experiment with both the browser's print settings page orientation and "multiple page on one page" options to see what is possible.</p>
@@ -648,6 +649,18 @@
             <p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=KQBwhg5gpgFlYBMoCcAEAiAygGwJZgCMZUA5AewBcoBndVABTOwGsxqAoUSKAMzMpSoAwsnhUEqAO64KxGBQogAXAHoVAW1wBjGGCjYazXADsAdFrLqVhLZ0QIKZLagAqhA6jI9hZY1T8cwPYUMh5YeITE5FS0DEysgfbUAK4EIRQeALJgCsLIYMYyOqgAtKgAIr5g2KiZycggMACepa6W6i0A8qiYydh4AG4FnACOyBZI7OwAGkqoAIzsLnMucKgAQthgWsySOSjsQnPZuSIFRTDsAEpzIPFg7JlzAEwqACzsADJz8yoAHOwANJzcrqMAAK3YAB8lAAxCTrBAqdYqKEAQVhqAAouV0QAadZ4ipYqGwrHY2FQ9hohFIlHozFYynlTFo5EqNmw1E4ioAPixSipMNhaI2WihCGeqBpUJ4EBUPBUqCgCFlUGVzypCC0KiRytV61FZKhLOl7M53PKfIFUNQU1mqGeSzmgJyMAMUGMAHIOEdajkKHlzhQdNdbvdHi93l8fv8gXN1ppjNClNrdUqeFAJesNqqoLzvCqoVpRWjxew03rM9nc8XzWKofMNlL1lpBS2pTxeRAoUKlGBvNBZRIkArURBC6qS9LeVn2DwJFBxQgcyWoYbUCLG82Nor5e2d63e3aZnMAMzO2oAW50UAAh9gfYdjgGg4UQ5cbqg7iwHk9HdG3wLHGwLSimaItmyKKoLa05oryOaweqegwYqYBjlASpaOsVIQRsUFKrBpa8pitpMmaKI6myMFNhuaLkgedFSr27CQNYSoEGAMGoDwXGZjBJYqDqyqisWObrMxrHyuhqCcdxvE8eq6LOJhiqYcJ66lpJbEyXJtoKfxxZssJUCidhYowdSkHstxcEkdx5EEVRhH4dKzEALqcMYUCSOA0D2j8l7ZMYLSigA6rg2ASCQuAQPIYbfhG-6vB8QG-ACoGghC0I0qgK4MpuuIAOLiWipIqEVHJ8jh1IjjhGKFVCJX4SaUrlAhgrgRIvFQtAyq8uKZbKmOPYLnlKiYXSqK1TxYC9eqRZaOqnESlKCAdbaAWOpeYXVNQMA+qgADEixfj+rCRgBqWxhlcxFWCkIQFKE4qPKUKQKgQ4ri1RWioiVJPZ9e6oh9X2lU1UpFc8gp2kVvJ-WVRXkji654laKOEujuLsHDCNNcjuKY9ixWQ9DVKnqgF7LKgu3YPth1HU6Z1JVG13Abd0oPSmJJDbwUJLqgOpIjq9K8zw-NSkuuEqeLAtC0J7IFcaaJnp1MJIphaqC-VmLK-D0rilAksa9N-HYUrPP6xi6Kq5twDeb53BbYs1OrOqaLGMYkAwAQUAQAl51-qzMbs-GFRczCBEWtKqpRyoXIx8W6rrANmmbmV1LmvHSoynHCcyktGyp02CDeJKB6l3lWZ9jwxta0bErOEeG5buwADa8y1-q9eatqDaV0gnVt88ec57HWf51OyepwPmqbRTTrU-QUBUBs+QIAYTRPszv6XSlIfpWH93ZTCEk-QTUJYqWKJsk1ObalSZ+GvjxOX9fHKolDqC42rSiIlXNYIA4W+kAtOaJKq33YP-JAgDgE5jRDfT+kM0Qwy2lTOYJAfJgmQMwFeAcWZXQPiBEEEclC5VLvzWkityFZn4g3GaFCVS5moSOLMTYxrrXWAeDh1cUzAy4hOShzDRasJ7lSfhQMhGIhYQA9hrDuEjgQseKY7AgA&format=noten&ssp=0&pdf=multi&pn=br&fp=yes&name=Sliabh_Notes_Polkas" target="_blank">Three sets of polkas from the group "Sliabh Notes"</a></p>
             <p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgjAUAKiUBYFMAEUCGAnARgewDYBdsA7CAWRAGEAfCAaRAFEATbdCAIQQSaQQCZ2AQSoBxIQDEkI8Q3FUAIkyYBjJEz6CRVcZoZIZ8uRAZceCAGYBzBFXPdzvAcJGD2I-S7lvBkkQwZ8IDRUIJZ2DtaYNpHIYQjKVOrmPIJMyVTKTJr68rI0Lm4ePlQBFkhxTFTsmexIgnw6VZ5S-oE0EKB80LCISAAyxGGsPBR4uPGEbOTUdCAiEAB+IgDMgkjVTJZUCOwL7Hy8lkzsouIu6zVUgspCLbn5Z2sbWzt7B+oWVJZ8qBHcJ2A6jc1n5ckEDtdbqC+FRgqErKhytwXrt9mo+J9vr8kccrsC7jDFpZlojrJttqj3hjzF9MNiyQCgVCGPI2hD8aCGLCIABSHlEBAAdwADqhrBAOiBlt14MgAMqoACWuFYAHIAM7rYgC-BkSg0ejyCD1HRqcwLcwwtJlY5vK4NNZpOyJITucTyeQnY0Os0WmG-G2U+2mp02Y7Zd2s7khVB8BaxpC-NJUAMOW37WyYOlIOnmVBUTB5hx2T4QQt+xPmy0p8JqIMmx3mZ2A8OSQQetl1nx1D0ndpAA&w=50&format=noten" target="_blank">Michael Coleman set ("The Tarbolton" - "The Longford Collector" - "The Sailor's Bonnet")</a></p>
             <p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuCyBXAlgJwKYEMB22DkAzlAMLgByymANlWAGrVXpUCeUASuAFLIDmU8cADYA9AA4oAGXARxUANLgAQgFtk2KAB8QAEyUBBMAG8dAXwNLNO9ADNjN0+muaj6UzYBM6Y7cfObmHZYIjYi6JpQeoYWVrb2fuE2AEaYYDZOLm6e3kYOTkogEdoWxmboAMwuZiVGmO62mkopaRmu7l7x+RE1ZR6WJub6SmmVKXaYHkmaASFhnXqFWiAGAGLGAOKmAKIe6y76pisAIltgx1uaK-qGQ5ZKOjrzllADqxvbu-uHJ2cnl0Ngaw2TQQNKhdAiR65PwFTQeMFhSFgWy8TRFEC1ep2JLlESTERTTHpca4jyYESYabNdI6TLtHK+JzhKDEsBJDzAmzQuITAAU5QhoXJmjGYAmU1BoV4IQZeWshXhUplT00AF0wFAoEA&w=50&format=noten" target="_blank">"Muireann's" jig (by Niall Vallely) for Anglo Concertina</a></p>
+            <hr id="shortening_abc_share_urls">
+            <h1>Shortening ABC Share URLs</h1>
+            <p>ABC Share URLs can be pretty long.</p>
+            <p>You can use a free service like <a href="https://tinyurl.com/app" target="_blank">TinyURL</a> to shorten Share URLs.</p>
+            <p>To shorten a Share URL, on the sharing controls panel, click "Copy Share URL".</p>
+            <p>Open <a href="https://tinyurl.com/app" target="_blank">TinyURL</a> in another browser tab.</p>
+            <p>Paste the copied Share URL into the <a href="https://tinyurl.com/app" target="_blank">TinyURL</a> page and click "Shorten URL".</p>
+            <p>Copy the shortened URL and paste it into emails or share it on social media.</p>
+            <p>For example, here is the above "Sliabh Notes" polka set Share URL as a shortened URL:</p>
+            <p><a href="https://tinyurl.com/5n9293yu" target="_blank">https://tinyurl.com/5n9293yu</a></p>
+            <p><strong>Note: </strong>Incorporating URL shortening into the tool itself would require having a server-side component to call the URL shortening service APIs.</p>
+            <p>This would go against my "no reliance on server-side code or third party service" requirement for this tool.</p>
             <hr id="qr_code_example">
             <h1>QR Code Example</h1>
             <p>Michael Coleman set ("The Tarbolton" - "The Longford Collector" - "The Sailor's Bonnet"):</p>
@@ -704,15 +717,15 @@
             <p><strong>All supported spacing parameters</strong></p>
             <p>Here is the full list of ABC spacing-related parameters available in abcjs:</p>
             <p>%%topspace<br/>
-            %%titlespace<br/> 
-            %%subtitlespace<br/> 
-            %%composerspace<br/> 
-            %%musicspace<br/>
-            %%partsspace<br/>
-            %%vocalspace<br/> 
-            %%wordsspace<br/> 
-            %%textspace<br/> 
-            %%staffsep<br/>
+                %%titlespace<br/>
+                %%subtitlespace<br/>
+                %%composerspace<br/>
+                %%musicspace<br/>
+                %%partsspace<br/>
+                %%vocalspace<br/>
+                %%wordsspace<br/>
+                %%textspace<br/>
+                %%staffsep<br/>
             %%sysstaffsep</p>
             <p>Please refer to the <a href="http://abcnotation.com/wiki/abc:standard:v2.1" target="_blank">official ABC 2.1 specification</a> for more details.</p>
             <p>Another good reference is this handy ABC 2.1 Quick Reference Card put together by Stephen Merrony: </p>
@@ -726,33 +739,33 @@
             <p>As per the ABC 2.1 specification, custom font overrides are possible, giving you maximum control over the appearance of your notation.</p>
             <p><strong>Available ABC Font Annotations:</strong></p>
             <p>%%titlefont        font-style size<br/>
-            %%subtitlefont     font-style size<br/>
-            %%composerfont     font-style size<br/>
-            %%partsfont        font-style size<br/>
-            %%tempofont        font-style size<br/>
-            %%gchordfont       font-style size (used for chords symbols)<br/>
-            %%annotationfont   font-style size (used for "^..." annotations)<br/>
-            %%infofont         font-style size<br/>
-            %%textfont         font-style size<br/>
-            %%vocalfont        font-style size (used for for w:)<br/>
+                %%subtitlefont     font-style size<br/>
+                %%composerfont     font-style size<br/>
+                %%partsfont        font-style size<br/>
+                %%tempofont        font-style size<br/>
+                %%gchordfont       font-style size (used for chords symbols)<br/>
+                %%annotationfont   font-style size (used for "^..." annotations)<br/>
+                %%infofont         font-style size<br/>
+                %%textfont         font-style size<br/>
+                %%vocalfont        font-style size (used for for w:)<br/>
             %%wordsfont        font-style size (used for W:)</p>
             <p>Generally, these will use the PostScript font-style naming convention, for example:</p>
-            <p>Times, Helvetica, Courier, Verdana, Times-Bold, Helvetica-Italic, etc.</p> 
+            <p>Times, Helvetica, Courier, Verdana, Times-Bold, Helvetica-Italic, etc.</p>
             <p>The size parameter should be an integer, but is optional.</p>
             <p>Place your font override annotations just below the X: and above the T: ABC tune headers.</p>
             <p><strong>For example:</strong></p>
             <p>X: 1<br/>
-            %%titlefont Palatino 30<br/>
-            %%infofont Palatino 18<br/>
-            %%gchordfont Palatino Bold 14<br/>
-            T: The Road to Lisdoonvarna<br/>
-            R: slide<br/>
-            M: 12/8<br/>
-            L: 1/8<br/>
-            K:Edor<br/>
-            D|:"Em"E2B B2A B2c d3|"D"F2A ABA D2E FED|<br/>
-            "Em"E2B B2A B2c d3|"D"cdc B2A "Em"B2E E3:|<br/>
-            |:"Em"e2f gfe "Bm"d2B Bcd|"A"c2A ABc "Bm"d2B B3|<br/>
+                %%titlefont Palatino 30<br/>
+                %%infofont Palatino 18<br/>
+                %%gchordfont Palatino Bold 14<br/>
+                T: The Road to Lisdoonvarna<br/>
+                R: slide<br/>
+                M: 12/8<br/>
+                L: 1/8<br/>
+                K:Edor<br/>
+                D|:"Em"E2B B2A B2c d3|"D"F2A ABA D2E FED|<br/>
+                "Em"E2B B2A B2c d3|"D"cdc B2A "Em"B2E E3:|<br/>
+                |:"Em"e2f gfe "Bm"d2B Bcd|"A"c2A ABc "Bm"d2B B3|<br/>
             "Em"e2f gfe "Bm"d2B Bcd|"A"cdc B2A "Em"B2E E3:|</p>
             <p><strong>Result:</strong></p>
             <div class="image_holder">
@@ -783,7 +796,7 @@
             <h1>Injecting ABC Lyric-based Note Names (Experimental)</h1>
             <p>If you find the "Note Names" tab too tall, you can try holding down the Shift key while clicking the "Note Names" tab selector.</p>
             <p>This will inject an ABC lyrics line under each ABC line using the w: directive that will put the ABC note name under each note in the notation for all the tunes.</p>
-            <p>For example:<p>
+            <p>For example:</p>
             <p>GAG GAB | ABA ABd | edd gdd | edB dBA | </p>
             <p>w: G A G G A B A B A A B d e d d g d d e d B d B A</p>
             <p>The injected ABC lyrics are literally the same as the ABC so has no idea about sharps or flats, just the note letters. You may have to fix those manually.</p>
