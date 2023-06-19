@@ -2146,6 +2146,15 @@ function AppendQRCode(thePDF,paperStyle,callback){
 
 			// Add the QR code
 			thePDF.addImage(theImageSource, 'PNG', theHOffset, 150, 256, 256);
+
+			var vOff = 377;
+
+			if (paperStyle == "a4"){
+				vOff += 18;
+			}
+
+			// Add the link
+			thePDF.link(theHOffset/1.55, vOff, 256/1.55, 256/1.55, {url:theURL});
 			
 			// Set the font size
 			thePDF.setFont("Times","","normal");
@@ -2165,8 +2174,12 @@ function AppendQRCode(thePDF,paperStyle,callback){
 				theQRCodeCaption = gQRCodeCaptionOverride;
 			}
 
+			var pageWidth = thePDF.internal.pageSize.getWidth();
+
+			var textWidth = thePDF.getTextWidth(theQRCodeCaption);
+
 			// Add the tune names
-			thePDF.text(theQRCodeCaption, thePDF.internal.pageSize.getWidth()/3.10, captionOffset, {align:"center"});
+			thePDF.textWithLink(theQRCodeCaption, (pageWidth/3.10)-(textWidth/2), captionOffset, {align:"left", url:theURL});
 
 			// Clear the QR code
 			gTheQRCode.clear();
