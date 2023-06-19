@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-                
+        
         <style>
         p {
         font-size:14pt;
@@ -664,8 +664,9 @@
             <p>For example, here is the above "Sliabh Notes" polka set Share URL as a shortened URL:</p>
             <p><a href="https://tinyurl.com/5n9293yu" target="_blank">https://tinyurl.com/5n9293yu</a></p>
             <p><a href="https://tinyurl.com" target="_blank">TinyURL</a> also allows you to create and save a simple QR code for the shortened URL.</p>
-            <p><strong>Note: </strong>Incorporating URL shortening directly into the tool itself would require having a server-side component to call the URL shortening service APIs.</p>
-            <p>This would go against my "no reliance on server-side code or third party services" requirement for this tool.</p>
+            <p><strong>Note: </strong>Incorporating URL shortening directly into the tool itself would require having a server-side component to call the URL shortening service APIs since API keys should never be exposed in client-side code.</p>
+            <p>This would go against my "no reliance on server-side code" requirement for this tool.</p>
+            <p>Additionally, URL shortening services integrated into web applications only allow a limited number of free shortened URLs before charging for their service.</p>
             <hr id="qr_code_example">
             <h1>QR Code Example</h1>
             <p>Michael Coleman set ("The Tarbolton" - "The Longford Collector" - "The Sailor's Bonnet"):</p>
