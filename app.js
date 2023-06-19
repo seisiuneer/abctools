@@ -884,6 +884,10 @@ var gQRCodeRequested = false;
 var gQRCodeURLOverride = "";
 var gDoForceQRCodeURLOverride = false;
 
+// Did they request a QR code caption override
+var gQRCodeCaptionOverride = "";
+var gDoForceQRCodeCaptionOverride = false;
+
 // Did they request an tunebook index?
 var TunebookIndexRequested = false;
 var theTunebookIndexTitle = "";
@@ -2097,7 +2101,7 @@ function AppendQRCode(thePDF,paperStyle,callback){
 
 		// Use the specified URL for the QR code
 		theURL = gQRCodeURLOverride;
-		
+
 	}
 
 	// Generate the QR code
@@ -2154,8 +2158,15 @@ function AppendQRCode(thePDF,paperStyle,callback){
 				captionOffset = 575;
 			}
 
+			// See if there is a QR code caption override
+			var theQRCodeCaption = theHeaderFooterTuneNames;
+
+			if (gDoForceQRCodeCaptionOverride){
+				theQRCodeCaption = gQRCodeCaptionOverride;
+			}
+
 			// Add the tune names
-			thePDF.text(theHeaderFooterTuneNames, thePDF.internal.pageSize.getWidth()/3.10, captionOffset, {align:"center"});
+			thePDF.text(theQRCodeCaption, thePDF.internal.pageSize.getWidth()/3.10, captionOffset, {align:"center"});
 
 			// Clear the QR code
 			gTheQRCode.clear();
@@ -2663,7 +2674,7 @@ function ParseCommentCommands(theNotes){
 	// Search for a QR code request
 	searchRegExp = /^%qrcode.*$/m
 
-	// Detect page footer annotation
+	// Detect QR code annotation
 	var addQRCode = theNotes.match(searchRegExp);
 
 	if ((addQRCode) && (addQRCode.length > 0)){
@@ -2677,6 +2688,30 @@ function ParseCommentCommands(theNotes){
 		if (gQRCodeURLOverride != ""){
 
 			gDoForceQRCodeURLOverride = true; 
+
+		}
+	}
+
+	// Did they request a QR code caption override?
+	gDoForceQRCodeCaptionOverride = false;
+
+	gQRCodeCaptionOverride = "";
+
+	// Search for a QR code caption request
+	searchRegExp = /^%caption_for_qrcode.*$/m
+
+	// Detect QR code caption annotation
+	var addQRCodeCaption = theNotes.match(searchRegExp);
+
+	if ((addQRCodeCaption) && (addQRCodeCaption.length > 0)){
+		
+		gQRCodeCaptionOverride = addQRCodeCaption[0].replace("%caption_for_qrcode","");
+
+		gQRCodeCaptionOverride = gQRCodeCaptionOverride.trim();
+
+		if (gQRCodeCaptionOverride != ""){
+
+			gDoForceQRCodeCaptionOverride = true; 
 
 		}
 	}
