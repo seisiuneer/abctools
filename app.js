@@ -150,6 +150,7 @@ var gAddTheSessionHyperlinks = false;
 var gAddPlaybackHyperlinks = false;
 var gPlaybackHyperlinkProgram = "";
 
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -879,7 +880,9 @@ var theHeaderFooterTuneNames = "";
 var thePageNumberVerticalOffset = 0;
 
 // Did they request a QR code
-var QRCodeRequested = false;
+var gQRCodeRequested = false;
+var gQRCodeURLOverride = "";
+var gDoForceQRCodeURLOverride = false;
 
 // Did they request an tunebook index?
 var TunebookIndexRequested = false;
@@ -2067,23 +2070,34 @@ function DryRunAddTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperSty
 // Generate and append a QR code to the current PDF
 //
 function AppendQRCode(thePDF,paperStyle,callback){
-	
-	// Need to have the share link available in the urltextbox
-	FillUrlBoxWithAbcInLZW();
 
-	// Can we make a QR code from the current share link URL?
-	var theURL = document.getElementById("urltextbox").value;
+	var theURL;
 
-	if (!gAllowQRCodeSave){
+	if (!gDoForceQRCodeURLOverride){
 
-		//console.log("Share URL too long for QR Code, early exit...")
+		// Need to have the share link available in the urltextbox
+		FillUrlBoxWithAbcInLZW();
+
+		// Can we make a QR code from the current share link URL?
+		theURL = document.getElementById("urltextbox").value;
+
+		if (!gAllowQRCodeSave){
+
+			//console.log("Share URL too long for QR Code, early exit...")
+			
+			// URL too long for QR code... early exit
+
+			callback(false);
+			
+			return;
+
+		}
+	}
+	else{
+
+		// Use the specified URL for the QR code
+		theURL = gQRCodeURLOverride;
 		
-		// URL too long for QR code... early exit
-
-		callback(false);
-		
-		return;
-
 	}
 
 	// Generate the QR code
@@ -2103,7 +2117,7 @@ function AppendQRCode(thePDF,paperStyle,callback){
 
 		gTheQRCode.clear();
 
-		gTheQRCode.makeCode(document.getElementById("urltextbox").value);
+		gTheQRCode.makeCode(theURL);
 
 	}
 
@@ -2617,9 +2631,6 @@ function ParseCommentCommands(theNotes){
 	thePageHeader = "";
 	thePageFooter = "";
 
-	// Did they request a QR code
-	QRCodeRequested = false;
-
 	// Search for a page header
 	var searchRegExp = /^%pageheader.*$/m
 
@@ -2642,6 +2653,13 @@ function ParseCommentCommands(theNotes){
 		thePageFooter = thePageFooter.trim();
 	}
 
+	// Did they request a QR code?
+	gQRCodeRequested = false;
+
+	gDoForceQRCodeURLOverride = false;
+
+	gQRCodeURLOverride = "";
+
 	// Search for a QR code request
 	searchRegExp = /^%qrcode.*$/m
 
@@ -2649,7 +2667,18 @@ function ParseCommentCommands(theNotes){
 	var addQRCode = theNotes.match(searchRegExp);
 
 	if ((addQRCode) && (addQRCode.length > 0)){
-		QRCodeRequested = true;
+		
+		gQRCodeRequested = true;
+
+		gQRCodeURLOverride = addQRCode[0].replace("%qrcode","");
+
+		gQRCodeURLOverride = gQRCodeURLOverride.trim();
+
+		if (gQRCodeURLOverride != ""){
+
+			gDoForceQRCodeURLOverride = true; 
+
+		}
 	}
 
 	// Clear the tunebook index string
@@ -4264,7 +4293,7 @@ function ExportTextIncipitsPDF(title){
 		}
 		
 		// Did they request a QR code?
-		if (QRCodeRequested){
+		if (gQRCodeRequested){
 
 			document.getElementById("statustunecount").innerHTML = "Adding QR Code";
 
@@ -4827,7 +4856,7 @@ function ExportNotationPDF(title) {
 					}
 
 					// Did they request a QR code?
-					if (QRCodeRequested){
+					if (gQRCodeRequested){
 
 						document.getElementById("statustunecount").innerHTML = "Adding QR Code";
 
