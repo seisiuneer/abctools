@@ -213,8 +213,8 @@ font-size:11pt;
 border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
-margin-right:10px;
-margin-left:30px;
+margin-right:23px;
+margin-left:0px;
 background-color: lavender;
 color:black;
 -webkit-appearance:none;
@@ -232,7 +232,8 @@ font-size:11pt;
 border: 1px solid #333;
 border-radius: 0.3em;
 padding: 0.6em;
-margin-left:16px;
+margin-right:23px;
+margin-left:0px;
 background-color: #FFFFFF;
 color:black;
 -webkit-appearance:none;
@@ -472,22 +473,23 @@ resize: none;
 
 #testurl{
 display:inline;
-margin-right:20px	
 }
 
 #copyurl{
 display:inline;
-margin-right:20px	
 }
 
 #saveurl{
 display:inline;
-margin-left:20px	
+}
+
+#shortenurl{
+display:inline;
 }
 
 #generateqrcode{
 display:inline;
-margin-left:25px;
+margin-right: 0px;
 }
 
 #statuspdfname{
