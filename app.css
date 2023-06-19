@@ -739,13 +739,33 @@ display:none;
 }
 
 #notation-placeholder{
-margin-top: 100px;
 font-family:"Helvetica";
 font-size:12pt;
 display:none;
 width:850px;
 background-color:white;
 
+}
+
+#notation-placeholder-text{
+margin-top: 100px;
+font-family:"Helvetica";
+font-size:12pt;
+}
+
+.notation-placeholder-button{
+font-family:"Helvetica";
+font-size:11pt;
+border: 1px solid #333;
+border-radius: 0.3em;
+padding: 0.6em;
+margin-top:50px;
+margin-left:0px;
+margin-right:0px;
+background-color: #FFFFFF;
+color:black;
+-webkit-appearance:none;
+opacity:1.0;
 }
 
 .toggletabnames {
