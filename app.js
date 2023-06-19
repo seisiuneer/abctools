@@ -9238,7 +9238,7 @@ function restoreStateFromLocalStorage(){
 		   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Click "Play" to play the tune currently being edited.</p>';
 		   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Click "Show Controls" to show the tablature options, PDF tunebook settings (tunes-per-page, paper size, page numbers), sharing features, and other options.</p>';
 
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 194 });
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 165 });
 
 	}
 
