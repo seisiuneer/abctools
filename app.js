@@ -1687,28 +1687,16 @@ function PostProcessTuneHyperlinks(pdf,theLinks,paperStyle,startPage){
 				curPage = thisPage;
 
 			}
+
+			// Convert the page relative rect to link relative
 			
-			// Left and right side hyperlink markers
-			// var textWidth = pdf.getTextWidth("*");
+			var r = {left:thisLink.x, top:thisLink.y, width: thisLink.width, height: thisLink.height}
 
-			// var h = 15;
-
-			var vOff = 307;
-
-			if (paperStyle == "a4"){
-				vOff = 327;
-			}
-
-			var v = vOff+(thisLink.y/1.55);
+			r = pageRect2LinkRect(pdf,r, paperStyle);
 			
-			// pdf.text("*", h, v, {align:"left"});
-
-			// h = (pageWidth/1.55)-(textWidth+15);
-
-			// pdf.text("*", h, v, {align:"left"});
-
 			// And the title link
-			pdf.link(thisLink.x/1.55, v-(thisLink.height/1.55), thisLink.width/1.55, thisLink.height/1.55, {url:thisLink.url});
+			pdf.link(r.left,r.top,r.width,r.height,{url:thisLink.url})
+
 
 		}
 
@@ -2071,6 +2059,64 @@ function DryRunAddTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperSty
 }
 
 //
+// Convert page relative rect to link relative rect
+//
+function pageRect2LinkRect(pdf, r,thePaperStyle){
+
+	var pdfVoff = 23;
+
+	if (thePaperStyle == "a4"){
+		pdfVoff = 25;
+	}
+
+	r.left = r.left/1.55;
+	
+	r.top = ((pdf.internal.pageSize.getHeight()/3.10)+pdfVoff) + (r.top/1.55);
+
+	r.width = r.width / 1.55;
+
+	r.height = r.height / 1.55;
+
+	return r;
+
+}
+
+//
+// Convert page relative vertical offset to link relative vertical offset
+//
+
+function pageVOffset2LinkVOffset(pdf, v,thePaperStyle){
+
+	var pdfVoff = 23;
+
+	if (thePaperStyle == "a4"){
+		pdfVoff = 25;
+	}
+
+	return ((pdf.internal.pageSize.getHeight()/3.10)+pdfVoff) + (v/1.55)
+}
+
+//
+// Convert link relative vertical offset to page relative vertical offset
+//
+function linkVOffset2PageVOffset(pdf, v,thePaperStyle){
+
+	var pdfVoff = 23;
+
+	if (thePaperStyle == "a4"){
+		pdfVoff = 25;
+	}
+
+	v = v - ((pdf.internal.pageSize.getHeight()/3.10)+pdfVoff);
+
+	v *= 1.55;
+
+	return v;
+
+}
+
+
+//
 // Generate and append a QR code to the current PDF
 //
 function AppendQRCode(thePDF,paperStyle,callback){
@@ -2147,15 +2193,16 @@ function AppendQRCode(thePDF,paperStyle,callback){
 			// Add the QR code
 			thePDF.addImage(theImageSource, 'PNG', theHOffset, 150, 256, 256);
 
-			var vOff = 377;
+			// Full page link example
+			//thePDF.link(0, (thePDF.internal.pageSize.getHeight()/3.10)+pdfVoff, (thePDF.internal.pageSize.getWidth()/1.55), (thePDF.internal.pageSize.getHeight()/1.55), {url:theURL});
 
-			if (paperStyle == "a4"){
-				vOff += 18;
-			}
-
-			// Add the link
-			thePDF.link(theHOffset/1.55, vOff, 256/1.55, 256/1.55, {url:theURL});
+			// Fix up the page-relative link
+			var r = {left:theHOffset, top: 150, width: 256, height: 256};
 			
+			r = pageRect2LinkRect(thePDF,r,paperStyle);
+
+			thePDF.link(r.left, r.top, r.width, r.height, {url:theURL});
+
 			// Set the font size
 			thePDF.setFont("Times","","normal");
 			thePDF.setFontSize(QRCODECAPTIONPDFFONTSIZE);
@@ -2166,6 +2213,12 @@ function AppendQRCode(thePDF,paperStyle,callback){
 			if (paperStyle == "a4"){
 				captionOffset = 575;
 			}
+
+			// Frame-of-reference round-trip test
+
+			// captionOffset = linkVOffset2PageVOffset(thePDF,captionOffset,paperStyle);
+
+			// captionOffset = pageVOffset2LinkVOffset(thePDF,captionOffset,paperStyle);
 
 			// See if there is a QR code caption override
 			var theQRCodeCaption = theHeaderFooterTuneNames;
@@ -2180,7 +2233,7 @@ function AppendQRCode(thePDF,paperStyle,callback){
 
 			// Add the tune names
 			thePDF.textWithLink(theQRCodeCaption, (pageWidth/3.10)-(textWidth/2), captionOffset, {align:"left", url:theURL});
-
+			
 			// Clear the QR code
 			gTheQRCode.clear();
 
