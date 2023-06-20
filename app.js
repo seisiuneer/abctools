@@ -2063,10 +2063,10 @@ function DryRunAddTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperSty
 //
 function pageRect2LinkRect(pdf, r,thePaperStyle){
 
-	var pdfVoff = 23;
+	var pdfVoff = 26;
 
 	if (thePaperStyle == "a4"){
-		pdfVoff = 25;
+		pdfVoff = 27;
 	}
 
 	r.left = r.left/1.55;
@@ -2087,10 +2087,10 @@ function pageRect2LinkRect(pdf, r,thePaperStyle){
 
 function pageVOffset2LinkVOffset(pdf, v,thePaperStyle){
 
-	var pdfVoff = 23;
+	var pdfVoff = 26;
 
 	if (thePaperStyle == "a4"){
-		pdfVoff = 25;
+		pdfVoff = 27;
 	}
 
 	return ((pdf.internal.pageSize.getHeight()/3.10)+pdfVoff) + (v/1.55)
@@ -2101,10 +2101,10 @@ function pageVOffset2LinkVOffset(pdf, v,thePaperStyle){
 //
 function linkVOffset2PageVOffset(pdf, v,thePaperStyle){
 
-	var pdfVoff = 23;
+	var pdfVoff = 26;
 
 	if (thePaperStyle == "a4"){
-		pdfVoff = 25;
+		pdfVoff = 27;
 	}
 
 	v = v - ((pdf.internal.pageSize.getHeight()/3.10)+pdfVoff);
