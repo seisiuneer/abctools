@@ -9416,7 +9416,7 @@ function restoreStateFromLocalStorage(){
 function showWelcomeScreen(){
 
    var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Read the <a href="userguide.html" target="_blank">User Guide</a> for complete documentation and demo videos.';
+	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica"><strong>Read the <a href="userguide.html" target="_blank">User Guide</a> for complete documentation and demo videos.</strong></p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">To begin, type or paste tunes in ABC format into the text area.</p>'; 
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Each ABC tune must begin with an X: tag.</p>'; 
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Notation updates instantly as you make changes.</p>'; 
@@ -9429,6 +9429,7 @@ function showWelcomeScreen(){
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Copy All" to copy all the ABC text to the clipboard.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Play" to play the tune currently being edited.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Show Controls" for tablature options, PDF tunebook settings (paper size, tunes-per-page, page numbers), sharing features, etc.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica"><strong>If you find this tool useful, please consider <a href="donate.html" target="_blank">buying me a beer!</a></strong></p>';
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50 });
 
