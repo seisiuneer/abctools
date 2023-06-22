@@ -7894,7 +7894,7 @@ function CopyABC(e){
 //
 // Copy the ShareURL to the clipboard and then launch TinyURL
 //
-function ShortenURL(){
+function ShortenURLFallback(){
 
 	if (!gAllowURLSave){
 		return;
@@ -7924,6 +7924,73 @@ function ShortenURL(){
 
 	},2000);
 
+}
+
+//
+// Try calling the TinyURL API directly first
+//
+// If it fails, fall back to the old manual assist system
+//
+
+function ShortenURL(){
+
+	if (!gAllowURLSave){
+		return;
+	}
+
+	var theURL = document.getElementById("urltextbox");
+
+	var theData = theURL.value;
+
+	let body = {
+
+	  url: theData
+	
+	}
+
+	fetch(`https://api.tinyurl.com/create`, {
+	    method: `POST`,
+	    headers: {
+	      accept: `application/json`,
+	      authorization: `Bearer 6YJMYs01UHvxocEle5C9T1Emypv2L4JNSM0PtzaetoZDVfl6YLzOp6I67E6I`,
+	      'content-type': `application/json`,
+	    },
+	    body: JSON.stringify(body)
+	  })
+	  .then(response => {
+
+	  	// If it fails, go back to the old way
+	    if (response.status != 200){
+
+	    	ShortenURLFallback();
+
+	    	return;
+
+	    };
+
+	    return response.json()
+
+	  })
+	  .then(data => {
+
+	  	// Copy the shortened
+		CopyToClipboard(data.data.tiny_url);
+
+		var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica">Shortened URL Copied to the Clipboard</p>';
+	   	modal_msg += '<p style="text-align:center;font-size:14pt;line-height:19pt;font-family:helvetica">Short URL:</p>';
+	   	modal_msg += '<p style="text-align:center;font-size:14pt;line-height:19pt;font-family:helvetica"><a href="'+data.data.tiny_url+'" target="_blank">'+data.data.tiny_url+'</a></p>';
+
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50 });
+
+	  })
+	  .catch(
+	  	error => {
+
+	  		ShortenURLFallback();
+
+	    	return;
+
+	  });
 }
 
 //
