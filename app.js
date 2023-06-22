@@ -9269,19 +9269,98 @@ function isSafari(){
 	}
 }
 
-// 
-// Restore the application state from local storage
 //
-function restoreStateFromLocalStorage(){
-
-	var bIsFirstTime = true;
+// Is this the first run?
+// 
+// Check for local storage use
+//
+function isFirstRun(){
 
 	// Display mode
 	var theTab = localStorage.abcTab;
 
 	if (theTab){
 
-		bIsFirstTime = false;
+		return false;
+
+	}
+
+	// PDF Tunes/page
+	var theTunesPerPage = localStorage.abcTunesPerPage;
+
+	if (theTunesPerPage){
+
+		return false;
+
+	}
+
+	// Page number
+	var thePageNumberLocation = localStorage.abcPageNumberLocation;
+
+	if (thePageNumberLocation){
+
+		return false;
+
+	}
+
+	// Page number on first page
+	var thePageNumberOnPageOne = localStorage.abcPageNumberOnPageOne;
+
+	if (thePageNumberOnPageOne){
+
+		return false;
+
+	}
+
+	// Capo
+	var theCapo = localStorage.abcCapo;
+
+	if (theCapo){
+
+		return false;
+
+	}
+
+	// Staff spacing
+	var theStaffSpacing = localStorage.abcStaffSpacing;
+
+	if (theStaffSpacing){
+
+		return false;
+
+	}
+
+	// Top bar
+	var theHideTopBar = localStorage.abcHideTopBar;
+
+	if (theHideTopBar){
+
+		return false;
+	}
+
+	// Show tab names
+	var theShowTabNames = localStorage.abcShowTabNames;
+
+	if (theShowTabNames){
+
+		return false;
+
+	}
+
+	return true;
+}
+
+// 
+// Restore the application state from local storage
+//
+function restoreStateFromLocalStorage(){
+
+	var bIsFirstTime = isFirstRun();
+
+	// Display mode
+	var theTab = localStorage.abcTab;
+
+	if (theTab){
 
 		SetRadioValue("notenodertab", theTab);
 
@@ -9303,8 +9382,6 @@ function restoreStateFromLocalStorage(){
 
 	if (theTunesPerPage){
 
-		bIsFirstTime = false;
-
 		document.getElementById("pdfformat").value = theTunesPerPage;
 
 	}
@@ -9313,8 +9390,6 @@ function restoreStateFromLocalStorage(){
 	var thePageNumberLocation = localStorage.abcPageNumberLocation;
 
 	if (thePageNumberLocation){
-
-		bIsFirstTime = false;
 
 		document.getElementById("pagenumbers").value = thePageNumberLocation;
 
@@ -9325,8 +9400,6 @@ function restoreStateFromLocalStorage(){
 
 	if (thePageNumberOnPageOne){
 
-		bIsFirstTime = false;
-
 		document.getElementById("firstpage").value = thePageNumberOnPageOne;
 
 	}
@@ -9335,8 +9408,6 @@ function restoreStateFromLocalStorage(){
 	var theCapo = localStorage.abcCapo;
 
 	if (theCapo){
-
-		bIsFirstTime = false;
 
 		document.getElementById("capo").value = theCapo;
 
@@ -9349,8 +9420,6 @@ function restoreStateFromLocalStorage(){
 
 	if (theStaffSpacing){
 
-		bIsFirstTime = false;
-
 		document.getElementById("staff-spacing").value = theStaffSpacing;
 
 		gStaffSpacing = STAFFSPACEOFFSET + parseInt(theStaffSpacing);
@@ -9361,8 +9430,6 @@ function restoreStateFromLocalStorage(){
 	var theHideTopBar = localStorage.abcHideTopBar;
 
 	if (theHideTopBar){
-
-		bIsFirstTime = false;
 
 		if (theHideTopBar == "true"){
 
@@ -9375,8 +9442,6 @@ function restoreStateFromLocalStorage(){
 	var theShowTabNames = localStorage.abcShowTabNames;
 
 	if (theShowTabNames){
-
-		bIsFirstTime = false;
 
 		if (theShowTabNames == "true"){
 
@@ -9428,6 +9493,23 @@ function showWelcomeScreen(){
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Play" to play the tune currently being edited.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Show Controls" for tablature options, PDF tunebook settings (paper size, tunes-per-page, page numbers), sharing features, etc.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica"><strong>If you find this tool useful, please consider <a href="donate.html" target="_blank">buying me a beer!</a></strong></p>';
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50 });
+
+}
+
+//
+// Show the first run zoom screen
+//
+function showZoomInstructionsScreen(){
+
+   	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
+   	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Since this is your first time using the tool, here is some useful information:</p>';
+   	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">In this view, you may scroll through the tune notation.</p>';
+       modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">If you would like to edit or create a PDF tunebook from the notation:</p>';
+  	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click the Zoom-In arrows at the upper-right to open the ABC editor.</p>';
+   	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">In the ABC editor, click the Zoom-Out arrows to view notation fullscreen.</p>';
+	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Read the <a href="userguide.html" target="_blank">User Guide</a> for complete documentation and demo videos.</p>';
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50 });
 
@@ -9771,6 +9853,14 @@ function DoStartup() {
 
 	}
 	else{
+
+		// First time using the tool?
+		if (isFirstRun()){
+
+			// Show zoom instructions screen
+			showZoomInstructionsScreen();
+
+		}
 
 		// Save the state in the share link to local storage
 		UpdateLocalStorage();
