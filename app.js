@@ -839,7 +839,7 @@ function ClearNoRender() {
 var PAGENUMBERTOP = 296;
 var PAGENUMBERTOPA4 = 313;
 var PAGETOPOFFSET = 32;
-var PAGEBOTTOMOFFSET = 0;
+var PAGEBOTTOMOFFSET = 32; //FOOFOO was 0
 var PAGELEFTOFFSET = 37;
 var PAGELEFTOFFSETA4 = 29;
 var PAGEHEIGHTLETTER = 792;
@@ -1646,8 +1646,6 @@ function GetAllTuneHyperlinks(theLinks) {
 //
 function PostProcessTuneHyperlinks(pdf,theLinks,paperStyle,startPage){
 
-	//debugger;
-
 	// Sanity check the links array
 	if (!theLinks){
 		return;
@@ -1710,8 +1708,6 @@ function PostProcessTuneHyperlinks(pdf,theLinks,paperStyle,startPage){
 //
 function PostProcessTOCAndIndexLinks(pdf,startPage,endPage,addTOCLinks,theTOCLinkPage,addIndexLinks,theIndexLinkPage){
 	
-	//debugger;
-
 	// console.log("PostProcessTOCAndIndexLinks");
 	// console.log("startPage = "+startPage);
 	// console.log("endPage = "+endPage);
@@ -2492,8 +2488,8 @@ function ProcessTunesForContinuousLayout(pageBreakList,pageHeight,doIncipits){
 				spaceAvailable = pageSizeWithMargins;
 
 				// Is this a tune moved to a new page that takes up more than one page
-				if (thisTuneHeight > pageSizeWithMargins){
-					
+				if (thisTuneHeight  > pageSizeWithMargins){ 
+
 					// Then we have to walk the staffs
 					var nStaffs = renderingDivs[i].staffHeights.length;
 
@@ -3979,15 +3975,19 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 			} else {
 
+				// Reset the running height
+				running_height = PAGETOPOFFSET;
+
+				theCurrentPageNumber++; // for the status display.
+
+				// Set the tune page map and hyperlink for this tune if moved to the top of the next page
 				if (isFirstBlock){
 
 					gTuneHyperlinks.push({page:theCurrentPageNumber,x:hoff,y:running_height,width:(535 / scale_factor),height:height,url:""});
 
+					theTunePageMap[tunesProcessed - 1] = theCurrentPageNumber;
+
 				}
-
-				running_height = PAGETOPOFFSET;
-
-				theCurrentPageNumber++; // for the status display.
 
 				pdf.addPage(paperStyle); //... create a page in letter or a4 format, then leave a 30 pt margin at the top and continue.
 
@@ -4800,8 +4800,6 @@ function ExportNotationPDF(title) {
 				nBlocksProcessed++;
 
 				if (nBlocksProcessed == nBlocks) {
-
-					//debugger;
 
 					var totalPages = theCurrentPageNumber;
 
