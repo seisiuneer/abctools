@@ -642,7 +642,7 @@
             <p>Save Share URL - Saves the ABC Share URL to a text file.</p>
             <p>The saved file will be in your browser's Downloads directory.</p>
             <p>On iOS the downloaded files will be found in the "Downloads" directory in the iOS "Files" app.</p>
-            <p>Shorten URL - Copies the ABC Share URL to the clipboard and then launches <a href="https://tinyurl.com" target="_blank">TinyURL</a> in another browser tab.</p>
+            <p>Shorten URL - Shortens the ABC Share URL using TinyURL automatically if possible, or if not, assists with the URL shortening process.</p>
             <p>Generate QR Code - Once an ABC Share URL is generated, if it is short enough to fit in a QR code (less than 2600 characters), this button is activated.</p>
             <p>The QR Code is a visual representation of an ABC Share URL that you can scan with the Camera app on your iOS or Android device.</p>
             <p>Clicking the button will generate a QR code in .PNG format for the ABC Share URL and open it in a new browser tab.</p>
@@ -659,16 +659,16 @@
             <p></p>
             <p>ABC Share URLs can get pretty long, particularly for large sets of tunes.</p>
             <p>A third-party service like <a href="https://tinyurl.com" target="_blank">TinyURL</a> can be used to shorten the ABC Share URLs.</p>
-            <p>Click "Shorten URL" to automatically copy the ABC Share URL to the clipboard and then launch <a href="https://tinyurl.com" target="_blank">TinyURL</a> in another browser tab.</p>
-            <p>Paste the already copied ABC Share URL into the <a href="https://tinyurl.com" target="_blank">TinyURL</a> "Enter long link" box and click "Shorten URL".</p>
+            <p>To get a shortened URL for the ABC Share URL, click "Shorten URL".</p>
+            <p>The tool will attempt to call TinyURL directly first to get a shortened ABC Share URL.</p>
+            <p>If it succeeds, it will copy the shortened ABC Share URL to the system clipboard and also show the result in a dialog.</p>
+            <p>If it fails (most likely the tool has used up all available free URL shortening sessions for the month), the tool will help you manually get a shortened URL by automatically copying the full ABC Share URL to the system clipboard and then launching <a href="https://tinyurl.com" target="_blank">TinyURL</a> in another browser tab.</p>
+            <p>Paste the already copied full ABC Share URL into the <a href="https://tinyurl.com" target="_blank">TinyURL</a> "Enter long link" box and click "Shorten URL".</p>
             <p>You may have to agree to the TinyURL terms-of-service before you can shorten the URL.</p>
             <p>Copy the shortened URL from TinyURL and paste it into emails or share it on social media.</p>
             <p>For example, here is the above "Sliabh Notes" polka set Share URL as a shortened URL:</p>
             <p><a href="https://tinyurl.com/5n9293yu" target="_blank">https://tinyurl.com/5n9293yu</a></p>
             <p><a href="https://tinyurl.com" target="_blank">TinyURL</a> also allows you to create and save a simple QR code for the shortened URL.</p>
-            <p><strong>Note: </strong>Incorporating URL shortening directly into the tool itself would require having a server-side component to call the URL shortening service APIs since API keys should never be exposed in client-side code.</p>
-            <p>This would go against my "no reliance on server-side code" requirement for this tool.</p>
-            <p>Additionally, URL shortening services integrated into web applications only allow a limited number of free shortened URLs before charging for their service.</p>
             <hr id="qr_code_example">
             <h1>QR Code Example</h1>
             <p>Michael Coleman set ("The Tarbolton" - "The Longford Collector" - "The Sailor's Bonnet"):</p>
