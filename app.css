@@ -954,7 +954,7 @@ left:-5000px;
 .modal_flat_inner { padding: 30px; background: #fff; color: #000; }
 .modal_flat_content { font-family:"Helvetica"; margin: 20px 0px;}
 .modal_flat_input { margin: 20px 0px;}
-.modal_flat_buttons { margin-top: 40px; }
+.modal_flat_buttons { text-align:center;margin-top: 40px; }
 .modal_flat_main button { background-color: #ccc; color: #000; padding: 10px 20px; border: 0px; cursor: pointer; outline: none; width: 100px;  }
 .modal_flat_cancel {margin-left: 5px;}
 
