@@ -9481,9 +9481,9 @@ function showWelcomeScreen(){
    var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica"><strong>Read the <a href="userguide.html" target="_blank">User Guide</a> for complete documentation and demo videos.</strong></p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">To begin, type or paste tunes in ABC format into the text area.</p>'; 
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Each ABC tune must begin with an X: tag.</p>'; 
+	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Each ABC tune <strong>must</strong> begin with an X: tag.</p>'; 
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Notation updates instantly as you make changes.</p>'; 
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click the zoom-out arrows at the upper-right to view notation fullscreen.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click the Zoom-Out arrows at the upper-right to view notation fullscreen.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click "New ABC" to generate a one-line sample tune with examples of all the available PDF tunebook annotations.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click "Open ABC" to open and import an ABC text file from your system.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica"><strong>Once ABC has been entered and notation is displayed:</strong></p>';
