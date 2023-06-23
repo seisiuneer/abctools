@@ -8899,7 +8899,7 @@ function InjectPDFHeaders(e){
 		output += "%hyperlink http://michaeleskin.com\n";
 		output += "%add_link_to_thesession\n";
 		output += "%add_playback_link 49\n";
-		output += "%\n";
+		output += "\n";
 		
 		output += theNotes;
 
