@@ -7952,7 +7952,7 @@ function ShortenURL(){
 	    method: `POST`,
 	    headers: {
 	      accept: `application/json`,
-	      authorization: `Bearer <USE YOUR OWN TINYURL TOKEN HERE>`,
+	      authorization: `Bearer <ADD YOUR TINYURL TOKEN HERE>`,
 	      'content-type': `application/json`,
 	    },
 	    body: JSON.stringify(body)
@@ -8972,7 +8972,7 @@ function InjectOneTuneABCNoteNameLyrics(theTune){
 				thisLine = thisLine.replace(searchRegExp, "");
 
 				// Now strip anything that isn't ABC note names
-				searchRegExp = /[^ABCDEFGabcdefg]*/gm
+				searchRegExp = /[^ABCDEFGabcdefg|]*/gm
 				thisLine = thisLine.replace(searchRegExp,"");
 
 				// Now insert spaces between each character
