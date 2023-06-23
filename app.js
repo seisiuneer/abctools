@@ -8894,12 +8894,12 @@ function InjectPDFHeaders(e){
 		output += "%add_all_playback_links 74\n";
 		output += "%pdfname your_pdf_filename\n"
 		output += "%qrcode\n";
-		output += "\n";
-		output += "These directives can be added to each tune:\n";
+		output += "%\n";
+		output += "% These directives can be added to each tune:\n";
 		output += "%hyperlink http://michaeleskin.com\n";
 		output += "%add_link_to_thesession\n";
 		output += "%add_playback_link 49\n";
-		output += "\n";
+		output += "%\n";
 		
 		output += theNotes;
 
