@@ -15156,8 +15156,16 @@ function SynthController() {
     return self.runWhenReady(self._randomAccess, ev);
   };
   self._randomAccess = function (ev) {
+      
     var background = ev.target.classList.contains('abcjs-midi-progress-indicator') ? ev.target.parentNode : ev.target;
-    var percent = (ev.x - background.offsetLeft) / background.offsetWidth;
+    
+    // MAE 26 June 2023 - For seek control in a modal
+    //var percent = (ev.x - background.offsetLeft) / background.offsetWidth;
+  
+    var bRect = background.getBoundingClientRect();
+
+    var percent = (ev.x - bRect.x) / bRect.width;
+
     if (percent < 0) percent = 0;
     if (percent > 1) percent = 1;
     self.seek(percent);
