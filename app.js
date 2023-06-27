@@ -7698,7 +7698,7 @@ function CopyToClipboard(textToCopy) {
 //
 // Inject MIDI program number directive 
 //
-function InjectOneTuneMIDIProgram(theTune, progNum){
+function InjectOneTuneMIDIProgram(theTune, progNum, bIsChords){
 
 	var theABC = escape(theTune);
 
@@ -7721,7 +7721,17 @@ function InjectOneTuneMIDIProgram(theTune, progNum){
 
 			// Inject the font directive to save people time
 			if (theChars[0] == "X"){
-				theOutput += "%%MIDI program "+progNum+"\n";
+
+				if (bIsChords){
+
+					theOutput += "%%MIDI chordprog "+progNum+"\n";
+
+				}
+				else{
+
+					theOutput += "%%MIDI program "+progNum+"\n";
+
+				}
 			}
 
 		}
@@ -7743,14 +7753,28 @@ function InjectOneTuneMIDIProgram(theTune, progNum){
 //
 // Inject a MIDI instrument directive after all the X: headers
 //
-function InjectMIDIInstrument() {
+function InjectMIDIInstrument(bIsChords) {
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
 		return;
 	}
 
-	DayPilot.Modal.prompt('<p style="font-size:14pt;line-height:19pt;font-family:helvetica">MIDI instrument program number to inject?</p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, 0 - Piano</p>', "74",{ theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
+	var theProgramToInject = " melody";
+	var theDefaultProgram = "74";
+
+	if (bIsChords){
+		theProgramToInject = " chords"
+		theDefaultProgram = "0";
+	}
+
+	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica">MIDI instrument program number to inject for the'+theProgramToInject+'?</p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, 0 - Piano</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm.jpg" target="_blank">General MIDI Instrument Program Numbers</a></p>';
+
+	if (bIsChords){
+		thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica">MIDI instrument program number to inject for the'+theProgramToInject+'?</p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">0 - Piano, 19 - Organ, 25 - Guitar, 32 - Bass, 38 - Synth Bass</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm.jpg" target="_blank">General MIDI Instrument Program Numbers</a></p>';
+	}
+
+	DayPilot.Modal.prompt(thePrompt, theDefaultProgram, { theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
 		
 		var progNumStr = args.result;
 
@@ -7781,7 +7805,7 @@ function InjectMIDIInstrument() {
 
 			theTunes[i] = "X:"+theTunes[i];
 
-			output += InjectOneTuneMIDIProgram(theTunes[i],progNum);
+			output += InjectOneTuneMIDIProgram(theTunes[i],progNum,bIsChords);
 
 		}
 
@@ -7806,10 +7830,16 @@ function PlayABC(e){
 
 	if (gAllowCopy){
 
-		// Alt key injects a MIDI instrument directive
 
+		// Shift+Alt key injects a MIDI instrument directive for the chords
+   		if (e.altKey && e.shiftKey){
+    		InjectMIDIInstrument(true);
+    		return;
+    	}
+
+		// Alt key injects a MIDI instrument directive for the melody
    		if (e.altKey){
-    		InjectMIDIInstrument();
+    		InjectMIDIInstrument(false);
     		return;
     	}
 
