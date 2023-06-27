@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+                
         <style>
         p {
         font-size:14pt;
@@ -162,6 +162,7 @@
                 <p class="toc"><a href="#abc_editor">ABC Editor</a></p>
                 <p class="toc"><a href="#viewing_the_notation_full_screen">Viewing the Notation Full Screen</a></p>
                 <p class="toc"><a href="#playing_your_tunes">Playing Your Tunes</a></p>
+                <p class="toc"><a href="#general_midi_instrument_program_numbers">General MIDI Instrument Program Numbers</a></p>
                 <p class="toc"><a href="#selecting_the_instrument_for_playback">Selecting the Instrument for Playback</a></p>
                 <p class="toc"><a href="#notation_tablature_display_controls">Notation/Tablature Display Controls</a></p>
                 <p class="toc"><a href="#basic_controls">Basic Controls</a></p>
@@ -188,7 +189,6 @@
                 <p class="toc"><a href="#iphone_ipad_chord_entry_issue_fix">iPhone/iPad Chord Entry Issue Fix</a></p>
                 <p class="toc"><a href="#abc_specification">ABC Specification</a></p>
                 <p class="toc"><a href="#abc_21_quick_reference_card">ABC Quick Reference Card</a></p>
-                <p class="toc"><a href="#general_midi_instrument_list">General MIDI Instrument List</a></p>
                 <p class="toc"><a href="#donate">Donate</a></p>
                 <p class="toc"><a href="#support">Support</a></p>
             </div>
@@ -301,12 +301,17 @@
             <p></p>
             <p><strong>%%MIDI chordprog 25</strong></p>
             <p></p>
-            <p>Any General MIDI (level 1) instrument number can be selected for the melody and chord sounds.</p>
-            <p>Visit <a href="https://www.midi.org/specifications-old/item/gm-level-1-sound-set" target="_blank">https://www.midi.org/specifications-old/item/gm-level-1-sound-set</a> for the full list of MIDI instruments and their program numbers.<p>
+            <p>Any General MIDI instrument program number can be selected for the melody and chord sounds.</p>
             <p></p>
             <p><strong>Power User Tip:</strong></p>
-            <p>To have the tool automatically inject a %%MIDI program directive for every tune with a specific MIDI instrument program number, hold down the Alt-key while clicking the "Play" button.</p>
-            <p>You will be prompted for a MIDI instrument program number to inject.</p>            
+            <p>To have the tool automatically inject a %%MIDI program directive into every tune with a specific MIDI instrument program number for the melody, hold down the Alt-key while clicking the "Play" button.</p>
+            <p>You will be prompted for a MIDI instrument program number to inject.</p>
+            <p>To inject a %%MIDI chordprog directive program number for the chords instead, hold down the Shift+Alt keys while clicking the "Play" button.</p>            
+            <hr class="hidden-print" id="general_midi_instrument_program_numbers">
+            <h1>General MIDI Instrument Program Numbers</h1>
+            <div class="image_holder">
+                <img src="img/gm.jpg"/>
+            </div>
             <hr class="hidden-print" id="notation_tablature_display_controls">
             <h1>Notation/Tablature Display Controls</h1>
             <div class="image_holder">
@@ -613,7 +618,7 @@
             <p>%hyperlink http://michaeleskin.com</p>
             <p>%hyperlink https://cnn.com</p>
             <p></p>
-            <p>To add a hyperlink to Paul Rosen's ABC Quick Editor for playing a specific tune with a specific General MIDI program number sound, add the following comment-based annotation anywhere in the ABC for a specific tune:</p>
+            <p>To add a hyperlink to Paul Rosen's ABC Quick Editor for playing a specific tune with a specific General MIDI instrument program number sound, add the following comment-based annotation anywhere in the ABC for a specific tune:</p>
             <p></p>
             <p>%add_playback_link MIDI_PROGRAM_NUMBER</p>
             <p></p>
@@ -655,7 +660,7 @@
             <p></p>
             <p><strong>Adding playback or thesession.org hyperlinks to every tune in a PDF tunebook:</strong></p>
             <p></p>
-            <p>You may automatically add a hyperlink for every tune to Paul Rosen's ABC Quick Editor for playing the tune with a specific General MIDI program number sound by adding the following comment-based annotation anywhere in the ABC file:</p>
+            <p>You may automatically add a hyperlink for every tune to Paul Rosen's ABC Quick Editor for playing the tune with a specific General MIDI instrument program number sound by adding the following comment-based annotation anywhere in the ABC file:</p>
             <p></p>
             <p>%add_all_playback_links MIDI_PROGRAM_NUMBER</p>
             <p></p>
@@ -903,9 +908,6 @@
             <h1>ABC 2.1 Quick Reference Card</h1>
             <p>Download this handy ABC 2.1 Quick Reference Card put together by Stephen Merrony: </p>
             <p><a href="http://michaeleskin.com/documents/ABCquickRefv0_6.pdf" target="_blank">ABC Quick Reference Card</a></p>
-            <hr class="hidden-print" id="general_midi_instrument_list">
-            <h1>General MIDI Instrument List</h1>
-            <p>Visit <a href="https://www.midi.org/specifications-old/item/gm-level-1-sound-set" target="_blank">https://www.midi.org/specifications-old/item/gm-level-1-sound-set</a> for the full list of MIDI instruments and their program numbers to use for choosing instruments for playback.<p>
             <hr class="hidden-print" id="donate">
             <h1>Donate</h1>
             <p>If you find my ABC Transcription Tools useful, please consider tossing a few bucks into one of my virtual tip jars:</p>
