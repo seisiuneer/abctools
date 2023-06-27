@@ -79,51 +79,51 @@
         margin-top:0px;
         margin-bottom:12px;
         }
-
+        
         @media print {
-            .hidden-print {
-            display: none !important;
-            }
-
-            h1 {
-            font-size:18pt;
-            font-family:"Helvetica";
-            margin-bottom:36px;
-            margin-top:60px;
-            }
-
-            p {
-            font-size:14pt;
-            font-family:"Helvetica";
-            line-height: 28px;
-            }
-                        
-            hr {
-            margin-top:24px;
-            margin-bottom:24px;
-            }
-            
-            body {
-            padding:10px;
-            text-align: center;
-            }
-                    
-            #maindiv{
-            text-align: left;
-            background-color: white;
-            width:90%;
-            }
-           
-            .image_holder{
-            text-align: center;
-            }
-            
-            .toc{
-            margin-top:0px;
-            margin-bottom:12px;
-            }       
+        .hidden-print {
+        display: none !important;
         }
-
+        
+        h1 {
+        font-size:18pt;
+        font-family:"Helvetica";
+        margin-bottom:36px;
+        margin-top:60px;
+        }
+        
+        p {
+        font-size:14pt;
+        font-family:"Helvetica";
+        line-height: 28px;
+        }
+        
+        hr {
+        margin-top:24px;
+        margin-bottom:24px;
+        }
+        
+        body {
+        padding:10px;
+        text-align: center;
+        }
+        
+        #maindiv{
+        text-align: left;
+        background-color: white;
+        width:90%;
+        }
+        
+        .image_holder{
+        text-align: center;
+        }
+        
+        .toc{
+        margin-top:0px;
+        margin-bottom:12px;
+        }
+        }
+        
         </style>
         
     </head>
@@ -137,7 +137,7 @@
                 <p>Try it out here: <a href="http://michaeleskin.com/abc" target="_blank">ABC Transcription Tools</a>.</p>
                 <p><strong>"I've used various ABC apps and Web tools for many years, and this is by far the best. Thanks for making my life easier." - Jim Besser</strong></p>
                 <hr class="hidden-print">
-                <p>A PDF version of this User Guide is available at: <a href="http://michaeleskin.com/documents/abc_transcription_tools_user_guide_22jun2023.pdf" target="_blank">ABC Transcription Tools User Guide PDF</a></p>
+                <p class="hidden-print">A PDF version of this User Guide is available at: <a href="http://michaeleskin.com/documents/abc_transcription_tools_user_guide_26jun2023.pdf" target="_blank">ABC Transcription Tools User Guide PDF</a></p>
             </div>
             <hr class="hidden-print">
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/eVOLh2Z-GDU" title="ABC Transcription Tools Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
@@ -161,12 +161,12 @@
                 <p class="toc"><a href="#getting_started">Getting Started</a></p>
                 <p class="toc"><a href="#abc_editor">ABC Editor</a></p>
                 <p class="toc"><a href="#viewing_the_notation_full_screen">Viewing the Notation Full Screen</a></p>
+                <p class="toc"><a href="#playing_your_tunes">Playing Your Tunes</a></p>
+                <p class="toc"><a href="#selecting_the_instrument_for_playback">Selecting the Instrument for Playback</a></p>
                 <p class="toc"><a href="#notation_tablature_display_controls">Notation/Tablature Display Controls</a></p>
                 <p class="toc"><a href="#basic_controls">Basic Controls</a></p>
                 <p class="toc"><a href="#sorting_your_abc_tunes">Sorting Your ABC Tunes</a></p>
                 <p class="toc"><a href="#advanced_controls">Advanced Controls</a></p>
-                <p class="toc"><a href="#playing_your_tunes">Playing Your Tunes</a></p>
-                <p class="toc"><a href="#selecting_the_instrument_for_playback">Selecting the Instrument for Playback</a></p>
                 <p class="toc"><a href="#pdf_tunebook_settings">PDF Tunebook Settings</a></p>
                 <p class="toc"><a href="#pdf_quality_setting">PDF Quality Setting</a></p>
                 <p class="toc"><a href="#adding_a_pdf_title_page">Adding a PDF Tunebook Title Page</a></p>
@@ -251,7 +251,57 @@
             <p>The control hides or shows the ABC Editor and all controls so you can view your notation fullscreen.</p>
             <p>Click once to hide the ABC Editor and all controls.</p>
             <p>Click again to show the ABC Editor and all controls.</p>
-            <hr class="hidden-print" id="notation_tablature_display_controls">
+            <hr class="hidden-print" id="playing_your_tunes">
+            <h1>Playing Your Tunes</h1>
+            <p>To play a specific tune, click anywhere in the ABC for the tune and then click "Play".</p>
+            <p>The tool will automatically find the tune you've clicked on bring it up in a window for playback.</p>
+            <div class="image_holder">
+                <img src="img/playback.jpg"/>
+            </div>
+            <p>Using the playback controls at the bottom, you can enable looping, rewind to start, start/pause playback, click in the progress bar to seek, or change the tempo as a percentage. </p>
+            <p>Click "Close" to return to the ABC editor.</p>
+            <p></p>
+            <p>If you hold down the Shift key while clicking the Play button the tool will automatically find the tune you've clicked on and send it to Paul Rosen's abcjs Quick Editor for playback:</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/-JvOFaotgtY" title="Playing your Tunes (New and Improved)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p>If there is a text selection in the ABC area, whatever is selected will be sent.</p>
+            <p>You can use this to send more than one tune to the abcjs Quick Editor</p>
+            <p>The abcjs Quick Editor only plays the first tune in it's own ABC editor.</p>
+            <p>If you select more than one tune in the ABC editor, and click "Play", you will need to edit the ABC in the abcjs Quick Editor editor to bring the tune you are interested in playing to the top.</p>
+            <p>The abcjs Quick Editor can also export MIDI and audio files of tunes.</p>
+            <p>Once you are happy with the playback, copy the ABC from the "abcjs Quick Editor tool, then paste the edited ABC back into this tool for further editing.</p>
+            <p>If you single-clicked and played one tune, the entire tune will be selected when you come back to the tool from the abcjs Quick Editor.</p>
+            <p>This makes it simple to paste any changes you might have made and copied from the abcjs Quick Editor.</p>
+            <hr class="hidden-print" id="selecting_the_instrument_for_playback">
+            <h1>Selecting the Instrument for Playback</h1>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/i6oKpGzS2lo" title="Playing your Tunes (New and Improved)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p>You may select which instrument sound the abcjs Quick Editor uses for playback of your tunes.</p>
+            <p>By default, the instrument used is a piano.</p>
+            <p>To choose the sound when played, add an additional line to your ABC right after any headers and before the ABC notes, for example for a flute sound:</p>
+            <p></p>
+            <p><strong>%%MIDI program 74</strong></p>
+            <p></p>
+            <p>To change the instrument used for playback, change the MIDI program # above to one of:</p>
+            <p>74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano</p>
+            <p></p>
+            <p><strong>For example:</strong></p>
+            <p>X: 1<br/>
+                T: The Kesh<br/>
+                R: Jig<br/>
+                M: 6/8<br/>
+                L: 1/8<br/>
+                K: Gmaj<br/>
+                <strong>%%MIDI program 74</strong><br/>
+                D|: GAG GAB | ABA ABd | edd gdd | edB dBA |<br/>
+                GAG GAB | ABA ABd | edd gdB |1 AGF G2D :|2 AGF G2A||<br/>
+                |: B2B dBd | ege dBA | BAB dBG | ABA AGA |<br/>
+            B2 B dBd | ege dBd | gfg aga |1 bgg g2A :|2 bgg g2D |]</p>
+            <p></p>
+            <p>Any General MIDI (level 1) instrument number can be selected.</p>
+            <p>Visit <a href="https://www.midi.org/specifications-old/item/gm-level-1-sound-set" target="_blank">https://www.midi.org/specifications-old/item/gm-level-1-sound-set</a> for the full list of MIDI instruments and their program numbers.<p>
+            <p></p>
+            <p><strong>Power User Tip:</strong></p>
+            <p>To have the tool automatically inject a %%MIDI program directive for every tune with a specific MIDI instrument program number, hold down the Alt-key while clicking the "Play" button.</p>
+            <p>You will be prompted for a MIDI instrument program number to inject.</p>            <hr class="hidden-print" id="notation_tablature_display_controls">
             <h1>Notation/Tablature Display Controls</h1>
             <div class="image_holder">
                 <img src="img/ug4.jpg"/>
@@ -310,50 +360,6 @@
             <p>Staff Display Settings:</p>
             <p>Set Staff Spacing - Allows you to set a wider or narrower gap between the staffs.</p>
             <p>A value of 0 corresponds to an ABC %%staffsep of 40</p>
-            <hr class="hidden-print" id="playing_your_tunes">
-            <h1>Playing Your Tunes</h1>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/-JvOFaotgtY" title="Playing your Tunes (New and Improved)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p>To play a specific tune, click once (don't select) anywhere in the ABC for the tune and then click "Play".</p>
-            <p>The tool will automatically find the tune you've clicked on and send it to the abcjs Quick Editor for playback.</p>
-            <p>If there is a text selection in the ABC area, whatever is selected will be sent.</p>
-            <p>You can use this to send more than one tune to the abcjs Quick Editor</p>
-            <p>The abcjs Quick Editor only plays the first tune in it's own ABC editor.</p>
-            <p>If you select more than one tune in the ABC editor, and click "Play", you will need to edit the ABC in the abcjs Quick Editor editor to bring the tune you are interested in playing to the top.</p>
-            <p>The abcjs Quick Editor can also export MIDI and audio files of tunes.</p>
-            <p>Once you are happy with the playback, copy the ABC from the "abcjs Quick Editor tool, then paste the edited ABC back into this tool for further editing.</p>
-            <p>If you single-clicked and played one tune, the entire tune will be selected when you come back to the tool from the abcjs Quick Editor.</p>
-            <p>This makes it simple to paste any changes you might have made and copied from the abcjs Quick Editor.</p>
-            <hr class="hidden-print" id="selecting_the_instrument_for_playback">
-            <h1>Selecting the Instrument for Playback</h1>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/i6oKpGzS2lo" title="Playing your Tunes (New and Improved)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p>You may select which instrument sound the abcjs Quick Editor uses for playback of your tunes.</p>
-            <p>By default, the instrument used is a piano.</p>
-            <p>To choose the sound when played, add an additional line to your ABC right after any headers and before the ABC notes, for example for a flute sound:</p>
-            <p></p>
-            <p><strong>%%MIDI program 74</strong></p>
-            <p></p>
-            <p>To change the instrument used for playback, change the MIDI program # above to one of:</p>
-            <p>74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano</p>
-            <p></p>
-            <p><strong>For example:</strong></p>
-            <p>X: 1<br/>
-                T: The Kesh<br/>
-                R: Jig<br/>
-                M: 6/8<br/>
-                L: 1/8<br/>
-                K: Gmaj<br/>
-                <strong>%%MIDI program 74</strong><br/>
-                D|: GAG GAB | ABA ABd | edd gdd | edB dBA |<br/>
-                GAG GAB | ABA ABd | edd gdB |1 AGF G2D :|2 AGF G2A||<br/>
-                |: B2B dBd | ege dBA | BAB dBG | ABA AGA |<br/>
-            B2 B dBd | ege dBd | gfg aga |1 bgg g2A :|2 bgg g2D |]</p>
-            <p></p>
-            <p>Any General MIDI (level 1) instrument number can be selected.</p>
-            <p>Visit <a href="https://www.midi.org/specifications-old/item/gm-level-1-sound-set" target="_blank">https://www.midi.org/specifications-old/item/gm-level-1-sound-set</a> for the full list of MIDI instruments and their program numbers.<p>
-            <p></p>
-            <p><strong>Power User Tip:</strong></p>
-            <p>To have the tool automatically inject a %%MIDI program directive for every tune with a specific MIDI instrument program number, Shift-Click the "Play" button.</p>
-            <p>You will be prompted for a MIDI instrument program number to inject.</p>
             <hr class="hidden-print" id="pdf_tunebook_settings">
             <h1>PDF Tunebook Settings</h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/jtiVzXB8xhQ" title="PDF Generation Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
