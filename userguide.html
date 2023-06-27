@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+         
         <style>
         p {
         font-size:14pt;
@@ -275,8 +275,8 @@
             <h1>Selecting the Instrument for Playback</h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/i6oKpGzS2lo" title="Playing your Tunes (New and Improved)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>You may select which instrument sound the abcjs Quick Editor uses for playback of your tunes.</p>
-            <p>By default, the instrument used is a piano.</p>
-            <p>To choose the sound when played, add an additional line to your ABC right after any headers and before the ABC notes, for example for a flute sound:</p>
+            <p>By default, the melody instrument used is a piano.</p>
+            <p>To choose the instrument used, add the following line to your ABC right after any headers and before the ABC notes, for example for a flute sound:</p>
             <p></p>
             <p><strong>%%MIDI program 74</strong></p>
             <p></p>
@@ -296,7 +296,12 @@
                 |: B2B dBd | ege dBA | BAB dBG | ABA AGA |<br/>
             B2 B dBd | ege dBd | gfg aga |1 bgg g2A :|2 bgg g2D |]</p>
             <p></p>
-            <p>Any General MIDI (level 1) instrument number can be selected.</p>
+            <p>By default, if you have chords in the ABC, the instrument used for the chord playback is a piano.</p>
+            <p>To choose the instrument for the chords, add the following line to your ABC right after any headers and before the ABC notes, for example for a guitar sound:</p>
+            <p></p>
+            <p><strong>%%MIDI chordprog 25</strong></p>
+            <p></p>
+            <p>Any General MIDI (level 1) instrument number can be selected for the melody and chord sounds.</p>
             <p>Visit <a href="https://www.midi.org/specifications-old/item/gm-level-1-sound-set" target="_blank">https://www.midi.org/specifications-old/item/gm-level-1-sound-set</a> for the full list of MIDI instruments and their program numbers.<p>
             <p></p>
             <p><strong>Power User Tip:</strong></p>
