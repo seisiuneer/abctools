@@ -7750,7 +7750,7 @@ function InjectMIDIInstrument() {
 		return;
 	}
 
-	DayPilot.Modal.prompt("MIDI instrument program number to inject? (Suggested values: 74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, 0 - Piano)", "74",{ theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
+	DayPilot.Modal.prompt('<p style="font-size:14pt;line-height:19pt;font-family:helvetica">MIDI instrument program number to inject?</p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, 0 - Piano</p>', "74",{ theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
 		
 		var progNumStr = args.result;
 
@@ -7800,69 +7800,90 @@ function InjectMIDIInstrument() {
 }
 
 //
-// Send the ABC to Paul Rosen's drawthedots site for playback
+// Play the ABC
 //
 function PlayABC(e){
 
-	// Follows same semantics as Copy
 	if (gAllowCopy){
-    	
 
-    	if (e.shiftKey){
+		// Alt key injects a MIDI instrument directive
+
+   		if (e.altKey){
     		InjectMIDIInstrument();
     		return;
     	}
 
-		// Is there a selection?
-		var theSelectedABC = getSelectedText("abc");
 
-		// No, try to find the tune
-		if (theSelectedABC.length == 0){
+    	// Shift key launches Paul Rosen's site
 
-			// Try to find the current tune
-			theSelectedABC = findSelectedTune();
+		if (e.shiftKey){
 
-			if (theSelectedABC == ""){
-				// This should never happen
-				return;
+			// Is there a selection?
+			var theSelectedABC = getSelectedText("abc");
+
+			// No, try to find the tune
+			if (theSelectedABC.length == 0){
+
+				// Try to find the current tune
+				theSelectedABC = findSelectedTune();
+
+				if (theSelectedABC == ""){
+					// This should never happen
+					return;
+				}
+				
+				// Get the notes
+				var theNotes = gTheABC.value;
+
+				// Refocus back on the ABC
+				gTheABC.focus();
+
+	    		// Select the whole tune
+				var start = theNotes.indexOf(theSelectedABC);
+				var end = start + theSelectedABC.length;
+
+	    		gTheABC.selectionStart = start;
+	    		gTheABC.selectionEnd = end;
+
 			}
-			
-			// Get the notes
-			var theNotes = gTheABC.value;
 
-			// Refocus back on the ABC
-			gTheABC.focus();
+			// Copy the abc to the clipboard
+			CopyToClipboard(theSelectedABC);
 
-    		// Select the whole tune
-			var start = theNotes.indexOf(theSelectedABC);
-			var end = start + theSelectedABC.length;
+			var theData = encodeURIComponent(theSelectedABC);
 
-    		gTheABC.selectionStart = start;
-    		gTheABC.selectionEnd = end;
+			var w = window.open("https://editor.drawthedots.com?t="+theData);
 
+			 // Give some feedback
+			document.getElementById("playbutton").value = "Sent!";
+
+			setTimeout(function(){
+
+				document.getElementById("playbutton").value = "Play";
+
+				// Refocus back on the ABC
+				gTheABC.focus();
+
+			},750);		
+
+			return;
+				
 		}
 
-		// Copy the abc to the clipboard
-		CopyToClipboard(theSelectedABC);
+		// Play back locally
 
-		var theData = encodeURIComponent(theSelectedABC);
+		// Try to find the current tune
+		var theSelectedABC = findSelectedTune();
 
-		var w = window.open("https://editor.drawthedots.com?t="+theData);
+		if (theSelectedABC == ""){
+			// This should never happen
+			return;
+		}
 
-		 // Give some feedback
-		document.getElementById("playbutton").value = "Sent!";
-
-		setTimeout(function(){
-
-			document.getElementById("playbutton").value = "Play";
-
-			// Refocus back on the ABC
-			gTheABC.focus();
-
-		},750);
+		// Play back locally in-tool	
+		LocalPlayABC(theSelectedABC);
 
 	}
-
 }
 
 //
@@ -7952,7 +7973,7 @@ function ShortenURL(){
 	    method: `POST`,
 	    headers: {
 	      accept: `application/json`,
-	      authorization: `Bearer <YOUR TINYURL API TOKEN HERE>`,
+	      authorization: `Bearer 6YJMYs01UHvxocEle5C9T1Emypv2L4JNSM0PtzaetoZDVfl6YLzOp6I67E6I`,
 	      'content-type': `application/json`,
 	    },
 	    body: JSON.stringify(body)
@@ -9583,6 +9604,150 @@ function showZoomInstructionsScreen(){
 	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Read the <a href="userguide.html" target="_blank">User Guide</a> for complete documentation and demo videos.</p>';
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50 });
+
+}
+
+// 
+// Local playback
+//
+function LocalPlayABC(theABC){
+
+	var abcOptions = {
+		add_classes: true,
+		responsive: "resize"
+	};
+
+	function CursorControl() {
+
+		var self = this;
+
+		self.onReady = function() {
+		};
+
+		self.onStart = function() {
+			var svg = document.querySelector("#playback-paper svg");
+			var cursor = document.createElementNS("http://www.w3.org/2000/svg", "line");
+			cursor.setAttribute("class", "abcjs-cursor");
+			cursor.setAttributeNS(null, 'x1', 0);
+			cursor.setAttributeNS(null, 'y1', 0);
+			cursor.setAttributeNS(null, 'x2', 0);
+			cursor.setAttributeNS(null, 'y2', 0);
+			svg.appendChild(cursor);
+
+		};
+
+		self.beatSubdivisions = 2;
+
+		self.onBeat = function(beatNumber, totalBeats, totalTime) {
+		};
+
+		self.onEvent = function(ev) {
+			if (ev.measureStart && ev.left === null)
+				return; // this was the second part of a tie across a measure line. Just ignore it.
+
+			var lastSelection = document.querySelectorAll("#playback-paper svg .highlight");
+			for (var k = 0; k < lastSelection.length; k++)
+				lastSelection[k].classList.remove("highlight");
+
+			for (var i = 0; i < ev.elements.length; i++ ) {
+				var note = ev.elements[i];
+				for (var j = 0; j < note.length; j++) {
+					note[j].classList.add("highlight");
+				}
+			}
+
+			var cursor = document.querySelector("#playback-paper svg .abcjs-cursor");
+			if (cursor) {
+				cursor.setAttribute("x1", ev.left - 2);
+				cursor.setAttribute("x2", ev.left - 2);
+				cursor.setAttribute("y1", ev.top);
+				cursor.setAttribute("y2", ev.top + ev.height);
+			}
+		};
+
+		self.onFinished = function() {
+			var els = document.querySelectorAll("svg .highlight");
+			for (var i = 0; i < els.length; i++ ) {
+				els[i].classList.remove("highlight");
+			}
+			var cursor = document.querySelector("#playback-paper svg .abcjs-cursor");
+			if (cursor) {
+				cursor.setAttribute("x1", 0);
+				cursor.setAttribute("x2", 0);
+				cursor.setAttribute("y1", 0);
+				cursor.setAttribute("y2", 0);
+			}
+		};
+
+	}
+
+	function setTune(userAction) {
+
+		synthControl.disable(true);
+
+		var visualObj = ABCJS.renderAbc("playback-paper", theABC, abcOptions)[0];
+
+		var midiBuffer = new ABCJS.synth.CreateSynth();
+
+		midiBuffer.init({
+			visualObj: visualObj,
+		}).then(function (response) {
+			console.log(response);
+			if (synthControl) {
+				synthControl.setTune(visualObj, userAction).then(function (response) {
+					console.log("Audio successfully loaded.")
+				}).catch(function (error) {
+					console.warn("Audio problem:", error);
+				});
+			}
+		}).catch(function (error) {
+			console.warn("Audio problem:", error);
+		});
+	}
+
+	function StopPlay(){
+				
+		synthControl.destroy();
+
+		synthControl = null;
+	}
+
+	var cursorControl = new CursorControl();
+
+	var synthControl;
+
+	function initPlay() {
+
+		var modal_msg  = '<div id="abcplayer">';
+	   	modal_msg += '<div id="playback-paper"></div>';
+	   	modal_msg += '<div id="playback-audio"></div>';
+	   	modal_msg += '</div>';
+
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width:850, okText:"Close"});
+
+		var theOKButton = document.getElementsByClassName("modal_flat_ok")[0];
+
+		var originalOnClick = theOKButton.onclick;
+
+		theOKButton.onclick = function(){originalOnClick(); StopPlay(); };
+
+		if (ABCJS.synth.supportsAudio()) {
+			
+			synthControl = new ABCJS.synth.SynthController();
+			
+			synthControl.load("#playback-audio", cursorControl, {displayLoop: true, displayRestart: true, displayPlay: true, displayProgress: true, displayWarp: true});
+
+
+		} else {
+
+			document.querySelector("#playback-audio").innerHTML = "<div class='audio-error'>Audio is not supported in this browser.</div>";
+
+		}
+
+		setTune(false);
+	}
+
+	initPlay();
 
 }
 
