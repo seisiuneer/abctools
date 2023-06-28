@@ -6986,37 +6986,48 @@ function ToggleChords(e) {
 
 }
 
-
-
 //
 // Create a template for a new ABC file
 //
 function NewABC(){
 
 	// Stuff in some default ABC with additional options explained
-	var theValue = "X: 1\n";
-	theValue += "T: New Tune\n";
+	theValue  = "% Each tune in the tunebook must start with an X: tag:\n";
+	theValue += "%\n";
+	theValue += "X: 1\n";
+	theValue += "T: The Merry Blacksmith\n";
 	theValue += "R: Reel\n";
 	theValue += "M: 4/4\n";
 	theValue += "L: 1/8\n";
-	theValue += "K: Gmaj\n";
-	theValue += "C: Gan Ainm\n";
+	theValue += "K: Dmaj\n";
+	theValue += "C: Traditional\n";
+	theValue += "%\n";
+	theValue += "% Use a Flute sound when playing the melody:\n";
 	theValue += "%%MIDI program 74\n";
 	theValue += "%\n";
-	theValue += "% Enter the ABC for your tune(s) below:\n";
+	theValue += "% Use a Bass sound when playing the chords:\n";
+	theValue += "%%MIDI chordprog 32\n";
 	theValue += "%\n";
-	theValue += "|:d2dA BAFA|ABdA BAFA|ABde fded|Beed egfe:|\n\n";
+	theValue += "% ABC for the tune, both melody and chords:\n";
 	theValue += "%\n";
-	theValue += "% To choose the sound when played, change the MIDI program # above to:\n";
-	theValue += "%\n";
-	theValue += "% 74 - Flute, 49 - Fiddle, 23 - Accordion, 25 - Guitar, or 0 - Piano\n";
-	theValue += "%\n";
+	theValue += '|:"D"d2dA BAFA|ABdA BAFA|ABde f2ed|"G"Beed "A"egfe|\n';
+	theValue += '"D"d2dA BAFA|ABdA BAFA|ABde "G"fdec|"A"dBAF "D"D4:|\n';
+	theValue += '|:"D"a2 ag f2 fe|d2 dA BAFA|ABde f2ed|"G"Beed "A"egfe|\n';
+	theValue += '"D"abag fgfe|d2 dA BAFA|ABde "G"fdec|"A"dBAF "D"D4:|\n';
 	theValue += "\n";
-	theValue += "% Try these custom PDF page annotations by removing the % and the space\n";
+	theValue += "% To choose the sound when played, change the MIDI program # above to:\n";
+	theValue += "%\n"
+	theValue += "% Melody:\n";
+	theValue += "% Flute: 74, Strings: 48, Accordion: 23, Guitar: 25, Piano: 0\n";
 	theValue += "%\n";
-	theValue += "% Set the PDF quality (1.0 is highest quality, 0.5 is good quality):\n";
+	theValue += "% Chords:\n";
+	theValue += "% Piano: 0, Organ: 19, Guitar: 25, Bass: 32, Synth Bass: 38\n";
 	theValue += "%\n";
-	theValue += "% %pdfquality 0.75\n";
+	theValue += "% If program or chordprog is not specified, both default to Piano\n";
+	theValue += "\n";
+	theValue += "% PDF Tunebook Annotations:\n";
+	theValue += "%\n";
+	theValue += "% Try these custom PDF tunebook annotations by removing the extra % and space at the beginning of the line:\n";
 	theValue += "%\n";
 	theValue += "% Before the tunes, add a title page with a title:\n";
 	theValue += "%\n";
@@ -7075,23 +7086,6 @@ function NewABC(){
 	theValue += "% Add a PDF hyperlink from every tune back to Paul Rosen's ABC Quick Editor for playback. Use a flute sound for playback.\n";
 	theValue += "%\n";
 	theValue += "% %add_all_playback_links 74\n";
-	theValue += "%\n";
-	theValue += "% Add a PDF hyperlink for this tune:\n";
-	theValue += "%\n";	
-	theValue += "% %hyperlink http://michaeleskin.com\n";	
-	theValue += "%\n";	
-	theValue += "% Add a PDF hyperlink for this tune back to thesession.org\n";
-	theValue += "%\n";	
-	theValue += "% %add_link_to_thesession\n";	
-	theValue += "%\n";	
-	theValue += "% Add a PDF hyperlink for this tune back to Paul Rosen's ABC Quick Editor for playback. Use a fiddle sound for playback.\n";
-	theValue += "%\n";	
-	theValue += "% %add_playback_link 49\n";	
-	theValue += "%\n";	
-	theValue += "% After the tunes, add a sharing QR code on a new page in the PDF:\n";
-	theValue += "%\n";
-	theValue += "% %qrcode\n";
-	theValue += "%\n";
 
 	gTheABC.value = theValue;
 
@@ -7768,7 +7762,7 @@ function InjectMIDIInstrument(bIsChords) {
 		theDefaultProgram = "0";
 	}
 
-	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica">MIDI instrument program number to inject for the'+theProgramToInject+'?</p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Flute: 74, Fiddle: 49, Accordion: 23, Guitar: 25, Piano: 0</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm.jpg" target="_blank">General MIDI Instrument Program Numbers</a></p>';
+	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica">MIDI instrument program number to inject for the'+theProgramToInject+'?</p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Flute: 74, Strings: 48, Accordion: 23, Guitar: 25, Piano: 0</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm.jpg" target="_blank">General MIDI Instrument Program Numbers</a></p>';
 
 	if (bIsChords){
 		thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica">MIDI instrument program number to inject for the'+theProgramToInject+'?</p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0, Organ: 19, Guitar: 25, Bass: 32, Synth Bass: 38</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm.jpg" target="_blank">General MIDI Instrument Program Numbers</a></p>';
