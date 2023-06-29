@@ -13787,7 +13787,15 @@ function CreateSynth() {
     self.soundFontUrl = params.soundFontUrl ? params.soundFontUrl : defaultSoundFontUrl;
     if (self.soundFontUrl[self.soundFontUrl.length - 1] !== '/') self.soundFontUrl += '/';
     if (params.soundFontVolumeMultiplier || params.soundFontVolumeMultiplier === 0) self.soundFontVolumeMultiplier = params.soundFontVolumeMultiplier;else if (self.soundFontUrl === defaultSoundFontUrl || self.soundFontUrl === alternateSoundFontUrl) self.soundFontVolumeMultiplier = 3.0;else if (self.soundFontUrl === originalSoundFontUrl) self.soundFontVolumeMultiplier = 0.4;else self.soundFontVolumeMultiplier = 1.0;
-    if (params.programOffsets) self.programOffsets = params.programOffsets;else if (self.soundFontUrl === originalSoundFontUrl) self.programOffsets = {
+    
+    // Can't use .ogg files on Safari, falls back to .mp3 with offsets
+    var isSafari = false
+    if (/Safari/i.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
+      isSafari = true;
+    }
+   
+    if (params.programOffsets) self.programOffsets = params.programOffsets;
+    else if (self.soundFontUrl === originalSoundFontUrl) self.programOffsets = {
       "bright_acoustic_piano": 20,
       "honkytonk_piano": 20,
       "electric_piano_1": 30,
@@ -13831,7 +13839,21 @@ function CreateSynth() {
       "flute": 50,
       "banjo": 50,
       "woodblock": 20
-    };else self.programOffsets = {};
+    };else {
+      if (isSafari){
+        // If using Celtic Sound .mp3 sound fonts on Safari, set the offsets to 50 msec (Adobe Audition artifact)
+          self.programOffsets = {
+            "accordion": 50,
+            "tango_accordion": 50,
+            "flute": 50,
+            "whistle": 50,
+            "gunshot": 50
+          }
+      }
+      else{
+        self.programOffsets = {};
+      }
+    }
 
     var p = params.fadeLength !== undefined ? parseInt(params.fadeLength, 10) : NaN;
     self.fadeLength = isNaN(p) ? 200 : p;
@@ -14478,7 +14500,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
   if (!soundsCache[instrument]) soundsCache[instrument] = {};
   var instrumentCache = soundsCache[instrument];
 
-  // Can't use .ogg files on Safari, falls back to .wav
+  // Can't use .ogg files on Safari, falls back to .mp3
   var isSafari = false
   if (/Safari/i.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
     isSafari = true;
@@ -14514,7 +14536,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
         noteUrl = url + instrument + "-ogg/" + name + ".ogg";
       }
       else{
-        noteUrl = url + instrument + "-wav/" + name + ".wav"; 
+        noteUrl = url + instrument + "-mp3/" + name + ".mp3"; 
       } 
 
     }
