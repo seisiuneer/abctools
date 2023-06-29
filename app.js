@@ -7002,11 +7002,11 @@ function NewABC(){
 	theValue += "K: Dmaj\n";
 	theValue += "C: Traditional\n";
 	theValue += "%\n";
-	theValue += "% Use a Flute sound when playing the melody:\n";
-	theValue += "%%MIDI program 74\n";
+	theValue += "% Use an Accordion sound when playing the melody:\n";
+	theValue += "%%MIDI program 21\n";
 	theValue += "%\n";
-	theValue += "% Use a Bass sound when playing the chords:\n";
-	theValue += "%%MIDI chordprog 32\n";
+	theValue += "% Use an Electric Piano sound when playing the chords:\n";
+	theValue += "%%MIDI chordprog 5\n";
 	theValue += "%\n";
 	theValue += "% ABC for the tune, both melody and chords:\n";
 	theValue += "%\n";
@@ -7018,10 +7018,10 @@ function NewABC(){
 	theValue += "% To choose the sound when played, change the MIDI program # above to:\n";
 	theValue += "%\n"
 	theValue += "% Melody:\n";
-	theValue += "% Flute: 74, Strings: 48, Accordion: 23, Guitar: 25, Piano: 0\n";
+	theValue += "% Piano: 0, Accordion: 21, Concertina: 23, Flute: 73, Whistle: 78, Fiddle: 110, Uilleann Pipes: 127\n";
 	theValue += "%\n";
 	theValue += "% Chords:\n";
-	theValue += "% Piano: 0, Organ: 19, Guitar: 25, Bass: 32, Synth Bass: 38\n";
+	theValue += "% Piano: 0, Electric Piano: 5, Organ: 19, Guitar: 25, Bass: 34, Synth Bass: 38\n";
 	theValue += "%\n";
 	theValue += "% If program or chordprog is not specified, both default to Piano\n";
 	theValue += "\n";
@@ -7083,9 +7083,9 @@ function NewABC(){
 	theValue += "%\n";
 	theValue += "% %add_all_links_to_thesession\n";
 	theValue += "%\n";
-	theValue += "% Add a PDF hyperlink from every tune back to Paul Rosen's ABC Quick Editor for playback. Use a flute sound for playback.\n";
+	theValue += "% Add a PDF hyperlink from every tune back to Paul Rosen's ABC Quick Editor for playback. Use an accordion sound for playback.\n";
 	theValue += "%\n";
-	theValue += "% %add_all_playback_links 74\n";
+	theValue += "% %add_all_playback_links 21\n";
 
 	gTheABC.value = theValue;
 
@@ -7755,17 +7755,17 @@ function InjectMIDIInstrument(bIsChords) {
 	}
 
 	var theProgramToInject = " melody";
-	var theDefaultProgram = "74";
+	var theDefaultProgram = "21";
 
 	if (bIsChords){
 		theProgramToInject = " chords"
-		theDefaultProgram = "0";
+		theDefaultProgram = "5";
 	}
 
-	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica">MIDI instrument program number to inject for the'+theProgramToInject+'?</p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Flute: 74, Strings: 48, Accordion: 23, Guitar: 25, Piano: 0</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm.jpg" target="_blank">General MIDI Instrument Program Numbers</a></p>';
+	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica">MIDI instrument program number to inject for the'+theProgramToInject+'?</p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0, Accordion: 21, Concertina: 23, Flute: 73, Whistle: 78, Fiddle: 110, Uilleann Pipes: 127</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm.jpg" target="_blank">General MIDI Instrument Program Numbers</a></p>';
 
 	if (bIsChords){
-		thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica">MIDI instrument program number to inject for the'+theProgramToInject+'?</p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0, Organ: 19, Guitar: 25, Bass: 32, Synth Bass: 38</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm.jpg" target="_blank">General MIDI Instrument Program Numbers</a></p>';
+		thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica">MIDI instrument program number to inject for the'+theProgramToInject+'?</p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0, Electric Piano: 5, Organ: 19, Guitar: 25, Bass: 34, Synth Bass: 38</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm.jpg" target="_blank">General MIDI Instrument Program Numbers</a></p>';
 	}
 
 	DayPilot.Modal.prompt(thePrompt, theDefaultProgram, { theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
@@ -9714,7 +9714,7 @@ function LocalPlayABC(theABC){
 		var midiBuffer = new ABCJS.synth.CreateSynth();
 
 		midiBuffer.init({
-			visualObj: visualObj,
+			visualObj: visualObj,			
 		}).then(function (response) {
 			console.log(response);
 			if (synthControl) {
