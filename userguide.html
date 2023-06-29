@@ -276,12 +276,12 @@
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/i6oKpGzS2lo" title="Playing your Tunes (New and Improved)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>You may select which instrument sound the abcjs Quick Editor uses for playback of your tunes.</p>
             <p>By default, the melody instrument used is a piano.</p>
-            <p>To choose the instrument used, add the following line to your ABC right after any headers and before the ABC notes, for example for a flute sound:</p>
+            <p>To choose the instrument used, add the following line to your ABC right after any headers and before the ABC notes, for example for an Accordion sound:</p>
             <p></p>
-            <p><strong>%%MIDI program 74</strong></p>
+            <p><strong>%%MIDI program 21</strong></p>
             <p></p>
             <p>To change the instrument used for playback, change the MIDI program # above to one of:</p>
-            <p>74 - Flute, 48 - Strings, 23 - Accordion, 25 - Guitar, or 0 - Piano</p>
+            <p>Piano: 0, Accordion: 21, Concertina: 23, Flute: 73, Whistle: 78, Fiddle:110, Uilleann Pipes: 127</p>
             <p></p>
             <p><strong>For example:</strong></p>
             <p>X: 1<br/>
@@ -290,16 +290,20 @@
                 M: 6/8<br/>
                 L: 1/8<br/>
                 K: Gmaj<br/>
-                <strong>%%MIDI program 74</strong><br/>
+                <strong>%%MIDI program 78</strong><br/>
                 D|: GAG GAB | ABA ABd | edd gdd | edB dBA |<br/>
                 GAG GAB | ABA ABd | edd gdB |1 AGF G2D :|2 AGF G2A||<br/>
                 |: B2B dBd | ege dBA | BAB dBG | ABA AGA |<br/>
             B2 B dBd | ege dBd | gfg aga |1 bgg g2A :|2 bgg g2D |]</p>
             <p></p>
-            <p>By default, if you have chords in the ABC, the instrument used for the chord playback is a piano.</p>
-            <p>To choose the instrument for the chords, add the following line to your ABC right after any headers and before the ABC notes, for example for a guitar sound:</p>
+            <p><strong>The following MIDI instruments now use the same samples as my iOS "Celtic Sounds" app:</strong></p>
             <p></p>
-            <p><strong>%%MIDI chordprog 25</strong></p>
+            <p><strong>Accordion: 21, Concertina: 23, Flute: 73, Whistle: 78, Uilleann Pipes: 127</strong></p>
+            <p></p>
+            <p>By default, if you have chords in the ABC, the instrument used for the chord playback is a piano.</p>
+            <p>To choose the instrument for the chords, add the following line to your ABC right after any headers and before the ABC notes, for example for an electric piano sound:</p>
+            <p></p>
+            <p><strong>%%MIDI chordprog 5</strong></p>
             <p></p>
             <p>Any General MIDI instrument program number can be selected for the melody and chord sounds.</p>
             <p></p>
@@ -626,15 +630,15 @@
             <p>The MIDI_PROGRAM_NUMBER is optional.</p>
             <p></p>
             <p>Some MIDI program numbers I recommend:</p>
-            <p>74 - Flute, 48 - Strings, 23 - Accordion, 25 - Guitar, or 0 - Piano</p>
+            <p>Piano: 0, Accordion: 21, Concertina: 23, Flute: 73, Whistle: 78, Fiddle:110, Uilleann Pipes: 127</p>
             <p></p>
-            <p>Example: To have a specific tune played with a strings sound</p>
+            <p>Example: To have a specific tune played with an accordion sound</p>
             <p></p>
             <p>X:1<br/>
                 T:The Tarbolton<br/>
                 M:4/4<br/>
                 K:Edor<br/>
-                %add_playback_link 48<br/>
+                %add_playback_link 21<br/>
                 Beed e2BA|GBAF GFEF|Dddc d2AG|FAGE FEDF|<br/>
                 Eeed efge|fedf e2BA|GABG FGAF|BGAF GEE2:|<br/>
                 |:gfef gebe|gebe gfec|d2fd Adfd|cdAG FDEF|<br/>
@@ -667,10 +671,10 @@
             <p>The MIDI_PROGRAM_NUMBER is optional.</p>
             <p></p>
             <p>Some MIDI program numbers I recommend:</p>
-            <p>74 - Flute, 48 - Strings, 23 - Accordion, 25 - Guitar, or 0 - Piano</p>
+            <p>Piano: 0, Accordion: 21, Concertina: 23, Flute: 73, Whistle: 78, Fiddle:110, Uilleann Pipes: 127</p>
             <p></p>
             <p>Example: To have all tunes played with a flute sound</p>
-            <p>%add_all_playback_links 74</p>
+            <p>%add_all_playback_links 73</p>
             <p></p>
             <p>You may automatically add a hyperlink for every tune to the thesession.org search page for the tune title by adding the following comment-based annotation anywhere in the ABC file:</p>
             <p></p>
