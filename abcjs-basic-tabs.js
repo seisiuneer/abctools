@@ -13832,8 +13832,13 @@ function CreateSynth() {
       "banjo": 50,
       "woodblock": 20
     };else self.programOffsets = {};
+
     var p = params.fadeLength !== undefined ? parseInt(params.fadeLength, 10) : NaN;
     self.fadeLength = isNaN(p) ? 200 : p;
+
+    // MAE FOOFOO - Reducing the fade length in all cases
+    self.fadeLength = 100; 
+
     p = params.noteEnd !== undefined ? parseInt(params.noteEnd, 10) : NaN;
     self.noteEnd = isNaN(p) ? 0 : p;
     self.pan = params.pan;
@@ -14472,9 +14477,48 @@ var soundsCache = __webpack_require__(/*! ./sounds-cache */ "./src/synth/sounds-
 var getNote = function getNote(url, instrument, name, audioContext) {
   if (!soundsCache[instrument]) soundsCache[instrument] = {};
   var instrumentCache = soundsCache[instrument];
+
+  // Can't use .ogg files on Safari, falls back to .wav
+  var isSafari = false
+  if (/Safari/i.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
+    isSafari = true;
+  }
+
   if (!instrumentCache[name]) instrumentCache[name] = new Promise(function (resolve, reject) {
+
+    var isOgg = false;
+
+    // MAE 28 June 29023 - Override Celtic Sound instruments with my own
+    switch (instrument){
+
+      case "flute":
+      case "whistle":
+      case "tango_accordion":
+      case "gunshot":
+      case "accordion":
+        url = "http://michaeleskin.com/abctools/soundfonts/";
+        isOgg = true;
+        break;
+
+      default:
+        break;
+    }
+
     var xhr = new XMLHttpRequest();
     var noteUrl = url + instrument + "-mp3/" + name + ".mp3";
+
+    // If replacing a default sound, choose .ogg or .wav depending on the platform
+    if (isOgg){
+
+      if (!isSafari){
+        noteUrl = url + instrument + "-ogg/" + name + ".ogg";
+      }
+      else{
+        noteUrl = url + instrument + "-wav/" + name + ".wav"; 
+      } 
+
+    }
+
     xhr.open("GET", noteUrl, true);
     xhr.responseType = "arraybuffer";
     xhr.onload = function () {
