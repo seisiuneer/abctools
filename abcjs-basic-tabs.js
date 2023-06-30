@@ -13847,6 +13847,8 @@ function CreateSynth() {
             "tango_accordion": 50,
             "flute": 50,
             "whistle": 50,
+            "helicopter":50,
+            "applause": 50,
             "gunshot": 50
           }
       }
@@ -14513,11 +14515,13 @@ var getNote = function getNote(url, instrument, name, audioContext) {
     // MAE 28 June 29023 - Override Celtic Sound instruments with my own
     switch (instrument){
 
-      case "flute":
-      case "whistle":
-      case "tango_accordion":
-      case "gunshot":
       case "accordion":
+      case "tango_accordion":
+      case "flute":
+      case "whistle": 
+      case "helicopter": 
+      case "applause":  
+      case "gunshot":
         url = "http://michaeleskin.com/abctools/soundfonts/";
         isOgg = true;
         break;
