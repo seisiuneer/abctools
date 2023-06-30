@@ -7018,7 +7018,7 @@ function NewABC(){
 	theValue += "% To choose the sound when played, change the MIDI program # above to:\n";
 	theValue += "%\n"
 	theValue += "% Melody:\n";
-	theValue += "% Piano: 0, Accordion: 21, Concertina: 23, Flute: 73, Whistle: 78, Fiddle: 110, Uilleann Pipes: 127\n";
+	theValue += "% Piano: 0, Accordion: 21, Concertina: 23, Flute: 73, Whistle: 78, Fiddle: 110, Säckpipa: 125, Scottish Smallpipes (A): 126, Uilleann Pipes: 127\n";
 	theValue += "%\n";
 	theValue += "% Chords:\n";
 	theValue += "% Piano: 0, Electric Piano: 5, Organ: 19, Guitar: 25, Bass: 34, Synth Bass: 38\n";
@@ -7762,7 +7762,7 @@ function InjectMIDIInstrument(bIsChords) {
 		theDefaultProgram = "5";
 	}
 
-	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica">MIDI instrument program number to inject for the'+theProgramToInject+'?</p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0, Accordion: 21, Concertina: 23, Flute: 73, Whistle: 78, Fiddle: 110, Uilleann Pipes: 127</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm.jpg" target="_blank">General MIDI Instrument Program Numbers</a></p>';
+	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica">MIDI instrument program number to inject for the'+theProgramToInject+'?</p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0, Accordion: 21, Concertina: 23, Flute: 73, Whistle: 78, Fiddle: 110, Säckpipa: 125, Scottish Smallpipes (A): 126, Uilleann Pipes: 127</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm.jpg" target="_blank">General MIDI Instrument Program Numbers</a></p>';
 
 	if (bIsChords){
 		thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica">MIDI instrument program number to inject for the'+theProgramToInject+'?</p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0, Electric Piano: 5, Organ: 19, Guitar: 25, Bass: 34, Synth Bass: 38</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm.jpg" target="_blank">General MIDI Instrument Program Numbers</a></p>';
