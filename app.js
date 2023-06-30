@@ -6995,25 +6995,25 @@ function NewABC(){
 	theValue  = "% Each tune in the tunebook must start with an X: tag:\n";
 	theValue += "%\n";
 	theValue += "X: 1\n";
-	theValue += "T: The Merry Blacksmith\n";
+	theValue += "T: Cooley's\n";
 	theValue += "R: Reel\n";
 	theValue += "M: 4/4\n";
 	theValue += "L: 1/8\n";
-	theValue += "K: Dmaj\n";
+	theValue += "K: Edor\n";
 	theValue += "C: Traditional\n";
 	theValue += "%\n";
 	theValue += "% Use an Accordion sound when playing the melody:\n";
 	theValue += "%%MIDI program 21\n";
 	theValue += "%\n";
-	theValue += "% Use an Electric Piano sound when playing the chords:\n";
-	theValue += "%%MIDI chordprog 5\n";
+	theValue += "% Use an Accordion sound when playing the chords:\n";
+	theValue += "%%MIDI chordprog 21\n";
 	theValue += "%\n";
 	theValue += "% ABC for the tune, both melody and chords:\n";
 	theValue += "%\n";
-	theValue += '|:"D"d2dA BAFA|ABdA BAFA|ABde f2ed|"G"Beed "A"egfe|\n';
-	theValue += '"D"d2dA BAFA|ABdA BAFA|ABde "G"fdec|"A"dBAF "D"D4:|\n';
-	theValue += '|:"D"a2 ag f2 fe|d2 dA BAFA|ABde f2ed|"G"Beed "A"egfe|\n';
-	theValue += '"D"abag fgfe|d2 dA BAFA|ABde "G"fdec|"A"dBAF "D"D4:|\n';
+	theValue += '|:"Em"EBBA B2 EB|"Em"B2 AB dBAG|"D"F/E/D AD BDAD|"D"F/E/D AD BAGF|\n';
+	theValue += '"Em"EBBA B2 EB|"Em"B2 AB defg|"D"afec dBAF|1 "D"DEFD "Em"E3D:|2 "D"DEFD "Em"E2gf||\n';
+	theValue += '|:"Em"eB (3BBB eBgf|"Em"eBB2 gedB|"D"A/A/A FA DAFA|"D"A/A/A FA defg|\n';
+	theValue += '"Em"eB (3BBB eBgf|"Em"eBBB defg|"D"afec dBAF|1 "D"DEFD "Em"E2gf:|2 "D"DEFD "Em"E4|]\n';
 	theValue += "\n";
 	theValue += "% To choose the sound when played, change the MIDI program # above to:\n";
 	theValue += "%\n"
@@ -7021,7 +7021,7 @@ function NewABC(){
 	theValue += "% Piano: 0, Accordion: 21, Concertina: 23, Flute: 73, Whistle: 78, Fiddle: 110, Säckpipa: 125, Scottish Smallpipes (A): 126, Uilleann Pipes: 127\n";
 	theValue += "%\n";
 	theValue += "% Chords:\n";
-	theValue += "% Piano: 0, Electric Piano: 5, Organ: 19, Guitar: 25, Bass: 34, Synth Bass: 38\n";
+	theValue += "% Piano: 0, Electric Piano: 5, Organ: 19, Accordion: 21, Guitar: 25, Bass: 34, Synth Bass: 38\n";
 	theValue += "%\n";
 	theValue += "% If program or chordprog is not specified, both default to Piano\n";
 	theValue += "\n";
@@ -7759,13 +7759,13 @@ function InjectMIDIInstrument(bIsChords) {
 
 	if (bIsChords){
 		theProgramToInject = " chords"
-		theDefaultProgram = "5";
+		theDefaultProgram = "21";
 	}
 
 	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica">MIDI instrument program number to inject for the'+theProgramToInject+'?</p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0, Accordion: 21, Concertina: 23, Flute: 73, Whistle: 78, Fiddle: 110, Säckpipa: 125, Scottish Smallpipes (A): 126, Uilleann Pipes: 127</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm.jpg" target="_blank">General MIDI Instrument Program Numbers</a></p>';
 
 	if (bIsChords){
-		thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica">MIDI instrument program number to inject for the'+theProgramToInject+'?</p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0, Electric Piano: 5, Organ: 19, Guitar: 25, Bass: 34, Synth Bass: 38</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm.jpg" target="_blank">General MIDI Instrument Program Numbers</a></p>';
+		thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica">MIDI instrument program number to inject for the'+theProgramToInject+'?</p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0, Electric Piano: 5, Organ: 19, Accordion: 21, Guitar: 25, Bass: 34, Synth Bass: 38</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm.jpg" target="_blank">General MIDI Instrument Program Numbers</a></p>';
 	}
 
 	DayPilot.Modal.prompt(thePrompt, theDefaultProgram, { theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
