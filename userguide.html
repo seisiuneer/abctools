@@ -162,8 +162,8 @@
                 <p class="toc"><a href="#abc_editor">ABC Editor</a></p>
                 <p class="toc"><a href="#viewing_the_notation_full_screen">Viewing the Notation Full Screen</a></p>
                 <p class="toc"><a href="#playing_your_tunes">Playing Your Tunes</a></p>
+                <p class="toc"><a href="#selecting_the_instruments_for_playback">Selecting the Instruments for Playback</a></p>
                 <p class="toc"><a href="#general_midi_instrument_program_numbers">General MIDI Instrument Program Numbers</a></p>
-                <p class="toc"><a href="#selecting_the_instrument_for_playback">Selecting the Instrument for Playback</a></p>
                 <p class="toc"><a href="#notation_tablature_display_controls">Notation/Tablature Display Controls</a></p>
                 <p class="toc"><a href="#basic_controls">Basic Controls</a></p>
                 <p class="toc"><a href="#sorting_your_abc_tunes">Sorting Your ABC Tunes</a></p>
@@ -273,8 +273,9 @@
             <p>Once you are happy with the playback, copy the ABC from the "abcjs Quick Editor tool, then paste the edited ABC back into this tool for further editing.</p>
             <p>If you single-clicked and played one tune, the entire tune will be selected when you come back to the tool from the abcjs Quick Editor.</p>
             <p>This makes it simple to paste any changes you might have made and copied from the abcjs Quick Editor.</p>
-            <hr class="hidden-print" id="selecting_the_instrument_for_playback">
-             <p>You may choose which instrument sounds are used for the melody and bass/chord when playing tunes.</p>
+            <hr class="hidden-print" id="selecting_the_instruments_for_playback">
+            <h1>Selecting the Instruments for Playback</h1>
+            <p>You may choose which instrument sounds are used for the melody and bass/chord when playing tunes.</p>
             <p>By default, the melody and bass/chord instrument used is a piano.</p>
             <p></p>
             <p><strong>Choosing the Melody Instrument Sound</strong></p>
@@ -303,9 +304,9 @@
             <p></p>
             <p><strong>Choosing the Bass and Chord Instrument Sounds</strong></p>
             <p></p>
-            <p>To choose the instrument for the bass and chords, add the following line to your ABC right after any headers and before the ABC notes, for example for an accordion sound:</p>
+            <p>To choose the instrument for the bass and chords, add the following line to your ABC right after any headers and before the ABC notes, for example for a Bass sound:</p>
             <p></p>
-            <p><strong>%%MIDI chordprog 21</strong></p>
+            <p><strong>%%MIDI chordprog 34</strong></p>
             <p></p>
             <p>Here's the same example where I've added the bass/chords instrument program selection:</p>
             <p>X: 1<br/>
@@ -315,7 +316,7 @@
                 L: 1/8<br/>
                 K: Gmaj<br/>
                 %%MIDI program 78<br/>
-                <strong>%%MIDI chordprog 21</strong><br/>
+                <strong>%%MIDI chordprog 34</strong><br/>
                 D|: GAG GAB | ABA ABd | edd gdd | edB dBA |<br/>
                 GAG GAB | ABA ABd | edd gdB |1 AGF G2D :|2 AGF G2A||<br/>
                 |: B2B dBd | ege dBA | BAB dBG | ABA AGA |<br/>
@@ -324,7 +325,31 @@
             <p>To change the instrument used for the bass/chords, try changing the MIDI chordprog # above to one of:</p>
             <p></p>
             <p>Piano: 0, Electric Piano: 5, Organ: 19, Accordion: 21, Guitar: 25, Bass: 34, Synth Bass: 38</p>
-            <p>
+            <p></p>
+            <p><strong>Changing the Playback Volume of the Melody, Bass, and Chords</strong></p>
+            <p></p>
+            <p>To change the volume of the melody, add a dynamics indication in the ABC itself before all the notes.</p>
+            <p></p>
+            <p>For example to make the melody very soft, you can inject a !ppp! pianissimo annotation:</p>
+            <p></p>
+            <p>!ppp! |:"Em"EBBA B2 EB|"Em"B2 AB dBAG|"D"F/E/D AD BDAD|"D"F/E/D AD BAGF|</p>
+            <p></p>
+            <p>Most standard dynamics indications are supported, for example: !ppp!, !pp!, !p!, !mf!, !f!</p>
+            <p></p>
+            <p>To change the volume of the bass and chords, add the following two chordvol and bassvol %%MIDI directives immediately before any %%MIDI program and %%MIDI chordprog directives:</p>
+            <p></p>
+            <p>% Set the chord and bass volume (0-127)<br/>
+            %%MIDI chordvol 16<br/>
+            %%MIDI bassvol 16<br/>
+            %<br/>
+            % Use an Accordion sound when playing the melody:<br/>
+            %%MIDI program 21<br/>
+            %<br/>
+            % Use an Accordion sound when playing the chords:<br/>
+            %%MIDI chordprog 21<br/>
+            %</p>   
+            <p>The volume range is from 0 to 127.</p>
+            <p></p>
             <p><strong>The following MIDI instruments now use the same samples as my iOS "Celtic Sounds" app:</strong></p>
             <p></p>
             <p><strong>Accordion: 21, Concertina: 23, Flute: 73, Whistle: 78, Säckpipa: 125, Scottish Smallpipes (A): 126, Uilleann Pipes: 127</strong></p>
