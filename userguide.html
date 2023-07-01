@@ -263,7 +263,7 @@
              <p>Using the playback controls at the bottom, you can enable looping, rewind to start, start/pause playback, click in the progress bar to seek, or change the tempo as a percentage. </p>
             <p>Click "Close" to return to the ABC editor.</p>
             <p></p>
-            <p>If you hold down the Shift key while clicking the Play button the tool will automatically find the tune you've clicked on and send it to Paul Rosen's abcjs Quick Editor for playback:</p>
+            <p>If you hold down the Shift+Alt key while clicking the Play button the tool will automatically find the tune you've clicked on and send it to Paul Rosen's abcjs Quick Editor for playback:</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/-JvOFaotgtY" title="Playing your Tunes (New and Improved)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>If there is a text selection in the ABC area, whatever is selected will be sent.</p>
             <p>You can use this to send more than one tune to the abcjs Quick Editor</p>
@@ -367,9 +367,10 @@
             <p>Any General MIDI instrument program number can be selected for the melody and chord sounds.</p>
             <p></p>
             <p><strong>Power User Tip:</strong></p>
-            <p>To have the tool automatically inject a %%MIDI program directive into every tune with a specific MIDI instrument program number for the melody, hold down the Alt-key while clicking the "Play" button.</p>
+            <p>To have the tool automatically inject a %%MIDI program directive into every tune with a specific MIDI instrument program number for the melody, hold down the Shift key while clicking the "Play" button.</p>
             <p>You will be prompted for a MIDI instrument program number to inject.</p>
-            <p>To inject a %%MIDI chordprog directive program number for the chords instead, hold down the Shift+Alt keys while clicking the "Play" button.</p>            
+            <p>To inject a %%MIDI chordprog directive program number for the chords instead, hold down the Alt key while clicking the "Play" button.</p>            
+            <p>In both cases, if you enter a negative number, the same value will be used to inject both a melody and chords instrument program number into every tune.</p>
             <hr class="hidden-print" id="general_midi_instrument_program_numbers">
             <h1>General MIDI Instrument Program Numbers</h1>
             <div class="image_holder">
