@@ -7762,10 +7762,10 @@ function InjectMIDIInstrument(bIsChords) {
 		theDefaultProgram = "34";
 	}
 
-	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica">MIDI instrument program number to inject for the'+theProgramToInject+'?</p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0, Accordion: 21, Concertina: 23, Flute: 73, Whistle: 78, Fiddle: 110, Säckpipa: 125, Scottish Smallpipes (A): 126, Uilleann Pipes: 127</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm.jpg" target="_blank">General MIDI Instrument Program Numbers</a></p>';
+	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0, Accordion: 21, Concertina: 23, Flute: 73, Whistle: 78, Fiddle: 110, Säckpipa: 125, Scottish Smallpipes (A): 126, Uilleann Pipes: 127</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject same the value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm.jpg" target="_blank">General MIDI Instrument Program Numbers</a></p>';
 
 	if (bIsChords){
-		thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica">MIDI instrument program number to inject for the'+theProgramToInject+'?</p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0, Electric Piano: 5, Organ: 19, Accordion: 21, Guitar: 25, Bass: 34, Synth Bass: 38</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm.jpg" target="_blank">General MIDI Instrument Program Numbers</a></p>';
+		thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0, Electric Piano: 5, Organ: 19, Accordion: 21, Guitar: 25, Bass: 34, Synth Bass: 38</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject same the value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm.jpg" target="_blank">General MIDI Instrument Program Numbers</a></p>';
 	}
 
 	DayPilot.Modal.prompt(thePrompt, theDefaultProgram, { theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
@@ -7782,25 +7782,67 @@ function InjectMIDIInstrument(bIsChords) {
 			return;
 		}
 
-		if ((progNum < 0) || (progNum > 255)){
+		var bDoBoth = false;
+
+		if (progNum < 0){
+			bDoBoth = true;
+			progNum = -progNum;
+		}
+
+		if ((progNum < 0) || (progNum > 127)){
 			return;
 		}
 
 		var nTunes = CountTunes();
 
-		var theNotes = gTheABC.value;
+		if (!bDoBoth){
 
-		// Find the tunes
-		var theTunes = theNotes.split(/^X:/gm);
+			var theNotes = gTheABC.value;
 
-		var output = "";
+			// Find the tunes
+			var theTunes = theNotes.split(/^X:/gm);
 
-		for (var i=1;i<=nTunes;++i){
+			var output = "";
 
-			theTunes[i] = "X:"+theTunes[i];
+			for (var i=1;i<=nTunes;++i){
 
-			output += InjectOneTuneMIDIProgram(theTunes[i],progNum,bIsChords);
+				theTunes[i] = "X:"+theTunes[i];
 
+				output += InjectOneTuneMIDIProgram(theTunes[i],progNum,bIsChords);
+
+			}
+
+		}
+		else{
+
+			var theNotes = gTheABC.value;
+
+			// Inject the melody program
+			var theTunes = theNotes.split(/^X:/gm);
+
+			var output = "";
+
+			for (var i=1;i<=nTunes;++i){
+
+				theTunes[i] = "X:"+theTunes[i];
+
+				output += InjectOneTuneMIDIProgram(theTunes[i],progNum,false);
+
+			}	
+
+			// Inject the chords
+			theTunes = output.split(/^X:/gm);
+
+			var output = "";
+
+			for (var i=1;i<=nTunes;++i){
+
+				theTunes[i] = "X:"+theTunes[i];
+
+				output += InjectOneTuneMIDIProgram(theTunes[i],progNum,true);
+
+			}	
+					
 		}
 
 		// Stuff in the transposed output
@@ -7997,7 +8039,7 @@ function ShortenURL(){
 	    method: `POST`,
 	    headers: {
 	      accept: `application/json`,
-	      authorization: `Bearer <YOUR TINYURL API TOKEN HERE>`,
+	      authorization: `Bearer <YOUR_TINYURL_API_TOKEN_HERE>`,
 	      'content-type': `application/json`,
 	    },
 	    body: JSON.stringify(body)
