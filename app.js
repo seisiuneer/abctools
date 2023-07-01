@@ -7826,7 +7826,7 @@ function InjectMIDIInstrument(bIsChords) {
 
 				theTunes[i] = "X:"+theTunes[i];
 
-				output += InjectOneTuneMIDIProgram(theTunes[i],progNum,false);
+				output += InjectOneTuneMIDIProgram(theTunes[i],progNum,true);
 
 			}	
 
@@ -7839,7 +7839,7 @@ function InjectMIDIInstrument(bIsChords) {
 
 				theTunes[i] = "X:"+theTunes[i];
 
-				output += InjectOneTuneMIDIProgram(theTunes[i],progNum,true);
+				output += InjectOneTuneMIDIProgram(theTunes[i],progNum,false);
 
 			}	
 					
