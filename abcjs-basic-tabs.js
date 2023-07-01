@@ -13847,6 +13847,7 @@ function CreateSynth() {
             "tango_accordion": 50,
             "flute": 50,
             "whistle": 50,
+            "bird_tweet": 50,
             "telephone_ring": 50,
             "helicopter":50,
             "applause": 50,
@@ -14519,7 +14520,8 @@ var getNote = function getNote(url, instrument, name, audioContext) {
       case "accordion":
       case "tango_accordion":
       case "flute":
-      case "whistle": 
+      case "whistle":
+      case "bird_tweet": 
       case "telephone_ring":
       case "helicopter": 
       case "applause":  
