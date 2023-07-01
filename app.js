@@ -7867,22 +7867,9 @@ function PlayABC(e){
 	if (gAllowCopy){
 
 
-		// Shift+Alt key injects a MIDI instrument directive for the chords
-   		if (e.altKey && e.shiftKey){
-    		InjectMIDIInstrument(true);
-    		return;
-    	}
-
-		// Alt key injects a MIDI instrument directive for the melody
-   		if (e.altKey){
-    		InjectMIDIInstrument(false);
-    		return;
-    	}
-
-
     	// Shift key launches Paul Rosen's site
 
-		if (e.shiftKey){
+		if (e.altKey && e.shiftKey){
 
 			// Is there a selection?
 			var theSelectedABC = getSelectedText("abc");
@@ -7935,6 +7922,18 @@ function PlayABC(e){
 			return;
 				
 		}
+
+		// Shift key injects a MIDI instrument directive for the melody
+   		if (e.shiftKey){
+    		InjectMIDIInstrument(false);
+    		return;
+    	}
+
+		// Alt key injects a MIDI instrument directive for the chords
+   		if (e.altKey){
+    		InjectMIDIInstrument(true);
+    		return;
+    	}
 
 		// Play back locally
 
@@ -8039,7 +8038,7 @@ function ShortenURL(){
 	    method: `POST`,
 	    headers: {
 	      accept: `application/json`,
-	      authorization: `Bearer <YOUR_TINY_URL_API_TOKEN_HERE>`,
+	      authorization: `Bearer <YOUR_TINYURL_API_TOKEN_HERE>`,
 	      'content-type': `application/json`,
 	    },
 	    body: JSON.stringify(body)
