@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-                
+        
         <style>
         p {
         font-size:14pt;
@@ -260,7 +260,7 @@
             </div>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/bLV8XsYTIkc " title="Playing tunes in the tool" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p></p>
-             <p>Using the playback controls at the bottom, you can enable looping, rewind to start, start/pause playback, click in the progress bar to seek, or change the tempo as a percentage. </p>
+            <p>Using the playback controls at the bottom, you can enable looping, rewind to start, start/pause playback, click in the progress bar to seek, or change the tempo as a percentage. </p>
             <p>Click "Close" to return to the ABC editor.</p>
             <p></p>
             <p>If you hold down the Shift+Alt key while clicking the Play button the tool will automatically find the tune you've clicked on and send it to Paul Rosen's abcjs Quick Editor for playback:</p>
@@ -298,7 +298,7 @@
             B2 B dBd | ege dBd | gfg aga |1 bgg g2A :|2 bgg g2D |]</p>
             <p></p>
             <p>To change the instrument used for the melody, try changing the MIDI program # above to one of:</p>
-            <p>Piano: 0, Accordion: 21, Concertina: 23, Flute: 73, Whistle: 78, Fiddle:110, Melodica: 123, Scottish Smallpipes (D): 124, Säckpipa: 125, Scottish Smallpipes (A): 126, Uilleann Pipes: 127</p>
+            <p>Piano: 0, Accordion: 21, Concertina: 23, Flute: 73, Whistle: 78, Fiddle: 110, Melodica: 123, Scottish Smallpipes (D): 124, Säckpipa: 125, Scottish Smallpipes (A): 126, Uilleann Pipes: 127</p>
             <p></p>
             <p>By default, if you have chords in the ABC, the instrument used for the chord playback is a piano.</p>
             <p></p>
@@ -320,7 +320,7 @@
                 D|: GAG GAB | ABA ABd | edd gdd | edB dBA |<br/>
                 GAG GAB | ABA ABd | edd gdB |1 AGF G2D :|2 AGF G2A||<br/>
                 |: B2B dBd | ege dBA | BAB dBG | ABA AGA |<br/>
-                B2 B dBd | ege dBd | gfg aga |1 bgg g2A :|2 bgg g2D |]</p>
+            B2 B dBd | ege dBd | gfg aga |1 bgg g2A :|2 bgg g2D |]</p>
             <p></p>
             <p>To change the instrument used for the bass/chords, try changing the MIDI chordprog # above to one of:</p>
             <p></p>
@@ -339,15 +339,15 @@
             <p>To change the volume of the bass and chords, add the following two chordvol and bassvol %%MIDI directives immediately before any %%MIDI program and %%MIDI chordprog directives:</p>
             <p></p>
             <p>% Set the chord and bass volume (0-127)<br/>
-            %%MIDI chordvol 16<br/>
-            %%MIDI bassvol 16<br/>
-            %<br/>
-            % Use an Accordion sound when playing the melody:<br/>
-            %%MIDI program 21<br/>
-            %<br/>
-            % Use an Accordion sound when playing the chords:<br/>
-            %%MIDI chordprog 21<br/>
-            %</p>   
+                %%MIDI chordvol 16<br/>
+                %%MIDI bassvol 16<br/>
+                %<br/>
+                % Use an Accordion sound when playing the melody:<br/>
+                %%MIDI program 21<br/>
+                %<br/>
+                % Use an Accordion sound when playing the chords:<br/>
+                %%MIDI chordprog 21<br/>
+            %</p>
             <p>The volume range is from 0 to 127.</p>
             <p></p>
             <p><strong>The following MIDI instruments now use the same samples as my iOS "Celtic Sounds" and other apps:</strong></p>
@@ -369,7 +369,7 @@
             <p><strong>Power User Tip:</strong></p>
             <p>To have the tool automatically inject a %%MIDI program directive into every tune with a specific MIDI instrument program number for the melody, hold down the Shift key while clicking the "Play" button.</p>
             <p>You will be prompted for a MIDI instrument program number to inject.</p>
-            <p>To inject a %%MIDI chordprog directive program number for the chords instead, hold down the Alt key while clicking the "Play" button.</p>            
+            <p>To inject a %%MIDI chordprog directive program number for the chords instead, hold down the Alt key while clicking the "Play" button.</p>
             <p>In both cases, if you enter a negative number, the same value will be used to inject both a melody and chords instrument program number into every tune.</p>
             <hr class="hidden-print" id="general_midi_instrument_program_numbers">
             <h1>General MIDI Instrument Program Numbers</h1>
@@ -689,8 +689,8 @@
             <p></p>
             <p>The MIDI_PROGRAM_NUMBER is optional.</p>
             <p></p>
-            <p>Some MIDI program numbers I recommend:</p>
-            <p>Piano: 0, Accordion: 21, Concertina: 23, Flute: 73, Whistle: 78, Fiddle:110, Melodica: 123, Scottish Smallpipes (D): 124, Säckpipa: 125, Scottish Smallpipes (A): 126, Uilleann Pipes: 127</p>
+            <p>Some MIDI program numbers for the ABC Quick Editor I recommend (my custom instruments are not available):</p>
+            <p>74: Flute, 48: Strings, 23: Accordion, 25: Guitar, or 0: Piano</p>
             <p></p>
             <p>Example: To have a specific tune played with an accordion sound</p>
             <p></p>
@@ -730,8 +730,8 @@
             <p></p>
             <p>The MIDI_PROGRAM_NUMBER is optional.</p>
             <p></p>
-            <p>Some MIDI program numbers I recommend:</p>
-            <p>Piano: 0, Accordion: 21, Concertina: 23, Flute: 73, Whistle: 78, Fiddle:110, Melodica: 123, Scottish Smallpipes (D): 124, Säckpipa: 125, Scottish Smallpipes (A): 126, Uilleann Pipes: 127</p>
+            <p>Some MIDI program numbers for the ABC Quick Editor I recommend (my custom instruments are not available):</p>
+            <p>74: Flute, 48: Strings, 23: Accordion, 25: Guitar, or 0: Piano</p>
             <p></p>
             <p>Example: To have all tunes played with a flute sound</p>
             <p>%add_all_playback_links 73</p>
