@@ -7762,10 +7762,10 @@ function InjectMIDIInstrument(bIsChords) {
 		theDefaultProgram = "34";
 	}
 
-	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0, Accordion: 21, Flute: 73, Whistle: 78, Fiddle: 110, Uilleann Pipes: 129, Scottish Smallpipes (D): 130, Scottish Smallpipes (A): 131, Säckpipa: 132, Concertina: 133, Melodica: 134</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm_extended.jpg" target="_blank">Extended General MIDI Instrument Program Numbers</a></p>';
+	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,  Hammered Dulcimer: 15,  Accordion: 21,  Flute: 73,  Whistle: 78,  Fiddle: 110,  Uilleann Pipes: 129,  Scottish Smallpipes (D): 130,  Scottish Smallpipes (A): 131,  Säckpipa: 132,  Concertina: 133,  Melodica: 134</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm_extended.jpg" target="_blank">Extended General MIDI Instrument Program Numbers</a></p>';
 
 	if (bIsChords){
-		thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0, Electric Piano: 5, Organ: 19, Accordion: 21, Guitar: 25, Bass: 34, Synth Bass: 38</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm_extended.jpg" target="_blank">Extended General MIDI Instrument Program Numbers</a></p>';
+		thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,  Electric Piano: 5,  Organ: 19,  Accordion: 21,  Guitar: 25,  Bass: 34,  Synth Bass: 38</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm_extended.jpg" target="_blank">Extended General MIDI Instrument Program Numbers</a></p>';
 	}
 
 	DayPilot.Modal.prompt(thePrompt, theDefaultProgram, { theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
@@ -8038,7 +8038,7 @@ function ShortenURL(){
 	    method: `POST`,
 	    headers: {
 	      accept: `application/json`,
-	      authorization: `Bearer <YOUR_TINYURL_API_KEY_HERE>`,
+	      authorization: `Bearer <YOUR_TINY_URL_API_TOKEN_HERE>`,
 	      'content-type': `application/json`,
 	    },
 	    body: JSON.stringify(body)
@@ -9755,11 +9755,14 @@ function LocalPlayABC(theABC){
 		var midiBuffer = new ABCJS.synth.CreateSynth();
 
 		midiBuffer.init({
-			visualObj: visualObj,			
+			visualObj: visualObj
 		}).then(function (response) {
 			console.log(response);
 			if (synthControl) {
-				synthControl.setTune(visualObj, userAction).then(function (response) {
+				
+				var fadeLength = computeFade(theABC);
+
+				synthControl.setTune(visualObj, userAction, {fadeLength:fadeLength}).then(function (response) {
 					console.log("Audio successfully loaded.")
 				}).catch(function (error) {
 					console.warn("Audio problem:", error);
@@ -9768,6 +9771,83 @@ function LocalPlayABC(theABC){
 		}).catch(function (error) {
 			console.warn("Audio problem:", error);
 		});
+	}
+
+	function computeFade(tuneABC){
+
+		//debugger;
+
+		var theFade = 200;
+
+		var searchRegExp = /^%%MIDI program.*$/m
+
+		var melodyProgramRequested = tuneABC.match(searchRegExp);
+
+		if ((melodyProgramRequested) && (melodyProgramRequested.length > 0)){
+
+			var thePatchString = melodyProgramRequested[0].replace("%%MIDI program","");
+				
+			thePatchString = thePatchString.trim();
+
+			var thePatchElements = thePatchString.split(" ");
+
+			if (thePatchElements && (thePatchElements.length > 0)){
+
+				var thisPatch = thePatchElements[0];
+
+				// Is this one of ours?
+				switch(thisPatch){
+					case "15":   // Dulcimer
+						theFade = 4000;
+						break;
+					case "21":   // Accordion
+					case "73":   // Flute
+					case "78":   // Whistle
+					case "129":  // Uilleann pipes
+					case "130":  // Smallpipes D
+					case "131":  // Smallpipes A
+					case "132":  // Sackpipa
+					case "133":  // Concertina
+					case "134":  // Melodica
+						theFade = 100;
+						break;
+					default:
+						break;
+				}
+			}
+		}
+
+		// Now look for a chordprog
+		searchRegExp = /^%%MIDI chordprog.*$/m
+
+		var chordProgramRequested = tuneABC.match(searchRegExp);
+
+		if ((chordProgramRequested) && (chordProgramRequested.length > 0)){
+
+			var thePatchString = chordProgramRequested[0].replace("%%MIDI chordprog","");
+				
+			thePatchString = thePatchString.trim();
+
+			var thePatchElements = thePatchString.split(" ");
+
+			if (thePatchElements && (thePatchElements.length > 0)){
+
+				var thisPatch = thePatchElements[0];
+
+				// Special case for dulcimer on bass/chords
+				switch(thisPatch){
+					case "15":   // Dulcimer
+						theFade = 4000;
+						break;
+					default:
+						break;
+				}
+			}
+		}
+
+		//console.log("theFade = "+theFade);
+
+		return theFade;
 	}
 
 	function StopPlay(){
@@ -9799,7 +9879,7 @@ function LocalPlayABC(theABC){
 		if (ABCJS.synth.supportsAudio()) {
 			
 			synthControl = new ABCJS.synth.SynthController();
-			
+
 			synthControl.load("#playback-audio", cursorControl, {displayLoop: true, displayRestart: true, displayPlay: true, displayProgress: true, displayWarp: true});
 
 
