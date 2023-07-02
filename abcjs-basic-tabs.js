@@ -13843,15 +13843,16 @@ function CreateSynth() {
       if (isSafari){
         // If using Celtic Sound .mp3 sound fonts on Safari, set the offsets to 50 msec (Adobe Audition artifact)
           self.programOffsets = {
-            "accordion": 50,
-            "flute": 50,
-            "whistle": 50,
-            "uilleann": 50, // 129
+            "dulcimer":50,     // 15
+            "accordion": 50,   // 21
+            "flute": 50,       // 73
+            "whistle": 50,     // 78
+            "uilleann": 50,    // 129
             "smallpipesd": 50, // 130
-            "smallpipesa":50, // 131
-            "sackpipa": 50, // 132
-            "concertina": 50, // 133
-            "melodica": 50 //134
+            "smallpipesa":50,  // 131
+            "sackpipa": 50,    // 132
+            "concertina": 50,  // 133
+            "melodica": 50     // 134
           }
       }
       else{
@@ -13861,9 +13862,6 @@ function CreateSynth() {
 
     var p = params.fadeLength !== undefined ? parseInt(params.fadeLength, 10) : NaN;
     self.fadeLength = isNaN(p) ? 200 : p;
-
-    // MAE FOOFOO - Reducing the fade length in all cases
-    self.fadeLength = 100; 
 
     p = params.noteEnd !== undefined ? parseInt(params.noteEnd, 10) : NaN;
     self.noteEnd = isNaN(p) ? 0 : p;
@@ -14516,10 +14514,11 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
     // MAE 28 June 29023 - Override Celtic Sound instruments with my own
     switch (instrument){
-
-      case "accordion":
-      case "flute":
-      case "whistle":
+      
+      case "dulcimer":    // 15
+      case "accordion":   // 21
+      case "flute":       // 73
+      case "whistle":     // 78
       case "uilleann":    // 129 
       case "smallpipesd": // 130
       case "smallpipesa": // 131
