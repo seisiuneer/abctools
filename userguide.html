@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-                
+       
         <style>
         p {
         font-size:14pt;
@@ -173,7 +173,9 @@
                 <p class="toc"><a href="#viewing_the_notation_full_screen">Viewing the Notation Full Screen</a></p>
                 <p class="toc"><a href="#playing_your_tunes">Playing Your Tunes</a></p>
                 <p class="toc"><a href="#selecting_the_instruments_for_playback">Selecting the Instruments for Playback</a></p>
-                <p class="toc"><a href="#general_midi_instrument_program_numbers_extended">General MIDI Instrument Program Numbers (Extended)</a></p>
+                <p class="toc"><a href="#configuring_default_instruments_for_playback">Configuring Default Instruments for Playback</a></p>
+                <p class="toc"><a href="#auto_injecting_midi_programs">Auto-injecting Melody and Bass/Chord MIDI Programs into Every Tune</a></p>
+                <p class="toc"><a href="#general_midi_instrument_program_numbers">General MIDI Instrument Program Numbers</a></p>
                 <p class="toc"><a href="#notation_tablature_display_controls">Notation/Tablature Display Controls</a></p>
                 <p class="toc"><a href="#basic_controls">Basic Controls</a></p>
                 <p class="toc"><a href="#sorting_your_abc_tunes">Sorting Your ABC Tunes</a></p>
@@ -222,23 +224,21 @@
             <hr class="hidden-print" id="getting_started">
             <h1 class="page_break_always">Getting Started</h1>
             <div class="image_holder">
-                <img src="img/ug1.jpg"/>
+                <img src="img/ug1a.jpg"/>
             </div>
             <p>The text on top shows currently loaded ABC file or Share URL name and the current number of tunes found in the ABC Editor.</p>
-            <p>New ABC - Creates a simple example tune in ABC to get you started.</p>
-            <p>Open ABC - Opens an .abc or .txt file from your computer and loads it into the ABC Editor.</p>
-            <p>Save ABC - Saves the contents of the ABC editor to a file.</p>
+            <p>New - Creates a simple example tune in ABC to get you started.</p>
+            <p>Open - Opens an .abc or .txt file from your computer and loads it into the ABC Editor.</p>
+            <p>Save - Saves the contents of the ABC editor to a file.</p>
             <p>Export PDF - Exports the currently displayed score as a high quality PDF file.</p>
             <p>The saved ABC or PDF file will be in your browser's Downloads directory.</p>
             <p>On iOS the downloaded files will be found in the "Downloads" directory in the iOS "Files" app.</p>
-            <p>If you want to force a specific filename to be used by default every time you export the PDF file, add the following comment-based directive anywhere in the ABC:</p>
-            <p></p>
-            <p>%pdfname your_pdf_filename_here</p>
             <p></p>
             <p>Play - Plays the current tune. Full details below in the <a href="#playing_your_tunes">Playing Your Tunes</a> section.</p>
             <p>Copy All - Copies all the ABC text to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
             <p>Page number settings are found in the settings panel.</p>
             <p>Show Controls / Hide Controls - Shows/Hides all the control buttons below.</p>
+            <p>Settings - Brings up the default playback instrument settings dialog.</p>
             <p>▲/▼ - Click this to hide/show the header at the top so you can have more room to work on your music.</p>
             <hr class="hidden-print" id="abc_editor">
             <h1 class="page_break_always">ABC Editor</h1>
@@ -376,7 +376,17 @@
             <p></p>
             <p>Any General MIDI instrument program number can be selected for the melody and chord sounds.</p>
             <p></p>
-            <p style="page-break-before: always;"><strong>Power User Tip:</strong></p>
+            <hr class="hidden-print" id="configuring_default_midi_instrument_programs">
+            <h1 class="page_break_always">Configuring Default MIDI Instrument Programs</h1>
+            <p>Clicking the "Settings" button at the top of the tool brings up a dialog where you can select default MIDI programs to use for the melody and bass/chords if there isn't already one present in the ABC.</p>
+            <div class="image_holder">
+                <img src="img/default_program_dialog.jpg"/>
+            </div>
+            <p>If a %%MIDI program or %%MIDI chordprog directive is already present in the tune when playing, it will take precedence over the default program value.</p>
+            <p></p>
+            <p>These default program values are saved when you close the dialog and are restored each time you run the tool.</p>
+            <hr class="hidden-print" id="auto_injecting_midi_programs">
+            <h1 class="page_break_always">Auto-injecting Melody and Bass/Chord MIDI Programs into Every Tune</h1>
             <p>To have the tool automatically inject a %%MIDI program directive into every tune with a specific MIDI instrument program number for the melody, hold down the Shift key while clicking the "Play" button.</p>
             <p>You will be prompted for a MIDI instrument program number to inject:</p>
             <div class="image_holder">
@@ -388,8 +398,8 @@
                 <img src="img/chords_program.jpg"/>
             </div>
             <p>For both the melody and chord program inject dialogs, if you enter a negative number, the same value will be used to inject both a melody and chords instrument program number into every tune.</p>
-            <hr class="hidden-print" id="general_midi_instrument_program_numbers_extended">
-            <h1 class="page_break_always">General MIDI Instrument Program Numbers (Extended)</h1>
+            <hr class="hidden-print" id="general_midi_instrument_program_numbers">
+            <h1 class="page_break_always">General MIDI Instrument Program Numbers</h1>
             <div class="image_holder">
                 <img src="img/gm_extended.jpg"/>
             </div>
@@ -656,7 +666,6 @@
                 Eeed efge|fedf e2BA|GABG FGAF|BGAF GEE2:|<br/>
                 |:gfef gebe|gebe gfec|d2fd Adfd|cdAG FDEF|<br/>
             GABG FGAF|E2ef gfed|BcdB A2FA|BGAF GEE2:|</p>
-            <p></p>
             <p>Results in a PDF that looks like this:</p>
             <p></p>
             <p></p>
@@ -672,7 +681,13 @@
             <p>If you add a page footer and you have selected bottom-centered page numbers, the page number will be hidden.</p>
             <p></p>
             <p>Since these annotations are ABC comment-based, they will just appear to be normal comments in other ABC software.</p>
-            <hr class="hidden-print">
+            <p></p>
+            <p><strong>Forcing a Specific Filename for PDF Export</strong></p>
+            <p>If you want to force a specific filename to be used by default every time you export the PDF file, add the following comment-based directive anywhere in the ABC:</p>
+            <p></p>
+            <p>%pdfname your_pdf_filename_here</p>
+            <p></p>
+             <hr class="hidden-print">
             <p><strong>Power User Tip:</strong></p>
             <p>Holding down the Shift key while clicking on the "PDF Tunes/Page" label will inject examples of all of the above PDF headers at the top of the ABC.</p>
             <p>You can then remove the headers you don't need and edit the others to meet your requirements.</p>
