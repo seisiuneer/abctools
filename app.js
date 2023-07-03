@@ -10132,15 +10132,16 @@ function ConfigureMIDISettings() {
 	const form = [
 	  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica">Select Default MIDI Instrument Programs and Volumes</p>'},
 	  {html: '<p style="margin-top:24px;font-size:14pt;line-height:16pt;font-family:helvetica">Enabling these options will always use your selected MIDI instrument programs and volumes as the defaults when playing tunes.</p>'},	  
-	  {name: "            Use Default Melody/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text"},
+	  {name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default Melody MIDI program (0-134):", id: "configure_melody_program", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default Bass/Chords MIDI program (0-134):", id: "configure_chord_program", type:"number", cssClass:"configure_settings_form_text"},
-	  {html: '<p style="margin-top:24px;font-size:14pt;line-height:16pt;font-family:helvetica">If there is already a MIDI program in the ABC for melody or the bass/chords, the value in the ABC will override the default.</p>'},	  
+	  {html: '<p style="margin-top:24px;font-size:14pt;line-height:16pt;font-family:helvetica">If there is already a %%MIDI program or %%MIDI chordprog directive in the ABC, the value in the ABC will override the default value.</p>'},	  
+	  {html: '<p style="font-size:14pt;font-family:helvetica;margin-bottom:36px;margin-top:36px;text-align:center"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'},
 	  {name: "            Use Default Bass/Chord volumes when playing tunes", id: "configure_inject_volumes", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default Bass MIDI volume (0-127):", id: "configure_bass_volume", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default Chords MIDI volume (0-127):", id: "configure_chord_volume", type:"number", cssClass:"configure_settings_form_text"},
-	  {html: '<p style="margin-top:24px;font-size:14pt;line-height:16pt;font-family:helvetica">If there already are MIDI volumes in the ABC for bass or the chords, the value in the ABC will override the default.</p>'},	  
-	  {html: '<p style="font-size:14pt;font-family:helvetica;margin-bottom:36px;margin-top:36px;text-align:center"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'},
+	  {html: '<p style="margin-top:24px;font-size:14pt;line-height:16pt;font-family:helvetica">If there are already a %%MIDI bassvol or %%MIDI chordvol directive in the ABC, the value in the ABC will override the default value.</p>'},	  
+	  {html: '<p style="margin-top:24px;font-size:14pt;line-height:16pt;font-family:helvetica">To change the Melody volume, add a dynamics indication such as !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! immediately before the first note in the ABC.</p>'},	  
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50, width: 680 } ).then(function(args){
