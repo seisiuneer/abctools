@@ -8041,7 +8041,7 @@ function ShortenURL(){
 	    method: `POST`,
 	    headers: {
 	      accept: `application/json`,
-	      authorization: `Bearer 6YJMYs01UHvxocEle5C9T1Emypv2L4JNSM0PtzaetoZDVfl6YLzOp6I67E6I`,
+	      authorization: `Bearer <YOUR_TINYURL_API_TOKEN_HERE>`,
 	      'content-type': `application/json`,
 	    },
 	    body: JSON.stringify(body)
