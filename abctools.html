@@ -36,8 +36,8 @@
 		<link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 		<link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-		<link href="app.css?v=342" media="all" rel="stylesheet" type="text/css">
-		
+		<link href="app.css?v=344" media="all" rel="stylesheet" type="text/css">
+			
 	</head>
 	<body>
 		<div id="app-container">
@@ -69,15 +69,16 @@
 					<!-- name of abc file selected -->
 					<p id="abc-selected">No ABC file selected</p>
 					<div id="fileoperations">
-						<input class="newabcfile" id="newabcfile" onclick="NewABC();" type="button" value="New ABC">
+						<input class="newabcfile" id="newabcfile" onclick="NewABC();" type="button" value="New">
 						<input type="file" id="selectabcfile" accept=".abc,.txt,.ABC,.TXT" hidden/>
 						<!--our custom abc file upload button-->
-						<label class="abcupload" for="selectabcfile">Open ABC</label>
-						<input class="saveabcfiledisabled" id="saveabcfile" onclick="SaveABC();" type="button" value="Save ABC">
+						<label class="abcupload" for="selectabcfile">Open</label>
+						<input class="saveabcfiledisabled" id="saveabcfile" onclick="SaveABC();" type="button" value="Save">
 						<input class="saveaspdfdisabled" id="saveaspdf" onclick="ExportPDF();" type="button" value="Export PDF">
 						<input class="copybuttondisabled" id="copybutton" onclick="CopyABC(event);" type="button" value="Copy All">
 						<input class="playbuttondisabled" id="playbutton" onclick="PlayABC(event);" type="button" value="Play">
 						<input class="toggleallcontrolsdisabled" id="toggleallcontrols" onclick="ToggleAllControls();" type="button" value="Hide Controls">
+						<input class="configuresettings" id="configuresettings" onclick="ConfigureMIDISettings(event);" type="button" value="Settings">
 						<input class="toggletopbar" id="toggletopbar" onclick="ToggleTopBar();" type="button" value="▲">
 					</div>
 					<div id="inputarea">
@@ -188,11 +189,11 @@
 		</div>
 		
 	</body>
-	<script type="text/javascript" src="abcjs-basic-tabs-min.js?v=342"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
+	<script type="text/javascript" src="abcjs-basic-tabs-min.js?v=344"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
 	<script type="text/javascript" src="jspdf.min.js"></script><!-- to generate PDF using Javscript -->
 	<script type="text/javascript" src="html2image.js"></script><!-- to convert HTML elements to bitmaps -->
-	<script type="text/javascript" src="qrcode.js?v=342"></script><!-- to generate QR codes for the share links -->
+	<script type="text/javascript" src="qrcode.js?v=344"></script><!-- to generate QR codes for the share links -->
 	<script type="text/javascript" src="lz-string.min.js"></script><!-- to generate QR codes for the share links -->
-	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=342"></script><!-- modal dialog replacement -->
-	<script type="text/javascript" src="app.js?v=342"></script><!-- main application business logic -->
+	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=344"></script><!-- modal dialog replacement -->
+	<script type="text/javascript" src="app.js?v=344"></script><!-- main application business logic -->
 </html>
