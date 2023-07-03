@@ -28,10 +28,10 @@
 <p><a href="https://davidshimjs.github.io/qrcodejs/">qrcode.js</a> is used to generate the QR codes.</p> 
 <p><a href="https://github.com/pieroxy/lz-string">lz-string.js</a> is used to for LZW compression of the tunes for share links.</p> 
 <p>Ui icons created by <a href="https://www.flaticon.com/free-icons/ui" title="ui icons"> Karacis - Flaticon</a>.</p>
+ <p>This product includes <a href="https://modal.daypilot.org" target="_blank">DayPilot Modal</a> for modal dialog replacements.</p>
 <p>Without these free resources this project would not have been possible.</p>
 <p></p>
 <hr>
 <p><strong>Project Contributors:</strong></p>
 <p>Thank you to Philip McGarvey for the share link export feature addition!</p>
 <hr>
-
