@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
- 
+        
         <style>
         p {
         font-size:14pt;
@@ -173,7 +173,7 @@
                 <p class="toc"><a href="#viewing_the_notation_full_screen">Viewing the Notation Full Screen</a></p>
                 <p class="toc"><a href="#playing_your_tunes">Playing Your Tunes</a></p>
                 <p class="toc"><a href="#selecting_the_instruments_for_playback">Selecting the Instruments for Playback</a></p>
-                <p class="toc"><a href="#selecting_default_instruments_for_playing_tunes">Selecting Default Instruments for Playing Tunes</a></p>
+                <p class="toc"><a href="#selecting_default_instruments_for_playing_tunes">Selecting Default Instruments and Volumes for Playing Tunes</a></p>
                 <p class="toc"><a href="#auto_injecting_midi_programs">Auto-injecting Melody and Bass/Chord MIDI Programs into Every Tune</a></p>
                 <p class="toc"><a href="#general_midi_instrument_program_numbers">General MIDI Instrument Program Numbers</a></p>
                 <p class="toc"><a href="#notation_tablature_display_controls">Notation/Tablature Display Controls</a></p>
@@ -377,17 +377,23 @@
             <p>Any General MIDI instrument program number can be selected for the melody and chord sounds.</p>
             <p></p>
             <hr class="hidden-print" id="selecting_default_instruments_for_playing_tunes">
-            <h1 class="page_break_always">Selecting Default Instruments for Playing Tunes</h1>
+            <h1 class="page_break_always">Selecting Default Instruments and Volumes for Playing Tunes</h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/fufQFUISym4" title="Selecting Default Instruments for Playing Tunes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p>Clicking the "Settings" button at the top of the tool brings up a dialog where you can select default MIDI programs to use for the melody and bass/chords if there isn't already one present in the ABC.</p>
+            <p>Clicking the "Settings" button at the top of the tool brings up a dialog where you can select default MIDI programs and volumes to use for the bass and chords if there aren't already MIDI directives present in the ABC.</p>
             <div class="image_holder">
-                <img src="img/default_program_dialog.jpg"/>
+                <img src="img/default_program_volume_dialog.jpg"/>
             </div>
-            <p>If a %%MIDI program or %%MIDI chordprog directive is already present in the tune when playing, it will take precedence over the default program value.</p>
+            <p>If a %%MIDI program or %%MIDI chordprog directive is already present in the tune when playing, it will take precedence over the default program values.</p>
+            <p>If a %%MIDI bassvol or %%MIDI chordvol directive is already present in the tune when playing, it will take precedence over the default volume values.</p>
             <p></p>
-            <p>These default program values are saved when you close the dialog and are restored each time you run the tool.</p>
+            <p>These default program and volume values are saved when you close the dialog and are restored each time you run the tool.</p>
             <p></p>
-            <p class="page_break_always"><strong>Special Note on the Dulcimer (15) Instrument</strong></p>
+            <p><strong>Changing the Melody Volume</strong></p>
+            <p></p>           
+            <p>To change the melody volume, use a dynamics indication like !pp! or !mf! in the tune ABC itself just before the first note of the tune.</p>
+            <p>Most standard dynamics indications are supported, for example: !ppp!, !pp!, !p!, !mf!, !f!</p>
+            <p></p>
+            <p><strong>Special Note on the Dulcimer (15) Instrument</strong></p>
             <p></p>
             <p>Selecting the Dulcimer (15) program for either the melody or chords automatically sets all note release times to 4 seconds to allow the notes to ring.</p>
             <p></p>
