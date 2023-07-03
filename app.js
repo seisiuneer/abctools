@@ -572,7 +572,7 @@ function Transpose(transposeAmount) {
 				}
 				catch (error){
 
-					alert("Unable to tranpose one or more tunes.");
+					DayPilot.Modal.alert("Unable to tranpose one or more tunes.",{ theme: "modal_flat", top: 50 });
 					
 					output += theTunes[i];
 
@@ -6442,7 +6442,7 @@ function ensureABCFile(filename) {
 	if ((fileExtension.toLowerCase() == "abc") || (fileExtension.toLowerCase() == "txt")) {
 		return true;
 	} else {
-		alert("You must select a .abc or .txt file for upload");
+		DayPilot.Modal.alert("You must select a .abc or .txt file for upload.",{ theme: "modal_flat", top: 50 });
 		return false;
 	}
 }
@@ -8041,7 +8041,7 @@ function ShortenURL(){
 	    method: `POST`,
 	    headers: {
 	      accept: `application/json`,
-	      authorization: `Bearer <YOUR_TINYURL_API_TOKEN_HERE>`,
+	      authorization: `Bearer 6YJMYs01UHvxocEle5C9T1Emypv2L4JNSM0PtzaetoZDVfl6YLzOp6I67E6I`,
 	      'content-type': `application/json`,
 	    },
 	    body: JSON.stringify(body)
@@ -9878,7 +9878,7 @@ function LocalPlayABC(theABC){
 
 		var originalOnClick = theOKButton.onclick;
 
-		theOKButton.onclick = function(){originalOnClick(); StopPlay(); };
+		theOKButton.onclick = function(){originalOnClick(); StopPlay(); gTheABC.focus();};
 
 		if (ABCJS.synth.supportsAudio()) {
 			
@@ -10027,10 +10027,32 @@ function ConfigureMIDISettings() {
 			gTheMelodyProgram = args.result.configure_melody_program;
 			gTheChordProgram = args.result.configure_chord_program;
 
+			if ((gAlwaysInjectPrograms) && ((gTheMelodyProgram == "15") || (gTheChordProgram == "15"))){
+
+				// Special release time case case for Dulcimer
+			   	var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica">Special Note on the Dulcimer (15) Instrument</p>';
+			   	   	modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Selecting the Dulcimer (15) program for either the melody or chords automatically sets all note release times to 4 seconds to allow the notes to ring.</p>';
+			   	   	modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">This can be useful for tunes using solo melody instruments with long release times like Orchestral Harp (46) or Koto (107).</p>';
+			       	modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">For those instruments played solo, set the melody instrument program as desired and the chord instrument program to Dulcimer (15).</p>';
+			   	   	modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">In this case, you may not want to include any chords in the ABC, as they will be played using the Dulcimer (15) instrument.</p>';
+
+			       	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 600 }).then(function(){
+
+					   	// Focus back on the ABC after the dialog is dismissed
+						gTheABC.focus();
+		       		
+			       	});
+
+
+			}
+
 			// Update local storage
 			SaveConfigurationSettings();
 
 		}
+
+		// Focus back on the ABC after the dialog is dismissed
+		gTheABC.focus();
 
 	});
 
@@ -10259,7 +10281,7 @@ function DoStartup() {
 		// check if user had selected a file
 		if (fileElement.files.length === 0) {
 
-			alert("Please select an ABC file");
+			DayPilot.Modal.alert("Please select an ABC file",{ theme: "modal_flat", top: 50 });
 
 			return;
 
