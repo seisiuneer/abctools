@@ -7762,10 +7762,10 @@ function InjectMIDIInstrument(bIsChords) {
 		theDefaultProgram = "34";
 	}
 
-	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,  Hammered Dulcimer: 15,  Accordion: 21,  Flute: 73,  Whistle: 78,  Fiddle: 110,  Uilleann Pipes: 129,  Scottish Smallpipes (D): 130,  Scottish Smallpipes (A): 131,  Säckpipa: 132,  Concertina: 133,  Melodica: 134</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm_extended.jpg" target="_blank">Extended General MIDI Instrument Program Numbers</a></p>';
+	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,  Hammered Dulcimer: 15,  Accordion: 21,  Flute: 73,  Whistle: 78,  Fiddle: 110,  Uilleann Pipes: 129,  Scottish Smallpipes (D): 130,  Scottish Smallpipes (A): 131,  Säckpipa: 132,  Concertina: 133,  Melodica: 134</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/abctools/img/gm_extended.jpg" target="_blank">General MIDI Instrument Program Numbers</a></p>';
 
 	if (bIsChords){
-		thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,  Electric Piano: 5,  Organ: 19,  Accordion: 21,  Guitar: 25,  Bass: 34,  Synth Bass: 38</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><a href="http://michaeleskin.com/abctools/img/gm_extended.jpg" target="_blank">Extended General MIDI Instrument Program Numbers</a></p>';
+		thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,  Electric Piano: 5,  Organ: 19,  Accordion: 21,  Guitar: 25,  Bass: 34,  Synth Bass: 38</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/abctools/img/gm_extended.jpg" target="_blank">General MIDI Instrument Program Numbers</a></p>';
 	}
 
 	DayPilot.Modal.prompt(thePrompt, theDefaultProgram, { theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
@@ -7945,6 +7945,9 @@ function PlayABC(e){
 			return;
 		}
 
+		// Pre-process the ABC to inject any requested programs or volumes
+		theSelectedABC = PreProcessLocalPlayABC(theSelectedABC);
+
 		// Play back locally in-tool	
 		LocalPlayABC(theSelectedABC);
 
@@ -8038,7 +8041,7 @@ function ShortenURL(){
 	    method: `POST`,
 	    headers: {
 	      accept: `application/json`,
-	      authorization: `Bearer <YOUR_TINY_URL_API_TOKEN_HERE>`,
+	      authorization: `Bearer <YOUR_TINYURL_API_TOKEN_HERE>`,
 	      'content-type': `application/json`,
 	    },
 	    body: JSON.stringify(body)
@@ -9641,14 +9644,15 @@ function showWelcomeScreen(){
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Each ABC tune <strong>must</strong> begin with an X: tag.</p>'; 
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Notation updates instantly as you make changes.</p>'; 
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click the Zoom-Out arrows at the upper-right to view notation fullscreen.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click "New ABC" to generate a one-line sample tune with examples of all the available PDF tunebook annotations.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click "Open ABC" to open and import an ABC text file from your system.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click "New" to generate a one-line sample tune with examples of all the available PDF tunebook annotations.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click "Open" to open and import an ABC text file from your system.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica"><strong>Once ABC has been entered and notation is displayed:</strong></p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Save ABC" to save all the ABC text to an ABC text file.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Save" to save all the ABC text to an ABC text file.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Export PDF" to export your tunebook in PDF format.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Copy All" to copy all the ABC text to the clipboard.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Play" to play the tune currently being edited.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Show Controls" for tablature options, PDF tunebook settings (paper size, tunes-per-page, page numbers), sharing features, etc.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Settings" to select the default instrument sounds to use when playing tunes.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica"><strong>If you find this tool useful, please consider <a href="donate.html" target="_blank">buying me a beer!</a></strong></p>';
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50 });
@@ -9893,6 +9897,142 @@ function LocalPlayABC(theABC){
 	}
 
 	initPlay();
+
+}
+
+
+//
+// Based on the global injection configuration, pre-process the %%MIDI directives in the ABC
+function PreProcessLocalPlayABC(theTune){
+
+	// Inject programs?
+	if (gAlwaysInjectPrograms){
+
+		// Check first for any existing program messages before replacing
+		var searchRegExp = /^%%MIDI chordprog.*$/m
+
+		var chordProgramRequested = theTune.match(searchRegExp);
+
+		if (!((chordProgramRequested) && (chordProgramRequested.length > 0))){
+
+			theTune = InjectOneTuneMIDIProgram(theTune, gTheChordProgram, true);
+
+		}
+
+		searchRegExp = /^%%MIDI program.*$/m
+
+		var melodyProgramRequested = theTune.match(searchRegExp);
+
+		if (!((melodyProgramRequested) && (melodyProgramRequested.length > 0))){
+
+			theTune = InjectOneTuneMIDIProgram(theTune, gTheMelodyProgram, false);
+
+		}
+	}
+
+	return(theTune);
+
+}
+
+//
+// Configure the playback and other settings
+//
+
+
+// Global settings state
+var gAlwaysInjectPrograms = false;
+var gTheMelodyProgram = 0;
+var gTheChordProgram = 0;
+var gAlwaysInjectVolumes = false;
+
+// Get the initial configuration settings from local browser storage, if present
+function GetInitialConfigurationSettings(){
+
+	var val = localStorage.AlwaysInjectPrograms;
+	if (val){
+		gAlwaysInjectPrograms = (val == "true");
+	}
+	else{
+		gAlwaysInjectPrograms = true;
+	}
+
+	val = localStorage.TheMelodyProgram;
+	if (val){
+		gTheMelodyProgram = val;
+	}
+	else{
+		gTheMelodyProgram = 0;
+	}
+
+	val = localStorage.TheChordProgram;
+	if (val){
+		gTheChordProgram = val;
+	}
+	else{
+		gTheChordProgram = 0;
+	}
+
+	// Save the settings, in case they were initialized
+	SaveConfigurationSettings();
+
+}
+
+// Save the configuration settings in local browser storage
+function SaveConfigurationSettings(){
+
+	// 
+	// Centralized place to save local browser storage values
+	//
+	if (gLocalStorageAvailable){
+
+		localStorage.AlwaysInjectPrograms = gAlwaysInjectPrograms;
+		localStorage.TheMelodyProgram = gTheMelodyProgram;
+		localStorage.TheChordProgram = gTheChordProgram;
+	}
+}
+
+//
+// Configuration settings dialog
+//
+function ConfigureMIDISettings() {
+
+	var bAlwaysInjectPrograms = gAlwaysInjectPrograms;
+
+	var theMelodyProgram = gTheMelodyProgram;
+	var theChordProgram = gTheChordProgram;
+
+	// Setup initial values
+	const theData = {
+	  configure_inject_programs: bAlwaysInjectPrograms,
+	  configure_melody_program: theMelodyProgram,
+	  configure_chord_program: theChordProgram,
+	};
+
+	const form = [
+	  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica">Select Default MIDI Instrument Programs</p>'},
+	  {html: '<p style="margin-top:24px;font-size:14pt;line-height:16pt;font-family:helvetica">Enabling this option will always use your selected MIDI instrument programs as the defaults when playing tunes.</p>'},	  
+	  {name: "            Use Default Melody/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text"},
+	  {name: "Default Melody MIDI program (0-134):", id: "configure_melody_program", type:"number", cssClass:"configure_settings_form_text"},
+	  {name: "Default Bass/Chords MIDI program (0-134):", id: "configure_chord_program", type:"number", cssClass:"configure_settings_form_text"},
+	  {html: '<p style="margin-top:24px;font-size:14pt;line-height:16pt;font-family:helvetica">If there is already a MIDI program specified in the ABC for melody or the bass/chords, the value in the ABC will override the default.</p>'},	  
+	  {html: '<p style="font-size:14pt;font-family:helvetica;margin-bottom:36px;margin-top:36px;text-align:center"><a href="http://michaeleskin.com/abctools/img/gm_extended.jpg" target="_blank">General MIDI Instrument Program Numbers</a></p>'},
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50 } ).then(function(args){
+
+		// Get the results and store them in the global configuration
+		if (!args.canceled){
+
+			gAlwaysInjectPrograms = args.result.configure_inject_programs;
+			gTheMelodyProgram = args.result.configure_melody_program;
+			gTheChordProgram = args.result.configure_chord_program;
+
+			// Update local storage
+			SaveConfigurationSettings();
+
+		}
+
+	});
 
 }
 
@@ -10216,7 +10356,11 @@ function DoStartup() {
 
 		gLocalStorageAvailable = true;
 
+		// Load the initial configuration settings from local storage
+		GetInitialConfigurationSettings();
+
 	}
+
 
 	// Check for and process URL share link
 	var isFromShare = processShareLink();
