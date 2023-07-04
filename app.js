@@ -10157,6 +10157,55 @@ function ConfigureMIDISettings() {
 			gTheBassVolume = args.result.configure_bass_volume;
 			gTheChordVolume = args.result.configure_chord_volume;
 
+			// Sanity check the values
+			if (isNaN(parseInt(gTheMelodyProgram))){
+				gTheMelodyProgram = 0;
+			}
+
+			if (gTheMelodyProgram < 0){
+				gTheMelodyProgram = 0;
+			}
+
+			if (gTheMelodyProgram > 134){
+				gTheMelodyProgram = 134;
+			}
+
+			if (isNaN(parseInt(gTheChordProgram))){
+				gTheChordProgram = 0;
+			}
+
+			if (gTheChordProgram < 0){
+				gTheChordProgram = 0;
+			}
+
+			if (gTheChordProgram > 134){
+				gTheChordProgram = 134;
+			}
+
+			if (isNaN(parseInt(gTheBassVolume))){
+				gTheBassVolume = 0;
+			}
+
+			if (gTheBassVolume < 0){
+				gTheBassVolume = 0;
+			}
+
+			if (gTheBassVolume > 127){
+				gTheBassVolume = 127;
+			}
+
+			if (isNaN(parseInt(gTheChordVolume))){
+				gTheChordVolume = 0;
+			}
+
+			if (gTheChordVolume < 0){
+				gTheChordVolume = 0;
+			}
+
+			if (gTheChordVolume > 127){
+				gTheChordVolume = 127;
+			}
+
 			if ((gAlwaysInjectPrograms) && ((gTheMelodyProgram == "15") || (gTheChordProgram == "15"))){
 
 				// Special release time case case for Dulcimer
