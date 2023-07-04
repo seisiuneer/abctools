@@ -7018,7 +7018,7 @@ function NewABC(){
 	theValue += "% To choose the sound when played, change the MIDI program # above to:\n";
 	theValue += "%\n"
 	theValue += "% Melody:\n";
-	theValue += "% Piano: 0, Accordion: 21, Flute: 73, Whistle: 78, Fiddle: 110, Uilleann Pipes: 129, Scottish Smallpipes (D): 130, Scottish Smallpipes (A): 131, Säckpipa: 132, Concertina: 133, Melodica: 134\n";
+	theValue += "% Piano: 0, Accordion: 21, Flute: 73, Whistle: 78, Fiddle: 110, Uilleann Pipes: 129, Scottish Smallpipes (D): 130, Scottish Smallpipes (A): 131, Säckpipa: 132, Concertina: 133, Melodica: 134, Cajun Accordion: 135\n";
 	theValue += "%\n";
 	theValue += "% Chords:\n";
 	theValue += "% Piano: 0, Electric Piano: 5, Organ: 19, Accordion: 21, Guitar: 25, Bass: 34, Synth Bass: 38\n";
@@ -7818,7 +7818,7 @@ function InjectMIDIInstrument(bIsChords) {
 		theDefaultProgram = "34";
 	}
 
-	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,  Hammered Dulcimer: 15,  Accordion: 21,  Flute: 73,  Whistle: 78,  Fiddle: 110,  Uilleann Pipes: 129,  Scottish Smallpipes (D): 130,  Scottish Smallpipes (A): 131,  Säckpipa: 132,  Concertina: 133,  Melodica: 134</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>';
+	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,  Hammered Dulcimer: 15,  Accordion: 21,  Flute: 73,  Whistle: 78,  Fiddle: 110,  Uilleann Pipes: 129,  Scottish Smallpipes (D): 130,  Scottish Smallpipes (A): 131,  Säckpipa: 132,  Concertina: 133,  Melodica: 134, Cajun Accordion: 135</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>';
 
 	if (bIsChords){
 		thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,  Electric Piano: 5,  Organ: 19,  Accordion: 21,  Guitar: 25,  Bass: 34,  Synth Bass: 38</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>';
@@ -7845,7 +7845,7 @@ function InjectMIDIInstrument(bIsChords) {
 			progNum = -progNum;
 		}
 
-		if ((progNum < 0) || (progNum > 134)){
+		if ((progNum < 0) || (progNum > 135)){
 			return;
 		}
 
@@ -9869,6 +9869,7 @@ function LocalPlayABC(theABC){
 					case "132":  // Sackpipa
 					case "133":  // Concertina
 					case "134":  // Melodica
+					case "135":  // Cajun Accordion
 						theFade = 100;
 						break;
 					default:
@@ -10133,8 +10134,8 @@ function ConfigureMIDISettings() {
 	  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica">Select Default MIDI Instrument Programs and Volumes</p>'},
 	  {html: '<p style="margin-top:24px;font-size:14pt;line-height:16pt;font-family:helvetica">Enabling these options will always use your selected MIDI instrument programs and volumes as the defaults when playing tunes.</p>'},	  
 	  {name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text"},
-	  {name: "Default Melody MIDI program (0-134):", id: "configure_melody_program", type:"number", cssClass:"configure_settings_form_text"},
-	  {name: "Default Bass/Chords MIDI program (0-134):", id: "configure_chord_program", type:"number", cssClass:"configure_settings_form_text"},
+	  {name: "Default Melody MIDI program (0-135):", id: "configure_melody_program", type:"number", cssClass:"configure_settings_form_text"},
+	  {name: "Default Bass/Chords MIDI program (0-135):", id: "configure_chord_program", type:"number", cssClass:"configure_settings_form_text"},
 	  {html: '<p style="margin-top:24px;font-size:14pt;line-height:16pt;font-family:helvetica">If there is already a %%MIDI program or %%MIDI chordprog directive in the ABC, the value in the ABC will override the default value.</p>'},	  
 	  {html: '<p style="font-size:14pt;font-family:helvetica;margin-bottom:36px;margin-top:36px;text-align:center"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'},
 	  {name: "            Use Default Bass/Chord volumes when playing tunes", id: "configure_inject_volumes", type:"checkbox", cssClass:"configure_settings_form_text"},
@@ -10166,8 +10167,8 @@ function ConfigureMIDISettings() {
 				gTheMelodyProgram = 0;
 			}
 
-			if (gTheMelodyProgram > 134){
-				gTheMelodyProgram = 134;
+			if (gTheMelodyProgram > 135){
+				gTheMelodyProgram = 135;
 			}
 
 			if (isNaN(parseInt(gTheChordProgram))){
@@ -10178,8 +10179,8 @@ function ConfigureMIDISettings() {
 				gTheChordProgram = 0;
 			}
 
-			if (gTheChordProgram > 134){
-				gTheChordProgram = 134;
+			if (gTheChordProgram > 135){
+				gTheChordProgram = 135;
 			}
 
 			if (isNaN(parseInt(gTheBassVolume))){
