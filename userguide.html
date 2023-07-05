@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-         
+        
         <style>
         p {
         font-size:14pt;
@@ -142,9 +142,9 @@
         <div id="maindiv">
             <div style="text-align: center;">
                 <font id="pagetitle" face="Comic Sans MS" size="5">ABC Transcription Tools User Guide</font><br/>
-                <p>This ABC to notation converter was developed by <a href="http://michaeleskin.com" target="_blank">Michael Eskin</a></p>
-                <p>Full project source may be found on: <a href="https://github.com/seisiuneer/abctools" target="_blank">GitHub</a></p>
-                <p>Try it out here: <a href="http://michaeleskin.com/abc" target="_blank">ABC Transcription Tools</a></p>
+                <p class="hidden-print">This ABC to notation converter was developed by <a href="http://michaeleskin.com" target="_blank">Michael Eskin</a></p>
+                <p class="hidden-print">Full project source may be found on: <a href="https://github.com/seisiuneer/abctools" target="_blank">GitHub</a></p>
+                <p class="hidden-print">Try it out here: <a href="http://michaeleskin.com/abc" target="_blank">ABC Transcription Tools</a></p>
                 <hr class="hidden-print">
                 <p class="hidden-print">A PDF version of this User Guide is available at:</p>
                 <p class="hidden-print"><a href="http://michaeleskin.com/documents/abc_transcription_tools_user_guide.pdf" target="_blank">ABC Transcription Tools User Guide PDF</a></p>
@@ -158,7 +158,6 @@
                 <p class="toc"><a href="#viewing_the_notation_full_screen">Viewing the Notation Full Screen</a></p>
                 <p class="toc"><a href="#notation_tablature_display_controls">Notation/Tablature Display Controls</a></p>
                 <p class="toc"><a href="#basic_controls">Basic Controls</a></p>
-                <p class="toc"><a href="#sorting_your_abc_tunes">Sorting Your ABC Tunes</a></p>
                 <p class="toc"><a href="#playing_your_tunes">Playing Your Tunes</a></p>
                 <p class="toc"><a href="#selecting_the_instruments_for_playback">Selecting the Instruments for Playback</a></p>
                 <p class="toc"><a href="#selecting_default_instruments_for_playing_tunes">Selecting Default Instruments and Volumes for Playing Tunes</a></p>
@@ -173,9 +172,9 @@
                 <p class="toc"><a href="#table_of_contents_and_index_font_size_and_line_spacing_overrides">Table of Contents and Index Font Size and Line Spacing Overrides</a></p>
                 <p class="toc"><a href="#tune_hyperlinks">Tune Hyperlinks</a></p>
                 <p class="toc"><a href="#printing_your_tunes">Printing Your Tunes</a></p>
-                <p class="toc"><a href="#sharing_controls">Sharing Controls</a></p>
-                <p class="toc"><a href="#abc_share_url_examples">ABC Share URL Examples</a></p>
-                <p class="toc"><a href="#shortening_abc_share_urls">Shortening ABC Share URLs</a></p>
+                <p class="toc"><a href="#sharing_controls">Sharing Tunes with Share URLs and QR Codes</a></p>
+                <p class="toc"><a href="#abc_share_url_examples">Share URL Examples</a></p>
+                <p class="toc"><a href="#shortening_abc_share_urls">Shortening Share URLs</a></p>
                 <p class="toc"><a href="#qr_code_example">QR Code Example</a></p>
                 <p class="toc"><a href="#adding_a_qr_code_to_the_pdf_export">Adding a QR Code to the PDF Export</a></p>
                 <p class="toc"><a href="#reading_the_qr_codes">Reading the QR Codes</a></p>
@@ -200,7 +199,7 @@
             <p>Generate tunebook PDF files with title pages, table of contents, tune index, custom headers, footers, tune incipits (notation or raw ABC), and sharing QR codes using the tool's built-in PDF Export feature.</p>            
             <p>It also has easy-to-use features to transpose and sort your ABC tunebooks.</p>
             <p>You can fully customize the look of your notation using the standard ABC spacing and font annotations.</p>
-            <p>The tool also includes the ability to easily share your tunes with others via ABC Share URLs and QR Codes.</p>
+            <p>The tool also includes the ability to easily share your tunes with others via Share URLs and QR Codes.</p>
             <p>The underlying ABC rendering technology is Paul Rosen's incredible <a href="https://www.abcjs.net/" target="_blank">abcjs</a> Javascript library.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/eVOLh2Z-GDU" title="ABC Transcription Tools Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <hr class="hidden-print" id="getting_started">
@@ -264,22 +263,17 @@
             <div class="image_holder">
                 <img src="img/ug5a.jpg"/>
             </div>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/b9BQEUb6XcI" title="Transposition" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p></p>
-            <p>Transpose Down - Transposes the selected tunes down one semitone.</p>
-            <p>Transpose Up - Transposes the selected tunes up one semitone.</p>
+            <p>Transpose Down - Transposes the selected tunes down one semitone. Shift-click transposes down one full step. Alt-click transposes down one octave.</p>
+            <p>Transpose Up - Transposes the selected tunes up one semitone.  Shift-click transposes up one full step. Alt-click transposes up one octave.</p>
             <p>To transpose multiple tunes, just click anywhere in the first tune you want to transpose, and drag to select any part of additional tunes you want transposed.</p>
             <p>To transpose all the tunes at once, select them all before clicking the Tranpose buttons.</p>
-            <p></p>
-            <p>Show/Hide Advanced - Shows/Hides a new panel (described below) with several additional ABC filtering and display controls.</p>
-            <p>Show/Hide Sharing - Shows/Hides a new panel (described below) with options for sharing your tune set via URL or QR code.</p>
-            <p>Clear ABC - Clears the ABC Editor so you can start over.</p>
-            <hr class="hidden-print" id="sorting_your_abc_tunes">
-            <h1>Sorting Your ABC Tunes&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
-            <p></p>
             <p>Sort ABC - Sorts all the tunes in the ABC area in alphabetical order by tune name.</p>
             <p>Tune names that start with "The" will have the "The" moved to the end of the tune name before the alphabetical sorting.</p>
             <p>Holding down the Shift key while clicking this button will also treat "A " and "An " the same way as "The " for sorting.</p>
+            <p>Show/Hide Advanced - Shows/Hides a new panel (described below) with several additional ABC filtering and display controls.</p>
+            <p>Show/Hide Sharing - Shows/Hides a new panel (described below) with options for sharing your tune set via URL or QR code.</p>
+            <p>Clear ABC - Clears the ABC Editor so you can start over.</p>
             <hr class="hidden-print" id="playing_your_tunes">
             <h1 class="page_break_always">Playing Your Tunes&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <p>To play a specific tune, click anywhere in the ABC for the tune and then click "Play".</p>
@@ -787,48 +781,51 @@
             <p>Experiment with both the browser's print settings page orientation and "multiple page on one page" options to see what is possible.</p>
             <p><strong>Note:</strong>If you want to print a tunebook automatically formated with multiple tunes per page, you must use the tool's PDF Export feature described in the next section.</p>
             <hr class="hidden-print" id="sharing_controls">
-            <h1 class="page_break_always">Sharing Controls&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/I8KcG4swmUQ" title="Sharing Tunes with ABC Share URLs and QR Codes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <h1 class="page_break_always">Sharing Tunes with Share URLs and QR Codes&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/I8KcG4swmUQ" title="Sharing Tunes with Share URLs and QR Codes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <div class="image_holder">
                 <img src="img/ug9a.jpg"/>
             </div>
-            <p>ABC Share URLs and QR Codes are a quick and easy way to share your ABC tunes with friends or to post tunes on social media sites.</p>
-            <p>Anyone with the ABC Share URL or QR Code can view, edit, save, and share their own copy of the tunes.</p>
+            <p>Share URLs and QR Codes are a quick and easy way to share your ABC tunes with friends or to post tunes on social media sites.</p>
+            <p>Anyone with the Share URL or QR Code can view, edit, save, and share their own copy of the tunes.</p>
             <p>Share URLs and QR Codes also include the instrument selected, whether or not to show the top bar and links, display size, line spacing, PDF tunes/page setting, page number position, and page number on first page settings.</p>
             <p>For Mandolin, Bouzouki, Mandola, and Guitar tablature, the link also includes the capo setting and whether or not to show the tablature name.</p>
             <p>Share URL: Copying and pasting this link in a browser address bar will open the ABC Tools website and copy in the tune set ABC and tablature settings.</p>
-            <p>If the share URL link is too long to work in most browsers, the Share URL buttons will be disabled and you will see a message suggesting sharing fewer tunes.</p>
-            <p>Test Share URL - Opens the ABC Share URL in a new browser tab.</p>
-            <p>Copy Share URL - Copies the ABC Share URL to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
-            <p>Save Share URL - Saves the ABC Share URL to a text file.</p>
+            <p>If the Share URL link is too long to work in most browsers, the Share URL buttons will be disabled and you will see a message suggesting sharing fewer tunes.</p>
+            <p>Test Share URL - Opens the Share URL in a new browser tab.</p>
+            <p>Copy Share URL - Copies the Share URL to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
+            <p>Save Share URL - Saves the Share URL to a text file.</p>
             <p>The saved file will be in your browser's Downloads directory.</p>
             <p>On iOS the downloaded files will be found in the "Downloads" directory in the iOS "Files" app.</p>
-            <p>Shorten URL - Shortens the ABC Share URL using TinyURL automatically if possible, or if not, assists with the URL shortening process.</p>
-            <p>Generate QR Code - Once an ABC Share URL is generated, if it is short enough to fit in a QR code (less than 2600 characters), this button is activated.</p>
-            <p>The QR Code is a visual representation of an ABC Share URL that you can scan with the Camera app on your iOS or Android device.</p>
-            <p>Clicking the button will generate a QR code in .PNG format for the ABC Share URL and open it in a new browser tab.</p>
+            <p>Shorten URL - Shortens the Share URL using TinyURL automatically if possible, or if not, assists with the URL shortening process.</p>
+            <p>Generate QR Code - Once an Share URL is generated, if it is short enough to fit in a QR code (less than 2600 characters), this button is activated.</p>
+            <p>The QR Code is a visual representation of an Share URL that you can scan with the Camera app on your iOS or Android device.</p>
+            <p>Clicking the button will generate a QR code in .PNG format for the Share URL and open it in a new browser tab.</p>
+            <p>Even if the button is greyed out, Shift-click of the "Generate QR Code" button will attempt to generate a QR code for whatever text is present in the Share URL box.</p>
+            <p>This can be useful for generating QR codes from TinyURL shortened Share URL links or for other arbitrary website URLs.</p>
+            <p>If the arbitrary text in the Share URL box is too long to generate a QR code, the tool will display an alert.</p>
             <p>In the newly opened tab, you can click the link below the image to save the QR code to your system.</p>
             <hr class="hidden-print" id="abc_share_url_examples">
-            <h1 class="page_break_never">ABC Share URL Examples&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
-            <p>Clicking these ABC Share URL links, created with the tool, will launch the tool and load the listed tune set you can start working with immediately:</p>
+            <h1 class="page_break_never">Share URL Examples&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
+            <p>Clicking these Share URL links, created with the tool, will launch the tool and load the listed tune set you can start working with immediately:</p>
             <p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=KQBwhg5gpgFlYBMoCcAEAiAygGwJZgCMZUA5AewBcoBndVABTOwGsxqAoUSKAMzMpSoAwsnhUEqAO64KxGBQogAXAHoVAW1wBjGGCjYazXADsAdFrLqVhLZ0QIKZLagAqhA6jI9hZY1T8cwPYUMh5YeITE5FS0DEysgfbUAK4EIRQeALJgCsLIYMYyOqgAtKgAIr5g2KiZycggMACepa6W6i0A8qiYydh4AG4FnACOyBZI7OwAGkqoAIzsLnMucKgAQthgWsySOSjsQnPZuSIFRTDsAEpzIPFg7JlzAEwqACzsADJz8yoAHOwANJzcrqMAAK3YAB8lAAxCTrBAqdYqKEAQVhqAAouV0QAadZ4ipYqGwrHY2FQ9hohFIlHozFYynlTFo5EqNmw1E4ioAPixSipMNhaI2WihCGeqBpUJ4EBUPBUqCgCFlUGVzypCC0KiRytV61FZKhLOl7M53PKfIFUNQU1mqGeSzmgJyMAMUGMAHIOEdajkKHlzhQdNdbvdHi93l8fv8gXN1ppjNClNrdUqeFAJesNqqoLzvCqoVpRWjxew03rM9nc8XzWKofMNlL1lpBS2pTxeRAoUKlGBvNBZRIkArURBC6qS9LeVn2DwJFBxQgcyWoYbUCLG82Nor5e2d63e3aZnMAMzO2oAW50UAAh9gfYdjgGg4UQ5cbqg7iwHk9HdG3wLHGwLSimaItmyKKoLa05oryOaweqegwYqYBjlASpaOsVIQRsUFKrBpa8pitpMmaKI6myMFNhuaLkgedFSr27CQNYSoEGAMGoDwXGZjBJYqDqyqisWObrMxrHyuhqCcdxvE8eq6LOJhiqYcJ66lpJbEyXJtoKfxxZssJUCidhYowdSkHstxcEkdx5EEVRhH4dKzEALqcMYUCSOA0D2j8l7ZMYLSigA6rg2ASCQuAQPIYbfhG-6vB8QG-ACoGghC0I0qgK4MpuuIAOLiWipIqEVHJ8jh1IjjhGKFVCJX4SaUrlAhgrgRIvFQtAyq8uKZbKmOPYLnlKiYXSqK1TxYC9eqRZaOqnESlKCAdbaAWOpeYXVNQMA+qgADEixfj+rCRgBqWxhlcxFWCkIQFKE4qPKUKQKgQ4ri1RWioiVJPZ9e6oh9X2lU1UpFc8gp2kVvJ-WVRXkji654laKOEujuLsHDCNNcjuKY9ixWQ9DVKnqgF7LKgu3YPth1HU6Z1JVG13Abd0oPSmJJDbwUJLqgOpIjq9K8zw-NSkuuEqeLAtC0J7IFcaaJnp1MJIphaqC-VmLK-D0rilAksa9N-HYUrPP6xi6Kq5twDeb53BbYs1OrOqaLGMYkAwAQUAQAl51-qzMbs-GFRczCBEWtKqpRyoXIx8W6rrANmmbmV1LmvHSoynHCcyktGyp02CDeJKB6l3lWZ9jwxta0bErOEeG5buwADa8y1-q9eatqDaV0gnVt88ec57HWf51OyepwPmqbRTTrU-QUBUBs+QIAYTRPszv6XSlIfpWH93ZTCEk-QTUJYqWKJsk1ObalSZ+GvjxOX9fHKolDqC42rSiIlXNYIA4W+kAtOaJKq33YP-JAgDgE5jRDfT+kM0Qwy2lTOYJAfJgmQMwFeAcWZXQPiBEEEclC5VLvzWkityFZn4g3GaFCVS5moSOLMTYxrrXWAeDh1cUzAy4hOShzDRasJ7lSfhQMhGIhYQA9hrDuEjgQseKY7AgA&format=noten&ssp=0&pdf=multi&pn=br&fp=yes&name=Sliabh_Notes_Polkas" target="_blank">Three sets of polkas from the group "Sliabh Notes"</a></p>
             <p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgjAUAKiUBYFMAEUCGAnARgewDYBdsA7CAWRAGEAfCAaRAFEATbdCAIQQSaQQCZ2AQSoBxIQDEkI8Q3FUAIkyYBjJEz6CRVcZoZIZ8uRAZceCAGYBzBFXPdzvAcJGD2I-S7lvBkkQwZ8IDRUIJZ2DtaYNpHIYQjKVOrmPIJMyVTKTJr68rI0Lm4ePlQBFkhxTFTsmexIgnw6VZ5S-oE0EKB80LCISAAyxGGsPBR4uPGEbOTUdCAiEAB+IgDMgkjVTJZUCOwL7Hy8lkzsouIu6zVUgspCLbn5Z2sbWzt7B+oWVJZ8qBHcJ2A6jc1n5ckEDtdbqC+FRgqErKhytwXrt9mo+J9vr8kccrsC7jDFpZlojrJttqj3hjzF9MNiyQCgVCGPI2hD8aCGLCIABSHlEBAAdwADqhrBAOiBlt14MgAMqoACWuFYAHIAM7rYgC-BkSg0ejyCD1HRqcwLcwwtJlY5vK4NNZpOyJITucTyeQnY0Os0WmG-G2U+2mp02Y7Zd2s7khVB8BaxpC-NJUAMOW37WyYOlIOnmVBUTB5hx2T4QQt+xPmy0p8JqIMmx3mZ2A8OSQQetl1nx1D0ndpAA&w=50&format=noten" target="_blank">Michael Coleman set ("The Tarbolton" - "The Longford Collector" - "The Sailor's Bonnet")</a></p>
             <p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuCyBXAlgJwKYEMB22DkAzlAMLgByymANlWAGrVXpUCeUASuAFLIDmU8cADYA9AA4oAGXARxUANLgAQgFtk2KAB8QAEyUBBMAG8dAXwNLNO9ADNjN0+muaj6UzYBM6Y7cfObmHZYIjYi6JpQeoYWVrb2fuE2AEaYYDZOLm6e3kYOTkogEdoWxmboAMwuZiVGmO62mkopaRmu7l7x+RE1ZR6WJub6SmmVKXaYHkmaASFhnXqFWiAGAGLGAOKmAKIe6y76pisAIltgx1uaK-qGQ5ZKOjrzllADqxvbu-uHJ2cnl0Ngaw2TQQNKhdAiR65PwFTQeMFhSFgWy8TRFEC1ep2JLlESTERTTHpca4jyYESYabNdI6TLtHK+JzhKDEsBJDzAmzQuITAAU5QhoXJmjGYAmU1BoV4IQZeWshXhUplT00AF0wFAoEA&w=50&format=noten" target="_blank">"Muireann's" jig (by Niall Vallely) for Anglo Concertina</a></p>
             <hr class="hidden-print" id="shortening_abc_share_urls">
-            <h1 class="page_break_always">Shortening ABC Share URLs&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
+            <h1 class="page_break_always">Shortening Share URLs&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <p>Automatic URL shortening using TinyURL:</p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/UkC9GoI9qvE" title="ABC Share URL Shortening" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/UkC9GoI9qvE" title="Share URL Shortening" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <hr class="hidden-print">
             <p>Assisted TinyURL URL shortening if automatic shortening fails:</p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/MZEsEPnr7Sk" title="ABC Share URL Shortening" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/MZEsEPnr7Sk" title="Share URL Shortening" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p></p>
-            <p>ABC Share URLs can get pretty long, particularly for large sets of tunes.</p>
-            <p>A third-party service like <a href="https://tinyurl.com" target="_blank">TinyURL</a> can be used to shorten the ABC Share URLs.</p>
-            <p>To get a shortened URL for the ABC Share URL, click "Shorten URL".</p>
-            <p>The tool will attempt to call TinyURL directly first to get a shortened ABC Share URL.</p>
-            <p>If it succeeds, it will copy the shortened ABC Share URL to the system clipboard and also show the result in a dialog.</p>
-            <p>If it fails (most likely the tool has used up all available free URL shortening sessions for the month), the tool will help you manually get a shortened URL by automatically copying the full ABC Share URL to the system clipboard and then launching <a href="https://tinyurl.com" target="_blank">TinyURL</a> in another browser tab.</p>
-            <p>Paste the already copied full ABC Share URL into the <a href="https://tinyurl.com" target="_blank">TinyURL</a> "Enter long link" box and click "Shorten URL".</p>
+            <p>Share URLs can get pretty long, particularly for large sets of tunes.</p>
+            <p>A third-party service like <a href="https://tinyurl.com" target="_blank">TinyURL</a> can be used to shorten Share URLs.</p>
+            <p>To get a shortened URL for the Share URL, click "Shorten URL".</p>
+            <p>The tool will attempt to call TinyURL directly first to get a shortened Share URL.</p>
+            <p>If it succeeds, it will copy the shortened Share URL to the system clipboard and also show the result in a dialog.</p>
+            <p>If it fails (most likely the tool has used up all available free URL shortening sessions for the month), the tool will help you manually get a shortened URL by automatically copying the full Share URL to the system clipboard and then launching <a href="https://tinyurl.com" target="_blank">TinyURL</a> in another browser tab.</p>
+            <p>Paste the already copied full Share URL into the <a href="https://tinyurl.com" target="_blank">TinyURL</a> "Enter long link" box and click "Shorten URL".</p>
             <p>You may have to agree to the TinyURL terms-of-service before you can shorten the URL.</p>
             <p>Copy the shortened URL from TinyURL and paste it into emails or share it on social media.</p>
             <p>For example, here is the above "Sliabh Notes" polka set Share URL as a shortened URL:</p>
@@ -851,7 +848,7 @@
             <p>%qrcode URL</p>
             <p></p>
             <p>The URL field is optional.</p>
-            <p>If a URL is present, it will be used for the creation of the QR code, otherwise the computed share URL for the PDF tunebook (as would be shown in the sharing controls) will be used by default.</p>
+            <p>If a URL is present, it will be used for the creation of the QR code, otherwise the computed Share URL for the PDF tunebook (as would be shown in the sharing controls) will be used by default.</p>
             <p></p>
             <p>One application for this would be the use of a shortened Share URL from <a href="https://tinyurl.com" target="_blank">TinyURL</a> for the QR code instead of the longer one generated by the tool itself.</p>
             <p></p>
