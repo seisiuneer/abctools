@@ -8173,7 +8173,7 @@ function SaveABC(){
 			}
 			else{
 
-				theName += "txt";
+				theName += ".txt";
 
 				saveABCFile("Please enter a filename for your ABC file:",theName,theData);
 			}
