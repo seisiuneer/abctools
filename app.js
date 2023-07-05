@@ -9683,7 +9683,7 @@ function showWelcomeScreen(){
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Each ABC tune <strong>must</strong> begin with an X: tag.</p>'; 
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Notation updates instantly as you make changes.</p>'; 
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click the Zoom-Out arrows at the upper-right to view notation fullscreen.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click "New" to generate a one-line sample tune with examples of all the available PDF tunebook annotations.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click "New" to generate a sample tune with examples of some of the available PDF tunebook annotations.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click "Open" to open and import an ABC text file from your system.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica"><strong>Once ABC has been entered and notation is displayed:</strong></p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Save" to save all the ABC text to an ABC text file.</p>';
@@ -9709,6 +9709,7 @@ function showZoomInstructionsScreen(){
        modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">If you would like to edit or create a PDF tunebook from the notation:</p>';
   	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click the Zoom-In arrows at the upper-right to open the ABC editor.</p>';
    	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">In the ABC editor, click the Zoom-Out arrows to view notation fullscreen.</p>';
+   	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">All controls in the ABC editor have helpful tooltips.</p>';
 	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Read the <a href="userguide.html" target="_blank">User Guide</a> for complete documentation and demo videos.</p>';
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50 });
