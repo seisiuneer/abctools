@@ -7068,6 +7068,10 @@ function NewABC(){
 	theValue += "% %pageheader My Tune Set: $TUNENAMES\n";
 	theValue += "% %pagefooter PDF named: $PDFNAME saved on: $DATEMDY at $TIME\n";
 	theValue += "%\n";
+	theValue += "% After the tunes, add a sharing QR code on a new page in the PDF:\n";
+	theValue += "%\n";
+	theValue += "% %qrcode\n";
+	theValue += "%\n";
 
 
 	gTheABC.value = theValue;
