@@ -618,9 +618,19 @@ function Transpose(transposeAmount) {
 // Tranpose the ABC up one semitone
 //
 
-function TransposeUp() {
+function TransposeUp(e) {
 
-	Transpose(1);
+	var transposeAmount = 1;
+
+	if (e.shiftKey){
+		transposeAmount = 2;
+	}
+
+	if (e.altKey){
+		transposeAmount = 12;
+	}
+
+	Transpose(transposeAmount);
 
 }
 
@@ -628,9 +638,19 @@ function TransposeUp() {
 // Tranpose the ABC down one semitone
 //
 
-function TransposeDown() {
+function TransposeDown(e) {
 
-	Transpose(-1);
+	var transposeAmount = -1;
+
+	if (e.shiftKey){
+		transposeAmount = -2;
+	}
+
+	if (e.altKey){
+		transposeAmount = -12;
+	}
+
+	Transpose(transposeAmount);
 
 }
 
@@ -7353,6 +7373,8 @@ function CreateURLfromHTML() {
 //
 // Generate a QR code from the share URL
 //
+// Shift-click allows generic creation of QR codes, as long as the value is not too long to fit 
+//
 
 function clearQRCode() {
 
@@ -7362,18 +7384,44 @@ function clearQRCode() {
 
 }
 
-function GenerateQRCode() {
+function GenerateQRCode(e) {
 
-	if (!gAllowQRCodeSave){
+	var isShiftOverride = false;
 
-		return;
+	var theURL = document.getElementById("urltextbox").value;
+
+	// Shift-click allows generic QR code generation
+	if (e.shiftKey){
+
+		var maxURLLength = MAXQRCODEURLLENGTH;
+	
+		if (theURL.length > maxURLLength) {
+
+			DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:14pt;">Share URL text is too long to generate a QR Code</p>',{ theme: "modal_flat", top: 50 });
+
+			return;
+
+		}
+
+		isShiftOverride = true;
+
+	}
+	else{
+
+		// Normal QR code generation
+
+		if (!gAllowQRCodeSave){
+
+			return;
+		}
+
 	}
 
 
 	if (gTheQRCode == null) {
 
 		gTheQRCode = new QRCode(document.getElementById("qrcode"), {
-			text: document.getElementById("urltextbox").value,
+			text: theURL,
 			width: 548,
 			height: 548,
 			colorDark: "#000000",
@@ -7386,7 +7434,7 @@ function GenerateQRCode() {
 
 		gTheQRCode.clear();
 
-		gTheQRCode.makeCode(document.getElementById("urltextbox").value);
+		gTheQRCode.makeCode(theURL);
 
 	}
 
@@ -7395,71 +7443,79 @@ function GenerateQRCode() {
 	// Find the image
 	theQRCodeImage = document.querySelectorAll('div[id="qrcode"] > img');
 
+	var theTitles = "Custom QR Code";
+	var theImageName = "custom_qr_code";
+
 	if (theQRCodeImage && (theQRCodeImage.length > 0)) {
 
-		// Get all the titles of the tunes in the text area
-		var theTitles = GetAllTuneTitles();
+		if (!isShiftOverride){
 
-		// Get the current instrument setting
-		var theTab = GetRadioValue("notenodertab");
+			// Get all the titles of the tunes in the text area
+			theTitles = GetAllTuneTitles();
 
-		var postfix = "";
+			// Get the current instrument setting
+			var theTab = GetRadioValue("notenodertab");
 
-		switch (theTab){
-			case "noten":
-				postfix = "<br/><br/>(Standard Notation)";
-				break;
-			case "notenames":
-				postfix = "<br/><br/>(Note Names Tab)";
-				break;
-			case "mandolin":
-				postfix = "<br/><br/>(Mandolin Tab";
-				if (gCapo != 0){
-					postfix += " - Capo on "+gCapo;
-				}
-				postfix += ")";
-				break;
-			case "gdad":
-				postfix = "<br/><br/>(Bouzouki GDAD Tab";
-				if (gCapo != 0){
-					postfix += " - Capo on "+gCapo;
-				}
-				postfix += ")";
-				break;
-			case "mandola":
-				postfix = "<br/><br/>(Mandola Tab";
-				if (gCapo != 0){
-					postfix += " - Capo on "+gCapo;
-				}
-				postfix += ")";
-				break;
-			case "guitare":
-				postfix = "<br/><br/>(Standard Guitar Tab";
-				if (gCapo != 0){
-					postfix += " - Capo on "+gCapo;
-				}
-				postfix += ")";
-				break;
-			case "guitard":
-				postfix = "<br/><br/>(DADGAD Guitar Tab";
-				if (gCapo != 0){
-					postfix += " - Capo on "+gCapo;
-				}
-				postfix += ")";
-				break;
-			case "whistle":
-				postfix = "<br/><br/>(Whistle Tab)";
-				break;
+			var postfix = "";
+
+			switch (theTab){
+				case "noten":
+					postfix = "<br/><br/>(Standard Notation)";
+					break;
+				case "notenames":
+					postfix = "<br/><br/>(Note Names Tab)";
+					break;
+				case "mandolin":
+					postfix = "<br/><br/>(Mandolin Tab";
+					if (gCapo != 0){
+						postfix += " - Capo on "+gCapo;
+					}
+					postfix += ")";
+					break;
+				case "gdad":
+					postfix = "<br/><br/>(Bouzouki GDAD Tab";
+					if (gCapo != 0){
+						postfix += " - Capo on "+gCapo;
+					}
+					postfix += ")";
+					break;
+				case "mandola":
+					postfix = "<br/><br/>(Mandola Tab";
+					if (gCapo != 0){
+						postfix += " - Capo on "+gCapo;
+					}
+					postfix += ")";
+					break;
+				case "guitare":
+					postfix = "<br/><br/>(Standard Guitar Tab";
+					if (gCapo != 0){
+						postfix += " - Capo on "+gCapo;
+					}
+					postfix += ")";
+					break;
+				case "guitard":
+					postfix = "<br/><br/>(DADGAD Guitar Tab";
+					if (gCapo != 0){
+						postfix += " - Capo on "+gCapo;
+					}
+					postfix += ")";
+					break;
+				case "whistle":
+					postfix = "<br/><br/>(Whistle Tab)";
+					break;
+			}
+
+			theTitles += postfix;
+
+			var theTuneCount = CountTunes();
+
+			// Derive a suggested name from the ABC
+			theImageName = getDescriptiveFileName(theTuneCount,true);
+
 		}
-
-		theTitles += postfix;
-
+		
+		// Get the QR code image
 		theQRCodeImage = theQRCodeImage[0];
-
-		var theTuneCount = CountTunes();
-
-		// Derive a suggested name from the ABC
-		var theImageName = getDescriptiveFileName(theTuneCount,true);
 
 		var w = window.open("");
 
@@ -7476,7 +7532,7 @@ function GenerateQRCode() {
 			theOutputHTML +=    '<p style="font-family:times;font-size:16pt;margin-top:32px;margin-bottom:0px;"><a href="'+theImageSource+'" download="'+theImageName+'.png" style="text-decoration:none;color:darkblue">Click here to download&nbsp;' + theImageName +'.png&nbsp;to your system.</a></p>';
 			theOutputHTML +=    '<p style="font-family:times;font-size:16pt;margin-top:32px;margin-bottom:0px;"><strong>Use Your QR Code</strong></p>';
 			theOutputHTML +=    '<p style="font-family:times;font-size:15pt;margin-top:30px;margin-bottom:0px;">Share QR Codes on social media or email them to friends like any other photo.</p>';
-			theOutputHTML +=    '<p style="font-family:times;font-size:15pt;margin-top:24px;margin-bottom:0px;">Scanning the code with the Camera app on any smartphone will load the</p>';
+			theOutputHTML +=    '<p style="font-family:times;font-size:15pt;margin-top:24px;margin-bottom:0px;">Scanning the code with the Camera app on any iOS or Android phone will load the</p>';
 			theOutputHTML +=    '<p style="font-family:times;font-size:15pt;margin-top:6px;margin-bottom:0px;">ABC Transcription Tool with your tune set into the browser on the device.</p>';
 			theOutputHTML +=    '</div>';
 
@@ -8084,7 +8140,7 @@ function ShortenURL(){
 	    method: `POST`,
 	    headers: {
 	      accept: `application/json`,
-	      authorization: `Bearer <YOUR_TINYURL_API_KEY_HERE>`,
+	      authorization: gTinyURLAPIKey,
 	      'content-type': `application/json`,
 	    },
 	    body: JSON.stringify(body)
@@ -10630,4 +10686,9 @@ function WaitForReady(fn) {
 //
 
 WaitForReady(DoStartup);
+
+//
+// TinyURL API key
+//
+var gTinyURLAPIKey = "<YOUR_TINYURL_API_KEY_HERE>";
 
