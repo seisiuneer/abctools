@@ -7015,7 +7015,7 @@ function NewABC(){
 	theValue += '|:"Em"eB (3BBB eBgf|"Em"eBB2 gedB|"D"A/A/A FA DAFA|"D"A/A/A FA defg|\n';
 	theValue += '"Em"eB (3BBB eBgf|"Em"eBBB defg|"D"afec dBAF|1 "D"DEFD "Em"E2gf:|2 "D"DEFD "Em"E4|]\n';
 	theValue += "\n";
-	theValue += "% To choose the sound when played, change the MIDI program # above to:\n";
+	theValue += "% To choose the sound when played, try changing the MIDI program # above to:\n";
 	theValue += "%\n"
 	theValue += "% Melody:\n";
 	theValue += "% Piano: 0, Accordion: 21, Flute: 73, Whistle: 78, Fiddle: 110, Uilleann Pipes: 129, Scottish Smallpipes (D): 130, Scottish Smallpipes (A): 131, Säckpipa: 132, Concertina: 133, Melodica: 134, Cajun Accordion: 135\n";
@@ -7023,7 +7023,9 @@ function NewABC(){
 	theValue += "% Chords:\n";
 	theValue += "% Piano: 0, Electric Piano: 5, Organ: 19, Accordion: 21, Guitar: 25, Bass: 34, Synth Bass: 38\n";
 	theValue += "%\n";
-	theValue += "% If program or chordprog is not specified, both default to Piano\n";
+	theValue += "% Click the MIDI link at the top of the page to see a full list of available MIDI instruments.\n";
+	theValue += "%\n";
+	theValue += "% If program or chordprog is not specified and you haven't chosen default MIDI instruments in the settings, both default to Piano.\n";
 	theValue += "\n";
 	theValue += "% PDF Tunebook Annotations:\n";
 	theValue += "%\n";
@@ -7037,14 +7039,6 @@ function NewABC(){
 	theValue += "%\n";
 	theValue += "% %addsubtitle My Tunebook Title Page Subtitle\n";
 	theValue += "%\n";
-	theValue += "% Add a title page with a title as a hyperlink:\n";
-	theValue += "%\n";
-	theValue += "% %urladdtitle http://michaeleskin.com Title as Hyperlink\n";
-	theValue += "%\n";
-	theValue += "% Optional subtitle for the title page as a hyperlink:\n";
-	theValue += "%\n";	
-	theValue += "% %urladdsubtitle http://michaeleskin.com Subtitle as Hyperlink\n";
-	theValue += "%\n";	
 	theValue += "% Before the tunes, add a table of contents with a title:\n";
 	theValue += "%\n";
 	theValue += "% %addtoc My Tunebook Table of Contents\n";
@@ -7074,18 +7068,7 @@ function NewABC(){
 	theValue += "% %pageheader My Tune Set: $TUNENAMES\n";
 	theValue += "% %pagefooter PDF named: $PDFNAME saved on: $DATEMDY at $TIME\n";
 	theValue += "%\n";
-	theValue += "% Add a PDF page header or footer as a hyperlink:\n";
-	theValue += "%\n";
-	theValue += "% %urlpageheader http://michaeleskin.com Page Header as Hyperlink\n";
-	theValue += "% %urlpagefooter http://michaeleskin.com Page Footer as Hyperlink\n";
-	theValue += "%\n";
-	theValue += "% Add a PDF hyperlink from every tune back to thesession.org\n";
-	theValue += "%\n";
-	theValue += "% %add_all_links_to_thesession\n";
-	theValue += "%\n";
-	theValue += "% Add a PDF hyperlink from every tune back to Paul Rosen's ABC Quick Editor for playback. Use an accordion sound for playback.\n";
-	theValue += "%\n";
-	theValue += "% %add_all_playback_links 21\n";
+
 
 	gTheABC.value = theValue;
 
@@ -8097,7 +8080,7 @@ function ShortenURL(){
 	    method: `POST`,
 	    headers: {
 	      accept: `application/json`,
-	      authorization: `Bearer <YOUR_TINYURL_API_TOKEN_HERE>`,
+	      authorization: `Bearer <YOUR_TINYURL_API_KEY_HERE>`,
 	      'content-type': `application/json`,
 	    },
 	    body: JSON.stringify(body)
