@@ -9441,7 +9441,7 @@ function HandleWindowResize(){
 				var windowHeight = window.innerHeight;
 
 				// Leave some room for tools
-				windowHeight -= 500;
+				windowHeight -= 540;
 
 				// About 30 pixels/line
 				var nRows = windowHeight/30;
@@ -10690,5 +10690,5 @@ WaitForReady(DoStartup);
 //
 // TinyURL API key
 //
-var gTinyURLAPIKey = "<YOUR_TINYURL_API_KEY_HERE>";
+var gTinyURLAPIKey = "Bearer <YOUR_TINYURL_API_KEY_HERE>";
 
