@@ -39,21 +39,12 @@ display: none;
 }
 
 .toggle-buttons label {
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: .6em;
 margin-right:10px;
-color:black;
--webkit-appearance:none;
-user-select: none;
 }
 
 .toggle-buttons input:checked + label {
-background: #ebf5d7;
+background: #c0df81;
 color: black;
-box-shadow: none;
 user-select: none;
 
 }
@@ -89,16 +80,8 @@ margin-bottom: 0px;
 }
 
 .transpose {
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
-margin-right:15px;
+margin-right:18px;
 margin-left:0px;
-background-color: #EEEEEE;
-color:black;
--webkit-appearance:none;
 }
 
 @media (hover: hover) {
@@ -108,29 +91,13 @@ color:black;
 }
 
 .saveaspdf {
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
 margin-left:0px;
-margin-right:15px;
-background-color: #FFFFFF;
-color:black;
--webkit-appearance:none;
+margin-right:12px;
 }
 
 .saveaspdfdisabled {
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
 margin-left:0px;
-margin-right:15px;
-background-color: #FFFFFF;
-color:black;
--webkit-appearance:none;
+margin-right:12px;
 opacity: 0.4;
 }
 
@@ -141,16 +108,8 @@ opacity: 0.4;
 }
 
 .toggleadvancedcontrols{
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
 margin-left:5px;
 margin-right:0px;
-background-color: #E8FFFF;
-color:black;
--webkit-appearance:none;
 }
 
 @media (hover: hover) {
@@ -160,16 +119,8 @@ color:black;
 }
 
 .togglesharecontrols{
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
 margin-left:16px;
 margin-right:0px;
-background-color: lavender;
-color:black;
--webkit-appearance:none;
 }
 
 @media (hover: hover) {
@@ -179,25 +130,9 @@ color:black;
 }
 
 .advancedcontrols{
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
-background-color: #E8FFFF;
-color:black;
--webkit-appearance:none;
 }
 
 .advancedcontrolsdisabled{
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
-background-color: #E8FFFF;
-color:black;
--webkit-appearance:none;
 opacity:0.4;
 }
 
@@ -208,15 +143,7 @@ opacity:0.4;
 }
 
 .configuresettings{
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
-background-color: lavender;
-color:black;
--webkit-appearance:none;
-margin-right:15px;
+margin-right:12px;
 }
 
 @media (hover: hover) {
@@ -226,16 +153,8 @@ margin-right:15px;
 }
 
 .urlcontrols{
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
-margin-right:23px;
+margin-right:21px;
 margin-left:0px;
-background-color: lavender;
-color:black;
--webkit-appearance:none;
 }
 
 @media (hover: hover) {
@@ -245,30 +164,14 @@ color:black;
 }
 
 .urlcontrolsdisabled{
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
-margin-right:23px;
+margin-right:21px;
 margin-left:0px;
-background-color: #FFFFFF;
-color:black;
--webkit-appearance:none;
 opacity:0.4;
 }
 
 .sortbutton{
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
-background-color: #EEEEEE;
-color:black;
--webkit-appearance:none;
 margin-left: 7px;
-margin-right: 15px;
+margin-right: 17px;
 }
 
 @media (hover: hover) {
@@ -278,14 +181,6 @@ margin-right: 15px;
 }
 
 .clearbutton{
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
-background-color: #FFCCCC;
-color:black;
--webkit-appearance:none;
 margin-left: 16px;
 margin-right: 0px;
 }
@@ -298,30 +193,19 @@ margin-right: 0px;
 
 #selectabcfile{
 -webkit-appearance:none !important;
-margin-right:15px;
+margin-right:12px;
 }
 
 .abcupload {
-font-family:"Helvetica" !important;
-font-size:11pt !important;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
 margin-left:0px;
-margin-right:15px;
-background-color: #FFFFFF;
-color:black;
--webkit-appearance:none !important;
+margin-right:12px;
 }
 
 #abc-selected{
-font-family:"Helvetica" !important;
-font-size:11pt !important;
 -webkit-appearance: none !important;
 margin-top:15px;
 margin-bottom:1px;
 }
-
 
 #notenrechts{
 margin-top:18px;
@@ -334,11 +218,11 @@ margin-top:18px;
 }
 
 #transpose-controls{
-margin-top:20px;
+margin-top:18px;
 }
 
 #pdf-settings{
-margin-top:20px;	
+margin-top:22px;	
 }
 
 #pdf-controls{
@@ -352,7 +236,7 @@ left:-2100px;
 
 #advanced-controls{
 display:none;
-margin-top:20px;
+margin-top:18px;
 }
 
 #share-controls{
@@ -361,6 +245,7 @@ margin-top:20px;
 }
 
 #staff-spacing{
+padding-top:7px;
 width:50px;
 margin-top:6px;
 margin-left:4px;
@@ -372,6 +257,7 @@ font-size:11pt;
 }
 
 #capo{
+padding-top:7px;
 width:35px;
 margin-top:6px;
 margin-right:10px;
@@ -477,7 +363,7 @@ left:-3000px;
 
 #urlarea{
 display:none;
-margin-top:9px;
+margin-top:5px;
 margin-left: -11px;
 }
 
@@ -543,58 +429,26 @@ margin-top:8px;
 }
 
 .saveabcfile{
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
 margin-left:0px;
-margin-right:15px;
-background-color: #FFFFFF;
-color:black;
--webkit-appearance:none;
+margin-right:12px;
 opacity:1.0;
 }
 
 .saveabcfiledisabled{
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
 margin-left:0px;
-margin-right:15px;
-background-color: #FFFFFF;
-color:black;
--webkit-appearance:none;
+margin-right:12px;
 opacity:0.4;
 }
 
 .toggleallcontrols{
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
 margin-left:0px;
-margin-right:15px;
-background-color: #FFF4E6;
-color:black;
--webkit-appearance:none;
+margin-right:12px;
 opacity:1.0;
 }
 
 .toggleallcontrolsdisabled{
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
 margin-left:0px;
-margin-right:15px;
-background-color: #FFFFFF;
-color:black;
--webkit-appearance:none;
+margin-right:12px;
 opacity:0.4;
 }
 
@@ -605,30 +459,14 @@ opacity:0.4;
 }
 
 .copybutton{
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
 margin-left:0px;
-margin-right:15px;
-padding: 0.6em;
-background-color: #FFFFFF;
-color:black;
--webkit-appearance:none;
+margin-right:12px;
 opacity:1.0;
 }
 
 .copybuttondisabled{
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
 margin-left:0px;
-margin-right:15px;
-padding: 0.6em;
-background-color: #FFFFFF;
-color:black;
--webkit-appearance:none;
+margin-right:12px;
 opacity:0.4;
 }
 
@@ -639,30 +477,14 @@ opacity:0.4;
 }
 
 .playbutton{
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
 margin-left:0px;
-margin-right:15px;
-padding: 0.6em;
-background-color: #C8ECFE;
-color:black;
--webkit-appearance:none;
+margin-right:12px;
 opacity:1.0;
 }
 
 .playbuttondisabled{
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
 margin-left:0px;
-margin-right:15px;
-padding: 0.6em;
-background-color: #FFFFFF;
-color:black;
--webkit-appearance:none;
+margin-right:12px;
 opacity:0.4;
 }
 
@@ -673,16 +495,8 @@ opacity:0.4;
 }
 
 .newabcfile{
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
 margin-left:0px;
-margin-right:15px;
-background-color: #FFFFFF;
-color:black;
--webkit-appearance:none;
+margin-right:12px;
 opacity:1.0;
 }
 
@@ -693,16 +507,8 @@ opacity:1.0;
 }
 
 .toggletopbar{
-font-family:"Helvetica";
-font-size:10pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
 margin-left:0px;
 margin-right:0px;
-background-color: #FFFFFF;
-color:black;
--webkit-appearance:none;
 opacity:1.0;
 }
 
@@ -714,7 +520,7 @@ opacity:1.0;
 
 #fileoperations{
 text-align:center;
-margin-top:16px;
+margin-top:12px;
 }
 
 @media (hover: hover) {
@@ -775,44 +581,20 @@ font-size:12pt;
 }
 
 .notation-placeholder-button{
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
 margin-top:40px;
 margin-left:0px;
 margin-right:0px;
-background-color: #FFFFFF;
-color:black;
--webkit-appearance:none;
 opacity:1.0;
 }
 
 .toggletabnames {
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
 margin-left:0px;
 margin-right:10px;
-background-color: #E8FFFF;
-color:black;
--webkit-appearance:none;
 }
 
 .toggletabnamesdisabled {
-font-family:"Helvetica";
-font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
 margin-left:0px;
 margin-right:10px;
-background-color: #E8FFFF;
-color:black;
--webkit-appearance:none;
 opacity: 0.4;
 }
 
@@ -880,14 +662,14 @@ width: 600px;
 .cancelpdf {
 font-family:"Helvetica";
 font-size:11pt;
-border: 1px solid #333;
-border-radius: 0.3em;
-padding: 0.6em;
 margin-top: 12px;
 margin-bottom: 12px;
+/*border: 1px solid #333;
+border-radius: 0.3em;
+padding: 0.6em;
 background-color: #FFFFFF;
 color:black;
--webkit-appearance:none;
+-webkit-appearance:none;*/
 }
 
 #fontholder{
@@ -1196,3 +978,161 @@ left:-5000px;
 	width: 60px;
 }
 
+/******************************************************************************/
+/* STYLES RELATED TO EXPERIMENT BUTTONS                                       */
+/******************************************************************************/
+.btn {
+  --color: #000000;
+  --background-color: #d8d8d8;
+  --border-color: darken(#d8d8d8, 7.5%);
+  color: var(--color);
+  font-family: helvetica !important;
+  font-size: 11pt !important;
+  background-color: var(--background-color);
+  padding: 0.7rem 0.7rem;
+  padding-top: 0.8rem;
+  border: solid 1px var(--border-color);
+  outline: none;
+  position: relative;
+  border-radius: 0.5rem;
+  user-select: none;
+  /* box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.4), 0 -0.3rem 0.6rem rgba(0, 0, 0, 0.2) inset;*/
+  box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.2), 0 -0.1rem 0.5rem rgba(0, 0, 0, 0.1) inset;
+  transition: box-shadow 64ms ease-out;
+  -webkit-appearance:none;
+}
+.btn:after {
+  content: "";
+  background-color: #ffffff;
+  width: 75%;
+  height: 12.5%;
+  position: absolute;
+  top: 0.15rem;
+  left: 12.5%;
+  border-radius: 50%;
+  filter: blur(0.15rem);
+  transition: opacity 64ms ease-out;
+}
+.btn:active {
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0.4), 0 0.4rem 1rem rgba(0, 0, 0, 0.3) inset;
+}
+.btn:active:after {
+  opacity: 0;
+}
+
+.btn-info {
+  --color: #ffffff;
+  --background-color: #0091ea;
+  --border-color: #0079c4;
+}
+.btn-info:active {
+  --color: #ececec;
+}
+.btn-success {
+  --color: #ffffff;
+  --background-color: #00c853;
+  --border-color: #00a243;
+}
+.btn-success:active {
+  --color: #ececec;
+}
+.btn-warning {
+  --color: #3e2723;
+  --background-color: #ffc400;
+  --border-color: #d9a700;
+}
+.btn-warning:active {
+  --color: #261815;
+}
+.btn-error {
+  --color: #ffffff;
+  --background-color: #d50000;
+  --border-color: #af0000;
+}
+.btn-error:active {
+  --color: #ececec;
+}
+.btn-dark {
+  --color: #ffffff;
+  --background-color: #303030;
+  --border-color: #1d1d1d;
+}
+.btn-dark:active {
+  --color: #ececec;
+}
+
+.btn-play {
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-play {
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-toggleallcontrols {
+  --color: black;
+  --background-color: #FFF4E6;
+}
+
+.btn-configuresettings{
+  --color: black;
+  --background-color: lavender;
+}
+
+.btn-transpose{
+  --color: black;
+  --background-color: #F0F0F0;
+}
+
+.btn-sortbutton{
+  --color: black;
+  --background-color: #F0F0F0;
+}
+
+.btn-togglesharecontrols{
+  --color: black;
+  --background-color: lavender;
+}
+
+.btn-clearbutton{
+  --color: black;
+  --background-color: #FFCCCC;	
+}
+
+.btn-toggleadvancedcontrols{
+  --color: black;
+  --background-color: #DCFFFF;
+}
+
+.btn-advancedcontrols{
+  --color: black;
+  --background-color: #DCFFFF;
+}
+
+.btn-urlcontrols{
+  --color: black;
+  --background-color: lavender;
+}
+
+.btn-top{
+  --color: black;
+  --background-color: #F0F0F0;
+}
+
+.btn-tab{
+  --color: black;
+  --background-color: #F0F0F0;
+}
+
+.btn-placeholder{
+  --color: black;
+  --background-color: #F0F0F0;
+}
+
+.btn-cancelpdf{
+  --color: black;
+  --background-color: #F0F0F0;
+
+}
