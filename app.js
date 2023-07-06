@@ -499,8 +499,14 @@ function resetSelectionAfterTranspose(start,end){
 	gTheABC.selectionStart = theStartIndex;
     gTheABC.selectionEnd = theEndIndex;
 
-    // And set the focus
-    gTheABC.focus();
+    // Fixes odd button event behavior after transpose on iOS
+    if (gIsIOS || gIsAndroid){
+    	gTheABC.blur()
+    }
+    else{
+    	// And set the focus
+    	gTheABC.focus();
+    }
 
 }
 
