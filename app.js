@@ -150,7 +150,6 @@ var gAddTheSessionHyperlinks = false;
 var gAddPlaybackHyperlinks = false;
 var gPlaybackHyperlinkProgram = "";
 
-
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -2351,6 +2350,12 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
 			case "whistle":
 				postfix = "_Whistle";
 				break;
+			case "bc":
+				postfix = "_BC";
+				break;
+			case "cd":
+				postfix = "_CD";
+				break;
 		}
 
 		title += postfix;
@@ -2363,6 +2368,8 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
 			case "noten":
 			case "notenames":
 			case "whistle":
+			case "bc":
+			case "cd":
 				break;
 
 			case "mandolin":
@@ -5247,6 +5254,15 @@ function GetABCJSParams(instrument){
 				case "guitard":
 					theLabel = "DADGAD"+postfix;
 					break;
+
+				case "bc":
+					theLabel = " ";
+					break;
+
+				case "cd":
+					theLabel = " ";
+					break;
+
 			}
 		}
 	}
@@ -5272,6 +5288,23 @@ function GetABCJSParams(instrument){
 		tabnumberfont: "Arial 12"
 	};
 
+	var boxFontFormat = 
+	{
+		titlefont: tFont,
+		subtitlefont: pFont,
+		infofont: pFont,
+		partsfont: pFont,
+		tempofont: pFont,
+		textfont: pFont,
+		composerfont: pFont,
+		annotationfont: pFont,
+		partsfont: pFont,
+		gchordfont: "Verdana 12",
+		vocalfont: pFont,
+		wordsfont: pFont,
+		tabnumberfont: "Arial"+gBoxTabFontSize
+	};
+
 	var params;
 
 	if (!instrument) {
@@ -5289,7 +5322,6 @@ function GetABCJSParams(instrument){
 			selectTypes: false,
 			format: commonFontFormat
 		};
-		instrument = ""; 
 	}
 	else if (instrument == "mandolin") {
 		params = {
@@ -5387,6 +5419,33 @@ function GetABCJSParams(instrument){
 			oneSvgPerLine: 'true',
 			selectTypes: false,
 			format: commonFontFormat
+		}
+
+	} else if (instrument == "bc") {
+		params = {
+			tablature: [{
+				instrument: 'violin',
+				label: theLabel,
+				tuning: ['^D,,,','^D,,','^D,'],
+				highestNote: "^a'"
+			}],
+			responsive: 'resize',
+			oneSvgPerLine: 'true',
+			selectTypes: false,
+			format: boxFontFormat
+		}
+	} else if (instrument == "cd") {
+		params = {
+			tablature: [{
+				instrument: 'violin',
+				label: theLabel,
+				tuning: ['F,,,','F,,','F,'],
+				highestNote: "^a'"
+			}],
+			responsive: 'resize',
+			oneSvgPerLine: 'true',
+			selectTypes: false,
+			format: boxFontFormat
 		}
 	}
 
@@ -5580,19 +5639,7 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 		return;
 	}
 
-	//
-	// Keep track of how long it takes to render the notation 
-	//
-
-	// Get the current time for possible progress banner display
-	//currentTime = Date.now();
-
 	var visualObj = ABCJS.renderAbc(renderDivs, tune, params);
-
-	// How long did it take to render?
-	// var deltaTime = Date.now() - currentTime;
-
-	//console.log("deltaTime = "+deltaTime);
 
 	var svgTextArray = [];
 
@@ -5600,17 +5647,12 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 
 		var renderDivID = "notation" + tuneIndex;
 
-		// Bei Whistle rendert er zunächst erst eine Linie mit Mandolinentabs, also Zahlen.
-		// Diese werden hier anschließend ersetzt durch Buchstaben. 
-		// Die Elemente, wo die drin sind heißen tspan - die kriegen zusätzlich die Klasse "whistle", die wir über CSS vordefinieren.
 		if (instrument == "whistle") {
 
-			// hiermit findet er alle g's, die eine Tabzahl sind. 
 			var Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g > [class="abcjs-top-line"]');
 
 			for (x = 0; x < Tabstriche.length; x++) {
 
-				// Wenn es nur Note und Tab geht - nur beim Tab die Linien ausblenden.
 				if (x % 2 != 0) {
 
 					Tabstriche[x].setAttribute("class", "tabstrich");
@@ -5626,8 +5668,6 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 
 			var Tspans = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g[data-name="tabNumber"] > text > tspan');
 
-			// Sämtliche Tspan Tags, die zu Tags und nicht Noten gehören, haben jetzt Zahlen auf einem String (D). Diese können jetzt in Whistle Tags umgewandelt werden.
-			// Dazu werden die Buchstaben mit dem jeweiligen Unicode Buchstaben des TinWhistleFingering Fonts ersetzt.
 			for (x = 0; x < Tspans.length; x++) {
 				
 				Tspans[x].setAttribute("class", "whistle");
@@ -5712,17 +5752,123 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 					Tspans[x].innerHTML = "A";
 				}
 			}
-	  	}
+		}
+
+		//
+		// Box tablature
+		//
+		if ((instrument == "bc") || (instrument == "cd")){
+
+			var Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g > [class="abcjs-top-line"]');
+
+			for (x = 0; x < Tabstriche.length; x++) {
+
+				if (x % 2 != 0) {
+
+					Tabstriche[x].setAttribute("class", "tabstrich");
+
+					var Geschwisterstriche = getNextSiblings(Tabstriche[x]);
+
+					for (y = 0; y < Geschwisterstriche.length; y++) {
+						Geschwisterstriche[y].setAttribute("class", "tabstrich");
+					}
+
+				}
+			}
+
+			var Tspans = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g[data-name="tabNumber"] > text > tspan');
+
+			for (x = 0; x < Tspans.length; x++) {
+				
+				if (Tspans[x].innerHTML == "0") { 			// D#3
+					Tspans[x].innerHTML = "①↓";
+				} else if (Tspans[x].innerHTML == "1") {	// E3
+					Tspans[x].innerHTML = "1↓";
+				} else if (Tspans[x].innerHTML == "2") {	// F3
+					Tspans[x].innerHTML = "x";
+				} else if (Tspans[x].innerHTML == "3") {	// F#3
+					Tspans[x].innerHTML = "②↓";
+				} else if (Tspans[x].innerHTML == "4") {	// G3
+					Tspans[x].innerHTML = "2↓";
+				} else if (Tspans[x].innerHTML == "5") {	// G#3
+					Tspans[x].innerHTML = "①↑";
+				} else if (Tspans[x].innerHTML == "6") {	// A3
+					Tspans[x].innerHTML = "1↑";
+				} else if (Tspans[x].innerHTML == "7") {	// A#3
+					Tspans[x].innerHTML = "②↑";
+				} else if (Tspans[x].innerHTML == "8") {	// B3
+					Tspans[x].innerHTML = "2↑";
+				} else if (Tspans[x].innerHTML == "9") {	// C4
+					Tspans[x].innerHTML = "3↓";
+				} else if (Tspans[x].innerHTML == "10") {	// C#4
+					Tspans[x].innerHTML = "③↑";
+				} else if (Tspans[x].innerHTML == "11") {	// D4
+					Tspans[x].innerHTML = "3↑";
+				} else if (Tspans[x].innerHTML == "12") {	// D#4
+					Tspans[x].innerHTML = "④↓";
+				} else if (Tspans[x].innerHTML == "13") {	// E4
+					Tspans[x].innerHTML = "4↓";
+				} else if (Tspans[x].innerHTML == "14") {	// F4
+					Tspans[x].innerHTML = "4↑";
+				} else if (Tspans[x].innerHTML == "15") {	// F#4
+					Tspans[x].innerHTML = "⑤↓";
+				} else if (Tspans[x].innerHTML == "16") {	// G4
+					Tspans[x].innerHTML = "5↓";
+				} else if (Tspans[x].innerHTML == "17") {	// G#4
+					Tspans[x].innerHTML = "⑤↑";
+				} else if (Tspans[x].innerHTML == "18") {	// A4
+					Tspans[x].innerHTML = "5↑";
+				} else if (Tspans[x].innerHTML == "19") {	// A#4
+					Tspans[x].innerHTML = "⑥↑";
+				} else if (Tspans[x].innerHTML == "20") {	// B4
+					Tspans[x].innerHTML = "6↑";
+				} else if (Tspans[x].innerHTML == "21") {	// C5
+					Tspans[x].innerHTML = "6↓";
+				} else if (Tspans[x].innerHTML == "22") {	// C#5
+					Tspans[x].innerHTML = "⑦↑";
+				} else if (Tspans[x].innerHTML == "23") {	// D5
+					Tspans[x].innerHTML = "7↑";
+				} else if (Tspans[x].innerHTML == "24") {	// D#5
+					Tspans[x].innerHTML = "⑦↓";
+				} else if (Tspans[x].innerHTML == "25") {	// E5
+					Tspans[x].innerHTML = "7↓";
+				} else if (Tspans[x].innerHTML == "26") {	// F5
+					Tspans[x].innerHTML = "8↑";
+				} else if (Tspans[x].innerHTML == "27") {	// F#5
+					Tspans[x].innerHTML = "⑧↓";
+				} else if (Tspans[x].innerHTML == "28") {	// G5
+					Tspans[x].innerHTML = "8↓";
+				} else if (Tspans[x].innerHTML == "29") {	// G#5
+					Tspans[x].innerHTML = "⑨↑";
+				} else if (Tspans[x].innerHTML == "30") {	// A5
+					Tspans[x].innerHTML = "9↑";
+				} else if (Tspans[x].innerHTML == "31") {	// A#5
+					Tspans[x].innerHTML = "⑩↑";
+				} else if (Tspans[x].innerHTML == "32") {	// B5
+					Tspans[x].innerHTML = "10↑";
+				} else if (Tspans[x].innerHTML == "33") {	// C5
+					Tspans[x].innerHTML = "9↓";
+				} else if (Tspans[x].innerHTML == "34") {	// C#5
+					Tspans[x].innerHTML = "⑪↑ ";
+				} else if (Tspans[x].innerHTML == "35") {	// D5
+					Tspans[x].innerHTML = "x";
+				} else if (Tspans[x].innerHTML == "36") {   // D#5
+					Tspans[x].innerHTML = "⑩↓";
+				} else if (Tspans[x].innerHTML == "37") {	// E5
+					Tspans[x].innerHTML = "10↓";
+				} else  {	// All other notes
+					Tspans[x].innerHTML = "x";
+				} 
+			}
+		}
 
 		if (instrument == "notenames") {
 
 			var useSharps = true;
 
-			// hiermit findet er alle g's, die eine Tabzahl sind. 
 			var Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g > [class="abcjs-top-line"]');
 
 			for (x = 0; x < Tabstriche.length; x++) {
-				// Wenn es nur Note und Tab geht - nur beim Tab die Linien ausblenden.
 				if (x % 2 != 0) {
 					Tabstriche[x].setAttribute("class", "tabstrich");
 
@@ -5757,14 +5903,11 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 							useSharps = false;
 
 						}
-
 					}
 
 					var Tspans = theSVG.querySelectorAll('g[data-name="tabNumber"] > text > tspan');
 
 					if (useSharps) {
-						// Sämtliche Tspan Tags, die zu Tags und nicht Noten gehören, haben jetzt Zahlen auf einem String (D). Diese können jetzt in Whistle Tags umgewandelt werden.
-						// Dazu werden die Buchstaben mit dem jeweiligen Unicode Buchstaben des TinWhistleFingering Fonts ersetzt.
 						for (x = 0; x < Tspans.length; x++) {
 							if (Tspans[x].innerHTML == "0") {
 								Tspans[x].innerHTML = "G,";
@@ -6854,6 +6997,8 @@ function IdleCapoControl(){
 		case "noten":
 		case "notenames":
 		case "whistle":
+		case "bc":
+		case "cd":
 			break;
 
 		case "mandolin":
@@ -7244,6 +7389,8 @@ function FillUrlBoxWithAbcInLZW() {
 		case "noten":
 		case "notenames":
 		case "whistle":
+		case "bc":
+		case "cd":
 			break;
 
 		case "mandolin":
@@ -7508,6 +7655,12 @@ function GenerateQRCode(e) {
 					break;
 				case "whistle":
 					postfix = "<br/><br/>(Whistle Tab)";
+					break;
+				case "bc":
+					postfix = "<br/><br/>(B/C Box Tab)";
+					break;
+				case "cd":
+					postfix = "<br/><br/>(C#/D Box Tab)";
 					break;
 			}
 
@@ -8451,6 +8604,8 @@ function IdleShowTabNamesControl(){
 		case "noten":
 		case "notenames":
 		case "whistle":
+		case "bc":
+		case "cd":
 			break;
 
 		case "mandolin":
@@ -9194,11 +9349,10 @@ function InjectOneTuneABCNoteNameLyrics(theTune){
 	
 }
 
-
 //
 // Inject note name lyrics in the selected tunes
 //
-function InjectABCNoteNameLyrics() {
+function InjectABCNoteNameLyrics(){
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
@@ -9251,8 +9405,6 @@ function DoInjectABCNoteNameLyrics(e){
 		InjectABCNoteNameLyrics();
 		
 		RenderAsync(true,null);
-
-
 	}
 }
 
@@ -10080,6 +10232,10 @@ var gAlwaysInjectVolumes = false;
 var gTheBassVolume = 64;
 var gTheChordVolume = 48;
 
+// User setting for the Box tab fontsize
+var gBoxTabFontSize = "12";
+
+
 // Get the initial configuration settings from local browser storage, if present
 function GetInitialConfigurationSettings(){
 
@@ -10131,6 +10287,14 @@ function GetInitialConfigurationSettings(){
 		gTheChordVolume = 48;
 	}
 
+	val = localStorage.BoxTabFontSize;
+	if (val){
+		gBoxTabFontSize = val;
+	}
+	else{
+		gBoxTabFontSize = 12;
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -10150,6 +10314,7 @@ function SaveConfigurationSettings(){
 		localStorage.AlwaysInjectVolumes = gAlwaysInjectVolumes;
 		localStorage.TheBassVolume = gTheBassVolume;
 		localStorage.TheChordVolume = gTheChordVolume;
+		localStorage.BoxTabFontSize = gBoxTabFontSize;
 	}
 }
 
@@ -10168,6 +10333,7 @@ function ConfigureMIDISettings() {
 	var theBassVolume = gTheBassVolume;
 	var theChordVolume = gTheChordVolume;
 
+	var theBoxTabFontSize = gBoxTabFontSize;
 
 	// Setup initial values
 	const theData = {
@@ -10177,22 +10343,24 @@ function ConfigureMIDISettings() {
 	  configure_inject_volumes: bAlwaysInjectVolumes,
 	  configure_bass_volume: theBassVolume,
 	  configure_chord_volume: theChordVolume,
+	  configure_box_tab_fontsize: theBoxTabFontSize,
 
 	};
 
 	const form = [
-	  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica">Select Default MIDI Instrument Programs and Volumes</p>'},
-	  {html: '<p style="margin-top:24px;font-size:14pt;line-height:16pt;font-family:helvetica">Enabling these options will always use your selected MIDI instrument programs and volumes as the defaults when playing tunes.</p>'},	  
+	  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica">ABC Transcription Tools Settings</p>'},
+	  {html: '<p style="margin-top:10px;font-size:14pt;line-height:16pt;font-family:helvetica">Enabling these options will always use your selected MIDI instrument programs and volumes as the defaults when playing tunes.</p>'},	  
 	  {name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default Melody MIDI program (0-135):", id: "configure_melody_program", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default Bass/Chords MIDI program (0-135):", id: "configure_chord_program", type:"number", cssClass:"configure_settings_form_text"},
-	  {html: '<p style="margin-top:24px;font-size:14pt;line-height:16pt;font-family:helvetica">If there is already a %%MIDI program or %%MIDI chordprog directive in the ABC, the value in the ABC will override the default value.</p>'},	  
-	  {html: '<p style="font-size:14pt;font-family:helvetica;margin-bottom:36px;margin-top:36px;text-align:center"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'},
+	  {html: '<p style="margin-top:10px;font-size:14pt;line-height:16pt;font-family:helvetica">If there is already a %%MIDI program or %%MIDI chordprog directive in the ABC, the value in the ABC will override the default value.</p>'},	  
+	  {html: '<p style="font-size:14pt;font-family:helvetica;margin-bottom:20px;margin-top:20px;text-align:center"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'},
 	  {name: "            Use Default Bass/Chord volumes when playing tunes", id: "configure_inject_volumes", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default Bass MIDI volume (0-127):", id: "configure_bass_volume", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default Chords MIDI volume (0-127):", id: "configure_chord_volume", type:"number", cssClass:"configure_settings_form_text"},
-	  {html: '<p style="margin-top:24px;font-size:14pt;line-height:16pt;font-family:helvetica">If there are already a %%MIDI bassvol or %%MIDI chordvol directive in the ABC, the value in the ABC will override the default value.</p>'},	  
-	  {html: '<p style="margin-top:24px;font-size:14pt;line-height:16pt;font-family:helvetica">To change the Melody volume, add a dynamics indication such as !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! immediately before the first note in the ABC.</p>'},	  
+	  {html: '<p style="margin-top:10px;font-size:14pt;line-height:16pt;font-family:helvetica">If there are already a %%MIDI bassvol or %%MIDI chordvol directive in the ABC, the value in the ABC will override the default value.</p>'},	  
+	  {html: '<p style="margin-top:10px;font-size:14pt;line-height:16pt;font-family:helvetica">To change the Melody volume, add a dynamics indication such as !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! immediately before the first note in the ABC.</p>'},	  
+	  {name: "Box Tablature Font Size:", id: "configure_box_tab_fontsize", type:"number", cssClass:"configure_settings_form_text"},
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50, width: 680 } ).then(function(args){
@@ -10207,6 +10375,18 @@ function ConfigureMIDISettings() {
 			gAlwaysInjectVolumes = args.result.configure_inject_volumes;
 			gTheBassVolume = args.result.configure_bass_volume;
 			gTheChordVolume = args.result.configure_chord_volume;
+
+			var fontsize = args.result.configure_box_tab_fontsize;
+
+			// Just in case
+			fontsize = fontsize.replace("pt","");
+			fontsize = fontsize.trim();
+
+			var oldBoxTabFontSize = gBoxTabFontSize;
+
+			if (!(isNaN(parseFloat(fontsize)))){
+				gBoxTabFontSize = fontsize;
+			}
 
 			// Sanity check the values
 			if (isNaN(parseInt(gTheMelodyProgram))){
@@ -10278,6 +10458,19 @@ function ConfigureMIDISettings() {
 
 			// Update local storage
 			SaveConfigurationSettings();
+
+			// If in a box tab, and the font size changed, force a refresh
+			if (oldBoxTabFontSize != gBoxTabFontSize){
+
+				var tabs = GetRadioValue("notenodertab");
+
+				if ((tabs == "bc") || (tabs = "cd")){
+
+					RenderAsync(true,null);
+
+				}
+
+			}
 
 		}
 
