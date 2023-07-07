@@ -4265,6 +4265,9 @@ function ExportTextIncipitsPDF(title){
 
 	pdf = new jsPDF('p', 'pt', paperStyle);	
 
+	// Set the initial PDF display mode
+	pdf.setDisplayMode("fullpage","single","UseNone");
+
 	// Creates a sharper image
 	pdf.internal.scaleFactor = PDFSCALEFACTOR;
 
@@ -4743,6 +4746,9 @@ function ExportNotationPDF(title) {
 		gRenderingPDF = true;
 
 		pdf = new jsPDF('p', 'pt', paperStyle);
+
+		// Set the initial PDF display mode
+		pdf.setDisplayMode("fullpage","single","UseNone");
 
 		// If not doing single page, find any tunes that have page break requests
 		pageBreakList = [];
@@ -10889,5 +10895,5 @@ WaitForReady(DoStartup);
 //
 // TinyURL API key
 //
-var gTinyURLAPIKey = "Bearer <YOUR_TINYURL_API_KEY_HERE>";
+var gTinyURLAPIKey = "Bearer <YOUR_TINY_URL_API_KEY_HERE>";
 
