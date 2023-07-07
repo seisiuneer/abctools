@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+      
         <style>
         p {
         font-size:14pt;
@@ -192,11 +192,11 @@
             <hr class="hidden-print" id="introduction">
             <h1 class="page_break_never">Introduction&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <div class="image_holder">
-                <img src="img/main_4.jpg"/>
+                <img src="img/main_5.jpg"/>
             </div>
-            <p>ABC Transcription Tools is a free, web-based, open-source tool for converting music in ABC format to standard notation and tablature.</p>
+            <p>ABC Transcription Tools is a free, web-based, open-source tool for converting music in ABC format to both standard notation and tablature for a wide variety of instruments.</p>
             <p>Play your tunes with high-quality, built-in sampled instruments.</p>
-            <p>Generate tunebook PDF files with title pages, table of contents, tune index, custom headers, footers, tune incipits (notation or raw ABC), and sharing QR codes using the tool's built-in PDF Export feature.</p>            
+            <p>Create PDF tunebooks with title pages, table of contents, tune index, custom headers, footers, hyperlinks, tune incipits (notation or raw ABC), and sharing QR codes using the tool's built-in PDF Export feature.</p>            
             <p>It also has easy-to-use features to transpose and sort your ABC tunebooks.</p>
             <p>You can fully customize the look of your notation using the standard ABC spacing and font annotations.</p>
             <p>The tool also includes the ability to easily share your tunes with others via Share URLs and QR Codes.</p>
@@ -207,7 +207,9 @@
             <div class="image_holder">
                 <img src="img/ug1b.jpg"/>
             </div>
-            <p>Hover your mouse over any button or control in the tool to show a tooltip explaining what it does.</p>
+            <p>Hover your mouse over any button or control in the tool to show a tooltip with a detailed explanation of what it does.</p>
+            <p>Some buttons and controls implement alternative features if you Shift-click, Alt-click, or Shift+Alt-click on them.</p>
+            <p>The tooltip will tell you exactly what the button or control does for all Shift/Alt combinations.</p>
             <p>The text on top shows currently loaded ABC file or Share URL name and the current number of tunes found in the ABC Editor.</p>
             <p>New - Creates a simple example tune in ABC to get you started.</p>
             <p>Open - Opens an .abc or .txt file from your computer and loads it into the ABC Editor.</p>
@@ -246,18 +248,39 @@
             <hr class="hidden-print" id="notation_tablature_display_controls">
             <h1 class="page_break_always">Notation/Tablature Display Controls&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <div class="image_holder">
-                <img src="img/ug4b.jpg"/>
+                <img src="img/ug4c.jpg"/>
             </div>
             <p>These control how the notation is displayed.</p>
-            <p>Sheet Music - Standard notation only.</p>
-            <p>Note Names - Shows standard notation and note names below.</p>
-            <p>Mandolin - Shows standard notation and tablature for Mandolin.</p>
-            <p>Zouk GDAD - Shows standard notation and tablature for GDAD-tuned Bouzouki.</p>
-            <p>Mandola - Shows standard notation and tablature for CGDA-tuned Mandola.</p>
-            <p>Guitar - Shows standard notation and tablature for standard EADGBE-tuned guitar.</p>
-            <p>DADGAD - Shows standard notation and tablature for DADGAD-tuned guitar.</p>
-            <p>Whistle Tab - Shows standard notation and tablature for whistle in the key of D.</p>
-            <p><strong>Note:</strong> For notes that go below D on of the whistle, the suggested "folded" octave-up fingerings are shown.</p>
+            <p><strong>Notation</strong> - Standard notation only.</p>
+            <p><strong>Names</strong> - Shows standard notation and note names below.</p>
+            <p><strong>Mandolin</strong> - Shows standard notation and tablature for Mandolin.</p>
+            <p><strong>GDAD</strong> - Shows standard notation and tablature for GDAD-tuned Bouzouki.</p>
+            <p><strong>CGDA</strong> - Shows standard notation and tablature for CGDA-tuned Mandola.</p>
+            <p><strong>Guitar</strong> - Shows standard notation and tablature for standard EADGBE-tuned guitar.</p>
+            <p><strong>DADGAD</strong> - Shows standard notation and tablature for DADGAD-tuned guitar.</p>
+            <p><strong>Whistle</strong> - Shows standard notation and fingering tablature for tin whistle in the key of D.</p>
+            <p>Note: For notes that go below D on of the whistle, the suggested "folded" octave-up fingerings are shown.</p>
+            <p></p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/2rduXDq1nLg " title="B/C and C#/D Box Tablature Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p></p>
+            <p><strong>B/C</strong> - Shows standard notation and tablature for a 21-button B/C tuned diatonic accordion.</p>
+            <p>Notes on the C-row are indicated by numbers.</p>
+            <p>Notes on the B-row are indicated by numbers in circles.</p>
+            <p>Push is indicated with a down arrow.</p>
+            <p>Draw is indicated with an up arrow.</p>
+            <p><strong>C#/D</strong> - Shows standard notation and tablature for a 21-button C#/D tuned diatonic accordion.</p>
+            <p>Notes on the D-row are indicated by numbers.</p>
+            <p>Notes on the C#-row are indicated by numbers in circles.</p>
+            <p>Push is indicated with a down arrow.</p>
+            <p>Draw is indicated with an up arrow.</p>
+            <p class="page_break_always"><strong>Changing the B/C and C#/D Box tablature font size:</strong></p>
+            <p>Click the "Settings" button at the top of the tool to bring up a dialog where you can set the font size used for the box tablature. The default is 12 pt.</p>
+            <p>Selecting a smaller font size like 9 or 10 pt will help fit more box tablature in denser notation like reels and hornpipes.</p>
+            <p>The font size setting will be saved and used the next time you run the tool.</p>
+            <p><strong>Assumptions about the B/C and C#/D Box tablature solutions:</strong></p>
+            <p>The tablature solution assumes that the "magic" notes (E and B on a B/C, F# and C# on a C#/D) that are available on both rows, will be played on the C-row on a B/C box and on the D-row on a C#/D box.</p>
+            <p><strong>Use of the B/C and C#/D Box tablatures on a 23-button instrument:</strong></p>
+            <p>If you are playing a 23-button instrument, you will need to shift your start position one button higher when playing.</p>
             <hr class="hidden-print" id="basic_controls">
             <h1 class="page_break_always">Basic Controls&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <div class="image_holder">
@@ -392,9 +415,9 @@
             <hr class="hidden-print" id="selecting_default_instruments_for_playing_tunes">
             <h1 class="page_break_always">Selecting Default Instruments and Volumes for Playing Tunes&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/fufQFUISym4" title="Selecting Default Instruments for Playing Tunes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p>Clicking the "Settings" button at the top of the tool brings up a dialog where you can select default MIDI programs and volumes to use for the Melody, Bass, and Chords:</p>
+            <p>Clicking the "Settings" button at the top of the tool brings up a dialog where you can select default MIDI programs and volumes to use for the Melody, Bass, and Chords, as well as other tool-wide settings:</p>
             <div class="image_holder">
-                <img src="img/default_program_volume_dialog_3.jpg"/>
+                <img src="img/default_program_volume_dialog_4.jpg"/>
             </div>
             <p>If a %%MIDI program or %%MIDI chordprog directive is already present in the tune when playing, it will take precedence over the default program values.</p>
             <p>If a %%MIDI bassvol or %%MIDI chordvol directive is already present in the tune when playing, it will take precedence over the default volume values.</p>
