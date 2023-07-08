@@ -245,7 +245,8 @@ margin-top:20px;
 }
 
 #staff-spacing{
-padding-top:7px;
+padding-top:4px;
+padding-bottom:4px;
 width:50px;
 margin-top:6px;
 margin-left:4px;
@@ -257,7 +258,8 @@ font-size:11pt;
 }
 
 #capo{
-padding-top:7px;
+padding-top:4px;
+padding-bottom:4px;
 width:35px;
 margin-top:6px;
 margin-right:10px;
