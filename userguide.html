@@ -321,8 +321,8 @@
             <p>This makes it simple to paste any changes you might have made and copied from the abcjs Quick Editor.</p>
             <hr class="hidden-print" id="selecting_the_instruments_for_playback">
             <h1 class="page_break_always">Selecting the Instruments for Playback&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
-            <p>You may choose which instrument sounds are used for the melody and bass/chord when playing tunes.</p>
-            <p>By default, the melody and bass/chord instrument used is a piano.</p>
+            <p>You may choose which instrument sounds are used for the melody and bass/chords when playing tunes.</p>
+            <p>By default, the melody and bass/chords instrument used is a piano.</p>
             <p></p>
             <p><strong>Choosing the Melody Instrument Sound</strong></p>
             <p></p>
@@ -344,7 +344,7 @@
             B2 B dBd | ege dBd | gfg aga |1 bgg g2A :|2 bgg g2D |]</p>
             <p></p>
             <p>To change the instrument used for the melody, try changing the MIDI program # above to one of:</p>
-            <p>Piano: 0, Hammered Dulcimer: 15, Accordion: 21, Flute: 73, Whistle: 78, Fiddle: 110, Uilleann Pipes: 129, Scottish Smallpipes (D): 130, Scottish Smallpipes (A): 131, Säckpipa: 132, Concertina: 133, Melodica: 134, Cajun Accordion: 135</p>
+            <p>Piano: 0, Hammered Dulcimer: 15, Accordion: 21, Fingered Bass: 33, Flute: 73, Whistle: 78, Fiddle: 110, Uilleann Pipes: 129, Scottish Smallpipes (D): 130, Scottish Smallpipes (A): 131, Säckpipa: 132, Concertina: 133, Melodica: 134, Cajun Accordion: 135</p>
             <p></p>
             <p>By default, if you have chords in the ABC, the instrument used for the chord playback is a piano.</p>
             <p></p>
@@ -716,6 +716,8 @@
             <p class="hidden-print" >Details on tune playback hyperlinks:</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/EcSknrJOxBE" title="Tune Playback Hyperlinks" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p></p>
+            <p><strong>Adding an external website hyperlink to a specific tune:</strong></p>
+            <p></p>
             <p>The tool can add hyperlinks to external websites to the tune notation in a PDF tunebook.</p>
             <p></p>
             <p>Tune hyperlinks are available for tune notation and tune incipits tunebooks, and are not available for ABC text incipit tunebooks.</p>
@@ -730,27 +732,37 @@
             <p>%hyperlink http://michaeleskin.com</p>
             <p>%hyperlink https://cnn.com</p>
             <p></p>
-            <p>To add a hyperlink back to the ABC Transcription Tools for playing a specific tune with a specific General MIDI instrument program number sound, add the following comment-based annotation anywhere in the ABC for a specific tune:</p>
+            <p><strong>Adding a playback hyperlink to a specific tune:</strong></p>
             <p></p>
-            <p>%add_playback_link MIDI_PROGRAM_NUMBER</p>
+            <p>To add a hyperlink back to the ABC Transcription Tools for playing a specific tune with specific General MIDI instrument program number sounds for the melody and the bass/chords, add the following comment-based annotation anywhere in the ABC for a specific tune:</p>
             <p></p>
+            <p>%add_playback_link MELODY_PROGRAM BASS_CHORD_PROGRAM</p>
             <p></p>
-            <p>The MIDI_PROGRAM_NUMBER is optional.</p>
+            <p>The MELODY_PROGRAM and BASS_CHORD_PROGRAM are optional.</p>
+            <p>If not specified, they will first be set by the programs specified in an %add_all_playback_links annotation if found in the ABC.</p>
+            <p>If not specified, and no %add_all_playback_links is present in the ABC, the values will be set to the default instrument program number settings for playback in the "Settings" dialog.</p>
             <p></p>
-            <p>Some MIDI program numbers for the I recommend:</p>
-            <p>Piano: 0, Accordion: 21, Guitar: 25, Whistle: 78</p>
+            <p>Some MIDI program numbers I recommend for the melody:</p>
             <p></p>
-            <p style="page-break-before: always;">Example: To have a specific tune played with an accordion sound</p>
+            <p>Piano: 0, Accordion: 21, Fingered Bass: 33, Guitar: 25, Whistle: 78</p>
+            <p></p>
+            <p>Some MIDI program numbers I recommend for the bass/chords:</p>
+            <p></p>
+            <p>Piano: 0, Electric Piano: 5, Organ: 19, Guitar: 25, Bass: 34, Synth Bass: 38</p>
+            <p></p>
+            <p style="page-break-before: always;">Example: To have a specific tune played with an Accordion sound on the melody and a Piano sound on the chord/bass</p>
             <p></p>
             <p>X:1<br/>
                 T:The Tarbolton<br/>
                 M:4/4<br/>
                 K:Edor<br/>
-                %add_playback_link 21<br/>
+                %add_playback_link 21 0<br/>
                 Beed e2BA|GBAF GFEF|Dddc d2AG|FAGE FEDF|<br/>
                 Eeed efge|fedf e2BA|GABG FGAF|BGAF GEE2:|<br/>
                 |:gfef gebe|gebe gfec|d2fd Adfd|cdAG FDEF|<br/>
             GABG FGAF|E2ef gfed|BcdB A2FA|BGAF GEE2:|</p>
+            <p></p>
+            <p><strong>Adding a thesession.org hyperlink to a specific tune:</strong></p>
             <p></p>
             <p>To add a hyperlink to a specific tune to the thesession.org search page for the tune title, add the following comment-based annotation anywhere in the ABC for a specific tune:</p>
             <p></p>
@@ -770,19 +782,28 @@
             <p></p>
             <p>Precedence order for multiple manually added hyperlinks on one specific tune is website hyperlinks take highest priority, then playback hyperlinks, then thesession.org hyperlinks.</p>
             <p></p>
-            <p><strong>Adding playback or thesession.org hyperlinks to every tune in a PDF tunebook:</strong></p>
+            <p><strong>Adding playback hyperlinks to every tune in a PDF tunebook:</strong></p>
             <p></p>
-            <p>You may automatically add a hyperlink for every tune back to the ABC Transcription Tools for playing the tune with a specific General MIDI instrument program number sound by adding the following comment-based annotation anywhere in the ABC file:</p>
+            <p>You may automatically add a hyperlink for every tune back to the ABC Transcription Tools for playing the tune with a specific General MIDI instrument program number sound for the melody and the bass/chords by adding the following comment-based annotation anywhere in the ABC file:</p>
             <p></p>
-            <p>%add_all_playback_links MIDI_PROGRAM_NUMBER</p>
+            <p>%add_all_playback_links MELODY_PROGRAM BASS_CHORD_PROGRAM</p>
             <p></p>
-            <p>The MIDI_PROGRAM_NUMBER is optional.</p>
+            <p>The MELODY_PROGRAM and BASS_CHORD_PROGRAM are optional.</p>
             <p></p>
-            <p>Some MIDI program numbers for the I recommend:</p>
-            <p>Piano: 0, Accordion: 21, Guitar: 25, Whistle: 78</p>
+            <p>If not specified, the values will be set to the current default instrument program number settings for playback in the "Settings" dialog.</p>
             <p></p>
-            <p>Example: To have all tunes played with an Accordion sound</p>
-            <p>%add_all_playback_links 21</p>
+            <p>Some MIDI program numbers I recommend for the melody:</p>
+            <p></p>
+            <p>Piano: 0, Accordion: 21, Fingered Bass: 33, Guitar: 25, Whistle: 78</p>
+            <p></p>
+            <p>Some MIDI program numbers I recommend for the bass/chords:</p>
+            <p></p>
+            <p>Piano: 0, Electric Piano: 5, Organ: 19, Guitar: 25, Bass: 34, Synth Bass: 38</p>
+            <p></p>
+            <p>Example: To have all tunes played with an Accordion sound on the melody and a Piano sound on the chords/bass:</p>
+            <p>%add_all_playback_links 21 0</p>
+            <p></p>
+            <p><strong>Adding thesession.org hyperlinks to every tune in a PDF tunebook:</strong></p>
             <p></p>
             <p>You may automatically add a hyperlink for every tune to the thesession.org search page for the tune title by adding the following comment-based annotation anywhere in the ABC file:</p>
             <p></p>
