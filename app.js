@@ -148,7 +148,8 @@ var gAddIndexLinkback = false;
 var gTuneHyperlinks = [];
 var gAddTheSessionHyperlinks = false;
 var gAddPlaybackHyperlinks = false;
-var gPlaybackHyperlinkProgram = "";
+var gPlaybackHyperlinkMelodyProgram = "";
+var gPlaybackHyperlinkBassChordProgram = "";
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -1592,17 +1593,14 @@ function GetAllTuneHyperlinks(theLinks) {
 
 			// Strip out tempo markings
 			tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
+				
+			// Strip out the X: tag
+			var searchRegExp = /^X:.*[\r\n]*/gm 
 
-			if (thePatch != ""){
+			// Strip out tempo markings
+			tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
 
-				tuneWithPatch = "X:1\n%%MIDI program "+gPlaybackHyperlinkProgram+"\n"+tuneWithPatch;
-
-			}
-			else{
-
-				tuneWithPatch = "X:1\n"+tuneWithPatch;
-
-			}
+			tuneWithPatch = "X:1\n%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkBassChordProgram+"\n"+tuneWithPatch;
 
 			// Create a share URL for this tune
 			var theURL = FillUrlBoxWithAbcInLZW(tuneWithPatch);
@@ -1644,25 +1642,43 @@ function GetAllTuneHyperlinks(theLinks) {
 			var tuneWithPatch = thisTune;
 
 			var thePatch = addPlaybackHyperlink[0].replace("%add_playback_link","");
-				
-			thePatch = thePatch.trim();
 
+			var thePatches = thePatch.match(/\b(\w+)\b/g);
+
+			// Initially, use the defaults
+			var theMelodyPatch = gTheMelodyProgram;
+			var theBassChordPatch = gTheChordProgram;
+
+			// If adding complete tunebook patches, they take precedence over the defaults
+			if (gAddPlaybackHyperlinks){
+
+				theMelodyPatch = gPlaybackHyperlinkMelodyProgram;
+				theBassChordPatch = gPlaybackHyperlinkBassChordProgram;
+
+			}
+
+			if (thePatches && (thePatches.length > 0)){
+
+				if (thePatches.length >= 1){
+					theMelodyPatch = thePatches[0];
+					theMelodyPatch = theMelodyPatch.trim();
+				}
+
+				if (thePatches.length > 1){
+					theBassChordPatch = thePatches[1];
+					theBassChordPatch = theBassChordPatch.trim();
+				}
+
+
+			}
+				
 			// Strip out the X: tag
 			var searchRegExp = /^X:.*[\r\n]*/gm 
 
 			// Strip out tempo markings
 			tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
 
-			if (thePatch != ""){
-
-				tuneWithPatch = "X:1\n%%MIDI program "+thePatch+"\n"+tuneWithPatch;
-
-			}
-			else{
-
-				tuneWithPatch = "X:1\n"+tuneWithPatch;
-
-			}
+			tuneWithPatch = "X:1\n%%MIDI program "+theMelodyPatch+"\n"+"%%MIDI chordprog "+theBassChordPatch+"\n"+tuneWithPatch;
 
 			// Create a share URL for this tune
 			var theURL = FillUrlBoxWithAbcInLZW(tuneWithPatch);
@@ -3433,7 +3449,6 @@ function ParseCommentCommands(theNotes){
 
 	// Include playback links for every tune
 	gAddPlaybackHyperlinks = false;
-	gPlaybackHyperlinkProgram = "";
 
 	// Search for a playback link request
 	searchRegExp = /^%add_all_playback_links.*$/m
@@ -3446,9 +3461,27 @@ function ParseCommentCommands(theNotes){
 		gAddPlaybackHyperlinks = true;
 
 		var thePatch = addPlaybackHyperlinks[0].replace("%add_all_playback_links","");
-		
-		gPlaybackHyperlinkProgram = thePatch.trim();
-		
+
+		thePatch = thePatch.trim();
+
+		var thePatches = thePatch.match(/\b(\w+)\b/g);
+
+		gPlaybackHyperlinkMelodyProgram = gTheMelodyProgram;
+		gPlaybackHyperlinkBassChordProgram = gTheChordProgram;
+
+		if (thePatches && (thePatches.length > 0)){
+
+			if (thePatches.length >= 1){
+				gPlaybackHyperlinkMelodyProgram = thePatches[0];
+				gPlaybackHyperlinkMelodyProgram = gPlaybackHyperlinkMelodyProgram.trim();
+			}
+
+			if (thePatches.length > 1){
+				gPlaybackHyperlinkBassChordProgram = thePatches[1];
+				gPlaybackHyperlinkBassChordProgram = gPlaybackHyperlinkBassChordProgram.trim();
+			}	
+
+		}
 	}
 
 	// Check my work
@@ -3460,7 +3493,8 @@ function ParseCommentCommands(theNotes){
 	// console.log("gAddIndexLinkback = "+gAddIndexLinkback);
 	// console.log("gAddTheSessionHyperlinks = "+gAddTheSessionHyperlinks);
 	// console.log("gAddPlaybackHyperlinks = "+gAddPlaybackHyperlinks);
-	// console.log("gPlaybackHyperlinkProgram = "+gPlaybackHyperlinkProgram);
+	// console.log("gPlaybackHyperlinkMelodyProgram = "+gPlaybackHyperlinkMelodyProgram);
+	// console.log("gPlaybackHyperlinkBassChordProgram = "+gPlaybackHyperlinkBassChordProgram);
 
 }
 
@@ -7222,10 +7256,10 @@ function NewABC(){
 	theValue += '|:"Em"eB (3BBB eBgf|"Em"eBB2 gedB|"D"A/A/A FA DAFA|"D"A/A/A FA defg|\n';
 	theValue += '"Em"eB (3BBB eBgf|"Em"eBBB defg|"D"afec dBAF|1 "D"DEFD "Em"E2gf:|2 "D"DEFD "Em"E4|]\n';
 	theValue += "\n";
-	theValue += "% To choose the instrument used when playing a tune, try changing the MIDI program # above to:\n";
+	theValue += "% To choose the instrument used when playing a tune, try changing the MIDI programs above to:\n";
 	theValue += "%\n"
 	theValue += "% Melody:\n";
-	theValue += "% Piano: 0, Accordion: 21, Flute: 73, Whistle: 78, Fiddle: 110, Melodica: 134, Cajun Accordion: 135\n";
+	theValue += "% Piano: 0, Accordion: 21, Fingered Bass: 33, Flute: 73, Whistle: 78, Fiddle: 110, Melodica: 134, Cajun Accordion: 135\n";
 	theValue += "%\n";
 	theValue += "% Chords:\n";
 	theValue += "% Piano: 0, Electric Piano: 5, Organ: 19, Guitar: 25, Bass: 34, Synth Bass: 38\n";
@@ -8069,7 +8103,7 @@ function InjectMIDIInstrument(bIsChords) {
 		theDefaultProgram = "34";
 	}
 
-	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,  Hammered Dulcimer: 15,  Accordion: 21,  Flute: 73,  Whistle: 78,  Fiddle: 110,  Uilleann Pipes: 129,  Scottish Smallpipes (D): 130,  Scottish Smallpipes (A): 131,  Säckpipa: 132,  Concertina: 133,  Melodica: 134, Cajun Accordion: 135</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>';
+	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,  Hammered Dulcimer: 15,  Accordion: 21, Fingered Bass: 33,  Flute: 73,  Whistle: 78,  Fiddle: 110,  Uilleann Pipes: 129,  Scottish Smallpipes (D): 130,  Scottish Smallpipes (A): 131,  Säckpipa: 132,  Concertina: 133,  Melodica: 134, Cajun Accordion: 135</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>';
 
 	if (bIsChords){
 		thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,  Electric Piano: 5,  Organ: 19,  Accordion: 21,  Guitar: 25,  Bass: 34,  Synth Bass: 38</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>';
