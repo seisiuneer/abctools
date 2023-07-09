@@ -1587,9 +1587,20 @@ function GetAllTuneHyperlinks(theLinks) {
 
 			var tuneWithPatch = thisTune;
 
-			if (gPlaybackHyperlinkProgram != ""){
+			// Strip out the X: tag
+			var searchRegExp = /^X:.*[\r\n]*/gm 
 
-				tuneWithPatch = "%%MIDI program "+gPlaybackHyperlinkProgram+"\n"+tuneWithPatch;
+			// Strip out tempo markings
+			tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
+
+			if (thePatch != ""){
+
+				tuneWithPatch = "X:1\n%%MIDI program "+gPlaybackHyperlinkProgram+"\n"+tuneWithPatch;
+
+			}
+			else{
+
+				tuneWithPatch = "X:1\n"+tuneWithPatch;
 
 			}
 
@@ -1636,9 +1647,20 @@ function GetAllTuneHyperlinks(theLinks) {
 				
 			thePatch = thePatch.trim();
 
+			// Strip out the X: tag
+			var searchRegExp = /^X:.*[\r\n]*/gm 
+
+			// Strip out tempo markings
+			tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
+
 			if (thePatch != ""){
 
-				tuneWithPatch = "%%MIDI program "+thePatch+"\n"+tuneWithPatch;
+				tuneWithPatch = "X:1\n%%MIDI program "+thePatch+"\n"+tuneWithPatch;
+
+			}
+			else{
+
+				tuneWithPatch = "X:1\n"+tuneWithPatch;
 
 			}
 
@@ -9295,14 +9317,14 @@ function InjectPDFHeaders(e){
 		output += "%urlpageheader http://michaeleskin.com Page Header as Hyperlink\n";
 		output += "%urlpagefooter http://michaeleskin.com Page Footer as Hyperlink\n";
 		output += "%add_all_links_to_thesession\n";
-		output += "%add_all_playback_links 74\n";
+		output += "%add_all_playback_links 21\n";
 		output += "%pdfname your_pdf_filename\n"
 		output += "%qrcode\n";
 		output += "%\n";
 		output += "% These directives can be added to each tune:\n";
 		output += "%hyperlink http://michaeleskin.com\n";
 		output += "%add_link_to_thesession\n";
-		output += "%add_playback_link 49\n";
+		output += "%add_playback_link 21\n";
 		output += "\n";
 		
 		output += theNotes;
@@ -10964,5 +10986,5 @@ WaitForReady(DoStartup);
 //
 // TinyURL API key
 //
-var gTinyURLAPIKey = "Bearer <YOUR_TINYURL_API_TOKEN_HERE>";
+var gTinyURLAPIKey = "Bearer <YOUR_TINYURL_API_KEY_HERE>";
 
