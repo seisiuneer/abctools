@@ -1593,9 +1593,13 @@ function GetAllTuneHyperlinks(theLinks) {
 
 			}
 
-			var theData = encodeURIComponent(tuneWithPatch);
+			// Create a share URL for this tune
+			var theURL = FillUrlBoxWithAbcInLZW(tuneWithPatch);
 
-			theLinks[i].url = "https://editor.drawthedots.com?t="+theData;
+			// Add the play parameter
+			theURL += "&play=1"
+
+			theLinks[i].url = theURL;
 
 		}
 		else
@@ -1638,9 +1642,13 @@ function GetAllTuneHyperlinks(theLinks) {
 
 			}
 
-			var theData = encodeURIComponent(tuneWithPatch);
+			// Create a share URL for this tune
+			var theURL = FillUrlBoxWithAbcInLZW(tuneWithPatch);
 
-			theLinks[i].url = "https://editor.drawthedots.com?t="+theData;
+			// Add the play parameter
+			theURL += "&play=1"
+
+			theLinks[i].url = theURL;
 
 		}
 
@@ -2147,7 +2155,7 @@ function AppendQRCode(thePDF,paperStyle,callback){
 	if (!gDoForceQRCodeURLOverride){
 
 		// Need to have the share link available in the urltextbox
-		FillUrlBoxWithAbcInLZW();
+		FillUrlBoxWithAbcInLZW(null);
 
 		// Can we make a QR code from the current share link URL?
 		theURL = document.getElementById("urltextbox").value;
@@ -5518,7 +5526,7 @@ function RecalcShareURLPDF(){
 	// Since this is a Share URL parameter, update URL if required
 	if (document.getElementById("urlarea").style.display != "none") {
 
-		FillUrlBoxWithAbcInLZW();
+		FillUrlBoxWithAbcInLZW(null);
 
 	}
 
@@ -6354,7 +6362,7 @@ function Render(renderAll,tuneNumber) {
 		UpdateLocalStorage();
 
 		if (document.getElementById("urlarea").style.display != "none") {
-			FillUrlBoxWithAbcInLZW();
+			FillUrlBoxWithAbcInLZW(null);
 		}
 
 		// Hide the notation placeholder
@@ -7192,17 +7200,17 @@ function NewABC(){
 	theValue += '|:"Em"eB (3BBB eBgf|"Em"eBB2 gedB|"D"A/A/A FA DAFA|"D"A/A/A FA defg|\n';
 	theValue += '"Em"eB (3BBB eBgf|"Em"eBBB defg|"D"afec dBAF|1 "D"DEFD "Em"E2gf:|2 "D"DEFD "Em"E4|]\n';
 	theValue += "\n";
-	theValue += "% To choose the sound when played, try changing the MIDI program # above to:\n";
+	theValue += "% To choose the instrument used when playing a tune, try changing the MIDI program # above to:\n";
 	theValue += "%\n"
 	theValue += "% Melody:\n";
-	theValue += "% Piano: 0, Accordion: 21, Flute: 73, Whistle: 78, Fiddle: 110, Uilleann Pipes: 129, Scottish Smallpipes (D): 130, Scottish Smallpipes (A): 131, Säckpipa: 132, Concertina: 133, Melodica: 134, Cajun Accordion: 135\n";
+	theValue += "% Piano: 0, Accordion: 21, Flute: 73, Whistle: 78, Fiddle: 110, Melodica: 134, Cajun Accordion: 135\n";
 	theValue += "%\n";
 	theValue += "% Chords:\n";
-	theValue += "% Piano: 0, Electric Piano: 5, Organ: 19, Accordion: 21, Guitar: 25, Bass: 34, Synth Bass: 38\n";
+	theValue += "% Piano: 0, Electric Piano: 5, Organ: 19, Guitar: 25, Bass: 34, Synth Bass: 38\n";
 	theValue += "%\n";
-	theValue += "% Click the MIDI link at the top of the page to see a full list of available MIDI instruments.\n";
+	theValue += "% Click the MIDI link at the top of the page to see a full list of available instruments.\n";
 	theValue += "%\n";
-	theValue += "% If program or chordprog is not specified and you haven't chosen default MIDI instruments in the settings, both default to Piano.\n";
+	theValue += "% If program or chordprog is not specified and you haven't set default MIDI instruments in the settings, both default to Piano.\n";
 	theValue += "\n";
 	theValue += "% PDF Tunebook Annotations:\n";
 	theValue += "%\n";
@@ -7220,18 +7228,10 @@ function NewABC(){
 	theValue += "%\n";
 	theValue += "% %addtoc My Tunebook Table of Contents\n";
 	theValue += "%\n";
-	theValue += "% Before the tunes, add a sorted table of contents with a title:\n";
-	theValue += "%\n";
-	theValue += "% %addsortedtoc My Tunebook Table of Contents Sorted by Tune Name\n";
-	theValue += "%\n";
 	theValue += "% Add a << link on each page back to the Table of Contents:\n";
 	theValue += "%\n";
 	theValue += "% %addlinkbacktotoc\n";
 	theValue += "%\n";	
-	theValue += "% After the tunes, add an unsorted tunebook index with a title:\n";
-	theValue += "%\n";
-	theValue += "% %addindex My Tunebook Unsorted Index\n";
-	theValue += "%\n";
 	theValue += "% After the tunes, add a sorted tunebook index with a title:\n";
 	theValue += "%\n";
 	theValue += "% %addsortedindex My Tunebook Index Sorted by Tune Name\n";
@@ -7242,14 +7242,17 @@ function NewABC(){
 	theValue += "%\n";	
 	theValue += "% Add a PDF page header or footer:\n";
 	theValue += "%\n";
-	theValue += "% %pageheader My Tune Set: $TUNENAMES\n";
-	theValue += "% %pagefooter PDF named: $PDFNAME saved on: $DATEMDY at $TIME\n";
+	theValue += "% %pageheader My Tunebook Page Header\n";
+	theValue += "% %pagefooter My Tunebook Page Footer\n";
 	theValue += "%\n";
+	theValue += "% Clicking on tune titles in the PDF will launch playback in the tool using a specific MIDI instrument program number:\n";
+	theValue += "%\n";
+	theValue += "% %add_all_playback_links 21\n";
+	theValue += "%\n";	
 	theValue += "% After the tunes, add a sharing QR code on a new page in the PDF:\n";
 	theValue += "%\n";
 	theValue += "% %qrcode\n";
 	theValue += "%\n";
-
 
 	gTheABC.value = theValue;
 
@@ -7362,9 +7365,20 @@ function getUrlWithoutParams() {
 
 }
 
-function FillUrlBoxWithAbcInLZW() {
+//
+// Generate a share link for either all the tunes or just what's passed in
+//
+function FillUrlBoxWithAbcInLZW(ABCtoEncode) {
 
-	var abcText = gTheABC.value;
+	// Encode all the tunes or just what's passed in?
+	var abcText = "";
+
+	if (!ABCtoEncode){
+		abcText = gTheABC.value;
+	}
+	else{
+		abcText = ABCtoEncode;		
+	}
 
 	var abcInLZW = LZString.compressToEncodedURIComponent(abcText);
 
@@ -7423,6 +7437,13 @@ function FillUrlBoxWithAbcInLZW() {
 	}
 
 	url += postfix;
+
+	url += "&btfs="+gBoxTabFontSize;
+
+	// If just encoding some ABC, return it now
+	if (ABCtoEncode){
+		return url;
+	}
 
 	// Add the tune set name
 	var theTuneCount = CountTunes();
@@ -7517,7 +7538,7 @@ function FillUrlBoxWithAbcInLZW() {
 
 function CreateURLfromHTML() {
 
-	FillUrlBoxWithAbcInLZW();
+	FillUrlBoxWithAbcInLZW(null);
 	urlarea = document.getElementById("urlarea");
 	urlarea.style.display = "inline-block";
 	urltextbox = document.getElementById("urltextbox");
@@ -8133,7 +8154,7 @@ function PlayABC(e){
 
     	// Shift key launches Paul Rosen's site
 
-		if (e.altKey && e.shiftKey){
+		if (e && e.altKey && e.shiftKey){
 
 			// Is there a selection?
 			var theSelectedABC = getSelectedText("abc");
@@ -8188,13 +8209,13 @@ function PlayABC(e){
 		}
 
 		// Shift key injects a MIDI instrument directive for the melody
-   		if (e.shiftKey){
+   		if (e && e.shiftKey){
     		InjectMIDIInstrument(false);
     		return;
     	}
 
 		// Alt key injects a MIDI instrument directive for the chords
-   		if (e.altKey){
+   		if (e && e.altKey){
     		InjectMIDIInstrument(true);
     		return;
     	}
@@ -8877,6 +8898,21 @@ function processShareLink() {
 		}
 	}
 
+	// Set the box tab fontsize
+	if (urlParams.has("btfs")) {
+		var theTabFontSize = urlParams.get("btfs");
+		gBoxTabFontSize = theTabFontSize;
+	}
+
+	// Open for playback
+	var doPlay = false;
+	if (urlParams.has("play")) {
+		var thePlay = urlParams.get("play");
+		if (thePlay == "1"){
+			doPlay = true;
+		}
+	}
+
 	if (doRender) {
 
 		// Set the title
@@ -8915,7 +8951,20 @@ function processShareLink() {
 		FocusABC();
 
 		// Render the tune
-		RenderAsync(true,null);
+		RenderAsync(true,null,function(){
+
+			// Playback requested?
+			if (doPlay){
+
+				// Pre-process the ABC to inject any requested programs or volumes
+				var theProcessedABC = PreProcessLocalPlayABC(gTheABC.value);
+
+				// Play back locally in-tool	
+				LocalPlayABC(theProcessedABC);
+
+			}
+
+		});
 
 		return true;
 
@@ -9555,7 +9604,7 @@ function ToggleTopBar(){
 	// Update the link if there is any ABC
 	if (gAllowCopy){
 
-		FillUrlBoxWithAbcInLZW();
+		FillUrlBoxWithAbcInLZW(null);
 
 	}
 
@@ -10120,10 +10169,13 @@ function LocalPlayABC(theABC){
 	}
 
 	function StopPlay(){
-				
-		synthControl.destroy();
 
-		synthControl = null;
+		if (synthControl){
+				
+			synthControl.destroy();
+
+			synthControl = null;
+		}
 	}
 
 	var cursorControl = new CursorControl();
@@ -10139,11 +10191,28 @@ function LocalPlayABC(theABC){
 
 		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width:850, okText:"Close"});
 
-		var theOKButton = document.getElementsByClassName("modal_flat_ok")[0];
+		var theOKButtons = document.getElementsByClassName("modal_flat_ok");
 
-		var originalOnClick = theOKButton.onclick;
+		// Find the button that says "Close" and hook its click handler to make sure music stops on close
+		// Need to search through the modals since there may be a first time share dialog also present
+		// the first time someone plays a linked PDF tune
 
-		theOKButton.onclick = function(){originalOnClick(); StopPlay(); gTheABC.focus();};
+		var theOKButton = null;
+
+		for (i=0;i<theOKButtons.length;++i){
+
+			theOKButton = theOKButtons[i];
+
+			if (theOKButton.innerText == "Close"){
+
+				var originalOnClick = theOKButton.onclick;
+
+				theOKButton.onclick = function(){originalOnClick(); StopPlay(); gTheABC.focus();};
+
+				break;
+
+			}
+		}
 
 		if (ABCJS.synth.supportsAudio()) {
 			
@@ -10232,14 +10301,14 @@ function PreProcessLocalPlayABC(theTune){
 
 // Global settings state
 var gAlwaysInjectPrograms = false;
-var gTheMelodyProgram = 0;
-var gTheChordProgram = 0;
+var gTheMelodyProgram = 21;
+var gTheChordProgram = 21;
 var gAlwaysInjectVolumes = false;
 var gTheBassVolume = 64;
 var gTheChordVolume = 48;
 
 // User setting for the Box tab fontsize
-var gBoxTabFontSize = "12";
+var gBoxTabFontSize = "10";
 
 
 // Get the initial configuration settings from local browser storage, if present
@@ -10258,7 +10327,7 @@ function GetInitialConfigurationSettings(){
 		gTheMelodyProgram = val;
 	}
 	else{
-		gTheMelodyProgram = 0;
+		gTheMelodyProgram = 21;
 	}
 
 	val = localStorage.TheChordProgram;
@@ -10266,7 +10335,7 @@ function GetInitialConfigurationSettings(){
 		gTheChordProgram = val;
 	}
 	else{
-		gTheChordProgram = 0;
+		gTheChordProgram = 21;
 	}
 
 	var val = localStorage.AlwaysInjectVolumes;
@@ -10298,7 +10367,7 @@ function GetInitialConfigurationSettings(){
 		gBoxTabFontSize = val;
 	}
 	else{
-		gBoxTabFontSize = 12;
+		gBoxTabFontSize = 10;
 	}
 
 	// Save the settings, in case they were initialized
@@ -10895,5 +10964,5 @@ WaitForReady(DoStartup);
 //
 // TinyURL API key
 //
-var gTinyURLAPIKey = "Bearer <YOUR_TINYURL_API_KEY_HERE>";
+var gTinyURLAPIKey = "Bearer 6YJMYs01UHvxocEle5C9T1Emypv2L4JNSM0PtzaetoZDVfl6YLzOp6I67E6I";
 
