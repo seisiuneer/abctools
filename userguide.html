@@ -81,59 +81,59 @@
         }
         
         @media print {
-            .hidden-print {
-            display: none !important;
-            }
-
-            h1 {
-            font-size:18pt;
-            font-family:"Helvetica";
-            margin-bottom:36px;
-            margin-top:36px;
-            }
-
-            .page_break_always{
-            page-break-before: always; 
-            }
-
-            .page_break_never {
-             page-break-before: avoid;                
-            }
-
-            p {
-            font-size:14pt;
-            font-family:"Helvetica";
-            line-height: 28px;
-            }
-                        
-            hr {
-            margin-top:24px;
-            margin-bottom:24px;
-            }
-            
-            body {
-            padding:10px;
-            text-align: center;
-            }
-                    
-            #maindiv{
-            text-align: left;
-            background-color: white;
-            width:90%;
-            }
-           
-            .image_holder{
-            margin-top:48px;
-            text-align: center;
-            margin-botton:48px;
-            }
-            
-            .toc{
-            margin-top:0px;
-            margin-bottom:12px;
-            } 
-        }      
-    
+        .hidden-print {
+        display: none !important;
+        }
+        
+        h1 {
+        font-size:18pt;
+        font-family:"Helvetica";
+        margin-bottom:36px;
+        margin-top:36px;
+        }
+        
+        .page_break_always{
+        page-break-before: always;
+        }
+        
+        .page_break_never {
+        page-break-before: avoid;
+        }
+        
+        p {
+        font-size:14pt;
+        font-family:"Helvetica";
+        line-height: 28px;
+        }
+        
+        hr {
+        margin-top:24px;
+        margin-bottom:24px;
+        }
+        
+        body {
+        padding:10px;
+        text-align: center;
+        }
+        
+        #maindiv{
+        text-align: left;
+        background-color: white;
+        width:90%;
+        }
+        
+        .image_holder{
+        margin-top:48px;
+        text-align: center;
+        margin-botton:48px;
+        }
+        
+        .toc{
+        margin-top:0px;
+        margin-bottom:12px;
+        }
+        }
+        
         </style>
         
     </head>
@@ -196,7 +196,7 @@
             </div>
             <p>ABC Transcription Tools is a free, web-based, open-source tool for converting music in ABC format to both standard notation and tablature for a wide variety of instruments.</p>
             <p>Play your tunes with high-quality, built-in sampled instruments.</p>
-            <p>Create PDF tunebooks with title pages, table of contents, tune index, custom headers, footers, hyperlinks, tune incipits (notation or raw ABC), and sharing QR codes using the tool's built-in PDF Export feature.</p>            
+            <p>Create PDF tunebooks with title pages, table of contents, tune index, custom headers, footers, hyperlinks, tune incipits (notation or raw ABC), and sharing QR codes using the tool's built-in PDF Export feature.</p>
             <p>It also has easy-to-use features to transpose and sort your ABC tunebooks.</p>
             <p>You can fully customize the look of your notation using the standard ABC spacing and font annotations.</p>
             <p>The tool also includes the ability to easily share your tunes with others via Share URLs and QR Codes.</p>
@@ -425,7 +425,7 @@
             <p>These default program and volume values are saved to local browser storage when you close the dialog and are restored each time you run the tool.</p>
             <p></p>
             <p><strong>Changing the Melody Volume</strong></p>
-            <p></p>           
+            <p></p>
             <p>To change the Melody volume, add a dynamics indication such as !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! immediately before the first note in the ABC.</p>
             <p></p>
             <p><strong>Special Note on the Dulcimer (15) Instrument</strong></p>
@@ -703,7 +703,7 @@
             <p></p>
             <p>%pdfname your_pdf_filename_here</p>
             <p></p>
-             <hr class="hidden-print">
+            <hr class="hidden-print">
             <p><strong>Power User Tip:</strong></p>
             <p>Holding down the Shift key while clicking on the "PDF Tunes/Page" label will inject examples of all of the above PDF headers at the top of the ABC.</p>
             <p>You can then remove the headers you don't need and edit the others to meet your requirements.</p>
@@ -810,6 +810,27 @@
             <p>%add_all_playback_links takes precedence for all tunes over %add_all_links_to_thesession</p>
             <p></p>
             <p>Any manually added tune hyperlinks, thesession.org hyperlinks, or playback hyperlinks take precedence over automatically generated thesession.org or playback hyperlinks.</p>
+            <p></p>
+            <p class="page_break_always"><strong>Example: Creating a PDF tunebooks with some advanced features</strong></p>
+            <p></p>
+            <p>Here is a good starting point for annotations for creating a tunebook that includes:</p>
+            <p></p>
+            <p>Title page with sub-title</p>
+            <p>Table of contents linked to each tune</p>
+            <p><< Link back on each page to the table of contents</p>
+            <p>Page footers with hyperlink to a website</p>
+            <p>Playback links on every tune title selecting an Accordion sound for the melody and a Piano sound for the bass/chords</p>
+            <p>QR code with hyperlink and caption at the end of the tunebook</p>
+            <p><strong>Add these annotations before the first tune in your tunebook:</strong></p>
+            <p></p>
+            <p>%addtitle PDF Tunebook With Play Links Demo<br/>
+                %addsubtitle Click any Tune Title to Play the Tune<br/>
+                %addtoc Table of Contents<br/>
+                %addlinkbacktotoc<br/>
+                %urlpagefooter https://cnn.com Click here to visit CNN.com<br/>
+                %add_all_playback_links 21 0<br/>
+                %qrcode https://cnn.com<br/>
+            %caption_for_qrcode Scan with your iOS or Android camera or click to visit CNN.com</p>
             <p></p>
             <hr class="hidden-print" id="printing_your_tunes">
             <h1 class="page_break_always">Printing Your Tunes&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
