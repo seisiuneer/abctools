@@ -10323,8 +10323,8 @@ function PreProcessLocalPlayABC(theTune){
 
 // Global settings state
 var gAlwaysInjectPrograms = false;
-var gTheMelodyProgram = 21;
-var gTheChordProgram = 21;
+var gTheMelodyProgram = 0;
+var gTheChordProgram = 0;
 var gAlwaysInjectVolumes = false;
 var gTheBassVolume = 64;
 var gTheChordVolume = 48;
@@ -10349,7 +10349,7 @@ function GetInitialConfigurationSettings(){
 		gTheMelodyProgram = val;
 	}
 	else{
-		gTheMelodyProgram = 21;
+		gTheMelodyProgram = 0;
 	}
 
 	val = localStorage.TheChordProgram;
@@ -10357,7 +10357,7 @@ function GetInitialConfigurationSettings(){
 		gTheChordProgram = val;
 	}
 	else{
-		gTheChordProgram = 21;
+		gTheChordProgram = 0;
 	}
 
 	var val = localStorage.AlwaysInjectVolumes;
@@ -10986,5 +10986,5 @@ WaitForReady(DoStartup);
 //
 // TinyURL API key
 //
-var gTinyURLAPIKey = "Bearer <YOUR_TINYURL_API_KEY_HERE>";
+var gTinyURLAPIKey = "Bearer <YOUR_TINY_URL_API_KEY_HERE>";
 
