@@ -10986,5 +10986,5 @@ WaitForReady(DoStartup);
 //
 // TinyURL API key
 //
-var gTinyURLAPIKey = "Bearer <YOUR_TINY_URL_API_KEY_HERE>";
+var gTinyURLAPIKey = "Bearer <YOUR_TINYURL_API_KEY_HERE>";
 
