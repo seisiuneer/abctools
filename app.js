@@ -151,6 +151,9 @@ var gAddPlaybackHyperlinks = false;
 var gPlaybackHyperlinkMelodyProgram = "";
 var gPlaybackHyperlinkBassChordProgram = "";
 
+// Append incrementing X values to tune names 
+var gAppendXValuesToTuneNames = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -992,6 +995,10 @@ function GetTunebookIndexTitles(){
 
 				titel = titel.trim();
 
+				if (gAppendXValuesToTuneNames){
+					titel = (i+1) +" - "+titel;
+				}
+
 				// Just grab the first title foiund
 				theTitles.push(titel);
 
@@ -1295,9 +1302,17 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		// sort tunes by name
 		tuneInfo.sort((a, b) => {
 
-		  const nameA = a.title.toUpperCase(); // ignore upper and lowercase
+		  var nameA = a.title.toUpperCase(); // ignore upper and lowercase
 		  
-		  const nameB = b.title.toUpperCase(); // ignore upper and lowercase
+		  var nameB = b.title.toUpperCase(); // ignore upper and lowercase
+		  
+		  // Sort criteria is different for appended X tune numbers
+		  if (gAppendXValuesToTuneNames){
+
+		  	 nameA = nameA.substring(nameA.indexOf("-")+2);
+		  	 nameB = nameB.substring(nameB.indexOf("-")+2);
+
+		  }
 		  
 		  if (nameA < nameB) {
 		    return -1;
@@ -1455,9 +1470,17 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 		// sort tunes by name
 		tuneInfo.sort((a, b) => {
 
-		  const nameA = a.name.toUpperCase(); // ignore upper and lowercase
+		  var nameA = a.name.toUpperCase(); // ignore upper and lowercase
 		  
-		  const nameB = b.name.toUpperCase(); // ignore upper and lowercase
+		  var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+
+		  // Sort criteria is different for appended X tune numbers
+		  if (gAppendXValuesToTuneNames){
+
+		  	 nameA = nameA.substring(nameA.indexOf("-")+2);
+		  	 nameB = nameB.substring(nameB.indexOf("-")+2);
+
+		  }
 		  
 		  if (nameA < nameB) {
 		    return -1;
@@ -1910,9 +1933,17 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 		// sort tunes by name
 		tuneInfo.sort((a, b) => {
 
-		  const nameA = a.name.toUpperCase(); // ignore upper and lowercase
+		  var nameA = a.name.toUpperCase(); // ignore upper and lowercase
 		  
-		  const nameB = b.name.toUpperCase(); // ignore upper and lowercase
+		  var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+
+		  // Sort criteria is different for appended X tune numbers
+		  if (gAppendXValuesToTuneNames){
+
+		  	 nameA = nameA.substring(nameA.indexOf("-")+2);
+		  	 nameB = nameB.substring(nameB.indexOf("-")+2);
+
+		  }
 		  
 		  if (nameA < nameB) {
 		    return -1;
@@ -2060,9 +2091,17 @@ function DryRunAddTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperSty
 		// sort tunes by name
 		tuneInfo.sort((a, b) => {
 
-		  const nameA = a.name.toUpperCase(); // ignore upper and lowercase
+		  var nameA = a.name.toUpperCase(); // ignore upper and lowercase
 		  
-		  const nameB = b.name.toUpperCase(); // ignore upper and lowercase
+		  var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+		  
+		  // Sort criteria is different for appended X tune numbers
+		  if (gAppendXValuesToTuneNames){
+
+		  	 nameA = nameA.substring(nameA.indexOf("-")+2);
+		  	 nameB = nameB.substring(nameB.indexOf("-")+2);
+
+		  }
 		  
 		  if (nameA < nameB) {
 		    return -1;
@@ -3484,6 +3523,20 @@ function ParseCommentCommands(theNotes){
 		}
 	}
 
+	// Should we append the X: tag values to the tune names when generating PDF tunebook
+	gAppendXValuesToTuneNames = false;
+	
+	searchRegExp = /^%append_x_values_to_names.*$/m
+
+	// Detect x values annotation
+	var addXValues = theNotes.match(searchRegExp);
+
+	if ((addXValues) && (addXValues.length > 0)){
+
+		gAppendXValuesToTuneNames = true;
+
+	}
+
 	// Check my work
 	// console.log("theTunebookTP = "+theTunebookTP);
 	// console.log("theTunebookTPST = "+theTunebookTPST);
@@ -3495,6 +3548,7 @@ function ParseCommentCommands(theNotes){
 	// console.log("gAddPlaybackHyperlinks = "+gAddPlaybackHyperlinks);
 	// console.log("gPlaybackHyperlinkMelodyProgram = "+gPlaybackHyperlinkMelodyProgram);
 	// console.log("gPlaybackHyperlinkBassChordProgram = "+gPlaybackHyperlinkBassChordProgram);
+	// console.log("gAppendXValuesToTuneNames = "+gAppendXValuesToTuneNames);
 
 }
 
@@ -4213,6 +4267,12 @@ function ExportPDF(){
 
 				ExportTextIncipitsPDF(fname);
 			}
+			else{
+
+				// Clean any globals set during the annotation scan
+				gAppendXValuesToTuneNames = false;
+
+			}
 		});
 
 	}
@@ -4607,6 +4667,9 @@ function ExportTextIncipitsPDF(title){
 					var pdfstatus = document.getElementById("pdf-controls");
 					pdfstatus.style.display = "none";
 
+					// Clean up any global state from the annotation parse
+					gAppendXValuesToTuneNames = false;
+
 					// Clear the PDF rendering global
 					gRenderingPDF = false;
 
@@ -4871,6 +4934,8 @@ function ExportNotationPDF(title) {
 					if (requirePostRender){
 						
 						document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Cleaning up incipit generation</font>";
+						
+						gAppendXValuesToTuneNames = false;
 
 						RenderAsync(true,null,function(){
 
@@ -4882,6 +4947,7 @@ function ExportNotationPDF(title) {
 							document.getElementById("offscreenrender").innerHTML = ""; 
 
 						});
+
 
 					}
 					else{
@@ -5176,6 +5242,10 @@ function ExportNotationPDF(title) {
 										setTimeout(function(){
 
 											gRenderingPDF = false;
+
+											// Clean up any global state from the annotation parse
+											gAppendXValuesToTuneNames = false;
+
 
 											Render(true,null);
 
@@ -6336,6 +6406,39 @@ function StripChordsOne(theNotes){
 
 }
 
+//
+// Append an incrementing value to the tune names 
+//
+function processXTuneNameValues(theNotes){
+
+	var outTunes = "";
+
+	var theTunes = theNotes.split(/^X:.*$/gm);
+
+	var nTunes = theTunes.length - 1;
+
+    // Now find all the X: items
+    var theTunes = theNotes.split(/^X:/gm);
+
+    var processedTune = "";
+    var thisTune = "";
+
+    for (var i=0;i<nTunes;++i){
+
+    	thisTune = theTunes[i+1]
+
+		thisTune = thisTune.replace("T:","T:"+(i+1)+". ");
+
+    	processedTune = "X:"+thisTune;
+    	
+    	outTunes = outTunes + processedTune;
+
+    }
+
+    return outTunes;
+	
+}
+
 // 
 // Allow putting up a spiner before the synchronous Render() function
 //
@@ -6604,6 +6707,13 @@ function Render(renderAll,tuneNumber) {
 		searchRegExp = /^X:.*$/gm
 
 		theNotes = theNotes.replace(searchRegExp, "X:1\n%%musicspace 10\n%%staffsep " + gStaffSpacing);
+
+		// Auto-inserting X: numbers on titles?
+		if (gAppendXValuesToTuneNames){
+
+			theNotes = processXTuneNameValues(theNotes);
+
+		}
 
 		// Render the notes
 		RenderTheNotes(theNotes,radiovalue,renderAll,tuneNumber);
@@ -9312,12 +9422,12 @@ function PrepareWhistleFont(){
 //
 function InjectPDFHeaders(e){
 
-	if (e.shiftKey){
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
 
-		// If currently rendering PDF, exit immediately
-		if (gRenderingPDF) {
-			return;
-		}
+	if (e.shiftKey){
 
 		var theNotes = gTheABC.value;
 
@@ -9351,14 +9461,17 @@ function InjectPDFHeaders(e){
 		output += "%urlpageheader http://michaeleskin.com Page Header as Hyperlink\n";
 		output += "%urlpagefooter http://michaeleskin.com Page Footer as Hyperlink\n";
 		output += "%add_all_links_to_thesession\n";
-		output += "%add_all_playback_links 21\n";
+		output += "%add_all_playback_links 21 0\n";
 		output += "%pdfname your_pdf_filename\n"
 		output += "%qrcode\n";
+		output += "%qrcode http://michaeleskin.com\n";
+		output += "%caption_for_qrcode Caption for the QR code\n";
+		output += "%pdfquality .75\n";
 		output += "%\n";
 		output += "% These directives can be added to each tune:\n";
 		output += "%hyperlink http://michaeleskin.com\n";
 		output += "%add_link_to_thesession\n";
-		output += "%add_playback_link 21\n";
+		output += "%add_playback_link 21 0\n";
 		output += "\n";
 		
 		output += theNotes;
@@ -9372,6 +9485,50 @@ function InjectPDFHeaders(e){
 
 	    // And set the focus
 	    gTheABC.focus();	
+
+	    return
+
+	}
+
+	if (e.altKey){
+
+		// If currently rendering PDF, exit immediately
+		if (gRenderingPDF) {
+			return;
+		}
+
+		var theNotes = gTheABC.value;
+
+		var output = "";
+		output += "%\n";
+		output += "% Here is a starting template of annotations for a PDF tunebook:\n";
+		output += "%\n";
+		output += "%addtitle Tunebook Title\n";
+        output += "%addsubtitle Tunebook Subtitle\n";
+        output += "%addtoc Table of Contents\n";
+        output += "%addlinkbacktotoc\n";
+        output += "%addsortedindex Index\n";
+        output += "%addlinkbacktoindex\n";
+        output += "%urlpageheader http://michaeleskin.com This is the Page Header with Hyperlink\n";
+        output += "%pagefooter This is the Page Footer\n";
+        output += "%add_all_playback_links 21 0\n";
+        output += "%qrcode http://michaeleskin.com\n";
+		output += "%caption_for_qrcode Click or Scan to Visit my Home Page\n";
+		output += "\n";
+		
+		output += theNotes;
+
+		// Stuff in the headers
+		gTheABC.value = output;
+
+		// Set the select point
+		gTheABC.selectionStart = 0;
+	    gTheABC.selectionEnd = 0;
+
+	    // And set the focus
+	    gTheABC.focus();	
+
+	    return;
 
 	}
 }
@@ -10147,8 +10304,6 @@ function LocalPlayABC(theABC){
 	}
 
 	function computeFade(tuneABC){
-
-		//debugger;
 
 		var theFade = 200;
 
