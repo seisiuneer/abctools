@@ -4839,6 +4839,35 @@ function ExportNotationPDF(title) {
 		}
 
 	}
+	else
+	// Auto-inserting X: numbers on titles for non-incipit render?
+	if (gAppendXValuesToTuneNames){
+
+		document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"red\">" + title + "</font>";
+
+		document.getElementById("statustunecount").innerHTML = "Processing tune numbering for PDF generation";
+
+		document.getElementById("pagestatustext").innerHTML = "&nbsp;";
+
+		setTimeout(function(){
+
+			var theNotes = gTheABC.value;
+
+			theNotes = processXTuneNameValues(theNotes);
+
+			var radiovalue = GetRadioValue("notenodertab");
+
+			// Render the notes
+			RenderTheNotes(theNotes,radiovalue,true,0);
+
+			// Going to need to clean up later
+			requirePostRender = true;
+
+			doPDFStepTwo();
+
+		},100);
+
+	}
 	else{
 
 		doPDFStepTwo();
