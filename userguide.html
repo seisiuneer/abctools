@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+ 
         <style>
         p {
         font-size:14pt;
@@ -370,7 +370,7 @@
             <p></p>
             <p>To change the instrument used for the bass/chords, try changing the MIDI chordprog # above to one of:</p>
             <p></p>
-            <p>Piano: 0, Electric Piano: 5, Organ: 19, Guitar: 25, Bass: 34, Synth Bass: 38</p>
+            <p>Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38</p>
             <p></p>
             <p><strong>Changing the Playback Volume of the Melody, Bass, and Chords</strong></p>
             <p></p>
@@ -417,12 +417,17 @@
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/fufQFUISym4" title="Selecting Default Instruments for Playing Tunes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>Clicking the "Settings" button at the top of the tool brings up a dialog where you can select default MIDI programs and volumes to use for the Melody, Bass, and Chords, as well as other tool-wide settings:</p>
             <div class="image_holder">
-                <img src="img/default_program_volume_dialog_4.jpg"/>
+                <img src="img/default_program_volume_dialog_5.jpg"/>
             </div>
             <p>If a %%MIDI program or %%MIDI chordprog directive is already present in the tune when playing, it will take precedence over the default program values.</p>
             <p>If a %%MIDI bassvol or %%MIDI chordvol directive is already present in the tune when playing, it will take precedence over the default volume values.</p>
             <p></p>
-            <p>These default program and volume values are saved to local browser storage when you close the dialog and are restored each time you run the tool.</p>
+            <p><strong>To force tune playback using your default programs and volumes if there are already %%MIDI directives in the ABC (useful for my Interactive PDF tunebooks):</strong></p>
+            <p>Enabling "Override all MIDI programs and volumes in the ABC when playing tunes" will override any existing %%MIDI program, %%MIDI chordprog, %MIDI bassvol, and %MIDI chordvol values found in the ABC with your defaults when you play a tune.</p>
+            <p>This can be useful with my Interactive PDF tunebooks with built-in playback features if you want to use your preferred instrument sounds and volumes instead of the instruments and volumes set by the Interactive tunebook play link ABC.</p>
+            <p>For example, if you want to always use a Whistle sound for the Melody and a Honky-Tonk Piano sound for the Bass and Chords, set your default Melody instrument to 78 and your default Bass/Chords instrument to 3. Then enable "Override all MIDI programs and volumes in the ABC when playing tunes".</p>
+            <p></p>
+            <p>These settings values are saved to local browser storage when you close the dialog and are restored each time you run the tool.</p>
             <p></p>
             <p><strong>Changing the Melody Volume</strong></p>
             <p></p>
@@ -746,7 +751,7 @@
             <p></p>
             <p>Some MIDI program numbers I recommend for the bass/chords:</p>
             <p></p>
-            <p>Piano: 0, Electric Piano: 5, Organ: 19, Guitar: 25, Bass: 34, Synth Bass: 38</p>
+            <p>Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38</p>
             <p></p>
             <p style="page-break-before: always;">Example: To have a specific tune played with an Accordion sound on the melody and a Piano sound on the chord/bass</p>
             <p></p>
@@ -796,7 +801,7 @@
             <p></p>
             <p>Some MIDI program numbers I recommend for the bass/chords:</p>
             <p></p>
-            <p>Piano: 0, Electric Piano: 5, Organ: 19, Guitar: 25, Bass: 34, Synth Bass: 38</p>
+            <p>Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38</p>
             <p></p>
             <p>Example: To have all tunes played with an Accordion sound on the melody and a Piano sound on the chords/bass:</p>
             <p>%add_all_playback_links 21 0</p>
@@ -813,24 +818,32 @@
             <p></p>
             <p class="page_break_always"><strong>Example: Creating a PDF tunebooks with some advanced features</strong></p>
             <p></p>
-            <p>Here is a good starting point for annotations for creating a tunebook that includes:</p>
+            <p>Here is a good starting template of annotations for creating a tunebook that includes:</p>
             <p></p>
             <p>Title page with sub-title</p>
             <p>Table of contents linked to each tune</p>
             <p><< Link back on each page to the table of contents</p>
-            <p>Page footers with hyperlink to a website</p>
+            <p>Sorted index linked to each tune</p>
+            <p>>> Link back on each page to the index</p>
+            <p>Page headers with a hyperlink</p>
+            <p>Page footers</p>
             <p>Playback links on every tune title selecting an Accordion sound for the melody and a Piano sound for the bass/chords</p>
             <p>QR code with hyperlink and caption at the end of the tunebook</p>
-            <p><strong>Add these annotations before the first tune in your tunebook:</strong></p>
             <p></p>
-            <p>%addtitle PDF Tunebook With Play Links Demo<br/>
-                %addsubtitle Click any Tune Title to Play the Tune<br/>
+            <p>%addtitle Tunebook Title<br/>
+                %addsubtitle Tunebook Subtitle<br/>
                 %addtoc Table of Contents<br/>
                 %addlinkbacktotoc<br/>
-                %urlpagefooter https://cnn.com Click here to visit CNN.com<br/>
+                %addsortedindex Index<br/>
+                %addlinkbacktoindex<br/>
+                %urlpageheader http://michaeleskin.com This is the Page Header with Hyperlink<br/>
+                %pagefooter This is the Page Footer<br/>
                 %add_all_playback_links 21 0<br/>
-                %qrcode https://cnn.com<br/>
-            %caption_for_qrcode Scan with your iOS or Android camera or click to visit CNN.com</p>
+                %qrcode http://michaeleskin.com<br/>
+                %caption_for_qrcode Click or Scan to Visit my Home Page</p>
+            <p></p>
+            <p><strong>Alt-click the "PDF Tunes/Page:" label in the controls to inject this annotation template at the top of your ABC.</strong></p>
+            <p></p>
             <p></p>
             <hr class="hidden-print" id="printing_your_tunes">
             <h1 class="page_break_always">Printing Your Tunes&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
