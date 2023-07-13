@@ -8169,6 +8169,74 @@ function InjectOneTuneMIDIProgram(theTune, progNum, bIsChords){
 }
 
 //
+// Override MIDI program number directive 
+//
+function OverrideOneTuneMIDIParams(theTune, melodyProg, chordProg, bassVol, chordVol){
+
+	var theOutput = theTune;
+
+	// Replace melody programs
+	var searchRegExp = /^%%MIDI program.*$/gm
+
+	var melodyProgramRequested = theTune.match(searchRegExp);
+
+	if ((melodyProgramRequested) && (melodyProgramRequested.length > 0)){
+
+		for (var i=0;i<melodyProgramRequested.length;++i){
+
+			theOutput = theOutput.replace(melodyProgramRequested[0],"%%MIDI program "+melodyProg);
+
+		}
+
+	}
+
+	// Replace chord programs
+	searchRegExp = /^%%MIDI chordprog.*$/gm
+
+	var chordProgramRequested = theTune.match(searchRegExp);
+
+	if ((chordProgramRequested) && (chordProgramRequested.length > 0)){
+
+		for (var i=0;i<chordProgramRequested.length;++i){
+
+			theOutput = theOutput.replace(chordProgramRequested[i],"%%MIDI chordprog "+chordProg);
+		}
+
+	}
+
+	// Replace bass volume
+	searchRegExp = /^%%MIDI bassvol.*$/gm
+
+	var bassVolumeRequested = theTune.match(searchRegExp);
+
+	if ((bassVolumeRequested) && (bassVolumeRequested.length > 0)){
+
+		for (var i=0;i<bassVolumeRequested.length;++i){
+
+			theOutput = theOutput.replace(bassVolumeRequested[i],"%%MIDI bassvol "+bassVol);
+		}
+
+	}
+
+	// Replace chord volume
+	searchRegExp = /^%%MIDI chordvol.*$/gm
+
+	var chordVolumeRequested = theTune.match(searchRegExp);
+
+	if ((chordVolumeRequested) && (chordVolumeRequested.length > 0)){
+
+		for (var i=0;i<chordVolumeRequested.length;++i){
+
+			theOutput = theOutput.replace(chordVolumeRequested[i],"%%MIDI chordvol "+chordVol);
+		}
+
+	}
+
+	return theOutput;
+	
+}
+
+//
 // Inject MIDI volume directive 
 //
 function InjectOneTuneMIDIVolume(theTune, theVolume, bIsChords){
@@ -10479,6 +10547,15 @@ function LocalPlayABC(theABC){
 // Based on the global injection configuration, pre-process the %%MIDI directives in the ABC
 function PreProcessLocalPlayABC(theTune){
 
+	// Override any ABC play values?
+
+	// Always override programs and volumes?
+
+	if (gOverridePlayMIDIParams){
+
+		theTune = OverrideOneTuneMIDIParams(theTune, gTheMelodyProgram, gTheChordProgram, gTheBassVolume, gTheChordVolume);
+	}
+
 	// Inject programs?
 	if (gAlwaysInjectPrograms){
 
@@ -10503,6 +10580,7 @@ function PreProcessLocalPlayABC(theTune){
 
 		}
 	}
+
 
 	// Inject volumes?
 	if (gAlwaysInjectVolumes){
@@ -10540,12 +10618,13 @@ function PreProcessLocalPlayABC(theTune){
 
 
 // Global settings state
-var gAlwaysInjectPrograms = false;
+var gAlwaysInjectPrograms = true;
 var gTheMelodyProgram = 0;
 var gTheChordProgram = 0;
-var gAlwaysInjectVolumes = false;
-var gTheBassVolume = 64;
-var gTheChordVolume = 48;
+var gAlwaysInjectVolumes = true;
+var gTheBassVolume = 32;
+var gTheChordVolume = 32;
+var gOverridePlayMIDIParams = false;
 
 // User setting for the Box tab fontsize
 var gBoxTabFontSize = "10";
@@ -10578,12 +10657,12 @@ function GetInitialConfigurationSettings(){
 		gTheChordProgram = 0;
 	}
 
-	var val = localStorage.AlwaysInjectVolumes;
+	val = localStorage.AlwaysInjectVolumes;
 	if (val){
 		gAlwaysInjectVolumes = (val == "true");
 	}
 	else{
-		gAlwaysInjectVolumes = false;
+		gAlwaysInjectVolumes = true;
 	}
 
 	val = localStorage.TheBassVolume;
@@ -10591,7 +10670,7 @@ function GetInitialConfigurationSettings(){
 		gTheBassVolume = val;
 	}
 	else{
-		gTheBassVolume = 64;
+		gTheBassVolume = 32;
 	}
 
 	val = localStorage.TheChordVolume;
@@ -10599,7 +10678,7 @@ function GetInitialConfigurationSettings(){
 		gTheChordVolume = val;
 	}
 	else{
-		gTheChordVolume = 48;
+		gTheChordVolume = 32;
 	}
 
 	val = localStorage.BoxTabFontSize;
@@ -10608,6 +10687,14 @@ function GetInitialConfigurationSettings(){
 	}
 	else{
 		gBoxTabFontSize = 10;
+	}
+
+	val = localStorage.OverridePlayMIDIParams;
+	if (val){
+		gOverridePlayMIDIParams = (val == "true");
+	}
+	else{
+		gOverridePlayMIDIParams = false;
 	}
 
 	// Save the settings, in case they were initialized
@@ -10630,13 +10717,14 @@ function SaveConfigurationSettings(){
 		localStorage.TheBassVolume = gTheBassVolume;
 		localStorage.TheChordVolume = gTheChordVolume;
 		localStorage.BoxTabFontSize = gBoxTabFontSize;
+		localStorage.OverridePlayMIDIParams = gOverridePlayMIDIParams;
 	}
 }
 
 //
 // Configuration settings dialog
 //
-function ConfigureMIDISettings() {
+function ConfigureToolSettings() {
 
 	var bAlwaysInjectPrograms = gAlwaysInjectPrograms;
 
@@ -10650,6 +10738,8 @@ function ConfigureMIDISettings() {
 
 	var theBoxTabFontSize = gBoxTabFontSize;
 
+	var bOverridePlayMIDIParams = gOverridePlayMIDIParams;
+
 	// Setup initial values
 	const theData = {
 	  configure_inject_programs: bAlwaysInjectPrograms,
@@ -10659,6 +10749,7 @@ function ConfigureMIDISettings() {
 	  configure_bass_volume: theBassVolume,
 	  configure_chord_volume: theChordVolume,
 	  configure_box_tab_fontsize: theBoxTabFontSize,
+	  configure_override_play_midi_params: bOverridePlayMIDIParams
 
 	};
 
@@ -10668,17 +10759,18 @@ function ConfigureMIDISettings() {
 	  {name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default Melody MIDI program (0-135):", id: "configure_melody_program", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default Bass/Chords MIDI program (0-135):", id: "configure_chord_program", type:"number", cssClass:"configure_settings_form_text"},
-	  {html: '<p style="margin-top:10px;font-size:14pt;line-height:16pt;font-family:helvetica">If there is already a %%MIDI program or %%MIDI chordprog directive in the ABC, the value in the ABC will override the default value.</p>'},	  
+	  {html: '<p style="margin-top:12px;font-size:14pt;line-height:16pt;font-family:helvetica">If there is already a %%MIDI program or %%MIDI chordprog directive in the ABC, the value in the ABC will override the default value.</p>'},	  
 	  {html: '<p style="font-size:14pt;font-family:helvetica;margin-bottom:20px;margin-top:20px;text-align:center"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'},
 	  {name: "            Use Default Bass/Chord volumes when playing tunes", id: "configure_inject_volumes", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default Bass MIDI volume (0-127):", id: "configure_bass_volume", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default Chords MIDI volume (0-127):", id: "configure_chord_volume", type:"number", cssClass:"configure_settings_form_text"},
-	  {html: '<p style="margin-top:10px;font-size:14pt;line-height:16pt;font-family:helvetica">If there are already a %%MIDI bassvol or %%MIDI chordvol directive in the ABC, the value in the ABC will override the default value.</p>'},	  
-	  {html: '<p style="margin-top:10px;font-size:14pt;line-height:16pt;font-family:helvetica">To change the Melody volume, add a dynamics indication such as !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! immediately before the first note in the ABC.</p>'},	  
+	  {html: '<p style="margin-top:12px;margin-bottom:0px;font-size:14pt;line-height:16pt;font-family:helvetica">If there are already a %%MIDI bassvol or %%MIDI chordvol directive in the ABC, the value in the ABC will override the default value.</p>'},	  
+	  {name: "            Override all MIDI programs and volumes in the ABC when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text"},
+	  {html: '<p style="margin-top:16px;font-size:14pt;line-height:16pt;font-family:helvetica">To change the Melody volume, add a dynamics indication such as !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! immediately before the first note in the ABC.</p>'},	  
 	  {name: "Box Tablature Font Size:", id: "configure_box_tab_fontsize", type:"number", cssClass:"configure_settings_form_text"},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50, width: 680 } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 20, width: 680 } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -10690,6 +10782,8 @@ function ConfigureMIDISettings() {
 			gAlwaysInjectVolumes = args.result.configure_inject_volumes;
 			gTheBassVolume = args.result.configure_bass_volume;
 			gTheChordVolume = args.result.configure_chord_volume;
+
+			gOverridePlayMIDIParams = args.result.configure_override_play_midi_params;
 
 			var fontsize = args.result.configure_box_tab_fontsize;
 
@@ -10752,7 +10846,7 @@ function ConfigureMIDISettings() {
 				gTheChordVolume = 127;
 			}
 
-			if ((gAlwaysInjectPrograms) && ((gTheMelodyProgram == "15") || (gTheChordProgram == "15"))){
+			if ((gAlwaysInjectPrograms || gOverridePlayMIDIParams) && ((gTheMelodyProgram == "15") || (gTheChordProgram == "15"))){
 
 				// Special release time case case for Dulcimer
 			   	var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica">Special Note on the Dulcimer (15) Instrument</p>';
