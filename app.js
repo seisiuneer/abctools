@@ -7398,10 +7398,10 @@ function NewABC(){
 	theValue += "% To choose the instrument used when playing a tune, try changing the MIDI programs above to:\n";
 	theValue += "%\n"
 	theValue += "% Melody:\n";
-	theValue += "% Piano: 0, Accordion: 21, Fingered Bass: 33, Flute: 73, Whistle: 78, Fiddle: 110, Melodica: 134, Cajun Accordion: 135\n";
+	theValue += "% Piano: 0, Accordion: 21, Fingered Bass: 33, Whistle: 78, Fiddle: 110, Melodica: 134, Cajun Accordion: 135\n";
 	theValue += "%\n";
 	theValue += "% Chords:\n";
-	theValue += "% Piano: 0, Electric Piano: 5, Organ: 19, Guitar: 25, Bass: 34, Synth Bass: 38\n";
+	theValue += "% Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38\n";
 	theValue += "%\n";
 	theValue += "% Click the MIDI link at the top of the page to see a full list of available instruments.\n";
 	theValue += "%\n";
@@ -7440,9 +7440,9 @@ function NewABC(){
 	theValue += "% %pageheader My Tunebook Page Header\n";
 	theValue += "% %pagefooter My Tunebook Page Footer\n";
 	theValue += "%\n";
-	theValue += "% Clicking on tune titles in the PDF will launch playback in the tool using a specific MIDI instrument program number:\n";
+	theValue += "% Clicking on tune titles in the PDF will launch playback in the tool using specific MIDI instrument program number for the melody and bass/chord:\n";
 	theValue += "%\n";
-	theValue += "% %add_all_playback_links 21\n";
+	theValue += "% %add_all_playback_links 0 0\n";
 	theValue += "%\n";	
 	theValue += "% After the tunes, add a sharing QR code on a new page in the PDF:\n";
 	theValue += "%\n";
@@ -9490,7 +9490,7 @@ function InjectPDFHeaders(e){
 		output += "%urlpageheader http://michaeleskin.com Page Header as Hyperlink\n";
 		output += "%urlpagefooter http://michaeleskin.com Page Footer as Hyperlink\n";
 		output += "%add_all_links_to_thesession\n";
-		output += "%add_all_playback_links 21 0\n";
+		output += "%add_all_playback_links 0 0\n";
 		output += "%pdfname your_pdf_filename\n"
 		output += "%qrcode\n";
 		output += "%qrcode http://michaeleskin.com\n";
@@ -9500,7 +9500,7 @@ function InjectPDFHeaders(e){
 		output += "% These directives can be added to each tune:\n";
 		output += "%hyperlink http://michaeleskin.com\n";
 		output += "%add_link_to_thesession\n";
-		output += "%add_playback_link 21 0\n";
+		output += "%add_playback_link 0 0\n";
 		output += "\n";
 		
 		output += theNotes;
@@ -9540,7 +9540,7 @@ function InjectPDFHeaders(e){
         output += "%addlinkbacktoindex\n";
         output += "%urlpageheader http://michaeleskin.com This is the Page Header with Hyperlink\n";
         output += "%pagefooter This is the Page Footer\n";
-        output += "%add_all_playback_links 21 0\n";
+        output += "%add_all_playback_links 0 0\n";
         output += "%qrcode http://michaeleskin.com\n";
 		output += "%caption_for_qrcode Click or Scan to Visit my Home Page\n";
 		output += "\n";
