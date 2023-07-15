@@ -957,9 +957,10 @@ function DoStartup(){
     document.getElementById('staff_sep').value = 80;
     document.getElementById('music_space').value = 10;
 
+    document.getElementById('input').value = "X: 1\nT: The Ebb Tide\nR: hornpipe\nM: 4/4\nL: 1/8\nK: Gmaj\n|:dc|BdAB GABc|BG ~G2 G2 bg|fdcA BcdB|cABG =F2 dc|\n(3BdB (3ABA GABc|defa g2 (3efg|fdcB cedc|(3BdB G2 G2:|\n|:ga|bgdB gBdB|GBdB gBbB|aAcA =fAcA|DAcA =fAcA|\nBdAB GABc|defa g2 (3efg|fdcB cedc|(3BdB G2 G2:|\n";
+
     document.getElementById('output').value = "";
  
-
     // Reset file selectors
     var fileElement = document.getElementById('selectabcfile');
 
