@@ -1,0 +1,139 @@
+<html>
+  
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="profile" href="http://gmpg.org/xfn/11">
+    <title>Anglo Concertina Fingerings Generator</title>
+    <link rel='dns-prefetch' href='//fonts.googleapis.com' />
+    <link rel='dns-prefetch' href='//s.w.org' />
+    <link rel='preconnect' href='https://secureservercdn.net' crossorigin />
+    <link rel='stylesheet' id='generate-fonts-css'  href='//fonts.googleapis.com/css?family=Raleway:100,200,300,regular,500,600,700,800,900|Alegreya:regular,italic,700,700italic,900,900italic' type='text/css' media='all' />
+    <link rel='stylesheet' id='all-css' href='css/all.css?v=16' type='text/css' media='all' />
+    <link rel='stylesheet' id='fontawesome-css'  href='https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/themes/generatepress/css/font-awesome.min.css?ver=4.4.0&#038;time=1606377715' type='text/css' media='all' />
+    <script type='text/javascript' src='https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-includes/js/jquery/jquery.js?ver=1.12.4-wp&#038;time=1606377715' id='jquery-core-js'></script>
+    <link rel="icon" href="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5-32x32.png" sizes="32x32" />
+    <link rel="icon" href="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5-192x192.png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5-180x180.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Anglo Concertina Fingerings ABC Batch Processor" />
+    <meta property="og:description" content="Batch processor for generating ABC notation with Anglo Concertina fingerings" />
+    <meta property="og:url" content="http://michaeleskin.com/tunebooks.html" />
+    <meta property="og:site_name" content="ABC Transcription Tools Example Tunebooks" />
+    <meta property="og:image" content="http://michaeleskin.com/img/ksscover.jpg" />
+    <meta name="msapplication-TileImage" content="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5.png?time=1606377715" />
+    <meta name="viewport" content="width=860">
+    <link rel="stylesheet" href="anglo-fingerings.css"/>
+  </head>
+  <body>
+
+    <div id="maindiv">
+
+      <div>
+
+        <div style="text-align: center;">
+          <h1>Anglo Concertina Fingering Generator</h1>
+          <h2>Batch Pre-processor for ABC Tunebooks</h2>
+        </div>
+        <h2 style="margin-top:36px;">Notes:</h2>
+        
+        <p>Only supports C/G Jeffies and Wheatstone layouts.</p>
+        <p>Chooses combinations to avoid "hopping" and to try to stay on the home rows.</p>
+        <p>Fingering choices are still not optimal. For example, bellows usage is ignored. More work is needed here.</p>
+        
+        <h2 style="margin-top:20px;">Instructions:</h2>
+        
+        <p>Paste one or more ABC tunes into the box below.</p>
+        <p>Enter your desired fingering tablature font sizes, %%staffsep, and %%musicspace values.</p>
+        <p>Click "Generate Fingerings".</p>
+        <p>Select and copy the resulting annotated ABC to your clipboard and paste it into my <a href="http://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a> to render the final tunebook.</p>
+
+      </div>
+      
+      <div style="text-align:left">
+
+        <h4>ABC Input:</h4>
+
+        <p style="margin-bottom:12px">Open a .ABC file:&nbsp;&nbsp;<input type="file" id="selectabcfile" accept=".abc,.txt,.ABC,.TXT"/>
+
+        <p>
+          <textarea id="input" placeholder="Enter ABC notation here">
+X: 1
+T: The Ebb Tide
+R: hornpipe
+M: 4/4
+L: 1/8
+K: Gmaj
+|:dc|BdAB GABc|BG ~G2 G2 bg|fdcA BcdB|cABG =F2 dc|
+(3BdB (3ABA GABc|defa g2 (3efg|fdcB cedc|(3BdB G2 G2:|
+|:ga|bgdB gBdB|GBdB gBbB|aAcA =fAcA|DAcA =fAcA|
+BdAB GABc|defa g2 (3efg|fdcB cedc|(3BdB G2 G2:|
+          </textarea>
+        </p>
+        
+        <p><input type="checkbox" id="annotateBellows" checked="true">&nbsp;&nbsp;Annotate bellows directions ('P'=Push, 'D'=Draw)</p>
+        
+        <p><input type="checkbox" id="injectVolumes" checked="true">&nbsp;&nbsp;Inject %%MIDI directives to mute bass/chords</p>
+        
+        <p>Font family:<span class="inputbox"><input style="width:100px;" id="font_family" type="text"></span><span class="recommended">Recommended: Palatino</span></p>
+        
+        <p>Title font size:<span class="inputbox"><input style="width:100px;" id="title_font_size" type="text"></span><span class="recommended">Recommended: 22</span></p>
+        
+        <p>Subtitle font size:<span class="inputbox"><input style="width:100px" id="subtitle_font_size" type="text"></span><span class="recommended">Recommended: 18</span></p>
+        
+        <p>Info font size:<span class="inputbox"><input style="width:100px" id="info_font_size" type="text"></span><span class="recommended">Recommended: 14</span></p>
+        
+        <p>Tab font size:<span class="inputbox"><input style="width:100px" id="tab_font_size" type="text"></span><span class="recommended">Recommended: Reels - 8,  Jigs - 10</span></p>
+        
+        <p>%%staffsep value:<span class="inputbox"><input style="width:100px" id="staff_sep" type="text"></span><span class="recommended">Recommended: 80</span></p>
+        
+        <p>%%musicspace value:<span class="inputbox"><input style="width:100px" id="music_space" type="text"></span><span class="recommended">Recommended: 10</span></p>
+        
+        <p>
+          
+          <button onClick="generateFingerings();">Generate Fingerings</button>
+          
+          <select id="layout" onchange="setButtonToNoteMap();">
+
+            <option value="CGJeffries">C/G Jeffries</option>
+
+            <option value="CGWheatstone">C/G Wheatstone</option>
+
+          </select>
+          
+        </p>
+        
+        
+        <h4>Processed ABC Output, with fingerings:</h4>
+        
+        <textarea id="output" placeholder="Results will appear here"></textarea>
+
+        <p>
+
+          <button onClick="copyAllToClipboard();">Copy results to clipboard</button>
+
+        </p>
+
+      </div>
+      
+      <hr>
+
+      <div style="text-align: center;">
+
+        <h2>How to Read the Anglo Concertina Tablature</h2>
+
+        <img src="anglo-fingerings.jpg" style="margin-top:0px;" alt="Anglo Concertina Fingering Tab Legend" style="margin-top: 20px" title="Anglo Concertina Fingering Tab Legend">
+
+      </div>
+      
+      <hr>
+      
+      <p>Original source code by Jim Van Donsel: <a href="https://jvandonsel.github.io/fingering/fingering.html" target="_blank">https://jvandonsel.github.io/fingering/fingering.html</a></p>
+      
+    </div>
+    
+  </body>
+  
+  <script src="anglo-fingerings.js" type="text/javascript"></script>
+  
+</html>
