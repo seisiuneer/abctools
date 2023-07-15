@@ -357,13 +357,12 @@ function mergeFingerings(input, path, notes, annotateFingerings) {
 
         var fingering = path.states[i].button.name;
 
-
         // Add double quotes to fingering, to be rendered above the note
         fingering = "\"^" + fingering + "\"";
 
-        // Optionally append bellows direction, to be rendered below the note.
+        // Optionally append bellows direction, to be rendered below the button number.
         if (annotateFingerings) {
-            fingering = "\"_" + path.states[i].direction + "\"" + fingering;
+            fingering = fingering + "\"^" + path.states[i].direction + "\""; 
         }
 
         var fingLen = fingering.length;
@@ -821,11 +820,11 @@ function getTuneByIndex(theABC,tuneNumber){
 }
 
 // MAE 14 July 2023 Using glyphs instead
-var PUSH_NAME = "P";
-var DRAW_NAME = "D";
+// var PUSH_NAME = "P";
+// var DRAW_NAME = "D";
 
-// var PUSH_NAME = "↓";
-// var DRAW_NAME = "↑";
+var PUSH_NAME = "↓";
+var DRAW_NAME = "↑";
 
 function generateFingerings(){
 
@@ -956,6 +955,7 @@ function DoStartup(){
     document.getElementById('tab_font_size').value = 10;
     document.getElementById('staff_sep').value = 80;
     document.getElementById('music_space').value = 10;
+    document.getElementById('layout').selectedIndex = 0;
 
     document.getElementById('input').value = "X: 1\nT: The Ebb Tide\nR: hornpipe\nM: 4/4\nL: 1/8\nK: Gmaj\n|:dc|BdAB GABc|BG ~G2 G2 bg|fdcA BcdB|cABG =F2 dc|\n(3BdB (3ABA GABc|defa g2 (3efg|fdcB cedc|(3BdB G2 G2:|\n|:ga|bgdB gBdB|GBdB gBbB|aAcA =fAcA|DAcA =fAcA|\nBdAB GABc|defa g2 (3efg|fdcB cedc|(3BdB G2 G2:|\n";
 
