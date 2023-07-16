@@ -23,7 +23,7 @@
     <meta property="og:image" content="http://michaeleskin.com/img/anglotab.jpg" />
     <meta name="msapplication-TileImage" content="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5.png?time=1606377715" />
     <meta name="viewport" content="width=860">
-    <link rel="stylesheet" href="anglo-fingerings.css?v=8"/>
+    <link rel="stylesheet" href="anglo-fingerings.css?v=10"/>
   </head>
   <body>
 
@@ -40,8 +40,8 @@
         <p>Only supports C/G Jeffies and Wheatstone layouts.</p>
         <p>Chooses combinations to avoid "hopping" and to try to stay on the home rows.</p>
         <p>Fingering choices are still not optimal. For example, bellows usage is ignored. More work is needed here.</p>
-        <p>For best results, use source ABC files that do not already contain % comments, %% ABC directives, %%MIDI directives or chords.</p>
-        <p>Unpredictable results may occur if any of these are already present.</p>
+        <p>For best results, use source ABC tunes that have a single voice. (i.e. no V: tags)</p>
+        <p>Unpredictable results may occur with multi-voice ABC files.</p>
         
         <h2 style="margin-top:20px;">Instructions:</h2>
         
@@ -125,11 +125,18 @@
       <p style="text-align: center"> <a href="https://jvandonsel.github.io/fingering/fingering.html" target="_blank">https://jvandonsel.github.io/fingering/fingering.html</a></p>
       
       <hr>
+
+      <p style="text-align: center">Complete source code for this utility may be found on GitHub</p>
+
+      <p style="text-align: center"> <a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">Anglo Fingering Generator on Github</a></p>
+      
+      <hr>
+
      
     </div>
     
   </body>
   
-  <script src="anglo-fingerings.js?v=" type="text/javascript"></script>
+  <script src="anglo-fingerings.js?v=10" type="text/javascript"></script>
   
 </html>
