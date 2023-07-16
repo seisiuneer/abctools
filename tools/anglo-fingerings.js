@@ -900,8 +900,8 @@ function generateFingerings(){
         // annotation
 
         // Inject directives
-        // Reels: Palatino 8
-        // Jigs: Palatino 10
+        // Reels: Palatino 9
+        // Jigs: Palatino 11
 
         thisTune = InjectOneDirective(thisTune, "%%musicspace "+musicSpace);
         thisTune = InjectOneDirective(thisTune, "%%staffsep "+staffSep);
@@ -985,7 +985,7 @@ function DoStartup(){
     document.getElementById('title_font_size').value = 22;
     document.getElementById('subtitle_font_size').value = 18;
     document.getElementById('info_font_size').value = 14;
-    document.getElementById('tab_font_size').value = 10;
+    document.getElementById('tab_font_size').value = 9;
     document.getElementById('staff_sep').value = 80;
     document.getElementById('music_space').value = 10;
     document.getElementById('layout').selectedIndex = 0;
