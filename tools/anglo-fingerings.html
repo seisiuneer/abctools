@@ -39,9 +39,6 @@
         
         <p>Only supports C/G Jeffies and Wheatstone layouts.</p>
         <p>Chooses combinations to avoid "hopping" and to try to stay on the home rows.</p>
-        <p>Fingering choices are still not optimal. For example, bellows usage is ignored. More work is needed here.</p>
-        <p>For best results, use source ABC tunes that have a single voice. (i.e. no V: tags)</p>
-        <p>Unpredictable results may occur with multi-voice ABC files.</p>
         
         <h2 style="margin-top:20px;">Instructions:</h2>
         
@@ -117,7 +114,19 @@
         <img src="anglo-fingerings.jpg" style="margin-top:0px;" alt="Anglo Concertina Fingering Tab Legend" style="margin-top: 20px" title="Anglo Concertina Fingering Tab Legend">
 
       </div>
-      
+
+      <hr>
+
+      <h4 style="text-align:center">Known Issues</h4>
+
+        <p><strong>Fails when converting multi-voice tunes:</strong></p>
+        <p>For best results, use source ABC tunes that have a single voice. (i.e. no V: tags)</p>
+        <p>Unpredictable results or a failure to complete the fingering generation may occur with multi-voice ABC files.</p>
+        <p></p>
+        <p><strong>Button direction shows up as "null" for some less-often used accidentals:</strong></p>
+        <p>After fingering generation, some less-often used accidentals like ^A may display "null" as their direction in the ABC.</p>
+        <p>If you see "null" as the direction for any note, review the ABC in the ABC editor and correct the direction manually by copying and pasting either a push "↓" or draw "↑" arrow in place of the "null" before generating a tunebook.</p>      
+
       <hr>
       
       <p style="text-align: center">This utility is a fork of the original Anglo Concertina fingering converter written by Jim Van Donsel</p>
