@@ -819,6 +819,35 @@ function getTuneByIndex(theABC,tuneNumber){
 
 }
 
+//
+// Strip all comments and comment-based annotations in the ABC
+//
+function stripAllComments(theNotes){
+
+    // Strip out anything that looks like a comment
+    var searchRegExp = /%.*[\r\n]*/gm
+    theNotes = theNotes.replace(searchRegExp, "");
+
+    return theNotes;
+
+}
+
+// 
+// Strip all the chords in the ABC
+//
+function StripChords(theNotes){
+
+    // Strip out chord markings
+    var searchRegExp = /"[^"]*"/gm
+
+    // Strip out chord markings
+    theNotes = theNotes.replace(searchRegExp, "");
+
+    // Replace the ABC
+    return theNotes;
+
+}
+
 // MAE 14 July 2023 Using glyphs instead
 // var PUSH_NAME = "P";
 // var DRAW_NAME = "D";
@@ -849,6 +878,10 @@ function generateFingerings(){
     for (var i=0;i<nTunes;++i){
 
         var thisTune = getTuneByIndex(theABC,i);
+
+        thisTune = stripAllComments(thisTune);
+
+        thisTune = StripChords(thisTune);
 
         thisTune = finger(thisTune, annotateBellows);
 
