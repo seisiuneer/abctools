@@ -20,7 +20,7 @@
     <meta property="og:image" content="http://michaeleskin.com/img/anglotab.jpg" />
     <meta name="msapplication-TileImage" content="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5.png?time=1606377715" />
     <meta name="viewport" content="width=860">
-    <link rel="stylesheet" href="anglo-fingerings.css?v=18"/>
+    <link rel="stylesheet" href="anglo-fingerings.css?v=19"/>
   </head>
   <body>
     
@@ -176,9 +176,13 @@
       <p>For best results, use source ABC tunes that have a single voice. (i.e. no V: tags)</p>
       <p>Unpredictable results or a failure to complete the fingering generation may occur with multi-voice ABC files.</p>
       <p></p>
-      <p><strong>Button direction shows up as "null" for some less-often used accidentals:</strong></p>
-      <p>After fingering generation, some less-often used accidentals like ^A may display "null" as their direction in the ABC.</p>
+      <p><strong>Button direction shows up as missing for some less-often used accidentals:</strong></p>
+      <p>After fingering generation, some less-often used accidentals like _E in certain keys may be missing their direction in the ABC.</p>
       <p>If you see "null" as the direction for any note, review the ABC in the ABC editor and correct the direction manually by copying and pasting either a push "↓" or draw "↑" arrow in place of the "null" before generating a tunebook.</p>
+      <p></p>
+      <p><strong>Tunes with key changes mid-tune may not generate correct fingerings after the key change:</strong></p>
+      <p>The fingering solutions only use the original key of the tune.</p>
+      <p>If the key changes mid-tune, the fingering solution after that point may not be correct.</p>
       
       <hr>
       
@@ -198,8 +202,8 @@
     
   </body>
   
-  <script src="anglo-fingerings.js?v=18" type="text/javascript"></script>
-  <script type="text/javascript" src="lz-string.min.js?v=18"></script>
-  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=18"></script>
+  <script src="anglo-fingerings.js?v=19" type="text/javascript"></script>
+  <script type="text/javascript" src="lz-string.min.js?v=19"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=19"></script>
   
 </html>
