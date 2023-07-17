@@ -167,8 +167,6 @@ var buttonMapIndex = null;
 //
 function initButtonMap(){
 
-    //debugger;
-
     // Initialization of the original button map
     jeffriesMap = [];
     wheatstoneMap = [];
@@ -198,8 +196,6 @@ function initButtonMap(){
 
 // called by HTML layout selector
 function setButtonToNoteMap() {
-
-    //debugger;
 
     var index = document.getElementById('preferred_fingering').selectedIndex;
 
@@ -305,29 +301,31 @@ function finger(abcInput, annotateBellows) {
         return ("ERROR: Unknown or unsupported key signature");
     }
 
-     // Generate an array of note objects. Each
-     var notes = getAbcNotes(abcInput);
+    // Generate an array of note objects. Each
+    var notes = getAbcNotes(abcInput);
 
-     // Generate the inverse mapping
-     var noteToButtonMap = generateNoteToButtonMap(buttonToNoteMap);
+    // Generate the inverse mapping
+    var noteToButtonMap = generateNoteToButtonMap(buttonToNoteMap);
 
-     // Sort the inverse mapping table with the least costly buttons first.
+
+    // Sort the inverse mapping table with the least costly buttons first.
     // This speeds up tree pruning later
     sortButtonMap(noteToButtonMap);
 
     // Generate a state tree
     var stateTree = generateStateTree(notes, noteToButtonMap);
 
-     var path = chooseFingerings(stateTree);
-     if (path == null) {
+    var path = chooseFingerings(stateTree);
+
+    if (path == null) {
          log("No fingerings generated!");
          return abcOutput;
-     }
+    }
 
-     // Merge the chosen fingerings with the ABC notation
-     abcOutput = mergeFingerings(abcInput, path, notes, annotateBellows);
+    // Merge the chosen fingerings with the ABC notation
+    abcOutput = mergeFingerings(abcInput, path, notes, annotateBellows);
 
-     return abcOutput;
+    return abcOutput;
 
  }
 
@@ -546,12 +544,33 @@ function mergeFingerings(input, path, notes, annotateFingerings) {
 // Determines the bellows direction (PUSH/DRAW) given
 // a button and note.
 function findBellowsDirection(note, button) {
+
     if (note.normalizedValue == button.notes[PUSH_INDEX]) {
+    
         return PUSH_NAME;
+    
     } else if (note.normalizedValue == button.notes[DRAW_INDEX]) {
+    
         return DRAW_NAME;
+    
     } else {
-        return null;
+
+        var respelled = respellNormalized(note.normalizedValue);
+    
+        if (respelled == button.notes[PUSH_INDEX]) {
+    
+            return PUSH_NAME;
+    
+        } else if (respelled == button.notes[DRAW_INDEX]) {
+    
+            return DRAW_NAME;
+
+        }
+        else{
+        
+            return " "; // Better than saying "null"
+
+        }
     }
 }
 
@@ -778,12 +797,15 @@ function getAbcNotes(input) {
 }
 
 function respell(note) {
+
     var ret = note;
+    
     // enharmonic respellings
+    
     var respellings = {
         //    "_A": "^G",
-        "^A": "_B",
-        //    "_B": "^A",
+        //"^A": "_B",
+        "_B": "^A",
         //    "B": "_C",
         "^B": "C",
         "_C": "B",
@@ -791,7 +813,7 @@ function respell(note) {
         //    "^C": "_D",
         "_D": "^C",
         "^D": "_E",
-        //    "_E": "^D",
+        "_E": "^D",
         //    "E": "_F",
         "^E": "F",
         "_F": "E",
@@ -800,10 +822,47 @@ function respell(note) {
         "_G": "^F",
         "^G": "_A"
     };
+
     for (var x in respellings) {
         ret = ret.replace(x, respellings[x]);
         ret = ret.replace(x.toLowerCase(), respellings[x].toLowerCase());
     }
+    
+    return ret;
+}
+
+function respellNormalized(note) {
+
+    var ret = note;
+    
+    // enharmonic respellings
+    
+    var respellings = {
+        //    "_A": "^G",
+        "^A": "_B",
+        //"_B": "^A",
+        //    "B": "_C",
+        //"^B": "C",
+        //"_C": "B",
+        //    "C": "^B",
+        //    "^C": "_D",
+        //"_D": "^C",
+        "^D": "_E",
+        //"_E": "^D", 
+        //    "E": "_F",
+        //"^E": "F",
+        //"_F": "E",
+        //    "F": "^E",
+        //    "^F": "_G",
+        //"_G": "^F",
+        "^G": "_A"
+    };
+
+    for (var x in respellings) {
+        ret = ret.replace(x, respellings[x]);
+        ret = ret.replace(x.toLowerCase(), respellings[x].toLowerCase());
+    }
+    
     return ret;
 }
 
@@ -882,26 +941,52 @@ function sortButtonMap(noteToButtonMap) {
 // The values of this map are buttons.
 // Returns the note->button map
 function generateNoteToButtonMap(buttonToNoteMap) {
+
     var noteMap = {};
+    
     for (var buttonName in buttonToNoteMap) {
+    
         var notes  = buttonToNoteMap[buttonName].notes;
+    
         if (notes == null) {
             log("Failed to find entry for button " + b);
             continue;
         }
+    
         notes.forEach(
+    
             function (v) {
-                v = respell(v);
+
                 if (noteMap[v] == null ) { 
+
                     // Create a new button list for this note.
                     noteMap[v] = [buttonToNoteMap[buttonName]];
+
                 } else {
+
                     // Insert this button into an existing button list for this note.
                     noteMap[v].push(buttonToNoteMap[buttonName]);
+
                 }
+
+                v = respell(v);
+
+                if (noteMap[v] == null ) { 
+
+                    // Create a new button list for this note.
+                    noteMap[v] = [buttonToNoteMap[buttonName]];
+
+                } else {
+
+                    // Insert this button into an existing button list for this note.
+                    noteMap[v].push(buttonToNoteMap[buttonName]);
+
+                }
+    
             });
         
     }
+    
     return noteMap;
 }
 
