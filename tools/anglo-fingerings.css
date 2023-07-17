@@ -93,13 +93,22 @@ background-color: #efefef;
 color:black;
 }
 
+#preferred_fingering{
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:245px;
+margin-left:0px;
+}
+
 #layout{
 font-size:11pt;
 font-family:"Helvetica";
 height:32px;
-width:213px;
-margin-left:24px;
+width:170px;
+margin-left:0px;
 }
+
 
 .btn {
   --color: #000000;
