@@ -20,7 +20,8 @@
     <meta property="og:image" content="http://michaeleskin.com/img/anglotab.jpg" />
     <meta name="msapplication-TileImage" content="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5.png?time=1606377715" />
     <meta name="viewport" content="width=860">
-    <link rel="stylesheet" href="anglo-fingerings.css?v=19"/>
+    <link rel="stylesheet" href="anglo-fingerings.css?v=22"/>
+    
   </head>
   <body>
     
@@ -42,16 +43,13 @@
         <p><strong>On-Row:</strong></p>
         <p>Jim Van Donsel's original fingering solution, favors center row.</p>
         <p>Favors playing the second octave D and E on the right side center row.</p>
-        <p>For Jeffries-style instruments, favors the right-side top-row 1st button draw for C#.</p>
-        <p><strong>On-Row + Jeffries C# Push:</strong></p>
-        <p>On-Row solution plus, for Jeffries-style instruments, favors the right-side top-row 2nd button press for C#.</p>
         <p><strong>Cross-Row:</strong></p>
         <p>A more cross-row friendly fingering solution:</p>
         <p>Favors playing the second octave D and E on the left side bottom row.</p>
-        <p>For Jeffries-style instruments, favors the right-side top-row 2nd button press for C#.</p>
-        <p>5)&nbsp;Click "Generate Fingerings".</p>
+        <p>5)&nbsp;For Jeffries-style instruments, if you prefer your second octave C# and D# on the right-side top-row 2nd button C#/D# rather than on the right-side top-row 1st button D#/C#,  check "Prefer right-side top-row 2nd button C#/D#."
+        <p>6)&nbsp;Click "Generate Fingerings".</p>
         <p>The generated fingerings will appear in the "Processed ABC Output, with Fingerings" box.</p>
-        <p>6)&nbsp;Save, Copy or Test the results:
+        <p>7)&nbsp;Save, Copy or Test the results:
         <p>Click "Save Output to a file" to save the results to a file.</p>
         <p>Click "Copy Output to the clipboard" to copy the results to the system clipboard for pasting into other applications.</p>
         <p>Click "Test Output in the ABC Transcription Tools" to open and test the results in my <a href="http://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a></p>
@@ -98,7 +96,7 @@
           
           <span style="">Style:&nbsp;&nbsp;</span>
 
-          <select id="layout" onchange="setButtonToNoteMap();">
+          <select id="layout" onchange="idleButtonToNoteMap();">
             
             <option value="CGJeffries">&nbsp;&nbsp;C/G Jeffries</option>
             
@@ -108,18 +106,18 @@
           
           <span style="margin-left:18px">Fingering Solution:&nbsp;&nbsp;</span>
 
-          <select id="preferred_fingering" onchange="setButtonToNoteMap();">
+          <select id="preferred_fingering" onchange="idleButtonToNoteMap();">
 
             <option value="0">&nbsp;&nbsp;On-Row</option>
 
-            <option value="1">&nbsp;&nbsp;On-Row + Jeffries C# Push</option>
-
-            <option value="2">&nbsp;&nbsp;Cross-Row</option>
+            <option value="1">&nbsp;&nbsp;Cross-Row</option>
 
           </select>
-         
+
         </p>
         
+        <p id="jeffries_csharp_holder"><input type="checkbox" id="jeffries_csharp">&nbsp;&nbsp;Prefer right-side top-row 2nd button C#/D#</p>
+      
         <p style="margin-top:24px"><button id="generateFingerings" class="btn btn-generate" onClick="generateFingerings();">Generate Fingerings</button></p>
 
         <div style="margin-bottom: 18px;">
@@ -202,8 +200,8 @@
     
   </body>
   
-  <script src="anglo-fingerings.js?v=19" type="text/javascript"></script>
-  <script type="text/javascript" src="lz-string.min.js?v=19"></script>
-  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=19"></script>
+  <script src="anglo-fingerings.js?v=22" type="text/javascript"></script>
+  <script type="text/javascript" src="lz-string.min.js?v=22"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=22"></script>
   
 </html>
