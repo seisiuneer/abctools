@@ -921,16 +921,118 @@ function generateFingerings(){
         result += "\n";
     }
 
-    document.getElementById('output').value=result;
+    document.getElementById("output").value=result;
 
+}
+
+//
+// Save the Output to a .abc file
+//
+function saveOutput(){
+
+    var theData = document.getElementById("output").value;
+
+    if (theData.length == 0){
+
+        DayPilot.Modal.alert("Nothing to save!",{ theme: "modal_flat", top: 50 });
+
+        return;
+    }
+
+    var thePlaceholder = "anglo_fingerings.txt";
+
+    var thePrompt = "Please enter a filename for your output ABC file:";
+
+    DayPilot.Modal.prompt(thePrompt, thePlaceholder,{ theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
+
+        var fname = args.result;
+
+        // If the user pressed Cancel, exit
+        if (fname == null){
+          return null;
+        }
+
+        // Strip out any naughty HTML tag characters
+        fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+        if (fname.length == 0){
+          return null;
+        }      
+
+        // Give it a good extension
+        if ((!gIsAndroid) && (!gIsIOS)){
+
+            if ((!fname.endsWith(".abc")) && (!fname.endsWith(".txt")) && (!fname.endsWith(".ABC")) && (!fname.endsWith(".TXT"))){
+
+                // Give it a good extension
+                fname = fname.replace(/\..+$/, '');
+                fname = fname + ".abc";
+
+            }
+        }
+        else{
+            // iOS and Android have odd rules about text file saving
+            // Give it a good extension
+            fname = fname.replace(/\..+$/, '');
+            fname = fname + ".txt";
+
+        }
+
+        var a = document.createElement("a");
+
+        document.body.appendChild(a);
+
+        a.style = "display: none";
+
+        var blob = new Blob([theData], {type: "text/plain"}),
+
+        url = window.URL.createObjectURL(blob);
+        a.href = url;
+        a.download = fname;
+        a.click();
+
+        document.body.removeChild(a);
+
+        setTimeout(function() {
+          window.URL.revokeObjectURL(url);
+        }, 1000);       
+
+    });
+
+}
+
+
+//
+// Copy the output text are to the clipboard 
+// 
+function copyOutputToClipboard(){
+
+    var textToCopy = document.getElementById('output').value;
+
+    if (textToCopy.length == 0){
+
+        DayPilot.Modal.alert("Nothing to copy!",{ theme: "modal_flat", top: 50 });
+
+        return;
+
+    }
+    
+    copyToClipboard(textToCopy);
+
+    // Give some feedback
+    document.getElementById("copybutton").innerHTML = "Output copied to the clipboard!";
+
+    setTimeout(function(){
+
+        document.getElementById("copybutton").innerHTML = "Copy output to the clipboard";
+
+    },1250);
 }
 
 //
 // Copy to Clipboard Polyfill
 //
-function copyAllToClipboard() {
-
-    var textToCopy = document.getElementById('output').value;
+function copyToClipboard(textToCopy) {
 
     //
     // Put this in a try/catch just to be safe
@@ -967,6 +1069,7 @@ function copyAllToClipboard() {
                 textArea.remove();
             });
         }
+
     } 
     catch (error){
 
@@ -975,6 +1078,115 @@ function copyAllToClipboard() {
     }
 }
 
+//
+// Get the current base URL
+//
+function getUrlWithoutParams() {
+
+    return "http://michaeleskin.com/abctools/abctools.html";
+
+    return window.location.protocol + "//" + window.location.host + window.location.pathname;
+
+}
+
+//
+// Generate and open an ABC Transcription Tools Share URL for the output
+//
+function testOutput(){
+
+    // Encode all the tunes or just what's passed in?
+    var abcText = document.getElementById('output').value;
+
+    if (abcText.length == 0){
+
+        DayPilot.Modal.alert("Nothing to test!",{ theme: "modal_flat", top: 50 });
+
+        return;
+
+    }
+
+    var shareName = "Anglo_Jeffries_Fingering_Test";
+
+    var index = document.getElementById('layout').selectedIndex;
+    var options = document.getElementById('layout').options;
+    var val = options[index].value;
+
+    if (val == "CGWheatstone"){
+
+        shareName = "Anglo_Wheatstone_Fingering_Test";
+
+    }
+
+    var abcInLZW = LZString.compressToEncodedURIComponent(abcText);
+
+    var ssp = document.getElementById('staff_sep').value;
+
+    var url = "http://michaeleskin.com/abctools/abctools.html?lzw=" + abcInLZW + "&format=noten&ssp=45&pdf=one&pn=br&fp=yes&btfs=10&name=" + shareName;
+
+    if (url.length > 8100) {
+
+        DayPilot.Modal.alert("Output too long to test!",{ theme: "modal_flat", top: 50 });
+
+        return;
+    } 
+
+    // Open the transcription tools with the share link
+    var w = window.open(url);
+
+}
+
+
+//
+// Are we on iOS?
+//
+function isIOS() {
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+        return true;
+    } else {
+        return navigator.maxTouchPoints &&
+            navigator.maxTouchPoints > 2 &&
+            /MacIntel/.test(navigator.platform);
+    }
+}
+
+//
+// Are we on an iPhone?
+//
+function isIPhone() {
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+        return true;
+    } 
+    else{
+        return false;
+    }
+}
+
+//
+// Are we on an iPad?
+//
+function isIPad() {
+    return navigator.maxTouchPoints &&
+        navigator.maxTouchPoints > 2 &&
+        /MacIntel/.test(navigator.platform);
+}
+
+//
+// Are we on Android?
+//
+function isAndroid(){
+    if (/Android/i.test(navigator.userAgent)) {
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+//
+// Globals
+//
+var gIsIOS = false;
+var gIsAndroid = false;
 
 //
 // Initialization 
@@ -998,6 +1210,19 @@ function DoStartup(){
     var fileElement = document.getElementById('selectabcfile');
 
     fileElement.value = "";
+
+    // Are we on iOS?
+    gIsIOS = false;
+    if (isIOS()) {
+        gIsIOS = true;
+    }
+
+    // Are we on Android?
+    gIsAndroid = false;
+
+    if (isAndroid()){
+        gIsAndroid = true;
+    }
 
     //
     // Setup the file import control
