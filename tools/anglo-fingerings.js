@@ -1223,6 +1223,10 @@ function DoStartup(){
     if (isAndroid()){
         gIsAndroid = true;
     }
+    
+    if (gIsIOS){
+        document.getElementById("selectabcfile").removeAttribute("accept");
+    }   
 
     //
     // Setup the file import control
