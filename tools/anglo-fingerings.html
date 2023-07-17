@@ -8,9 +8,6 @@
     <link rel='dns-prefetch' href='//fonts.googleapis.com' />
     <link rel='dns-prefetch' href='//s.w.org' />
     <link rel='preconnect' href='https://secureservercdn.net' crossorigin />
-    <link rel='stylesheet' id='generate-fonts-css'  href='//fonts.googleapis.com/css?family=Raleway:100,200,300,regular,500,600,700,800,900|Alegreya:regular,italic,700,700italic,900,900italic' type='text/css' media='all' />
-    <link rel='stylesheet' id='all-css' href='css/all.css?v=16' type='text/css' media='all' />
-    <link rel='stylesheet' id='fontawesome-css'  href='https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/themes/generatepress/css/font-awesome.min.css?ver=4.4.0&#038;time=1606377715' type='text/css' media='all' />
     <script type='text/javascript' src='https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-includes/js/jquery/jquery.js?ver=1.12.4-wp&#038;time=1606377715' id='jquery-core-js'></script>
     <link rel="icon" href="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5-32x32.png" sizes="32x32" />
     <link rel="icon" href="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5-192x192.png" sizes="192x192" />
@@ -23,7 +20,7 @@
     <meta property="og:image" content="http://michaeleskin.com/img/anglotab.jpg" />
     <meta name="msapplication-TileImage" content="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5.png?time=1606377715" />
     <meta name="viewport" content="width=860">
-    <link rel="stylesheet" href="anglo-fingerings.css?v=11"/>
+    <link rel="stylesheet" href="anglo-fingerings.css?v=13"/>
   </head>
   <body>
 
@@ -35,17 +32,16 @@
           <h1>Anglo Concertina Fingering Generator</h1>
           <h2>Batch Pre-processor for ABC Tunebooks</h2>
         </div>
-        <h2 style="margin-top:36px;">Notes:</h2>
         
-        <p>Only supports C/G Jeffies and Wheatstone layouts.</p>
-        <p>Chooses combinations to avoid "hopping" and to try to stay on the home rows.</p>
+        <h4 style="margin-top:20px;">Instructions:</h4>
         
-        <h2 style="margin-top:20px;">Instructions:</h2>
-        
-        <p>Paste one or more ABC tunes into the box below.</p>
+        <p>Click "Open an existing .ABC file" to open a file or paste one or more ABC tunes into the box below.</p>
         <p>Enter your desired fingering tablature font sizes, %%staffsep, and %%musicspace values.</p>
         <p>Click "Generate Fingerings".</p>
-        <p>Select and copy the resulting annotated ABC to your clipboard and paste it into my <a href="http://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a> to render the final tunebook.</p>
+        <p>The generated fingerings will appear in the "Processed ABC Output, with Fingerings" box.</p>
+        <p>Click "Save Output to a file" to save the results to a file.</p>
+        <p>Click "Copy Output to the clipboard" to copy the results to the system clipboard for pasting into other applications.</p>
+        <p>Click "Test Output in the ABC Transcription Tools" to instantly open and test the results in my <a href="http://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a></p>
 
       </div>
       
@@ -53,7 +49,12 @@
 
         <h4>ABC Input:</h4>
 
-        <p style="margin-bottom:12px">Open a .ABC file:&nbsp;&nbsp;<input type="file" id="selectabcfile" accept=".abc,.txt,.ABC,.TXT"/>
+        <div style="margin-top:28px;margin-bottom:36px;">
+        	<p>
+				<input type="file" id="selectabcfile" accept=".abc,.txt,.ABC,.TXT"  hidden/>
+				<label class="abcupload btn btn-controls" for="selectabcfile" title="Opens an existing ABC file">Open an existing .ABC file</label>
+			</p>
+		</div>
 
         <p>
           <textarea id="input" placeholder="Enter ABC notation here" spellcheck="false" autocorrect="off" autocapitalize="none">
@@ -80,26 +81,31 @@
         
         <p>
           
-          <button onClick="generateFingerings();">Generate Fingerings</button>
+          <button class="btn btn-generate" onClick="generateFingerings();">Generate Fingerings</button>
           
           <select id="layout" onchange="setButtonToNoteMap();">
 
-            <option value="CGJeffries">C/G Jeffries</option>
+            <option value="CGJeffries">&nbsp;&nbsp;C/G Jeffries</option>
 
-            <option value="CGWheatstone">C/G Wheatstone</option>
+            <option value="CGWheatstone">&nbsp;&nbsp;C/G Wheatstone</option>
 
           </select>
           
         </p>
         
+        <div style="margin-bottom: 18px;">
+        	<h4>Processed ABC Output, with Fingerings:</h4>
+        </div>
         
-        <h4>Processed ABC Output, with fingerings:</h4>
-        
-        <textarea id="output" placeholder="Results will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea>
+        <textarea id="output" placeholder="Output results will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea>
 
-        <p>
+        <p style="margin-top:20px;">
 
-          <button onClick="copyAllToClipboard();">Copy results to clipboard</button>
+          	<button id="copybutton" class="btn btn-controls" onClick="copyOutputToClipboard();">Copy Output to the clipboard</button>
+         
+         	<button style="margin-left:24px;" class="btn btn-controls" onClick="saveOutput();">Save Output to a file</button>
+
+         	<button style="margin-left:24px;" class="btn btn-controls" onClick="testOutput();">Test Output in the ABC Transcription Tools</button>
 
         </p>
 
@@ -109,13 +115,20 @@
 
       <div style="text-align: center;">
 
-        <h2>How to Read the Anglo Concertina Tablature</h2>
+        <h4>How to Read the Anglo Concertina Tablature</h4>
 
         <img src="anglo-fingerings.jpg" style="margin-top:0px;" alt="Anglo Concertina Fingering Tab Legend" style="margin-top: 20px" title="Anglo Concertina Fingering Tab Legend">
 
       </div>
 
       <hr>
+
+     	<h4 style="margin-top:36px;text-align:center;">Notes</h4>
+        
+        <p>Only supports C/G Jeffies and Wheatstone layouts.</p>
+        <p>Chooses combinations to avoid "hopping" and to try to stay on the home rows.</p>
+
+     <hr>
 
       <h4 style="text-align:center">Known Issues</h4>
 
@@ -139,13 +152,14 @@
 
       <p style="text-align: center"> <a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">Anglo Fingering Generator on Github</a></p>
       
-      <hr>
-
+      <hr style="margin-bottom:50px">
      
     </div>
     
   </body>
   
-  <script src="anglo-fingerings.js?v=11" type="text/javascript"></script>
+  <script src="anglo-fingerings.js?v=13" type="text/javascript"></script>
+<script type="text/javascript" src="lz-string.min.js?v=13"></script>
+<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=13"></script>
   
 </html>
