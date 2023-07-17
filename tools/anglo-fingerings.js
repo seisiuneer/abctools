@@ -36,7 +36,8 @@ var Button = function(name, notes, cost, finger) {
 // Notes are [PUSH, DRAW].
 var PUSH_INDEX = 0;
 var DRAW_INDEX = 1;
-var baseMap = {
+
+var baseMapOriginal = {
 
 // Top row, LH
 "L1a"  : new Button("L1a" , ["E,", "F,"],  10, "l4" ),
@@ -75,7 +76,58 @@ var baseMap = {
 
 };
 
-var jeffriesMap = {
+//
+// Closer to my preferred choices
+//
+// Original values commented out
+//
+// Prefers:
+// Draw c' on the left bottom row
+// Press d' on the left bottom row 
+//
+
+var baseMapAlt1 = {
+
+// Top row, LH
+"L1a"  : new Button("L1a" , ["E,", "F,"],  10, "l4" ),
+"L2a"  : new Button("L2a" , ["A,", "_B,"], 10, "l4" ),
+"L3a"  : new Button("L3a" , ["^C", "_E"],  10, "l3" ),
+"L4a"  : new Button("L4a" , ["A", "G"],    10, "l2" ),
+"L5a"  : new Button("L5a" , ["^G", "_B"],  10, "l1" ),
+
+// Middle row, LH
+"L1"  :  new Button("L1", ["C,", "G,"], 1, "l4" ),
+"L2"  :  new Button("L2", ["G,", "B,"], 1, "l4" ),
+"L3"  :  new Button("L3", ["C" , "D"],  1, "l3" ),
+"L4"  :  new Button("L4", ["E" , "F"],  1, "l2" ),
+"L5"  :  new Button("L5", ["G" , "A"],  1, "l1" ),
+
+// Bottom row, LH
+"L6"  :  new Button("L6", ["B," , "A,"], 1, "l4" ),
+"L7"  :  new Button("L7", ["D"  , "^F"], 2,  "l4" ),
+"L8"  :  new Button("L8", ["G"  , "A"],  2,  "l3" ),
+"L9"  :  new Button("L9", ["B"  , "c"],  2,  "l2" ),
+//"L10" :  new Button("L10", ["d"  , "e"], 2,  "l1" ),
+"L10" :  new Button("L10", ["d"  , "e"], 1,  "l1" ),
+
+// Middle row, RH
+"R1"  :  new Button("R1", ["c"  , "B"],  1, "r1" ),
+//"R2"  :  new Button("R2", ["e"  , "d"],  1, "r2" ),
+"R2"  :  new Button("R2", ["e"  , "d"],  2, "r2" ),
+"R3"  :  new Button("R3",  ["g"  , "f"], 2, "r3" ),
+"R4"  :  new Button("R4", ["c'" , "a"],  2, "r4" ),
+"R5" :   new Button("R5", ["e'" , "b"],  2, "r4" ),
+
+// Bottom row, RH
+"R6"  :  new Button("R6", ["g" , "^f"],   1, "r1" ),
+"R7"  :  new Button("R7", ["b"  , "a"],   1, "r2" ),
+"R8"  :  new Button("R8", ["d'" , "c'"],  1, "r3" ),
+"R9"  :  new Button("R9", ["g'", "e'"],   1, "r4" ),
+"R10" :  new Button("R10", ["b'", "^f'"], 1, "r4" )
+
+};
+
+var jeffriesMapOriginal = {
     // Top row, RH
     "R1a": new Button("R1a", ["^d", "^c"], 10, "r1"),
     "R2a": new Button("R2a", ["^c", "^d"], 10, "r2"),
@@ -84,7 +136,18 @@ var jeffriesMap = {
     "R5a": new Button("R5a", ["a", "d'"], 10, "r4")
 };
 
-var wheatstoneMap = {   
+// Prefers a R2a press C#
+var jeffriesMapAlt1 = {
+    // Top row, RH
+    "R1a": new Button("R1a", ["^d", "^c"], 10, "r1"),
+    //"R2a": new Button("R2a", ["^c", "^d"], 10, "r2"),
+    "R2a": new Button("R2a", ["^c", "^d"], 1, "r2"),
+    "R3a": new Button("R3a", ["^g", "g"], 10, "r3"),
+    "R4a": new Button("R4a", ["^c'", "_b"], 10, "r4"),
+    "R5a": new Button("R5a", ["a", "d'"], 10, "r4")
+};
+
+var wheatstoneMapOriginal = {   
     // Top row, RH
     "R1a": new Button("R1a", ["^c", "^d"], 10, "r1"),
     "R2a": new Button("R2a", ["a", "g"], 10, "r2"),
@@ -93,23 +156,127 @@ var wheatstoneMap = {
     "R5a": new Button("R5a", ["a", "f'"], 10, "r4"),   
 };
 
-for (var x in baseMap) {
-    jeffriesMap[x] = baseMap[x];
-    wheatstoneMap[x] = baseMap[x];
+// Initialization of the original button map
+var jeffriesMap = null;
+var wheatstoneMap = null;
+var buttonToNoteMap = null;
+var buttonMapIndex = null;
+
+//
+// Configure the button map to the orginal maps
+//
+function initButtonMap(){
+
+    //debugger;
+
+    // Initialization of the original button map
+    jeffriesMap = [];
+    wheatstoneMap = [];
+
+    for (var x in jeffriesMapOriginal) {
+        jeffriesMap[x] = jeffriesMapOriginal[x];
+     }
+
+    for (var x in wheatstoneMapOriginal) {
+        wheatstoneMap[x] = wheatstoneMapOriginal[x];
+     }
+
+    for (var x in baseMapOriginal) {
+        jeffriesMap[x] = baseMapOriginal[x];
+        wheatstoneMap[x] = baseMapOriginal[x];
+    }
+
+    buttonToNoteMap = jeffriesMap;
+
+    buttonMapIndex = {
+        "CGJeffries": jeffriesMap,
+        "CGWheatstone": wheatstoneMap
+    };
+
 }
 
-var buttonToNoteMap = jeffriesMap;
-
-var buttonMapIndex = {
-    "CGJeffries": jeffriesMap,
-    "CGWheatstone": wheatstoneMap
-};
 
 // called by HTML layout selector
 function setButtonToNoteMap() {
-    var index = document.getElementById('layout').selectedIndex;
+
+    //debugger;
+
+    var index = document.getElementById('preferred_fingering').selectedIndex;
+
+    var baseMapIndex = document.getElementById('preferred_fingering').options[index].value;
+
+    jeffriesMap = [];
+    wheatstoneMap = [];
+
+    switch (baseMapIndex){
+
+        // Original
+        case "0":
+
+            for (var x in jeffriesMapOriginal) {
+                jeffriesMap[x] = jeffriesMapOriginal[x];
+             }
+
+            for (var x in wheatstoneMapOriginal) {
+                wheatstoneMap[x] = wheatstoneMapOriginal[x];
+             }
+
+            for (var x in baseMapOriginal) {
+                jeffriesMap[x] = baseMapOriginal[x];
+                wheatstoneMap[x] = baseMapOriginal[x];
+            }
+
+            break;
+
+        // Original plus Jeffries C# push
+        case "1":
+
+            for (var x in jeffriesMapOriginal) {
+                jeffriesMap[x] = jeffriesMapAlt1[x];
+             }
+
+            for (var x in wheatstoneMapOriginal) {
+                wheatstoneMap[x] = wheatstoneMapOriginal[x];
+             }
+
+            for (var x in baseMapOriginal) {
+                jeffriesMap[x] = baseMapOriginal[x];
+                wheatstoneMap[x] = baseMapOriginal[x];
+            }
+
+            break;
+
+
+        // Cross-row
+        case "2":
+
+            for (var x in jeffriesMapAlt1) {
+                jeffriesMap[x] = jeffriesMapAlt1[x];
+             }
+
+            for (var x in wheatstoneMapOriginal) {
+                wheatstoneMap[x] = wheatstoneMapOriginal[x];
+             }
+
+            for (var x in baseMapAlt1) {
+                jeffriesMap[x] = baseMapAlt1[x];
+                wheatstoneMap[x] = baseMapAlt1[x];
+            }
+            
+            break;    
+    }
+
+    buttonMapIndex = {
+        "CGJeffries": jeffriesMap,
+        "CGWheatstone": wheatstoneMap
+    };
+
+    index = document.getElementById('layout').selectedIndex;
+
     var options = document.getElementById('layout').options;
+    
     buttonToNoteMap = buttonMapIndex[options[index].value];
+
 }
 
 
@@ -1201,6 +1368,7 @@ function DoStartup(){
     document.getElementById('staff_sep').value = 80;
     document.getElementById('music_space').value = 10;
     document.getElementById('layout').selectedIndex = 0;
+    document.getElementById('preferred_fingering').selectedIndex = 0;
 
     document.getElementById('input').value = "X: 1\nT: The Ebb Tide\nR: hornpipe\nM: 4/4\nL: 1/8\nK: Gmaj\n|:dc|BdAB GABc|BG ~G2 G2 bg|fdcA BcdB|cABG =F2 dc|\n(3BdB (3ABA GABc|defa g2 (3efg|fdcB cedc|(3BdB G2 G2:|\n|:ga|bgdB gBdB|GBdB gBbB|aAcA =fAcA|DAcA =fAcA|\nBdAB GABc|defa g2 (3efg|fdcB cedc|(3BdB G2 G2:|\n";
 
@@ -1251,6 +1419,9 @@ function DoStartup(){
         reader.readAsText(file);
 
     }
+
+    // Configure the initial button map
+    initButtonMap();
 
 }
 
