@@ -20,7 +20,7 @@
     <meta property="og:image" content="http://michaeleskin.com/img/boxtab1.jpg" />
     <meta name="msapplication-TileImage" content="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5.png?time=1606377715" />
     <meta name="viewport" content="width=860">
-    <link rel="stylesheet" href="box-tab.css?v=4"/>
+    <link rel="stylesheet" href="box-tab.css?v=5"/>
     
   </head>
   <body>
@@ -39,9 +39,10 @@
         <p>1)&nbsp;Click "Open an existing .ABC file" to open a file or paste one or more ABC tunes into the box below.</p>
         <p>2)&nbsp;Enter your preferred ABC font sizes, %%staffsep, and %%musicspace values.</p>
         <p>3)&nbsp;Select your instrument style: (B/C or C#/D) from the "Style" dropdown.</p>
-        <p>4)&nbsp;Click "Generate Tablature".</p>
+        <p>4)&nbsp;Select whether you want the tablature to appear above or below the notation from the "Tab Location" dropdown.</p>
+        <p>5)&nbsp;Click "Generate Tablature".</p>
         <p>The generated ABC with tablature will appear in the "Processed ABC Output, with Tablature" box.</p>
-        <p>5)&nbsp;Save, Copy or Test the results:</p>
+        <p>6)&nbsp;Save, Copy or Test the results:</p>
         <p>Click "Save Output to a file" to save the results to a file.</p>
         <p>Click "Copy Output to the clipboard" to copy the results to the system clipboard for pasting into other applications.</p>
         <p>Click "Test Output in the ABC Transcription Tools" to open and test the results in my <a href="http://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a></p>
@@ -94,6 +95,16 @@
             
           </select>
           
+          <span style="">Tab Location:&nbsp;&nbsp;</span>
+          
+          <select id="tab_location">
+            
+            <option value="above">&nbsp;&nbsp;Above Staff</option>
+            
+            <option value="below">&nbsp;&nbsp;Below Staff</option>
+            
+          </select>
+
         </p>
         
         <p style="margin-top:24px"><button id="generateTablature" class="btn btn-generate" onClick="generateTablature();">Generate Tablature</button></p>
@@ -190,8 +201,8 @@
     
   </body>
   
-  <script src="box-tab.js?v=4" type="text/javascript"></script>
-  <script type="text/javascript" src="lz-string.min.js?v=4"></script>
-  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=4"></script>
+  <script src="box-tab.js?v=5" type="text/javascript"></script>
+  <script type="text/javascript" src="lz-string.min.js?v=5"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=5"></script>
   
 </html>
