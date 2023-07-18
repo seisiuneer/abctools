@@ -23,6 +23,9 @@
 
 var verbose = false;
 
+// Suggested filename for save
+var gSaveFilename = "";
+
 // Button constructor
 var Button = function(name, notes, cost, finger) {
     this.name = name;
@@ -1229,9 +1232,47 @@ function saveOutput() {
         });
 
         return;
+    }    
+
+
+    if (gSaveFilename == ""){
+        gSaveFilename = "anglo_fingerings";
     }
 
-    var thePlaceholder = "anglo_fingerings.txt";
+    var thePlaceholder = gSaveFilename;
+
+    // Jeffries or Wheatstone
+    var style = document.getElementById('layout').selectedIndex;
+
+    switch (style){
+
+        // Jeffries
+        case 0:
+            thePlaceholder += "_Jeffries";
+            break;
+
+        // Wheatstone
+        case 1:
+           thePlaceholder += "_Wheatstone";
+            break;
+    }
+
+    // On-row or Cross-row
+    var index = document.getElementById('preferred_fingering').selectedIndex;
+
+    switch (index){
+
+        // On-Row
+        case 0:
+            thePlaceholder += "_On_Row.abc";
+            break;
+
+        // Cross-Row
+        case 1:
+           thePlaceholder += "_Cross_Row.abc";
+            break;
+    }
+
 
     var thePrompt = "Please enter a filename for your output ABC file:";
 
@@ -1541,6 +1582,20 @@ function DoStartup() {
 
         let file = fileElement.files[0];
 
+        gSaveFilename = file.name;
+
+        // Trim any whitespace
+        gSaveFilename = gSaveFilename.trim();
+
+        // Strip out any naughty HTML tag characters
+        gSaveFilename = gSaveFilename.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+        // Replace any spaces
+        gSaveFilename = gSaveFilename.replace(/\s/g, '_');
+
+        // Strip the extension
+        gSaveFilename = gSaveFilename.replace(/\..+$/, '');
+
         // Clean up the notation while the new file is loading
         document.getElementById('input').value = "";
 
@@ -1549,6 +1604,11 @@ function DoStartup() {
         reader.addEventListener('load', (event) => {
 
             document.getElementById('input').value = event.target.result;
+
+            // Reset file selectors
+            let fileElement = document.getElementById('selectabcfile');
+
+            fileElement.value = "";
 
         });
 
