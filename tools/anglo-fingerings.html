@@ -20,8 +20,8 @@
     <meta property="og:image" content="http://michaeleskin.com/img/anglotab3.jpg" />
     <meta name="msapplication-TileImage" content="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5.png?time=1606377715" />
     <meta name="viewport" content="width=860">
-    <link rel="stylesheet" href="anglo-fingerings.css?v=23"/>
-     
+    <link rel="stylesheet" href="anglo-fingerings.css?v=24"/>
+    
   </head>
   <body>
     
@@ -47,9 +47,10 @@
         <p>A more cross-row friendly fingering solution:</p>
         <p>Favors playing the second octave D and E on the left side bottom row.</p>
         <p>5)&nbsp;For Jeffries-style instruments, if you prefer your second octave C# and D# on the right-side top-row 2nd button C#/D# rather than on the right-side top-row 1st button D#/C#,  check "Prefer right-side top-row 2nd button C#/D#."</p>
-        <p>6)&nbsp;Click "Generate Fingerings".</p>
+        <p>6)&nbsp;Select whether you want the tablature to appear above or below the notation from the "Tab Location" dropdown.</p>
+        <p>7)&nbsp;Click "Generate Fingerings".</p>
         <p>The generated ABC with fingerings will appear in the "Processed ABC Output, with Fingerings" box.</p>
-        <p>7)&nbsp;Save, Copy or Test the results:</p>
+        <p>8)&nbsp;Save, Copy or Test the results:</p>
         <p>Click "Save Output to a file" to save the results to a file.</p>
         <p>Click "Copy Output to the clipboard" to copy the results to the system clipboard for pasting into other applications.</p>
         <p>Click "Test Output in the ABC Transcription Tools" to open and test the results in my <a href="http://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a></p>
@@ -111,6 +112,16 @@
             <option value="0">&nbsp;&nbsp;On-Row</option>
             
             <option value="1">&nbsp;&nbsp;Cross-Row</option>
+            
+          </select>
+
+          <span style="margin-left:18px">Tab Location:&nbsp;&nbsp;</span>
+          
+          <select id="tab_location">
+            
+            <option value="above">&nbsp;&nbsp;Above Staff</option>
+            
+            <option value="below">&nbsp;&nbsp;Below Staff</option>
             
           </select>
           
@@ -209,8 +220,8 @@
     
   </body>
   
-  <script src="anglo-fingerings.js?v=23" type="text/javascript"></script>
-  <script type="text/javascript" src="lz-string.min.js?v=23"></script>
-  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=23"></script>
+  <script src="anglo-fingerings.js?v=24" type="text/javascript"></script>
+  <script type="text/javascript" src="lz-string.min.js?v=24"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=24"></script>
   
 </html>
