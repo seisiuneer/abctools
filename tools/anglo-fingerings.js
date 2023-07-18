@@ -549,18 +549,43 @@ function mergeFingerings(input, path, notes, annotateFingerings) {
 
     var result = input;
     var insertedTotal = 0;
+
+    var location = document.getElementById('tab_location').selectedIndex;
+
     for (var i = 0; i < path.states.length; ++i) {
 
         var index = notes[i].index + insertedTotal;
 
         var fingering = path.states[i].button.name;
 
-        // Add double quotes to fingering, to be rendered above the note
-        fingering = "\"^" + fingering + "\"";
+        switch (location){
 
-        // Optionally append bellows direction, to be rendered below the button number.
-        if (annotateFingerings) {
-            fingering = fingering + "\"^" + path.states[i].direction + "\"";
+            // Above
+            case 0:
+
+                // Add double quotes to fingering, to be rendered above the note
+                fingering = "\"^" + fingering + "\"";
+
+                // Optionally append bellows direction, to be rendered below the button number.
+                if (annotateFingerings) {
+                    fingering = fingering + "\"^" + path.states[i].direction + "\"";
+                }
+
+                break;
+
+            // Below
+            case 1:
+
+                // Add double quotes to fingering, to be rendered above the note
+                fingering = "\"_" + fingering + "\"";
+
+                // Optionally append bellows direction, to be rendered below the button number.
+                if (annotateFingerings) {
+                    fingering = fingering + "\"_" + path.states[i].direction + "\"";
+                }
+
+                break;
+
         }
 
         var fingLen = fingering.length;
@@ -1546,6 +1571,7 @@ function DoStartup() {
     document.getElementById('music_space').value = 10;
     document.getElementById('layout').selectedIndex = 0;
     document.getElementById('preferred_fingering').selectedIndex = 0;
+    document.getElementById('tab_location').selectedIndex = 0;
 
     document.getElementById('input').value = "X: 1\nT: The Ebb Tide\nR: hornpipe\nM: 4/4\nL: 1/8\nK: Gmaj\n|:dc|BdAB GABc|BG ~G2 G2 bg|fdcA BcdB|cABG =F2 dc|\n(3BdB (3ABA GABc|defa g2 (3efg|fdcB cedc|(3BdB G2 G2:|\n|:ga|bgdB gBdB|GBdB gBbB|aAcA =fAcA|DAcA =fAcA|\nBdAB GABc|defa g2 (3efg|fdcB cedc|(3BdB G2 G2:|\n";
 
