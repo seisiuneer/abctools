@@ -19,6 +19,9 @@ var verbose = false;
 var abcOutput = "";
 var keySignature = null;
 
+// Suggested filename for save
+var gSaveFilename = "";
+
 function log(s) {
     if (verbose)
         console.log(s);
@@ -698,7 +701,28 @@ function saveOutput() {
         return;
     }
 
-    var thePlaceholder = "box_tab.txt";
+    if (gSaveFilename == ""){
+        gSaveFilename = "box_tab";
+    }
+
+    var thePlaceholder = gSaveFilename;
+
+    // B/C or C#/D?
+    var style = document.getElementById('layout').selectedIndex;
+
+    switch (style){
+
+        // B/C
+        case 0:
+            thePlaceholder += "_BC.abc";
+            break;
+
+        // C#D
+        case 1:
+           thePlaceholder += "_CsD.abc";
+            break;
+    }
+
 
     var thePrompt = "Please enter a filename for your output ABC file:";
 
@@ -1005,6 +1029,20 @@ function DoStartup() {
 
         let file = fileElement.files[0];
 
+        gSaveFilename = file.name;
+
+        // Trim any whitespace
+        gSaveFilename = gSaveFilename.trim();
+
+        // Strip out any naughty HTML tag characters
+        gSaveFilename = gSaveFilename.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+        // Replace any spaces
+        gSaveFilename = gSaveFilename.replace(/\s/g, '_');
+
+        // Strip the extension
+        gSaveFilename = gSaveFilename.replace(/\..+$/, '');
+       
         // Clean up the notation while the new file is loading
         document.getElementById('input').value = "";
 
@@ -1013,6 +1051,12 @@ function DoStartup() {
         reader.addEventListener('load', (event) => {
 
             document.getElementById('input').value = event.target.result;
+
+            // Reset file selectors
+            let fileElement = document.getElementById('selectabcfile');
+
+            fileElement.value = "";
+
 
         });
 
