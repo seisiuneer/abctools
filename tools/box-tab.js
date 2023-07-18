@@ -203,6 +203,8 @@ function mergeTablature(input, notes) {
     
     var insertedTotal = 0;
 
+    var location = document.getElementById('tab_location').selectedIndex;
+
     for (var i = 0; i < notes.length; ++i) {
 
         var index = notes[i].index + insertedTotal;
@@ -215,10 +217,28 @@ function mergeTablature(input, notes) {
 
         var buttonNumber = glyph.substr(0,glyphLen-1);
 
-        // Add double quotes to tab, to be rendered above the note
-        var theTab = "\"^" + buttonNumber + "\"";
+        switch (location){
 
-        theTab = theTab + "\"^" + direction + "\"";
+            // Above
+            case 0:
+                // Add double quotes to tab, to be rendered above the note
+                var theTab = "\"^" + buttonNumber + "\"";
+
+                theTab = theTab + "\"^" + direction + "\"";
+
+                break;
+
+            // Below
+            case 1:
+
+                // Add double quotes to tab, to be rendered above the note
+                var theTab = "\"_" + buttonNumber + "\"";
+
+                theTab = theTab + "\"_" + direction + "\"";
+
+                break;
+
+        }
 
         var tabLen = theTab.length;
 
@@ -993,6 +1013,7 @@ function DoStartup() {
     document.getElementById('staff_sep').value = 80;
     document.getElementById('music_space').value = 10;
     document.getElementById('layout').selectedIndex = 0;
+    document.getElementById('tab_location').selectedIndex = 0;
 
     document.getElementById('input').value = "X: 1\nT: The Ebb Tide\nR: hornpipe\nM: 4/4\nL: 1/8\nK: Gmaj\n|:dc|BdAB GABc|BG ~G2 G2 bg|fdcA BcdB|cABG =F2 dc|\n(3BdB (3ABA GABc|defa g2 (3efg|fdcB cedc|(3BdB G2 G2:|\n|:ga|bgdB gBdB|GBdB gBbB|aAcA =fAcA|DAcA =fAcA|\nBdAB GABc|defa g2 (3efg|fdcB cedc|(3BdB G2 G2:|\n";
 
