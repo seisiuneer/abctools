@@ -100,6 +100,15 @@ font-family:"Helvetica";
 height:32px;
 width:85px;
 margin-left:0px;
+margin-right:24px;
+}
+
+#tab_location{
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:130px;
+margin-left:0px;
 }
 
 
