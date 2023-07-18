@@ -664,7 +664,7 @@ function saveOutput() {
         return;
     }
 
-    var thePlaceholder = "anglo_fingerings.txt";
+    var thePlaceholder = "box_tab.txt";
 
     var thePrompt = "Please enter a filename for your output ABC file:";
 
