@@ -97,7 +97,7 @@ color:black;
 font-size:11pt;
 font-family:"Helvetica";
 height:32px;
-width:170px;
+width:130px;
 margin-left:0px;
 }
 
@@ -109,6 +109,13 @@ width:170px;
 margin-left:0px;
 }
 
+#tab_location{
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:130px;
+margin-left:0px;
+}
 
 .btn {
   --color: #000000;
