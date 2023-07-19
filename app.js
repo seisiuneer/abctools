@@ -9774,6 +9774,77 @@ function DoInjectABCNoteNameLyrics(e){
 }
 
 //
+// Do ABC Box or Concertina Tab Injections
+//
+function DoInjectTablature_BC(e){
+
+	// Shift key - B/C Box tab
+	if (e.shiftKey){
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		SetRadioValue("notenodertab","noten")
+
+		gInjectTab_BoxStyle = "0";
+
+		gTheABC.value = boxTabGenerator(gTheABC.value);
+		
+		RenderAsync(true,null);
+	}
+	else
+	// Alt key - Concertina fingering tab
+	if (e.altKey){
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		SetRadioValue("notenodertab","noten")
+
+		gTheABC.value = angloFingeringsGenerator(gTheABC.value);
+		
+		RenderAsync(true,null);
+	}
+
+}
+
+//
+// Do ABC Box or Concertina Tab Injections
+//
+function DoInjectTablature_CsD(e){
+
+	// Shift key - C#/D Box tab
+	if (e.shiftKey){
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		SetRadioValue("notenodertab","noten")
+
+		gInjectTab_BoxStyle = "1";
+
+		gTheABC.value = boxTabGenerator(gTheABC.value);
+		
+		RenderAsync(true,null);
+	}
+	else
+	// Alt key - Concertina fingering tab
+	if (e.altKey){
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		SetRadioValue("notenodertab","noten")
+
+		gTheABC.value = angloFingeringsGenerator(gTheABC.value);
+		
+		RenderAsync(true,null);
+	}
+
+}
+
+
+//
 // Change the tab display
 //
 function ChangeTab(){
@@ -10613,9 +10684,8 @@ function PreProcessLocalPlayABC(theTune){
 }
 
 //
-// Configure the playback and other settings
+// Save/load global configuration to/from local browser storage
 //
-
 
 // Global settings state
 var gAlwaysInjectPrograms = true;
@@ -10626,9 +10696,23 @@ var gTheBassVolume = 32;
 var gTheChordVolume = 32;
 var gOverridePlayMIDIParams = false;
 
+// Box and concertina tab global state
+var gInjectTab_InjectVolumeDirectives = true;
+var gInjectTab_FontFamily = "Palatino";
+var gInjectTab_TitleFontSize = 22;
+var gInjectTab_SubtitleFontSize = 18;
+var gInjectTab_InfoFontSize = 14;
+var gInjectTab_TabFontSize = 11;
+var gInjectTab_StaffSep = 80;
+var gInjectTab_MusicSpace = 10;
+var gInjectTab_TabLocation = 0;
+var gInjectTab_BoxStyle = 0;
+var gInjectTab_ConcertinaStyle = 0;
+var gInjectTab_ConcertinaFingering = 0;
+var gInjectTab_ConcertinaJeffriesCSharp = true;
+
 // User setting for the Box tab fontsize
 var gBoxTabFontSize = "10";
-
 
 // Get the initial configuration settings from local browser storage, if present
 function GetInitialConfigurationSettings(){
@@ -10697,6 +10781,104 @@ function GetInitialConfigurationSettings(){
 		gOverridePlayMIDIParams = false;
 	}
 
+	// Box and concertina tab global state
+
+	val = localStorage.gInjectTab_FontFamily;
+	if (val){
+		gInjectTab_FontFamily = val;
+	}
+	else{
+		gInjectTab_FontFamily = "Palatino";
+	}
+
+	val = localStorage.InjectTab_InjectVolumeDirectives;
+	if (val){
+		gInjectTab_InjectVolumeDirectives = (val == "true");
+	}
+	else{
+		gInjectTab_InjectVolumeDirectives = true;
+	}
+
+	val = localStorage.InjectTab_TitleFontSize;
+	if (val){
+		gInjectTab_TitleFontSize = val;
+	}
+	else{
+		gInjectTab_TitleFontSize = 22;
+	}
+
+	val = localStorage.InjectTab_SubtitleFontSize;
+	if (val){
+		gInjectTab_SubtitleFontSize = val;
+	}
+	else{
+		gInjectTab_SubtitleFontSize = 18;
+	}
+
+	val = localStorage.InjectTab_InfoFontSize;
+	if (val){
+		gInjectTab_InfoFontSize = val;
+	}
+	else{
+		gInjectTab_InfoFontSize = 14;
+	}
+
+	val = localStorage.InjectTab_TabFontSize;
+	if (val){
+		gInjectTab_TabFontSize = val;
+	}
+	else{
+		gInjectTab_TabFontSize = 10;
+	}
+
+	val = localStorage.InjectTab_StaffSep;
+	if (val){
+		gInjectTab_StaffSep = val;
+	}
+	else{
+		gInjectTab_StaffSep = 80;
+	}
+
+	val = localStorage.InjectTab_MusicSpace;
+	if (val){
+		gInjectTab_MusicSpace = val;
+	}
+	else{
+		gInjectTab_MusicSpace = 10;
+	}
+
+	val = localStorage.InjectTab_TabLocation;
+	if (val){
+		gInjectTab_TabLocation = val;
+	}
+	else{
+		gInjectTab_TabLocation = 0;
+	}
+
+	val = localStorage.InjectTab_ConcertinaStyle;
+	if (val){
+		gInjectTab_ConcertinaStyle = val;
+	}
+	else{
+		gInjectTab_ConcertinaStyle = 0;
+	}
+
+	val = localStorage.InjectTab_ConcertinaFingering;
+	if (val){
+		gInjectTab_ConcertinaFingering = val;
+	}
+	else{
+		gInjectTab_ConcertinaFingering = 1;
+	}
+
+	val = localStorage.InjectTab_ConcertinaJeffriesCSharp;
+	if (val){
+		gInjectTab_ConcertinaJeffriesCSharp = (val == "true");
+	}
+	else{
+		gInjectTab_ConcertinaJeffriesCSharp = true;
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -10718,7 +10900,116 @@ function SaveConfigurationSettings(){
 		localStorage.TheChordVolume = gTheChordVolume;
 		localStorage.BoxTabFontSize = gBoxTabFontSize;
 		localStorage.OverridePlayMIDIParams = gOverridePlayMIDIParams;
+
+		// Box and Concertina tab injection parameters
+		localStorage.InjectTab_InjectVolumeDirectives = gInjectTab_InjectVolumeDirectives;
+		localStorage.gInjectTab_FontFamily = gInjectTab_FontFamily;
+		localStorage.InjectTab_TitleFontSize = gInjectTab_TitleFontSize;
+		localStorage.InjectTab_SubtitleFontSize = gInjectTab_SubtitleFontSize;
+		localStorage.InjectTab_InfoFontSize = gInjectTab_InfoFontSize;
+		localStorage.InjectTab_TabFontSize = gInjectTab_TabFontSize;
+		localStorage.InjectTab_StaffSep = gInjectTab_StaffSep;
+		localStorage.InjectTab_MusicSpace = gInjectTab_MusicSpace;
+		localStorage.InjectTab_TabLocation = gInjectTab_TabLocation;
+		localStorage.InjectTab_ConcertinaStyle = gInjectTab_ConcertinaStyle;
+		localStorage.InjectTab_ConcertinaFingering = gInjectTab_ConcertinaFingering;
+		localStorage.InjectTab_ConcertinaJeffriesCSharp = gInjectTab_ConcertinaJeffriesCSharp;
+
 	}
+}
+
+//
+// Box and concertina settings dialog
+//
+function ConfigureBoxTab(){
+
+    const box_styles = [
+	    { name: "  B/C", id: "0" },
+	    { name: "  C#/D", id: "1" },
+  	];
+
+  	const concertina_fingerings = [
+	    { name: "  On-Row", id: "0" },
+	    { name: "  Cross-Row", id: "1" },
+  	];
+
+  	const concertina_styles = [
+	    { name: "  Jeffries", id: "0" },
+	    { name: "  Wheatstone", id: "1" },
+  	];
+
+    const tab_locations = [
+	    { name: "  Above", id: "0" },
+	    { name: "  Below", id: "1" },
+  	];
+
+	// Setup initial values
+	const theData = {
+	  configure_inject_directives: gInjectTab_InjectVolumeDirectives,
+	  configure_font_family: gInjectTab_FontFamily,
+	  configure_title_font_size: gInjectTab_TitleFontSize,
+	  configure_subtitle_font_size: gInjectTab_SubtitleFontSize,
+	  configure_info_font_size: gInjectTab_InfoFontSize,
+	  configure_tab_font_size: gInjectTab_TabFontSize,
+	  configure_staffsep: gInjectTab_StaffSep,
+	  configure_musicspace: gInjectTab_MusicSpace,
+	  configure_tab_location:parseInt(gInjectTab_TabLocation),
+	  configure_concertina_style:parseInt(gInjectTab_ConcertinaStyle),
+	  configure_concertina_fingering:parseInt(gInjectTab_ConcertinaFingering),
+	  configure_jeffries_csharp: gInjectTab_ConcertinaJeffriesCSharp,
+	};
+
+	const form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica">Box and Concertina Tablature Injection Settings</p>'},
+	  {name: "    Inject %%MIDI directives to mute bass/chords", id: "configure_inject_directives", type:"checkbox", cssClass:"configure_box_settings_form_text"},
+	  {html: '<p style="margin-top:18px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>Tablature Font Settings (for both Box and Concertina):</strong></p>'},	  
+	  {name: "Font family:  (Recommended: Palatino)", id: "configure_font_family", type:"text", cssClass:"configure_box_settings_form_text_wide"},
+	  {name: "Title font size:  (Recommended: 22)", id: "configure_title_font_size", type:"text", cssClass:"configure_box_settings_form_text"},
+	  {name: "Subtitle font size:  (Recommended: 18)", id: "configure_subtitle_font_size", type:"text", cssClass:"configure_box_settings_form_text"},
+	  {name: "Info font size:  (Recommended: 14)", id: "configure_info_font_size", type:"text", cssClass:"configure_box_settings_form_text"},
+	  {name: "Tablature font size:  (Recommended: 10)", id: "configure_tab_font_size", type:"text", cssClass:"configure_box_settings_form_text"},
+	  {name: "%%staffsep value:  (Recommended: 80)", id: "configure_staffsep", type:"text", cssClass:"configure_box_settings_form_text"},
+	  {name: "%%musicspace value:  (Recommended: 10)", id: "configure_musicspace", type:"text", cssClass:"configure_box_settings_form_text"},
+	  {name: "Tab location relative to notation:", id: "configure_tab_location", type:"select", options:tab_locations, cssClass:"configure_box_settings_select"},
+	  {html: '<p style="margin-top:18px;font-size:12pt;line-height:12pt;font-family:helvetica"><strong>Box Button Number Tablature:</strong></p>'},	  
+	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;margin-top:12px;font-family:helvetica">In the tool, Shift-click the B/C button to inject B/C Box button number tablature.'},	  
+	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;margin-top:12px;font-family:helvetica">In the tool, Shift-click the C#/D button to inject C#/D Box button number tablature.</p>'},	  
+	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;font-family:helvetica"><strong>Concertina Fingerings Tablature:</strong></p>'},	  
+	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;margin-top:12px;font-family:helvetica">In the tool, Alt-click the B/C or C#/D buttons to inject Concertina fingerings tablature.</p>'},	  
+	  {name: "Concertina style:", id: "configure_concertina_style", type:"select", options:concertina_styles, cssClass:"configure_box_settings_select"}, 
+	  {name: "    Prefer right-side top-row 2nd button C#/D# (Jeffies-only)", id: "configure_jeffries_csharp", type:"checkbox", cssClass:"configure_box_settings_form_text"},
+	  {name: "Preferred fingerings:", id: "configure_concertina_fingering", type:"select", options:concertina_fingerings, cssClass:"configure_box_settings_select"},
+	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">On-Row favors d and e on right-side C-row.</p>'},	  
+	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">Cross-Row favors d and e on the left-side G-row.</p>'},	  
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 720 } ).then(function(args){
+
+		// Get the results and store them in the global configuration
+		if (!args.canceled){
+
+			//debugger;
+
+			gInjectTab_InjectVolumeDirectives = args.result.configure_inject_directives;
+			gInjectTab_FontFamily = args.result.configure_font_family
+			gInjectTab_TitleFontSize = args.result.configure_title_font_size
+			gInjectTab_SubtitleFontSize = args.result.configure_subtitle_font_size
+			gInjectTab_InfoFontSize = args.result.configure_info_font_size
+			gInjectTab_TabFontSize = args.result.configure_tab_font_size
+			gInjectTab_StaffSep = args.result.configure_staffsep
+			gInjectTab_MusicSpace = args.result.configure_musicspace
+			gInjectTab_TabLocation = args.result.configure_tab_location
+			gInjectTab_ConcertinaStyle = args.result.configure_concertina_style
+			gInjectTab_ConcertinaFingering = args.result.configure_concertina_fingering
+			gInjectTab_ConcertinaJeffriesCSharp = args.result.configure_jeffries_csharp
+
+			// Save the settings, in case they were initialized
+			SaveConfigurationSettings();
+
+		}
+
+	});
+
 }
 
 //
@@ -10755,19 +11046,20 @@ function ConfigureToolSettings() {
 
 	const form = [
 	  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica">ABC Transcription Tools Settings</p>'},
-	  {html: '<p style="margin-top:10px;font-size:14pt;line-height:16pt;font-family:helvetica">Enabling these options will always use your selected MIDI instrument programs and volumes as the defaults when playing tunes.</p>'},	  
+	  {html: '<p style="margin-top:10px;font-size:12pt;line-height:14pt;font-family:helvetica">Enabling these options will always use your selected MIDI instrument programs and volumes as the defaults when playing tunes.</p>'},	  
 	  {name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default Melody MIDI program (0-135):", id: "configure_melody_program", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default Bass/Chords MIDI program (0-135):", id: "configure_chord_program", type:"number", cssClass:"configure_settings_form_text"},
-	  {html: '<p style="margin-top:12px;font-size:14pt;line-height:16pt;font-family:helvetica">If there is already a %%MIDI program or %%MIDI chordprog directive in the ABC, the value in the ABC will override the default value.</p>'},	  
-	  {html: '<p style="font-size:14pt;font-family:helvetica;margin-bottom:20px;margin-top:20px;text-align:center"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'},
+	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:14pt;font-family:helvetica">If there is already a %%MIDI program or %%MIDI chordprog directive in the ABC, the value in the ABC will override the default value.</p>'},	  
+	  {html: '<p style="font-size:12pt;font-family:helvetica;margin-bottom:20px;margin-top:20px;text-align:center"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'},
 	  {name: "            Use Default Bass/Chord volumes when playing tunes", id: "configure_inject_volumes", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default Bass MIDI volume (0-127):", id: "configure_bass_volume", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default Chords MIDI volume (0-127):", id: "configure_chord_volume", type:"number", cssClass:"configure_settings_form_text"},
-	  {html: '<p style="margin-top:12px;margin-bottom:0px;font-size:14pt;line-height:16pt;font-family:helvetica">If there are already a %%MIDI bassvol or %%MIDI chordvol directive in the ABC, the value in the ABC will override the default value.</p>'},	  
+	  {html: '<p style="margin-top:12px;margin-bottom:0px;font-size:12pt;line-height:14pt;font-family:helvetica">If there are already a %%MIDI bassvol or %%MIDI chordvol directive in the ABC, the value in the ABC will override the default value.</p>'},	  
 	  {name: "            Override all MIDI programs and volumes in the ABC when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text"},
-	  {html: '<p style="margin-top:16px;font-size:14pt;line-height:16pt;font-family:helvetica">To change the Melody volume, add a dynamics indication such as !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! immediately before the first note in the ABC.</p>'},	  
-	  {name: "Box Tablature Font Size:", id: "configure_box_tab_fontsize", type:"number", cssClass:"configure_settings_form_text"},
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">To change the Melody volume, add a dynamics indication such as !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! immediately before the first note in the ABC.</p>'},	  
+	  {name: "Box Tablature Font Size (when using B/C or C#/D tab mode buttons):", id: "configure_box_tab_fontsize", type:"number", cssClass:"configure_settings_form_text"},
+	  {html: '<p style="text-align:center;"><input id="configure_box" class="btn btn-urlcontrols" onclick="ConfigureBoxTab()" type="button" value="&nbsp;&nbsp;Configure Box and Concertina Tablature Injection Settings&nbsp;&nbsp;" title="Configure the Box and Concertina tablature injection settings"></p>'},	  
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 20, width: 680 } ).then(function(args){
@@ -10850,10 +11142,10 @@ function ConfigureToolSettings() {
 
 				// Special release time case case for Dulcimer
 			   	var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica">Special Note on the Dulcimer (15) Instrument</p>';
-			   	   	modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Selecting the Dulcimer (15) program for either the melody or chords automatically sets all note release times to 4 seconds to allow the notes to ring.</p>';
-			   	   	modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">This can be useful for tunes using solo melody instruments with long release times like Orchestral Harp (46) or Koto (107).</p>';
-			       	modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">For those instruments played solo, set the melody instrument program as desired and the chord instrument program to Dulcimer (15).</p>';
-			   	   	modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">In this case, you may not want to include any chords in the ABC, as they will be played using the Dulcimer (15) instrument.</p>';
+			   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Selecting the Dulcimer (15) program for either the melody or chords automatically sets all note release times to 4 seconds to allow the notes to ring.</p>';
+			   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">This can be useful for tunes using solo melody instruments with long release times like Orchestral Harp (46) or Koto (107).</p>';
+			       	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">For those instruments played solo, set the melody instrument program as desired and the chord instrument program to Dulcimer (15).</p>';
+			   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In this case, you may not want to include any chords in the ABC, as they will be played using the Dulcimer (15) instrument.</p>';
 
 			       	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 600 }).then(function(){
 
