@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-              
+        
         <style>
         p {
         font-size:14pt;
@@ -1121,6 +1121,20 @@
             <p><strong>Use of the B/C and C#/D Box tablatures on a 23-button instrument:</strong></p>
             <p>If you are playing a 23-button instrument, you will need to shift your start position one button higher when playing.</p>
             <p>Consider your first button as "button zero".</p>
+            <p></p>
+            <hr>
+            <p style="text-align: center"><strong>Tablature Injection Known Issues and Limitations</strong></p>
+            <p><strong>Fails when converting multi-voice tunes:</strong></p>
+            <p>For best results, use source ABC tunes that have a single voice. (i.e. no V: tags)</p>
+            <p>Unpredictable results or a failure to complete the fingering generation may occur with multi-voice ABC files.</p>
+            <p></p>
+            <p><strong>(Anglo Concertina-only) Button direction missing for some less-often used accidentals:</strong></p>
+            <p>After fingering generation, some less-often used accidentals like _E in certain keys may show the correct button, but are missing their direction in the ABC.</p>
+            <p>If you see missing directions on any notes, review the ABC in the ABC editor and correct the direction manually by copying and pasting either a push "↓" or draw "↑" arrow for the missing direction.</p>
+            <p></p>
+            <p><strong>Tunes with key changes mid-tune may not generate correct tablature after the key change:</strong></p>
+            <p>The tablature solutions only use the original key of the tune.</p>
+            <p>If the key changes mid-tune, the tablature solution after that point may not be correct.</p>
             <hr class="hidden-print" id="reading_the_concertina_tablature">
             <h1 class="page_break_always">Reading the Anglo Concertina Tablature&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <div class="image_holder">
