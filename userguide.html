@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
- 
+         
         <style>
         p {
         font-size:14pt;
@@ -133,6 +133,7 @@
         margin-bottom:12px;
         }
         
+        
         </style>
         
     </head>
@@ -180,7 +181,10 @@
                 <p class="toc"><a href="#shared_tunes_open_full_screen">Shared Tunes Open Full Screen</a></p>
                 <p class="toc"><a href="#staff_and_title_spacing_overrides">Staff and Title Spacing Overrides</a></p>
                 <p class="toc"><a href="#custom_font_overrides">Custom Font Overrides</a></p>
-                <p class="toc"><a href="#injecting_abc_lyric_based_note_names_experimental">Injecting ABC Lyric-based Note Names (Experimental)</a></p>
+                <p class="toc"><a href="#injecting_abc_lyric_based_note_names">Injecting ABC Lyric-based Note Names Into the ABC Tunes</a></p>
+                <p class="toc"><a href="#injecting_box_or_anglo_concertina_tablature">Injecting B/C Box, C#/D Box, or Anglo Concertina Tablature Into the ABC Tunes</a></p>
+                <p class="toc"><a href="#reading_the_box_tablature">Reading the Box Tablature</a></p>
+                <p class="toc"><a href="#reading_the_concertina_tablature">Reading the Anglo Concertina Tablature</a></p>
                 <p class="toc"><a href="#iphone_ipad_chord_entry_issue_fix">iPhone/iPad Chord Entry Issue Fix</a></p>
                 <p class="toc"><a href="#abc_specification">ABC Specification</a></p>
                 <p class="toc"><a href="#abc_21_quick_reference_card">ABC Quick Reference Card</a></p>
@@ -416,7 +420,7 @@
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/fufQFUISym4" title="Selecting Default Instruments for Playing Tunes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>Clicking the "Settings" button at the top of the tool brings up a dialog where you can select default MIDI programs and volumes to use for the Melody, Bass, and Chords, as well as other tool-wide settings:</p>
             <div class="image_holder">
-                <img src="img/default_program_volume_dialog_5.jpg"/>
+                <img src="img/default_program_volume_dialog_6.jpg"/>
             </div>
             <p>If a %%MIDI program or %%MIDI chordprog directive is already present in the tune when playing, it will take precedence over the default program values.</p>
             <p>If a %%MIDI bassvol or %%MIDI chordvol directive is already present in the tune when playing, it will take precedence over the default volume values.</p>
@@ -1049,8 +1053,8 @@
             <p><strong>More information is available here:</strong></p>
             <p><a href="https://blog.hubspot.com/website/web-safe-html-css-fonts" target="_blank">Web Safe CSS Fonts</a></p>
             <p><a href="http://iosfonts.com/" target="_blank">iOS Fonts</a></p>
-            <hr class="hidden-print" id="injecting_abc_lyric_based_note_names_experimental">
-            <h1 class="page_break_always">Injecting ABC Lyric-based Note Names&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
+            <hr class="hidden-print" id="injecting_abc_lyric_based_note_names">
+            <h1 class="page_break_always">Injecting ABC Lyric-based Note Names Into the ABC Tunes&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <p>If you find the "Note Names" tab too tall, you can try holding down the Shift key while clicking the "Note Names" tab selector.</p>
             <p>This will inject an ABC lyrics line under each ABC line using the w: directive that will put the ABC note name under each note in the notation for all the tunes.</p>
             <p>For example:</p>
@@ -1063,6 +1067,64 @@
             <p>X:1</p>
             <p>%%vocalfont Verdana 14</p>
             <p>You can use any of the fonts, styles, and sizes as described above in the "Web Safe Fonts" section.</p>
+            <hr class="hidden-print" id="injecting_box_or_anglo_concertina_tablature">
+            <h1 class="page_break_always">Injecting B/C Box, C#/D Box, or Anglo Concertina Tablature Into the ABC Tunes&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
+            <p>Shift-click the B/C button to inject button number B/C Box tablature into all the tunes in the ABC editor.</p>
+            <p>Shift-click the C#/D button to inject button number C#/D tablature into all the tunes in the ABC editor.</p>
+            <p>Alt-click either the B/C or the C#/D button to inject Anglo Concertina fingering tablature into all the tunes in the ABC editor.</p>
+            <p>To configure the first click the tool's Settings button, then click the "Configure Box and Concertina Tablature Injection Settings" button at the bottom of the dialog to bring up the tablature injection settings dialog:</p>
+            <div class="image_holder">
+                <img src="img/box_tab_injection_settings_1.jpg"/>
+            </div>
+            <p><strong>Common Box and Anglo Concertina tablature settings:</strong>
+            <p>Font family: Font used for all text injected into the tablature.</p>
+            <p>Title font size: Font size used for the tune title.</p>
+            <p>Subtitle font size: Font size used for any tune subtitles that might be present.</p>
+            <p>Info font size: Font size used for all standard ABC annotations like composer, tune-style, etc.</p>
+            <p>Tablature font size: Font size used for the injected tablature text and symbols.</p>
+            <p>%%staffsep value: Sets spacing between the staves.</p>
+            <p>%%musicspace value: Sets spacing between the title and the staves.</p>
+            <p>Select your preferred tab position relative to the notation (Above or Below) from the dropdown.</p>
+            <p><strong>Anglo Concertina-specific settings:</strong></p>
+            <p>Select your instrument style: (Jeffries or Wheatstone) from the "Concertina style" dropdown.</p>
+            <p>For Jeffries-style instruments, if you prefer your second octave C# and D# on the right-side top-row 2nd button C#/D# rather than on the right-side top-row 1st button D#/C#,  check " Prefer right-side top-row 2nd button C#/D# (Jeffies-only)".</p>
+            <p>Select your preferred fingering solution from the "Preferred fingerings" dropdown:</p>
+            <p><strong>On-Row:</strong></p>
+            <p>Jim Van Donsel's original fingering solution, favors center row:</p>
+            <p>Favors playing the second octave D and E on the right side center row.</p>
+            <p><strong>Cross-Row:</strong></p>
+            <p>A more cross-row friendly fingering solution:</p>
+            <p>Favors playing the second octave D and E on the left side bottom row.</p>
+            <hr class="hidden-print" id="reading_the_box_tablature">
+            <h1 class="page_break_always">Reading the Box Tablature&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
+            <p><strong>B/C Box</strong> - Shows standard notation and tablature for a standard 21-button B/C tuned box.</p>
+            <p>The button numbers and pitches used for the tablature match those on this chart:</p> 
+            <div class="image_holder">
+                <img src="img/BC21.jpg">
+            </div>
+            <p>Notes on the C-row are indicated by numbers: <strong>1, 2, 3, ...</strong></p>
+            <p>Notes on the B-row are indicated by numbers in circles: <span style="font-size:18pt">①, ②, ③, ...</span></p>
+            <p>Push is indicated with a "↓" arrow.</p>
+            <p>Draw is indicated with an "↑" arrow.</p>
+            <p><strong>C#/D Box</strong> - Shows standard notation and tablature for a standard 21-button C#/D tuned box.</p>
+            <p>The button numbers and pitches used for the tablature match those on this chart:</p> 
+            <div class="image_holder">
+                <img src="img/CD21.jpg" style="margin-top:0px;" alt="C#/D Box Button Map" style="margin-top: 20px" title="C#/D Box Button Map">
+            </div>
+            <p>Notes on the D-row are indicated by numbers: <strong>1, 2, 3,...</strong></p>
+            <p>Notes on the C#-row are indicated by numbers in circles: <span style="font-size:18pt">①, ②, ③, ...</span></p>
+            <p>Push is indicated with a "↓" arrow.</p>
+            <p>Draw is indicated with an "↑" arrow.</p>
+            <p><strong>Assumptions about the B/C and C#/D Box tablature solutions:</strong></p>
+            <p>The tablature solution assumes that the "magic" notes (E and B on a B/C, F# and C# on a C#/D) that are available on both rows, will be played on the C-row on a B/C box and on the D-row on a C#/D box.</p>
+            <p><strong>Use of the B/C and C#/D Box tablatures on a 23-button instrument:</strong></p>
+            <p>If you are playing a 23-button instrument, you will need to shift your start position one button higher when playing.</p>
+            <p>Consider your first button as "button zero".</p>
+            <hr class="hidden-print" id="reading_the_concertina_tablature">
+            <h1 class="page_break_always">Reading the Anglo Concertina Tablature&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
+            <div class="image_holder">
+                <img src="img/anglo-fingerings.jpg">
+            </div>
             <hr class="hidden-print" id="iphone_ipad_chord_entry_issue_fix">
             <h1 class="page_break_always">iPhone/iPad Chord Entry Issue Fix&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <p>If you are trying to enter ABC chords, for example "D" or "Am", on an iPhone or iPad, iOS will, by default stick in "smart quotes" instead of standard double quotes.</p>
