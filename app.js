@@ -11015,7 +11015,15 @@ function ConfigureBoxTab(){
 //
 // Configuration settings dialog
 //
-function ConfigureToolSettings() {
+function ConfigureToolSettings(e) {
+
+	// Shift click goes directly to the Box and Anglo concertina settings dialog
+	if (e.shiftKey){
+
+		ConfigureBoxTab();
+		
+		return
+	}
 
 	var bAlwaysInjectPrograms = gAlwaysInjectPrograms;
 
