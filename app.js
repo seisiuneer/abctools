@@ -10967,9 +10967,9 @@ function ConfigureBoxTab(){
 	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;margin-top:12px;font-family:helvetica">In the tool, Alt-click the B/C or C#/D buttons to inject Concertina fingerings tablature.</p>'},	  
 	  {name: "Concertina style:", id: "configure_concertina_style", type:"select", options:concertina_styles, cssClass:"configure_box_settings_select"}, 
 	  {name: "Preferred fingerings:", id: "configure_concertina_fingering", type:"select", options:concertina_fingerings, cssClass:"configure_box_settings_select"},
-	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:12pt;font-family:helvetica">On-Row: Favors d and e on right-side C-row.</p>'},	  
-	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">Cross-Row: Favors d and e on the left-side G-row.</p>'},	  
-	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">On Jeffries also favors c on the left side G-row draw, B on the right side C-row draw.</p>'},	  
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:12pt;font-family:helvetica">On-Row: Favors D5 and E5 on right-side C-row.</p>'},	  
+	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">Cross-Row: Favors D5 and E5 on the left-side G-row.</p>'},	  
+	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">On Jeffries also favors C5 on the left-side G-row draw, B4 on the right-side C-row draw.</p>'},	  
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 720 } ).then(function(args){
