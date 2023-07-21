@@ -10709,7 +10709,6 @@ var gInjectTab_TabLocation = 0;
 var gInjectTab_BoxStyle = 0;
 var gInjectTab_ConcertinaStyle = 0;
 var gInjectTab_ConcertinaFingering = 0;
-var gInjectTab_ConcertinaJeffriesCSharp = true;
 
 // User setting for the Box tab fontsize
 var gBoxTabFontSize = "10";
@@ -10871,14 +10870,6 @@ function GetInitialConfigurationSettings(){
 		gInjectTab_ConcertinaFingering = 1;
 	}
 
-	val = localStorage.InjectTab_ConcertinaJeffriesCSharp;
-	if (val){
-		gInjectTab_ConcertinaJeffriesCSharp = (val == "true");
-	}
-	else{
-		gInjectTab_ConcertinaJeffriesCSharp = true;
-	}
-
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -10913,7 +10904,6 @@ function SaveConfigurationSettings(){
 		localStorage.InjectTab_TabLocation = gInjectTab_TabLocation;
 		localStorage.InjectTab_ConcertinaStyle = gInjectTab_ConcertinaStyle;
 		localStorage.InjectTab_ConcertinaFingering = gInjectTab_ConcertinaFingering;
-		localStorage.InjectTab_ConcertinaJeffriesCSharp = gInjectTab_ConcertinaJeffriesCSharp;
 
 	}
 }
@@ -10956,7 +10946,6 @@ function ConfigureBoxTab(){
 	  configure_tab_location:parseInt(gInjectTab_TabLocation),
 	  configure_concertina_style:parseInt(gInjectTab_ConcertinaStyle),
 	  configure_concertina_fingering:parseInt(gInjectTab_ConcertinaFingering),
-	  configure_jeffries_csharp: gInjectTab_ConcertinaJeffriesCSharp,
 	};
 
 	const form = [
@@ -10977,10 +10966,10 @@ function ConfigureBoxTab(){
 	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;font-family:helvetica"><strong>Concertina Fingerings Tablature:</strong></p>'},	  
 	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;margin-top:12px;font-family:helvetica">In the tool, Alt-click the B/C or C#/D buttons to inject Concertina fingerings tablature.</p>'},	  
 	  {name: "Concertina style:", id: "configure_concertina_style", type:"select", options:concertina_styles, cssClass:"configure_box_settings_select"}, 
-	  {name: "    Prefer right-side top-row 2nd button C#/D# (Jeffies-only)", id: "configure_jeffries_csharp", type:"checkbox", cssClass:"configure_box_settings_form_text"},
 	  {name: "Preferred fingerings:", id: "configure_concertina_fingering", type:"select", options:concertina_fingerings, cssClass:"configure_box_settings_select"},
-	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">On-Row favors d and e on right-side C-row.</p>'},	  
-	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">Cross-Row favors d and e on the left-side G-row.</p>'},	  
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:12pt;font-family:helvetica">On-Row: Favors d and e on right-side C-row.</p>'},	  
+	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">Cross-Row: Favors d and e on the left-side G-row.</p>'},	  
+	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">On Jeffries also favors c on the left side G-row draw, B on the right side C-row draw.</p>'},	  
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 720 } ).then(function(args){
@@ -11001,7 +10990,6 @@ function ConfigureBoxTab(){
 			gInjectTab_TabLocation = args.result.configure_tab_location
 			gInjectTab_ConcertinaStyle = args.result.configure_concertina_style
 			gInjectTab_ConcertinaFingering = args.result.configure_concertina_fingering
-			gInjectTab_ConcertinaJeffriesCSharp = args.result.configure_jeffries_csharp
 
 			// Save the settings, in case they were initialized
 			SaveConfigurationSettings();
