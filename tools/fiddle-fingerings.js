@@ -298,62 +298,124 @@ function sanitizeString(input, start, len) {
 //
 function getNoteGlyph(note){
 
-    var glyph_map = {
-        "G,":  "G⓪",
-        "^G,": "G①",
-        "_A,": "G①",
-        "A,":  "G①",
-        "^A,": "G②",
-        "_B,": "G②",
-        "B,":  "G②",
-        "C":   "G③",
-        "^C":  "G③",
-        "_D":  "G③",
-        "D":   "D⓪",
-        "^D":  "D①",
-        "_E":  "D①",
-        "E":   "D①",
-        "F":   "D②",
-        "^F":  "D②",
-        "_G":  "D②",
-        "G":   "D③",
-        "^G":  "D③",
-        "_A":  "D③",
-        "A":   "A⓪",
-        "^A":  "A①",
-        "_B":  "A①",
-        "B":   "A①",
-        "c":   "A②",
-        "^c":  "A②",
-        "_d":  "A②",
-        "d":   "A③",
-        "^d":  "A③",
-        "_e":  "A③",
-        "e":   "E⓪",
-        "f":   "E①",
-        "^f":  "E①",
-        "_g":  "E①",
-        "g":   "E②",
-        "^g":  "E②",
-        "_a":  "E②",
-        "a":   "E③",
-        "^a":  "E③",
-        "_b":  "E③",
-        "b":   "E④",
-        "c'":  "E④",
-        "^c'": "E④",
-        "_d'": "E④",
-        "d'":  "E④",
-    };
+    var numbersInCircles = document.getElementById('numbersInCircles').checked;
 
-    var thisGlyph = glyph_map[note];
+    if (numbersInCircles){
 
-    if (!thisGlyph){
-        return "x ";
+        var glyph_map = {
+            "G,":  "G⓪",
+            "^G,": "G①",
+            "_A,": "G①",
+            "A,":  "G①",
+            "^A,": "G②",
+            "_B,": "G②",
+            "B,":  "G②",
+            "C":   "G③",
+            "^C":  "G③",
+            "_D":  "G③",
+            "D":   "D⓪",
+            "^D":  "D①",
+            "_E":  "D①",
+            "E":   "D①",
+            "F":   "D②",
+            "^F":  "D②",
+            "_G":  "D②",
+            "G":   "D③",
+            "^G":  "D③",
+            "_A":  "D③",
+            "A":   "A⓪",
+            "^A":  "A①",
+            "_B":  "A①",
+            "B":   "A①",
+            "c":   "A②",
+            "^c":  "A②",
+            "_d":  "A②",
+            "d":   "A③",
+            "^d":  "A③",
+            "_e":  "A③",
+            "e":   "E⓪",
+            "f":   "E①",
+            "^f":  "E①",
+            "_g":  "E①",
+            "g":   "E②",
+            "^g":  "E②",
+            "_a":  "E②",
+            "a":   "E③",
+            "^a":  "E③",
+            "_b":  "E③",
+            "b":   "E④",
+            "c'":  "E④",
+            "^c'": "E④",
+            "_d'": "E④",
+            "d'":  "E④",
+        };
+
+        var thisGlyph = glyph_map[note];
+
+        if (!thisGlyph){
+            return "x ";
+        }
+
+        return thisGlyph;
     }
+    else{
+        
+        var glyph_map = {
+            "G,":  "G0",
+            "^G,": "G1",
+            "_A,": "G1",
+            "A,":  "G1",
+            "^A,": "G2",
+            "_B,": "G2",
+            "B,":  "G2",
+            "C":   "G3",
+            "^C":  "G3",
+            "_D":  "G3",
+            "D":   "D0",
+            "^D":  "D1",
+            "_E":  "D1",
+            "E":   "D1",
+            "F":   "D2",
+            "^F":  "D2",
+            "_G":  "D2",
+            "G":   "D3",
+            "^G":  "D3",
+            "_A":  "D3",
+            "A":   "A0",
+            "^A":  "A1",
+            "_B":  "A1",
+            "B":   "A1",
+            "c":   "A2",
+            "^c":  "A2",
+            "_d":  "A2",
+            "d":   "A3",
+            "^d":  "A3",
+            "_e":  "A3",
+            "e":   "E0",
+            "f":   "E1",
+            "^f":  "E1",
+            "_g":  "E1",
+            "g":   "E2",
+            "^g":  "E2",
+            "_a":  "E2",
+            "a":   "E3",
+            "^a":  "E3",
+            "_b":  "E3",
+            "b":   "E4",
+            "c'":  "E4",
+            "^c'": "E4",
+            "_d'": "E4",
+            "d'":  "E4",
+        };
 
-    return thisGlyph;
+        var thisGlyph = glyph_map[note];
 
+        if (!thisGlyph){
+            return "x ";
+        }
+
+        return thisGlyph;
+    }
 }
 
 // Returns an array of Notes from the ABC string input
@@ -925,6 +987,7 @@ function DoStartup() {
     document.getElementById('music_space').value = 10;
     document.getElementById('tab_location').selectedIndex = 1;
     document.getElementById('includeStringName').checked = false;
+    document.getElementById('numbersInCircles').checked = false;
 
     var sampleTune = "";
     sampleTune += "X: 1\n";
