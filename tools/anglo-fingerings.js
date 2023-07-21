@@ -80,16 +80,17 @@ var baseMapOriginal = {
 };
 
 //
-// Closer to my preferred choices
+// Cross-row map for Wheatstone
 //
 // Original values commented out
 //
 // Prefers:
-// Draw c' on the left bottom row
-// Press d' on the left bottom row 
+// Press d' on the left G row
+// Draw e' on the left G row
+//
 //
 
-var baseMapAlt1 = {
+var baseMapCrossRowWheatstone = {
 
     // Top row, LH
     "L1a": new Button("L1a", ["E,", "F,"], 10, "l4"),
@@ -110,12 +111,61 @@ var baseMapAlt1 = {
     "L7": new Button("L7", ["D", "^F"], 2, "l4"),
     "L8": new Button("L8", ["G", "A"], 2, "l3"),
     "L9": new Button("L9", ["B", "c"], 2, "l2"),
-    //"L10" :  new Button("L10", ["d"  , "e"], 2,  "l1" ),
     "L10": new Button("L10", ["d", "e"], 1, "l1"),
 
     // Middle row, RH
     "R1": new Button("R1", ["c", "B"], 1, "r1"),
-    //"R2"  :  new Button("R2", ["e"  , "d"],  1, "r2" ),
+     "R2": new Button("R2", ["e", "d"], 2, "r2"),
+    "R3": new Button("R3", ["g", "f"], 2, "r3"),
+    "R4": new Button("R4", ["c'", "a"], 2, "r4"),
+    "R5": new Button("R5", ["e'", "b"], 2, "r4"),
+
+    // Bottom row, RH
+    "R6": new Button("R6", ["g", "^f"], 1, "r1"),
+    "R7": new Button("R7", ["b", "a"], 1, "r2"),
+    "R8": new Button("R8", ["d'", "c'"], 1, "r3"),
+    "R9": new Button("R9", ["g'", "e'"], 1, "r4"),
+    "R10": new Button("R10", ["b'", "^f'"], 1, "r4")
+
+};
+
+//
+// My preferred fingering map for Jeffries
+//
+// Prefers:
+// Draw B on right C row
+// Draw c' on the left G row
+// Press d' on the left G row
+// Draw e' on the left G row
+//
+
+var baseMapCrossRowJeffries = {
+
+    // Top row, LH
+    "L1a": new Button("L1a", ["E,", "F,"], 10, "l4"),
+    "L2a": new Button("L2a", ["A,", "_B,"], 10, "l4"), 
+    "L3a": new Button("L3a", ["^C", "_E"], 10, "l3"),
+    "L4a": new Button("L4a", ["A", "G"], 10, "l2"),
+    "L5a": new Button("L5a", ["^G", "_B"], 10, "l1"),
+
+    // Middle row, LH
+    "L1": new Button("L1", ["C,", "G,"], 1, "l4"),
+    "L2": new Button("L2", ["G,", "B,"], 1, "l4"),
+    "L3": new Button("L3", ["C", "D"], 1, "l3"),
+    "L4": new Button("L4", ["E", "F"], 1, "l2"),
+    "L5": new Button("L5", ["G", "A"], 1, "l1"),
+
+    // Bottom row, LH
+    "L6": new Button("L6", ["B,", "A,"], 1, "l4"), 
+    "L7": new Button("L7", ["D", "^F"], 2, "l4"),
+    "L8": new Button("L8", ["G", "A"], 2, "l3"),
+    "L9": new Button("L9", ["B", "z"], 2, "l2"),
+    "L9a": new Button("L9", ["z", "c"], 1, "l2"),
+    "L10": new Button("L10", ["d", "e"], 1, "l1"),
+
+    // Middle row, RH
+    "R1": new Button("R1", ["c", "x"], 2, "r1"),
+    "R1a": new Button("R1",["x", "B"], 1, "r1"),
     "R2": new Button("R2", ["e", "d"], 2, "r2"),
     "R3": new Button("R3", ["g", "f"], 2, "r3"),
     "R4": new Button("R4", ["c'", "a"], 2, "r4"),
@@ -130,9 +180,9 @@ var baseMapAlt1 = {
 
 };
 
-var jeffriesMapOriginal = {
+var jeffriesRxMapOriginal = {
     // Top row, RH
-    "R1a": new Button("R1a", ["^d", "^c"], 10, "r1"),
+    "R1a": new Button("R1a", ["^d", "^c"], 1, "r1"),
     "R2a": new Button("R2a", ["^c", "^d"], 10, "r2"),
     "R3a": new Button("R3a", ["^g", "g"], 10, "r3"),
     "R4a": new Button("R4a", ["^c'", "_b"], 10, "r4"),
@@ -140,17 +190,16 @@ var jeffriesMapOriginal = {
 };
 
 // Prefers a R2a press C#
-var jeffriesMapAlt1 = {
+var jeffriesRxMapAlt = {
     // Top row, RH
     "R1a": new Button("R1a", ["^d", "^c"], 10, "r1"),
-    //"R2a": new Button("R2a", ["^c", "^d"], 10, "r2"),
     "R2a": new Button("R2a", ["^c", "^d"], 1, "r2"),
     "R3a": new Button("R3a", ["^g", "g"], 10, "r3"),
     "R4a": new Button("R4a", ["^c'", "_b"], 10, "r4"),
     "R5a": new Button("R5a", ["a", "d'"], 10, "r4")
 };
 
-var wheatstoneMapOriginal = {
+var wheatstoneRxMapOriginal = {
     // Top row, RH
     "R1a": new Button("R1a", ["^c", "^d"], 10, "r1"),
     "R2a": new Button("R2a", ["a", "g"], 10, "r2"),
@@ -174,12 +223,12 @@ function initButtonMap() {
     jeffriesMap = [];
     wheatstoneMap = [];
 
-    for (var x in jeffriesMapOriginal) {
-        jeffriesMap[x] = jeffriesMapOriginal[x];
+    for (var x in jeffriesRxMapAlt) {
+        jeffriesMap[x] = jeffriesRxMapAlt[x];
     }
 
-    for (var x in wheatstoneMapOriginal) {
-        wheatstoneMap[x] = wheatstoneMapOriginal[x];
+    for (var x in wheatstoneRxMapOriginal) {
+        wheatstoneMap[x] = wheatstoneRxMapOriginal[x];
     }
 
     for (var x in baseMapOriginal) {
@@ -196,32 +245,6 @@ function initButtonMap() {
 
 }
 
-//
-// Idle controls based on instrument style and fingering map
-//
-
-function idleButtonToNoteMap() {
-
-    //debugger;
-
-    var csharp_pref = document.getElementById('jeffries_csharp').checked;
-
-    index = document.getElementById('layout').selectedIndex;
-
-    switch (index) {
-
-        case 0: // Jeffries
-            document.getElementById('jeffries_csharp_holder').style.display = "block";
-            break;
-
-        case 1: // Wheatstone
-            document.getElementById('jeffries_csharp_holder').style.display = "none";
-            break;
-
-    }
-
-}
-
 // 
 // Called at solution generation time
 //
@@ -231,8 +254,6 @@ function setButtonToNoteMap() {
 
     var baseMapIndex = document.getElementById('preferred_fingering').options[index].value;
 
-    var csharp_pref = document.getElementById('jeffries_csharp').checked;
-
     jeffriesMap = [];
     wheatstoneMap = [];
 
@@ -241,22 +262,12 @@ function setButtonToNoteMap() {
         // Original
         case "0":
 
-            if (csharp_pref) {
-
-                for (var x in jeffriesMapAlt1) {
-                    jeffriesMap[x] = jeffriesMapAlt1[x];
-                }
-
-            } else {
-
-                for (var x in jeffriesMapOriginal) {
-                    jeffriesMap[x] = jeffriesMapOriginal[x];
-                }
-
+            for (var x in jeffriesRxMapAlt) {
+                jeffriesMap[x] = jeffriesRxMapAlt[x];
             }
 
-            for (var x in wheatstoneMapOriginal) {
-                wheatstoneMap[x] = wheatstoneMapOriginal[x];
+            for (var x in wheatstoneRxMapOriginal) {
+                wheatstoneMap[x] = wheatstoneRxMapOriginal[x];
             }
 
             for (var x in baseMapOriginal) {
@@ -266,39 +277,33 @@ function setButtonToNoteMap() {
 
             break;
 
-            // Cross-row
+        // Cross-row
         case "1":
 
-            if (csharp_pref) {
-
-                for (var x in jeffriesMapAlt1) {
-                    jeffriesMap[x] = jeffriesMapAlt1[x];
-                }
-
-
-            } else {
-
-                for (var x in jeffriesMapOriginal) {
-                    jeffriesMap[x] = jeffriesMapOriginal[x];
-                }
-
+            for (var x in jeffriesRxMapAlt) {
+                jeffriesMap[x] = jeffriesRxMapAlt[x];
             }
 
-            for (var x in wheatstoneMapOriginal) {
-                wheatstoneMap[x] = wheatstoneMapOriginal[x];
+            for (var x in wheatstoneRxMapOriginal) {
+                wheatstoneMap[x] = wheatstoneRxMapOriginal[x];
             }
 
-            for (var x in baseMapAlt1) {
-                jeffriesMap[x] = baseMapAlt1[x];
-                wheatstoneMap[x] = baseMapAlt1[x];
+            for (var x in baseMapCrossRowJeffries) {
+                jeffriesMap[x] = baseMapCrossRowJeffries[x];
+            }
+
+            for (var x in baseMapCrossRowWheatstone) {
+                 wheatstoneMap[x] = baseMapCrossRowWheatstone[x];
             }
 
             break;
     }
 
     buttonMapIndex = {
+
         "CGJeffries": jeffriesMap,
         "CGWheatstone": wheatstoneMap
+
     };
 
     index = document.getElementById('layout').selectedIndex;
