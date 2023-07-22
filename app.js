@@ -10969,7 +10969,7 @@ function ConfigureBoxTab(){
 	  {name: "Preferred fingerings:", id: "configure_concertina_fingering", type:"select", options:concertina_fingerings, cssClass:"configure_box_settings_select"},
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:12pt;font-family:helvetica">On-Row: Favors D5 and E5 on right-side C-row.</p>'},	  
 	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">Cross-Row: Favors D5 and E5 on the left-side G-row.</p>'},	  
-	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">On Jeffries also favors C5 on the left-side G-row draw, B4 on the right-side C-row draw.</p>'},	  
+	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">Favors C5 on the left-side G-row draw, B4 on the right-side C-row draw.</p>'},	  
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 720 } ).then(function(args){
