@@ -5437,8 +5437,14 @@ function GetABCJSParams(instrument){
 	}
 
 	// Shared font format between all tab styles
-	var tFont = "Times-Roman 18";
-	var pFont = "Times-Roman 13.5";
+	var tFont = "Palatino 18";
+	var pFont = "Palatino 13.5";
+
+	// Not sure if Palatino is supported by Android so fall back to Times-Roman
+	if (gIsAndroid){
+		tFont = "Times-Roman 18";
+		pFont = "Times-Roman 13.5";
+	}
 
 	var commonFontFormat = 
 	{
