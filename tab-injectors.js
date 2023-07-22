@@ -134,7 +134,7 @@ var angloFingeringsGenerator = function (theABC){
     };
 
     //
-    // My preferred fingering map for Jeffries
+    // My preferred fingering map for Cross-Row playing
     //
     // Prefers:
     // Draw B on right C row
@@ -143,7 +143,7 @@ var angloFingeringsGenerator = function (theABC){
     // Draw e' on the left G row
     //
 
-    var baseMapCrossRowJeffries = {
+    var baseMapCrossRow = {
 
         // Top row, LH
         "L1a": new Button("L1a", ["E,", "F,"], 10, "l4"),
@@ -169,7 +169,7 @@ var angloFingeringsGenerator = function (theABC){
 
         // Middle row, RH
         "R1": new Button("R1", ["c", "x"], 2, "r1"),
-        "R1a": new Button("R1",["x", "B"], 1, "r1"),
+        "R1x": new Button("R1",["x", "B"], 1, "r1"),
         "R2": new Button("R2", ["e", "d"], 2, "r2"),
         "R3": new Button("R3", ["g", "f"], 2, "r3"),
         "R4": new Button("R4", ["c'", "a"], 2, "r4"),
@@ -260,12 +260,12 @@ var angloFingeringsGenerator = function (theABC){
                     wheatstoneMap[x] = wheatstoneRxMapOriginal[x];
                 }
 
-                for (var x in baseMapCrossRowJeffries) {
-                    jeffriesMap[x] = baseMapCrossRowJeffries[x];
+                for (var x in baseMapCrossRow) {
+                    jeffriesMap[x] = baseMapCrossRow[x];
                 }
 
-                for (var x in baseMapCrossRowWheatstone) {
-                     wheatstoneMap[x] = baseMapCrossRowWheatstone[x];
+                for (var x in baseMapCrossRow) {
+                      wheatstoneMap[x] = baseMapCrossRow[x];
                 }
 
                 break;
