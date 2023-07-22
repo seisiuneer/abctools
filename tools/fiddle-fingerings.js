@@ -30,7 +30,7 @@ function log(s) {
 }
 
 //
-// Generate the box tab
+// Generate the fiddle fingering  tab
 //
 function generate_tab(abcInput){
 
