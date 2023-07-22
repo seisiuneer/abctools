@@ -11503,7 +11503,6 @@ function DoStartup() {
 
 	}
 
-
 	// Check for and process URL share link
 	var isFromShare = processShareLink();
 
@@ -11556,9 +11555,16 @@ function DoStartup() {
 	HandleWindowResize();
 
 	// 
-	// Initially hide the controls
+	// Initially show the controls as soon as some ABC is entered
 	//
-	HideAllControls();
+	ShowAllControls();
+	
+	if (!isFromShare){
+		document.getElementById("toggleallcontrols").classList.add("toggleallcontrolsdisabled");
+		document.getElementById("notenrechts").style.display = "none";
+		gAllowControlToggle = false;
+	}
+
 
 	// And set the focus
     gTheABC.focus();
