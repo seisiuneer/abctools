@@ -5438,7 +5438,7 @@ function GetABCJSParams(instrument){
 
 	// Shared font format between all tab styles
 	var tFont = "Palatino 18";
-	var pFont = "Palatino 13.5";
+	var pFont = "Palatino 13";
 
 	// Not sure if Palatino is supported by Android so fall back to Times-Roman
 	if (gIsAndroid){
