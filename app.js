@@ -10344,7 +10344,6 @@ function showWelcomeScreen(){
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Export PDF" to export your tunebook in PDF format.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Copy All" to copy all the ABC text to the clipboard.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Play" to play the tune currently being edited.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Show Controls" for tablature options, PDF tunebook settings (paper size, tunes-per-page, page numbers), sharing features, etc.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Settings" to select the default instrument sounds and volumes to use when playing tunes.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica"><strong>If you find this tool useful, please consider <a href="donate.html" target="_blank">buying me a beer!</a></strong></p>';
 
