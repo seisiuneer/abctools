@@ -833,8 +833,26 @@ function getAbcNotes(input) {
         sanitizedInput = sanitizeString(sanitizedInput, x.index, x[0].length);
     }
 
-    // TODO: sanitize embedded quotes, too
+    // Sanitize chord markings
+    var searchRegExp = /"[^"]*"/gm
 
+    while (m = searchRegExp.exec(sanitizedInput)) {
+
+
+        var start = m.index;
+        var end = start + m[0].length;
+
+        //console.log(m[0],start,end);
+
+        for (var index=start;index<end;++index){
+
+            sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+        }
+
+
+    }
+    
     log("sanitized input:" + sanitizedInput);
 
     // Find all the notes
@@ -1161,6 +1179,27 @@ function StripChords(theNotes) {
 
 }
 
+//
+// Idle the tab location control
+//
+function idleTabLocation() {
+
+    // Idle the strip chords control visiblity based on the tab location
+    var tabLocation = document.getElementById('tab_location').selectedIndex;
+
+    if (tabLocation == 1){
+
+        document.getElementById('stripChordsHolder').style.display = "block";
+
+    }
+    else{
+
+        document.getElementById('stripChordsHolder').style.display = "none";
+
+    }
+}
+
+
 // MAE 14 July 2023 Using glyphs instead
 // var PUSH_NAME = "P";
 // var DRAW_NAME = "D";
@@ -1177,6 +1216,7 @@ function generateFingerings() {
     var annotateBellows = document.getElementById('annotateBellows').checked;
 
     var injectVolumes = document.getElementById('injectVolumes').checked;
+    var stripChords = document.getElementById('stripChords').checked;
 
     var fontFamily = document.getElementById('font_family').value
     var titleFontSize = document.getElementById('title_font_size').value;
@@ -1185,6 +1225,7 @@ function generateFingerings() {
     var tabFontSize = document.getElementById('tab_font_size').value;
     var musicSpace = document.getElementById('music_space').value
     var staffSep = document.getElementById('staff_sep').value;
+    var tabLocation = document.getElementById('tab_location').selectedIndex;
 
     var result = "";
 
@@ -1194,7 +1235,9 @@ function generateFingerings() {
 
         thisTune = stripAllComments(thisTune);
 
-        thisTune = StripChords(thisTune);
+        if ((tabLocation == 0) || ((tabLocation == 1) && (stripChords))){
+            thisTune = StripChords(thisTune);
+        }
 
         thisTune = finger(thisTune, annotateBellows);
 
