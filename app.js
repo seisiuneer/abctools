@@ -10700,6 +10700,7 @@ var gAlwaysInjectVolumes = true;
 var gTheBassVolume = 32;
 var gTheChordVolume = 32;
 var gOverridePlayMIDIParams = false;
+var gInjectTab_StripChords = true;
 
 // Box and concertina tab global state
 var gInjectTab_InjectVolumeDirectives = true;
@@ -10787,7 +10788,7 @@ function GetInitialConfigurationSettings(){
 
 	// Box and concertina tab global state
 
-	val = localStorage.gInjectTab_FontFamily;
+	val = localStorage.InjectTab_FontFamily;
 	if (val){
 		gInjectTab_FontFamily = val;
 	}
@@ -10875,6 +10876,14 @@ function GetInitialConfigurationSettings(){
 		gInjectTab_ConcertinaFingering = 1;
 	}
 
+	val = localStorage.InjectTab_StripChords;
+	if (val){
+		gInjectTab_StripChords = (val == "true");
+	}
+	else{
+		gInjectTab_StripChords = true;
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -10896,10 +10905,11 @@ function SaveConfigurationSettings(){
 		localStorage.TheChordVolume = gTheChordVolume;
 		localStorage.BoxTabFontSize = gBoxTabFontSize;
 		localStorage.OverridePlayMIDIParams = gOverridePlayMIDIParams;
+		localStorage.InjectTab_StripChords = gInjectTab_StripChords;
 
 		// Box and Concertina tab injection parameters
 		localStorage.InjectTab_InjectVolumeDirectives = gInjectTab_InjectVolumeDirectives;
-		localStorage.gInjectTab_FontFamily = gInjectTab_FontFamily;
+		localStorage.InjectTab_FontFamily = gInjectTab_FontFamily;
 		localStorage.InjectTab_TitleFontSize = gInjectTab_TitleFontSize;
 		localStorage.InjectTab_SubtitleFontSize = gInjectTab_SubtitleFontSize;
 		localStorage.InjectTab_InfoFontSize = gInjectTab_InfoFontSize;
@@ -10951,6 +10961,7 @@ function ConfigureBoxTab(){
 	  configure_tab_location:parseInt(gInjectTab_TabLocation),
 	  configure_concertina_style:parseInt(gInjectTab_ConcertinaStyle),
 	  configure_concertina_fingering:parseInt(gInjectTab_ConcertinaFingering),
+	  configure_strip_chords:gInjectTab_StripChords,
 	};
 
 	const form = [
@@ -10965,6 +10976,7 @@ function ConfigureBoxTab(){
 	  {name: "%%staffsep value:  (Recommended: 80)", id: "configure_staffsep", type:"text", cssClass:"configure_box_settings_form_text"},
 	  {name: "%%musicspace value:  (Recommended: 10)", id: "configure_musicspace", type:"text", cssClass:"configure_box_settings_form_text"},
 	  {name: "Tab location relative to notation:", id: "configure_tab_location", type:"select", options:tab_locations, cssClass:"configure_box_settings_select"},
+	  {name: "    Strip all chords and tab before injecting tab (Tab below only. Tab above always strips.)", id: "configure_strip_chords", type:"checkbox", cssClass:"configure_box_settings_form_text"},
 	  {html: '<p style="margin-top:18px;font-size:12pt;line-height:12pt;font-family:helvetica"><strong>Box Button Number Tablature:</strong></p>'},	  
 	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;margin-top:12px;font-family:helvetica">In the tool, Shift-click the B/C button to inject B/C Box button number tablature.'},	  
 	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;margin-top:12px;font-family:helvetica">In the tool, Shift-click the C#/D button to inject C#/D Box button number tablature.</p>'},	  
@@ -10985,16 +10997,17 @@ function ConfigureBoxTab(){
 			//debugger;
 
 			gInjectTab_InjectVolumeDirectives = args.result.configure_inject_directives;
-			gInjectTab_FontFamily = args.result.configure_font_family
-			gInjectTab_TitleFontSize = args.result.configure_title_font_size
-			gInjectTab_SubtitleFontSize = args.result.configure_subtitle_font_size
-			gInjectTab_InfoFontSize = args.result.configure_info_font_size
-			gInjectTab_TabFontSize = args.result.configure_tab_font_size
-			gInjectTab_StaffSep = args.result.configure_staffsep
-			gInjectTab_MusicSpace = args.result.configure_musicspace
-			gInjectTab_TabLocation = args.result.configure_tab_location
-			gInjectTab_ConcertinaStyle = args.result.configure_concertina_style
-			gInjectTab_ConcertinaFingering = args.result.configure_concertina_fingering
+			gInjectTab_FontFamily = args.result.configure_font_family;
+			gInjectTab_TitleFontSize = args.result.configure_title_font_size;
+			gInjectTab_SubtitleFontSize = args.result.configure_subtitle_font_size;
+			gInjectTab_InfoFontSize = args.result.configure_info_font_size;
+			gInjectTab_TabFontSize = args.result.configure_tab_font_size;
+			gInjectTab_StaffSep = args.result.configure_staffsep;
+			gInjectTab_MusicSpace = args.result.configure_musicspace;
+			gInjectTab_TabLocation = args.result.configure_tab_location;
+			gInjectTab_ConcertinaStyle = args.result.configure_concertina_style;
+			gInjectTab_ConcertinaFingering = args.result.configure_concertina_fingering;
+			gInjectTab_StripChords = args.result.configure_strip_chords;
 
 			// Save the settings, in case they were initialized
 			SaveConfigurationSettings();
