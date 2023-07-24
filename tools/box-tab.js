@@ -428,6 +428,7 @@ function getAbcNotes(input,style) {
     // Sanitize the input, removing header and footer, but keeping
     // the same offsets for the notes. We'll just replace header
     // and footer sections with '*'.
+ 
     var sanitizedInput = input;
     var headerRegex = /^\w:.*$/mg;
     var x;
@@ -435,7 +436,25 @@ function getAbcNotes(input,style) {
         sanitizedInput = sanitizeString(sanitizedInput, x.index, x[0].length);
     }
 
-    // TODO: sanitize embedded quotes, too
+    // Sanitize chord markings
+    var searchRegExp = /"[^"]*"/gm
+
+    while (m = searchRegExp.exec(sanitizedInput)) {
+
+
+        var start = m.index;
+        var end = start + m[0].length;
+
+        //console.log(m[0],start,end);
+
+        for (var index=start;index<end;++index){
+
+            sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+        }
+
+
+    }
 
     log("sanitized input:" + sanitizedInput);
 
@@ -613,7 +632,7 @@ function stripAllComments(theNotes) {
 // 
 // Strip all the chords in the ABC
 //
-function StripChords(theNotes) {
+function StripChords(theNotes) {    
 
     // Strip out chord markings
     var searchRegExp = /"[^"]*"/gm
@@ -627,6 +646,26 @@ function StripChords(theNotes) {
 }
 
 //
+// Idle the tab location control
+//
+function idleTabLocation() {
+
+    // Idle the strip chords control visiblity based on the tab location
+    var tabLocation = document.getElementById('tab_location').selectedIndex;
+
+    if (tabLocation == 1){
+
+        document.getElementById('stripChordsHolder').style.display = "block";
+
+    }
+    else{
+
+        document.getElementById('stripChordsHolder').style.display = "none";
+
+    }
+}
+
+//
 // Main processor
 //
 function generateTablature() {
@@ -636,6 +675,7 @@ function generateTablature() {
     var nTunes = countTunes(theABC);
 
     var injectVolumes = document.getElementById('injectVolumes').checked;
+    var stripChords = document.getElementById('stripChords').checked;
 
     var fontFamily = document.getElementById('font_family').value
     var titleFontSize = document.getElementById('title_font_size').value;
@@ -644,6 +684,7 @@ function generateTablature() {
     var tabFontSize = document.getElementById('tab_font_size').value;
     var musicSpace = document.getElementById('music_space').value
     var staffSep = document.getElementById('staff_sep').value;
+    var tabLocation = document.getElementById('tab_location').selectedIndex;
 
     var result = "";
 
@@ -653,7 +694,9 @@ function generateTablature() {
 
         thisTune = stripAllComments(thisTune);
 
-        thisTune = StripChords(thisTune);
+        if ((tabLocation == 0) || ((tabLocation == 1) && (stripChords))){
+            thisTune = StripChords(thisTune);
+        }
 
         thisTune = generate_tab(thisTune);
 
