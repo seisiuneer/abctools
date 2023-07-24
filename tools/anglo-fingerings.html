@@ -20,8 +20,8 @@
     <meta property="og:image" content="http://michaeleskin.com/img/anglotab3.jpg" />
     <meta name="msapplication-TileImage" content="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5.png?time=1606377715" />
     <meta name="viewport" content="width=860">
-    <link rel="stylesheet" href="anglo-fingerings.css?v=27"/>
-   
+    <link rel="stylesheet" href="anglo-fingerings.css?v=28"/>
+
   </head>
   <body>
     
@@ -51,9 +51,11 @@
         <p>Favors playing B4 on the right-side C-row draw.</p>
         <p>For Jeffries: Favors 2nd button on right-side top-row for C#5 and D#5.</p>
         <p>5)&nbsp;Select whether you want the tablature to appear above or below the notation from the "Tab Location" dropdown.</p>
-        <p>6)&nbsp;Click "Generate Fingerings".</p>
+        <p>6)&nbsp;If fingerings are set to appear over the notation, existing chords in the ABC are always stripped.</p>
+        <p>If fingerings are set to appear under the notation, and you want to leave existing chords above the staff, uncheck "Strip all chords before injecting fingerings".</p>
+        <p>7)&nbsp;Click "Generate Fingerings".</p>
         <p>The generated ABC with fingerings will appear in the "Processed ABC Output, with Fingerings" box.</p>
-        <p>7)&nbsp;Save, Copy or Test the results:</p>
+        <p>8)&nbsp;Save, Copy or Test the results:</p>
         <p>Click "Save Output to a file" to save the results to a file.</p>
         <p>Click "Copy Output to the clipboard" to copy the results to the system clipboard for pasting into other applications.</p>
         <p>Click "Test Output in the ABC Transcription Tools" to open and test the results in my <a href="http://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a></p>
@@ -120,7 +122,7 @@
           
           <span style="margin-left:15px">Tab Location:&nbsp;&nbsp;</span>
           
-          <select id="tab_location">
+          <select id="tab_location" onChange="idleTabLocation()">
             
             <option value="above">&nbsp;&nbsp;Above Staff</option>
             
@@ -129,6 +131,8 @@
           </select>
           
         </p>
+
+        <p id="stripChordsHolder" style="display:none;"><input type="checkbox" id="stripChords" checked="true" onChange="idleStripChords()">&nbsp;&nbsp;Strip all chords before injecting fingerings</p>
         
         <p style="margin-top:24px"><button id="generateFingerings" class="btn btn-generate" onClick="generateFingerings();">Generate Fingerings</button></p>
         
@@ -231,8 +235,8 @@
     
   </body>
   
-  <script src="anglo-fingerings.js?v=27" type="text/javascript"></script>
-  <script type="text/javascript" src="lz-string.min.js?v=27"></script>
-  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=27"></script>
+  <script src="anglo-fingerings.js?v=28" type="text/javascript"></script>
+  <script type="text/javascript" src="lz-string.min.js?v=28"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=28"></script>
   
 </html>
