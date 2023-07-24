@@ -798,8 +798,26 @@ var angloFingeringsGenerator = function (theABC){
             sanitizedInput = sanitizeString(sanitizedInput, x.index, x[0].length);
         }
 
-        // TODO: sanitize embedded quotes, too
+        // Sanitize chord markings
+        var searchRegExp = /"[^"]*"/gm
 
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+
+        }
+        
         angloLog("sanitized input:" + sanitizedInput);
 
         // Find all the notes
@@ -1147,6 +1165,8 @@ var angloFingeringsGenerator = function (theABC){
         var tabFontSize = gInjectTab_TabFontSize;
         var musicSpace = gInjectTab_MusicSpace;
         var staffSep = gInjectTab_StaffSep;
+        var tabLocation = parseInt(gInjectTab_TabLocation);
+        var stripChords = gInjectTab_StripChords;
 
         var result = "";
 
@@ -1156,8 +1176,13 @@ var angloFingeringsGenerator = function (theABC){
 
             thisTune = angloStripAllComments(thisTune);
 
-            thisTune = angloStripChords(thisTune);
-
+            // Strip chords? 
+            // Above always strips
+            // Below only strips if specified in the settings
+            if ((tabLocation == 0) || ((tabLocation == 1) && (stripChords))){
+                thisTune = angloStripChords(thisTune);
+            }
+ 
             thisTune = generateAngloFingerings(thisTune);
 
             // Default directives to inject into every tune
@@ -1645,7 +1670,25 @@ var boxTabGenerator = function (theABC){
             sanitizedInput = sanitizeString(sanitizedInput, x.index, x[0].length);
         }
 
-        // TODO: sanitize embedded quotes, too
+        // Sanitize chord markings
+        var searchRegExp = /"[^"]*"/gm
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+
+        }
 
         log("sanitized input:" + sanitizedInput);
 
@@ -1855,6 +1898,8 @@ var boxTabGenerator = function (theABC){
         var tabFontSize = gInjectTab_TabFontSize;
         var musicSpace = gInjectTab_MusicSpace;
         var staffSep = gInjectTab_StaffSep;
+        var tabLocation = parseInt(gInjectTab_TabLocation);
+        var stripChords = gInjectTab_StripChords;
 
         var result = "";
 
@@ -1864,7 +1909,12 @@ var boxTabGenerator = function (theABC){
 
             thisTune = stripAllComments(thisTune);
 
-            thisTune = StripChords(thisTune);
+            // Strip chords? 
+            // Above always strips
+            // Below only strips if specified in the settings
+            if ((tabLocation == 0) || ((tabLocation == 1) && (stripChords))){
+                thisTune = StripChords(thisTune);
+            }
 
             thisTune = generate_tab(thisTune);
 
