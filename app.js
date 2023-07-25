@@ -5847,6 +5847,9 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 				
 				Tspans[x].setAttribute("class", "whistle");
 
+				// This fixes the + cutoff issue below the second octave notes
+				Tspans[x].setAttribute("dy","-7");
+
 				if (Tspans[x].innerHTML == "0") {
 					Tspans[x].innerHTML = "g";
 				} else if (Tspans[x].innerHTML == "1") {
