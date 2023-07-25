@@ -456,6 +456,25 @@ function getAbcNotes(input,style) {
 
     }
 
+    // Sanitize in-abc chords in brackets
+    searchRegExp = /\[[^\]|]*\]/g
+
+    while (m = searchRegExp.exec(sanitizedInput)) {
+
+
+        var start = m.index;
+        var end = start + m[0].length;
+
+        //console.log(m[0],start,end);
+
+        for (var index=start;index<end;++index){
+
+            sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+        }
+
+    }  
+    
     log("sanitized input:" + sanitizedInput);
 
     // Find all the notes
