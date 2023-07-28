@@ -36,7 +36,7 @@
 		<link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 		<link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-		<link href="app.css?v=407" media="all" rel="stylesheet" type="text/css">
+		<link href="app.css?v=409" media="all" rel="stylesheet" type="text/css">
 				
 	</head>
 	<body>
@@ -113,7 +113,7 @@
 						<input class="transpose btn btn-transpose" id="transposeup" onclick="TransposeUp(event)" type="button" value="Transpose Up"  title="Transposes the selected tunes up one semitone.&nbsp;&nbsp;Shift-click transposes up one full step.&nbsp;&nbsp;Alt-click transposes up one octave.">
 						<input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortABC(event)" type="button" value="Sort ABC" title="Sorts all the tunes by name">
 						<input class="toggleadvancedcontrols btn btn-toggleadvancedcontrols" id="toggleadvancedcontrols" onclick="AdvancedControlsDialog()" type="button" value="Show Advanced" title="Shows the Advanced Controls dialog">
-						<input class="togglesharecontrols btn btn-togglesharecontrols" id="togglesharecontrols" onclick="ToggleShareControls()" type="button" value="Show Sharing"  title="Shows/Hides the Sharing controls">
+						<input class="togglesharecontrols btn btn-togglesharecontrols" id="togglesharecontrols" onclick="SharingControlsDialog()" type="button" value="Show Sharing"  title="Shows the Sharing dialog">
 						<input class="clearbutton btn btn-clearbutton" id="clearbutton" onclick="Clear()" type="button" value="Clear ABC" title="Clears all the ABC">
 					</div>
 
@@ -151,18 +151,6 @@
 							<option value = "no">&nbsp;No</option>
 						</select>
 					</div>
-					<div id="urlarea">
-						<p>
-							<input id="testurl" class="urlcontrols btn btn-urlcontrols" onclick="TestShareURL()" type="button" value="Test Share URL" title="Opens the Share URL in a new tab">
-							<input id="copyurl" class="urlcontrols btn btn-urlcontrols" onclick="CopyShareURL()" type="button" value="Copy Share URL" title="Copies the Share URL to the clipboard">
-							<input id="saveurl" class="urlcontrols btn btn-urlcontrols" onclick="SaveShareURL()" type="button" value="Save Share URL" title="Saves the Share URL to a file">
-							<input id="shortenurl" class="urlcontrols btn btn-urlcontrols" onclick="ShortenURL()" type="button" value="Shorten URL" title="Shortens the Share URL and copies it to the clipboard">
-							<input id="generateqrcode" class="urlcontrols btn btn-urlcontrols" onclick="GenerateQRCode(event)" type="button" value="Generate QR Code" title="Generates a QR Code for the Share URL.&nbsp;&nbsp;Even if this button is greyed-out, Shift-click attempts to generate a QR code from the text in the Share URL box.">
-						</p>
-						<textarea id="urltextbox" rows="8" cols="80" spellcheck="false" autocorrect="off" autocapitalize="off" placeholder="URL for sharing will appear here" >
-						</textarea>
-						<p id="shareurlcaption">Share URL</p>
-					</div>
 				</div>
 				
 			</div>
@@ -183,12 +171,12 @@
 		</div>
 		
 	</body>
-	<script type="text/javascript" src="abcjs-basic-tabs-min.js?v=407"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
+	<script type="text/javascript" src="abcjs-basic-tabs-min.js?v=409"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
 	<script type="text/javascript" src="jspdf.min.js"></script><!-- to generate PDF using Javscript -->
 	<script type="text/javascript" src="html2image.js"></script><!-- to convert HTML elements to bitmaps -->
-	<script type="text/javascript" src="qrcode.js?v=407"></script><!-- to generate QR codes for the share links -->
+	<script type="text/javascript" src="qrcode.js?v=409"></script><!-- to generate QR codes for the share links -->
 	<script type="text/javascript" src="lz-string.min.js"></script><!-- used for share URL generation -->
-	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=407"></script><!-- modal dialog replacement -->
-	<script type="text/javascript" src="tab-injectors-min.js?v=407"></script><!-- Box and Concertina tab generation for ABC injection -->
-	<script type="text/javascript" src="app-min.js?v=407"></script><!-- main application business logic -->
+	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=409"></script><!-- modal dialog replacement -->
+	<script type="text/javascript" src="tab-injectors-min.js?v=409"></script><!-- Box and Concertina tab generation for ABC injection -->
+	<script type="text/javascript" src="app-min.js?v=409"></script><!-- main application business logic -->
 </html>
