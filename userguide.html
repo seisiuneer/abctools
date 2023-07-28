@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+                
         <style>
         p {
         font-size:14pt;
@@ -297,7 +297,7 @@
             <p>Sort ABC - Sorts all the tunes in the ABC area in alphabetical order by tune name.</p>
             <p>Tune names that start with "The" will have the "The" moved to the end of the tune name before the alphabetical sorting.</p>
             <p>Holding down the Shift key while clicking this button will also treat "A " and "An " the same way as "The " for sorting.</p>
-            <p>Show/Hide Advanced - Shows/Hides a new panel (described below) with several additional ABC filtering and display controls.</p>
+            <p>Show Advanced - Shows the Advanced Control dialog with several additional ABC filtering and display controls.</p>
             <p>Show/Hide Sharing - Shows/Hides a new panel (described below) with options for sharing your tune set via URL or QR code.</p>
             <p>Clear ABC - Clears the ABC Editor so you can start over.</p>
             <hr class="hidden-print" id="playing_your_tunes">
@@ -465,27 +465,36 @@
             </div>
             <hr class="hidden-print" id="advanced_controls">
             <h1 class="page_break_always">Advanced Controls&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/NbbX1BHVtyo" title="Stripping Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p></p>
             <div class="image_holder">
-                <img src="img/ug8a.jpg"/>
+                <img src="img/ug8b.jpg"/>
             </div>
-            <p>Hide/Show Annotations - Hides/Shows most ABC annotations like Composer, Discography, History, Tempo, etc. in the generated notation.</p>
-            <p>Holding down the Shift key while clicking this button will strip the annotations from the ABC itself.</p>
-            <p>Hide/Show Text - Hides/Shows any %%center or %%text based text annotations in the ABC in the generated notation.</p>
-            <p>Holding down the Shift key while clicking this button will strip the text annotations from the ABC itself.</p>
-            <p>Hide/Show Chords - Hides/Shows any chords entered in the ABC in the generated notation.</p>
-            <p>Holding down the Shift key while clicking this button will strip the chords from the ABC itself.</p>
+            <p><strong>Notation Display Settings:</strong></p>
+            <p>Set Staff Spacing - Allows you to set a wider or narrower gap between the staffs.</p>
+            <p>A value of 0 corresponds to an ABC %%staffsep of 40</p>
+            <p><strong>Show/Hide ABC Features:</strong></p>
+            <p>Hide/Show Annotations - Hides/Shows most ABC annotations like Composer, Discography, History, Tempo, etc. in the displayed notation.</p>
+            <p>Hide/Show Text - Hides/Shows any %%center or %%text based text annotations in the ABC in the displayed notation.</p>
+            <p>Hide/Show Chords - Hides/Shows any chords entered in the ABC in the displayed notation.</p>           
             <p>The ABC filtering buttons are enabled if Annotations, Text, or Chords are detected in the ABC.</p>
-            <p>Tab Name Settings: (only enabled if Mandolin, GDAD, CGDA, or Guitar tab is being displayed).</p>
+            <p><strong>Strip ABC Features:</strong></p>
+            <p>Strip Annotations - Removes most ABC annotations like Composer, Discography, History, Tempo, etc. from the ABC.</p>
+            <p>Strip Text - Removes any %%center or %%text based text annotations from the ABC.</p>
+            <p>Strip Chords - Removes any chords entered from the ABC.</p>           
+            <p>The ABC stripping buttons are enabled if Annotations, Text, or Chords are detected in the ABC.</p>
+            <p><strong>Stringed Instrument Tablature Settings (only enabled if Mandolin, GDAD, CGDA, or Guitar tab is being displayed):</strong></p>
             <p>Hide/Show Tab Names: Hides/Shows the instrument names and capo settings on the tablature.</p>
             <p>When the tab instrument names are hidden, the spacing between the staves is somewhat reduced.</p>
             <p>Hiding the tab names may, or may not, depending on the height of the staves, be useful for getting more staves on a single PDF page.</p>
             <p>Capo Settings: (only enabled if Mandolin, GDAD, CGDA, or Guitar tab is being displayed).</p>
             <p>Capo - Allows you to set a capo setting from 0 to 12 frets for the Mandolin, GDAD, CGDA, or Guitar tab.</p>
-            <p>Staff Display Settings:</p>
-            <p>Set Staff Spacing - Allows you to set a wider or narrower gap between the staffs.</p>
-            <p>A value of 0 corresponds to an ABC %%staffsep of 40</p>
+            <p><strong>ABC Injection Features:</strong></p>
+            <p>Inject All PDF Annotations: Injects all available tool-specific PDF annotations for title page, table of contents, index generation, etc. at the top of the ABC.</p>
+            <p>Inject PDF Annotation Template: Injects a useful template of common PDF annotations at the top of the ABC.</p>
+            <p>Inject Note Name Lyrics: Injects note names as lyrics in the ABC.</p>
+            <p>Inject B/C Box Tab: Injects B/C Box tablature into the ABC.</p>
+            <p>Inject C#/D Box Tab: Injects C#/D Box tablature into the ABC.</p>
+            <p>Inject Anglo Concertina Tab: Injects Anglo Concertina tablature into the ABC.</p>
+            <p>Configure Box and Concertina Tablature Injection Settings: Brings up a dialog where you can configure all parameters for the box and concertina tab injection.</p>
             <hr class="hidden-print" id="pdf_tunebook_settings">
             <h1 class="page_break_always">PDF Tunebook Settings&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/jtiVzXB8xhQ" title="PDF Generation Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
@@ -710,11 +719,6 @@
             <p>If you want to force a specific filename to be used by default every time you export the PDF file, add the following comment-based directive anywhere in the ABC:</p>
             <p></p>
             <p>%pdfname your_pdf_filename_here</p>
-            <p></p>
-            <hr class="hidden-print">
-            <p><strong>Power User Tip:</strong></p>
-            <p>Holding down the Shift key while clicking on the "PDF Tunes/Page" label will inject examples of all of the above PDF headers at the top of the ABC.</p>
-            <p>You can then remove the headers you don't need and edit the others to meet your requirements.</p>
             <p></p>
             <hr class="hidden-print" id="tunebook_hyperlinks">
             <h1 class="page_break_always">PDF Tunebook Hyperlinks and Automatic Play Links&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
@@ -1055,8 +1059,7 @@
             <p><a href="http://iosfonts.com/" target="_blank">iOS Fonts</a></p>
             <hr class="hidden-print" id="injecting_abc_lyric_based_note_names">
             <h1 class="page_break_always">Injecting ABC Lyric-based Note Names Into the ABC Tunes&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
-            <p>If you find the "Note Names" tab too tall, you can try holding down the Shift key while clicking the "Note Names" tab selector.</p>
-            <p>This will inject an ABC lyrics line under each ABC line using the w: directive that will put the ABC note name under each note in the notation for all the tunes.</p>
+            <p>Clicking "Inject Note Names Lyrics" in the Advanced Settings dialog will inject an ABC lyrics line under each ABC line using the w: directive that will put the ABC note name under each note in the notation for all the tunes.</p>
             <p>For example:</p>
             <p>GAG GAB | ABA ABd | edd gdd | edB dBA | </p>
             <p>w: G A G G A B A B A A B d e d d g d d e d B d B A</p>
@@ -1069,13 +1072,13 @@
             <p>You can use any of the fonts, styles, and sizes as described above in the "Web Safe Fonts" section.</p>
             <hr class="hidden-print" id="injecting_box_or_anglo_concertina_tablature">
             <h1 class="page_break_always">Injecting B/C Box, C#/D Box, or Anglo Concertina Tablature Into the ABC Tunes&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/7OUFBuGqbvE" title="Injecting B/C Box, C#/D Box, or Anglo Concertina tablature demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p>Shift-click the B/C button to inject button number B/C Box tablature into all the tunes in the ABC editor.</p>
-            <p>Shift-click the C#/D button to inject button number C#/D tablature into all the tunes in the ABC editor.</p>
-            <p>Alt-click either the B/C or the C#/D button to inject Anglo Concertina fingering tablature into all the tunes in the ABC editor.</p>
-            <p>To configure the first click the tool's Settings button, then click the "Configure Box and Concertina Tablature Injection Settings" button at the bottom of the dialog to bring up the tablature injection settings dialog:</p>
+            <p>You may inject Box or Anglo Concertina tablature into the ABC using the following buttons in the "Advanced Controls" dialog:</p>
+            <p>"Inject B/C Box Tab": Injects B/C Box tablature into the ABC.</p>
+            <p>"Inject C#/D Box Tab": Injects C#/D Box tablature into the ABC.</p>
+            <p>"Inject Anglo Concertina Tab": Injects Anglo Concertina tablature into the ABC.</p>
+            <p>To configure the tablature fonts and other settings, first click the tool's Settings button, then click the "Configure Box and Concertina Tablature Injection Settings" button at the bottom of the dialog to bring up the tablature injection settings dialog:</p>
             <div class="image_holder">
-                <img src="img/box_tab_injection_settings_3.jpg"/>
+                <img src="img/box_tab_injection_settings_4.jpg"/>
             </div>
             <p>You can also Shift-click the Settings button to go directly to the tablature injection settings dialog.</p>
             <p><strong>Common Box and Anglo Concertina tablature settings:</strong>
