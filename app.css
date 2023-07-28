@@ -153,9 +153,18 @@ margin-right:12px;
 }
 
 .urlcontrols{
-margin-right:21px;
+margin-right:16px;
 margin-left:0px;
+height:42px;
+padding:12px !important;
 }
+
+.urlcontrolslast{
+margin-left:0px;
+height:42px;
+padding:12px !important;
+}
+
 
 @media (hover: hover) {
 	.urlcontrols:hover{
@@ -167,7 +176,8 @@ margin-left:0px;
 margin-right:21px;
 margin-left:0px;
 opacity:0.4;
-}
+height:42px;
+padding:12px;}
 
 .sortbutton{
 margin-left: 7px;
@@ -240,10 +250,11 @@ margin-top:24px;
 margin-bottom:24px;
 }
 
-
-#share-controls{
-display:none;
-margin-top:20px;
+#sharing-controls-dialog{
+display:block;
+margin-top:24px;
+margin-bottom:24px;
+text-align: center;
 }
 
 #staff-spacing{
