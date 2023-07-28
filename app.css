@@ -234,10 +234,12 @@ position:absolute;
 left:-2100px;
 }
 
-#advanced-controls{
-display:none;
-margin-top:18px;
+#advanced-controls-dialog{
+display:block;
+margin-top:24px;
+margin-bottom:24px;
 }
+
 
 #share-controls{
 display:none;
@@ -245,30 +247,32 @@ margin-top:20px;
 }
 
 #staff-spacing{
-padding-top:4px;
-padding-bottom:4px;
-width:50px;
-margin-top:6px;
-margin-left:4px;
+padding-top:4px !important;
+padding-bottom:4px !important;
+width:80px !important;
+margin-top:6px !important;
+margin-left:8px !important;
 }
 
 .staff-spacing {
-font-family:"Helvetica";
-font-size:11pt;
+font-family:"Helvetica" !important;
+font-size:12pt !important;
 }
 
+
 #capo{
-padding-top:4px;
-padding-bottom:4px;
-width:35px;
-margin-top:6px;
-margin-right:10px;
-margin-left:4px;
+padding-top:4px !important;
+padding-bottom:4px !important;
+width:60px !important;
+margin-top:6px !important;
+margin-right:10px !important;
+margin-left:8px !important;
 }
 
 .capo {
-font-family:"Helvetica";
-font-size:11pt;
+font-family:"Helvetica" !important;
+font-size:12pt !important;
+margin-left: 36px !important;
 }
 
 #transpose-controls, #tabs-selection, #pdf-settings{
@@ -419,11 +423,52 @@ font-size:12pt;
 }
 
 #toggleannotations, #toggletext{
-margin-right:10px;
+margin-right:24px;
+height:42px;
+padding:12px;
 }
 
 #togglechords{
-margin-right:10px;
+height:42px;
+padding:12px;
+}
+
+#stripannotations, #striptext{
+margin-right:24px;
+height:42px;
+padding:12px;
+}
+
+#stripchords{
+height:42px;
+padding:12px;
+}
+
+#toggletabnames {
+height:42px;
+padding:12px;
+}
+
+.toggletabnames {
+height:42px;
+padding:12px;
+}
+
+.toggletabnamesdisabled {
+height:42px;
+opacity: 0.4;
+padding:12px;
+}
+
+#injectbctab, #injectcdtab, #injectallheaders, #injectheadertemplate{
+margin-right:24px;
+height:42px;
+padding:12px;
+}
+
+#injectanglotab, #injectnotenames{
+height:42px;
+padding:12px;
 }
 
 #shareurlcaption{
@@ -589,16 +634,6 @@ margin-right:0px;
 opacity:1.0;
 }
 
-.toggletabnames {
-margin-left:0px;
-margin-right:10px;
-}
-
-.toggletabnamesdisabled {
-margin-left:0px;
-margin-right:10px;
-opacity: 0.4;
-}
 
 /* Spinner */
 #loading-bar-spinner.spinner {
@@ -607,7 +642,7 @@ margin-left: -23px;
 top: 25%;
 margin-top: -23px;
 position: fixed;
-z-index: 101 !important;
+z-index: 100000 !important;
 animation: loading-bar-spinner 400ms linear infinite;
 display:none;
 }
@@ -1012,7 +1047,16 @@ left:-5000px;
 #configure_box{
 	height:42px;
 	margin-top: 9px;
+	padding:12px;
+
 }
+
+#configure_box_advanced{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+}
+
 
 .configure_box_settings_select{
 font-size:11pt;
@@ -1176,6 +1220,11 @@ margin-top:-7px;
 .btn-advancedcontrols{
   --color: black;
   --background-color: #DCFFFF;
+}
+
+.btn-injectcontrols{
+  --color: black;
+  --background-color: #fff5f5;
 }
 
 .btn-urlcontrols{
