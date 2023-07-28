@@ -835,12 +835,20 @@ function Clear() {
 		return;
 	}
 
-	ClearNoRender();
+	DayPilot.Modal.confirm("Are you sure you want to clear all the ABC?",{ top:100, theme: "modal_flat"}).then(function(args){
 
-	RenderAsync(true,null);
+		if (!args.canceled){
 
-	// And set the focus
-    gTheABC.focus();
+			ClearNoRender();
+
+			RenderAsync(true,null);
+
+			// And set the focus
+		    gTheABC.focus();
+
+		}
+
+	});
 
 }
 
@@ -857,9 +865,6 @@ function ClearNoRender() {
 	gABCFromFile = false;
 
 	RestoreDefaults();
-
-	HideAllControls();
-
 
 }
 
@@ -1629,7 +1634,7 @@ function GetAllTuneHyperlinks(theLinks) {
 			tuneWithPatch = "X:1\n%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkBassChordProgram+"\n"+tuneWithPatch;
 
 			// Create a share URL for this tune
-			var theURL = FillUrlBoxWithAbcInLZW(tuneWithPatch);
+			var theURL = FillUrlBoxWithAbcInLZW(tuneWithPatch,false);
 
 			// Add the play parameter
 			theURL += "&play=1"
@@ -1707,7 +1712,7 @@ function GetAllTuneHyperlinks(theLinks) {
 			tuneWithPatch = "X:1\n%%MIDI program "+theMelodyPatch+"\n"+"%%MIDI chordprog "+theBassChordPatch+"\n"+tuneWithPatch;
 
 			// Create a share URL for this tune
-			var theURL = FillUrlBoxWithAbcInLZW(tuneWithPatch);
+			var theURL = FillUrlBoxWithAbcInLZW(tuneWithPatch,false);
 
 			// Add the play parameter
 			theURL += "&play=1"
@@ -2234,11 +2239,8 @@ function AppendQRCode(thePDF,paperStyle,callback){
 
 	if (!gDoForceQRCodeURLOverride){
 
-		// Need to have the share link available in the urltextbox
-		FillUrlBoxWithAbcInLZW(null);
-
 		// Can we make a QR code from the current share link URL?
-		theURL = document.getElementById("urltextbox").value;
+		theURL = FillUrlBoxWithAbcInLZW(null,false);
 
 		if (!gAllowQRCodeSave){
 
@@ -4791,7 +4793,7 @@ function ExportNotationPDF(title) {
 		BETWEENTUNESPACE = 0;
 
 		// Force an idle on the advanced controls to determine if we need to hide the annotations or text annotations before incipit render
-		IdleAdvancedControls(true,false);
+		IdleAdvancedControls(false);
 
 		// Is annotation suppressed allowed, but not enabled, or is text annotation suppression allowed but not enabled, do a render
 		// If tabnames are being shown, hide them
@@ -5687,13 +5689,6 @@ function RecalcShareURLPDF(){
 	// If available, save all the app settings to local storage
 	UpdateLocalStorage();
 
-	// Since this is a Share URL parameter, update URL if required
-	if (document.getElementById("urlarea").style.display != "none") {
-
-		FillUrlBoxWithAbcInLZW(null);
-
-	}
-
 }
 
 //
@@ -6561,10 +6556,6 @@ function Render(renderAll,tuneNumber) {
 		// If available, save all the app settings to local storage
 		UpdateLocalStorage();
 
-		if (document.getElementById("urlarea").style.display != "none") {
-			FillUrlBoxWithAbcInLZW(null);
-		}
-
 		// Hide the notation placeholder
 		document.getElementById("notation-placeholder").style.display = "none";
 
@@ -6625,9 +6616,6 @@ function Render(renderAll,tuneNumber) {
 		document.getElementById("playbutton").classList.remove("playbuttondisabled");
 		document.getElementById("playbutton").classList.add("playbutton");
 		gAllowCopy = true;
-
-		// Idle the advanced controls
-		IdleAdvancedControls(false,false);
 
 		var radiovalue = GetRadioValue("notenodertab");
 
@@ -6845,340 +6833,285 @@ function ensureABCFile(filename) {
 // If bUpdateUI is false, just updates the global filtering options states
 // If bUpdateUI is true also idles the UI elements
 //
-function IdleAdvancedControls(bForce, bUpdateUI){
+function IdleAdvancedControls(bUpdateUI){
 
-	if ((gShowAllControls && gShowAdvancedControls) || bForce){
+	var theNotes = gTheABC.value;
 
-		var theNotes = gTheABC.value;
+	var searchRegExp = "";
 
-		var searchRegExp = "";
+	var EnableAnnotations = false;
+	var EnableText = false;
+	var EnableChords = false;
 
-		var EnableAnnotations = false;
-		var EnableText = false;
-		var EnableChords = false;
+	var gotMatch = false;
 
-		var gotMatch = false;
+	// Detect tempo markings
+	searchRegExp = /^Q:.*$/gm
 
-		// Detect tempo markings
-		searchRegExp = /^Q:.*$/gm
+	// Detect tempo markings
+	gotMatch = theNotes.search(searchRegExp) != -1;
 
-		// Detect tempo markings
+	if (!gotMatch){
+
+		// Detect Z: annotation
+		searchRegExp = /^Z:.*$/gm
+
+		// Detect Z: annotation
 		gotMatch = theNotes.search(searchRegExp) != -1;
 
-		if (!gotMatch){
+	}
 
-			// Detect Z: annotation
-			searchRegExp = /^Z:.*$/gm
+	if (!gotMatch){
 
-			// Detect Z: annotation
-			gotMatch = theNotes.search(searchRegExp) != -1;
+		// Detect R: annotation
+		searchRegExp = /^R:.*$/gm
 
-		}
-
-		if (!gotMatch){
-
-			// Detect R: annotation
-			searchRegExp = /^R:.*$/gm
-
-			// Detect R: annotation
-			gotMatch = theNotes.search(searchRegExp) != -1;
-
-		}
-
-		if (!gotMatch){
-
-			// Detect S: annotation
-			searchRegExp = /^S:.*$/gm
-
-			// Detect S: annotation
-			gotMatch = theNotes.search(searchRegExp) != -1;
-
-		}
-
-		if (!gotMatch){
-
-			// Detect N: annotation
-			searchRegExp = /^N:.*$/gm
-
-			// Detect N: annotation
-			gotMatch = theNotes.search(searchRegExp) != -1;
-
-		}
-
-		if (!gotMatch){
-
-			// Detect D: annotation
-			searchRegExp = /^D:.*$/gm
-
-			// Detect D: annotation
-			gotMatch = theNotes.search(searchRegExp) != -1;
-
-		}
-
-		if (!gotMatch){
-
-			// Detect H: annotation
-			searchRegExp = /^H:.*$/gm
-
-			// Detect H: annotation
-			gotMatch = theNotes.search(searchRegExp) != -1;
-
-		}
-
-		if (!gotMatch){
-
-			// Detect B: annotation
-			searchRegExp = /^B:.*$/gm
-
-			// Detect B: annotation
-			gotMatch = theNotes.search(searchRegExp) != -1;
-
-		}
-
-		if (!gotMatch){
-
-			// Detect C: annotation
-			searchRegExp = /^C:.*$/gm
-
-			// Detect C: annotation
-			gotMatch = theNotes.search(searchRegExp) != -1;
-
-		}
-
-		if (!gotMatch){
-
-			// Detect O: annotation
-			searchRegExp = /^O:.*$/gm
-
-			// Detect O: annotation
-			gotMatch = theNotes.search(searchRegExp) != -1;
-
-		}
-
-		EnableAnnotations = gotMatch;
-
-		gotMatch = false;
-
-		// Detect text markings
-		searchRegExp = /%%text.*$/gm
-
-		// Detect text markings
+		// Detect R: annotation
 		gotMatch = theNotes.search(searchRegExp) != -1;
 
-		if (!gotMatch){
+	}
 
-			// Detect %%center annotation
-			searchRegExp = /%%center.*$/gm
+	if (!gotMatch){
 
-			// Detect %%center annotation
-			gotMatch = theNotes.search(searchRegExp) != -1;
+		// Detect S: annotation
+		searchRegExp = /^S:.*$/gm
 
-		}
-
-		EnableText = gotMatch;
-
-		gotMatch = false;
-
-		// Detect chord markings
-		searchRegExp = /"[^"]*"/gm
-
-		// Detect chord markings
+		// Detect S: annotation
 		gotMatch = theNotes.search(searchRegExp) != -1;
 
-		EnableChords = gotMatch;
+	}
 
-		// Now set the button styling based on the results
-		if (EnableAnnotations){
+	if (!gotMatch){
 
-			gAllowFilterAnnotations = true;
+		// Detect N: annotation
+		searchRegExp = /^N:.*$/gm
 
-			if (bUpdateUI){
+		// Detect N: annotation
+		gotMatch = theNotes.search(searchRegExp) != -1;
 
-				// Enable the Toggle Annotations button
-				document.getElementById("toggleannotations").classList.remove("advancedcontrolsdisabled");
-				document.getElementById("toggleannotations").classList.add("advancedcontrols");	
+	}
 
-				// Enable the Strip Annotations button
-				document.getElementById("stripannotations").classList.remove("advancedcontrolsdisabled");
-				document.getElementById("stripannotations").classList.add("advancedcontrols");	
+	if (!gotMatch){
 
-			}
-		}
-		else{
+		// Detect D: annotation
+		searchRegExp = /^D:.*$/gm
 
-			gAllowFilterAnnotations = false;
+		// Detect D: annotation
+		gotMatch = theNotes.search(searchRegExp) != -1;
 
-			if (bUpdateUI){
+	}
 
-				// Disable the Toggle Annotations button
-				document.getElementById("toggleannotations").classList.remove("advancedcontrols");
-				document.getElementById("toggleannotations").classList.add("advancedcontrolsdisabled");	
+	if (!gotMatch){
 
-				// Disable the Strip Annotations button
-				document.getElementById("stripannotations").classList.remove("advancedcontrols");
-				document.getElementById("stripannotations").classList.add("advancedcontrolsdisabled");	
+		// Detect H: annotation
+		searchRegExp = /^H:.*$/gm
 
-			}			
-		}
+		// Detect H: annotation
+		gotMatch = theNotes.search(searchRegExp) != -1;
 
-		if (EnableText){
+	}
 
-			gAllowFilterText = true;
+	if (!gotMatch){
 
-			if (bUpdateUI){
+		// Detect B: annotation
+		searchRegExp = /^B:.*$/gm
 
-				// Enable the Toggle Text button
-				document.getElementById("toggletext").classList.remove("advancedcontrolsdisabled");
-				document.getElementById("toggletext").classList.add("advancedcontrols");
+		// Detect B: annotation
+		gotMatch = theNotes.search(searchRegExp) != -1;
 
-				// Enable the Strip Text button
-				document.getElementById("striptext").classList.remove("advancedcontrolsdisabled");
-				document.getElementById("striptext").classList.add("advancedcontrols");
+	}
 
-			}	
-		}
-		else{
+	if (!gotMatch){
 
-			gAllowFilterText = false;
-			
-			if (bUpdateUI){
+		// Detect C: annotation
+		searchRegExp = /^C:.*$/gm
 
-				// Disable the Toggle Text button
-				document.getElementById("toggletext").classList.remove("advancedcontrols");
-				document.getElementById("toggletext").classList.add("advancedcontrolsdisabled");
+		// Detect C: annotation
+		gotMatch = theNotes.search(searchRegExp) != -1;
 
-				// Disable the Strip Text button
-				document.getElementById("striptext").classList.remove("advancedcontrols");
-				document.getElementById("striptext").classList.add("advancedcontrolsdisabled");
-			}				
-		}
+	}
 
-		if (EnableChords){
+	if (!gotMatch){
 
-			gAllowFilterChords = true;
-			
-			if (bUpdateUI){
+		// Detect O: annotation
+		searchRegExp = /^O:.*$/gm
 
-				// Enable the Toggle Chords button
-				document.getElementById("togglechords").classList.remove("advancedcontrolsdisabled");
-				document.getElementById("togglechords").classList.add("advancedcontrols");
+		// Detect O: annotation
+		gotMatch = theNotes.search(searchRegExp) != -1;
 
-				// Enable the Strip Chords button
-				document.getElementById("stripchords").classList.remove("advancedcontrolsdisabled");
-				document.getElementById("stripchords").classList.add("advancedcontrols");
-			}	
-		}
-		else{
+	}
 
-			gAllowFilterChords = false;
+	EnableAnnotations = gotMatch;
 
-			if (bUpdateUI){
+	gotMatch = false;
 
-				// Disable the Toggle Chords button
-				document.getElementById("togglechords").classList.remove("advancedcontrols");
-				document.getElementById("togglechords").classList.add("advancedcontrolsdisabled");
+	// Detect text markings
+	searchRegExp = /%%text.*$/gm
 
-				// Disable the Strip Chords button
-				document.getElementById("stripchords").classList.remove("advancedcontrols");
-				document.getElementById("stripchords").classList.add("advancedcontrolsdisabled");
+	// Detect text markings
+	gotMatch = theNotes.search(searchRegExp) != -1;
 
-			}			
-		}
+	if (!gotMatch){
 
+		// Detect %%center annotation
+		searchRegExp = /%%center.*$/gm
+
+		// Detect %%center annotation
+		gotMatch = theNotes.search(searchRegExp) != -1;
+
+	}
+
+	EnableText = gotMatch;
+
+	gotMatch = false;
+
+	// Detect chord markings
+	searchRegExp = /"[^"]*"/gm
+
+	// Detect chord markings
+	gotMatch = theNotes.search(searchRegExp) != -1;
+
+	EnableChords = gotMatch;
+
+	// Now set the button styling based on the results
+	if (EnableAnnotations){
+
+		gAllowFilterAnnotations = true;
 
 		if (bUpdateUI){
 
-			// Now idle the button labels based on the global states
+			// Enable the Toggle Annotations button
+			document.getElementById("toggleannotations").classList.remove("advancedcontrolsdisabled");
+			document.getElementById("toggleannotations").classList.add("advancedcontrols");	
 
-			if (gStripAnnotations){
+			// Enable the Strip Annotations button
+			document.getElementById("stripannotations").classList.remove("advancedcontrolsdisabled");
+			document.getElementById("stripannotations").classList.add("advancedcontrols");	
 
-				document.getElementById("toggleannotations").value = "Show Annotations";
+		}
+	}
+	else{
 
-			}
-			else{
+		gAllowFilterAnnotations = false;
 
-				document.getElementById("toggleannotations").value = "Hide Annotations";
+		if (bUpdateUI){
 
-			}
+			// Disable the Toggle Annotations button
+			document.getElementById("toggleannotations").classList.remove("advancedcontrols");
+			document.getElementById("toggleannotations").classList.add("advancedcontrolsdisabled");	
 
-			if (gStripTextAnnotations){
+			// Disable the Strip Annotations button
+			document.getElementById("stripannotations").classList.remove("advancedcontrols");
+			document.getElementById("stripannotations").classList.add("advancedcontrolsdisabled");	
 
-				document.getElementById("toggletext").value = "Show Text";
+		}			
+	}
 
-			}
-			else{
+	if (EnableText){
 
-				document.getElementById("toggletext").value = "Hide Text";
+		gAllowFilterText = true;
 
-			}
+		if (bUpdateUI){
 
-			if (gStripChords){
+			// Enable the Toggle Text button
+			document.getElementById("toggletext").classList.remove("advancedcontrolsdisabled");
+			document.getElementById("toggletext").classList.add("advancedcontrols");
 
-				document.getElementById("togglechords").value = "Show Chords";
+			// Enable the Strip Text button
+			document.getElementById("striptext").classList.remove("advancedcontrolsdisabled");
+			document.getElementById("striptext").classList.add("advancedcontrols");
 
-			}
-			else{
+		}	
+	}
+	else{
 
-				document.getElementById("togglechords").value = "Hide Chords";
+		gAllowFilterText = false;
+		
+		if (bUpdateUI){
 
-			}
+			// Disable the Toggle Text button
+			document.getElementById("toggletext").classList.remove("advancedcontrols");
+			document.getElementById("toggletext").classList.add("advancedcontrolsdisabled");
+
+			// Disable the Strip Text button
+			document.getElementById("striptext").classList.remove("advancedcontrols");
+			document.getElementById("striptext").classList.add("advancedcontrolsdisabled");
+		}				
+	}
+
+	if (EnableChords){
+
+		gAllowFilterChords = true;
+		
+		if (bUpdateUI){
+
+			// Enable the Toggle Chords button
+			document.getElementById("togglechords").classList.remove("advancedcontrolsdisabled");
+			document.getElementById("togglechords").classList.add("advancedcontrols");
+
+			// Enable the Strip Chords button
+			document.getElementById("stripchords").classList.remove("advancedcontrolsdisabled");
+			document.getElementById("stripchords").classList.add("advancedcontrols");
+		}	
+	}
+	else{
+
+		gAllowFilterChords = false;
+
+		if (bUpdateUI){
+
+			// Disable the Toggle Chords button
+			document.getElementById("togglechords").classList.remove("advancedcontrols");
+			document.getElementById("togglechords").classList.add("advancedcontrolsdisabled");
+
+			// Disable the Strip Chords button
+			document.getElementById("stripchords").classList.remove("advancedcontrols");
+			document.getElementById("stripchords").classList.add("advancedcontrolsdisabled");
+
+		}			
+	}
+
+
+	if (bUpdateUI){
+
+		// Now idle the button labels based on the global states
+
+		if (gStripAnnotations){
+
+			document.getElementById("toggleannotations").value = "Show Annotations";
+
+		}
+		else{
+
+			document.getElementById("toggleannotations").value = "Hide Annotations";
+
 		}
 
-	}
-}
+		if (gStripTextAnnotations){
 
+			document.getElementById("toggletext").value = "Show Text";
 
-//
-// Hide the share controls
-//
-function HideShareControls() {
+		}
+		else{
 
-	document.getElementById('togglesharecontrols').value = "Show Sharing";
+			document.getElementById("toggletext").value = "Hide Text";
 
-	// Also hide the share url area
-	document.getElementById('urlarea').style.display = "none";
+		}
 
-}
+		if (gStripChords){
 
-//
-// Show the share controls
-//
-function ShowShareControls() {
+			document.getElementById("togglechords").value = "Show Chords";
 
-	document.getElementById('togglesharecontrols').value = "Hide Sharing";
+		}
+		else{
 
-	CreateURLfromHTML();
+			document.getElementById("togglechords").value = "Hide Chords";
 
-}
-
-//
-// Toggle the share controls
-//
-function ToggleShareControls() {
-
-	gShowShareControls = !gShowShareControls;
-
-	if (gShowShareControls) {
-
-		ShowShareControls();
-
-	} else {
-
-		HideShareControls();
-
-	}
-
-	// Recalculate the notation top position
-	UpdateNotationTopPosition();
-
-	// Force a rescroll for one column view
-	if (gIsOneColumn){
-
-		MakeTuneVisible(true);
-		
+		}
 	}
 
 }
+
 
 //
 // Handle the spacing control
@@ -7285,9 +7218,6 @@ function RestoreDefaults() {
 	// Clear the QR code
 	clearQRCode();
 
-	// Idle the advanced controls
-	IdleAdvancedControls(false,false);
-
 	// Recalculate the notation top position
 	UpdateNotationTopPosition();
 
@@ -7312,7 +7242,7 @@ function ToggleAnnotations(bDoStrip) {
 		
 		RenderAsync(true,null)
 
-		IdleAdvancedControls(true,true);
+		IdleAdvancedControls(true);
 
 		return;
 	}
@@ -7321,7 +7251,7 @@ function ToggleAnnotations(bDoStrip) {
 
 	RenderAsync(true,null)
 
-	IdleAdvancedControls(true,true);
+	IdleAdvancedControls(true);
 
 
 }
@@ -7344,7 +7274,7 @@ function ToggleTextAnnotations(bDoStrip) {
 		
 		RenderAsync(true,null);
 		
-		IdleAdvancedControls(true,true);
+		IdleAdvancedControls(true);
 
 		return;
 	}
@@ -7354,7 +7284,7 @@ function ToggleTextAnnotations(bDoStrip) {
 
 	RenderAsync(true,null);
 
-	IdleAdvancedControls(true,true);
+	IdleAdvancedControls(true);
 
 }
 
@@ -7376,7 +7306,7 @@ function ToggleChords(bDoStrip) {
 		
 		RenderAsync(true,null)
 
-		IdleAdvancedControls(true,true);
+		IdleAdvancedControls(true);
 
 		return;
 	}
@@ -7386,7 +7316,7 @@ function ToggleChords(bDoStrip) {
 
 	RenderAsync(true,null)
 
-	IdleAdvancedControls(true,true);
+	IdleAdvancedControls(true);
 
 }
 
@@ -7587,7 +7517,7 @@ function getUrlWithoutParams() {
 //
 // Generate a share link for either all the tunes or just what's passed in
 //
-function FillUrlBoxWithAbcInLZW(ABCtoEncode) {
+function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
 
 	// Encode all the tunes or just what's passed in?
 	var abcText = "";
@@ -7671,95 +7601,93 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode) {
 
 	url += "&name=" + theName;
 
-	var urltextbox = document.getElementById("urltextbox");
+	// Hide the QR code
+	document.getElementById("qrcode").style.display = "none";
 
 	// First disallow all sharing until valid URL validated
 	gAllowURLSave = false;
 	gAllowQRCodeSave = false;
 
-	if (url.length > 8100) {
-
-		url = "     The URL link would be too long to share. Please try sharing fewer tunes.";
-
-		document.getElementById("generateqrcode").classList.remove("urlcontrols");
-		document.getElementById("generateqrcode").classList.add("urlcontrolsdisabled");
-
-		document.getElementById("shortenurl").classList.remove("urlcontrols");
-		document.getElementById("shortenurl").classList.add("urlcontrolsdisabled");
-
-		document.getElementById("testurl").classList.remove("urlcontrols");
-		document.getElementById("testurl").classList.add("urlcontrolsdisabled");
-
-		document.getElementById("copyurl").classList.remove("urlcontrols");
-		document.getElementById("copyurl").classList.add("urlcontrolsdisabled");
-
-		document.getElementById("saveurl").classList.remove("urlcontrols");
-		document.getElementById("saveurl").classList.add("urlcontrolsdisabled");
-
-		gAllowURLSave = false;
-
-
-	} else {
-
-		document.getElementById("testurl").classList.remove("urlcontrolsdisabled");
-		document.getElementById("testurl").classList.add("urlcontrols");
-
-		document.getElementById("saveurl").classList.remove("urlcontrolsdisabled");
-		document.getElementById("saveurl").classList.add("urlcontrols");
-
-		document.getElementById("copyurl").classList.remove("urlcontrolsdisabled");
-		document.getElementById("copyurl").classList.add("urlcontrols");
-
-		document.getElementById("shortenurl").classList.remove("urlcontrolsdisabled");
-		document.getElementById("shortenurl").classList.add("urlcontrols");
+	// GoDaddy web servers have a maximum URL length
+	if (url.length < 8100) {
 
 		gAllowURLSave = true;
 
 		// If fits in a QR code, show the QR code button
 		var maxURLLength = MAXQRCODEURLLENGTH;
-	
+		
 		if (url.length < maxURLLength) {
-
 			gAllowQRCodeSave = true;
+		}
 
-			document.getElementById("generateqrcode").classList.remove("urlcontrolsdisabled");
-			document.getElementById("generateqrcode").classList.add("urlcontrols");
+	}
 
-		} else {
+	if (bUpdateUI){
 
-			gAllowQRCodeSave = false;
+		var urltextbox = document.getElementById("urltextbox");
+
+		if (!gAllowURLSave) {
+
+			url = " *** The URL link would be too long to share. Please try sharing fewer tunes. ***";
 
 			document.getElementById("generateqrcode").classList.remove("urlcontrols");
 			document.getElementById("generateqrcode").classList.add("urlcontrolsdisabled");
 
+			document.getElementById("shortenurl").classList.remove("urlcontrols");
+			document.getElementById("shortenurl").classList.add("urlcontrolsdisabled");
+
+			document.getElementById("testurl").classList.remove("urlcontrols");
+			document.getElementById("testurl").classList.add("urlcontrolsdisabled");
+
+			document.getElementById("copyurl").classList.remove("urlcontrols");
+			document.getElementById("copyurl").classList.add("urlcontrolsdisabled");
+
+			document.getElementById("saveurl").classList.remove("urlcontrols");
+			document.getElementById("saveurl").classList.add("urlcontrolsdisabled");
+
+
+		} else {
+
+			document.getElementById("testurl").classList.remove("urlcontrolsdisabled");
+			document.getElementById("testurl").classList.add("urlcontrols");
+
+			document.getElementById("saveurl").classList.remove("urlcontrolsdisabled");
+			document.getElementById("saveurl").classList.add("urlcontrols");
+
+			document.getElementById("copyurl").classList.remove("urlcontrolsdisabled");
+			document.getElementById("copyurl").classList.add("urlcontrols");
+
+			document.getElementById("shortenurl").classList.remove("urlcontrolsdisabled");
+			document.getElementById("shortenurl").classList.add("urlcontrols");
+		
+			if (gAllowQRCodeSave) {
+
+				document.getElementById("generateqrcode").classList.remove("urlcontrolsdisabled");
+				document.getElementById("generateqrcode").classList.add("urlcontrols");
+
+			} else {
+
+				document.getElementById("generateqrcode").classList.remove("urlcontrols");
+				document.getElementById("generateqrcode").classList.add("urlcontrolsdisabled");
+
+			}
 		}
+
+		urltextbox.value = url;
+
+		// Scroll to the top
+		setTimeout(function(){
+			urltextbox.scrollTo(0,0);
+		},100); 
 	}
 
-	// Hide the QR code
-	document.getElementById("qrcode").style.display = "none";
-
-	urltextbox.value = url;
-
-	// Resize URL link holder
-	var urlTextRows = url.length / 80 + 1;
-
-	if (urlTextRows > 8){
-		urlTextRows = 8;
-	}
-
-	urltextbox.rows = urlTextRows;
-
-	// Scroll to the top
-	setTimeout(function(){
-		urltextbox.scrollTo(0,0);
-	},100); 
+	return url;
 }
 
 function CreateURLfromHTML() {
 
-	FillUrlBoxWithAbcInLZW(null);
-	urlarea = document.getElementById("urlarea");
-	urlarea.style.display = "inline-block";
+	FillUrlBoxWithAbcInLZW(null,true);
+
 	urltextbox = document.getElementById("urltextbox");
 	urltextbox.focus();
 	urltextbox.setSelectionRange(0, 0);
@@ -9788,7 +9716,7 @@ function DoInjectABCNoteNameLyrics(){
 	
 	RenderAsync(true,null);
 
-	IdleAdvancedControls(true,true);
+	IdleAdvancedControls(true);
 
 }
 
@@ -9805,7 +9733,7 @@ function DoInjectTablature_BC(){
 	
 	RenderAsync(true,null);
 
-	IdleAdvancedControls(true,true);
+	IdleAdvancedControls(true);
 
 }
 
@@ -9822,7 +9750,7 @@ function DoInjectTablature_CsD(){
 	
 	RenderAsync(true,null);
 
-	IdleAdvancedControls(true,true);
+	IdleAdvancedControls(true);
 
 }
 
@@ -9837,7 +9765,7 @@ function DoInjectTablature_Anglo(){
 	
 	RenderAsync(true,null);
 
-	IdleAdvancedControls(true,true);
+	IdleAdvancedControls(true);
 
 
 }
@@ -9978,13 +9906,6 @@ function ToggleTopBar(){
 	
 	// If available, save all the app settings to local storage
 	UpdateLocalStorage();
-
-	// Update the link if there is any ABC
-	if (gAllowCopy){
-
-		FillUrlBoxWithAbcInLZW(null);
-
-	}
 
 }
 
@@ -10997,6 +10918,43 @@ function ConfigureBoxTab(){
 }
 
 //
+// Sharing controls dialog
+//
+function SharingControlsDialog(){
+
+	// Moving the advanced controls to their own dialog
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">ABC Transcription Tools Sharing Controls</p>';
+	modal_msg += '<div id="sharing-controls-dialog">';
+	modal_msg += '<p style="margin-top:28px;">';
+	modal_msg += '<input id="testurl" class="urlcontrols btn btn-urlcontrols" onclick="TestShareURL()" type="button" value="Test Share URL" title="Opens the Share URL in a new tab">';
+	modal_msg += '<input id="copyurl" class="urlcontrols btn btn-urlcontrols" onclick="CopyShareURL()" type="button" value="Copy Share URL" title="Copies the Share URL to the clipboard">';
+	modal_msg += '<input id="saveurl" class="urlcontrols btn btn-urlcontrols" onclick="SaveShareURL()" type="button" value="Save Share URL" title="Saves the Share URL to a file">';
+	modal_msg += '<input id="shortenurl" class="urlcontrols btn btn-urlcontrols" onclick="ShortenURL()" type="button" value="Shorten URL" title="Shortens the Share URL and copies it to the clipboard">';
+	modal_msg += '<input id="generateqrcode" class="urlcontrolslast btn btn-urlcontrols" onclick="GenerateQRCode(event)" type="button" value="Generate QR Code" title="Generates a QR Code for the Share URL.&nbsp;&nbsp;Even if this button is greyed-out, Shift-click attempts to generate a QR code from the text in the Share URL box.">';
+	modal_msg += '</p>';
+	modal_msg += '<p style="margin-top:24px;">';
+	modal_msg += '<textarea id="urltextbox" rows="10" cols="80" spellcheck="false" autocorrect="off" autocapitalize="off" placeholder="URL for sharing will appear here" >';
+	modal_msg += '</textarea>';
+	modal_msg += '</p>';
+
+	modal_msg += '<p id="shareurlcaption">Share URL</p>';
+
+
+	modal_msg += '</div>';
+
+	setTimeout(function(){
+
+		CreateURLfromHTML();
+
+	}, 200);
+
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 800 }).then(function(){
+
+	});
+
+}
+//
 // Advanced controls dialog
 //
 function AdvancedControlsDialog(){
@@ -11005,28 +10963,28 @@ function AdvancedControlsDialog(){
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">ABC Transcription Tools Advanced Controls</p>';
 	modal_msg += '<div id="advanced-controls-dialog">';
 
-	modal_msg  += 	'<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;margin-bottom:12px">Notation Display Setttings</p>'
+	modal_msg  += 	'<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;margin-bottom:12px">Notation Display Setttings</p>'
 	modal_msg  += 	'<p style="text-align:center;margin-top:0px"><label class="staff-spacing" for="staff-spacing">';
 	modal_msg  += 	'	Staff spacing:';
 	modal_msg  += 		'<input type="number" name="staff-spacing" id="staff-spacing" min="-20" max="200" step="5" value="10" onchange="SetStaffSpacing()"  title="Adjusts the spacing between the staves">';
 	modal_msg  += 	'</label>';
 	modal_msg  += '</p>';
 	
-	modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Show/Hide ABC Features</p>'
+	modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">Show/Hide ABC Features</p>'
 	modal_msg  += '<p style="text-align:center;">'
 	modal_msg  += '<input id="toggleannotations" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleAnnotations(false)" type="button" value="Hide Annotations" title="Hides/Shows common annotations in the ABC notation">';
 	modal_msg  += 	'<input id="toggletext" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTextAnnotations(false)" type="button" value="Hide Text" title="Hides/Shows any text in the ABC notation.">';
 	modal_msg  += 	'<input id="togglechords" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleChords(false)" type="button" value="Hide Chords" title="Hides/Shows any chords in the ABC notation.&nbsp;&nbsp;Also hides any Box or Anglo Concertina tablature.">';
 	modal_msg  += '</p>';
 	
-	modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Strip ABC Features</p>'
+	modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">Strip ABC Features</p>'
 	modal_msg  += '<p style="text-align:center;">';
 	modal_msg  += '<input id="stripannotations" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleAnnotations(true)" type="button" value="Strip Annotations" title="Strips common annotations from the ABC">';
 	modal_msg  += 	'<input id="striptext" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleTextAnnotations(true)" type="button" value="Strip Text" title="Strips all text from the ABC">';
 	modal_msg  += 	'<input id="stripchords" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleChords(true)" type="button" value="Strip Chords" title="Strips all chords from the ABC.&nbsp;&nbsp;Also strips any Box or Anglo Concertina tablature.">';
 	modal_msg  += '</p>';
 	
-	modal_msg  += 	'<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Stringed Instrument Tablature Settings</p>'
+	modal_msg  += 	'<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">Stringed Instrument Tablature Settings</p>'
 	modal_msg  += 	'<p style="text-align:center;"><input class="toggletabnamesdisabled btn btn-advancedcontrols" id="toggletabnames" onclick="ToggleTabNames()" type="button" value="Hide Tab Names" title="Hides/Shows the tablature name label">';
 	modal_msg += "<tspan></tspan>";
 	modal_msg  += 	'<label class="capo" for="capo">';
@@ -11035,25 +10993,25 @@ function AdvancedControlsDialog(){
 	modal_msg  += 	'</label>';
 	modal_msg  += '</p>';
 
-	modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">ABC Injection Features</p>'
+	modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">ABC Injection Features</p>'
 	modal_msg  += '<p style="text-align:center;">'
 	modal_msg  += '<input id="injectallheaders" class="advancedcontrols btn btn-injectcontrols" onclick="InjectPDFHeaders(true)" type="button" value="Inject All PDF Annotations" title="Injects all possible PDF annotations at the top of the ABC">';	
 	modal_msg  += '<input id="injectheadertemplate" class="advancedcontrols btn btn-injectcontrols" onclick="InjectPDFHeaders(false)" type="button" value="Inject PDF Annotation Template" title="Injects a useful template of PDF annotations at the top of the ABC">';
-	modal_msg  += '<p style="text-align:center;margin-top:24px;">'
+	modal_msg  += '<p style="text-align:center;margin-top:22px;">'
 	modal_msg  += '<input id="injectnotenames" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectABCNoteNameLyrics()" type="button" value="Inject Note Name Lyrics" title="Injects note names as lyrics in the ABC">';
 	modal_msg  += '</p>';
-	modal_msg  += '<p style="text-align:center;margin-top:24px;">'
+	modal_msg  += '<p style="text-align:center;margin-top:22px;">'
 	modal_msg  += '<input id="injectbctab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_BC()" type="button" value="Inject B/C Box Tab" title="Injects B/C box tablature into the ABC">';
 	modal_msg  += '<input id="injectcdtab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_CsD()" type="button" value="Inject C#/D Box Tab" title="Injects C#/D box tablature into the ABC">';
 	modal_msg  += '<input id="injectanglotab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Anglo()" type="button" value="Inject Anglo Concertina Tab" title="Injects Anglo Concertina tablature into the ABC">';
 	modal_msg  += '</p>';
-	modal_msg  += '<p style="text-align:center;margin-top:24px;"><input id="configure_box_advanced" class="btn btn-urlcontrols" onclick="ConfigureBoxTab()" type="button" value="Configure Box and Concertina Tablature Injection Settings" title="Configure the Box and Concertina tablature injection settings"></p>';	
+	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-urlcontrols" onclick="ConfigureBoxTab()" type="button" value="Configure Box and Concertina Tablature Injection Settings" title="Configure the Box and Concertina tablature injection settings"></p>';	
 	modal_msg += '</div>';
 
 	setTimeout(function(){
 
 		// Do an initial idle on the controls
-		IdleAdvancedControls(true, true);
+		IdleAdvancedControls(true);
 
 		// Idle the capo control
 		IdleCapoControl();
@@ -11069,7 +11027,7 @@ function AdvancedControlsDialog(){
 	}, 200);
 
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 10, width: 700 }).then(function(){
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 700 }).then(function(){
 
 	});
 
