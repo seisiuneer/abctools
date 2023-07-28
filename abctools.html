@@ -36,7 +36,7 @@
 		<link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 		<link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-		<link href="app.css?v=403" media="all" rel="stylesheet" type="text/css">
+		<link href="app.css?v=406" media="all" rel="stylesheet" type="text/css">
 				
 	</head>
 	<body>
@@ -75,7 +75,7 @@
 						<label class="abcupload btn btn-top" for="selectabcfile" title="Opens an existing ABC file">Open</label>
 						<input class="saveabcfiledisabled btn btn-top" id="saveabcfile" onclick="SaveABC();" type="button" value="Save" title="Saves the current ABC text to a file">
 						<input class="saveaspdfdisabled btn btn-top" id="saveaspdf" onclick="ExportPDF();" type="button" value="Export PDF" title="Exports a PDF tunebook">
-						<input class="copybuttondisabled btn btn-top" id="copybutton" onclick="CopyABC(event);" type="button" value="Copy All" title="Copies all of the ABC text to the clipboard">
+						<input class="copybuttondisabled btn btn-top" id="copybutton" onclick="CopyABC();" type="button" value="Copy All" title="Copies all of the ABC text to the clipboard">
 						<input class="playbuttondisabled btn btn-play" id="playbutton" onclick="PlayABC(event);" type="button" value="Play"  title="Plays the currently selected tune.&nbsp;&nbsp;Shift-click injects Melody MIDI programs into every tune.&nbsp;&nbsp;Alt-click injects Bass/Chord MIDI programs into every tune.&nbsp;&nbsp;Alt+Shift click opens the currently selected tunes in Paul Rosen's abcjs quick editor.">
 						<input class="toggleallcontrolsdisabled btn btn-toggleallcontrols" id="toggleallcontrols" onclick="ToggleAllControls();" type="button" value="Hide Controls" title="Shows/Hides all the tool controls">
 						<input class="configuresettings btn btn-configuresettings"  id="configuresettings" onclick="ConfigureToolSettings(event);" type="button" value="Settings" title="Sets the default instruments/volumes for playing tunes and the B/C and C#/D box tablature font size.&nbsp;&nbsp;Shift-click to bring up the Box and Anglo Concertina tablature injection settings.&nbsp;&nbsp;All settings are saved and restored the next time you run the tool.">
@@ -90,7 +90,7 @@
 						<input type="radio" id="b1" value="noten" name="notenodertab" class="hidebutton" onclick="ChangeTab()">
 						<label for="b1" class="btn btn-tab" title="Shows standard music notation">Notation</label>
 						<input type="radio" id="b2" value="notenames" name="notenodertab" class="hidebutton" onclick="ChangeTab()">
-						<label for="b2" class="btn btn-tab" onclick="DoInjectABCNoteNameLyrics(event)" title="Shows note names tablature.&nbsp;&nbsp;Shift-click to inject note names lyrics into the ABC.">Names</label>
+						<label for="b2" class="btn btn-tab" title="Shows note names tablature">Names</label>
 						<input type="radio" id="b3" value="mandolin" name="notenodertab" class="hidebutton" onclick="ChangeTab()" >
 						<label for="b3" class="btn btn-tab" title="Shows GDAE Mandolin tablature">Mandolin</label>
 						<input type="radio" id="b4" value="gdad" name="notenodertab" class="hidebutton" onclick="ChangeTab()">
@@ -104,37 +104,21 @@
 						<input type="radio" id="b8" value="whistle" name="notenodertab" class="hidebutton" onclick="ChangeTab()">
 						<label for="b8" class="btn btn-tab" title="Shows Tin Whistle (D) tablature">Whistle</label>
 						<input type="radio" id="b9" value="bc" name="notenodertab" class="hidebutton" onclick="ChangeTab()">
-						<label for="b9" class="btn btn-tab" onclick="DoInjectTablature_BC(event)" title="Shows B/C Box tablature.&nbsp;&nbsp;&nbsp;&nbsp;Shift-click to inject B/C Box tablature into the ABC.&nbsp;&nbsp;Alt-click to inject Anglo Concertina tablature into the ABC.">B/C</label>
+						<label for="b9" class="btn btn-tab" title="Shows B/C Box tablature">B/C</label>
 						<input type="radio" id="b10" value="cd" name="notenodertab" class="hidebutton" onclick="ChangeTab()">
-						<label for="b10" class="btn btn-tab" onclick="DoInjectTablature_CsD(event)" title="Shows C#/D Box tablature.&nbsp;&nbsp;Shift-click to inject C#/D Box tablature into the ABC.&nbsp;&nbsp;Alt-click to inject Anglo Concertina tablature into the ABC.">C#/D</label>
+						<label for="b10" class="btn btn-tab" title="Shows C#/D Box tablature">C#/D</label>
 					</div>
 					<div id="transpose-controls">
 						<input class="transpose btn btn-transpose" id="transposedown" onclick="TransposeDown(event)" type="button" value="Transpose Down" title="Transposes the selected tunes down one semitone.&nbsp;&nbsp; Shift-click transposes down one full step.&nbsp;&nbsp;Alt-click transposes down one octave.">
 						<input class="transpose btn btn-transpose" id="transposeup" onclick="TransposeUp(event)" type="button" value="Transpose Up"  title="Transposes the selected tunes up one semitone.&nbsp;&nbsp;Shift-click transposes up one full step.&nbsp;&nbsp;Alt-click transposes up one octave.">
 						<input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortABC(event)" type="button" value="Sort ABC" title="Sorts all the tunes by name">
-						<input class="toggleadvancedcontrols btn btn-toggleadvancedcontrols" id="toggleadvancedcontrols" onclick="ToggleAdvancedControls()" type="button" value="Show Advanced" title="Shows/Hides the Advanced controls">
+						<input class="toggleadvancedcontrols btn btn-toggleadvancedcontrols" id="toggleadvancedcontrols" onclick="AdvancedControlsDialog()" type="button" value="Show Advanced" title="Shows the Advanced Controls dialog">
 						<input class="togglesharecontrols btn btn-togglesharecontrols" id="togglesharecontrols" onclick="ToggleShareControls()" type="button" value="Show Sharing"  title="Shows/Hides the Sharing controls">
 						<input class="clearbutton btn btn-clearbutton" id="clearbutton" onclick="Clear()" type="button" value="Clear ABC" title="Clears all the ABC">
 					</div>
-					<div id="advanced-controls">
-						<input id="toggleannotations" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleAnnotations(event)" type="button" value="Hide Annotations" title="Hides/Shows common annotations in the ABC notation.&nbsp;&nbsp;Shift-click to remove common annotations from the ABC">
-						<input id="toggletext" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTextAnnotations(event)" type="button" value="Hide Text" title="Hides/Shows any text in the ABC notation.&nbsp;&nbsp;Shift-click to remove all text from the ABC">
-						<input id="togglechords" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleChords(event)" type="button" value="Hide Chords" title="Hides/Shows any chords in the ABC notation.&nbsp;&nbsp;Shift-click to remove all chords from the ABC">
-						<input class="toggletabnamesdisabled btn btn-advancedcontrols" id="toggletabnames" onclick="ToggleTabNames()" type="button" value="Hide Tab Names" title="Hides/Shows the tablature name label">
-						<tspan></tspan>
-						<label class="capo" for="capo">
-							Capo:
-							<input type="number" name="capo" id="capo"
-							min="0" max="12" step="1" value="0" onchange="SetCapo()" disabled  title="Sets the capo offset for stringed instruments">
-						</label>
-						<label class="staff-spacing" for="staff-spacing">
-							Staff spacing:
-							<input type="number" name="staff-spacing" id="staff-spacing"
-							min="-20" max="200" step="5" value="10" onchange="SetStaffSpacing()"  title="Adjusts the spacing between the staves">
-						</label>
-					</div>
+
 					<div id="pdf-settings" class="toggle-buttons">
-						<tspan id="pdfformatlabel" onclick="InjectPDFHeaders(event)" title="Shift-click to inject all available PDF tunebook annotations into the ABC.&nbsp;&nbsp;Alt-click to inject a template of annotations for generating a PDF tunebook with a title page, table of contents, index, headers, footers, and play links.">PDF Tunes/Page:</tspan>
+						<tspan id="pdfformatlabel">PDF Tunes/Page:</tspan>
 						<select id="pdfformat" name="pdfformat" onchange="RecalcShareURLPDF()" title="Sets the PDF tunebook page output format">
 							<option value = "one" title="One tune-per-page.&nbsp;&nbsp;Paper size is Letter">&nbsp;One&nbsp;-&nbsp;Letter</option>
 							<option value = "multi" title="Multiple tunes-per-page.&nbsp;&nbsp;Paper size is Letter">&nbsp;Multiple&nbsp;-&nbsp;Letter</option>
@@ -199,12 +183,12 @@
 		</div>
 		
 	</body>
-	<script type="text/javascript" src="abcjs-basic-tabs-min.js?v=403"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
+	<script type="text/javascript" src="abcjs-basic-tabs-min.js?v=406"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
 	<script type="text/javascript" src="jspdf.min.js"></script><!-- to generate PDF using Javscript -->
 	<script type="text/javascript" src="html2image.js"></script><!-- to convert HTML elements to bitmaps -->
-	<script type="text/javascript" src="qrcode.js?v=403"></script><!-- to generate QR codes for the share links -->
+	<script type="text/javascript" src="qrcode.js?v=406"></script><!-- to generate QR codes for the share links -->
 	<script type="text/javascript" src="lz-string.min.js"></script><!-- used for share URL generation -->
-	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=403"></script><!-- modal dialog replacement -->
-	<script type="text/javascript" src="tab-injectors-min.js?v=403"></script><!-- Box and Concertina tab generation for ABC injection -->
-	<script type="text/javascript" src="app-min.js?v=403"></script><!-- main application business logic -->
+	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=406"></script><!-- modal dialog replacement -->
+	<script type="text/javascript" src="tab-injectors-min.js?v=406"></script><!-- Box and Concertina tab generation for ABC injection -->
+	<script type="text/javascript" src="app-min.js?v=406"></script><!-- main application business logic -->
 </html>
