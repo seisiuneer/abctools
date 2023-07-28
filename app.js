@@ -835,7 +835,7 @@ function Clear() {
 		return;
 	}
 
-	DayPilot.Modal.confirm("Are you sure you want to clear all the ABC?",{ top:100, theme: "modal_flat"}).then(function(args){
+	DayPilot.Modal.confirm("Are you sure you want to erase all the ABC and start over?",{ top:100, theme: "modal_flat"}).then(function(args){
 
 		if (!args.canceled){
 
