@@ -96,6 +96,9 @@ var gAllowShowTabNames = false;
 // Has the tin whistle font been loaded?
 var gWhistleFontPrepared = false;
 
+// First render detect for show controls notation area reposition
+var gIsFirstRender = true;
+
 // Debounce time for text area change render requests
 var DEBOUNCEMS = 280;
 
@@ -868,7 +871,7 @@ function ClearNoRender() {
 var PAGENUMBERTOP = 296;
 var PAGENUMBERTOPA4 = 313;
 var PAGETOPOFFSET = 32;
-var PAGEBOTTOMOFFSET = 32; //FOOFOO was 0
+var PAGEBOTTOMOFFSET = 32; 
 var PAGELEFTOFFSET = 37;
 var PAGELEFTOFFSETA4 = 29;
 var PAGEHEIGHTLETTER = 792;
@@ -4788,7 +4791,7 @@ function ExportNotationPDF(title) {
 		BETWEENTUNESPACE = 0;
 
 		// Force an idle on the advanced controls to determine if we need to hide the annotations or text annotations before incipit render
-		IdleAdvancedControls(true);
+		IdleAdvancedControls(true,false);
 
 		// Is annotation suppressed allowed, but not enabled, or is text annotation suppression allowed but not enabled, do a render
 		// If tabnames are being shown, hide them
@@ -5641,10 +5644,10 @@ function UpdateLocalStorage(){
 		var format = GetRadioValue("notenodertab");
 		localStorage.abcTab = format;
 
-		var capo = document.getElementById("capo").value;
+		var capo = gCapo;
 		localStorage.abcCapo = capo;
 
-		var ssp = document.getElementById("staff-spacing").value;
+		var ssp = gStaffSpacing - STAFFSPACEOFFSET;
 		localStorage.abcStaffSpacing = ssp;
 
 		var pdfformat = document.getElementById("pdfformat").value;
@@ -6585,7 +6588,15 @@ function Render(renderAll,tuneNumber) {
 		document.getElementById("zoombutton").style.display = "block";
 
 		if (gShowAllControls){
+
 			document.getElementById("notenrechts").style.display = "inline-block";
+
+			// Recalculate the notation top position first time the notation is rendered
+			if (gIsFirstRender){
+				UpdateNotationTopPosition();
+				gIsFirstRender = false;
+			}
+
 		}
 		else{
 			document.getElementById("notenrechts").style.display = "none";
@@ -6616,13 +6627,7 @@ function Render(renderAll,tuneNumber) {
 		gAllowCopy = true;
 
 		// Idle the advanced controls
-		IdleAdvancedControls(false);
-
-		// Idle the capo control
-		IdleCapoControl();
-
-		// Idle the show tab names control
-		IdleShowTabNamesControl();
+		IdleAdvancedControls(false,false);
 
 		var radiovalue = GetRadioValue("notenodertab");
 
@@ -6835,35 +6840,12 @@ function ensureABCFile(filename) {
 }
 
 //
-// Hide the advanced controls
-//
-function HideAdvancedControls() {
-
-	document.getElementById('toggleadvancedcontrols').value = "Show Advanced";
-
-	document.getElementById('advanced-controls').style.display = "none";
-
-}
-
-
-//
-// Show the advanced controls
-//
-function ShowAdvancedControls() {
-
-	document.getElementById('toggleadvancedcontrols').value = "Hide Advanced";
-
-	document.getElementById('advanced-controls').style.display = "flex";
-
-	// Idle the controls
-	IdleAdvancedControls(false);
-
-}
-
-//
 // Idle the advanced controls
 //
-function IdleAdvancedControls(bForce){
+// If bUpdateUI is false, just updates the global filtering options states
+// If bUpdateUI is true also idles the UI elements
+//
+function IdleAdvancedControls(bForce, bUpdateUI){
 
 	if ((gShowAllControls && gShowAdvancedControls) || bForce){
 
@@ -7010,119 +6992,141 @@ function IdleAdvancedControls(bForce){
 
 			gAllowFilterAnnotations = true;
 
-			// Enable the Toggle Annotations button
-			document.getElementById("toggleannotations").classList.remove("advancedcontrolsdisabled");
-			document.getElementById("toggleannotations").classList.add("advancedcontrols");	
+			if (bUpdateUI){
+
+				// Enable the Toggle Annotations button
+				document.getElementById("toggleannotations").classList.remove("advancedcontrolsdisabled");
+				document.getElementById("toggleannotations").classList.add("advancedcontrols");	
+
+				// Enable the Strip Annotations button
+				document.getElementById("stripannotations").classList.remove("advancedcontrolsdisabled");
+				document.getElementById("stripannotations").classList.add("advancedcontrols");	
+
+			}
 		}
 		else{
 
 			gAllowFilterAnnotations = false;
 
-			// Disable the Toggle Annotations button
-			document.getElementById("toggleannotations").classList.remove("advancedcontrols");
-			document.getElementById("toggleannotations").classList.add("advancedcontrolsdisabled");				
+			if (bUpdateUI){
+
+				// Disable the Toggle Annotations button
+				document.getElementById("toggleannotations").classList.remove("advancedcontrols");
+				document.getElementById("toggleannotations").classList.add("advancedcontrolsdisabled");	
+
+				// Disable the Strip Annotations button
+				document.getElementById("stripannotations").classList.remove("advancedcontrols");
+				document.getElementById("stripannotations").classList.add("advancedcontrolsdisabled");	
+
+			}			
 		}
 
 		if (EnableText){
 
 			gAllowFilterText = true;
 
-			// Enable the Toggle Text button
-			document.getElementById("toggletext").classList.remove("advancedcontrolsdisabled");
-			document.getElementById("toggletext").classList.add("advancedcontrols");	
+			if (bUpdateUI){
+
+				// Enable the Toggle Text button
+				document.getElementById("toggletext").classList.remove("advancedcontrolsdisabled");
+				document.getElementById("toggletext").classList.add("advancedcontrols");
+
+				// Enable the Strip Text button
+				document.getElementById("striptext").classList.remove("advancedcontrolsdisabled");
+				document.getElementById("striptext").classList.add("advancedcontrols");
+
+			}	
 		}
 		else{
 
 			gAllowFilterText = false;
+			
+			if (bUpdateUI){
 
-			// Disable the Toggle Text button
-			document.getElementById("toggletext").classList.remove("advancedcontrols");
-			document.getElementById("toggletext").classList.add("advancedcontrolsdisabled");				
+				// Disable the Toggle Text button
+				document.getElementById("toggletext").classList.remove("advancedcontrols");
+				document.getElementById("toggletext").classList.add("advancedcontrolsdisabled");
+
+				// Disable the Strip Text button
+				document.getElementById("striptext").classList.remove("advancedcontrols");
+				document.getElementById("striptext").classList.add("advancedcontrolsdisabled");
+			}				
 		}
 
 		if (EnableChords){
 
 			gAllowFilterChords = true;
+			
+			if (bUpdateUI){
 
-			// Enable the Toggle Chords button
-			document.getElementById("togglechords").classList.remove("advancedcontrolsdisabled");
-			document.getElementById("togglechords").classList.add("advancedcontrols");	
+				// Enable the Toggle Chords button
+				document.getElementById("togglechords").classList.remove("advancedcontrolsdisabled");
+				document.getElementById("togglechords").classList.add("advancedcontrols");
+
+				// Enable the Strip Chords button
+				document.getElementById("stripchords").classList.remove("advancedcontrolsdisabled");
+				document.getElementById("stripchords").classList.add("advancedcontrols");
+			}	
 		}
 		else{
 
 			gAllowFilterChords = false;
 
-			// Disable the Toggle Chords button
-			document.getElementById("togglechords").classList.remove("advancedcontrols");
-			document.getElementById("togglechords").classList.add("advancedcontrolsdisabled");				
+			if (bUpdateUI){
+
+				// Disable the Toggle Chords button
+				document.getElementById("togglechords").classList.remove("advancedcontrols");
+				document.getElementById("togglechords").classList.add("advancedcontrolsdisabled");
+
+				// Disable the Strip Chords button
+				document.getElementById("stripchords").classList.remove("advancedcontrols");
+				document.getElementById("stripchords").classList.add("advancedcontrolsdisabled");
+
+			}			
 		}
 
-		// Now idle the button labels based on the global states
 
-		if (gStripAnnotations){
+		if (bUpdateUI){
 
-			document.getElementById("toggleannotations").value = "Show Annotations";
+			// Now idle the button labels based on the global states
 
-		}
-		else{
+			if (gStripAnnotations){
 
-			document.getElementById("toggleannotations").value = "Hide Annotations";
+				document.getElementById("toggleannotations").value = "Show Annotations";
 
-		}
+			}
+			else{
 
-		if (gStripTextAnnotations){
+				document.getElementById("toggleannotations").value = "Hide Annotations";
 
-			document.getElementById("toggletext").value = "Show Text";
+			}
 
-		}
-		else{
+			if (gStripTextAnnotations){
 
-			document.getElementById("toggletext").value = "Hide Text";
+				document.getElementById("toggletext").value = "Show Text";
 
-		}
+			}
+			else{
 
-		if (gStripChords){
+				document.getElementById("toggletext").value = "Hide Text";
 
-			document.getElementById("togglechords").value = "Show Chords";
+			}
 
-		}
-		else{
+			if (gStripChords){
 
-			document.getElementById("togglechords").value = "Hide Chords";
+				document.getElementById("togglechords").value = "Show Chords";
 
+			}
+			else{
+
+				document.getElementById("togglechords").value = "Hide Chords";
+
+			}
 		}
 
 	}
 }
 
-//
-// Toggle the advanced controls
-//
-function ToggleAdvancedControls() {
-
-	gShowAdvancedControls = !gShowAdvancedControls;
-
-	if (gShowAdvancedControls) {
-
-		ShowAdvancedControls();
-
-	} else {
-
-		HideAdvancedControls();
-
-	}
-
-	// Recalculate the notation top position
-	UpdateNotationTopPosition();
-
-	// Force a rescroll for one column view
-	if (gIsOneColumn){
-
-		MakeTuneVisible(true);
-
-	}
-
-}
 
 //
 // Hide the share controls
@@ -7186,7 +7190,6 @@ function SetStaffSpacing() {
 	newSpacing = parseInt(newSpacing);
 
 	gStaffSpacing = newSpacing + STAFFSPACEOFFSET;
-
 
 	RenderAsync(true,null);
 }
@@ -7283,7 +7286,7 @@ function RestoreDefaults() {
 	clearQRCode();
 
 	// Idle the advanced controls
-	IdleAdvancedControls(false);
+	IdleAdvancedControls(false,false);
 
 	// Recalculate the notation top position
 	UpdateNotationTopPosition();
@@ -7293,7 +7296,7 @@ function RestoreDefaults() {
 //
 // Toggle annotations
 //
-function ToggleAnnotations(e) {
+function ToggleAnnotations(bDoStrip) {
 
 	if (!gAllowFilterAnnotations){
 
@@ -7302,27 +7305,31 @@ function ToggleAnnotations(e) {
 	}
 
 
-	// Shift-click strips the annotations in the actual ABC and re-renders
-	if (e.shiftKey){
+	// Strips the annotations in the actual ABC and re-renders
+	if (bDoStrip){
 
 		StripAnnotations();
 		
-		RenderAsync(true,null);
+		RenderAsync(true,null)
+
+		IdleAdvancedControls(true,true);
 
 		return;
 	}
 
-
 	gStripAnnotations = !gStripAnnotations;
 
-	RenderAsync(true,null);
+	RenderAsync(true,null)
+
+	IdleAdvancedControls(true,true);
+
 
 }
 
 //
 // Toggle text
 //
-function ToggleTextAnnotations(e) {
+function ToggleTextAnnotations(bDoStrip) {
 
 	if (!gAllowFilterText){
 
@@ -7330,12 +7337,14 @@ function ToggleTextAnnotations(e) {
 
 	}
 
-	// Shift-click strips the text annotations in the actual ABC and re-renders
-	if (e.shiftKey){
+	// Strip the text annotations in the actual ABC and re-renders
+	if (bDoStrip){
 
 		StripTextAnnotations();
 		
 		RenderAsync(true,null);
+		
+		IdleAdvancedControls(true,true);
 
 		return;
 	}
@@ -7345,12 +7354,14 @@ function ToggleTextAnnotations(e) {
 
 	RenderAsync(true,null);
 
+	IdleAdvancedControls(true,true);
+
 }
 
 //
 // Toggle chords
 //
-function ToggleChords(e) {
+function ToggleChords(bDoStrip) {
 
 	if (!gAllowFilterChords){
 
@@ -7358,12 +7369,14 @@ function ToggleChords(e) {
 	
 	}
 
-	// Shift-click strips the text annotations in the actual ABC and re-renders
-	if (e.shiftKey){
+	// Strips the text annotations in the actual ABC and re-renders
+	if (bDoStrip){
 
 		StripChords();
 		
-		RenderAsync(true,null);
+		RenderAsync(true,null)
+
+		IdleAdvancedControls(true,true);
 
 		return;
 	}
@@ -7371,7 +7384,9 @@ function ToggleChords(e) {
 
 	gStripChords = !gStripChords;
 
-	RenderAsync(true,null);
+	RenderAsync(true,null)
+
+	IdleAdvancedControls(true,true);
 
 }
 
@@ -7588,9 +7603,9 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode) {
 
 	var format = GetRadioValue("notenodertab");
 
-	var capo = document.getElementById("capo").value;
+	var capo = gCapo;
 
-	var ssp = document.getElementById("staff-spacing").value;
+	var ssp = gStaffSpacing-STAFFSPACEOFFSET;
 
 	var pdfformat = document.getElementById("pdfformat").value;
 
@@ -8516,7 +8531,7 @@ function PlayABC(e){
 //
 // If shift key is pressed, copy the text and open the ABC in editor.drawthedots.com
 //
-function CopyABC(e){
+function CopyABC(){
 
 	if (gAllowCopy){
 
@@ -8935,6 +8950,19 @@ function IdleShowTabNamesControl(){
 		gAllowShowTabNames = false;
 	}
 
+	if (gShowTabNames){
+
+		document.getElementById('toggletabnames').value = "Hide Tab Names";
+
+
+	}
+	else{
+
+
+		document.getElementById('toggletabnames').value = "Show Tab Names";
+
+	}
+
 }
 
 //
@@ -9042,7 +9070,6 @@ function processShareLink() {
 	if (urlParams.has("format")) {
 		var format = urlParams.get("format");
 		SetRadioValue("notenodertab", format);
-		IdleCapoControl();
 
 		if (format == "whistle"){
 
@@ -9058,7 +9085,6 @@ function processShareLink() {
 	// Handler for capo parameter
 	if (urlParams.has("capo")) {
 		var capo = urlParams.get("capo");
-		document.getElementById("capo").value = capo;
 		gCapo = parseInt(capo);
 	}
 	else{
@@ -9068,11 +9094,9 @@ function processShareLink() {
 	// Handler for staffspacing ssp parameter
 	if (urlParams.has("ssp")) {
 		var ssp = urlParams.get("ssp");
-		document.getElementById("staff-spacing").value = ssp;
 		gStaffSpacing = STAFFSPACEOFFSET + parseInt(ssp);
 	}
 	else{
-		document.getElementById("staff-spacing").value = STAFFSPACEDEFAULT;
 		gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
 	}
 
@@ -9084,24 +9108,19 @@ function processShareLink() {
 		if (showtabnames == "true"){
 
 			gShowTabNames = true;
-			document.getElementById('toggletabnames').value = "Hide Tab Names";
 
 		}
 		else{
 
 			gShowTabNames = false;
-			document.getElementById('toggletabnames').value = "Show Tab Names";	
 
 		}
-
-		IdleShowTabNamesControl();
 
 	}
 	else{
 
 		gShowTabNames = true;
 
-		document.getElementById('toggletabnames').value = "Hide Tab Names";
 	}
 
 	// Handler for newer showtabnames stn parameter
@@ -9112,24 +9131,19 @@ function processShareLink() {
 		if (showtabnames == "true"){
 
 			gShowTabNames = true;
-			document.getElementById('toggletabnames').value = "Hide Tab Names";
 
 		}
 		else{
 
 			gShowTabNames = false;
-			document.getElementById('toggletabnames').value = "Show Tab Names";	
 
 		}
-
-		IdleShowTabNamesControl();
 
 	}
 	else{
 
 		gShowTabNames = true;
 
-		document.getElementById('toggletabnames').value = "Hide Tab Names";
 	}
 
 	// Handler for pdf format pdf parameter
@@ -9526,14 +9540,14 @@ function PrepareWhistleFont(){
 //
 // Inject PDF-related headers at the top of the file
 //
-function InjectPDFHeaders(e){
+function InjectPDFHeaders(bDoAll){
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
 		return;
 	}
 
-	if (e.shiftKey){
+	if (bDoAll){
 
 		var theNotes = gTheABC.value;
 
@@ -9595,8 +9609,7 @@ function InjectPDFHeaders(e){
 	    return
 
 	}
-
-	if (e.altKey){
+	else{
 
 		// If currently rendering PDF, exit immediately
 		if (gRenderingPDF) {
@@ -9769,90 +9782,65 @@ function InjectABCNoteNameLyrics(){
 //
 // Do ABC Notename Lyric inject
 //
-function DoInjectABCNoteNameLyrics(e){
+function DoInjectABCNoteNameLyrics(){
 
-	if (e.shiftKey){
+	InjectABCNoteNameLyrics();
+	
+	RenderAsync(true,null);
 
-		e.preventDefault();
-		e.stopPropagation();
-
-		InjectABCNoteNameLyrics();
-		
-		RenderAsync(true,null);
-	}
-}
-
-//
-// Do ABC Box or Concertina Tab Injections
-//
-function DoInjectTablature_BC(e){
-
-	// Shift key - B/C Box tab
-	if (e.shiftKey){
-
-		e.preventDefault();
-		e.stopPropagation();
-
-		SetRadioValue("notenodertab","noten")
-
-		gInjectTab_BoxStyle = "0";
-
-		gTheABC.value = boxTabGenerator(gTheABC.value);
-		
-		RenderAsync(true,null);
-	}
-	else
-	// Alt key - Concertina fingering tab
-	if (e.altKey){
-
-		e.preventDefault();
-		e.stopPropagation();
-
-		SetRadioValue("notenodertab","noten")
-
-		gTheABC.value = angloFingeringsGenerator(gTheABC.value);
-		
-		RenderAsync(true,null);
-	}
+	IdleAdvancedControls(true,true);
 
 }
 
 //
 // Do ABC Box or Concertina Tab Injections
 //
-function DoInjectTablature_CsD(e){
+function DoInjectTablature_BC(){
 
-	// Shift key - C#/D Box tab
-	if (e.shiftKey){
+	SetRadioValue("notenodertab","noten")
 
-		e.preventDefault();
-		e.stopPropagation();
+	gInjectTab_BoxStyle = "0";
 
-		SetRadioValue("notenodertab","noten")
+	gTheABC.value = boxTabGenerator(gTheABC.value);
+	
+	RenderAsync(true,null);
 
-		gInjectTab_BoxStyle = "1";
-
-		gTheABC.value = boxTabGenerator(gTheABC.value);
-		
-		RenderAsync(true,null);
-	}
-	else
-	// Alt key - Concertina fingering tab
-	if (e.altKey){
-
-		e.preventDefault();
-		e.stopPropagation();
-
-		SetRadioValue("notenodertab","noten")
-
-		gTheABC.value = angloFingeringsGenerator(gTheABC.value);
-		
-		RenderAsync(true,null);
-	}
+	IdleAdvancedControls(true,true);
 
 }
 
+//
+// Do ABC Box or Concertina Tab Injections
+//
+function DoInjectTablature_CsD(){
 
+	SetRadioValue("notenodertab","noten")
+
+	gInjectTab_BoxStyle = "1";
+
+	gTheABC.value = boxTabGenerator(gTheABC.value);
+	
+	RenderAsync(true,null);
+
+	IdleAdvancedControls(true,true);
+
+}
+
+//
+// Do ABC Box or Concertina Tab Injections
+//
+function DoInjectTablature_Anglo(){
+
+	SetRadioValue("notenodertab","noten")
+
+	gTheABC.value = angloFingeringsGenerator(gTheABC.value);
+	
+	RenderAsync(true,null);
+
+	IdleAdvancedControls(true,true);
+
+
+}
 //
 // Change the tab display
 //
@@ -10226,8 +10214,6 @@ function restoreStateFromLocalStorage(){
 
 		SetRadioValue("notenodertab", theTab);
 
-		IdleCapoControl();
-
 		if (theTab == "whistle"){
 
 			// If first time using the whistle tab, prep the tin whistle font for embedded SVG styles
@@ -10271,8 +10257,6 @@ function restoreStateFromLocalStorage(){
 
 	if (theCapo){
 
-		document.getElementById("capo").value = theCapo;
-
 		gCapo = parseInt(theCapo);
 
 	}
@@ -10281,8 +10265,6 @@ function restoreStateFromLocalStorage(){
 	var theStaffSpacing = localStorage.abcStaffSpacing;
 
 	if (theStaffSpacing){
-
-		document.getElementById("staff-spacing").value = theStaffSpacing;
 
 		gStaffSpacing = STAFFSPACEOFFSET + parseInt(theStaffSpacing);
 
@@ -10309,18 +10291,12 @@ function restoreStateFromLocalStorage(){
 
 			gShowTabNames = true;
 
-			document.getElementById('toggletabnames').value = "Hide Tab Names";
-
 		}
 		else{
 
 			gShowTabNames = false;
 
-			document.getElementById('toggletabnames').value = "Show Tab Names";	
-
 		}
-
-		IdleShowTabNamesControl();	
 
 	}
 
@@ -10715,7 +10691,6 @@ var gInjectTab_TabFontSize = 11;
 var gInjectTab_StaffSep = 80;
 var gInjectTab_MusicSpace = 10;
 var gInjectTab_TabLocation = 0;
-var gInjectTab_BoxStyle = 0;
 var gInjectTab_ConcertinaStyle = 0;
 var gInjectTab_ConcertinaFingering = 0;
 
@@ -10981,10 +10956,10 @@ function ConfigureBoxTab(){
 	  {name: "Tab location relative to notation:", id: "configure_tab_location", type:"select", options:tab_locations, cssClass:"configure_box_settings_select"},
 	  {name: "    Strip all chords and tab before injecting tab (Tab below only. Tab above always strips.)", id: "configure_strip_chords", type:"checkbox", cssClass:"configure_box_settings_form_text"},
 	  {html: '<p style="margin-top:18px;font-size:12pt;line-height:12pt;font-family:helvetica"><strong>Box Button Number Tablature:</strong></p>'},	  
-	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;margin-top:12px;font-family:helvetica">In the tool, Shift-click the B/C button to inject B/C Box button number tablature.'},	  
-	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;margin-top:12px;font-family:helvetica">In the tool, Shift-click the C#/D button to inject C#/D Box button number tablature.</p>'},	  
+	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;margin-top:12px;font-family:helvetica">Click "Inject B/C Box Tab" in the Advanced Controls to inject B/C box tab.'},	  
+	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;margin-top:12px;font-family:helvetica">Click "Inject C#/D Box Tab" in the Advanced Controls to inject C#/D box tab.</p>'},	  
 	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;font-family:helvetica"><strong>Concertina Fingerings Tablature:</strong></p>'},	  
-	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;margin-top:12px;font-family:helvetica">In the tool, Alt-click the B/C or C#/D buttons to inject Concertina fingerings tablature.</p>'},	  
+	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;margin-top:12px;font-family:helvetica">Click "Inject Anglo Concertina Tab" in the Advanced Controls to inject Concertina tab.</p>'},	  
 	  {name: "Concertina style:", id: "configure_concertina_style", type:"select", options:concertina_styles, cssClass:"configure_box_settings_select"}, 
 	  {name: "Preferred fingerings:", id: "configure_concertina_fingering", type:"select", options:concertina_fingerings, cssClass:"configure_box_settings_select"},
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:12pt;font-family:helvetica">On-Row: Favors D5 and E5 on right-side C-row.</p>'},	  
@@ -11016,6 +10991,85 @@ function ConfigureBoxTab(){
 			SaveConfigurationSettings();
 
 		}
+
+	});
+
+}
+
+//
+// Advanced controls dialog
+//
+function AdvancedControlsDialog(){
+
+	// Moving the advanced controls to their own dialog
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">ABC Transcription Tools Advanced Controls</p>';
+	modal_msg += '<div id="advanced-controls-dialog">';
+
+	modal_msg  += 	'<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;margin-bottom:12px">Notation Display Setttings</p>'
+	modal_msg  += 	'<p style="text-align:center;margin-top:0px"><label class="staff-spacing" for="staff-spacing">';
+	modal_msg  += 	'	Staff spacing:';
+	modal_msg  += 		'<input type="number" name="staff-spacing" id="staff-spacing" min="-20" max="200" step="5" value="10" onchange="SetStaffSpacing()"  title="Adjusts the spacing between the staves">';
+	modal_msg  += 	'</label>';
+	modal_msg  += '</p>';
+	
+	modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Show/Hide ABC Features</p>'
+	modal_msg  += '<p style="text-align:center;">'
+	modal_msg  += '<input id="toggleannotations" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleAnnotations(false)" type="button" value="Hide Annotations" title="Hides/Shows common annotations in the ABC notation">';
+	modal_msg  += 	'<input id="toggletext" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTextAnnotations(false)" type="button" value="Hide Text" title="Hides/Shows any text in the ABC notation.">';
+	modal_msg  += 	'<input id="togglechords" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleChords(false)" type="button" value="Hide Chords" title="Hides/Shows any chords in the ABC notation.">';
+	modal_msg  += '</p>';
+	
+	modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Strip ABC Features</p>'
+	modal_msg  += '<p style="text-align:center;">';
+	modal_msg  += '<input id="stripannotations" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleAnnotations(true)" type="button" value="Strip Annotations" title="Strips common annotations from the ABC">';
+	modal_msg  += 	'<input id="striptext" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleTextAnnotations(true)" type="button" value="Strip Text" title="Strips all text from the ABC">';
+	modal_msg  += 	'<input id="stripchords" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleChords(true)" type="button" value="Strip Chords" title="Strips all chords from the ABC">';
+	modal_msg  += '</p>';
+	
+	modal_msg  += 	'<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Stringed Instrument Tablature Settings</p>'
+	modal_msg  += 	'<p style="text-align:center;"><input class="toggletabnamesdisabled btn btn-advancedcontrols" id="toggletabnames" onclick="ToggleTabNames()" type="button" value="Hide Tab Names" title="Hides/Shows the tablature name label">';
+	modal_msg += "<tspan></tspan>";
+	modal_msg  += 	'<label class="capo" for="capo">';
+	modal_msg  += 	'   Capo:';
+	modal_msg  += 		'<input type="number" name="capo" id="capo" min="0" max="12" step="1" value="0" onchange="SetCapo()" disabled  title="Sets the capo offset for stringed instruments">';
+	modal_msg  += 	'</label>';
+	modal_msg  += '</p>';
+
+	modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">ABC Injection Features</p>'
+	modal_msg  += '<p style="text-align:center;">'
+	modal_msg  += '<input id="injectallheaders" class="advancedcontrols btn btn-injectcontrols" onclick="InjectPDFHeaders(true)" type="button" value="Inject All PDF Annotations" title="Injects all possible PDF annotations at the top of the ABC">';	
+	modal_msg  += '<input id="injectheadertemplate" class="advancedcontrols btn btn-injectcontrols" onclick="InjectPDFHeaders(false)" type="button" value="Inject PDF Annotation Template" title="Injects a useful template of PDF annotations at the top of the ABC">';
+	modal_msg  += '<p style="text-align:center;margin-top:24px;">'
+	modal_msg  += '<input id="injectnotenames" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectABCNoteNameLyrics()" type="button" value="Inject Note Name Lyrics" title="Injects note names as lyrics in the ABC">';
+	modal_msg  += '</p>';
+	modal_msg  += '<p style="text-align:center;margin-top:24px;">'
+	modal_msg  += '<input id="injectbctab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_BC()" type="button" value="Inject B/C Box Tab" title="Injects B/C box tablature into the ABC">';
+	modal_msg  += '<input id="injectcdtab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_CsD()" type="button" value="Inject C#/D Box Tab" title="Injects C#/D box tablature into the ABC">';
+	modal_msg  += '<input id="injectanglotab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Anglo()" type="button" value="Inject Anglo Concertina Tab" title="Injects Anglo Concertina tablature into the ABC">';
+	modal_msg  += '</p>';
+	modal_msg  += '<p style="text-align:center;margin-top:24px;"><input id="configure_box_advanced" class="btn btn-urlcontrols" onclick="ConfigureBoxTab()" type="button" value="Configure Box and Concertina Tablature Injection Settings" title="Configure the Box and Concertina tablature injection settings"></p>';	
+	modal_msg += '</div>';
+
+	setTimeout(function(){
+
+		// Do an initial idle on the controls
+		IdleAdvancedControls(true, true);
+
+		// Idle the capo control
+		IdleCapoControl();
+
+		// Idle the show tab names control
+		IdleShowTabNamesControl();
+
+		document.getElementById("staff-spacing").value = gStaffSpacing - STAFFSPACEOFFSET;
+
+		document.getElementById("capo").value = gCapo;
+
+
+	}, 200);
+
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 10, width: 700 }).then(function(){
 
 	});
 
@@ -11076,7 +11130,7 @@ function ConfigureToolSettings(e) {
 	  {name: "            Override all MIDI programs and volumes in the ABC when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">To change the Melody volume, add a dynamics indication such as !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! immediately before the first note in the ABC.</p>'},	  
 	  {name: "Box Tablature Font Size (when using B/C or C#/D tab mode buttons):", id: "configure_box_tab_fontsize", type:"number", cssClass:"configure_settings_form_text"},
-	  {html: '<p style="text-align:center;"><input id="configure_box" class="btn btn-urlcontrols" onclick="ConfigureBoxTab()" type="button" value="&nbsp;&nbsp;Configure Box and Concertina Tablature Injection Settings&nbsp;&nbsp;" title="Configure the Box and Concertina tablature injection settings"></p>'},	  
+	  {html: '<p style="text-align:center;"><input id="configure_box" class="btn btn-urlcontrols" onclick="ConfigureBoxTab()" type="button" value="Configure Box and Concertina Tablature Injection Settings" title="Configure the Box and Concertina tablature injection settings"></p>'},	  
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 20, width: 680 } ).then(function(args){
@@ -11505,11 +11559,7 @@ function DoStartup() {
 			ToggleMaximize();
 		};
 	
-	document.getElementById('staff-spacing').value = STAFFSPACEDEFAULT;
-
 	gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
-
-	document.getElementById('capo').value = 0;
 
 	// Clear the text entry area, but don't render
 	ClearNoRender();
@@ -11579,7 +11629,8 @@ function DoStartup() {
 	// Initially show the controls as soon as some ABC is entered
 	//
 	ShowAllControls();
-	
+
+
 	if (!isFromShare){
 		document.getElementById("toggleallcontrols").classList.add("toggleallcontrolsdisabled");
 		document.getElementById("notenrechts").style.display = "none";
@@ -11613,5 +11664,5 @@ WaitForReady(DoStartup);
 //
 // TinyURL API key
 //
-var gTinyURLAPIKey = "Bearer <YOUR_TINYURL_API_KEY_HERE>";
+var gTinyURLAPIKey = "Bearer <YOUR_TINYURL_APP_KEY_HERE>";
 
