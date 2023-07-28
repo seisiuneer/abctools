@@ -11016,14 +11016,14 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<p style="text-align:center;">'
 	modal_msg  += '<input id="toggleannotations" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleAnnotations(false)" type="button" value="Hide Annotations" title="Hides/Shows common annotations in the ABC notation">';
 	modal_msg  += 	'<input id="toggletext" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTextAnnotations(false)" type="button" value="Hide Text" title="Hides/Shows any text in the ABC notation.">';
-	modal_msg  += 	'<input id="togglechords" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleChords(false)" type="button" value="Hide Chords" title="Hides/Shows any chords in the ABC notation.">';
+	modal_msg  += 	'<input id="togglechords" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleChords(false)" type="button" value="Hide Chords" title="Hides/Shows any chords in the ABC notation.&nbsp;&nbsp;Also hides any Box or Anglo Concertina tablature.">';
 	modal_msg  += '</p>';
 	
 	modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Strip ABC Features</p>'
 	modal_msg  += '<p style="text-align:center;">';
 	modal_msg  += '<input id="stripannotations" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleAnnotations(true)" type="button" value="Strip Annotations" title="Strips common annotations from the ABC">';
 	modal_msg  += 	'<input id="striptext" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleTextAnnotations(true)" type="button" value="Strip Text" title="Strips all text from the ABC">';
-	modal_msg  += 	'<input id="stripchords" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleChords(true)" type="button" value="Strip Chords" title="Strips all chords from the ABC">';
+	modal_msg  += 	'<input id="stripchords" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleChords(true)" type="button" value="Strip Chords" title="Strips all chords from the ABC.&nbsp;&nbsp;Also strips any Box or Anglo Concertina tablature.">';
 	modal_msg  += '</p>';
 	
 	modal_msg  += 	'<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Stringed Instrument Tablature Settings</p>'
@@ -11664,5 +11664,5 @@ WaitForReady(DoStartup);
 //
 // TinyURL API key
 //
-var gTinyURLAPIKey = "Bearer <YOUR_TINYURL_APP_KEY_HERE>";
+var gTinyURLAPIKey = "Bearer <YOUR_TINYURL_API_TOKEN_HERE>";
 
