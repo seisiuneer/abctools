@@ -10936,7 +10936,7 @@ function ConfigureBoxTab(){
 	};
 
 	const form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica">Box and Concertina Tablature Injection Settings</p>'},
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Box and Concertina Tablature Injection Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#injecting_box_or_anglo_concertina_tablature" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
 	  {name: "    Inject %%MIDI directives to mute bass/chords", id: "configure_inject_directives", type:"checkbox", cssClass:"configure_box_settings_form_text"},
 	  {html: '<p style="margin-top:18px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>Tablature Font Settings (for both Box and Concertina):</strong></p>'},	  
 	  {name: "Font family:  (Recommended: Palatino)", id: "configure_font_family", type:"text", cssClass:"configure_box_settings_form_text_wide"},
@@ -10995,7 +10995,7 @@ function ConfigureBoxTab(){
 function SharingControlsDialog(){
 
 	// Moving the advanced controls to their own dialog
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">ABC Transcription Tools Sharing Controls</p>';
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">ABC Transcription Tools Sharing Controls&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#sharing_controls" target="_blank" style="text-decoration:none;">💡</a></span></p>';
 	modal_msg += '<div id="sharing-controls-dialog">';
 	modal_msg += '<p style="margin-top:28px;">';
 	modal_msg += '<input id="testurl" class="urlcontrols btn btn-urlcontrols" onclick="TestShareURL()" type="button" value="Test Share URL" title="Opens the Share URL in a new tab">';
@@ -11039,7 +11039,7 @@ function AdvancedControlsDialog(){
 	)
 
 	// Moving the advanced controls to their own dialog
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">ABC Transcription Tools Advanced Controls</p>';
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">ABC Transcription Tools Advanced Controls&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#advanced_controls" target="_blank" style="text-decoration:none;">💡</a></span></p>';
 	modal_msg += '<div id="advanced-controls-dialog">';
 
 	modal_msg  += 	'<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;margin-bottom:12px">Notation Display Setttings</p>'
@@ -11158,7 +11158,7 @@ function ConfigureToolSettings(e) {
 	};
 
 	const form = [
-	  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica">ABC Transcription Tools Settings</p>'},
+	  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:50px;">ABC Transcription Tools Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#selecting_default_instruments_for_playing_tunes" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
 	  {html: '<p style="margin-top:10px;font-size:12pt;line-height:14pt;font-family:helvetica">Enabling these options will always use your selected MIDI instrument programs and volumes as the defaults when playing tunes.</p>'},	  
 	  {name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default Melody MIDI program (0-135):", id: "configure_melody_program", type:"number", cssClass:"configure_settings_form_text"},
