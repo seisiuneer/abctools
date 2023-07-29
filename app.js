@@ -9730,6 +9730,9 @@ function DoInjectTablature_BC(){
 	gInjectTab_BoxStyle = "0";
 
 	gTheABC.value = boxTabGenerator(gTheABC.value);
+
+	// Show the chords after an inject
+	gStripChords = false;
 	
 	RenderAsync(true,null);
 
@@ -9747,6 +9750,9 @@ function DoInjectTablature_CsD(){
 	gInjectTab_BoxStyle = "1";
 
 	gTheABC.value = boxTabGenerator(gTheABC.value);
+
+	// Show the chords after an inject
+	gStripChords = false;	
 	
 	RenderAsync(true,null);
 
@@ -9762,6 +9768,9 @@ function DoInjectTablature_Anglo(){
 	SetRadioValue("notenodertab","noten")
 
 	gTheABC.value = angloFingeringsGenerator(gTheABC.value);
+
+	// Show the chords after an inject
+	gStripChords = false;
 	
 	RenderAsync(true,null);
 
