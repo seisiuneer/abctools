@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-                
+        
         <style>
         p {
         font-size:14pt;
@@ -160,8 +160,7 @@
                 <p class="toc"><a href="#basic_controls">Basic Controls</a></p>
                 <p class="toc"><a href="#playing_your_tunes">Playing Your Tunes</a></p>
                 <p class="toc"><a href="#selecting_the_instruments_for_playback">Selecting the Instruments for Playback</a></p>
-                <p class="toc"><a href="#selecting_default_instruments_for_playing_tunes">ABC Transcription Tools Settings</a></p>
-                <p class="toc"><a href="#auto_injecting_midi_programs">Auto-injecting Melody and Bass/Chord MIDI Programs into Every Tune</a></p>
+                <p class="toc"><a href="#settings_dialog">ABC Transcription Tools Settings</a></p>
                 <p class="toc"><a href="#general_midi_instrument_program_numbers">General MIDI Instrument Program Numbers</a></p>
                 <p class="toc"><a href="#advanced_controls">Advanced Controls</a></p>
                 <p class="toc"><a href="#pdf_tunebook_settings">PDF Tunebook Settings</a></p>
@@ -312,7 +311,7 @@
             <p>Using the playback controls at the bottom, you can enable looping, rewind to start, start/pause playback, click in the progress bar to seek, or change the tempo as a percentage. </p>
             <p>Click "Close" to return to the ABC editor.</p>
             <p></p>
-            <p>If you hold down the Shift+Alt key while clicking the Play button the tool will automatically find the tune you've clicked on and send it to Paul Rosen's abcjs Quick Editor for playback:</p>
+            <p>If you hold down the Shift key while clicking the Play button the tool will automatically find the tune you've clicked on and send it to Paul Rosen's abcjs Quick Editor for playback:</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/-JvOFaotgtY" title="Playing your Tunes (New and Improved)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>If there is a text selection in the ABC area, whatever is selected will be sent.</p>
             <p>You can use this to send more than one tune to the abcjs Quick Editor</p>
@@ -415,7 +414,7 @@
             <p></p>
             <p>Any General MIDI instrument program number can be selected for the melody and chord sounds.</p>
             <p></p>
-            <hr class="hidden-print" id="selecting_default_instruments_for_playing_tunes">
+            <hr class="hidden-print" id="settings_dialog">
             <h1 class="page_break_always">ABC Transcription Tools Settings&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/fufQFUISym4" title="Selecting Default Instruments for Playing Tunes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>Clicking the "Settings" button at the top of the tool brings up a dialog where you can select default MIDI programs and volumes to use for the Melody, Bass, and Chords, as well as other tool-wide settings:</p>
@@ -445,19 +444,6 @@
             <p>For those instruments played solo, set the melody instrument program as desired and the chord instrument program to Dulcimer (15).</p>
             <p></p>
             <p>In this case, you may not want to include any chords in the ABC, as they will be played using the Dulcimer (15) instrument.</p>
-            <hr class="hidden-print" id="auto_injecting_midi_programs">
-            <h1 class="page_break_always">Auto-injecting Melody and Bass/Chord MIDI Programs into Every Tune&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
-            <p>To have the tool automatically inject a %%MIDI program directive into every tune with a specific MIDI instrument program number for the melody, hold down the Shift key while clicking the "Play" button.</p>
-            <p>You will be prompted for a MIDI instrument program number to inject:</p>
-            <div class="image_holder">
-                <img src="img/melody_program_3.jpg"/>
-            </div>
-            <p>To have the tool automatically inject a %%MIDI chordprog directive into every tune with a specific MIDI instrument program number for the bass/chords, hold down the Alt key while clicking the "Play" button.</p>
-            <p>You will be prompted for a MIDI instrument program number to inject:</p>
-            <div class="image_holder">
-                <img src="img/chords_program_2.jpg"/>
-            </div>
-            <p>For both the melody and chord program inject dialogs, if you enter a negative number, the same value will be used to inject both a melody and chords instrument program number into every tune.</p>
             <hr class="hidden-print" id="general_midi_instrument_program_numbers">
             <h1 class="page_break_always">General MIDI Instrument Program Numbers&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <div class="image_holder">
@@ -467,8 +453,9 @@
             <h1 class="page_break_always">Advanced Controls&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <p>Clicking the "Show Advanced" button brings up the ABC Transcription Tools Advanced Controls dialog:</p>
             <div class="image_holder">
-                <img src="img/ug8c.jpg"/>
+                <img src="img/ug8d.jpg"/>
             </div>
+            <p>Click the lightbulb icon to bring up this section of the user guide in a new browser tab.</p>
             <p class="page_break_always"><strong>Notation Display Settings:</strong></p>
             <p>Set Staff Spacing - Allows you to set a wider or narrower gap between the staffs.</p>
             <p>A value of 0 corresponds to an ABC %%staffsep of 40</p>
@@ -498,12 +485,25 @@
             <p><strong>ABC Injection Features:</strong></p>
             <p>These commands are destructive in that they inject additional text into the current ABC.</p>
             <p>It may be a good idea to save the current ABC or do a "Copy All" before using one of these commands if you want to quickly undo the operation.</p>
+            <p>The commands in light green inject only PDF comment-based annotations or %%MIDI directives and do not affect the display of the notation:</p>
             <p>Inject All PDF Annotations: Injects all available tool-specific PDF annotations for title page, table of contents, index generation, etc. at the top of the ABC.</p>
             <p>Inject PDF Annotation Template: Injects a useful template of common PDF annotations at the top of the ABC.</p>
+            <p>Inject MIDI Melody: Injects a %%MIDI program directive into every tune with a specific MIDI instrument program number for the melody.</p>
+            <p>You will be prompted for a MIDI instrument program number to inject:</p>
+            <div class="image_holder">
+                <img src="img/melody_program_3.jpg"/>
+            </div>
+            <p>Inject MIDI Bass/Chords: Inject a %%MIDI chordprog directive into every tune with a specific MIDI instrument program number for the bass/chords.</p>
+            <p>You will be prompted for a MIDI instrument program number to inject:</p>
+            <div class="image_holder">
+                <img src="img/chords_program_2.jpg"/>
+            </div>
+            <p>For both the melody and chord program inject dialogs, if you enter a negative number, the same value will be used to inject both a melody and chords instrument program number into every tune.</p>
+            <p>The commands in light red inject additional ABC lyrics-based or ABC chord-based tablature into the ABC:</p>
             <p>Inject Note Name Lyrics: Injects note names as lyrics in the ABC.</p>
-            <p>Inject B/C Box Tab: Injects B/C Box tablature into the ABC.</p>
-            <p>Inject C#/D Box Tab: Injects C#/D Box tablature into the ABC.</p>
-            <p>Inject Anglo Concertina Tab: Injects Anglo Concertina tablature into the ABC.</p>
+            <p>Inject B/C Box Tab: Injects B/C Box tablature into the ABC (uses ABC chord syntax).</p>
+            <p>Inject C#/D Box Tab: Injects C#/D Box tablature into the ABC (uses ABC chord syntax).</p>
+            <p>Inject Anglo Concertina Tab: Injects Anglo Concertina tablature into the ABC (uses ABC chord syntax).</p>
             <p>Configure Box and Concertina Tablature Injection Settings: Brings up a dialog where you can configure all parameters for the box and concertina tab injection.</p>
             <hr class="hidden-print" id="pdf_tunebook_settings">
             <h1 class="page_break_always">PDF Tunebook Settings&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
