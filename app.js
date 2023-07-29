@@ -8397,7 +8397,7 @@ function PlayABC(e){
 
     	// Shift key launches Paul Rosen's site
 
-		if (e && e.altKey && e.shiftKey){
+		if (e && e.shiftKey){
 
 			// Is there a selection?
 			var theSelectedABC = getSelectedText("abc");
@@ -8450,18 +8450,6 @@ function PlayABC(e){
 			return;
 				
 		}
-
-		// Shift key injects a MIDI instrument directive for the melody
-   		if (e && e.shiftKey){
-    		InjectMIDIInstrument(false);
-    		return;
-    	}
-
-		// Alt key injects a MIDI instrument directive for the chords
-   		if (e && e.altKey){
-    		InjectMIDIInstrument(true);
-    		return;
-    	}
 
 		// Play back locally
 
@@ -11074,9 +11062,11 @@ function AdvancedControlsDialog(){
 
 	modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">ABC Injection Features</p>'
 	modal_msg  += '<p style="text-align:center;">'
-	modal_msg  += '<input id="injectallheaders" class="advancedcontrols btn btn-injectcontrols" onclick="InjectPDFHeaders(true)" type="button" value="Inject All PDF Annotations" title="Injects all possible PDF annotations at the top of the ABC">';	
-	modal_msg  += '<input id="injectheadertemplate" class="advancedcontrols btn btn-injectcontrols" onclick="InjectPDFHeaders(false)" type="button" value="Inject PDF Annotation Template" title="Injects a useful template of PDF annotations at the top of the ABC">';
-	modal_msg  += '<p style="text-align:center;margin-top:22px;">'
+	modal_msg  += '<input id="injectallheaders" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders(true)" type="button" value="Inject All PDF Annotations" title="Injects all possible PDF annotations at the top of the ABC">';	
+	modal_msg  += '<input id="injectheadertemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders(false)" type="button" value="Inject PDF Annotation Template" title="Injects a useful template of PDF annotations at the top of the ABC">';
+	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
+	modal_msg  += '<input id="injectmelody" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMIDIInstrument(false);" type="button" value="Inject MIDI Melody" title="Injects %%MIDI program melody annotation into all tunes in the ABC">';	
+	modal_msg  += '<input id="injectchords" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMIDIInstrument(true);" type="button" value="Inject MIDI Bass/Chord" title="Injects %%MIDI chordprog bass/chord annotation into all tunes in the ABC">';
 	modal_msg  += '<input id="injectnotenames" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectABCNoteNameLyrics()" type="button" value="Inject Note Name Lyrics" title="Injects note names as lyrics in the ABC">';
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">'
@@ -11158,7 +11148,7 @@ function ConfigureToolSettings(e) {
 	};
 
 	const form = [
-	  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:50px;">ABC Transcription Tools Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#selecting_default_instruments_for_playing_tunes" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:50px;">ABC Transcription Tools Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#settings_dialog" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
 	  {html: '<p style="margin-top:10px;font-size:12pt;line-height:14pt;font-family:helvetica">Enabling these options will always use your selected MIDI instrument programs and volumes as the defaults when playing tunes.</p>'},	  
 	  {name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default Melody MIDI program (0-135):", id: "configure_melody_program", type:"number", cssClass:"configure_settings_form_text"},
