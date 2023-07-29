@@ -5418,7 +5418,7 @@ function GetABCJSParams(instrument){
 					break;
 
 				case "mandola":
-					theLabel = 'GCDA'+postfix;
+					theLabel = 'CGDA'+postfix;
 					break;
 
 				case "guitare":
@@ -7108,6 +7108,16 @@ function IdleAdvancedControls(bUpdateUI){
 			document.getElementById("togglechords").value = "Hide Chords + Injected Tab";
 
 		}
+
+		// Reset the window scroll after the operation
+		setTimeout(function(){
+			window.scrollTo(
+				{
+				  top: 0,
+				}
+			)
+		},100);
+
 	}
 
 }
@@ -7124,7 +7134,16 @@ function SetStaffSpacing() {
 
 	gStaffSpacing = newSpacing + STAFFSPACEOFFSET;
 
-	RenderAsync(true,null);
+	RenderAsync(true,null, function(){;
+
+		// Reset the window scroll before the operation
+		window.scrollTo(
+			{
+			  top: 0,
+			}
+		)
+	});
+
 }
 
 //
@@ -7134,7 +7153,16 @@ function SetCapo() {
 
 	gCapo = document.getElementById('capo').value;
 
-	RenderAsync(true,null);
+	RenderAsync(true,null, function(){;
+
+		// Reset the window scroll after the operation
+		window.scrollTo(
+			{
+			  top: 0,
+			}
+		)
+	});
+
 }
 
 //
@@ -8920,8 +8948,15 @@ function ToggleTabNames(){
 
 	}
 
-	RenderAsync(true,null);
+	RenderAsync(true,null, function(){;
 
+		// Reset the window scroll after the operation
+		window.scrollTo(
+			{
+			  top: 0,
+			}
+		)
+	});
 }
 
 // 
@@ -9725,7 +9760,9 @@ function DoInjectABCNoteNameLyrics(){
 //
 function DoInjectTablature_BC(){
 
-	SetRadioValue("notenodertab","noten")
+	SetRadioValue("notenodertab","noten");
+
+	gCurrentTab = "noten";
 
 	gInjectTab_BoxStyle = "0";
 
@@ -9736,7 +9773,14 @@ function DoInjectTablature_BC(){
 	
 	RenderAsync(true,null);
 
+	// Idle the dialog
 	IdleAdvancedControls(true);
+
+	// Idle the capo control
+	IdleCapoControl();
+
+	// Idle the show tab names control
+	IdleShowTabNamesControl();
 
 }
 
@@ -9745,7 +9789,9 @@ function DoInjectTablature_BC(){
 //
 function DoInjectTablature_CsD(){
 
-	SetRadioValue("notenodertab","noten")
+	SetRadioValue("notenodertab","noten");
+
+	gCurrentTab = "noten";
 
 	gInjectTab_BoxStyle = "1";
 
@@ -9756,7 +9802,15 @@ function DoInjectTablature_CsD(){
 	
 	RenderAsync(true,null);
 
+	// Idle the dialog
 	IdleAdvancedControls(true);
+
+	// Idle the capo control
+	IdleCapoControl();
+
+	// Idle the show tab names control
+	IdleShowTabNamesControl();
+
 
 }
 
@@ -9765,7 +9819,9 @@ function DoInjectTablature_CsD(){
 //
 function DoInjectTablature_Anglo(){
 
-	SetRadioValue("notenodertab","noten")
+	SetRadioValue("notenodertab","noten");
+
+	gCurrentTab = "noten";
 
 	gTheABC.value = angloFingeringsGenerator(gTheABC.value);
 
@@ -9774,10 +9830,17 @@ function DoInjectTablature_Anglo(){
 	
 	RenderAsync(true,null);
 
+	// Idle the dialog
 	IdleAdvancedControls(true);
 
+	// Idle the capo control
+	IdleCapoControl();
+
+	// Idle the show tab names control
+	IdleShowTabNamesControl();
 
 }
+
 //
 // Change the tab display
 //
@@ -10968,6 +11031,13 @@ function SharingControlsDialog(){
 //
 function AdvancedControlsDialog(){
 
+	// Reset the window scroll before the operation
+	window.scrollTo(
+		{
+		  top: 0,
+		}
+	)
+
 	// Moving the advanced controls to their own dialog
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">ABC Transcription Tools Advanced Controls</p>';
 	modal_msg += '<div id="advanced-controls-dialog">';
@@ -11017,28 +11087,33 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-urlcontrols" onclick="ConfigureBoxTab()" type="button" value="Configure Box and Concertina Tablature Injection Settings" title="Configure the Box and Concertina tablature injection settings"></p>';	
 	modal_msg += '</div>';
 
+	// Make sure the scroll happened before the dialog is presented
 	setTimeout(function(){
 
-		// Do an initial idle on the controls
-		IdleAdvancedControls(true);
+		setTimeout(function(){
 
-		// Idle the capo control
-		IdleCapoControl();
+			// Do an initial idle on the controls
+			IdleAdvancedControls(true);
 
-		// Idle the show tab names control
-		IdleShowTabNamesControl();
+			// Idle the capo control
+			IdleCapoControl();
 
-		document.getElementById("staff-spacing").value = gStaffSpacing - STAFFSPACEOFFSET;
+			// Idle the show tab names control
+			IdleShowTabNamesControl();
 
-		document.getElementById("capo").value = gCapo;
+			document.getElementById("staff-spacing").value = gStaffSpacing - STAFFSPACEOFFSET;
+
+			document.getElementById("capo").value = gCapo;
 
 
-	}, 200);
+		}, 200);
 
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 700 }).then(function(){
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 700 }).then(function(){
 
-	});
+		});
+
+	},100);
 
 }
 
