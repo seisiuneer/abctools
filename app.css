@@ -471,7 +471,7 @@ opacity: 0.4;
 padding:12px;
 }
 
-#injectbctab, #injectcdtab, #injectallheaders, #injectheadertemplate{
+#injectbctab, #injectcdtab, #injectallheaders, #injectheadertemplate, #injectmelody, #injectchords{
 margin-right:24px;
 height:42px;
 padding:12px;
@@ -480,6 +480,7 @@ padding:12px;
 #injectanglotab, #injectnotenames{
 height:42px;
 padding:12px;
+margin-right:24px;
 }
 
 #shareurlcaption{
@@ -1237,6 +1238,12 @@ margin-top:-7px;
   --color: black;
   --background-color: #fff5f5;
 }
+
+.btn-injectcontrols-headers{
+  --color: black;
+  --background-color: #f0fff0;
+}
+
 
 .btn-urlcontrols{
   --color: black;
