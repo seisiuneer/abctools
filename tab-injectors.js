@@ -1236,7 +1236,6 @@ var angloFingeringsGenerator = function (theABC){
 
             result += thisTune;
 
-            result += "\n";
         }
 
         return result;
@@ -1987,7 +1986,6 @@ var boxTabGenerator = function (theABC){
 
             result += thisTune;
 
-            result += "\n";
         }
 
         return result
