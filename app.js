@@ -157,6 +157,9 @@ var gPlaybackHyperlinkBassChordProgram = "";
 // Append incrementing X values to tune names 
 var gAppendXValuesToTuneNames = false;
 
+// True while in the advanced controls dialog
+var gInAdvancedControlsDialog = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -9306,6 +9309,11 @@ function MakeTuneVisible(forceUpdate){
 
 	// Follows same enable semantics as copy
 
+	// Don't do this while in the advanced controls dialog
+	if (gInAdvancedControlsDialog){
+		return;
+	}
+
 	if (gAllowCopy){
 
 		var tuneIndex = findSelectedTuneIndex();
@@ -11019,6 +11027,9 @@ function SharingControlsDialog(){
 //
 function AdvancedControlsDialog(){
 
+	// Set global flag that we're in the advanced controls dialog
+	gInAdvancedSettingsDialog = true;
+
 	// Reset the window scroll before the operation
 	window.scrollTo(
 		{
@@ -11100,6 +11111,9 @@ function AdvancedControlsDialog(){
 
 
 		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 700 }).then(function(){
+						
+			// Clear advanced controls dialog flag
+			gInAdvancedControlsDialog = false;
 
 		});
 
