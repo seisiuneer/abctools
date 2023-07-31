@@ -157,9 +157,6 @@ var gPlaybackHyperlinkBassChordProgram = "";
 // Append incrementing X values to tune names 
 var gAppendXValuesToTuneNames = false;
 
-// True while in the advanced controls dialog
-var gInAdvancedControlsDialog = false;
-
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -587,7 +584,7 @@ function Transpose(transposeAmount) {
 				}
 				catch (error){
 
-					DayPilot.Modal.alert("Unable to tranpose one or more tunes.",{ theme: "modal_flat", top: 50 });
+					DayPilot.Modal.alert("Unable to tranpose one or more tunes.",{ theme: "modal_flat", top: 50, scrollWithPage: false });
 					
 					output += theTunes[i];
 
@@ -838,7 +835,7 @@ function Clear() {
 		return;
 	}
 
-	DayPilot.Modal.confirm("Are you sure you want to erase all the ABC and start over?",{ top:100, theme: "modal_flat"}).then(function(args){
+	DayPilot.Modal.confirm("Are you sure you want to erase all the ABC and start over?",{ top:100, theme: "modal_flat", scrollWithPage: false }).then(function(args){
 
 		if (!args.canceled){
 
@@ -4193,7 +4190,7 @@ function promptForPDFFilename(placeholder, callback){
 
 	}
 
-	DayPilot.Modal.prompt("Please enter a filename for your PDF file:", placeholder+".pdf",{ theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
+	DayPilot.Modal.prompt("Please enter a filename for your PDF file:", placeholder+".pdf",{ theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: false }).then(function(args) {
 
 		var fname = args.result;
 
@@ -6825,7 +6822,7 @@ function ensureABCFile(filename) {
 	if ((fileExtension.toLowerCase() == "abc") || (fileExtension.toLowerCase() == "txt")) {
 		return true;
 	} else {
-		DayPilot.Modal.alert("You must select a .abc or .txt file for upload.",{ theme: "modal_flat", top: 50 });
+		DayPilot.Modal.alert("You must select a .abc or .txt file for upload.",{ theme: "modal_flat", top: 50, scrollWithPage: false });
 		return false;
 	}
 }
@@ -7112,15 +7109,6 @@ function IdleAdvancedControls(bUpdateUI){
 
 		}
 
-		// Reset the window scroll after the operation
-		setTimeout(function(){
-			window.scrollTo(
-				{
-				  top: 0,
-				}
-			)
-		},100);
-
 	}
 
 }
@@ -7139,12 +7127,6 @@ function SetStaffSpacing() {
 
 	RenderAsync(true,null, function(){;
 
-		// Reset the window scroll before the operation
-		window.scrollTo(
-			{
-			  top: 0,
-			}
-		)
 	});
 
 }
@@ -7158,12 +7140,6 @@ function SetCapo() {
 
 	RenderAsync(true,null, function(){;
 
-		// Reset the window scroll after the operation
-		window.scrollTo(
-			{
-			  top: 0,
-			}
-		)
 	});
 
 }
@@ -7706,10 +7682,6 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
 
 		urltextbox.value = url;
 
-		// Scroll to the top
-		setTimeout(function(){
-			urltextbox.scrollTo(0,0);
-		},100); 
 	}
 
 	return url;
@@ -7755,7 +7727,7 @@ function GenerateQRCode(e) {
 	
 		if (theURL.length > maxURLLength) {
 
-			DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:14pt;">Share URL text is too long to generate a QR Code</p>',{ theme: "modal_flat", top: 50 });
+			DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:14pt;">Share URL text is too long to generate a QR Code</p>',{ theme: "modal_flat", top: 50, scrollWithPage: false });
 
 			return;
 
@@ -7919,7 +7891,7 @@ function GenerateQRCode(e) {
 //
 function saveABCFile(thePrompt, thePlaceholder, theData){
 
-	DayPilot.Modal.prompt(thePrompt, thePlaceholder,{ theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
+	DayPilot.Modal.prompt(thePrompt, thePlaceholder,{ theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: false }).then(function(args) {
 
 		var fname = args.result;
 
@@ -7991,7 +7963,7 @@ function saveABCFile(thePrompt, thePlaceholder, theData){
 //
 function saveShareURLFile(thePrompt, thePlaceholder, theData){
 
-	DayPilot.Modal.prompt(thePrompt, thePlaceholder,{ theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
+	DayPilot.Modal.prompt(thePrompt, thePlaceholder,{ theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: false }).then(function(args) {
 
 		var fname = args.result;
 
@@ -8299,7 +8271,7 @@ function InjectMIDIInstrument(bIsChords) {
 		thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,  Electric Piano: 5,  Organ: 19,  Accordion: 21,  Guitar: 25,  Bass: 34,  Synth Bass: 38</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>';
 	}
 
-	DayPilot.Modal.prompt(thePrompt, theDefaultProgram, { theme: "modal_flat", top: 194, autoFocus: false }).then(function(args) {
+	DayPilot.Modal.prompt(thePrompt, theDefaultProgram, { theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: false }).then(function(args) {
 		
 		var progNumStr = args.result;
 
@@ -8588,7 +8560,7 @@ function ShortenURL(){
 	   	modal_msg += '<p style="text-align:center;font-size:14pt;line-height:19pt;font-family:helvetica">Short URL:</p>';
 	   	modal_msg += '<p style="text-align:center;font-size:14pt;line-height:19pt;font-family:helvetica"><a href="'+data.data.tiny_url+'" target="_blank">'+data.data.tiny_url+'</a></p>';
 
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50 });
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: false });
 
 	  })
 	  .catch(
@@ -8941,12 +8913,6 @@ function ToggleTabNames(){
 
 	RenderAsync(true,null, function(){;
 
-		// Reset the window scroll after the operation
-		window.scrollTo(
-			{
-			  top: 0,
-			}
-		)
 	});
 }
 
@@ -9308,11 +9274,6 @@ function findSelectedTuneIndex(){
 function MakeTuneVisible(forceUpdate){
 
 	// Follows same enable semantics as copy
-
-	// Don't do this while in the advanced controls dialog
-	if (gInAdvancedControlsDialog){
-		return;
-	}
 
 	if (gAllowCopy){
 
@@ -10321,7 +10282,7 @@ function showWelcomeScreen(){
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Settings" to select the default instrument sounds and volumes to use when playing tunes.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica"><strong>If you find this tool useful, please consider <a href="donate.html" target="_blank">buying me a beer!</a></strong></p>';
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50 });
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: false });
 
 }
 
@@ -10339,7 +10300,7 @@ function showZoomInstructionsScreen(){
    	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">All controls in the ABC editor have helpful tooltips.</p>';
 	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Read the <a href="userguide.html" target="_blank">User Guide</a> for complete documentation and demo videos.</p>';
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50 });
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: false });
 
 }
 
@@ -10541,7 +10502,7 @@ function LocalPlayABC(theABC){
 	   	modal_msg += '<div id="playback-audio"></div>';
 	   	modal_msg += '</div>';
 
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width:850, okText:"Close"});
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width:850, okText:"Close", scrollWithPage: false });
 
 		var theOKButtons = document.getElementsByClassName("modal_flat_ok");
 
@@ -10956,7 +10917,7 @@ function ConfigureBoxTab(){
 	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">Favors C5 on the left-side G-row draw, B4 on the right-side C-row draw.</p>'},	  
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 720 } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 720, scrollWithPage: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -11017,7 +10978,7 @@ function SharingControlsDialog(){
 	}, 200);
 
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 800 }).then(function(){
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 800, scrollWithPage: false}).then(function(){
 
 	});
 
@@ -11029,13 +10990,6 @@ function AdvancedControlsDialog(){
 
 	// Set global flag that we're in the advanced controls dialog
 	gInAdvancedSettingsDialog = true;
-
-	// Reset the window scroll before the operation
-	window.scrollTo(
-		{
-		  top: 0,
-		}
-	)
 
 	// Moving the advanced controls to their own dialog
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">ABC Transcription Tools Advanced Controls&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#advanced_controls" target="_blank" style="text-decoration:none;">💡</a></span></p>';
@@ -11088,36 +11042,32 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-urlcontrols" onclick="ConfigureBoxTab()" type="button" value="Configure Box and Concertina Tablature Injection Settings" title="Configure the Box and Concertina tablature injection settings"></p>';	
 	modal_msg += '</div>';
 
-	// Make sure the scroll happened before the dialog is presented
 	setTimeout(function(){
 
-		setTimeout(function(){
+		// Do an initial idle on the controls
+		IdleAdvancedControls(true);
 
-			// Do an initial idle on the controls
-			IdleAdvancedControls(true);
+		// Idle the capo control
+		IdleCapoControl();
 
-			// Idle the capo control
-			IdleCapoControl();
+		// Idle the show tab names control
+		IdleShowTabNamesControl();
 
-			// Idle the show tab names control
-			IdleShowTabNamesControl();
+		document.getElementById("staff-spacing").value = gStaffSpacing - STAFFSPACEOFFSET;
 
-			document.getElementById("staff-spacing").value = gStaffSpacing - STAFFSPACEOFFSET;
-
-			document.getElementById("capo").value = gCapo;
+		document.getElementById("capo").value = gCapo;
 
 
-		}, 200);
+	}, 200);
 
 
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 700 }).then(function(){
-						
-			// Clear advanced controls dialog flag
-			gInAdvancedControlsDialog = false;
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 700,  scrollWithPage: false }).then(function(){
+					
+		// Clear advanced controls dialog flag
+		gInAdvancedControlsDialog = false;
 
 		});
 
-	},100);
 
 }
 
@@ -11179,7 +11129,7 @@ function ConfigureToolSettings(e) {
 	  {html: '<p style="text-align:center;"><input id="configure_box" class="btn btn-urlcontrols" onclick="ConfigureBoxTab()" type="button" value="Configure Box and Concertina Tablature Injection Settings" title="Configure the Box and Concertina tablature injection settings"></p>'},	  
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 20, width: 680 } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 20, width: 680, scrollWithPage: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -11264,7 +11214,7 @@ function ConfigureToolSettings(e) {
 			       	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">For those instruments played solo, set the melody instrument program as desired and the chord instrument program to Dulcimer (15).</p>';
 			   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In this case, you may not want to include any chords in the ABC, as they will be played using the Dulcimer (15) instrument.</p>';
 
-			       	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 600 }).then(function(){
+			       	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 600, scrollWithPage: false }).then(function(){
 
 					   	// Focus back on the ABC after the dialog is dismissed
 						gTheABC.focus();
@@ -11522,7 +11472,7 @@ function DoStartup() {
 		// check if user had selected a file
 		if (fileElement.files.length === 0) {
 
-			DayPilot.Modal.alert("Please select an ABC file",{ theme: "modal_flat", top: 50 });
+			DayPilot.Modal.alert("Please select an ABC file",{ theme: "modal_flat", top: 50, scrollWithPage: false });
 
 			return;
 
