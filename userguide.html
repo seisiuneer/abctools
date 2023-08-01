@@ -37,6 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
+    
         
         <style>
         p {
@@ -157,12 +158,12 @@
                 <p class="toc"><a href="#abc_editor">ABC Editor</a></p>
                 <p class="toc"><a href="#viewing_the_notation_full_screen">Viewing the Notation Full Screen</a></p>
                 <p class="toc"><a href="#notation_tablature_display_controls">Notation/Tablature Display Controls</a></p>
-                <p class="toc"><a href="#basic_controls">Basic Controls</a></p>
                 <p class="toc"><a href="#playing_your_tunes">Playing Your Tunes</a></p>
+                <p class="toc"><a href="#basic_controls">Basic Controls</a></p>
+                <p class="toc"><a href="#advanced_controls">Advanced Controls</a></p>
                 <p class="toc"><a href="#selecting_the_instruments_for_playback">Selecting the Instruments for Playback</a></p>
                 <p class="toc"><a href="#settings_dialog">ABC Transcription Tools Settings</a></p>
                 <p class="toc"><a href="#general_midi_instrument_program_numbers">General MIDI Instrument Program Numbers</a></p>
-                <p class="toc"><a href="#advanced_controls">Advanced Controls</a></p>
                 <p class="toc"><a href="#pdf_tunebook_settings">PDF Tunebook Settings</a></p>
                 <p class="toc"><a href="#pdf_quality_setting">PDF Quality Setting</a></p>
                 <p class="toc"><a href="#adding_a_pdf_title_page">Adding a PDF Tunebook Title Page</a></p>
@@ -194,7 +195,7 @@
             <hr class="hidden-print" id="introduction">
             <h1 class="page_break_never">Introduction&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <div class="image_holder">
-                <img src="img/main_6.jpg"/>
+                <img src="img/main_7.jpg"/>
             </div>
             <p>ABC Transcription Tools is a free, web-based, open-source tool for converting music in ABC format to both standard notation and tablature for a wide variety of instruments.</p>
             <p>Play your tunes with high-quality, built-in sampled instruments.</p>
@@ -207,25 +208,36 @@
             <hr class="hidden-print" id="getting_started">
             <h1 class="page_break_always">Getting Started&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <div class="image_holder">
-                <img src="img/ug1c.jpg"/>
+                <img src="img/ug1d.jpg"/>
             </div>
             <p>Hover your mouse over any button or control in the tool to show a tooltip with a detailed explanation of what it does.</p>
             <p>Some buttons and controls implement alternative features if you Shift-click, Alt-click, or Shift+Alt-click on them.</p>
             <p>The tooltip will tell you exactly what the button or control does for all Shift/Alt combinations.</p>
             <p>The text on top shows currently loaded ABC file or Share URL name and the current number of tunes found in the ABC Editor.</p>
-            <p>New - Creates a simple example tune in ABC to get you started.</p>
-            <p>Open - Opens an .abc or .txt file from your computer and loads it into the ABC Editor.</p>
-            <p>Save - Saves the contents of the ABC editor to a file.</p>
-            <p>Export PDF - Exports the currently displayed score as a high quality PDF file.</p>
+            <p><strong>Add</strong> - Brings up a dialog where you can add a new tune, song template, or typical PDF tunebook headers to the ABC:</p>
+            <div class="image_holder">
+                <img src="img/add_example_template_1.jpg"/>
+            </div>
+            <p>Add a New Tune:</p>
+            <p>Adds "Cooley's" in ABC as an example of a typical tune template.</p>
+            <p>Add a New Song:</p>
+            <p>Adds an ABC template for a song with lyrics.</p>
+            <p>Add PDF Tunebook Annotations:</p>
+            <p>Adds a set of useful tool-specific annotations that are used when exporting a PDF tunebook.</p>
+            <p>These include:</p>
+            <p>Adding a title page with subtitle, page headers and footers, a linked Table of Contents and sorted Index, playback links for the tunes, as well as a QR code with specific hyperlink.</p>
+            <p><strong>Open</strong> - Opens an .abc or .txt file from your computer and loads it into the ABC Editor.</p>
+            <p><strong>Save</strong> - Saves the contents of the ABC editor to a file.</p>
+            <p><strong>Export PDF</strong> - Exports the currently displayed score as a high quality PDF file.</p>
             <p>The saved ABC or PDF file will be in your browser's Downloads directory.</p>
             <p>On iOS the downloaded files will be found in the "Downloads" directory in the iOS "Files" app.</p>
             <p></p>
-            <p>Player - Opens up the ABC player where you can play the current tune. Full details below in the <a href="#playing_your_tunes">Playing Your Tunes</a> section.</p>
-            <p>Copy All - Copies all the ABC text to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
+            <p><strong>Player</strong>  - Opens up the ABC player where you can play the current tune. Full details below in the <a href="#playing_your_tunes">Playing Your Tunes</a> section.</p>
+            <p><strong>Copy All</strong>  - Copies all the ABC text to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
             <p>Page number settings are found in the settings panel.</p>
-            <p>Show Controls / Hide Controls - Shows/Hides all the control buttons below.</p>
-            <p>Settings - Brings up the default playback instrument settings dialog.</p>
-            <p>▲/▼ - Click this to hide/show the header at the top so you can have more room to work on your music.</p>
+            <p><strong>Hide Controls / Show Controls</strong>  - Hides/Shows all the control buttons below the ABC editor area.</p>
+            <p><strong>Settings</strong>  - Brings up the default playback instrument and other tool-wide settings dialog.</p>
+            <p><strong>▲/▼</strong> - Click this to hide/show the header at the top so you can have more room to work on your music.</p>
             <hr class="hidden-print" id="abc_editor">
             <h1 class="page_break_always">ABC Editor&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <div class="image_holder">
@@ -247,6 +259,30 @@
             <p>The control hides or shows the ABC Editor and all controls so you can view your notation fullscreen.</p>
             <p>Click once to hide the ABC Editor and all controls.</p>
             <p>Click again to show the ABC Editor and all controls.</p>
+            <hr class="hidden-print" id="playing_your_tunes">
+            <h1 class="page_break_always">Playing Your Tunes&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
+            <p>To play a specific tune, click anywhere in the ABC for the tune and then click "Player".</p>
+            <p>The tool will automatically find the tune you've clicked on bring it up in the ABC player for playback.</p>
+            <p>The controls for the player are located below the displayed notation.</p>
+            <p>If the tune is very long, you may have to scroll down in the player to get to the player controls.</p>
+            <div class="image_holder">
+                <img src="img/playback.jpg"/>
+            </div>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/bLV8XsYTIkc " title="Playing tunes in the tool" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p></p>
+            <p>Using the playback controls at the bottom, you can enable looping, rewind to start, start/pause playback, click in the progress bar to seek, or change the tempo as a percentage. </p>
+            <p>Click "Close" to return to the ABC editor.</p>
+            <p></p>
+            <p>If you hold down the Shift key while clicking the Player button the tool will automatically find the tune you've clicked on and send it to Paul Rosen's abcjs Quick Editor for playback:</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/-JvOFaotgtY" title="Playing your Tunes (New and Improved)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p>If there is a text selection in the ABC area, whatever is selected will be sent.</p>
+            <p>You can use this to send more than one tune to the abcjs Quick Editor</p>
+            <p>The abcjs Quick Editor only plays the first tune in it's own ABC editor.</p>
+            <p>If you select more than one tune in the ABC editor, and click "Player", you will need to edit the ABC in the abcjs Quick Editor editor to bring the tune you are interested in playing to the top.</p>
+            <p>The abcjs Quick Editor can also export MIDI and audio files of tunes.</p>
+            <p>Once you are happy with the playback, copy the ABC from the "abcjs Quick Editor tool, then paste the edited ABC back into this tool for further editing.</p>
+            <p>If you single-clicked and played one tune, the entire tune will be selected when you come back to the tool from the abcjs Quick Editor.</p>
+            <p>This makes it simple to paste any changes you might have made and copied from the abcjs Quick Editor.</p>
             <hr class="hidden-print" id="notation_tablature_display_controls">
             <h1 class="page_break_always">Notation/Tablature Display Controls&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <div class="image_holder">
@@ -287,40 +323,72 @@
                 <img src="img/ug5b.jpg"/>
             </div>
             <p></p>
-            <p>Transpose Down - Transposes the selected tunes down one semitone. Shift-click transposes down one full step. Alt-click transposes down one octave.</p>
-            <p>Transpose Up - Transposes the selected tunes up one semitone.  Shift-click transposes up one full step. Alt-click transposes up one octave.</p>
+            <p><strong>Transpose Down</strong> - Transposes the selected tunes down one semitone. Shift-click transposes down one full step. Alt-click transposes down one octave.</p>
+            <p><strong>Transpose Up</strong> - Transposes the selected tunes up one semitone.  Shift-click transposes up one full step. Alt-click transposes up one octave.</p>
             <p>To transpose multiple tunes, just click anywhere in the first tune you want to transpose, and drag to select any part of additional tunes you want transposed.</p>
             <p>To transpose all the tunes at once, select them all before clicking the Tranpose buttons.</p>
-            <p>Sort ABC - Sorts all the tunes in the ABC area in alphabetical order by tune name.</p>
+            <p><strong>Sort ABC</strong> - Sorts all the tunes in the ABC area in alphabetical order by tune name.</p>
             <p>Tune names that start with "The" will have the "The" moved to the end of the tune name before the alphabetical sorting.</p>
             <p>Holding down the Shift key while clicking this button will also treat "A " and "An " the same way as "The " for sorting.</p>
-            <p>Show Advanced - Shows the Advanced Control dialog with several additional ABC filtering and display controls.</p>
-            <p>Show/Hide Sharing - Shows/Hides a new panel (described below) with options for sharing your tune set via URL or QR code.</p>
-            <p>Clear ABC - Clears the ABC Editor so you can start over.</p>
-            <hr class="hidden-print" id="playing_your_tunes">
-            <h1 class="page_break_always">Playing Your Tunes&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
-            <p>To play a specific tune, click anywhere in the ABC for the tune and then click "Player".</p>
-            <p>The tool will automatically find the tune you've clicked on bring it up in the ABC player for playback.</p>
-            <p>The controls for the player are located below the displayed notation.</p>
-            <p>If the tune is very long, you may have to scroll down in the player to get to the player controls.</p>
+            <p><strong>Show Advanced</strong> - Shows the <a href="#advanced_controls">Advanced Controls</a> dialog with several additional ABC filtering and display controls.</p>
+            <p><strong>Show Sharing</strong> - Shows the <a href="#sharing_controls">Sharing Controls</a> dialog with options for sharing your tunes via a share URL or QR code.</p>
+            <p><strong>Clear ABC</strong> - Clears the ABC Editor so you can start over.</p>
+            <hr class="hidden-print" id="advanced_controls">
+            <h1 class="page_break_always">Advanced Controls&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
+            <p>Clicking the "Show Advanced" button brings up the ABC Transcription Tools Advanced Controls dialog:</p>
             <div class="image_holder">
-                <img src="img/playback.jpg"/>
+                <img src="img/ug8e.jpg"/>
             </div>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/bLV8XsYTIkc " title="Playing tunes in the tool" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p></p>
-            <p>Using the playback controls at the bottom, you can enable looping, rewind to start, start/pause playback, click in the progress bar to seek, or change the tempo as a percentage. </p>
-            <p>Click "Close" to return to the ABC editor.</p>
-            <p></p>
-            <p>If you hold down the Shift key while clicking the Player button the tool will automatically find the tune you've clicked on and send it to Paul Rosen's abcjs Quick Editor for playback:</p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/-JvOFaotgtY" title="Playing your Tunes (New and Improved)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p>If there is a text selection in the ABC area, whatever is selected will be sent.</p>
-            <p>You can use this to send more than one tune to the abcjs Quick Editor</p>
-            <p>The abcjs Quick Editor only plays the first tune in it's own ABC editor.</p>
-            <p>If you select more than one tune in the ABC editor, and click "Player", you will need to edit the ABC in the abcjs Quick Editor editor to bring the tune you are interested in playing to the top.</p>
-            <p>The abcjs Quick Editor can also export MIDI and audio files of tunes.</p>
-            <p>Once you are happy with the playback, copy the ABC from the "abcjs Quick Editor tool, then paste the edited ABC back into this tool for further editing.</p>
-            <p>If you single-clicked and played one tune, the entire tune will be selected when you come back to the tool from the abcjs Quick Editor.</p>
-            <p>This makes it simple to paste any changes you might have made and copied from the abcjs Quick Editor.</p>
+            <p>Click the lightbulb icon to bring up this section of the user guide in a new browser tab.</p>
+            <p class="page_break_always"><strong>Notation Display Settings:</strong></p>
+            <p><strong>Set Staff Spacing</strong> - Allows you to set a wider or narrower gap between the staffs.</p>
+            <p>A value of 0 corresponds to an ABC %%staffsep of 40</p>
+            <p><strong>Show/Hide ABC Features:</strong></p>
+            <p><strong>Hide/Show Annotations</strong>  - Hides/Shows most ABC annotations like Composer, Discography, History, Tempo, etc. in the displayed notation.</p>
+            <p><strong>Hide/Show Text</strong>  - Hides/Shows any %%center or %%text based text annotations in the ABC in the displayed notation.</p>
+            <p><strong>Hide/Show Chords</strong>  + Injected Tab - Hides/Shows any chords present in the ABC in the displayed notation.</p>
+            <p>B/C Box, C#/D Box, and Anglo Concertina tablature are created using the ABC chord system, so also will be hidden.</p>
+            <p>The ABC filtering buttons are enabled if Annotations, Text, or Chords are detected in the ABC.</p>
+            <p><strong>Strip ABC Features:</strong></p>
+            <p>These commands are destructive in that they remove text from the current ABC.</p>
+            <p>It may be a good idea to save the current ABC or do a "Copy All" before using one of these commands if you want to quickly undo the operation.</p>
+            <p><strong>Strip Annotations</strong> - Removes most ABC annotations like Composer, Discography, History, Tempo, etc. from the ABC.</p>
+            <p><strong>Strip Text</strong> - Removes any %%center or %%text based text annotations from the ABC.</p>
+            <p><strong>Strip Chords + Injected Tab</strong> - Removes any chords present in the ABC.</p>
+            <p>B/C Box, C#/D Box, and Anglo Concertina tablature are created using the ABC chord system, so also will be stripped.</p>
+            <p>When working with these tablatures, this is a quick way to clear out the current tablature before injecting new tablature.</p>
+            <p>The ABC stripping buttons are enabled if Annotations, Text, or Chords are detected in the ABC.</p>
+            <p><strong>Stringed Instrument Tablature Settings (only enabled if Mandolin, GDAD, CGDA, or Guitar tab is being displayed):</strong></p>
+            <p><strong>Hide/Show Tab Names</strong> - Hides/Shows the instrument names and capo settings on the tablature.</p>
+            <p>Only available when a stringed instrument tab is the current display mode.</p>
+            <p>When the tab instrument names are hidden, the spacing between the staves is somewhat reduced.</p>
+            <p>Hiding the tab names may, or may not, depending on the height of the staves, be useful for getting more staves on a single PDF page.</p>
+            <p>Capo Settings: (only enabled if Mandolin, GDAD, CGDA, or Guitar tab is being displayed).</p>
+            <p><strong>Capo</strong> - Allows you to set a capo setting from 0 to 12 frets for the Mandolin, GDAD, CGDA, or Guitar tab.</p>
+            <p>Only available when a stringed instrument tab is the current display mode.</p>
+            <p><strong>ABC Injection Features:</strong></p>
+            <p>These commands are destructive in that they inject additional text into the current ABC.</p>
+            <p>It may be a good idea to save the current ABC or do a "Copy All" before using one of these commands if you want to quickly undo the operation.</p>
+            <p>The commands in light green inject only PDF comment-based annotations or %%MIDI directives and do not affect the display of the notation:</p>
+            <p><strong>Inject All PDF Annotations</strong> - Injects all available tool-specific PDF tunebook annotations for title page, table of contents, index generation, etc. at the top of the ABC.</p>
+            <p><strong>Inject PDF Tunebook Annotation Template</strong> - Injects a useful template of common PDF tunebook annotations at the top of the ABC.</p>
+            <p><strong>Inject MIDI Melody</strong> - Injects a %%MIDI program directive into every tune with a specific MIDI instrument program number for the melody.</p>
+            <p>You will be prompted for a MIDI instrument program number to inject:</p>
+            <div class="image_holder">
+                <img src="img/melody_program_3.jpg"/>
+            </div>
+            <p><strong>Inject MIDI Bass/Chords</strong> - Inject a %%MIDI chordprog directive into every tune with a specific MIDI instrument program number for the bass/chords.</p>
+            <p>You will be prompted for a MIDI instrument program number to inject:</p>
+            <div class="image_holder">
+                <img src="img/chords_program_2.jpg"/>
+            </div>
+            <p>For both the melody and chord program inject dialogs, if you enter a negative number, the same value will be used to inject both a melody and chords instrument program number into every tune.</p>
+            <p>The commands in light red inject additional ABC lyrics-based or ABC chord-based tablature into the ABC:</p>
+            <p><strong>Inject Note Name Lyrics</strong> - Injects note names as lyrics in the ABC.</p>
+            <p><strong>Inject B/C Box Tab</strong> - Injects B/C Box tablature into the ABC (uses ABC chord syntax).</p>
+            <p><strong>Inject C#/D Box Tab</strong> - Injects C#/D Box tablature into the ABC (uses ABC chord syntax).</p>
+            <p><strong>Inject Anglo Concertina Tab</strong> - Injects Anglo Concertina tablature into the ABC (uses ABC chord syntax).</p>
+            <p><strong>Configure Box and Concertina Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for the box and concertina tab injection.</p>
             <hr class="hidden-print" id="selecting_the_instruments_for_playback">
             <h1 class="page_break_always">Selecting the Instruments for Playback&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <p>You may choose which instrument sounds are used for the melody and bass/chords when playing tunes.</p>
@@ -449,62 +517,6 @@
             <div class="image_holder">
                 <img src="img/gm_extended_4.jpg"/>
             </div>
-            <hr class="hidden-print" id="advanced_controls">
-            <h1 class="page_break_always">Advanced Controls&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
-            <p>Clicking the "Show Advanced" button brings up the ABC Transcription Tools Advanced Controls dialog:</p>
-            <div class="image_holder">
-                <img src="img/ug8d.jpg"/>
-            </div>
-            <p>Click the lightbulb icon to bring up this section of the user guide in a new browser tab.</p>
-            <p class="page_break_always"><strong>Notation Display Settings:</strong></p>
-            <p>Set Staff Spacing - Allows you to set a wider or narrower gap between the staffs.</p>
-            <p>A value of 0 corresponds to an ABC %%staffsep of 40</p>
-            <p><strong>Show/Hide ABC Features:</strong></p>
-            <p>Hide/Show Annotations - Hides/Shows most ABC annotations like Composer, Discography, History, Tempo, etc. in the displayed notation.</p>
-            <p>Hide/Show Text - Hides/Shows any %%center or %%text based text annotations in the ABC in the displayed notation.</p>
-            <p>Hide/Show Chords + Injected Tab - Hides/Shows any chords present in the ABC in the displayed notation.</p> 
-            <p>B/C Box, C#/D Box, and Anglo Concertina tablature are created using the ABC chord system, so also will be hidden.</p>          
-            <p>The ABC filtering buttons are enabled if Annotations, Text, or Chords are detected in the ABC.</p>
-            <p><strong>Strip ABC Features:</strong></p>
-            <p>These commands are destructive in that they remove text from the current ABC.</p>
-            <p>It may be a good idea to save the current ABC or do a "Copy All" before using one of these commands if you want to quickly undo the operation.</p>
-            <p>Strip Annotations - Removes most ABC annotations like Composer, Discography, History, Tempo, etc. from the ABC.</p>
-            <p>Strip Text - Removes any %%center or %%text based text annotations from the ABC.</p>
-            <p>Strip Chords + Injected Tab - Removes any chords present in the ABC.</p>           
-            <p>B/C Box, C#/D Box, and Anglo Concertina tablature are created using the ABC chord system, so also will be stripped.</p>   
-            <p>When working with these tablatures, this is a quick way to clear out the current tablature before injecting new tablature.</p>       
-            <p>The ABC stripping buttons are enabled if Annotations, Text, or Chords are detected in the ABC.</p>
-            <p><strong>Stringed Instrument Tablature Settings (only enabled if Mandolin, GDAD, CGDA, or Guitar tab is being displayed):</strong></p>
-            <p>Hide/Show Tab Names: Hides/Shows the instrument names and capo settings on the tablature.</p>
-            <p>Only available when a stringed instrument tab is the current display mode.</p>
-            <p>When the tab instrument names are hidden, the spacing between the staves is somewhat reduced.</p>
-            <p>Hiding the tab names may, or may not, depending on the height of the staves, be useful for getting more staves on a single PDF page.</p>
-            <p>Capo Settings: (only enabled if Mandolin, GDAD, CGDA, or Guitar tab is being displayed).</p>
-            <p>Capo - Allows you to set a capo setting from 0 to 12 frets for the Mandolin, GDAD, CGDA, or Guitar tab.</p>
-            <p>Only available when a stringed instrument tab is the current display mode.</p>
-            <p><strong>ABC Injection Features:</strong></p>
-            <p>These commands are destructive in that they inject additional text into the current ABC.</p>
-            <p>It may be a good idea to save the current ABC or do a "Copy All" before using one of these commands if you want to quickly undo the operation.</p>
-            <p>The commands in light green inject only PDF comment-based annotations or %%MIDI directives and do not affect the display of the notation:</p>
-            <p>Inject All PDF Annotations: Injects all available tool-specific PDF annotations for title page, table of contents, index generation, etc. at the top of the ABC.</p>
-            <p>Inject PDF Annotation Template: Injects a useful template of common PDF annotations at the top of the ABC.</p>
-            <p>Inject MIDI Melody: Injects a %%MIDI program directive into every tune with a specific MIDI instrument program number for the melody.</p>
-            <p>You will be prompted for a MIDI instrument program number to inject:</p>
-            <div class="image_holder">
-                <img src="img/melody_program_3.jpg"/>
-            </div>
-            <p>Inject MIDI Bass/Chords: Inject a %%MIDI chordprog directive into every tune with a specific MIDI instrument program number for the bass/chords.</p>
-            <p>You will be prompted for a MIDI instrument program number to inject:</p>
-            <div class="image_holder">
-                <img src="img/chords_program_2.jpg"/>
-            </div>
-            <p>For both the melody and chord program inject dialogs, if you enter a negative number, the same value will be used to inject both a melody and chords instrument program number into every tune.</p>
-            <p>The commands in light red inject additional ABC lyrics-based or ABC chord-based tablature into the ABC:</p>
-            <p>Inject Note Name Lyrics: Injects note names as lyrics in the ABC.</p>
-            <p>Inject B/C Box Tab: Injects B/C Box tablature into the ABC (uses ABC chord syntax).</p>
-            <p>Inject C#/D Box Tab: Injects C#/D Box tablature into the ABC (uses ABC chord syntax).</p>
-            <p>Inject Anglo Concertina Tab: Injects Anglo Concertina tablature into the ABC (uses ABC chord syntax).</p>
-            <p>Configure Box and Concertina Tablature Injection Settings: Brings up a dialog where you can configure all parameters for the box and concertina tab injection.</p>
             <hr class="hidden-print" id="pdf_tunebook_settings">
             <h1 class="page_break_always">PDF Tunebook Settings&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/jtiVzXB8xhQ" title="PDF Generation Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
@@ -770,7 +782,7 @@
             <p></p>
             <p>Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38</p>
             <p></p>
-            <p style="page-break-before: always;">Example: To have a specific tune played with an Accordion sound on the melody and a Piano sound on the chord/bass</p>
+            <p>Example: To have a specific tune played with an Accordion sound on the melody and a Piano sound on the chord/bass</p>
             <p></p>
             <p>X:1<br/>
                 T:The Tarbolton<br/>
@@ -857,7 +869,7 @@
                 %pagefooter This is the Page Footer<br/>
                 %add_all_playback_links 21 0<br/>
                 %qrcode http://michaeleskin.com<br/>
-                %caption_for_qrcode Click or Scan to Visit my Home Page</p>
+            %caption_for_qrcode Click or Scan to Visit my Home Page</p>
             <p></p>
             <p><strong>Alt-click the "PDF Tunes/Page:" label in the controls to inject this annotation template at the top of your ABC.</strong></p>
             <p></p>
@@ -877,7 +889,7 @@
             <h1 class="page_break_always">Sharing Tunes with Share URLs and QR Codes&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/I8KcG4swmUQ" title="Sharing Tunes with Share URLs and QR Codes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>Clicking the "Show Sharing" button brings up the ABC Transcription Tools Sharing Controls dialog:</p>
-           <div class="image_holder">
+            <div class="image_holder">
                 <img src="img/ug9c.jpg"/>
             </div>
             <p>Share URLs and QR Codes are a quick and easy way to share your ABC tunes with friends or to post tunes on social media sites.</p>
@@ -1084,15 +1096,15 @@
             <hr class="hidden-print" id="injecting_box_or_anglo_concertina_tablature">
             <h1 class="page_break_always">Injecting B/C Box, C#/D Box, or Anglo Concertina Tablature Into the ABC Tunes&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <p>You may inject Box or Anglo Concertina tablature into the ABC using the following buttons in the "Advanced Controls" dialog:</p>
-            <p>"Inject B/C Box Tab": Injects B/C Box tablature into the ABC.</p>
-            <p>"Inject C#/D Box Tab": Injects C#/D Box tablature into the ABC.</p>
-            <p>"Inject Anglo Concertina Tab": Injects Anglo Concertina tablature into the ABC.</p>
-            <p>To configure the tablature fonts and other settings, first click the tool's Settings button, then click the "Configure Box and Concertina Tablature Injection Settings" button at the bottom of the dialog to bring up the tablature injection settings dialog:</p>
+            <p><strong>Inject B/C Box Tab</strong> - Injects B/C Box tablature into the ABC.</p>
+            <p><strong>Inject C#/D Box Tab</strong> - Injects C#/D Box tablature into the ABC.</p>
+            <p><strong>Inject Anglo Concertina Tab</strong> - Injects Anglo Concertina tablature into the ABC.</p>
+            <p>To configure the tablature fonts and other settings, first click the tool's Settings button, then click the "Configure Box and Concertina Tablature Injection Settings" button at the bottom of the dialog to bring up the tablature injections settings dialog:</p>
             <div class="image_holder">
                 <img src="img/box_tab_injection_settings_4.jpg"/>
             </div>
-            <p>You can also Shift-click the Settings button to go directly to the tablature injection settings dialog.</p>
-            <p><strong>Common Box and Anglo Concertina tablature settings:</strong>
+            <p>You can also Shift-click the Settings button to go directly to the tablature settings dialog.</p>
+            <p><strong>Common Box and Anglo Concertina tablature settings:</strong></p>
             <p>Font family: Font used for all text injected into the tablature.</p>
             <p>Title font size: Font size used for the tune title.</p>
             <p>Subtitle font size: Font size used for any tune subtitles that might be present.</p>
@@ -1121,7 +1133,7 @@
             <hr class="hidden-print" id="reading_the_box_tablature">
             <h1 class="page_break_always">Reading the Box Tablature&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <p><strong>B/C Box</strong> - Shows standard notation and tablature for a standard 21-button B/C tuned box.</p>
-            <p>The button numbers and pitches used for the tablature match those on this chart:</p> 
+            <p>The button numbers and pitches used for the tablature match those on this chart:</p>
             <div class="image_holder">
                 <img src="img/BC21.jpg">
             </div>
@@ -1130,7 +1142,7 @@
             <p>Push is indicated with a "↓" arrow.</p>
             <p>Draw is indicated with an "↑" arrow.</p>
             <p><strong>C#/D Box</strong> - Shows standard notation and tablature for a standard 21-button C#/D tuned box.</p>
-            <p>The button numbers and pitches used for the tablature match those on this chart:</p> 
+            <p>The button numbers and pitches used for the tablature match those on this chart:</p>
             <div class="image_holder">
                 <img src="img/CD21.jpg" style="margin-top:0px;" alt="C#/D Box Button Map" style="margin-top: 20px" title="C#/D Box Button Map">
             </div>
