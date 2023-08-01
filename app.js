@@ -7328,13 +7328,38 @@ function ToggleChords(bDoStrip) {
 }
 
 //
-// Create a template for a new ABC file
+// Add a new ABC tune template, song template, or PDF tunebook annotation template to the current ABC
 //
-function NewABC(){
+
+function AddABC(){
+
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">Add a New Example ABC Template&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#getting_started" target="_blank" style="text-decoration:none;">💡</a></span></p>';
+	modal_msg += '<div id="add-new-tune-dialog">';
+	modal_msg += '<p style="text-align:center;margin-top:36x;">';
+	modal_msg  += '<input id="addnewtune" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendTuneTemplate();" type="button" value="Add a New Tune" title="Adds a new tune template to the end of the ABC.">';
+	modal_msg  += '<input id="addnewsong" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSongTemplate();" type="button" value="Add a New Song" title="Adds a new song template to the end of the ABC.">';
+	modal_msg  += '<input id="addtunebookheaders" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders(false);" type="button" value="Add PDF Tunebook Annotations" title="Adds common useful PDF tunebook annotations to the top of the ABC">';
+	modal_msg += '</p>';
+
+	modal_msg += '</div>';
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 700,  scrollWithPage: false }).then(function(){
+			
+	});
+
+}
+
+function AppendTuneTemplate(){	
 
 	// Stuff in some default ABC with additional options explained
-	theValue  = "% Each tune in the tunebook must start with an X: tag:\n";
-	theValue += "%\n";
+	var theValue = ""
+
+	var nTunes = CountTunes();
+
+	if (nTunes > 0){
+		theValue += "\n";
+	}
+	
 	theValue += "X: 1\n";
 	theValue += "T: Cooley's\n";
 	theValue += "R: Reel\n";
@@ -7355,78 +7380,186 @@ function NewABC(){
 	theValue += '"Em"EBBA B2 EB|"Em"B2 AB defg|"D"afec dBAF|1 "D"DEFD "Em"E3D:|2 "D"DEFD "Em"E2gf||\n';
 	theValue += '|:"Em"eB (3BBB eBgf|"Em"eBB2 gedB|"D"A/A/A FA DAFA|"D"A/A/A FA defg|\n';
 	theValue += '"Em"eB (3BBB eBgf|"Em"eBBB defg|"D"afec dBAF|1 "D"DEFD "Em"E2gf:|2 "D"DEFD "Em"E4|]\n';
-	theValue += "\n";
-	theValue += "% To choose the instrument used when playing a tune, try changing the MIDI programs above to:\n";
-	theValue += "%\n"
-	theValue += "% Melody:\n";
-	theValue += "% Piano: 0, Accordion: 21, Fingered Bass: 33, Whistle: 78, Fiddle: 110, Melodica: 134, Cajun Accordion: 135\n";
-	theValue += "%\n";
-	theValue += "% Chords:\n";
-	theValue += "% Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38\n";
-	theValue += "%\n";
-	theValue += "% Click the MIDI link at the top of the page to see a full list of available instruments.\n";
-	theValue += "%\n";
-	theValue += "% If program or chordprog is not specified and you haven't set default MIDI instruments in the settings, both default to Piano.\n";
-	theValue += "\n";
-	theValue += "% PDF Tunebook Annotations:\n";
-	theValue += "%\n";
-	theValue += "% Try these custom PDF tunebook annotations by removing the extra % and space at the beginning of the line:\n";
-	theValue += "%\n";
-	theValue += "% Before the tunes, add a title page with a title:\n";
-	theValue += "%\n";
-	theValue += "% %addtitle My Tunebook Title Page Title\n";
-	theValue += "%\n";
-	theValue += "% Optional subtitle for the title page:\n";
-	theValue += "%\n";
-	theValue += "% %addsubtitle My Tunebook Title Page Subtitle\n";
-	theValue += "%\n";
-	theValue += "% Before the tunes, add a table of contents with a title:\n";
-	theValue += "%\n";
-	theValue += "% %addtoc My Tunebook Table of Contents\n";
-	theValue += "%\n";
-	theValue += "% Add a << link on each page back to the Table of Contents:\n";
-	theValue += "%\n";
-	theValue += "% %addlinkbacktotoc\n";
-	theValue += "%\n";	
-	theValue += "% After the tunes, add a sorted tunebook index with a title:\n";
-	theValue += "%\n";
-	theValue += "% %addsortedindex My Tunebook Index Sorted by Tune Name\n";
-	theValue += "%\n";
-	theValue += "% Add a << link on each page back to the Index:\n";
-	theValue += "%\n";
-	theValue += "% %addlinkbacktoindex\n";
-	theValue += "%\n";	
-	theValue += "% Add a PDF page header or footer:\n";
-	theValue += "%\n";
-	theValue += "% %pageheader My Tunebook Page Header\n";
-	theValue += "% %pagefooter My Tunebook Page Footer\n";
-	theValue += "%\n";
-	theValue += "% Clicking on tune titles in the PDF will launch playback in the tool using specific MIDI instrument program number for the melody and bass/chord:\n";
-	theValue += "%\n";
-	theValue += "% %add_all_playback_links 0 0\n";
-	theValue += "%\n";	
-	theValue += "% After the tunes, add a sharing QR code on a new page in the PDF:\n";
-	theValue += "%\n";
-	theValue += "% %qrcode\n";
-	theValue += "%\n";
 
-	gTheABC.value = theValue;
+	// Do common tune addition processing
+	ProcessAddTune(theValue);
 
-	// Refocus back on the ABC
-	FocusABC();
+}
+
+//
+// Add a new song template to the ABC
+//
+function AppendSongTemplate(){	
+
+	// Stuff in some default ABC with additional options explained
+	var theValue = ""
+
+	var nTunes = CountTunes();
+	
+	if (nTunes > 0){
+		theValue += "\n";
+	}
+
+	theValue += "% A simple, self-documenting song in ABC, by Linda Eskin\n";
+	theValue += "%\n";
+	theValue += "% ABC is a plain-text format for conveying musical information.\n";
+	theValue += "% Use this as an example to learn how ABC is written.\n";
+	theValue += "% You can use it as a template to create your own ABC song.\n";
+	theValue += "% Examples are in UPPER-CASE so you can see and replace them easily.\n";
+	theValue += "%\n";
+	theValue += "% Comments (like this one) start with a single percent symbol.\n";
+	theValue += "%\n";
+	theValue += "X: 0 \n";
+	theValue += "% Each tune must start with an X: tag, and a number.\n";
+	theValue += "%\n";
+	theValue += "% *** THIS IS THE HEADER - INFO ABOUT THE TUNE/SONG ***\n";
+	theValue += "%\n";
+	theValue += "T: TITLE OF THE SONG\n"; 
+	theValue += "T: ALTERNATE TITLE\n";
+	theValue += "%\n"; 
+	theValue += "C: COMPOSER\n"; 
+	theValue += '% Songwriter, source, "Traditional", "Child Ballad," etc.\n';
+	theValue += "%\n";
+	theValue += "O: ORIGIN\n";
+	theValue += "% Where is the tune from? Country, culture, ...\n";
+	theValue += "%\n";
+	theValue += "N: THESE NOTES APPEAR NEAR THE BOTTOM OF THE PAGE.\n";
+	theValue += 'N: A SECOND LINE OF NOTES WILL NOT SAY "Notes: " AGAIN AT THE START.\n';
+	theValue += '% First line adds "Notes: " at the start. The second does not.\n';
+	theValue += "%\n";
+	theValue += "Z: TRANSCRIBER, COPYRIGHT, PERMISSIONS.\n";
+	theValue += "Z: This self-documenting ABC example song was created by Linda Eskin.\n";
+	theValue += '% First line adds "Transcriber: " at the start. The second does not.\n';
+	theValue += "% Transcriber info appears at the bottom, right below the Notes.\n";
+	theValue += "%\n";
+	theValue += "% Important: Notes and Transcriber info do NOT word wrap.\n";
+	theValue += "% Add more lines if you have more than will fit across the page.\n";
+	theValue += "%\n";
+	theValue += "M: 4/4\n";
+	theValue += "% Meter, such as 3/4, 4/4, 9/8. Appears in the key signature.\n";
+	theValue += "%\n";
+	theValue += "L: 1/4\n";
+	theValue += "% Length of base note unit. Here a 1/4 note = 1.\n";
+	theValue += "% Use multiplier numbers to get longer notes: C2, a3, F4\n";
+	theValue += "%\n";
+	theValue += "Q: 1/4=120\n";
+	theValue += "% Tempo. e.g. 120 beats per minute (BPM). (Mnemonic: Q=Quickness.)\n";
+	theValue += "%\n";
+	theValue += "R: RHYTHM\n";
+	theValue += "% Reel, Waltz, Jig, Hornpipe, etc.\n";
+	theValue += "%\n";
+	theValue += "%%text GENERAL PURPOSE TEXT\n";
+	theValue += "% There are many more options that use the double percentage symbols.\n";
+	theValue += "% Note that lines starting with %% are *not* comments.\n";
+	theValue += "%\n";
+	theValue += "%%staffsep 80\n";
+	theValue += "% Sets the spacing between the staffs. Bigger numbers = more space.\n";
+	theValue += "%\n";
+	theValue += "K: C\n";
+	theValue += "% Key signature - G, D, Edor, Amix, etc.\n";
+	theValue += "% The K (key) tag should be the last thing in the header.\n";
+	theValue += "%\n";
+	theValue += "% *** THE TUNE ITSELF STARTS HERE ***\n";
+	theValue += "%\n";
+	theValue += "P: PART GOES HERE\n";
+	theValue += "% Intro, Verse, Chorus, Refrain, etc.\n";
+	theValue += "%\n";
+	theValue += "% This is the actual music and words.\n";
+	theValue += "% ABC apps *play* the music you write. Don't just make stuff up!\n";
+	theValue += "% Follow the ABC standard so your tune and chords play correctly:\n";
+	theValue += "% http://abcnotation.com/wiki/abc:standard:v2.1\n";
+	theValue += "%\n";
+	theValue += '"C"C D2 E|"FM7"F G3|"Am"A B2 c|"E"d e3|\n';
+	theValue += "w: The words to the act-u-al tune go here\n";
+	theValue += "w: You can put more ver-ses here is you like\n";
+	theValue += "%\n";
+	theValue += '"C"C D2 E|"FM7"F G3|"Am"A B2 c|"E"d e3|]\n';
+	theValue += "w: This tune is a scale. See how the notes work!\n";
+	theValue += "w: This line is for the se-cond verse. Ta-da!\n";
+	theValue += "%\n";
+	theValue += "% Chord names, in quotes, appear above the black-dots notation.\n";
+	theValue += "% Note: In ABC specify __M7 if you want a major seventh chord.\n";
+	theValue += "%\n";
+	theValue += "% The other letters are the notes. Lower-case for higher octave.\n";
+	theValue += '% The base unit note length ("L", above) is assumed to equal 1.\n';
+	theValue += "% For longer notes use a multiplier: G3, e2, C4 etc.\n";
+	theValue += "%\n";
+	theValue += '% w (lower-case "w") = words, or inline lyrics - the lyrics that appear right in the sheet music, below the black-dots notation.\n';
+	theValue += "%\n";
+	theValue += "% *** YOU CAN PUT MORE LYRICS AFTER THE TUNE, TOO. ***\n";
+	theValue += "%\n";
+	theValue += "% W = Words. More lyrics, if you want them.\n";
+	theValue += '% Note upper-case "W:" used below:\n';
+	theValue += "%\n";
+	theValue += "W: Write your extra verses here, verses here, verses here.\n";
+	theValue += "W: Write your extra verses here, or the whole song if you like.\n";
+	theValue += "W:\n";
+	theValue += '% You can leave a "W" line blank, to leave some space.\n';
+	theValue += "W: --- This is where the chorus goes, chorus goes, chorus goes\n";
+	theValue += "W: --- Indent it with dashes if you like, but spaces won't work.\n";
+	theValue += "W:\n";
+	theValue += "W: Here we have another verse, another verse, another verse.\n";
+	theValue += "W: Now we've reached the end - this is the last verse of this song.\n";
+	theValue += "%\n";
+	theValue += "% That should get you started. Go play!\n";
+
+	// Do common tune addition processing
+	ProcessAddTune(theValue);
+
+}
+
+// 
+// Common code after template add
+//
+function ProcessAddTune(theValue){
+
+
+	// Force scroll into view
+	var theOriginalLength = gTheABC.value.length; 
+
+	// Add the tune to the ABC
+	gTheABC.value = gTheABC.value+theValue;
 
 	// Reset the displayed name base
-	gDisplayedName = "No ABC file selected";
+	if (gDisplayedName != "No ABC file selected"){
 
-	gABCFromFile = false;
-	
+		if (gDisplayedName.indexOf("+ added tunes") == -1){
+
+			gDisplayedName = gDisplayedName + " + added tunes";
+
+		}
+	}
+
 	RenderAsync(true,null,function(){
 
 		UpdateNotationTopPosition();
 
-	});
+		// No autoscroll on mobile
+		if (gIsIOS || gIsAndroid){
+			return;
+		}
 
+		var nTunes = CountTunes();
+
+		var theTune = getTuneByIndex(nTunes-1);
+
+		var tuneOffset = theOriginalLength+(theTune.length / 2);
+
+		if (!gIsMaximized){
+
+			// Scroll the tune ABC into view
+		    gTheABC.selectionEnd = gTheABC.selectionStart = tuneOffset;
+	    	gTheABC.blur();
+	    	gTheABC.focus();
+
+	    }
+
+		// Scroll the tune into view
+		MakeTuneVisible(true);
+		
+	});
 }
+
 
 //
 // Click handler for render divs
@@ -9506,7 +9639,7 @@ function InjectPDFHeaders(bDoAll){
 		output += "%qrcode\n";
 		output += "%qrcode http://michaeleskin.com\n";
 		output += "%caption_for_qrcode Caption for the QR code\n";
-		output += "%pdfquality .75\n";
+		output += "%pdfquality .7\n";
 		output += "%\n";
 		output += "% These directives can be added to each tune:\n";
 		output += "%hyperlink http://michaeleskin.com\n";
@@ -9540,7 +9673,7 @@ function InjectPDFHeaders(bDoAll){
 
 		var output = "";
 		output += "%\n";
-		output += "% Here is a starting template of annotations for a PDF tunebook:\n";
+		output += "% Here is a useful template of annotations for a PDF tunebook:\n";
 		output += "%\n";
 		output += "%addtitle Tunebook Title\n";
         output += "%addsubtitle Tunebook Subtitle\n";
@@ -9548,7 +9681,7 @@ function InjectPDFHeaders(bDoAll){
         output += "%addlinkbacktotoc\n";
         output += "%addsortedindex Index\n";
         output += "%addlinkbacktoindex\n";
-        output += "%urlpageheader http://michaeleskin.com This is the Page Header with Hyperlink\n";
+        output += "%pageheader This is the Page Header\n";
         output += "%pagefooter This is the Page Footer\n";
         output += "%add_all_playback_links 0 0\n";
         output += "%qrcode http://michaeleskin.com\n";
@@ -10502,7 +10635,7 @@ function LocalPlayABC(theABC){
 	   	modal_msg += '<div id="playback-audio"></div>';
 	   	modal_msg += '</div>';
 
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width:850, okText:"Close", scrollWithPage: false });
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width:850, okText:"Close", scrollWithPage: true });
 
 		var theOKButtons = document.getElementsByClassName("modal_flat_ok");
 
@@ -11027,8 +11160,8 @@ function AdvancedControlsDialog(){
 
 	modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">ABC Injection Features</p>'
 	modal_msg  += '<p style="text-align:center;">'
-	modal_msg  += '<input id="injectallheaders" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders(true)" type="button" value="Inject All PDF Annotations" title="Injects all possible PDF annotations at the top of the ABC">';	
-	modal_msg  += '<input id="injectheadertemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders(false)" type="button" value="Inject PDF Annotation Template" title="Injects a useful template of PDF annotations at the top of the ABC">';
+	modal_msg  += '<input id="injectallheaders" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders(true)" type="button" value="Inject All PDF Annotations" title="Injects all available tool-specific PDF tunebook annotations for title page, table of contents, index generation, etc. at the top of the ABC">';	
+	modal_msg  += '<input id="injectheadertemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders(false)" type="button" value="Inject PDF Tunebook Annotations Template" title="Injects a template of common useful PDF tunebook annotations at the top of the ABC">';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
 	modal_msg  += '<input id="injectmelody" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMIDIInstrument(false);" type="button" value="Inject MIDI Melody" title="Injects %%MIDI program melody annotation into all tunes in the ABC">';	
 	modal_msg  += '<input id="injectchords" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMIDIInstrument(true);" type="button" value="Inject MIDI Bass/Chord" title="Injects %%MIDI chordprog bass/chord annotation into all tunes in the ABC">';
