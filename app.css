@@ -250,6 +250,13 @@ margin-top:24px;
 margin-bottom:24px;
 }
 
+#add-new-tune-dialog{
+display:block;
+margin-top:24px;
+margin-bottom:24px;
+}
+
+
 #sharing-controls-dialog{
 display:block;
 margin-top:24px;
@@ -481,6 +488,17 @@ padding:12px;
 height:42px;
 padding:12px;
 margin-right:24px;
+}
+
+#addnewtune,#addnewsong{
+height:42px;
+padding:12px;
+margin-right:24px;
+}
+
+#addtunebookheaders{
+height:42px;
+padding:12px;
 }
 
 #shareurlcaption{
