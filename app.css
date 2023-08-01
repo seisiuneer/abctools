@@ -490,10 +490,15 @@ padding:12px;
 margin-right:24px;
 }
 
-#addnewtune,#addnewsong{
+#addnewreel,#addnewsong{
 height:42px;
 padding:12px;
-margin-right:24px;
+margin-right:32px;
+}
+
+#addnewjig,#addsongtemplate{
+height:42px;
+padding:12px;
 }
 
 #addtunebookheaders{
