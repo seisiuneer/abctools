@@ -7333,11 +7333,17 @@ function ToggleChords(bDoStrip) {
 
 function AddABC(){
 
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">Add a New Example ABC Template&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#getting_started" target="_blank" style="text-decoration:none;">💡</a></span></p>';
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">Add New Example ABC Templates&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#getting_started" target="_blank" style="text-decoration:none;">💡</a></span></p>';
 	modal_msg += '<div id="add-new-tune-dialog">';
-	modal_msg += '<p style="text-align:center;margin-top:36x;">';
-	modal_msg  += '<input id="addnewtune" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendTuneTemplate();" type="button" value="Add a New Tune" title="Adds a new tune template to the end of the ABC.">';
-	modal_msg  += '<input id="addnewsong" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSongTemplate();" type="button" value="Add a New Song" title="Adds a new song template to the end of the ABC.">';
+	modal_msg += '<p style="text-align:center;margin-top:36px;">';
+	modal_msg  += '<input id="addnewreel" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleReel();" type="button" value="Add an Example Reel" title="Adds an example reel (Cooley\'s) to the end of the ABC">';
+	modal_msg  += '<input id="addnewjig" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleJig();" type="button" value="Add an Example Jig" title="Adds an example jig (The Kesh) to the end of the ABC">';
+	modal_msg += '</p>';	
+	modal_msg += '<p style="text-align:center;margin-top:32px;">';
+	modal_msg  += '<input id="addnewsong" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleSong();" type="button" value="Add an Example Song" title="Adds an example song to the end of the ABC">';
+	modal_msg  += '<input id="addsongtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSongTemplate();" type="button" value="Add a Song Template" title="Adds a minimal song template to the end of the ABC">';
+	modal_msg += '</p>';
+	modal_msg += '<p style="text-align:center;margin-top:32px;">';
 	modal_msg  += '<input id="addtunebookheaders" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders(false);" type="button" value="Add PDF Tunebook Annotations" title="Adds common useful PDF tunebook annotations to the top of the ABC">';
 	modal_msg += '</p>';
 
@@ -7349,7 +7355,8 @@ function AddABC(){
 
 }
 
-function AppendTuneTemplate(){	
+
+function AppendSampleReel(){	
 
 	// Stuff in some default ABC with additional options explained
 	var theValue = ""
@@ -7377,9 +7384,46 @@ function AppendTuneTemplate(){
 	theValue += "% ABC for the tune, both melody and chords:\n";
 	theValue += "%\n";
 	theValue += '|:"Em"EBBA B2 EB|"Em"B2 AB dBAG|"D"F/E/D AD BDAD|"D"F/E/D AD BAGF|\n';
-	theValue += '"Em"EBBA B2 EB|"Em"B2 AB defg|"D"afec dBAF|1 "D"DEFD "Em"E3D:|2 "D"DEFD "Em"E2gf||\n';
+	theValue += '"Em"EBBA B2 EB|"Em"B2 AB defg|"D"afge dBAF|1 "D"DEFD "Em"E3D:|2 "D"DEFD "Em"E2gf||\n';
 	theValue += '|:"Em"eB (3BBB eBgf|"Em"eBB2 gedB|"D"A/A/A FA DAFA|"D"A/A/A FA defg|\n';
-	theValue += '"Em"eB (3BBB eBgf|"Em"eBBB defg|"D"afec dBAF|1 "D"DEFD "Em"E2gf:|2 "D"DEFD "Em"E4|]\n';
+	theValue += '"Em"eB (3BBB eBgf|"Em"eBBB defg|"D"afge dBAF|1 "D"DEFD "Em"E2gf:|2 "D"DEFD "Em"E4|]\n';
+
+	// Do common tune addition processing
+	ProcessAddTune(theValue);
+
+}
+
+function AppendSampleJig(){	
+
+	// Stuff in some default ABC with additional options explained
+	var theValue = ""
+
+	var nTunes = CountTunes();
+
+	if (nTunes > 0){
+		theValue += "\n";
+	}
+	
+	theValue += "X: 1\n";
+	theValue += "T: The Kesh\n";
+	theValue += "R: Jig\n";
+	theValue += "M: 6/8\n";
+	theValue += "L: 1/8\n";
+	theValue += "K: Gmaj\n";
+	theValue += "C: Traditional\n";
+	theValue += "%\n";
+	theValue += "% Use an Accordion sound when playing the melody:\n";
+	theValue += "%%MIDI program 21\n";
+	theValue += "%\n";
+	theValue += "% Use an Accordion sound when playing the chords:\n";
+	theValue += "%%MIDI chordprog 21\n";
+	theValue += "%\n";
+	theValue += "% ABC for the tune, both melody and chords:\n";
+	theValue += "%\n";
+	theValue += '|:"G"GAG GAB|"D"ABA ABd|"G"edd gdd|"C"edB "D"dBA|\n';
+	theValue += '"G"GAG GAB|"D"ABA ABd|"G"edd gdB|"D"AGF "G"G3:|\n';
+	theValue += '|:"G"BAB dBd|"C"ege "D"dBA|"G"BAB dBG|"D"ABA AGA|\n';
+	theValue += '"G"BAB dBd|"C"ege "G"dBd|"C"gfg "D"aga|"G"bgf g3:|\n';
 
 	// Do common tune addition processing
 	ProcessAddTune(theValue);
@@ -7400,6 +7444,84 @@ function AppendSongTemplate(){
 		theValue += "\n";
 	}
 
+	theValue += "% Stripped-down self-documenting song in ABC, by Linda Eskin\n";
+	theValue += "% Replace the WORDS IN UPPER-CASE with your own information.\n";
+	theValue += "% You can remove all these comments with single % signs.\n";
+	theValue += "%\n";
+	theValue += "X: 1\n"; 
+	theValue += "%\n";
+	theValue += "% *** THIS HEADER CONVEYS INFORMATION ABOUT THE SONG ***\n";
+	theValue += "%\n";
+	theValue += "% These text elements appear above the music:\n";
+	theValue += "T: TITLE OF THE SONG\n";
+	theValue += "T: ALTERNATE TITLE\n";
+	theValue += "C: COMPOSER/SONGWRITER\n";
+	theValue += "O: ORIGIN/GEOGRAPHIC\n";
+	theValue += "%%text GENERAL PURPOSE TEXT\n";
+	theValue += "%\n";
+	theValue += "% These appear below the music and lyrics:\n";
+	theValue += "S: SOURCE OF THE SONG\n";
+	theValue += "D: DISCOGRAPHY - CD, LP, ETC.\n";
+	theValue += "N: NOTES (TEXT)\n";
+	theValue += "Z: TRANSCRIBER, COPYRIGHT, PERMISSIONS\n";
+	theValue += "H: HISTORY OF THE SONG\n";
+	theValue += "H: This self-documenting ABC song template was created by Linda Eskin.\n";
+	theValue += "%\n";
+	theValue += "% This appears in your ABC file only, for reference.\n";
+	theValue += "F: FILE URL - WHERE TO FIND THIS ONLINE\n";
+	theValue += "%\n";
+	theValue += "% These appear above the music AND control how it is played:\n";
+	theValue += "R: RHYTHM, E.G. JIG, WALTZ\n";
+	theValue += "M: 4/4\n";
+	theValue += "L: 1/4\n";
+	theValue += "Q: 1/4=120\n";
+	theValue += "K: C\n";
+	theValue += "% The K (key) tag should be the last thing in the header.\n";
+	theValue += "%\n";
+	theValue += "% *** THE SONG ITSELF STARTS HERE - REPLACE THIS WITH YOUR SONG ***\n";
+	theValue += "%\n";
+	theValue += "P: PART - VERSE, CHORUS, ETC.\n";
+	theValue += '"C"C D2 E|"FM7"F G3|"Am"A B2 c|"E"d e3|\n';
+	theValue += "w: The words to the act-u-al tune go here\n";
+	theValue += "w: You can put more ver-ses here is you like\n";
+	theValue += "%\n";
+	theValue += '"C"C D2 E|"FM7"F G3|"Am"A B2 c|"E"d e3|]\n';
+	theValue += "w: This tune is a scale. See how the notes work!\n";
+	theValue += "w: This line is for the se-cond verse. Ta-da!\n";
+	theValue += "%\n";
+	theValue += "% *** YOU CAN PUT MORE LYRICS AFTER THE TUNE, TOO. ***\n";
+	theValue += "%\n";
+	theValue += "W: Write your extra verses here, verses here, verses here.\n";
+	theValue += "W: Write your extra verses here, or the whole song if you like.\n";
+	theValue += "W:\n";
+	theValue += "W: --- This is where the chorus goes, chorus goes, chorus goes.\n";
+	theValue += "W: --- Indent it with dashes if you like, but spaces will not work.\n";
+	theValue += "W:\n";
+	theValue += "W: Here we have another verse, another verse, another verse.\n";
+	theValue += "W: Now we have reached the end - this is the last verse of this song.\n"; 
+	theValue += "%\n";
+	theValue += "% That should get you started. Go play!\n";
+
+
+	// Do common tune addition processing
+	ProcessAddTune(theValue);
+
+}
+
+//
+// Add a new song template to the ABC
+//
+function AppendSampleSong(){	
+
+	// Stuff in some default ABC with additional options explained
+	var theValue = ""
+
+	var nTunes = CountTunes();
+	
+	if (nTunes > 0){
+		theValue += "\n";
+	}
+
 	theValue += "% A simple, self-documenting song in ABC, by Linda Eskin\n";
 	theValue += "%\n";
 	theValue += "% ABC is a plain-text format for conveying musical information.\n";
@@ -7409,10 +7531,12 @@ function AppendSongTemplate(){
 	theValue += "%\n";
 	theValue += "% Comments (like this one) start with a single percent symbol.\n";
 	theValue += "%\n";
-	theValue += "X: 0 \n";
+	theValue += "X: 1 \n";
 	theValue += "% Each tune must start with an X: tag, and a number.\n";
 	theValue += "%\n";
 	theValue += "% *** THIS IS THE HEADER - INFO ABOUT THE TUNE/SONG ***\n";
+	theValue += "%\n";
+	theValue += "% These text elements appear above the music:\n";
 	theValue += "%\n";
 	theValue += "T: TITLE OF THE SONG\n"; 
 	theValue += "T: ALTERNATE TITLE\n";
@@ -7423,17 +7547,40 @@ function AppendSongTemplate(){
 	theValue += "O: ORIGIN\n";
 	theValue += "% Where is the tune from? Country, culture, ...\n";
 	theValue += "%\n";
+	theValue += "%%text GENERAL PURPOSE TEXT\n";
+	theValue += "% There are many more options that use the double percentage symbols.\n";
+	theValue += "% Note that lines starting with %% are *not* comments.\n";
+	theValue += "%\n";
+	theValue += "% These text elements appear below the music and lyrics:\n";
+	theValue += "%\n";
+	theValue += "% For S:, D:, H:, N:, and Z: the first line with the tag adds a label.\n";
+	theValue += "% Additional lines with the same tag do not.\n";
+	theValue += "%\n";
+	theValue += "% S:, D:, H:, N:, and Z: lines do not word wrap.\n";
+	theValue += "% Add more lines if you have more than will fit across the page.\n";
+	theValue += "%\n";
+	theValue += "S: SOURCE\n";
+	theValue += '% "Learned from Morgan at Folk Festival," "Child Ballad," etc.\n';
+	theValue += "%\n";
+	theValue += "D: DISCOGRAPHY\n";
+	theValue += "% On which CD/LP? Appears at the bottom of the page.\n";
+	theValue += "%\n";
 	theValue += "N: THESE NOTES APPEAR NEAR THE BOTTOM OF THE PAGE.\n";
-	theValue += 'N: A SECOND LINE OF NOTES WILL NOT SAY "Notes: " AGAIN AT THE START.\n';
-	theValue += '% First line adds "Notes: " at the start. The second does not.\n';
 	theValue += "%\n";
 	theValue += "Z: TRANSCRIBER, COPYRIGHT, PERMISSIONS.\n";
-	theValue += "Z: This self-documenting ABC example song was created by Linda Eskin.\n";
-	theValue += '% First line adds "Transcriber: " at the start. The second does not.\n';
 	theValue += "% Transcriber info appears at the bottom, right below the Notes.\n";
 	theValue += "%\n";
-	theValue += "% Important: Notes and Transcriber info do NOT word wrap.\n";
-	theValue += "% Add more lines if you have more than will fit across the page.\n";
+	theValue += "H: HISTORY OF THE SONG\n";
+	theValue += "H: This self-documenting ABC example song was created by Linda Eskin.\n";
+	theValue += "% Real-life event? Written for a movie? Appears at the bottom of the page.\n";
+	theValue += "%\n";
+	theValue += "F: FILE URL\n";
+	theValue += "% If you want people to find your file online, put the URL here.\n";
+	theValue += "%\n";
+	theValue += "% These appear above the music AND control how it is played:\n";
+	theValue += "%\n";
+	theValue += "R: RHYTHM\n";
+	theValue += "% Reel, Waltz, Jig, Hornpipe, etc.\n";
 	theValue += "%\n";
 	theValue += "M: 4/4\n";
 	theValue += "% Meter, such as 3/4, 4/4, 9/8. Appears in the key signature.\n";
@@ -7444,13 +7591,6 @@ function AppendSongTemplate(){
 	theValue += "%\n";
 	theValue += "Q: 1/4=120\n";
 	theValue += "% Tempo. e.g. 120 beats per minute (BPM). (Mnemonic: Q=Quickness.)\n";
-	theValue += "%\n";
-	theValue += "R: RHYTHM\n";
-	theValue += "% Reel, Waltz, Jig, Hornpipe, etc.\n";
-	theValue += "%\n";
-	theValue += "%%text GENERAL PURPOSE TEXT\n";
-	theValue += "% There are many more options that use the double percentage symbols.\n";
-	theValue += "% Note that lines starting with %% are *not* comments.\n";
 	theValue += "%\n";
 	theValue += "%%staffsep 80\n";
 	theValue += "% Sets the spacing between the staffs. Bigger numbers = more space.\n";
@@ -7495,11 +7635,11 @@ function AppendSongTemplate(){
 	theValue += "W: Write your extra verses here, or the whole song if you like.\n";
 	theValue += "W:\n";
 	theValue += '% You can leave a "W" line blank, to leave some space.\n';
-	theValue += "W: --- This is where the chorus goes, chorus goes, chorus goes\n";
+	theValue += "W: --- This is where the chorus goes, chorus goes, chorus goes.\n";
 	theValue += "W: --- Indent it with dashes if you like, but spaces won't work.\n";
 	theValue += "W:\n";
 	theValue += "W: Here we have another verse, another verse, another verse.\n";
-	theValue += "W: Now we've reached the end - this is the last verse of this song.\n";
+	theValue += "W: Now we have reached the end - this is the last verse of this song.\n";
 	theValue += "%\n";
 	theValue += "% That should get you started. Go play!\n";
 
