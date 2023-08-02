@@ -7762,19 +7762,21 @@ function AppendBoxFingeringTemplate(){
 	output += '%\n';	
 	output += '% Copy and paste these as chord annotations before the notes:\n';
 	output += '%\n';
-	output += '% Finger 1: "①"\n';
-	output += '% Finger 2: "②"\n';
-	output += '% Finger 3: "③"\n';
-	output += '% Finger 4: "④"\n';
+	output += '% Finger 1: "1" "①"\n';
+	output += '% Finger 2: "2" "②"\n';
+	output += '% Finger 3: "3" "③"\n';
+	output += '% Finger 4: "4" "④"\n';
 	output += '% Slide down: "➘"\n';
 	output += '% Slide up: "➚"\n';
 	output += '% Slide straight down: "↓"\n';
+	output += '% Cross over/under: "x"\n';
 	output += '% Push: "⮐"\n';
-	output += '% Draw: "⮑"\n';
+	output += '% Draw: "⮑"\n';	
 	output += '%\n';
 	output += '% Additional symbols for button numbering tablature:\n';
 	output += '%\n';
-	output += '% "①" "②" "③" "④" "⑤" "⑥" "⑦" "⑧" "⑨" "⑩" "↑" "↓"\n';
+	output += '% "1" "2" "3" "4" "5" "6" "7" "8" "9" "10" "11" "↑" "↓"\n';
+	output += '% "①" "②" "③" "④" "⑤" "⑥" "⑦" "⑧" "⑨" "⑩" "⑪"\n';
  	output += '%\n';
  	output += '\n';
 
