@@ -933,6 +933,10 @@ var theTunebookIndexTitle = "";
 var TunebookSortedIndexRequested = false;
 var theTunebookSortedIndexTitle = "";
 
+// Did they request an tunebook Index header?
+var TunebookIndexHeaderRequested = false;
+var theTunebookIndexHeader = "";
+
 // Did they request an tunebook TOC?
 var TunebookTOCRequested = false;
 var theTunebookTOCTitle = "";
@@ -940,6 +944,10 @@ var theTunebookTOCTitle = "";
 // Did they request a sorted tunebook TOC?
 var TunebookSortedTOCRequested = false;
 var theTunebookSortedTOCTitle = "";
+
+// Did they request an tunebook TOC header?
+var TunebookTOCHeaderRequested = false;
+var theTunebookTOCHeader = "";
 
 // Did they request an tunebook title page?
 var TunebookTPRequested = false;
@@ -1411,6 +1419,14 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 	// Add a new page
 	thePDF.addPage(paperStyle); 
 
+	// Tunebook index header requested?
+	if (TunebookIndexHeaderRequested){
+
+		AddPageTextHeader(thePDF,paperStyle,theTunebookIndexHeader);
+
+	}
+
+
 	// Set the font size
 	thePDF.setFont("Times","","normal");
 	thePDF.setFontSize(INDEXTITLESIZE);
@@ -1553,7 +1569,14 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 				theCurrentPageNumber++;
 
 				// Add a new page
-				thePDF.addPage(paperStyle); 
+				thePDF.addPage(paperStyle);
+
+				// Index header requested? 
+				if (TunebookIndexHeaderRequested){
+
+					AddPageTextHeader(thePDF,paperStyle,theTunebookIndexHeader);
+
+				}
 
 				// Set the font size
 				thePDF.setFont("Times","","normal");
@@ -1845,6 +1868,32 @@ function PostProcessTOCAndIndexLinks(pdf,startPage,endPage,addTOCLinks,theTOCLin
 	}
 
 }
+
+//
+// Add a table of contents or index header
+//
+function AddPageTextHeader(thePDF,paperStyle,theHeaderText){
+
+	// Calc offset for A4 paper
+	var voff = PAGENUMBERTOP;
+
+	if (paperStyle == "letter"){
+		// Letter offset
+		voff = PAGENUMBERTOP;
+	}
+	else{
+		// A4 offset
+		voff = PAGENUMBERTOPA4;
+	}
+
+	thePDF.setFont("Times","","normal");
+	thePDF.setFontSize(HEADERFOOTERFONTSIZE);
+
+	// Add the TOC header
+	thePDF.text(theHeaderText, (thePDF.internal.pageSize.getWidth()/3.10), voff, {align:"center"});
+
+}
+
 //
 // Tune table of contents page layout constants
 //
@@ -1873,6 +1922,12 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 
 	// Add a new page
 	thePDF.setPage(TOCpage); 
+
+	if (TunebookTOCHeaderRequested){
+
+		AddPageTextHeader(thePDF,paperStyle,theTunebookTOCHeader);
+
+	}
 
 	// Set the font size
 	thePDF.setFont("Times","","normal");
@@ -2019,12 +2074,19 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 				// Add a new page
 				thePDF.setPage(TOCpage); 
 
+				if (TunebookTOCHeaderRequested){
+
+					AddPageTextHeader(thePDF,paperStyle,theTunebookTOCHeader);
+					
+				}
+
 				// Set the font size
 				thePDF.setFont("Times","","normal");
 				thePDF.setFontSize(TOCFONTSIZE);
 
 				// Start back at the top
 				curTop = TOCTOPOFFSET + TOCTITLEOFFSET + a4offset;
+
 
 			}
 		}
@@ -3542,6 +3604,41 @@ function ParseCommentCommands(theNotes){
 
 	}
 
+	// Clear the tunebook toc headerstring
+	theTunebookTOCHeader = "";
+
+	// Did they request a tunebook TOC header?
+	TunebookTOCHeaderRequested = false;
+
+	// Search for a tunebook TOC header request
+	searchRegExp = /^%tocheader.*$/m
+
+	// Detect tunebook TOC annotation
+	var addTunebookTOCHeader = theNotes.match(searchRegExp);
+
+	if ((addTunebookTOCHeader) && (addTunebookTOCHeader.length > 0)){
+		TunebookTOCHeaderRequested = true;
+		theTunebookTOCHeader = addTunebookTOCHeader[0].replace("%tocheader","");
+		theTunebookTOCHeader = theTunebookTOCHeader.trim();
+	}
+
+	// Clear the tunebook index headerstring
+	theTunebookIndexHeader = "";
+
+	// Did they request a tunebook index header?
+	TunebookTOCIndexHeaderRequested = false;
+
+	// Search for a tunebook index header request
+	searchRegExp = /^%indexheader.*$/m
+
+	// Detect tunebook TOC annotation
+	var addTunebookIndexHeader = theNotes.match(searchRegExp);
+
+	if ((addTunebookIndexHeader) && (addTunebookIndexHeader.length > 0)){
+		TunebookIndexHeaderRequested = true;
+		theTunebookIndexHeader = addTunebookIndexHeader[0].replace("%indexheader","");
+		theTunebookIndexHeader = theTunebookIndexHeader.trim();
+	}
 	// Check my work
 	// console.log("theTunebookTP = "+theTunebookTP);
 	// console.log("theTunebookTPST = "+theTunebookTPST);
@@ -7344,12 +7441,15 @@ function AddABC(){
 	modal_msg  += '<input id="addsongtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSongTemplate();" type="button" value="Add a Song Template" title="Adds a minimal song template to the end of the ABC">';
 	modal_msg += '</p>';
 	modal_msg += '<p style="text-align:center;margin-top:32px;">';
+	modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendBoxFingeringTemplate();" type="button" value="Add Box Fingering Symbols Template" title="Adds a template with symbols for annotating box fingerings and tablature to the top of the ABC">';
+	modal_msg += '</p>';
+	modal_msg += '<p style="text-align:center;margin-top:32px;">';
 	modal_msg  += '<input id="addtunebookheaders" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders(false);" type="button" value="Add PDF Tunebook Annotations" title="Adds common useful PDF tunebook annotations to the top of the ABC">';
 	modal_msg += '</p>';
 
 	modal_msg += '</div>';
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 700,  scrollWithPage: false }).then(function(){
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 600,  scrollWithPage: false }).then(function(){
 			
 	});
 
@@ -7645,6 +7745,50 @@ function AppendSampleSong(){
 
 	// Do common tune addition processing
 	ProcessAddTune(theValue);
+
+}
+
+//
+// Add a box fingering template
+//
+function AppendBoxFingeringTemplate(){
+
+	var theNotes = gTheABC.value;
+
+	var output = "";
+
+	output += '%\n';
+	output += "% Danny Flynn's symbols for box fingering transcriptions\n";
+	output += '%\n';	
+	output += '% Copy and paste these as chord annotations before the notes:\n';
+	output += '%\n';
+	output += '% Finger 1: "①"\n';
+	output += '% Finger 2: "②"\n';
+	output += '% Finger 3: "③"\n';
+	output += '% Finger 4: "④"\n';
+	output += '% Slide down: "➘"\n';
+	output += '% Slide up: "➚"\n';
+	output += '% Slide straight down: "↓"\n';
+	output += '% Push: "⮐"\n';
+	output += '% Draw: "⮑"\n';
+	output += '%\n';
+	output += '% Additional symbols for button numbering tablature:\n';
+	output += '%\n';
+	output += '% "①" "②" "③" "④" "⑤" "⑥" "⑦" "⑧" "⑨" "⑩" "↑" "↓"\n';
+ 	output += '%\n';
+ 	output += '\n';
+
+	output += theNotes;
+
+	// Stuff in the headers
+	gTheABC.value = output;
+
+	// Set the select point
+	gTheABC.selectionStart = 0;
+    gTheABC.selectionEnd = 0;
+
+    // And set the focus
+    gTheABC.focus();	
 
 }
 
@@ -9754,7 +9898,8 @@ function InjectPDFHeaders(bDoAll){
 		output += "%urladdsubtitle http://michaeleskin.com Title Page Subtitle as Hyperlink\n";
 		output += "%addtoc Table of Contents\n";
 		output += "%addsortedtoc Table of Contents Sorted by Tune Name\n";
-		output += "%addlinkbacktotoc\n";		
+		output += "%addlinkbacktotoc\n";
+		output += "%tocheader Page Header Text for Table of Contents Pages\n";		
 		output += "%toctopoffset 30\n";
         output += "%toctitleoffset 35\n";
         output += "%toctitlefontsize 18\n";
@@ -9763,6 +9908,7 @@ function InjectPDFHeaders(bDoAll){
 		output += "%addindex Unsorted Index\n"
 		output += "%addsortedindex Index Sorted by Tune Name\n"
 		output += "%addlinkbacktoindex\n";		
+		output += "%indexheader Page Header Text for Index Pages\n";		
         output += "%indextopoffset 30\n";
         output += "%indextitleoffset 35\n";
         output += "%indextitlefontsize 18\n";
