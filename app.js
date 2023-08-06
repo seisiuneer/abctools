@@ -157,6 +157,9 @@ var gPlaybackHyperlinkBassChordProgram = "";
 // Append incrementing X values to tune names 
 var gAppendXValuesToTuneNames = false;
 
+// Full screen view scaling (percentage)
+var gFullScreenScaling = 50;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -9232,11 +9235,45 @@ function ToggleMaximize(){
 
 		DoMinimize();
 
+		if (!(gIsAndroid || gIsIOS)){
+
+			document.getElementById("notation-holder").style.width = "855px";
+
+		}
+		else{
+
+			document.getElementById("notation-holder").style.width = "820px";
+
+		}
+
 	}
 	else{
 
 		DoMaximize();
 
+		if (!(gIsAndroid || gIsIOS)){
+
+			// Scale the full screen up a bit if it makes sense
+			var windowWidth = window.innerWidth;
+
+			if (((windowWidth * gFullScreenScaling)/100.0) > 850){
+
+				document.getElementById("notation-holder").style.width = gFullScreenScaling+"%";
+
+			}
+		}
+		else{
+
+			// Scale the full screen up a bit if it makes sense
+			var windowWidth = window.innerWidth;
+
+			if (((windowWidth * gFullScreenScaling)/100.0) > 820){
+
+				document.getElementById("notation-holder").style.width = gFullScreenScaling+"%";
+
+			}
+
+		}
 	}
 
 }
@@ -9590,6 +9627,30 @@ function processShareLink() {
 			}
 
 		});
+
+		if (!(gIsAndroid || gIsIOS)){
+
+			// Scale the full screen up a bit if it makes sense
+			var windowWidth = window.innerWidth;
+
+			if (((windowWidth * gFullScreenScaling)/100.0) > 850){
+
+				document.getElementById("notation-holder").style.width = gFullScreenScaling+"%";
+
+			}
+		}
+		else{
+
+			// Scale the full screen up a bit if it makes sense
+			var windowWidth = window.innerWidth;
+
+			if (((windowWidth * gFullScreenScaling)/100.0) > 820){
+
+				document.getElementById("notation-holder").style.width = gFullScreenScaling+"%";
+
+			}
+
+		}
 
 		return true;
 
@@ -10923,7 +10984,16 @@ function LocalPlayABC(theABC){
 	   	modal_msg += '<div id="playback-audio"></div>';
 	   	modal_msg += '</div>';
 
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width:850, okText:"Close", scrollWithPage: true });
+	   	// Scale the player for larger screens
+		var windowWidth = window.innerWidth;
+
+		var theWidth = windowWidth * 0.4;
+
+		if (theWidth < 850){
+			theWidth = 850;
+		}
+
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width:theWidth, okText:"Close", scrollWithPage: true });
 
 		var theOKButtons = document.getElementsByClassName("modal_flat_ok");
 
@@ -11233,6 +11303,15 @@ function GetInitialConfigurationSettings(){
 		gInjectTab_StripChords = true;
 	}
 
+	// Default to 50% full screen scaling
+	val = localStorage.FullScreenScaling;
+	if (val){
+		gFullScreenScaling = val;
+	}
+	else{
+		gFullScreenScaling = 50;
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -11268,6 +11347,9 @@ function SaveConfigurationSettings(){
 		localStorage.InjectTab_TabLocation = gInjectTab_TabLocation;
 		localStorage.InjectTab_ConcertinaStyle = gInjectTab_ConcertinaStyle;
 		localStorage.InjectTab_ConcertinaFingering = gInjectTab_ConcertinaFingering;
+
+		// Fullscreen scaling
+		localStorage.FullScreenScaling = gFullScreenScaling;
 
 	}
 }
@@ -11417,13 +11499,14 @@ function AdvancedControlsDialog(){
 	modal_msg += '<div id="advanced-controls-dialog">';
 
 	modal_msg  += 	'<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;margin-bottom:12px">Notation Display Setttings</p>'
-	modal_msg  += 	'<p style="text-align:center;margin-top:0px"><label class="staff-spacing" for="staff-spacing">';
+	modal_msg  += 	'<p style="text-align:center;margin-top:0px">'
+	modal_msg  += 	'<label class="staff-spacing" for="staff-spacing">';
 	modal_msg  += 	'	Staff spacing:';
 	modal_msg  += 		'<input type="number" name="staff-spacing" id="staff-spacing" min="-20" max="200" step="5" value="10" onchange="SetStaffSpacing()"  title="Adjusts the spacing between the staves">';
 	modal_msg  += 	'</label>';
-	modal_msg  += '</p>';
+	modal_msg  += 	'</p>';
 	
-	modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">Show/Hide ABC Features</p>'
+	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">Show/Hide ABC Features</p>'
 	modal_msg  += '<p style="text-align:center;">'
 	modal_msg  += '<input id="toggleannotations" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleAnnotations(false)" type="button" value="Hide Annotations" title="Hides/Shows common annotations in the ABC notation">';
 	modal_msg  += 	'<input id="toggletext" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTextAnnotations(false)" type="button" value="Hide Text" title="Hides/Shows any text in the ABC notation.">';
@@ -11478,7 +11561,6 @@ function AdvancedControlsDialog(){
 
 		document.getElementById("capo").value = gCapo;
 
-
 	}, 200);
 
 
@@ -11519,6 +11601,8 @@ function ConfigureToolSettings(e) {
 
 	var bOverridePlayMIDIParams = gOverridePlayMIDIParams;
 
+	var theFullScreenScaling = gFullScreenScaling;
+
 	// Setup initial values
 	const theData = {
 	  configure_inject_programs: bAlwaysInjectPrograms,
@@ -11528,13 +11612,15 @@ function ConfigureToolSettings(e) {
 	  configure_bass_volume: theBassVolume,
 	  configure_chord_volume: theChordVolume,
 	  configure_box_tab_fontsize: theBoxTabFontSize,
-	  configure_override_play_midi_params: bOverridePlayMIDIParams
+	  configure_override_play_midi_params: bOverridePlayMIDIParams,
+	  configure_fullscreen_scaling: theFullScreenScaling
 
 	};
 
 	const form = [
 	  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:50px;">ABC Transcription Tools Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#settings_dialog" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
-	  {html: '<p style="margin-top:10px;font-size:12pt;line-height:14pt;font-family:helvetica">Enabling these options will always use your selected MIDI instrument programs and volumes as the defaults when playing tunes.</p>'},	  
+	  {name: "Full screen tune display scaling (percentage):", id: "configure_fullscreen_scaling", type:"number", cssClass:"configure_settings_form_text"},
+	  {html: '<p style="margin-top:18px;font-size:12pt;line-height:14pt;font-family:helvetica">Enabling the following options will always use your selected MIDI instrument programs and volumes as the defaults when playing tunes:</p>'},	  
 	  {name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default Melody MIDI program (0-135):", id: "configure_melody_program", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default Bass/Chords MIDI program (0-135):", id: "configure_chord_program", type:"number", cssClass:"configure_settings_form_text"},
@@ -11645,6 +11731,25 @@ function ConfigureToolSettings(e) {
 
 			}
 
+			// Sanity check the full screen scaling setting
+			gFullScreenScaling = args.result.configure_fullscreen_scaling;
+
+			gFullScreenScaling = gFullScreenScaling.replace("%","");
+			
+			if (isNaN(parseInt(gFullScreenScaling))){
+				gFullScreenScaling = 50;
+			}
+
+			if (gFullScreenScaling < 25){
+				gFullScreenScaling = 25;
+
+			}
+
+			if (gFullScreenScaling > 100){
+				gFullScreenScaling = 100;
+			}
+				
+
 			// Update local storage
 			SaveConfigurationSettings();
 
@@ -11705,6 +11810,7 @@ function DoStartup() {
 	gIncludePageLinks = true;
 	gDoForcePDFFilename = false;
 	gForcePDFFilename = "";
+	gFullScreenScaling = 50;
 
 	// Startup in blank screen
 	
