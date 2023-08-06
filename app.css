@@ -272,11 +272,24 @@ margin-top:6px !important;
 margin-left:8px !important;
 }
 
+.full-screen-percentage {
+font-family:"Helvetica" !important;
+font-size:12pt !important;
+margin-left: 12px !important;
+}
+
+#full-screen-percentage{
+padding-top:4px !important;
+padding-bottom:4px !important;
+width:80px !important;
+margin-top:6px !important;
+margin-left:8px !important;
+}
+
 .staff-spacing {
 font-family:"Helvetica" !important;
 font-size:12pt !important;
 }
-
 
 #capo{
 padding-top:4px !important;
