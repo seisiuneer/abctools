@@ -263,9 +263,11 @@
                 <img src="img/ug3.jpg"/>
             </div>
             <p>If any ABC is present in the ABC Editor, this double-arrow control shows up on the top right corner of the page.</p>
-            <p>The control hides or shows the ABC Editor and all controls so you can view your notation fullscreen.</p>
+            <p>The control hides or shows the ABC Editor and all controls so you can view your notation full screen.</p>
             <p>Click once to hide the ABC Editor and all controls.</p>
             <p>Click again to show the ABC Editor and all controls.</p>
+            <p>The size of the full screen notation as a percentage of the browser window width is set in the <strong>Settings</strong> dialog. Default is 50%.</p>
+            <p>If the resulting scaled width is less than 850 pixels (820 pixels for iOS/Android) the width will be set to 850 pixels (820 pixels for iOS/Android).</p>
             <hr class="hidden-print" id="playing_your_tunes">
             <h1 class="page_break_always">Playing Your Tunes&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <p>To play a specific tune, click anywhere in the ABC for the tune and then click <strong>Player</strong>.</p>
@@ -491,11 +493,15 @@
             <p></p>
             <hr class="hidden-print" id="settings_dialog">
             <h1 class="page_break_always">ABC Transcription Tools Settings&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/fufQFUISym4" title="Selecting Default Instruments for Playing Tunes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can select default MIDI programs and volumes to use for the Melody, Bass, and Chords, as well as other tool-wide settings:</p>
+            <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder">
-                <img src="img/default_program_volume_dialog_6.jpg"/>
+                <img src="img/abc_transcription_tool_settings_2.jpg"/>
             </div>
+            <p><strong>Full screen tune display scaling (percentage):</strong> Sets the width in percentage of window width for the tune notation on the screen when viewing full screen. Default is 50%.</p>
+            <p>If the resulting scaled width is less than 850 pixels (820 pixels for iOS/Android) the width will be set to 850 pixels (820 pixels for iOS/Android).</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/fufQFUISym4" title="Selecting Default Instruments for Playing Tunes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p>The following controls select default MIDI programs and volumes to use for the Melody, Bass, and Chords.</p> 
+            <p>Enabling <strong>Use Default Melody and Bass/Chord programs when playing tunes</strong> will play tunes that don't have Melody or Bass/Chord programs already in the ABC with your preferred instrument sounds. </p>
             <p>If a %%MIDI program or %%MIDI chordprog directive is already present in the tune when playing, it will take precedence over the default program values.</p>
             <p>If a %%MIDI bassvol or %%MIDI chordvol directive is already present in the tune when playing, it will take precedence over the default volume values.</p>
             <p></p>
