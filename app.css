@@ -39,7 +39,7 @@ display: none;
 }
 
 .toggle-buttons label {
-margin-right:9px;
+margin-right:21px;
 }
 
 .toggle-buttons input:checked + label {
