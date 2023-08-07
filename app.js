@@ -2505,12 +2505,6 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
 			case "whistle":
 				postfix = "_Whistle";
 				break;
-			case "bc":
-				postfix = "_BC";
-				break;
-			case "cd":
-				postfix = "_CD";
-				break;
 		}
 
 		title += postfix;
@@ -2523,8 +2517,6 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
 			case "noten":
 			case "notenames":
 			case "whistle":
-			case "bc":
-			case "cd":
 				break;
 
 			case "mandolin":
@@ -5529,14 +5521,6 @@ function GetABCJSParams(instrument){
 					theLabel = "DADGAD"+postfix;
 					break;
 
-				case "bc":
-					theLabel = " ";
-					break;
-
-				case "cd":
-					theLabel = " ";
-					break;
-
 			}
 		}
 	}
@@ -5566,23 +5550,6 @@ function GetABCJSParams(instrument){
 		vocalfont: pFont,
 		wordsfont: pFont,
 		tabnumberfont: "Arial 12"
-	};
-
-	var boxFontFormat = 
-	{
-		titlefont: tFont,
-		subtitlefont: pFont,
-		infofont: pFont,
-		partsfont: pFont,
-		tempofont: pFont,
-		textfont: pFont,
-		composerfont: pFont,
-		annotationfont: pFont,
-		partsfont: pFont,
-		gchordfont: "Verdana 12",
-		vocalfont: pFont,
-		wordsfont: pFont,
-		tabnumberfont: "Arial"+gBoxTabFontSize
 	};
 
 	var params;
@@ -5701,32 +5668,6 @@ function GetABCJSParams(instrument){
 			format: commonFontFormat
 		}
 
-	} else if (instrument == "bc") {
-		params = {
-			tablature: [{
-				instrument: 'violin',
-				label: theLabel,
-				tuning: ['^D,,,','^D,,','^D,'],
-				highestNote: "^a'"
-			}],
-			responsive: 'resize',
-			oneSvgPerLine: 'true',
-			selectTypes: false,
-			format: boxFontFormat
-		}
-	} else if (instrument == "cd") {
-		params = {
-			tablature: [{
-				instrument: 'violin',
-				label: theLabel,
-				tuning: ['F,,,','F,,','F,'],
-				highestNote: "^a'"
-			}],
-			responsive: 'resize',
-			oneSvgPerLine: 'true',
-			selectTypes: false,
-			format: boxFontFormat
-		}
 	}
 
 	return params;
@@ -6027,114 +5968,6 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 				} else if (Tspans[x].innerHTML == "38") {
 					Tspans[x].innerHTML = "A";
 				}
-			}
-		}
-
-		//
-		// Box tablature
-		//
-		if ((instrument == "bc") || (instrument == "cd")){
-
-			var Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g > [class="abcjs-top-line"]');
-
-			for (x = 0; x < Tabstriche.length; x++) {
-
-				if (x % 2 != 0) {
-
-					Tabstriche[x].setAttribute("class", "tabstrich");
-
-					var Geschwisterstriche = getNextSiblings(Tabstriche[x]);
-
-					for (y = 0; y < Geschwisterstriche.length; y++) {
-						Geschwisterstriche[y].setAttribute("class", "tabstrich");
-					}
-
-				}
-			}
-
-			var Tspans = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g[data-name="tabNumber"] > text > tspan');
-
-			for (x = 0; x < Tspans.length; x++) {
-				
-				if (Tspans[x].innerHTML == "0") { 			// D#3
-					Tspans[x].innerHTML = "①↓";
-				} else if (Tspans[x].innerHTML == "1") {	// E3
-					Tspans[x].innerHTML = "1↓";
-				} else if (Tspans[x].innerHTML == "2") {	// F3
-					Tspans[x].innerHTML = "x";
-				} else if (Tspans[x].innerHTML == "3") {	// F#3
-					Tspans[x].innerHTML = "②↓";
-				} else if (Tspans[x].innerHTML == "4") {	// G3
-					Tspans[x].innerHTML = "2↓";
-				} else if (Tspans[x].innerHTML == "5") {	// G#3
-					Tspans[x].innerHTML = "①↑";
-				} else if (Tspans[x].innerHTML == "6") {	// A3
-					Tspans[x].innerHTML = "1↑";
-				} else if (Tspans[x].innerHTML == "7") {	// A#3
-					Tspans[x].innerHTML = "②↑";
-				} else if (Tspans[x].innerHTML == "8") {	// B3
-					Tspans[x].innerHTML = "2↑";
-				} else if (Tspans[x].innerHTML == "9") {	// C4
-					Tspans[x].innerHTML = "3↓";
-				} else if (Tspans[x].innerHTML == "10") {	// C#4
-					Tspans[x].innerHTML = "③↑";
-				} else if (Tspans[x].innerHTML == "11") {	// D4
-					Tspans[x].innerHTML = "3↑";
-				} else if (Tspans[x].innerHTML == "12") {	// D#4
-					Tspans[x].innerHTML = "④↓";
-				} else if (Tspans[x].innerHTML == "13") {	// E4
-					Tspans[x].innerHTML = "4↓";
-				} else if (Tspans[x].innerHTML == "14") {	// F4
-					Tspans[x].innerHTML = "4↑";
-				} else if (Tspans[x].innerHTML == "15") {	// F#4
-					Tspans[x].innerHTML = "⑤↓";
-				} else if (Tspans[x].innerHTML == "16") {	// G4
-					Tspans[x].innerHTML = "5↓";
-				} else if (Tspans[x].innerHTML == "17") {	// G#4
-					Tspans[x].innerHTML = "⑤↑";
-				} else if (Tspans[x].innerHTML == "18") {	// A4
-					Tspans[x].innerHTML = "5↑";
-				} else if (Tspans[x].innerHTML == "19") {	// A#4
-					Tspans[x].innerHTML = "⑥↑";
-				} else if (Tspans[x].innerHTML == "20") {	// B4
-					Tspans[x].innerHTML = "6↑";
-				} else if (Tspans[x].innerHTML == "21") {	// C5
-					Tspans[x].innerHTML = "6↓";
-				} else if (Tspans[x].innerHTML == "22") {	// C#5
-					Tspans[x].innerHTML = "⑦↑";
-				} else if (Tspans[x].innerHTML == "23") {	// D5
-					Tspans[x].innerHTML = "7↑";
-				} else if (Tspans[x].innerHTML == "24") {	// D#5
-					Tspans[x].innerHTML = "⑦↓";
-				} else if (Tspans[x].innerHTML == "25") {	// E5
-					Tspans[x].innerHTML = "7↓";
-				} else if (Tspans[x].innerHTML == "26") {	// F5
-					Tspans[x].innerHTML = "8↑";
-				} else if (Tspans[x].innerHTML == "27") {	// F#5
-					Tspans[x].innerHTML = "⑧↓";
-				} else if (Tspans[x].innerHTML == "28") {	// G5
-					Tspans[x].innerHTML = "8↓";
-				} else if (Tspans[x].innerHTML == "29") {	// G#5
-					Tspans[x].innerHTML = "⑨↑";
-				} else if (Tspans[x].innerHTML == "30") {	// A5
-					Tspans[x].innerHTML = "9↑";
-				} else if (Tspans[x].innerHTML == "31") {	// A#5
-					Tspans[x].innerHTML = "⑩↑";
-				} else if (Tspans[x].innerHTML == "32") {	// B5
-					Tspans[x].innerHTML = "10↑";
-				} else if (Tspans[x].innerHTML == "33") {	// C5
-					Tspans[x].innerHTML = "9↓";
-				} else if (Tspans[x].innerHTML == "34") {	// C#5
-					Tspans[x].innerHTML = "⑪↑ ";
-				} else if (Tspans[x].innerHTML == "35") {	// D5
-					Tspans[x].innerHTML = "x";
-				} else if (Tspans[x].innerHTML == "36") {   // D#5
-					Tspans[x].innerHTML = "⑩↓";
-				} else if (Tspans[x].innerHTML == "37") {	// E5
-					Tspans[x].innerHTML = "10↓";
-				} else  {	// All other notes
-					Tspans[x].innerHTML = "x";
-				} 
 			}
 		}
 
@@ -7258,8 +7091,6 @@ function IdleCapoControl(){
 		case "noten":
 		case "notenames":
 		case "whistle":
-		case "bc":
-		case "cd":
 			break;
 
 		case "mandolin":
@@ -7987,8 +7818,6 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
 		case "noten":
 		case "notenames":
 		case "whistle":
-		case "bc":
-		case "cd":
 			break;
 
 		case "mandolin":
@@ -8015,8 +7844,6 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
 	}
 
 	url += postfix;
-
-	url += "&btfs="+gBoxTabFontSize;
 
 	// If just encoding some ABC, return it now
 	if (ABCtoEncode){
@@ -8254,12 +8081,6 @@ function GenerateQRCode(e) {
 					break;
 				case "whistle":
 					postfix = "<br/><br/>(Whistle Tab)";
-					break;
-				case "bc":
-					postfix = "<br/><br/>(B/C Box Tab)";
-					break;
-				case "cd":
-					postfix = "<br/><br/>(C#/D Box Tab)";
 					break;
 			}
 
@@ -9293,8 +9114,6 @@ function IdleShowTabNamesControl(){
 		case "noten":
 		case "notenames":
 		case "whistle":
-		case "bc":
-		case "cd":
 			break;
 
 		case "mandolin":
@@ -9444,7 +9263,16 @@ function processShareLink() {
 
 	// Handler for format parameter
 	if (urlParams.has("format")) {
+
 		var format = urlParams.get("format");
+
+		// No longer supporting bc or cd tablature, reset to notes
+		if ((format == "bc") || (format == "cd")){
+
+			format = "noten";
+			
+		}
+
 		SetRadioValue("notenodertab", format);
 
 		if (format == "whistle"){
@@ -9558,12 +9386,6 @@ function processShareLink() {
 		if (theHide == "1"){
 			HideTopBar();
 		}
-	}
-
-	// Set the box tab fontsize
-	if (urlParams.has("btfs")) {
-		var theTabFontSize = urlParams.get("btfs");
-		gBoxTabFontSize = theTabFontSize;
 	}
 
 	// Open for playback
@@ -11144,8 +10966,9 @@ var gInjectTab_TabLocation = 0;
 var gInjectTab_ConcertinaStyle = 0;
 var gInjectTab_ConcertinaFingering = 0;
 
-// User setting for the Box tab fontsize
-var gBoxTabFontSize = "10";
+// Box and Concertina Push and draw tablature glyphs
+var gInjectTab_PushGlyph = "↓";
+var gInjectTab_DrawGlyph = "↑";
 
 // Get the initial configuration settings from local browser storage, if present
 function GetInitialConfigurationSettings(){
@@ -11196,14 +11019,6 @@ function GetInitialConfigurationSettings(){
 	}
 	else{
 		gTheChordVolume = 32;
-	}
-
-	val = localStorage.BoxTabFontSize;
-	if (val){
-		gBoxTabFontSize = val;
-	}
-	else{
-		gBoxTabFontSize = 10;
 	}
 
 	val = localStorage.OverridePlayMIDIParams;
@@ -11312,6 +11127,23 @@ function GetInitialConfigurationSettings(){
 		gInjectTab_StripChords = true;
 	}
 
+	// Push and draw glyphs
+	val = localStorage.InjectTab_PushGlyph;
+	if (val){
+		gInjectTab_PushGlyph = val;
+	}
+	else{
+		gInjectTab_PushGlyph = "↓";
+	}
+
+	val = localStorage.InjectTab_DrawGlyph;
+	if (val){
+		gInjectTab_DrawGlyph = val;
+	}
+	else{
+		gInjectTab_DrawGlyph = "↑";
+	}
+
 	// Default to 50% full screen scaling
 	val = localStorage.FullScreenScaling;
 	if (val){
@@ -11340,7 +11172,6 @@ function SaveConfigurationSettings(){
 		localStorage.AlwaysInjectVolumes = gAlwaysInjectVolumes;
 		localStorage.TheBassVolume = gTheBassVolume;
 		localStorage.TheChordVolume = gTheChordVolume;
-		localStorage.BoxTabFontSize = gBoxTabFontSize;
 		localStorage.OverridePlayMIDIParams = gOverridePlayMIDIParams;
 		localStorage.InjectTab_StripChords = gInjectTab_StripChords;
 
@@ -11356,6 +11187,10 @@ function SaveConfigurationSettings(){
 		localStorage.InjectTab_TabLocation = gInjectTab_TabLocation;
 		localStorage.InjectTab_ConcertinaStyle = gInjectTab_ConcertinaStyle;
 		localStorage.InjectTab_ConcertinaFingering = gInjectTab_ConcertinaFingering;
+
+		// Accordion and concertina tab bellows direction glyphs
+		localStorage.InjectTab_PushGlyph = gInjectTab_PushGlyph;
+		localStorage.InjectTab_DrawGlyph = gInjectTab_DrawGlyph;
 
 		// Fullscreen scaling
 		localStorage.FullScreenScaling = gFullScreenScaling;
@@ -11402,10 +11237,12 @@ function ConfigureBoxTab(){
 	  configure_concertina_style:parseInt(gInjectTab_ConcertinaStyle),
 	  configure_concertina_fingering:parseInt(gInjectTab_ConcertinaFingering),
 	  configure_strip_chords:gInjectTab_StripChords,
+	  configure_pushglyph:gInjectTab_PushGlyph,
+	  configure_drawglyph:gInjectTab_DrawGlyph,
 	};
 
 	const form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Box and Concertina Tablature Injection Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#injecting_box_or_anglo_concertina_tablature" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Box and Anglo Concertina Tablature Injection Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#injecting_box_or_anglo_concertina_tablature" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
 	  {name: "    Inject %%MIDI directives to mute bass/chords", id: "configure_inject_directives", type:"checkbox", cssClass:"configure_box_settings_form_text"},
 	  {html: '<p style="margin-top:18px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>Tablature Font Settings (for both Box and Concertina):</strong></p>'},	  
 	  {name: "Font family:  (Recommended: Palatino)", id: "configure_font_family", type:"text", cssClass:"configure_box_settings_form_text_wide"},
@@ -11415,13 +11252,11 @@ function ConfigureBoxTab(){
 	  {name: "Tablature font size:  (Recommended: 10)", id: "configure_tab_font_size", type:"text", cssClass:"configure_box_settings_form_text"},
 	  {name: "%%staffsep value:  (Recommended: 80)", id: "configure_staffsep", type:"text", cssClass:"configure_box_settings_form_text"},
 	  {name: "%%musicspace value:  (Recommended: 10)", id: "configure_musicspace", type:"text", cssClass:"configure_box_settings_form_text"},
+	  {name: "Character(s) for Push indication (Clearing this field will reset to ↓ ):", id: "configure_pushglyph", type:"text", cssClass:"configure_box_settings_form_text"},
+	  {name: "Character(s) for Draw indication (Clearing this field will reset to ↑ ):", id: "configure_drawglyph", type:"text", cssClass:"configure_box_settings_form_text"},
 	  {name: "Tab location relative to notation:", id: "configure_tab_location", type:"select", options:tab_locations, cssClass:"configure_box_settings_select"},
 	  {name: "    Strip all chords and tab before injecting tab (Tab below only. Tab above always strips.)", id: "configure_strip_chords", type:"checkbox", cssClass:"configure_box_settings_form_text"},
-	  {html: '<p style="margin-top:18px;font-size:12pt;line-height:12pt;font-family:helvetica"><strong>Box Button Number Tablature:</strong></p>'},	  
-	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;margin-top:12px;font-family:helvetica">Click "Inject B/C Box Tab" in the Advanced Controls to inject B/C box tab.'},	  
-	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;margin-top:12px;font-family:helvetica">Click "Inject C#/D Box Tab" in the Advanced Controls to inject C#/D box tab.</p>'},	  
-	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;font-family:helvetica"><strong>Concertina Fingerings Tablature:</strong></p>'},	  
-	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;margin-top:12px;font-family:helvetica">Click "Inject Anglo Concertina Tab" in the Advanced Controls to inject Concertina tab.</p>'},	  
+	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;font-family:helvetica"><strong>Anglo Concertina Tablature Settings:</strong></p>'},	  
 	  {name: "Concertina style:", id: "configure_concertina_style", type:"select", options:concertina_styles, cssClass:"configure_box_settings_select"}, 
 	  {name: "Preferred fingerings:", id: "configure_concertina_fingering", type:"select", options:concertina_fingerings, cssClass:"configure_box_settings_select"},
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:12pt;font-family:helvetica">On-Row: Favors D5 and E5 on right-side C-row.</p>'},	  
@@ -11448,6 +11283,19 @@ function ConfigureBoxTab(){
 			gInjectTab_ConcertinaStyle = args.result.configure_concertina_style;
 			gInjectTab_ConcertinaFingering = args.result.configure_concertina_fingering;
 			gInjectTab_StripChords = args.result.configure_strip_chords;
+
+			// Do some sanity checking on the push and draw glyphs
+			gInjectTab_PushGlyph = args.result.configure_pushglyph;
+
+			if (gInjectTab_PushGlyph == ""){
+				gInjectTab_PushGlyph = "↓";
+			}
+
+			gInjectTab_DrawGlyph = args.result.configure_drawglyph;
+
+			if (gInjectTab_DrawGlyph == ""){
+				gInjectTab_DrawGlyph = "↑";
+			}
 
 			// Save the settings, in case they were initialized
 			SaveConfigurationSettings();
@@ -11552,7 +11400,7 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<input id="injectcdtab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_CsD()" type="button" value="Inject C#/D Box Tab" title="Injects C#/D box tablature into the ABC">';
 	modal_msg  += '<input id="injectanglotab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Anglo()" type="button" value="Inject Anglo Concertina Tab" title="Injects Anglo Concertina tablature into the ABC">';
 	modal_msg  += '</p>';
-	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-urlcontrols" onclick="ConfigureBoxTab()" type="button" value="Configure Box and Concertina Tablature Injection Settings" title="Configure the Box and Concertina tablature injection settings"></p>';	
+	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-urlcontrols" onclick="ConfigureBoxTab()" type="button" value="Configure Box and Anglo Concertina Tablature Injection Settings" title="Configure the Box and Concertina tablature injection settings"></p>';	
 	modal_msg += '</div>';
 
 	setTimeout(function(){
@@ -11606,8 +11454,6 @@ function ConfigureToolSettings(e) {
 	var theBassVolume = gTheBassVolume;
 	var theChordVolume = gTheChordVolume;
 
-	var theBoxTabFontSize = gBoxTabFontSize;
-
 	var bOverridePlayMIDIParams = gOverridePlayMIDIParams;
 
 	var theFullScreenScaling = gFullScreenScaling;
@@ -11620,7 +11466,6 @@ function ConfigureToolSettings(e) {
 	  configure_inject_volumes: bAlwaysInjectVolumes,
 	  configure_bass_volume: theBassVolume,
 	  configure_chord_volume: theChordVolume,
-	  configure_box_tab_fontsize: theBoxTabFontSize,
 	  configure_override_play_midi_params: bOverridePlayMIDIParams,
 	  configure_fullscreen_scaling: theFullScreenScaling
 
@@ -11641,8 +11486,7 @@ function ConfigureToolSettings(e) {
 	  {html: '<p style="margin-top:12px;margin-bottom:0px;font-size:12pt;line-height:14pt;font-family:helvetica">If there are already a %%MIDI bassvol or %%MIDI chordvol directive in the ABC, the value in the ABC will override the default value.</p>'},	  
 	  {name: "            Override all MIDI programs and volumes in the ABC when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">To change the Melody volume, add a dynamics indication such as !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! immediately before the first note in the ABC.</p>'},	  
-	  {name: "Box Tablature Font Size (when using B/C or C#/D tab mode buttons):", id: "configure_box_tab_fontsize", type:"number", cssClass:"configure_settings_form_text"},
-	  {html: '<p style="text-align:center;"><input id="configure_box" class="btn btn-urlcontrols" onclick="ConfigureBoxTab()" type="button" value="Configure Box and Concertina Tablature Injection Settings" title="Configure the Box and Concertina tablature injection settings"></p>'},	  
+	  {html: '<p style="text-align:center;"><input id="configure_box" class="btn btn-urlcontrols" onclick="ConfigureBoxTab()" type="button" value="Configure Box and Anglo Concertina Tablature Injection Settings" title="Configure the Box and Concertina tablature injection settings"></p>'},	  
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 20, width: 680, scrollWithPage: false } ).then(function(args){
@@ -11659,18 +11503,6 @@ function ConfigureToolSettings(e) {
 			gTheChordVolume = args.result.configure_chord_volume;
 
 			gOverridePlayMIDIParams = args.result.configure_override_play_midi_params;
-
-			var fontsize = args.result.configure_box_tab_fontsize;
-
-			// Just in case
-			fontsize = fontsize.replace("pt","");
-			fontsize = fontsize.trim();
-
-			var oldBoxTabFontSize = gBoxTabFontSize;
-
-			if (!(isNaN(parseFloat(fontsize)))){
-				gBoxTabFontSize = fontsize;
-			}
 
 			// Sanity check the values
 			if (isNaN(parseInt(gTheMelodyProgram))){
@@ -11762,18 +11594,6 @@ function ConfigureToolSettings(e) {
 			// Update local storage
 			SaveConfigurationSettings();
 
-			// If in a box tab, and the font size changed, force a refresh
-			if (oldBoxTabFontSize != gBoxTabFontSize){
-
-				var tabs = GetRadioValue("notenodertab");
-
-				if ((tabs == "bc") || (tabs = "cd")){
-
-					RenderAsync(true,null);
-
-				}
-
-			}
 
 		}
 
