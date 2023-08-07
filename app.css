@@ -831,7 +831,7 @@ left:-5000px;
 .modal_flat_main, .modal_flat_main input, .modal_flat_main button {  font-size: 16px; }
 
 .modal_flat_main input, .modal_flat_main button {  padding: 5px; box-sizing: border-box; }
-.modal_flat_inner { padding: 30px; background: #fff; color: #000; }
+.modal_flat_inner { padding: 10px 30px 30px 30px; background: #fff; color: #000; }
 .modal_flat_content { font-family:"Helvetica"; margin: 20px 0px;}
 .modal_flat_input { margin: 20px 0px;}
 .modal_flat_buttons { text-align:center;margin-top: 40px; }
