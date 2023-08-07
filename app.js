@@ -10989,8 +10989,17 @@ function LocalPlayABC(theABC){
 
 		var theWidth = windowWidth * 0.4;
 
-		if (theWidth < 850){
-			theWidth = 850;
+		if ((!gIsAndroid) && (!gIsIOS)){
+
+			if (theWidth < 850){
+				theWidth = 850;
+			}
+
+		}
+		else{
+
+			theWidth = 820;
+			
 		}
 
 		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width:theWidth, okText:"Close", scrollWithPage: true });
