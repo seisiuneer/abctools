@@ -10987,7 +10987,7 @@ function LocalPlayABC(theABC){
 	   	// Scale the player for larger screens
 		var windowWidth = window.innerWidth;
 
-		var theWidth = windowWidth * 0.4;
+		var theWidth = windowWidth * 0.45;
 
 		if ((!gIsAndroid) && (!gIsIOS)){
 
