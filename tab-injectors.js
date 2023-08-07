@@ -1158,10 +1158,7 @@ var angloFingeringsGenerator = function (theABC){
 
     }
 
-    // MAE 14 July 2023 Using glyphs instead
-    // var PUSH_NAME = "P";
-    // var DRAW_NAME = "D";
-
+    // Glyphs for bellows push and draw indications
     var PUSH_NAME = "↓";
     var DRAW_NAME = "↑";
 
@@ -1185,6 +1182,10 @@ var angloFingeringsGenerator = function (theABC){
         var staffSep = gInjectTab_StaffSep;
         var tabLocation = parseInt(gInjectTab_TabLocation);
         var stripChords = gInjectTab_StripChords;
+
+        // Stuff the push and draw glyphs
+        PUSH_NAME = gInjectTab_PushGlyph;
+        DRAW_NAME = gInjectTab_DrawGlyph;
 
         var result = "";
 
@@ -1467,9 +1468,9 @@ var boxTabGenerator = function (theABC){
 
             var glyphLen = glyph.length;
 
-            var direction = glyph[glyphLen-1];
+            var buttonNumber = glyph.substr(0,1);
 
-            var buttonNumber = glyph.substr(0,glyphLen-1);
+            var direction = glyph.substr(1,glyphLen-1);
 
             switch (location){
 
@@ -1532,62 +1533,62 @@ var boxTabGenerator = function (theABC){
             case 0:
 
                 var glyph_map = {
-                    "^D,": "①↓",
-                    "_E,": "①↓",
-                    "E,":  "1↓",
+                    "^D,": "①"+PUSH_NAME,
+                    "_E,": "①"+PUSH_NAME,
+                    "E,":  "1"+PUSH_NAME,
                     "F,":  "x ",
-                    "^F,": "②↓",
-                    "_G,": "②↓",
-                    "G,":  "2↓",
-                    "^G,": "①↑",
-                    "_A,": "①↑",
-                    "A,":  "1↑",
-                    "^A,": "②↑",
-                    "_B,": "②↑",
-                    "B,":  "2↑",
-                    "C":   "3↓",
-                    "^C":  "③↑",
-                    "_D":  "③↑",
-                    "D":   "3↑",
-                    "^D":  "④↓",
-                    "_E":  "④↓",
-                    "E":   "4↓",
-                    "F":   "4↑",
-                    "^F":  "⑤↓",
-                    "_G":  "⑤↓",
-                    "G":   "5↓",
-                    "^G":  "⑤↑",
-                    "_A":  "⑤↑",
-                    "A":   "5↑",
-                    "^A":  "⑥↑",
-                    "_B":  "⑥↑",
-                    "B":   "6↑",
-                    "c":   "6↓",
-                    "^c":  "⑦↑",
-                    "_d":  "⑦↑",
-                    "d":   "7↑",
-                    "^d":  "⑦↓",
-                    "_e":  "⑦↓",
-                    "e":   "7↓",
-                    "f":   "8↑",
-                    "^f":  "⑧↓",
-                    "_g":  "⑧↓",
-                    "g":   "8↓",
-                    "^g":  "⑨↑",
-                    "_a":  "⑨↑",
-                    "a":   "9↑",
-                    "^a":  "⑩↑",
-                    "_b":  "⑩↑",
-                    "b":   "10↑",
-                    "c'":  "9↓",
-                    "^c'": "⑪↑",
-                    "_d'": "⑪↑",
+                    "^F,": "②"+PUSH_NAME,
+                    "_G,": "②"+PUSH_NAME,
+                    "G,":  "2"+PUSH_NAME,
+                    "^G,": "①"+DRAW_NAME,
+                    "_A,": "①"+DRAW_NAME,
+                    "A,":  "1"+DRAW_NAME,
+                    "^A,": "②"+DRAW_NAME,
+                    "_B,": "②"+DRAW_NAME,
+                    "B,":  "2"+DRAW_NAME,
+                    "C":   "3"+PUSH_NAME,
+                    "^C":  "③"+DRAW_NAME,
+                    "_D":  "③"+DRAW_NAME,
+                    "D":   "3"+DRAW_NAME,
+                    "^D":  "④"+PUSH_NAME,
+                    "_E":  "④"+PUSH_NAME,
+                    "E":   "4"+PUSH_NAME,
+                    "F":   "4"+DRAW_NAME,
+                    "^F":  "⑤"+PUSH_NAME,
+                    "_G":  "⑤"+PUSH_NAME,
+                    "G":   "5"+PUSH_NAME,
+                    "^G":  "⑤"+DRAW_NAME,
+                    "_A":  "⑤"+DRAW_NAME,
+                    "A":   "5"+DRAW_NAME,
+                    "^A":  "⑥"+DRAW_NAME,
+                    "_B":  "⑥"+DRAW_NAME,
+                    "B":   "6"+DRAW_NAME,
+                    "c":   "6"+PUSH_NAME,
+                    "^c":  "⑦"+DRAW_NAME,
+                    "_d":  "⑦"+DRAW_NAME,
+                    "d":   "7"+DRAW_NAME,
+                    "^d":  "⑦"+PUSH_NAME,
+                    "_e":  "⑦"+PUSH_NAME,
+                    "e":   "7"+PUSH_NAME,
+                    "f":   "8"+DRAW_NAME,
+                    "^f":  "⑧"+PUSH_NAME,
+                    "_g":  "⑧"+PUSH_NAME,
+                    "g":   "8"+PUSH_NAME,
+                    "^g":  "⑨"+DRAW_NAME,
+                    "_a":  "⑨"+DRAW_NAME,
+                    "a":   "9"+DRAW_NAME,
+                    "^a":  "⑩"+DRAW_NAME,
+                    "_b":  "⑩"+DRAW_NAME,
+                    "b":   "10"+DRAW_NAME,
+                    "c'":  "9"+PUSH_NAME,
+                    "^c'": "⑪"+DRAW_NAME,
+                    "_d'": "⑪"+DRAW_NAME,
                     "d'":  "x ",
-                    "^d'": "⑩↓",
-                    "_e'": "⑩↓",
-                    "e'":  "10↓",
-                    "^f'": "⑪↓",
-                    "_g'": "⑪↓"
+                    "^d'": "⑩"+PUSH_NAME,
+                    "_e'": "⑩"+PUSH_NAME,
+                    "e'":  "10"+PUSH_NAME,
+                    "^f'": "⑪"+PUSH_NAME,
+                    "_g'": "⑪"+PUSH_NAME
                 };
 
                 var thisGlyph = glyph_map[note];
@@ -1602,63 +1603,63 @@ var boxTabGenerator = function (theABC){
             case 1:
                 
                 var glyph_map = {
-                    "F,":  "①↓",
-                    "^F,": "1↓",
-                    "_G,": "1↓",
+                    "F,":  "①"+PUSH_NAME,
+                    "^F,": "1"+PUSH_NAME,
+                    "_G,": "1"+PUSH_NAME,
                     "G,":  "x ",
-                    "^G,": "②↓",
-                    "_A,": "②↓",
-                    "A,":  "2↓",
-                    "^A,": "①↑",
-                    "_B,": "①↑",
-                    "B,":  "1↑",
-                    "C":   "②↑",
-                    "^C":  "2↑",
-                    "_D":  "2↑",
-                    "D":   "3↓",
-                    "^D":  "③↑",
-                    "_E":  "③↑",
-                    "E":   "3↑",
-                    "F":   "④↓",
-                    "^F":  "4↓",
-                    "_G":  "4↓",
-                    "G":   "4↑",
-                    "^G":  "⑤↓",
-                    "_A":  "⑤↓",
-                    "A":   "5↓",
-                    "^A":  "⑤↑",
-                    "_B":  "⑤↑",
-                    "B":   "5↑",
-                    "c":   "⑥↑",
-                    "^c":  "6↑",
-                    "_d":  "6↑",
-                    "d":   "6↓",
-                    "^d":  "⑦↑",
-                    "_e":  "⑦↑",
-                    "e":   "7↑",
-                    "f":   "⑦↓",
-                    "^f":  "7↓",
-                    "_g":  "7↓",
-                    "g":   "8↑",
-                    "^g":  "⑧↓",
-                    "_a":  "⑧↓",
-                    "a":   "8↓",
-                    "^a":  "⑨↑",
-                    "_b":  "⑨↑",
-                    "b":   "9↑",
-                    "c'":  "⑩↑",
-                    "^c'": "10↑",
-                    "_d'": "10↑",
-                    "d'":   "9↓",
-                    "^d'":  "⑪↑",
-                    "_e'":  "⑪↑",
+                    "^G,": "②"+PUSH_NAME,
+                    "_A,": "②"+PUSH_NAME,
+                    "A,":  "2"+PUSH_NAME,
+                    "^A,": "①"+DRAW_NAME,
+                    "_B,": "①"+DRAW_NAME,
+                    "B,":  "1"+DRAW_NAME,
+                    "C":   "②"+DRAW_NAME,
+                    "^C":  "2"+DRAW_NAME,
+                    "_D":  "2"+DRAW_NAME,
+                    "D":   "3"+PUSH_NAME,
+                    "^D":  "③"+DRAW_NAME,
+                    "_E":  "③"+DRAW_NAME,
+                    "E":   "3"+DRAW_NAME,
+                    "F":   "④"+PUSH_NAME,
+                    "^F":  "4"+PUSH_NAME,
+                    "_G":  "4"+PUSH_NAME,
+                    "G":   "4"+DRAW_NAME,
+                    "^G":  "⑤"+PUSH_NAME,
+                    "_A":  "⑤"+PUSH_NAME,
+                    "A":   "5"+PUSH_NAME,
+                    "^A":  "⑤"+DRAW_NAME,
+                    "_B":  "⑤"+DRAW_NAME,
+                    "B":   "5"+DRAW_NAME,
+                    "c":   "⑥"+DRAW_NAME,
+                    "^c":  "6"+DRAW_NAME,
+                    "_d":  "6"+DRAW_NAME,
+                    "d":   "6"+PUSH_NAME,
+                    "^d":  "⑦"+DRAW_NAME,
+                    "_e":  "⑦"+DRAW_NAME,
+                    "e":   "7"+DRAW_NAME,
+                    "f":   "⑦"+PUSH_NAME,
+                    "^f":  "7"+PUSH_NAME,
+                    "_g":  "7"+PUSH_NAME,
+                    "g":   "8"+DRAW_NAME,
+                    "^g":  "⑧"+PUSH_NAME,
+                    "_a":  "⑧"+PUSH_NAME,
+                    "a":   "8"+PUSH_NAME,
+                    "^a":  "⑨"+DRAW_NAME,
+                    "_b":  "⑨"+DRAW_NAME,
+                    "b":   "9"+DRAW_NAME,
+                    "c'":  "⑩"+DRAW_NAME,
+                    "^c'": "10"+DRAW_NAME,
+                    "_d'": "10"+DRAW_NAME,
+                    "d'":   "9"+PUSH_NAME,
+                    "^d'":  "⑪"+DRAW_NAME,
+                    "_e'":  "⑪"+DRAW_NAME,
                     "e'":   "x ",
-                    "f'":   "⑩↓",
-                    "^f'":  "10↓",
-                    "_g'":  "10↓",
+                    "f'":   "⑩"+PUSH_NAME,
+                    "^f'":  "10"+PUSH_NAME,
+                    "_g'":  "10"+PUSH_NAME,
                     "g'":   "x ",
-                    "^g'":  "⑪↓",
-                    "_a'":  "⑪↓"
+                    "^g'":  "⑪"+PUSH_NAME,
+                    "_a'":  "⑪"+PUSH_NAME
                 };
 
                 var thisGlyph = glyph_map[note];
@@ -1914,6 +1915,10 @@ var boxTabGenerator = function (theABC){
 
     }
 
+    // Glyph(s) to use for the bellows push or draw indication
+    var PUSH_NAME = "↓";
+    var DRAW_NAME = "↑";
+
     //
     // Main processor
     //
@@ -1935,6 +1940,10 @@ var boxTabGenerator = function (theABC){
         var staffSep = gInjectTab_StaffSep;
         var tabLocation = parseInt(gInjectTab_TabLocation);
         var stripChords = gInjectTab_StripChords;
+
+        // Stuff the push and draw glyphs
+        PUSH_NAME = gInjectTab_PushGlyph;
+        DRAW_NAME = gInjectTab_DrawGlyph;
 
         var result = "";
 
