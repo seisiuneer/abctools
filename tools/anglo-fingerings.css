@@ -76,6 +76,12 @@ background-color: white;
 	left:170px;
 }
 
+.inputboxglyph{
+  position:absolute;
+  left:230px;
+}
+
+
 .recommended{
 	position:absolute;
 	left:300px;
