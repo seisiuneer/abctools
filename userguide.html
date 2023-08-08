@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+                
         <style>
         p {
         font-size:14pt;
@@ -156,12 +156,12 @@
                 <p class="toc"><a href="#getting_started">Getting Started</a></p>
                 <p class="toc"><a href="#abc_editor">ABC Editor</a></p>
                 <p class="toc"><a href="#viewing_the_notation_full_screen">Viewing the Notation Full Screen</a></p>
-                <p class="toc"><a href="#notation_tablature_display_controls">Notation/Tablature Display Controls</a></p>
                 <p class="toc"><a href="#playing_your_tunes">Playing Your Tunes</a></p>
+                <p class="toc"><a href="#notation_tablature_display_controls">Notation/Tablature Display Controls</a></p>
                 <p class="toc"><a href="#basic_controls">Basic Controls</a></p>
                 <p class="toc"><a href="#advanced_controls">Advanced Controls</a></p>
-                <p class="toc"><a href="#selecting_the_instruments_for_playback">Selecting the Instruments for Playback</a></p>
                 <p class="toc"><a href="#settings_dialog">ABC Transcription Tools Settings</a></p>
+                <p class="toc"><a href="#selecting_the_instruments_for_playback">Selecting the Instruments for Playback</a></p>
                 <p class="toc"><a href="#general_midi_instrument_program_numbers">General MIDI Instrument Program Numbers</a></p>
                 <p class="toc"><a href="#pdf_tunebook_settings">PDF Tunebook Settings</a></p>
                 <p class="toc"><a href="#pdf_quality_setting">PDF Quality Setting</a></p>
@@ -328,12 +328,9 @@
             <h1 class="page_break_always">Advanced Controls&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <p>Clicking the <strong>Show Advanced</strong> button brings up the ABC Transcription Tools Advanced Controls dialog:</p>
             <div class="image_holder">
-                <img src="img/ug8f.jpg"/>
+                <img src="img/advanced_controls_1.jpg"/>
             </div>
             <p>Click the lightbulb icon to bring up this section of the user guide in a new browser tab.</p>
-            <p class="page_break_always"><strong>Notation Display Settings:</strong></p>
-            <p><strong>Set Staff Spacing</strong> - Allows you to set a wider or narrower gap between the staffs.</p>
-            <p>A value of 0 corresponds to an ABC %%staffsep of 40</p>
             <p><strong>Show/Hide ABC Features:</strong></p>
             <p><strong>Hide/Show Annotations</strong>  - Hides/Shows most ABC annotations like Composer, Discography, History, Tempo, etc. in the displayed notation.</p>
             <p><strong>Hide/Show Text</strong>  - Hides/Shows any %%center or %%text based text annotations in the ABC in the displayed notation.</p>
@@ -379,6 +376,48 @@
             <p><strong>Inject B/C Box Tab</strong> - Injects B/C Box tablature into the ABC (uses ABC chord syntax).</p>
             <p><strong>Inject C#/D Box Tab</strong> - Injects C#/D Box tablature into the ABC (uses ABC chord syntax).</p>
             <p><strong>Inject Anglo Concertina Tab</strong> - Injects Anglo Concertina tablature into the ABC (uses ABC chord syntax).</p>
+            <p><strong>Configure Box and Anglo Concertina Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for the Box and Anglo Concertina tab injection.</p>
+           <hr class="hidden-print" id="settings_dialog">
+            <h1 class="page_break_always">ABC Transcription Tools Settings&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
+            <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
+            <div class="image_holder">
+                <img src="img/abc_transcription_tool_settings_5.jpg"/>
+            </div>
+            <p><strong>Full screen tune display scaling (percentage)</strong> - Sets the width in percentage of window width for the tune notation on the screen when viewing full screen. Default is 50%.</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/KagT-Aq8mY8" title="Full-Screen Tune Display Options" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p>If the resulting scaled width is less than 850 pixels (820 pixels for iOS/Android) the width will be set to 850 pixels (820 pixels for iOS/Android).</p>
+            <p><strong>Staff spacing (default is 10)</strong> - Allows you to set a wider or narrower gap between the staffs.</p>
+            <p>A value of 0 corresponds to an ABC %%staffsep of 40</p>
+            <p>Minimum value is -40 (corresponds to an ABC %%staffsep of 0)</p>
+            <p>Final rendered staff separation depends on the contents of ABC itself, for example the use of chords and other annotations may increase the staff spacing.</p>
+            <p>For minimal staff spacing of stringed instrument tablatures, open the <strong>Advanced Controls</strong> dialog and click <strong>Hide Tab Names</strong>.</p>
+            <p>Experiment with this value until you get the result you want.</p>
+            <p>The following controls select default MIDI programs and volumes to use for the Melody, Bass, and Chords:</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/fufQFUISym4" title="Selecting Default Instruments for Playing Tunes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p>Enabling <strong>Use Default Melody and Bass/Chord programs when playing tunes</strong> will play tunes that don't have Melody or Bass/Chord programs already in the ABC with your preferred instrument sounds. </p>
+            <p>If a %%MIDI program or %%MIDI chordprog directive is already present in the tune when playing, it will take precedence over the default program values.</p>
+            <p>If a %%MIDI bassvol or %%MIDI chordvol directive is already present in the tune when playing, it will take precedence over the default volume values.</p>
+            <p></p>
+            <p><strong>To force tune playback using your default programs and volumes if there are already %%MIDI directives in the ABC (useful for my Interactive PDF tunebooks):</strong></p>
+            <p>Enabling <strong>Override all MIDI programs and volumes in the ABC when playing tunes</strong> will override any existing %%MIDI program, %%MIDI chordprog, %MIDI bassvol, and %MIDI chordvol values found in the ABC with your defaults when you play a tune.</p>
+            <p>This can be useful with my Interactive PDF tunebooks with built-in playback features if you want to use your preferred instrument sounds and volumes instead of the instruments and volumes set by the Interactive tunebook play link ABC.</p>
+            <p>For example, if you want to always use a Whistle sound for the Melody and a Honky-Tonk Piano sound for the Bass and Chords, set your default Melody instrument to 78 and your default Bass/Chords instrument to 3. Then enable <strong>Override all MIDI programs and volumes in the ABC when playing tunes</strong>.</p>
+            <p></p>
+            <p>These settings values are saved to local browser storage when you close the dialog and are restored each time you run the tool.</p>
+            <p></p>
+            <p><strong>Changing the Melody Volume</strong></p>
+            <p></p>
+            <p>To change the Melody volume, add a dynamics indication such as !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! immediately before the first note in the ABC.</p>
+            <p></p>
+            <p><strong>Special Note on the Dulcimer (15) Instrument</strong></p>
+            <p></p>
+            <p>Selecting the Dulcimer (15) program for either the melody or chords automatically sets all note release times to 4 seconds to allow the notes to ring.</p>
+            <p></p>
+            <p>This can be useful for tunes using solo melody instruments with long release times like Orchestral Harp (46) or Koto (107).</p>
+            <p></p>
+            <p>For those instruments played solo, set the melody instrument program as desired and the chord instrument program to Dulcimer (15).</p>
+            <p></p>
+            <p>In this case, you may not want to include any chords in the ABC, as they will be played using the Dulcimer (15) instrument.</p>
             <p><strong>Configure Box and Anglo Concertina Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for the Box and Anglo Concertina tab injection.</p>
             <hr class="hidden-print" id="selecting_the_instruments_for_playback">
             <h1 class="page_break_always">Selecting the Instruments for Playback&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
@@ -473,42 +512,6 @@
             <p></p>
             <p>Any General MIDI instrument program number can be selected for the melody and chord sounds.</p>
             <p></p>
-            <hr class="hidden-print" id="settings_dialog">
-            <h1 class="page_break_always">ABC Transcription Tools Settings&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
-            <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
-            <div class="image_holder">
-                <img src="img/abc_transcription_tool_settings_4.jpg"/>
-            </div>
-            <p><strong>Full screen tune display scaling (percentage):</strong> Sets the width in percentage of window width for the tune notation on the screen when viewing full screen. Default is 50%.</p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/KagT-Aq8mY8" title="Full-Screen Tune Display Options" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p>If the resulting scaled width is less than 850 pixels (820 pixels for iOS/Android) the width will be set to 850 pixels (820 pixels for iOS/Android).</p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/fufQFUISym4" title="Selecting Default Instruments for Playing Tunes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p>The following controls select default MIDI programs and volumes to use for the Melody, Bass, and Chords.</p>
-            <p>Enabling <strong>Use Default Melody and Bass/Chord programs when playing tunes</strong> will play tunes that don't have Melody or Bass/Chord programs already in the ABC with your preferred instrument sounds. </p>
-            <p>If a %%MIDI program or %%MIDI chordprog directive is already present in the tune when playing, it will take precedence over the default program values.</p>
-            <p>If a %%MIDI bassvol or %%MIDI chordvol directive is already present in the tune when playing, it will take precedence over the default volume values.</p>
-            <p></p>
-            <p><strong>To force tune playback using your default programs and volumes if there are already %%MIDI directives in the ABC (useful for my Interactive PDF tunebooks):</strong></p>
-            <p>Enabling <strong>Override all MIDI programs and volumes in the ABC when playing tunes</strong> will override any existing %%MIDI program, %%MIDI chordprog, %MIDI bassvol, and %MIDI chordvol values found in the ABC with your defaults when you play a tune.</p>
-            <p>This can be useful with my Interactive PDF tunebooks with built-in playback features if you want to use your preferred instrument sounds and volumes instead of the instruments and volumes set by the Interactive tunebook play link ABC.</p>
-            <p>For example, if you want to always use a Whistle sound for the Melody and a Honky-Tonk Piano sound for the Bass and Chords, set your default Melody instrument to 78 and your default Bass/Chords instrument to 3. Then enable <strong>Override all MIDI programs and volumes in the ABC when playing tunes</strong>.</p>
-            <p></p>
-            <p>These settings values are saved to local browser storage when you close the dialog and are restored each time you run the tool.</p>
-            <p></p>
-            <p><strong>Changing the Melody Volume</strong></p>
-            <p></p>
-            <p>To change the Melody volume, add a dynamics indication such as !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! immediately before the first note in the ABC.</p>
-            <p></p>
-            <p><strong>Special Note on the Dulcimer (15) Instrument</strong></p>
-            <p></p>
-            <p>Selecting the Dulcimer (15) program for either the melody or chords automatically sets all note release times to 4 seconds to allow the notes to ring.</p>
-            <p></p>
-            <p>This can be useful for tunes using solo melody instruments with long release times like Orchestral Harp (46) or Koto (107).</p>
-            <p></p>
-            <p>For those instruments played solo, set the melody instrument program as desired and the chord instrument program to Dulcimer (15).</p>
-            <p></p>
-            <p>In this case, you may not want to include any chords in the ABC, as they will be played using the Dulcimer (15) instrument.</p>
-            <p><strong>Configure Box and Anglo Concertina Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for the Box and Anglo Concertina tab injection.</p>
             <hr class="hidden-print" id="general_midi_instrument_program_numbers">
             <h1 class="page_break_always">General MIDI Instrument Program Numbers&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <div class="image_holder">
@@ -998,7 +1001,7 @@
             <p>Click the Maximize/Minimize arrow to show the ABC Editor and controls.</p>
             <hr class="hidden-print" id="staff_and_title_spacing_overrides">
             <h1 class="page_break_always">Staff and Title Spacing Overrides&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
-            <p>The Staff Spacing value in the Advanced Controls can be easily overridden by setting a %%staffsep value in the ABC just below the tune header.</p>
+            <p>The Staff spacing value in the ABC Transcription Tools Settings dialog can be easily overridden by setting a %%staffsep value in the ABC just below the tune header.</p>
             <p>This can be very useful particularly for getting as much tab notation on a single page as possible.</p>
             <p>Any spacing overrides must be applied on a tune-by-tune basis.</p>
             <p>For the absolute minimum spacing between staffs, turn off the tab names, hide the tune annotations, and add the following just below the tune header:</p>
