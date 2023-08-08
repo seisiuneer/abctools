@@ -256,20 +256,11 @@ margin-top:24px;
 margin-bottom:24px;
 }
 
-
 #sharing-controls-dialog{
 display:block;
 margin-top:24px;
 margin-bottom:24px;
 text-align: center;
-}
-
-#staff-spacing{
-padding-top:4px !important;
-padding-bottom:4px !important;
-width:80px !important;
-margin-top:6px !important;
-margin-left:8px !important;
 }
 
 .full-screen-percentage {
@@ -284,11 +275,6 @@ padding-bottom:4px !important;
 width:80px !important;
 margin-top:6px !important;
 margin-left:8px !important;
-}
-
-.staff-spacing {
-font-family:"Helvetica" !important;
-font-size:12pt !important;
 }
 
 #capo{
@@ -309,7 +295,6 @@ margin-left: 36px !important;
 #transpose-controls, #tabs-selection, #pdf-settings{
 display:flex;
 }
-
 
 p{
 font-size:11pt;
