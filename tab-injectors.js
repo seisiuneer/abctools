@@ -1472,6 +1472,11 @@ var boxTabGenerator = function (theABC){
 
             var direction = glyph.substr(1,glyphLen-1);
 
+            if (glyph.indexOf("10") == 0){
+                buttonNumber = glyph.substr(0,2);
+                direction = glyph.substr(2,glyphLen-1);
+            }
+
             switch (location){
 
                 // Above
