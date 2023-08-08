@@ -7050,15 +7050,11 @@ function IdleAdvancedControls(bUpdateUI){
 //
 // Handle the spacing control
 //
-function SetStaffSpacing() {
-
-	var newSpacing = document.getElementById('staff-spacing').value;
+function SetStaffSpacing(newSpacing) {
 	
-	newSpacing = parseInt(newSpacing);
-
 	gStaffSpacing = newSpacing + STAFFSPACEOFFSET;
 
-	RenderAsync(true,null, function(){;
+	RenderAsync(true, null, function(){;
 
 	});
 
@@ -10571,20 +10567,20 @@ function restoreStateFromLocalStorage(){
 function showWelcomeScreen(){
 
    var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica"><strong>Read the <a href="userguide.html" target="_blank">User Guide</a> for complete documentation and demo videos.</strong></p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica"><strong>Read the <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> for instructions and demo videos.</strong></p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">To begin, type or paste tunes in ABC format into the text area.</p>'; 
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Each ABC tune <strong>must</strong> begin with an X: tag.</p>'; 
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Notation updates instantly as you make changes.</p>'; 
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click the Zoom-Out arrows at the upper-right to view notation fullscreen.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click "New" to generate a sample tune with examples of some of the available PDF tunebook annotations.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click "Open" to open and import an ABC text file from your system.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click the <strong>Zoom-Out</strong> arrows at the upper-right to view notation fullscreen.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click <strong>Add</strong> to add a new ABC tune template.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click <strong>Open</strong> to open and import an ABC text file from your system.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click <strong>Settings</strong> to set common tools settings and select the default instrument sounds and volumes to use when playing tunes.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica"><strong>Once ABC has been entered and notation is displayed:</strong></p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Save" to save all the ABC text to an ABC text file.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Export PDF" to export your tunebook in PDF format.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Copy All" to copy all the ABC text to the clipboard.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Play" to play the tune currently being edited.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click "Settings" to select the default instrument sounds and volumes to use when playing tunes.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica"><strong>If you find this tool useful, please consider <a href="donate.html" target="_blank">buying me a beer!</a></strong></p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click <strong>Save</strong> to save all the ABC text to an ABC text file.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click <strong>Export PDF</strong> to export your tunebook in PDF format.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click <strong>Copy All</strong> to copy all the ABC text to the clipboard.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click <strong>Player</strong> to play the tune currently being edited.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">If you find this tool useful, please <strong><a href="donate.html" target="_blank" title="Michael likes beer!">Buy Michael a Beer!</a></strong></p>';
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: false });
 
@@ -10599,10 +10595,10 @@ function showZoomInstructionsScreen(){
    	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Since this is your first time using the tool, here is some useful information:</p>';
    	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">In this view, you may scroll through the tune notation.</p>';
        modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">If you would like to edit or create a PDF tunebook from the notation:</p>';
-  	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click the Zoom-In arrows at the upper-right to open the ABC editor.</p>';
-   	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">In the ABC editor, click the Zoom-Out arrows to view notation fullscreen.</p>';
+  	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click the <strong>Zoom-In</strong> arrows at the upper-right to open the ABC editor.</p>';
+   	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">In the ABC editor, click the <strong>Zoom-Out</strong> arrows to view notation fullscreen.</p>';
    	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">All controls in the ABC editor have helpful tooltips.</p>';
-	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Read the <a href="userguide.html" target="_blank">User Guide</a> for complete documentation and demo videos.</p>';
+	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Read the <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> for instructions and demo videos.</p>';
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: false });
 
@@ -11354,14 +11350,6 @@ function AdvancedControlsDialog(){
 	// Moving the advanced controls to their own dialog
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">ABC Transcription Tools Advanced Controls&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#advanced_controls" target="_blank" style="text-decoration:none;">💡</a></span></p>';
 	modal_msg += '<div id="advanced-controls-dialog">';
-
-	modal_msg  += 	'<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;margin-bottom:12px">Notation Display Setttings</p>'
-	modal_msg  += 	'<p style="text-align:center;margin-top:0px">'
-	modal_msg  += 	'<label class="staff-spacing" for="staff-spacing">';
-	modal_msg  += 	'	Staff spacing:';
-	modal_msg  += 		'<input type="number" name="staff-spacing" id="staff-spacing" min="-20" max="200" step="5" value="10" onchange="SetStaffSpacing()"  title="Adjusts the spacing between the staves">';
-	modal_msg  += 	'</label>';
-	modal_msg  += 	'</p>';
 	
 	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">Show/Hide ABC Features</p>'
 	modal_msg  += '<p style="text-align:center;">'
@@ -11414,8 +11402,6 @@ function AdvancedControlsDialog(){
 		// Idle the show tab names control
 		IdleShowTabNamesControl();
 
-		document.getElementById("staff-spacing").value = gStaffSpacing - STAFFSPACEOFFSET;
-
 		document.getElementById("capo").value = gCapo;
 
 	}, 200);
@@ -11458,6 +11444,8 @@ function ConfigureToolSettings(e) {
 
 	var theFullScreenScaling = gFullScreenScaling;
 
+	var theOldStaffSpacing = gStaffSpacing - STAFFSPACEOFFSET;
+
 	// Setup initial values
 	const theData = {
 	  configure_inject_programs: bAlwaysInjectPrograms,
@@ -11467,14 +11455,14 @@ function ConfigureToolSettings(e) {
 	  configure_bass_volume: theBassVolume,
 	  configure_chord_volume: theChordVolume,
 	  configure_override_play_midi_params: bOverridePlayMIDIParams,
-	  configure_fullscreen_scaling: theFullScreenScaling
-
+	  configure_fullscreen_scaling: theFullScreenScaling,
+	  configure_staff_spacing: theOldStaffSpacing,
 	};
 
 	const form = [
 	  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:50px;">ABC Transcription Tools Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#settings_dialog" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
 	  {name: "Full screen tune display scaling (percentage):", id: "configure_fullscreen_scaling", type:"number", cssClass:"configure_settings_form_text"},
-	  {html: '<p style="margin-top:18px;font-size:12pt;line-height:14pt;font-family:helvetica">Enabling the following options will always use your selected MIDI instrument programs and volumes as the defaults when playing tunes:</p>'},	  
+	  {name: "Staff spacing (default is 10):", id: "configure_staff_spacing", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default Melody MIDI program (0-135):", id: "configure_melody_program", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default Bass/Chords MIDI program (0-135):", id: "configure_chord_program", type:"number", cssClass:"configure_settings_form_text"},
@@ -11503,6 +11491,25 @@ function ConfigureToolSettings(e) {
 			gTheChordVolume = args.result.configure_chord_volume;
 
 			gOverridePlayMIDIParams = args.result.configure_override_play_midi_params;
+
+			// Validate the staff spacing value
+			var testStaffSpacing = args.result.configure_staff_spacing;
+
+			testStaffSpacing = parseInt(testStaffSpacing);
+
+			if (!((isNaN(testStaffSpacing)) || (testStaffSpacing == undefined))){
+
+				// Limit is the negative staffsep offset
+				if (testStaffSpacing < (-1*STAFFSPACEOFFSET)){
+					testStaffSpacing = (-1*STAFFSPACEOFFSET);
+				}
+
+				if (testStaffSpacing != theOldStaffSpacing){
+
+					SetStaffSpacing(testStaffSpacing);
+
+				}
+			}
 
 			// Sanity check the values
 			if (isNaN(parseInt(gTheMelodyProgram))){
@@ -11590,10 +11597,8 @@ function ConfigureToolSettings(e) {
 				gFullScreenScaling = 100;
 			}
 				
-
 			// Update local storage
 			SaveConfigurationSettings();
-
 
 		}
 
@@ -12016,5 +12021,5 @@ WaitForReady(DoStartup);
 //
 // TinyURL API key
 //
-var gTinyURLAPIKey = "Bearer <YOUR_TINYURL_API_TOKEN_HERE>";
+var gTinyURLAPIKey = "Bearer <YOUR_TINY_URL_API_TOKEN_HERE>";
 
