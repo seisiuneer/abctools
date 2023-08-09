@@ -21,7 +21,7 @@
     <meta name="msapplication-TileImage" content="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5.png?time=1606377715" />
     <meta name="viewport" content="width=860">
     <link rel="stylesheet" href="anglo-fingerings.css?v=31"/>
-
+      
   </head>
   <body>
     
@@ -38,8 +38,11 @@
         
         <p>1)&nbsp;Click "Open an existing .ABC file" to open a file or paste one or more ABC tunes into the box below.</p>
         <p>2)&nbsp;Enter your preferred ABC font sizes, %%staffsep, %%musicspace, and preferred bellows direction indication character values.</p>
-        <p>3)&nbsp;Select your instrument style: (Jeffries or Wheatstone) from the "Style" dropdown.</p>
-        <p>4)&nbsp;Select your preferred fingering solution from the "Fingering Solution" dropdown:</p>
+        <p>3)&nbsp;If desired, edit the button names you would like used in the tablature.</p>
+        <p>Click "Reset to Default" to reset to the original values.</p>
+        <p>Changes to the button names are saved to your local browser storage and reloaded the next time you run the tool.</p>
+        <p>4)&nbsp;Select your instrument style: (Jeffries or Wheatstone) from the "Style" dropdown.</p>
+        <p>5)&nbsp;Select your preferred fingering solution from the "Fingering Solution" dropdown:</p>
         <p><strong>On-Row:</strong></p>
         <p>Jim Van Donsel's original fingering solution, favors center row:</p>
         <p>Favors playing D5 and E5 on the right-side C-row.</p>
@@ -100,6 +103,47 @@
         <p>Character(s) for bellows Push:<span class="inputboxglyph"><input style="width:70px" id="push_glyph" type="text"></span></p>
         <p style="margin-bottom:24px;">Character(s) for bellows Draw:<span class="inputboxglyph"><input style="width:70px" id="draw_glyph" type="text"></span></p>
         
+        <p style="margin-bottom:24px;">Button names:&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-reset-buttonnames" onClick="defaultButtonNames();">Reset to Default</button></p>
+        
+        <table style="margin-bottom:24px;">
+          <tr>
+            <td><input type="text" id="r1c1"></td>
+            <td><input type="text" id="r1c2"></td>
+            <td><input type="text" id="r1c3"></td>
+            <td><input type="text" id="r1c4"></td>
+            <td><input type="text" id="r1c5"></td>
+            <td><input type="text" id="r1c6" style="margin-left:36px"></td>
+            <td><input type="text" id="r1c7"></td>
+            <td><input type="text" id="r1c8"></td>
+            <td><input type="text" id="r1c9"></td>
+            <td><input type="text" id="r1c10"></td>
+          </tr>
+          <tr>
+            <td><input type="text" id="r2c1"></td>
+            <td><input type="text" id="r2c2"></td>
+            <td><input type="text" id="r2c3"></td>
+            <td><input type="text" id="r2c4"></td>
+            <td><input type="text" id="r2c5"></td>
+            <td><input type="text" id="r2c6" style="margin-left:36px"></td>
+            <td><input type="text" id="r2c7"></td>
+            <td><input type="text" id="r2c8"></td>
+            <td><input type="text" id="r2c9"></td>
+            <td><input type="text" id="r2c10"></td>
+          </tr>
+          <tr>
+            <td><input type="text" id="r3c1"></td>
+            <td><input type="text" id="r3c2"></td>
+            <td><input type="text" id="r3c3"></td>
+            <td><input type="text" id="r3c4"></td>
+            <td><input type="text" id="r3c5"></td>
+            <td><input type="text" id="r3c6" style="margin-left:36px"></td>
+            <td><input type="text" id="r3c7"></td>
+            <td><input type="text" id="r3c8"></td>
+            <td><input type="text" id="r3c9"></td>
+            <td><input type="text" id="r3c10"></td>
+          </tr>
+        </table>
+        
         <p>
           
           <span style="">Style:&nbsp;&nbsp;</span>
@@ -133,7 +177,7 @@
           </select>
           
         </p>
-
+        
         <p id="stripChordsHolder" style="display:none;"><input type="checkbox" id="stripChords" checked="true">&nbsp;&nbsp;Strip all chords before injecting fingerings</p>
         
         <p style="margin-top:24px"><button id="generateFingerings" class="btn btn-generate" onClick="generateFingerings();">Generate Fingerings</button></p>
@@ -213,7 +257,7 @@
       <p><strong>Tunes with [GBd] style chords in square brackets do not generate the correct fingerings:</strong></p>
       <p>You'll need to reduce these down to a single note for the tool to work.</p>
       <p></p>
-     
+      
       <hr>
       
       <div style="text-align:center;padding:10px 10px 5px 10px;background-color:honeydew">
