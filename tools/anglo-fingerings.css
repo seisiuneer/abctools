@@ -216,6 +216,7 @@ margin-left:0px;
 }
 
 
+
 /* For modal dialog prompt replacement */
 .modal_flat_background { background-color: #000; opacity: 0.4; }
 .modal_flat_main { border: 1px solid #333; box-shadow: 0px 0px 15px -2px rgba(0,0,0,0.75);  }
@@ -230,3 +231,7 @@ margin-left:0px;
 .modal_flat_buttons { text-align:center;margin-top: 40px; }
 .modal_flat_main button { background-color: #ccc; color: #000; padding: 10px 20px; border: 0px; cursor: pointer; outline: none; width: 100px;  }
 .modal_flat_cancel {margin-left: 5px;}
+
+td > input {
+  width:72px;
+}
