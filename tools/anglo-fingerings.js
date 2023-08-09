@@ -26,6 +26,15 @@ var verbose = false;
 // Suggested filename for save
 var gSaveFilename = "";
 
+// Local storage available?
+var gLocalStorageAvailable = false;
+if (window.localStorage) {
+    gLocalStorageAvailable = true;
+}
+
+// Global button naming matrix
+var gButtonNames = [];
+
 // Button constructor
 var Button = function(name, notes, cost, finger) {
     this.name = name;
@@ -115,7 +124,7 @@ var baseMapCrossRowWheatstone = {
 
     // Middle row, RH
     "R1": new Button("R1", ["c", "B"], 1, "r1"),
-     "R2": new Button("R2", ["e", "d"], 2, "r2"),
+    "R2": new Button("R2", ["e", "d"], 2, "r2"),
     "R3": new Button("R3", ["g", "f"], 2, "r3"),
     "R4": new Button("R4", ["c'", "a"], 2, "r4"),
     "R5": new Button("R5", ["e'", "b"], 2, "r4"),
@@ -306,11 +315,15 @@ function setButtonToNoteMap() {
 
     };
 
+
     index = document.getElementById('layout').selectedIndex;
 
     var options = document.getElementById('layout').options;
 
     buttonToNoteMap = buttonMapIndex[options[index].value];
+
+    // Inject custom button names
+    buttonToNoteMap = processButtonNoteNames(buttonToNoteMap);
 
 }
 
@@ -1217,6 +1230,220 @@ function idleTabLocation() {
     }
 }
 
+//
+// Process the button naming matrix at tab build time
+//
+function processButtonNoteNames(map){
+
+    // Walk the current map and inject the requested note names
+    var i;
+
+    for (i=0;i<10;++i){
+        var id = "r1c"+(i+1);
+        gButtonNames[i] = document.getElementById(id).value;
+    }
+    
+    for (i=0;i<10;++i){
+        var id = "r2c"+(i+1);
+        gButtonNames[i+10] = document.getElementById(id).value;
+    }
+
+    for (i=0;i<10;++i){
+        var id = "r3c"+(i+1);
+        gButtonNames[i+20] = document.getElementById(id).value;
+    }
+
+    // Sanity check the button names
+    for (i=0;i<30;++i){
+
+        if (gButtonNames[i] == ""){
+            gButtonNames[i] = " ";
+        }
+
+    }
+
+    // Save the custom button naming map
+    if (gLocalStorageAvailable){
+
+        localStorage.angloButtonNames = JSON.stringify(gButtonNames);
+
+    }
+
+    // Top row
+    map["L1a"].name = gButtonNames[0];
+    map["L2a"].name = gButtonNames[1];
+    map["L3a"].name = gButtonNames[2];
+    map["L4a"].name = gButtonNames[3];
+    map["L5a"].name = gButtonNames[4];
+    map["R1a"].name = gButtonNames[5];
+    map["R2a"].name = gButtonNames[6];
+    map["R3a"].name = gButtonNames[7];
+    map["R4a"].name = gButtonNames[8];
+    map["R5a"].name = gButtonNames[9];
+
+    // Middle row
+    map["L1"].name = gButtonNames[10];
+    map["L2"].name = gButtonNames[11];
+    map["L3"].name = gButtonNames[12];
+    map["L4"].name = gButtonNames[13];
+    map["L5"].name = gButtonNames[14];
+    map["R1"].name = gButtonNames[15];
+
+    // Special case
+    if (map["R1x"]){
+        map["R1x"].name = gButtonNames[15];
+    }
+
+    map["R2"].name = gButtonNames[16];
+    map["R3"].name = gButtonNames[17];
+    map["R4"].name = gButtonNames[18];
+    map["R5"].name = gButtonNames[19];
+
+    // Bottom row
+    map["L6"].name = gButtonNames[20];
+    map["L7"].name = gButtonNames[21];
+    map["L8"].name = gButtonNames[22];
+    map["L9"].name = gButtonNames[23];
+
+     // Special case
+    if (map["L9a"]){
+        map["L9a"].name = gButtonNames[23];
+    }
+   
+    map["L10"].name = gButtonNames[24];
+    map["R6"].name = gButtonNames[25];
+    map["R7"].name = gButtonNames[26];
+    map["R8"].name = gButtonNames[27];
+    map["R9"].name = gButtonNames[28];
+    map["R10"].name = gButtonNames[29];
+
+
+    return map;
+}
+
+//
+// Reset the button naming matrix to the default
+//
+function defaultButtonNames(){
+
+    resetButtonNames();
+
+    for (i=0;i<10;++i){
+        var id = "r1c"+(i+1);
+        document.getElementById(id).value = gButtonNames[i];
+    }
+    
+    for (i=0;i<10;++i){
+        var id = "r2c"+(i+1);
+        document.getElementById(id).value = gButtonNames[i+10];
+    }
+
+    for (i=0;i<10;++i){
+        var id = "r3c"+(i+1);
+        document.getElementById(id).value = gButtonNames[i+20];
+    }
+    
+    // Save the defaults to local storage
+    if (gLocalStorageAvailable){
+
+        localStorage.angloButtonNames = JSON.stringify(gButtonNames);
+
+    }
+
+}
+
+//
+// Initialize the button naming matrix
+//
+function resetButtonNames(){
+
+    gButtonNames = [
+
+        // Top row, LH
+        "L1a",
+        "L2a",
+        "L3a",
+        "L4a",
+        "L5a",
+
+        // Top row, RH
+        "R1a",
+        "R2a",
+        "R3a",
+        "R4a",
+        "R5a",
+
+        // Middle row, LH
+        "L1",
+        "L2",
+        "L3",
+        "L4",
+        "L5",
+
+        // Middle row, RH
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5",
+
+        // Bottom row, LH
+        "L6",
+        "L7",
+        "L8",
+        "L9",
+        "L10",
+
+        // Bottom row, RH
+        "R6",
+        "R7",
+        "R8",
+        "R9",
+        "R10"
+    ];
+
+}
+
+//
+// Init the button naming matrix
+//
+function initButtonNames(){
+
+    resetButtonNames();
+
+    if (gLocalStorageAvailable){
+
+        var theButtonNames = localStorage.angloButtonNames;
+
+        if (theButtonNames){
+
+            gButtonNames = JSON.parse(theButtonNames);
+
+        }
+
+        localStorage.angloButtonNames = JSON.stringify(gButtonNames);
+
+    }
+
+    var i;
+
+    for (i=0;i<10;++i){
+        var id = "r1c"+(i+1);
+        document.getElementById(id).value = gButtonNames[i];
+    }
+    
+    for (i=0;i<10;++i){
+        var id = "r2c"+(i+1);
+        document.getElementById(id).value = gButtonNames[i+10];
+    }
+
+    for (i=0;i<10;++i){
+        var id = "r3c"+(i+1);
+        document.getElementById(id).value = gButtonNames[i+20];
+    }
+
+}
+
 
 // MAE 14 July 2023 Using glyphs for bellows direction by default
 var PUSH_NAME = "↓";
@@ -1713,6 +1940,9 @@ function DoStartup() {
 
     // Configure the initial button map
     initButtonMap();
+
+    // Configure the initial button naming matrix from local storage
+    initButtonNames();
 
 }
 
