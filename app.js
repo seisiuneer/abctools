@@ -160,6 +160,9 @@ var gAppendXValuesToTuneNames = false;
 // Full screen view scaling (percentage)
 var gFullScreenScaling = 50;
 
+// Anglo concertina button names
+var gAngloButtonNames = [];
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -11149,6 +11152,20 @@ function GetInitialConfigurationSettings(){
 		gFullScreenScaling = 50;
 	}
 
+    var theButtonNames = localStorage.angloButtonNames;
+
+    if (theButtonNames){
+
+        gAngloButtonNames = JSON.parse(theButtonNames);
+
+    }
+    else{
+
+    	resetAngloButtonNames();
+
+    }
+
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -11191,8 +11208,242 @@ function SaveConfigurationSettings(){
 		// Fullscreen scaling
 		localStorage.FullScreenScaling = gFullScreenScaling;
 
+		// Anglo button naming matrix
+		localStorage.angloButtonNames = JSON.stringify(gAngloButtonNames);
+
 	}
 }
+
+
+//
+// Initialize the Anglo Concertina button naming matrix
+//
+function resetAngloButtonNames(){
+
+    gAngloButtonNames = [
+
+        // Top row, LH
+        "L1a",
+        "L2a",
+        "L3a",
+        "L4a",
+        "L5a",
+
+        // Top row, RH
+        "R1a",
+        "R2a",
+        "R3a",
+        "R4a",
+        "R5a",
+
+        // Middle row, LH
+        "L1",
+        "L2",
+        "L3",
+        "L4",
+        "L5",
+
+        // Middle row, RH
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5",
+
+        // Bottom row, LH
+        "L6",
+        "L7",
+        "L8",
+        "L9",
+        "L10",
+
+        // Bottom row, RH
+        "R6",
+        "R7",
+        "R8",
+        "R9",
+        "R10"
+    ];
+
+}
+
+//
+// Reset the button naming matrix to the default with confirmation
+//
+function defaultAngloButtonNames(){
+
+	DayPilot.Modal.confirm("Are you sure you want to reset the Anglo Concertina button names to their default values?",{ top:180, theme: "modal_flat", scrollWithPage: false }).then(function(args){
+
+		if (!args.canceled){
+
+		    resetAngloButtonNames();
+
+		    for (i=0;i<10;++i){
+		        var id = "r1c"+(i+1);
+		        document.getElementById(id).value = gAngloButtonNames[i];
+		    }
+		    
+		    for (i=0;i<10;++i){
+		        var id = "r2c"+(i+1);
+		        document.getElementById(id).value = gAngloButtonNames[i+10];
+		    }
+
+		    for (i=0;i<10;++i){
+		        var id = "r3c"+(i+1);
+		        document.getElementById(id).value = gAngloButtonNames[i+20];
+		    }
+		    
+		}
+
+	});
+}
+
+//
+// Init the button naming matrix
+//
+function initAngloButtonNames(){
+
+    var i;
+
+    for (i=0;i<10;++i){
+        var id = "r1c"+(i+1);
+        document.getElementById(id).value = gAngloButtonNames[i];
+    }
+    
+    for (i=0;i<10;++i){
+        var id = "r2c"+(i+1);
+        document.getElementById(id).value = gAngloButtonNames[i+10];
+    }
+
+    for (i=0;i<10;++i){
+        var id = "r3c"+(i+1);
+        document.getElementById(id).value = gAngloButtonNames[i+20];
+    }
+
+}
+
+//
+// Change handler for Anglo fingerings input fields
+//
+function angloFingeringsChangeHandler(){
+
+	// Walk the current map and inject the requested note names
+    var i;
+
+    for (i=0;i<10;++i){
+        var id = "r1c"+(i+1);
+        gAngloButtonNames[i] = document.getElementById(id).value;
+    }
+    
+    for (i=0;i<10;++i){
+        var id = "r2c"+(i+1);
+        gAngloButtonNames[i+10] = document.getElementById(id).value;
+    }
+
+    for (i=0;i<10;++i){
+        var id = "r3c"+(i+1);
+        gAngloButtonNames[i+20] = document.getElementById(id).value;
+    }
+
+    // Sanity check the button names
+    for (i=0;i<30;++i){
+
+        if (gAngloButtonNames[i] == ""){
+            gAngloButtonNames[i] = " ";
+        }
+
+    }
+
+}
+
+//
+// Configure the Anglo concertina button names
+//
+function ConfigureAngloFingerings(){
+
+	const theData = {};
+
+	// Save off the original fingerings
+	var gAngloButtonNamesOriginal = gAngloButtonNames.slice();
+
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">Configure Anglo Concertina Tablature Button Names&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#injecting_box_or_anglo_concertina_tablature" target="_blank" style="text-decoration:none;">💡</a></span></p>';
+	modal_msg += '<div id="anglo-button-names-dialog">';
+	modal_msg += '<table style="margin-bottom:24px;text-align:center;">\n';
+	modal_msg += '<tr>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r1c1" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r1c2" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r1c3" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r1c4" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r1c5" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r1c6" style="margin-left:36px" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r1c7" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r1c8" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r1c9" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r1c10" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '</tr>\n';
+	modal_msg += '<tr>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r2c1" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r2c2" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r2c3" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r2c4" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r2c5" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r2c6" style="margin-left:36px" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r2c7" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r2c8" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r2c9" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r2c10" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '</tr>\n';
+	modal_msg += '<tr>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r3c1" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r3c2" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r3c3" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r3c4" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r3c5" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r3c6" style="margin-left:36px" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r3c7" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r3c8" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r3c9" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="anglobuttonnames" type="text" id="r3c10" onchange="angloFingeringsChangeHandler()"></td>\n';
+	modal_msg += '</tr>\n';
+	modal_msg += '</table>\n';
+	modal_msg += '</div>\n';
+	modal_msg += '<p style="text-align:center;margin-top:22px;"><input id="default_anglo_fingerings" class="btn btn-clearbutton default_anglo_fingerings" onclick="defaultAngloButtonNames()" type="button" value="Reset to Default" title="Reset the Anglo Concertina button names to their default values"></p>\n';
+
+	const form = [
+	  {html: modal_msg}
+	];
+
+
+	setTimeout(function(){
+
+		initAngloButtonNames();
+
+	}, 150);
+
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 160, width: 800, scrollWithPage: false } ).then(function(args){
+		
+		// Get the results and store them in the global configuration
+		if (!args.canceled){
+
+		    // Save the custom button naming map
+		    if (gLocalStorageAvailable){
+
+		        localStorage.angloButtonNames = JSON.stringify(gAngloButtonNames);
+
+		    }
+
+		}
+		else{
+
+			// Cancelled, reset the original values
+			gAngloButtonNames = gAngloButtonNamesOriginal;
+		}
+
+	});
+
+}
+
 
 //
 // Box and concertina settings dialog
@@ -11240,7 +11491,7 @@ function ConfigureBoxTab(){
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Box and Anglo Concertina Tablature Injection Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#injecting_box_or_anglo_concertina_tablature" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
 	  {name: "    Inject %%MIDI directives to mute bass/chords", id: "configure_inject_directives", type:"checkbox", cssClass:"configure_box_settings_form_text"},
-	  {html: '<p style="margin-top:18px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>Tablature Font Settings (for both Box and Concertina):</strong></p>'},	  
+	  {html: '<p style="margin-top:18px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>Tablature Font Settings (for both Box and Anglo Concertina):</strong></p>'},	  
 	  {name: "Font family:  (Recommended: Palatino)", id: "configure_font_family", type:"text", cssClass:"configure_box_settings_form_text_wide"},
 	  {name: "Title font size:  (Recommended: 22)", id: "configure_title_font_size", type:"text", cssClass:"configure_box_settings_form_text"},
 	  {name: "Subtitle font size:  (Recommended: 18)", id: "configure_subtitle_font_size", type:"text", cssClass:"configure_box_settings_form_text"},
@@ -11258,6 +11509,7 @@ function ConfigureBoxTab(){
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:12pt;font-family:helvetica">On-Row: Favors D5 and E5 on right-side C-row.</p>'},	  
 	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">Cross-Row: Favors D5 and E5 on the left-side G-row.</p>'},	  
 	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">Favors C5 on the left-side G-row draw, B4 on the right-side C-row draw.</p>'},	  
+	  {html: '<p style="text-align:center;margin-top:22px;"><input id="configure_anglo_fingerings" class="btn btn-urlcontrols configure_anglo_fingerings" onclick="ConfigureAngloFingerings()" type="button" value="Configure Anglo Concertina Tablature Button Names" title="Configure the Anglo Concertina tablature button names"></p>'},
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 720, scrollWithPage: false } ).then(function(args){
@@ -11339,6 +11591,7 @@ function SharingControlsDialog(){
 	});
 
 }
+
 //
 // Advanced controls dialog
 //
@@ -11388,7 +11641,7 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<input id="injectcdtab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_CsD()" type="button" value="Inject C#/D Box Tab" title="Injects C#/D box tablature into the ABC">';
 	modal_msg  += '<input id="injectanglotab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Anglo()" type="button" value="Inject Anglo Concertina Tab" title="Injects Anglo Concertina tablature into the ABC">';
 	modal_msg  += '</p>';
-	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-urlcontrols" onclick="ConfigureBoxTab()" type="button" value="Configure Box and Anglo Concertina Tablature Injection Settings" title="Configure the Box and Concertina tablature injection settings"></p>';	
+	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-urlcontrols configure_box_advanced" onclick="ConfigureBoxTab()" type="button" value="Configure Box and Anglo Concertina Tablature Injection Settings" title="Configure the Box and Anglo Concertina tablature injection settings"></p>';	
 	modal_msg += '</div>';
 
 	setTimeout(function(){
@@ -11474,7 +11727,7 @@ function ConfigureToolSettings(e) {
 	  {html: '<p style="margin-top:12px;margin-bottom:0px;font-size:12pt;line-height:14pt;font-family:helvetica">If there are already a %%MIDI bassvol or %%MIDI chordvol directive in the ABC, the value in the ABC will override the default value.</p>'},	  
 	  {name: "            Override all MIDI programs and volumes in the ABC when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">To change the Melody volume, add a dynamics indication such as !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! immediately before the first note in the ABC.</p>'},	  
-	  {html: '<p style="text-align:center;"><input id="configure_box" class="btn btn-urlcontrols" onclick="ConfigureBoxTab()" type="button" value="Configure Box and Anglo Concertina Tablature Injection Settings" title="Configure the Box and Concertina tablature injection settings"></p>'},	  
+	  {html: '<p style="text-align:center;"><input id="configure_box" class="btn btn-urlcontrols configure_box" onclick="ConfigureBoxTab()" type="button" value="Configure Box and Anglo Concertina Tablature Injection Settings" title="Configure the Box and Anglo Concertina tablature injection settings"></p>'},	  
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 20, width: 680, scrollWithPage: false } ).then(function(args){
@@ -11921,6 +12174,10 @@ function DoStartup() {
 	// Clear the text entry area, but don't render
 	ClearNoRender();
 
+	// Init the Anglo Concertina button naming matrix
+	resetAngloButtonNames();
+
+
 	// Is local storage available
 	if (window.localStorage) {
 
@@ -11997,6 +12254,7 @@ function DoStartup() {
 
 	// And set the focus
     gTheABC.focus();
+
 
 }
 
