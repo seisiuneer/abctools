@@ -219,6 +219,62 @@ var angloFingeringsGenerator = function (theABC){
     var buttonToNoteMap = null;
     var buttonMapIndex = null;
 
+    //
+    // Process the button naming matrix at tab build time
+    //
+    function processButtonNoteNames(map){
+
+        // Top row
+        map["L1a"].name = gAngloButtonNames[0];
+        map["L2a"].name = gAngloButtonNames[1];
+        map["L3a"].name = gAngloButtonNames[2];
+        map["L4a"].name = gAngloButtonNames[3];
+        map["L5a"].name = gAngloButtonNames[4];
+        map["R1a"].name = gAngloButtonNames[5];
+        map["R2a"].name = gAngloButtonNames[6];
+        map["R3a"].name = gAngloButtonNames[7];
+        map["R4a"].name = gAngloButtonNames[8];
+        map["R5a"].name = gAngloButtonNames[9];
+
+        // Middle row
+        map["L1"].name = gAngloButtonNames[10];
+        map["L2"].name = gAngloButtonNames[11];
+        map["L3"].name = gAngloButtonNames[12];
+        map["L4"].name = gAngloButtonNames[13];
+        map["L5"].name = gAngloButtonNames[14];
+        map["R1"].name = gAngloButtonNames[15];
+
+        // Special case
+        if (map["R1x"]){
+            map["R1x"].name = gAngloButtonNames[15];
+        }
+
+        map["R2"].name = gAngloButtonNames[16];
+        map["R3"].name = gAngloButtonNames[17];
+        map["R4"].name = gAngloButtonNames[18];
+        map["R5"].name = gAngloButtonNames[19];
+
+        // Bottom row
+        map["L6"].name = gAngloButtonNames[20];
+        map["L7"].name = gAngloButtonNames[21];
+        map["L8"].name = gAngloButtonNames[22];
+        map["L9"].name = gAngloButtonNames[23];
+
+         // Special case
+        if (map["L9a"]){
+            map["L9a"].name = gAngloButtonNames[23];
+        }
+       
+        map["L10"].name = gAngloButtonNames[24];
+        map["R6"].name = gAngloButtonNames[25];
+        map["R7"].name = gAngloButtonNames[26];
+        map["R8"].name = gAngloButtonNames[27];
+        map["R9"].name = gAngloButtonNames[28];
+        map["R10"].name = gAngloButtonNames[29];
+
+        return map;
+    }
+
     // 
     // Called at solution generation time
     //
@@ -281,6 +337,9 @@ var angloFingeringsGenerator = function (theABC){
             buttonToNoteMap = wheatstoneMap;
 
         }
+
+        // Inject custom button names
+        buttonToNoteMap = processButtonNoteNames(buttonToNoteMap);
 
     }
 
