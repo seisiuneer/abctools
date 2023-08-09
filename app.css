@@ -1084,12 +1084,47 @@ left:-5000px;
 
 }
 
+@media (hover: hover) {
+	.configure_box:hover{
+	background: palegreen;
+	}
+}
+
 #configure_box_advanced{
 	height:42px;
 	margin-top: 9px;
 	padding:12px;
 }
 
+@media (hover: hover) {
+	.configure_box_advanced:hover{
+	background: palegreen;
+	}
+}
+
+#configure_anglo_fingerings{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.configure_anglo_fingerings:hover{
+	background: palegreen;
+	}
+}
+
+#default_anglo_fingerings{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.default_anglo_fingerings:hover{
+	background: palegreen;
+	}
+}
 
 .configure_box_settings_select{
 font-size:11pt;
@@ -1290,4 +1325,9 @@ margin-top:-7px;
   --color: black;
   --background-color: #F0F0F0;
 
+}
+
+/* For Anglo concertina button naming dialog */
+.anglobuttonnames {
+  width:66px;
 }
