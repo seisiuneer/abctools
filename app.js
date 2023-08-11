@@ -6743,7 +6743,6 @@ function Render(renderAll,tuneNumber) {
 
 }
 
-
 //
 // Check that the user has selected a .abc file to render
 //
@@ -6755,10 +6754,10 @@ function ensureABCFile(filename) {
 		fileExtension = filename.substring(filename.lastIndexOf(".") + 1, filename.length);
 	}
 
-	if ((fileExtension.toLowerCase() == "abc") || (fileExtension.toLowerCase() == "txt")) {
+	if ((fileExtension.toLowerCase() == "abc") || (fileExtension.toLowerCase() == "txt") || (fileExtension.toLowerCase() == "xml") || (fileExtension.toLowerCase() == "musicxml") || (fileExtension.toLowerCase() == "mxl")){
 		return true;
 	} else {
-		DayPilot.Modal.alert("You must select a .abc or .txt file for upload.",{ theme: "modal_flat", top: 50, scrollWithPage: false });
+		DayPilot.Modal.alert("You must select a .abc, .txt, .xml, .musicxml, or .mxl file to open.",{ theme: "modal_flat", top: 50, scrollWithPage: false });
 		return false;
 	}
 }
@@ -11155,16 +11154,20 @@ function GetInitialConfigurationSettings(){
     var theButtonNames = localStorage.angloButtonNames;
 
     if (theButtonNames){
-
         gAngloButtonNames = JSON.parse(theButtonNames);
-
     }
     else{
-
     	resetAngloButtonNames();
-
     }
 
+    var theMusicXMLImportSettings = localStorage.musicXMLImportOptions;
+
+    if (theMusicXMLImportSettings){
+        gMusicXMLImportOptions = JSON.parse(theMusicXMLImportSettings);
+    }
+    else{
+    	resetMusicXMLImportOptions();
+    }
 
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
@@ -11211,9 +11214,149 @@ function SaveConfigurationSettings(){
 		// Anglo button naming matrix
 		localStorage.angloButtonNames = JSON.stringify(gAngloButtonNames);
 
+		// MusicXML import options
+		localStorage.musicXMLImportOptions = JSON.stringify(gMusicXMLImportOptions);
+
 	}
 }
 
+
+//
+// Configure the MusicXML import
+//
+var gMusicXMLImportOptions = {};
+
+
+function resetMusicXMLImportOptions(){
+
+	gMusicXMLImportOptions = {
+		b:4,
+		n:0,
+		c:0,
+		v:0,
+		d:0,
+		x:1,
+		noped:0,
+		p:'',
+		v1:0,
+		stm:0,
+		s:0,
+		t:0,
+		u:0,
+		v:0,
+		v1:0,
+		mnum:-1,
+		m:1
+	};
+}
+
+function setMusicXMLOptions () {
+
+    gMusicXMLImportOptions.u = $('#musicxml_unfld').prop ('checked') ? 1 : 0;
+    gMusicXMLImportOptions.b = parseInt ($('#musicxml_bpl').val () || 4);
+    gMusicXMLImportOptions.n = parseInt ($('#musicxml_cpl').val () || 0);
+    gMusicXMLImportOptions.c = parseInt ($('#musicxml_crf').val () || 0);
+    gMusicXMLImportOptions.d = parseInt ($('#musicxml_den').val () || 0);
+    gMusicXMLImportOptions.m = parseInt ($('#musicxml_midi').val () || 0);
+    gMusicXMLImportOptions.x = $('#musicxml_nlb').prop ('checked') ? 1 : 0;
+    gMusicXMLImportOptions.noped = $('#musicxml_noped').prop ('checked') ? 1 : 0;
+    gMusicXMLImportOptions.v1 = $('#musicxml_v1').prop ('checked') ? 1 : 0;
+    gMusicXMLImportOptions.stm = $('#musicxml_stems').prop ('checked') ? 1 : 0;
+    gMusicXMLImportOptions.mnum = parseInt ($('#musicxml_mnum').val () || -1);
+
+ }
+
+function idleXMLImport(){
+
+	$('#musicxml_unfld').prop('checked',(gMusicXMLImportOptions.u == 1));
+	$('#musicxml_bpl').val(gMusicXMLImportOptions.b);
+	$('#musicxml_cpl').val(gMusicXMLImportOptions.n);
+	$('#musicxml_crf').val(gMusicXMLImportOptions.c);
+	$('#musicxml_den').val(gMusicXMLImportOptions.d);
+	$('#musicxml_midi').val(gMusicXMLImportOptions.m);
+	$('#musicxml_nlb').prop('checked',(gMusicXMLImportOptions.x == 1));
+	$('#musicxml_noped').prop('checked',(gMusicXMLImportOptions.noped == 1));
+	$('#musicxml_v1').prop('checked',(gMusicXMLImportOptions.v1 == 1));
+	$('#musicxml_stems').prop('checked',(gMusicXMLImportOptions.stm == 1));
+	$('#musicxml_mnum').val(gMusicXMLImportOptions.mnum);
+
+};
+
+//
+// Reset the MusicXML Import settings
+//
+function defaultMusicXMLSettings(){
+
+	DayPilot.Modal.confirm("Are you sure you want to reset the MusicXML import options to their default values?",{ top:180, theme: "modal_flat", scrollWithPage: false }).then(function(args){
+
+		if (!args.canceled){
+
+		    resetMusicXMLImportOptions();
+
+		    idleXMLImport();
+
+		}
+
+	});
+}
+
+function ConfigureMusicXMLImport(){
+
+	const theData = {};
+
+	// Copy the original options object for later possible restore
+	var originalMusicXMLImportOptions = JSON.parse(JSON.stringify(gMusicXMLImportOptions));
+
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;"">Configure MusicXML Import&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#musicxml" target="_blank" style="text-decoration:none;">💡</a></p>';
+
+    modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Bars-per-line:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_bpl" type="text" pattern="\d+" title="Default: 4"/></div>\n';
+    modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Characters-per-line:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_cpl" type="text" pattern="\d+" title="Default: 0 - ignore"/></div>\n';
+    modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Measure numbers:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_mnum" type="text" pattern="\d+" title="-1: No measure numbers, 1..n: Number every n-th measure, 0: Number every system"/></div>\n';
+    modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Unfold repeats:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_unfld" type="checkbox"/></div>\n';
+    modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Credit text filter (level 0-6):&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_crf" type="text" pattern="[0123456]" title="0 (Default), 1, 2, 3, 4, 5, 6"/></div>\n';
+    modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Denominator unit length for L: tags:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_den" type="text" pattern="\d\d?" title="0 (Automatic), 1, 2, 4, 8, 16, or 32"/></div>\n';
+    modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">%%MIDI options:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_midi" type="text" pattern="[012]" title="0: No MIDI, 1: Only program, 2: All MIDI"/></div>\n';
+    modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">No score line breaks:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_nlb" type="checkbox"/></div>\n';
+    modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">No pedal directions:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_noped" type="checkbox"/></div>\n';
+    modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">All directions to first voice:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_v1" type="checkbox"/></div>\n';
+    modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Translate stem directions:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_stems" type="checkbox"/></div>\n';
+
+	modal_msg += '<p style="text-align:center;margin-top:22px;"><input id="default_musicxml_settings" class="btn btn-clearbutton default_musicxml_settings" onclick="defaultMusicXMLSettings()" type="button" value="Reset to Default" title="Reset the MusicXML import settings to their default values"></p>\n';
+
+	const form = [
+	  {html: modal_msg}
+	];
+
+
+	setTimeout(function(){
+
+		idleXMLImport();
+
+	}, 150);
+
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50, width: 500, scrollWithPage: false } ).then(function(args){
+		
+		// Get the results and store them in the global configuration
+		if (!args.canceled){
+
+		    // Save the custom button naming map
+		    if (gLocalStorageAvailable){
+
+		        localStorage.musicXMLImportOptions = JSON.stringify(gMusicXMLImportOptions);
+
+		    }
+		}
+		else{
+
+			// Restore the original options
+			gMusicXMLImportOptions = originalMusicXMLImportOptions;
+
+		}
+
+	});
+
+}
 
 //
 // Initialize the Anglo Concertina button naming matrix
@@ -11509,7 +11652,7 @@ function ConfigureBoxTab(){
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:12pt;font-family:helvetica">On-Row: Favors D5 and E5 on right-side C-row.</p>'},	  
 	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">Cross-Row: Favors D5 and E5 on the left-side G-row.</p>'},	  
 	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">Favors C5 on the left-side G-row draw, B4 on the right-side C-row draw.</p>'},	  
-	  {html: '<p style="text-align:center;margin-top:22px;"><input id="configure_anglo_fingerings" class="btn btn-urlcontrols configure_anglo_fingerings" onclick="ConfigureAngloFingerings()" type="button" value="Configure Anglo Concertina Tablature Button Names" title="Configure the Anglo Concertina tablature button names"></p>'},
+	  {html: '<p style="text-align:center;margin-top:22px;"><input id="configure_anglo_fingerings" class="btn btn-subdialog configure_anglo_fingerings" onclick="ConfigureAngloFingerings()" type="button" value="Configure Anglo Concertina Tablature Button Names" title="Configure the Anglo Concertina tablature button names"></p>'},
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 720, scrollWithPage: false } ).then(function(args){
@@ -11641,7 +11784,7 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<input id="injectcdtab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_CsD()" type="button" value="Inject C#/D Box Tab" title="Injects C#/D box tablature into the ABC">';
 	modal_msg  += '<input id="injectanglotab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Anglo()" type="button" value="Inject Anglo Concertina Tab" title="Injects Anglo Concertina tablature into the ABC">';
 	modal_msg  += '</p>';
-	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-urlcontrols configure_box_advanced" onclick="ConfigureBoxTab()" type="button" value="Configure Box and Anglo Concertina Tablature Injection Settings" title="Configure the Box and Anglo Concertina tablature injection settings"></p>';	
+	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-subdialog configure_box_advanced " onclick="ConfigureBoxTab()" type="button" value="Configure Box and Anglo Concertina Tablature Injection Settings" title="Configure the Box and Anglo Concertina tablature injection settings"></p>';	
 	modal_msg += '</div>';
 
 	setTimeout(function(){
@@ -11680,7 +11823,15 @@ function ConfigureToolSettings(e) {
 
 		ConfigureBoxTab();
 		
-		return
+		return;
+	}
+	
+	// Alt click goes directly to the MusicXML import configuration dialog
+	if (e.altKey){
+
+		ConfigureMusicXMLImport();
+		
+		return;
 	}
 
 	var bAlwaysInjectPrograms = gAlwaysInjectPrograms;
@@ -11727,7 +11878,8 @@ function ConfigureToolSettings(e) {
 	  {html: '<p style="margin-top:12px;margin-bottom:0px;font-size:12pt;line-height:14pt;font-family:helvetica">If there are already a %%MIDI bassvol or %%MIDI chordvol directive in the ABC, the value in the ABC will override the default value.</p>'},	  
 	  {name: "            Override all MIDI programs and volumes in the ABC when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">To change the Melody volume, add a dynamics indication such as !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! immediately before the first note in the ABC.</p>'},	  
-	  {html: '<p style="text-align:center;"><input id="configure_box" class="btn btn-urlcontrols configure_box" onclick="ConfigureBoxTab()" type="button" value="Configure Box and Anglo Concertina Tablature Injection Settings" title="Configure the Box and Anglo Concertina tablature injection settings"></p>'},	  
+	  {html: '<p style="text-align:center;"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureBoxTab()" type="button" value="Configure Box and Anglo Concertina Tablature Injection Settings" title="Configure the Box and Anglo Concertina tablature injection settings"></p>'},	  
+	  {html: '<p style="text-align:center;"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="Configure MusicXML Import" title="Configure MusicXML import parameters"></p>'},
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 20, width: 680, scrollWithPage: false } ).then(function(args){
@@ -11828,8 +11980,6 @@ function ConfigureToolSettings(e) {
 						gTheABC.focus();
 		       		
 			       	});
-
-
 			}
 
 			// Sanity check the full screen scaling setting
@@ -11859,6 +12009,42 @@ function ConfigureToolSettings(e) {
 		gTheABC.focus();
 
 	});
+
+}
+
+// 
+// Is a file XML data
+//
+function isXML(theText){
+
+   	var xs = theText.slice (0, 100);   // only look at the beginning of the file
+
+    if (xs.indexOf ('<?xml') != -1) { 
+    	return true; 
+    }
+
+    return false;
+}
+
+//
+// Import MusicXML format
+//
+function importMusicXML(theXML){
+ 
+    var xmldata = $.parseXML (theXML);    // abc_code is a (unicode) string with one abc tune.
+
+    // var options = { u:0, b:4, n:0,  // unfold repeats (1), bars per line, chars per line
+    //                 c:0, v:0, d:0,  // credit text filter level (0-6), no volta on higher voice numbers (1), denominator unit length (L:)
+    //                 m:0, x:0, t:0,  // no midi, minimal midi, all midi output (0,1,2), no line breaks (1), perc, tab staff -> voicemap (1)
+    //                 v1:0, noped:0,  // all directions to first voice of staff (1), no pedal directions (1)
+    //                 stm:0,          // translate stem elements (stem direction)
+    //                 p:'', s:0 };   // page format: scale (1.0), width, left- and right margin in cm, shift note heads in tablature (1)
+
+    var result = vertaal (xmldata, gMusicXMLImportOptions);
+
+    var abcText = result [0];               // the translation (string)
+
+    return abcText;
 
 }
 
@@ -12086,7 +12272,7 @@ function DoStartup() {
 		// check if user had selected a file
 		if (fileElement.files.length === 0) {
 
-			DayPilot.Modal.alert("Please select an ABC file",{ theme: "modal_flat", top: 50, scrollWithPage: false });
+			DayPilot.Modal.alert("Please select an ABC or MusicXML file",{ theme: "modal_flat", top: 50, scrollWithPage: false });
 
 			return;
 
@@ -12096,6 +12282,8 @@ function DoStartup() {
 
 		// Check the filename extension
 		if (ensureABCFile(file.name)) {
+
+			var isMXL = (file.name.toLowerCase().indexOf(".mxl") != -1);
 
 			// Clean up the notation while the new file is loading
 			gTheABC.value = "";
@@ -12109,11 +12297,112 @@ function DoStartup() {
 			// Save the filename
 			gDisplayedName = file.name;
 
+			// If this is a .mxl file, need to unzip first
+			if (isMXL){
+
+				var zip = new JSZip();
+				
+				zip.loadAsync(file)
+				.then(function(zip) {
+
+					// Read the META-INF metadata
+					var fname = "META-INF/container.xml";
+
+					zip.files[fname].async("string")
+	                .then(function (theXML) {
+	                	
+	                	// Need to parse the container.xml to find the root file
+	                	var xmldata = $.parseXML(theXML); 
+
+	                	var rootfile = xmldata.getElementsByTagName('rootfile')[0];
+
+	                	// Get the main MusicXML file name in the zipfile
+	                	var fname = rootfile.getAttribute("full-path");
+
+						zip.files[fname].async("string")
+		                .then(function (theText) {
+
+							// Check for MusicXML format
+							if (isXML(theText)){
+
+								theText = importMusicXML(theText);
+
+							}
+							else{
+
+								DayPilot.Modal.alert("This is not a valid MXL file.",{ theme: "modal_flat", top: 50, scrollWithPage: false });
+
+				     			return;
+
+							}
+
+							gTheABC.value = theText;
+
+							// Refocus back on the ABC
+							FocusABC();
+
+							setTimeout(function() {
+
+								// Reset the defaults
+								RestoreDefaults();
+
+								// Reset the window scroll
+								window.scrollTo(
+									{
+									  top: 0,
+									}
+								)
+
+								// Mark that this ABC was from a file
+								gABCFromFile = true;
+
+								// Render the notation
+								RenderAsync(true,null,function(){
+
+									// Recalculate the notation top position
+									UpdateNotationTopPosition();
+
+								});
+
+							}, 100);
+
+		                });                
+
+						return;
+
+	                }, function() {
+
+						DayPilot.Modal.alert("This is not a valid MXL file.",{ theme: "modal_flat", top: 50, scrollWithPage: false });
+
+						return;
+
+				    });
+
+				    return;
+
+			    }, function() {
+
+					DayPilot.Modal.alert("This is not a valid MXL file.",{ theme: "modal_flat", top: 50, scrollWithPage: false });
+
+					return;
+
+			    });
+
+				return;
+			}
+
 			const reader = new FileReader();
 
 			reader.addEventListener('load', (event) => {
 
-				gTheABC.value = event.target.result;
+				var theText = event.target.result;
+
+				// Check for MusicXML format
+				if (isXML(theText)){
+					theText = importMusicXML(theText);
+				}
+
+				gTheABC.value = theText;
 
 				// Refocus back on the ABC
 				FocusABC();
@@ -12177,6 +12466,8 @@ function DoStartup() {
 	// Init the Anglo Concertina button naming matrix
 	resetAngloButtonNames();
 
+	// Init the MusicXML import options
+	resetMusicXMLImportOptions();
 
 	// Is local storage available
 	if (window.localStorage) {
