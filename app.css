@@ -1090,6 +1090,19 @@ left:-5000px;
 	}
 }
 
+#configure_musicxml_import{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+
+}
+
+@media (hover: hover) {
+	.configure_musicxml_import:hover{
+	background: palegreen;
+	}
+}
+
 #configure_box_advanced{
 	height:42px;
 	margin-top: 9px;
@@ -1122,6 +1135,18 @@ left:-5000px;
 
 @media (hover: hover) {
 	.default_anglo_fingerings:hover{
+	background: palegreen;
+	}
+}
+
+#default_musicxml_settings{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.default_musicxml_settings:hover{
 	background: palegreen;
 	}
 }
@@ -1326,6 +1351,13 @@ margin-top:-7px;
   --background-color: #F0F0F0;
 
 }
+
+.btn-subdialog{
+  --color: black;
+  --background-color: #D5EBFD;
+
+}
+
 
 /* For Anglo concertina button naming dialog */
 .anglobuttonnames {
