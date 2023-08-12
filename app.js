@@ -7659,7 +7659,7 @@ function AppendJSBach(){
 	theValue += 'M:4/4\n';
 	theValue += 'K:C\n';
 	theValue += 'V:1 treble\n';
-	theValue += '%%staffsep 50\n';
+	theValue += '%%staffsep 40\n';
 	theValue += '%%MIDI program 6\n';
 	theValue += 'V:2 bass\n';
 	theValue += '%%MIDI program 6\n';
