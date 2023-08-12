@@ -509,6 +509,17 @@ height:42px;
 padding:12px;
 }
 
+#abcplayer_scrollbutton{
+height:42px;
+padding:12px;
+}
+
+@media (hover: hover) {
+	.abcplayer_scrollbutton:hover{
+	background: palegreen;
+	}
+}
+
 #shareurlcaption{
 margin-top:8px;
 }
