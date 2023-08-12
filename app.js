@@ -10679,9 +10679,10 @@ function showZoomInstructionsScreen(){
 function LocalPlayABC(theABC){
 
 	var abcOptions = {
-		add_classes: true,
-		responsive: "resize"
-	};
+		add_classes: false,
+		responsive:  "resize",
+		selectTypes: false
+	}; 
 
 	function CursorControl() {
 
