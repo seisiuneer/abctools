@@ -10686,7 +10686,7 @@ function idleMakePlayControlsVisible(){
 
 	var theWindowScrollY = window.scrollY;
 
-	if ((theButtonElem.offsetTop+thePlayerDialog.offsetTop) > (theWindowHeight + theWindowScrollY)){
+	if (((theButtonElem.offsetTop+theButtonElem.offsetHeight)+thePlayerDialog.offsetTop) > (theWindowHeight + theWindowScrollY)){
 
 		// Show the button
 		theButtonElem =  document.getElementById("abcplayer_scrollbutton").style.display = "block";
@@ -10708,9 +10708,9 @@ function MakePlayControlsVisible(){
 
 	var theWindowScrollY = window.scrollY;
 
-	if ((theButtonElem.offsetTop+thePlayerDialog.offsetTop) > (theWindowHeight + theWindowScrollY)){
+	if (((theButtonElem.offsetTop+theButtonElem.offsetHeight)+thePlayerDialog.offsetTop) > (theWindowHeight + theWindowScrollY)){
 
-		window.scrollTo(0,(theButtonElem.offsetTop+thePlayerDialog.offsetTop)-((4*theWindowHeight)/5));
+		window.scrollTo(0,(theButtonElem.offsetTop+thePlayerDialog.offsetTop)-((7*theWindowHeight)/8));
 
 	}
 
