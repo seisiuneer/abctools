@@ -7649,7 +7649,6 @@ function AppendJSBach(){
 	theValue += "% Example J.S. Bach transcription originally imported from MusicXML\n";
 	theValue += "%\n";	
 	theValue += '% Click "Player" to play\n';
-	theValue += "% In the player view, scroll to the bottom for the play controls\n";
 	theValue += "%\n";
 	theValue += 'X:1\n';
 	theValue += 'T:Two-Part Invention #1\n';
@@ -10673,6 +10672,50 @@ function showZoomInstructionsScreen(){
 
 }
 
+//
+// Do we need to show the play controls scroll button? 
+//
+
+function idleMakePlayControlsVisible(){
+
+	var thePlayerDialog = document.getElementsByClassName("modal_flat_main")[0];
+
+	var theButtonElem = document.getElementsByClassName("modal_flat_ok")[0];
+	
+	var theWindowHeight = window.innerHeight;
+
+	var theWindowScrollY = window.scrollY;
+
+	if ((theButtonElem.offsetTop+thePlayerDialog.offsetTop) > (theWindowHeight + theWindowScrollY)){
+
+		// Show the button
+		theButtonElem =  document.getElementById("abcplayer_scrollbutton").style.display = "block";
+
+	}
+}
+
+//
+// Scrolls the play controls into view if it not visible
+//
+
+function MakePlayControlsVisible(){
+
+	var thePlayerDialog = document.getElementsByClassName("modal_flat_main")[0];
+
+	var theButtonElem = document.getElementsByClassName("modal_flat_ok")[0];
+	
+	var theWindowHeight = window.innerHeight;
+
+	var theWindowScrollY = window.scrollY;
+
+	if ((theButtonElem.offsetTop+thePlayerDialog.offsetTop) > (theWindowHeight + theWindowScrollY)){
+
+		window.scrollTo(0,(theButtonElem.offsetTop+thePlayerDialog.offsetTop)-((4*theWindowHeight)/5));
+
+	}
+
+}
+
 // 
 // Local playback
 //
@@ -10867,7 +10910,8 @@ function LocalPlayABC(theABC){
 
 	function initPlay() {
 
-		var modal_msg  = '<div id="abcplayer">';
+		modal_msg = '<p id="abcplayer_scrollbutton" style="text-align:center;margin:0px;display:none"><input id="abcplayer_scrollbutton" class="abcplayer_scrollbutton btn" onclick="MakePlayControlsVisible();" type="button" value="Scroll Player Controls into View" title="Scrolls the player controls into view"></p>';
+		modal_msg += '<div id="abcplayer">';
 	   	modal_msg += '<div id="playback-paper"></div>';
 	   	modal_msg += '<div id="playback-audio"></div>';
 	   	modal_msg += '</div>';
@@ -10929,6 +10973,10 @@ function LocalPlayABC(theABC){
 		}
 
 		setTune(false);
+
+		// Do we need to show the scroll button?
+		idleMakePlayControlsVisible();
+
 	}
 
 	initPlay();
