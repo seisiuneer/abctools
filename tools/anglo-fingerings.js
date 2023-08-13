@@ -599,8 +599,8 @@ function mergeFingerings(input, path, notes, useBarForDraw) {
                         }
 
                         var origFingering = fingering;
-                        fingering = "\"^" + theBar + "\"";
-                        fingering = fingering + "\"^" + origFingering + "\"";
+                        fingering = "\"^" + theBar + ";";
+                        fingering = fingering + origFingering + "\"";
                        
                     }
 
@@ -612,7 +612,7 @@ function mergeFingerings(input, path, notes, useBarForDraw) {
                    if (path.states[i].direction == PUSH_NAME){
 
                         // Add double quotes to fingering, to be rendered below the note
-                        fingering = "\"_" + " " + "\"" + "\"_" + fingering + "\"";
+                        fingering = "\"_" + " " + ";"  + fingering + "\"";
 
                     }
                     else{
@@ -625,8 +625,8 @@ function mergeFingerings(input, path, notes, useBarForDraw) {
                         }
 
                         var origFingering = fingering;
-                        fingering = "\"_" + theBar + "\"";
-                        fingering = fingering + "\"_" + origFingering + "\"";
+                        fingering = "\"_" + theBar + ";";
+                        fingering = fingering + origFingering + "\"";
                        
                     }
 
@@ -642,10 +642,10 @@ function mergeFingerings(input, path, notes, useBarForDraw) {
                 case 0:
 
                     // Add double quotes to fingering, to be rendered above the note
-                    fingering = "\"^" + fingering + "\"";
+                    fingering = "\"^" + fingering + ";";
 
                     // Optionally append bellows direction, to be rendered below the button number.
-                    fingering = fingering + "\"^" + path.states[i].direction + "\"";
+                    fingering = fingering + path.states[i].direction + "\"";
 
                     break;
 
@@ -653,10 +653,10 @@ function mergeFingerings(input, path, notes, useBarForDraw) {
                 case 1:
 
                     // Add double quotes to fingering, to be rendered below the note
-                    fingering = "\"_" + fingering + "\"";
+                    fingering = "\"_" + fingering + ";";
 
                     // Optionally append bellows direction, to be rendered below the button number.
-                    fingering = fingering + "\"_" + path.states[i].direction + "\"";
+                    fingering = fingering + path.states[i].direction + "\"";
 
                     break;
 
