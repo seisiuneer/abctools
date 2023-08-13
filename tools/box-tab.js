@@ -267,8 +267,8 @@ function mergeTablature(input, notes) {
                             }
                         }
 
-                        theTab = "\"^" + theBar + "\"";
-                        theTab = theTab + "\"^" + buttonNumber + "\"";
+                        theTab = "\"^" + theBar + ";";
+                        theTab = theTab + buttonNumber + "\"";
                        
                     }
 
@@ -280,7 +280,7 @@ function mergeTablature(input, notes) {
                     if (direction == PUSH_NAME){
 
                         // Add double quotes to fingering, to be rendered below the note
-                        theTab = "\"_" + " " + "\"" + "\"_" + buttonNumber + "\"";
+                        theTab = "\"_" + " " + ";" +  buttonNumber + "\"";
 
                     }
                     else{
@@ -311,8 +311,8 @@ function mergeTablature(input, notes) {
                             }
                         }
                         
-                        theTab = "\"_" + theBar + "\"";
-                        theTab = theTab + "\"_" + buttonNumber + "\"";
+                        theTab = "\"_" + theBar + ";";
+                        theTab = theTab + buttonNumber + "\"";
                        
                     }
 
@@ -326,9 +326,9 @@ function mergeTablature(input, notes) {
                 // Above
                 case 0:
                     // Add double quotes to tab, to be rendered above the note
-                    theTab = "\"^" + buttonNumber + "\"";
+                    theTab = "\"^" + buttonNumber + ";";
 
-                    theTab = theTab + "\"^" + direction + "\"";
+                    theTab = theTab + direction + "\"";
 
                     break;
 
@@ -336,9 +336,9 @@ function mergeTablature(input, notes) {
                 case 1:
 
                     // Add double quotes to tab, to be rendered below the note
-                    theTab = "\"_" + buttonNumber + "\"";
+                    theTab = "\"_" + buttonNumber + ";";
 
-                    theTab = theTab + "\"_" + direction + "\"";
+                    theTab = theTab + direction + "\"";
 
                     break;
 
