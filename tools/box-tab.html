@@ -20,7 +20,7 @@
     <meta property="og:image" content="http://michaeleskin.com/img/boxtab1.jpg" />
     <meta name="msapplication-TileImage" content="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5.png?time=1606377715" />
     <meta name="viewport" content="width=860">
-    <link rel="stylesheet" href="box-tab.css?v=8"/>
+    <link rel="stylesheet" href="box-tab.css?v=9"/>
     
   </head>
   <body>
@@ -38,13 +38,14 @@
         
         <p>1)&nbsp;Click "Open an existing .ABC file" to open a file or paste one or more ABC tunes into the box below.</p>
         <p>2)&nbsp;Enter your preferred ABC font sizes, %%staffsep, %%musicspace, and preferred bellows direction indication character values.</p>
-        <p>3)&nbsp;Select your instrument style: (B/C or C#/D) from the "Style" dropdown.</p>
-        <p>4)&nbsp;Select whether you want the tablature to appear above or below the notation from the "Tab Location" dropdown.</p>
-        <p>5)&nbsp;If tablature is set to appear over the notation, existing chords in the ABC are always stripped.</p>
+        <p>3)&nbsp;If you would like to use a bar over the button name to indicate draw instead of using the bellows direction indication characters, check "Use a bar over button name to indicate Draw (overrides Push and Draw characters)"
+        <p>4)&nbsp;Select your instrument style: (B/C or C#/D) from the "Style" dropdown.</p>
+        <p>5)&nbsp;Select whether you want the tablature to appear above or below the notation from the "Tab Location" dropdown.</p>
+        <p>6)&nbsp;If tablature is set to appear over the notation, existing chords in the ABC are always stripped.</p>
     	  <p>If tablature is set to appear under the notation, and you want to leave existing chords above the staff, uncheck "Strip all chords before injecting tablature".</p>
-       	<p>6)&nbsp;Click "Generate Tablature".</p>
+       	<p>7)&nbsp;Click "Generate Tablature".</p>
         <p>The generated ABC with tablature will appear in the "Processed ABC Output, with Tablature" box.</p>
-        <p>7)&nbsp;Save, Copy or Test the results:</p>
+        <p>8)&nbsp;Save, Copy or Test the results:</p>
         <p>Click "Save Output to a file" to save the results to a file.</p>
         <p>Click "Copy Output to the clipboard" to copy the results to the system clipboard for pasting into other applications.</p>
         <p>Click "Test Output in the ABC Transcription Tools" to open and test the results in my <a href="http://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a></p>
@@ -86,6 +87,7 @@
         <p>%%musicspace value:<span class="inputbox"><input style="width:100px" id="music_space" type="text"></span><span class="recommended">Recommended:&nbsp;10</span></p>
         <p>Character(s) for bellows Push:<span class="inputboxglyph"><input style="width:70px" id="push_glyph" type="text"></span></p>
         <p style="margin-bottom:24px;">Character(s) for bellows Draw:<span class="inputboxglyph"><input style="width:70px" id="draw_glyph" type="text"></span></p>
+        <p><input type="checkbox" id="useBarForDraw" checked="false">&nbsp;&nbsp;Use a bar over button name to indicate Draw (overrides Push and Draw characters)</p>
         
         <p>
           
@@ -211,8 +213,8 @@
     
   </body>
   
-  <script src="box-tab.js?v=8" type="text/javascript"></script>
-  <script type="text/javascript" src="lz-string.min.js?v=8"></script>
-  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=8"></script>
+  <script src="box-tab.js?v=9" type="text/javascript"></script>
+  <script type="text/javascript" src="lz-string.min.js?v=9"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=9"></script>
   
 </html>
