@@ -611,8 +611,8 @@ var angloFingeringsGenerator = function (theABC){
                             }
 
                             var origFingering = fingering;
-                            fingering = "\"^" + theBar + "\"";
-                            fingering = fingering + "\"^" + origFingering + "\"";
+                            fingering = "\"^" + theBar + ";";
+                            fingering = fingering + origFingering + "\"";
                            
                         }
 
@@ -624,7 +624,7 @@ var angloFingeringsGenerator = function (theABC){
                        if (path.states[i].direction == PUSH_NAME){
 
                             // Add double quotes to fingering, to be rendered below the note
-                            fingering = "\"_" + " " + "\"" + "\"_" + fingering + "\"";
+                            fingering = "\"_" + " " + ";" + fingering + "\"";
 
                         }
                         else{
@@ -637,8 +637,8 @@ var angloFingeringsGenerator = function (theABC){
                             }
 
                             var origFingering = fingering;
-                            fingering = "\"_" + theBar + "\"";
-                            fingering = fingering + "\"_" + origFingering + "\"";
+                            fingering = "\"_" + theBar + ";";
+                            fingering = fingering + origFingering + "\"";
                            
                         }
  
@@ -654,10 +654,10 @@ var angloFingeringsGenerator = function (theABC){
                     case 0:
 
                         // Add double quotes to fingering, to be rendered above the note
-                        fingering = "\"^" + fingering + "\"";
+                        fingering = "\"^" + fingering + ";";
 
                         // Optionally append bellows direction, to be rendered below the button number.
-                        fingering = fingering + "\"^" + path.states[i].direction + "\"";
+                        fingering = fingering + path.states[i].direction + "\"";
 
                         break;
 
@@ -665,10 +665,10 @@ var angloFingeringsGenerator = function (theABC){
                     case 1:
 
                         // Add double quotes to fingering, to be rendered below the note
-                        fingering = "\"_" + fingering + "\"";
+                        fingering = "\"_" + fingering + ";";
 
                         // Optionally append bellows direction, to be rendered below the button number.
-                        fingering = fingering + "\"_" + path.states[i].direction + "\"";
+                        fingering = fingering + path.states[i].direction + "\"";
 
                         break;
 
@@ -1636,8 +1636,8 @@ var boxTabGenerator = function (theABC){
                                 }
                             }
 
-                            theTab = "\"^" + theBar + "\"";
-                            theTab = theTab + "\"^" + buttonNumber + "\"";
+                            theTab = "\"^" + theBar + ";";
+                            theTab = theTab + buttonNumber + "\"";
                            
                         }
 
@@ -1649,7 +1649,7 @@ var boxTabGenerator = function (theABC){
                         if (direction == PUSH_NAME){
 
                             // Add double quotes to fingering, to be rendered below the note
-                            theTab = "\"_" + " " + "\"" + "\"_" + buttonNumber + "\"";
+                            theTab = "\"_" + " " + ";" + buttonNumber + "\"";
 
                         }
                         else{
@@ -1680,8 +1680,8 @@ var boxTabGenerator = function (theABC){
                                 }
                             }
                             
-                            theTab = "\"_" + theBar + "\"";
-                            theTab = theTab + "\"_" + buttonNumber + "\"";
+                            theTab = "\"_" + theBar + ";";
+                            theTab = theTab + buttonNumber + "\"";
                            
                         }
 
@@ -1695,9 +1695,9 @@ var boxTabGenerator = function (theABC){
                     // Above
                     case 0:
                         // Add double quotes to tab, to be rendered above the note
-                        theTab = "\"^" + buttonNumber + "\"";
+                        theTab = "\"^" + buttonNumber + ";";
 
-                        theTab = theTab + "\"^" + direction + "\"";
+                        theTab = theTab + direction + "\"";
 
                         break;
 
@@ -1705,9 +1705,9 @@ var boxTabGenerator = function (theABC){
                     case 1:
 
                         // Add double quotes to tab, to be rendered below the note
-                        theTab = "\"_" + buttonNumber + "\"";
+                        theTab = "\"_" + buttonNumber + ";";
 
-                        theTab = theTab + "\"_" + direction + "\"";
+                        theTab = theTab + direction + "\"";
 
                         break;
 
