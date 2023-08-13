@@ -200,12 +200,14 @@ function keySignatureMap(tonic, modeFlatness) {
 //
 function mergeTablature(input, notes) {
 
-
     var result = input;
     
     var insertedTotal = 0;
 
     var location = document.getElementById('tab_location').selectedIndex;
+    var useBarForDraw = document.getElementById('useBarForDraw').checked
+
+    var theTab;
 
     for (var i = 0; i < notes.length; ++i) {
 
@@ -224,27 +226,123 @@ function mergeTablature(input, notes) {
             direction = glyph.substr(2,glyphLen-1);
         }
 
-        switch (location){
+        if (useBarForDraw){
 
-            // Above
-            case 0:
-                // Add double quotes to tab, to be rendered above the note
-                var theTab = "\"^" + buttonNumber + "\"";
+            switch (location){
 
-                theTab = theTab + "\"^" + direction + "\"";
+                // Above
+                case 0:
 
-                break;
+                    if (direction == PUSH_NAME){
 
-            // Below
-            case 1:
+                        // Add double quotes to fingering, to be rendered above the note
+                        theTab = "\"^" + buttonNumber + "\"";
 
-                // Add double quotes to tab, to be rendered above the note
-                var theTab = "\"_" + buttonNumber + "\"";
+                    }
+                    else{
 
-                theTab = theTab + "\"_" + direction + "\"";
+                        var len = buttonNumber.length;
+                        var theBar = "";
+                        for (var j=0;j<len;++j){
+                            theBar += "_";
+                        }
+                        
+                        // Chrome and Safari have wide numbers in circles
+                        if (gIsChrome || gIsSafari){
 
-                break;
+                            switch (buttonNumber){
+                                case "①":
+                                case "②":
+                                case "③":
+                                case "④":
+                                case "⑤":
+                                case "⑥":
+                                case "⑦":
+                                case "⑧":
+                                case "⑨":
+                                case "⑩":
+                                case "⑪":
+                                    theBar+= "_";
+                                    break;
+                            }
+                        }
 
+                        theTab = "\"^" + theBar + "\"";
+                        theTab = theTab + "\"^" + buttonNumber + "\"";
+                       
+                    }
+
+                    break;
+
+                // Below
+                case 1:
+
+                    if (direction == PUSH_NAME){
+
+                        // Add double quotes to fingering, to be rendered below the note
+                        theTab = "\"_" + " " + "\"" + "\"_" + buttonNumber + "\"";
+
+                    }
+                    else{
+
+                        var len = buttonNumber.length;
+                        var theBar = "";
+                        for (var j=0;j<len;++j){
+                            theBar += "_";
+                        }
+                       
+                        // Chrome and Safari have wide numbers in circles
+                        if (gIsChrome || gIsSafari){
+
+                            switch (buttonNumber){
+                                case "①":
+                                case "②":
+                                case "③":
+                                case "④":
+                                case "⑤":
+                                case "⑥":
+                                case "⑦":
+                                case "⑧":
+                                case "⑨":
+                                case "⑩":
+                                case "⑪":
+                                    theBar+= "_";
+                                    break;
+                            }
+                        }
+                        
+                        theTab = "\"_" + theBar + "\"";
+                        theTab = theTab + "\"_" + buttonNumber + "\"";
+                       
+                    }
+
+                    break;
+                }
+        }
+        else{
+
+            switch (location){
+
+                // Above
+                case 0:
+                    // Add double quotes to tab, to be rendered above the note
+                    theTab = "\"^" + buttonNumber + "\"";
+
+                    theTab = theTab + "\"^" + direction + "\"";
+
+                    break;
+
+                // Below
+                case 1:
+
+                    // Add double quotes to tab, to be rendered below the note
+                    theTab = "\"_" + buttonNumber + "\"";
+
+                    theTab = theTab + "\"_" + direction + "\"";
+
+                    break;
+
+            }
         }
 
         var tabLen = theTab.length;
@@ -258,7 +356,6 @@ function mergeTablature(input, notes) {
 
     return result;
 }
-
 
 // Replaces parts of the given string with '*'
 // input: string to replace
@@ -1073,10 +1170,38 @@ function isAndroid() {
 }
 
 //
+// Are we on Safari?
+//
+function isSafari(){
+
+    if (/Safari/i.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+//
+// Are we on Chrome?
+//
+function isChrome(){
+
+    if (/chrome|chromium|crios/i.test(navigator.userAgent)) {
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+//
 // Globals
 //
 var gIsIOS = false;
 var gIsAndroid = false;
+var gIsSafari = false;
+var gIsChrome = false;
 
 //
 // Initialization 
@@ -1094,9 +1219,22 @@ function DoStartup() {
     document.getElementById('tab_location').selectedIndex = 0;
     document.getElementById('push_glyph').value = "↓";
     document.getElementById('draw_glyph').value = "↑";
+    document.getElementById('useBarForDraw').checked = false;
 
-    document.getElementById('input').value = "X: 1\nT: The Ebb Tide\nR: hornpipe\nM: 4/4\nL: 1/8\nK: Gmaj\n|:dc|BdAB GABc|BG ~G2 G2 bg|fdcA BcdB|cABG =F2 dc|\n(3BdB (3ABA GABc|defa g2 (3efg|fdcB cedc|(3BdB G2 G2:|\n|:ga|bgdB gBdB|GBdB gBbB|aAcA =fAcA|DAcA =fAcA|\nBdAB GABc|defa g2 (3efg|fdcB cedc|(3BdB G2 G2:|\n";
+    var theValue = "";
+    theValue += "X: 1\n";
+    theValue += "T: The Kesh\n";
+    theValue += "R: Jig\n";
+    theValue += "M: 6/8\n";
+    theValue += "L: 1/8\n";
+    theValue += "K: Gmaj\n";
+    theValue += "C: Traditional\n";
+    theValue += '|:GAG GAB|ABA ABd|edd gdd|edB dBA|\n';
+    theValue += 'GAG GAB|ABA ABd|edd gdB|AGF G3:|\n';
+    theValue += '|:BAB dBd|ege dBA|BAB dBG|ABA AGA|\n';
+    theValue += 'BAB dBd|ege dBd|gfg aga|bgf g3:|\n';
 
+    document.getElementById('input').value = theValue;
     document.getElementById('output').value = "";
 
     // Reset file selectors
@@ -1119,6 +1257,21 @@ function DoStartup() {
 
     if (gIsIOS) {
         document.getElementById("selectabcfile").removeAttribute("accept");
+    }
+
+    // Are we on Safari?
+    gIsSafari = false;
+    if (isSafari()){
+        gIsSafari = true;
+    }
+
+    // Are we on Chrome?
+    gIsChrome = false;
+
+    if (!gIsSafari){
+        if (isChrome()){
+            gIsChrome = true;
+        }
     }
 
     //
