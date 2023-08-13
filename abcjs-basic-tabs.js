@@ -18298,7 +18298,9 @@ var createNoteHead = function createNoteHead(abselem, c, pitchelem, options) {
   var accidentalshiftx = 0;
   var newDotShiftX = 0;
   var extraLeft = 0;
-  if (c === undefined) abselem.addFixed(new RelativeElement("pitch is undefined", 0, 0, 0, {
+  // MAE 12 Aug 2023 For MusicXML import FOOFOO
+  //if (c === undefined) abselem.addFixed(new RelativeElement("pitch is undefined", 0, 0, 0, {
+  if (c === undefined) abselem.addFixed(new RelativeElement(" ", 0, 0, 0, {
     type: "debug"
   }));else if (c === "") {
     notehead = new RelativeElement(null, 0, 0, pitch);
