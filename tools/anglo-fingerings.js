@@ -342,7 +342,7 @@ function log(s) {
         console.log(s);
 }
 
-function finger(abcInput, annotateBellows) {
+function finger(abcInput, useBarForDraw) {
 
     log("Got input:" + abcInput);
 
@@ -378,7 +378,7 @@ function finger(abcInput, annotateBellows) {
     }
 
     // Merge the chosen fingerings with the ABC notation
-    abcOutput = mergeFingerings(abcInput, path, notes, annotateBellows);
+    abcOutput = mergeFingerings(abcInput, path, notes, useBarForDraw);
 
     return abcOutput;
 
@@ -556,7 +556,7 @@ function keySignatureMap(tonic, modeFlatness) {
 // Merges an array of Button objects with an array of Notes
 // with the original string input.
 // Returns a merged string.
-function mergeFingerings(input, path, notes, annotateFingerings) {
+function mergeFingerings(input, path, notes, useBarForDraw) {
 
     // Drop the first state of the path - it's a dummy root state
     path.states.shift();
@@ -576,42 +576,100 @@ function mergeFingerings(input, path, notes, annotateFingerings) {
 
         var fingering = path.states[i].button.name;
 
-        switch (location){
+        if (useBarForDraw){
 
-            // Above
-            case 0:
+           switch (location){
 
-                // Add double quotes to fingering, to be rendered above the note
-                fingering = "\"^" + fingering + "\"";
+                // Above
+                case 0:
 
-                // Optionally append bellows direction, to be rendered below the button number.
-                if (annotateFingerings) {
+                    if (path.states[i].direction == PUSH_NAME){
+
+                        // Add double quotes to fingering, to be rendered above the note
+                        fingering = "\"^" + fingering + "\"";
+
+                    }
+                    else{
+
+                        var len = fingering.length;
+                        var theBar = "";
+
+                        for (var j=0;j<len;++j){
+                            theBar += "_";
+                        }
+
+                        var origFingering = fingering;
+                        fingering = "\"^" + theBar + "\"";
+                        fingering = fingering + "\"^" + origFingering + "\"";
+                       
+                    }
+
+                    break;
+
+                // Below
+                case 1:
+
+                   if (path.states[i].direction == PUSH_NAME){
+
+                        // Add double quotes to fingering, to be rendered below the note
+                        fingering = "\"_" + " " + "\"" + "\"_" + fingering + "\"";
+
+                    }
+                    else{
+
+                        var len = fingering.length;
+                        var theBar = "";
+
+                        for (var j=0;j<len;++j){
+                            theBar += "_";
+                        }
+
+                        var origFingering = fingering;
+                        fingering = "\"_" + theBar + "\"";
+                        fingering = fingering + "\"_" + origFingering + "\"";
+                       
+                    }
+
+                    break;
+
+            }
+        }
+        else{
+
+            switch (location){
+
+                // Above
+                case 0:
+
+                    // Add double quotes to fingering, to be rendered above the note
+                    fingering = "\"^" + fingering + "\"";
+
+                    // Optionally append bellows direction, to be rendered below the button number.
                     fingering = fingering + "\"^" + path.states[i].direction + "\"";
-                }
 
-                break;
+                    break;
 
-            // Below
-            case 1:
+                // Below
+                case 1:
 
-                // Add double quotes to fingering, to be rendered above the note
-                fingering = "\"_" + fingering + "\"";
+                    // Add double quotes to fingering, to be rendered below the note
+                    fingering = "\"_" + fingering + "\"";
 
-                // Optionally append bellows direction, to be rendered below the button number.
-                if (annotateFingerings) {
+                    // Optionally append bellows direction, to be rendered below the button number.
                     fingering = fingering + "\"_" + path.states[i].direction + "\"";
-                }
 
-                break;
+                    break;
 
+            }
         }
 
         var fingLen = fingering.length;
-        //log("Merge["+i+"] index="+index+" fingLen="+fingLen+" insertedTotal="+insertedTotal);
+        //angloLog("Merge["+i+"] index="+index+" fingLen="+fingLen+" insertedTotal="+insertedTotal);
 
         result = result.substr(0, index) + fingering + result.substr(index);
 
         insertedTotal += fingLen;
+
     }
 
     return result;
@@ -1459,8 +1517,6 @@ function generateFingerings() {
 
     var nTunes = countTunes(theABC);
 
-    var annotateBellows = document.getElementById('annotateBellows').checked;
-
     var injectVolumes = document.getElementById('injectVolumes').checked;
     var stripChords = document.getElementById('stripChords').checked;
 
@@ -1472,6 +1528,8 @@ function generateFingerings() {
     var musicSpace = document.getElementById('music_space').value;
     var staffSep = document.getElementById('staff_sep').value;
     var tabLocation = document.getElementById('tab_location').selectedIndex;
+
+    var useBarForDraw = document.getElementById('useBarForDraw').checked
 
     var result = "";
 
@@ -1485,7 +1543,7 @@ function generateFingerings() {
             thisTune = StripChords(thisTune);
         }
 
-        thisTune = finger(thisTune, annotateBellows);
+        thisTune = finger(thisTune, useBarForDraw);
 
         // Default directives to inject into every tune
         //%%MIDI chordprog 133
@@ -1868,8 +1926,23 @@ function DoStartup() {
     document.getElementById('tab_location').selectedIndex = 0;
     document.getElementById('push_glyph').value = "↓";
     document.getElementById('draw_glyph').value = "↑";
+    document.getElementById('useBarForDraw').checked = false;
+   
 
-    document.getElementById('input').value = "X: 1\nT: The Ebb Tide\nR: hornpipe\nM: 4/4\nL: 1/8\nK: Gmaj\n|:dc|BdAB GABc|BG ~G2 G2 bg|fdcA BcdB|cABG =F2 dc|\n(3BdB (3ABA GABc|defa g2 (3efg|fdcB cedc|(3BdB G2 G2:|\n|:ga|bgdB gBdB|GBdB gBbB|aAcA =fAcA|DAcA =fAcA|\nBdAB GABc|defa g2 (3efg|fdcB cedc|(3BdB G2 G2:|\n";
+    var theValue = "";
+    theValue += "X: 1\n";
+    theValue += "T: The Kesh\n";
+    theValue += "R: Jig\n";
+    theValue += "M: 6/8\n";
+    theValue += "L: 1/8\n";
+    theValue += "K: Gmaj\n";
+    theValue += "C: Traditional\n";
+    theValue += '|:GAG GAB|ABA ABd|edd gdd|edB dBA|\n';
+    theValue += 'GAG GAB|ABA ABd|edd gdB|AGF G3:|\n';
+    theValue += '|:BAB dBd|ege dBA|BAB dBG|ABA AGA|\n';
+    theValue += 'BAB dBd|ege dBd|gfg aga|bgf g3:|\n';
+
+    document.getElementById('input').value = theValue;
 
     document.getElementById('output').value = "";
 
