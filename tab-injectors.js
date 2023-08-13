@@ -390,7 +390,7 @@ var angloFingeringsGenerator = function (theABC){
         }
 
         // Merge the chosen fingerings with the ABC notation
-        abcOutput = mergeFingerings(abcInput, path, notes, true);
+        abcOutput = mergeFingerings(abcInput, path, notes);
 
         return abcOutput;
 
@@ -568,7 +568,7 @@ var angloFingeringsGenerator = function (theABC){
     // Merges an array of Button objects with an array of Notes
     // with the original string input.
     // Returns a merged string.
-    function mergeFingerings(input, path, notes, annotateFingerings) {
+    function mergeFingerings(input, path, notes) {
 
         // Drop the first state of the path - it's a dummy root state
         path.states.shift();
@@ -588,34 +588,91 @@ var angloFingeringsGenerator = function (theABC){
 
             var fingering = path.states[i].button.name;
 
-            switch (location){
+            if (gInjectTab_UseBarForDraw){
 
-                // Above
-                case 0:
+               switch (location){
 
-                    // Add double quotes to fingering, to be rendered above the note
-                    fingering = "\"^" + fingering + "\"";
+                    // Above
+                    case 0:
 
-                    // Optionally append bellows direction, to be rendered below the button number.
-                    if (annotateFingerings) {
+                        if (path.states[i].direction == PUSH_NAME){
+
+                            // Add double quotes to fingering, to be rendered above the note
+                            fingering = "\"^" + fingering + "\"";
+
+                        }
+                        else{
+
+                            var len = fingering.length;
+                            var theBar = "";
+
+                            for (var j=0;j<len;++j){
+                                theBar += "_";
+                            }
+
+                            var origFingering = fingering;
+                            fingering = "\"^" + theBar + "\"";
+                            fingering = fingering + "\"^" + origFingering + "\"";
+                           
+                        }
+
+                        break;
+
+                    // Below
+                    case 1:
+
+                       if (path.states[i].direction == PUSH_NAME){
+
+                            // Add double quotes to fingering, to be rendered below the note
+                            fingering = "\"_" + " " + "\"" + "\"_" + fingering + "\"";
+
+                        }
+                        else{
+
+                            var len = fingering.length;
+                            var theBar = "";
+
+                            for (var j=0;j<len;++j){
+                                theBar += "_";
+                            }
+
+                            var origFingering = fingering;
+                            fingering = "\"_" + theBar + "\"";
+                            fingering = fingering + "\"_" + origFingering + "\"";
+                           
+                        }
+ 
+                        break;
+
+                }
+            }
+            else{
+
+                switch (location){
+
+                    // Above
+                    case 0:
+
+                        // Add double quotes to fingering, to be rendered above the note
+                        fingering = "\"^" + fingering + "\"";
+
+                        // Optionally append bellows direction, to be rendered below the button number.
                         fingering = fingering + "\"^" + path.states[i].direction + "\"";
-                    }
 
-                    break;
+                        break;
 
-                // Below
-                case 1:
+                    // Below
+                    case 1:
 
-                    // Add double quotes to fingering, to be rendered above the note
-                    fingering = "\"_" + fingering + "\"";
+                        // Add double quotes to fingering, to be rendered below the note
+                        fingering = "\"_" + fingering + "\"";
 
-                    // Optionally append bellows direction, to be rendered below the button number.
-                    if (annotateFingerings) {
+                        // Optionally append bellows direction, to be rendered below the button number.
                         fingering = fingering + "\"_" + path.states[i].direction + "\"";
-                    }
 
-                    break;
+                        break;
 
+                }
             }
 
             var fingLen = fingering.length;
@@ -1519,6 +1576,8 @@ var boxTabGenerator = function (theABC){
 
         var location = parseInt(gInjectTab_TabLocation);
 
+        var theTab;
+
         for (var i = 0; i < notes.length; ++i) {
 
             var index = notes[i].index + insertedTotal;
@@ -1536,27 +1595,123 @@ var boxTabGenerator = function (theABC){
                 direction = glyph.substr(2,glyphLen-1);
             }
 
-            switch (location){
+            if (gInjectTab_UseBarForDraw){
 
-                // Above
-                case 0:
-                    // Add double quotes to tab, to be rendered above the note
-                    var theTab = "\"^" + buttonNumber + "\"";
+                switch (location){
 
-                    theTab = theTab + "\"^" + direction + "\"";
+                    // Above
+                    case 0:
 
-                    break;
+                        if (direction == PUSH_NAME){
 
-                // Below
-                case 1:
+                            // Add double quotes to fingering, to be rendered above the note
+                            theTab = "\"^" + buttonNumber + "\"";
 
-                    // Add double quotes to tab, to be rendered above the note
-                    var theTab = "\"_" + buttonNumber + "\"";
+                        }
+                        else{
 
-                    theTab = theTab + "\"_" + direction + "\"";
+                            var len = buttonNumber.length;
+                            var theBar = "";
+                            for (var j=0;j<len;++j){
+                                theBar += "_";
+                            }
+                            
+                            // Chrome and Safari have wide numbers in circles
+                            if (gIsChrome || gIsSafari){
 
-                    break;
+                                switch (buttonNumber){
+                                    case "①":
+                                    case "②":
+                                    case "③":
+                                    case "④":
+                                    case "⑤":
+                                    case "⑥":
+                                    case "⑦":
+                                    case "⑧":
+                                    case "⑨":
+                                    case "⑩":
+                                    case "⑪":
+                                        theBar+= "_";
+                                        break;
+                                }
+                            }
 
+                            theTab = "\"^" + theBar + "\"";
+                            theTab = theTab + "\"^" + buttonNumber + "\"";
+                           
+                        }
+
+                        break;
+
+                    // Below
+                    case 1:
+
+                        if (direction == PUSH_NAME){
+
+                            // Add double quotes to fingering, to be rendered below the note
+                            theTab = "\"_" + " " + "\"" + "\"_" + buttonNumber + "\"";
+
+                        }
+                        else{
+
+                            var len = buttonNumber.length;
+                            var theBar = "";
+                            for (var j=0;j<len;++j){
+                                theBar += "_";
+                            }
+                           
+                            // Chrome and Safari have wide numbers in circles
+                            if (gIsChrome || gIsSafari){
+
+                                switch (buttonNumber){
+                                    case "①":
+                                    case "②":
+                                    case "③":
+                                    case "④":
+                                    case "⑤":
+                                    case "⑥":
+                                    case "⑦":
+                                    case "⑧":
+                                    case "⑨":
+                                    case "⑩":
+                                    case "⑪":
+                                        theBar+= "_";
+                                        break;
+                                }
+                            }
+                            
+                            theTab = "\"_" + theBar + "\"";
+                            theTab = theTab + "\"_" + buttonNumber + "\"";
+                           
+                        }
+
+                        break;
+                    }
+            }
+            else{
+
+                switch (location){
+
+                    // Above
+                    case 0:
+                        // Add double quotes to tab, to be rendered above the note
+                        theTab = "\"^" + buttonNumber + "\"";
+
+                        theTab = theTab + "\"^" + direction + "\"";
+
+                        break;
+
+                    // Below
+                    case 1:
+
+                        // Add double quotes to tab, to be rendered below the note
+                        theTab = "\"_" + buttonNumber + "\"";
+
+                        theTab = theTab + "\"_" + direction + "\"";
+
+                        break;
+
+                }
             }
 
             var tabLen = theTab.length;
