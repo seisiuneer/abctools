@@ -45,6 +45,7 @@ var gIsIOS = false;
 var gIsIPad = false;
 var gIsIPhone = false;
 var gIsSafari = false;
+var gIsChrome = false;
 var gIsAndroid = false;
 
 var gRenderingPDF = false;
@@ -10438,6 +10439,20 @@ function isSafari(){
 }
 
 //
+// Are we on Chrome?
+//
+function isChrome(){
+
+	if (/chrome|chromium|crios/i.test(navigator.userAgent)) {
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
+
+//
 // Is this the first run?
 // 
 // Check for local storage use
@@ -11083,6 +11098,7 @@ var gInjectTab_ConcertinaFingering = 0;
 // Box and Concertina Push and draw tablature glyphs
 var gInjectTab_PushGlyph = "↓";
 var gInjectTab_DrawGlyph = "↑";
+var gInjectTab_UseBarForDraw = false;
 
 // Get the initial configuration settings from local browser storage, if present
 function GetInitialConfigurationSettings(){
@@ -11258,6 +11274,14 @@ function GetInitialConfigurationSettings(){
 		gInjectTab_DrawGlyph = "↑";
 	}
 
+	val = localStorage.InjectTab_UseBarForDraw;
+	if (val){
+		gInjectTab_UseBarForDraw = (val == "true");
+	}
+	else{
+		gInjectTab_UseBarForDraw = false;
+	}
+
 	// Default to 50% full screen scaling
 	val = localStorage.FullScreenScaling;
 	if (val){
@@ -11284,6 +11308,7 @@ function GetInitialConfigurationSettings(){
     else{
     	resetMusicXMLImportOptions();
     }
+
 
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
@@ -11323,6 +11348,7 @@ function SaveConfigurationSettings(){
 		// Accordion and concertina tab bellows direction glyphs
 		localStorage.InjectTab_PushGlyph = gInjectTab_PushGlyph;
 		localStorage.InjectTab_DrawGlyph = gInjectTab_DrawGlyph;
+		localStorage.InjectTab_UseBarForDraw = gInjectTab_UseBarForDraw;
 
 		// Fullscreen scaling
 		localStorage.FullScreenScaling = gFullScreenScaling;
@@ -11745,6 +11771,7 @@ function ConfigureBoxTab(){
 	  configure_strip_chords:gInjectTab_StripChords,
 	  configure_pushglyph:gInjectTab_PushGlyph,
 	  configure_drawglyph:gInjectTab_DrawGlyph,
+	  configure_use_bar_for_draw:gInjectTab_UseBarForDraw,
 	};
 
 	const form = [
@@ -11760,6 +11787,7 @@ function ConfigureBoxTab(){
 	  {name: "%%musicspace value:  (Recommended: 10)", id: "configure_musicspace", type:"text", cssClass:"configure_box_settings_form_text"},
 	  {name: "Character(s) for Push indication (Clearing this field will reset to ↓ ):", id: "configure_pushglyph", type:"text", cssClass:"configure_box_settings_form_text"},
 	  {name: "Character(s) for Draw indication (Clearing this field will reset to ↑ ):", id: "configure_drawglyph", type:"text", cssClass:"configure_box_settings_form_text"},
+	  {name: "    Use a bar over button name to indicate Draw (overrides Push and Draw characters)", id: "configure_use_bar_for_draw", type:"checkbox", cssClass:"configure_box_settings_form_text"},
 	  {name: "Tab location relative to notation:", id: "configure_tab_location", type:"select", options:tab_locations, cssClass:"configure_box_settings_select"},
 	  {name: "    Strip all chords and tab before injecting tab (Tab below only. Tab above always strips.)", id: "configure_strip_chords", type:"checkbox", cssClass:"configure_box_settings_form_text"},
 	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;font-family:helvetica"><strong>Anglo Concertina Tablature Settings:</strong></p>'},	  
@@ -11803,6 +11831,8 @@ function ConfigureBoxTab(){
 			if (gInjectTab_DrawGlyph == ""){
 				gInjectTab_DrawGlyph = "↑";
 			}
+			
+			gInjectTab_UseBarForDraw =  args.result.configure_use_bar_for_draw;
 
 			// Save the settings, in case they were initialized
 			SaveConfigurationSettings();
@@ -12212,6 +12242,15 @@ function DoStartup() {
 	gIsSafari = false;
 	if (isSafari()){
 		gIsSafari = true;
+	}
+
+	// Are we on Chrome?
+	gIsChrome = false;
+
+	if (!gIsSafari){
+		if (isChrome()){
+			gIsChrome = true;
+		}
 	}
 
 	// Are we on iOS?
