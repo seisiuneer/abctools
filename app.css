@@ -520,6 +520,17 @@ padding:12px;
 	}
 }
 
+#abcplayer_downloadbutton{
+height:42px;
+padding:12px;
+}
+
+@media (hover: hover) {
+	.abcplayer_downloadbutton:hover{
+	background: palegreen;
+	}
+}
+
 #shareurlcaption{
 margin-top:8px;
 }
@@ -1371,6 +1382,12 @@ margin-top:-7px;
 .btn-subdialog{
   --color: black;
   --background-color: #D5EBFD;
+
+}
+
+.btn-wavedownload{
+  --color: black;
+  --background-color: lavender;
 
 }
 
