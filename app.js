@@ -10819,7 +10819,7 @@ function LocalPlayABC(theABC){
 		}).then(function (response) {
 			console.log(response);
 			if (synthControl) {
-				
+
 				var fadeLength = computeFade(theABC);
 
 				synthControl.setTune(visualObj, userAction, {fadeLength:fadeLength}).then(function (response) {
@@ -10925,8 +10925,18 @@ function LocalPlayABC(theABC){
 
 	function initPlay() {
 
+		// Adapt the top based on the player control size
+		var theTop = 50;
+
 		modal_msg = '<p id="abcplayer_scrollbutton" style="text-align:center;margin:0px;display:none"><input id="abcplayer_scrollbutton" class="abcplayer_scrollbutton btn" onclick="MakePlayControlsVisible();" type="button" value="Scroll Player Controls into View" title="Scrolls the player controls into view"></p>';
-		modal_msg += '<div id="abcplayer">';
+
+		if (gLargePlayerControls){
+			modal_msg += '<div id="abcplayer" class="abcjs-large">';
+		}
+		else{
+			modal_msg += '<div id="abcplayer">';			
+		}
+
 	   	modal_msg += '<div id="playback-paper"></div>';
 	   	modal_msg += '<div id="playback-audio"></div>';
 	   	modal_msg += '</div>';
@@ -10935,6 +10945,11 @@ function LocalPlayABC(theABC){
 		var windowWidth = window.innerWidth;
 
 		var theWidth = windowWidth * 0.45;
+
+		// Adapt the width based on the player control size
+		if (gLargePlayerControls){
+			theWidth = windowWidth * 0.435;
+		}
 
 		if ((!gIsAndroid) && (!gIsIOS)){
 
@@ -10949,7 +10964,7 @@ function LocalPlayABC(theABC){
 			
 		}
 
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width:theWidth, okText:"Close", scrollWithPage: true });
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: theTop, width:theWidth, okText:"Close", scrollWithPage: true });
 
 		var theOKButtons = document.getElementsByClassName("modal_flat_ok");
 
@@ -11099,6 +11114,9 @@ var gInjectTab_ConcertinaFingering = 0;
 var gInjectTab_PushGlyph = "↓";
 var gInjectTab_DrawGlyph = "↑";
 var gInjectTab_UseBarForDraw = false;
+
+// Large player controls
+var gLargePlayerControls = false;
 
 // Get the initial configuration settings from local browser storage, if present
 function GetInitialConfigurationSettings(){
@@ -11309,6 +11327,13 @@ function GetInitialConfigurationSettings(){
     	resetMusicXMLImportOptions();
     }
 
+	val = localStorage.LargePlayerControls;
+	if (val){
+		gLargePlayerControls = (val == "true");
+	}
+	else{
+		gLargePlayerControls = false;
+	}
 
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
@@ -11358,6 +11383,9 @@ function SaveConfigurationSettings(){
 
 		// MusicXML import options
 		localStorage.musicXMLImportOptions = JSON.stringify(gMusicXMLImportOptions);
+
+		// Large player control player options
+		localStorage.LargePlayerControls = gLargePlayerControls;
 
 	}
 }
@@ -12007,6 +12035,7 @@ function ConfigureToolSettings(e) {
 	  configure_override_play_midi_params: bOverridePlayMIDIParams,
 	  configure_fullscreen_scaling: theFullScreenScaling,
 	  configure_staff_spacing: theOldStaffSpacing,
+	  configure_large_player_controls: gLargePlayerControls,
 	};
 
 	const form = [
@@ -12017,18 +12046,19 @@ function ConfigureToolSettings(e) {
 	  {name: "Default Melody MIDI program (0-135):", id: "configure_melody_program", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default Bass/Chords MIDI program (0-135):", id: "configure_chord_program", type:"number", cssClass:"configure_settings_form_text"},
 	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:14pt;font-family:helvetica">If there is already a %%MIDI program or %%MIDI chordprog directive in the ABC, the value in the ABC will override the default value.</p>'},	  
-	  {html: '<p style="font-size:12pt;font-family:helvetica;margin-bottom:20px;margin-top:20px;text-align:center"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'},
+	  {html: '<p style="font-size:12pt;font-family:helvetica;margin-bottom:12px;margin-top:12px;text-align:center"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'},
 	  {name: "            Use Default Bass/Chord volumes when playing tunes", id: "configure_inject_volumes", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default Bass MIDI volume (0-127):", id: "configure_bass_volume", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default Chords MIDI volume (0-127):", id: "configure_chord_volume", type:"number", cssClass:"configure_settings_form_text"},
 	  {html: '<p style="margin-top:12px;margin-bottom:0px;font-size:12pt;line-height:14pt;font-family:helvetica">If there are already a %%MIDI bassvol or %%MIDI chordvol directive in the ABC, the value in the ABC will override the default value.</p>'},	  
 	  {name: "            Override all MIDI programs and volumes in the ABC when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">To change the Melody volume, add a dynamics indication such as !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! immediately before the first note in the ABC.</p>'},	  
+	  {name: "    Player uses large controls (easier to touch on mobile and tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"configure_box_settings_form_text"},
 	  {html: '<p style="text-align:center;"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureBoxTab()" type="button" value="Configure Box and Anglo Concertina Tablature Injection Settings" title="Configure the Box and Anglo Concertina tablature injection settings"></p>'},	  
 	  {html: '<p style="text-align:center;"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="Configure MusicXML Import" title="Configure MusicXML import parameters"></p>'},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 20, width: 680, scrollWithPage: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 680, scrollWithPage: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -12042,6 +12072,8 @@ function ConfigureToolSettings(e) {
 			gTheChordVolume = args.result.configure_chord_volume;
 
 			gOverridePlayMIDIParams = args.result.configure_override_play_midi_params;
+
+			gLargePlayerControls = args.result.configure_large_player_controls;
 
 			// Validate the staff spacing value
 			var testStaffSpacing = args.result.configure_staff_spacing;
