@@ -10732,9 +10732,162 @@ function MakePlayControlsVisible(){
 }
 
 // 
+// Download the current tune as a .WAV file
+//
+
+var gMIDIbuffer = null;
+var gPlayerABC = null;
+
+//
+// Return the .WAV filename
+//
+function GetTuneWAVName(){
+
+	var neu = escape(gPlayerABC);
+
+	var Reihe = neu.split("%0D%0A");
+
+	Reihe = neu.split("%0A");
+
+	for (var j = 0; j < Reihe.length; ++j) {
+
+		Reihe[j] = unescape(Reihe[j]); /* Macht die Steuerzeichen wieder weg */
+
+		var Aktuellereihe = Reihe[j].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
+
+		if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
+
+			var fname = Reihe[j].slice(2);
+
+			fname = fname.trim();
+
+			// Strip out any naughty HTML tag characters
+			fname = fname.replace(/[ ]+/ig, '_',)
+			fname = fname.replace(/[^a-zA-Z0-9_\-.]+/ig, '');
+
+			return fname+".wav";
+
+		}
+	}
+
+	// Failed to find a tune title, return a default
+	return "output.wav";
+
+}
+
+//
+// Return the .WAV filename
+//
+function isJigWithNoTiming(tuneABC,millisecondsPerMeasure){
+
+	var neu = escape(gPlayerABC);
+
+	var Reihe = neu.split("%0D%0A");
+
+	Reihe = neu.split("%0A");
+
+	var bHasTempo = false;
+	var bIsJig = false;
+	var bIsSlipJig = false;
+	var bIsSlide = false;
+
+	var theMSPerMeasure  = millisecondsPerMeasure;
+
+	for (var j = 0; j < Reihe.length; ++j) {
+
+		Reihe[j] = unescape(Reihe[j]); /* Macht die Steuerzeichen wieder weg */
+
+		var Aktuellereihe = Reihe[j].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
+
+		if (Aktuellereihe[0] == "Q" && Aktuellereihe[1] == ":") {
+
+			bHasTempo = true;
+
+		}
+
+		if (Aktuellereihe[0] == "M" && Aktuellereihe[1] == ":") {
+
+			// Is this a jig variant (meter ends with /8)?
+
+			var theMeter = Reihe[j].replace("M:","");
+			theMeter = theMeter.trim();
+
+			if ((theMeter.indexOf("12/8") != -1)){
+				bIsSlide = true;
+				theMSPerMeasure = 2000;
+			}
+
+			if ((theMeter.indexOf("6/8") != -1)){
+				bIsJig = true;
+				theMSPerMeasure = 1000;
+			}
+
+			if ((theMeter.indexOf("9/8") != -1)){
+				bIsSlipJig = true;
+				theMSPerMeasure = 1500;
+			}
+
+		}
+	}
+
+	if ((bIsJig || bIsSlipJig || bIsSlide) && (!bHasTempo)){
+
+		//console.log("Tempo replacement case, returning "+theMSPerMeasure);
+
+		return theMSPerMeasure;
+
+	}
+	else{
+
+		return millisecondsPerMeasure;
+
+	}
+}
+
+//
+// Generate and download the .wav file for the current tune
+//
+function DownloadWave(tuneABC){
+
+	// Fix timing bug for jig-like tunes with no tempo specified
+	gMIDIbuffer.millisecondsPerMeasure  = isJigWithNoTiming(tuneABC,gMIDIbuffer.millisecondsPerMeasure);
+
+	gMIDIbuffer.prime().then((function(t) {
+		
+		var wavData = gMIDIbuffer.download();
+
+		var link = document.createElement("a");
+		
+		document.body.appendChild(link);
+		
+		link.setAttribute("style", "display: none;");
+		
+		link.href = wavData;
+		
+		link.download = GetTuneWAVName(tuneABC);
+		
+		link.click();
+		
+		window.URL.revokeObjectURL(wavData);
+		
+		document.body.removeChild(link);
+		
+		}
+    )).catch((function(e) {
+
+        console.warn("Audio problem:", e)
+
+    }));
+
+}
+
+// 
 // Local playback
 //
 function LocalPlayABC(theABC){
+
+	gMIDIbuffer = null;
+	gPlayerABC = theABC;
 
 	var abcOptions = {
 		add_classes: false,
@@ -10814,6 +10967,8 @@ function LocalPlayABC(theABC){
 
 		var midiBuffer = new ABCJS.synth.CreateSynth();
 
+		gMIDIbuffer = midiBuffer;
+
 		midiBuffer.init({
 			visualObj: visualObj
 		}).then(function (response) {
@@ -10823,13 +10978,19 @@ function LocalPlayABC(theABC){
 				var fadeLength = computeFade(theABC);
 
 				synthControl.setTune(visualObj, userAction, {fadeLength:fadeLength}).then(function (response) {
-					console.log("Audio successfully loaded.")
+					
+					console.log("Audio successfully loaded.");
+					
 				}).catch(function (error) {
-					console.warn("Audio problem:", error);
+					
+					console.log("Problem loading audio for this tune");
+
 				});
 			}
 		}).catch(function (error) {
-			console.warn("Audio problem:", error);
+
+			console.log("Problem loading audio for this tune");
+
 		});
 	}
 
@@ -10940,6 +11101,11 @@ function LocalPlayABC(theABC){
 	   	modal_msg += '<div id="playback-paper"></div>';
 	   	modal_msg += '<div id="playback-audio"></div>';
 	   	modal_msg += '</div>';
+
+	   	// Add the .wav download button?
+	   	if (gAllowWavDownloadInPlayer){
+			modal_msg += '<p id="abcplayer_scrollbutton" style="text-align:center;margin:0px;margin-top:12px"><input id="abcplayer_downloadbutton" class="abcplayer_downloadbutton btn btn-wavedownload" onclick="DownloadWave();" type="button" value="Download .WAV" title="Downloads the audio for the current tune as a .WAV file"></p>';
+		}
 
 	   	// Scale the player for larger screens
 		var windowWidth = window.innerWidth;
@@ -11117,6 +11283,9 @@ var gInjectTab_UseBarForDraw = false;
 
 // Large player controls
 var gLargePlayerControls = false;
+
+// Allow .wav download in player
+var gAllowWavDownloadInPlayer = false;
 
 // Get the initial configuration settings from local browser storage, if present
 function GetInitialConfigurationSettings(){
@@ -11335,6 +11504,14 @@ function GetInitialConfigurationSettings(){
 		gLargePlayerControls = false;
 	}
 
+	val = localStorage.AllowWavDownloadInPlayer;
+	if (val){
+		gAllowWavDownloadInPlayer = (val == "true");
+	}
+	else{
+		gAllowWavDownloadInPlayer = false;
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -11386,6 +11563,9 @@ function SaveConfigurationSettings(){
 
 		// Large player control player options
 		localStorage.LargePlayerControls = gLargePlayerControls;
+
+		// Allow .wav download in player
+		localStorage.AllowWavDownloadInPlayer = gAllowWavDownloadInPlayer;
 
 	}
 }
@@ -12036,6 +12216,7 @@ function ConfigureToolSettings(e) {
 	  configure_fullscreen_scaling: theFullScreenScaling,
 	  configure_staff_spacing: theOldStaffSpacing,
 	  configure_large_player_controls: gLargePlayerControls,
+	  configure_allow_wav_download: gAllowWavDownloadInPlayer,
 	};
 
 	const form = [
@@ -12054,6 +12235,7 @@ function ConfigureToolSettings(e) {
 	  {name: "            Override all MIDI programs and volumes in the ABC when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">To change the Melody volume, add a dynamics indication such as !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! immediately before the first note in the ABC.</p>'},	  
 	  {name: "    Player uses large controls (easier to touch on mobile and tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"configure_box_settings_form_text"},
+	  {name: "    Allow .wav download from the Player (experimental)", id: "configure_allow_wav_download", type:"checkbox", cssClass:"configure_box_settings_form_text"},
 	  {html: '<p style="text-align:center;"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureBoxTab()" type="button" value="Configure Box and Anglo Concertina Tablature Injection Settings" title="Configure the Box and Anglo Concertina tablature injection settings"></p>'},	  
 	  {html: '<p style="text-align:center;"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="Configure MusicXML Import" title="Configure MusicXML import parameters"></p>'},
 	];
@@ -12074,6 +12256,8 @@ function ConfigureToolSettings(e) {
 			gOverridePlayMIDIParams = args.result.configure_override_play_midi_params;
 
 			gLargePlayerControls = args.result.configure_large_player_controls;
+
+			gAllowWavDownloadInPlayer = args.result.configure_allow_wav_download;
 
 			// Validate the staff spacing value
 			var testStaffSpacing = args.result.configure_staff_spacing;
@@ -12754,8 +12938,5 @@ function WaitForReady(fn) {
 
 WaitForReady(DoStartup);
 
-//
-// TinyURL API key
-//
-var gTinyURLAPIKey = "Bearer <YOUR_TINYURL_API_TOKEN_HERE>";
+
 
