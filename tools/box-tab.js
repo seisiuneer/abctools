@@ -1099,7 +1099,7 @@ function testOutput() {
 
     if (val == "CD") {
 
-        shareName = "Irish_Box_CDß_Tablature_Test";
+        shareName = "Irish_Box_CD_Tablature_Test";
 
     }
 
