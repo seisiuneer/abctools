@@ -30,14 +30,14 @@ function log(s) {
 }
 
 //
-// Generate the box tab
+// Generate the flute tab
 //
 function generate_tab(abcInput){
 
     log("Got input:" + abcInput);
 
     // Root key?
-    var root_key = document.getElementById('root_key').selectedIndex;
+    var root_scale = document.getElementById('root_scale').selectedIndex;
 
     // Find the key signature in the input
     keySignature = findKeySignature(abcInput);
@@ -47,7 +47,7 @@ function generate_tab(abcInput){
     }
 
     // Generate an array of note objects. 
-    var notes = getAbcNotes(abcInput,root_key);
+    var notes = getAbcNotes(abcInput,root_scale);
 
     // Merge the chosen fingerings with the ABC notation
     abcOutput = mergeTablature(abcInput, notes);
@@ -261,11 +261,11 @@ function sanitizeString(input, start, len) {
 //
 // From a note name, gets the button string
 //
-function getNoteGlyph(note, root_key){
+function getNoteGlyph(note, root_scale){
 
     var thisGlyph = "";
 
-    switch (root_key){
+    switch (root_scale){
         
         case 0: // Key of C
 
@@ -445,7 +445,7 @@ function getNoteGlyph(note, root_key){
 }
 
 // Returns an array of Notes from the ABC string input
-function getAbcNotes(input,root_key) {
+function getAbcNotes(input,root_scale) {
 
     // Sanitize the input, removing header and footer, but keeping
     // the same offsets for the notes. We'll just replace header
@@ -514,7 +514,7 @@ function getAbcNotes(input,root_key) {
 
             log("UnNormalized=" + unNormalizedValue + " normalized=" + normalizedValue);
             
-            var theGlyph = getNoteGlyph(normalizedValue,root_key);
+            var theGlyph = getNoteGlyph(normalizedValue,root_scale);
 
             notes.push(new Note((m.index), unNormalizedValue, normalizedValue, theGlyph));
         }
@@ -689,7 +689,7 @@ function generateTablature() {
     var tabFontSize = document.getElementById('tab_font_size').value;
     var musicSpace = document.getElementById('music_space').value
     var staffSep = document.getElementById('staff_sep').value;
-    var root_key = document.getElementById('root_key').selectedIndex;
+    var root_scale = document.getElementById('root_scale').selectedIndex;
 
     var result = "";
 
@@ -727,7 +727,7 @@ function generateTablature() {
         thisTune = InjectOneDirective(thisTune, "%%titlefont " + fontFamily + " " + titleFontSize);
 
         // Inject the root key indication
-        switch (root_key){
+        switch (root_scale){
             case 0: // C
                 thisTune = InjectOneDirective(thisTune, "%%text ");
                 thisTune = InjectOneDirective(thisTune, "%%text 1=C");
@@ -1078,7 +1078,7 @@ function DoStartup() {
     document.getElementById('tab_font_size').value = 11;
     document.getElementById('staff_sep').value = 80;
     document.getElementById('music_space').value = 10;
-    document.getElementById('root_key').selectedIndex = 1;
+    document.getElementById('root_scale').selectedIndex = 1;
 
     var theValue = "";
     theValue += "X: 1\n";
