@@ -321,69 +321,7 @@ function getNoteGlyph(note, root_scale){
 
             break;
 
-        case 1: // Key of G
-
-            var glyph_map = {
-                "G,":  "1-",
-                "^G,": "#1-",
-                "_A,": "#1-",
-                "A,":  "2-",
-                "^A,": "#2-",
-                "_B,": "#2-",
-                "B,":  "3-",
-                "C":   "4-",
-                "^C,": "#4-",
-                "_D,": "#4-",
-                "D":   "5-",
-                "^D,": "#5-",
-                "_E,": "#5-",
-                "E":   "6-",
-                "F":   "#6-",
-                "^F":  "7-",
-                "G":   "1 ",
-                "^G":  "#1 ",
-                "_A":  "#1 ",
-                "A":   "2 ",
-                "^A":  "#2 ",
-                "_B":  "#2 ",
-                "B":   "3 ",
-                "c":   "4 ",
-                "^c":  "#4 ",
-                "_d":  "#4 ",
-                "d":   "5 ",
-                "^d":  "#5 ",
-                "_e":  "#5 ",
-                "e":   "6 ",
-                "f":   "#6 ",
-                "^f":  "7 ",
-                "_g":  "7 ",
-                "g":   "1•",
-                "^g":  "#1•",
-                "_a":  "#1•",
-                "a":   "2•",
-                "^a":  "#2•",
-                "_b":  "#2•",
-                "b":   "3•",
-                "c'":  "4•",
-                "^c'": "#4•",
-                "_d'": "#4•",
-                "d'":  "5•",
-                "^d'": "#5•",
-                "_e'": "#5•",
-                "e'":  "6•",
-                "^f'": "7•",
-                "_g'": "7•"
-            };
-
-            thisGlyph = glyph_map[note];
-
-            if (!thisGlyph){
-                return "x ";
-            }
-
-            break;
-
-        case 2: // Key of D
+        case 1: // Key of D
 
            var glyph_map = {
                 "G,":  "4-",
@@ -438,6 +376,134 @@ function getNoteGlyph(note, root_scale){
             }
 
             break;
+
+        case 2: // Key of G
+
+            var glyph_map = {
+                "G,":  "1-",
+                "^G,": "#1-",
+                "_A,": "#1-",
+                "A,":  "2-",
+                "^A,": "#2-",
+                "_B,": "#2-",
+                "B,":  "3-",
+                "C":   "4-",
+                "^C": "#4-",
+                "_D": "#4-",
+                "D":   "5-",
+                "^D": "#5-",
+                "_E": "#5-",
+                "E":   "6-",
+                "F":   "#6-",
+                "^F":  "7-",
+                "G":   "1 ",
+                "^G":  "#1 ",
+                "_A":  "#1 ",
+                "A":   "2 ",
+                "^A":  "#2 ",
+                "_B":  "#2 ",
+                "B":   "3 ",
+                "c":   "4 ",
+                "^c":  "#4 ",
+                "_d":  "#4 ",
+                "d":   "5 ",
+                "^d":  "#5 ",
+                "_e":  "#5 ",
+                "e":   "6 ",
+                "f":   "#6 ",
+                "^f":  "7 ",
+                "_g":  "7 ",
+                "g":   "1•",
+                "^g":  "#1•",
+                "_a":  "#1•",
+                "a":   "2•",
+                "^a":  "#2•",
+                "_b":  "#2•",
+                "b":   "3•",
+                "c'":  "4•",
+                "^c'": "#4•",
+                "_d'": "#4•",
+                "d'":  "5•",
+                "^d'": "#5•",
+                "_e'": "#5•",
+                "e'":  "6•",
+                "f'":  "6#•",
+                "^f'": "7•",
+                "_g'": "7•"
+            };
+
+            thisGlyph = glyph_map[note];
+
+            if (!thisGlyph){
+                return "x ";
+            }
+
+            break;
+
+       case 3: // Key of A
+
+            var glyph_map = {
+                "A,":  "1-",
+                "^A,": "#1-",
+                "_B,": "#1-",
+                "B,":  "2-",
+                "C":   "#2-",
+                "^C":  "3-",
+                "_D":  "3-",
+                "D":   "4-",
+                "^D":  "#4-",
+                "_E":  "#4-",
+                "E":   "5-",
+                "F":   "#5-",
+                "^F":  "6-",
+                "_G":  "6-",
+                "G":   "6#-",
+                "^G":  "7-",
+                "_A":  "7-",
+                "A":   "1 ",
+                "^A":  "#1 ",
+                "_B":  "#1 ",
+                "B":   "2 ",
+                "c":   "#2 ",
+                "^c":  "3 ",
+                "_d":  "3 ",
+                "d":   "4 ",
+                "^d":  "#4 ",
+                "_e":  "#4 ",
+                "e":   "5 ",
+                "f":   "#5 ",
+                "^f":  "6 ",
+                "_g":  "6 ",
+                "g":   "6# ",
+                "^g":  "7 ",
+                "_a":  "7 ",
+                "a":   "1•",
+                "^a":  "#1•",
+                "_b":  "#1•",
+                "b":   "2•",
+                "c'":   "#2•",
+                "^c'":  "3•",
+                "_d'":  "3•",
+                "d'":   "4•",
+                "^d'":  "#4•",
+                "_e'":  "#4•",
+                "e'":   "5•",
+                "f'":   "#5•",
+                "^f'":  "6•",
+                "_g'":  "6•",
+                "g'":   "6#•",
+                "^g'":  "7•",
+                "_a'":  "7•",
+            };
+
+            thisGlyph = glyph_map[note];
+
+            if (!thisGlyph){
+                return "x ";
+            }
+
+            break;
+
     }
 
     return thisGlyph;
@@ -728,20 +794,27 @@ function generateTablature() {
 
         // Inject the root key indication
         switch (root_scale){
+
             case 0: // C
                 thisTune = InjectOneDirective(thisTune, "%%text ");
                 thisTune = InjectOneDirective(thisTune, "%%text 1=C");
             break;
 
-            case 1: // G
-                thisTune = InjectOneDirective(thisTune, "%%text ");
-                thisTune = InjectOneDirective(thisTune, "%%text 1=G");
-            break;
-            
-            case 2: // D
+            case 1: // D
                 thisTune = InjectOneDirective(thisTune, "%%text ");
                 thisTune = InjectOneDirective(thisTune, "%%text 1=D");
             break;
+            
+            case 2: // G
+                thisTune = InjectOneDirective(thisTune, "%%text ");
+                thisTune = InjectOneDirective(thisTune, "%%text 1=G");
+            break;
+
+            case 3: // A
+                thisTune = InjectOneDirective(thisTune, "%%text ");
+                thisTune = InjectOneDirective(thisTune, "%%text 1=A");
+            break;
+
         }
 
 
@@ -1078,7 +1151,7 @@ function DoStartup() {
     document.getElementById('tab_font_size').value = 11;
     document.getElementById('staff_sep').value = 80;
     document.getElementById('music_space').value = 10;
-    document.getElementById('root_scale').selectedIndex = 1;
+    document.getElementById('root_scale').selectedIndex = 2;
 
     var theValue = "";
     theValue += "X: 1\n";
