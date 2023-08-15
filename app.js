@@ -10741,9 +10741,9 @@ var gPlayerABC = null;
 //
 // Return the .WAV filename
 //
-function GetTuneWAVName(){
+function GetTuneWAVName(tuneABC){
 
-	var neu = escape(gPlayerABC);
+	var neu = escape(tuneABC);
 
 	var Reihe = neu.split("%0D%0A");
 
@@ -10780,7 +10780,7 @@ function GetTuneWAVName(){
 //
 function isJigWithNoTiming(tuneABC,millisecondsPerMeasure){
 
-	var neu = escape(gPlayerABC);
+	var neu = escape(tuneABC);
 
 	var Reihe = neu.split("%0D%0A");
 
@@ -10847,10 +10847,15 @@ function isJigWithNoTiming(tuneABC,millisecondsPerMeasure){
 //
 // Generate and download the .wav file for the current tune
 //
-function DownloadWave(tuneABC){
+function DownloadWave(){
 
 	// Fix timing bug for jig-like tunes with no tempo specified
-	gMIDIbuffer.millisecondsPerMeasure  = isJigWithNoTiming(tuneABC,gMIDIbuffer.millisecondsPerMeasure);
+	gMIDIbuffer.millisecondsPerMeasure  = isJigWithNoTiming(gPlayerABC,gMIDIbuffer.millisecondsPerMeasure);
+
+	// Adjust the sample fade time if required
+	var theFade = computeFade(gPlayerABC);
+
+	gMIDIbuffer.fadeLength = theFade;
 
 	gMIDIbuffer.prime().then((function(t) {
 		
@@ -10864,7 +10869,7 @@ function DownloadWave(tuneABC){
 		
 		link.href = wavData;
 		
-		link.download = GetTuneWAVName(tuneABC);
+		link.download = GetTuneWAVName(gPlayerABC);
 		
 		link.click();
 		
@@ -10879,6 +10884,86 @@ function DownloadWave(tuneABC){
 
     }));
 
+}
+
+//
+// Compute the fade to use for the samples
+// My custom samples have shorter fade times for best sound
+//
+function computeFade(tuneABC){
+
+	var theFade = 200;
+
+	var searchRegExp = /^%%MIDI program.*$/m
+
+	var melodyProgramRequested = tuneABC.match(searchRegExp);
+
+	if ((melodyProgramRequested) && (melodyProgramRequested.length > 0)){
+
+		var thePatchString = melodyProgramRequested[0].replace("%%MIDI program","");
+			
+		thePatchString = thePatchString.trim();
+
+		var thePatchElements = thePatchString.split(" ");
+
+		if (thePatchElements && (thePatchElements.length > 0)){
+
+			var thisPatch = thePatchElements[0];
+
+			// Is this one of ours?
+			switch(thisPatch){
+				case "15":   // Dulcimer
+					theFade = 4000;
+					break;
+				case "21":   // Accordion
+				case "73":   // Flute
+				case "78":   // Whistle
+				case "129":  // Uilleann pipes
+				case "130":  // Smallpipes D
+				case "131":  // Smallpipes A
+				case "132":  // Sackpipa
+				case "133":  // Concertina
+				case "134":  // Melodica
+				case "135":  // Cajun Accordion
+					theFade = 100;
+					break;
+				default:
+					break;
+			}
+		}
+	}
+
+	// Now look for a chordprog
+	searchRegExp = /^%%MIDI chordprog.*$/m
+
+	var chordProgramRequested = tuneABC.match(searchRegExp);
+
+	if ((chordProgramRequested) && (chordProgramRequested.length > 0)){
+
+		var thePatchString = chordProgramRequested[0].replace("%%MIDI chordprog","");
+			
+		thePatchString = thePatchString.trim();
+
+		var thePatchElements = thePatchString.split(" ");
+
+		if (thePatchElements && (thePatchElements.length > 0)){
+
+			var thisPatch = thePatchElements[0];
+
+			// Special case for dulcimer on bass/chords
+			switch(thisPatch){
+				case "15":   // Dulcimer
+					theFade = 4000;
+					break;
+				default:
+					break;
+			}
+		}
+	}
+
+	//console.log("theFade = "+theFade);
+
+	return theFade;
 }
 
 // 
@@ -10992,82 +11077,6 @@ function LocalPlayABC(theABC){
 			console.log("Problem loading audio for this tune");
 
 		});
-	}
-
-	function computeFade(tuneABC){
-
-		var theFade = 200;
-
-		var searchRegExp = /^%%MIDI program.*$/m
-
-		var melodyProgramRequested = tuneABC.match(searchRegExp);
-
-		if ((melodyProgramRequested) && (melodyProgramRequested.length > 0)){
-
-			var thePatchString = melodyProgramRequested[0].replace("%%MIDI program","");
-				
-			thePatchString = thePatchString.trim();
-
-			var thePatchElements = thePatchString.split(" ");
-
-			if (thePatchElements && (thePatchElements.length > 0)){
-
-				var thisPatch = thePatchElements[0];
-
-				// Is this one of ours?
-				switch(thisPatch){
-					case "15":   // Dulcimer
-						theFade = 4000;
-						break;
-					case "21":   // Accordion
-					case "73":   // Flute
-					case "78":   // Whistle
-					case "129":  // Uilleann pipes
-					case "130":  // Smallpipes D
-					case "131":  // Smallpipes A
-					case "132":  // Sackpipa
-					case "133":  // Concertina
-					case "134":  // Melodica
-					case "135":  // Cajun Accordion
-						theFade = 100;
-						break;
-					default:
-						break;
-				}
-			}
-		}
-
-		// Now look for a chordprog
-		searchRegExp = /^%%MIDI chordprog.*$/m
-
-		var chordProgramRequested = tuneABC.match(searchRegExp);
-
-		if ((chordProgramRequested) && (chordProgramRequested.length > 0)){
-
-			var thePatchString = chordProgramRequested[0].replace("%%MIDI chordprog","");
-				
-			thePatchString = thePatchString.trim();
-
-			var thePatchElements = thePatchString.split(" ");
-
-			if (thePatchElements && (thePatchElements.length > 0)){
-
-				var thisPatch = thePatchElements[0];
-
-				// Special case for dulcimer on bass/chords
-				switch(thisPatch){
-					case "15":   // Dulcimer
-						theFade = 4000;
-						break;
-					default:
-						break;
-				}
-			}
-		}
-
-		//console.log("theFade = "+theFade);
-
-		return theFade;
 	}
 
 	function StopPlay(){
