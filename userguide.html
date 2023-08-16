@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-       
+        
         <style>
         p {
         font-size:14pt;
@@ -181,7 +181,7 @@
                 <p class="toc"><a href="#staff_and_title_spacing_overrides">Staff and Title Spacing Overrides</a></p>
                 <p class="toc"><a href="#custom_font_overrides">Custom Font Overrides</a></p>
                 <p class="toc"><a href="#injecting_abc_lyric_based_note_names">Injecting ABC Lyric-based Note Names Into the ABC Tunes</a></p>
-                <p class="toc"><a href="#injecting_box_or_anglo_concertina_tablature">Injecting B/C Box, C#/D Box, or Anglo Concertina Tablature Into the ABC Tunes</a></p>
+                <p class="toc"><a href="#injecting_tablature">Injecting B/C Box, C#/D Box, Anglo Concertina, or Bamboo Flute Tablature Into the ABC Tunes</a></p>
                 <p class="toc"><a href="#reading_the_box_tablature">Reading the Box Tablature</a></p>
                 <p class="toc"><a href="#reading_the_concertina_tablature">Reading the Anglo Concertina Tablature</a></p>
                 <p class="toc"><a href="#musicxml">MusicXML Import Settings</a></p>
@@ -350,7 +350,7 @@
             <h1 class="page_break_always">Advanced Controls&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <p>Clicking the <strong>Show Advanced</strong> button brings up the ABC Transcription Tools Advanced Controls dialog:</p>
             <div class="image_holder">
-                <img src="img/advanced_controls_1.jpg"/>
+                <img src="img/advanced_controls_2.jpg"/>
             </div>
             <p>Click the lightbulb icon to bring up this section of the user guide in a new browser tab.</p>
             <p><strong>Show/Hide ABC Features:</strong></p>
@@ -398,12 +398,16 @@
             <p><strong>Inject B/C Box Tab</strong> - Injects B/C Box tablature into the ABC (uses ABC chord syntax).</p>
             <p><strong>Inject C#/D Box Tab</strong> - Injects C#/D Box tablature into the ABC (uses ABC chord syntax).</p>
             <p><strong>Inject Anglo Concertina Tab</strong> - Injects Anglo Concertina tablature into the ABC (uses ABC chord syntax).</p>
-            <p><strong>Configure Box and Anglo Concertina Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for the Box and Anglo Concertina tab injection.</p>
-           <hr class="hidden-print" id="settings_dialog">
+            <p class="page_break_always"><strong>Inject Bamboo Flute Tab</strong> - After requesting the bamboo flute key, injects numeric notation tab for the selected key into the ABC.</p>
+            <div class="image_holder">
+                <img src="img/bamboo_flute_1.jpg"/>
+            </div>
+            <p><strong>Configure Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for tablature injection.</p>
+            <hr class="hidden-print" id="settings_dialog">
             <h1 class="page_break_always">ABC Transcription Tools Settings&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder">
-                <img src="img/abc_transcription_tool_settings_8.jpg"/>
+                <img src="img/abc_transcription_tool_settings_9.jpg"/>
             </div>
             <p><strong>Full screen tune display scaling (percentage)</strong> - Sets the width in percentage of window width for the tune notation on the screen when viewing full screen. Default is 50%.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/KagT-Aq8mY8" title="Full-Screen Tune Display Options" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
@@ -453,7 +457,7 @@
                 <img src="img/download_wav_1.jpg"/>
             </div>
             <p>Clicking this button will download the audio for the current tune to your system in .wav format.</p>
-            <p><strong>Configure Box and Anglo Concertina Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for the Box and Anglo Concertina tab injection.</p>
+            <p><strong>Configure Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for tablature injection.</p>
             <p><strong>Configure MusicXML Import</strong> - Brings up a dialog where you can configure all parameters for MusicXML import.</p>
             <p>Details on MusicXML import settings below in the <a href="#musicxml">MusicXML Import Settings</a> section.</p>
             <hr class="hidden-print" id="selecting_the_instruments_for_playback">
@@ -1139,18 +1143,22 @@
             <p>X:1</p>
             <p>%%vocalfont Verdana 14</p>
             <p>You can use any of the fonts, styles, and sizes as described above in the "Web Safe Fonts" section.</p>
-            <hr class="hidden-print" id="injecting_box_or_anglo_concertina_tablature">
-            <h1 class="page_break_always">Injecting B/C Box, C#/D Box, or Anglo Concertina Tablature Into the ABC Tunes&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
+            <hr class="hidden-print" id="injecting_tablature">
+            <h1 class="page_break_always">Injecting B/C Box, C#/D Box, Anglo Concertina, or Bamboo Flute Tablature Into the ABC Tunes&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <p>You may inject Box or Anglo Concertina tablature into the ABC using the following buttons in the <strong>Advanced Controls</strong> dialog:</p>
             <p><strong>Inject B/C Box Tab</strong> - Injects B/C Box tablature into the ABC.</p>
             <p><strong>Inject C#/D Box Tab</strong> - Injects C#/D Box tablature into the ABC.</p>
             <p><strong>Inject Anglo Concertina Tab</strong> - Injects Anglo Concertina tablature into the ABC.</p>
-            <p>To configure the tablature fonts and other settings, first click the tool's Settings button, then click the <strong>Configure Box and Anglo Concertina Tablature Injection Settings</strong> button at the bottom of the dialog to bring up the tablature injections settings dialog:</p>
+            <p><strong>Inject Bamboo Flute Tab</strong> - After requesting the bamboo flute key, injects numeric notation tab for the selected key into the ABC.</p>
             <div class="image_holder">
-                <img src="img/box_tab_injection_settings_8.jpg"/>
+                <img src="img/bamboo_flute_1.jpg"/>
+            </div>
+            <p>To configure the tablature fonts and other settings, first click the tool's Settings button, then click the <strong>Configure Tablature Injection Settings</strong> button at the bottom of the dialog to bring up the tablature injections settings dialog:</p>
+            <div class="image_holder">
+                <img src="img/tab_injection_settings_1.jpg"/>
             </div>
             <p>You can also Shift-click the Settings button to go directly to the tablature settings dialog.</p>
-            <p><strong>Common Box and Anglo Concertina tablature settings:</strong></p>
+            <p><strong>Common Box, Anglo Concertina, and Bamboo Flute tablature settings:</strong></p>
             <p><strong>Font family</strong> - Font used for all text injected into the tablature.</p>
             <p><strong>Title font size</strong> - Font size used for the tune title.</p>
             <p><strong>Subtitle font size</strong> -  Font size used for any tune subtitles that might be present.</p>
