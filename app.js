@@ -7440,7 +7440,6 @@ function AppendSongTemplate(){
 	theValue += "%\n";
 	theValue += "% That should get you started. Go play!\n";
 
-
 	// Do common tune addition processing
 	ProcessAddTune(theValue);
 
