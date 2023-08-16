@@ -3065,18 +3065,22 @@ var bambooFluteTabGenerator = function (theABC){
             switch (parseInt(gBambooFluteKey)){
 
                 case 0: // C
+                    thisTune = InjectOneDirective(thisTune, "%%text ");
                     thisTune = InjectOneDirective(thisTune, "%%text 1=C");
                 break;
 
                 case 1: // D
+                    thisTune = InjectOneDirective(thisTune, "%%text ");
                     thisTune = InjectOneDirective(thisTune, "%%text 1=D");
                 break;
                 
                 case 2: // G
+                    thisTune = InjectOneDirective(thisTune, "%%text ");
                     thisTune = InjectOneDirective(thisTune, "%%text 1=G");
                 break;
 
                 case 3: // A
+                    thisTune = InjectOneDirective(thisTune, "%%text ");
                     thisTune = InjectOneDirective(thisTune, "%%text 1=A");
                 break;
 
