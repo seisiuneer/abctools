@@ -7440,6 +7440,7 @@ function AppendSongTemplate(){
 	theValue += "%\n";
 	theValue += "% That should get you started. Go play!\n";
 
+
 	// Do common tune addition processing
 	ProcessAddTune(theValue);
 
@@ -10080,7 +10081,7 @@ function DoInjectABCNoteNameLyrics(){
 }
 
 //
-// Do ABC Box or Concertina Tab Injections
+// Do B/C Box Tab Injection
 //
 function DoInjectTablature_BC(){
 
@@ -10109,7 +10110,7 @@ function DoInjectTablature_BC(){
 }
 
 //
-// Do ABC Box or Concertina Tab Injections
+// Do ABC C#/D Box Tab Injection
 //
 function DoInjectTablature_CsD(){
 
@@ -10139,7 +10140,7 @@ function DoInjectTablature_CsD(){
 }
 
 //
-// Do ABC Box or Concertina Tab Injections
+// Do Anglo Concertina Tab Injection
 //
 function DoInjectTablature_Anglo(){
 
@@ -10164,6 +10165,71 @@ function DoInjectTablature_Anglo(){
 	IdleShowTabNamesControl();
 
 }
+
+//
+// Do Bamboo Flute Tab Injection
+//
+// Prompt first for the key
+//
+function DoInjectTablature_Bamboo_Flute(){
+
+  	const bamboo_flute_keys = [
+	    { name: "  C", id: "0" },
+	    { name: "  D", id: "1" },
+	    { name: "  G", id: "2" },
+	    { name: "  A", id: "3" },
+  	];
+
+
+	// Setup initial values
+	const theData = {
+	  configure_bamboo_flute_key:gBambooFluteKey,
+	};
+
+	const form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject Bamboo Flute Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://en.m.wikipedia.org/wiki/Numbered_musical_notation" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">This will inject numeric notation tablature for a bamboo flute in the key selected below into all of the tunes in the ABC text area:</p>'},	  
+	  {name: "Bamboo flute key:", id: "configure_bamboo_flute_key", type:"select", options:bamboo_flute_keys, cssClass:"configure_box_settings_select"}, 
+	  {html: '<p style="margin-top:24px;font-size:12pt;line-height:14pt;font-family:helvetica">&nbsp;</p>'},	  
+
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 500, scrollWithPage: false } ).then(function(args){
+
+		// Get the results and store them in the global configuration
+		if (!args.canceled){
+
+			gBambooFluteKey = args.result.configure_bamboo_flute_key; 
+
+			// Save the settings, in case they were initialized
+			SaveConfigurationSettings();
+
+			SetRadioValue("notenodertab","noten");
+
+			gCurrentTab = "noten";
+
+			gTheABC.value = bambooFluteTabGenerator(gTheABC.value);
+
+			// Show the chords after an inject
+			gStripChords = false;
+			
+			RenderAsync(true,null);
+
+			// Idle the dialog
+			IdleAdvancedControls(true);
+
+			// Idle the capo control
+			IdleCapoControl();
+
+			// Idle the show tab names control
+			IdleShowTabNamesControl();
+
+		}
+
+	});
+
+}
+
 
 //
 // Change the tab display
@@ -11294,6 +11360,9 @@ var gLargePlayerControls = false;
 // Allow .wav download in player
 var gAllowWavDownloadInPlayer = false;
 
+// Bamboo flute key
+var gBambooFluteKey = 1; // Default to D
+
 // Get the initial configuration settings from local browser storage, if present
 function GetInitialConfigurationSettings(){
 
@@ -11519,6 +11588,16 @@ function GetInitialConfigurationSettings(){
 		gAllowWavDownloadInPlayer = false;
 	}
 
+	// Bamboo flute
+	val = localStorage.BambooFluteKey;
+	if (val){
+		gBambooFluteKey = val;
+	}
+	else{
+		gBambooFluteKey = 1;
+	}
+
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -11573,6 +11652,10 @@ function SaveConfigurationSettings(){
 
 		// Allow .wav download in player
 		localStorage.AllowWavDownloadInPlayer = gAllowWavDownloadInPlayer;
+
+		// Save the bamboo flute key
+		localStorage.BambooFluteKey =  gBambooFluteKey;
+
 
 	}
 }
@@ -11946,9 +12029,9 @@ function ConfigureAngloFingerings(){
 
 
 //
-// Box and concertina settings dialog
+// Tablature settings dialog
 //
-function ConfigureBoxTab(){
+function ConfigureTablatureSettings(){
 
     const box_styles = [
 	    { name: "  B/C", id: "0" },
@@ -11990,9 +12073,9 @@ function ConfigureBoxTab(){
 	};
 
 	const form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Box and Anglo Concertina Tablature Injection Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#injecting_box_or_anglo_concertina_tablature" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Tablature Injection Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#injecting_box_or_anglo_concertina_tablature" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
 	  {name: "    Inject %%MIDI directives to mute bass/chords", id: "configure_inject_directives", type:"checkbox", cssClass:"configure_box_settings_form_text"},
-	  {html: '<p style="margin-top:18px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>Tablature Font Settings (for both Box and Anglo Concertina):</strong></p>'},	  
+	  {html: '<p style="margin-top:18px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>Tablature Font Settings:</strong></p>'},	  
 	  {name: "Font family:  (Recommended: Palatino)", id: "configure_font_family", type:"text", cssClass:"configure_box_settings_form_text_wide"},
 	  {name: "Title font size:  (Recommended: 22)", id: "configure_title_font_size", type:"text", cssClass:"configure_box_settings_form_text"},
 	  {name: "Subtitle font size:  (Recommended: 18)", id: "configure_subtitle_font_size", type:"text", cssClass:"configure_box_settings_form_text"},
@@ -12145,7 +12228,10 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<input id="injectcdtab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_CsD()" type="button" value="Inject C#/D Box Tab" title="Injects C#/D box tablature into the ABC">';
 	modal_msg  += '<input id="injectanglotab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Anglo()" type="button" value="Inject Anglo Concertina Tab" title="Injects Anglo Concertina tablature into the ABC">';
 	modal_msg  += '</p>';
-	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-subdialog configure_box_advanced " onclick="ConfigureBoxTab()" type="button" value="Configure Box and Anglo Concertina Tablature Injection Settings" title="Configure the Box and Anglo Concertina tablature injection settings"></p>';	
+	modal_msg  += '<p style="text-align:center;margin-top:22px;">'
+	modal_msg  += '<input id="injectbambooflute" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Bamboo_Flute()" type="button" value="Inject Bamboo Flute Tab" title="Injects Bamboo flute tablature into the ABC">';
+	modal_msg  += '</p>';
+	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-subdialog configure_box_advanced " onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"></p>';	
 	modal_msg += '</div>';
 
 	setTimeout(function(){
@@ -12182,7 +12268,7 @@ function ConfigureToolSettings(e) {
 	// Shift click goes directly to the Box and Anglo concertina settings dialog
 	if (e.shiftKey){
 
-		ConfigureBoxTab();
+		ConfigureTablatureSettings();
 		
 		return;
 	}
@@ -12243,7 +12329,7 @@ function ConfigureToolSettings(e) {
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">To change the Melody volume, add a dynamics indication such as !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! immediately before the first note in the ABC.</p>'},	  
 	  {name: "    Player uses large controls (easier to touch on mobile and tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"configure_box_settings_form_text"},
 	  {name: "    Allow .wav download from the Player (experimental)", id: "configure_allow_wav_download", type:"checkbox", cssClass:"configure_box_settings_form_text"},
-	  {html: '<p style="text-align:center;"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureBoxTab()" type="button" value="Configure Box and Anglo Concertina Tablature Injection Settings" title="Configure the Box and Anglo Concertina tablature injection settings"></p>'},	  
+	  {html: '<p style="text-align:center;"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"></p>'},	  
 	  {html: '<p style="text-align:center;"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="Configure MusicXML Import" title="Configure MusicXML import parameters"></p>'},
 	];
 
