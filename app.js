@@ -295,6 +295,12 @@ function findSelectedTune(){
 
 	}
 
+	// End of ABC play after paste case fix
+	var theABCLength = theNotes.length;
+	if (start == theABCLength){
+		start = theABCLength-1;
+	}
+
     // Now find all the X: items
     var theTunes = theNotes.split(/^X:/gm);
 
@@ -12687,18 +12693,18 @@ function DoStartup() {
 	// the text change logic only re-renders if the number of tunes has changed
 	// because of a text entry event
 	//
-	document.getElementById('abc').onpaste = 
-		function(){
+	// document.getElementById('abc').onpaste = 
+	// 	function(){
 			
-			// Refocus back on the ABC
-			setTimeout(function(){
-				gTheABC.focus();
-				gTheABC.selectionStart = gTheABC.selectionStart-1;
-	    		gTheABC.selectionEnd = gTheABC.selectionStart;
+	// 		// Refocus back on the ABC
+	// 		setTimeout(function(){
+	// 			gTheABC.focus();
+	// 			gTheABC.selectionStart = gTheABC.selectionStart-1;
+	//     		gTheABC.selectionEnd = gTheABC.selectionStart;
 
-			},250);
+	// 		},250);
 
-		};
+	// 	};
 
 	//
 	// Hook up the text area text change callback with debounce
