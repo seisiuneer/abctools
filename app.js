@@ -11175,10 +11175,8 @@ function LocalPlayABC(theABC){
 	   	modal_msg += '<div id="playback-audio"></div>';
 	   	modal_msg += '</div>';
 
-	   	// Add the .wav download button?
-	   	if (gAllowWavDownloadInPlayer){
-			modal_msg += '<p id="abcplayer_scrollbutton" style="text-align:center;margin:0px;margin-top:12px"><input id="abcplayer_downloadbutton" class="abcplayer_downloadbutton btn btn-wavedownload" onclick="DownloadWave();" type="button" value="Download .WAV" title="Downloads the audio for the current tune as a .WAV file"></p>';
-		}
+	   	// Add the .wav download button
+		modal_msg += '<p id="abcplayer_scrollbutton" style="text-align:center;margin:0px;margin-top:12px"><input id="abcplayer_downloadbutton" class="abcplayer_downloadbutton btn btn-wavedownload" onclick="DownloadWave();" type="button" value="Download .WAV" title="Downloads the audio for the current tune as a .WAV file"></p>';
 
 	   	// Scale the player for larger screens
 		var windowWidth = window.innerWidth;
@@ -11356,9 +11354,6 @@ var gInjectTab_UseBarForDraw = false;
 
 // Large player controls
 var gLargePlayerControls = false;
-
-// Allow .wav download in player
-var gAllowWavDownloadInPlayer = false;
 
 // Bamboo flute key
 var gBambooFluteKey = 1; // Default to D
@@ -11580,14 +11575,6 @@ function GetInitialConfigurationSettings(){
 		gLargePlayerControls = false;
 	}
 
-	val = localStorage.AllowWavDownloadInPlayer;
-	if (val){
-		gAllowWavDownloadInPlayer = (val == "true");
-	}
-	else{
-		gAllowWavDownloadInPlayer = false;
-	}
-
 	// Bamboo flute
 	val = localStorage.BambooFluteKey;
 	if (val){
@@ -11649,9 +11636,6 @@ function SaveConfigurationSettings(){
 
 		// Large player control player options
 		localStorage.LargePlayerControls = gLargePlayerControls;
-
-		// Allow .wav download in player
-		localStorage.AllowWavDownloadInPlayer = gAllowWavDownloadInPlayer;
 
 		// Save the bamboo flute key
 		localStorage.BambooFluteKey =  gBambooFluteKey;
@@ -12309,7 +12293,6 @@ function ConfigureToolSettings(e) {
 	  configure_fullscreen_scaling: theFullScreenScaling,
 	  configure_staff_spacing: theOldStaffSpacing,
 	  configure_large_player_controls: gLargePlayerControls,
-	  configure_allow_wav_download: gAllowWavDownloadInPlayer,
 	};
 
 	const form = [
@@ -12328,7 +12311,6 @@ function ConfigureToolSettings(e) {
 	  {name: "            Override all MIDI programs and volumes in the ABC when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">To change the Melody volume, add a dynamics indication such as !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! immediately before the first note in the ABC.</p>'},	  
 	  {name: "    Player uses large controls (easier to touch on mobile and tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"configure_box_settings_form_text"},
-	  {name: "    Allow .wav download from the Player (experimental)", id: "configure_allow_wav_download", type:"checkbox", cssClass:"configure_box_settings_form_text"},
 	  {html: '<p style="text-align:center;"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"></p>'},	  
 	  {html: '<p style="text-align:center;"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="Configure MusicXML Import" title="Configure MusicXML import parameters"></p>'},
 	];
@@ -12349,8 +12331,6 @@ function ConfigureToolSettings(e) {
 			gOverridePlayMIDIParams = args.result.configure_override_play_midi_params;
 
 			gLargePlayerControls = args.result.configure_large_player_controls;
-
-			gAllowWavDownloadInPlayer = args.result.configure_allow_wav_download;
 
 			// Validate the staff spacing value
 			var testStaffSpacing = args.result.configure_staff_spacing;
