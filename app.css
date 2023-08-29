@@ -528,6 +528,7 @@ padding:12px;
 #abcplayer_downloadbutton{
 height:42px;
 padding:12px;
+margin-right:24px;
 }
 
 @media (hover: hover) {
@@ -535,6 +536,18 @@ padding:12px;
 	background: palegreen;
 	}
 }
+
+#abcplayer_midibutton{
+height:42px;
+padding:12px;
+}
+
+@media (hover: hover) {
+	.abcplayer_midibutton:hover{
+	background: palegreen;
+	}
+}
+
 
 #shareurlcaption{
 margin-top:8px;
@@ -1395,6 +1408,13 @@ margin-top:-7px;
   --background-color: lavender;
 
 }
+
+.btn-mididownload{
+  --color: black;
+  --background-color: lavender;
+
+}
+
 
 
 /* For Anglo concertina button naming dialog */
