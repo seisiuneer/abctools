@@ -8682,63 +8682,6 @@ function PlayABC(e){
 
 	if (gAllowCopy){
 
-
-    	// Shift key launches Paul Rosen's site
-
-		if (e && e.shiftKey){
-
-			// Is there a selection?
-			var theSelectedABC = getSelectedText("abc");
-
-			// No, try to find the tune
-			if (theSelectedABC.length == 0){
-
-				// Try to find the current tune
-				theSelectedABC = findSelectedTune();
-
-				if (theSelectedABC == ""){
-					// This should never happen
-					return;
-				}
-				
-				// Get the notes
-				var theNotes = gTheABC.value;
-
-				// Refocus back on the ABC
-				gTheABC.focus();
-
-	    		// Select the whole tune
-				var start = theNotes.indexOf(theSelectedABC);
-				var end = start + theSelectedABC.length;
-
-	    		gTheABC.selectionStart = start;
-	    		gTheABC.selectionEnd = end;
-
-			}
-
-			// Copy the abc to the clipboard
-			CopyToClipboard(theSelectedABC);
-
-			var theData = encodeURIComponent(theSelectedABC);
-
-			var w = window.open("https://editor.drawthedots.com?t="+theData);
-
-			 // Give some feedback
-			document.getElementById("playbutton").value = "Sent!";
-
-			setTimeout(function(){
-
-				document.getElementById("playbutton").value = "Play";
-
-				// Refocus back on the ABC
-				gTheABC.focus();
-
-			},750);		
-
-			return;
-				
-		}
-
 		// Play back locally
 
 		// Try to find the current tune
@@ -10845,8 +10788,9 @@ function GetTuneWAVName(tuneABC){
 
 }
 
+
 //
-// Return the .WAV filename
+// Is this a Jig with no specified timing?
 //
 function isJigWithNoTiming(tuneABC,millisecondsPerMeasure){
 
@@ -10953,6 +10897,34 @@ function DownloadWave(){
         console.warn("Audio problem:", e)
 
     }));
+
+}
+
+//
+// Generate and download the MIDI file for the current tune
+//
+function DownloadMIDI(){
+	
+	var midiData = ABCJS.synth.getMidiFile(gPlayerABC, { midiOutputType: "link" });
+
+	var thisMIDI = midiData[0];
+
+	thisMIDI = thisMIDI.replace('<a download','<a id="downloadmidilink" download');
+    
+	var link = document.createElement("div");
+
+	link.innerHTML = thisMIDI;
+
+	link.setAttribute("style", "display: none;");
+
+	document.body.appendChild(link);
+
+	var theMIDILink = document.getElementById("downloadmidilink");
+	
+	theMIDILink.click();
+		
+	document.body.removeChild(link);
+		
 
 }
 
@@ -11182,7 +11154,10 @@ function LocalPlayABC(theABC){
 	   	modal_msg += '</div>';
 
 	   	// Add the .wav download button
-		modal_msg += '<p id="abcplayer_scrollbutton" style="text-align:center;margin:0px;margin-top:12px"><input id="abcplayer_downloadbutton" class="abcplayer_downloadbutton btn btn-wavedownload" onclick="DownloadWave();" type="button" value="Download .WAV" title="Downloads the audio for the current tune as a .WAV file"></p>';
+		modal_msg += '<p id="abcplayer_scrollbutton" style="text-align:center;margin:0px;margin-top:12px">'
+		modal_msg += '<input id="abcplayer_downloadbutton" class="abcplayer_downloadbutton btn btn-wavedownload" onclick="DownloadWave();" type="button" value="Download .WAV" title="Downloads the audio for the current tune as a .WAV file">'
+		modal_msg += '<input id="abcplayer_midibutton" class="abcplayer_midibutton btn btn-mididownload" onclick="DownloadMIDI();" type="button" value="Download MIDI" title="Downloads the current tune as a MIDI file">'
+		modal_msg += '</p>';
 
 	   	// Scale the player for larger screens
 		var windowWidth = window.innerWidth;
