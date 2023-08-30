@@ -164,6 +164,24 @@ var gFullScreenScaling = 50;
 // Anglo concertina button names
 var gAngloButtonNames = [];
 
+// Fonts used for rendering
+var gRenderingFonts = {
+	titlefont: "Palatino 18",
+	subtitlefont: "Palatino 13",
+	infofont: "Palatino 13",
+	partsfont: "Palatino 13",
+	tempofont: "Palatino 13",
+	textfont: "Palatino 13",
+	composerfont: "Palatino 13",
+	annotationfont: "Palatino 13",
+	gchordfont: "Verdana 12",
+	vocalfont: "Palatino 13",
+	wordsfont: "Palatino 13",
+	tabnumberfont: "Arial 12",
+	historyfont: "Times New Roman 14",
+	voicefont: "Times New Roman 13"
+}
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -5535,32 +5553,7 @@ function GetABCJSParams(instrument){
 		}
 	}
 
-	// Shared font format between all tab styles
-	var tFont = "Palatino 18";
-	var pFont = "Palatino 13";
-
-	// Not sure if Palatino is supported by Android so fall back to Times-Roman
-	if (gIsAndroid){
-		tFont = "Times-Roman 18";
-		pFont = "Times-Roman 13.5";
-	}
-
-	var commonFontFormat = 
-	{
-		titlefont: tFont,
-		subtitlefont: pFont,
-		infofont: pFont,
-		partsfont: pFont,
-		tempofont: pFont,
-		textfont: pFont,
-		composerfont: pFont,
-		annotationfont: pFont,
-		partsfont: pFont,
-		gchordfont: "Verdana 12",
-		vocalfont: pFont,
-		wordsfont: pFont,
-		tabnumberfont: "Arial 12"
-	};
+	var commonFontFormat = gRenderingFonts;
 
 	var params;
 
@@ -11019,7 +11012,8 @@ function LocalPlayABC(theABC){
 	var abcOptions = {
 		add_classes: false,
 		responsive:  "resize",
-		selectTypes: false
+		selectTypes: false,
+		format: gRenderingFonts
 	}; 
 
 	function CursorControl() {
@@ -11318,9 +11312,6 @@ var gInjectTab_StripChords = true;
 // Box and concertina tab global state
 var gInjectTab_InjectVolumeDirectives = true;
 var gInjectTab_FontFamily = "Palatino";
-var gInjectTab_TitleFontSize = 22;
-var gInjectTab_SubtitleFontSize = 18;
-var gInjectTab_InfoFontSize = 14;
 var gInjectTab_TabFontSize = 11;
 var gInjectTab_StaffSep = 80;
 var gInjectTab_MusicSpace = 10;
@@ -11414,30 +11405,6 @@ function GetInitialConfigurationSettings(){
 	}
 	else{
 		gInjectTab_InjectVolumeDirectives = true;
-	}
-
-	val = localStorage.InjectTab_TitleFontSize;
-	if (val){
-		gInjectTab_TitleFontSize = val;
-	}
-	else{
-		gInjectTab_TitleFontSize = 22;
-	}
-
-	val = localStorage.InjectTab_SubtitleFontSize;
-	if (val){
-		gInjectTab_SubtitleFontSize = val;
-	}
-	else{
-		gInjectTab_SubtitleFontSize = 18;
-	}
-
-	val = localStorage.InjectTab_InfoFontSize;
-	if (val){
-		gInjectTab_InfoFontSize = val;
-	}
-	else{
-		gInjectTab_InfoFontSize = 14;
 	}
 
 	val = localStorage.InjectTab_TabFontSize;
@@ -11565,6 +11532,15 @@ function GetInitialConfigurationSettings(){
 		gBambooFluteKey = 1;
 	}
 
+	// ABC rendering fonts
+    var theRenderingFonts = localStorage.RenderingFonts;
+
+    if (theRenderingFonts){
+        gRenderingFonts = JSON.parse(theRenderingFonts);
+    }
+    else{
+    	resetABCRenderingFonts();
+    }
 
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
@@ -11591,9 +11567,6 @@ function SaveConfigurationSettings(){
 		// Box and Concertina tab injection parameters
 		localStorage.InjectTab_InjectVolumeDirectives = gInjectTab_InjectVolumeDirectives;
 		localStorage.InjectTab_FontFamily = gInjectTab_FontFamily;
-		localStorage.InjectTab_TitleFontSize = gInjectTab_TitleFontSize;
-		localStorage.InjectTab_SubtitleFontSize = gInjectTab_SubtitleFontSize;
-		localStorage.InjectTab_InfoFontSize = gInjectTab_InfoFontSize;
 		localStorage.InjectTab_TabFontSize = gInjectTab_TabFontSize;
 		localStorage.InjectTab_StaffSep = gInjectTab_StaffSep;
 		localStorage.InjectTab_MusicSpace = gInjectTab_MusicSpace;
@@ -11620,6 +11593,9 @@ function SaveConfigurationSettings(){
 
 		// Save the bamboo flute key
 		localStorage.BambooFluteKey =  gBambooFluteKey;
+
+		// Save the ABC rendering fonts
+		localStorage.RenderingFonts = JSON.stringify(gRenderingFonts);
 
 
 	}
@@ -12022,9 +11998,6 @@ function ConfigureTablatureSettings(){
 	const theData = {
 	  configure_inject_directives: gInjectTab_InjectVolumeDirectives,
 	  configure_font_family: gInjectTab_FontFamily,
-	  configure_title_font_size: gInjectTab_TitleFontSize,
-	  configure_subtitle_font_size: gInjectTab_SubtitleFontSize,
-	  configure_info_font_size: gInjectTab_InfoFontSize,
 	  configure_tab_font_size: gInjectTab_TabFontSize,
 	  configure_staffsep: gInjectTab_StaffSep,
 	  configure_musicspace: gInjectTab_MusicSpace,
@@ -12041,13 +12014,10 @@ function ConfigureTablatureSettings(){
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Tablature Injection Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#injecting_box_or_anglo_concertina_tablature" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
 	  {name: "    Inject %%MIDI directives to mute bass/chords", id: "configure_inject_directives", type:"checkbox", cssClass:"configure_box_settings_form_text"},
 	  {html: '<p style="margin-top:18px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>Tablature Font Settings:</strong></p>'},	  
-	  {name: "Font family:  (Recommended: Palatino)", id: "configure_font_family", type:"text", cssClass:"configure_box_settings_form_text_wide"},
-	  {name: "Title font size:  (Recommended: 22)", id: "configure_title_font_size", type:"text", cssClass:"configure_box_settings_form_text"},
-	  {name: "Subtitle font size:  (Recommended: 18)", id: "configure_subtitle_font_size", type:"text", cssClass:"configure_box_settings_form_text"},
-	  {name: "Info font size:  (Recommended: 14)", id: "configure_info_font_size", type:"text", cssClass:"configure_box_settings_form_text"},
-	  {name: "Tablature font size:  (Recommended: 10)", id: "configure_tab_font_size", type:"text", cssClass:"configure_box_settings_form_text"},
-	  {name: "%%staffsep value:  (Recommended: 80)", id: "configure_staffsep", type:"text", cssClass:"configure_box_settings_form_text"},
-	  {name: "%%musicspace value:  (Recommended: 10)", id: "configure_musicspace", type:"text", cssClass:"configure_box_settings_form_text"},
+	  {name: "Font family (Recommended: Palatino):", id: "configure_font_family", type:"text", cssClass:"configure_box_settings_form_text_wide"},
+	  {name: "Tablature font size (Recommended: 10):", id: "configure_tab_font_size", type:"text", cssClass:"configure_box_settings_form_text"},
+	  {name: "%%staffsep value (Recommended: 80):", id: "configure_staffsep", type:"text", cssClass:"configure_box_settings_form_text"},
+	  {name: "%%musicspace value (Recommended: 10):", id: "configure_musicspace", type:"text", cssClass:"configure_box_settings_form_text"},
 	  {name: "Character(s) for Push indication (Clearing this field will reset to ↓ ):", id: "configure_pushglyph", type:"text", cssClass:"configure_box_settings_form_text"},
 	  {name: "Character(s) for Draw indication (Clearing this field will reset to ↑ ):", id: "configure_drawglyph", type:"text", cssClass:"configure_box_settings_form_text"},
 	  {name: "    Use a bar over button name to indicate Draw (overrides Push and Draw characters)", id: "configure_use_bar_for_draw", type:"checkbox", cssClass:"configure_box_settings_form_text"},
@@ -12062,7 +12032,7 @@ function ConfigureTablatureSettings(){
 	  {html: '<p style="text-align:center;margin-top:22px;"><input id="configure_anglo_fingerings" class="btn btn-subdialog configure_anglo_fingerings" onclick="ConfigureAngloFingerings()" type="button" value="Configure Anglo Concertina Tablature Button Names" title="Configure the Anglo Concertina tablature button names"></p>'},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 720, scrollWithPage: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 13, width: 720, scrollWithPage: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -12071,9 +12041,6 @@ function ConfigureTablatureSettings(){
 
 			gInjectTab_InjectVolumeDirectives = args.result.configure_inject_directives;
 			gInjectTab_FontFamily = args.result.configure_font_family;
-			gInjectTab_TitleFontSize = args.result.configure_title_font_size;
-			gInjectTab_SubtitleFontSize = args.result.configure_subtitle_font_size;
-			gInjectTab_InfoFontSize = args.result.configure_info_font_size;
 			gInjectTab_TabFontSize = args.result.configure_tab_font_size;
 			gInjectTab_StaffSep = args.result.configure_staffsep;
 			gInjectTab_MusicSpace = args.result.configure_musicspace;
@@ -12105,6 +12072,168 @@ function ConfigureTablatureSettings(){
 	});
 
 }
+
+
+//
+// Font settings dialog
+//
+
+
+//
+// Idle the rendering fonts dialog
+// 
+function idleFontsDialog(){
+
+	$('[name="configure_titlefont"]').val(gRenderingFonts.titlefont);
+	$('[name="configure_subtitlefont"]').val(gRenderingFonts.subtitlefont);
+	$('[name="configure_infofont"]').val(gRenderingFonts.infofont);
+	$('[name="configure_partsfont"]').val(gRenderingFonts.partsfont);
+	$('[name="configure_tempofont"]').val(gRenderingFonts.tempofont);
+	$('[name="configure_textfont"]').val(gRenderingFonts.textfont);
+	$('[name="configure_composerfont"]').val(gRenderingFonts.composerfont);
+	$('[name="configure_annotationfont"]').val(gRenderingFonts.annotationfont);
+	$('[name="configure_gchordfont"]').val(gRenderingFonts.gchordfont);
+	$('[name="configure_vocalfont"]').val(gRenderingFonts.vocalfont);
+	$('[name="configure_wordsfont"]').val(gRenderingFonts.wordsfont);
+	$('[name="configure_tabnumberfont"]').val(gRenderingFonts.tabnumberfont);
+	$('[name="configure_historyfont"]').val(gRenderingFonts.historyfont);
+	$('[name="configure_voicefont"]').val(gRenderingFonts.voicefont);
+}
+
+//
+// Reset the rendering fonts
+//
+
+function resetABCRenderingFonts(){
+
+	// Default fonts used for rendering
+	gRenderingFonts = {
+		titlefont: "Palatino 18",
+		subtitlefont: "Palatino 13",
+		infofont: "Palatino 13",
+		partsfont: "Palatino 13",
+		tempofont: "Palatino 13",
+		textfont: "Palatino 13",
+		composerfont: "Palatino 13",
+		annotationfont: "Palatino 13",
+		gchordfont: "Verdana 12",
+		vocalfont: "Palatino 13",
+		wordsfont: "Palatino 13",
+		tabnumberfont: "Arial 12",
+		historyfont: "Times New Roman 14",
+		voicefont: "Times New Roman 13"
+
+	}
+}
+
+//
+// Reset the ABC rendering font settings
+//
+function defaultFontSettings(){
+
+	DayPilot.Modal.confirm("Are you sure you want to reset the ABC rendering fonts to their default values?",{ top:180, theme: "modal_flat", scrollWithPage: false }).then(function(args){
+
+		if (!args.canceled){
+
+		    resetABCRenderingFonts();
+
+		    idleFontsDialog();
+
+		}
+
+	});
+}
+
+
+function ConfigureFonts(){
+
+	// titlefont: "Palatino 18",
+	// subtitlefont: "Palatino 13",
+	// infofont: "Palatino 13",
+	// partsfont: "Palatino 13",
+	// tempofont: "Palatino 13",
+	// textfont: "Palatino 13",
+	// composerfont: "Palatino 13",
+	// annotationfont: "Palatino 13",
+	// partsfont: "Palatino 13",
+	// gchordfont: "Verdana 12",
+	// vocalfont: "Palatino 13",
+	// wordsfont: "Palatino 13",
+	// tabnumberfont: "Arial 12"
+	// historyfont: "Times New Roman 14"
+	// voicefont: "Times New Roman 13"
+
+	// Setup initial values
+	const theData = {
+	  configure_titlefont: gRenderingFonts.titlefont,
+	  configure_subtitlefont: gRenderingFonts.subtitlefont,
+	  configure_infofont: gRenderingFonts.infofont,
+	  configure_partsfont: gRenderingFonts.partsfont,
+	  configure_tempofont:gRenderingFonts.tempofont,
+	  configure_textfont:gRenderingFonts.textfont,
+	  configure_composerfont:gRenderingFonts.composerfont,
+	  configure_annotationfont:gRenderingFonts.annotationfont,
+	  configure_gchordfont:gRenderingFonts.gchordfont,
+	  configure_vocalfont:gRenderingFonts.vocalfont,
+	  configure_wordsfont:gRenderingFonts.wordsfont,
+	  configure_tabnumberfont:gRenderingFonts.tabnumberfont,
+	  configure_historyfont:gRenderingFonts.historyfont,
+	  configure_voicefont:gRenderingFonts.voicefont,
+	};
+
+
+	const form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Configure ABC Rendering Fonts&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#configure_fonts" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {name: "Title font (Default: Palatino 18):", id: "configure_titlefont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
+	  {name: "Subtitle font (Default: Palatino 13):", id: "configure_subtitlefont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
+	  {name: "Info font (Default: Palatino 13):", id: "configure_infofont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
+	  {name: "Composer font (Default: Palatino 13):", id: "configure_composerfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
+	  {name: "Tempo font (Default: Palatino 13):", id: "configure_tempofont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
+	  {name: "Guitar chord font (Default: Verdana 12):", id: "configure_gchordfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
+	  {name: "Tab number font (Default: Arial 12):", id: "configure_tabnumberfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
+	  {name: "History font (Default: Times New Roman 14):", id: "configure_historyfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
+	  {name: "Text font (Default: Palatino 13):", id: "configure_textfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
+	  {name: "Annotation font (Default: Palatino 13):", id: "configure_annotationfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
+	  {name: "Voice font (Default: Times New Roman 13):", id: "configure_voicefont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
+	  {name: "Parts font (Default: Palatino 13):", id: "configure_partsfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
+	  {name: "Vocal font (Default: Palatino 13):", id: "configure_vocalfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
+	  {name: "Words font (Default: Palatino 13):", id: "configure_wordsfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
+	  {html: '<p style="text-align:center;margin-top:22px;"><input id="default_rendering_fonts" class="btn btn-clearbutton default_rendering_fonts" onclick="defaultFontSettings()" type="button" value="Reset to Default" title="Reset the ABC rendering fonts to their default values"></p>'}
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 600, scrollWithPage: false } ).then(function(args){
+
+		// Get the results and store them in the global configuration
+		if (!args.canceled){
+
+			//debugger;
+
+			gRenderingFonts.titlefont = args.result.configure_titlefont;
+			gRenderingFonts.subtitlefont = args.result.configure_subtitlefont;
+			gRenderingFonts.infofont = args.result.configure_infofont;
+			gRenderingFonts.partsfont = args.result.configure_partsfont;
+			gRenderingFonts.tempofont = args.result.configure_tempofont;
+			gRenderingFonts.textfont = args.result.configure_textfont;
+			gRenderingFonts.composerfont = args.result.configure_composerfont;
+			gRenderingFonts.annotationfont = args.result.configure_annotationfont;
+			gRenderingFonts.gchordfont = args.result.configure_gchordfont;
+			gRenderingFonts.vocalfont = args.result.configure_vocalfont;
+			gRenderingFonts.wordsfont = args.result.configure_wordsfont;
+			gRenderingFonts.tabnumberfont = args.result.configure_tabnumberfont;
+			gRenderingFonts.historyfont = args.result.configure_historyfont;
+			gRenderingFonts.voicefont = args.result.configure_voicefont;
+
+			Render(true,null);
+
+			// Save the settings, in case they were initialized
+			SaveConfigurationSettings();
+
+		}
+
+	});
+
+}
+
 
 //
 // Sharing controls dialog
@@ -12292,11 +12421,10 @@ function ConfigureToolSettings(e) {
 	  {name: "            Override all MIDI programs and volumes in the ABC when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">To change the Melody volume, add a dynamics indication such as !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! immediately before the first note in the ABC.</p>'},	  
 	  {name: "    Player uses large controls (easier to touch on mobile and tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"configure_box_settings_form_text"},
-	  {html: '<p style="text-align:center;"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"></p>'},	  
-	  {html: '<p style="text-align:center;"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="Configure MusicXML Import" title="Configure MusicXML import parameters"></p>'},
+	  {html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Configure ABC Fonts" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="Configure MusicXML Import" title="Configure MusicXML import parameters"></p>'},	  
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 680, scrollWithPage: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 780, scrollWithPage: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
