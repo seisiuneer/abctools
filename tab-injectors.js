@@ -1290,9 +1290,6 @@ var angloFingeringsGenerator = function (theABC){
         var injectVolumes = gInjectTab_InjectVolumeDirectives;
 
         var fontFamily = gInjectTab_FontFamily;
-        var titleFontSize = gInjectTab_TitleFontSize;
-        var subtitleFontSize = gInjectTab_SubtitleFontSize;
-        var infoFontSize = gInjectTab_InfoFontSize;
         var tabFontSize = gInjectTab_TabFontSize;
         var musicSpace = gInjectTab_MusicSpace;
         var staffSep = gInjectTab_StaffSep;
@@ -1341,9 +1338,6 @@ var angloFingeringsGenerator = function (theABC){
             thisTune = angloInjectOneDirective(thisTune, "%%musicspace " + musicSpace);
             thisTune = angloInjectOneDirective(thisTune, "%%staffsep " + staffSep);
             thisTune = angloInjectOneDirective(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
-            thisTune = angloInjectOneDirective(thisTune, "%%infofont " + fontFamily + " " + infoFontSize);
-            thisTune = angloInjectOneDirective(thisTune, "%%subtitlefont " + fontFamily + " " + subtitleFontSize);
-            thisTune = angloInjectOneDirective(thisTune, "%%titlefont " + fontFamily + " " + titleFontSize);
 
             // Safety measure if you want to mute any bass/chords on playback
             if (injectVolumes) {
@@ -2151,9 +2145,6 @@ var boxTabGenerator = function (theABC){
         var injectVolumes = gInjectTab_InjectVolumeDirectives;
 
         var fontFamily = gInjectTab_FontFamily;
-        var titleFontSize = gInjectTab_TitleFontSize;
-        var subtitleFontSize = gInjectTab_SubtitleFontSize;
-        var infoFontSize = gInjectTab_InfoFontSize;
         var tabFontSize = gInjectTab_TabFontSize;
         var musicSpace = gInjectTab_MusicSpace;
         var staffSep = gInjectTab_StaffSep;
@@ -2202,10 +2193,7 @@ var boxTabGenerator = function (theABC){
             thisTune = InjectOneDirective(thisTune, "%%musicspace " + musicSpace);
             thisTune = InjectOneDirective(thisTune, "%%staffsep " + staffSep);
             thisTune = InjectOneDirective(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
-            thisTune = InjectOneDirective(thisTune, "%%infofont " + fontFamily + " " + infoFontSize);
-            thisTune = InjectOneDirective(thisTune, "%%subtitlefont " + fontFamily + " " + subtitleFontSize);
-            thisTune = InjectOneDirective(thisTune, "%%titlefont " + fontFamily + " " + titleFontSize);
-
+ 
             // Safety measure if you want to mute any bass/chords on playback
             if (injectVolumes) {
                 thisTune = InjectOneDirective(thisTune, "%%MIDI bassvol 0");
@@ -3012,9 +3000,6 @@ var bambooFluteTabGenerator = function (theABC){
         var injectVolumes = gInjectTab_InjectVolumeDirectives;
 
         var fontFamily = gInjectTab_FontFamily;
-        var titleFontSize = gInjectTab_TitleFontSize;
-        var subtitleFontSize = gInjectTab_SubtitleFontSize;
-        var infoFontSize = gInjectTab_InfoFontSize;
         var tabFontSize = gInjectTab_TabFontSize;
         var musicSpace = gInjectTab_MusicSpace;
         var staffSep = gInjectTab_StaffSep;
@@ -3057,10 +3042,7 @@ var bambooFluteTabGenerator = function (theABC){
             thisTune = InjectOneDirective(thisTune, "%%musicspace " + musicSpace);
             thisTune = InjectOneDirective(thisTune, "%%staffsep " + staffSep);
             thisTune = InjectOneDirective(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
-            thisTune = InjectOneDirective(thisTune, "%%infofont " + fontFamily + " " + infoFontSize);
-            thisTune = InjectOneDirective(thisTune, "%%subtitlefont " + fontFamily + " " + subtitleFontSize);
-            thisTune = InjectOneDirective(thisTune, "%%titlefont " + fontFamily + " " + titleFontSize);
-
+ 
             // Inject the root key indication
             switch (parseInt(gBambooFluteKey)){
 
