@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+                
         <style>
         p {
         font-size:14pt;
@@ -161,6 +161,7 @@
                 <p class="toc"><a href="#basic_controls">Basic Controls</a></p>
                 <p class="toc"><a href="#advanced_controls">Advanced Controls</a></p>
                 <p class="toc"><a href="#settings_dialog">ABC Transcription Tools Settings</a></p>
+                <p class="toc"><a href="#configure_fonts">Configuring ABC Rendering Fonts</a></p>
                 <p class="toc"><a href="#selecting_the_instruments_for_playback">Selecting the Instruments for Playback</a></p>
                 <p class="toc"><a href="#general_midi_instrument_program_numbers">General MIDI Instrument Program Numbers</a></p>
                 <p class="toc"><a href="#pdf_tunebook_settings">PDF Tunebook Settings</a></p>
@@ -295,12 +296,10 @@
                 <img src="img/large_player_controls_2.jpg"/>
             </div>
             <p>Click the <strong>Download .WAV</strong> button to download the audio for the current tune to your system in .wav format:</p>
-            <p>Click the <strong>Download MIDI</strong> button to download a MIDI file for the current tune to your system</p>
-            <p class="hidden-print"><strong>Download .WAV Demo #1:</strong> </p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/vESIbNZBVtE" title="Download .WAV demo #1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/vESIbNZBVtE" title="Download .WAV demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p></p>
-            <p class="hidden-print"><strong>Download .WAV Demo #2:</strong> </p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/b4YNn-GSo70" title="Download .WAV demo #2" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p>Click the <strong>Download MIDI</strong> button to download a MIDI file for the current tune to your system</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/1o3HZD7afL8" title="Download MIDI demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <hr class="hidden-print" id="notation_tablature_display_controls">
             <h1 class="page_break_always">Notation/Tablature Display Controls&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <div class="image_holder">
@@ -394,7 +393,7 @@
             <h1 class="page_break_always">ABC Transcription Tools Settings&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder">
-                <img src="img/abc_transcription_tool_settings_9.jpg"/>
+                <img src="img/abc_transcription_tool_settings_10.jpg"/>
             </div>
             <p><strong>Full screen tune display scaling (percentage)</strong> - Sets the width in percentage of window width for the tune notation on the screen when viewing full screen. Default is 50%.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/KagT-Aq8mY8" title="Full-Screen Tune Display Options" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
@@ -439,9 +438,19 @@
             <div class="image_holder">
                 <img src="img/large_player_controls_1.jpg"/>
             </div>
+            <p><strong>Configure ABC Fonts</strong> - Brings up a dialog where you can configure all fonts used for rendering the ABC.</p>
             <p><strong>Configure Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for tablature injection.</p>
             <p><strong>Configure MusicXML Import</strong> - Brings up a dialog where you can configure all parameters for MusicXML import.</p>
             <p>Details on MusicXML import settings below in the <a href="#musicxml">MusicXML Import Settings</a> section.</p>
+            <hr class="hidden-print" id="configure_fonts">
+            <h1 class="page_break_always">Configuring ABC Rendering Fonts&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
+            <p>Clicking the <strong>Configure ABC Fonts</strong> button in the tool settings dialog shows a subdialog where you can configure all the fonts used for rendering the ABC.</p>
+            <div class="image_holder">
+                <img src="img/rendering_fonts_3.jpg"/>
+            </div>
+            <p>Values are saved in browser storage and restored the next time the tool is run.</p>
+            <p>For details on the use of each font, refer to the <strong><a href="#custom_font_overrides">Custom Font Overrides</a></strong> information below.</p>
+            <p>Click <strong>Reset to Default</strong> to reset the ABC rendering font settings to their original defaults.</p>
             <hr class="hidden-print" id="selecting_the_instruments_for_playback">
             <h1 class="page_break_always">Selecting the Instruments for Playback&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <p>You may choose which instrument sounds are used for the melody and bass/chords when playing tunes.</p>
@@ -1057,22 +1066,26 @@
             <hr class="hidden-print" id="custom_font_overrides">
             <h1 class="page_break_always">Custom Font Overrides&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <p>As per the ABC 2.1 specification, custom font overrides are possible, giving you maximum control over the appearance of your notation.</p>
-            <p><strong>Available ABC Font Annotations:</strong></p>
-            <p>%%titlefont        font-style size<br/>
-                %%subtitlefont     font-style size<br/>
-                %%composerfont     font-style size<br/>
-                %%partsfont        font-style size<br/>
-                %%tempofont        font-style size<br/>
-                %%gchordfont       font-style size (used for chords symbols)<br/>
-                %%annotationfont   font-style size (used for "^..." annotations)<br/>
-                %%infofont         font-style size<br/>
-                %%textfont         font-style size<br/>
+            <p><strong>Available ABC Inline Font Annotations:</strong></p>
+            <p>%%titlefont        font-style size (used for the first title of the tune)<br/>
+                %%subtitlefont     font-style size (used any additional titles for the tune)<br/>
+                %%infofont         font-style size (used for rhythm string at the left side of the staff)<br/>
+                %%composerfont     font-style size (used for the composer string at the right side of the staff)<br/>
+                %%tempofont        font-style size (used for the tempo indication)<br/>
+                %%gchordfont       font-style size (used for "G", "Em", etc., style chords symbols)<br/>
+                %%tabnumberfont    font-style size (used for tablature numbers)<br/>
+                %%historyfont      font-style size (used for for Z:, H:, and other descriptive metadata tags)<br/>
+                %%textfont         font-style size (used for any %%text or %%center text)<br/>
+                %%annotationfont   font-style size (used for "^*" and "_*" chord-like tablature annotations)<br/>
+                %%voicefont        font-style size (multiple voice staff labels)<br/>
+                %%partsfont        font-style size (used for P:)<br/>
                 %%vocalfont        font-style size (used for for w:)<br/>
-            %%wordsfont        font-style size (used for W:)</p>
+                %%wordsfont        font-style size (used for W:)</p>
             <p>Generally, these will use the PostScript font-style naming convention, for example:</p>
             <p>Times, Helvetica, Courier, Verdana, Times-Bold, Helvetica-Italic, etc.</p>
             <p>The size parameter should be an integer, but is optional.</p>
             <p>Place your font override annotations just below the X: and above the T: ABC tune headers.</p>
+            <p>Inline font annotations will override the default font settings configured in the tool's <strong>Settings</strong> dialog.</p>
             <p><strong>For example:</strong></p>
             <p>X: 1<br/>
                 %%titlefont Palatino 30<br/>
@@ -1138,14 +1151,11 @@
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/55mo9ZOTSCo " title="Bamboo Flute Tablature Injection" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>To configure the tablature fonts and other settings, first click the tool's Settings button, then click the <strong>Configure Tablature Injection Settings</strong> button at the bottom of the dialog to bring up the tablature injections settings dialog:</p>
             <div class="image_holder">
-                <img src="img/tab_injection_settings_1.jpg"/>
+                <img src="img/tab_injection_settings_2.jpg"/>
             </div>
             <p>You can also Shift-click the Settings button to go directly to the tablature settings dialog.</p>
             <p><strong>Common Box, Anglo Concertina, and Bamboo Flute tablature settings:</strong></p>
             <p><strong>Font family</strong> - Font used for all text injected into the tablature.</p>
-            <p><strong>Title font size</strong> - Font size used for the tune title.</p>
-            <p><strong>Subtitle font size</strong> -  Font size used for any tune subtitles that might be present.</p>
-            <p><strong>Info font size</strong> -Font size used for all standard ABC annotations like composer, tune-style, etc.</p>
             <p><strong>Tablature font size</strong> - Font size used for the injected tablature text and symbols.</p>
             <p><strong>%%staffsep value</strong> - Sets spacing between the staves.</p>
             <p><strong>%%musicspace value</strong> - Sets spacing between the title and the staves.</p>
@@ -1235,7 +1245,7 @@
                 <img src="img/anglo-fingerings.jpg">
             </div>
             <p>Push is indicated with a "↓" arrow by default (configurable in the Box and Anglo Concertina Tablature Settings dialog).</p>
-            <p>Draw is indicated with an "↑" arrow by default (configurable in the Box and Anglo Concertina Tablature Settings dialog).</p> 
+            <p>Draw is indicated with an "↑" arrow by default (configurable in the Box and Anglo Concertina Tablature Settings dialog).</p>
             <hr class="hidden-print" id="musicxml">
             <h1 class="page_break_always">MusicXML Import Settings&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <div class="image_holder">
@@ -1243,28 +1253,28 @@
             </div>
             <p>You can also Alt-click the Settings button to go directly to the MusicXML import settings dialog.</p>
             <p><b>Bars-per-line:</b>&nbsp;&nbsp;Sets the number of bars per line. Every line of ABC will have the specified
-            bars (measures). When both Character-per-line and Bars-per-line options are given, Bars-per-line is ignored.</p>          
+            bars (measures). When both Character-per-line and Bars-per-line options are given, Bars-per-line is ignored.</p>
             <p><b>Characters-per-line:</b>&nbsp;&nbsp;Sets the maximum line length for ABC output to <b>CPL</b> characters. The default is
                 100 chars per line. An integer number of bars, at least one, is always output. How many bars fit into the
                 maximum line length is calculated from the note line, not from the lyric lines.
-            Line- and page breaks in MusicXML are translated to '$' after the previous barline [or volta number]</p>   
-            <p><b>Measure numbers:</b>&nbsp;&nbsp;-1: No measure numbers, 1..n: Number every n-th measure, 0: Number every system.</p>            
-            <p><b>Unfold repeats:</b>&nbsp;&nbsp;Turns off repeat translation and unfolds simple repeats instead.</p>           
+            Line- and page breaks in MusicXML are translated to '$' after the previous barline [or volta number]</p>
+            <p><b>Measure numbers:</b>&nbsp;&nbsp;-1: No measure numbers, 1..n: Number every n-th measure, 0: Number every system.</p>
+            <p><b>Unfold repeats:</b>&nbsp;&nbsp;Turns off repeat translation and unfolds simple repeats instead.</p>
             <p><b>Credit text filter (level 0-6):</b>&nbsp;&nbsp;Sets the filter level of the credit filter. This filter tries to eliminate
                 redundant T: fields. The level C goes from 0 (default) to 6 (no filtering). A higher level
                 does less filtering. The default filters as much as possible and only includes the xml
                 credit elements if no title of movement-title is found. Level 6 does no filtering and includes
-            all xml credit elements as T: fields.</p>           
+            all xml credit elements as T: fields.</p>
             <p><b>Denominator unit length for L: tags:</b>&nbsp;&nbsp;Sets the unit length for the ABC output to L:1/value. This overrides the computation
-            of the optimal unit length per voice.</p>            
-            <p><b>%%MIDI options:</b>&nbsp;&nbsp;0: No MIDI, 1: Only program, 2: All MIDI.</p>            
+            of the optimal unit length per voice.</p>
+            <p><b>%%MIDI options:</b>&nbsp;&nbsp;0: No MIDI, 1: Only program, 2: All MIDI.</p>
             <p><b>No score line breaks:</b>&nbsp;&nbsp;Disables translation of xml line breaks. No abc score line breaks ($) will be output.</p>
             <p><b>No pedal directions:</b>&nbsp;&nbsp;Disables translation of xml pedal elements.</p>
             <p><b>All directions to first voice:</b>&nbsp;&nbsp;Allocates all XML staff directions to the first voice of the staff. Normally a staff
             direction is allocated to the voice of the next note after the direction (if any).</p>
-            <p><b>Translate stem directions:</b>&nbsp;&nbsp;Translates stem directions present in the XML.</p>          
+            <p><b>Translate stem directions:</b>&nbsp;&nbsp;Translates stem directions present in the XML.</p>
             <p>Click <strong>Reset to Default</strong> to reset the MusicXML import settings to their original defaults.</p>
-            <p>Values are saved in browser storage and restored the next time the tool is run.</p>           
+            <p>Values are saved in browser storage and restored the next time the tool is run.</p>
             <hr class="hidden-print" id="iphone_ipad_chord_entry_issue_fix">
             <h1 class="page_break_always">iPhone/iPad Chord Entry Issue Fix&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <p>If you are trying to enter ABC chords, for example "D" or "Am", on an iPhone or iPad, iOS will, by default stick in "smart quotes" instead of standard double quotes.</p>
