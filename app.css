@@ -1118,11 +1118,12 @@ left:-5000px;
 	font-size:12pt;
 	font-family:helvetica;
 	margin-left: 12px;
-	width: 120px;
+	width: 200px;
 	margin-top:-5px;
 }
 
 #configure_box{
+	margin-left:24px;
 	height:42px;
 	margin-top: 9px;
 	padding:12px;
@@ -1139,6 +1140,7 @@ left:-5000px;
 	height:42px;
 	margin-top: 9px;
 	padding:12px;
+	margin-left:24px;
 
 }
 
@@ -1146,6 +1148,37 @@ left:-5000px;
 	.configure_musicxml_import:hover{
 	background: palegreen;
 	}
+}
+
+#configure_fonts{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+
+}
+
+@media (hover: hover) {
+	.configure_fonts:hover{
+	background: palegreen;
+	}
+}
+
+
+.configure_font_settings_form_text_wide{
+	font-size:12pt;
+	line-height:36px;
+	font-family:helvetica;
+	margin-top:10px;
+	display:flex;
+}
+
+.configure_font_settings_form_text_wide>input{
+	font-size:12pt;
+	font-family:helvetica;
+	width: 200px;
+	margin-top:-5px;
+	position:absolute;
+	left:360px;
 }
 
 #configure_box_advanced{
@@ -1192,6 +1225,18 @@ left:-5000px;
 
 @media (hover: hover) {
 	.default_musicxml_settings:hover{
+	background: palegreen;
+	}
+}
+
+#default_rendering_fonts{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.default_rendering_fonts:hover{
 	background: palegreen;
 	}
 }
@@ -1414,8 +1459,6 @@ margin-top:-7px;
   --background-color: lavender;
 
 }
-
-
 
 /* For Anglo concertina button naming dialog */
 .anglobuttonnames {
