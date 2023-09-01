@@ -46,6 +46,7 @@
         }
         
         h1 {
+        text-align: center;
         font-size:18pt;
         font-family:"Helvetica";
         margin-bottom:32px;
@@ -79,66 +80,65 @@
         margin-top:0px;
         margin-bottom:12px;
         }
+
+        .accordion {
+          font-size:14pt  !important;
+          font-family:"Helvetica" !important;
+          background-color: #eee; 
+          color: #000 !important;
+          cursor: pointer !important;
+          padding: 14px !important;
+          width: 100% !important;
+          text-align: left !important;
+          border: none !important;
+          outline: none !important;
+          margin-bottom:5px;
+        }
+
+        .active {
+          background-color: #cfc;
+        }
         
+        .accordion:hover {
+          background-color: #9f9;
+        }
+
+        .expandall{
+            padding:7px !important;
+        }  
+
+        .expandall:hover {
+         background-color: #9f9;
+        }
+ 
+        .tocpanel {
+          padding: 12px !important;
+          padding-left: 36px !important;
+          background-color: white !important;
+          display: none;
+          overflow: hidden !important;
+        } 
+
         @media print {
         .hidden-print {
         display: none !important;
         }
-        
-        h1 {
-        font-size:18pt;
-        font-family:"Helvetica";
-        margin-bottom:36px;
-        margin-top:36px;
-        }
-        
+                
         .page_break_always{
         page-break-before: always;
         }
         
         .page_break_never {
         page-break-before: avoid;
-        }
-        
-        p {
-        font-size:14pt;
-        font-family:"Helvetica";
-        line-height: 28px;
-        }
-        
-        hr {
-        margin-top:24px;
-        margin-bottom:24px;
-        }
-        
-        body {
-        padding:10px;
-        text-align: center;
-        }
-        
-        #maindiv{
-        text-align: left;
-        background-color: white;
-        width:90%;
-        }
-        
-        .image_holder{
-        margin-top:48px;
-        text-align: center;
-        margin-botton:48px;
-        }
-        
-        .toc{
-        margin-top:0px;
-        margin-bottom:12px;
-        }
-        
-        
+        }  
+
+       
         </style>
         
     </head>
     
     <body style="padding:10px">
+
         <div id="maindiv">
             <div style="text-align: center;">
                 <font id="pagetitle" face="Comic Sans MS" size="5">ABC Transcription Tools User Guide</font><br/>
@@ -149,50 +149,105 @@
                 <p class="hidden-print">A PDF version of this User Guide is available at:</p>
                 <p class="hidden-print"><a href="http://michaeleskin.com/documents/abc_transcription_tools_user_guide.pdf" target="_blank">ABC Transcription Tools User Guide PDF</a></p>
             </div>
+
             <hr id="table_of_contents" class="hidden-print">
+
             <div class="hidden-print">
-                <h1>Table of Contents</h1>
-                <p class="toc"><a href="#introduction">Introduction</a></p>
-                <p class="toc"><a href="#getting_started">Getting Started</a></p>
-                <p class="toc"><a href="#abc_editor">ABC Editor</a></p>
-                <p class="toc"><a href="#viewing_the_notation_full_screen">Viewing the Notation Full Screen</a></p>
-                <p class="toc"><a href="#playing_your_tunes">Playing Your Tunes</a></p>
-                <p class="toc"><a href="#notation_tablature_display_controls">Notation/Tablature Display Controls</a></p>
-                <p class="toc"><a href="#basic_controls">Basic Controls</a></p>
-                <p class="toc"><a href="#advanced_controls">Advanced Controls</a></p>
-                <p class="toc"><a href="#settings_dialog">ABC Transcription Tools Settings</a></p>
-                <p class="toc"><a href="#configure_fonts">Configuring ABC Rendering Fonts</a></p>
-                <p class="toc"><a href="#selecting_the_instruments_for_playback">Selecting the Instruments for Playback</a></p>
-                <p class="toc"><a href="#general_midi_instrument_program_numbers">General MIDI Instrument Program Numbers</a></p>
-                <p class="toc"><a href="#pdf_tunebook_settings">PDF Tunebook Settings</a></p>
-                <p class="toc"><a href="#pdf_quality_setting">PDF Quality Setting</a></p>
-                <p class="toc"><a href="#adding_a_pdf_title_page">Adding a PDF Tunebook Title Page</a></p>
-                <p class="toc"><a href="#adding_a_pdf_tunebook_table_of_contents_and_index">Adding a PDF Tunebook Table of Contents and Index</a></p>
-                <p class="toc"><a href="#pdf_page_headers_and_footers">PDF Page Headers and Footers</a></p>
-                <p class="toc"><a href="#table_of_contents_and_index_font_size_and_line_spacing_overrides">Table of Contents and Index Font Size and Line Spacing Overrides</a></p>
-                <p class="toc"><a href="#tunebook_hyperlinks">PDF Tunebook Hyperlinks and Automatic Play Links</a></p>
-                <p class="toc"><a href="#printing_your_tunes">Printing Your Tunes</a></p>
-                <p class="toc"><a href="#sharing_controls">Sharing Tunes with Share URLs and QR Codes</a></p>
-                <p class="toc"><a href="#abc_share_url_examples">Share URL Examples</a></p>
-                <p class="toc"><a href="#shortening_abc_share_urls">Shortening Share URLs</a></p>
-                <p class="toc"><a href="#qr_code_example">QR Code Example</a></p>
-                <p class="toc"><a href="#adding_a_qr_code_to_the_pdf_export">Adding a QR Code to the PDF Export</a></p>
-                <p class="toc"><a href="#reading_the_qr_codes">Reading the QR Codes</a></p>
-                <p class="toc"><a href="#shared_tunes_open_full_screen">Shared Tunes Open Full Screen</a></p>
-                <p class="toc"><a href="#staff_and_title_spacing_overrides">Staff and Title Spacing Overrides</a></p>
-                <p class="toc"><a href="#custom_font_overrides">Custom Font Overrides</a></p>
-                <p class="toc"><a href="#injecting_abc_lyric_based_note_names">Injecting ABC Lyric-based Note Names Into the ABC Tunes</a></p>
-                <p class="toc"><a href="#injecting_tablature">Injecting B/C Box, C#/D Box, Anglo Concertina, or Bamboo Flute Tablature Into the ABC Tunes</a></p>
-                <p class="toc"><a href="#reading_the_box_tablature">Reading the Box Tablature</a></p>
-                <p class="toc"><a href="#reading_the_concertina_tablature">Reading the Anglo Concertina Tablature</a></p>
-                <p class="toc"><a href="#musicxml">MusicXML Import Settings</a></p>
-                <p class="toc"><a href="#iphone_ipad_chord_entry_issue_fix">iPhone/iPad Chord Entry Issue Fix</a></p>
-                <p class="toc"><a href="#abc_specification">ABC Specification</a></p>
-                <p class="toc"><a href="#abc_21_quick_reference_card">ABC Quick Reference Card</a></p>
-                <p class="toc"><a href="#webinar">90-minute Overview Webinar and Q&A</a></p>
-                <p class="toc"><a href="#donate">Donate</a></p>
-                <p class="toc"><a href="#support">Support</a></p>
+
+                <h1 style="margin-bottom:0px;line-height:12px;">Table of Contents</h1>
+                <h1 style="margin-bottom:16px"><button class="expandall" onclick="ExpandAll();">Expand All</button>&nbsp;&nbsp;&nbsp;<button class="expandall" onclick="CollapseAll();">Collapse All</button></h1>
+
+                <button class="accordion" title="Click to expand/collapse this section">Basic Operation</button>
+                <div class="tocpanel">
+                    <p class="toc"><a href="#introduction">Introduction</a></p>
+                    <p class="toc"><a href="#getting_started">Getting Started</a></p>
+                    <p class="toc"><a href="#abc_editor">ABC Editor</a></p>
+                    <p class="toc"><a href="#viewing_the_notation_full_screen">Viewing the Notation Full Screen</a></p>
+                    <p class="toc"><a href="#playing_your_tunes">Playing Your Tunes</a></p>
+                    <p class="toc"><a href="#notation_tablature_display_controls">Notation/Tablature Display Controls</a></p>
+                </div>
+
+                <button class="accordion" title="Click to expand/collapse this section">Tool Controls</button>
+                <div class="tocpanel">
+                    <p class="toc"><a href="#basic_controls">Basic Controls</a></p>
+                    <p class="toc"><a href="#advanced_controls">Advanced Controls</a></p>
+                 </div>
+
+                <button class="accordion" title="Click to expand/collapse this section">Tool Settings</button>
+                <div class="tocpanel">
+                    <p class="toc"><a href="#settings_dialog">ABC Transcription Tools Settings</a></p>
+                    <p class="toc"><a href="#configure_fonts">Configuring ABC Rendering Fonts</a></p>
+                </div>
+
+                <button class="accordion" title="Click to expand/collapse this section">Selecting Playback Instruments</button>
+                <div class="tocpanel">
+                    <p class="toc"><a href="#selecting_the_instruments_for_playback">Selecting the Instruments for Playback</a></p>
+                    <p class="toc"><a href="#general_midi_instrument_program_numbers">General MIDI Instrument Program Numbers</a></p>
+                </div>
+
+                <button class="accordion" title="Click to expand/collapse this section">PDF Tunebook Generation</button>
+                <div class="tocpanel">
+                    <p class="toc"><a href="#pdf_tunebook_settings">PDF Tunebook Settings</a></p>
+                    <p class="toc"><a href="#pdf_quality_setting">PDF Quality Setting</a></p>
+                    <p class="toc"><a href="#adding_a_pdf_title_page">Adding a PDF Tunebook Title Page</a></p>
+                    <p class="toc"><a href="#adding_a_pdf_tunebook_table_of_contents_and_index">Adding a PDF Tunebook Table of Contents and Index</a></p>
+                    <p class="toc"><a href="#pdf_page_headers_and_footers">PDF Page Headers and Footers</a></p>
+                    <p class="toc"><a href="#table_of_contents_and_index_font_size_and_line_spacing_overrides">Table of Contents and Index Font Size and Line Spacing Overrides</a></p>
+                    <p class="toc"><a href="#tunebook_hyperlinks">PDF Tunebook Hyperlinks and Automatic Play Links</a></p>
+                </div>
+                <button class="accordion" title="Click to expand/collapse this section">Printing from the Browser</button>
+                <div class="tocpanel">
+                    <p class="toc"><a href="#printing_your_tunes">Printing Your Tunes</a></p>
+                </div>
+
+                <button class="accordion" title="Click to expand/collapse this section">Sharing Tunes via Share URLs and QR Codes</button>
+                <div class="tocpanel">
+                    <p class="toc"><a href="#sharing_controls">Sharing Tunes with Share URLs and QR Codes</a></p>
+                    <p class="toc"><a href="#abc_share_url_examples">Share URL Examples</a></p>
+                    <p class="toc"><a href="#shortening_abc_share_urls">Shortening Share URLs</a></p>
+                    <p class="toc"><a href="#qr_code_example">QR Code Example</a></p>
+                    <p class="toc"><a href="#adding_a_qr_code_to_the_pdf_export">Adding a QR Code to the PDF Export</a></p>
+                    <p class="toc"><a href="#reading_the_qr_codes">Reading the QR Codes</a></p>
+                    <p class="toc"><a href="#shared_tunes_open_full_screen">Shared Tunes Open Full Screen</a></p>
+                </div>
+
+                <button class="accordion" title="Click to expand/collapse this section">PDF Tunebooks Advanced Formatting</button>
+                <div class="tocpanel">
+                    <p class="toc"><a href="#staff_and_title_spacing_overrides">Staff and Title Spacing Overrides</a></p>
+                    <p class="toc"><a href="#custom_font_overrides">Custom Font Overrides</a></p>
+                </div>
+
+                <button class="accordion" title="Click to expand/collapse this section">Tablature Injection</button>
+                <div class="tocpanel">
+                    <p class="toc"><a href="#injecting_abc_lyric_based_note_names">Injecting ABC Lyric-based Note Names Into the ABC Tunes</a></p>
+                    <p class="toc"><a href="#injecting_tablature">Injecting B/C Box, C#/D Box, Anglo Concertina, or Bamboo Flute Tablature Into the ABC Tunes</a></p>
+                    <p class="toc"><a href="#reading_the_box_tablature">Reading the Box Tablature</a></p>
+                    <p class="toc"><a href="#reading_the_concertina_tablature">Reading the Anglo Concertina Tablature</a></p>
+                </div>
+
+                <button class="accordion" title="Click to expand/collapse this section">MusicXML Import Settings</button>
+                <div class="tocpanel">
+                    <p class="toc"><a href="#musicxml">MusicXML Import Settings</a></p>
+                </div>
+
+                <button class="accordion" title="Click to expand/collapse this section">iOS-Specific Topics</button>
+                <div class="tocpanel">
+                    <p class="toc"><a href="#iphone_ipad_chord_entry_issue_fix">iPhone/iPad Chord Entry Issue Fix</a></p>
+                </div>
+
+                <button class="accordion" title="Click to expand/collapse this section">ABC 2.1 Specification and Quick Reference Card</button>
+                <div class="tocpanel">
+                    <p class="toc"><a href="#abc_specification">ABC Specification</a></p>
+                    <p class="toc"><a href="#abc_21_quick_reference_card">ABC Quick Reference Card</a></p>
+                </div>
+
+                <button class="accordion" title="Click to expand/collapse this section">Tip Jar and Support</button>
+                <div class="tocpanel">
+                    <p class="toc"><a href="#donate">Donate</a></p>
+                    <p class="toc"><a href="#support">Support</a></p>
+                </div>
             </div>
+
             <hr class="hidden-print" id="introduction">
             <h1 class="page_break_never">Introduction&nbsp;&nbsp;&nbsp;<a href="#table_of_contents" class="hidden-print">(Back to Top)</a></h1>
             <div class="image_holder">
@@ -1308,6 +1363,51 @@
 <script>
 
 //
+// Expand the table of contents
+//
+function ExpandAll(){
+
+    var i;
+
+    var acc = document.getElementsByClassName("accordion");
+
+    for (i = 0; i < acc.length; i++) {
+        var thisAcc = acc[i];
+        thisAcc.classList.add("active");
+    }
+
+    var thePanels = document.getElementsByClassName("tocpanel");
+
+    for (i = 0; i < thePanels.length; i++) {
+        var thisPanel = thePanels[i];
+        thisPanel.style.display = "block";
+    };
+}
+
+//
+// Collapse the table of contents
+//
+function CollapseAll(){
+
+    var i;
+
+    var acc = document.getElementsByClassName("accordion");
+
+    for (i = 0; i < acc.length; i++) {
+        var thisAcc = acc[i];
+        thisAcc.classList.remove("active");
+    }
+
+    var thePanels = document.getElementsByClassName("tocpanel");
+
+    for (i = 0; i < thePanels.length; i++) {
+        var thisPanel = thePanels[i];
+        thisPanel.style.display = "none";
+    };
+}
+
+
+//
 // Are we on iOS?
 //
 function isIOS() {
@@ -1334,6 +1434,21 @@ if (gIsIOS) {
 var elem = document.getElementById("pagetitle");
 elem.size = 5;
 elem.style.fontFamily = "Helvetica";
+}
+
+var acc = document.getElementsByClassName("accordion");
+var i;
+
+for (i = 0; i < acc.length; i++) {
+  acc[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var panel = this.nextElementSibling;
+    if (panel.style.display === "block") {
+      panel.style.display = "none";
+    } else {
+      panel.style.display = "block";
+    }
+  });
 }
 
 }
