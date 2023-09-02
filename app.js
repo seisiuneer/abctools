@@ -5864,341 +5864,9 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 
 		var renderDivID = "notation" + tuneIndex;
 
-		if (instrument == "whistle") {
+		// If whistle or note name tab, inject replacement values for tab numbers
+		postProcessTab(renderDivID, instrument, false);
 
-			var Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g > [class="abcjs-top-line"]');
-
-			for (x = 0; x < Tabstriche.length; x++) {
-
-				if (x % 2 != 0) {
-
-					Tabstriche[x].setAttribute("class", "tabstrich");
-
-					var Geschwisterstriche = getNextSiblings(Tabstriche[x]);
-
-					for (y = 0; y < Geschwisterstriche.length; y++) {
-						Geschwisterstriche[y].setAttribute("class", "tabstrich");
-					}
-
-				}
-			}
-
-			var Tspans = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g[data-name="tabNumber"] > text > tspan');
-
-			for (x = 0; x < Tspans.length; x++) {
-				
-				Tspans[x].setAttribute("class", "whistle");
-
-				// This fixes the + cutoff issue below the second octave notes
-				Tspans[x].setAttribute("dy","-7");
-
-				if (Tspans[x].innerHTML == "0") {
-					Tspans[x].innerHTML = "g";
-				} else if (Tspans[x].innerHTML == "1") {
-					Tspans[x].innerHTML = "m";
-				} else if (Tspans[x].innerHTML == "2") {
-					Tspans[x].innerHTML = "a";
-				} else if (Tspans[x].innerHTML == "3") {
-					Tspans[x].innerHTML = "i";
-				} else if (Tspans[x].innerHTML == "4") {
-					Tspans[x].innerHTML = "b";
-				} else if (Tspans[x].innerHTML == "5") {
-					Tspans[x].innerHTML = "c";
-				} else if (Tspans[x].innerHTML == "6") {
-					Tspans[x].innerHTML = "j";
-				} else if (Tspans[x].innerHTML == "7") {
-					Tspans[x].innerHTML = "d";
-				} else if (Tspans[x].innerHTML == "8") {
-					Tspans[x].innerHTML = "k";
-				} else if (Tspans[x].innerHTML == "9") {
-					Tspans[x].innerHTML = "e";
-				} else if (Tspans[x].innerHTML == "10") {
-					Tspans[x].innerHTML = "f";
-				} else if (Tspans[x].innerHTML == "11") {
-					Tspans[x].innerHTML = "l";
-				} else if (Tspans[x].innerHTML == "12") {
-					Tspans[x].innerHTML = "g";
-				} else if (Tspans[x].innerHTML == "13") {
-					Tspans[x].innerHTML = "m";
-				} else if (Tspans[x].innerHTML == "14") {
-					Tspans[x].innerHTML = "a";
-				} else if (Tspans[x].innerHTML == "15") {
-					Tspans[x].innerHTML = "i";
-				} else if (Tspans[x].innerHTML == "16") {
-					Tspans[x].innerHTML = "b";
-				} else if (Tspans[x].innerHTML == "17") {
-					Tspans[x].innerHTML = "c";
-				} else if (Tspans[x].innerHTML == "18") {
-					Tspans[x].innerHTML = "j";
-				} else if (Tspans[x].innerHTML == "19") {
-					Tspans[x].innerHTML = "D";
-				} else if (Tspans[x].innerHTML == "20") {
-					Tspans[x].innerHTML = "K";
-				} else if (Tspans[x].innerHTML == "21") {
-					Tspans[x].innerHTML = "E";
-				} else if (Tspans[x].innerHTML == "22") {
-					Tspans[x].innerHTML = "F";
-				} else if (Tspans[x].innerHTML == "23") {
-					Tspans[x].innerHTML = "L";
-				} else if (Tspans[x].innerHTML == "24") {
-					Tspans[x].innerHTML = "G";
-				} else if (Tspans[x].innerHTML == "25") {
-					Tspans[x].innerHTML = "M";
-				} else if (Tspans[x].innerHTML == "26") {
-					Tspans[x].innerHTML = "A";
-				} else if (Tspans[x].innerHTML == "27") {
-					Tspans[x].innerHTML = "I";
-				} else if (Tspans[x].innerHTML == "28") {
-					Tspans[x].innerHTML = "B";
-				} else if (Tspans[x].innerHTML == "29") {
-					Tspans[x].innerHTML = "C";
-				} else if (Tspans[x].innerHTML == "30") {
-					Tspans[x].innerHTML = "J";
-				} else if (Tspans[x].innerHTML == "31") {
-					Tspans[x].innerHTML = "D";
-				} else if (Tspans[x].innerHTML == "32") {
-					Tspans[x].innerHTML = "K";
-				} else if (Tspans[x].innerHTML == "33") {
-					Tspans[x].innerHTML = "E";
-				} else if (Tspans[x].innerHTML == "34") {
-					Tspans[x].innerHTML = "F";
-				} else if (Tspans[x].innerHTML == "35") {
-					Tspans[x].innerHTML = "L";
-				} else if (Tspans[x].innerHTML == "36") {
-					Tspans[x].innerHTML = "G";
-				} else if (Tspans[x].innerHTML == "37") {
-					Tspans[x].innerHTML = "M";
-				} else if (Tspans[x].innerHTML == "38") {
-					Tspans[x].innerHTML = "A";
-				}
-			}
-		}
-
-		if (instrument == "notenames") {
-
-			var useSharps = true;
-
-			var Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g > [class="abcjs-top-line"]');
-
-			for (x = 0; x < Tabstriche.length; x++) {
-				if (x % 2 != 0) {
-					Tabstriche[x].setAttribute("class", "tabstrich");
-
-					var Geschwisterstriche = getNextSiblings(Tabstriche[x]);
-					for (y = 0; y < Geschwisterstriche.length; y++) {
-						Geschwisterstriche[y].setAttribute("class", "tabstrich");
-					}
-				}
-			}
-
-			// Walk the SVGs
-			var Svgs = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg');
-
-			if (Svgs && (Svgs.length > 1)) {
-
-				for (var i = 1; i < Svgs.length; ++i) {
-
-					useSharps = true;
-
-					var theSVG = Svgs[i];
-
-					// Find the key signature group
-					var keySignatures = theSVG.querySelectorAll('g[data-name="staff-extra key-signature"]');
-
-					// Look for the flat glyph in the key signature group
-					if (keySignatures && (keySignatures.length >= 1)) {
-
-						var inner = keySignatures[0].innerHTML;
-
-						if (inner.indexOf("accidentals.flat") != -1) {
-
-							useSharps = false;
-
-						}
-					}
-
-					var Tspans = theSVG.querySelectorAll('g[data-name="tabNumber"] > text > tspan');
-
-					if (useSharps) {
-						for (x = 0; x < Tspans.length; x++) {
-							if (Tspans[x].innerHTML == "0") {
-								Tspans[x].innerHTML = "G,";
-							} else if (Tspans[x].innerHTML == "1") {
-								Tspans[x].innerHTML = "G♯,";
-							} else if (Tspans[x].innerHTML == "2") {
-								Tspans[x].innerHTML = "A,";
-							} else if (Tspans[x].innerHTML == "3") {
-								Tspans[x].innerHTML = "A♯,";
-							} else if (Tspans[x].innerHTML == "4") {
-								Tspans[x].innerHTML = "B,";
-							} else if (Tspans[x].innerHTML == "5") {
-								Tspans[x].innerHTML = "C";
-							} else if (Tspans[x].innerHTML == "6") {
-								Tspans[x].innerHTML = "C♯";
-							} else if (Tspans[x].innerHTML == "7") {
-								Tspans[x].innerHTML = "D";
-							} else if (Tspans[x].innerHTML == "8") {
-								Tspans[x].innerHTML = "D♯";
-							} else if (Tspans[x].innerHTML == "9") {
-								Tspans[x].innerHTML = "E";
-							} else if (Tspans[x].innerHTML == "10") {
-								Tspans[x].innerHTML = "F";
-							} else if (Tspans[x].innerHTML == "11") {
-								Tspans[x].innerHTML = "F♯";
-							} else if (Tspans[x].innerHTML == "12") {
-								Tspans[x].innerHTML = "G";
-							} else if (Tspans[x].innerHTML == "13") {
-								Tspans[x].innerHTML = "G♯";
-							} else if (Tspans[x].innerHTML == "14") {
-								Tspans[x].innerHTML = "A";
-							} else if (Tspans[x].innerHTML == "15") {
-								Tspans[x].innerHTML = "A♯";
-							} else if (Tspans[x].innerHTML == "16") {
-								Tspans[x].innerHTML = "B";
-							} else if (Tspans[x].innerHTML == "17") {
-								Tspans[x].innerHTML = "c";
-							} else if (Tspans[x].innerHTML == "18") {
-								Tspans[x].innerHTML = "c♯";
-							} else if (Tspans[x].innerHTML == "19") {
-								Tspans[x].innerHTML = "d";
-							} else if (Tspans[x].innerHTML == "20") {
-								Tspans[x].innerHTML = "d♯";
-							} else if (Tspans[x].innerHTML == "21") {
-								Tspans[x].innerHTML = "e";
-							} else if (Tspans[x].innerHTML == "22") {
-								Tspans[x].innerHTML = "f";
-							} else if (Tspans[x].innerHTML == "23") {
-								Tspans[x].innerHTML = "f♯";
-							} else if (Tspans[x].innerHTML == "24") {
-								Tspans[x].innerHTML = "g";
-							} else if (Tspans[x].innerHTML == "25") {
-								Tspans[x].innerHTML = "g♯";
-							} else if (Tspans[x].innerHTML == "26") {
-								Tspans[x].innerHTML = "a";
-							} else if (Tspans[x].innerHTML == "27") {
-								Tspans[x].innerHTML = "a♯";
-							} else if (Tspans[x].innerHTML == "28") {
-								Tspans[x].innerHTML = "b";
-							} else if (Tspans[x].innerHTML == "29") {
-								Tspans[x].innerHTML = "c'";
-							} else if (Tspans[x].innerHTML == "30") {
-								Tspans[x].innerHTML = "c♯'";
-							} else if (Tspans[x].innerHTML == "31") {
-								Tspans[x].innerHTML = "d'";
-							} else if (Tspans[x].innerHTML == "32") {
-								Tspans[x].innerHTML = "d♯'";
-							} else if (Tspans[x].innerHTML == "33") {
-								Tspans[x].innerHTML = "e'";
-							} else if (Tspans[x].innerHTML == "34") {
-								Tspans[x].innerHTML = "f'";
-							} else if (Tspans[x].innerHTML == "35") {
-								Tspans[x].innerHTML = "f♯'";
-							} else if (Tspans[x].innerHTML == "36") {
-								Tspans[x].innerHTML = "g'";
-							} else if (Tspans[x].innerHTML == "37") {
-								Tspans[x].innerHTML = "g♯'";
-							} else if (Tspans[x].innerHTML == "38") {
-								Tspans[x].innerHTML = "a'";
-							} else if (Tspans[x].innerHTML == "39") {
-								Tspans[x].innerHTML = "a♯'";
-							} else if (Tspans[x].innerHTML == "40") {
-								Tspans[x].innerHTML = "b'";
-							} else {
-								Tspans[x].innerHTML = "?";
-							}
-						}
-					} else {
-						for (x = 0; x < Tspans.length; x++) {
-							if (Tspans[x].innerHTML == "0") {
-								Tspans[x].innerHTML = "G,";
-							} else if (Tspans[x].innerHTML == "1") {
-								Tspans[x].innerHTML = "A♭,";
-							} else if (Tspans[x].innerHTML == "2") {
-								Tspans[x].innerHTML = "A,";
-							} else if (Tspans[x].innerHTML == "3") {
-								Tspans[x].innerHTML = "B♭,";
-							} else if (Tspans[x].innerHTML == "4") {
-								Tspans[x].innerHTML = "B,";
-							} else if (Tspans[x].innerHTML == "5") {
-								Tspans[x].innerHTML = "C";
-							} else if (Tspans[x].innerHTML == "6") {
-								Tspans[x].innerHTML = "D♭";
-							} else if (Tspans[x].innerHTML == "7") {
-								Tspans[x].innerHTML = "D";
-							} else if (Tspans[x].innerHTML == "8") {
-								Tspans[x].innerHTML = "E♭";
-							} else if (Tspans[x].innerHTML == "9") {
-								Tspans[x].innerHTML = "E";
-							} else if (Tspans[x].innerHTML == "10") {
-								Tspans[x].innerHTML = "F";
-							} else if (Tspans[x].innerHTML == "11") {
-								Tspans[x].innerHTML = "G♭";
-							} else if (Tspans[x].innerHTML == "12") {
-								Tspans[x].innerHTML = "G";
-							} else if (Tspans[x].innerHTML == "13") {
-								Tspans[x].innerHTML = "A♭";
-							} else if (Tspans[x].innerHTML == "14") {
-								Tspans[x].innerHTML = "A";
-							} else if (Tspans[x].innerHTML == "15") {
-								Tspans[x].innerHTML = "B♭";
-							} else if (Tspans[x].innerHTML == "16") {
-								Tspans[x].innerHTML = "B";
-							} else if (Tspans[x].innerHTML == "17") {
-								Tspans[x].innerHTML = "c";
-							} else if (Tspans[x].innerHTML == "18") {
-								Tspans[x].innerHTML = "d♭";
-							} else if (Tspans[x].innerHTML == "19") {
-								Tspans[x].innerHTML = "d";
-							} else if (Tspans[x].innerHTML == "20") {
-								Tspans[x].innerHTML = "e♭";
-							} else if (Tspans[x].innerHTML == "21") {
-								Tspans[x].innerHTML = "e";
-							} else if (Tspans[x].innerHTML == "22") {
-								Tspans[x].innerHTML = "f";
-							} else if (Tspans[x].innerHTML == "23") {
-								Tspans[x].innerHTML = "g♭";
-							} else if (Tspans[x].innerHTML == "24") {
-								Tspans[x].innerHTML = "g";
-							} else if (Tspans[x].innerHTML == "25") {
-								Tspans[x].innerHTML = "a♭";
-							} else if (Tspans[x].innerHTML == "26") {
-								Tspans[x].innerHTML = "a";
-							} else if (Tspans[x].innerHTML == "27") {
-								Tspans[x].innerHTML = "b♭";
-							} else if (Tspans[x].innerHTML == "28") {
-								Tspans[x].innerHTML = "b";
-							} else if (Tspans[x].innerHTML == "29") {
-								Tspans[x].innerHTML = "c'";
-							} else if (Tspans[x].innerHTML == "30") {
-								Tspans[x].innerHTML = "d♭'";
-							} else if (Tspans[x].innerHTML == "31") {
-								Tspans[x].innerHTML = "d'";
-							} else if (Tspans[x].innerHTML == "32") {
-								Tspans[x].innerHTML = "e♭'";
-							} else if (Tspans[x].innerHTML == "33") {
-								Tspans[x].innerHTML = "e'";
-							} else if (Tspans[x].innerHTML == "34") {
-								Tspans[x].innerHTML = "f'";
-							} else if (Tspans[x].innerHTML == "35") {
-								Tspans[x].innerHTML = "g♭'";
-							} else if (Tspans[x].innerHTML == "36") {
-								Tspans[x].innerHTML = "g'";
-							} else if (Tspans[x].innerHTML == "37") {
-								Tspans[x].innerHTML = "a♭'";
-							} else if (Tspans[x].innerHTML == "38") {
-								Tspans[x].innerHTML = "a'";
-							} else if (Tspans[x].innerHTML == "39") {
-								Tspans[x].innerHTML = "b♭'";
-							} else if (Tspans[x].innerHTML == "40") {
-								Tspans[x].innerHTML = "b'";
-							} else {
-								Tspans[x].innerHTML = "?";
-							}
-						}
-					}
-				}
-			}
-		}
 	}
 }
 
@@ -8686,10 +8354,10 @@ function PlayABC(e){
 		}
 
 		// Pre-process the ABC to inject any requested programs or volumes
-		theSelectedABC = PreProcessLocalPlayABC(theSelectedABC);
+		theSelectedABC = PreProcessPlayABC(theSelectedABC);
 
 		// Play back locally in-tool	
-		LocalPlayABC(theSelectedABC);
+		PlayABCDialog(theSelectedABC);
 
 	}
 }
@@ -9447,10 +9115,10 @@ function processShareLink() {
 			if (doPlay){
 
 				// Pre-process the ABC to inject any requested programs or volumes
-				var theProcessedABC = PreProcessLocalPlayABC(gTheABC.value);
+				var theProcessedABC = PreProcessPlayABC(gTheABC.value);
 
 				// Play back locally in-tool	
-				LocalPlayABC(theProcessedABC);
+				PlayABCDialog(theProcessedABC);
 
 			}
 
@@ -11001,21 +10669,409 @@ function computeFade(tuneABC){
 	return theFade;
 }
 
-// 
-// Local playback
 //
-function LocalPlayABC(theABC){
+// Post-process whistle and notename tab
+//
+function postProcessTab(renderDivID, instrument, bIsPlayback){
+
+
+	if (instrument == "whistle") {
+
+		var Tabstriche;
+
+		if (bIsPlayback){
+			Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > svg > g > g > [class="abcjs-top-line"]');
+		}
+		else{
+			Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g > [class="abcjs-top-line"]');
+		}
+
+		for (x = 0; x < Tabstriche.length; x++) {
+
+			if (x % 2 != 0) {
+
+				Tabstriche[x].setAttribute("class", "tabstrich");
+
+				var Geschwisterstriche = getNextSiblings(Tabstriche[x]);
+
+				for (y = 0; y < Geschwisterstriche.length; y++) {
+					Geschwisterstriche[y].setAttribute("class", "tabstrich");
+				}
+
+			}
+		}
+
+		var Tspans;
+		if (bIsPlayback){
+			Tspans = document.querySelectorAll('div[id="' + renderDivID + '"] > svg > g > g[data-name="tabNumber"] > text > tspan');
+		}
+		else{
+			Tspans = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g[data-name="tabNumber"] > text > tspan');
+		}
+
+		for (x = 0; x < Tspans.length; x++) {
+			
+			Tspans[x].setAttribute("class", "whistle");
+
+			// This fixes the + cutoff issue below the second octave notes
+			Tspans[x].setAttribute("dy","-7");
+
+			if (Tspans[x].innerHTML == "0") {
+				Tspans[x].innerHTML = "g";
+			} else if (Tspans[x].innerHTML == "1") {
+				Tspans[x].innerHTML = "m";
+			} else if (Tspans[x].innerHTML == "2") {
+				Tspans[x].innerHTML = "a";
+			} else if (Tspans[x].innerHTML == "3") {
+				Tspans[x].innerHTML = "i";
+			} else if (Tspans[x].innerHTML == "4") {
+				Tspans[x].innerHTML = "b";
+			} else if (Tspans[x].innerHTML == "5") {
+				Tspans[x].innerHTML = "c";
+			} else if (Tspans[x].innerHTML == "6") {
+				Tspans[x].innerHTML = "j";
+			} else if (Tspans[x].innerHTML == "7") {
+				Tspans[x].innerHTML = "d";
+			} else if (Tspans[x].innerHTML == "8") {
+				Tspans[x].innerHTML = "k";
+			} else if (Tspans[x].innerHTML == "9") {
+				Tspans[x].innerHTML = "e";
+			} else if (Tspans[x].innerHTML == "10") {
+				Tspans[x].innerHTML = "f";
+			} else if (Tspans[x].innerHTML == "11") {
+				Tspans[x].innerHTML = "l";
+			} else if (Tspans[x].innerHTML == "12") {
+				Tspans[x].innerHTML = "g";
+			} else if (Tspans[x].innerHTML == "13") {
+				Tspans[x].innerHTML = "m";
+			} else if (Tspans[x].innerHTML == "14") {
+				Tspans[x].innerHTML = "a";
+			} else if (Tspans[x].innerHTML == "15") {
+				Tspans[x].innerHTML = "i";
+			} else if (Tspans[x].innerHTML == "16") {
+				Tspans[x].innerHTML = "b";
+			} else if (Tspans[x].innerHTML == "17") {
+				Tspans[x].innerHTML = "c";
+			} else if (Tspans[x].innerHTML == "18") {
+				Tspans[x].innerHTML = "j";
+			} else if (Tspans[x].innerHTML == "19") {
+				Tspans[x].innerHTML = "D";
+			} else if (Tspans[x].innerHTML == "20") {
+				Tspans[x].innerHTML = "K";
+			} else if (Tspans[x].innerHTML == "21") {
+				Tspans[x].innerHTML = "E";
+			} else if (Tspans[x].innerHTML == "22") {
+				Tspans[x].innerHTML = "F";
+			} else if (Tspans[x].innerHTML == "23") {
+				Tspans[x].innerHTML = "L";
+			} else if (Tspans[x].innerHTML == "24") {
+				Tspans[x].innerHTML = "G";
+			} else if (Tspans[x].innerHTML == "25") {
+				Tspans[x].innerHTML = "M";
+			} else if (Tspans[x].innerHTML == "26") {
+				Tspans[x].innerHTML = "A";
+			} else if (Tspans[x].innerHTML == "27") {
+				Tspans[x].innerHTML = "I";
+			} else if (Tspans[x].innerHTML == "28") {
+				Tspans[x].innerHTML = "B";
+			} else if (Tspans[x].innerHTML == "29") {
+				Tspans[x].innerHTML = "C";
+			} else if (Tspans[x].innerHTML == "30") {
+				Tspans[x].innerHTML = "J";
+			} else if (Tspans[x].innerHTML == "31") {
+				Tspans[x].innerHTML = "D";
+			} else if (Tspans[x].innerHTML == "32") {
+				Tspans[x].innerHTML = "K";
+			} else if (Tspans[x].innerHTML == "33") {
+				Tspans[x].innerHTML = "E";
+			} else if (Tspans[x].innerHTML == "34") {
+				Tspans[x].innerHTML = "F";
+			} else if (Tspans[x].innerHTML == "35") {
+				Tspans[x].innerHTML = "L";
+			} else if (Tspans[x].innerHTML == "36") {
+				Tspans[x].innerHTML = "G";
+			} else if (Tspans[x].innerHTML == "37") {
+				Tspans[x].innerHTML = "M";
+			} else if (Tspans[x].innerHTML == "38") {
+				Tspans[x].innerHTML = "A";
+			}
+		}
+	}
+
+	if (instrument == "notenames") {
+
+		var useSharps = true;
+
+		var Tabstriche;
+		if (bIsPlayback){
+			Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > svg > g > g > [class="abcjs-top-line"]');
+		}
+		else{
+			Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g > [class="abcjs-top-line"]');
+
+		}
+
+		for (x = 0; x < Tabstriche.length; x++) {
+
+			if (x % 2 != 0) {
+			
+				Tabstriche[x].setAttribute("class", "tabstrich");
+
+				var Geschwisterstriche = getNextSiblings(Tabstriche[x]);
+			
+				for (y = 0; y < Geschwisterstriche.length; y++) {
+					Geschwisterstriche[y].setAttribute("class", "tabstrich");
+				}
+			}
+		}
+
+		// Walk the SVGs
+
+		var SVGs;
+
+		if (bIsPlayback){
+			Svgs = document.querySelectorAll('div[id="' + renderDivID + '"] > svg');
+		}
+		else{
+			Svgs = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg');			
+		}
+
+		var nSVGsRequired = 1;
+
+		if (bIsPlayback){
+			nSVGsRequired = 0;
+		}
+
+		if ((Svgs) && (Svgs.length > nSVGsRequired)) {
+
+			for (var i = nSVGsRequired; i < Svgs.length; ++i) {
+
+				useSharps = true;
+
+				var theSVG = Svgs[i];
+
+				// Find the key signature group
+				var keySignatures = theSVG.querySelectorAll('g[data-name="staff-extra key-signature"]');
+
+				// Look for the flat glyph in the key signature group
+				if (keySignatures && (keySignatures.length >= 1)) {
+
+					var inner = keySignatures[0].innerHTML;
+
+					if (inner.indexOf("accidentals.flat") != -1) {
+
+						useSharps = false;
+
+					}
+				}
+
+				var Tspans = theSVG.querySelectorAll('g[data-name="tabNumber"] > text > tspan');
+
+				if (useSharps) {
+					for (x = 0; x < Tspans.length; x++) {
+						if (Tspans[x].innerHTML == "0") {
+							Tspans[x].innerHTML = "G,";
+						} else if (Tspans[x].innerHTML == "1") {
+							Tspans[x].innerHTML = "G♯,";
+						} else if (Tspans[x].innerHTML == "2") {
+							Tspans[x].innerHTML = "A,";
+						} else if (Tspans[x].innerHTML == "3") {
+							Tspans[x].innerHTML = "A♯,";
+						} else if (Tspans[x].innerHTML == "4") {
+							Tspans[x].innerHTML = "B,";
+						} else if (Tspans[x].innerHTML == "5") {
+							Tspans[x].innerHTML = "C";
+						} else if (Tspans[x].innerHTML == "6") {
+							Tspans[x].innerHTML = "C♯";
+						} else if (Tspans[x].innerHTML == "7") {
+							Tspans[x].innerHTML = "D";
+						} else if (Tspans[x].innerHTML == "8") {
+							Tspans[x].innerHTML = "D♯";
+						} else if (Tspans[x].innerHTML == "9") {
+							Tspans[x].innerHTML = "E";
+						} else if (Tspans[x].innerHTML == "10") {
+							Tspans[x].innerHTML = "F";
+						} else if (Tspans[x].innerHTML == "11") {
+							Tspans[x].innerHTML = "F♯";
+						} else if (Tspans[x].innerHTML == "12") {
+							Tspans[x].innerHTML = "G";
+						} else if (Tspans[x].innerHTML == "13") {
+							Tspans[x].innerHTML = "G♯";
+						} else if (Tspans[x].innerHTML == "14") {
+							Tspans[x].innerHTML = "A";
+						} else if (Tspans[x].innerHTML == "15") {
+							Tspans[x].innerHTML = "A♯";
+						} else if (Tspans[x].innerHTML == "16") {
+							Tspans[x].innerHTML = "B";
+						} else if (Tspans[x].innerHTML == "17") {
+							Tspans[x].innerHTML = "c";
+						} else if (Tspans[x].innerHTML == "18") {
+							Tspans[x].innerHTML = "c♯";
+						} else if (Tspans[x].innerHTML == "19") {
+							Tspans[x].innerHTML = "d";
+						} else if (Tspans[x].innerHTML == "20") {
+							Tspans[x].innerHTML = "d♯";
+						} else if (Tspans[x].innerHTML == "21") {
+							Tspans[x].innerHTML = "e";
+						} else if (Tspans[x].innerHTML == "22") {
+							Tspans[x].innerHTML = "f";
+						} else if (Tspans[x].innerHTML == "23") {
+							Tspans[x].innerHTML = "f♯";
+						} else if (Tspans[x].innerHTML == "24") {
+							Tspans[x].innerHTML = "g";
+						} else if (Tspans[x].innerHTML == "25") {
+							Tspans[x].innerHTML = "g♯";
+						} else if (Tspans[x].innerHTML == "26") {
+							Tspans[x].innerHTML = "a";
+						} else if (Tspans[x].innerHTML == "27") {
+							Tspans[x].innerHTML = "a♯";
+						} else if (Tspans[x].innerHTML == "28") {
+							Tspans[x].innerHTML = "b";
+						} else if (Tspans[x].innerHTML == "29") {
+							Tspans[x].innerHTML = "c'";
+						} else if (Tspans[x].innerHTML == "30") {
+							Tspans[x].innerHTML = "c♯'";
+						} else if (Tspans[x].innerHTML == "31") {
+							Tspans[x].innerHTML = "d'";
+						} else if (Tspans[x].innerHTML == "32") {
+							Tspans[x].innerHTML = "d♯'";
+						} else if (Tspans[x].innerHTML == "33") {
+							Tspans[x].innerHTML = "e'";
+						} else if (Tspans[x].innerHTML == "34") {
+							Tspans[x].innerHTML = "f'";
+						} else if (Tspans[x].innerHTML == "35") {
+							Tspans[x].innerHTML = "f♯'";
+						} else if (Tspans[x].innerHTML == "36") {
+							Tspans[x].innerHTML = "g'";
+						} else if (Tspans[x].innerHTML == "37") {
+							Tspans[x].innerHTML = "g♯'";
+						} else if (Tspans[x].innerHTML == "38") {
+							Tspans[x].innerHTML = "a'";
+						} else if (Tspans[x].innerHTML == "39") {
+							Tspans[x].innerHTML = "a♯'";
+						} else if (Tspans[x].innerHTML == "40") {
+							Tspans[x].innerHTML = "b'";
+						} else {
+							Tspans[x].innerHTML = "?";
+						}
+					}
+				} else {
+					for (x = 0; x < Tspans.length; x++) {
+						if (Tspans[x].innerHTML == "0") {
+							Tspans[x].innerHTML = "G,";
+						} else if (Tspans[x].innerHTML == "1") {
+							Tspans[x].innerHTML = "A♭,";
+						} else if (Tspans[x].innerHTML == "2") {
+							Tspans[x].innerHTML = "A,";
+						} else if (Tspans[x].innerHTML == "3") {
+							Tspans[x].innerHTML = "B♭,";
+						} else if (Tspans[x].innerHTML == "4") {
+							Tspans[x].innerHTML = "B,";
+						} else if (Tspans[x].innerHTML == "5") {
+							Tspans[x].innerHTML = "C";
+						} else if (Tspans[x].innerHTML == "6") {
+							Tspans[x].innerHTML = "D♭";
+						} else if (Tspans[x].innerHTML == "7") {
+							Tspans[x].innerHTML = "D";
+						} else if (Tspans[x].innerHTML == "8") {
+							Tspans[x].innerHTML = "E♭";
+						} else if (Tspans[x].innerHTML == "9") {
+							Tspans[x].innerHTML = "E";
+						} else if (Tspans[x].innerHTML == "10") {
+							Tspans[x].innerHTML = "F";
+						} else if (Tspans[x].innerHTML == "11") {
+							Tspans[x].innerHTML = "G♭";
+						} else if (Tspans[x].innerHTML == "12") {
+							Tspans[x].innerHTML = "G";
+						} else if (Tspans[x].innerHTML == "13") {
+							Tspans[x].innerHTML = "A♭";
+						} else if (Tspans[x].innerHTML == "14") {
+							Tspans[x].innerHTML = "A";
+						} else if (Tspans[x].innerHTML == "15") {
+							Tspans[x].innerHTML = "B♭";
+						} else if (Tspans[x].innerHTML == "16") {
+							Tspans[x].innerHTML = "B";
+						} else if (Tspans[x].innerHTML == "17") {
+							Tspans[x].innerHTML = "c";
+						} else if (Tspans[x].innerHTML == "18") {
+							Tspans[x].innerHTML = "d♭";
+						} else if (Tspans[x].innerHTML == "19") {
+							Tspans[x].innerHTML = "d";
+						} else if (Tspans[x].innerHTML == "20") {
+							Tspans[x].innerHTML = "e♭";
+						} else if (Tspans[x].innerHTML == "21") {
+							Tspans[x].innerHTML = "e";
+						} else if (Tspans[x].innerHTML == "22") {
+							Tspans[x].innerHTML = "f";
+						} else if (Tspans[x].innerHTML == "23") {
+							Tspans[x].innerHTML = "g♭";
+						} else if (Tspans[x].innerHTML == "24") {
+							Tspans[x].innerHTML = "g";
+						} else if (Tspans[x].innerHTML == "25") {
+							Tspans[x].innerHTML = "a♭";
+						} else if (Tspans[x].innerHTML == "26") {
+							Tspans[x].innerHTML = "a";
+						} else if (Tspans[x].innerHTML == "27") {
+							Tspans[x].innerHTML = "b♭";
+						} else if (Tspans[x].innerHTML == "28") {
+							Tspans[x].innerHTML = "b";
+						} else if (Tspans[x].innerHTML == "29") {
+							Tspans[x].innerHTML = "c'";
+						} else if (Tspans[x].innerHTML == "30") {
+							Tspans[x].innerHTML = "d♭'";
+						} else if (Tspans[x].innerHTML == "31") {
+							Tspans[x].innerHTML = "d'";
+						} else if (Tspans[x].innerHTML == "32") {
+							Tspans[x].innerHTML = "e♭'";
+						} else if (Tspans[x].innerHTML == "33") {
+							Tspans[x].innerHTML = "e'";
+						} else if (Tspans[x].innerHTML == "34") {
+							Tspans[x].innerHTML = "f'";
+						} else if (Tspans[x].innerHTML == "35") {
+							Tspans[x].innerHTML = "g♭'";
+						} else if (Tspans[x].innerHTML == "36") {
+							Tspans[x].innerHTML = "g'";
+						} else if (Tspans[x].innerHTML == "37") {
+							Tspans[x].innerHTML = "a♭'";
+						} else if (Tspans[x].innerHTML == "38") {
+							Tspans[x].innerHTML = "a'";
+						} else if (Tspans[x].innerHTML == "39") {
+							Tspans[x].innerHTML = "b♭'";
+						} else if (Tspans[x].innerHTML == "40") {
+							Tspans[x].innerHTML = "b'";
+						} else {
+							Tspans[x].innerHTML = "?";
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+// 
+// Tune Play Dialog
+//
+function PlayABCDialog(theABC){
 
 	gMIDIbuffer = null;
 	gPlayerABC = theABC;
+	
+	var instrument = GetRadioValue("notenodertab");
 
-	var abcOptions = {
-		add_classes: false,
-		responsive:  "resize",
-		selectTypes: false,
-		format: gRenderingFonts
-	}; 
+	var abcOptions = GetABCJSParams(instrument);
 
+	abcOptions.oneSvgPerLine = false;
+
+	// Clear the tab label if present to compress vertical space
+	if (instrument != "noten" ){
+
+		// Sanity check the options first
+		if (abcOptions.tablature && (abcOptions.tablature.length > 0)){
+			abcOptions.tablature[0].label = "";
+		}
+	}
+	
 	function CursorControl() {
 
 		var self = this;
@@ -11062,6 +11118,7 @@ function LocalPlayABC(theABC){
 				cursor.setAttribute("y1", ev.top);
 				cursor.setAttribute("y2", ev.top + ev.height);
 			}
+
 		};
 
 		self.onFinished = function() {
@@ -11085,6 +11142,9 @@ function LocalPlayABC(theABC){
 		synthControl.disable(true);
 
 		var visualObj = ABCJS.renderAbc("playback-paper", theABC, abcOptions)[0];
+
+		// Post process whistle or note name tab
+		postProcessTab("playback-paper",instrument,true);
 
 		var midiBuffer = new ABCJS.synth.CreateSynth();
 
@@ -11228,7 +11288,7 @@ function LocalPlayABC(theABC){
 
 //
 // Based on the global injection configuration, pre-process the %%MIDI directives in the ABC
-function PreProcessLocalPlayABC(theTune){
+function PreProcessPlayABC(theTune){
 
 	// Override any ABC play values?
 
