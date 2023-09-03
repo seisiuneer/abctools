@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+                
         <style>
         p {
         font-size:14pt;
@@ -177,7 +177,7 @@
 
             <div class="hidden-print">
 
-                <h1 style="margin-bottom:0px;line-height:12px;padding-left:0px">Table of Contents</h1>
+                <h1 style="margin-bottom:20px;line-height:12px;padding-left:0px">Table of Contents</h1>
                 <h1 style="margin-bottom:16px;padding-left:0px"><button class="expandall" onclick="ExpandAll();">Expand All</button>&nbsp;&nbsp;&nbsp;<button class="expandall" onclick="CollapseAll();">Collapse All</button></h1>
 
                 <button class="accordion" title="Click to expand/collapse this section">Basic Operation</button>
@@ -361,7 +361,6 @@
             <p>To play a specific tune, click anywhere in the ABC for the tune and then click <strong>Player</strong>.</p>
             <p>The tool will automatically find the tune you've clicked on bring it up in the ABC player for playback.</p>
             <p>The controls for the player are located below the displayed notation.</p>
-            <p>If the tune is very long, you may have to scroll down in the player to get to the player controls.</p>
             <div class="image_holder_p">
                 <img src="img/download_wav_midi_1.jpg"/>
             </div>
@@ -413,7 +412,7 @@
             <h1 class="page_break_always">Advanced Controls<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Show Advanced</strong> button brings up the ABC Transcription Tools Advanced Controls dialog:</p>
             <div class="image_holder_p">
-                <img src="img/advanced_controls_2.jpg"/>
+                <img src="img/advanced_controls_3.jpg"/>
             </div>
             <p>Click the lightbulb icon to bring up this section of the user guide in a new browser tab.</p>
             <p><strong>Show/Hide ABC Features:</strong></p>
@@ -431,14 +430,6 @@
             <p>B/C Box, C#/D Box, and Anglo Concertina tablature are created using the ABC chord system, so also will be stripped.</p>
             <p>When working with these tablatures, this is a quick way to clear out the current tablature before injecting new tablature.</p>
             <p>The ABC stripping buttons are enabled if Annotations, Text, or Chords are detected in the ABC.</p>
-            <p><strong>Stringed Instrument Tablature Settings (only enabled if Mandolin, GDAD, CGDA, or Guitar tab is being displayed):</strong></p>
-            <p><strong>Hide/Show Tab Names</strong> - Hides/Shows the instrument names and capo settings on the tablature.</p>
-            <p>Only available when a stringed instrument tab is the current display mode.</p>
-            <p>When the tab instrument names are hidden, the spacing between the staves is somewhat reduced.</p>
-            <p>Hiding the tab names may, or may not, depending on the height of the staves, be useful for getting more staves on a single PDF page.</p>
-            <p>Capo Settings: (only enabled if Mandolin, GDAD, CGDA, or Guitar tab is being displayed).</p>
-            <p><strong>Capo</strong> - Allows you to set a capo setting from 0 to 12 frets for the Mandolin, GDAD, CGDA, or Guitar tab.</p>
-            <p>Only available when a stringed instrument tab is the current display mode.</p>
             <p><strong>ABC Injection Features:</strong></p>
             <p>These commands are destructive in that they inject additional text into the current ABC.</p>
             <p>It may be a good idea to save the current ABC or do a <strong>Copy All</strong> before using one of these commands if you want to quickly undo the operation.</p>
@@ -471,7 +462,7 @@
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder_p">
-                <img src="img/abc_transcription_tool_settings_10.jpg"/>
+                <img src="img/abc_transcription_tool_settings_11.jpg"/>
             </div>
             <p><strong>Full screen tune display scaling (percentage)</strong> - Sets the width in percentage of window width for the tune notation on the screen when viewing full screen. Default is 50%.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/KagT-Aq8mY8" title="Full-Screen Tune Display Options" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
@@ -480,8 +471,11 @@
             <p>A value of 0 corresponds to an ABC %%staffsep of 40</p>
             <p>Minimum value is -40 (corresponds to an ABC %%staffsep of 0)</p>
             <p>Final rendered staff separation depends on the contents of ABC itself, for example the use of chords and other annotations may increase the staff spacing.</p>
-            <p>For minimal staff spacing of stringed instrument tablatures, open the <strong>Advanced Controls</strong> dialog and click <strong>Hide Tab Names</strong>.</p>
             <p>Experiment with this value until you get the result you want.</p>
+            <p><strong>Show stringed instrument names on tablature (never shown in the Player)</strong> - Hides/Shows the instrument names and capo settings on the tablature.</p>
+            <p>When the tab instrument names are hidden, the spacing between the staves is somewhat reduced.</p>
+            <p>Hiding the tab names may, or may not, depending on the height of the staves, be useful for getting more staves on a single PDF page.</p>
+            <p><strong>Stringed instrument capo fret postion</strong> - Allows you to set a capo setting from 0 to 12 frets for the Mandolin, GDAD, CGDA, or Guitar tab.</p>
             <p>The following controls select default MIDI programs and volumes to use for the Melody, Bass, and Chords:</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/fufQFUISym4" title="Selecting Default Instruments for Playing Tunes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>Enabling <strong>Use Default Melody and Bass/Chord programs when playing tunes</strong> will play tunes that don't have Melody or Bass/Chord programs already in the ABC with your preferred instrument sounds. </p>
