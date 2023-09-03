@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-                
+        
         <style>
         p {
         font-size:14pt;
@@ -187,6 +187,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#abc_editor">ABC Editor</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#viewing_the_notation_full_screen">Viewing the Notation Full Screen</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#playing_your_tunes">Playing Your Tunes</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#saving_wav_mp3_midi">Saving .WAV, .MP3, or MIDI Files</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#notation_tablature_display_controls">Notation/Tablature Display Controls</a></p>
                 </div>
 
@@ -362,7 +363,7 @@
             <p>The tool will automatically find the tune you've clicked on bring it up in the ABC player for playback.</p>
             <p>The controls for the player are located below the displayed notation.</p>
             <div class="image_holder_p">
-                <img src="img/download_wav_midi_1.jpg"/>
+                <img src="img/small_player_controls_2.jpg"/>
             </div>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/bLV8XsYTIkc " title="Playing tunes in the tool" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p></p>
@@ -370,12 +371,17 @@
             <p>Click <strong>Close</strong> to return to the ABC editor.</p>
             <p>If you would prefer larger player controls, for example for use on mobile devices, open the <strong>Settings</strong> dialog and set the check on: <strong>Player uses large controls (easier to touch on mobile and tablet)</strong>:</p>
             <div class="image_holder_p">
-                <img src="img/large_player_controls_2.jpg"/>
+                <img src="img/large_player_controls_3.jpg"/>
             </div>
+            <hr class="hidden-print" id="saving_wav_mp3_midi">
+            <h1 class="page_break_always">Saving .WAV, .MP3 or MIDI Files<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>From the <strong>Player</strong>, you can save out audio of your tune in either .WAV or .MP3 format as well as a MIDI file.</p>
             <p>Click the <strong>Download .WAV</strong> button to download the audio for the current tune to your system in .wav format:</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/vESIbNZBVtE" title="Download .WAV demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p></p>
-            <p>Click the <strong>Download MIDI</strong> button to download a MIDI file for the current tune to your system</p>
+            <p>Click the <strong>Download .MP3</strong> button to download the audio for the current tune to your system.</p>
+            <p>The bitrate for the MP3 file is set in the <strong>Settings</strong> dialog. Default is 224 kbit/sec.</p>
+            <p>This operation may take some time. The button label changes to <strong>Encoding .MP3</strong> while the audio is being encoded..</p>
+            <p>Click the <strong>Download MIDI</strong> button to download a MIDI file for the current tune to your system:</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/1o3HZD7afL8" title="Download MIDI demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <hr class="hidden-print" id="notation_tablature_display_controls">
             <h1 class="page_break_always">Notation/Tablature Display Controls<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -462,7 +468,7 @@
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder_p">
-                <img src="img/abc_transcription_tool_settings_11.jpg"/>
+                <img src="img/abc_transcription_tool_settings_13.jpg"/>
             </div>
             <p><strong>Full screen tune display scaling (percentage)</strong> - Sets the width in percentage of window width for the tune notation on the screen when viewing full screen. Default is 50%.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/KagT-Aq8mY8" title="Full-Screen Tune Display Options" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
@@ -510,6 +516,8 @@
             <div class="image_holder_p">
                 <img src="img/large_player_controls_1.jpg"/>
             </div>
+            <p><strong>MP3 audio export bitrate (kbit/sec):</strong> - Sets the bitrate for MP3 stereo audio downloaded from the Player. </p>
+            <p>Default value is 224.  Minimum value allowed is 96. Maximum value allowed is 384. Higher values result in higher quality audio.</p>
             <p><strong>Configure ABC Fonts</strong> - Brings up a dialog where you can configure all fonts used for rendering the ABC.</p>
             <p><strong>Configure Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for tablature injection.</p>
             <p><strong>Configure MusicXML Import</strong> - Brings up a dialog where you can configure all parameters for MusicXML import.</p>
