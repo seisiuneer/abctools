@@ -182,6 +182,9 @@ var gRenderingFonts = {
 	voicefont: "Times New Roman 13"
 }
 
+// Mp3 bitrate
+var gMP3Bitrate = 224;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -10025,15 +10028,6 @@ function isFirstRun(){
 
 	}
 
-	// Capo
-	var theCapo = localStorage.abcCapo;
-
-	if (theCapo){
-
-		return false;
-
-	}
-
 	// Staff spacing
 	var theStaffSpacing = localStorage.abcStaffSpacing;
 
@@ -10051,14 +10045,6 @@ function isFirstRun(){
 		return false;
 	}
 
-	// Show tab names
-	var theShowTabNames = localStorage.abcShowTabNames;
-
-	if (theShowTabNames){
-
-		return false;
-
-	}
 
 	return true;
 }
@@ -10207,9 +10193,9 @@ var gMIDIbuffer = null;
 var gPlayerABC = null;
 
 //
-// Return the .WAV filename
+// Return the .WAV or .MP3 filename
 //
-function GetTuneWAVName(tuneABC){
+function GetTuneAudioDownloadName(tuneABC,extension){
 
 	var neu = escape(tuneABC);
 
@@ -10233,13 +10219,13 @@ function GetTuneWAVName(tuneABC){
 			fname = fname.replace(/[ ]+/ig, '_',)
 			fname = fname.replace(/[^a-zA-Z0-9_\-.]+/ig, '');
 
-			return fname+".wav";
+			return fname+extension;
 
 		}
 	}
 
 	// Failed to find a tune title, return a default
-	return "output.wav";
+	return "output"+extension;
 
 }
 
@@ -10338,7 +10324,7 @@ function DownloadWave(){
 		
 		link.href = wavData;
 		
-		link.download = GetTuneWAVName(gPlayerABC);
+		link.download = GetTuneAudioDownloadName(gPlayerABC,".wav");
 		
 		link.click();
 		
@@ -10349,7 +10335,176 @@ function DownloadWave(){
 		}
     )).catch((function(e) {
 
-        console.warn("Audio problem:", e)
+        //console.warn("Problem exporting .wav:", e)
+		DayPilot.Modal.alert("A problem occured when exporting the .wav file.",{ theme: "modal_flat", top: 50, scrollWithPage: false });
+
+    }));
+
+}
+
+//
+// Generate and download the .mp3 file for the current tune
+//
+var gInDownloadMP3 = false;
+
+function DownloadMP3(){
+
+	// Avoid re-entry
+	if (gInDownloadMP3){
+		return false;
+	}
+	
+	gInDownloadMP3 = true;
+
+	function convertToMp3(wav){
+
+	    var arrayBuffer = wav;
+	    var buffer = new Uint8Array(arrayBuffer);
+	  
+	    var data = parseWav(buffer);
+	    var dataSize = data.samples.length;
+	    var nSamples = dataSize / 4;
+
+	    // Create the MP3 encoder
+		var mp3encoder = new lamejs.Mp3Encoder(2, 44100, gMP3Bitrate);
+		var mp3Data = [];
+
+		var data16 = new Int16Array(data.samples.buffer);
+
+		//
+		// Test zeroing out the first 10ms of data
+		// to eliminate mp3 encoding pop
+		//
+		for (let i = 0; i < 882; i++) {
+			data16[i] = 0;
+		}
+
+		// Calculate the length of the resulting arrays (even and odd)
+		const evenLength = Math.ceil(dataSize / 2);
+		const oddLength = dataSize - evenLength;
+
+		// Create new Int16Arrays for even and odd values
+		var evenArray = new Int16Array(evenLength);
+		var oddArray = new Int16Array(oddLength);
+
+		// Split the original array into even and odd arrays
+		for (let i = 0; i < (nSamples*2); i++) {
+		  if (i % 2 === 0) {
+		    evenArray[i / 2] = data16[i];
+		  } else {
+		    oddArray[(i - 1) / 2] = data16[i];
+		  }
+		}
+
+		var sampleBlockSize = 1152; //can be anything but make it a multiple of 576 to make encoders life easier
+
+		for (var i = 0; i < nSamples; i += sampleBlockSize) {
+		  var leftChunk = evenArray.subarray(i, i + sampleBlockSize);
+		  var rightChunk = oddArray.subarray(i, i + sampleBlockSize);
+		  var mp3buf = mp3encoder.encodeBuffer(leftChunk, rightChunk);
+		  if (mp3buf.length > 0) {
+		    mp3Data.push(mp3buf);
+		  }
+		}
+		var mp3buf = mp3encoder.flush();   //finish writing mp3
+
+		if (mp3buf.length > 0) {
+		    mp3Data.push(mp3buf);
+		}
+
+	    return mp3Data;
+
+	};
+
+	function parseWav(wav) {
+	  function readInt(i, bytes) {
+	    var ret = 0,
+	        shft = 0;
+
+	    while (bytes) {
+	      ret += wav[i] << shft;
+	      shft += 8;
+	      i++;
+	      bytes--;
+	    }
+	    return ret;
+	  }
+
+	  //if (readInt(20, 2) != 1) throw 'Invalid compression code, not PCM';
+	  //if (readInt(22, 2) != 1) throw 'Invalid number of channels, not 1';
+	  return {
+	    sampleRate: readInt(24, 4),
+	    bitsPerSample: readInt(34, 2),
+	    samples: wav.subarray(44)
+	  };
+	}
+
+	// Fix timing bug for jig-like tunes with no tempo specified
+	gMIDIbuffer.millisecondsPerMeasure  = isJigWithNoTiming(gPlayerABC,gMIDIbuffer.millisecondsPerMeasure);
+
+	// Adjust the sample fade time if required
+	var theFade = computeFade(gPlayerABC);
+
+	gMIDIbuffer.fadeLength = theFade;
+
+	gMIDIbuffer.prime().then(function(t) {
+
+		document.getElementById("abcplayer_mp3button").value = "Encoding .MP3";
+		document.getElementById("loading-bar-spinner").style.display = "block";
+
+		// Give the UI a chance to update
+		setTimeout(async function(){
+	
+			var wavDataURL = gMIDIbuffer.download();
+
+			var wavData = await fetch(wavDataURL).then(r => r.blob());
+
+			var fileReader = new FileReader();
+
+			fileReader.onload = function(event) {
+
+				var buffer = event.target.result;
+
+				var mp3Data = convertToMp3(buffer);
+
+				var blob = new Blob(mp3Data, {type: 'audio/mp3'});
+
+				var url = window.URL.createObjectURL(blob);
+
+				var link = document.createElement("a");
+				
+				document.body.appendChild(link);
+				
+				link.setAttribute("style", "display: none;");
+				
+				link.href = url;
+				
+				link.download = GetTuneAudioDownloadName(gPlayerABC,".mp3");
+				
+				link.click();
+				
+				window.URL.revokeObjectURL(url);
+				
+				document.body.removeChild(link);
+
+				document.getElementById("abcplayer_mp3button").value = "Download .MP3";
+				document.getElementById("loading-bar-spinner").style.display = "none";
+				gInDownloadMP3 = false;
+
+			};
+
+			fileReader.readAsArrayBuffer(wavData);
+
+		},100);
+	}	
+    ).catch((function(e) {
+
+		DayPilot.Modal.alert("A problem occured when exporting the .mp3 file.",{ theme: "modal_flat", top: 50, scrollWithPage: false });
+
+		document.getElementById("abcplayer_mp3button").value = "Download .MP3";
+		document.getElementById("loading-bar-spinner").style.display = "none";
+		gInDownloadMP3 = false;
+
 
     }));
 
@@ -11014,7 +11169,8 @@ function PlayABCDialog(theABC){
 
 	   	// Add the download buttons
 		modal_msg += '<p style="text-align:center;margin:0px;margin-top:18px">'
-		modal_msg += '<input id="abcplayer_downloadbutton" class="abcplayer_downloadbutton btn btn-wavedownload" onclick="DownloadWave();" type="button" value="Download .WAV" title="Downloads the audio for the current tune as a .WAV file">'
+		modal_msg += '<input id="abcplayer_wavbutton" class="abcplayer_wavbutton btn btn-wavedownload" onclick="DownloadWave();" type="button" value="Download .WAV" title="Downloads the audio for the current tune as a .WAV file">'
+		modal_msg += '<input id="abcplayer_mp3button" class="abcplayer_mp3button btn btn-mp3download" onclick="DownloadMP3();" type="button" value="Download .MP3" title="Downloads the audio for the current tune as a .MP3 file">'
 		modal_msg += '<input id="abcplayer_midibutton" class="abcplayer_midibutton btn btn-mididownload" onclick="DownloadMIDI();" type="button" value="Download MIDI" title="Downloads the current tune as a MIDI file">'
 		modal_msg += '</p>';
 
@@ -11424,7 +11580,22 @@ function GetInitialConfigurationSettings(){
 	}
 
 	// Capo
-	gCapo = localStorage.abcCapo;
+	val = localStorage.abcCapo;
+	if (val){
+		gCapo = val;
+	}
+	else{
+		gCapo = 0;
+	}
+
+	// MP3 bitrate
+	val = localStorage.MP3Bitrate;
+	if (val){
+		gMP3Bitrate = val;
+	}
+	else{
+		gMP3Bitrate = 224;
+	}
 
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
@@ -11492,6 +11663,9 @@ function SaveConfigurationSettings(){
 
 		// Save the capo state
 		localStorage.abcCapo = gCapo;
+
+		// Save the MP3 bitrate
+		localStorage.MP3Bitrate = gMP3Bitrate;
 
 	}
 }
@@ -12288,7 +12462,8 @@ function ConfigureToolSettings(e) {
 	  configure_staff_spacing: theOldStaffSpacing,
 	  configure_large_player_controls: gLargePlayerControls,
 	  configure_show_tab_names: gShowTabNames,
-	  configure_capo: gCapo
+	  configure_capo: gCapo,
+	  configure_mp3_bitrate: gMP3Bitrate	  
 	};
 
 	const form = [
@@ -12309,6 +12484,7 @@ function ConfigureToolSettings(e) {
 	  {html: '<p style="margin-top:12px;margin-bottom:0px;font-size:12pt;line-height:14pt;font-family:helvetica">%MIDI bassvol or %%MIDI chordvol present in the ABC will override the default value.</p>'},	  
 	  {name: "            Override all MIDI programs and volumes in the ABC when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">To change the Melody volume, add !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! before the first ABC note.</p>'},	  
+	  {name: "MP3 audio export bitrate (kbit/sec):", id: "configure_mp3_bitrate", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "    Player uses large controls (easier to touch on mobile and tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"configure_box_settings_form_text"},
 	  {html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Configure ABC Fonts" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="Configure MusicXML Import" title="Configure MusicXML import parameters"></p>'},	  
 	];
@@ -12445,6 +12621,21 @@ function ConfigureToolSettings(e) {
 
 					gCapo = parseInt(testCapo);
 
+				}
+			}
+
+			var testMP3Bitrate = parseInt(args.result.configure_mp3_bitrate);
+			
+			if (!isNaN(testMP3Bitrate)){
+
+				gMP3Bitrate = testMP3Bitrate;
+
+				if (gMP3Bitrate < 96){
+					gMP3Bitrate = 96;
+				}
+
+				if (gMP3Bitrate > 384){
+					gMP3Bitrate = 384;
 				}
 			}
 
