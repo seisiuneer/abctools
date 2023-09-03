@@ -4915,6 +4915,9 @@ function ExportNotationPDF(title) {
 		// Force an idle on the advanced controls to determine if we need to hide the annotations or text annotations before incipit render
 		IdleAdvancedControls(false);
 
+		// Are we showing tablature?
+		IdleAllowShowTabNames();
+
 		// Is annotation suppressed allowed, but not enabled, or is text annotation suppression allowed but not enabled, do a render
 		// If tabnames are being shown, hide them
 		if ((gAllowFilterAnnotations && (!gStripAnnotations)) || (gAllowFilterText && (!gStripTextAnnotations)) || (gAllowShowTabNames && (gShowTabNames))){
@@ -6727,58 +6730,6 @@ function SetStaffSpacing(newSpacing) {
 	RenderAsync(true, null, function(){;
 
 	});
-
-}
-
-//
-// Handle the capo control
-//
-function SetCapo() {
-
-	gCapo = document.getElementById('capo').value;
-
-	RenderAsync(true,null, function(){;
-
-	});
-
-}
-
-//
-// Idle the capo control
-//
-function IdleCapoControl(){
-
-	var format = GetRadioValue("notenodertab");
-
-	var enableCapo = false;
-
-	switch (format){
-
-		case "noten":
-		case "notenames":
-		case "whistle":
-			break;
-
-		case "mandolin":
-		case "gdad":
-		case "mandola":
-		case "guitare":
-		case "guitard":
-			enableCapo = true;
-			break;
-
-	}
-
-	if (enableCapo){
-
-		// Enable the capo control
-		document.getElementById("capo").disabled = false;
-
-	}
-	else{
-		// Disable the capo control
-		document.getElementById("capo").disabled = true;
-	}
 
 }
 
@@ -8773,11 +8724,10 @@ function ToggleMaximize(){
 
 }
 
-
 //
-// Idle the show tab names control
+// Idle the show tab names allow state
 //
-function IdleShowTabNamesControl(){
+function IdleAllowShowTabNames(){
 
 	var format = GetRadioValue("notenodertab");
 
@@ -8802,68 +8752,16 @@ function IdleShowTabNamesControl(){
 
 	if (allowShowTabs){
 
-		// Enable the Toggle Tag Names button
-		document.getElementById("toggletabnames").classList.remove("toggletabnamesdisabled");
-		document.getElementById("toggletabnames").classList.add("toggletabnames");	
-
 		gAllowShowTabNames = true;
 
 	}
 	else{
 
-		// Disable the Toggle Tag Names button
-		document.getElementById("toggletabnames").classList.remove("toggletabnames");	
-		document.getElementById("toggletabnames").classList.add("toggletabnamesdisabled");
-
 		gAllowShowTabNames = false;
 	}
 
-	if (gShowTabNames){
-
-		document.getElementById('toggletabnames').value = "Hide Tab Names";
-
-
-	}
-	else{
-
-
-		document.getElementById('toggletabnames').value = "Show Tab Names";
-
-	}
-
 }
 
-//
-// Toggle the display of tab names
-//
-function ToggleTabNames(){
-
-	if (!gAllowShowTabNames){
-
-		return;
-
-	}
-
-	if (gShowTabNames){
-
-		gShowTabNames = false;
-
-		document.getElementById('toggletabnames').value = "Show Tab Names";
-
-
-	}
-	else{
-
-		gShowTabNames = true;
-
-		document.getElementById('toggletabnames').value = "Hide Tab Names";
-
-	}
-
-	RenderAsync(true,null, function(){;
-
-	});
-}
 
 // 
 // Utility function for convertering UTF-8 to Base64
@@ -8965,9 +8863,6 @@ function processShareLink() {
 		var capo = urlParams.get("capo");
 		gCapo = parseInt(capo);
 	}
-	else{
-		gCapo = 0;
-	}
 
 	// Handler for staffspacing ssp parameter
 	if (urlParams.has("ssp")) {
@@ -8976,29 +8871,6 @@ function processShareLink() {
 	}
 	else{
 		gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
-	}
-
-	// Handler for legacy showtabnames parameter
-	if (urlParams.has("showtabnames")) {
-
-		var showtabnames = urlParams.get("showtabnames");
-
-		if (showtabnames == "true"){
-
-			gShowTabNames = true;
-
-		}
-		else{
-
-			gShowTabNames = false;
-
-		}
-
-	}
-	else{
-
-		gShowTabNames = true;
-
 	}
 
 	// Handler for newer showtabnames stn parameter
@@ -9016,11 +8888,6 @@ function processShareLink() {
 			gShowTabNames = false;
 
 		}
-
-	}
-	else{
-
-		gShowTabNames = true;
 
 	}
 
@@ -9688,6 +9555,9 @@ function DoInjectABCNoteNameLyrics(){
 
 	IdleAdvancedControls(true);
 
+	// Idle the show tab names control
+	IdleAllowShowTabNames();
+
 }
 
 //
@@ -9711,11 +9581,9 @@ function DoInjectTablature_BC(){
 	// Idle the dialog
 	IdleAdvancedControls(true);
 
-	// Idle the capo control
-	IdleCapoControl();
-
 	// Idle the show tab names control
-	IdleShowTabNamesControl();
+	IdleAllowShowTabNames();
+
 
 }
 
@@ -9740,11 +9608,8 @@ function DoInjectTablature_CsD(){
 	// Idle the dialog
 	IdleAdvancedControls(true);
 
-	// Idle the capo control
-	IdleCapoControl();
-
 	// Idle the show tab names control
-	IdleShowTabNamesControl();
+	IdleAllowShowTabNames();
 
 
 }
@@ -9768,11 +9633,8 @@ function DoInjectTablature_Anglo(){
 	// Idle the dialog
 	IdleAdvancedControls(true);
 
-	// Idle the capo control
-	IdleCapoControl();
-
 	// Idle the show tab names control
-	IdleShowTabNamesControl();
+	IdleAllowShowTabNames();
 
 }
 
@@ -9827,12 +9689,6 @@ function DoInjectTablature_Bamboo_Flute(){
 
 			// Idle the dialog
 			IdleAdvancedControls(true);
-
-			// Idle the capo control
-			IdleCapoControl();
-
-			// Idle the show tab names control
-			IdleShowTabNamesControl();
 
 		}
 
@@ -10289,24 +10145,6 @@ function restoreStateFromLocalStorage(){
 		}
 	}
 
-	// Show tab names
-	var theShowTabNames = localStorage.abcShowTabNames;
-
-	if (theShowTabNames){
-
-		if (theShowTabNames == "true"){
-
-			gShowTabNames = true;
-
-		}
-		else{
-
-			gShowTabNames = false;
-
-		}
-
-	}
-
 	// If first time, show a welcome message
 	if (bIsFirstTime){
 		
@@ -10358,50 +10196,6 @@ function showZoomInstructionsScreen(){
 	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Read the <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> for instructions and demo videos.</p>';
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: false });
-
-}
-
-//
-// Do we need to show the play controls scroll button? 
-//
-
-function idleMakePlayControlsVisible(){
-
-	var thePlayerDialog = document.getElementsByClassName("modal_flat_main")[0];
-
-	var theButtonElem = document.getElementsByClassName("modal_flat_ok")[0];
-	
-	var theWindowHeight = window.innerHeight;
-
-	var theWindowScrollY = window.scrollY;
-
-	if (((theButtonElem.offsetTop+theButtonElem.offsetHeight)+thePlayerDialog.offsetTop) > (theWindowHeight + theWindowScrollY)){
-
-		// Show the button
-		theButtonElem =  document.getElementById("abcplayer_scrollbutton").style.display = "block";
-
-	}
-}
-
-//
-// Scrolls the play controls into view if it not visible
-//
-
-function MakePlayControlsVisible(){
-
-	var thePlayerDialog = document.getElementsByClassName("modal_flat_main")[0];
-
-	var theButtonElem = document.getElementsByClassName("modal_flat_ok")[0];
-	
-	var theWindowHeight = window.innerHeight;
-
-	var theWindowScrollY = window.scrollY;
-
-	if (((theButtonElem.offsetTop+theButtonElem.offsetHeight)+thePlayerDialog.offsetTop) > (theWindowHeight + theWindowScrollY)){
-
-		window.scrollTo(0,(theButtonElem.offsetTop+thePlayerDialog.offsetTop)-((7*theWindowHeight)/8));
-
-	}
 
 }
 
@@ -11194,7 +10988,9 @@ function PlayABCDialog(theABC){
 		// Adapt the top based on the player control size
 		var theTop = 50;
 
-		modal_msg = '<p id="abcplayer_scrollbutton" style="text-align:center;margin:0px;display:none"><input id="abcplayer_scrollbutton" class="abcplayer_scrollbutton btn" onclick="MakePlayControlsVisible();" type="button" value="Scroll Player Controls into View" title="Scrolls the player controls into view"></p>';
+		var theHeight = window.innerHeight - 340;
+
+	   	modal_msg = '<div id="playerholder" style="height:'+theHeight+'px;overflow-y:auto;margin-bottom:15px;">';
 
 		if (gLargePlayerControls){
 			modal_msg += '<div id="abcplayer" class="abcjs-large">';
@@ -11204,11 +11000,20 @@ function PlayABCDialog(theABC){
 		}
 
 	   	modal_msg += '<div id="playback-paper"></div>';
-	   	modal_msg += '<div id="playback-audio"></div>';
 	   	modal_msg += '</div>';
 
-	   	// Add the .wav download button
-		modal_msg += '<p id="abcplayer_scrollbutton" style="text-align:center;margin:0px;margin-top:12px">'
+	   	modal_msg += '</div>';
+
+	   	// Add the player controls
+		if (gLargePlayerControls){
+	   		modal_msg += '<div id="playback-audio" class="abcjs-large"></div>';
+		}
+		else{
+	   		modal_msg += '<div id="playback-audio"></div>';
+		}
+
+	   	// Add the download buttons
+		modal_msg += '<p style="text-align:center;margin:0px;margin-top:18px">'
 		modal_msg += '<input id="abcplayer_downloadbutton" class="abcplayer_downloadbutton btn btn-wavedownload" onclick="DownloadWave();" type="button" value="Download .WAV" title="Downloads the audio for the current tune as a .WAV file">'
 		modal_msg += '<input id="abcplayer_midibutton" class="abcplayer_midibutton btn btn-mididownload" onclick="DownloadMIDI();" type="button" value="Download MIDI" title="Downloads the current tune as a MIDI file">'
 		modal_msg += '</p>';
@@ -11216,12 +11021,9 @@ function PlayABCDialog(theABC){
 	   	// Scale the player for larger screens
 		var windowWidth = window.innerWidth;
 
-		var theWidth = windowWidth * 0.45;
+		var instrument = GetRadioValue("notenodertab");
 
-		// Adapt the width based on the player control size
-		if (gLargePlayerControls){
-			theWidth = windowWidth * 0.435;
-		}
+		var theWidth = windowWidth * 0.45;
 
 		if ((!gIsAndroid) && (!gIsIOS)){
 
@@ -11236,7 +11038,7 @@ function PlayABCDialog(theABC){
 			
 		}
 
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: theTop, width:theWidth, okText:"Close", scrollWithPage: true });
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: theTop, width:theWidth, okText:"Close", scrollWithPage: false });
 
 		var theOKButtons = document.getElementsByClassName("modal_flat_ok");
 
@@ -11275,9 +11077,6 @@ function PlayABCDialog(theABC){
 		}
 
 		setTune(false);
-
-		// Do we need to show the scroll button?
-		idleMakePlayControlsVisible();
 
 	}
 
@@ -11602,6 +11401,31 @@ function GetInitialConfigurationSettings(){
     	resetABCRenderingFonts();
     }
 
+	// Show tab names
+	var theShowTabNames = localStorage.abcShowTabNames;
+
+	if (theShowTabNames){
+
+		if (theShowTabNames == "true"){
+
+			gShowTabNames = true;
+
+		}
+		else{
+
+			gShowTabNames = false;
+
+		}
+
+	}
+	else{
+
+		gShowTabNames = true;
+	}
+
+	// Capo
+	gCapo = localStorage.abcCapo;
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -11657,6 +11481,17 @@ function SaveConfigurationSettings(){
 		// Save the ABC rendering fonts
 		localStorage.RenderingFonts = JSON.stringify(gRenderingFonts);
 
+		// Save the show tab names state
+		var showtabnames = gShowTabNames;
+		if (showtabnames){
+			localStorage.abcShowTabNames = "true";
+		}
+		else{
+			localStorage.abcShowTabNames = "false";
+		}
+
+		// Save the capo state
+		localStorage.abcCapo = gCapo;
 
 	}
 }
@@ -12358,16 +12193,6 @@ function AdvancedControlsDialog(){
 	modal_msg  += 	'<input id="striptext" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleTextAnnotations(true)" type="button" value="Strip Text" title="Strips all text from the ABC">';
 	modal_msg  += 	'<input id="stripchords" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleChords(true)" type="button" value="Strip Chords + Injected Tab" title="Strips all chords from the ABC.&nbsp;&nbsp;Also strips any Box or Anglo Concertina tablature.">';
 	modal_msg  += '</p>';
-	
-	modal_msg  += 	'<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">Stringed Instrument Tablature Settings</p>'
-	modal_msg  += 	'<p style="text-align:center;"><input class="toggletabnamesdisabled btn btn-advancedcontrols" id="toggletabnames" onclick="ToggleTabNames()" type="button" value="Hide Tab Names" title="Hides/Shows the tablature name label">';
-	modal_msg += "<tspan></tspan>";
-	modal_msg  += 	'<label class="capo" for="capo">';
-	modal_msg  += 	'   Capo:';
-	modal_msg  += 		'<input type="number" name="capo" id="capo" min="0" max="12" step="1" value="0" onchange="SetCapo()" disabled  title="Sets the capo offset for stringed instruments">';
-	modal_msg  += 	'</label>';
-	modal_msg  += '</p>';
-
 	modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">ABC Injection Features</p>'
 	modal_msg  += '<p style="text-align:center;">'
 	modal_msg  += '<input id="injectallheaders" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders(true)" type="button" value="Inject All PDF Annotations" title="Injects all available tool-specific PDF tunebook annotations for title page, table of contents, index generation, etc. at the top of the ABC">';	
@@ -12393,13 +12218,8 @@ function AdvancedControlsDialog(){
 		// Do an initial idle on the controls
 		IdleAdvancedControls(true);
 
-		// Idle the capo control
-		IdleCapoControl();
-
 		// Idle the show tab names control
-		IdleShowTabNamesControl();
-
-		document.getElementById("capo").value = gCapo;
+		IdleAllowShowTabNames();
 
 	}, 200);
 
@@ -12451,6 +12271,10 @@ function ConfigureToolSettings(e) {
 
 	var theOldStaffSpacing = gStaffSpacing - STAFFSPACEOFFSET;
 
+	var theOldShowTabNames = gShowTabNames;
+
+	var theOldCapo = gCapo;
+
 	// Setup initial values
 	const theData = {
 	  configure_inject_programs: bAlwaysInjectPrograms,
@@ -12463,23 +12287,28 @@ function ConfigureToolSettings(e) {
 	  configure_fullscreen_scaling: theFullScreenScaling,
 	  configure_staff_spacing: theOldStaffSpacing,
 	  configure_large_player_controls: gLargePlayerControls,
+	  configure_show_tab_names: gShowTabNames,
+	  configure_capo: gCapo
 	};
 
 	const form = [
 	  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:50px;">ABC Transcription Tools Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#settings_dialog" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
 	  {name: "Full screen tune display scaling (percentage):", id: "configure_fullscreen_scaling", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Staff spacing (default is 10):", id: "configure_staff_spacing", type:"number", cssClass:"configure_settings_form_text"},
+	  {html: '<p style="font-size:4pt;font-family:helvetica">&nbsp;</p>'},	  
+	  {name: "    Show stringed instrument names on tablature (never shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_box_settings_form_text"},
+	  {name: "Stringed instrument capo fret postion:", id: "configure_capo", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default Melody MIDI program (0-135):", id: "configure_melody_program", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default Bass/Chords MIDI program (0-135):", id: "configure_chord_program", type:"number", cssClass:"configure_settings_form_text"},
-	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:14pt;font-family:helvetica">If there is already a %%MIDI program or %%MIDI chordprog directive in the ABC, the value in the ABC will override the default value.</p>'},	  
+	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:14pt;font-family:helvetica">%%MIDI program or %%MIDI chordprog present in the ABC will override the default value.</p>'},	  
 	  {html: '<p style="font-size:12pt;font-family:helvetica;margin-bottom:12px;margin-top:12px;text-align:center"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'},
 	  {name: "            Use Default Bass/Chord volumes when playing tunes", id: "configure_inject_volumes", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default Bass MIDI volume (0-127):", id: "configure_bass_volume", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default Chords MIDI volume (0-127):", id: "configure_chord_volume", type:"number", cssClass:"configure_settings_form_text"},
-	  {html: '<p style="margin-top:12px;margin-bottom:0px;font-size:12pt;line-height:14pt;font-family:helvetica">If there are already a %%MIDI bassvol or %%MIDI chordvol directive in the ABC, the value in the ABC will override the default value.</p>'},	  
+	  {html: '<p style="margin-top:12px;margin-bottom:0px;font-size:12pt;line-height:14pt;font-family:helvetica">%MIDI bassvol or %%MIDI chordvol present in the ABC will override the default value.</p>'},	  
 	  {name: "            Override all MIDI programs and volumes in the ABC when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text"},
-	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">To change the Melody volume, add a dynamics indication such as !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! immediately before the first note in the ABC.</p>'},	  
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">To change the Melody volume, add !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! before the first ABC note.</p>'},	  
 	  {name: "    Player uses large controls (easier to touch on mobile and tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"configure_box_settings_form_text"},
 	  {html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Configure ABC Fonts" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="Configure MusicXML Import" title="Configure MusicXML import parameters"></p>'},	  
 	];
@@ -12500,6 +12329,8 @@ function ConfigureToolSettings(e) {
 			gOverridePlayMIDIParams = args.result.configure_override_play_midi_params;
 
 			gLargePlayerControls = args.result.configure_large_player_controls;
+
+			gShowTabNames = args.result.configure_show_tab_names;
 
 			// Validate the staff spacing value
 			var testStaffSpacing = args.result.configure_staff_spacing;
@@ -12603,14 +12434,45 @@ function ConfigureToolSettings(e) {
 			if (gFullScreenScaling > 100){
 				gFullScreenScaling = 100;
 			}
-				
+
+			// Sanity check the new capo value
+			var testCapo = args.result.configure_capo;
+
+			if (!isNaN(parseInt(testCapo))){
+
+				var theCapo = parseInt(testCapo);
+				if ((theCapo >= 0) && (theCapo <= 12)){
+
+					gCapo = parseInt(testCapo);
+
+				}
+			}
+
+			IdleAllowShowTabNames();
+
 			// Update local storage
 			SaveConfigurationSettings();
 
-		}
+			// Do we need to re-render
+			if ((theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo))){
+				
+				RenderAsync(true, null, function(){
 
-		// Focus back on the ABC after the dialog is dismissed
-		gTheABC.focus();
+					// Focus back on the ABC after the dialog is dismissed
+					gTheABC.focus();
+
+				});
+
+			}
+			
+
+		}
+		else{
+
+			// Focus back on the ABC after the dialog is dismissed
+			gTheABC.focus();
+
+		}
 
 	});
 
