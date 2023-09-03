@@ -514,25 +514,26 @@ height:42px;
 padding:12px;
 }
 
-#abcplayer_scrollbutton{
-height:42px;
-padding:12px;
-}
-
-@media (hover: hover) {
-	.abcplayer_scrollbutton:hover{
-	background: palegreen;
-	}
-}
-
-#abcplayer_downloadbutton{
+#abcplayer_wavbutton{
 height:42px;
 padding:12px;
 margin-right:24px;
 }
 
 @media (hover: hover) {
-	.abcplayer_downloadbutton:hover{
+	.abcplayer_wavbutton:hover{
+	background: palegreen;
+	}
+}
+
+#abcplayer_mp3button{
+height:42px;
+padding:12px;
+margin-right:24px;
+}
+
+@media (hover: hover) {
+	.abcplayer_mp3button:hover{
 	background: palegreen;
 	}
 }
@@ -1455,6 +1456,12 @@ margin-top:-7px;
 }
 
 .btn-mididownload{
+  --color: black;
+  --background-color: lavender;
+
+}
+
+.btn-mp3download{
   --color: black;
   --background-color: lavender;
 
