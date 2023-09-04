@@ -2533,6 +2533,9 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
 			case "guitard":
 				postfix = "_DADGAD";
 				break;
+			case "bass":
+				postfix = "_Bass";
+				break;
 			case "whistle":
 				postfix = "_Whistle";
 				break;
@@ -2555,6 +2558,7 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
 			case "mandola":
 			case "guitare":
 			case "guitard":
+			case "bass":
 				if (gCapo > 0){
 					postfix = "_Capo_" + gCapo;
 				}
@@ -5555,6 +5559,10 @@ function GetABCJSParams(instrument){
 					theLabel = "DADGAD"+postfix;
 					break;
 
+				case "bass":
+					theLabel = "Bass"+postfix;
+					break;
+
 			}
 		}
 	}
@@ -5641,6 +5649,20 @@ function GetABCJSParams(instrument){
 				instrument: 'guitar',
 				label: theLabel,
 				tuning: ['D,', 'A,', 'D', 'G', 'A', 'd'],
+				highestNote: "f'",
+				capo: gCapo
+			}],
+			responsive: 'resize',
+			oneSvgPerLine: 'true',
+			selectTypes: false,
+			format: commonFontFormat
+		}
+	} else if (instrument == "bass") {
+		params = {
+			tablature: [{
+				instrument: 'violin',
+				label: theLabel,
+				tuning: ['E,,', 'A,,', 'D,', 'G,'],
 				highestNote: "f'",
 				capo: gCapo
 			}],
@@ -7510,6 +7532,7 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
 		case "mandola":
 		case "guitare":
 		case "guitard":
+		case "bass":
 
 			postfix = "&capo=" + capo;
 
@@ -7759,6 +7782,13 @@ function GenerateQRCode(e) {
 					break;
 				case "guitard":
 					postfix = "<br/><br/>(DADGAD Guitar Tab";
+					if (gCapo != 0){
+						postfix += " - Capo on "+gCapo;
+					}
+					postfix += ")";
+					break;
+				case "bass":
+					postfix = "<br/><br/>(Bass Tab";
 					if (gCapo != 0){
 						postfix += " - Capo on "+gCapo;
 					}
@@ -8748,6 +8778,7 @@ function IdleAllowShowTabNames(){
 		case "mandola":
 		case "guitare":
 		case "guitard":
+		case "bass":
 			allowShowTabs = true;
 			break;
 
@@ -10343,11 +10374,190 @@ function DownloadWave(){
 }
 
 //
+// Batch .MP3 Export
+//
+
+var gBatchMP3ExportCancelRequested = false;
+var gTheBatchMP3ExportOKButton = null;
+var gTheBatchMP3ExportStatusText = null;
+
+//
+// Extract the title from a single tune ABC
+function getTuneTitle(thisTune){
+	
+	var neu = escape(thisTune);
+
+	var Reihe = neu.split("%0D%0A");
+
+	Reihe = neu.split("%0A");
+
+	var title = "";
+
+	for (var j = 0; j < Reihe.length; ++j) {
+
+		Reihe[j] = unescape(Reihe[j]); /* Macht die Steuerzeichen wieder weg */
+
+		var Aktuellereihe = Reihe[j].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
+
+		if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
+
+			title = Reihe[j].slice(2);
+
+			title = title.trim();
+
+			return title;
+
+		}
+	}
+
+	return title;
+}
+
+function BatchMP3Export(){
+
+	// Apparently broken
+	if ((gIsIOS) || (gIsAndroid)){
+		DayPilot.Modal.alert("Batch export to .MP3 not supported on iOS or Android at this time.",{ theme: "modal_flat", top: 400, scrollWithPage: false, okText:"Ok" });
+		return;
+	}
+
+	var totalTunesToExport;
+
+	function callback2(theOKButton){
+
+		//console.log("callback2 called");
+
+		nTunes--;
+
+		// Dismiss the player
+		theOKButton.click();
+
+		if (!gBatchMP3ExportCancelRequested){
+
+			if (nTunes != 0){
+
+				setTimeout(function(){
+
+					currentTune++;
+
+					var thisTune = getTuneByIndex(currentTune);
+
+					thisTune = PreProcessPlayABC(thisTune);
+
+					var title = getTuneTitle(thisTune);
+
+					gTheBatchMP3ExportStatusText.innerText = "Exporting .MP3 for tune "+ (currentTune+1) + " of "+totalTunesToExport+": "+title;
+
+					PlayABCDialog(thisTune,callback,currentTune);
+
+				}, 1000);
+
+			}
+			else{
+
+				// We're done, close the status dialog
+				gTheBatchMP3ExportOKButton.click();
+
+				gBatchMP3ExportCancelRequested = false;
+			}
+		}
+	}
+
+	function callback(result,theOKButton){
+
+		//console.log("callback called result = "+result);
+
+		DownloadMP3(callback2,theOKButton);
+
+	}
+
+	// Make sure there are tunes to covert
+	var nTunes = CountTunes();
+
+	if (nTunes == 0){
+		return;
+	}
+
+	totalTunesToExport = nTunes;
+
+	var currentTune = 0;
+
+	gBatchMP3ExportCancelRequested = false;
+	gTheBatchMP3ExportOKButton = null;
+	gTheBatchMP3ExportStatusText = null;
+
+	// Put up batch running dialog
+	DayPilot.Modal.alert("Exporting .MP3 for tune "+ (currentTune+1) + " of "+totalTunesToExport,{ theme: "modal_flat", top: 400, scrollWithPage: false, okText:"Cancel" }).then(function(args){
+		
+		//console.log("Got cancel");
+		
+		gBatchMP3ExportCancelRequested = true;
+		
+	});	
+
+	var modals = document.getElementsByClassName("modal_flat_main");
+
+	var nmodals = modals.length;
+
+	modals[nmodals-1].style.zIndex = 100001;
+
+	// Find the OK button
+
+	var theOKButtons = document.getElementsByClassName("modal_flat_ok");
+
+	// Find the button that says "Cancel" to use to close the dialog when the cascade is complete
+	var theOKButton = null;
+
+	for (i=0;i<theOKButtons.length;++i){
+
+		theOKButton = theOKButtons[i];
+
+		if (theOKButton.innerText == "Cancel"){
+
+			//console.log("Found conversion cancel button");
+			gTheBatchMP3ExportOKButton = theOKButton;
+
+			break;
+
+		}
+	}
+
+	// Find the status text 
+
+	var theStatusElems = document.getElementsByClassName("modal_flat_content");
+	var nStatus = theStatusElems.length;
+
+	gTheBatchMP3ExportStatusText = theStatusElems[nStatus-1];
+	gTheBatchMP3ExportStatusText.style.textAlign = "center";
+
+	var thisTune = getTuneByIndex(currentTune);
+
+	thisTune = PreProcessPlayABC(thisTune);
+
+	var title = getTuneTitle(thisTune);
+	
+	gTheBatchMP3ExportStatusText.innerText = "Exporting .MP3 for tune "+ (currentTune+1) + " of "+totalTunesToExport+": "+title;
+
+	// Kick off the conversion cascade
+
+	PlayABCDialog(thisTune,callback,currentTune);
+
+	return true;
+
+}
+
+//
 // Generate and download the .mp3 file for the current tune
 //
 var gInDownloadMP3 = false;
 
-function DownloadMP3(){
+function DownloadMP3(callback,val){
+
+	// // Apparently broken on iOS and Android
+	// if (gIsAndroid){
+	// 	DayPilot.Modal.alert("Export to .MP3 not supported on Android at this time.",{ theme: "modal_flat", top: 400, scrollWithPage: false, okText:"Ok" });
+	// 	return;
+	// }
 
 	// Avoid re-entry
 	if (gInDownloadMP3){
@@ -10366,7 +10576,8 @@ function DownloadMP3(){
 	    var nSamples = dataSize / 4;
 
 	    // Create the MP3 encoder
-		var mp3encoder = new lamejs.Mp3Encoder(2, 44100, gMP3Bitrate);
+	    var theSampleRate = data.sampleRate;
+		var mp3encoder = new lamejs.Mp3Encoder(2, theSampleRate, gMP3Bitrate);
 		var mp3Data = [];
 
 		var data16 = new Int16Array(data.samples.buffer);
@@ -10490,6 +10701,10 @@ function DownloadMP3(){
 				document.getElementById("abcplayer_mp3button").value = "Download .MP3";
 				document.getElementById("loading-bar-spinner").style.display = "none";
 				gInDownloadMP3 = false;
+
+				if (callback){
+					callback(val);
+				}
 
 			};
 
@@ -11001,10 +11216,14 @@ function postProcessTab(renderDivID, instrument, bIsPlayback){
 // 
 // Tune Play Dialog
 //
-function PlayABCDialog(theABC){
+// callback and val are used for batch export automation
+//
+
+function PlayABCDialog(theABC,callback,val){
 
 	gMIDIbuffer = null;
 	gPlayerABC = theABC;
+	gTheOKButton = null;
 	
 	var instrument = GetRadioValue("notenodertab");
 
@@ -11110,6 +11329,10 @@ function PlayABCDialog(theABC){
 				synthControl.setTune(visualObj, userAction, {fadeLength:fadeLength}).then(function (response) {
 					
 					console.log("Audio successfully loaded.");
+
+					if (callback){
+						callback(val,gTheOKButton);
+					}
 					
 				}).catch(function (error) {
 					
@@ -11209,6 +11432,8 @@ function PlayABCDialog(theABC){
 			theOKButton = theOKButtons[i];
 
 			if (theOKButton.innerText == "Close"){
+
+				gTheOKButton = theOKButton;
 
 				var originalOnClick = theOKButton.onclick;
 
@@ -12385,6 +12610,7 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<input id="injectbambooflute" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Bamboo_Flute()" type="button" value="Inject Bamboo Flute Tab" title="Injects Bamboo flute tablature into the ABC">';
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-subdialog configure_box_advanced " onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"></p>';	
+	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="BatchMP3Export()" type="button" value="Export all Tunes as MP3" title="Exports all the tunes in the ABC text area as .mp3 files"></p>';	
 	modal_msg += '</div>';
 
 	setTimeout(function(){
