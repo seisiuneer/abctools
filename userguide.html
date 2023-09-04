@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+
         <style>
         p {
         font-size:14pt;
@@ -143,6 +143,14 @@
           overflow: hidden !important;
         } 
 
+        .code {
+          padding:8px;
+          font-family: monospace; !important;
+          color:white;
+          background-color: black;
+          line-height: 28px;
+        }
+
         @media print {
         .hidden-print {
         display: none !important;
@@ -155,6 +163,15 @@
         .page_break_never {
         page-break-before: avoid;
         }  
+        
+        .code {
+          padding:8px;
+          font-family: monospace; !important;
+          color:black;
+          line-height: 28px;
+        }
+
+        }
        
         </style>
         
@@ -213,11 +230,12 @@
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#pdf_tunebook_settings">PDF Tunebook Settings</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#pdf_quality_setting">PDF Quality Setting</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#pdf_tunebook_spacing_overrides">PDF Tunebook Tune Layout Spacing Override</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#adding_a_pdf_title_page">Adding a PDF Tunebook Title Page</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#adding_a_pdf_tunebook_table_of_contents_and_index">Adding a PDF Tunebook Table of Contents and Index</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#pdf_page_headers_and_footers">PDF Page Headers and Footers</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#table_of_contents_and_index_font_size_and_line_spacing_overrides">Table of Contents and Index Font Size and Line Spacing Overrides</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#tunebook_hyperlinks">PDF Tunebook Hyperlinks and Automatic Play Links</a></p>
+                   <p class="toc"><a style="text-decoration:none;" href="#tunebook_hyperlinks">PDF Tunebook Hyperlinks and Automatic Play Links</a></p>
                 </div>
                 <button class="accordion" title="Click to expand/collapse this section">Printing from the Browser</button>
                 <div class="tocpanel">
@@ -545,16 +563,16 @@
             <p></p>
             <p>To choose the instrument used for the melody, add the following line to your ABC right after any headers and before the ABC notes, for example for an Accordion sound:</p>
             <p></p>
-            <p><strong>%%MIDI program 21</strong></p>
+            <p class="code">%%MIDI program 21</p>
             <p></p>
             <p><strong>Example:</strong></p>
-            <p>X: 1<br/>
+            <p class="code">X: 1<br/>
                 T: The Kesh<br/>
                 R: Jig<br/>
                 M: 6/8<br/>
                 L: 1/8<br/>
                 K: Gmaj<br/>
-                <strong>%%MIDI program 21</strong><br/>
+                %%MIDI program 21<br/>
                 D|: GAG GAB | ABA ABd | edd gdd | edB dBA |<br/>
                 GAG GAB | ABA ABd | edd gdB |1 AGF G2D :|2 AGF G2A||<br/>
                 |: B2B dBd | ege dBA | BAB dBG | ABA AGA |<br/>
@@ -569,17 +587,17 @@
             <p></p>
             <p>To choose the instrument for the bass and chords, add the following line to your ABC right after any headers and before the ABC notes, for example for a Bass sound:</p>
             <p></p>
-            <p><strong>%%MIDI chordprog 34</strong></p>
+            <p class="code">%%MIDI chordprog 34</p>
             <p></p>
             <p>Here's the same example where I've added the bass/chords instrument program selection:</p>
-            <p>X: 1<br/>
+            <p class="code">X: 1<br/>
                 T: The Kesh<br/>
                 R: Jig<br/>
                 M: 6/8<br/>
                 L: 1/8<br/>
                 K: Gmaj<br/>
                 %%MIDI program 21<br/>
-                <strong>%%MIDI chordprog 34</strong><br/>
+                %%MIDI chordprog 34<br/>
                 D|: GAG GAB | ABA ABd | edd gdd | edB dBA |<br/>
                 GAG GAB | ABA ABd | edd gdB |1 AGF G2D :|2 AGF G2A||<br/>
                 |: B2B dBd | ege dBA | BAB dBG | ABA AGA |<br/>
@@ -595,13 +613,13 @@
             <p></p>
             <p>For example, to make the melody very soft, you can inject a !ppp! pianissimo annotation:</p>
             <p></p>
-            <p>!ppp! |:"Em"EBBA B2 EB|"Em"B2 AB dBAG|"D"F/E/D AD BDAD|"D"F/E/D AD BAGF|</p>
+            <p class="code">!ppp! |:"Em"EBBA B2 EB|"Em"B2 AB dBAG|"D"F/E/D AD BDAD|"D"F/E/D AD BAGF|</p>
             <p></p>
             <p>Most standard dynamics indications are supported, for example: !ppp!, !pp!, !p!, !mf!, !f!</p>
             <p></p>
             <p>To change the volume of the bass and chords, add the following two chordvol and bassvol %%MIDI directives immediately before any %%MIDI program and %%MIDI chordprog directives:</p>
             <p></p>
-            <p>% Set the chord and bass volume (0-127)<br/>
+            <p class="code">% Set the chord and bass volume (0-127)<br/>
                 %%MIDI chordvol 16<br/>
                 %%MIDI bassvol 16<br/>
                 %<br/>
@@ -664,7 +682,7 @@
             <p></p>
             <p>When exporting multiple tunes per page, if you want to manually force a tune to a new page in the PDF, add:</p>
             <p></p>
-            <p>%%newpage</p>
+            <p class="code">%%newpage</p>
             <p></p>
             <p>on a new line immediately at the end of tunes after which you want to force a page break.</p>
             <p></p>
@@ -704,38 +722,50 @@
             <h1 class="page_break_always">PDF Quality Setting<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>You may set the quality of the PDF output by adding the following ABC comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p>%pdfquality quality_value</p>
+            <p class="code">%pdfquality quality_value</p>
             <p></p>
-            <p>Where quality_value is a floating point value, default is 0.75 (high quality)</p>
+            <p>Where quality_value is a floating point value. Default is 0.75 (high quality)</p>
             <p>Lower values will create lower resolution PDF notation output and smaller PDF file size.</p>
             <p>A value of 1.0 will produce the maximum quality.</p>
             <p>A value of 0.5 will still produce good-quality PDF notation at about half the PDF file size of the maximum quality.</p>
             <p>A pdfquality value of 0.25 can be used to produce draft quality output with even smaller PDF file size.</p>
+            <hr class="hidden-print" id="pdf_tunebook_spacing_overrides">
+            <h1 class="page_break_always">PDF Tunebook Tune Layout Spacing Override<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>You may control the spacing between tunes in the PDF output by adding the following ABC comment-based annotation anywhere in the ABC:</p>
+            <p></p>
+            <p class="code">%pdf_between_tune_space spacing_value</p>
+            <p></p>
+            <p>Where spacing_value is an integer in 1/72" increments. Default is 20</p>
+            <p>Smaller values will reduce the space between the tunes in the PDF.</p>
+            <p>Larger values will increase the space between the tunes in the PDF.</p>
+            <p>This value is used in the layout of multiple tunes per page.</p>
+            <p>For the most compact layout possible to maximize the number of tunes per page in the PDF, set this value to zero:</p>
+            <p class="code">%pdf_between_tune_space 0</p>
             <hr class="hidden-print" id="adding_a_pdf_title_page">
             <h1 class="page_break_always">Adding a PDF Title Page<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p></p>
             <p>To add a title page to your PDF tunebook, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p>%addtitle (your tunebook title text goes here...)</p>
+            <p class="code">%addtitle (title text)</p>
             <p></p>
             <p>To add a smaller subtitle below the title on the title page, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p>%addsubtitle (your tunebook title page subtitle text goes here...)</p>
+            <p class="code">%addsubtitle (title page subtitle text)</p>
             <p></p>
             <p>Note: The subtitle only appears if a title page is requested.</p>
             <p>For a title page with just a subtitle and no subtitle, just enter %addtitle with no text after it and then add %addsubtitle with your subtitle text.</p>
             <p></p>
             <p>To add a title page to your PDF tunebook as a hyperlink, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p>%urladdtitle URL (your tunebook title text goes here...)</p>
+            <p class="code">%urladdtitle URL (title text)</p>
             <p></p>
             <p>To add a smaller subtitle as a hyperlink below the title on the title page, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p>%urladdsubtitle URL (your tunebook title page subtitle text goes here...)</p>
+            <p class="code">%urladdsubtitle URL (title page subtitle text)</p>
             <p></p>
             <p>Examples:</p>
-            <p>%urladdtitle http://michaeleskin.com Tunebook Title with Hyperlink</p>
-            <p>%urladdsubtitle http://michaeleskin.com/abc Tunebook Subtitle with Hyperlink</p>
+            <p class="code">%urladdtitle http://michaeleskin.com Tunebook Title with Hyperlink</p>
+            <p class="code">%urladdsubtitle http://michaeleskin.com/abc Tunebook Subtitle with Hyperlink</p>
             <p></p>
             <p>Note: The URL must begin with either http:// or https:// to be recognized as a hyperlink.</p>
             <p></p>
@@ -749,31 +779,31 @@
             <p></p>
             <p>To add a table of contents to the start of of your PDF tunebook listing each tune name and page number in the same order the tunes appear in the ABC along with hyperlinks to each tune, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p>%addtoc (your tunebook table of contents title text goes here...)</p>
+            <p class="code">%addtoc (table of contents title text)</p>
             <p></p>
             <p>To append an sorted tunebook table of contents to the start of your PDF tunebook listing each tune name and page number in alphabetical order by tune name along with hyperlinks to each tune, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p>%addsortedtoc (your tunebook sorted table of contents title text goes here...)</p>
+            <p class="code">%addsortedtoc (sorted table of contents title text)</p>
             <p></p>
             <p>Tune names that start with "The" will have the "The" moved to the end of the tune name before the sorting.</p>
             <p></p>
             <p>To add a hyperlink (displayed as <<) on the left side of each page that links back to the tunebook table of contents, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p>%addlinkbacktotoc</p>
+            <p class="code">%addlinkbacktotoc</p>
             <p></p>
             <p>To add some text above the table of contents pages as a page header, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p>%tocheader (your table of contents page header text here)</p>
+            <p class="code">%tocheader (table of contents page header text here)</p>
             <p></p>
             <p>Unlike standard page headers, the table of contents page headers do not support macro expansion.</p>
             <p></p>
             <p>To append an unsorted tunebook index to the end of your PDF tunebook listing each tune name and page number in the same order they are in the ABC along with hyperlinks to each tune, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p>%addindex (your tunebook index unsorted title text goes here...)</p>
+            <p class="code">%addindex (index unsorted title text)</p>
             <p></p>
             <p>To append an sorted tunebook index to the end of your PDF tunebook listing each tune name and page number in alphabetical order by tune name along with hyperlinks to each tune, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p>%addsortedindex (your tunebook sorted index title text goes here...)</p>
+            <p class="code">%addsortedindex (sorted index title text)</p>
             <p></p>
             <p>Tune names that start with "The" will have the "The" moved to the end of the tune name before the sorting.</p>
             <p></p>
@@ -781,15 +811,15 @@
             <p></p>
             <p>If you want to suppress having the hyperlinks added from the table of contents or index page entries to the tunes, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p>%no_toc_or_index_links</p>
+            <p class="code">%no_toc_or_index_links</p>
             <p></p>
             <p>To add a hyperlink (displayed as >>) on the right side of each page that links back to the tunebook index, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p>%addlinkbacktoindex</p>
+            <p class="code">%addlinkbacktoindex</p>
             <p></p>
             <p>To add some text above the index pages as a page header, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p>%indexheader (your index page header text here)</p>
+            <p class="code">%indexheader (index page header text here)</p>
             <p></p>
             <p>Unlike standard page headers, the index page headers do not support macro expansion.</p>
             <p></p>
@@ -797,33 +827,33 @@
             <h1 class="page_break_always">Table of Contents and Index Font Size and Line Spacing Overrides<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>You may override the top offset to title, offset from title to the index or table of contents entries, default tune name font sizes and line spacing, by adding the following comment-based annotations anywhere in your ABC:</p>
             <p><strong>Table of Contents offset and font overrides:</strong></p>
-            <p>%toctopoffset (your top offset goes here) - 72 dpi offset from the page header for the top of the table of contents title. Default is 30.</p>
-            <p>%toctitleoffset (your title offset goes here) - 72 dpi offset from the title to the first entry in the table of contents. Default is 35.</p>
-            <p>%toctitlefontsize (your font size goes here) - Font size for the table of contents title. Default is 18.</p>
-            <p>%tocfontsize (your font size goes here) - Font size for tune names in the table of contents. Default is 13.</p>
-            <p>%toclinespacing (your line spacing goes here) - Line spacing for tune names in the table of contents. Default is 12.</p>
+            <p class="code">%toctopoffset (top offset) - 72 dpi offset from the page header for the top of the table of contents title. Default is 30.</p>
+            <p class="code">%toctitleoffset (title offset) - 72 dpi offset from the title to the first entry in the table of contents. Default is 35.</p>
+            <p class="code">%toctitlefontsize (font size) - Font size for the table of contents title. Default is 18.</p>
+            <p class="code">%tocfontsize (font size) - Font size for tune names in the table of contents. Default is 13.</p>
+            <p class="code">%toclinespacing (line spacing) - Line spacing for tune names in the table of contents. Default is 12.</p>
             <p><strong>Index offset and font overrides:</strong></p>
-            <p>%indextopoffset (your top offset goes here) - 72 dpi offset from the page header for the top of the index title. Default is 30.</p>
-            <p>%indextitleoffset (your title offset goes here) - 72 dpi offset from the title to the first entry in the index. Default is 35.</p>
-            <p>%indextitlefontsize (your font size goes here) - Font size for the index title. Default is 18.</p>
-            <p>%indexfontsize (your font size goes here) - Font size for tune names in the index. Default is 13.</p>
-            <p>%indexlinespacing (your line spacing goes here) - Line spacing for tune names in the index. Default is 12.</p>
+            <p class="code">%indextopoffset (top offset) - 72 dpi offset from the page header for the top of the index title. Default is 30.</p>
+            <p class="code">%indextitleoffset (title offset) - 72 dpi offset from the title to the first entry in the index. Default is 35.</p>
+            <p class="code">%indextitlefontsize (font size) - Font size for the index title. Default is 18.</p>
+            <p class="code">%indexfontsize (font size) - Font size for tune names in the index. Default is 13.</p>
+            <p class="code">%indexlinespacing (line spacing) - Line spacing for tune names in the index. Default is 12.</p>
             <p>As with all previously described annotation, only the first instance these annotations are processed, any additional instances are ignored.</p>
             <hr class="hidden-print" id="pdf_page_headers_and_footers">
             <h1 class="page_break_always">PDF Page Headers and Footers<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>You may add custom page headers and footers to your exported PDF files by including the following ABC comment-based annotations anywhere in your ABC:</p>
             <p></p>
-            <p>%pageheader (your header text goes here...)</p>
-            <p>%pagefooter (your footer text goes here...)</p>
+            <p class="code">%pageheader (header text)</p>
+            <p class="code">%pagefooter (footer text)</p>
             <p></p>
             <p>If you'd like to link to a specific URL when users click in the PDF page header or footer, include either the following ABC comment-based annotations anywhere in your ABC:</p>
             <p></p>
-            <p>%urlpageheader (URL) (your header text goes here...)</p>
-            <p>%urlpagefooter (URL) (your footer text goes here...)</p>
+            <p class="code">%urlpageheader (URL) (header text)</p>
+            <p class="code">%urlpagefooter (URL) (footer text)</p>
             <p></p>
             <p>Examples:</p>
-            <p>%urlpageheader http://michaeleskin.com/abc Click in this page header to visit my home page</p>
-            <p>%urlpagefooter http://michaeleskin.com/abc Click in this page footer to visit my home page</p>
+            <p class="code">%urlpageheader http://michaeleskin.com/abc Click in this page header to visit my home page</p>
+            <p class="code">%urlpagefooter http://michaeleskin.com/abc Click in this page footer to visit my home page</p>
             <p></p>
             <p>Note: The URL must begin with either http:// or https:// to be recognized as a hyperlink.</p>
             <p></p>
@@ -840,7 +870,7 @@
             <p></p>
             <p>Example ABC with page header and page footer annotations that include user macros:</p>
             <p></p>
-            <p>%pageheader "The Tarbolton" from the Michael Coleman set - Saved on $DATEMDY at $TIME<br/>
+            <p class="code">%pageheader "The Tarbolton" from the Michael Coleman set - Saved on $DATEMDY at $TIME<br/>
                 %pagefooter $PDFNAME - Page $PAGENUMBER<br/>
                 X:1<br/>
                 T:The Tarbolton<br/>
@@ -869,7 +899,7 @@
             <p><strong>Forcing a Specific Filename for PDF Export</strong></p>
             <p>If you want to force a specific filename to be used by default every time you export the PDF file, add the following comment-based directive anywhere in the ABC:</p>
             <p></p>
-            <p>%pdfname your_pdf_filename_here</p>
+            <p class="code">%pdfname your_pdf_filename_here</p>
             <p></p>
             <hr class="hidden-print" id="tunebook_hyperlinks">
             <h1 class="page_break_always">PDF Tunebook Hyperlinks and Automatic Play Links<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -887,17 +917,17 @@
             <p></p>
             <p>To add a hyperlink to an external website in any tune, add the following comment-based annotation anywhere in the ABC for a specific tune:</p>
             <p></p>
-            <p>%hyperlink URL</p>
+            <p class="code">%hyperlink URL</p>
             <p></p>
             <p>Examples:</p>
-            <p>%hyperlink http://michaeleskin.com</p>
-            <p>%hyperlink https://cnn.com</p>
+            <p class="code">%hyperlink http://michaeleskin.com</p>
+            <p class="code">%hyperlink https://cnn.com</p>
             <p></p>
             <p><strong>Adding a playback hyperlink to a specific tune:</strong></p>
             <p></p>
             <p>To add a hyperlink back to the ABC Transcription Tools for playing a specific tune with specific General MIDI instrument program number sounds for the melody and the bass/chords, add the following comment-based annotation anywhere in the ABC for a specific tune:</p>
             <p></p>
-            <p>%add_playback_link MELODY_PROGRAM BASS_CHORD_PROGRAM</p>
+            <p class="code">%add_playback_link MELODY_PROGRAM BASS_CHORD_PROGRAM</p>
             <p></p>
             <p>The MELODY_PROGRAM and BASS_CHORD_PROGRAM are optional.</p>
             <p>If not specified, they will first be set by the programs specified in an %add_all_playback_links annotation if found in the ABC.</p>
@@ -913,7 +943,7 @@
             <p></p>
             <p>Example: To have a specific tune played with an Accordion sound on the melody and a Piano sound on the chord/bass</p>
             <p></p>
-            <p>X:1<br/>
+            <p class="code">X:1<br/>
                 T:The Tarbolton<br/>
                 M:4/4<br/>
                 K:Edor<br/>
@@ -927,11 +957,11 @@
             <p></p>
             <p>To add a hyperlink to a specific tune to the thesession.org search page for the tune title, add the following comment-based annotation anywhere in the ABC for a specific tune:</p>
             <p></p>
-            <p>%add_link_to_thesession</p>
+            <p class="code">%add_link_to_thesession</p>
             <p></p>
             <p>Example:</p>
             <p></p>
-            <p>X:1<br/>
+            <p class="code">X:1<br/>
                 T:The Tarbolton<br/>
                 M:4/4<br/>
                 K:Edor<br/>
@@ -947,7 +977,7 @@
             <p></p>
             <p>You may automatically add a hyperlink for every tune back to the ABC Transcription Tools for playing the tune with a specific General MIDI instrument program number sound for the melody and the bass/chords by adding the following comment-based annotation anywhere in the ABC file:</p>
             <p></p>
-            <p>%add_all_playback_links MELODY_PROGRAM BASS_CHORD_PROGRAM</p>
+            <p class="code">%add_all_playback_links MELODY_PROGRAM BASS_CHORD_PROGRAM</p>
             <p></p>
             <p>The MELODY_PROGRAM and BASS_CHORD_PROGRAM are optional.</p>
             <p></p>
@@ -962,13 +992,13 @@
             <p>Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38</p>
             <p></p>
             <p>Example: To have all tunes played with an Accordion sound on the melody and a Piano sound on the chords/bass:</p>
-            <p>%add_all_playback_links 21 0</p>
+            <p class="code">%add_all_playback_links 21 0</p>
             <p></p>
             <p><strong>Adding thesession.org hyperlinks to every tune in a PDF tunebook:</strong></p>
             <p></p>
             <p>You may automatically add a hyperlink for every tune to the thesession.org search page for the tune title by adding the following comment-based annotation anywhere in the ABC file:</p>
             <p></p>
-            <p>%add_all_links_to_thesession</p>
+            <p class="code">%add_all_links_to_thesession</p>
             <p></p>
             <p>%add_all_playback_links takes precedence for all tunes over %add_all_links_to_thesession</p>
             <p></p>
@@ -988,7 +1018,7 @@
             <p>Playback links on every tune title selecting an Accordion sound for the melody and a Piano sound for the bass/chords</p>
             <p>QR code with hyperlink and caption at the end of the tunebook</p>
             <p></p>
-            <p>%addtitle Tunebook Title<br/>
+            <p class="code">%addtitle Tunebook Title<br/>
                 %addsubtitle Tunebook Subtitle<br/>
                 %addtoc Table of Contents<br/>
                 %addlinkbacktotoc<br/>
@@ -1077,7 +1107,7 @@
             <h1 class="page_break_always">Adding a QR Code to the PDF Export<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>To append a QR code representing the Share URL for tune set or a specific URL as a final page on your PDF, add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p>%qrcode URL</p>
+            <p class="code">%qrcode URL</p>
             <p></p>
             <p>The URL field is optional.</p>
             <p>If a URL is present, it will be used for the creation of the QR code, otherwise the computed Share URL for the PDF tunebook (as would be shown in the sharing controls) will be used by default.</p>
@@ -1096,7 +1126,7 @@
             <p></p>
             <p>To override the default generated caption that is shown under the QR code added to a PDF file, add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p>%caption_for_qrcode YOUR_CAPTION_FOR_THE_QR_CODE_HERE</p>
+            <p class="code">%caption_for_qrcode YOUR_CAPTION_FOR_THE_QR_CODE_HERE</p>
             <p></p>
             <p>The QR code image and caption in the PDF file now have clickable hyperlinks to the same URL used to generate the QR code.</p>
             <p></p>
@@ -1122,15 +1152,17 @@
             <p>This can be very useful particularly for getting as much tab notation on a single page as possible.</p>
             <p>Any spacing overrides must be applied on a tune-by-tune basis.</p>
             <p>For the absolute minimum spacing between staffs, turn off the tab names, hide the tune annotations, and add the following just below the tune header:</p>
-            <p><strong>%%staffsep 0</strong></p>
+            <p class="code">%%staffsep 0</p>
             <p>Try experimenting with different %%staffsep values until you get the result you want.</p>
             <p>Setting the %%staffsep value manually too low may sometimes result in overlapping staff rendering.</p>
             <p>To override the default space between the title and the first staff of music, you can add a custom %%musicspace value in the ABC just below the tune header, for example:</p>
-            <p><strong>%%musicspace 10</strong></p>
+            <p class="code">%%musicspace 10</p>
             <p>Try experimenting with different %%musicspace values until you get the result you want.</p>
+            <p>For the most compact PDF layout possible to maximize the number of tunes per page when generating a PDF, also add this anywhere in the ABC:</p>
+            <p class="code">%pdf_between_tune_space 0</p>
             <p><strong>All supported spacing parameters</strong></p>
             <p>Here is the full list of ABC spacing-related parameters available in abcjs:</p>
-            <p>%%topspace<br/>
+            <p class="code">%%topspace<br/>
                 %%titlespace<br/>
                 %%subtitlespace<br/>
                 %%composerspace<br/>
@@ -1152,7 +1184,7 @@
             <h1 class="page_break_always">Custom Font Overrides<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>As per the ABC 2.1 specification, custom font overrides are possible, giving you maximum control over the appearance of your notation.</p>
             <p><strong>Available ABC Inline Font Annotations:</strong></p>
-            <p>%%titlefont        font-style size (used for the first title of the tune)<br/>
+            <p class="code">%%titlefont        font-style size (used for the first title of the tune)<br/>
                 %%subtitlefont     font-style size (used any additional titles for the tune)<br/>
                 %%infofont         font-style size (used for rhythm string at the left side of the staff)<br/>
                 %%composerfont     font-style size (used for the composer string at the right side of the staff)<br/>
@@ -1172,7 +1204,7 @@
             <p>Place your font override annotations just below the X: and above the T: ABC tune headers.</p>
             <p>Inline font annotations will override the default font settings configured in the tool's <strong>Settings</strong> dialog.</p>
             <p><strong>For example:</strong></p>
-            <p>X: 1<br/>
+            <p class="code">X: 1<br/>
                 %%titlefont Palatino 30<br/>
                 %%infofont Palatino 18<br/>
                 %%gchordfont Palatino Bold 14<br/>
@@ -1214,14 +1246,14 @@
             <h1 class="page_break_always">Injecting ABC Lyric-based Note Names Into the ABC Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking <strong>Inject Note Names Lyrics</strong> in the Advanced Settings dialog will inject an ABC lyrics line under each ABC line using the w: directive that will put the ABC note name under each note in the notation for all the tunes.</p>
             <p>For example:</p>
-            <p>GAG GAB | ABA ABd | edd gdd | edB dBA | </p>
-            <p>w: G A G G A B A B A A B d e d d g d d e d B d B A</p>
+            <p class="code">GAG GAB | ABA ABd | edd gdd | edB dBA |<br/>
+            w: G A G G A B A B A A B d e d d g d d e d B d B A</p>
             <p>The injected ABC lyrics are literally the same as the ABC so has no idea about sharps or flats, just the note letters. You may have to fix those manually.</p>
             <p>It is a destructive operation, so you might want to click <strong>Copy All</strong> before trying this operation.</p>
             <p>Also, it will in some circumstances mess up the notation formatting, so try it, if it works, great, hopefully it saves you some time compared to doing the work manually.</p>
             <p>f you want the note names in a different font, style, or size, change the %%vocalfont directive injected for you immediately after the X: tag in each tune, for example:</p>
-            <p>X:1</p>
-            <p>%%vocalfont Verdana 14</p>
+            <p class="code">X:1<br/>
+            %%vocalfont Verdana 14</p>
             <p>You can use any of the fonts, styles, and sizes as described above in the "Web Safe Fonts" section.</p>
             <hr class="hidden-print" id="injecting_tablature">
             <h1 class="page_break_always">Injecting B/C Box, C#/D Box, Anglo Concertina, or Bamboo Flute Tablature Into the ABC Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
