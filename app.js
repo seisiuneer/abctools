@@ -9377,6 +9377,9 @@ function InjectPDFHeaders(bDoAll){
 		output += "%\n";
 		output += "% Here are all available custom annotations:\n";
 		output += "%\n";
+		output += "%pdfquality .75\n";
+		output += "%pdf_between_tune_space 20\n";
+		output += "%pdfname your_pdf_filename\n"
 		output += "%addtitle Title Page Title\n";
 		output += "%addsubtitle Title Page Subtitle\n";
 		output += "%urladdtitle http://michaeleskin.com Title Page Title as Hyperlink\n";
@@ -9406,11 +9409,9 @@ function InjectPDFHeaders(bDoAll){
 		output += "%urlpagefooter http://michaeleskin.com Page Footer as Hyperlink\n";
 		output += "%add_all_links_to_thesession\n";
 		output += "%add_all_playback_links 0 0\n";
-		output += "%pdfname your_pdf_filename\n"
 		output += "%qrcode\n";
 		output += "%qrcode http://michaeleskin.com\n";
 		output += "%caption_for_qrcode Caption for the QR code\n";
-		output += "%pdfquality .7\n";
 		output += "%\n";
 		output += "% These directives can be added to each tune:\n";
 		output += "%hyperlink http://michaeleskin.com\n";
@@ -9446,6 +9447,8 @@ function InjectPDFHeaders(bDoAll){
 		output += "%\n";
 		output += "% Here is a useful template of annotations for a PDF tunebook:\n";
 		output += "%\n";
+		output += "%pdfquality .75\n";
+		output += "%pdf_between_tune_space 20\n";
 		output += "%addtitle Tunebook Title\n";
         output += "%addsubtitle Tunebook Subtitle\n";
         output += "%addtoc Table of Contents\n";
