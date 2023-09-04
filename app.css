@@ -39,7 +39,7 @@ display: none;
 }
 
 .toggle-buttons label {
-margin-right:21px;
+margin-right:16px;
 }
 
 .toggle-buttons input:checked + label {
@@ -1194,6 +1194,18 @@ left:-5000px;
 	}
 }
 
+#configure_batch_mp3_export{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.configure_batch_mp3_export:hover{
+	background: palegreen;
+	}
+}
+
 #configure_anglo_fingerings{
 	height:42px;
 	margin-top: 9px;
@@ -1465,6 +1477,11 @@ margin-top:-7px;
   --color: black;
   --background-color: lavender;
 
+}
+
+.btn-batchmp3export{
+  --color: black;
+  --background-color: lavender;
 }
 
 /* For Anglo concertina button naming dialog */
