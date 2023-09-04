@@ -916,6 +916,7 @@ var PAGELEFTOFFSETA4 = 29;
 var PAGEHEIGHTLETTER = 792;
 var PAGEHEIGHTA4 = 842;
 var BETWEENTUNESPACE = 20;
+var gBetweenTuneSpace = 20;  // Can be overriden with a %pdf_between_tune_space directive
 
 // Keeps track of where we are on the page
 var running_height = PAGETOPOFFSET;
@@ -3669,6 +3670,30 @@ function ParseCommentCommands(theNotes){
 		theTunebookIndexHeader = addTunebookIndexHeader[0].replace("%indexheader","");
 		theTunebookIndexHeader = theTunebookIndexHeader.trim();
 	}
+
+	// Search for a between tunes space override
+	searchRegExp = /^%pdf_between_tune_space.*$/m
+
+	// Detect tunebook pdf between tune space override
+	// Default is 20/72"
+	gBetweenTuneSpace = 20;
+	var betweenTuneSpace = theNotes.match(searchRegExp);
+
+	if ((betweenTuneSpace) && (betweenTuneSpace.length > 0)){
+
+		var betweenTuneSpace = betweenTuneSpace[0].replace("%pdf_between_tune_space","");
+
+		betweenTuneSpace = betweenTuneSpace.trim();
+		
+		var betweenTuneSpaceInt = parseInt(betweenTuneSpace);
+		
+		if ((!isNaN(betweenTuneSpaceInt)) && (betweenTuneSpaceInt >= 0)){
+
+			gBetweenTuneSpace = betweenTuneSpaceInt;
+
+		}
+	}
+
 	// Check my work
 	// console.log("theTunebookTP = "+theTunebookTP);
 	// console.log("theTunebookTPST = "+theTunebookTPST);
@@ -4912,7 +4937,7 @@ function ExportNotationPDF(title) {
 	gTuneHyperlinks = [];
 
 	// Restore the default between-tune layout spacing
-	BETWEENTUNESPACE = 20;
+	BETWEENTUNESPACE = gBetweenTuneSpace;
 
 	if (incipitsRequested){
 
