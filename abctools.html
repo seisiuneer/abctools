@@ -36,8 +36,8 @@
 		<link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 		<link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-		<link href="app.css?v=477" media="all" rel="stylesheet" type="text/css">
-		
+		<link href="app.css?v=486" media="all" rel="stylesheet" type="text/css">
+				
 	</head>
 	<body>
 		<div id="app-container">
@@ -69,10 +69,10 @@
 					<!-- name of abc file selected -->
 					<p id="abc-selected">No ABC file selected</p>
 					<div id="fileoperations">
-						<input class="newabcfile btn btn-top" id="newabcfile" onclick="AddABC();" type="button" value="Add" title="Add a new tune or song template to the end of the ABC">
 						<input type="file" id="selectabcfile" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL"  hidden/>
 						<!--our custom abc file upload button-->
 						<label class="abcupload btn btn-top" for="selectabcfile" title="Opens an existing ABC or MusicXML file">Open</label>
+						<input class="newabcfile btn btn-top" id="newabcfile" onclick="AddABC();" type="button" value="Add" title="Add a new tune or song template to the end of the ABC">
 						<input class="saveabcfiledisabled btn btn-top" id="saveabcfile" onclick="SaveABC();" type="button" value="Save" title="Saves the current ABC text to a file">
 						<input class="saveaspdfdisabled btn btn-top" id="saveaspdf" onclick="ExportPDF();" type="button" value="Export PDF" title="Exports a PDF tunebook">
 						<input class="copybuttondisabled btn btn-top" id="copybutton" onclick="CopyABC();" type="button" value="Copy All" title="Copies all of the ABC text to the clipboard">
@@ -90,7 +90,7 @@
 						<input type="radio" id="b1" value="noten" name="notenodertab" class="hidebutton" onclick="ChangeTab()">
 						<label for="b1" class="btn btn-tab" title="Shows standard music notation">Notation</label>
 						<input type="radio" id="b2" value="notenames" name="notenodertab" class="hidebutton" onclick="ChangeTab()">
-						<label for="b2" class="btn btn-tab" title="Shows note names tablature">Note Names</label>
+						<label for="b2" class="btn btn-tab" title="Shows note names tablature">Names</label>
 						<input type="radio" id="b3" value="mandolin" name="notenodertab" class="hidebutton" onclick="ChangeTab()" >
 						<label for="b3" class="btn btn-tab" title="Shows GDAE Mandolin tablature">Mandolin</label>
 						<input type="radio" id="b4" value="gdad" name="notenodertab" class="hidebutton" onclick="ChangeTab()">
@@ -101,8 +101,10 @@
 						<label for="b6" class="btn btn-tab" title="Shows standard EADGBE Guitar tablature">Guitar</label>
 						<input type="radio" id="b7" value="guitard" name="notenodertab" class="hidebutton" onclick="ChangeTab()">
 						<label for="b7" class="btn btn-tab" title="Shows DADGAD Guitar tablature">DADGAD</label>
-						<input type="radio" id="b8" value="whistle" name="notenodertab" class="hidebutton" onclick="ChangeTab()" >
-						<label for="b8" class="btn btn-tab" title="Shows Tin Whistle (D) tablature" style="margin-right:13px;">Whistle</label>
+						<input type="radio" id="b8" value="bass" name="notenodertab" class="hidebutton" onclick="ChangeTab()">
+						<label for="b8" class="btn btn-tab" title="Shows Bass tablature">Bass</label>
+						<input type="radio" id="b9" value="whistle" name="notenodertab" class="hidebutton" onclick="ChangeTab()" >
+						<label for="b9" class="btn btn-tab" title="Shows Tin Whistle (D) tablature" style="margin-right:13px;">Whistle</label>
 					</div>
 					<div id="transpose-controls">
 						<input class="transpose btn btn-transpose" id="transposedown" onclick="TransposeDown(event)" type="button" value="Transpose Down" title="Transposes the selected tunes down one semitone.&nbsp;&nbsp; Shift-click transposes down one full step.&nbsp;&nbsp;Alt-click transposes down one octave.">
@@ -168,18 +170,18 @@
 		</div>
 		
 	</body>
-	<script type="text/javascript" src="jquery-1.11.1.min.js?v=477"></script><!-- jQuery -->
-	<script type="text/javascript" src="jszip.min.js?v=477"></script><!-- zip file handling -->
-	<script type="text/javascript" src="xml2abc.js?v=477"></script><!-- to convert MusicXML to ABC -->
-	<script type="text/javascript" src="abcjs-chord-intervals.js?v=477"></script><!-- chord intervals used by abcjs - non-minified -->
-	<script type="text/javascript" src="abcjs-basic-tabs-min.js?v=477"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
-	<script type="text/javascript" src="jspdf.min.js?v=477"></script><!-- to generate PDF using Javscript -->
-	<script type="text/javascript" src="html2image.js?v=477"></script><!-- to convert HTML elements to bitmaps -->
-	<script type="text/javascript" src="qrcode.js?v=477"></script><!-- to generate QR codes for the share links -->
-	<script type="text/javascript" src="lz-string.min.js?v=477"></script><!-- used for share URL generation -->
-	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=477"></script><!-- modal dialog replacement -->
-	<script type="text/javascript" src="lame.min.js?v=477"></script><!-- .mp3 audio encoder -->
-	<script type="text/javascript" src="tab-injectors-min.js?v=477"></script><!-- Tab generation for ABC injection -->
-	<script type="text/javascript" src="app-min.js?v=477"></script><!-- main application business logic -->
-	<script type="text/javascript" src="api-keys.js?v=477"></script><!-- API keys used by the tool -->
+	<script type="text/javascript" src="jquery-1.11.1.min.js?v=486"></script><!-- jQuery -->
+	<script type="text/javascript" src="jszip.min.js?v=486"></script><!-- zip file handling -->
+	<script type="text/javascript" src="xml2abc.js?v=486"></script><!-- to convert MusicXML to ABC -->
+	<script type="text/javascript" src="abcjs-chord-intervals.js?v=486"></script><!-- chord intervals used by abcjs - non-minified -->
+	<script type="text/javascript" src="abcjs-basic-tabs-min.js?v=486"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
+	<script type="text/javascript" src="jspdf.min.js?v=486"></script><!-- to generate PDF using Javscript -->
+	<script type="text/javascript" src="html2image.js?v=486"></script><!-- to convert HTML elements to bitmaps -->
+	<script type="text/javascript" src="qrcode.js?v=486"></script><!-- to generate QR codes for the share links -->
+	<script type="text/javascript" src="lz-string.min.js?v=486"></script><!-- used for share URL generation -->
+	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=486"></script><!-- modal dialog replacement -->
+	<script type="text/javascript" src="lame.min.js?v=486"></script><!-- .mp3 audio encoder -->
+	<script type="text/javascript" src="tab-injectors-min.js?v=486"></script><!-- Tab generation for ABC injection -->
+	<script type="text/javascript" src="app-min.js?v=486"></script><!-- main application business logic -->
+	<script type="text/javascript" src="api-keys.js?v=486"></script><!-- API keys used by the tool -->
 </html>
