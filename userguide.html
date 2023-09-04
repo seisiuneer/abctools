@@ -45,7 +45,7 @@
         line-height: 24px;
         margin-bottom: 0px;
         }
-              
+        
         h1 {
         text-align: center;
         font-size:18pt;
@@ -53,11 +53,11 @@
         margin-bottom:32px;
         padding-left:75px;
         }
-
+        
         @media print {
-            h1 {
-            padding-left:0px;
-            }
+        h1 {
+        padding-left:0px;
+        }
         }
         
         hr {
@@ -82,121 +82,117 @@
         .image_holder{
         text-align: center;
         }
-
+        
         .image_holder_p{
         text-align: center;
         margin-top:24px;
         }
-       
+        
         .toc{
         margin-top:0px;
         margin-bottom:12px;
         }
-
+        
         .accordion {
-          font-size:14pt  !important;
-          font-family:"Helvetica" !important;
-          background-color: #eee; 
-          color: #000 !important;
-          cursor: pointer !important;
-          padding: 14px !important;
-          width: 100% !important;
-          text-align: left !important;
-          border: none !important;
-          outline: none !important;
-          margin-bottom:5px;
+        font-size:14pt  !important;
+        font-family:"Helvetica" !important;
+        background-color: #eee;
+        color: #000 !important;
+        cursor: pointer !important;
+        padding: 14px !important;
+        width: 100% !important;
+        text-align: left !important;
+        border: none !important;
+        outline: none !important;
+        margin-bottom:5px;
         }
-
+        
         .active {
-          background-color: #cfc;
+        background-color: #cfc;
         }
         
         @media not all and (pointer: coarse) {
-           .accordion:hover {
-                  background-color: #9f9;
-                }
-        }        
-
-        .expandall{
-            font-size:11pt  !important;
-            font-family:"Helvetica" !important;
-            width:120px !important;
-            height:40px !important;
-            padding:7px !important;
-            border-radius:4px !important;
-            border:0px !important;
-            color:black !important;
-            background-color: #eee; 
-        }  
-
-        @media not all and (pointer: coarse) {
-            .expandall:hover {
-             background-color: #9f9;
-            }
-        }        
- 
-        .tocpanel {
-          padding: 12px !important;
-          padding-left: 60px !important;
-          background-color: white !important;
-          display: none;
-          overflow: hidden !important;
-        } 
-
-        .code {
-          padding:8px;
-          font-family: monospace; !important;
-          color:white;
-          background-color: black;
-          line-height: 28px;
+        .accordion:hover {
+        background-color: #9f9;
         }
-
+        }
+        
+        .expandall{
+        font-size:11pt  !important;
+        font-family:"Helvetica" !important;
+        width:120px !important;
+        height:40px !important;
+        padding:7px !important;
+        border-radius:4px !important;
+        border:0px !important;
+        color:black !important;
+        background-color: #eee;
+        }
+        
+        @media not all and (pointer: coarse) {
+        .expandall:hover {
+        background-color: #9f9;
+        }
+        }
+        
+        .tocpanel {
+        padding: 12px !important;
+        padding-left: 60px !important;
+        background-color: white !important;
+        display: none;
+        overflow: hidden !important;
+        }
+        
+        .code {
+        padding:8px;
+        font-family: monospace; !important;
+        color:white;
+        background-color: black;
+        line-height: 28px;
+        }
+        
         @media print {
         .hidden-print {
         display: none !important;
         }
-                
+        
         .page_break_always{
         page-break-before: always;
         }
         
         .page_break_never {
         page-break-before: avoid;
-        }  
+        }
         
         .code {
-          padding:8px;
-          font-family: monospace; !important;
-          color:black;
-          line-height: 28px;
+        padding:8px;
+        font-family: monospace; !important;
+        color:black;
+        line-height: 28px;
         }
-
+        
         }
-       
+        
         </style>
         
     </head>
     
     <body style="padding:10px">
-
+        
         <div id="maindiv">
             <div style="text-align: center;">
                 <font id="pagetitle" face="Comic Sans MS" size="5">ABC Transcription Tools User Guide</font><br/>
-                <p class="hidden-print">This ABC to notation converter was developed by <a href="http://michaeleskin.com" target="_blank">Michael Eskin</a></p>
-                <p class="hidden-print">Full project source may be found on: <a href="https://github.com/seisiuneer/abctools" target="_blank">GitHub</a></p>
+                <p class="hidden-print">This ABC converter and player tool was developed by <a href="http://michaeleskin.com" target="_blank">Michael Eskin</a></p>
                 <p class="hidden-print">Try it out here: <a href="http://michaeleskin.com/abc" target="_blank">ABC Transcription Tools</a></p>
-                <hr class="hidden-print">
-                <p class="hidden-print">A PDF version of this User Guide is available at:</p>
-                <p class="hidden-print"><a href="http://michaeleskin.com/documents/abc_transcription_tools_user_guide.pdf" target="_blank">ABC Transcription Tools User Guide PDF</a></p>
             </div>
-
+            
             <hr id="table_of_contents" class="hidden-print">
-
+            
             <div class="hidden-print">
-
+                
                 <h1 style="margin-bottom:20px;line-height:12px;padding-left:0px">Table of Contents</h1>
                 <h1 style="margin-bottom:16px;padding-left:0px"><button class="expandall" onclick="ExpandAll();">Expand All</button>&nbsp;&nbsp;&nbsp;<button class="expandall" onclick="CollapseAll();">Collapse All</button></h1>
-
+                
                 <button class="accordion" title="Click to expand/collapse this section">Basic Operation</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#introduction">Introduction</a></p>
@@ -207,25 +203,25 @@
                     <p class="toc"><a style="text-decoration:none;" href="#saving_wav_mp3_midi">Saving .WAV, .MP3, or MIDI Files</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#notation_tablature_display_controls">Notation/Tablature Display Controls</a></p>
                 </div>
-
+                
                 <button class="accordion" title="Click to expand/collapse this section">Tool Controls</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#basic_controls">Basic Controls</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#advanced_controls">Advanced Controls</a></p>
-                 </div>
-
+                </div>
+                
                 <button class="accordion" title="Click to expand/collapse this section">Tool Settings</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#settings_dialog">ABC Transcription Tools Settings</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#configure_fonts">Configuring ABC Rendering Fonts</a></p>
                 </div>
-
+                
                 <button class="accordion" title="Click to expand/collapse this section">Selecting Playback Instruments</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#selecting_the_instruments_for_playback">Selecting the Instruments for Playback</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#general_midi_instrument_program_numbers">General MIDI Instrument Program Numbers</a></p>
                 </div>
-
+                
                 <button class="accordion" title="Click to expand/collapse this section">PDF Tunebook Generation</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#pdf_tunebook_settings">PDF Tunebook Settings</a></p>
@@ -235,11 +231,26 @@
                     <p class="toc"><a style="text-decoration:none;" href="#adding_a_pdf_tunebook_table_of_contents_and_index">Adding a PDF Tunebook Table of Contents and Index</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#pdf_page_headers_and_footers">PDF Page Headers and Footers</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#table_of_contents_and_index_font_size_and_line_spacing_overrides">Table of Contents and Index Font Size and Line Spacing Overrides</a></p>
-                   <p class="toc"><a style="text-decoration:none;" href="#tunebook_hyperlinks">PDF Tunebook Hyperlinks and Automatic Play Links</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#tunebook_hyperlinks">PDF Tunebook Hyperlinks and Automatic Play Links</a></p>
                 </div>
-                <button class="accordion" title="Click to expand/collapse this section">Printing from the Browser</button>
+                                
+                <button class="accordion" title="Click to expand/collapse this section">PDF Tunebook Advanced Formatting</button>
                 <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#printing_your_tunes">Printing Your Tunes</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#staff_and_title_spacing_overrides">Staff and Title Spacing Overrides</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#custom_font_overrides">Custom Font Overrides</a></p>
+                </div>
+                
+                <button class="accordion" title="Click to expand/collapse this section">Tablature Injection</button>
+                <div class="tocpanel">
+                    <p class="toc"><a style="text-decoration:none;" href="#injecting_abc_lyric_based_note_names">Injecting ABC Lyric-based Note Names Into the ABC Tunes</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#injecting_tablature">Injecting B/C Box, C#/D Box, Anglo Concertina, or Bamboo Flute Tablature Into the ABC Tunes</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#reading_the_box_tablature">Reading the Box Tablature</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#reading_the_concertina_tablature">Reading the Anglo Concertina Tablature</a></p>
+                </div>
+                
+                <button class="accordion" title="Click to expand/collapse this section">MusicXML Import Settings</button>
+                <div class="tocpanel">
+                    <p class="toc"><a style="text-decoration:none;" href="#musicxml">MusicXML Import Settings</a></p>
                 </div>
 
                 <button class="accordion" title="Click to expand/collapse this section">Sharing Tunes via Share URLs and QR Codes</button>
@@ -253,43 +264,30 @@
                     <p class="toc"><a style="text-decoration:none;" href="#shared_tunes_open_full_screen">Shared Tunes Open Full Screen</a></p>
                 </div>
 
-                <button class="accordion" title="Click to expand/collapse this section">PDF Tunebook Advanced Formatting</button>
+                <button class="accordion" title="Click to expand/collapse this section">Printing Your Tunes Using the Browser's Built-in Print Feature</button>
                 <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#staff_and_title_spacing_overrides">Staff and Title Spacing Overrides</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#custom_font_overrides">Custom Font Overrides</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#printing_your_tunes">Printing Your Tunes Using the Browser's Built-in Print Feature</a></p>
                 </div>
-
-                <button class="accordion" title="Click to expand/collapse this section">Tablature Injection</button>
-                <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#injecting_abc_lyric_based_note_names">Injecting ABC Lyric-based Note Names Into the ABC Tunes</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#injecting_tablature">Injecting B/C Box, C#/D Box, Anglo Concertina, or Bamboo Flute Tablature Into the ABC Tunes</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#reading_the_box_tablature">Reading the Box Tablature</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#reading_the_concertina_tablature">Reading the Anglo Concertina Tablature</a></p>
-                </div>
-
-                <button class="accordion" title="Click to expand/collapse this section">MusicXML Import Settings</button>
-                <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#musicxml">MusicXML Import Settings</a></p>
-                </div>
-
+                
                 <button class="accordion" title="Click to expand/collapse this section">iOS-Specific Topics</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#iphone_ipad_chord_entry_issue_fix">iPhone/iPad Chord Entry Issue Fix</a></p>
                 </div>
-
+                
                 <button class="accordion" title="Click to expand/collapse this section">ABC 2.1 Specification and Quick Reference Card</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#abc_specification">ABC Specification</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#abc_21_quick_reference_card">ABC Quick Reference Card</a></p>
                 </div>
-
-                <button class="accordion" title="Click to expand/collapse this section">Tip Jar and Support</button>
+                
+                <button class="accordion" title="Click to expand/collapse this section">Tip Jars, Source Code, and Support</button>
                 <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#donate">Donate</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#donate">Tip Jars</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#github">Source Code on GitHub</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#support">Support</a></p>
                 </div>
             </div>
-
+            
             <hr class="hidden-print" id="introduction">
             <h1 class="page_break_never">Introduction<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder">
@@ -1010,6 +1008,8 @@
             <p></p>
             <p>Here is a good starting template of annotations for creating a tunebook that includes:</p>
             <p></p>
+            <p>Sets the PDF quality to the default (.75 = High quality). This can be reduced to create smaller, but lower quality PDF files.</p>
+            <p>Sets the spacing between tunes for multiple tunes/page to the default of 20/72". Change this to 0 for minimal space between PDF tunes.</p>
             <p>Title page with sub-title</p>
             <p>Table of contents linked to each tune</p>
             <p><< Link back on each page to the table of contents</p>
@@ -1017,10 +1017,12 @@
             <p>>> Link back on each page to the index</p>
             <p>Page headers</p>
             <p>Page footers</p>
-            <p>Playback links on every tune title selecting an Accordion sound for the melody and a Piano sound for the bass/chords</p>
+            <p>Playback links on every tune title selecting an Piano sound for the melody and a Piano sound for the bass/chords</p>
             <p>QR code with hyperlink and caption at the end of the tunebook</p>
             <p></p>
-            <p class="code">%addtitle Tunebook Title<br/>
+            <p class="code">%pdfquality .75<br/>
+                %pdf_between_tune_space 20<br/>
+                %addtitle Tunebook Title<br/>
                 %addsubtitle Tunebook Subtitle<br/>
                 %addtoc Table of Contents<br/>
                 %addlinkbacktotoc<br/>
@@ -1028,126 +1030,10 @@
                 %addlinkbacktoindex<br/>
                 %pageheader This is the Page Header<br/>
                 %pagefooter This is the Page Footer<br/>
-                %add_all_playback_links 21 0<br/>
+                %add_all_playback_links 0 0<br/>
                 %qrcode http://michaeleskin.com<br/>
             %caption_for_qrcode Click or Scan to Visit my Home Page</p>
-            <p>You can inject this starter set of annotations from the <strong>Add</strong> dialog.</p>
-            <hr class="hidden-print" id="printing_your_tunes">
-            <h1 class="page_break_always">Printing Your Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p class="hidden-print" >Overview of printing from the browser:</p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/6AlzAVNTRQA" title="Printing you Tunes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p></p>
-            <p>You may quickly print your tunes or generate a PDF using your browser's built-in print and PDF export features.</p>
-            <p>Tunes printed or exported from the browser are limited to one tune per page.</p>
-            <p>You may choose portrait or landscape orientation from your browser's print settings.</p>
-            <p>Additional advanced settings such as printing multiple-pages per page and setting custom margins may be available in your browser's print settings dialog.</p>
-            <p>Experiment with both the browser's print settings page orientation and "multiple page on one page" options to see what is possible.</p>
-            <p><strong>Note:</strong>If you want to print a tunebook automatically formated with multiple tunes per page, you must use the tool's PDF Export feature described in the next section.</p>
-            <hr class="hidden-print" id="sharing_controls">
-            <h1 class="page_break_always">Sharing Tunes with Share URLs and QR Codes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/I8KcG4swmUQ" title="Sharing Tunes with Share URLs and QR Codes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p>Clicking the <strong>Show Sharing</strong> button brings up the ABC Transcription Tools Sharing Controls dialog:</p>
-            <div class="image_holder_p">
-                <img style="width:700px;"src="img/ug9c.jpg"/>
-            </div>
-            <p>Share URLs and QR Codes are a quick and easy way to share your ABC tunes with friends or to post tunes on social media sites.</p>
-            <p>Anyone with the Share URL or QR Code can view, edit, save, and share their own copy of the tunes.</p>
-            <p>Share URLs and QR Codes also include the instrument selected, whether or not to show the top bar and links, display size, line spacing, PDF tunes/page setting, page number position, and page number on first page settings.</p>
-            <p>For Mandolin, Bouzouki, Mandola, and Guitar tablature, the link also includes the capo setting and whether or not to show the tablature name.</p>
-            <p><strong>Share URL</strong>: Copying and pasting this link in a browser address bar will open the ABC Tools website and copy in the tune set ABC and tablature settings.</p>
-            <p>If the Share URL link is too long to work in most browsers, the Share URL buttons will be disabled and you will see a message suggesting sharing fewer tunes.</p>
-            <p><strong>Test Share URL</strong> - Opens the Share URL in a new browser tab.</p>
-            <p><strong>Copy Share URL</strong> - Copies the Share URL to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
-            <p><strong>Save Share URL</strong> - Saves the Share URL to a text file.</p>
-            <p>The saved file will be in your browser's Downloads directory.</p>
-            <p>On iOS the downloaded files will be found in the "Downloads" directory in the iOS "Files" app.</p>
-            <p><strong>Shorten URL</strong> - Shortens the Share URL using TinyURL automatically if possible, or if not, assists with the URL shortening process.</p>
-            <p><strong>Generate QR Code</strong> - Once an Share URL is generated, if it is short enough to fit in a QR code (less than 2600 characters), this button is activated.</p>
-            <p>The QR Code is a visual representation of an Share URL that you can scan with the Camera app on your iOS or Android device.</p>
-            <p>Clicking the button will generate a QR code in .PNG format for the Share URL and open it in a new browser tab.</p>
-            <p>Even if the button is greyed out, Shift-click of the <strong>Generate QR Code</strong> button will attempt to generate a QR code for whatever text is present in the Share URL box.</p>
-            <p>This can be useful for generating QR codes from TinyURL shortened Share URL links or for other arbitrary website URLs.</p>
-            <p>If the arbitrary text in the Share URL box is too long to generate a QR code, the tool will display an alert.</p>
-            <p>In the newly opened tab, you can click the link below the image to save the QR code to your system.</p>
-            <hr class="hidden-print" id="abc_share_url_examples">
-            <h1 class="page_break_always">Share URL Examples<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>Clicking these Share URL links, created with the tool, will launch the tool and load the listed tune set you can start working with immediately:</p>
-            <p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=KQBwhg5gpgFlYBMoCcAEAiAygGwJZgCMZUA5AewBcoBndVABTOwGsxqAoUSKAMzMpSoAwsnhUEqAO64KxGBQogAXAHoVAW1wBjGGCjYazXADsAdFrLqVhLZ0QIKZLagAqhA6jI9hZY1T8cwPYUMh5YeITE5FS0DEysgfbUAK4EIRQeALJgCsLIYMYyOqgAtKgAIr5g2KiZycggMACepa6W6i0A8qiYydh4AG4FnACOyBZI7OwAGkqoAIzsLnMucKgAQthgWsySOSjsQnPZuSIFRTDsAEpzIPFg7JlzAEwqACzsADJz8yoAHOwANJzcrqMAAK3YAB8lAAxCTrBAqdYqKEAQVhqAAouV0QAadZ4ipYqGwrHY2FQ9hohFIlHozFYynlTFo5EqNmw1E4ioAPixSipMNhaI2WihCGeqBpUJ4EBUPBUqCgCFlUGVzypCC0KiRytV61FZKhLOl7M53PKfIFUNQU1mqGeSzmgJyMAMUGMAHIOEdajkKHlzhQdNdbvdHi93l8fv8gXN1ppjNClNrdUqeFAJesNqqoLzvCqoVpRWjxew03rM9nc8XzWKofMNlL1lpBS2pTxeRAoUKlGBvNBZRIkArURBC6qS9LeVn2DwJFBxQgcyWoYbUCLG82Nor5e2d63e3aZnMAMzO2oAW50UAAh9gfYdjgGg4UQ5cbqg7iwHk9HdG3wLHGwLSimaItmyKKoLa05oryOaweqegwYqYBjlASpaOsVIQRsUFKrBpa8pitpMmaKI6myMFNhuaLkgedFSr27CQNYSoEGAMGoDwXGZjBJYqDqyqisWObrMxrHyuhqCcdxvE8eq6LOJhiqYcJ66lpJbEyXJtoKfxxZssJUCidhYowdSkHstxcEkdx5EEVRhH4dKzEALqcMYUCSOA0D2j8l7ZMYLSigA6rg2ASCQuAQPIYbfhG-6vB8QG-ACoGghC0I0qgK4MpuuIAOLiWipIqEVHJ8jh1IjjhGKFVCJX4SaUrlAhgrgRIvFQtAyq8uKZbKmOPYLnlKiYXSqK1TxYC9eqRZaOqnESlKCAdbaAWOpeYXVNQMA+qgADEixfj+rCRgBqWxhlcxFWCkIQFKE4qPKUKQKgQ4ri1RWioiVJPZ9e6oh9X2lU1UpFc8gp2kVvJ-WVRXkji654laKOEujuLsHDCNNcjuKY9ixWQ9DVKnqgF7LKgu3YPth1HU6Z1JVG13Abd0oPSmJJDbwUJLqgOpIjq9K8zw-NSkuuEqeLAtC0J7IFcaaJnp1MJIphaqC-VmLK-D0rilAksa9N-HYUrPP6xi6Kq5twDeb53BbYs1OrOqaLGMYkAwAQUAQAl51-qzMbs-GFRczCBEWtKqpRyoXIx8W6rrANmmbmV1LmvHSoynHCcyktGyp02CDeJKB6l3lWZ9jwxta0bErOEeG5buwADa8y1-q9eatqDaV0gnVt88ec57HWf51OyepwPmqbRTTrU-QUBUBs+QIAYTRPszv6XSlIfpWH93ZTCEk-QTUJYqWKJsk1ObalSZ+GvjxOX9fHKolDqC42rSiIlXNYIA4W+kAtOaJKq33YP-JAgDgE5jRDfT+kM0Qwy2lTOYJAfJgmQMwFeAcWZXQPiBEEEclC5VLvzWkityFZn4g3GaFCVS5moSOLMTYxrrXWAeDh1cUzAy4hOShzDRasJ7lSfhQMhGIhYQA9hrDuEjgQseKY7AgA&format=noten&ssp=0&pdf=multi&pn=br&fp=yes&name=Sliabh_Notes_Polkas" target="_blank">Three sets of polkas from the group "Sliabh Notes"</a></p>
-            <p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgjAUAKiUBYFMAEUCGAnARgewDYBdsA7CAWRAGEAfCAaRAFEATbdCAIQQSaQQCZ2AQSoBxIQDEkI8Q3FUAIkyYBjJEz6CRVcZoZIZ8uRAZceCAGYBzBFXPdzvAcJGD2I-S7lvBkkQwZ8IDRUIJZ2DtaYNpHIYQjKVOrmPIJMyVTKTJr68rI0Lm4ePlQBFkhxTFTsmexIgnw6VZ5S-oE0EKB80LCISAAyxGGsPBR4uPGEbOTUdCAiEAB+IgDMgkjVTJZUCOwL7Hy8lkzsouIu6zVUgspCLbn5Z2sbWzt7B+oWVJZ8qBHcJ2A6jc1n5ckEDtdbqC+FRgqErKhytwXrt9mo+J9vr8kccrsC7jDFpZlojrJttqj3hjzF9MNiyQCgVCGPI2hD8aCGLCIABSHlEBAAdwADqhrBAOiBlt14MgAMqoACWuFYAHIAM7rYgC-BkSg0ejyCD1HRqcwLcwwtJlY5vK4NNZpOyJITucTyeQnY0Os0WmG-G2U+2mp02Y7Zd2s7khVB8BaxpC-NJUAMOW37WyYOlIOnmVBUTB5hx2T4QQt+xPmy0p8JqIMmx3mZ2A8OSQQetl1nx1D0ndpAA&w=50&format=noten" target="_blank">Michael Coleman set ("The Tarbolton" - "The Longford Collector" - "The Sailor's Bonnet")</a></p>
-            <p><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuCyBXAlgJwKYEMB22DkAzlAMLgByymANlWAGrVXpUCeUASuAFLIDmU8cADYA9AA4oAGXARxUANLgAQgFtk2KAB8QAEyUBBMAG8dAXwNLNO9ADNjN0+muaj6UzYBM6Y7cfObmHZYIjYi6JpQeoYWVrb2fuE2AEaYYDZOLm6e3kYOTkogEdoWxmboAMwuZiVGmO62mkopaRmu7l7x+RE1ZR6WJub6SmmVKXaYHkmaASFhnXqFWiAGAGLGAOKmAKIe6y76pisAIltgx1uaK-qGQ5ZKOjrzllADqxvbu-uHJ2cnl0Ngaw2TQQNKhdAiR65PwFTQeMFhSFgWy8TRFEC1ep2JLlESTERTTHpca4jyYESYabNdI6TLtHK+JzhKDEsBJDzAmzQuITAAU5QhoXJmjGYAmU1BoV4IQZeWshXhUplT00AF0wFAoEA&w=50&format=noten" target="_blank">"Muireann's" jig (by Niall Vallely) for Anglo Concertina</a></p>
-            <hr class="hidden-print" id="shortening_abc_share_urls">
-            <h1 class="page_break_always">Shortening Share URLs<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p class="hidden-print" >Automatic URL shortening using TinyURL:</p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/UkC9GoI9qvE" title="Share URL Shortening" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <hr class="hidden-print">
-            <p class="hidden-print" >Assisted TinyURL URL shortening if automatic shortening fails:</p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/MZEsEPnr7Sk" title="Share URL Shortening" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p></p>
-            <p>Share URLs can get pretty long, particularly for large sets of tunes.</p>
-            <p>A third-party service like <a href="https://tinyurl.com" target="_blank">TinyURL</a> can be used to shorten Share URLs.</p>
-            <p>To get a shortened URL for the Share URL, click <strong>Shorten URL</strong>.</p>
-            <p>The tool will attempt to call TinyURL directly first to get a shortened Share URL.</p>
-            <p>If it succeeds, it will copy the shortened Share URL to the system clipboard and also show the result in a dialog.</p>
-            <p>If it fails (most likely the tool has used up all available free URL shortening sessions for the month), the tool will help you manually get a shortened URL by automatically copying the full Share URL to the system clipboard and then launching <a href="https://tinyurl.com" target="_blank">TinyURL</a> in another browser tab.</p>
-            <p>Paste the already copied full Share URL into the <a href="https://tinyurl.com" target="_blank">TinyURL</a> "Enter long link" box and click <strong>Shorten URL</strong>.</p>
-            <p>You may have to agree to the TinyURL terms-of-service before you can shorten the URL.</p>
-            <p>Copy the shortened URL from TinyURL and paste it into emails or share it on social media.</p>
-            <p>For example, here is the above "Sliabh Notes" polka set Share URL as a shortened URL:</p>
-            <p><a href="https://tinyurl.com/5n9293yu" target="_blank">https://tinyurl.com/5n9293yu</a></p>
-            <p><a href="https://tinyurl.com" target="_blank">TinyURL</a> also allows you to create and save a simple QR code for the shortened URL.</p>
-            <hr class="hidden-print" id="qr_code_example">
-            <h1 class="page_break_always">QR Code Example<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p style="text-align: center;">Michael Coleman set ("The Tarbolton" - "The Longford Collector" - "The Sailor's Bonnet"):</p>
-            <div class="image_holder_p">
-                <img src="img/ug10.png"/>
-                <p>Try scanning this code with the Camera app on your iOS or Android phone.</p>
-            </div>
-            <hr class="hidden-print">
-            <p style="text-align: center;">I have several example QR codes for tune sets on my Flickr account at:</p>
-            <p style="text-align: center;"><a href="https://flic.kr/s/aHBqjArRJZ" target="_blank">ABC Tune Set QR Codes on Flickr</a></p>
-            <hr class="hidden-print" id="adding_a_qr_code_to_the_pdf_export">
-            <h1 class="page_break_always">Adding a QR Code to the PDF Export<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>To append a QR code representing the Share URL for tune set or a specific URL as a final page on your PDF, add the following comment-based annotation anywhere in the ABC:</p>
-            <p></p>
-            <p class="code">%qrcode URL</p>
-            <p></p>
-            <p>The URL field is optional.</p>
-            <p>If a URL is present, it will be used for the creation of the QR code, otherwise the computed Share URL for the PDF tunebook (as would be shown in the sharing controls) will be used by default.</p>
-            <p></p>
-            <p>One application for this would be the use of a shortened Share URL from <a href="https://tinyurl.com" target="_blank">TinyURL</a> for the QR code instead of the longer one generated by the tool itself.</p>
-            <p></p>
-            <p>Note that the QR code page itself includes the PDF page header and footer but does not include a page number.</p>
-            <p></p>
-            <p>Here is an example of a tune set QR code included in the exported PDF:</p>
-            <div class="image_holder_p">
-                <img src="img/ug12.jpg"/>
-            </div>
-            <p></p>
-            <p>Note: If a QR code has been requested, and the Share URL is too long to generate a QR code (more than 2600 characters), you will see an informative message at the end of the PDF export suggesting sharing fewer tunes.</p>
-            <p>If you are able to generate a QR code in the Sharing Controls, then the Share URL is short enough to embed a QR code in a PDF.</p>
-            <p></p>
-            <p>To override the default generated caption that is shown under the QR code added to a PDF file, add the following comment-based annotation anywhere in the ABC:</p>
-            <p></p>
-            <p class="code">%caption_for_qrcode YOUR_CAPTION_FOR_THE_QR_CODE_HERE</p>
-            <p></p>
-            <p>The QR code image and caption in the PDF file now have clickable hyperlinks to the same URL used to generate the QR code.</p>
-            <p></p>
-            <hr class="hidden-print" id="reading_the_qr_codes">
-            <h1 class="page_break_always">Reading the QR Codes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>All devices should easily be able to read the simpler QR codes generated for sets of one to three tunes.</p>
-            <p></p>
-            <p>Most iOS devices are able to read even the most complex QR codes generated by this tool using the built-in Camera app.</p>
-            <p></p>
-            <p>Some Android devices may have trouble reading the most complex codes with their built-in Camera app.</p>
-            <p></p>
-            <p>I suggest trying the free Google Lens app, available on the Google Play Store:</p>
-            <p></p>
-            <p><a href="https://play.google.com/store/apps/details?id=com.google.ar.lens&hl=en_US&gl=US" target="_blank">Google Lens</a></p>
-            <p></p>
-            <hr class="hidden-print" id="shared_tunes_open_full_screen">
-            <h1 class="page_break_always">Shared Tunes Open Full Screen<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>Shared tunes, when opened from a Share URL or QR code, are initially displayed with the ABC Editor and controls hidden so you can see the music full-screen.</p>
-            <p>Click the Maximize/Minimize arrow to show the ABC Editor and controls.</p>
+            <p>You can instantly inject this useful starter set of PDF annotations at the top of your ABC by clicking the <strong>Add PDF Tunebook Annotations</strong> button in the <strong>Add</strong> dialog.</p>
             <hr class="hidden-print" id="staff_and_title_spacing_overrides">
             <h1 class="page_break_always">Staff and Title Spacing Overrides<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>The Staff spacing value in the ABC Transcription Tools Settings dialog can be easily overridden by setting a %%staffsep value in the ABC just below the tune header.</p>
@@ -1177,7 +1063,7 @@
             %%sysstaffsep</p>
             <p>Please refer to the <a href="http://abcnotation.com/wiki/abc:standard:v2.1" target="_blank">official ABC 2.1 specification</a> for more details.</p>
             <p>Another good reference is this handy ABC 2.1 Quick Reference Card put together by Stephen Merrony: </p>
-            <p><a href="http://michaeleskin.com/documents/ABCquickRefv0_6.pdf" target="_blank">ABC Quick Reference Card</a></p>
+            <p style="text-align: center;"><a href="http://michaeleskin.com/documents/ABCquickRefv0_6.pdf" target="_blank">ABC Quick Reference Card</a></p>
             <p><strong>Example of custom spacing:</strong></p>
             <div class="image_holder_p">
                 <img style="width:700px;" src="img/ug13a.jpg"/>
@@ -1199,7 +1085,7 @@
                 %%voicefont        font-style size (multiple voice staff labels)<br/>
                 %%partsfont        font-style size (used for P:)<br/>
                 %%vocalfont        font-style size (used for for w:)<br/>
-                %%wordsfont        font-style size (used for W:)</p>
+            %%wordsfont        font-style size (used for W:)</p>
             <p>Generally, these will use the PostScript font-style naming convention, for example:</p>
             <p>Times, Helvetica, Courier, Verdana, Times-Bold, Helvetica-Italic, etc.</p>
             <p>The size parameter should be an integer, but is optional.</p>
@@ -1242,8 +1128,8 @@
             <p style="font-family: Bradley Hand;font-size: 16pt;">Bradley Hand (cursive)</p>
             <p>Font availability varies with browser and platform. Many other fonts may be available on your system.</p>
             <p><strong>More information is available here:</strong></p>
-            <p><a href="https://blog.hubspot.com/website/web-safe-html-css-fonts" target="_blank">Web Safe CSS Fonts</a></p>
-            <p><a href="http://iosfonts.com/" target="_blank">iOS Fonts</a></p>
+            <p style="text-align: center;"><a href="https://blog.hubspot.com/website/web-safe-html-css-fonts" target="_blank">Web Safe CSS Fonts</a></p>
+            <p style="text-align: center;"><a href="http://iosfonts.com/" target="_blank">iOS Fonts</a></p>
             <hr class="hidden-print" id="injecting_abc_lyric_based_note_names">
             <h1 class="page_break_always">Injecting ABC Lyric-based Note Names Into the ABC Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking <strong>Inject Note Names Lyrics</strong> in the Advanced Settings dialog will inject an ABC lyrics line under each ABC line using the w: directive that will put the ABC note name under each note in the notation for all the tunes.</p>
@@ -1334,7 +1220,7 @@
             <p>Consider your first button as "button zero".</p>
             <p></p>
             <hr>
-            <p class="page_break_always" style="text-align: center"><strong>Tablature Injection Known Issues and Limitations</strong></p>
+            <p class="page_break_always" style="text-align: center;"><strong>Tablature Injection Known Issues and Limitations</strong></p>
             <p><strong>Fails when converting multi-voice tunes:</strong></p>
             <p>For best results, use source ABC tunes that have a single voice. (i.e. no V: tags)</p>
             <p>Unpredictable results or a failure to complete the fingering generation may occur with multi-voice ABC files.</p>
@@ -1394,6 +1280,122 @@
             <p><b>Translate stem directions:</b>&nbsp;&nbsp;Translates stem directions present in the XML.</p>
             <p>Click <strong>Reset to Default</strong> to reset the MusicXML import settings to their original defaults.</p>
             <p>Values are saved in browser storage and restored the next time the tool is run.</p>
+            <hr class="hidden-print" id="sharing_controls">
+            <h1 class="page_break_always">Sharing Tunes with Share URLs and QR Codes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/I8KcG4swmUQ" title="Sharing Tunes with Share URLs and QR Codes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p>Clicking the <strong>Show Sharing</strong> button brings up the ABC Transcription Tools Sharing Controls dialog:</p>
+            <div class="image_holder_p">
+                <img style="width:700px;"src="img/ug9c.jpg"/>
+            </div>
+            <p>Share URLs and QR Codes are a quick and easy way to share your ABC tunes with friends or to post tunes on social media sites.</p>
+            <p>Anyone with the Share URL or QR Code can view, edit, save, and share their own copy of the tunes.</p>
+            <p>Share URLs and QR Codes also include the instrument selected, whether or not to show the top bar and links, display size, line spacing, PDF tunes/page setting, page number position, and page number on first page settings.</p>
+            <p>For Mandolin, Bouzouki, Mandola, and Guitar tablature, the link also includes the capo setting and whether or not to show the tablature name.</p>
+            <p><strong>Share URL</strong>: Copying and pasting this link in a browser address bar will open the ABC Tools website and copy in the tune set ABC and tablature settings.</p>
+            <p>If the Share URL link is too long to work in most browsers, the Share URL buttons will be disabled and you will see a message suggesting sharing fewer tunes.</p>
+            <p><strong>Test Share URL</strong> - Opens the Share URL in a new browser tab.</p>
+            <p><strong>Copy Share URL</strong> - Copies the Share URL to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
+            <p><strong>Save Share URL</strong> - Saves the Share URL to a text file.</p>
+            <p>The saved file will be in your browser's Downloads directory.</p>
+            <p>On iOS the downloaded files will be found in the "Downloads" directory in the iOS "Files" app.</p>
+            <p><strong>Shorten URL</strong> - Shortens the Share URL using TinyURL automatically if possible, or if not, assists with the URL shortening process.</p>
+            <p><strong>Generate QR Code</strong> - Once an Share URL is generated, if it is short enough to fit in a QR code (less than 2600 characters), this button is activated.</p>
+            <p>The QR Code is a visual representation of an Share URL that you can scan with the Camera app on your iOS or Android device.</p>
+            <p>Clicking the button will generate a QR code in .PNG format for the Share URL and open it in a new browser tab.</p>
+            <p>Even if the button is greyed out, Shift-click of the <strong>Generate QR Code</strong> button will attempt to generate a QR code for whatever text is present in the Share URL box.</p>
+            <p>This can be useful for generating QR codes from TinyURL shortened Share URL links or for other arbitrary website URLs.</p>
+            <p>If the arbitrary text in the Share URL box is too long to generate a QR code, the tool will display an alert.</p>
+            <p>In the newly opened tab, you can click the link below the image to save the QR code to your system.</p>
+            <hr class="hidden-print" id="abc_share_url_examples">
+            <h1 class="page_break_always">Share URL Examples<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>Clicking these Share URL links, created with the tool, will launch the tool and load the listed tune set you can start working with immediately:</p>
+            <p style="text-align: center;"><a href="http://michaeleskin.com/abctools/abctools.html?lzw=KQBwhg5gpgFlYBMoCcAEAiAygGwJZgCMZUA5AewBcoBndVABTOwGsxqAoUSKAMzMpSoAwsnhUEqAO64KxGBQogAXAHoVAW1wBjGGCjYazXADsAdFrLqVhLZ0QIKZLagAqhA6jI9hZY1T8cwPYUMh5YeITE5FS0DEysgfbUAK4EIRQeALJgCsLIYMYyOqgAtKgAIr5g2KiZycggMACepa6W6i0A8qiYydh4AG4FnACOyBZI7OwAGkqoAIzsLnMucKgAQthgWsySOSjsQnPZuSIFRTDsAEpzIPFg7JlzAEwqACzsADJz8yoAHOwANJzcrqMAAK3YAB8lAAxCTrBAqdYqKEAQVhqAAouV0QAadZ4ipYqGwrHY2FQ9hohFIlHozFYynlTFo5EqNmw1E4ioAPixSipMNhaI2WihCGeqBpUJ4EBUPBUqCgCFlUGVzypCC0KiRytV61FZKhLOl7M53PKfIFUNQU1mqGeSzmgJyMAMUGMAHIOEdajkKHlzhQdNdbvdHi93l8fv8gXN1ppjNClNrdUqeFAJesNqqoLzvCqoVpRWjxew03rM9nc8XzWKofMNlL1lpBS2pTxeRAoUKlGBvNBZRIkArURBC6qS9LeVn2DwJFBxQgcyWoYbUCLG82Nor5e2d63e3aZnMAMzO2oAW50UAAh9gfYdjgGg4UQ5cbqg7iwHk9HdG3wLHGwLSimaItmyKKoLa05oryOaweqegwYqYBjlASpaOsVIQRsUFKrBpa8pitpMmaKI6myMFNhuaLkgedFSr27CQNYSoEGAMGoDwXGZjBJYqDqyqisWObrMxrHyuhqCcdxvE8eq6LOJhiqYcJ66lpJbEyXJtoKfxxZssJUCidhYowdSkHstxcEkdx5EEVRhH4dKzEALqcMYUCSOA0D2j8l7ZMYLSigA6rg2ASCQuAQPIYbfhG-6vB8QG-ACoGghC0I0qgK4MpuuIAOLiWipIqEVHJ8jh1IjjhGKFVCJX4SaUrlAhgrgRIvFQtAyq8uKZbKmOPYLnlKiYXSqK1TxYC9eqRZaOqnESlKCAdbaAWOpeYXVNQMA+qgADEixfj+rCRgBqWxhlcxFWCkIQFKE4qPKUKQKgQ4ri1RWioiVJPZ9e6oh9X2lU1UpFc8gp2kVvJ-WVRXkji654laKOEujuLsHDCNNcjuKY9ixWQ9DVKnqgF7LKgu3YPth1HU6Z1JVG13Abd0oPSmJJDbwUJLqgOpIjq9K8zw-NSkuuEqeLAtC0J7IFcaaJnp1MJIphaqC-VmLK-D0rilAksa9N-HYUrPP6xi6Kq5twDeb53BbYs1OrOqaLGMYkAwAQUAQAl51-qzMbs-GFRczCBEWtKqpRyoXIx8W6rrANmmbmV1LmvHSoynHCcyktGyp02CDeJKB6l3lWZ9jwxta0bErOEeG5buwADa8y1-q9eatqDaV0gnVt88ec57HWf51OyepwPmqbRTTrU-QUBUBs+QIAYTRPszv6XSlIfpWH93ZTCEk-QTUJYqWKJsk1ObalSZ+GvjxOX9fHKolDqC42rSiIlXNYIA4W+kAtOaJKq33YP-JAgDgE5jRDfT+kM0Qwy2lTOYJAfJgmQMwFeAcWZXQPiBEEEclC5VLvzWkityFZn4g3GaFCVS5moSOLMTYxrrXWAeDh1cUzAy4hOShzDRasJ7lSfhQMhGIhYQA9hrDuEjgQseKY7AgA&format=noten&ssp=0&pdf=multi&pn=br&fp=yes&name=Sliabh_Notes_Polkas" target="_blank">Three sets of polkas from the group "Sliabh Notes"</a></p>
+            <p style="text-align: center;"><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgjAUAKiUBYFMAEUCGAnARgewDYBdsA7CAWRAGEAfCAaRAFEATbdCAIQQSaQQCZ2AQSoBxIQDEkI8Q3FUAIkyYBjJEz6CRVcZoZIZ8uRAZceCAGYBzBFXPdzvAcJGD2I-S7lvBkkQwZ8IDRUIJZ2DtaYNpHIYQjKVOrmPIJMyVTKTJr68rI0Lm4ePlQBFkhxTFTsmexIgnw6VZ5S-oE0EKB80LCISAAyxGGsPBR4uPGEbOTUdCAiEAB+IgDMgkjVTJZUCOwL7Hy8lkzsouIu6zVUgspCLbn5Z2sbWzt7B+oWVJZ8qBHcJ2A6jc1n5ckEDtdbqC+FRgqErKhytwXrt9mo+J9vr8kccrsC7jDFpZlojrJttqj3hjzF9MNiyQCgVCGPI2hD8aCGLCIABSHlEBAAdwADqhrBAOiBlt14MgAMqoACWuFYAHIAM7rYgC-BkSg0ejyCD1HRqcwLcwwtJlY5vK4NNZpOyJITucTyeQnY0Os0WmG-G2U+2mp02Y7Zd2s7khVB8BaxpC-NJUAMOW37WyYOlIOnmVBUTB5hx2T4QQt+xPmy0p8JqIMmx3mZ2A8OSQQetl1nx1D0ndpAA&w=50&format=noten" target="_blank">Michael Coleman Set<br/>("The Tarbolton" - "The Longford Collector" - "The Sailor's Bonnet")</a></p>
+            <p style="text-align: center;"><a href="http://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuCyBXAlgJwKYEMB22DkAzlAMLgByymANlWAGrVXpUCeUASuAFLIDmU8cADYA9AA4oAGXARxUANLgAQgFtk2KAB8QAEyUBBMAG8dAXwNLNO9ADNjN0+muaj6UzYBM6Y7cfObmHZYIjYi6JpQeoYWVrb2fuE2AEaYYDZOLm6e3kYOTkogEdoWxmboAMwuZiVGmO62mkopaRmu7l7x+RE1ZR6WJub6SmmVKXaYHkmaASFhnXqFWiAGAGLGAOKmAKIe6y76pisAIltgx1uaK-qGQ5ZKOjrzllADqxvbu-uHJ2cnl0Ngaw2TQQNKhdAiR65PwFTQeMFhSFgWy8TRFEC1ep2JLlESTERTTHpca4jyYESYabNdI6TLtHK+JzhKDEsBJDzAmzQuITAAU5QhoXJmjGYAmU1BoV4IQZeWshXhUplT00AF0wFAoEA&w=50&format=noten" target="_blank">"Muireann's" jig (by Niall Vallely) for Anglo Concertina</a></p>
+            <hr class="hidden-print" id="shortening_abc_share_urls">
+            <h1 class="page_break_always">Shortening Share URLs<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p class="hidden-print" >Automatic URL shortening using TinyURL:</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/UkC9GoI9qvE" title="Share URL Shortening" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <hr class="hidden-print">
+            <p class="hidden-print" >Assisted TinyURL URL shortening if automatic shortening fails:</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/MZEsEPnr7Sk" title="Share URL Shortening" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p></p>
+            <p>Share URLs can get pretty long, particularly for large sets of tunes.</p>
+            <p>A third-party service like <a href="https://tinyurl.com" target="_blank">TinyURL</a> can be used to shorten Share URLs.</p>
+            <p>To get a shortened URL for the Share URL, click <strong>Shorten URL</strong>.</p>
+            <p>The tool will attempt to call TinyURL directly first to get a shortened Share URL.</p>
+            <p>If it succeeds, it will copy the shortened Share URL to the system clipboard and also show the result in a dialog.</p>
+            <p>If it fails (most likely the tool has used up all available free URL shortening sessions for the month), the tool will help you manually get a shortened URL by automatically copying the full Share URL to the system clipboard and then launching <a href="https://tinyurl.com" target="_blank">TinyURL</a> in another browser tab.</p>
+            <p>Paste the already copied full Share URL into the <a href="https://tinyurl.com" target="_blank">TinyURL</a> "Enter long link" box and click <strong>Shorten URL</strong>.</p>
+            <p>You may have to agree to the TinyURL terms-of-service before you can shorten the URL.</p>
+            <p>Copy the shortened URL from TinyURL and paste it into emails or share it on social media.</p>
+            <p>For example, here is the above "Sliabh Notes" polka set Share URL as a shortened URL:</p>
+            <p style="text-align: center;"><a href="https://tinyurl.com/5n9293yu" target="_blank">https://tinyurl.com/5n9293yu</a></p>
+            <p><a href="https://tinyurl.com" target="_blank">TinyURL</a> also allows you to create and save a simple QR code for the shortened URL.</p>
+            <hr class="hidden-print" id="qr_code_example">
+            <h1 class="page_break_always">QR Code Example<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p style="text-align: center;">Michael Coleman set ("The Tarbolton" - "The Longford Collector" - "The Sailor's Bonnet"):</p>
+            <div class="image_holder_p">
+                <img src="img/ug10.png"/>
+                <p>Try scanning this code with the Camera app on your iOS or Android phone.</p>
+            </div>
+            <hr class="hidden-print">
+            <p style="text-align: center;">I have several example QR codes for tune sets on my Flickr account at:</p>
+            <p style="text-align: center;"><a href="https://flic.kr/s/aHBqjArRJZ" target="_blank">ABC Tune Set QR Codes on Flickr</a></p>
+            <hr class="hidden-print" id="adding_a_qr_code_to_the_pdf_export">
+            <h1 class="page_break_always">Adding a QR Code to the PDF Export<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>To append a QR code representing the Share URL for tune set or a specific URL as a final page on your PDF, add the following comment-based annotation anywhere in the ABC:</p>
+            <p></p>
+            <p class="code">%qrcode URL</p>
+            <p></p>
+            <p>The URL field is optional.</p>
+            <p>If a URL is present, it will be used for the creation of the QR code, otherwise the computed Share URL for the PDF tunebook (as would be shown in the sharing controls) will be used by default.</p>
+            <p></p>
+            <p>One application for this would be the use of a shortened Share URL from <a href="https://tinyurl.com" target="_blank">TinyURL</a> for the QR code instead of the longer one generated by the tool itself.</p>
+            <p></p>
+            <p>Note that the QR code page itself includes the PDF page header and footer but does not include a page number.</p>
+            <p></p>
+            <p>Here is an example of a tune set QR code included in the exported PDF:</p>
+            <div class="image_holder_p">
+                <img src="img/ug12.jpg"/>
+            </div>
+            <p></p>
+            <p>Note: If a QR code has been requested, and the Share URL is too long to generate a QR code (more than 2600 characters), you will see an informative message at the end of the PDF export suggesting sharing fewer tunes.</p>
+            <p>If you are able to generate a QR code in the Sharing Controls, then the Share URL is short enough to embed a QR code in a PDF.</p>
+            <p></p>
+            <p>To override the default generated caption that is shown under the QR code added to a PDF file, add the following comment-based annotation anywhere in the ABC:</p>
+            <p></p>
+            <p class="code">%caption_for_qrcode YOUR_CAPTION_FOR_THE_QR_CODE_HERE</p>
+            <p></p>
+            <p>The QR code image and caption in the PDF file now have clickable hyperlinks to the same URL used to generate the QR code.</p>
+            <p></p>
+            <hr class="hidden-print" id="reading_the_qr_codes">
+            <h1 class="page_break_always">Reading the QR Codes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>All devices should easily be able to read the simpler QR codes generated for sets of one to three tunes.</p>
+            <p></p>
+            <p>Most iOS devices are able to read even the most complex QR codes generated by this tool using the built-in Camera app.</p>
+            <p></p>
+            <p>Some Android devices may have trouble reading the most complex codes with their built-in Camera app.</p>
+            <p></p>
+            <p>I suggest trying the free Google Lens app, available on the Google Play Store:</p>
+            <p></p>
+            <p style="text-align: center;"><a href="https://play.google.com/store/apps/details?id=com.google.ar.lens&hl=en_US&gl=US" target="_blank">Google Lens</a></p>
+            <p></p>
+            <hr class="hidden-print" id="shared_tunes_open_full_screen">
+            <h1 class="page_break_always">Shared Tunes Open Full Screen<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>Shared tunes, when opened from a Share URL or QR code, are initially displayed with the ABC Editor and controls hidden so you can see the music full-screen.</p>
+            <p>Click the Maximize/Minimize arrow to show the ABC Editor and controls.</p>
+            <hr class="hidden-print" id="printing_your_tunes">
+            <h1 class="page_break_always">Printing Your Tunes Using the Browser's Built-in Print Feature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p class="hidden-print" >Overview of printing from the browser:</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/6AlzAVNTRQA" title="Printing you Tunes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p></p>
+            <p>You may quickly print your tunes or generate a PDF using your browser's built-in print and PDF export features.</p>
+            <p>Tunes printed or exported from the browser are limited to one tune per page.</p>
+            <p>You may choose portrait or landscape orientation from your browser's print settings.</p>
+            <p>Additional advanced settings such as printing multiple-pages per page and setting custom margins may be available in your browser's print settings dialog.</p>
+            <p>Experiment with both the browser's print settings page orientation and "multiple page on one page" options to see what is possible.</p>
+            <p><strong>Note:</strong>If you want to print a tunebook automatically formated with multiple tunes per page, you must use the tool's PDF Export feature described in the next section.</p>
             <hr class="hidden-print" id="iphone_ipad_chord_entry_issue_fix">
             <h1 class="page_break_always">iPhone/iPad Chord Entry Issue Fix<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>If you are trying to enter ABC chords, for example "D" or "Am", on an iPhone or iPad, iOS will, by default stick in "smart quotes" instead of standard double quotes.</p>
@@ -1405,17 +1407,22 @@
             <p style="text-align: center;"><a href="http://abcnotation.com/wiki/abc:standard:v2.1" target="_blank">The ABC Music Standard 2.1 (Dec 2011)</a></p>
             <hr class="hidden-print" id="abc_21_quick_reference_card">
             <h1 class="page_break_always">ABC 2.1 Quick Reference Card<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p style="text-align: center;">Download this handy ABC 2.1 Quick Reference Card put together by Stephen Merrony: </p>
+            <p style="text-align: center;">Handy ABC 2.1 Quick Reference Card put together by Stephen Merrony: </p>
             <p style="text-align: center;"><a href="http://michaeleskin.com/documents/ABCquickRefv0_6.pdf" target="_blank">ABC Quick Reference Card</a></p>
             <hr class="hidden-print" id="donate">
-            <h1 class="page_break_always">Donate<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <h1 class="page_break_always">Tip Jars<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p style="text-align: center;">If you find my ABC Transcription Tools useful,<br/>please consider tossing a few bucks into one of my virtual tip jars:</p>
-            <p style="text-align: center" class="notranslate">PayPal</br><a href="https://paypal.me/MichaelEskin" target="_blank">https://paypal.me/MichaelEskin</a></p>
-            <p style="text-align: center" class="notranslate">Venmo</br>@MichaelEskin</p>
+            <p style="text-align: center;" class="notranslate">PayPal</br><a href="https://paypal.me/MichaelEskin" target="_blank">https://paypal.me/MichaelEskin</a></p>
+            <p style="text-align: center;" class="notranslate">Venmo</br>@MichaelEskin</p>
+            <hr class="hidden-print" id="github">
+            <h1 class="page_break_always">Source Code<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p style="text-align: center;">Full project source code may be found at:</p>
+            <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools" target="_blank">GitHub</a></p>
             <hr class="hidden-print" id="support">
             <h1 class="page_break_always">Support<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p style="text-align: center;">Have an issue with a specific tune, want to report a bug, or suggest a new feature?</p>
-            <p style="text-align: center;">Click here: <a href="support.html" target="_blank">ABC Transcription Tools Support</a> to go to the support page for the tool.</p>
+            <p style="text-align: center;">Click here for the project support page:</p>
+            <p style="text-align: center;"><a href="support.html" target="_blank">ABC Transcription Tools Support</a></p>
             <hr class="hidden-print">
         </div>
     </div>
@@ -1428,21 +1435,21 @@
 //
 function ExpandAll(){
 
-    var i;
+var i;
 
-    var acc = document.getElementsByClassName("accordion");
+var acc = document.getElementsByClassName("accordion");
 
-    for (i = 0; i < acc.length; i++) {
-        var thisAcc = acc[i];
-        thisAcc.classList.add("active");
-    }
+for (i = 0; i < acc.length; i++) {
+var thisAcc = acc[i];
+thisAcc.classList.add("active");
+}
 
-    var thePanels = document.getElementsByClassName("tocpanel");
+var thePanels = document.getElementsByClassName("tocpanel");
 
-    for (i = 0; i < thePanels.length; i++) {
-        var thisPanel = thePanels[i];
-        thisPanel.style.display = "block";
-    };
+for (i = 0; i < thePanels.length; i++) {
+var thisPanel = thePanels[i];
+thisPanel.style.display = "block";
+};
 }
 
 //
@@ -1450,21 +1457,21 @@ function ExpandAll(){
 //
 function CollapseAll(){
 
-    var i;
+var i;
 
-    var acc = document.getElementsByClassName("accordion");
+var acc = document.getElementsByClassName("accordion");
 
-    for (i = 0; i < acc.length; i++) {
-        var thisAcc = acc[i];
-        thisAcc.classList.remove("active");
-    }
+for (i = 0; i < acc.length; i++) {
+var thisAcc = acc[i];
+thisAcc.classList.remove("active");
+}
 
-    var thePanels = document.getElementsByClassName("tocpanel");
+var thePanels = document.getElementsByClassName("tocpanel");
 
-    for (i = 0; i < thePanels.length; i++) {
-        var thisPanel = thePanels[i];
-        thisPanel.style.display = "none";
-    };
+for (i = 0; i < thePanels.length; i++) {
+var thisPanel = thePanels[i];
+thisPanel.style.display = "none";
+};
 }
 
 
@@ -1501,15 +1508,15 @@ var acc = document.getElementsByClassName("accordion");
 var i;
 
 for (i = 0; i < acc.length; i++) {
-  acc[i].addEventListener("click", function() {
-    this.classList.toggle("active");
-    var panel = this.nextElementSibling;
-    if (panel.style.display === "block") {
-      panel.style.display = "none";
-    } else {
-      panel.style.display = "block";
-    }
-  });
+acc[i].addEventListener("click", function() {
+this.classList.toggle("active");
+var panel = this.nextElementSibling;
+if (panel.style.display === "block") {
+panel.style.display = "none";
+} else {
+panel.style.display = "block";
+}
+});
 }
 
 }
