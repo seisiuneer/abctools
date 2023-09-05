@@ -197,11 +197,20 @@ var gTheABC = document.getElementById("abc");
 //
 function findTuneOffsetByIndex(tuneIndex){	
 	
-	if (tuneIndex == 0){
-		return 0;
-	}
-	
 	var theNotes = gTheABC.value;
+
+	if (tuneIndex == 0){
+		
+		var theIndex = theNotes.indexOf("X:");
+
+		if (theIndex == -1){
+			return 0;
+		}
+		else{
+			return theIndex;
+		}
+	}
+
 
 	// Find the tunes
 	var theTunes = theNotes.split(/^X:/gm);
@@ -597,7 +606,7 @@ function Transpose(transposeAmount) {
 
 		}
 
-		var output = "";
+		var output = FindPreTuneHeader(theNotes);
 
 		for (var i=1;i<=nTunes;++i){
 
@@ -8174,6 +8183,138 @@ function OverrideOneTuneMIDIParams(theTune, melodyProg, chordProg, bassVol, chor
 	
 }
 
+
+//
+// Find all text before the first tune 
+//
+function FindPreTuneHeader(theABC){
+
+	var theResult;
+
+	var firstTuneIndex = theABC.indexOf("X:");
+
+	// No tunes, or first string is a tune so no header
+	if ((firstTuneIndex == -1) || (firstTuneIndex == 0)){
+
+		return "";
+
+	}
+	else{
+
+		theResult = theABC.substring(0,firstTuneIndex);
+
+	} 
+
+	return theResult;
+}
+
+
+
+//
+// Inject MIDI volume directive 
+//
+function InjectOneTuneStaffWidth(theTune, staffwidth){
+
+	var theABC = escape(theTune);
+
+	var theLines = theABC.split("%0A");
+
+	var theOutput = "";
+
+	var thisLine = "";
+
+	for (i = 0; i < theLines.length; ++i) {
+		
+		thisLine = unescape(theLines[i]); 
+
+		var theChars = thisLine.split(""); 
+
+		// It's a normal ABC : directive, copy it as is
+		if (((theChars[0] != "|") && (theChars[0] != "[")) && (theChars[1] == ":")) {
+
+			theOutput += thisLine+"\n";
+
+			// Inject the font directive to save people time
+			if (theChars[0] == "X"){
+
+				theOutput += "%%staffwidth "+staffwidth+"\n";
+			}
+
+		}
+		else
+		{
+			theOutput += thisLine;
+
+			if (i != (theLines.length-1)){
+				theOutput += "\n";
+			}
+
+		}
+	}
+	
+	return theOutput;
+	
+}
+
+//
+// Inject a %%staffwidth directive after all the X: headers
+//
+function InjectStaffWidth() {
+
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
+
+	DayPilot.Modal.prompt("%%staffwidth value to inject? (Larger values make the tunes less tall)", 560, { theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: false }).then(function(args) {
+		
+		var staffwidthstr = args.result;
+
+		if (staffwidthstr == null){
+			return;
+		}
+
+		var staffwidth = parseInt(staffwidthstr);
+
+		if ((isNaN(staffwidth)) || (staffwidth == undefined)){
+			return;
+		}
+
+		var nTunes = CountTunes();
+
+		var theNotes = gTheABC.value;
+
+		// Find the tunes
+		var theTunes = theNotes.split(/^X:/gm);
+
+		var output = FindPreTuneHeader(theNotes);
+
+		for (var i=1;i<=nTunes;++i){
+
+			theTunes[i] = "X:"+theTunes[i];
+
+			output += InjectOneTuneStaffWidth(theTunes[i],staffwidth);
+
+		}
+
+		// Stuff in the transposed output
+		gTheABC.value = output;
+
+		// Force a redraw
+		RenderAsync(true,null,function(){
+
+			// Set the select point
+			gTheABC.selectionStart = 0;
+		    gTheABC.selectionEnd = 0;
+
+		    // And set the focus
+		    gTheABC.focus();
+		});
+
+	});
+
+}
+
 //
 // Inject MIDI volume directive 
 //
@@ -8228,7 +8369,6 @@ function InjectOneTuneMIDIVolume(theTune, theVolume, bIsChords){
 	return theOutput;
 	
 }
-
 
 //
 // Inject a MIDI instrument directive after all the X: headers
@@ -8288,7 +8428,7 @@ function InjectMIDIInstrument(bIsChords) {
 			// Find the tunes
 			var theTunes = theNotes.split(/^X:/gm);
 
-			var output = "";
+			var output = FindPreTuneHeader(theNotes);
 
 			for (var i=1;i<=nTunes;++i){
 
@@ -8306,7 +8446,7 @@ function InjectMIDIInstrument(bIsChords) {
 			// Inject the melody program
 			var theTunes = theNotes.split(/^X:/gm);
 
-			var output = "";
+			var output = FindPreTuneHeader(theNotes);
 
 			for (var i=1;i<=nTunes;++i){
 
@@ -8319,7 +8459,7 @@ function InjectMIDIInstrument(bIsChords) {
 			// Inject the chords
 			theTunes = output.split(/^X:/gm);
 
-			var output = "";
+			var output = FindPreTuneHeader(theNotes);
 
 			for (var i=1;i<=nTunes;++i){
 
@@ -9580,7 +9720,7 @@ function InjectABCNoteNameLyrics(){
 	// Find the tunes
 	var theTunes = theNotes.split(/^X:/gm);
 
-	var output = "";
+	var output = FindPreTuneHeader(theNotes);
 
 	for (var i=1;i<=nTunes;++i){
 
@@ -9590,7 +9730,7 @@ function InjectABCNoteNameLyrics(){
 
 	}
 
-	// Stuff in the transposed output
+	// Stuff in the modified output
 	gTheABC.value = output;
 
 	// Force a full render
@@ -12642,14 +12782,15 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
 	modal_msg  += '<input id="injectmelody" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMIDIInstrument(false);" type="button" value="Inject MIDI Melody" title="Injects %%MIDI program melody annotation into all tunes in the ABC">';	
 	modal_msg  += '<input id="injectchords" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMIDIInstrument(true);" type="button" value="Inject MIDI Bass/Chord" title="Injects %%MIDI chordprog bass/chord annotation into all tunes in the ABC">';
-	modal_msg  += '<input id="injectnotenames" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectABCNoteNameLyrics()" type="button" value="Inject Note Name Lyrics" title="Injects note names as lyrics in the ABC">';
+	modal_msg  += '<input id="injectstaffwidth" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectStaffWidth(false)" type="button" value="Inject %%staffwidth" title="Injects a %%staffwidth annotation at the top of every tune">';
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">'
+	modal_msg  += '<input id="injectnotenames" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectABCNoteNameLyrics()" type="button" value="Inject Note Name Lyrics" title="Injects note names as lyrics in the ABC">';
 	modal_msg  += '<input id="injectbctab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_BC()" type="button" value="Inject B/C Box Tab" title="Injects B/C box tablature into the ABC">';
 	modal_msg  += '<input id="injectcdtab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_CsD()" type="button" value="Inject C#/D Box Tab" title="Injects C#/D box tablature into the ABC">';
-	modal_msg  += '<input id="injectanglotab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Anglo()" type="button" value="Inject Anglo Concertina Tab" title="Injects Anglo Concertina tablature into the ABC">';
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">'
+	modal_msg  += '<input id="injectanglotab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Anglo()" type="button" value="Inject Anglo Concertina Tab" title="Injects Anglo Concertina tablature into the ABC">';
 	modal_msg  += '<input id="injectbambooflute" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Bamboo_Flute()" type="button" value="Inject Bamboo Flute Tab" title="Injects Bamboo flute tablature into the ABC">';
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-subdialog configure_box_advanced " onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"></p>';	
