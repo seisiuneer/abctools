@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-             
+                
         <style>
         p {
         font-size:14pt;
@@ -226,7 +226,7 @@
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#pdf_tunebook_settings">PDF Tunebook Settings</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#pdf_quality_setting">PDF Quality Setting</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#pdf_tunebook_spacing_overrides">PDF Tunebook Tune Layout Spacing Override</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#pdf_tunebook_spacing_overrides">PDF Tunebook Tune Size and Layout Spacing Overrides</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#adding_a_pdf_title_page">Adding a PDF Tunebook Title Page</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#adding_a_pdf_tunebook_table_of_contents_and_index">Adding a PDF Tunebook Table of Contents and Index</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#pdf_page_headers_and_footers">PDF Page Headers and Footers</a></p>
@@ -236,7 +236,6 @@
                                 
                 <button class="accordion" title="Click to expand/collapse this section">PDF Tunebook Advanced Formatting</button>
                 <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#staff_and_title_spacing_overrides">Staff and Title Spacing Overrides</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#custom_font_overrides">Custom Font Overrides</a></p>
                 </div>
                 
@@ -444,7 +443,7 @@
             <h1 class="page_break_always">Advanced Controls<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Show Advanced</strong> button brings up the ABC Transcription Tools Advanced Controls dialog:</p>
             <div class="image_holder_p">
-                <img src="img/advanced_controls_4.jpg"/>
+                <img src="img/advanced_controls_5.jpg"/>
             </div>
             <p>Click the lightbulb icon to bring up this section of the user guide in a new browser tab.</p>
             <p><strong>Show/Hide ABC Features:</strong></p>
@@ -479,6 +478,9 @@
                 <img src="img/chords_program_2.jpg"/>
             </div>
             <p>For both the melody and chord program inject dialogs, if you enter a negative number, the same value will be used to inject both a melody and chords instrument program number into every tune.</p>
+            <p><strong>Inject %%staffwidth</strong> - Prompts for a %%staffwidth value to inject at the top of every tune.</p>
+            <p>This can be used to change the scale of every tune both for display and PDF generation.</p>
+            <p>Generally values above 560 will make the tunes less tall.</p>
             <p>The commands in light red inject additional ABC lyrics-based or ABC chord-based tablature into the ABC:</p>
             <p><strong>Inject Note Name Lyrics</strong> - Injects note names as lyrics in the ABC.</p>
             <p><strong>Inject B/C Box Tab</strong> - Injects B/C Box tablature into the ABC (uses ABC chord syntax).</p>
@@ -737,17 +739,46 @@
             <p>A value of 0.5 will still produce good-quality PDF notation at about half the PDF file size of the maximum quality.</p>
             <p>A pdfquality value of 0.25 can be used to produce draft quality output with even smaller PDF file size.</p>
             <hr class="hidden-print" id="pdf_tunebook_spacing_overrides">
-            <h1 class="page_break_always">PDF Tunebook Tune Layout Spacing Override<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>You may control the spacing between tunes in the PDF output by adding the following ABC comment-based annotation anywhere in the ABC:</p>
-            <p></p>
+            <h1 class="page_break_always">PDF Tunebook Tune Size and Layout Spacing Overrides<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>You can also make individual tunes render smaller (or larger) both on screen and in exported PDF tunebooks by adding:</p>
+            <p class="code">%%staffwidth desired_width</p>
+            <p>Immediately after the X: tag for a tune.</p>
+            <p>To make the tunes less tall, I suggest starting out with setting desired_width to 730</p>
+            <p>Play with changing that 730 value until you get the output result you want.</p>
+            <p>This can be used to layout more tunes per PDF page.</p>
+            <p>You may also control the spacing between tunes in the PDF output by adding the following ABC comment-based annotation anywhere in the ABC:</p>
             <p class="code">%pdf_between_tune_space spacing_value</p>
-            <p></p>
             <p>Where spacing_value is an integer in 1/72" increments. Default is 20</p>
             <p>Smaller values will reduce the space between the tunes in the PDF.</p>
             <p>Larger values will increase the space between the tunes in the PDF.</p>
             <p>This value is used in the layout of multiple tunes per page.</p>
-            <p>For the most compact layout possible to maximize the number of tunes per page in the PDF, set this value to zero:</p>
+            <p>For the most compact PDF layout possible to maximize the number of tunes per page when generating a PDF, set the value to zero:</p>
             <p class="code">%pdf_between_tune_space 0</p>
+            <p>The Staff spacing value in the ABC Transcription Tools Settings dialog can be easily overridden by setting a %%staffsep value in the ABC just below the tune header.</p>
+            <p>This can be very useful particularly for getting as much tab notation on a single page as possible.</p>
+            <p>Any spacing overrides must be applied on a tune-by-tune basis.</p>
+            <p>For the absolute minimum spacing between staffs, turn off the tab names, hide the tune annotations, and add the following just below the tune header:</p>
+            <p class="code">%%staffsep 0</p>
+            <p>Try experimenting with different %%staffsep values until you get the result you want.</p>
+            <p>Setting the %%staffsep value manually too low may sometimes result in overlapping staff rendering.</p>
+            <p>To override the default space between the title and the first staff of music, you can add a custom %%musicspace value in the ABC just below the tune header, for example:</p>
+            <p class="code">%%musicspace 10</p>
+            <p>Try experimenting with different %%musicspace values until you get the result you want.</p>
+            <p>Here is the full list of ABC spacing-related parameters available in abcjs:</p>
+            <p class="code">%%topspace<br/>
+                %%titlespace<br/>
+                %%subtitlespace<br/>
+                %%composerspace<br/>
+                %%musicspace<br/>
+                %%partsspace<br/>
+                %%vocalspace<br/>
+                %%wordsspace<br/>
+                %%textspace<br/>
+                %%staffsep<br/>
+            %%sysstaffsep</p>
+            <p>Please refer to the <a href="http://abcnotation.com/wiki/abc:standard:v2.1" target="_blank">official ABC 2.1 specification</a> for more details.</p>
+            <p>Another good reference is this handy ABC 2.1 Quick Reference Card put together by Stephen Merrony: </p>
+            <p style="text-align: center;"><a href="http://michaeleskin.com/documents/ABCquickRefv0_6.pdf" target="_blank">ABC Quick Reference Card</a></p>
             <hr class="hidden-print" id="adding_a_pdf_title_page">
             <h1 class="page_break_always">Adding a PDF Title Page<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p></p>
@@ -1041,40 +1072,6 @@
                 %qrcode http://michaeleskin.com<br/>
             %caption_for_qrcode Click or Scan to Visit my Home Page</p>
             <p>You can instantly inject this useful starter set of PDF annotations at the top of your ABC by clicking the <strong>Add PDF Tunebook Annotations</strong> button in the <strong>Add</strong> dialog.</p>
-            <hr class="hidden-print" id="staff_and_title_spacing_overrides">
-            <h1 class="page_break_always">Staff and Title Spacing Overrides<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>The Staff spacing value in the ABC Transcription Tools Settings dialog can be easily overridden by setting a %%staffsep value in the ABC just below the tune header.</p>
-            <p>This can be very useful particularly for getting as much tab notation on a single page as possible.</p>
-            <p>Any spacing overrides must be applied on a tune-by-tune basis.</p>
-            <p>For the absolute minimum spacing between staffs, turn off the tab names, hide the tune annotations, and add the following just below the tune header:</p>
-            <p class="code">%%staffsep 0</p>
-            <p>Try experimenting with different %%staffsep values until you get the result you want.</p>
-            <p>Setting the %%staffsep value manually too low may sometimes result in overlapping staff rendering.</p>
-            <p>To override the default space between the title and the first staff of music, you can add a custom %%musicspace value in the ABC just below the tune header, for example:</p>
-            <p class="code">%%musicspace 10</p>
-            <p>Try experimenting with different %%musicspace values until you get the result you want.</p>
-            <p>For the most compact PDF layout possible to maximize the number of tunes per page when generating a PDF, also add this anywhere in the ABC:</p>
-            <p class="code">%pdf_between_tune_space 0</p>
-            <p><strong>All supported spacing parameters</strong></p>
-            <p>Here is the full list of ABC spacing-related parameters available in abcjs:</p>
-            <p class="code">%%topspace<br/>
-                %%titlespace<br/>
-                %%subtitlespace<br/>
-                %%composerspace<br/>
-                %%musicspace<br/>
-                %%partsspace<br/>
-                %%vocalspace<br/>
-                %%wordsspace<br/>
-                %%textspace<br/>
-                %%staffsep<br/>
-            %%sysstaffsep</p>
-            <p>Please refer to the <a href="http://abcnotation.com/wiki/abc:standard:v2.1" target="_blank">official ABC 2.1 specification</a> for more details.</p>
-            <p>Another good reference is this handy ABC 2.1 Quick Reference Card put together by Stephen Merrony: </p>
-            <p style="text-align: center;"><a href="http://michaeleskin.com/documents/ABCquickRefv0_6.pdf" target="_blank">ABC Quick Reference Card</a></p>
-            <p><strong>Example of custom spacing:</strong></p>
-            <div class="image_holder_p">
-                <img style="width:700px;" src="img/ug13a.jpg"/>
-            </div>
             <hr class="hidden-print" id="custom_font_overrides">
             <h1 class="page_break_always">Custom Font Overrides<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>As per the ABC 2.1 specification, custom font overrides are possible, giving you maximum control over the appearance of your notation.</p>
