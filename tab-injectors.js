@@ -1300,7 +1300,7 @@ var angloFingeringsGenerator = function (theABC){
         PUSH_NAME = gInjectTab_PushGlyph;
         DRAW_NAME = gInjectTab_DrawGlyph;
 
-        var result = "";
+        var result = FindPreTuneHeader(theABC);
 
         for (var i = 0; i < nTunes; ++i) {
 
@@ -2137,8 +2137,7 @@ var boxTabGenerator = function (theABC){
     //
     function generateBoxTab(theABC) {
 
-
-       // Count the tunes in the ABC
+        // Count the tunes in the ABC
         var theTunes = theABC.split(/^X:.*$/gm);
         var nTunes = theTunes.length - 1;
 
@@ -2155,7 +2154,7 @@ var boxTabGenerator = function (theABC){
         PUSH_NAME = gInjectTab_PushGlyph;
         DRAW_NAME = gInjectTab_DrawGlyph;
 
-        var result = "";
+        var result = FindPreTuneHeader(theABC);
 
         for (var i = 0; i < nTunes; ++i) {
 
@@ -3006,7 +3005,7 @@ var bambooFluteTabGenerator = function (theABC){
         var tabLocation = parseInt(gInjectTab_TabLocation);
         var stripChords = gInjectTab_StripChords;
 
-        var result = "";
+        var result = FindPreTuneHeader(theABC);
 
         for (var i = 0; i < nTunes; ++i) {
 
