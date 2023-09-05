@@ -11933,7 +11933,7 @@ var gMusicXMLImportOptions = {};
 function resetMusicXMLImportOptions(){
 
 	gMusicXMLImportOptions = {
-		b:4,
+		b:3,
 		n:0,
 		c:0,
 		v:0,
@@ -11956,7 +11956,7 @@ function resetMusicXMLImportOptions(){
 function setMusicXMLOptions () {
 
     gMusicXMLImportOptions.u = $('#musicxml_unfld').prop ('checked') ? 1 : 0;
-    gMusicXMLImportOptions.b = parseInt ($('#musicxml_bpl').val () || 4);
+    gMusicXMLImportOptions.b = parseInt ($('#musicxml_bpl').val () || 3);
     gMusicXMLImportOptions.n = parseInt ($('#musicxml_cpl').val () || 0);
     gMusicXMLImportOptions.c = parseInt ($('#musicxml_crf').val () || 0);
     gMusicXMLImportOptions.d = parseInt ($('#musicxml_den').val () || 0);
@@ -12012,7 +12012,7 @@ function ConfigureMusicXMLImport(){
 
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;"">Configure MusicXML Import&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#musicxml" target="_blank" style="text-decoration:none;">💡</a></p>';
 
-    modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Bars-per-line:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_bpl" type="text" pattern="\d+" title="Default: 4"/></div>\n';
+    modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Bars-per-line:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_bpl" type="text" pattern="\d+" title="Default: 3"/></div>\n';
     modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Characters-per-line:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_cpl" type="text" pattern="\d+" title="Default: 0 - ignore"/></div>\n';
     modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Measure numbers:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_mnum" type="text" pattern="\d+" title="-1: No measure numbers, 1..n: Number every n-th measure, 0: Number every system"/></div>\n';
     modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Unfold repeats:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_unfld" type="checkbox"/></div>\n';
@@ -12969,6 +12969,15 @@ function importMusicXML(theXML){
     var result = vertaal (xmldata, gMusicXMLImportOptions);
 
     var abcText = result [0];               // the translation (string)
+
+    // Strip out extra clef indications
+    abcText = abcText.replaceAll("[K:treble]","");
+    abcText = abcText.replaceAll("[K:alto]","");
+    abcText = abcText.replaceAll("[K:alto1]","");
+    abcText = abcText.replaceAll("[K:alto2]","");
+    abcText = abcText.replaceAll("[K:tenor]","");
+    abcText = abcText.replaceAll("[K:bass]","");
+    abcText = abcText.replaceAll("[K:bass3]","");
 
     return abcText;
 
