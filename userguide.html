@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-            
+        
         <style>
         p {
         font-size:14pt;
@@ -1289,7 +1289,7 @@
             <p>Values are saved in browser storage and restored the next time the tool is run.</p>
             <hr class="hidden-print" id="musicxmlformatting">
             <h1 class="page_break_always">MusicXML Formatting Fixes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>Formatting issues with MusicXML, at least as I have observed, generally are caused by inconsistent bars-per-line in the MusicXML conversion output ABC.</p>
+            <p>Formatting issues with imported multi-voice MusicXML files, at least as I have observed, generally are caused by inconsistent bars-per-line in the MusicXML conversion output ABC.</p>
             <p>They are generally simple to fix:</p>
             <p>Open the ABC in a text editor (I use SublimeText) and isolate each voice. (V:1, V:2, etc.)</p>
             <p>Join all the lines in each voice (SublimeText has a "Join Lines" command) so that each voices is now one long line of ABC instead of on multiple lines.</p>
@@ -1299,6 +1299,8 @@
             <p>to the top of the ABC just under the X: tag. This forces the number of bars per staff to be 3.</p>
             <p>That causes abcjs to reflow the notation correctly.</p>
             <p>Try larger numbers of measures per staff, and see if the right side of the staff line up, I found that 3 was a good number for most cases.</p>
+            <p>Here is an example:</p>
+            <p style="text-align: center;"><a href="http://tinyurl.com/9uttjbz4" target="_blank">J.S. Bach - Goldberg Variation #1</a></p>
             <hr class="hidden-print" id="sharing_controls">
             <h1 class="page_break_always">Sharing Tunes with Share URLs and QR Codes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/I8KcG4swmUQ" title="Sharing Tunes with Share URLs and QR Codes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
