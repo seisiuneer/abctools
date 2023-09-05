@@ -12560,6 +12560,21 @@ function ConfigureFonts(){
 //
 // Sharing controls dialog
 //
+
+// Add the autoplay string to the URL
+function AddAutoPlay(){
+
+	var theURL = urltextbox.value;
+
+	// Check if already present
+	if (theURL.indexOf("&play=1") == -1){
+		theURL += "&play=1";
+	}
+
+	urltextbox.value = theURL;
+
+}
+
 function SharingControlsDialog(){
 
 	// Moving the advanced controls to their own dialog
@@ -12576,8 +12591,8 @@ function SharingControlsDialog(){
 	modal_msg += '<textarea id="urltextbox" rows="10" cols="80" spellcheck="false" autocorrect="off" autocapitalize="off" placeholder="URL for sharing will appear here" >';
 	modal_msg += '</textarea>';
 	modal_msg += '</p>';
-
 	modal_msg += '<p id="shareurlcaption">Share URL</p>';
+	modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="addautoplay" class="urlcontrolslast btn btn-urlcontrols" onclick="AddAutoPlay()" type="button" value="Add Auto-Play" title="Adds &play=1 to the ShareURL"></p>';
 
 
 	modal_msg += '</div>';
