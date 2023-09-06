@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+       
         <style>
         p {
         font-size:14pt;
@@ -495,6 +495,12 @@
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/55mo9ZOTSCo " title="Bamboo Flute Tablature Injection" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p><strong>Configure Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for tablature injection.</p>
             <p><strong>Export all Tunes as .MP3</strong> - Exports all the tunes in the ABC area as individual .mp3 files at the bitrate set in the <strong>Settings</strong> dialog.</p>
+            <p>You will be prompted for how many times you want each tune to repeat in the .MP3 file. Default is 1.</p>
+            <p>This can be very useful for creating longer "play-along" recordings of tunes.</p>
+            <p>For clean repeats, your tunes must not have extraneous pickup notes and must have proper and complete timing.</p> 
+            <p>If you have tunes with chords, you can quickly create a backing track playing continously multiple times through the tune:</p> 
+            <p><strong>1:</strong> Mute the melody for all the tunes by clicking the <strong>Inject MIDI Melody</strong> button in the <strong>Advanced Controls</strong> dialog and enter 136 as the MIDI program number.</p>
+            <p><strong>2:</strong> Export all the tunes in the tunebook to .MP3 by clicking <strong>Export all Tunes as .MP3</strong> in the <strong>Advanced Controls</strong> dialog, and when prompted enter the number of times through each tune.</p>
             <p>Your browser may request permission to download multiple files.</p>
             <p>During the batch export operation, click the export status dialog's <strong>Cancel</strong> button to stop the export.</p>
             <hr class="hidden-print" id="settings_dialog">
