@@ -10964,6 +10964,7 @@ function computeFade(tuneABC){
 				case "133":  // Concertina
 				case "134":  // Melodica
 				case "135":  // Cajun Accordion
+				case "136":  // Silence
 					theFade = 100;
 					break;
 				default:
