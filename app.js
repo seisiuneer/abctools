@@ -12891,7 +12891,7 @@ function ConfigureToolSettings(e) {
 	  {name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default Melody MIDI program (0-136):", id: "configure_melody_program", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default Bass/Chords MIDI program (0-136):", id: "configure_chord_program", type:"number", cssClass:"configure_settings_form_text"},
-	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:14pt;font-family:helvetica">%%MIDI program or %%MIDI chordprog present in the ABC will override the default value.</p>'},	  
+	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:14pt;font-family:helvetica">%%MIDI program or %%MIDI chordprog present in the ABC will override the default value.<br/>To mute either the Melody or the Bass/Chords, select MIDI  program 136</p>'},	  
 	  {html: '<p style="font-size:12pt;font-family:helvetica;margin-bottom:12px;margin-top:12px;text-align:center"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'},
 	  {name: "            Use Default Bass/Chord volumes when playing tunes", id: "configure_inject_volumes", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default Bass MIDI volume (0-127):", id: "configure_bass_volume", type:"number", cssClass:"configure_settings_form_text"},
