@@ -200,8 +200,10 @@ function findTuneOffsetByIndex(tuneIndex){
 	var theNotes = gTheABC.value;
 
 	if (tuneIndex == 0){
-		
-		var theIndex = theNotes.indexOf("X:");
+
+		var searchRegExp = /^X:.*[\r\n]*/m 
+
+		var theIndex = theNotes.search(searchRegExp);
 
 		if (theIndex == -1){
 			return 0;
@@ -8191,7 +8193,9 @@ function FindPreTuneHeader(theABC){
 
 	var theResult;
 
-	var firstTuneIndex = theABC.indexOf("X:");
+	var searchRegExp = /^X:.*[\r\n]*/m 
+
+	var firstTuneIndex = theABC.search(searchRegExp);
 
 	// No tunes, or first string is a tune so no header
 	if ((firstTuneIndex == -1) || (firstTuneIndex == 0)){
