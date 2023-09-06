@@ -10585,13 +10585,78 @@ function getTuneTitle(thisTune){
 	return title;
 }
 
+//
+// Get the notes for a tune without the header
+//
+function removeABCTuneHeaders(abcTune) {
+
+  // Use a regular expression to match and remove header lines
+  const headerPattern = /^(X:|T:|M:|K:|L:|Q:|V:|W:|Z:|R:|C:|A:|O:|P:|N:|G:|H:|B:|D:|F:|S:|I:|%|:[A-Za-z]:)[^\r\n]*\r?\n?/gm;
+  const tuneWithoutHeaders = abcTune.replace(headerPattern, '');
+  
+  return tuneWithoutHeaders;
+}
+
+//
+// Append additional copies of the tune notes for long MP3 generation
+//
+function AddDuplicatesForMp3(theTune, count){
+
+	if (count <= 1){
+		return theTune;
+	}
+
+	theTune = theTune.trim();
+
+	var theNotes = removeABCTuneHeaders(theTune);
+	theNotes = theNotes.trim();
+
+	for (var i=0;i<count-1;++i){
+		theTune += "\n";
+		theTune += theNotes;
+	}
+
+	return theTune;
+}
+
+//
+// Batch MP3 export of all the tunes in the ABC area
+//
 function BatchMP3Export(){
 
 	// Apparently broken
 	if ((gIsIOS) || (gIsAndroid)){
+
 		DayPilot.Modal.alert("Batch export to .MP3 not supported on iOS or Android at this time.",{ theme: "modal_flat", top: 400, scrollWithPage: false, okText:"Ok" });
+	
 		return;
+
 	}
+
+	DayPilot.Modal.prompt("How many times to repeat each tune in the .MP3?", 1, { theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: false }).then(function(args) {
+		
+		var repeatCountStr = args.result;
+
+		if (repeatCountStr == null){
+			return;
+		}
+
+		repeatCount = parseInt(repeatCountStr);
+
+		if ((isNaN(repeatCount)) || (repeatCount == undefined)){
+			return;
+		}
+
+		if (repeatCount < 1){
+			return;
+		}
+
+		DoBatchMP3Export(repeatCount);
+
+	});
+}
+
+function DoBatchMP3Export(repeatCount){
 
 	var totalTunesToExport;
 
@@ -10614,11 +10679,14 @@ function BatchMP3Export(){
 
 					var thisTune = getTuneByIndex(currentTune);
 
+					thisTune = AddDuplicatesForMp3(thisTune, repeatCount);
+
 					thisTune = PreProcessPlayABC(thisTune);
 
 					var title = getTuneTitle(thisTune);
 
 					gTheBatchMP3ExportStatusText.innerText = "Exporting .MP3 for tune "+ (currentTune+1) + " of "+totalTunesToExport+": "+title;
+
 
 					PlayABCDialog(thisTune,callback,currentTune);
 
@@ -10703,6 +10771,8 @@ function BatchMP3Export(){
 	gTheBatchMP3ExportStatusText.style.textAlign = "center";
 
 	var thisTune = getTuneByIndex(currentTune);
+	
+	thisTune = AddDuplicatesForMp3(thisTune, repeatCount);
 
 	thisTune = PreProcessPlayABC(thisTune);
 
