@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-                
+        
         <style>
         p {
         font-size:14pt;
@@ -760,7 +760,8 @@
             <p></p>
             <p class="code">%pdfquality quality_value</p>
             <p></p>
-            <p>Where quality_value is a floating point value. Default is 0.75 (high quality)</p>
+            <p>Where quality_value is a floating point value.</p>
+            <p>The default value is 0.75 (high quality)</p>
             <p>Lower values will create lower resolution PDF notation output and smaller PDF file size.</p>
             <p>A value of 1.0 will produce the maximum quality.</p>
             <p>A value of 0.5 will still produce good-quality PDF notation at about half the PDF file size of the maximum quality.</p>
@@ -770,12 +771,14 @@
             <p>You can also make individual tunes render smaller (or larger) both on screen and in exported PDF tunebooks by adding:</p>
             <p class="code">%%staffwidth desired_width</p>
             <p>Immediately after the X: tag for a tune.</p>
-            <p>To make the tunes less tall, I suggest starting out with setting desired_width to 730</p>
+            <p>The default value is 560</p>
+            <p>To make the tunes less tall, a good value to start out with is setting desired_width to 730</p>
             <p>Play with changing that 730 value until you get the output result you want.</p>
             <p>This can be used to layout more tunes per PDF page.</p>
             <p>You may also control the spacing between tunes in the PDF output by adding the following ABC comment-based annotation anywhere in the ABC:</p>
             <p class="code">%pdf_between_tune_space spacing_value</p>
-            <p>Where spacing_value is an integer in 1/72" increments. Default is 20</p>
+            <p>Where spacing_value is an integer in 1/72" increments.</p>
+            <p>The default value is 20</p>
             <p>Smaller values will reduce the space between the tunes in the PDF.</p>
             <p>Larger values will increase the space between the tunes in the PDF.</p>
             <p>This value is used in the layout of multiple tunes per page.</p>
