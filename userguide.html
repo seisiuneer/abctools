@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+                
         <style>
         p {
         font-size:14pt;
@@ -405,6 +405,12 @@
             <p>This operation may take some time. The button label changes to <strong>Encoding .MP3</strong> while the audio is being encoded..</p>
             <p>Click the <strong>Download MIDI</strong> button to download a MIDI file for the current tune to your system:</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/1o3HZD7afL8" title="Download MIDI demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p style="text-align: center;"><strong>Limits on Use of my Custom MIDI Instruments</strong></p>
+            <p>The General MIDI specification only supports MIDI program numbers as high as 128.</p>
+            <p>My custom MIDI instruments start at MIDI program 129 and go up from there.</p>
+            <p>These custom instruments and program numbers can only be used by my ABC tool and are not interoperable with other ABC software.</p>
+            <p>Other MIDI applications will not be able to work with exported MIDI files that use any of my custom instrument MIDI program numbers.</p>
+            <p>You will need to change any %%MIDI program or %%MIDI chordprog entries that use the custom MIDI programs to a value less than 128 before exporting a MIDI file for use in another MIDI application.</p>
             <hr class="hidden-print" id="notation_tablature_display_controls">
             <h1 class="page_break_always">Notation/Tablature Display Controls<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder">
