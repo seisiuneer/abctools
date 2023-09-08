@@ -273,7 +273,7 @@
                 
                 <button class="accordion" title="Click to expand/collapse this section">ABC Tricks and Tips</button>
                 <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#clicktrack">Adding a Two-Bar Click Track Intro to Tunes</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#clicktrack">Adding a Two-Bar Click Intro to Tunes</a></p>
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">iOS-Specific Topics</button>
@@ -329,9 +329,9 @@
             <p>.abc or .txt - Opens an ABC file from your computer and loads it into the ABC Editor.</p>
             <p>.xml, .musicxml, or .mxl - Imports a MusicXML file form your computer, converts it to ABC, and loads it into the ABC Editor.</p>
             <p>Details on MusicXML import settings below in the <a style="text-decoration:none;" href="#musicxml">MusicXML Import Settings</a> section.</p>
-            <p><strong>Add</strong> - Brings up a dialog where you can add a new reel, jig, song, song template, or typical useful PDF tunebook headers to the ABC:</p>
+            <p><strong>Add</strong> - Brings up a dialog where you can add a new reel, jig, song, song template, two-bar click intro templates, or typical useful PDF tunebook headers to the ABC:</p>
             <div class="image_holder_p">
-                <img src="img/add_example_template_4.jpg"/>
+                <img src="img/add_example_template_5.jpg"/>
             </div>
             <p><strong>Add an Example Reel:</strong></p>
             <p>Adds "Cooley's" as an example of a typical reel in ABC to the end of the ABC editor text.</p>
@@ -344,8 +344,12 @@
             <p>Adds a detailed self-documenting example of ABC for a song with lyrics to the end of the ABC editor text.</p>
             <p><strong>Add a Song Template:</strong></p>
             <p>Adds an minimal self-documenting ABC template for a song with lyrics to the end of the ABC editor text.</p>
-            <p><strong>Add Box Fingering Symbols Template:</strong></p>
+             <p><strong>Add Box Fingering Symbols Template:</strong></p>
             <p>Add a template with symbols for annotating box fingerings and tablature to the start of the ABC editor text.</p>
+            <p><strong>Add Two-Bar Click Intro Templates:</strong></p>
+            <p>Add a template with two-bar click intro templates for common tune styles.</p>
+            <p>Copy and paste these into the start of your tunes before any repeats.</p>
+            <p>Delete the rest when you are done.</p>
             <p><strong>Add PDF Tunebook Annotations:</strong></p>
             <p>Adds a set of useful tool-specific annotations that are used when exporting a PDF tunebook at the start of the ABC editor text.</p>
             <p>These include:</p>
@@ -407,8 +411,9 @@
             <p>Click the <strong>Download .WAV</strong> button to download the audio for the current tune to your system in .wav format:</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/vESIbNZBVtE" title="Download .WAV demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>Click the <strong>Download .MP3</strong> button to download the audio for the current tune to your system.</p>
-            <p>The bitrate for the MP3 file is set in the <strong>Settings</strong> dialog. Default is 224 kbit/sec.</p>
-            <p>This operation may take some time. The button label changes to <strong>Encoding .MP3</strong> while the audio is being encoded..</p>
+            <p>The bitrate for the MP3 file is set in the <strong>Settings</strong> dialog. Default is 192 kbit/sec.</p>
+            <p>This operation may take some time. The button label changes to <strong>Encoding .MP3</strong> while the audio is being encoded.</p>
+            <p>To download all the tunes at once in .MP3 format with repeats and optional two-bar click intros, use the <strong>Export all Tunes as .MP3</strong> feature in the <a style="text-decoration:none;" href="#advanced_controls">Advanced Controls</a> dialog.</p>
             <p>Click the <strong>Download MIDI</strong> button to download a MIDI file for the current tune to your system:</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/1o3HZD7afL8" title="Download MIDI demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p style="text-align: center;"><strong>Limits on Use of my Custom MIDI Instruments</strong></p>
@@ -455,7 +460,7 @@
             <h1 class="page_break_always">Advanced Controls<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Show Advanced</strong> button brings up the ABC Transcription Tools Advanced Controls dialog:</p>
             <div class="image_holder_p">
-                <img src="img/advanced_controls_5.jpg"/>
+                <img src="img/advanced_controls_6.jpg"/>
             </div>
             <p>Click the lightbulb icon to bring up this section of the user guide in a new browser tab.</p>
             <p><strong>Show/Hide ABC Features:</strong></p>
@@ -476,13 +481,12 @@
             <p><strong>ABC Injection Features:</strong></p>
             <p>These commands are destructive in that they inject additional text into the current ABC.</p>
             <p>It may be a good idea to save the current ABC or do a <strong>Copy All</strong> before using one of these commands if you want to quickly undo the operation.</p>
-            <p>The commands in light green inject only PDF comment-based annotations or %%MIDI directives and do not affect the display of the notation:</p>
             <p><strong>Inject All PDF Annotations</strong> - Injects all available tool-specific PDF tunebook annotations for title page, table of contents, index generation, etc. at the top of the ABC.</p>
             <p><strong>Inject PDF Tunebook Annotation Template</strong> - Injects a useful template of common PDF tunebook annotations at the top of the ABC.</p>
             <p><strong>Inject MIDI Melody</strong> - Injects a %%MIDI program directive into every tune with a specific MIDI instrument program number for the melody.</p>
             <p>You will be prompted for a MIDI instrument program number to inject:</p>
             <div class="image_holder_p">
-                <img src="img/melody_program_4.jpg"/>
+                <img src="img/melody_program_5.jpg"/>
             </div>
             <p>To mute the melody, select program 136.</p>
             <p><strong>Inject MIDI Bass/Chords</strong> - Inject a %%MIDI chordprog directive into every tune with a specific MIDI instrument program number for the bass/chords.</p>
@@ -495,6 +499,19 @@
             <p><strong>Inject %%staffwidth</strong> - Prompts for a %%staffwidth value to inject at the top of every tune.</p>
             <p>This can be used to change the scale of every tune both for display and PDF generation.</p>
             <p>Generally values above 560 will make the tunes less tall.</p>
+            <p id="injectrepeatsandtwobarclickintros"><strong>Inject Repeats and Two-Bar Click Intros</strong> - Allows you to increase the number of times through each tune by duplicating the ABC for the tune.</p>
+            <div class="image_holder_p">
+                <img src="img/inject_repeats_1.jpg"/>
+            </div>
+            <p>Additionally, you may optionally inject a two-bar style-appropriate click intro at the top of each tune.</p>
+            <p>You will be prompted for how many times you want each tune to repeat. Default is 1.</p>
+            <p>Check <strong>Inject a two-bar style-appropriate click intro before each tune</strong> to add a two-bar click intro at the start of each tune.</p>
+            <p>For clean repeats, your tunes must not have extraneous pickup notes and must have proper and complete timing.</p>
+            <p style="text-align: center;"><strong>Important Requirement for 1st Part Repeats</strong></p>
+            <p><strong>If the 1st part of a tune has a :| repeat symbol at the end of it (or on a first ending), but not at the very start of the part, you will need to add the starting |: repeat bar symbol for the ABC to play correctly if there is more than one repetition through the tune.</strong></p>
+            <p><strong>The lack of a first repeat bar symbol in the ABC will make the first part of the tune on the second and repetitions appear to not repeat.</strong></p>
+            <p><strong>To Fix:</strong></p>
+            <p><strong>Add a |: repeat bar at the start of the tune.</strong></p>
             <p>The commands in light red inject additional ABC lyrics-based or ABC chord-based tablature into the ABC:</p>
             <p><strong>Inject Note Name Lyrics</strong> - Injects note names as lyrics in the ABC.</p>
             <p><strong>Inject B/C Box Tab</strong> - Injects B/C Box tablature into the ABC (uses ABC chord syntax).</p>
@@ -506,8 +523,12 @@
             </div>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/55mo9ZOTSCo " title="Bamboo Flute Tablature Injection" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p><strong>Configure Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for tablature injection.</p>
-            <p><strong>Export all Tunes as .MP3</strong> - Exports all the tunes in the ABC area as individual .mp3 files at the bitrate set in the <strong>Settings</strong> dialog.</p>
+            <p id="export_all_tunes_as_mp3"><strong>Export all Tunes as .MP3</strong> - Exports all the tunes in the ABC area as individual .mp3 files at the bitrate set in the <strong>Settings</strong> dialog.</p>
+            <div class="image_holder_p">
+                <img src="img/mp3batchexport_2.jpg"/>
+            </div>
             <p>You will be prompted for how many times you want each tune to repeat in the .MP3 file. Default is 1.</p>
+            <p>Check <strong>Inject a two-bar style-appropriate click intro before each tune</strong> to add a two bar click intro at the start of each .MP3 file.</p>
             <p>This can be very useful for creating longer "play-along" recordings of tunes.</p>
             <p>For clean repeats, your tunes must not have extraneous pickup notes and must have proper and complete timing.</p>
             <p style="text-align: center;"><strong>Important Requirement for 1st Part Repeats</strong></p>
@@ -547,7 +568,7 @@
             <p><strong>To force tune playback using your default programs and volumes if there are already %%MIDI directives in the ABC (useful for my Interactive PDF tunebooks):</strong></p>
             <p>Enabling <strong>Override all MIDI programs and volumes in the ABC when playing tunes</strong> will override any existing %%MIDI program, %%MIDI chordprog, %MIDI bassvol, and %MIDI chordvol values found in the ABC with your defaults when you play a tune.</p>
             <p>This can be useful with my Interactive PDF tunebooks with built-in playback features if you want to use your preferred instrument sounds and volumes instead of the instruments and volumes set by the Interactive tunebook play link ABC.</p>
-            <p>For example, if you want to always use a Whistle sound for the Melody and a Honky-Tonk Piano sound for the Bass and Chords, set your default Melody instrument to 78 and your default Bass/Chords instrument to 3. Then enable <strong>Override all MIDI programs and volumes in the ABC when playing tunes</strong>.</p>
+            <p>For example, if you want to always use a Whistle sound for the Melody and a Piano sound for the Bass and Chords, set your default Melody instrument to 78 and your default Bass/Chords instrument to 1. Then enable <strong>Override all MIDI programs and volumes in the ABC when playing tunes</strong>.</p>
             <p>To mute the melody, select program 136.</p>
             <p>To mute the bass/chords, select program 136.</p>
             <p></p>
@@ -615,7 +636,7 @@
             B2 B dBd | ege dBd | gfg aga |1 bgg g2A :|2 bgg g2D |]</p>
             <p></p>
             <p>To change the instrument used for the melody, try changing the MIDI program # above to one of:</p>
-            <p>Piano: 0, Hammered Dulcimer: 15, Accordion: 21, Fingered Bass: 33, Flute: 73, Whistle: 78, Fiddle: 110, Uilleann Pipes: 129, Scottish Smallpipes (D): 130, Scottish Smallpipes (A): 131, Säckpipa: 132, Concertina: 133, Melodica: 134, Cajun Accordion: 135, Silence: 136</p>
+            <p>Piano: 0, Harpsichord: 6, Hammered Dulcimer: 15, Accordion: 21, Fingered Bass: 33, Flute: 73, Whistle: 78, Fiddle: 110, Uilleann Pipes: 129, Scottish Smallpipes (D): 130, Scottish Smallpipes (A): 131, Säckpipa: 132, Concertina: 133, Melodica: 134, Cajun Accordion: 135, Silence: 136</p>
             <p></p>
             <p>By default, if you have chords in the ABC, the instrument used for the chord playback is a piano.</p>
             <p></p>
@@ -1009,7 +1030,7 @@
             <p></p>
             <p>Some MIDI program numbers I recommend for the melody:</p>
             <p></p>
-            <p>Piano: 0, Accordion: 21, Fingered Bass: 33, Guitar: 25, Whistle: 78, Silence: 136</p>
+            <p>Piano: 0, Harpsichord: 6, Accordion: 21, Fingered Bass: 33, Guitar: 25, Whistle: 78, Silence: 136</p>
             <p></p>
             <p>Some MIDI program numbers I recommend for the bass/chords:</p>
             <p></p>
@@ -1059,7 +1080,7 @@
             <p></p>
             <p>Some MIDI program numbers I recommend for the melody:</p>
             <p></p>
-            <p>Piano: 0, Accordion: 21, Fingered Bass: 33, Guitar: 25, Whistle: 78, Silence: 136</p>
+            <p>Piano: 0, Harpsichord: 6, Accordion: 21, Fingered Bass: 33, Guitar: 25, Whistle: 78, Silence: 136</p>
             <p></p>
             <p>Some MIDI program numbers I recommend for the bass/chords:</p>
             <p></p>
@@ -1196,7 +1217,7 @@
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/55mo9ZOTSCo " title="Bamboo Flute Tablature Injection" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>To configure the tablature fonts and other settings, first click the tool's Settings button, then click the <strong>Configure Tablature Injection Settings</strong> button at the bottom of the dialog to bring up the tablature injections settings dialog:</p>
             <div class="image_holder_p">
-                <img src="img/tab_injection_settings_2.jpg"/>
+                <img src="img/tab_injection_settings_3.jpg"/>
             </div>
             <p>You can also Shift-click the Settings button to go directly to the tablature settings dialog.</p>
             <p><strong>Common Box, Anglo Concertina, and Bamboo Flute tablature settings:</strong></p>
@@ -1457,29 +1478,60 @@
             <p>Experiment with both the browser's print settings page orientation and "multiple page on one page" options to see what is possible.</p>
             <p><strong>Note:</strong>If you want to print a tunebook automatically formated with multiple tunes per page, you must use the tool's PDF Export feature described in the next section.</p>
             <hr class="hidden-print" id="clicktrack">
-            <h1 class="page_break_always">Adding a Two-Bar Click Track Intro to Tunes <span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>If you want to add a two-bar click track intro before a tune, here's a pattern I find works well for reels and jigs:</p>
+            <h1 class="page_break_always">Adding a Two-Bar Click Intro to Tunes <span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>If you want to add a two-bar click intro before a tune, here are ABC pattern templates I find work well for common styles of tunes:</p>
             <p>Add this before the start of a reel, before any repeats:</p>
-            <p class="code">% Reel two bar click intro<br/>
+            <p class="code">% Reel two-bar click intro<br/>
                 V:1<br/>
                 V:2<br/>
                 %%MIDI program 128<br/>
-                ^Cz3^Cz3|^Cz3^Cz3|<br/>
+                ^Cz3 ^Cz3|^Cz3 ^Cz3|<br/>
                 V:1<br/>
             z8|z8|</p>
             <p>Add this before the start of a jig, before any repeats:</p>
-            <p class="code">% Jig two bar click intro<br/>
+            <p class="code">% Jig two-bar click intro<br/>
                 V:1<br/>
                 V:2<br/>
                 %%MIDI program 128<br/>
-                ^Cz2^Cz2|^Cz2^Cz2|<br/>
+                ^Cz2 ^Cz2|^Cz2 ^Cz2|<br/>
+                V:1<br/>
+            z6|z6|</p>
+            <p>Add this before the start of a slide, before any repeats:</p>
+            <p class="code">% Slide two-bar click intro<br/>
+                V:1<br/>
+                V:2<br/>
+                %%MIDI program 128<br/>
+                ^Cz2 ^Cz2 ^Cz2 ^Cz2|<br/>
+                V:1<br/>
+            z12|</p>
+            <p>Add this before the start of a slip jig, before any repeats:</p>
+            <p class="code">% Slip Jig two-bar click intro<br/>
+                V:1<br/>
+                V:2<br/>
+                %%MIDI program 128<br/>
+                ^Cz2 ^Cz2 ^Cz2|^Cz2 ^Cz2 ^Cz2|<br/>
+                V:1<br/>
+            z9|z9|</p>
+            <p>Add this before the start of a polka, before any repeats:</p>
+            <p class="code">% Polka two-bar click intro<br/>
+                V:1<br/>
+                V:2<br/>
+                %%MIDI program 128<br/>
+                ^Cz ^Cz|^Cz ^Cz|<br/>
+                V:1<br/>
+            z4|z4|</p>
+            <p>Add this before the start of a waltz, before any repeats:</p>
+            <p class="code">% Waltz two-bar click intro<br/>
+                V:1<br/>
+                V:2<br/>
+                %%MIDI program 128<br/>
+                ^Cz ^Cz ^Cz|^Cz ^Cz ^Cz|<br/>
                 V:1<br/>
             z6|z6|</p>
             <p style="text-align: center;">Demos:</p>
             <p style="text-align: center;"><a href="https://tinyurl.com/3u3v27sv" target="_blank">Reel with Two-Bar Click Intro</a></p>
             <p style="text-align: center;"><a href="https://tinyurl.com/5b5brfdp" target="_blank">Jig with Two-Bar Click Intro</a></p>
-            <p>Currently this will not work for multiple repeat bulk export of tunes to MP3 as the click intro would be repeated.</p>
-            <p>I am actively working to add automatic injection of a starting click track to the feature in the future.</p>
+            <p>You can add an ABC template containing all of these examples from the <strong>Add</strong> dialog and then copy and paste them into your tunes.</p>
             <hr class="hidden-print" id="iphone_ipad_chord_entry_issue_fix">
             <h1 class="page_break_always">iPhone/iPad Chord Entry Issue Fix<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>If you are trying to enter ABC chords, for example "D" or "Am", on an iPhone or iPad, iOS will, by default stick in "smart quotes" instead of standard double quotes.</p>
