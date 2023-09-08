@@ -1687,12 +1687,6 @@ function GetAllTuneHyperlinks(theLinks) {
 		if (gAddPlaybackHyperlinks){
 
 			var tuneWithPatch = thisTune;
-
-			// Strip out the X: tag
-			var searchRegExp = /^X:.*[\r\n]*/gm 
-
-			// Strip out tempo markings
-			tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
 				
 			// Strip out the X: tag
 			var searchRegExp = /^X:.*[\r\n]*/gm 
@@ -6959,6 +6953,9 @@ function AddABC(){
 	modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendBoxFingeringTemplate();" type="button" value="Add Box Fingering Symbols Template" title="Adds a template with symbols for annotating box fingerings and tablature to the top of the ABC">';
 	modal_msg += '</p>';
 	modal_msg += '<p style="text-align:center;margin-top:32px;">';
+	modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddClickTrackTemplate();" type="button" value="Add Two-Bar Click Intro Templates" title="Adds two-bar click intro templates for common styles of tunes to the top of the ABC">';
+	modal_msg += '</p>';
+	modal_msg += '<p style="text-align:center;margin-top:32px;">';
 	modal_msg  += '<input id="addtunebookheaders" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders(false);" type="button" value="Add PDF Tunebook Annotations" title="Adds common useful PDF tunebook annotations to the top of the ABC">';
 	modal_msg += '</p>';
 	modal_msg += '<p style="text-align:center;margin-top:32px;">';
@@ -7311,6 +7308,84 @@ function AppendBoxFingeringTemplate(){
 }
 
 //
+// Add a click track template to the top of the ABC
+//
+function AddClickTrackTemplate(){
+
+	var theNotes = gTheABC.value;
+
+	var output = "";
+	output += '% \n';
+	output += '% Two-bar click intro templates for common tune styles\n';
+	output += '% \n';
+	output += '% Copy and paste these into the start of your tunes before any repeats\n';
+	output += '% \n';
+	output += '% Delete the rest when you are done\n';
+	output += '%\n';
+	output += '\n';
+	output += '% Reel two-bar click intro\n';
+	output += 'V:1\n';
+	output += 'V:2\n';
+	output += '%%MIDI program 128\n';
+	output += '^Cz3 ^Cz3|^Cz3 ^Cz3|\n';
+	output += 'V:1\n';
+	output += 'z8|z8|\n';
+	output += '\n';
+	output += '% Jig two-bar click intro\n';
+	output += 'V:1\n';
+	output += 'V:2\n';
+	output += '%%MIDI program 128\n';
+	output += '^Cz2 ^Cz2|^Cz2 ^Cz2|\n';
+	output += 'V:1\n';
+	output += 'z6|z6|\n';
+	output += '\n';
+	output += '% Slide two-bar click intro\n';
+	output += 'V:1\n';
+	output += 'V:2\n';
+	output += '%%MIDI program 128\n';
+	output += '^Cz2 ^Cz2 ^Cz2 ^Cz2|\n';
+	output += 'V:1\n';
+	output += 'z12|\n';
+	output += '\n';
+	output += '% Slip Jig two-bar click intro\n';
+	output += 'V:1\n';
+	output += 'V:2\n';
+	output += '%%MIDI program 128\n';
+	output += '^Cz2 ^Cz2 ^Cz2|^Cz2 ^Cz2 ^Cz2|\n';
+	output += 'V:1\n';
+	output += 'z9|z9|\n';
+	output += '\n';
+	output += '% Polka two-bar click intro\n';
+	output += 'V:1\n';
+	output += 'V:2\n';
+	output += '%%MIDI program 128\n';
+	output += '^Cz ^Cz|^Cz ^Cz|\n';
+	output += 'V:1\n';
+	output += 'z4|z4|\n';
+	output += '\n';
+	output += '% Waltz two-bar click intro\n';
+	output += 'V:1\n';
+	output += 'V:2\n';
+	output += '%%MIDI program 128\n';
+	output += '^Cz ^Cz ^Cz|^Cz ^Cz ^Cz|\n';
+	output += 'V:1\n';
+	output += 'z6|z6|\n';
+	output += '\n';
+
+	output += theNotes;
+
+	// Stuff in the headers
+	gTheABC.value = output;
+
+	// Set the select point
+	gTheABC.selectionStart = 0;
+    gTheABC.selectionEnd = 0;
+
+    // And set the focus
+    gTheABC.focus();	
+
+}
+//
 // Add the J.S. Bach 2-Part Invention #1
 //
 function AppendJSBach(){
@@ -7342,6 +7417,7 @@ function AppendJSBach(){
 	theValue += 'V:2 bass\n';
 	theValue += '%%MIDI program 6\n';
 	theValue += 'V:1\n';
+	theValue += '[Q:84]\n';	
 	theValue += 'z CDE FDEC G2c2 B/A/Bc2 | dGAB cABG d2g2 f/e/fg2 |\n'; 
 	theValue += 'eagf egfa gfed cedf | edcB AcBd cBAG ^FAGB |\n'; 
 	theValue += 'A2D2 c/B/c2d BAG^F EGFA | GBAc Bdce dB/c/dg B/c/BAG |\n';
@@ -7354,6 +7430,7 @@ function AppendJSBach(){
 	theValue += "ecde fdec defg afge | fgab c'abg [Q:78]c'2g2 [Q:70]e/f/edc|\n";
 	theValue += 'c_BAG [Q:62]FAGB [Q:54]A=BcE [Q:46]Dc[Q:28]FB | [EGc]16|]\n'; 
 	theValue += 'V:2\n';
+	theValue += '[Q:84]\n';	
 	theValue += 'z8 z C,D,E, F,D,E,C, | G,2G,,2 z4 z G,A,B, CA,B,G, |\n'; 
 	theValue += 'C2B,2C2D2 E2G,2A,2B,2 | C2E,2^F,2G,2 A,2B,2 C4- |\n';
 	theValue += 'CD,E,^F, G,E,F,D, G,2B,,2C,2D,2 | E,2^F,2G,2E,2 B,,2>C,2 D,2D,,2 |\n';
@@ -8062,60 +8139,6 @@ function CopyToClipboard(textToCopy) {
 	}
 }
 
-//
-// Inject MIDI program number directive 
-//
-function InjectOneTuneMIDIProgram(theTune, progNum, bIsChords){
-
-	var theABC = escape(theTune);
-
-	var theLines = theABC.split("%0A");
-
-	var theOutput = "";
-
-	var thisLine = "";
-
-	for (i = 0; i < theLines.length; ++i) {
-		
-		thisLine = unescape(theLines[i]); 
-
-		var theChars = thisLine.split(""); 
-
-		// It's a normal ABC : directive, copy it as is
-		if (((theChars[0] != "|") && (theChars[0] != "[")) && (theChars[1] == ":")) {
-
-			theOutput += thisLine+"\n";
-
-			// Inject the font directive to save people time
-			if (theChars[0] == "X"){
-
-				if (bIsChords){
-
-					theOutput += "%%MIDI chordprog "+progNum+"\n";
-
-				}
-				else{
-
-					theOutput += "%%MIDI program "+progNum+"\n";
-
-				}
-			}
-
-		}
-		else
-		{
-			theOutput += thisLine;
-
-			if (i != (theLines.length-1)){
-				theOutput += "\n";
-			}
-
-		}
-	}
-	
-	return theOutput;
-	
-}
 
 //
 // Override MIDI program number directive 
@@ -8133,7 +8156,7 @@ function OverrideOneTuneMIDIParams(theTune, melodyProg, chordProg, bassVol, chor
 
 		for (var i=0;i<melodyProgramRequested.length;++i){
 
-			theOutput = theOutput.replace(melodyProgramRequested[0],"%%MIDI program "+melodyProg);
+			theOutput = theOutput.replace(melodyProgramRequested[i],"%%MIDI program "+melodyProg);
 
 		}
 
@@ -8215,50 +8238,177 @@ function FindPreTuneHeader(theABC){
 
 
 //
-// Inject MIDI volume directive 
+// Inject two bar intro click tracks into all the tunes
+//
+function InjectRepeatsAndClickTrackAll(){
+
+	var nTunes = CountTunes();
+
+	if (nTunes == 0){
+		return;
+	}
+
+	// Setup initial values
+	const theData = {
+	  configure_repeats:1,
+	  configure_inject_click:false
+	};
+
+	const form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject Repeats and Two-Bar Click Intros&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#injectrepeatsandtwobarclickintros" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">This will inject repeats into each tune in the ABC area by  appending the entire ABC for each tune to itself multiple times.</p>'},	  
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">You may also optionally inject a two-bar click intro before each tune.</p>'},	  
+	  {name: "How many times through each tune:", id: "configure_repeats", type:"number", cssClass:"configure_settings_form_text"}, 
+	  {name: "            Inject a two-bar style-appropriate click intro before each tune", id: "configure_inject_click", type:"checkbox", cssClass:"configure_settings_form_text"},
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>To only append a two-bar click intro before each tune:</strong></p>'},	  
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">1) Set <strong>How many times through each tune:</strong> to 1</p>'},	  
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">2) Check <strong>Inject a two-bar style-appropriate click intro before each tune</strong>.</p>'},	  
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">3) Click <strong>OK</strong>.</p>'},	  
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>For best results when repeating tunes:<strong></p>'},	  
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">For clean repeats, your tunes must not have extraneous pickup or trailing notes and must have proper and complete timing.</p>'},	  
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">If there is a repeat at the end of the first part of a tune, either standalone or in a first ending, there must be a matching |: bar at the start of the tune for the tune repeats to work properly.</p>'},	  
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 760, scrollWithPage: false } ).then(function(args){
+		
+		if (!args.canceled){
+		
+			var repeatCountStr = args.result.configure_repeats;
+
+			if (repeatCountStr == null){
+				return;
+			}
+
+			repeatCount = parseInt(repeatCountStr);
+
+			if ((isNaN(repeatCount)) || (repeatCount == undefined)){
+				return;
+			}
+
+			if (repeatCount < 1){
+				return;
+			}
+
+			var doClickTrack = args.result.configure_inject_click;
+
+			var theNotes = gTheABC.value;
+
+			var output = FindPreTuneHeader(theNotes);
+
+			for (var i=0;i<nTunes;++i){
+
+				var thisTune = getTuneByIndex(i);
+
+				var rhythmType = getTuneRhythmType(thisTune);
+
+				thisTune = AddDuplicatesForMp3(thisTune, rhythmType, repeatCount, doClickTrack);
+
+				output += thisTune;
+
+				output += "\n\n";
+
+			}
+
+			// Stuff in the transposed output
+			gTheABC.value = output;
+
+			// Force a redraw
+			RenderAsync(true,null,function(){
+
+				// Set the select point
+				gTheABC.selectionStart = 0;
+			    gTheABC.selectionEnd = 0;
+
+			    // And set the focus
+			    gTheABC.focus();
+			});
+		}
+	});
+}
+
+
+//
+// Inject a string below the X: and above the rest of the header
+//
+function InjectStringAboveTuneHeader(theTune, theDirective) {
+
+    var theABC = escape(theTune);
+
+    var theLines = theABC.split("%0A");
+
+    var theOutput = "";
+
+    var thisLine = "";
+
+    for (i = 0; i < theLines.length; ++i) {
+
+        thisLine = unescape(theLines[i]);
+
+        var theChars = thisLine.split("");
+
+        // It's a normal ABC : directive, copy it as is
+        if (((theChars[0] != "|") && (theChars[0] != "[")) && (theChars[1] == ":")) {
+
+            theOutput += thisLine + "\n";
+
+            // Inject the font directive to save people time
+            if (theChars[0] == "X") {
+
+                theOutput += theDirective + "\n";
+            }
+
+        } else {
+            theOutput += thisLine;
+
+            if (i != (theLines.length - 1)) {
+                theOutput += "\n";
+            }
+
+        }
+    }
+
+    return theOutput;
+
+}
+
+
+//
+// Inject anything just below the header
+//
+function InjectStringBelowTuneHeader(theTune,theString){
+
+	theTune = theTune.trim();
+
+	// Find the notes below the header
+	var theNotes = removeABCTuneHeaders(theTune);
+
+	theNotes = theNotes.trim();
+
+	var theLines = theNotes.split("\n");
+
+	var firstLine = theLines[0]; 
+
+	// Find the offset into the tune of the first line of notes in the trimmed version
+	var theNotesIndex = theTune.indexOf(firstLine);
+
+	theTune = theTune.substring(0,theNotesIndex);
+	theTune += theString;
+	theTune += "\n"+theNotes+"\n\n";
+
+	return theTune;
+}
+
+//
+// Inject MIDI staff width 
 //
 function InjectOneTuneStaffWidth(theTune, staffwidth){
 
-	var theABC = escape(theTune);
-
-	var theLines = theABC.split("%0A");
-
-	var theOutput = "";
-
-	var thisLine = "";
-
-	for (i = 0; i < theLines.length; ++i) {
-		
-		thisLine = unescape(theLines[i]); 
-
-		var theChars = thisLine.split(""); 
-
-		// It's a normal ABC : directive, copy it as is
-		if (((theChars[0] != "|") && (theChars[0] != "[")) && (theChars[1] == ":")) {
-
-			theOutput += thisLine+"\n";
-
-			// Inject the font directive to save people time
-			if (theChars[0] == "X"){
-
-				theOutput += "%%staffwidth "+staffwidth+"\n";
-			}
-
-		}
-		else
-		{
-			theOutput += thisLine;
-
-			if (i != (theLines.length-1)){
-				theOutput += "\n";
-			}
-
-		}
-	}
+	theOutput = InjectStringBelowTuneHeader(theTune, "%%staffwidth "+staffwidth);
 	
 	return theOutput;
 	
 }
+
 
 //
 // Inject a %%staffwidth directive after all the X: headers
@@ -8320,54 +8470,81 @@ function InjectStaffWidth() {
 }
 
 //
-// Inject MIDI volume directive 
+// Inject MIDI program number directive below the tune header
+//
+function InjectOneTuneMIDIProgram(theTune, progNum, bIsChords){
+
+	if (bIsChords){
+
+		theOutput = InjectStringBelowTuneHeader(theTune,"%%MIDI chordprog "+progNum);
+
+	}
+	else{
+
+		theOutput = InjectStringBelowTuneHeader(theTune,"%%MIDI program "+progNum);
+
+	}
+	
+	return theOutput;
+	
+}
+
+//
+// Inject MIDI program number directive above the tune header
+//
+function InjectOneTuneMIDIProgramAboveTune(theTune, progNum, bIsChords){
+
+	if (bIsChords){
+
+		theOutput = InjectStringAboveTuneHeader(theTune,"%%MIDI chordprog "+progNum);
+
+	}
+	else{
+
+		theOutput = InjectStringAboveTuneHeader(theTune,"%%MIDI program "+progNum);
+
+	}
+	
+	return theOutput;
+	
+}
+
+//
+// Inject MIDI volume directive below the tune header
 //
 function InjectOneTuneMIDIVolume(theTune, theVolume, bIsChords){
 
-	var theABC = escape(theTune);
 
-	var theLines = theABC.split("%0A");
+	if (bIsChords){
 
-	var theOutput = "";
+		theOutput = InjectStringBelowTuneHeader(theTune,"%%MIDI chordvol "+theVolume);
 
-	var thisLine = "";
+	}
+	else{
 
-	for (i = 0; i < theLines.length; ++i) {
-		
-		thisLine = unescape(theLines[i]); 
+		theOutput = InjectStringBelowTuneHeader(theTune,"%%MIDI bassvol "+theVolume);
 
-		var theChars = thisLine.split(""); 
+	}
+	
+	return theOutput;
+	
+}
 
-		// It's a normal ABC : directive, copy it as is
-		if (((theChars[0] != "|") && (theChars[0] != "[")) && (theChars[1] == ":")) {
+//
+// Inject MIDI volume directive above the tune header
+//
+function InjectOneTuneMIDIVolumeAboveTune(theTune, theVolume, bIsChords){
 
-			theOutput += thisLine+"\n";
 
-			// Inject the font directive to save people time
-			if (theChars[0] == "X"){
+	if (bIsChords){
 
-				if (bIsChords){
+		theOutput = InjectStringAboveTuneHeader(theTune,"%%MIDI chordvol "+theVolume);
 
-					theOutput += "%%MIDI chordvol "+theVolume+"\n";
+	}
+	else{
 
-				}
-				else{
+		theOutput = InjectStringAboveTuneHeader(theTune,"%%MIDI bassvol "+theVolume);
 
-					theOutput += "%%MIDI bassvol "+theVolume+"\n";
-
-				}
-			}
-
-		}
-		else
-		{
-			theOutput += thisLine;
-
-			if (i != (theLines.length-1)){
-				theOutput += "\n";
-			}
-
-		}
 	}
 	
 	return theOutput;
@@ -8392,7 +8569,7 @@ function InjectMIDIInstrument(bIsChords) {
 		theDefaultProgram = "34";
 	}
 
-	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,  Hammered Dulcimer: 15,  Accordion: 21, Fingered Bass: 33,  Flute: 73,  Whistle: 78,  Fiddle: 110,  Uilleann Pipes: 129,  Scottish Smallpipes (D): 130,  Scottish Smallpipes (A): 131,  Säckpipa: 132,  Concertina: 133,  Melodica: 134, Cajun Accordion: 135, Silence: 136</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>';
+	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,  Harpsichord: 6,  Hammered Dulcimer: 15,  Accordion: 21, Fingered Bass: 33,  Flute: 73,  Whistle: 78,  Fiddle: 110,  Uilleann Pipes: 129,  Scottish Smallpipes (D): 130,  Scottish Smallpipes (A): 131,  Säckpipa: 132,  Concertina: 133,  Melodica: 134, Cajun Accordion: 135, Silence: 136</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>';
 
 	if (bIsChords){
 		thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,  Electric Piano: 5,  Organ: 19,  Accordion: 21,  Guitar: 25,  Bass: 34,  Synth Bass: 38,  Silence: 136</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>';
@@ -10586,12 +10763,52 @@ function getTuneTitle(thisTune){
 }
 
 //
+// Batch .MP3 Export
+//
+
+var gBatchMP3ExportCancelRequested = false;
+var gTheBatchMP3ExportOKButton = null;
+var gTheBatchMP3ExportStatusText = null;
+
+//
+// Extract the title from a single tune ABC
+function getTuneTitle(thisTune){
+	
+	var neu = escape(thisTune);
+
+	var Reihe = neu.split("%0D%0A");
+
+	Reihe = neu.split("%0A");
+
+	var title = "";
+
+	for (var j = 0; j < Reihe.length; ++j) {
+
+		Reihe[j] = unescape(Reihe[j]); /* Macht die Steuerzeichen wieder weg */
+
+		var Aktuellereihe = Reihe[j].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
+
+		if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
+
+			title = Reihe[j].slice(2);
+
+			title = title.trim();
+
+			return title;
+
+		}
+	}
+
+	return title;
+}
+
+//
 // Get the notes for a tune without the header
 //
 function removeABCTuneHeaders(abcTune) {
 
   // Use a regular expression to match and remove header lines
-  const headerPattern = /^(X:|T:|M:|K:|L:|Q:|V:|W:|Z:|R:|C:|A:|O:|P:|N:|G:|H:|B:|D:|F:|S:|I:|%|:[A-Za-z]:)[^\r\n]*\r?\n?/gm;
+  const headerPattern = /^(X:|T:|M:|K:|L:|Q:|W:|Z:|R:|C:|A:|O:|P:|N:|G:|H:|B:|D:|F:|S:|I:|:[A-Za-z]:)[^\r\n]*\r?\n?/gm;
   const tuneWithoutHeaders = abcTune.replace(headerPattern, '');
   
   return tuneWithoutHeaders;
@@ -10600,16 +10817,89 @@ function removeABCTuneHeaders(abcTune) {
 //
 // Append additional copies of the tune notes for long MP3 generation
 //
-function AddDuplicatesForMp3(theTune, count){
+function AddDuplicatesForMp3(theTune, rhythmType, count, doClickTrack){
 
-	if (count <= 1){
+	// Nothing to do?
+	if ((count == 1) && (!doClickTrack)){
 		return theTune;
 	}
 
 	theTune = theTune.trim();
 
+	// Find the notes below the header
 	var theNotes = removeABCTuneHeaders(theTune);
+
 	theNotes = theNotes.trim();
+
+	var theLines = theNotes.split("\n");
+
+	var lineCount = theLines.length;
+
+	// Should never happen...
+	if (lineCount == 0){
+		return theTune;
+	}
+
+	var startLine = 0;
+	var bFoundMIDI = (theLines[0].indexOf("%%MIDI") != -1);
+
+	// Are there any %%MIDI directives at the top of the ABC, if yes skip them
+	if (bFoundMIDI){
+		
+		// Strip the %%MIDI directive from the notes
+		theNotes = theNotes.replace(theLines[startLine]+"\n","");
+
+		startLine = 1;
+
+		for (var i=1;i<lineCount;++i){
+			
+			if (theLines[i].indexOf("%%MIDI") == -1){
+				break;
+			}
+
+			// Strip the %%MIDI directive from the notes
+			theNotes = theNotes.replace(theLines[startLine]+"\n","");
+
+			startLine++;
+
+		}
+	}
+
+	var firstLine = theLines[startLine]; 
+
+	// Find the offset into the tune of the first line of notes in the trimmed version
+	var theNotesIndex = theTune.indexOf(firstLine);
+
+	theTune = theTune.substring(0,theNotesIndex);
+
+	if (doClickTrack){
+
+		switch (rhythmType){
+			case "reel":
+				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz3 ^Cz3|^Cz3 ^Cz3|\nV:1\nz8|z8|\n";
+				break;
+			case "jig":
+				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz2 ^Cz2|^Cz2 ^Cz2|\nV:1\nz6|z6|\n";
+				break;
+			case "slide":
+				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz2 ^Cz2 ^Cz2 ^Cz2|\nV:1\nz12|\n";
+				break;
+			case "slipjig":
+				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz2 ^Cz2 ^Cz2|^Cz2 ^Cz2 ^Cz2|\nV:1\nz9|z9|\n";
+				break;
+			case "polka":
+				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz ^Cz|^Cz ^Cz|\nV:1\nz4|z4|\n";
+				break;
+			case "waltz":
+				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz ^Cz ^Cz|^Cz ^Cz ^Cz|\nV:1\nz6|z6|\n";
+				break;
+			default:
+				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz3 ^Cz3|^Cz3 ^Cz3|\nV:1\nz8|z8|\n";
+				break;			
+		}
+	}
+
+	theTune += theNotes;
 
 	for (var i=0;i<count-1;++i){
 		theTune += "\n";
@@ -10617,6 +10907,105 @@ function AddDuplicatesForMp3(theTune, count){
 	}
 
 	return theTune;
+}
+
+//
+// Is this a Jig variant
+//
+function getTuneRhythmType(tuneABC){
+
+	var neu = escape(tuneABC);
+
+	var Reihe = neu.split("%0D%0A");
+
+	Reihe = neu.split("%0A");
+
+	var bIsJig = false;
+	var bIsSlipJig = false;
+	var bIsSlide = false;
+	var bIsPolka = false;
+	var bIsReel = false;
+	var bIsWaltz = false;
+
+	for (var j = 0; j < Reihe.length; ++j) {
+
+		Reihe[j] = unescape(Reihe[j]); /* Macht die Steuerzeichen wieder weg */
+
+		var Aktuellereihe = Reihe[j].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
+
+		if (Aktuellereihe[0] == "M" && Aktuellereihe[1] == ":") {
+
+			// Is this a jig variant (meter ends with /8)?
+
+			var theMeter = Reihe[j].replace("M:","");
+			theMeter = theMeter.trim();
+
+			if ((theMeter.indexOf("6/8") != -1)){
+				bIsJig = true;
+			}
+
+			if ((theMeter.indexOf("9/8") != -1)){
+				bIsSlipJig = true;
+			}
+
+			if ((theMeter.indexOf("12/8") != -1)){
+				bIsSlide = true;
+			}
+
+			if ((theMeter.indexOf("2/4") != -1)){
+				bIsPolka = true;
+			}
+
+			if ((theMeter.indexOf("4/4") != -1)){
+				bIsReel = true;
+			}
+
+			if ((theMeter.indexOf("3/4") != -1)){
+				bIsWaltz = true;
+			}
+
+			if ((theMeter.indexOf("C") != -1)){
+				bIsReel = true;
+			}
+
+		}
+	}
+
+	if (bIsJig || bIsSlide){
+
+		//console.log("Is a jig!");
+		return "jig";
+
+	}
+	if (bIsSlipJig){
+
+		//console.log("Is a slip jig!");
+		return "slipjig";
+
+	}
+	if (bIsPolka){
+
+		//console.log("Is a polka!");
+		return "polka";
+
+	}
+	if (bIsReel){
+
+		//console.log("Is a reel!");
+		return "reel";
+
+	}
+	if (bIsWaltz){
+
+		//console.log("Is a waltz!");
+		return "waltz";
+
+	}
+
+	// Default to reel
+	return "reel";
+
+
 }
 
 //
@@ -10633,30 +11022,51 @@ function BatchMP3Export(){
 
 	}
 
-	DayPilot.Modal.prompt("How many times to repeat each tune in the .MP3?", 1, { theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: false }).then(function(args) {
+	// Setup initial values
+	const theData = {
+	  configure_repeats:1,
+	  configure_inject_click:false
+	};
+
+	const form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Export All Tunes as MP3&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#export_all_tunes_as_mp3" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">This will export all the tunes in the ABC area as .MP3 files with one or more repeats.</p>'},	  
+	  {name: "How many times to repeat each tune in the MP3:", id: "configure_repeats", type:"number", cssClass:"configure_settings_form_text"}, 
+	  {name: "            Inject a two-bar style-appropriate click intro before each tune", id: "configure_inject_click", type:"checkbox", cssClass:"configure_settings_form_text"},
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>For best results with repeated tunes:</strong></p>'},	  
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">For clean repeats, your tunes must not have extraneous pickup or trailing notes and must have proper and complete timing.</p>'},	  
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">If there is a repeat at the end of the first part of a tune, either standalone or in a first ending, there must be a matching |: bar at the start of the tune for the tune repeats to work properly.</p>'},	  
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 760, scrollWithPage: false } ).then(function(args){
 		
-		var repeatCountStr = args.result;
+		if (!args.canceled){
+		
+			var repeatCountStr = args.result.configure_repeats;
 
-		if (repeatCountStr == null){
-			return;
+			if (repeatCountStr == null){
+				return;
+			}
+
+			repeatCount = parseInt(repeatCountStr);
+
+			if ((isNaN(repeatCount)) || (repeatCount == undefined)){
+				return;
+			}
+
+			if (repeatCount < 1){
+				return;
+			}
+
+			var doClickTrack = args.result.configure_inject_click;
+
+			DoBatchMP3Export(repeatCount,doClickTrack);
 		}
-
-		repeatCount = parseInt(repeatCountStr);
-
-		if ((isNaN(repeatCount)) || (repeatCount == undefined)){
-			return;
-		}
-
-		if (repeatCount < 1){
-			return;
-		}
-
-		DoBatchMP3Export(repeatCount);
 
 	});
 }
 
-function DoBatchMP3Export(repeatCount){
+function DoBatchMP3Export(repeatCount,doClickTrack){
 
 	var totalTunesToExport;
 
@@ -10679,14 +11089,15 @@ function DoBatchMP3Export(repeatCount){
 
 					var thisTune = getTuneByIndex(currentTune);
 
-					thisTune = AddDuplicatesForMp3(thisTune, repeatCount);
+					var rhythmType = getTuneRhythmType(thisTune);
+
+					thisTune = AddDuplicatesForMp3(thisTune, rhythmType, repeatCount, doClickTrack);
 
 					thisTune = PreProcessPlayABC(thisTune);
 
 					var title = getTuneTitle(thisTune);
 
 					gTheBatchMP3ExportStatusText.innerText = "Exporting .MP3 for tune "+ (currentTune+1) + " of "+totalTunesToExport+": "+title;
-
 
 					PlayABCDialog(thisTune,callback,currentTune);
 
@@ -10771,9 +11182,11 @@ function DoBatchMP3Export(repeatCount){
 	gTheBatchMP3ExportStatusText.style.textAlign = "center";
 
 	var thisTune = getTuneByIndex(currentTune);
-	
-	thisTune = AddDuplicatesForMp3(thisTune, repeatCount);
 
+	var rhythmType = getTuneRhythmType(thisTune);
+
+	thisTune = AddDuplicatesForMp3(thisTune, rhythmType, repeatCount, doClickTrack);
+	
 	thisTune = PreProcessPlayABC(thisTune);
 
 	var title = getTuneTitle(thisTune);
@@ -10781,7 +11194,6 @@ function DoBatchMP3Export(repeatCount){
 	gTheBatchMP3ExportStatusText.innerText = "Exporting .MP3 for tune "+ (currentTune+1) + " of "+totalTunesToExport+": "+title;
 
 	// Kick off the conversion cascade
-
 	PlayABCDialog(thisTune,callback,currentTune);
 
 	return true;
@@ -11732,7 +12144,7 @@ function PreProcessPlayABC(theTune){
 
 		if (!((chordProgramRequested) && (chordProgramRequested.length > 0))){
 
-			theTune = InjectOneTuneMIDIProgram(theTune, gTheChordProgram, true);
+			theTune = InjectOneTuneMIDIProgramAboveTune(theTune, gTheChordProgram, true);
 
 		}
 
@@ -11742,7 +12154,7 @@ function PreProcessPlayABC(theTune){
 
 		if (!((melodyProgramRequested) && (melodyProgramRequested.length > 0))){
 
-			theTune = InjectOneTuneMIDIProgram(theTune, gTheMelodyProgram, false);
+			theTune = InjectOneTuneMIDIProgramAboveTune(theTune, gTheMelodyProgram, false);
 
 		}
 	}
@@ -11758,7 +12170,7 @@ function PreProcessPlayABC(theTune){
 
 		if (!((bassVolumeRequested) && (bassVolumeRequested.length > 0))){
 
-			theTune = InjectOneTuneMIDIVolume(theTune, gTheBassVolume, false);
+			theTune = InjectOneTuneMIDIVolumeAboveTune(theTune, gTheBassVolume, false);
 
 		}
 
@@ -11768,7 +12180,7 @@ function PreProcessPlayABC(theTune){
 
 		if (!((chordVolumeRequested) && (chordVolumeRequested.length > 0))){
 
-			theTune = InjectOneTuneMIDIVolume(theTune, gTheChordVolume, true);
+			theTune = InjectOneTuneMIDIVolumeAboveTune(theTune, gTheChordVolume, true);
 
 		}
 
@@ -11787,13 +12199,12 @@ var gAlwaysInjectPrograms = true;
 var gTheMelodyProgram = 0;
 var gTheChordProgram = 0;
 var gAlwaysInjectVolumes = true;
-var gTheBassVolume = 32;
-var gTheChordVolume = 32;
+var gTheBassVolume = 48;
+var gTheChordVolume = 48;
 var gOverridePlayMIDIParams = false;
 var gInjectTab_StripChords = true;
 
 // Box and concertina tab global state
-var gInjectTab_InjectVolumeDirectives = true;
 var gInjectTab_FontFamily = "Palatino";
 var gInjectTab_TabFontSize = 11;
 var gInjectTab_StaffSep = 80;
@@ -11853,7 +12264,7 @@ function GetInitialConfigurationSettings(){
 		gTheBassVolume = val;
 	}
 	else{
-		gTheBassVolume = 32;
+		gTheBassVolume = 48;
 	}
 
 	val = localStorage.TheChordVolume;
@@ -11861,7 +12272,7 @@ function GetInitialConfigurationSettings(){
 		gTheChordVolume = val;
 	}
 	else{
-		gTheChordVolume = 32;
+		gTheChordVolume = 48;
 	}
 
 	val = localStorage.OverridePlayMIDIParams;
@@ -11880,14 +12291,6 @@ function GetInitialConfigurationSettings(){
 	}
 	else{
 		gInjectTab_FontFamily = "Palatino";
-	}
-
-	val = localStorage.InjectTab_InjectVolumeDirectives;
-	if (val){
-		gInjectTab_InjectVolumeDirectives = (val == "true");
-	}
-	else{
-		gInjectTab_InjectVolumeDirectives = true;
 	}
 
 	val = localStorage.InjectTab_TabFontSize;
@@ -12088,7 +12491,6 @@ function SaveConfigurationSettings(){
 		localStorage.InjectTab_StripChords = gInjectTab_StripChords;
 
 		// Box and Concertina tab injection parameters
-		localStorage.InjectTab_InjectVolumeDirectives = gInjectTab_InjectVolumeDirectives;
 		localStorage.InjectTab_FontFamily = gInjectTab_FontFamily;
 		localStorage.InjectTab_TabFontSize = gInjectTab_TabFontSize;
 		localStorage.InjectTab_StaffSep = gInjectTab_StaffSep;
@@ -12533,7 +12935,6 @@ function ConfigureTablatureSettings(){
 
 	// Setup initial values
 	const theData = {
-	  configure_inject_directives: gInjectTab_InjectVolumeDirectives,
 	  configure_font_family: gInjectTab_FontFamily,
 	  configure_tab_font_size: gInjectTab_TabFontSize,
 	  configure_staffsep: gInjectTab_StaffSep,
@@ -12549,7 +12950,6 @@ function ConfigureTablatureSettings(){
 
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Tablature Injection Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#injecting_box_or_anglo_concertina_tablature" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
-	  {name: "    Inject %%MIDI directives to mute bass/chords", id: "configure_inject_directives", type:"checkbox", cssClass:"configure_box_settings_form_text"},
 	  {html: '<p style="margin-top:18px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>Tablature Font Settings:</strong></p>'},	  
 	  {name: "Font family (Recommended: Palatino):", id: "configure_font_family", type:"text", cssClass:"configure_box_settings_form_text_wide"},
 	  {name: "Tablature font size (Recommended: 10):", id: "configure_tab_font_size", type:"text", cssClass:"configure_box_settings_form_text"},
@@ -12576,7 +12976,6 @@ function ConfigureTablatureSettings(){
 
 			//debugger;
 
-			gInjectTab_InjectVolumeDirectives = args.result.configure_inject_directives;
 			gInjectTab_FontFamily = args.result.configure_font_family;
 			gInjectTab_TabFontSize = args.result.configure_tab_font_size;
 			gInjectTab_StaffSep = args.result.configure_staffsep;
@@ -12858,6 +13257,9 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<input id="injectmelody" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMIDIInstrument(false);" type="button" value="Inject MIDI Melody" title="Injects %%MIDI program melody annotation into all tunes in the ABC">';	
 	modal_msg  += '<input id="injectchords" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMIDIInstrument(true);" type="button" value="Inject MIDI Bass/Chord" title="Injects %%MIDI chordprog bass/chord annotation into all tunes in the ABC">';
 	modal_msg  += '<input id="injectstaffwidth" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectStaffWidth(false)" type="button" value="Inject %%staffwidth" title="Injects a %%staffwidth annotation at the top of every tune">';
+	modal_msg  += '</p>';
+	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
+	modal_msg  += '<input id="injectclicktrackall" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectRepeatsAndClickTrackAll()" type="button" value="Inject Repeats and Two-Bar Click Intros" title="Injects repeated copies of tunes and optional style-adaptive two-bar click intros into every tune">';	
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">'
 	modal_msg  += '<input id="injectnotenames" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectABCNoteNameLyrics()" type="button" value="Inject Note Name Lyrics" title="Injects note names as lyrics in the ABC">';
