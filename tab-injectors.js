@@ -1187,50 +1187,6 @@ var angloFingeringsGenerator = function (theABC){
     }
 
     //
-    // Inject font directive number directive 
-    //
-    function angloInjectOneDirective(theTune, theDirective) {
-
-        var theABC = escape(theTune);
-
-        var theLines = theABC.split("%0A");
-
-        var theOutput = "";
-
-        var thisLine = "";
-
-        for (i = 0; i < theLines.length; ++i) {
-
-            thisLine = unescape(theLines[i]);
-
-            var theChars = thisLine.split("");
-
-            // It's a normal ABC : directive, copy it as is
-            if (((theChars[0] != "|") && (theChars[0] != "[")) && (theChars[1] == ":")) {
-
-                theOutput += thisLine + "\n";
-
-                // Inject the font directive to save people time
-                if (theChars[0] == "X") {
-
-                    theOutput += theDirective + "\n";
-                }
-
-            } else {
-                theOutput += thisLine;
-
-                if (i != (theLines.length - 1)) {
-                    theOutput += "\n";
-                }
-
-            }
-        }
-
-        return theOutput;
-
-    }
-
-    //
     // Return the tune ABC at a specific index
     //
     //
@@ -1287,8 +1243,6 @@ var angloFingeringsGenerator = function (theABC){
         var theTunes = theABC.split(/^X:.*$/gm);
         var nTunes = theTunes.length - 1;
 
-        var injectVolumes = gInjectTab_InjectVolumeDirectives;
-
         var fontFamily = gInjectTab_FontFamily;
         var tabFontSize = gInjectTab_TabFontSize;
         var musicSpace = gInjectTab_MusicSpace;
@@ -1318,9 +1272,6 @@ var angloFingeringsGenerator = function (theABC){
             thisTune = generateAngloFingerings(thisTune);
 
             // Default directives to inject into every tune
-            //%%MIDI chordprog 133
-            //%%MIDI chordvol 32
-            //%%MIDI bassvol 32
             //%%titlefont Palatino 22
             //%%subtitlefont Palantino 18
             //%%infofont Palatino 14
@@ -1335,15 +1286,9 @@ var angloFingeringsGenerator = function (theABC){
             // Reels: Palatino 9
             // Jigs: Palatino 11
 
-            thisTune = angloInjectOneDirective(thisTune, "%%musicspace " + musicSpace);
-            thisTune = angloInjectOneDirective(thisTune, "%%staffsep " + staffSep);
-            thisTune = angloInjectOneDirective(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
-
-            // Safety measure if you want to mute any bass/chords on playback
-            if (injectVolumes) {
-                thisTune = angloInjectOneDirective(thisTune, "%%MIDI bassvol 0");
-                thisTune = angloInjectOneDirective(thisTune, "%%MIDI chordvol 0");
-            }
+            thisTune = InjectStringBelowTuneHeader(thisTune, "%%staffsep " + staffSep);
+            thisTune = InjectStringAboveTuneHeader(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
+            thisTune = InjectStringAboveTuneHeader(thisTune, "%%musicspace " + musicSpace);
 
             result += thisTune;
 
@@ -2041,50 +1986,6 @@ var boxTabGenerator = function (theABC){
     }
 
     //
-    // Inject font directive number directive 
-    //
-    function InjectOneDirective(theTune, theDirective) {
-
-        var theABC = escape(theTune);
-
-        var theLines = theABC.split("%0A");
-
-        var theOutput = "";
-
-        var thisLine = "";
-
-        for (i = 0; i < theLines.length; ++i) {
-
-            thisLine = unescape(theLines[i]);
-
-            var theChars = thisLine.split("");
-
-            // It's a normal ABC : directive, copy it as is
-            if (((theChars[0] != "|") && (theChars[0] != "[")) && (theChars[1] == ":")) {
-
-                theOutput += thisLine + "\n";
-
-                // Inject the font directive to save people time
-                if (theChars[0] == "X") {
-
-                    theOutput += theDirective + "\n";
-                }
-
-            } else {
-                theOutput += thisLine;
-
-                if (i != (theLines.length - 1)) {
-                    theOutput += "\n";
-                }
-
-            }
-        }
-
-        return theOutput;
-
-    }
-
-    //
     // Return the tune ABC at a specific index
     //
     //
@@ -2141,8 +2042,6 @@ var boxTabGenerator = function (theABC){
         var theTunes = theABC.split(/^X:.*$/gm);
         var nTunes = theTunes.length - 1;
 
-        var injectVolumes = gInjectTab_InjectVolumeDirectives;
-
         var fontFamily = gInjectTab_FontFamily;
         var tabFontSize = gInjectTab_TabFontSize;
         var musicSpace = gInjectTab_MusicSpace;
@@ -2172,9 +2071,6 @@ var boxTabGenerator = function (theABC){
             thisTune = generate_tab(thisTune);
 
             // Default directives to inject into every tune
-            //%%MIDI chordprog 133
-            //%%MIDI chordvol 32
-            //%%MIDI bassvol 32
             //%%titlefont Palatino 22
             //%%subtitlefont Palantino 18
             //%%infofont Palatino 14
@@ -2189,15 +2085,9 @@ var boxTabGenerator = function (theABC){
             // Reels: Palatino 9
             // Jigs: Palatino 11
 
-            thisTune = InjectOneDirective(thisTune, "%%musicspace " + musicSpace);
-            thisTune = InjectOneDirective(thisTune, "%%staffsep " + staffSep);
-            thisTune = InjectOneDirective(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
- 
-            // Safety measure if you want to mute any bass/chords on playback
-            if (injectVolumes) {
-                thisTune = InjectOneDirective(thisTune, "%%MIDI bassvol 0");
-                thisTune = InjectOneDirective(thisTune, "%%MIDI chordvol 0");
-            }
+            thisTune = InjectStringBelowTuneHeader(thisTune, "%%staffsep " + staffSep);
+            thisTune = InjectStringAboveTuneHeader(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
+            thisTune = InjectStringAboveTuneHeader(thisTune, "%%musicspace " + musicSpace);
 
             result += thisTune;
 
@@ -2900,50 +2790,6 @@ var bambooFluteTabGenerator = function (theABC){
     }
 
     //
-    // Inject font directive number directive 
-    //
-    function InjectOneDirective(theTune, theDirective) {
-
-        var theABC = escape(theTune);
-
-        var theLines = theABC.split("%0A");
-
-        var theOutput = "";
-
-        var thisLine = "";
-
-        for (i = 0; i < theLines.length; ++i) {
-
-            thisLine = unescape(theLines[i]);
-
-            var theChars = thisLine.split("");
-
-            // It's a normal ABC : directive, copy it as is
-            if (((theChars[0] != "|") && (theChars[0] != "[")) && (theChars[1] == ":")) {
-
-                theOutput += thisLine + "\n";
-
-                // Inject the font directive to save people time
-                if (theChars[0] == "X") {
-
-                    theOutput += theDirective + "\n";
-                }
-
-            } else {
-                theOutput += thisLine;
-
-                if (i != (theLines.length - 1)) {
-                    theOutput += "\n";
-                }
-
-            }
-        }
-
-        return theOutput;
-
-    }
-
-    //
     // Return the tune ABC at a specific index
     //
     //
@@ -2996,8 +2842,6 @@ var bambooFluteTabGenerator = function (theABC){
         var theTunes = theABC.split(/^X:.*$/gm);
         var nTunes = theTunes.length - 1;
 
-        var injectVolumes = gInjectTab_InjectVolumeDirectives;
-
         var fontFamily = gInjectTab_FontFamily;
         var tabFontSize = gInjectTab_TabFontSize;
         var musicSpace = gInjectTab_MusicSpace;
@@ -3021,9 +2865,6 @@ var bambooFluteTabGenerator = function (theABC){
             thisTune = generate_tab(thisTune);
 
             // Default directives to inject into every tune
-            //%%MIDI chordprog 133
-            //%%MIDI chordvol 32
-            //%%MIDI bassvol 32
             //%%titlefont Palatino 22
             //%%subtitlefont Palantino 18
             //%%infofont Palatino 14
@@ -3038,40 +2879,36 @@ var bambooFluteTabGenerator = function (theABC){
             // Reels: Palatino 9
             // Jigs: Palatino 11
 
-            thisTune = InjectOneDirective(thisTune, "%%musicspace " + musicSpace);
-            thisTune = InjectOneDirective(thisTune, "%%staffsep " + staffSep);
-            thisTune = InjectOneDirective(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
- 
+            thisTune = InjectStringBelowTuneHeader(thisTune, "%%staffsep " + staffSep);
+  
             // Inject the root key indication
             switch (parseInt(gBambooFluteKey)){
 
                 case 0: // C
-                    thisTune = InjectOneDirective(thisTune, "%%text ");
-                    thisTune = InjectOneDirective(thisTune, "%%text 1=C");
+                    thisTune = InjectStringBelowTuneHeader(thisTune, "%%text ");
+                    thisTune = InjectStringBelowTuneHeader(thisTune, "%%text 1=C");
                 break;
 
                 case 1: // D
-                    thisTune = InjectOneDirective(thisTune, "%%text ");
-                    thisTune = InjectOneDirective(thisTune, "%%text 1=D");
+                    thisTune = InjectStringBelowTuneHeader(thisTune, "%%text ");
+                    thisTune = InjectStringBelowTuneHeader(thisTune, "%%text 1=D");
                 break;
                 
                 case 2: // G
-                    thisTune = InjectOneDirective(thisTune, "%%text ");
-                    thisTune = InjectOneDirective(thisTune, "%%text 1=G");
+                    thisTune = InjectStringBelowTuneHeader(thisTune, "%%text ");
+                    thisTune = InjectStringBelowTuneHeader(thisTune, "%%text 1=G");
                 break;
 
                 case 3: // A
-                    thisTune = InjectOneDirective(thisTune, "%%text ");
-                    thisTune = InjectOneDirective(thisTune, "%%text 1=A");
+                    thisTune = InjectStringBelowTuneHeader(thisTune, "%%text ");
+                    thisTune = InjectStringBelowTuneHeader(thisTune, "%%text 1=A");
                 break;
 
             }
 
-            // Safety measure if you want to mute any bass/chords on playback
-            if (injectVolumes) {
-                thisTune = InjectOneDirective(thisTune, "%%MIDI bassvol 0");
-                thisTune = InjectOneDirective(thisTune, "%%MIDI chordvol 0");
-            }
+            thisTune = InjectStringAboveTuneHeader(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
+
+            thisTune = InjectStringAboveTuneHeader(thisTune, "%%musicspace " + musicSpace);
 
             result += thisTune;
 
