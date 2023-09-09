@@ -6943,7 +6943,7 @@ function AddABC(){
 	modal_msg  += '<input id="addnewjig" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleJig();" type="button" value="Add an Example Jig" title="Adds an example jig (The Kesh) to the end of the ABC">';
 	modal_msg += '</p>';	
 	modal_msg += '<p style="text-align:center;margin-top:32px;">';
-	modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendJSBach();" type="button" value="Add J.S. Bach Two-Part Invention #1" title="Adds the J.S. Bach 2-Part Invention #1 to the top of the ABC">';
+	modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendJSBach();" type="button" value="Add J.S. Bach Two-Part Invention #1" title="Adds the J.S. Bach 2-Part Invention #1 to the end of the ABC">';
 	modal_msg += '</p>';
 	modal_msg += '<p style="text-align:center;margin-top:32px;">';
 	modal_msg  += '<input id="addnewsong" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleSong();" type="button" value="Add an Example Song" title="Adds an example song to the end of the ABC">';
@@ -6953,7 +6953,7 @@ function AddABC(){
 	modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendBoxFingeringTemplate();" type="button" value="Add Box Fingering Symbols Template" title="Adds a template with symbols for annotating box fingerings and tablature to the top of the ABC">';
 	modal_msg += '</p>';
 	modal_msg += '<p style="text-align:center;margin-top:32px;">';
-	modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddClickTrackTemplate();" type="button" value="Add Two-Bar Click Intro Templates" title="Adds two-bar click intro templates for common styles of tunes to the top of the ABC">';
+	modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddClickTrackTemplate();" type="button" value="Add Two-Bar Click Intro Templates" title="Adds two-bar click intro templates for common styles of tunes to the end of the ABC">';
 	modal_msg += '</p>';
 	modal_msg += '<p style="text-align:center;margin-top:32px;">';
 	modal_msg  += '<input id="addtunebookheaders" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders(false);" type="button" value="Add PDF Tunebook Annotations" title="Adds common useful PDF tunebook annotations to the top of the ABC">';
@@ -7312,79 +7312,95 @@ function AppendBoxFingeringTemplate(){
 //
 function AddClickTrackTemplate(){
 
-	var theNotes = gTheABC.value;
-
 	var output = "";
-	output += '% \n';
-	output += '% Two-bar click intro templates for common tune styles\n';
-	output += '% \n';
-	output += '% Copy and paste these into the start of your tunes before any repeats\n';
-	output += '% \n';
-	output += '% Delete the rest when you are done\n';
+
+	var nTunes = CountTunes();
+
+	if (nTunes > 0){
+		output += "\n";
+	}
+
+	output += 'X: 1\n';
+	output += 'T: Two-Bar Click Intro Templates\n';
+	output += 'Q: 1/8\n';
 	output += '%\n';
-	output += '\n';
-	output += '% Reel two-bar click intro\n';
+	output += '%%text Copy and paste these templates at the start of the notes for any tune.\n';
+	output += '%%text Make sure that any tune first-part repeats, including first-endings, have a starting |:\n';
+	output += '%%text For a higher pitched click, change the ^C values in the patterns to =C\n';
+	output += '%%text\n';
+	output += '%\n';
+	output += '%%text Reel two-bar click intro:\n';
+	output += '%%text\n';
+	output += 'M: 4/4\n';
+	output += '%\n';
 	output += 'V:1\n';
 	output += 'V:2\n';
 	output += '%%MIDI program 128\n';
 	output += '^Cz3 ^Cz3|^Cz3 ^Cz3|\n';
 	output += 'V:1\n';
 	output += 'z8|z8|\n';
-	output += '\n';
-	output += '% Jig two-bar click intro\n';
+	output += '%\n';
+	output += '%%text\n';
+	output += '%%text Jig two-bar click intro:\n';
+	output += 'M: 6/8\n';
+	output += '%\n';
 	output += 'V:1\n';
 	output += 'V:2\n';
 	output += '%%MIDI program 128\n';
 	output += '^Cz2 ^Cz2|^Cz2 ^Cz2|\n';
 	output += 'V:1\n';
 	output += 'z6|z6|\n';
-	output += '\n';
-	output += '% Slide two-bar click intro\n';
+	output += '%\n';
+	output += '%%text\n';
+	output += '%%text Slide two-bar click intro:\n';
+	output += 'M: 12/8\n';
+	output += '%\n';
 	output += 'V:1\n';
 	output += 'V:2\n';
 	output += '%%MIDI program 128\n';
 	output += '^Cz2 ^Cz2 ^Cz2 ^Cz2|\n';
 	output += 'V:1\n';
 	output += 'z12|\n';
-	output += '\n';
-	output += '% Slip Jig two-bar click intro\n';
+	output += '%\n';
+	output += '%%text\n';
+	output += '%%text Slip Jig two-bar click intro:\n';
+	output += 'M: 9/8\n';
+	output += '%\n';
 	output += 'V:1\n';
 	output += 'V:2\n';
 	output += '%%MIDI program 128\n';
 	output += '^Cz2 ^Cz2 ^Cz2|^Cz2 ^Cz2 ^Cz2|\n';
 	output += 'V:1\n';
 	output += 'z9|z9|\n';
-	output += '\n';
-	output += '% Polka two-bar click intro\n';
+	output += '%\n';
+	output += '%%text\n';
+	output += '%%text Polka two-bar click intro:\n';
+	output += 'M: 2/4\n';
+	output += '%\n';
 	output += 'V:1\n';
 	output += 'V:2\n';
 	output += '%%MIDI program 128\n';
 	output += '^Cz ^Cz|^Cz ^Cz|\n';
 	output += 'V:1\n';
 	output += 'z4|z4|\n';
-	output += '\n';
-	output += '% Waltz two-bar click intro\n';
+	output += '%\n';
+	output += '%%text\n';
+	output += '%%text Waltz two-bar click intro:\n';
+	output += 'M: 3/4\n';
+	output += '%\n';
 	output += 'V:1\n';
 	output += 'V:2\n';
 	output += '%%MIDI program 128\n';
 	output += '^Cz ^Cz ^Cz|^Cz ^Cz ^Cz|\n';
 	output += 'V:1\n';
 	output += 'z6|z6|\n';
-	output += '\n';
+	output += "\n";
 
-	output += theNotes;
-
-	// Stuff in the headers
-	gTheABC.value = output;
-
-	// Set the select point
-	gTheABC.selectionStart = 0;
-    gTheABC.selectionEnd = 0;
-
-    // And set the focus
-    gTheABC.focus();	
+	// Do common tune addition processing
+	ProcessAddTune(output);
 
 }
+
 //
 // Add the J.S. Bach 2-Part Invention #1
 //
