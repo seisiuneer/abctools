@@ -221,6 +221,7 @@
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#selecting_the_instruments_for_playback">Selecting the Instruments for Playback</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#general_midi_instrument_program_numbers">General MIDI Instrument Program Numbers</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#general_midi_percussion_map">General MIDI Drum Sound ABC Note Map</a></p>
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">PDF Tunebook Generation</button>
@@ -709,12 +710,18 @@
             <p>Any General MIDI instrument program number can be selected for the melody and chord sounds.</p>
             <p></p>
             <hr class="hidden-print" id="general_midi_instrument_program_numbers">
-            <h1 class="page_break_always">General MIDI Instrument Program Numbers<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <h1 class="page_break_always">General MIDI Instrument Program Numbers <span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder">
                 <img style="width:700px;" src="img/gm_extended_5.jpg"/>
             </div>
             <p>Use program #136 (Silence) to mute MIDI voices.</p>
             <p>This can be used, for example, to create "Music Minus One" recordings consisting only of backing bass and chord tracks.</p>
+            <hr class="hidden-print" id="general_midi_percussion_map">
+            <h1 class="page_break_always">General MIDI Drum Sound ABC Note Map<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <div class="image_holder">
+                <img style="width:700px;" src="img/gm_extended_6.jpg"/>
+            </div>
+            <p>Use program #128 (Percussion) on it's own voice for MIDI click tracks.</p>
             <hr class="hidden-print" id="pdf_tunebook_settings">
             <h1 class="page_break_always">PDF Tunebook Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/jtiVzXB8xhQ" title="PDF Generation Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
@@ -1528,10 +1535,12 @@
                 ^Cz ^Cz ^Cz|^Cz ^Cz ^Cz|<br/>
                 V:1<br/>
             z6|z6|</p>
-            <p>If you want a higher pitched click, for example for the first beat of the measures, change the:</p>
-            <p class="code">^C</p>
+            <p>A chart showing the complete mapping of MIDI drum sounds to ABC notes is here:</p>
+            <p style="text-align: center;"><a href="#general_midi_percussion_map">General MIDI Drum Sound ABC Note Map</a></p>
+             <p>For example, if you want a higher pitched click, for example for the first beat of the measures, change the:</p>
+            <p class="code">% Low Bongo<br/>^C</p>
             <p>values in the click intro patterns to:</p>
-            <p class="code">=C</p>
+            <p class="code">% High Bongo<br/>=C</p>
             <p style="text-align: center;">Demos:</p>
             <p style="text-align: center;"><a href="https://tinyurl.com/3u3v27sv" target="_blank">Reel with Two-Bar Click Intro</a></p>
             <p style="text-align: center;"><a href="https://tinyurl.com/5b5brfdp" target="_blank">Jig with Two-Bar Click Intro</a></p>
