@@ -5784,9 +5784,9 @@ function UpdateLocalStorage(){
 }
 
 //
-// Recalc URL on PDF settings change
+// Save PDF settings change
 //
-function RecalcShareURLPDF(){
+function SavePDFSettings(){
 
 	// If available, save all the app settings to local storage
 	UpdateLocalStorage();
@@ -13239,6 +13239,106 @@ function SharingControlsDialog(){
 	});
 
 }
+
+//
+// PDF Export dialog
+//
+
+function IdlePDFExportDialog(){
+
+	var pdfformat = document.getElementById("pdfformat").value;
+	document.getElementById("pdfformat_dialog").value = pdfformat
+
+	var pagenumbers = document.getElementById("pagenumbers").value;
+	document.getElementById("pagenumbers_dialog").value = pagenumbers;
+
+	var firstpage = document.getElementById("firstpage").value;
+	document.getElementById("firstpage_dialog").value = firstpage;
+
+}
+
+function SyncPDFExportDialog(){
+
+	// Syncs up the hidden old-style controls with the dialog controls
+
+	var pdfformat = document.getElementById("pdfformat_dialog").value;
+	document.getElementById("pdfformat").value = pdfformat
+
+	var pagenumbers = document.getElementById("pagenumbers_dialog").value;
+	document.getElementById("pagenumbers").value = pagenumbers;
+
+	var firstpage = document.getElementById("firstpage_dialog").value;
+	document.getElementById("firstpage").value = firstpage;
+
+	SavePDFSettings();
+
+}
+
+function PDFExportDialog(){
+
+	var theData = {};
+
+	// Moving the PDF export controls to their own dialog
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">Export PDF Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#pdf_tunebook_settings" target="_blank" style="text-decoration:none;">💡</a></span></p>';
+	modal_msg += '<div id="pdf-export-dialog">';
+	modal_msg += '<div id="pdf-settings_dialog" class="toggle-buttons">';
+	modal_msg += '<tspan id="pdfformatlabel_dialog">PDF Tunes/Page:</tspan>';
+	modal_msg += '<select id="pdfformat_dialog" name="pdfformat" onchange="SyncPDFExportDialog()" title="Sets the PDF tunebook page output format">';
+	modal_msg += '<option value = "one" title="One tune-per-page.&nbsp;&nbsp;Paper size is Letter">&nbsp;One&nbsp;-&nbsp;Letter</option>';
+	modal_msg += '<option value = "multi" title="Multiple tunes-per-page.&nbsp;&nbsp;Paper size is Letter">&nbsp;Multiple&nbsp;-&nbsp;Letter</option>';
+	modal_msg += '<option value = "incipits" title="Tune notation incipits.&nbsp;&nbsp;Paper size is Letter">&nbsp;Notes Incipits&nbsp;-&nbsp;Letter</option>';
+	modal_msg += '<option value = "incipits_abc" title="ABC text incipits.&nbsp;&nbsp;Paper size is Letter">&nbsp;ABC Incipits&nbsp;-&nbsp;Letter</option>';
+	modal_msg += '<option value = "incipits_abc_sort" title="ABC text incipits, sorted by title.&nbsp;&nbsp;Paper size is Letter">&nbsp;ABC Incipits Sorted&nbsp;-&nbsp;Letter</option>';
+	modal_msg += '<option value = "one_a4" title="One tune-per-page.&nbsp;&nbsp;Paper size is A4">&nbsp;One&nbsp;-&nbsp;A4</option>';
+	modal_msg += '<option value = "multi_a4" title="Multiple tunes-per-page.&nbsp;&nbsp;Paper size is A4">&nbsp;Multiple&nbsp;-&nbsp;A4</option>';
+	modal_msg += '<option value = "incipits_a4" title="Tune notation incipits.&nbsp;&nbsp;Paper size is A4">&nbsp;Notes Incipits&nbsp;-&nbsp;A4</option>';
+	modal_msg += '<option value = "incipits_a4_abc" title="ABC text incipits.&nbsp;&nbsp;Paper size is A4">&nbsp;ABC Incipits&nbsp;-&nbsp;A4</option>';
+	modal_msg += '<option value = "incipits_a4_abc_sort" title="ABC text incipits sorted by title.&nbsp;&nbsp;Paper size is A4">&nbsp;ABC Incipits Sorted&nbsp;-&nbsp;A4</option>';
+	modal_msg += '</select>';
+	modal_msg += '<tspan id="pagenumberslabel_dialog">Page #:</tspan>';
+	modal_msg += '<select id="pagenumbers_dialog" name="pagenumbers" onchange="SyncPDFExportDialog()" title="Sets the PDF tunebook page number position">';
+	modal_msg += '<option value = "none">&nbsp;None</option>';
+	modal_msg += '<option value = "tl">&nbsp;Top Left</option>';
+	modal_msg += '<option value = "tc">&nbsp;Top Center</option>';
+	modal_msg += '<option value = "tr">&nbsp;Top Right</option>';
+	modal_msg += '<option value = "bl">&nbsp;Bottom Left</option>';
+	modal_msg += '<option value = "bc">&nbsp;Bottom Center</option>';
+	modal_msg += '<option value = "br">&nbsp;Bottom Right</option>';
+	modal_msg += '<option value = "tlr">&nbsp;Top Left/Right</option>';
+	modal_msg += '<option value = "trl">&nbsp;Top Right/Left</option>';
+	modal_msg += '<option value = "blr">&nbsp;Bottom Left/Right</option>';
+	modal_msg += '<option value = "brl">&nbsp;Bottom Right/Left</option>';
+	modal_msg += '</select>';
+	modal_msg += '<tspan id="firstpagelabel_dialog"># on Page 1:</tspan>';
+	modal_msg += '<select id="firstpage_dialog" name="firstpage" onchange="SyncPDFExportDialog()" title="Sets whether page numbers should appear on the first page of the PDF tunebook">';
+	modal_msg += '<option value = "yes">&nbsp;Yes</option>';
+	modal_msg += '<option value = "no">&nbsp;No</option>';
+	modal_msg += '</select>';
+	modal_msg += '</div>';
+	modal_msg += '</div>';
+
+	var form = [{html:modal_msg}];
+
+	setTimeout(function(){
+
+		// Do an initial idle on the controls
+		IdlePDFExportDialog();
+
+	}, 200);
+
+
+	DayPilot.Modal.form(form,theData,{ theme: "modal_flat", top: 170, width: 800,  scrollWithPage: false }).then(function(args){
+		
+		if (!args.canceled){
+
+			ExportPDF();
+
+		}
+					
+	});
+
+}
+
 
 //
 // Advanced controls dialog
