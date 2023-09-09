@@ -7415,12 +7415,12 @@ function AppendJSBach(){
 		theValue += "\n";
 	}
 
+	theValue += 'X:1\n';
 	theValue += "%\n";
 	theValue += "% Example J.S. Bach transcription originally imported from MusicXML\n";
 	theValue += "%\n";	
 	theValue += '% Click "Player" to play\n';
 	theValue += "%\n";
-	theValue += 'X:1\n';
 	theValue += 'T:Two-Part Invention #1\n';
 	theValue += 'C:J.S. Bach\n';
 	theValue += 'L:1/16\n';
