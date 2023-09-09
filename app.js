@@ -10857,23 +10857,23 @@ function AddDuplicatesForMp3(theTune, rhythmType, count, doClickTrack){
 	}
 
 	var startLine = 0;
-	var bFoundMIDI = (theLines[0].indexOf("%%MIDI") != -1);
+	var bFoundMIDI = (theLines[0].indexOf("%") != -1);
 
-	// Are there any %%MIDI directives at the top of the ABC, if yes skip them
+	// Are there any % directives at the top of the ABC, if yes skip them
 	if (bFoundMIDI){
 		
-		// Strip the %%MIDI directive from the notes
+		// Strip the % directive from the notes
 		theNotes = theNotes.replace(theLines[startLine]+"\n","");
 
 		startLine = 1;
 
 		for (var i=1;i<lineCount;++i){
 			
-			if (theLines[i].indexOf("%%MIDI") == -1){
+			if (theLines[i].indexOf("%") == -1){
 				break;
 			}
 
-			// Strip the %%MIDI directive from the notes
+			// Strip the % directive from the notes
 			theNotes = theNotes.replace(theLines[startLine]+"\n","");
 
 			startLine++;
