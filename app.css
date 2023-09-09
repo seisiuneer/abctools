@@ -232,7 +232,7 @@ margin-top:18px;
 }
 
 #pdf-settings{
-margin-top:22px;	
+display:none;
 }
 
 #pdf-controls{
@@ -292,7 +292,7 @@ font-size:12pt !important;
 margin-left: 36px !important;
 }
 
-#transpose-controls, #tabs-selection, #pdf-settings{
+#transpose-controls, #tabs-selection{
 display:flex;
 }
 
@@ -327,7 +327,17 @@ margin-right:4px;
 user-select: none;
 }
 
-#pdfformat{
+#pdfformatlabel_dialog{
+font-size:11pt;
+font-family:"Helvetica";
+padding-top: 8px;
+margin-left:0px;
+margin-right:0px;
+user-select: none;
+}
+
+
+#pdfformat,#pdfformat_dialog{
 font-size:11pt;
 font-family:"Helvetica";
 height:32px;
@@ -344,7 +354,17 @@ margin-right:8px;
 user-select: none;
 }
 
-#pagenumbers{
+#pagenumberslabel_dialog{
+font-size:11pt;
+font-family:"Helvetica";
+padding-top:8px;
+margin-left:11px;
+margin-right:0px;
+user-select: none;
+}
+
+
+#pagenumbers,#pagenumbers_dialog{
 font-size:11pt;
 font-family:"Helvetica";
 height:32px;
@@ -362,12 +382,25 @@ margin-right:8px;
 user-select: none;
 }
 
-#firstpage{
+#firstpagelabel_dialog{
+font-size:11pt;
+font-family:"Helvetica";
+padding-top:8px;
+margin-left:11px;
+margin-right:0px;
+user-select: none;
+}
+
+#firstpage, #firstpage_dialog{
 font-size:11pt;
 font-family:"Helvetica";
 height:32px;
 width:64px;
 margin-left:4px;
+}
+
+#pdf-export-dialog{
+margin-top:36px;
 }
 
 #displayformatlabel{
