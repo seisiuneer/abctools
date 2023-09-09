@@ -6963,7 +6963,7 @@ function AddABC(){
 
 	modal_msg += '</div>';
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 600,  scrollWithPage: false }).then(function(){
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 140, width: 600,  scrollWithPage: false }).then(function(){
 			
 	});
 
@@ -8285,7 +8285,7 @@ function InjectRepeatsAndClickTrackAll(){
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">If there is a repeat at the end of the first part of a tune, either standalone or in a first ending, there must be a matching |: bar at the start of the tune for the tune repeats to work properly.</p>'},	  
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 760, scrollWithPage: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 760, scrollWithPage: false } ).then(function(args){
 		
 		if (!args.canceled){
 		
