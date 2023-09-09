@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-                
+        
         <style>
         p {
         font-size:14pt;
@@ -181,6 +181,7 @@
     <body style="padding:10px">
         
         <div id="maindiv">
+            
             <div style="text-align: center;">
                 <font id="pagetitle" face="Comic Sans MS" size="5">ABC Transcription Tools User Guide</font><br/>
                 <p class="hidden-print">This free, open-source ABC converter/player tool was developed by <a href="http://michaeleskin.com" target="_blank">Michael Eskin</a></p>
@@ -226,7 +227,7 @@
                 
                 <button class="accordion" title="Click to expand/collapse this section">PDF Tunebook Generation</button>
                 <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#pdf_tunebook_settings">PDF Tunebook Settings</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#pdf_tunebook_settings">Export PDF Settings</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#pdf_quality_setting">PDF Quality Setting</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#pdf_tunebook_spacing_overrides">PDF Tunebook Tune Size and Layout Spacing Overrides</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#adding_a_pdf_title_page">Adding a PDF Tunebook Title Page</a></p>
@@ -304,11 +305,11 @@
             <hr class="hidden-print" id="introduction">
             <h1 class="page_break_never">Introduction<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder">
-                <img style="width:700px;" src="img/main_9.jpg"/>
+                <img style="width:700px;" src="img/main_10.jpg"/>
             </div>
             <p>ABC Transcription Tools is a free, web-based, open-source tool for converting music in ABC format to both standard notation and tablature for a wide variety of instruments.</p>
             <p>Play your tunes with high-quality, built-in sampled instruments.</p>
-            <p>Create PDF tunebooks with title pages, table of contents, tune index, custom headers, footers, hyperlinks, tune incipits (notation or raw ABC), and sharing QR codes using the tool's built-in PDF Export feature.</p>
+            <p>Create PDF tunebooks with title pages, table of contents, tune index, custom headers, footers, hyperlinks, tune incipits (notation or raw ABC), and sharing QR codes using the tool's built-in Export PDF feature.</p>
             <p>It also has easy-to-use features to transpose and sort your ABC tunebooks.</p>
             <p>You can fully customize the look of your notation using the standard ABC spacing and font annotations.</p>
             <p>The tool also includes the ability to easily share your tunes with others via Share URLs and QR Codes.</p>
@@ -345,7 +346,7 @@
             <p>Adds a detailed self-documenting example of ABC for a song with lyrics to the end of the ABC editor text.</p>
             <p><strong>Add a Song Template:</strong></p>
             <p>Adds an minimal self-documenting ABC template for a song with lyrics to the end of the ABC editor text.</p>
-             <p><strong>Add Box Fingering Symbols Template:</strong></p>
+            <p><strong>Add Box Fingering Symbols Template:</strong></p>
             <p>Add a template with symbols for annotating box fingerings and tablature to the start of the ABC editor text.</p>
             <p><strong>Add Two-Bar Click Intro Templates:</strong></p>
             <p>Add a template with two-bar click intro templates for common tune styles.</p>
@@ -723,15 +724,14 @@
             </div>
             <p>Use program #128 (Percussion) on it's own voice for MIDI click tracks.</p>
             <hr class="hidden-print" id="pdf_tunebook_settings">
-            <h1 class="page_break_always">PDF Tunebook Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/jtiVzXB8xhQ" title="PDF Generation Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p></p>
-            <p>The tool has a powerful built-in PDF tunebook generator that provides more flexibility than the browser's print feature, particularly in the area of adding custom page headers and footers, title page, table of contents, or a tune index.</p>
+            <h1 class="page_break_always">Export PDF Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>The tool has a powerful built-in PDF tunebook generator that provides more flexibility than the browser's print feature, particularly in the area of adding custom page headers and footers, title page, table of contents, tune index, or adding a custom QR code.</p>
             <p>It can format PDF tunebooks with one or multiple tunes per page, something the native browser's Print command cannot accomplish.</p>
-            <p></p>
-            <p>The PDF generator also includes an option to append a Share URL QR code to the end of the PDF document.</p>
-            <p>All of this is done using custom ABC comment-based annotation (described below).</p>
-            <p><strong>PDF Tunes/Page</strong> - Select whether you want One Tune/Page, Multiple Tunes/Page, Tune Note Incipits, or ABC Incipits (unsorted or alphabetically sorted by tune name) in the PDF along with the paper size (Letter or A4):</p>
+            <p>When you click <strong>Export PDF</strong>, the following dialog will appear where you select your PDF formatting preferences:</p>
+            <div class="image_holder_p">
+                <img src="img/export_pdf_settings_1.jpg"/>
+            </div>
+            <p><strong>PDF Tunes/Page</strong> - Choose whether you want One Tune/Page, Multiple Tunes/Page, Tune Note Incipits, or ABC Incipits (unsorted or alphabetically sorted by tune name) in the PDF along with the paper size (Letter or A4):</p>
             <p></p>
             <div class="image_holder_p">
                 <img src="img/ug7a4.jpg"/>
@@ -1478,12 +1478,12 @@
             <p class="hidden-print" >Overview of printing from the browser:</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/6AlzAVNTRQA" title="Printing you Tunes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p></p>
-            <p>You may quickly print your tunes or generate a PDF using your browser's built-in print and PDF export features.</p>
+            <p>You may quickly print your tunes or generate a PDF using your browser's built-in print and export PDF features.</p>
             <p>Tunes printed or exported from the browser are limited to one tune per page.</p>
             <p>You may choose portrait or landscape orientation from your browser's print settings.</p>
             <p>Additional advanced settings such as printing multiple-pages per page and setting custom margins may be available in your browser's print settings dialog.</p>
             <p>Experiment with both the browser's print settings page orientation and "multiple page on one page" options to see what is possible.</p>
-            <p><strong>Note:</strong>If you want to print a tunebook automatically formated with multiple tunes per page, you must use the tool's PDF Export feature described in the next section.</p>
+            <p><strong>Note:</strong>If you want to print a tunebook automatically formated with multiple tunes per page, you must use the tool's Export PDF feature.</p>
             <hr class="hidden-print" id="clicktrack">
             <h1 class="page_break_always">Adding a Two-Bar Click Intro to Tunes <span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>If you want to add a two-bar click intro before a tune, here are ABC pattern templates I find work well for common styles of tunes:</p>
@@ -1537,7 +1537,7 @@
             z6|z6|</p>
             <p>A chart showing the complete mapping of MIDI drum sounds to ABC notes is here:</p>
             <p style="text-align: center;"><a href="#general_midi_percussion_map">General MIDI Drum Sound ABC Note Map</a></p>
-             <p>For example, if you want a higher pitched click, for example for the first beat of the measures, change the:</p>
+            <p>For example, if you want a higher pitched click, for example for the first beat of the measures, change the:</p>
             <p class="code">% Low Bongo<br/>^C</p>
             <p>values in the click intro patterns to:</p>
             <p class="code">% High Bongo<br/>=C</p>
@@ -1578,122 +1578,123 @@
             <p style="text-align: center;">Click here for the project support page:</p>
             <p style="text-align: center;"><a href="support.html" target="_blank">ABC Transcription Tools Support</a></p>
             <hr class="hidden-print">
+
         </div>
-    </div>
-</body>
-
-<script>
-
-//
-// Expand the table of contents
-//
-function ExpandAll(){
-
-var i;
-
-var acc = document.getElementsByClassName("accordion");
-
-for (i = 0; i < acc.length; i++) {
-var thisAcc = acc[i];
-thisAcc.classList.add("active");
-}
-
-var thePanels = document.getElementsByClassName("tocpanel");
-
-for (i = 0; i < thePanels.length; i++) {
-var thisPanel = thePanels[i];
-thisPanel.style.display = "block";
-};
-}
-
-//
-// Collapse the table of contents
-//
-function CollapseAll(){
-
-var i;
-
-var acc = document.getElementsByClassName("accordion");
-
-for (i = 0; i < acc.length; i++) {
-var thisAcc = acc[i];
-thisAcc.classList.remove("active");
-}
-
-var thePanels = document.getElementsByClassName("tocpanel");
-
-for (i = 0; i < thePanels.length; i++) {
-var thisPanel = thePanels[i];
-thisPanel.style.display = "none";
-};
-}
-
-
-//
-// Are we on iOS?
-//
-function isIOS() {
-
-if (/iPad|iPhone|iPod/.test(navigator.platform)) {
-return true;
-} else {
-return navigator.maxTouchPoints &&
-navigator.maxTouchPoints > 2 &&
-/MacIntel/.test(navigator.platform);
-}
-}
-
-function DoStartup() {
-
-//
-// iOS Styling adaptation
-//
-
-var gIsIOS = isIOS();
-
-if (gIsIOS) {
-// Fix the title font
-var elem = document.getElementById("pagetitle");
-elem.size = 5;
-elem.style.fontFamily = "Helvetica";
-}
-
-var acc = document.getElementsByClassName("accordion");
-var i;
-
-for (i = 0; i < acc.length; i++) {
-acc[i].addEventListener("click", function() {
-this.classList.toggle("active");
-var panel = this.nextElementSibling;
-if (panel.style.display === "block") {
-panel.style.display = "none";
-} else {
-panel.style.display = "block";
-}
-});
-}
-
-}
-
-//
-// Wait for the document to be ready, then fire a function
-//
-
-function WaitForReady(fn) {
-if (document.readyState !== 'loading') {
-fn();
-return;
-}
-
-document.addEventListener('DOMContentLoaded', fn);
-
-}
-
-//
-// Wait for the document to be ready, then startup
-//
-
-WaitForReady(DoStartup);
-
-</script>
+        
+    </body>
+    
+    <script>
+    
+    //
+    // Expand the table of contents
+    //
+    function ExpandAll(){
+    
+    var i;
+    
+    var acc = document.getElementsByClassName("accordion");
+    
+    for (i = 0; i < acc.length; i++) {
+    var thisAcc = acc[i];
+    thisAcc.classList.add("active");
+    }
+    
+    var thePanels = document.getElementsByClassName("tocpanel");
+    
+    for (i = 0; i < thePanels.length; i++) {
+    var thisPanel = thePanels[i];
+    thisPanel.style.display = "block";
+    };
+    }
+    
+    //
+    // Collapse the table of contents
+    //
+    function CollapseAll(){
+    
+    var i;
+    
+    var acc = document.getElementsByClassName("accordion");
+    
+    for (i = 0; i < acc.length; i++) {
+    var thisAcc = acc[i];
+    thisAcc.classList.remove("active");
+    }
+    
+    var thePanels = document.getElementsByClassName("tocpanel");
+    
+    for (i = 0; i < thePanels.length; i++) {
+    var thisPanel = thePanels[i];
+    thisPanel.style.display = "none";
+    };
+    }
+    
+    
+    //
+    // Are we on iOS?
+    //
+    function isIOS() {
+    
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+    return true;
+    } else {
+    return navigator.maxTouchPoints &&
+    navigator.maxTouchPoints > 2 &&
+    /MacIntel/.test(navigator.platform);
+    }
+    }
+    
+    function DoStartup() {
+    
+    //
+    // iOS Styling adaptation
+    //
+    
+    var gIsIOS = isIOS();
+    
+    if (gIsIOS) {
+    // Fix the title font
+    var elem = document.getElementById("pagetitle");
+    elem.size = 5;
+    elem.style.fontFamily = "Helvetica";
+    }
+    
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+    
+    for (i = 0; i < acc.length; i++) {
+    acc[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var panel = this.nextElementSibling;
+    if (panel.style.display === "block") {
+    panel.style.display = "none";
+    } else {
+    panel.style.display = "block";
+    }
+    });
+    }
+    
+    }
+    
+    //
+    // Wait for the document to be ready, then fire a function
+    //
+    
+    function WaitForReady(fn) {
+    if (document.readyState !== 'loading') {
+    fn();
+    return;
+    }
+    
+    document.addEventListener('DOMContentLoaded', fn);
+    
+    }
+    
+    //
+    // Wait for the document to be ready, then startup
+    //
+    
+    WaitForReady(DoStartup);
+    
+    </script>
 </html>
