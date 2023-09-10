@@ -7486,6 +7486,11 @@ function AppendJSBach2(){
 	}
 
 	theValue += 'X:1\n';
+	theValue += "%\n";
+	theValue += "% Example J.S. Bach transcription originally imported from MusicXML\n";
+	theValue += "%\n";	
+	theValue += '% Click "Player" to play\n';
+	theValue += "%\n";
 	theValue += 'T:Fantasia\n';
 	theValue += 'T:BWV570\n';
 	theValue += 'T:Johann Sebastian Bach (1685-1750)\n';
