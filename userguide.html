@@ -305,7 +305,7 @@
             <hr class="hidden-print" id="introduction">
             <h1 class="page_break_never">Introduction<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder">
-                <img style="width:700px;" src="img/main_10.jpg"/>
+                <img style="width:700px;" src="img/main_11.jpg"/>
             </div>
             <p>ABC Transcription Tools is a free, web-based, open-source tool for converting music in ABC and MusicXML format to both standard notation and tablature for a wide variety of instruments.</p>
             <p>Play your tunes with high-quality, built-in sampled instruments.</p>
@@ -318,7 +318,7 @@
             <hr class="hidden-print" id="getting_started">
             <h1 class="page_break_always">Getting Started<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder">
-                <img style="width:700px;" src="img/ug1e.jpg"/>
+                <img style="width:700px;" src="img/ug1f.jpg"/>
             </div>
             <p>Hover your mouse over any button or control in the tool to show a tooltip with a detailed explanation of what it does.</p>
             <p>Some buttons and controls implement alternative features if you Shift-click, Alt-click, or Shift+Alt-click on them.</p>
@@ -364,7 +364,7 @@
             <p>The saved ABC or PDF file will be in your browser's Downloads directory.</p>
             <p>On iOS the downloaded files will be found in the "Downloads" directory in the iOS "Files" app.</p>
             <p></p>
-            <p><strong>Player</strong>  - Opens up the ABC player where you can play the current tune. Full details below in the <a style="text-decoration:none;" href="#playing_your_tunes">Playing Your Tunes</a> section.</p>
+            <p><strong>Play</strong>  - Opens the ABC Player where you can play the current tune. Full details below in the <a style="text-decoration:none;" href="#playing_your_tunes">Playing Your Tunes</a> section.</p>
             <p><strong>Copy All</strong>  - Copies all the ABC text to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
             <p>Page number settings are found in the settings panel.</p>
             <p><strong>Hide Controls / Show Controls</strong>  - Hides/Shows all the control buttons below the ABC editor area.</p>
@@ -396,9 +396,9 @@
             <p>If the resulting scaled width is less than 850 pixels (820 pixels for iOS/Android) the width will be set to 850 pixels (820 pixels for iOS/Android).</p>
             <hr class="hidden-print" id="playing_your_tunes">
             <h1 class="page_break_always">Playing Your Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>To play a specific tune, click anywhere in the ABC for the tune and then click <strong>Player</strong>.</p>
-            <p>The tool will automatically find the tune you've clicked on bring it up in the ABC player for playback.</p>
-            <p>The controls for the player are located below the displayed notation.</p>
+            <p>To play a specific tune, click anywhere in the ABC for the tune and then click <strong>Play</strong>.</p>
+            <p>The tool will automatically find the tune you've clicked on bring it up in the ABC Player for playback.</p>
+            <p>The controls for the Player are located below the displayed notation.</p>
             <div class="image_holder_p">
                 <img src="img/small_player_controls_2.jpg"/>
             </div>
@@ -406,7 +406,7 @@
             <p></p>
             <p>Using the playback controls at the bottom, you can enable looping, rewind to start, start/pause playback, click in the progress bar to seek, or change the tempo as a percentage. </p>
             <p>Click <strong>Close</strong> to return to the ABC editor.</p>
-            <p>If you would prefer larger player controls, for example for use on mobile devices, open the <strong>Settings</strong> dialog and set the check on: <strong>Player uses large controls (easier to touch on mobile and tablet)</strong>:</p>
+            <p>If you would prefer larger Player controls, for example for use on mobile devices, open the <strong>Settings</strong> dialog and set the check on: <strong>Player uses large controls (easier to touch on mobile and tablet)</strong>:</p>
             <div class="image_holder_p">
                 <img src="img/large_player_controls_3.jpg"/>
             </div>
@@ -550,7 +550,7 @@
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder_p">
-                <img src="img/abc_transcription_tool_settings_14.jpg"/>
+                <img src="img/abc_transcription_tool_settings_16.jpg"/>
             </div>
             <p><strong>Full screen tune display scaling (percentage)</strong> - Sets the width in percentage of window width for the tune notation on the screen when viewing full screen. Default is 50%.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/KagT-Aq8mY8" title="Full-Screen Tune Display Options" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
@@ -600,6 +600,14 @@
             <div class="image_holder_p">
                 <img src="img/large_player_controls_1.jpg"/>
             </div>
+            <p><strong>ABCJS Soundfont:</strong> - Choose between the three GM soundfonts available in abcjs:</p>
+            <p style="text-align: center;">Fluid (default)<br/>
+            Musyng Kite<br/>
+            FatBoy</p> 
+            <p>For more details on the soundfonts, visit: <a href="https://paulrosen.github.io/midi-js-soundfonts/" target="_blank">midi-js-soundfonts on GitHub</a></p>
+            <p>When changing soundfonts, you will be required to reload the tool to use the new soundfont.</p>
+            <p>Your soundfont choice is saved in browser storage and restored the next time the tool is run.</p>
+            <p>Note: For all soundfonts, my custom sampled instruments for dulcimer, accordion, flute, and whistle will override the soundfont sounds.</p>
             <p><strong>MP3 audio export bitrate (kbit/sec):</strong> - Sets the bitrate for MP3 stereo audio downloaded from the Player. </p>
             <p>Default value is 224.  Minimum value allowed is 96. Maximum value allowed is 384. Higher values result in higher quality audio.</p>
             <p><strong>Configure ABC Fonts</strong> - Brings up a dialog where you can configure all fonts used for rendering the ABC.</p>
