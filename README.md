@@ -29,6 +29,7 @@
 <p><a href="https://github.com/pieroxy/lz-string">lz-string.js</a> is used to for LZW compression of the tunes for share links.</p> 
 <p><a href="https://wim.vree.org/js/xml2abc-js_index.html" target="_blank">xml2abc.js</a> is used to for converting MusicXML format to ABC.</p> 
 <p><a href="https://github.com/zhuker/lamejs" target="_blank">lame.js</a> is used to for converting .wav format to .mp3.</p>  
+<p><a href="https://github.com/swevans/unmute" target="_blank">umute.js</a> is used to for fixing the iOS tab switch audio mute issue.</p> 
 <p>Ui icons created by <a href="https://www.flaticon.com/free-icons/ui" title="ui icons"> Karacis - Flaticon</a>.</p>
 <p>This product includes <a href="https://modal.daypilot.org" target="_blank">DayPilot Modal</a> for modal dialog replacements.</p>
 <p>Anglo Concertina fingering solution and ABC parsing methods used by the tab injectors originally developed by <a href="https://jvandonsel.github.io/fingering/fingering.html" target="_blank">Jim Van Donsel</a>.</p>
