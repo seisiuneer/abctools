@@ -1097,11 +1097,11 @@ left:-5000px;
 }
 
 .highlight {
-	fill: #0a9ecc;
+	fill: #F00000;
 }
 
 .abcjs-cursor {
-	stroke: red;
+	stroke: blue;
 }
 
 #playback-paper{
