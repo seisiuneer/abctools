@@ -36,8 +36,8 @@
 		<link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 		<link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-		<link href="app.css?v=524" media="all" rel="stylesheet" type="text/css">
-				
+		<link href="app.css?v=534" media="all" rel="stylesheet" type="text/css">
+		
 	</head>
 	<body>
 		<div id="app-container">
@@ -76,7 +76,7 @@
 						<input class="saveabcfiledisabled btn btn-top" id="saveabcfile" onclick="SaveABC();" type="button" value="Save" title="Saves the current ABC text to a file">
 						<input class="saveaspdfdisabled btn btn-top" id="saveaspdf" onclick="PDFExportDialog();" type="button" value="Export PDF" title="Exports a PDF tunebook">
 						<input class="copybuttondisabled btn btn-top" id="copybutton" onclick="CopyABC();" type="button" value="Copy All" title="Copies all of the ABC text to the clipboard">
-						<input class="playbuttondisabled btn btn-play" id="playbutton" onclick="PlayABC(event);" type="button" value="Player" title="Opens the ABC player for the currently selected tune.&nbsp;&nbsp;Scroll down in the ABC player if you can't see the play controls.&nbsp;&nbsp;Shift-click opens the currently selected tunes for playback using Paul Rosen's abcjs quick editor.">
+						<input class="playbuttondisabled btn btn-play" id="playbutton" onclick="PlayABC(event);" type="button" value="Play" title="Opens the ABC player for the currently selected tune.">
 						<input class="toggleallcontrolsdisabled btn btn-toggleallcontrols" id="toggleallcontrols" onclick="ToggleAllControls();" type="button" value="Hide Controls" title="Shows/Hides all the tool controls">
 						<input class="configuresettings btn btn-configuresettings"  id="configuresettings" onclick="ConfigureToolSettings(event);" type="button" value="Settings" title="Sets the default instruments/volumes for playing tunes and the B/C and C#/D box tablature font size.&nbsp;&nbsp;Shift-click to bring up the Box and Anglo Concertina tablature injection settings.&nbsp;&nbsp;Alt-click to bring up the MusicXML import settings.&nbsp;&nbsp;All settings are saved and restored the next time you run the tool.">
 						<input class="toggletopbar btn btn-top" id="toggletopbar" onclick="ToggleTopBar();" type="button" value="▲" title="Toggles the top bar area">
@@ -170,18 +170,19 @@
 		</div>
 		
 	</body>
-	<script type="text/javascript" src="jquery-1.11.1.min.js?v=524"></script><!-- jQuery -->
-	<script type="text/javascript" src="jszip.min.js?v=524"></script><!-- zip file handling -->
-	<script type="text/javascript" src="xml2abc.js?v=524"></script><!-- to convert MusicXML to ABC -->
-	<script type="text/javascript" src="abcjs-chord-intervals.js?v=524"></script><!-- chord intervals used by abcjs - non-minified -->
-	<script type="text/javascript" src="abcjs-basic-tabs-min.js?v=524"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
-	<script type="text/javascript" src="jspdf.min.js?v=524"></script><!-- to generate PDF using Javscript -->
-	<script type="text/javascript" src="html2image.js?v=524"></script><!-- to convert HTML elements to bitmaps -->
-	<script type="text/javascript" src="qrcode.js?v=524"></script><!-- to generate QR codes for the share links -->
-	<script type="text/javascript" src="lz-string.min.js?v=524"></script><!-- used for share URL generation -->
-	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=524"></script><!-- modal dialog replacement -->
-	<script type="text/javascript" src="lame.min.js?v=524"></script><!-- .mp3 audio encoder -->
-	<script type="text/javascript" src="tab-injectors-min.js?v=524"></script><!-- Tab generation for ABC injection -->
-	<script type="text/javascript" src="app-min.js?v=524"></script><!-- main application business logic -->
-	<script type="text/javascript" src="api-keys.js?v=524"></script><!-- API keys used by the tool -->
+	<script type="text/javascript" src="jquery-1.11.1.min.js?v=534"></script><!-- jQuery -->
+	<script type="text/javascript" src="jszip.min.js?v=534"></script><!-- zip file handling -->
+	<script type="text/javascript" src="xml2abc.js?v=534"></script><!-- to convert MusicXML to ABC -->
+	<script type="text/javascript" src="abcjs-chord-intervals.js?v=534"></script><!-- chord intervals used by abcjs - non-minified -->
+	<script type="text/javascript" src="abcjs-basic-tabs-min.js?v=534"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
+	<script type="text/javascript" src="jspdf.min.js?v=534"></script><!-- to generate PDF using Javscript -->
+	<script type="text/javascript" src="html2image.js?v=534"></script><!-- to convert HTML elements to bitmaps -->
+	<script type="text/javascript" src="qrcode.js?v=534"></script><!-- to generate QR codes for the share links -->
+	<script type="text/javascript" src="lz-string.min.js?v=534"></script><!-- used for share URL generation -->
+	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=534"></script><!-- modal dialog replacement -->
+	<script type="text/javascript" src="lame.min.js?v=534"></script><!-- .mp3 audio encoder -->
+	<script type="text/javascript" src="unmute.min.js?v=534"></script><!-- fixes issue on iOS Safari muting tabs -->
+	<script type="text/javascript" src="tab-injectors-min.js?v=534"></script><!-- Tab generation for ABC injection -->
+	<script type="text/javascript" src="app-min.js?v=534"></script><!-- main application business logic -->
+	<script type="text/javascript" src="api-keys.js?v=534"></script><!-- API keys used by the tool -->
 </html>
