@@ -188,6 +188,9 @@ var gMP3Bitrate = 224;
 // Soundfont to use
 var gTheSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
 
+// Allow player to autoscroll
+var gAutoscrollPlayer = true;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -11998,12 +12001,15 @@ function postProcessTab(renderDivID, instrument, bIsPlayback){
 // callback and val are used for batch export automation
 //
 
-
 function PlayABCDialog(theABC,callback,val){
 
 	gMIDIbuffer = null;
 	gPlayerABC = theABC;
 	gTheOKButton = null;
+
+	// Autoscroll-related cached values
+	var playerHolder;
+	var containerRect;
 	
 	var instrument = GetRadioValue("notenodertab");
 
@@ -12021,6 +12027,7 @@ function PlayABCDialog(theABC,callback,val){
 	}
 	
 	function CursorControl() {
+
 
 		var self = this;
 
@@ -12060,13 +12067,35 @@ function PlayABCDialog(theABC,callback,val){
 			}
 
 			var cursor = document.querySelector("#playback-paper svg .abcjs-cursor");
+
 			if (cursor) {
+
 				cursor.setAttribute("x1", ev.left - 2);
 				cursor.setAttribute("x2", ev.left - 2);
 				cursor.setAttribute("y1", ev.top);
 				cursor.setAttribute("y2", ev.top + ev.height);
-			}
 
+				// Don't try to autoscroll cursors larger than
+				if (gAutoscrollPlayer){
+
+					// Get the SVG element's position relative to the container
+					const svgRect = cursor.getBoundingClientRect();
+
+					// Check if the SVG element is above or below the container's visible area
+					if (svgRect.top < containerRect.top) {
+
+						// Scroll up to make the SVG element visible at the top
+						playerHolder.scrollTop += svgRect.top - containerRect.top;
+
+					} else if (svgRect.bottom > containerRect.bottom) {
+
+						// Scroll down to make the SVG element visible at the bottom
+						playerHolder.scrollTop += svgRect.bottom - containerRect.bottom;
+
+					}
+				}
+
+			}
 		};
 
 		self.onFinished = function() {
@@ -12253,6 +12282,9 @@ function PlayABCDialog(theABC,callback,val){
 
 		setTune(false);
 
+		// Cache autoscroll values early
+		playerHolder = document.getElementById("playerholder");
+		containerRect = playerHolder.getBoundingClientRect();
 	}
 
 	// Try to deal with tab deactivation muting
@@ -12637,6 +12669,14 @@ function GetInitialConfigurationSettings(){
 		gTheSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
 	}
 
+	val = localStorage.AutoscrollPlayer;
+	if (val){
+		gAutoscrollPlayer = (val == "true");
+	}
+	else{
+		gAutoscrollPlayer = true;
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -12708,6 +12748,9 @@ function SaveConfigurationSettings(){
 
 		// Save the soundfont preference
 		localStorage.theSoundFont = gTheSoundFont;
+
+		// Save the player autoscroll preference
+		localStorage.AutoscrollPlayer = gAutoscrollPlayer;
 
 	}
 }
@@ -13625,7 +13668,8 @@ function ConfigureToolSettings(e) {
 	  configure_show_tab_names: gShowTabNames,
 	  configure_capo: gCapo,
 	  configure_mp3_bitrate: gMP3Bitrate,
-	  configure_soundfont: gTheSoundFont,	  
+	  configure_soundfont: gTheSoundFont,
+	  configure_autoscrollplayer: gAutoscrollPlayer,	  
 	};
 
  	const sound_font_options = [
@@ -13644,17 +13688,14 @@ function ConfigureToolSettings(e) {
 	  {name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default Melody MIDI program (0-136):", id: "configure_melody_program", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default Bass/Chords MIDI program (0-136):", id: "configure_chord_program", type:"number", cssClass:"configure_settings_form_text"},
-	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:14pt;font-family:helvetica">%%MIDI program or %%MIDI chordprog present in the ABC will override the default value.<br/>To mute either the Melody or the Bass/Chords, select MIDI  program 136</p>'},	  
-	  {html: '<p style="font-size:12pt;font-family:helvetica;margin-bottom:12px;margin-top:12px;text-align:center"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'},
 	  {name: "            Use Default Bass/Chord volumes when playing tunes", id: "configure_inject_volumes", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default Bass MIDI volume (0-127):", id: "configure_bass_volume", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default Chords MIDI volume (0-127):", id: "configure_chord_volume", type:"number", cssClass:"configure_settings_form_text"},
-	  {html: '<p style="margin-top:12px;margin-bottom:0px;font-size:12pt;line-height:14pt;font-family:helvetica">%MIDI bassvol or %%MIDI chordvol present in the ABC will override the default value.</p>'},	  
 	  {name: "            Override all MIDI programs and volumes in the ABC when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text"},
-	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">To change the Melody volume, add !ppp!, !pp!, !p!, !mp!, !mf!, !f!, or !ff! before the first ABC note.</p>'},	  
+	  {name: "            Autoscroll player when playing", id: "configure_autoscrollplayer", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "ABCJS Soundfont:", id: "configure_soundfont", type:"select", options:sound_font_options, cssClass:"configure_settings_select"}, 
 	  {name: "MP3 audio export bitrate (kbit/sec):", id: "configure_mp3_bitrate", type:"number", cssClass:"configure_settings_form_text"},
-	  {name: "    Player uses large controls (easier to touch on mobile and tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"configure_box_settings_form_text"},
+	  {name: "    Player uses large controls (easier to touch on mobile and tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Configure ABC Fonts" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="Configure MusicXML Import" title="Configure MusicXML import parameters"></p>'},	  
 	];
 
@@ -13813,6 +13854,8 @@ function ConfigureToolSettings(e) {
 			if (theOldSoundFont != gTheSoundFont ){
 				DayPilot.Modal.alert("Please restart the tool to switch to using the new soundfont.",{ theme: "modal_flat", top: 300, scrollWithPage: (gIsIOS || gIsAndroid) });
 			}
+
+			gAutoscrollPlayer = args.result.configure_autoscrollplayer;
 
 			IdleAllowShowTabNames();
 
