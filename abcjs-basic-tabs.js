@@ -13653,6 +13653,8 @@ var originalSoundFontUrl = "https://paulrosen.github.io/midi-js-soundfonts/abcjs
 // These are the original soundfonts supplied. They will need a volume boost:
 var defaultSoundFontUrl = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
 var alternateSoundFontUrl = "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/";
+var alternateSoundFontUrl2 = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
+
 function CreateSynth() {
   var self = this;
   self.audioBufferPossible = undefined;
@@ -13666,6 +13668,7 @@ function CreateSynth() {
 
   // Load and cache all needed sounds
   self.init = function (options) {
+
     if (!options) options = {};
     //    self.options = options
     registerAudioContext(options.audioContext); // This works no matter what - if there is already an ac it is a nop; if the context is not passed in, then it creates one.
@@ -13678,9 +13681,32 @@ function CreateSynth() {
       message: notSupportedMessage
     });
     var params = options.options ? options.options : {};
-    self.soundFontUrl = params.soundFontUrl ? params.soundFontUrl : defaultSoundFontUrl;
+
+    // MAE 10 Sep 2023 - Inject the default soundfont
+    //self.soundFontUrl = params.soundFontUrl ? params.soundFontUrl : gTheSoundFont;
+    self.soundFontUrl = gTheSoundFont;
+
     if (self.soundFontUrl[self.soundFontUrl.length - 1] !== '/') self.soundFontUrl += '/';
-    if (params.soundFontVolumeMultiplier || params.soundFontVolumeMultiplier === 0) self.soundFontVolumeMultiplier = params.soundFontVolumeMultiplier;else if (self.soundFontUrl === defaultSoundFontUrl || self.soundFontUrl === alternateSoundFontUrl) self.soundFontVolumeMultiplier = 3.0;else if (self.soundFontUrl === originalSoundFontUrl) self.soundFontVolumeMultiplier = 0.4;else self.soundFontVolumeMultiplier = 1.0;
+
+    // Determine the volume multiplier
+    if (params.soundFontVolumeMultiplier || params.soundFontVolumeMultiplier === 0){
+        self.soundFontVolumeMultiplier = params.soundFontVolumeMultiplier;
+    } 
+    else 
+    if (self.soundFontUrl === defaultSoundFontUrl){
+        self.soundFontVolumeMultiplier = 3.0;
+    }
+    else
+    if (self.soundFontUrl === alternateSoundFontUrl || self.soundFontUrl === alternateSoundFontUrl2){
+        self.soundFontVolumeMultiplier = 3.0;
+    }
+    else 
+    if (self.soundFontUrl === originalSoundFontUrl){
+        self.soundFontVolumeMultiplier = 0.4;
+    }
+    else{
+        self.soundFontVolumeMultiplier = 1.0;
+    }
     
     // Can't use .ogg files on Safari, falls back to .mp3 with offsets
     var isSafari = false
@@ -14425,6 +14451,11 @@ var getNote = function getNote(url, instrument, name, audioContext) {
       case "silence":     // 136
         url = "http://michaeleskin.com/abctools/soundfonts/";
         isOgg = true;
+        break;
+
+      case "percussion":  // 128
+        // The percussion on the alternate sound fonts is too loud, use the default in all cases
+        url = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
         break;
 
       default:
