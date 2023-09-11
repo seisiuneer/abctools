@@ -12085,12 +12085,12 @@ function PlayABCDialog(theABC,callback,val){
 					if (svgRect.top < containerRect.top) {
 
 						// Scroll up to make the SVG element visible at the top
-						playerHolder.scrollTop += svgRect.top - containerRect.top;
+						playerHolder.scrollTop += svgRect.top - containerRect.top - 16;
 
 					} else if (svgRect.bottom > containerRect.bottom) {
 
 						// Scroll down to make the SVG element visible at the bottom
-						playerHolder.scrollTop += svgRect.bottom - containerRect.bottom;
+						playerHolder.scrollTop += svgRect.bottom - containerRect.bottom + 16;
 
 					}
 				}
