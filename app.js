@@ -186,7 +186,8 @@ var gRenderingFonts = {
 var gMP3Bitrate = 224;
 
 // Soundfont to use
-var gTheSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
+var gDefaultSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
+var gTheActiveSoundFont = gDefaultSoundFont;
 
 // Allow player to autoscroll
 var gAutoscrollPlayer = true;
@@ -6997,6 +6998,7 @@ function AppendSampleReel(){
 	theValue += "L: 1/8\n";
 	theValue += "K: Edor\n";
 	theValue += "C: Traditional\n";
+	theValue += '%abcjs_soundfont fluid\n';	
 	theValue += "%\n";
 	theValue += "% Use an Accordion sound when playing the melody:\n";
 	theValue += "%%MIDI program 21\n";
@@ -7034,6 +7036,7 @@ function AppendSampleJig(){
 	theValue += "L: 1/8\n";
 	theValue += "K: Gmaj\n";
 	theValue += "C: Traditional\n";
+	theValue += '%abcjs_soundfont fluid\n';	
 	theValue += "%\n";
 	theValue += "% Use an Accordion sound when playing the melody:\n";
 	theValue += "%%MIDI program 21\n";
@@ -7436,6 +7439,12 @@ function AppendJSBach(){
 	theValue += 'Q:1/4=84\n';
 	theValue += 'M:4/4\n';
 	theValue += 'K:C\n';
+	theValue += '%\n';
+	theValue += '% Try changing the abcjs_soundfont value to\n';
+	theValue += '% fluid, musyng, or fatboy for different harpsichord sounds:\n';
+	theValue += '%\n';	
+	theValue += '%abcjs_soundfont fluid\n';	
+	theValue += '%\n';	
 	theValue += '%%staffsep 40\n';
 	theValue += '%\n';
 	theValue += '% Try changing these to %%MIDI program 136 (Silence)\n';
@@ -7504,6 +7513,12 @@ function AppendJSBach2(){
 	theValue += 'L:1/16\n';
 	theValue += 'M:4/4\n';
 	theValue += 'K:C\n';
+	theValue += '%\n';
+	theValue += '% Try changing the abcjs_soundfont value to\n';
+	theValue += '% fluid, musyng, or fatboy for different organ sounds:\n';
+	theValue += '%\n';	
+	theValue += '%abcjs_soundfont fluid\n';	
+	theValue += '%\n';		
 	theValue += '%%stretchlast true\n';
 	theValue += '%%staffsep 40\n';
 	theValue += 'Q:100\n';
@@ -8535,6 +8550,16 @@ function InjectOneTuneStaffWidth(theTune, staffwidth){
 	
 }
 
+//
+// Inject MIDI soundfont 
+//
+function InjectOneTuneSoundfont(theTune, theSoundfont){
+
+	theOutput = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont "+theSoundfont);
+	
+	return theOutput;
+	
+}
 
 //
 // Inject a %%staffwidth directive after all the X: headers
@@ -8595,6 +8620,51 @@ function InjectStaffWidth() {
 
 }
 
+//
+// Inject a %abcjs_soundfont directive after all the X: headers
+//
+function InjectSoundfont() {
+
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
+
+	DayPilot.Modal.prompt("%abcjs_sound value to inject? Options are: fluid, musyng, or fatboy", "fluid", { theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: (gIsIOS || gIsAndroid) }).then(function(args) {
+		
+		var theSoundfont = args.result;
+
+		if (theSoundfont == null){
+			return;
+		}
+
+		if ((theSoundfont != "fluid") && (theSoundfont != "musyng") && (theSoundfont != "fatboy") ){
+			return;
+		}
+
+		var nTunes = CountTunes();
+
+		var theNotes = gTheABC.value;
+
+		// Find the tunes
+		var theTunes = theNotes.split(/^X:/gm);
+
+		var output = FindPreTuneHeader(theNotes);
+
+		for (var i=1;i<=nTunes;++i){
+
+			theTunes[i] = "X:"+theTunes[i];
+
+			output += InjectOneTuneSoundfont(theTunes[i],theSoundfont);
+
+		}
+
+		// Stuff in the transposed output
+		gTheABC.value = output;
+
+	});
+
+}
 //
 // Inject MIDI program number directive below the tune header
 //
@@ -12007,6 +12077,46 @@ function PlayABCDialog(theABC,callback,val){
 	gPlayerABC = theABC;
 	gTheOKButton = null;
 
+	var soundFontRequested = ScanTuneForSoundFont(theABC);
+
+	if (soundFontRequested){
+
+		var theOriginalSoundFont = gTheActiveSoundFont;
+
+		switch (soundFontRequested){
+			case "fluid":
+				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
+				break;
+			case "musyng":
+				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/";
+				break;
+			case "fatboy":
+				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
+				break;
+		}
+
+		// New soundfont requested, clear the cache
+		if (gTheActiveSoundFont != theOriginalSoundFont){
+			
+			// Clear the soundfont cache
+			gSoundsCacheABCJS = {};
+
+		}
+
+	}
+	else{
+
+		// No sound font requested, lets see if the current font is the user default
+		if (gTheActiveSoundFont != gDefaultSoundFont){
+
+			gTheActiveSoundFont = gDefaultSoundFont;
+
+			// Clear the soundfont cache
+			gSoundsCacheABCJS = {};
+
+		}
+	}
+
 	// Autoscroll-related cached values
 	var playerHolder;
 	var containerRect;
@@ -12260,6 +12370,7 @@ function PlayABCDialog(theABC,callback,val){
   							gTheMuteHandle = null;
   						}
 					}
+
 				};
 
 				break;
@@ -12380,6 +12491,32 @@ function PreProcessPlayABC(theTune){
 
 	return(theTune);
 
+}
+
+//
+// Scan tune for soundfont request
+//
+function ScanTuneForSoundFont(theTune){
+
+	var soundFontFound = null;
+
+	// Search for a soundfont request
+	var searchRegExp = /^%abcjs_soundfont.*$/m
+
+	// Detect tunebook TOC annotation
+	var soundfont = theTune.match(searchRegExp);
+
+	if ((soundfont) && (soundfont.length > 0)){
+
+		soundFontFound = soundfont[0].replace("%abcjs_soundfont","");
+		
+		soundFontFound = soundFontFound.trim();
+
+		soundFontFound = soundFontFound.toLowerCase();
+
+	}
+
+	return soundFontFound;
 }
 
 //
@@ -12663,10 +12800,12 @@ function GetInitialConfigurationSettings(){
 	// Sound font
 	val = localStorage.theSoundFont;
 	if (val){
-		gTheSoundFont = val;
+		gDefaultSoundFont = val;
+		gTheActiveSoundFont = val;
 	}
 	else{
-		gTheSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
+		gDefaultSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
+		gTheActiveSoundFont = gDefaultSoundFont;
 	}
 
 	val = localStorage.AutoscrollPlayer;
@@ -12747,7 +12886,7 @@ function SaveConfigurationSettings(){
 		localStorage.MP3Bitrate = gMP3Bitrate;
 
 		// Save the soundfont preference
-		localStorage.theSoundFont = gTheSoundFont;
+		localStorage.theSoundFont = gDefaultSoundFont;
 
 		// Save the player autoscroll preference
 		localStorage.AutoscrollPlayer = gAutoscrollPlayer;
@@ -13189,8 +13328,6 @@ function ConfigureTablatureSettings(){
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
 
-			//debugger;
-
 			gInjectTab_FontFamily = args.result.configure_font_family;
 			gInjectTab_TabFontSize = args.result.configure_tab_font_size;
 			gInjectTab_StaffSep = args.result.configure_staffsep;
@@ -13356,8 +13493,6 @@ function ConfigureFonts(){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
-
-			//debugger;
 
 			gRenderingFonts.titlefont = args.result.configure_titlefont;
 			gRenderingFonts.subtitlefont = args.result.configure_subtitlefont;
@@ -13571,10 +13706,11 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
 	modal_msg  += '<input id="injectmelody" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMIDIInstrument(false);" type="button" value="Inject MIDI Melody" title="Injects %%MIDI program melody annotation into all tunes in the ABC">';	
 	modal_msg  += '<input id="injectchords" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMIDIInstrument(true);" type="button" value="Inject MIDI Bass/Chord" title="Injects %%MIDI chordprog bass/chord annotation into all tunes in the ABC">';
-	modal_msg  += '<input id="injectstaffwidth" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectStaffWidth(false)" type="button" value="Inject %%staffwidth" title="Injects a %%staffwidth annotation at the top of every tune">';
+	modal_msg  += '<input id="injectstaffwidth" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectStaffWidth()" type="button" value="Inject %%staffwidth" title="Injects a %%staffwidth annotation at the top of every tune">';
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
-	modal_msg  += '<input id="injectclicktrackall" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectRepeatsAndClickTrackAll()" type="button" value="Inject Repeats and Two-Bar Click Intros" title="Injects repeated copies of tunes and optional style-adaptive two-bar click intros into every tune">';	
+	modal_msg  += '<input id="injectsoundfont" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectSoundfont()" type="button" value="Inject %abcjs_soundfont" title="Injects a %abcjs_soundfont annotation at the top of every tune">';
+		modal_msg  += '<input id="injectclicktrackall" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectRepeatsAndClickTrackAll()" type="button" value="Inject Repeats and Two-Bar Click Intros" title="Injects repeated copies of tunes and optional style-adaptive two-bar click intros into every tune">';	
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">'
 	modal_msg  += '<input id="injectnotenames" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectABCNoteNameLyrics()" type="button" value="Inject Note Name Lyrics" title="Injects note names as lyrics in the ABC">';
@@ -13651,7 +13787,7 @@ function ConfigureToolSettings(e) {
 
 	var theOldCapo = gCapo;
 
-	var theOldSoundFont = gTheSoundFont;
+	var theOldSoundFont = gDefaultSoundFont;
 
 	// Setup initial values
 	const theData = {
@@ -13668,12 +13804,12 @@ function ConfigureToolSettings(e) {
 	  configure_show_tab_names: gShowTabNames,
 	  configure_capo: gCapo,
 	  configure_mp3_bitrate: gMP3Bitrate,
-	  configure_soundfont: gTheSoundFont,
+	  configure_soundfont: gDefaultSoundFont,
 	  configure_autoscrollplayer: gAutoscrollPlayer,	  
 	};
 
  	const sound_font_options = [
-	    { name: "  Fluid (default)", id: "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/" },
+	    { name: "  Fluid", id: "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/" },
 	    { name: "  Musyng Kite", id: "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/" },
 	    { name: "  FatBoy", id: "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/" },
   	];
@@ -13693,7 +13829,7 @@ function ConfigureToolSettings(e) {
 	  {name: "Default Chords MIDI volume (0-127):", id: "configure_chord_volume", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "            Override all MIDI programs and volumes in the ABC when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "            Autoscroll player when playing", id: "configure_autoscrollplayer", type:"checkbox", cssClass:"configure_settings_form_text"},
-	  {name: "ABCJS Soundfont:", id: "configure_soundfont", type:"select", options:sound_font_options, cssClass:"configure_settings_select"}, 
+	  {name: "Default abcjs soundfont:", id: "configure_soundfont", type:"select", options:sound_font_options, cssClass:"configure_settings_select"}, 
 	  {name: "MP3 audio export bitrate (kbit/sec):", id: "configure_mp3_bitrate", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "    Player uses large controls (easier to touch on mobile and tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Configure ABC Fonts" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="Configure MusicXML Import" title="Configure MusicXML import parameters"></p>'},	  
@@ -13849,10 +13985,16 @@ function ConfigureToolSettings(e) {
 				}
 			}
 
-			gTheSoundFont = args.result.configure_soundfont;
+			gDefaultSoundFont = args.result.configure_soundfont;
 
-			if (theOldSoundFont != gTheSoundFont ){
-				DayPilot.Modal.alert("Please restart the tool to switch to using the new soundfont.",{ theme: "modal_flat", top: 300, scrollWithPage: (gIsIOS || gIsAndroid) });
+			if (theOldSoundFont != gDefaultSoundFont ){
+
+				// Reset the current soundfont to the selected font
+				gTheActiveSoundFont = gDefaultSoundFont
+
+				// Reset the abcjs sounds cache
+				gSoundsCacheABCJS = {};
+
 			}
 
 			gAutoscrollPlayer = args.result.configure_autoscrollplayer;
