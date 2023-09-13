@@ -1,3 +1,6 @@
+// MAE 12 Sep 2023 - I need this to be global to be able to clear the cache from the ABC tool on soundfont change
+var gSoundsCacheABCJS = {};
+
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
@@ -10,7 +13,6 @@
 })(this, function() {
 return /******/ (function() { // webpackBootstrap
 /******/  var __webpack_modules__ = ({
-
 /***/ "./index.js":
 /*!******************!*\
   !*** ./index.js ***!
@@ -45,6 +47,7 @@ var animation = __webpack_require__(/*! ./src/api/abc_animation */ "./src/api/ab
 var tuneBook = __webpack_require__(/*! ./src/api/abc_tunebook */ "./src/api/abc_tunebook.js");
 var sequence = __webpack_require__(/*! ./src/synth/abc_midi_sequencer */ "./src/synth/abc_midi_sequencer.js");
 var strTranspose = __webpack_require__(/*! ./src/str/output */ "./src/str/output.js");
+
 var abcjs = {};
 abcjs.signature = "abcjs-basic v" + version;
 Object.keys(animation).forEach(function (key) {
@@ -13645,7 +13648,6 @@ var pitchToNoteName = __webpack_require__(/*! ./pitch-to-note-name */ "./src/syn
 var instrumentIndexToName = __webpack_require__(/*! ./instrument-index-to-name */ "./src/synth/instrument-index-to-name.js");
 var downloadBuffer = __webpack_require__(/*! ./download-buffer */ "./src/synth/download-buffer.js");
 var placeNote = __webpack_require__(/*! ./place-note */ "./src/synth/place-note.js");
-var soundsCache = __webpack_require__(/*! ./sounds-cache */ "./src/synth/sounds-cache.js");
 
 // TODO-PER: remove the midi tests from here: I don't think the object can be constructed unless it passes.
 var notSupportedMessage = "MIDI is not supported in this browser.";
@@ -13683,8 +13685,8 @@ function CreateSynth() {
     var params = options.options ? options.options : {};
 
     // MAE 10 Sep 2023 - Inject the default soundfont
-    //self.soundFontUrl = params.soundFontUrl ? params.soundFontUrl : gTheSoundFont;
-    self.soundFontUrl = gTheSoundFont;
+    //self.soundFontUrl = params.soundFontUrl ? params.soundFontUrl : gTheActiveSoundFont;
+    self.soundFontUrl = gTheActiveSoundFont;
 
     if (self.soundFontUrl[self.soundFontUrl.length - 1] !== '/') self.soundFontUrl += '/';
 
@@ -13811,7 +13813,7 @@ function CreateSynth() {
           var noteName = pitchToNoteName[pitchNumber];
           if (noteName) {
             if (!allNotes[currentInstrument]) allNotes[currentInstrument] = {};
-            if (!soundsCache[currentInstrument] || !soundsCache[currentInstrument][noteName]) allNotes[currentInstrument][noteName] = true;else {
+            if (!gSoundsCacheABCJS[currentInstrument] || !gSoundsCacheABCJS[currentInstrument][noteName]) allNotes[currentInstrument][noteName] = true;else {
               var label2 = currentInstrument + ":" + noteName;
               if (cached.indexOf(label2) < 0) cached.push(label2);
             }
@@ -14419,10 +14421,9 @@ module.exports = instrumentIndexToName;
 // url = the base url for the soundfont
 // instrument = the instrument name (e.g. "acoustic_grand_piano")
 // name = the pitch name (e.g. "A3")
-var soundsCache = __webpack_require__(/*! ./sounds-cache */ "./src/synth/sounds-cache.js");
 var getNote = function getNote(url, instrument, name, audioContext) {
-  if (!soundsCache[instrument]) soundsCache[instrument] = {};
-  var instrumentCache = soundsCache[instrument];
+  if (!gSoundsCacheABCJS[instrument]) gSoundsCacheABCJS[instrument] = {};
+  var instrumentCache = gSoundsCacheABCJS[instrument];
 
   // Can't use .ogg files on Safari, falls back to .mp3
   var isSafari = false
@@ -14772,7 +14773,6 @@ module.exports = pitchesToPerc;
   \*********************************/
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var soundsCache = __webpack_require__(/*! ./sounds-cache */ "./src/synth/sounds-cache.js");
 var pitchToNoteName = __webpack_require__(/*! ./pitch-to-note-name */ "./src/synth/pitch-to-note-name.js");
 var centsToFactor = __webpack_require__(/*! ./cents-to-factor */ "./src/synth/cents-to-factor.js");
 function placeNote(outputAudioBuffer, sampleRate, sound, startArray, volumeMultiplier, ofsMs, fadeTimeSec, noteEndSec, debugCallback) {
@@ -14786,7 +14786,7 @@ function placeNote(outputAudioBuffer, sampleRate, sound, startArray, volumeMulti
   if (len < 0) len = 0.005; // Have some small audible length no matter how short the note is.
   var offlineCtx = new OfflineAC(2, Math.floor((len + fadeTimeSec) * sampleRate), sampleRate);
   var noteName = pitchToNoteName[sound.pitch];
-  var noteBufferPromise = soundsCache[sound.instrument][noteName];
+  var noteBufferPromise = gSoundsCacheABCJS[sound.instrument][noteName];
   if (!noteBufferPromise) {
     // if the note isn't present then just skip it - it will leave a blank spot in the audio.
     if (debugCallback) debugCallback('placeNote skipped: ' + sound.instrument + ':' + noteName);
@@ -14942,17 +14942,6 @@ function registerAudioContext(ac) {
   return window.abcjsAudioContext.state !== "suspended";
 }
 module.exports = registerAudioContext;
-
-/***/ }),
-
-/***/ "./src/synth/sounds-cache.js":
-/*!***********************************!*\
-  !*** ./src/synth/sounds-cache.js ***!
-  \***********************************/
-/***/ (function(module) {
-
-var soundsCache = {};
-module.exports = soundsCache;
 
 /***/ }),
 
