@@ -509,7 +509,7 @@ opacity: 0.4;
 padding:12px;
 }
 
-#injectbctab, #injectcdtab, #injectallheaders, #injectheadertemplate, #injectmelody, #injectchords, #injectstaffwidth{
+#injectbctab, #injectcdtab, #injectallheaders, #injectheadertemplate, #injectmelody, #injectchords, #injectstaffwidth, #injectsoundfont{
 margin-right:24px;
 height:42px;
 padding:12px;
