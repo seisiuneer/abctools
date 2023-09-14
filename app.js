@@ -6940,40 +6940,85 @@ function ToggleChords(bDoStrip) {
 //
 // Add a new ABC tune template, song template, or PDF tunebook annotation template to the current ABC
 //
+function idleAddABC(){
+
+	if (gIsIOS){
+
+		document.getElementById("addabcfilebutton").removeAttribute("accept");
+	
+	}	
+
+	//
+	// Setup the file import control
+	//
+	document.getElementById("addabcfilebutton").onchange = () => {
+
+		let fileElement = document.getElementById("addabcfilebutton");
+
+		// check if user had selected a file
+		if (fileElement.files.length === 0) {
+
+			DayPilot.Modal.alert("Please select an ABC or MusicXML file",{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
+
+			return;
+
+		}
+
+		let file = fileElement.files[0];
+
+		// Read the file and append it to the editor
+		DoFileRead(file, true);
+
+		// Reset file selectors
+		fileElement.value = "";
+
+	}
+
+}
 
 function AddABC(){
 
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">Add New Example ABC Templates&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#add_templates_dialog" target="_blank" style="text-decoration:none;">💡</a></span></p>';
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">Add ABC Tunes&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#add_templates_dialog" target="_blank" style="text-decoration:none;">💡</a></span></p>';
 	modal_msg += '<div id="add-new-tune-dialog">';
+	modal_msg += '<p style="text-align:center;margin-top:28px;font-size:18px;">Add Your Own Tunes from an ABC or MusicXML File</p>';
 	modal_msg += '<p style="text-align:center;margin-top:36px;">';
+	modal_msg += '<input type="file" id="addabcfilebutton" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL" hidden/>';
+	modal_msg += '<label class="abcupload btn btn-top" for="addabcfilebutton" title="Adds tunes from an existing ABC or MusicXML file to the end of the ABC">Choose File to Add</label>';
+	modal_msg += '</p>';
+	modal_msg += '<p style="text-align:center;margin-top:24px;font-size:18px;margin-top:40px;">Add an Example ABC Tune</p>';
+	modal_msg += '<p style="text-align:center;margin-top:24px;">';
 	modal_msg  += '<input id="addnewreel" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleReel();" type="button" value="Add an Example Reel" title="Adds an example reel (Cooley\'s) to the end of the ABC">';
 	modal_msg  += '<input id="addnewjig" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleJig();" type="button" value="Add an Example Jig" title="Adds an example jig (The Kesh) to the end of the ABC">';
 	modal_msg += '</p>';	
-	modal_msg += '<p style="text-align:center;margin-top:32px;">';
-	modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendJSBach();" type="button" value="Add J.S. Bach Two-Part Invention #1" title="Adds the J.S. Bach 2-Part Invention #1 to the end of the ABC">';
-	modal_msg += '</p>';
-	modal_msg += '<p style="text-align:center;margin-top:32px;">';
+	modal_msg += '<p style="text-align:center;margin-top:24px;">';
+	modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendJSBach();" type="button" value="Add J.S. Bach Two-Part Invention #1" title="Adds the J.S. Bach 2-Part Invention #1 to the end of the ABC">';
 	modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendJSBach2();" type="button" value="Add J.S. Bach BWV570 Fantasia" title="Adds the J.S. Bach BWV570 Fantasia for Pipe Organ to the end of the ABC">';
 	modal_msg += '</p>';
-	modal_msg += '<p style="text-align:center;margin-top:32px;">';
+	modal_msg += '<p style="text-align:center;margin-top:32px;font-size:18px;">Add an ABC Template</p>';
+	modal_msg += '<p style="text-align:center;margin-top:24px;">';
 	modal_msg  += '<input id="addnewsong" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleSong();" type="button" value="Add an Example Song" title="Adds an example song to the end of the ABC">';
 	modal_msg  += '<input id="addsongtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSongTemplate();" type="button" value="Add a Song Template" title="Adds a minimal song template to the end of the ABC">';
 	modal_msg += '</p>';
-	modal_msg += '<p style="text-align:center;margin-top:32px;">';
-	modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendBoxFingeringTemplate();" type="button" value="Add Box Fingering Symbols Template" title="Adds a template with symbols for annotating box fingerings and tablature to the top of the ABC">';
-	modal_msg += '</p>';
-	modal_msg += '<p style="text-align:center;margin-top:32px;">';
+	modal_msg += '<p style="text-align:center;margin-top:24px;">';
+	modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendBoxFingeringTemplate();" type="button" value="Add Box Fingering Symbols Template" title="Adds a template with symbols for annotating box fingerings and tablature to the top of the ABC">';
 	modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddClickTrackTemplate();" type="button" value="Add Two-Bar Click Intro Templates" title="Adds two-bar click intro templates for common styles of tunes to the end of the ABC">';
 	modal_msg += '</p>';
-	modal_msg += '<p style="text-align:center;margin-top:32px;">';
+	modal_msg += '<p style="text-align:center;margin-top:24px;">';
 	modal_msg  += '<input id="addtunebookheaders" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders(false);" type="button" value="Add PDF Tunebook Annotations" title="Adds common useful PDF tunebook annotations to the top of the ABC">';
 	modal_msg += '</p>';
-	modal_msg += '<p style="text-align:center;margin-top:32px;">';
+	modal_msg += '<p style="text-align:center;margin-top:24px;">';
 	modal_msg += '</p>';
 
 	modal_msg += '</div>';
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 600,  scrollWithPage: (gIsIOS || gIsAndroid) }).then(function(){
+	setTimeout(function(){
+
+		idleAddABC();
+
+	}, 150);
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 700,  scrollWithPage: (gIsIOS || gIsAndroid) }).then(function(){
+
 			
 	});
 
@@ -14188,26 +14233,29 @@ function DoFileRead(file,doAppend){
 							// Render the notation
 							RenderAsync(true,null,function(){
 
-								// Scroll the last appended tune into view
-								if (doAppend){
+								if (!(gIsIOS || gIsAndroid)){
 
-									var nTunes = CountTunes();
+									// Scroll the last appended tune into view
+									if (doAppend){
 
-									var theTune = getTuneByIndex(nTunes-1);
+										var nTunes = CountTunes();
 
-									var tuneOffset = gTheABC.value.length-(theTune.length / 2);
+										var theTune = getTuneByIndex(nTunes-1);
 
-									if (!gIsMaximized){
+										var tuneOffset = gTheABC.value.length-(theTune.length / 2);
 
-										// Scroll the tune ABC into view
-									    gTheABC.selectionEnd = gTheABC.selectionStart = tuneOffset;
-								    	gTheABC.blur();
-								    	gTheABC.focus();
+										if (!gIsMaximized){
 
-								    }
+											// Scroll the tune ABC into view
+										    gTheABC.selectionEnd = gTheABC.selectionStart = tuneOffset;
+									    	gTheABC.blur();
+									    	gTheABC.focus();
 
-									// Scroll the tune into view
-									MakeTuneVisible(true);						
+									    }
+
+										// Scroll the tune into view
+										MakeTuneVisible(true);						
+									}
 								}
 
 								// Recalculate the notation top position
@@ -14301,26 +14349,29 @@ function DoFileRead(file,doAppend){
 				// Render the notation
 				RenderAsync(true,null,function(){
 
-					// Scroll the last appended tune into view
-					if (doAppend){
+					if (!(gIsIOS || gIsAndroid)){
+						
+						// Scroll the last appended tune into view
+						if (doAppend){
 
-						var nTunes = CountTunes();
+							var nTunes = CountTunes();
 
-						var theTune = getTuneByIndex(nTunes-1);
+							var theTune = getTuneByIndex(nTunes-1);
 
-						var tuneOffset = gTheABC.value.length-(theTune.length / 2);
+							var tuneOffset = gTheABC.value.length-(theTune.length / 2);
 
-						if (!gIsMaximized){
+							if (!gIsMaximized){
 
-							// Scroll the tune ABC into view
-						    gTheABC.selectionEnd = gTheABC.selectionStart = tuneOffset;
-					    	gTheABC.blur();
-					    	gTheABC.focus();
+								// Scroll the tune ABC into view
+							    gTheABC.selectionEnd = gTheABC.selectionStart = tuneOffset;
+						    	gTheABC.blur();
+						    	gTheABC.focus();
 
-					    }
+						    }
 
-						// Scroll the tune into view
-						MakeTuneVisible(true);						
+							// Scroll the tune into view
+							MakeTuneVisible(true);						
+						}
 					}
 
 					// Recalculate the notation top position
