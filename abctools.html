@@ -36,8 +36,8 @@
 		<link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 		<link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-		<link href="app.css?v=543" media="all" rel="stylesheet" type="text/css">
-		
+		<link href="app.css?v=544" media="all" rel="stylesheet" type="text/css">
+				
 	</head>
 	<body>
 		<div id="app-container">
@@ -71,7 +71,7 @@
 					<div id="fileoperations">
 						<input type="file" id="selectabcfile" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL"  hidden/>
 						<!--our custom abc file upload button-->
-						<label class="abcupload btn btn-top" for="selectabcfile" title="Opens an existing ABC or MusicXML file">Open</label>
+						<label class="abcupload btn btn-top" for="selectabcfile" title="Opens an existing ABC or MusicXML file.&nbsp;&nbsp;You may also drag-and-drop a single ABC or MusicXML file on the editor area to add it.">Open</label>
 						<input class="newabcfile btn btn-top" id="newabcfile" onclick="AddABC();" type="button" value="Add" title="Add a new tune or song template to the end of the ABC">
 						<input class="saveabcfiledisabled btn btn-top" id="saveabcfile" onclick="SaveABC();" type="button" value="Save" title="Saves the current ABC text to a file">
 						<input class="saveaspdfdisabled btn btn-top" id="saveaspdf" onclick="PDFExportDialog();" type="button" value="Export PDF" title="Exports a PDF tunebook">
@@ -82,7 +82,7 @@
 						<input class="toggletopbar btn btn-top" id="toggletopbar" onclick="ToggleTopBar();" type="button" value="▲" title="Toggles the top bar area">
 					</div>
 					<div id="inputarea">
-						<textarea id="abc" rows="12" cols="70" placeholder="Enter the ABC for your tunes here" spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
+						<textarea id="abc" rows="12" cols="70" placeholder="Enter some ABC or drag-and-drop an ABC or MusicXML file here" spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
 					</div>
 				</div>
 				<div id="notenrechts" class="hidden-print">
@@ -155,8 +155,8 @@
 			
 			<div id="notation-spacer" class="hidden-print relativebox"></div>
 			
-			<div id="notation-placeholder" class="hidden-print relativebox"><p id="notation-placeholder-text"><strong>Notation will appear here when you enter some ABC.</strong><br><br><br>Click <strong>Open</strong> to open an existing ABC file.<br><br>Click <strong>
-				Add</strong> to add a new ABC tune template.<br><br><br><strong>Desktop/Laptop Users:</strong><br><br>Not seeing the side-by-side ABC/Notation view?<br><br>Try zooming out your browser view by pressing:<br><br>Windows: Ctrl -&nbsp;&nbsp;&nbsp;&nbsp;Mac: ⌘ - </p><input class="notation-placeholder-button btn btn-placeholder" onclick="showWelcomeScreen();" type="button" value="Show Help Screen" title="Shows the help screen"></div>
+			<div id="notation-placeholder" class="hidden-print relativebox"><p id="notation-placeholder-text"><strong>Notation will appear here when you enter some ABC.</strong><br><br><br>Click <strong>Open</strong> to open an existing ABC or MusicXML file.<br><br>Click <strong>
+				Add</strong> to add a new ABC tune template.<br><br><br><strong>Desktop/Laptop Users:</strong><br><br>Drag-and-drop an ABC or MusicXML file on the editor area to add it.<br><br>Not seeing the side-by-side ABC/Notation view?<br><br>Try zooming out your browser view by pressing:<br><br>Windows: Ctrl -&nbsp;&nbsp;&nbsp;&nbsp;Mac: ⌘ - </p><input class="notation-placeholder-button btn btn-placeholder" onclick="showWelcomeScreen();" type="button" value="Show Help Screen" title="Shows the help screen"></div>
 			
 			<div id="notation-holder" class="notation-holder relativebox pagebreak">
 			</div>
@@ -170,19 +170,19 @@
 		</div>
 		
 	</body>
-	<script type="text/javascript" src="jquery-1.11.1.min.js?v=543"></script><!-- jQuery -->
-	<script type="text/javascript" src="jszip.min.js?v=543"></script><!-- zip file handling -->
-	<script type="text/javascript" src="xml2abc.js?v=543"></script><!-- to convert MusicXML to ABC -->
-	<script type="text/javascript" src="abcjs-chord-intervals.js?v=543"></script><!-- chord intervals used by abcjs - non-minified -->
-	<script type="text/javascript" src="abcjs-basic-tabs-min.js?v=543"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
-	<script type="text/javascript" src="jspdf.min.js?v=543"></script><!-- to generate PDF using Javscript -->
-	<script type="text/javascript" src="html2image.js?v=543"></script><!-- to convert HTML elements to bitmaps -->
-	<script type="text/javascript" src="qrcode.js?v=543"></script><!-- to generate QR codes for the share links -->
-	<script type="text/javascript" src="lz-string.min.js?v=543"></script><!-- used for share URL generation -->
-	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=543"></script><!-- modal dialog replacement -->
-	<script type="text/javascript" src="lame.min.js?v=543"></script><!-- .mp3 audio encoder -->
-	<script type="text/javascript" src="unmute.min.js?v=543"></script><!-- fixes issue on iOS Safari muting tabs -->
-	<script type="text/javascript" src="tab-injectors-min.js?v=543"></script><!-- Tab generation for ABC injection -->
-	<script type="text/javascript" src="app-min.js?v=543"></script><!-- main application business logic -->
-	<script type="text/javascript" src="api-keys.js?v=543"></script><!-- API keys used by the tool -->
+	<script type="text/javascript" src="jquery-1.11.1.min.js?v=544"></script><!-- jQuery -->
+	<script type="text/javascript" src="jszip.min.js?v=544"></script><!-- zip file handling -->
+	<script type="text/javascript" src="xml2abc.js?v=544"></script><!-- to convert MusicXML to ABC -->
+	<script type="text/javascript" src="abcjs-chord-intervals.js?v=544"></script><!-- chord intervals used by abcjs - non-minified -->
+	<script type="text/javascript" src="abcjs-basic-tabs-min.js?v=544"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
+	<script type="text/javascript" src="jspdf.min.js?v=544"></script><!-- to generate PDF using Javscript -->
+	<script type="text/javascript" src="html2image.js?v=544"></script><!-- to convert HTML elements to bitmaps -->
+	<script type="text/javascript" src="qrcode.js?v=544"></script><!-- to generate QR codes for the share links -->
+	<script type="text/javascript" src="lz-string.min.js?v=544"></script><!-- used for share URL generation -->
+	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=544"></script><!-- modal dialog replacement -->
+	<script type="text/javascript" src="lame.min.js?v=544"></script><!-- .mp3 audio encoder -->
+	<script type="text/javascript" src="unmute.min.js?v=544"></script><!-- fixes issue on iOS Safari muting tabs -->
+	<script type="text/javascript" src="tab-injectors-min.js?v=544"></script><!-- Tab generation for ABC injection -->
+	<script type="text/javascript" src="app-min.js?v=544"></script><!-- main application business logic -->
+	<script type="text/javascript" src="api-keys.js?v=544"></script><!-- API keys used by the tool -->
 </html>
