@@ -6490,7 +6490,7 @@ function ensureABCFile(filename) {
 	if ((fileExtension.toLowerCase() == "abc") || (fileExtension.toLowerCase() == "txt") || (fileExtension.toLowerCase() == "xml") || (fileExtension.toLowerCase() == "musicxml") || (fileExtension.toLowerCase() == "mxl")){
 		return true;
 	} else {
-		DayPilot.Modal.alert("You must select a .abc, .txt, .xml, .musicxml, or .mxl file to open.",{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
+		DayPilot.Modal.alert("Sorry, only .abc, .txt, .xml, .musicxml, or .mxl files are supported.",{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
 		return false;
 	}
 }
@@ -10727,7 +10727,10 @@ function showWelcomeScreen(){
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">To begin, type or paste tunes in ABC format into the text area.</p>'; 
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Each ABC tune <strong>must</strong> begin with an X: tag.</p>'; 
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Notation updates instantly as you make changes.</p>'; 
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click <strong>Open</strong> to open and import an ABC text file from your system.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click <strong>Open</strong> to open an ABC or MusicXML file from your system.</p>';
+	   if (!(gIsIOS || gIsAndroid)){
+	   		modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">You may also drag-and-drop a single ABC or MusicXML file on the editor area to add it.</p>';
+	   }
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click <strong>Add</strong> to add a new ABC tune template.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click <strong>Settings</strong> to set common tools settings and select the default instrument sounds and volumes to use when playing tunes.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica"><strong>Once ABC has been entered and notation is displayed:</strong></p>';
@@ -14074,6 +14077,281 @@ function importMusicXML(theXML){
 
 }
 
+//
+// Common file read routine for Open and Drop
+//
+function DoFileRead(file,doAppend){
+
+	// Check the filename extension
+	if (ensureABCFile(file.name)) {
+
+		var isMXL = (file.name.toLowerCase().indexOf(".mxl") != -1);
+
+		// Clean up the notation while the new file is loading
+		if (!doAppend){
+
+			gTheABC.value = "";
+
+			Render(true,null);
+		}
+
+		// Show the loading status
+		var fileSelected = document.getElementById('abc-selected');
+		fileSelected.innerText = "Loading: "+file.name;
+
+		// Save the filename
+		gDisplayedName = file.name;
+
+		// If this is a .mxl file, need to unzip first
+		if (isMXL){
+
+			var zip = new JSZip();
+			
+			zip.loadAsync(file)
+			.then(function(zip) {
+
+				// Read the META-INF metadata
+				var fname = "META-INF/container.xml";
+
+				zip.files[fname].async("string")
+                .then(function (theXML) {
+                	
+                	// Need to parse the container.xml to find the root file
+                	var xmldata = $.parseXML(theXML); 
+
+                	var rootfile = xmldata.getElementsByTagName('rootfile')[0];
+
+                	// Get the main MusicXML file name in the zipfile
+                	var fname = rootfile.getAttribute("full-path");
+
+					zip.files[fname].async("string")
+	                .then(function (theText) {
+
+						// Check for MusicXML format
+						if (isXML(theText)){
+
+							theText = importMusicXML(theText);
+
+						}
+						else{
+
+							DayPilot.Modal.alert("This is not a valid MXL file.",{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
+
+			     			return;
+
+						}
+
+						// Handle appending for  drag and drop
+						if (doAppend){
+
+							var nTunes = CountTunes();
+							
+							if (nTunes > 0){
+
+								// Do we need to add a new line before the next tune?
+								var theLength = gTheABC.value.length;
+
+								if (gTheABC.value.substring(theLength-1) != "\n"){
+									gTheABC.value += "\n";
+								}
+
+								gTheABC.value += "\n";
+							}
+							
+							gTheABC.value += theText;
+
+						}
+						else{
+
+							gTheABC.value = theText;
+
+						}
+
+						// Refocus back on the ABC
+						FocusABC();
+
+						setTimeout(function() {
+
+							// Reset the defaults
+							RestoreDefaults();
+
+							// Reset the window scroll
+							window.scrollTo(
+								{
+								  top: 0,
+								}
+							)
+
+							// Mark that this ABC was from a file
+							gABCFromFile = true;
+
+							// Render the notation
+							RenderAsync(true,null,function(){
+
+								// Scroll the last appended tune into view
+								if (doAppend){
+
+									var nTunes = CountTunes();
+
+									var theTune = getTuneByIndex(nTunes-1);
+
+									var tuneOffset = gTheABC.value.length-(theTune.length / 2);
+
+									if (!gIsMaximized){
+
+										// Scroll the tune ABC into view
+									    gTheABC.selectionEnd = gTheABC.selectionStart = tuneOffset;
+								    	gTheABC.blur();
+								    	gTheABC.focus();
+
+								    }
+
+									// Scroll the tune into view
+									MakeTuneVisible(true);						
+								}
+
+								// Recalculate the notation top position
+								UpdateNotationTopPosition();
+
+							});
+
+						}, 100);
+
+	                });                
+
+					return;
+
+                }, function() {
+
+					DayPilot.Modal.alert("This is not a valid MXL file.",{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
+
+					return;
+
+			    });
+
+			    return;
+
+		    }, function() {
+
+				DayPilot.Modal.alert("This is not a valid MXL file.",{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
+
+				return;
+
+		    });
+
+			return;
+		}
+
+		const reader = new FileReader();
+
+		reader.addEventListener('load', (event) => {
+
+			var theText = event.target.result;
+
+			// Check for MusicXML format
+			if (isXML(theText)){
+				theText = importMusicXML(theText);
+			}
+
+			// Handle appending for  drag and drop
+			if (doAppend){
+
+				var nTunes = CountTunes();
+				
+				if (nTunes > 0){
+					
+					// Do we need to add a new line before the next tune?
+					var theLength = gTheABC.value.length;
+
+					if (gTheABC.value.substring(theLength-1) != "\n"){
+
+						gTheABC.value += "\n";
+					}
+
+					gTheABC.value += "\n";
+				}
+				
+				gTheABC.value += theText;
+
+			}
+			else{
+
+				gTheABC.value = theText;
+
+			}
+
+			// Refocus back on the ABC
+			FocusABC();
+
+			setTimeout(function() {
+
+				// Reset the defaults
+				RestoreDefaults();
+
+				// Reset the window scroll
+				window.scrollTo(
+					{
+					  top: 0,
+					}
+				)
+
+				// Mark that this ABC was from a file
+				gABCFromFile = true;
+
+				// Render the notation
+				RenderAsync(true,null,function(){
+
+					// Scroll the last appended tune into view
+					if (doAppend){
+
+						var nTunes = CountTunes();
+
+						var theTune = getTuneByIndex(nTunes-1);
+
+						var tuneOffset = gTheABC.value.length-(theTune.length / 2);
+
+						if (!gIsMaximized){
+
+							// Scroll the tune ABC into view
+						    gTheABC.selectionEnd = gTheABC.selectionStart = tuneOffset;
+					    	gTheABC.blur();
+					    	gTheABC.focus();
+
+					    }
+
+						// Scroll the tune into view
+						MakeTuneVisible(true);						
+					}
+
+					// Recalculate the notation top position
+					UpdateNotationTopPosition();
+
+				});
+
+			}, 100);
+
+		});
+
+		reader.readAsText(file);
+	}
+}
+
+//
+// Drag/drop handler
+//
+function DoDrop(e){
+
+    e.stopPropagation ();
+    e.preventDefault ();
+
+    var drop_files = e.dataTransfer.files;
+
+	let file = drop_files[0];
+
+	DoFileRead(file,true);
+}
+
+
 function DoStartup() {
 
 	// Init global state
@@ -14321,162 +14599,8 @@ function DoStartup() {
 
 		let file = fileElement.files[0];
 
-		// Check the filename extension
-		if (ensureABCFile(file.name)) {
-
-			var isMXL = (file.name.toLowerCase().indexOf(".mxl") != -1);
-
-			// Clean up the notation while the new file is loading
-			gTheABC.value = "";
-
-			Render(true,null);
-
-			// Show the loading status
-			var fileSelected = document.getElementById('abc-selected');
-			fileSelected.innerText = "Loading: "+file.name;
-
-			// Save the filename
-			gDisplayedName = file.name;
-
-			// If this is a .mxl file, need to unzip first
-			if (isMXL){
-
-				var zip = new JSZip();
-				
-				zip.loadAsync(file)
-				.then(function(zip) {
-
-					// Read the META-INF metadata
-					var fname = "META-INF/container.xml";
-
-					zip.files[fname].async("string")
-	                .then(function (theXML) {
-	                	
-	                	// Need to parse the container.xml to find the root file
-	                	var xmldata = $.parseXML(theXML); 
-
-	                	var rootfile = xmldata.getElementsByTagName('rootfile')[0];
-
-	                	// Get the main MusicXML file name in the zipfile
-	                	var fname = rootfile.getAttribute("full-path");
-
-						zip.files[fname].async("string")
-		                .then(function (theText) {
-
-							// Check for MusicXML format
-							if (isXML(theText)){
-
-								theText = importMusicXML(theText);
-
-							}
-							else{
-
-								DayPilot.Modal.alert("This is not a valid MXL file.",{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
-
-				     			return;
-
-							}
-
-							gTheABC.value = theText;
-
-							// Refocus back on the ABC
-							FocusABC();
-
-							setTimeout(function() {
-
-								// Reset the defaults
-								RestoreDefaults();
-
-								// Reset the window scroll
-								window.scrollTo(
-									{
-									  top: 0,
-									}
-								)
-
-								// Mark that this ABC was from a file
-								gABCFromFile = true;
-
-								// Render the notation
-								RenderAsync(true,null,function(){
-
-									// Recalculate the notation top position
-									UpdateNotationTopPosition();
-
-								});
-
-							}, 100);
-
-		                });                
-
-						return;
-
-	                }, function() {
-
-						DayPilot.Modal.alert("This is not a valid MXL file.",{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
-
-						return;
-
-				    });
-
-				    return;
-
-			    }, function() {
-
-					DayPilot.Modal.alert("This is not a valid MXL file.",{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
-
-					return;
-
-			    });
-
-				return;
-			}
-
-			const reader = new FileReader();
-
-			reader.addEventListener('load', (event) => {
-
-				var theText = event.target.result;
-
-				// Check for MusicXML format
-				if (isXML(theText)){
-					theText = importMusicXML(theText);
-				}
-
-				gTheABC.value = theText;
-
-				// Refocus back on the ABC
-				FocusABC();
-
-				setTimeout(function() {
-
-					// Reset the defaults
-					RestoreDefaults();
-
-					// Reset the window scroll
-					window.scrollTo(
-						{
-						  top: 0,
-						}
-					)
-
-					// Mark that this ABC was from a file
-					gABCFromFile = true;
-
-					// Render the notation
-					RenderAsync(true,null,function(){
-
-						// Recalculate the notation top position
-						UpdateNotationTopPosition();
-
-					});
-
-				}, 100);
-
-			});
-
-			reader.readAsText(file);
-		}
+		// Read the file
+		DoFileRead(file, false);
 
 	}
 
@@ -14583,6 +14707,37 @@ function DoStartup() {
 		gAllowControlToggle = false;
 	}
 
+	//
+	// Add drag-and-drop handlers on desktop browsers 
+	//
+	if (!(gIsIOS || gIsAndroid)){
+
+    	$.event.props.push ("dataTransfer");      // make jQuery copy the dataTransfer attribute
+
+		$('#abc').on ('drop', function(e){
+			
+			// Remove the drag drop highlighting
+			$(this).toggleClass('indrag', false);
+
+			DoDrop(e);
+		});
+		
+		$('#abc').on ('dragover', function (e) {    // this handler makes the element accept drops and generate drop-events
+	        e.stopPropagation ();
+	        e.preventDefault ();                    // the preventDefault is obligatory for drag/drop!
+	        e.dataTransfer.dropEffect = 'copy';     // Explicitly show this is a copy.
+	    });
+
+	    $('#abc').on ('dragenter dragleave', function () {
+	        $(this).toggleClass ('indrag');
+	    });
+
+	}
+	else{
+		// Use the original placeholder on iOS and Android
+		gTheABC.placeholder = "Enter the ABC for your tunes here";
+
+	}
 
 	// And set the focus
     gTheABC.focus();
