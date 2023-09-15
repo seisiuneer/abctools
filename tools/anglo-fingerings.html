@@ -21,6 +21,14 @@
     <meta name="viewport" content="width=860">
     <link rel="stylesheet" href="anglo-fingerings.css?v=34"/>
     
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VM0N9HL3MK');
+    </script>
+    
   </head>
   <body>
     
@@ -37,7 +45,7 @@
         
         <p>1)&nbsp;Click "Open an existing .ABC file" to open a file or paste one or more ABC tunes into the box below.</p>
         <p>2)&nbsp;Enter your preferred ABC font sizes, %%staffsep, %%musicspace, and preferred bellows direction indication character values.</p>
-        <p>3)&nbsp;If you would like to use a bar over the button name to indicate draw instead of using the bellows direction indication characters, check "Use a bar over button name to indicate Draw (overrides Push and Draw characters)"
+        <p>3)&nbsp;If you would like to use a bar over the button name to indicate draw instead of using the bellows direction indication characters, check "Use a bar over button name to indicate Draw (overrides Push and Draw characters)"</p>
         <p>4)&nbsp;If desired, edit the button names you would like used in the tablature.</p>
         <p>Click "Reset to Default" to reset to the original values.</p>
         <p>Changes to the button names are saved to your local browser storage and reloaded the next time you run the tool.</p>
@@ -82,7 +90,7 @@
           <textarea id="input" placeholder="Enter ABC notation here" spellcheck="false" autocorrect="off" autocapitalize="none">
           </textarea>
         </p>
-                
+        
         <p><input type="checkbox" id="injectVolumes" checked="true">&nbsp;&nbsp;Inject %%MIDI directives to mute bass/chords</p>
         
         <p>Font family:<span class="inputbox"><input style="width:100px;" id="font_family" type="text"></span><span class="recommended">Recommended: Palatino</span></p>
@@ -103,8 +111,8 @@
         <p><input type="checkbox" id="useBarForDraw" checked="false">&nbsp;&nbsp;Use a bar over button name to indicate Draw (overrides Push and Draw characters)</p>
         
         <p style="margin-bottom:24px;">Button names:&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-reset-buttonnames" onClick="defaultButtonNames();">Reset to Default</button></p>
-
-
+        
+        
         <table style="margin-bottom:24px;">
           <tr>
             <td><input type="text" id="r1c1"></td>
