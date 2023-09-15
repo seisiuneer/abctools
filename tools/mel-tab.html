@@ -12,14 +12,14 @@
     <link rel="icon" href="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5-192x192.png" sizes="192x192" />
     <link rel="apple-touch-icon" href="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5-180x180.png" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Traditional B/C and C#/D Irish Button Box Tablature Generator" />
-    <meta property="og:description" content="Batch processor for generating ABC notation with tablature for traditional Irish B/C and C#/D button box." />
-    <meta property="og:url" content="http://michaeleskin.com/tools/box-tab.html" />
-    <meta property="og:site_name" content="Traditional B/C and C#/D Irish Button Box Tablature Generator" />
-    <meta property="og:image" content="http://michaeleskin.com/img/boxtab1.jpg" />
+    <meta property="og:title" content="D/G and G/C Diatonic Melodeon Tablature Generator" />
+    <meta property="og:description" content="Batch processor for generating ABC notation with tablature for D/G and G/C Diatonic Melodeon." />
+    <meta property="og:url" content="http://michaeleskin.com/tools/mel-tab.html" />
+    <meta property="og:site_name" content="D/G and G/C Diatonic Melodeon Tablature Generatorr" />
+    <meta property="og:image" content="http://michaeleskin.com/tools/mel-tab2.jpg" />
     <meta name="msapplication-TileImage" content="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5.png?time=1606377715" />
     <meta name="viewport" content="width=860">
-    <link rel="stylesheet" href="box-tab.css?v=11"/>
+    <link rel="stylesheet" href="mel-tab.css?v=12"/>
     
   </head>
   <body>
@@ -29,7 +29,7 @@
       <div>
         
         <div style="text-align: center;">
-       <h1> D/G and G/C Diatonic Melodeon Tablature Generator</h1>          
+          <h1> D/G and G/C Diatonic Melodeon Tablature Generator</h1>
           <h2>Batch Pre-processor for ABC Tunebooks</h2>
         </div>
         
@@ -37,12 +37,12 @@
         
         <p>1)&nbsp;Click "Open an existing .ABC file" to open a file or paste one or more ABC tunes into the box below.</p>
         <p>2)&nbsp;Enter your preferred ABC font sizes, %%staffsep, %%musicspace, and preferred bellows direction indication character values.</p>
-        <p>3)&nbsp;If you would like to use a bar over the button name to indicate draw instead of using the bellows direction indication characters, check "Use a bar over button name to indicate Draw (overrides Push and Draw characters)"
-        <p>4)&nbsp;Select your instrument style: (D/G or G/C) from the "Style" dropdown.</p>
+        <p>3)&nbsp;If you would like to use a bar over the button name to indicate draw instead of using the bellows direction indication characters, check "Use a bar over button name to indicate Draw (overrides Push and Draw characters)"</p>
+        <p>4)&nbsp;Select your instrument : D/G or G/C and button start 3rd or 4th from the "Style" dropdown.</p>
         <p>5)&nbsp;Select whether you want the tablature to appear above or below the notation from the "Tab Location" dropdown.</p>
         <p>6)&nbsp;If tablature is set to appear over the notation, existing chords in the ABC are always stripped.</p>
-    	  <p>If tablature is set to appear under the notation, and you want to leave existing chords above the staff, uncheck "Strip all chords before injecting tablature".</p>
-       	<p>7)&nbsp;Click "Generate Tablature".</p>
+        <p>If tablature is set to appear under the notation, and you want to leave existing chords above the staff, uncheck "Strip all chords before injecting tablature".</p>
+        <p>7)&nbsp;Click "Generate Tablature".</p>
         <p>The generated ABC with tablature will appear in the "Processed ABC Output, with Tablature" box.</p>
         <p>8)&nbsp;Save, Copy or Test the results:</p>
         <p>Click "Save Output to a file" to save the results to a file.</p>
@@ -98,9 +98,7 @@
             
             <option value="DG4">&nbsp;&nbsp;D/G 4 Start</option>
             
-             <option value="GC3">&nbsp;&nbsp;G/C 3 Start</option>
-             
-              <option value="GC4">&nbsp;&nbsp;G/C 4 Start</option>
+            <option value="GC3">&nbsp;&nbsp;G/C 3 Start</option>
             
           </select>
           
@@ -113,9 +111,9 @@
             <option value="below">&nbsp;&nbsp;Below Staff</option>
             
           </select>
-
+          
         </p>
-
+        
         <p id="stripChordsHolder" style="display:none;"><input type="checkbox" id="stripChords" checked="true">&nbsp;&nbsp;Strip all chords before injecting tablature</p>
         
         <p style="margin-top:24px"><button id="generateTablature" class="btn btn-generate" onClick="generateTablature();">Generate Tablature</button></p>
@@ -144,28 +142,29 @@
       
       <div style="text-align: center;">
         
-        <h4>How to Read the Box Tablature</h4>
+        <h4>How to Read the Melodeon Tablature</h4>
         
         <div style="text-align: left">
-          <p>The tablature assumes a standard 21-button instrument.</p>
+          <p>The tablature assumes a standard 21-button 2 row instrument.</p>
           <p></p>
-          <p>If playing a 23-button instrument, you will need to offset from the tab one button.</p>
+          <p>The tuning options currently are D/G 3rd or 4th button start and G/C 3rd button start.</p>
+          <p>Pleaser feel free to suggest and request other tunings.</p>
           <p></p>
-          <p>Numbers represent the button number on the primary row:</p>
-          <p>C-row for B/C, D-row for C#/D.</p>
+          <p>Numbers represent the button number on the inner row:</p>
+          <p>G-row for D/G, C-row for G/C.</p>
           <p></p>
-          <p>Number in circles represent the button number on the secondary row:</p>
-          <p>B-row for B/C, C#-row for C#/D</p>
+          <p>Number in circles represent the button number on the outer row:</p>
+          <p>D-row for D/G, G-row for G/C</p>
           <p></p>
           <p>Push is represented by a "↓" under the button number.</p>
           <p>Draw is represented by a "↑" under the button number.</p>
         </div>
         
       </div>
-
+      
       <hr>
       
-      <h4 style="text-align:center;">Walkthrough and Demo Video</h4>
+      <!--       <h4 style="text-align:center;">Walkthrough and Demo Video</h4>
       
       <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/_BAXNI4G7xg" title="Traditional B/C and C#/D Irish Button Box Tablature Generator Walkthrough" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
       
@@ -179,7 +178,7 @@
       
       <p><a href="http://michaeleskin.com/tunebooks.html" target="_blank">Tunebooks with Tablature for B/C and C#/D Box</a></p>
       
-      <hr>
+      <hr> -->
       
       <h4 style="text-align:center">Known Issues</h4>
       
@@ -195,7 +194,7 @@
       <p>You'll need to reduce these down to a single note for the tool to work.</p>
       <p></p>
       
-      <hr>     
+      <hr>
       
       <div style="text-align:center;padding:10px 10px 5px 10px;background-color:honeydew">
         <h2 style="text-align:center;">Tip Jars</h2>
@@ -208,7 +207,7 @@
       
       <p style="text-align: center">Complete source code for this utility may be found on GitHub</p>
       
-      <p style="text-align: center"> <a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">Irish Box Tab Generator on Github</a></p>
+      <p style="text-align: center"> <a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">Diatonic Melodeon Tab Generator on Github</a></p>
       
       <hr style="margin-bottom:50px">
       
@@ -216,8 +215,8 @@
     
   </body>
   
-  <script src="box-tab.js?v=11" type="text/javascript"></script>
-  <script type="text/javascript" src="lz-string.min.js?v=11"></script>
-  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=11"></script>
+  <script src="mel-tab.js?v=12" type="text/javascript"></script>
+  <script type="text/javascript" src="lz-string.min.js?v=12"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=12"></script>
   
 </html>
