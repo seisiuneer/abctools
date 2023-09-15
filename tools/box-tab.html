@@ -21,6 +21,14 @@
     <meta name="viewport" content="width=860">
     <link rel="stylesheet" href="box-tab.css?v=11"/>
     
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VM0N9HL3MK');
+    </script>
+    
   </head>
   <body>
     
@@ -37,12 +45,12 @@
         
         <p>1)&nbsp;Click "Open an existing .ABC file" to open a file or paste one or more ABC tunes into the box below.</p>
         <p>2)&nbsp;Enter your preferred ABC font sizes, %%staffsep, %%musicspace, and preferred bellows direction indication character values.</p>
-        <p>3)&nbsp;If you would like to use a bar over the button name to indicate draw instead of using the bellows direction indication characters, check "Use a bar over button name to indicate Draw (overrides Push and Draw characters)"
+        <p>3)&nbsp;If you would like to use a bar over the button name to indicate draw instead of using the bellows direction indication characters, check "Use a bar over button name to indicate Draw (overrides Push and Draw characters)"</p>
         <p>4)&nbsp;Select your instrument style: (B/C or C#/D) from the "Style" dropdown.</p>
         <p>5)&nbsp;Select whether you want the tablature to appear above or below the notation from the "Tab Location" dropdown.</p>
         <p>6)&nbsp;If tablature is set to appear over the notation, existing chords in the ABC are always stripped.</p>
-    	  <p>If tablature is set to appear under the notation, and you want to leave existing chords above the staff, uncheck "Strip all chords before injecting tablature".</p>
-       	<p>7)&nbsp;Click "Generate Tablature".</p>
+        <p>If tablature is set to appear under the notation, and you want to leave existing chords above the staff, uncheck "Strip all chords before injecting tablature".</p>
+        <p>7)&nbsp;Click "Generate Tablature".</p>
         <p>The generated ABC with tablature will appear in the "Processed ABC Output, with Tablature" box.</p>
         <p>8)&nbsp;Save, Copy or Test the results:</p>
         <p>Click "Save Output to a file" to save the results to a file.</p>
@@ -109,9 +117,9 @@
             <option value="below">&nbsp;&nbsp;Below Staff</option>
             
           </select>
-
+          
         </p>
-
+        
         <p id="stripChordsHolder" style="display:none;"><input type="checkbox" id="stripChords" checked="true">&nbsp;&nbsp;Strip all chords before injecting tablature</p>
         
         <p style="margin-top:24px"><button id="generateTablature" class="btn btn-generate" onClick="generateTablature();">Generate Tablature</button></p>
@@ -158,7 +166,7 @@
         </div>
         
       </div>
-
+      
       <hr>
       
       <h4 style="text-align:center;">Walkthrough and Demo Video</h4>
@@ -191,7 +199,7 @@
       <p>You'll need to reduce these down to a single note for the tool to work.</p>
       <p></p>
       
-      <hr>     
+      <hr>
       
       <div style="text-align:center;padding:10px 10px 5px 10px;background-color:honeydew">
         <h2 style="text-align:center;">Tip Jars</h2>
