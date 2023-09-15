@@ -20,7 +20,15 @@
     <meta name="msapplication-TileImage" content="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5.png?time=1606377715" />
     <meta name="viewport" content="width=860">
     <link rel="stylesheet" href="chinese-flute.css?v=3"/>
-
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VM0N9HL3MK');
+    </script>
+    
   </head>
   <body>
     
@@ -38,7 +46,7 @@
         <p>1)&nbsp;Click "Open an existing .ABC file" to open a file or paste one or more ABC tunes into the box below.</p>
         <p>2)&nbsp;Enter your preferred ABC font sizes, %%staffsep, and %%musicspace values</p>
         <p>3)&nbsp;Select the root scale (1=C, 1=D, 1=G, or 1=A) from the "Scale" dropdown. (Default is 1=G)</p>
-       	<p>4)&nbsp;Click "Generate Tablature".</p>
+        <p>4)&nbsp;Click "Generate Tablature".</p>
         <p>The generated ABC with tablature will appear in the "Processed ABC Output, with Tablature" box.</p>
         <p>5)&nbsp;Save, Copy or Test the results:</p>
         <p>Click "Save Output to a file" to save the results to a file.</p>
@@ -86,17 +94,17 @@
           <span style="">Scale:&nbsp;&nbsp;</span>
           
           <select id="root_scale">
-
+            
             <option value="C">&nbsp;&nbsp;1=C</option>
-        
+            
             <option value="D">&nbsp;&nbsp;1=D</option>
-
+            
             <option value="G">&nbsp;&nbsp;1=G</option>
-
+            
             <option value="A">&nbsp;&nbsp;1=A</option>
-           
+            
           </select>
- 
+          
         </p>
         
         <p style="margin-top:24px"><button id="generateTablature" class="btn btn-generate" onClick="generateTablature();">Generate Tablature</button></p>
@@ -120,34 +128,34 @@
         </p>
         
       </div>
-
+      
       <hr>
       
       <div>
-      
-      <h4 style="text-align:center;">How to Read the Chinese Flute Tablature</h4>
-      <p>Note numbers are referenced relative to the root scale.</p>
-      <p>One octave lower is indicated by a dot below the note.</p>
-      <p>One octave higher is indicated by a dot above the note.</p>
-      <p>Sharpened notes relative to the root scale key are indicated by a # after the number.</p>
-      
-      <p>For more information on numbered musical notation systems, please visit:</p>
-      <p style="text-align: center"> <a href="https://en.m.wikipedia.org/wiki/Numbered_musical_notation" target="_blank">Numbered Musical Notation on Wikipedia</a></p>
-      
+        
+        <h4 style="text-align:center;">How to Read the Chinese Flute Tablature</h4>
+        <p>Note numbers are referenced relative to the root scale.</p>
+        <p>One octave lower is indicated by a dot below the note.</p>
+        <p>One octave higher is indicated by a dot above the note.</p>
+        <p>Sharpened notes relative to the root scale key are indicated by a # after the number.</p>
+        
+        <p>For more information on numbered musical notation systems, please visit:</p>
+        <p style="text-align: center"> <a href="https://en.m.wikipedia.org/wiki/Numbered_musical_notation" target="_blank">Numbered Musical Notation on Wikipedia</a></p>
+        
       </div>
       
       <hr>
       
       <div style="text-align: center;">
-      
-      <p style="text-align: center">Complete source code for this utility may be found on GitHub</p>
-      
-      <p style="text-align: center"> <a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">Chinese Flute Tab Generator on Github</a></p>
-      
-      <hr style="margin-bottom:50px">
-      
+        
+        <p style="text-align: center">Complete source code for this utility may be found on GitHub</p>
+        
+        <p style="text-align: center"> <a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">Chinese Flute Tab Generator on Github</a></p>
+        
+        <hr style="margin-bottom:50px">
+        
       </div>
-
+      
     </div>
     
   </body>
