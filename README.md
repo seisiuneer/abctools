@@ -31,7 +31,7 @@
 <hr>
 <p><strong>Open Source Info:</strong></p>
 <p>The converter uses open source Javascript libraries and forks of other projects:</p>
-<p><a href="http://www.franziskaludwig.de/abctransposer/" target="_blank">Jens Wollschlager's abc transposer</a> My code is a fork of Jens Wollschlager's original version.</p> 
+<p><a href="http://www.franziskaludwig.de/abctransposer/" target="_blank">Jens Wollschlager's abc transposer</a> My code started in January 2023 with a fork of Jens Wollschlager's transposer tool.</p> 
 <p><a href="https://www.abcjs.net/">abcjs</a> by Paul Rosen and Gregory Dyke to convert abc to sheet music.</p>
 <p><a href="https://www.npmjs.com/package/html-to-image">html-to-image</a> is used to prepare the html sheet music for PDF conversion.</p>
 <p><a href="https://github.com/parallax/jsPDF">jsPDF</a> is used to actually create the PDF.</p>
