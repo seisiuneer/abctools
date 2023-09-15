@@ -1,6 +1,5 @@
 //
-// box-tab-generator.js
-// DG-tab-generator.js
+// Mel-tab-generator.js
 // ABC Muscial Notation Converter for Traditional Irish Button Accordion
 // ABC Muscial Notation Converter for Chromatic 21 Key Melodeon
 // Annotates an ABC format tune with tablature
@@ -36,7 +35,7 @@ function generate_tab(abcInput){
 
     log("Got input:" + abcInput);
 //D/G 3 Start or D/G 4 Start or G/C 3 Start or G/C 4 Start
-    // B/C or C#/D?
+  
     var style = document.getElementById('layout').selectedIndex;
 
     // Find the key signature in the input
@@ -317,6 +316,53 @@ function mergeTablature(input, notes) {
                     }
 
                     break;
+                    
+                    case 2:
+
+                    if (direction == PUSH_NAME){
+
+                        // Add double quotes to fingering, to be rendered below the note
+                        theTab = "\"_" + " " + ";" +  buttonNumber + "\"";
+
+                    }
+                    else{
+
+                        var len = buttonNumber.length;
+                        var theBar = "";
+                        for (var j=0;j<len;++j){
+                            theBar += "_";
+                        }
+                       
+                        // Chrome and Safari have wide numbers in circles
+                        if (gIsChrome || gIsSafari){
+
+                            switch (buttonNumber){
+                                case "①":
+                                case "②":
+                                case "③":
+                                case "④":
+                                case "⑤":
+                                case "⑥":
+                                case "⑦":
+                                case "⑧":
+                                case "⑨":
+                                case "⑩":
+                                case "⑪":
+                                    theBar+= "_";
+                                    break;
+                            }
+                        }
+                        
+                        theTab = "\"_" + theBar + ";";
+                        theTab = theTab + buttonNumber + "\"";
+                       
+                    }
+
+                    break;
+                    
+                   
+                    
+                    
                 }
         }
         else{
@@ -339,6 +385,18 @@ function mergeTablature(input, notes) {
                     theTab = "\"_" + buttonNumber + ";";
 
                     theTab = theTab + direction + "\"";
+
+                    break;
+                    
+                    case 2:
+
+                    // Add double quotes to tab, to be rendered below the note
+                    theTab = "\"_" + buttonNumber + ";";
+
+                    theTab = theTab + direction + "\"";
+
+                    
+                    
 
                     break;
 
@@ -378,14 +436,79 @@ function sanitizeString(input, start, len) {
 function getNoteGlyph(note,style){
 
     switch (style){
-//
-        // B/C //
-        //D/G 4 Start
+
+        //DG4
         case 0:
 
             var glyph_map = {
+            //DG3
+                  
+                "^G,": "①"+PUSH_NAME,
+                "_A,": "①"+PUSH_NAME,
+                "F,":  "1"+PUSH_NAME,
+                "A,": "②"+PUSH_NAME,
+                "D,":  "2"+PUSH_NAME,
+                "_B,": "①"+DRAW_NAME,
+                "^A,": "①"+DRAW_NAME,
+                "_E,":  "1"+DRAW_NAME,
+                "^D,":  "1"+DRAW_NAME,
+                "^C,": "②"+DRAW_NAME,
+                "_D,": "②"+DRAW_NAME,
+                "^F,":  "2"+DRAW_NAME,
+                "_G,":  "2"+DRAW_NAME,
+                "G":   "3"+PUSH_NAME,
+                "E":  "③"+DRAW_NAME,
+                "A":   "3"+DRAW_NAME,
+                "^F":  "④"+PUSH_NAME,
+                "_G":  "④"+PUSH_NAME,
+                "B":   "4"+PUSH_NAME,
+                "C":   "4"+DRAW_NAME,
+                "A":  "⑤"+PUSH_NAME,
+                "B":   "5"+PUSH_NAME,
+                "B":  "⑤"+DRAW_NAME,
+                "E":   "5"+DRAW_NAME,
+                "^C":  "⑥"+DRAW_NAME,
+                "_D":  "⑥"+DRAW_NAME,
+                "E":   "6"+DRAW_NAME,
+                "G":   "6"+PUSH_NAME,
+                "e":  "⑦"+DRAW_NAME,
+                "a":   "7"+DRAW_NAME,
+                "^f":  "⑦"+PUSH_NAME,
+                "_g":  "⑦"+PUSH_NAME,
+                "b":   "7"+PUSH_NAME,
+                "c":   "8"+DRAW_NAME,
+                "a":  "⑧"+PUSH_NAME,
+                "d":   "8"+PUSH_NAME,
+                "b":  "⑨"+DRAW_NAME,
+                "e":   "9"+DRAW_NAME,
+                "^c":  "⑩"+DRAW_NAME,
+                "_d":  "⑩"+DRAW_NAME,
+                "^f":   "10"+DRAW_NAME,
+                "_g":   "10"+DRAW_NAME,
+                "g'":  "9"+PUSH_NAME,
+                "e'": "⑪"+DRAW_NAME,
+                "b'": "⑩"+PUSH_NAME,
+                "^f'":  "10"+PUSH_NAME,
+                "_g'":  "10"+PUSH_NAME,
+                "a'": "⑪"+PUSH_NAME
             
-                
+              
+            };
+
+            var thisGlyph = glyph_map[note];
+
+            if (!thisGlyph){
+                return "x ";
+            }
+
+        break;
+
+
+        // GC3
+        case 1:
+            
+            var glyph_map = {
+              //DG4
                  "^G,": "①"+PUSH_NAME,
                 "_A,": "①"+PUSH_NAME,
                 "F,":  "1"+PUSH_NAME,
@@ -435,6 +558,8 @@ function getNoteGlyph(note,style){
                 "g'":  "10"+PUSH_NAME,
                 "^f'": "⑪"+PUSH_NAME,
                 "_g'": "⑪"+PUSH_NAME
+            
+            
             };
 
             var thisGlyph = glyph_map[note];
@@ -444,12 +569,12 @@ function getNoteGlyph(note,style){
             }
 
         break;
-
-        // C#/D //
-        // G/C 3 Start
-        case 1:
-            
-            var glyph_map = {
+        
+        case 2:
+       
+         var glyph_map = {
+         
+         //GC3
                "^C,": "①"+PUSH_NAME,
                 "_D,": "①"+PUSH_NAME,
                 "^A,":  "1"+PUSH_NAME,
@@ -475,7 +600,7 @@ function getNoteGlyph(note,style){
                 "A":   "5"+DRAW_NAME,
                 "^F":  "⑥"+DRAW_NAME,
                 "_G":  "⑥"+DRAW_NAME,
-                "B":   "6"+DRAW_NAME,
+                "B" :   "6"+DRAW_NAME,
                 "c":   "6"+PUSH_NAME,
                 "a":  "⑦"+DRAW_NAME,
                 "d":   "7"+DRAW_NAME,
@@ -494,6 +619,9 @@ function getNoteGlyph(note,style){
                 "b'": "⑩"+PUSH_NAME,
                 "e'":  "10"+PUSH_NAME,
                 "d'": "⑪"+PUSH_NAME,
+         
+         
+
             };
 
             var thisGlyph = glyph_map[note];
@@ -503,6 +631,8 @@ function getNoteGlyph(note,style){
             }
 
         break;
+        
+        
     }
 
     return thisGlyph;
