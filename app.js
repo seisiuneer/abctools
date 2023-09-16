@@ -7492,7 +7492,7 @@ function AppendJSBach(){
 	theValue += '%\n';	
 	theValue += '%%staffsep 40\n';
 	theValue += '%\n';
-	theValue += '% Try changing these to %%MIDI program 136 (Silence)\n';
+	theValue += '% Try changing these to %%MIDI program mute\n';
 	theValue += '% to isolate individual voices:\n';
 	theValue += '%\n';
 	theValue += 'V:1 treble\n';
@@ -7568,7 +7568,7 @@ function AppendJSBach2(){
 	theValue += '%%staffsep 40\n';
 	theValue += 'Q:100\n';
 	theValue += '%\n';
-	theValue += '% Try changing these to %%MIDI program 136 (Silence)\n';
+	theValue += '% Try changing these to %%MIDI program mute\n';
 	theValue += '% to isolate individual voices:\n';
 	theValue += '%\n';
 	theValue += 'V:1 treble\n';
@@ -8810,10 +8810,10 @@ function InjectMIDIInstrument(bIsChords) {
 		theDefaultProgram = "34";
 	}
 
-	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,  Harpsichord: 6,  Hammered Dulcimer: 15,  Accordion: 21, Fingered Bass: 33,  Flute: 73,  Whistle: 78,  Fiddle: 110,  Uilleann Pipes: 129,  Scottish Smallpipes (D): 130,  Scottish Smallpipes (A): 131,  Säckpipa: 132,  Concertina: 133,  Melodica: 134, Cajun Accordion: 135, Silence: 136</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>';
+	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,&nbsp;&nbsp;Harpsichord: 6,&nbsp;&nbsp;Hammered Dulcimer: 15,&nbsp;&nbsp;Accordion: 21,&nbsp;&nbsp;Fingered Bass: 33,&nbsp;&nbsp;Harp: 46,&nbsp;&nbsp;Flute: 73,&nbsp;&nbsp;Whistle: 78,&nbsp;&nbsp;Fiddle: 110,&nbsp;&nbsp;Silence: mute</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended_v2.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>';
 
 	if (bIsChords){
-		thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,  Electric Piano: 5,  Organ: 19,  Accordion: 21,  Guitar: 25,  Bass: 34,  Synth Bass: 38,  Silence: 136</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>';
+		thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,&nbsp;&nbsp;Electric Piano: 5,&nbsp;&nbsp;Organ: 19,&nbsp;&nbsp;Accordion: 21,&nbsp;&nbsp;Guitar: 25,&nbsp;&nbsp;Bass: 34,&nbsp;&nbsp;Synth Bass: 38,&nbsp;&nbsp;Silence: mute</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended_v2.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>';
 	}
 
 	DayPilot.Modal.prompt(thePrompt, theDefaultProgram, { theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: (gIsIOS || gIsAndroid) }).then(function(args) {
@@ -8824,21 +8824,32 @@ function InjectMIDIInstrument(bIsChords) {
 			return;
 		}
 
-		var progNum = parseInt(progNumStr);
-
-		if ((isNaN(progNum)) || (progNum == undefined)){
-			return;
-		}
-
 		var bDoBoth = false;
 
-		if (progNum < 0){
-			bDoBoth = true;
-			progNum = -progNum;
-		}
+		// Special case for muting voices
+		if (progNumStr.toLowerCase() == "mute"){
 
-		if ((progNum < 0) || (progNum > 136)){
-			return;
+			progNum = "mute";
+
+		}
+		else{
+
+			var progNum = parseInt(progNumStr);
+
+			if ((isNaN(progNum)) || (progNum == undefined)){
+				return;
+			}
+
+
+			if (progNum < 0){
+				bDoBoth = true;
+				progNum = -progNum;
+			}
+
+			if ((progNum < 0) || (progNum > 136)){
+				return;
+			}
+
 		}
 
 		var nTunes = CountTunes();
@@ -11692,6 +11703,7 @@ function computeFade(tuneABC){
 				case "134":  // Melodica
 				case "135":  // Cajun Accordion
 				case "136":  // Silence
+				case "mute": // Silence
 					theFade = 100;
 					break;
 				default:
@@ -13870,8 +13882,8 @@ function ConfigureToolSettings(e) {
 	  {name: "    Show stringed instrument names on tablature (never shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_box_settings_form_text"},
 	  {name: "Stringed instrument capo fret postion:", id: "configure_capo", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text"},
-	  {name: "Default Melody MIDI program (0-136):", id: "configure_melody_program", type:"number", cssClass:"configure_settings_form_text"},
-	  {name: "Default Bass/Chords MIDI program (0-136):", id: "configure_chord_program", type:"number", cssClass:"configure_settings_form_text"},
+	  {name: "Default Melody MIDI program (0-136 or mute):", id: "configure_melody_program", type:"number", cssClass:"configure_settings_form_text"},
+	  {name: "Default Bass/Chords MIDI program (0-136 or mute):", id: "configure_chord_program", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "            Use Default Bass/Chord volumes when playing tunes", id: "configure_inject_volumes", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default Bass MIDI volume (0-127):", id: "configure_bass_volume", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default Chords MIDI volume (0-127):", id: "configure_chord_volume", type:"number", cssClass:"configure_settings_form_text"},
@@ -13921,30 +13933,37 @@ function ConfigureToolSettings(e) {
 				}
 			}
 
-			// Sanity check the values
-			if (isNaN(parseInt(gTheMelodyProgram))){
-				gTheMelodyProgram = 0;
+			if (gTheMelodyProgram != "mute"){
+
+				// Sanity check the values
+				if (isNaN(parseInt(gTheMelodyProgram))){
+					gTheMelodyProgram = 0;
+				}
+
+				if (gTheMelodyProgram < 0){
+					gTheMelodyProgram = 0;
+				}
+
+				if (gTheMelodyProgram > 136){
+					gTheMelodyProgram = 136;
+				}
 			}
 
-			if (gTheMelodyProgram < 0){
-				gTheMelodyProgram = 0;
+			if (gTheChordProgram != "mute"){
+
+				if (isNaN(parseInt(gTheChordProgram))){
+					gTheChordProgram = 0;
+				}
+
+				if (gTheChordProgram < 0){
+					gTheChordProgram = 0;
+				}
+
+				if (gTheChordProgram > 136){
+					gTheChordProgram = 136;
+				}
 			}
 
-			if (gTheMelodyProgram > 136){
-				gTheMelodyProgram = 136;
-			}
-
-			if (isNaN(parseInt(gTheChordProgram))){
-				gTheChordProgram = 0;
-			}
-
-			if (gTheChordProgram < 0){
-				gTheChordProgram = 0;
-			}
-
-			if (gTheChordProgram > 136){
-				gTheChordProgram = 136;
-			}
 
 			if (isNaN(parseInt(gTheBassVolume))){
 				gTheBassVolume = 0;
