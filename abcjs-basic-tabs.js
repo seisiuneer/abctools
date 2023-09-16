@@ -2553,7 +2553,46 @@ var create;
               // If we're using the percussion voice, change to Channel 10
               midi.setChannel(9, pan);
               midi.setInstrument(0);
-            } else {
+            } 
+            else
+            // MAE 15 Sep 2023 - Custom MIDI instrument processing
+            if (event.instrument == 136){
+              midi.setChannelMute(event.channel, pan);
+              midi.setInstrument(0);              
+            }
+            else
+            if (event.instrument > 128){
+              
+              var theInstrument = 0;
+
+              // Remap my custom instruments to something reasonable
+              switch (event.instrument){
+                case 129: // Uilleann
+                case 130: // Smallpipes D
+                case 131: // Smallpipes A
+                case 132: // Sackpipa 
+                  theInstrument = 109; // Bagpipes
+                  break;
+
+                case 133: // Concertina
+                case 134: // Melodica 
+                  theInstrument = 22; // Harmonica
+                  break;
+
+                case 135: // Cajun Accordion
+                  theInstrument = 21; // Accordion
+                  break;
+
+                default:
+                  theInstrument = 0; // Acoustic Grand Piano
+                  break;
+              }
+                           
+              midi.setChannel(event.channel, pan);
+              midi.setInstrument(theInstrument);
+
+            }
+            else {
               midi.setChannel(event.channel, pan);
               midi.setInstrument(event.instrument);
             }
@@ -4077,9 +4116,51 @@ var parseDirective = {};
       // ONE STRING PARAMETER
       if (midi.length !== 1) warn("Expected one parameter in MIDI " + midi_cmd, restOfString, 0);else midi_params.push(midi[0].token);
     } else if (midiCmdParam1Integer.indexOf(midi_cmd) >= 0) {
+
+      //
+      // MAE 15 Sep 2023 - Stuff in silence patch 136 if mute selected as the chordprog or bassprog
+      //
+      if ((midi_cmd == "chordprog") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "mute")){
+        //console.log("Got mute program request for "+midi_cmd);
+        midi[0].type = 'number';
+        midi[0].token = "136";
+        midi[0].intt = 136;
+        midi[0].floatt = 136;
+        midi[0].contineId = false;
+        midi[0].start = 10;
+        midi[0].end = 13;
+      }
+      else
+      if ((midi_cmd == "bassprog") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "mute")){
+        //console.log("Got mute program request for "+midi_cmd);
+        midi[0].type = 'number';
+        midi[0].token = "136";
+        midi[0].intt = 136;
+        midi[0].floatt = 136;
+        midi[0].contineId = false;
+        midi[0].start = 9;
+        midi[0].end = 12;
+      }
+
       // ONE INT PARAMETER
       if (midi.length !== 1) warn("Expected one parameter in MIDI " + midi_cmd, restOfString, 0);else if (midi[0].type !== "number") warn("Expected one integer parameter in MIDI " + midi_cmd, restOfString, 0);else midi_params.push(midi[0].intt);
     } else if (midiCmdParam1Integer1OptionalInteger.indexOf(midi_cmd) >= 0) {
+      
+      //
+      // MAE 15 Sep 2023 - Stuff in silence patch 136 if mute selected as the program
+      //
+      //debugger;
+      if ((midi_cmd == "program") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "mute")){
+        //console.log("Got mute program request for "+midi_cmd);
+        midi[0].type = 'number';
+        midi[0].token = "136";
+        midi[0].intt = 136;
+        midi[0].floatt = 136;
+        midi[0].contineId = false;
+        midi[0].start = 8;
+        midi[0].end = 11;
+      }
+
       // ONE INT PARAMETER, ONE OPTIONAL PARAMETER
       if (midi.length !== 1 && midi.length !== 2) warn("Expected one or two parameters in MIDI " + midi_cmd, restOfString, 0);else if (midi[0].type !== "number") warn("Expected integer parameter in MIDI " + midi_cmd, restOfString, 0);else if (midi.length === 2 && midi[1].type !== "number") warn("Expected integer parameter in MIDI " + midi_cmd, restOfString, 0);else {
         midi_params.push(midi[0].intt);
@@ -12413,6 +12494,22 @@ var rendererFactory;
     this.noteOnAndChannel = "%9" + this.channel.toString(16);
     this.noteOffAndChannel = "%8" + this.channel.toString(16);
   };
+  Midi.prototype.setChannelMute = function (number, pan) {
+    this.channel = number;
+    var ccPrefix = "%00%B" + this.channel.toString(16);
+    // Reset midi, in case it was set previously.
+    this.track += ccPrefix + "%79%00"; // Reset All Controllers
+    this.track += ccPrefix + "%40%00"; // Damper pedal
+    this.track += ccPrefix + "%5B%30"; // Effect 1 Depth (reverb)
+    // Translate pan as -1 to 1 to 0 to 127
+    if (!pan) pan = 0;
+    pan = Math.round((pan + 1) * 64);
+    this.track += ccPrefix + "%0A" + toHex(pan, 2); // Pan
+    this.track += ccPrefix + "%07%00"; // Channel Volume
+
+    this.noteOnAndChannel = "%9" + this.channel.toString(16);
+    this.noteOffAndChannel = "%8" + this.channel.toString(16);
+  };
   var HALF_STEP = 4096; // For the pitch wheel - (i.e. the distance from C to C#)
   Midi.prototype.startNote = function (pitch, loudness, cents) {
     this.track += toDurationHex(this.silencelength); // only need to shift by amount of silence (if there is any)
@@ -13064,7 +13161,7 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                       });
                       break;
                     case "program":
-                      addIfDifferent(voices[voiceNumber], {
+                       addIfDifferent(voices[voiceNumber], {
                         el_type: 'instrument',
                         program: elem.params[0]
                       });
