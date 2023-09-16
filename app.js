@@ -192,6 +192,9 @@ var gTheActiveSoundFont = gDefaultSoundFont;
 // Allow player to autoscroll
 var gAutoscrollPlayer = true;
 
+// Use the custom GM sounds for dulcimer, accordion, flute, and whistle
+var gUseCustomGMSounds = true;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -11687,27 +11690,51 @@ function computeFade(tuneABC){
 
 			var thisPatch = thePatchElements[0];
 
-			// Is this one of ours?
-			switch(thisPatch){
-				case "15":   // Dulcimer
-					theFade = 4000;
-					break;
-				case "21":   // Accordion
-				case "73":   // Flute
-				case "78":   // Whistle
-				case "129":  // Uilleann pipes
-				case "130":  // Smallpipes D
-				case "131":  // Smallpipes A
-				case "132":  // Sackpipa
-				case "133":  // Concertina
-				case "134":  // Melodica
-				case "135":  // Cajun Accordion
-				case "136":  // Silence
-				case "mute": // Silence
-					theFade = 100;
-					break;
-				default:
-					break;
+			// Only override the default fade for GM instruments if using our own
+			if (gUseCustomGMSounds){
+
+				// Is this one of ours?
+				switch(thisPatch){
+					case "15":   // Dulcimer
+						theFade = 4000;
+						break;
+					case "21":   // Accordion
+					case "73":   // Flute
+					case "78":   // Whistle
+					case "129":  // Uilleann pipes
+					case "130":  // Smallpipes D
+					case "131":  // Smallpipes A
+					case "132":  // Sackpipa
+					case "133":  // Concertina
+					case "134":  // Melodica
+					case "135":  // Cajun Accordion
+					case "136":  // Silence
+					case "mute": // Silence
+						theFade = 100;
+						break;
+					default:
+						break;
+				}
+			}
+			else{
+				// Only check for patches above 128
+				// Is this one of ours?
+				switch(thisPatch){
+					case "129":  // Uilleann pipes
+					case "130":  // Smallpipes D
+					case "131":  // Smallpipes A
+					case "132":  // Sackpipa
+					case "133":  // Concertina
+					case "134":  // Melodica
+					case "135":  // Cajun Accordion
+					case "136":  // Silence
+					case "mute": // Silence
+						theFade = 100;
+						break;
+					default:
+						break;
+				}
+
 			}
 		}
 	}
@@ -11730,12 +11757,16 @@ function computeFade(tuneABC){
 			var thisPatch = thePatchElements[0];
 
 			// Special case for dulcimer on bass/chords
-			switch(thisPatch){
-				case "15":   // Dulcimer
-					theFade = 4000;
-					break;
-				default:
-					break;
+
+			// Only override if using our own samples for GM sounds
+			if (gUseCustomGMSounds){
+				switch(thisPatch){
+					case "15":   // Dulcimer
+						theFade = 4000;
+						break;
+					default:
+						break;
+				}
 			}
 		}
 	}
@@ -12876,6 +12907,14 @@ function GetInitialConfigurationSettings(){
 		gAutoscrollPlayer = true;
 	}
 
+	val = localStorage.UseCustomGMSounds;
+	if (val){
+		gUseCustomGMSounds = (val == "true");
+	}
+	else{
+		gUseCustomGMSounds = true;
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -12950,6 +12989,9 @@ function SaveConfigurationSettings(){
 
 		// Save the player autoscroll preference
 		localStorage.AutoscrollPlayer = gAutoscrollPlayer;
+
+		// Save the custom GM sounds setting
+		localStorage.UseCustomGMSounds = gUseCustomGMSounds;
 
 	}
 }
@@ -13849,6 +13891,8 @@ function ConfigureToolSettings(e) {
 
 	var theOldSoundFont = gDefaultSoundFont;
 
+	var theOldUseCustomGMSounds = gUseCustomGMSounds;
+
 	// Setup initial values
 	const theData = {
 	  configure_inject_programs: bAlwaysInjectPrograms,
@@ -13865,7 +13909,8 @@ function ConfigureToolSettings(e) {
 	  configure_capo: gCapo,
 	  configure_mp3_bitrate: gMP3Bitrate,
 	  configure_soundfont: gDefaultSoundFont,
-	  configure_autoscrollplayer: gAutoscrollPlayer,	  
+	  configure_autoscrollplayer: gAutoscrollPlayer,
+	  configure_use_custom_gm_sounds: gUseCustomGMSounds,	  
 	};
 
  	const sound_font_options = [
@@ -13890,6 +13935,7 @@ function ConfigureToolSettings(e) {
 	  {name: "            Override all MIDI programs and volumes in the ABC when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "            Autoscroll player when playing", id: "configure_autoscrollplayer", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default abcjs soundfont:", id: "configure_soundfont", type:"select", options:sound_font_options, cssClass:"configure_settings_select"}, 
+	  {name: "    Use AppCordions custom sounds for Dulcimer, Accordion, Flute, and Whistle", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "MP3 audio export bitrate (kbit/sec):", id: "configure_mp3_bitrate", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "    Player uses large controls (easier to touch on mobile and tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Configure ABC Fonts" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="Configure MusicXML Import" title="Configure MusicXML import parameters"></p>'},	  
@@ -13989,21 +14035,24 @@ function ConfigureToolSettings(e) {
 				gTheChordVolume = 127;
 			}
 
-			if ((gAlwaysInjectPrograms || gOverridePlayMIDIParams) && ((gTheMelodyProgram == "15") || (gTheChordProgram == "15"))){
+			if (gUseCustomGMSounds){
 
-				// Special release time case case for Dulcimer
-			   	var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica">Special Note on the Dulcimer (15) Instrument</p>';
-			   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Selecting the Dulcimer (15) program for either the melody or chords automatically sets all note release times to 4 seconds to allow the notes to ring.</p>';
-			   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">This can be useful for tunes using solo melody instruments with long release times like Orchestral Harp (46) or Koto (107).</p>';
-			       	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">For those instruments played solo, set the melody instrument program as desired and the chord instrument program to Dulcimer (15).</p>';
-			   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In this case, you may not want to include any chords in the ABC, as they will be played using the Dulcimer (15) instrument.</p>';
+				if ((gAlwaysInjectPrograms || gOverridePlayMIDIParams) && ((gTheMelodyProgram == "15") || (gTheChordProgram == "15"))){
 
-			       	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 600, scrollWithPage: (gIsIOS || gIsAndroid) }).then(function(){
+					// Special release time case case for Dulcimer
+				   	var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica">Special Note on the Dulcimer (15) Instrument</p>';
+				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Selecting the Dulcimer (15) program for either the melody or chords automatically sets all note release times to 4 seconds to allow the notes to ring.</p>';
+				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">This can be useful for tunes using solo melody instruments with long release times like Orchestral Harp (46) or Koto (107).</p>';
+				       	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">For those instruments played solo, set the melody instrument program as desired and the chord instrument program to Dulcimer (15).</p>';
+				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In this case, you may not want to include any chords in the ABC, as they will be played using the Dulcimer (15) instrument.</p>';
 
-					   	// Focus back on the ABC after the dialog is dismissed
-						gTheABC.focus();
-		       		
-			       	});
+				       	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 600, scrollWithPage: (gIsIOS || gIsAndroid) }).then(function(){
+
+						   	// Focus back on the ABC after the dialog is dismissed
+							gTheABC.focus();
+			       		
+				       	});
+				}
 			}
 
 			// Sanity check the full screen scaling setting
@@ -14065,6 +14114,15 @@ function ConfigureToolSettings(e) {
 			}
 
 			gAutoscrollPlayer = args.result.configure_autoscrollplayer;
+
+			gUseCustomGMSounds = args.result.configure_use_custom_gm_sounds;
+
+			// If changing the custom GM sounds setting, clear the abcjs sample cache
+			if (gUseCustomGMSounds != theOldUseCustomGMSounds){
+
+				// Reset the abcjs sounds cache
+				gSoundsCacheABCJS = {};				
+			}
 
 			IdleAllowShowTabNames();
 
