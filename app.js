@@ -12822,11 +12822,21 @@ function GetInitialConfigurationSettings(){
     }
 
 	val = localStorage.LargePlayerControls;
+
 	if (val){
 		gLargePlayerControls = (val == "true");
 	}
 	else{
-		gLargePlayerControls = false;
+
+		if ((gIsIPhone) || (gIsAndroid)){
+
+			gLargePlayerControls = true;
+
+		}
+		else{
+
+			gLargePlayerControls = false;
+		}
 	}
 
 	// Bamboo flute
@@ -14583,11 +14593,35 @@ function DoStartup() {
 		// Add little extra room at the top
 		elem = document.getElementById("notenlinks");
 		elem.style.paddingTop = "20px";
-
+		
 		elem = gTheABC;
-		elem.cols = 74;
-		elem.style.fontSize = "13pt";
-		elem.style.lineHeight = "15pt";
+
+		if ((gIsIPhone) || (gIsAndroid)){
+
+			if (gIsIPhone){
+				elem.cols = 60;
+			}
+			else{
+				elem.cols = 58;				
+			}
+
+			elem.style.fontSize = "16pt";
+			elem.style.lineHeight = "18pt";
+
+			// Reset the viewport to avoid scaling
+			var viewport = document.querySelector("meta[name=viewport]");
+			viewport.setAttribute("content","width=860,maximum-scale=1.0,user-scalable=0");
+			
+		}
+		else{
+
+			// iPad
+			elem.cols = 73;
+			elem.style.fontSize = "13pt";
+			elem.style.lineHeight = "15pt";
+
+
+		}
 
 		// Resize the app-container
 		elem = document.getElementById("app-container");
@@ -14862,8 +14896,17 @@ function DoStartup() {
 
 	}
 	else{
+		
 		// Use the original placeholder on iOS and Android
 		gTheABC.placeholder = "Enter the ABC for your tunes here";
+
+		if (gIsAndroid || gIsIPhone){
+
+			// Defaulting to large player controls
+			gLargePlayerControls = true;
+
+		}
+
 
 	}
 
