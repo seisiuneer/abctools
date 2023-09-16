@@ -13860,20 +13860,37 @@ function CreateSynth() {
       "woodblock": 20
     };else {
       if (isSafari){
-        // If using Celtic Sound .mp3 sound fonts on Safari, set the offsets to 50 msec (Adobe Audition artifact)
-          self.programOffsets = {
-            "dulcimer":50,     // 15
-            "accordion": 50,   // 21
-            "flute": 50,       // 73
-            "whistle": 50,     // 78
-            "uilleann": 50,    // 129
-            "smallpipesd": 50, // 130
-            "smallpipesa":50,  // 131
-            "sackpipa": 50,    // 132
-            "concertina": 50,  // 133
-            "melodica": 50,    // 134
-            "cajun": 50,       // 136
-            "silence": 50      // 135
+
+          // If using Celtic Sound .mp3 sound fonts on Safari, set the offsets to 50 msec (Adobe Audition artifact)
+
+          // Are we overriding the standard GM sounds with our own?
+          if (gUseCustomGMSounds){
+            self.programOffsets = {
+              "dulcimer":50,     // 15
+              "accordion": 50,   // 21
+              "flute": 50,       // 73
+              "whistle": 50,     // 78
+              "uilleann": 50,    // 129
+              "smallpipesd": 50, // 130
+              "smallpipesa":50,  // 131
+              "sackpipa": 50,    // 132
+              "concertina": 50,  // 133
+              "melodica": 50,    // 134
+              "cajun": 50,       // 136
+              "silence": 50      // 135
+            }
+          }
+          else{
+            self.programOffsets = {
+              "uilleann": 50,    // 129
+              "smallpipesd": 50, // 130
+              "smallpipesa":50,  // 131
+              "sackpipa": 50,    // 132
+              "concertina": 50,  // 133
+              "melodica": 50,    // 134
+              "cajun": 50,       // 136
+              "silence": 50      // 135
+            }
           }
       }
       else{
@@ -14532,32 +14549,62 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
     var isOgg = false;
 
-    // MAE 28 June 29023 - Override Celtic Sound instruments with my own
-    switch (instrument){
-      
-      case "dulcimer":    // 15
-      case "accordion":   // 21
-      case "flute":       // 73
-      case "whistle":     // 78
-      case "uilleann":    // 129 
-      case "smallpipesd": // 130
-      case "smallpipesa": // 131
-      case "sackpipa":    // 132
-      case "concertina":  // 133
-      case "melodica":    // 134
-      case "cajun":       // 135
-      case "silence":     // 136
-        url = "http://michaeleskin.com/abctools/soundfonts/";
-        isOgg = true;
-        break;
+    // Are we overriding the default GM sounds with our own?
+    if (gUseCustomGMSounds){
 
-      case "percussion":  // 128
-        // The percussion on the alternate sound fonts is too loud, use the default in all cases
-        url = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
-        break;
+      // MAE 28 June 29023 - Override Celtic Sound instruments with my own
+      switch (instrument){
+        case "dulcimer":    // 15
+        case "accordion":   // 21
+        case "flute":       // 73
+        case "whistle":     // 78
+        case "uilleann":    // 129 
+        case "smallpipesd": // 130
+        case "smallpipesa": // 131
+        case "sackpipa":    // 132
+        case "concertina":  // 133
+        case "melodica":    // 134
+        case "cajun":       // 135
+        case "silence":     // 136
+          url = "http://michaeleskin.com/abctools/soundfonts/";
+          isOgg = true;
+          break;
 
-      default:
-        break;
+        case "percussion":  // 128
+          // The percussion on the alternate sound fonts is too loud, use the default in all cases
+          url = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
+          break;
+
+        default:
+          break;
+      }
+    }
+    else{
+
+      // MAE 28 June 29023 - Override Celtic Sound instruments with my own
+      switch (instrument){        
+        case "uilleann":    // 129 
+        case "smallpipesd": // 130
+        case "smallpipesa": // 131
+        case "sackpipa":    // 132
+        case "concertina":  // 133
+        case "melodica":    // 134
+        case "cajun":       // 135
+        case "silence":     // 136
+          url = "http://michaeleskin.com/abctools/soundfonts/";
+          isOgg = true;
+          break;
+
+        case "percussion":  // 128
+          // The percussion on the alternate sound fonts is too loud, use the default in all cases
+          url = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
+          break;
+
+        default:
+          break;
+      }
+
+
     }
 
     var xhr = new XMLHttpRequest();
