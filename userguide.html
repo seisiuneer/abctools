@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-                
+        
         <style>
         p {
         font-size:14pt;
@@ -567,7 +567,7 @@
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder_p">
-                <img src="img/abc_transcription_tool_settings_18.jpg"/>
+                <img src="img/abc_transcription_tool_settings_19.jpg"/>
             </div>
             <p><strong>Full screen tune display scaling (percentage)</strong> - Sets the width in percentage of window width for the tune notation on the screen when viewing full screen. Default is 50%.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/KagT-Aq8mY8" title="Full-Screen Tune Display Options" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
@@ -609,6 +609,8 @@
             <p>For those instruments played solo, set the melody instrument program as desired and the chord instrument program to Dulcimer (15).</p>
             <p></p>
             <p>In this case, you may not want to include any chords in the ABC, as they will be played using the Dulcimer (15) instrument.</p>
+            <p></p>
+            <p>This only applies if <strong>Use AppCordions custom sounds for Dulcimer, Accordion, Flute, and Whistle</strong> is enabled (see below).</p>
             <p><strong>Autoscroll player when playing</strong> - Check this if you want have the player autoscroll the notes into view while playing.</p>
             <p><strong>Player uses large controls (easier to touch on mobile and tablet)</strong> - Check this if you want to have larger controls in the Player view:</p>
             <div class="image_holder_p">
@@ -623,7 +625,8 @@
             <p>If no %abcjs_soundfont soundfont is specified in a tune, the default soundfont chosen in the tool's <strong>Settings</strong> dialog is used.</p>
             <p>For more details on the soundfonts, visit: <a href="https://paulrosen.github.io/midi-js-soundfonts/" target="_blank">midi-js-soundfonts on GitHub</a></p>
             <p>Your default soundfont choice is saved in browser storage and restored the next time the tool is run.</p>
-            <p>Note: For all soundfonts, my custom sampled instruments for dulcimer, accordion, flute, and whistle will override the soundfont sounds.</p>
+            <p><strong>Use AppCordions custom sounds for Dulcimer, Accordion, Flute, and Whistle</strong></p>
+            <p>If this is enabled (on by default), for all soundfonts, my custom sampled instruments for Dulcimer, Accordion, Flute, and Whistle will override the soundfont sounds.</p>
             <p><strong>MP3 audio export bitrate (kbit/sec):</strong> - Sets the bitrate for MP3 stereo audio downloaded from the Player. </p>
             <p>Default value is 224.  Minimum value allowed is 96. Maximum value allowed is 384. Higher values result in higher quality audio.</p>
             <p><strong>Configure ABC Fonts</strong> - Brings up a dialog where you can configure all fonts used for rendering the ABC.</p>
@@ -653,7 +656,7 @@
             <p>It is not possible to change soundfonts within a tune.</p>
             <p>If multiple instancs of %abcjs_soundfont are found in a tune, only the first one is used.</p>
             <p>For more details on the soundfonts, visit: <a href="https://paulrosen.github.io/midi-js-soundfonts/" target="_blank">midi-js-soundfonts on GitHub</a></p>
-            <p>Note: For all soundfonts, my custom sampled instruments for the General MIDI dulcimer, accordion, flute, and whistle programs will override the soundfont sounds.</p>
+            <p>If <strong>Use AppCordions custom sounds for Dulcimer, Accordion, Flute, and Whistle</strong> is enabled in the Settings (on by default), for all soundfonts, my custom sampled instruments for Dulcimer, Accordion, Flute, and Whistle will override the soundfont sounds.</p>
             <p></p>
             <p><strong>Choosing the Melody Instrument Sound</strong></p>
             <p></p>
@@ -735,7 +738,7 @@
             <p></p>
             <p><strong>Hammered Dulcimer: 15, Accordion: 21, Flute: 73, Whistle: 78, Uilleann Pipes: 129, Scottish Smallpipes (D): 130, Scottish Smallpipes (A): 131, Säckpipa: 132, Concertina: 133, Melodica: 134, Cajun Accordion: 135, Silence: 136 (or mute)</strong></p>
             <p>The Scottish Smallpipes (A) samples are from an instrument tuned in A, but the note numbers mapped to D so that they have the same transposed MIDI note range as the flute or whistle.</p>
-            <p>The Flute, Whistle, and Uilleann pipes sounds will automatically "fold" notes below first octave D up an octave.</p>
+            <p>The Flute, Whistle (if <strong>Use AppCordions custom sounds for Dulcimer, Accordion, Flute, and Whistle</strong> in the <strong>Settings</strong> is enabled), and Uilleann pipes sounds will automatically "fold" notes below first octave D up an octave.</p>
             <p>The Säckpipa and Scottish Smallpipes (A) and (D) sounds will automatically "fold" notes above second octave D down an octave.</p>
             <p></p>
             <p class="hidden-print">Here are some demo videos of the "Celtic Sounds" instrument samples being used in the tool:</p>
