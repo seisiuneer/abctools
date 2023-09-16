@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+                
         <style>
         p {
         font-size:14pt;
@@ -189,7 +189,9 @@
             <div style="text-align: center;">
                 <font id="pagetitle" face="Comic Sans MS" size="5">ABC Transcription Tools User Guide</font><br/>
                 <p class="hidden-print">This free, open-source ABC converter/player tool was developed by <a href="http://michaeleskin.com" target="_blank">Michael Eskin</a></p>
-                <p class="hidden-print">Try it out here: <a href="http://michaeleskin.com/abc" target="_blank">ABC Transcription Tools</a></p>
+                <p class="hidden-print">Try it out here:&nbsp;&nbsp;<a href="http://michaeleskin.com/abc" target="_blank">ABC Transcription Tools</a></p>
+                <p class="hidden-print">YouTube playlist with all the demo videos:&nbsp;&nbsp;<a href="https://www.youtube.com/playlist?list=PLZvjgS80ixQuX2-gMv25U3ECXiceGfTdr" target="_blank">Demo Videos</a></p>
+               
             </div>
             
             <hr id="table_of_contents" class="hidden-print">
@@ -436,8 +438,15 @@
             <p>The General MIDI specification only supports MIDI program numbers as high as 128.</p>
             <p>My custom MIDI instruments start at MIDI program 129 and go up from there.</p>
             <p>These custom instruments and program numbers can only be used by my ABC tool and are not interoperable with other ABC software.</p>
-            <p>Other MIDI applications will not be able to work with exported MIDI files that use any of my custom instrument MIDI program numbers.</p>
-            <p>You will need to change any %%MIDI program or %%MIDI chordprog entries that use the custom MIDI programs to a value less than 128 before exporting a MIDI file for use in another MIDI application.</p>
+            <p>In the exported MIDI file, any of my custom MIDI instrument program numbers will be remapped as follows:</p>
+            <p>129: Uilleann -> 109: Bagpipes</p>
+            <p>130: Smallpipes D -> 109: Bagpipes</p>
+            <p>131: Smallpipes A -> 109: Bagpipes</p>
+            <p>132: Sackpipa -> 109: Bagpipes</p>
+            <p>133: Concertina -> 22: Harmonica</p>
+            <p>134: Melodica -> 22: Harmonica</p>
+            <p>135: Cajun Accordion -> 21: Accordion</p>
+            <p>Muted voices using MIDI instrument 136 or "mute" will be changed to program 0 (Acoustic Grand Piano) and the volume set to zero.</p>
             <hr class="hidden-print" id="notation_tablature_display_controls">
             <h1 class="page_break_always">Notation/Tablature Display Controls<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder">
@@ -501,17 +510,11 @@
             <p><strong>Inject PDF Tunebook Annotation Template</strong> - Injects a useful template of common PDF tunebook annotations at the top of the ABC.</p>
             <p><strong>Inject MIDI Melody</strong> - Injects a %%MIDI program directive into every tune with a specific MIDI instrument program number for the melody.</p>
             <p>You will be prompted for a MIDI instrument program number to inject:</p>
-            <div class="image_holder_p">
-                <img src="img/melody_program_5.jpg"/>
-            </div>
-            <p>To mute the melody, select program 136.</p>
+            <p>To mute the melody, enter program 136 (or mute).</p>
             <p><strong>Inject MIDI Bass/Chords</strong> - Inject a %%MIDI chordprog directive into every tune with a specific MIDI instrument program number for the bass/chords.</p>
             <p>You will be prompted for a MIDI instrument program number to inject:</p>
-            <div class="image_holder_p">
-                <img src="img/chords_program_3.jpg"/>
-            </div>
             <p>For both the melody and chord program inject dialogs, if you enter a negative number, the same value will be used to inject both a melody and chords instrument program number into every tune.</p>
-            <p>To mute the bass/chords, select program 136.</p>
+            <p>To mute the bass/chords, enter program 136 (or mute).</p>
             <p><strong>Inject %%staffwidth</strong> - Prompts for a %%staffwidth value to inject at the top of every tune.</p>
             <p>This can be used to change the scale of every tune both for display and PDF generation.</p>
             <p>Generally values above 560 will make the tunes less tall.</p>
@@ -556,7 +559,7 @@
             <p><strong>To Fix:</strong></p>
             <p><strong>Add a |: repeat bar at the start of the tune and regenerate the .MP3 file.</strong></p>
             <p>If you have tunes with chords, you can quickly create a backing track playing continously multiple times through the tune:</p>
-            <p><strong>1:</strong> Mute the melody for all the tunes by clicking the <strong>Inject MIDI Melody</strong> button in the <strong>Advanced Controls</strong> dialog and enter 136 as the MIDI program number.</p>
+            <p><strong>1:</strong> Mute the melody for all the tunes by clicking the <strong>Inject MIDI Melody</strong> button in the <strong>Advanced Controls</strong> dialog and enter 136 (or mute) as the MIDI program number.</p>
             <p><strong>2:</strong> Export all the tunes in the tunebook to .MP3 by clicking <strong>Export all Tunes as .MP3</strong> in the <strong>Advanced Controls</strong> dialog, and when prompted enter the number of times through each tune.</p>
             <p>Your browser may request permission to download multiple files.</p>
             <p>During the batch export operation, click the export status dialog's <strong>Cancel</strong> button to stop the export.</p>
@@ -588,8 +591,8 @@
             <p>Enabling <strong>Override all MIDI programs and volumes in the ABC when playing tunes</strong> will override any existing %%MIDI program, %%MIDI chordprog, %MIDI bassvol, and %MIDI chordvol values found in the ABC with your defaults when you play a tune.</p>
             <p>This can be useful with my Interactive PDF tunebooks with built-in playback features if you want to use your preferred instrument sounds and volumes instead of the instruments and volumes set by the Interactive tunebook play link ABC.</p>
             <p>For example, if you want to always use a Whistle sound for the Melody and a Piano sound for the Bass and Chords, set your default Melody instrument to 78 and your default Bass/Chords instrument to 1. Then enable <strong>Override all MIDI programs and volumes in the ABC when playing tunes</strong>.</p>
-            <p>To mute the melody, select program 136.</p>
-            <p>To mute the bass/chords, select program 136.</p>
+            <p>To mute the melody, select program 136 (or mute) .</p>
+            <p>To mute the bass/chords, select program 136 (or mute).</p>
             <p></p>
             <p>These settings values are saved to local browser storage when you close the dialog and are restored each time you run the tool.</p>
             <p></p>
@@ -650,7 +653,7 @@
             <p>It is not possible to change soundfonts within a tune.</p>
             <p>If multiple instancs of %abcjs_soundfont are found in a tune, only the first one is used.</p>
             <p>For more details on the soundfonts, visit: <a href="https://paulrosen.github.io/midi-js-soundfonts/" target="_blank">midi-js-soundfonts on GitHub</a></p>
-            <p>Note: For all soundfonts, my custom sampled instruments for dulcimer, accordion, flute, and whistle will override the soundfont sounds.</p>
+            <p>Note: For all soundfonts, my custom sampled instruments for the General MIDI dulcimer, accordion, flute, and whistle programs will override the soundfont sounds.</p>
             <p></p>
             <p><strong>Choosing the Melody Instrument Sound</strong></p>
             <p></p>
@@ -672,7 +675,7 @@
             B2 B dBd | ege dBd | gfg aga |1 bgg g2A :|2 bgg g2D |]</p>
             <p></p>
             <p>To change the instrument used for the melody, try changing the MIDI program # above to one of:</p>
-            <p>Piano: 0, Harpsichord: 6, Hammered Dulcimer: 15, Accordion: 21, Fingered Bass: 33, Flute: 73, Whistle: 78, Fiddle: 110, Uilleann Pipes: 129, Scottish Smallpipes (D): 130, Scottish Smallpipes (A): 131, Säckpipa: 132, Concertina: 133, Melodica: 134, Cajun Accordion: 135, Silence: 136</p>
+            <p>Piano: 0, Harpsichord: 6, Hammered Dulcimer: 15, Accordion: 21, Fingered Bass: 33, Harp: 46, Flute: 73, Whistle: 78, Fiddle: 110, Silence: 136 (or mute)</p>
             <p></p>
             <p>By default, if you have chords in the ABC, the instrument used for the chord playback is a piano.</p>
             <p></p>
@@ -698,7 +701,7 @@
             <p></p>
             <p>To change the instrument used for the bass/chords, try changing the MIDI chordprog # above to one of:</p>
             <p></p>
-            <p>Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38, Silence: 136</p>
+            <p>Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38, Silence: 136 (or mute)</p>
             <p></p>
             <p><strong>Changing the Playback Volume of the Melody, Bass, and Chords</strong></p>
             <p></p>
@@ -710,8 +713,8 @@
             <p></p>
             <p>Most standard dynamics indications are supported, for example: !ppp!, !pp!, !p!, !mf!, !f!</p>
             <p></p>
-            <p>To completely mute the melody, change the MIDI Program to 136:</p>
-            <p class="code">%%MIDI program 136</p>
+            <p>To completely mute the melody, change the MIDI Program to 136 (or mute):</p>
+            <p class="code">%%MIDI program mute</p>
             <p>To change the volume of the bass and chords, add the following two chordvol and bassvol %%MIDI directives immediately before any %%MIDI program and %%MIDI chordprog directives:</p>
             <p></p>
             <p class="code">% Set the chord and bass volume (0-127)<br/>
@@ -725,12 +728,12 @@
                 %%MIDI chordprog 21<br/>
             %</p>
             <p>The volume range is from 0 to 127.</p>
-            <p>To completely mute the bass/chords, change the MIDI Program to 136:</p>
-            <p class="code">%%MIDI chordprog 136</p>
+            <p>To completely mute the bass/chords, change the MIDI Program to 136 (or mute):</p>
+            <p class="code">%%MIDI chordprog mute</p>
             <p></p>
             <p><strong>The following MIDI instruments now use the same samples as my iOS "Celtic Sounds" and other apps:</strong></p>
             <p></p>
-            <p><strong>Hammered Dulcimer: 15, Accordion: 21, Flute: 73, Whistle: 78, Uilleann Pipes: 129, Scottish Smallpipes (D): 130, Scottish Smallpipes (A): 131, Säckpipa: 132, Concertina: 133, Melodica: 134, Cajun Accordion: 135, Silence: 136</strong></p>
+            <p><strong>Hammered Dulcimer: 15, Accordion: 21, Flute: 73, Whistle: 78, Uilleann Pipes: 129, Scottish Smallpipes (D): 130, Scottish Smallpipes (A): 131, Säckpipa: 132, Concertina: 133, Melodica: 134, Cajun Accordion: 135, Silence: 136 (or mute)</strong></p>
             <p>The Scottish Smallpipes (A) samples are from an instrument tuned in A, but the note numbers mapped to D so that they have the same transposed MIDI note range as the flute or whistle.</p>
             <p>The Flute, Whistle, and Uilleann pipes sounds will automatically "fold" notes below first octave D up an octave.</p>
             <p>The Säckpipa and Scottish Smallpipes (A) and (D) sounds will automatically "fold" notes above second octave D down an octave.</p>
@@ -747,9 +750,9 @@
             <hr class="hidden-print" id="general_midi_instrument_program_numbers">
             <h1 class="page_break_always">General MIDI Instrument Program Numbers <span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder">
-                <img style="width:700px;" src="img/gm_extended_5.jpg"/>
+                <img style="width:700px;" src="img/gm_extended_7.jpg"/>
             </div>
-            <p>Use program #136 (Silence) to mute MIDI voices.</p>
+            <p>Use program #136 Silence (or mute) to mute MIDI voices.</p>
             <p>This can be used, for example, to create "Music Minus One" recordings consisting only of backing bass and chord tracks.</p>
             <hr class="hidden-print" id="general_midi_percussion_map">
             <h1 class="page_break_always">General MIDI Drum Sound ABC Note Map<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -1071,11 +1074,11 @@
             <p></p>
             <p>Some MIDI program numbers I recommend for the melody:</p>
             <p></p>
-            <p>Piano: 0, Harpsichord: 6, Accordion: 21, Fingered Bass: 33, Guitar: 25, Whistle: 78, Silence: 136</p>
+            <p>Piano: 0, Harpsichord: 6, Hammered Dulcimer: 15, Accordion: 21, Fingered Bass: 33, Harp: 46, Flute: 73, Whistle: 78, Fiddle: 110, Silence: 136 (or mute)</p>
             <p></p>
             <p>Some MIDI program numbers I recommend for the bass/chords:</p>
             <p></p>
-            <p>Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38, Silence: 136</p>
+            <p>Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38, Silence: 136 (or mute)</p>
             <p></p>
             <p>Example: To have a specific tune played with an Accordion sound on the melody and a Piano sound on the chord/bass</p>
             <p></p>
@@ -1121,11 +1124,11 @@
             <p></p>
             <p>Some MIDI program numbers I recommend for the melody:</p>
             <p></p>
-            <p>Piano: 0, Harpsichord: 6, Accordion: 21, Fingered Bass: 33, Guitar: 25, Whistle: 78, Silence: 136</p>
+            <p>Piano: 0, Harpsichord: 6, Hammered Dulcimer: 15, Accordion: 21, Fingered Bass: 33, Harp: 46, Flute: 73, Whistle: 78, Fiddle: 110, Silence: 136 (or mute)</p>
             <p></p>
             <p>Some MIDI program numbers I recommend for the bass/chords:</p>
             <p></p>
-            <p>Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38, Silence: 136</p>
+            <p>Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38, Silence: 136 (or mute)</p>
             <p></p>
             <p>Example: To have all tunes played with an Accordion sound on the melody and a Piano sound on the chords/bass:</p>
             <p class="code">%add_all_playback_links 21 0</p>
