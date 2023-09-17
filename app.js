@@ -10782,23 +10782,26 @@ function restoreStateFromLocalStorage(){
 function showWelcomeScreen(){
 
    var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica"><strong>Read the <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> for instructions and demo videos.</strong></p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">To begin, type or paste tunes in ABC format into the text area.</p>'; 
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Each ABC tune <strong>must</strong> begin with an X: tag.</p>'; 
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Notation updates instantly as you make changes.</p>'; 
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click <strong>Open</strong> to open an ABC or MusicXML file from your system.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica"><strong>Read the <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> for instructions and demo videos.</strong></p>';
 	   if (!(gIsIOS || gIsAndroid)){
-	   		modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">You may also drag-and-drop a single ABC or MusicXML file on the editor area to add it.</p>';
+		   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Zoom your browser out using Ctrl - on Windows, ⌘ - on Mac until you have the ABC editor on the left, and the notation area on the right.</p>';
 	   }
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click <strong>Add</strong> to add a new ABC tune template.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click <strong>Settings</strong> to set common tools settings and select the default instrument sounds and volumes to use when playing tunes.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica"><strong>Once ABC has been entered and notation is displayed:</strong></p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click the <strong>Zoom-Out</strong> arrows at the upper-right to view notation fullscreen.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click <strong>Save</strong> to save all the ABC text to an ABC text file.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click <strong>Export PDF</strong> to export your tunebook in PDF format.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click <strong>Copy All</strong> to copy all the ABC text to the clipboard.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">• Click <strong>Play</strong> to play the tune currently being edited.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">If you find this tool useful, please <strong><a href="donate.html" target="_blank" title="Michael likes beer!">Buy Michael a Beer!</a></strong></p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">To begin, type or paste tunes in ABC format into the text area.</p>'; 
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Each ABC tune <strong>must</strong> begin with an X: tag.</p>'; 
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Notation updates instantly as you make changes.</p>'; 
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Click <strong>Open</strong> to open an ABC or MusicXML file from your system.</p>';
+	   if (!(gIsIOS || gIsAndroid)){
+	   		modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">You may also drag-and-drop a single ABC or MusicXML file on the editor area to add it.</p>';
+	   }
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Click <strong>Add</strong> to add a new ABC tune template.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Click <strong>Settings</strong> to set common tools settings and select the default instrument sounds and volumes to use when playing tunes.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica"><strong>Once ABC has been entered and notation is displayed:</strong></p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click the <strong>Zoom-Out</strong> arrows at the upper-right to view notation fullscreen.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click <strong>Save</strong> to save all the ABC text to an ABC text file.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click <strong>Export PDF</strong> to export your tunebook in PDF format.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click <strong>Copy All</strong> to copy all the ABC text to the clipboard.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click <strong>Play</strong> to play the tune currently being edited.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">If you find this tool useful, please <strong><a href="donate.html" target="_blank" title="Michael likes beer!">Buy Michael a Beer!</a></strong></p>';
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
 
@@ -14905,7 +14908,11 @@ function DoStartup() {
 			// Defaulting to large player controls
 			gLargePlayerControls = true;
 
+
 		}
+
+		// Hide the desktop zoom message
+		document.getElementById("desktop_use_message").style.display = "none";
 
 
 	}
