@@ -739,6 +739,12 @@ font-family:"Helvetica";
 font-size:12pt;
 }
 
+#desktop_use_message{
+margin-top: 40px;
+font-family:"Helvetica";
+font-size:12pt;
+}
+
 .notation-placeholder-button{
 margin-top:40px;
 margin-left:0px;
