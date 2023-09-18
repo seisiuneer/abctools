@@ -639,7 +639,7 @@ function Transpose(transposeAmount) {
 				}
 				catch (error){
 
-					DayPilot.Modal.alert("Unable to tranpose one or more tunes.",{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
+					DayPilot.Modal.alert("Unable to tranpose one or more tunes.",{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
 					
 					output += theTunes[i];
 
@@ -890,7 +890,7 @@ function Clear() {
 		return;
 	}
 
-	DayPilot.Modal.confirm("Are you sure you want to erase all the ABC and start over?",{ top:100, theme: "modal_flat", scrollWithPage: (gIsIOS || gIsAndroid) }).then(function(args){
+	DayPilot.Modal.confirm("Are you sure you want to erase all the ABC and start over?",{ top:100, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
 
 		if (!args.canceled){
 
@@ -4357,7 +4357,7 @@ function promptForPDFFilename(placeholder, callback){
 
 	}
 
-	DayPilot.Modal.prompt("Please enter a filename for your PDF file:", placeholder+".pdf",{ theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: (gIsIOS || gIsAndroid) }).then(function(args) {
+	DayPilot.Modal.prompt("Please enter a filename for your PDF file:", placeholder+".pdf",{ theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args) {
 
 		var fname = args.result;
 
@@ -6493,7 +6493,7 @@ function ensureABCFile(filename) {
 	if ((fileExtension.toLowerCase() == "abc") || (fileExtension.toLowerCase() == "txt") || (fileExtension.toLowerCase() == "xml") || (fileExtension.toLowerCase() == "musicxml") || (fileExtension.toLowerCase() == "mxl")){
 		return true;
 	} else {
-		DayPilot.Modal.alert("Sorry, only .abc, .txt, .xml, .musicxml, or .mxl files are supported.",{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
+		DayPilot.Modal.alert("Sorry, only .abc, .txt, .xml, .musicxml, or .mxl files are supported.",{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
 		return false;
 	}
 }
@@ -6961,7 +6961,7 @@ function idleAddABC(){
 		// check if user had selected a file
 		if (fileElement.files.length === 0) {
 
-			DayPilot.Modal.alert("Please select an ABC or MusicXML file",{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
+			DayPilot.Modal.alert("Please select an ABC or MusicXML file",{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
 
 			return;
 
@@ -7020,7 +7020,7 @@ function AddABC(){
 
 	}, 150);
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 700,  scrollWithPage: (gIsIOS || gIsAndroid) }).then(function(){
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 700,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 
 			
 	});
@@ -7986,7 +7986,7 @@ function GenerateQRCode(e) {
 	
 		if (theURL.length > maxURLLength) {
 
-			DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:14pt;">Share URL text is too long to generate a QR Code</p>',{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
+			DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:14pt;">Share URL text is too long to generate a QR Code</p>',{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
 
 			return;
 
@@ -8151,7 +8151,7 @@ function GenerateQRCode(e) {
 //
 function saveABCFile(thePrompt, thePlaceholder, theData){
 
-	DayPilot.Modal.prompt(thePrompt, thePlaceholder,{ theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: (gIsIOS || gIsAndroid) }).then(function(args) {
+	DayPilot.Modal.prompt(thePrompt, thePlaceholder,{ theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args) {
 
 		var fname = args.result;
 
@@ -8223,7 +8223,7 @@ function saveABCFile(thePrompt, thePlaceholder, theData){
 //
 function saveShareURLFile(thePrompt, thePlaceholder, theData){
 
-	DayPilot.Modal.prompt(thePrompt, thePlaceholder,{ theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: (gIsIOS || gIsAndroid) }).then(function(args) {
+	DayPilot.Modal.prompt(thePrompt, thePlaceholder,{ theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args) {
 
 		var fname = args.result;
 
@@ -8458,7 +8458,7 @@ function InjectRepeatsAndClickTrackAll(){
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">If there is a repeat at the end of the first part of a tune, either standalone or in a first ending, there must be a matching |: bar at the start of the tune for the tune repeats to work properly.</p>'},	  
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 760, scrollWithPage: (gIsIOS || gIsAndroid) } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 760, scrollWithPage: (AllowDialogsToScroll()) } ).then(function(args){
 		
 		if (!args.canceled){
 		
@@ -8619,7 +8619,7 @@ function InjectStaffWidth() {
 		return;
 	}
 
-	DayPilot.Modal.prompt("%%staffwidth value to inject? (Larger values make the tunes less tall)", 560, { theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: (gIsIOS || gIsAndroid) }).then(function(args) {
+	DayPilot.Modal.prompt("%%staffwidth value to inject? (Larger values make the tunes less tall)", 560, { theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args) {
 		
 		var staffwidthstr = args.result;
 
@@ -8678,7 +8678,7 @@ function InjectSoundfont() {
 		return;
 	}
 
-	DayPilot.Modal.prompt("%abcjs_sound value to inject? Options are: fluid, musyng, or fatboy", "fluid", { theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: (gIsIOS || gIsAndroid) }).then(function(args) {
+	DayPilot.Modal.prompt("%abcjs_sound value to inject? Options are: fluid, musyng, or fatboy", "fluid", { theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args) {
 		
 		var theSoundfont = args.result;
 
@@ -8819,7 +8819,7 @@ function InjectMIDIInstrument(bIsChords) {
 		thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,&nbsp;&nbsp;Electric Piano: 5,&nbsp;&nbsp;Organ: 19,&nbsp;&nbsp;Accordion: 21,&nbsp;&nbsp;Guitar: 25,&nbsp;&nbsp;Bass: 34,&nbsp;&nbsp;Synth Bass: 38,&nbsp;&nbsp;Silence: mute</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended_v2.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>';
 	}
 
-	DayPilot.Modal.prompt(thePrompt, theDefaultProgram, { theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: (gIsIOS || gIsAndroid) }).then(function(args) {
+	DayPilot.Modal.prompt(thePrompt, theDefaultProgram, { theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args) {
 		
 		var progNumStr = args.result;
 
@@ -9062,7 +9062,7 @@ function ShortenURL(){
 	   	modal_msg += '<p style="text-align:center;font-size:14pt;line-height:19pt;font-family:helvetica">Short URL:</p>';
 	   	modal_msg += '<p style="text-align:center;font-size:14pt;line-height:19pt;font-family:helvetica"><a href="'+data.data.tiny_url+'" target="_blank">'+data.data.tiny_url+'</a></p>';
 
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
 
 	  })
 	  .catch(
@@ -10303,7 +10303,7 @@ function DoInjectTablature_Bamboo_Flute(){
 
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 500, scrollWithPage: (gIsIOS || gIsAndroid) } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 500, scrollWithPage: (AllowDialogsToScroll()) } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -10801,9 +10801,9 @@ function showWelcomeScreen(){
 	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click <strong>Export PDF</strong> to export your tunebook in PDF format.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click <strong>Copy All</strong> to copy all the ABC text to the clipboard.</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click <strong>Play</strong> to play the tune currently being edited.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">If you find this tool useful, please <strong><a href="donate.html" target="_blank" title="Michael likes beer!">Buy Michael a Beer!</a></strong></p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">If you find this tool useful, here are my <strong><a href="tipjars.html" target="_blank" title="Buy Michael a beer!">Virtual Tip Jars</a>.</strong></p>';
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
 
 }
 
@@ -10821,7 +10821,7 @@ function showZoomInstructionsScreen(){
    	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">All controls in the ABC editor have helpful tooltips.</p>';
 	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Read the <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> for instructions and demo videos.</p>';
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
 
 }
 
@@ -10978,7 +10978,7 @@ function DownloadWave(){
     )).catch((function(e) {
 
         //console.warn("Problem exporting .wav:", e)
-		DayPilot.Modal.alert("A problem occured when exporting the .wav file.",{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
+		DayPilot.Modal.alert("A problem occured when exporting the .wav file.",{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
 
     }));
 
@@ -11278,7 +11278,7 @@ function BatchMP3Export(){
 	// Apparently broken
 	if ((gIsIOS) || (gIsAndroid)){
 
-		DayPilot.Modal.alert("Batch export to .MP3 not supported on iOS or Android at this time.",{ theme: "modal_flat", top: 400, scrollWithPage: (gIsIOS || gIsAndroid), okText:"Ok" });
+		DayPilot.Modal.alert("Batch export to .MP3 not supported on iOS or Android at this time.",{ theme: "modal_flat", top: 400, scrollWithPage: (AllowDialogsToScroll()), okText:"Ok" });
 	
 		return;
 
@@ -11300,7 +11300,7 @@ function BatchMP3Export(){
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">If there is a repeat at the end of the first part of a tune, either standalone or in a first ending, there must be a matching |: bar at the start of the tune for the tune repeats to work properly.</p>'},	  
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 760, scrollWithPage: (gIsIOS || gIsAndroid) } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 760, scrollWithPage: (AllowDialogsToScroll()) } ).then(function(args){
 		
 		if (!args.canceled){
 		
@@ -11400,7 +11400,7 @@ function DoBatchMP3Export(repeatCount,doClickTrack){
 	gTheBatchMP3ExportStatusText = null;
 
 	// Put up batch running dialog
-	DayPilot.Modal.alert("Exporting .MP3 for tune "+ (currentTune+1) + " of "+totalTunesToExport,{ theme: "modal_flat", top: 400, scrollWithPage: (gIsIOS || gIsAndroid), okText:"Cancel" }).then(function(args){
+	DayPilot.Modal.alert("Exporting .MP3 for tune "+ (currentTune+1) + " of "+totalTunesToExport,{ theme: "modal_flat", top: 400, scrollWithPage: (AllowDialogsToScroll()), okText:"Cancel" }).then(function(args){
 		
 		//console.log("Got cancel");
 		
@@ -11630,7 +11630,7 @@ function DownloadMP3(callback,val){
 	}	
     ).catch((function(e) {
 
-		DayPilot.Modal.alert("A problem occured when exporting the .mp3 file.",{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
+		DayPilot.Modal.alert("A problem occured when exporting the .mp3 file.",{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
 
 		document.getElementById("abcplayer_mp3button").value = "Download .MP3";
 		document.getElementById("loading-bar-spinner").style.display = "none";
@@ -12426,7 +12426,7 @@ function PlayABCDialog(theABC,callback,val){
 		}
 		else{
 
-			theWidth = 800;  // FOOFOO was 820
+			theWidth = 800;  
 			
 		}
 
@@ -13076,7 +13076,7 @@ function idleXMLImport(){
 //
 function defaultMusicXMLSettings(){
 
-	DayPilot.Modal.confirm("Are you sure you want to reset the MusicXML import options to their default values?",{ top:180, theme: "modal_flat", scrollWithPage: (gIsIOS || gIsAndroid) }).then(function(args){
+	DayPilot.Modal.confirm("Are you sure you want to reset the MusicXML import options to their default values?",{ top:180, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
 
 		if (!args.canceled){
 
@@ -13124,7 +13124,7 @@ function ConfigureMusicXMLImport(){
 	}, 150);
 
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50, width: 500, scrollWithPage: (gIsIOS || gIsAndroid) } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50, width: 500, scrollWithPage: (AllowDialogsToScroll()) } ).then(function(args){
 		
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -13204,7 +13204,7 @@ function resetAngloButtonNames(){
 //
 function defaultAngloButtonNames(){
 
-	DayPilot.Modal.confirm("Are you sure you want to reset the Anglo Concertina button names to their default values?",{ top:180, theme: "modal_flat", scrollWithPage: (gIsIOS || gIsAndroid) }).then(function(args){
+	DayPilot.Modal.confirm("Are you sure you want to reset the Anglo Concertina button names to their default values?",{ top:180, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
 
 		if (!args.canceled){
 
@@ -13353,7 +13353,7 @@ function ConfigureAngloFingerings(){
 	}, 150);
 
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 160, width: 800, scrollWithPage: (gIsIOS || gIsAndroid) } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 160, width: 800, scrollWithPage: (AllowDialogsToScroll()) } ).then(function(args){
 		
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -13438,7 +13438,7 @@ function ConfigureTablatureSettings(){
 	  {html: '<p style="text-align:center;margin-top:22px;"><input id="configure_anglo_fingerings" class="btn btn-subdialog configure_anglo_fingerings" onclick="ConfigureAngloFingerings()" type="button" value="Configure Anglo Concertina Tablature Button Names" title="Configure the Anglo Concertina tablature button names"></p>'},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 13, width: 720, scrollWithPage: (gIsIOS || gIsAndroid) } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 13, width: 720, scrollWithPage: (AllowDialogsToScroll()) } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -13534,7 +13534,7 @@ function resetABCRenderingFonts(){
 //
 function defaultFontSettings(){
 
-	DayPilot.Modal.confirm("Are you sure you want to reset the ABC rendering fonts to their default values?",{ top:180, theme: "modal_flat", scrollWithPage: (gIsIOS || gIsAndroid) }).then(function(args){
+	DayPilot.Modal.confirm("Are you sure you want to reset the ABC rendering fonts to their default values?",{ top:180, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
 
 		if (!args.canceled){
 
@@ -13604,7 +13604,7 @@ function ConfigureFonts(){
 	  {html: '<p style="text-align:center;margin-top:22px;"><input id="default_rendering_fonts" class="btn btn-clearbutton default_rendering_fonts" onclick="defaultFontSettings()" type="button" value="Reset to Default" title="Reset the ABC rendering fonts to their default values"></p>'}
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 600, scrollWithPage: (gIsIOS || gIsAndroid) } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 600, scrollWithPage: (AllowDialogsToScroll()) } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -13683,7 +13683,7 @@ function SharingControlsDialog(){
 	}, 200);
 
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 800, scrollWithPage: (gIsIOS || gIsAndroid)}).then(function(){
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 800, scrollWithPage: (AllowDialogsToScroll())}).then(function(){
 
 	});
 
@@ -13776,7 +13776,7 @@ function PDFExportDialog(){
 	}, 200);
 
 
-	DayPilot.Modal.form(form,theData,{ theme: "modal_flat", top: 170, width: 800,  scrollWithPage: (gIsIOS || gIsAndroid) }).then(function(args){
+	DayPilot.Modal.form(form,theData,{ theme: "modal_flat", top: 170, width: 800,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
 		
 		if (!args.canceled){
 
@@ -13851,7 +13851,7 @@ function AdvancedControlsDialog(){
 	}, 200);
 
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 700,  scrollWithPage: (gIsIOS || gIsAndroid) }).then(function(){
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 700,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 					
 		// Clear advanced controls dialog flag
 		gInAdvancedControlsDialog = false;
@@ -13954,7 +13954,7 @@ function ConfigureToolSettings(e) {
 	  {html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Configure ABC Fonts" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="Configure MusicXML Import" title="Configure MusicXML import parameters"></p>'},	  
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 780, scrollWithPage: (gIsIOS || gIsAndroid) } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 780, scrollWithPage: (AllowDialogsToScroll()) } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -14059,7 +14059,7 @@ function ConfigureToolSettings(e) {
 				       	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">For those instruments played solo, set the melody instrument program as desired and the chord instrument program to Dulcimer (15).</p>';
 				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In this case, you may not want to include any chords in the ABC, as they will be played using the Dulcimer (15) instrument.</p>';
 
-				       	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 600, scrollWithPage: (gIsIOS || gIsAndroid) }).then(function(){
+				       	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 600, scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 
 						   	// Focus back on the ABC after the dialog is dismissed
 							gTheABC.focus();
@@ -14270,7 +14270,7 @@ function DoFileRead(file,doAppend){
 						}
 						else{
 
-							DayPilot.Modal.alert("This is not a valid MXL file.",{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
+							DayPilot.Modal.alert("This is not a valid MXL file.",{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
 
 			     			return;
 
@@ -14361,7 +14361,7 @@ function DoFileRead(file,doAppend){
 
                 }, function() {
 
-					DayPilot.Modal.alert("This is not a valid MXL file.",{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
+					DayPilot.Modal.alert("This is not a valid MXL file.",{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
 
 					return;
 
@@ -14371,7 +14371,7 @@ function DoFileRead(file,doAppend){
 
 		    }, function() {
 
-				DayPilot.Modal.alert("This is not a valid MXL file.",{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
+				DayPilot.Modal.alert("This is not a valid MXL file.",{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
 
 				return;
 
@@ -14492,6 +14492,29 @@ function DoDrop(e){
 	DoFileRead(file,true);
 }
 
+//
+// Allow tall dialogs to scroll on mobile and short screens
+//
+function AllowDialogsToScroll(){
+	
+	if (gIsIOS || gIsAndroid){
+
+		return true;
+
+	}
+
+    // Try to make the app more usable at short window heights
+    var windowHeight = window.innerHeight;
+
+    if (windowHeight < 950){
+
+    	return true;
+
+    }
+	
+	return false;
+
+}
 
 function DoStartup() {
 
@@ -14756,7 +14779,7 @@ function DoStartup() {
 		// check if user had selected a file
 		if (fileElement.files.length === 0) {
 
-			DayPilot.Modal.alert("Please select an ABC or MusicXML file",{ theme: "modal_flat", top: 50, scrollWithPage: (gIsIOS || gIsAndroid) });
+			DayPilot.Modal.alert("Please select an ABC or MusicXML file",{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
 
 			return;
 
