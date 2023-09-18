@@ -195,6 +195,9 @@ var gAutoscrollPlayer = true;
 // Use the custom GM sounds for dulcimer, accordion, flute, and whistle
 var gUseCustomGMSounds = true;
 
+// Use count for tip jar reminder
+var gTipJarCount = 0;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -10825,6 +10828,25 @@ function showZoomInstructionsScreen(){
 
 }
 
+//
+// Show the tip jar reminder
+//
+function TipJarReminderDialog(){
+
+   var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Thank You!</p>';
+ 	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;">I hope my ABC Transcription Tools have been useful to you!</p>';
+	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;margin-top:36px;">If so, please consider dropping something in one of my </p>';
+	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;"><strong><a href="tipjars.html" target="_blank" title="My Virtual Tip Jars">Virtual Tip Jars</a>.</strong></p>';
+	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;margin-top:36px;">Don\'t worry, I won\'t bug you again.</p>';
+	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;margin-top:36px;">Cheers and thanks!</p>';
+	   modal_msg += '<div style="text-align:center"><img style="width:150px;" src="img/michael.jpg"/></div>';
+	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;">Michael Eskin</p>';
+
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+
+}
+
 // 
 // Download the current tune as a .WAV file
 //
@@ -12928,6 +12950,16 @@ function GetInitialConfigurationSettings(){
 		gUseCustomGMSounds = true;
 	}
 
+	val = localStorage.TipJarCount;
+	if (val){
+
+		gTipJarCount = val;
+
+	}
+	else{
+		gTipJarCount = 0;
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -13005,6 +13037,9 @@ function SaveConfigurationSettings(){
 
 		// Save the custom GM sounds setting
 		localStorage.UseCustomGMSounds = gUseCustomGMSounds;
+
+		// Save the tip jar count 
+		localStorage.TipJarCount = gTipJarCount;
 
 	}
 }
@@ -14937,6 +14972,23 @@ function DoStartup() {
 		// Hide the desktop zoom message
 		document.getElementById("desktop_use_message").style.display = "none";
 
+	}
+
+	// Don't count share URL consumption as a tip jar event
+	if (!isFromShare){
+
+		gTipJarCount++;
+
+		if (gLocalStorageAvailable){
+			localStorage.TipJarCount = gTipJarCount;
+		}
+
+	}
+
+	// Occasional reminder
+	if (gTipJarCount == 25){
+
+		TipJarReminderDialog();
 
 	}
 
