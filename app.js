@@ -12837,7 +12837,7 @@ function GetInitialConfigurationSettings(){
     	resetAngloButtonNames();
     }
 
-    var theMusicXMLImportSettings = localStorage.musicXMLImportOptions;
+    var theMusicXMLImportSettings = localStorage.musicXMLImportOptionsV2;
 
     if (theMusicXMLImportSettings){
         gMusicXMLImportOptions = JSON.parse(theMusicXMLImportSettings);
@@ -13003,7 +13003,7 @@ function SaveConfigurationSettings(){
 		localStorage.angloButtonNames = JSON.stringify(gAngloButtonNames);
 
 		// MusicXML import options
-		localStorage.musicXMLImportOptions = JSON.stringify(gMusicXMLImportOptions);
+		localStorage.musicXMLImportOptionsV2 = JSON.stringify(gMusicXMLImportOptions);
 
 		// Large player control player options
 		localStorage.LargePlayerControls = gLargePlayerControls;
@@ -13058,7 +13058,7 @@ function resetMusicXMLImportOptions(){
 		n:0,
 		c:0,
 		v:0,
-		d:0,
+		d:4,
 		x:1,
 		noped:0,
 		p:'',
@@ -13080,7 +13080,7 @@ function setMusicXMLOptions () {
     gMusicXMLImportOptions.b = parseInt ($('#musicxml_bpl').val () || 3);
     gMusicXMLImportOptions.n = parseInt ($('#musicxml_cpl').val () || 0);
     gMusicXMLImportOptions.c = parseInt ($('#musicxml_crf').val () || 0);
-    gMusicXMLImportOptions.d = parseInt ($('#musicxml_den').val () || 0);
+    gMusicXMLImportOptions.d = parseInt ($('#musicxml_den').val () || 4);
     gMusicXMLImportOptions.m = parseInt ($('#musicxml_midi').val () || 0);
     gMusicXMLImportOptions.x = $('#musicxml_nlb').prop ('checked') ? 1 : 0;
     gMusicXMLImportOptions.noped = $('#musicxml_noped').prop ('checked') ? 1 : 0;
@@ -13167,7 +13167,7 @@ function ConfigureMusicXMLImport(){
 		    // Save the custom button naming map
 		    if (gLocalStorageAvailable){
 
-		        localStorage.musicXMLImportOptions = JSON.stringify(gMusicXMLImportOptions);
+		        localStorage.musicXMLImportOptionsV2 = JSON.stringify(gMusicXMLImportOptions);
 
 		    }
 		}
