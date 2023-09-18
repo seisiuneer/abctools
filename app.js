@@ -8613,109 +8613,227 @@ function InjectOneTuneSoundfont(theTune, theSoundfont){
 }
 
 //
-// Inject a %%staffwidth directive after all the X: headers
+// Inject a %%staffwidth directive into one or all tunes
 //
-function InjectStaffWidth() {
+
+var gLastInjectedStaffWidth = 560;
+
+function InjectStaffWidth(){
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
 		return;
 	}
 
-	DayPilot.Modal.prompt("%%staffwidth value to inject? (Larger values make the tunes less tall)", 560, { theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args) {
+	// Setup initial values
+	const theData = {
+	  configure_staffwidth:gLastInjectedStaffWidth,
+	  configure_inject_all:false
+	};
+
+	var form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject Staff Width Directive&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#pdf_tunebook_spacing_overrides" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">This will inject a %%staffwidth directive into the ABC. </p>'},  
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">Larger numbers make the notation less tall. </p>'},  
+	  {name: "%%staffwidth value to inject?", id: "configure_staffwidth", type:"number", cssClass:"configure_staffwidth_form_text"}, 
+	  {name: "            Inject all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_staffwidth_form_text"},
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 760, scrollWithPage: (AllowDialogsToScroll()) } ).then(function(args){
 		
-		var staffwidthstr = args.result;
+		if (!args.canceled){
 
-		if (staffwidthstr == null){
-			return;
+			var staffwidthstr = args.result.configure_staffwidth;
+
+			if (staffwidthstr == null){
+				return;
+			}
+
+			var staffwidth = parseInt(staffwidthstr);
+
+			if ((isNaN(staffwidth)) || (staffwidth == undefined)){
+				return;
+			}
+
+			// Time saver for next use
+			gLastInjectedStaffWidth = staffwidth;
+
+			// Injecting all tunes
+			if (args.result.configure_inject_all){
+
+				var nTunes = CountTunes();
+
+				var theNotes = gTheABC.value;
+
+				// Find the tunes
+				var theTunes = theNotes.split(/^X:/gm);
+
+				var output = FindPreTuneHeader(theNotes);
+
+				for (var i=1;i<=nTunes;++i){
+
+					theTunes[i] = "X:"+theTunes[i];
+
+					output += InjectOneTuneStaffWidth(theTunes[i],staffwidth);
+
+				}
+
+				// Stuff in the transposed output
+				gTheABC.value = output;
+
+				// Force a redraw
+				RenderAsync(true,null,function(){
+
+					// Set the select point
+					gTheABC.selectionStart = 0;
+				    gTheABC.selectionEnd = 0;
+
+				    // And set the focus
+				    gTheABC.focus();
+				});
+			}
+			else{
+
+				var theSelectionStart = gTheABC.selectionStart;
+
+				var leftSide = gTheABC.value.substring(0,theSelectionStart);
+				
+				var rightSide = gTheABC.value.substring(theSelectionStart);
+
+				gTheABC.value = leftSide + "%%staffwidth " + staffwidth + "\n" + rightSide;
+
+				// Force a redraw
+				RenderAsync(true,null,function(){
+
+					// And reset the focus
+					// Set the select point
+					gTheABC.selectionStart = theSelectionStart;
+				    gTheABC.selectionEnd = theSelectionStart;
+
+				    // And set the focus
+				    gTheABC.focus();
+				});
+
+			}
+
 		}
-
-		var staffwidth = parseInt(staffwidthstr);
-
-		if ((isNaN(staffwidth)) || (staffwidth == undefined)){
-			return;
-		}
-
-		var nTunes = CountTunes();
-
-		var theNotes = gTheABC.value;
-
-		// Find the tunes
-		var theTunes = theNotes.split(/^X:/gm);
-
-		var output = FindPreTuneHeader(theNotes);
-
-		for (var i=1;i<=nTunes;++i){
-
-			theTunes[i] = "X:"+theTunes[i];
-
-			output += InjectOneTuneStaffWidth(theTunes[i],staffwidth);
-
-		}
-
-		// Stuff in the transposed output
-		gTheABC.value = output;
-
-		// Force a redraw
-		RenderAsync(true,null,function(){
-
-			// Set the select point
-			gTheABC.selectionStart = 0;
-		    gTheABC.selectionEnd = 0;
-
-		    // And set the focus
-		    gTheABC.focus();
-		});
-
 	});
-
 }
 
+
 //
-// Inject a %abcjs_soundfont directive after all the X: headers
+// Inject a %abcjs_soundfont directive into one or all tunes
 //
-function InjectSoundfont() {
+
+var gLastInjectedSoundfont = null;
+
+function InjectSoundfont(){
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
 		return;
 	}
 
-	DayPilot.Modal.prompt("%abcjs_sound value to inject? Options are: fluid, musyng, or fatboy", "fluid", { theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args) {
+	// Set the injector initially based on the default chosen in the settings
+	if (gLastInjectedSoundfont == null){
+		if (gDefaultSoundFont.indexOf("Fluid")!=-1){
+			gLastInjectedSoundfont = "0";
+		}else
+		if (gDefaultSoundFont.indexOf("Musyng")!=-1){
+			gLastInjectedSoundfont = "1";
+		}else
+		if (gDefaultSoundFont.indexOf("FatBoy")!=-1){
+			gLastInjectedSoundfont = "2";
+		}
+	}
+
+    const sound_fonts_list = [
+	    { name: "  Fluid", id: "0" },
+	    { name: "  Musyng Kite", id: "1" },
+	    { name: "  FatBoy", id: "2" },
+  	];
+
+	// Setup initial values
+	const theData = {
+	  configure_soundfont:gLastInjectedSoundfont,
+	  configure_inject_all:false
+	};
+
+	var form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject Soundfont&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#selecting_the_instruments_for_playback" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">This will inject a %abcjs_soundfont directive into the ABC.</p>'},  
+	  {name: "%abcjs_sound value to inject:", id: "configure_soundfont", type:"select", options:sound_fonts_list, cssClass:"configure_soundfont_select"},
+	  {name: "            Inject all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_soundfont_form_text"},
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 760, scrollWithPage: (AllowDialogsToScroll()) } ).then(function(args){
 		
-		var theSoundfont = args.result;
+		if (!args.canceled){
 
-		if (theSoundfont == null){
-			return;
+			var theSoundfont = args.result.configure_soundfont;
+
+			gLastInjectedSoundfont = theSoundfont;
+
+			var soundFontToInject = "fluid";
+
+			switch (theSoundfont){
+				case "0":
+					soundFontToInject = "fluid";
+					break;
+				case "1":
+					soundFontToInject = "musyng";
+					break;
+				case "2":
+					soundFontToInject = "fatboy";
+					break;
+			}
+			
+			// Injecting all tunes
+			if (args.result.configure_inject_all){
+
+				var nTunes = CountTunes();
+
+				var theNotes = gTheABC.value;
+
+				// Find the tunes
+				var theTunes = theNotes.split(/^X:/gm);
+
+				var output = FindPreTuneHeader(theNotes);
+
+				for (var i=1;i<=nTunes;++i){
+
+					theTunes[i] = "X:"+theTunes[i];
+
+					output += InjectOneTuneSoundfont(theTunes[i],soundFontToInject);
+
+				}
+
+				// Stuff in the transposed output
+				gTheABC.value = output;
+
+			}
+			else{
+
+				var theSelectionStart = gTheABC.selectionStart;
+
+				var leftSide = gTheABC.value.substring(0,theSelectionStart);
+				
+				var rightSide = gTheABC.value.substring(theSelectionStart);
+
+				gTheABC.value = leftSide + "%abcjs_soundfont " + soundFontToInject + "\n" + rightSide;
+
+				// And reset the focus
+				// Set the select point
+				gTheABC.selectionStart = theSelectionStart;
+			    gTheABC.selectionEnd = theSelectionStart;
+
+			    gTheABC.focus();	
+			    	
+			}
 		}
-
-		if ((theSoundfont != "fluid") && (theSoundfont != "musyng") && (theSoundfont != "fatboy") ){
-			return;
-		}
-
-		var nTunes = CountTunes();
-
-		var theNotes = gTheABC.value;
-
-		// Find the tunes
-		var theTunes = theNotes.split(/^X:/gm);
-
-		var output = FindPreTuneHeader(theNotes);
-
-		for (var i=1;i<=nTunes;++i){
-
-			theTunes[i] = "X:"+theTunes[i];
-
-			output += InjectOneTuneSoundfont(theTunes[i],theSoundfont);
-
-		}
-
-		// Stuff in the transposed output
-		gTheABC.value = output;
-
 	});
-
 }
+
 //
 // Inject MIDI program number directive below the tune header
 //
@@ -8798,131 +8916,138 @@ function InjectOneTuneMIDIVolumeAboveTune(theTune, theVolume, bIsChords){
 	
 }
 
+
 //
-// Inject a MIDI instrument directive after all the X: headers
+// Inject %%MIDI program or chordprog directives into one or all tunes
 //
-function InjectMIDIInstrument(bIsChords) {
+
+var gLastInjectedProgram = 0;
+
+function InjectMIDIInstrument(bIsChords){
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
 		return;
 	}
 
-	var theProgramToInject = " melody";
-	var theDefaultProgram = "21";
+	// Setup initial values
+	const theData = {
+	  configure_program:gLastInjectedProgram,
+	  configure_inject_all:false
+	};
+
+	var form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject MIDI Melody Program&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#selecting_the_instruments_for_playback" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">This will inject a %%MIDI program directive into the ABC.</p>'},  
+	  {name: "MIDI program to inject:", id: "configure_program", type:"number", cssClass:"configure_midi_program_form_text"}, 
+	  {name: "            Inject all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_midi_program_form_text"},
+	  {html: '<p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended_v2.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'}
+	];
 
 	if (bIsChords){
-		theProgramToInject = " chords"
-		theDefaultProgram = "34";
+		form = [
+		  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject MIDI Bass/Chords Program&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#selecting_the_instruments_for_playback" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+		  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">This will inject a %%MIDI chordprog directive into the ABC.</p>'},  
+		  {name: "MIDI program to inject:", id: "configure_program", type:"number", cssClass:"configure_midi_program_form_text"}, 
+		  {name: "            Inject all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_midi_program_form_text"},
+		  {html: '<p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended_v2.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'}
+		];
 	}
 
-	var thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,&nbsp;&nbsp;Harpsichord: 6,&nbsp;&nbsp;Hammered Dulcimer: 15,&nbsp;&nbsp;Accordion: 21,&nbsp;&nbsp;Fingered Bass: 33,&nbsp;&nbsp;Harp: 46,&nbsp;&nbsp;Flute: 73,&nbsp;&nbsp;Whistle: 78,&nbsp;&nbsp;Fiddle: 110,&nbsp;&nbsp;Silence: mute</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended_v2.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>';
-
-	if (bIsChords){
-		thePrompt = '<p style="font-size:14pt;line-height:19pt;font-family:helvetica"><strong>MIDI instrument program number to inject for the'+theProgramToInject+'?</strong></p><p style="font-size:14pt;font-family:helvetica">Suggested values:</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica">Piano: 0,&nbsp;&nbsp;Electric Piano: 5,&nbsp;&nbsp;Organ: 19,&nbsp;&nbsp;Accordion: 21,&nbsp;&nbsp;Guitar: 25,&nbsp;&nbsp;Bass: 34,&nbsp;&nbsp;Synth Bass: 38,&nbsp;&nbsp;Silence: mute</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px"><strong>Shortcut:</strong> Entering a negative value will inject the same value for both the melody and chord instrument program numbers.</p><p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended_v2.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>';
-	}
-
-	DayPilot.Modal.prompt(thePrompt, theDefaultProgram, { theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args) {
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 760, scrollWithPage: (AllowDialogsToScroll()) } ).then(function(args){
 		
-		var progNumStr = args.result;
+		if (!args.canceled){
 
-		if (progNumStr == null){
-			return;
-		}
-
-		var bDoBoth = false;
-
-		// Special case for muting voices
-		if (progNumStr.toLowerCase() == "mute"){
-
-			progNum = "mute";
-
-		}
-		else{
-
-			var progNum = parseInt(progNumStr);
-
-			if ((isNaN(progNum)) || (progNum == undefined)){
+			var progNumStr = args.result.configure_program;
+		
+			if (progNumStr == null){
 				return;
 			}
 
+			// Special case for muting voices
+			if (progNumStr.toLowerCase() == "mute"){
 
-			if (progNum < 0){
-				bDoBoth = true;
-				progNum = -progNum;
+				progNum = "mute";
+
 			}
+			else{
 
-			if ((progNum < 0) || (progNum > 136)){
-				return;
-			}
+				var progNum = parseInt(progNumStr);
 
-		}
+				if ((isNaN(progNum)) || (progNum == undefined)){
+					return;
+				}
 
-		var nTunes = CountTunes();
-
-		if (!bDoBoth){
-
-			var theNotes = gTheABC.value;
-
-			// Find the tunes
-			var theTunes = theNotes.split(/^X:/gm);
-
-			var output = FindPreTuneHeader(theNotes);
-
-			for (var i=1;i<=nTunes;++i){
-
-				theTunes[i] = "X:"+theTunes[i];
-
-				output += InjectOneTuneMIDIProgram(theTunes[i],progNum,bIsChords);
+				if ((progNum < 0) || (progNum > 136)){
+					return;
+				}
 
 			}
 
+			// Time saver - Save the last injected program for next use of the dialog
+			gLastInjectedProgram = progNum;
+
+			// Injecting all tunes
+			if (args.result.configure_inject_all){
+
+				var nTunes = CountTunes();
+
+				var theNotes = gTheABC.value;
+
+				// Find the tunes
+				var theTunes = theNotes.split(/^X:/gm);
+
+				var output = FindPreTuneHeader(theNotes);
+
+				for (var i=1;i<=nTunes;++i){
+
+					theTunes[i] = "X:"+theTunes[i];
+
+					output += InjectOneTuneMIDIProgram(theTunes[i],progNum,bIsChords);
+
+				}
+
+				// Stuff in the transposed output
+				gTheABC.value = output;
+
+				// Set the select point
+				gTheABC.selectionStart = 0;
+			    gTheABC.selectionEnd = 0;
+
+			    // And reset the focus
+			    gTheABC.focus();
+
+			}
+			// Injecting just a single string
+			else{
+
+				var theSelectionStart = gTheABC.selectionStart;
+
+				var leftSide = gTheABC.value.substring(0,theSelectionStart);
+				
+				var rightSide = gTheABC.value.substring(theSelectionStart);
+
+				if (bIsChords){
+					gTheABC.value = leftSide + "%%MIDI chordprog " + progNum + "\n" + rightSide;
+				}
+				else{
+					gTheABC.value = leftSide + "%%MIDI program " + progNum + "\n" + rightSide;					
+				}
+
+				// And reset the focus
+				// Set the select point
+				gTheABC.selectionStart = theSelectionStart;
+			    gTheABC.selectionEnd = theSelectionStart;
+
+			    gTheABC.focus();		
+
+			}
+
+
 		}
-		else{
-
-			var theNotes = gTheABC.value;
-
-			// Inject the melody program
-			var theTunes = theNotes.split(/^X:/gm);
-
-			var output = FindPreTuneHeader(theNotes);
-
-			for (var i=1;i<=nTunes;++i){
-
-				theTunes[i] = "X:"+theTunes[i];
-
-				output += InjectOneTuneMIDIProgram(theTunes[i],progNum,true);
-
-			}	
-
-			// Inject the chords
-			theTunes = output.split(/^X:/gm);
-
-			var output = FindPreTuneHeader(theNotes);
-
-			for (var i=1;i<=nTunes;++i){
-
-				theTunes[i] = "X:"+theTunes[i];
-
-				output += InjectOneTuneMIDIProgram(theTunes[i],progNum,false);
-
-			}	
-					
-		}
-
-		// Stuff in the transposed output
-		gTheABC.value = output;
-
-		// Set the select point
-		gTheABC.selectionStart = 0;
-	    gTheABC.selectionEnd = 0;
-
-	    // And set the focus
-	    gTheABC.focus();
-
 	});
-
 }
+
 
 //
 // Play the ABC
@@ -13687,6 +13812,15 @@ function AddAutoPlay(){
 
 	urltextbox.value = theURL;
 
+	// Give some feedback
+	document.getElementById("addautoplay").value = "Auto-Play Added!";
+
+	setTimeout(function(){
+
+		document.getElementById("addautoplay").value = "Add Auto-Play";
+
+	},1500);
+
 }
 
 function SharingControlsDialog(){
@@ -13854,12 +13988,12 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<input id="injectallheaders" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders(true)" type="button" value="Inject All PDF Annotations" title="Injects all available tool-specific PDF tunebook annotations for title page, table of contents, index generation, etc. at the top of the ABC">';	
 	modal_msg  += '<input id="injectheadertemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders(false)" type="button" value="Inject PDF Tunebook Annotations Template" title="Injects a template of common useful PDF tunebook annotations at the top of the ABC">';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
-	modal_msg  += '<input id="injectmelody" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMIDIInstrument(false);" type="button" value="Inject MIDI Melody" title="Injects %%MIDI program melody annotation into all tunes in the ABC">';	
-	modal_msg  += '<input id="injectchords" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMIDIInstrument(true);" type="button" value="Inject MIDI Bass/Chord" title="Injects %%MIDI chordprog bass/chord annotation into all tunes in the ABC">';
-	modal_msg  += '<input id="injectstaffwidth" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectStaffWidth()" type="button" value="Inject %%staffwidth" title="Injects a %%staffwidth annotation at the top of every tune">';
+	modal_msg  += '<input id="injectmelody" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMIDIInstrument(false);" type="button" value="Inject MIDI Melody" title="Injects %%MIDI program melody annotation into one or all tunes">';	
+	modal_msg  += '<input id="injectchords" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMIDIInstrument(true);" type="button" value="Inject MIDI Bass/Chord" title="Injects %%MIDI chordprog bass/chord annotation into one or all tunes">';
+	modal_msg  += '<input id="injectstaffwidth" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectStaffWidth()" type="button" value="Inject %%staffwidth" title="Injects a %%staffwidth annotation into one or all tunes">';
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
-	modal_msg  += '<input id="injectsoundfont" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectSoundfont()" type="button" value="Inject %abcjs_soundfont" title="Injects a %abcjs_soundfont annotation at the top of every tune">';
+	modal_msg  += '<input id="injectsoundfont" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectSoundfont()" type="button" value="Inject %abcjs_soundfont" title="Injects a %abcjs_soundfont annotation into one or all tunes">';
 		modal_msg  += '<input id="injectclicktrackall" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectRepeatsAndClickTrackAll()" type="button" value="Inject Repeats and Two-Bar Click Intros" title="Injects repeated copies of tunes and optional style-adaptive two-bar click intros into every tune">';	
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">'
