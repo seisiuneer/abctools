@@ -8839,14 +8839,37 @@ function InjectSoundfont(){
 //
 function InjectOneTuneMIDIProgram(theTune, progNum, bIsChords){
 
+	var thePatchName;
+
+	var toInject = "";
+
+	if (progNum == "mute"){
+
+		thePatchName = "Mute";
+
+	} 
+	else{
+
+		thePatchName = generalMIDISoundNames[progNum+1];
+
+	}
+
 	if (bIsChords){
 
-		theOutput = InjectStringBelowTuneHeader(theTune,"%%MIDI chordprog "+progNum);
+		toInject = "% "+thePatchName+"\n"+"%%MIDI chordprog " + progNum;
+	}
+	else{
+		toInject = "% "+thePatchName+"\n"+"%%MIDI program " + progNum;
+	}
+
+	if (bIsChords){
+
+		theOutput = InjectStringBelowTuneHeader(theTune,toInject);
 
 	}
 	else{
 
-		theOutput = InjectStringBelowTuneHeader(theTune,"%%MIDI program "+progNum);
+		theOutput = InjectStringBelowTuneHeader(theTune,toInject);
 
 	}
 	
@@ -8921,9 +8944,159 @@ function InjectOneTuneMIDIVolumeAboveTune(theTune, theVolume, bIsChords){
 // Inject %%MIDI program or chordprog directives into one or all tunes
 //
 
-var gLastInjectedProgram = 0;
+var gLastInjectedProgram = 1;
+
+const generalMIDISoundNames = [
+  "Mute",
+  "Acoustic Grand Piano",
+  "Bright Acoustic Piano",
+  "Electric Grand Piano",
+  "Honky-tonk Piano",
+  "Electric Piano 1",
+  "Electric Piano 2",
+  "Harpsichord",
+  "Clavi",
+  "Celesta",
+  "Glockenspiel",
+  "Music Box",
+  "Vibraphone",
+  "Marimba",
+  "Xylophone",
+  "Tubular Bells",
+  "Dulcimer",
+  "Drawbar Organ",
+  "Percussive Organ",
+  "Rock Organ",
+  "Church Organ",
+  "Reed Organ",
+  "Accordion",
+  "Harmonica",
+  "Tango Accordion",
+  "Acoustic Guitar (nylon)",
+  "Acoustic Guitar (steel)",
+  "Electric Guitar (jazz)",
+  "Electric Guitar (clean)",
+  "Electric Guitar (muted)",
+  "Overdriven Guitar",
+  "Distortion Guitar",
+  "Guitar Harmonics",
+  "Acoustic Bass",
+  "Electric Bass (finger)",
+  "Electric Bass (pick)",
+  "Fretless Bass",
+  "Slap Bass 1",
+  "Slap Bass 2",
+  "Synth Bass 1",
+  "Synth Bass 2",
+  "Violin",
+  "Viola",
+  "Cello",
+  "Contrabass",
+  "Tremolo Strings",
+  "Pizzicato Strings",
+  "Orchestral Harp",
+  "Timpani",
+  "String Ensemble 1",
+  "String Ensemble 2",
+  "SynthStrings 1",
+  "SynthStrings 2",
+  "Choir Aahs",
+  "Voice Oohs",
+  "Synth Voice",
+  "Orchestra Hit",
+  "Trumpet",
+  "Trombone",
+  "Tuba",
+  "Muted Trumpet",
+  "French Horn",
+  "Brass Section",
+  "SynthBrass 1",
+  "SynthBrass 2",
+  "Soprano Sax",
+  "Alto Sax",
+  "Tenor Sax",
+  "Baritone Sax",
+  "Oboe",
+  "English Horn",
+  "Bassoon",
+  "Clarinet",
+  "Piccolo",
+  "Flute",
+  "Recorder",
+  "Pan Flute",
+  "Blown Bottle",
+  "Shakuhachi",
+  "Whistle",
+  "Ocarina",
+  "Lead 1 (square)",
+  "Lead 2 (sawtooth)",
+  "Lead 3 (calliope)",
+  "Lead 4 (chiff)",
+  "Lead 5 (charang)",
+  "Lead 6 (voice)",
+  "Lead 7 (fifths)",
+  "Lead 8 (bass + lead)",
+  "Pad 1 (new age)",
+  "Pad 2 (warm)",
+  "Pad 3 (polysynth)",
+  "Pad 4 (choir)",
+  "Pad 5 (bowed)",
+  "Pad 6 (metallic)",
+  "Pad 7 (halo)",
+  "Pad 8 (sweep)",
+  "FX 1 (rain)",
+  "FX 2 (soundtrack)",
+  "FX 3 (crystal)",
+  "FX 4 (atmosphere)",
+  "FX 5 (brightness)",
+  "FX 6 (goblins)",
+  "FX 7 (echoes)",
+  "FX 8 (sci-fi)",
+  "Sitar",
+  "Banjo",
+  "Shamisen",
+  "Koto",
+  "Kalimba",
+  "Bag pipe",
+  "Fiddle",
+  "Shanai",
+  "Tinkle Bell",
+  "Agogo",
+  "Steel Drums",
+  "Woodblock",
+  "Taiko Drum",
+  "Melodic Tom",
+  "Synth Drum",
+  "Reverse Cymbal",
+  "Guitar Fret Noise",
+  "Breath Noise",
+  "Seashore",
+  "Bird Tweet",
+  "Telephone Ring",
+  "Helicopter",
+  "Applause",
+  "Gunshot",
+  //
+  // Expanded GM sounds, specific to this tool
+  //
+  "abcjs Percussion",	// 128
+  "Uilleann Pipes",    	// 129
+  "Smallpipes (D)", 	// 130
+  "Smallpipes (A)",  	// 131
+  "Säckpipa",    		// 132
+  "Concertina",  		// 133
+  "Melodica",   		// 134
+  "Cajun Accordion",    // 135
+  "Silence"				// 136
+];
 
 function InjectMIDIInstrument(bIsChords){
+
+    var midi_program_list = [];
+
+  	for (var i=0;i<138;++i){
+  		midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
+  	}
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
@@ -8939,7 +9112,7 @@ function InjectMIDIInstrument(bIsChords){
 	var form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject MIDI Melody Program&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#selecting_the_instruments_for_playback" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
 	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">This will inject a %%MIDI program directive into the ABC.</p>'},  
-	  {name: "MIDI program to inject:", id: "configure_program", type:"number", cssClass:"configure_midi_program_form_text"}, 
+	  {name: "MIDI program to inject:", id: "configure_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
 	  {name: "            Inject all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_midi_program_form_text"},
 	  {html: '<p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended_v2.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'}
 	];
@@ -8948,7 +9121,7 @@ function InjectMIDIInstrument(bIsChords){
 		form = [
 		  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject MIDI Bass/Chords Program&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#selecting_the_instruments_for_playback" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
 		  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">This will inject a %%MIDI chordprog directive into the ABC.</p>'},  
-		  {name: "MIDI program to inject:", id: "configure_program", type:"number", cssClass:"configure_midi_program_form_text"}, 
+	  	  {name: "MIDI program to inject:", id: "configure_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
 		  {name: "            Inject all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_midi_program_form_text"},
 		  {html: '<p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended_v2.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'}
 		];
@@ -8958,34 +9131,26 @@ function InjectMIDIInstrument(bIsChords){
 		
 		if (!args.canceled){
 
-			var progNumStr = args.result.configure_program;
-		
-			if (progNumStr == null){
-				return;
-			}
+			var progNum = args.result.configure_program;
 
+			// Time saver - Save the last injected program for next use of the dialog
+			gLastInjectedProgram = progNum;
+		
 			// Special case for muting voices
-			if (progNumStr.toLowerCase() == "mute"){
+			if (progNum == 0){
 
 				progNum = "mute";
 
 			}
 			else{
 
-				var progNum = parseInt(progNumStr);
-
-				if ((isNaN(progNum)) || (progNum == undefined)){
-					return;
-				}
+				progNum = progNum - 1;
 
 				if ((progNum < 0) || (progNum > 136)){
 					return;
 				}
 
 			}
-
-			// Time saver - Save the last injected program for next use of the dialog
-			gLastInjectedProgram = progNum;
 
 			// Injecting all tunes
 			if (args.result.configure_inject_all){
@@ -9021,6 +9186,16 @@ function InjectMIDIInstrument(bIsChords){
 			// Injecting just a single string
 			else{
 
+				// Provide a label
+				var thePatchName;
+
+				if (progNum == "mute"){
+					thePatchName = "Mute";
+				} 
+				else{
+					thePatchName = generalMIDISoundNames[progNum+1];
+				}
+
 				var theSelectionStart = gTheABC.selectionStart;
 
 				var leftSide = gTheABC.value.substring(0,theSelectionStart);
@@ -9028,10 +9203,10 @@ function InjectMIDIInstrument(bIsChords){
 				var rightSide = gTheABC.value.substring(theSelectionStart);
 
 				if (bIsChords){
-					gTheABC.value = leftSide + "%%MIDI chordprog " + progNum + "\n" + rightSide;
+					gTheABC.value = leftSide + "% "+thePatchName+"\n"+"%%MIDI chordprog " + progNum + "\n" + rightSide;
 				}
 				else{
-					gTheABC.value = leftSide + "%%MIDI program " + progNum + "\n" + rightSide;					
+					gTheABC.value = leftSide + "% "+thePatchName+"\n"+ "%%MIDI program " + progNum + "\n" + rightSide;					
 				}
 
 				// And reset the focus
@@ -14051,10 +14226,33 @@ function ConfigureToolSettings(e) {
 		return;
 	}
 
+    var midi_program_list = [];
+
+  	for (var i=0;i<138;++i){
+  		midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
+  	}
+
 	var bAlwaysInjectPrograms = gAlwaysInjectPrograms;
 
 	var theMelodyProgram = gTheMelodyProgram;
+
+	var selectedMelodyProgram;
+	if (theMelodyProgram == "mute"){
+		selectedMelodyProgram = 0;
+	}
+	else{
+		selectedMelodyProgram = parseInt(theMelodyProgram)+1;
+	}
+
 	var theChordProgram = gTheChordProgram;
+
+	var selectedChordProgram;
+	if (theChordProgram == "mute"){
+		selectedChordProgram = 0;
+	}
+	else{
+		selectedChordProgram = parseInt(theChordProgram)+1;
+	}
 
 	var bAlwaysInjectVolumes = gAlwaysInjectVolumes;
 
@@ -14078,8 +14276,8 @@ function ConfigureToolSettings(e) {
 	// Setup initial values
 	const theData = {
 	  configure_inject_programs: bAlwaysInjectPrograms,
-	  configure_melody_program: theMelodyProgram,
-	  configure_chord_program: theChordProgram,
+	  configure_melody_program: selectedMelodyProgram,
+	  configure_chord_program: selectedChordProgram,
 	  configure_inject_volumes: bAlwaysInjectVolumes,
 	  configure_bass_volume: theBassVolume,
 	  configure_chord_volume: theChordVolume,
@@ -14109,8 +14307,8 @@ function ConfigureToolSettings(e) {
 	  {name: "    Show stringed instrument names on tablature (never shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_box_settings_form_text"},
 	  {name: "Stringed instrument capo fret postion:", id: "configure_capo", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text"},
-	  {name: "Default Melody MIDI program (0-136 or mute):", id: "configure_melody_program", type:"number", cssClass:"configure_settings_form_text"},
-	  {name: "Default Bass/Chords MIDI program (0-136 or mute):", id: "configure_chord_program", type:"number", cssClass:"configure_settings_form_text"},
+	  {name: "Default Melody MIDI program:", id: "configure_melody_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
+	  {name: "Default Bass/Chords MIDI program:", id: "configure_chord_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
 	  {name: "            Use Default Bass/Chord volumes when playing tunes", id: "configure_inject_volumes", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default Bass MIDI volume (0-127):", id: "configure_bass_volume", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default Chords MIDI volume (0-127):", id: "configure_chord_volume", type:"number", cssClass:"configure_settings_form_text"},
@@ -14129,6 +14327,7 @@ function ConfigureToolSettings(e) {
 		if (!args.canceled){
 
 			gAlwaysInjectPrograms = args.result.configure_inject_programs;
+
 			gTheMelodyProgram = args.result.configure_melody_program;
 			gTheChordProgram = args.result.configure_chord_program;
 
@@ -14161,6 +14360,13 @@ function ConfigureToolSettings(e) {
 				}
 			}
 
+			if (gTheMelodyProgram == 0){
+				gTheMelodyProgram = "mute";
+			}
+			else{
+				gTheMelodyProgram--;
+			}
+
 			if (gTheMelodyProgram != "mute"){
 
 				// Sanity check the values
@@ -14175,6 +14381,13 @@ function ConfigureToolSettings(e) {
 				if (gTheMelodyProgram > 136){
 					gTheMelodyProgram = 136;
 				}
+			}
+
+			if (gTheChordProgram == 0){
+				gTheChordProgram = "mute";
+			}
+			else{
+				gTheChordProgram--;
 			}
 
 			if (gTheChordProgram != "mute"){
