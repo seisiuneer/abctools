@@ -1,6 +1,11 @@
 // MAE 12 Sep 2023 - I need this to be global to be able to clear the cache from the ABC tool on soundfont change
 var gSoundsCacheABCJS = {};
 
+// MAE 20 Sep 2023 - Rhythm pattern overrides
+// Uses same syntax as standard patterns wrapped in an object with both the pattern and partial play threshold
+// var gRhythmPatternOverrides = {"10/8": {pattern:['boom', 'boom2', 'boom2', 'boom2', 'boom', 'boom2', 'boom2', 'boom', 'boom2', 'boom2'], threshold:5} };
+var gRhythmPatternOverrides = {};
+
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
@@ -12101,36 +12106,144 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       });
     }
   }
+
+  //
+  // MAE 19 Sep 2023 - Added 5/8, 7/4, 7/8, and 10/8 reworked partial measure handling
+  //
   var rhythmPatterns = {
     "2/2": ['boom', 'chick'],
     "2/4": ['boom', 'chick'],
     "3/4": ['boom', 'chick', 'chick'],
     "4/4": ['boom', 'chick', 'boom2', 'chick'],
     "5/4": ['boom', 'chick', 'chick', 'boom2', 'chick'],
+    "7/4": ['boom', 'chick', 'boom2', 'chick', 'boom2', 'chick', 'chick'],
+    "2/8": ['boom', 'chick'],
+    "3/8": ['boom', 'chick', 'chick'],
+    "5/8": ['boom', 'chick', 'chick', 'boom2', 'chick'],
     "6/8": ['boom', '', 'chick', 'boom2', '', 'chick'],
+    "7/8": ['boom', 'chick', 'chick', 'boom2', 'chick', 'boom2', 'chick'],
     "9/8": ['boom', '', 'chick', 'boom2', '', 'chick', 'boom2', '', 'chick'],
+    "10/8": ['boom', 'chick', 'chick', 'boom2', 'chick', 'chick', 'boom2', 'chick', 'boom2', 'chick'],
     "12/8": ['boom', '', 'chick', 'boom2', '', 'chick', 'boom', '', 'chick', 'boom2', '', 'chick']
   };
+
+  var partialMeasureThresholdList = {
+    "2/2": 1,
+    "2/4": 1,
+    "3/4": 1,
+    "4/4": 2,
+    "5/4": 2,
+    "7/4": 2,
+    "2/8": 1,
+    "3/8": 1,
+    "5/8": 2,
+    "6/8": 2,
+    "7/8": 2,
+    "9/8": 2,
+    "10/8": 2,
+    "12/8": 2
+  };
+
   function resolveChords(startTime, endTime) {
+
     var num = meter.num;
     var den = meter.den;
+
     var beatLength = 1 / den;
     var noteLength = beatLength / 2;
-    var pattern = rhythmPatterns[num + '/' + den];
-    var thisMeasureLength = parseInt(num, 10) / parseInt(den, 10);
-    var portionOfAMeasure = thisMeasureLength - (endTime - startTime) / tempoChangeFactor;
-    if (Math.abs(portionOfAMeasure) < 0.00001) portionOfAMeasure = false;
-    if (!pattern || portionOfAMeasure) {
-      // If it is an unsupported meter, or this isn't a full bar, just chick on each beat.
-      pattern = [];
-      var beatsPresent = (endTime - startTime) / tempoChangeFactor / beatLength;
-      for (var p = 0; p < beatsPresent; p++) {
-        pattern.push("chick");
-      }
+
+    var patternWork = null;
+    var bIsCustomPattern = false;
+
+    // Search the custom patterns array first
+    if (gRhythmPatternOverrides){
+
+        var testCustomPattern = gRhythmPatternOverrides[num + '/' + den];
+
+        if (testCustomPattern){
+
+          patternWork = testCustomPattern.pattern;
+
+          //console.log("Using custom pattern for "+num + '/' + den + " pattern= " + JSON.stringify(patternWork));
+
+        }
+
     }
+
+    if (patternWork){
+
+      bIsCustomPattern = true;
+ 
+    }
+    else{
+
+      patternWork = rhythmPatterns[num + '/' + den];
+
+    }
+
+    var thisMeasureLength = parseInt(num, 10) / parseInt(den, 10);
+
+    var portionOfAMeasure = thisMeasureLength - (endTime - startTime) / tempoChangeFactor;
+
+    if (Math.abs(portionOfAMeasure) < 0.00001) portionOfAMeasure = false;
+
+    var pattern = [];
+
+    if (!patternWork || portionOfAMeasure) {
+
+      // If it is an unsupported meter, or this isn't a full bar, just chick on each beat.
+      var beatsPresent = (endTime - startTime) / tempoChangeFactor / beatLength;
+
+      var partialMeasureThreshold;
+
+      if (bIsCustomPattern){
+
+        partialMeasureThreshold = gRhythmPatternOverrides[num + '/' + den].threshold;
+
+        //console.log("Using custom threshold for "+num + '/' + den + " threshold = "+partialMeasureThreshold);
+
+
+      }
+      else
+      if (patternWork){
+
+        partialMeasureThreshold = partialMeasureThresholdList[num + '/' + den];
+
+      }
+     
+      for (var p = 0; p < beatsPresent; p++) {
+
+        if ((!portionOfAMeasure) || (!patternWork)){
+
+          pattern.push("chick");
+
+        }
+        else
+        if (beatsPresent <= partialMeasureThreshold){
+
+          pattern.push("");
+          
+        }
+        else{
+
+          // Use a partial pattern from the current rhythm
+          pattern.push(patternWork[p % num]);
+
+        }
+
+      }
+
+    }
+    else{
+
+      pattern = patternWork;
+
+    }
+
     //console.log(startTime, pattern, currentChords, lastChord, portionOfAMeasure)
 
     if (currentChords.length === 0) {
+
       // there wasn't a new chord this measure, so use the last chord declared.
       currentChords.push({
         beat: 0,
@@ -12183,12 +12296,14 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       if (!hasRhythmHead && thisChord) {
         switch (pattern[m2]) {
           case 'boom':
-            if (beats['' + (m2 + 1)])
+           if (beats['' + (m2 + 1)]){
               // If there is not a chord change on the next beat, play a bass note.
-              writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, noteLength);else {
+              writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, noteLength);
+            }
+            else {
               writeBoom(thisChord.chord.boom, beatLength, boomVolume, m2, noteLength);
               lastBoom = thisChord.chord.boom;
-            }
+            }           
             break;
           case 'boom2':
             if (beats['' + (m2 + 1)]) writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, noteLength);else {
@@ -12214,6 +12329,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       }
     }
   }
+
   function normalizeDrumDefinition(params) {
     // Be very strict with the drum definition. If anything is not perfect,
     // just turn the drums off.
