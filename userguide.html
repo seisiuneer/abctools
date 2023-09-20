@@ -231,7 +231,12 @@
                     <p class="toc"><a style="text-decoration:none;" href="#general_midi_instrument_program_numbers">General MIDI Instrument Program Numbers</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#general_midi_percussion_map">General MIDI Drum Sound ABC Note Map</a></p>
                 </div>
-                
+
+                <button class="accordion" title="Click to expand/collapse this section">Custom Backup Rhythms</button>
+                <div class="tocpanel">
+                    <p class="toc"><a style="text-decoration:none;" href="#custom_backup_rhythms">Custom Backup Rhythms</a></p>
+                 </div>
+               
                 <button class="accordion" title="Click to expand/collapse this section">PDF Tunebook Generation</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#pdf_tunebook_settings">Export PDF Settings</a></p>
@@ -781,6 +786,25 @@
                 <img style="width:700px;" src="img/gm_extended_6.jpg"/>
             </div>
             <p>Use program #128 (Percussion) on it's own voice for MIDI click tracks.</p>
+            <hr class="hidden-print" id="custom_backup_rhythms">
+            <h1 class="page_break_always">Custom Backup Rhythms<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>You may customize the backup rhythm used for any meter in a single tune with chords by adding the following comment-based directive anywhere in the tune's ABC:</p>
+            <p class="code">%abcjs_boomchick meter rhythm_pattern_string partial_measure_threshold</p>
+            <p>This is particularly useful for meters that may have multiple commomly played subdivision groupings like 7/8 and 10/8.</p>
+            <p>Valid rhythm_pattern_string characters are:</p>
+            <p>B - Boom, b - Alternate Boom, c - Chick, and x - Silence.</p>
+            <p>Examples:</p>
+            <p class="code">%abcjs_boomchick 5/4 Bxcbc 2</p>
+            <p class="code">%abcjs_boomchick 5/8 Bxxbx 2</p>
+            <p class="code">%abcjs_boomchick 7/8 Bccbxbx 3</p>
+            <p class="code">%abcjs_boomchick 10/8 Bccbccbxbx 5</p>
+            <p>The number of characters in the pattern_string must match the meter numerator.</p>
+            <p>partial_measure_threshold sets how many beats must be present in a partial measure in the ABC to use the custom pattern.</p>
+            <p>partial_measure_threshold is optional and if not included, defaults to half of the meter numerator rounded down to the next lowest integer (minimum is 1).</p>
+            <p>If you have an incorrectly formatted %abcjs_boomchick directive in a tune, you will be alerted when trying to play the tune.</p>
+            <p>You may have multiple custom rhythm directives for different meters in a single tune.</p>
+            <p>If you have the same meter specified twice in custom rhythm directives in a tune, only the first one will be used.</p> 
+            <p>This directive is specific to this tool and will not work with other ABC players.</p>
             <hr class="hidden-print" id="pdf_tunebook_settings">
             <h1 class="page_break_always">Export PDF Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>The tool has a powerful built-in PDF tunebook generator that provides more flexibility than the browser's print feature, particularly in the area of adding custom page headers and footers, title page, table of contents, tune index, or adding a custom QR code.</p>
