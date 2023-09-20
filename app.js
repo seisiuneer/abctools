@@ -15090,9 +15090,14 @@ function CleanSmartQuotes(){
 
 	var val = gTheABC.value;
 
+	// Double quotes
 	val = val.replaceAll('“','"');
 	val = val.replaceAll('”','"');
-	
+
+	// Single quotes
+	val = val.replaceAll('‘',"'");
+	val = val.replaceAll('’',"'");
+
 	gTheABC.value = val;
 
 }
@@ -15303,7 +15308,7 @@ function DoStartup() {
 	//
 	document.getElementById('abc').oninput = 
 		debounce( () => {
-			
+
 			if (!gForceFullRender){
 
 		    	OnABCTextChange();
