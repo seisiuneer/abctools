@@ -14854,10 +14854,14 @@ function DoFileRead(file,doAppend){
 							
 							gTheABC.value += theText;
 
+							CleanSmartQuotes();
+
 						}
 						else{
 
 							gTheABC.value = theText;
+							
+							CleanSmartQuotes();
 
 						}
 
@@ -14970,10 +14974,14 @@ function DoFileRead(file,doAppend){
 				
 				gTheABC.value += theText;
 
+				CleanSmartQuotes();
+
 			}
 			else{
 
 				gTheABC.value = theText;
+
+				CleanSmartQuotes();
 
 			}
 
@@ -15074,6 +15082,21 @@ function AllowDialogsToScroll(){
 	return false;
 
 }
+
+//
+// Clean "smart quotes" from the ABC
+//
+function CleanSmartQuotes(){
+
+	var val = gTheABC.value;
+
+	val = val.replaceAll('“','"');
+	val = val.replaceAll('”','"');
+	
+	gTheABC.value = val;
+
+}
+
 
 function DoStartup() {
 
@@ -15298,23 +15321,27 @@ function DoStartup() {
 
 
 	//
-	// Hook up the text area text paste callback to re-render
-	// Required because a paste might end up with the same number of tunes and
-	// the text change logic only re-renders if the number of tunes has changed
-	// because of a text entry event
+	// Clean "smart quotes" on paste
 	//
-	// document.getElementById('abc').onpaste = 
-	// 	function(){
-			
-	// 		// Refocus back on the ABC
-	// 		setTimeout(function(){
-	// 			gTheABC.focus();
-	// 			gTheABC.selectionStart = gTheABC.selectionStart-1;
-	//     		gTheABC.selectionEnd = gTheABC.selectionStart;
+	document.getElementById('abc').onpaste = 
 
-	// 		},250);
+		function(){
 
-	// 	};
+			setTimeout(function(){
+
+				CleanSmartQuotes();
+
+			},0);
+
+			// // Refocus back on the ABC
+			// setTimeout(function(){
+			// 	gTheABC.focus();
+			// 	gTheABC.selectionStart = gTheABC.selectionStart-1;
+	  		//   gTheABC.selectionEnd = gTheABC.selectionStart;
+
+			// },250);
+
+		};
 
 	//
 	// Hook up the text area text change callback with debounce
