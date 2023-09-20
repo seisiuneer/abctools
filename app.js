@@ -7023,7 +7023,7 @@ function AddABC(){
 
 	}, 150);
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 700,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 700,  scrollWithPage: false }).then(function(){
 
 			
 	});
@@ -12533,6 +12533,17 @@ function PlayABCDialog(theABC,callback,val){
 		}
 	}
 
+	// Setup any custom boom-chick rhythm patterns found
+	var boomChickOK = ScanTuneForBoomChick(theABC);
+
+	// Incorrectly formatted %abcjs_boomchick detected, put up an alert
+	if (boomChickOK != ""){
+
+		DayPilot.Modal.alert('<p style="font-family:helvetica;font-size:14pt;"><strong>There is an issue with your custom rhythm directive:</strong></p><p style="font-family:helvetica;font-size:14pt;"><strong>'+boomChickOK+'</strong></p><p style="font-family:helvetica;font-size:14pt;">Format should be:</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick meter rhythm_pattern_string partial_measure</p><p style="font-family:helvetica;font-size:14pt;">Valid rhythm_pattern_string characters are:</p><p style="font-family:helvetica;font-size:14pt;">B - Boom, b - Alternate Boom, c - Chick, and x - Silence.</p><p style="font-family:helvetica;font-size:14pt;">Examples:</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick 7/8 Bccbxbx 3</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick 10/8 Bccbccbxbx 5</p><p style="font-family:helvetica;font-size:14pt;">The number of characters in the pattern_string must match the meter numerator.</p><p style="font-family:helvetica;font-size:14pt;">partial_measure sets how many beats must be present in a partial measure in the ABC to use the custom pattern.</p><p style="font-family:helvetica;font-size:14pt;">partial_measure is optional and defaults to half of the meter numerator rounded down to the next lowest integer (min is 1).</p>',{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
+
 	// Autoscroll-related cached values
 	var playerHolder;
 	var containerRect;
@@ -12910,6 +12921,172 @@ function PreProcessPlayABC(theTune){
 }
 
 //
+// Scan tune for custom rhythm pattern request
+//
+// Returns "" if there are no issues with the custom rhythm patterns found
+// Returns the bad %abcjs_boomchick directive if there is an issue
+//
+function ScanTuneForBoomChick(theTune){
+
+	// Reset the custom rhythm patterns global
+	gRhythmPatternOverrides = {};
+
+	// Search for a boomchick request
+	var searchRegExp = /^%abcjs_boomchick.*$/gm
+
+	// Detect boomchick annotation
+	var boomchick = theTune.match(searchRegExp);
+
+	if ((boomchick) && (boomchick.length > 0)){
+
+		for (var i=0; i<boomchick.length; ++i){
+
+			var theOriginalBoomChick = boomchick[i];
+
+			var theBoomChick = theOriginalBoomChick;
+
+			var boomChickFound = theBoomChick.replace("%abcjs_boomchick","");
+			
+			boomChickFound = boomChickFound.trim();
+
+			//console.log("abcjs_boomchick found: "+boomChickFound);
+
+			// Split the directive
+			var theSplits = boomChickFound.split(" ");
+
+			if ((theSplits.length == 2 || theSplits.length == 3)){
+				
+				var theMeter = theSplits[0];
+
+				var theBoomChick = theSplits[1];
+
+				var theMeterSplits = theMeter.split("/");
+
+				if (theMeterSplits.length != 2){
+					//console.log("ScanTuneForBoomChick: Bad meter")
+					return theOriginalBoomChick;
+				}
+
+				// Sanity check the meter
+				var theNum = theMeterSplits[0];
+
+				if (isNaN(parseInt(theNum))){
+					//console.log("ScanTuneForBoomChick: Bad numerator")
+					return theOriginalBoomChick;
+				}
+
+				theNum = parseInt(theNum);
+
+				var theDenom = theMeterSplits[1];
+
+				if (isNaN(parseInt(theDenom))){
+					//console.log("ScanTuneForBoomChick: Bad denominator")
+					return theOriginalBoomChick;
+				}
+
+				theDenom = parseInt(theDenom);
+
+				var theThreshold;
+
+				// If threshold specified, use it
+				if (theSplits.length == 3){
+
+					theThreshold = theSplits[2];
+
+					// Sanity check the threshold
+					if (isNaN(parseInt(theThreshold))){
+						//console.log("ScanTuneForBoomChick: Bad threshold")
+						return theOriginalBoomChick;
+					}
+
+					theThreshold = parseInt(theThreshold);
+
+					// Sanity check the threshold again
+					if ((theThreshold < 1) || (theThreshold > theNum)){
+						//console.log("ScanTuneForBoomChick: Threshold negative or larger than pattern length")
+						return theOriginalBoomChick;
+					}
+
+				}
+				else{
+
+					// Otherwise default to half of the pattern length
+					theThreshold = theNum / 2;
+					
+					theThreshold = Math.floor(theThreshold);
+
+					if (theThreshold == 0){
+						theThreshold = 1;
+					}
+					
+					//console.log("Computed theThreshold for theNum "+theNum+" is "+theThreshold);
+
+				}
+
+				// Split the boom chick pattern
+				var theBoomChickSplits = theBoomChick.split("");
+
+				var nPatternElements = theBoomChickSplits.length;
+
+				// Sanity check the pattern
+				if (nPatternElements != theNum){
+					//console.log("ScanTuneForBoomChick: Mismatch of meter and beat string length")
+					return theOriginalBoomChick;
+				}
+
+				// Map the boom-chicks
+				var thePattern = [];
+
+				for (var j=0;j<nPatternElements;++j){
+
+					var thisSplit = theBoomChickSplits[j];
+
+					switch (thisSplit){
+						case "B":
+							thePattern.push("boom");
+							break;
+						case "b":
+							thePattern.push("boom2");
+							break;
+						case "c":
+							thePattern.push("chick");
+							break;
+						case "x":
+							thePattern.push("");
+							break;
+						default:
+							//console.log("got bad pattern")
+							return theOriginalBoomChick;
+							break;
+					}
+
+				}
+
+				// Store the final pattern for abcjs
+				// Only add if not already present
+				if (!gRhythmPatternOverrides[theMeter]){
+					
+					// console.log("Adding pattern for theMeter = "+theMeter);
+					// console.log("theThreshold = "+theThreshold);
+					// console.log("thePattern = "+JSON.stringify(thePattern));
+
+					gRhythmPatternOverrides[theMeter] = {pattern:thePattern,threshold:theThreshold};
+
+				}
+			}
+			else{
+
+				// console.log("Missing parameters in %abcjs_boomchick");
+				return theOriginalBoomChick
+
+			}
+		}
+	}
+
+	return "";
+}
+
+//
 // Scan tune for soundfont request
 //
 function ScanTuneForSoundFont(theTune){
@@ -12919,7 +13096,7 @@ function ScanTuneForSoundFont(theTune){
 	// Search for a soundfont request
 	var searchRegExp = /^%abcjs_soundfont.*$/m
 
-	// Detect tunebook TOC annotation
+	// Detect soundfont annotation
 	var soundfont = theTune.match(searchRegExp);
 
 	if ((soundfont) && (soundfont.length > 0)){
