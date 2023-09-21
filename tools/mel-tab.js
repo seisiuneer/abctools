@@ -208,6 +208,7 @@ function mergeTablature(input, notes) {
 
     var theTab;
 
+
     for (var i = 0; i < notes.length; ++i) {
 
         var index = notes[i].index + insertedTotal;
@@ -220,7 +221,11 @@ function mergeTablature(input, notes) {
 
         var direction = glyph.substr(1,glyphLen-1);
 
-        if (glyph.indexOf("10") == 0){
+        if ((glyph.indexOf("10") == 0)||(glyph.indexOf("11") == 0)||
+            (glyph.indexOf("12") == 0)||(glyph.indexOf("13") == 0)||
+            (glyph.indexOf("14") == 0)||(glyph.indexOf("15") == 0) ||
+            (glyph.indexOf("16") == 0)||(glyph.indexOf("17") == 0) ||
+            (glyph.indexOf("18") == 0)){
             buttonNumber = glyph.substr(0,2);
             direction = glyph.substr(2,glyphLen-1);
         }
@@ -231,6 +236,7 @@ function mergeTablature(input, notes) {
 
                 // Above
                 case 0:
+                    //DG3A
 
                     if (direction == PUSH_NAME){
 
@@ -275,6 +281,7 @@ function mergeTablature(input, notes) {
 
                 // Below
                 case 1:
+                    //DG4A
 
                     if (direction == PUSH_NAME){
 
@@ -318,6 +325,7 @@ function mergeTablature(input, notes) {
                     break;
                     
                     case 2:
+                        //GC3A
 
                     if (direction == PUSH_NAME){
 
@@ -333,38 +341,6 @@ function mergeTablature(input, notes) {
                             theBar += "_";
                         }
                        
-                        // Chrome and Safari have wide numbers in circles
-                        if (gIsChrome || gIsSafari){
-
-                            switch (buttonNumber){
-                                case "①":
-                                case "②":
-                                case "③":
-                                case "④":
-                                case "⑤":
-                                case "⑥":
-                                case "⑦":
-                                case "⑧":
-                                case "⑨":
-                                case "⑩":
-                                case "⑪":
-                                    theBar+= "_";
-                                    break;
-                            }
-                        }
-                        
-                        theTab = "\"_" + theBar + ";";
-                        theTab = theTab + buttonNumber + "\"";
-                       
-                    }
-
-                    break;
-                    
-                   
-                    
-                    
-              
-                        
                         // Chrome and Safari have wide numbers in circles
                         if (gIsChrome || gIsSafari){
 
@@ -393,111 +369,8 @@ function mergeTablature(input, notes) {
                     break;
 
                 // Below
-                case 4:
-
-                    if (direction == PUSH_NAME){
-
-                        // Add double quotes to fingering, to be rendered below the note
-                        theTab = "\"_" + " " + ";" +  buttonNumber + "\"";
-
-                    }
-                    else{
-
-                        var len = buttonNumber.length;
-                        var theBar = "";
-                        for (var j=0;j<len;++j){
-                            theBar += "_";
-                        }
-                       
-                        // Chrome and Safari have wide numbers in circles
-                        if (gIsChrome || gIsSafari){
-
-                            switch (buttonNumber){
-                                case "①":
-                                case "②":
-                                case "③":
-                                case "④":
-                                case "⑤":
-                                case "⑥":
-                                case "⑦":
-                                case "⑧":
-                                case "⑨":
-                                case "⑩":
-                                case "⑪":
-                                    theBar+= "_";
-                                    break;
-                            }
-                        }
-                        
-                        theTab = "\"_" + theBar + ";";
-                        theTab = theTab + buttonNumber + "\"";
-                       
-                    }
-
-                    break;
-                    
-                    case 5:
-
-                    if (direction == PUSH_NAME){
-
-                        // Add double quotes to fingering, to be rendered below the note
-                        theTab = "\"_" + " " + ";" +  buttonNumber + "\"";
-
-                    }
-                    else{
-
-                        var len = buttonNumber.length;
-                        var theBar = "";
-                        for (var j=0;j<len;++j){
-                            theBar += "_";
-                        }
-                       
-                        // Chrome and Safari have wide numbers in circles
-                        if (gIsChrome || gIsSafari){
-
-                            switch (buttonNumber){
-                                case "①":
-                                case "②":
-                                case "③":
-                                case "④":
-                                case "⑤":
-                                case "⑥":
-                                case "⑦":
-                                case "⑧":
-                                case "⑨":
-                                case "⑩":
-                                case "⑪":
-                                    theBar+= "_";
-                                    break;
-                            }
-                        }
-                        
-                        theTab = "\"_" + theBar + ";";
-                        theTab = theTab + buttonNumber + "\"";
-                       
-                    }
-
-                    break;
-                      }
                 
-                      case 3:
-
-                    if (direction == PUSH_NAME){
-
-                        // Add double quotes to fingering, to be rendered above the note
-                        theTab = "\"^" + buttonNumber + "\"";
-
-                    }
-                    else{
-
-                        var len = buttonNumber.length;
-                        var theBar = "";
-                        for (var j=0;j<len;++j){
-                            theBar += "_";
-                        }
-                    
                    
-                    
                     
                 }
         }
@@ -515,6 +388,7 @@ function mergeTablature(input, notes) {
                     break;
 
                 // Below
+
                 case 1:
 
                     // Add double quotes to tab, to be rendered below the note
@@ -523,18 +397,18 @@ function mergeTablature(input, notes) {
                     theTab = theTab + direction + "\"";
 
                     break;
-                    
+
                     case 2:
 
                     // Add double quotes to tab, to be rendered below the note
                     theTab = "\"_" + buttonNumber + ";";
 
                     theTab = theTab + direction + "\"";
-
-                    
-                    
+  
 
                     break;
+
+                
 
             }
         }
@@ -575,9 +449,10 @@ function getNoteGlyph(note,style){
 
         
         case 0:
+            //DG3A
 
             var glyph_map = {
-            //DG3
+          
                   
                 "^G,": "①"+PUSH_NAME,
                 "_A,": "①"+PUSH_NAME,
@@ -640,11 +515,12 @@ function getNoteGlyph(note,style){
         break;
 
 
-        // GC3
+        
         case 1:
+            //DG4A
             
             var glyph_map = {
-              //DG4
+              
                  "^G,": "①"+PUSH_NAME,
                 "_A,": "①"+PUSH_NAME,
                 "F,":  "1"+PUSH_NAME,
@@ -707,10 +583,11 @@ function getNoteGlyph(note,style){
         break;
         
         case 2:
+            //GC3A
        
          var glyph_map = {
          
-         //GC3
+         
                "^C,": "①"+PUSH_NAME,
                 "_D,": "①"+PUSH_NAME,
                 "^A,":  "1"+PUSH_NAME,
@@ -756,18 +633,21 @@ function getNoteGlyph(note,style){
                 "e'":  "10"+PUSH_NAME,
                 "d'": "⑪"+PUSH_NAME,
     
+            
             };
 
             var thisGlyph = glyph_map[note];
 
             if (!thisGlyph){
                 return "x ";
-                
             }
-            
-             case 3:
-            //DG3 Btab
-             var glyph_map = {
+
+        break;
+        
+        case 3:
+            //DG3B
+       
+         var glyph_map = {
                 "^G,": "1"+PUSH_NAME,
                 "_A,": "1"+PUSH_NAME,
                 "F,":  "2"+PUSH_NAME,
@@ -817,7 +697,7 @@ function getNoteGlyph(note,style){
                 "_g'":  "20"+PUSH_NAME,
                 "a'": "21"+PUSH_NAME
                
-                 };
+            };
 
             var thisGlyph = glyph_map[note];
 
@@ -825,11 +705,12 @@ function getNoteGlyph(note,style){
                 return "x ";
             }
 
-                
-                
-                case 4:
-              //DG4 Btab
-               var glyph_map = {
+        break;
+        
+        case 4:
+            //DG4B
+       
+         var glyph_map = {
                  "^G,": "1"+PUSH_NAME,
                 "_A,": "1"+PUSH_NAME,
                 "F,":  "2"+PUSH_NAME,
@@ -880,7 +761,7 @@ function getNoteGlyph(note,style){
                 "^f'": "21"+PUSH_NAME,
                 "_g'": "21"+PUSH_NAME
                 
-                  };
+            };
 
             var thisGlyph = glyph_map[note];
 
@@ -888,11 +769,12 @@ function getNoteGlyph(note,style){
                 return "x ";
             }
 
-                
-                 
-                case 5:
-				//GC3 Btab
-				 var glyph_map = {
+        break;
+        
+        case 5:
+            //GC3B
+       
+         var glyph_map = {
                "^C,": "1"+PUSH_NAME,
                 "_D,": "1"+PUSH_NAME,
                 "^A,":  "2"+PUSH_NAME,
@@ -937,8 +819,10 @@ function getNoteGlyph(note,style){
                 "b'": "19"+PUSH_NAME,
                 "e'":  "20"+PUSH_NAME,
                 "d'": "21"+PUSH_NAME,
-                
-                  };
+         
+         
+
+            };
 
             var thisGlyph = glyph_map[note];
 
@@ -952,6 +836,7 @@ function getNoteGlyph(note,style){
     }
 
     return thisGlyph;
+
 
 }
 
@@ -1653,16 +1538,15 @@ function DoStartup() {
 
     var theValue = "";
     theValue += "X: 1\n";
-    theValue += "T: The Kesh\n";
-    theValue += "R: Jig\n";
-    theValue += "M: 6/8\n";
+    theValue += "T: J'ai vu le loups, le renard, et la belette\n";
+    theValue += "M: 2/4\n";
     theValue += "L: 1/8\n";
     theValue += "K: Gmaj\n";
-    theValue += "C: Traditional\n";
-    theValue += '|:GAG GAB|ABA ABd|edd gdd|edB dBA|\n';
-    theValue += 'GAG GAB|ABA ABd|edd gdB|AGF G3:|\n';
-    theValue += '|:BAB dBd|ege dBA|BAB dBG|ABA AGA|\n';
-    theValue += 'BAB dBd|ege dBd|gfg aga|bgf g3:|\n';
+    theValue += "C: French Traditional\n";
+    theValue += 'GF/2E/2 DE/2F/2 | G/2F/2G/2A/2 BG | GF/2E/2 DE/2F/2 | GA G2 :|\n';
+    theValue += 'GA Bc | BA B2 | GF E>D |1 EF ED :|2 EF G2 :||\n';
+
+
 
     document.getElementById('input').value = theValue;
     document.getElementById('output').value = "";
