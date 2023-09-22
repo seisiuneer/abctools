@@ -509,19 +509,19 @@ opacity: 0.4;
 padding:12px;
 }
 
-#injectbctab, #injectcdtab, #injectallheaders, #injectheadertemplate, #injectmelody, #injectchords, #injectstaffwidth, #injectsoundfont{
+#injectbctab, #injectallheaders, #injectmelody, #injectstaffwidth, #injectsoundfont{
 margin-right:24px;
 height:42px;
 padding:12px;
 }
 
-#injectanglotab, #injectnotenames{
+#injectanglotab, #injectnotenames, #injectmetronome{
 height:42px;
 padding:12px;
 margin-right:24px;
 }
 
-#injectbambooflute, #injectclicktrackall{
+#injectbambooflute, #injectclicktrackall, #injectchords, #injectheadertemplate, #injectcdtab{
 height:42px;
 padding:12px;
 }
@@ -1229,6 +1229,50 @@ font-size:11pt;
 font-family:"Helvetica";
 height:32px;
 width:150px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_metronome_form_text{
+	font-size:12pt;
+	line-height:24px;
+	font-family:helvetica;
+	margin-top:18px;
+	display:flex;
+}
+
+.configure_metronome_form_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 60px;
+	margin-top:-4px;
+}
+
+.configure_metronome_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:24px;
+}
+
+.configure_metronome_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:100px;
 margin-left:10px;
 padding-left:10px;
 margin-top:-7px;
