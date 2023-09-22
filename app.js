@@ -7360,13 +7360,17 @@ function AppendBoxFingeringTemplate(){
 
 	// Stuff in the headers
 	gTheABC.value = output;
+	
+	if(!(gIsIOS || gIsAndroid)){
 
-	// Set the select point
-	gTheABC.selectionStart = 0;
-    gTheABC.selectionEnd = 0;
+		// Set the select point
+		gTheABC.selectionStart = 0;
+	    gTheABC.selectionEnd = 0;
 
-    // And set the focus
-    gTheABC.focus();	
+	    // And set the focus
+	    gTheABC.focus();
+	    
+	}	
 
 }
 
@@ -8506,13 +8510,17 @@ function InjectRepeatsAndClickTrackAll(){
 
 			// Force a redraw
 			RenderAsync(true,null,function(){
+				
+				if(!(gIsIOS || gIsAndroid)){
 
-				// Set the select point
-				gTheABC.selectionStart = 0;
-			    gTheABC.selectionEnd = 0;
+					// Set the select point
+					gTheABC.selectionStart = 0;
+				    gTheABC.selectionEnd = 0;
 
-			    // And set the focus
-			    gTheABC.focus();
+				    // And set the focus
+				    gTheABC.focus();
+				}
+
 			});
 		}
 	});
@@ -8684,12 +8692,16 @@ function InjectStaffWidth(){
 				// Force a redraw
 				RenderAsync(true,null,function(){
 
-					// Set the select point
-					gTheABC.selectionStart = 0;
-				    gTheABC.selectionEnd = 0;
+					if(!(gIsIOS || gIsAndroid)){
 
-				    // And set the focus
-				    gTheABC.focus();
+						// Set the select point
+						gTheABC.selectionStart = 0;
+					    gTheABC.selectionEnd = 0;
+
+					    // And set the focus
+					    gTheABC.focus();
+					}
+
 				});
 			}
 			else{
@@ -8705,13 +8717,17 @@ function InjectStaffWidth(){
 				// Force a redraw
 				RenderAsync(true,null,function(){
 
-					// And reset the focus
-					// Set the select point
-					gTheABC.selectionStart = theSelectionStart;
-				    gTheABC.selectionEnd = theSelectionStart;
+					if(!(gIsIOS || gIsAndroid)){
 
-				    // And set the focus
-				    gTheABC.focus();
+						// Set the select point
+						gTheABC.selectionStart = theSelectionStart;
+					    gTheABC.selectionEnd = theSelectionStart;
+
+						// And reset the focus
+					    gTheABC.focus();	
+
+					}
+
 				});
 
 			}
@@ -8821,13 +8837,16 @@ function InjectSoundfont(){
 
 				gTheABC.value = leftSide + "%abcjs_soundfont " + soundFontToInject + "\n" + rightSide;
 
-				// And reset the focus
-				// Set the select point
-				gTheABC.selectionStart = theSelectionStart;
-			    gTheABC.selectionEnd = theSelectionStart;
+				if(!(gIsIOS || gIsAndroid)){
 
-			    gTheABC.focus();	
-			    	
+					// Set the select point
+					gTheABC.selectionStart = theSelectionStart;
+				    gTheABC.selectionEnd = theSelectionStart;
+
+					// And reset the focus
+				    gTheABC.focus();	
+
+				}			    	
 			}
 		}
 	});
@@ -9116,16 +9135,18 @@ function InjectMetronome(){
 			// Force a redraw of the tune
 			RenderAsync(false,theSelectedTuneIndex,function(){
 
-				// Set the select point
-				gTheABC.selectionStart = theSelectionStart;
-			    gTheABC.selectionEnd = theSelectionStart;
+				if(!(gIsIOS || gIsAndroid)){
 
-				// And reset the focus
-			    gTheABC.focus();	
+					// Set the select point
+					gTheABC.selectionStart = theSelectionStart;
+				    gTheABC.selectionEnd = theSelectionStart;
 
+					// And reset the focus
+				    gTheABC.focus();	
 
+				}
 			});
-
+			
 		}
 	});
 }
@@ -9471,12 +9492,15 @@ function InjectMIDIInstrument(bIsChords){
 				// Stuff in the transposed output
 				gTheABC.value = output;
 
-				// Set the select point
-				gTheABC.selectionStart = 0;
-			    gTheABC.selectionEnd = 0;
+				if(!(gIsIOS || gIsAndroid)){
 
-			    // And reset the focus
-			    gTheABC.focus();
+					// Set the select point
+					gTheABC.selectionStart = 0;
+				    gTheABC.selectionEnd = 0;
+
+				    // And reset the focus
+				    gTheABC.focus();
+				}
 
 			}
 			// Injecting just a single string
@@ -9505,12 +9529,14 @@ function InjectMIDIInstrument(bIsChords){
 					gTheABC.value = leftSide + "% "+thePatchName+"\n"+ "%%MIDI program " + progNum + "\n" + rightSide;					
 				}
 
-				// And reset the focus
-				// Set the select point
-				gTheABC.selectionStart = theSelectionStart;
-			    gTheABC.selectionEnd = theSelectionStart;
+				if(!(gIsIOS || gIsAndroid)){
+					// And reset the focus
+					// Set the select point
+					gTheABC.selectionStart = theSelectionStart;
+				    gTheABC.selectionEnd = theSelectionStart;
 
-			    gTheABC.focus();		
+				    gTheABC.focus();	
+				}	
 
 			}
 
@@ -10599,12 +10625,15 @@ function InjectPDFHeaders(bDoAll){
 		// Stuff in the transposed output
 		gTheABC.value = output;
 
-		// Set the select point
-		gTheABC.selectionStart = 0;
-	    gTheABC.selectionEnd = 0;
+		if(!(gIsIOS || gIsAndroid)){
 
-	    // And set the focus
-	    gTheABC.focus();	
+			// Set the select point
+			gTheABC.selectionStart = 0;
+		    gTheABC.selectionEnd = 0;
+
+		    // And set the focus
+		    gTheABC.focus();	
+		}
 
 	    return
 
@@ -10641,13 +10670,17 @@ function InjectPDFHeaders(bDoAll){
 
 		// Stuff in the headers
 		gTheABC.value = output;
+		
+		if(!(gIsIOS || gIsAndroid)){
 
-		// Set the select point
-		gTheABC.selectionStart = 0;
-	    gTheABC.selectionEnd = 0;
+			// Set the select point
+			gTheABC.selectionStart = 0;
+		    gTheABC.selectionEnd = 0;
 
-	    // And set the focus
-	    gTheABC.focus();	
+		    // And set the focus
+		    gTheABC.focus();
+
+		}	
 
 	    return;
 
@@ -10770,13 +10803,17 @@ function InjectABCNoteNameLyrics(){
 
 	// Force a full render
 	RenderAsync(true, null);
+	
+	if(!(gIsIOS || gIsAndroid)){
 
-	// Set the select point
-	gTheABC.selectionStart = 0;
-    gTheABC.selectionEnd = 0;
+		// Set the select point
+		gTheABC.selectionStart = 0;
+	    gTheABC.selectionEnd = 0;
 
-    // And set the focus
-    gTheABC.focus();
+	    // And set the focus
+	    gTheABC.focus();
+
+	}
 
 
 }
