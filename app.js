@@ -9138,7 +9138,7 @@ function InjectMetronome(){
 				// Lets see if we have a supported meter
 				for (var i=0;i<metronome_list.length;++i){
 					if (theMeter == metronome_list[i].name){
-						theMetronomePattern = "%\n% Metronome sound\n%\n%%MIDI chordprog 115\n%%MIDI bassvol 64\n%%MIDI chordvol 64\n%\n% Metronome rhythm pattern\n%\n%abcjs_boomchick "+metronome_list[i].pattern+"\n%";
+						theMetronomePattern = "%\n% Metronome sound\n%\n%%MIDI chordprog 115\n%%MIDI bassvol 64\n%%MIDI chordvol 64\n%\n% Metronome rhythm pattern\n%\n%abcjs_boomchick "+metronome_list[i].pattern+'\n%\n% To disable the metronome, delete the "E" chord that starts it:\n%';
 						break;
 					}
 				}
