@@ -7023,7 +7023,7 @@ function AddABC(){
 
 	}, 150);
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 700,  scrollWithPage: false }).then(function(){
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 75, width: 700,  scrollWithPage: false }).then(function(){
 
 			
 	});
@@ -8720,7 +8720,6 @@ function InjectStaffWidth(){
 	});
 }
 
-
 //
 // Inject a %abcjs_soundfont directive into one or all tunes
 //
@@ -8830,6 +8829,303 @@ function InjectSoundfont(){
 			    gTheABC.focus();	
 			    	
 			}
+		}
+	});
+}
+
+//
+// Inject metronome annotation into the current tune
+//
+
+function InjectMetronome(){
+
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
+
+	// Try to find the current tune
+	var theSelectedABC = findSelectedTune();
+
+	if (theSelectedABC == ""){
+		// This should never happen
+		return;
+	}
+
+	var theSelectedTuneIndex = findSelectedTuneIndex();
+
+	const metronome_list = [
+	    { name:"C|",  pattern:"2/2 cB"}, 
+	    { name:"C",   pattern:"4/4 cBBB"}, 
+	   	{ name:"2/2", pattern:"2/2 cB"},
+	    { name:"2/4", pattern:"2/4 cB"}, 
+	    { name:"3/4", pattern:"3/4 cBB"}, 
+	    { name:"4/4", pattern:"4/4 cBBB"}, 
+	    { name:"5/4", pattern:"5/4 cBBBB"}, 
+	    { name:"7/4", pattern:"7/4 cBBBBBB"}, 
+	    { name:"2/8", pattern:"2/8 cx"}, 
+	    { name:"3/8", pattern:"3/8 cxx"}, 
+	    { name:"5/8", pattern:"5/8 cxxcx"},
+	    { name:"6/8", pattern:"6/8 cxxcxx"}, 
+	    { name:"7/8", pattern:"7/8 cxcxcxx"}, 
+	    { name:"9/8", pattern:"9/8 cxxcxxcxx"},
+	    { name:"10/8", pattern:"10/8 cxxcxxcxcx"},
+	    { name:"12/8", pattern:"12/8 cxxcxxcxxcxx"}
+	];
+
+	// Setup initial values
+	const theData = {
+	};
+
+	var form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject Metronome&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#adding_a_metronome" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">This adds a metronome into the ABC using %MIDI chordprog and %abcjs_boomchick directives.</p>'},  
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>Note:&nbsp;&nbsp;This will strip any existing chords, MIDI chord programs and volumes from the ABC.</strong><br/>&nbsp</p>'},  
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 760, scrollWithPage: (AllowDialogsToScroll()) } ).then(function(args){
+		
+		if (!args.canceled){
+
+			// Strip out chord markings
+			searchRegExp = /"[^"]*"/gm
+
+			// Strip out chord markings
+			var theStrippedABC = theSelectedABC.replace(searchRegExp, "");
+
+			// Strip out %%MIDI chordprog markings
+			searchRegExp = /^%%MIDI chordprog.*$/gm
+
+			// Detect chordprogs annotation
+			var chordprogs = theStrippedABC.match(searchRegExp);
+
+			// If any found strip them
+			if ((chordprogs) && (chordprogs.length > 0)){
+
+				for (var i=0;i<chordprogs.length;++i){
+					theStrippedABC = theStrippedABC.replace(chordprogs[i]+"\n","");
+				}
+			}
+
+			// Strip out %%MIDI chordvol markings
+			searchRegExp = /^%%MIDI chordvol.*$/gm
+
+			// Detect chordprogs annotation
+			var chordprogs = theStrippedABC.match(searchRegExp);
+
+			// If any found strip them
+			if ((chordprogs) && (chordprogs.length > 0)){
+
+				for (var i=0;i<chordprogs.length;++i){
+					theStrippedABC = theStrippedABC.replace(chordprogs[i]+"\n","");
+				}
+			}
+
+			// Strip out %%MIDI bassvol markings
+			searchRegExp = /^%%MIDI bassvol.*$/gm
+
+			// Detect chordprogs annotation
+			var chordprogs = theStrippedABC.match(searchRegExp);
+
+			// If any found strip them
+			if ((chordprogs) && (chordprogs.length > 0)){
+
+				for (var i=0;i<chordprogs.length;++i){
+					theStrippedABC = theStrippedABC.replace(chordprogs[i]+"\n","");
+				}
+			}
+
+		    var theLines = theStrippedABC.split("\n");
+
+		    var thisLine = "";
+
+		    var bFoundLine;
+
+		    var theMeter = "";
+
+		    for (i = 0; i < theLines.length; ++i) {
+
+		        thisLine = theLines[i];
+
+				// Find the meter
+				searchRegExp = /^M:.*[\r\n]*/m
+
+				var thisMeter = thisLine.match(searchRegExp);
+
+				if ((thisMeter) && (thisMeter.length > 0)){
+
+					if (theMeter == ""){
+
+						theMeter = thisMeter[0].replace("M:","");
+						theMeter = theMeter.trim();
+
+						//console.log("found meter "+theMeter);
+
+					}
+				}
+		        
+
+				// Search for the first line with a bar indicatin
+				var theBarLocation = thisLine.indexOf("|");
+				
+				if (theBarLocation != -1){
+
+					// Make sure it's not a M: C| line
+
+					if (thisLine.indexOf("M:") == -1){
+
+						bFoundLine = true;
+
+						break;
+					}
+
+				}
+
+			}
+
+			if (!bFoundLine){
+
+				// Didn't find any bars, exit early
+				return;
+
+			}
+
+			// Find the first barline position
+			var theBarOffset = 0;
+
+			var theBarLocation = thisLine.indexOf("|:");
+
+			if (theBarLocation == 0){
+
+				theBarOffset = 2;
+			
+			}
+			else { 
+
+				theBarLocation = thisLine.indexOf("[|");
+
+				if (theBarLocation == 0){
+
+					theBarOffset = 2;
+				
+				}
+				else { 
+
+					theBarLocation = thisLine.indexOf("||");
+
+					if (theBarLocation == 0){
+
+						theBarOffset = 2;
+					
+					}
+					else{
+
+						theBarLocation = thisLine.indexOf("[:");
+
+						if (theBarLocation == 0){
+
+							theBarOffset = 2;
+						
+						}
+						else{
+							
+							theBarLocation = thisLine.indexOf("[");
+
+							if (theBarLocation == 0){
+
+								theBarOffset = 1;
+							
+							}
+							else { 					
+
+								theBarLocation = thisLine.indexOf("|");
+
+								if (theBarLocation == 0){
+
+									theBarOffset = 1;
+								
+								}
+							}
+						}
+					}
+				}
+			}
+
+			// Do we have a meter?
+			if (theMeter == ""){
+
+				// Nope, exit
+				DayPilot.Modal.alert("No meter found in the ABC.",{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+
+				return;
+
+			}
+
+			var theMetronomePattern = "";
+
+			// Lets see if we have a supported meter
+			for (var i=0;i<metronome_list.length;++i){
+				if (theMeter == metronome_list[i].name){
+					theMetronomePattern = "%\n% Metronome sound\n%\n%%MIDI chordprog 115\n%%MIDI bassvol 64\n%%MIDI chordvol 64\n%\n% Metronome rhythm pattern\n%\n%abcjs_boomchick "+metronome_list[i].pattern+"\n%";
+					break;
+				}
+			}
+
+			// Meter not supported
+			if (theMetronomePattern == ""){
+
+				// Nope, exit
+				DayPilot.Modal.alert("No metronome pattern available for "+theMeter+".",{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+
+				return;
+
+			}
+
+			var lineWithChord = "";
+
+			if (theBarOffset != 0){
+
+				var leftSide = thisLine.substring(0,theBarOffset);
+				
+				var rightSide = thisLine.substring(theBarOffset);
+
+				lineWithChord = leftSide + '"E"' + rightSide;
+
+			}
+			else{
+
+				lineWithChord = '"E"' + thisLine;
+			}
+
+
+			var injectedLine = theMetronomePattern + '\n' + lineWithChord;
+
+			theStrippedABC = theStrippedABC.replace(thisLine,injectedLine);
+
+			// Seeing extra line breaks after the inject
+			theStrippedABC = theStrippedABC.replace("\n\n","");
+
+			// Try and keep the same tune after the redraw for immediate play
+			var theSelectionStart = gTheABC.selectionStart;
+
+			// Stuff in the injected ABC
+			var theABC = gTheABC.value;
+			theABC = theABC.replace(theSelectedABC,theStrippedABC);
+			gTheABC.value = theABC;
+
+			// Force a redraw of the tune
+			RenderAsync(false,theSelectedTuneIndex,function(){
+
+				// Set the select point
+				gTheABC.selectionStart = theSelectionStart;
+			    gTheABC.selectionEnd = theSelectionStart;
+
+				// And reset the focus
+			    gTheABC.focus();	
+
+
+			});
+
 		}
 	});
 }
@@ -14340,13 +14636,14 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<input id="injectallheaders" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders(true)" type="button" value="Inject All PDF Annotations" title="Injects all available tool-specific PDF tunebook annotations for title page, table of contents, index generation, etc. at the top of the ABC">';	
 	modal_msg  += '<input id="injectheadertemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders(false)" type="button" value="Inject PDF Tunebook Annotations Template" title="Injects a template of common useful PDF tunebook annotations at the top of the ABC">';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
+	modal_msg  += '<input id="injectsoundfont" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectSoundfont()" type="button" value="Inject %abcjs_soundfont" title="Injects a %abcjs_soundfont annotation into one or all tunes">';
 	modal_msg  += '<input id="injectmelody" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMIDIInstrument(false);" type="button" value="Inject MIDI Melody" title="Injects %%MIDI program melody annotation into one or all tunes">';	
 	modal_msg  += '<input id="injectchords" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMIDIInstrument(true);" type="button" value="Inject MIDI Bass/Chord" title="Injects %%MIDI chordprog bass/chord annotation into one or all tunes">';
-	modal_msg  += '<input id="injectstaffwidth" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectStaffWidth()" type="button" value="Inject %%staffwidth" title="Injects a %%staffwidth annotation into one or all tunes">';
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
-	modal_msg  += '<input id="injectsoundfont" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectSoundfont()" type="button" value="Inject %abcjs_soundfont" title="Injects a %abcjs_soundfont annotation into one or all tunes">';
-		modal_msg  += '<input id="injectclicktrackall" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectRepeatsAndClickTrackAll()" type="button" value="Inject Repeats and Two-Bar Click Intros" title="Injects repeated copies of tunes and optional style-adaptive two-bar click intros into every tune">';	
+	modal_msg  += '<input id="injectmetronome" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMetronome()" type="button" value="Inject Metronome" title="Injects ABC for a metronome into the current tune">';
+	modal_msg  += '<input id="injectstaffwidth" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectStaffWidth()" type="button" value="Inject %%staffwidth" title="Injects a %%staffwidth annotation into one or all tunes">';
+	modal_msg  += '<input id="injectclicktrackall" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectRepeatsAndClickTrackAll()" type="button" value="Inject Repeats and Click Intros" title="Injects repeated copies of tunes and optional style-adaptive two-bar click intros into every tune">';	
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">'
 	modal_msg  += '<input id="injectnotenames" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectABCNoteNameLyrics()" type="button" value="Inject Note Name Lyrics" title="Injects note names as lyrics in the ABC">';
