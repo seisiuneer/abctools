@@ -563,14 +563,8 @@ function resetSelectionAfterTranspose(start,end){
 	gTheABC.selectionStart = theStartIndex;
     gTheABC.selectionEnd = theEndIndex;
 
-    // Fixes odd button event behavior after transpose on iOS
-    if (gIsIOS || gIsAndroid){
-    	gTheABC.blur()
-    }
-    else{
-    	// And set the focus
-    	gTheABC.focus();
-    }
+    // Focus after operation
+    FocusAfterOperation();
 
 }
 
@@ -834,8 +828,8 @@ function SortTunes(stripAn){
 	gTheABC.selectionStart = 0;
     gTheABC.selectionEnd = 0;
 
-    // And set the focus
-    gTheABC.focus();
+    // Focus after operation
+    FocusAfterOperation();
 
 }
 
@@ -7364,19 +7358,10 @@ function AppendBoxFingeringTemplate(){
 	// Set the select point
 	gTheABC.selectionStart = 0;
     gTheABC.selectionEnd = 0;
+
+    // Focus after operation
+    FocusAfterOperation();
 	
-	if(!(gIsIOS || gIsAndroid)){
-
-	    // And set the focus
-	    gTheABC.focus();
-
-	}	
-	else{
-	    // And clear the focus
-	    gTheABC.blur();
-
-	}
-
 }
 
 //
@@ -8520,16 +8505,8 @@ function InjectRepeatsAndClickTrackAll(){
 				gTheABC.selectionStart = 0;
 			    gTheABC.selectionEnd = 0;
 				
-				if(!(gIsIOS || gIsAndroid)){
-
-				    // And set the focus
-				    gTheABC.focus();
-				}
-				else{
-				    // And clear the focus
-				    gTheABC.blur();
-
-				}
+			    // Focus after operation
+			    FocusAfterOperation();
 
 			});
 		}
@@ -8706,16 +8683,8 @@ function InjectStaffWidth(){
 					gTheABC.selectionStart = 0;
 				    gTheABC.selectionEnd = 0;
 
-					if(!(gIsIOS || gIsAndroid)){
-
-					    // And set the focus
-					    gTheABC.focus();
-					}
-					else{
-					    // And clear the focus
-					    gTheABC.blur();
-
-					}
+				    // Focus after operation
+				    FocusAfterOperation();
 
 				});
 			}
@@ -8736,17 +8705,8 @@ function InjectStaffWidth(){
 					gTheABC.selectionStart = theSelectionStart;
 				    gTheABC.selectionEnd = theSelectionStart;
 
-					if(!(gIsIOS || gIsAndroid)){
-
-						// And reset the focus
-					    gTheABC.focus();	
-
-					}
-					else{
-					    // And clear the focus
-					    gTheABC.blur();
-
-					}
+				    // Focus after operation
+				    FocusAfterOperation();
 
 				});
 
@@ -8861,17 +8821,8 @@ function InjectSoundfont(){
 				gTheABC.selectionStart = theSelectionStart;
 			    gTheABC.selectionEnd = theSelectionStart;
 
-				if(!(gIsIOS || gIsAndroid)){
-
-					// And reset the focus
-				    gTheABC.focus();	
-
-				}
-				else{
-				    // And clear the focus
-				    gTheABC.blur();
-
-				}
+			    // Focus after operation
+			    FocusAfterOperation();
 
 			}
 		}
@@ -9165,17 +9116,8 @@ function InjectMetronome(){
 				gTheABC.selectionStart = theSelectionStart;
 			    gTheABC.selectionEnd = theSelectionStart;
 
-				if(!(gIsIOS || gIsAndroid)){
-
-					// And reset the focus
-				    gTheABC.focus();	
-
-				}
-				else{
-				    // And clear the focus
-				    gTheABC.blur();
-
-				}
+			    // Focus after operation
+			    FocusAfterOperation();
 
 			});
 			
@@ -9528,17 +9470,8 @@ function InjectMIDIInstrument(bIsChords){
 				gTheABC.selectionStart = 0;
 			    gTheABC.selectionEnd = 0;
 
-				if(!(gIsIOS || gIsAndroid)){
-
-				    // And reset the focus
-				    gTheABC.focus();
-
-				}
-				else{
-				    // And clear the focus
-				    gTheABC.blur();
-
-				}
+			    // Focus after operation
+			    FocusAfterOperation();
 
 			}
 			// Injecting just a single string
@@ -9571,21 +9504,10 @@ function InjectMIDIInstrument(bIsChords){
 				gTheABC.selectionStart = theSelectionStart;
 			    gTheABC.selectionEnd = theSelectionStart;
 
-				if(!(gIsIOS || gIsAndroid)){
-
-					// And reset the focus
-				    gTheABC.focus();	
-
-				}	
-				else{
-				    // And clear the focus
-				    gTheABC.blur();
-
-				}
+			    // Focus after operation
+			    FocusAfterOperation();
 
 			}
-
-
 		}
 	});
 }
@@ -10674,18 +10596,10 @@ function InjectPDFHeaders(bDoAll){
 		gTheABC.selectionStart = 0;
 	    gTheABC.selectionEnd = 0;
 
-		if(!(gIsIOS || gIsAndroid)){
+	    // Focus after operation
+	    FocusAfterOperation();
 
-		    // And set the focus
-		    gTheABC.focus();	
-		}
-		else{
-		    // And clear the focus
-		    gTheABC.blur();
-
-		}
-
-	    return
+	    return;
 
 	}
 	else{
@@ -10725,17 +10639,8 @@ function InjectPDFHeaders(bDoAll){
 		gTheABC.selectionStart = 0;
 	    gTheABC.selectionEnd = 0;
 
-		if(!(gIsIOS || gIsAndroid)){
-
-		    // And set the focus
-		    gTheABC.focus();
-
-		}	
-		else{
-		    // And clear the focus
-		    gTheABC.blur();
-
-		}
+	    // Focus after operation
+	    FocusAfterOperation();
 
 	    return;
 
@@ -10863,18 +10768,8 @@ function InjectABCNoteNameLyrics(){
 	gTheABC.selectionStart = 0;
     gTheABC.selectionEnd = 0;
 	
-	if(!(gIsIOS || gIsAndroid)){
-
-	    // And set the focus
-	    gTheABC.focus();
-
-	}
-	else{
-	    // And clear the focus
-	    gTheABC.blur();
-
-	}
-
+    // Focus after operation
+    FocusAfterOperation();
 
 }
 
@@ -11052,6 +10947,27 @@ function ChangeTab(){
 	}
 
 	gCurrentTab = theTab;
+
+}
+
+//
+// Focus after operation handler
+// On iOS and Android, does a blur to avoid extra on-screen keyboard popups
+//
+function FocusAfterOperation(){
+
+	if(!(gIsIOS || gIsAndroid)){
+
+		// And reset the focus
+	    gTheABC.focus();	
+
+	}
+	else{
+
+	    // And clear the focus
+	    gTheABC.blur();
+
+	}
 
 }
 
@@ -13180,7 +13096,9 @@ function PlayABCDialog(theABC,callback,val){
 
 					originalOnClick(); 
 					StopPlay(); 
-					gTheABC.focus();
+
+				    // Focus after operation
+				    FocusAfterOperation();
 
 					// If on iOS and the muting controller installed, dispose it now
 					if (gIsIOS){
@@ -15014,8 +14932,8 @@ function ConfigureToolSettings(e) {
 
 				       	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 600, scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 
-						   	// Focus back on the ABC after the dialog is dismissed
-							gTheABC.focus();
+						    // Focus after operation
+						    FocusAfterOperation();
 			       		
 				       	});
 				}
@@ -15100,8 +15018,8 @@ function ConfigureToolSettings(e) {
 				
 				RenderAsync(true, null, function(){
 
-					// Focus back on the ABC after the dialog is dismissed
-					gTheABC.focus();
+				    // Focus after operation
+				    FocusAfterOperation();
 
 				});
 
@@ -15111,8 +15029,8 @@ function ConfigureToolSettings(e) {
 		}
 		else{
 
-			// Focus back on the ABC after the dialog is dismissed
-			gTheABC.focus();
+		    // Focus after operation
+		    FocusAfterOperation();
 
 		}
 
@@ -15731,15 +15649,6 @@ function DoStartup() {
 				CleanSmartQuotes();
 
 			},0);
-
-			// // Refocus back on the ABC
-			// setTimeout(function(){
-			// 	gTheABC.focus();
-			// 	gTheABC.selectionStart = gTheABC.selectionStart-1;
-	  		//   gTheABC.selectionEnd = gTheABC.selectionStart;
-
-			// },250);
-
 		};
 
 	//
