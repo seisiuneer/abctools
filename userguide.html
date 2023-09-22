@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+                
         <style>
         p {
         font-size:14pt;
@@ -543,6 +543,7 @@
             <p>To mute the melody, select "Mute".</p>
             <p><strong>Inject Metronome</strong> - Using the custom rhythm pattern feature, injects a playable metronome into one or all tunes based on the meter of the tune as specified in the M: tag.</p>
             <p>Since the metronome uses the ABC chord system to do its job, adding a metronome strips any existing ABC chords, MIDI chord programs, and MIDI bass/chord volumes from the ABC before injecting the ABC for the metronome.</p>
+            <p>To disable an injected metronome, simply delete the injected "E" chord that starts it off.</p>
             <p><strong>Inject %%staffwidth</strong> - Prompts for a %%staffwidth value to inject at the text insertion point or into all tunes.</p>
             <p>This can be used to change the scale of every tune both for display and PDF generation.</p>
             <p>Generally values above 560 will make the tunes less tall.</p>
@@ -870,6 +871,7 @@
                 |:BAB dBd|ege dBA|BAB dBG|ABA AGA|<br/>
             BAB dBd|ege dBd|gfg aga|bgf g3:|</p>
             <p>Try this example here:&nbsp;&nbsp;<a href="https://tinyurl.com/yck7suum" target="_blank">Jig Metronome Example</a></p>
+            <p>To disable an injected metronome, simply delete the injected "E" chord that starts it off.</p>
             <hr class="hidden-print" id="pdf_tunebook_settings">
             <h1 class="page_break_always">Export PDF Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>The tool has a powerful built-in PDF tunebook generator that provides more flexibility than the browser's print feature, particularly in the area of adding custom page headers and footers, title page, table of contents, tune index, or adding a custom QR code.</p>
