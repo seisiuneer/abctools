@@ -8956,15 +8956,58 @@ function InjectMetronome(){
 
 			}
 
+			//
 			// Inject metronome ABC into a single tune
+			//
 			function inject_one_metronome(tuneABC, showWarnings){
 
-				// Strip out chord markings
-				var searchRegExp = /"[^"]*"/gm
 
-				// Strip out chord markings
-				var theStrippedABC = tuneABC.replace(searchRegExp, "");
+				// Strip out non-tablature chord markings
+				var searchRegExp = /(?:"[_^][^"]*)"/gm
 
+				var theMatches = tuneABC.match(searchRegExp);
+
+				var nMatches = 0;
+
+				if (theMatches){
+
+					nMatches = theMatches.length;
+
+				}
+
+				var theStrippedABC = tuneABC;
+
+				// Are there any tablature chords?
+				if (nMatches > 0){
+
+					// Yes, replace them with placeholders
+					for (var i=0;i<nMatches;++i){
+
+						theStrippedABC = theStrippedABC.replace(theMatches[i],"xyzyzx_"+i)
+
+					}
+
+					searchRegExp = /"[^"]*"/gm
+				
+					theStrippedABC = theStrippedABC.replace(searchRegExp, "");
+
+					for (var i=0;i<nMatches;++i){
+
+						theStrippedABC = theStrippedABC.replace("xyzyzx_"+i,theMatches[i])
+
+					}
+
+				}
+				else{
+
+
+					// No tablature chords, just replace them all 
+					searchRegExp = /"[^"]*"/gm
+
+					theStrippedABC = tuneABC.replace(searchRegExp, "");
+
+				}
+				
 				// Strip out %%MIDI chordprog markings
 				searchRegExp = /^%%MIDI chordprog.*$/gm
 
