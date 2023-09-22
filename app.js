@@ -636,7 +636,7 @@ function Transpose(transposeAmount) {
 				}
 				catch (error){
 
-					DayPilot.Modal.alert("Unable to tranpose one or more tunes.",{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+					DayPilot.Modal.alert("Unable to tranpose one or more tunes.",{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 					
 					output += theTunes[i];
 
@@ -887,7 +887,7 @@ function Clear() {
 		return;
 	}
 
-	DayPilot.Modal.confirm("Are you sure you want to erase all the ABC and start over?",{ top:100, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+	DayPilot.Modal.confirm("Are you sure you want to erase all the ABC and start over?",{ top:200, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
 
 		if (!args.canceled){
 
@@ -4354,7 +4354,7 @@ function promptForPDFFilename(placeholder, callback){
 
 	}
 
-	DayPilot.Modal.prompt("Please enter a filename for your PDF file:", placeholder+".pdf",{ theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args) {
+	DayPilot.Modal.prompt("Please enter a filename for your PDF file:", placeholder+".pdf",{ theme: "modal_flat", top: 200, autoFocus: false, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args) {
 
 		var fname = args.result;
 
@@ -6490,7 +6490,7 @@ function ensureABCFile(filename) {
 	if ((fileExtension.toLowerCase() == "abc") || (fileExtension.toLowerCase() == "txt") || (fileExtension.toLowerCase() == "xml") || (fileExtension.toLowerCase() == "musicxml") || (fileExtension.toLowerCase() == "mxl")){
 		return true;
 	} else {
-		DayPilot.Modal.alert("Sorry, only .abc, .txt, .xml, .musicxml, or .mxl files are supported.",{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+		DayPilot.Modal.alert("Sorry, only .abc, .txt, .xml, .musicxml, or .mxl files are supported.",{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 		return false;
 	}
 }
@@ -6958,7 +6958,7 @@ function idleAddABC(){
 		// check if user had selected a file
 		if (fileElement.files.length === 0) {
 
-			DayPilot.Modal.alert("Please select an ABC or MusicXML file",{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+			DayPilot.Modal.alert("Please select an ABC or MusicXML file",{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 
 			return;
 
@@ -7983,7 +7983,7 @@ function GenerateQRCode(e) {
 	
 		if (theURL.length > maxURLLength) {
 
-			DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:14pt;">Share URL text is too long to generate a QR Code</p>',{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+			DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:14pt;">Share URL text is too long to generate a QR Code</p>',{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 
 			return;
 
@@ -8148,7 +8148,7 @@ function GenerateQRCode(e) {
 //
 function saveABCFile(thePrompt, thePlaceholder, theData){
 
-	DayPilot.Modal.prompt(thePrompt, thePlaceholder,{ theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args) {
+	DayPilot.Modal.prompt(thePrompt, thePlaceholder,{ theme: "modal_flat", top: 200, autoFocus: false, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args) {
 
 		var fname = args.result;
 
@@ -8220,7 +8220,7 @@ function saveABCFile(thePrompt, thePlaceholder, theData){
 //
 function saveShareURLFile(thePrompt, thePlaceholder, theData){
 
-	DayPilot.Modal.prompt(thePrompt, thePlaceholder,{ theme: "modal_flat", top: 194, autoFocus: false, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args) {
+	DayPilot.Modal.prompt(thePrompt, thePlaceholder,{ theme: "modal_flat", top: 200, autoFocus: false, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args) {
 
 		var fname = args.result;
 
@@ -8840,14 +8840,6 @@ function InjectMetronome(){
 		return;
 	}
 
-	// Try to find the current tune
-	var theSelectedABC = findSelectedTune();
-
-	if (theSelectedABC == ""){
-		// This should never happen
-		return;
-	}
-
 	var theSelectedTuneIndex = findSelectedTuneIndex();
 
 	const metronome_list = [
@@ -8871,134 +8863,207 @@ function InjectMetronome(){
 
 	// Setup initial values
 	const theData = {
+	  configure_inject_all:false
 	};
 
 	var form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject Metronome&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#adding_a_metronome" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
 	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">This adds a metronome into the ABC using %MIDI chordprog and %abcjs_boomchick directives.</p>'},  
-	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>Note:&nbsp;&nbsp;This will strip any existing chords, MIDI chord programs and volumes from the ABC.</strong><br/>&nbsp</p>'},  
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>Note:&nbsp;&nbsp;This will strip any existing chords, MIDI chord programs and volumes from the ABC.</strong></p>'},  
+	  {name: "            Inject metronome into all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_metronome_form_text"},
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 760, scrollWithPage: (AllowDialogsToScroll()) } ).then(function(args){
 		
 		if (!args.canceled){
 
-			// Strip out chord markings
-			searchRegExp = /"[^"]*"/gm
+			if (args.result.configure_inject_all){
 
-			// Strip out chord markings
-			var theStrippedABC = theSelectedABC.replace(searchRegExp, "");
+				var nTunes = CountTunes();
 
-			// Strip out %%MIDI chordprog markings
-			searchRegExp = /^%%MIDI chordprog.*$/gm
+				var isOneTune = (nTunes == 1);
 
-			// Detect chordprogs annotation
-			var chordprogs = theStrippedABC.match(searchRegExp);
+				var output = "";
 
-			// If any found strip them
-			if ((chordprogs) && (chordprogs.length > 0)){
+				for (var i=0;i<nTunes;++i){
 
-				for (var i=0;i<chordprogs.length;++i){
-					theStrippedABC = theStrippedABC.replace(chordprogs[i]+"\n","");
-				}
-			}
+					var thisTune = getTuneByIndex(i);
 
-			// Strip out %%MIDI chordvol markings
-			searchRegExp = /^%%MIDI chordvol.*$/gm
+					var injectedTune = inject_one_metronome(thisTune,isOneTune);
 
-			// Detect chordprogs annotation
-			var chordprogs = theStrippedABC.match(searchRegExp);
-
-			// If any found strip them
-			if ((chordprogs) && (chordprogs.length > 0)){
-
-				for (var i=0;i<chordprogs.length;++i){
-					theStrippedABC = theStrippedABC.replace(chordprogs[i]+"\n","");
-				}
-			}
-
-			// Strip out %%MIDI bassvol markings
-			searchRegExp = /^%%MIDI bassvol.*$/gm
-
-			// Detect chordprogs annotation
-			var chordprogs = theStrippedABC.match(searchRegExp);
-
-			// If any found strip them
-			if ((chordprogs) && (chordprogs.length > 0)){
-
-				for (var i=0;i<chordprogs.length;++i){
-					theStrippedABC = theStrippedABC.replace(chordprogs[i]+"\n","");
-				}
-			}
-
-		    var theLines = theStrippedABC.split("\n");
-
-		    var thisLine = "";
-
-		    var bFoundLine;
-
-		    var theMeter = "";
-
-		    for (i = 0; i < theLines.length; ++i) {
-
-		        thisLine = theLines[i];
-
-				// Find the meter
-				searchRegExp = /^M:.*[\r\n]*/m
-
-				var thisMeter = thisLine.match(searchRegExp);
-
-				if ((thisMeter) && (thisMeter.length > 0)){
-
-					if (theMeter == ""){
-
-						theMeter = thisMeter[0].replace("M:","");
-						theMeter = theMeter.trim();
-
-						//console.log("found meter "+theMeter);
-
+					// Wasn't able to inject this tune, just keep the original
+					if (!injectedTune){
+						output += thisTune;
 					}
-				}
-		        
-
-				// Search for the first line with a bar indicatin
-				var theBarLocation = thisLine.indexOf("|");
-				
-				if (theBarLocation != -1){
-
-					// Make sure it's not a M: C| line
-
-					if (thisLine.indexOf("M:") == -1){
-
-						bFoundLine = true;
-
-						break;
+					else{
+						output += injectedTune;
+						output += "\n\n";
 					}
 
 				}
 
+				// Stuff in the transposed output
+				gTheABC.value = output;
+
+				RenderAsync(true,null,function(){
+
+					// Set the select point
+					gTheABC.selectionStart = 0;
+				    gTheABC.selectionEnd = 0;
+
+				    // Focus after operation
+				    FocusAfterOperation();
+
+				});
+
+			}
+			else{
+
+
+				// Try to find the current tune
+				var theSelectedABC = findSelectedTune();
+
+				if (theSelectedABC == ""){
+					// This should never happen
+					return;
+				}
+
+				var theStrippedABC = inject_one_metronome(theSelectedABC,true);
+
+				if (!theStrippedABC){
+					return;
+				}
+
+				// Try and keep the same tune after the redraw for immediate play
+				var theSelectionStart = gTheABC.selectionStart;
+
+				// Stuff in the injected ABC
+				var theABC = gTheABC.value;
+				theABC = theABC.replace(theSelectedABC,theStrippedABC);
+				gTheABC.value = theABC;
+
+				// Force a redraw of the tune
+				RenderAsync(false,theSelectedTuneIndex,function(){
+
+					// Set the select point
+					gTheABC.selectionStart = theSelectionStart;
+				    gTheABC.selectionEnd = theSelectionStart;
+
+				    // Focus after operation
+				    FocusAfterOperation();
+
+				});
+
 			}
 
-			if (!bFoundLine){
+			// Inject metronome ABC into a single tune
+			function inject_one_metronome(tuneABC, showWarnings){
 
-				// Didn't find any bars, exit early
-				return;
+				// Strip out chord markings
+				var searchRegExp = /"[^"]*"/gm
 
-			}
+				// Strip out chord markings
+				var theStrippedABC = tuneABC.replace(searchRegExp, "");
 
-			// Find the first barline position
-			var theBarOffset = 0;
+				// Strip out %%MIDI chordprog markings
+				searchRegExp = /^%%MIDI chordprog.*$/gm
 
-			var theBarLocation = thisLine.indexOf("|:");
+				// Detect chordprogs annotation
+				var chordprogs = theStrippedABC.match(searchRegExp);
 
-			if (theBarLocation == 0){
+				// If any found strip them
+				if ((chordprogs) && (chordprogs.length > 0)){
 
-				theBarOffset = 2;
-			
-			}
-			else { 
+					for (var i=0;i<chordprogs.length;++i){
+						theStrippedABC = theStrippedABC.replace(chordprogs[i]+"\n","");
+					}
+				}
 
-				theBarLocation = thisLine.indexOf("[|");
+				// Strip out %%MIDI chordvol markings
+				searchRegExp = /^%%MIDI chordvol.*$/gm
+
+				// Detect chordprogs annotation
+				chordprogs = theStrippedABC.match(searchRegExp);
+
+				// If any found strip them
+				if ((chordprogs) && (chordprogs.length > 0)){
+
+					for (var i=0;i<chordprogs.length;++i){
+						theStrippedABC = theStrippedABC.replace(chordprogs[i]+"\n","");
+					}
+				}
+
+				// Strip out %%MIDI bassvol markings
+				searchRegExp = /^%%MIDI bassvol.*$/gm
+
+				// Detect chordprogs annotation
+				chordprogs = theStrippedABC.match(searchRegExp);
+
+				// If any found strip them
+				if ((chordprogs) && (chordprogs.length > 0)){
+
+					for (var i=0;i<chordprogs.length;++i){
+						theStrippedABC = theStrippedABC.replace(chordprogs[i]+"\n","");
+					}
+				}
+
+			    var theLines = theStrippedABC.split("\n");
+
+			    var thisLine = "";
+
+			    var bFoundLine;
+
+			    var theMeter = "";
+
+			    for (i = 0; i < theLines.length; ++i) {
+
+			        thisLine = theLines[i];
+
+					// Find the meter
+					searchRegExp = /^M:.*[\r\n]*/m
+
+					var thisMeter = thisLine.match(searchRegExp);
+
+					if ((thisMeter) && (thisMeter.length > 0)){
+
+						if (theMeter == ""){
+
+							theMeter = thisMeter[0].replace("M:","");
+							theMeter = theMeter.trim();
+
+						}
+					}
+			        
+
+					// Search for the first line with a bar indicatin
+					var theBarLocation = thisLine.indexOf("|");
+					
+					if (theBarLocation != -1){
+
+						// Make sure it's not a M: C| line
+
+						if (thisLine.indexOf("M:") == -1){
+
+							bFoundLine = true;
+
+							break;
+						}
+
+					}
+
+				}
+
+				if (!bFoundLine){
+
+					// Didn't find any bars, exit early
+					return null;
+
+				}
+
+				// Find the first barline position
+				var theBarOffset = 0;
+
+				var theBarLocation = thisLine.indexOf("|:");
 
 				if (theBarLocation == 0){
 
@@ -9007,16 +9072,16 @@ function InjectMetronome(){
 				}
 				else { 
 
-					theBarLocation = thisLine.indexOf("||");
+					theBarLocation = thisLine.indexOf("[|");
 
 					if (theBarLocation == 0){
 
 						theBarOffset = 2;
 					
 					}
-					else{
+					else { 
 
-						theBarLocation = thisLine.indexOf("[:");
+						theBarLocation = thisLine.indexOf("||");
 
 						if (theBarLocation == 0){
 
@@ -9024,102 +9089,99 @@ function InjectMetronome(){
 						
 						}
 						else{
-							
-							theBarLocation = thisLine.indexOf("[");
+
+							theBarLocation = thisLine.indexOf("[:");
 
 							if (theBarLocation == 0){
 
-								theBarOffset = 1;
+								theBarOffset = 2;
 							
 							}
-							else { 					
-
-								theBarLocation = thisLine.indexOf("|");
+							else{
+								
+								theBarLocation = thisLine.indexOf("[");
 
 								if (theBarLocation == 0){
 
 									theBarOffset = 1;
 								
 								}
+								else { 					
+
+									theBarLocation = thisLine.indexOf("|");
+
+									if (theBarLocation == 0){
+
+										theBarOffset = 1;
+									
+									}
+								}
 							}
 						}
 					}
 				}
-			}
 
-			// Do we have a meter?
-			if (theMeter == ""){
+				// Do we have a meter?
+				if (theMeter == ""){
 
-				// Nope, exit
-				DayPilot.Modal.alert("No meter found in the ABC.",{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+					if (showWarnings){
+						// Nope, exit
+						DayPilot.Modal.alert("No meter found in the ABC.",{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+					}
 
-				return;
+					return null;
 
-			}
-
-			var theMetronomePattern = "";
-
-			// Lets see if we have a supported meter
-			for (var i=0;i<metronome_list.length;++i){
-				if (theMeter == metronome_list[i].name){
-					theMetronomePattern = "%\n% Metronome sound\n%\n%%MIDI chordprog 115\n%%MIDI bassvol 64\n%%MIDI chordvol 64\n%\n% Metronome rhythm pattern\n%\n%abcjs_boomchick "+metronome_list[i].pattern+"\n%";
-					break;
 				}
+
+				var theMetronomePattern = "";
+
+				// Lets see if we have a supported meter
+				for (var i=0;i<metronome_list.length;++i){
+					if (theMeter == metronome_list[i].name){
+						theMetronomePattern = "%\n% Metronome sound\n%\n%%MIDI chordprog 115\n%%MIDI bassvol 64\n%%MIDI chordvol 64\n%\n% Metronome rhythm pattern\n%\n%abcjs_boomchick "+metronome_list[i].pattern+"\n%";
+						break;
+					}
+				}
+
+				// Meter not supported
+				if (theMetronomePattern == ""){
+
+					if (showWarnings){
+						// Nope, exit
+						DayPilot.Modal.alert("No metronome pattern available for "+theMeter+".",{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+					}
+
+					return null;
+
+				}
+
+				var lineWithChord = "";
+
+				if (theBarOffset != 0){
+
+					var leftSide = thisLine.substring(0,theBarOffset);
+					
+					var rightSide = thisLine.substring(theBarOffset);
+
+					lineWithChord = leftSide + '"E"' + rightSide;
+
+				}
+				else{
+
+					lineWithChord = '"E"' + thisLine;
+				}
+
+
+				var injectedLine = theMetronomePattern + '\n' + lineWithChord;
+
+				theStrippedABC = theStrippedABC.replace(thisLine,injectedLine);
+
+				// Seeing extra line breaks after the inject
+				theStrippedABC = theStrippedABC.replace("\n\n","");
+
+				return theStrippedABC;
+
 			}
-
-			// Meter not supported
-			if (theMetronomePattern == ""){
-
-				// Nope, exit
-				DayPilot.Modal.alert("No metronome pattern available for "+theMeter+".",{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
-
-				return;
-
-			}
-
-			var lineWithChord = "";
-
-			if (theBarOffset != 0){
-
-				var leftSide = thisLine.substring(0,theBarOffset);
-				
-				var rightSide = thisLine.substring(theBarOffset);
-
-				lineWithChord = leftSide + '"E"' + rightSide;
-
-			}
-			else{
-
-				lineWithChord = '"E"' + thisLine;
-			}
-
-
-			var injectedLine = theMetronomePattern + '\n' + lineWithChord;
-
-			theStrippedABC = theStrippedABC.replace(thisLine,injectedLine);
-
-			// Seeing extra line breaks after the inject
-			theStrippedABC = theStrippedABC.replace("\n\n","");
-
-			// Try and keep the same tune after the redraw for immediate play
-			var theSelectionStart = gTheABC.selectionStart;
-
-			// Stuff in the injected ABC
-			var theABC = gTheABC.value;
-			theABC = theABC.replace(theSelectedABC,theStrippedABC);
-			gTheABC.value = theABC;
-
-			// Force a redraw of the tune
-			RenderAsync(false,theSelectedTuneIndex,function(){
-
-				// Set the select point
-				gTheABC.selectionStart = theSelectionStart;
-			    gTheABC.selectionEnd = theSelectionStart;
-
-			    // Focus after operation
-			    FocusAfterOperation();
-
-			});
 			
 		}
 	});
@@ -9654,7 +9716,7 @@ function ShortenURL(){
 	   	modal_msg += '<p style="text-align:center;font-size:14pt;line-height:19pt;font-family:helvetica">Short URL:</p>';
 	   	modal_msg += '<p style="text-align:center;font-size:14pt;line-height:19pt;font-family:helvetica"><a href="'+data.data.tiny_url+'" target="_blank">'+data.data.tiny_url+'</a></p>';
 
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 
 	  })
 	  .catch(
@@ -11452,7 +11514,7 @@ function TipJarReminderDialog(){
 	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;">Michael Eskin</p>';
 
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, scrollWithPage: (AllowDialogsToScroll()) });
 
 }
 
@@ -11609,7 +11671,7 @@ function DownloadWave(){
     )).catch((function(e) {
 
         //console.warn("Problem exporting .wav:", e)
-		DayPilot.Modal.alert("A problem occured when exporting the .wav file.",{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+		DayPilot.Modal.alert("A problem occured when exporting the .wav file.",{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 
     }));
 
@@ -12261,7 +12323,7 @@ function DownloadMP3(callback,val){
 	}	
     ).catch((function(e) {
 
-		DayPilot.Modal.alert("A problem occured when exporting the .mp3 file.",{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+		DayPilot.Modal.alert("A problem occured when exporting the .mp3 file.",{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 
 		document.getElementById("abcplayer_mp3button").value = "Download .MP3";
 		document.getElementById("loading-bar-spinner").style.display = "none";
@@ -14515,7 +14577,7 @@ function SharingControlsDialog(){
 	}, 200);
 
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 800, scrollWithPage: (AllowDialogsToScroll())}).then(function(){
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 800, scrollWithPage: (AllowDialogsToScroll())}).then(function(){
 
 	});
 
@@ -14656,7 +14718,7 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<input id="injectchords" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMIDIInstrument(true);" type="button" value="Inject MIDI Bass/Chord" title="Injects %%MIDI chordprog bass/chord annotation into one or all tunes">';
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
-	modal_msg  += '<input id="injectmetronome" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMetronome()" type="button" value="Inject Metronome" title="Injects ABC for a metronome into the current tune">';
+	modal_msg  += '<input id="injectmetronome" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMetronome()" type="button" value="Inject Metronome" title="Injects ABC for a metronome into one or all tunes">';
 	modal_msg  += '<input id="injectstaffwidth" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectStaffWidth()" type="button" value="Inject %%staffwidth" title="Injects a %%staffwidth annotation into one or all tunes">';
 	modal_msg  += '<input id="injectclicktrackall" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectRepeatsAndClickTrackAll()" type="button" value="Inject Repeats and Click Intros" title="Injects repeated copies of tunes and optional style-adaptive two-bar click intros into every tune">';	
 	modal_msg  += '</p>';
@@ -14930,7 +14992,7 @@ function ConfigureToolSettings(e) {
 				       	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">For those instruments played solo, set the melody instrument program as desired and the chord instrument program to Dulcimer (15).</p>';
 				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In this case, you may not want to include any chords in the ABC, as they will be played using the Dulcimer (15) instrument.</p>';
 
-				       	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 600, scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+				       	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 
 						    // Focus after operation
 						    FocusAfterOperation();
@@ -15141,7 +15203,7 @@ function DoFileRead(file,doAppend){
 						}
 						else{
 
-							DayPilot.Modal.alert("This is not a valid MXL file.",{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+							DayPilot.Modal.alert("This is not a valid MXL file.",{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 
 			     			return;
 
@@ -15236,7 +15298,7 @@ function DoFileRead(file,doAppend){
 
                 }, function() {
 
-					DayPilot.Modal.alert("This is not a valid MXL file.",{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+					DayPilot.Modal.alert("This is not a valid MXL file.",{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 
 					return;
 
@@ -15246,7 +15308,7 @@ function DoFileRead(file,doAppend){
 
 		    }, function() {
 
-				DayPilot.Modal.alert("This is not a valid MXL file.",{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+				DayPilot.Modal.alert("This is not a valid MXL file.",{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 
 				return;
 
@@ -15673,7 +15735,7 @@ function DoStartup() {
 		// check if user had selected a file
 		if (fileElement.files.length === 0) {
 
-			DayPilot.Modal.alert("Please select an ABC or MusicXML file",{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+			DayPilot.Modal.alert("Please select an ABC or MusicXML file",{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 
 			return;
 
