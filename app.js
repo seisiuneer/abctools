@@ -7360,17 +7360,22 @@ function AppendBoxFingeringTemplate(){
 
 	// Stuff in the headers
 	gTheABC.value = output;
+
+	// Set the select point
+	gTheABC.selectionStart = 0;
+    gTheABC.selectionEnd = 0;
 	
 	if(!(gIsIOS || gIsAndroid)){
 
-		// Set the select point
-		gTheABC.selectionStart = 0;
-	    gTheABC.selectionEnd = 0;
-
 	    // And set the focus
 	    gTheABC.focus();
-	    
+
 	}	
+	else{
+	    // And clear the focus
+	    gTheABC.blur();
+
+	}
 
 }
 
@@ -8510,15 +8515,20 @@ function InjectRepeatsAndClickTrackAll(){
 
 			// Force a redraw
 			RenderAsync(true,null,function(){
+
+				// Set the select point
+				gTheABC.selectionStart = 0;
+			    gTheABC.selectionEnd = 0;
 				
 				if(!(gIsIOS || gIsAndroid)){
 
-					// Set the select point
-					gTheABC.selectionStart = 0;
-				    gTheABC.selectionEnd = 0;
-
 				    // And set the focus
 				    gTheABC.focus();
+				}
+				else{
+				    // And clear the focus
+				    gTheABC.blur();
+
 				}
 
 			});
@@ -8692,14 +8702,19 @@ function InjectStaffWidth(){
 				// Force a redraw
 				RenderAsync(true,null,function(){
 
-					if(!(gIsIOS || gIsAndroid)){
+					// Set the select point
+					gTheABC.selectionStart = 0;
+				    gTheABC.selectionEnd = 0;
 
-						// Set the select point
-						gTheABC.selectionStart = 0;
-					    gTheABC.selectionEnd = 0;
+					if(!(gIsIOS || gIsAndroid)){
 
 					    // And set the focus
 					    gTheABC.focus();
+					}
+					else{
+					    // And clear the focus
+					    gTheABC.blur();
+
 					}
 
 				});
@@ -8717,14 +8732,19 @@ function InjectStaffWidth(){
 				// Force a redraw
 				RenderAsync(true,null,function(){
 
-					if(!(gIsIOS || gIsAndroid)){
+					// Set the select point
+					gTheABC.selectionStart = theSelectionStart;
+				    gTheABC.selectionEnd = theSelectionStart;
 
-						// Set the select point
-						gTheABC.selectionStart = theSelectionStart;
-					    gTheABC.selectionEnd = theSelectionStart;
+					if(!(gIsIOS || gIsAndroid)){
 
 						// And reset the focus
 					    gTheABC.focus();	
+
+					}
+					else{
+					    // And clear the focus
+					    gTheABC.blur();
 
 					}
 
@@ -8837,16 +8857,22 @@ function InjectSoundfont(){
 
 				gTheABC.value = leftSide + "%abcjs_soundfont " + soundFontToInject + "\n" + rightSide;
 
-				if(!(gIsIOS || gIsAndroid)){
+				// Set the select point
+				gTheABC.selectionStart = theSelectionStart;
+			    gTheABC.selectionEnd = theSelectionStart;
 
-					// Set the select point
-					gTheABC.selectionStart = theSelectionStart;
-				    gTheABC.selectionEnd = theSelectionStart;
+				if(!(gIsIOS || gIsAndroid)){
 
 					// And reset the focus
 				    gTheABC.focus();	
 
-				}			    	
+				}
+				else{
+				    // And clear the focus
+				    gTheABC.blur();
+
+				}
+
 			}
 		}
 	});
@@ -9135,16 +9161,22 @@ function InjectMetronome(){
 			// Force a redraw of the tune
 			RenderAsync(false,theSelectedTuneIndex,function(){
 
-				if(!(gIsIOS || gIsAndroid)){
+				// Set the select point
+				gTheABC.selectionStart = theSelectionStart;
+			    gTheABC.selectionEnd = theSelectionStart;
 
-					// Set the select point
-					gTheABC.selectionStart = theSelectionStart;
-				    gTheABC.selectionEnd = theSelectionStart;
+				if(!(gIsIOS || gIsAndroid)){
 
 					// And reset the focus
 				    gTheABC.focus();	
 
 				}
+				else{
+				    // And clear the focus
+				    gTheABC.blur();
+
+				}
+
 			});
 			
 		}
@@ -9492,14 +9524,20 @@ function InjectMIDIInstrument(bIsChords){
 				// Stuff in the transposed output
 				gTheABC.value = output;
 
-				if(!(gIsIOS || gIsAndroid)){
+				// Set the select point
+				gTheABC.selectionStart = 0;
+			    gTheABC.selectionEnd = 0;
 
-					// Set the select point
-					gTheABC.selectionStart = 0;
-				    gTheABC.selectionEnd = 0;
+				if(!(gIsIOS || gIsAndroid)){
 
 				    // And reset the focus
 				    gTheABC.focus();
+
+				}
+				else{
+				    // And clear the focus
+				    gTheABC.blur();
+
 				}
 
 			}
@@ -9529,14 +9567,21 @@ function InjectMIDIInstrument(bIsChords){
 					gTheABC.value = leftSide + "% "+thePatchName+"\n"+ "%%MIDI program " + progNum + "\n" + rightSide;					
 				}
 
-				if(!(gIsIOS || gIsAndroid)){
-					// And reset the focus
-					// Set the select point
-					gTheABC.selectionStart = theSelectionStart;
-				    gTheABC.selectionEnd = theSelectionStart;
+				// Set the select point
+				gTheABC.selectionStart = theSelectionStart;
+			    gTheABC.selectionEnd = theSelectionStart;
 
+				if(!(gIsIOS || gIsAndroid)){
+
+					// And reset the focus
 				    gTheABC.focus();	
+
 				}	
+				else{
+				    // And clear the focus
+				    gTheABC.blur();
+
+				}
 
 			}
 
@@ -10625,14 +10670,19 @@ function InjectPDFHeaders(bDoAll){
 		// Stuff in the transposed output
 		gTheABC.value = output;
 
-		if(!(gIsIOS || gIsAndroid)){
+		// Set the select point
+		gTheABC.selectionStart = 0;
+	    gTheABC.selectionEnd = 0;
 
-			// Set the select point
-			gTheABC.selectionStart = 0;
-		    gTheABC.selectionEnd = 0;
+		if(!(gIsIOS || gIsAndroid)){
 
 		    // And set the focus
 		    gTheABC.focus();	
+		}
+		else{
+		    // And clear the focus
+		    gTheABC.blur();
+
 		}
 
 	    return
@@ -10670,17 +10720,22 @@ function InjectPDFHeaders(bDoAll){
 
 		// Stuff in the headers
 		gTheABC.value = output;
-		
-		if(!(gIsIOS || gIsAndroid)){
 
-			// Set the select point
-			gTheABC.selectionStart = 0;
-		    gTheABC.selectionEnd = 0;
+		// Set the select point
+		gTheABC.selectionStart = 0;
+	    gTheABC.selectionEnd = 0;
+
+		if(!(gIsIOS || gIsAndroid)){
 
 		    // And set the focus
 		    gTheABC.focus();
 
 		}	
+		else{
+		    // And clear the focus
+		    gTheABC.blur();
+
+		}
 
 	    return;
 
@@ -10803,15 +10858,20 @@ function InjectABCNoteNameLyrics(){
 
 	// Force a full render
 	RenderAsync(true, null);
+
+	// Set the select point
+	gTheABC.selectionStart = 0;
+    gTheABC.selectionEnd = 0;
 	
 	if(!(gIsIOS || gIsAndroid)){
 
-		// Set the select point
-		gTheABC.selectionStart = 0;
-	    gTheABC.selectionEnd = 0;
-
 	    // And set the focus
 	    gTheABC.focus();
+
+	}
+	else{
+	    // And clear the focus
+	    gTheABC.blur();
 
 	}
 
