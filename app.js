@@ -848,25 +848,25 @@ function SortABC(e) {
 
 
 	// Give some feedback
-	document.getElementById("sortbutton").value = "  Sorting  ";
+	document.getElementById("sortbutton").value = "Sorting ABC by Name";
 
 	setTimeout(function(){
 
 		// Sort the tunes
 		SortTunes(stripAn);
 
-		document.getElementById("sortbutton").value = "Rendering";
+		document.getElementById("sortbutton").value = "   Rendering   ";
 
 		// Redraw
 		RenderAsync(true,null,function(){
 
-			document.getElementById("sortbutton").value = "  Sorted!  ";
+			document.getElementById("sortbutton").value = "   Sorted!   ";
 		
 			setTimeout(function(){
 
-				document.getElementById("sortbutton").value = "Sort ABC";
+				document.getElementById("sortbutton").value = "Sort ABC by Name";
 
-			},1500);
+			},1000);
 
 		});
 
@@ -915,6 +915,125 @@ function ClearNoRender() {
 
 	RestoreDefaults();
 
+}
+
+//
+// Save the current ABC to browser storage
+//
+function SaveSnapshot(){
+
+	if (gLocalStorageAvailable){
+		
+		var theABC = gTheABC.value;
+
+		localStorage.SavedSnapshot = theABC;
+
+		document.getElementById("snapshotbutton").value = "  Saved!  ";
+		
+		setTimeout(function(){
+
+			document.getElementById("snapshotbutton").value = "Snapshot";
+
+		},1000);
+	}
+	else{
+
+		DayPilot.Modal.alert("Snapshot storage not available on this browser.",{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+	}
+}
+
+//
+// Restore current ABC from browser storage
+//
+function RestoreSnapshot(bIsAddDialogButton){
+	
+	if (gLocalStorageAvailable){
+
+		var theABC = gTheABC.value;
+
+		var theSnapshot = localStorage.SavedSnapshot;
+
+		if ((theSnapshot) && (theSnapshot != "")){
+
+			DayPilot.Modal.confirm("Replace the contents of the ABC editor with the saved snapshot?",{ top:200, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+
+				if (!args.canceled){
+
+					if (!bIsAddDialogButton){
+
+						document.getElementById("restorebutton").value = "Restoring";
+
+						setTimeout(function(){
+
+							gTheABC.value = theSnapshot;
+
+							// Redraw
+							RenderAsync(true,null,function(){
+
+								document.getElementById("restorebutton").value = "Restored";
+								
+								setTimeout(function(){
+
+									document.getElementById("restorebutton").value = "Restore";
+
+								},1000);
+
+							});
+
+						},750);
+					}
+					else{
+
+						// The dialog might have been closed, so check that the element is present before idling it
+						var elem = document.getElementById("dialogrestorebutton");
+
+						if (elem){
+							elem.value = "Restoring from Snapshot";
+						}
+
+						setTimeout(function(){
+
+							gTheABC.value = theSnapshot;
+
+							// Redraw
+							RenderAsync(true,null,function(){
+
+								var elem = document.getElementById("dialogrestorebutton");
+
+								if (elem){
+									elem.value = "Restored from Snapshot";
+								}
+								
+								setTimeout(function(){
+
+									var elem = document.getElementById("dialogrestorebutton");
+
+									if (elem){
+										elem.value = "Restore from Snapshot";
+									}
+
+								},1000);
+
+							});
+
+						},750);
+					}
+				}
+			});
+		}
+		else{
+
+			DayPilot.Modal.alert('<p style="text-align:center;font-size:18px;">No saved snapshot available to restore.</p>',{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+		}
+		
+	}
+	else{
+
+		DayPilot.Modal.alert("Snapshot storage not available on this browser.",{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+	}
 }
 
 //
@@ -6836,6 +6955,23 @@ function idleAddABC(){
 
 	}
 
+	// Show the snapshot button if one is available in browser storage
+	var elem = document.getElementById("dialogrestorebutton");
+
+	elem.style.display="none";
+
+	if (gLocalStorageAvailable){
+
+		var theSnapshot = localStorage.SavedSnapshot;
+
+		if ((theSnapshot) && (theSnapshot != "")){
+
+			elem.style.display="inline";
+
+		}
+	}
+
+
 }
 
 function AddABC(){
@@ -6845,7 +6981,8 @@ function AddABC(){
 	modal_msg += '<p style="text-align:center;margin-top:28px;font-size:18px;">Add Your Own Tunes from an ABC or MusicXML File</p>';
 	modal_msg += '<p style="text-align:center;margin-top:36px;">';
 	modal_msg += '<input type="file" id="addabcfilebutton" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL" hidden/>';
-	modal_msg += '<label class="abcupload btn btn-top" for="addabcfilebutton" title="Adds tunes from an existing ABC or MusicXML file to the end of the ABC">Choose File to Add</label>';
+	modal_msg += '<label class="abcuploaddialog btn btn-top" for="addabcfilebutton" title="Adds tunes from an existing ABC or MusicXML file to the end of the ABC">Choose File to Add</label>';
+	modal_msg += '<input class="dialogrestorebutton btn btn-restorebutton" id="dialogrestorebutton" onclick="RestoreSnapshot(true);" type="button" value="Restore from Snapshot" title="Replaces the contents of the ABC editor with the last snapshot from browser storage" style="display:none;">';
 	modal_msg += '</p>';
 	modal_msg += '<p style="text-align:center;margin-top:24px;font-size:18px;margin-top:40px;">Add an Example ABC Tune</p>';
 	modal_msg += '<p style="text-align:center;margin-top:24px;">';
@@ -13872,6 +14009,12 @@ function GetInitialConfigurationSettings(){
 		gIsFirstTimeUsingMetronome = true;
 	}
 
+	// Setup initial saved ABC snapshot
+	val = localStorage.SavedSnapshot;
+	if (!val){
+		localStorage.SavedSnapshot = "";
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -14799,7 +14942,7 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<input id="injectbambooflute" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Bamboo_Flute()" type="button" value="Inject Bamboo Flute Tab" title="Injects Bamboo flute tablature into the ABC">';
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-subdialog configure_box_advanced " onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"></p>';	
-	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="BatchMP3Export()" type="button" value="Export all Tunes as MP3" title="Exports all the tunes in the ABC text area as .mp3 files"></p>';	
+	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="BatchMP3Export()" type="button" value="Export all Tunes as MP3" title="Exports all the tunes in the ABC text area as .mp3 files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortABC(event)" type="button" value="Sort ABC by Name" title="Sorts all the tunes by name"></p>';	
 	modal_msg += '</div>';
 
 	setTimeout(function(){
@@ -15982,7 +16125,6 @@ function DoStartup() {
 
 	// And set the focus
     gTheABC.focus();
-
 
 }
 
