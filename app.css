@@ -79,13 +79,24 @@ margin-bottom: 0px;
 -moz-appearance: none;
 }
 
-.transpose {
-margin-right:18px;
+.transposeup {
+margin-right:23px;
 margin-left:0px;
 }
 
 @media (hover: hover) {
-	.transpose:hover{
+	.transposeup:hover{
+	background: palegreen;
+	}
+}
+
+.transposedown {
+margin-right:20px;
+margin-left:0px;
+}
+
+@media (hover: hover) {
+	.transposedown:hover{
 	background: palegreen;
 	}
 }
@@ -108,8 +119,8 @@ opacity: 0.4;
 }
 
 .toggleadvancedcontrols{
-margin-left:5px;
-margin-right:0px;
+margin-left:0px;
+margin-right:23px;
 }
 
 @media (hover: hover) {
@@ -119,8 +130,8 @@ margin-right:0px;
 }
 
 .togglesharecontrols{
-margin-left:16px;
-margin-right:0px;
+margin-left:0px;
+margin-right:22px;
 }
 
 @media (hover: hover) {
@@ -179,10 +190,13 @@ opacity:0.4;
 height:42px;
 padding:12px;}
 
-.sortbutton{
-margin-left: 7px;
-margin-right: 17px;
+#sortbutton{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+	margin-right:24px;
 }
+
 
 @media (hover: hover) {
 	.sortbutton:hover{
@@ -190,8 +204,43 @@ margin-right: 17px;
 	}
 }
 
+.snapshotbutton{
+margin-left: 0px;
+margin-right: 23px;
+}
+
+@media (hover: hover) {
+	.snapshotbutton:hover{
+	background: palegreen;
+	}
+}
+
+.restorebutton{
+margin-left: 0px;
+margin-right: 23px;
+}
+
+@media (hover: hover) {
+	.restorebutton:hover{
+	background: palegreen;
+	}
+}
+
+#dialogrestorebutton{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+	margin-left:24px;
+}
+
+@media (hover: hover) {
+	.dialogrestorebutton:hover{
+	background: palegreen;
+	}
+}
+
 .clearbutton{
-margin-left: 16px;
+margin-left: 0px;
 margin-right: 0px;
 }
 
@@ -209,6 +258,10 @@ margin-right:12px;
 .abcupload {
 margin-left:0px;
 margin-right:12px;
+}
+
+.abcuploaddialog {
+margin-left:0px;
 }
 
 #abc-selected{
@@ -1415,6 +1468,7 @@ margin-top:-7px;
 	height:42px;
 	margin-top: 9px;
 	padding:12px;
+	margin-right:24px;
 }
 
 @media (hover: hover) {
@@ -1641,6 +1695,16 @@ margin-top:-7px;
 .btn-sortbutton{
   --color: black;
   --background-color: #F0F0F0;
+}
+
+.btn-snapshotbutton{
+  --color: black;
+  --background-color: #F0E6F0;
+}
+
+.btn-restorebutton{
+  --color: black;
+  --background-color: #F0E6F0;
 }
 
 .btn-togglesharecontrols{
