@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+                
         <style>
         p {
         font-size:14pt;
@@ -338,22 +338,12 @@
             <p>On desktop browsers, when the tool is run, you should be seeing a side-by-side view with the ABC editor on the left and the notation on the right:</p>
             <br/>
             <div class="image_holder">
-                <img style="width:700px;" src="img/main_11.jpg"/>
+                <img style="width:700px;" src="img/main_12.jpg"/>
             </div>
             <p>If you are seeing the notation below the ABC editor area, or the welcome dialog is taller than the screen, try zooming out your browser view by pressing:</p>
             <p><strong>Windows:&nbsp;&nbsp;Ctrl -</strong></p>
             <p><strong>Mac:&nbsp;&nbsp;⌘ -</strong></p>
-            <p>On iOS and Android devices the ABC editor will always be at the top and the notation below:</p>
-            <p><strong>iPhone:</strong></p>
-            <br/>
-            <div class="image_holder">
-                <img style="width:300px;" src="img/main_iphone_1.jpg"/>
-            </div>
-            <p><strong>iPad:</strong></p>
-            <br/>
-            <div class="image_holder">
-                <img style="width:400px;" src="img/main_ipad_1.jpg"/>
-            </div>
+            <p>On iOS and Android devices the ABC editor will always be on the upper half of the screen and the notation below.</p>
             <hr class="hidden-print" id="top_bar_buttons">
             <h1 class="page_break_always">Top Bar Buttons<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder">
@@ -372,10 +362,13 @@
             <p>On desktop browsers, you may also drag-and-drop a single ABC or MusicXML file on the editor area to add it.</p>
             <p id="add_templates_dialog"><strong>Add</strong> - Brings up a dialog where you can add your own ABC or MusicXML tunes, example ABC tunes, and useful ABC templates:</p>
             <div class="image_holder_p">
-                <img src="img/add_example_template_7.jpg"/>
+                <img src="img/add_example_template_8.jpg"/>
             </div>
             <p><strong>Choose File to Add:</strong></p>
             <p>Browse your system for an ABC or MusicXML file with one or more tunes to add to the end of the current tunes.</p>
+            <p><strong>Restore from Last Snapshot</strong> - This button appears if there is a saved Snapshot available in browser storage.</p>
+            <p>When clicked, restores the last saved Snapshot, replacing the contents of the ABC editor.</p>
+            <p>Since it completely replaces the contents of the ABC editor, you will be asked to confirm the operation.</p>
             <p><strong>Add an Example Reel:</strong></p>
             <p>Adds "Cooley's" as an example of a typical reel.</p>
             <p><strong>Add an Example Jig:</strong></p>
@@ -482,12 +475,12 @@
             <p>134: Melodica -> 22: Harmonica</p>
             <p>135: Cajun Accordion -> 21: Accordion</p>
             <p>Muted voices using MIDI instrument 136 or "mute" will be changed to program 0 (Acoustic Grand Piano) and the volume set to zero.</p>
-             <hr class="hidden-print" id="basic_controls">
+            <hr class="hidden-print" id="basic_controls">
             <h1 class="page_break_always">Basic Controls<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p style="margin-top:24px;"><strong>These buttons control how the notation and tablature is displayed:</strong></p>
             <div class="image_holder">
-                <img style="width:700px;" src="img/ug4e.jpg"/>
+                <img style="width:700px;margin-top:24px"" src="img/ug4e.jpg"/>
             </div>
-            <p>These control how the notation is displayed.</p>
             <p><strong>Notation</strong> - Standard notation only.</p>
             <p><strong>Names</strong> - Shows standard notation and note names below.</p>
             <p><strong>Mandolin</strong> - Shows standard notation and tablature for Mandolin.</p>
@@ -500,24 +493,26 @@
             <p class="code">K:D bass octave=-2</p>
             <p><strong>Whistle</strong> - Shows standard notation and fingering tablature for tin whistle in the key of D.</p>
             <p>Note: For notes that go below D on of the whistle, the suggested "folded" octave-up fingerings are shown.</p>
+            <p style="margin-top:24px;margin-bottom: 12px;"><strong>These buttons perform common operations on the ABC:</strong></p>
             <div class="image_holder" style="margin-top:24px">
-                <img style="width:700px;" src="img/ug5b.jpg"/>
+                <img style="width:700px;" src="img/ug5c.jpg"/>
             </div>
             <p><strong>Transpose Down</strong> - Transposes the selected tunes down one semitone. Shift-click transposes down one full step. Alt-click transposes down one octave.</p>
             <p><strong>Transpose Up</strong> - Transposes the selected tunes up one semitone.  Shift-click transposes up one full step. Alt-click transposes up one octave.</p>
             <p>To transpose multiple tunes, just click anywhere in the first tune you want to transpose, and drag to select any part of additional tunes you want transposed.</p>
             <p>To transpose all the tunes at once, select them all before clicking the Tranpose buttons.</p>
-            <p><strong>Sort ABC</strong> - Sorts all the tunes in the ABC area in alphabetical order by tune name.</p>
-            <p>Tune names that start with "The" will have the "The" moved to the end of the tune name before the alphabetical sorting.</p>
-            <p>Holding down the Shift key while clicking this button will also treat "A " and "An " the same way as "The " for sorting.</p>
-            <p><strong>Show Advanced</strong> - Shows the <a style="text-decoration:none;" href="#advanced_controls">Advanced Controls</a> dialog with several additional ABC filtering and display controls.</p>
-            <p><strong>Show Sharing</strong> - Shows the <a style="text-decoration:none;" href="#sharing_controls">Sharing Controls</a> dialog with options for sharing your tunes via a share URL or QR code.</p>
-            <p><strong>Clear ABC</strong> - Clears the ABC Editor so you can start over.</p>
+            <p><strong>Snapshot</strong> - Saves a snapshot of the contents of the ABC editor to browser storage.</p>
+            <p>If you save a snapshot and leave the tool, the next time you run the tool the snapshot will be available to restore by either clicking the <strong>Restore</strong> button on the main toolbar or the <strong>Restore from Snapshot</strong> button in the <strong>Add</strong> dialog.</p>
+            <p><strong>Restore</strong> - If one is available, replaces the current contents of the ABC editor with the last saved snapshot from browser storage.</p>
+            <p>Since it completely replaces the contents of the ABC editor, you will be asked to confirm the operation.</p>
+            <p><strong>Advanced</strong> - Shows the <a style="text-decoration:none;" href="#advanced_controls">Advanced Controls</a> dialog with several additional ABC filtering and display controls.</p>
+            <p><strong>Sharing</strong> - Shows the <a style="text-decoration:none;" href="#sharing_controls">Sharing Controls</a> dialog with options for sharing your tunes via a share URL or QR code.</p>
+            <p><strong>Clear</strong> - Clears the ABC Editor so you can start over.</p>
             <hr class="hidden-print" id="advanced_controls">
             <h1 class="page_break_always">Advanced Controls<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>Clicking the <strong>Show Advanced</strong> button brings up the ABC Transcription Tools Advanced Controls dialog:</p>
+            <p>Clicking the <strong>Advanced</strong> button brings up the ABC Transcription Tools Advanced Controls dialog:</p>
             <div class="image_holder_p">
-                <img src="img/advanced_controls_8.jpg"/>
+                <img src="img/advanced_controls_9.jpg"/>
             </div>
             <p>Click the lightbulb icon to bring up this section of the user guide in a new browser tab.</p>
             <p><strong>Show/Hide ABC Features:</strong></p>
@@ -596,6 +591,9 @@
             <p><strong>2:</strong> Export all the tunes in the tunebook to .MP3 by clicking <strong>Export all Tunes as .MP3</strong> in the <strong>Advanced Controls</strong> dialog, and when prompted enter the number of times through each tune.</p>
             <p>Your browser may request permission to download multiple files.</p>
             <p>During the batch export operation, click the export status dialog's <strong>Cancel</strong> button to stop the export.</p>
+            <p><strong>Sort ABC by Name</strong> - Sorts all the tunes in the ABC area in alphabetical order by tune name.</p>
+            <p>Tune names that start with "The" will have the "The" moved to the end of the tune name before the alphabetical sorting.</p>
+            <p>Holding down the Shift key while clicking this button will also treat "A " and "An " the same way as "The " for sorting.</p>
             <hr class="hidden-print" id="settings_dialog">
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
@@ -1521,7 +1519,7 @@
             <hr class="hidden-print" id="sharing_controls">
             <h1 class="page_break_always">Sharing Tunes with Share URLs and QR Codes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/I8KcG4swmUQ" title="Sharing Tunes with Share URLs and QR Codes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p>Clicking the <strong>Show Sharing</strong> button brings up the ABC Transcription Tools Sharing Controls dialog:</p>
+            <p>Clicking the <strong>Sharing</strong> button brings up the ABC Transcription Tools Sharing Controls dialog:</p>
             <div class="image_holder_p">
                 <img style="width:700px;"src="img/share_controls_1.jpg"/>
             </div>
