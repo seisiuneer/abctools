@@ -574,10 +574,23 @@ margin-right:24px;
 #abcplayer_midibutton{
 height:42px;
 padding:12px;
+margin-right:24px;
 }
 
 @media (hover: hover) {
 	.abcplayer_midibutton:hover{
+	background: palegreen;
+	}
+}
+
+
+#abcplayer_metronomebutton{
+height:42px;
+padding:12px;
+}
+
+@media (hover: hover) {
+	.abcplayer_metronomebutton:hover{
 	background: palegreen;
 	}
 }
@@ -1610,11 +1623,6 @@ margin-top:-7px;
   --background-color: #C8ECFE;
 }
 
-.btn-play {
-  --color: black;
-  --background-color: #C8ECFE;
-}
-
 .btn-toggleallcontrols {
   --color: black;
   --background-color: #FFF4E6;
@@ -1720,6 +1728,13 @@ margin-top:-7px;
   --color: black;
   --background-color: lavender;
 }
+
+.btn-metronome{
+  --color: black;
+  --background-color: #C8ECFE;
+
+}
+
 
 /* For Anglo concertina button naming dialog */
 .anglobuttonnames {
