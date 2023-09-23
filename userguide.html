@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-         
+        
         <style>
         p {
         font-size:14pt;
@@ -208,9 +208,12 @@
                     <p class="toc"><a style="text-decoration:none;" href="#top_bar_buttons">Top Bar Buttons</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#abc_editor">ABC Editor</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#viewing_the_notation_full_screen">Viewing the Notation Full Screen</a></p>
+                </div>
+                
+                <button class="accordion" title="Click to expand/collapse this section">Playing Your Tunes</button>
+                <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#playing_your_tunes">Playing Your Tunes</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#saving_wav_mp3_midi">Saving .WAV, .MP3, or MIDI Files</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#notation_tablature_display_controls">Notation/Tablature Display Controls</a></p>
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">Tool Controls</button>
@@ -438,15 +441,22 @@
             <p>The tool will automatically find the tune you've clicked on bring it up in the ABC Player for playback.</p>
             <p>The controls for the Player are located below the displayed notation.</p>
             <div class="image_holder_p">
-                <img src="img/small_player_controls_2.jpg"/>
+                <img src="img/small_player_controls_3.jpg"/>
             </div>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/bLV8XsYTIkc " title="Playing tunes in the tool" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p></p>
             <p>Using the playback controls at the bottom, you can enable looping, rewind to start, start/pause playback, click in the progress bar to seek, or change the tempo as a percentage. </p>
             <p>Click <strong>Close</strong> to return to the ABC editor.</p>
+            <p>Click <strong>Enable Metronome</strong> to switch to a version of the tune that has a metronome click sound when playing.</p>
+            <p><strong>Important note about using the metronome features with tunes with chords:</strong></p>
+            <p>Behind-the-scenes the metronome in the player the ABC chord system to do its job.</p>
+            <p>When using the metronome, any chords in your tune will be temporarily hidden.</p>
+            <p>The "E" chord you will see at the start of the tune when the metronome is enabled is used to start the metronome playback.</p>
+            <p>Don't worry, the original chords in your ABC are safe!</p>
+            <p>When playing a tune with the metronome enabled, click <strong>Disable Metronome</strong> to return to the original version.</p>
+            <p>If you save the tune to .WAV or .MP3 while the metronome is enabled, the resulting audio file will have the metronome sound.</p>
+            <p>While most common tune meters are supported by the metronome system, if the tune you are playing is in a meter that is not supported, you will be presented with a alert explaining the issue and will only be able to play the original version.</p>
             <p>If you would prefer larger Player controls, for example for use on mobile devices, open the <strong>Settings</strong> dialog and set the check on: <strong>Player uses large controls (easier to touch on mobile and tablet)</strong>:</p>
             <div class="image_holder_p">
-                <img src="img/large_player_controls_3.jpg"/>
+                <img src="img/large_player_controls_4.jpg"/>
             </div>
             <hr class="hidden-print" id="saving_wav_mp3_midi">
             <h1 class="page_break_always">Saving .WAV, .MP3 or MIDI Files<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -472,8 +482,8 @@
             <p>134: Melodica -> 22: Harmonica</p>
             <p>135: Cajun Accordion -> 21: Accordion</p>
             <p>Muted voices using MIDI instrument 136 or "mute" will be changed to program 0 (Acoustic Grand Piano) and the volume set to zero.</p>
-            <hr class="hidden-print" id="notation_tablature_display_controls">
-            <h1 class="page_break_always">Notation/Tablature Display Controls<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+             <hr class="hidden-print" id="basic_controls">
+            <h1 class="page_break_always">Basic Controls<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder">
                 <img style="width:700px;" src="img/ug4e.jpg"/>
             </div>
@@ -490,12 +500,9 @@
             <p class="code">K:D bass octave=-2</p>
             <p><strong>Whistle</strong> - Shows standard notation and fingering tablature for tin whistle in the key of D.</p>
             <p>Note: For notes that go below D on of the whistle, the suggested "folded" octave-up fingerings are shown.</p>
-            <hr class="hidden-print" id="basic_controls">
-            <h1 class="page_break_always">Basic Controls<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <div class="image_holder">
+            <div class="image_holder" style="margin-top:24px">
                 <img style="width:700px;" src="img/ug5b.jpg"/>
             </div>
-            <p></p>
             <p><strong>Transpose Down</strong> - Transposes the selected tunes down one semitone. Shift-click transposes down one full step. Alt-click transposes down one octave.</p>
             <p><strong>Transpose Up</strong> - Transposes the selected tunes up one semitone.  Shift-click transposes up one full step. Alt-click transposes up one octave.</p>
             <p>To transpose multiple tunes, just click anywhere in the first tune you want to transpose, and drag to select any part of additional tunes you want transposed.</p>
