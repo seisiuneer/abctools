@@ -8833,6 +8833,316 @@ function InjectSoundfont(){
 // Inject metronome annotation into the current tune
 //
 
+const metronome_list = [
+    { name:"C|",  pattern:"2/2 cB"}, 
+    { name:"C",   pattern:"4/4 cBBB"}, 
+   	{ name:"2/2", pattern:"2/2 cB"},
+    { name:"2/4", pattern:"2/4 cB"}, 
+    { name:"3/4", pattern:"3/4 cBB"}, 
+    { name:"4/4", pattern:"4/4 cBBB"}, 
+    { name:"5/4", pattern:"5/4 cBBBB"}, 
+    { name:"7/4", pattern:"7/4 cBBBBBB"}, 
+    { name:"2/8", pattern:"2/8 cx"}, 
+    { name:"3/8", pattern:"3/8 cxx"}, 
+    { name:"5/8", pattern:"5/8 cxxcx"},
+    { name:"6/8", pattern:"6/8 cxxcxx"}, 
+    { name:"7/8", pattern:"7/8 cxcxcxx"}, 
+    { name:"9/8", pattern:"9/8 cxxcxxcxx"},
+    { name:"10/8", pattern:"10/8 cxxcxxcxcx"},
+    { name:"12/8", pattern:"12/8 cxxcxxcxxcxx"}
+];
+
+//
+// Inject metronome ABC into a single tune
+//
+function inject_one_metronome(tuneABC, showWarnings){
+
+	// Strip out non-tablature chord markings
+	var searchRegExp = /(?:"[_^][^"]*)"/gm
+
+	var theMatches = tuneABC.match(searchRegExp);
+
+	var nMatches = 0;
+
+	if (theMatches){
+
+		nMatches = theMatches.length;
+
+	}
+
+	var theStrippedABC = tuneABC;
+
+	// Are there any tablature chords?
+	if (nMatches > 0){
+
+		// Yes, replace them with placeholders
+		for (var i=0;i<nMatches;++i){
+
+			theStrippedABC = theStrippedABC.replace(theMatches[i],"xyzyzx_"+i)
+
+		}
+
+		searchRegExp = /"[^"]*"/gm
+	
+		theStrippedABC = theStrippedABC.replace(searchRegExp, "");
+
+		for (var i=0;i<nMatches;++i){
+
+			theStrippedABC = theStrippedABC.replace("xyzyzx_"+i,theMatches[i])
+
+		}
+
+	}
+	else{
+
+
+		// No tablature chords, just replace them all 
+		searchRegExp = /"[^"]*"/gm
+
+		theStrippedABC = tuneABC.replace(searchRegExp, "");
+
+	}
+	
+	// Strip out %%MIDI chordprog markings
+	searchRegExp = /^%%MIDI chordprog.*$/gm
+
+	// Detect chordprogs annotation
+	var chordprogs = theStrippedABC.match(searchRegExp);
+
+	// If any found strip them
+	if ((chordprogs) && (chordprogs.length > 0)){
+
+		for (var i=0;i<chordprogs.length;++i){
+			theStrippedABC = theStrippedABC.replace(chordprogs[i]+"\n","");
+		}
+	}
+
+	// Strip out %%MIDI chordvol markings
+	searchRegExp = /^%%MIDI chordvol.*$/gm
+
+	// Detect chordprogs annotation
+	chordprogs = theStrippedABC.match(searchRegExp);
+
+	// If any found strip them
+	if ((chordprogs) && (chordprogs.length > 0)){
+
+		for (var i=0;i<chordprogs.length;++i){
+			theStrippedABC = theStrippedABC.replace(chordprogs[i]+"\n","");
+		}
+	}
+
+	// Strip out %%MIDI bassvol markings
+	searchRegExp = /^%%MIDI bassvol.*$/gm
+
+	// Detect chordprogs annotation
+	chordprogs = theStrippedABC.match(searchRegExp);
+
+	// If any found strip them
+	if ((chordprogs) && (chordprogs.length > 0)){
+
+		for (var i=0;i<chordprogs.length;++i){
+			theStrippedABC = theStrippedABC.replace(chordprogs[i]+"\n","");
+		}
+	}
+	
+    var theLines = theStrippedABC.split("\n");
+
+    var thisLine = "";
+
+    var bFoundLine;
+
+    var theMeter = "";
+
+    for (i = 0; i < theLines.length; ++i) {
+
+        thisLine = theLines[i];
+
+		// Find the meter
+		searchRegExp = /^M:.*[\r\n]*/m
+
+		var thisMeter = thisLine.match(searchRegExp);
+
+		if ((thisMeter) && (thisMeter.length > 0)){
+
+			if (theMeter == ""){
+
+				theMeter = thisMeter[0].replace("M:","");
+				theMeter = theMeter.trim();
+
+			}
+		}
+        
+
+		// Search for the first line with a bar indicatin
+		var theBarLocation = thisLine.indexOf("|");
+		
+		if (theBarLocation != -1){
+
+			// Make sure it's not a M: C| line or a %%score line, since both can have | bars
+			if ((thisLine.indexOf("M:") == -1) && (thisLine.indexOf("%%score") == -1)){
+
+				bFoundLine = true;
+
+				break;
+			}
+
+		}
+
+	}
+
+	if (!bFoundLine){
+
+		// Didn't find any bars, exit early
+		return null;
+
+	}
+
+	// Find the first barline position
+	var theBarOffset = 0;
+
+	var theBarLocation = thisLine.indexOf("|:");
+
+	if (theBarLocation == 0){
+
+		theBarOffset = 2;
+	
+	}
+	else { 
+
+		theBarLocation = thisLine.indexOf("[|");
+
+		if (theBarLocation == 0){
+
+			theBarOffset = 2;
+		
+		}
+		else { 
+
+			theBarLocation = thisLine.indexOf("||");
+
+			if (theBarLocation == 0){
+
+				theBarOffset = 2;
+			
+			}
+			else{
+
+				theBarLocation = thisLine.indexOf("[:");
+
+				if (theBarLocation == 0){
+
+					theBarOffset = 2;
+				
+				}
+				else{
+					
+					theBarLocation = thisLine.indexOf("[");
+
+					if (theBarLocation == 0){
+
+						theBarOffset = 1;
+					
+					}
+					else { 					
+
+						theBarLocation = thisLine.indexOf("|");
+
+						if (theBarLocation == 0){
+
+							theBarOffset = 1;
+						
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Do we have a meter?
+	if (theMeter == ""){
+
+		if (showWarnings){
+			// Nope, exit
+			DayPilot.Modal.alert("No meter found in the ABC.",{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+		}
+
+		return null;
+
+	}
+
+	var theMetronomePattern = "";
+
+	// Lets see if we have a supported meter
+	for (var i=0;i<metronome_list.length;++i){
+		if (theMeter == metronome_list[i].name){
+			theMetronomePattern = "%\n% Metronome sound and volumes\n%\n%%MIDI chordprog 115\n%%MIDI bassvol 64\n%%MIDI chordvol 64\n%\n% Metronome rhythm pattern\n% c = High Click, B = Low Click, x = Silence\n%\n%abcjs_boomchick "+metronome_list[i].pattern+'\n%\n% To disable the metronome, delete the "E" chord that starts it:\n%';
+			break;
+		}
+	}
+
+	// Meter not supported
+	if (theMetronomePattern == ""){
+
+		if (showWarnings){
+			// Nope, exit
+			DayPilot.Modal.alert("No metronome pattern available for "+theMeter+".",{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+		}
+
+		return null;
+
+	}
+
+	var lineWithChord = "";
+
+	if (theBarOffset != 0){
+
+		var leftSide = thisLine.substring(0,theBarOffset);
+		
+		var rightSide = thisLine.substring(theBarOffset);
+
+		lineWithChord = leftSide + '"E"' + rightSide;
+
+	}
+	else{
+
+		lineWithChord = '"E"' + thisLine;
+	}
+
+	// Is there a V: tag in the tune?
+	var firstVTag = theStrippedABC.indexOf("V:");
+
+	var injectedLine;
+
+	if (firstVTag != -1){
+
+		// Now inject the metronome pattern into the whole tune just before the first V: tag
+
+		var leftSide = theStrippedABC.substring(0,firstVTag);
+		
+		var rightSide = theStrippedABC.substring(firstVTag);
+
+		theStrippedABC = leftSide + theMetronomePattern + "\n" + rightSide;
+
+		// And inject the chord into the first line of notation
+		injectedLine = lineWithChord;
+
+		theStrippedABC = theStrippedABC.replace(thisLine,injectedLine);
+
+	}
+	else{
+
+		injectedLine = theMetronomePattern + '\n' + lineWithChord;
+		theStrippedABC = theStrippedABC.replace(thisLine,injectedLine);
+
+	}
+
+	// Seeing extra line breaks after the inject
+	theStrippedABC = theStrippedABC.replace("\n\n","");
+
+	return theStrippedABC;
+
+}
+
 function InjectMetronome(){
 
 	// If currently rendering PDF, exit immediately
@@ -8841,25 +9151,6 @@ function InjectMetronome(){
 	}
 
 	var theSelectedTuneIndex = findSelectedTuneIndex();
-
-	const metronome_list = [
-	    { name:"C|",  pattern:"2/2 cB"}, 
-	    { name:"C",   pattern:"4/4 cBBB"}, 
-	   	{ name:"2/2", pattern:"2/2 cB"},
-	    { name:"2/4", pattern:"2/4 cB"}, 
-	    { name:"3/4", pattern:"3/4 cBB"}, 
-	    { name:"4/4", pattern:"4/4 cBBB"}, 
-	    { name:"5/4", pattern:"5/4 cBBBB"}, 
-	    { name:"7/4", pattern:"7/4 cBBBBBB"}, 
-	    { name:"2/8", pattern:"2/8 cx"}, 
-	    { name:"3/8", pattern:"3/8 cxx"}, 
-	    { name:"5/8", pattern:"5/8 cxxcx"},
-	    { name:"6/8", pattern:"6/8 cxxcxx"}, 
-	    { name:"7/8", pattern:"7/8 cxcxcxx"}, 
-	    { name:"9/8", pattern:"9/8 cxxcxxcxx"},
-	    { name:"10/8", pattern:"10/8 cxxcxxcxcx"},
-	    { name:"12/8", pattern:"12/8 cxxcxxcxxcxx"}
-	];
 
 	// Setup initial values
 	const theData = {
@@ -8873,7 +9164,7 @@ function InjectMetronome(){
 	  {name: "            Inject metronome into all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_metronome_form_text"},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 760, scrollWithPage: (AllowDialogsToScroll()) } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 760, scrollWithPage: (AllowDialogsToScroll()) } ).then(function(args){
 		
 		if (!args.canceled){
 
@@ -8953,276 +9244,6 @@ function InjectMetronome(){
 				    FocusAfterOperation();
 
 				});
-
-			}
-
-			//
-			// Inject metronome ABC into a single tune
-			//
-			function inject_one_metronome(tuneABC, showWarnings){
-
-
-				// Strip out non-tablature chord markings
-				var searchRegExp = /(?:"[_^][^"]*)"/gm
-
-				var theMatches = tuneABC.match(searchRegExp);
-
-				var nMatches = 0;
-
-				if (theMatches){
-
-					nMatches = theMatches.length;
-
-				}
-
-				var theStrippedABC = tuneABC;
-
-				// Are there any tablature chords?
-				if (nMatches > 0){
-
-					// Yes, replace them with placeholders
-					for (var i=0;i<nMatches;++i){
-
-						theStrippedABC = theStrippedABC.replace(theMatches[i],"xyzyzx_"+i)
-
-					}
-
-					searchRegExp = /"[^"]*"/gm
-				
-					theStrippedABC = theStrippedABC.replace(searchRegExp, "");
-
-					for (var i=0;i<nMatches;++i){
-
-						theStrippedABC = theStrippedABC.replace("xyzyzx_"+i,theMatches[i])
-
-					}
-
-				}
-				else{
-
-
-					// No tablature chords, just replace them all 
-					searchRegExp = /"[^"]*"/gm
-
-					theStrippedABC = tuneABC.replace(searchRegExp, "");
-
-				}
-				
-				// Strip out %%MIDI chordprog markings
-				searchRegExp = /^%%MIDI chordprog.*$/gm
-
-				// Detect chordprogs annotation
-				var chordprogs = theStrippedABC.match(searchRegExp);
-
-				// If any found strip them
-				if ((chordprogs) && (chordprogs.length > 0)){
-
-					for (var i=0;i<chordprogs.length;++i){
-						theStrippedABC = theStrippedABC.replace(chordprogs[i]+"\n","");
-					}
-				}
-
-				// Strip out %%MIDI chordvol markings
-				searchRegExp = /^%%MIDI chordvol.*$/gm
-
-				// Detect chordprogs annotation
-				chordprogs = theStrippedABC.match(searchRegExp);
-
-				// If any found strip them
-				if ((chordprogs) && (chordprogs.length > 0)){
-
-					for (var i=0;i<chordprogs.length;++i){
-						theStrippedABC = theStrippedABC.replace(chordprogs[i]+"\n","");
-					}
-				}
-
-				// Strip out %%MIDI bassvol markings
-				searchRegExp = /^%%MIDI bassvol.*$/gm
-
-				// Detect chordprogs annotation
-				chordprogs = theStrippedABC.match(searchRegExp);
-
-				// If any found strip them
-				if ((chordprogs) && (chordprogs.length > 0)){
-
-					for (var i=0;i<chordprogs.length;++i){
-						theStrippedABC = theStrippedABC.replace(chordprogs[i]+"\n","");
-					}
-				}
-
-			    var theLines = theStrippedABC.split("\n");
-
-			    var thisLine = "";
-
-			    var bFoundLine;
-
-			    var theMeter = "";
-
-			    for (i = 0; i < theLines.length; ++i) {
-
-			        thisLine = theLines[i];
-
-					// Find the meter
-					searchRegExp = /^M:.*[\r\n]*/m
-
-					var thisMeter = thisLine.match(searchRegExp);
-
-					if ((thisMeter) && (thisMeter.length > 0)){
-
-						if (theMeter == ""){
-
-							theMeter = thisMeter[0].replace("M:","");
-							theMeter = theMeter.trim();
-
-						}
-					}
-			        
-
-					// Search for the first line with a bar indicatin
-					var theBarLocation = thisLine.indexOf("|");
-					
-					if (theBarLocation != -1){
-
-						// Make sure it's not a M: C| line
-
-						if (thisLine.indexOf("M:") == -1){
-
-							bFoundLine = true;
-
-							break;
-						}
-
-					}
-
-				}
-
-				if (!bFoundLine){
-
-					// Didn't find any bars, exit early
-					return null;
-
-				}
-
-				// Find the first barline position
-				var theBarOffset = 0;
-
-				var theBarLocation = thisLine.indexOf("|:");
-
-				if (theBarLocation == 0){
-
-					theBarOffset = 2;
-				
-				}
-				else { 
-
-					theBarLocation = thisLine.indexOf("[|");
-
-					if (theBarLocation == 0){
-
-						theBarOffset = 2;
-					
-					}
-					else { 
-
-						theBarLocation = thisLine.indexOf("||");
-
-						if (theBarLocation == 0){
-
-							theBarOffset = 2;
-						
-						}
-						else{
-
-							theBarLocation = thisLine.indexOf("[:");
-
-							if (theBarLocation == 0){
-
-								theBarOffset = 2;
-							
-							}
-							else{
-								
-								theBarLocation = thisLine.indexOf("[");
-
-								if (theBarLocation == 0){
-
-									theBarOffset = 1;
-								
-								}
-								else { 					
-
-									theBarLocation = thisLine.indexOf("|");
-
-									if (theBarLocation == 0){
-
-										theBarOffset = 1;
-									
-									}
-								}
-							}
-						}
-					}
-				}
-
-				// Do we have a meter?
-				if (theMeter == ""){
-
-					if (showWarnings){
-						// Nope, exit
-						DayPilot.Modal.alert("No meter found in the ABC.",{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
-					}
-
-					return null;
-
-				}
-
-				var theMetronomePattern = "";
-
-				// Lets see if we have a supported meter
-				for (var i=0;i<metronome_list.length;++i){
-					if (theMeter == metronome_list[i].name){
-						theMetronomePattern = "%\n% Metronome sound and volumes\n%\n%%MIDI chordprog 115\n%%MIDI bassvol 64\n%%MIDI chordvol 64\n%\n% Metronome rhythm pattern\n% c = High Click, B = Low Click, x = Silence\n%\n%abcjs_boomchick "+metronome_list[i].pattern+'\n%\n% To disable the metronome, delete the "E" chord that starts it:\n%';
-						break;
-					}
-				}
-
-				// Meter not supported
-				if (theMetronomePattern == ""){
-
-					if (showWarnings){
-						// Nope, exit
-						DayPilot.Modal.alert("No metronome pattern available for "+theMeter+".",{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
-					}
-
-					return null;
-
-				}
-
-				var lineWithChord = "";
-
-				if (theBarOffset != 0){
-
-					var leftSide = thisLine.substring(0,theBarOffset);
-					
-					var rightSide = thisLine.substring(theBarOffset);
-
-					lineWithChord = leftSide + '"E"' + rightSide;
-
-				}
-				else{
-
-					lineWithChord = '"E"' + thisLine;
-				}
-
-
-				var injectedLine = theMetronomePattern + '\n' + lineWithChord;
-
-				theStrippedABC = theStrippedABC.replace(thisLine,injectedLine);
-
-				// Seeing extra line breaks after the inject
-				theStrippedABC = theStrippedABC.replace("\n\n","");
-
-				return theStrippedABC;
 
 			}
 			
@@ -9639,7 +9660,7 @@ function PlayABC(e){
 		theSelectedABC = PreProcessPlayABC(theSelectedABC);
 
 		// Play back locally in-tool	
-		PlayABCDialog(theSelectedABC);
+		PlayABCDialog(theSelectedABC,null,null,null);
 
 	}
 }
@@ -10317,7 +10338,7 @@ function processShareLink() {
 				var theProcessedABC = PreProcessPlayABC(gTheABC.value);
 
 				// Play back locally in-tool	
-				PlayABCDialog(theProcessedABC);
+				PlayABCDialog(theProcessedABC, null, null, null);
 
 			}
 
@@ -11567,8 +11588,11 @@ function TipJarReminderDialog(){
 
 var gMIDIbuffer = null;
 var gPlayerABC = null;
+var gPlayerABCMetronome = null;
 var gTheOKButton = null;
 var gTheMuteHandle = null;
+var gPlayMetronome = false;
+var gIsFirstTimeUsingMetronome = false;
 
 //
 // Return the .WAV or .MP3 filename
@@ -12097,7 +12121,7 @@ function DoBatchMP3Export(repeatCount,doClickTrack){
 
 					gTheBatchMP3ExportStatusText.innerText = "Exporting .MP3 for tune "+ (currentTune+1) + " of "+totalTunesToExport+": "+title;
 
-					PlayABCDialog(thisTune,callback,currentTune);
+					PlayABCDialog(thisTune,callback,currentTune,null);
 
 				}, 1000);
 
@@ -12192,7 +12216,7 @@ function DoBatchMP3Export(repeatCount,doClickTrack){
 	gTheBatchMP3ExportStatusText.innerText = "Exporting .MP3 for tune "+ (currentTune+1) + " of "+totalTunesToExport+": "+title;
 
 	// Kick off the conversion cascade
-	PlayABCDialog(thisTune,callback,currentTune);
+	PlayABCDialog(thisTune,callback,currentTune,null);
 
 	return true;
 
@@ -12895,17 +12919,131 @@ function postProcessTab(renderDivID, instrument, bIsPlayback){
 	}
 }
 
+
+//
+// First time using the metronome dialog
+//
+function FirstTimeUsingMetronomeDialog(callback){
+
+   var modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">About the Metronome in the Player</p>';
+ 	   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;margin-top:36px;">Since this is your first time using the metronome feature, there are some things you should be aware of:</p>';
+	   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;margin-top:36px;">Behind-the-scenes the metronome in the player the ABC chord system to do its job.</p>';
+	   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;margin-top:36px;">When using the metronome, any chords in your tune will be temporarily hidden.</p>';
+	   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;margin-top:36px;">The "E" chord you will see at the start of the tune is used to start the metronome playback.</p>';
+	   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;margin-top:36px;">Don\'t worry, the original chords in your ABC are safe!</p>';
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 150, scrollWithPage: (AllowDialogsToScroll()) }).then(function(){callback();});
+
+}
+
+//
+// Toggle the metronome version of the tune;
+//
+function ToggleMetronome(){
+
+	// One time dialog when user first uses the metronome feature
+	if (gLocalStorageAvailable){
+
+		if (gIsFirstTimeUsingMetronome){
+
+			gIsFirstTimeUsingMetronome = false;
+
+			localStorage.IsFirstTimeUsingMetronome = false;
+
+			FirstTimeUsingMetronomeDialog(callback);
+
+		}
+		else{
+
+			callback();
+
+		}
+	}
+	else{
+
+		gIsFirstTimeUsingMetronome = false;
+
+		callback();
+
+	}
+
+	function callback(){
+
+		gPlayMetronome = !gPlayMetronome;
+
+		gTheOKButton.click();
+
+		setTimeout(function() {
+
+			if (gPlayMetronome){
+
+				if (!gPlayerABCMetronome){
+
+					gPlayerABCMetronome = inject_one_metronome(gPlayerABC, false);
+
+					// Injection failed due to unsupported meter
+					if (!gPlayerABCMetronome){
+
+					   var modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Metronome Not Available for this Meter</p>';
+					 	   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;">No metronome pattern is available for the meter of this tune.</p>';
+					 	   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;">Only the original version can be played.</p>';
+
+						DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) }).then(
+							function(){
+								PlayABCDialog(gPlayerABC,null,null,false);
+							});
+
+						return;
+
+					}
+
+				}
+
+				// Launch the player with the metronome injected tune
+				PlayABCDialog(gPlayerABCMetronome,null,null,true);
+
+			}
+			else{
+
+				// Launch the original tune
+				PlayABCDialog(gPlayerABC,null,null,false);
+
+			}
+
+		},250);		
+	}
+
+
+}
+
+
 // 
 // Tune Play Dialog
 //
 // callback and val are used for batch export automation
 //
 
-function PlayABCDialog(theABC,callback,val){
+function PlayABCDialog(theABC,callback,val,metronome_state){
 
 	gMIDIbuffer = null;
-	gPlayerABC = theABC;
 	gTheOKButton = null;
+	gPlayMetronome = false;
+
+	// We came in because of a metronome state change, don't init the tune cache
+	if (metronome_state){
+
+		gPlayMetronome = metronome_state;
+
+	}
+	else{
+
+		gPlayerABC = theABC;
+
+		gPlayMetronome = false;
+
+		gPlayerABCMetronome = null;
+
+	}
 
 	var soundFontRequested = ScanTuneForSoundFont(theABC);
 
@@ -13121,6 +13259,7 @@ function PlayABCDialog(theABC,callback,val){
 
 	var synthControl;
 
+
 	function initPlay() {
 
 		// Adapt the top based on the player control size
@@ -13155,6 +13294,7 @@ function PlayABCDialog(theABC,callback,val){
 		modal_msg += '<input id="abcplayer_wavbutton" class="abcplayer_wavbutton btn btn-wavedownload" onclick="DownloadWave();" type="button" value="Download .WAV" title="Downloads the audio for the current tune as a .WAV file">'
 		modal_msg += '<input id="abcplayer_mp3button" class="abcplayer_mp3button btn btn-mp3download" onclick="DownloadMP3();" type="button" value="Download .MP3" title="Downloads the audio for the current tune as a .MP3 file">'
 		modal_msg += '<input id="abcplayer_midibutton" class="abcplayer_midibutton btn btn-mididownload" onclick="DownloadMIDI();" type="button" value="Download MIDI" title="Downloads the current tune as a MIDI file">'
+		modal_msg += '<input id="abcplayer_metronomebutton" class="abcplayer_metronome button btn btn-metronome" onclick="ToggleMetronome();" type="button" value="Enable Metronome" title="Enables/disables the metronome">'
 		modal_msg += '</p>';
 
 	   	// Scale the player for larger screens
@@ -13178,6 +13318,15 @@ function PlayABCDialog(theABC,callback,val){
 		}
 
 		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: theTop, width:theWidth, okText:"Close", scrollWithPage: (gIsIOS || gIsAndroid) });
+
+		// Idle the metronome button
+		if ((metronome_state) && (metronome_state == true)){
+
+			var elem = document.getElementById("abcplayer_metronomebutton");
+
+			elem.value = "Disable Metronome";
+
+		}
 
 		var theOKButtons = document.getElementsByClassName("modal_flat_ok");
 
@@ -13845,12 +13994,18 @@ function GetInitialConfigurationSettings(){
 
 	val = localStorage.TipJarCount;
 	if (val){
-
 		gTipJarCount = val;
-
 	}
 	else{
 		gTipJarCount = 0;
+	}
+
+	val = localStorage.IsFirstTimeUsingMetronome;
+	if (val){
+		gIsFirstTimeUsingMetronome = (val == "true");
+	}
+	else{
+		gIsFirstTimeUsingMetronome = true;
 	}
 
 	// Save the settings, in case they were initialized
@@ -13933,6 +14088,9 @@ function SaveConfigurationSettings(){
 
 		// Save the tip jar count 
 		localStorage.TipJarCount = gTipJarCount;
+
+		// Save the first time using the metronome status
+		localStorage.IsFirstTimeUsingMetronome = gIsFirstTimeUsingMetronome;
 
 	}
 }
