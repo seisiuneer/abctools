@@ -155,9 +155,6 @@ var gAddPlaybackHyperlinks = false;
 var gPlaybackHyperlinkMelodyProgram = "";
 var gPlaybackHyperlinkBassChordProgram = "";
 
-// Append incrementing X values to tune names 
-var gAppendXValuesToTuneNames = false;
-
 // Full screen view scaling (percentage)
 var gFullScreenScaling = 50;
 
@@ -259,7 +256,7 @@ function findTuneByOffset(start){
 
     theOffset = theTunes[0].length;
 
-    for (i=1;i<nTunes;++i){
+    for (var i=1;i<nTunes;++i){
 
     	// Account for the X: stripped in the length
     	theOffset += theTunes[i].length+2;
@@ -356,7 +353,7 @@ function findSelectedTune(){
 
     theOffset = theTunes[0].length;
 
-    for (i=1;i<nTunes;++i){
+    for (var i=1;i<nTunes;++i){
 
     	// Account for the X: stripped in the length
     	theOffset += theTunes[i].length+2;
@@ -392,7 +389,7 @@ function GetFirstTuneTitle() {
 
 	var theLines = theABC.split("%0A");
 
-	for (i = 0; i < theLines.length; ++i) {
+	for (var i = 0; i < theLines.length; ++i) {
 		
 		theLines[i] = unescape(theLines[i]); 
 
@@ -1052,7 +1049,7 @@ function GetTunebookIndexTitles(){
 
 		Reihe = neu.split("%0A");
 
-		for (j = 0; j < Reihe.length; ++j) {
+		for (var j = 0; j < Reihe.length; ++j) {
 
 			Reihe[j] = unescape(Reihe[j]); /* Macht die Steuerzeichen wieder weg */
 
@@ -1063,10 +1060,6 @@ function GetTunebookIndexTitles(){
 				titel = Reihe[j].slice(2);
 
 				titel = titel.trim();
-
-				if (gAppendXValuesToTuneNames){
-					titel = (i+1) +" - "+titel;
-				}
 
 				// Just grab the first title foiund
 				theTitles.push(titel);
@@ -1374,15 +1367,7 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		  var nameA = a.title.toUpperCase(); // ignore upper and lowercase
 		  
 		  var nameB = b.title.toUpperCase(); // ignore upper and lowercase
-		  
-		  // Sort criteria is different for appended X tune numbers
-		  if (gAppendXValuesToTuneNames){
-
-		  	 nameA = nameA.substring(nameA.indexOf("-")+2);
-		  	 nameB = nameB.substring(nameB.indexOf("-")+2);
-
-		  }
-		  
+		  		  
 		  if (nameA < nameB) {
 		    return -1;
 		  }
@@ -1550,14 +1535,6 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 		  var nameA = a.name.toUpperCase(); // ignore upper and lowercase
 		  
 		  var nameB = b.name.toUpperCase(); // ignore upper and lowercase
-
-		  // Sort criteria is different for appended X tune numbers
-		  if (gAppendXValuesToTuneNames){
-
-		  	 nameA = nameA.substring(nameA.indexOf("-")+2);
-		  	 nameB = nameB.substring(nameB.indexOf("-")+2);
-
-		  }
 		  
 		  if (nameA < nameB) {
 		    return -1;
@@ -2046,14 +2023,6 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 		  var nameA = a.name.toUpperCase(); // ignore upper and lowercase
 		  
 		  var nameB = b.name.toUpperCase(); // ignore upper and lowercase
-
-		  // Sort criteria is different for appended X tune numbers
-		  if (gAppendXValuesToTuneNames){
-
-		  	 nameA = nameA.substring(nameA.indexOf("-")+2);
-		  	 nameB = nameB.substring(nameB.indexOf("-")+2);
-
-		  }
 		  
 		  if (nameA < nameB) {
 		    return -1;
@@ -2211,15 +2180,7 @@ function DryRunAddTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperSty
 		  var nameA = a.name.toUpperCase(); // ignore upper and lowercase
 		  
 		  var nameB = b.name.toUpperCase(); // ignore upper and lowercase
-		  
-		  // Sort criteria is different for appended X tune numbers
-		  if (gAppendXValuesToTuneNames){
-
-		  	 nameA = nameA.substring(nameA.indexOf("-")+2);
-		  	 nameB = nameB.substring(nameB.indexOf("-")+2);
-
-		  }
-		  
+		  		  
 		  if (nameA < nameB) {
 		    return -1;
 		  }
@@ -3633,20 +3594,6 @@ function ParseCommentCommands(theNotes){
 		}
 	}
 
-	// Should we append the X: tag values to the tune names when generating PDF tunebook
-	gAppendXValuesToTuneNames = false;
-	
-	searchRegExp = /^%append_x_values_to_names.*$/m
-
-	// Detect x values annotation
-	var addXValues = theNotes.match(searchRegExp);
-
-	if ((addXValues) && (addXValues.length > 0)){
-
-		gAppendXValuesToTuneNames = true;
-
-	}
-
 	// Clear the tunebook toc headerstring
 	theTunebookTOCHeader = "";
 
@@ -3717,7 +3664,6 @@ function ParseCommentCommands(theNotes){
 	// console.log("gAddPlaybackHyperlinks = "+gAddPlaybackHyperlinks);
 	// console.log("gPlaybackHyperlinkMelodyProgram = "+gPlaybackHyperlinkMelodyProgram);
 	// console.log("gPlaybackHyperlinkBassChordProgram = "+gPlaybackHyperlinkBassChordProgram);
-	// console.log("gAppendXValuesToTuneNames = "+gAppendXValuesToTuneNames);
 
 }
 
@@ -4436,12 +4382,6 @@ function ExportPDF(){
 
 				ExportTextIncipitsPDF(fname);
 			}
-			else{
-
-				// Clean any globals set during the annotation scan
-				gAppendXValuesToTuneNames = false;
-
-			}
 		});
 
 	}
@@ -4836,9 +4776,6 @@ function ExportTextIncipitsPDF(title){
 					var pdfstatus = document.getElementById("pdf-controls");
 					pdfstatus.style.display = "none";
 
-					// Clean up any global state from the annotation parse
-					gAppendXValuesToTuneNames = false;
-
 					// Clear the PDF rendering global
 					gRenderingPDF = false;
 
@@ -5011,35 +4948,6 @@ function ExportNotationPDF(title) {
 		}
 
 	}
-	else
-	// Auto-inserting X: numbers on titles for non-incipit render?
-	if (gAppendXValuesToTuneNames){
-
-		document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"red\">" + title + "</font>";
-
-		document.getElementById("statustunecount").innerHTML = "Processing tune numbering for PDF generation";
-
-		document.getElementById("pagestatustext").innerHTML = "&nbsp;";
-
-		setTimeout(function(){
-
-			var theNotes = gTheABC.value;
-
-			theNotes = processXTuneNameValues(theNotes);
-
-			var radiovalue = GetRadioValue("notenodertab");
-
-			// Render the notes
-			RenderTheNotes(theNotes,radiovalue,true,0);
-
-			// Going to need to clean up later
-			requirePostRender = true;
-
-			doPDFStepTwo();
-
-		},100);
-
-	}
 	else{
 
 		doPDFStepTwo();
@@ -5136,8 +5044,6 @@ function ExportNotationPDF(title) {
 						
 						document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Cleaning up incipit generation</font>";
 						
-						gAppendXValuesToTuneNames = false;
-
 						RenderAsync(true,null,function(){
 
 							// Hide the PDF status modal
@@ -5443,10 +5349,6 @@ function ExportNotationPDF(title) {
 										setTimeout(function(){
 
 											gRenderingPDF = false;
-
-											// Clean up any global state from the annotation parse
-											gAppendXValuesToTuneNames = false;
-
 
 											Render(true,null);
 
@@ -6111,39 +6013,6 @@ function StripChordsOne(theNotes){
 
 }
 
-//
-// Append an incrementing value to the tune names 
-//
-function processXTuneNameValues(theNotes){
-
-	var outTunes = "";
-
-	var theTunes = theNotes.split(/^X:.*$/gm);
-
-	var nTunes = theTunes.length - 1;
-
-    // Now find all the X: items
-    var theTunes = theNotes.split(/^X:/gm);
-
-    var processedTune = "";
-    var thisTune = "";
-
-    for (var i=0;i<nTunes;++i){
-
-    	thisTune = theTunes[i+1]
-
-		thisTune = thisTune.replace("T:","T:"+(i+1)+". ");
-
-    	processedTune = "X:"+thisTune;
-    	
-    	outTunes = outTunes + processedTune;
-
-    }
-
-    return outTunes;
-	
-}
-
 // 
 // Allow putting up a spiner before the synchronous Render() function
 //
@@ -6407,13 +6276,6 @@ function Render(renderAll,tuneNumber) {
 		searchRegExp = /^X:.*$/gm
 
 		theNotes = theNotes.replace(searchRegExp, "X:1\n%%musicspace 10\n%%staffsep " + gStaffSpacing);
-
-		// Auto-inserting X: numbers on titles?
-		if (gAppendXValuesToTuneNames){
-
-			theNotes = processXTuneNameValues(theNotes);
-
-		}
 
 		// Render the notes
 		RenderTheNotes(theNotes,radiovalue,renderAll,tuneNumber);
@@ -8857,6 +8719,8 @@ const metronome_list = [
 //
 function inject_one_metronome(tuneABC, showWarnings){
 
+	var i;
+
 	// Strip out non-tablature chord markings
 	var searchRegExp = /(?:"[_^][^"]*)"/gm
 
@@ -8876,7 +8740,7 @@ function inject_one_metronome(tuneABC, showWarnings){
 	if (nMatches > 0){
 
 		// Yes, replace them with placeholders
-		for (var i=0;i<nMatches;++i){
+		for (i=0;i<nMatches;++i){
 
 			theStrippedABC = theStrippedABC.replace(theMatches[i],"xyzyzx_"+i)
 
@@ -8912,7 +8776,7 @@ function inject_one_metronome(tuneABC, showWarnings){
 	// If any found strip them
 	if ((chordprogs) && (chordprogs.length > 0)){
 
-		for (var i=0;i<chordprogs.length;++i){
+		for (i=0;i<chordprogs.length;++i){
 			theStrippedABC = theStrippedABC.replace(chordprogs[i]+"\n","");
 		}
 	}
@@ -8926,7 +8790,7 @@ function inject_one_metronome(tuneABC, showWarnings){
 	// If any found strip them
 	if ((chordprogs) && (chordprogs.length > 0)){
 
-		for (var i=0;i<chordprogs.length;++i){
+		for (i=0;i<chordprogs.length;++i){
 			theStrippedABC = theStrippedABC.replace(chordprogs[i]+"\n","");
 		}
 	}
@@ -9073,7 +8937,7 @@ function inject_one_metronome(tuneABC, showWarnings){
 	var theMetronomePattern = "";
 
 	// Lets see if we have a supported meter
-	for (var i=0;i<metronome_list.length;++i){
+	for (i=0;i<metronome_list.length;++i){
 		if (theMeter == metronome_list[i].name){
 			theMetronomePattern = "%\n% Metronome sound and volumes\n%\n%%MIDI chordprog 115\n%%MIDI bassvol 64\n%%MIDI chordvol 64\n%\n% Metronome rhythm pattern\n% c = High Click, B = Low Click, x = Silence\n%\n%abcjs_boomchick "+metronome_list[i].pattern+'\n%\n% To disable the metronome, delete the "E" chord that starts it:\n%';
 			break;
@@ -10439,7 +10303,7 @@ function findSelectedTuneIndex(){
 
     theOffset = theTunes[0].length;
 
-    for (i=1;i<=nTunes;++i){
+    for (var i=1;i<=nTunes;++i){
 
     	// Account for the X: stripped in the length
     	theOffset += theTunes[i].length+2;
@@ -12181,7 +12045,7 @@ function DoBatchMP3Export(repeatCount,doClickTrack){
 	// Find the button that says "Cancel" to use to close the dialog when the cascade is complete
 	var theOKButton = null;
 
-	for (i=0;i<theOKButtons.length;++i){
+	for (var i=0;i<theOKButtons.length;++i){
 
 		theOKButton = theOKButtons[i];
 
@@ -13336,7 +13200,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 
 		var theOKButton = null;
 
-		for (i=0;i<theOKButtons.length;++i){
+		for (var i=0;i<theOKButtons.length;++i){
 
 			theOKButton = theOKButtons[i];
 
@@ -14293,6 +14157,8 @@ function defaultAngloButtonNames(){
 	DayPilot.Modal.confirm("Are you sure you want to reset the Anglo Concertina button names to their default values?",{ top:180, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
 
 		if (!args.canceled){
+
+			var i;
 
 		    resetAngloButtonNames();
 
