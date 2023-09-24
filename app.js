@@ -8998,6 +8998,8 @@ function inject_one_metronome(tuneABC, showWarnings){
 
 	}
 
+	thisLine = thisLine.trim();
+
 	// Find the first barline position
 	var theBarOffset = 0;
 
@@ -9037,35 +9039,67 @@ function inject_one_metronome(tuneABC, showWarnings){
 				}
 				else {
 
-					// Does the line start with a voice declaration?
-					theBarLocation = thisLine.indexOf("[V:");
+					// Does the line start with a [*:*] style declaration?
+					searchRegExp = /\[.:.*\]/
 
-					if (theBarLocation == 0){
+					var theTagMatch = thisLine.match(searchRegExp);
 
-						// Is there a bar line on this line?
-						theBarLocation = thisLine.indexOf("|");
+					if (theTagMatch && (thisLine.indexOf(theTagMatch[0]) == 0)){
 
-						theBarOffset = theBarLocation + 1;
+						// Search for a double bar pattern after the initial tag
+
+						var lineWithoutTag = thisLine.replace(theTagMatch,"");
+
+						lineWithoutTag = lineWithoutTag.trim();
+
+						var theBarLocation1 = lineWithoutTag.indexOf("|:");
+						var theBarLocation2 = lineWithoutTag.indexOf("||");
+						var theBarLocation3 = lineWithoutTag.indexOf("[:");
+
+						if ((theBarLocation1 == 0) || (theBarLocation2 == 0) || (theBarLocation3 == 0)){
+
+							theBarLocation1 = thisLine.indexOf("|:");
+							theBarLocation2 = thisLine.indexOf("||");
+							theBarLocation3 = thisLine.indexOf("[:");
+
+							if (theBarLocation1 != -1){
+								theBarOffset = theBarLocation1 + 2;
+							}
+							if (theBarLocation2 != -1){
+								theBarOffset = theBarLocation2 + 2;
+							}
+							if (theBarLocation3 != -1){
+								theBarOffset = theBarLocation3 + 2;
+							}
+						
+						}
+						else{
+
+							// Find the barline on this line
+							theBarLocation = lineWithoutTag.indexOf("|");
+
+							if (theBarLocation == 0){
+								
+								theBarOffset = thisLine.indexOf("|") + 1;
+
+							}
+							else{
+
+								theBarOffset = theTagMatch[0].length;
+
+							}
+							
+						}
 
 					}
-					else{
-						
-						theBarLocation = thisLine.indexOf("[");
+					else{				
+
+						theBarLocation = thisLine.indexOf("|");
 
 						if (theBarLocation == 0){
 
 							theBarOffset = 1;
 						
-						}
-						else { 					
-
-							theBarLocation = thisLine.indexOf("|");
-
-							if (theBarLocation == 0){
-
-								theBarOffset = 1;
-							
-							}
 						}
 					}
 				}
