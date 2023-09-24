@@ -9035,23 +9035,37 @@ function inject_one_metronome(tuneABC, showWarnings){
 					theBarOffset = 2;
 				
 				}
-				else{
-					
-					theBarLocation = thisLine.indexOf("[");
+				else {
+
+					// Does the line start with a voice declaration?
+					theBarLocation = thisLine.indexOf("[V:");
 
 					if (theBarLocation == 0){
 
-						theBarOffset = 1;
-					
-					}
-					else { 					
-
+						// Is there a bar line on this line?
 						theBarLocation = thisLine.indexOf("|");
+
+						theBarOffset = theBarLocation + 1;
+
+					}
+					else{
+						
+						theBarLocation = thisLine.indexOf("[");
 
 						if (theBarLocation == 0){
 
 							theBarOffset = 1;
 						
+						}
+						else { 					
+
+							theBarLocation = thisLine.indexOf("|");
+
+							if (theBarLocation == 0){
+
+								theBarOffset = 1;
+							
+							}
 						}
 					}
 				}
@@ -9108,9 +9122,9 @@ function inject_one_metronome(tuneABC, showWarnings){
 
 		lineWithChord = '"E"' + thisLine;
 	}
-
+	
 	// Is there a V: tag in the tune?
-	var firstVTag = theStrippedABC.indexOf("V:");
+	var firstVTag = theStrippedABC.indexOf("V:")
 
 	var injectedLine;
 
