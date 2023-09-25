@@ -8441,17 +8441,17 @@ function InjectRepeatsAndClickTrackAll(){
 
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject Repeats and Two-Bar Click Intros&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#injectrepeatsandtwobarclickintros" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
-	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">This will inject repeats into each tune in the ABC area by  appending the entire ABC for each tune to itself multiple times.</p>'},	  
-	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">You may also optionally inject a two-bar click intro before each tune.</p>'},	  
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject repeats into each tune in the ABC area by  appending the entire ABC for each tune to itself multiple times.</p>'},	  
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">You may also optionally inject a two-bar click intro before each tune.</p>'},	  
 	  {name: "How many times through each tune:", id: "configure_repeats", type:"number", cssClass:"configure_repeats_form_text"}, 
 	  {name: "            Inject a two-bar style-appropriate click intro before each tune", id: "configure_inject_click", type:"checkbox", cssClass:"configure_repeats_form_text"},
-	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>To only append a two-bar click intro before each tune:</strong></p>'},	  
-	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">1) Set <strong>How many times through each tune:</strong> to 1</p>'},	  
-	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">2) Check <strong>Inject a two-bar style-appropriate click intro before each tune</strong>.</p>'},	  
-	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">3) Click <strong>OK</strong>.</p>'},	  
-	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>For best results when repeating tunes:<strong></p>'},	  
-	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">For clean repeats, your tunes must not have extraneous pickup or trailing notes and must have proper and complete timing.</p>'},	  
-	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">If there is a repeat at the end of the first part of a tune, either standalone or in a first ending, there must be a matching |: bar at the start of the tune for the tune repeats to work properly.</p>'},	  
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:18pt;font-family:helvetica"><strong>To only append a two-bar click intro before each tune:</strong></p>'},	  
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:18pt;font-family:helvetica">1) Set <strong>How many times through each tune:</strong> to 1</p>'},	  
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:18pt;font-family:helvetica">2) Check <strong>Inject a two-bar style-appropriate click intro before each tune</strong>.</p>'},	  
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:18pt;font-family:helvetica">3) Click <strong>OK</strong>.</p>'},	  
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:18pt;font-family:helvetica"><strong>For best results when repeating tunes:<strong></p>'},	  
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:18pt;font-family:helvetica">For clean repeats, your tunes must not have extraneous pickup or trailing notes and must have proper and complete timing.</p>'},	  
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:18pt;font-family:helvetica">If there is a repeat at the end of the first part of a tune, either standalone or in a first ending, there must be a matching |: bar at the start of the tune for the tune repeats to work properly.</p>'},	  
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 760, scrollWithPage: (AllowDialogsToScroll()) } ).then(function(args){
@@ -8627,8 +8627,8 @@ function InjectStaffWidth(){
 
 	var form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject Staff Width Directive&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#pdf_tunebook_spacing_overrides" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
-	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">This will inject a %%staffwidth directive into the ABC. </p>'},  
-	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">Larger numbers make the notation less tall. </p>'},  
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a %%staffwidth directive into the ABC. </p>'},  
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">Larger numbers make the notation less tall. </p>'},  
 	  {name: "%%staffwidth value to inject?", id: "configure_staffwidth", type:"number", cssClass:"configure_staffwidth_form_text"}, 
 	  {name: "            Inject all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_staffwidth_form_text"},
 	];
@@ -8755,7 +8755,7 @@ function InjectSoundfont(){
 
 	var form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject Soundfont&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#selecting_the_instruments_for_playback" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
-	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">This will inject a %abcjs_soundfont directive into the ABC.</p>'},  
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a %abcjs_soundfont directive into the ABC.</p>'},  
 	  {name: "%abcjs_sound value to inject:", id: "configure_soundfont", type:"select", options:sound_fonts_list, cssClass:"configure_soundfont_select"},
 	  {name: "            Inject all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_soundfont_form_text"},
 	];
@@ -8836,10 +8836,12 @@ const metronome_list = [
     { name:"C|",  pattern:"2/2 cB"}, 
     { name:"C",   pattern:"4/4 cBBB"}, 
    	{ name:"2/2", pattern:"2/2 cB"},
+   	{ name:"3/2", pattern:"3/2 cBB"},
     { name:"2/4", pattern:"2/4 cB"}, 
     { name:"3/4", pattern:"3/4 cBB"}, 
     { name:"4/4", pattern:"4/4 cBBB"}, 
     { name:"5/4", pattern:"5/4 cBBBB"}, 
+    { name:"6/4", pattern:"6/4 cBBBBB"}, 
     { name:"7/4", pattern:"7/4 cBBBBBB"}, 
     { name:"2/8", pattern:"2/8 cx"}, 
     { name:"3/8", pattern:"3/8 cxx"}, 
@@ -8858,8 +8860,8 @@ function inject_one_metronome(tuneABC, showWarnings){
 
 	var i;
 
-	// Strip out non-tablature chord markings
-	var searchRegExp = /(?:"[_^][^"]*)"/gm
+	// Strip out non-tablature chord markings that don't cross line boundaries
+	var searchRegExp = /(?:"[_^][^"\n]*)"/gm
 
 	var theMatches = tuneABC.match(searchRegExp);
 
@@ -8883,7 +8885,8 @@ function inject_one_metronome(tuneABC, showWarnings){
 
 		}
 
-		searchRegExp = /"[^"]*"/gm
+		// Strip out chords that don't cross line boundaries
+		searchRegExp = /"[^"\n]*"/gm
 	
 		theStrippedABC = theStrippedABC.replace(searchRegExp, "");
 
@@ -8898,7 +8901,8 @@ function inject_one_metronome(tuneABC, showWarnings){
 
 
 		// No tablature chords, just replace them all 
-		searchRegExp = /"[^"]*"/gm
+		// Strip out chords that don't cross line boundaries
+		searchRegExp = /"[^"\n]*"/gm
 
 		theStrippedABC = tuneABC.replace(searchRegExp, "");
 
@@ -9208,8 +9212,8 @@ function InjectMetronome(){
 
 	var form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject Metronome&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#adding_a_metronome" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
-	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">This adds a metronome into the ABC using %MIDI chordprog and %abcjs_boomchick directives.</p>'},  
-	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>Note:&nbsp;&nbsp;This will strip any existing chords, MIDI chord programs and volumes from the ABC.</strong></p>'},  
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This adds a meter-adaptive metronome into the ABC using %MIDI chordprog and %abcjs_boomchick directives.</p>'},  
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica"><strong>Note:&nbsp;&nbsp;This will strip any existing chords, MIDI chord programs, and MIDI bass/chord volumes from the ABC.</strong></p>'},  
 	  {name: "            Inject metronome into all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_metronome_form_text"},
 	];
 
@@ -9577,7 +9581,7 @@ function InjectMIDIInstrument(bIsChords){
 
 	var form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject MIDI Melody Program&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#selecting_the_instruments_for_playback" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
-	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">This will inject a %%MIDI program directive into the ABC.</p>'},  
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a %%MIDI program directive into the ABC.</p>'},  
 	  {name: "MIDI program to inject:", id: "configure_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
 	  {name: "            Inject all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_midi_program_form_text"},
 	  {html: '<p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended_v2.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'}
@@ -9586,7 +9590,7 @@ function InjectMIDIInstrument(bIsChords){
 	if (bIsChords){
 		form = [
 		  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject MIDI Bass/Chords Program&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#selecting_the_instruments_for_playback" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
-		  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">This will inject a %%MIDI chordprog directive into the ABC.</p>'},  
+		  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a %%MIDI chordprog directive into the ABC.</p>'},  
 	  	  {name: "MIDI program to inject:", id: "configure_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
 		  {name: "            Inject all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_midi_program_form_text"},
 		  {html: '<p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="http://michaeleskin.com/documents/general_midi_extended_v2.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'}
@@ -11063,9 +11067,9 @@ function DoInjectTablature_Bamboo_Flute(){
 
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject Bamboo Flute Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://en.m.wikipedia.org/wiki/Numbered_musical_notation" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
-	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">This will inject numeric notation tablature for a bamboo flute in the key selected below into all of the tunes in the ABC text area:</p>'},	  
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject numeric notation tablature for a bamboo flute in the key selected below into all of the tunes in the ABC text area:</p>'},	  
 	  {name: "Bamboo flute key:", id: "configure_bamboo_flute_key", type:"select", options:bamboo_flute_keys, cssClass:"configure_box_settings_select"}, 
-	  {html: '<p style="margin-top:24px;font-size:12pt;line-height:14pt;font-family:helvetica">&nbsp;</p>'},	  
+	  {html: '<p style="margin-top:24px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},	  
 
 	];
 
@@ -12101,12 +12105,12 @@ function BatchMP3Export(){
 
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Export All Tunes as MP3&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#export_all_tunes_as_mp3" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
-	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:14pt;font-family:helvetica">This will export all the tunes in the ABC area as .MP3 files with one or more repeats.</p>'},	  
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will export all the tunes in the ABC area as .MP3 files with one or more repeats.</p>'},	  
 	  {name: "How many times to repeat each tune in the MP3:", id: "configure_repeats", type:"number", cssClass:"configure_repeats_form_text"}, 
 	  {name: "            Inject a two-bar style-appropriate click intro before each tune", id: "configure_inject_click", type:"checkbox", cssClass:"configure_repeats_form_text"},
-	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>For best results with repeated tunes:</strong></p>'},	  
-	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">For clean repeats, your tunes must not have extraneous pickup or trailing notes and must have proper and complete timing.</p>'},	  
-	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:14pt;font-family:helvetica">If there is a repeat at the end of the first part of a tune, either standalone or in a first ending, there must be a matching |: bar at the start of the tune for the tune repeats to work properly.</p>'},	  
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:18pt;font-family:helvetica"><strong>For best results with repeated tunes:</strong></p>'},	  
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:18pt;font-family:helvetica">For clean repeats, your tunes must not have extraneous pickup or trailing notes and must have proper and complete timing.</p>'},	  
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:18pt;font-family:helvetica">If there is a repeat at the end of the first part of a tune, either standalone or in a first ending, there must be a matching |: bar at the start of the tune for the tune repeats to work properly.</p>'},	  
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 760, scrollWithPage: (AllowDialogsToScroll()) } ).then(function(args){
