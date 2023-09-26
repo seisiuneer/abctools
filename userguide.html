@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-              
+        
         <style>
         p {
         font-size:14pt;
@@ -514,7 +514,7 @@
             <h1 class="page_break_always">Advanced Controls<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Advanced</strong> button brings up the ABC Transcription Tools Advanced Controls dialog:</p>
             <div class="image_holder_p">
-                <img src="img/advanced_controls_9.jpg"/>
+                <img src="img/advanced_controls_10.jpg"/>
             </div>
             <p>Click the lightbulb icon to bring up this section of the user guide in a new browser tab.</p>
             <p><strong>Show/Hide ABC Features:</strong></p>
@@ -593,9 +593,11 @@
             <p><strong>2:</strong> Export all the tunes in the tunebook to .MP3 by clicking <strong>Export all Tunes as .MP3</strong> in the <strong>Advanced Controls</strong> dialog, and when prompted enter the number of times through each tune.</p>
             <p>Your browser may request permission to download multiple files.</p>
             <p>During the batch export operation, click the export status dialog's <strong>Cancel</strong> button to stop the export.</p>
-            <p><strong>Sort ABC by Name</strong> - Sorts all the tunes in the ABC area in alphabetical order by tune name.</p>
-            <p>Tune names that start with "The" will have the "The" moved to the end of the tune name before the alphabetical sorting.</p>
-            <p>Holding down the Shift key while clicking this button will also treat "A " and "An " the same way as "The " for sorting.</p>
+            <p id="sort_dialog"><strong>Sort by Specific Tag</strong> - Brings up a dialog where you can sort the tunes based on a specified ABC tag:</p>
+            <p style="margin-left:30px;"><strong>Sort by Name (T:)</strong> - Sorts all the tunes by name alphabetically based on the value found in the first T: tag, ignoring an initial "The"</p>
+            <p style="margin-left:30px;"><strong>Sort by Name (T:) - Ignore "A"and "An"</strong> - This also sorts all the tunes by name, ignoring an initial "A" and "An" along with "The".</p>
+            <p style="margin-left:30px;"><strong>Sort by Key (K:)</strong> - This sorts all the tunes by the key value found in the first K: tag in the tune.</p>
+            <p style="margin-left:30px;"><strong>Sort by Meter (M:)</strong> - This sorts all the tunes by the meter value found in the first M: tag in the tune.</p>
             <hr class="hidden-print" id="settings_dialog">
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
