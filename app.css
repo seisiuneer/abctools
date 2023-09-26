@@ -239,6 +239,19 @@ margin-right: 23px;
 	}
 }
 
+#dialogrestoreautobutton{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+	margin-left:24px;
+}
+
+@media (hover: hover) {
+	.dialogrestoreautobutton:hover{
+	background: palegreen;
+	}
+}
+
 .clearbutton{
 margin-left: 0px;
 margin-right: 0px;
@@ -1182,7 +1195,7 @@ left:-5000px;
 
 .configure_settings_form_text{
 	font-size:12pt;
-	line-height:22px;
+	line-height:16px;
 	font-family:helvetica;
 	margin-top:18px;
 	display:flex;
@@ -1193,7 +1206,7 @@ left:-5000px;
 	font-family:helvetica;
 	margin-left: 12px;
 	width: 60px;
-	margin-top:-4px;
+	margin-top:-7px;
 }
 
 .configure_repeats_form_text{
