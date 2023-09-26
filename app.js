@@ -773,24 +773,24 @@ function GetAllTuneTags(theTag,totalTunes){
 function SortTunesByTag(theTag){
 
 	const meterWeights = [
-	    { name:"C|",  weight:5}, 
-	    { name:"C",   weight:6}, 
-	   	{ name:"2/2", weight:1},
-	   	{ name:"3/2", weight:2},
-	    { name:"2/4", weight:3}, 
-	    { name:"3/4", weight:4}, 
-	    { name:"4/4", weight:7}, 
-	    { name:"5/4", weight:8}, 
+	    { name:"C|",  weight:1}, 
+	    { name:"C",   weight:2}, 
+	   	{ name:"2/2", weight:10},
+	   	{ name:"3/2", weight:11},
+	    { name:"2/4", weight:7}, 
+	    { name:"3/4", weight:8}, 
+	    { name:"4/4", weight:3}, 
+	    { name:"5/4", weight:12}, 
 	    { name:"6/4", weight:9}, 
-	    { name:"7/4", weight:10}, 
-	    { name:"2/8", weight:11}, 
-	    { name:"3/8", weight:12}, 
-	    { name:"5/8", weight:13},
-	    { name:"6/8", weight:14}, 
-	    { name:"7/8", weight:15}, 
-	    { name:"9/8", weight:16},
-	    { name:"10/8", weight:17},
-	    { name:"12/8", weight:18}
+	    { name:"7/4", weight:13}, 
+	    { name:"2/8", weight:14}, 
+	    { name:"3/8", weight:15}, 
+	    { name:"5/8", weight:16},
+	    { name:"6/8", weight:4}, 
+	    { name:"7/8", weight:17}, 
+	    { name:"9/8", weight:5},
+	    { name:"10/8", weight:18},
+	    { name:"12/8", weight:6}
 	];
 
 	// Get all the tunes
