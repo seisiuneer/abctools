@@ -1177,7 +1177,7 @@ function SortDialog(){
 
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Sort by Specific Tag&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#sort_dialog" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
-	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will sort the ABC based on the field you select:</p>'},	  
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will sort the tunes based on the ABC tag you select:</p>'},	  
 	  {name: "Tag to sort by:", id: "configure_sort", type:"select", options:sorting_options, cssClass:"configure_sort_settings_select"}, 	  
 	  {html: '<p style="font-size:12pt;font-family:helvetica">&nbsp;</p>'},	  
 	];
@@ -8555,9 +8555,9 @@ function saveABCFile(thePrompt, thePlaceholder, theData){
 }
 
 //
-// Save the ShareURL file
+// Save a text file
 //
-function saveShareURLFile(thePrompt, thePlaceholder, theData){
+function saveTextFile(thePrompt, thePlaceholder, theData){
 
 	DayPilot.Modal.prompt(thePrompt, thePlaceholder,{ theme: "modal_flat", top: 200, autoFocus: false, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args) {
 
@@ -10263,7 +10263,7 @@ function SaveShareURL(){
 			// Derive a suggested name from the ABC
 			var theName = getDescriptiveFileName(theTuneCount,false);
 
-			saveShareURLFile("Please enter a filename for your Share URL file:",theName+"_Share_URL.txt",theData);
+			saveTextFile("Please enter a filename for your Share URL file:",theName+"_Share_URL.txt",theData);
 		}
 	}
 }
@@ -14968,26 +14968,128 @@ function ConfigureTablatureSettings(){
 // Font settings dialog
 //
 
+// Holds fonts during the duration of the dialog, global settings not changed unless accepted
+var gDialogRenderingFonts;
+
+function idleOpenFonts(){
+
+	if (gIsIOS){
+
+		document.getElementById("load_rendering_fonts_fs").removeAttribute("accept");
+	
+	}	
+
+	//
+	// Setup the file import control
+	//
+	document.getElementById("load_rendering_fonts_fs").onchange = () => {
+
+		let fileElement = document.getElementById("load_rendering_fonts_fs");
+
+		// check if user had selected a file
+		if (fileElement.files.length === 0) {
+
+			DayPilot.Modal.alert("Please select a font settings file",{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+			return;
+
+		}
+
+		let file = fileElement.files[0];
+
+		// Read the file and append it to the editor
+		loadFontSettings(file);
+
+		// Reset file selectors
+		fileElement.value = "";
+
+	}
+
+}
+
+//
+// Load the font settings from a dialog
+//
+function loadFontSettings(file){
+
+	const reader = new FileReader();
+
+	reader.addEventListener('load', (event) => {
+
+		var theText = event.target.result;
+
+		var theParsedFonts = JSON.parse(theText);
+
+		// Sanity check a couple of fields
+		if ((!theParsedFonts.titlefont) || (!theParsedFonts.voicefont)){
+
+			DayPilot.Modal.alert("This is not a valid font settings file.",{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+			return;
+
+		}
+
+		gDialogRenderingFonts = theParsedFonts;
+
+		// Idle the fonts dialog display showing the new values
+		idleFontsDialog();
+
+	});
+
+	reader.readAsText(file);
+}
+
+
+//
+// Load the font settings from a dialog
+//
+function saveFontSettings(){
+
+	// Default fonts used for rendering
+	var theRenderingFonts = {
+		titlefont: $('[name="configure_titlefont"]').val(),
+		subtitlefont: $('[name="configure_subtitlefont"]').val(),
+		infofont: $('[name="configure_infofont"]').val(),
+		partsfont: $('[name="configure_partsfont"]').val(),
+		tempofont: $('[name="configure_tempofont"]').val(),
+		textfont: $('[name="configure_textfont"]').val(),
+		composerfont: $('[name="configure_composerfont"]').val(),
+		annotationfont: $('[name="configure_annotationfont"]').val(),
+		gchordfont: $('[name="configure_gchordfont"]').val(),
+		vocalfont: $('[name="configure_vocalfont"]').val(),
+		wordsfont: $('[name="configure_wordsfont"]').val(),
+		tabnumberfont: $('[name="configure_tabnumberfont"]').val(),
+		historyfont: $('[name="configure_historyfont"]').val(),
+		voicefont: $('[name="configure_voicefont"]').val()
+
+	}
+
+	var theRenderingFontsJSON = JSON.stringify(theRenderingFonts);
+
+	saveTextFile("Please enter a filename for your font settings:", "abc_tool_fonts.txt", theRenderingFontsJSON);
+	
+}
+
 
 //
 // Idle the rendering fonts dialog
 // 
 function idleFontsDialog(){
 
-	$('[name="configure_titlefont"]').val(gRenderingFonts.titlefont);
-	$('[name="configure_subtitlefont"]').val(gRenderingFonts.subtitlefont);
-	$('[name="configure_infofont"]').val(gRenderingFonts.infofont);
-	$('[name="configure_partsfont"]').val(gRenderingFonts.partsfont);
-	$('[name="configure_tempofont"]').val(gRenderingFonts.tempofont);
-	$('[name="configure_textfont"]').val(gRenderingFonts.textfont);
-	$('[name="configure_composerfont"]').val(gRenderingFonts.composerfont);
-	$('[name="configure_annotationfont"]').val(gRenderingFonts.annotationfont);
-	$('[name="configure_gchordfont"]').val(gRenderingFonts.gchordfont);
-	$('[name="configure_vocalfont"]').val(gRenderingFonts.vocalfont);
-	$('[name="configure_wordsfont"]').val(gRenderingFonts.wordsfont);
-	$('[name="configure_tabnumberfont"]').val(gRenderingFonts.tabnumberfont);
-	$('[name="configure_historyfont"]').val(gRenderingFonts.historyfont);
-	$('[name="configure_voicefont"]').val(gRenderingFonts.voicefont);
+	$('[name="configure_titlefont"]').val(gDialogRenderingFonts.titlefont);
+	$('[name="configure_subtitlefont"]').val(gDialogRenderingFonts.subtitlefont);
+	$('[name="configure_infofont"]').val(gDialogRenderingFonts.infofont);
+	$('[name="configure_partsfont"]').val(gDialogRenderingFonts.partsfont);
+	$('[name="configure_tempofont"]').val(gDialogRenderingFonts.tempofont);
+	$('[name="configure_textfont"]').val(gDialogRenderingFonts.textfont);
+	$('[name="configure_composerfont"]').val(gDialogRenderingFonts.composerfont);
+	$('[name="configure_annotationfont"]').val(gDialogRenderingFonts.annotationfont);
+	$('[name="configure_gchordfont"]').val(gDialogRenderingFonts.gchordfont);
+	$('[name="configure_vocalfont"]').val(gDialogRenderingFonts.vocalfont);
+	$('[name="configure_wordsfont"]').val(gDialogRenderingFonts.wordsfont);
+	$('[name="configure_tabnumberfont"]').val(gDialogRenderingFonts.tabnumberfont);
+	$('[name="configure_historyfont"]').val(gDialogRenderingFonts.historyfont);
+	$('[name="configure_voicefont"]').val(gDialogRenderingFonts.voicefont);
 }
 
 //
@@ -14997,7 +15099,7 @@ function idleFontsDialog(){
 function resetABCRenderingFonts(){
 
 	// Default fonts used for rendering
-	gRenderingFonts = {
+	gDialogRenderingFonts = {
 		titlefont: "Palatino 18",
 		subtitlefont: "Palatino 13",
 		infofont: "Palatino 13",
@@ -15071,7 +15173,6 @@ function ConfigureFonts(){
 	  configure_voicefont:gRenderingFonts.voicefont,
 	};
 
-
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Configure ABC Rendering Fonts&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#configure_fonts" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
 	  {name: "Title font (Default: Palatino 18):", id: "configure_titlefont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
@@ -15088,8 +15189,14 @@ function ConfigureFonts(){
 	  {name: "Parts font (Default: Palatino 13):", id: "configure_partsfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
 	  {name: "Vocal font (Default: Palatino 13):", id: "configure_vocalfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
 	  {name: "Words font (Default: Palatino 13):", id: "configure_wordsfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
-	  {html: '<p style="text-align:center;margin-top:22px;"><input id="default_rendering_fonts" class="btn btn-clearbutton default_rendering_fonts" onclick="defaultFontSettings()" type="button" value="Reset to Default" title="Reset the ABC rendering fonts to their default values"></p>'}
+	  {html: '<p style="text-align:center;margin-top:22px;"><input id="save_rendering_fonts" class="btn btn-top save_rendering_fonts" onclick="saveFontSettings()" type="button" value="Save to File" title="Saves the ABC rendering font settings to a file"><input type="file" id="load_rendering_fonts_fs" accept=".txt,.TXT" hidden/><label class="btn btn-top load_rendering_fonts" for="load_rendering_fonts_fs" id="load_rendering_fonts" title="Loads the ABC rendering font settings from a file">Load from File</label><input id="default_rendering_fonts" class="btn btn-clearbutton default_rendering_fonts" onclick="defaultFontSettings()" type="button" value="Reset to Default" title="Reset the ABC rendering fonts to their default values"></p>'}
 	];
+	
+	setTimeout(function(){
+
+		idleOpenFonts();
+
+	}, 150);
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 600, scrollWithPage: (AllowDialogsToScroll()) } ).then(function(args){
 
@@ -15111,7 +15218,7 @@ function ConfigureFonts(){
 			gRenderingFonts.historyfont = args.result.configure_historyfont;
 			gRenderingFonts.voicefont = args.result.configure_voicefont;
 
-			Render(true,null);
+			RenderAsync(true,null);
 
 			// Save the settings, in case they were initialized
 			SaveConfigurationSettings();
