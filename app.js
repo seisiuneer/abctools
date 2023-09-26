@@ -716,6 +716,287 @@ function TransposeDown(e) {
 }
 
 //
+// Get the tune index titles
+//
+function GetAllTuneTags(theTag,totalTunes){
+
+	var i;
+
+	var theTags = [];
+
+	for (i=0;i<totalTunes;++i){
+
+		var thisTune = getTuneByIndex(i);
+
+		var neu = escape(thisTune);
+
+		var Reihe = neu.split("%0D%0A");
+
+		Reihe = neu.split("%0A");
+
+		var bGotTag = false;
+
+		for (var j = 0; j < Reihe.length; ++j) {
+
+			Reihe[j] = unescape(Reihe[j]); 
+
+			var Aktuellereihe = Reihe[j].split(""); 
+
+			if (Aktuellereihe[0] == theTag && Aktuellereihe[1] == ":") {
+
+				var tagValue = Reihe[j].slice(2);
+
+				tagValue = tagValue.trim();
+
+				// Just grab the first tag
+				theTags.push(tagValue);
+
+				bGotTag = true;
+
+				break
+
+			}
+		}
+
+		// If the tune is missing the tag, push a dummy value
+		if (!bGotTag){
+			theTags.push(" ");
+		}
+	}
+
+	return theTags;
+}
+
+//
+// Sort the tunes in the ABC text area
+//
+function SortTunesByTag(theTag){
+
+	const meterWeights = [
+	    { name:"C|",  weight:5}, 
+	    { name:"C",   weight:6}, 
+	   	{ name:"2/2", weight:1},
+	   	{ name:"3/2", weight:2},
+	    { name:"2/4", weight:3}, 
+	    { name:"3/4", weight:4}, 
+	    { name:"4/4", weight:7}, 
+	    { name:"5/4", weight:8}, 
+	    { name:"6/4", weight:9}, 
+	    { name:"7/4", weight:10}, 
+	    { name:"2/8", weight:11}, 
+	    { name:"3/8", weight:12}, 
+	    { name:"5/8", weight:13},
+	    { name:"6/8", weight:14}, 
+	    { name:"7/8", weight:15}, 
+	    { name:"9/8", weight:16},
+	    { name:"10/8", weight:17},
+	    { name:"12/8", weight:18}
+	];
+
+	// Get all the tunes
+	var theNotes = gTheABC.value;
+
+	var theTunes = theNotes.split(/(^X:.*$)/gm);
+
+	var nTunes = (theTunes.length - 1)/2;
+
+	if (nTunes < 2){
+		return;
+	}
+
+	var thePrefixABC = theTunes[0];
+
+	//console.log("thePrefixABC: "+thePrefixABC);
+
+	var theTags = GetAllTuneTags(theTag,theTunes.length - 1);
+
+	// Special weighted processing for the meter tag
+	var nTags = theTags.length;
+
+	if (theTag == "M"){
+		
+		var workTags = [];
+
+		for (var i=0;i<nTags;++i){
+
+			var thisMeter = theTags[i];
+
+			var theWeight = 19;
+
+			// Lets see if we have a supported meter
+			for (var j=0;j<meterWeights.length;++j){
+
+				if (thisMeter == meterWeights[j].name){
+
+					theWeight = meterWeights[j].weight;
+					break;
+
+				}
+			}
+
+			workTags.push(theWeight);
+		}
+
+		// Replace the tags with meter weights
+		theTags = workTags;
+	}
+	
+	var i;
+
+	var tunesToProcess = [];
+	var nProcessed = 0;
+	var thisTitle;
+
+	for (i=0;i<nTunes;++i){
+
+		if (theTunes[(i*2)+1] != undefined){
+
+			thisTag = theTags[nProcessed];
+
+			nProcessed++;
+
+			//console.log("Tune #"+nProcessed+": "+theTunes[(i*2)+1]+theTunes[(i*2)+2]);
+
+			tunesToProcess.push({tag:thisTag,tune:theTunes[(i*2)+1]+theTunes[(i*2)+2]});
+
+		}
+
+	}
+
+	//console.log("Tunes processed: "+nProcessed);
+
+	// Sort tunes by name
+	tunesToProcess.sort((a, b) => {
+
+	  const tagA = a.tag;
+	  
+	  const tagB = b.tag; // ignore upper and lowercase
+	  
+	  if (tagA < tagB) {
+	    return -1;
+	  }
+	  
+	  if (tagA > tagB) {
+	    return 1;
+	  }
+
+	  // names must be equal
+	  return 0;
+
+	});
+
+	theNotes = "";
+	theNotes += thePrefixABC;
+
+	// Aggregate the results
+	for (i=0;i<nProcessed;++i){
+
+		theNotes += tunesToProcess[i].tune;
+	}
+
+	// Put them back in the ABC area
+	gTheABC.value = theNotes; 
+
+	// Reset the selection
+	gTheABC.selectionStart = 0;
+    gTheABC.selectionEnd = 0;
+
+    // Focus after operation
+    FocusAfterOperation();
+
+}
+
+//
+// DoSortTunesByMeter command
+//
+function DoSortTunesByMeter() {
+
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
+
+	var elem = document.getElementById("sortbutton");
+	if (elem){
+		// Give some feedback
+		elem.value = "Sorting by Meter";
+	}
+
+	setTimeout(function(){
+
+		// Sort the tunes
+		SortTunesByTag("M");
+
+		// Redraw
+		RenderAsync(true,null,function(){
+
+			var elem = document.getElementById("sortbutton");
+			if (elem){
+				elem.value = "   Sorted!   ";
+			}
+		
+			setTimeout(function(){
+
+				var elem = document.getElementById("sortbutton");
+				if (elem){
+					elem.value = "Sort by Specific Tag";
+				}
+
+			},1000);
+
+		});
+
+	},750);
+
+}
+
+
+//
+// DoSortTunesByKey command
+//
+function DoSortTunesByKey() {
+
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
+
+	// Give some feedback
+	var elem = document.getElementById("sortbutton");
+	if (elem){
+		// Give some feedback
+		elem.value = "Sorting by Key";
+	}
+
+	setTimeout(function(){
+
+		// Sort the tunes by key
+		SortTunesByTag("K");
+
+		// Redraw
+		RenderAsync(true,null,function(){
+
+			var elem = document.getElementById("sortbutton");
+			if (elem){
+				elem.value = "   Sorted!   ";
+			}
+		
+			setTimeout(function(){
+
+				var elem = document.getElementById("sortbutton");
+				if (elem){
+					elem.value = "Sort by Specific Tag";
+				}
+
+			},1000);
+
+		});
+
+	},750);
+
+}
+
+//
 // Sort the tunes in the ABC text area
 //
 function SortTunes(stripAn){
@@ -728,9 +1009,7 @@ function SortTunes(stripAn){
 	var nTunes = (theTunes.length - 1)/2;
 
 	if (nTunes < 2){
-
 		return;
-		
 	}
 
 	var thePrefixABC = theTunes[0];
@@ -831,40 +1110,41 @@ function SortTunes(stripAn){
 }
 
 //
-// UI SortABC command
+// DoSortTunesByName command
 //
-function SortABC(e) {
+function DoSortTunesByName(stripAn) {
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
 		return;
 	}
 
-	var stripAn = false;
-
-	if (e.shiftKey){
-		stripAn = true;
-	}
-
-
 	// Give some feedback
-	document.getElementById("sortbutton").value = "Sorting ABC by Name";
+	var elem = document.getElementById("sortbutton");
+
+	if (elem){
+		elem.value = "Sorting by Name";
+	}
 
 	setTimeout(function(){
 
 		// Sort the tunes
 		SortTunes(stripAn);
 
-		document.getElementById("sortbutton").value = "   Rendering   ";
-
 		// Redraw
 		RenderAsync(true,null,function(){
 
-			document.getElementById("sortbutton").value = "   Sorted!   ";
+			var elem = document.getElementById("sortbutton");
+			if (elem){
+				elem.value = "   Sorted!   ";
+			}
 		
 			setTimeout(function(){
 
-				document.getElementById("sortbutton").value = "Sort ABC by Name";
+				var elem = document.getElementById("sortbutton");
+				if (elem){
+					elem.value = "Sort by Specific Tag";
+				}
 
 			},1000);
 
@@ -872,6 +1152,63 @@ function SortABC(e) {
 
 	},750);
 
+}
+
+//
+// Sort Dialog
+//
+// Prompts for the sorting key
+//
+var gLastSortOrder = "0";
+
+function SortDialog(){
+
+ 	const sorting_options = [
+	    { name: "  Sort by Name (T:)", id: "0" },
+	    { name: '  Sort by Name (T:) - Ignore "A"and "An"' , id: "1" },
+	    { name: "  Sort by Key (K:)", id: "2" },
+	    { name: "  Sort by Meter (M:)", id: "3" },
+  	];
+
+	// Setup initial values
+	const theData = {
+	  configure_sort:gLastSortOrder,
+	};
+
+	const form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Sort by Specific Tag&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#sort_dialog" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will sort the ABC based on the field you select:</p>'},	  
+	  {name: "Tag to sort by:", id: "configure_sort", type:"select", options:sorting_options, cssClass:"configure_sort_settings_select"}, 	  
+	  {html: '<p style="font-size:12pt;font-family:helvetica">&nbsp;</p>'},	  
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 500, scrollWithPage: (AllowDialogsToScroll()) } ).then(function(args){
+
+		// Get the results and store them in the global configuration
+		if (!args.canceled){
+			
+			gLastSortOrder = args.result.configure_sort;
+
+			switch (args.result.configure_sort){
+
+				case "0":
+					DoSortTunesByName(false);
+					break;
+				case "1":
+					DoSortTunesByName(true);
+					break;
+				case "2":
+					DoSortTunesByKey();
+					break;
+				case "3":
+					DoSortTunesByMeter();
+					break;
+				default:
+					DoSortTunesByName(false);
+					break;
+			}
+		}
+	});
 }
 
 //
@@ -14997,7 +15334,7 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<input id="injectbambooflute" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Bamboo_Flute()" type="button" value="Inject Bamboo Flute Tab" title="Injects Bamboo flute tablature into the ABC">';
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-subdialog configure_box_advanced " onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"></p>';	
-	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="BatchMP3Export()" type="button" value="Export all Tunes as MP3" title="Exports all the tunes in the ABC text area as .mp3 files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortABC(event)" type="button" value="Sort ABC by Name" title="Sorts all the tunes by name"></p>';	
+	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="BatchMP3Export()" type="button" value="Export all Tunes as MP3" title="Exports all the tunes in the ABC text area as .mp3 files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Specific Tag" title="Brings up the Sort by Specific Tag dialog"></p>';	
 	modal_msg += '</div>';
 
 	setTimeout(function(){
