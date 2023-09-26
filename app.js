@@ -97,9 +97,6 @@ var gAllowShowTabNames = false;
 // Has the tin whistle font been loaded?
 var gWhistleFontPrepared = false;
 
-// First render detect for show controls notation area reposition
-var gIsFirstRender = true;
-
 // Debounce time for text area change render requests
 var DEBOUNCEMS = 280;
 
@@ -123,6 +120,9 @@ var gCurrentTab = "noten";
 
 // Did we just do a paste or other operation to programatically change the text area?
 var gForceFullRender = false;
+
+// Is this the first render
+var gIsFirstRender = true;
 
 // Are we in single or dual column display mode?
 var gIsOneColumn = true;
@@ -6450,6 +6450,8 @@ function Render(renderAll,tuneNumber) {
 
 		gABCFromFile = false;
 
+		gIsFirstRender = true;
+
 		// Recalculate the notation top position
 		UpdateNotationTopPosition();
 
@@ -6804,6 +6806,7 @@ function RestoreDefaults() {
 	gTotalTunes = 0;
 	gCurrentTune = 0;
 	gForceFullRender = false;
+	gIsFirstRender = true;
 
 	// Clear the autoscroll state
 	gLastAutoScrolledTune = -1;
@@ -15738,6 +15741,53 @@ function CleanSmartQuotes(){
 
 }
 
+//
+// Fix the iOS 17 URL encoded paste issue
+//
+function FixIOS17(){
+
+	// Restrict to iOS 17
+
+	var UA = navigator.userAgent;
+	
+	//alert("navigator.userAgent: "+UA);
+
+	// Checking both Safari as well as Chrome/Firefox user agent strings
+	if ((UA.indexOf("Version/17") != -1) || (UA.indexOf("OS 17") != -1) || (UA.indexOf("FxiOS") != -1)){
+
+		//alert("Doing iOS 17 fix");
+
+		var val = gTheABC.value;
+
+		try{
+			
+			val = decodeURI(val);
+
+			try{
+
+				val = decodeURI(val);
+
+			}
+			catch(err){
+
+				//console.log("FixIOS17 catch 2");
+
+			}
+		}
+		catch(err){
+
+			//console.log("FixIOS17 catch 1");
+
+		}
+
+		val = val.replaceAll("%3A",":")		
+		val = val.replaceAll("x:","X:");
+
+		gTheABC.value = val;
+	}
+
+}
+
 
 function DoStartup() {
 
@@ -15971,6 +16021,14 @@ function DoStartup() {
 			setTimeout(function(){
 
 				CleanSmartQuotes();
+
+				if (gIsIOS){
+
+					// iOS 17 messed up copy and paste 
+					// appears to be double URL encoded
+					FixIOS17();
+
+				}
 
 			},0);
 		};
