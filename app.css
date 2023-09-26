@@ -1485,6 +1485,32 @@ margin-top:-7px;
 	}
 }
 
+#load_rendering_fonts{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+	margin-right:24px;
+}
+
+@media (hover: hover) {
+	.load_rendering_fonts:hover{
+	background: palegreen;
+	}
+}
+
+#save_rendering_fonts{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+	margin-right:24px;
+}
+
+@media (hover: hover) {
+	.save_rendering_fonts:hover{
+	background: palegreen;
+	}
+}
+
 #default_rendering_fonts{
 	height:42px;
 	margin-top: 9px;
