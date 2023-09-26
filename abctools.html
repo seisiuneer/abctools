@@ -36,8 +36,8 @@
 		<link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 		<link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-		<link href="app.css?v=633" media="all" rel="stylesheet" type="text/css">
-				
+		<link href="app.css?v=635" media="all" rel="stylesheet" type="text/css">
+		
 	</head>
 	<body>
 		<div id="app-container">
@@ -109,8 +109,8 @@
 					<div id="transpose-controls">
 						<input class="transposedown btn btn-transpose" id="transposedown" onclick="TransposeDown(event)" type="button" value="Transpose Down" title="Transposes the selected tunes down one semitone.&nbsp;&nbsp; Shift-click transposes down one full step.&nbsp;&nbsp;Alt-click transposes down one octave.">
 						<input class="transposeup btn btn-transpose" id="transposeup" onclick="TransposeUp(event)" type="button" value="Transpose Up" title="Transposes the selected tunes up one semitone.&nbsp;&nbsp;Shift-click transposes up one full step.&nbsp;&nbsp;Alt-click transposes up one octave.">
-						<input class="snapshotbutton btn btn-snapshotbutton" id="snapshotbutton" onclick="SaveSnapshot();" type="button" value="Snapshot" title="Saves a snapshot of the contents of the ABC editor to browser storage">
-						<input class="restorebutton btn btn-restorebutton" id="restorebutton" onclick="RestoreSnapshot(false);" type="button" value="Restore" title="Replaces the contents of the ABC editor with the last snapshot from browser storage">
+						<input class="snapshotbutton btn btn-snapshotbutton" id="snapshotbutton" onclick="SaveSnapshot();" type="button" value="Snapshot" title="Saves a Snapshot of the contents of the ABC editor to browser storage">
+						<input class="restorebutton btn btn-restorebutton" id="restorebutton" onclick="RestoreSnapshot(false,false);" type="button" value="Restore" title="Replaces the contents of the ABC editor with a Snapshot saved in browser storage">
 						<input class="toggleadvancedcontrols btn btn-toggleadvancedcontrols" id="toggleadvancedcontrols" onclick="AdvancedControlsDialog()" type="button" value="Advanced" title="Shows the Advanced Controls dialog where you can inject Box or Anglo Concertina tablature and useful ABC templates, hide or strip chords and other ABC annotations, as well as perform other ABC operations">
 						<input class="togglesharecontrols btn btn-togglesharecontrols" id="togglesharecontrols" onclick="SharingControlsDialog()" type="button" value="Sharing"  title="Shows the Sharing dialog">
 						<input class="clearbutton btn btn-clearbutton" id="clearbutton" onclick="Clear()" type="button" value="Clear" title="Clears all the ABC">
@@ -171,19 +171,19 @@
 		</div>
 		
 	</body>
-	<script type="text/javascript" src="jquery-1.11.1.min.js?v=633"></script><!-- jQuery -->
-	<script type="text/javascript" src="jszip.min.js?v=633"></script><!-- zip file handling -->
-	<script type="text/javascript" src="xml2abc.js?v=633"></script><!-- to convert MusicXML to ABC -->
-	<script type="text/javascript" src="abcjs-chord-intervals.js?v=633"></script><!-- chord intervals used by abcjs - non-minified -->
-	<script type="text/javascript" src="abcjs-basic-tabs-min.js?v=633"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
-	<script type="text/javascript" src="jspdf.min.js?v=633"></script><!-- to generate PDF using Javscript -->
-	<script type="text/javascript" src="html2image.js?v=633"></script><!-- to convert HTML elements to bitmaps -->
-	<script type="text/javascript" src="qrcode.js?v=633"></script><!-- to generate QR codes for the share links -->
-	<script type="text/javascript" src="lz-string.min.js?v=633"></script><!-- used for share URL generation -->
-	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=633"></script><!-- modal dialog replacement -->
-	<script type="text/javascript" src="lame.min.js?v=633"></script><!-- .mp3 audio encoder -->
-	<script type="text/javascript" src="unmute.min.js?v=633"></script><!-- fixes issue on iOS Safari muting tabs -->
-	<script type="text/javascript" src="tab-injectors-min.js?v=633"></script><!-- Tab generation for ABC injection -->
-	<script type="text/javascript" src="app-min.js?v=633"></script><!-- main application business logic -->
-	<script type="text/javascript" src="api-keys.js?v=633"></script><!-- API keys used by the tool -->
+	<script type="text/javascript" src="jquery-1.11.1.min.js?v=635"></script><!-- jQuery -->
+	<script type="text/javascript" src="jszip.min.js?v=635"></script><!-- zip file handling -->
+	<script type="text/javascript" src="xml2abc.js?v=635"></script><!-- to convert MusicXML to ABC -->
+	<script type="text/javascript" src="abcjs-chord-intervals.js?v=635"></script><!-- chord intervals used by abcjs - non-minified -->
+	<script type="text/javascript" src="abcjs-basic-tabs-min.js?v=635"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
+	<script type="text/javascript" src="jspdf.min.js?v=635"></script><!-- to generate PDF using Javscript -->
+	<script type="text/javascript" src="html2image.js?v=635"></script><!-- to convert HTML elements to bitmaps -->
+	<script type="text/javascript" src="qrcode.js?v=635"></script><!-- to generate QR codes for the share links -->
+	<script type="text/javascript" src="lz-string.min.js?v=635"></script><!-- used for share URL generation -->
+	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=635"></script><!-- modal dialog replacement -->
+	<script type="text/javascript" src="lame.min.js?v=635"></script><!-- .mp3 audio encoder -->
+	<script type="text/javascript" src="unmute.min.js?v=635"></script><!-- fixes issue on iOS Safari muting tabs -->
+	<script type="text/javascript" src="tab-injectors-min.js?v=635"></script><!-- Tab generation for ABC injection -->
+	<script type="text/javascript" src="app-min.js?v=635"></script><!-- main application business logic -->
+	<script type="text/javascript" src="api-keys.js?v=635"></script><!-- API keys used by the tool -->
 </html>
