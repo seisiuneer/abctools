@@ -195,6 +195,9 @@ var gUseCustomGMSounds = true;
 // Use count for tip jar reminder
 var gTipJarCount = 0;
 
+// Save the editor state in a snapshot at exit time
+var gSaveLastAutoSnapShot = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -1254,6 +1257,21 @@ function ClearNoRender() {
 
 }
 
+
+//
+// Save the current ABC to browser storage at exit time
+//
+function DoSaveLastAutoSnapShot(){
+
+	if (gLocalStorageAvailable){
+		
+		var theABC = gTheABC.value;
+
+		localStorage.LastAutoSnapShot = theABC;
+
+	}
+}
+
 //
 // Save the current ABC to browser storage
 //
@@ -1283,17 +1301,41 @@ function SaveSnapshot(){
 //
 // Restore current ABC from browser storage
 //
-function RestoreSnapshot(bIsAddDialogButton){
+// Restores either a user snapshot or an automatically saved snapshot
+//
+
+function RestoreSnapshot(bRestoreAutoSnapshot,bIsAddDialogButton){
 	
 	if (gLocalStorageAvailable){
 
 		var theABC = gTheABC.value;
 
-		var theSnapshot = localStorage.SavedSnapshot;
+		var theSnapshot;
+
+		var thePrompt, theErrorPrompt;
+
+		if (bRestoreAutoSnapshot){
+
+			theSnapshot = localStorage.LastAutoSnapShot;
+
+			thePrompt = "Replace the contents of the ABC editor with the Auto-Snapshot?";
+
+			theErrorPrompt = "No saved Auto-Snapshot available to restore.";
+
+		}
+		else{
+
+			theSnapshot = localStorage.SavedSnapshot;
+
+			thePrompt = "Replace the contents of the ABC editor with the Snapshot?";
+
+			theErrorPrompt = "No saved Snapshot available to restore.";
+
+		}
 
 		if ((theSnapshot) && (theSnapshot != "")){
 
-			DayPilot.Modal.confirm("Replace the contents of the ABC editor with the saved snapshot?",{ top:200, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+			DayPilot.Modal.confirm(thePrompt,{ top:200, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
 
 				if (!args.canceled){
 
@@ -1322,12 +1364,23 @@ function RestoreSnapshot(bIsAddDialogButton){
 					}
 					else{
 
-						// The dialog might have been closed, so check that the element is present before idling it
-						var elem = document.getElementById("dialogrestorebutton");
+						var elem;
 
-						if (elem){
-							elem.value = "Restoring from Snapshot";
+						// The dialog might have been closed, so check that the element is present before idling it
+
+						if (bRestoreAutoSnapshot){
+							elem = document.getElementById("dialogrestoreautobutton");
+							if (elem){
+								elem.value = "Restoring from Auto-Snapshot";
+							}
 						}
+						else{
+							elem = document.getElementById("dialogrestorebutton");
+							if (elem){
+								elem.value = "Restoring from Snapshot";
+							}
+						}
+
 
 						setTimeout(function(){
 
@@ -1336,18 +1389,41 @@ function RestoreSnapshot(bIsAddDialogButton){
 							// Redraw
 							RenderAsync(true,null,function(){
 
-								var elem = document.getElementById("dialogrestorebutton");
+								var elem;
 
-								if (elem){
-									elem.value = "Restored from Snapshot";
+								// The dialog might have been closed, so check that the element is present before idling it
+
+								if (bRestoreAutoSnapshot){
+									elem = document.getElementById("dialogrestoreautobutton");
+									if (elem){
+										elem.value = "Restored from Auto-Snapshot";
+									}
 								}
-								
+								else{
+									elem = document.getElementById("dialogrestorebutton");
+									if (elem){
+										elem.value = "Restored from Snapshot";
+									}
+								}
+
 								setTimeout(function(){
 
-									var elem = document.getElementById("dialogrestorebutton");
+									var elem;
 
-									if (elem){
-										elem.value = "Restore from Snapshot";
+									// The dialog might have been closed, so check that the element is present before idling it
+
+									if (bRestoreAutoSnapshot){
+										elem = document.getElementById("dialogrestoreautobutton");
+
+										if (elem){
+											elem.value = "Restore from Auto-Snapshot";
+										}
+									}
+									else{
+										elem = document.getElementById("dialogrestorebutton");
+										if (elem){
+											elem.value = "Restore from Snapshot";
+										}
 									}
 
 								},1000);
@@ -1361,7 +1437,7 @@ function RestoreSnapshot(bIsAddDialogButton){
 		}
 		else{
 
-			DayPilot.Modal.alert('<p style="text-align:center;font-size:18px;">No saved snapshot available to restore.</p>',{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+			DayPilot.Modal.alert('<p style="text-align:center;font-size:18px;">'+theErrorPrompt+'</p>',{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 
 		}
 		
@@ -7296,19 +7372,36 @@ function idleAddABC(){
 	}
 
 	// Show the snapshot button if one is available in browser storage
-	var elem = document.getElementById("dialogrestorebutton");
+	var elem1 = document.getElementById("dialogrestorebutton");
 
-	elem.style.display="none";
+	elem1.style.display="none";
+
+	var elem2 = document.getElementById("dialogrestoreautobutton");
+
+	elem2.style.display="none";
 
 	if (gLocalStorageAvailable){
 
 		var theSnapshot = localStorage.SavedSnapshot;
 
-		if ((theSnapshot) && (theSnapshot != "")){
+		var bTheSnapShotAvailable = ((theSnapshot) && (theSnapshot != ""));
 
-			elem.style.display="inline";
+		var theLastAutoSnapShot = localStorage.LastAutoSnapShot;
+
+		var bTheLastAutoSnapShotAvailable = ((theLastAutoSnapShot) && (theLastAutoSnapShot != ""));
+
+		if (bTheSnapShotAvailable){
+
+			elem1.style.display="inline";
 
 		}
+
+		if (bTheLastAutoSnapShotAvailable){
+
+			elem2.style.display="inline";
+
+		}
+
 	}
 
 
@@ -7322,7 +7415,8 @@ function AddABC(){
 	modal_msg += '<p style="text-align:center;margin-top:36px;">';
 	modal_msg += '<input type="file" id="addabcfilebutton" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL" hidden/>';
 	modal_msg += '<label class="abcuploaddialog btn btn-top" for="addabcfilebutton" title="Adds tunes from an existing ABC or MusicXML file to the end of the ABC">Choose File to Add</label>';
-	modal_msg += '<input class="dialogrestorebutton btn btn-restorebutton" id="dialogrestorebutton" onclick="RestoreSnapshot(true);" type="button" value="Restore from Snapshot" title="Replaces the contents of the ABC editor with the last snapshot from browser storage" style="display:none;">';
+	modal_msg += '<input class="dialogrestorebutton btn btn-restorebutton" id="dialogrestorebutton" onclick="RestoreSnapshot(false,true);" type="button" value="Restore from Snapshot" title="Replaces the contents of the ABC editor with a Snapshot saved in browser storage" style="display:none;">';
+	modal_msg += '<input class="dialogrestoreautobutton btn btn-restorebutton" id="dialogrestoreautobutton" onclick="RestoreSnapshot(true,true);" type="button" value="Restore from Auto-Snapshot" title="Replaces the contents of the ABC editor with an Auto-Snapshot saved in browser storage" style="display:none;">';
 	modal_msg += '</p>';
 	modal_msg += '<p style="text-align:center;margin-top:24px;font-size:18px;margin-top:40px;">Add an Example ABC Tune</p>';
 	modal_msg += '<p style="text-align:center;margin-top:24px;">';
@@ -14407,6 +14501,21 @@ function GetInitialConfigurationSettings(){
 		localStorage.SavedSnapshot = "";
 	}
 
+	// Setup initial saved exit snapshot
+	val = localStorage.SaveLastAutoSnapShot;
+	if (val){
+		gSaveLastAutoSnapShot = (val == "true");
+	}
+	else{
+		gSaveLastAutoSnapShot = false;
+	}
+
+	val = localStorage.LastAutoSnapShot;
+	if (!val){
+		localStorage.LastAutoSnapShot = "";
+	}
+
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -14490,6 +14599,9 @@ function SaveConfigurationSettings(){
 
 		// Save the first time using the metronome status
 		localStorage.IsFirstTimeUsingMetronome = gIsFirstTimeUsingMetronome;
+
+		// Save the save editor state flag
+		localStorage.SaveLastAutoSnapShot = gSaveLastAutoSnapShot;
 
 	}
 }
@@ -15407,7 +15519,7 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">Show/Hide ABC Features</p>'
 	modal_msg  += '<p style="text-align:center;">'
 	modal_msg  += '<input id="toggleannotations" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleAnnotations(false)" type="button" value="Hide Annotations" title="Hides/Shows common annotations in the ABC notation">';
-	modal_msg  += 	'<input id="toggletext" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTextAnnotations(false)" type="button" value="Hide Text" title="Hides/Shows any text in the ABC notation.">';
+	modal_msg  += 	'<input id="toggletext" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTextAnnotations(false)" type="button" value="Hide Text" title="Hides/Shows any text in the ABC notation">';
 	modal_msg  += 	'<input id="togglechords" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleChords(false)" type="button" value="Hide Chords + Injected Tab" title="Hides/Shows any chords in the ABC notation.&nbsp;&nbsp;Also hides any Box or Anglo Concertina tablature.">';
 	modal_msg  += '</p>';
 	
@@ -15550,7 +15662,8 @@ function ConfigureToolSettings(e) {
 	  configure_mp3_bitrate: gMP3Bitrate,
 	  configure_soundfont: gDefaultSoundFont,
 	  configure_autoscrollplayer: gAutoscrollPlayer,
-	  configure_use_custom_gm_sounds: gUseCustomGMSounds,	  
+	  configure_use_custom_gm_sounds: gUseCustomGMSounds,
+	  configure_save_exit_snapshot: gSaveLastAutoSnapShot,	  
 	};
 
  	const sound_font_options = [
@@ -15559,8 +15672,19 @@ function ConfigureToolSettings(e) {
 	    { name: "  FatBoy", id: "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/" },
   	];
 
-	const form = [
-	  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:50px;">ABC Transcription Tools Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#settings_dialog" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+  	// Disallowing auto snapshots on mobile
+
+	var form = [
+	  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:50px;">ABC Transcription Tools Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#settings_dialog" target="_blank" style="text-decoration:none;">💡</a></span></p>'}
+	];
+
+	if (!(gIsIOS || gIsAndroid)){
+		form.push(
+	  		{name: "   Save an Auto-Snapshot on browser tab close or reload (Restore it from the Add dialog)", id: "configure_save_exit_snapshot", type:"checkbox", cssClass:"configure_settings_form_text"}
+	  );
+	}
+
+	const form2 = [
 	  {name: "Full screen tune display scaling (percentage):", id: "configure_fullscreen_scaling", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Staff spacing (default is 10):", id: "configure_staff_spacing", type:"number", cssClass:"configure_settings_form_text"},
 	  {html: '<p style="font-size:4pt;font-family:helvetica">&nbsp;</p>'},	  
@@ -15581,6 +15705,8 @@ function ConfigureToolSettings(e) {
 	  {html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Configure ABC Fonts" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="Configure MusicXML Import" title="Configure MusicXML import parameters"></p>'},	  
 	];
 
+	form = form.concat(form2);
+
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 780, scrollWithPage: (AllowDialogsToScroll()) } ).then(function(args){
 
 		// Get the results and store them in the global configuration
@@ -15600,6 +15726,27 @@ function ConfigureToolSettings(e) {
 			gLargePlayerControls = args.result.configure_large_player_controls;
 
 			gShowTabNames = args.result.configure_show_tab_names;
+			
+			if (!(gIsIOS || gIsAndroid)){
+
+				gSaveLastAutoSnapShot = args.result.configure_save_exit_snapshot;
+
+				// Clear any existing auto snapshot if not requested
+				if (!gSaveLastAutoSnapShot){
+
+					if (gLocalStorageAvailable){
+
+						localStorage.LastAutoSnapShot = "";
+
+					}
+				}
+
+			}
+			else{
+			
+				gSaveLastAutoSnapShot = false;
+			
+			}
 
 			// Validate the staff spacing value
 			var testStaffSpacing = args.result.configure_staff_spacing;
@@ -16511,6 +16658,27 @@ function DoStartup() {
 		DoFileRead(file, false);
 
 	}
+
+ 	//
+    // Setup the exit function to save the last editor state
+    //
+    // Only allowed on desktop systems
+    //
+	if (!(gIsIOS || gIsAndroid)){
+
+	    window.addEventListener('beforeunload', function (e) {
+	    	
+	    	if (gSaveLastAutoSnapShot){
+
+	    		DoSaveLastAutoSnapShot();
+
+	    	}
+
+	    	return;
+
+	    });
+	}
+
 
 	// Set the initial tab to notation
 	//document.getElementById("b1").checked = true;
