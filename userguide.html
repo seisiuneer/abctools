@@ -362,15 +362,21 @@
             <p>.xml, .musicxml, or .mxl - Imports a MusicXML file form your computer, converts it to ABC, and loads it into the ABC Editor.</p>
             <p>Details on MusicXML import settings below in the <a style="text-decoration:none;" href="#musicxml">MusicXML Import Settings</a> section.</p>
             <p>On desktop browsers, you may also drag-and-drop a single ABC or MusicXML file on the editor area to add it.</p>
-            <p id="add_templates_dialog"><strong>Add</strong> - Brings up a dialog where you can add your own ABC or MusicXML tunes, example ABC tunes, and useful ABC templates:</p>
+            <p id="add_templates_dialog"><strong>Add</strong> - Brings up a dialog where you can add your own ABC or MusicXML tunes, example ABC tunes, useful ABC templates, or restore previously saved Snapshots:</p>
             <div class="image_holder_p">
-                <img src="img/add_example_template_8.jpg"/>
+                <img src="img/add_example_template_9.jpg"/>
             </div>
             <p><strong>Choose File to Add:</strong></p>
             <p>Browse your system for an ABC or MusicXML file with one or more tunes to add to the end of the current tunes.</p>
-            <p><strong>Restore from Snapshot</strong> - This button appears if there is a saved Snapshot available in browser storage.</p>
+            <p><strong>Restore from Snapshot:</strong></p>
+            <p>This button appears if there is a saved Snapshot available in browser storage.</p>
             <p>When clicked, restores the last saved Snapshot, replacing the contents of the ABC editor.</p>
             <p>Since it completely replaces the contents of the ABC editor, you will be asked to confirm the operation.</p>
+            <p><strong>Restore from Auto-Snapshot:</strong> (Desktop browsers only) </p>
+            <p>This button appears if there is a saved Auto-Snapshot available in browser storage.</p>
+            <p>When clicked, restores the last Auto-Snapshot, replacing the contents of the ABC editor.</p>
+            <p>Since it completely replaces the contents of the ABC editor, you will be asked to confirm the operation.</p>
+            <p>On desktop browsers, automatic snapshots when closing or reloading the browser tab the tool is running in can be enabled in the tool's <strong>Settings</strong> dialog. </p>
             <p><strong>Add an Example Reel:</strong></p>
             <p>Adds "Cooley's" as an example of a typical reel.</p>
             <p><strong>Add an Example Jig:</strong></p>
@@ -603,8 +609,9 @@
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder_p">
-                <img src="img/abc_transcription_tool_settings_20.jpg"/>
+                <img src="img/abc_transcription_tool_settings_21.jpg"/>
             </div>
+            <p><strong>Save an Auto-Snapshot on browser tab close or reload? (Restore it from the Add dialog)</strong> - (Desktop browsers only) When enabled, saves an Auto-Snapshot when closing or reloading the browser tab the tool is running in.</p>
             <p><strong>Full screen tune display scaling (percentage)</strong> - Sets the width in percentage of window width for the tune notation on the screen when viewing full screen. Default is 50%.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/KagT-Aq8mY8" title="Full-Screen Tune Display Options" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>If the resulting scaled width is less than 850 pixels (820 pixels for iOS/Android) the width will be set to 850 pixels (820 pixels for iOS/Android).</p>
