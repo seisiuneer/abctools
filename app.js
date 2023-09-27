@@ -15922,6 +15922,8 @@ function ConfigureToolSettings(e) {
 
 	var theOldUseCustomGMSounds = gUseCustomGMSounds;
 
+	var theOldSaveLastAutoSnapShot = gSaveLastAutoSnapShot;
+
 	// Setup initial values
 	const theData = {
 	  configure_inject_programs: bAlwaysInjectPrograms,
@@ -16014,6 +16016,23 @@ function ConfigureToolSettings(e) {
 					if (gLocalStorageAvailable){
 
 						localStorage.LastAutoSnapShot = "";
+
+					}
+
+					// Was on before, now is off
+					if (theOldSaveLastAutoSnapShot != gSaveLastAutoSnapShot){
+
+						RemoveTabCloseListener();
+
+					}
+
+				}
+				else
+				{
+					// Was off, now is on
+					if (theOldSaveLastAutoSnapShot != gSaveLastAutoSnapShot){
+
+						AddTabCloseListener();
 
 					}
 				}
@@ -16656,6 +16675,40 @@ function FixIOS17(){
 
 }
 
+//
+// Add tab close listener
+//
+function theTabCloseListener(e){
+
+	DoSaveLastAutoSnapShot();
+
+	return;
+
+}
+
+function AddTabCloseListener(){
+
+	if (!(gIsIOS || gIsAndroid)){
+
+		//console.log("Adding tab close listener")
+
+	    window.addEventListener('beforeunload',theTabCloseListener);
+
+	}
+}
+
+//
+// Remove tab close listener
+//
+function RemoveTabCloseListener(){
+
+	if (!(gIsIOS || gIsAndroid)){
+
+		//console.log("Removing tab close listener")
+
+	    window.removeEventListener('beforeunload',theTabCloseListener);
+	}
+}
 
 function DoStartup() {
 
@@ -16936,26 +16989,6 @@ function DoStartup() {
 
 	}
 
- 	//
-    // Setup the exit function to save the last editor state
-    //
-    // Only allowed on desktop systems
-    //
-	if (!(gIsIOS || gIsAndroid)){
-
-	    window.addEventListener('beforeunload', function (e) {
-	    	
-	    	if (gSaveLastAutoSnapShot){
-
-	    		DoSaveLastAutoSnapShot();
-
-	    	}
-
-	    	return;
-
-	    });
-	}
-
 
 	// Set the initial tab to notation
 	//document.getElementById("b1").checked = true;
@@ -16995,6 +17028,21 @@ function DoStartup() {
 		// Load the initial configuration settings from local storage
 		GetInitialConfigurationSettings();
 
+	}
+
+	//
+    // If enabled install the tab close listener to save the last editor state
+    //
+    // Only allowed on desktop systems
+    //
+	if (!(gIsIOS || gIsAndroid)){
+
+	    if (gSaveLastAutoSnapShot){
+
+	    	AddTabCloseListener();
+	    
+	    }
+	    
 	}
 
 	// Check for and process URL share link
