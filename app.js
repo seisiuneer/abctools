@@ -137,6 +137,10 @@ var gLocalStorageAvailable = false;
 // PDF oversampling for PDF rendering
 var gPDFQuality = 0.75;
 
+// PDF font
+var gPDFFont = "Times";
+var gPDFFontStyle = "";
+
 // Include page links on tunebook index pages
 var gIncludePageLinks = true;
 
@@ -1630,7 +1634,7 @@ function AppendTuneTitlePage(thePDF,paperStyle,theTitle,theSubtitle){
 	if (theTitle != ""){
 
 		// Set the font size
-		thePDF.setFont("Times","","normal");
+		thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
 		thePDF.setFontSize(TPTITLESIZE);
 
 		if (theTunebookTPURL && (theTunebookTPURL != "")){
@@ -1653,7 +1657,7 @@ function AppendTuneTitlePage(thePDF,paperStyle,theTitle,theSubtitle){
 	if (theSubtitle != ""){
 
 		// Set the font size
-		thePDF.setFont("Times","","normal");
+		thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
 		thePDF.setFontSize(TPSTTITLESIZE);
 
 		if (theTunebookTPSTURL && (theTunebookTPSTURL != "")){
@@ -1715,7 +1719,7 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 	var i,j;
 
 	// Set the font size
-	thePDF.setFont("Times","","normal");
+	thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
 	thePDF.setFontSize(TEXTINCIPITFONTSIZE);
 
 	var theTune;
@@ -1949,7 +1953,7 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 				thePDF.addPage(paperStyle); 
 
 				// Set the font size
-				thePDF.setFont("Times","","normal");
+				thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
 				thePDF.setFontSize(TEXTINCIPITFONTSIZE);
 
 				// Start back at the top
@@ -1998,7 +2002,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 
 
 	// Set the font size
-	thePDF.setFont("Times","","normal");
+	thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
 	thePDF.setFontSize(INDEXTITLESIZE);
 
 	if (theTitle != ""){
@@ -2022,7 +2026,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 	var thePageNumber;
 
 	// Set the font size
-	thePDF.setFont("Times","","normal");
+	thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
 	thePDF.setFontSize(INDEXFONTSIZE);
 
 	// Make a copy of the page map
@@ -2141,7 +2145,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 				}
 
 				// Set the font size
-				thePDF.setFont("Times","","normal");
+				thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
 				thePDF.setFontSize(INDEXFONTSIZE);
 
 				// Start back at the top
@@ -2442,7 +2446,7 @@ function AddPageTextHeader(thePDF,paperStyle,theHeaderText){
 		voff = PAGENUMBERTOPA4;
 	}
 
-	thePDF.setFont("Times","","normal");
+	thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
 	thePDF.setFontSize(HEADERFOOTERFONTSIZE);
 
 	// Add the TOC header
@@ -2486,7 +2490,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 	}
 
 	// Set the font size
-	thePDF.setFont("Times","","normal");
+	thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
 	thePDF.setFontSize(TOCTITLESIZE);
 
 	if (theTitle != ""){
@@ -2510,7 +2514,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 	var thePageNumber;
 
 	// Set the font size
-	thePDF.setFont("Times","","normal");
+	thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
 	thePDF.setFontSize(TOCFONTSIZE);
 
 	// Make a copy of the page map
@@ -2629,7 +2633,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 				}
 
 				// Set the font size
-				thePDF.setFont("Times","","normal");
+				thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
 				thePDF.setFontSize(TOCFONTSIZE);
 
 				// Start back at the top
@@ -2917,7 +2921,7 @@ function AppendQRCode(thePDF,paperStyle,callback){
 			thePDF.link(r.left, r.top, r.width, r.height, {url:theURL});
 
 			// Set the font size
-			thePDF.setFont("Times","","normal");
+			thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
 			thePDF.setFontSize(QRCODECAPTIONPDFFONTSIZE);
 
 			// Different caption offset for letter vs a4
@@ -4185,6 +4189,88 @@ function ParseCommentCommands(theNotes){
 		}
 	}
 
+	// Search for a PDF font request
+	searchRegExp = /^%pdffont.*$/m
+
+	gPDFFont = "Times";
+	gPDFFontStyle = "";
+
+	// Detect tunebook TOC annotation
+	var pdfFont = theNotes.match(searchRegExp);
+
+	if ((pdfFont) && (pdfFont.length > 0)){
+
+		pdfFont = pdfFont[0].replace("%pdffont","");
+		
+		pdfFont = pdfFont.trim();
+		
+		var theFontSplit = pdfFont.split(" ");
+		
+		if ((theFontSplit) && (theFontSplit.length>1)){
+
+			gPDFFont = theFontSplit[0];
+			gPDFFontStyle = theFontSplit[1];
+
+		}
+		else{
+			
+			gPDFFont = pdfFont;
+			gPDFFontStyle = "";
+
+		}
+
+		if (gPDFFontStyle.toLowerCase() == "normal"){
+			gPDFFontStyle = "";
+		}
+
+		// Sanity check font name
+		var lcfont = gPDFFont.toLowerCase();
+
+		switch (lcfont){
+			case "times":
+				// Translate Times style description
+				if(gPDFFontStyle.toLowerCase() == "oblique"){
+					gPDFFontStyle = "Italic";
+				}
+				else
+				if(gPDFFontStyle.toLowerCase() == "boldoblique"){
+					gPDFFontStyle = "BoldItalic";
+				}
+				break;
+
+			case "helvetica":
+			case "courier":
+				break;
+
+			default:
+				gPDFFont = "Times";
+				gPDFFontStyle = "";
+				break;
+				
+		}
+
+		// Sanity check font style
+		var lcstyle = gPDFFontStyle.toLowerCase();
+
+		if (lcstyle != ""){
+		
+			switch (lcstyle){
+				case "normal":
+				case "bold":
+				case "oblique":
+				case "boldoblique":
+				case "italic":
+				case "bolditalic":
+					break;
+
+				default:
+					gPDFFontStyle = "";
+					break;
+			}
+		}
+	}
+
+
 	// Check my work
 	// console.log("theTunebookTP = "+theTunebookTP);
 	// console.log("theTunebookTPST = "+theTunebookTPST);
@@ -4196,6 +4282,8 @@ function ParseCommentCommands(theNotes){
 	// console.log("gAddPlaybackHyperlinks = "+gAddPlaybackHyperlinks);
 	// console.log("gPlaybackHyperlinkMelodyProgram = "+gPlaybackHyperlinkMelodyProgram);
 	// console.log("gPlaybackHyperlinkBassChordProgram = "+gPlaybackHyperlinkBassChordProgram);
+	// console.log("gPDFFont = "+gPDFFont);
+	// console.log("gPDFFontStyle = "+gPDFFontStyle);
 
 }
 
@@ -4289,7 +4377,7 @@ function AddPageHeaderFooter(thePDF,doAddPageNumber,pageNumber,pageNumberLocatio
 		voff = PAGENUMBERTOPA4;
 	}
 
-	thePDF.setFont("Times","","normal");
+	thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
 	thePDF.setFontSize(HEADERFOOTERFONTSIZE);
 
 	var hasHeader = false;
@@ -4356,7 +4444,7 @@ function AddPageHeaderFooter(thePDF,doAddPageNumber,pageNumber,pageNumberLocatio
 		}
 	}
 
-	thePDF.setFont("Times","","normal");
+	thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
 	thePDF.setFontSize(HEADERFOOTERFONTSIZE);
 
 	// Add page number
@@ -11343,13 +11431,14 @@ function InjectPDFHeaders(bDoAll){
 		output += "%pdfquality .75\n";
 		output += "%pdf_between_tune_space 20\n";
 		output += "%pdfname your_pdf_filename\n"
+		output += "%pdffont fontname style\n"		
 		output += "%addtitle Title Page Title\n";
 		output += "%addsubtitle Title Page Subtitle\n";
 		output += "%urladdtitle http://michaeleskin.com Title Page Title as Hyperlink\n";
 		output += "%urladdsubtitle http://michaeleskin.com Title Page Subtitle as Hyperlink\n";
 		output += "%addtoc Table of Contents\n";
 		output += "%addsortedtoc Table of Contents Sorted by Tune Name\n";
-		output += "%addlinkbacktotoc\n";
+		output += "%addlinkbacktotoc\n";	
 		output += "%tocheader Page Header Text for Table of Contents Pages\n";		
 		output += "%toctopoffset 30\n";
         output += "%toctitleoffset 35\n";
@@ -11408,7 +11497,13 @@ function InjectPDFHeaders(bDoAll){
 
 		var output = "";
 		output += "%\n";
-		output += "% Here is a useful template of annotations for a PDF tunebook:\n";
+		output += "% This is a template of commonly used annotations for a PDF tunebook\n";
+		output += "%\n";
+		output += "% Select the font for the Title Page, Table of Contents, Index, etc.\n"
+		output += "% Available fonts: Times, Helvetica, and Courier\n"
+		output += "% Available font styles: Normal, Bold, Oblique, and BoldOblique\n"
+		output += "%\n";
+		output += "%pdffont Times Normal\n"
 		output += "%\n";
 		output += "%pdfquality .75\n";
 		output += "%pdf_between_tune_space 20\n";
