@@ -244,6 +244,7 @@
                 <button class="accordion" title="Click to expand/collapse this section">PDF Tunebook Generation</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#pdf_tunebook_settings">Export PDF Settings</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#pdf_font_settings">PDF Font Settings</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#pdf_quality_setting">PDF Quality Setting</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#pdf_tunebook_spacing_overrides">PDF Tunebook Tune Size and Layout Spacing Overrides</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#adding_a_pdf_title_page">Adding a PDF Tunebook Title Page</a></p>
@@ -510,6 +511,7 @@
             <p>To transpose multiple tunes, just click anywhere in the first tune you want to transpose, and drag to select any part of additional tunes you want transposed.</p>
             <p>To transpose all the tunes at once, select them all before clicking the Tranpose buttons.</p>
             <p><strong>Snapshot</strong> - Saves a snapshot of the contents of the ABC editor to browser storage.</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/doPwU-BgCAc " title="Snapshots" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>If you save a snapshot and leave the tool, the next time you run the tool the snapshot will be available to restore by either clicking the <strong>Restore</strong> button on the main toolbar or the <strong>Restore from Snapshot</strong> button in the <strong>Add</strong> dialog.</p>
             <p><strong>Restore</strong> - If one is available, replaces the current contents of the ABC editor with the last saved snapshot from browser storage.</p>
             <p>Since it completely replaces the contents of the ABC editor, you will be asked to confirm the operation.</p>
@@ -612,6 +614,7 @@
                 <img src="img/abc_transcription_tool_settings_21.jpg"/>
             </div>
             <p><strong>Save an Auto-Snapshot on browser tab close or reload? (Restore it from the Add dialog)</strong> - (Desktop browsers only) When enabled, saves an Auto-Snapshot when closing or reloading the browser tab the tool is running in.</p>
+           <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/pp6fD2NOKtw" title="Auto-Snapshots" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p><strong>Full screen tune display scaling (percentage)</strong> - Sets the width in percentage of window width for the tune notation on the screen when viewing full screen. Default is 50%.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/KagT-Aq8mY8" title="Full-Screen Tune Display Options" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>If the resulting scaled width is less than 850 pixels (820 pixels for iOS/Android) the width will be set to 850 pixels (820 pixels for iOS/Android).</p>
@@ -956,6 +959,16 @@
             </div>
             <p>Choose whether the page number will be shown on the first page of the PDF.</p>
             <p>Default is:&nbsp;&nbsp;Yes</p>
+            <hr class="hidden-print" id="pdf_font_settings">
+            <h1 class="page_break_always">PDF Font Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/iGuuhN8HZDI" title="Setting Tunebook Fonts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p>You may set the font to be used for the PDF title page, page headers/footers, table of contents, index pages, page numbers, and text incipits by adding the following ABC comment-based annotation anywhere in the ABC:</p>
+            <p></p>
+            <p class="code">%pdffont fontname fontstyle</p>
+            <p>Valid fontname values are: Times, Helvetica, and Courier.</p>
+            <p>Valid fontstyle values are: Normal, Bold, Oblique, and BoldOblique.</p>
+            <p>You can leave the style value blank for the Normal style.</p>
+            <p></p>
             <hr class="hidden-print" id="pdf_quality_setting">
             <h1 class="page_break_always">PDF Quality Setting<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>You may set the quality of the PDF output by adding the following ABC comment-based annotation anywhere in the ABC:</p>
@@ -1278,6 +1291,7 @@
             <p></p>
             <p>Here is a good starting template of annotations for creating a tunebook that includes:</p>
             <p></p>
+            <p>Sets the font to Times for the title page, table of contents, index, page headers/footers, page numbers, and text incipits.</p>
             <p>Sets the PDF quality to the default (.75 = High quality). This can be reduced to create smaller, but lower quality PDF files.</p>
             <p>Sets the spacing between tunes for multiple tunes/page to the default of 20/72". Change this to 0 for minimal space between PDF tunes.</p>
             <p>Title page with sub-title</p>
@@ -1290,7 +1304,8 @@
             <p>Playback links on every tune title selecting an Piano sound for the melody and a Piano sound for the bass/chords</p>
             <p>QR code with hyperlink and caption at the end of the tunebook</p>
             <p></p>
-            <p class="code">%pdfquality .75<br/>
+            <p class="code">%pdffont Times<br/>
+                %pdfquality .75<br/>
                 %pdf_between_tune_space 20<br/>
                 %addtitle Tunebook Title<br/>
                 %addsubtitle Tunebook Subtitle<br/>
