@@ -1241,6 +1241,23 @@ left:-5000px;
 	margin-top:-4px;
 }
 
+.configure_midi_program_form_number_input{
+	font-size:12pt;
+	line-height:24px;
+	font-family:helvetica;
+	margin-top:18px;
+	display:flex;
+}
+
+.configure_midi_program_form_number_input>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 60px;
+	margin-top:-4px;
+}
+
+
 .configure_midi_program_select{
 font-size:11pt;
 font-family:"Helvetica";
