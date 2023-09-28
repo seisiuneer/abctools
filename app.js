@@ -9578,10 +9578,10 @@ function InjectAllMIDIParams(){
 	var form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject MIDI Soundfont, Melody, and Chords&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#selecting_the_instruments_for_playback" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
 	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a %abcjs_soundfont directive into the ABC.</p>'},  
-	  {name: "            Inject Soundfont", id: "configure_inject_soundfont", type:"checkbox", cssClass:"configure_midi_program_form_text"},
+	  {name: "            Inject abcjs Soundfont", id: "configure_inject_soundfont", type:"checkbox", cssClass:"configure_midi_program_form_text"},
 	  {name: "%abcjs_soundfont value to inject:", id: "configure_soundfont", type:"select", options:sound_fonts_list, cssClass:"configure_soundfont_select"},
 	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a %%MIDI program directive into the ABC.</p>'},  
-	  {name: "            Inject Melody program", id: "configure_inject_melody_program", type:"checkbox", cssClass:"configure_midi_program_form_text"},
+	  {name: "            Inject MIDI Melody program", id: "configure_inject_melody_program", type:"checkbox", cssClass:"configure_midi_program_form_text"},
 	  {name: "MIDI Melody program to inject:", id: "configure_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
 	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a %%MIDI chordprog with bass and chord volume directives into the ABC.</p>'},  
 	  {name: "            Inject MIDI Chord program and volumes", id: "configure_inject_chord_program", type:"checkbox", cssClass:"configure_midi_program_form_text"},
@@ -9602,7 +9602,7 @@ function InjectAllMIDIParams(){
 
 			// Nothing requested
 			if (!(bDoSoundFont || bDoMelodyProgram || bDoChordProgram)){
-				console.log("No MIDI injection requested");
+				//console.log("No MIDI injection requested");
 				return;
 			}
 
