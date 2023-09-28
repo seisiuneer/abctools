@@ -37,7 +37,16 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-                
+        
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-5C74XEDW40"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-5C74XEDW40');
+        </script>
+        
         <style>
         p {
         font-size:14pt;
@@ -522,7 +531,7 @@
             <h1 class="page_break_always">Advanced Controls<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Advanced</strong> button brings up the ABC Transcription Tools Advanced Controls dialog:</p>
             <div class="image_holder_p">
-                <img src="img/advanced_controls_10.jpg"/>
+                <img src="img/advanced_controls_11.jpg"/>
             </div>
             <p>Click the lightbulb icon to bring up this section of the user guide in a new browser tab.</p>
             <p><strong>Show/Hide ABC Features:</strong></p>
@@ -545,14 +554,17 @@
             <p>It may be a good idea to save the current ABC or do a <strong>Copy All</strong> before using one of these commands if you want to quickly undo the operation.</p>
             <p><strong>Inject All PDF Annotations</strong> - Injects all available tool-specific PDF tunebook annotations for title page, table of contents, index generation, etc. at the top of the ABC.</p>
             <p><strong>Inject PDF Tunebook Annotation Template</strong> - Injects a useful template of common PDF tunebook annotations at the top of the ABC.</p>
-            <p><strong>Inject %abcjs_soundfont</strong> - Prompts for an %abcjs_soundfont value to inject at the text insertion point or into all tunes.</p>
             <p>This allows you to control the abcjs soundfont used for playback of the tune.</p>
-            <p><strong>Inject MIDI Melody</strong> - Injects a %%MIDI program directive at the text insertion point or into all tunes with a specific MIDI instrument program number for the melody.</p>
-            <p>Select your MIDI instrument for the Melody from the instrument dropdown menu.</p>
-            <p>To mute the melody, select "Mute".</p>
-            <p><strong>Inject MIDI Bass/Chords</strong> - Inject a %%MIDI chordprog directive with optional bass/chord volume directives at the text insertion point or into all tunes with a specific MIDI instrument program number for the bass/chords.</p>
-            <p>Select your MIDI instrument for the Bass/Chords from the instrument dropdown menu.</p>
-            <p>To mute the melody, select "Mute".</p>
+            <p><strong>Inject MIDI Soundfont, Melody Program, Chord Program, and Volumes</strong> - Injects MIDI Soundfont, Melody program, Chord program and volume annotation into one or all tunes.</p>
+            <div class="image_holder_p">
+                <img src="img/inject_all_midi_1.jpg"/>
+            </div>
+            <p>Select your MIDI soundfont from the soundfont selection menu.</p>
+            <p>Select your MIDI instrument for the Melody and Bass/Chords from the instrument program selection menus.</p>
+            <p>To mute the Melody or Bass/Chords, select "Mute" from the instrument program selection menus.</p>
+            <p>You may select which of the MIDI parameters you want injected by clicking the checkboxes.</p>
+            <p>Select "Inject all tunes" to add the selected MIDI annotations to all tunes.</p>
+            <p>If "Inject all tunes" is not checked, the MIDI annotation is added at the current text insertion point.</p>
             <p><strong>Inject Metronome</strong> - Using the custom rhythm pattern feature, injects a playable metronome into one or all tunes based on the meter of the tune as specified in the M: tag.</p>
             <p>Since the metronome uses the ABC chord system to do its job, adding a metronome strips any existing ABC chords, MIDI chord programs, and MIDI bass/chord volumes from the ABC before injecting the ABC for the metronome.</p>
             <p>To disable an injected metronome, simply delete the injected "E" chord that starts it off.</p>
@@ -628,8 +640,8 @@
             <p>Hiding the tab names may, or may not, depending on the height of the staves, be useful for getting more staves on a single PDF page.</p>
             <p><strong>Stringed instrument capo fret postion</strong> - Allows you to set a capo setting from 0 to 12 frets for the Mandolin, GDAD, CGDA, or Guitar tab.</p>
             <p>The following controls select default MIDI programs and volumes to use for the Melody, Bass, and Chords:</p>
-            <p><strong>Default Melody MIDI program</strong> - Select your default MIDI instrument for the Melody from the instrument dropdown menu.</p>
-            <p><strong>Default Bass/Chords MIDI program</strong> - Select your default MIDI instrument for the Bass/Chords from the instrument dropdown menu.</p>
+            <p><strong>Default Melody MIDI program</strong> - Select your default MIDI instrument for the Melody from the instrument selection menu.</p>
+            <p><strong>Default Bass/Chords MIDI program</strong> - Select your default MIDI instrument for the Bass/Chords from the instrument selection menu.</p>
             <p>Enabling <strong>Use Default Melody and Bass/Chord programs when playing tunes</strong> will play tunes that don't have Melody or Bass/Chord programs already in the ABC with your preferred instrument sounds. </p>
             <p>If a %%MIDI program or %%MIDI chordprog directive is already present in the tune when playing, it will take precedence over the default program values.</p>
             <p>If a %%MIDI bassvol or %%MIDI chordvol directive is already present in the tune when playing, it will take precedence over the default volume values.</p>
@@ -1420,12 +1432,12 @@
             <p><strong>Note:</strong> Setting either value blank restores the original default "↓" for Push and "↑" for Draw character values.</p>
             <p><strong>Use a bar over button name to indicate Draw (overrides Push and Draw characters)</strong> - If checked, draws a bar over the button name for a bellows Draw and no bar for bellows Push.</p>
             <p>If checked, overrides the use of the Push or Draw characters entered above.</p>
-            <p>Select your preferred tablature position relative to the notation (Above or Below) from the dropdown.</p>
+            <p>Select your preferred tablature position relative to the notation (Above or Below) from the selection menu.</p>
             <p>When injecting tablature below the notation, you have the option to strip all existing chords and tablature from the ABC before injecting the new tab.</p>
             <p>Injecting tablature above the notation always strips existing chords and tablature from the ABC before injecting the new tab.</p>
             <p><strong>Anglo Concertina-specific settings:</strong></p>
-            <p>Select your instrument style: (Jeffries or Wheatstone) from the <strong>Concertina style</strong> dropdown.</p>
-            <p>Select your preferred fingering solution from the <strong>Preferred fingerings</strong> dropdown:</p>
+            <p>Select your instrument style: (Jeffries or Wheatstone) from the <strong>Concertina style</strong> selection menu.</p>
+            <p>Select your preferred fingering solution from the <strong>Preferred fingerings</strong> selection menu:</p>
             <p><strong>On-Row:</strong></p>
             <p>Jim Van Donsel's original fingering solution, favors center row:</p>
             <p>Favors playing D5 and E5 on the right-side C-row.</p>
