@@ -4192,8 +4192,9 @@ function ParseCommentCommands(theNotes){
 	// Search for a PDF font request
 	searchRegExp = /^%pdffont.*$/m
 
-	gPDFFont = "Times";
-	gPDFFontStyle = "";
+	// Now being set in the PDF dialog
+	// gPDFFont = "Times";
+	// gPDFFontStyle = "";
 
 	// Detect tunebook TOC annotation
 	var pdfFont = theNotes.match(searchRegExp);
@@ -5107,7 +5108,7 @@ function ExportTextIncipitsPDF(title){
 
 	// Setup function scope shared vars
 
-	document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"red\">" + title + "</font>";
+	document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"blue\">" + title + "</font>";
 
 	document.getElementById("statustunecount").innerHTML = "";
 
@@ -5344,11 +5345,11 @@ function ExportTextIncipitsPDF(title){
 		//
 		function finalize_pdf_export(){				
 
-			document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Rendering Complete!</font>";
+			document.getElementById("statuspdfname").innerHTML = "<font color=\"green\">Rendering Complete!</font>";
 
 				setTimeout(function(){
 
-				document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"red\">" + title + "</font>";
+				document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"blue\">" + title + "</font>";
 
 				// Save the status up for a bit before saving
 				setTimeout(function(){
@@ -5523,7 +5524,7 @@ function ExportNotationPDF(title) {
 		// If tabnames are being shown, hide them
 		if ((gAllowFilterAnnotations && (!gStripAnnotations)) || (gAllowFilterText && (!gStripTextAnnotations)) || (gAllowShowTabNames && (gShowTabNames))){
 
-			document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"red\">" + title + "</font>";
+			document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"blue\">" + title + "</font>";
 
 			document.getElementById("statustunecount").innerHTML = "Processing incipits for PDF generation";
 
@@ -5580,7 +5581,7 @@ function ExportNotationPDF(title) {
 
 		qualitaet = 1200; 
 
-		document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"red\">" + title + "</font>";
+		document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"blue\">" + title + "</font>";
 
 		document.getElementById("statustunecount").innerHTML = "Processing notation for PDF generation";
 
@@ -5912,15 +5913,13 @@ function ExportNotationPDF(title) {
 					//
 					function finalize_pdf_export(){				
 
-						document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Rendering Complete!</font>";
+						document.getElementById("statuspdfname").innerHTML = "<font color=\"green\">Rendering Complete!</font>";
 
 						setTimeout(function(){
 
-
-
 								if (title){
 
-									document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"red\">" + title + "</font>";
+									document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"blue\">" + title + "</font>";
 
 								}
 
@@ -6307,6 +6306,11 @@ function UpdateLocalStorage(){
 		else{
 			localStorage.abcShowTabNames = "false";
 		}
+
+		// Save the last PDF font and style
+		localStorage.PDFFont = gPDFFont;
+		localStorage.PDFFontStyle = gPDFFontStyle;
+
 
 	}
 
@@ -7517,6 +7521,9 @@ function AddABC(){
 	modal_msg += '</p>';
 	modal_msg += '<p style="text-align:center;margin-top:32px;font-size:18px;">Add an ABC Template</p>';
 	modal_msg += '<p style="text-align:center;margin-top:24px;">';
+	modal_msg  += '<input id="addtunebookheaders" class="advancedcontrols btn btn-injectcontrols-injectpdfheaders" onclick="InjectPDFHeaders(false);" type="button" value="Add Common Useful PDF Tunebook Annotations" title="Adds common useful PDF tunebook annotations to the top of the ABC">';
+	modal_msg += '</p>';
+	modal_msg += '<p style="text-align:center;margin-top:24px;">';
 	modal_msg  += '<input id="addnewsong" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleSong();" type="button" value="Add an Example Song" title="Adds an example song to the end of the ABC">';
 	modal_msg  += '<input id="addsongtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSongTemplate();" type="button" value="Add a Song Template" title="Adds a minimal song template to the end of the ABC">';
 	modal_msg += '</p>';
@@ -7525,11 +7532,7 @@ function AddABC(){
 	modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddClickTrackTemplate();" type="button" value="Add Two-Bar Click Intro Templates" title="Adds two-bar click intro templates for common styles of tunes to the end of the ABC">';
 	modal_msg += '</p>';
 	modal_msg += '<p style="text-align:center;margin-top:24px;">';
-	modal_msg  += '<input id="addtunebookheaders" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders(false);" type="button" value="Add PDF Tunebook Annotations" title="Adds common useful PDF tunebook annotations to the top of the ABC">';
 	modal_msg += '</p>';
-	modal_msg += '<p style="text-align:center;margin-top:24px;">';
-	modal_msg += '</p>';
-
 	modal_msg += '</div>';
 
 	setTimeout(function(){
@@ -11427,12 +11430,7 @@ function InjectPDFHeaders(bDoAll){
 		var output = "";
 		output += "%\n";
 		output += "% This is a template of commonly used annotations for a PDF tunebook\n";
-		output += "%\n";
-		output += "% Select the font for the Title Page, Table of Contents, Index, etc.\n"
-		output += "% Available fonts: Times, Helvetica, and Courier\n"
-		output += "% Available font styles: Normal, Bold, Oblique, and BoldOblique\n"
-		output += "%\n";
-		output += "%pdffont Times Normal\n"
+		output += "% Modify these as required for your tunebook\n";
 		output += "%\n";
 		output += "%pdfquality .75\n";
 		output += "%pdf_between_tune_space 20\n";
@@ -14721,6 +14719,15 @@ function GetInitialConfigurationSettings(){
 		localStorage.LastAutoSnapShot = "";
 	}
 
+	val = localStorage.PDFFont;
+	if (val){
+		gPDFFont = val;
+	}
+
+	val = localStorage.PDFFontStyle;
+	if (val){
+		gPDFFontStyle = val;
+	}
 
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
@@ -14808,6 +14815,10 @@ function SaveConfigurationSettings(){
 
 		// Save the save editor state flag
 		localStorage.SaveLastAutoSnapShot = gSaveLastAutoSnapShot;
+
+		// Save the last PDF font and style
+		localStorage.PDFFont = gPDFFont;
+		localStorage.PDFFontStyle = gPDFFontStyle;
 
 	}
 }
@@ -15614,101 +15625,210 @@ function SharingControlsDialog(){
 // PDF Export dialog
 //
 
-function IdlePDFExportDialog(){
-
-	var pdfformat = document.getElementById("pdfformat").value;
-	document.getElementById("pdfformat_dialog").value = pdfformat
-
-	var pagenumbers = document.getElementById("pagenumbers").value;
-	document.getElementById("pagenumbers_dialog").value = pagenumbers;
-
-	var firstpage = document.getElementById("firstpage").value;
-	document.getElementById("firstpage_dialog").value = firstpage;
-
-}
-
-function SyncPDFExportDialog(){
-
-	// Syncs up the hidden old-style controls with the dialog controls
-
-	var pdfformat = document.getElementById("pdfformat_dialog").value;
-	document.getElementById("pdfformat").value = pdfformat
-
-	var pagenumbers = document.getElementById("pagenumbers_dialog").value;
-	document.getElementById("pagenumbers").value = pagenumbers;
-
-	var firstpage = document.getElementById("firstpage_dialog").value;
-	document.getElementById("firstpage").value = firstpage;
-
-	SavePDFSettings();
-
-}
-
 function PDFExportDialog(){
 
-	var theData = {};
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
 
-	// Moving the PDF export controls to their own dialog
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">Export PDF Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#pdf_tunebook_settings" target="_blank" style="text-decoration:none;">💡</a></span></p>';
-	modal_msg += '<div id="pdf-export-dialog">';
-	modal_msg += '<div id="pdf-settings_dialog" class="toggle-buttons">';
-	modal_msg += '<tspan id="pdfformatlabel_dialog">PDF Tunes/Page:</tspan>';
-	modal_msg += '<select id="pdfformat_dialog" name="pdfformat" onchange="SyncPDFExportDialog()" title="Sets the PDF tunebook page output format">';
-	modal_msg += '<option value = "one" title="One tune-per-page.&nbsp;&nbsp;Paper size is Letter">&nbsp;One&nbsp;-&nbsp;Letter</option>';
-	modal_msg += '<option value = "multi" title="Multiple tunes-per-page.&nbsp;&nbsp;Paper size is Letter">&nbsp;Multiple&nbsp;-&nbsp;Letter</option>';
-	modal_msg += '<option value = "incipits" title="Tune notation incipits.&nbsp;&nbsp;Paper size is Letter">&nbsp;Notes Incipits&nbsp;-&nbsp;Letter</option>';
-	modal_msg += '<option value = "incipits_abc" title="ABC text incipits.&nbsp;&nbsp;Paper size is Letter">&nbsp;ABC Incipits&nbsp;-&nbsp;Letter</option>';
-	modal_msg += '<option value = "incipits_abc_sort" title="ABC text incipits, sorted by title.&nbsp;&nbsp;Paper size is Letter">&nbsp;ABC Incipits Sorted&nbsp;-&nbsp;Letter</option>';
-	modal_msg += '<option value = "one_a4" title="One tune-per-page.&nbsp;&nbsp;Paper size is A4">&nbsp;One&nbsp;-&nbsp;A4</option>';
-	modal_msg += '<option value = "multi_a4" title="Multiple tunes-per-page.&nbsp;&nbsp;Paper size is A4">&nbsp;Multiple&nbsp;-&nbsp;A4</option>';
-	modal_msg += '<option value = "incipits_a4" title="Tune notation incipits.&nbsp;&nbsp;Paper size is A4">&nbsp;Notes Incipits&nbsp;-&nbsp;A4</option>';
-	modal_msg += '<option value = "incipits_a4_abc" title="ABC text incipits.&nbsp;&nbsp;Paper size is A4">&nbsp;ABC Incipits&nbsp;-&nbsp;A4</option>';
-	modal_msg += '<option value = "incipits_a4_abc_sort" title="ABC text incipits sorted by title.&nbsp;&nbsp;Paper size is A4">&nbsp;ABC Incipits Sorted&nbsp;-&nbsp;A4</option>';
-	modal_msg += '</select>';
-	modal_msg += '<tspan id="pagenumberslabel_dialog">Page #:</tspan>';
-	modal_msg += '<select id="pagenumbers_dialog" name="pagenumbers" onchange="SyncPDFExportDialog()" title="Sets the PDF tunebook page number position">';
-	modal_msg += '<option value = "none">&nbsp;None</option>';
-	modal_msg += '<option value = "tl">&nbsp;Top Left</option>';
-	modal_msg += '<option value = "tc">&nbsp;Top Center</option>';
-	modal_msg += '<option value = "tr">&nbsp;Top Right</option>';
-	modal_msg += '<option value = "bl">&nbsp;Bottom Left</option>';
-	modal_msg += '<option value = "bc">&nbsp;Bottom Center</option>';
-	modal_msg += '<option value = "br">&nbsp;Bottom Right</option>';
-	modal_msg += '<option value = "tlr">&nbsp;Top Left/Right</option>';
-	modal_msg += '<option value = "trl">&nbsp;Top Right/Left</option>';
-	modal_msg += '<option value = "blr">&nbsp;Bottom Left/Right</option>';
-	modal_msg += '<option value = "brl">&nbsp;Bottom Right/Left</option>';
-	modal_msg += '</select>';
-	modal_msg += '<tspan id="firstpagelabel_dialog"># on Page 1:</tspan>';
-	modal_msg += '<select id="firstpage_dialog" name="firstpage" onchange="SyncPDFExportDialog()" title="Sets whether page numbers should appear on the first page of the PDF tunebook">';
-	modal_msg += '<option value = "yes">&nbsp;Yes</option>';
-	modal_msg += '<option value = "no">&nbsp;No</option>';
-	modal_msg += '</select>';
-	modal_msg += '</div>';
-	modal_msg += '</div>';
+    const papersize_list = [
+	    { name: "  Letter", id: "letter" },
+	    { name: "  A4", id: "a4" },
+  	];
 
-	var form = [{html:modal_msg}];
+    const tunelayout_list = [
+	    { name: "  One Tune per Page", id: "one" },
+	    { name: "  Multiple Tunes per Page", id: "multi" },
+	    { name: "  Notes Incipits", id: "incipits" },
+	    { name: "  ABC Text Incipits", id: "incipits_abc" },
+	    { name: "  ABC Text Incipits Sorted", id: "incipits_abc_sort" },
+  	];
 
-	setTimeout(function(){
+  	const pagenumber_list = [
+	    { name: "  None", id: "none" },
+	    { name: "  Top Left", id: "tl" },
+	    { name: "  Top Center", id: "tc" },
+	    { name: "  Top Right", id: "tr" },
+	    { name: "  Bottom Left", id: "bl" },
+	    { name: "  Bottom Center", id: "bc" },
+	    { name: "  Bottom Right", id: "br" },
+	    { name: "  Alternating Top Left/Right", id: "tlr" },
+	    { name: "  Alternating Top Right/Left", id: "trl" },
+	    { name: "  Alternating Bottom Left/Right", id: "blr" },
+	    { name: "  Alternating Bottom Right/Left", id: "brl" },
+	];
 
-		// Do an initial idle on the controls
-		IdlePDFExportDialog();
+  	const fontname_list = [
+	    { name: "  Times", id: "Times" },
+	    { name: "  Helvetica", id: "Helvetica" },
+	    { name: "  Courier", id: "Courier" },
+	];
 
-	}, 200);
+  	const fontstyle_list = [
+	    { name: "  Normal", id: "Normal" },
+	    { name: "  Bold", id: "Bold" },
+	    { name: "  Oblique", id: "Oblique" },
+	    { name: "  Bold Oblique", id: "BoldOblique" },
+	];
 
+	var thePaperSize = "letter";
 
-	DayPilot.Modal.form(form,theData,{ theme: "modal_flat", top: 170, width: 800,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+	var theTuneLayout = document.getElementById("pdfformat").value;
+	
+	if (theTuneLayout.indexOf("a4") != -1){
+		thePaperSize = "a4"
+		theTuneLayout = theTuneLayout.replace("_a4","");
+	}
+
+	var pagenumbers = document.getElementById("pagenumbers").value;
+
+	var firstpage = document.getElementById("firstpage").value;
+
+	var theFirstPage = (firstpage == "yes");
+
+	// Sanity check the PDF font and style
+	var dialog_PDFFont = gPDFFont;
+	var pdffontlc = dialog_PDFFont.toLowerCase();
+
+	if ((pdffontlc != "times") && (pdffontlc != "helvetica") && (pdffontlc != "courier")){
+		dialog_PDFFont = "Times";
+	}
+
+	var dialog_PDFFontStyle = gPDFFontStyle;
+
+	if (dialog_PDFFontStyle == ""){
+		dialog_PDFFontStyle = "Normal";
+	}
+	else{
+
+		var pdffontstylelc = dialog_PDFFontStyle.toLowerCase();
+
+		// Times italic to oblique mapping
+		if (dialog_PDFFont == "Times"){
+
+			if (pdffontstylelc == "italic"){
+				dialog_PDFFontStyle = "Oblique";
+			}
+
+			if (pdffontstylelc == "bolditalic"){
+				dialog_PDFFontStyle = "BoldOblique";
+			}
+		}
+
+		// One last check just in case someone put a bad value in a %pdffont directive
+
+		pdffontstylelc = dialog_PDFFontStyle.toLowerCase();
+
+		if ((pdffontstylelc != "normal") && (pdffontstylelc != "bold") && (pdffontstylelc != "oblique") && (pdffontstylelc != "boldoblique")){
+			dialog_PDFFontStyle = "Normal";
+		}
+
+	}
+
+	// Setup initial values
+	const theData = {
+	  configure_papersize:thePaperSize,
+	  configure_tunelayout:theTuneLayout,
+	  configure_pagenumber:pagenumbers,
+	  configure_pagenumberonfirstpage:theFirstPage,
+	  configure_fontname:dialog_PDFFont,
+	  configure_fontstyle:dialog_PDFFontStyle,
+	};
+
+	var form = [
+	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">Export PDF Tunebook&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#export_pdf_tunebook" target="_blank" style="text-decoration:none;">💡</a></span></p>'},  
+	  {name: "Paper Size:", id: "configure_papersize", type:"select", options:papersize_list, cssClass:"configure_pdf_papersize_select"},
+	  {name: "Tune Layout:", id: "configure_tunelayout", type:"select", options:tunelayout_list, cssClass:"configure_pdf_tunelayout_select"},
+	  {name: "Page Number Location:", id: "configure_pagenumber", type:"select", options:pagenumber_list, cssClass:"configure_pdf_pagenumber_select"},
+	  {name: "            Page Number on First Page", id: "configure_pagenumberonfirstpage", type:"checkbox", cssClass:"configure_settings_form_text"},
+	  {html: '<p style="margin-top:36px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</strong></p>'},  
+	  {name: "Font:", id: "configure_fontname", type:"select", options:fontname_list, cssClass:"configure_pdf_fontname_select"},
+	  {name: "Font Style:", id: "configure_fontstyle", type:"select", options:fontstyle_list, cssClass:"configure_pdf_fontstyle_select"},
+	  {html: '<p style="font-size:3pt;">&nbsp;</p>'}	
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 760, scrollWithPage: (AllowDialogsToScroll()) } ).then(function(args){
 		
 		if (!args.canceled){
 
-			ExportPDF();
+			var thePaperSize = args.result.configure_papersize;
 
-		}
+			var theTuneLayout = args.result.configure_tunelayout;
+
+			if (thePaperSize == "a4"){
+
+				// Map the dialog values to the renderer expectation
+				if (theTuneLayout == "incipits_abc"){
+					theTuneLayout = "incipits_a4_abc";
+				}
+				else
+				if (theTuneLayout == "incipits_abc_sort"){
+					theTuneLayout = "incipits_a4_abc_sort";
+				}
+				else{
+					theTuneLayout += "_a4";
+				}
+
+			}
+
+			document.getElementById("pdfformat").value = theTuneLayout;
+
+			var thePageNumber = args.result.configure_pagenumber;
+			document.getElementById("pagenumbers").value = thePageNumber;
+
+			var thePageNumberOnFirstPage = args.result.configure_pagenumberonfirstpage;
+			if (thePageNumberOnFirstPage){
+				document.getElementById("firstpage").value = "yes";
+			}
+			else{
+				document.getElementById("firstpage").value = "no";
+			}
+
+			var theFontName = args.result.configure_fontname;
+			gPDFFont = theFontName;
+
+			var theFontStyle = args.result.configure_fontstyle;
+
+			// Remap Normal style to empty for Helvetica and Courier
+			if (theFontStyle == "Normal"){
+
+				theFontStyle = "";
+
+			}
+			else{
+
+				// Remap Time Oblique style names
+				switch (theFontName){
 					
+					case "Times":
+						// Translate Times style description
+						if(theFontStyle.toLowerCase() == "oblique"){
+							theFontStyle = "Italic";
+						}
+						else
+						if(theFontStyle.toLowerCase() == "boldoblique"){
+							theFontStyle = "BoldItalic";
+						}
+						break;
+
+					case "Helvetica":
+					case "Courier":
+						break;
+						
+				}
+			
+			}
+
+			gPDFFontStyle = theFontStyle;
+
+			SavePDFSettings();
+
+			ExportPDF();				
+		}
+
 	});
-
 }
-
 
 //
 // Advanced controls dialog
