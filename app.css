@@ -465,6 +465,49 @@ width:64px;
 margin-left:4px;
 }
 
+#pdffonts,#pdffonts_dialog{
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:120px;
+margin-left:4px;
+}
+
+#pdffontslabel_dialog{
+font-size:11pt;
+font-family:"Helvetica";
+padding-top:8px;
+margin-left:11px;
+margin-right:0px;
+user-select: none;
+}
+
+#pdffontstyle,#pdffontstyle_dialog{
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:120px;
+margin-left:4px;
+}
+
+#pdffontstylelabel_dialog{
+font-size:11pt;
+font-family:"Helvetica";
+padding-top:8px;
+margin-left:24px;
+margin-right:0px;
+user-select: none;
+}
+
+#pagenumberslabel{
+font-size:11pt;
+font-family:"Helvetica";
+padding-top:8px;
+margin-left:11px;
+margin-right:8px;
+user-select: none;
+}
+
 #pdf-export-dialog{
 margin-top:36px;
 }
@@ -1637,6 +1680,146 @@ padding-left:10px;
 margin-top:-7px;
 }
 
+.configure_pdf_papersize_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:30px;
+}
+
+.configure_pdf_papersize_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:100px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_pdf_tunelayout_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:30px;
+}
+
+.configure_pdf_tunelayout_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:215px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_pdf_pagenumber_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:30px;
+}
+
+.configure_pdf_pagenumber_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:245px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_pdf_fontname_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:30px;
+}
+
+.configure_pdf_fontname_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:120px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_pdf_fontstyle_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:30px;
+}
+
+.configure_pdf_fontstyle_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:145px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
 .modal_flat_form_item_label{
 	font-size: 12pt;
 }
@@ -1793,6 +1976,10 @@ margin-top:-7px;
   --background-color: #f0fff0;
 }
 
+.btn-injectcontrols-injectpdfheaders{
+  --color: black;
+  --background-color: #DCF3FE;
+}
 
 .btn-urlcontrols{
   --color: black;
