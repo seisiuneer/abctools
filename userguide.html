@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+                
         <style>
         p {
         font-size:14pt;
@@ -243,8 +243,8 @@
                 
                 <button class="accordion" title="Click to expand/collapse this section">PDF Tunebook Generation</button>
                 <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#pdf_tunebook_settings">Export PDF Settings</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#pdf_font_settings">PDF Font Settings</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#export_pdf_tunebook">Exporting a PDF Tunebook</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#pdf_font_override_settings">PDF Font Override Settings</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#pdf_quality_setting">PDF Quality Setting</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#pdf_tunebook_spacing_overrides">PDF Tunebook Tune Size and Layout Spacing Overrides</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#adding_a_pdf_title_page">Adding a PDF Tunebook Title Page</a></p>
@@ -296,7 +296,7 @@
                 
                 <button class="accordion" title="Click to expand/collapse this section">iOS-Specific Topics</button>
                 <div class="tocpanel">
-                  
+                    
                     <p class="toc"><a style="text-decoration:none;" href="#iphone_ipad_chord_entry_issue_fix">iPhone/iPad Chord Entry Issue Fix</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#goodreader"> Using Interactive PDF Tunebooks with GoodReader</a></p>
                 </div>
@@ -363,9 +363,10 @@
             <p>.xml, .musicxml, or .mxl - Imports a MusicXML file form your computer, converts it to ABC, and loads it into the ABC Editor.</p>
             <p>Details on MusicXML import settings below in the <a style="text-decoration:none;" href="#musicxml">MusicXML Import Settings</a> section.</p>
             <p>On desktop browsers, you may also drag-and-drop a single ABC or MusicXML file on the editor area to add it.</p>
+            <hr>
             <p id="add_templates_dialog"><strong>Add</strong> - Brings up a dialog where you can add your own ABC or MusicXML tunes, example ABC tunes, useful ABC templates, or restore previously saved Snapshots:</p>
             <div class="image_holder_p">
-                <img src="img/add_example_template_9.jpg"/>
+                <img src="img/add_example_template_10.jpg"/>
             </div>
             <p><strong>Choose File to Add:</strong></p>
             <p>Browse your system for an ABC or MusicXML file with one or more tunes to add to the end of the current tunes.</p>
@@ -388,6 +389,10 @@
             <p><strong>Add J.S. Bach BWV570 Fantasia:</strong></p>
             <p>Adds the J.S. Bach BWV570 Fantasia in four parts for Pipe Organ.</p>
             <p>This piece was originally imported from a MusicXML transcription.</p>
+            <p><strong>Add Common Useful PDF Tunebook Annotations:</strong></p>
+            <p>Adds a set of useful tool-specific annotations that are used when exporting a PDF tunebook at the top of the ABC editor text.</p>
+            <p>These include:</p>
+            <p>Adding a title page with subtitle, page headers and footers, a linked Table of Contents and sorted Index, playback links for the tunes, as well as a QR code with specific hyperlink.</p>
             <p><strong>Add an Example Song:</strong></p>
             <p>Adds a detailed self-documenting example of ABC for a song with lyrics.</p>
             <p><strong>Add a Song Template:</strong></p>
@@ -398,10 +403,7 @@
             <p>Add a template with two-bar click intro templates for common tune styles.</p>
             <p>Copy and paste these into the start of your tunes before any repeats.</p>
             <p>Delete the rest when you are done.</p>
-            <p><strong>Add PDF Tunebook Annotations:</strong></p>
-            <p>Adds a set of useful tool-specific annotations that are used when exporting a PDF tunebook at the top of the ABC editor text.</p>
-            <p>These include:</p>
-            <p>Adding a title page with subtitle, page headers and footers, a linked Table of Contents and sorted Index, playback links for the tunes, as well as a QR code with specific hyperlink.</p>
+            <hr>
             <p><strong>Save</strong> - Saves the contents of the ABC editor to a file.</p>
             <p><strong>Export PDF</strong> - Exports the currently displayed score as a high quality PDF file.</p>
             <p>The saved ABC or PDF file will be in your browser's Downloads directory.</p>
@@ -584,7 +586,6 @@
             <div class="image_holder_p">
                 <img src="img/bamboo_flute_1.jpg"/>
             </div>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/55mo9ZOTSCo " title="Bamboo Flute Tablature Injection" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p><strong>Configure Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for tablature injection.</p>
             <p id="export_all_tunes_as_mp3"><strong>Export all Tunes as .MP3</strong> - Exports all the tunes in the ABC area as individual .mp3 files at the bitrate set in the <strong>Settings</strong> dialog.</p>
             <div class="image_holder_p">
@@ -664,7 +665,7 @@
             <p><strong>Autoscroll player when playing</strong> - Check this if you want have the player autoscroll the notes into view while playing.</p>
             <p><strong>Player uses large controls (easier to touch on mobile and tablet)</strong> - Check this if you want to have larger controls in the Player view:</p>
             <div class="image_holder_p">
-                <img src="img/large_player_controls_3.jpg"/>
+                <img src="img/large_player_controls_4.jpg"/>
             </div>
             <p><strong>Default abcjs soundfont:</strong> - Choose between the three General MIDI soundfonts available in abcjs to use by default when playing tunes:</p>
             <p style="text-align: center;">Fluid<br/>
@@ -794,13 +795,6 @@
             <p>The Flute, Whistle (if <strong>Use AppCordions custom sounds for Dulcimer, Accordion, Flute, and Whistle</strong> in the <strong>Settings</strong> is enabled), and Uilleann pipes sounds will automatically "fold" notes below first octave D up an octave.</p>
             <p>The Säckpipa and Scottish Smallpipes (A) and (D) sounds will automatically "fold" notes above second octave D down an octave.</p>
             <p></p>
-            <p class="hidden-print">Here are some demo videos of the "Celtic Sounds" instrument samples being used in the tool:</p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/tNk1OQRXNUM" title="Celtic Sounds samples" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p></p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/1XC40QD_TqM" title="Scottish Smallpipes and Säckpipa samples" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p></p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/IHglx6ivwbE" title="New Accordion Bass and Chord samples" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p></p>
             <p>Any General MIDI instrument program number can be selected for the melody and chord sounds.</p>
             <p></p>
             <hr class="hidden-print" id="general_midi_instrument_program_numbers">
@@ -898,30 +892,31 @@
             BAB dBd|ege dBd|gfg aga|bgf g3:|</p>
             <p>Try this example here:&nbsp;&nbsp;<a href="https://tinyurl.com/yck7suum" target="_blank">Jig Metronome Example</a></p>
             <p>To disable an injected metronome, simply delete the injected "E" chord that starts it off.</p>
-            <hr class="hidden-print" id="pdf_tunebook_settings">
-            <h1 class="page_break_always">Export PDF Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <hr class="hidden-print" id="export_pdf_tunebook">
+            <h1 class="page_break_always">Exporting a PDF Tunebook<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/PqgjtQXpRYA " title="Export PDF Tunebook Dialog Walkthrough" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>            
             <p>The tool has a powerful built-in PDF tunebook generator that provides more flexibility than the browser's print feature, particularly in the area of adding custom page headers and footers, title page, table of contents, tune index, or adding a custom QR code.</p>
             <p>It can format PDF tunebooks with one or multiple tunes per page, something the native browser's Print command cannot accomplish.</p>
             <p>When you click <strong>Export PDF</strong>, the following dialog will appear where you select your PDF formatting preferences:</p>
             <div class="image_holder_p">
-                <img src="img/export_pdf_settings_1.jpg"/>
+                <img src="img/export_pdf_tunebook_1.jpg"/>
             </div>
-            <p><strong>PDF Tunes/Page</strong> - Choose whether you want One Tune/Page, Multiple Tunes/Page, Tune Note Incipits, or ABC Incipits (unsorted or alphabetically sorted by tune name) in the PDF along with the paper size (Letter or A4):</p>
-            <p></p>
+             <p><strong>Paper Size:</strong></p>
+            <p>Choose between Letter or A4 paper size:</p>
             <div class="image_holder_p">
-                <img src="img/ug7a4.jpg"/>
+                <img src="img/paper_size_1.jpg"/>
             </div>
-            <p><strong>One - Letter</strong>:&nbsp;&nbsp;Each tune is placed on a new page in the PDF.&nbsp;&nbsp;Paper size = Letter</p>
-            <p><strong>Multiple - Letter</strong>:&nbsp;&nbsp;Tunes are added one after another down each page in the PDF.&nbsp;&nbsp;Paper size = Letter</p>
-            <p><strong>Notes Incipits - Letter</strong>:&nbsp;&nbsp;Notation for the first line of each tune is added one after another down each page in the PDF.&nbsp;&nbsp;Paper size = Letter</p>
-            <p><strong>ABC Incipits - Letter</strong>:&nbsp;&nbsp;First few bars of the ABC each tune is added one after another down each page in the PDF.&nbsp;&nbsp;Paper size = Letter</p>
-            <p><strong>ABC Incipits Sorted - Letter:</strong>&nbsp;&nbsp;First few bars of the ABC each tune is added one after another down each page in the PDF in tune name sorted order.&nbsp;&nbsp;Paper size = Letter</p>
-            <p><strong>One - A4</strong>:&nbsp;&nbsp;Each tune is placed on a new page in the PDF.&nbsp;&nbsp;Paper size = A4</p>
-            <p><strong>Multiple - A4</strong>:&nbsp;&nbsp;Tunes are added one after another down each page in the PDF.&nbsp;&nbsp;Paper size = A4</p>
-            <p><strong>Notes Incipits - A4</strong>:&nbsp;&nbsp;Notation for the first line of each tune is added one after another down each page in the PDF.&nbsp;&nbsp;Paper size = A4</p>
-            <p><strong>ABC Incipits - A4</strong>:&nbsp;&nbsp;First few bars of the ABC for each tune is added one after another down each page in the PDF.&nbsp;&nbsp;Paper size = A4</p>
-            <p><strong>ABC Incipits Sorted - A4</strong>:&nbsp;&nbsp;First few bars of the ABC for each tune is added one after another down each page in the PDF in tune name sorted order.&nbsp;&nbsp;Paper size = A4</p>
-            <p>Default is:&nbsp;&nbsp;One - Letter</p>
+            <p><strong>Tune Layout:</strong></p>
+            <p>Choose whether you want One Tune per Page, Multiple Tunes per Page, Tune Note Incipits, or ABC Incipits (unsorted or alphabetically sorted by tune name):</p>
+            <div class="image_holder_p">
+                <img src="img/tune_layout_1.jpg"/>
+            </div>
+            <p><strong>One Tune per Page</strong>:&nbsp;&nbsp;Each tune is placed on a new page in the PDF.</p>
+            <p><strong>Multiple Tunes per Page</strong>:&nbsp;&nbsp;Tunes are added one after another down each page in the PDF.</p>
+            <p><strong>Notes Incipits</strong>:&nbsp;&nbsp;Notation for the first line of each tune is added one after another down each page in the PDF.</p>
+            <p><strong>ABC Text Incipits</strong>:&nbsp;&nbsp;First few bars of the ABC each tune is added one after another down each page in the PDF.</p>
+            <p><strong>ABC Text Incipits Sorted</strong>:&nbsp;&nbsp;First few bars of the ABC each tune is added one after another down each page in the PDF in tune name sorted order.</p>
+            <p>Default is:&nbsp;&nbsp;One Tune per Page</p>
             <p></p>
             <p>When exporting multiple tunes per page to PDF the tool will do its best to layout the output to not split tunes between pages, unless the tune itself is longer than one page.</p>
             <p></p>
@@ -950,28 +945,45 @@
             <p></p>
             <p>Exporting a PDF tunebook with ABC incipits allow you create a "cheat sheet" for the tunebook that includes just the first few measures of the ABC for each tune.</p>
             <p></p>
-            <p><strong>PDF Page Number Position Options:</strong></p>
+            <p><strong>Page Number Location:</strong></p>
             <div class="image_holder_p">
-                <img src="img/ug7b.jpg"/>
+                <img src="img/page_number_location_1.jpg"/>
             </div>
-            <p>Choose between: None, Top Left, Top Center, Top Right, Bottom Left, Bottom Center, Bottom Right, Top Left/Right, Top Right/Left, Bottom Left/Right, and Bottom Right/Left.</p>
-            <p>The Left/Right and Right/Left settings alternate the location between the left/right or right/left sides of the page for printing on both sides of the paper.</p>
+            <p>Choose between: None, Top Left, Top Center, Top Right, Bottom Left, Bottom Center, Bottom Right, Alternating Top Left/Right, Alternating Top Right/Left, Alternating Bottom Left/Right, or Alternating Bottom Right/Left.</p>
+            <p>The Alternating Left/Right and Alternating Right/Left settings alternate the location between the left/right or right/left sides of the page for printing on both sides of the paper.</p>
             <p>Default is:&nbsp;&nbsp;None</p>
-            <p><strong>Show or Hide Page Number on First Page Options:</strong></p>
+            <p><strong>Page Number on First Page:</strong></p>
             <div class="image_holder_p">
-                <img src="img/ug7c2.jpg"/>
+                <img src="img/pagenumber_firstpage_1.jpg"/>
             </div>
-            <p>Choose whether the page number will be shown on the first page of the PDF.</p>
-            <p>Default is:&nbsp;&nbsp;Yes</p>
-            <hr class="hidden-print" id="pdf_font_settings">
-            <h1 class="page_break_always">PDF Font Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>Check this if you want the page number to be shown on the first page with tunes in the PDF.</p>
+            <p>Page numbers are not added to title pages, table of contents, index, or QR code pages.</p>
+            <p>Default is:&nbsp;&nbsp;On</p>
+            <p><strong>PDF Tunebook Additions Font Settings</strong></p>
+            <p>The following two settings control the font and font style for the PDF tunebook Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits, and QR Code label.</p>
+            <p>These settings do not change the fonts in the ABC notation itself, those are configured in the <strong>Settings</strong> dialog <strong>Configure ABC Fonts</strong> sub-dialog.</p>
+            <p><strong>Font:</strong></p>
+            <div class="image_holder_p">
+                <img src="img/pdf_font_1.jpg"/>
+            </div>
+            <p>Choose between: Times, Helvetica, or Courier.</p>
+            <p>Default is:&nbsp;&nbsp;Times</p>
+            <p><strong>Font Style:</strong></p>
+            <div class="image_holder_p">
+                <img src="img/pdf_fontstyle_1.jpg"/>
+            </div>
+            <p>Choose between: Normal, Bold, Oblique, or Bold Oblique.</p>
+            <p>Default is:&nbsp;&nbsp;Normal</p>
+            <hr class="hidden-print" id="pdf_font_override_settings">
+            <h1 class="page_break_always">PDF Font Override Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/iGuuhN8HZDI" title="Setting Tunebook Fonts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p>You may set the font to be used for the PDF title page, page headers/footers, table of contents, index pages, page numbers, and text incipits by adding the following ABC comment-based annotation anywhere in the ABC:</p>
+            <p>You may override the font and font style set in the PDF Tunebook Export dialog to be used for the PDF title page, page headers/footers, table of contents, index pages, page numbers, text incipits, and QR code label by adding the following ABC comment-based annotation anywhere in the ABC:</p>
             <p></p>
             <p class="code">%pdffont fontname fontstyle</p>
             <p>Valid fontname values are: Times, Helvetica, and Courier.</p>
             <p>Valid fontstyle values are: Normal, Bold, Oblique, and BoldOblique.</p>
             <p>You can leave the style value blank for the Normal style.</p>
+            <p>This allows you to make sure a tunebook PDF always gets generated with a specific font and style.</p>
             <p></p>
             <hr class="hidden-print" id="pdf_quality_setting">
             <h1 class="page_break_always">PDF Quality Setting<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -1408,7 +1420,6 @@
             <div class="image_holder_p">
                 <img src="img/bamboo_flute_1.jpg"/>
             </div>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/55mo9ZOTSCo " title="Bamboo Flute Tablature Injection" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>To configure the tablature fonts and other settings, first click the tool's Settings button, then click the <strong>Configure Tablature Injection Settings</strong> button at the bottom of the dialog to bring up the tablature injections settings dialog:</p>
             <div class="image_holder_p">
                 <img src="img/tab_injection_settings_3.jpg"/>
