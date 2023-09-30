@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-                
+         
         <style>
         p {
         font-size:14pt;
@@ -261,10 +261,10 @@
                 
                 <button class="accordion" title="Click to expand/collapse this section">Tablature Injection</button>
                 <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#injecting_abc_lyric_based_note_names">Injecting ABC Lyric-based Note Names Into the ABC Tunes</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#injecting_tablature">Injecting B/C Box, C#/D Box, Anglo Concertina, or Bamboo Flute Tablature Into the ABC Tunes</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#reading_the_box_tablature">Reading the Box Tablature</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#reading_the_concertina_tablature">Reading the Anglo Concertina Tablature</a></p>
+                   <p class="toc"><a style="text-decoration:none;" href="#injecting_abc_lyric_based_note_names">Injecting ABC Lyric-based Note Names Into the ABC Tunes</a></p>
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">MusicXML Import</button>
@@ -1397,19 +1397,6 @@
             <p><strong>More information is available here:</strong></p>
             <p style="text-align: center;"><a href="https://blog.hubspot.com/website/web-safe-html-css-fonts" target="_blank">Web Safe CSS Fonts</a></p>
             <p style="text-align: center;"><a href="http://iosfonts.com/" target="_blank">iOS Fonts</a></p>
-            <hr class="hidden-print" id="injecting_abc_lyric_based_note_names">
-            <h1 class="page_break_always h1wide">Injecting ABC Lyric-based Note Names Into the ABC Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>Clicking <strong>Inject Note Names Lyrics</strong> in the Advanced Settings dialog will inject an ABC lyrics line under each ABC line using the w: directive that will put the ABC note name under each note in the notation for all the tunes.</p>
-            <p>For example:</p>
-            <p class="code">GAG GAB | ABA ABd | edd gdd | edB dBA |<br/>
-            w: G A G G A B A B A A B d e d d g d d e d B d B A</p>
-            <p>The injected ABC lyrics are literally the same as the ABC so has no idea about sharps or flats, just the note letters. You may have to fix those manually.</p>
-            <p>It is a destructive operation, so you might want to click <strong>Copy All</strong> before trying this operation.</p>
-            <p>Also, it will in some circumstances mess up the notation formatting, so try it, if it works, great, hopefully it saves you some time compared to doing the work manually.</p>
-            <p>f you want the note names in a different font, style, or size, change the %%vocalfont directive injected for you immediately after the X: tag in each tune, for example:</p>
-            <p class="code">X:1<br/>
-            %%vocalfont Verdana 14</p>
-            <p>You can use any of the fonts, styles, and sizes as described above in the "Web Safe Fonts" section.</p>
             <hr class="hidden-print" id="injecting_tablature">
             <h1 class="page_break_always h1wide">Injecting B/C Box, C#/D Box, Anglo Concertina, or Bamboo Flute Tablature Into the ABC Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>You may inject Box or Anglo Concertina tablature into the ABC using the following buttons in the <strong>Advanced Controls</strong> dialog:</p>
@@ -1422,7 +1409,7 @@
             </div>
             <p>To configure the tablature fonts and other settings, first click the tool's Settings button, then click the <strong>Configure Tablature Injection Settings</strong> button at the bottom of the dialog to bring up the tablature injections settings dialog:</p>
             <div class="image_holder_p">
-                <img src="img/tab_injection_settings_3.jpg"/>
+                <img src="img/tab_injection_settings_4.jpg"/>
             </div>
             <p>You can also Shift-click the Settings button to go directly to the tablature settings dialog.</p>
             <p><strong>Common Box, Anglo Concertina, and Bamboo Flute tablature settings:</strong></p>
@@ -1517,6 +1504,19 @@
             </div>
             <p>Push is indicated with a "↓" arrow by default (configurable in the Box and Anglo Concertina Tablature Settings dialog).</p>
             <p>Draw is indicated with an "↑" arrow by default (configurable in the Box and Anglo Concertina Tablature Settings dialog).</p>
+            <hr class="hidden-print" id="injecting_abc_lyric_based_note_names">
+            <h1 class="page_break_always h1wide">Injecting ABC Lyric-based Note Names Into the ABC Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>Clicking <strong>Inject Note Names Lyrics</strong> in the Advanced Settings dialog will inject an ABC lyrics line under each ABC line using the w: directive that will put the ABC note name under each note in the notation for all the tunes.</p>
+            <p>For example:</p>
+            <p class="code">GAG GAB | ABA ABd | edd gdd | edB dBA |<br/>
+            w: G A G G A B A B A A B d e d d g d d e d B d B A</p>
+            <p>The injected ABC lyrics are literally the same as the ABC so has no idea about sharps or flats, just the note letters. You may have to fix those manually.</p>
+            <p>It is a destructive operation, so you might want to click <strong>Copy All</strong> before trying this operation.</p>
+            <p>Also, it will in some circumstances mess up the notation formatting, so try it, if it works, great, hopefully it saves you some time compared to doing the work manually.</p>
+            <p>f you want the note names in a different font, style, or size, change the %%vocalfont directive injected for you immediately after the X: tag in each tune, for example:</p>
+            <p class="code">X:1<br/>
+            %%vocalfont Verdana 14</p>
+            <p>You can use any of the fonts, styles, and sizes as described above in the "Web Safe Fonts" section.</p>
             <hr class="hidden-print" id="musicxml">
             <h1 class="page_break_always">MusicXML Import Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">
