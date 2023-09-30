@@ -14635,7 +14635,7 @@ function GetInitialConfigurationSettings(){
     	resetAngloButtonNames();
     }
 
-    var theMusicXMLImportSettings = localStorage.musicXMLImportOptionsV2;
+    var theMusicXMLImportSettings = localStorage.musicXMLImportOptionsV3;
 
     if (theMusicXMLImportSettings){
         gMusicXMLImportOptions = JSON.parse(theMusicXMLImportSettings);
@@ -14837,7 +14837,7 @@ function SaveConfigurationSettings(){
 		localStorage.angloButtonNames = JSON.stringify(gAngloButtonNames);
 
 		// MusicXML import options
-		localStorage.musicXMLImportOptionsV2 = JSON.stringify(gMusicXMLImportOptions);
+		localStorage.musicXMLImportOptionsV3 = JSON.stringify(gMusicXMLImportOptions);
 
 		// Large player control player options
 		localStorage.LargePlayerControls = gLargePlayerControls;
@@ -14914,7 +14914,9 @@ function resetMusicXMLImportOptions(){
 		v:0,
 		v1:0,
 		mnum:-1,
-		m:1
+		m:1,
+		addq:1,
+		q:100,
 	};
 }
 
@@ -14931,6 +14933,8 @@ function setMusicXMLOptions () {
     gMusicXMLImportOptions.v1 = $('#musicxml_v1').prop ('checked') ? 1 : 0;
     gMusicXMLImportOptions.stm = $('#musicxml_stems').prop ('checked') ? 1 : 0;
     gMusicXMLImportOptions.mnum = parseInt ($('#musicxml_mnum').val () || -1);
+    gMusicXMLImportOptions.addq = $('#musicxml_addq').prop ('checked') ? 1 : 0;
+    gMusicXMLImportOptions.q = parseInt ($('#musicxml_q').val () || 100);;
 
  }
 
@@ -14947,6 +14951,8 @@ function idleXMLImport(){
 	$('#musicxml_v1').prop('checked',(gMusicXMLImportOptions.v1 == 1));
 	$('#musicxml_stems').prop('checked',(gMusicXMLImportOptions.stm == 1));
 	$('#musicxml_mnum').val(gMusicXMLImportOptions.mnum);
+	$('#musicxml_addq').prop('checked',(gMusicXMLImportOptions.addq == 1));
+	$('#musicxml_q').val(gMusicXMLImportOptions.q);
 
 };
 
@@ -14993,7 +14999,8 @@ function ConfigureMusicXMLImport(){
     modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">No pedal directions:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_noped" type="checkbox"/></div>\n';
     modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">All directions to first voice:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_v1" type="checkbox"/></div>\n';
     modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Translate stem directions:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_stems" type="checkbox"/></div>\n';
-
+    modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Inject Q: tag if not present:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_addq" type="checkbox"/></div>\n';
+    modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Q: tag value to inject:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_q" type="text" pattern="\d+" title="Default: 100"/></div>\n';
 	modal_msg += '<p style="text-align:center;margin-top:22px;"><input id="default_musicxml_settings" class="btn btn-clearbutton default_musicxml_settings" onclick="defaultMusicXMLSettings()" type="button" value="Reset to Default" title="Reset the MusicXML import settings to their default values"></p>\n';
 
 	const form = [
@@ -15016,7 +15023,7 @@ function ConfigureMusicXMLImport(){
 		    // Save the custom button naming map
 		    if (gLocalStorageAvailable){
 
-		        localStorage.musicXMLImportOptionsV2 = JSON.stringify(gMusicXMLImportOptions);
+		        localStorage.musicXMLImportOptionsV3 = JSON.stringify(gMusicXMLImportOptions);
 
 		    }
 		}
@@ -16403,6 +16410,106 @@ function isXML(theText){
 }
 
 //
+// Inject a Q tag into the ABC
+//
+function InjectQTag(theTune,theTempo){
+
+	var theLines = theTune.split("\n");
+
+	var nLines = theLines.length;
+
+	// Does the tune already have a Q: tag at the start of a line?
+	for (var j=0;j<nLines;++j){
+
+		if (theLines[j].trim().indexOf("Q:") == 0){
+
+			// Yes, nothing to inject
+			return theTune;
+
+		}
+
+	}
+
+	// No Q: tag found, find the M: tag, and inject there
+
+	// Find the Meter
+	var theMeterLine = "";
+
+	var bFoundMeter = false;
+
+	// Find the first line of the tune that has measure separators
+	for (var j=0;j<nLines;++j){
+
+		theMeterLine = theLines[j];
+
+		if (theMeterLine.trim().indexOf("M:") == 0){
+
+			bFoundMeter = true;
+
+			// Put it after the M: tag line if not at the end of the ABC
+			if (j<(nLines-1)){
+
+				theMeterLine = theLines[j+1];
+
+			}
+			break;
+		}
+
+	}
+
+	if (bFoundMeter){
+
+		var meterIndex = theTune.indexOf(theMeterLine);
+
+		var leftSide = theTune.substring(0,meterIndex);
+		var rightSide = theTune.substring(meterIndex);
+
+		theTune = leftSide + "Q:" + theTempo + "\n" + rightSide;
+
+	}
+	else{
+
+		// Just in case there is no M: tag. Almost certainly never will happen.
+		// In this case, put it behind the K: tag
+		// If no K: tag, just punt
+
+		// Find the Key
+		var theKeyLine = "";
+
+		var bFoundKey = false;
+
+		// Find the first line of the tune that has measure separators
+		for (var j=0;j<nLines;++j){
+
+			theKeyLine = theLines[j];
+
+			if (theKeyLine.trim().indexOf("K:") == 0){
+
+				bFoundKey = true;
+				break;
+			}
+
+		}
+
+		if (bFoundKey){
+
+			var keyIndex = theTune.indexOf(theKeyLine);
+
+			var leftSide = theTune.substring(0,keyIndex);
+			var rightSide = theTune.substring(keyIndex);
+
+			theTune = leftSide + "Q:" + theTempo + "\n" + rightSide;
+
+		}
+
+	}
+
+	return theTune;
+
+}
+
+
+//
 // Import MusicXML format
 //
 function importMusicXML(theXML){
@@ -16428,6 +16535,15 @@ function importMusicXML(theXML){
     abcText = abcText.replaceAll("[K:tenor]","");
     abcText = abcText.replaceAll("[K:bass]","");
     abcText = abcText.replaceAll("[K:bass3]","");
+
+    // Inject Q: tag?
+    if (gMusicXMLImportOptions.addq == 1){
+
+    	var theTempoToInject = gMusicXMLImportOptions.q;
+
+    	abcText = InjectQTag(abcText,theTempoToInject);
+
+    }
 
     return abcText;
 
@@ -17367,6 +17483,3 @@ function WaitForReady(fn) {
 //
 
 WaitForReady(DoStartup);
-
-
-
