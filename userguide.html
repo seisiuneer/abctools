@@ -276,9 +276,9 @@
                 <button class="accordion" title="Click to expand/collapse this section">Sharing Tunes via Share URLs and QR Codes</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#sharing_controls">Sharing Tunes with Share URLs and QR Codes</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#share_url_autoplay">Making Shared Tunes Open in the Player</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#shortening_abc_share_urls">Shortening Share URLs</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#shared_tunes_open_full_screen">Shared Tunes Open Full Screen</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#share_url_autoplay">Making Shared Tunes Open in the Player</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#adding_a_qr_code_to_the_pdf_export">Adding a QR Code to the PDF Export</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#reading_the_qr_codes">Reading the QR Codes</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#qr_code_example">QR Code Example</a></p>
@@ -1201,7 +1201,7 @@
             <p class="code">%pdfname your_pdf_filename_here</p>
             <p></p>
             <hr class="hidden-print" id="tunebook_hyperlinks">
-            <h1 class="page_break_always">PDF Tunebook Hyperlinks and Automatic Play Links<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <h1 class="page_break_always h1wide">PDF Tunebook Hyperlinks and Automatic Play Links<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p></p>
             <p class="hidden-print" >Example of using the tune playback hyperlinks and other advanced features:</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/L0tiG-hX4eM" title="Tune Playback Hyperlinks" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
@@ -1222,6 +1222,7 @@
             <p class="code">%hyperlink http://michaeleskin.com</p>
             <p class="code">%hyperlink https://cnn.com</p>
             <p></p>
+            <hr>
             <p><strong>Adding a playback hyperlink to a specific tune:</strong></p>
             <p></p>
             <p>To add a hyperlink back to the ABC Transcription Tools for playing a specific tune with specific General MIDI instrument program number sounds for the melody and the bass/chords, add the following comment-based annotation anywhere in the ABC for a specific tune:</p>
@@ -1229,8 +1230,8 @@
             <p class="code">%add_playback_link MELODY_PROGRAM BASS_CHORD_PROGRAM</p>
             <p></p>
             <p>The MELODY_PROGRAM and BASS_CHORD_PROGRAM are optional.</p>
-            <p>If not specified, they will first be set by the programs specified in an %add_all_playback_links annotation if found in the ABC.</p>
-            <p>If not specified, and no %add_all_playback_links is present in the ABC, the values will be set to the default instrument program number settings for playback in the <strong>Settings</strong> dialog.</p>
+            <p>If only the MELODY_PROGRAM is specified, the BASS_CHORD_PROGRAM value will be set to the current default instrument program number settings for bass/chord playback in the <strong>Settings</strong> dialog.</p>
+            <p>If neither MELODY_PROGRAM or BASS_CHORD_PROGRAM is specified, the play link will be added, but no additional MIDI program or chordprog information will be injected into the tune at playback time.</p>
             <p></p>
             <p>Some MIDI program numbers I recommend for the melody:</p>
             <p></p>
@@ -1252,6 +1253,36 @@
                 |:gfef gebe|gebe gfec|d2fd Adfd|cdAG FDEF|<br/>
             GABG FGAF|E2ef gfed|BcdB A2FA|BGAF GEE2:|</p>
             <p></p>
+            <p><strong>Adding playback hyperlinks to every tune in a PDF tunebook:</strong></p>
+            <p></p>
+            <p>You may automatically add a hyperlink for every tune back to the ABC Transcription Tools for playing the tune with a specific General MIDI instrument program number sound for the melody and the bass/chords by adding the following comment-based annotation anywhere in the ABC file:</p>
+            <p></p>
+            <p class="code">%add_all_playback_links MELODY_PROGRAM BASS_CHORD_PROGRAM</p>
+            <p></p>
+            <p>MELODY_PROGRAM and BASS_CHORD_PROGRAM are optional.</p>
+            <p></p>
+            <p>If only the MELODY_PROGRAM is specified, the BASS_CHORD_PROGRAM value will be set to the current default instrument program number settings for bass/chord playback in the <strong>Settings</strong> dialog.</p>
+            <p>If neither MELODY_PROGRAM or BASS_CHORD_PROGRAM is specified, the play link will be added, but no additional MIDI program or chordprog information will be injected into the tune at playback time.</p>
+            <p>This is useful for tunebooks for which you have manually specified all the MIDI soundfont, program, and chordprog information already in the tunes and do not want them overriden when played from the play link.</p>
+            <p></p>
+            <p>Some MIDI program numbers I recommend for the melody:</p>
+            <p></p>
+            <p>Piano: 0, Harpsichord: 6, Accordion: 21, Fingered Bass: 33, Harp: 46</p>
+            <p></p>
+            <p>Some MIDI program numbers I recommend for the bass/chords:</p>
+            <p></p>
+            <p>Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38</p>
+            <p></p>
+            <p>Example: To have all tunes played with an Accordion sound on the melody and a Piano sound on the chords/bass:</p>
+            <p class="code">%add_all_playback_links 21 0</p>
+            <p></p>
+            <hr>
+            <p><strong>Disabling access to the tune editor from tunes linked from PDF tunebooks.</strong></p>
+            <p>To disable access to the editor (hides the Zoom arrows in the full screen view) from a tune link created with one of the above directives, add:</p>
+            <p class="code">%no_edit_allowed</p>
+            <p>anywhere in the ABC file.</p>
+            <p></p>
+            <hr>
             <p><strong>Adding a thesession.org hyperlink to a specific tune:</strong></p>
             <p></p>
             <p>To add a hyperlink to a specific tune to the thesession.org search page for the tune title, add the following comment-based annotation anywhere in the ABC for a specific tune:</p>
@@ -1270,44 +1301,24 @@
                 |:gfef gebe|gebe gfec|d2fd Adfd|cdAG FDEF|<br/>
             GABG FGAF|E2ef gfed|BcdB A2FA|BGAF GEE2:|</p>
             <p></p>
-            <p>Precedence order for multiple manually added hyperlinks on one specific tune is website hyperlinks take highest priority, then playback hyperlinks, then thesession.org hyperlinks.</p>
-            <p></p>
-            <p><strong>Adding playback hyperlinks to every tune in a PDF tunebook:</strong></p>
-            <p></p>
-            <p>You may automatically add a hyperlink for every tune back to the ABC Transcription Tools for playing the tune with a specific General MIDI instrument program number sound for the melody and the bass/chords by adding the following comment-based annotation anywhere in the ABC file:</p>
-            <p></p>
-            <p class="code">%add_all_playback_links MELODY_PROGRAM BASS_CHORD_PROGRAM</p>
-            <p></p>
-            <p>The MELODY_PROGRAM and BASS_CHORD_PROGRAM are optional.</p>
-            <p></p>
-            <p>If not specified, the values will be set to the current default instrument program number settings for playback in the <strong>Settings</strong> dialog.</p>
-            <p></p>
-            <p>Some MIDI program numbers I recommend for the melody:</p>
-            <p></p>
-            <p>Piano: 0, Harpsichord: 6, Accordion: 21, Fingered Bass: 33, Harp: 46</p>
-            <p></p>
-            <p>Some MIDI program numbers I recommend for the bass/chords:</p>
-            <p></p>
-            <p>Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38</p>
-            <p></p>
-            <p>Example: To have all tunes played with an Accordion sound on the melody and a Piano sound on the chords/bass:</p>
-            <p class="code">%add_all_playback_links 21 0</p>
-            <p></p>
             <p><strong>Adding thesession.org hyperlinks to every tune in a PDF tunebook:</strong></p>
             <p></p>
             <p>You may automatically add a hyperlink for every tune to the thesession.org search page for the tune title by adding the following comment-based annotation anywhere in the ABC file:</p>
             <p></p>
             <p class="code">%add_all_links_to_thesession</p>
             <p></p>
-            <p>%add_all_playback_links takes precedence for all tunes over %add_all_links_to_thesession</p>
+            <hr>
+            <p><strong>Precedence order for hyperlinks:</strong></p>
+            <p>On a single tune, manually added website hyperlinks take highest priority, then playback hyperlinks, then thesession.org hyperlinks.</p>
+            <p>Any manually added individual tune hyperlinks take precedence over automatically generated tunebook-wide playback or thesession.org hyperlinks.</p>
             <p></p>
-            <p>Any manually added tune hyperlinks, thesession.org hyperlinks, or playback hyperlinks take precedence over automatically generated thesession.org or playback hyperlinks.</p>
+            <p>For automatically generated tunebook-wide hyperlinks, %add_all_playback_links takes precedence over %add_all_links_to_thesession</p>
             <p></p>
-            <p class="page_break_always"><strong>Example: Creating a PDF tunebooks with some advanced features</strong></p>
+            <hr>
+            <p class="page_break_always"><strong>Example: Creating a PDF tunebook with playback links and other advanced features</strong></p>
             <p></p>
             <p>Here is a good starting template of annotations for creating a tunebook that includes:</p>
             <p></p>
-            <p>Sets the font to Times for the title page, table of contents, index, page headers/footers, page numbers, and text incipits.</p>
             <p>Sets the PDF quality to the default (.75 = High quality). This can be reduced to create smaller, but lower quality PDF files.</p>
             <p>Sets the spacing between tunes for multiple tunes/page to the default of 20/72". Change this to 0 for minimal space between PDF tunes.</p>
             <p>Title page with sub-title</p>
@@ -1320,8 +1331,7 @@
             <p>Playback links on every tune title selecting an Piano sound for the melody and a Piano sound for the bass/chords</p>
             <p>QR code with hyperlink and caption at the end of the tunebook</p>
             <p></p>
-            <p class="code">%pdffont Times<br/>
-                %pdfquality .75<br/>
+            <p class="code">%pdfquality .75<br/>
                 %pdf_between_tune_space 20<br/>
                 %addtitle Tunebook Title<br/>
                 %addsubtitle Tunebook Subtitle<br/>
@@ -1566,7 +1576,7 @@
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/I8KcG4swmUQ" title="Sharing Tunes with Share URLs and QR Codes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>Clicking the <strong>Sharing</strong> button brings up the ABC Transcription Tools Sharing Controls dialog:</p>
             <div class="image_holder_p">
-                <img style="width:700px;"src="img/share_controls_1.jpg"/>
+                <img style="width:700px;"src="img/share_controls_2.jpg"/>
             </div>
             <p>Share URLs and QR Codes are a quick and easy way to share your ABC tunes with friends or to post tunes on social media sites.</p>
             <p>Anyone with the Share URL or QR Code can view, edit, save, and share their own copy of the tunes.</p>
@@ -1587,6 +1597,16 @@
             <p>This can be useful for generating QR codes from TinyURL shortened Share URL links or for other arbitrary website URLs.</p>
             <p>If the arbitrary text in the Share URL box is too long to generate a QR code, the tool will display an alert.</p>
             <p>In the newly opened tab, you can click the link below the image to save the QR code to your system.</p>
+            <p><strong>Add Auto-Play</strong> - Adds &play=1 to the URL.</p>
+            <p>Link will open in the player.</p>
+            <p><strong>Add Disable Editing</strong> - Adds &dx=1 to the URL.</p>
+            <p>Entering the editor from the fullscreen view of the tune shown when the share link is visited will be disabled.</p>
+            <hr class="hidden-print" id="share_url_autoplay">
+            <h1 class="page_break_always">Making Shared Tunes Open in the Player<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>For single tune sharing, if you want to have the Player open with the tune already loaded when someone clicks the share link or scans the QR code, it is very simple to create a play link.</p>
+            <p>Click <strong>Add Auto-Play</strong> to add:</p>
+            <p class="code">&play=1</p>          
+            <p>to the end of the Share URL before copying it, shortening the URL, or creating a QR code.</p>
             <hr class="hidden-print" id="shortening_abc_share_urls">
             <h1 class="page_break_always">Shortening Share URLs<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" >Automatic URL shortening using TinyURL:</p>
@@ -1611,12 +1631,6 @@
             <h1 class="page_break_always">Shared Tunes Open Full Screen<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Shared tunes, when opened from a Share URL or QR code, are initially displayed with the ABC Editor and controls hidden so you can see the music full-screen.</p>
             <p>Click the Maximize/Minimize arrow to show the ABC Editor and controls.</p>
-            <hr class="hidden-print" id="share_url_autoplay">
-            <h1 class="page_break_always">Making Shared Tunes Open in the Player<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>For single tune sharing, if you want to have the Player open with the tune already loaded when someone clicks the share link or scans the QR code, it is very simple to create a play link.</p>
-            <p>Once you already have the Share URL in the URL window, click the <strong>Add Auto-Play</strong> button to add:</p>
-            <p class="code">&play=1</p>
-            <p>to the end of the Share URL before copying it, shortening the URL, or creating a QR code.</p>
             <hr class="hidden-print" id="adding_a_qr_code_to_the_pdf_export">
             <h1 class="page_break_always">Adding a QR Code to the PDF Export<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>To append a QR code representing the Share URL for tune set or a specific URL as a final page on your PDF, add the following comment-based annotation anywhere in the ABC:</p>
