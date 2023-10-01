@@ -156,8 +156,15 @@ var gAddIndexLinkback = false;
 var gTuneHyperlinks = [];
 var gAddTheSessionHyperlinks = false;
 var gAddPlaybackHyperlinks = false;
+var gAddPlaybackHyperlinksIncludePrograms = false;
 var gPlaybackHyperlinkMelodyProgram = "";
 var gPlaybackHyperlinkBassChordProgram = "";
+
+// Lock out editing on injected playback PDF links
+var gInjectEditDisabled = false;
+
+// If true, never show the zoom button
+var gDisableEditFromPlayLink = false;
 
 // Full screen view scaling (percentage)
 var gFullScreenScaling = 50;
@@ -2230,20 +2237,29 @@ function GetAllTuneHyperlinks(theLinks) {
 		if (gAddPlaybackHyperlinks){
 
 			var tuneWithPatch = thisTune;
+
+			// If MIDI programs to be injected, do it now
+			if (gAddPlaybackHyperlinksIncludePrograms){
 				
-			// Strip out the X: tag
-			var searchRegExp = /^X:.*[\r\n]*/gm 
+				// Strip out the X: tag
+				var searchRegExp = /^X:.*[\r\n]*/gm 
 
-			// Strip out tempo markings
-			tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
+				// Strip out tempo markings
+				tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
 
-			tuneWithPatch = "X:1\n%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkBassChordProgram+"\n"+tuneWithPatch;
+				tuneWithPatch = "X:1\n%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkBassChordProgram+"\n"+tuneWithPatch;
+
+			}
 
 			// Create a share URL for this tune
 			var theURL = FillUrlBoxWithAbcInLZW(tuneWithPatch,false);
 
 			// Add the play parameter
-			theURL += "&play=1"
+			if (gInjectEditDisabled){
+				theURL += "&dx=1"
+			}
+
+			theURL += "&play=1"				
 
 			theLinks[i].url = theURL;
 
@@ -2294,6 +2310,8 @@ function GetAllTuneHyperlinks(theLinks) {
 
 			}
 
+			var doAddPatches = false;
+
 			if (thePatches && (thePatches.length > 0)){
 
 				if (thePatches.length >= 1){
@@ -2306,22 +2324,33 @@ function GetAllTuneHyperlinks(theLinks) {
 					theBassChordPatch = theBassChordPatch.trim();
 				}
 
+				doAddPatches = true;
 
 			}
-				
-			// Strip out the X: tag
-			var searchRegExp = /^X:.*[\r\n]*/gm 
 
-			// Strip out tempo markings
-			tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
+			if (doAddPatches){
 
-			tuneWithPatch = "X:1\n%%MIDI program "+theMelodyPatch+"\n"+"%%MIDI chordprog "+theBassChordPatch+"\n"+tuneWithPatch;
+				// Strip out the X: tag
+				var searchRegExp = /^X:.*[\r\n]*/gm 
+
+				// Strip out tempo markings
+				tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
+
+				tuneWithPatch = "X:1\n%%MIDI program "+theMelodyPatch+"\n"+"%%MIDI chordprog "+theBassChordPatch+"\n"+tuneWithPatch;
+
+			}
 
 			// Create a share URL for this tune
 			var theURL = FillUrlBoxWithAbcInLZW(tuneWithPatch,false);
-
+			
 			// Add the play parameter
-			theURL += "&play=1"
+			if (gInjectEditDisabled){
+				// Mark this as a play-only link
+				theURL += "&dx=1"
+			}
+
+			// Normal play/edit link
+			theURL += "&play=1"				
 
 			theLinks[i].url = theURL;
 
@@ -4116,8 +4145,26 @@ function ParseCommentCommands(theNotes){
 
 	}
 
+	// See if no editing allowed
+	gInjectEditDisabled = false;
+	
+	searchRegExp = /^%no_edit_allowed.*$/m
+
+	// Detect thesession linkback annotation
+	var no_edit_allowed = theNotes.match(searchRegExp);
+
+	if ((no_edit_allowed) && (no_edit_allowed.length > 0)){
+
+		gInjectEditDisabled = true;
+
+	}
+
+
 	// Include playback links for every tune
 	gAddPlaybackHyperlinks = false;
+
+	// Inject the MIDI program in the ABC before creating the link
+	gAddPlaybackHyperlinksIncludePrograms = false;
 
 	// Search for a playback link request
 	searchRegExp = /^%add_all_playback_links.*$/m
@@ -4139,6 +4186,9 @@ function ParseCommentCommands(theNotes){
 		gPlaybackHyperlinkBassChordProgram = gTheChordProgram;
 
 		if (thePatches && (thePatches.length > 0)){
+			
+			// Inject MIDI program info in the tune
+			gAddPlaybackHyperlinksIncludePrograms = true;
 
 			if (thePatches.length >= 1){
 				gPlaybackHyperlinkMelodyProgram = thePatches[0];
@@ -4149,6 +4199,11 @@ function ParseCommentCommands(theNotes){
 				gPlaybackHyperlinkBassChordProgram = thePatches[1];
 				gPlaybackHyperlinkBassChordProgram = gPlaybackHyperlinkBassChordProgram.trim();
 			}	
+		}
+		else{
+
+			// No programs specified, just add the link, but don't inject the programs
+			gAddPlaybackHyperlinksIncludePrograms = false;
 
 		}
 	}
@@ -5535,7 +5590,7 @@ function ExportNotationPDF(title) {
 	if (incipitsRequested){
 
 		// Reduce the space between tunes in the PDF for incipits
-		BETWEENTUNESPACE = 0;
+		//BETWEENTUNESPACE = 0;
 
 		// Force an idle on the advanced controls to determine if we need to hide the annotations or text annotations before incipit render
 		IdleAdvancedControls(false);
@@ -6760,8 +6815,13 @@ function Render(renderAll,tuneNumber) {
 
 		}
 
-		// Show the zoom control
-		document.getElementById("zoombutton").style.display = "block";
+		// Hide/Show the zoom control
+		if (gDisableEditFromPlayLink){
+			HideMaximizeButton();
+		}
+		else{
+			ShowMaximizeButton();
+		}
 
 		if (gShowAllControls){
 
@@ -10885,6 +10945,9 @@ function processShareLink() {
 
 	var doRender = false;
 
+	// If edit disabled, hide the zoom arrows
+	gDisableEditFromPlayLink = false;
+
 	const urlParams = new URLSearchParams(window.location.search);
 
 	// Process URL params
@@ -11015,6 +11078,17 @@ function processShareLink() {
 		}
 	}
 
+	// Is editing disabled?
+	var disableEdit = false;
+
+	// Disable editing?
+	if (urlParams.has("dx")) {
+		var theNoEdit = urlParams.get("dx");
+		if (theNoEdit == "1"){
+			disableEdit = true;;
+		}
+	}
+
 	// Open for playback
 	var doPlay = false;
 	if (urlParams.has("play")) {
@@ -11022,6 +11096,11 @@ function processShareLink() {
 		if (thePlay == "1"){
 			doPlay = true;
 		}
+	}
+
+	// If edit disabled, hide the zoom arrows
+	if (disableEdit){
+		gDisableEditFromPlayLink = true;
 	}
 
 	if (doRender) {
@@ -11402,7 +11481,7 @@ function InjectPDFHeaders(bDoAll){
 
 		var output = "";
 		output += "%\n";
-		output += "% Here are all available custom annotations:\n";
+		output += "% Here are all the available custom annotations:\n";
 		output += "%\n";
 		output += "%pdfquality .75\n";
 		output += "%pdf_between_tune_space 20\n";
@@ -11437,6 +11516,7 @@ function InjectPDFHeaders(bDoAll){
 		output += "%urlpagefooter http://michaeleskin.com Page Footer as Hyperlink\n";
 		output += "%add_all_links_to_thesession\n";
 		output += "%add_all_playback_links 0 0\n";
+		output += "%no_edit_allowed\n";
 		output += "%qrcode\n";
 		output += "%qrcode http://michaeleskin.com\n";
 		output += "%caption_for_qrcode Caption for the QR code\n";
@@ -15664,7 +15744,7 @@ function AddAutoPlay(){
 
 	var theURL = urltextbox.value;
 
-	// Check if already present
+	// Check if a play directive already present
 	if (theURL.indexOf("&play=1") == -1){
 		theURL += "&play=1";
 	}
@@ -15681,6 +15761,30 @@ function AddAutoPlay(){
 	},1500);
 
 }
+
+// Add the disable editing param to the URL
+function AddDisableEditing(){
+
+	var theURL = urltextbox.value;
+
+	// Check if a disable editor directive already present
+	if (theURL.indexOf("&dx=1") == -1){
+		theURL += "&dx=1";
+	}
+
+	urltextbox.value = theURL;
+
+	// Give some feedback
+	document.getElementById("adddisableediting").value = "Disable Editing Added!";
+
+	setTimeout(function(){
+
+		document.getElementById("adddisableediting").value = "Add Disable Editing";
+
+	},1500);
+
+}
+
 
 function SharingControlsDialog(){
 
@@ -15699,8 +15803,7 @@ function SharingControlsDialog(){
 	modal_msg += '</textarea>';
 	modal_msg += '</p>';
 	modal_msg += '<p id="shareurlcaption">Share URL</p>';
-	modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="addautoplay" class="urlcontrolslast btn btn-urlcontrols" onclick="AddAutoPlay()" type="button" value="Add Auto-Play" title="Adds &play=1 to the ShareURL"></p>';
-
+	modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="addautoplay" class="urlcontrols btn btn-urlcontrols" onclick="AddAutoPlay()" type="button" value="Add Auto-Play" title="Adds &play=1 to the ShareURL.&nbsp;&nbsp;Tune will open in the player."><input id="adddisableediting" class="urlcontrolslast btn btn-urlcontrols" onclick="AddDisableEditing()" type="button" value="Add Disable Editing" title="Adds &dx=1 to the ShareURL.&nbsp;&nbsp;Entering the editor from the fullscreen tune view will be disabled."></p>';
 
 	modal_msg += '</div>';
 
@@ -17483,3 +17586,6 @@ function WaitForReady(fn) {
 //
 
 WaitForReady(DoStartup);
+
+
+
