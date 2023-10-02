@@ -2210,7 +2210,13 @@ function PostProcessHeadersAndFooters(thePDF,addPageNumbers,startingPage,nPages,
 //
 // Get all the tune titles
 //
+var gAcrobatURLLimitExceeded = [];
+var ACROBATMAXURLLENGTH = 2076;
+
 function GetAllTuneHyperlinks(theLinks) {
+
+	// Keep track of any tunes that exceed the Acrobat maximum length
+	gAcrobatURLLimitExceeded = [];
 
 	var nTunes = CountTunes();
 
@@ -2259,7 +2265,14 @@ function GetAllTuneHyperlinks(theLinks) {
 				theURL += "&dx=1"
 			}
 
-			theURL += "&play=1"				
+			theURL += "&play=1";
+
+			// Warn if too large for Acrobat Reader
+			if (theURL.length > ACROBATMAXURLLENGTH){
+
+				gAcrobatURLLimitExceeded.push({name:theTitles[i],urllength:theURL.length});
+
+			}			
 
 			theLinks[i].url = theURL;
 
@@ -2350,7 +2363,14 @@ function GetAllTuneHyperlinks(theLinks) {
 			}
 
 			// Normal play/edit link
-			theURL += "&play=1"				
+			theURL += "&play=1"	
+
+			// Warn if too large for Acrobat Reader
+			if (theURL.length > ACROBATMAXURLLENGTH){
+
+				gAcrobatURLLimitExceeded.push({name:theTitles[i],urllength:theURL.length});
+
+			}			
 
 			theLinks[i].url = theURL;
 
@@ -2367,6 +2387,13 @@ function GetAllTuneHyperlinks(theLinks) {
 			theHyperlink = addTunebookHyperlink[0].replace("%hyperlink","");
 			
 			theHyperlink = theHyperlink.trim();
+
+			// Warn if too large for Acrobat Reader
+			if (theHyperlink.length > ACROBATMAXURLLENGTH){
+
+				gAcrobatURLLimitExceeded.push({name:theTitles[i],urllength:theHyperlink.length});
+
+			}			
 
 			theLinks[i].url = theHyperlink;
 
@@ -5042,6 +5069,29 @@ function promptForPDFFilename(placeholder, callback){
 	});
 }
 
+// 
+// Warn if there are any play ShareURLs too large for Adobe Acrobat
+//
+function ShowAcrobatURLSizeWarningDialog(){
+
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Adobe Acrobat Maximum URL Length Warning</p>';
+	modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;">During PDF export play hyperlink embedding, some very long and complex tunes had play hyperlinks that exceeded the Adobe Acrobat maximum URL length of 2076 characters.</p>';
+	modal_msg += '<p style="font-size:12pt;line-height:18pt;">These play links will work with the built-in PDF reader on most web browsers and online PDF readers, many non-Adobe desktop and mobile PDF readers, but will not open correctly if the tune title is clicked when the PDF is viewed using Adobe Acrobat:</p>';
+
+	var nBadTunes = gAcrobatURLLimitExceeded.length;
+	for (var i=0;i<nBadTunes;++i){
+		modal_msg += '<p style="font-size:12pt;line-height:10pt;">"'+gAcrobatURLLimitExceeded[i].name+'"&nbsp;-&nbsp;URL length: '+gAcrobatURLLimitExceeded[i].urllength+'</p>';
+	}
+	modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:24px">If Adobe Acrobat is your target PDF reader, your best option is to use the per-tune %hyperlink directive in these tunes with a shortened play Share URL manually generated using the Sharing dialog.</p>';
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 75, width: 700,  scrollWithPage: false }).then(function(){
+
+		// Clear the list of bad URLs
+		gAcrobatURLLimitExceeded = [];
+			
+	});
+}
+
 //
 // PDF Exporter
 //
@@ -6080,6 +6130,13 @@ function ExportNotationPDF(title) {
 										// Hide the PDF status modal
 										var pdfstatus = document.getElementById("pdf-controls");
 										pdfstatus.style.display = "none";
+
+										// Were there any injected URLs that exceeded the Acrobat max?
+										if (gAcrobatURLLimitExceeded.length > 0){
+
+											ShowAcrobatURLSizeWarningDialog();
+
+										}
 
 									}
 
