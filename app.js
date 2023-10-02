@@ -5084,7 +5084,7 @@ function ShowAcrobatURLSizeWarningDialog(){
 	}
 	modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:24px">If Adobe Acrobat is your target PDF reader, your best option is to use the per-tune %hyperlink directive in these tunes with a shortened play Share URL manually generated using the Sharing dialog.</p>';
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 75, width: 700,  scrollWithPage: false }).then(function(){
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 75, width: 700,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 
 		// Clear the list of bad URLs
 		gAcrobatURLLimitExceeded = [];
