@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-                
+        
         <style>
         p {
         font-size:14pt;
@@ -1314,6 +1314,13 @@
             <p></p>
             <p>For automatically generated tunebook-wide hyperlinks, %add_all_playback_links takes precedence over %add_all_links_to_thesession</p>
             <p></p>
+            <hr>
+            <p><strong>Note: Adobe Acrobat has a maximum supported hyperlink URL length of 2076 characters.</strong></p>
+            <p>During PDF generation, if a playback or other hyperlink is detected that exceeds the maximum Adobe Acrobat supported URL length, you will be presented with an alert at the completion of the PDF generation.</p>
+            <p>The alert lists the names of the tunes that have the long URLs, along with the URL length for each tune.</p>
+            <p>These play links will work with the built-in PDF reader on most web browsers and online PDF readers, many non-Adobe desktop and mobile PDF readers, but will not open correctly if the tune title is clicked when the PDF is viewed using Adobe Acrobat.</p>
+            <p>If Adobe Acrobat is your target PDF reader, your best option is to use the available per-tune %hyperlink directive in these tunes with a shortened play Share URL manually generated using the <strong>Sharing</strong> dialog:</p>
+            <p class="code">%hyperlink your_shortened_Share_URL_here</p>
             <hr>
             <p class="page_break_always"><strong>Example: Creating a PDF tunebook with playback links and other advanced features</strong></p>
             <p></p>
