@@ -5069,6 +5069,20 @@ function promptForPDFFilename(placeholder, callback){
 	});
 }
 
+//
+// Warn if coming in from a bad Acrobat link
+//
+function ShowAcrobatHyperlinkLengthWarning()
+{
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Adobe Acrobat Hyperlink Length Warning</p>';
+	modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;">Adobe Acrobat limits the length of clicked hyperlinks to 2076 characters.</p>';
+	modal_msg += '<p style="font-size:12pt;line-height:18pt;">Some very complex tune Share URLs used in tunebooks generated with this tool may exceed this limit.</p>';
+	modal_msg += '<p style="font-size:12pt;line-height:18pt;">If you are using Adobe Acrobat as your PDF reader, and you are seeing this message after clicking a complex tune link, try instead simply dragging the PDF of the tunebook to your browser to read it.</p>';
+	modal_msg += '<p style="font-size:12pt;line-height:18pt;">The PDF readers built into most modern browsers do not have this hyperlink length limitation and will properly open the tune hyperlink when clicked.</p>'
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 75, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
+}
+
 // 
 // Warn if there are any play ShareURLs too large for Adobe Acrobat
 //
@@ -11009,20 +11023,6 @@ function processShareLink() {
 
 	// Process URL params
 
-	// Handler for legacy base64 parameters
-	if (urlParams.has("base64")) {
-
-		const abcInBase64 = urlParams.get("base64");
-
-		const abcText = b64toutf8(abcInBase64);
-
-		if (abcText.length > 0) {
-			SetAbcText(abcText);
-			RestoreDefaults();
-			doRender = true;
-		}
-	}
-
 	// Handler for lzw ABC data parameter
 	if (urlParams.has("lzw")) {
 
@@ -11036,6 +11036,12 @@ function processShareLink() {
 			SetAbcText(abcText);
 			RestoreDefaults();
 			doRender = true;
+		}
+		else{
+
+			// Bad decode, possibly from a truncated Adobe Acrobat link
+			ShowAcrobatHyperlinkLengthWarning();
+
 		}
 	}
 
