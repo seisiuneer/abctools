@@ -5072,15 +5072,26 @@ function promptForPDFFilename(placeholder, callback){
 //
 // Warn if coming in from a bad Acrobat link
 //
-function ShowAcrobatHyperlinkLengthWarning()
-{
+function ShowAcrobatHyperlinkLengthWarning(){
+
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Adobe Acrobat Hyperlink Length Warning</p>';
 	modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;">Adobe Acrobat limits the length of clicked hyperlinks to 2076 characters.</p>';
 	modal_msg += '<p style="font-size:12pt;line-height:18pt;">Some very complex tune Share URLs used in tunebooks generated with this tool may exceed this limit.</p>';
 	modal_msg += '<p style="font-size:12pt;line-height:18pt;">If you are using Adobe Acrobat as your PDF reader, and you are seeing this message after clicking a complex tune link, try instead simply dragging the PDF of the tunebook to your browser to read it.</p>';
 	modal_msg += '<p style="font-size:12pt;line-height:18pt;">The PDF readers built into most modern browsers do not have this hyperlink length limitation and will properly open the tune hyperlink when clicked.</p>'
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 75, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
+}
+
+//
+// Put up an alert that there is a decode issue
+//
+function ShowHyperlinkBadDecodeAlert(){
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Problem Decoding Tune Share URL</p>';
+	modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;text-align:center;">An unrecoverable error occured when decoding this tune ShareURL.</p>';
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
+
 }
 
 // 
@@ -11026,9 +11037,9 @@ function processShareLink() {
 	// Handler for lzw ABC data parameter
 	if (urlParams.has("lzw")) {
 
-		var abcInLZW = urlParams.get("lzw");
+		var originalAbcInLZW = urlParams.get("lzw");
 
-		abcInLZW = LZString.decompressFromEncodedURIComponent(abcInLZW);
+		abcInLZW = LZString.decompressFromEncodedURIComponent(originalAbcInLZW);
 
 		const abcText = abcInLZW;
 
@@ -11038,10 +11049,16 @@ function processShareLink() {
 			doRender = true;
 		}
 		else{
+			// If it's a long LZW, most likely an Acrobat truncation issue
+			if (originalAbcInLZW.length > 2000){
+				// Bad decode, possibly from a truncated Adobe Acrobat link
+				ShowAcrobatHyperlinkLengthWarning();
+			}
+			else{
+				// Bad decode
+				ShowHyperlinkBadDecodeAlert();
 
-			// Bad decode, possibly from a truncated Adobe Acrobat link
-			ShowAcrobatHyperlinkLengthWarning();
-
+			}
 		}
 	}
 
