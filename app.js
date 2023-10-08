@@ -209,6 +209,9 @@ var gTipJarCount = 0;
 // Save the editor state in a snapshot at exit time
 var gSaveLastAutoSnapShot = false;
 
+// Notation incipits columns
+var gIncipitsColumns = 1;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -1491,13 +1494,15 @@ function RestoreSnapshot(bRestoreAutoSnapshot,bIsAddDialogButton){
 var PAGENUMBERTOP = 296;
 var PAGENUMBERTOPA4 = 313;
 var PAGETOPOFFSET = 32;
-var PAGEBOTTOMOFFSET = 32; 
+var PAGEBOTTOMOFFSET = 24; // Was 32
 var PAGELEFTOFFSET = 37;
 var PAGELEFTOFFSETA4 = 29;
 var PAGEHEIGHTLETTER = 792;
 var PAGEHEIGHTA4 = 842;
 var BETWEENTUNESPACE = 20;
+
 var gBetweenTuneSpace = 20;  // Can be overriden with a %pdf_between_tune_space directive
+var gGotBetweenTuneSpace = false;
 
 // Keeps track of where we are on the page
 var running_height = PAGETOPOFFSET;
@@ -3199,10 +3204,19 @@ function ProcessTunesForContinuousLayout(pageBreakList,pageHeight,doIncipits){
 		var scale_factor = 1.0;
 
 		if (doIncipits){
+
 			if (nBlocks > 2){
+
 				nBlocks = 2;
+
 			}
-			scale_factor = 2.0;
+
+			if (gIncipitsColumns == 2){
+
+				scale_factor = 2.0;
+
+			}
+
 		}
 
 		var theBlockHeight;
@@ -3227,7 +3241,9 @@ function ProcessTunesForContinuousLayout(pageBreakList,pageHeight,doIncipits){
 
 		// If doing incipits, the tune block height is only the height of the first two lines
 		if (doIncipits){
+
 			theElemHeight = accumHeight;
+
 		}
 
 		var tuneStruct = 
@@ -4277,6 +4293,8 @@ function ParseCommentCommands(theNotes){
 	// Detect tunebook pdf between tune space override
 	// Default is 20/72"
 	gBetweenTuneSpace = 20;
+	gGotBetweenTuneSpace = false;
+
 	var betweenTuneSpace = theNotes.match(searchRegExp);
 
 	if ((betweenTuneSpace) && (betweenTuneSpace.length > 0)){
@@ -4290,6 +4308,8 @@ function ParseCommentCommands(theNotes){
 		if ((!isNaN(betweenTuneSpaceInt)) && (betweenTuneSpaceInt >= 0)){
 
 			gBetweenTuneSpace = betweenTuneSpaceInt;
+
+			gGotBetweenTuneSpace = true;
 
 		}
 	}
@@ -4777,7 +4797,12 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 			return;
 		}
 
-		scale_factor = 2;
+		// Doing two column incipits
+		if (gIncipitsColumns == 2){
+
+			scale_factor = 2;
+
+		}
 
 	}
 
@@ -4867,7 +4892,8 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 							if (doIncipits){
 
-								if (column_number == 0){
+								// Setup second column if doing notation incipits in two column mode
+								if ((gIncipitsColumns==2) && (column_number == 0)){
 
 									// Yes, force it to the second column
 									running_height = PAGETOPOFFSET;
@@ -5664,8 +5690,11 @@ function ExportNotationPDF(title) {
 
 	if (incipitsRequested){
 
-		// Reduce the space between tunes in the PDF for incipits
-		//BETWEENTUNESPACE = 0;
+		// Unless overridden, reduce the space between tunes for single column note incipits
+		if ((gIncipitsColumns == 1) && (!gGotBetweenTuneSpace)){
+
+			BETWEENTUNESPACE = 0;	
+		}
 
 		// Force an idle on the advanced controls to determine if we need to hide the annotations or text annotations before incipit render
 		IdleAdvancedControls(false);
@@ -15904,6 +15933,59 @@ function SharingControlsDialog(){
 // PDF Export dialog
 //
 
+//
+// Add a new ABC tune template, song template, or PDF tunebook annotation template to the current ABC
+//
+function idlePDFExportDialog(){
+
+	function showHideIncipitsLayout(val){
+
+		if (val != "incipits"){
+
+			var elem = document.getElementsByName("configure_incipitscolumns");
+			
+			if (elem && (elem.length!=0)){
+				elem[0].disabled = true;
+				elem[0].style.opacity = 0.4;
+
+			}
+
+		}
+		else{
+
+			var elem = document.getElementsByName("configure_incipitscolumns");
+			
+			if (elem && (elem.length!=0)){
+				elem[0].disabled = false;
+				elem[0].style.opacity = 1.0;
+			}
+
+		}
+	}
+
+	// Idle the incipits column selector
+	var elem = document.getElementsByName("configure_tunelayout");
+
+	if (elem && (elem.length!=0)){
+
+		// Initial idle of incipits layout selector
+		var val = elem[0].value;
+
+		showHideIncipitsLayout(val)
+
+		// Idle the incipits layout selector
+		elem[0].onchange = function(){
+
+			// Initial idle of incipits layout selector
+			var val = this.value;
+
+			showHideIncipitsLayout(val);
+
+		}
+
+	}
+}
+
 function PDFExportDialog(){
 
 	// If currently rendering PDF, exit immediately
@@ -15922,6 +16004,11 @@ function PDFExportDialog(){
 	    { name: "  Notes Incipits", id: "incipits" },
 	    { name: "  ABC Text Incipits", id: "incipits_abc" },
 	    { name: "  ABC Text Incipits Sorted", id: "incipits_abc_sort" },
+  	];
+
+  	const incipits_columns_list = [
+	    { name: "  One Column", id: 1 },
+	    { name: "  Two Columns", id: 2 },
   	];
 
   	const pagenumber_list = [
@@ -16009,6 +16096,7 @@ function PDFExportDialog(){
 	const theData = {
 	  configure_papersize:thePaperSize,
 	  configure_tunelayout:theTuneLayout,
+	  configure_incipitscolumns: gIncipitsColumns,
 	  configure_pagenumber:pagenumbers,
 	  configure_pagenumberonfirstpage:theFirstPage,
 	  configure_fontname:dialog_PDFFont,
@@ -16019,6 +16107,7 @@ function PDFExportDialog(){
 	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">Export PDF Tunebook&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#export_pdf_tunebook" target="_blank" style="text-decoration:none;">💡</a></span></p>'},  
 	  {name: "Paper Size:", id: "configure_papersize", type:"select", options:papersize_list, cssClass:"configure_pdf_papersize_select"},
 	  {name: "Tune Layout:", id: "configure_tunelayout", type:"select", options:tunelayout_list, cssClass:"configure_pdf_tunelayout_select"},
+	  {name: "Notes Incipits Columns:", id: "configure_incipitscolumns", type:"select", options:incipits_columns_list, cssClass:"configure_pdf_incipitscolumns_select"},
 	  {name: "Page Number Location:", id: "configure_pagenumber", type:"select", options:pagenumber_list, cssClass:"configure_pdf_pagenumber_select"},
 	  {name: "            Page Number on First Page", id: "configure_pagenumberonfirstpage", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {html: '<p style="margin-top:36px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</strong></p>'},  
@@ -16027,9 +16116,17 @@ function PDFExportDialog(){
 	  {html: '<p style="font-size:3pt;">&nbsp;</p>'}	
 	];
 
+	setTimeout(function(){
+
+		idlePDFExportDialog();
+
+	}, 150);
+
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 760, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
-		
+	
 		if (!args.canceled){
+
+			gIncipitsColumns = args.result.configure_incipitscolumns;
 
 			var thePaperSize = args.result.configure_papersize;
 
