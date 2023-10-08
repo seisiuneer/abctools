@@ -3262,9 +3262,9 @@ function ProcessTunesForContinuousLayout(pageBreakList,pageHeight,doIncipits){
 	//
 
 	// Keep track of the space left on the page with top and bottom margins
-	var pageSizeWithMargins = pageHeight  - (PAGETOPOFFSET + PAGEBOTTOMOFFSET);
+	var pageSizeWithMargins = pageHeight - (PAGETOPOFFSET + PAGEBOTTOMOFFSET);
 
-	var spaceAvailable = pageSizeWithMargins;
+	var spaceAvailable = pageSizeWithMargins + BETWEENTUNESPACE;
 
 	var thisTuneHeight;
 
@@ -3283,32 +3283,18 @@ function ProcessTunesForContinuousLayout(pageBreakList,pageHeight,doIncipits){
 			// Does this tune fit on the page?
 			if (thisTuneHeight > spaceAvailable){
 
-				if (!doIncipits){
+				// Put in a page break (not on the first tune)
+				if (i != 0){
 
-					// Put in a page break (not on the first tune)
-					if (i != 0){
-
-						pageBreakList[i-1] = true;
-
-					}
-
-				}
-				else{
-						
-					// Put in a page break (not on the first tune)
-					if (i != 0){
-
-						pageBreakList[i-1] = true;
-
-					}
+					pageBreakList[i-1] = true;
 
 				}
 
 				// Reset the page offset
-				spaceAvailable = pageSizeWithMargins;
+				spaceAvailable = pageSizeWithMargins + BETWEENTUNESPACE;
 
 				// Is this a tune moved to a new page that takes up more than one page
-				if (thisTuneHeight  > pageSizeWithMargins){ 
+				if (thisTuneHeight > pageSizeWithMargins){ 
 
 					// Then we have to walk the staffs
 					var nStaffs = renderingDivs[i].staffHeights.length;
@@ -3347,7 +3333,7 @@ function ProcessTunesForContinuousLayout(pageBreakList,pageHeight,doIncipits){
 				else{
 
 					// Reset the page offset
-					spaceAvailable = pageSizeWithMargins;
+					spaceAvailable = pageSizeWithMargins + BETWEENTUNESPACE;
 
 					// Place the tune on the page
 					spaceAvailable -= thisTuneHeight;
