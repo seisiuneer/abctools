@@ -249,8 +249,9 @@
                     <p class="toc"><a style="text-decoration:none;" href="#pdf_tunebook_spacing_overrides">PDF Tunebook Tune Size and Layout Spacing Overrides</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#adding_a_pdf_title_page">Adding a PDF Tunebook Title Page</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#adding_a_pdf_tunebook_table_of_contents_and_index">Adding a PDF Tunebook Table of Contents and Index</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#pdf_page_headers_and_footers">PDF Page Headers and Footers</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#pdf_section_headers">Adding Table of Contents and Index Section Headers</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#table_of_contents_and_index_font_size_and_line_spacing_overrides">Table of Contents and Index Font Size and Line Spacing Overrides</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#pdf_page_headers_and_footers">PDF Page Headers and Footers</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#tunebook_hyperlinks">PDF Tunebook Hyperlinks and Automatic Play Links</a></p>
                 </div>
                 
@@ -524,7 +525,7 @@
             <h1 class="page_break_always">Advanced Controls<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Advanced</strong> button brings up the ABC Transcription Tools Advanced Controls dialog:</p>
             <div class="image_holder_p">
-                <img src="img/advanced_controls_11.jpg"/>
+                <img src="img/advanced_controls_12.jpg"/>
             </div>
             <p>Click the lightbulb icon to bring up this section of the user guide in a new browser tab.</p>
             <p><strong>Show/Hide ABC Features:</strong></p>
@@ -548,7 +549,14 @@
             <p><strong>Inject All PDF Annotations</strong> - Injects all available tool-specific PDF tunebook annotations for title page, table of contents, index generation, etc. at the top of the ABC.</p>
             <p><strong>Inject PDF Tunebook Annotation Template</strong> - Injects a useful template of common PDF tunebook annotations at the top of the ABC.</p>
             <p>This allows you to control the abcjs soundfont used for playback of the tune.</p>
-            <p><strong>Inject MIDI Soundfont, Melody Program, Chord Program, and Volumes</strong> - Injects MIDI Soundfont, Melody program, Chord program and volume annotation into one or all tunes.</p>
+            <p><strong>Inject PDF Section Header</strong> - Prompts for a PDF section header to inject at the text cursor insertion point.</p>
+            <p>Click on any section header in the Table of Contents or Index to jump to that section of the tunebook.</p>
+            <p>The * at the start of the injected tune title will be automatically hidden in the rendered ABC notation and only used to signal the PDF generator to add the section header.</p>
+            <p>In the unsorted Table of Contents and Index, section headers will be displayed with space above and below the section header.</p>
+            <p>In the sorted Table of Contents and Index, section headers will be displayed at the top without the extra space.</p>
+            <p>When rendering full tunes, section headers are automatically pushed to the top of a new page in the tunebook.</p>
+            <p>When rendering note or text incipits, section headers are not automatically pushed to the top of a new page.</p>
+            <p><strong>Inject MIDI Soundfont, Melody, Chord, and Volumes</strong> - Injects MIDI Soundfont, Melody program, Chord program and volume annotation into one or all tunes.</p>
             <div class="image_holder_p">
                 <img src="img/inject_all_midi_2.jpg"/>
             </div>
@@ -1129,6 +1137,26 @@
             <p></p>
             <p>Unlike standard page headers, the index page headers do not support macro expansion.</p>
             <p></p>
+            <hr class="hidden-print" id="pdf_section_headers">
+            <h1 class="page_break_always h1wide">Adding Table of Contents and Index Section Headers<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/ZdBg6Yd8lNU" title="PDF Tunebook Section Headers" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p>To add a section header in the Table of Contents or Index, add a two line placeholder tune with only X: and T: tags, and with a tune title that starts with a * character:</p>
+            <p class="code">X:1<br/>
+            T:*Reels</p>
+            <p>The * at the start of the tune title will be automatically hidden in the rendered ABC notation and only used to signal the PDF generator to add the section header.</p>
+            <p>Click on any section header in the Table of Contents or Index to jump to that section in the tunebook.</p>
+            <p>In the unsorted Table of Contents and Index, section headers will be displayed with space above and below the section header.</p>
+            <p>In the sorted Table of Contents and Index, section headers will be displayed at the top without the extra space.</p>
+            <p>When rendering full tunes, section headers are automatically pushed to the top of a new page in the tunebook.</p>
+            <p>When rendering note or text incipits, section headers are not automatically pushed to the top of a new page.</p>
+            <p>If you want more information displayed under the section headers in the tunebook, just add more normal T: title tags (not starting with a *), they will show up as centered subtitles under the main section header.</p>
+            <p>For example:</p>
+            <p class="code">X:1<br/>
+            T:*Reels<br/>
+            T:These are some tunes I'm working on<br/>
+            T:We can play them at the session next week</p>
+            <p>The additional text in the T: tags is added to the PDF tune pages, not the Table of Contents and Index.</p>
+            <p>Do not put more than one T:* section header tag in the placeholder tune, only the first T: tag should be marked with the *.</p>
             <hr class="hidden-print" id="table_of_contents_and_index_font_size_and_line_spacing_overrides">
             <h1 class="page_break_always">Table of Contents and Index Font Size and Line Spacing Overrides<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>You may override the top offset to title, offset from title to the index or table of contents entries, default tune name font sizes and line spacing, by adding the following comment-based annotations anywhere in your ABC:</p>
