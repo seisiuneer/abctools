@@ -1962,19 +1962,57 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		}
 	}
 
+	var firstSectionHeader = true;
+
 	for (i=0;i<totalTunes;++i){
 
 		thisTitle = theIncipits[i].title;
+
+		var isSectionHeader = false;
+
+		// Strip section header markers
+		if (thisTitle.indexOf("*") == 0){
+
+			thisTitle = thisTitle.replaceAll("*","");
+			
+			isSectionHeader = true;
+
+			if (!firstSectionHeader){
+
+				curTop += TEXTINCIPITLINESPACING;
+
+			}
+
+			firstSectionHeader = false;
+
+		}
 
 		theTextIncipit = theIncipits[i].incipit;
 
 		tunePageMap.push(theCurrentPageNumber);
 
-		thePDF.text(thisTitle, TEXTINCIPITLEFTMARGIN, curTop, {align:"left"});
+		if (isSectionHeader){
 
-		thePDF.text(theTextIncipit, thePaperWidth-TEXTINCIPITRIGHTMARGIN, curTop, {align:"left"});
+			var textWidth = thePDF.getTextWidth(thisTitle);
+
+			thePDF.text(thisTitle, (thePDF.internal.pageSize.getWidth()/3.10) - (textWidth/2), curTop, {align:"left"});
+
+		}
+		else{
+
+			thePDF.text(thisTitle, TEXTINCIPITLEFTMARGIN, curTop, {align:"left"});
+
+			thePDF.text(theTextIncipit, thePaperWidth-TEXTINCIPITRIGHTMARGIN, curTop, {align:"left"});
+
+		}
 
 		curTop += TEXTINCIPITLINESPACING;
+
+		if (isSectionHeader){
+
+			curTop += TEXTINCIPITLINESPACING;
+
+		}
 
 		if (i != (totalTunes - 1)){
 
@@ -2134,6 +2172,8 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 	
 	}
 
+	var firstSectionHeader = true;
+
 	// Add the tunes by name and page number
 	for (i=0;i<totalTunes;++i){
 
@@ -2146,21 +2186,66 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 			theFinalPageNumber += pageDelta;
 		}
 
-		if (doPageLinks){
-			thePDF.textWithLink(theTitles[i], INDEXLEFTMARGIN, curTop, {align:"left",pageNumber:theFinalPageNumber});
+		if (theTitles[i].indexOf("*") != 0){
+
+			if (doPageLinks){
+				thePDF.textWithLink(theTitles[i], INDEXLEFTMARGIN, curTop, {align:"left",pageNumber:theFinalPageNumber});
+			}
+			else{
+				thePDF.text(theTitles[i], INDEXLEFTMARGIN, curTop, {align:"left"});
+			}
+
+			if (doPageLinks){
+				thePDF.textWithLink(""+thePageNumber, thePaperWidth-INDEXRIGHTMARGIN, curTop, {align:"left",pageNumber:theFinalPageNumber});
+			}
+			else{
+				thePDF.text(""+thePageNumber, thePaperWidth-INDEXRIGHTMARGIN, curTop, {align:"left"});
+			}
+
+			curTop += INDEXLINESPACING;
+
 		}
 		else{
-			thePDF.text(theTitles[i], INDEXLEFTMARGIN, curTop, {align:"left"});
-		}
 
-		if (doPageLinks){
-			thePDF.textWithLink(""+thePageNumber, thePaperWidth-INDEXRIGHTMARGIN, curTop, {align:"left",pageNumber:theFinalPageNumber});
-		}
-		else{
-			thePDF.text(""+thePageNumber, thePaperWidth-INDEXRIGHTMARGIN, curTop, {align:"left"});
-		}
+			// Add an Index section header
+			var theSectionName = theTitles[i];
+			
+			theSectionName = theSectionName.replaceAll("*","");
 
-		curTop += INDEXLINESPACING;
+			var textWidth = thePDF.getTextWidth(theSectionName);
+
+			if (!sortTunes){
+
+				if (!firstSectionHeader){
+					curTop += INDEXLINESPACING;
+					firstSectionHeader = true;
+				}
+
+				if (firstSectionHeader){
+					firstSectionHeader = false;
+				}
+
+			}
+
+			if (doPageLinks){
+				thePDF.textWithLink(theSectionName, (thePDF.internal.pageSize.getWidth()/3.10) - (textWidth/2), curTop, {align:"left",pageNumber:theFinalPageNumber});
+			}
+			else{
+				thePDF.text(theSectionName, (thePDF.internal.pageSize.getWidth()/3.10) - (textWidth/2), curTop, {align:"left"});
+			}
+
+			if (!sortTunes){
+
+				curTop += INDEXLINESPACING*2;
+
+			}
+			else{
+
+				curTop += INDEXLINESPACING;
+
+			}
+
+		}
 
 		if (i != (totalTunes - 1)){
 
@@ -2188,6 +2273,10 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 
 			}
 		}
+
+		// Only remove the top spacing for a first tune section header
+		firstSectionHeader = false;
+
 	}
 
 
@@ -2240,6 +2329,11 @@ function GetAllTuneHyperlinks(theLinks) {
 
 		// See if there is a hyperlink override for this tune
 		var thisTune = getTuneByIndex(i);
+
+		// Don't add hyperlinks to section headers
+		if (theTitles[i].indexOf("*") == 0){
+			continue;
+		}
 
 		// Clear the tunebook toc string
 		var theHyperlink = "";
@@ -2672,34 +2766,76 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 		
 	}
 
+	var firstSectionHeader = true;
+
 	// Add the tunes by name and page number
 	for (i=0;i<totalTunes;++i){
 
 		thePageNumber = localPageMap[i];
 
-		if (doPageLinks){
+		if (theTitles[i].indexOf("*") != 0){
 
-			thePDF.textWithLink(theTitles[i], TOCLEFTMARGIN, curTop, {align:"left",pageNumber:(thePageNumber+pageDelta)});
+			if (doPageLinks){
+
+				thePDF.textWithLink(theTitles[i], TOCLEFTMARGIN, curTop, {align:"left",pageNumber:(thePageNumber+pageDelta)});
+
+			}
+			else{
+
+				thePDF.text(theTitles[i], TOCLEFTMARGIN, curTop, {align:"left"});
+
+			}
+
+			if (doPageLinks){
+
+				thePDF.textWithLink(""+thePageNumber, thePaperWidth-TOCRIGHTMARGIN, curTop, {align:"left",pageNumber:(thePageNumber+pageDelta)});
+
+			}
+			else{
+
+				thePDF.text(""+thePageNumber, thePaperWidth-TOCRIGHTMARGIN, curTop, {align:"left"});
+
+			}
+
+			curTop += TOCLINESPACING;
 
 		}
 		else{
 
-			thePDF.text(theTitles[i], TOCLEFTMARGIN, curTop, {align:"left"});
+			// Add a TOC header
+			var theSectionName = theTitles[i];
+			
+			theSectionName = theSectionName.replaceAll("*","");
+
+			var textWidth = thePDF.getTextWidth(theSectionName);
+
+			if (!sortTunes){
+
+				if (!firstSectionHeader){
+					curTop += TOCLINESPACING;
+					firstSectionHeader = true;
+				}
+
+				if (firstSectionHeader){
+					firstSectionHeader = false;
+				}
+			}
+
+			if (doPageLinks){
+				thePDF.textWithLink(theSectionName, (thePDF.internal.pageSize.getWidth()/3.10) - (textWidth/2), curTop, {align:"left",pageNumber:(thePageNumber+pageDelta)});
+			}
+			else{
+				thePDF.text(theSectionName, (thePDF.internal.pageSize.getWidth()/3.10) - (textWidth/2), curTop, {align:"left"});
+			}
+			
+			if (!sortTunes){
+				curTop += TOCLINESPACING*2;
+			}
+			else{
+				curTop += TOCLINESPACING;
+			}
 
 		}
-
-		if (doPageLinks){
-
-			thePDF.textWithLink(""+thePageNumber, thePaperWidth-TOCRIGHTMARGIN, curTop, {align:"left",pageNumber:(thePageNumber+pageDelta)});
-
-		}
-		else{
-
-			thePDF.text(""+thePageNumber, thePaperWidth-TOCRIGHTMARGIN, curTop, {align:"left"});
-
-		}
-
-		curTop += TOCLINESPACING;
 
 		if (i != (totalTunes - 1)){
 
@@ -2726,6 +2862,9 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 
 			}
 		}
+
+		// Only remove the top spacing for a first tune section header
+		firstSectionHeader = false;
 	}
 }
 
@@ -2829,10 +2968,38 @@ function DryRunAddTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperSty
 	
 	}
 
+	var firstSectionHeader = true;
+
 	// Add the tunes by name and page number
 	for (i=0;i<totalTunes;++i){
 
-		curTop += TOCLINESPACING;
+		if (theTitles[i].indexOf("*") != 0){
+
+			curTop += TOCLINESPACING;
+
+		}
+		else{
+
+			if (!sortTunes){
+
+				if (firstSectionHeader){
+					curTop += TOCLINESPACING*2;
+				}
+				else{
+					curTop += TOCLINESPACING*3;
+				}
+
+				if (firstSectionHeader){
+					firstSectionHeader = false;
+				}
+			}
+			else{
+				
+				curTop += TOCLINESPACING;
+			
+			}
+
+		}
 
 		if (i != (totalTunes - 1)){
 
@@ -3274,101 +3441,106 @@ function ProcessTunesForContinuousLayout(pageBreakList,pageHeight,doIncipits){
 
 	for (i=0;i<nTunes;++i){
 
-		// If there is already a forced pagebreak on the tune, we can skip the space calculation
-		if (!pageBreakList[i]){
+		if (i != 0){
 
-			// The PDF generator adds one extra line per block it renders
-			var thisTuneHeight = renderingDivs[i].height + (renderingDivs[i].staffHeights.length / scale_factor);
-
-			// Does this tune fit on the page?
-			if (thisTuneHeight > spaceAvailable){
-
-				// Put in a page break (not on the first tune)
-				if (i != 0){
-
-					pageBreakList[i-1] = true;
-
-				}
+			if (pageBreakList[i-1]){
 
 				// Reset the page offset
 				spaceAvailable = pageSizeWithMargins + BETWEENTUNESPACE;
 
-				// Is this a tune moved to a new page that takes up more than one page
-				if (thisTuneHeight > pageSizeWithMargins){ 
+			}
+		}
 
-					// Then we have to walk the staffs
-					var nStaffs = renderingDivs[i].staffHeights.length;
+		// The PDF generator adds one extra line per block it renders
+		var thisTuneHeight = renderingDivs[i].height + (renderingDivs[i].staffHeights.length / scale_factor);
 
-					var spaceTest;
+		// Does this tune fit on the page?
+		if (thisTuneHeight > spaceAvailable){
 
-					var thisStaffHeight;
+			// Put in a page break (not on the first tune)
+			if (i != 0){
 
-					// How many staffs fit on this page?
-					for (j=0;j<nStaffs;++j){
+				pageBreakList[i-1] = true;
 
-						// The +1 is an additional offset in the PDF generator
-						thisStaffHeight = renderingDivs[i].staffHeights[j] + 1;
+			}
 
-						spaceTest = spaceAvailable - thisStaffHeight;
+			// Reset the page offset
+			spaceAvailable = pageSizeWithMargins + BETWEENTUNESPACE;
 
-						// Out of room on this page, move to the next page
-						if (spaceTest < 0){
+			// Is this a tune moved to a new page that takes up more than one page
+			if (thisTuneHeight > pageSizeWithMargins){ 
 
-							// This staff moves to a new page
-							spaceAvailable = pageSizeWithMargins;
+				// Then we have to walk the staffs
+				var nStaffs = renderingDivs[i].staffHeights.length;
 
-						}
+				var spaceTest;
 
-						spaceAvailable -= thisStaffHeight;
+				var thisStaffHeight;
+
+				// How many staffs fit on this page?
+				for (j=0;j<nStaffs;++j){
+
+					// The +1 is an additional offset in the PDF generator
+					thisStaffHeight = renderingDivs[i].staffHeights[j] + 1;
+
+					spaceTest = spaceAvailable - thisStaffHeight;
+
+					// Out of room on this page, move to the next page
+					if (spaceTest < 0){
+
+						// This staff moves to a new page
+						spaceAvailable = pageSizeWithMargins;
 
 					}
 
-					// Add the space below for the next tune
-					spaceAvailable -= (BETWEENTUNESPACE/scale_factor);
-
-					// Try to layout next tune below this one
-					firstTuneOnPage = false;
+					spaceAvailable -= thisStaffHeight;
 
 				}
-				else{
 
-					// Reset the page offset
-					spaceAvailable = pageSizeWithMargins + BETWEENTUNESPACE;
+				// Add the space below for the next tune
+				spaceAvailable -= (BETWEENTUNESPACE/scale_factor);
 
-					// Place the tune on the page
-					spaceAvailable -= thisTuneHeight;
-
-					// With a space below
-					spaceAvailable -= (BETWEENTUNESPACE/scale_factor);
-
-					// Flag this as the first tune on the page
-					firstTuneOnPage = true;
-
-				}
+				// Try to layout next tune below this one
+				firstTuneOnPage = false;
 
 			}
 			else{
 
-				// Only add in-between space after the first tune on the page
-				if (firstTuneOnPage){
+				// Reset the page offset
+				spaceAvailable = pageSizeWithMargins + BETWEENTUNESPACE;
 
-					firstTuneOnPage = false;
-
-				}
-
-				// Take space for the tune
+				// Place the tune on the page
 				spaceAvailable -= thisTuneHeight;
 
-				// And the spacer below
+				// With a space below
 				spaceAvailable -= (BETWEENTUNESPACE/scale_factor);
 
+				// Flag this as the first tune on the page
+				firstTuneOnPage = true;
+
 			}
+
+		}
+		else{
+
+			// Only add in-between space after the first tune on the page
+			if (firstTuneOnPage){
+
+				firstTuneOnPage = false;
+
+			}
+
+			// Take space for the tune
+			spaceAvailable -= thisTuneHeight;
+
+			// And the spacer below
+			spaceAvailable -= (BETWEENTUNESPACE/scale_factor);
 
 		}
 
 	}
 
-	// First, do no harm... 
+
 	return pageBreakList;
 
 }
@@ -3405,6 +3577,13 @@ function scanTunesForPageBreaks(pdf,paperStyle,doIncipits){
 	if (!doIncipits){
 
 		for (var i=1;i<=nTunes;++i){
+
+			// Auto inject page breaks for section headers
+			if (i>1){
+				if ((theTunes[i].indexOf("T:*") != -1) || (theTunes[i].indexOf("T: *") != -1)){
+					pageBreakRequested[i-2] = true;
+				}
+			}
 
 			if (theTunes[i].indexOf("%%newpage") != -1){
 				pageBreakRequested.push(true);
@@ -5510,7 +5689,7 @@ function ExportTextIncipitsPDF(title){
 		//
 		function finalize_pdf_export(){				
 
-			document.getElementById("statuspdfname").innerHTML = "<font color=\"green\">Rendering Complete!</font>";
+			document.getElementById("statuspdfname").innerHTML = "<font color=\"darkgreen\">Rendering Complete!</font>";
 
 				setTimeout(function(){
 
@@ -6081,7 +6260,7 @@ function ExportNotationPDF(title) {
 					//
 					function finalize_pdf_export(){				
 
-						document.getElementById("statuspdfname").innerHTML = "<font color=\"green\">Rendering Complete!</font>";
+						document.getElementById("statuspdfname").innerHTML = "<font color=\"darkgreen\">Rendering Complete!</font>";
 
 						setTimeout(function(){
 
@@ -9278,6 +9457,11 @@ function InjectStringAboveTuneHeader(theTune, theDirective) {
 //
 function InjectStringBelowTuneHeader(theTune,theString){
 
+	// Don't inject section header tune fragments
+	if ((theTune.indexOf("T:*") != -1) || (theTune.indexOf("T: *") != -1)){
+		return theTune;
+	}
+
 	theTune = theTune.trim();
 
 	// Find the notes below the header
@@ -9319,6 +9503,66 @@ function InjectOneTuneSoundfont(theTune, theSoundfont){
 	
 	return theOutput;
 	
+}
+
+
+//
+// Inject a section header placeholder tune
+//
+
+function InjectSectionHeader(){
+
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
+
+	// Setup initial values
+	const theData = {
+	  configure_sectionheader:"Section Name",
+	};
+
+	var form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject PDF Tunebook Section Header&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#pdf_section_headers" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="margin-top:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a PDF section header placeholder tune into the ABC.</p>'},  
+	  {html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">The section header will be displayed on its own line in the PDF Table of Contents and Index.</p>'}, 
+	  {html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Clicking on the section header in the PDF Table of Contents or Index will jump to the section.</p>'}, 
+	  {html: '<p style="margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">The * at the start of the injected tune title marks the tune as a PDF section header.</p>'}, 
+	  {name: "Section name to inject", id: "configure_sectionheader", type:"text", cssClass:"configure_sectionheader_form_text"}, 
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 760, scrollWithPage: (AllowDialogsToScroll()), autoFocus: true } ).then(function(args){
+		
+		if (!args.canceled){
+
+			var sectionHeader = args.result.configure_sectionheader;
+
+			if (sectionHeader == null){
+				return;
+			}
+
+			var theSelectionStart = gTheABC.selectionStart;
+
+			var leftSide = gTheABC.value.substring(0,theSelectionStart);
+			
+			var rightSide = gTheABC.value.substring(theSelectionStart);
+
+			gTheABC.value = leftSide + "\nX:1\nT:*" + sectionHeader + "\n" + rightSide;
+
+			// Force a redraw
+			RenderAsync(true,null,function(){
+
+				// Set the select point
+				gTheABC.selectionStart = theSelectionStart;
+			    gTheABC.selectionEnd = theSelectionStart;
+
+			    // Focus after operation
+			    FocusAfterOperation();
+
+			});
+
+		}
+	});
 }
 
 //
@@ -16222,7 +16466,8 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<input id="injectallheaders" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders(true)" type="button" value="Inject All PDF Annotations" title="Injects all available tool-specific PDF tunebook annotations for title page, table of contents, index generation, etc. at the top of the ABC">';	
 	modal_msg  += '<input id="injectheadertemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders(false)" type="button" value="Inject PDF Tunebook Annotations Template" title="Injects a template of common useful PDF tunebook annotations at the top of the ABC">';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
-	modal_msg  += '<input id="injectallmidiparams" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectAllMIDIParams()" type="button" value="Inject MIDI Soundfont, Melody Program, Chord Program, and Volumes" title="Injects MIDI Soundfont, Melody program, Chord program and volume annotation into one or all tunes">';
+	modal_msg  += '<input id="injectsectionheader" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectSectionHeader()" type="button" value="Inject PDF Section Header" title="Injects a PDF section header placeholder tune at the cursor insertion point">';
+	modal_msg  += '<input id="injectallmidiparams" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectAllMIDIParams()" type="button" value="Inject MIDI Soundfont, Melody, Chord, and Volumes" title="Injects MIDI Soundfont, Melody program, Chord program and volume annotation into one or all tunes">';
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
 	modal_msg  += '<input id="injectmetronome" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMetronome()" type="button" value="Inject Metronome" title="Injects ABC for a metronome into one or all tunes">';
