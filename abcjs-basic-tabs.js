@@ -20280,6 +20280,10 @@ function TopText(metaText, metaTextInfo, formatting, lines, width, isPrint, padd
   var tAnchor = formatting.titleleft ? 'start' : 'middle';
   var tLeft = formatting.titleleft ? paddingLeft : paddingLeft + width / 2;
   if (metaText.title) {
+    // MAE 9 Oct 2023 For Table of Contents headers
+    if (metaText.title.indexOf("*") == 0){
+      metaText.title = metaText.title.replaceAll("*","");
+    }
     addTextIf(this.rows, {
       marginLeft: tLeft,
       text: metaText.title,
