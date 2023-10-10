@@ -1260,6 +1260,12 @@ var angloFingeringsGenerator = function (theABC){
 
             var thisTune = angloGetTuneByIndex(theABC, i);
 
+            // Don't inject section header tune fragments
+            if ((thisTune.indexOf("T:*") != -1) || (thisTune.indexOf("T: *") != -1)){
+                result += thisTune;
+                continue;
+            }
+
             thisTune = angloStripAllComments(thisTune);
 
             // Strip chords? 
@@ -2059,6 +2065,12 @@ var boxTabGenerator = function (theABC){
 
             var thisTune = getTuneByIndex(theABC, i);
 
+            // Don't inject section header tune fragments
+            if ((thisTune.indexOf("T:*") != -1) || (thisTune.indexOf("T: *") != -1)){
+                result += thisTune;
+                continue;
+            }
+
             thisTune = stripAllComments(thisTune);
 
             // Strip chords? 
@@ -2854,6 +2866,12 @@ var bambooFluteTabGenerator = function (theABC){
         for (var i = 0; i < nTunes; ++i) {
 
             var thisTune = getTuneByIndex(theABC, i);
+
+            // Don't inject section header tune fragments
+            if ((thisTune.indexOf("T:*") != -1) || (thisTune.indexOf("T: *") != -1)){
+                result += thisTune;
+                continue;
+            }
 
             thisTune = stripAllComments(thisTune);
 
