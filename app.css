@@ -618,7 +618,7 @@ opacity: 0.4;
 padding:12px;
 }
 
-#injectbctab, #injectallheaders, #injectmelody, #injectstaffwidth{
+#injectbctab, #injectallheaders, #injectmelody, #injectstaffwidth, #injectsectionheader{
 margin-right:24px;
 height:42px;
 padding:12px;
@@ -1402,6 +1402,22 @@ margin-top:-7px;
 	font-family:helvetica;
 	margin-left: 12px;
 	width: 60px;
+	margin-top:-4px;
+}
+
+.configure_sectionheader_form_text{
+	font-size:12pt;
+	line-height:24px;
+	font-family:helvetica;
+	margin-top:18px;
+	display:flex;
+}
+
+.configure_sectionheader_form_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 300px;
 	margin-top:-4px;
 }
 
