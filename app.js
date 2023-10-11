@@ -220,6 +220,23 @@ var gTheABC = document.getElementById("abc");
 // 
 
 //
+// Detect a T:* or T: * section header
+//
+function isSectionHeader(theTune){
+
+	var searchRegExp = /^T:\s*\*.*$/m
+
+	var sectionHeaderDetected = theTune.match(searchRegExp);
+
+	if ((sectionHeaderDetected) && (sectionHeaderDetected.length > 0)){
+		return true;
+	}
+
+	return false;
+
+}
+
+//
 // Get the text area character offset to the start of a specific tune by index
 //
 function findTuneOffsetByIndex(tuneIndex){	
@@ -885,8 +902,6 @@ function SortTunesByTag(theTag){
 
 	}
 
-	//console.log("Tunes processed: "+nProcessed);
-
 	// Sort tunes by name
 	tunesToProcess.sort((a, b) => {
 
@@ -1088,7 +1103,6 @@ function SortTunes(stripAn){
 
 	}
 
-	//console.log("Tunes processed: "+nProcessed);
 
 	// Sort tunes by name
 	tunesToProcess.sort((a, b) => {
@@ -1932,6 +1946,8 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 
 		}
 
+
+
 		// sort tunes by name
 		tuneInfo.sort((a, b) => {
 
@@ -1974,6 +1990,7 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		if (thisTitle.indexOf("*") == 0){
 
 			thisTitle = thisTitle.replaceAll("*","");
+			thisTitle = thisTitle.trim();
 			
 			isSectionHeader = true;
 
@@ -2127,7 +2144,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 
 				theTitles[i] = thisTitle;
 			}
-			
+		
 		}
 
 		var tuneInfo = [];
@@ -2211,6 +2228,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 			var theSectionName = theTitles[i];
 			
 			theSectionName = theSectionName.replaceAll("*","");
+			theSectionName = theSectionName.trim();
 
 			var textWidth = thePDF.getTextWidth(theSectionName);
 
@@ -2723,6 +2741,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 
 		}
 
+
 		var tuneInfo = [];
 		
 		for (i=0;i<totalTunes;++i){
@@ -2804,8 +2823,8 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 
 			// Add a TOC header
 			var theSectionName = theTitles[i];
-			
 			theSectionName = theSectionName.replaceAll("*","");
+			theSectionName = theSectionName.trim();				
 
 			var textWidth = thePDF.getTextWidth(theSectionName);
 
@@ -3580,7 +3599,7 @@ function scanTunesForPageBreaks(pdf,paperStyle,doIncipits){
 
 			// Auto inject page breaks for section headers
 			if (i>1){
-				if ((theTunes[i].indexOf("T:*") != -1) || (theTunes[i].indexOf("T: *") != -1)){
+				if (isSectionHeader(theTunes[i])){
 					pageBreakRequested[i-2] = true;
 				}
 			}
@@ -9458,7 +9477,7 @@ function InjectStringAboveTuneHeader(theTune, theDirective) {
 function InjectStringBelowTuneHeader(theTune,theString){
 
 	// Don't inject section header tune fragments
-	if ((theTune.indexOf("T:*") != -1) || (theTune.indexOf("T: *") != -1)){
+	if (isSectionHeader(theTune)){
 		return theTune;
 	}
 
