@@ -1261,7 +1261,7 @@ var angloFingeringsGenerator = function (theABC){
             var thisTune = angloGetTuneByIndex(theABC, i);
 
             // Don't inject section header tune fragments
-            if ((thisTune.indexOf("T:*") != -1) || (thisTune.indexOf("T: *") != -1)){
+            if (isSectionHeader(thisTune)){
                 result += thisTune;
                 continue;
             }
@@ -2066,7 +2066,7 @@ var boxTabGenerator = function (theABC){
             var thisTune = getTuneByIndex(theABC, i);
 
             // Don't inject section header tune fragments
-            if ((thisTune.indexOf("T:*") != -1) || (thisTune.indexOf("T: *") != -1)){
+            if (isSectionHeader(thisTune)){
                 result += thisTune;
                 continue;
             }
@@ -2868,7 +2868,7 @@ var bambooFluteTabGenerator = function (theABC){
             var thisTune = getTuneByIndex(theABC, i);
 
             // Don't inject section header tune fragments
-            if ((thisTune.indexOf("T:*") != -1) || (thisTune.indexOf("T: *") != -1)){
+            if (isSectionHeader(thisTune)){
                 result += thisTune;
                 continue;
             }
