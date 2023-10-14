@@ -1502,6 +1502,38 @@ function initButtonNames(){
 
 }
 
+//
+// Get the title of a tune from the ABC
+// 
+function getTuneTitle(theTune){
+
+    var neu = escape(theTune);
+
+    var Reihe = neu.split("%0D%0A");
+
+    Reihe = neu.split("%0A");
+
+    for (var j = 0; j < Reihe.length; ++j) {
+
+        Reihe[j] = unescape(Reihe[j]); 
+
+        var Aktuellereihe = Reihe[j].split(""); 
+
+        if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
+
+            titel = Reihe[j].slice(2);
+
+            titel = titel.trim();
+
+            // Just grab the first title foiund
+            return titel
+
+        }
+    }
+
+    return "Unknown";
+
+}
 
 // MAE 14 July 2023 Using glyphs for bellows direction by default
 var PUSH_NAME = "↓";
@@ -1533,9 +1565,15 @@ function generateFingerings() {
 
     var result = "";
 
+    var gotError = false;
+
+    var badTunes = [];
+
     for (var i = 0; i < nTunes; ++i) {
 
         var thisTune = getTuneByIndex(theABC, i);
+
+        var originalTune = thisTune;
 
         thisTune = stripAllComments(thisTune);
 
@@ -1543,7 +1581,24 @@ function generateFingerings() {
             thisTune = StripChords(thisTune);
         }
 
-        thisTune = finger(thisTune, useBarForDraw);
+        try{
+
+            thisTune = finger(thisTune, useBarForDraw);
+
+        }
+        catch(err){
+
+            result += originalTune;
+
+            var thisTitle = getTuneTitle(originalTune);
+
+            badTunes.push(thisTitle);
+
+            gotError = true;
+
+            continue;
+
+        }
 
         // Default directives to inject into every tune
         //%%MIDI chordprog 133
@@ -1579,6 +1634,23 @@ function generateFingerings() {
         result += thisTune;
 
         result += "\n";
+    }
+
+    if (gotError){
+
+        var thePrompt = '<p style="text-align:center;font-size:18px;margin-bottom:18px">No Anglo Concertina tablature generated for one or more tunes:</p>';
+
+        for (var j=0;j<badTunes.length;++j){
+            thePrompt += '<p style="text-align:center;font-size:18px;">'+badTunes[j]+'</p>';
+        }
+
+        thePrompt += '<p style="text-align:center;font-size:18px;line-height:24px;margin-top:18px">Some notes may be outside the range or not available on the selected style of Anglo concertina.</p>';
+
+        thePrompt += '<p style="text-align:center;font-size:18px;line-height:24px;margin-top:18px">This will also occur if there is text in the ABC that doesn\'t start with a %, usually between %%begintext and %%endtext annotations.</p>';
+
+        DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 100, scrollWithPage: true });
+
+
     }
 
     document.getElementById("output").value = result;
