@@ -1,0 +1,300 @@
+<html>
+  
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="profile" href="http://gmpg.org/xfn/11">
+    <title>Anglo Concertina Fingerings Generator</title>
+    <link rel='dns-prefetch' href='//fonts.googleapis.com' />
+    <link rel='dns-prefetch' href='//s.w.org' />
+    <link rel='preconnect' href='https://secureservercdn.net' crossorigin />
+    <link rel="icon" href="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5-32x32.png" sizes="32x32" />
+    <link rel="icon" href="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5-192x192.png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5-180x180.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Anglo Concertina Fingerings ABC Batch Processor" />
+    <meta property="og:description" content="Batch processor for generating ABC notation with Anglo Concertina fingerings" />
+    <meta property="og:url" content="http://michaeleskin.com/tools/anglo-fingerings.html" />
+    <meta property="og:site_name" content="Anglo Concertina Fingerings Generator" />
+    <meta property="og:image" content="http://michaeleskin.com/img/anglotab3.jpg" />
+    <meta name="msapplication-TileImage" content="https://secureservercdn.net/45.40.144.200/33d.dea.myftpupload.com/wp-content/uploads/2015/08/favicon5.png?time=1606377715" />
+    <meta name="viewport" content="width=860">
+    <link rel="stylesheet" href="anglo-fingerings.css?v=35"/>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VM0N9HL3MK');
+    </script>
+    
+  </head>
+  <body>
+    
+    <div id="maindiv">
+      
+      <div>
+        
+        <div style="text-align: center;">
+          <h1>Anglo Concertina Fingering Generator</h1>
+          <h2>Batch Pre-processor for ABC Tunebooks</h2>
+        </div>
+        
+        <h4 style="margin-top:32px;">Instructions:&nbsp;&nbsp;<a href="#abcinput">Jump to Tool</a></h4>
+        
+        <p>1)&nbsp;Click "Open an existing .ABC file" to open a file or paste one or more ABC tunes into the box below.</p>
+        <p>2)&nbsp;Enter your preferred ABC font sizes, %%staffsep, %%musicspace, and preferred bellows direction indication character values.</p>
+        <p>3)&nbsp;If you would like to use a bar over the button name to indicate draw instead of using the bellows direction indication characters, check "Use a bar over button name to indicate Draw (overrides Push and Draw characters)"</p>
+        <p>4)&nbsp;If desired, edit the button names you would like used in the tablature.</p>
+        <p>Click "Reset to Default" to reset to the original values.</p>
+        <p>Changes to the button names are saved to your local browser storage and reloaded the next time you run the tool.</p>
+        <p>5)&nbsp;Select your instrument style: (Jeffries or Wheatstone) from the "Style" dropdown.</p>
+        <p>6)&nbsp;Select your preferred fingering solution from the "Fingering Solution" dropdown:</p>
+        <p><strong>On-Row:</strong></p>
+        <p>Jim Van Donsel's original fingering solution, favors center row:</p>
+        <p>Favors playing D5 and E5 on the right-side C-row.</p>
+        <p>For Jeffries: Favors 2nd button on right-side top-row for C#5 and D#5.</p>
+        <p><strong>Cross-Row:</strong></p>
+        <p>A more cross-row friendly fingering solution:</p>
+        <p>Favors playing the D5 and E5 on the left-side G-row.</p>
+        <p>Favors playing C5 on the left-side G-row draw.</p>
+        <p>Favors playing B4 on the right-side C-row draw.</p>
+        <p>For Jeffries: Favors 2nd button on right-side top-row for C#5 and D#5.</p>
+        <p>5)&nbsp;Select whether you want the tablature to appear above or below the notation from the "Tab Location" dropdown.</p>
+        <p>6)&nbsp;If fingerings are set to appear over the notation, existing chords in the ABC are always stripped.</p>
+        <p>If fingerings are set to appear under the notation, and you want to leave existing chords above the staff, uncheck "Strip all chords before injecting fingerings".</p>
+        <p>7)&nbsp;Click "Generate Fingerings".</p>
+        <p>The generated ABC with fingerings will appear in the "Processed ABC Output, with Fingerings" box.</p>
+        <p>8)&nbsp;Save, Copy or Test the results:</p>
+        <p>Click "Save Output to a file" to save the results to a file.</p>
+        <p>Click "Copy Output to the clipboard" to copy the results to the system clipboard for pasting into other applications.</p>
+        <p>Click "Test Output in the ABC Transcription Tools" to open and test the results in my <a href="http://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a></p>
+        
+      </div>
+      
+      <hr id="abcinput">
+      
+      <div style="text-align:left">
+        
+        <h4>ABC Input:</h4>
+        
+        <div style="margin-top:28px;margin-bottom:36px;">
+          <p>
+            <input type="file" id="selectabcfile" accept=".abc,.txt,.ABC,.TXT"  hidden/>
+            <label class="abcupload btn btn-controls" for="selectabcfile" title="Opens an existing ABC file">Open an existing .ABC file</label>
+          </p>
+        </div>
+        
+        <p>
+          <textarea id="input" placeholder="Enter ABC notation here" spellcheck="false" autocorrect="off" autocapitalize="none">
+          </textarea>
+        </p>
+        
+        <p><input type="checkbox" id="injectVolumes" checked="true">&nbsp;&nbsp;Inject %%MIDI directives to mute bass/chords</p>
+        
+        <p>Font family:<span class="inputbox"><input style="width:100px;" id="font_family" type="text"></span><span class="recommended">Recommended: Palatino</span></p>
+        
+        <p>Title font size:<span class="inputbox"><input style="width:100px;" id="title_font_size" type="text"></span><span class="recommended">Recommended: 22</span></p>
+        
+        <p>Subtitle font size:<span class="inputbox"><input style="width:100px" id="subtitle_font_size" type="text"></span><span class="recommended">Recommended: 18</span></p>
+        
+        <p>Info font size:<span class="inputbox"><input style="width:100px" id="info_font_size" type="text"></span><span class="recommended">Recommended: 14</span></p>
+        
+        <p>Fingering font size:<span class="inputbox"><input style="width:100px" id="tab_font_size" type="text"></span><span class="recommended">Recommended: Reels/Hornpipes - 9,  Jigs - 11</span></p>
+        
+        <p>%%staffsep value:<span class="inputbox"><input style="width:100px" id="staff_sep" type="text"></span><span class="recommended">Recommended: 80</span></p>
+        
+        <p>%%musicspace value:<span class="inputbox"><input style="width:100px" id="music_space" type="text"></span><span class="recommended">Recommended: 10</span></p>
+        <p>Character(s) for bellows Push:<span class="inputboxglyph"><input style="width:70px" id="push_glyph" type="text"></span></p>
+        <p style="margin-bottom:24px;">Character(s) for bellows Draw:<span class="inputboxglyph"><input style="width:70px" id="draw_glyph" type="text"></span></p>
+        <p><input type="checkbox" id="useBarForDraw" checked="false">&nbsp;&nbsp;Use a bar over button name to indicate Draw (overrides Push and Draw characters)</p>
+        
+        <p style="margin-bottom:24px;">Button names:&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-reset-buttonnames" onClick="defaultButtonNames();">Reset to Default</button></p>
+        
+        
+        <table style="margin-bottom:24px;">
+          <tr>
+            <td><input type="text" id="r1c1"></td>
+            <td><input type="text" id="r1c2"></td>
+            <td><input type="text" id="r1c3"></td>
+            <td><input type="text" id="r1c4"></td>
+            <td><input type="text" id="r1c5"></td>
+            <td><input type="text" id="r1c6" style="margin-left:36px"></td>
+            <td><input type="text" id="r1c7"></td>
+            <td><input type="text" id="r1c8"></td>
+            <td><input type="text" id="r1c9"></td>
+            <td><input type="text" id="r1c10"></td>
+          </tr>
+          <tr>
+            <td><input type="text" id="r2c1"></td>
+            <td><input type="text" id="r2c2"></td>
+            <td><input type="text" id="r2c3"></td>
+            <td><input type="text" id="r2c4"></td>
+            <td><input type="text" id="r2c5"></td>
+            <td><input type="text" id="r2c6" style="margin-left:36px"></td>
+            <td><input type="text" id="r2c7"></td>
+            <td><input type="text" id="r2c8"></td>
+            <td><input type="text" id="r2c9"></td>
+            <td><input type="text" id="r2c10"></td>
+          </tr>
+          <tr>
+            <td><input type="text" id="r3c1"></td>
+            <td><input type="text" id="r3c2"></td>
+            <td><input type="text" id="r3c3"></td>
+            <td><input type="text" id="r3c4"></td>
+            <td><input type="text" id="r3c5"></td>
+            <td><input type="text" id="r3c6" style="margin-left:36px"></td>
+            <td><input type="text" id="r3c7"></td>
+            <td><input type="text" id="r3c8"></td>
+            <td><input type="text" id="r3c9"></td>
+            <td><input type="text" id="r3c10"></td>
+          </tr>
+        </table>
+        
+        <p>
+          
+          <span style="">Style:&nbsp;&nbsp;</span>
+          
+          <select id="layout">
+            
+            <option value="CGJeffries">&nbsp;&nbsp;Jeffries</option>
+            
+            <option value="CGWheatstone">&nbsp;&nbsp;Wheatstone</option>
+            
+          </select>
+          
+          <span style="margin-left:15px">Fingering Solution:&nbsp;&nbsp;</span>
+          
+          <select id="preferred_fingering">
+            
+            <option value="0">&nbsp;&nbsp;On-Row</option>
+            
+            <option value="1">&nbsp;&nbsp;Cross-Row</option>
+            
+          </select>
+          
+          <span style="margin-left:15px">Tab Location:&nbsp;&nbsp;</span>
+          
+          <select id="tab_location" onChange="idleTabLocation()">
+            
+            <option value="above">&nbsp;&nbsp;Above Staff</option>
+            
+            <option value="below">&nbsp;&nbsp;Below Staff</option>
+            
+          </select>
+          
+        </p>
+        
+        <p id="stripChordsHolder" style="display:none;"><input type="checkbox" id="stripChords" checked="true">&nbsp;&nbsp;Strip all chords before injecting fingerings</p>
+        
+        <p style="margin-top:24px"><button id="generateFingerings" class="btn btn-generate" onClick="generateFingerings();">Generate Fingerings</button></p>
+        
+        <div style="margin-bottom: 18px;">
+          
+          <h4>Processed ABC Output, with Fingerings:</h4>
+          
+        </div>
+        
+        <textarea id="output" placeholder="Output results will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea>
+        
+        <p style="margin-top:20px;">
+          
+          <button id="copybutton" class="btn btn-controls" onClick="copyOutputToClipboard();">Copy Output to the clipboard</button>
+          
+          <button style="margin-left:24px;" class="btn btn-controls" onClick="saveOutput();">Save Output to a file</button>
+          
+          <button style="margin-left:24px;" class="btn btn-controls" onClick="testOutput();">Test Output in the ABC Transcription Tools</button>
+          
+        </p>
+        
+      </div>
+      
+      <hr>
+      
+      <div style="text-align: center;">
+        
+        <h4>How to Read the Anglo Concertina Tablature</h4>
+        
+        <p style="text-align: center;margin-top:36px;"><strong>Wheatstone Layout</strong></p>
+        
+        <img style="margin-top:20px;" src="wheatstone_cg.jpg">
+        
+        <p style="text-align: center;margin-top:36px;"><strong>Jeffries Layout</strong></p>
+        
+        <img style="margin-top:20px;"  src="jeffries_cg.jpg">
+        
+        <p style="text-align: center;margin-top:36px;"><strong>Tablature Button Names</strong></p>
+        
+        <img style="margin-top:20px;"  src="anglo-fingerings.jpg">
+        
+      </div>
+      
+      <hr>
+      
+      <h4 style="text-align:center;">Walkthrough and Demo Video</h4>
+      
+      <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="720" height="393" src="https://www.youtube.com/embed/OOXPKw9v2S8" title="Anglo Concertina Fingerings Generator Walkthrough" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+      
+      <hr>
+      
+      <h4 style="text-align:center;">Example Tunebooks</h4>
+      
+      <p>I've created several large tunebooks with fingerings for Anglo Concertina using this tool to pre-process the original source ABC files, then bringing the output of the tool into my <a href="http://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a> for PDF generation including a Table of Contents, Index, and playback links.</p>
+      
+      <p>Check them out here:</p>
+      
+      <p><a href="http://michaeleskin.com/tunebooks.html#anglo_concertina_tunebooks" target="_blank">Tunebooks with Fingering Tablature for Anglo Concertina</a></p>
+      
+      <hr>
+      
+      <h4 style="text-align:center">Known Issues</h4>
+      
+      <p><strong>Fails when converting multi-voice tunes:</strong></p>
+      <p>For best results, use source ABC tunes that have a single voice. (i.e. no V: tags)</p>
+      <p>Unpredictable results or a failure to complete the fingering generation may occur with multi-voice ABC files.</p>
+      <p></p>
+      <p><strong>Button direction missing for some less-often used accidentals:</strong></p>
+      <p>After fingering generation, some less-often used accidentals like _E in certain keys may show the correct button, but are missing their direction in the ABC.</p>
+      <p>If you see missing directions on any notes, review the ABC in the ABC editor and correct the direction manually by copying and pasting either a push "↓" or draw "↑" arrow for the missing direction.</p>
+      <p></p>
+      <p><strong>Tunes with key changes mid-tune may not generate correct fingerings after the key change:</strong></p>
+      <p>The fingering solutions only use the original key of the tune.</p>
+      <p>If the key changes mid-tune, the fingering solution after that point may not be correct.</p>
+      <p></p>
+      <p><strong>Tunes with [GBd] style chords in square brackets do not generate the correct fingerings:</strong></p>
+      <p>You'll need to reduce these down to a single note for the tool to work.</p>
+      <p></p>
+      
+      <hr>
+      
+      <div style="text-align:center;padding:10px 10px 5px 10px;background-color:honeydew">
+        <h2 style="text-align:center;">Tip Jars</h2>
+        <p>If you find this tool useful, please consider buying me a beer<br/>by tossing a few bucks into one of my virtual tip jars:</p>
+        <p class="notranslate">PayPal</br><a href="https://paypal.me/MichaelEskin" target="_blank">https://paypal.me/MichaelEskin</a></p>
+        <p class="notranslate">Venmo</br>@MichaelEskin</p>
+      </div>
+      
+      <hr>
+      
+      <p style="text-align: center">This utility is a fork of the original Anglo Concertina fingering converter written by Jim Van Donsel</p>
+      
+      <p style="text-align: center"> <a href="https://jvandonsel.github.io/fingering/fingering.html" target="_blank">https://jvandonsel.github.io/fingering/fingering.html</a></p>
+      
+      <hr>
+      
+      <p style="text-align: center">Complete source code for this utility may be found on GitHub</p>
+      
+      <p style="text-align: center"> <a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">Anglo Fingering Generator on Github</a></p>
+      
+      <hr style="margin-bottom:50px">
+      
+    </div>
+    
+  </body>
+  
+  <script src="anglo-fingerings.js?v=35" type="text/javascript"></script>
+  <script type="text/javascript" src="lz-string.min.js?v=35"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=35"></script>
+  
+</html>
