@@ -220,6 +220,39 @@ var gTheABC = document.getElementById("abc");
 // 
 
 //
+// Get the title of a tune from the ABC
+// 
+function getTuneTitle(theTune){
+
+	var neu = escape(theTune);
+
+	var Reihe = neu.split("%0D%0A");
+
+	Reihe = neu.split("%0A");
+
+	for (var j = 0; j < Reihe.length; ++j) {
+
+		Reihe[j] = unescape(Reihe[j]); 
+
+		var Aktuellereihe = Reihe[j].split(""); 
+
+		if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
+
+			titel = Reihe[j].slice(2);
+
+			titel = titel.trim();
+
+			// Just grab the first title foiund
+			return titel
+
+		}
+	}
+
+	return "Unknown";
+
+}
+
+//
 // Detect a T:* or T: * section header
 //
 function isSectionHeader(theTune){
@@ -8398,7 +8431,7 @@ function AppendJSBach(){
 	theValue += 'K:C\n';
 	theValue += '%\n';
 	theValue += '% Try changing the abcjs_soundfont value to\n';
-	theValue += '% fluid, musyng, or fatboy for different harpsichord sounds:\n';
+	theValue += '% fluid, musyng, fatboy, canvas, or mscore for different harpsichord sounds:\n';
 	theValue += '%\n';	
 	theValue += '%abcjs_soundfont fluid\n';	
 	theValue += '%\n';	
@@ -8472,7 +8505,7 @@ function AppendJSBach2(){
 	theValue += 'K:C\n';
 	theValue += '%\n';
 	theValue += '% Try changing the abcjs_soundfont value to\n';
-	theValue += '% fluid, musyng, or fatboy for different organ sounds:\n';
+	theValue += '% fluid, musyng, fatboy, canvas, or mscore for different organ sounds:\n';
 	theValue += '%\n';	
 	theValue += '%abcjs_soundfont fluid\n';	
 	theValue += '%\n';		
@@ -10009,6 +10042,12 @@ function InjectAllMIDIParams(){
 		}else
 		if (gDefaultSoundFont.indexOf("FatBoy")!=-1){
 			gLastInjectedSoundfont = "2";
+		}else
+		if (gDefaultSoundFont.indexOf("Canvas")!=-1){
+			gLastInjectedSoundfont = "3";
+		}else
+		if (gDefaultSoundFont.indexOf("MScore")!=-1){
+			gLastInjectedSoundfont = "4";
 		}
 	}
 
@@ -10016,6 +10055,8 @@ function InjectAllMIDIParams(){
 	    { name: "  Fluid", id: "0" },
 	    { name: "  Musyng Kite", id: "1" },
 	    { name: "  FatBoy", id: "2" },
+	    { name: "  Canvas", id: "3" },
+	    { name: "  MScore", id: "4" },
   	];
 
 	// Setup initial values
@@ -10077,6 +10118,12 @@ function InjectAllMIDIParams(){
 					break;
 				case "2":
 					soundFontToInject = "fatboy";
+					break;
+				case "3":
+					soundFontToInject = "canvas";
+					break;
+				case "4":
+					soundFontToInject = "mscore";
 					break;
 			}
 
@@ -12151,19 +12198,46 @@ function DoInjectTablature_Anglo(){
 
 	gCurrentTab = "noten";
 
-	gTheABC.value = angloFingeringsGenerator(gTheABC.value);
+	angloFingeringsGenerator(gTheABC.value,callback);
 
-	// Show the chords after an inject
-	gStripChords = false;
-	
-	RenderAsync(true,null);
+	function callback(injectedABC, wasError, errorReport){
+		
+		if (!wasError){
+			
+			gTheABC.value = injectedABC;
 
-	// Idle the dialog
-	IdleAdvancedControls(true);
+			// Show the chords after an inject
+			gStripChords = false;
+			
+			RenderAsync(true,null);
 
-	// Idle the show tab names control
-	IdleAllowShowTabNames();
+			// Idle the dialog
+			IdleAdvancedControls(true);
 
+			// Idle the show tab names control
+			IdleAllowShowTabNames();
+
+		}
+		else{
+
+            DayPilot.Modal.alert(errorReport,{ theme: "modal_flat", top: 100, scrollWithPage: true }).then(function(){
+
+	   			gTheABC.value = injectedABC;
+
+				// Show the chords after an inject
+				gStripChords = false;
+				
+				RenderAsync(true,null);
+
+				// Idle the dialog
+				IdleAdvancedControls(true);
+
+				// Idle the show tab names control
+				IdleAllowShowTabNames();
+         	
+            });
+		}
+	}
 }
 
 //
@@ -13631,6 +13705,24 @@ function computeFade(tuneABC){
 
 	var theFade = 200;
 
+	// Check for a custom sound font first
+
+	// var searchRegExp = /^%abcjs_soundfont canvas.*$/m
+
+	// var isCustomSoundFont = tuneABC.match(searchRegExp);
+	
+	// if ((isCustomSoundFont) && (isCustomSoundFont.length > 0)){
+	// 	theFade = 100;
+	// }
+
+	// searchRegExp = /^%abcjs_soundfont mscore.*$/m
+
+	// isCustomSoundFont = tuneABC.match(searchRegExp);
+	
+	// if ((isCustomSoundFont) && (isCustomSoundFont.length > 0)){
+	// 	theFade = 100;
+	// }
+
 	var searchRegExp = /^%%MIDI program.*$/m
 
 	var melodyProgramRequested = tuneABC.match(searchRegExp);
@@ -14254,6 +14346,12 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 				break;
 			case "fatboy":
 				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
+				break;
+			case "canvas":
+				gTheActiveSoundFont = "http://michaeleskin.com/abctools/soundfonts/canvas/";
+				break;
+			case "mscore":
+				gTheActiveSoundFont = "http://michaeleskin.com/abctools/soundfonts/mscore/";
 				break;
 		}
 
@@ -16622,7 +16720,9 @@ function ConfigureToolSettings(e) {
 	    { name: "  Fluid", id: "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/" },
 	    { name: "  Musyng Kite", id: "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/" },
 	    { name: "  FatBoy", id: "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/" },
-  	];
+ 	    { name: "  Canvas", id: "http://michaeleskin.com/abctools/soundfonts/canvas/" },
+ 	    { name: "  MScore", id: "http://michaeleskin.com/abctools/soundfonts/mscore/" },
+ 	];
 
   	// Disallowing auto snapshots on mobile
 
