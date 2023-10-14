@@ -26,7 +26,7 @@
 //
 // Put the whole thing in a function for isolation
 //
-var angloFingeringsGenerator = function (theABC){
+var angloFingeringsGenerator = function (theABC, callback){
 
     var gAngloVerbose = false;
 
@@ -1237,7 +1237,7 @@ var angloFingeringsGenerator = function (theABC){
     //
     // Generate Anglo Concertina Tablature
     //
-    function generateConcertinaFingerings(theABC) {
+    function generateConcertinaFingerings(theABC,callback) {
 
         // Count the tunes in the ABC
         var theTunes = theABC.split(/^X:.*$/gm);
@@ -1256,9 +1256,15 @@ var angloFingeringsGenerator = function (theABC){
 
         var result = FindPreTuneHeader(theABC);
 
+        var gotError = false;
+
+        var badTunes = [];
+
         for (var i = 0; i < nTunes; ++i) {
 
             var thisTune = angloGetTuneByIndex(theABC, i);
+
+            var originalTune = thisTune;
 
             // Don't inject section header tune fragments
             if (isSectionHeader(thisTune)){
@@ -1275,7 +1281,24 @@ var angloFingeringsGenerator = function (theABC){
                 thisTune = angloStripChords(thisTune);
             }
  
-            thisTune = generateAngloFingerings(thisTune);
+            try{
+
+                thisTune = generateAngloFingerings(thisTune);
+
+            }
+            catch(err){
+
+                result += originalTune;
+
+                var thisTitle = getTuneTitle(originalTune);
+
+                badTunes.push(thisTitle);
+
+                gotError = true;
+
+                continue;
+
+            }
 
             // Default directives to inject into every tune
             //%%titlefont Palatino 22
@@ -1300,11 +1323,30 @@ var angloFingeringsGenerator = function (theABC){
 
         }
 
-        return result;
+        if (gotError){
+
+            var thePrompt = '<p style="text-align:center;font-size:18px;margin-bottom:18px">No Anglo Concertina tablature generated for one or more tunes:</p>';
+
+            for (var j=0;j<badTunes.length;++j){
+                thePrompt += '<p style="text-align:center;font-size:18px;">'+badTunes[j]+'</p>';
+            }
+
+            thePrompt += '<p style="text-align:center;font-size:18px;line-height:24px;margin-top:18px">Some notes may be outside the range or not available on the selected style of Anglo concertina.</p>';
+           thePrompt += '<p style="text-align:center;font-size:18px;line-height:24px;margin-top:18px">This will also occur if there is text in the ABC that doesn\'t start with a %, usually between %%begintext and %%endtext annotations.</p>';
+
+            callback(result,true,thePrompt);
+            
+
+         }
+        else{
+
+            callback(result,false,"");
+
+        }
 
     }
 
-    return generateConcertinaFingerings(theABC);
+    return generateConcertinaFingerings(theABC,callback);
 
 }
 
