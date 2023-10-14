@@ -1207,7 +1207,7 @@ var angloFingeringsGenerator = function (theABC, callback){
     function angloStripAllComments(theNotes) {
 
         // Strip out anything that looks like a comment
-        var searchRegExp = /%.*[\r\n]*/gm
+        var searchRegExp = /^%.*[\r\n]*/gm
         theNotes = theNotes.replace(searchRegExp, "");
 
         return theNotes;
@@ -2054,7 +2054,7 @@ var boxTabGenerator = function (theABC){
     function stripAllComments(theNotes) {
 
         // Strip out anything that looks like a comment
-        var searchRegExp = /%.*[\r\n]*/gm
+        var searchRegExp = /^%.*[\r\n]*/gm
         theNotes = theNotes.replace(searchRegExp, "");
 
         return theNotes;
@@ -2864,7 +2864,7 @@ var bambooFluteTabGenerator = function (theABC){
     function stripAllComments(theNotes) {
 
         // Strip out anything that looks like a comment
-        var searchRegExp = /%.*[\r\n]*/gm
+        var searchRegExp = /^%.*[\r\n]*/gm
         theNotes = theNotes.replace(searchRegExp, "");
 
         return theNotes;
