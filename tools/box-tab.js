@@ -577,6 +577,45 @@ function getAbcNotes(input,style) {
         }
 
     }  
+
+    // Sanitize multi-line comments
+    searchRegExp = /^%%begintext((.|\n)*)%%endtext/gm
+
+    while (m = searchRegExp.exec(sanitizedInput)) {
+
+        //debugger;
+
+        var start = m.index;
+        var end = start + m[0].length;
+
+        //console.log(m[0],start,end);
+
+        for (var index=start;index<end;++index){
+
+            sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+        }
+
+    }
+    // Sanitize comments
+    searchRegExp = /^%.*$/gm
+
+    while (m = searchRegExp.exec(sanitizedInput)) {
+
+        //debugger;
+
+        var start = m.index;
+        var end = start + m[0].length;
+
+        //console.log(m[0],start,end);
+
+        for (var index=start;index<end;++index){
+
+            sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+        }
+
+    }
     
     log("sanitized input:" + sanitizedInput);
 
@@ -738,18 +777,6 @@ function getTuneByIndex(theABC, tuneNumber) {
 
 }
 
-//
-// Strip all comments and comment-based annotations in the ABC
-//
-function stripAllComments(theNotes) {
-
-    // Strip out anything that looks like a comment
-    var searchRegExp = /^%.*[\r\n]*/gm
-    theNotes = theNotes.replace(searchRegExp, "");
-
-    return theNotes;
-
-}
 
 // 
 // Strip all the chords in the ABC
@@ -821,8 +848,6 @@ function generateTablature() {
     for (var i = 0; i < nTunes; ++i) {
 
         var thisTune = getTuneByIndex(theABC, i);
-
-        thisTune = stripAllComments(thisTune);
 
         if ((tabLocation == 0) || ((tabLocation == 1) && (stripChords))){
             thisTune = StripChords(thisTune);
