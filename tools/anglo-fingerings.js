@@ -894,6 +894,8 @@ function sanitizeString(input, start, len) {
 // Returns an array of Notes from the ABC string input
 function getAbcNotes(input) {
 
+    log("original input:\n" + input);
+
     // Sanitize the input, removing header and footer, but keeping
     // the same offsets for the notes. We'll just replace header
     // and footer sections with '*'.
@@ -941,8 +943,48 @@ function getAbcNotes(input) {
         }
 
     }  
+
+    // Sanitize multi-line comments
+    searchRegExp = /^%%begintext((.|\n)*)%%endtext/gm
+
+    while (m = searchRegExp.exec(sanitizedInput)) {
+
+        //debugger;
+
+        var start = m.index;
+        var end = start + m[0].length;
+
+        //console.log(m[0],start,end);
+
+        for (var index=start;index<end;++index){
+
+            sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+        }
+
+    }
     
-    log("sanitized input:" + sanitizedInput);
+    // Sanitize comments
+    searchRegExp = /^%.*$/gm
+
+    while (m = searchRegExp.exec(sanitizedInput)) {
+
+        //debugger;
+
+        var start = m.index;
+        var end = start + m[0].length;
+
+        //console.log(m[0],start,end);
+
+        for (var index=start;index<end;++index){
+
+            sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+        }
+
+    }
+
+    log("sanitized input:\n" + sanitizedInput);
 
     // Find all the notes
     var regex = /([=^_]?[a-gA-G][',]?|\|)/g;
@@ -1236,19 +1278,6 @@ function getTuneByIndex(theABC, tuneNumber) {
     var theTunes = theNotes.split(/^X:/gm);
 
     return ("X:" + theTunes[tuneNumber + 1]);
-
-}
-
-//
-// Strip all comments and comment-based annotations in the ABC
-//
-function stripAllComments(theNotes) {
-
-    // Strip out anything that looks like a comment
-    var searchRegExp = /^%.*[\r\n]*/gm
-    theNotes = theNotes.replace(searchRegExp, "");
-
-    return theNotes;
 
 }
 
@@ -1575,8 +1604,6 @@ function generateFingerings() {
 
         var originalTune = thisTune;
 
-        thisTune = stripAllComments(thisTune);
-
         if ((tabLocation == 0) || ((tabLocation == 1) && (stripChords))){
             thisTune = StripChords(thisTune);
         }
@@ -1645,8 +1672,6 @@ function generateFingerings() {
         }
 
         thePrompt += '<p style="text-align:center;font-size:18px;line-height:24px;margin-top:18px">Some notes may be outside the range or not available on the selected style of Anglo concertina.</p>';
-
-        thePrompt += '<p style="text-align:center;font-size:18px;line-height:24px;margin-top:18px">This will also occur if there is text in the ABC that doesn\'t start with a %, usually between %%begintext and %%endtext annotations.</p>';
 
         DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 100, scrollWithPage: true });
 
