@@ -951,7 +951,47 @@ var angloFingeringsGenerator = function (theABC, callback){
             }
 
         }  
+
+        // Sanitize multi-line comments
+        searchRegExp = /^%%begintext((.|\n)*)%%endtext/gm
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+            //debugger;
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }    
         
+        // Sanitize comments
+        searchRegExp = /^%.*$/gm
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+            //debugger;
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }       
+
         angloLog("sanitized input:" + sanitizedInput);
 
         // Find all the notes
@@ -1201,19 +1241,6 @@ var angloFingeringsGenerator = function (theABC, callback){
 
     }
 
-    //
-    // Strip all comments and comment-based annotations in the ABC
-    //
-    function angloStripAllComments(theNotes) {
-
-        // Strip out anything that looks like a comment
-        var searchRegExp = /^%.*[\r\n]*/gm
-        theNotes = theNotes.replace(searchRegExp, "");
-
-        return theNotes;
-
-    }
-
     // 
     // Strip all the chords in the ABC
     //
@@ -1271,8 +1298,6 @@ var angloFingeringsGenerator = function (theABC, callback){
                 result += thisTune;
                 continue;
             }
-
-            thisTune = angloStripAllComments(thisTune);
 
             // Strip chords? 
             // Above always strips
@@ -1332,7 +1357,6 @@ var angloFingeringsGenerator = function (theABC, callback){
             }
 
             thePrompt += '<p style="text-align:center;font-size:18px;line-height:24px;margin-top:18px">Some notes may be outside the range or not available on the selected style of Anglo concertina.</p>';
-           thePrompt += '<p style="text-align:center;font-size:18px;line-height:24px;margin-top:18px">This will also occur if there is text in the ABC that doesn\'t start with a %, usually between %%begintext and %%endtext annotations.</p>';
 
             callback(result,true,thePrompt);
             
@@ -1932,6 +1956,46 @@ var boxTabGenerator = function (theABC){
 
         }  
 
+        // Sanitize multi-line comments
+        searchRegExp = /^%%begintext((.|\n)*)%%endtext/gm
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+            //debugger;
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }    
+
+        // Sanitize comments
+        searchRegExp = /^%.*$/gm
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+            //debugger;
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }
+
         log("sanitized input:" + sanitizedInput);
 
         // Find all the notes
@@ -2048,19 +2112,6 @@ var boxTabGenerator = function (theABC){
 
     }
 
-    //
-    // Strip all comments and comment-based annotations in the ABC
-    //
-    function stripAllComments(theNotes) {
-
-        // Strip out anything that looks like a comment
-        var searchRegExp = /^%.*[\r\n]*/gm
-        theNotes = theNotes.replace(searchRegExp, "");
-
-        return theNotes;
-
-    }
-
     // 
     // Strip all the chords in the ABC
     //
@@ -2112,8 +2163,6 @@ var boxTabGenerator = function (theABC){
                 result += thisTune;
                 continue;
             }
-
-            thisTune = stripAllComments(thisTune);
 
             // Strip chords? 
             // Above always strips
@@ -2741,7 +2790,47 @@ var bambooFluteTabGenerator = function (theABC){
             }
 
         }  
-        
+
+        // Sanitize multi-line comments
+        searchRegExp = /^%%begintext((.|\n)*)%%endtext/gm
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+            //debugger;
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }    
+
+        // Sanitize comments
+        searchRegExp = /^%.*$/gm
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+            //debugger;
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }        
+
         log("sanitized input:" + sanitizedInput);
 
         // Find all the notes
@@ -2858,19 +2947,6 @@ var bambooFluteTabGenerator = function (theABC){
 
     }
 
-    //
-    // Strip all comments and comment-based annotations in the ABC
-    //
-    function stripAllComments(theNotes) {
-
-        // Strip out anything that looks like a comment
-        var searchRegExp = /^%.*[\r\n]*/gm
-        theNotes = theNotes.replace(searchRegExp, "");
-
-        return theNotes;
-
-    }
-
     // 
     // Strip all the chords in the ABC
     //
@@ -2914,8 +2990,6 @@ var bambooFluteTabGenerator = function (theABC){
                 result += thisTune;
                 continue;
             }
-
-            thisTune = stripAllComments(thisTune);
 
             // Strip chords? 
             if (stripChords){
