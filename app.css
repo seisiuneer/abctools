@@ -624,7 +624,7 @@ height:42px;
 padding:12px;
 }
 
-#injectanglotab, #injectnotenames, #injectmetronome{
+#injectanglotab, #ceoltastransform, #injectmetronome{
 height:42px;
 padding:12px;
 margin-right:24px;
@@ -1035,7 +1035,7 @@ left:-5000px;
 /* Some basic CSS to make the Audio controls in abcjs presentable. */
 
 .abcjs-inline-audio {
-	height: 26px;
+	height: 34px;
 	padding: 0 5px;
 	border-radius: 3px;
 	background-color: #424242;
@@ -1078,8 +1078,8 @@ left:-5000px;
 }
 
 .abcjs-inline-audio .abcjs-midi-loop.abcjs-pushed {
-	border: 1px solid #cccccc;
-	background-color: #666666;
+	border: 1px solid #008800;
+	background-color: #008800 !important;
 	box-sizing: border-box;
 }
 
@@ -1245,6 +1245,22 @@ left:-5000px;
 }
 
 .configure_settings_form_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 60px;
+	margin-top:-7px;
+}
+
+.configure_pdf_settings_form_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:18px;
+	display:flex;
+}
+
+.configure_pdf_settings_form_text>input{
 	font-size:12pt;
 	font-family:helvetica;
 	margin-left: 12px;
