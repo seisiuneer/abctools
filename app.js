@@ -212,6 +212,9 @@ var gSaveLastAutoSnapShot = false;
 // Notation incipits columns
 var gIncipitsColumns = 1;
 
+// Using Comhaltas naming for notes display
+var gUseComhaltasABC = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -6535,6 +6538,9 @@ function GetABCJSParams(instrument){
 
 	var params;
 
+	// Normally, have abcjs draw tab icon for tablatures
+	gDrawTabSymbol = true;
+
 	if (!instrument) {
 		params = {
 			responsive: 'resize',
@@ -6636,7 +6642,8 @@ function GetABCJSParams(instrument){
 			format: commonFontFormat
 		}
 	} else if (instrument == "notenames") {
-		commonFontFormat.tabnumberfont = "Arial 12";
+		// Suppress the tab icon
+		gDrawTabSymbol = false;
 		params = {
 			tablature: [{
 				instrument: 'violin',
@@ -6650,6 +6657,8 @@ function GetABCJSParams(instrument){
 			format: commonFontFormat
 		}
 	} else if (instrument == "whistle") {
+		// Suppress the tab icon
+		gDrawTabSymbol = false;
 		params = {
 			tablature: [{
 				instrument: 'violin',
@@ -6716,8 +6725,6 @@ function UpdateLocalStorage(){
 		// Save the last PDF font and style
 		localStorage.PDFFont = gPDFFont;
 		localStorage.PDFFontStyle = gPDFFontStyle;
-
-
 	}
 
 }
@@ -7685,19 +7692,6 @@ function IdleAdvancedControls(bUpdateUI){
 
 }
 
-
-//
-// Handle the spacing control
-//
-function SetStaffSpacing(newSpacing) {
-	
-	gStaffSpacing = newSpacing + STAFFSPACEOFFSET;
-
-	RenderAsync(true, null, function(){;
-
-	});
-
-}
 
 //
 // Recalculate and update the top position for the music
@@ -11994,140 +11988,15 @@ function InjectPDFHeaders(bDoAll){
 }
 
 //
-// Inject note name lyrics into one tune
+// Do Ceoltas Transform
 //
-function InjectOneTuneABCNoteNameLyrics(theTune){
+function DoCeoltasTransform(){
 
-	var theABC = escape(theTune);
-
-	var theLines = theABC.split("%0A");
-
-	var theOutput = "";
-
-	var thisLine = "";
-
-	for (i = 0; i < theLines.length; ++i) {
-		
-		thisLine = unescape(theLines[i]); 
-
-		var theChars = thisLine.split(""); 
-
-		// It's a normal ABC : directive, copy it as is
-		if (((theChars[0] != "|") && (theChars[0] != "[")) && (theChars[1] == ":")) {
-
-			theOutput += thisLine+"\n";
-
-			// Inject the font directive to save people time
-			if (theChars[0] == "X"){
-				theOutput += "%%vocalfont Times-Roman 13.5\n";
-			}
-
-		}
-		else
-		// It's a comment or an ABC directive, copy it as-is
-		if (theChars[0] == "%") {
-			theOutput += thisLine+"\n";
-		}
-		else{
-
-			thisLine = thisLine.trim();
-
-			if (thisLine != ""){
-
-				theOutput += thisLine+"\n";
-
-				// Strip out chord markings
-				var searchRegExp = /"[^"]*"/gm
-
-				// Strip out chord markings
-				thisLine = thisLine.replace(searchRegExp, "");
-
-				// Strip out ornaments
-				var searchRegExp = /{[^{]*}/gm
-
-				// Strip out ornaments
-				thisLine = thisLine.replace(searchRegExp, "");
-
-				// Now strip anything that isn't ABC note names
-				searchRegExp = /[^ABCDEFGabcdefg|]*/gm
-				thisLine = thisLine.replace(searchRegExp,"");
-
-				// Now insert spaces between each character
-				theChars = thisLine.split(""); 
-				thisLine = theChars.join(" ");
-
-				// Fix of any | | pairs
-				searchRegExp = /\| \|/gm
-				thisLine = thisLine.replace(searchRegExp,"|");
-
-				theOutput += "w: "+thisLine+"\n";
-
-			}
-			else{
-
-				theOutput += thisLine;
-
-			}
-		}
-	}
-	
-	theOutput += "\n";
-
-	return theOutput;
-	
-}
-
-//
-// Inject note name lyrics in the selected tunes
-//
-function InjectABCNoteNameLyrics(){
-
-	// If currently rendering PDF, exit immediately
-	if (gRenderingPDF) {
-		return;
-	}
-
-	var nTunes = CountTunes();
-
-	var theNotes = gTheABC.value;
-
-	// Find the tunes
-	var theTunes = theNotes.split(/^X:/gm);
-
-	var output = FindPreTuneHeader(theNotes);
-
-	for (var i=1;i<=nTunes;++i){
-
-		theTunes[i] = "X:"+theTunes[i];
-
-		output += InjectOneTuneABCNoteNameLyrics(theTunes[i]);
-
-	}
-
-	// Stuff in the modified output
-	gTheABC.value = output;
-
-	// Force a full render
-	RenderAsync(true, null);
-
-	// Set the select point
-	gTheABC.selectionStart = 0;
-    gTheABC.selectionEnd = 0;
-	
-    // Focus after operation
-    FocusAfterOperation();
-
-}
-
-//
-// Do ABC Notename Lyric inject
-//
-function DoInjectABCNoteNameLyrics(){
-
-	InjectABCNoteNameLyrics();
+	gTheABC.value = ceoltasABCTransformer(gTheABC.value);
 	
 	RenderAsync(true,null);
 
+	// Idle the dialog
 	IdleAdvancedControls(true);
 
 	// Idle the show tab names control
@@ -14023,182 +13892,364 @@ function postProcessTab(renderDivID, instrument, bIsPlayback){
 
 				var Tspans = theSVG.querySelectorAll('g[data-name="tabNumber"] > text > tspan');
 
-				if (useSharps) {
-					for (x = 0; x < Tspans.length; x++) {
-						if (Tspans[x].innerHTML == "0") {
-							Tspans[x].innerHTML = "G,";
-						} else if (Tspans[x].innerHTML == "1") {
-							Tspans[x].innerHTML = "G♯,";
-						} else if (Tspans[x].innerHTML == "2") {
-							Tspans[x].innerHTML = "A,";
-						} else if (Tspans[x].innerHTML == "3") {
-							Tspans[x].innerHTML = "A♯,";
-						} else if (Tspans[x].innerHTML == "4") {
-							Tspans[x].innerHTML = "B,";
-						} else if (Tspans[x].innerHTML == "5") {
-							Tspans[x].innerHTML = "C";
-						} else if (Tspans[x].innerHTML == "6") {
-							Tspans[x].innerHTML = "C♯";
-						} else if (Tspans[x].innerHTML == "7") {
-							Tspans[x].innerHTML = "D";
-						} else if (Tspans[x].innerHTML == "8") {
-							Tspans[x].innerHTML = "D♯";
-						} else if (Tspans[x].innerHTML == "9") {
-							Tspans[x].innerHTML = "E";
-						} else if (Tspans[x].innerHTML == "10") {
-							Tspans[x].innerHTML = "F";
-						} else if (Tspans[x].innerHTML == "11") {
-							Tspans[x].innerHTML = "F♯";
-						} else if (Tspans[x].innerHTML == "12") {
-							Tspans[x].innerHTML = "G";
-						} else if (Tspans[x].innerHTML == "13") {
-							Tspans[x].innerHTML = "G♯";
-						} else if (Tspans[x].innerHTML == "14") {
-							Tspans[x].innerHTML = "A";
-						} else if (Tspans[x].innerHTML == "15") {
-							Tspans[x].innerHTML = "A♯";
-						} else if (Tspans[x].innerHTML == "16") {
-							Tspans[x].innerHTML = "B";
-						} else if (Tspans[x].innerHTML == "17") {
-							Tspans[x].innerHTML = "c";
-						} else if (Tspans[x].innerHTML == "18") {
-							Tspans[x].innerHTML = "c♯";
-						} else if (Tspans[x].innerHTML == "19") {
-							Tspans[x].innerHTML = "d";
-						} else if (Tspans[x].innerHTML == "20") {
-							Tspans[x].innerHTML = "d♯";
-						} else if (Tspans[x].innerHTML == "21") {
-							Tspans[x].innerHTML = "e";
-						} else if (Tspans[x].innerHTML == "22") {
-							Tspans[x].innerHTML = "f";
-						} else if (Tspans[x].innerHTML == "23") {
-							Tspans[x].innerHTML = "f♯";
-						} else if (Tspans[x].innerHTML == "24") {
-							Tspans[x].innerHTML = "g";
-						} else if (Tspans[x].innerHTML == "25") {
-							Tspans[x].innerHTML = "g♯";
-						} else if (Tspans[x].innerHTML == "26") {
-							Tspans[x].innerHTML = "a";
-						} else if (Tspans[x].innerHTML == "27") {
-							Tspans[x].innerHTML = "a♯";
-						} else if (Tspans[x].innerHTML == "28") {
-							Tspans[x].innerHTML = "b";
-						} else if (Tspans[x].innerHTML == "29") {
-							Tspans[x].innerHTML = "c'";
-						} else if (Tspans[x].innerHTML == "30") {
-							Tspans[x].innerHTML = "c♯'";
-						} else if (Tspans[x].innerHTML == "31") {
-							Tspans[x].innerHTML = "d'";
-						} else if (Tspans[x].innerHTML == "32") {
-							Tspans[x].innerHTML = "d♯'";
-						} else if (Tspans[x].innerHTML == "33") {
-							Tspans[x].innerHTML = "e'";
-						} else if (Tspans[x].innerHTML == "34") {
-							Tspans[x].innerHTML = "f'";
-						} else if (Tspans[x].innerHTML == "35") {
-							Tspans[x].innerHTML = "f♯'";
-						} else if (Tspans[x].innerHTML == "36") {
-							Tspans[x].innerHTML = "g'";
-						} else if (Tspans[x].innerHTML == "37") {
-							Tspans[x].innerHTML = "g♯'";
-						} else if (Tspans[x].innerHTML == "38") {
-							Tspans[x].innerHTML = "a'";
-						} else if (Tspans[x].innerHTML == "39") {
-							Tspans[x].innerHTML = "a♯'";
-						} else if (Tspans[x].innerHTML == "40") {
-							Tspans[x].innerHTML = "b'";
-						} else {
-							Tspans[x].innerHTML = "?";
+				if (!gUseComhaltasABC){
+
+					if (useSharps) {
+						for (x = 0; x < Tspans.length; x++) {
+							if (Tspans[x].innerHTML == "0") {
+								Tspans[x].innerHTML = "G,";
+							} else if (Tspans[x].innerHTML == "1") {
+								Tspans[x].innerHTML = "G♯,";
+							} else if (Tspans[x].innerHTML == "2") {
+								Tspans[x].innerHTML = "A,";
+							} else if (Tspans[x].innerHTML == "3") {
+								Tspans[x].innerHTML = "A♯,";
+							} else if (Tspans[x].innerHTML == "4") {
+								Tspans[x].innerHTML = "B,";
+							} else if (Tspans[x].innerHTML == "5") {
+								Tspans[x].innerHTML = "C";
+							} else if (Tspans[x].innerHTML == "6") {
+								Tspans[x].innerHTML = "C♯";
+							} else if (Tspans[x].innerHTML == "7") {
+								Tspans[x].innerHTML = "D";
+							} else if (Tspans[x].innerHTML == "8") {
+								Tspans[x].innerHTML = "D♯";
+							} else if (Tspans[x].innerHTML == "9") {
+								Tspans[x].innerHTML = "E";
+							} else if (Tspans[x].innerHTML == "10") {
+								Tspans[x].innerHTML = "F";
+							} else if (Tspans[x].innerHTML == "11") {
+								Tspans[x].innerHTML = "F♯";
+							} else if (Tspans[x].innerHTML == "12") {
+								Tspans[x].innerHTML = "G";
+							} else if (Tspans[x].innerHTML == "13") {
+								Tspans[x].innerHTML = "G♯";
+							} else if (Tspans[x].innerHTML == "14") {
+								Tspans[x].innerHTML = "A";
+							} else if (Tspans[x].innerHTML == "15") {
+								Tspans[x].innerHTML = "A♯";
+							} else if (Tspans[x].innerHTML == "16") {
+								Tspans[x].innerHTML = "B";
+							} else if (Tspans[x].innerHTML == "17") {
+								Tspans[x].innerHTML = "c";
+							} else if (Tspans[x].innerHTML == "18") {
+								Tspans[x].innerHTML = "c♯";
+							} else if (Tspans[x].innerHTML == "19") {
+								Tspans[x].innerHTML = "d";
+							} else if (Tspans[x].innerHTML == "20") {
+								Tspans[x].innerHTML = "d♯";
+							} else if (Tspans[x].innerHTML == "21") {
+								Tspans[x].innerHTML = "e";
+							} else if (Tspans[x].innerHTML == "22") {
+								Tspans[x].innerHTML = "f";
+							} else if (Tspans[x].innerHTML == "23") {
+								Tspans[x].innerHTML = "f♯";
+							} else if (Tspans[x].innerHTML == "24") {
+								Tspans[x].innerHTML = "g";
+							} else if (Tspans[x].innerHTML == "25") {
+								Tspans[x].innerHTML = "g♯";
+							} else if (Tspans[x].innerHTML == "26") {
+								Tspans[x].innerHTML = "a";
+							} else if (Tspans[x].innerHTML == "27") {
+								Tspans[x].innerHTML = "a♯";
+							} else if (Tspans[x].innerHTML == "28") {
+								Tspans[x].innerHTML = "b";
+							} else if (Tspans[x].innerHTML == "29") {
+								Tspans[x].innerHTML = "c'";
+							} else if (Tspans[x].innerHTML == "30") {
+								Tspans[x].innerHTML = "c♯'";
+							} else if (Tspans[x].innerHTML == "31") {
+								Tspans[x].innerHTML = "d'";
+							} else if (Tspans[x].innerHTML == "32") {
+								Tspans[x].innerHTML = "d♯'";
+							} else if (Tspans[x].innerHTML == "33") {
+								Tspans[x].innerHTML = "e'";
+							} else if (Tspans[x].innerHTML == "34") {
+								Tspans[x].innerHTML = "f'";
+							} else if (Tspans[x].innerHTML == "35") {
+								Tspans[x].innerHTML = "f♯'";
+							} else if (Tspans[x].innerHTML == "36") {
+								Tspans[x].innerHTML = "g'";
+							} else if (Tspans[x].innerHTML == "37") {
+								Tspans[x].innerHTML = "g♯'";
+							} else if (Tspans[x].innerHTML == "38") {
+								Tspans[x].innerHTML = "a'";
+							} else if (Tspans[x].innerHTML == "39") {
+								Tspans[x].innerHTML = "a♯'";
+							} else if (Tspans[x].innerHTML == "40") {
+								Tspans[x].innerHTML = "b'";
+							} else {
+								Tspans[x].innerHTML = "?";
+							}
 						}
-					}
-				} else {
-					for (x = 0; x < Tspans.length; x++) {
-						if (Tspans[x].innerHTML == "0") {
-							Tspans[x].innerHTML = "G,";
-						} else if (Tspans[x].innerHTML == "1") {
-							Tspans[x].innerHTML = "A♭,";
-						} else if (Tspans[x].innerHTML == "2") {
-							Tspans[x].innerHTML = "A,";
-						} else if (Tspans[x].innerHTML == "3") {
-							Tspans[x].innerHTML = "B♭,";
-						} else if (Tspans[x].innerHTML == "4") {
-							Tspans[x].innerHTML = "B,";
-						} else if (Tspans[x].innerHTML == "5") {
-							Tspans[x].innerHTML = "C";
-						} else if (Tspans[x].innerHTML == "6") {
-							Tspans[x].innerHTML = "D♭";
-						} else if (Tspans[x].innerHTML == "7") {
-							Tspans[x].innerHTML = "D";
-						} else if (Tspans[x].innerHTML == "8") {
-							Tspans[x].innerHTML = "E♭";
-						} else if (Tspans[x].innerHTML == "9") {
-							Tspans[x].innerHTML = "E";
-						} else if (Tspans[x].innerHTML == "10") {
-							Tspans[x].innerHTML = "F";
-						} else if (Tspans[x].innerHTML == "11") {
-							Tspans[x].innerHTML = "G♭";
-						} else if (Tspans[x].innerHTML == "12") {
-							Tspans[x].innerHTML = "G";
-						} else if (Tspans[x].innerHTML == "13") {
-							Tspans[x].innerHTML = "A♭";
-						} else if (Tspans[x].innerHTML == "14") {
-							Tspans[x].innerHTML = "A";
-						} else if (Tspans[x].innerHTML == "15") {
-							Tspans[x].innerHTML = "B♭";
-						} else if (Tspans[x].innerHTML == "16") {
-							Tspans[x].innerHTML = "B";
-						} else if (Tspans[x].innerHTML == "17") {
-							Tspans[x].innerHTML = "c";
-						} else if (Tspans[x].innerHTML == "18") {
-							Tspans[x].innerHTML = "d♭";
-						} else if (Tspans[x].innerHTML == "19") {
-							Tspans[x].innerHTML = "d";
-						} else if (Tspans[x].innerHTML == "20") {
-							Tspans[x].innerHTML = "e♭";
-						} else if (Tspans[x].innerHTML == "21") {
-							Tspans[x].innerHTML = "e";
-						} else if (Tspans[x].innerHTML == "22") {
-							Tspans[x].innerHTML = "f";
-						} else if (Tspans[x].innerHTML == "23") {
-							Tspans[x].innerHTML = "g♭";
-						} else if (Tspans[x].innerHTML == "24") {
-							Tspans[x].innerHTML = "g";
-						} else if (Tspans[x].innerHTML == "25") {
-							Tspans[x].innerHTML = "a♭";
-						} else if (Tspans[x].innerHTML == "26") {
-							Tspans[x].innerHTML = "a";
-						} else if (Tspans[x].innerHTML == "27") {
-							Tspans[x].innerHTML = "b♭";
-						} else if (Tspans[x].innerHTML == "28") {
-							Tspans[x].innerHTML = "b";
-						} else if (Tspans[x].innerHTML == "29") {
-							Tspans[x].innerHTML = "c'";
-						} else if (Tspans[x].innerHTML == "30") {
-							Tspans[x].innerHTML = "d♭'";
-						} else if (Tspans[x].innerHTML == "31") {
-							Tspans[x].innerHTML = "d'";
-						} else if (Tspans[x].innerHTML == "32") {
-							Tspans[x].innerHTML = "e♭'";
-						} else if (Tspans[x].innerHTML == "33") {
-							Tspans[x].innerHTML = "e'";
-						} else if (Tspans[x].innerHTML == "34") {
-							Tspans[x].innerHTML = "f'";
-						} else if (Tspans[x].innerHTML == "35") {
-							Tspans[x].innerHTML = "g♭'";
-						} else if (Tspans[x].innerHTML == "36") {
-							Tspans[x].innerHTML = "g'";
-						} else if (Tspans[x].innerHTML == "37") {
-							Tspans[x].innerHTML = "a♭'";
-						} else if (Tspans[x].innerHTML == "38") {
-							Tspans[x].innerHTML = "a'";
-						} else if (Tspans[x].innerHTML == "39") {
-							Tspans[x].innerHTML = "b♭'";
-						} else if (Tspans[x].innerHTML == "40") {
-							Tspans[x].innerHTML = "b'";
-						} else {
-							Tspans[x].innerHTML = "?";
+					} else {
+						for (x = 0; x < Tspans.length; x++) {
+							if (Tspans[x].innerHTML == "0") {
+								Tspans[x].innerHTML = "G,";
+							} else if (Tspans[x].innerHTML == "1") {
+								Tspans[x].innerHTML = "A♭,";
+							} else if (Tspans[x].innerHTML == "2") {
+								Tspans[x].innerHTML = "A,";
+							} else if (Tspans[x].innerHTML == "3") {
+								Tspans[x].innerHTML = "B♭,";
+							} else if (Tspans[x].innerHTML == "4") {
+								Tspans[x].innerHTML = "B,";
+							} else if (Tspans[x].innerHTML == "5") {
+								Tspans[x].innerHTML = "C";
+							} else if (Tspans[x].innerHTML == "6") {
+								Tspans[x].innerHTML = "D♭";
+							} else if (Tspans[x].innerHTML == "7") {
+								Tspans[x].innerHTML = "D";
+							} else if (Tspans[x].innerHTML == "8") {
+								Tspans[x].innerHTML = "E♭";
+							} else if (Tspans[x].innerHTML == "9") {
+								Tspans[x].innerHTML = "E";
+							} else if (Tspans[x].innerHTML == "10") {
+								Tspans[x].innerHTML = "F";
+							} else if (Tspans[x].innerHTML == "11") {
+								Tspans[x].innerHTML = "G♭";
+							} else if (Tspans[x].innerHTML == "12") {
+								Tspans[x].innerHTML = "G";
+							} else if (Tspans[x].innerHTML == "13") {
+								Tspans[x].innerHTML = "A♭";
+							} else if (Tspans[x].innerHTML == "14") {
+								Tspans[x].innerHTML = "A";
+							} else if (Tspans[x].innerHTML == "15") {
+								Tspans[x].innerHTML = "B♭";
+							} else if (Tspans[x].innerHTML == "16") {
+								Tspans[x].innerHTML = "B";
+							} else if (Tspans[x].innerHTML == "17") {
+								Tspans[x].innerHTML = "c";
+							} else if (Tspans[x].innerHTML == "18") {
+								Tspans[x].innerHTML = "d♭";
+							} else if (Tspans[x].innerHTML == "19") {
+								Tspans[x].innerHTML = "d";
+							} else if (Tspans[x].innerHTML == "20") {
+								Tspans[x].innerHTML = "e♭";
+							} else if (Tspans[x].innerHTML == "21") {
+								Tspans[x].innerHTML = "e";
+							} else if (Tspans[x].innerHTML == "22") {
+								Tspans[x].innerHTML = "f";
+							} else if (Tspans[x].innerHTML == "23") {
+								Tspans[x].innerHTML = "g♭";
+							} else if (Tspans[x].innerHTML == "24") {
+								Tspans[x].innerHTML = "g";
+							} else if (Tspans[x].innerHTML == "25") {
+								Tspans[x].innerHTML = "a♭";
+							} else if (Tspans[x].innerHTML == "26") {
+								Tspans[x].innerHTML = "a";
+							} else if (Tspans[x].innerHTML == "27") {
+								Tspans[x].innerHTML = "b♭";
+							} else if (Tspans[x].innerHTML == "28") {
+								Tspans[x].innerHTML = "b";
+							} else if (Tspans[x].innerHTML == "29") {
+								Tspans[x].innerHTML = "c'";
+							} else if (Tspans[x].innerHTML == "30") {
+								Tspans[x].innerHTML = "d♭'";
+							} else if (Tspans[x].innerHTML == "31") {
+								Tspans[x].innerHTML = "d'";
+							} else if (Tspans[x].innerHTML == "32") {
+								Tspans[x].innerHTML = "e♭'";
+							} else if (Tspans[x].innerHTML == "33") {
+								Tspans[x].innerHTML = "e'";
+							} else if (Tspans[x].innerHTML == "34") {
+								Tspans[x].innerHTML = "f'";
+							} else if (Tspans[x].innerHTML == "35") {
+								Tspans[x].innerHTML = "g♭'";
+							} else if (Tspans[x].innerHTML == "36") {
+								Tspans[x].innerHTML = "g'";
+							} else if (Tspans[x].innerHTML == "37") {
+								Tspans[x].innerHTML = "a♭'";
+							} else if (Tspans[x].innerHTML == "38") {
+								Tspans[x].innerHTML = "a'";
+							} else if (Tspans[x].innerHTML == "39") {
+								Tspans[x].innerHTML = "b♭'";
+							} else if (Tspans[x].innerHTML == "40") {
+								Tspans[x].innerHTML = "b'";
+							} else {
+								Tspans[x].innerHTML = "?";
+							}
 						}
-					}
+					}	
+				}
+				else{
+					if (useSharps) {
+						for (x = 0; x < Tspans.length; x++) {
+							if (Tspans[x].innerHTML == "0") {
+								Tspans[x].innerHTML = "G,";
+							} else if (Tspans[x].innerHTML == "1") {
+								Tspans[x].innerHTML = "G♯,";
+							} else if (Tspans[x].innerHTML == "2") {
+								Tspans[x].innerHTML = "A,";
+							} else if (Tspans[x].innerHTML == "3") {
+								Tspans[x].innerHTML = "A♯,";
+							} else if (Tspans[x].innerHTML == "4") {
+								Tspans[x].innerHTML = "B,";
+							} else if (Tspans[x].innerHTML == "5") {
+								Tspans[x].innerHTML = "C,";
+							} else if (Tspans[x].innerHTML == "6") {
+								Tspans[x].innerHTML = "C♯,";
+							} else if (Tspans[x].innerHTML == "7") {
+								Tspans[x].innerHTML = "D";
+							} else if (Tspans[x].innerHTML == "8") {
+								Tspans[x].innerHTML = "D♯";
+							} else if (Tspans[x].innerHTML == "9") {
+								Tspans[x].innerHTML = "E";
+							} else if (Tspans[x].innerHTML == "10") {
+								Tspans[x].innerHTML = "F";
+							} else if (Tspans[x].innerHTML == "11") {
+								Tspans[x].innerHTML = "F♯";
+							} else if (Tspans[x].innerHTML == "12") {
+								Tspans[x].innerHTML = "G";
+							} else if (Tspans[x].innerHTML == "13") {
+								Tspans[x].innerHTML = "G♯";
+							} else if (Tspans[x].innerHTML == "14") {
+								Tspans[x].innerHTML = "A";
+							} else if (Tspans[x].innerHTML == "15") {
+								Tspans[x].innerHTML = "A♯";
+							} else if (Tspans[x].innerHTML == "16") {
+								Tspans[x].innerHTML = "B";
+							} else if (Tspans[x].innerHTML == "17") {
+								Tspans[x].innerHTML = "C";
+							} else if (Tspans[x].innerHTML == "18") {
+								Tspans[x].innerHTML = "C♯";
+							} else if (Tspans[x].innerHTML == "19") {
+								Tspans[x].innerHTML = "D'";
+							} else if (Tspans[x].innerHTML == "20") {
+								Tspans[x].innerHTML = "D♯'";
+							} else if (Tspans[x].innerHTML == "21") {
+								Tspans[x].innerHTML = "E'";
+							} else if (Tspans[x].innerHTML == "22") {
+								Tspans[x].innerHTML = "F'";
+							} else if (Tspans[x].innerHTML == "23") {
+								Tspans[x].innerHTML = "F♯'";
+							} else if (Tspans[x].innerHTML == "24") {
+								Tspans[x].innerHTML = "G'";
+							} else if (Tspans[x].innerHTML == "25") {
+								Tspans[x].innerHTML = "G♯'";
+							} else if (Tspans[x].innerHTML == "26") {
+								Tspans[x].innerHTML = "A'";
+							} else if (Tspans[x].innerHTML == "27") {
+								Tspans[x].innerHTML = "A♯'";
+							} else if (Tspans[x].innerHTML == "28") {
+								Tspans[x].innerHTML = "B'";
+							} else if (Tspans[x].innerHTML == "29") {
+								Tspans[x].innerHTML = "C'";
+							} else if (Tspans[x].innerHTML == "30") {
+								Tspans[x].innerHTML = "C♯'";
+							} else if (Tspans[x].innerHTML == "31") {
+								Tspans[x].innerHTML = "D''";
+							} else if (Tspans[x].innerHTML == "32") {
+								Tspans[x].innerHTML = "D♯''";
+							} else if (Tspans[x].innerHTML == "33") {
+								Tspans[x].innerHTML = "E''";
+							} else if (Tspans[x].innerHTML == "34") {
+								Tspans[x].innerHTML = "F''";
+							} else if (Tspans[x].innerHTML == "35") {
+								Tspans[x].innerHTML = "F♯''";
+							} else if (Tspans[x].innerHTML == "36") {
+								Tspans[x].innerHTML = "G''";
+							} else if (Tspans[x].innerHTML == "37") {
+								Tspans[x].innerHTML = "G♯''";
+							} else if (Tspans[x].innerHTML == "38") {
+								Tspans[x].innerHTML = "A''";
+							} else if (Tspans[x].innerHTML == "39") {
+								Tspans[x].innerHTML = "A♯''";
+							} else if (Tspans[x].innerHTML == "40") {
+								Tspans[x].innerHTML = "B''";
+							} else {
+								Tspans[x].innerHTML = "?";
+							}
+						}
+					} else {
+						for (x = 0; x < Tspans.length; x++) {
+							if (Tspans[x].innerHTML == "0") {
+								Tspans[x].innerHTML = "G,";
+							} else if (Tspans[x].innerHTML == "1") {
+								Tspans[x].innerHTML = "A♭,";
+							} else if (Tspans[x].innerHTML == "2") {
+								Tspans[x].innerHTML = "A,";
+							} else if (Tspans[x].innerHTML == "3") {
+								Tspans[x].innerHTML = "B♭,";
+							} else if (Tspans[x].innerHTML == "4") {
+								Tspans[x].innerHTML = "B,";
+							} else if (Tspans[x].innerHTML == "5") {
+								Tspans[x].innerHTML = "C,";
+							} else if (Tspans[x].innerHTML == "6") {
+								Tspans[x].innerHTML = "D♭";
+							} else if (Tspans[x].innerHTML == "7") {
+								Tspans[x].innerHTML = "D";
+							} else if (Tspans[x].innerHTML == "8") {
+								Tspans[x].innerHTML = "E♭";
+							} else if (Tspans[x].innerHTML == "9") {
+								Tspans[x].innerHTML = "E";
+							} else if (Tspans[x].innerHTML == "10") {
+								Tspans[x].innerHTML = "F";
+							} else if (Tspans[x].innerHTML == "11") {
+								Tspans[x].innerHTML = "G♭";
+							} else if (Tspans[x].innerHTML == "12") {
+								Tspans[x].innerHTML = "G";
+							} else if (Tspans[x].innerHTML == "13") {
+								Tspans[x].innerHTML = "A♭";
+							} else if (Tspans[x].innerHTML == "14") {
+								Tspans[x].innerHTML = "A";
+							} else if (Tspans[x].innerHTML == "15") {
+								Tspans[x].innerHTML = "B♭";
+							} else if (Tspans[x].innerHTML == "16") {
+								Tspans[x].innerHTML = "B";
+							} else if (Tspans[x].innerHTML == "17") {
+								Tspans[x].innerHTML = "C";
+							} else if (Tspans[x].innerHTML == "18") {
+								Tspans[x].innerHTML = "D♭'";
+							} else if (Tspans[x].innerHTML == "19") {
+								Tspans[x].innerHTML = "D'";
+							} else if (Tspans[x].innerHTML == "20") {
+								Tspans[x].innerHTML = "E♭'";
+							} else if (Tspans[x].innerHTML == "21") {
+								Tspans[x].innerHTML = "E'";
+							} else if (Tspans[x].innerHTML == "22") {
+								Tspans[x].innerHTML = "F'";
+							} else if (Tspans[x].innerHTML == "23") {
+								Tspans[x].innerHTML = "G♭'";
+							} else if (Tspans[x].innerHTML == "24") {
+								Tspans[x].innerHTML = "G'";
+							} else if (Tspans[x].innerHTML == "25") {
+								Tspans[x].innerHTML = "A♭'";
+							} else if (Tspans[x].innerHTML == "26") {
+								Tspans[x].innerHTML = "A'";
+							} else if (Tspans[x].innerHTML == "27") {
+								Tspans[x].innerHTML = "B♭'";
+							} else if (Tspans[x].innerHTML == "28") {
+								Tspans[x].innerHTML = "B'";
+							} else if (Tspans[x].innerHTML == "29") {
+								Tspans[x].innerHTML = "C'";
+							} else if (Tspans[x].innerHTML == "30") {
+								Tspans[x].innerHTML = "D♭''";
+							} else if (Tspans[x].innerHTML == "31") {
+								Tspans[x].innerHTML = "D''";
+							} else if (Tspans[x].innerHTML == "32") {
+								Tspans[x].innerHTML = "E♭''";
+							} else if (Tspans[x].innerHTML == "33") {
+								Tspans[x].innerHTML = "E''";
+							} else if (Tspans[x].innerHTML == "34") {
+								Tspans[x].innerHTML = "F''";
+							} else if (Tspans[x].innerHTML == "35") {
+								Tspans[x].innerHTML = "G♭''";
+							} else if (Tspans[x].innerHTML == "36") {
+								Tspans[x].innerHTML = "G''";
+							} else if (Tspans[x].innerHTML == "37") {
+								Tspans[x].innerHTML = "A♭''";
+							} else if (Tspans[x].innerHTML == "38") {
+								Tspans[x].innerHTML = "A''";
+							} else if (Tspans[x].innerHTML == "39") {
+								Tspans[x].innerHTML = "B♭''";
+							} else if (Tspans[x].innerHTML == "40") {
+								Tspans[x].innerHTML = "B''";
+							} else {
+								Tspans[x].innerHTML = "?";
+							}
+						}
+					}						
 				}
 			}
 		}
@@ -14582,7 +14633,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 		}
 
 	   	// Add the download buttons
-		modal_msg += '<p style="text-align:center;margin:0px;margin-top:18px">'
+		modal_msg += '<p style="text-align:center;margin:0px;margin-top:22px">'
 		modal_msg += '<input id="abcplayer_wavbutton" class="abcplayer_wavbutton btn btn-wavedownload" onclick="DownloadWave();" type="button" value="Download .WAV" title="Downloads the audio for the current tune as a .WAV file">'
 		modal_msg += '<input id="abcplayer_mp3button" class="abcplayer_mp3button btn btn-mp3download" onclick="DownloadMP3();" type="button" value="Download .MP3" title="Downloads the audio for the current tune as a .MP3 file">'
 		modal_msg += '<input id="abcplayer_midibutton" class="abcplayer_midibutton btn btn-mididownload" onclick="DownloadMIDI();" type="button" value="Download MIDI" title="Downloads the current tune as a MIDI file">'
@@ -15330,6 +15381,12 @@ function GetInitialConfigurationSettings(){
 		gPDFFontStyle = val;
 	}
 
+	val = localStorage.UseComhaltasABC;
+	if (val){
+		gUseComhaltasABC = (val == "true");
+	}
+
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -15420,6 +15477,9 @@ function SaveConfigurationSettings(){
 		// Save the last PDF font and style
 		localStorage.PDFFont = gPDFFont;
 		localStorage.PDFFontStyle = gPDFFontStyle;
+
+		// Save the Comhaltas display mode
+		localStorage.UseComhaltasABC = gUseComhaltasABC;
 
 	}
 }
@@ -16091,6 +16151,9 @@ function defaultFontSettings(){
 
 		    resetABCRenderingFonts();
 
+			// Save the settings, in case they were initialized
+			SaveConfigurationSettings();
+
 		    idleFontsDialog();
 
 		}
@@ -16179,10 +16242,11 @@ function ConfigureFonts(){
 			gRenderingFonts.historyfont = args.result.configure_historyfont;
 			gRenderingFonts.voicefont = args.result.configure_voicefont;
 
-			RenderAsync(true,null);
-
 			// Save the settings, in case they were initialized
 			SaveConfigurationSettings();
+
+			RenderAsync(true,null);
+
 
 		}
 
@@ -16456,7 +16520,7 @@ function PDFExportDialog(){
 	  {name: "Tune Layout:", id: "configure_tunelayout", type:"select", options:tunelayout_list, cssClass:"configure_pdf_tunelayout_select"},
 	  {name: "Notes Incipits Columns:", id: "configure_incipitscolumns", type:"select", options:incipits_columns_list, cssClass:"configure_pdf_incipitscolumns_select"},
 	  {name: "Page Number Location:", id: "configure_pagenumber", type:"select", options:pagenumber_list, cssClass:"configure_pdf_pagenumber_select"},
-	  {name: "            Page Number on First Page", id: "configure_pagenumberonfirstpage", type:"checkbox", cssClass:"configure_settings_form_text"},
+	  {name: "            Page Number on First Page", id: "configure_pagenumberonfirstpage", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
 	  {html: '<p style="margin-top:36px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</strong></p>'},  
 	  {name: "Font:", id: "configure_fontname", type:"select", options:fontname_list, cssClass:"configure_pdf_fontname_select"},
 	  {name: "Font Style:", id: "configure_fontstyle", type:"select", options:fontstyle_list, cssClass:"configure_pdf_fontstyle_select"},
@@ -16592,7 +16656,7 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<input id="injectclicktrackall" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectRepeatsAndClickTrackAll()" type="button" value="Inject Repeats and Click Intros" title="Injects repeated copies of tunes and optional style-adaptive two-bar click intros into every tune">';	
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">'
-	modal_msg  += '<input id="injectnotenames" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectABCNoteNameLyrics()" type="button" value="Inject Note Name Lyrics" title="Injects note names as lyrics in the ABC">';
+	modal_msg  += '<input id="ceoltastransform" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransform()" type="button" value="Comhaltas ABC Transform" title="Transforms the ABC into Comhaltas format.">';
 	modal_msg  += '<input id="injectbctab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_BC()" type="button" value="Inject B/C Box Tab" title="Injects B/C box tablature into the ABC">';
 	modal_msg  += '<input id="injectcdtab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_CsD()" type="button" value="Inject C#/D Box Tab" title="Injects C#/D box tablature into the ABC">';
 	modal_msg  += '</p>';
@@ -16695,6 +16759,8 @@ function ConfigureToolSettings(e) {
 
 	var theOldSaveLastAutoSnapShot = gSaveLastAutoSnapShot;
 
+	var theOldComhaltas = gUseComhaltasABC;
+
 	// Setup initial values
 	const theData = {
 	  configure_inject_programs: bAlwaysInjectPrograms,
@@ -16713,7 +16779,8 @@ function ConfigureToolSettings(e) {
 	  configure_soundfont: gDefaultSoundFont,
 	  configure_autoscrollplayer: gAutoscrollPlayer,
 	  configure_use_custom_gm_sounds: gUseCustomGMSounds,
-	  configure_save_exit_snapshot: gSaveLastAutoSnapShot,	  
+	  configure_save_exit_snapshot: gSaveLastAutoSnapShot,
+	  configure_comhaltas: gUseComhaltasABC,	  
 	};
 
  	const sound_font_options = [
@@ -16742,6 +16809,8 @@ function ConfigureToolSettings(e) {
 	  {html: '<p style="font-size:4pt;font-family:helvetica">&nbsp;</p>'},	  
 	  {name: "    Show stringed instrument names on tablature (never shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_box_settings_form_text"},
 	  {name: "Stringed instrument capo fret postion:", id: "configure_capo", type:"number", cssClass:"configure_settings_form_text"},
+	  {name: "Default abcjs soundfont:", id: "configure_soundfont", type:"select", options:sound_font_options, cssClass:"configure_settings_select"}, 
+	  {name: "    Use AppCordions custom sounds for Dulcimer, Accordion, Flute, and Whistle", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "Default Melody MIDI program:", id: "configure_melody_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
 	  {name: "Default Bass/Chords MIDI program:", id: "configure_chord_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
@@ -16750,10 +16819,9 @@ function ConfigureToolSettings(e) {
 	  {name: "Default Chords MIDI volume (0-127):", id: "configure_chord_volume", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "            Override all MIDI programs and volumes in the ABC when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "            Autoscroll player when playing", id: "configure_autoscrollplayer", type:"checkbox", cssClass:"configure_settings_form_text"},
-	  {name: "Default abcjs soundfont:", id: "configure_soundfont", type:"select", options:sound_font_options, cssClass:"configure_settings_select"}, 
-	  {name: "    Use AppCordions custom sounds for Dulcimer, Accordion, Flute, and Whistle", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "MP3 audio export bitrate (kbit/sec):", id: "configure_mp3_bitrate", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "    Player uses large controls (easier to touch on mobile and tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"configure_settings_form_text"},
+	  {name: "    Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)", id: "configure_comhaltas", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Configure ABC Fonts" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="Configure MusicXML Import" title="Configure MusicXML import parameters"></p>'},	  
 	];
 
@@ -16765,6 +16833,8 @@ function ConfigureToolSettings(e) {
 		if (!args.canceled){
 
 			gAlwaysInjectPrograms = args.result.configure_inject_programs;
+
+			gUseComhaltasABC = args.result.configure_comhaltas;
 
 			gTheMelodyProgram = args.result.configure_melody_program;
 			gTheChordProgram = args.result.configure_chord_program;
@@ -16828,12 +16898,9 @@ function ConfigureToolSettings(e) {
 				if (testStaffSpacing < (-1*STAFFSPACEOFFSET)){
 					testStaffSpacing = (-1*STAFFSPACEOFFSET);
 				}
-
-				if (testStaffSpacing != theOldStaffSpacing){
-
-					SetStaffSpacing(testStaffSpacing);
-
-				}
+			}
+			else{
+				testStaffSpacing = gStaffSpacing;
 			}
 
 			if (gTheMelodyProgram == 0){
@@ -16997,11 +17064,21 @@ function ConfigureToolSettings(e) {
 
 			IdleAllowShowTabNames();
 
+			if (testStaffSpacing != theOldStaffSpacing){
+
+				gStaffSpacing = testStaffSpacing + STAFFSPACEOFFSET;
+
+				console.log("setting spacing");
+
+			}
+
 			// Update local storage
 			SaveConfigurationSettings();
 
-			// Do we need to re-render
-			if ((theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo))){
+			var radiovalue = GetRadioValue("notenodertab");
+
+			// Do we need to re-render?
+			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || ((radiovalue == "notenames") && (gUseComhaltasABC != theOldComhaltas))){
 				
 				RenderAsync(true, null, function(){
 
@@ -17009,9 +17086,7 @@ function ConfigureToolSettings(e) {
 				    FocusAfterOperation();
 
 				});
-
 			}
-			
 
 		}
 		else{
