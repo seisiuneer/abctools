@@ -6,6 +6,9 @@ var gSoundsCacheABCJS = {};
 // var gRhythmPatternOverrides = {"10/8": {pattern:['boom', 'boom2', 'boom2', 'boom2', 'boom', 'boom2', 'boom2', 'boom', 'boom2', 'boom2'], threshold:5} };
 var gRhythmPatternOverrides = {};
 
+// MAE 15 Oct 2023 - For suppressing tab icon
+var gDrawTabSymbol = true;
+
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
@@ -16400,11 +16403,14 @@ function buildTabAbsolute(plugin, absX, relX) {
   };
   var tabAbsolute = new AbsoluteElement(element, 0, 0, "symbol", 0);
   tabAbsolute.x = absX;
-  var tabRelative = new RelativeElement(tabIcon, 0, 0, 7.5, "tab");
-  tabRelative.x = relX;
-  tabAbsolute.children.push(tabRelative);
-  if (tabAbsolute.abcelem.el_type == 'tab') {
-    tabRelative.pitch = tabYPos;
+  // MAE 15 Oct 2023 to hide the left side TAB element on note name and whistle tab
+  if (gDrawTabSymbol){
+    var tabRelative = new RelativeElement(tabIcon, 0, 0, 7.5, "tab");
+    tabRelative.x = relX;
+    tabAbsolute.children.push(tabRelative);
+    if (tabAbsolute.abcelem.el_type == 'tab') {
+      tabRelative.pitch = tabYPos;
+    }
   }
   return tabAbsolute;
 }
