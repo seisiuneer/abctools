@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+    
         <style>
         p {
         font-size:14pt;
@@ -265,7 +265,6 @@
                     <p class="toc"><a style="text-decoration:none;" href="#injecting_tablature">Injecting B/C Box, C#/D Box, Anglo Concertina, or Bamboo Flute Tablature Into the ABC Tunes</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#reading_the_box_tablature">Reading the Box Tablature</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#reading_the_concertina_tablature">Reading the Anglo Concertina Tablature</a></p>
-                   <p class="toc"><a style="text-decoration:none;" href="#injecting_abc_lyric_based_note_names">Injecting ABC Lyric-based Note Names Into the ABC Tunes</a></p>
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">MusicXML Import</button>
@@ -494,7 +493,10 @@
                 <img style="width:700px;margin-top:24px"" src="img/ug4e.jpg"/>
             </div>
             <p><strong>Notation</strong> - Standard notation only.</p>
-            <p><strong>Names</strong> - Shows standard notation and note names below.</p>
+            <p><strong>Names</strong> - Shows standard notation with note names below.</p>
+            <p>Choose between standard ABC d e f style octave notes or Comhaltas-preferred D' E' F' octave note display in the <strong>Settings</strong> dialog.</p>
+            <p><strong>Important:</strong> While the note Names display will show the Comhaltas-preferred note names, the ABC standard requires that the second octave C in the ABC itself either be represented by c or C' so that may requires some minor changes when pasting in your Comhaltas-formatted tunes.</p>
+            <p>Note names font and size in the tab is set by the <strong>Tab number font</strong> value in the <strong>Configure ABC Rendering Fonts</strong> dialog.</p>
             <p><strong>Mandolin</strong> - Shows standard notation and tablature for Mandolin.</p>
             <p><strong>GDAD</strong> - Shows standard notation and tablature for GDAD-tuned Bouzouki.</p>
             <p><strong>CGDA</strong> - Shows standard notation and tablature for CGDA-tuned Mandola.</p>
@@ -525,7 +527,7 @@
             <h1 class="page_break_always">Advanced Controls<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Advanced</strong> button brings up the ABC Transcription Tools Advanced Controls dialog:</p>
             <div class="image_holder_p">
-                <img src="img/advanced_controls_12.jpg"/>
+                <img src="img/advanced_controls_13.jpg"/>
             </div>
             <p>Click the lightbulb icon to bring up this section of the user guide in a new browser tab.</p>
             <p><strong>Show/Hide ABC Features:</strong></p>
@@ -585,8 +587,8 @@
             <p><strong>The lack of a first repeat bar symbol in the ABC will make the first part of the tune on the second and repetitions appear to not repeat.</strong></p>
             <p><strong>To Fix:</strong></p>
             <p><strong>Add a |: repeat bar at the start of the tune.</strong></p>
-            <p>The commands in light red inject additional ABC lyrics-based or ABC chord-based tablature into the ABC:</p>
-            <p><strong>Inject Note Name Lyrics</strong> - Injects note names as lyrics in the ABC.</p>
+            <p><strong>Comhaltas ABC Transform</strong> - Replaces all d e f style octave notes in the entire ABC with the D' E' F' style preferred by Comhaltas.</p>
+            <p><strong>Important:</strong> While the note Names display will show the Comhaltas-preferred note names, the ABC standard requires that the second octave C in the ABC itself either be represented by c or C' so that may requires some minor changes when pasting in your Comhaltas-formatted tunes.</p>
             <p><strong>Inject B/C Box Tab</strong> - Injects B/C Box tablature into the ABC (uses ABC chord syntax).</p>
             <p><strong>Inject C#/D Box Tab</strong> - Injects C#/D Box tablature into the ABC (uses ABC chord syntax).</p>
             <p><strong>Inject Anglo Concertina Tab</strong> - Injects Anglo Concertina tablature into the ABC (uses ABC chord syntax).</p>
@@ -623,7 +625,7 @@
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder_p">
-                <img src="img/abc_transcription_tool_settings_21.jpg"/>
+                <img src="img/abc_transcription_tool_settings_23.jpg"/>
             </div>
             <p><strong>Save an Auto-Snapshot on browser tab close or reload? (Restore it from the Add dialog)</strong> - (Desktop browsers only) When enabled, saves an Auto-Snapshot when closing or reloading the browser tab the tool is running in.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/pp6fD2NOKtw" title="Auto-Snapshots" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
@@ -639,8 +641,21 @@
             <p>When the tab instrument names are hidden, the spacing between the staves is somewhat reduced.</p>
             <p>Hiding the tab names may, or may not, depending on the height of the staves, be useful for getting more staves on a single PDF page.</p>
             <p><strong>Stringed instrument capo fret postion</strong> - Allows you to set a capo setting from 0 to 12 frets for the Mandolin, GDAD, CGDA, or Guitar tab.</p>
-            <p>The following controls select default MIDI programs and volumes to use for the Melody, Bass, and Chords:</p>
-            <p><strong>Default Melody MIDI program</strong> - Select your default MIDI instrument for the Melody from the instrument selection menu.</p>
+            <p>The following controls select default MIDI soundfont, programs, and volumes to use for the Melody, Bass, and Chords:</p>
+            <p><strong>Default abcjs soundfont:</strong> - Choose between the five General MIDI soundfonts available in abcjs to use by default when playing tunes:</p>
+            <p style="text-align: center;">Fluid<br/>
+            Musyng Kite<br/>
+            FatBoy<br/>
+            Canvas (Based on a Roland JV-1010)<br/>
+            MScore (Based on the MuseScore General MIT licensed soundfont)</p>
+            <p>On first run, the default is set to Fluid.</p>
+            <p>Each soundfont is a full General MIDI implementation, but has somewhat different sounds for each instrument.</p>
+            <p>If no %abcjs_soundfont soundfont is specified in a tune, the default soundfont chosen in the tool's <strong>Settings</strong> dialog is used.</p>
+            <p>For more details on the soundfonts, visit: <a href="https://paulrosen.github.io/midi-js-soundfonts/" target="_blank">midi-js-soundfonts on GitHub</a></p>
+            <p>Your default soundfont choice is saved in browser storage and restored the next time the tool is run.</p>
+            <p><strong>Use AppCordions custom sounds for Dulcimer, Accordion, Flute, and Whistle</strong></p>
+            <p>If this is enabled (on by default), for all soundfonts, my custom sampled instruments for Dulcimer, Accordion, Flute, and Whistle will override the soundfont sounds.</p>
+           <p><strong>Default Melody MIDI program</strong> - Select your default MIDI instrument for the Melody from the instrument selection menu.</p>
             <p><strong>Default Bass/Chords MIDI program</strong> - Select your default MIDI instrument for the Bass/Chords from the instrument selection menu.</p>
             <p>Enabling <strong>Use Default Melody and Bass/Chord programs when playing tunes</strong> will play tunes that don't have Melody or Bass/Chord programs already in the ABC with your preferred instrument sounds. </p>
             <p>If a %%MIDI program or %%MIDI chordprog directive is already present in the tune when playing, it will take precedence over the default program values.</p>
@@ -671,25 +686,15 @@
             <p></p>
             <p>This only applies if <strong>Use AppCordions custom sounds for Dulcimer, Accordion, Flute, and Whistle</strong> is enabled (see below).</p>
             <p><strong>Autoscroll player when playing</strong> - Check this if you want have the player autoscroll the notes into view while playing.</p>
+            <p><strong>MP3 audio export bitrate (kbit/sec):</strong> - Sets the bitrate for MP3 stereo audio downloaded from the Player. </p>
+            <p>Default value is 224.  Minimum value allowed is 96. Maximum value allowed is 384. Higher values result in higher quality audio.</p>
             <p><strong>Player uses large controls (easier to touch on mobile and tablet)</strong> - Check this if you want to have larger controls in the Player view:</p>
             <div class="image_holder_p">
                 <img src="img/large_player_controls_4.jpg"/>
             </div>
-            <p><strong>Default abcjs soundfont:</strong> - Choose between the five General MIDI soundfonts available in abcjs to use by default when playing tunes:</p>
-            <p style="text-align: center;">Fluid<br/>
-            Musyng Kite<br/>
-            FatBoy<br/>
-            Canvas (Based on a Roland JV-1010)<br/>
-            MScore (Based on the MuseScore General MIT licensed soundfont)</p>
-            <p>On first run, the default is set to Fluid.</p>
-            <p>Each soundfont is a full General MIDI implementation, but has somewhat different sounds for each instrument.</p>
-            <p>If no %abcjs_soundfont soundfont is specified in a tune, the default soundfont chosen in the tool's <strong>Settings</strong> dialog is used.</p>
-            <p>For more details on the soundfonts, visit: <a href="https://paulrosen.github.io/midi-js-soundfonts/" target="_blank">midi-js-soundfonts on GitHub</a></p>
-            <p>Your default soundfont choice is saved in browser storage and restored the next time the tool is run.</p>
-            <p><strong>Use AppCordions custom sounds for Dulcimer, Accordion, Flute, and Whistle</strong></p>
-            <p>If this is enabled (on by default), for all soundfonts, my custom sampled instruments for Dulcimer, Accordion, Flute, and Whistle will override the soundfont sounds.</p>
-            <p><strong>MP3 audio export bitrate (kbit/sec):</strong> - Sets the bitrate for MP3 stereo audio downloaded from the Player. </p>
-            <p>Default value is 224.  Minimum value allowed is 96. Maximum value allowed is 384. Higher values result in higher quality audio.</p>
+            <p><strong>Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)</strong> - Check this if you want to use the Comhaltas standard for ABC note names (D' E' F' instead of d e f for octave notes) when in note names tab display mode.</p>
+            <p><strong>Important:</strong> While the note Names display will show the Comhaltas-preferred note names, the ABC standard requires that the second octave C in the ABC itself either be represented by c or C' so that may requires some minor changes when pasting in your Comhaltas-formatted tunes.</p>
+            <p>Note name font and size in the tab is set by the <strong>Tab number font</strong> setting in the <strong>Configure ABC Fonts dialog</strong>.</p>
             <p><strong>Configure ABC Fonts</strong> - Brings up a dialog where you can configure all fonts used for rendering the ABC.</p>
             <p><strong>Configure Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for tablature injection.</p>
             <p><strong>Configure MusicXML Import</strong> - Brings up a dialog where you can configure all parameters for MusicXML import.</p>
@@ -1560,19 +1565,6 @@
             </div>
             <p>Push is indicated with a "↓" arrow by default (configurable in the Box and Anglo Concertina Tablature Settings dialog).</p>
             <p>Draw is indicated with an "↑" arrow by default (configurable in the Box and Anglo Concertina Tablature Settings dialog).</p>
-            <hr class="hidden-print" id="injecting_abc_lyric_based_note_names">
-            <h1 class="page_break_always h1wide">Injecting ABC Lyric-based Note Names Into the ABC Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>Clicking <strong>Inject Note Names Lyrics</strong> in the Advanced Settings dialog will inject an ABC lyrics line under each ABC line using the w: directive that will put the ABC note name under each note in the notation for all the tunes.</p>
-            <p>For example:</p>
-            <p class="code">GAG GAB | ABA ABd | edd gdd | edB dBA |<br/>
-            w: G A G G A B A B A A B d e d d g d d e d B d B A</p>
-            <p>The injected ABC lyrics are literally the same as the ABC so has no idea about sharps or flats, just the note letters. You may have to fix those manually.</p>
-            <p>It is a destructive operation, so you might want to click <strong>Copy All</strong> before trying this operation.</p>
-            <p>Also, it will in some circumstances mess up the notation formatting, so try it, if it works, great, hopefully it saves you some time compared to doing the work manually.</p>
-            <p>f you want the note names in a different font, style, or size, change the %%vocalfont directive injected for you immediately after the X: tag in each tune, for example:</p>
-            <p class="code">X:1<br/>
-            %%vocalfont Verdana 14</p>
-            <p>You can use any of the fonts, styles, and sizes as described above in the "Web Safe Fonts" section.</p>
             <hr class="hidden-print" id="musicxml">
             <h1 class="page_break_always">MusicXML Import Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">
