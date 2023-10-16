@@ -1570,7 +1570,6 @@ margin-top:-7px;
 	}
 }
 
-
 .configure_font_settings_form_text_wide{
 	font-size:12pt;
 	line-height:36px;
@@ -1583,7 +1582,7 @@ margin-top:-7px;
 	font-size:12pt;
 	font-family:helvetica;
 	width: 200px;
-	margin-top:-5px;
+	margin-top:0px;
 	position:absolute;
 	left:360px;
 }
