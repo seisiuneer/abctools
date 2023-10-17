@@ -618,7 +618,7 @@ opacity: 0.4;
 padding:12px;
 }
 
-#injectbctab, #injectallheaders, #injectmelody, #injectstaffwidth, #injectsectionheader{
+#injectbctab, #injectmelody, #injectstaffwidth, #injectsectionheader{
 margin-right:24px;
 height:42px;
 padding:12px;
@@ -630,7 +630,7 @@ padding:12px;
 margin-right:24px;
 }
 
-#injectbambooflute, #injectclicktrackall, #injectchords, #injectheadertemplate, #injectcdtab, #injectallmidiparams{
+#injectbambooflute, #injectclicktrackall, #injectchords, #injectheadertemplate, #injectcdtab, #injectallmidiparams,#injectallheaders{
 height:42px;
 padding:12px;
 }
