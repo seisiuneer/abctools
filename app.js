@@ -7911,7 +7911,404 @@ function idleAddABC(){
 
 	}
 
+}
 
+//
+// PDF Tunebook builder
+//
+
+//
+// PDF Tunebook features
+//
+var gPDFTunebookConfig ={
+
+ 	// PDF Quality
+	pdfquality: 0.75,
+
+	// Space between tunes
+	pdf_between_tune_space: 20,
+
+	// Title
+	addtitle: "Tunebook Title",
+
+	// Subtitle
+	addsubtitle: "Tunebook Subtitle",
+
+	// TOC Title
+	addtoc: "Table of Contents",
+
+	// Index Title
+	addindex: "Index",
+
+	// Page Header
+	pageheader: "This is the Page Header",
+
+	// Page Footer
+	pagefooter: "This is the Page Footer",
+
+	// Add playback links?
+	bAdd_add_all_playback_links: true,
+
+	// Inject instruments?
+	bInjectInstruments: true,
+
+	// Melody Instrument
+	melody_instrument: 1,
+
+	// Bass/Chord Instrument
+	chord_instrument: 1,
+
+	// QR Code?
+	bAdd_QRCode: true,
+
+	// Link override
+	qrcode_link: "http://michaeleskin.com",
+
+	// Caption
+	caption_for_qrcode: "Click or Scan to Visit my Home Page",
+}
+
+// Reset the PDF tunebook config to defaults
+function resetPDFTunebookConfig(){
+
+	gPDFTunebookConfig ={
+
+	 	// PDF Quality
+		pdfquality: 0.75,
+
+		// Space between tunes
+		pdf_between_tune_space: 20,
+
+		// Title
+		addtitle: "Tunebook Title",
+
+		// Subtitle
+		addsubtitle: "Tunebook Subtitle",
+
+		// TOC Title
+		addtoc: "Table of Contents",
+
+		// Index Title
+		addindex: "Index",
+
+		// Page Header
+		pageheader: "This is the Page Header",
+
+		// Page Footer
+		pagefooter: "This is the Page Footer",
+
+		// Add playback links?
+		bAdd_add_all_playback_links: true,
+
+		// Inject instruments?
+		bInjectInstruments: true,
+
+		// Melody Instrument
+		melody_instrument: 1,
+
+		// Bass/Chord Instrument
+		chord_instrument: 1,
+
+		// QR Code?
+		bAdd_QRCode: true,
+
+		// Link override
+		qrcode_link: "http://michaeleskin.com",
+
+		// Caption
+		caption_for_qrcode: "Click or Scan to Visit my Home Page",
+	}
+}
+
+function idlePDFTunebookBuilder(){
+
+	$('[name="addtitle"]').attr('placeholder', 'No Title Page will be included');
+	$('[name="addsubtitle"]').attr('placeholder', 'No Title Page subtitle will be included');
+	$('[name="addtoc"]').attr('placeholder', 'No Table of Contents will be included');
+	$('[name="addindex"]').attr('placeholder', 'No Index will be included');
+	$('[name="pageheader"]').attr('placeholder', 'No Page Header will be included');
+	$('[name="pagefooter"]').attr('placeholder', 'No Page Footer will be included');
+	$('[name="qrcode_link"]').attr('placeholder', 'QR Code will use default Share URL');
+	$('[name="caption_for_qrcode"]').attr('placeholder', 'No QR Code caption will be included');
+
+}
+
+function PDFTunebookBuilder(){
+
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
+
+	var midi_program_list = [];
+
+  	for (var i=0;i<138;++i){
+  		midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
+  	}
+
+    const pdf_quality_list = [
+	    { name: "  Draft", id: 0.4 },
+	    { name: "  Good", id: 0.5 },
+	    { name: "  High", id: 0.75 },
+  	];
+
+  	for (var i=0;i<138;++i){
+  		midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
+  	}
+
+	var form = [
+	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">Configure PDF Tunebook Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#configure_pdf_tunebook_features" target="_blank" style="text-decoration:none;">💡</a></span></p>'},  
+	  {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Clicking "OK" will add PDF tunebook feature annotations to the top of your ABC.</p>'},  
+	  {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Leave any text fields blank for features you don\'t want in your PDF tunebook.</p>'},  
+	  {name: "PDF quality:", id: "pdfquality", type:"select", options:pdf_quality_list, cssClass:"configure_pdfquality_select"},
+	  {name: "Space between tunes (in 1/72\"):", id: "pdf_between_tune_space", type:"number", cssClass:"configure_setuppdftunebook_form_text"},
+	  {name: "Title Page title:", id: "addtitle", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide", placeholder:"Test"},
+	  {name: "Title Page subtitle:", id: "addsubtitle", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
+	  {name: "Table of Contents title:", id: "addtoc", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
+	  {name: "Index title:", id: "addindex", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
+	  {name: "Page Header:", id: "pageheader", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
+	  {name: "Page Footer:", id: "pagefooter", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
+	  {name: "          Add playback links to each tune to allow playing the tune by clicking the tune title", id: "bAdd_add_all_playback_links", type:"checkbox", cssClass:"configure_setuppdftunebook_form_text"},
+	  {name: "Melody instrument for playback links:", id: "melody_instrument", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
+	  {name: "Bass/Chord instrument for playback links:", id: "chord_instrument", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
+	  {name: "          Add a QR Code to the end of the PDF", id: "bAdd_QRCode", type:"checkbox", cssClass:"configure_setuppdftunebook_form_text"},
+	  {html: '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">To override the default Share URL QR Code, enter your own URL below:</p>'},  
+	  {name: "Custom URL:", id: "qrcode_link", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
+	  {name: "QR Code Caption:", id: "caption_for_qrcode", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
+	];
+
+	setTimeout(function(){
+
+		idlePDFTunebookBuilder();
+
+	}, 150);
+
+	const modal = DayPilot.Modal.form(form, gPDFTunebookConfig, { theme: "modal_flat", top: 20, width: 700, scrollWithPage: true, autoFocus: false } ).then(function(args){
+	
+		if (!args.canceled){
+
+			//debugger;
+			// %pdfquality .75
+			// %pdf_between_tune_space 20
+			// %addtitle Tunebook Title
+			// %addsubtitle Tunebook Subtitle
+			// %addtoc Table of Contents
+			// %addlinkbacktotoc
+			// %addsortedindex Index
+			// %addlinkbacktoindex
+			// %pageheader This is the Page Header
+			// %pagefooter This is the Page Footer
+			// %add_all_playback_links 0 0
+			// %qrcode http://michaeleskin.com
+			// %caption_for_qrcode Click or Scan to Visit my Home Page
+
+			var header_to_add = "% Start of PDF Tunebook Features\n";
+			header_to_add += "%\n";
+
+			// PDF Quality
+			gPDFTunebookConfig.pdfquality = args.result.pdfquality
+
+			header_to_add += "%pdfquality "+gPDFTunebookConfig.pdfquality+"\n";
+
+			// Space between tunes
+			gPDFTunebookConfig.pdf_between_tune_space = args.result.pdf_between_tune_space;
+
+			if (gPDFTunebookConfig.pdf_between_tune_space != ""){
+
+				header_to_add += "%pdf_between_tune_space "+gPDFTunebookConfig.pdf_between_tune_space+"\n";
+
+			}
+
+			// Title
+			gPDFTunebookConfig.addtitle = args.result.addtitle;
+
+			// Subtitle
+			gPDFTunebookConfig.addsubtitle = args.result.addsubtitle;
+
+			if (gPDFTunebookConfig.addtitle != ""){
+
+				header_to_add += "%addtitle "+gPDFTunebookConfig.addtitle+"\n";
+
+				if (gPDFTunebookConfig.addsubtitle != ""){
+
+					header_to_add += "%addsubtitle "+gPDFTunebookConfig.addsubtitle+"\n";
+
+				}
+
+			}
+
+			// TOC Title
+			gPDFTunebookConfig.addtoc = args.result.addtoc;
+
+			if (gPDFTunebookConfig.addtoc != ""){
+
+				header_to_add += "%addtoc "+gPDFTunebookConfig.addtoc+"\n";
+				header_to_add += "%addlinkbacktotoc\n";
+
+			}
+
+			// Index Title
+			gPDFTunebookConfig.addindex = args.result.addindex;
+
+			if (gPDFTunebookConfig.addindex != ""){
+
+				header_to_add += "%addsortedindex "+gPDFTunebookConfig.addindex+"\n";
+				header_to_add += "%addlinkbacktoindex\n";
+
+			}
+
+			// Page Header
+			gPDFTunebookConfig.pageheader = args.result.pageheader;
+
+			if (gPDFTunebookConfig.pageheader != ""){
+
+				header_to_add += "%pageheader "+gPDFTunebookConfig.pageheader+"\n";
+
+			}
+
+			// Page Footer
+			gPDFTunebookConfig.pagefooter = args.result.pagefooter;
+
+			if (gPDFTunebookConfig.pagefooter != ""){
+
+				header_to_add += "%pagefooter "+gPDFTunebookConfig.pagefooter+"\n";
+				
+			}
+
+			// Add playback links?
+			gPDFTunebookConfig.bAdd_add_all_playback_links = args.result.bAdd_add_all_playback_links;
+
+			// Inject instruments?
+			gPDFTunebookConfig.bInjectInstruments = args.result.bInjectInstruments;
+
+			// Melody Instrument
+			gPDFTunebookConfig.melody_instrument = args.result.melody_instrument;
+
+			// Bass/Chord Instrument
+			gPDFTunebookConfig.chord_instrument = args.result.chord_instrument;
+
+			if (gPDFTunebookConfig.bAdd_add_all_playback_links){
+				
+				var progNumMelody = gPDFTunebookConfig.melody_instrument;
+
+				var progNumChord = gPDFTunebookConfig.chord_instrument;
+
+				// Special case for muting voices
+				if (progNumMelody == 0){
+
+					progNumMelody = "mute";
+
+				}
+				else{
+
+					progNumMelody = progNumMelody - 1;
+
+					if ((progNumMelody < 0) || (progNumMelody > 136)){
+
+						progNumMelody = 0;
+
+					}
+
+				}
+
+				// Special case for muting voices
+				if (progNumChord == 0){
+
+					progNumChord = "mute";
+
+				}
+				else{
+
+					progNumChord = progNumChord - 1;
+
+					if ((progNumChord < 0) || (progNumChord > 136)){
+
+						progNumChord = 0;
+
+					}
+
+				}
+
+				header_to_add += "%add_all_playback_links "+progNumMelody+" "+progNumChord+"\n";
+
+			}
+
+
+			// QR Code?
+			gPDFTunebookConfig.bAdd_QRCode = args.result.bAdd_QRCode;
+
+			// Link override
+			gPDFTunebookConfig.qrcode_link = args.result.qrcode_link;
+
+			// Caption
+			gPDFTunebookConfig.caption_for_qrcode = args.result.caption_for_qrcode;
+
+			if (gPDFTunebookConfig.bAdd_QRCode){
+
+				if (gPDFTunebookConfig.qrcode_link != ""){
+
+					header_to_add += "%qrcode "+gPDFTunebookConfig.qrcode_link+"\n";
+
+				}
+				else{
+
+					header_to_add += "%qrcode\n";
+
+				}
+
+				if (gPDFTunebookConfig.caption_for_qrcode != ""){
+
+					header_to_add += "%caption_for_qrcode "+gPDFTunebookConfig.caption_for_qrcode+"\n";
+
+				}
+			}
+
+			header_to_add += "%\n";
+
+			header_to_add += "% End of PDF Tunebook Features\n";
+
+			header_to_add += "\n";
+
+			SaveConfigurationSettings();
+
+			// Add the feature annotations to the top of the ABC
+			var theNotes = gTheABC.value;
+
+			//debugger;
+
+			// Strip off any existing settings
+
+			var markerString = "% End of PDF Tunebook Features\n\n";
+
+			var startIndex = theNotes.indexOf(markerString);
+
+			if (startIndex != -1){
+
+				startIndex += markerString.length;
+
+				theNotes = theNotes.substring(startIndex); 
+
+			}
+
+			markerString = "% End of PDF Tunebook Features\n";
+
+			startIndex = theNotes.indexOf(markerString);
+
+			if (startIndex != -1){
+
+				startIndex += markerString.length;
+
+				theNotes = theNotes.substring(startIndex); 
+
+			}
+
+			header_to_add += theNotes;
+
+			gTheABC.value = header_to_add;
+
+		}
+
+	});
 }
 
 function AddABC(){
@@ -9434,7 +9831,7 @@ function InjectRepeatsAndClickTrackAll(){
 
 			}
 
-			// Stuff in the transposed output
+			// Stuff in the output
 			gTheABC.value = output;
 
 			// Force a redraw
@@ -9677,7 +10074,7 @@ function InjectStaffWidth(){
 
 				}
 
-				// Stuff in the transposed output
+				// Stuff in the output
 				gTheABC.value = output;
 
 				// Force a redraw
@@ -10210,7 +10607,7 @@ function InjectAllMIDIParams(){
 						output += InjectOneTuneMIDIBassChordProgramAndVolumes(theTunes[i], progNumChord, gLastInjectedBassVolume, gLastInjectedChordVolume);
 					}
 
-					// Stuff in the transposed output
+					// Stuff in the output
 					gTheABC.value = output;
 
 				}
@@ -10234,7 +10631,7 @@ function InjectAllMIDIParams(){
 
 					}
 
-					// Stuff in the transposed output
+					// Stuff in the output
 					gTheABC.value = output;
 
 				}
@@ -10258,13 +10655,10 @@ function InjectAllMIDIParams(){
 
 					}
 
-					// Stuff in the transposed output
+					// Stuff in the output
 					gTheABC.value = output;
 
 				}
-
-				// Stuff in the transposed output
-				gTheABC.value = output;
 
 				// Set the select point
 				gTheABC.selectionStart = 0;
@@ -10773,7 +11167,7 @@ function InjectMetronome(){
 
 				}
 
-				// Stuff in the transposed output
+				// Stuff in the output
 				gTheABC.value = output;
 
 				RenderAsync(true,null,function(){
@@ -11928,7 +12322,7 @@ function InjectPDFHeaders(bDoAll){
 		
 		output += theNotes;
 
-		// Stuff in the transposed output
+		// Stuff in the final output
 		gTheABC.value = output;
 
 		// Set the select point
@@ -15386,6 +15780,15 @@ function GetInitialConfigurationSettings(){
 		gUseComhaltasABC = (val == "true");
 	}
 
+	// PDF Features
+    var PDFTunebookConfig = localStorage.PDFTunebookConfig;
+
+    if (PDFTunebookConfig){
+        gPDFTunebookConfig = JSON.parse(PDFTunebookConfig);
+    }
+    else{
+    	resetPDFTunebookConfig();
+    }
 
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
@@ -15480,6 +15883,9 @@ function SaveConfigurationSettings(){
 
 		// Save the Comhaltas display mode
 		localStorage.UseComhaltasABC = gUseComhaltasABC;
+
+		// Save the PDF features 
+		localStorage.PDFTunebookConfig = JSON.stringify(gPDFTunebookConfig);
 
 	}
 }
@@ -16515,7 +16921,8 @@ function PDFExportDialog(){
 	};
 
 	var form = [
-	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">Export PDF Tunebook&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#export_pdf_tunebook" target="_blank" style="text-decoration:none;">💡</a></span></p>'},  
+	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">Export PDF Tunebook&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#export_pdf_tunebook" target="_blank" style="text-decoration:none;">💡</a></span></p>'}, 
+	  {html:'<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Configure PDF Tunebook Features" title="Easily add features to your PDF tunebook including: Title Page, Table of Contents, Index, Page Headers, Page Footers, playback links, and custom QR Code"></p>'},
 	  {name: "Paper Size:", id: "configure_papersize", type:"select", options:papersize_list, cssClass:"configure_pdf_papersize_select"},
 	  {name: "Tune Layout:", id: "configure_tunelayout", type:"select", options:tunelayout_list, cssClass:"configure_pdf_tunelayout_select"},
 	  {name: "Notes Incipits Columns:", id: "configure_incipitscolumns", type:"select", options:incipits_columns_list, cssClass:"configure_pdf_incipitscolumns_select"},
