@@ -8313,16 +8313,17 @@ function PDFTunebookBuilder(){
 
 function AddABC(){
 
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">Add ABC Tunes&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#add_templates_dialog" target="_blank" style="text-decoration:none;">💡</a></span></p>';
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">Add ABC Tunes, Templates, and PDF Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#add_templates_dialog" target="_blank" style="text-decoration:none;">💡</a></span></p>';
 	modal_msg += '<div id="add-new-tune-dialog">';
 	modal_msg += '<p style="text-align:center;margin-top:28px;font-size:18px;">Add Your Own Tunes from an ABC or MusicXML File</p>';
-	modal_msg += '<p style="text-align:center;margin-top:36px;">';
+	modal_msg += '<p style="text-align:center;margin-top:12px;">';
 	modal_msg += '<input type="file" id="addabcfilebutton" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL" hidden/>';
 	modal_msg += '<label class="abcuploaddialog btn btn-top" for="addabcfilebutton" title="Adds tunes from an existing ABC or MusicXML file to the end of the ABC">Choose File to Add</label>';
 	modal_msg += '<input class="dialogrestorebutton btn btn-restorebutton" id="dialogrestorebutton" onclick="RestoreSnapshot(false,true);" type="button" value="Restore from Snapshot" title="Replaces the contents of the ABC editor with a Snapshot saved in browser storage" style="display:none;">';
 	modal_msg += '<input class="dialogrestoreautobutton btn btn-restorebutton" id="dialogrestoreautobutton" onclick="RestoreSnapshot(true,true);" type="button" value="Restore from Auto-Snapshot" title="Replaces the contents of the ABC editor with an Auto-Snapshot saved in browser storage" style="display:none;">';
 	modal_msg += '</p>';
-	modal_msg += '<p style="text-align:center;margin-top:24px;font-size:18px;margin-top:40px;">Add an Example ABC Tune</p>';
+	modal_msg += '<p style="text-align:center;margin-top:24px;">';
+	modal_msg += '<p style="text-align:center;margin-top:24px;font-size:18px;margin-top:36px;">Add an Example ABC Tune</p>';
 	modal_msg += '<p style="text-align:center;margin-top:24px;">';
 	modal_msg  += '<input id="addnewreel" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleReel();" type="button" value="Add an Example Reel" title="Adds an example reel (Cooley\'s) to the end of the ABC">';
 	modal_msg  += '<input id="addnewjig" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleJig();" type="button" value="Add an Example Jig" title="Adds an example jig (The Kesh) to the end of the ABC">';
@@ -8333,9 +8334,6 @@ function AddABC(){
 	modal_msg += '</p>';
 	modal_msg += '<p style="text-align:center;margin-top:32px;font-size:18px;">Add an ABC Template</p>';
 	modal_msg += '<p style="text-align:center;margin-top:24px;">';
-	modal_msg  += '<input id="addtunebookheaders" class="advancedcontrols btn btn-injectcontrols-injectpdfheaders" onclick="InjectPDFHeaders(false);" type="button" value="Add Common Useful PDF Tunebook Annotations" title="Adds common useful PDF tunebook annotations to the top of the ABC">';
-	modal_msg += '</p>';
-	modal_msg += '<p style="text-align:center;margin-top:24px;">';
 	modal_msg  += '<input id="addnewsong" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleSong();" type="button" value="Add an Example Song" title="Adds an example song to the end of the ABC">';
 	modal_msg  += '<input id="addsongtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSongTemplate();" type="button" value="Add a Song Template" title="Adds a minimal song template to the end of the ABC">';
 	modal_msg += '</p>';
@@ -8343,6 +8341,8 @@ function AddABC(){
 	modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendBoxFingeringTemplate();" type="button" value="Add Box Fingering Symbols Template" title="Adds a template with symbols for annotating box fingerings and tablature to the top of the ABC">';
 	modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddClickTrackTemplate();" type="button" value="Add Two-Bar Click Intro Templates" title="Adds two-bar click intro templates for common styles of tunes to the end of the ABC">';
 	modal_msg += '</p>';
+	modal_msg += '<p style="text-align:center;margin-top:32px;font-size:18px;">Configure PDF Tunebook Features</p>';
+	modal_msg += '<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Configure PDF Tunebook Features" title="Easily add features to your PDF tunebook including: Title Page, Table of Contents, Index, Page Headers, Page Footers, playback links, and custom QR Code"></p>';
 	modal_msg += '<p style="text-align:center;margin-top:24px;">';
 	modal_msg += '</p>';
 	modal_msg += '</div>';
@@ -8353,7 +8353,7 @@ function AddABC(){
 
 	}, 150);
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 75, width: 700,  scrollWithPage: false }).then(function(){
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 75, width: 720,  scrollWithPage: false }).then(function(){
 
 			
 	});
@@ -12259,126 +12259,78 @@ function PrepareWhistleFont(){
 }
 
 //
-// Inject PDF-related headers at the top of the file
+// Inject all PDF-related headers at the top of the file
 //
-function InjectPDFHeaders(bDoAll){
+function InjectPDFHeaders(){
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
 		return;
 	}
 
-	if (bDoAll){
+	var theNotes = gTheABC.value;
 
-		var theNotes = gTheABC.value;
+	var output = "";
+	output += "%\n";
+	output += "% Here are all the available PDF tunebook annotations:\n";
+	output += "%\n";
+	output += "%pdfquality .75\n";
+	output += "%pdf_between_tune_space 20\n";
+	output += "%pdfname your_pdf_filename\n"
+	output += "%pdffont fontname style\n"		
+	output += "%addtitle Title Page Title\n";
+	output += "%addsubtitle Title Page Subtitle\n";
+	output += "%urladdtitle http://michaeleskin.com Title Page Title as Hyperlink\n";
+	output += "%urladdsubtitle http://michaeleskin.com Title Page Subtitle as Hyperlink\n";
+	output += "%addtoc Table of Contents\n";
+	output += "%addsortedtoc Table of Contents Sorted by Tune Name\n";
+	output += "%addlinkbacktotoc\n";	
+	output += "%tocheader Page Header Text for Table of Contents Pages\n";		
+	output += "%toctopoffset 30\n";
+    output += "%toctitleoffset 35\n";
+    output += "%toctitlefontsize 18\n";
+    output += "%tocfontsize 13\n";
+    output += "%toclinespacing 12\n";
+	output += "%addindex Unsorted Index\n"
+	output += "%addsortedindex Index Sorted by Tune Name\n"
+	output += "%addlinkbacktoindex\n";		
+	output += "%indexheader Page Header Text for Index Pages\n";		
+    output += "%indextopoffset 30\n";
+    output += "%indextitleoffset 35\n";
+    output += "%indextitlefontsize 18\n";
+    output += "%indexfontsize 13\n";
+    output += "%indexlinespacing 12\n";
+	output += "%no_toc_or_index_links\n"
+	output += "%pageheader Page Header\n"
+	output += "%pagefooter Page Footer\n"
+	output += "%urlpageheader http://michaeleskin.com Page Header as Hyperlink\n";
+	output += "%urlpagefooter http://michaeleskin.com Page Footer as Hyperlink\n";
+	output += "%add_all_links_to_thesession\n";
+	output += "%add_all_playback_links 0 0\n";
+	output += "%no_edit_allowed\n";
+	output += "%qrcode\n";
+	output += "%qrcode http://michaeleskin.com\n";
+	output += "%caption_for_qrcode Caption for the QR code\n";
+	output += "%\n";
+	output += "% These directives can be added to each tune:\n";
+	output += "%hyperlink http://michaeleskin.com\n";
+	output += "%add_link_to_thesession\n";
+	output += "%add_playback_link 0 0\n";
+	output += "\n";
+	
+	output += theNotes;
 
-		var output = "";
-		output += "%\n";
-		output += "% Here are all the available custom annotations:\n";
-		output += "%\n";
-		output += "%pdfquality .75\n";
-		output += "%pdf_between_tune_space 20\n";
-		output += "%pdfname your_pdf_filename\n"
-		output += "%pdffont fontname style\n"		
-		output += "%addtitle Title Page Title\n";
-		output += "%addsubtitle Title Page Subtitle\n";
-		output += "%urladdtitle http://michaeleskin.com Title Page Title as Hyperlink\n";
-		output += "%urladdsubtitle http://michaeleskin.com Title Page Subtitle as Hyperlink\n";
-		output += "%addtoc Table of Contents\n";
-		output += "%addsortedtoc Table of Contents Sorted by Tune Name\n";
-		output += "%addlinkbacktotoc\n";	
-		output += "%tocheader Page Header Text for Table of Contents Pages\n";		
-		output += "%toctopoffset 30\n";
-        output += "%toctitleoffset 35\n";
-        output += "%toctitlefontsize 18\n";
-        output += "%tocfontsize 13\n";
-        output += "%toclinespacing 12\n";
-		output += "%addindex Unsorted Index\n"
-		output += "%addsortedindex Index Sorted by Tune Name\n"
-		output += "%addlinkbacktoindex\n";		
-		output += "%indexheader Page Header Text for Index Pages\n";		
-        output += "%indextopoffset 30\n";
-        output += "%indextitleoffset 35\n";
-        output += "%indextitlefontsize 18\n";
-        output += "%indexfontsize 13\n";
-        output += "%indexlinespacing 12\n";
-		output += "%no_toc_or_index_links\n"
-		output += "%pageheader Page Header\n"
-		output += "%pagefooter Page Footer\n"
-		output += "%urlpageheader http://michaeleskin.com Page Header as Hyperlink\n";
-		output += "%urlpagefooter http://michaeleskin.com Page Footer as Hyperlink\n";
-		output += "%add_all_links_to_thesession\n";
-		output += "%add_all_playback_links 0 0\n";
-		output += "%no_edit_allowed\n";
-		output += "%qrcode\n";
-		output += "%qrcode http://michaeleskin.com\n";
-		output += "%caption_for_qrcode Caption for the QR code\n";
-		output += "%\n";
-		output += "% These directives can be added to each tune:\n";
-		output += "%hyperlink http://michaeleskin.com\n";
-		output += "%add_link_to_thesession\n";
-		output += "%add_playback_link 0 0\n";
-		output += "\n";
-		
-		output += theNotes;
+	// Stuff in the final output
+	gTheABC.value = output;
 
-		// Stuff in the final output
-		gTheABC.value = output;
+	// Set the select point
+	gTheABC.selectionStart = 0;
+    gTheABC.selectionEnd = 0;
 
-		// Set the select point
-		gTheABC.selectionStart = 0;
-	    gTheABC.selectionEnd = 0;
+    // Focus after operation
+    FocusAfterOperation();
 
-	    // Focus after operation
-	    FocusAfterOperation();
 
-	    return;
-
-	}
-	else{
-
-		// If currently rendering PDF, exit immediately
-		if (gRenderingPDF) {
-			return;
-		}
-
-		var theNotes = gTheABC.value;
-
-		var output = "";
-		output += "%\n";
-		output += "% This is a template of commonly used annotations for a PDF tunebook\n";
-		output += "% Modify these as required for your tunebook\n";
-		output += "%\n";
-		output += "%pdfquality .75\n";
-		output += "%pdf_between_tune_space 20\n";
-		output += "%addtitle Tunebook Title\n";
-        output += "%addsubtitle Tunebook Subtitle\n";
-        output += "%addtoc Table of Contents\n";
-        output += "%addlinkbacktotoc\n";
-        output += "%addsortedindex Index\n";
-        output += "%addlinkbacktoindex\n";
-        output += "%pageheader This is the Page Header\n";
-        output += "%pagefooter This is the Page Footer\n";
-        output += "%add_all_playback_links 0 0\n";
-        output += "%qrcode http://michaeleskin.com\n";
-		output += "%caption_for_qrcode Click or Scan to Visit my Home Page\n";
-		output += "\n";
-		
-		output += theNotes;
-
-		// Stuff in the headers
-		gTheABC.value = output;
-
-		// Set the select point
-		gTheABC.selectionStart = 0;
-	    gTheABC.selectionEnd = 0;
-
-	    // Focus after operation
-	    FocusAfterOperation();
-
-	    return;
-
-	}
 }
 
 //
@@ -17051,8 +17003,8 @@ function AdvancedControlsDialog(){
 	modal_msg  += '</p>';
 	modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">ABC Injection Features</p>'
 	modal_msg  += '<p style="text-align:center;">'
-	modal_msg  += '<input id="injectallheaders" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders(true)" type="button" value="Inject All PDF Annotations" title="Injects all available tool-specific PDF tunebook annotations for title page, table of contents, index generation, etc. at the top of the ABC">';	
-	modal_msg  += '<input id="injectheadertemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders(false)" type="button" value="Inject PDF Tunebook Annotations Template" title="Injects a template of common useful PDF tunebook annotations at the top of the ABC">';
+	modal_msg  += '<input id="injectallheaders" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders()" type="button" value="Inject All Available PDF Tunebook Annotations" title="Injects all available tool-specific PDF tunebook annotations for title page, table of contents, index generation, etc. at the top of the ABC">';	
+	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
 	modal_msg  += '<input id="injectsectionheader" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectSectionHeader()" type="button" value="Inject PDF Section Header" title="Injects a PDF section header placeholder tune at the cursor insertion point">';
 	modal_msg  += '<input id="injectallmidiparams" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectAllMIDIParams()" type="button" value="Inject MIDI Soundfont, Melody, Chord, and Volumes" title="Injects MIDI Soundfont, Melody program, Chord program and volume annotation into one or all tunes">';
