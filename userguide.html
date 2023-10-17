@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="http://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
-    
+        
         <style>
         p {
         font-size:14pt;
@@ -911,14 +911,32 @@
             <p>To disable an injected metronome, simply delete the injected "E" chord that starts it off.</p>
             <hr class="hidden-print" id="export_pdf_tunebook">
             <h1 class="page_break_always">Exporting a PDF Tunebook<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/PqgjtQXpRYA " title="Export PDF Tunebook Dialog Walkthrough" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>            
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/PqgjtQXpRYA" title="Export PDF Tunebook Dialog Walkthrough" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>            
             <p>The tool has a powerful built-in PDF tunebook generator that provides more flexibility than the browser's print feature, particularly in the area of adding custom page headers and footers, title page, table of contents, tune index, or adding a custom QR code.</p>
             <p>It can format PDF tunebooks with one or multiple tunes per page, something the native browser's Print command cannot accomplish.</p>
             <p>When you click <strong>Export PDF</strong>, the following dialog will appear where you select your PDF formatting preferences:</p>
             <div class="image_holder_p">
-                <img src="img/export_pdf_tunebook_2.jpg"/>
+                <img src="img/export_pdf_tunebook_3.jpg"/>
             </div>
-             <p><strong>Paper Size:</strong></p>
+            <p id="configure_pdf_tunebook_features"><strong>Configure PDF Tunebook Features</strong> - Brings up a dialog where you can add an optional Title Page, Table of Contents, Index, Page Header, Page Footer, playback links, and/or QR code to the PDF tunebook:</p>
+            <div class="image_holder_p">
+                <img src="img/configure_pdf_tunebook_features_1.jpg"/>
+            </div>
+
+            <p>Leave any text fields blank for features you don't want in your PDF tunebook.</p>
+            <p>The PDF features are added using the tool's ABC comment-based annotations to the top of the ABC.</p>
+            <p>Once added, you can modify the features values directly in the ABC if you wish.</p>
+            <p>Since the PDF features are part of the ABC, they will be saved along with the tunes if you save or share the ABC.</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/1zhCH1kdtww" title="PDF Features Dialog Walkthrough" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>            
+            <p>The PDF features are separated by two marker lines:</p>
+            <p class="code">% Start of PDF Tunebook Features<br/>% End of PDF Tunebook Features</p>
+            <p>These two lines are used by the tool to locate the tunebook feature settings in the ABC.</p>
+            <p>If you click the <strong>Configure PDF Tunebook Features</strong> button again, everything in that block of ABC will be replaced with the newly configured PDF tunebook features.</p>
+            <p><strong>Note:</strong> If you add features to your tunebook using the dialog and then manually delete:</p>
+            <p class="code">% End of PDF Tunebook Features</p>
+            <p>from the ABC and click the <strong>Configure PDF Tunebook Features</strong> button, the tool will not be able to find the original set of features in the ABC to overwrite.</p>
+            <p>If this occurs, the new set of requested PDF tunebook features will just be added to the top of the ABC.</p>
+            <p><strong>Paper Size:</strong></p>
             <p>Choose between Letter or A4 paper size:</p>
             <div class="image_holder_p">
                 <img src="img/paper_size_1.jpg"/>
