@@ -7962,10 +7962,10 @@ var gPDFTunebookConfig ={
 	bAdd_QRCode: true,
 
 	// Link override
-	qrcode_link: "http://michaeleskin.com",
+	qrcode_link: "http://michaeleskin.com/abc",
 
 	// Caption
-	caption_for_qrcode: "Click or Scan to Visit my Home Page",
+	caption_for_qrcode: "Created using Michael Eskin's ABC Transcription Tools",
 }
 
 // Reset the PDF tunebook config to defaults
@@ -8013,10 +8013,10 @@ function resetPDFTunebookConfig(){
 		bAdd_QRCode: true,
 
 		// Link override
-		qrcode_link: "http://michaeleskin.com",
+		qrcode_link: "http://michaeleskin.com/abc",
 
 		// Caption
-		caption_for_qrcode: "Click or Scan to Visit my Home Page",
+		caption_for_qrcode: "Created using Michael Eskin's ABC Transcription Tools",
 	}
 }
 
@@ -8074,7 +8074,7 @@ function PDFTunebookBuilder(){
 	  {name: "          Add a QR Code to the end of the PDF", id: "bAdd_QRCode", type:"checkbox", cssClass:"configure_setuppdftunebook_form_text"},
 	  {html: '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">To override the default Share URL QR Code, enter your own URL below:</p>'},  
 	  {name: "Custom URL:", id: "qrcode_link", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
-	  {name: "QR Code Caption:", id: "caption_for_qrcode", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
+	  {name: "QR Code caption:", id: "caption_for_qrcode", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
 	];
 
 	setTimeout(function(){
@@ -8083,7 +8083,7 @@ function PDFTunebookBuilder(){
 
 	}, 150);
 
-	const modal = DayPilot.Modal.form(form, gPDFTunebookConfig, { theme: "modal_flat", top: 20, width: 700, scrollWithPage: true, autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, gPDFTunebookConfig, { theme: "modal_flat", top: 20, width: 690, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 	
 		if (!args.canceled){
 
