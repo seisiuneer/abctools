@@ -38,6 +38,15 @@
         <link rel="icon" type="image/png" sizes="16x16" href="http://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="http://michaeleskin.com/abctools/img/abc-manifest.json">
         
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-5C74XEDW40"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-5C74XEDW40');
+        </script>
+        
         <style>
         p {
         font-size:14pt;
@@ -364,9 +373,9 @@
             <p>Details on MusicXML import settings below in the <a style="text-decoration:none;" href="#musicxml">MusicXML Import Settings</a> section.</p>
             <p>On desktop browsers, you may also drag-and-drop a single ABC or MusicXML file on the editor area to add it.</p>
             <hr>
-            <p id="add_templates_dialog"><strong>Add</strong> - Brings up a dialog where you can add your own ABC or MusicXML tunes, example ABC tunes, useful ABC templates, or restore previously saved Snapshots:</p>
+            <p id="add_templates_dialog"><strong>Add</strong> - Brings up a dialog where you can add your own ABC or MusicXML tunes, restore from previously saved Snapshots, add example ABC tunes, add useful ABC templates, or configure PDF tunebook features:</p>
             <div class="image_holder_p">
-                <img src="img/add_example_template_10.jpg"/>
+                <img src="img/add_example_template_11.jpg"/>
             </div>
             <p><strong>Choose File to Add:</strong></p>
             <p>Browse your system for an ABC or MusicXML file with one or more tunes to add to the end of the current tunes.</p>
@@ -389,10 +398,6 @@
             <p><strong>Add J.S. Bach BWV570 Fantasia:</strong></p>
             <p>Adds the J.S. Bach BWV570 Fantasia in four parts for Pipe Organ.</p>
             <p>This piece was originally imported from a MusicXML transcription.</p>
-            <p><strong>Add Common Useful PDF Tunebook Annotations:</strong></p>
-            <p>Adds a set of useful tool-specific annotations that are used when exporting a PDF tunebook at the top of the ABC editor text.</p>
-            <p>These include:</p>
-            <p>Adding a title page with subtitle, page headers and footers, a linked Table of Contents and sorted Index, playback links for the tunes, as well as a QR code with specific hyperlink.</p>
             <p><strong>Add an Example Song:</strong></p>
             <p>Adds a detailed self-documenting example of ABC for a song with lyrics.</p>
             <p><strong>Add a Song Template:</strong></p>
@@ -403,6 +408,8 @@
             <p>Add a template with two-bar click intro templates for common tune styles.</p>
             <p>Copy and paste these into the start of your tunes before any repeats.</p>
             <p>Delete the rest when you are done.</p>
+            <p><strong>Configure PDF Tunebook Features</strong> - Brings up a dialog that you can use to add annotations at the top of the ABC that will add an optional Title Page, Table of Contents, Index, Page Header, Page Footer, playback links, and/or QR code to an exported PDF tunebook.</p>
+            <p>Full details on PDF tunebook features can be found in the <a href="#configure_pdf_tunebook_features"><strong>Configure PDF Tunebook Features</strong></a> section of <a href="#export_pdf_tunebook"><strong>Exporting a PDF Tunebook</strong></a>.</p>
             <hr>
             <p><strong>Save</strong> - Saves the contents of the ABC editor to a file.</p>
             <p><strong>Export PDF</strong> - Exports the currently displayed score as a high quality PDF file.</p>
@@ -527,7 +534,7 @@
             <h1 class="page_break_always">Advanced Controls<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Advanced</strong> button brings up the ABC Transcription Tools Advanced Controls dialog:</p>
             <div class="image_holder_p">
-                <img src="img/advanced_controls_13.jpg"/>
+                <img src="img/advanced_controls_14.jpg"/>
             </div>
             <p>Click the lightbulb icon to bring up this section of the user guide in a new browser tab.</p>
             <p><strong>Show/Hide ABC Features:</strong></p>
@@ -548,9 +555,7 @@
             <p><strong>ABC Injection Features:</strong></p>
             <p>These commands are destructive in that they inject additional text into the current ABC.</p>
             <p>It may be a good idea to save the current ABC or do a <strong>Copy All</strong> before using one of these commands if you want to quickly undo the operation.</p>
-            <p><strong>Inject All PDF Annotations</strong> - Injects all available tool-specific PDF tunebook annotations for title page, table of contents, index generation, etc. at the top of the ABC.</p>
-            <p><strong>Inject PDF Tunebook Annotation Template</strong> - Injects a useful template of common PDF tunebook annotations at the top of the ABC.</p>
-            <p>This allows you to control the abcjs soundfont used for playback of the tune.</p>
+            <p><strong>Inject All Available PDF Tunebook Annotations</strong> - Injects all available tool-specific PDF tunebook annotations for title page, table of contents, index generation, etc. at the top of the ABC.</p>
             <p><strong>Inject PDF Section Header</strong> - Prompts for a PDF section header to inject at the text cursor insertion point.</p>
             <p>Click on any section header in the Table of Contents or Index to jump to that section of the tunebook.</p>
             <p>The * at the start of the injected tune title will be automatically hidden in the rendered ABC notation and only used to signal the PDF generator to add the section header.</p>
@@ -558,7 +563,7 @@
             <p>In the sorted Table of Contents and Index, section headers will be displayed at the top without the extra space.</p>
             <p>When rendering full tunes, section headers are automatically pushed to the top of a new page in the tunebook.</p>
             <p>When rendering note or text incipits, section headers are not automatically pushed to the top of a new page.</p>
-            <p><strong>Inject MIDI Soundfont, Melody, Chord, and Volumes</strong> - Injects MIDI Soundfont, Melody program, Chord program and volume annotation into one or all tunes.</p>
+            <p><strong>Inject MIDI Soundfont, Melody, Chord, and Volumes</strong> - Injects MIDI Soundfont, Melody program, Chord program and volume annotation into one or all tunes:</p>
             <div class="image_holder_p">
                 <img src="img/inject_all_midi_2.jpg"/>
             </div>
@@ -918,11 +923,10 @@
             <div class="image_holder_p">
                 <img src="img/export_pdf_tunebook_3.jpg"/>
             </div>
-            <p id="configure_pdf_tunebook_features"><strong>Configure PDF Tunebook Features</strong> - Brings up a dialog where you can add an optional Title Page, Table of Contents, Index, Page Header, Page Footer, playback links, and/or QR code to the PDF tunebook:</p>
+            <p id="configure_pdf_tunebook_features"><strong>Configure PDF Tunebook Features</strong> - Brings up a dialog that you can use to add annotations at the top of the ABC that will add an optional Title Page, Table of Contents, Index, Page Header, Page Footer, playback links, and/or QR code to an exported PDF tunebook:</p>
             <div class="image_holder_p">
                 <img src="img/configure_pdf_tunebook_features_1.jpg"/>
             </div>
-
             <p>Leave any text fields blank for features you don't want in your PDF tunebook.</p>
             <p>The PDF features are added using the tool's ABC comment-based annotations to the top of the ABC.</p>
             <p>Once added, you can modify the features values directly in the ABC if you wish.</p>
