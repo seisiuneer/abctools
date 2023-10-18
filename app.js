@@ -215,6 +215,9 @@ var gIncipitsColumns = 1;
 // Using Comhaltas naming for notes display
 var gUseComhaltasABC = false;
 
+// Zoom banner has been hidden
+var gZoomBannerHidden = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -12703,6 +12706,12 @@ function HandleWindowResize(){
 
 				gIsOneColumn = true;
 
+				// If they haven't dismissed the zoom suggestion banner before, show it now
+				if (!gZoomBannerHidden){
+					document.getElementById("zoombanner").style.display = "block";
+				}
+
+
 			}
 			else{
 				
@@ -12732,6 +12741,9 @@ function HandleWindowResize(){
 				gTheABC.rows = nRows;
 
 				gIsOneColumn = false;
+
+				// Hide the zoom suggestion banne
+				document.getElementById("zoombanner").style.display = "none";
 
 			}
 		}
@@ -12983,9 +12995,6 @@ function showWelcomeScreen(){
 
    var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica"><strong>Read the <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> for instructions and demo videos.</strong></p>';
-	   if (isDesktopBrowser()){
-		   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Zoom your browser out using Ctrl - on Windows, ⌘ - on Mac until you have the ABC editor on the left, and the notation area on the right.</p>';
-	   }
 	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">To begin, type or paste tunes in ABC format into the text area.</p>'; 
 	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Each ABC tune <strong>must</strong> begin with an X: tag.</p>'; 
 	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Notation updates instantly as you make changes.</p>'; 
@@ -17908,6 +17917,22 @@ function DoDrop(e){
 	let file = drop_files[0];
 
 	DoFileRead(file,true);
+}
+
+//
+// Hide the Zoom out suggestion banner, save that it was hidden manually
+//
+function HideZoomBanner(){
+
+	// Hide the banner
+	document.getElementById("zoombanner").style.display = "none";
+
+	// Won't show the banner again this session
+	gZoomBannerHidden = true;
+
+	// Update the top position of the notation since the banner shifts the UI up
+	UpdateNotationTopPosition();
+
 }
 
 //
