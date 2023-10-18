@@ -1996,30 +1996,43 @@ margin-top:-7px;
 }
 
 .configure_setuppdftunebook_form_text_wide{
-	font-size:12pt;
-	line-height:12px;
-	font-family:helvetica;
-	margin-top:32px;
-	display:flex;
+font-size:12pt;
+line-height:12px;
+font-family:helvetica;
+margin-top:32px;
+display:flex;
 }
 
 .configure_setuppdftunebook_form_text_wide>input{
-	font-size:12pt;
-	font-family:helvetica;
-	width: 450px;
-	margin-top:-9px;
-	position:absolute;
-	left:200px;
+font-size:12pt;
+font-family:helvetica;
+width: 450px;
+margin-top:-9px;
+position:absolute;
+left:200px;
 }
 
 .modal_flat_form_item_label{
-	font-size: 12pt;
+font-size: 12pt;
 }
 
 .indrag{ 
-	background: #CCCCFF;
+background: #CCCCFF;
 }
 
+#zoombanner{
+display:none;
+}
+
+#zoombanner>p{
+font-size:12pt;
+font-family:helvetica;
+margin-top:0px;
+margin-bottom:0px;
+background-color:#A0FF80;
+cursor: pointer;
+padding: 3px;
+}
 
 /******************************************************************************/
 /* STYLES RELATED TO EXPERIMENT BUTTONS                                       */
