@@ -218,6 +218,13 @@ var gUseComhaltasABC = false;
 // Zoom banner has been hidden
 var gZoomBannerHidden = false;
 
+// Initial text box width
+var gInitialTextBoxWidth;
+var gInitialTextBoxContainerWidth;
+var gInitialTextBoxContainerLeft;
+var gForceInitialTextBoxRecalc = false;
+var gGotWindowResizeWhileMaximized = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -8318,8 +8325,8 @@ function AddABC(){
 
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">Add ABC Tunes, Templates, and PDF Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="http://michaeleskin.com/abctools/userguide.html#add_templates_dialog" target="_blank" style="text-decoration:none;">💡</a></span></p>';
 	modal_msg += '<div id="add-new-tune-dialog">';
-	modal_msg += '<p style="text-align:center;margin-top:28px;font-size:18px;">Add Your Own Tunes from an ABC or MusicXML File</p>';
-	modal_msg += '<p style="text-align:center;margin-top:12px;">';
+	modal_msg += '<p style="text-align:center;margin-top:28px;font-size:18px;margin-bottom:36px">Add Your Own Tunes from an ABC or MusicXML File</p>';
+	modal_msg += '<p style="text-align:center;">';
 	modal_msg += '<input type="file" id="addabcfilebutton" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL" hidden/>';
 	modal_msg += '<label class="abcuploaddialog btn btn-top" for="addabcfilebutton" title="Adds tunes from an existing ABC or MusicXML file to the end of the ABC">Choose File to Add</label>';
 	modal_msg += '<input class="dialogrestorebutton btn btn-restorebutton" id="dialogrestorebutton" onclick="RestoreSnapshot(false,true);" type="button" value="Restore from Snapshot" title="Replaces the contents of the ABC editor with a Snapshot saved in browser storage" style="display:none;">';
@@ -11577,7 +11584,6 @@ function DoMaximize(){
 
 	}
 
-
 }
 
 function DoMinimize(){
@@ -11599,6 +11605,45 @@ function DoMinimize(){
 
 	// Handle any deferred notation clicks
 	if (isDesktopBrowser()){
+
+		// First time we minimize from a full screen share link or after a window resize while maximized, we need to grab the text box location params
+		// Since they are not valid before the UI has been displayed
+		if (gForceInitialTextBoxRecalc){
+
+			// Grab the text box positions and offsets
+			// Setup text box symmetrical resize 
+			gInitialTextBoxWidth = gTheABC.offsetWidth;
+
+			var elem = document.getElementById("notenlinks");
+			gInitialTextBoxContainerWidth = elem.offsetWidth;
+
+			elem = document.getElementById("noscroller");
+			gInitialTextBoxContainerLeft = elem.offsetLeft;
+
+			ResizeTextBox();
+
+			gForceInitialTextBoxRecalc = false;
+
+
+		}
+
+		// If we minimize from a window resize while maximized, we need to reset the text box location params
+		if (gGotWindowResizeWhileMaximized){
+
+			gTheABC.style.width = gInitialTextBoxWidth+"px";
+
+			gTheABC.style.leftMargin = "0px";
+
+			var elem = document.getElementById("notenlinks");
+			gInitialTextBoxContainerWidth = elem.offsetWidth;
+
+			elem = document.getElementById("noscroller");
+			gInitialTextBoxContainerLeft = elem.offsetLeft;
+
+			gGotWindowResizeWhileMaximized = false;
+
+		}
+
 		if (gGotRenderDivClick){
 
 			if (gRenderDivClickOffset != -1){
@@ -12236,7 +12281,6 @@ function OnABCTextChange(){
 
 }
 
-
 //
 // Prepare the whistle font 
 //
@@ -12597,461 +12641,7 @@ function fadeOutAndHide(fadeTarget,callback) {
 }
 
 
-//
-// Toggle the top bar
-//
-//
 
-function ShowTopBar(){
-
-	var elem = document.getElementById("topbar");
-
-	elem.style.display = "block";
-	elem.style.opacity = 1.0;
-
-	gTopBarShowing = true;
-
-	// Move the title down a bit
-	var elem = document.getElementById("abc-selected");
-	elem.style.marginTop = "15px";
-	elem.style.marginBottom = "1px";
-		
-	elem = document.getElementById("toggletopbar");
-
-	elem.value="▲";
-
-
-}
-
-function HideTopBar(){
-
-	var elem = document.getElementById("topbar");
-
-	elem.style.display = "none";
-
-	gTopBarShowing = false;
-
-	// Move the title up a bit
-	var elem = document.getElementById("abc-selected");
-
-	if (gIsIPhone || gIsAndroid){
-		elem.style.marginTop = "18px";
-		elem.style.marginBottom = "38px";
-	}
-	else{
-		elem.style.marginTop = "4px";
-	}
-
-	elem = document.getElementById("toggletopbar");
-
-	elem.value="▼";
-
-}
-
-function ToggleTopBar(){
-
-
-	if (gTopBarShowing){
-
-		HideTopBar();
-
-	}
-	else{
-
-		ShowTopBar();
-		
-	}
-
-	// Resize the notation spacer
-	UpdateNotationTopPosition();
-
-	// Force a rescroll for one column view
-	if (gIsOneColumn){
-
-		MakeTuneVisible(true);
-
-	}
-	
-	// If available, save all the app settings to local storage
-	UpdateLocalStorage();
-
-}
-
-//
-// Set the margins on window resize
-//
-function HandleWindowResize(){
-
-	// Only executed on responsive desktop browsers
-
-	if (isDesktopBrowser()){
-
-		if (!gIsMaximized){
-
-			var windowWidth = window.innerWidth;
-
-			// Offset required to avoid left side stack
-			if (windowWidth < 1798){
-
-				// One column display
-
-				var marginLeft = (windowWidth - 850)/2;
-
-				var elem = document.getElementById("app-container");
-				
-				elem.style.marginLeft = marginLeft+"px";
-
-				// Reset the number of rows in the ABC editor
-				gTheABC.rows = 12;
-
-				gIsOneColumn = true;
-
-				// If they haven't dismissed the zoom suggestion banner before, show it now
-				if (!gZoomBannerHidden){
-					document.getElementById("zoombanner").style.display = "block";
-				}
-
-
-			}
-			else{
-				
-				// Two column display
-
-				var elem = document.getElementById("app-container");
-
-				var marginLeft = (windowWidth - 1700)/2;
-				
-				elem.style.marginLeft = marginLeft+"px";
-
-				// We should have more room, resize the editor
-				var windowHeight = window.innerHeight;
-
-				// Leave some room for tools
-				windowHeight -= 540;
-
-				// About 30 pixels/line
-				var nRows = windowHeight/30;
-
-				// Set a minimum
-				if (nRows < 12){
-					nRows = 12;
-				}
-
-				// Resize the text box
-				gTheABC.rows = nRows;
-
-				gIsOneColumn = false;
-
-				// Hide the zoom suggestion banne
-				document.getElementById("zoombanner").style.display = "none";
-
-			}
-		}
-		else{
-
-			var elem = document.getElementById("app-container");
-			
-			elem.style.marginLeft = "0px";
-
-		}
-	}
-}
-
-
-//
-// Are we on iOS?
-//
-function isIOS() {
-	if (/iPad|iPhone|iPod/.test(navigator.platform)) {
-		return true;
-	} else {
-		return navigator.maxTouchPoints &&
-			navigator.maxTouchPoints > 2 &&
-			/MacIntel/.test(navigator.platform);
-	}
-}
-
-//
-// Are we on an iPhone?
-//
-function isIPhone() {
-	if (/iPad|iPhone|iPod/.test(navigator.platform)) {
-		return true;
-	} 
-	else{
-		return false;
-	}
-}
-
-//
-// Are we on an iPad?
-//
-function isIPad() {
-	return navigator.maxTouchPoints &&
-		navigator.maxTouchPoints > 2 &&
-		/MacIntel/.test(navigator.platform);
-}
-
-//
-// Are we on Android?
-//
-function isAndroid(){
-	if (/Android/i.test(navigator.userAgent)) {
-		return true;
-	}
-	else{
-		return false;
-	}
-}
-
-//
-// Are we on Safari?
-//
-function isSafari(){
-
-	if (/Safari/i.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
-		return true;
-	}
-	else{
-		return false;
-	}
-}
-
-//
-// Are we on Chrome?
-//
-function isChrome(){
-
-	if (/chrome|chromium|crios/i.test(navigator.userAgent)) {
-		return true;
-	}
-	else{
-		return false;
-	}
-}
-
-
-//
-// Is this the first run?
-// 
-// Check for local storage use
-//
-function isFirstRun(){
-
-	// Display mode
-	var theTab = localStorage.abcTab;
-
-	if (theTab){
-
-		return false;
-
-	}
-
-	// PDF Tunes/page
-	var theTunesPerPage = localStorage.abcTunesPerPage;
-
-	if (theTunesPerPage){
-
-		return false;
-
-	}
-
-	// Page number
-	var thePageNumberLocation = localStorage.abcPageNumberLocation;
-
-	if (thePageNumberLocation){
-
-		return false;
-
-	}
-
-	// Page number on first page
-	var thePageNumberOnPageOne = localStorage.abcPageNumberOnPageOne;
-
-	if (thePageNumberOnPageOne){
-
-		return false;
-
-	}
-
-	// Staff spacing
-	var theStaffSpacing = localStorage.abcStaffSpacing;
-
-	if (theStaffSpacing){
-
-		return false;
-
-	}
-
-	// Top bar
-	var theHideTopBar = localStorage.abcHideTopBar;
-
-	if (theHideTopBar){
-
-		return false;
-	}
-
-
-	return true;
-}
-
-// 
-// Restore the application state from local storage
-//
-function restoreStateFromLocalStorage(){
-
-	var bIsFirstTime = isFirstRun();
-
-	// Display mode
-	var theTab = localStorage.abcTab;
-
-	if (theTab){
-
-		SetRadioValue("notenodertab", theTab);
-
-		if (theTab == "whistle"){
-
-			// If first time using the whistle tab, prep the tin whistle font for embedded SVG styles
-			PrepareWhistleFont();
-			
-		}
-
-		gCurrentTab = theTab;
-
-	}
-
-	// PDF Tunes/page
-	var theTunesPerPage = localStorage.abcTunesPerPage;
-
-	if (theTunesPerPage){
-
-		document.getElementById("pdfformat").value = theTunesPerPage;
-
-	}
-
-	// Page number
-	var thePageNumberLocation = localStorage.abcPageNumberLocation;
-
-	if (thePageNumberLocation){
-
-		document.getElementById("pagenumbers").value = thePageNumberLocation;
-
-	}
-
-	// Page number on first page
-	var thePageNumberOnPageOne = localStorage.abcPageNumberOnPageOne;
-
-	if (thePageNumberOnPageOne){
-
-		document.getElementById("firstpage").value = thePageNumberOnPageOne;
-
-	}
-
-	// Capo
-	var theCapo = localStorage.abcCapo;
-
-	if (theCapo){
-
-		gCapo = parseInt(theCapo);
-
-	}
-
-	// Staff spacing
-	var theStaffSpacing = localStorage.abcStaffSpacing;
-
-	if (theStaffSpacing){
-
-		gStaffSpacing = STAFFSPACEOFFSET + parseInt(theStaffSpacing);
-
-	}
-
-	// Top bar
-	var theHideTopBar = localStorage.abcHideTopBar;
-
-	if (theHideTopBar){
-
-		if (theHideTopBar == "true"){
-
-			HideTopBar();
-
-		}
-	}
-
-	// If first time, show a welcome message
-	if (bIsFirstTime){
-		
-		UpdateLocalStorage();
-
-		showWelcomeScreen();
-
-	}
-
-}
-
-//
-// Show the first run welcome screen
-//
-function showWelcomeScreen(){
-
-   var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica"><strong>Read the <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> for instructions and demo videos.</strong></p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">To begin, type or paste tunes in ABC format into the text area.</p>'; 
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Each ABC tune <strong>must</strong> begin with an X: tag.</p>'; 
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Notation updates instantly as you make changes.</p>'; 
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Click <strong>Open</strong> to open an ABC or MusicXML file from your system.</p>';
-	   if (isDesktopBrowser()){
-	   		modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">You may also drag-and-drop a single ABC or MusicXML file on the editor area to add it.</p>';
-	   }
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Click <strong>Add</strong> to add a new ABC tune or tune template.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Click <strong>Settings</strong> to set common tools settings and select the default instrument sounds and volumes to use when playing tunes.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica"><strong>Once ABC has been entered and notation is displayed:</strong></p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click the <strong>Zoom-Out</strong> arrows at the upper-right to view notation fullscreen.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click <strong>Save</strong> to save all the ABC text to an ABC text file.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click <strong>Export PDF</strong> to export your tunebook in PDF format.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click <strong>Copy All</strong> to copy all the ABC text to the clipboard.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click <strong>Play</strong> to play the tune currently being edited.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">If you find this tool useful, here are my <strong><a href="tipjars.html" target="_blank" title="Buy Michael a beer!">Virtual Tip Jars</a>.</strong></p>';
-
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
-
-}
-
-//
-// Show the first run zoom screen
-//
-function showZoomInstructionsScreen(){
-
-   	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
-   	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Since this is your first time using the tool, here is some useful information:</p>';
-   	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">In this view, you may scroll through the tune notation.</p>';
-       modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">If you would like to edit or create a PDF tunebook from the notation:</p>';
-  	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click the <strong>Zoom-In</strong> arrows at the upper-right to open the ABC editor.</p>';
-   	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">In the ABC editor, click the <strong>Zoom-Out</strong> arrows to view notation fullscreen.</p>';
-   	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">All controls in the ABC editor have helpful tooltips.</p>';
-	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Read the <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> for instructions and demo videos.</p>';
-
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
-
-}
-
-//
-// Show the tip jar reminder
-//
-function TipJarReminderDialog(){
-
-   var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Thank You!</p>';
- 	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;">I hope my ABC Transcription Tools have been useful to you!</p>';
-	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;margin-top:36px;">If so, please consider dropping something in one of my </p>';
-	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;"><strong><a href="tipjars.html" target="_blank" title="My Virtual Tip Jars">Virtual Tip Jars</a>.</strong></p>';
-	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;margin-top:36px;">Don\'t worry, I won\'t bug you again.</p>';
-	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;margin-top:36px;">Cheers and thanks!</p>';
-	   modal_msg += '<div style="text-align:center"><img style="width:150px;" src="img/michael.jpg"/></div>';
-	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;">Michael Eskin</p>';
-
-
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, scrollWithPage: (AllowDialogsToScroll()) });
-
-}
 
 // 
 // Download the current tune as a .WAV file
@@ -17905,6 +17495,311 @@ function DoFileRead(file,doAppend){
 }
 
 //
+// Toggle the top bar
+//
+//
+
+function ShowTopBar(){
+
+	var elem = document.getElementById("topbar");
+
+	elem.style.display = "block";
+	elem.style.opacity = 1.0;
+
+	gTopBarShowing = true;
+
+	// Move the title down a bit
+	var elem = document.getElementById("abc-selected");
+	elem.style.marginTop = "15px";
+	elem.style.marginBottom = "1px";
+		
+	elem = document.getElementById("toggletopbar");
+
+	elem.value="▲";
+
+
+}
+
+function HideTopBar(){
+
+	var elem = document.getElementById("topbar");
+
+	elem.style.display = "none";
+
+	gTopBarShowing = false;
+
+	// Move the title up a bit
+	var elem = document.getElementById("abc-selected");
+
+	if (gIsIPhone || gIsAndroid){
+		elem.style.marginTop = "18px";
+		elem.style.marginBottom = "38px";
+	}
+	else{
+		elem.style.marginTop = "4px";
+	}
+
+	elem = document.getElementById("toggletopbar");
+
+	elem.value="▼";
+
+}
+
+function ToggleTopBar(){
+
+
+	if (gTopBarShowing){
+
+		HideTopBar();
+
+	}
+	else{
+
+		ShowTopBar();
+		
+	}
+
+	// Resize the notation spacer
+	UpdateNotationTopPosition();
+
+	// Force a rescroll for one column view
+	if (gIsOneColumn){
+
+		MakeTuneVisible(true);
+
+	}
+	
+	// If available, save all the app settings to local storage
+	UpdateLocalStorage();
+
+}
+
+
+
+
+//
+// Is this the first run?
+// 
+// Check for local storage use
+//
+function isFirstRun(){
+
+	// Display mode
+	var theTab = localStorage.abcTab;
+
+	if (theTab){
+
+		return false;
+
+	}
+
+	// PDF Tunes/page
+	var theTunesPerPage = localStorage.abcTunesPerPage;
+
+	if (theTunesPerPage){
+
+		return false;
+
+	}
+
+	// Page number
+	var thePageNumberLocation = localStorage.abcPageNumberLocation;
+
+	if (thePageNumberLocation){
+
+		return false;
+
+	}
+
+	// Page number on first page
+	var thePageNumberOnPageOne = localStorage.abcPageNumberOnPageOne;
+
+	if (thePageNumberOnPageOne){
+
+		return false;
+
+	}
+
+	// Staff spacing
+	var theStaffSpacing = localStorage.abcStaffSpacing;
+
+	if (theStaffSpacing){
+
+		return false;
+
+	}
+
+	// Top bar
+	var theHideTopBar = localStorage.abcHideTopBar;
+
+	if (theHideTopBar){
+
+		return false;
+	}
+
+
+	return true;
+}
+
+// 
+// Restore the application state from local storage
+//
+function restoreStateFromLocalStorage(){
+
+	var bIsFirstTime = isFirstRun();
+
+	// Display mode
+	var theTab = localStorage.abcTab;
+
+	if (theTab){
+
+		SetRadioValue("notenodertab", theTab);
+
+		if (theTab == "whistle"){
+
+			// If first time using the whistle tab, prep the tin whistle font for embedded SVG styles
+			PrepareWhistleFont();
+			
+		}
+
+		gCurrentTab = theTab;
+
+	}
+
+	// PDF Tunes/page
+	var theTunesPerPage = localStorage.abcTunesPerPage;
+
+	if (theTunesPerPage){
+
+		document.getElementById("pdfformat").value = theTunesPerPage;
+
+	}
+
+	// Page number
+	var thePageNumberLocation = localStorage.abcPageNumberLocation;
+
+	if (thePageNumberLocation){
+
+		document.getElementById("pagenumbers").value = thePageNumberLocation;
+
+	}
+
+	// Page number on first page
+	var thePageNumberOnPageOne = localStorage.abcPageNumberOnPageOne;
+
+	if (thePageNumberOnPageOne){
+
+		document.getElementById("firstpage").value = thePageNumberOnPageOne;
+
+	}
+
+	// Capo
+	var theCapo = localStorage.abcCapo;
+
+	if (theCapo){
+
+		gCapo = parseInt(theCapo);
+
+	}
+
+	// Staff spacing
+	var theStaffSpacing = localStorage.abcStaffSpacing;
+
+	if (theStaffSpacing){
+
+		gStaffSpacing = STAFFSPACEOFFSET + parseInt(theStaffSpacing);
+
+	}
+
+	// Top bar
+	var theHideTopBar = localStorage.abcHideTopBar;
+
+	if (theHideTopBar){
+
+		if (theHideTopBar == "true"){
+
+			HideTopBar();
+
+		}
+	}
+
+	// If first time, show a welcome message
+	if (bIsFirstTime){
+		
+		UpdateLocalStorage();
+
+		showWelcomeScreen();
+
+	}
+
+}
+
+//
+// Show the first run welcome screen
+//
+function showWelcomeScreen(){
+
+   var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica"><strong>Read the <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> for instructions and demo videos.</strong></p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">To begin, type or paste tunes in ABC format into the text area.</p>'; 
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Each ABC tune <strong>must</strong> begin with an X: tag.</p>'; 
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Notation updates instantly as you make changes.</p>'; 
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Click <strong>Open</strong> to open an ABC or MusicXML file from your system.</p>';
+	   if (isDesktopBrowser()){
+	   		modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">You may also drag-and-drop a single ABC or MusicXML file on the editor area to add it.</p>';
+	   }
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Click <strong>Add</strong> to add a new ABC tune or tune template.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Click <strong>Settings</strong> to set common tools settings and select the default instrument sounds and volumes to use when playing tunes.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica"><strong>Once ABC has been entered and notation is displayed:</strong></p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click the <strong>Zoom-Out</strong> arrows at the upper-right to view notation fullscreen.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click <strong>Save</strong> to save all the ABC text to an ABC text file.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click <strong>Export PDF</strong> to export your tunebook in PDF format.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click <strong>Copy All</strong> to copy all the ABC text to the clipboard.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click <strong>Play</strong> to play the tune currently being edited.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">If you find this tool useful, here are my <strong><a href="tipjars.html" target="_blank" title="Buy Michael a beer!">Virtual Tip Jars</a>.</strong></p>';
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+
+}
+
+//
+// Show the first run zoom screen
+//
+function showZoomInstructionsScreen(){
+
+   	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
+   	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Since this is your first time using the tool, here is some useful information:</p>';
+   	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">In this view, you may scroll through the tune notation.</p>';
+       modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">If you would like to edit or create a PDF tunebook from the notation:</p>';
+  	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click the <strong>Zoom-In</strong> arrows at the upper-right to open the ABC editor.</p>';
+   	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">In the ABC editor, click the <strong>Zoom-Out</strong> arrows to view notation fullscreen.</p>';
+   	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">All controls in the ABC editor have helpful tooltips.</p>';
+	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Read the <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> for instructions and demo videos.</p>';
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+
+}
+
+//
+// Show the tip jar reminder
+//
+function TipJarReminderDialog(){
+
+   var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Thank You!</p>';
+ 	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;">I hope my ABC Transcription Tools have been useful to you!</p>';
+	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;margin-top:36px;">If so, please consider dropping something in one of my </p>';
+	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;"><strong><a href="tipjars.html" target="_blank" title="My Virtual Tip Jars">Virtual Tip Jars</a>.</strong></p>';
+	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;margin-top:36px;">Don\'t worry, I won\'t bug you again.</p>';
+	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;margin-top:36px;">Cheers and thanks!</p>';
+	   modal_msg += '<div style="text-align:center"><img style="width:150px;" src="img/michael.jpg"/></div>';
+	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;">Michael Eskin</p>';
+
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, scrollWithPage: (AllowDialogsToScroll()) });
+
+}
+
+//
 // Drag/drop handler
 //
 function DoDrop(e){
@@ -17933,6 +17828,144 @@ function HideZoomBanner(){
 	// Update the top position of the notation since the banner shifts the UI up
 	UpdateNotationTopPosition();
 
+}
+
+//
+// Set the margins on window resize
+//
+function HandleWindowResize(){
+
+	// Only executed on responsive desktop browsers
+
+	if (isDesktopBrowser()){
+
+		if (!gIsMaximized){
+
+			var windowWidth = window.innerWidth;
+
+			// Offset required to avoid left side stack
+			if (windowWidth < 1798){
+
+				// One column display
+
+				var marginLeft = (windowWidth - 850)/2;
+
+				var elem = document.getElementById("app-container");
+				
+				elem.style.marginLeft = marginLeft+"px";
+
+				// Reset the number of rows in the ABC editor
+				gTheABC.rows = 12;
+
+				gIsOneColumn = true;
+
+				// If they haven't dismissed the zoom suggestion banner before, show it now
+				if (!gZoomBannerHidden){
+					document.getElementById("zoombanner").style.display = "block";
+				}
+
+
+			}
+			else{
+				
+				// Two column display
+
+				var elem = document.getElementById("app-container");
+
+				var marginLeft = (windowWidth - 1700)/2;
+				
+				elem.style.marginLeft = marginLeft+"px";
+
+				// We should have more room, resize the editor
+				var windowHeight = window.innerHeight;
+
+				// Leave some room for tools
+				windowHeight -= 540;
+
+				// About 30 pixels/line
+				var nRows = windowHeight/30;
+
+				// Set a minimum
+				if (nRows < 12){
+					nRows = 12;
+				}
+
+				// Resize the text box
+				gTheABC.rows = nRows;
+
+				gIsOneColumn = false;
+
+				// Hide the zoom suggestion banne
+				document.getElementById("zoombanner").style.display = "none";
+
+			}
+
+		}
+		else{
+
+			var elem = document.getElementById("app-container");
+			
+			elem.style.marginLeft = "0px";
+
+		}
+	}
+}
+
+//
+// Text Area resize observer
+// 
+// Try to restrict the recalc rate to something reasonable
+//
+var RESIZETEXTBOX_DEBOUNCEMS = 20;
+
+var gLastResizeTextboxTime = 0;
+
+function ResizeTextBox(){
+
+	var theTime = Date.now();
+
+	var deltaTime = theTime - gLastResizeTextboxTime;
+
+	if (deltaTime > RESIZETEXTBOX_DEBOUNCEMS) {
+
+		gLastResizeTextboxTime = theTime;
+		
+		//console.log("ResizeTextBox");
+
+		// console.log("Initial width = "+gInitialTextBoxWidth);
+		// console.log("Initial container width = "+gInitialTextBoxContainerWidth);
+		// console.log("Initial container left = "+gInitialTextBoxContainerLeft);
+
+		var currentWidth = gTheABC.offsetWidth;
+
+		// console.log("current width = "+gTheABC.offsetWidth);
+		// console.log("containerWidth = "+gInitialTextBoxContainerWidth);
+
+		var theOffset = (gInitialTextBoxContainerWidth - gInitialTextBoxWidth)/2;
+
+		// console.log("theOffset = "+theOffset);
+
+		if (currentWidth > gInitialTextBoxContainerWidth){
+
+			// console.log("Setting the marginLeft for stretch");
+
+			var theDelta = ((currentWidth - gInitialTextBoxWidth)/2)-theOffset;
+
+			if (theDelta <= gInitialTextBoxContainerLeft){
+
+				gTheABC.style.marginLeft = -theDelta+"px";
+
+			}
+
+		}
+		else{
+
+			// console.log("Setting the marginLeft to 0px");
+
+			gTheABC.style.marginLeft = "0px";
+
+		}
+	}
 }
 
 //
@@ -18083,6 +18116,80 @@ function isMobileBrowser(){
 //
 function makeCenteredPromptString(thePrompt){
 	return '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">'+thePrompt+'</p>';
+}
+
+
+
+//
+// Are we on iOS?
+//
+function isIOS() {
+	if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+		return true;
+	} else {
+		return navigator.maxTouchPoints &&
+			navigator.maxTouchPoints > 2 &&
+			/MacIntel/.test(navigator.platform);
+	}
+}
+
+//
+// Are we on an iPhone?
+//
+function isIPhone() {
+	if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+		return true;
+	} 
+	else{
+		return false;
+	}
+}
+
+//
+// Are we on an iPad?
+//
+function isIPad() {
+	return navigator.maxTouchPoints &&
+		navigator.maxTouchPoints > 2 &&
+		/MacIntel/.test(navigator.platform);
+}
+
+//
+// Are we on Android?
+//
+function isAndroid(){
+	if (/Android/i.test(navigator.userAgent)) {
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
+//
+// Are we on Safari?
+//
+function isSafari(){
+
+	if (/Safari/i.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
+//
+// Are we on Chrome?
+//
+function isChrome(){
+
+	if (/chrome|chromium|crios/i.test(navigator.userAgent)) {
+		return true;
+	}
+	else{
+		return false;
+	}
 }
 
 function DoStartup() {
@@ -18425,8 +18532,13 @@ function DoStartup() {
 	    
 	}
 
+	// Save if we need to force a text box recalc after minimize
+	gForceInitialTextBoxRecalc = false;
+
 	// Check for and process URL share link
 	var isFromShare = processShareLink();
+
+	gForceInitialTextBoxRecalc = isFromShare;
 
 	// Not from a share, show the UI
 	if (!isFromShare){
@@ -18464,10 +18576,53 @@ function DoStartup() {
 
 	if (isDesktopBrowser()){
 
+		// Setup text box symmetrical resize 
+		gInitialTextBoxWidth = gTheABC.offsetWidth;
+
+		var elem = document.getElementById("notenlinks");
+		gInitialTextBoxContainerWidth = elem.offsetWidth;
+
+		elem = document.getElementById("noscroller");
+		gInitialTextBoxContainerLeft = elem.offsetLeft;
+
+		// console.log("ResizeObserver setup:");
+		// console.log("Initial width = "+gInitialTextBoxWidth);
+		// console.log("Initial container width = "+gInitialTextBoxContainerWidth);
+		// console.log("Initial container left = "+gInitialTextBoxContainerLeft);
+
+		new ResizeObserver(ResizeTextBox).observe(gTheABC);
+
 		// Hook window resize events
 		window.onresize = function(){
 
 			HandleWindowResize();
+
+			if (!gIsMaximized){
+
+				// Reset text box symmetrical resize 
+				gTheABC.style.marginLeft = 0+"px";
+				gTheABC.style.width = gInitialTextBoxWidth+"px";
+
+				var elem = document.getElementById("notenlinks");
+				gInitialTextBoxContainerWidth = elem.offsetWidth;
+
+				elem = document.getElementById("noscroller");
+				gInitialTextBoxContainerLeft = elem.offsetLeft;
+
+				// console.log("On window resize:");
+				// console.log("Initial container width = "+gInitialTextBoxContainerWidth);
+				// console.log("Initial container left = "+gInitialTextBoxContainerLeft);
+
+				ResizeTextBox();
+
+				gGotWindowResizeWhileMaximized = false;
+
+			}
+			else{
+
+				gGotWindowResizeWhileMaximized = true;
+
+			}
 		
 		}
 
