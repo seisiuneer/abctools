@@ -11632,7 +11632,7 @@ function DoMinimize(){
 
 			gTheABC.style.width = gInitialTextBoxWidth+"px";
 
-			gTheABC.style.leftMargin = "0px";
+			gTheABC.style.marginLeft = "0px";
 
 			var elem = document.getElementById("notenlinks");
 			gInitialTextBoxContainerWidth = elem.offsetWidth;
