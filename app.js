@@ -224,6 +224,9 @@ var gInitialTextBoxContainerWidth;
 var gInitialTextBoxContainerLeft;
 var gForceInitialTextBoxRecalc = false;
 var gGotWindowResizeWhileMaximized = false;
+var gNotationLeftMarginBeforeMaximize = "auto";
+
+var gTheNotation = document.getElementById("notation-holder");
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -7147,16 +7150,16 @@ function Render(renderAll,tuneNumber) {
 		if (isDesktopBrowser()){
 			// Show the notation block
 			if (gIsMaximized)
-				document.getElementById("notation-holder").style.display = "flex";
+				gTheNotation.style.display = "flex";
 			else
-				document.getElementById("notation-holder").style.display = "inline";
+				gTheNotation.style.display = "inline";
 		}
 		else{
 			// Show the notation block
 			if (gIsMaximized)
-				document.getElementById("notation-holder").style.display = "flex";
+				gTheNotation.style.display = "flex";
 			else
-				document.getElementById("notation-holder").style.display = "block";
+				gTheNotation.style.display = "block";
 
 		}
 
@@ -7339,7 +7342,7 @@ function Render(renderAll,tuneNumber) {
 
 		// Hide all the buttons and notation
 		document.getElementById("notenrechts").style.display = "none";
-		document.getElementById("notation-holder").style.display = "none";
+		gTheNotation.style.display = "none";
 
 		// Disable the save button
 		document.getElementById("saveabcfile").classList.remove("saveabcfile");
@@ -9088,7 +9091,7 @@ function RenderDivClickHandler(e){
 function GenerateRenderingDivs(nTunes) {
 
 	// Clear the div
-	var notationHolder = document.getElementById("notation-holder");
+	var notationHolder = gTheNotation;
 	notationHolder.innerHTML = "";
 
 	for (var i = 0; i < nTunes; ++i) {
@@ -11566,8 +11569,8 @@ function DoMaximize(){
 
 	document.getElementById("noscroller").style.display = "none";
 	document.getElementById("notation-spacer").style.display = "none";
-	document.getElementById("notation-holder").style.display = "flex";
-	document.getElementById("notation-holder").style.float = "none";
+	gTheNotation.style.display = "flex";
+	gTheNotation.style.float = "none";
 
 	document.getElementById("zoombutton").src = "img/zoomin.png"
 
@@ -11582,6 +11585,13 @@ function DoMaximize(){
 		gGotRenderDivClick = false;
 		gRenderDivClickOffset = -1;
 
+		//debugger;
+
+		// Reset the notation margin
+		gNotationLeftMarginBeforeMaximize = gTheNotation.style.marginLeft;
+
+		gTheNotation.style.marginLeft = "auto";
+
 	}
 
 }
@@ -11594,8 +11604,10 @@ function DoMinimize(){
 	document.getElementById("zoombutton").src = "img/zoomout.png"
 
 	if (isDesktopBrowser()){
-		document.getElementById("notation-holder").style.display = "inline";
-		document.getElementById("notation-holder").style.float = "left";
+		gTheNotation.style.display = "inline";
+		gTheNotation.style.float = "left";
+		gTheNotation.style.marginLeft = gNotationLeftMarginBeforeMaximize;
+
 	}
 
 	gIsMaximized = false;
@@ -11640,6 +11652,8 @@ function DoMinimize(){
 			elem = document.getElementById("noscroller");
 			gInitialTextBoxContainerLeft = elem.offsetLeft;
 
+			gTheNotation.style.marginLeft = "auto";
+
 			gGotWindowResizeWhileMaximized = false;
 
 		}
@@ -11671,12 +11685,12 @@ function ToggleMaximize(){
 
 		if (isDesktopBrowser()){
 
-			document.getElementById("notation-holder").style.width = "855px";
+			gTheNotation.style.width = "855px";
 
 		}
 		else{
 
-			document.getElementById("notation-holder").style.width = "820px";
+			gTheNotation.style.width = "820px";
 
 		}
 
@@ -11692,7 +11706,7 @@ function ToggleMaximize(){
 
 			if (((windowWidth * gFullScreenScaling)/100.0) > 850){
 
-				document.getElementById("notation-holder").style.width = gFullScreenScaling+"%";
+				gTheNotation.style.width = gFullScreenScaling+"%";
 
 			}
 		}
@@ -11703,7 +11717,7 @@ function ToggleMaximize(){
 
 			if (((windowWidth * gFullScreenScaling)/100.0) > 820){
 
-				document.getElementById("notation-holder").style.width = gFullScreenScaling+"%";
+				gTheNotation.style.width = gFullScreenScaling+"%";
 
 			}
 
@@ -12004,7 +12018,7 @@ function processShareLink() {
 
 			if (((windowWidth * gFullScreenScaling)/100.0) > 850){
 
-				document.getElementById("notation-holder").style.width = gFullScreenScaling+"%";
+				gTheNotation.style.width = gFullScreenScaling+"%";
 
 			}
 		}
@@ -12015,7 +12029,7 @@ function processShareLink() {
 
 			if (((windowWidth * gFullScreenScaling)/100.0) > 820){
 
-				document.getElementById("notation-holder").style.width = gFullScreenScaling+"%";
+				gTheNotation.style.width = gFullScreenScaling+"%";
 
 			}
 
@@ -17922,6 +17936,10 @@ var gLastResizeTextboxTime = 0;
 
 function ResizeTextBox(){
 
+	if (gIsMaximized){
+		return;
+	}
+
 	var theTime = Date.now();
 
 	var deltaTime = theTime - gLastResizeTextboxTime;
@@ -17955,6 +17973,37 @@ function ResizeTextBox(){
 
 				gTheABC.style.marginLeft = -theDelta+"px";
 
+				if (!gIsOneColumn){
+
+					//debugger;
+
+					var theAppContainer = document.getElementById("app-container");
+
+					var theAppContainerMargin = theAppContainer.style.marginLeft;
+
+					if (theAppContainerMargin){
+
+						theAppContainerMargin = theAppContainer.style.marginLeft.replace("px","");
+
+						theAppContainerMarginFloat = parseFloat(theAppContainerMargin);
+
+						if (!isNaN(theAppContainerMarginFloat)){
+
+							// There is some edge delta factor
+							theAppContainerMarginFloat -= 48;
+
+							if (theDelta < theAppContainerMarginFloat){
+
+								// Slide the notation to the right but don't allow wrapping
+								gTheNotation.style.marginLeft = theDelta+"px";
+
+							}
+						}
+
+					}
+
+				}
+
 			}
 
 		}
@@ -17963,6 +18012,9 @@ function ResizeTextBox(){
 			// console.log("Setting the marginLeft to 0px");
 
 			gTheABC.style.marginLeft = "0px";
+
+			// Reset the notation left margin
+			gTheNotation.style.marginLeft = theDelta+"px";
 
 		}
 	}
@@ -18342,7 +18394,7 @@ function DoStartup() {
 		elem.style.display = "none"; // Hidden at startup
 
 		// Resize the notation div
-		elem = document.getElementById("notation-holder");
+		elem = gTheNotation;
 		elem.style.width = "820px";
 		elem.style.display = "block";
 		elem.style.marginLeft = "20px";
@@ -18608,6 +18660,8 @@ function DoStartup() {
 
 				elem = document.getElementById("noscroller");
 				gInitialTextBoxContainerLeft = elem.offsetLeft;
+
+				gTheNotation.style.marginLeft = "auto";
 
 				// console.log("On window resize:");
 				// console.log("Initial container width = "+gInitialTextBoxContainerWidth);
