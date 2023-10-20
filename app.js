@@ -17878,6 +17878,9 @@ function HandleWindowResize(){
 					document.getElementById("zoombanner").style.display = "block";
 				}
 
+				elem = document.getElementById("notation-placeholder-text");
+				elem.style.marginTop = "64px";
+
 
 			}
 			else{
@@ -17911,6 +17914,10 @@ function HandleWindowResize(){
 
 				// Hide the zoom suggestion banne
 				document.getElementById("zoombanner").style.display = "none";
+
+				elem = document.getElementById("notation-placeholder-text");
+				elem.style.marginTop = "136px";
+
 
 			}
 
