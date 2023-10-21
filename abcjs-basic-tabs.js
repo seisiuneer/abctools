@@ -13933,7 +13933,12 @@ function CreateSynth() {
     if (/Safari/i.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
       isSafari = true;
     }
-   
+
+    // For the embedded iOS browser, above Safari test fails
+    if (gIsIOS){
+      isSafari = true;
+    }
+      
     if (params.programOffsets) self.programOffsets = params.programOffsets;
     else if (self.soundFontUrl === originalSoundFontUrl) self.programOffsets = {
       "bright_acoustic_piano": 20,
