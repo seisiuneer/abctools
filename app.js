@@ -18207,18 +18207,19 @@ function getMIDI_note_name(note){
  //    };
 
 	var MIDI_note_map = {
-        "36":"C,,",
-        "37":"C,,",
-        "38":"D,,",
-        "39":"D,,",
-        "40":"E,,",
-        "41":"F,,",
-        "42":"F,,",
-        "43":"G,,",
-        "44":"G,,",
-        "45":"A,,",
-        "46":"A,,",
-        "47":"B,,",        
+		// Special common ABC macros for WARBL and other controllers
+        "36":" ", 	// C,,
+        "37":"BACKSPACE", // ^C,,
+        "38":"|",   // D,,
+        "39":"/", 	// ^D,,
+        "40":"2", 	// E,,
+        "41":"3", 	// F,,
+        "42":"4", 	// ^F,,
+        "43":"(3", 	// G,,
+        "44":"|:", 	// ^G,,
+        "45":":|", 	// A,,
+        "46":"||", 	// ^A,,
+        "47":"|]",	// B,,
         "48":"C,",
         "49":"C,",
         "50":"D,",
@@ -18294,26 +18295,48 @@ function MIDI_NoteOn(data){
 		
 		var theSelectionEnd = gTheABC.selectionEnd;
 
-		// console.log("theSelectionStart before: "+theSelectionStart);
-		// console.log("theSelectionEnd before: "+theSelectionEnd);
+		if (theNoteName != "BACKSPACE"){
 
-		var leftSide = gTheABC.value.substring(0,theSelectionStart);
-		
-		var rightSide = gTheABC.value.substring(theSelectionEnd);
+			// console.log("theSelectionStart before: "+theSelectionStart);
+			// console.log("theSelectionEnd before: "+theSelectionEnd);
 
-		gTheABC.value = leftSide + theNoteName + rightSide;
+			var leftSide = gTheABC.value.substring(0,theSelectionStart);
+			
+			var rightSide = gTheABC.value.substring(theSelectionEnd);
 
-		gTheABC.selectionStart = theSelectionStart + theNoteName.length;
+			gTheABC.value = leftSide + theNoteName + rightSide;
 
-		gTheABC.selectionEnd = gTheABC.selectionStart;
+			gTheABC.selectionStart = theSelectionStart + theNoteName.length;
 
-		OnABCTextChange();
+			gTheABC.selectionEnd = gTheABC.selectionStart;
 
-		// theSelectionStart = gTheABC.selectionStart;
-		// theSelectionEnd = gTheABC.selectionEnd;
+			OnABCTextChange();
 
-		// console.log("theSelectionStart after: "+theSelectionStart);
-		// console.log("theSelectionEnd after: "+theSelectionEnd);
+			// theSelectionStart = gTheABC.selectionStart;
+			// theSelectionEnd = gTheABC.selectionEnd;
+
+			// console.log("theSelectionStart after: "+theSelectionStart);
+			// console.log("theSelectionEnd after: "+theSelectionEnd);
+		}
+		else{
+
+			// Delete the last character
+			if (theSelectionStart != 0){
+
+				var leftSide = gTheABC.value.substring(0,theSelectionStart-1);
+			
+				var rightSide = gTheABC.value.substring(theSelectionEnd);
+
+				gTheABC.value = leftSide + rightSide;
+
+				gTheABC.selectionStart = theSelectionStart - 1;
+
+				gTheABC.selectionEnd = gTheABC.selectionStart;
+
+				OnABCTextChange();
+			
+			}
+		}
 
 	}
 
