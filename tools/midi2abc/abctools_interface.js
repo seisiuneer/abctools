@@ -83,7 +83,7 @@ function copyToClipboard(textToCopy) {
 //
 function getUrlWithoutParams() {
 
-    return "http://michaeleskin.com/abctools/abctools.html";
+    return "https://michaeleskin.com/abctools/abctools.html";
 
     return window.location.protocol + "//" + window.location.host + window.location.pathname;
 
@@ -114,7 +114,7 @@ function testOutput() {
 
     var abcInLZW = LZString.compressToEncodedURIComponent(abcText);
 
-    var url = "http://michaeleskin.com/abctools/abctools.html?lzw=" + abcInLZW + "&format=noten&pdf=one&pn=br&fp=yes&btfs=10&name=" + shareName + "&play=1";
+    var url = "https://michaeleskin.com/abctools/abctools.html?lzw=" + abcInLZW + "&format=noten&pdf=one&pn=br&fp=yes&btfs=10&name=" + shareName + "&play=1";
 
     if (url.length > 8100) {
 
