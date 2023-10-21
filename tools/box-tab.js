@@ -7,7 +7,7 @@
 // for the B/C and C#/D button accordions
 //
 // Michael Eskin
-// http://michaeleskin.com
+// https://michaeleskin.com
 //
 // ABC parsing algorithm by James van Donsel
 //
@@ -1093,7 +1093,7 @@ function copyToClipboard(textToCopy) {
 //
 function getUrlWithoutParams() {
 
-    return "http://michaeleskin.com/abctools/abctools.html";
+    return "https://michaeleskin.com/abctools/abctools.html";
 
 }
 
@@ -1132,7 +1132,7 @@ function testOutput() {
 
     var ssp = document.getElementById('staff_sep').value;
 
-    var url = "http://michaeleskin.com/abctools/abctools.html?lzw=" + abcInLZW + "&format=noten&ssp=45&pdf=one&pn=br&fp=yes&btfs=10&name=" + shareName;
+    var url = "https://michaeleskin.com/abctools/abctools.html?lzw=" + abcInLZW + "&format=noten&ssp=45&pdf=one&pn=br&fp=yes&btfs=10&name=" + shareName;
 
     if (url.length > 8100) {
 
