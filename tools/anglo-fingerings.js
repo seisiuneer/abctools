@@ -13,7 +13,7 @@
 // Updated and extended 15 July 2023 by: 
 //
 // Michael Eskin
-// http://michaeleskin.com
+// https://michaeleskin.com
 //
 // Copyright (c) 2013 James van Donsel
 //
@@ -1897,7 +1897,7 @@ function copyToClipboard(textToCopy) {
 //
 function getUrlWithoutParams() {
 
-    return "http://michaeleskin.com/abctools/abctools.html";
+    return "https://michaeleskin.com/abctools/abctools.html";
 
     return window.location.protocol + "//" + window.location.host + window.location.pathname;
 
@@ -1938,7 +1938,7 @@ function testOutput() {
 
     var ssp = document.getElementById('staff_sep').value;
 
-    var url = "http://michaeleskin.com/abctools/abctools.html?lzw=" + abcInLZW + "&format=noten&ssp=45&pdf=one&pn=br&fp=yes&btfs=10&name=" + shareName;
+    var url = "https://michaeleskin.com/abctools/abctools.html?lzw=" + abcInLZW + "&format=noten&ssp=45&pdf=one&pn=br&fp=yes&btfs=10&name=" + shareName;
 
     if (url.length > 8100) {
 
