@@ -14670,6 +14670,11 @@ var getNote = function getNote(url, instrument, name, audioContext) {
   if (/Safari/i.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
     isSafari = true;
   }
+  
+  // For the embedded iOS browser, above Safari test fails
+  if (gIsIOS){
+    isSafari = true;
+  }
 
   if (!instrumentCache[name]) instrumentCache[name] = new Promise(function (resolve, reject) {
 
