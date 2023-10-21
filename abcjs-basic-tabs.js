@@ -13872,8 +13872,8 @@ var originalSoundFontUrl = "https://paulrosen.github.io/midi-js-soundfonts/abcjs
 var defaultSoundFontUrl = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
 var alternateSoundFontUrl = "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/";
 var alternateSoundFontUrl2 = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
-var alternateSoundFontUrl3 = "http://michaeleskin.com/abctools/soundfonts/canvas/";
-var alternateSoundFontUrl4 = "http://michaeleskin.com/abctools/soundfonts/mscore/";
+var alternateSoundFontUrl3 = "https://michaeleskin.com/abctools/soundfonts/canvas/";
+var alternateSoundFontUrl4 = "https://michaeleskin.com/abctools/soundfonts/mscore/";
 
 function CreateSynth() {
   var self = this;
@@ -14687,7 +14687,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
         case "melodica":    // 134
         case "cajun":       // 135
         case "silence":     // 136
-          url = "http://michaeleskin.com/abctools/soundfonts/";
+          url = "https://michaeleskin.com/abctools/soundfonts/";
           isOgg = true;
           break;
 
@@ -14712,7 +14712,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
         case "melodica":    // 134
         case "cajun":       // 135
         case "silence":     // 136
-          url = "http://michaeleskin.com/abctools/soundfonts/";
+          url = "https://michaeleskin.com/abctools/soundfonts/";
           isOgg = true;
           break;
 
