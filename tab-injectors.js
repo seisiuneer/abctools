@@ -15,7 +15,7 @@
 // Updated and extended 19 July 2023 by: 
 //
 // Michael Eskin
-// http://michaeleskin.com
+// https://michaeleskin.com
 //
 // Copyright (c) 2013 James van Donsel
 //
@@ -1389,7 +1389,7 @@ var angloFingeringsGenerator = function (theABC, callback){
 // ABC parsing algorithm by James van Donsel
 //
 // Michael Eskin
-// http://michaeleskin.com
+// https://michaeleskin.com
 //
 // Released under CC0 - No Rights Reserved
 // https://creativecommons.org/share-your-work/public-domain/cc0/
@@ -2218,7 +2218,7 @@ var boxTabGenerator = function (theABC){
 // ABC parsing algorithm by James van Donsel
 //
 // Michael Eskin
-// http://michaeleskin.com
+// https://michaeleskin.com
 //
 // Released under CC0 - No Rights Reserved
 // https://creativecommons.org/share-your-work/public-domain/cc0/
@@ -2238,7 +2238,7 @@ var bambooFluteTabGenerator = function (theABC){
     // Chinese flute
     //
     // Michael Eskin
-    // http://michaeleskin.com
+    // https://michaeleskin.com
     //
     // ABC parsing algorithm by James van Donsel
     //
@@ -3065,7 +3065,7 @@ var bambooFluteTabGenerator = function (theABC){
 // Converts thesession.org format ABCs into Comhaltas preferred format
 //
 // Michael Eskin
-// http://michaeleskin.com
+// https://michaeleskin.com
 //
 //
 // Put the whole thing in a function for isolation
