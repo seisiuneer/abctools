@@ -660,6 +660,9 @@ function Transpose(transposeAmount) {
 		return;
 	}
 
+	// Keep track of actions
+	sendGoogleAnalytics("action","Transpose");
+
 	var nTunes = CountTunes();
 
 	var theTuneRange = getTuneRangeForTranspose();
@@ -1250,6 +1253,9 @@ var gLastSortOrder = "0";
 
 function SortDialog(){
 
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","SortDialog");
+
  	const sorting_options = [
 	    { name: "  Sort by Name (T:)", id: "0" },
 	    { name: '  Sort by Name (T:) - Ignore "A"and "An"' , id: "1" },
@@ -1307,6 +1313,9 @@ function Clear() {
 	if (gRenderingPDF) {
 		return;
 	}
+
+	// Keep track of actions
+	sendGoogleAnalytics("action","Clear");
 
 	var thePrompt = "Are you sure you want to erase all the ABC and start over?";
 
@@ -1367,7 +1376,10 @@ function DoSaveLastAutoSnapShot(){
 function SaveSnapshot(){
 
 	if (gLocalStorageAvailable){
-		
+
+		// Keep track of actions
+		sendGoogleAnalytics("action","SaveSnapshot");
+
 		var theABC = gTheABC.value;
 
 		localStorage.SavedSnapshot = theABC;
@@ -1381,6 +1393,9 @@ function SaveSnapshot(){
 		},1000);
 	}
 	else{
+
+		// Keep track of actions
+		sendGoogleAnalytics("action","SaveSnapshot_Fail");
 
 		var thePrompt = "Snapshot storage not available on this browser.";
 		
@@ -1401,6 +1416,9 @@ function SaveSnapshot(){
 function RestoreSnapshot(bRestoreAutoSnapshot,bIsAddDialogButton){
 	
 	if (gLocalStorageAvailable){
+
+		// Keep track of actions
+		sendGoogleAnalytics("action","RestoreSnapshot");
 
 		var theABC = gTheABC.value;
 
@@ -1534,12 +1552,18 @@ function RestoreSnapshot(bRestoreAutoSnapshot,bIsAddDialogButton){
 		}
 		else{
 
+			// Keep track of actions
+			sendGoogleAnalytics("action","RestoreSnapshot_Fail_1");
+
 			DayPilot.Modal.alert('<p style="text-align:center;font-size:18px;">'+theErrorPrompt+'</p>',{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 
 		}
 		
 	}
 	else{
+
+		// Keep track of actions
+		sendGoogleAnalytics("action","RestoreSnapshot_Fail_2");
 
 		var thePrompt = "Snapshot storage not available on this browser.";
 		
@@ -5335,6 +5359,9 @@ function promptForPDFFilename(placeholder, callback){
 //
 function ShowAcrobatHyperlinkLengthWarning(){
 
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","ShowAcrobatHyperlinkLengthWarning");
+
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Adobe Acrobat Hyperlink Length Warning</p>';
 	modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;">Adobe Acrobat limits the length of clicked hyperlinks to 2076 characters.</p>';
 	modal_msg += '<p style="font-size:12pt;line-height:18pt;">Some very complex tune Share URLs used in tunebooks generated with this tool may exceed this limit.</p>';
@@ -5348,6 +5375,10 @@ function ShowAcrobatHyperlinkLengthWarning(){
 // Put up an alert that there is a decode issue
 //
 function ShowHyperlinkBadDecodeAlert(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","ShowHyperlinkBadDecodeAlert");
+
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Problem Decoding Tune Share URL</p>';
 	modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;text-align:center;">An unrecoverable error occured when decoding this tune ShareURL.</p>';
 
@@ -5359,6 +5390,9 @@ function ShowHyperlinkBadDecodeAlert(){
 // Warn if there are any play ShareURLs too large for Adobe Acrobat
 //
 function ShowAcrobatURLSizeWarningDialog(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","ShowAcrobatURLSizeWarningDialog");
 
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Adobe Acrobat Maximum URL Length Warning</p>';
 	modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;">During PDF export play hyperlink embedding, some very long and complex tunes had play hyperlinks that exceeded the Adobe Acrobat maximum URL length of 2076 characters.</p>';
@@ -5392,6 +5426,9 @@ function ExportPDF(){
 	if (!gAllowPDF){
 		return;
 	}
+
+	// Keep track of use of PDF exporter
+	sendGoogleAnalytics("export","PDF");
 
 	// Get the page format
 	var elem = document.getElementById("pdfformat");
@@ -8055,6 +8092,9 @@ function PDFTunebookBuilder(){
 		return;
 	}
 
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","PDFTunebookBuilder");
+
 	var midi_program_list = [];
 
   	for (var i=0;i<138;++i){
@@ -8327,6 +8367,9 @@ function PDFTunebookBuilder(){
 }
 
 function AddABC(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","AddABC");
 
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">Add ABC Tunes, Templates, and PDF Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#add_templates_dialog" target="_blank" style="text-decoration:none;">💡</a></span></p>';
 	modal_msg += '<div id="add-new-tune-dialog">';
@@ -9323,6 +9366,9 @@ function clearQRCode() {
 
 function GenerateQRCode(e) {
 
+	// Keep track of dialogs
+	sendGoogleAnalytics("sharing","generate_qr_code");
+
 	var isShiftOverride = false;
 
 	var theURL = document.getElementById("urltextbox").value;
@@ -9779,6 +9825,9 @@ function FindPreTuneHeader(theABC){
 //
 function InjectRepeatsAndClickTrackAll(){
 
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","InjectRepeatsAndClickTrackAll");
+
 	var nTunes = CountTunes();
 
 	if (nTunes == 0){
@@ -9975,6 +10024,9 @@ function InjectSectionHeader(){
 		return;
 	}
 
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","InjectSectionHeader");
+
 	// Setup initial values
 	const theData = {
 	  configure_sectionheader:"Section Name",
@@ -10035,6 +10087,9 @@ function InjectStaffWidth(){
 	if (gRenderingPDF) {
 		return;
 	}
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","InjectStaffWidth");
 
 	// Setup initial values
 	const theData = {
@@ -10431,6 +10486,9 @@ function InjectAllMIDIParams(){
 	if (gRenderingPDF) {
 		return;
 	}
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","InjectAllMIDIParams");
 
     var midi_program_list = [];
 
@@ -11139,6 +11197,9 @@ function InjectMetronome(){
 		return;
 	}
 
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","InjectMetronome");
+
 	var theSelectedTuneIndex = findSelectedTuneIndex();
 
 	// Setup initial values
@@ -11341,6 +11402,9 @@ function ShortenURL(){
 		return;
 	}
 
+	// Keep track of URL shortening
+	sendGoogleAnalytics("sharing","shorten_share_url");
+
 	var theURL = document.getElementById("urltextbox");
 
 	var theData = theURL.value;
@@ -11405,6 +11469,9 @@ function CopyShareURL(){
 		return;
 	}
 
+	// Keep track of URL copy
+	sendGoogleAnalytics("sharing","copy_share_url");
+
 	var theURL = document.getElementById("urltextbox");
 
 	var theData = theURL.value;
@@ -11430,6 +11497,9 @@ function CopyShareURL(){
 function SaveABC(){
 
 	if (gAllowSave){
+
+		// Keep track exports
+		sendGoogleAnalytics("export","SaveABC");
 
 		var theData = gTheABC.value;
 
@@ -11464,6 +11534,9 @@ function SaveShareURL(){
 
 	if (gAllowURLSave){
 
+		// Keep track of URL save
+		sendGoogleAnalytics("sharing","save_share_url");
+
 		var theData = urltextbox.value;
 
 		if (theData.length != 0){
@@ -11486,6 +11559,9 @@ function TestShareURL(){
 	if (!gAllowURLSave){
 		return;
 	}
+
+	// Keep track of URL test
+	sendGoogleAnalytics("sharing","test_share_url");
 
 	var theURL = document.getElementById("urltextbox").value;
 
@@ -12003,6 +12079,9 @@ function processShareLink() {
 			// Playback requested?
 			if (doPlay){
 
+				// Keep track of share play presentation
+				sendGoogleAnalytics("show_player","from_share")
+
 				// Pre-process the ABC to inject any requested programs or volumes
 				var theProcessedABC = PreProcessPlayABC(gTheABC.value);
 
@@ -12401,6 +12480,9 @@ function InjectPDFHeaders(){
 //
 function DoCeoltasTransform(){
 
+	// Keep track of tablature injection use
+	sendGoogleAnalytics("inject_tablature","DoCeoltasTransform");
+
 	gTheABC.value = ceoltasABCTransformer(gTheABC.value);
 	
 	RenderAsync(true,null);
@@ -12417,6 +12499,9 @@ function DoCeoltasTransform(){
 // Do B/C Box Tab Injection
 //
 function DoInjectTablature_BC(){
+
+	// Keep track of tablature injection use
+	sendGoogleAnalytics("inject_tablature","DoInjectTablature_BC");
 
 	SetRadioValue("notenodertab","noten");
 
@@ -12445,6 +12530,9 @@ function DoInjectTablature_BC(){
 //
 function DoInjectTablature_CsD(){
 
+	// Keep track of tablature injection use
+	sendGoogleAnalytics("inject_tablature","DoInjectTablature_CsD");
+
 	SetRadioValue("notenodertab","noten");
 
 	gCurrentTab = "noten";
@@ -12471,6 +12559,9 @@ function DoInjectTablature_CsD(){
 // Do Anglo Concertina Tab Injection
 //
 function DoInjectTablature_Anglo(){
+
+	// Keep track of tablature injection use
+	sendGoogleAnalytics("inject_tablature","DoInjectTablature_Anglo");
 
 	SetRadioValue("notenodertab","noten");
 
@@ -12524,6 +12615,9 @@ function DoInjectTablature_Anglo(){
 // Prompt first for the key
 //
 function DoInjectTablature_Bamboo_Flute(){
+
+	// Keep track of tablature injection use
+	sendGoogleAnalytics("inject_tablature","DoInjectTablature_Bamboo_Flute");
 
  	const bamboo_flute_keys = [
 	    { name: "  C", id: "0" },
@@ -12592,7 +12686,10 @@ function ChangeTab(){
 
 	// If the tab changes, render all
 	if (theTab != gCurrentTab){
-		
+
+		// Keep track of tab use
+		sendGoogleAnalytics("ChangeTab",theTab);
+
 		RenderAsync(true,null);
 
 	}
@@ -12782,6 +12879,9 @@ function isJigWithNoTiming(tuneABC,millisecondsPerMeasure){
 // Generate and download the .wav file for the current tune
 //
 function DownloadWave(){
+
+	// Keep track of export
+	sendGoogleAnalytics("export","DownloadWave");
 
 	// Fix timing bug for jig-like tunes with no tempo specified
 	gMIDIbuffer.millisecondsPerMeasure  = isJigWithNoTiming(gPlayerABC,gMIDIbuffer.millisecondsPerMeasure);
@@ -13132,6 +13232,9 @@ function BatchMP3Export(){
 
 	}
 
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","BatchMP3Export");
+
 	// Setup initial values
 	const theData = {
 	  configure_repeats:1,
@@ -13332,7 +13435,10 @@ function DownloadMP3(callback,val){
 	if (gInDownloadMP3){
 		return false;
 	}
-	
+
+	// Keep track of export
+	sendGoogleAnalytics("export","DownloadMP3");
+
 	gInDownloadMP3 = true;
 
 	function convertToMp3(wav){
@@ -13503,7 +13609,10 @@ function DownloadMP3(callback,val){
 // Generate and download the MIDI file for the current tune
 //
 function DownloadMIDI(){
-	
+
+	// Keep track of export
+	sendGoogleAnalytics("export","DownloadMIDI");
+
 	var midiData = ABCJS.synth.getMidiFile(gPlayerABC, { midiOutputType: "link" });
 
 	var thisMIDI = midiData[0];
@@ -14223,7 +14332,10 @@ function postProcessTab(renderDivID, instrument, bIsPlayback){
 //
 function FirstTimeUsingMetronomeDialog(callback){
 
-   var modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">About the Metronome in the Player</p>';
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","FirstTimeUsingMetronomeDialog");
+
+    var modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">About the Metronome in the Player</p>';
  	   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;margin-top:36px;">Since this is your first time using the metronome feature, there are some things you should be aware of:</p>';
 	   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;margin-top:36px;">Behind-the-scenes the metronome in the player the ABC chord system to do its job.</p>';
 	   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;margin-top:36px;">When using the metronome, any chords in your tune will be temporarily hidden.</p>';
@@ -14323,6 +14435,9 @@ function ToggleMetronome(){
 
 function PlayABCDialog(theABC,callback,val,metronome_state){
 
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","PlayABCDialog");
+
 	gMIDIbuffer = null;
 	gTheOKButton = null;
 	gPlayMetronome = false;
@@ -14420,7 +14535,6 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 	}
 	
 	function CursorControl() {
-
 
 		var self = this;
 
@@ -14562,7 +14676,6 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 	var cursorControl = new CursorControl();
 
 	var synthControl;
-
 
 	function initPlay() {
 
@@ -15538,6 +15651,9 @@ function idleXMLImport(){
 //
 function defaultMusicXMLSettings(){
 
+	// Keep track of actions
+	sendGoogleAnalytics("action","defaultMusicXMLSettings");
+
 	var thePrompt = "Are you sure you want to reset the MusicXML import options to their default values?";
 
 	// Center the string in the prompt
@@ -15557,6 +15673,9 @@ function defaultMusicXMLSettings(){
 }
 
 function ConfigureMusicXMLImport(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","ConfigureMusicXMLImport");
 
 	const theData = {};
 
@@ -15672,6 +15791,9 @@ function resetAngloButtonNames(){
 //
 function defaultAngloButtonNames(){
 
+	// Keep track of actions
+	sendGoogleAnalytics("action","defaultAngloButtonNames");
+
 	var thePrompt = "Are you sure you want to reset the Anglo Concertina button names to their default values?";
 
 	// Center the string in the prompt
@@ -15768,6 +15890,9 @@ function angloFingeringsChangeHandler(){
 //
 function ConfigureAngloFingerings(){
 
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","ConfigureAngloFingerings");
+
 	const theData = {};
 
 	// Save off the original fingerings
@@ -15856,6 +15981,9 @@ function ConfigureAngloFingerings(){
 // Tablature settings dialog
 //
 function ConfigureTablatureSettings(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","ConfigureTablatureSettings");
 
     const box_styles = [
 	    { name: "  B/C", id: "0" },
@@ -16005,6 +16133,9 @@ function idleOpenFonts(){
 //
 function loadFontSettings(file){
 
+	// Keep track of actions
+	sendGoogleAnalytics("action","loadFontSettings");
+
 	const reader = new FileReader();
 
 	reader.addEventListener('load', (event) => {
@@ -16042,6 +16173,9 @@ function loadFontSettings(file){
 // Load the font settings from a dialog
 //
 function saveFontSettings(){
+
+	// Keep track of actions
+	sendGoogleAnalytics("action","saveFontSettings");
 
 	// Default fonts used for rendering
 	var theRenderingFonts = {
@@ -16121,6 +16255,9 @@ function resetABCRenderingFonts(){
 //
 function defaultFontSettings(){
 
+	// Keep track of actions
+	sendGoogleAnalytics("action","defaultFontSettings");
+
 	var thePrompt = "Are you sure you want to reset the ABC rendering fonts to their default values?";
 
 	// Center the string in the prompt
@@ -16143,6 +16280,9 @@ function defaultFontSettings(){
 }
 
 function ConfigureFonts(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","ConfigureFonts");
 
 	// titlefont: "Palatino 18",
 	// subtitlefont: "Palatino 13",
@@ -16289,6 +16429,9 @@ function AddDisableEditing(){
 
 function SharingControlsDialog(){
 
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","SharingControlsDialog");
+
 	// Moving the advanced controls to their own dialog
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">ABC Transcription Tools Sharing Controls&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#sharing_controls" target="_blank" style="text-decoration:none;">💡</a></span></p>';
 	modal_msg += '<div id="sharing-controls-dialog">';
@@ -16384,6 +16527,10 @@ function PDFExportDialog(){
 	if (gRenderingPDF) {
 		return;
 	}
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","PDFExportDialog");
+
 
     const papersize_list = [
 	    { name: "  Letter", id: "letter" },
@@ -16604,6 +16751,9 @@ function PDFExportDialog(){
 //
 function AdvancedControlsDialog(){
 
+	// Keep track of advanced controls dialog
+	sendGoogleAnalytics("dialog","AdvancedControlsDialog");
+
 	// Set global flag that we're in the advanced controls dialog
 	gInAdvancedSettingsDialog = true;
 
@@ -16691,6 +16841,9 @@ function ConfigureToolSettings(e) {
 		
 		return;
 	}
+
+	// Keep track of advanced controls dialog
+	sendGoogleAnalytics("dialog","ConfigureToolSettings");
 
     var midi_program_list = [];
 
@@ -17224,6 +17377,9 @@ function InjectQTag(theTune,theTempo){
 // Import MusicXML format
 //
 function importMusicXML(theXML){
+
+	// Keep track of actions
+	sendGoogleAnalytics("action","DoFileRead_XML");
  
     var xmldata = $.parseXML (theXML);    // abc_code is a (unicode) string with one abc tune.
 
@@ -17450,6 +17606,12 @@ function DoFileRead(file,doAppend){
 			// Check for MusicXML format
 			if (isXML(theText)){
 				theText = importMusicXML(theText);
+			}
+			else{
+
+				// Keep track of actions
+				sendGoogleAnalytics("action","DoFileRead_ABC");
+
 			}
 
 			// Handle appending for  drag and drop
@@ -17773,7 +17935,7 @@ function restoreStateFromLocalStorage(){
 
 	// If first time, show a welcome message
 	if (bIsFirstTime){
-		
+
 		UpdateLocalStorage();
 
 		showWelcomeScreen();
@@ -17787,7 +17949,10 @@ function restoreStateFromLocalStorage(){
 //
 function showWelcomeScreen(){
 
-   var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","showWelcomeScreen");
+
+    var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica"><strong>Read the <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> for instructions and demo videos.</strong></p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">To begin, type or paste tunes in ABC format into the text area.</p>'; 
 	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Each ABC tune <strong>must</strong> begin with an X: tag.</p>'; 
@@ -17815,6 +17980,9 @@ function showWelcomeScreen(){
 //
 function showZoomInstructionsScreen(){
 
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","showZoomInstructionsScreen");
+
    	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
    	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Since this is your first time using the tool, here is some useful information:</p>';
    	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">In this view, you may scroll through the tune notation.</p>';
@@ -17833,7 +18001,10 @@ function showZoomInstructionsScreen(){
 //
 function TipJarReminderDialog(){
 
-   var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Thank You!</p>';
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","TipJarReminderDialog");
+
+    var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Thank You!</p>';
  	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;">I hope my ABC Transcription Tools have been useful to you!</p>';
 	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;margin-top:36px;">If so, please consider dropping something in one of my </p>';
 	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;"><strong><a href="tipjars.html" target="_blank" title="My Virtual Tip Jars">Virtual Tip Jars</a>.</strong></p>';
@@ -18513,7 +18684,24 @@ function makeCenteredPromptString(thePrompt){
 	return '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">'+thePrompt+'</p>';
 }
 
+//
+// Send a Google analytics event
+//
+function sendGoogleAnalytics(theCategory,theAction,theLabel){
 
+	if (gtag && (gtag instanceof Function)){
+
+		if (!theLabel){
+			theLabel = "none";
+		}
+
+		//console.log("Sending gtag abctools event_category: "+theCategory+" event_action: "+theAction+" event_label: "+theLabel);
+
+		gtag('event', 'abctools', { event_category: theCategory, event_action: theAction, event_label: theLabel});
+
+	}
+
+}
 
 //
 // Are we on iOS?
@@ -18634,7 +18822,12 @@ function DoStartup() {
 	// Are we on Safari?
 	gIsSafari = false;
 	if (isSafari()){
+
 		gIsSafari = true;
+
+		// Keep track of browser
+		sendGoogleAnalytics("browser","Safari");
+
 	}
 
 	// Are we on Chrome?
@@ -18642,33 +18835,53 @@ function DoStartup() {
 
 	if (!gIsSafari){
 		if (isChrome()){
+
 			gIsChrome = true;
+
+			// Keep track of browser
+			sendGoogleAnalytics("browser","Chrome");
 		}
 	}
 
 	// Are we on iOS?
 	gIsIOS = false;
 	if (isIOS()) {
+
 		gIsIOS = true;
+
+		// Keep track of platform
+		sendGoogleAnalytics("platform","iOS");
 	}
 	
 	// Are we on an iPad?
 	gIsIPad = false;
 	if (isIPad()) {
+
 		gIsIPad = true;
+
+		// Keep track of platform
+		sendGoogleAnalytics("platform","iPad");
 	}
 
 	// Are we on an iPhone?
 	gIsIPhone = false;
 	if (isIPhone()) {
+
 		gIsIPhone = true;
+
+		// Keep track of platform
+		sendGoogleAnalytics("platform","iPhone");
 	}
 
 	// Are we on Android?
 	gIsAndroid = false;
 
 	if (isAndroid()){
+
 		gIsAndroid = true;
+
+		// Keep track of platform
+		sendGoogleAnalytics("platform","Android");
 	}
 
 	if (gIsIOS){
@@ -18919,6 +19132,9 @@ function DoStartup() {
     //
 	if (isDesktopBrowser()){
 
+		// Keep track of platform
+		sendGoogleAnalytics("platform","Desktop");
+
 	    if (gSaveLastAutoSnapShot){
 
 	    	AddTabCloseListener();
@@ -18946,6 +19162,9 @@ function DoStartup() {
 		// Update the application state from local storage if available
 		restoreStateFromLocalStorage();
 
+		// Keep track of raw editor runs
+		sendGoogleAnalytics("start","no_share");
+
 	}
 	else{
 
@@ -18959,6 +19178,9 @@ function DoStartup() {
 
 		// Save the state in the share link to local storage
 		UpdateLocalStorage();
+
+		// Keep track of raw editor runs
+		sendGoogleAnalytics("start","from_share");
 
 	}
 
