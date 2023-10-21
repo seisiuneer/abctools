@@ -18697,7 +18697,7 @@ function sendGoogleAnalytics(theCategory,theAction,theLabel){
 
 		//console.log("Sending gtag abctools event_category: "+theCategory+" event_action: "+theAction+" event_label: "+theLabel);
 
-		gtag('event', 'abctools', { event_category: theCategory, event_action: theAction, event_label: theLabel});
+		gtag('event', 'abctools_'+theCategory, { event_category: theCategory, event_action: theAction, event_label: theLabel});
 
 	}
 
