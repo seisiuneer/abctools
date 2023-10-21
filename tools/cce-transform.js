@@ -6,7 +6,7 @@
 // Converts thesession.org format ABCs into Comhaltas preferred format
 //
 // Michael Eskin
-// http://michaeleskin.com
+// https://michaeleskin.com
 //
 
 var verbose = false;
@@ -751,7 +751,7 @@ function copyToClipboard(textToCopy) {
 //
 function getUrlWithoutParams() {
 
-    return "http://michaeleskin.com/abctools/abctools.html";
+    return "https://michaeleskin.com/abctools/abctools.html";
 
 }
 
@@ -778,7 +778,7 @@ function testOutput() {
 
     var abcInLZW = LZString.compressToEncodedURIComponent(abcText);
 
-    var url = "http://michaeleskin.com/abctools/abctools.html?lzw=" + abcInLZW + "&format=noten&ssp=10&pdf=one&pn=br&fp=yes&btfs=10&name=" + shareName;
+    var url = "https://michaeleskin.com/abctools/abctools.html?lzw=" + abcInLZW + "&format=noten&ssp=10&pdf=one&pn=br&fp=yes&btfs=10&name=" + shareName;
 
     if (url.length > 8100) {
 
