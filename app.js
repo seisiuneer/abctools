@@ -16964,8 +16964,8 @@ function ConfigureToolSettings(e) {
 
 	form = form.concat(form2);
 
-	if (isDesktopBrowser() && isChrome()){
-		form.push({name: "    Allow MIDI input for ABC text entry (desktop Chrome-only)", id: "configure_allow_midi_input", type:"checkbox", cssClass:"configure_settings_form_text"});
+	if (browserSupportsMIDI()){
+		form.push({name: "    Allow MIDI input for ABC text entry", id: "configure_allow_midi_input", type:"checkbox", cssClass:"configure_settings_form_text"});
 	};
 
 	form.push({html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Configure ABC Fonts" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="Configure MusicXML Import" title="Configure MusicXML import parameters"></p>'});	  
@@ -17023,27 +17023,31 @@ function ConfigureToolSettings(e) {
 					}
 				}
 
-				// If on desktop Chrome, allow MIDI input if enabled
-				if (isChrome()){
-
-					gAllowMIDIInput = args.result.configure_allow_midi_input;
-
-					// If they've allowed MIDI input, and not currently using it
-					if (theOldAllowMIDIInput != gAllowMIDIInput){
-
-						if (gAllowMIDIInput){
-							initMIDI();
-						}
-
-					}
-				}
-
 			}
 			else{
 			
 				gSaveLastAutoSnapShot = false;
 			
 			}
+
+			// Allow MIDI input if enabled
+			if (browserSupportsMIDI()){
+
+				gAllowMIDIInput = args.result.configure_allow_midi_input;
+
+				// If they've allowed MIDI input, and not currently using it
+				if (theOldAllowMIDIInput != gAllowMIDIInput){
+
+					if (gAllowMIDIInput){
+
+						sendGoogleAnalytics("action","enable_MIDI");
+
+						initMIDI();
+					}
+
+				}
+			}
+
 
 			// Validate the staff spacing value
 			var testStaffSpacing = args.result.configure_staff_spacing;
@@ -18416,17 +18420,45 @@ function onMIDIInit(midi) {
 
 }
 
+//
+// Callback if MIDI start fails
+//
 function onMIDIReject(err) {
 
-	console.log("onMIDIReject");
+	//console.log("onMIDIReject");
 
-	//console.log("The MIDI system failed to start.");
+	sendGoogleAnalytics("action","onMIDIReject");
 
+	var thePrompt = "The MIDI input system failed to start. MIDI input will be disabled.";
+	thePrompt = makeCenteredPromptString(thePrompt);
+
+	DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+	// Reset the saved state so the message doesn't come up again on launch
+	if (localStorage){
+
+		gAllowMIDIInput = false;
+		localStorage.AllowMIDIInput = false;
+
+	}
+
+}
+
+// 
+// Does the browser support MIDI access?
+//
+function browserSupportsMIDI(){
+	if (navigator.requestMIDIAccess){
+		return true;
+	}
+	else{
+		return false;
+	}
 }
 
 function initMIDI(){
 
-	if (isDesktopBrowser() && isChrome()){
+	if (browserSupportsMIDI()){
 
 		// Don't do this more than once per session
 		if (gMIDIAccess == null){
