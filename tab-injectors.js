@@ -213,6 +213,51 @@ var angloFingeringsGenerator = function (theABC, callback){
     };
     
 
+    var gAngloButtonNames_GaryCoover = [
+
+        // Top row, LH
+        "1a",
+        "2a",
+        "3a",
+        "4a",
+        "5a",
+
+        // Top row, RH
+        "1a",
+        "2a",
+        "3a",
+        "4a",
+        "5a",
+
+        // Middle row, LH
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+
+        // Middle row, RH
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+
+        // Bottom row, LH
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+
+        // Bottom row, RH
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+    ];
+
     // Initialization of the original button map
     var jeffriesMap = null;
     var wheatstoneMap = null;
@@ -223,6 +268,12 @@ var angloFingeringsGenerator = function (theABC, callback){
     // Process the button naming matrix at tab build time
     //
     function processButtonNoteNames(map){
+
+        var originalButtonNames = gAngloButtonNames;
+
+        if (gInjectTab_GaryCoover){
+            gAngloButtonNames = gAngloButtonNames_GaryCoover;
+        }
 
         // Top row
         map["L1a"].name = gAngloButtonNames[0];
@@ -271,6 +322,11 @@ var angloFingeringsGenerator = function (theABC, callback){
         map["R8"].name = gAngloButtonNames[27];
         map["R9"].name = gAngloButtonNames[28];
         map["R10"].name = gAngloButtonNames[29];
+
+        // Restore the original map
+        if (gInjectTab_GaryCoover){
+            gAngloButtonNames = originalButtonNames;
+        }
 
         return map;
     }
@@ -582,98 +638,158 @@ var angloFingeringsGenerator = function (theABC, callback){
 
         var location = parseInt(gInjectTab_TabLocation);
 
+        // Button name is in path.states[i].button.finger first character
+
         for (var i = 0; i < path.states.length; ++i) {
 
             var index = notes[i].index + insertedTotal;
 
             var fingering = path.states[i].button.name;
 
-            if (gInjectTab_UseBarForDraw){
+            if (gInjectTab_GaryCoover){
 
-               switch (location){
+                var finger = path.states[i].button.finger;
 
-                    // Above
-                    case 0:
+                var isLeftSide = (finger.indexOf("l") == 0);
 
-                        if (path.states[i].direction == PUSH_NAME){
+                // Left side is below the staff
+                if (isLeftSide){
 
-                            // Add double quotes to fingering, to be rendered above the note
-                            fingering = "\"^" + fingering + "\"";
+                    if (path.states[i].direction == PUSH_NAME){
 
-                        }
-                        else{
+                        // Add double quotes to fingering, to be rendered below the note
+                        fingering = "\"_" + " " + ";" + fingering + "\"";
 
-                            var len = fingering.length;
-                            var theBar = "";
+                    }
+                    else{
 
-                            for (var j=0;j<len;++j){
-                                theBar += "_";
-                            }
+                        var len = fingering.length;
+                        var theBar = "";
 
-                            var origFingering = fingering;
-                            fingering = "\"^" + theBar + ";";
-                            fingering = fingering + origFingering + "\"";
-                           
+                        for (var j=0;j<len;++j){
+                            theBar += "_";
                         }
 
-                        break;
+                        var origFingering = fingering;
+                        fingering = "\"_" + theBar + ";";
+                        fingering = fingering + origFingering + "\"";                       
+                    }
 
-                    // Below
-                    case 1:
+                }
+                else{
 
-                       if (path.states[i].direction == PUSH_NAME){
+                    if (path.states[i].direction == PUSH_NAME){
 
-                            // Add double quotes to fingering, to be rendered below the note
-                            fingering = "\"_" + " " + ";" + fingering + "\"";
+                        // Add double quotes to fingering, to be rendered above the note
+                        fingering = "\"^" + fingering + "\"";
 
+                    }
+                    else{
+
+                        var len = fingering.length;
+                        var theBar = "";
+
+                        for (var j=0;j<len;++j){
+                            theBar += "_";
                         }
-                        else{
 
-                            var len = fingering.length;
-                            var theBar = "";
-
-                            for (var j=0;j<len;++j){
-                                theBar += "_";
-                            }
-
-                            var origFingering = fingering;
-                            fingering = "\"_" + theBar + ";";
-                            fingering = fingering + origFingering + "\"";
-                           
-                        }
- 
-                        break;
-
+                        var origFingering = fingering;
+                        fingering = "\"^" + theBar + ";";
+                        fingering = fingering + origFingering + "\"";
+                       
+                    }
                 }
             }
             else{
 
-                switch (location){
+                if (gInjectTab_UseBarForDraw){
 
-                    // Above
-                    case 0:
+                   switch (location){
 
-                        // Add double quotes to fingering, to be rendered above the note
-                        fingering = "\"^" + fingering + ";";
+                        // Above
+                        case 0:
 
-                        // Optionally append bellows direction, to be rendered below the button number.
-                        fingering = fingering + path.states[i].direction + "\"";
+                            if (path.states[i].direction == PUSH_NAME){
 
-                        break;
+                                // Add double quotes to fingering, to be rendered above the note
+                                fingering = "\"^" + fingering + "\"";
 
-                    // Below
-                    case 1:
+                            }
+                            else{
 
-                        // Add double quotes to fingering, to be rendered below the note
-                        fingering = "\"_" + fingering + ";";
+                                var len = fingering.length;
+                                var theBar = "";
 
-                        // Optionally append bellows direction, to be rendered below the button number.
-                        fingering = fingering + path.states[i].direction + "\"";
+                                for (var j=0;j<len;++j){
+                                    theBar += "_";
+                                }
 
-                        break;
+                                var origFingering = fingering;
+                                fingering = "\"^" + theBar + ";";
+                                fingering = fingering + origFingering + "\"";
+                               
+                            }
 
+                            break;
+
+                        // Below
+                        case 1:
+
+                           if (path.states[i].direction == PUSH_NAME){
+
+                                // Add double quotes to fingering, to be rendered below the note
+                                fingering = "\"_" + " " + ";" + fingering + "\"";
+
+                            }
+                            else{
+
+                                var len = fingering.length;
+                                var theBar = "";
+
+                                for (var j=0;j<len;++j){
+                                    theBar += "_";
+                                }
+
+                                var origFingering = fingering;
+                                fingering = "\"_" + theBar + ";";
+                                fingering = fingering + origFingering + "\"";
+                               
+                            }
+     
+                            break;
+
+                    }
+                }
+                else{
+
+                    switch (location){
+
+                        // Above
+                        case 0:
+
+                            // Add double quotes to fingering, to be rendered above the note
+                            fingering = "\"^" + fingering + ";";
+
+                            // Optionally append bellows direction, to be rendered below the button number.
+                            fingering = fingering + path.states[i].direction + "\"";
+
+                            break;
+
+                        // Below
+                        case 1:
+
+                            // Add double quotes to fingering, to be rendered below the note
+                            fingering = "\"_" + fingering + ";";
+
+                            // Optionally append bellows direction, to be rendered below the button number.
+                            fingering = fingering + path.states[i].direction + "\"";
+
+                            break;
+
+                    }
                 }
             }
+
 
             var fingLen = fingering.length;
             //angloLog("Merge["+i+"] index="+index+" fingLen="+fingLen+" insertedTotal="+insertedTotal);
@@ -907,6 +1023,7 @@ var angloFingeringsGenerator = function (theABC, callback){
         // Sanitize the input, removing header and footer, but keeping
         // the same offsets for the notes. We'll just replace header
         // and footer sections with '*'.
+
         var sanitizedInput = input;
         var headerRegex = /^\w:.*$/mg;
         var x;
@@ -970,8 +1087,8 @@ var angloFingeringsGenerator = function (theABC, callback){
 
             }
 
-        }    
-        
+        }  
+
         // Sanitize comments
         searchRegExp = /^%.*$/gm
 
@@ -990,9 +1107,12 @@ var angloFingeringsGenerator = function (theABC, callback){
 
             }
 
-        }       
+        }    
 
-        angloLog("sanitized input:" + sanitizedInput);
+
+        angloLog("orginal input:\n" + input);
+
+        angloLog("sanitized input:\n" + sanitizedInput);
 
         // Find all the notes
         var regex = /([=^_]?[a-gA-G][',]?|\|)/g;
@@ -1302,7 +1422,8 @@ var angloFingeringsGenerator = function (theABC, callback){
             // Strip chords? 
             // Above always strips
             // Below only strips if specified in the settings
-            if ((tabLocation == 0) || ((tabLocation == 1) && (stripChords))){
+            if (gInjectTab_GaryCoover || (tabLocation == 0) || ((tabLocation == 1) && (stripChords))){
+
                 thisTune = angloStripChords(thisTune);
             }
  
@@ -1340,9 +1461,9 @@ var angloFingeringsGenerator = function (theABC, callback){
             // Reels: Palatino 9
             // Jigs: Palatino 11
 
-            thisTune = InjectStringBelowTuneHeader(thisTune, "%%staffsep " + staffSep);
-            thisTune = InjectStringAboveTuneHeader(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
-            thisTune = InjectStringAboveTuneHeader(thisTune, "%%musicspace " + musicSpace);
+            thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%staffsep " + staffSep);
+            thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
+            thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%musicspace " + musicSpace);
 
             result += thisTune;
 
@@ -2188,9 +2309,9 @@ var boxTabGenerator = function (theABC){
             // Reels: Palatino 9
             // Jigs: Palatino 11
 
-            thisTune = InjectStringBelowTuneHeader(thisTune, "%%staffsep " + staffSep);
-            thisTune = InjectStringAboveTuneHeader(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
-            thisTune = InjectStringAboveTuneHeader(thisTune, "%%musicspace " + musicSpace);
+            thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%staffsep " + staffSep);
+            thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
+            thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%musicspace " + musicSpace);
 
             result += thisTune;
 
@@ -3013,36 +3134,36 @@ var bambooFluteTabGenerator = function (theABC){
             // Reels: Palatino 9
             // Jigs: Palatino 11
 
-            thisTune = InjectStringBelowTuneHeader(thisTune, "%%staffsep " + staffSep);
+            thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%staffsep " + staffSep);
   
             // Inject the root key indication
             switch (parseInt(gBambooFluteKey)){
 
                 case 0: // C
-                    thisTune = InjectStringBelowTuneHeader(thisTune, "%%text ");
-                    thisTune = InjectStringBelowTuneHeader(thisTune, "%%text 1=C");
+                    thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%text 1=C");
+                    thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%text ");
                 break;
 
                 case 1: // D
-                    thisTune = InjectStringBelowTuneHeader(thisTune, "%%text ");
-                    thisTune = InjectStringBelowTuneHeader(thisTune, "%%text 1=D");
+                    thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%text 1=D");
+                    thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%text ");
                 break;
                 
                 case 2: // G
-                    thisTune = InjectStringBelowTuneHeader(thisTune, "%%text ");
-                    thisTune = InjectStringBelowTuneHeader(thisTune, "%%text 1=G");
+                    thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%text 1=G");
+                    thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%text ");
                 break;
 
                 case 3: // A
-                    thisTune = InjectStringBelowTuneHeader(thisTune, "%%text ");
-                    thisTune = InjectStringBelowTuneHeader(thisTune, "%%text 1=A");
+                    thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%text 1=A");
+                    thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%text ");
                 break;
 
             }
 
-            thisTune = InjectStringAboveTuneHeader(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
+            thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
 
-            thisTune = InjectStringAboveTuneHeader(thisTune, "%%musicspace " + musicSpace);
+            thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%musicspace " + musicSpace);
 
             result += thisTune;
 
