@@ -18817,16 +18817,19 @@ function makeCenteredPromptString(thePrompt){
 //
 function sendGoogleAnalytics(theCategory,theAction,theLabel){
 
-	if (gtag && (gtag instanceof Function)){
+	if (typeof gtag !== "undefined"){
 
-		if (!theLabel){
-			theLabel = "none";
+		if ((gtag) && (gtag instanceof Function)){
+
+			if (!theLabel){
+				theLabel = "none";
+			}
+
+			//console.log("Sending gtag abctools event_category: "+theCategory+" event_action: "+theAction+" event_label: "+theLabel);
+
+			gtag('event', 'abc_'+theCategory+"_"+theAction, { event_category: theCategory, event_action: theAction, event_label: theLabel});
+
 		}
-
-		//console.log("Sending gtag abctools event_category: "+theCategory+" event_action: "+theAction+" event_label: "+theLabel);
-
-		gtag('event', 'abc_'+theCategory+"_"+theAction, { event_category: theCategory, event_action: theAction, event_label: theLabel});
-
 	}
 
 }
