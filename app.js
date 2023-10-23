@@ -9915,6 +9915,24 @@ function InjectRepeatsAndClickTrackAll(){
 
 
 //
+// Conditionally injects a string above the tune header if it doesn't already exist in the tune
+//
+function InjectStringAboveTuneHeaderConditional(theTune, theDirective){
+
+	if (theTune.indexOf(theDirective) == -1){
+
+		return InjectStringAboveTuneHeader(theTune, theDirective);
+
+	}
+	else{
+
+		return theTune;
+
+	}
+
+}
+
+//
 // Inject a string below the X: and above the rest of the header
 //
 function InjectStringAboveTuneHeader(theTune, theDirective) {
@@ -9958,6 +9976,22 @@ function InjectStringAboveTuneHeader(theTune, theDirective) {
 
 }
 
+//
+// Conditionally injects a string above the tune header if it doesn't already exist in the tune
+//
+function InjectStringBelowTuneHeaderConditional(theTune, theDirective){
+
+	if (theTune.indexOf(theDirective) == -1){
+
+		return InjectStringBelowTuneHeader(theTune, theDirective);
+
+	}
+	else{
+
+		return theTune;
+		
+	}
+}
 
 //
 // Inject anything just below the header
@@ -9969,6 +10003,8 @@ function InjectStringBelowTuneHeader(theTune,theString){
 		return theTune;
 	}
 
+	var theOriginalTune = theTune;
+
 	theTune = theTune.trim();
 
 	// Find the notes below the header
@@ -9978,7 +10014,30 @@ function InjectStringBelowTuneHeader(theTune,theString){
 
 	var theLines = theNotes.split("\n");
 
-	var firstLine = theLines[0]; 
+	// Find the first line that doesn't start with a comment
+	var nLines = theLines.length;
+
+	var firstLine;
+	var bGotNotes = false;
+
+	for (var i=0;i<nLines;++i){
+
+		firstLine = theLines[i];
+
+		if (firstLine.indexOf("%") != 0){
+			bGotNotes = true;
+			var theFirstLineIndex = theNotes.indexOf(firstLine);
+			theNotes = theNotes.substring(theFirstLineIndex);
+			break;
+		} 
+	}
+
+	// Didn't find anything below the header, exit early
+	if (!bGotNotes){
+
+		return(theOriginalTune);
+
+	}
 
 	// Find the offset into the tune of the first line of notes in the trimmed version
 	var theNotesIndex = theTune.indexOf(firstLine);
@@ -14832,7 +14891,6 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 
 }
 
-
 //
 // Based on the global injection configuration, pre-process the %%MIDI directives in the ABC
 function PreProcessPlayABC(theTune){
@@ -15116,6 +15174,7 @@ var gInjectTab_MusicSpace = 10;
 var gInjectTab_TabLocation = 0;
 var gInjectTab_ConcertinaStyle = 0;
 var gInjectTab_ConcertinaFingering = 0;
+var gInjectTab_GaryCoover = false;
 
 // Box and Concertina Push and draw tablature glyphs
 var gInjectTab_PushGlyph = "↓";
@@ -15243,6 +15302,14 @@ function GetInitialConfigurationSettings(){
 	}
 	else{
 		gInjectTab_ConcertinaFingering = 1;
+	}
+
+	val = localStorage.InjectTab_GaryCoover;
+	if (val){
+		gInjectTab_GaryCoover = (val == "true");
+	}
+	else{
+		gInjectTab_GaryCoover = false;
 	}
 
 	val = localStorage.InjectTab_StripChords;
@@ -15505,6 +15572,7 @@ function SaveConfigurationSettings(){
 		localStorage.InjectTab_TabLocation = gInjectTab_TabLocation;
 		localStorage.InjectTab_ConcertinaStyle = gInjectTab_ConcertinaStyle;
 		localStorage.InjectTab_ConcertinaFingering = gInjectTab_ConcertinaFingering;
+		localStorage.InjectTab_GaryCoover = gInjectTab_GaryCoover;
 
 		// Accordion and concertina tab bellows direction glyphs
 		localStorage.InjectTab_PushGlyph = gInjectTab_PushGlyph;
@@ -15787,6 +15855,7 @@ function resetAngloButtonNames(){
 }
 
 //
+//
 // Reset the button naming matrix to the default with confirmation
 //
 function defaultAngloButtonNames(){
@@ -16018,6 +16087,7 @@ function ConfigureTablatureSettings(){
 	  configure_pushglyph:gInjectTab_PushGlyph,
 	  configure_drawglyph:gInjectTab_DrawGlyph,
 	  configure_use_bar_for_draw:gInjectTab_UseBarForDraw,
+	  configure_gary_coover:gInjectTab_GaryCoover,
 	};
 
 	const form = [
@@ -16038,6 +16108,7 @@ function ConfigureTablatureSettings(){
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:12pt;font-family:helvetica">On-Row: Favors D5 and E5 on right-side C-row.</p>'},	  
 	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">Cross-Row: Favors D5 and E5 on the left-side G-row.</p>'},	  
 	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">Favors C5 on the left-side G-row draw, B4 on the right-side C-row draw.</p>'},	  
+	  {name: "    Gary Coover style tab (single notes only, overrides button name and direction settings)", id: "configure_gary_coover", type:"checkbox", cssClass:"configure_tab_settings_form_text"},
 	  {html: '<p style="text-align:center;margin-top:22px;"><input id="configure_anglo_fingerings" class="btn btn-subdialog configure_anglo_fingerings" onclick="ConfigureAngloFingerings()" type="button" value="Configure Anglo Concertina Tablature Button Names" title="Configure the Anglo Concertina tablature button names"></p>'},
 	];
 
@@ -16054,6 +16125,8 @@ function ConfigureTablatureSettings(){
 			gInjectTab_ConcertinaStyle = args.result.configure_concertina_style;
 			gInjectTab_ConcertinaFingering = args.result.configure_concertina_fingering;
 			gInjectTab_StripChords = args.result.configure_strip_chords;
+			gInjectTab_GaryCoover = args.result.configure_gary_coover
+
 
 			// Do some sanity checking on the push and draw glyphs
 			gInjectTab_PushGlyph = args.result.configure_pushglyph;
