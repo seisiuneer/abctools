@@ -1239,11 +1239,19 @@ left:-5000px;
 	margin-bottom:35px;
 }
 
+.configure_settings_form_text_checkbox{
+	font-size:12pt;
+	line-height:12px;
+	font-family:helvetica;
+	margin-top:11px;
+	display:flex;
+}
+
 .configure_settings_form_text{
 	font-size:12pt;
-	line-height:16px;
+	line-height:12px;
 	font-family:helvetica;
-	margin-top:16px;
+	margin-top:18px;
 	display:flex;
 }
 
@@ -1252,7 +1260,7 @@ left:-5000px;
 	font-family:helvetica;
 	margin-left: 12px;
 	width: 60px;
-	margin-top:-7px;
+	margin-top:-10px;
 }
 
 .configure_pdf_settings_form_text{
@@ -1328,7 +1336,6 @@ left:-5000px;
 	margin-top:-4px;
 }
 
-
 .configure_midi_program_select{
 font-size:11pt;
 font-family:"Helvetica";
@@ -1338,6 +1345,34 @@ margin-top:24px;
 }
 
 .configure_midi_program_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:220px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_midi_program_form_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:18px;
+}
+
+.configure_midi_program_form_select>select{
 display:inline;
 -webkit-appearance: none;
 -moz-appearance: none;
@@ -1759,7 +1794,7 @@ font-size:11pt;
 font-family:"Helvetica";
 display:flex;
 margin-right:12px;
-margin-top:24px;
+margin-top:18px;
 }
 
 .configure_settings_select>select{
