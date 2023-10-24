@@ -200,6 +200,15 @@ var gTheActiveSoundFont = gDefaultSoundFont;
 // Allow player to autoscroll
 var gAutoscrollPlayer = true;
 
+// Auto-swing hornpipes
+var gAutoSwingHornpipes = true;
+
+var gAutoSwingFactor = 0.25;
+
+var gAllSwingHornpipesRequested = false;
+var gAllSwingHornpipesSwingFactor = 0.25;
+var gAllNoSwingHornpipesRequested = false;
+
 // Use the custom GM sounds for dulcimer, accordion, flute, and whistle
 var gUseCustomGMSounds = true;
 
@@ -2436,13 +2445,53 @@ function GetAllTuneHyperlinks(theLinks) {
 
 			var tuneWithPatch = thisTune;
 
+			//
+			// Setting swing globally for all hornpipes?
+			//
+
+			// First check if swing disabled
+			if (!gAllNoSwingHornpipesRequested){
+
+				if (gAllSwingHornpipesRequested){
+
+					// Inject %swing into all hornpipes
+					if (tuneIsHornpipe(tuneWithPatch)){
+
+						// Strip out the X: tag
+						var searchRegExp = /^X:.*[\r\n]*/gm 
+
+						tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
+
+						tuneWithPatch = "X:1\n%swing "+gAllSwingHornpipesSwingFactor+"\n"+tuneWithPatch;
+
+					}
+
+				}
+
+			}
+			else{
+
+				// Inject %noswing into all hornpipes
+				if (tuneIsHornpipe(tuneWithPatch)){
+
+					// Strip out the X: tag
+					var searchRegExp = /^X:.*[\r\n]*/gm 
+
+					tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
+
+					tuneWithPatch = "X:1\n%noswing\n"+tuneWithPatch;
+
+				}
+
+			}
+
 			// If MIDI programs to be injected, do it now
 			if (gAddPlaybackHyperlinksIncludePrograms){
 				
 				// Strip out the X: tag
 				var searchRegExp = /^X:.*[\r\n]*/gm 
 
-				// Strip out tempo markings
+				// Strip out X:
 				tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
 
 				tuneWithPatch = "X:1\n%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkBassChordProgram+"\n"+tuneWithPatch;
@@ -4452,7 +4501,7 @@ function ParseCommentCommands(theNotes){
 	
 	searchRegExp = /^%no_edit_allowed.*$/m
 
-	// Detect thesession linkback annotation
+	// Detect no edit allowed annotatoin
 	var no_edit_allowed = theNotes.match(searchRegExp);
 
 	if ((no_edit_allowed) && (no_edit_allowed.length > 0)){
@@ -4461,6 +4510,54 @@ function ParseCommentCommands(theNotes){
 
 	}
 
+	// See if hornpipe swing global inject requested
+	gAllSwingHornpipesRequested = false;
+	gAllSwingHornpipesSwingFactor = gAutoSwingFactor;
+	
+	searchRegExp = /^%swing_all_hornpipes.*$/m
+
+	// Detect swing all hornpipes annotation
+	var swing_all_hornpipes = theNotes.match(searchRegExp);
+
+	if ((swing_all_hornpipes) && (swing_all_hornpipes.length > 0)){
+
+		gAllSwingHornpipesRequested = true;
+
+		var theSwingFactor = swing_all_hornpipes[0].replace("%swing_all_hornpipes","");
+		
+		theSwingFactor = theSwingFactor.trim();
+
+		if (theSwingFactor != ""){
+
+			var theSwingFactorFloat = parseFloat(theSwingFactor);
+
+			if (!isNaN(theSwingFactorFloat)){
+
+				// Range check swing value
+				if ((theSwingFactorFloat >= -0.9) && (theSwingFactorFloat <= 0.9)){
+
+					gAllSwingHornpipesSwingFactor = theSwingFactorFloat; 
+
+				}
+
+			}
+		}
+
+	}
+
+	// See if hornpipe swing disable global inject requested
+	gAllNoSwingHornpipesRequested = false;
+	
+	searchRegExp = /^%noswing_all_hornpipes.*$/m
+
+	// Detect no swing all hornpipes annotation
+	var no_swing_all_hornpipes = theNotes.match(searchRegExp);
+
+	if ((no_swing_all_hornpipes) && (no_swing_all_hornpipes.length > 0)){
+
+		gAllNoSwingHornpipesRequested = true;
+
+	}
 
 	// Include playback links for every tune
 	gAddPlaybackHyperlinks = false;
@@ -12508,6 +12605,8 @@ function InjectPDFHeaders(){
 	output += "%urlpagefooter https://michaeleskin.com Page Footer as Hyperlink\n";
 	output += "%add_all_links_to_thesession\n";
 	output += "%add_all_playback_links 0 0\n";
+	output += "%swing_all_hornpipes 0.25\n";	
+	output += "%noswing_all_hornpipes\n";	
 	output += "%no_edit_allowed\n";
 	output += "%qrcode\n";
 	output += "%qrcode https://michaeleskin.com\n";
@@ -14574,6 +14673,9 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 		return;
 	}
 
+	// Setup any swing found
+	ScanTuneForSwingInjection(theABC);
+
 	// Autoscroll-related cached values
 	var playerHolder;
 	var containerRect;
@@ -14958,6 +15060,118 @@ function PreProcessPlayABC(theTune){
 
 	return(theTune);
 
+}
+
+//
+// Is a tune a hornpipe?
+//
+function tuneIsHornpipe(theTune){
+
+	// First look for a Hornpipe rhythm request
+	var searchRegExp = /^R:Hornpipe.*$/gm
+
+	// Detect Hornpipe annotation
+	var testHornpipe = theTune.match(searchRegExp);
+
+	if ((testHornpipe) && (testHornpipe.length > 0)){
+
+		return true;
+
+	}
+
+	searchRegExp = /^R: Hornpipe.*$/gm
+
+	// Detect Hornpipe annotation
+	testHornpipe = theTune.match(searchRegExp);
+
+	if ((testHornpipe) && (testHornpipe.length > 0)){
+
+		return true;
+
+	}
+
+	searchRegExp = /^R:hornpipe.*$/gm
+
+	// Detect Hornpipe annotation
+	testHornpipe = theTune.match(searchRegExp);
+
+	if ((testHornpipe) && (testHornpipe.length > 0)){
+
+		return true;
+
+	}
+
+	searchRegExp = /^R: hornpipe.*$/gm
+
+	// Detect Hornpipe annotation
+	testHornpipe = theTune.match(searchRegExp);
+
+	if ((testHornpipe) && (testHornpipe.length > 0)){
+
+		return true;
+
+	}
+
+	return false;
+}
+
+//
+// Scan tune for swing annotation
+//
+function ScanTuneForSwingInjection(theTune){
+
+	// Default is no swing
+	gAddSwing = false;
+
+	// Default is typical hornpipe swing factor
+	gSwingFactor = gAutoSwingFactor;
+
+	var searchRegExp;
+	var doAddSwing;
+
+	// Check if autoswing enabled
+	if (gAutoSwingHornpipes){
+
+		gAddSwing = tuneIsHornpipe(theTune);
+
+	}
+
+	// Next search for an addswing override
+	searchRegExp = /^%swing.*$/gm
+
+	// Detect addswing annotation
+	doAddSwing = theTune.match(searchRegExp);
+
+	if ((doAddSwing) && (doAddSwing.length > 0)){
+
+		gAddSwing = true;
+
+		var swingValueFound = doAddSwing[0].replace("%swing","");
+
+		swingValueFound = swingValueFound.trim();
+
+		var swingValue = parseFloat(swingValueFound);
+
+		if (!isNaN(swingValue)){
+
+			gSwingFactor = swingValue;
+
+		}
+
+	}
+
+	// Have they disabled swing?
+
+	searchRegExp = /^%noswing.*$/gm
+
+	// Detect noswing annotation
+	doAddSwing = theTune.match(searchRegExp);
+
+	if ((doAddSwing) && (doAddSwing.length > 0)){
+
+		gAddSwing = false;
+
+	}
 }
 
 //
@@ -15468,6 +15682,26 @@ function GetInitialConfigurationSettings(){
 		gAutoscrollPlayer = true;
 	}
 
+	val = localStorage.AutoSwingHornpipes;
+	if (val){
+		gAutoSwingHornpipes = (val == "true");
+	}
+	else{
+		gAutoSwingHornpipes = true;
+	}
+
+	val = localStorage.AutoSwingFactor;
+	if (val){
+		var testVal = parseFloat(val);
+		if (!isNaN(testVal)){
+			gAutoSwingFactor = testVal;
+		}
+	}
+	else{
+		gAutoSwingFactor = 0.25;
+	}
+
+
 	val = localStorage.UseCustomGMSounds;
 	if (val){
 		gUseCustomGMSounds = (val == "true");
@@ -15617,6 +15851,12 @@ function SaveConfigurationSettings(){
 
 		// Save the player autoscroll preference
 		localStorage.AutoscrollPlayer = gAutoscrollPlayer;
+
+		// Save the hornpipe auto-swing setting
+		localStorage.AutoSwingHornpipes = gAutoSwingHornpipes
+
+		// Save the auto-swing swing factor
+		localStorage.AutoSwingFactor = gAutoSwingFactor
 
 		// Save the custom GM sounds setting
 		localStorage.UseCustomGMSounds = gUseCustomGMSounds;
@@ -16992,6 +17232,8 @@ function ConfigureToolSettings(e) {
 	  configure_save_exit_snapshot: gSaveLastAutoSnapShot,
 	  configure_comhaltas: gUseComhaltasABC,	  
 	  configure_allow_midi_input: gAllowMIDIInput,	  
+	  configure_auto_swing_hornpipes: gAutoSwingHornpipes,	  
+	  configure_auto_swing_factor: gAutoSwingFactor,	  
 	};
 
  	const sound_font_options = [
@@ -17010,35 +17252,36 @@ function ConfigureToolSettings(e) {
 
 	if (isDesktopBrowser()){
 		form.push(
-	  		{name: "   Save an Auto-Snapshot on browser tab close or reload (Restore it from the Add dialog)", id: "configure_save_exit_snapshot", type:"checkbox", cssClass:"configure_settings_form_text"}
+	  		{name: "   Save an Auto-Snapshot on browser tab close or reload (Restore it from the Add dialog)", id: "configure_save_exit_snapshot", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"}
 	  );
 	}
 
 	const form2 = [
 	  {name: "Full screen tune display scaling (percentage):", id: "configure_fullscreen_scaling", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Staff spacing (default is 10):", id: "configure_staff_spacing", type:"number", cssClass:"configure_settings_form_text"},
-	  {html: '<p style="font-size:4pt;font-family:helvetica">&nbsp;</p>'},	  
-	  {name: "    Show stringed instrument names on tablature (never shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_box_settings_form_text"},
+	  {name: "    Show stringed instrument names on tablature (never shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 	  {name: "Stringed instrument capo fret postion:", id: "configure_capo", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default abcjs soundfont:", id: "configure_soundfont", type:"select", options:sound_font_options, cssClass:"configure_settings_select"}, 
-	  {name: "    Use AppCordions custom sounds for Dulcimer, Accordion, Flute, and Whistle", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text"},
-	  {name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text"},
-	  {name: "Default Melody MIDI program:", id: "configure_melody_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
-	  {name: "Default Bass/Chords MIDI program:", id: "configure_chord_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
-	  {name: "            Use Default Bass/Chord volumes when playing tunes", id: "configure_inject_volumes", type:"checkbox", cssClass:"configure_settings_form_text"},
+	  {name: "    Use AppCordions custom sounds for Dulcimer, Accordion, Flute, and Whistle", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+	  {name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+	  {name: "Default Melody MIDI program:", id: "configure_melody_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
+	  {name: "Default Bass/Chords MIDI program:", id: "configure_chord_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
+	  {name: "            Use Default Bass/Chord volumes when playing tunes", id: "configure_inject_volumes", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 	  {name: "Default Bass MIDI volume (0-127):", id: "configure_bass_volume", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default Chords MIDI volume (0-127):", id: "configure_chord_volume", type:"number", cssClass:"configure_settings_form_text"},
-	  {name: "            Override all MIDI programs and volumes in the ABC when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text"},
-	  {name: "            Autoscroll player when playing", id: "configure_autoscrollplayer", type:"checkbox", cssClass:"configure_settings_form_text"},
+	  {name: "            Override all MIDI programs and volumes in the ABC when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+	  {name: "            Automatically swing Hornpipes when playing (enabled if R:Hornpipe is found in the tune)", id: "configure_auto_swing_hornpipes", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+	  {name: "Auto-swing scale factor (range is -0.9 to 0.9, default for Hornpipes is 0.25):", id: "configure_auto_swing_factor", type:"number", cssClass:"configure_settings_form_text"},
+	  {name: "            Autoscroll player when playing", id: "configure_autoscrollplayer", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 	  {name: "MP3 audio export bitrate (kbit/sec):", id: "configure_mp3_bitrate", type:"number", cssClass:"configure_settings_form_text"},
-	  {name: "    Player uses large controls (easier to touch on mobile and tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"configure_settings_form_text"},
-	  {name: "    Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)", id: "configure_comhaltas", type:"checkbox", cssClass:"configure_settings_form_text"},
+	  {name: "    Player uses large controls (easier to touch on mobile and tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+	  {name: "    Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)", id: "configure_comhaltas", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 	];
 
 	form = form.concat(form2);
 
 	if (browserSupportsMIDI()){
-		form.push({name: "    Allow MIDI input for ABC text entry", id: "configure_allow_midi_input", type:"checkbox", cssClass:"configure_settings_form_text"});
+		form.push({name: "    Allow MIDI input for ABC text entry", id: "configure_allow_midi_input", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 	};
 
 	form.push({html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Configure ABC Fonts" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="Configure MusicXML Import" title="Configure MusicXML import parameters"></p>'});	  
@@ -17287,6 +17530,22 @@ function ConfigureToolSettings(e) {
 			}
 
 			gAutoscrollPlayer = args.result.configure_autoscrollplayer;
+
+			gAutoSwingHornpipes = args.result.configure_auto_swing_hornpipes;
+
+			// Sanity check the autoswing factor value
+			var testSwing = args.result.configure_auto_swing_factor;
+
+			if (!isNaN(parseFloat(testSwing))){
+
+				var theSwing = parseFloat(testSwing);
+
+				if ((theSwing >= -0.9) && (theSwing <= 0.9)){
+
+					gAutoSwingFactor = theSwing;
+
+				}
+			}
 
 			gUseCustomGMSounds = args.result.configure_use_custom_gm_sounds;
 
