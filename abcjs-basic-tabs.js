@@ -9,6 +9,10 @@ var gRhythmPatternOverrides = {};
 // MAE 15 Oct 2023 - For suppressing tab icon
 var gDrawTabSymbol = true;
 
+// MAE 23 Oct 2023 - For adding swing
+var gAddSwing = false;
+var gSwingFactor = 0.25;
+
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
@@ -14199,8 +14203,32 @@ function CreateSynth() {
       // There might be a previous run that needs to be turned off.
       self.stop();
       var noteMapTracks = createNoteMap(self.flattened);
-      // if (self.options.swing)
-      //  addSwing(noteMapTracks, self.options.swing, self.beatsPerMeasure)
+
+      // MAE 23 Oct 2023 - Start for hornpipe swing
+
+      if (gAddSwing){
+
+        var beatsPerMeasure = self.beatsPerMeasure;
+
+        switch (beatsPerMeasure){
+
+          case 2:
+
+            addSwing(noteMapTracks, gSwingFactor/2, beatsPerMeasure*4, self.meterSize);
+
+            break;
+
+          case 4:
+
+            addSwing(noteMapTracks, gSwingFactor/2, beatsPerMeasure*2, self.meterSize);
+
+            break
+        }
+      
+      }
+
+      // MAE MAE 23 Oct 2023 -  End for hornpipe swing
+
       if (self.sequenceCallback) self.sequenceCallback(noteMapTracks, self.callbackContext);
       var panDistances = setPan(noteMapTracks.length, self.pan);
 
@@ -14411,38 +14439,45 @@ function CreateSynth() {
     }
   };
 
-  // // this is a first attempt at adding a little bit of swing to the output, but the algorithm isn't correct.
-  // function addSwing(noteMapTracks, swing, beatsPerMeasure) {
-  //  console.log("addSwing", noteMapTracks, swing, beatsPerMeasure)
-  //  // Swing should be between -0.9 and 0.9. Make sure the input is between them.
-  //  // Then that is the percentage to add to the first beat, so a negative number moves the second beat earlier.
-  //  // A value of zero is the same as no swing at all.
-  //  // This only works when there are an even number of beats in a measure.
-  //  if (beatsPerMeasure % 2 !== 0)
-  //    return;
-  //  swing = parseFloat(swing)
-  //  if (isNaN(swing))
-  //    return
-  //  if (swing < -0.9)
-  //    swing = -0.9
-  //  if (swing > 0.9)
-  //    swing = 0.9
-  //  var beatLength = (1 / beatsPerMeasure)*2
-  //  swing = beatLength * swing
-  //  for (var t = 0; t < noteMapTracks.length; t++) {
-  //    var track = noteMapTracks[t];
-  //    for (var i = 0; i < track.length; i++) {
-  //      var event = track[i];
-  //      if (event.start % beatLength) {
-  //        // This is the off beat
-  //        event.start += swing;
-  //      } else {
-  //        // This is the beat
-  //        event.end += swing;
-  //      }
-  //    }
-  //  }
-  // }
+  // this is a first attempt at adding a little bit of swing to the output
+  function addSwing(noteMapTracks, swing, beatsPerMeasure, meterSize) {
+
+    // console.log("addSwing", noteMapTracks, swing, beatsPerMeasure)
+    // Swing should be between -0.9 and 0.9. Make sure the input is between them.
+    // Then that is the percentage to add to the first beat, so a negative number moves the second beat earlier.
+    // A value of zero is the same as no swing at all.
+    // This only works when there are an even number of beats in a measure.
+    if ((beatsPerMeasure % 2 == 0) && (meterSize==1)){
+      //console.log("addSwing: Reel/Hornpipe");
+      swing = parseFloat(swing)
+      if (isNaN(swing))
+        return
+      if (swing < -0.9)
+        swing = -0.9
+      if (swing > 0.9)
+        swing = 0.9
+      var beatLength = (1 / beatsPerMeasure) * 2
+      swing = beatLength * swing
+      for (var t = 0; t < noteMapTracks.length; t++) {
+        var track = noteMapTracks[t];
+        for (var i = 0; i < track.length; i++) {
+          var event = track[i];
+          if ((event.end - event.start) >= (beatLength/2)){
+            if (event.start % beatLength) {
+              // This is the off beat
+              event.start += swing;
+            } else {
+              // This is the beat
+              event.end += swing;
+            }
+          }
+        }
+      }
+    }
+    else{
+      return;
+    }  
+  }
 }
 
 module.exports = CreateSynth;
