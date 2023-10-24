@@ -2457,12 +2457,17 @@ function GetAllTuneHyperlinks(theLinks) {
 					// Inject %swing into all hornpipes
 					if (tuneIsHornpipe(tuneWithPatch)){
 
-						// Strip out the X: tag
-						var searchRegExp = /^X:.*[\r\n]*/gm 
+						// Is there a manual swing disable override?
+						if (tuneWithPatch.indexOf("%noswing") == -1){
 
-						tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
+							// Strip out the X: tag
+							var searchRegExp = /^X:.*[\r\n]*/gm 
 
-						tuneWithPatch = "X:1\n%swing "+gAllSwingHornpipesSwingFactor+"\n"+tuneWithPatch;
+							tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
+
+							tuneWithPatch = "X:1\n%swing "+gAllSwingHornpipesSwingFactor+"\n"+tuneWithPatch;
+
+						}
 
 					}
 
@@ -2474,12 +2479,17 @@ function GetAllTuneHyperlinks(theLinks) {
 				// Inject %noswing into all hornpipes
 				if (tuneIsHornpipe(tuneWithPatch)){
 
-					// Strip out the X: tag
-					var searchRegExp = /^X:.*[\r\n]*/gm 
+					// Is there a manual swing override?
+					if (tuneWithPatch.indexOf("%swing") == -1){
 
-					tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
+						// Strip out the X: tag
+						var searchRegExp = /^X:.*[\r\n]*/gm 
 
-					tuneWithPatch = "X:1\n%noswing\n"+tuneWithPatch;
+						tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
+
+						tuneWithPatch = "X:1\n%noswing\n"+tuneWithPatch;
+
+					}
 
 				}
 
@@ -2497,6 +2507,7 @@ function GetAllTuneHyperlinks(theLinks) {
 				tuneWithPatch = "X:1\n%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkBassChordProgram+"\n"+tuneWithPatch;
 
 			}
+
 
 			// Create a share URL for this tune
 			var theURL = FillUrlBoxWithAbcInLZW(tuneWithPatch,false);
