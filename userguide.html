@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-                
+        
         <style>
         p {
         font-size:14pt;
@@ -214,6 +214,8 @@
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#playing_your_tunes">Playing Your Tunes</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#saving_wav_mp3_midi">Saving .WAV, .MP3, or MIDI Files</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#adding_swing">Adding Playback Swing to Hornpipes</a></p>
+
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">Tool Controls</button>
@@ -467,6 +469,28 @@
             <div class="image_holder_p">
                 <img src="img/large_player_controls_4.jpg"/>
             </div>
+            <hr class="hidden-print" id="adding_swing">
+            <h1 class="page_break_always">Adding Playback Swing to Hornpipes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/xQp3tuFyBPM" title="Hornpipe Swing" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p>By default, unless disabled in the <strong>Settings</strong> dialog, any tune with a:</p>
+            <p class="code">R:Hornpipe</p>
+            <p>detected in the ABC will automatically have swing added during playback.</p>
+            <p>The auto-swing factor may be set in the <strong>Settings</strong> dialog.</p>
+            <p>If the tune is not marked as a Hornpipe, you can manually add swing to Hornpipes and other tunes in 4/4 meter by including the following comment-based annotation anywhere in the tune ABC:</p>
+            <p class="code">%swing swing_factor (Optional: Range is -0.9 to 0.9)</p>
+            <p>The swing factor lengthens the primary beats by the swing factor and shorten subsequent beats accordingly.</p>
+            <p>For example, to get a typical Hornpipe feel with a lengthened first beat, shortened second beat:</p>
+            <p class="code">%swing .25</p>
+            <p>Another example, to get a typical Scottish snap feel with a shortened first beat, lengthened second beat:</p>
+            <p class="code">%swing -0.5</p>
+            <p>If no swing factor is provided, it will default to the Hornpipe swing factor set in the <strong>Settings</strong> dialog:</p>
+            <p class="code">% Uses the Hornpipe swing factor set in the tool's Settings<br/><br/>
+            %swing</p>
+            <p>Any manually added %addswing value always overrides the automatic detected swing factor.</p> 
+            <p>To disable swing for a Hornpipe, you may add %noswing anywhere in the tune ABC:</p>
+            <p class="code">% This will result in the swing being disabled<br/><br/>
+            %noswing</p>
+            <p>%noswing takes precedence over any default Hornpipe swing or manually added %addswing</p>
             <hr class="hidden-print" id="saving_wav_mp3_midi">
             <h1 class="page_break_always">Saving .WAV, .MP3 or MIDI Files<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>From the <strong>Player</strong>, you can save out audio of your tune in either .WAV or .MP3 format as well as a MIDI file.</p>
@@ -628,7 +652,7 @@
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder_p">
-                <img src="img/abc_transcription_tool_settings_25.jpg"/>
+                <img src="img/abc_transcription_tool_settings_26.jpg"/>
             </div>
             <p><strong>Save an Auto-Snapshot on browser tab close or reload? (Restore it from the Add dialog)</strong> - (Desktop browsers only) When enabled, saves an Auto-Snapshot when closing or reloading the browser tab the tool is running in.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/pp6fD2NOKtw" title="Auto-Snapshots" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
@@ -646,7 +670,7 @@
             <p><strong>Stringed instrument capo fret postion</strong> - Allows you to set a capo setting from 0 to 12 frets for the Mandolin, GDAD, CGDA, or Guitar tab.</p>
             <p>The following controls select default MIDI soundfont, programs, and volumes to use for the Melody, Bass, and Chords:</p>
             <p><strong>Default abcjs soundfont:</strong> - Choose between the five General MIDI soundfonts available in abcjs to use by default when playing tunes:</p>
-            <p style="text-align: center;">Fluid<br/>
+            <p>Fluid<br/>
             Musyng Kite<br/>
             FatBoy<br/>
             Canvas (Based on a Roland JV-1010)<br/>
@@ -688,6 +712,13 @@
             <p>In this case, you may not want to include any chords in the ABC, as they will be played using the Dulcimer (15) instrument.</p>
             <p></p>
             <p>This only applies if <strong>Use AppCordions custom sounds for Dulcimer, Accordion, Flute, and Whistle</strong> is enabled (see below).</p>
+            <p><strong>Automatically swing Hornpipes when playing (enabled if R:Hornpipe is found in the tune)</strong> - If checked, automatically swings Hornpipes if</p>
+            <p class="code">R:Hornpipe</p>
+            <p>is found in the tune.</p>
+            <p><strong>Auto-swing scale factor (range is -0.9 to 0.9, default for Hornpipes is 0.25)</strong> - Sets the level of swing used by the Hornpipe play auto-swing feature.</p>
+            <p>The swing factor lengthens the primary beats by the swing factor and shorten subsequent beats accordingly.</p>       
+            <p>For more details on swing and swing factor, see this section:</p>
+            <p style="text-align: center;"><a style="text-decoration:none;" href="#adding_swing">Adding Playback Swing to Hornpipes</a></p>     
             <p><strong>Autoscroll player when playing</strong> - Check this if you want have the player autoscroll the notes into view while playing.</p>
             <p><strong>MP3 audio export bitrate (kbit/sec):</strong> - Sets the bitrate for MP3 stereo audio downloaded from the Player. </p>
             <p>Default value is 224.  Minimum value allowed is 96. Maximum value allowed is 384. Higher values result in higher quality audio.</p>
@@ -1379,11 +1410,13 @@
             <p class="code">%add_all_playback_links 21 0</p>
             <p></p>
             <hr>
-            <p><strong>Disabling access to the tune editor from tunes linked from PDF tunebooks.</strong></p>
-            <p>To disable access to the editor (hides the Zoom arrows in the full screen view) from a tune link created with one of the above directives, add:</p>
-            <p class="code">%no_edit_allowed</p>
-            <p>anywhere in the ABC file.</p>
-            <p></p>
+            <p><strong>Adding or disabling swing for all Hornpipes in PDF tunebooks with play links:</strong></p>
+            <p>If you want to add swing to every Hornpipe when generating PDF tunebooks with play links, add the following comment-based annotation anywere in the tunebook ABC:</p>
+            <p class="code">%swing_all_hornpipes swing_factor (Optional: Range is -0.9 to 0.9)</p>
+            <p>If you omit the swing_factor value, it will use the current tool default from the settings dialog.</p>
+            <p>If you want to disable swing on every Hornpipe when generating PDF tunebooks with play links, add the following comment-based annotation anywere in the tunebook ABC:</p>
+            <p class="code">%noswing_all_hornpipes</p>
+            <p>%noswing_all_hornpipes takes precedence over %swing_all_hornpipes.</p>
             <hr>
             <p><strong>Adding a thesession.org hyperlink to a specific tune:</strong></p>
             <p></p>
@@ -1423,6 +1456,12 @@
             <p>These play links will work with the built-in PDF reader on most web browsers and online PDF readers, many non-Adobe desktop and mobile PDF readers, but will not open correctly if the tune title is clicked when the PDF is viewed using Adobe Acrobat.</p>
             <p>If Adobe Acrobat is your target PDF reader, your best option is to use the available per-tune %hyperlink directive in these tunes with a shortened play Share URL manually generated using the <strong>Sharing</strong> dialog:</p>
             <p class="code">%hyperlink your_shortened_Share_URL_here</p>
+            <hr>
+            <p><strong>Disabling access to the tune editor from tunes linked from PDF tunebooks.</strong></p>
+            <p>To disable access to the editor (hides the Zoom arrows in the full screen view) from a tune link created with one of the above directives, add:</p>
+            <p class="code">%no_edit_allowed</p>
+            <p>anywhere in the ABC file.</p>
+            <p></p>
             <hr>
             <p class="page_break_always"><strong>Example: Creating a PDF tunebook with playback links and other advanced features</strong></p>
             <p></p>
