@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+                
         <style>
         p {
         font-size:14pt;
@@ -1414,8 +1414,10 @@
             <p>If you want to add swing to every Hornpipe when generating PDF tunebooks with play links, add the following comment-based annotation anywere in the tunebook ABC:</p>
             <p class="code">%swing_all_hornpipes swing_factor (Optional: Range is -0.9 to 0.9)</p>
             <p>If you omit the swing_factor value, it will use the current tool default from the settings dialog.</p>
+            <p>Tunes that have swing manually disabled using %noswing in their ABC will not have the %swing annotation injected and will play with no swing.</p>
             <p>If you want to disable swing on every Hornpipe when generating PDF tunebooks with play links, add the following comment-based annotation anywere in the tunebook ABC:</p>
             <p class="code">%noswing_all_hornpipes</p>
+            <p>Tunes that have swing manually specified using %swing in their ABC will not have the %noswing annotation injected and will retain their swing setting.</p>
             <p>%noswing_all_hornpipes takes precedence over %swing_all_hornpipes.</p>
             <hr>
             <p><strong>Adding a thesession.org hyperlink to a specific tune:</strong></p>
