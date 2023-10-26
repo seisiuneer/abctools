@@ -616,19 +616,19 @@ opacity: 0.4;
 padding:12px;
 }
 
-#injectbctab, #injectmelody, #injectstaffwidth, #injectsectionheader{
+#injectbctab, #injectmelody, #injectstaffwidth, #injectsectionheader,#ceoltasdialog{
 margin-right:24px;
 height:42px;
 padding:12px;
 }
 
-#injectanglotab, #ceoltastransform, #injectmetronome{
+#injectanglotab, #ceoltastransform, #injectmetronome,#injectbambooflute,#ceoltasdialoginverse{
 height:42px;
 padding:12px;
 margin-right:24px;
 }
 
-#injectbambooflute, #injectclicktrackall, #injectchords, #injectheadertemplate, #injectcdtab, #injectallmidiparams,#injectallheaders{
+#injectfiddlefingerings, #injectclicktrackall, #injectchords, #injectheadertemplate, #injectcdtab, #injectallmidiparams,#injectallheaders{
 height:42px;
 padding:12px;
 }
