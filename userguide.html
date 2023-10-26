@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-                
+        
         <style>
         p {
         font-size:14pt;
@@ -222,7 +222,7 @@
                 <button class="accordion" title="Click to expand/collapse this section">Tool Controls</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#basic_controls">Basic Controls</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#advanced_controls">Advanced Controls</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#advanced_controls">Advanced Controls and Features</a></p>
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">Tool Settings</button>
@@ -264,9 +264,11 @@
                     <p class="toc"><a style="text-decoration:none;" href="#custom_font_overrides">Custom Font Overrides</a></p>
                 </div>
                 
-                <button class="accordion" title="Click to expand/collapse this section">Tablature Injection</button>
+                <button class="accordion" title="Click to expand/collapse this section">Instrument-Specific Tablature Injection</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#injecting_tablature">Injecting B/C Box, C#/D Box, Anglo Concertina, Bamboo Flute, or Fiddle Fingerings Tablature Into the ABC Tunes</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#clearing_tablature">Clearing the Injected Tablature</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#tablature_settings">Configuring Tablature Fonts and Settings</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#reading_the_box_tablature">Reading the Box Tablature</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#reading_the_concertina_tablature">Reading the Anglo Concertina Tablature</a></p>
                 </div>
@@ -536,7 +538,7 @@
             </div>
             <p><strong>Notation</strong> - Standard notation only.</p>
             <p><strong>Names</strong> - Shows standard notation with note names below.</p>
-            <p>Choose between standard ABC d e f style octave notes or Comhaltas-preferred D' E' F' octave note display in the <strong>Settings</strong> dialog.</p>
+            <p>Choose between standard ABC d e f style octave notes or Comhaltas-preferred "Blackboard ABC" D' E' F' octave note display in the <strong>Settings</strong> dialog.</p>
             <p><strong>Important:</strong> While the note Names display will show the Comhaltas-preferred note names, the ABC standard requires that the second octave C in the ABC itself either be represented by c or C' so that may requires some minor changes when pasting in your Comhaltas-formatted tunes.</p>
             <p>Note names font and size in the tab is set by the <strong>Tab number font</strong> value in the <strong>Configure ABC Rendering Fonts</strong> dialog.</p>
             <p><strong>Mandolin</strong> - Shows standard notation and tablature for Mandolin.</p>
@@ -566,8 +568,8 @@
             <p><strong>Sharing</strong> - Shows the <a style="text-decoration:none;" href="#sharing_controls">Sharing Controls</a> dialog with options for sharing your tunes via a share URL or QR code.</p>
             <p><strong>Clear</strong> - Clears the ABC Editor so you can start over.</p>
             <hr class="hidden-print" id="advanced_controls">
-            <h1 class="page_break_always">Advanced Controls<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>Clicking the <strong>Advanced</strong> button brings up the ABC Transcription Tools Advanced Controls dialog:</p>
+            <h1 class="page_break_always">Advanced Controls and Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>Clicking the <strong>Advanced</strong> button brings up the ABC Transcription Tools Advanced Controls and Features dialog:</p>
             <div class="image_holder_p">
                 <img src="img/advanced_controls_15.jpg"/>
             </div>
@@ -627,16 +629,19 @@
             <p><strong>The lack of a first repeat bar symbol in the ABC will make the first part of the tune on the second and repetitions appear to not repeat.</strong></p>
             <p><strong>To Fix:</strong></p>
             <p><strong>Add a |: repeat bar at the start of the tune.</strong></p>
-            <p><strong>Comhaltas ABC Transform</strong> - Brings up a dialog where you can choose between transforming the entire ABC from the standard ABC d e f octave note style to the Comhaltas-preferred D' E' F' octave note style, or from the Comhaltas-preferred D' E' F' octave note style to standard ABC d e f octave note style.</p>
+            <p><strong>Comhaltas ABC Transform</strong> - Brings up a dialog where you can choose between transforming the entire ABC from the standard ABC d e f octave note style to the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style, or from the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style to standard ABC d e f octave note style.</p>
             <p><strong>Important:</strong> While the note Names display will show the Comhaltas-preferred note names, the ABC standard requires that the second octave C in the ABC itself either be represented by c or C' so that may requires some minor changes when pasting in your Comhaltas-formatted tunes.</p>
-            <p><strong>Inject B/C Box Tab</strong> - Injects B/C Box tablature into the ABC (uses ABC chord syntax).</p>
-            <p><strong>Inject C#/D Box Tab</strong> - Injects C#/D Box tablature into the ABC (uses ABC chord syntax).</p>
-            <p><strong>Inject Anglo Concertina Tab</strong> - Injects Anglo Concertina tablature into the ABC (uses ABC chord syntax).</p>
+            <p><strong>Regarding Comhaltas ABC and instrument tab injection:</strong> The various instrument-specific tab injectors detailed below are not able to work with the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style note names.</p>
+            <p>To inject instrument tab into ABC in this format, you will first need to convert the Comhaltas-preferred ABC to standard ABC the <strong>Comhaltas ABC Transform</strong> dialog's <strong>Comhaltas ABC to Standard ABC</strong> button first, then do the tablature injection.</p>
+            <p>After doing the tab injection, you can then transform the ABC back into the Comhaltas-preferred format using the the <strong>Comhaltas ABC Transform</strong> dialog's <strong>Standard ABC to Comhaltas ABC</strong> button</p>
+            <p><strong>Inject B/C Box Tab</strong> - Injects B/C Box tablature into the ABC.</p>
+            <p><strong>Inject C#/D Box Tab</strong> - Injects C#/D Box tablature into the ABC.</p>
+            <p><strong>Inject Anglo Concertina Tab</strong> - Injects Anglo Concertina tablature into the ABC.</p>
             <p class="page_break_always"><strong>Inject Bamboo Flute Tab</strong> - After requesting the bamboo flute key, injects numeric notation tab for the selected key into the ABC.</p>
             <div class="image_holder_p">
                 <img src="img/bamboo_flute_1.jpg"/>
             </div>
-            <p><strong>Inject Fiddle Fingerings</strong> - Injects Fiddle/Mandolin fingerings (which finger to use for the note) into the ABC (uses ABC chord syntax).</p>
+            <p><strong>Inject Fiddle Fingerings</strong> - Injects Fiddle/Mandolin fingerings (which finger to use for the note) into the ABC.</p>
             <p>Note for Mandolin players:</p>
             <p>This is distinct from the fret number displayed when showing the Mandolin tablature along with the notation.</p>
             <p>The Mandolin tablature shows which fret to use on the Mandolin. This shows which finger to use on the fret.</p>
@@ -743,7 +748,7 @@
             <div class="image_holder_p">
                 <img src="img/large_player_controls_4.jpg"/>
             </div>
-            <p><strong>Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)</strong> - Check this if you want to use the Comhaltas standard for ABC note names (D' E' F' instead of d e f for octave notes) when in note names tab display mode.</p>
+            <p><strong>Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)</strong> - Check this if you want to use the Comhaltas "Blackboard ABC" standard for ABC note names (D' E' F' instead of d e f for octave notes) when in note names tab display mode.</p>
             <p><strong>Important:</strong> While the note Names display will show the Comhaltas-preferred note names, the ABC standard requires that the second octave C in the ABC itself either be represented by c or C' so that may requires some minor changes when pasting in your Comhaltas-formatted tunes.</p>
             <p>Note name font and size in the tab is set by the <strong>Tab number font</strong> setting in the <strong>Configure ABC Fonts dialog</strong>.</p>
             <p><strong>Configure ABC Fonts</strong> - Brings up a dialog where you can configure all fonts used for rendering the ABC.</p>
@@ -1576,6 +1581,10 @@
             <p style="text-align: center;"><a href="http://iosfonts.com/" target="_blank">iOS Fonts</a></p>
             <hr class="hidden-print" id="injecting_tablature">
             <h1 class="page_break_always h1wide">Injecting B/C Box, C#/D Box, Anglo Concertina, Bamboo Flute, or Fiddle Fingerings Tablature Into the ABC Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>The tablature injection features add additional text into your ABC to create tablature for the selected instrument.</p>
+            <p style="text-align: center;"><strong>Consider saving or grabbing a Snapshot your work before injecting tab!</strong></p> 
+            <p>Since the tab injectors modify your original ABC, you may want to grab a Snapshot of the entire ABC (simply click the <strong>Snapshot</strong> button) before doing the tab injection operation.</p>
+            <p>If you grab a Snapshot, after the tab injection operation, if there was an issue, you can use the <strong>Restore</strong> button to get back your original ABC.</p>
             <p>You may inject Box or Anglo Concertina tablature into the ABC using the following buttons in the <strong>Advanced Controls</strong> dialog:</p>
             <p><strong>Inject B/C Box Tab</strong> - Injects B/C Box tablature into the ABC.</p>
             <p><strong>Inject C#/D Box Tab</strong> - Injects C#/D Box tablature into the ABC.</p>
@@ -1584,10 +1593,15 @@
             <div class="image_holder_p">
                 <img src="img/bamboo_flute_1.jpg"/>
             </div>
-            <p><strong>Inject Fiddle Fingerings</strong> - Injects Fiddle/Mandolin fingerings (which finger to use for the note) into the ABC (uses ABC chord syntax).</p>
+            <p><strong>Inject Fiddle Fingerings</strong> - Injects Fiddle/Mandolin fingerings (which finger to use for the note) into the ABC.</p>
             <p>Note for Mandolin players:</p>
             <p>This is distinct from the fret number displayed when showing the Mandolin tablature along with the notation.</p>
             <p>The Mandolin tablature shows which fret to use on the Mandolin. This shows which finger to use on the fret.</p>
+            <hr class="hidden-print" id="clearing_tablature">
+            <h1 class="page_break_always h1wide">Clearing the Injected Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>Since the tablature is injected using the ABC chord system, you can easily clear all tab and get back to the original ABC by clicking the <strong>Strip Chords + Injected Tab</strong> button on the <strong>Advanced</strong> features dialog.</p>
+            <hr class="hidden-print" id="tablature_settings">
+            <h1 class="page_break_always h1wide">Configuring Tablature Fonts and Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>To configure the tablature fonts and other settings, first click the tool's Settings button, then click the <strong>Configure Tablature Injection Settings</strong> button at the bottom of the dialog to bring up the tablature injections settings dialog:</p>
             <div class="image_holder_p">
                 <img src="img/tab_injection_settings_5.jpg"/>
