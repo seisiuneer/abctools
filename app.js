@@ -12627,6 +12627,9 @@ function InjectPDFHeaders(){
 	output += "%hyperlink https://michaeleskin.com\n";
 	output += "%add_link_to_thesession\n";
 	output += "%add_playback_link 0 0\n";
+	output += "%swing 0.25 0\n";
+	output += "%noswing\n";
+
 	output += "\n";
 	
 	output += theNotes;
@@ -15131,11 +15134,16 @@ function tuneIsHornpipe(theTune){
 //
 function ScanTuneForSwingInjection(theTune){
 
+	//debugger;
+
 	// Default is no swing
 	gAddSwing = false;
 
 	// Default is typical hornpipe swing factor
 	gSwingFactor = gAutoSwingFactor;
+
+	// Zero out the swing offset
+	gSwingOffset = 0;
 
 	var searchRegExp;
 	var doAddSwing;
@@ -15157,18 +15165,37 @@ function ScanTuneForSwingInjection(theTune){
 
 		gAddSwing = true;
 
-		var swingValueFound = doAddSwing[0].replace("%swing","");
+		var theParamString = doAddSwing[0].replace("%swing","");
 
-		swingValueFound = swingValueFound.trim();
+		theParamString = theParamString.trim();
 
-		var swingValue = parseFloat(swingValueFound);
+		var theParams = theParamString.split(" ");
 
-		if (!isNaN(swingValue)){
+		if (theParams.length >= 1){
 
-			gSwingFactor = swingValue;
+			var theSwingValueFound = theParams[0];
 
+			var swingValue = parseFloat(theSwingValueFound);
+
+			if (!isNaN(swingValue)){
+
+				gSwingFactor = swingValue;
+
+			}
 		}
 
+		if (theParams.length > 1){
+
+			var theSwingOffsetValueFound = theParams[1];
+			
+			var swingOffsetValue = parseInt(theSwingOffsetValueFound);
+
+			if (!isNaN(swingOffsetValue)){
+
+				gSwingOffset = swingOffsetValue;
+
+			}
+		}
 	}
 
 	// Have they disabled swing?
