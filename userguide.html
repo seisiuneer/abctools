@@ -214,7 +214,7 @@
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#playing_your_tunes">Playing Your Tunes</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#saving_wav_mp3_midi">Saving .WAV, .MP3, or MIDI Files</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#adding_swing">Adding Playback Swing to Hornpipes</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#adding_swing">Adding Playback Swing to Tunes</a></p>
 
                 </div>
                 
@@ -470,27 +470,39 @@
                 <img src="img/large_player_controls_4.jpg"/>
             </div>
             <hr class="hidden-print" id="adding_swing">
-            <h1 class="page_break_always">Adding Playback Swing to Hornpipes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/xQp3tuFyBPM" title="Hornpipe Swing" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <h1 class="page_break_always">Adding Playback Swing to Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>By default, unless disabled in the <strong>Settings</strong> dialog, any tune with a:</p>
             <p class="code">R:Hornpipe</p>
             <p>detected in the ABC will automatically have swing added during playback.</p>
             <p>The auto-swing factor may be set in the <strong>Settings</strong> dialog.</p>
-            <p>If the tune is not marked as a Hornpipe, you can manually add swing to Hornpipes and other tunes in 4/4 meter by including the following comment-based annotation anywhere in the tune ABC:</p>
-            <p class="code">%swing swing_factor (Optional: Range is -0.9 to 0.9)</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/xQp3tuFyBPM" title="Hornpipe Swing" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <hr>
+            <p style="text-align: center;"><strong>Manually Adding Swing to Tunes</strong></p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/NpgJzVDRHwA" title="Adding Swing Manually" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p>If the tune is not marked as a Hornpipe, you can manually add swing to any tune in 2/4, 4/4, 6/8, 9/8, and 12/8 meter by including the following comment-based annotation anywhere in the tune ABC:</p>
+            <p class="code">%swing swing_factor (optional: Range is -0.9 to 0.9) swing_offset (optional: If used, generally set to 1 or 2)</p>
             <p>The swing factor lengthens the primary beats by the swing factor and shorten subsequent beats accordingly.</p>
-            <p>For example, to get a typical Hornpipe feel with a lengthened first beat, shortened second beat:</p>
+            <p>The swing offset offsets the swing pattern by the specified number of eighth notes.</p>
+            <p>Swing factor must be specified to use the swing offset feature.</p>
+            <p>The optional swing_offset parameter is required for tunes if there is a one or two eighth note pickup (most commonly found in Jigs, Slip Jigs, and Slides), otherwise the swing pattern will be out-of-sync with the tune.</p>
+            <p>If no swing factor is provided, it will default to the Hornpipe swing factor set in the <strong>Settings</strong> dialog.</p>
+            <p>If no swing offset is provided, it is set to zero.</p>
+            <p><strong>Example 1:</strong> To swing a reel with the default Hornpipe swing factor and no swing offset:</p>
+            <p class="code">%swing</p>
+            <p><strong>Example 2:</strong> To swing a reel with a 0.25 swing factor and no swing offset:</p>
             <p class="code">%swing .25</p>
-            <p>Another example, to get a typical Scottish snap feel with a shortened first beat, lengthened second beat:</p>
+            <p><strong>Example 3:</strong> To swing a jig with a 0.25 swing factor and a single pickup eighth note preceding the main tune:</p>
+            <p class="code">%swing .25 1</p>
+            <p><strong>Example 4:</strong> To swing a slip jig with a 0.25 swing factor and two pickup eighth notes preceding the main tune:</p>
+            <p class="code">%swing .25 2</p>
+            <p><strong>Example 5:</strong></p>
+            <p>To get a typical Scottish snap feel in a Hornpipe with a shortened first beat, lengthened second beat, with no swing offset:</p>
             <p class="code">%swing -0.5</p>
-            <p>If no swing factor is provided, it will default to the Hornpipe swing factor set in the <strong>Settings</strong> dialog:</p>
-            <p class="code">% Uses the Hornpipe swing factor set in the tool's Settings<br/><br/>
-            %swing</p>
-            <p>Any manually added %addswing value always overrides the automatic detected swing factor.</p> 
+            <p>Any manually added %swing value always overrides the automatic injected swing factor for Hornpipes.</p> 
             <p>To disable swing for a Hornpipe, you may add %noswing anywhere in the tune ABC:</p>
             <p class="code">% This will result in the swing being disabled<br/><br/>
             %noswing</p>
-            <p>%noswing takes precedence over any default Hornpipe swing or manually added %addswing</p>
+            <p>%noswing takes precedence over any default Hornpipe swing or manually added %swing</p>
             <hr class="hidden-print" id="saving_wav_mp3_midi">
             <h1 class="page_break_always">Saving .WAV, .MP3 or MIDI Files<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>From the <strong>Player</strong>, you can save out audio of your tune in either .WAV or .MP3 format as well as a MIDI file.</p>
