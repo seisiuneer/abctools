@@ -12650,12 +12650,17 @@ function InjectPDFHeaders(){
 //
 // Do Ceoltas Transform
 //
-function DoCeoltasTransform(){
+function DoCeoltasTransform(doInverse){
 
 	// Keep track of tablature injection use
-	sendGoogleAnalytics("inject_tablature","DoCeoltasTransform");
+	if (doInverse){
+		sendGoogleAnalytics("inject_tablature","DoCeoltasTransform_Inverse");
+	}
+	else{
+		sendGoogleAnalytics("inject_tablature","DoCeoltasTransform");
+	}
 
-	gTheABC.value = ceoltasABCTransformer(gTheABC.value);
+	gTheABC.value = ceoltasABCTransformer(gTheABC.value,doInverse);
 	
 	RenderAsync(true,null);
 
@@ -12664,6 +12669,20 @@ function DoCeoltasTransform(){
 
 	// Idle the show tab names control
 	IdleAllowShowTabNames();
+
+}
+
+//
+// Ceoltas transform dialog
+//
+function DoCeoltasTransformDialog(){
+
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Ceoltas ABC Transform</p>';
+
+	modal_msg  += '<p style="text-align:center;"><input id="ceoltasdialog" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransform(false)" type="button" value="Standard ABC to Comhaltas ABC" title="Transforms the standard ABC format to Comhaltas format.">';
+	modal_msg  += '<input id="ceoltasdialoginverse" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransform(true)" type="button" value="Comhaltas ABC to Standard ABC" title="Transforms the Comhaltas format to standard ABC format."></p>';
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, width: 650,  scrollWithPage: (AllowDialogsToScroll()) });
 
 }
 
@@ -12841,6 +12860,32 @@ function DoInjectTablature_Bamboo_Flute(){
 
 }
 
+//
+// Do Fiddle Fingerings Tab Injection
+//
+function DoInjectTablature_Fiddle_Fingerings(){
+
+	// Keep track of tablature injection use
+	sendGoogleAnalytics("inject_tablature","DoInjectTablature_Fiddle_Fingerings");
+
+	SetRadioValue("notenodertab","noten");
+
+	gCurrentTab = "noten";
+
+	gTheABC.value = fiddleFingeringsGenerator(gTheABC.value);
+
+	// Show the chords after an inject
+	gStripChords = false;	
+	
+	RenderAsync(true,null);
+
+	// Idle the dialog
+	IdleAdvancedControls(true);
+
+	// Idle the show tab names control
+	IdleAllowShowTabNames();
+
+}
 
 //
 // Change the tab display
@@ -17139,13 +17184,14 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<input id="injectclicktrackall" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectRepeatsAndClickTrackAll()" type="button" value="Inject Repeats and Click Intros" title="Injects repeated copies of tunes and optional style-adaptive two-bar click intros into every tune">';	
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">'
-	modal_msg  += '<input id="ceoltastransform" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransform()" type="button" value="Comhaltas ABC Transform" title="Transforms the ABC into Comhaltas format.">';
+	modal_msg  += '<input id="ceoltastransform" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransformDialog()" type="button" value="Comhaltas ABC Transform" title="Transforms the ABC to/from Comhaltas format.">';
 	modal_msg  += '<input id="injectbctab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_BC()" type="button" value="Inject B/C Box Tab" title="Injects B/C box tablature into the ABC">';
 	modal_msg  += '<input id="injectcdtab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_CsD()" type="button" value="Inject C#/D Box Tab" title="Injects C#/D box tablature into the ABC">';
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">'
 	modal_msg  += '<input id="injectanglotab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Anglo()" type="button" value="Inject Anglo Concertina Tab" title="Injects Anglo Concertina tablature into the ABC">';
 	modal_msg  += '<input id="injectbambooflute" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Bamboo_Flute()" type="button" value="Inject Bamboo Flute Tab" title="Injects Bamboo flute tablature into the ABC">';
+	modal_msg  += '<input id="injectfiddlefingerings" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings()" type="button" value="Inject Fiddle Fingerings" title="Injects Fiddle fingerings tablature into the ABC">';
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-subdialog configure_box_advanced " onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"></p>';	
 	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="BatchMP3Export()" type="button" value="Export all Tunes as MP3" title="Exports all the tunes in the ABC text area as .mp3 files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Specific Tag" title="Brings up the Sort by Specific Tag dialog"></p>';	
