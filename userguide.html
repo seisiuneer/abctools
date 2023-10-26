@@ -49,6 +49,7 @@
         h1 {
         text-align: center;
         font-size:18pt;
+        line-height:32px;
         font-family:"Helvetica";
         margin-bottom:32px;
         padding-left:75px;
@@ -265,7 +266,7 @@
                 
                 <button class="accordion" title="Click to expand/collapse this section">Tablature Injection</button>
                 <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#injecting_tablature">Injecting B/C Box, C#/D Box, Anglo Concertina, or Bamboo Flute Tablature Into the ABC Tunes</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#injecting_tablature">Injecting B/C Box, C#/D Box, Anglo Concertina, Bamboo Flute, or Fiddle Fingerings Tablature Into the ABC Tunes</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#reading_the_box_tablature">Reading the Box Tablature</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#reading_the_concertina_tablature">Reading the Anglo Concertina Tablature</a></p>
                 </div>
@@ -568,7 +569,7 @@
             <h1 class="page_break_always">Advanced Controls<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Advanced</strong> button brings up the ABC Transcription Tools Advanced Controls dialog:</p>
             <div class="image_holder_p">
-                <img src="img/advanced_controls_14.jpg"/>
+                <img src="img/advanced_controls_15.jpg"/>
             </div>
             <p>Click the lightbulb icon to bring up this section of the user guide in a new browser tab.</p>
             <p><strong>Show/Hide ABC Features:</strong></p>
@@ -626,7 +627,7 @@
             <p><strong>The lack of a first repeat bar symbol in the ABC will make the first part of the tune on the second and repetitions appear to not repeat.</strong></p>
             <p><strong>To Fix:</strong></p>
             <p><strong>Add a |: repeat bar at the start of the tune.</strong></p>
-            <p><strong>Comhaltas ABC Transform</strong> - Replaces all d e f style octave notes in the entire ABC with the D' E' F' style preferred by Comhaltas.</p>
+            <p><strong>Comhaltas ABC Transform</strong> - Brings up a dialog where you can choose between transforming the entire ABC from the standard ABC d e f octave note style to the Comhaltas-preferred D' E' F' octave note style, or from the Comhaltas-preferred D' E' F' octave note style to standard ABC d e f octave note style.</p>
             <p><strong>Important:</strong> While the note Names display will show the Comhaltas-preferred note names, the ABC standard requires that the second octave C in the ABC itself either be represented by c or C' so that may requires some minor changes when pasting in your Comhaltas-formatted tunes.</p>
             <p><strong>Inject B/C Box Tab</strong> - Injects B/C Box tablature into the ABC (uses ABC chord syntax).</p>
             <p><strong>Inject C#/D Box Tab</strong> - Injects C#/D Box tablature into the ABC (uses ABC chord syntax).</p>
@@ -635,6 +636,10 @@
             <div class="image_holder_p">
                 <img src="img/bamboo_flute_1.jpg"/>
             </div>
+            <p><strong>Inject Fiddle Fingerings</strong> - Injects Fiddle/Mandolin fingerings (which finger to use for the note) into the ABC (uses ABC chord syntax).</p>
+            <p>Note for Mandolin players:</p>
+            <p>This is distinct from the fret number displayed when showing the Mandolin tablature along with the notation.</p>
+            <p>The Mandolin tablature shows which fret to use on the Mandolin. This shows which finger to use on the fret.</p>
             <p><strong>Configure Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for tablature injection.</p>
             <p id="export_all_tunes_as_mp3"><strong>Export all Tunes as .MP3</strong> - Exports all the tunes in the ABC area as individual .mp3 files at the bitrate set in the <strong>Settings</strong> dialog.</p>
             <div class="image_holder_p">
@@ -1570,7 +1575,7 @@
             <p style="text-align: center;"><a href="https://blog.hubspot.com/website/web-safe-html-css-fonts" target="_blank">Web Safe CSS Fonts</a></p>
             <p style="text-align: center;"><a href="http://iosfonts.com/" target="_blank">iOS Fonts</a></p>
             <hr class="hidden-print" id="injecting_tablature">
-            <h1 class="page_break_always h1wide">Injecting B/C Box, C#/D Box, Anglo Concertina, or Bamboo Flute Tablature Into the ABC Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <h1 class="page_break_always h1wide">Injecting B/C Box, C#/D Box, Anglo Concertina, Bamboo Flute, or Fiddle Fingerings Tablature Into the ABC Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>You may inject Box or Anglo Concertina tablature into the ABC using the following buttons in the <strong>Advanced Controls</strong> dialog:</p>
             <p><strong>Inject B/C Box Tab</strong> - Injects B/C Box tablature into the ABC.</p>
             <p><strong>Inject C#/D Box Tab</strong> - Injects C#/D Box tablature into the ABC.</p>
@@ -1579,6 +1584,10 @@
             <div class="image_holder_p">
                 <img src="img/bamboo_flute_1.jpg"/>
             </div>
+            <p><strong>Inject Fiddle Fingerings</strong> - Injects Fiddle/Mandolin fingerings (which finger to use for the note) into the ABC (uses ABC chord syntax).</p>
+            <p>Note for Mandolin players:</p>
+            <p>This is distinct from the fret number displayed when showing the Mandolin tablature along with the notation.</p>
+            <p>The Mandolin tablature shows which fret to use on the Mandolin. This shows which finger to use on the fret.</p>
             <p>To configure the tablature fonts and other settings, first click the tool's Settings button, then click the <strong>Configure Tablature Injection Settings</strong> button at the bottom of the dialog to bring up the tablature injections settings dialog:</p>
             <div class="image_holder_p">
                 <img src="img/tab_injection_settings_5.jpg"/>
