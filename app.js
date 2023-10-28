@@ -10973,7 +10973,7 @@ function InjectAllMIDIParams(){
 			// Injecting all tunes
 			if (args.result.configure_inject_all){
 
-				if (bDoChordProgram){
+				if (bDoSoundFont){
 
 					var nTunes = CountTunes();
 
@@ -10988,7 +10988,8 @@ function InjectAllMIDIParams(){
 
 						theTunes[i] = "X:"+theTunes[i];
 
-						output += InjectOneTuneMIDIBassChordProgramAndVolumes(theTunes[i], progNumChord, gLastInjectedBassVolume, gLastInjectedChordVolume);
+						output += InjectOneTuneSoundfont(theTunes[i],soundFontToInject);
+
 					}
 
 					// Stuff in the output
@@ -11019,8 +11020,8 @@ function InjectAllMIDIParams(){
 					gTheABC.value = output;
 
 				}
-
-				if (bDoSoundFont){
+				
+				if (bDoChordProgram){
 
 					var nTunes = CountTunes();
 
@@ -11035,8 +11036,7 @@ function InjectAllMIDIParams(){
 
 						theTunes[i] = "X:"+theTunes[i];
 
-						output += InjectOneTuneSoundfont(theTunes[i],soundFontToInject);
-
+						output += InjectOneTuneMIDIBassChordProgramAndVolumes(theTunes[i], progNumChord, gLastInjectedBassVolume, gLastInjectedChordVolume);
 					}
 
 					// Stuff in the output
