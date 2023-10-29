@@ -8493,6 +8493,7 @@ function AddABC(){
 	modal_msg += '<p style="text-align:center;margin-top:24px;">';
 	modal_msg  += '<input id="addnewreel" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleReel();" type="button" value="Add an Example Reel" title="Adds an example reel (Cooley\'s) to the end of the ABC">';
 	modal_msg  += '<input id="addnewjig" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleJig();" type="button" value="Add an Example Jig" title="Adds an example jig (The Kesh) to the end of the ABC">';
+	modal_msg  += '<input id="addnewhornpipe" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleHornpipe();" type="button" value="Add an Example Hornpipe" title="Adds an example Hornpipe (Alexander\'s) to the end of the ABC">';
 	modal_msg += '</p>';	
 	modal_msg += '<p style="text-align:center;margin-top:24px;">';
 	modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendJSBach();" type="button" value="Add J.S. Bach Two-Part Invention #1" title="Adds the J.S. Bach 2-Part Invention #1 to the end of the ABC">';
@@ -8529,6 +8530,9 @@ function AddABC(){
 
 function AppendSampleReel(){	
 
+	// Keep track of actions
+	sendGoogleAnalytics("action","AppendSampleReel");
+
 	// Stuff in some default ABC with additional options explained
 	var theValue = ""
 
@@ -8540,11 +8544,12 @@ function AppendSampleReel(){
 	
 	theValue += "X: 1\n";
 	theValue += "T: Cooley's\n";
+	theValue += "C: Traditional\n";
 	theValue += "R: Reel\n";
 	theValue += "M: 4/4\n";
 	theValue += "L: 1/8\n";
+	theValue += "Q: 1/2=90\n";
 	theValue += "K: Edor\n";
-	theValue += "C: Traditional\n";
 	theValue += '%abcjs_soundfont fluid\n';	
 	theValue += "%\n";
 	theValue += "% Use an Accordion sound when playing the melody:\n";
@@ -8553,7 +8558,8 @@ function AppendSampleReel(){
 	theValue += "% Use an Accordion sound when playing the chords:\n";
 	theValue += "%%MIDI chordprog 21\n";
 	theValue += "%\n";
-	theValue += "% ABC for the tune, both melody and chords:\n";
+	theValue += "% Set a specific amount of swing:\n";
+	theValue += '%swing 0.15\n';
 	theValue += "%\n";
 	theValue += '|:"Em"EBBA B2 EB|"Em"B2 AB dBAG|"D"F/E/D AD BDAD|"D"F/E/D AD BAGF|\n';
 	theValue += '"Em"EBBA B2 EB|"Em"B2 AB defg|"D"afge dBAF|1 "D"DEFD "Em"E3D:|2 "D"DEFD "Em"E2gf||\n';
@@ -8567,6 +8573,9 @@ function AppendSampleReel(){
 
 function AppendSampleJig(){	
 
+	// Keep track of actions
+	sendGoogleAnalytics("action","AppendSampleJig");
+
 	// Stuff in some default ABC with additional options explained
 	var theValue = ""
 
@@ -8578,11 +8587,12 @@ function AppendSampleJig(){
 	
 	theValue += "X: 1\n";
 	theValue += "T: The Kesh\n";
+	theValue += "C: Traditional\n";
 	theValue += "R: Jig\n";
 	theValue += "M: 6/8\n";
 	theValue += "L: 1/8\n";
+	theValue += "Q: 3/8=120\n";
 	theValue += "K: Gmaj\n";
-	theValue += "C: Traditional\n";
 	theValue += '%abcjs_soundfont fluid\n';	
 	theValue += "%\n";
 	theValue += "% Use an Accordion sound when playing the melody:\n";
@@ -8591,7 +8601,8 @@ function AppendSampleJig(){
 	theValue += "% Use an Accordion sound when playing the chords:\n";
 	theValue += "%%MIDI chordprog 21\n";
 	theValue += "%\n";
-	theValue += "% ABC for the tune, both melody and chords:\n";
+	theValue += "% Set a specific amount of swing:\n";
+	theValue += '%swing 0.25\n';
 	theValue += "%\n";
 	theValue += '|:"G"GAG GAB|"D"ABA ABd|"G"edd gdd|"C"edB "D"dBA|\n';
 	theValue += '"G"GAG GAB|"D"ABA ABd|"G"edd gdB|"D"AGF "G"G3:|\n';
@@ -8603,10 +8614,55 @@ function AppendSampleJig(){
 
 }
 
+function AppendSampleHornpipe(){	
+
+	// Keep track of actions
+	sendGoogleAnalytics("action","AppendSampleHornpipe");
+
+	// Stuff in some default ABC with additional options explained
+	var theValue = ""
+
+	var nTunes = CountTunes();
+
+	if (nTunes > 0){
+		theValue += "\n";
+	}
+	
+	theValue += 'X: 1\n';
+	theValue += 'T: Alexander\'s\n';
+	theValue += "C: Traditional\n";
+	theValue += 'R: Hornpipe\n';
+	theValue += 'M: 4/4\n';
+	theValue += 'L: 1/8\n';
+	theValue += 'Q: 1/2=80\n';
+	theValue += 'K: Dmaj\n';
+	theValue += '%abcjs_soundfont fluid\n';
+	theValue += "%\n";
+	theValue += "% Use an Piano sound when playing the melody:\n";
+	theValue += '%%MIDI program 0\n';
+	theValue += "%\n";
+	theValue += "% Use an Piano sound when playing the chords:\n";
+	theValue += '%%MIDI chordprog 0\n';
+	theValue += "%\n";
+	theValue += "% Set a specific amount of swing:\n";
+	theValue += '%swing 0.25\n';
+	theValue += "%\n";
+	theValue += '|:(3gfe|"D"dAFA DFAd|fdcd Adef|"G"g2 ge "D"fdcd|"A"(3efe (3dcB A2 (3gfe|\n';
+	theValue += '"D"dAFA DFAd|fdcd Adef|"G"g2 ge "D"fdcd|"A"(3efe dc"D"d2:|\n';
+	theValue += '|:AG|"D"FAdA FAdA|"G"GBdB GBdB|"A"Acec Acec|"D"dfaf "A"(3gfe (3dAG|\n';
+	theValue += '"D"FAdA FAdA|"G"GBdB GBdB|"A"Acef gecd|(3efe dc"D"d2:|\n';
+
+	// Do common tune addition processing
+	ProcessAddTune(theValue);
+
+}
 //
 // Add a new song template to the ABC
 //
 function AppendSongTemplate(){	
+
+	// Keep track of actions
+	sendGoogleAnalytics("action","AppendSongTemplate");
 
 	// Stuff in some default ABC with additional options explained
 	var theValue = ""
@@ -8685,6 +8741,9 @@ function AppendSongTemplate(){
 // Add a new song template to the ABC
 //
 function AppendSampleSong(){	
+
+	// Keep track of actions
+	sendGoogleAnalytics("action","AppendSampleSong");
 
 	// Stuff in some default ABC with additional options explained
 	var theValue = ""
@@ -8825,6 +8884,9 @@ function AppendSampleSong(){
 //
 function AppendBoxFingeringTemplate(){
 
+	// Keep track of actions
+	sendGoogleAnalytics("action","AppendBoxFingeringTemplate");
+
 	var theNotes = gTheABC.value;
 
 	var output = "";
@@ -8870,6 +8932,9 @@ function AppendBoxFingeringTemplate(){
 // Add a click track template to the top of the ABC
 //
 function AddClickTrackTemplate(){
+
+	// Keep track of actions
+	sendGoogleAnalytics("action","AddClickTrackTemplate");
 
 	var output = "";
 
@@ -8965,6 +9030,9 @@ function AddClickTrackTemplate(){
 //
 function AppendJSBach(){
 
+	// Keep track of actions
+	sendGoogleAnalytics("action","AppendJSBach");
+
 	// Stuff in some default ABC with additional options explained
 	var theValue = ""
 
@@ -9037,6 +9105,9 @@ function AppendJSBach(){
 // Add the J.S. Bach Fantasia BWV570
 //
 function AppendJSBach2(){
+
+	// Keep track of actions
+	sendGoogleAnalytics("action","AppendJSBach2");
 
 	// Stuff in some default ABC with additional options explained
 	var theValue = ""
