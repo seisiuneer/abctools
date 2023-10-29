@@ -16177,6 +16177,7 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 			modal_msg += '<input id="swingexplorertest" class="swingexplorertest button btn btn-swingexplorertest" onclick="SwingExplorerRegenerate();" type="button" value="Test Swing" title="Reloads the tune into the player with the entered swing factor and offset">';
 			modal_msg += '<input id="swingexplorerinject" class="swingexplorerinject button btn btn-swingexplorerinject" onclick="SwingExplorerInject();" type="button" value="Inject Swing into ABC" title="Injects the current swing factor and offset into the tune ABC">';
 			modal_msg += '</p>';
+			modal_msg += '<a id="swingexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#swing_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the Swing Explorer">💡</a>';
 		}
 		else{
 
@@ -16188,6 +16189,7 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 			modal_msg += '<input id="swingexplorertest" class="swingexplorertest button btn btn-swingexplorertest" onclick="SwingExplorerRegenerate();" type="button" value="Test Swing" title="Reloads the tune into the player with the entered swing factor and offset">';
 			modal_msg += '<input id="swingexplorerinject" class="swingexplorerinject button btn btn-swingexplorerinject" onclick="SwingExplorerInject();" type="button" value="Inject Swing into ABC" title="Injects the current swing factor and offset into the tune ABC">';
 			modal_msg += '</p>';
+			modal_msg += '<a id="swingexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#swing_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the Swing Explorer">💡</a>';
 
 		}
 
