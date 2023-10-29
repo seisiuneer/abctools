@@ -726,6 +726,13 @@ margin-left:12px;
 	}
 }
 
+#swingexplorerhelp{
+font-size:24pt;
+position:absolute;
+left:20px;
+top:20px;
+}
+
 #shareurlcaption{
 margin-top:8px;
 }
