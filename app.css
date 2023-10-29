@@ -689,7 +689,6 @@ margin-right:24px;
 	}
 }
 
-
 #abcplayer_metronomebutton{
 height:42px;
 padding:12px;
@@ -701,6 +700,31 @@ padding:12px;
 	}
 }
 
+#swingexplorerinject{
+height:42px;
+padding:12px;
+width:auto;
+margin-left:12px;
+}
+
+@media (hover: hover) {
+	.swingexplorerinject:hover{
+	background: palegreen;
+	}
+}
+
+#swingexplorertest{
+height:42px;
+padding:12px;
+width:auto;
+margin-left:12px;
+}
+
+@media (hover: hover) {
+	.swingexplorertest:hover{
+	background: palegreen;
+	}
+}
 
 #shareurlcaption{
 margin-top:8px;
@@ -1621,6 +1645,34 @@ margin-top:-7px;
 
 }
 
+.configure_swingexplorer_text{
+	font-size:13pt;
+	font-family:helvetica;
+	margin-top:0px;
+}
+
+.configure_swingexplorer_text>input{
+	font-size:13pt;
+	font-family:helvetica;
+	margin-left: 2px;
+	width: 60px;
+	margin-right:10px;
+}
+
+.configure_swingexplorer_text_mobile{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-top:0px;
+}
+
+.configure_swingexplorer_text_mobile>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 2px;
+	width: 60px;
+	margin-right:10px;
+}
+
 @media (hover: hover) {
 	.configure_box:hover{
 	background: palegreen;
@@ -1692,6 +1744,19 @@ margin-top:-7px;
 
 @media (hover: hover) {
 	.configure_batch_mp3_export:hover{
+	background: palegreen;
+	}
+}
+
+#configure_swing_explorer{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+	margin-right:24px;
+}
+
+@media (hover: hover) {
+	.configure_swing_explorer:hover{
 	background: palegreen;
 	}
 }
@@ -2317,12 +2382,26 @@ padding: 3px;
   --background-color: lavender;
 }
 
+.btn-swingexplorer{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-swingexplorertest{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-swingexplorerinject{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
 .btn-metronome{
   --color: black;
   --background-color: #C8ECFE;
 
 }
-
 
 /* For Anglo concertina button naming dialog */
 .anglobuttonnames {
