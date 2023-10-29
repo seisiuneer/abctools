@@ -11682,12 +11682,10 @@ function InjectMetronome(){
 	});
 }
 
-
-
 //
 // Play the ABC
 //
-function PlayABC(e){
+function PlayABC(){
 
 	if (gAllowCopy){
 
@@ -14857,7 +14855,6 @@ function ToggleMetronome(){
 
 }
 
-
 // 
 // Tune Play Dialog
 //
@@ -15471,6 +15468,7 @@ function ScanTuneForSwingInjection(theTune){
 	}
 }
 
+
 //
 // Scan tune for custom rhythm pattern request
 //
@@ -15661,6 +15659,649 @@ function ScanTuneForSoundFont(theTune){
 	}
 
 	return soundFontFound;
+}
+
+//
+// Swing Explorer
+//
+function SwingExplorer(){
+
+	if (gAllowCopy){
+
+		// Play back locally
+
+		// Try to find the current tune
+		var theSelectedABC = findSelectedTune();
+
+		if (theSelectedABC == ""){
+			// This should never happen
+			return;
+		}
+
+		// Pre-process the ABC to inject any requested programs or volumes
+		var theProcessedABC = PreProcessPlayABC(theSelectedABC);
+
+		// Play back locally in-tool	
+		SwingExplorerDialog(theSelectedABC,theProcessedABC,false);
+
+	}
+}
+
+//
+// Reload the player with a new swing offset
+//
+function SwingExplorerRegenerate(){
+
+	var bDoReload = false;
+
+	// Grab the swing factor
+	var theSwingFactor = document.getElementById("swing_explorer_factor").value;
+
+	theSwingFactor = parseFloat(theSwingFactor);
+
+	if (!isNaN(theSwingFactor) && ((theSwingFactor >= -0.9) && (theSwingFactor <= 0.9))){
+
+		gSwingFactor = theSwingFactor;
+
+		bDoReload = true;
+	}
+
+	// Grab the swing offset
+	var theSwingOffset = document.getElementById("swing_explorer_offset").value;
+
+	theSwingOffset = parseInt(theSwingOffset);
+
+	if ((!isNaN(theSwingOffset)) && (theSwingOffset >= 0)){
+
+		gSwingOffset = theSwingOffset;
+
+		bDoReload = true;
+
+	}
+
+	if (bDoReload){
+
+		gTheOKButton.click();
+
+		setTimeout(function() {
+
+			// Launch the player with the metronome injected tune
+			SwingExplorerDialog(gPlayerABCSwingExplorerOriginal,gPlayerABCSwingExplorerProcessed,true);
+
+		},250);
+
+	}
+}
+
+
+//
+// Scan tune for swing annotation for the swing explorer
+//
+function ScanTuneForSwingExplorer(theTune){
+
+	//debugger;
+
+	// Default is swing while running the swing explorer
+	gAddSwing = true;
+
+	// Default is typical hornpipe swing factor
+	gSwingFactor = 0.0;
+
+	// Zero out the swing offset
+	gSwingOffset = 0;
+
+	// Check if autoswing enabled
+	if (gAutoSwingHornpipes){
+
+		if (tuneIsHornpipe(theTune)){
+
+			// Default is typical hornpipe swing factor
+			gSwingFactor = gAutoSwingFactor;
+
+		}
+	
+	}
+
+	var searchRegExp;
+	var doAddSwing;
+
+	// Next search for an addswing override
+	searchRegExp = /^%swing.*$/gm
+
+	// Detect addswing annotation
+	doAddSwing = theTune.match(searchRegExp);
+
+	if ((doAddSwing) && (doAddSwing.length > 0)){
+
+		var theParamString = doAddSwing[0].replace("%swing","");
+
+		theParamString = theParamString.trim();
+
+		var theParams = theParamString.split(" ");
+
+		if (theParams.length >= 1){
+
+			var theSwingValueFound = theParams[0];
+
+			var swingValue = parseFloat(theSwingValueFound);
+
+			if (!isNaN(swingValue)){
+
+				gSwingFactor = swingValue;
+
+			}
+		}
+
+		if (theParams.length > 1){
+
+			var theSwingOffsetValueFound = theParams[1];
+			
+			var swingOffsetValue = parseInt(theSwingOffsetValueFound);
+
+			if (!isNaN(swingOffsetValue)){
+
+				gSwingOffset = swingOffsetValue;
+
+			}
+		}
+	}
+
+}
+
+//
+// Inject the tune with the Swing Explorer values
+//
+
+function SwingExplorerInject(){
+
+	var theSelectedTuneIndex = findSelectedTuneIndex();
+
+	var bDoInjectSwingFactor = false;
+
+	var theSwingFactor = document.getElementById("swing_explorer_factor").value;
+
+	theSwingFactor = parseFloat(theSwingFactor);
+
+	if (!isNaN(theSwingFactor) && ((theSwingFactor >= -0.9) && (theSwingFactor <= 0.9))){
+
+		bDoInjectSwingFactor = true;
+	}
+
+	var bDoInjectSwingOffset = false;
+
+	if (bDoInjectSwingFactor){
+
+		// Grab the swing offset
+		var theSwingOffset = document.getElementById("swing_explorer_offset").value;
+
+		theSwingOffset = parseInt(theSwingOffset);
+
+		if ((!isNaN(theSwingOffset)) && (theSwingOffset >= 0)){
+
+			bDoInjectSwingOffset = true;
+
+		}
+
+		var theInjectString = "%swing "+theSwingFactor;
+
+		if (bDoInjectSwingOffset){
+
+			theInjectString += " "+theSwingOffset;
+
+		}
+
+		//
+		// Strip any existing %swing out of the current tune
+		//
+
+		var searchRegExp = /^%swing.*[\r\n]*/gm 
+
+		var tuneWithNoSwing = gPlayerABCSwingExplorerOriginal.replaceAll(searchRegExp, "");
+
+		var tuneWithSwing = InjectStringBelowTuneHeader(tuneWithNoSwing,theInjectString);
+
+		// Seeing extra line breaks after the inject
+		tuneWithSwing = tuneWithSwing.replace("\n\n","");
+
+		// Try and keep the same tune after the redraw for immediate play
+		var theSelectionStart = gTheABC.selectionStart;
+
+		// Stuff in the injected ABC
+		var theABC = gTheABC.value;
+
+		theABC = theABC.replace(gPlayerABCSwingExplorerOriginal,tuneWithSwing);
+		
+		gTheABC.value = theABC;
+
+		// For future injects
+		gPlayerABCSwingExplorerOriginal = tuneWithSwing;
+
+		// Set the select point
+		gTheABC.selectionStart = theSelectionStart;
+	    gTheABC.selectionEnd = theSelectionStart;
+
+	    // Focus after operation
+	    FocusAfterOperation();
+
+	}
+
+}
+
+// 
+// Swing Explorer Dialog
+//
+// callback and val are used for batch export automation
+//
+
+var gSwingExplorerFactor = 0;
+var gSwingExplorerOffset = 0;
+var gPlayerABCSwingExplorerOriginal = null;
+var gPlayerABCSwingExplorerProcessed = null;
+
+function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_state){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","SwingExplorerDialog");
+
+	gMIDIbuffer = null;
+	gTheOKButton = null;
+	gInSwingExplorer = false;
+
+	// We came in because of a swing change, don't init the tune cache
+	if (!swing_explorer_state){
+
+		gPlayerABCSwingExplorerOriginal = theOriginalABC;
+		gPlayerABCSwingExplorerProcessed = theProcessedABC;
+
+	}
+
+	var soundFontRequested = ScanTuneForSoundFont(theProcessedABC);
+
+	if (soundFontRequested){
+
+		var theOriginalSoundFont = gTheActiveSoundFont;
+
+		switch (soundFontRequested){
+			case "fluid":
+				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
+				break;
+			case "musyng":
+				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/";
+				break;
+			case "fatboy":
+				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
+				break;
+			case "canvas":
+				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/canvas/";
+				break;
+			case "mscore":
+				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/mscore/";
+				break;
+		}
+
+		// New soundfont requested, clear the cache
+		if (gTheActiveSoundFont != theOriginalSoundFont){
+			
+			// Clear the soundfont cache
+			gSoundsCacheABCJS = {};
+
+		}
+
+	}
+	else{
+
+		// No sound font requested, lets see if the current font is the user default
+		if (gTheActiveSoundFont != gDefaultSoundFont){
+
+			gTheActiveSoundFont = gDefaultSoundFont;
+
+			// Clear the soundfont cache
+			gSoundsCacheABCJS = {};
+
+		}
+	}
+
+	// Setup any custom boom-chick rhythm patterns found
+	var boomChickOK = ScanTuneForBoomChick(theProcessedABC);
+
+	// Incorrectly formatted %abcjs_boomchick detected, put up an alert
+	if (boomChickOK != ""){
+
+		DayPilot.Modal.alert('<p style="font-family:helvetica;font-size:14pt;"><strong>There is an issue with your custom rhythm directive:</strong></p><p style="font-family:helvetica;font-size:14pt;"><strong>'+boomChickOK+'</strong></p><p style="font-family:helvetica;font-size:14pt;">Format should be:</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick meter rhythm_pattern_string partial_measure</p><p style="font-family:helvetica;font-size:14pt;">Valid rhythm_pattern_string characters are:</p><p style="font-family:helvetica;font-size:14pt;">B - Boom, b - Alternate Boom, c - Chick, and x - Silence.</p><p style="font-family:helvetica;font-size:14pt;">Examples:</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick 7/8 Bccbxbx 3</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick 10/8 Bccbccbxbx 5</p><p style="font-family:helvetica;font-size:14pt;">The number of characters in the pattern_string must match the meter numerator.</p><p style="font-family:helvetica;font-size:14pt;">partial_measure sets how many beats must be present in a partial measure in the ABC to use the custom pattern.</p><p style="font-family:helvetica;font-size:14pt;">partial_measure is optional and defaults to half of the meter numerator rounded down to the next lowest integer (min is 1).</p>',{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
+
+	// Setup any swing found (Only done the first time)
+	if (!swing_explorer_state){
+
+		ScanTuneForSwingExplorer(theProcessedABC);
+
+	}
+
+	// Autoscroll-related cached values
+	var playerHolder;
+	var containerRect;
+	
+	var instrument = GetRadioValue("notenodertab");
+
+	var abcOptions = GetABCJSParams(instrument);
+
+	abcOptions.oneSvgPerLine = false;
+
+	// Clear the tab label if present to compress vertical space
+	if (instrument != "noten" ){
+
+		// Sanity check the options first
+		if (abcOptions.tablature && (abcOptions.tablature.length > 0)){
+			abcOptions.tablature[0].label = "";
+		}
+	}
+	
+	function CursorControl() {
+
+		var self = this;
+
+		self.onReady = function() {
+		};
+
+		self.onStart = function() {
+			var svg = document.querySelector("#playback-paper svg");
+			var cursor = document.createElementNS("http://www.w3.org/2000/svg", "line");
+			cursor.setAttribute("class", "abcjs-cursor");
+			cursor.setAttributeNS(null, 'x1', 0);
+			cursor.setAttributeNS(null, 'y1', 0);
+			cursor.setAttributeNS(null, 'x2', 0);
+			cursor.setAttributeNS(null, 'y2', 0);
+			svg.appendChild(cursor);
+
+		};
+
+		self.beatSubdivisions = 2;
+
+		self.onBeat = function(beatNumber, totalBeats, totalTime) {
+		};
+
+		self.onEvent = function(ev) {
+			if (ev.measureStart && ev.left === null)
+				return; // this was the second part of a tie across a measure line. Just ignore it.
+
+			var lastSelection = document.querySelectorAll("#playback-paper svg .highlight");
+			for (var k = 0; k < lastSelection.length; k++)
+				lastSelection[k].classList.remove("highlight");
+
+			for (var i = 0; i < ev.elements.length; i++ ) {
+				var note = ev.elements[i];
+				for (var j = 0; j < note.length; j++) {
+					note[j].classList.add("highlight");
+				}
+			}
+
+			var cursor = document.querySelector("#playback-paper svg .abcjs-cursor");
+
+			if (cursor) {
+
+				cursor.setAttribute("x1", ev.left - 2);
+				cursor.setAttribute("x2", ev.left - 2);
+				cursor.setAttribute("y1", ev.top);
+				cursor.setAttribute("y2", ev.top + ev.height);
+
+				// Don't try to autoscroll cursors larger than
+				if (gAutoscrollPlayer){
+
+					// Get the SVG element's position relative to the container
+					const svgRect = cursor.getBoundingClientRect();
+
+					// Check if the SVG element is above or below the container's visible area
+					if (svgRect.top < containerRect.top) {
+
+						// Scroll up to make the SVG element visible at the top
+						playerHolder.scrollTop += svgRect.top - containerRect.top;
+
+					} else if (svgRect.bottom > containerRect.bottom) {
+
+						// Scroll down to make the SVG element visible at the bottom
+						playerHolder.scrollTop += svgRect.bottom - containerRect.bottom + 16;
+
+					}
+				}
+
+			}
+		};
+
+		self.onFinished = function() {
+			var els = document.querySelectorAll("svg .highlight");
+			for (var i = 0; i < els.length; i++ ) {
+				els[i].classList.remove("highlight");
+			}
+			var cursor = document.querySelector("#playback-paper svg .abcjs-cursor");
+			if (cursor) {
+				cursor.setAttribute("x1", 0);
+				cursor.setAttribute("x2", 0);
+				cursor.setAttribute("y1", 0);
+				cursor.setAttribute("y2", 0);
+			}
+		};
+
+	}
+
+	function setTune(userAction) {
+
+		synthControl.disable(true);
+
+		var visualObj = ABCJS.renderAbc("playback-paper", theProcessedABC, abcOptions)[0];
+
+		// Post process whistle or note name tab
+		postProcessTab("playback-paper",instrument,true);
+
+		var midiBuffer = new ABCJS.synth.CreateSynth();
+
+		gMIDIbuffer = midiBuffer;
+
+		midiBuffer.init({
+			visualObj: visualObj
+		}).then(function (response) {
+			console.log(response);
+			if (synthControl) {
+
+				var fadeLength = computeFade(theProcessedABC);
+
+				synthControl.setTune(visualObj, userAction, {fadeLength:fadeLength}).then(function (response) {
+					
+					console.log("Audio successfully loaded.");
+
+				}).catch(function (error) {
+					
+					console.log("Problem loading audio for this tune");
+
+				});
+			}
+		}).catch(function (error) {
+
+			console.log("Problem loading audio for this tune");
+
+		});
+	}
+
+	function StopPlay(){
+
+		if (synthControl){
+				
+			synthControl.destroy();
+
+			synthControl = null;
+		}
+	}
+
+	var cursorControl = new CursorControl();
+
+	var synthControl;
+
+	function initPlay() {
+
+		// Adapt the top based on the player control size
+		var theTop = 50;
+
+		var theHeight = window.innerHeight - 340;
+
+	   	modal_msg = '<div id="playerholder" style="height:'+theHeight+'px;overflow-y:auto;margin-bottom:15px;">';
+
+		if (gLargePlayerControls){
+			modal_msg += '<div id="abcplayer" class="abcjs-large">';
+		}
+		else{
+			modal_msg += '<div id="abcplayer">';			
+		}
+
+	   	modal_msg += '<div id="playback-paper"></div>';
+	   	modal_msg += '</div>';
+
+	   	modal_msg += '</div>';
+
+	   	// Add the player controls
+		if (gLargePlayerControls){
+	   		modal_msg += '<div id="playback-audio" class="abcjs-large"></div>';
+		}
+		else{
+	   		modal_msg += '<div id="playback-audio"></div>';
+		}
+
+	   	// Add the swing explorer controls
+		if (isMobileBrowser()){
+
+			modal_msg += '<p class="configure_swingexplorer_text_mobile" style="text-align:center;margin:0px;margin-top:22px">';
+
+			modal_msg += 'Swing factor: <input style="width:80px;" id="swing_explorer_factor" type="number" min="-0.9" step="0.05" max=".9" title="Swing factor, range is -0.9 to 0.9" autocomplete="off"/>';
+			modal_msg += 'Swing offset (1/8 notes): <input style="width:50px;" id="swing_explorer_offset" type="number" min="0" step="1" max="12" title="Swing offset in 1/8 notes" autocomplete="off"/>';
+
+			modal_msg += '<input id="swingexplorertest" class="swingexplorertest button btn btn-swingexplorertest" onclick="SwingExplorerRegenerate();" type="button" value="Test Swing" title="Reloads the tune into the player with the entered swing factor and offset">';
+			modal_msg += '<input id="swingexplorerinject" class="swingexplorerinject button btn btn-swingexplorerinject" onclick="SwingExplorerInject();" type="button" value="Inject Swing into ABC" title="Injects the current swing factor and offset into the tune ABC">';
+			modal_msg += '</p>';
+		}
+		else{
+
+			modal_msg += '<p class="configure_swingexplorer_text" style="text-align:center;margin:0px;margin-top:22px">';
+
+			modal_msg += 'Swing factor: <input style="width:90px;" id="swing_explorer_factor" type="number" min="-0.9" step="0.05" max=".9" title="Swing factor, range is -0.9 to 0.9" autocomplete="off"/>';
+			modal_msg += 'Swing offset (1/8 notes): <input style="width:60px;" id="swing_explorer_offset" type="number" min="0" step="1" max="12" title="Swing offset in 1/8 notes" autocomplete="off"/>';
+
+			modal_msg += '<input id="swingexplorertest" class="swingexplorertest button btn btn-swingexplorertest" onclick="SwingExplorerRegenerate();" type="button" value="Test Swing" title="Reloads the tune into the player with the entered swing factor and offset">';
+			modal_msg += '<input id="swingexplorerinject" class="swingexplorerinject button btn btn-swingexplorerinject" onclick="SwingExplorerInject();" type="button" value="Inject Swing into ABC" title="Injects the current swing factor and offset into the tune ABC">';
+			modal_msg += '</p>';
+
+		}
+
+	   	// Scale the player for larger screens
+		var windowWidth = window.innerWidth;
+
+		var instrument = GetRadioValue("notenodertab");
+
+		var theWidth = windowWidth * 0.45;
+
+		if (isDesktopBrowser()){
+
+			if (theWidth < 850){
+				theWidth = 850;
+			}
+
+		}
+		else{
+
+			theWidth = 800;  
+			
+		}
+
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: theTop, width:theWidth, okText:"Close", scrollWithPage: (isMobileBrowser()) });
+
+		// Set the initial swing factor and offset
+		document.getElementById("swing_explorer_factor").value = gSwingFactor;
+		document.getElementById("swing_explorer_offset").value = gSwingOffset;
+
+		var theOKButtons = document.getElementsByClassName("modal_flat_ok");
+
+		// Find the button that says "Close" and hook its click handler to make sure music stops on close
+		// Need to search through the modals since there may be a first time share dialog also present
+		// the first time someone plays a linked PDF tune
+
+		var theOKButton = null;
+
+		for (var i=0;i<theOKButtons.length;++i){
+
+			theOKButton = theOKButtons[i];
+
+			if (theOKButton.innerText == "Close"){
+
+				gTheOKButton = theOKButton;
+
+				var originalOnClick = theOKButton.onclick;
+
+				theOKButton.onclick = function(){
+
+					originalOnClick(); 
+					StopPlay(); 
+
+				    // Focus after operation
+				    FocusAfterOperation();
+
+					// If on iOS and the muting controller installed, dispose it now
+					if (gIsIOS){
+
+						if (gTheMuteHandle){
+						 	gTheMuteHandle.dispose();
+  							gTheMuteHandle = null;
+  						}
+					}
+
+				};
+
+				break;
+
+			}
+		}
+
+		if (ABCJS.synth.supportsAudio()) {
+			
+			synthControl = new ABCJS.synth.SynthController();
+
+			synthControl.load("#playback-audio", cursorControl, {displayLoop: true, displayRestart: true, displayPlay: true, displayProgress: true, displayWarp: true});
+
+
+		} else {
+
+			document.querySelector("#playback-audio").innerHTML = "<div class='audio-error'>Audio is not supported in this browser.</div>";
+
+		}
+
+		setTune(false);
+
+		// Cache autoscroll values early
+		playerHolder = document.getElementById("playerholder");
+		containerRect = playerHolder.getBoundingClientRect();
+	}
+
+	// Try to deal with tab deactivation muting
+	if (gIsIOS){
+
+		var context = ABCJS.synth.activeAudioContext();
+
+		// Decide on some parameters
+		let allowBackgroundPlayback = false; // default false, recommended false
+		let forceIOSBehavior = false; // default false, recommended false
+
+		gTheMuteHandle = null;
+		
+		// Pass it to unmute if the context exists... ie WebAudio is supported
+		if (context)
+		{
+		  // If you need to be able to disable unmute at a later time, you can use the returned handle's dispose() method
+		  // if you don't need to do that (most folks won't) then you can simply ignore the return value
+		  gTheMuteHandle = unmute(context, allowBackgroundPlayback, forceIOSBehavior);
+		  
+		}
+	}
+
+	initPlay();
+
 }
 
 //
@@ -17409,7 +18050,7 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<input id="injectfiddlefingerings" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings()" type="button" value="Inject Fiddle Fingerings" title="Injects Fiddle fingerings tablature into the ABC">';
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-subdialog configure_box_advanced " onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"></p>';	
-	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="BatchMP3Export()" type="button" value="Export all Tunes as MP3" title="Exports all the tunes in the ABC text area as .mp3 files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Specific Tag" title="Brings up the Sort by Specific Tag dialog"></p>';	
+	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_swing_explorer" class="btn btn-swingexplorer configure_swing_explorer " onclick="SwingExplorer()" type="button" value="Swing Explorer" title="Brings up a tune player where you can experiment with different swing factor and offset settings"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="BatchMP3Export()" type="button" value="Export all Tunes as MP3" title="Exports all the tunes in the ABC text area as .mp3 files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Specific Tag" title="Brings up the Sort by Specific Tag dialog"></p>';	
 	modal_msg += '</div>';
 
 	setTimeout(function(){
