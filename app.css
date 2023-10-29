@@ -627,13 +627,13 @@ height:42px;
 padding:12px;
 }
 
-#addnewreel,#addnewsong{
+#addnewreel,#addnewsong,#addnewjig{
 height:42px;
 padding:12px;
-margin-right:32px;
+margin-right:24px;
 }
 
-#addnewjig,#addsongtemplate,#addboxfingeringtemplate{
+#addnewhornpipe,#addsongtemplate,#addboxfingeringtemplate{
 height:42px;
 padding:12px;
 }
