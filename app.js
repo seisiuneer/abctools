@@ -16362,6 +16362,9 @@ function InstrumentExplorer(){
 
 		}
 
+		// Fix issue with initial swing not happening
+		ScanTuneForSwingExplorer(theSelectedABC);
+
 		// Scan the original tune for any existing directives for initialization of the UI
 		ScanTuneForInstrumentExplorer(theSelectedABC);
 
