@@ -10712,6 +10712,14 @@ function InjectOneTuneMIDIVolumeAboveTune(theTune, theVolume, bIsChords){
 // Inject MIDI soundfont and instrument related directives
 //
 
+const soundfontNames = [
+	"Fluid",
+	"Musyng Kite",
+	"FatBoy",
+	"Canvas",
+	"MScore"
+];
+
 const generalMIDISoundNames = [
   "Mute",
   "Acoustic Grand Piano",
@@ -15814,8 +15822,6 @@ function ScanTuneForSwingExplorer(theTune){
 
 function SwingExplorerInject(){
 
-	var theSelectedTuneIndex = findSelectedTuneIndex();
-
 	var bDoInjectSwingFactor = false;
 
 	var theSwingFactor = document.getElementById("swing_explorer_factor").value;
@@ -15889,8 +15895,6 @@ function SwingExplorerInject(){
 
 // 
 // Swing Explorer Dialog
-//
-// callback and val are used for batch export automation
 //
 
 var gSwingExplorerFactor = 0;
@@ -16142,7 +16146,7 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 		// Adapt the top based on the player control size
 		var theTop = 50;
 
-		var theHeight = window.innerHeight - 340;
+		var theHeight = window.innerHeight - 400;
 
 	   	modal_msg = '<div id="playerholder" style="height:'+theHeight+'px;overflow-y:auto;margin-bottom:15px;">';
 
@@ -16172,10 +16176,12 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 			modal_msg += '<p class="configure_swingexplorer_text_mobile" style="text-align:center;margin:0px;margin-top:22px">';
 
 			modal_msg += 'Swing factor: <input style="width:80px;" id="swing_explorer_factor" type="number" min="-0.9" step="0.05" max=".9" title="Swing factor, range is -0.9 to 0.9" autocomplete="off"/>';
-			modal_msg += 'Swing offset (1/8 notes): <input style="width:50px;" id="swing_explorer_offset" type="number" min="0" step="1" max="12" title="Swing offset in 1/8 notes" autocomplete="off"/>';
+			modal_msg += 'Swing offset (1/8 notes): <input style="width:50px;margin-right:0px;" id="swing_explorer_offset" type="number" min="0" step="1" max="12" title="Swing offset in 1/8 notes" autocomplete="off"/>';
+			modal_msg += '</p>';
 
+			modal_msg += '<p class="configure_swingexplorer_text_mobile" style="text-align:center;margin:0px;margin-top:22px">';
 			modal_msg += '<input id="swingexplorertest" class="swingexplorertest button btn btn-swingexplorertest" onclick="SwingExplorerRegenerate();" type="button" value="Test Swing" title="Reloads the tune into the player with the entered swing factor and offset">';
-			modal_msg += '<input id="swingexplorerinject" class="swingexplorerinject button btn btn-swingexplorerinject" onclick="SwingExplorerInject();" type="button" value="Inject Swing into ABC" title="Injects the current swing factor and offset into the tune ABC">';
+			modal_msg += '<input id="swingexplorerinject" class="swingexplorerinject button btn btn-swingexplorerinject" onclick="SwingExplorerInject();" type="button" style="margin-right:0px;" value="Inject Swing into ABC" title="Injects the current swing factor and offset into the tune ABC">';
 			modal_msg += '</p>';
 			modal_msg += '<a id="swingexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#swing_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the Swing Explorer">💡</a>';
 		}
@@ -16184,10 +16190,11 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 			modal_msg += '<p class="configure_swingexplorer_text" style="text-align:center;margin:0px;margin-top:22px">';
 
 			modal_msg += 'Swing factor: <input style="width:90px;" id="swing_explorer_factor" type="number" min="-0.9" step="0.05" max=".9" title="Swing factor, range is -0.9 to 0.9" autocomplete="off"/>';
-			modal_msg += 'Swing offset (1/8 notes): <input style="width:60px;" id="swing_explorer_offset" type="number" min="0" step="1" max="12" title="Swing offset in 1/8 notes" autocomplete="off"/>';
-
+			modal_msg += 'Swing offset (1/8 notes): <input style="width:60px;margin-right:0px;" id="swing_explorer_offset" type="number" min="0" step="1" max="12" title="Swing offset in 1/8 notes" autocomplete="off"/>';
+			modal_msg += '</p>';
+			modal_msg += '<p class="configure_swingexplorer_text" style="text-align:center;margin:0px;margin-top:22px">';
 			modal_msg += '<input id="swingexplorertest" class="swingexplorertest button btn btn-swingexplorertest" onclick="SwingExplorerRegenerate();" type="button" value="Test Swing" title="Reloads the tune into the player with the entered swing factor and offset">';
-			modal_msg += '<input id="swingexplorerinject" class="swingexplorerinject button btn btn-swingexplorerinject" onclick="SwingExplorerInject();" type="button" value="Inject Swing into ABC" title="Injects the current swing factor and offset into the tune ABC">';
+			modal_msg += '<input id="swingexplorerinject" class="swingexplorerinject button btn btn-swingexplorerinject" onclick="SwingExplorerInject();" type="button" style="margin-right:0px;" value="Inject Swing into ABC" title="Injects the current swing factor and offset into the tune ABC">';
 			modal_msg += '</p>';
 			modal_msg += '<a id="swingexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#swing_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the Swing Explorer">💡</a>';
 
@@ -16218,6 +16225,869 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 		// Set the initial swing factor and offset
 		document.getElementById("swing_explorer_factor").value = gSwingFactor;
 		document.getElementById("swing_explorer_offset").value = gSwingOffset;
+
+		var theOKButtons = document.getElementsByClassName("modal_flat_ok");
+
+		// Find the button that says "Close" and hook its click handler to make sure music stops on close
+		// Need to search through the modals since there may be a first time share dialog also present
+		// the first time someone plays a linked PDF tune
+
+		var theOKButton = null;
+
+		for (var i=0;i<theOKButtons.length;++i){
+
+			theOKButton = theOKButtons[i];
+
+			if (theOKButton.innerText == "Close"){
+
+				gTheOKButton = theOKButton;
+
+				var originalOnClick = theOKButton.onclick;
+
+				theOKButton.onclick = function(){
+
+					originalOnClick(); 
+					StopPlay(); 
+
+				    // Focus after operation
+				    FocusAfterOperation();
+
+					// If on iOS and the muting controller installed, dispose it now
+					if (gIsIOS){
+
+						if (gTheMuteHandle){
+						 	gTheMuteHandle.dispose();
+  							gTheMuteHandle = null;
+  						}
+					}
+
+				};
+
+				break;
+
+			}
+		}
+
+		if (ABCJS.synth.supportsAudio()) {
+			
+			synthControl = new ABCJS.synth.SynthController();
+
+			synthControl.load("#playback-audio", cursorControl, {displayLoop: true, displayRestart: true, displayPlay: true, displayProgress: true, displayWarp: true});
+
+
+		} else {
+
+			document.querySelector("#playback-audio").innerHTML = "<div class='audio-error'>Audio is not supported in this browser.</div>";
+
+		}
+
+		setTune(false);
+
+		// Cache autoscroll values early
+		playerHolder = document.getElementById("playerholder");
+		containerRect = playerHolder.getBoundingClientRect();
+	}
+
+	// Try to deal with tab deactivation muting
+	if (gIsIOS){
+
+		var context = ABCJS.synth.activeAudioContext();
+
+		// Decide on some parameters
+		let allowBackgroundPlayback = false; // default false, recommended false
+		let forceIOSBehavior = false; // default false, recommended false
+
+		gTheMuteHandle = null;
+		
+		// Pass it to unmute if the context exists... ie WebAudio is supported
+		if (context)
+		{
+		  // If you need to be able to disable unmute at a later time, you can use the returned handle's dispose() method
+		  // if you don't need to do that (most folks won't) then you can simply ignore the return value
+		  gTheMuteHandle = unmute(context, allowBackgroundPlayback, forceIOSBehavior);
+		  
+		}
+	}
+
+	initPlay();
+
+}
+
+//
+// MIDI Instrument Explorer
+// 
+// This allows the user to easily test playing a tune with different soundfonts and MIDI instruments
+//
+
+var gInstrumentExplorerMelodyInstruments = null;
+var gInstrumentExplorerChordInstruments = null;
+var gInstrumentExplorerSoundfonts = null;
+
+function InstrumentExplorer(){
+
+	if (gAllowCopy){
+
+		// Try to find the current tune
+		var theSelectedABC = findSelectedTune();
+
+		if (theSelectedABC == ""){
+			// This should never happen
+			return;
+		}
+
+		// Clear out the tune processing caches
+		gPlayerABCInstrumentExplorerOriginal = null;
+		gPlayerABCInstrumentExplorerProcessed = null;
+		gPlayerABCInstrumentExplorerInjected = null;
+
+		// Generate the instrument menus
+		if (!gInstrumentExplorerSoundfonts){
+
+			gInstrumentExplorerSoundfonts = InstrumentExplorerBuildDropdown("instrument_explorer_soundfont",soundfontNames);
+
+			// Make the soundfont dropdown narrower using inline CSS
+			gInstrumentExplorerSoundfonts = gInstrumentExplorerSoundfonts.replace('<select ','<select style="width:130px;" ');
+
+		}
+
+		if (!gInstrumentExplorerMelodyInstruments){
+
+			gInstrumentExplorerMelodyInstruments = InstrumentExplorerBuildDropdown("instrument_explorer_melody_program",generalMIDISoundNames);
+
+		}
+
+		if (!gInstrumentExplorerChordInstruments){
+
+			gInstrumentExplorerChordInstruments = InstrumentExplorerBuildDropdown("instrument_explorer_chord_program",generalMIDISoundNames);
+
+		}
+
+		// Scan the original tune for any existing directives for initialization of the UI
+		ScanTuneForInstrumentExplorer(theSelectedABC);
+
+		// Pre-process the ABC to strip out all MIDI directives
+		var theProcessedABC = PreProcessTuneInstrumentExplorer(theSelectedABC);
+
+		// Play back locally in-tool	
+		InstrumentExplorerDialog(theSelectedABC,theProcessedABC,false);
+
+	}
+}
+
+//
+// Instrument Explorer Dropdown builder
+//
+
+function InstrumentExplorerBuildDropdown(dropdown_name,dropdown_options){
+
+	var theDropdown = '<select id="'+dropdown_name+'" name="'+dropdown_name+'">\n';
+
+	var nOptions = dropdown_options.length;
+
+	for (var i=0;i<nOptions;++i){
+
+		theDropdown += '<option value="'+i+'"> '+dropdown_options[i]+'</option>'; 
+
+	}
+	
+	theDropdown += '</select>'; 
+
+	return theDropdown;
+
+
+}
+
+//
+// Strip out any existing MIDI directives in the tune
+//
+function PreProcessTuneInstrumentExplorer(theTune){
+
+	var searchRegExp = /^%abcjs_soundfont.*[\r\n]*/gm
+
+	theTune = theTune.replaceAll(searchRegExp,"");
+
+	searchRegExp = /^%%MIDI program.*[\r\n]*/gm
+
+	theTune = theTune.replaceAll(searchRegExp,"");
+
+	searchRegExp = /^%%MIDI chordprog.*[\r\n]*/gm
+
+	theTune = theTune.replaceAll(searchRegExp,"");
+
+	searchRegExp = /^%%MIDI bassvol.*[\r\n]*/gm
+
+	theTune = theTune.replaceAll(searchRegExp,"");
+
+	searchRegExp = /^%%MIDI chordvol.*[\r\n]*/gm
+
+	theTune = theTune.replaceAll(searchRegExp,"");
+
+	return theTune;
+
+}
+
+//
+// Reload the player with a new swing offset
+//
+function InstrumentExplorerRegenerate(){
+
+	// Grab the sound font
+	gInstrumentExplorerSoundfont = document.getElementById("instrument_explorer_soundfont").value;
+
+	// Grab the melody instrument
+	gInstrumentExplorerMelodyInstrument = document.getElementById("instrument_explorer_melody_program").value;
+
+	// Grab the chord instrument
+	gInstrumentExplorerChordInstrument = document.getElementById("instrument_explorer_chord_program").value;
+
+	// Grab the bass volume
+	var theBassVolume = document.getElementById("instrument_explorer_bass_volume").value;
+
+	theBassVolume = parseInt(theBassVolume);
+	if (!isNaN(theBassVolume)){
+		gInstrumentExplorerBassVolume = theBassVolume;
+	}
+
+	// Grab the chord volume
+	var theChordVolume = document.getElementById("instrument_explorer_chord_volume").value;
+
+	theChordVolume = parseInt(theChordVolume);
+	if (!isNaN(theChordVolume)){
+		gInstrumentExplorerChordVolume = theChordVolume;
+	}
+
+	gTheOKButton.click();
+
+	setTimeout(function() {
+
+		// Launch the player with the metronome injected tune
+		InstrumentExplorerDialog(gPlayerABCInstrumentExplorerOriginal,gPlayerABCInstrumentExplorerProcessed,true);
+
+	},250);
+}
+
+
+//
+// Scan tune for MIDI soundfont, programs and volumes to use as starting defaults for the Instrument Explorer
+//
+function ScanTuneForInstrumentExplorer(theTune){
+
+	// Start with the setting defaults
+
+	switch (gDefaultSoundFont){
+		case "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/":
+			gInstrumentExplorerSoundfont = "0";
+			break;
+		case "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/":
+			gInstrumentExplorerSoundfont = "1";
+			break;
+		case "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/":
+			gInstrumentExplorerSoundfont = "2";
+			break;
+		case "https://michaeleskin.com/abctools/soundfonts/canvas/":
+			gInstrumentExplorerSoundfont = "3";
+			break;
+		case "https://michaeleskin.com/abctools/soundfonts/mscore/":
+			gInstrumentExplorerSoundfont = "4";
+			break;
+		default:
+			gInstrumentExplorerSoundfont = "0";
+			break;		
+	}
+
+	if (gTheMelodyProgram == "136"){
+		gInstrumentExplorerMelodyInstrument = 0;
+	}
+	else{
+		gInstrumentExplorerMelodyInstrument = parseInt(gTheMelodyProgram)+1;
+	}
+
+	gInstrumentExplorerMelodyInstrument = ""+gInstrumentExplorerMelodyInstrument;
+
+	if (gTheChordProgram == "136"){
+		gInstrumentExplorerChordInstrument = 0;
+	}
+	else{
+		gInstrumentExplorerChordInstrument = parseInt(gTheChordProgram)+1;
+	}
+
+	gInstrumentExplorerChordInstrument = ""+gInstrumentExplorerChordInstrument;
+
+	gInstrumentExplorerBassVolume = gTheBassVolume;
+	gInstrumentExplorerChordVolume = gTheChordVolume;
+
+	var searchRegExp;
+
+	var theMatch;
+
+	searchRegExp = /^%abcjs_soundfont.*$/gm
+
+	theMatch = theTune.match(searchRegExp);
+
+	if ((theMatch) && (theMatch.length > 0)){
+
+		var theParamString = theMatch[0].replace("%abcjs_soundfont","");
+
+		theParamString = theParamString.trim();
+
+		if (theParamString != ""){
+
+			switch (theParamString){
+				case "fluid":
+					gInstrumentExplorerSoundfont = "0";
+					break;
+				case "musyng":
+					gInstrumentExplorerSoundfont = "1";
+					break;
+				case "fatboy":
+					gInstrumentExplorerSoundfont = "2";
+					break;
+				case "canvas":
+					gInstrumentExplorerSoundfont = "3";
+					break;
+				case "mscore":
+					gInstrumentExplorerSoundfont = "4";
+					break;
+			}
+		}
+	}
+
+	searchRegExp = /^%%MIDI program.*$/gm
+
+	theMatch = theTune.match(searchRegExp);
+
+	if ((theMatch) && (theMatch.length > 0)){
+
+		var theParamString = theMatch[0].replace("%%MIDI program","");
+
+		theParamString = theParamString.trim();
+
+		if (theParamString != ""){
+
+			if (theParamString.toLowerCase()  == "mute"){
+
+				gInstrumentExplorerMelodyInstrument = "0";
+			
+			}
+			else{
+
+				var theValue = parseInt(theParamString);
+
+				if (!isNaN(theValue)){
+
+					gInstrumentExplorerMelodyInstrument = ""+(theValue+1);
+
+				}
+			}
+		}
+	}
+
+	searchRegExp = /^%%MIDI chordprog.*$/gm
+
+	theMatch = theTune.match(searchRegExp);
+
+	if ((theMatch) && (theMatch.length > 0)){
+
+		var theParamString = theMatch[0].replace("%%MIDI chordprog","");
+
+		theParamString = theParamString.trim();
+		
+		if (theParamString != ""){
+
+			if (theParamString.toLowerCase() == "mute"){
+
+				gInstrumentExplorerChordInstrument = "0";
+			
+			}
+			else{
+
+				var theValue = parseInt(theParamString);
+
+				if (!isNaN(theValue)){
+
+					gInstrumentExplorerChordInstrument = ""+(theValue+1);
+
+				}
+			}
+		}
+	}
+
+	searchRegExp = /^%%MIDI bassvol.*$/gm
+
+	theMatch = theTune.match(searchRegExp);
+
+	if ((theMatch) && (theMatch.length > 0)){
+
+		var theParamString = theMatch[0].replace("%%MIDI bassvol","");
+
+		theParamString = theParamString.trim();
+		
+		if (theParamString != ""){
+
+			var theValue = parseInt(theParamString);
+
+			if (!isNaN(theValue)){
+
+				gInstrumentExplorerBassVolume = theValue;
+
+			}
+		}
+	}
+
+	searchRegExp = /^%%MIDI chordvol.*$/gm
+
+	theMatch = theTune.match(searchRegExp);
+
+	if ((theMatch) && (theMatch.length > 0)){
+
+		var theParamString = theMatch[0].replace("%%MIDI chordvol","");
+
+		theParamString = theParamString.trim();
+		
+		if (theParamString != ""){
+
+			var theValue = parseInt(theParamString);
+
+			if (!isNaN(theValue)){
+
+				gInstrumentExplorerChordVolume = theValue;
+
+			}
+		}
+	}
+}
+
+//
+// Inject the tune with the Instrument Explorer values
+//
+function InstrumentExplorerInject(){
+
+	// Try and keep the same tune after the redraw for immediate play
+	var theSelectionStart = gTheABC.selectionStart;
+
+	// Stuff in the injected ABC
+	var theABC = gTheABC.value;
+
+	theABC = theABC.replace(gPlayerABCInstrumentExplorerOriginal,gPlayerABCInstrumentExplorerInjected);
+	
+	gTheABC.value = theABC;
+
+	// For future injects
+	gPlayerABCInstrumentExplorerOriginal = gPlayerABCInstrumentExplorerInjected;
+
+	// Set the select point
+	gTheABC.selectionStart = theSelectionStart;
+    gTheABC.selectionEnd = theSelectionStart;
+
+    // Focus after operation
+    FocusAfterOperation();
+
+}
+
+//
+// Inject the MIDI parameters into this tune
+//
+function InstrumentExplorerDialogInjectThisTune(theTune){
+
+	// Inject soundfont
+	switch (gInstrumentExplorerSoundfont){
+		case "0":
+			theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont fluid");
+			break;
+		case "1":
+			theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont musyng");
+			break;
+		case "2":
+			theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont fatboy");
+			break;
+		case "3":
+			theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont canvas");
+			break;
+		case "4":
+			theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont mscore");
+			break;
+		default:
+			theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont fluid");
+			break;
+	}
+
+	// Inject melody instrument
+	// Offset by one to deal with mute instrument at offset zero
+	if (gInstrumentExplorerMelodyInstrument == "0"){
+		theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI program mute");
+	}
+	else{
+		var theProgram = parseInt(gInstrumentExplorerMelodyInstrument)-1;
+		theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI program "+theProgram);
+	}
+
+	// Inject chord instrument
+	// Offset by one to deal with mute instrument at offset zero
+	if (gInstrumentExplorerChordInstrument == "0"){
+		theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI chordprog mute");
+	}
+	else{
+		var theProgram = parseInt(gInstrumentExplorerChordInstrument)-1;
+		theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI chordprog "+theProgram);
+	}
+
+	// Inject bass volume
+	theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI bassvol "+gInstrumentExplorerBassVolume);
+
+	// Inject chord volume
+	theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI chordvol "+gInstrumentExplorerChordVolume);
+	
+	// Seeing extra linefeeds after the inject
+	theTune = theTune.replace("\n\n","");
+
+	return(theTune);
+
+}
+
+// 
+// Instrument Explorer Dialog
+//
+
+var gInstrumentExplorerSoundfont = "0";
+var gInstrumentExplorerMelodyInstrument = "0";
+var gInstrumentExplorerChordInstrument = "0";
+var gInstrumentExplorerBassVolume = 0;
+var gInstrumentExplorerChordVolume = 0;
+var gPlayerABCInstrumentExplorerOriginal = null;
+var gPlayerABCInstrumentExplorerProcessed = null;
+var gPlayerABCInstrumentExplorerInjected = null;
+
+function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_explorer_state){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","InstrumentExplorerDialog");
+
+	gMIDIbuffer = null;
+	gTheOKButton = null;
+	gInInstrumentExplorer = false;
+
+	// We came in because of a swing change, don't init the tune cache
+	if (!instrument_explorer_state){
+
+		gPlayerABCInstrumentExplorerOriginal = theOriginalABC;
+
+		gPlayerABCInstrumentExplorerProcessed = theProcessedABC;
+
+	}
+
+	theProcessedABC = InstrumentExplorerDialogInjectThisTune(gPlayerABCInstrumentExplorerProcessed);
+
+	gPlayerABCInstrumentExplorerInjected = theProcessedABC;
+
+	var soundFontRequested = ScanTuneForSoundFont(theProcessedABC);
+
+	if (soundFontRequested){
+
+		var theOriginalSoundFont = gTheActiveSoundFont;
+
+		switch (soundFontRequested){
+			case "fluid":
+				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
+				break;
+			case "musyng":
+				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/";
+				break;
+			case "fatboy":
+				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
+				break;
+			case "canvas":
+				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/canvas/";
+				break;
+			case "mscore":
+				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/mscore/";
+				break;
+		}
+
+		// New soundfont requested, clear the cache
+		if (gTheActiveSoundFont != theOriginalSoundFont){
+			
+			// Clear the soundfont cache
+			gSoundsCacheABCJS = {};
+
+		}
+
+	}
+	else{
+
+		// No sound font requested, lets see if the current font is the user default
+		if (gTheActiveSoundFont != gDefaultSoundFont){
+
+			gTheActiveSoundFont = gDefaultSoundFont;
+
+			// Clear the soundfont cache
+			gSoundsCacheABCJS = {};
+
+		}
+	}
+
+	// Setup any custom boom-chick rhythm patterns found
+	var boomChickOK = ScanTuneForBoomChick(theProcessedABC);
+
+	// Incorrectly formatted %abcjs_boomchick detected, put up an alert
+	if (boomChickOK != ""){
+
+		DayPilot.Modal.alert('<p style="font-family:helvetica;font-size:14pt;"><strong>There is an issue with your custom rhythm directive:</strong></p><p style="font-family:helvetica;font-size:14pt;"><strong>'+boomChickOK+'</strong></p><p style="font-family:helvetica;font-size:14pt;">Format should be:</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick meter rhythm_pattern_string partial_measure</p><p style="font-family:helvetica;font-size:14pt;">Valid rhythm_pattern_string characters are:</p><p style="font-family:helvetica;font-size:14pt;">B - Boom, b - Alternate Boom, c - Chick, and x - Silence.</p><p style="font-family:helvetica;font-size:14pt;">Examples:</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick 7/8 Bccbxbx 3</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick 10/8 Bccbccbxbx 5</p><p style="font-family:helvetica;font-size:14pt;">The number of characters in the pattern_string must match the meter numerator.</p><p style="font-family:helvetica;font-size:14pt;">partial_measure sets how many beats must be present in a partial measure in the ABC to use the custom pattern.</p><p style="font-family:helvetica;font-size:14pt;">partial_measure is optional and defaults to half of the meter numerator rounded down to the next lowest integer (min is 1).</p>',{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
+
+	// Autoscroll-related cached values
+	var playerHolder;
+	var containerRect;
+	
+	var instrument = GetRadioValue("notenodertab");
+
+	var abcOptions = GetABCJSParams(instrument);
+
+	abcOptions.oneSvgPerLine = false;
+
+	// Clear the tab label if present to compress vertical space
+	if (instrument != "noten" ){
+
+		// Sanity check the options first
+		if (abcOptions.tablature && (abcOptions.tablature.length > 0)){
+			abcOptions.tablature[0].label = "";
+		}
+	}
+	
+	function CursorControl() {
+
+		var self = this;
+
+		self.onReady = function() {
+		};
+
+		self.onStart = function() {
+			var svg = document.querySelector("#playback-paper svg");
+			var cursor = document.createElementNS("http://www.w3.org/2000/svg", "line");
+			cursor.setAttribute("class", "abcjs-cursor");
+			cursor.setAttributeNS(null, 'x1', 0);
+			cursor.setAttributeNS(null, 'y1', 0);
+			cursor.setAttributeNS(null, 'x2', 0);
+			cursor.setAttributeNS(null, 'y2', 0);
+			svg.appendChild(cursor);
+
+		};
+
+		self.beatSubdivisions = 2;
+
+		self.onBeat = function(beatNumber, totalBeats, totalTime) {
+		};
+
+		self.onEvent = function(ev) {
+			if (ev.measureStart && ev.left === null)
+				return; // this was the second part of a tie across a measure line. Just ignore it.
+
+			var lastSelection = document.querySelectorAll("#playback-paper svg .highlight");
+			for (var k = 0; k < lastSelection.length; k++)
+				lastSelection[k].classList.remove("highlight");
+
+			for (var i = 0; i < ev.elements.length; i++ ) {
+				var note = ev.elements[i];
+				for (var j = 0; j < note.length; j++) {
+					note[j].classList.add("highlight");
+				}
+			}
+
+			var cursor = document.querySelector("#playback-paper svg .abcjs-cursor");
+
+			if (cursor) {
+
+				cursor.setAttribute("x1", ev.left - 2);
+				cursor.setAttribute("x2", ev.left - 2);
+				cursor.setAttribute("y1", ev.top);
+				cursor.setAttribute("y2", ev.top + ev.height);
+
+				// Don't try to autoscroll cursors larger than
+				if (gAutoscrollPlayer){
+
+					// Get the SVG element's position relative to the container
+					const svgRect = cursor.getBoundingClientRect();
+
+					// Check if the SVG element is above or below the container's visible area
+					if (svgRect.top < containerRect.top) {
+
+						// Scroll up to make the SVG element visible at the top
+						playerHolder.scrollTop += svgRect.top - containerRect.top;
+
+					} else if (svgRect.bottom > containerRect.bottom) {
+
+						// Scroll down to make the SVG element visible at the bottom
+						playerHolder.scrollTop += svgRect.bottom - containerRect.bottom + 16;
+
+					}
+				}
+
+			}
+		};
+
+		self.onFinished = function() {
+			var els = document.querySelectorAll("svg .highlight");
+			for (var i = 0; i < els.length; i++ ) {
+				els[i].classList.remove("highlight");
+			}
+			var cursor = document.querySelector("#playback-paper svg .abcjs-cursor");
+			if (cursor) {
+				cursor.setAttribute("x1", 0);
+				cursor.setAttribute("x2", 0);
+				cursor.setAttribute("y1", 0);
+				cursor.setAttribute("y2", 0);
+			}
+		};
+
+	}
+
+	function setTune(userAction) {
+
+		synthControl.disable(true);
+
+		var visualObj = ABCJS.renderAbc("playback-paper", theProcessedABC, abcOptions)[0];
+
+		// Post process whistle or note name tab
+		postProcessTab("playback-paper",instrument,true);
+
+		var midiBuffer = new ABCJS.synth.CreateSynth();
+
+		gMIDIbuffer = midiBuffer;
+
+		midiBuffer.init({
+			visualObj: visualObj
+		}).then(function (response) {
+			console.log(response);
+			if (synthControl) {
+
+				var fadeLength = computeFade(theProcessedABC);
+
+				synthControl.setTune(visualObj, userAction, {fadeLength:fadeLength}).then(function (response) {
+					
+					console.log("Audio successfully loaded.");
+
+				}).catch(function (error) {
+					
+					console.log("Problem loading audio for this tune");
+
+				});
+			}
+		}).catch(function (error) {
+
+			console.log("Problem loading audio for this tune");
+
+		});
+	}
+
+	function StopPlay(){
+
+		if (synthControl){
+				
+			synthControl.destroy();
+
+			synthControl = null;
+		}
+	}
+
+	var cursorControl = new CursorControl();
+
+	var synthControl;
+
+	function initPlay() {
+
+		// Adapt the top based on the player control size
+		var theTop = 50;
+
+		var theHeight = window.innerHeight - 465; 
+
+	   	modal_msg = '<div id="playerholder" style="height:'+theHeight+'px;overflow-y:auto;margin-bottom:15px;">';
+
+		if (gLargePlayerControls){
+			modal_msg += '<div id="abcplayer" class="abcjs-large">';
+		}
+		else{
+			modal_msg += '<div id="abcplayer">';			
+		}
+
+	   	modal_msg += '<div id="playback-paper"></div>';
+	   	modal_msg += '</div>';
+
+	   	modal_msg += '</div>';
+
+	   	// Add the player controls
+		if (gLargePlayerControls){
+	   		modal_msg += '<div id="playback-audio" class="abcjs-large"></div>';
+		}
+		else{
+	   		modal_msg += '<div id="playback-audio"></div>';
+		}
+
+	   	// Add the swing explorer controls
+		if (isMobileBrowser()){
+
+			modal_msg += '<div class="configure_instrumentexplorer_text_mobile" style="text-align:center;margin:0px;margin-top:36px">';
+			modal_msg += '<p class="configure_instrumentexplorer_text_mobile">';
+			modal_msg += "Sound font:"+gInstrumentExplorerSoundfonts+"&nbsp;&nbsp;Melody:"+gInstrumentExplorerMelodyInstruments+"&nbsp;&nbsp;Bass/Chord:"+ gInstrumentExplorerChordInstruments;
+			modal_msg += '</p>';
+			modal_msg += '<p class="configure_instrumentexplorer_text_mobile">';
+			modal_msg += 'Bass Volume (0-127):&nbsp;<input style="width:90px;" id="instrument_explorer_bass_volume" type="number" min="0" step="1" max="127" title="Bass volume, range is 0-127"  autocomplete="off"/>';
+			modal_msg += '&nbsp;&nbsp;Chord Volume (0-127):&nbsp;<input style="width:90px;" id="instrument_explorer_chord_volume" type="number" min="0" step="1" max="127" title="Chord volume, range is 0-127" autocomplete="off"/>';
+			modal_msg += '</p>';
+			modal_msg += '<p class="configure_instrumentexplorer_text_mobile">';
+			modal_msg += '<input id="instrumentexplorertest" class="instrumentexplorertest button btn btn-instrumentexplorertest" onclick="InstrumentExplorerRegenerate();" type="button" value="Test MIDI Instruments and Volumes" title="Reloads the tune into the player with the selected MIDI soundfont, melody instrument, bass/chord instrument, and bass/chord volumes">';
+			modal_msg += '<input id="instrumentexplorerinject" class="instrumentexplorerinject button btn btn-instrumentexplorerinject" onclick="InstrumentExplorerInject();" style="margin-right:0px;" type="button" value="Inject MIDI Instruments and Volumes into the ABC" title="Injects the current soundfont, melody instrument, bass/chord instrument, and bass/chord volumes into the tune ABC">';
+			modal_msg += '</p>';
+			modal_msg += '</div>';
+
+			modal_msg += '<a id="instrumentexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#midi_instrument_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the MIDI Instrument Explorer">💡</a>';
+		}
+		else{
+			modal_msg += '<div class="configure_instrumentexplorer_text" style="text-align:center;margin:0px;margin-top:36px">';
+			modal_msg += '<p class="configure_instrumentexplorer_text">';
+			modal_msg += "Sound font:"+gInstrumentExplorerSoundfonts+"&nbsp;&nbsp;&nbsp;Melody:"+gInstrumentExplorerMelodyInstruments+"&nbsp;&nbsp;&nbsp;Bass/Chord:"+ gInstrumentExplorerChordInstruments;
+			modal_msg += '</p>';
+			modal_msg += '<p class="configure_instrumentexplorer_text">';
+			modal_msg += 'Bass Volume (0-127):&nbsp;&nbsp;<input style="width:90px;" id="instrument_explorer_bass_volume" type="number" min="0" step="1" max="127" title="Bass volume, range is 0-127"  autocomplete="off"/>';
+			modal_msg += 'Chord Volume (0-127):&nbsp;&nbsp;<input style="width:90px;" id="instrument_explorer_chord_volume" type="number" min="0" step="1" max="127" title="Chord volume, range is 0-127" autocomplete="off"/>';
+			modal_msg += '</p>';
+			modal_msg += '<p class="configure_instrumentexplorer_text">';
+			modal_msg += '<input id="instrumentexplorertest" class="instrumentexplorertest button btn btn-instrumentexplorertest" onclick="InstrumentExplorerRegenerate();" type="button" value="Test MIDI Instruments and Volumes" title="Reloads the tune into the player with the selected MIDI soundfont, melody instrument, bass/chord instrument, and bass/chord volumes">';
+			modal_msg += '<input id="instrumentexplorerinject" class="instrumentexplorerinject button btn btn-instrumentexplorerinject" onclick="InstrumentExplorerInject();" style="margin-right:0px;" type="button" value="Inject MIDI Instruments and Volumes into the ABC" title="Injects the current soundfont, melody instrument, bass/chord instrument, and bass/chord volumes into the tune ABC">';
+			modal_msg += '</p>';
+			modal_msg += '</div>';
+
+			modal_msg += '<a id="instrumentexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#midi_instrument_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the MIDI Instrument Explorer">💡</a>';			
+		}
+
+	   	// Scale the player for larger screens
+		var windowWidth = window.innerWidth;
+
+		var instrument = GetRadioValue("notenodertab");
+
+		var theWidth = windowWidth * 0.45;
+
+		if (isDesktopBrowser()){
+
+			if (theWidth < 850){
+				theWidth = 850;
+			}
+
+		}
+		else{
+
+			theWidth = 800;  
+			
+		}
+
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: theTop, width:theWidth, okText:"Close", scrollWithPage: (isMobileBrowser()) });
+
+		// Set the initial values
+		document.getElementById("instrument_explorer_soundfont").value = gInstrumentExplorerSoundfont;
+		document.getElementById("instrument_explorer_melody_program").value = gInstrumentExplorerMelodyInstrument;
+		document.getElementById("instrument_explorer_chord_program").value = gInstrumentExplorerChordInstrument;
+		document.getElementById("instrument_explorer_bass_volume").value = gInstrumentExplorerBassVolume;
+		document.getElementById("instrument_explorer_chord_volume").value = gInstrumentExplorerChordVolume;
 
 		var theOKButtons = document.getElementsByClassName("modal_flat_ok");
 
@@ -18052,7 +18922,8 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<input id="injectfiddlefingerings" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings()" type="button" value="Inject Fiddle Fingerings" title="Injects Fiddle fingerings tablature into the ABC">';
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-subdialog configure_box_advanced " onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"></p>';	
-	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_swing_explorer" class="btn btn-swingexplorer configure_swing_explorer " onclick="SwingExplorer()" type="button" value="Swing Explorer" title="Brings up a tune player where you can experiment with different swing factor and offset settings"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="BatchMP3Export()" type="button" value="Export all Tunes as MP3" title="Exports all the tunes in the ABC text area as .mp3 files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Specific Tag" title="Brings up the Sort by Specific Tag dialog"></p>';	
+	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_instrument_explorer" class="configure_instrument_explorer button btn btn-instrumentexplorer" onclick="InstrumentExplorer();" type="button" value="MIDI Instrument Explorer" title="Brings up a tune player where you can experiment playing the current tune with different MIDI soundfonts and melody/chord instruments"><input id="configure_swing_explorer" class="btn btn-swingexplorer configure_swing_explorer " onclick="SwingExplorer()" type="button" value="Swing Explorer" title="Brings up a tune player where you can experiment with different swing factor and offset settings"></p>';
+	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="BatchMP3Export()" type="button" value="Export all Tunes as MP3" title="Exports all the tunes in the ABC text area as .mp3 files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Specific Tag" title="Brings up the Sort by Specific Tag dialog"></p>';	
 	modal_msg += '</div>';
 
 	setTimeout(function(){
