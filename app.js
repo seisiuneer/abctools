@@ -12011,7 +12011,6 @@ function ToggleAllControls(){
 		
 	}
 
-
 }
 
 //
