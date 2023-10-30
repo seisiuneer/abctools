@@ -14863,6 +14863,100 @@ function ToggleMetronome(){
 
 }
 
+//
+// Shared player cursor control
+//
+var gPlayerContainerRect = null;
+var gPlayerHolder = null;
+
+function CursorControl() {
+
+	var self = this;
+
+	self.onReady = function() {
+	};
+
+	self.onStart = function() {
+		var svg = document.querySelector("#playback-paper svg");
+		var cursor = document.createElementNS("http://www.w3.org/2000/svg", "line");
+		cursor.setAttribute("class", "abcjs-cursor");
+		cursor.setAttributeNS(null, 'x1', 0);
+		cursor.setAttributeNS(null, 'y1', 0);
+		cursor.setAttributeNS(null, 'x2', 0);
+		cursor.setAttributeNS(null, 'y2', 0);
+		svg.appendChild(cursor);
+
+	};
+
+	self.beatSubdivisions = 2;
+
+	self.onBeat = function(beatNumber, totalBeats, totalTime) {
+	};
+
+	self.onEvent = function(ev) {
+
+		if (ev.measureStart && ev.left === null)
+			return; // this was the second part of a tie across a measure line. Just ignore it.
+
+		var lastSelection = document.querySelectorAll("#playback-paper svg .highlight");
+		for (var k = 0; k < lastSelection.length; k++)
+			lastSelection[k].classList.remove("highlight");
+
+		for (var i = 0; i < ev.elements.length; i++ ) {
+			var note = ev.elements[i];
+			for (var j = 0; j < note.length; j++) {
+				note[j].classList.add("highlight");
+			}
+		}
+
+		var cursor = document.querySelector("#playback-paper svg .abcjs-cursor");
+
+		if (cursor) {
+
+			cursor.setAttribute("x1", ev.left - 2);
+			cursor.setAttribute("x2", ev.left - 2);
+			cursor.setAttribute("y1", ev.top);
+			cursor.setAttribute("y2", ev.top + ev.height);
+
+			// Don't try to autoscroll cursors larger than
+			if (gAutoscrollPlayer){
+
+				// Get the SVG element's position relative to the container
+				const svgRect = cursor.getBoundingClientRect();
+
+				// Check if the SVG element is above or below the container's visible area
+				if (svgRect.top < gPlayerContainerRect.top) {
+
+					// Scroll up to make the SVG element visible at the top
+					gPlayerHolder.scrollTop += svgRect.top - gPlayerContainerRect.top;
+
+				} else if (svgRect.bottom > gPlayerContainerRect.bottom) {
+
+					// Scroll down to make the SVG element visible at the bottom
+					gPlayerHolder.scrollTop += svgRect.bottom - gPlayerContainerRect.bottom + 16;
+
+				}
+			}
+
+		}
+	};
+
+	self.onFinished = function() {
+		var els = document.querySelectorAll("svg .highlight");
+		for (var i = 0; i < els.length; i++ ) {
+			els[i].classList.remove("highlight");
+		}
+		var cursor = document.querySelector("#playback-paper svg .abcjs-cursor");
+		if (cursor) {
+			cursor.setAttribute("x1", 0);
+			cursor.setAttribute("x2", 0);
+			cursor.setAttribute("y1", 0);
+			cursor.setAttribute("y2", 0);
+		}
+	};
+
+}
+
 // 
 // Tune Play Dialog
 //
@@ -14953,10 +15047,6 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 
 	// Setup any swing found
 	ScanTuneForSwingInjection(theABC);
-
-	// Autoscroll-related cached values
-	var playerHolder;
-	var containerRect;
 	
 	var instrument = GetRadioValue("notenodertab");
 
@@ -14973,92 +15063,6 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 		}
 	}
 	
-	function CursorControl() {
-
-		var self = this;
-
-		self.onReady = function() {
-		};
-
-		self.onStart = function() {
-			var svg = document.querySelector("#playback-paper svg");
-			var cursor = document.createElementNS("http://www.w3.org/2000/svg", "line");
-			cursor.setAttribute("class", "abcjs-cursor");
-			cursor.setAttributeNS(null, 'x1', 0);
-			cursor.setAttributeNS(null, 'y1', 0);
-			cursor.setAttributeNS(null, 'x2', 0);
-			cursor.setAttributeNS(null, 'y2', 0);
-			svg.appendChild(cursor);
-
-		};
-
-		self.beatSubdivisions = 2;
-
-		self.onBeat = function(beatNumber, totalBeats, totalTime) {
-		};
-
-		self.onEvent = function(ev) {
-			if (ev.measureStart && ev.left === null)
-				return; // this was the second part of a tie across a measure line. Just ignore it.
-
-			var lastSelection = document.querySelectorAll("#playback-paper svg .highlight");
-			for (var k = 0; k < lastSelection.length; k++)
-				lastSelection[k].classList.remove("highlight");
-
-			for (var i = 0; i < ev.elements.length; i++ ) {
-				var note = ev.elements[i];
-				for (var j = 0; j < note.length; j++) {
-					note[j].classList.add("highlight");
-				}
-			}
-
-			var cursor = document.querySelector("#playback-paper svg .abcjs-cursor");
-
-			if (cursor) {
-
-				cursor.setAttribute("x1", ev.left - 2);
-				cursor.setAttribute("x2", ev.left - 2);
-				cursor.setAttribute("y1", ev.top);
-				cursor.setAttribute("y2", ev.top + ev.height);
-
-				// Don't try to autoscroll cursors larger than
-				if (gAutoscrollPlayer){
-
-					// Get the SVG element's position relative to the container
-					const svgRect = cursor.getBoundingClientRect();
-
-					// Check if the SVG element is above or below the container's visible area
-					if (svgRect.top < containerRect.top) {
-
-						// Scroll up to make the SVG element visible at the top
-						playerHolder.scrollTop += svgRect.top - containerRect.top;
-
-					} else if (svgRect.bottom > containerRect.bottom) {
-
-						// Scroll down to make the SVG element visible at the bottom
-						playerHolder.scrollTop += svgRect.bottom - containerRect.bottom + 16;
-
-					}
-				}
-
-			}
-		};
-
-		self.onFinished = function() {
-			var els = document.querySelectorAll("svg .highlight");
-			for (var i = 0; i < els.length; i++ ) {
-				els[i].classList.remove("highlight");
-			}
-			var cursor = document.querySelector("#playback-paper svg .abcjs-cursor");
-			if (cursor) {
-				cursor.setAttribute("x1", 0);
-				cursor.setAttribute("x2", 0);
-				cursor.setAttribute("y1", 0);
-				cursor.setAttribute("y2", 0);
-			}
-		};
-
-	}
 
 	function setTune(userAction) {
 
@@ -15242,8 +15246,9 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 		setTune(false);
 
 		// Cache autoscroll values early
-		playerHolder = document.getElementById("playerholder");
-		containerRect = playerHolder.getBoundingClientRect();
+		gPlayerHolder = document.getElementById("playerholder");
+		gPlayerContainerRect = gPlayerHolder.getBoundingClientRect();
+
 	}
 
 	// Try to deal with tab deactivation muting
@@ -15982,10 +15987,6 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 		ScanTuneForSwingExplorer(theProcessedABC);
 
 	}
-
-	// Autoscroll-related cached values
-	var playerHolder;
-	var containerRect;
 	
 	var instrument = GetRadioValue("notenodertab");
 
@@ -16002,92 +16003,6 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 		}
 	}
 	
-	function CursorControl() {
-
-		var self = this;
-
-		self.onReady = function() {
-		};
-
-		self.onStart = function() {
-			var svg = document.querySelector("#playback-paper svg");
-			var cursor = document.createElementNS("http://www.w3.org/2000/svg", "line");
-			cursor.setAttribute("class", "abcjs-cursor");
-			cursor.setAttributeNS(null, 'x1', 0);
-			cursor.setAttributeNS(null, 'y1', 0);
-			cursor.setAttributeNS(null, 'x2', 0);
-			cursor.setAttributeNS(null, 'y2', 0);
-			svg.appendChild(cursor);
-
-		};
-
-		self.beatSubdivisions = 2;
-
-		self.onBeat = function(beatNumber, totalBeats, totalTime) {
-		};
-
-		self.onEvent = function(ev) {
-			if (ev.measureStart && ev.left === null)
-				return; // this was the second part of a tie across a measure line. Just ignore it.
-
-			var lastSelection = document.querySelectorAll("#playback-paper svg .highlight");
-			for (var k = 0; k < lastSelection.length; k++)
-				lastSelection[k].classList.remove("highlight");
-
-			for (var i = 0; i < ev.elements.length; i++ ) {
-				var note = ev.elements[i];
-				for (var j = 0; j < note.length; j++) {
-					note[j].classList.add("highlight");
-				}
-			}
-
-			var cursor = document.querySelector("#playback-paper svg .abcjs-cursor");
-
-			if (cursor) {
-
-				cursor.setAttribute("x1", ev.left - 2);
-				cursor.setAttribute("x2", ev.left - 2);
-				cursor.setAttribute("y1", ev.top);
-				cursor.setAttribute("y2", ev.top + ev.height);
-
-				// Don't try to autoscroll cursors larger than
-				if (gAutoscrollPlayer){
-
-					// Get the SVG element's position relative to the container
-					const svgRect = cursor.getBoundingClientRect();
-
-					// Check if the SVG element is above or below the container's visible area
-					if (svgRect.top < containerRect.top) {
-
-						// Scroll up to make the SVG element visible at the top
-						playerHolder.scrollTop += svgRect.top - containerRect.top;
-
-					} else if (svgRect.bottom > containerRect.bottom) {
-
-						// Scroll down to make the SVG element visible at the bottom
-						playerHolder.scrollTop += svgRect.bottom - containerRect.bottom + 16;
-
-					}
-				}
-
-			}
-		};
-
-		self.onFinished = function() {
-			var els = document.querySelectorAll("svg .highlight");
-			for (var i = 0; i < els.length; i++ ) {
-				els[i].classList.remove("highlight");
-			}
-			var cursor = document.querySelector("#playback-paper svg .abcjs-cursor");
-			if (cursor) {
-				cursor.setAttribute("x1", 0);
-				cursor.setAttribute("x2", 0);
-				cursor.setAttribute("y1", 0);
-				cursor.setAttribute("y2", 0);
-			}
-		};
-
-	}
 
 	function setTune(userAction) {
 
@@ -16284,8 +16199,8 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 		setTune(false);
 
 		// Cache autoscroll values early
-		playerHolder = document.getElementById("playerholder");
-		containerRect = playerHolder.getBoundingClientRect();
+		gPlayerHolder = document.getElementById("playerholder");
+		gPlayerContainerRect = gPlayerHolder.getBoundingClientRect();
 	}
 
 	// Try to deal with tab deactivation muting
@@ -16838,10 +16753,6 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 
 		return;
 	}
-
-	// Autoscroll-related cached values
-	var playerHolder;
-	var containerRect;
 	
 	var instrument = GetRadioValue("notenodertab");
 
@@ -16856,93 +16767,6 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 		if (abcOptions.tablature && (abcOptions.tablature.length > 0)){
 			abcOptions.tablature[0].label = "";
 		}
-	}
-	
-	function CursorControl() {
-
-		var self = this;
-
-		self.onReady = function() {
-		};
-
-		self.onStart = function() {
-			var svg = document.querySelector("#playback-paper svg");
-			var cursor = document.createElementNS("http://www.w3.org/2000/svg", "line");
-			cursor.setAttribute("class", "abcjs-cursor");
-			cursor.setAttributeNS(null, 'x1', 0);
-			cursor.setAttributeNS(null, 'y1', 0);
-			cursor.setAttributeNS(null, 'x2', 0);
-			cursor.setAttributeNS(null, 'y2', 0);
-			svg.appendChild(cursor);
-
-		};
-
-		self.beatSubdivisions = 2;
-
-		self.onBeat = function(beatNumber, totalBeats, totalTime) {
-		};
-
-		self.onEvent = function(ev) {
-			if (ev.measureStart && ev.left === null)
-				return; // this was the second part of a tie across a measure line. Just ignore it.
-
-			var lastSelection = document.querySelectorAll("#playback-paper svg .highlight");
-			for (var k = 0; k < lastSelection.length; k++)
-				lastSelection[k].classList.remove("highlight");
-
-			for (var i = 0; i < ev.elements.length; i++ ) {
-				var note = ev.elements[i];
-				for (var j = 0; j < note.length; j++) {
-					note[j].classList.add("highlight");
-				}
-			}
-
-			var cursor = document.querySelector("#playback-paper svg .abcjs-cursor");
-
-			if (cursor) {
-
-				cursor.setAttribute("x1", ev.left - 2);
-				cursor.setAttribute("x2", ev.left - 2);
-				cursor.setAttribute("y1", ev.top);
-				cursor.setAttribute("y2", ev.top + ev.height);
-
-				// Don't try to autoscroll cursors larger than
-				if (gAutoscrollPlayer){
-
-					// Get the SVG element's position relative to the container
-					const svgRect = cursor.getBoundingClientRect();
-
-					// Check if the SVG element is above or below the container's visible area
-					if (svgRect.top < containerRect.top) {
-
-						// Scroll up to make the SVG element visible at the top
-						playerHolder.scrollTop += svgRect.top - containerRect.top;
-
-					} else if (svgRect.bottom > containerRect.bottom) {
-
-						// Scroll down to make the SVG element visible at the bottom
-						playerHolder.scrollTop += svgRect.bottom - containerRect.bottom + 16;
-
-					}
-				}
-
-			}
-		};
-
-		self.onFinished = function() {
-			var els = document.querySelectorAll("svg .highlight");
-			for (var i = 0; i < els.length; i++ ) {
-				els[i].classList.remove("highlight");
-			}
-			var cursor = document.querySelector("#playback-paper svg .abcjs-cursor");
-			if (cursor) {
-				cursor.setAttribute("x1", 0);
-				cursor.setAttribute("x2", 0);
-				cursor.setAttribute("y1", 0);
-				cursor.setAttribute("y2", 0);
-			}
-		};
-
 	}
 
 	function setTune(userAction) {
@@ -17026,7 +16850,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 	   		modal_msg += '<div id="playback-audio"></div>';
 		}
 
-	   	// Add the MIDI instrument explorer controls
+	   	// Add the MIDI Instrument Explorer controls
 		if (isMobileBrowser()){
 
 			modal_msg += '<div class="configure_instrumentexplorer_text_mobile" style="text-align:center;margin:0px;margin-top:36px">';
@@ -17150,8 +16974,8 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 		setTune(false);
 
 		// Cache autoscroll values early
-		playerHolder = document.getElementById("playerholder");
-		containerRect = playerHolder.getBoundingClientRect();
+		gPlayerHolder = document.getElementById("playerholder");
+		gPlayerContainerRect = gPlayerHolder.getBoundingClientRect();
 	}
 
 	// Try to deal with tab deactivation muting
