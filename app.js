@@ -12011,6 +12011,7 @@ function ToggleAllControls(){
 		
 	}
 
+
 }
 
 //
@@ -16429,7 +16430,7 @@ function PreProcessTuneInstrumentExplorer(theTune){
 }
 
 //
-// Reload the player with a new swing offset
+// Reload the player with new instruments and volumes
 //
 function InstrumentExplorerRegenerate(){
 
@@ -16768,7 +16769,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 	gTheOKButton = null;
 	gInInstrumentExplorer = false;
 
-	// We came in because of a swing change, don't init the tune cache
+	// We came in because of an instrument change, don't init the tune cache
 	if (!instrument_explorer_state){
 
 		gPlayerABCInstrumentExplorerOriginal = theOriginalABC;
@@ -17025,7 +17026,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 	   		modal_msg += '<div id="playback-audio"></div>';
 		}
 
-	   	// Add the swing explorer controls
+	   	// Add the MIDI instrument explorer controls
 		if (isMobileBrowser()){
 
 			modal_msg += '<div class="configure_instrumentexplorer_text_mobile" style="text-align:center;margin:0px;margin-top:36px">';
