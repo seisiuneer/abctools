@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-           
+                
         <style>
         p {
         font-size:14pt;
@@ -218,11 +218,67 @@
                     <p class="toc"><a style="text-decoration:none;" href="#adding_swing">Adding Playback Swing to Tunes</a></p>
 
                 </div>
-                
-                <button class="accordion" title="Click to expand/collapse this section">Tool Controls</button>
+
+                <button class="accordion" title="Click to expand/collapse this section">Basic Controls and Features</button>
                 <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#basic_controls">Basic Controls</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#basic_controls">Basic Controls and Features</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#basic_tablature">Notation and Tablature Display</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#basic_transpose">Transpose Controls</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#basic_snapshot">Saving and Restoring Snapshots</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#basic_advanced">Showing Advanced Features and Controls</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#basic_sharing">Showing Share Controls</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#basic_clear">Clearing the ABC Editor</a></p>
+                </div>
+               
+                <button class="accordion" title="Click to expand/collapse this section">Advanced Controls and Features</button>
+                <div class="tocpanel">                  
+                    
                     <p class="toc"><a style="text-decoration:none;" href="#advanced_controls">Advanced Controls and Features</a></p>
+
+                    <button class="accordion" title="Click to expand/collapse this section">Hiding/Showing ABC Annotations, Text, and Chords</button>
+                    <div class="tocpanel">                  
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_showhidefeatures">Hide/Show ABC Features</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_showhideannotations">Hide/Show Annotations</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_showhidetext">Hide/Show Text</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_showhidechords">Hide/Show Chords</a></p>
+                    </div>
+                    
+                    <button class="accordion" title="Click to expand/collapse this section">Stripping Out ABC Annotation, Text, and Chords</button>
+                    <div class="tocpanel">                  
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_stripfeatures">Strip ABC Features</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_stripannotations">Strip Annotations</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_striptext">Strip Text</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_stripchords">Strip Chords + Injected Tab</a></p>
+                    </div>
+                    
+                    <button class="accordion" title="Click to expand/collapse this section">Useful Utilities for Injecting ABC Annotations and Features</button>
+                    <div class="tocpanel">                  
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injectionfeatures">ABC Utility Injection Features</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injectallpdf">Inject All Available PDF Tunebook Annotations</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injectsectionheader">Inject PDF Section Header</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injectmidi">Inject MIDI Soundfont, Melody, Chord, and Volumes</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injectmetronome">Inject Metronome</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injectabcheader">Inject ABC Header String</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injectstaffwidth">Inject %%staffwidth</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#injectrepeatsandtwobarclickintros">Inject Repeats and Click Intros</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#comhaltas_abc">Comhaltas ABC Transform</a></p>
+                    </div>
+
+                    <button class="accordion" title="Click to expand/collapse this section">Injecting Instrument-Specifc Tab Into the ABC</button>
+                    <div class="tocpanel">                  
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_tabinjectors">Instrument Tablature Injectors</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injectbc">Inject B/C Box Tab</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injectcd">Inject C#/D Box Tab</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injectanglo">Inject Anglo Concertina Tab</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_bamboo">Inject Bamboo Flute Tab</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_fiddle">Inject Fiddle Fingerings</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_configuretab">Configure Tablature Injection Settings</a></p>
+                    </div>
+                    
+                    <p class="toc"><a style="text-decoration:none;" href="#midi_instrument_explorer">MIDI Instrument Explorer</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#swing_explorer">Swing Explorer</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#export_all_tunes_as_mp3">Export all Tunes as .MP3</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#sort_dialog">Sort by Specific Tag</a></p>
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">Tool Settings</button>
@@ -533,8 +589,8 @@
             <p>135: Cajun Accordion -> 21: Accordion</p>
             <p>Muted voices using MIDI instrument 136 or "mute" will be changed to program 0 (Acoustic Grand Piano) and the volume set to zero.</p>
             <hr class="hidden-print" id="basic_controls">
-            <h1 class="page_break_always">Basic Controls<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p style="margin-top:24px;"><strong>These buttons control how the notation and tablature is displayed:</strong></p>
+            <h1 class="page_break_always">Basic Controls and Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p id="basic_tablature" style="margin-top:24px;"><strong>These buttons control how the notation and tablature is displayed:</strong></p>
             <div class="image_holder">
                 <img style="width:700px;margin-top:24px"" src="img/ug4e.jpg"/>
             </div>
@@ -557,18 +613,18 @@
             <div class="image_holder" style="margin-top:24px">
                 <img style="width:700px;" src="img/ug5c.jpg"/>
             </div>
-            <p><strong>Transpose Down</strong> - Transposes the selected tunes down one semitone. Shift-click transposes down one full step. Alt-click transposes down one octave.</p>
+            <p id="basic_transpose"><strong>Transpose Down</strong> - Transposes the selected tunes down one semitone. Shift-click transposes down one full step. Alt-click transposes down one octave.</p>
             <p><strong>Transpose Up</strong> - Transposes the selected tunes up one semitone.  Shift-click transposes up one full step. Alt-click transposes up one octave.</p>
             <p>To transpose multiple tunes, just click anywhere in the first tune you want to transpose, and drag to select any part of additional tunes you want transposed.</p>
             <p>To transpose all the tunes at once, select them all before clicking the Tranpose buttons.</p>
-            <p><strong>Snapshot</strong> - Saves a snapshot of the contents of the ABC editor to browser storage.</p>
+            <p id="basic_snapshot"><strong>Snapshot</strong> - Saves a snapshot of the contents of the ABC editor to browser storage.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/doPwU-BgCAc " title="Snapshots" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>If you save a snapshot and leave the tool, the next time you run the tool the snapshot will be available to restore by either clicking the <strong>Restore</strong> button on the main toolbar or the <strong>Restore from Snapshot</strong> button in the <strong>Add</strong> dialog.</p>
             <p><strong>Restore</strong> - If one is available, replaces the current contents of the ABC editor with the last saved snapshot from browser storage.</p>
             <p>Since it completely replaces the contents of the ABC editor, you will be asked to confirm the operation.</p>
-            <p><strong>Advanced</strong> - Shows the <a style="text-decoration:none;" href="#advanced_controls">Advanced Controls</a> dialog with several additional ABC filtering and display controls.</p>
-            <p><strong>Sharing</strong> - Shows the <a style="text-decoration:none;" href="#sharing_controls">Sharing Controls</a> dialog with options for sharing your tunes via a share URL or QR code.</p>
-            <p><strong>Clear</strong> - Clears the ABC Editor so you can start over.</p>
+            <p id="basic_advanced"><strong>Advanced</strong> - Shows the <a style="text-decoration:none;" href="#advanced_controls">Advanced Controls</a> dialog with several additional ABC filtering and display controls.</p>
+            <p id="basic_sharing"><strong>Sharing</strong> - Shows the <a style="text-decoration:none;" href="#sharing_controls">Sharing Controls</a> dialog with options for sharing your tunes via a share URL or QR code.</p>
+            <p id="basic_clear"><strong>Clear</strong> - Clears the ABC Editor so you can start over.</p>
             <hr class="hidden-print" id="advanced_controls">
             <h1 class="page_break_always">Advanced Controls and Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Advanced</strong> button brings up the ABC Transcription Tools Advanced Controls and Features dialog:</p>
@@ -576,33 +632,36 @@
                 <img src="img/advanced_controls_18.jpg"/>
             </div>
             <p>Click the lightbulb icon to bring up this section of the user guide in a new browser tab.</p>
-            <p><strong>Show/Hide ABC Features:</strong></p>
-            <p><strong>Hide/Show Annotations</strong>  - Hides/Shows most ABC annotations like Composer, Discography, History, Tempo, etc. in the displayed notation.</p>
-            <p><strong>Hide/Show Text</strong>  - Hides/Shows any %%center or %%text based text annotations in the ABC in the displayed notation.</p>
-            <p><strong>Hide/Show Chords</strong>  + Injected Tab - Hides/Shows any chords present in the ABC in the displayed notation.</p>
+            <hr class="hidden-print" id="advanced_showhidefeatures">
+            <h1 class="page_break_always">Hide/Show ABC Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p id="advanced_showhideannotations"><strong>Hide/Show Annotations</strong>  - Hides/Shows most ABC annotations like Composer, Discography, History, Tempo, etc. in the displayed notation.</p>
+            <p id="advanced_showhidetext"><strong>Hide/Show Text</strong>  - Hides/Shows any %%center or %%text based text annotations in the ABC in the displayed notation.</p>
+            <p id="advanced_showhidechords"><strong>Hide/Show Chords</strong>  + Injected Tab - Hides/Shows any chords present in the ABC in the displayed notation.</p>
             <p>B/C Box, C#/D Box, and Anglo Concertina tablature are created using the ABC chord system, so also will be hidden.</p>
             <p>The ABC filtering buttons are enabled if Annotations, Text, or Chords are detected in the ABC.</p>
-            <p><strong>Strip ABC Features:</strong></p>
+            <hr class="hidden-print" id="advanced_stripfeatures">
+            <h1 class="page_break_always">Strip ABC Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>These commands are destructive in that they remove text from the current ABC.</p>
-            <p>It may be a good idea to save the current ABC or do a <strong>Copy All</strong> before using one of these commands if you want to quickly undo the operation.</p>
-            <p><strong>Strip Annotations</strong> - Removes most ABC annotations like Composer, Discography, History, Tempo, etc. from the ABC.</p>
-            <p><strong>Strip Text</strong> - Removes any %%center or %%text based text annotations from the ABC.</p>
-            <p><strong>Strip Chords + Injected Tab</strong> - Removes any chords present in the ABC.</p>
+            <p>It may be a good idea to save the current ABC or do a <strong>Copy All</strong> or <strong>Snapshot</strong> before using one of these commands if you want to quickly undo the operation.</p>
+            <p id="advanced_stripannotations"><strong>Strip Annotations</strong> - Removes most ABC annotations like Composer, Discography, History, Tempo, etc. from the ABC.</p>
+            <p id="advanced_striptext"><strong>Strip Text</strong> - Removes any %%center or %%text based text annotations from the ABC.</p>
+            <p id="advanced_stripchords"><strong>Strip Chords + Injected Tab</strong> - Removes any chords present in the ABC.</p>
             <p>B/C Box, C#/D Box, and Anglo Concertina tablature are created using the ABC chord system, so also will be stripped.</p>
             <p>When working with these tablatures, this is a quick way to clear out the current tablature before injecting new tablature.</p>
             <p>The ABC stripping buttons are enabled if Annotations, Text, or Chords are detected in the ABC.</p>
-            <p><strong>ABC Injection Features:</strong></p>
+            <hr class="hidden-print" id="advanced_injectionfeatures">
+            <h1 class="page_break_always">ABC Utility Injection Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>These commands are destructive in that they inject additional text into the current ABC.</p>
-            <p>It may be a good idea to save the current ABC or do a <strong>Copy All</strong> before using one of these commands if you want to quickly undo the operation.</p>
-            <p><strong>Inject All Available PDF Tunebook Annotations</strong> - Injects all available tool-specific PDF tunebook annotations for title page, table of contents, index generation, etc. at the top of the ABC.</p>
-            <p><strong>Inject PDF Section Header</strong> - Prompts for a PDF section header to inject at the text cursor insertion point.</p>
+            <p>It may be a good idea to save the current ABC or do a <strong>Copy All</strong> or <strong>Snapshot</strong> before using one of these commands if you want to quickly undo the operation.</p>
+            <p id="advanced_injectallpdf"><strong>Inject All Available PDF Tunebook Annotations</strong> - Injects all available tool-specific PDF tunebook annotations for title page, table of contents, index generation, etc. at the top of the ABC.</p>
+            <p id="advanced_injectsectionheader"><strong>Inject PDF Section Header</strong> - Prompts for a PDF section header to inject at the text cursor insertion point.</p>
             <p>Click on any section header in the Table of Contents or Index to jump to that section of the tunebook.</p>
             <p>The * at the start of the injected tune title will be automatically hidden in the rendered ABC notation and only used to signal the PDF generator to add the section header.</p>
             <p>In the unsorted Table of Contents and Index, section headers will be displayed with space above and below the section header.</p>
             <p>In the sorted Table of Contents and Index, section headers will be displayed at the top without the extra space.</p>
             <p>When rendering full tunes, section headers are automatically pushed to the top of a new page in the tunebook.</p>
             <p>When rendering note or text incipits, section headers are not automatically pushed to the top of a new page.</p>
-            <p><strong>Inject MIDI Soundfont, Melody, Chord, and Volumes</strong> - Injects MIDI Soundfont, Melody program, Chord program and volume annotation into one or all tunes:</p>
+            <p id="advanced_injectmidi"><strong>Inject MIDI Soundfont, Melody, Chord, and Volumes</strong> - Injects MIDI Soundfont, Melody program, Chord program and volume annotation into one or all tunes:</p>
             <div class="image_holder_p">
                 <img src="img/inject_all_midi_2.jpg"/>
             </div>
@@ -612,12 +671,12 @@
             <p>You may select which of the MIDI parameters you want injected by clicking the checkboxes.</p>
             <p>Select "Inject all tunes" to add the selected MIDI annotations to all tunes.</p>
             <p>If "Inject all tunes" is not checked, the MIDI annotation is added at the current text insertion point.</p>
-            <p><strong>Inject Metronome</strong> - Using the custom rhythm pattern feature, injects a playable metronome into one or all tunes based on the meter of the tune as specified in the M: tag.</p>
+            <p id="advanced_injectmetronome"><strong>Inject Metronome</strong> - Using the custom rhythm pattern feature, injects a playable metronome into one or all tunes based on the meter of the tune as specified in the M: tag.</p>
             <p>Since the metronome uses the ABC chord system to do its job, adding a metronome strips any existing ABC chords, MIDI chord programs, and MIDI bass/chord volumes from the ABC before injecting the ABC for the metronome.</p>
             <p>To disable an injected metronome, simply delete the injected "E" chord that starts it off.</p>
-            <p><strong>Inject ABC Header String</strong> - Prompts for a string to inject at the top or bottom of the current tune or all tunes ABC header.</p>
+            <p id="advanced_injectabcheader"><strong>Inject ABC Header String</strong> - Prompts for a string to inject at the top or bottom of the current tune or all tunes ABC header.</p>
             <p>This can be useful, for example to add a Q: tempo tag or %swing value to all the tunes at once.</p>
-            <p><strong>Inject %%staffwidth</strong> - Prompts for a %%staffwidth value to inject at the text insertion point or into all tunes.</p>
+            <p id="advanced_injectstaffwidth"><strong>Inject %%staffwidth</strong> - Prompts for a %%staffwidth value to inject at the text insertion point or into all tunes.</p>
             <p>This can be used to change the scale of every tune both for display and PDF generation.</p>
             <p>Generally values above 560 will make the tunes less tall.</p>
             <p id="injectrepeatsandtwobarclickintros"><strong>Inject Repeats and Click Intros</strong> - Allows you to increase the number of times through each tune by duplicating the ABC for the tune.</p>
@@ -634,26 +693,31 @@
             <p><strong>To Fix:</strong></p>
             <p><strong>Add a |: repeat bar at the start of the tune.</strong></p>
             <hr id="comhaltas_abc">
-            <p><strong>Comhaltas ABC Transform</strong> - Brings up a dialog where you can choose between transforming the entire ABC from the standard ABC d e f octave note style to the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style, or from the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style to standard ABC d e f octave note style.</p>
+            <p id="advanced_comhaltas"><strong>Comhaltas ABC Transform</strong> - Brings up a dialog where you can choose between transforming the entire ABC from the standard ABC d e f octave note style to the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style, or from the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style to standard ABC d e f octave note style.</p>
             <p><strong>Important:</strong> While the note Names display will show the Comhaltas-preferred note names, the ABC standard requires that the second octave C in the ABC itself either be represented by c or C' so that may requires some minor changes when pasting in your Comhaltas-formatted tunes.</p>
             <p><strong>Regarding Comhaltas ABC and instrument tab injection:</strong> The various instrument-specific tab injectors detailed below are not able to work with the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style note names.</p>
             <p>To inject instrument tab into ABC in this format, you will first need to convert the Comhaltas-preferred ABC to standard ABC the <strong>Comhaltas ABC Transform</strong> dialog's <strong>Comhaltas ABC to Standard ABC</strong> button first, then do the tablature injection.</p>
             <p>After doing the tab injection, you can then transform the ABC back into the Comhaltas-preferred format using the the <strong>Comhaltas ABC Transform</strong> dialog's <strong>Standard ABC to Comhaltas ABC</strong> button</p>
-            <hr>
-            <p><strong>Inject B/C Box Tab</strong> - Injects B/C Box tablature into the ABC.</p>
-            <p><strong>Inject C#/D Box Tab</strong> - Injects C#/D Box tablature into the ABC.</p>
-            <p><strong>Inject Anglo Concertina Tab</strong> - Injects Anglo Concertina tablature into the ABC.</p>
-            <p class="page_break_always"><strong>Inject Bamboo Flute Tab</strong> - After requesting the bamboo flute key, injects numeric notation tab for the selected key into the ABC.</p>
+            <hr class="hidden-print" id="advanced_tabinjectors">
+            <h1 class="page_break_always">Instrument Tablature Injectors<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>These command all inject instrument tablature into the ABC.</p>
+            <p>These commands are destructive in that they add tablature text to the current ABC.</p>
+            <p>It may be a good idea to save the current ABC or do a <strong>Copy All</strong> or <strong>Snapshot</strong> before using one of these commands if you want to quickly undo the operation.</p>
+            <p id="advanced_injectbc"><strong>Inject B/C Box Tab</strong> - Injects B/C Box tablature into the ABC.</p>
+            <p id="advanced_injectcd"><strong>Inject C#/D Box Tab</strong> - Injects C#/D Box tablature into the ABC.</p>
+            <p id="advanced_injectanglo"><strong>Inject Anglo Concertina Tab</strong> - Injects Anglo Concertina tablature into the ABC.</p>
+            <p id="advanced_bamboo" class="page_break_always"><strong>Inject Bamboo Flute Tab</strong> - After requesting the bamboo flute key, injects numeric notation tab for the selected key into the ABC.</p>
             <div class="image_holder_p">
                 <img src="img/bamboo_flute_1.jpg"/>
             </div>
-            <p><strong>Inject Fiddle Fingerings</strong> - Injects Fiddle/Mandolin fingerings (which finger to use for the note) into the ABC.</p>
+            <p id="advanced_fiddle"><strong>Inject Fiddle Fingerings</strong> - Injects Fiddle/Mandolin fingerings (which finger to use for the note) into the ABC.</p>
             <p>Note for Mandolin players:</p>
             <p>This is distinct from the fret number displayed when showing the Mandolin tablature along with the notation.</p>
             <p>The Mandolin tablature shows which fret to use on the Mandolin. This shows which finger to use on the fret.</p>
-            <p><strong>Configure Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for tablature injection.</p>
-            <hr id="midi_instrument_explorer">
-            <p><strong>MIDI Instrument Explorer</strong> - Brings up a player dialog where you can experiment with playing the currently selected tune using all of the available MIDI soundfonts, melody and bass/chord programs and volumes:</p>
+            <p id="advanced_configuretab"><strong>Configure Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for tablature injection.</p>
+            <hr class="hidden-print" id="midi_instrument_explorer">
+            <h1 class="page_break_always">MIDI Instrument Explorer<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+             <p>Brings up a player dialog where you can experiment with playing the currently selected tune using all of the available MIDI soundfonts, melody and bass/chord programs and volumes:</p>
             <div class="image_holder_p">
                 <img src="img/midi_instrument_explorer_1.jpg"/>
             </div>
@@ -665,8 +729,10 @@
             <p>Click the play button to play the tune to check the new settings.</p>
             <p>If you are happy with your new MIDI settings and want to apply them to the tune, click <strong>Inject MIDI Instruments and Volumes into the ABC</strong> to inject your new MIDI soundfont, program, and volume values into the tune's ABC, replacing any previous MIDI soundfont, melody instrument, bass/chord instrument, and bass/chord volume values.</p>
             <p>To exit the MIDI Instrument Explorer, click the <strong>Close</strong> button.</p>
-            <hr id="swing_explorer">
-            <p><strong>Swing Explorer</strong> - Brings up a player dialog where you can experiment with playing the currently selected tune using different swing factors and offsets:</p>
+            <p><strong>Note:</strong> This feature is primarily for use with single-voice tunes. Unpredictable results may occur with multi-voice tunes.</p>
+            <hr class="hidden-print" id="swing_explorer">
+            <h1 class="page_break_always">Swing Explorer<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>Brings up a player dialog where you can experiment with playing the currently selected tune using different swing factors and offsets:</p>
             <div class="image_holder_p">
                 <img src="img/swing_explorer_3.jpg"/>
             </div>
@@ -680,8 +746,9 @@
             <p>To exit the Swing Explorer, click the <strong>Close</strong> button.</p>
             <p>For more details on swing factor and swing offset, see this section:</p>
             <p style="text-align: center;"><a style="text-decoration:none;" href="#adding_swing">Adding Playback Swing to Tunes</a></p>     
-            <hr id="export_all_tunes_as_mp3">
-            <p><strong>Export all Tunes as .MP3</strong> - Exports all the tunes in the ABC area as individual .mp3 files at the bitrate set in the <strong>Settings</strong> dialog:</p>
+            <hr class="hidden-print" id="export_all_tunes_as_mp3">
+            <h1 class="page_break_always">Export all Tunes as .MP3<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>Exports all the tunes in the ABC area as individual .mp3 files at the bitrate set in the <strong>Settings</strong> dialog:</p>
             <div class="image_holder_p">
                 <img src="img/mp3batchexport_2.jpg"/>
             </div>
@@ -699,7 +766,10 @@
             <p><strong>2:</strong> Export all the tunes in the tunebook to .MP3 by clicking <strong>Export all Tunes as .MP3</strong> in the <strong>Advanced Controls</strong> dialog, and when prompted enter the number of times through each tune.</p>
             <p>Your browser may request permission to download multiple files.</p>
             <p>During the batch export operation, click the export status dialog's <strong>Cancel</strong> button to stop the export.</p>
-            <p id="sort_dialog"><strong>Sort by Specific Tag</strong> - Brings up a dialog where you can sort the tunes based on a specified ABC tag:</p>
+            <hr class="hidden-print" id="sort_dialog">
+            <h1 class="page_break_always">Sort by Specific Tag<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <hr id="sort_dialog">
+            <p>Brings up a dialog where you can sort the tunes based on a specified ABC tag:</p>
             <p style="margin-left:30px;"><strong>Sort by Name (T:)</strong> - Sorts all the tunes by name alphabetically based on the value found in the first T: tag, ignoring an initial "The"</p>
             <p style="margin-left:30px;"><strong>Sort by Name (T:) - Ignore "A"and "An"</strong> - This also sorts all the tunes by name, ignoring an initial "A" and "An" along with "The".</p>
             <p style="margin-left:30px;"><strong>Sort by Key (K:)</strong> - This sorts all the tunes by the key value found in the first K: tag in the tune.</p>
