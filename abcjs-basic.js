@@ -1,19 +1,3 @@
-// MAE 12 Sep 2023 - I need this to be global to be able to clear the cache from the ABC tool on soundfont change
-var gSoundsCacheABCJS = {};
-
-// MAE 20 Sep 2023 - Rhythm pattern overrides
-// Uses same syntax as standard patterns wrapped in an object with both the pattern and partial play threshold
-// var gRhythmPatternOverrides = {"10/8": {pattern:['boom', 'boom2', 'boom2', 'boom2', 'boom', 'boom2', 'boom2', 'boom', 'boom2', 'boom2'], threshold:5} };
-var gRhythmPatternOverrides = {};
-
-// MAE 15 Oct 2023 - For suppressing tab icon
-var gDrawTabSymbol = true;
-
-// MAE 23 Oct 2023 - For adding swing
-var gAddSwing = false;
-var gSwingFactor = 0.25;
-var gSwingOffset = 0;
-
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
@@ -26,6 +10,7 @@ var gSwingOffset = 0;
 })(this, function() {
 return /******/ (function() { // webpackBootstrap
 /******/  var __webpack_modules__ = ({
+
 /***/ "./index.js":
 /*!******************!*\
   !*** ./index.js ***!
@@ -60,7 +45,6 @@ var animation = __webpack_require__(/*! ./src/api/abc_animation */ "./src/api/ab
 var tuneBook = __webpack_require__(/*! ./src/api/abc_tunebook */ "./src/api/abc_tunebook.js");
 var sequence = __webpack_require__(/*! ./src/synth/abc_midi_sequencer */ "./src/synth/abc_midi_sequencer.js");
 var strTranspose = __webpack_require__(/*! ./src/str/output */ "./src/str/output.js");
-
 var abcjs = {};
 abcjs.signature = "abcjs-basic v" + version;
 Object.keys(animation).forEach(function (key) {
@@ -2566,46 +2550,7 @@ var create;
               // If we're using the percussion voice, change to Channel 10
               midi.setChannel(9, pan);
               midi.setInstrument(0);
-            } 
-            else
-            // MAE 15 Sep 2023 - Custom MIDI instrument processing
-            if (event.instrument == 136){
-              midi.setChannelMute(event.channel, pan);
-              midi.setInstrument(0);              
-            }
-            else
-            if (event.instrument > 128){
-              
-              var theInstrument = 0;
-
-              // Remap my custom instruments to something reasonable
-              switch (event.instrument){
-                case 129: // Uilleann
-                case 130: // Smallpipes D
-                case 131: // Smallpipes A
-                case 132: // Sackpipa 
-                  theInstrument = 109; // Bagpipes
-                  break;
-
-                case 133: // Concertina
-                case 134: // Melodica 
-                  theInstrument = 22; // Harmonica
-                  break;
-
-                case 135: // Cajun Accordion
-                  theInstrument = 21; // Accordion
-                  break;
-
-                default:
-                  theInstrument = 0; // Acoustic Grand Piano
-                  break;
-              }
-                           
-              midi.setChannel(event.channel, pan);
-              midi.setInstrument(theInstrument);
-
-            }
-            else {
+            } else {
               midi.setChannel(event.channel, pan);
               midi.setInstrument(event.instrument);
             }
@@ -4129,51 +4074,9 @@ var parseDirective = {};
       // ONE STRING PARAMETER
       if (midi.length !== 1) warn("Expected one parameter in MIDI " + midi_cmd, restOfString, 0);else midi_params.push(midi[0].token);
     } else if (midiCmdParam1Integer.indexOf(midi_cmd) >= 0) {
-
-      //
-      // MAE 15 Sep 2023 - Stuff in silence patch 136 if mute selected as the chordprog or bassprog
-      //
-      if ((midi_cmd == "chordprog") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "mute")){
-        //console.log("Got mute program request for "+midi_cmd);
-        midi[0].type = 'number';
-        midi[0].token = "136";
-        midi[0].intt = 136;
-        midi[0].floatt = 136;
-        midi[0].contineId = false;
-        midi[0].start = 10;
-        midi[0].end = 13;
-      }
-      else
-      if ((midi_cmd == "bassprog") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "mute")){
-        //console.log("Got mute program request for "+midi_cmd);
-        midi[0].type = 'number';
-        midi[0].token = "136";
-        midi[0].intt = 136;
-        midi[0].floatt = 136;
-        midi[0].contineId = false;
-        midi[0].start = 9;
-        midi[0].end = 12;
-      }
-
       // ONE INT PARAMETER
       if (midi.length !== 1) warn("Expected one parameter in MIDI " + midi_cmd, restOfString, 0);else if (midi[0].type !== "number") warn("Expected one integer parameter in MIDI " + midi_cmd, restOfString, 0);else midi_params.push(midi[0].intt);
     } else if (midiCmdParam1Integer1OptionalInteger.indexOf(midi_cmd) >= 0) {
-      
-      //
-      // MAE 15 Sep 2023 - Stuff in silence patch 136 if mute selected as the program
-      //
-      //debugger;
-      if ((midi_cmd == "program") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "mute")){
-        //console.log("Got mute program request for "+midi_cmd);
-        midi[0].type = 'number';
-        midi[0].token = "136";
-        midi[0].intt = 136;
-        midi[0].floatt = 136;
-        midi[0].contineId = false;
-        midi[0].start = 8;
-        midi[0].end = 11;
-      }
-
       // ONE INT PARAMETER, ONE OPTIONAL PARAMETER
       if (midi.length !== 1 && midi.length !== 2) warn("Expected one or two parameters in MIDI " + midi_cmd, restOfString, 0);else if (midi[0].type !== "number") warn("Expected integer parameter in MIDI " + midi_cmd, restOfString, 0);else if (midi.length === 2 && midi[1].type !== "number") warn("Expected integer parameter in MIDI " + midi_cmd, restOfString, 0);else {
         midi_params.push(midi[0].intt);
@@ -12074,13 +11977,119 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       chick: chick
     };
   }
-  //
-  // MAE 16 Aug 2023 - Chord interval map moved external after finding minifier issues
-  //
+  var chordIntervals = {
+    // diminished (all flat 5 chords)
+    'dim': [0, 3, 6],
+    '°': [0, 3, 6],
+    '˚': [0, 3, 6],
+    'dim7': [0, 3, 6, 9],
+    '°7': [0, 3, 6, 9],
+    '˚7': [0, 3, 6, 9],
+    'ø7': [0, 3, 6, 10],
+    'm7(b5)': [0, 3, 6, 10],
+    'm7b5': [0, 3, 6, 10],
+    'm7♭5': [0, 3, 6, 10],
+    '-7(b5)': [0, 3, 6, 10],
+    '-7b5': [0, 3, 6, 10],
+    '7b5': [0, 4, 6, 10],
+    '7(b5)': [0, 4, 6, 10],
+    '7♭5': [0, 4, 6, 10],
+    '7(b9,b5)': [0, 4, 6, 10, 13],
+    '7b9,b5': [0, 4, 6, 10, 13],
+    '7(#9,b5)': [0, 4, 6, 10, 15],
+    '7#9b5': [0, 4, 6, 10, 15],
+    'maj7(b5)': [0, 4, 6, 11],
+    'maj7b5': [0, 4, 6, 11],
+    '13(b5)': [0, 4, 6, 10, 14, 21],
+    '13b5': [0, 4, 6, 10, 14, 21],
+    // minor (all normal 5, minor 3 chords)
+    'm': [0, 3, 7],
+    '-': [0, 3, 7],
+    'm6': [0, 3, 7, 9],
+    '-6': [0, 3, 7, 9],
+    'm7': [0, 3, 7, 10],
+    '-7': [0, 3, 7, 10],
+    '-(b6)': [0, 3, 7, 8],
+    '-b6': [0, 3, 7, 8],
+    '-6/9': [0, 3, 7, 9, 14],
+    '-7(b9)': [0, 3, 7, 10, 13],
+    '-7b9': [0, 3, 7, 10, 13],
+    '-maj7': [0, 3, 7, 11],
+    '-9+7': [0, 3, 7, 11, 13],
+    '-11': [0, 3, 7, 11, 14, 17],
+    'm11': [0, 3, 7, 11, 14, 17],
+    '-maj9': [0, 3, 7, 11, 14],
+    '-∆9': [0, 3, 7, 11, 14],
+    'mM9': [0, 3, 7, 11, 14],
+    // major (all normal 5, major 3 chords)
+    'M': [0, 4, 7],
+    '6': [0, 4, 7, 9],
+    '6/9': [0, 4, 7, 9, 14],
+    '6add9': [0, 4, 7, 9, 14],
+    '69': [0, 4, 7, 9, 14],
+    '7': [0, 4, 7, 10],
+    '9': [0, 4, 7, 10, 14],
+    '11': [0, 7, 10, 14, 17],
+    '13': [0, 4, 7, 10, 14, 21],
+    '7b9': [0, 4, 7, 10, 13],
+    '7♭9': [0, 4, 7, 10, 13],
+    '7(b9)': [0, 4, 7, 10, 13],
+    '7(#9)': [0, 4, 7, 10, 15],
+    '7#9': [0, 4, 7, 10, 15],
+    '(13)': [0, 4, 7, 10, 14, 21],
+    '7(9,13)': [0, 4, 7, 10, 14, 21],
+    '7(#9,b13)': [0, 4, 7, 10, 15, 20],
+    '7(#11)': [0, 4, 7, 10, 14, 18],
+    '7#11': [0, 4, 7, 10, 14, 18],
+    '7(b13)': [0, 4, 7, 10, 20],
+    '7b13': [0, 4, 7, 10, 20],
+    '9(#11)': [0, 4, 7, 10, 14, 18],
+    '9#11': [0, 4, 7, 10, 14, 18],
+    '13(#11)': [0, 4, 7, 10, 18, 21],
+    '13#11': [0, 4, 7, 10, 18, 21],
+    'maj7': [0, 4, 7, 11],
+    '∆7': [0, 4, 7, 11],
+    'Δ7': [0, 4, 7, 11],
+    'maj9': [0, 4, 7, 11, 14],
+    'maj7(9)': [0, 4, 7, 11, 14],
+    'maj7(11)': [0, 4, 7, 11, 17],
+    'maj7(#11)': [0, 4, 7, 11, 18],
+    'maj7(13)': [0, 4, 7, 14, 21],
+    'maj7(9,13)': [0, 4, 7, 11, 14, 21],
+    '7sus4': [0, 5, 7, 10],
+    'm7sus4': [0, 3, 7, 10, 17],
+    'sus4': [0, 5, 7],
+    'sus2': [0, 2, 7],
+    '7sus2': [0, 2, 7, 10],
+    '9sus4': [0, 5, 7, 10, 14],
+    '13sus4': [0, 5, 7, 10, 14, 21],
+    // augmented (all sharp 5 chords)
+    'aug7': [0, 4, 8, 10],
+    '+7': [0, 4, 8, 10],
+    '+': [0, 4, 8],
+    '7#5': [0, 4, 8, 10],
+    '7♯5': [0, 4, 8, 10],
+    '7+5': [0, 4, 8, 10],
+    '9#5': [0, 4, 8, 10, 14],
+    '9♯5': [0, 4, 8, 10, 14],
+    '9+5': [0, 4, 8, 10, 14],
+    '-7(#5)': [0, 3, 8, 10],
+    '-7#5': [0, 3, 8, 10],
+    '7(#5)': [0, 4, 8, 10],
+    '7(b9,#5)': [0, 4, 8, 10, 13],
+    '7b9#5': [0, 4, 8, 10, 13],
+    'maj7(#5)': [0, 4, 8, 11],
+    'maj7#5': [0, 4, 8, 11],
+    'maj7(#5,#11)': [0, 4, 8, 11, 18],
+    'maj7#5#11': [0, 4, 8, 11, 18],
+    '9(#5)': [0, 4, 8, 10, 14],
+    '13(#5)': [0, 4, 8, 10, 14, 21],
+    '13#5': [0, 4, 8, 10, 14, 21]
+  };
   function chordNotes(bass, modifier) {
-    var intervals = gChordIntervals[modifier]; // MAE 16 Aug 2023 - The chord intervals array was getting trashed by the minifier, moved it outside
+    var intervals = chordIntervals[modifier];
     if (!intervals) {
-      if (modifier.slice(0, 2).toLowerCase() === 'ma' || modifier[0] === 'M') intervals = gChordIntervals.M;else if (modifier[0] === 'm' || modifier[0] === '-') intervals = gChordIntervals.m;else intervals = gChordIntervals.M;
+      if (modifier.slice(0, 2).toLowerCase() === 'ma' || modifier[0] === 'M') intervals = chordIntervals.M;else if (modifier[0] === 'm' || modifier[0] === '-') intervals = chordIntervals.m;else intervals = chordIntervals.M;
     }
     bass += 12; // the chord is an octave above the bass note.
     var notes = [];
@@ -12114,144 +12123,36 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       });
     }
   }
-
-  //
-  // MAE 19 Sep 2023 - Added 5/8, 7/4, 7/8, and 10/8 reworked partial measure handling
-  //
   var rhythmPatterns = {
     "2/2": ['boom', 'chick'],
     "2/4": ['boom', 'chick'],
     "3/4": ['boom', 'chick', 'chick'],
     "4/4": ['boom', 'chick', 'boom2', 'chick'],
     "5/4": ['boom', 'chick', 'chick', 'boom2', 'chick'],
-    "7/4": ['boom', 'chick', 'boom2', 'chick', 'boom2', 'chick', 'chick'],
-    "2/8": ['boom', 'chick'],
-    "3/8": ['boom', 'chick', 'chick'],
-    "5/8": ['boom', 'chick', 'chick', 'boom2', 'chick'],
     "6/8": ['boom', '', 'chick', 'boom2', '', 'chick'],
-    "7/8": ['boom', 'chick', 'chick', 'boom2', 'chick', 'boom2', 'chick'],
     "9/8": ['boom', '', 'chick', 'boom2', '', 'chick', 'boom2', '', 'chick'],
-    "10/8": ['boom', 'chick', 'chick', 'boom2', 'chick', 'chick', 'boom2', 'chick', 'boom2', 'chick'],
     "12/8": ['boom', '', 'chick', 'boom2', '', 'chick', 'boom', '', 'chick', 'boom2', '', 'chick']
   };
-
-  var partialMeasureThresholdList = {
-    "2/2": 1,
-    "2/4": 1,
-    "3/4": 1,
-    "4/4": 2,
-    "5/4": 2,
-    "7/4": 2,
-    "2/8": 1,
-    "3/8": 1,
-    "5/8": 2,
-    "6/8": 2,
-    "7/8": 2,
-    "9/8": 2,
-    "10/8": 2,
-    "12/8": 2
-  };
-
   function resolveChords(startTime, endTime) {
-
     var num = meter.num;
     var den = meter.den;
-
     var beatLength = 1 / den;
     var noteLength = beatLength / 2;
-
-    var patternWork = null;
-    var bIsCustomPattern = false;
-
-    // Search the custom patterns array first
-    if (gRhythmPatternOverrides){
-
-        var testCustomPattern = gRhythmPatternOverrides[num + '/' + den];
-
-        if (testCustomPattern){
-
-          patternWork = testCustomPattern.pattern;
-
-          //console.log("Using custom pattern for "+num + '/' + den + " pattern= " + JSON.stringify(patternWork));
-
-        }
-
-    }
-
-    if (patternWork){
-
-      bIsCustomPattern = true;
- 
-    }
-    else{
-
-      patternWork = rhythmPatterns[num + '/' + den];
-
-    }
-
+    var pattern = rhythmPatterns[num + '/' + den];
     var thisMeasureLength = parseInt(num, 10) / parseInt(den, 10);
-
     var portionOfAMeasure = thisMeasureLength - (endTime - startTime) / tempoChangeFactor;
-
     if (Math.abs(portionOfAMeasure) < 0.00001) portionOfAMeasure = false;
-
-    var pattern = [];
-
-    if (!patternWork || portionOfAMeasure) {
-
+    if (!pattern || portionOfAMeasure) {
       // If it is an unsupported meter, or this isn't a full bar, just chick on each beat.
+      pattern = [];
       var beatsPresent = (endTime - startTime) / tempoChangeFactor / beatLength;
-
-      var partialMeasureThreshold;
-
-      if (bIsCustomPattern){
-
-        partialMeasureThreshold = gRhythmPatternOverrides[num + '/' + den].threshold;
-
-        //console.log("Using custom threshold for "+num + '/' + den + " threshold = "+partialMeasureThreshold);
-
-
-      }
-      else
-      if (patternWork){
-
-        partialMeasureThreshold = partialMeasureThresholdList[num + '/' + den];
-
-      }
-     
       for (var p = 0; p < beatsPresent; p++) {
-
-        if ((!portionOfAMeasure) || (!patternWork)){
-
-          pattern.push("chick");
-
-        }
-        else
-        if (beatsPresent <= partialMeasureThreshold){
-
-          pattern.push("");
-          
-        }
-        else{
-
-          // Use a partial pattern from the current rhythm
-          pattern.push(patternWork[p % num]);
-
-        }
-
+        pattern.push("chick");
       }
-
     }
-    else{
-
-      pattern = patternWork;
-
-    }
-
     //console.log(startTime, pattern, currentChords, lastChord, portionOfAMeasure)
 
     if (currentChords.length === 0) {
-
       // there wasn't a new chord this measure, so use the last chord declared.
       currentChords.push({
         beat: 0,
@@ -12304,14 +12205,12 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       if (!hasRhythmHead && thisChord) {
         switch (pattern[m2]) {
           case 'boom':
-           if (beats['' + (m2 + 1)]){
+            if (beats['' + (m2 + 1)])
               // If there is not a chord change on the next beat, play a bass note.
-              writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, noteLength);
-            }
-            else {
+              writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, noteLength);else {
               writeBoom(thisChord.chord.boom, beatLength, boomVolume, m2, noteLength);
               lastBoom = thisChord.chord.boom;
-            }           
+            }
             break;
           case 'boom2':
             if (beats['' + (m2 + 1)]) writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, noteLength);else {
@@ -12337,7 +12236,6 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       }
     }
   }
-
   function normalizeDrumDefinition(params) {
     // Be very strict with the drum definition. If anything is not perfect,
     // just turn the drums off.
@@ -12614,22 +12512,6 @@ var rendererFactory;
     pan = Math.round((pan + 1) * 64);
     this.track += ccPrefix + "%0A" + toHex(pan, 2); // Pan
     this.track += ccPrefix + "%07%64"; // Channel Volume
-
-    this.noteOnAndChannel = "%9" + this.channel.toString(16);
-    this.noteOffAndChannel = "%8" + this.channel.toString(16);
-  };
-  Midi.prototype.setChannelMute = function (number, pan) {
-    this.channel = number;
-    var ccPrefix = "%00%B" + this.channel.toString(16);
-    // Reset midi, in case it was set previously.
-    this.track += ccPrefix + "%79%00"; // Reset All Controllers
-    this.track += ccPrefix + "%40%00"; // Damper pedal
-    this.track += ccPrefix + "%5B%30"; // Effect 1 Depth (reverb)
-    // Translate pan as -1 to 1 to 0 to 127
-    if (!pan) pan = 0;
-    pan = Math.round((pan + 1) * 64);
-    this.track += ccPrefix + "%0A" + toHex(pan, 2); // Pan
-    this.track += ccPrefix + "%07%00"; // Channel Volume
 
     this.noteOnAndChannel = "%9" + this.channel.toString(16);
     this.noteOffAndChannel = "%8" + this.channel.toString(16);
@@ -13285,7 +13167,7 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                       });
                       break;
                     case "program":
-                       addIfDifferent(voices[voiceNumber], {
+                      addIfDifferent(voices[voiceNumber], {
                         el_type: 'instrument',
                         program: elem.params[0]
                       });
@@ -13869,6 +13751,7 @@ var pitchToNoteName = __webpack_require__(/*! ./pitch-to-note-name */ "./src/syn
 var instrumentIndexToName = __webpack_require__(/*! ./instrument-index-to-name */ "./src/synth/instrument-index-to-name.js");
 var downloadBuffer = __webpack_require__(/*! ./download-buffer */ "./src/synth/download-buffer.js");
 var placeNote = __webpack_require__(/*! ./place-note */ "./src/synth/place-note.js");
+var soundsCache = __webpack_require__(/*! ./sounds-cache */ "./src/synth/sounds-cache.js");
 
 // TODO-PER: remove the midi tests from here: I don't think the object can be constructed unless it passes.
 var notSupportedMessage = "MIDI is not supported in this browser.";
@@ -13876,10 +13759,6 @@ var originalSoundFontUrl = "https://paulrosen.github.io/midi-js-soundfonts/abcjs
 // These are the original soundfonts supplied. They will need a volume boost:
 var defaultSoundFontUrl = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
 var alternateSoundFontUrl = "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/";
-var alternateSoundFontUrl2 = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
-var alternateSoundFontUrl3 = "https://michaeleskin.com/abctools/soundfonts/canvas/";
-var alternateSoundFontUrl4 = "https://michaeleskin.com/abctools/soundfonts/mscore/";
-
 function CreateSynth() {
   var self = this;
   self.audioBufferPossible = undefined;
@@ -13893,7 +13772,6 @@ function CreateSynth() {
 
   // Load and cache all needed sounds
   self.init = function (options) {
-
     if (!options) options = {};
     //    self.options = options
     registerAudioContext(options.audioContext); // This works no matter what - if there is already an ac it is a nop; if the context is not passed in, then it creates one.
@@ -13906,46 +13784,10 @@ function CreateSynth() {
       message: notSupportedMessage
     });
     var params = options.options ? options.options : {};
-
-    // MAE 10 Sep 2023 - Inject the default soundfont
-    //self.soundFontUrl = params.soundFontUrl ? params.soundFontUrl : gTheActiveSoundFont;
-    self.soundFontUrl = gTheActiveSoundFont;
-
+    self.soundFontUrl = params.soundFontUrl ? params.soundFontUrl : defaultSoundFontUrl;
     if (self.soundFontUrl[self.soundFontUrl.length - 1] !== '/') self.soundFontUrl += '/';
-
-    // Determine the volume multiplier
-    if (params.soundFontVolumeMultiplier || params.soundFontVolumeMultiplier === 0){
-        self.soundFontVolumeMultiplier = params.soundFontVolumeMultiplier;
-    } 
-    else 
-    if (self.soundFontUrl === defaultSoundFontUrl){
-        self.soundFontVolumeMultiplier = 3.0;
-    }
-    else
-    if (self.soundFontUrl === alternateSoundFontUrl || self.soundFontUrl === alternateSoundFontUrl2 || self.soundFontUrl === alternateSoundFontUrl3 || self.soundFontUrl === alternateSoundFontUrl4){
-        self.soundFontVolumeMultiplier = 3.0;
-    }
-    else 
-    if (self.soundFontUrl === originalSoundFontUrl){
-        self.soundFontVolumeMultiplier = 0.4;
-    }
-    else{
-        self.soundFontVolumeMultiplier = 1.0;
-    }
-    
-    // Can't use .ogg files on Safari, falls back to .mp3 with offsets
-    var isSafari = false
-    if (/Safari/i.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
-      isSafari = true;
-    }
-
-    // For the embedded iOS browser, above Safari test fails
-    if (gIsIOS){
-      isSafari = true;
-    }
-      
-    if (params.programOffsets) self.programOffsets = params.programOffsets;
-    else if (self.soundFontUrl === originalSoundFontUrl) self.programOffsets = {
+    if (params.soundFontVolumeMultiplier || params.soundFontVolumeMultiplier === 0) self.soundFontVolumeMultiplier = params.soundFontVolumeMultiplier;else if (self.soundFontUrl === defaultSoundFontUrl || self.soundFontUrl === alternateSoundFontUrl) self.soundFontVolumeMultiplier = 3.0;else if (self.soundFontUrl === originalSoundFontUrl) self.soundFontVolumeMultiplier = 0.4;else self.soundFontVolumeMultiplier = 1.0;
+    if (params.programOffsets) self.programOffsets = params.programOffsets;else if (self.soundFontUrl === originalSoundFontUrl) self.programOffsets = {
       "bright_acoustic_piano": 20,
       "honkytonk_piano": 20,
       "electric_piano_1": 30,
@@ -13989,49 +13831,9 @@ function CreateSynth() {
       "flute": 50,
       "banjo": 50,
       "woodblock": 20
-    };else {
-      if (isSafari){
-
-          // If using Celtic Sound .mp3 sound fonts on Safari, set the offsets to 50 msec (Adobe Audition artifact)
-
-          // Are we overriding the standard GM sounds with our own?
-          if (gUseCustomGMSounds){
-            self.programOffsets = {
-              "dulcimer":50,     // 15
-              "accordion": 50,   // 21
-              "flute": 50,       // 73
-              "whistle": 50,     // 78
-              "uilleann": 50,    // 129
-              "smallpipesd": 50, // 130
-              "smallpipesa":50,  // 131
-              "sackpipa": 50,    // 132
-              "concertina": 50,  // 133
-              "melodica": 50,    // 134
-              "cajun": 50,       // 136
-              "silence": 50      // 135
-            }
-          }
-          else{
-            self.programOffsets = {
-              "uilleann": 50,    // 129
-              "smallpipesd": 50, // 130
-              "smallpipesa":50,  // 131
-              "sackpipa": 50,    // 132
-              "concertina": 50,  // 133
-              "melodica": 50,    // 134
-              "cajun": 50,       // 136
-              "silence": 50      // 135
-            }
-          }
-      }
-      else{
-        self.programOffsets = {};
-      }
-    }
-
+    };else self.programOffsets = {};
     var p = params.fadeLength !== undefined ? parseInt(params.fadeLength, 10) : NaN;
     self.fadeLength = isNaN(p) ? 200 : p;
-
     p = params.noteEnd !== undefined ? parseInt(params.noteEnd, 10) : NaN;
     self.noteEnd = isNaN(p) ? 0 : p;
     self.pan = params.pan;
@@ -14058,7 +13860,7 @@ function CreateSynth() {
           var noteName = pitchToNoteName[pitchNumber];
           if (noteName) {
             if (!allNotes[currentInstrument]) allNotes[currentInstrument] = {};
-            if (!gSoundsCacheABCJS[currentInstrument] || !gSoundsCacheABCJS[currentInstrument][noteName]) allNotes[currentInstrument][noteName] = true;else {
+            if (!soundsCache[currentInstrument] || !soundsCache[currentInstrument][noteName]) allNotes[currentInstrument][noteName] = true;else {
               var label2 = currentInstrument + ":" + noteName;
               if (cached.indexOf(label2) < 0) cached.push(label2);
             }
@@ -14204,67 +14006,8 @@ function CreateSynth() {
       // There might be a previous run that needs to be turned off.
       self.stop();
       var noteMapTracks = createNoteMap(self.flattened);
-
-      // MAE 25 Oct 2023 - Start for swing injection
-
-      if (gAddSwing){
-
-        var beatsPerMeasure = self.beatsPerMeasure;
-
-        switch (beatsPerMeasure){
-
-          case 2:
-
-            if (self.meterSize == .5){
-
-              addSwing(noteMapTracks, gSwingFactor, beatsPerMeasure, "polka");
-
-            }
-            else
-            if (self.meterSize == .75){
-
-              addSwing(noteMapTracks, gSwingFactor, beatsPerMeasure, "jig");
-
-            }
-            else
-            if (self.meterSize == 1){
-
-              addSwing(noteMapTracks, gSwingFactor, beatsPerMeasure*4, "hornpipe");
-
-            }
-
-            break;
-
-          case 3:
-
-            if (self.meterSize == 1.125){
-
-              addSwing(noteMapTracks, gSwingFactor, beatsPerMeasure, "slipjig");
-
-            }
-
-            break;
-
-          case 4:
-
-            if (self.meterSize == 1){
-
-              addSwing(noteMapTracks, gSwingFactor, beatsPerMeasure*2, "hornpipe");
-
-            }
-            else
-            if (self.meterSize == 1.5){
-              
-              addSwing(noteMapTracks, gSwingFactor, beatsPerMeasure, "slide");
-
-            }
-            break;
-        }
-      
-      }
-
-      // MAE 25 Oct 2023 -  End for swing injection
-
+      // if (self.options.swing)
+      //  addSwing(noteMapTracks, self.options.swing, self.beatsPerMeasure)
       if (self.sequenceCallback) self.sequenceCallback(noteMapTracks, self.callbackContext);
       var panDistances = setPan(noteMapTracks.length, self.pan);
 
@@ -14475,247 +14218,38 @@ function CreateSynth() {
     }
   };
 
-  // this is a first attempt at adding a little bit of swing to the output
-  function addSwing(noteMapTracks, swing, beatsPerMeasure, style) {
-
-    // console.log("addSwing", noteMapTracks, swing, beatsPerMeasure)
-    // Swing should be between -0.9 and 0.9. Make sure the input is between them.
-    // Then that is the percentage to add to the first beat, so a negative number moves the second beat earlier.
-    // A value of zero is the same as no swing at all.
-    // This only works when there are an even number of beats in a measure.
-    switch (style){
-
-      case "hornpipe":
-      
-        // console.log("addSwing: Reel/Hornpipe");
-
-        swing = parseFloat(swing)
-
-        if (isNaN(swing))
-          return
-        
-        swing = swing / 2;
-
-        if (swing < -0.9)
-          swing = -0.9
-        if (swing > 0.9)
-          swing = 0.9
-
-        var beatLength = (1 / beatsPerMeasure) * 2
-
-        swing = beatLength * swing
-
-        for (var t = 0; t < noteMapTracks.length; t++) {
-
-          var track = noteMapTracks[t];
-          
-          for (var i = 0; i < track.length; i++) {
-          
-            var event = track[i];
-
-            var theStart = event.start - (gSwingOffset * 0.125);
-
-            if (theStart >= 0){
-          
-              if ((event.end - event.start) >= (beatLength/2)){
-            
-                if (theStart % beatLength) {
-
-                  // This is the off beat
-                  event.start += swing;
-
-                } 
-                else {
-
-                  // This is the beat
-                  event.end += swing;
-
-                }
-              }
-            }
-          }
-        }
-
-        break;
-
-      case "jig":
-      case "slipjig":
-      case "slide":
-
-        // console.log("addSwing: "+style);
-
-        swing = parseFloat(swing)
-        if (isNaN(swing))
-          return
-
-        swing = swing / 2;
-
-        if (swing < -0.9)
-          swing = -0.9
-        if (swing > 0.9)
-          swing = 0.9
-
-        var beatLength = 0.125;
-
-        swingFactor = swing;
-        swing = beatLength * swing
-
-        if (swing == 0){
-          return;
-        }
-
-        for (var t = 0; t < noteMapTracks.length; t++) {
-
-          var track = noteMapTracks[t];
-          
-          for (var i = 0; i < track.length; i++) {
-
-            var event = track[i];
-
-            var duration = (event.end - event.start);
-            
-            var theStart = event.start - (gSwingOffset * 0.125);
-
-            if (theStart >= 0){
-
-              if (duration == 0.125){
-
-                if ((theStart % (beatLength * 3)) == 0.125) {
-
-                  // This is the first off beat
-                  // console.log("first offbeat: "+event.pitch);
-                  // console.log("before start: "+event.start+" duration: "+duration);
-                  
-                  event.start += swing;
-
-                  duration = event.end - event.start;
-                  
-                  event.end = event.start + (duration * (1-swingFactor));
-
-                  //duration = event.end - event.start;
-                  // console.log("after start: "+event.start+" duration: "+duration);
-                } 
-                //else
-                //if (theStart % (beatLength * 3)) {
-
-                  // This is the second off beat
-                  // console.log("second offbeat: "+event.pitch);
-
-                  //duration = event.end - event.start;
-                  // console.log("before start: "+event.start+" duration: "+duration);
-                  // console.log("after start: "+event.start+" duration: "+duration);
-                //} 
-                else {
-
-                  // This is the beat
-                  // console.log("beat: "+event.pitch);
-
-                  //duration = event.end - event.start;
-                  // console.log("before start: "+event.start+" duration: "+duration);
-                  event.end += swing;
-
-                  //duration = event.end - event.start;
-                  // console.log("after start: "+event.start+" duration: "+duration);
-                }
-              }
-              //else{
-                // console.log("not swung: "+event.pitch);
-
-                //duration = event.end - event.start;
-                // console.log("before start: "+event.start+" duration: "+duration);
-                // console.log("after start: "+event.start+" duration: "+duration);
-              //}
-            }
-          }
-        }
-
-        break;
-
-
-      case "polka":
-        
-        // console.log("addSwing: "+style);
-
-        //debugger;
-
-        swing = parseFloat(swing)
-        if (isNaN(swing))
-          return
-
-        swing = swing / 2;
-
-        if (swing < -0.9)
-          swing = -0.9
-        if (swing > 0.9)
-          swing = 0.9
-
-        var beatLength = 0.125;
-
-        swingFactor = swing;
-        swing = beatLength * swing
-
-        if (swing == 0){
-          return;
-        }
-
-        for (var t = 0; t < noteMapTracks.length; t++) {
-
-          var track = noteMapTracks[t];
-          
-          for (var i = 0; i < track.length; i++) {
-
-            var event = track[i];
-
-            var duration = (event.end - event.start);
-
-            var theStart = event.start - (gSwingOffset * 0.125);
-
-            if (theStart >= 0){
-
-              if (duration == 0.125){
-
-                if ((theStart % (beatLength * 2)) == 0.125) {
-
-                  // This is the off beat
-                  // console.log("offbeat: "+event.pitch);
-                  // console.log("before start: "+event.start+" duration: "+duration);
-                  
-                  event.start += swing;
-
-                  duration = event.end - event.start;
-                  
-                  event.end = event.start + (duration * (1-swingFactor));
-
-                  //duration = event.end - event.start;
-                  // console.log("after start: "+event.start+" duration: "+duration);
-                } 
-                else {
-
-                  // This is the beat
-                  // console.log("beat: "+event.pitch);
-
-                  //duration = event.end - event.start;
-                  // console.log("before start: "+event.start+" duration: "+duration);
-                  event.end += swing;
-
-                  //duration = event.end - event.start;
-                  // console.log("after start: "+event.start+" duration: "+duration);
-                }
-              }
-              //else{
-                // console.log("not swung: "+event.pitch);
-
-                //duration = event.end - event.start;
-                // console.log("before start: "+event.start+" duration: "+duration);
-                // console.log("after start: "+event.start+" duration: "+duration);
-              //}
-            }
-          }
-        }
-
-        break;
-    }
-  }
+  // // this is a first attempt at adding a little bit of swing to the output, but the algorithm isn't correct.
+  // function addSwing(noteMapTracks, swing, beatsPerMeasure) {
+  //  console.log("addSwing", noteMapTracks, swing, beatsPerMeasure)
+  //  // Swing should be between -0.9 and 0.9. Make sure the input is between them.
+  //  // Then that is the percentage to add to the first beat, so a negative number moves the second beat earlier.
+  //  // A value of zero is the same as no swing at all.
+  //  // This only works when there are an even number of beats in a measure.
+  //  if (beatsPerMeasure % 2 !== 0)
+  //    return;
+  //  swing = parseFloat(swing)
+  //  if (isNaN(swing))
+  //    return
+  //  if (swing < -0.9)
+  //    swing = -0.9
+  //  if (swing > 0.9)
+  //    swing = 0.9
+  //  var beatLength = (1 / beatsPerMeasure)*2
+  //  swing = beatLength * swing
+  //  for (var t = 0; t < noteMapTracks.length; t++) {
+  //    var track = noteMapTracks[t];
+  //    for (var i = 0; i < track.length; i++) {
+  //      var event = track[i];
+  //      if (event.start % beatLength) {
+  //        // This is the off beat
+  //        event.start += swing;
+  //      } else {
+  //        // This is the beat
+  //        event.end += swing;
+  //      }
+  //    }
+  //  }
+  // }
 }
 
 module.exports = CreateSynth;
@@ -14919,7 +14453,7 @@ module.exports = svg;
   \***********************************************/
 /***/ (function(module) {
 
-var instrumentIndexToName = ["acoustic_grand_piano", "bright_acoustic_piano", "electric_grand_piano", "honkytonk_piano", "electric_piano_1", "electric_piano_2", "harpsichord", "clavinet", "celesta", "glockenspiel", "music_box", "vibraphone", "marimba", "xylophone", "tubular_bells", "dulcimer", "drawbar_organ", "percussive_organ", "rock_organ", "church_organ", "reed_organ", "accordion", "harmonica", "tango_accordion", "acoustic_guitar_nylon", "acoustic_guitar_steel", "electric_guitar_jazz", "electric_guitar_clean", "electric_guitar_muted", "overdriven_guitar", "distortion_guitar", "guitar_harmonics", "acoustic_bass", "electric_bass_finger", "electric_bass_pick", "fretless_bass", "slap_bass_1", "slap_bass_2", "synth_bass_1", "synth_bass_2", "violin", "viola", "cello", "contrabass", "tremolo_strings", "pizzicato_strings", "orchestral_harp", "timpani", "string_ensemble_1", "string_ensemble_2", "synth_strings_1", "synth_strings_2", "choir_aahs", "voice_oohs", "synth_choir", "orchestra_hit", "trumpet", "trombone", "tuba", "muted_trumpet", "french_horn", "brass_section", "synth_brass_1", "synth_brass_2", "soprano_sax", "alto_sax", "tenor_sax", "baritone_sax", "oboe", "english_horn", "bassoon", "clarinet", "piccolo", "flute", "recorder", "pan_flute", "blown_bottle", "shakuhachi", "whistle", "ocarina", "lead_1_square", "lead_2_sawtooth", "lead_3_calliope", "lead_4_chiff", "lead_5_charang", "lead_6_voice", "lead_7_fifths", "lead_8_bass_lead", "pad_1_new_age", "pad_2_warm", "pad_3_polysynth", "pad_4_choir", "pad_5_bowed", "pad_6_metallic", "pad_7_halo", "pad_8_sweep", "fx_1_rain", "fx_2_soundtrack", "fx_3_crystal", "fx_4_atmosphere", "fx_5_brightness", "fx_6_goblins", "fx_7_echoes", "fx_8_scifi", "sitar", "banjo", "shamisen", "koto", "kalimba", "bagpipe", "fiddle", "shanai", "tinkle_bell", "agogo", "steel_drums", "woodblock", "taiko_drum", "melodic_tom", "synth_drum", "reverse_cymbal", "guitar_fret_noise", "breath_noise", "seashore", "bird_tweet", "telephone_ring", "helicopter", "applause", "gunshot", "percussion", "uilleann", "smallpipesd", "smallpipesa", "sackpipa", "concertina", "melodica", "cajun", "silence"];
+var instrumentIndexToName = ["acoustic_grand_piano", "bright_acoustic_piano", "electric_grand_piano", "honkytonk_piano", "electric_piano_1", "electric_piano_2", "harpsichord", "clavinet", "celesta", "glockenspiel", "music_box", "vibraphone", "marimba", "xylophone", "tubular_bells", "dulcimer", "drawbar_organ", "percussive_organ", "rock_organ", "church_organ", "reed_organ", "accordion", "harmonica", "tango_accordion", "acoustic_guitar_nylon", "acoustic_guitar_steel", "electric_guitar_jazz", "electric_guitar_clean", "electric_guitar_muted", "overdriven_guitar", "distortion_guitar", "guitar_harmonics", "acoustic_bass", "electric_bass_finger", "electric_bass_pick", "fretless_bass", "slap_bass_1", "slap_bass_2", "synth_bass_1", "synth_bass_2", "violin", "viola", "cello", "contrabass", "tremolo_strings", "pizzicato_strings", "orchestral_harp", "timpani", "string_ensemble_1", "string_ensemble_2", "synth_strings_1", "synth_strings_2", "choir_aahs", "voice_oohs", "synth_choir", "orchestra_hit", "trumpet", "trombone", "tuba", "muted_trumpet", "french_horn", "brass_section", "synth_brass_1", "synth_brass_2", "soprano_sax", "alto_sax", "tenor_sax", "baritone_sax", "oboe", "english_horn", "bassoon", "clarinet", "piccolo", "flute", "recorder", "pan_flute", "blown_bottle", "shakuhachi", "whistle", "ocarina", "lead_1_square", "lead_2_sawtooth", "lead_3_calliope", "lead_4_chiff", "lead_5_charang", "lead_6_voice", "lead_7_fifths", "lead_8_bass_lead", "pad_1_new_age", "pad_2_warm", "pad_3_polysynth", "pad_4_choir", "pad_5_bowed", "pad_6_metallic", "pad_7_halo", "pad_8_sweep", "fx_1_rain", "fx_2_soundtrack", "fx_3_crystal", "fx_4_atmosphere", "fx_5_brightness", "fx_6_goblins", "fx_7_echoes", "fx_8_scifi", "sitar", "banjo", "shamisen", "koto", "kalimba", "bagpipe", "fiddle", "shanai", "tinkle_bell", "agogo", "steel_drums", "woodblock", "taiko_drum", "melodic_tom", "synth_drum", "reverse_cymbal", "guitar_fret_noise", "breath_noise", "seashore", "bird_tweet", "telephone_ring", "helicopter", "applause", "gunshot", "percussion"];
 module.exports = instrumentIndexToName;
 
 /***/ }),
@@ -14934,98 +14468,13 @@ module.exports = instrumentIndexToName;
 // url = the base url for the soundfont
 // instrument = the instrument name (e.g. "acoustic_grand_piano")
 // name = the pitch name (e.g. "A3")
+var soundsCache = __webpack_require__(/*! ./sounds-cache */ "./src/synth/sounds-cache.js");
 var getNote = function getNote(url, instrument, name, audioContext) {
-  if (!gSoundsCacheABCJS[instrument]) gSoundsCacheABCJS[instrument] = {};
-  var instrumentCache = gSoundsCacheABCJS[instrument];
-
-  // Can't use .ogg files on Safari, falls back to .mp3
-  var isSafari = false
-  if (/Safari/i.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
-    isSafari = true;
-  }
-  
-  // For the embedded iOS browser, above Safari test fails
-  if (gIsIOS){
-    isSafari = true;
-  }
-
+  if (!soundsCache[instrument]) soundsCache[instrument] = {};
+  var instrumentCache = soundsCache[instrument];
   if (!instrumentCache[name]) instrumentCache[name] = new Promise(function (resolve, reject) {
-
-    var isOgg = false;
-
-    // Are we overriding the default GM sounds with our own?
-    if (gUseCustomGMSounds){
-
-      // MAE 28 June 29023 - Override Celtic Sound instruments with my own
-      switch (instrument){
-        case "dulcimer":    // 15
-        case "accordion":   // 21
-        case "flute":       // 73
-        case "whistle":     // 78
-        case "uilleann":    // 129 
-        case "smallpipesd": // 130
-        case "smallpipesa": // 131
-        case "sackpipa":    // 132
-        case "concertina":  // 133
-        case "melodica":    // 134
-        case "cajun":       // 135
-        case "silence":     // 136
-          url = "https://michaeleskin.com/abctools/soundfonts/";
-          isOgg = true;
-          break;
-
-        case "percussion":  // 128
-          // The percussion on the alternate sound fonts is too loud, use the default in all cases
-          url = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
-          break;
-
-        default:
-          break;
-      }
-    }
-    else{
-
-      // MAE 28 June 29023 - Override Celtic Sound instruments with my own
-      switch (instrument){        
-        case "uilleann":    // 129 
-        case "smallpipesd": // 130
-        case "smallpipesa": // 131
-        case "sackpipa":    // 132
-        case "concertina":  // 133
-        case "melodica":    // 134
-        case "cajun":       // 135
-        case "silence":     // 136
-          url = "https://michaeleskin.com/abctools/soundfonts/";
-          isOgg = true;
-          break;
-
-        case "percussion":  // 128
-          // The percussion on the alternate sound fonts is too loud, use the default in all cases
-          url = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
-          break;
-
-        default:
-          break;
-      }
-
-
-    }
-
     var xhr = new XMLHttpRequest();
     var noteUrl = url + instrument + "-mp3/" + name + ".mp3";
-
-    // If replacing a default sound, choose .ogg or .wav depending on the platform
-    if (isOgg){
-
-      if (!isSafari){
-        noteUrl = url + instrument + "-ogg/" + name + ".ogg";
-      }
-      else{
-        noteUrl = url + instrument + "-mp3/" + name + ".mp3"; 
-      } 
-
-    }
-
     xhr.open("GET", noteUrl, true);
     xhr.responseType = "arraybuffer";
     xhr.onload = function () {
@@ -15321,6 +14770,7 @@ module.exports = pitchesToPerc;
   \*********************************/
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
+var soundsCache = __webpack_require__(/*! ./sounds-cache */ "./src/synth/sounds-cache.js");
 var pitchToNoteName = __webpack_require__(/*! ./pitch-to-note-name */ "./src/synth/pitch-to-note-name.js");
 var centsToFactor = __webpack_require__(/*! ./cents-to-factor */ "./src/synth/cents-to-factor.js");
 function placeNote(outputAudioBuffer, sampleRate, sound, startArray, volumeMultiplier, ofsMs, fadeTimeSec, noteEndSec, debugCallback) {
@@ -15334,7 +14784,7 @@ function placeNote(outputAudioBuffer, sampleRate, sound, startArray, volumeMulti
   if (len < 0) len = 0.005; // Have some small audible length no matter how short the note is.
   var offlineCtx = new OfflineAC(2, Math.floor((len + fadeTimeSec) * sampleRate), sampleRate);
   var noteName = pitchToNoteName[sound.pitch];
-  var noteBufferPromise = gSoundsCacheABCJS[sound.instrument][noteName];
+  var noteBufferPromise = soundsCache[sound.instrument][noteName];
   if (!noteBufferPromise) {
     // if the note isn't present then just skip it - it will leave a blank spot in the audio.
     if (debugCallback) debugCallback('placeNote skipped: ' + sound.instrument + ':' + noteName);
@@ -15490,6 +14940,17 @@ function registerAudioContext(ac) {
   return window.abcjsAudioContext.state !== "suspended";
 }
 module.exports = registerAudioContext;
+
+/***/ }),
+
+/***/ "./src/synth/sounds-cache.js":
+/*!***********************************!*\
+  !*** ./src/synth/sounds-cache.js ***!
+  \***********************************/
+/***/ (function(module) {
+
+var soundsCache = {};
+module.exports = soundsCache;
 
 /***/ }),
 
@@ -15695,16 +15156,8 @@ function SynthController() {
     return self.runWhenReady(self._randomAccess, ev);
   };
   self._randomAccess = function (ev) {
-      
     var background = ev.target.classList.contains('abcjs-midi-progress-indicator') ? ev.target.parentNode : ev.target;
-    
-    // MAE 26 June 2023 - For seek control in a modal
-    //var percent = (ev.x - background.offsetLeft) / background.offsetWidth;
-  
-    var bRect = background.getBoundingClientRect();
-
-    var percent = (ev.x - bRect.x) / bRect.width;
-
+    var percent = (ev.x - background.offsetLeft) / background.offsetWidth;
     if (percent < 0) percent = 0;
     if (percent > 1) percent = 1;
     self.seek(percent);
@@ -16686,14 +16139,11 @@ function buildTabAbsolute(plugin, absX, relX) {
   };
   var tabAbsolute = new AbsoluteElement(element, 0, 0, "symbol", 0);
   tabAbsolute.x = absX;
-  // MAE 15 Oct 2023 to hide the left side TAB element on note name and whistle tab
-  if (gDrawTabSymbol){
-    var tabRelative = new RelativeElement(tabIcon, 0, 0, 7.5, "tab");
-    tabRelative.x = relX;
-    tabAbsolute.children.push(tabRelative);
-    if (tabAbsolute.abcelem.el_type == 'tab') {
-      tabRelative.pitch = tabYPos;
-    }
+  var tabRelative = new RelativeElement(tabIcon, 0, 0, 7.5, "tab");
+  tabRelative.x = relX;
+  tabAbsolute.children.push(tabRelative);
+  if (tabAbsolute.abcelem.el_type == 'tab') {
+    tabRelative.pitch = tabYPos;
   }
   return tabAbsolute;
 }
@@ -18765,9 +18215,7 @@ var createNoteHead = function createNoteHead(abselem, c, pitchelem, options) {
   var accidentalshiftx = 0;
   var newDotShiftX = 0;
   var extraLeft = 0;
-  // MAE 12 Aug 2023 For MusicXML import FOOFOO
-  //if (c === undefined) abselem.addFixed(new RelativeElement("pitch is undefined", 0, 0, 0, {
-  if (c === undefined) abselem.addFixed(new RelativeElement(" ", 0, 0, 0, {
+  if (c === undefined) abselem.addFixed(new RelativeElement("pitch is undefined", 0, 0, 0, {
     type: "debug"
   }));else if (c === "") {
     notehead = new RelativeElement(null, 0, 0, pitch);
@@ -20571,10 +20019,6 @@ function TopText(metaText, metaTextInfo, formatting, lines, width, isPrint, padd
   var tAnchor = formatting.titleleft ? 'start' : 'middle';
   var tLeft = formatting.titleleft ? paddingLeft : paddingLeft + width / 2;
   if (metaText.title) {
-    // MAE 9 Oct 2023 For Table of Contents headers
-    if (metaText.title.indexOf("*") == 0){
-      metaText.title = metaText.title.replaceAll("*","");
-    }
     addTextIf(this.rows, {
       marginLeft: tLeft,
       text: metaText.title,
@@ -25625,8 +25069,7 @@ var Renderer = function Renderer(paper) {
   this.space = 3 * spacing.SPACE;
   this.padding = {}; // renderer's padding is managed by the controller
   this.reset();
-  // MAE FOOFOO Make this the case for all versions of Firefox
-  this.firefox112 = false; //navigator.userAgent.indexOf('Firefox') >= 0;
+  this.firefox112 = navigator.userAgent.indexOf('Firefox/112.0') >= 0;
 };
 Renderer.prototype.reset = function () {
   this.paper.clear();
