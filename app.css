@@ -194,7 +194,6 @@ padding:12px;}
 	height:42px;
 	margin-top: 9px;
 	padding:12px;
-	margin-right:24px;
 }
 
 
@@ -704,7 +703,7 @@ padding:12px;
 height:42px;
 padding:12px;
 width:auto;
-margin-left:12px;
+margin-left:0px;
 }
 
 @media (hover: hover) {
@@ -717,7 +716,7 @@ margin-left:12px;
 height:42px;
 padding:12px;
 width:auto;
-margin-left:12px;
+margin-right:36px;
 }
 
 @media (hover: hover) {
@@ -727,6 +726,51 @@ margin-left:12px;
 }
 
 #swingexplorerhelp{
+font-size:24pt;
+position:absolute;
+left:20px;
+top:20px;
+}
+
+#configure_instrument_explorer{
+height:42px;
+padding:12px;
+margin-right:24px;
+}
+
+@media (hover: hover) {
+	.configure_instrument_explorer:hover{
+	background: palegreen;
+	}
+}
+
+#instrumentexplorertest{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:36px;
+}
+
+@media (hover: hover) {
+	.instrumentexplorertest:hover{
+	background: palegreen;
+	}
+}
+
+
+#instrumentexplorerinject{
+height:42px;
+padding:12px;
+width:auto;
+}
+
+@media (hover: hover) {
+	.instrumentexplorerinject:hover{
+	background: palegreen;
+	}
+}
+
+#instrumentexplorerhelp{
 font-size:24pt;
 position:absolute;
 left:20px;
@@ -1652,6 +1696,13 @@ margin-top:-7px;
 
 }
 
+@media (hover: hover) {
+	.configure_box:hover{
+	background: palegreen;
+	}
+}
+
+
 .configure_swingexplorer_text{
 	font-size:13pt;
 	font-family:helvetica;
@@ -1680,10 +1731,72 @@ margin-top:-7px;
 	margin-right:10px;
 }
 
-@media (hover: hover) {
-	.configure_box:hover{
-	background: palegreen;
-	}
+.configure_instrumentexplorer_text{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-top:24px;
+}
+
+.configure_instrumentexplorer_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 2px;
+	width: 60px;
+	margin-right:10px;
+}
+
+.configure_instrumentexplorer_text>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:190px;
+margin-left:8px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_instrumentexplorer_text_mobile{
+	font-size:10pt;
+	font-family:helvetica;
+	margin-top:24px;
+}
+
+.configure_instrumentexplorer_text_mobile>input{
+	font-size:11pt;
+	font-family:helvetica;
+	margin-left: 2px;
+	width: 60px;
+	margin-right:10px;
+}
+
+.configure_instrumentexplorer_text_mobile>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:190px;
+margin-left:4px;
+padding-left:10px;
+margin-top:-7px;
 }
 
 #configure_musicxml_import{
@@ -1759,7 +1872,6 @@ margin-top:-7px;
 	height:42px;
 	margin-top: 9px;
 	padding:12px;
-	margin-right:24px;
 }
 
 @media (hover: hover) {
@@ -2400,6 +2512,21 @@ padding: 3px;
 }
 
 .btn-swingexplorerinject{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-instrumentexplorer{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-instrumentexplorertest{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-instrumentexplorerinject{
   --color: black;
   --background-color: #C8ECFE;
 }
