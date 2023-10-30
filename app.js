@@ -16180,8 +16180,8 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 			modal_msg += '</p>';
 
 			modal_msg += '<p class="configure_swingexplorer_text_mobile" style="text-align:center;margin:0px;margin-top:22px">';
-			modal_msg += '<input id="swingexplorertest" class="swingexplorertest button btn btn-swingexplorertest" onclick="SwingExplorerRegenerate();" type="button" value="Test Swing" title="Reloads the tune into the player with the entered swing factor and offset">';
-			modal_msg += '<input id="swingexplorerinject" class="swingexplorerinject button btn btn-swingexplorerinject" onclick="SwingExplorerInject();" type="button" style="margin-right:0px;" value="Inject Swing into ABC" title="Injects the current swing factor and offset into the tune ABC">';
+			modal_msg += '<input id="swingexplorertest" class="swingexplorertest button btn btn-swingexplorertest" onclick="SwingExplorerRegenerate();" type="button" value="Reload Tune with Changed Swing Settings" title="Reloads the tune into the player with the entered swing factor and offset">';
+			modal_msg += '<input id="swingexplorerinject" class="swingexplorerinject button btn btn-swingexplorerinject" onclick="SwingExplorerInject();" type="button" style="margin-right:0px;" value="Inject Swing into the ABC" title="Injects the current swing factor and offset into the tune ABC">';
 			modal_msg += '</p>';
 			modal_msg += '<a id="swingexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#swing_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the Swing Explorer">💡</a>';
 		}
@@ -16193,8 +16193,8 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 			modal_msg += 'Swing offset (1/8 notes): <input style="width:60px;margin-right:0px;" id="swing_explorer_offset" type="number" min="0" step="1" max="12" title="Swing offset in 1/8 notes" autocomplete="off"/>';
 			modal_msg += '</p>';
 			modal_msg += '<p class="configure_swingexplorer_text" style="text-align:center;margin:0px;margin-top:22px">';
-			modal_msg += '<input id="swingexplorertest" class="swingexplorertest button btn btn-swingexplorertest" onclick="SwingExplorerRegenerate();" type="button" value="Test Swing" title="Reloads the tune into the player with the entered swing factor and offset">';
-			modal_msg += '<input id="swingexplorerinject" class="swingexplorerinject button btn btn-swingexplorerinject" onclick="SwingExplorerInject();" type="button" style="margin-right:0px;" value="Inject Swing into ABC" title="Injects the current swing factor and offset into the tune ABC">';
+			modal_msg += '<input id="swingexplorertest" class="swingexplorertest button btn btn-swingexplorertest" onclick="SwingExplorerRegenerate();" type="button" value="Reload Tune with Changed Swing Settings" title="Reloads the tune into the player with the entered swing factor and offset">';
+			modal_msg += '<input id="swingexplorerinject" class="swingexplorerinject button btn btn-swingexplorerinject" onclick="SwingExplorerInject();" type="button" style="margin-right:0px;" value="Inject Swing into the ABC" title="Injects the current swing factor and offset into the tune ABC">';
 			modal_msg += '</p>';
 			modal_msg += '<a id="swingexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#swing_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the Swing Explorer">💡</a>';
 
@@ -17038,8 +17038,8 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 			modal_msg += '&nbsp;&nbsp;Chord Volume (0-127):&nbsp;<input style="width:90px;" id="instrument_explorer_chord_volume" type="number" min="0" step="1" max="127" title="Chord volume, range is 0-127" autocomplete="off"/>';
 			modal_msg += '</p>';
 			modal_msg += '<p class="configure_instrumentexplorer_text_mobile">';
-			modal_msg += '<input id="instrumentexplorertest" class="instrumentexplorertest button btn btn-instrumentexplorertest" onclick="InstrumentExplorerRegenerate();" type="button" value="Test MIDI Instruments and Volumes" title="Reloads the tune into the player with the selected MIDI soundfont, melody instrument, bass/chord instrument, and bass/chord volumes">';
-			modal_msg += '<input id="instrumentexplorerinject" class="instrumentexplorerinject button btn btn-instrumentexplorerinject" onclick="InstrumentExplorerInject();" style="margin-right:0px;" type="button" value="Inject MIDI Instruments and Volumes into the ABC" title="Injects the current soundfont, melody instrument, bass/chord instrument, and bass/chord volumes into the tune ABC">';
+			modal_msg += '<input id="instrumentexplorertest" class="instrumentexplorertest button btn btn-instrumentexplorertest" onclick="InstrumentExplorerRegenerate();" type="button" value="Reload Tune with Changed Instruments" title="Reloads the tune into the player with the selected MIDI soundfont, melody instrument, bass/chord instrument, and bass/chord volumes">';
+			modal_msg += '<input id="instrumentexplorerinject" class="instrumentexplorerinject button btn btn-instrumentexplorerinject" onclick="InstrumentExplorerInject();" style="margin-right:0px;" type="button" value="Inject Instruments and Volumes into the ABC" title="Injects the current soundfont, melody instrument, bass/chord instrument, and bass/chord volumes into the tune ABC">';
 			modal_msg += '</p>';
 			modal_msg += '</div>';
 
@@ -17055,8 +17055,8 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 			modal_msg += 'Chord Volume (0-127):&nbsp;&nbsp;<input style="width:90px;" id="instrument_explorer_chord_volume" type="number" min="0" step="1" max="127" title="Chord volume, range is 0-127" autocomplete="off"/>';
 			modal_msg += '</p>';
 			modal_msg += '<p class="configure_instrumentexplorer_text">';
-			modal_msg += '<input id="instrumentexplorertest" class="instrumentexplorertest button btn btn-instrumentexplorertest" onclick="InstrumentExplorerRegenerate();" type="button" value="Test MIDI Instruments and Volumes" title="Reloads the tune into the player with the selected MIDI soundfont, melody instrument, bass/chord instrument, and bass/chord volumes">';
-			modal_msg += '<input id="instrumentexplorerinject" class="instrumentexplorerinject button btn btn-instrumentexplorerinject" onclick="InstrumentExplorerInject();" style="margin-right:0px;" type="button" value="Inject MIDI Instruments and Volumes into the ABC" title="Injects the current soundfont, melody instrument, bass/chord instrument, and bass/chord volumes into the tune ABC">';
+			modal_msg += '<input id="instrumentexplorertest" class="instrumentexplorertest button btn btn-instrumentexplorertest" onclick="InstrumentExplorerRegenerate();" type="button" value="Reload Tune with Changed Instruments and Volumes" title="Reloads the tune into the player with the selected MIDI soundfont, melody instrument, bass/chord instrument, and bass/chord volumes">';
+			modal_msg += '<input id="instrumentexplorerinject" class="instrumentexplorerinject button btn btn-instrumentexplorerinject" onclick="InstrumentExplorerInject();" style="margin-right:0px;" type="button" value="Inject Instruments and Volumes into the ABC" title="Injects the current soundfont, melody instrument, bass/chord instrument, and bass/chord volumes into the tune ABC">';
 			modal_msg += '</p>';
 			modal_msg += '</div>';
 
