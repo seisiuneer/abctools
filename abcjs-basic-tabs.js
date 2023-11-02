@@ -14207,6 +14207,8 @@ function CreateSynth() {
 
       // MAE 25 Oct 2023 - Start for swing injection
 
+      //debugger;
+
       if (gAddSwing){
 
         var beatsPerMeasure = self.beatsPerMeasure;
@@ -14237,6 +14239,12 @@ function CreateSynth() {
 
           case 3:
 
+            if (self.meterSize == 0.75){
+
+              addSwing(noteMapTracks, gSwingFactor, beatsPerMeasure, "waltz");
+
+            }
+            else
             if (self.meterSize == 1.125){
 
               addSwing(noteMapTracks, gSwingFactor, beatsPerMeasure, "slipjig");
@@ -14634,7 +14642,7 @@ function CreateSynth() {
 
       case "polka":
         
-        // console.log("addSwing: "+style);
+        //console.log("addSwing: "+style);
 
         //debugger;
 
@@ -14689,6 +14697,99 @@ function CreateSynth() {
                   //duration = event.end - event.start;
                   // console.log("after start: "+event.start+" duration: "+duration);
                 } 
+                else {
+
+                  // This is the beat
+                  // console.log("beat: "+event.pitch);
+
+                  //duration = event.end - event.start;
+                  // console.log("before start: "+event.start+" duration: "+duration);
+                  event.end += swing;
+
+                  //duration = event.end - event.start;
+                  // console.log("after start: "+event.start+" duration: "+duration);
+                }
+              }
+              //else{
+                // console.log("not swung: "+event.pitch);
+
+                //duration = event.end - event.start;
+                // console.log("before start: "+event.start+" duration: "+duration);
+                // console.log("after start: "+event.start+" duration: "+duration);
+              //}
+            }
+          }
+        }
+
+        break;
+
+        case "waltz":
+
+        //console.log("addSwing: "+style);
+      
+        swing = parseFloat(swing)
+        if (isNaN(swing))
+          return
+
+        swing = swing / 2;
+
+        if (swing < -0.9)
+          swing = -0.9
+        if (swing > 0.9)
+          swing = 0.9
+
+        var beatLength = 0.125;
+
+        swingFactor = swing;
+        swing = beatLength * swing
+
+        if (swing == 0){
+          return;
+        }
+
+        for (var t = 0; t < noteMapTracks.length; t++) {
+
+          //debugger;
+
+          var track = noteMapTracks[t];
+          
+          for (var i = 0; i < track.length; i++) {
+
+            var event = track[i];
+
+            var duration = (event.end - event.start);
+            
+            var theStart = event.start - (gSwingOffset * 0.125);
+
+            if (theStart >= 0){
+
+              if (duration == 0.125){
+
+                if ((theStart % (beatLength * 2)) == 0.125) {
+
+                  // This is the first off beat
+                  // console.log("first offbeat: "+event.pitch);
+                  // console.log("before start: "+event.start+" duration: "+duration);
+                  
+                  event.start += swing;
+
+                  duration = event.end - event.start;
+                  
+                  event.end = event.start + (duration * (1-swingFactor));
+
+                  //duration = event.end - event.start;
+                  // console.log("after start: "+event.start+" duration: "+duration);
+                } 
+                //else
+                //if (theStart % (beatLength * 3)) {
+
+                  // This is the second off beat
+                  // console.log("second offbeat: "+event.pitch);
+
+                  //duration = event.end - event.start;
+                  // console.log("before start: "+event.start+" duration: "+duration);
+                  // console.log("after start: "+event.start+" duration: "+duration);
+                //} 
                 else {
 
                   // This is the beat
