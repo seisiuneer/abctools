@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+                
         <style>
         p {
         font-size:14pt;
@@ -216,6 +216,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#playing_your_tunes">Playing Your Tunes</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#saving_wav_mp3_midi">Saving .WAV, .MP3, or MIDI Files</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#adding_swing">Adding Playback Swing to Tunes</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#grace_timing">Setting Grace Note Duration for Ornamentation</a></p>
 
                 </div>
 
@@ -564,6 +565,18 @@
             <p class="code">% This will result in the swing being disabled<br/><br/>
             %noswing</p>
             <p>%noswing takes precedence over any default Hornpipe swing or manually added %swing</p>
+            <hr class="hidden-print" id="grace_timing">
+            <h1 class="page_break_always h1wide">Setting Grace Note Duration for Ornamentation<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>In ABC, grace notes, often used to indicate cuts and taps for traditional Irish music, are added using {}.</p>
+            <p>For example to indicate cutting a G with a preceding A, you would put the following in the ABC:</p>
+            <p class="code">{A}G</p>
+            <p>Grace notes play with a fixed (very short) duration and steal time from the following target note.</p>
+            <p>Playing some tunes on specific instruments may sound more authentic with minor adjustments to the default 30 milliseconds grace note duration.</p>
+            <p>To set the duration of grace notes used in ABC {*} style ornamentation, add the following comment-based annotation anywhere in the tune ABC:</p>
+            <p class="code">%grace_duration_ms duration_in_milliseconds</p>
+            <p>Unit is milliseconds, range is 1 to 100, default is 30.</p>
+            <p>For example to set the grace note duration to 50 milliseconds add the following anywhere in the tune's ABC:</p>
+            <p class="code">%grace_duration_ms 50</p>            
             <hr class="hidden-print" id="saving_wav_mp3_midi">
             <h1 class="page_break_always">Saving .WAV, .MP3 or MIDI Files<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>From the <strong>Player</strong>, you can save out audio of your tune in either .WAV or .MP3 format as well as a MIDI file.</p>

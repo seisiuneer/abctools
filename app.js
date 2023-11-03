@@ -12849,6 +12849,7 @@ function InjectPDFHeaders(){
 	output += "%add_playback_link 0 0\n";
 	output += "%swing 0.25 0\n";
 	output += "%noswing\n";
+	output += "%grace_duration_ms 30\n";
 
 	output += "\n";
 	
@@ -15478,6 +15479,39 @@ function ScanTuneForSwingInjection(theTune){
 
 		gAddSwing = false;
 
+	}
+
+	// Next search for an grace_duration_ms override
+	searchRegExp = /^%grace_duration_ms.*$/gm
+
+	// Detect grace_duration_ms annotation
+	var doGraceDuration = theTune.match(searchRegExp);
+
+	// Default is 30 ms
+	gGraceDuration = 0.030;
+
+	if ((doGraceDuration) && (doGraceDuration.length > 0)){
+
+		var theParamString = doGraceDuration[0].replace("%grace_duration_ms","");
+
+		theParamString = theParamString.trim();
+
+		var theParams = theParamString.split(" ");
+
+		if (theParams.length >= 1){
+
+			var theDurationValueFound = theParams[0];
+
+			var durationValue = parseInt(theDurationValueFound);
+
+			if (!isNaN(durationValue)){
+
+				if ((durationValue > 0) && (durationValue <= 100)){
+					gGraceDuration = durationValue/1000;
+				}
+
+			}
+		}
 	}
 }
 
