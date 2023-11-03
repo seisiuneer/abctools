@@ -14,6 +14,9 @@ var gAddSwing = false;
 var gSwingFactor = 0.25;
 var gSwingOffset = 0;
 
+// MAE 2 Nov 2023 - For gracenotes
+var gGraceDuration = 0.030;
+
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
@@ -11814,8 +11817,16 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
         };
         p = adjustForMicroTone(p);
         if (elem.gracenotes) {
-          p.duration = p.duration / 2;
-          p.start = p.start + p.duration;
+
+          // MAE 2 Nov 2023 - Offset graced notes by the grace note duration
+          var graces = elem.gracenotes
+
+          var graceDuration = graces.length * gGraceDuration;
+
+          p.duration -= graceDuration;
+
+          p.start = p.start + graceDuration;
+
         }
         if (elem.elem) elem.elem.midiPitches.push(p);
         if (ret.noteModification) {
@@ -11918,18 +11929,13 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     }
     return accidentals;
   }
+  //
+  // MAE 2 November 2023 - Made graces all the same duration, stealing from target note
   function processGraceNotes(graces, companionDuration) {
-    // Grace notes take up half of the note value. So if there are many of them they are all real short.
     var graceDuration = 0;
     var ret = [];
-    var grace;
     for (var g = 0; g < graces.length; g++) {
-      grace = graces[g];
-      graceDuration += grace.duration;
-    }
-    var multiplier = companionDuration / 2 / graceDuration;
-    for (g = 0; g < graces.length; g++) {
-      grace = graces[g];
+      var grace = graces[g];
       var actualPitch = adjustPitch(grace);
       if (currentInstrument === drumInstrument && percmap) {
         var name = pitchesToPerc(grace);
@@ -11937,7 +11943,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       }
       var pitch = {
         pitch: actualPitch,
-        duration: grace.duration * multiplier
+        duration: gGraceDuration
       };
       pitch = adjustForMicroTone(pitch);
       ret.push(pitch);
