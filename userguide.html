@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-            
+        
         <style>
         p {
         font-size:14pt;
@@ -572,16 +572,14 @@
             <p>For example to indicate cutting a G with a preceding A, you would put the following in the ABC:</p>
             <p class="code">{A}G</p>
             <p>Grace notes play with a fixed (very short) duration and steal time from the following target note.</p>
-            <p>Playing some tunes on specific instruments may sound more authentic with minor adjustments to the default 30 milliseconds grace note duration.</p>
+            <p>Playing some tunes on specific instruments may sound more authentic with minor adjustments to the default 45 milliseconds grace note duration.</p>
             <p>To set the duration of grace notes used in ABC {*} style ornamentation, add the following comment-based annotation anywhere in the tune ABC:</p>
             <p class="code">%grace_duration_ms duration_in_milliseconds</p>
-            <p>Unit is milliseconds, range is 1 to 100, default is 30.</p>
-            <p>For example to set the grace note duration to 50 milliseconds add the following anywhere in the tune's ABC:</p>
-            <p class="code">%grace_duration_ms 50</p> 
+            <p>Unit is milliseconds, range is 1 to 150, default is 45.</p>
+            <p>For example to set the grace note duration to 60 milliseconds add the following anywhere in the tune's ABC:</p>
+            <p class="code">%grace_duration_ms 60</p> 
             <p>Setting the %grace_duration_ms value to 0 will disable my custom grace duration solution and for the tune revert back to the original abcjs solution for grace note timing: Graces use half the duration of the following note and the following note duration is reduced by half.</p>
             <p class="code">% Disables custom grace timing solution<br/>%grace_duration_ms 0</p> 
-            <p><strong>Note:</strong> The grace note duration feature is a experimental "work-in-progress" feature and can produces graces that aren't exactly the number of milliseconds specified depending on the meter and tempo of the tune.</p>
-            <p>Rather than using a fixed value for all tunes, I suggest just changing the %grace_duration_ms value until the tune sounds the way you want when played.</p>           
             <hr class="hidden-print" id="saving_wav_mp3_midi">
             <h1 class="page_break_always">Saving .WAV, .MP3 or MIDI Files<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>From the <strong>Player</strong>, you can save out audio of your tune in either .WAV or .MP3 format as well as a MIDI file.</p>

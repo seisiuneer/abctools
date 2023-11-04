@@ -13569,6 +13569,7 @@ function getTuneRhythmType(tuneABC){
 	var bIsPolka = false;
 	var bIsReel = false;
 	var bIsWaltz = false;
+	var bIsOddJig = false;
 
 	for (var j = 0; j < Reihe.length; ++j) {
 
@@ -13582,6 +13583,10 @@ function getTuneRhythmType(tuneABC){
 
 			var theMeter = Reihe[j].replace("M:","");
 			theMeter = theMeter.trim();
+
+			if ((theMeter.indexOf("3/8") != -1)){
+				bIsOddJig = true;
+			}
 
 			if ((theMeter.indexOf("6/8") != -1)){
 				bIsJig = true;
@@ -13624,6 +13629,12 @@ function getTuneRhythmType(tuneABC){
 
 		//console.log("Is a slip jig!");
 		return "slipjig";
+
+	}
+	if (bIsOddJig){
+
+		//console.log("Is an odd jig!");
+		return "oddjig";
 
 	}
 	if (bIsPolka){
@@ -15487,8 +15498,8 @@ function ScanTuneForSwingInjection(theTune){
 	// Detect grace_duration_ms annotation
 	var doGraceDuration = theTune.match(searchRegExp);
 
-	// Default is 30 ms
-	gGraceDuration = 0.030;
+	// Default is 45 ms
+	gGraceDuration = 0.045;
 
 	if ((doGraceDuration) && (doGraceDuration.length > 0)){
 
@@ -15506,13 +15517,31 @@ function ScanTuneForSwingInjection(theTune){
 
 			if (!isNaN(durationValue)){
 
-				if ((durationValue >= 0) && (durationValue <= 100)){
+				if ((durationValue >= 0) && (durationValue <= 150)){
 					gGraceDuration = durationValue/1000;
 				}
 
 			}
 		}
 	}
+
+	// Is there a Q: tempo tag?
+	gGraceMissingTempo = true;
+
+	// Next search for an tempo tag
+	searchRegExp = /^Q:.*$/gm
+
+	// Detect tempo tag
+	var hasTempo = theTune.match(searchRegExp);
+
+	if ((hasTempo) && (hasTempo.length > 0)){
+		gGraceMissingTempo = false;
+	}
+
+	// Is this a jig-type rhythm?
+	gGraceTuneType = getTuneRhythmType(theTune);
+
+
 }
 
 

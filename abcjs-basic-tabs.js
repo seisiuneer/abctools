@@ -15,7 +15,9 @@ var gSwingFactor = 0.25;
 var gSwingOffset = 0;
 
 // MAE 2 Nov 2023 - For gracenotes
-var gGraceDuration = 0.030;
+var gGraceDuration = 0.045;
+var gGraceTuneType = "";
+var gGraceMissingTempo = false;
 
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
@@ -1796,6 +1798,7 @@ var Tune = function Tune() {
     lastEl.endX = lines[lastEl.line].staffGroup.w;
   }
   this.getBpm = function (tempo) {
+
     var bpm;
     if (tempo) {
       bpm = tempo.bpm;
@@ -1814,6 +1817,7 @@ var Tune = function Tune() {
     return bpm;
   };
   this.setTiming = function (bpm, measuresOfDelay) {
+
     measuresOfDelay = measuresOfDelay || 0;
     if (!this.engraver || !this.engraver.staffgroups) {
       console.log("setTiming cannot be called before the tune is drawn.");
@@ -1829,7 +1833,7 @@ var Tune = function Tune() {
 
     // Calculate the basic midi data. We only care about the qpm variable here.
     //this.setUpAudio({qpm: bpm});
-
+    
     var beatLength = this.getBeatLength();
     var beatsPerSecond = bpm / 60;
     var measureLength = this.getBarLength();
@@ -11449,6 +11453,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     }
     return 0.25;
   }
+
   //
   // The algorithm for chords is:
   // - The chords are done in a separate track.
@@ -11818,7 +11823,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
         p = adjustForMicroTone(p);
         if (elem.gracenotes) {
 
-          // MAE 3 Nov 2023 - Backdoor to original abcjs gracenote timing solution
+         // MAE 3 Nov 2023 - Backdoor to original abcjs gracenote timing solution
           if (gGraceDuration == 0){
 
             p.duration = p.duration / 2;
@@ -11827,17 +11832,50 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
           }
           else{
 
+            //debugger;
+
+            // console.log("*****************");
+            // console.log("writeNote");
+            // console.log("gGraceMissingTempo: "+gGraceMissingTempo);
+            // console.log("gGraceTuneType: "+gGraceTuneType);
+            // console.log("startingTempo: "+startingTempo);
+
+            // Odd case where jig-like tunes with missing tempo get a starting tempo of 180, but play at 120
+            if ((gGraceMissingTempo) && (gGraceTuneType.indexOf("jig") != -1)){
+
+              // console.log("missing tempo jig case, setting tempo to 120")
+              startingTempo = 120;
+            }
+
+            var beatUnit = 1.0/parseFloat(meter.den);
+
+            // console.log("beatUnit: "+beatUnit);
+            // console.log("beatFraction: "+beatFraction);
+
+            var adjustedTempo = startingTempo*(beatFraction/beatUnit);
+
+            // console.log("adjusted tempo : "+adjustedTempo);
+            // console.log("gGraceDuration: "+ gGraceDuration);
+            // console.log("target note duration: "+ p.duration);
+
+            var beatTime = 60.0 / adjustedTempo;
+
+            // console.log("beatTime: "+beatTime);
+
+            var adjustedGraceTime = (gGraceDuration * beatUnit)/beatTime;
+
+            // console.log("adjustedGraceTime: "+adjustedGraceTime);
+                    
             // MAE 2 Nov 2023 - Offset graced notes by the grace note duration
             var graces = elem.gracenotes
 
-            var graceDuration = graces.length * gGraceDuration;
+            var graceDuration = graces.length * adjustedGraceTime;
 
             p.duration -= graceDuration;
 
             p.start = p.start + graceDuration;
-           
-          }
 
+          }
 
         }
         if (elem.elem) elem.elem.midiPitches.push(p);
@@ -11941,11 +11979,10 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     }
     return accidentals;
   }
-
   //
   // MAE 2 November 2023 - Made graces all the same duration, stealing from target note
-  //
   function processGraceNotes(graces, companionDuration) {
+
 
     // MAE 3 November 2023 - Back door to disable custom grace timing solution
     if (gGraceDuration == 0){
@@ -11953,6 +11990,37 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       return processGraceNotesOriginal(graces, companionDuration);
  
     }
+    
+    // console.log("*****************");
+    // console.log("processGraceNotes");
+    // console.log("gGraceMissingTempo: "+gGraceMissingTempo);
+    // console.log("gGraceTuneType: "+gGraceTuneType);
+    // console.log("startingTempo: "+startingTempo);
+
+    // Odd case where jig-like tunes with missing tempo get a starting tempo of 180, but play at 120
+    if ((gGraceMissingTempo) && (gGraceTuneType.indexOf("jig") != -1)){
+
+      // console.log("missing tempo jig case, setting tempo to 120")
+      startingTempo = 120;
+    }
+
+    var beatUnit = 1.0/parseFloat(meter.den);
+
+    // console.log("beatUnit: "+beatUnit);
+    // console.log("beatFraction: "+beatFraction);
+
+    var adjustedTempo = startingTempo*(beatFraction/beatUnit);
+
+    // console.log("adjusted tempo : "+adjustedTempo);
+    // console.log("gGraceDuration: "+ gGraceDuration);
+
+    var beatTime = 60.0 / adjustedTempo;
+
+    // console.log("beatTime: "+beatTime);
+
+    var adjustedGraceTime = (gGraceDuration * beatUnit)/beatTime;
+
+    // console.log("adjustedGraceTime: "+adjustedGraceTime);
 
     var graceDuration = 0;
     var ret = [];
@@ -11965,13 +12033,12 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       }
       var pitch = {
         pitch: actualPitch,
-        duration: gGraceDuration
+        duration: adjustedGraceTime
       };
       pitch = adjustForMicroTone(pitch);
       ret.push(pitch);
     }
     return ret;
-
   }
 
   //
