@@ -15506,7 +15506,7 @@ function ScanTuneForSwingInjection(theTune){
 
 			if (!isNaN(durationValue)){
 
-				if ((durationValue > 0) && (durationValue <= 100)){
+				if ((durationValue >= 0) && (durationValue <= 100)){
 					gGraceDuration = durationValue/1000;
 				}
 
