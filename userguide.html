@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-               
+            
         <style>
         p {
         font-size:14pt;
@@ -579,6 +579,7 @@
             <p>For example to set the grace note duration to 50 milliseconds add the following anywhere in the tune's ABC:</p>
             <p class="code">%grace_duration_ms 50</p> 
             <p>Setting the %grace_duration_ms value to 0 will disable my custom grace duration solution and for the tune revert back to the original abcjs solution for grace note timing: Graces use half the duration of the following note and the following note duration is reduced by half.</p>
+            <p class="code">% Disables custom grace timing solution<br/>%grace_duration_ms 0</p> 
             <p><strong>Note:</strong> The grace note duration feature is a experimental "work-in-progress" feature and can produces graces that aren't exactly the number of milliseconds specified depending on the meter and tempo of the tune.</p>
             <p>Rather than using a fixed value for all tunes, I suggest just changing the %grace_duration_ms value until the tune sounds the way you want when played.</p>           
             <hr class="hidden-print" id="saving_wav_mp3_midi">
