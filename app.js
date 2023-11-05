@@ -16641,6 +16641,33 @@ function ScanTuneForInstrumentExplorer(theTune){
 //
 function InstrumentExplorerInject(){
 
+	// Grab the sound font
+	gInstrumentExplorerSoundfont = document.getElementById("instrument_explorer_soundfont").value;
+
+	// Grab the melody instrument
+	gInstrumentExplorerMelodyInstrument = document.getElementById("instrument_explorer_melody_program").value;
+
+	// Grab the chord instrument
+	gInstrumentExplorerChordInstrument = document.getElementById("instrument_explorer_chord_program").value;
+
+	// Grab the bass volume
+	var theBassVolume = document.getElementById("instrument_explorer_bass_volume").value;
+
+	theBassVolume = parseInt(theBassVolume);
+	if (!isNaN(theBassVolume)){
+		gInstrumentExplorerBassVolume = theBassVolume;
+	}
+
+	// Grab the chord volume
+	var theChordVolume = document.getElementById("instrument_explorer_chord_volume").value;
+
+	theChordVolume = parseInt(theChordVolume);
+	if (!isNaN(theChordVolume)){
+		gInstrumentExplorerChordVolume = theChordVolume;
+	}
+
+	gPlayerABCInstrumentExplorerInjected = InstrumentExplorerDialogInjectThisTune(gPlayerABCInstrumentExplorerProcessed);
+
 	// Try and keep the same tune after the redraw for immediate play
 	var theSelectionStart = gTheABC.selectionStart;
 
