@@ -732,6 +732,39 @@ left:20px;
 top:20px;
 }
 
+#graceexplorerinject{
+height:42px;
+padding:12px;
+width:auto;
+margin-left:0px;
+}
+
+@media (hover: hover) {
+	.graceexplorerinject:hover{
+	background: palegreen;
+	}
+}
+
+#graceexplorertest{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:36px;
+}
+
+@media (hover: hover) {
+	.graceexplorertest:hover{
+	background: palegreen;
+	}
+}
+
+#graceexplorerhelp{
+font-size:24pt;
+position:absolute;
+left:20px;
+top:20px;
+}
+
 #configure_instrument_explorer{
 height:42px;
 padding:12px;
@@ -1731,6 +1764,34 @@ margin-top:-7px;
 	margin-right:10px;
 }
 
+.configure_graceexplorer_text{
+	font-size:13pt;
+	font-family:helvetica;
+	margin-top:0px;
+}
+
+.configure_graceexplorer_text>input{
+	font-size:13pt;
+	font-family:helvetica;
+	margin-left: 2px;
+	width: 60px;
+	margin-right:10px;
+}
+
+.configure_graceexplorer_text{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-top:0px;
+}
+
+.configure_graceexplorer_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 2px;
+	width: 60px;
+	margin-right:10px;
+}
+
 .configure_instrumentexplorer_text{
 	font-size:12pt;
 	font-family:helvetica;
@@ -1872,10 +1933,23 @@ margin-top:-7px;
 	height:42px;
 	margin-top: 9px;
 	padding:12px;
+	margin-right:24px;
 }
 
 @media (hover: hover) {
 	.configure_swing_explorer:hover{
+	background: palegreen;
+	}
+}
+
+#configure_grace_explorer{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.configure_grace_explorer:hover{
 	background: palegreen;
 	}
 }
@@ -2515,6 +2589,22 @@ padding: 3px;
   --color: black;
   --background-color: #C8ECFE;
 }
+
+.btn-graceexplorer{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-graceexplorertest{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-graceexplorerinject{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
 
 .btn-instrumentexplorer{
   --color: black;

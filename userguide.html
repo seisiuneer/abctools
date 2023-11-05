@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+                
         <style>
         p {
         font-size:14pt;
@@ -278,6 +278,7 @@
                     
                     <p class="toc"><a style="text-decoration:none;" href="#midi_instrument_explorer">MIDI Instrument Explorer</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#swing_explorer">Swing Explorer</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#grace_duration_explorer">Grace Duration Explorer</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#export_all_tunes_as_mp3">Export all Tunes as .MP3</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#sort_dialog">Sort by Specific Tag</a></p>
                 </div>
@@ -567,7 +568,7 @@
             <p>%noswing takes precedence over any default Hornpipe swing or manually added %swing</p>
             <hr class="hidden-print" id="grace_timing">
             <h1 class="page_break_always h1wide">Setting Grace Note Duration for Ornamentation<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/6SUfitSI7CI" title="Grace Note Duration Control" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/sdFeN33sQdo" title="Grace Note Duration Control" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>In ABC, grace notes, often used to indicate cuts and taps for traditional Irish music, are added using {}.</p>
             <p>For example to indicate cutting a G with a preceding A, you would put the following in the ABC:</p>
             <p class="code">{A}G</p>
@@ -645,7 +646,7 @@
             <h1 class="page_break_always">Advanced Controls and Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Advanced</strong> button brings up the ABC Transcription Tools Advanced Controls and Features dialog:</p>
             <div class="image_holder_p">
-                <img src="img/advanced_controls_18.jpg"/>
+                <img src="img/advanced_controls_19.jpg"/>
             </div>
             <p>Click the lightbulb icon to bring up this section of the user guide in a new browser tab.</p>
             <hr class="hidden-print" id="advanced_showhidefeatures">
@@ -762,6 +763,23 @@
             <p>To exit the Swing Explorer, click the <strong>Close</strong> button.</p>
             <p>For more details on swing factor and swing offset, see this section:</p>
             <p style="text-align: center;"><a style="text-decoration:none;" href="#adding_swing">Adding Playback Swing to Tunes</a></p>     
+            <hr class="hidden-print" id="grace_duration_explorer">
+            <h1 class="page_break_always">Grace Duration Explorer<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>Brings up a player dialog where you can experiment with playing the currently selected tune using grace durations:</p>
+            <div class="image_holder_p">
+                <img src="img/grace_duration_explorer_1.jpg"/>
+            </div>
+            <p>This makes it quick and easy to find the right grace duration settings for any tune:</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/A0Kz_zF_TcU" title="Grace Duration Explorer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p>The player controls works the same way as the standard player.</p>
+            <p>To test playing the tune with a new grace duration, enter a grace duration in milliseconds (Range is 0 to 150) and then click <strong>Reload Tune with Changed Grace Duration</strong>.</p>
+            <p>The tune will be reloaded into the player with the new grace duration settings applied.</p>
+            <p>Click the play button to play the tune to check the new grace duration settings.</p>
+            <p>If you are happy with your new grace duration and want to apply them to the tune, click <strong>Inject Grace Duration into the ABC</strong> to inject your new grace duration value into the tune's ABC, replacing any previous grace duration value.</p>
+            <p>Entering a value of 0 will disable the custom grace timings and play the tune using the abcjs default behavior: Graces use half the duration of the following note and the following note duration is reduced by half.</p>
+            <p>To exit the Grace Duration Explorer, click the <strong>Close</strong> button.</p>
+            <p>For more details on grace duration, see this section:</p>
+            <p style="text-align: center;"><a style="text-decoration:none;" href="#grace_timing">Setting Grace Note Duration for Ornamentation</a></p>     
             <hr class="hidden-print" id="export_all_tunes_as_mp3">
             <h1 class="page_break_always">Export all Tunes as .MP3<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Exports all the tunes in the ABC area as individual .mp3 files at the bitrate set in the <strong>Settings</strong> dialog:</p>
