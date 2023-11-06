@@ -15954,6 +15954,19 @@ function SynthController() {
       self.destroy();
       self.isStarted = false;
       return self.go().then(function () {
+        
+        // MAE 6 Nov 2023 - Loop button getting unhighlighted on speed chnage
+        if (self.isLooping){
+          if (self.control){
+            self.control.pushLoop(true);
+          }
+        }
+        else{
+          if (self.control){
+            self.control.pushLoop(false);
+          }
+        }
+
         self.setProgress(startPercent, self.midiBuffer.duration * 1000);
         if (self.control) self.control.setWarp(self.currentTempo, self.warp);
         if (wasPlaying) {
