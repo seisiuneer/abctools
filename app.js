@@ -14843,7 +14843,9 @@ function ToggleMetronome(){
 					// Injection failed due to unsupported meter
 					if (!gPlayerABCMetronome){
 
-					   var modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Metronome Not Available for this Meter</p>';
+						gPlayMetronome = false; 
+
+					    var modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Metronome Not Available for this Meter</p>';
 					 	   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;">No metronome pattern is available for the meter of this tune.</p>';
 					 	   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;">Only the original version can be played.</p>';
 
@@ -14871,7 +14873,6 @@ function ToggleMetronome(){
 
 		},250);		
 	}
-
 
 }
 
@@ -17606,6 +17607,9 @@ function TuneTrainer(){
 			return;
 		}
 
+		// Clear the metronome version
+		gPlayerABCMetronome = null;
+
 		// Fix issue with initial swing not happening
 		ScanTuneForSwingExplorer(theSelectedABC);
 
@@ -17663,6 +17667,11 @@ function TuneTrainerReset(){
 		// Clear the player in pause flag
 		gPlayerInPause = false;
 
+		// Clear the metronome flags
+		gPlayMetronome = false;
+		gLooperMetronomeState = false;
+		gPlayerABCMetronome = null;
+
 		gTheOKButton.click();
 
 		setTimeout(function() {
@@ -17683,8 +17692,96 @@ function TuneTrainerReset(){
 	}
 }
 
+//
+// Toggle the metronome version of the tune;
+//
+function ToggleTuneTrainerMetronome(){
+
+	// One time dialog when user first uses the metronome feature
+	if (gLocalStorageAvailable){
+
+		if (gIsFirstTimeUsingMetronome){
+
+			gIsFirstTimeUsingMetronome = false;
+
+			localStorage.IsFirstTimeUsingMetronome = false;
+
+			FirstTimeUsingMetronomeDialog(callback);
+
+		}
+		else{
+
+			callback();
+
+		}
+	}
+	else{
+
+		gIsFirstTimeUsingMetronome = false;
+
+		callback();
+
+	}
+
+	function callback(){
+
+		gPlayMetronome = !gPlayMetronome;
+
+		gTheOKButton.click();
+
+		setTimeout(function() {
+
+			if (gPlayMetronome){
+
+				if (!gPlayerABCMetronome){
+
+					gPlayerABCMetronome = inject_one_metronome(gPlayerLooperProcessed, false);
+
+					// Injection failed due to unsupported meter
+					if (!gPlayerABCMetronome){
+
+ 	                    gLooperMetronomeState = false;
+ 	                    gPlayMetronome = false;
+
+					    var modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Metronome Not Available for this Meter</p>';
+					 	   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;">No metronome pattern is available for the meter of this tune.</p>';
+					 	   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;">Only the original version can be played.</p>';
+
+						DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) }).then(
+							function(){
+								TuneTrainerDialog(gPlayerLooperOriginal,gPlayerLooperProcessed,true);
+							});
+
+						return;
+
+					}
+
+				}
+	            
+	            gLooperMetronomeState = true;
+
+				TuneTrainerDialog(gPlayerLooperOriginal,gPlayerABCMetronome,true);
+
+			}
+			else{
+
+	            gLooperMetronomeState = false;
+
+	            gPlayerABCMetronome = null;
+
+				// Launch the original tune
+				TuneTrainerDialog(gPlayerLooperOriginal,gPlayerLooperProcessed,true);
+
+			}
+
+		},250);		
+	}
+
+}
+
+
 // 
-// Looper Dialog
+// Tune trainer Dialog
 //
 
 // Starting defaults
@@ -17696,6 +17793,7 @@ var gLooperCurrent = gLooperSpeedStart;
 var gLooperLoopCount = gLooperCount;
 var gPlayerLooperOriginal = null;
 var gPlayerLooperProcessed = null;
+var gLooperMetronomeState = false;
 
 function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 
@@ -17710,6 +17808,11 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 
 		gPlayerLooperOriginal = theOriginalABC;
 		gPlayerLooperProcessed = theProcessedABC;
+
+		// Clear metronome state
+		gPlayMetronome = false;
+		gLooperMetronomeState = false;
+		gPlayerABCMetronome = null;
 
 	}
 
@@ -17936,7 +18039,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 	   		modal_msg += '<div id="playback-audio"></div>';
 		}
 
-	   	// Add the grace explorer controls
+	   	// Add the tune trainer controls
 
 		modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
 		modal_msg += 'Starting tempo %: <input style="width:75px;margin-right:18px;" id="looper_start_percent" type="number" min="1" step="1" max="100" title="Tune tempo start percentage" autocomplete="off"/>';
@@ -17947,6 +18050,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 		modal_msg += '</p>';
 		modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
 		modal_msg += '<input id="looperreset" class="looperreset button btn btn-looperreset" onclick="TuneTrainerReset();" type="button" value="Apply Tune Trainer Settings and Reload the Player" title="Applies the entered tune trainer settings and reloads the player">';
+		modal_msg += '<input id="looper_metronomebutton" class="looper_metronome button btn btn-metronome" onclick="ToggleTuneTrainerMetronome();" type="button" value="Enable Metronome" title="Enables/disables the metronome">'
 		modal_msg += '</p>';
 		modal_msg += '<a id="looperhelp" href="https://michaeleskin.com/abctools/userguide.html#tune_trainer" target="_blank" style="text-decoration:none;" title="Learn more about the Tune Trainer">💡</a>';
 
@@ -17977,6 +18081,22 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 		document.getElementById("looper_end_percent").value = gLooperSpeedEnd;
 		document.getElementById("looper_increment").value = gLooperSpeedIncrement;
 		document.getElementById("looper_count").value = gLooperCount;
+
+		// Idle the metronome button
+		if (gLooperMetronomeState){
+
+			var elem = document.getElementById("looper_metronomebutton");
+
+			elem.value = "Disable Metronome";
+
+		}
+		else{
+
+			var elem = document.getElementById("looper_metronomebutton");
+
+			elem.value = "Enable Metronome";
+
+		}
 
 		var theOKButtons = document.getElementsByClassName("modal_flat_ok");
 
