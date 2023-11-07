@@ -765,6 +765,25 @@ left:20px;
 top:20px;
 }
 
+#looperreset{
+height:42px;
+padding:12px;
+width:auto;
+}
+
+@media (hover: hover) {
+	.looperreset:hover{
+	background: palegreen;
+	}
+}
+
+#looperhelp{
+font-size:24pt;
+position:absolute;
+left:20px;
+top:20px;
+}
+
 #configure_instrument_explorer{
 height:42px;
 padding:12px;
@@ -1860,6 +1879,34 @@ padding-left:10px;
 margin-top:-7px;
 }
 
+.configure_looper_text{
+	font-size:13pt;
+	font-family:helvetica;
+	margin-top:0px;
+}
+
+.configure_looper_text>input{
+	font-size:13pt;
+	font-family:helvetica;
+	margin-left: 2px;
+	width: 60px;
+	margin-right:10px;
+}
+
+.configure_looper_text_mobile{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-top:0px;
+}
+
+.configure_looper_text_mobile>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 2px;
+	width: 60px;
+	margin-right:10px;
+}
+
 #configure_musicxml_import{
 	height:42px;
 	margin-top: 9px;
@@ -1950,6 +1997,19 @@ margin-top:-7px;
 
 @media (hover: hover) {
 	.configure_grace_explorer:hover{
+	background: palegreen;
+	}
+}
+
+#configure_looper{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+	margin-right:24px;
+}
+
+@media (hover: hover) {
+	.configure_looper:hover{
 	background: palegreen;
 	}
 }
@@ -2605,7 +2665,6 @@ padding: 3px;
   --background-color: #C8ECFE;
 }
 
-
 .btn-instrumentexplorer{
   --color: black;
   --background-color: #C8ECFE;
@@ -2620,6 +2679,17 @@ padding: 3px;
   --color: black;
   --background-color: #C8ECFE;
 }
+
+.btn-looper{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-looperreset{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
 
 .btn-metronome{
   --color: black;

@@ -19,6 +19,10 @@ var gGraceDuration = 0.045;
 var gGraceTuneType = "";
 var gGraceMissingTempo = false;
 
+// MAE 6 Nov 2023 - For tune trainer
+var gLoopCallback = null;
+var gPlayerInPause = false;
+
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
@@ -15903,9 +15907,11 @@ function SynthController() {
     });
   };
   self.pause = function () {
-    if (self.timer) {
+     if (self.timer) {
       self.timer.pause();
       self.midiBuffer.pause();
+      // MAE 6 Nov 2023 - For tune looper
+      gPlayerInPause = true;
       if (self.control) self.control.pushPlay(false);
     }
   };
@@ -15953,6 +15959,7 @@ function SynthController() {
       var startPercent = self.percent;
       self.destroy();
       self.isStarted = false;
+
       return self.go().then(function () {
         
         // MAE 6 Nov 2023 - Loop button getting unhighlighted on speed chnage
@@ -15969,12 +15976,16 @@ function SynthController() {
 
         self.setProgress(startPercent, self.midiBuffer.duration * 1000);
         if (self.control) self.control.setWarp(self.currentTempo, self.warp);
+        
         if (wasPlaying) {
+
           return self.play().then(function () {
+            
             self.seek(startPercent);
             return Promise.resolve();
           });
         }
+
         self.seek(startPercent);
         return Promise.resolve();
       });
@@ -15985,6 +15996,12 @@ function SynthController() {
     var newWarp = ev.target.value;
     return self.setWarp(newWarp);
   };
+  
+  // MAE 6 Nov 2023 - To force a warp value in from the looper
+  self.forceWarp = function(newWarp){
+     return self.setWarp(newWarp);   
+  }
+
   self.setProgress = function (percent, totalTime) {
     self.percent = percent;
     if (self.control) self.control.setProgress(percent, totalTime);
@@ -15992,9 +16009,17 @@ function SynthController() {
   self.finished = function () {
     self.timer.reset();
     if (self.isLooping) {
+
       self.timer.start(0);
       self.midiBuffer.finished();
       self.midiBuffer.start();
+
+      // MAE 6 Nov 2023 - For tune looper
+      // To get a callback on loop completion
+      if (gLoopCallback){
+        gLoopCallback();
+      }
+
       return "continue";
     } else {
       self.timer.stop();

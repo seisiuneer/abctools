@@ -15134,6 +15134,12 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 
 	function initPlay() {
 
+		// Clear the looper callback
+		gLoopCallback = null;
+
+		// Clear the player in pause flag
+		gPlayerInPause = false;
+
 		// Adapt the top based on the player control size
 		var theTop = 50;
 
@@ -15800,7 +15806,7 @@ function SwingExplorerRegenerate(){
 
 		setTimeout(function() {
 
-			// Launch the player with the metronome injected tune
+			// Launch the player with the swing injected tune
 			SwingExplorerDialog(gPlayerABCSwingExplorerOriginal,gPlayerABCSwingExplorerProcessed,true);
 
 		},250);
@@ -16118,6 +16124,12 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 	var synthControl;
 
 	function initPlay() {
+
+		// Clear the looper callback
+		gLoopCallback = null;
+
+		// Clear the player in pause flag
+		gPlayerInPause = false;
 
 		// Adapt the top based on the player control size
 		var theTop = 50;
@@ -16439,7 +16451,7 @@ function InstrumentExplorerRegenerate(){
 
 	setTimeout(function() {
 
-		// Launch the player with the metronome injected tune
+		// Launch the player with the instruments injected tune
 		InstrumentExplorerDialog(gPlayerABCInstrumentExplorerOriginal,gPlayerABCInstrumentExplorerProcessed,true);
 
 	},250);
@@ -16910,6 +16922,12 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 
 	function initPlay() {
 
+		// Clear the looper callback
+		gLoopCallback = null;
+
+		// Clear the player in pause flag
+		gPlayerInPause = false;
+
 		// Adapt the top based on the player control size
 		var theTop = 50;
 
@@ -17108,6 +17126,9 @@ function GraceExplorer(){
 			return;
 		}
 
+		// Fix issue with initial swing not happening
+		ScanTuneForSwingExplorer(theSelectedABC);
+
 		// Pre-process the ABC to inject any requested programs or volumes
 		var theProcessedABC = PreProcessPlayABC(theSelectedABC);
 
@@ -17124,7 +17145,7 @@ function GraceExplorerRegenerate(){
 
 	var bDoReload = false;
 
-	// Grab the swing factor
+	// Grab the grace duration
 	var theGraceDuration = document.getElementById("grace_explorer_duration").value;
 
 	theGraceDuration = parseFloat(theGraceDuration);
@@ -17142,7 +17163,7 @@ function GraceExplorerRegenerate(){
 
 		setTimeout(function() {
 
-			// Launch the player with the metronome injected tune
+			// Launch the player with the grace injected tune
 			GraceExplorerDialog(gPlayerABCGraceExplorerOriginal,gPlayerABCGraceExplorerProcessed,true);
 
 		},250);
@@ -17256,7 +17277,7 @@ function GraceExplorerInject(){
 }
 
 // 
-// Swing Explorer Dialog
+// Grace Explorer Dialog
 //
 
 var gPlayerABCGraceExplorerOriginal = null;
@@ -17270,7 +17291,7 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 	gMIDIbuffer = null;
 	gTheOKButton = null;
 
-	// We came in because of a swing change, don't init the tune cache
+	// We came in because of a grace duration change, don't init the tune cache
 	if (!grace_explorer_state){
 
 		gPlayerABCGraceExplorerOriginal = theOriginalABC;
@@ -17412,6 +17433,12 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 
 	function initPlay() {
 
+		// Clear the looper callback
+		gLoopCallback = null;
+		
+		// Clear the player in pause flag
+		gPlayerInPause = false;
+
 		// Adapt the top based on the player control size
 		var theTop = 50;
 
@@ -17535,6 +17562,482 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 		// Cache autoscroll values early
 		gPlayerHolder = document.getElementById("playerholder");
 		gPlayerContainerRect = gPlayerHolder.getBoundingClientRect();
+	}
+
+	// Try to deal with tab deactivation muting
+	if (gIsIOS){
+
+		var context = ABCJS.synth.activeAudioContext();
+
+		// Decide on some parameters
+		let allowBackgroundPlayback = false; // default false, recommended false
+		let forceIOSBehavior = false; // default false, recommended false
+
+		gTheMuteHandle = null;
+		
+		// Pass it to unmute if the context exists... ie WebAudio is supported
+		if (context)
+		{
+		  // If you need to be able to disable unmute at a later time, you can use the returned handle's dispose() method
+		  // if you don't need to do that (most folks won't) then you can simply ignore the return value
+		  gTheMuteHandle = unmute(context, allowBackgroundPlayback, forceIOSBehavior);
+		  
+		}
+	}
+
+	initPlay();
+
+}
+
+//
+// Tune trainer - Loops tunes with increasing speed
+//
+function TuneTrainer(){
+
+	if (gAllowCopy){
+
+		// Play back locally
+
+		// Try to find the current tune
+		var theSelectedABC = findSelectedTune();
+
+		if (theSelectedABC == ""){
+			// This should never happen
+			return;
+		}
+
+		// Fix issue with initial swing not happening
+		ScanTuneForSwingExplorer(theSelectedABC);
+
+		// Pre-process the ABC to inject any requested programs or volumes
+		var theProcessedABC = PreProcessPlayABC(theSelectedABC);
+
+		// Play back locally in-tool	
+		TuneTrainerDialog(theSelectedABC,theProcessedABC,false);
+
+	}
+}
+
+
+//
+// Reset the looper 
+//
+function TuneTrainerReset(){
+
+	//console.log("TuneTrainerReset");
+
+	var bDoReload = false;
+
+	// Set the initial loop parameters
+	var looperSpeedStart = document.getElementById("looper_start_percent").value;
+	var looperSpeedEnd = document.getElementById("looper_end_percent").value;
+	var looperSpeedIncrement = document.getElementById("looper_increment").value;
+	var looperCount = document.getElementById("looper_count").value;
+
+	looperSpeedStart = parseFloat(looperSpeedStart);
+	looperSpeedEnd = parseFloat(looperSpeedEnd);
+	looperSpeedIncrement = parseFloat(looperSpeedIncrement);
+	looperCount = parseFloat(looperCount);
+
+	if ((!isNaN(looperSpeedStart)) && (!isNaN(looperSpeedEnd)) && (!isNaN(looperSpeedIncrement)) && (!isNaN(looperCount)) ){
+
+		if ((looperSpeedStart <= looperSpeedEnd) && (looperSpeedStart >= 0) && (looperSpeedEnd <= 400) && (looperSpeedIncrement >= 0) && (looperCount >= 0)){
+
+			gLooperSpeedStart = looperSpeedStart;
+			gLooperSpeedEnd = looperSpeedEnd;
+			gLooperSpeedIncrement = looperSpeedIncrement;
+			gLooperCount = looperCount;
+			gLooperCurrent = gLooperSpeedStart;
+			gLooperLoopCount = gLooperCount;
+
+			bDoReload = true;
+
+		}
+	}
+
+	if (bDoReload){
+
+		// Clear the looper callback
+		gLoopCallback = null;
+
+		// Clear the player in pause flag
+		gPlayerInPause = false;
+
+		gTheOKButton.click();
+
+		setTimeout(function() {
+
+			// Launch the player with the new values
+			TuneTrainerDialog(gPlayerLooperOriginal,gPlayerLooperProcessed,true);
+
+		},250);
+
+	}
+	else{
+
+		// User entered odd values
+		var thePrompt = '<p style="font-family:helvetica;font-size:14pt;text-align:center"><strong>Invalid Tune Trainer Values Entered</strong></p><p style="font-family:helvetica;font-size:14pt;margin-top:36px;">All values must be numbers.</p><p style="font-family:helvetica;font-size:14pt;">Starting tempo must be less than the ending tempo.</p><p style="font-family:helvetica;font-size:14pt;">Tempo increment must be greater than zero.</p><p style="font-family:helvetica;font-size:14pt;">Loop count must be greater than zero.</p><p style="font-family:helvetica;font-size:14pt;">Please fix and try again.</p>'
+
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+	}
+}
+
+// 
+// Looper Dialog
+//
+
+// Starting defaults
+var gLooperSpeedStart = 50;
+var gLooperSpeedEnd = 100;
+var gLooperSpeedIncrement = 10;
+var gLooperCount = 1;
+var gLooperCurrent = gLooperSpeedStart;
+var gLooperLoopCount = gLooperCount;
+var gPlayerLooperOriginal = null;
+var gPlayerLooperProcessed = null;
+
+function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","TuneTrainer");
+
+	gMIDIbuffer = null;
+	gTheOKButton = null;
+
+	// We came in because of a looper param change, don't init the tune cache
+	if (!looperState){
+
+		gPlayerLooperOriginal = theOriginalABC;
+		gPlayerLooperProcessed = theProcessedABC;
+
+	}
+
+	gLooperCurrent = gLooperSpeedStart;
+	gLooperLoopCount = gLooperCount;
+
+	var soundFontRequested = ScanTuneForSoundFont(theProcessedABC);
+
+	if (soundFontRequested){
+
+		var theOriginalSoundFont = gTheActiveSoundFont;
+
+		switch (soundFontRequested){
+			case "fluid":
+				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
+				break;
+			case "musyng":
+				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/";
+				break;
+			case "fatboy":
+				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
+				break;
+			case "canvas":
+				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/canvas/";
+				break;
+			case "mscore":
+				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/mscore/";
+				break;
+		}
+
+		// New soundfont requested, clear the cache
+		if (gTheActiveSoundFont != theOriginalSoundFont){
+			
+			// Clear the soundfont cache
+			gSoundsCacheABCJS = {};
+
+		}
+
+	}
+	else{
+
+		// No sound font requested, lets see if the current font is the user default
+		if (gTheActiveSoundFont != gDefaultSoundFont){
+
+			gTheActiveSoundFont = gDefaultSoundFont;
+
+			// Clear the soundfont cache
+			gSoundsCacheABCJS = {};
+
+		}
+	}
+
+	// Setup any custom boom-chick rhythm patterns found
+	var boomChickOK = ScanTuneForBoomChick(theProcessedABC);
+
+	// Incorrectly formatted %abcjs_boomchick detected, put up an alert
+	if (boomChickOK != ""){
+
+		DayPilot.Modal.alert('<p style="font-family:helvetica;font-size:14pt;"><strong>There is an issue with your custom rhythm directive:</strong></p><p style="font-family:helvetica;font-size:14pt;"><strong>'+boomChickOK+'</strong></p><p style="font-family:helvetica;font-size:14pt;">Format should be:</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick meter rhythm_pattern_string partial_measure</p><p style="font-family:helvetica;font-size:14pt;">Valid rhythm_pattern_string characters are:</p><p style="font-family:helvetica;font-size:14pt;">B - Boom, b - Alternate Boom, c - Chick, and x - Silence.</p><p style="font-family:helvetica;font-size:14pt;">Examples:</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick 7/8 Bccbxbx 3</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick 10/8 Bccbccbxbx 5</p><p style="font-family:helvetica;font-size:14pt;">The number of characters in the pattern_string must match the meter numerator.</p><p style="font-family:helvetica;font-size:14pt;">partial_measure sets how many beats must be present in a partial measure in the ABC to use the custom pattern.</p><p style="font-family:helvetica;font-size:14pt;">partial_measure is optional and defaults to half of the meter numerator rounded down to the next lowest integer (min is 1).</p>',{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
+	
+	var instrument = GetRadioValue("notenodertab");
+
+	var abcOptions = GetABCJSParams(instrument);
+
+	abcOptions.oneSvgPerLine = false;
+
+	// Clear the tab label if present to compress vertical space
+	if (instrument != "noten" ){
+
+		// Sanity check the options first
+		if (abcOptions.tablature && (abcOptions.tablature.length > 0)){
+			abcOptions.tablature[0].label = "";
+		}
+	}
+	
+	function setTune(userAction) {
+
+		synthControl.disable(true);
+
+		var visualObj = ABCJS.renderAbc("playback-paper", theProcessedABC, abcOptions)[0];
+
+		// Post process whistle or note name tab
+		postProcessTab("playback-paper",instrument,true);
+
+		var midiBuffer = new ABCJS.synth.CreateSynth();
+
+		gMIDIbuffer = midiBuffer;
+
+		midiBuffer.init({
+			visualObj: visualObj
+		}).then(function (response) {
+			console.log(response);
+			if (synthControl) {
+
+				var fadeLength = computeFade(theProcessedABC);
+
+				synthControl.setTune(visualObj, userAction, {fadeLength:fadeLength}).then(function (response) {
+					
+					console.log("Audio successfully loaded.");
+
+					//console.log("Tune is loaded, setting initial warp and loop callback");
+
+					// Stuff in the initial warp
+					synthControl.forceWarp(gLooperCurrent);
+
+					synthControl.isLooping = true;
+
+					// Setup the callback
+					gLoopCallback = LoopCallback;
+
+
+				}).catch(function (error) {
+					
+					console.log("Problem loading audio for this tune");
+
+				});
+			}
+		}).catch(function (error) {
+
+			console.log("Problem loading audio for this tune");
+
+		});
+	}
+
+	function StopPlay(){
+
+		if (synthControl){
+				
+			synthControl.destroy();
+
+			synthControl = null;
+		}
+	}
+
+
+	// Callback at end of each loop
+	function LoopCallback(){
+
+		//console.log("LoopCallback");
+
+		//console.log("gPlayerInPause "+gPlayerInPause);
+
+		if (!gPlayerInPause){
+
+			if ((!isNaN(gLooperSpeedEnd)) && (!isNaN(gLooperSpeedIncrement)) && (!isNaN(gLooperCount))){
+
+				// If incrementing, also possible to just spin at the start tempo
+				if (gLooperSpeedIncrement != 0){
+
+					gLooperLoopCount--;
+
+					if (gLooperLoopCount == 0){
+
+						gLooperLoopCount = gLooperCount;
+
+						if (gLooperCurrent != gLooperSpeedEnd){
+
+							gLooperCurrent = gLooperCurrent + gLooperSpeedIncrement;
+
+							if (gLooperCurrent > gLooperSpeedEnd){
+								gLooperCurrent = gLooperSpeedEnd;
+							}
+
+							synthControl.pause();
+						
+							synthControl.forceWarp(gLooperCurrent);
+						}
+
+					}
+				}
+			}
+			else{
+				
+				gPlayerInPause = false;
+
+			}
+		}
+		else{
+
+			gPlayerInPause = false;
+
+		}
+	}
+
+	var cursorControl = new CursorControl();
+
+	var synthControl;
+
+	function initPlay() {
+
+		// Clear the looper callback
+		gLoopCallback = null;
+
+		// Clear the player in pause flag
+		gPlayerInPause = false;
+
+		// Adapt the top based on the player control size
+		var theTop = 50;
+
+		var theHeight = window.innerHeight - 450;
+
+	   	modal_msg = '<div id="playerholder" style="height:'+theHeight+'px;overflow-y:auto;margin-bottom:15px;">';
+
+		if (gLargePlayerControls){
+			modal_msg += '<div id="abcplayer" class="abcjs-large">';
+		}
+		else{
+			modal_msg += '<div id="abcplayer">';			
+		}
+
+	   	modal_msg += '<div id="playback-paper"></div>';
+	   	modal_msg += '</div>';
+
+	   	modal_msg += '</div>';
+
+	   	// Add the player controls
+		if (gLargePlayerControls){
+	   		modal_msg += '<div id="playback-audio" class="abcjs-large"></div>';
+		}
+		else{
+	   		modal_msg += '<div id="playback-audio"></div>';
+		}
+
+	   	// Add the grace explorer controls
+
+		modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
+		modal_msg += 'Starting tempo %: <input style="width:75px;margin-right:18px;" id="looper_start_percent" type="number" min="1" step="1" max="100" title="Tune tempo start percentage" autocomplete="off"/>';
+		modal_msg += 'Ending tempo %: <input style="width:75px;margin-right:18px;" id="looper_end_percent" type="number" min="1" step="1" max="100" title="Tune tempo end percentage" autocomplete="off"/>';
+		modal_msg += 'Tempo increment %: <input style="width:75px;" id="looper_increment" type="number" min="1" step="1" max="100" title="Tempo increment percentage" autocomplete="off"/>';
+		modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
+		modal_msg += 'Increment tempo after how many loops: <input style="width:75px;" id="looper_count" type="number" min="1" step="1" max="100" title="Increment tempo after this many times through the tune" autocomplete="off"/>';
+		modal_msg += '</p>';
+		modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
+		modal_msg += '<input id="looperreset" class="looperreset button btn btn-looperreset" onclick="TuneTrainerReset();" type="button" value="Apply Tune Trainer Settings and Reload the Player" title="Applies the entered tune trainer settings and reloads the player">';
+		modal_msg += '</p>';
+		modal_msg += '<a id="looperhelp" href="https://michaeleskin.com/abctools/userguide.html#tune_trainer" target="_blank" style="text-decoration:none;" title="Learn more about the Tune Trainer">💡</a>';
+
+	   	// Scale the player for larger screens
+		var windowWidth = window.innerWidth;
+
+		var instrument = GetRadioValue("notenodertab");
+
+		var theWidth = windowWidth * 0.45;
+
+		if (isDesktopBrowser()){
+
+			if (theWidth < 850){
+				theWidth = 850;
+			}
+
+		}
+		else{
+
+			theWidth = 800;  
+			
+		}
+
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: theTop, width:theWidth, okText:"Close", scrollWithPage: (isMobileBrowser()) });
+
+		// Set the initial loop parameters
+		document.getElementById("looper_start_percent").value = gLooperSpeedStart;
+		document.getElementById("looper_end_percent").value = gLooperSpeedEnd;
+		document.getElementById("looper_increment").value = gLooperSpeedIncrement;
+		document.getElementById("looper_count").value = gLooperCount;
+
+		var theOKButtons = document.getElementsByClassName("modal_flat_ok");
+
+		// Find the button that says "Close" and hook its click handler to make sure music stops on close
+		// Need to search through the modals since there may be a first time share dialog also present
+		// the first time someone plays a linked PDF tune
+
+		var theOKButton = null;
+
+		for (var i=0;i<theOKButtons.length;++i){
+
+			theOKButton = theOKButtons[i];
+
+			if (theOKButton.innerText == "Close"){
+
+				gTheOKButton = theOKButton;
+
+				var originalOnClick = theOKButton.onclick;
+
+				theOKButton.onclick = function(){
+
+					originalOnClick(); 
+					StopPlay(); 
+
+				    // Focus after operation
+				    FocusAfterOperation();
+
+					// If on iOS and the muting controller installed, dispose it now
+					if (gIsIOS){
+
+						if (gTheMuteHandle){
+						 	gTheMuteHandle.dispose();
+  							gTheMuteHandle = null;
+  						}
+					}
+
+				};
+
+				break;
+
+			}
+		}
+
+		if (ABCJS.synth.supportsAudio()) {
+			
+			synthControl = new ABCJS.synth.SynthController();
+
+			synthControl.load("#playback-audio", cursorControl, {displayLoop: false, displayRestart: true, displayPlay: true, displayProgress: true, displayWarp: true});
+			
+		} else {
+
+			document.querySelector("#playback-audio").innerHTML = "<div class='audio-error'>Audio is not supported in this browser.</div>";
+
+		}
+
+		setTune(false);
+
+		// Cache autoscroll values early
+		gPlayerHolder = document.getElementById("playerholder");
+		gPlayerContainerRect = gPlayerHolder.getBoundingClientRect();
+
 	}
 
 	// Try to deal with tab deactivation muting
@@ -19310,7 +19813,7 @@ function AdvancedControlsDialog(){
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-subdialog configure_box_advanced " onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"></p>';	
 	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_instrument_explorer" class="configure_instrument_explorer button btn btn-instrumentexplorer" onclick="InstrumentExplorer();" type="button" value="MIDI Instrument Explorer" title="Brings up a tune player where you can experiment playing the current tune with different MIDI soundfonts and melody/chord instruments"><input id="configure_swing_explorer" class="btn btn-swingexplorer configure_swing_explorer " onclick="SwingExplorer()" type="button" value="Swing Explorer" title="Brings up a tune player where you can experiment with different swing factor and offset settings"><input id="configure_grace_explorer" class="btn btn-graceexplorer configure_grace_explorer " onclick="GraceExplorer()" type="button" value="Grace Duration Explorer" title="Brings up a tune player where you can experiment with different grace note duration settings"></p>';
-	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="BatchMP3Export()" type="button" value="Export all Tunes as MP3" title="Exports all the tunes in the ABC text area as .mp3 files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Specific Tag" title="Brings up the Sort by Specific Tag dialog"></p>';	
+	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_looper" class="btn btn-looper configure_looper" onclick="TuneTrainer()" type="button" value="Tune Trainer" title="Looping player with increasing speed for tune practice"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="BatchMP3Export()" type="button" value="Export all Tunes as MP3" title="Exports all the tunes in the ABC text area as .mp3 files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Specific Tag" title="Brings up the Sort by Specific Tag dialog"></p>';	
 	modal_msg += '</div>';
 
 	setTimeout(function(){
