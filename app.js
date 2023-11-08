@@ -17836,6 +17836,14 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 	gLooperCurrent = gLooperSpeedStart;
 	gLooperLoopCount = gLooperCount;
 
+	// Save the settings in browser local storage for next time
+	if (gLocalStorageAvailable){
+		localStorage.LooperSpeedStart = gLooperSpeedStart;
+		localStorage.LooperSpeedEnd = gLooperSpeedEnd;
+		localStorage.LooperSpeedIncrement = gLooperSpeedIncrement;
+		localStorage.LooperCount = gLooperCount;
+	}
+
 	var soundFontRequested = ScanTuneForSoundFont(theProcessedABC);
 
 	if (soundFontRequested){
@@ -18613,6 +18621,51 @@ function GetInitialConfigurationSettings(){
     	resetPDFTunebookConfig();
     }
 
+    // Tune Trainer settings
+    val = localStorage.LooperSpeedStart;
+	if (val){
+		gLooperSpeedStart = parseFloat(val);
+		if (isNaN(gLooperSpeedStart)){
+			gLooperSpeedStart = 50;
+		}
+	}
+	else{
+		gLooperSpeedStart = 50;
+	}
+
+    val = localStorage.LooperSpeedEnd;
+	if (val){
+		gLooperSpeedEnd = parseFloat(val);
+		if (isNaN(gLooperSpeedEnd)){
+			gLooperSpeedEnd = 100;
+		}
+	}
+	else{
+		gLooperSpeedEnd = 100;
+	}
+
+	val = localStorage.LooperSpeedIncrement;
+	if (val){
+		gLooperSpeedIncrement = parseFloat(val);
+		if (isNaN(gLooperSpeedIncrement)){
+			gLooperSpeedIncrement = 10;
+		}
+	}
+	else{
+		gLooperSpeedIncrement = 10;
+	}
+
+	val = localStorage.LooperCount;
+	if (val){
+		gLooperCount = parseInt(val);
+		if (isNaN(gLooperCount)){
+			gLooperCount = 1;
+		}
+	}
+	else{
+		gLooperCount = 1;
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -18719,6 +18772,12 @@ function SaveConfigurationSettings(){
 
 		// Save the PDF features 
 		localStorage.PDFTunebookConfig = JSON.stringify(gPDFTunebookConfig);
+
+		// Save the Tune Trainer settings
+		localStorage.LooperSpeedStart = gLooperSpeedStart;
+		localStorage.LooperSpeedEnd = gLooperSpeedEnd;
+		localStorage.LooperSpeedIncrement = gLooperSpeedIncrement;
+		localStorage.LooperCount = gLooperCount;
 
 	}
 }
