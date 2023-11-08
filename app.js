@@ -18042,9 +18042,9 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 	   	// Add the tune trainer controls
 
 		modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
-		modal_msg += 'Starting tempo %: <input style="width:75px;margin-right:18px;" id="looper_start_percent" type="number" min="1" step="1" max="100" title="Tune tempo start percentage" autocomplete="off"/>';
-		modal_msg += 'Ending tempo %: <input style="width:75px;margin-right:18px;" id="looper_end_percent" type="number" min="1" step="1" max="100" title="Tune tempo end percentage" autocomplete="off"/>';
-		modal_msg += 'Tempo increment %: <input style="width:75px;" id="looper_increment" type="number" min="1" step="1" max="100" title="Tempo increment percentage" autocomplete="off"/>';
+		modal_msg += 'Starting tempo: <input style="width:75px;margin-right:4px;" id="looper_start_percent" type="number" min="1" step="1" max="100" title="Tune tempo start percentage" autocomplete="off"/>%&nbsp;&nbsp;&nbsp;&nbsp;';
+		modal_msg += 'Ending tempo: <input style="width:75px;margin-right:4px;" id="looper_end_percent" type="number" min="1" step="1" max="100" title="Tune tempo end percentage" autocomplete="off"/>%&nbsp;&nbsp;&nbsp;&nbsp;';
+		modal_msg += 'Tempo increment: <input style="width:75px;margin-right:4px;" id="looper_increment" type="number" min="1" step="1" max="100" title="Tempo increment percentage" autocomplete="off"/>%';
 		modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
 		modal_msg += 'Increment tempo after how many loops: <input style="width:75px;" id="looper_count" type="number" min="1" step="1" max="100" title="Increment tempo after this many times through the tune" autocomplete="off"/>';
 		modal_msg += '</p>';
