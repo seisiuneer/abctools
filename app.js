@@ -7339,8 +7339,6 @@ function Render(renderAll,tuneNumber) {
 		gAllowSave = true;
 
 		// Enable the control display toggle
-		document.getElementById("toggleallcontrols").classList.remove("toggleallcontrolsdisabled");
-		document.getElementById("toggleallcontrols").classList.add("toggleallcontrols");
 		gAllowControlToggle = true;
 
 		// Enable the PDF generation button
@@ -7355,6 +7353,11 @@ function Render(renderAll,tuneNumber) {
 		// Enable the play button
 		document.getElementById("playbutton").classList.remove("playbuttondisabled");
 		document.getElementById("playbutton").classList.add("playbutton");
+
+		// Enable the trainer button
+		document.getElementById("trainerbutton").classList.remove("trainerbuttondisabled");
+		document.getElementById("trainerbutton").classList.add("trainerbutton");
+
 		gAllowCopy = true;
 
 		var radiovalue = GetRadioValue("notenodertab");
@@ -7502,8 +7505,6 @@ function Render(renderAll,tuneNumber) {
 		gAllowPDF = false;
 
 		// Disable the control display toggle
-		document.getElementById("toggleallcontrols").classList.remove("toggleallcontrols");
-		document.getElementById("toggleallcontrols").classList.add("toggleallcontrolsdisabled");
 		gAllowControlToggle = false;
 
 		// Disable the copy button
@@ -7513,6 +7514,10 @@ function Render(renderAll,tuneNumber) {
 		// Disable the play button
 		document.getElementById("playbutton").classList.remove("playbutton");
 		document.getElementById("playbutton").classList.add("playbuttondisabled");
+
+		// Disable the trainer button
+		document.getElementById("trainerbutton").classList.remove("trainerbutton");
+		document.getElementById("trainerbutton").classList.add("trainerbuttondisabled");
 
 		gAllowCopy = false;
 
@@ -9383,11 +9388,6 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
 	var firstpage = document.getElementById("firstpage").value;
 
 	var url = getUrlWithoutParams() + "?lzw=" + abcInLZW + "&format=" + format + "&ssp=" + ssp + "&pdf=" + pdfformat + "&pn=" + pagenumbers + "&fp=" + firstpage;
-
-	// Pass along the top bar status
-	if (!gTopBarShowing){
-		url+="&hide=1";
-	}
 
 	// Add a capo parameter for mandolin and guitar
 	var postfix = "";
@@ -11972,34 +11972,8 @@ function SetAbcText(txt) {
 function ShowAllControls(){
 
 	document.getElementById("notenrechts").style.display = "inline-block";
-	document.getElementById("toggleallcontrols").value = "Hide Controls";
 
 	gShowAllControls = true;
-
-}
-
-function HideAllControls(){
-
-	document.getElementById("notenrechts").style.display = "none";
-	document.getElementById("toggleallcontrols").value = "Show Controls";
-
-	gShowAllControls = false;
-
-}
-
-function ToggleAllControls(){
-
-	// Check if OK to toggle the controls
-	if (!gAllowControlToggle){
-		return;
-	}
-
-	if (gShowAllControls){
-		HideAllControls();
-	}
-	else{
-		ShowAllControls();
-	}
 
 	// Recalculate the notation top position
 	UpdateNotationTopPosition();
@@ -12011,6 +11985,23 @@ function ToggleAllControls(){
 		
 	}
 
+}
+
+function HideAllControls(){
+
+	document.getElementById("notenrechts").style.display = "none";
+
+	gShowAllControls = false;
+
+	// Recalculate the notation top position
+	UpdateNotationTopPosition();
+
+	// Force a rescroll for one column view
+	if (gIsOneColumn){
+
+		MakeTuneVisible(true);
+		
+	}
 
 }
 
@@ -12390,14 +12381,6 @@ function processShareLink() {
 		document.getElementById("firstpage").value = "yes";
 	}
 
-	// Hide the top bar?
-	if (urlParams.has("hide")) {
-		var theHide = urlParams.get("hide");
-		if (theHide == "1"){
-			HideTopBar();
-		}
-	}
-
 	// Is editing disabled?
 	var disableEdit = false;
 
@@ -12450,7 +12433,6 @@ function processShareLink() {
 
 		// Hide the controls if coming in from a share link
 		document.getElementById("notenrechts").style.display = "none";
-		document.getElementById("toggleallcontrols").value = "Show Controls";
 
 		// Recalculate the notation top position
 		UpdateNotationTopPosition();
@@ -13874,12 +13856,6 @@ var gInDownloadMP3 = false;
 
 function DownloadMP3(callback,val){
 
-	// // Apparently broken on iOS and Android
-	// if (gIsAndroid){
-	// 	DayPilot.Modal.alert("Export to .MP3 not supported on Android at this time.",{ theme: "modal_flat", top: 400, scrollWithPage: false, okText:"Ok" });
-	// 	return;
-	// }
-
 	// Avoid re-entry
 	if (gInDownloadMP3){
 		return false;
@@ -13984,7 +13960,9 @@ function DownloadMP3(callback,val){
 
 	gMIDIbuffer.prime().then(function(t) {
 
-		document.getElementById("abcplayer_mp3button").value = "Encoding .MP3";
+		if (!callback){
+			document.getElementById("abcplayer_mp3button").value = "Encoding .MP3";
+		}
 		document.getElementById("loading-bar-spinner").style.display = "block";
 
 		// Give the UI a chance to update
@@ -14022,7 +14000,10 @@ function DownloadMP3(callback,val){
 				
 				document.body.removeChild(link);
 
-				document.getElementById("abcplayer_mp3button").value = "Download .MP3";
+				if (!callback){
+					document.getElementById("abcplayer_mp3button").value = "Save as .MP3";
+				}
+
 				document.getElementById("loading-bar-spinner").style.display = "none";
 				gInDownloadMP3 = false;
 
@@ -14045,7 +14026,10 @@ function DownloadMP3(callback,val){
 
 		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 
-		document.getElementById("abcplayer_mp3button").value = "Download .MP3";
+		if (!callback){
+			document.getElementById("abcplayer_mp3button").value = "Save as .MP3";
+		}
+
 		document.getElementById("loading-bar-spinner").style.display = "none";
 		gInDownloadMP3 = false;
 
@@ -14084,6 +14068,23 @@ function DownloadMIDI(){
 		
 
 }
+
+//
+// Export the tune in .WAV, .MP3, or MIDI formats
+//
+function ExportAudioMIDI(){
+
+	var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica">Save .WAV, .MP3, or MIDI File of Your Tune</p>';
+	modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;margin-top:42px;">';
+	modal_msg += '<input id="abcplayer_wavbutton" class="abcplayer_wavbutton btn btn-wavedownload" onclick="DownloadWave();" type="button" value="Save as .WAV File" title="Saves the audio for the current tune as a .WAV file">'
+	modal_msg += '<input id="abcplayer_mp3button" class="abcplayer_mp3button btn btn-mp3download" onclick="DownloadMP3();" type="button" value="Save as .MP3 File" title="Saves the audio for the current tune as a .MP3 file">'
+	modal_msg += '<input id="abcplayer_midibutton" class="abcplayer_midibutton btn btn-mididownload" onclick="DownloadMIDI();" type="button" value="Save as MIDI File" title="Saves the current tune as a MIDI file">'
+	modal_msg  += '</p>';
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) })
+
+}
+
 
 //
 // Compute the fade to use for the samples
@@ -15170,10 +15171,10 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 
 	   	// Add the download buttons
 		modal_msg += '<p style="text-align:center;margin:0px;margin-top:22px">'
-		modal_msg += '<input id="abcplayer_wavbutton" class="abcplayer_wavbutton btn btn-wavedownload" onclick="DownloadWave();" type="button" value="Download .WAV" title="Downloads the audio for the current tune as a .WAV file">'
-		modal_msg += '<input id="abcplayer_mp3button" class="abcplayer_mp3button btn btn-mp3download" onclick="DownloadMP3();" type="button" value="Download .MP3" title="Downloads the audio for the current tune as a .MP3 file">'
-		modal_msg += '<input id="abcplayer_midibutton" class="abcplayer_midibutton btn btn-mididownload" onclick="DownloadMIDI();" type="button" value="Download MIDI" title="Downloads the current tune as a MIDI file">'
+		modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioMIDI();" type="button" value="Save Audio or MIDI" title="Brings up a dialog where you can export the tune in .WAV, .MP3, or MIDI formats">'
+		modal_msg += '<input id="abcplayer_trainer" class="btn btn-looper abcplayer_trainer" onclick="TuneTrainerLaunchFromPlayer()" type="button" value="Start Tune Trainer" title="Opens the Tune Trainer for practicing tunes with increasing tempos">';
 		modal_msg += '<input id="abcplayer_metronomebutton" class="abcplayer_metronome button btn btn-metronome" onclick="ToggleMetronome();" type="button" value="Enable Metronome" title="Enables/disables the metronome">'
+		modal_msg += '<a id="abcplayer_help" href="https://michaeleskin.com/abctools/userguide.html#playing_your_tunes" target="_blank" style="text-decoration:none;" title="Learn more about the Player">💡</a>';
 		modal_msg += '</p>';
 
 	   	// Scale the player for larger screens
@@ -17593,6 +17594,22 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 //
 // Tune trainer - Loops tunes with increasing speed
 //
+
+//
+// Launched from the player, close the player, launch the trainer
+function TuneTrainerLaunchFromPlayer(){
+
+	// Click the OK button in the player
+	gTheOKButton.click();
+
+	setTimeout(function() {
+
+		// Launch the trainer
+		TuneTrainer();
+
+	},250);
+}
+
 function TuneTrainer(){
 
 	if (gAllowCopy){
@@ -19933,7 +19950,7 @@ function AdvancedControlsDialog(){
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-subdialog configure_box_advanced " onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"></p>';	
 	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_instrument_explorer" class="configure_instrument_explorer button btn btn-instrumentexplorer" onclick="InstrumentExplorer();" type="button" value="MIDI Instrument Explorer" title="Brings up a tune player where you can experiment playing the current tune with different MIDI soundfonts and melody/chord instruments"><input id="configure_swing_explorer" class="btn btn-swingexplorer configure_swing_explorer " onclick="SwingExplorer()" type="button" value="Swing Explorer" title="Brings up a tune player where you can experiment with different swing factor and offset settings"><input id="configure_grace_explorer" class="btn btn-graceexplorer configure_grace_explorer " onclick="GraceExplorer()" type="button" value="Grace Duration Explorer" title="Brings up a tune player where you can experiment with different grace note duration settings"></p>';
-	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_looper" class="btn btn-looper configure_looper" onclick="TuneTrainer()" type="button" value="Tune Trainer" title="Looping player with increasing speed for tune practice"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="BatchMP3Export()" type="button" value="Export all Tunes as MP3" title="Exports all the tunes in the ABC text area as .mp3 files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Specific Tag" title="Brings up the Sort by Specific Tag dialog"></p>';	
+	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="BatchMP3Export()" type="button" value="Export all Tunes as MP3" title="Exports all the tunes in the ABC text area as .mp3 files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Specific Tag" title="Brings up the Sort by Specific Tag dialog"></p>';	
 	modal_msg += '</div>';
 
 	setTimeout(function(){
@@ -20886,6 +20903,11 @@ function ShowTopBar(){
 
 	elem.value="▲";
 
+	// Also shows the controls if allowed
+	if(gAllowControlToggle){
+		ShowAllControls();
+	}
+
 
 }
 
@@ -20912,10 +20934,14 @@ function HideTopBar(){
 
 	elem.value="▼";
 
+	// Also hides the controls
+	if(gAllowControlToggle){
+		HideAllControls();
+	}
+
 }
 
 function ToggleTopBar(){
-
 
 	if (gTopBarShowing){
 
@@ -22470,7 +22496,6 @@ function DoStartup() {
 
 
 	if (!isFromShare){
-		document.getElementById("toggleallcontrols").classList.add("toggleallcontrolsdisabled");
 		document.getElementById("notenrechts").style.display = "none";
 		gAllowControlToggle = false;
 	}

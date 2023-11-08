@@ -652,10 +652,35 @@ height:42px;
 padding:12px;
 }
 
+#abcplayer_exportbutton{
+height:42px;
+padding:12px;
+margin-right:36px;
+}
+
+@media (hover: hover) {
+	.abcplayer_exportbutton:hover{
+	background: palegreen;
+	}
+}
+
+#abcplayer_trainer{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+	margin-right:36px;
+}
+
+@media (hover: hover) {
+	.abcplayer_trainer:hover{
+	background: palegreen;
+	}
+}
+
 #abcplayer_wavbutton{
 height:42px;
 padding:12px;
-margin-right:24px;
+margin-right:30px;
 }
 
 @media (hover: hover) {
@@ -667,7 +692,7 @@ margin-right:24px;
 #abcplayer_mp3button{
 height:42px;
 padding:12px;
-margin-right:24px;
+margin-right:30px;
 }
 
 @media (hover: hover) {
@@ -679,7 +704,6 @@ margin-right:24px;
 #abcplayer_midibutton{
 height:42px;
 padding:12px;
-margin-right:24px;
 }
 
 @media (hover: hover) {
@@ -697,6 +721,24 @@ padding:12px;
 	.abcplayer_metronomebutton:hover{
 	background: palegreen;
 	}
+}
+
+#abcplayer_export{
+height:42px;
+padding:12px;
+}
+
+@media (hover: hover) {
+	.abcplayer_export:hover{
+	background: palegreen;
+	}
+}
+
+#abcplayer_help{
+font-size:24pt;
+position:absolute;
+left:20px;
+top:20px;
 }
 
 #swingexplorerinject{
@@ -891,6 +933,24 @@ opacity:0.4;
 
 @media (hover: hover) {
 	.copybutton:hover{
+	background: palegreen;
+	}
+}
+
+.trainerbutton{
+margin-left:0px;
+margin-right:12px;
+opacity:1.0;
+}
+
+.trainerbuttondisabled{
+margin-left:0px;
+margin-right:12px;
+opacity:0.4;
+}
+
+@media (hover: hover) {
+	.trainerbutton:hover{
 	background: palegreen;
 	}
 }
@@ -2015,19 +2075,6 @@ margin-top:-7px;
 	}
 }
 
-#configure_looper{
-	height:42px;
-	margin-top: 9px;
-	padding:12px;
-	margin-right:24px;
-}
-
-@media (hover: hover) {
-	.configure_looper:hover{
-	background: palegreen;
-	}
-}
-
 #configure_anglo_fingerings{
 	height:42px;
 	margin-top: 9px;
@@ -2626,6 +2673,12 @@ padding: 3px;
 
 }
 
+.btn-exportaudiomidi{
+  --color: black;
+  --background-color: lavender;
+
+}
+
 .btn-wavedownload{
   --color: black;
   --background-color: lavender;
@@ -2707,7 +2760,7 @@ padding: 3px;
 
 .btn-metronome{
   --color: black;
-  --background-color: #C8ECFE;
+  --background-color: #ABF2E4;
 
 }
 
