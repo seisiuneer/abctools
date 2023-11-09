@@ -831,7 +831,28 @@ top:20px;
 font-size:13pt;
 position:absolute;
 left:50px;
-bottom:22px;
+bottom:34px;
+}
+
+#looperstatusbar {
+position:absolute;
+background-color:green;
+left:52px;
+bottom:23px;
+height:20px;
+width:0px;
+display:none;
+}
+
+#looperstatusbaroverlay {
+position:absolute;
+background-color: transparent;
+left:52px;
+bottom:23px;
+height:20px;
+width:212px;
+outline: 1px solid black;
+display:none;
 }
 
 

@@ -17822,6 +17822,9 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","TuneTrainer");
 
+	var totalLoops = 0;
+	var loopCount = 0;
+
 	gMIDIbuffer = null;
 	gTheOKButton = null;
 
@@ -17980,6 +17983,83 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 		}
 	}
 
+	//
+	// Update the status bar
+	//
+	function UpdateProgressBar(){
+
+		//debugger;
+
+		if (loopCount > totalLoops){
+
+			return;
+		
+		}
+
+		if ((gLooperSpeedStart == gLooperSpeedEnd) || (gLooperSpeedIncrement == 0)){
+
+			var elem = document.getElementById("looperstatusbaroverlay");
+			elem.style.display = "block";
+
+			elem = document.getElementById("looperstatusbar");
+			elem.style.display = "block";
+
+			elem.style.width = "212px";
+		
+			return;		
+
+		}
+
+		setTimeout(function(){
+
+			var progressWidth = 212;
+
+			var elem = document.getElementById("looperstatusbaroverlay");
+			elem.style.display = "block";
+
+			elem = document.getElementById("looperstatusbar");
+			elem.style.display = "block";
+
+			if (gLooperSpeedStart != gLooperSpeedEnd);
+			{
+				progressWidth = 212 * (loopCount/totalLoops);
+			}
+
+			elem.style.width = progressWidth+"px";
+
+		},10);
+
+	}
+
+	//
+	// Calc the total number of times to get to the full speed
+	//
+	function CalcTotalLoops(){
+
+		if ((gLooperSpeedStart == gLooperSpeedEnd) || (gLooperSpeedIncrement == 0)){
+
+			return 1;
+		
+		}
+
+		var count = 0;
+
+		var looperSpeedStart = gLooperSpeedStart;
+		var looperSpeedEnd = gLooperSpeedEnd;
+		var looperSpeedIncrement = gLooperSpeedIncrement;
+		var looperCount = gLooperCount;
+
+		var start = looperSpeedStart;
+
+		while (start < looperSpeedEnd){
+			count += looperCount;
+			start += looperSpeedIncrement;
+		}
+
+		//console.log("count = "+count);
+
+		return count;
+	}
 
 	// Callback at end of each loop
 	function LoopCallback(){
@@ -17991,6 +18071,8 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 		if (!gPlayerInPause){
 
 			if ((!isNaN(gLooperSpeedEnd)) && (!isNaN(gLooperSpeedIncrement)) && (!isNaN(gLooperCount))){
+
+				loopCount++;
 
 				var isAtEnd = false;
 
@@ -18042,6 +18124,8 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 
 					}
 
+					// Update the progress bar
+					UpdateProgressBar();
 				}
 			}
 			else{
@@ -18069,6 +18153,9 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 			var elem = document.getElementById("looperstatus");
 			elem.innerHTML = "Tempo:&nbsp;"+gLooperCurrent+"%";
 		}
+
+		// Update the progress bar
+		UpdateProgressBar();
 
 	}
 
@@ -18127,6 +18214,8 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 		modal_msg += '</p>';
 		modal_msg += '<a id="looperhelp" href="https://michaeleskin.com/abctools/userguide.html#tune_trainer" target="_blank" style="text-decoration:none;" title="Learn more about the Tune Trainer">💡</a>';
 		modal_msg += '<p id="looperstatus"></p>';
+		modal_msg += '<div id="looperstatusbar"></div>';
+		modal_msg += '<div id="looperstatusbaroverlay"></div>';
 
 	   	// Scale the player for larger screens
 		var windowWidth = window.innerWidth;
@@ -18155,6 +18244,9 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 		document.getElementById("looper_end_percent").value = gLooperSpeedEnd;
 		document.getElementById("looper_increment").value = gLooperSpeedIncrement;
 		document.getElementById("looper_count").value = gLooperCount;
+
+		// Calc the total loops
+		totalLoops = CalcTotalLoops();
 
 		// Idle the metronome button
 		if (gLooperMetronomeState){
