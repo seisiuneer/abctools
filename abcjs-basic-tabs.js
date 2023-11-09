@@ -21,6 +21,7 @@ var gGraceMissingTempo = false;
 
 // MAE 6 Nov 2023 - For tune trainer
 var gLoopCallback = null;
+var gStartPlayCallback = null;
 var gPlayerInPause = false;
 
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -15898,6 +15899,11 @@ function SynthController() {
         self.midiBuffer.start();
         self.timer.start(self.percent);
         if (self.control) self.control.pushPlay(true);
+        // MAE 8 Nov 2023 - For initial play notification
+        if (gStartPlayCallback != null){
+          gStartPlayCallback();
+          gStartPlayCallback = null;
+        }
       } else {
         self.pause();
       }

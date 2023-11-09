@@ -827,6 +827,14 @@ left:20px;
 top:20px;
 }
 
+#looperstatus {
+font-size:13pt;
+position:absolute;
+left:50px;
+bottom:22px;
+}
+
+
 #looper_metronomebutton{
 height:42px;
 padding:12px;

@@ -15138,6 +15138,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 
 		// Clear the looper callback
 		gLoopCallback = null;
+		gStartPlayCallback = null;
 
 		// Clear the player in pause flag
 		gPlayerInPause = false;
@@ -16129,6 +16130,7 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 
 		// Clear the looper callback
 		gLoopCallback = null;
+		gStartPlayCallback = null;
 
 		// Clear the player in pause flag
 		gPlayerInPause = false;
@@ -16926,6 +16928,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 
 		// Clear the looper callback
 		gLoopCallback = null;
+		gStartPlayCallback = null;
 
 		// Clear the player in pause flag
 		gPlayerInPause = false;
@@ -17437,6 +17440,7 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 
 		// Clear the looper callback
 		gLoopCallback = null;
+		gStartPlayCallback = null;
 		
 		// Clear the player in pause flag
 		gPlayerInPause = false;
@@ -17662,7 +17666,7 @@ function TuneTrainerReset(){
 
 	if ((!isNaN(looperSpeedStart)) && (!isNaN(looperSpeedEnd)) && (!isNaN(looperSpeedIncrement)) && (!isNaN(looperCount)) ){
 
-		if ((looperSpeedStart <= looperSpeedEnd) && (looperSpeedStart >= 0) && (looperSpeedEnd <= 400) && (looperSpeedIncrement >= 0) && (looperCount >= 0)){
+		if ((looperSpeedStart <= looperSpeedEnd) && (looperSpeedStart >= 0) && (looperSpeedEnd <= 400) && (looperSpeedIncrement >= 0) && (looperCount > 0)){
 
 			gLooperSpeedStart = looperSpeedStart;
 			gLooperSpeedEnd = looperSpeedEnd;
@@ -17680,6 +17684,7 @@ function TuneTrainerReset(){
 
 		// Clear the looper callback
 		gLoopCallback = null;
+		gStartPlayCallback = null;
 
 		// Clear the player in pause flag
 		gPlayerInPause = false;
@@ -17948,9 +17953,9 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 
 					synthControl.isLooping = true;
 
-					// Setup the callback
+					// Setup the callbacks
 					gLoopCallback = LoopCallback;
-
+					gStartPlayCallback = StartCallback;
 
 				}).catch(function (error) {
 					
@@ -17987,6 +17992,12 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 
 			if ((!isNaN(gLooperSpeedEnd)) && (!isNaN(gLooperSpeedIncrement)) && (!isNaN(gLooperCount))){
 
+				var isAtEnd = false;
+
+				if (gLooperCurrent == gLooperSpeedEnd){
+					isAtEnd = true;
+				}
+
 				// If incrementing, also possible to just spin at the start tempo
 				if (gLooperSpeedIncrement != 0){
 
@@ -18000,16 +18011,37 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 
 							gLooperCurrent = gLooperCurrent + gLooperSpeedIncrement;
 
-							if (gLooperCurrent > gLooperSpeedEnd){
+							if (gLooperCurrent >= gLooperSpeedEnd){
 								gLooperCurrent = gLooperSpeedEnd;
+								isAtEnd = true;
 							}
 
 							synthControl.pause();
 						
 							synthControl.forceWarp(gLooperCurrent);
+
+						}
+						else{
+							isAtEnd = true;
 						}
 
 					}
+					
+					var elem = document.getElementById("looperstatus");
+
+					if (!isAtEnd){
+						if ((gLooperSpeedStart != gLooperSpeedEnd) && (gLooperSpeedIncrement != 0)){
+							elem.innerHTML = "Tempo:&nbsp;"+gLooperCurrent+"%&nbsp;&nbsp;-&nbsp;&nbsp;Loop "+((gLooperCount - gLooperLoopCount)+1)+" of "+gLooperCount;
+						}
+						else{
+							elem.innerHTML = "Tempo:&nbsp;"+gLooperCurrent+"%";
+						}
+					}
+					else{
+						elem.innerHTML = "Tempo:&nbsp;"+gLooperCurrent+"%";
+
+					}
+
 				}
 			}
 			else{
@@ -18025,6 +18057,23 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 		}
 	}
 
+	// Called when the user first clicks play
+	function StartCallback(){
+
+
+		var elem = document.getElementById("looperstatus");
+
+		if ((gLooperSpeedStart != gLooperSpeedEnd) && (gLooperSpeedIncrement != 0)){
+			elem.innerHTML = "Tempo:&nbsp;"+gLooperCurrent+"%&nbsp;&nbsp;-&nbsp;&nbsp;Loop 1 of "+gLooperCount;		
+		}
+		else{
+			var elem = document.getElementById("looperstatus");
+			elem.innerHTML = "Tempo:&nbsp;"+gLooperCurrent+"%";
+		}
+
+
+	}
+
 	var cursorControl = new CursorControl();
 
 	var synthControl;
@@ -18033,6 +18082,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 
 		// Clear the looper callback
 		gLoopCallback = null;
+		gStartPlayCallback = null;
 
 		// Clear the player in pause flag
 		gPlayerInPause = false;
@@ -18078,6 +18128,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 		modal_msg += '<input id="looper_metronomebutton" class="looper_metronome button btn btn-metronome" onclick="ToggleTuneTrainerMetronome();" type="button" value="Enable Metronome" title="Enables/disables the metronome">'
 		modal_msg += '</p>';
 		modal_msg += '<a id="looperhelp" href="https://michaeleskin.com/abctools/userguide.html#tune_trainer" target="_blank" style="text-decoration:none;" title="Learn more about the Tune Trainer">💡</a>';
+		modal_msg += '<p id="looperstatus"></p>';
 
 	   	// Scale the player for larger screens
 		var windowWidth = window.innerWidth;
