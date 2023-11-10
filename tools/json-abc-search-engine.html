@@ -1,0 +1,110 @@
+<html>
+  
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="profile" href="http://gmpg.org/xfn/11">
+    <title>ABC JSON File Search Engine</title>
+    <link rel='dns-prefetch' href='//fonts.googleapis.com' />
+    <link rel='dns-prefetch' href='//s.w.org' />
+    <link rel='preconnect' href='https://secureservercdn.net' crossorigin />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="ABC JSON File Search Engine" />
+    <meta property="og:description" content="ABC JSON File Search Engine" />
+    <meta property="og:url" content="https://michaeleskin.com/tools/json-reader.html" />
+    <meta property="og:site_name" content="ABC JSON File Search Engine" />
+    <meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png"/>
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
+    <meta name="viewport" content="width=860">
+    <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
+    <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
+    <link rel="stylesheet" href="json-abc-search-engine.css?v=1"/>
+    
+  </head>
+  <body>
+    
+    <div id="maindiv">
+      
+      <div>
+        
+        <div style="text-align: center;">
+          <h1>JSON ABC Search Engine</h1>
+          <h2>Seaches a JSON File for Tunes by Name</h2>
+         </div>
+        
+        <h4 style="margin-top:32px;">Instructions:</h4>
+        <p>1)&nbsp;Click "Open JSON File" to open a JSON file of tunes.</p>
+        <p>2)&nbsp;Enter the tune name you are looking for in the search box.</p>
+        <p>2)&nbsp;Click "Search".</p>
+        <p>If found, the ABC for any matching tunes will appear in the "Search Result" box.</p>
+        <p>3)&nbsp;Save, Copy or Test the results:</p>
+        <p>Click "Save Output to a file" to save the results to a file.</p>
+        <p>Click "Copy Output to the clipboard" to copy the results to the system clipboard for pasting into other applications.</p>
+        <p>Click "Test Output in the ABC Transcription Tools" to open and test the results in my <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a></p>
+        
+      </div>
+      
+      <hr id="abcinput">
+      
+      <div style="text-align:left">
+                
+        <div style="margin-top:28px;margin-bottom:36px;">
+          <p>
+            <input type="file" id="selectjsonfile" accept=".json,.JSON,.txt,.TXT"  hidden/>
+            <label class="abcupload btn btn-controls" for="selectjsonfile" title="Opens a JSON file">Open JSON File</label>
+          </p>
+        </div>
+
+        <p style="margin:0px;margin-top:20px">Search for Tune Name:&nbsp;<input style="width:600px;font-size:12pt;line-height:18px;padding:6px;" id="tuneNameToSearch" title="Tune name to search for in the JSON" autocomplete="off" autocorrect="off" placeholder="Tune name to search for here" />        
+        <p style="margin-top:24px"><button id="searchJSON" class="btn btn-generate" onClick="searchJSON();" placeholder="Enter tune name here">Search</button></p>
+        
+        <div style="margin-bottom: 18px;">
+          
+          <h4>Search Result:</h4>
+          
+        </div>
+        
+        <textarea id="output" placeholder="Output results will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea>
+        
+        <p style="margin-top:20px;">
+          
+          <button id="copybutton" class="btn btn-controls" onClick="copyOutputToClipboard();">Copy Output to the clipboard</button>
+          
+          <button style="margin-left:24px;" class="btn btn-controls" onClick="saveOutput();">Save Output to a file</button>
+          
+          <button style="margin-left:24px;" class="btn btn-controls" onClick="testOutput();">Test Output in the ABC Transcription Tools</button>
+          
+        </p>
+        
+      </div>
+            
+      <hr>
+      
+      <p style="text-align: center">Complete source code for this utility may be found on GitHub</p>
+      
+      <p style="text-align: center"> <a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">JSON ABC Reader</a></p>
+      
+      <hr style="margin-bottom:50px">
+      
+    </div>
+    
+  </body>
+  
+  <script src="json-abc-search-engine.js?v=1" type="text/javascript"></script>
+  <script type="text/javascript" src="lz-string.min.js?v=1"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1"></script>
+  
+</html>
