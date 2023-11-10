@@ -17816,6 +17816,7 @@ var gLooperLoopCount = gLooperCount;
 var gPlayerLooperOriginal = null;
 var gPlayerLooperProcessed = null;
 var gLooperMetronomeState = false;
+var gTouchIncrementFive = false;
 
 function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 
@@ -18204,10 +18205,29 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 		var eventX = event.clientX;
 
 		var isDecrement = true;
+		var delta = 1;
 
 		if ((eventX - elemRect.left) > (elemRect.width/2)){
 			
 			isDecrement = false;
+
+			if (theControlIndex != 3){
+
+				if (gTouchIncrementFive){
+					delta = 5;
+				}
+			}
+
+		}
+		else{
+
+			if (theControlIndex != 3){
+				
+				if (gTouchIncrementFive){
+					delta = 5;
+				}
+
+			}
 
 		}
 
@@ -18223,13 +18243,13 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 			case 1:
 				theValue = parseFloat(theValue);
 				if (isDecrement){
-					theValue = theValue - 1;
+					theValue = theValue - delta;
 					if (theValue < 1){
 						theValue = 1;
 					}
 				}
 				else{
-					theValue = theValue + 1;
+					theValue = theValue + delta;
 					if (theValue > 400){
 						theValue = 400
 					}
@@ -18240,13 +18260,13 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 			case 2:
 				theValue = parseFloat(theValue);
 				if (isDecrement){
-					theValue = theValue - 1;
+					theValue = theValue - delta;
 					if (theValue < 0){
 						theValue = 0;
 					}
 				}
 				else{
-					theValue = theValue + 1;
+					theValue = theValue + delta;
 					if (theValue > 400){
 						theValue = 400
 					}
@@ -18258,13 +18278,13 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 			case 3:
 				theValue = parseInt(theValue);
 				if (isDecrement){
-					theValue = theValue - 1;
+					theValue = theValue - delta;
 					if (theValue < 1){
 						theValue = 1;
 					}
 				}
 				else{
-					theValue = theValue + 1;
+					theValue = theValue + delta;
 					if (theValue > 100){
 						theValue = 100
 					}
@@ -18273,6 +18293,14 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 		}
 
 		theControl.value = theValue;
+	}
+
+	//
+	// Touching the % next to the value entry toggles the touch entry decrement/increment value between 1 and 5
+	function ToggleTouchValueIncrement(){
+
+		gTouchIncrementFive = !gTouchIncrementFive;
+
 	}
 
 	var cursorControl = new CursorControl();
@@ -18318,9 +18346,9 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 	   	// Add the tune trainer controls
 
 		modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
-		modal_msg += '<span id="looper_text_1">Starting tempo:</span> <input style="width:75px;margin-right:4px;" id="looper_start_percent" type="number" min="1" step="1" max="400" title="Tune tempo start percentage" autocomplete="off"/>%&nbsp;&nbsp;&nbsp;&nbsp;';
-		modal_msg += '<span id="looper_text_2">Ending tempo:</span> <input style="width:75px;margin-right:4px;" id="looper_end_percent" type="number" min="1" step="1" max="400" title="Tune tempo end percentage" autocomplete="off"/>%&nbsp;&nbsp;&nbsp;&nbsp;';
-		modal_msg += '<span id="looper_text_3">Tempo increment:</span> <input style="width:75px;margin-right:4px;" id="looper_increment" type="number" min="0" step="1" max="400" title="Tempo increment percentage" autocomplete="off"/>%';
+		modal_msg += '<span id="looper_text_1">Starting tempo:</span> <input style="width:75px;margin-right:4px;" id="looper_start_percent" type="number" min="1" step="1" max="400" title="Tune tempo start percentage" autocomplete="off"/><span id="looper_percent_span_1">%&nbsp;&nbsp;&nbsp;&nbsp;</span>';
+		modal_msg += '<span id="looper_text_2">Ending tempo:</span> <input style="width:75px;margin-right:4px;" id="looper_end_percent" type="number" min="1" step="1" max="400" title="Tune tempo end percentage" autocomplete="off"/><span id="looper_percent_span_2">%&nbsp;&nbsp;&nbsp;&nbsp;</span>';
+		modal_msg += '<span id="looper_text_3">Tempo increment:</span> <input style="width:75px;margin-right:4px;" id="looper_increment" type="number" min="0" step="1" max="400" title="Tempo increment percentage" autocomplete="off"/><span id="looper_percent_span_3">%</span>';
 		modal_msg += '</p>';
 		modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
 		modal_msg += '<span id="looper_text_4">Increment tempo after how many loops:</span> <input style="width:75px;" id="looper_count" type="number" min="1" step="1" max="100" title="Increment tempo after this many times through the tune" autocomplete="off"/>';
@@ -18369,6 +18397,10 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 			document.getElementById("looper_text_2").onclick = IncrementDecrementControlValue;
 			document.getElementById("looper_text_3").onclick = IncrementDecrementControlValue;
 			document.getElementById("looper_text_4").onclick = IncrementDecrementControlValue;
+
+			document.getElementById("looper_percent_span_1").onclick = ToggleTouchValueIncrement;
+			document.getElementById("looper_percent_span_2").onclick = ToggleTouchValueIncrement;
+			document.getElementById("looper_percent_span_3").onclick = ToggleTouchValueIncrement;
 		
 		}
 
