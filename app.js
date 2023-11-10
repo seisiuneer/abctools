@@ -18159,6 +18159,122 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 
 	}
 
+	// 
+	// Large control increment/decrement control
+	//
+	function IncrementDecrementControlValue(event){
+
+		//debugger;
+
+		//console.log("IncrementDecrementControlValue this ="+this);
+
+		//console.log("Control text = "+this.innerHTML);
+
+		var theText = this.innerHTML;
+
+		var theControl = null;
+		var theControlIndex = 0;
+
+		if (theText.indexOf("Starting") == 0){
+			//console.log("Start control");
+			theControl = document.getElementById("looper_start_percent");
+			theControlIndex = 0;
+		}
+		else
+		if (theText.indexOf("Ending") == 0){
+			//console.log("End control");
+			theControl = document.getElementById("looper_end_percent");
+			theControlIndex = 1;
+		}
+		else
+		if (theText.indexOf("Tempo") == 0){
+			//console.log("Increment control");
+			theControl = document.getElementById("looper_increment");
+			theControlIndex = 2;
+		}
+		else
+		if (theText.indexOf("Increment") == 0){
+			//console.log("Count control");
+			theControl = document.getElementById("looper_count");
+			theControlIndex = 3;
+		}
+
+		const elemRect = this.getBoundingClientRect();
+
+		var eventX = event.clientX;
+
+		var isDecrement = true;
+
+		if ((eventX - elemRect.left) > (elemRect.width/2)){
+			
+			isDecrement = false;
+
+		}
+
+		//console.log("isDecrement = "+isDecrement);
+
+		var theValue = theControl.value;
+
+		switch (theControlIndex){
+
+			// Start
+			// End
+			case 0:
+			case 1:
+				theValue = parseFloat(theValue);
+				if (isDecrement){
+					theValue = theValue - 1;
+					if (theValue < 1){
+						theValue = 1;
+					}
+				}
+				else{
+					theValue = theValue + 1;
+					if (theValue > 400){
+						theValue = 400
+					}
+				}
+				break;
+
+			// Increment
+			case 2:
+				theValue = parseFloat(theValue);
+				if (isDecrement){
+					theValue = theValue - 1;
+					if (theValue < 0){
+						theValue = 0;
+					}
+				}
+				else{
+					theValue = theValue + 1;
+					if (theValue > 400){
+						theValue = 400
+					}
+				}
+				break;
+
+
+			// Count
+			case 3:
+				theValue = parseInt(theValue);
+				if (isDecrement){
+					theValue = theValue - 1;
+					if (theValue < 1){
+						theValue = 1;
+					}
+				}
+				else{
+					theValue = theValue + 1;
+					if (theValue > 100){
+						theValue = 100
+					}
+				}
+				break;
+		}
+
+		theControl.value = theValue;
+	}
+
 	var cursorControl = new CursorControl();
 
 	var synthControl;
@@ -18202,11 +18318,12 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 	   	// Add the tune trainer controls
 
 		modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
-		modal_msg += 'Starting tempo: <input style="width:75px;margin-right:4px;" id="looper_start_percent" type="number" min="1" step="1" max="400" title="Tune tempo start percentage" autocomplete="off"/>%&nbsp;&nbsp;&nbsp;&nbsp;';
-		modal_msg += 'Ending tempo: <input style="width:75px;margin-right:4px;" id="looper_end_percent" type="number" min="1" step="1" max="400" title="Tune tempo end percentage" autocomplete="off"/>%&nbsp;&nbsp;&nbsp;&nbsp;';
-		modal_msg += 'Tempo increment: <input style="width:75px;margin-right:4px;" id="looper_increment" type="number" min="0" step="1" max="400" title="Tempo increment percentage" autocomplete="off"/>%';
+		modal_msg += '<span id="looper_text_1">Starting tempo:</span> <input style="width:75px;margin-right:4px;" id="looper_start_percent" type="number" min="1" step="1" max="400" title="Tune tempo start percentage" autocomplete="off"/>%&nbsp;&nbsp;&nbsp;&nbsp;';
+		modal_msg += '<span id="looper_text_2">Ending tempo:</span> <input style="width:75px;margin-right:4px;" id="looper_end_percent" type="number" min="1" step="1" max="400" title="Tune tempo end percentage" autocomplete="off"/>%&nbsp;&nbsp;&nbsp;&nbsp;';
+		modal_msg += '<span id="looper_text_3">Tempo increment:</span> <input style="width:75px;margin-right:4px;" id="looper_increment" type="number" min="0" step="1" max="400" title="Tempo increment percentage" autocomplete="off"/>%';
+		modal_msg += '</p>';
 		modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
-		modal_msg += 'Increment tempo after how many loops: <input style="width:75px;" id="looper_count" type="number" min="1" step="1" max="100" title="Increment tempo after this many times through the tune" autocomplete="off"/>';
+		modal_msg += '<span id="looper_text_4">Increment tempo after how many loops:</span> <input style="width:75px;" id="looper_count" type="number" min="1" step="1" max="100" title="Increment tempo after this many times through the tune" autocomplete="off"/>';
 		modal_msg += '</p>';
 		modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
 		modal_msg += '<input id="looperreset" class="looperreset button btn btn-looperreset" onclick="TuneTrainerReset();" type="button" value="Apply Tune Trainer Settings and Reload the Player" title="Applies the entered tune trainer settings and reloads the player">';
@@ -18244,6 +18361,16 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 		document.getElementById("looper_end_percent").value = gLooperSpeedEnd;
 		document.getElementById("looper_increment").value = gLooperSpeedIncrement;
 		document.getElementById("looper_count").value = gLooperCount;
+
+		// Are we using the trainer touch controls
+		if (gTrainerTouchControls){
+
+			document.getElementById("looper_text_1").onclick = IncrementDecrementControlValue;
+			document.getElementById("looper_text_2").onclick = IncrementDecrementControlValue;
+			document.getElementById("looper_text_3").onclick = IncrementDecrementControlValue;
+			document.getElementById("looper_text_4").onclick = IncrementDecrementControlValue;
+		
+		}
 
 		// Calc the total loops
 		totalLoops = CalcTotalLoops();
@@ -18383,6 +18510,9 @@ var gInjectTab_UseBarForDraw = false;
 
 // Large player controls
 var gLargePlayerControls = false;
+
+// Trainer label touch increment/decrement controls
+var gTrainerTouchControls = false;
 
 // Bamboo flute key
 var gBambooFluteKey = 1; // Default to D
@@ -18587,6 +18717,24 @@ function GetInitialConfigurationSettings(){
 		else{
 
 			gLargePlayerControls = false;
+		}
+	}
+
+	val = localStorage.TrainerTouchControls;
+
+	if (val){
+		gTrainerTouchControls = (val == "true");
+	}
+	else{
+
+		if ((gIsIPhone) || (gIsAndroid)){
+
+			gTrainerTouchControls = true;
+
+		}
+		else{
+
+			gTrainerTouchControls = false;
 		}
 	}
 
@@ -18855,6 +19003,9 @@ function SaveConfigurationSettings(){
 
 		// Large player control player options
 		localStorage.LargePlayerControls = gLargePlayerControls;
+
+		// Trainer touch control options
+		localStorage.TrainerTouchControls = gTrainerTouchControls;
 
 		// Save the bamboo flute key
 		localStorage.BambooFluteKey =  gBambooFluteKey;
@@ -20263,6 +20414,7 @@ function ConfigureToolSettings(e) {
 	  configure_fullscreen_scaling: theFullScreenScaling,
 	  configure_staff_spacing: theOldStaffSpacing,
 	  configure_large_player_controls: gLargePlayerControls,
+	  configure_trainer_touch_controls: gTrainerTouchControls,
 	  configure_show_tab_names: gShowTabNames,
 	  configure_capo: gCapo,
 	  configure_mp3_bitrate: gMP3Bitrate,
@@ -20314,7 +20466,8 @@ function ConfigureToolSettings(e) {
 	  {name: "Auto-swing scale factor (range is -0.9 to 0.9, default for Hornpipes is 0.25):", id: "configure_auto_swing_factor", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "            Autoscroll player when playing", id: "configure_autoscrollplayer", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 	  {name: "MP3 audio export bitrate (kbit/sec):", id: "configure_mp3_bitrate", type:"number", cssClass:"configure_settings_form_text"},
-	  {name: "    Player uses large controls (easier to touch on mobile and tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+	  {name: "    Player uses large controls (easier to touch on phone/tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+	  {name: "    Tune Trainer uses label L/R side click to decrement/increment values (for touch devices)", id: "configure_trainer_touch_controls", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 	  {name: "    Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)", id: "configure_comhaltas", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 	];
 
@@ -20345,6 +20498,8 @@ function ConfigureToolSettings(e) {
 			gOverridePlayMIDIParams = args.result.configure_override_play_midi_params;
 
 			gLargePlayerControls = args.result.configure_large_player_controls;
+
+			gTrainerTouchControls = args.result.configure_trainer_touch_controls;
 
 			gShowTabNames = args.result.configure_show_tab_names;
 			

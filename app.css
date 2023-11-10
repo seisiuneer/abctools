@@ -1465,7 +1465,7 @@ left:-5000px;
 
 .configure_settings_form_text_checkbox{
 	font-size:12pt;
-	line-height:12px;
+	line-height:11px;
 	font-family:helvetica;
 	margin-top:11px;
 	display:flex;
@@ -1473,9 +1473,9 @@ left:-5000px;
 
 .configure_settings_form_text{
 	font-size:12pt;
-	line-height:12px;
+	line-height:11px;
 	font-family:helvetica;
-	margin-top:18px;
+	margin-top:14px;
 	display:flex;
 }
 
@@ -1996,18 +1996,9 @@ margin-top:-7px;
 	margin-right:10px;
 }
 
-.configure_looper_text_mobile{
-	font-size:12pt;
-	font-family:helvetica;
-	margin-top:0px;
-}
-
-.configure_looper_text_mobile>input{
-	font-size:12pt;
-	font-family:helvetica;
-	margin-left: 2px;
-	width: 60px;
-	margin-right:10px;
+#looper_text_1,#looper_text_2,#looper_text_3,#looper_text_4{
+	-webkit-user-select: none;
+    user-select: none;
 }
 
 #configure_musicxml_import{
