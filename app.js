@@ -14938,16 +14938,35 @@ function CursorControl() {
 				// Get the SVG element's position relative to the container
 				const svgRect = cursor.getBoundingClientRect();
 
+				//
+				// Original bottom scroll code, didn't have any slop
+				//
+				// // Check if the SVG element is above or below the container's visible area
+				// if (svgRect.top < gPlayerContainerRect.top) {
+
+				// 	// Scroll up to make the SVG element visible at the top
+				// 	gPlayerHolder.scrollTop += svgRect.top - gPlayerContainerRect.top;
+
+				// } else if (svgRect.bottom > gPlayerContainerRect.bottom) {
+
+				// 	// Scroll down to make the SVG element visible at the bottom
+				// 	//gPlayerHolder.scrollTop += svgRect.bottom - gPlayerContainerRect.bottom + 16;
+
+				// }
+
+				// Keep several lines visible under the currently playing line
+				var theScrollTarget = 3*(gPlayerContainerRect.bottom-gPlayerContainerRect.top)/4
+
 				// Check if the SVG element is above or below the container's visible area
 				if (svgRect.top < gPlayerContainerRect.top) {
 
 					// Scroll up to make the SVG element visible at the top
 					gPlayerHolder.scrollTop += svgRect.top - gPlayerContainerRect.top;
 
-				} else if (svgRect.bottom > gPlayerContainerRect.bottom) {
+				} else if (svgRect.bottom > theScrollTarget) {
 
-					// Scroll down to make the SVG element visible at the bottom
-					gPlayerHolder.scrollTop += svgRect.bottom - gPlayerContainerRect.bottom + 16;
+					// Scroll down to make the SVG element visible at the bottom with additional space underneath
+					gPlayerHolder.scrollTop += svgRect.bottom - theScrollTarget;
 
 				}
 			}
