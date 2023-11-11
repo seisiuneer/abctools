@@ -14954,8 +14954,10 @@ function CursorControl() {
 
 				// }
 
+				var containerHeight = gPlayerContainerRect.bottom-gPlayerContainerRect.top;
+
 				// Keep several lines visible under the currently playing line
-				var theScrollTarget = 3*(gPlayerContainerRect.bottom-gPlayerContainerRect.top)/4
+				var theScrollTarget = 3*(containerHeight)/4;
 
 				// Check if the SVG element is above or below the container's visible area
 				if (svgRect.top < gPlayerContainerRect.top) {
@@ -14965,9 +14967,22 @@ function CursorControl() {
 
 				} else if (svgRect.bottom > theScrollTarget) {
 
-					// Scroll down to make the SVG element visible at the bottom with additional space underneath
-					gPlayerHolder.scrollTop += svgRect.bottom - theScrollTarget;
+					var cursorHeight = svgRect.bottom - svgRect.top;
 
+					// This prevents very tall scores from jumping up and down on each cursor event
+					if (cursorHeight <= theScrollTarget){
+
+						// Scroll down to make the SVG element visible at the bottom with additional space underneath
+						gPlayerHolder.scrollTop += svgRect.bottom - theScrollTarget;
+					}
+					else{
+
+						//console.log("override case");
+
+						// Scroll up to make the SVG element visible at the top
+						gPlayerHolder.scrollTop += svgRect.top - gPlayerContainerRect.top;
+
+					}
 				}
 			}
 
