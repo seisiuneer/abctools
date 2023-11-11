@@ -28,11 +28,13 @@ function log(s) {
 //
 function searchJSON() {
 
+    //debugger;
+
     if (!gTheParsedJSON){
 
          DayPilot.Modal.alert("No JSON File Loaded", {
             theme: "modal_flat",
-            top: 50
+            top: 200
         });
 
         return;
@@ -42,12 +44,21 @@ function searchJSON() {
 
     if (tuneNameToSearch == ""){
 
-         DayPilot.Modal.alert("No Tune Name Entered", {
+         DayPilot.Modal.alert("No Tune Name Entered in the Search Field", {
             theme: "modal_flat",
-            top: 50
+            top: 200
         });
 
         return;
+    }
+
+    // Use the search term as the save filename basis
+    gSaveFilename = tuneNameToSearch;
+    gSaveFilename = gSaveFilename.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+    gSaveFilename = gSaveFilename.replaceAll(" ","_");
+
+    if (gSaveFilename.length == 0) {
+        gSaveFilename = "tunes_found_in_json"
     }
 
     var originalTuneNameToSearch = tuneNameToSearch;
@@ -62,6 +73,8 @@ function searchJSON() {
 
     var bFound = false;
 
+    var theTotal = 0;
+
     for (var i=0;i<nTunes;++i){
 
         var theInfo = gTheParsedJSON[i].info
@@ -71,37 +84,39 @@ function searchJSON() {
         thisTitle = thisTitle.toLowerCase();
 
         if (thisTitle.indexOf(tuneNameToSearch) != -1){
-            
-            for (const [key, value] of Object.entries(theInfo)) {
 
-                theOutput += key+": "+value+"\n";
+            var theVariations = gTheParsedJSON[i].variations;
+
+            var index = 1;
+            var total = Object.entries(theVariations).length;
+
+            for (const [key, thisTuneABC] of Object.entries(theVariations))
+            {
+
+                for (const [key2, value2] of Object.entries(theInfo)) {
+
+                    theOutput += key2+": "+value2+"\n";
+                }
+
+                // If multiple variations, label them
+                if (total > 1){
+                    theOutput+="% Variation "+index+" of "+total+"\n";
+                }
+
+                theOutput += thisTuneABC+"\n\n";
+
+                index++;
+
+                theTotal++;
+
+                bFound = true;
+
             }
-
-            var thisTuneABC = gTheParsedJSON[i].variation;
-
-            var nLines = thisTuneABC.length;
-
-            for (var j=0;j<nLines;++j) {
-
-                theOutput += thisTuneABC[j]+"\n";
-            }
-
-            theOutput += "\n";
-
-            bFound = true;
-
         }
-
     }
 
-    if (!bFound){
-
-         DayPilot.Modal.alert(originalTuneNameToSearch+ " not found in the JSON file.", {
-            theme: "modal_flat",
-            top: 50
-        });
-
-    }
+    var elem = document.getElementById("search_result");
+    elem.innerHTML = "Search Results:&nbsp;&nbsp;"+theTotal+ " found";
 
     document.getElementById('output').value = theOutput;
 
@@ -118,7 +133,7 @@ function saveOutput() {
 
         DayPilot.Modal.alert("Nothing to save!", {
             theme: "modal_flat",
-            top: 50
+            top: 200
         });
 
         return;
@@ -134,7 +149,7 @@ function saveOutput() {
 
     DayPilot.Modal.prompt(thePrompt, thePlaceholder, {
         theme: "modal_flat",
-        top: 194,
+        top: 200,
         autoFocus: false
     }).then(function(args) {
 
@@ -295,7 +310,7 @@ function testOutput() {
 
         DayPilot.Modal.alert("Nothing to test!", {
             theme: "modal_flat",
-            top: 50
+            top: 200
         });
 
         return;
@@ -310,9 +325,9 @@ function testOutput() {
 
     if (url.length > 8100) {
 
-        DayPilot.Modal.alert('<p style="font-size:14pt;line-height:32px">Output too long to test directly!<br/><br/>Save the results to an ABC file or Copy to the clipboard and Paste into the ABC Transcription Tools.</p>', {
+        DayPilot.Modal.alert('<p style="font-size:14pt;line-height:32px">Search results too long to transfer directly!<br/><br/>Either:</br></br>Click "Copy Output to the clipboard" and Paste into the ABC Transcription Tools<br/><br/>Click "Save Output to a file" and open the file from the ABC Transcription Tools</p>', {
             theme: "modal_flat",
-            top: 50
+            top: 200
         });
 
         return;
@@ -463,6 +478,12 @@ function DoStartup() {
 
         reader.addEventListener('load', (event) => {
 
+            var elem = document.getElementById("status");
+            elem.innerHTML = "JSON file loaded:&nbsp;&nbsp;"+file.name;
+
+            elem = document.getElementById("search_result");
+            elem.innerHTML = "Search Results:";
+           
             gTheRawJSON = event.target.result;
 
             gTheParsedJSON = JSON.parse(gTheRawJSON);

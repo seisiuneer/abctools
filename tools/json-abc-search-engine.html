@@ -31,7 +31,7 @@
     <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
     <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-    <link rel="stylesheet" href="json-abc-search-engine.css?v=1"/>
+    <link rel="stylesheet" href="json-abc-search-engine.css?v=2"/>
     
   </head>
   <body>
@@ -42,8 +42,7 @@
         
         <div style="text-align: center;">
           <h1>JSON ABC File Search Engine</h1>
-          <h2>Seaches a JSON File for Tunes by Name</h2>
-         </div>
+        </div>
         
         <h4 style="margin-top:32px;">Instructions:</h4>
         <p>1)&nbsp;Click "Open JSON File" to open a JSON file of tunes.</p>
@@ -65,15 +64,16 @@
           <p>
             <input type="file" id="selectjsonfile" accept=".json,.JSON,.txt,.TXT"  hidden/>
             <label class="abcupload btn btn-controls" for="selectjsonfile" title="Opens a JSON file">Open JSON File</label>
+            <span id="status" style="margin-left:18px">No JSON file loaded</span>
           </p>
         </div>
 
-        <p style="margin:0px;margin-top:20px">Search for Tune Name:&nbsp;<input style="width:600px;font-size:12pt;line-height:18px;padding:6px;" id="tuneNameToSearch" title="Tune name to search for in the JSON" autocomplete="off" autocorrect="off" placeholder="Tune name to search for here" />        
+        <p style="margin:0px;margin-top:20px">Search for Tune Name:&nbsp;&nbsp;<input style="width:600px;font-size:12pt;line-height:18px;padding:6px;" id="tuneNameToSearch" title="Tune name to search for in the JSON" autocomplete="off" autocorrect="off" placeholder="Tune name to search for here" />        
         <p style="margin-top:24px"><button id="searchJSON" class="btn btn-generate" onClick="searchJSON();" placeholder="Enter tune name here">Search</button></p>
         
         <div style="margin-bottom: 18px;">
           
-          <h4>Search Result:</h4>
+          <h4 id="search_result">Search Result:</h4>
           
         </div>
         
@@ -103,8 +103,8 @@
     
   </body>
   
-  <script src="json-abc-search-engine.js?v=1" type="text/javascript"></script>
-  <script type="text/javascript" src="lz-string.min.js?v=1"></script>
-  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1"></script>
+  <script src="json-abc-search-engine.js?v=2" type="text/javascript"></script>
+  <script type="text/javascript" src="lz-string.min.js?v=2"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=2"></script>
   
 </html>
