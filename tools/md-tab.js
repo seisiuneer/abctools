@@ -969,7 +969,7 @@ var gIsChrome = false;
 //
 function DoStartup() {
 
-    document.getElementById('font_family').value = "Comic Sans MS";
+    document.getElementById('font_family').value = "Palatino";
     document.getElementById('title_font_size').value = 22;
     document.getElementById('subtitle_font_size').value = 18;
     document.getElementById('tab_font_size').value = 10;
