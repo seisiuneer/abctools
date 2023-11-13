@@ -14092,6 +14092,8 @@ function ExportAudioMIDI(){
 //
 function computeFade(tuneABC){
 
+	//debugger;
+
 	var theFade = 200;
 
 	// Check for a custom sound font first
@@ -14112,13 +14114,13 @@ function computeFade(tuneABC){
 	// 	theFade = 100;
 	// }
 
-	var searchRegExp = /^%%MIDI program.*$/m
+	var searchRegExp = /^%%MIDI program.*[\r\n]*/gm
 
 	var melodyProgramRequested = tuneABC.match(searchRegExp);
 
 	if ((melodyProgramRequested) && (melodyProgramRequested.length > 0)){
 
-		var thePatchString = melodyProgramRequested[0].replace("%%MIDI program","");
+		var thePatchString = melodyProgramRequested[melodyProgramRequested.length-1].replace("%%MIDI program","");
 			
 		thePatchString = thePatchString.trim();
 
@@ -14178,13 +14180,13 @@ function computeFade(tuneABC){
 	}
 
 	// Now look for a chordprog
-	searchRegExp = /^%%MIDI chordprog.*$/m
+	searchRegExp = /^%%MIDI chordprog.*[\r\n]*/gm
 
 	var chordProgramRequested = tuneABC.match(searchRegExp);
 
 	if ((chordProgramRequested) && (chordProgramRequested.length > 0)){
 
-		var thePatchString = chordProgramRequested[0].replace("%%MIDI chordprog","");
+		var thePatchString = chordProgramRequested[chordProgramRequested.length-1].replace("%%MIDI chordprog","");
 			
 		thePatchString = thePatchString.trim();
 
