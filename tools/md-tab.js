@@ -248,8 +248,53 @@ function sanitizeString(input, start, len) {
 //
 function getNoteGlyph(note,style){
 
-    thisGlyph = "1;2;3"
+    var glyph_map = {
+        "E,":  "-;4;-",
+        "^F,": "-;5;-",
+        "_G,": "-;5;-",
+        "G,":  "-;-;3",
+        "^G,": "-;6+;-",
+        "_A,": "-;6+;-",
+        "A,":  "-;0;-",
+        "B,":  "-;1;-",
+        "C":   "-;-;6",
+        "^C":  "-;2;-",
+        "_D":  "-;2;-",
+        "D":   "-;-;0",
+        "E":   "-;-;1",
+        "^F":  "-;-;2",
+        "_G":  "-;-;2",
+        "G":   "-;-;3",
+        "^G":  "-;6+;-",
+        "_A":  "-;6+;-",
+        "A":   "-;-;4",
+        "B":   "-;-;5",
+        "c":   "-;-;6",
+        "^c":  "-;-;6+",
+        "_d":  "-;-;6+",
+        "d":   "-;-;7",
+        "e":   "-;-;8",
+        "^f":  "-;-;9",
+        "_g":  "-;-;9",
+        "g":   "-;-;10",
+        "^g":  "-;6+;-",
+        "_a":  "-;6+;-",
+        "a":   "-;-;11",
+        "b":   "-;1;-",
+        "c'":  "-;-;6",
+        "^c'": "-;2;-",
+        "_d'": "-;2;-",
+        "d'":  "-;3;-",
+        "e'":  "-;4;-",
+        "^f'": "-;5;-",
+        "_g'": "-;10;-"
+    };
 
+    var thisGlyph = glyph_map[note];
+
+    if (!thisGlyph){
+        return "x;x;x";
+    }
  
     return thisGlyph;
 
@@ -493,6 +538,70 @@ function InjectOneDirective(theTune, theDirective) {
 }
 
 //
+// Get the notes for a tune without the header
+//
+function removeABCTuneHeaders(abcTune) {
+
+  // Use a regular expression to match and remove header lines
+  const headerPattern = /^(X:|T:|M:|K:|L:|Q:|W:|Z:|R:|C:|A:|O:|P:|N:|G:|H:|B:|D:|F:|S:|I:|:[A-Za-z]:)[^\r\n]*\r?\n?/gm;
+  const tuneWithoutHeaders = abcTune.replace(headerPattern, '');
+  
+  return tuneWithoutHeaders;
+}
+
+
+//
+// Inject anything just below the header
+//
+function InjectStringBelowTuneHeader(theTune,theString){
+
+    var theOriginalTune = theTune;
+
+    theTune = theTune.trim();
+
+    // Find the notes below the header
+    var theNotes = removeABCTuneHeaders(theTune);
+
+    theNotes = theNotes.trim();
+
+    var theLines = theNotes.split("\n");
+
+    // Find the first line that doesn't start with a comment
+    var nLines = theLines.length;
+
+    var firstLine;
+    var bGotNotes = false;
+
+    for (var i=0;i<nLines;++i){
+
+        firstLine = theLines[i];
+
+        if (firstLine.indexOf("%") != 0){
+            bGotNotes = true;
+            var theFirstLineIndex = theNotes.indexOf(firstLine);
+            theNotes = theNotes.substring(theFirstLineIndex);
+            break;
+        } 
+    }
+
+    // Didn't find anything below the header, exit early
+    if (!bGotNotes){
+
+        return(theOriginalTune);
+
+    }
+
+    // Find the offset into the tune of the first line of notes in the trimmed version
+    var theNotesIndex = theTune.indexOf(firstLine);
+
+    theTune = theTune.substring(0,theNotesIndex);
+    theTune += theString;
+    theTune += "\n"+theNotes+"\n\n";
+
+    return theTune;
+}
+
+//
 // Return the tune ABC at a specific index
 //
 //
@@ -522,7 +631,6 @@ function generateTablature() {
     var fontFamily = document.getElementById('font_family').value
     var titleFontSize = document.getElementById('title_font_size').value;
     var subtitleFontSize = document.getElementById('subtitle_font_size').value;
-    var infoFontSize = document.getElementById('info_font_size').value;
     var tabFontSize = document.getElementById('tab_font_size').value;
     var musicSpace = document.getElementById('music_space').value
     var staffSep = document.getElementById('staff_sep').value;
@@ -538,7 +646,6 @@ function generateTablature() {
         thisTune = InjectOneDirective(thisTune, "%%musicspace " + musicSpace);
         thisTune = InjectOneDirective(thisTune, "%%staffsep " + staffSep);
         thisTune = InjectOneDirective(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
-        thisTune = InjectOneDirective(thisTune, "%%infofont " + fontFamily + " " + infoFontSize);
         thisTune = InjectOneDirective(thisTune, "%%subtitlefont " + fontFamily + " " + subtitleFontSize);
         thisTune = InjectOneDirective(thisTune, "%%titlefont " + fontFamily + " " + titleFontSize);
 
@@ -547,6 +654,8 @@ function generateTablature() {
             thisTune = InjectOneDirective(thisTune, "%%MIDI bassvol 0");
             thisTune = InjectOneDirective(thisTune, "%%MIDI chordvol 0");
         }
+
+        thisTune = InjectStringBelowTuneHeader(thisTune, "A: DAD-Tuned Mountain Dulcimer Tablature ");
 
         result += thisTune;
 
@@ -584,27 +693,10 @@ function saveOutput() {
     }
 
     if (gSaveFilename == ""){
-        gSaveFilename = "box_tab";
+        gSaveFilename = "md_tab";
     }
 
     var thePlaceholder = gSaveFilename;
-
-    // B/C or C#/D?
-    var style = document.getElementById('layout').selectedIndex;
-
-    switch (style){
-
-        // B/C
-        case 0:
-            thePlaceholder += "_BC.abc";
-            break;
-
-        // C#D
-        case 1:
-           thePlaceholder += "_CsD.abc";
-            break;
-    }
-
 
     var thePrompt = "Please enter a filename for your output ABC file:";
 
@@ -885,11 +977,10 @@ var gIsChrome = false;
 //
 function DoStartup() {
 
-    document.getElementById('font_family').value = "Palatino";
+    document.getElementById('font_family').value = "Comic Sans MS";
     document.getElementById('title_font_size').value = 22;
     document.getElementById('subtitle_font_size').value = 18;
-    document.getElementById('info_font_size').value = 14;
-    document.getElementById('tab_font_size').value = 11;
+    document.getElementById('tab_font_size').value = 10;
     document.getElementById('staff_sep').value = 80;
     document.getElementById('music_space').value = 10;
 
