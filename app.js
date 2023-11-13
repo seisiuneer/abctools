@@ -15140,6 +15140,27 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 					if (callback){
 						callback(val,gTheOKButton);
 					}
+
+					// Are we using the trainer touch controls
+					if (gTrainerTouchControls){
+
+						//debugger;
+
+						var elems1 = document.getElementsByClassName("abcjs-midi-clock");
+						var elems2 = document.getElementsByClassName("abcjs-midi-current-tempo-wrapper");
+
+						if (elems1 && elems2 && (elems1.length > 0) && (elems2.length > 0)){
+
+							gSynthControl = synthControl;
+							
+							var elem = elems1[0];
+							elem.onclick = DecrementTempo;
+							elem = elems2[0];
+							elem.onclick = IncrementTempo;
+
+						}
+					
+					}
 					
 				}).catch(function (error) {
 					
@@ -15156,11 +15177,15 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 
 	function StopPlay(){
 
+		gSynthControl = null;
+	
 		if (synthControl){
 				
 			synthControl.destroy();
 
 			synthControl = null;
+
+
 		}
 	}
 
@@ -16133,6 +16158,28 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 					
 					console.log("Audio successfully loaded.");
 
+					// Are we using the trainer touch controls
+					if (gTrainerTouchControls){
+
+						//debugger;
+
+						var elems1 = document.getElementsByClassName("abcjs-midi-clock");
+						var elems2 = document.getElementsByClassName("abcjs-midi-current-tempo-wrapper");
+
+						if (elems1 && elems2 && (elems1.length > 0) && (elems2.length > 0)){
+							
+							gSynthControl = synthControl;
+
+							var elem = elems1[0];
+							elem.onclick = DecrementTempo;
+							elem = elems2[0];
+							elem.onclick = IncrementTempo;
+
+						}
+					
+					}
+
+
 				}).catch(function (error) {
 					
 					console.log("Problem loading audio for this tune");
@@ -16147,6 +16194,8 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 	}
 
 	function StopPlay(){
+
+		gSynthControl = null;
 
 		if (synthControl){
 				
@@ -16931,6 +16980,28 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 					
 					console.log("Audio successfully loaded.");
 
+					// Are we using the trainer touch controls
+					if (gTrainerTouchControls){
+
+						//debugger;
+
+						var elems1 = document.getElementsByClassName("abcjs-midi-clock");
+						var elems2 = document.getElementsByClassName("abcjs-midi-current-tempo-wrapper");
+
+						if (elems1 && elems2 && (elems1.length > 0) && (elems2.length > 0)){
+							
+							gSynthControl = synthControl;
+
+							var elem = elems1[0];
+							elem.onclick = DecrementTempo;
+							elem = elems2[0];
+							elem.onclick = IncrementTempo;
+
+						}
+					
+					}
+
+
 				}).catch(function (error) {
 					
 					console.log("Problem loading audio for this tune");
@@ -16945,6 +17016,8 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 	}
 
 	function StopPlay(){
+
+		gSynthControl = null;
 
 		if (synthControl){
 				
@@ -17443,6 +17516,28 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 					
 					console.log("Audio successfully loaded.");
 
+					// Are we using the trainer touch controls
+					if (gTrainerTouchControls){
+
+						//debugger;
+
+						var elems1 = document.getElementsByClassName("abcjs-midi-clock");
+						var elems2 = document.getElementsByClassName("abcjs-midi-current-tempo-wrapper");
+
+						if (elems1 && elems2 && (elems1.length > 0) && (elems2.length > 0)){
+							
+							gSynthControl = synthControl;
+
+							var elem = elems1[0];
+							elem.onclick = DecrementTempo;
+							elem = elems2[0];
+							elem.onclick = IncrementTempo;
+
+						}
+					
+					}
+
+
 				}).catch(function (error) {
 					
 					console.log("Problem loading audio for this tune");
@@ -17457,6 +17552,8 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 	}
 
 	function StopPlay(){
+
+		gSynthControl = null;
 
 		if (synthControl){
 				
@@ -17995,6 +18092,27 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 					gLoopCallback = LoopCallback;
 					gStartPlayCallback = StartCallback;
 
+					// Are we using the trainer touch controls
+					if (gTrainerTouchControls){
+
+						//debugger;
+
+						var elems1 = document.getElementsByClassName("abcjs-midi-clock");
+						var elems2 = document.getElementsByClassName("abcjs-midi-current-tempo-wrapper");
+
+						if (elems1 && elems2 && (elems1.length > 0) && (elems2.length > 0)){
+
+							gSynthControl = synthControl;
+							
+							var elem = elems1[0];
+							elem.onclick = DecrementTempo;
+							elem = elems2[0];
+							elem.onclick = IncrementTempo;
+
+						}
+					
+					}
+
 				}).catch(function (error) {
 					
 					console.log("Problem loading audio for this tune");
@@ -18009,6 +18127,8 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 	}
 
 	function StopPlay(){
+
+		gSynthControl = null;
 
 		if (synthControl){
 				
@@ -18544,6 +18664,68 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 
 }
 
+// Used by the IncrementTempo and DecrementTempo functions
+var gSynthControl = null;
+
+//
+// Decrement the tempo
+//
+function DecrementTempo(){
+
+	//console.log("DecrementTempo");
+
+	var elems = document.getElementsByClassName("abcjs-midi-tempo");
+
+	if (elems && (elems.length>0)){
+
+		var elem = elems[0];
+		
+		var theTempo = elem.value;
+
+		theTempo = parseInt(theTempo);
+
+		if (!isNaN(theTempo)){
+			
+			if (theTempo > 5){
+				theTempo -= 5;
+				elem.value = theTempo;
+
+				gSynthControl.pause();
+				gSynthControl.forceWarp(theTempo);
+
+			}
+		}
+	}
+}
+
+//
+// Increment the tempo
+//
+function IncrementTempo(){
+
+	//console.log("IncrementTempo");
+	
+	var elems = document.getElementsByClassName("abcjs-midi-tempo");
+
+	if (elems && (elems.length>0)){
+
+		var elem = elems[0];
+		
+		var theTempo = elem.value;
+
+		theTempo = parseInt(theTempo);
+
+		if (!isNaN(theTempo)){
+
+			theTempo += 5;
+
+			elem.value = theTempo;
+			
+			gSynthControl.pause();
+			gSynthControl.forceWarp(theTempo);
+		}
+	}
+}
 
 //
 // Save/load global configuration to/from local browser storage
@@ -20533,7 +20715,7 @@ function ConfigureToolSettings(e) {
 	  {name: "            Autoscroll player when playing", id: "configure_autoscrollplayer", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 	  {name: "MP3 audio export bitrate (kbit/sec):", id: "configure_mp3_bitrate", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "    Player uses large controls (easier to touch on phone/tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-	  {name: "    Tune Trainer uses label L/R side click to decrement/increment values (for touch devices)", id: "configure_trainer_touch_controls", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+	  {name: "    Player/Tune Trainer uses label L/R side click to decrement/increment values (for touch devices)", id: "configure_trainer_touch_controls", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 	  {name: "    Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)", id: "configure_comhaltas", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 	];
 

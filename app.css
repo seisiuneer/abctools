@@ -1459,6 +1459,11 @@ left:-5000px;
 	stroke: blue;
 }
 
+.abcjs-midi-clock,.abcjs-midi-current-tempo-wrapper{
+	-webkit-user-select: none;
+    user-select: none;
+}
+
 #playback-paper{
 	margin-bottom:35px;
 }
