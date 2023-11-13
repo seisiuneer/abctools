@@ -47,9 +47,10 @@
         <h4 style="margin-top:32px;">Instructions:</h4>
         <p>1)&nbsp;Click "Open JSON File" to open a JSON file of tunes.</p>
         <p>2)&nbsp;Enter the tune name you are looking for in the search box.</p>
-        <p>2)&nbsp;Click "Search".</p>
+        <p>3)&nbsp;If you only want versions that include chords, check "Only return tunes with chords"
+        <p>4)&nbsp;Click "Search".</p>
         <p>If found, the ABC for any matching tunes will appear in the "Search Result" box.</p>
-        <p>3)&nbsp;Save, Copy or Test the results:</p>
+        <p>5)&nbsp;Save, Copy or Test the results:</p>
         <p>Click "Save Output to a file" to save the results to a file.</p>
         <p>Click "Copy Output to the clipboard" to copy the results to the system clipboard for pasting into other applications.</p>
         <p>Click "Test Output in the ABC Transcription Tools" to open and test the results in my <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a></p>
@@ -68,7 +69,8 @@
           </p>
         </div>
 
-        <p style="margin:0px;margin-top:20px">Search for Tune Name:&nbsp;&nbsp;<input style="width:600px;font-size:12pt;line-height:18px;padding:6px;" id="tuneNameToSearch" title="Tune name to search for in the JSON" autocomplete="off" autocorrect="off" placeholder="Tune name to search for here" />        
+        <p style="margin:0px;margin-top:20px;margin-bottom:12px;">Search for Tune Name:&nbsp;&nbsp;<input style="width:600px;font-size:12pt;line-height:18px;padding:6px;" id="tuneNameToSearch" title="Tune name to search for in the JSON" autocomplete="off" autocorrect="off" placeholder="Tune name to search for here" /> </p>   
+        <label>Only return tunes with chords?&nbsp;&nbsp;</label><input id="chords_only" type="checkbox"/>    
         <p style="margin-top:24px"><button id="searchJSON" class="btn btn-generate" onClick="searchJSON();" placeholder="Enter tune name here">Search</button></p>
         
         <div style="margin-bottom: 18px;">

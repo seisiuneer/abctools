@@ -67,6 +67,8 @@ function searchJSON() {
 
     document.getElementById('output').value = "";
 
+    var returnOnlyWithChords = document.getElementById('chords_only').checked;
+
     var nTunes = gTheParsedJSON.length;
 
     var theOutput = "";
@@ -93,24 +95,58 @@ function searchJSON() {
             for (const [key, thisTuneABC] of Object.entries(theVariations))
             {
 
-                for (const [key2, value2] of Object.entries(theInfo)) {
+                // Are we only returning tunes with chords?
+                if (returnOnlyWithChords){
 
-                    theOutput += key2+": "+value2+"\n";
+                    var searchRegExp = /"[^"]*"/gm
+
+                    var chordsPresent = thisTuneABC.match(searchRegExp);
+
+                    if ((chordsPresent) && (chordsPresent.length > 0)){
+
+                        for (const [key2, value2] of Object.entries(theInfo)) {
+
+                            theOutput += key2+": "+value2+"\n";
+                        }
+
+                        // If multiple variations, label them
+                        if (total > 1){
+                            theOutput+="% Variation "+index+"\n";
+                        }
+
+                        theOutput += thisTuneABC+"\n\n";
+
+                        index++;
+
+                        theTotal++;
+
+                        bFound = true;
+
+                    }
+
                 }
+                else{
 
-                // If multiple variations, label them
-                if (total > 1){
-                    theOutput+="% Variation "+index+" of "+total+"\n";
-                }
+                    for (const [key2, value2] of Object.entries(theInfo)) {
 
-                theOutput += thisTuneABC+"\n\n";
+                        theOutput += key2+": "+value2+"\n";
+                    }
 
-                index++;
+                    // If multiple variations, label them
+                    if (total > 1){
+                        theOutput+="% Variation "+index+" of "+total+"\n";
+                    }
 
-                theTotal++;
+                    theOutput += thisTuneABC+"\n\n";
 
-                bFound = true;
+                    index++;
 
+                    theTotal++;
+
+                    bFound = true;
+               }
+
+ 
             }
         }
     }

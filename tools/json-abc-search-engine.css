@@ -26,6 +26,13 @@ line-height: 24px;
 margin-bottom:0px;
 }
 
+label {
+font-size:12pt;
+font-family:"Helvetica";
+line-height: 24px;
+margin-bottom:0px;
+}
+
 h1 {
 font-size:18pt;
 font-family:"Helvetica";
