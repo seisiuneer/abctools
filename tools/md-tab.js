@@ -626,8 +626,6 @@ function generateTablature() {
 
     var nTunes = countTunes(theABC);
 
-    var injectVolumes = document.getElementById('injectVolumes').checked;
-
     var fontFamily = document.getElementById('font_family').value
     var titleFontSize = document.getElementById('title_font_size').value;
     var subtitleFontSize = document.getElementById('subtitle_font_size').value;
@@ -648,12 +646,6 @@ function generateTablature() {
         thisTune = InjectOneDirective(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
         thisTune = InjectOneDirective(thisTune, "%%subtitlefont " + fontFamily + " " + subtitleFontSize);
         thisTune = InjectOneDirective(thisTune, "%%titlefont " + fontFamily + " " + titleFontSize);
-
-        // Safety measure if you want to mute any bass/chords on playback
-        if (injectVolumes) {
-            thisTune = InjectOneDirective(thisTune, "%%MIDI bassvol 0");
-            thisTune = InjectOneDirective(thisTune, "%%MIDI chordvol 0");
-        }
 
         thisTune = InjectStringBelowTuneHeader(thisTune, "A: DAD-Tuned Mountain Dulcimer Tablature ");
 
