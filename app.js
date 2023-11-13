@@ -8525,7 +8525,7 @@ function AddABC(){
 
 	}, 150);
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 75, width: 720,  scrollWithPage: false }).then(function(){
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 75, width: 720,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 
 			
 	});
