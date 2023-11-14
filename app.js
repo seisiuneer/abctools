@@ -15860,14 +15860,14 @@ function ScanTuneForSoundFont(theTune){
 	var soundFontFound = null;
 
 	// Search for a soundfont request
-	var searchRegExp = /^%abcjs_soundfont.*$/m
+	var searchRegExp = /^%abcjs_soundfont.*$/gm
 
 	// Detect soundfont annotation
 	var soundfont = theTune.match(searchRegExp);
 
 	if ((soundfont) && (soundfont.length > 0)){
 
-		soundFontFound = soundfont[0].replace("%abcjs_soundfont","");
+		soundFontFound = soundfont[soundfont.length-1].replace("%abcjs_soundfont","");
 		
 		soundFontFound = soundFontFound.trim();
 
@@ -16678,7 +16678,7 @@ function ScanTuneForInstrumentExplorer(theTune){
 
 	if ((theMatch) && (theMatch.length > 0)){
 
-		var theParamString = theMatch[0].replace("%abcjs_soundfont","");
+		var theParamString = theMatch[theMatch.length-1].replace("%abcjs_soundfont","");
 
 		theParamString = theParamString.trim();
 
