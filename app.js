@@ -159,6 +159,7 @@ var gAddPlaybackHyperlinks = false;
 var gAddPlaybackHyperlinksIncludePrograms = false;
 var gPlaybackHyperlinkMelodyProgram = "";
 var gPlaybackHyperlinkBassChordProgram = "";
+var gPlaybackHyperlinkSoundFont = "";
 
 // Lock out editing on injected playback PDF links
 var gInjectEditDisabled = false;
@@ -2504,7 +2505,7 @@ function GetAllTuneHyperlinks(theLinks) {
 				// Strip out X:
 				tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
 
-				tuneWithPatch = "X:1\n%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkBassChordProgram+"\n"+tuneWithPatch;
+				tuneWithPatch = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkBassChordProgram+"\n"+tuneWithPatch;
 
 			}
 
@@ -2566,10 +2567,28 @@ function GetAllTuneHyperlinks(theLinks) {
 			// Initially, use the defaults
 			var theMelodyPatch = gTheMelodyProgram;
 			var theBassChordPatch = gTheChordProgram;
+			var theSoundFont = "fluid";
+
+			if (gDefaultSoundFont.indexOf("Fluid")!=-1){
+				theSoundFont = "fluid";
+			}else
+			if (gDefaultSoundFont.indexOf("Musyng")!=-1){
+				theSoundFont = "musyng";
+			}else
+			if (gDefaultSoundFont.indexOf("FatBoy")!=-1){
+				theSoundFont = "fatboy";
+			}else
+			if (gDefaultSoundFont.indexOf("canvas")!=-1){
+				theSoundFont = "canvas";
+			}else
+			if (gDefaultSoundFont.indexOf("mscore")!=-1){
+				theSoundFont = "mscore";
+			}
 
 			// If adding complete tunebook patches, they take precedence over the defaults
 			if (gAddPlaybackHyperlinks){
 
+				theSoundFont = gPlaybackHyperlinkSoundFont;
 				theMelodyPatch = gPlaybackHyperlinkMelodyProgram;
 				theBassChordPatch = gPlaybackHyperlinkBassChordProgram;
 
@@ -2589,6 +2608,11 @@ function GetAllTuneHyperlinks(theLinks) {
 					theBassChordPatch = theBassChordPatch.trim();
 				}
 
+				if (thePatches.length > 2){
+					theSoundFont = thePatches[2];
+					theSoundFont = theSoundFont.trim();
+				}
+
 				doAddPatches = true;
 
 			}
@@ -2601,7 +2625,7 @@ function GetAllTuneHyperlinks(theLinks) {
 				// Strip out tempo markings
 				tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
 
-				tuneWithPatch = "X:1\n%%MIDI program "+theMelodyPatch+"\n"+"%%MIDI chordprog "+theBassChordPatch+"\n"+tuneWithPatch;
+				tuneWithPatch = "X:1\n%abcjs_soundfont "+theSoundFont+"\n"+"%%MIDI program "+theMelodyPatch+"\n"+"%%MIDI chordprog "+theBassChordPatch+"\n"+tuneWithPatch;
 
 			}
 
@@ -4594,6 +4618,23 @@ function ParseCommentCommands(theNotes){
 
 		gPlaybackHyperlinkMelodyProgram = gTheMelodyProgram;
 		gPlaybackHyperlinkBassChordProgram = gTheChordProgram;
+		gPlaybackHyperlinkSoundFont = "fluid";
+
+		if (gDefaultSoundFont.indexOf("Fluid")!=-1){
+			gPlaybackHyperlinkSoundFont = "fluid";
+		}else
+		if (gDefaultSoundFont.indexOf("Musyng")!=-1){
+			gPlaybackHyperlinkSoundFont = "musyng";
+		}else
+		if (gDefaultSoundFont.indexOf("FatBoy")!=-1){
+			gPlaybackHyperlinkSoundFont = "fatboy";
+		}else
+		if (gDefaultSoundFont.indexOf("canvas")!=-1){
+			gPlaybackHyperlinkSoundFont = "canvas";
+		}else
+		if (gDefaultSoundFont.indexOf("mscore")!=-1){
+			gPlaybackHyperlinkSoundFont = "mscore";
+		}
 
 		if (thePatches && (thePatches.length > 0)){
 			
@@ -4609,6 +4650,12 @@ function ParseCommentCommands(theNotes){
 				gPlaybackHyperlinkBassChordProgram = thePatches[1];
 				gPlaybackHyperlinkBassChordProgram = gPlaybackHyperlinkBassChordProgram.trim();
 			}	
+
+			if (thePatches.length > 2){
+				gPlaybackHyperlinkSoundFont = thePatches[2];
+				gPlaybackHyperlinkSoundFont = gPlaybackHyperlinkSoundFont.trim();
+			}	
+
 		}
 		else{
 
@@ -8117,6 +8164,9 @@ var gPDFTunebookConfig ={
 	// Inject instruments?
 	bInjectInstruments: true,
 
+	// Sound font
+	sound_font: "fluid",
+
 	// Melody Instrument
 	melody_instrument: 1,
 
@@ -8168,6 +8218,9 @@ function resetPDFTunebookConfig(){
 		// Inject instruments?
 		bInjectInstruments: true,
 
+		// Sound font
+		sound_font: "fluid",
+
 		// Melody Instrument
 		melody_instrument: 1,
 
@@ -8208,6 +8261,11 @@ function PDFTunebookBuilder(){
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","PDFTunebookBuilder");
 
+	// sound_font was added later, make sure the field is present
+	if ((!gPDFTunebookConfig.sound_font) || (gPDFTunebookConfig.sound_font == "")){
+		gPDFTunebookConfig.sound_font = "fluid";
+	}
+
 	var midi_program_list = [];
 
   	for (var i=0;i<138;++i){
@@ -8219,6 +8277,14 @@ function PDFTunebookBuilder(){
 	    { name: "  Good", id: 0.5 },
 	    { name: "  High", id: 0.75 },
   	];
+
+ 	const sound_font_options = [
+	    { name: "  Fluid", id: "fluid" },
+	    { name: "  Musyng Kite", id: "musyng" },
+	    { name: "  FatBoy", id: "fatboy" },
+ 	    { name: "  Canvas", id: "canvas" },
+ 	    { name: "  MScore", id: "mscore" },
+ 	];
 
   	for (var i=0;i<138;++i){
   		midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
@@ -8237,6 +8303,7 @@ function PDFTunebookBuilder(){
 	  {name: "Page Header:", id: "pageheader", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
 	  {name: "Page Footer:", id: "pagefooter", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
 	  {name: "          Add playback links to each tune to allow playing the tune by clicking the tune title", id: "bAdd_add_all_playback_links", type:"checkbox", cssClass:"configure_setuppdftunebook_form_text"},
+	  {name: "Soundfont for playback links:", id: "sound_font", type:"select", options:sound_font_options, cssClass:"configure_midi_program_select"},
 	  {name: "Melody instrument for playback links:", id: "melody_instrument", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
 	  {name: "Bass/Chord instrument for playback links:", id: "chord_instrument", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
 	  {name: "          Add a QR Code to the end of the PDF", id: "bAdd_QRCode", type:"checkbox", cssClass:"configure_setuppdftunebook_form_text"},
@@ -8266,7 +8333,7 @@ function PDFTunebookBuilder(){
 			// %addlinkbacktoindex
 			// %pageheader This is the Page Header
 			// %pagefooter This is the Page Footer
-			// %add_all_playback_links 0 0
+			// %add_all_playback_links 0 0 fatboy
 			// %qrcode https://michaeleskin.com
 			// %caption_for_qrcode Click or Scan to Visit my Home Page
 
@@ -8349,6 +8416,9 @@ function PDFTunebookBuilder(){
 			// Inject instruments?
 			gPDFTunebookConfig.bInjectInstruments = args.result.bInjectInstruments;
 
+			// Soundfont
+			gPDFTunebookConfig.sound_font = args.result.sound_font;
+
 			// Melody Instrument
 			gPDFTunebookConfig.melody_instrument = args.result.melody_instrument;
 
@@ -8357,6 +8427,8 @@ function PDFTunebookBuilder(){
 
 			if (gPDFTunebookConfig.bAdd_add_all_playback_links){
 				
+				var soundFont = gPDFTunebookConfig.sound_font;
+
 				var progNumMelody = gPDFTunebookConfig.melody_instrument;
 
 				var progNumChord = gPDFTunebookConfig.chord_instrument;
@@ -8397,7 +8469,7 @@ function PDFTunebookBuilder(){
 
 				}
 
-				header_to_add += "%add_all_playback_links "+progNumMelody+" "+progNumChord+"\n";
+				header_to_add += "%add_all_playback_links "+progNumMelody+" "+progNumChord+" "+soundFont+"\n";
 
 			}
 
@@ -10897,10 +10969,10 @@ function InjectAllMIDIParams(){
 		if (gDefaultSoundFont.indexOf("FatBoy")!=-1){
 			gLastInjectedSoundfont = "2";
 		}else
-		if (gDefaultSoundFont.indexOf("Canvas")!=-1){
+		if (gDefaultSoundFont.indexOf("canvas")!=-1){
 			gLastInjectedSoundfont = "3";
 		}else
-		if (gDefaultSoundFont.indexOf("MScore")!=-1){
+		if (gDefaultSoundFont.indexOf("mscore")!=-1){
 			gLastInjectedSoundfont = "4";
 		}
 	}
@@ -12817,7 +12889,7 @@ function InjectPDFHeaders(){
 	output += "%urlpageheader https://michaeleskin.com Page Header as Hyperlink\n";
 	output += "%urlpagefooter https://michaeleskin.com Page Footer as Hyperlink\n";
 	output += "%add_all_links_to_thesession\n";
-	output += "%add_all_playback_links 0 0\n";
+	output += "%add_all_playback_links 0 0 fluid\n";
 	output += "%swing_all_hornpipes 0.25\n";	
 	output += "%noswing_all_hornpipes\n";	
 	output += "%no_edit_allowed\n";
@@ -12828,7 +12900,7 @@ function InjectPDFHeaders(){
 	output += "% These directives can be added to each tune:\n";
 	output += "%hyperlink https://michaeleskin.com\n";
 	output += "%add_link_to_thesession\n";
-	output += "%add_playback_link 0 0\n";
+	output += "%add_playback_link 0 0 fluid\n";
 	output += "%swing 0.25 0\n";
 	output += "%noswing\n";
 	output += "%grace_duration_ms 30\n";

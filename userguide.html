@@ -1196,7 +1196,7 @@
             </div>
             <p id="configure_pdf_tunebook_features"><strong>Configure PDF Tunebook Features</strong> - Brings up a dialog that you can use to add annotations at the top of the ABC that will add an optional Title Page, Table of Contents, Index, Page Header, Page Footer, playback links, and/or QR code to an exported PDF tunebook:</p>
             <div class="image_holder_p">
-                <img src="img/configure_pdf_tunebook_features_2.jpg"/>
+                <img src="img/configure_pdf_tunebook_features_3.jpg"/>
             </div>
             <p>Leave any text fields blank for features you don't want in your PDF tunebook.</p>
             <p>The PDF features are added using the tool's ABC comment-based annotations to the top of the ABC.</p>
@@ -1564,27 +1564,19 @@
             <p></p>
             <p>To add a hyperlink back to the ABC Transcription Tools for playing a specific tune with specific General MIDI instrument program number sounds for the melody and the bass/chords, add the following comment-based annotation anywhere in the ABC for a specific tune:</p>
             <p></p>
-            <p class="code">%add_playback_link MELODY_PROGRAM BASS_CHORD_PROGRAM</p>
+            <p class="code">%add_playback_link MELODY_PROGRAM BASS_CHORD_PROGRAM SOUND_FONT</p>
             <p></p>
-            <p>The MELODY_PROGRAM and BASS_CHORD_PROGRAM are optional.</p>
-            <p>If only the MELODY_PROGRAM is specified, the BASS_CHORD_PROGRAM value will be set to the current default instrument program number settings for bass/chord playback in the <strong>Settings</strong> dialog.</p>
-            <p>If neither MELODY_PROGRAM or BASS_CHORD_PROGRAM is specified, the play link will be added, but no additional MIDI program or chordprog information will be injected into the tune at playback time.</p>
+            <p>The MELODY_PROGRAM, BASS_CHORD_PROGRAM, and SOUND_FONT are optional.</p>
+            <p>If only the MELODY_PROGRAM is specified, the BASS_CHORD_PROGRAM and SOUND_FONT values will be set to the current default soundfont and instrument program number settings for bass/chord playback in the <strong>Settings</strong> dialog.</p>
+            <p>If MELODY_PROGRAM, BASS_CHORD_PROGRAM, and SOUND_FONT are not specified, the play link will be added, but no additional MIDI program or chordprog information will be injected into the tune at playback time.</p>
             <p></p>
-            <p>Some MIDI program numbers I recommend for the melody:</p>
-            <p></p>
-            <p>Piano: 0, Harpsichord: 6, Accordion: 21, Fingered Bass: 33, Harp: 46</p>
-            <p></p>
-            <p>Some MIDI program numbers I recommend for the bass/chords:</p>
-            <p></p>
-            <p>Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38</p>
-            <p></p>
-            <p>Example: To have a specific tune played with an Accordion sound on the melody and a Piano sound on the chord/bass</p>
+            <p>Example: To have a specific tune played using the FatBoy soundfont with an Harpsichord sound on the melody and a Piano sound on the chord/bass</p>
             <p></p>
             <p class="code">X:1<br/>
                 T:The Tarbolton<br/>
                 M:4/4<br/>
                 K:Edor<br/>
-                %add_playback_link 21 0<br/>
+                %add_playback_link 6 0 fatboy<br/>
                 Beed e2BA|GBAF GFEF|Dddc d2AG|FAGE FEDF|<br/>
                 Eeed efge|fedf e2BA|GABG FGAF|BGAF GEE2:|<br/>
                 |:gfef gebe|gebe gfec|d2fd Adfd|cdAG FDEF|<br/>
@@ -1594,25 +1586,14 @@
             <p></p>
             <p>You may automatically add a hyperlink for every tune back to the ABC Transcription Tools for playing the tune with a specific General MIDI instrument program number sound for the melody and the bass/chords by adding the following comment-based annotation anywhere in the ABC file:</p>
             <p></p>
-            <p class="code">%add_all_playback_links MELODY_PROGRAM BASS_CHORD_PROGRAM</p>
+            <p class="code">%add_all_playback_links MELODY_PROGRAM BASS_CHORD_PROGRAM SOUND_FONT</p>
             <p></p>
-            <p>MELODY_PROGRAM and BASS_CHORD_PROGRAM are optional.</p>
-            <p></p>
-            <p>If only the MELODY_PROGRAM is specified, the BASS_CHORD_PROGRAM value will be set to the current default instrument program number settings for bass/chord playback in the <strong>Settings</strong> dialog.</p>
-            <p>If neither MELODY_PROGRAM or BASS_CHORD_PROGRAM is specified, the play link will be added, but no additional MIDI program or chordprog information will be injected into the tune at playback time.</p>
+            <p>The MELODY_PROGRAM, BASS_CHORD_PROGRAM, and SOUND_FONT are optional.</p>
+            <p>If only the MELODY_PROGRAM is specified, the BASS_CHORD_PROGRAM and SOUND_FONT values will be set to the current default soundfont and instrument program number settings for bass/chord playback in the <strong>Settings</strong> dialog.</p>
+            <p>If MELODY_PROGRAM, BASS_CHORD_PROGRAM, and SOUND_FONT are not specified, the play link will be added, but no additional MIDI program or chordprog information will be injected into the tune at playback time.</p>
             <p>This is useful for tunebooks for which you have manually specified all the MIDI soundfont, program, and chordprog information already in the tunes and do not want them overriden when played from the play link.</p>
-            <p></p>
-            <p>Some MIDI program numbers I recommend for the melody:</p>
-            <p></p>
-            <p>Piano: 0, Harpsichord: 6, Accordion: 21, Fingered Bass: 33, Harp: 46</p>
-            <p></p>
-            <p>Some MIDI program numbers I recommend for the bass/chords:</p>
-            <p></p>
-            <p>Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38</p>
-            <p></p>
-            <p>Example: To have all tunes played with an Accordion sound on the melody and a Piano sound on the chords/bass:</p>
-            <p class="code">%add_all_playback_links 21 0</p>
-            <p></p>
+            <p>Example: To have all tunes played using the FatBoy soundfont and a Harpsichord sound on the melody and a Piano sound on the chords/bass:</p>
+            <p class="code">%add_all_playback_links 6 0 fatboy</p>
             <hr>
             <p><strong>Adding or disabling swing for all Hornpipes in PDF tunebooks with play links:</strong></p>
             <p>If you want to add swing to every Hornpipe when generating PDF tunebooks with play links, add the following comment-based annotation anywhere in the tunebook ABC:</p>
@@ -1682,7 +1663,7 @@
             <p>>> Link back on each page to the index</p>
             <p>Page headers</p>
             <p>Page footers</p>
-            <p>Playback links on every tune title selecting an Piano sound for the melody and a Piano sound for the bass/chords</p>
+            <p>Playback links on every tune title selecting the Fluid soundfont, Piano sound for the melody, and a Piano sound for the bass/chords</p>
             <p>QR code with hyperlink and caption at the end of the tunebook</p>
             <p></p>
             <p class="code">%pdfquality .75<br/>
@@ -1695,7 +1676,7 @@
                 %addlinkbacktoindex<br/>
                 %pageheader This is the Page Header<br/>
                 %pagefooter This is the Page Footer<br/>
-                %add_all_playback_links 0 0<br/>
+                %add_all_playback_links 0 0 fluid<br/>
                 %qrcode https://michaeleskin.com<br/>
             %caption_for_qrcode Click or Scan to Visit my Home Page</p>
             <p>You can instantly inject this useful starter set of PDF annotations at the top of your ABC by clicking the <strong>Add PDF Tunebook Annotations</strong> button in the <strong>Add</strong> dialog.</p>
