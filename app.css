@@ -194,8 +194,8 @@ padding:12px;}
 	height:42px;
 	margin-top: 9px;
 	padding:12px;
+	margin-right:24px;
 }
-
 
 @media (hover: hover) {
 	.sortbutton:hover{
@@ -615,13 +615,13 @@ opacity: 0.4;
 padding:12px;
 }
 
-#injectanglotab,#ceoltastransform,#injectbambooflute,#ceoltasdialoginverse,#injectallheaders,#injectheaderstring,#injectallmidiparams,#injectbctab,#injectmelody,#injectstaffwidth, #ceoltasdialog{
+#ceoltasdialoginverse,#injectallheaders,#injectheaderstring,#injectallmidiparams,#injectbctab,#injectcdtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth, #ceoltasdialog{
 height:42px;
 padding:12px;
 margin-right:24px;
 }
 
-#injectfiddlefingerings,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectcdtab,#injectsectionheader,#injectmetronome,#looper_metronomebutton{
+#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#ceoltastransform,#injectsectionheader,#injectmetronome,#looper_metronomebutton{
 height:42px;
 padding:12px;
 }
