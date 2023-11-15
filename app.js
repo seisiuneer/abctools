@@ -1888,6 +1888,9 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		// Strip out chord markings
 		theTune = StripChordsOne(theTune);
 
+		// Strip out injected tab
+		theTune = StripTabOne(theTune);
+
 		// We also need to strip the meter markings:
 		searchRegExp = /^M:.*[\r\n]*/gm
 
@@ -7620,10 +7623,7 @@ function Render(renderAll,tuneNumber) {
 		if (gStripTab) {
 
 			// Strip out tab markings
-			searchRegExp = /"[_^][^"]*"/gm
-
-			// Strip out chord markings
-			theNotes = theNotes.replace(searchRegExp, "");
+			theNotes = StripTabOne(theNotes);
 		}
 
 		// Replace standalone %%center directives with %%vskip 12
@@ -22923,6 +22923,7 @@ function DoStartup() {
 	gStripAnnotations = false;
 	gStripTextAnnotations = false;
 	gStripChords = false;
+	gStripTab = false;
 	gRenderingPDF = false;
 	gAllowSave = false;
 	gAllowURLSave = false;
