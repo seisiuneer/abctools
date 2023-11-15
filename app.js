@@ -34,6 +34,7 @@ var gShowAdvancedControls = false;
 var gStripAnnotations = false;
 var gStripTextAnnotations = false;
 var gStripChords = false;
+var gStripTab = false;
 
 var STAFFSPACEMIN = 0;
 var STAFFSPACEDEFAULT = 10;
@@ -78,6 +79,7 @@ var gAllowControlToggle = false
 var gAllowFilterAnnotations = false;
 var gAllowFilterText = false;
 var gAllowFilterChords = false;
+var gAllowFilterTab = false;
 
 var gCapo = 0;
 
@@ -7246,11 +7248,114 @@ function StripChords(){
 //
 function StripChordsOne(theNotes){
 
-	// Strip out chord markings
+	function match_callback(match){
+
+		// Don't strip tab annotations, only chords
+		if ((match.indexOf('"_') == -1) && (match.indexOf('"^') == -1)){
+			return "";
+		}
+		else{
+			return match;
+		}
+		
+	}
+
+	// Strip out chord markings and not text annotations
 	var searchRegExp = /"[^"]*"/gm
 
-	// Strip out chord markings
-	theNotes = theNotes.replace(searchRegExp, "");
+	theNotes = theNotes.replace(searchRegExp,match_callback);
+
+	// Replace the ABC
+	return theNotes;
+
+}
+
+
+// 
+// Are there chords in a match regex?
+//
+function AreChordsInMatch(theABC,theMatch){
+
+	if (!theMatch){
+		return false;
+	}
+	
+	var nMatch = theMatch.length;
+
+	for (var i=0; i<nMatch; ++i){
+
+		// Detect chords
+		if ((theMatch[i].indexOf('"_') == -1) && (theMatch[i].indexOf('"^') == -1)){
+
+			return true;
+
+		}
+	}
+
+	return false;
+
+}
+
+// 
+// Are there tabs in a match regex?
+//
+function IsTabInMatch(theABC,theMatch){
+
+	if (!theMatch){
+		return false;
+	}
+	
+	var nMatch = theMatch.length;
+
+	for (var i=0; i<nMatch; ++i){
+
+		// Detect tab annotation
+		if ((theMatch[i].indexOf('"_') == 0) || (theMatch[i].indexOf('"^') == 0)){
+
+			return true;
+
+		}
+	}
+
+	return false;
+
+}
+
+// 
+// Strip all the tab in the ABC
+//
+function StripTab(){
+
+	var theNotes = gTheABC.value;
+
+	theNotes = StripTabOne(theNotes);
+
+	// Replace the ABC
+	gTheABC.value = theNotes;
+
+}
+
+// 
+// Strip all the tab in the ABC
+//
+function StripTabOne(theNotes){
+
+	function match_callback(match){
+
+		// Don't strip chords, only tab
+		if ((match.indexOf('"_') == 0) || (match.indexOf('"^') == 0)){
+			return "";
+		}
+		else{
+			return match;
+		}
+		
+	}
+
+	// Strip out text annotation and not chords
+	var searchRegExp = /"[^"]*"/gm
+
+	theNotes = theNotes.replace(searchRegExp,match_callback);
 
 	// Replace the ABC
 	return theNotes;
@@ -7509,7 +7614,13 @@ function Render(renderAll,tuneNumber) {
 		if (gStripChords) {
 
 			// Strip out chord markings
-			searchRegExp = /"[^"]*"/gm
+			theNotes = StripChordsOne(theNotes)
+		}
+
+		if (gStripTab) {
+
+			// Strip out tab markings
+			searchRegExp = /"[_^][^"]*"/gm
 
 			// Strip out chord markings
 			theNotes = theNotes.replace(searchRegExp, "");
@@ -7759,10 +7870,21 @@ function IdleAdvancedControls(bUpdateUI){
 	// Detect chord markings
 	searchRegExp = /"[^"]*"/gm
 
-	// Detect chord markings
-	gotMatch = theNotes.search(searchRegExp) != -1;
+	var theMatch = theNotes.match(searchRegExp);
+
+	gotMatch = AreChordsInMatch(theNotes,theMatch);
 
 	EnableChords = gotMatch;
+
+	// Detect tab markings
+	searchRegExp = /"[^"]*"/gm
+
+	var theMatch = theNotes.match(searchRegExp);
+
+	// Detect tab markings
+	gotMatch = IsTabInMatch(theNotes,theMatch);
+
+	EnableTab = gotMatch;
 
 	// Now set the button styling based on the results
 	if (EnableAnnotations){
@@ -7843,6 +7965,7 @@ function IdleAdvancedControls(bUpdateUI){
 			// Enable the Strip Chords button
 			document.getElementById("stripchords").classList.remove("advancedcontrolsdisabled");
 			document.getElementById("stripchords").classList.add("advancedcontrols");
+
 		}	
 	}
 	else{
@@ -7862,6 +7985,37 @@ function IdleAdvancedControls(bUpdateUI){
 		}			
 	}
 
+	if (EnableTab){
+
+		gAllowFilterTab = true;
+		
+		if (bUpdateUI){
+
+			// Enable the Toggle Tab button
+			document.getElementById("toggletab").classList.remove("advancedcontrolsdisabled");
+			document.getElementById("toggletab").classList.add("advancedcontrols");
+
+			// Enable the Strip Tab button
+			document.getElementById("striptab").classList.remove("advancedcontrolsdisabled");
+			document.getElementById("striptab").classList.add("advancedcontrols");
+		}	
+	}
+	else{
+
+		gAllowFilterTab = false;
+
+		if (bUpdateUI){
+
+			// Disable the Toggle Tab button
+			document.getElementById("toggletab").classList.remove("advancedcontrols");
+			document.getElementById("toggletab").classList.add("advancedcontrolsdisabled");
+
+			// Disable the Strip Chords button
+			document.getElementById("striptab").classList.remove("advancedcontrols");
+			document.getElementById("striptab").classList.add("advancedcontrolsdisabled");
+
+		}			
+	}
 
 	if (bUpdateUI){
 
@@ -7891,12 +8045,23 @@ function IdleAdvancedControls(bUpdateUI){
 
 		if (gStripChords){
 
-			document.getElementById("togglechords").value = "Show Chords + Injected Tab";
+			document.getElementById("togglechords").value = "Show Chords";
 
 		}
 		else{
 
-			document.getElementById("togglechords").value = "Hide Chords + Injected Tab";
+			document.getElementById("togglechords").value = "Hide Chords";
+
+		}
+
+		if (gStripTab){
+
+			document.getElementById("toggletab").value = "Show Injected Tab";
+
+		}
+		else{
+
+			document.getElementById("toggletab").value = "Hide Injected Tab";
 
 		}
 
@@ -7930,6 +8095,7 @@ function RestoreDefaults() {
 	gStripAnnotations = false;
 	gStripTextAnnotations = false;
 	gStripChords = false;
+	gStripTab = false;
 	gTotalTunes = 0;
 	gCurrentTune = 0;
 	gForceFullRender = false;
@@ -8007,7 +8173,6 @@ function ToggleTextAnnotations(bDoStrip) {
 		return;
 	}
 	
-
 	gStripTextAnnotations = !gStripTextAnnotations;
 
 	RenderAsync(true,null);
@@ -8048,6 +8213,36 @@ function ToggleChords(bDoStrip) {
 
 }
 
+//
+// Toggle tab
+//
+function ToggleTab(bDoStrip) {
+
+	if (!gAllowFilterTab){
+
+		return;
+	
+	}
+
+	// Strips the text annotations in the actual ABC and re-renders
+	if (bDoStrip){
+
+		StripTab();
+		
+		RenderAsync(true,null)
+
+		IdleAdvancedControls(true);
+
+		return;
+	}
+
+	gStripTab = !gStripTab;
+
+	RenderAsync(true,null)
+
+	IdleAdvancedControls(true);
+
+}
 //
 // Add a new ABC tune template, song template, or PDF tunebook annotation template to the current ABC
 //
@@ -12977,8 +13172,8 @@ function DoInjectTablature_BC(){
 
 	gTheABC.value = boxTabGenerator(gTheABC.value);
 
-	// Show the chords after an inject
-	gStripChords = false;
+	// Show the tab after an inject
+	gStripTab = false;
 	
 	RenderAsync(true,null);
 
@@ -13007,8 +13202,8 @@ function DoInjectTablature_CsD(){
 
 	gTheABC.value = boxTabGenerator(gTheABC.value);
 
-	// Show the chords after an inject
-	gStripChords = false;	
+	// Show the tab after an inject
+	gStripTab = false;
 	
 	RenderAsync(true,null);
 
@@ -13041,8 +13236,8 @@ function DoInjectTablature_Anglo(){
 			
 			gTheABC.value = injectedABC;
 
-			// Show the chords after an inject
-			gStripChords = false;
+			// Show the tab after an inject
+			gStripTab = false;
 			
 			RenderAsync(true,null);
 
@@ -13059,8 +13254,8 @@ function DoInjectTablature_Anglo(){
 
 	   			gTheABC.value = injectedABC;
 
-				// Show the chords after an inject
-				gStripChords = false;
+				// Show the tab after an inject
+				gStripTab = false;
 				
 				RenderAsync(true,null);
 
@@ -13121,8 +13316,8 @@ function DoInjectTablature_Bamboo_Flute(){
 
 			gTheABC.value = bambooFluteTabGenerator(gTheABC.value);
 
-			// Show the chords after an inject
-			gStripChords = false;
+			// Show the tab after an inject
+			gStripTab = false;
 			
 			RenderAsync(true,null);
 
@@ -13149,8 +13344,8 @@ function DoInjectTablature_Fiddle_Fingerings(){
 
 	gTheABC.value = fiddleFingeringsGenerator(gTheABC.value);
 
-	// Show the chords after an inject
-	gStripChords = false;	
+	// Show the tab after an inject
+	gStripTab = false;
 	
 	RenderAsync(true,null);
 
@@ -13176,8 +13371,8 @@ function DoInjectTablature_MD(){
 
 	gTheABC.value = MDTablatureGenerator(gTheABC.value);
 
-	// Show the chords after an inject
-	gStripChords = false;	
+	// Show the tab after an inject
+	gStripTab = false;
 	
 	RenderAsync(true,null);
 
@@ -20615,14 +20810,16 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<p style="text-align:center;">'
 	modal_msg  += '<input id="toggleannotations" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleAnnotations(false)" type="button" value="Hide Annotations" title="Hides/Shows common annotations in the ABC notation">';
 	modal_msg  += 	'<input id="toggletext" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTextAnnotations(false)" type="button" value="Hide Text" title="Hides/Shows any text in the ABC notation">';
-	modal_msg  += 	'<input id="togglechords" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleChords(false)" type="button" value="Hide Chords + Injected Tab" title="Hides/Shows any chords in the ABC notation.&nbsp;&nbsp;Also hides any Box or Anglo Concertina tablature.">';
+	modal_msg  += 	'<input id="togglechords" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleChords(false)" type="button" value="Hide Chords" title="Hides/Shows any chords in the ABC notation">';
+	modal_msg  += 	'<input id="toggletab" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTab(false)" type="button" value="Hide Injected Tab" title="Hides/Shows any injected tablature">';
 	modal_msg  += '</p>';
 	
 	modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">Strip ABC Features</p>'
 	modal_msg  += '<p style="text-align:center;">';
 	modal_msg  += '<input id="stripannotations" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleAnnotations(true)" type="button" value="Strip Annotations" title="Strips common annotations from the ABC">';
 	modal_msg  += 	'<input id="striptext" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleTextAnnotations(true)" type="button" value="Strip Text" title="Strips all text from the ABC">';
-	modal_msg  += 	'<input id="stripchords" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleChords(true)" type="button" value="Strip Chords + Injected Tab" title="Strips all chords from the ABC.&nbsp;&nbsp;Also strips any Box or Anglo Concertina tablature.">';
+	modal_msg  += 	'<input id="stripchords" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleChords(true)" type="button" value="Strip Chords" title="Strips all chords from the ABC">';
+	modal_msg  += 	'<input id="striptab" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleTab(true)" type="button" value="Strip Injected Tab" title="Strips all injected tablature">';
 	modal_msg  += '</p>';
 	modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">ABC Injection Features</p>'
 	modal_msg  += '<p style="text-align:center;">'
@@ -22734,6 +22931,7 @@ function DoStartup() {
 	gAllowFilterAnnotations = false;
 	gAllowFilterText = false;
 	gAllowFilterChords = false;
+	gAllowFilterTab = false;
 	gIsMaximized = false;
 	gCapo = 0;
 	gABCFromFile = false;

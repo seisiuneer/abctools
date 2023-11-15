@@ -1364,22 +1364,6 @@ var angloFingeringsGenerator = function (theABC, callback){
 
     }
 
-    // 
-    // Strip all the chords in the ABC
-    //
-    function angloStripChords(theNotes) {
-
-        // Strip out chord markings
-        var searchRegExp = /"[^"]*"/gm
-
-        // Strip out chord markings
-        theNotes = theNotes.replace(searchRegExp, "");
-
-        // Replace the ABC
-        return theNotes;
-
-    }
-
     // Glyphs for bellows push and draw indications
     var PUSH_NAME = "↓";
     var DRAW_NAME = "↑";
@@ -1422,12 +1406,15 @@ var angloFingeringsGenerator = function (theABC, callback){
                 continue;
             }
 
+            // Strip any existing tab
+            thisTune = StripTabOne(thisTune);
+
             // Strip chords? 
             // Above always strips
             // Below only strips if specified in the settings
             if (gInjectTab_GaryCoover || (tabLocation == 0) || ((tabLocation == 1) && (stripChords))){
 
-                thisTune = angloStripChords(thisTune);
+                thisTune = StripChordsOne(thisTune);
             }
  
             try{
@@ -2239,21 +2226,6 @@ var boxTabGenerator = function (theABC){
 
     }
 
-    // 
-    // Strip all the chords in the ABC
-    //
-    function StripChords(theNotes) {
-
-        // Strip out chord markings
-        var searchRegExp = /"[^"]*"/gm
-
-        // Strip out chord markings
-        theNotes = theNotes.replace(searchRegExp, "");
-
-        // Replace the ABC
-        return theNotes;
-
-    }
 
     // Glyph(s) to use for the bellows push or draw indication
     var PUSH_NAME = "↓";
@@ -2291,11 +2263,14 @@ var boxTabGenerator = function (theABC){
                 continue;
             }
 
+            // Strip existing tab
+            thisTune = StripTabOne(thisTune);
+
             // Strip chords? 
             // Above always strips
             // Below only strips if specified in the settings
             if ((tabLocation == 0) || ((tabLocation == 1) && (stripChords))){
-                thisTune = StripChords(thisTune);
+                thisTune = StripChordsOne(thisTune);
             }
 
             thisTune = generate_tab(thisTune);
@@ -3074,21 +3049,6 @@ var bambooFluteTabGenerator = function (theABC){
 
     }
 
-    // 
-    // Strip all the chords in the ABC
-    //
-    function StripChords(theNotes) {
-
-        // Strip out chord markings
-        var searchRegExp = /"[^"]*"/gm
-
-        // Strip out chord markings
-        theNotes = theNotes.replace(searchRegExp, "");
-
-        // Replace the ABC
-        return theNotes;
-
-    }
 
     //
     // Main processor
@@ -3118,9 +3078,12 @@ var bambooFluteTabGenerator = function (theABC){
                 continue;
             }
 
+            // Strip any existing tab
+            thisTune = StripTabOne(thisTune);
+
             // Strip chords? 
             if (stripChords){
-                thisTune = StripChords(thisTune);
+                thisTune = StripChordsOne(thisTune);
             }
 
             thisTune = generate_tab(thisTune);
@@ -4472,23 +4435,6 @@ var fiddleFingeringsGenerator = function (theABC){
 
     }
 
-
-    // 
-    // Strip all the chords in the ABC
-    //
-    function StripChords(theNotes) {
-
-        // Strip out chord markings
-        var searchRegExp = /"[^"]*"/gm
-
-        // Strip out chord markings
-        theNotes = theNotes.replace(searchRegExp, "");
-
-        // Replace the ABC
-        return theNotes;
-
-    }
-
     //
     // Main processor
     //
@@ -4517,11 +4463,14 @@ var fiddleFingeringsGenerator = function (theABC){
                 continue;
             }
 
+            // Strip any existing tab
+            thisTune = StripTabOne(thisTune);
+
             // Strip chords? 
             // Above always strips
             // Below only strips if specified in the settings
             if ((tabLocation == 0) || ((tabLocation == 1) && (stripChords))){
-                thisTune = StripChords(thisTune);
+                thisTune = StripChordsOne(thisTune);
             }
 
              thisTune = generate_tab(thisTune);
@@ -5205,6 +5154,16 @@ var MDTablatureGenerator = function (theABC){
             if (isSectionHeader(thisTune)){
                 result += thisTune;
                 continue;
+            }
+
+            // Strip any existing tab
+            thisTune = StripTabOne(thisTune);
+
+            // Strip chords? 
+            // Above always strips
+            // Below only strips if specified in the settings
+            if (stripChords){
+                thisTune = StripChordsOne(thisTune);
             }
 
             thisTune = generate_tab(thisTune);

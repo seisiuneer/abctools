@@ -577,24 +577,24 @@ font-family:"Helvetica";
 font-size:12pt;
 }
 
-#toggleannotations, #toggletext{
+#toggleannotations, #toggletext,#togglechords{
 margin-right:24px;
 height:42px;
 padding:12px;
 }
 
-#togglechords{
+#toggletab{
 height:42px;
 padding:12px;
 }
 
-#stripannotations, #striptext{
+#stripannotations, #striptext, #stripchords{
 margin-right:24px;
 height:42px;
 padding:12px;
 }
 
-#stripchords{
+#striptab{
 height:42px;
 padding:12px;
 }
