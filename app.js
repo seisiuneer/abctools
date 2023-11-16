@@ -242,6 +242,8 @@ var gTheNotation = document.getElementById("notation-holder");
 
 var gAllowMIDIInput = false;
 
+var gIsFromShare = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -1338,6 +1340,12 @@ function Clear() {
 
 		if (!args.canceled){
 
+			// Start over
+			gIsFromShare = false;
+
+			// If staff spacing had changed due to a share, restore it
+			RestoreSavedStaffSpacing();
+
 			ClearNoRender();
 
 			RenderAsync(true,null);
@@ -1365,6 +1373,21 @@ function ClearNoRender() {
 
 	RestoreDefaults();
 
+}
+
+//
+// Restore the staff spacing from browser storage
+//
+function RestoreSavedStaffSpacing(){
+
+	if (gLocalStorageAvailable){
+
+		var val = localStorage.abcStaffSpacing;
+
+		if (val){
+			gStaffSpacing = STAFFSPACEOFFSET + parseInt(val);
+		}
+	}
 }
 
 
@@ -1474,6 +1497,12 @@ function RestoreSnapshot(bRestoreAutoSnapshot,bIsAddDialogButton){
 
 							gTheABC.value = theSnapshot;
 
+							// Not from share
+							gIsFromShare = false;
+
+							// If staff spacing had changed due to a share, restore it
+							RestoreSavedStaffSpacing();
+
 							// Redraw
 							RenderAsync(true,null,function(){
 
@@ -1512,6 +1541,12 @@ function RestoreSnapshot(bRestoreAutoSnapshot,bIsAddDialogButton){
 						setTimeout(function(){
 
 							gTheABC.value = theSnapshot;
+							
+							// Not from share
+							gIsFromShare = false;
+
+							// If staff spacing had changed due to a share, restore it
+							RestoreSavedStaffSpacing();
 
 							// Redraw
 							RenderAsync(true,null,function(){
@@ -6906,8 +6941,13 @@ function UpdateLocalStorage(){
 		var capo = gCapo;
 		localStorage.abcCapo = capo;
 
-		var ssp = gStaffSpacing - STAFFSPACEOFFSET;
-		localStorage.abcStaffSpacing = ssp;
+		// Don't reset saved staff spacing if from a share
+		// Related to issue where shared tune reset the saved staff spacing
+
+		if (!gIsFromShare){
+			var ssp = gStaffSpacing - STAFFSPACEOFFSET;
+			localStorage.abcStaffSpacing = ssp;
+		}
 
 		var pdfformat = document.getElementById("pdfformat").value;
 		localStorage.abcTunesPerPage = pdfformat;
@@ -7255,7 +7295,19 @@ function StripChordsOne(theNotes){
 
 		// Don't strip tab annotations, only chords
 		if ((match.indexOf('"_') == -1) && (match.indexOf('"^') == -1)){
-			return "";
+
+			// Try and avoid stripping long text strings that aren't chords
+			if (match.length > 9){
+				return match;
+			}
+			else
+			// If there are spaces in the match, also probably not a chord
+			if (match.indexOf(" ") != -1){
+				return match;
+			}
+			else{
+				return "";
+			}
 		}
 		else{
 			return match;
@@ -7287,11 +7339,23 @@ function AreChordsInMatch(theABC,theMatch){
 
 	for (var i=0; i<nMatch; ++i){
 
+		var match = theMatch[i];
+
 		// Detect chords
-		if ((theMatch[i].indexOf('"_') == -1) && (theMatch[i].indexOf('"^') == -1)){
+		if ((match.indexOf('"_') == -1) && (match.indexOf('"^') == -1)){
 
-			return true;
-
+			// Try and avoid stripping long text strings that aren't chords
+			if (match.length > 9){
+				continue;
+			}
+			else
+			// If there are spaces in the match, also probably not a chord
+			if (match.indexOf(" ") != -1){
+				continue;
+			}
+			else{
+				return true;
+			}
 		}
 	}
 
@@ -19499,6 +19563,21 @@ function GetInitialConfigurationSettings(){
 		gLooperCount = 1;
 	}
 
+	val = localStorage.abcStaffSpacing;
+	if (val){
+		gStaffSpacing = STAFFSPACEOFFSET + parseInt(val);
+	}
+	else{
+
+		// Staff spacing in local storage not initialized, set it here
+		// Related to issue where shared tune reset the saved staff spacing
+		gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
+
+		var ssp = gStaffSpacing - STAFFSPACEOFFSET;
+		localStorage.abcStaffSpacing = ssp;
+
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -21303,7 +21382,13 @@ function ConfigureToolSettings(e) {
 
 				gStaffSpacing = testStaffSpacing + STAFFSPACEOFFSET;
 
-				console.log("setting spacing");
+			}
+
+			// Force change of saved staff spacing if user modifies it in the dialog
+			// Related to avoiding resetting of saved staff spacing if changed by a shared file
+			if (gLocalStorageAvailable){
+
+				localStorage.abcStaffSpacing = testStaffSpacing;
 
 			}
 
@@ -21560,7 +21645,7 @@ function DoFileRead(file,doAppend){
 
 						}
 
-						// Handle appending for  drag and drop
+						// Handle appending for drag and drop
 						if (doAppend){
 
 							var nTunes = CountTunes();
@@ -21607,6 +21692,16 @@ function DoFileRead(file,doAppend){
 
 							// Mark that this ABC was from a file
 							gABCFromFile = true;
+
+							// Only reset the spacing if not appending to a share
+							if (!doAppend){
+
+								// Not from share
+								gIsFromShare = false;
+
+								// If staff spacing had changed due to a share, restore it
+								RestoreSavedStaffSpacing();
+							}
 
 							// Render the notation
 							RenderAsync(true,null,function(){
@@ -21739,6 +21834,16 @@ function DoFileRead(file,doAppend){
 
 				// Mark that this ABC was from a file
 				gABCFromFile = true;
+
+				// Don't restore saved staff spacing if appending to a share
+				if (!doAppend){
+
+					// Not from share
+					gIsFromShare = false;
+
+					// If staff spacing had changed due to a share, restore it
+					RestoreSavedStaffSpacing();
+				}
 
 				// Render the notation
 				RenderAsync(true,null,function(){
@@ -23290,6 +23395,9 @@ function DoStartup() {
 
 	// Check for and process URL share link
 	var isFromShare = processShareLink();
+
+	// Save global is from share
+	gIsFromShare = isFromShare;
 
 	gForceInitialTextBoxRecalc = isFromShare;
 
