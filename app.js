@@ -19301,7 +19301,7 @@ function GetInitialConfigurationSettings(){
     	resetAngloButtonNames();
     }
 
-    var theMusicXMLImportSettings = localStorage.musicXMLImportOptionsV3;
+    var theMusicXMLImportSettings = localStorage.musicXMLImportOptionsV4;
 
     if (theMusicXMLImportSettings){
         gMusicXMLImportOptions = JSON.parse(theMusicXMLImportSettings);
@@ -19622,7 +19622,7 @@ function SaveConfigurationSettings(){
 		localStorage.angloButtonNames = JSON.stringify(gAngloButtonNames);
 
 		// MusicXML import options
-		localStorage.musicXMLImportOptionsV3 = JSON.stringify(gMusicXMLImportOptions);
+		localStorage.musicXMLImportOptionsV4 = JSON.stringify(gMusicXMLImportOptions);
 
 		// Large player control player options
 		localStorage.LargePlayerControls = gLargePlayerControls;
@@ -19703,7 +19703,6 @@ function SaveConfigurationSettings(){
 //
 var gMusicXMLImportOptions = {};
 
-
 function resetMusicXMLImportOptions(){
 
 	gMusicXMLImportOptions = {
@@ -19726,6 +19725,7 @@ function resetMusicXMLImportOptions(){
 		m:1,
 		addq:1,
 		q:100,
+		addstavenum:1
 	};
 }
 
@@ -19744,6 +19744,7 @@ function setMusicXMLOptions () {
     gMusicXMLImportOptions.mnum = parseInt ($('#musicxml_mnum').val () || -1);
     gMusicXMLImportOptions.addq = $('#musicxml_addq').prop ('checked') ? 1 : 0;
     gMusicXMLImportOptions.q = parseInt ($('#musicxml_q').val () || 100);;
+    gMusicXMLImportOptions.addstavenum = $('#musicxml_addstavenum').prop ('checked') ? 1 : 0;
 
  }
 
@@ -19762,6 +19763,7 @@ function idleXMLImport(){
 	$('#musicxml_mnum').val(gMusicXMLImportOptions.mnum);
 	$('#musicxml_addq').prop('checked',(gMusicXMLImportOptions.addq == 1));
 	$('#musicxml_q').val(gMusicXMLImportOptions.q);
+	$('#musicxml_addstavenum').prop('checked',(gMusicXMLImportOptions.addstavenum == 1));
 
 };
 
@@ -19806,6 +19808,7 @@ function ConfigureMusicXMLImport(){
     modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Bars-per-line:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_bpl" type="text" pattern="\d+" title="Default: 3"/></div>\n';
     modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Characters-per-line:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_cpl" type="text" pattern="\d+" title="Default: 0 - ignore"/></div>\n';
     modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Measure numbers:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_mnum" type="text" pattern="\d+" title="-1: No measure numbers, 1..n: Number every n-th measure, 0: Number every system"/></div>\n';
+   	modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Include measure numbers at end of staves:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_addstavenum" type="checkbox"/></div>\n';
     modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Unfold repeats:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_unfld" type="checkbox"/></div>\n';
     modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Credit text filter (level 0-6):&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_crf" type="text" pattern="[0123456]" title="0 (Default), 1, 2, 3, 4, 5, 6"/></div>\n';
     modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Denominator unit length for L: tags:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_den" type="text" pattern="\d\d?" title="0 (Automatic), 1, 2, 4, 8, 16, or 32"/></div>\n';
@@ -19835,10 +19838,10 @@ function ConfigureMusicXMLImport(){
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
 
-		    // Save the custom button naming map
+		    // Save the MusicXML settings
 		    if (gLocalStorageAvailable){
 
-		        localStorage.musicXMLImportOptionsV3 = JSON.stringify(gMusicXMLImportOptions);
+		        localStorage.musicXMLImportOptionsV4 = JSON.stringify(gMusicXMLImportOptions);
 
 		    }
 		}
@@ -21550,7 +21553,8 @@ function importMusicXML(theXML){
     //                 m:0, x:0, t:0,  // no midi, minimal midi, all midi output (0,1,2), no line breaks (1), perc, tab staff -> voicemap (1)
     //                 v1:0, noped:0,  // all directions to first voice of staff (1), no pedal directions (1)
     //                 stm:0,          // translate stem elements (stem direction)
-    //                 p:'', s:0 };   // page format: scale (1.0), width, left- and right margin in cm, shift note heads in tablature (1)
+    //                 p:'', s:0,   // page format: scale (1.0), width, left- and right margin in cm, shift note heads in tablature (1)
+    //                 addstavenum:1 };  // Add stave numbers at the end of the staves
 
     var result = vertaal (xmldata, gMusicXMLImportOptions);
 
