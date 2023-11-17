@@ -13585,7 +13585,7 @@ function ShowMDTabWarningDialog(){
     modal_msg += gExcludedFromMDSolution[nBadTunes-1];
 	modal_msg += '</p>'
 
-    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 75, width: 700,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 75, width: 630,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 
     	gExcludedFromMDSolution = [];
             
