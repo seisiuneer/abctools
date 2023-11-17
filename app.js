@@ -7467,6 +7467,22 @@ function StripTabOne(theNotes){
 }
 
 // 
+// Strip all the ornaments in the ABC
+//
+function StripOrnamentsOne(theNotes){
+
+	// Strip out all ornaments
+	var searchRegExp = /{[^}]*}/gm
+
+	theNotes = theNotes.replace(searchRegExp,"");
+
+	// Replace the ABC
+	return theNotes;
+
+}
+
+
+// 
 // Allow putting up a spiner before the synchronous Render() function
 //
 function RenderAsync(renderAll,tuneNumber,callback){
@@ -13546,9 +13562,41 @@ function DoInjectTablature_Fiddle_Fingerings(){
 
 }
 
+// 
+// Warn if there were any tunes excluded
+//
+function ShowMDTabWarningDialog(){
+
+    // Keep track of dialogs
+    sendGoogleAnalytics("dialog","ShowMDTabWarningDialog");
+
+    var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Some Tunes Did Not Have Complete DAD Solutions</p>';
+
+    modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;">During the tablature generation the following tunes did not have complete DAD 6-1/2 fret solutions and as requested were excluded from the result:</p>';
+
+    var nBadTunes = gExcludedFromMDSolution.length;
+
+	modal_msg += '<p style="font-size:12pt;line-height:18pt;">'
+
+    for (var i=0;i<nBadTunes-1;++i){
+        modal_msg += gExcludedFromMDSolution[i]+', ';
+    }
+
+    modal_msg += gExcludedFromMDSolution[nBadTunes-1];
+	modal_msg += '</p>'
+
+    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 75, width: 700,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
+    	gExcludedFromMDSolution = [];
+            
+    });
+}
+
 //
 // Do Mountain Dulcimer Tab Injection
 //
+var gExcludedFromMDSolution = [];
+
 function DoInjectTablature_MD(){
 
 	// Keep track of tablature injection use
@@ -13562,12 +13610,14 @@ function DoInjectTablature_MD(){
 	// Setup initial values
 	const theData = {
 	  configure_dulcimer_style:gMDulcimerStyle,
+	  strip_bad_tunes:gMDulcimerStripBadTunes
 	};
 
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject Mountain Dulcimer Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#injecting_tablature" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
 	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject tablature for a DAD-tuned Mountain Dulcimer in the style selected below into all of the tunes in the ABC text area:</p>'},	  
 	  {name: "Style:", id: "configure_dulcimer_style", type:"select", options:mountain_dulcimer_styles, cssClass:"configure_md_settings_select"}, 
+	  {name: "          Strip tunes from the result that have no complete DAD 6-1/2 fret solution", id: "strip_bad_tunes", type:"checkbox", cssClass:"configure_md_settings_form_text"},
 	  {html: '<p style="margin-top:24px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},	  
 
 	];
@@ -13579,12 +13629,17 @@ function DoInjectTablature_MD(){
 
 			gMDulcimerStyle = args.result.configure_dulcimer_style; 
 
+			gMDulcimerStripBadTunes = args.result.strip_bad_tunes;
+
 			// Save the settings, in case they were initialized
 			SaveConfigurationSettings();
 
 			SetRadioValue("notenodertab","noten");
 
 			gCurrentTab = "noten";
+
+			// Clear the excluded list
+			gExcludedFromMDSolution = [];
 
 			gTheABC.value = MDTablatureGenerator(gTheABC.value);
 
@@ -13594,19 +13649,24 @@ function DoInjectTablature_MD(){
 			// Show the tab after an inject
 			gStripTab = false;
 			
-			RenderAsync(true,null);
+			// Render the tunes
+			RenderAsync(true,null,function(){
 
-			// Idle the dialog
-			IdleAdvancedControls(true);
+				if (gExcludedFromMDSolution.length > 0){
 
-			// Idle the show tab names control
-			IdleAllowShowTabNames();
+					ShowMDTabWarningDialog();
 
+				}
+
+				// Idle the dialog
+				IdleAdvancedControls(true);
+
+				// Idle the show tab names control
+				IdleAllowShowTabNames();
+
+			});
 		}
-
 	});
-
-
 }
 
 //
@@ -19297,6 +19357,7 @@ var gBambooFluteKey = 1; // Default to D
 
 // Mountain Dulcimer style
 var gMDulcimerStyle = 0; // Default to high string
+var gMDulcimerStripBadTunes = false; // Don't strip bad tunes on MD injection
 
 // Get the initial configuration settings from local browser storage, if present
 function GetInitialConfigurationSettings(){
@@ -19537,6 +19598,13 @@ function GetInitialConfigurationSettings(){
 		gMDulcimerStyle = 0;
 	}
 
+	val = localStorage.MDulcimerStripBadTunes;
+	if (val){
+		gMDulcimerStripBadTunes = (val == "true");
+	}
+	else{
+		gMDulcimerStripBadTunes = false;
+	}
 
 	// ABC rendering fonts
     var theRenderingFonts = localStorage.RenderingFonts;
@@ -19816,8 +19884,9 @@ function SaveConfigurationSettings(){
 		// Save the bamboo flute key
 		localStorage.BambooFluteKey =  gBambooFluteKey;
 
-		// Save the mountain dulcimer style
+		// Save the mountain dulcimer style and bad tune strip option
 		localStorage.MDulcimerStyle =  gMDulcimerStyle;
+		localStorage.MDulcimerStripBadTunes = gMDulcimerStripBadTunes
 
 		// Save the ABC rendering fonts
 		localStorage.RenderingFonts = JSON.stringify(gRenderingFonts);

@@ -5205,6 +5205,8 @@ var MDTablatureGenerator = function (theABC){
 
         var result = FindPreTuneHeader(theABC);
 
+        gExcludedFromMDSolution = [];
+
         for (var i = 0; i < nTunes; ++i) {
 
             var thisTune = getTuneByIndex(theABC, i);
@@ -5214,6 +5216,9 @@ var MDTablatureGenerator = function (theABC){
                 result += thisTune;
                 continue;
             }
+
+            // Strip any existing ornaments
+            thisTune = StripOrnamentsOne(thisTune);
 
             // Strip any existing tab
             thisTune = StripTabOne(thisTune);
@@ -5246,11 +5251,25 @@ var MDTablatureGenerator = function (theABC){
             thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
             thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%musicspace " + musicSpace);
 
+            // Stripping out tunes that don't have complete tab solutions?
+            if (gMDulcimerStripBadTunes){
+                
+                if (thisTune.indexOf('"_x;x;x"') != -1){
+                    
+                    // Get the tune name
+                    var theTitle = getTuneTitle(thisTune);
+
+                    gExcludedFromMDSolution.push(theTitle);
+
+                    thisTune = "";
+                }
+            }
+
             result += thisTune;
 
         }
 
-       return result;
+        return result;
 
     }
 
