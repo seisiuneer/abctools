@@ -23254,6 +23254,7 @@ function DoStartup() {
 	gDoForcePDFFilename = false;
 	gForcePDFFilename = "";
 	gFullScreenScaling = 50;
+	gIsDirty = false;
 
 	// Startup in blank screen
 	
