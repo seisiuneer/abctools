@@ -13507,6 +13507,9 @@ function DoInjectTablature_Bamboo_Flute(){
 			// Idle the dialog
 			IdleAdvancedControls(true);
 
+			// Idle the show tab names control
+			IdleAllowShowTabNames();
+
 		}
 
 	});
@@ -13551,25 +13554,58 @@ function DoInjectTablature_MD(){
 	// Keep track of tablature injection use
 	sendGoogleAnalytics("inject_tablature","DoInjectTablature_MD");
 
-	SetRadioValue("notenodertab","noten");
+ 	const mountain_dulcimer_styles = [
+	    { name: "  Along High-D String", id: "0" },
+	    { name: "  Cross-String", id: "1" },
+  	];
 
-	gCurrentTab = "noten";
+	// Setup initial values
+	const theData = {
+	  configure_dulcimer_style:gMDulcimerStyle,
+	};
 
-	gTheABC.value = MDTablatureGenerator(gTheABC.value);
+	const form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject Mountain Dulcimer Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#injecting_tablature" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject tablature for a DAD-tuned Mountain Dulcimer in the style selected below into all of the tunes in the ABC text area:</p>'},	  
+	  {name: "Style:", id: "configure_dulcimer_style", type:"select", options:mountain_dulcimer_styles, cssClass:"configure_md_settings_select"}, 
+	  {html: '<p style="margin-top:24px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},	  
 
-	// Set dirty
-	gIsDirty = true;
+	];
 
-	// Show the tab after an inject
-	gStripTab = false;
-	
-	RenderAsync(true,null);
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
-	// Idle the dialog
-	IdleAdvancedControls(true);
+		// Get the results and store them in the global configuration
+		if (!args.canceled){
 
-	// Idle the show tab names control
-	IdleAllowShowTabNames();
+			gMDulcimerStyle = args.result.configure_dulcimer_style; 
+
+			// Save the settings, in case they were initialized
+			SaveConfigurationSettings();
+
+			SetRadioValue("notenodertab","noten");
+
+			gCurrentTab = "noten";
+
+			gTheABC.value = MDTablatureGenerator(gTheABC.value);
+
+			// Set dirty
+			gIsDirty = true;
+
+			// Show the tab after an inject
+			gStripTab = false;
+			
+			RenderAsync(true,null);
+
+			// Idle the dialog
+			IdleAdvancedControls(true);
+
+			// Idle the show tab names control
+			IdleAllowShowTabNames();
+
+		}
+
+	});
+
 
 }
 
@@ -19259,6 +19295,9 @@ var gTrainerTouchControls = false;
 // Bamboo flute key
 var gBambooFluteKey = 1; // Default to D
 
+// Mountain Dulcimer style
+var gMDulcimerStyle = 0; // Default to high string
+
 // Get the initial configuration settings from local browser storage, if present
 function GetInitialConfigurationSettings(){
 
@@ -19488,6 +19527,16 @@ function GetInitialConfigurationSettings(){
 	else{
 		gBambooFluteKey = 1;
 	}
+
+	// Mountain dulcimer
+	val = localStorage.MDulcimerStyle;
+	if (val){
+		gMDulcimerStyle = val;
+	}
+	else{
+		gMDulcimerStyle = 0;
+	}
+
 
 	// ABC rendering fonts
     var theRenderingFonts = localStorage.RenderingFonts;
@@ -19766,6 +19815,9 @@ function SaveConfigurationSettings(){
 
 		// Save the bamboo flute key
 		localStorage.BambooFluteKey =  gBambooFluteKey;
+
+		// Save the mountain dulcimer style
+		localStorage.MDulcimerStyle =  gMDulcimerStyle;
 
 		// Save the ABC rendering fonts
 		localStorage.RenderingFonts = JSON.stringify(gRenderingFonts);
@@ -23058,7 +23110,7 @@ function fileOpenIntercept(e){
 
 	if (gIsDirty){
 
-		var thePrompt = '<p style="font-size:18pt;line-height:20pt;text-align:center;">You Have Unsaved Changes</p><p style="font-size:14pt;line-height:20pt;text-align:center;margin-top:32px;">Click "OK" to abandon your work and open a new file.<br/><br/>Click "Cancel" to go back.</p>';
+		var thePrompt = '<p style="font-size:18pt;line-height:20pt;text-align:center;">You Have Unsaved Changes</p><p style="font-size:13pt;line-height:16pt;text-align:center;margin-top:30px;">Click "OK" to abandon your work and open a new file.<br/><br/>Click "Cancel" to go back.</p>';
 
 		// Center the string in the prompt
 		thePrompt = makeCenteredPromptString(thePrompt);
