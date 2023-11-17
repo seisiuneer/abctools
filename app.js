@@ -244,8 +244,12 @@ var gAllowMIDIInput = false;
 
 var gIsFromShare = false;
 
+// Have there been changes since last open?
+var gIsDirty = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
+
 
 //
 // Tune utility functions
@@ -756,6 +760,9 @@ function Transpose(transposeAmount) {
 		// Stuff in the transposed output
 		gTheABC.value = output;
 
+		// Set dirty
+		gIsDirty = true;
+
 		// Reset the selection point to the current tune
 		resetSelectionAfterTranspose(theTuneRange.start,theTuneRange.end);
 
@@ -1002,9 +1009,13 @@ function SortTunesByTag(theTag){
 	// Put them back in the ABC area
 	gTheABC.value = theNotes; 
 
+    // Set dirty
+	gIsDirty = true;
+
 	// Reset the selection
 	gTheABC.selectionStart = 0;
     gTheABC.selectionEnd = 0;
+
 
     // Focus after operation
     FocusAfterOperation();
@@ -1204,6 +1215,9 @@ function SortTunes(stripAn){
 	// Put them back in the ABC area
 	gTheABC.value = theNotes; 
 
+	// Set dirty
+	gIsDirty = true;
+
 	// Reset the selection
 	gTheABC.selectionStart = 0;
     gTheABC.selectionEnd = 0;
@@ -1342,6 +1356,9 @@ function Clear() {
 
 			// Start over
 			gIsFromShare = false;
+
+			// Clear dirty flag
+			gIsDirty = false;
 
 			// If staff spacing had changed due to a share, restore it
 			RestoreSavedStaffSpacing();
@@ -1503,6 +1520,9 @@ function RestoreSnapshot(bRestoreAutoSnapshot,bIsAddDialogButton){
 							// If staff spacing had changed due to a share, restore it
 							RestoreSavedStaffSpacing();
 
+							// Set dirty flag
+							gIsDirty = true;
+
 							// Redraw
 							RenderAsync(true,null,function(){
 
@@ -1544,6 +1564,9 @@ function RestoreSnapshot(bRestoreAutoSnapshot,bIsAddDialogButton){
 							
 							// Not from share
 							gIsFromShare = false;
+
+							// Set dirty flag
+							gIsDirty = true;
 
 							// If staff spacing had changed due to a share, restore it
 							RestoreSavedStaffSpacing();
@@ -7166,6 +7189,10 @@ function StripAnnotations(){
 
 	// Replace the ABC
 	gTheABC.value = theNotes;
+
+	// Set dirty
+	gIsDirty = true;
+
 }
 
 //
@@ -7249,6 +7276,10 @@ function StripTextAnnotations(){
 	// Replace the ABC
 	gTheABC.value = theNotes;
 
+	// Set dirty
+	gIsDirty = true;
+
+
 }
 
 //
@@ -7283,6 +7314,9 @@ function StripChords(){
 
 	// Replace the ABC
 	gTheABC.value = theNotes;
+
+	// Set dirty
+	gIsDirty = true;
 
 }
 
@@ -7399,6 +7433,9 @@ function StripTab(){
 
 	// Replace the ABC
 	gTheABC.value = theNotes;
+
+	// Set dirty
+	gIsDirty = true;
 
 }
 
@@ -8805,6 +8842,10 @@ function PDFTunebookBuilder(){
 
 			gTheABC.value = header_to_add;
 
+			// Set dirty
+			gIsDirty = true;
+
+
 		}
 
 	});
@@ -9255,6 +9296,9 @@ function AppendBoxFingeringTemplate(){
 	// Stuff in the headers
 	gTheABC.value = output;
 
+	// Set dirty flag
+	gIsDirty = true;
+
 	// Set the select point
 	gTheABC.selectionStart = 0;
     gTheABC.selectionEnd = 0;
@@ -9548,12 +9592,14 @@ function AppendJSBach2(){
 //
 function ProcessAddTune(theValue){
 
-
 	// Force scroll into view
 	var theOriginalLength = gTheABC.value.length; 
 
 	// Add the tune to the ABC
 	gTheABC.value = gTheABC.value+theValue;
+
+	// Set dirty
+	gIsDirty = true;
 
 	// Reset the displayed name base
 	if (gDisplayedName != "No ABC file selected"){
@@ -10119,6 +10165,9 @@ function saveABCFile(thePrompt, thePlaceholder, theData){
 		var fileSelected = document.getElementById('abc-selected');
 		fileSelected.innerText = fname;
 
+		// Clear the dirty count
+		gIsDirty = false;
+
 	});
 }
 
@@ -10408,6 +10457,9 @@ function InjectRepeatsAndClickTrackAll(){
 			// Stuff in the output
 			gTheABC.value = output;
 
+			// Set dirty
+			gIsDirty = true;
+
 			// Force a redraw
 			RenderAsync(true,null,function(){
 
@@ -10628,6 +10680,9 @@ function InjectSectionHeader(){
 
 			gTheABC.value = leftSide + "\nX:1\nT:*" + sectionHeader + "\n" + rightSide;
 
+			// Set dirty
+			gIsDirty = true;
+
 			// Force a redraw
 			RenderAsync(true,null,function(){
 
@@ -10721,6 +10776,9 @@ function InjectHeaderString(){
 
 					// Stuff in the output
 					gTheABC.value = output;
+					
+					// Set dirty
+					gIsDirty = true;
 
 					// Force a redraw
 					RenderAsync(true,null,function(){
@@ -10766,7 +10824,11 @@ function InjectHeaderString(){
 					// Stuff in the injected ABC
 					var theABC = gTheABC.value;
 					theABC = theABC.replace(theSelectedABC,theInjectedTune);
+
 					gTheABC.value = theABC;
+
+					// Set dirty
+					gIsDirty = true;
 
 					// Force a redraw of the tune
 					RenderAsync(false,theSelectedTuneIndex,function(){
@@ -10860,6 +10922,9 @@ function InjectStaffWidth(){
 				// Stuff in the output
 				gTheABC.value = output;
 
+				// Set dirty
+				gIsDirty = true;
+
 				// Force a redraw
 				RenderAsync(true,null,function(){
 
@@ -10881,6 +10946,9 @@ function InjectStaffWidth(){
 				var rightSide = gTheABC.value.substring(theSelectionStart);
 
 				gTheABC.value = leftSide + "%%staffwidth " + staffwidth + "\n" + rightSide;
+
+				// Set dirty
+				gIsDirty = true;
 
 				// Force a redraw
 				RenderAsync(true,null,function(){
@@ -11405,6 +11473,10 @@ function InjectAllMIDIParams(){
 					// Stuff in the output
 					gTheABC.value = output;
 
+					// Set dirty
+					gIsDirty = true;
+
+
 				}
 
 				if (bDoMelodyProgram){
@@ -11429,6 +11501,9 @@ function InjectAllMIDIParams(){
 					// Stuff in the output
 					gTheABC.value = output;
 
+					// Set dirty
+					gIsDirty = true;
+
 				}
 				
 				if (bDoChordProgram){
@@ -11451,6 +11526,9 @@ function InjectAllMIDIParams(){
 
 					// Stuff in the output
 					gTheABC.value = output;
+
+					// Set dirty
+					gIsDirty = true;
 
 				}
 
@@ -11489,6 +11567,10 @@ function InjectAllMIDIParams(){
 
 					gTheABC.value = leftSide + toInject + rightSide;
 
+					// Set dirty
+					gIsDirty = true;
+
+
 				}
 
 				if (bDoMelodyProgram){
@@ -11508,6 +11590,10 @@ function InjectAllMIDIParams(){
 					var rightSide = gTheABC.value.substring(theSelectionStart);
 					
 					gTheABC.value = leftSide + "% Melody instrument: "+thePatchName+"\n"+ "%%MIDI program " + progNum + "\n" + rightSide;	
+
+					// Set dirty
+					gIsDirty = true;
+
 				}
 
 				if (bDoSoundFont){
@@ -11517,6 +11603,10 @@ function InjectAllMIDIParams(){
 					var rightSide = gTheABC.value.substring(theSelectionStart);
 
 					gTheABC.value = leftSide + "% Soundfont: "+soundFontToInject+"\n"+"%abcjs_soundfont " + soundFontToInject + "\n" + rightSide;
+
+					// Set dirty
+					gIsDirty = true;
+
 				}
 
 				// Set the select point
@@ -11967,6 +12057,9 @@ function InjectMetronome(){
 				// Stuff in the output
 				gTheABC.value = output;
 
+				// Set dirty
+				gIsDirty = true;
+
 				RenderAsync(true,null,function(){
 
 					// Set the select point
@@ -12001,7 +12094,11 @@ function InjectMetronome(){
 				// Stuff in the injected ABC
 				var theABC = gTheABC.value;
 				theABC = theABC.replace(theSelectedABC,theStrippedABC);
+
 				gTheABC.value = theABC;
+
+				// Set dirty
+				gIsDirty = true;
 
 				// Force a redraw of the tune
 				RenderAsync(false,theSelectedTuneIndex,function(){
@@ -12609,6 +12706,7 @@ function processShareLink() {
 			SetAbcText(abcText);
 			RestoreDefaults();
 			doRender = true;
+			gIsDirty = true;
 		}
 		else{
 			// If it's a long LZW, most likely an Acrobat truncation issue
@@ -13171,6 +13269,9 @@ function InjectPDFHeaders(){
 	// Stuff in the final output
 	gTheABC.value = output;
 
+	// Set dirty
+	gIsDirty = true;
+
 	// Set the select point
 	gTheABC.selectionStart = 0;
     gTheABC.selectionEnd = 0;
@@ -13195,7 +13296,10 @@ function DoCeoltasTransform(doInverse){
 	}
 
 	gTheABC.value = ceoltasABCTransformer(gTheABC.value,doInverse);
-	
+
+	// Set dirty
+	gIsDirty = true;
+
 	RenderAsync(true,null);
 
 	// Idle the dialog
@@ -13236,6 +13340,9 @@ function DoInjectTablature_BC(){
 
 	gTheABC.value = boxTabGenerator(gTheABC.value);
 
+	// Set dirty
+	gIsDirty = true;
+
 	// Show the tab after an inject
 	gStripTab = false;
 	
@@ -13265,6 +13372,9 @@ function DoInjectTablature_CsD(){
 	gInjectTab_BoxStyle = "1";
 
 	gTheABC.value = boxTabGenerator(gTheABC.value);
+
+	// Set dirty
+	gIsDirty = true;
 
 	// Show the tab after an inject
 	gStripTab = false;
@@ -13300,6 +13410,9 @@ function DoInjectTablature_Anglo(){
 			
 			gTheABC.value = injectedABC;
 
+			// Set dirty
+			gIsDirty = true;
+
 			// Show the tab after an inject
 			gStripTab = false;
 			
@@ -13317,6 +13430,9 @@ function DoInjectTablature_Anglo(){
             DayPilot.Modal.alert(errorReport,{ theme: "modal_flat", top: 100, scrollWithPage: true }).then(function(){
 
 	   			gTheABC.value = injectedABC;
+
+				// Set dirty
+				gIsDirty = true;
 
 				// Show the tab after an inject
 				gStripTab = false;
@@ -13380,6 +13496,9 @@ function DoInjectTablature_Bamboo_Flute(){
 
 			gTheABC.value = bambooFluteTabGenerator(gTheABC.value);
 
+			// Set dirty
+			gIsDirty = true;
+
 			// Show the tab after an inject
 			gStripTab = false;
 			
@@ -13408,6 +13527,9 @@ function DoInjectTablature_Fiddle_Fingerings(){
 
 	gTheABC.value = fiddleFingeringsGenerator(gTheABC.value);
 
+	// Set dirty
+	gIsDirty = true;
+
 	// Show the tab after an inject
 	gStripTab = false;
 	
@@ -13434,6 +13556,9 @@ function DoInjectTablature_MD(){
 	gCurrentTab = "noten";
 
 	gTheABC.value = MDTablatureGenerator(gTheABC.value);
+
+	// Set dirty
+	gIsDirty = true;
 
 	// Show the tab after an inject
 	gStripTab = false;
@@ -16374,6 +16499,9 @@ function SwingExplorerInject(){
 		
 		gTheABC.value = theABC;
 
+		// Set dirty
+		gIsDirty = true;
+
 		// For future injects
 		gPlayerABCSwingExplorerOriginal = tuneWithSwing;
 
@@ -17137,6 +17265,9 @@ function InstrumentExplorerInject(){
 	
 	gTheABC.value = theABC;
 
+	// Set dirty
+	gIsDirty = true;
+
 	// For future injects
 	gPlayerABCInstrumentExplorerOriginal = gPlayerABCInstrumentExplorerInjected;
 
@@ -17733,6 +17864,9 @@ function GraceExplorerInject(){
 		theABC = theABC.replace(gPlayerABCGraceExplorerOriginal,tuneWithGrace);
 		
 		gTheABC.value = theABC;
+
+		// Set dirty
+		gIsDirty = true;
 
 		// For future injects
 		gPlayerABCGraceExplorerOriginal = tuneWithGrace;
@@ -21668,6 +21802,8 @@ function DoFileRead(file,doAppend){
 							
 							gTheABC.value += theText;
 
+							gIsDirty = true;
+
 							CleanSmartQuotes();
 
 						}
@@ -21705,6 +21841,10 @@ function DoFileRead(file,doAppend){
 
 								// If staff spacing had changed due to a share, restore it
 								RestoreSavedStaffSpacing();
+
+								// Clear the dirty flag
+								gIsDirty = false;
+
 							}
 
 							// Render the notation
@@ -21810,6 +21950,8 @@ function DoFileRead(file,doAppend){
 				
 				gTheABC.value += theText;
 
+				gIsDirty = true;
+
 				CleanSmartQuotes();
 
 			}
@@ -21847,6 +21989,10 @@ function DoFileRead(file,doAppend){
 
 					// If staff spacing had changed due to a share, restore it
 					RestoreSavedStaffSpacing();
+
+					// Clear dirty flag
+					gIsDirty = false;
+
 				}
 
 				// Render the notation
@@ -22221,6 +22367,9 @@ function DoDrop(e){
     e.stopPropagation ();
     e.preventDefault ();
 
+    // Mark as dirty
+    gIsDirty = true;
+
     var drop_files = e.dataTransfer.files;
 
 	let file = drop_files[0];
@@ -22500,6 +22649,9 @@ function MIDI_NoteOn(data){
 			var rightSide = gTheABC.value.substring(theSelectionEnd);
 
 			gTheABC.value = leftSide + theNoteName + rightSide;
+			
+			// Set dirty
+			gIsDirty = true;
 
 			gTheABC.selectionStart = theSelectionStart + theNoteName.length;
 
@@ -22523,6 +22675,9 @@ function MIDI_NoteOn(data){
 				var rightSide = gTheABC.value.substring(theSelectionEnd);
 
 				gTheABC.value = leftSide + rightSide;
+
+				// Set dirty
+				gIsDirty = true;
 
 				gTheABC.selectionStart = theSelectionStart - 1;
 
@@ -22866,6 +23021,7 @@ function FixIOS17(){
 		val = val.replaceAll("x:","X:");
 
 		gTheABC.value = val;
+		
 	}
 
 }
@@ -22888,6 +23044,42 @@ function AddTabCloseListener(){
 		//console.log("Adding tab close listener")
 
 	    window.addEventListener('beforeunload',theTabCloseListener);
+
+	}
+}
+
+
+//
+// File open intercept alert
+//
+function fileOpenIntercept(e){
+
+	var elem = document.getElementById("selectabcfile");
+
+	if (gIsDirty){
+
+		var thePrompt = '<p style="font-size:18pt;line-height:20pt;text-align:center;">You Have Unsaved Changes</p><p style="font-size:14pt;line-height:20pt;text-align:center;margin-top:32px;">Click "OK" to abandon your work and open a new file.<br/><br/>Click "Cancel" to go back.</p>';
+
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+
+		DayPilot.Modal.confirm(thePrompt,{ top:200, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+
+			if (!args.canceled){
+
+				// Click the file open input element
+				setTimeout(function(){
+
+					elem.click();
+
+				},100);
+
+			}
+		});
+	}
+	else{
+
+		elem.click();
 
 	}
 }
@@ -23257,6 +23449,9 @@ function DoStartup() {
 	document.getElementById('abc').oninput = 
 		debounce( () => {
 
+			// Set dirty
+			gIsDirty = true;
+		
 			if (!gForceFullRender){
 
 		    	OnABCTextChange();
@@ -23283,6 +23478,9 @@ function DoStartup() {
 			setTimeout(function(){
 
 				CleanSmartQuotes();
+
+				// Set dirty
+				gIsDirty = true;
 
 				if (gIsIOS){
 
