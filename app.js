@@ -13570,9 +13570,9 @@ function ShowMDTabWarningDialog(){
     // Keep track of dialogs
     sendGoogleAnalytics("dialog","ShowMDTabWarningDialog");
 
-    var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Some Tunes Did Not Have Complete DAD Solutions</p>';
+    var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Some Tunes Did Not Have Complete Tab Solutions</p>';
 
-    modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;">During the tablature generation the following tunes did not have complete DAD 6-1/2 fret solutions and as requested were excluded from the result:</p>';
+    modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;">During the tablature generation the following tunes did not have complete tablature solutions and as requested were excluded from the result:</p>';
 
     var nBadTunes = gExcludedFromMDSolution.length;
 
@@ -13603,8 +13603,10 @@ function DoInjectTablature_MD(){
 	sendGoogleAnalytics("inject_tablature","DoInjectTablature_MD");
 
  	const mountain_dulcimer_styles = [
-	    { name: "  Along High-D String", id: "0" },
-	    { name: "  Cross-String", id: "1" },
+	    { name: "  DAD - Along High-D String", id: "0" },
+	    { name: "  DAD - Cross-String", id: "1" },
+	    { name: "  DGD - Along High-D String", id: "2" },
+	    { name: "  DGD - Cross-String", id: "3" },
   	];
 
 	// Setup initial values
@@ -13615,9 +13617,9 @@ function DoInjectTablature_MD(){
 
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject Mountain Dulcimer Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#injecting_tablature" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
-	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject tablature for a DAD-tuned Mountain Dulcimer in the style selected below into all of the tunes in the ABC text area:</p>'},	  
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject tablature for a DAD or DGD-tuned Mountain Dulcimer in the style selected below into all of the tunes in the ABC text area:</p>'},	  
 	  {name: "Style:", id: "configure_dulcimer_style", type:"select", options:mountain_dulcimer_styles, cssClass:"configure_md_settings_select"}, 
-	  {name: "          Strip tunes from the result that have no complete DAD 6-1/2 fret solution", id: "strip_bad_tunes", type:"checkbox", cssClass:"configure_md_settings_form_text"},
+	  {name: "          Strip tunes from the result that have no complete tablature solution", id: "strip_bad_tunes", type:"checkbox", cssClass:"configure_md_settings_form_text"},
 	  {html: '<p style="margin-top:24px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},	  
 
 	];
@@ -21179,7 +21181,7 @@ function AdvancedControlsDialog(){
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">'
 	modal_msg  += '<input id="injectfiddlefingerings" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings()" type="button" value="Inject Fiddle Fingerings" title="Injects Fiddle fingerings tablature into the ABC">';
-	modal_msg  += '<input id="injectmd" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_MD()" type="button" value="Inject DAD Dulcimer Tab" title="Injects DAD-tuned Mountain Dulcimer tablature into the ABC">';
+	modal_msg  += '<input id="injectmd" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_MD()" type="button" value="Inject Dulcimer Tab" title="Injects Mountain Dulcimer tablature into the ABC">';
 	modal_msg  += '<input id="injectbambooflute" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Bamboo_Flute()" type="button" value="Inject Bamboo Flute Tab" title="Injects Bamboo flute tablature into the ABC">';
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-subdialog configure_box_advanced " onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"></p>';	
