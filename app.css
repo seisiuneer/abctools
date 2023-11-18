@@ -39,7 +39,7 @@ display: none;
 }
 
 .toggle-buttons label {
-margin-right:16px;
+margin-right:17px;
 }
 
 .toggle-buttons input:checked + label {
@@ -120,7 +120,7 @@ opacity: 0.4;
 
 .toggleadvancedcontrols{
 margin-left:0px;
-margin-right:23px;
+margin-right:24px;
 }
 
 @media (hover: hover) {
@@ -131,7 +131,7 @@ margin-right:23px;
 
 .togglesharecontrols{
 margin-left:0px;
-margin-right:22px;
+margin-right:23px;
 }
 
 @media (hover: hover) {
@@ -216,7 +216,7 @@ margin-right: 23px;
 
 .restorebutton{
 margin-left: 0px;
-margin-right: 23px;
+margin-right: 24px;
 }
 
 @media (hover: hover) {

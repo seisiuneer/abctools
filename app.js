@@ -3538,8 +3538,8 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
 			case "guitard":
 				postfix = "_DADGAD";
 				break;
-			case "bass":
-				postfix = "_Bass";
+			case "uke":
+				postfix = "_Ukelele";
 				break;
 			case "whistle":
 				postfix = "_Whistle";
@@ -3563,7 +3563,7 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
 			case "mandola":
 			case "guitare":
 			case "guitard":
-			case "bass":
+			case "uke":
 				if (gCapo > 0){
 					postfix = "_Capo_" + gCapo;
 				}
@@ -6799,8 +6799,8 @@ function GetABCJSParams(instrument){
 					theLabel = "DADGAD"+postfix;
 					break;
 
-				case "bass":
-					theLabel = "Bass"+postfix;
+				case "uke":
+					theLabel = "Ukelele"+postfix;
 					break;
 
 			}
@@ -6900,12 +6900,12 @@ function GetABCJSParams(instrument){
 			selectTypes: false,
 			format: commonFontFormat
 		}
-	} else if (instrument == "bass") {
+	} else if (instrument == "uke") {
 		params = {
 			tablature: [{
 				instrument: 'violin',
 				label: theLabel,
-				tuning: ['E', 'A', 'd', 'g'],
+				tuning: ['G,','C', 'E', 'A'],
 				highestNote: "f'",
 				capo: gCapo
 			}],
@@ -6945,6 +6945,16 @@ function GetABCJSParams(instrument){
 			format: commonFontFormat
 		}
 
+	}
+	else{
+		// Default for deprecated instruments
+		//console.log("Got deprecated instrument")
+		params = {
+			responsive: 'resize',
+			oneSvgPerLine: 'true',
+			selectTypes: false,
+			format: commonFontFormat
+		};
 	}
 
 	return params;
@@ -9804,7 +9814,7 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
 		case "mandola":
 		case "guitare":
 		case "guitard":
-		case "bass":
+		case "uke":
 
 			postfix = "&capo=" + capo;
 
@@ -10062,8 +10072,8 @@ function GenerateQRCode(e) {
 					}
 					postfix += ")";
 					break;
-				case "bass":
-					postfix = "<br/><br/>(Bass Tab";
+				case "uke":
+					postfix = "<br/><br/>(Ukelele Tab";
 					if (gCapo != 0){
 						postfix += " - Capo on "+gCapo;
 					}
@@ -12661,7 +12671,7 @@ function IdleAllowShowTabNames(){
 		case "mandola":
 		case "guitare":
 		case "guitard":
-		case "bass":
+		case "uke":
 			allowShowTabs = true;
 			break;
 
@@ -12757,8 +12767,8 @@ function processShareLink() {
 
 		var format = urlParams.get("format");
 
-		// No longer supporting bc or cd tablature, reset to notes
-		if ((format == "bc") || (format == "cd")){
+		// No longer supporting bc or cd tablature or bass, reset to notes
+		if ((format == "bc") || (format == "cd") || (format == "bass")){
 
 			format = "noten";
 			
