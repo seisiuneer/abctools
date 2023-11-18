@@ -192,7 +192,7 @@ function saveOutput() {
 
     var thePlaceholder = gSaveFilename;
 
-    var thePrompt = "Please enter a filename for your output ABC file:";
+    var thePrompt = "Please enter a filename for your results ABC file:";
 
     DayPilot.Modal.prompt(thePrompt, thePlaceholder, {
         theme: "modal_flat",
@@ -284,11 +284,11 @@ function copyOutputToClipboard() {
     copyToClipboard(textToCopy);
 
     // Give some feedback
-    document.getElementById("copybutton").innerHTML = "Output copied to the clipboard!";
+    document.getElementById("copybutton").innerHTML = "Results copied to the clipboard!";
 
     setTimeout(function() {
 
-        document.getElementById("copybutton").innerHTML = "Copy output to the clipboard";
+        document.getElementById("copybutton").innerHTML = "Copy Results to the clipboard";
 
     }, 1250);
 }
@@ -360,7 +360,7 @@ function testOutput() {
 
     if (abcText.length == 0) {
 
-        var prompt = makeCenteredPromptString("Nothing to test!");
+        var prompt = makeCenteredPromptString("Nothing to send!");
 
         DayPilot.Modal.alert(prompt, {
             theme: "modal_flat",
@@ -372,7 +372,7 @@ function testOutput() {
     }
 
     // Keep track of actions
-    sendGoogleAnalytics("action","test");
+    sendGoogleAnalytics("action","send");
 
     var shareName = "JSON_Search_Results";
 
@@ -382,7 +382,7 @@ function testOutput() {
 
     if (url.length > 8100) {
 
-        DayPilot.Modal.alert('<p style="font-size:18pt;line-height:32px;text-align:center;">Search results too long to transfer directly!<p style="font-size:14pt;line-height:32px;margin-top:30px">You may either:</br>Click "Copy Output to the clipboard" and Paste the ABC into the ABC Transcription Tools.<br/>or<br/>Click "Save Output to a file" and Open the ABC file from the ABC Transcription Tools.</p>', {
+        DayPilot.Modal.alert('<p style="font-size:18pt;line-height:32px;text-align:center;">Search Results Too Large to Send!<p style="font-size:14pt;line-height:32px;margin-top:30px">You may either:</br>Click "Copy Results to the clipboard" and Paste the ABC into the ABC Transcription Tools.<br/>or<br/>Click "Save Results to a file" and Open the ABC file from the ABC Transcription Tools.</p>', {
             theme: "modal_flat",
             top: 200
         });

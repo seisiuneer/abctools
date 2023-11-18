@@ -32,7 +32,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
     <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
 
-    <link rel="stylesheet" href="abc-search-engine.css?v=7"/>
+    <link rel="stylesheet" href="abc-search-engine.css?v=8"/>
     
   </head>
 
@@ -51,11 +51,11 @@
         <p>1)&nbsp;Enter the tune name you are looking for in the search box.</p>
         <p>2)&nbsp;If you only want versions that include chords, check "Only return tunes with chords"
         <p>3)&nbsp;Click "Search".</p>
-        <p>If found, the ABC for any matching tunes will appear in the "Search Result" box.</p>
-        <p>4)&nbsp;Save, Copy or Test the results:</p>
-        <p>Click "Save Output to a file" to save the results to a file.</p>
-        <p>Click "Copy Output to the clipboard" to copy the results to the system clipboard for pasting into other applications.</p>
-        <p>Click "Test Output in the ABC Transcription Tools" to open and test the results in my <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a></p>
+        <p>If found, the ABC for any matching tunes will appear in the "Search Results" box.</p>
+        <p>4)&nbsp;Save, Copy or Send the search results:</p>
+        <p>Click "Save Results to a file" to save the results to a file.</p>
+        <p>Click "Copy Results to the clipboard" to copy the results to the system clipboard for pasting into other applications.</p>
+        <p>Click "Send Results to the ABC Transcription Tools" to send the search results directly to my <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a>.</p>
         
       </div>
       
@@ -63,25 +63,25 @@
       
       <div style="text-align:left">
                 
-        <p style="margin:0px;margin-top:20px;margin-bottom:12px;">Search for Tune Name:&nbsp;&nbsp;<input style="width:600px;font-size:12pt;line-height:18px;padding:6px;" id="tuneNameToSearch" title="Tune name to search for in the JSON" autocomplete="off" autocorrect="off" placeholder="Tune name to search for here" /> </p>   
+        <p style="margin:0px;margin-top:20px;margin-bottom:12px;">Search for text in the tune name:&nbsp;&nbsp;<input style="width:600px;font-size:12pt;line-height:18px;padding:6px;" id="tuneNameToSearch" title="Tune name to search for in the JSON" autocomplete="off" autocorrect="off" placeholder="Tune name to search for here" /> </p>   
         <label>Only return tunes with chords?&nbsp;&nbsp;</label><input id="chords_only" type="checkbox"/>    
         <p style="margin-top:24px"><button id="searchJSON" class="btn btn-generate" onClick="searchJSON();" placeholder="Enter tune name here">Search</button><span id="status">&nbsp;&nbsp;&nbsp;Waiting for tune database to load...</span></p>
         
         <div style="margin-bottom: 18px;">
           
-          <h4 id="search_result">Search Result:</h4>
+          <h4 id="search_result">Search Results:</h4>
           
         </div>
         
-        <textarea id="output" placeholder="Output results will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea>
+        <textarea id="output" placeholder="Search results will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea>
         
         <p style="margin-top:20px;">
           
-          <button id="copybutton" class="btn btn-controls" onClick="copyOutputToClipboard();">Copy Output to the clipboard</button>
+          <button id="copybutton" class="btn btn-controls" onClick="copyOutputToClipboard();">Copy Results to the clipboard</button>
           
-          <button style="margin-left:24px;" class="btn btn-controls" onClick="saveOutput();">Save Output to a file</button>
+          <button style="margin-left:24px;" class="btn btn-controls" onClick="saveOutput();">Save Results to a file</button>
           
-          <button style="margin-left:24px;" class="btn btn-controls" onClick="testOutput();">Test Output in the ABC Transcription Tools</button>
+          <button style="margin-left:24px;" class="btn btn-controls" onClick="testOutput();">Send Results to the ABC Transcription Tools</button>
           
         </p>
         
@@ -99,8 +99,8 @@
     
   </body>
   
-  <script src="abc-search-engine.js?v=7" type="text/javascript"></script>
-  <script type="text/javascript" src="lz-string.min.js?v=7"></script>
-  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=7"></script>
+  <script src="abc-search-engine.js?v=8" type="text/javascript"></script>
+  <script type="text/javascript" src="lz-string.min.js?v=8"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=8"></script>
   
 </html>
