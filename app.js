@@ -3539,7 +3539,7 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
 				postfix = "_DADGAD";
 				break;
 			case "uke":
-				postfix = "_Ukelele";
+				postfix = "_Ukulele";
 				break;
 			case "whistle":
 				postfix = "_Whistle";
@@ -6800,7 +6800,7 @@ function GetABCJSParams(instrument){
 					break;
 
 				case "uke":
-					theLabel = "Ukelele"+postfix;
+					theLabel = "Ukulele"+postfix;
 					break;
 
 			}
@@ -10073,7 +10073,7 @@ function GenerateQRCode(e) {
 					postfix += ")";
 					break;
 				case "uke":
-					postfix = "<br/><br/>(Ukelele Tab";
+					postfix = "<br/><br/>(Ukulele Tab";
 					if (gCapo != 0){
 						postfix += " - Capo on "+gCapo;
 					}
