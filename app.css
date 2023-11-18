@@ -1073,6 +1073,17 @@ z-index:101;
 display:none;
 }
 
+.helpbutton{
+position:fixed;
+width:48px;
+height:48px;
+left:24px;
+top:16px;
+padding:4px;
+z-index:101;
+display:block;
+}
+
 #notation-placeholder{
 font-family:"Helvetica";
 font-size:12pt;
@@ -1194,6 +1205,11 @@ left:-5000px;
 	}
 }
 
+@media (hover: hover) {
+	.helpbutton:hover{
+	background: palegreen;
+	}
+}
 
 @media print {
   	.hidden-print {

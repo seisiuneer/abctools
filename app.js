@@ -247,6 +247,9 @@ var gIsFromShare = false;
 // Have there been changes since last open?
 var gIsDirty = false;
 
+// Is this the first run?
+var gIsFirstRun = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -7802,6 +7805,9 @@ function Render(renderAll,tuneNumber) {
 		// Hide the zoom control
 		document.getElementById("zoombutton").style.display = "none";
 
+		// Hide the help control
+		//document.getElementById("helpbutton").style.display = "none";
+
 		// Hide the spinner
 		document.getElementById("loading-bar-spinner").style.display = "none";
 
@@ -12473,6 +12479,7 @@ function DoMaximize(){
 	gTheNotation.style.float = "none";
 
 	document.getElementById("zoombutton").src = "img/zoomin.png"
+	//document.getElementById("helpbutton").style.display = "block";
 
 	gIsMaximized = true;
 
@@ -12502,6 +12509,7 @@ function DoMinimize(){
 	document.getElementById("notation-spacer").style.display = "block";
 
 	document.getElementById("zoombutton").src = "img/zoomout.png"
+	//document.getElementById("helpbutton").style.display = "none";
 
 	if (isDesktopBrowser()){
 		gTheNotation.style.display = "inline";
@@ -12576,6 +12584,7 @@ function DoMinimize(){
 	}
 
 }
+
 
 function ToggleMaximize(){
 
@@ -20831,7 +20840,7 @@ function SharingControlsDialog(){
 	modal_msg += '</textarea>';
 	modal_msg += '</p>';
 	modal_msg += '<p id="shareurlcaption">Share URL</p>';
-	modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="addautoplay" class="urlcontrols btn btn-urlcontrols" onclick="AddAutoPlay()" type="button" value="Add Auto-Play" title="Adds &play=1 to the ShareURL.&nbsp;&nbsp;Tune will open in the player."><input id="adddisableediting" class="urlcontrolslast btn btn-urlcontrols" onclick="AddDisableEditing()" type="button" value="Add Disable Editing" title="Adds &dx=1 to the ShareURL.&nbsp;&nbsp;Entering the editor from the fullscreen tune view will be disabled."></p>';
+	modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="addautoplay" class="urlcontrols btn btn-urlcontrols" onclick="AddAutoPlay()" type="button" value="Add Auto-Play" title="Adds &play=1 to the ShareURL.&nbsp;&nbsp;Tune will open in the player."><input id="adddisableediting" class="urlcontrolslast btn btn-urlcontrols" onclick="AddDisableEditing()" type="button" value="Add Disable Editing" title="Adds &dx=1 to the ShareURL.&nbsp;&nbsp;Entering the editor from the full screen tune view will be disabled."></p>';
 
 	modal_msg += '</div>';
 
@@ -22249,8 +22258,6 @@ function ToggleTopBar(){
 }
 
 
-
-
 //
 // Is this the first run?
 // 
@@ -22258,69 +22265,75 @@ function ToggleTopBar(){
 //
 function isFirstRun(){
 
-	// Display mode
-	var theTab = localStorage.abcTab;
+	if (gLocalStorageAvailable){
 
-	if (theTab){
+		// Display mode
+		var theTab = localStorage.abcTab;
+
+		if (theTab){
+
+			return false;
+
+		}
+
+		// PDF Tunes/page
+		var theTunesPerPage = localStorage.abcTunesPerPage;
+
+		if (theTunesPerPage){
+
+			return false;
+
+		}
+
+		// Page number
+		var thePageNumberLocation = localStorage.abcPageNumberLocation;
+
+		if (thePageNumberLocation){
+
+			return false;
+
+		}
+
+		// Page number on first page
+		var thePageNumberOnPageOne = localStorage.abcPageNumberOnPageOne;
+
+		if (thePageNumberOnPageOne){
+
+			return false;
+
+		}
+
+		// Staff spacing
+		var theStaffSpacing = localStorage.abcStaffSpacing;
+
+		if (theStaffSpacing){
+
+			return false;
+
+		}
+
+		// Top bar
+		var theHideTopBar = localStorage.abcHideTopBar;
+
+		if (theHideTopBar){
+
+			return false;
+		}
+
+		return true;
+
+	}
+	else{
 
 		return false;
 
 	}
-
-	// PDF Tunes/page
-	var theTunesPerPage = localStorage.abcTunesPerPage;
-
-	if (theTunesPerPage){
-
-		return false;
-
-	}
-
-	// Page number
-	var thePageNumberLocation = localStorage.abcPageNumberLocation;
-
-	if (thePageNumberLocation){
-
-		return false;
-
-	}
-
-	// Page number on first page
-	var thePageNumberOnPageOne = localStorage.abcPageNumberOnPageOne;
-
-	if (thePageNumberOnPageOne){
-
-		return false;
-
-	}
-
-	// Staff spacing
-	var theStaffSpacing = localStorage.abcStaffSpacing;
-
-	if (theStaffSpacing){
-
-		return false;
-
-	}
-
-	// Top bar
-	var theHideTopBar = localStorage.abcHideTopBar;
-
-	if (theHideTopBar){
-
-		return false;
-	}
-
-
-	return true;
 }
 
 // 
 // Restore the application state from local storage
 //
 function restoreStateFromLocalStorage(){
-
-	var bIsFirstTime = isFirstRun();
 
 	// Display mode
 	var theTab = localStorage.abcTab;
@@ -22398,87 +22411,13 @@ function restoreStateFromLocalStorage(){
 	}
 
 	// If first time, show a welcome message
-	if (bIsFirstTime){
+	if (gIsFirstRun){
 
 		UpdateLocalStorage();
 
 		showWelcomeScreen();
 
 	}
-
-}
-
-//
-// Show the first run welcome screen
-//
-function showWelcomeScreen(){
-
-	// Keep track of dialogs
-	sendGoogleAnalytics("dialog","showWelcomeScreen");
-
-    var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica"><strong>Read the <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> for instructions and demo videos.</strong></p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">To begin, type or paste tunes in ABC format into the text area.</p>'; 
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Each ABC tune <strong>must</strong> begin with an X: tag.</p>'; 
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Notation updates instantly as you make changes.</p>'; 
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Click <strong>Open</strong> to open an ABC or MusicXML file from your system.</p>';
-	   if (isDesktopBrowser()){
-	   		modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">You may also drag-and-drop a single ABC or MusicXML file on the editor area to add it.</p>';
-	   }
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Click <strong>Add</strong> to add a new ABC tune or tune template.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">Click <strong>Settings</strong> to set common tools settings and select the default instrument sounds and volumes to use when playing tunes.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica"><strong>Once ABC has been entered and notation is displayed:</strong></p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click the <strong>Zoom-Out</strong> arrows at the upper-right to view notation fullscreen.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click <strong>Save</strong> to save all the ABC text to an ABC text file.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click <strong>Export PDF</strong> to export your tunebook in PDF format.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click <strong>Copy All</strong> to copy all the ABC text to the clipboard.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">• Click <strong>Play</strong> to play the tune currently being edited.</p>';
-	   modal_msg += '<p style="font-size:12pt;line-height:15pt;font-family:helvetica">If you find this tool useful, here are my <strong><a href="tipjars.html" target="_blank" title="Buy Michael a beer!">Virtual Tip Jars</a>.</strong></p>';
-
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
-
-}
-
-//
-// Show the first run zoom screen
-//
-function showZoomInstructionsScreen(){
-
-	// Keep track of dialogs
-	sendGoogleAnalytics("dialog","showZoomInstructionsScreen");
-
-   	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
-   	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Since this is your first time using the tool, here is some useful information:</p>';
-   	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">In this view, you may scroll through the tune notation.</p>';
-       modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">If you would like to edit or create a PDF tunebook from the notation:</p>';
-  	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Click the <strong>Zoom-In</strong> arrows at the upper-right to open the ABC editor.</p>';
-   	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">In the ABC editor, click the <strong>Zoom-Out</strong> arrows to view notation fullscreen.</p>';
-   	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">All controls in the ABC editor have helpful tooltips.</p>';
-	   modal_msg  += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica">Read the <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> for instructions and demo videos.</p>';
-
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
-
-}
-
-//
-// Show the tip jar reminder
-//
-function TipJarReminderDialog(){
-
-	// Keep track of dialogs
-	sendGoogleAnalytics("dialog","TipJarReminderDialog");
-
-    var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Thank You!</p>';
- 	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;">I hope my ABC Transcription Tools have been useful to you!</p>';
-	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;margin-top:36px;">If so, please consider dropping something in one of my </p>';
-	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;"><strong><a href="tipjars.html" target="_blank" title="My Virtual Tip Jars">Virtual Tip Jars</a>.</strong></p>';
-	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;margin-top:36px;">Don\'t worry, I won\'t bug you again.</p>';
-	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;margin-top:36px;">Cheers and thanks!</p>';
-	   modal_msg += '<div style="text-align:center"><img style="width:150px;" src="img/michael.jpg"/></div>';
-	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;">Michael Eskin</p>';
-
-
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, scrollWithPage: (AllowDialogsToScroll()) });
 
 }
 
@@ -22962,6 +22901,106 @@ function initMIDI(){
 	}
 
 }
+
+
+//
+// Show the first run welcome screen
+//
+function showWelcomeScreen(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","showWelcomeScreen");
+
+    var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
+	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica"><strong>Please visit my <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> page for complete instructions and demo videos on how to use the tools.</strong></p>';
+	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">To begin, type or paste tunes in ABC format into the text area.</p>'; 
+	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Each ABC tune <strong>must</strong> begin with an X: tag.</p>'; 
+	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Notation updates instantly as you make changes to the ABC.</p>'; 
+	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Click "Open" to open an ABC or MusicXML file from your system.</p>';
+	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Click "Add" to add a new ABC tune or tune template.</p>';
+	   if (isDesktopBrowser()){
+	   		modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">You may also drag-and-drop a single ABC or MusicXML file on the editor area to add it.</p>';
+	   }
+	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Click "Settings" to set common tools settings and select the default instrument sounds and volumes to use when playing tunes.</p>';
+	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica"><strong>Once ABC has been entered and notation is displayed:</strong></p>';
+	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click the Zoom-Out arrows at the upper-right to view the notation full screen.</p>';
+	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Save" to save all the ABC text to an ABC text file.</p>';
+	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Export PDF to export your tunebook in PDF format.</p>';
+	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Play" to play or train on the tune currently being edited.</p>';
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, scrollWithPage: (AllowDialogsToScroll()) });
+
+}
+
+//
+// Show the first run zoom screen
+//
+function showZoomInstructionsScreen(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","showZoomInstructionsScreen");
+
+   	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
+   	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Since this is your first time using the tools, here is some useful information to help you get started:</p>';
+   	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">In this view, you may scroll through the tune notation.</p>';
+       modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">If you would like to edit the ABC for these tunes or create a PDF tunebook of the notation:</p>';
+  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the Zoom-In arrows at the upper-right to close the full screen notation view and open the ABC editor.</p>';
+  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">The ABC for all the tunes will be loaded in the editor.</p>';
+   	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">In the ABC editor, click the Zoom-Out arrows at the upper-right to view notation full screen.</p>';
+	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Please visit my <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> page for complete instructions and demo videos on how to use the tools.</p>';
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+
+}
+
+//
+// Show the tip jar reminder
+//
+function TipJarReminderDialog(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","TipJarReminderDialog");
+
+    var modal_msg  = '<p style="text-align:center;font-size:22pt;font-family:helvetica">Thank You!</p>';
+ 	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;">I hope my ABC Transcription Tools have been useful to you!</p>';
+	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;margin-top:36px;">If so, please consider dropping something in one of my </p>';
+	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;"><strong><a href="tipjars.html" target="_blank" title="My Virtual Tip Jars">Virtual Tip Jars</a>.</strong></p>';
+	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;margin-top:36px;">Don\'t worry, I won\'t bug you again.</p>';
+	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;margin-top:36px;">Cheers and thanks!</p>';
+	   modal_msg += '<div style="text-align:center"><img style="width:150px;" src="img/michael.jpg"/></div>';
+	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;">Michael Eskin</p>';
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 75, scrollWithPage: (AllowDialogsToScroll()) });
+
+}
+
+//
+// Show help when in fullscreen mode
+//
+function ShowHelp(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","ShowHelp");
+
+	if (gIsMaximized){
+
+	   	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">About the Full Screen Notation View</p>';
+	   	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">In this view, you may scroll through the tune notation.</p>';
+	       modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">If you would like to edit the ABC for these tunes or create a PDF tunebook of the notation:</p>';
+	  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the Zoom-In arrows at the upper-right to close the full screen notation view and open the tunes in the ABC editor.</p>';
+	  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">The ABC for all the tunes will be loaded in the editor.</p>';
+	   	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">In the ABC editor, click the Zoom-Out arrows at the upper-right to view the notation full screen.</p>';
+		   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Please visit my <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> page for complete instructions and demo videos on how to use the tools.</p>';
+
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+	}
+	else{
+		// Open the user guide in a new tab
+		window.open("https://michaeleskin.com/abctools/userguide.html");
+	}
+
+}
+
 
 //
 // Text Area resize observer
@@ -23552,6 +23591,7 @@ function DoStartup() {
 	if (gIsIPhone || gIsAndroid){
 
 		document.getElementById("zoombutton").style.right = "36px";
+		document.getElementById("helpbutton").style.left = "36px";
 	}
 
 	// On iPad, resize the zoom button
@@ -23561,6 +23601,11 @@ function DoStartup() {
 		document.getElementById("zoombutton").style.height = "36px";
 		document.getElementById("zoombutton").style.top = "8px";
 		document.getElementById("zoombutton").style.right = "8px"
+
+		document.getElementById("helpbutton").style.width = "36px";
+		document.getElementById("helpbutton").style.height = "36px";
+		document.getElementById("helpbutton").style.top = "8px";
+		document.getElementById("helpbutton").style.right = "8px"
 
 	}
 
@@ -23657,6 +23702,15 @@ function DoStartup() {
 
 	}
 
+	// Is browser storage available?
+	if (window.localStorage) {
+
+		gLocalStorageAvailable = true;
+
+	}
+
+	// Check if this is the first time the tool has run	
+	gIsFirstRun = isFirstRun();
 
 	// Set the initial tab to notation
 	//document.getElementById("b1").checked = true;
@@ -23677,6 +23731,12 @@ function DoStartup() {
 			ToggleMaximize();
 		};
 	
+	// Hook up the help button
+	document.getElementById("helpbutton").onclick = 
+		function() {
+			ShowHelp();
+		};
+
 	gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
 
 	// Clear the text entry area, but don't render
@@ -23689,9 +23749,7 @@ function DoStartup() {
 	resetMusicXMLImportOptions();
 
 	// Is local storage available
-	if (window.localStorage) {
-
-		gLocalStorageAvailable = true;
+	if (gLocalStorageAvailable) {
 
 		// Load the initial configuration settings from local storage
 		GetInitialConfigurationSettings();
@@ -23745,7 +23803,7 @@ function DoStartup() {
 	else{
 
 		// First time using the tool?
-		if (isFirstRun()){
+		if (gIsFirstRun){
 
 			// Show zoom instructions screen
 			showZoomInstructionsScreen();
