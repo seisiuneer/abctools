@@ -7588,6 +7588,7 @@ function Render(renderAll,tuneNumber) {
 		// Hide/Show the zoom control
 		if (gDisableEditFromPlayLink){
 			HideMaximizeButton();
+			HideHelpButton();
 		}
 		else{
 			ShowMaximizeButton();
@@ -12471,6 +12472,12 @@ function HideMaximizeButton(){
 
 }
 
+function HideHelpButton(){
+
+	document.getElementById("helpbutton").style.display = "none";
+
+}
+
 function DoMaximize(){
 
 	document.getElementById("noscroller").style.display = "none";
@@ -12479,7 +12486,6 @@ function DoMaximize(){
 	gTheNotation.style.float = "none";
 
 	document.getElementById("zoombutton").src = "img/zoomin.png"
-	//document.getElementById("helpbutton").style.display = "block";
 
 	gIsMaximized = true;
 
@@ -12509,7 +12515,6 @@ function DoMinimize(){
 	document.getElementById("notation-spacer").style.display = "block";
 
 	document.getElementById("zoombutton").src = "img/zoomout.png"
-	//document.getElementById("helpbutton").style.display = "none";
 
 	if (isDesktopBrowser()){
 		gTheNotation.style.display = "inline";
@@ -23605,7 +23610,7 @@ function DoStartup() {
 		document.getElementById("helpbutton").style.width = "36px";
 		document.getElementById("helpbutton").style.height = "36px";
 		document.getElementById("helpbutton").style.top = "8px";
-		document.getElementById("helpbutton").style.right = "8px"
+		document.getElementById("helpbutton").style.left = "8px"
 
 	}
 
