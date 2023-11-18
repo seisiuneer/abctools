@@ -508,7 +508,7 @@ var angloFingeringsGenerator = function (theABC, callback){
 
         var myMap = null;
 
-        var keyMatch = abcInput.match(/[kK]: *([A-G])([b#])? *(.*?)$/m);
+        var keyMatch = abcInput.match(/^K: *([A-G])([b#])? *(.*?)$/m);
         if (keyMatch == null || keyMatch.length < 3) {
             return null;
         }
@@ -525,7 +525,7 @@ var angloFingeringsGenerator = function (theABC, callback){
 
 
         angloLog("Got base key of '" + keySignatureBase + "' and extra of '" + keyExtra + "'");
-
+        
         // Determine musical mode
         if (keyExtra == "" ||
             keyExtra.search("maj") != -1 ||
@@ -1573,7 +1573,7 @@ var boxTabGenerator = function (theABC){
 
         var myMap = null;
 
-        var keyMatch = abcInput.match(/[kK]: *([A-G])([b#])? *(.*?)$/m);
+        var keyMatch = abcInput.match(/^K: *([A-G])([b#])? *(.*?)$/m);
         if (keyMatch == null || keyMatch.length < 3) {
             return null;
         }
@@ -2409,7 +2409,7 @@ var bambooFluteTabGenerator = function (theABC){
 
         var myMap = null;
 
-        var keyMatch = abcInput.match(/[kK]: *([A-G])([b#])? *(.*?)$/m);
+        var keyMatch = abcInput.match(/^K: *([A-G])([b#])? *(.*?)$/m);
         if (keyMatch == null || keyMatch.length < 3) {
             return null;
         }
@@ -3220,7 +3220,7 @@ var ceoltasABCTransformer = function (theABC,doInverse){
 
         var myMap = null;
 
-        var keyMatch = abcInput.match(/[kK]: *([A-G])([b#])? *(.*?)$/m);
+        var keyMatch = abcInput.match(/^K: *([A-G])([b#])? *(.*?)$/m);
         if (keyMatch == null || keyMatch.length < 3) {
             return null;
         }
@@ -3984,7 +3984,7 @@ var fiddleFingeringsGenerator = function (theABC){
 
         var myMap = null;
 
-        var keyMatch = abcInput.match(/[kK]: *([A-G])([b#])? *(.*?)$/m);
+        var keyMatch = abcInput.match(/^K: *([A-G])([b#])? *(.*?)$/m);
         if (keyMatch == null || keyMatch.length < 3) {
             return null;
         }
@@ -4591,7 +4591,7 @@ var MDTablatureGenerator = function (theABC){
 
         var myMap = null;
 
-        var keyMatch = abcInput.match(/[kK]: *([A-G])([b#])? *(.*?)$/m);
+        var keyMatch = abcInput.match(/^K: *([A-G])([b#])? *(.*?)$/m);
         if (keyMatch == null || keyMatch.length < 3) {
             return null;
         }
