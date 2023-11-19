@@ -504,6 +504,8 @@ var gIsChrome = false;
 
 var gTheParsedJSON = null;
 
+var showInstructions = false;
+
 //
 // Initialization 
 //
@@ -540,6 +542,23 @@ function DoStartup() {
         if (isChrome()){
             gIsChrome = true;
         }
+    }
+
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.display === "block") {
+                panel.style.display = "none";
+                document.getElementById("instructions_header").innerHTML = "Show Instructions";
+            } else {
+                panel.style.display = "block";
+                document.getElementById("instructions_header").innerHTML = "Hide Instructions";
+           }
+        });
     }
     
     // Read in the tune database

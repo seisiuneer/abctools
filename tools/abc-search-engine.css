@@ -123,6 +123,62 @@ width:130px;
 margin-left:0px;
 }
 
+.toc{
+margin-top:0px;
+margin-bottom:12px;
+}
+
+.accordion {
+font-size:14pt  !important;
+font-family:"Helvetica" !important;
+background-color: #eee;
+color: #000 !important;
+cursor: pointer !important;
+padding: 14px !important;
+width: 100% !important;
+text-align: center !important;
+border: none !important;
+outline: none !important;
+margin-bottom:5px;
+}
+
+.active {
+background-color: #eee;
+}
+
+@media not all and (pointer: coarse) {
+.accordion:hover {
+background-color: #9f9;
+}
+}
+
+.expandall{
+font-size:11pt  !important;
+font-family:"Helvetica" !important;
+width:120px !important;
+height:40px !important;
+padding:7px !important;
+border-radius:4px !important;
+border:0px !important;
+color:black !important;
+background-color: #eee;
+}
+
+@media not all and (pointer: coarse) {
+.expandall:hover {
+background-color: #9f9;
+}
+}
+
+.tocpanel {
+padding: 12px !important;
+padding-left: 60px !important;
+background-color: white !important;
+display: none;
+overflow: hidden !important;
+}
+
+
 
 .btn {
   --color: #000000;
