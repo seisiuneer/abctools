@@ -12482,11 +12482,23 @@ function HideMaximizeButton(){
 
 }
 
+//
+// Handle the help button
+//
+
+
 function HideHelpButton(){
 
 	document.getElementById("helpbutton").style.display = "none";
 
 }
+
+function ShowHelpButton(){
+
+	document.getElementById("helpbutton").style.display = "block";
+
+}
+
 
 function DoMaximize(){
 
@@ -23977,6 +23989,9 @@ function DoStartup() {
 
 		initMIDI();
 	}
+
+	// Show the help button
+	ShowHelpButton();
 
 	// And set the focus
     gTheABC.focus();

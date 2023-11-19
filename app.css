@@ -1101,7 +1101,7 @@ left:24px;
 top:16px;
 padding:4px;
 z-index:101;
-display:block;
+display:none;
 }
 
 #notation-placeholder{
