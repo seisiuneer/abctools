@@ -13,6 +13,26 @@ margin:0px;
 touch-action: pan-x pan-y;
 }
 
+ /* unvisited link */
+a:link {
+  color: black;
+}
+
+/* visited link */
+a:visited {
+  color: black;
+}
+
+/* mouse over link */
+a:hover {
+  color: #00BB00;
+}
+
+/* selected link */
+a:active {
+  color: black;
+} 
+
 #app-container{
 text-align: center;
 }

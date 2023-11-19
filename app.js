@@ -1300,7 +1300,7 @@ function SortDialog(){
 	};
 
 	const form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Sort by Specific Tag&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#sort_dialog" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Sort by Specific Tag&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#sort_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
 	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will sort the tunes based on the ABC tag you select:</p>'},	  
 	  {name: "Tag to sort by:", id: "configure_sort", type:"select", options:sorting_options, cssClass:"configure_sort_settings_select"}, 	  
 	  {html: '<p style="font-size:12pt;font-family:helvetica">&nbsp;</p>'},	  
@@ -8620,7 +8620,7 @@ function PDFTunebookBuilder(){
   	}
 
 	var form = [
-	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">Configure PDF Tunebook Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#configure_pdf_tunebook_features" target="_blank" style="text-decoration:none;">💡</a></span></p>'},  
+	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Configure PDF Tunebook Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#configure_pdf_tunebook_features" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},  
 	  {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Clicking "OK" will add PDF tunebook feature annotations to the top of your ABC.</p>'},  
 	  {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Leave any text fields blank for features you don\'t want in your PDF tunebook.</p>'},  
 	  {name: "PDF quality:", id: "pdfquality", type:"select", options:pdf_quality_list, cssClass:"configure_pdfquality_select"},
@@ -8889,7 +8889,7 @@ function AddABC(){
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","AddABC");
 
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">Add ABC Tunes, Templates, and PDF Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#add_templates_dialog" target="_blank" style="text-decoration:none;">💡</a></span></p>';
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Add ABC Tunes, Templates, and PDF Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#add_templates_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>';
 	modal_msg += '<div id="add-new-tune-dialog">';
 	modal_msg += '<p style="text-align:center;margin-top:28px;font-size:18px;margin-bottom:36px">Add Your Own Tunes from an ABC or MusicXML File</p>';
 	modal_msg += '<p style="text-align:center;">';
@@ -10433,7 +10433,7 @@ function InjectRepeatsAndClickTrackAll(){
 	};
 
 	const form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject Repeats and Two-Bar Click Intros&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#injectrepeatsandtwobarclickintros" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Repeats and Two-Bar Click Intros&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#injectrepeatsandtwobarclickintros" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
 	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject repeats into each tune in the ABC area by  appending the entire ABC for each tune to itself multiple times.</p>'},	  
 	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">You may also optionally inject a two-bar click intro before each tune.</p>'},	  
 	  {name: "How many times through each tune:", id: "configure_repeats", type:"number", cssClass:"configure_repeats_form_text"}, 
@@ -10687,7 +10687,7 @@ function InjectSectionHeader(){
 	};
 
 	var form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject PDF Tunebook Section Header&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#pdf_section_headers" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject PDF Tunebook Section Header&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#pdf_section_headers" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
 	  {html: '<p style="margin-top:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a PDF section header placeholder tune into the ABC.</p>'},  
 	  {html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">The section header will be displayed on its own line in the PDF Table of Contents and Index.</p>'}, 
 	  {html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Clicking on the section header in the PDF Table of Contents or Index will jump to the section.</p>'}, 
@@ -10758,7 +10758,7 @@ function InjectHeaderString(){
 	};
 
 	var form = [
-	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">Inject ABC Header String&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_controls" target="_blank" style="text-decoration:none;">💡</a></span></p>'},  
+	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Inject ABC Header String&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_controls" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},  
 	  {html: '<p style="margin-top:24px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">Clicking "OK" will inject the string into the header of your ABC tune(s).</p>'},  
 	  {name: "Header inject location:", id: "injectlocation", type:"select", options:inject_location_list, cssClass:"configure_injectheaderstring_select"},
 	  {name: "String to inject:", id: "injectstring", type:"text", cssClass:"configure_injectheaderstring_form_text"},
@@ -10906,7 +10906,7 @@ function InjectStaffWidth(){
 	};
 
 	var form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject Staff Width Directive&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#pdf_tunebook_spacing_overrides" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Staff Width Directive&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#pdf_tunebook_spacing_overrides" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
 	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a %%staffwidth directive into the ABC. </p>'},  
 	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">Larger numbers make the notation less tall. </p>'},  
 	  {name: "%%staffwidth value to inject?", id: "configure_staffwidth", type:"number", cssClass:"configure_staffwidth_form_text"}, 
@@ -11359,7 +11359,7 @@ function InjectAllMIDIParams(){
 	};
 
 	var form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject MIDI Soundfont, Melody, and Chords&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#selecting_the_instruments_for_playback" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject MIDI Soundfont, Melody, and Chords&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#selecting_the_instruments_for_playback" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
 	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a %abcjs_soundfont directive into the ABC.</p>'},  
 	  {name: "            Inject abcjs Soundfont", id: "configure_inject_soundfont", type:"checkbox", cssClass:"configure_midi_program_form_text"},
 	  {name: "%abcjs_soundfont value to inject:", id: "configure_soundfont", type:"select", options:sound_fonts_list, cssClass:"configure_soundfont_select"},
@@ -12052,7 +12052,7 @@ function InjectMetronome(){
 	};
 
 	var form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject Metronome&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#adding_a_metronome" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Metronome&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#adding_a_metronome" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
 	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This adds a meter-adaptive metronome into the ABC using %MIDI chordprog and %abcjs_boomchick directives.</p>'},  
 	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica"><strong>Note:&nbsp;&nbsp;This will strip any existing chords, MIDI chord programs, and MIDI bass/chord volumes from the ABC.</strong></p>'},  
 	  {name: "            Inject metronome into all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_metronome_form_text"},
@@ -13513,7 +13513,7 @@ function DoInjectTablature_Bamboo_Flute(){
 	};
 
 	const form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject Bamboo Flute Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://en.m.wikipedia.org/wiki/Numbered_musical_notation" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Bamboo Flute Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://en.m.wikipedia.org/wiki/Numbered_musical_notation" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
 	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject numeric notation tablature for a bamboo flute in the key selected below into all of the tunes in the ABC text area:</p>'},	  
 	  {name: "Bamboo flute key:", id: "configure_bamboo_flute_key", type:"select", options:bamboo_flute_keys, cssClass:"configure_box_settings_select"}, 
 	  {html: '<p style="margin-top:24px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},	  
@@ -13640,7 +13640,7 @@ function DoInjectTablature_MD(){
 	};
 
 	const form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Inject Mountain Dulcimer Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#injecting_tablature" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Mountain Dulcimer Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#injecting_tablature" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
 	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject tablature for a DAD or DGD-tuned Mountain Dulcimer in the style selected below into all of the tunes in the ABC text area:</p>'},	  
 	  {name: "Style:", id: "configure_dulcimer_style", type:"select", options:mountain_dulcimer_styles, cssClass:"configure_md_settings_select"}, 
 	  {name: "          Strip tunes from the result that have no complete tablature solution", id: "strip_bad_tunes", type:"checkbox", cssClass:"configure_md_settings_form_text"},
@@ -14278,7 +14278,7 @@ function BatchMP3Export(){
 	};
 
 	const form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Export All Tunes as MP3&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#export_all_tunes_as_mp3" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Export All Tunes as MP3&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#export_all_tunes_as_mp3" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
 	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will export all the tunes in the ABC area as .MP3 files with one or more repeats.</p>'},	  
 	  {name: "How many times to repeat each tune in the MP3:", id: "configure_repeats", type:"number", cssClass:"configure_repeats_form_text"}, 
 	  {name: "            Inject a two-bar style-appropriate click intro before each tune", id: "configure_inject_click", type:"checkbox", cssClass:"configure_repeats_form_text"},
@@ -15841,7 +15841,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 		modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioMIDI();" type="button" value="Save Audio or MIDI" title="Brings up a dialog where you can export the tune in .WAV, .MP3, or MIDI formats">'
 		modal_msg += '<input id="abcplayer_trainer" class="btn btn-looper abcplayer_trainer" onclick="TuneTrainerLaunchFromPlayer()" type="button" value="Start Tune Trainer" title="Opens the Tune Trainer for practicing tunes with increasing tempos">';
 		modal_msg += '<input id="abcplayer_metronomebutton" class="abcplayer_metronome button btn btn-metronome" onclick="ToggleMetronome();" type="button" value="Enable Metronome" title="Enables/disables the metronome">'
-		modal_msg += '<a id="abcplayer_help" href="https://michaeleskin.com/abctools/userguide.html#playing_your_tunes" target="_blank" style="text-decoration:none;" title="Learn more about the Player">💡</a>';
+		modal_msg += '<a id="abcplayer_help" href="https://michaeleskin.com/abctools/userguide.html#playing_your_tunes" target="_blank" style="text-decoration:none;" title="Learn more about the Player">?</a>';
 		modal_msg += '</p>';
 
 	   	// Scale the player for larger screens
@@ -16868,7 +16868,7 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 			modal_msg += '<input id="swingexplorertest" class="swingexplorertest button btn btn-swingexplorertest" onclick="SwingExplorerRegenerate();" type="button" value="Reload Tune with Changed Swing Settings" title="Reloads the tune into the player with the entered swing factor and offset">';
 			modal_msg += '<input id="swingexplorerinject" class="swingexplorerinject button btn btn-swingexplorerinject" onclick="SwingExplorerInject();" type="button" style="margin-right:0px;" value="Inject Swing into the ABC" title="Injects the current swing factor and offset into the tune ABC">';
 			modal_msg += '</p>';
-			modal_msg += '<a id="swingexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#swing_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the Swing Explorer">💡</a>';
+			modal_msg += '<a id="swingexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#swing_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the Swing Explorer">?</a>';
 		}
 		else{
 
@@ -16881,7 +16881,7 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 			modal_msg += '<input id="swingexplorertest" class="swingexplorertest button btn btn-swingexplorertest" onclick="SwingExplorerRegenerate();" type="button" value="Reload Tune with Changed Swing Settings" title="Reloads the tune into the player with the entered swing factor and offset">';
 			modal_msg += '<input id="swingexplorerinject" class="swingexplorerinject button btn btn-swingexplorerinject" onclick="SwingExplorerInject();" type="button" style="margin-right:0px;" value="Inject Swing into the ABC" title="Injects the current swing factor and offset into the tune ABC">';
 			modal_msg += '</p>';
-			modal_msg += '<a id="swingexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#swing_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the Swing Explorer">💡</a>';
+			modal_msg += '<a id="swingexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#swing_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the Swing Explorer">?</a>';
 
 		}
 
@@ -17697,7 +17697,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 			modal_msg += '</p>';
 			modal_msg += '</div>';
 
-			modal_msg += '<a id="instrumentexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#midi_instrument_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the MIDI Instrument Explorer">💡</a>';
+			modal_msg += '<a id="instrumentexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#midi_instrument_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the MIDI Instrument Explorer">?</a>';
 		}
 		else{
 			modal_msg += '<div class="configure_instrumentexplorer_text" style="text-align:center;margin:0px;margin-top:36px">';
@@ -17714,7 +17714,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 			modal_msg += '</p>';
 			modal_msg += '</div>';
 
-			modal_msg += '<a id="instrumentexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#midi_instrument_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the MIDI Instrument Explorer">💡</a>';			
+			modal_msg += '<a id="instrumentexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#midi_instrument_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the MIDI Instrument Explorer">?</a>';			
 		}
 
 	   	// Scale the player for larger screens
@@ -18228,7 +18228,7 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 		modal_msg += '<input id="graceexplorertest" class="graceexplorertest button btn btn-graceexplorertest" onclick="GraceExplorerRegenerate();" type="button" value="Reload Tune with Changed Grace Duration" title="Reloads the tune into the player with the entered grace duration">';
 		modal_msg += '<input id="graceexplorerinject" class="graceexplorerinject button btn btn-graceexplorerinject" onclick="GraceExplorerInject();" type="button" style="margin-right:0px;" value="Inject Grace Duration into the ABC" title="Injects the current grace duration into the tune ABC">';
 		modal_msg += '</p>';
-		modal_msg += '<a id="graceexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#grace_duration_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the Grace Duration Explorer">💡</a>';
+		modal_msg += '<a id="graceexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#grace_duration_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the Grace Duration Explorer">?</a>';
 
 	   	// Scale the player for larger screens
 		var windowWidth = window.innerWidth;
@@ -19127,7 +19127,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 		modal_msg += '<input id="looperreset" class="looperreset button btn btn-looperreset" onclick="TuneTrainerReset();" type="button" value="Apply Tune Trainer Settings and Reload the Player" title="Applies the entered tune trainer settings and reloads the player">';
 		modal_msg += '<input id="looper_metronomebutton" class="looper_metronome button btn btn-metronome" onclick="ToggleTuneTrainerMetronome();" type="button" value="Enable Metronome" title="Enables/disables the metronome">'
 		modal_msg += '</p>';
-		modal_msg += '<a id="looperhelp" href="https://michaeleskin.com/abctools/userguide.html#tune_trainer" target="_blank" style="text-decoration:none;" title="Learn more about the Tune Trainer">💡</a>';
+		modal_msg += '<a id="looperhelp" href="https://michaeleskin.com/abctools/userguide.html#tune_trainer" target="_blank" style="text-decoration:none;" title="Learn more about the Tune Trainer">?</a>';
 		modal_msg += '<p id="looperstatus"></p>';
 		modal_msg += '<div id="looperstatusbar"></div>';
 		modal_msg += '<div id="looperstatusbaroverlay"></div>';
@@ -20084,7 +20084,7 @@ function ConfigureMusicXMLImport(){
 	// Copy the original options object for later possible restore
 	var originalMusicXMLImportOptions = JSON.parse(JSON.stringify(gMusicXMLImportOptions));
 
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;"">Configure MusicXML Import&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#musicxml" target="_blank" style="text-decoration:none;">💡</a></p>';
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Configure MusicXML Import&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#musicxml" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></p>';
 
     modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Bars-per-line:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_bpl" type="text" pattern="\d+" title="Default: 3"/></div>\n';
     modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Characters-per-line:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_cpl" type="text" pattern="\d+" title="Default: 0 - ignore"/></div>\n';
@@ -20302,7 +20302,7 @@ function ConfigureAngloFingerings(){
 	// Save off the original fingerings
 	var gAngloButtonNamesOriginal = gAngloButtonNames.slice();
 
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">Configure Anglo Concertina Tablature Button Names&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#injecting_box_or_anglo_concertina_tablature" target="_blank" style="text-decoration:none;">💡</a></span></p>';
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Configure Anglo Concertina Tablature Button Names&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#injecting_box_or_anglo_concertina_tablature" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>';
 	modal_msg += '<div id="anglo-button-names-dialog">';
 	modal_msg += '<table style="margin-bottom:24px;text-align:center;">\n';
 	modal_msg += '<tr>\n';
@@ -20426,7 +20426,7 @@ function ConfigureTablatureSettings(){
 	};
 
 	const form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Tablature Injection Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#injecting_tablature" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Tablature Injection Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#injecting_tablature" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
 	  {html: '<p style="margin-top:18px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>Tablature Font Settings:</strong></p>'},	  
 	  {name: "Font family (Recommended: Palatino):", id: "configure_font_family", type:"text", cssClass:"configure_tab_settings_form_text_wide"},
 	  {name: "Tablature font size (Recommended: 10):", id: "configure_tab_font_size", type:"text", cssClass:"configure_tab_settings_form_text"},
@@ -20727,7 +20727,7 @@ function ConfigureFonts(){
 	};
 
 	const form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:50px;">Configure ABC Rendering Fonts&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#configure_fonts" target="_blank" style="text-decoration:none;">💡</a></span></p>'},
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Configure ABC Rendering Fonts&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#configure_fonts" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
 	  {name: "Title font (Default: Palatino 18):", id: "configure_titlefont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
 	  {name: "Subtitle font (Default: Palatino 13):", id: "configure_subtitlefont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
 	  {name: "Info font (Default: Palatino 13):", id: "configure_infofont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
@@ -20841,7 +20841,7 @@ function SharingControlsDialog(){
 	sendGoogleAnalytics("dialog","SharingControlsDialog");
 
 	// Moving the advanced controls to their own dialog
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">ABC Transcription Tools Sharing Controls&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#sharing_controls" target="_blank" style="text-decoration:none;">💡</a></span></p>';
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">ABC Transcription Tools Sharing Controls&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#sharing_controls" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>';
 	modal_msg += '<div id="sharing-controls-dialog">';
 	modal_msg += '<p style="margin-top:28px;">';
 	modal_msg += '<input id="testurl" class="urlcontrols btn btn-urlcontrols" onclick="TestShareURL()" type="button" value="Test Share URL" title="Opens the Share URL in a new tab">';
@@ -21051,7 +21051,7 @@ function PDFExportDialog(){
 	};
 
 	var form = [
-	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">Export PDF Tunebook&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#export_pdf_tunebook" target="_blank" style="text-decoration:none;">💡</a></span></p>'}, 
+	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Export PDF Tunebook&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#export_pdf_tunebook" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'}, 
 	  {html:'<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Configure PDF Tunebook Features" title="Easily add features to your PDF tunebook including: Title Page, Table of Contents, Index, Page Headers, Page Footers, playback links, and custom QR Code"></p>'},
 	  {name: "Paper Size:", id: "configure_papersize", type:"select", options:papersize_list, cssClass:"configure_pdf_papersize_select"},
 	  {name: "Tune Layout:", id: "configure_tunelayout", type:"select", options:tunelayout_list, cssClass:"configure_pdf_tunelayout_select"},
@@ -21166,7 +21166,7 @@ function AdvancedControlsDialog(){
 	gInAdvancedSettingsDialog = true;
 
 	// Moving the advanced controls to their own dialog
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:50px;">ABC Transcription Tools Advanced Controls&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_controls" target="_blank" style="text-decoration:none;">💡</a></span></p>';
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">ABC Transcription Tools Advanced Controls&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_controls" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>';
 	modal_msg += '<div id="advanced-controls-dialog">';
 	
 	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">Show/Hide ABC Features</p>'
@@ -21348,7 +21348,7 @@ function ConfigureToolSettings(e) {
   	// Disallowing auto snapshots on mobile
 
 	var form = [
-	  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:50px;">ABC Transcription Tools Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#settings_dialog" target="_blank" style="text-decoration:none;">💡</a></span></p>'}
+	  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;">ABC Transcription Tools Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#settings_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'}
 	];
 
 	if (isDesktopBrowser()){
