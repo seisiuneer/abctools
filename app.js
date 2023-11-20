@@ -13643,6 +13643,7 @@ function DoInjectTablature_MD(){
 	    { name: "  DAD - Cross-String", id: "1" },
 	    { name: "  DGD - Along High-D String", id: "2" },
 	    { name: "  DGD - Cross-String", id: "3" },
+	    { name: "  DAA - Along High-D String", id: "4" },
   	];
 
 	// Setup initial values
@@ -13653,7 +13654,7 @@ function DoInjectTablature_MD(){
 
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Mountain Dulcimer Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#injecting_tablature" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
-	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject tablature for a DAD or DGD-tuned Mountain Dulcimer in the style selected below into all of the tunes in the ABC text area:</p>'},	  
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject tablature for a DAD, DGD, or DAD-tuned Mountain Dulcimer in the style selected below into all of the tunes in the ABC text area:</p>'},	  
 	  {name: "Style:", id: "configure_dulcimer_style", type:"select", options:mountain_dulcimer_styles, cssClass:"configure_md_settings_select"}, 
 	  {name: "          Strip tunes from the result that have no complete tablature solution", id: "strip_bad_tunes", type:"checkbox", cssClass:"configure_md_settings_form_text"},
 	  {html: '<p style="margin-top:24px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},	  
