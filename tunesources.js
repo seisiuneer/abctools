@@ -71,6 +71,9 @@ function searchJSON() {
 
     tuneNameToSearch = tuneNameToSearch.toLowerCase();
 
+    tuneNameToSearch = tuneNameToSearch.replace("'","");
+    tuneNameToSearch = tuneNameToSearch.replace('"',"");
+
     document.getElementById('output').value = "";
 
     var returnOnlyWithChords = document.getElementById('chords_only').checked;
@@ -90,6 +93,9 @@ function searchJSON() {
         var thisTitle = theInfo["T"];
 
         thisTitle = thisTitle.toLowerCase();
+
+        thisTitle = thisTitle.replace("'","");
+        thisTitle = thisTitle.replace('"',"");
 
         if (thisTitle.indexOf(tuneNameToSearch) != -1){
 
