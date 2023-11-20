@@ -37,135 +37,103 @@
   <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
   <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
   <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-  <style>
-    p {
-    font-size:14pt;
-    font-family:"Helvetica";
-    line-height: 28px;
-    }
 
-    h1 {
-    font-size:16pt;
-    font-family:"Helvetica";
-    margin-bottom:32px;
-    }
+  <link rel="stylesheet" href="tunesources.css?v=10"/>
 
-    hr {
-    margin-top:24px;
-    margin-bottom:24px;
-    }
+  </head>
 
-    body {
-    padding:10px;
-    text-align: center;
-    }
+  <body>
+    
+    <div id="maindiv">
+      
+      <div>
+        <div style="text-align: center;">
+        <font face="Comic Sans MS" size="5" id="pagetitle">ABC Transcription Tools ABC and MusicXML Tune Sources</font><br>
+        <p>This ABC to notation converter was developed by <a href="https://michaeleskin.com" target="_blank">Michael Eskin</a>.</p>
+        <p>Full project source may be found on: <a href="https://github.com/seisiuneer/abctools" target="_blank">GitHub</a>.</p>
+        <p>Try it out here: <a href="https://michaeleskin.com/abc" target="_blank">ABC Transcription Tools</a>.</p>
+        </div>
+        <hr>
+       
+        <div style="text-align: center;">
+          <h2>ABC Tune Search Engine</h1>
+          <h2>for Gavin Heneghan's 20,000+ Tune Database</h2>
+        </div>
 
-    #maindiv{
-    position: absolute;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, 0%);
-    text-align: left;
-    width: 800px;
-    background-color: white;
-    }
-
-    .image_holder{
-      text-align: center;
-  }  
-
-</style>
-
-</head>
-<body>
-<div id="maindiv">
-  <div style="text-align: center;">
-  <font face="Comic Sans MS" size="5" id="pagetitle">ABC Transcription Tools ABC and MusicXML Tune Sources</font><br>
-  <p>This ABC to notation converter was developed by <a href="https://michaeleskin.com" target="_blank">Michael Eskin</a>.</p>
-  <p>Full project source may be found on: <a href="https://github.com/seisiuneer/abctools" target="_blank">GitHub</a>.</p>
-  <p>Try it out here: <a href="https://michaeleskin.com/abc" target="_blank">ABC Transcription Tools</a>.</p>
-  </div>
-  <hr>
-  <p>I have my own tune database search engine available using Gavin Heneghan's 20,000+ Tune Database at:</p>
-  <p style="text-align: center;"><a href="https://michaeleskin.com/tools/abc-search-engine.html" target="_blank">ABC Tune Search Engine</a></p>
-  <p>On that page you can search for tunes by text anywhere in the tune title, and optionally filter the results to only include versions of tunes with chords.</p>
-  <p>You can save the results to an ABC file, copy the tunes to the clipboard, or launch the tunes directly into my ABC Transcription Tools.</p>
-  <hr>
-  <p><strong>The following sites are great starting locations for finding tunes in ABC format:</strong></p>
-  <p><a href="https://thesession.org/tunes" target="_blank">The Session</a> - Jeremy Keith's legendary site with thousands of tunes in multiple versions.</p>
-  <p><a href="http://abctunesearch.com/" target="_blank">The Reverend's ABC Tune Search</a> - Pete Strickler's full featured tune search engine.</p>
-  <p><a href="https://abcnotation.com/tunes" target="_blank">ABC Notation</a> - Has a vast number of linked sites with collections of ABC files. It also has a <a href="https://abcnotation.com/search" target="_blank">tune search engine.</a></p>
-  <p><a href="http://john-chambers.us/~jc/cgi/abc/tunefind" target="_blank">JC's ABC Tune Finder</a> - John Chamber's comprehensive search engine for tunes.</p>
-  <p><a href="http://www.norbeck.nu/abc/index2.asp" target="_blank">Henrik Norbeck's ABC Tunes</a> - A massive collection of tunes for traditional Irish and Swedish music.</p>
-  <hr>
-  <p><strong>The following sites are great starting locations for finding tunes in MusicXML format:</strong></p>
-  <p><a href="http://www.mscorelib.com/index.htm" target="_blank">MScoreLib - Music Library in MusicXML</a> - A huge collection of classical pieces in MusicXML format.</p>
-  <p><a href="https://www.musicxml.com/music-in-musicxml/" target="_blank">Music in MusicXML</a> - Links to several large collections of music in MusicXML format.</p>
-  <hr>
-  <p><strong>ABC Specification</strong></p>
-  <p>The full specification for ABC notation can be found at:</p>
-  <p><a href="http://abcnotation.com/wiki/abc:standard:v2.1" target="_blank">The ABC Music Standard 2.1 (Dec 2011)</a></p>
-  <hr>
-  <p><strong>ABC 2.1 Quick Reference Card</strong></p>
-  <p>Download this handy ABC 2.1 Quick Reference Card put together by Stephen Merrony: </p>
-  <p><a href="https://michaeleskin.com/documents/ABCquickRefv0_6.pdf" target="_blank">ABC Quick Reference Card</a></p>
-  <hr>
-</div>
-
-</body>
-
-<script>
-
-    //
-    // Are we on iOS?
-    //
-    function isIOS() {
-
-        if (/iPad|iPhone|iPod/.test(navigator.platform)) {
-            return true;
-        } else {
-            return navigator.maxTouchPoints &&
-                navigator.maxTouchPoints > 2 &&
-                /MacIntel/.test(navigator.platform);
-        }
-    }
-
-    function DoStartup() {
-
-        // 
-        // iOS Styling adaptation
-        //
-
-        var gIsIOS = isIOS();
-
-        if (gIsIOS) {
-            // Fix the title font
-            var elem = document.getElementById("pagetitle");
-            elem.size = 5;
-            elem.style.fontFamily = "Helvetica";
-        }
-
-    }
-
-    //
-    // Wait for the document to be ready, then fire a function
-    //
-
-    function WaitForReady(fn) {
-      if (document.readyState !== 'loading') {
-        fn();
-        return;
-      }
-
-      document.addEventListener('DOMContentLoaded', fn);
-
-    }
-
-    //
-    // Wait for the document to be ready, then startup
-    //
-
-    WaitForReady(DoStartup);  
-
-</script>
+        <hr>
+        
+        <button class="accordion" title="Click to expand/collapse this section" id="instructions_header">Show Instructions</button>
+        <div class="tocpanel">
+          <p>1)&nbsp;Enter the tune name you are looking for in the search box.</p>
+          <p>2)&nbsp;If you only want versions that include chords, check "Only return tunes with chords"</p>
+          <p>3)&nbsp;Click "Search".</p>
+          <p>If found, the ABC for any matching tunes will appear in the "Search Results" box.</p>
+          <p>4)&nbsp;Save, Copy or Send the search results:</p>
+          <p>Click "Save Results to a file" to save the results to a file.</p>
+          <p>Click "Copy Results to the clipboard" to copy the results to the system clipboard for pasting into other applications.</p>
+          <p>Click "Send Results to the ABC Transcription Tools" to send the search results directly to my <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a>.</p>
+        </div>
+        
+      </div>
+      
+      <hr>
+      
+      <div style="text-align:left">
+                
+        <p style="margin:0px;margin-top:20px;margin-bottom:12px;">Search for text in the tune name:&nbsp;&nbsp;<input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="tuneNameToSearch" title="Enter your search text here" autocomplete="off" autocorrect="off" placeholder="Enter your search text here" onchange="searchJSON();"/> </p>   
+        <label>Only return tunes with chords?&nbsp;&nbsp;</label><input id="chords_only" type="checkbox"/>    
+        <p style="margin-top:24px"><button id="searchJSON" class="btn btn-generate" onClick="searchJSON();" title="Start search">Search</button><span id="status">&nbsp;&nbsp;&nbsp;Waiting for tune database to load...</span></p>
+        
+        <div style="margin-bottom: 18px;">
+          
+          <h4 id="search_result">Search Results:</h4>
+          
+        </div>
+        
+        <textarea id="output" placeholder="Search results will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea>
+        
+        <p style="margin-top:20px;text-align: center;">
+          
+          <button id="copybutton" class="btn btn-controls" onClick="copyOutputToClipboard();">Copy Results to the clipboard</button>
+          
+          <button style="margin-left:24px;" class="btn btn-controls" onClick="saveOutput();">Save Results to a file</button>
+          
+          <button style="margin-left:24px;" class="btn btn-controls" onClick="testOutput();">Send Results to the ABC Transcription Tools</button>
+          
+        </p>
+        
+      </div>
+            
+      <hr>
+      <h4 style="text-align:center">Additional Sources for Tunes in ABC Format</h4>
+      <p><a href="https://thesession.org/tunes" target="_blank">The Session</a> - Jeremy Keith's legendary site with thousands of tunes in multiple versions.</p>
+      <p><a href="http://abctunesearch.com/" target="_blank">The Reverend's ABC Tune Search</a> - Pete Strickler's full featured tune search engine.</p>
+      <p><a href="https://abcnotation.com/tunes" target="_blank">ABC Notation</a> - Has a vast number of linked sites with collections of ABC files. It also has a <a href="https://abcnotation.com/search" target="_blank">tune search engine.</a></p>
+      <p><a href="http://john-chambers.us/~jc/cgi/abc/tunefind" target="_blank">JC's ABC Tune Finder</a> - John Chamber's comprehensive search engine for tunes.</p>
+      <p><a href="http://www.norbeck.nu/abc/index2.asp" target="_blank">Henrik Norbeck's ABC Tunes</a> - A massive collection of tunes for traditional Irish and Swedish music.</p>
+      <hr>
+      <h4 style="text-align:center">Additional Sources for Tunes in MusicXML Format</h4>
+      <p><a href="http://www.mscorelib.com/index.htm" target="_blank">MScoreLib - Music Library in MusicXML</a> - A huge collection of classical pieces in MusicXML format.</p>
+      <p><a href="https://www.musicxml.com/music-in-musicxml/" target="_blank">Music in MusicXML</a> - Links to several large collections of music in MusicXML format.</p>
+      <hr>
+      <div style="text-align:center"> 
+        <h4 style="text-align:center">ABC Specification</strong></h4>
+        <p>The full specification for ABC notation can be found at:</p>
+        <p><a href="http://abcnotation.com/wiki/abc:standard:v2.1" target="_blank">The ABC Music Standard 2.1 (Dec 2011)</a></p>
+        <hr>
+        <h4 style="text-align:center">ABC 2.1 Quick Reference Card</strong></h4>
+        <p>Download this handy ABC 2.1 Quick Reference Card put together by Stephen Merrony: </p>
+        <p><a href="https://michaeleskin.com/documents/ABCquickRefv0_6.pdf" target="_blank">ABC Quick Reference Card</a></p>
+      </div>
+      
+      <hr style="margin-bottom:50px">
+      
+    </div>
+    
+  </body>
+  
+  <script src="tunesources.js?v=10" type="text/javascript"></script>
+  <script type="text/javascript" src="lz-string.min.js?v=10"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=10"></script>
+  
 </html>
