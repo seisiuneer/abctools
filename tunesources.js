@@ -561,6 +561,24 @@ function DoStartup() {
         });
     }
     
+    if (gIsIOS) {
+        // Fix the title font
+        var elem = document.getElementById("pagetitle");
+        elem.size = 5;
+        elem.style.fontFamily = "Helvetica";
+    }
+    else{
+
+        if (!gIsAndroid){
+
+            // Hook up the onchange for the search field on only 
+            var elem = document.getElementById("tuneNameToSearch");
+
+            elem.onchange=searchJSON;
+            
+        }
+    }
+   
     // Read in the tune database
     fetch('https://michaeleskin.com/tools/JSON/abctunes_gavin_heneghan_10nov2023.json')
     .then((response) => response.json())
