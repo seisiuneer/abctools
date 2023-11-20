@@ -13643,7 +13643,7 @@ function DoInjectTablature_MD(){
 	    { name: "  DAD - Cross-String", id: "1" },
 	    { name: "  DGD - Along High-D String", id: "2" },
 	    { name: "  DGD - Cross-String", id: "3" },
-	    { name: "  DAA - Along High-D String", id: "4" },
+	    { name: "  DAA - Along A String", id: "4" },
   	];
 
 	// Setup initial values
