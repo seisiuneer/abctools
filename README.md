@@ -50,4 +50,5 @@
 <hr>
 <p><strong>Project Contributors:</strong></p>
 <p>Thank you to Philip McGarvey for the share link export feature addition!</p>
+<p>Thank you to Gavin Heneghan for allowing me to use his 20,000+ tune database for the tune search page.</p>
 <hr>
