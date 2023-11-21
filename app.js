@@ -20010,7 +20010,7 @@ var gMusicXMLImportOptions = {};
 function resetMusicXMLImportOptions(){
 
 	gMusicXMLImportOptions = {
-		b:3,
+		b:4,
 		n:0,
 		c:0,
 		v:0,
@@ -20036,7 +20036,7 @@ function resetMusicXMLImportOptions(){
 function setMusicXMLOptions () {
 
     gMusicXMLImportOptions.u = $('#musicxml_unfld').prop ('checked') ? 1 : 0;
-    gMusicXMLImportOptions.b = parseInt ($('#musicxml_bpl').val () || 3);
+    gMusicXMLImportOptions.b = parseInt ($('#musicxml_bpl').val () || 4);
     gMusicXMLImportOptions.n = parseInt ($('#musicxml_cpl').val () || 0);
     gMusicXMLImportOptions.c = parseInt ($('#musicxml_crf').val () || 0);
     gMusicXMLImportOptions.d = parseInt ($('#musicxml_den').val () || 4);
