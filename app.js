@@ -6818,6 +6818,7 @@ function GetABCJSParams(instrument){
 		params = {
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
+			expandToWidest: 'true',
 			selectTypes: false,
 			format: commonFontFormat
 		};
@@ -6826,6 +6827,7 @@ function GetABCJSParams(instrument){
 		params = {
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
+			expandToWidest: 'true',
 			selectTypes: false,
 			format: commonFontFormat
 		};
@@ -6841,6 +6843,7 @@ function GetABCJSParams(instrument){
 			}],
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
+			expandToWidest: 'true',
 			selectTypes: false,
 			format: commonFontFormat
 		}
@@ -6855,6 +6858,7 @@ function GetABCJSParams(instrument){
 			}],
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
+			expandToWidest: 'true',
 			selectTypes: false,
 			format: commonFontFormat
 		}	
@@ -6869,6 +6873,7 @@ function GetABCJSParams(instrument){
 			}],
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
+			expandToWidest: 'true',
 			selectTypes: false,
 			format: commonFontFormat
 		}		
@@ -6883,6 +6888,7 @@ function GetABCJSParams(instrument){
 			}],
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
+			expandToWidest: 'true',
 			selectTypes: false,
 			format: commonFontFormat
 		}
@@ -6897,6 +6903,7 @@ function GetABCJSParams(instrument){
 			}],
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
+			expandToWidest: 'true',
 			selectTypes: false,
 			format: commonFontFormat
 		}
@@ -6911,6 +6918,7 @@ function GetABCJSParams(instrument){
 			}],
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
+			expandToWidest: 'true',
 			selectTypes: false,
 			format: commonFontFormat
 		}
@@ -6926,6 +6934,7 @@ function GetABCJSParams(instrument){
 			}],
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
+			expandToWidest: 'true',
 			selectTypes: false,
 			format: commonFontFormat
 		}
@@ -6941,6 +6950,7 @@ function GetABCJSParams(instrument){
 			}],
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
+			expandToWidest: 'true',
 			selectTypes: false,
 			format: commonFontFormat
 		}
