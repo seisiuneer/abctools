@@ -361,10 +361,14 @@
                     <p class="toc"><a style="text-decoration:none;" href="#learningtunes">Learning New Tunes Part-by-Part Using ABC</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#clicktrack">Adding a Two-Bar Click Intro to Tunes</a></p>
                 </div>
+
+                <button class="accordion" title="Click to expand/collapse this section">abcjs 6.2.3 Specific Issues and Workarounds</button>
+                <div class="tocpanel">
+                    <p class="toc"><a style="text-decoration:none;" href="#expandtowidest">Opting-out of "Expand to Widest" Layout</a></p>
+                </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">iOS-Specific Topics</button>
                 <div class="tocpanel">
-                    
                     <p class="toc"><a style="text-decoration:none;" href="#iphone_ipad_chord_entry_issue_fix">iPhone/iPad Chord Entry Issue Fix</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#goodreader"> Using Interactive PDF Tunebooks with GoodReader</a></p>
                 </div>
@@ -2121,6 +2125,15 @@
             <p style="text-align: center;"><a href="https://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuDCB7RAbApgTwOQGcoCVx800UoBZcAFgHoqoAZcCGgDigGlwBRAE0QBOUeOBgCAhrwCWAFymIAduLIBSKCvEAjAMYArHAH0ciAK4LeAM0UywFlCam916sAFUcaMOIVgAgtu1BaUUwYzNeMAB3AAs0HwAHFHEMKQUAczAZWLAAW1JEXgwQdRVyAEkAETKweIFENIkcsAAmaDUVNw8vH39AgWCfMPMo2ISklPTM7O1ooJxilVLK6pmg2vqWtpdfACF4W0EpzxkzNAAaME1ELNz8wu6I1f755w7iUkzIxEvxATBtFBSbQAazAqRkdSgADUQNAYc0SuUqjU6g1xE0IM12AA9eAALwAzLjCQAfYlE-EEknQ2FQPGsEn06kkkAAIm4OXZOx2vjAO2aYG4OxJ7M5-L8OzAvB5AHERRVWQAxGjcGgVPzqnYVXwVeVKlVqjV83wyxXU0Vcnl8gVCkUc1ni3ZStAWNJ68SuzzS3xmiBgVkKircRXqi3cAkVEAkgUBgPB0P27jNNIWEnMtn2tCSgAUBO5kqzKbtnKz4rSaGlet8NGrvMVvO19arNZrYHrztd5szObz3LAhdTFtLkt4LrdsY95alPN9-sD8f9ieTFijMfnIcXnO4VBJAF0oEA&format=noten&ssp=0&pdf=multi_a4&pn=none&fp=yes&name=two-bar-click-intro-demo&play=1" target="_blank">Reel with Two-Bar Click Intro</a></p>
             <p style="text-align: center;"><a href="https://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuMAsCmYDSSDOCoCVwCkBLAcygFlwA2AegA4oAZcCOqVcAcQFsBDAKygBheACceAE0IAXQgHsAdjwA2UAKRqeAIwDGfDAH0MsgK7zxAMwVSw5pccLi1asAFUMKHvLABBbdtkikgpgRqbiYADuyF4ADko8AJ6E8sRgUshgXEhKsuIJIGqqZACSACLFYDEissRiXGAATNDqqq7uYJ4+fgFBXqFmkdGV8UkpaRnaCD0YBapFZRWTPVU1jc3O3gBCgjYB4yhSpkgANGCasumZ2bkJHQNLgTNOrUSpUhGyZzwiYNpKhNoANZgZJSapQABqIGgUIahRK5Uq1VqPHqEAa9AAeoIAF4NbF4gA+BPxuIahMh0KgOMohJpFMJIAARBwWd4OGAOFtCUzSkytt4fJtxDzWUhxOFiBKeYImeLNmBeUzxJtvBSWWyOVzNjy+QKhSKNeLJSrdfyOAAxRWsjgAZhADOZrNVCpVhtlSGIKCVKrVGpdYBVHDN+vZaqg-q2geFMrlXutypjTNlxHMqSVPGIPFFTM0qbAxHtFKAA&format=noten&ssp=0&pdf=multi_a4&pn=none&fp=yes&name=two-bar-click-intro-demo&play=1" target="_blank">Jig with Two-Bar Click Intro</a></p>
             <p>You can add an ABC template containing all of these examples from the <strong>Add</strong> dialog and then copy and paste them into your tunes.</p>
+            <hr class="hidden-print" id="expandtowidest">
+            <h1 class="page_break_always">Opting-out of "Expand to Widest" Layout<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>The original abcjs version 6.2.2 I used for the early versions of the tool would sometimes leave ragged right edges on staves, particulary for staves with many or changing numbers of measures per staff or on complex tunes brought into the tool through MusicXML import.</p>
+            <p>As of 20 November 2023, with the release of abcjs version 6.2.3, a significant update to the library, I defaulted to expanding all staves to the widest in the tune, which produces very clean and aligned right staff edges in nearly all cases.</p>
+            <p>Unfortunately, if you are using %%center for centered text annotation or have additional T: subtitle tags in the body of the tune ABC, the text will not be properly centered with the "expand to widest" feature enabled.</p>
+            <p>This is a bug in abcjs 6.2.3 that I have not been able to work around.</p>
+            <p>To help with these cases, I've added a new first-class (starts with %%) ABC directive that can be put into any tune to force abcjs to use the original abcjs 6.2.2 layout calculation system:</p>
+            <p class="code">%%noexpandtowidest</p>
+            <p>Put this anywhere in a tune to use the original staff width calculation and layout solution for that tune. </p>
             <hr class="hidden-print" id="iphone_ipad_chord_entry_issue_fix">
             <h1 class="page_break_always">iPhone/iPad Chord Entry Issue Fix<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>If you are trying to enter ABC chords, for example "D" or "Am", on an iPhone or iPad, iOS will, by default stick in "smart quotes" instead of standard double quotes.</p>

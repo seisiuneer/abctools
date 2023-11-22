@@ -960,6 +960,7 @@ function renderOne(div, tune, params, tuneNumber, lineOffset) {
     div.style.overflowY = "auto";
     div = div.children[0]; // The music should be rendered in the inner div.
   } else div.innerHTML = "";
+
   var engraver_controller = new EngraverController(div, params);
   engraver_controller.engraveABC(tune, tuneNumber, lineOffset);
   tune.engraver = engraver_controller;
@@ -4341,6 +4342,12 @@ var parseDirective = {};
       //          straightflags: { type: "boolean", optional: true },
       //          stretchstaff: { type: "boolean", optional: true },
       //          titleformat: { type: "string", optional: true },
+      // MAE Start of Change
+      case "noexpandtowidest":
+        //console.log("Got noexpandtowidest");
+        tune.formatting.noexpandtowidest = true;
+        break;
+      // MAE End of Change
       case "bagpipes":
         tune.formatting.bagpipes = true;
         break;
@@ -23871,7 +23878,7 @@ var EngraverController = function EngraverController(paper, params) {
   this.responsive = params.responsive;
   this.space = 3 * spacing.SPACE;
   this.initialClef = params.initialClef;
-  this.expandToWidest = !!params.expandToWidest;
+  this.expandToWidest = !!params.expandToWidest;  
   this.scale = params.scale ? parseFloat(params.scale) : 0;
   this.classes = new Classes({
     shouldAddClasses: params.add_classes
@@ -24055,15 +24062,35 @@ EngraverController.prototype.engraveTune = function (abcTune, tuneNumber, lineOf
   // Create all of the element objects that will appear on the page.
   this.constructTuneElements(abcTune);
 
-  // Do all the positioning, both horizontally and vertically
-  var maxWidth = layout(this.renderer, abcTune, this.width, this.space, this.expandToWidest);
-
   //Set the top text now that we know the width
-  if (this.expandToWidest && maxWidth > this.width + 1) {
-    // MAE 21 Nov 2023
-    //console.log("Wide tune: "+abcTune.metaText.title); 
-    abcTune.topText = new TopText(abcTune.metaText, abcTune.metaTextInfo, abcTune.formatting, abcTune.lines, maxWidth, this.renderer.isPrint, this.renderer.padding.left, this.renderer.spacing, this.getTextSize);
+
+  // MAE Start of Change to allow legacy layout on a per-tune basis with %%noexpandtowidest
+
+  // Default to expand to widest
+  var doExpandToWidest = true;
+
+  // Is it disallowed in this specific tune? (Opt-out)
+  if (abcTune.formatting.noexpandtowidest){
+
+    doExpandToWidest = false;
+  
   }
+
+  // Do all the positioning, both horizontally and vertically
+  //var maxWidth = layout(this.renderer, abcTune, this.width, this.space, this.expandToWidest);
+  var maxWidth = layout(this.renderer, abcTune, this.width, this.space, doExpandToWidest);
+
+  if (doExpandToWidest && maxWidth > this.width + 1) {
+
+    //if (this.expandToWidest && maxWidth > this.width + 1) {
+
+    //console.log("Got wide tune: "+abcTune.metaText.title);
+
+    abcTune.topText = new TopText(abcTune.metaText, abcTune.metaTextInfo, abcTune.formatting, abcTune.lines, maxWidth, this.renderer.isPrint, this.renderer.padding.left, this.renderer.spacing, this.getTextSize);
+
+  }
+
+  // MAE End of Change
 
   // Deal with tablature for staff
   if (abcTune.tablatures) {
@@ -25171,19 +25198,34 @@ var layout = function layout(renderer, abctune, width, space, expandToWidest) {
   var abcLine;
   // Adjust the x-coordinates to their absolute positions
   var maxWidth = width;
-  for (i = 0; i < abctune.lines.length; i++) {
-    abcLine = abctune.lines[i];
-    if (abcLine.staff) {
-      // console.log("=== line", i)
-      var thisWidth = setXSpacing(renderer, maxWidth, space, abcLine.staffGroup, abctune.formatting, i === abctune.lines.length - 1, false);
-      // console.log(thisWidth, maxWidth)
-      if (Math.round(thisWidth) > Math.round(maxWidth)) {
-        // to take care of floating point weirdness
-        maxWidth = thisWidth;
-        if (expandToWidest) i = -1; // do the calculations over with the new width
+
+  // MAE Start of Change
+  // If not expanding to widest, use original algorithm
+  if (expandToWidest){
+    for (i = 0; i < abctune.lines.length; i++) {
+      abcLine = abctune.lines[i];
+      if (abcLine.staff) {
+        // console.log("=== line", i)
+        var thisWidth = setXSpacing(renderer, maxWidth, space, abcLine.staffGroup, abctune.formatting, i === abctune.lines.length - 1, false);
+        // console.log(thisWidth, maxWidth)
+        if (Math.round(thisWidth) > Math.round(maxWidth)) {
+          // to take care of floating point weirdness
+          maxWidth = thisWidth;
+          if (expandToWidest) i = -1; // do the calculations over with the new width
+        }
       }
     }
   }
+  else{
+    for (i = 0; i < abctune.lines.length; i++) {
+      abcLine = abctune.lines[i];
+      if (abcLine.staff) {
+        setXSpacing(renderer, width, space, abcLine.staffGroup, abctune.formatting, i === abctune.lines.length - 1, false);
+        if (abcLine.staffGroup.w > maxWidth) maxWidth = abcLine.staffGroup.w;
+      }
+    }
+  }
+  // MAE End of Change
 
   // Layout the beams and add the stems to the beamed notes.
   for (i = 0; i < abctune.lines.length; i++) {
