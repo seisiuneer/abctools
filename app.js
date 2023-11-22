@@ -250,9 +250,6 @@ var gIsDirty = false;
 // Is this the first run?
 var gIsFirstRun = false;
 
-// Expand to widest?
-var gExpandToWidest = false;
-
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
