@@ -12784,6 +12784,22 @@ var rendererFactory;
     this.noteOnAndChannel = "%9" + this.channel.toString(16);
     this.noteOffAndChannel = "%8" + this.channel.toString(16);
   };
+  Midi.prototype.setChannelMute = function (number, pan) {
+    this.channel = number;
+    var ccPrefix = "%00%B" + this.channel.toString(16);
+    // Reset midi, in case it was set previously.
+    this.track += ccPrefix + "%79%00"; // Reset All Controllers
+    this.track += ccPrefix + "%40%00"; // Damper pedal
+    this.track += ccPrefix + "%5B%30"; // Effect 1 Depth (reverb)
+    // Translate pan as -1 to 1 to 0 to 127
+    if (!pan) pan = 0;
+    pan = Math.round((pan + 1) * 64);
+    this.track += ccPrefix + "%0A" + toHex(pan, 2); // Pan
+    this.track += ccPrefix + "%07%00"; // Channel Volume
+
+    this.noteOnAndChannel = "%9" + this.channel.toString(16);
+    this.noteOffAndChannel = "%8" + this.channel.toString(16);
+  };
   var HALF_STEP = 4096; // For the pitch wheel - (i.e. the distance from C to C#)
   Midi.prototype.startNote = function (pitch, loudness, cents) {
     this.track += toDurationHex(this.silencelength); // only need to shift by amount of silence (if there is any)
@@ -15941,6 +15957,12 @@ function SynthController() {
         self.midiBuffer.start();
         self.timer.start(self.percent);
         if (self.control) self.control.pushPlay(true);
+        // MAE Start of Play
+        if (gStartPlayCallback != null){
+          gStartPlayCallback();
+          gStartPlayCallback = null;
+        }
+        // MAE End of change
       } else {
         self.pause();
       }
