@@ -24100,6 +24100,7 @@ EngraverController.prototype.engraveTune = function (abcTune, tuneNumber, lineOf
 
   // Do all the positioning, both horizontally and vertically
   //var maxWidth = layout(this.renderer, abcTune, this.width, this.space, this.expandToWidest);
+
   var maxWidth = layout(this.renderer, abcTune, this.width, this.space, doExpandToWidest);
 
   if (doExpandToWidest && maxWidth > this.width + 1) {
@@ -24108,8 +24109,57 @@ EngraverController.prototype.engraveTune = function (abcTune, tuneNumber, lineOf
 
     //console.log("Got wide tune: "+abcTune.metaText.title);
 
+    //debugger;
+
     abcTune.topText = new TopText(abcTune.metaText, abcTune.metaTextInfo, abcTune.formatting, abcTune.lines, maxWidth, this.renderer.isPrint, this.renderer.padding.left, this.renderer.spacing, this.getTextSize);
 
+    if ((abcTune.lines)&&(abcTune.lines.length > 0)){
+
+      var nlines = abcTune.lines.length;
+
+      for (var i=0;i<nlines;++i){
+
+        var entry = abcTune.lines[i];
+
+        if (entry.nonMusic){
+
+          if ((entry.nonMusic.rows) && (entry.nonMusic.rows.length > 0)){
+
+            var nRows = entry.nonMusic.rows.length;
+
+            for (var j=0;j<nRows;++j){
+
+              var thisRow = entry.nonMusic.rows[j];
+
+              // Recenter the element if it's a subtitle or centered text 
+              if (thisRow.left){
+
+                if (entry.subtitle){
+
+                  //console.log("Got centered subtitle: "+entry.subtitle.text);
+
+                  thisRow.left = (maxWidth/2) + this.renderer.padding.left;
+
+                }
+                else
+                if ((entry.text)&&(entry.text.length>0)){
+
+                  if (entry.text[0].center){
+
+                    //debugger;
+
+                    //console.log("Got centered text element: "+entry.text[0].text);
+
+                    thisRow.left = (maxWidth/2) + this.renderer.padding.left;
+
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   // MAE End of Change
