@@ -743,6 +743,31 @@ padding:12px;
 	}
 }
 
+#abcplayer_wideplayerbutton{
+height:42px;
+padding:12px;
+margin-left:36px;
+}
+
+@media (hover: hover) {
+	.abcplayer_wideplayerbutton:hover{
+	background: palegreen;
+	}
+}
+
+#abcplayer_widetrainerbutton{
+height:42px;
+padding:12px;
+margin-left:36px;
+width:auto !important;
+}
+
+@media (hover: hover) {
+	.abcplayer_widetrainerbutton:hover{
+	background: palegreen;
+	}
+}
+
 #abcplayer_export{
 height:42px;
 padding:12px;
@@ -2854,11 +2879,19 @@ padding: 3px;
   --background-color: #C8ECFE;
 }
 
-
 .btn-metronome{
   --color: black;
   --background-color: #ABF2E4;
+}
 
+.btn-wide-player{
+  --color: black;
+  --background-color: #E5CAF2;
+}
+
+.btn-wide-trainer{
+  --color: black;
+  --background-color: #E5CAF2;
 }
 
 /* For Anglo concertina button naming dialog */

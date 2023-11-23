@@ -12161,32 +12161,6 @@ function InjectMetronome(){
 }
 
 //
-// Play the ABC
-//
-function PlayABC(){
-
-	if (gAllowCopy){
-
-		// Play back locally
-
-		// Try to find the current tune
-		var theSelectedABC = findSelectedTune();
-
-		if (theSelectedABC == ""){
-			// This should never happen
-			return;
-		}
-
-		// Pre-process the ABC to inject any requested programs or volumes
-		theSelectedABC = PreProcessPlayABC(theSelectedABC);
-
-		// Play back locally in-tool	
-		PlayABCDialog(theSelectedABC,null,null,null);
-
-	}
-}
-
-//
 // Copy the ABC to the clipboard
 //
 // If shift key is pressed, copy the text and open the ABC in editor.drawthedots.com
@@ -12945,7 +12919,7 @@ function processShareLink() {
 				var theProcessedABC = PreProcessPlayABC(gTheABC.value);
 
 				// Play back locally in-tool	
-				PlayABCDialog(theProcessedABC, null, null, null);
+				PlayABCDialog(theProcessedABC, null, null, null, false);
 
 			}
 
@@ -13814,6 +13788,7 @@ var gTheOKButton = null;
 var gTheMuteHandle = null;
 var gPlayMetronome = false;
 var gIsFirstTimeUsingMetronome = false;
+var gUseWidePlayer = false;
 
 //
 // Return the .WAV or .MP3 filename
@@ -14370,7 +14345,7 @@ function DoBatchMP3Export(repeatCount,doClickTrack){
 
 					gTheBatchMP3ExportStatusText.innerText = "Exporting .MP3 for tune "+ (currentTune+1) + " of "+totalTunesToExport+": "+title;
 
-					PlayABCDialog(thisTune,callback,currentTune,null);
+					PlayABCDialog(thisTune,callback,currentTune,null,false);
 
 				}, 1000);
 
@@ -14470,7 +14445,7 @@ function DoBatchMP3Export(repeatCount,doClickTrack){
 	gTheBatchMP3ExportStatusText.innerText = "Exporting .MP3 for tune "+ (currentTune+1) + " of "+totalTunesToExport+": "+title;
 
 	// Kick off the conversion cascade
-	PlayABCDialog(thisTune,callback,currentTune,null);
+	PlayABCDialog(thisTune,callback,currentTune,null,false);
 
 	return true;
 
@@ -15481,7 +15456,7 @@ function ToggleMetronome(){
 
 						DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) }).then(
 							function(){
-								PlayABCDialog(gPlayerABC,null,null,false);
+								PlayABCDialog(gPlayerABC,null,null,gUseWidePlayer);
 							});
 
 						return;
@@ -15491,18 +15466,35 @@ function ToggleMetronome(){
 				}
 
 				// Launch the player with the metronome injected tune
-				PlayABCDialog(gPlayerABCMetronome,null,null,true);
+				PlayABCDialog(gPlayerABCMetronome,null,null,true,gUseWidePlayer);
 
 			}
 			else{
 
 				// Launch the original tune
-				PlayABCDialog(gPlayerABC,null,null,false);
+				PlayABCDialog(gPlayerABC,null,null,false,gUseWidePlayer);
 
 			}
 
 		},250);		
 	}
+
+}
+
+//
+// Toggle wide player view
+//
+function ToggleWidePlayer(){
+
+	gUseWidePlayer = !gUseWidePlayer;
+
+	gTheOKButton.click();
+
+	setTimeout(function() {
+		// Launch the original tune
+		PlayABCDialog(gPlayerABC,null,null,false,gUseWidePlayer);
+
+	},250);		
 
 }
 
@@ -15567,39 +15559,43 @@ function CursorControl() {
 				// Get the SVG element's position relative to the container
 				const svgRect = cursor.getBoundingClientRect();
 
-				//
-				// Original bottom scroll code, didn't have any slop
-				//
-				// // Check if the SVG element is above or below the container's visible area
-				// if (svgRect.top < gPlayerContainerRect.top) {
-
-				// 	// Scroll up to make the SVG element visible at the top
-				// 	gPlayerHolder.scrollTop += svgRect.top - gPlayerContainerRect.top;
-
-				// } else if (svgRect.bottom > gPlayerContainerRect.bottom) {
-
-				// 	// Scroll down to make the SVG element visible at the bottom
-				// 	//gPlayerHolder.scrollTop += svgRect.bottom - gPlayerContainerRect.bottom + 16;
-
-				// }
-
 				var containerHeight = gPlayerContainerRect.bottom-gPlayerContainerRect.top;
 
 				// Keep several lines visible under the currently playing line
-				var theScrollTarget = 3*(containerHeight)/4;
+
+				var theScrollTarget;
+
+				if (gUseWidePlayer) {
+
+					theScrollTarget = 2*(containerHeight)/3;
+
+				}
+				else{
+
+					theScrollTarget = 3*(containerHeight)/4;
+
+				}
 
 				// Check if the SVG element is above or below the container's visible area
 				if (svgRect.top < gPlayerContainerRect.top) {
+
+					//console.log("top case");
 
 					// Scroll up to make the SVG element visible at the top
 					gPlayerHolder.scrollTop += svgRect.top - gPlayerContainerRect.top;
 
 				} else if (svgRect.bottom > theScrollTarget) {
 
+					//console.log("bottom case");
+
 					var cursorHeight = svgRect.bottom - svgRect.top;
+
+					//console.log("cursorHeight "+cursorHeight+" scrollTarget "+theScrollTarget);
 
 					// This prevents very tall scores from jumping up and down on each cursor event
 					if (cursorHeight <= theScrollTarget){
+						
+						//console.log("normal case");
 
 						// Scroll down to make the SVG element visible at the bottom with additional space underneath
 						gPlayerHolder.scrollTop += svgRect.bottom - theScrollTarget;
@@ -15634,13 +15630,141 @@ function CursorControl() {
 
 }
 
+//
+// Find the largest rectangle of a specific aspect ratio that fit in another rectangle
+//
+function findLargestRectangle(containerWidth, containerHeight, targetAspectRatio) {
+
+	// console.log("findLargestRectangle containerWidth: "+containerWidth+" containerHeight: "+containerHeight+" targetAspectRatio: "+targetAspectRatio);
+
+    // Initialize variables to store the best rectangle found
+    var bestRectangle = { width: 0, height: 0 };
+
+    // Iterate through all possible rectangle widths
+    for (var width = 1; width <= containerWidth; width++) {
+
+        // Calculate corresponding height based on the target aspect ratio
+        var height = width / targetAspectRatio;
+
+        // Ensure the calculated height is within the container bounds
+        if (height <= containerHeight) {
+                          
+            // console.log("best width: "+width);
+            // console.log("best height: "+height);
+
+	        bestRectangle.width = width;
+	        
+	        bestRectangle.height = height;
+
+        }
+    }
+
+    return bestRectangle;
+}
+
+
+//
+// Calculate the optimal size for wide play mode
+//
+function calc_wide_play_width(offset){
+	
+	//debugger;
+
+	var tuneIndex = getTuneRangeForTranspose().start;
+
+	//console.log("calc_wide_play_width: tune #"+tuneIndex);
+
+	var theTuneHolder = document.getElementById("notation"+tuneIndex);
+
+	if (theTuneHolder){
+
+		var theTuneDivs = theTuneHolder.getElementsByTagName('div');
+
+		var theTargetSVGDiv;
+
+		if (theTuneDivs && (theTuneDivs.length > 0)){
+
+			if (theTuneDivs.length > 1){
+				theTargetSVGDiv = theTuneDivs[1];
+			}
+			else{
+				theTargetSVGDiv = theTuneDivs[0];
+			}
+
+			var theSVGs = theTargetSVGDiv.getElementsByTagName('svg');
+
+			if (theSVGs && (theSVGs.length > 0)){
+
+				var theStaff = theSVGs[0];
+
+				//debugger;
+
+				var theBounds = theStaff.getBoundingClientRect();
+
+				// Try to fit three staves in the window
+				var theStaffWidth = theBounds.width;
+				var theStaffHeight = theBounds.height*3;
+
+				var theAspectRatio = theStaffWidth/theStaffHeight;
+
+				var windowWidth = window.innerWidth*0.9;
+				var windowHeight = (window.innerHeight-offset)*0.9 ;
+
+				//debugger;
+
+				var theTargetRect = findLargestRectangle(windowWidth,windowHeight,theAspectRatio);
+
+				return theTargetRect.width;
+			
+			}
+
+		}
+
+	}
+
+	// Some issue in finding the SVG, just set a percentage of the screen width
+	var windowWidth = window.innerWidth;
+
+	return windowWidth * 0.75;
+
+}
+
+//
+// Play the ABC
+//
+function PlayABC(){
+
+	if (gAllowCopy){
+
+		// Play back locally
+
+		// Try to find the current tune
+		var theSelectedABC = findSelectedTune();
+
+		if (theSelectedABC == ""){
+			// This should never happen
+			return;
+		}
+
+		// Pre-process the ABC to inject any requested programs or volumes
+		theSelectedABC = PreProcessPlayABC(theSelectedABC);
+
+		// Initially normal width
+		gUseWidePlayer = false;
+
+		// Play back locally in-tool	
+		PlayABCDialog(theSelectedABC,null,null,null,gUseWidePlayer);
+
+	}
+}
+
 // 
 // Tune Play Dialog
 //
 // callback and val are used for batch export automation
 //
 
-function PlayABCDialog(theABC,callback,val,metronome_state){
+function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","PlayABCDialog");
@@ -15832,7 +15956,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 		gPlayerInPause = false;
 
 		// Adapt the top based on the player control size
-		var theTop = 50;
+		var theTop = 40;
 
 		var theHeight = window.innerHeight - 340;
 
@@ -15859,11 +15983,17 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 		}
 
 	   	// Add the download buttons
-		modal_msg += '<p style="text-align:center;margin:0px;margin-top:22px">'
-		modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioMIDI();" type="button" value="Save Audio or MIDI" title="Brings up a dialog where you can export the tune in .WAV, .MP3, or MIDI formats">'
-		modal_msg += '<input id="abcplayer_trainer" class="btn btn-looper abcplayer_trainer" onclick="TuneTrainerLaunchFromPlayer()" type="button" value="Start Tune Trainer" title="Opens the Tune Trainer for practicing tunes with increasing tempos">';
-		modal_msg += '<input id="abcplayer_metronomebutton" class="abcplayer_metronome button btn btn-metronome" onclick="ToggleMetronome();" type="button" value="Enable Metronome" title="Enables/disables the metronome">'
+		modal_msg += '<p style="text-align:center;margin:0px;margin-top:22px">';
+		modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioMIDI();" type="button" value="Save Audio or MIDI" title="Brings up a dialog where you can export the tune in .WAV, .MP3, or MIDI formats">';
+		modal_msg += '<input id="abcplayer_trainer" class="btn btn-looper abcplayer_trainer" onclick="TuneTrainerLaunchFromPlayer()" type="button" value="Start Tune Trainer" title="Opens the Tune Trainer for practicing tunes with increasing tempos">';;
+		modal_msg += '<input id="abcplayer_metronomebutton" class="abcplayer_metronome button btn btn-metronome" onclick="ToggleMetronome();" type="button" value="Enable Metronome" title="Enables/disables the metronome">';
+
+		if (isDesktopBrowser()){
+			modal_msg += '<input id="abcplayer_wideplayerbutton" class="abcplayer_wideplayerbutton button btn btn-wide-player" onclick="ToggleWidePlayer();" type="button" value="Wide View" title="Toggles the player between normal and wide views">';
+		}
+
 		modal_msg += '<a id="abcplayer_help" href="https://michaeleskin.com/abctools/userguide.html#playing_your_tunes" target="_blank" style="text-decoration:none;" title="Learn more about the Player">?</a>';
+
 		modal_msg += '</p>';
 
 	   	// Scale the player for larger screens
@@ -15871,9 +16001,25 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 
 		var instrument = GetRadioValue("notenodertab");
 
-		var theWidth = windowWidth * 0.45;
+		var theWidth;
+		var theWideWidth;
 
 		if (isDesktopBrowser()){
+
+			// Get the optimal wide play width
+			theWideWidth = calc_wide_play_width(200);
+
+			if (isWide){
+
+				// Get the optimal wide play width
+				theWidth = theWideWidth;
+
+			}
+			else{
+
+				theWidth = windowWidth * 0.45;
+
+			}
 
 			if (theWidth < 850){
 				theWidth = 850;
@@ -15895,6 +16041,27 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 
 			elem.value = "Disable Metronome";
 
+		}
+
+		if (isDesktopBrowser()){
+
+			// If the wide view isn't wider than the standard view, hide the button
+			if ((!isWide) && (theWideWidth <= theWidth)){
+
+				document.getElementById("abcplayer_wideplayerbutton").style.display = "none";
+				
+			}
+			else{
+
+				// Idle the wide/normal button
+				if ((isWide) && (isWide == true)){
+
+					var elem = document.getElementById("abcplayer_wideplayerbutton");
+
+					elem.value = "Normal View";
+
+				}
+			}
 		}
 
 		var theOKButtons = document.getElementsByClassName("modal_flat_ok");
@@ -16676,6 +16843,9 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 
 	gMIDIbuffer = null;
 	gTheOKButton = null;
+
+	// Always normal width
+	gUseWidePlayer = false;
 
 	// We came in because of a swing change, don't init the tune cache
 	if (!swing_explorer_state){
@@ -17505,6 +17675,9 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 	gMIDIbuffer = null;
 	gTheOKButton = null;
 
+	// Always normal width
+	gUseWidePlayer = false;
+
 	// We came in because of an instrument change, don't init the tune cache
 	if (!instrument_explorer_state){
 
@@ -18041,6 +18214,9 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 	gMIDIbuffer = null;
 	gTheOKButton = null;
 
+	// Always normal width
+	gUseWidePlayer = false;
+
 	// We came in because of a grace duration change, don't init the tune cache
 	if (!grace_explorer_state){
 
@@ -18400,6 +18576,9 @@ function TuneTrainer(){
 		// Clear the metronome version
 		gPlayerABCMetronome = null;
 
+		// Clear the wide trainer
+		gUseWidePlayer = false;
+
 		// Fix issue with initial swing not happening
 		ScanTuneForSwingExplorer(theSelectedABC);
 
@@ -18407,7 +18586,7 @@ function TuneTrainer(){
 		var theProcessedABC = PreProcessPlayABC(theSelectedABC);
 
 		// Play back locally in-tool	
-		TuneTrainerDialog(theSelectedABC,theProcessedABC,false);
+		TuneTrainerDialog(theSelectedABC,theProcessedABC,false,gUseWidePlayer);
 
 	}
 }
@@ -18468,7 +18647,7 @@ function TuneTrainerReset(){
 		setTimeout(function() {
 
 			// Launch the player with the new values
-			TuneTrainerDialog(gPlayerLooperOriginal,gPlayerLooperProcessed,true);
+			TuneTrainerDialog(gPlayerLooperOriginal,gPlayerLooperProcessed,true,gUseWidePlayer);
 
 		},250);
 
@@ -18540,7 +18719,7 @@ function ToggleTuneTrainerMetronome(){
 
 						DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) }).then(
 							function(){
-								TuneTrainerDialog(gPlayerLooperOriginal,gPlayerLooperProcessed,true);
+								TuneTrainerDialog(gPlayerLooperOriginal,gPlayerLooperProcessed,true,gUseWidePlayer);
 							});
 
 						return;
@@ -18551,7 +18730,7 @@ function ToggleTuneTrainerMetronome(){
 	            
 	            gLooperMetronomeState = true;
 
-				TuneTrainerDialog(gPlayerLooperOriginal,gPlayerABCMetronome,true);
+				TuneTrainerDialog(gPlayerLooperOriginal,gPlayerABCMetronome,true,gUseWidePlayer);
 
 			}
 			else{
@@ -18561,7 +18740,7 @@ function ToggleTuneTrainerMetronome(){
 	            gPlayerABCMetronome = null;
 
 				// Launch the original tune
-				TuneTrainerDialog(gPlayerLooperOriginal,gPlayerLooperProcessed,true);
+				TuneTrainerDialog(gPlayerLooperOriginal,gPlayerLooperProcessed,true,gUseWidePlayer);
 
 			}
 
@@ -18570,7 +18749,22 @@ function ToggleTuneTrainerMetronome(){
 
 }
 
+//
+// Toggle wide trainer view
+//
+function ToggleTuneTrainerWidePlayer(){
 
+	gUseWidePlayer = !gUseWidePlayer;
+
+	gTheOKButton.click();
+
+	setTimeout(function() {
+		// Launch the original tune
+		TuneTrainerDialog(gPlayerLooperOriginal,gPlayerLooperProcessed,true,gUseWidePlayer);
+
+	},250);		
+
+}
 // 
 // Tune trainer Dialog
 //
@@ -18587,7 +18781,7 @@ var gPlayerLooperProcessed = null;
 var gLooperMetronomeState = false;
 var gTouchIncrementFive = false;
 
-function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
+function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide){
 
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","TuneTrainer");
@@ -19109,7 +19303,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 		gPlayerInPause = false;
 
 		// Adapt the top based on the player control size
-		var theTop = 50;
+		var theTop = 45;
 
 		var theHeight = window.innerHeight - 450;
 
@@ -19148,6 +19342,9 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 		modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
 		modal_msg += '<input id="looperreset" class="looperreset button btn btn-looperreset" onclick="TuneTrainerReset();" type="button" value="Apply Tune Trainer Settings and Reload the Player" title="Applies the entered tune trainer settings and reloads the player">';
 		modal_msg += '<input id="looper_metronomebutton" class="looper_metronome button btn btn-metronome" onclick="ToggleTuneTrainerMetronome();" type="button" value="Enable Metronome" title="Enables/disables the metronome">'
+		if (isDesktopBrowser()){
+			modal_msg += '<input id="abcplayer_widetrainerbutton" class="abcplayer_widetrainerbutton button btn btn-wide-trainer" onclick="ToggleTuneTrainerWidePlayer();" type="button" value="Wide View" title="Toggles the trainer between normal and wide views">';
+		}
 		modal_msg += '</p>';
 		modal_msg += '<a id="looperhelp" href="https://michaeleskin.com/abctools/userguide.html#tune_trainer" target="_blank" style="text-decoration:none;" title="Learn more about the Tune Trainer">?</a>';
 		modal_msg += '<p id="looperstatus"></p>';
@@ -19159,9 +19356,24 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 
 		var instrument = GetRadioValue("notenodertab");
 
-		var theWidth = windowWidth * 0.45;
+		var theWidth;
+		var theWideWidth;
 
 		if (isDesktopBrowser()){
+
+			// Get the optimal wide play width
+			theWideWidth = calc_wide_play_width(250);
+
+			if (isWide){
+
+				theWidth = theWideWidth;
+
+			}
+			else{
+
+				theWidth = windowWidth * 0.45;
+
+			}
 
 			if (theWidth < 850){
 				theWidth = 850;
@@ -19213,6 +19425,27 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 
 			elem.value = "Enable Metronome";
 
+		}
+
+		if (isDesktopBrowser()){
+
+			// If the wide view isn't wider than the standard view, hide the button
+			if ((!isWide) && (theWideWidth <= theWidth)){
+
+				document.getElementById("abcplayer_widetrainerbutton").style.display = "none";
+				
+			}
+			else{
+
+				// Idle the wide/normal button
+				if ((isWide) && (isWide == true)){
+
+					var elem = document.getElementById("abcplayer_widetrainerbutton");
+
+					elem.value = "Normal View";
+
+				}
+			}
 		}
 
 		var theOKButtons = document.getElementsByClassName("modal_flat_ok");
