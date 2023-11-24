@@ -3608,6 +3608,7 @@ var parseDirective = {};
     tune.formatting.tripletfont = multilineVars.tripletfont;
     tune.formatting.vocalfont = multilineVars.vocalfont;
     tune.formatting.wordsfont = multilineVars.wordsfont;
+
   }
   var fontTypeCanHaveBox = {
     gchordfont: true,
@@ -4587,6 +4588,10 @@ var parseDirective = {};
       case "voicefont":
       case "footerfont":
       case "headerfont":
+      // MAE START OF CHANGE - Expose the tab label and tab number fonts
+      case "tablabelfont": 
+      case "tabnumberfont": 
+      // MAE END OF CHANGE
         return getGlobalFont(cmd, tokens, str);
       case "barlabelfont":
       case "barnumberfont":
@@ -16238,6 +16243,10 @@ Plugin.prototype.init = function (abcTune, tuneNumber, params) {
   this.tablature = new StringTablature(this.nbLines, this.linePitch);
   var semantics = new GuitarPatterns(this);
   this.semantics = semantics;
+  // MAE START OF CHANGE
+  this.isFirstStaff = true;
+  this.firstTabNameHeight = 1;
+  // MAE END OF CHANGE
 };
 Plugin.prototype.render = function (renderer, line, staffIndex) {
   if (this._super.inError) return;
@@ -16903,6 +16912,10 @@ Plugin.prototype.init = function (abcTune, tuneNumber, params) {
   this.tablature = new StringTablature(this.nbLines, this.linePitch);
   var semantics = new ViolinPatterns(this);
   this.semantics = semantics;
+  // MAE START OF CHANGE
+  this.isFirstStaff = true;
+  this.firstTabNameHeight = 1;
+  // MAE END OF CHANGE
 };
 Plugin.prototype.render = function (renderer, line, staffIndex) {
   if (this._super.inError) return;
@@ -17338,22 +17351,6 @@ function getLyricHeight(voice) {
   return maxLyricHeight; // add spacing
 }
 
-//
-// MAE 17 April 2023 - For excessively tall tabs when tab names are displayed
-//
-// function buildTabName(self, dest) {
-//   var stringSemantics = self.plugin.semantics.strings;
-//   var controller = self.renderer.controller;
-//   var textSize = controller.getTextSize;
-//   var tabName = stringSemantics.tabInfos(self.plugin);
-//   var size = textSize.calc(tabName, 'tablabelfont', 'text instrumentname');
-//   dest.tabNameInfos = {
-//     textSize: size,
-//     name: tabName
-//   };
-//   return size.height;
-// }
-
 function buildTabName(self, dest) {
   var stringSemantics = self.plugin.semantics.strings;
   var controller = self.renderer.controller;
@@ -17362,15 +17359,13 @@ function buildTabName(self, dest) {
   var size = textSize.calc(tabName, 'tablabelfont', 'text instrumentname');
  
   dest.tabNameInfos = {
-    textSize: {height:(size.height*4)/5,width:size.width},
-
+    textSize: {height:size.height,width:size.width},
     name: tabName
   };
 
-  return (size.height*4)/5;
-}
+  return size.height;
 
-// MAE END OF CHANGE
+}
 
 /**
  * Laying out tabs
@@ -17534,23 +17529,72 @@ TabRenderer.prototype.doLayout = function () {
   if (isMultiVoiceSingleStaff(staffGroup.staffs, parentStaff)) {
     nbVoices = parentStaff.voices.length;
   }
+  
   // build from staff
   this.tabStaff.voices = [];
+
   for (var ii = 0; ii < nbVoices; ii++) {
+
     var tabVoice = new VoiceElement(0, 0);
+    
     if (ii > 0) tabVoice.duplicate = true;
-    var nameHeight = buildTabName(this, tabVoice) / spacing.STEP;
-    nameHeight = Math.max(nameHeight, 1); // If there is no label for the tab line, then there needs to be a little padding
-    staffGroup.staffs[this.staffIndex].top += nameHeight;
-    staffGroup.height += nameHeight * spacing.STEP;
+
+    var nameHeight;
+
+    // MAE START OF CHANGE
+
+    // First staff with a tab name gets special treatment
+    if (this.plugin.isFirstStaff){
+    
+      var nameHeight = buildTabName(this, tabVoice) / spacing.STEP;
+
+      nameHeight = Math.max(nameHeight, 1); // If there is no label for the tab line, then there needs to be a little padding
+      
+      staffGroup.staffs[this.staffIndex].top += 1;
+   
+      if (nameHeight == 1){
+
+        staffGroup.height += spacing.STEP;
+
+      }
+      else{
+
+        staffGroup.height += nameHeight;
+
+      }
+
+      this.plugin.firstTabNameHeight = nameHeight;
+
+      this.plugin.isFirstStaff = false;
+
+    }
+    else{
+
+      // Padding
+      staffGroup.height += spacing.STEP;
+
+      staffGroup.staffs[this.staffIndex].top += this.plugin.firstTabNameHeight;
+
+
+    }
+    // MAE END OF CHANGE
+
     tabVoice.staff = staffGroupInfos;
+    
     var tabVoiceIndex = voices.length;
+    
     voices.splice(voices.length, 0, tabVoice);
+    
     var keySig = checkVoiceKeySig(voices, ii + this.staffIndex);
+    
     this.tabStaff.voices[ii] = [];
+    
     this.absolutes.build(this.plugin, voices, this.tabStaff.voices[ii], ii, this.staffIndex, keySig, tabVoiceIndex);
+  
   }
+
   linkStaffAndTabs(staffGroup.staffs); // crossreference tabs and staff
+
 };
 
 module.exports = TabRenderer;
@@ -19115,7 +19159,7 @@ var createNoteHead = function createNoteHead(abselem, c, pitchelem, options) {
   var accidentalshiftx = 0;
   var newDotShiftX = 0;
   var extraLeft = 0;
-  // MAE 12 Aug 2023 For MusicXML import FOOFOO
+  // MAE 12 Aug 2023 For MusicXML import 
   //if (c === undefined) abselem.addFixed(new RelativeElement("pitch is undefined", 0, 0, 0, {
   if (c === undefined) abselem.addFixed(new RelativeElement(" ", 0, 0, 0, {
     type: "debug"
