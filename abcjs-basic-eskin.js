@@ -19520,6 +19520,21 @@ var stackedDecoration = function stackedDecoration(decoration, width, abselem, y
     }));
     incrementPlacement(placement, height);
   }
+
+  // MAE START OF CHANGE 24 Nov 2023
+  function symbolDecorationBreath(symbol, placement) {
+    var deltaX = width*1.5;
+    var height = glyphs.symbolHeightInPitches(symbol) + 1; // adding a little padding so nothing touches.
+    var y = getPlacement(placement);
+    y = placement === 'above' ? y + height / 2 : y - height / 2; // Center the element vertically.
+    abselem.addFixedX(new RelativeElement(symbol, deltaX, glyphs.getSymbolWidth(symbol), y, {
+      klass: 'ornament',
+      thickness: glyphs.symbolHeightInPitches(symbol)
+    }));
+    incrementPlacement(placement, height);
+  }
+  // MAE END OF CHANGE
+
   var symbolList = {
     "+": "scripts.stopped",
     "open": "scripts.open",
@@ -19603,13 +19618,21 @@ var stackedDecoration = function stackedDecoration(decoration, width, abselem, y
       case "downbow":
       case "upbow":
       case "fermata":
-      case "breath":
+      // MAE START OF CHANGE
+      //case "breath":
+      // MAE END OF CHANGE
       case "umarcato":
       case "coda":
       case "segno":
         symbolDecoration(symbolList[decoration[i]], positioning);
         hasOne = true;
         break;
+      // MAE START OF CHANGE
+      case "breath":
+        symbolDecorationBreath(symbolList[decoration[i]], positioning);
+        hasOne = true;
+        break;
+      // MAE END OF CHANGE
       case "invertedfermata":
         symbolDecoration(symbolList[decoration[i]], 'below');
         hasOne = true;
