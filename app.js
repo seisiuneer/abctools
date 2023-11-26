@@ -188,8 +188,9 @@ var gRenderingFonts = {
 	gchordfont: "Verdana 12",
 	vocalfont: "Palatino 13",
 	wordsfont: "Palatino 13",
-	tabnumberfont: "Arial 12",
 	tablabelfont: "Trebuchet MS 14",
+	tabnumberfont: "Arial 12",
+	tabgracefont: "Arial 8",
 	historyfont: "Times New Roman 14",
 	voicefont: "Times New Roman 13"
 }
@@ -19892,12 +19893,19 @@ function GetInitialConfigurationSettings(){
     var theRenderingFonts = localStorage.RenderingFonts;
 
     if (theRenderingFonts){
+    	
         gRenderingFonts = JSON.parse(theRenderingFonts);
         
         // MAE 24 Nov 2023 - For addition of the tab label font
         if (!gRenderingFonts.tablabelfont){
 
         	gRenderingFonts.tablabelfont = "Trebuchet MS 14";
+
+        }
+        // MAE 26 Nov 2023 - For addition of the tab graces font
+        if (!gRenderingFonts.tabgracefont){
+
+        	gRenderingFonts.tabgracefont = "Arial 8";
 
         }
     }
@@ -20838,6 +20846,12 @@ function loadFontSettings(file){
 
         }
 
+      	// MAE 26 Nov 2023 - For addition of the tab graces font
+        if (!gDialogRenderingFonts.tabgracefont){
+
+        	gDialogRenderingFonts.tabgracefont = "Arial 8";
+
+        }
 
 		// Idle the fonts dialog display showing the new values
 		idleFontsDialog();
@@ -20869,8 +20883,9 @@ function saveFontSettings(){
 		gchordfont: $('[name="configure_gchordfont"]').val(),
 		vocalfont: $('[name="configure_vocalfont"]').val(),
 		wordsfont: $('[name="configure_wordsfont"]').val(),
-		tabnumberfont: $('[name="configure_tabnumberfont"]').val(),
 		tablabelfont: $('[name="configure_tablabelfont"]').val(),
+		tabnumberfont: $('[name="configure_tabnumberfont"]').val(),
+		tabgracefont: $('[name="configure_tabgracefont"]').val(),
 		historyfont: $('[name="configure_historyfont"]').val(),
 		voicefont: $('[name="configure_voicefont"]').val()
 
@@ -20899,8 +20914,9 @@ function idleFontsDialog(){
 	$('[name="configure_gchordfont"]').val(gDialogRenderingFonts.gchordfont);
 	$('[name="configure_vocalfont"]').val(gDialogRenderingFonts.vocalfont);
 	$('[name="configure_wordsfont"]').val(gDialogRenderingFonts.wordsfont);
-	$('[name="configure_tabnumberfont"]').val(gDialogRenderingFonts.tabnumberfont);
 	$('[name="configure_tablabelfont"]').val(gDialogRenderingFonts.tablabelfont);
+	$('[name="configure_tabnumberfont"]').val(gDialogRenderingFonts.tabnumberfont);
+	$('[name="configure_tabgracefont"]').val(gDialogRenderingFonts.tabgracefont);
 	$('[name="configure_historyfont"]').val(gDialogRenderingFonts.historyfont);
 	$('[name="configure_voicefont"]').val(gDialogRenderingFonts.voicefont);
 }
@@ -20924,8 +20940,9 @@ function resetABCRenderingFonts(){
 		gchordfont: "Verdana 12",
 		vocalfont: "Palatino 13",
 		wordsfont: "Palatino 13",
-		tabnumberfont: "Arial 12",
 		tablabelfont: "Trebuchet MS 14",
+		tabnumberfont: "Arial 12",
+		tabgracefont: "Arial 8",
 		historyfont: "Times New Roman 14",
 		voicefont: "Times New Roman 13"
 
@@ -20979,8 +20996,9 @@ function ConfigureFonts(){
 	  configure_gchordfont:gRenderingFonts.gchordfont,
 	  configure_vocalfont:gRenderingFonts.vocalfont,
 	  configure_wordsfont:gRenderingFonts.wordsfont,
-	  configure_tabnumberfont:gRenderingFonts.tabnumberfont,
 	  configure_tablabelfont:gRenderingFonts.tablabelfont,
+	  configure_tabnumberfont:gRenderingFonts.tabnumberfont,
+	  configure_tabgracefont:gRenderingFonts.tabgracefont,
 	  configure_historyfont:gRenderingFonts.historyfont,
 	  configure_voicefont:gRenderingFonts.voicefont,
 	};
@@ -20993,8 +21011,9 @@ function ConfigureFonts(){
 	  {name: "Composer font (Default: Palatino 13):", id: "configure_composerfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
 	  {name: "Tempo font (Default: Palatino 13):", id: "configure_tempofont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
 	  {name: "Guitar chord font (Default: Verdana 12):", id: "configure_gchordfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
-	  {name: "Tab number font (Default: Arial 12):", id: "configure_tabnumberfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
 	  {name: "Tab label font (Default: Trebuchet MS 14):", id: "configure_tablabelfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
+	  {name: "Tab number font (Default: Arial 12):", id: "configure_tabnumberfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
+	  {name: "Tab grace font (Default: Arial 8):", id: "configure_tabgracefont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
 	  {name: "History font (Default: Times New Roman 14):", id: "configure_historyfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
 	  {name: "Text font (Default: Palatino 13):", id: "configure_textfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
 	  {name: "Annotation font (Default: Palatino 13):", id: "configure_annotationfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
@@ -21027,8 +21046,9 @@ function ConfigureFonts(){
 			gRenderingFonts.gchordfont = args.result.configure_gchordfont;
 			gRenderingFonts.vocalfont = args.result.configure_vocalfont;
 			gRenderingFonts.wordsfont = args.result.configure_wordsfont;
-			gRenderingFonts.tabnumberfont = args.result.configure_tabnumberfont;
 			gRenderingFonts.tablabelfont = args.result.configure_tablabelfont;
+			gRenderingFonts.tabnumberfont = args.result.configure_tabnumberfont;
+			gRenderingFonts.tabgracefont = args.result.configure_tabgracefont;
 			gRenderingFonts.historyfont = args.result.configure_historyfont;
 			gRenderingFonts.voicefont = args.result.configure_voicefont;
 
