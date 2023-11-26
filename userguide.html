@@ -684,6 +684,8 @@
             <div class="image_holder" style="margin-top:24px">
                 <img style="width:700px;" src="img/ug5c.jpg"/>
             </div>
+            <p>Note: At this time, tunes with multiple voices have display issues with both note Names and Whistle tablature display.</p>
+            <p>For stringed instruments, up to 8 voices may be displayed with tablature.</p>
             <p id="basic_transpose"><strong>Transpose Down</strong> - Transposes the selected tunes down one semitone. Shift-click transposes down one full step. Alt-click transposes down one octave.</p>
             <p><strong>Transpose Up</strong> - Transposes the selected tunes up one semitone.  Shift-click transposes up one full step. Alt-click transposes up one octave.</p>
             <p>To transpose multiple tunes, just click anywhere in the first tune you want to transpose, and drag to select any part of additional tunes you want transposed.</p>
@@ -881,7 +883,7 @@
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder_p">
-                <img src="img/abc_transcription_tool_settings_30.jpg"/>
+                <img src="img/abc_transcription_tool_settings_31.jpg"/>
             </div>
             <p><strong>Save an Auto-Snapshot on browser tab close or reload? (Restore it from the Add dialog)</strong> - (Desktop browsers only) When enabled, saves an Auto-Snapshot when closing or reloading the browser tab the tool is running in.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/pp6fD2NOKtw" title="Auto-Snapshots" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
@@ -893,9 +895,8 @@
             <p>Minimum value is -40 (corresponds to an ABC %%staffsep of 0)</p>
             <p>Final rendered staff separation depends on the contents of ABC itself, for example the use of chords and other annotations may increase the staff spacing.</p>
             <p>Experiment with this value until you get the result you want.</p>
-            <p><strong>Show stringed instrument names on tablature (never shown in the Player)</strong> - Hides/Shows the instrument names and capo settings on the tablature.</p>
-            <p>When the tab instrument names are hidden, the spacing between the staves is somewhat reduced.</p>
-            <p>Hiding the tab names may, or may not, depending on the height of the staves, be useful for getting more staves on a single PDF page.</p>
+            <p><strong>Show stringed instrument names on tablature (single-voice tunes only, not shown in the Player))</strong> - Hides/Shows the instrument names and capo settings on the tablature.</p>
+            <p>At this time, instrument names below the tablature will only be displayed for single-voice tunes.</p>
             <p><strong>Stringed instrument capo fret postion</strong> - Allows you to set a capo setting from 0 to 12 frets for the Mandolin, GDAD, CGDA, or Guitar tab.</p>
             <p>The following controls select default MIDI soundfont, programs, and volumes to use for the Melody, Bass, and Chords:</p>
             <p><strong>Default abcjs soundfont:</strong> - Choose between the five General MIDI soundfonts available in abcjs to use by default when playing tunes:</p>

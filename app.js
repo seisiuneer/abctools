@@ -6815,7 +6815,10 @@ function GetABCJSParams(instrument){
 	// Normally, have abcjs draw tab icon for tablatures
 	gDrawTabSymbol = true;
 
+	var allowMultitab = true;
+
 	if (!instrument) {
+		allowMultitab = false;
 		params = {
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
@@ -6825,6 +6828,7 @@ function GetABCJSParams(instrument){
 		};
 		instrument = ""; 
 	} else if (instrument == "noten"){
+		allowMultitab = false;
 		params = {
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
@@ -6926,6 +6930,7 @@ function GetABCJSParams(instrument){
 	} else if (instrument == "notenames") {
 		// Suppress the tab icon
 		gDrawTabSymbol = false;
+		allowMultitab = false;
 		params = {
 			tablature: [{
 				instrument: 'violin',
@@ -6942,6 +6947,7 @@ function GetABCJSParams(instrument){
 	} else if (instrument == "whistle") {
 		// Suppress the tab icon
 		gDrawTabSymbol = false;
+		allowMultitab = false;
 		params = {
 			tablature: [{
 				instrument: 'violin',
@@ -6960,12 +6966,28 @@ function GetABCJSParams(instrument){
 	else{
 		// Default for deprecated instruments
 		//console.log("Got deprecated instrument")
+		allowMultitab = false;
 		params = {
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
 			selectTypes: false,
 			format: commonFontFormat
 		};
+	}
+
+	// 
+	// Added 26 November 2023
+	//
+	// Support multiple voice tab
+
+	if (allowMultitab){
+		if ((params.tablature)&&(params.tablature.length > 0)){
+			// debugger;
+			var theTab = params.tablature[0];
+			for (var i=0;i<7;++i){
+				params.tablature.push(theTab);
+			}
+		}
 	}
 
 	return params;
@@ -21641,7 +21663,7 @@ function ConfigureToolSettings(e) {
 	const form2 = [
 	  {name: "Full screen tune display scaling (percentage):", id: "configure_fullscreen_scaling", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Staff spacing (default is 10):", id: "configure_staff_spacing", type:"number", cssClass:"configure_settings_form_text"},
-	  {name: "    Show stringed instrument names on tablature (never shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+	  {name: "    Show stringed instrument names on tablature (single-voice tunes only, not shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 	  {name: "Stringed instrument capo fret postion:", id: "configure_capo", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default abcjs soundfont:", id: "configure_soundfont", type:"select", options:sound_font_options, cssClass:"configure_settings_select"}, 
 	  {name: "    Use AppCordions custom sounds for Dulcimer, Accordion, Flute, and Whistle", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
