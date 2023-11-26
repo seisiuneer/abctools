@@ -4588,9 +4588,10 @@ var parseDirective = {};
       case "voicefont":
       case "footerfont":
       case "headerfont":
-      // MAE START OF CHANGE - Expose the tab label and tab number fonts
+      // MAE START OF CHANGE - Expose the tab label, tab number, and tab grace fonts
       case "tablabelfont": 
       case "tabnumberfont": 
+      case "tabgracefont":
       // MAE END OF CHANGE
         return getGlobalFont(cmd, tokens, str);
       case "barlabelfont":
