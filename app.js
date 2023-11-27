@@ -6814,7 +6814,6 @@ function GetABCJSParams(instrument){
 
 	// Normally, have abcjs draw tab icon for tablatures
 	gDrawTabSymbol = true;
-
 	var allowMultitab = true;
 
 	if (!instrument) {
@@ -6930,7 +6929,6 @@ function GetABCJSParams(instrument){
 	} else if (instrument == "notenames") {
 		// Suppress the tab icon
 		gDrawTabSymbol = false;
-		allowMultitab = false;
 		params = {
 			tablature: [{
 				instrument: 'violin',
@@ -6947,7 +6945,6 @@ function GetABCJSParams(instrument){
 	} else if (instrument == "whistle") {
 		// Suppress the tab icon
 		gDrawTabSymbol = false;
-		allowMultitab = false;
 		params = {
 			tablature: [{
 				instrument: 'violin',
@@ -6982,7 +6979,6 @@ function GetABCJSParams(instrument){
 
 	if (allowMultitab){
 		if ((params.tablature)&&(params.tablature.length > 0)){
-			// debugger;
 			var theTab = params.tablature[0];
 			for (var i=0;i<7;++i){
 				params.tablature.push(theTab);
@@ -7183,14 +7179,12 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 
 	var visualObj = ABCJS.renderAbc(renderDivs, tune, params);
 
-	var svgTextArray = [];
-
 	for (var tuneIndex = startTune; tuneIndex < endTune; ++tuneIndex) {
 
 		var renderDivID = "notation" + tuneIndex;
 
 		// If whistle or note name tab, inject replacement values for tab numbers
-		postProcessTab(renderDivID, instrument, false);
+		postProcessTab(visualObj, renderDivID, instrument, false);
 
 	}
 }
@@ -14845,10 +14839,19 @@ function computeFade(tuneABC){
 //
 // Post-process whistle and notename tab
 //
-function postProcessTab(renderDivID, instrument, bIsPlayback){
+function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 
+	//console.log("postProcessTab: renderDivID = "+renderDivID);
+
+	if (!visualObj){
+
+		//console.log("postProcessTab: Got null visualObj");
+		return;
+	}
 
 	if (instrument == "whistle") {
+
+		//debugger;
 
 		var Tabstriche;
 
@@ -14859,15 +14862,80 @@ function postProcessTab(renderDivID, instrument, bIsPlayback){
 			Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g > [class="abcjs-top-line"]');
 		}
 
-		for (x = 0; x < Tabstriche.length; x++) {
+		var nVis = visualObj.length;
 
-			if (x % 2 != 0) {
+		// Sanity check the tab replacement state
+		if (nVis == 0){
+			//console.log("postProcessTab: no visualObj entries");
+			return;
+		}
+
+		//
+		// Hide the staff lines on the tab staves
+		//
+
+		// For single tune re-renders, the visual only has one entry
+		var vis = 0;
+
+		// If there is more than one tune being rendered, find it
+		if (nVis > 1){
+			var vis = renderDivID.replace("notation","");
+			vis = parseInt(vis);
+			if (isNaN(vis)){
+				//console.log("postProcessTab: bad renderDivID");
+				return;
+			}
+		}
+
+		var theVisual = visualObj[vis];
+
+		// How many actual staves are in the visual
+		// Other kinds of lines are in the array, like subtitles
+		var nStaffs = 0;
+		var testStaff = -1;
+
+		var nStaffsInVisual = theVisual.lines.length;
+
+		if (nStaffsInVisual == 0){
+			//console.log("postProcessTab: no lines in visual")
+			return;
+		}
+
+		for (var i=0;i<nStaffsInVisual;++i){
+
+			if (theVisual.lines[i].staff){
+
+				if (testStaff == -1){
+					testStaff = i;
+				}
+
+				nStaffs++;
+			}
+		}
+
+		if (testStaff == -1){
+			//console.log("postProcessTab: no staffs in visual")
+			return;
+		}
+
+		var linesPerStaff = theVisual.lines[testStaff].staff.length;
+
+		//console.log("nStaffs = "+nStaffs);
+		//console.log("linesPerStaff = "+linesPerStaff);
+
+		var tabStaffIndex = linesPerStaff/2;
+
+		//debugger;
+
+		for (var x = 0; x < Tabstriche.length; x++) {
+
+			if ((x % linesPerStaff) >= tabStaffIndex) {
 
 				Tabstriche[x].setAttribute("class", "tabstrich");
 
 				var Geschwisterstriche = getNextSiblings(Tabstriche[x]);
 
-				for (y = 0; y < Geschwisterstriche.length; y++) {
+				for (var y = 0; y < Geschwisterstriche.length; y++) {
 					Geschwisterstriche[y].setAttribute("class", "tabstrich");
 				}
 
@@ -14875,6 +14943,7 @@ function postProcessTab(renderDivID, instrument, bIsPlayback){
 		}
 
 		var Tspans;
+
 		if (bIsPlayback){
 			Tspans = document.querySelectorAll('div[id="' + renderDivID + '"] > svg > g > g[data-name="tabNumber"] > text > tspan');
 		}
@@ -14976,25 +15045,91 @@ function postProcessTab(renderDivID, instrument, bIsPlayback){
 		var useSharps = true;
 
 		var Tabstriche;
+
 		if (bIsPlayback){
 			Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > svg > g > g > [class="abcjs-top-line"]');
 		}
 		else{
 			Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g > [class="abcjs-top-line"]');
-
 		}
 
-		for (x = 0; x < Tabstriche.length; x++) {
+		var nVis = visualObj.length;
 
-			if (x % 2 != 0) {
-			
+		// Sanity check the tab replacement state
+		if (nVis == 0){
+			//console.log("postProcessTab: no visualObj entries");
+			return;
+		}
+
+		//
+		// Hide the staff lines on the tab staves
+		//
+
+		// For single tune re-renders, the visual only has one entry
+		var vis = 0;
+
+		// If there is more than one tune being rendered, find it
+		if (nVis > 1){
+			var vis = renderDivID.replace("notation","");
+			vis = parseInt(vis);
+			if (isNaN(vis)){
+				//console.log("postProcessTab: bad renderDivID");
+				return;
+			}
+		}
+
+		var theVisual = visualObj[vis];
+
+		// How many actual staves are in the visual
+		// Other kinds of lines are in the array, like subtitles
+		var nStaffs = 0;
+		var testStaff = -1;
+
+		var nStaffsInVisual = theVisual.lines.length;
+
+		if (nStaffsInVisual == 0){
+			//console.log("postProcessTab: no lines in visual")
+			return;
+		}
+
+		for (var i=0;i<nStaffsInVisual;++i){
+
+			if (theVisual.lines[i].staff){
+
+				if (testStaff == -1){
+					testStaff = i;
+				}
+
+				nStaffs++;
+			}
+		}
+
+		if (testStaff == -1){
+			//console.log("postProcessTab: no staffs in visual")
+			return;
+		}
+
+		var linesPerStaff = theVisual.lines[testStaff].staff.length;
+
+		//console.log("nStaffs = "+nStaffs);
+		//console.log("linesPerStaff = "+linesPerStaff);
+
+		var tabStaffIndex = linesPerStaff/2;
+
+		//debugger;
+
+		for (var x = 0; x < Tabstriche.length; x++) {
+
+			if ((x % linesPerStaff) >= tabStaffIndex) {
+
 				Tabstriche[x].setAttribute("class", "tabstrich");
 
 				var Geschwisterstriche = getNextSiblings(Tabstriche[x]);
-			
-				for (y = 0; y < Geschwisterstriche.length; y++) {
+
+				for (var y = 0; y < Geschwisterstriche.length; y++) {
 					Geschwisterstriche[y].setAttribute("class", "tabstrich");
 				}
+
 			}
 		}
 
@@ -15896,7 +16031,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 		var visualObj = ABCJS.renderAbc("playback-paper", theABC, abcOptions)[0];
 
 		// Post process whistle or note name tab
-		postProcessTab("playback-paper",instrument,true);
+		postProcessTab([visualObj], "playback-paper",instrument, true);
 
 		var midiBuffer = new ABCJS.synth.CreateSynth();
 
@@ -16966,7 +17101,7 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 		var visualObj = ABCJS.renderAbc("playback-paper", theProcessedABC, abcOptions)[0];
 
 		// Post process whistle or note name tab
-		postProcessTab("playback-paper",instrument,true);
+		postProcessTab([visualObj], "playback-paper", instrument, true);
 
 		var midiBuffer = new ABCJS.synth.CreateSynth();
 
@@ -17794,7 +17929,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 		var visualObj = ABCJS.renderAbc("playback-paper", theProcessedABC, abcOptions)[0];
 
 		// Post process whistle or note name tab
-		postProcessTab("playback-paper",instrument,true);
+		postProcessTab([visualObj], "playback-paper", instrument, true);
 
 		var midiBuffer = new ABCJS.synth.CreateSynth();
 
@@ -18336,7 +18471,7 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 		var visualObj = ABCJS.renderAbc("playback-paper", theProcessedABC, abcOptions)[0];
 
 		// Post process whistle or note name tab
-		postProcessTab("playback-paper",instrument,true);
+		postProcessTab([visualObj], "playback-paper", instrument, true);
 
 		var midiBuffer = new ABCJS.synth.CreateSynth();
 
@@ -18919,7 +19054,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 		var visualObj = ABCJS.renderAbc("playback-paper", theProcessedABC, abcOptions)[0];
 
 		// Post process whistle or note name tab
-		postProcessTab("playback-paper",instrument,true);
+		postProcessTab([visualObj], "playback-paper", instrument, true);
 
 		var midiBuffer = new ABCJS.synth.CreateSynth();
 
