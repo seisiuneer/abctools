@@ -15039,6 +15039,14 @@ function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 			} else if (Tspans[x].innerHTML == "38") {
 				Tspans[x].innerHTML = "A";
 			}
+			else {
+				// No mapped note, put an x
+				Tspans[x].setAttribute("class", "whistle_small");
+				
+				Tspans[x].setAttribute("dy","-23");
+
+				Tspans[x].innerHTML = "x";
+			}
 		}
 	}
 

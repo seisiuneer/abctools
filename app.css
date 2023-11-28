@@ -42,6 +42,12 @@ font-family: 'TinWhistleFingering';
 font-size: 50px;
 }
 
+.whistle_small {
+font-family: 'TinWhistleFingering';
+font-size: 20px;
+}
+
+
 .tabstrich {
 display:none;
 }
