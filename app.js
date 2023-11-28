@@ -3530,8 +3530,8 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
 			case "gdad":
 				postfix = "_GDAD";
 				break;
-			case "mandola":
-				postfix = "_Mandola";
+			case "cgdae":
+				postfix = "_CGDAE";
 				break;
 			case "guitare":
 				postfix = "_Guitar";
@@ -3561,7 +3561,7 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
 
 			case "mandolin":
 			case "gdad":
-			case "mandola":
+			case "cgdae":
 			case "guitare":
 			case "guitard":
 			case "uke":
@@ -6788,8 +6788,8 @@ function GetABCJSParams(instrument){
 					theLabel = 'GDAD'+postfix;
 					break;
 
-				case "mandola":
-					theLabel = 'CGDA'+postfix;
+				case "cgdae":
+					theLabel = 'CGDAE'+postfix;
 					break;
 
 				case "guitare":
@@ -6866,12 +6866,12 @@ function GetABCJSParams(instrument){
 			selectTypes: false,
 			format: commonFontFormat
 		}	
-	} else if (instrument == "mandola") {
+	} else if (instrument == "cgdae") {
 		params = {
 			tablature: [{
-				instrument: 'violin',
+				instrument: 'fivestring',
 				label: theLabel,
-				tuning: ['C', 'G', 'd', 'a'],
+				tuning: ['C,', 'G,', 'D', 'A', 'e'],
 				highestNote: "f'",
 				capo: gCapo
 			}],
@@ -9840,7 +9840,7 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
 
 		case "mandolin":
 		case "gdad":
-		case "mandola":
+		case "cgdae":
 		case "guitare":
 		case "guitard":
 		case "uke":
@@ -10080,8 +10080,8 @@ function GenerateQRCode(e) {
 					}
 					postfix += ")";
 					break;
-				case "mandola":
-					postfix = "<br/><br/>(Mandola Tab";
+				case "cgdae":
+					postfix = "<br/><br/>(CGDAE Tab";
 					if (gCapo != 0){
 						postfix += " - Capo on "+gCapo;
 					}
@@ -12683,7 +12683,7 @@ function IdleAllowShowTabNames(){
 
 		case "mandolin":
 		case "gdad":
-		case "mandola":
+		case "cgdae":
 		case "guitare":
 		case "guitard":
 		case "uke":
@@ -12782,8 +12782,8 @@ function processShareLink() {
 
 		var format = urlParams.get("format");
 
-		// No longer supporting bc or cd tablature or bass, reset to notes
-		if ((format == "bc") || (format == "cd") || (format == "bass")){
+		// No longer supporting bc or cd tablature, bass, or mandola, reset to notes
+		if ((format == "bc") || (format == "cd") || (format == "bass") || (format == "mandola")){
 
 			format = "noten";
 			

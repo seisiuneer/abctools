@@ -65,7 +65,7 @@ display: none;
 }
 
 .toggle-buttons label {
-margin-right:17px;
+margin-right:16px;
 }
 
 .toggle-buttons input:checked + label {
@@ -106,7 +106,7 @@ margin-bottom: 0px;
 }
 
 .transposeup {
-margin-right:23px;
+margin-right:24px;
 margin-left:0px;
 }
 
