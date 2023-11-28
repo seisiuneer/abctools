@@ -6934,7 +6934,8 @@ function GetABCJSParams(instrument){
 				instrument: 'violin',
 				label: theLabel,
 				tuning: ['G,,,','G,,','G,'],
-				highestNote: "b'"
+				highestNote: "b'",
+				hideTabSymbol:true
 			}],
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
@@ -6950,7 +6951,8 @@ function GetABCJSParams(instrument){
 				instrument: 'violin',
 				label: theLabel,
 				tuning: ['G,'],
-				highestNote: "^a'"
+				highestNote: "^a'",
+				hideTabSymbol:true
 			}],
 			responsive: 'resize',
 			oneSvgPerLine: 'true',

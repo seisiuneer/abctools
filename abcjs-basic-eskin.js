@@ -6,9 +6,6 @@ var gSoundsCacheABCJS = {};
 // var gRhythmPatternOverrides = {"10/8": {pattern:['boom', 'boom2', 'boom2', 'boom2', 'boom', 'boom2', 'boom2', 'boom', 'boom2', 'boom2'], threshold:5} };
 var gRhythmPatternOverrides = {};
 
-// MAE 15 Oct 2023 - For suppressing tab icon
-var gDrawTabSymbol = true;
-
 // MAE 23 Oct 2023 - For adding swing
 var gAddSwing = false;
 var gSwingFactor = 0.25;
@@ -16246,6 +16243,9 @@ Plugin.prototype.init = function (abcTune, tuneNumber, params) {
   this.isTabBig = true;
   this.capo = params.capo;
   this.transpose = params.visualTranspose;
+  // MAE START OF CHANGE
+  this.hideTabSymbol = params.hideTabSymbol;
+  // MAE END OF CHANGE
   this.tablature = new StringTablature(this.nbLines, this.linePitch);
   var semantics = new GuitarPatterns(this);
   this.semantics = semantics;
@@ -16915,6 +16915,9 @@ Plugin.prototype.init = function (abcTune, tuneNumber, params) {
   this.isTabBig = false;
   this.capo = params.capo;
   this.transpose = params.visualTranspose;
+  // MAE START OF CHANGE
+  this.hideTabSymbol = params.hideTabSymbol;
+  // MAE END OF CHANGE
   this.tablature = new StringTablature(this.nbLines, this.linePitch);
   var semantics = new ViolinPatterns(this);
   this.semantics = semantics;
@@ -17038,8 +17041,9 @@ function buildTabAbsolute(plugin, absX, relX) {
   };
   var tabAbsolute = new AbsoluteElement(element, 0, 0, "symbol", 0);
   tabAbsolute.x = absX;
-  // MAE 15 Oct 2023 to hide the left side TAB element on note name and whistle tab
-  if (gDrawTabSymbol){
+
+  // MAE 28 Nov 2023 to hide the left side TAB element on note name and whistle tab
+  if (!plugin.hideTabSymbol){
     var tabRelative = new RelativeElement(tabIcon, 0, 0, 7.5, "tab");
     tabRelative.x = relX;
     tabAbsolute.children.push(tabRelative);
