@@ -228,6 +228,7 @@ module.exports = animation;
  */
 var ViolinTablature = __webpack_require__(/*! ../tablatures/instruments/violin/tab-violin */ "./src/tablatures/instruments/violin/tab-violin.js");
 var GuitarTablature = __webpack_require__(/*! ../tablatures/instruments/guitar/tab-guitar */ "./src/tablatures/instruments/guitar/tab-guitar.js");
+var FiveStringTablature = __webpack_require__(/*! ../tablatures/instruments/fivestring/tab-fivestring */ "./src/tablatures/instruments/violin/tab-fivestring.js");
 
 /* extend the table below when adding a new instrument plugin */
 
@@ -236,7 +237,8 @@ var pluginTab = {
   'violin': 'ViolinTab',
   'fiddle': 'ViolinTab',
   'mandolin': 'ViolinTab',
-  'guitar': 'GuitarTab'
+  'guitar': 'GuitarTab',
+  'fivestring': 'FiveStringTab'
 };
 var abcTablatures = {
   inited: false,
@@ -354,6 +356,7 @@ var abcTablatures = {
     if (!this.inited) {
       this.register(new ViolinTablature());
       this.register(new GuitarTablature());
+      this.register(new FiveStringTablature());
       this.inited = true;
     }
   }
@@ -16241,6 +16244,7 @@ Plugin.prototype.init = function (abcTune, tuneNumber, params) {
   this.linePitch = 3;
   this.nbLines = 6;
   this.isTabBig = true;
+  this.tabSymbolOffset = 0;
   this.capo = params.capo;
   this.transpose = params.visualTranspose;
   // MAE START OF CHANGE
@@ -16421,7 +16425,9 @@ function toNumber(self, note) {
     }
   }
   return {
-    num: "?",
+    // MAE 28 Nov 2023 - Replace out-of-bounds value ? with an x
+    // num: "?",
+    num: "X",
     str: self.stringPitches.length - 1,
     note: note
   };
@@ -16433,7 +16439,9 @@ StringPatterns.prototype.stringToPitch = function (stringNumber) {
 };
 function invalidNumber(retNotes, note) {
   var number = {
-    num: "?",
+    // MAE 28 Nov 2023 - Replace out-of-bounds value ? with an x
+    // num: "?",
+    num: "X",
     str: 0,
     note: note
   };
@@ -16913,6 +16921,7 @@ Plugin.prototype.init = function (abcTune, tuneNumber, params) {
   this.linePitch = 3;
   this.nbLines = 4;
   this.isTabBig = false;
+  this.tabSymbolOffset = 0;
   this.capo = params.capo;
   this.transpose = params.visualTranspose;
   // MAE START OF CHANGE
@@ -16971,6 +16980,92 @@ ViolinPatterns.prototype.stringToPitch = function (stringNumber) {
   return converter.stringToPitch(stringNumber);
 };
 module.exports = ViolinPatterns;
+
+/***/ }),
+
+/***/ "./src/tablatures/instruments/violin/tab-fivestring.js":
+/*!*********************************************************!*\
+  !*** ./src/tablatures/instruments/violin/tab-5string.js ***!
+  \*********************************************************/
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var StringTablature = __webpack_require__(/*! ../string-tablature */ "./src/tablatures/instruments/string-tablature.js");
+var TabCommon = __webpack_require__(/*! ../../tab-common */ "./src/tablatures/tab-common.js");
+var TabRenderer = __webpack_require__(/*! ../../tab-renderer */ "./src/tablatures/tab-renderer.js");
+var FiveStringPatterns = __webpack_require__(/*! ./fivestring-patterns */ "./src/tablatures/instruments/fivestring/fivestring-patterns.js");
+
+/**
+ * upon init mainly store provided instances for later usage
+ * @param {*} abcTune  the parsed tune AST tree
+*  @param {*} tuneNumber  the parsed tune AST tree
+ * @param {*} params  complementary args provided to Tablature Plugin
+ */
+Plugin.prototype.init = function (abcTune, tuneNumber, params) {
+  var _super = new TabCommon(abcTune, tuneNumber, params);
+  this.abcTune = abcTune;
+  this._super = _super;
+  this.linePitch = 3;
+  this.nbLines = 5;
+  this.isTabBig = true;
+  this.tabSymbolOffset = -.95; // Offset the tab symbol down a bit
+  this.capo = params.capo;
+  this.transpose = params.visualTranspose;
+  // MAE START OF CHANGE
+  this.hideTabSymbol = params.hideTabSymbol;
+  // MAE END OF CHANGE
+  this.tablature = new StringTablature(this.nbLines, this.linePitch);
+  var semantics = new FiveStringPatterns(this);
+  this.semantics = semantics;
+  // MAE START OF CHANGE
+  this.isFirstStaff = true;
+  this.firstTabNameHeight = 1;
+  // MAE END OF CHANGE
+};
+Plugin.prototype.render = function (renderer, line, staffIndex) {
+  if (this._super.inError) return;
+  if (this.tablature.bypass(line)) return;
+  var rndrer = new TabRenderer(this, renderer, line, staffIndex);
+  rndrer.doLayout();
+};
+function Plugin() {}
+
+//
+// Tablature plugin definition
+//
+var AbcFiveStringTab = function AbcFiveStringTab() {
+  return {
+    name: 'FiveStringTab',
+    tablature: Plugin
+  };
+};
+module.exports = AbcFiveStringTab;
+
+/***/ }),
+
+/***/ "./src/tablatures/instruments/fivestring/fivestring-patterns.js":
+/*!**************************************************************!*\
+  !*** ./src/tablatures/instruments/fivestring/fivestring-patterns.js ***!
+  \**************************************************************/
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var StringPatterns = __webpack_require__(/*! ../string-patterns */ "./src/tablatures/instruments/string-patterns.js");
+function FiveStringPatterns(plugin) {
+  this.tuning = plugin._super.params.tuning;
+  if (!this.tuning) {
+    this.tuning = ['C,', 'G,', 'D', 'A', 'e'];
+  }
+  plugin.tuning = this.tuning;
+  this.strings = new StringPatterns(plugin);
+}
+FiveStringPatterns.prototype.notesToNumber = function (notes, graces) {
+  var converter = this.strings;
+  return converter.notesToNumber(notes, graces);
+};
+FiveStringPatterns.prototype.stringToPitch = function (stringNumber) {
+  var converter = this.strings;
+  return converter.stringToPitch(stringNumber);
+};
+module.exports = FiveStringPatterns;
 
 /***/ }),
 
@@ -17039,6 +17134,10 @@ function buildTabAbsolute(plugin, absX, relX) {
     icon: tabIcon,
     Ypos: tabYPos
   };
+
+  // Offset the tab position if specified in the tab description
+  tabYPos += plugin.tabSymbolOffset;
+
   var tabAbsolute = new AbsoluteElement(element, 0, 0, "symbol", 0);
   tabAbsolute.x = absX;
 
