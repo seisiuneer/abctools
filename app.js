@@ -10794,7 +10794,7 @@ function InjectHeaderString(){
 	const theData = {
 	  injectlocation:1,
 	  injectstring:"",
-	  injectalltunes: false
+	  injectalltunes: true
 	};
 
 	var form = [
@@ -10942,7 +10942,7 @@ function InjectStaffWidth(){
 	// Setup initial values
 	const theData = {
 	  configure_staffwidth:gLastInjectedStaffWidth,
-	  configure_inject_all:false
+	  configure_inject_all:true
 	};
 
 	var form = [
@@ -11060,7 +11060,7 @@ function InjectLargePrint(){
 	// Setup initial values
 	const theData = {
 	  configure_staffwidth:gLastInjectedLargePrint,
-	  configure_inject_all:false
+	  configure_inject_all:true
 	};
 
 	var form = [
@@ -11514,7 +11514,7 @@ function InjectAllMIDIParams(){
 	  configure_bassvolume:gLastInjectedBassVolume,
 	  configure_chordvolume:gLastInjectedChordVolume,
 	  configure_inject_chord_program: false,
-	  configure_inject_all:false
+	  configure_inject_all:true
 	};
 
 	var form = [
