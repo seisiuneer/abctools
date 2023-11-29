@@ -1,6 +1,6 @@
 # abctools
 <p>This ABC tunes-to-notation converter was developed by <a href="https://michaeleskin.com" target="_blank">Michael Eskin</a>.</p>
-<p>This converter can generate standard music notation from ABC and MusicXML files, show note names along with notation, and also create tablature for mandolin, bouzouki, mandola, standard guitar, DADGAD guitar, or whistle.</p>
+<p>This converter can generate standard music notation from ABC and MusicXML files, show note names along with notation, and also create tablature for Mandolin, GDAD Bouzouki, CGDAE Mandolin, Standard Guitar, DADGAD Guitar, Ukulele or Tin Whistle.</p>
 <p>It can also transpose ABC up or down in semitone increments.</p>
 <p>It can generate PDF tunebooks in tune-per-page, multiple-tunes-per-page, or tune incipits formats.</p>
 <p>It can play ABC files with melody and chords, and supports custom MIDI instruments.</p>
