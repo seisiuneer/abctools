@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-                
+               
         <style>
         p {
         font-size:14pt;
@@ -260,11 +260,12 @@
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectionfeatures">ABC Utility Injection Features</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectallpdf">Inject All Available PDF Tunebook Annotations</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectsectionheader">Inject PDF Section Header</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injectmidi">Inject MIDI Soundfont, Melody, Chord, and Volumes</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injectmidi">Inject MIDI Programs and Volumes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectmetronome">Inject Metronome</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#injectrepeatsandtwobarclickintros">Inject Repeats and Intros</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectabcheader">Inject ABC Header String</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectstaffwidth">Inject %%staffwidth</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#injectrepeatsandtwobarclickintros">Inject Repeats and Click Intros</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injectlargenotation">Inject Large Notation Headers</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">Injecting Instrument-Specifc Tab Into the ABC</button>
@@ -703,7 +704,7 @@
             <h1 class="page_break_always">Advanced Controls and Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Advanced</strong> button brings up the ABC Transcription Tools Advanced Controls and Features dialog:</p>
             <div class="image_holder_p">
-                <img src="img/advanced_controls_25.jpg"/>
+                <img src="img/advanced_controls_26.jpg"/>
             </div>
             <p>Click the lightbulb icon to bring up this section of the user guide in a new browser tab.</p>
             <hr class="hidden-print" id="advanced_showhidefeatures">
@@ -734,7 +735,7 @@
             <p>In the sorted Table of Contents and Index, section headers will be displayed at the top without the extra space.</p>
             <p>When rendering full tunes, section headers are automatically pushed to the top of a new page in the tunebook.</p>
             <p>When rendering note or text incipits, section headers are not automatically pushed to the top of a new page.</p>
-            <p id="advanced_injectmidi"><strong>Inject MIDI Soundfont, Melody, Chord, and Volumes</strong> - Injects MIDI Soundfont, Melody program, Chord program and volume annotation into one or all tunes:</p>
+            <p id="advanced_injectmidi"><strong>Inject MIDI Programs and Volumes</strong> - Injects MIDI Soundfont, Melody program, Chord program and volume annotation into one or all tunes:</p>
             <div class="image_holder_p">
                 <img src="img/inject_all_midi_3.jpg"/>
             </div>
@@ -747,12 +748,7 @@
             <p id="advanced_injectmetronome"><strong>Inject Metronome</strong> - Using the custom rhythm pattern feature, injects a playable metronome into one or all tunes based on the meter of the tune as specified in the M: tag.</p>
             <p>Since the metronome uses the ABC chord system to do its job, adding a metronome strips any existing ABC chords, MIDI chord programs, and MIDI bass/chord volumes from the ABC before injecting the ABC for the metronome.</p>
             <p>To disable an injected metronome, simply delete the injected "E" chord that starts it off.</p>
-            <p id="advanced_injectabcheader"><strong>Inject ABC Header String</strong> - Prompts for a string to inject at the top or bottom of the current tune or all tunes ABC header.</p>
-            <p>This can be useful, for example to add a Q: tempo tag or %swing value to all the tunes at once.</p>
-            <p id="advanced_injectstaffwidth"><strong>Inject %%staffwidth</strong> - Prompts for a %%staffwidth value to inject at the text insertion point or into all tunes.</p>
-            <p>This can be used to change the scale of every tune both for display and PDF generation.</p>
-            <p>Generally values above 560 will make the tunes less tall.</p>
-            <p id="injectrepeatsandtwobarclickintros"><strong>Inject Repeats and Click Intros</strong> - Allows you to increase the number of times through each tune by duplicating the ABC for the tune.</p>
+            <p id="injectrepeatsandtwobarclickintros"><strong>Inject Repeats and Intros</strong> - Allows you to increase the number of times through each tune by duplicating the ABC for the tune.</p>
             <div class="image_holder_p">
                 <img src="img/inject_repeats_2.jpg"/>
             </div>
@@ -764,7 +760,21 @@
             <p><strong>If the 1st part of a tune has a :| repeat symbol at the end of it (or on a first ending), but not at the very start of the part, you will need to add the starting |: repeat bar symbol for the ABC to play correctly if there is more than one repetition through the tune.</strong></p>
             <p><strong>The lack of a first repeat bar symbol in the ABC will make the first part of the tune on the second and repetitions appear to not repeat.</strong></p>
             <p><strong>To Fix:</strong></p>
-            <p><strong>Add a |: repeat bar at the start of the tune.</strong></p>
+            <p><strong>Add a |: repeat bar at the start of the tune.</strong></p>            
+            <p id="advanced_injectabcheader"><strong>Inject ABC Header String</strong> - Prompts for a string to inject at the top or bottom of the current tune or all tunes ABC header.</p>
+            <p>This can be useful, for example to add a Q: tempo tag or %swing value to all the tunes at once.</p>
+            <p id="advanced_injectstaffwidth"><strong>Inject %%staffwidth</strong> - Prompts for a %%staffwidth value to inject at the text insertion point or into all tunes.</p>
+            <p>This can be used to change the scale of every tune both for display and PDF generation.</p>
+            <p>Generally values above 560 will make the tunes less tall.</p>
+            <p id="advanced_injectlargenotation"><strong>Inject Large Notation Headers</strong> - Prompts for a %%staffwidth value to inject along with other useful headers at the text insertion point or into all tunes to make the notation larger.</p>
+            <p>For example:</p>
+            <p class="code">%%noexpandtowidest<br/>
+                %%leftmargin 0<br/>
+                %%rightmargin 0<br/>
+            %%staffwidth 500</p>
+            <p>Experiment with changing the %%staffwidth value until you get the result you want.</p>
+            <p>Once you add %%noexpandtowidest, you may in some cases have to adjust your ABC to get a consistent right edge to the staves.</p>
+            <p>For more details, check out the <a href="#largeprint">"Large Print" Edition Tune Notation</a> section.</p>
             <hr class="hidden-print" id="advanced_tabinjectors">
             <h1 class="page_break_always">Instrument Tablature Injectors<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>These command all inject instrument tablature into the ABC.</p>
@@ -2081,14 +2091,14 @@
             <p>To do this with the new layout system, you'll need to override the expandtowidest feature in abcjs 6.2.3 by adding:</p>
             <p class="code">%%noexpandtowidest</p>
             <p>to your ABC, and then play around with the values of:</p>
-            <p class="code">%%staffwidth<br/>
-                %%leftmargin<br/>
-            %%rightmargin</p>
+            <p class="code">%%leftmargin<br/>
+                %%rightmargin<br/>
+            %%staffwidth</p>
             <p>For example:</p>
             <p class="code">%%noexpandtowidest<br/>
-                %%staffwidth 400<br/>
                 %%leftmargin 0<br/>
-            %%rightmargin 0</p>
+                %%rightmargin 0<br/>
+            %%staffwidth 400</p>
             <p>Once you add %%noexpandtowidest, you may in some cases have to adjust your ABC to get a consistent right edge to the staves.</p>
             <hr class="hidden-print" id="tabtranspose">
             <h1 class="page_break_always h1wide">Transposing Notation Independent of Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>

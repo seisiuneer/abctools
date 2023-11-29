@@ -641,13 +641,13 @@ opacity: 0.4;
 padding:12px;
 }
 
-#ceoltasdialoginverse,#injectallheaders,#injectheaderstring,#injectallmidiparams,#injectbctab,#injectcdtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth, #ceoltasdialog{
+#ceoltasdialoginverse,#injectallheaders,#injectheaderstring,#injectallmidiparams,#injectbctab,#injectcdtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth, #ceoltasdialog,#injectmetronome{
 height:42px;
 padding:12px;
 margin-right:24px;
 }
 
-#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#ceoltastransform,#injectsectionheader,#injectmetronome,#looper_metronomebutton{
+#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#ceoltastransform,#injectsectionheader,#looper_metronomebutton,#injectlargeprint{
 height:42px;
 padding:12px;
 }

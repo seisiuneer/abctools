@@ -10685,6 +10685,17 @@ function InjectOneTuneStaffWidth(theTune, staffwidth){
 }
 
 //
+// Inject MIDI Large Print headers 
+//
+function InjectOneTuneLargePrint(theTune, staffwidth){
+
+	theOutput = InjectStringBelowTuneHeader(theTune, "%\n% Adjust these values to produce the desired results:\n%\n%%noexpandtowidest\n%%leftmargin 0\n%%rightmargin 0\n%%staffwidth "+staffwidth+"\n%");
+	
+	return theOutput;
+	
+}
+
+//
 // Inject MIDI soundfont 
 //
 function InjectOneTuneSoundfont(theTune, theSoundfont){
@@ -11008,6 +11019,125 @@ function InjectStaffWidth(){
 				var rightSide = gTheABC.value.substring(theSelectionStart);
 
 				gTheABC.value = leftSide + "%%staffwidth " + staffwidth + "\n" + rightSide;
+
+				// Set dirty
+				gIsDirty = true;
+
+				// Force a redraw
+				RenderAsync(true,null,function(){
+
+					// Set the select point
+					gTheABC.selectionStart = theSelectionStart;
+				    gTheABC.selectionEnd = theSelectionStart;
+
+				    // Focus after operation
+				    FocusAfterOperation();
+
+				});
+
+			}
+
+		}
+	});
+}
+
+//
+// Inject a "Large Print" directive into one or all tunes
+//
+
+var gLastInjectedLargePrint = 560;
+
+function InjectLargePrint(){
+
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","InjectLargePrint");
+
+	// Setup initial values
+	const theData = {
+	  configure_staffwidth:gLastInjectedLargePrint,
+	  configure_inject_all:false
+	};
+
+	var form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject "Large Print" Directives&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#pdf_tunebook_spacing_overrides" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject example directives into the ABC for larger notation.</p>'},  
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">Because this disables the optimized ABC staff width layout, you may need to make changes to the ABC to get the results you want.</p>'},  
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">Default is 560, smaller numbers will make the notation larger.</p>'},  
+	  {name: "%%staffwidth value to inject?", id: "configure_staffwidth", type:"number", cssClass:"configure_staffwidth_form_text"}, 
+	  {name: "            Inject all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_staffwidth_form_text"},
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+		
+		if (!args.canceled){
+
+			var staffwidthstr = args.result.configure_staffwidth;
+
+			if (staffwidthstr == null){
+				return;
+			}
+
+			var staffwidth = parseInt(staffwidthstr);
+
+			if ((isNaN(staffwidth)) || (staffwidth == undefined)){
+				return;
+			}
+
+			// Time saver for next use
+			gLastInjectedLargePrint = staffwidth;
+
+			// Injecting all tunes
+			if (args.result.configure_inject_all){
+
+				var nTunes = CountTunes();
+
+				var theNotes = gTheABC.value;
+
+				// Find the tunes
+				var theTunes = theNotes.split(/^X:/gm);
+
+				var output = FindPreTuneHeader(theNotes);
+
+				for (var i=1;i<=nTunes;++i){
+
+					theTunes[i] = "X:"+theTunes[i];
+
+					output += InjectOneTuneLargePrint(theTunes[i],staffwidth);
+
+				}
+
+				// Stuff in the output
+				gTheABC.value = output;
+
+				// Set dirty
+				gIsDirty = true;
+
+				// Force a redraw
+				RenderAsync(true,null,function(){
+
+					// Set the select point
+					gTheABC.selectionStart = 0;
+				    gTheABC.selectionEnd = 0;
+
+				    // Focus after operation
+				    FocusAfterOperation();
+
+				});
+			}
+			else{
+
+				var theSelectionStart = gTheABC.selectionStart;
+
+				var leftSide = gTheABC.value.substring(0,theSelectionStart);
+				
+				var rightSide = gTheABC.value.substring(theSelectionStart);
+
+				gTheABC.value = leftSide + "%\n% Adjust these values to produce the desired results:\n%\n%%noexpandtowidest\n%%leftmargin 0\n%%rightmargin 0\n%%staffwidth "+staffwidth+"\n%\n" + rightSide;
 
 				// Set dirty
 				gIsDirty = true;
@@ -21638,13 +21768,14 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<input id="injectsectionheader" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectSectionHeader()" type="button" value="Inject PDF Section Header" title="Injects a PDF section header placeholder tune at the cursor insertion point">';
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
-	modal_msg  += '<input id="injectallmidiparams" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectAllMIDIParams()" type="button" value="Inject MIDI Soundfont, Melody, Chord, and Volumes" title="Injects MIDI Soundfont, Melody program, Chord program and volume annotation into one or all tunes">';
+	modal_msg  += '<input id="injectallmidiparams" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectAllMIDIParams()" type="button" value="Inject MIDI Programs and Volumes" title="Injects MIDI Soundfont, Melody program, Chord program and volume annotation into one or all tunes">';
 	modal_msg  += '<input id="injectmetronome" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMetronome()" type="button" value="Inject Metronome" title="Injects ABC for a metronome into one or all tunes">';
+	modal_msg  += '<input id="injectclicktrackall" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectRepeatsAndClickTrackAll()" type="button" value="Inject Repeats and Intros" title="Injects repeated copies of tunes and optional style-adaptive two-bar click intros into every tune">';	
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
 	modal_msg  += '<input id="injectheaderstring" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectHeaderString()" type="button" value="Inject ABC Header String" title="Injects a string into the top or bottom of the ABC header for one or all tunes">';	
 	modal_msg  += '<input id="injectstaffwidth" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectStaffWidth()" type="button" value="Inject %%staffwidth" title="Injects a %%staffwidth annotation into one or all tunes">';
-	modal_msg  += '<input id="injectclicktrackall" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectRepeatsAndClickTrackAll()" type="button" value="Inject Repeats and Click Intros" title="Injects repeated copies of tunes and optional style-adaptive two-bar click intros into every tune">';	
+	modal_msg  += '<input id="injectlargeprint" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectLargePrint()" type="button" value="Inject Large Notation Headers" title="Injects an ABC header template for larger notation display into one or all tunes.">';
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">'
 	modal_msg  += '<input id="injectbctab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_BC()" type="button" value="Inject B/C Box Tab" title="Injects B/C box tablature into the ABC">';
