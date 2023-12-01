@@ -10678,7 +10678,7 @@ function InjectStringBelowTuneHeader(theTune,theString){
 //
 function InjectOneTuneStaffWidth(theTune, staffwidth){
 
-	theOutput = InjectStringBelowTuneHeader(theTune, "%%staffwidth "+staffwidth);
+	var theOutput = InjectStringBelowTuneHeader(theTune, "%%staffwidth "+staffwidth);
 	
 	return theOutput;
 	
@@ -10689,7 +10689,7 @@ function InjectOneTuneStaffWidth(theTune, staffwidth){
 //
 function InjectOneTuneLargePrint(theTune, staffwidth){
 
-	theOutput = InjectStringBelowTuneHeader(theTune, "%\n% Adjust these values to produce the desired results:\n%\n%%noexpandtowidest\n%%leftmargin 0\n%%rightmargin 0\n%%staffwidth "+staffwidth+"\n%");
+	var theOutput = InjectStringBelowTuneHeader(theTune, "%\n% Adjust these values to produce the desired results:\n%\n%%noexpandtowidest\n%%leftmargin 0\n%%rightmargin 0\n%%staffwidth "+staffwidth+"\n%");
 	
 	return theOutput;
 	
@@ -10700,7 +10700,7 @@ function InjectOneTuneLargePrint(theTune, staffwidth){
 //
 function InjectOneTuneSoundfont(theTune, theSoundfont){
 
-	theOutput = InjectStringBelowTuneHeader(theTune, "% Soundfont: "+theSoundfont+"\n"+"%abcjs_soundfont "+theSoundfont);
+	var theOutput = InjectStringBelowTuneHeader(theTune, "% Soundfont: "+theSoundfont+"\n"+"%abcjs_soundfont "+theSoundfont);
 	
 	return theOutput;
 	
@@ -10927,7 +10927,7 @@ function InjectHeaderString(){
 // Inject a %%staffwidth directive into one or all tunes
 //
 
-var gLastInjectedStaffWidth = 560;
+var gLastInjectedStaffWidth = 556;
 
 function InjectStaffWidth(){
 
@@ -11042,12 +11042,163 @@ function InjectStaffWidth(){
 }
 
 //
-// Inject a "Large Print" directive into one or all tunes
+// Notation Spacing Explorer
+// Test and inject notation spacing values 
 //
 
-var gLastInjectedLargePrint = 560;
+var gNotationSpacingLeftMargin = 15;
+var gNotationSpacingRightMargin = 15;
+var gNotationSpacingStaffWidth = 556;
+var gNotationSpacingStaffSep = 0;
+var gNotationSpacingNoExpand = false;
+var gNotationCallback = null;
 
-function InjectLargePrint(){
+function testSpacingChange(){
+
+	//console.log("Got testSpacingChange");
+	
+	var testVal;
+
+	testVal = document.getElementById("layout_left_margin").value;
+	if (!isNaN(testVal)){
+		gNotationSpacingLeftMargin = testVal;
+	}
+
+	testVal =  document.getElementById("layout_right_margin").value;
+	if (!isNaN(testVal)){
+		gNotationSpacingRightMargin = testVal;
+	}
+
+	testVal = document.getElementById("layout_staff_width").value;
+	if (!isNaN(testVal)){
+		gNotationSpacingStaffWidth = testVal;
+	}
+
+	testVal = document.getElementById("layout_staff_sep").value;
+	if (!isNaN(testVal)){
+		gNotationSpacingStaffSep = testVal;
+	}
+
+	gNotationSpacingNoExpand = document.getElementById("layout_inject_noexpand").checked;
+
+	if (gNotationCallback){
+		gNotationCallback();
+	}
+}
+
+function NotationSpacingInject(){
+
+	//console.log("Got NotationSpacingInject");
+
+	var injectAll = document.getElementById("layout_inject_all").checked;
+
+	if (injectAll){
+
+		var nTunes = CountTunes();
+
+		var theNotes = gTheABC.value;
+
+		// Find the tunes
+		var theTunes = theNotes.split(/^X:/gm);
+
+		var output = FindPreTuneHeader(theNotes);
+
+		for (var i=1;i<=nTunes;++i){
+
+			var theTune = "X:"+theTunes[i];
+
+			output += InjectOneTuneSpacingHeader(theTune,gNotationSpacingStaffSep, gNotationSpacingLeftMargin,gNotationSpacingRightMargin,gNotationSpacingStaffWidth,gNotationSpacingNoExpand);
+
+		}
+
+		// Stuff in the output
+		gTheABC.value = output;
+		
+		// Set dirty
+		gIsDirty = true;
+
+		// Force a redraw
+		RenderAsync(true,null,function(){
+
+			// Set the select point
+			gTheABC.selectionStart = 0;
+		    gTheABC.selectionEnd = 0;
+
+		    // Focus after operation
+		    FocusAfterOperation();
+
+		});
+	}
+	else{
+
+		// Try to find the current tune
+		var theSelectedABC = findSelectedTune();
+
+		if (theSelectedABC == ""){
+			// This should never happen
+			return;
+		}
+
+		var theSelectedTuneIndex = findSelectedTuneIndex();
+
+		var theInjectedTune = theSelectedABC;
+
+		theInjectedTune = InjectOneTuneSpacingHeader(theInjectedTune,gNotationSpacingStaffSep, gNotationSpacingLeftMargin,gNotationSpacingRightMargin,gNotationSpacingStaffWidth,gNotationSpacingNoExpand);
+
+		// Seeing extra line breaks after the inject
+		theInjectedTune = theInjectedTune.replace("\n\n","");
+
+		// Try and keep the same tune after the redraw for immediate play
+		var theSelectionStart = gTheABC.selectionStart;
+
+		// Stuff in the injected ABC
+		var theABC = gTheABC.value;
+		theABC = theABC.replace(theSelectedABC,theInjectedTune);
+
+		gTheABC.value = theABC;
+
+		// Set dirty
+		gIsDirty = true;
+
+		// Force a redraw of the tune
+		RenderAsync(false,theSelectedTuneIndex,function(){
+
+			// Set the select point
+			gTheABC.selectionStart = theSelectionStart;
+		    gTheABC.selectionEnd = theSelectionStart;
+
+		    // Focus after operation
+		    FocusAfterOperation();
+
+		});
+
+
+	}
+}
+
+function InjectOneTuneSpacingHeader(theTune, staffSep, leftMargin, rightMargin, staffWidth, noExpand){
+
+	var theHeaders = "%%staffsep "+staffSep+"\n%%leftmargin "+leftMargin+"\n%%rightmargin "+rightMargin+"\n%%staffwidth "+staffWidth+"\n%";
+
+	if (noExpand){
+		theHeaders = "%%noexpandtowidest\n"+theHeaders;
+	}
+
+	theHeaders = "%\n% Spacing values injected by the Notation Spacing Explorer:\n%\n"+theHeaders;
+
+	var theOutput = InjectStringBelowTuneHeader(theTune, theHeaders);
+	
+	return theOutput;
+
+}
+
+function NotationSpacingExplorer(){
+
+	if (!gAllowCopy){
+
+		return;
+
+	}
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
@@ -11055,109 +11206,210 @@ function InjectLargePrint(){
 	}
 
 	// Keep track of dialogs
-	sendGoogleAnalytics("dialog","InjectLargePrint");
+	sendGoogleAnalytics("dialog","NotationSpacingExplorer");
 
-	// Setup initial values
-	const theData = {
-	  configure_staffwidth:gLastInjectedLargePrint,
-	  configure_inject_all:true
-	};
+	// Try to find the current tune
+	var theABC = findSelectedTune();
 
-	var form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Large Notation Headers&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_injectlargenotation" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
-	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject example directives into the ABC for larger notation.</p>'},  
-	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">Because this disables the optimized ABC staff width layout, you may need to make changes to the ABC to get the results you want.</p>'},  
-	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">Default is 560, smaller numbers will make the notation larger.</p>'},  
-	  {name: "%%staffwidth value to inject?", id: "configure_staffwidth", type:"number", cssClass:"configure_staffwidth_form_text"}, 
-	  {name: "            Inject all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_staffwidth_form_text"},
-	];
+	if (theABC == ""){
+		// This should never happen
+		return;
+	}
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	var instrument = GetRadioValue("notenodertab");
+
+	var abcOptions = GetABCJSParams(instrument);
+
+	abcOptions.oneSvgPerLine = false;
+
+	// Adapt the top based on the player control size
+	var theTop = 40;
+
+	var theHeight = window.innerHeight - 340;
+
+   	modal_msg = '<div id="notationspacingexplorerholder" style="height:'+theHeight+'px;overflow-y:auto;margin-bottom:15px;">';
+
+   	modal_msg += '<div id="notationspacingexplorer-paper"></div>';
+
+   	modal_msg += '</div>';
+
+	modal_msg += '<p class="configure_layout_text" style="text-align:center;margin:0px;margin-top:20px">';
+	modal_msg += '<span>Staff Separation:</span> <input style="width:70px;margin-right:14px;" id="layout_staff_sep" type="number" min="-100" step="1" max="1000" title="Staff separation" autocomplete="off" onchange="testSpacingChange();"/>';
+	modal_msg += '<span>Left Margin:</span> <input style="width:70px;margin-right:14px;" id="layout_left_margin" type="number" min="0" step="1" max="1000" title="Left margin" autocomplete="off" onchange="testSpacingChange();"/>';
+	modal_msg += '<span>Right Margin:</span> <input style="width:70px;margin-right:14px;" id="layout_right_margin" type="number" min="0" step="1" max="1000" title="Tune tempo end percentage" autocomplete="off" onchange="testSpacingChange();"/>';
+	modal_msg += '<span>Staff Width:</span> <input style="width:80px;margin-right:0px;" id="layout_staff_width" type="number" min="0" step="1" max="2000" title="Staff width" autocomplete="off" onchange="testSpacingChange();"/>';
+	modal_msg += '</p>';
+	modal_msg += '<p class="configure_layout_text" style="text-align:center;margin:0px;margin-top:20px">';
+   	modal_msg += '<span style="font-size:12pt;font-family:helvetica;">Add %%noexpandtowidest:</span><input style="width:16px;margin-left:8px;margin-right:24px;" id="layout_inject_noexpand" type="checkbox" onchange="testSpacingChange();"/>';
+	modal_msg += '<input id="notationspacingexplorertest" style="margin-right:36px;" class="notationspacingexplorerinject button btn btn-notationspacingexplorertest" onclick="testSpacingChange();" type="button" value="Test Values" title="Tests the spacing changes ABC">';
+  	modal_msg += '<span style="font-size:12pt;font-family:helvetica;">Inject all tunes:</span><input style="width:16px;margin-left:8px;margin-right:24px;" id="layout_inject_all" type="checkbox"/>';
+   	modal_msg += '<input id="notationspacingexplorerinject" class="notationspacingexplorerinject button btn btn-notationspacingexplorerinject" onclick="NotationSpacingInject();" type="button" style="margin-right:0px;" value="Inject Spacing into the ABC" title="Injects the spacing values into the ABC">';
+ 	modal_msg += '</p>';  	
+ 	modal_msg += '<a id="notationspacingexplorer_help" href="https://michaeleskin.com/abctools/userguide.html#advanced_notationspacingexplorer" target="_blank" style="text-decoration:none;" title="Learn more about the Notation Spacing Explorer">?</a>';
+	
+   	// Scale the player for larger screens
+	var windowWidth = window.innerWidth;
+
+	var theWidth;
+
+	if (isDesktopBrowser()){
+
+		theWidth = windowWidth * 0.45;
+
+		if (theWidth < 850){
+			theWidth = 850;
+		}
+
+	}
+	else{
+
+		theWidth = 800;  
 		
-		if (!args.canceled){
+	}
 
-			var staffwidthstr = args.result.configure_staffwidth;
+	// Make initial spacing identical to standard viewer
 
-			if (staffwidthstr == null){
-				return;
-			}
+	// Replace standalone %%center directives with %%vskip 12
+	var searchRegExp = /%%center$/gm;
 
-			var staffwidth = parseInt(staffwidthstr);
+	theABC = theABC.replace(searchRegExp, "%%vskip 12\n%%center");
 
-			if ((isNaN(staffwidth)) || (staffwidth == undefined)){
-				return;
-			}
+	// Inject %%staffsep 
+	searchRegExp = /^X:.*$/gm
 
-			// Time saver for next use
-			gLastInjectedLargePrint = staffwidth;
+	theABC = theABC.replace(searchRegExp, "X:1\n%%musicspace 10\n%%staffsep " + gStaffSpacing);
 
-			// Injecting all tunes
-			if (args.result.configure_inject_all){
+	var originalABC = theABC;
 
-				var nTunes = CountTunes();
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: theTop, width:theWidth, okText:"Close", scrollWithPage: (isMobileBrowser()) });
 
-				var theNotes = gTheABC.value;
+	// Get the default
+	gNotationSpacingLeftMargin = 15;
 
-				// Find the tunes
-				var theTunes = theNotes.split(/^X:/gm);
+	// See if there are already values injected
+	var searchRegExp = /^%%leftmargin.*$/m
 
-				var output = FindPreTuneHeader(theNotes);
+	var testMatch = theABC.match(searchRegExp);
 
-				for (var i=1;i<=nTunes;++i){
 
-					theTunes[i] = "X:"+theTunes[i];
+	if ((testMatch) && (testMatch.length > 0)){
 
-					output += InjectOneTuneLargePrint(theTunes[i],staffwidth);
+		var theVal = testMatch[0].replace("%%leftmargin","");
 
-				}
+		theVal = theVal.trim();
+		
+		var theValParsed = parseInt(theVal);
+		
+		if (!isNaN(theValParsed)){
 
-				// Stuff in the output
-				gTheABC.value = output;
-
-				// Set dirty
-				gIsDirty = true;
-
-				// Force a redraw
-				RenderAsync(true,null,function(){
-
-					// Set the select point
-					gTheABC.selectionStart = 0;
-				    gTheABC.selectionEnd = 0;
-
-				    // Focus after operation
-				    FocusAfterOperation();
-
-				});
-			}
-			else{
-
-				var theSelectionStart = gTheABC.selectionStart;
-
-				var leftSide = gTheABC.value.substring(0,theSelectionStart);
-				
-				var rightSide = gTheABC.value.substring(theSelectionStart);
-
-				gTheABC.value = leftSide + "%\n% Adjust these values to produce the desired results:\n%\n%%noexpandtowidest\n%%leftmargin 0\n%%rightmargin 0\n%%staffwidth "+staffwidth+"\n%\n" + rightSide;
-
-				// Set dirty
-				gIsDirty = true;
-
-				// Force a redraw
-				RenderAsync(true,null,function(){
-
-					// Set the select point
-					gTheABC.selectionStart = theSelectionStart;
-				    gTheABC.selectionEnd = theSelectionStart;
-
-				    // Focus after operation
-				    FocusAfterOperation();
-
-				});
-
-			}
+			gNotationSpacingLeftMargin = theValParsed;
 
 		}
-	});
+	}
+
+	// Get the default
+	gNotationSpacingRightMargin = 15;
+
+	searchRegExp = /^%%rightmargin.*$/gm
+
+	testMatch = theABC.match(searchRegExp);
+
+	if ((testMatch) && (testMatch.length > 0)){
+
+		var theVal = testMatch[testMatch.length-1].replace("%%rightmargin","");
+
+		theVal = theVal.trim();
+		
+		var theValParsed = parseInt(theVal);
+		
+		if (!isNaN(theValParsed)){
+
+			gNotationSpacingRightMargin = theValParsed;
+
+		}
+	}
+
+	// Get the default
+	gNotationSpacingStaffWidth = 556;
+
+	searchRegExp = /^%%staffwidth.*$/gm
+
+	testMatch = theABC.match(searchRegExp);
+
+	if ((testMatch) && (testMatch.length > 0)){
+
+		var theVal = testMatch[testMatch.length-1].replace("%%staffwidth","");
+
+		theVal = theVal.trim();
+		
+		var theValParsed = parseInt(theVal);
+		
+		if (!isNaN(theValParsed)){
+
+			gNotationSpacingStaffWidth = theValParsed;
+
+		}
+	}
+
+	// Get the default
+	gNotationSpacingStaffSep = gStaffSpacing;
+
+	searchRegExp = /^%%staffsep.*$/gm
+
+	testMatch = theABC.match(searchRegExp);
+
+	if ((testMatch) && (testMatch.length > 0)){
+
+		var theVal = testMatch[testMatch.length-1].replace("%%staffsep","");
+
+		theVal = theVal.trim();
+		
+		var theValParsed = parseInt(theVal);
+		
+		if (!isNaN(theValParsed)){
+
+			gNotationSpacingStaffSep = theValParsed;
+
+		}
+	}
+	
+
+	// Get the default
+	gNotationSpacingNoExpand = false;
+
+	searchRegExp = /^%%noexpandtowidest.*$/m
+
+	testMatch = theABC.match(searchRegExp);
+
+	if ((testMatch) && (testMatch.length > 0)){
+		gNotationSpacingNoExpand = true;
+	}
+
+	document.getElementById("layout_left_margin").value = gNotationSpacingLeftMargin;
+	document.getElementById("layout_right_margin").value = gNotationSpacingRightMargin;
+	document.getElementById("layout_staff_width").value = gNotationSpacingStaffWidth;
+	document.getElementById("layout_staff_sep").value = gNotationSpacingStaffSep;
+	document.getElementById("layout_inject_noexpand").checked = gNotationSpacingNoExpand;
+
+	// Setup the redraw callback
+	gNotationCallback = function(){
+
+		//console.log("notation callback called");
+
+		theABC = InjectOneTuneSpacingHeader(originalABC,gNotationSpacingStaffSep, gNotationSpacingLeftMargin,gNotationSpacingRightMargin,gNotationSpacingStaffWidth,gNotationSpacingNoExpand);
+
+		var visualObj = ABCJS.renderAbc("notationspacingexplorer-paper", theABC, abcOptions)[0];
+
+		// Post process whistle or note name tab
+		postProcessTab([visualObj], "notationspacingexplorer-paper",instrument, true);
+
+	}
+
+	var visualObj = ABCJS.renderAbc("notationspacingexplorer-paper", theABC, abcOptions)[0];
+
+	// Post process whistle or note name tab
+	postProcessTab([visualObj], "notationspacingexplorer-paper",instrument, true);
+
 }
 
 //
@@ -11187,6 +11439,8 @@ function InjectOneTuneMIDIProgram(theTune, progNum, bIsChords){
 	else{
 		toInject = "% Melody program: "+thePatchName+"\n"+"%%MIDI program " + progNum;
 	}
+
+	var theOutput; 
 
 	if (bIsChords){
 
@@ -11228,7 +11482,7 @@ function InjectOneTuneMIDIBassChordProgramAndVolumes(theTune, progNum, bassVol, 
 	toInject += "\n%%MIDI bassvol " + bassVol + "\n" + "%%MIDI chordvol " + chordVol;
 
 
-	theOutput = InjectStringBelowTuneHeader(theTune,toInject);
+	var theOutput = InjectStringBelowTuneHeader(theTune,toInject);
 
 	
 	return theOutput;
@@ -11239,6 +11493,8 @@ function InjectOneTuneMIDIBassChordProgramAndVolumes(theTune, progNum, bassVol, 
 // Inject MIDI program number directive above the tune header
 //
 function InjectOneTuneMIDIProgramAboveTune(theTune, progNum, bIsChords){
+
+	var theOutput;
 
 	if (bIsChords){
 
@@ -11260,6 +11516,7 @@ function InjectOneTuneMIDIProgramAboveTune(theTune, progNum, bIsChords){
 //
 function InjectOneTuneMIDIVolume(theTune, theVolume, bIsChords){
 
+	var theOutput;
 
 	if (bIsChords){
 
@@ -11281,6 +11538,7 @@ function InjectOneTuneMIDIVolume(theTune, theVolume, bIsChords){
 //
 function InjectOneTuneMIDIVolumeAboveTune(theTune, theVolume, bIsChords){
 
+	var theOutput;
 
 	if (bIsChords){
 
@@ -21775,7 +22033,7 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
 	modal_msg  += '<input id="injectheaderstring" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectHeaderString()" type="button" value="Inject ABC Header String" title="Injects a string into the top or bottom of the ABC header for one or all tunes">';	
 	modal_msg  += '<input id="injectstaffwidth" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectStaffWidth()" type="button" value="Inject %%staffwidth" title="Injects a %%staffwidth annotation into one or all tunes">';
-	modal_msg  += '<input id="injectlargeprint" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectLargePrint()" type="button" value="Inject Large Notation Headers" title="Injects an ABC header template for larger notation display into one or all tunes.">';
+	modal_msg  += '<input id="injectlargeprint" class="advancedcontrols btn btn-injectcontrols-headers" onclick="NotationSpacingExplorer()" type="button" value="Notation Spacing Explorer" title="Find the right spacing and scale values for your notation">';
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">'
 	modal_msg  += '<input id="injectbctab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_BC()" type="button" value="Inject B/C Box Tab" title="Injects B/C box tablature into the ABC">';

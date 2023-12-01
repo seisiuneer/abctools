@@ -805,6 +805,40 @@ margin-left:0px;
 	}
 }
 
+#notationspacingexplorerinject{
+height:42px;
+padding:12px;
+width:auto;
+margin-left:0px;
+}
+
+@media (hover: hover) {
+	.notationspacingexplorerinject:hover{
+	background: palegreen;
+	}
+}
+
+#notationspacingexplorertest{
+height:42px;
+padding:12px;
+width:auto;
+margin-left:0px;
+}
+
+@media (hover: hover) {
+	.notationspacingexplorertest:hover{
+	background: palegreen;
+	}
+}
+
+#notationspacingexplorer_help{
+font-size:24pt;
+position:absolute;
+left:20px;
+top:20px;
+}
+
+
 #swingexplorertest{
 height:42px;
 padding:12px;
@@ -2081,6 +2115,20 @@ margin-top:-7px;
     user-select: none;
 }
 
+.configure_layout_text, .configure_layout_text{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-top:0px;
+}
+
+.configure_layout_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 2px;
+	width: 60px;
+	margin-right:10px;
+}
+
 #configure_musicxml_import{
 	height:42px;
 	margin-top: 9px;
@@ -2899,6 +2947,19 @@ padding: 3px;
   --color: black;
   --background-color: #E5CAF2;
 }
+
+.btn-notationspacingexplorertest{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-notationspacingexplorerinject{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+
+
 
 /* For Anglo concertina button naming dialog */
 .anglobuttonnames {
