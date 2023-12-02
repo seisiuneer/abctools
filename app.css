@@ -647,7 +647,7 @@ padding:12px;
 margin-right:24px;
 }
 
-#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#ceoltastransform,#injectsectionheader,#looper_metronomebutton,#injectlargeprint{
+#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#ceoltastransform,#injectsectionheader,#looper_metronomebutton,#injectlargeprint,#pdfinjectlargeprint{
 height:42px;
 padding:12px;
 }
@@ -666,6 +666,7 @@ padding:12px;
 #tunebookbuilder{
 height:42px;
 padding:12px;
+margin-right:24px;
 }
 
 #addtunebookheaders{
@@ -2958,6 +2959,10 @@ padding: 3px;
   --background-color: #C8ECFE;
 }
 
+.btn-injectcontrols-headers-pdf{
+  --color: black;
+  --background-color: #C8ECFE;
+}
 
 
 
