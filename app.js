@@ -8948,7 +8948,7 @@ function AddABC(){
 	modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddClickTrackTemplate();" type="button" value="Add Two-Bar Click Intro Templates" title="Adds two-bar click intro templates for common styles of tunes to the end of the ABC">';
 	modal_msg += '</p>';
 	modal_msg += '<p style="text-align:center;margin-top:32px;font-size:18px;">Configure PDF Tunebook Features</p>';
-	modal_msg += '<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Configure PDF Tunebook Features" title="Easily add features to your PDF tunebook including: Title Page, Table of Contents, Index, Page Headers, Page Footers, playback links, and custom QR Code"></p>';
+	modal_msg += '<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder_add" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Configure PDF Tunebook Features" title="Easily add features to your PDF tunebook including: Title Page, Table of Contents, Index, Page Headers, Page Footers, playback links, and custom QR Code"></p>';
 	modal_msg += '<p style="text-align:center;margin-top:24px;">';
 	modal_msg += '</p>';
 	modal_msg += '</div>';
