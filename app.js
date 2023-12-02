@@ -11236,7 +11236,7 @@ function NotationSpacingExplorer(){
 	modal_msg += '<p class="configure_layout_text" style="text-align:center;margin:0px;margin-top:20px">';
 	modal_msg += '<span>Staff Separation:</span> <input style="width:70px;margin-right:14px;" id="layout_staff_sep" type="number" min="-100" step="1" max="1000" title="Staff separation" autocomplete="off" onchange="testSpacingChange();"/>';
 	modal_msg += '<span>Left Margin:</span> <input style="width:70px;margin-right:14px;" id="layout_left_margin" type="number" min="0" step="1" max="1000" title="Left margin" autocomplete="off" onchange="testSpacingChange();"/>';
-	modal_msg += '<span>Right Margin:</span> <input style="width:70px;margin-right:14px;" id="layout_right_margin" type="number" min="0" step="1" max="1000" title="Tune tempo end percentage" autocomplete="off" onchange="testSpacingChange();"/>';
+	modal_msg += '<span>Right Margin:</span> <input style="width:70px;margin-right:14px;" id="layout_right_margin" type="number" min="0" step="1" max="1000" title="Right margin" autocomplete="off" onchange="testSpacingChange();"/>';
 	modal_msg += '<span>Staff Width:</span> <input style="width:80px;margin-right:0px;" id="layout_staff_width" type="number" min="0" step="1" max="2000" title="Staff width" autocomplete="off" onchange="testSpacingChange();"/>';
 	modal_msg += '</p>';
 	modal_msg += '<p class="configure_layout_text" style="text-align:center;margin:0px;margin-top:20px">';
