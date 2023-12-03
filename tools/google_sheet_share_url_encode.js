@@ -8,6 +8,25 @@
 // Returns:
 // ABC Transcription Tools Share URL
 //
+// In the function, if you want to change the displayed notation from standard notation to tab when launched, change the noten format value in the function to
+
+// &format=noten
+
+// in the function to 
+
+// &format=
+
+// followed by one of these:
+
+// noten
+// notenames
+// mandolin
+// gdad
+// cgdae
+// guitare
+// guitard
+// uke
+// whistle
 
 function encodeABCToolsShareURL(theABC,setName) {
 
