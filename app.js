@@ -11403,12 +11403,21 @@ function NotationSpacingExplorer(){
 		// Post process whistle or note name tab
 		postProcessTab([visualObj], "notationspacingexplorer-paper",instrument, true);
 
+		// Put a light reference border around the notation
+		var theSVG =  document.querySelectorAll('div[id="notationspacingexplorer-paper"] > svg');
+		theSVG[0].style.boxShadow = "inset 0px 0px 0px 1px #b8b8b8";
+
 	}
 
 	var visualObj = ABCJS.renderAbc("notationspacingexplorer-paper", theABC, abcOptions)[0];
 
 	// Post process whistle or note name tab
 	postProcessTab([visualObj], "notationspacingexplorer-paper",instrument, true);
+
+	// Put a light reference border around the notation
+	var theSVG =  document.querySelectorAll('div[id="notationspacingexplorer-paper"] > svg');
+	theSVG[0].style.boxShadow = "inset 0px 0px 0px 1px #b8b8b8";
+
 
 }
 
