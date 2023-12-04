@@ -11227,7 +11227,7 @@ function NotationSpacingExplorer(){
 
 	var theHeight = window.innerHeight - 340;
 
-   	modal_msg = '<div id="notationspacingexplorerholder" style="height:'+theHeight+'px;overflow-y:auto;margin-bottom:15px;">';
+   	modal_msg = '<div id="notationspacingexplorerholder" style="height:'+theHeight+'px;overflow-y:auto;margin-bottom:15px;padding:4px;">';
 
    	modal_msg += '<div id="notationspacingexplorer-paper"></div>';
 
