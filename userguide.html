@@ -265,9 +265,8 @@
                         <p class="toc"><a style="text-decoration:none;" href="#injectrepeatsandtwobarclickintros">Inject Repeats and Intros</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectabcheader">Inject ABC Header String</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectstaffwidth">Inject %%staffwidth</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#advanced_notationspacingexplorer">Notation Spacing Explorer</a></p>
                     </div>
-                    
+
                     <button class="accordion" title="Click to expand/collapse this section">Injecting Instrument-Specifc Tab Into the ABC</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_tabinjectors">Instrument Tablature Injectors</a></p>
@@ -280,6 +279,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_configuretab">Configure Tablature Injection Settings</a></p>
                     </div>
                     
+                    <p class="toc"><a style="text-decoration:none;" href="#advanced_notationspacingexplorer">Notation Spacing Explorer</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#midi_instrument_explorer">MIDI Instrument Explorer</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#swing_explorer">Swing Explorer</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#grace_duration_explorer">Grace Duration Explorer</a></p>
@@ -767,25 +767,6 @@
             <p>This can be used to change the scale of every tune both for display and PDF generation.</p>
             <p>Generally values above 556 will make the tunes less tall.</p>
             <p>If "Inject all tunes" is not checked, the annotation is added at the current text insertion point.</p>
-            <hr class="hidden-print" id="advanced_notationspacingexplorer">
-            <h1 class="page_break_always">Notation Spacing Explorer<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>Brings up a dialog where you can experiment with spacing values for the notation and then optionally inject the values into one or all of the tunes:</p>
-            <div class="image_holder_p">
-                <img src="img/notation_spacing_explorer_2.jpg"/>
-            </div>
-            <p><strong>Staff Separation:</strong> Sets the spacing between the staves. Default depends on the default spacing set in the tool's <strong>Settings</strong> dialog.</p>
-            <p><strong>Left Margin:</strong> Sets the spacing to the left of the staves. Default value is 15.</p>
-            <p><strong>Right Margin:</strong> Sets the spacing to the right of the staves. Default value is 15</p>
-            <p><strong>Staff Width:</strong> Sets the width of the staves.  Default value is 556.</p>
-            <p>Values greater than 556 will make the staves less tall to allow more staves per page in a PDF.</p>
-            <p>Values less than 556 combined with checking <strong>Add %%noexpandtowidest</strong> will make the staves taller and more horizontally compressed for "large print" format tunes.</p>
-            <p><strong>Add %%noexpandtowidest:</strong> When checked, disables the abcjs automatic expand to widest staff feature to allow for staves less wide than the default. Default is unchecked.</p>
-            <p>More details on %%noexpandtowidest in this section of the User Guide: <a href="#largeprint">"Large Print" Edition Tune Notation</a>.
-            <p><strong>Test Values:</strong> Applies the current values to the displayed notation in the dialog.</p>
-            <p><strong>Inject all tunes:</strong> When checked, all tunes in the ABC will be injected with the new spacing values if <strong>Inject Spacing into the ABC</strong> is clicked.</p>
-            <p><strong>Inject Spacing into the ABC</strong> Injects the spacing values into either the currently selected tune or all the tunes in the ABC depending on if <strong>Inject all tunes:</strong> is checked.</p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/OVxA8VZaxMI" title="Notation Spacing Explorer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p>Once the spacing values are injected into the ABC, they can be modified in place if additional adjustments are desired.</p>
             <hr class="hidden-print" id="advanced_tabinjectors">
             <h1 class="page_break_always">Instrument Tablature Injectors<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>These command all inject instrument tablature into the ABC.</p>
@@ -816,6 +797,25 @@
                 <img src="img/bamboo_flute_2.jpg"/>
             </div>
             <p id="advanced_configuretab"><strong>Configure Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for tablature injection.</p>
+            <hr class="hidden-print" id="advanced_notationspacingexplorer">
+            <h1 class="page_break_always">Notation Spacing Explorer<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>Brings up a dialog where you can experiment with spacing values for the notation and then optionally inject the values into one or all of the tunes:</p>
+            <div class="image_holder_p">
+                <img src="img/notation_spacing_explorer_2.jpg"/>
+            </div>
+            <p><strong>Staff Separation:</strong> Sets the spacing between the staves. Default depends on the default spacing set in the tool's <strong>Settings</strong> dialog.</p>
+            <p><strong>Left Margin:</strong> Sets the spacing to the left of the staves. Default value is 15.</p>
+            <p><strong>Right Margin:</strong> Sets the spacing to the right of the staves. Default value is 15</p>
+            <p><strong>Staff Width:</strong> Sets the width of the staves.  Default value is 556.</p>
+            <p>Values greater than 556 will make the staves less tall to allow more staves per page in a PDF.</p>
+            <p>Values less than 556 combined with checking <strong>Add %%noexpandtowidest</strong> will make the staves taller and more horizontally compressed for "large print" format tunes.</p>
+            <p><strong>Add %%noexpandtowidest:</strong> When checked, disables the abcjs automatic expand to widest staff feature to allow for staves less wide than the default. Default is unchecked.</p>
+            <p>More details on %%noexpandtowidest in this section of the User Guide: <a href="#largeprint">"Large Print" Edition Tune Notation</a>.
+            <p><strong>Test Values:</strong> Applies the current values to the displayed notation in the dialog.</p>
+            <p><strong>Inject all tunes:</strong> When checked, all tunes in the ABC will be injected with the new spacing values if <strong>Inject Spacing into the ABC</strong> is clicked.</p>
+            <p><strong>Inject Spacing into the ABC</strong> Injects the spacing values into either the currently selected tune or all the tunes in the ABC depending on if <strong>Inject all tunes:</strong> is checked.</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/OVxA8VZaxMI" title="Notation Spacing Explorer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p>Once the spacing values are injected into the ABC, they can be modified in place if additional adjustments are desired.</p>
             <hr class="hidden-print" id="midi_instrument_explorer">
             <h1 class="page_break_always">MIDI Instrument Explorer<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Brings up a player where you can experiment with playing the currently selected tune using all of the available MIDI soundfonts, melody and bass/chord programs and volumes:</p>
