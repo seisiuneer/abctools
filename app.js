@@ -138,10 +138,16 @@ var gLocalStorageAvailable = false;
 
 // PDF oversampling for PDF rendering
 var gPDFQuality = 0.75;
+var gQualitaet = 1200; 
 
 // PDF font
 var gPDFFont = "Times";
 var gPDFFontStyle = "";
+
+// PDF orientation
+var gPDFOrientation = "portrait";
+var gPDFPaperSize = "letter";
+var gPageWidth = 535;
 
 // Include page links on tunebook index pages
 var gIncludePageLinks = true;
@@ -1654,14 +1660,15 @@ function RestoreSnapshot(bRestoreAutoSnapshot,bIsAddDialogButton){
 //
 
 // Rendering offsets based on paper size
-var PAGENUMBERTOP = 296;
-var PAGENUMBERTOPA4 = 313;
+var gPAGENUMBERTOP = 296;
 var PAGETOPOFFSET = 32;
 var PAGEBOTTOMOFFSET = 24; // Was 32
 var PAGELEFTOFFSET = 37;
 var PAGELEFTOFFSETA4 = 29;
 var PAGEHEIGHTLETTER = 792;
 var PAGEHEIGHTA4 = 842;
+var PAGEHEIGHTLETTER_LANDSCAPE = 580;
+var PAGEHEIGHTA4_LANDSCAPE = 565;
 var BETWEENTUNESPACE = 20;
 
 var gBetweenTuneSpace = 20;  // Can be overriden with a %pdf_between_tune_space directive
@@ -1812,19 +1819,13 @@ function GetTunebookIndexTitles(){
 //
 var TPTITLESIZE = 24;
 var TPSTTITLESIZE = 16;
-var TPTOPOFFSET = 435;
+var gTPTOPOFFSET = 435;
 var TPSTOFFSET = 24;
 
 //
 // Generate and append a tune index to the current PDF
 //
 function AppendTuneTitlePage(thePDF,paperStyle,theTitle,theSubtitle){
-
-	var a4offset = 0
-
-	if (paperStyle == "a4"){
-		a4offset = 20;
-	}
 
 	// Add a new page
 	thePDF.setPage(1); 
@@ -1840,13 +1841,13 @@ function AppendTuneTitlePage(thePDF,paperStyle,theTitle,theSubtitle){
 			var textWidth = thePDF.getTextWidth(theTitle);
 
 			// Add the title as a hyperlink			
-			thePDF.textWithLink(theTitle, (thePDF.internal.pageSize.getWidth()/3.10)  - (textWidth/2), TPTOPOFFSET+a4offset , {align:"center", url:theTunebookTPURL});
+			thePDF.textWithLink(theTitle, (thePDF.internal.pageSize.getWidth()/3.10)  - (textWidth/2), gTPTOPOFFSET , {align:"center", url:theTunebookTPURL});
 
 		}
 		else{
 
 			// Add the title
-			thePDF.text(theTitle, thePDF.internal.pageSize.getWidth()/3.10, TPTOPOFFSET+a4offset, {align:"center"});
+			thePDF.text(theTitle, thePDF.internal.pageSize.getWidth()/3.10, gTPTOPOFFSET, {align:"center"});
 
 		}
 
@@ -1863,13 +1864,13 @@ function AppendTuneTitlePage(thePDF,paperStyle,theTitle,theSubtitle){
 			var textWidth = thePDF.getTextWidth(theSubtitle);
 
 			// Add the title as a hyperlink			
-			thePDF.textWithLink(theSubtitle, (thePDF.internal.pageSize.getWidth()/3.10)  - (textWidth/2), TPTOPOFFSET+TPSTOFFSET+a4offset , {align:"center", url:theTunebookTPSTURL});
+			thePDF.textWithLink(theSubtitle, (thePDF.internal.pageSize.getWidth()/3.10)  - (textWidth/2), gTPTOPOFFSET+TPSTOFFSET , {align:"center", url:theTunebookTPSTURL});
 
 		}
 		else{
 
 			// Add the subtitle
-			thePDF.text(theSubtitle, thePDF.internal.pageSize.getWidth()/3.10, TPTOPOFFSET+TPSTOFFSET+a4offset, {align:"center"});
+			thePDF.text(theSubtitle, thePDF.internal.pageSize.getWidth()/3.10, gTPTOPOFFSET+TPSTOFFSET, {align:"center"});
 
 		}
 
@@ -1877,14 +1878,13 @@ function AppendTuneTitlePage(thePDF,paperStyle,theTitle,theSubtitle){
 
 }
 
-
 //
 // Text incipits page layout constants
 //
-var TEXTINCIPITTOPOFFSET = 330;
+var gTEXTINCIPITTOPOFFSET = 330;
 var TEXTINCIPITBOTTOMOFFSET = 12;
-var TEXTINCIPITLEFTMARGIN = 65;
-var TEXTINCIPITRIGHTMARGIN = 190; 
+var gTEXTINCIPITLEFTMARGIN = 65;
+var gTEXTINCIPITRIGHTMARGIN = 190; 
 var TEXTINCIPITFONTSIZE = 12;
 var TEXTINCIPITLINESPACING = 10;
 //
@@ -1892,24 +1892,12 @@ var TEXTINCIPITLINESPACING = 10;
 //
 function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,tunePageMap,sortTunes){
 
-	// Adjust margins based on paper style
- 	TEXTINCIPITLEFTMARGIN = 65;
- 	TEXTINCIPITRIGHTMARGIN = 190; 
-
-	var a4offset = 0
-
-	if (paperStyle == "a4"){
- 		TEXTINCIPITLEFTMARGIN = 61;
- 		TEXTINCIPITRIGHTMARGIN = 186; 
-		a4offset = 20;
-	}
-
 	var thePaperHeight = thePDF.internal.pageSize.getHeight();;
 	var thePaperWidth = thePDF.internal.pageSize.getWidth()/1.55;
 
 	var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + TEXTINCIPITBOTTOMOFFSET);
 
-	var curTop = TEXTINCIPITTOPOFFSET + a4offset;
+	var curTop = gTEXTINCIPITTOPOFFSET;
 
 	// Get all the tune titles (uses first T: tag found)
 	var theTitles = GetTunebookIndexTitles();
@@ -2169,9 +2157,9 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		}
 		else{
 
-			thePDF.text(thisTitle, TEXTINCIPITLEFTMARGIN, curTop, {align:"left"});
+			thePDF.text(thisTitle, gTEXTINCIPITLEFTMARGIN, curTop, {align:"left"});
 
-			thePDF.text(theTextIncipit, thePaperWidth-TEXTINCIPITRIGHTMARGIN, curTop, {align:"left"});
+			thePDF.text(theTextIncipit, thePaperWidth-gTEXTINCIPITRIGHTMARGIN, curTop, {align:"left"});
 
 		}
 
@@ -2192,14 +2180,14 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 				theCurrentPageNumber++;
 
 				// Add a new page
-				thePDF.addPage(paperStyle); 
+				thePDF.addPage(paperStyle,gPDFOrientation); 
 
 				// Set the font size
 				thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
 				thePDF.setFontSize(TEXTINCIPITFONTSIZE);
 
 				// Start back at the top
-				curTop = TEXTINCIPITTOPOFFSET + a4offset;
+				curTop = gTEXTINCIPITTOPOFFSET;
 
 			}
 		}
@@ -2212,7 +2200,7 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 //
 // Tune index page layout constants
 //
-var INDEXTOPOFFSET = 330;
+var gINDEXTOPOFFSET = 330;
 var INDEXBOTTOMOFFSET = 16;
 var INDEXTITLEOFFSET = 35;
 var INDEXLEFTMARGIN = 90;
@@ -2226,14 +2214,8 @@ var INDEXLINESPACING = 12;
 //
 function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageNumberList,theTitle,sortTunes,isSortedABCIncipits,doPageLinks,pageDelta){
 
-	var a4offset = 0
-
-	if (paperStyle == "a4"){
-		a4offset = 20;
-	}
-
 	// Add a new page
-	thePDF.addPage(paperStyle); 
+	thePDF.addPage(paperStyle,gPDFOrientation); 
 
 	// Tunebook index header requested?
 	if (TunebookIndexHeaderRequested){
@@ -2242,7 +2224,6 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 
 	}
 
-
 	// Set the font size
 	thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
 	thePDF.setFontSize(INDEXTITLESIZE);
@@ -2250,7 +2231,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 	if (theTitle != ""){
 
 		// Add the tune names
-		thePDF.text(theTitle, thePDF.internal.pageSize.getWidth()/3.10, INDEXTOPOFFSET+a4offset, {align:"center"});
+		thePDF.text(theTitle, thePDF.internal.pageSize.getWidth()/3.10, gINDEXTOPOFFSET, {align:"center"});
 
 	}
 
@@ -2262,7 +2243,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 
 	var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + INDEXBOTTOMOFFSET);
 
-	var curTop = INDEXTOPOFFSET + INDEXTITLEOFFSET + a4offset;
+	var curTop = gINDEXTOPOFFSET + INDEXTITLEOFFSET;
 
 	var i;
 	var thePageNumber;
@@ -2425,7 +2406,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 				theCurrentPageNumber++;
 
 				// Add a new page
-				thePDF.addPage(paperStyle);
+				thePDF.addPage(paperStyle,gPDFOrientation);
 
 				// Index header requested? 
 				if (TunebookIndexHeaderRequested){
@@ -2439,7 +2420,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 				thePDF.setFontSize(INDEXFONTSIZE);
 
 				// Start back at the top
-				curTop = INDEXTOPOFFSET + INDEXTITLEOFFSET + a4offset;
+				curTop = gINDEXTOPOFFSET + INDEXTITLEOFFSET;
 
 			}
 		}
@@ -2856,17 +2837,8 @@ function PostProcessTOCAndIndexLinks(pdf,startPage,endPage,addTOCLinks,theTOCLin
 //
 function AddPageTextHeader(thePDF,paperStyle,theHeaderText){
 
-	// Calc offset for A4 paper
-	var voff = PAGENUMBERTOP;
-
-	if (paperStyle == "letter"){
-		// Letter offset
-		voff = PAGENUMBERTOP;
-	}
-	else{
-		// A4 offset
-		voff = PAGENUMBERTOPA4;
-	}
+	// Calc offset for A4 paper (set by PDF export dialog)
+	var voff = gPAGENUMBERTOP;
 
 	thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
 	thePDF.setFontSize(HEADERFOOTERFONTSIZE);
@@ -2880,7 +2852,7 @@ function AddPageTextHeader(thePDF,paperStyle,theHeaderText){
 // Tune table of contents page layout constants
 //
 
-var TOCTOPOFFSET = 330;
+var gTOCTOPOFFSET = 330;
 var TOCBOTTOMOFFSET = 16;
 var TOCTITLEOFFSET = 35;
 var TOCLEFTMARGIN = 90;
@@ -2895,12 +2867,6 @@ var TOCLINESPACING = 12;
 function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageNumberList,theTitle,sortTunes,isSortedABCIncipits,doPageLinks,pageDelta,tocStartPage){
 
 	var TOCpage = tocStartPage;
-
-	var a4offset = 0
-
-	if (paperStyle == "a4"){
-		a4offset = 20;
-	}
 
 	// Add a new page
 	thePDF.setPage(TOCpage); 
@@ -2918,7 +2884,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 	if (theTitle != ""){
 
 		// Add the tune names
-		thePDF.text(theTitle, thePDF.internal.pageSize.getWidth()/3.10, TOCTOPOFFSET+a4offset, {align:"center"});
+		thePDF.text(theTitle, thePDF.internal.pageSize.getWidth()/3.10, gTOCTOPOFFSET, {align:"center"});
 
 	}
 
@@ -2930,7 +2896,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 
 	var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + TOCBOTTOMOFFSET);
 
-	var curTop = TOCTOPOFFSET + TOCTITLEOFFSET + a4offset;
+	var curTop = gTOCTOPOFFSET + TOCTITLEOFFSET;
 
 	var i;
 	var thePageNumber;
@@ -3102,7 +3068,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 				thePDF.setFontSize(TOCFONTSIZE);
 
 				// Start back at the top
-				curTop = TOCTOPOFFSET + TOCTITLEOFFSET + a4offset;
+				curTop = gTOCTOPOFFSET + TOCTITLEOFFSET;
 
 
 			}
@@ -3117,15 +3083,9 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 // Dry run adding a TOC to determine how many pages are required
 //
 function DryRunAddTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageNumberList,theTitle,sortTunes,isSortedABCIncipits){
-
-	var a4offset = 0
-
-	if (paperStyle == "a4"){
-		a4offset = 20;
-	}
 	
 	// Add a new page
-	thePDF.addPage(paperStyle); 
+	thePDF.addPage(paperStyle,gPDFOrientation); 
 
 	// Get all the tune titles (uses first T: tag found)
 	var theTitles = GetTunebookIndexTitles();
@@ -3135,7 +3095,7 @@ function DryRunAddTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperSty
 
 	var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + TOCBOTTOMOFFSET);
 
-	var curTop = TOCTOPOFFSET + TOCTITLEOFFSET + a4offset;
+	var curTop = gTOCTOPOFFSET + TOCTITLEOFFSET;
 
 	var i;
 	var thePageNumber;
@@ -3257,10 +3217,10 @@ function DryRunAddTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperSty
 				thePDF.movePage(theCurrentPageNumber,tocPageOffset);
 
 				// Start back at the top
-				curTop = TOCTOPOFFSET + TOCTITLEOFFSET + a4offset;
+				curTop = gTOCTOPOFFSET + TOCTITLEOFFSET;
 
 				// Add a new page
-				thePDF.addPage(paperStyle); 
+				thePDF.addPage(paperStyle,gPDFOrientation); 
 
 			}
 		}
@@ -3395,9 +3355,38 @@ function AppendQRCode(thePDF,paperStyle,callback){
 		if (theQRCodeImage && theQRCodeImage[0]){
 
 			// Add a new page
-			thePDF.addPage(paperStyle); 
+			thePDF.addPage(paperStyle,gPDFOrientation); 
 
-			var theHOffset = (thePDF.internal.pageSize.getWidth()/3.10) - 18;
+			var theHOffset;
+
+			if (gPDFOrientation == "portrait"){
+
+				if (gPDFPaperSize == "letter"){
+
+					theHOffset = (thePDF.internal.pageSize.getWidth()/3.10) - 18;
+
+				}
+				else{
+
+					theHOffset = (thePDF.internal.pageSize.getWidth()/3.10) - 22;
+
+				}
+
+			}
+			else{
+
+				if (gPDFPaperSize == "letter"){
+
+					theHOffset = (thePDF.internal.pageSize.getWidth()/3.10) + 12;
+
+				}
+				else{
+					
+					theHOffset = (thePDF.internal.pageSize.getWidth()/3.10) + 24;
+
+				}
+
+			}
 
 			theQRCodeImage = theQRCodeImage[0];
 
@@ -3410,7 +3399,18 @@ function AppendQRCode(thePDF,paperStyle,callback){
 			//thePDF.link(0, (thePDF.internal.pageSize.getHeight()/3.10)+pdfVoff, (thePDF.internal.pageSize.getWidth()/1.55), (thePDF.internal.pageSize.getHeight()/1.55), {url:theURL});
 
 			// Fix up the page-relative link
-			var r = {left:theHOffset, top: 150, width: 256, height: 256};
+			var r;
+
+			if (gPDFOrientation == "portrait"){
+
+				r = {left:theHOffset, top: 150, width: 256, height: 256};
+
+			}
+			else{
+
+				r = {left:theHOffset, top: 139, width: 256, height: 256};
+
+			}
 			
 			r = pageRect2LinkRect(thePDF,r,paperStyle);
 
@@ -3420,11 +3420,26 @@ function AppendQRCode(thePDF,paperStyle,callback){
 			thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
 			thePDF.setFontSize(QRCODECAPTIONPDFFONTSIZE);
 
-			// Different caption offset for letter vs a4
-			var captionOffset = 558;
+			var captionOffset;
 
-			if (paperStyle == "a4"){
-				captionOffset = 575;
+			if (gPDFOrientation == "portrait"){
+
+				// Different caption offset for letter vs a4
+				captionOffset = 558;
+
+				if (paperStyle == "a4"){
+					captionOffset = 575;
+				}
+			}
+			else{
+
+				// Different caption offset for letter vs a4
+				captionOffset = 500;
+
+				if (paperStyle == "a4"){
+					captionOffset = 500;
+				}
+
 			}
 
 			// Frame-of-reference round-trip test
@@ -3697,7 +3712,27 @@ function ProcessTunesForContinuousLayout(pageBreakList,pageHeight,doIncipits){
 		}
 
 		// The PDF generator adds one extra line per block it renders
-		var thisTuneHeight = renderingDivs[i].height + (renderingDivs[i].staffHeights.length / scale_factor);
+
+		var theRenderingDivsHeight = renderingDivs[i].height;
+
+		// Need to scale up the rendering size if landscape
+
+		if (gPDFOrientation == "landscape"){
+
+			if (gPDFPaperSize == "letter"){
+
+				theRenderingDivsHeight = (theRenderingDivsHeight * 718) / 535;
+
+			}
+			else{
+
+				theRenderingDivsHeight = (theRenderingDivsHeight * 785) / 535;
+
+			}
+
+		}
+
+		var thisTuneHeight = theRenderingDivsHeight + (renderingDivs[i].staffHeights.length / scale_factor);
 
 		// Does this tune fit on the page?
 		if (thisTuneHeight > spaceAvailable){
@@ -3796,13 +3831,37 @@ function ProcessTunesForContinuousLayout(pageBreakList,pageHeight,doIncipits){
 
 function scanTunesForPageBreaks(pdf,paperStyle,doIncipits){
 
-	// Get the paper height at 72 dpi from the PDF generator
-	var thePaperHeight = PAGEHEIGHTLETTER;
+	var thePaperHeight;
 
-	if (paperStyle == "a4"){
+	//debugger;
 
-		thePaperHeight = PAGEHEIGHTA4;
-		
+	switch (gPDFOrientation){
+
+		case "portrait":
+
+			// Get the paper height at 72 dpi from the PDF generator
+			thePaperHeight = PAGEHEIGHTLETTER;
+
+			if (paperStyle == "a4"){
+
+				thePaperHeight = PAGEHEIGHTA4;
+				
+			}
+
+			break;
+
+		case "landscape":
+
+			// Get the paper height at 72 dpi from the PDF generator
+			thePaperHeight = PAGEHEIGHTLETTER_LANDSCAPE;
+
+			if (paperStyle == "a4"){
+
+				thePaperHeight = PAGEHEIGHTA4_LANDSCAPE;
+				
+			}
+
+			break;
 	}
 
 	var pageBreakRequested = [];
@@ -4213,8 +4272,8 @@ function ParseCommentCommands(theNotes){
 		}
 	}
 
-	// Set the default tunebook index top offset 
-	INDEXTOPOFFSET = 330;
+	// Set the default tunebook index top offset
+	// Set by the PDF export dialog 
 
 	// Search for a tunebook index top offset override request
 	searchRegExp = /^%indextopoffset.*$/m
@@ -4232,7 +4291,7 @@ function ParseCommentCommands(theNotes){
 		
 		if ((!isNaN(theTopOffsetInt)) && (theTopOffsetInt >= 0)){
 
-			INDEXTOPOFFSET = theTopOffsetInt + 300;
+			gINDEXTOPOFFSET = theTopOffsetInt + 300;
 
 		}
 	}
@@ -4333,8 +4392,7 @@ function ParseCommentCommands(theNotes){
 		}
 	}
 
-	// Set the default tunebook TOC top offset 
-	TOCTOPOFFSET = 330;
+	// TOC top offset was set by the PDF export dialog
 
 	// Search for a tunebook TOC top offset override request
 	searchRegExp = /^%toctopoffset.*$/m
@@ -4352,7 +4410,7 @@ function ParseCommentCommands(theNotes){
 		
 		if ((!isNaN(theTopOffsetInt)) && (theTopOffsetInt >= 0)){
 
-			TOCTOPOFFSET = theTopOffsetInt + 300;
+			gTOCTOPOFFSET = theTopOffsetInt + 300;
 
 		}
 	}
@@ -4972,17 +5030,8 @@ function calcPageNumberVerticalOffset(thePDF){
 //
 function AddPageHeaderFooter(thePDF,doAddPageNumber,pageNumber,pageNumberLocation,hideFirstPageNumber,paperStyle){
 
-	// Calc offset for A4 paper
-	var voff = PAGENUMBERTOP;
-
-	if (paperStyle == "letter"){
-		// Letter offset
-		voff = PAGENUMBERTOP;
-	}
-	else{
-		// A4 offset
-		voff = PAGENUMBERTOPA4;
-	}
+	// Set by the PDF export dialog
+	var voff = gPAGENUMBERTOP;
 
 	thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
 	thePDF.setFontSize(HEADERFOOTERFONTSIZE);
@@ -5148,8 +5197,6 @@ function PrimeWhistleRender(theBlocks,callback){
 
 	}
 
-	qualitaet = 1200; 
-
 	//console.log("PrimeWhistleRender 1");
 
 	var theBlock = theBlocks[0];
@@ -5164,7 +5211,7 @@ function PrimeWhistleRender(theBlocks,callback){
 	svg = theOffscreen.querySelector("svg");
 
 	// Set the SVG width for high resolution rasterization
-	svg.setAttribute("width", qualitaet);
+	svg.setAttribute("width", gQualitaet);
 
 	// scale improves the subsequent PDF quality. was theBlock
 	htmlToImage.toCanvas(svg, {
@@ -5190,7 +5237,7 @@ function PrimeWhistleRender(theBlocks,callback){
 			svg = theOffscreen.querySelector("svg");
 
 			// Set the SVG width for high resolution rasterization
-			svg.setAttribute("width", qualitaet);
+			svg.setAttribute("width", gQualitaet);
 
 			// scale improves the subsequent PDF quality. was theBlock
 			htmlToImage.toCanvas(svg, {
@@ -5229,7 +5276,7 @@ function PrimeWhistleRender(theBlocks,callback){
 					svg = theOffscreen.querySelector("svg");
 
 					// Set the SVG width for high resolution rasterization
-					svg.setAttribute("width", qualitaet);
+					svg.setAttribute("width", gQualitaet);
 
 					// scale improves the subsequent PDF quality. was theBlock
 					htmlToImage.toCanvas(svg, {
@@ -5297,7 +5344,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 	svg = theOffscreen.querySelector("svg");
 
 	// Set the SVG width for high resolution rasterization
-	svg.setAttribute("width", qualitaet);
+	svg.setAttribute("width", gQualitaet);
 
 	// scale improves the subsequent PDF quality. was theBlock
 	htmlToImage.toCanvas(svg, {
@@ -5321,7 +5368,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 			// Calculate the column offsets
 			var col0_hoff = hoff;
 
-			var col1_hoff = hoff + (535/2);
+			var col1_hoff = hoff + (gPageWidth/2);
 
 			// For second column incipits
 			if (column_number == 1){
@@ -5330,12 +5377,36 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 			
 			}
 
-			var thePageHeight = PAGEHEIGHTLETTER;
+			//debugger;
 
-			if (paperStyle == "a4"){
+			var thePageHeight;
 
-				thePageHeight = PAGEHEIGHTA4;
+			switch (gPDFOrientation){
 
+				case "portrait":
+
+					// Get the paper height at 72 dpi from the PDF generator
+					thePageHeight = PAGEHEIGHTLETTER;
+
+					if (paperStyle == "a4"){
+
+						thePageHeight = PAGEHEIGHTA4;
+						
+					}
+
+					break;
+				case "landscape":
+
+					// Get the paper height at 72 dpi from the PDF generator
+					thePageHeight = PAGEHEIGHTLETTER_LANDSCAPE;
+
+					if (paperStyle == "a4"){
+
+						thePageHeight = PAGEHEIGHTA4_LANDSCAPE;
+						
+					}
+
+				break;
 			}
 
 			// Creates a sharper image
@@ -5360,7 +5431,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 						theCurrentPageNumber++; // for the status display.
 
-						pdf.addPage(paperStyle); //... create a page in letter or A4 format, then leave a 30 pt margin at the top and continue.
+						pdf.addPage(paperStyle,gPDFOrientation); //... create a page in letter or A4 format, then leave a 30 pt margin at the top and continue.
 
 						document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
 
@@ -5394,7 +5465,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 									theCurrentPageNumber++; // for the status display.
 
-									pdf.addPage(paperStyle); //... create a page in letter or a4 format, then leave a 30 pt margin at the top and continue.
+									pdf.addPage(paperStyle,gPDFOrientation); //... create a page in letter or a4 format, then leave a 30 pt margin at the top and continue.
 
 									document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
 
@@ -5415,7 +5486,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 								theCurrentPageNumber++; // for the status display.
 
-								pdf.addPage(paperStyle); //... create a page in letter or a4 format, then leave a 30 pt margin at the top and continue.
+								pdf.addPage(paperStyle,gPDFOrientation); //... create a page in letter or a4 format, then leave a 30 pt margin at the top and continue.
 
 								document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
 							}
@@ -5453,7 +5524,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 			}
 
-			height = parseInt(canvas.height * 535 / canvas.width);
+			height = parseInt(canvas.height * gPageWidth / canvas.width);
 
 			height /= scale_factor;
 
@@ -5465,11 +5536,11 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 				if (isFirstBlock){
 
-					gTuneHyperlinks.push({page:theCurrentPageNumber,x:hoff,y:running_height,width:(535 / scale_factor),height:height,url:""});
+					gTuneHyperlinks.push({page:theCurrentPageNumber,x:hoff,y:running_height,width:(gPageWidth / scale_factor),height:height,url:""});
 
 				}
 
-				pdf.addImage(imgData, 'JPG', hoff, running_height, (535 / scale_factor), height);
+				pdf.addImage(imgData, 'JPG', hoff, running_height, (gPageWidth / scale_factor), height);
 
 
 			} else {
@@ -5482,15 +5553,15 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 				// Set the tune page map and hyperlink for this tune if moved to the top of the next page
 				if (isFirstBlock){
 
-					gTuneHyperlinks.push({page:theCurrentPageNumber,x:hoff,y:running_height,width:(535 / scale_factor),height:height,url:""});
+					gTuneHyperlinks.push({page:theCurrentPageNumber,x:hoff,y:running_height,width:(gPageWidth / scale_factor),height:height,url:""});
 
 					theTunePageMap[tunesProcessed - 1] = theCurrentPageNumber;
 
 				}
 
-				pdf.addPage(paperStyle); //... create a page in letter or a4 format, then leave a 30 pt margin at the top and continue.
+				pdf.addPage(paperStyle,gPDFOrientation); //... create a page in letter or a4 format, then leave a 30 pt margin at the top and continue.
 
-				pdf.addImage(imgData, 'JPG', hoff, running_height, (535 / scale_factor), height);
+				pdf.addImage(imgData, 'JPG', hoff, running_height, (gPageWidth / scale_factor), height);
 
 				document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
 			}
@@ -5790,7 +5861,7 @@ function ExportTextIncipitsPDF(title){
 	// Set the global PDF rendering flag
 	gRenderingPDF = true;
 
-	pdf = new jsPDF('p', 'pt', paperStyle);	
+	pdf = new jsPDF(gPDFOrientation, 'pt', paperStyle);	
 
 	// Set the initial PDF display mode
 	pdf.setDisplayMode("fullpage","single","UseNone");
@@ -5814,7 +5885,7 @@ function ExportTextIncipitsPDF(title){
 		if (TunebookTPRequested){
 
 			// Add a new page
-			pdf.addPage(paperStyle);
+			pdf.addPage(paperStyle,gPDFOrientation);
 			theCurrentPageNumber++;
 
 			pdf.movePage(theCurrentPageNumber,1);
@@ -6255,8 +6326,6 @@ function ExportNotationPDF(title) {
 
 		running_height = PAGETOPOFFSET;
 
-		qualitaet = 1200; 
-
 		document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"blue\">" + title + "</font>";
 
 		document.getElementById("statustunecount").innerHTML = "Processing notation for PDF generation";
@@ -6278,7 +6347,7 @@ function ExportNotationPDF(title) {
 		// Set the global PDF rendering flag
 		gRenderingPDF = true;
 
-		pdf = new jsPDF('p', 'pt', paperStyle);
+		pdf = new jsPDF(gPDFOrientation, 'pt', paperStyle);
 
 		// Set the initial PDF display mode
 		pdf.setDisplayMode("fullpage","single","UseNone");
@@ -6379,7 +6448,7 @@ function ExportNotationPDF(title) {
 					if (TunebookTPRequested){
 
 						// Add a new page
-						pdf.addPage(paperStyle);
+						pdf.addPage(paperStyle,gPDFOrientation);
 						theCurrentPageNumber++;
 
 						pdf.movePage(theCurrentPageNumber,1);
@@ -7044,6 +7113,9 @@ function UpdateLocalStorage(){
 		// Save the last PDF font and style
 		localStorage.PDFFont = gPDFFont;
 		localStorage.PDFFontStyle = gPDFFontStyle;
+
+		// Save the last PDF orientation
+		localStorage.PDFOrientation = gPDFOrientation;
 	}
 
 }
@@ -20610,6 +20682,11 @@ function GetInitialConfigurationSettings(){
 		gPDFFontStyle = val;
 	}
 
+	val = localStorage.PDFOrientation;
+	if (val){
+		gPDFOrientation = val;
+	}
+
 	val = localStorage.UseComhaltasABC;
 	if (val){
 		gUseComhaltasABC = (val == "true");
@@ -21790,6 +21867,11 @@ function PDFExportDialog(){
 	    { name: "  A4", id: "a4" },
   	];
 
+    const orientation_list = [
+	    { name: "  Portrait", id: "portrait" },
+	    { name: "  Landscape", id: "landscape" },
+  	];
+
     const tunelayout_list = [
 	    { name: "  One Tune per Page", id: "one" },
 	    { name: "  Multiple Tunes per Page", id: "multi" },
@@ -21888,6 +21970,7 @@ function PDFExportDialog(){
 	const theData = {
 	  configure_papersize:thePaperSize,
 	  configure_tunelayout:theTuneLayout,
+	  configure_orientation:gPDFOrientation,
 	  configure_incipitscolumns: gIncipitsColumns,
 	  configure_pagenumber:pagenumbers,
 	  configure_pagenumberonfirstpage:theFirstPage,
@@ -21899,6 +21982,7 @@ function PDFExportDialog(){
 	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Export PDF Tunebook&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#export_pdf_tunebook" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'}, 
 	  {html:'<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Configure PDF Tunebook Features" title="Easily add features to your PDF tunebook including: Title Page, Table of Contents, Index, Page Headers, Page Footers, playback links, and custom QR Code"><input id="pdfinjectlargeprint" class="advancedcontrols btn btn-injectcontrols-headers-pdf" onclick="NotationSpacingExplorer()" type="button" value="Notation Spacing Explorer" title="Find the right spacing and scale values for your notation"></p>'},
 	  {name: "Paper Size:", id: "configure_papersize", type:"select", options:papersize_list, cssClass:"configure_pdf_papersize_select"},
+	  {name: "Orientation:", id: "configure_orientation", type:"select", options:orientation_list, cssClass:"configure_pdf_orientation_select"},
 	  {name: "Tune Layout:", id: "configure_tunelayout", type:"select", options:tunelayout_list, cssClass:"configure_pdf_tunelayout_select"},
 	  {name: "Notes Incipits Columns:", id: "configure_incipitscolumns", type:"select", options:incipits_columns_list, cssClass:"configure_pdf_incipitscolumns_select"},
 	  {name: "Page Number Location:", id: "configure_pagenumber", type:"select", options:pagenumber_list, cssClass:"configure_pdf_pagenumber_select"},
@@ -21923,6 +22007,8 @@ function PDFExportDialog(){
 
 			var thePaperSize = args.result.configure_papersize;
 
+			gPDFPaperSize = thePaperSize;
+
 			var theTuneLayout = args.result.configure_tunelayout;
 
 			if (thePaperSize == "a4"){
@@ -21939,6 +22025,57 @@ function PDFExportDialog(){
 					theTuneLayout += "_a4";
 				}
 
+			}
+
+			gPDFOrientation = args.result.configure_orientation;
+
+			// Rendering width and layout parameters for table of contents and index depends on orientation
+			if (gPDFOrientation == "portrait"){
+
+				if (thePaperSize == "letter"){
+					gPageWidth = 535;
+					gTPTOPOFFSET = 435;
+					gINDEXTOPOFFSET = 330; 
+					gTOCTOPOFFSET = 330;
+					gPAGENUMBERTOP = 296;
+					gTEXTINCIPITTOPOFFSET = 330;
+				 	gTEXTINCIPITLEFTMARGIN = 50;
+				 	gTEXTINCIPITRIGHTMARGIN = 190; 
+				}
+				else{
+					gPageWidth = 535;
+					gTPTOPOFFSET = 455;
+					gINDEXTOPOFFSET = 350; 
+					gTOCTOPOFFSET = 350;
+					gPAGENUMBERTOP = 313;
+					gTEXTINCIPITTOPOFFSET = 350;
+					gTEXTINCIPITLEFTMARGIN = 50;
+			 		gTEXTINCIPITRIGHTMARGIN = 185; 
+				}
+			}
+			else{
+				if (thePaperSize == "letter"){
+					gPageWidth = 718;
+					gTPTOPOFFSET = 330;
+					gINDEXTOPOFFSET = 265; 
+					gTOCTOPOFFSET = 265;
+					gPAGENUMBERTOP = 232;
+					gTEXTINCIPITTOPOFFSET = 265;
+					gTEXTINCIPITLEFTMARGIN = 100;
+				 	gTEXTINCIPITRIGHTMARGIN = 210; 
+
+
+				}
+				else{
+					gPageWidth = 785;
+					gTPTOPOFFSET = 350;
+					gINDEXTOPOFFSET = 255; 
+					gTOCTOPOFFSET = 255;
+					gPAGENUMBERTOP = 232;
+					gTEXTINCIPITTOPOFFSET = 255;
+					gTEXTINCIPITLEFTMARGIN = 105;
+			 		gTEXTINCIPITRIGHTMARGIN = 216; 
+				}
 			}
 
 			document.getElementById("pdfformat").value = theTuneLayout;
