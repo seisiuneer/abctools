@@ -22030,6 +22030,9 @@ function PDFExportDialog(){
 
 			gPDFOrientation = args.result.configure_orientation;
 
+			// Keep track of which orientation is being used most often
+			sendGoogleAnalytics("pdf_orientation",gPDFOrientation);
+
 			// Rendering width and layout parameters for table of contents and index depends on orientation
 			if (gPDFOrientation == "portrait"){
 
