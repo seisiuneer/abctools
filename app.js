@@ -148,6 +148,7 @@ var gPDFFontStyle = "";
 var gPDFOrientation = "portrait";
 var gPDFPaperSize = "letter";
 var gPageWidth = 535;
+var gRenderPixelRatio = 2.0;
 
 // Include page links on tunebook index pages
 var gIncludePageLinks = true;
@@ -5219,7 +5220,7 @@ function PrimeWhistleRender(theBlocks,callback){
 			style: {
 				background: "white"
 			},
-			pixelRatio: (gPDFQuality*2)
+			pixelRatio: (gPDFQuality*gRenderPixelRatio)
 		})
 		.then(function(canvas){
 
@@ -5245,7 +5246,7 @@ function PrimeWhistleRender(theBlocks,callback){
 					style: {
 						background: "white"
 					},
-					pixelRatio: (gPDFQuality*2)
+					pixelRatio: (gPDFQuality*gRenderPixelRatio)
 				})
 				.then(function(canvas){
 
@@ -5284,7 +5285,7 @@ function PrimeWhistleRender(theBlocks,callback){
 							style: {
 								background: "white"
 							},
-							pixelRatio: (gPDFQuality*2) 
+							pixelRatio: (gPDFQuality*gRenderPixelRatio) 
 						})
 						.then(function(canvas){
 
@@ -5352,7 +5353,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 			style: {
 				background: "white"
 			},
-			pixelRatio: (gPDFQuality*2) 
+			pixelRatio: (gPDFQuality*gRenderPixelRatio) 
 		})
 		.then(function(canvas) {
 
@@ -22032,6 +22033,8 @@ function PDFExportDialog(){
 			// Rendering width and layout parameters for table of contents and index depends on orientation
 			if (gPDFOrientation == "portrait"){
 
+				gRenderPixelRatio = 2.0;
+
 				if (thePaperSize == "letter"){
 					gPageWidth = 535;
 					gTPTOPOFFSET = 435;
@@ -22054,6 +22057,9 @@ function PDFExportDialog(){
 				}
 			}
 			else{
+
+				gRenderPixelRatio = 3.0;
+
 				if (thePaperSize == "letter"){
 					gPageWidth = 718;
 					gTPTOPOFFSET = 330;
