@@ -573,14 +573,18 @@ function DoStartup() {
         elem.size = 5;
         elem.style.fontFamily = "Helvetica";
     }
-   
-    // Read in the tune database
-    fetch('https://michaeleskin.com/tools/JSON/abctunes_gavin_heneghan_10nov2023.json')
-    .then((response) => response.json())
-    .then((json) => {
-        document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
-        gTheParsedJSON = json;
-    });
+    
+    gTheParsedJSON = theTuneDatabase;
+    
+    document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
+
+    // // Read in the tune database
+    // fetch('https://michaeleskin.com/tools/JSON/abctunes_gavin_heneghan_10nov2023.json')
+    // .then((response) => response.json())
+    // .then((json) => {
+    //     document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
+    //     gTheParsedJSON = json;
+    // });
 
 }
 
