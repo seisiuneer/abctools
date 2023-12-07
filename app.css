@@ -797,6 +797,29 @@ padding:12px;
 	}
 }
 
+#exportall_jsonbutton{
+height:42px;
+padding:12px;
+margin-right:30px;
+}
+
+@media (hover: hover) {
+	.exportall_jsonbutton:hover{
+	background: palegreen;
+	}
+}
+
+#exportall_csvbutton{
+height:42px;
+padding:12px;
+}
+
+@media (hover: hover) {
+	.exportall_csvbutton:hover{
+	background: palegreen;
+	}
+}
+
 .export_all_text{
 	font-size:12pt;
 	line-height:16px;
@@ -3069,6 +3092,18 @@ padding: 3px;
 .btn-allsvgdownload{
   --color: black;
   --background-color: lavender;
+
+}
+
+.btn-alljsondownload{
+  --color: black;
+  --background-color: #F0F0F0;
+
+}
+
+.btn-allcsvdownload{
+  --color: black;
+  --background-color: #F0F0F0;
 
 }
 

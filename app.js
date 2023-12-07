@@ -10369,6 +10369,59 @@ function saveTextFile(thePrompt, thePlaceholder, theData){
 }
 
 //
+// Save a text file with an arbitrary extension
+//
+function saveTextFileDeveloper(thePrompt, thePlaceholder, theData){
+
+	DayPilot.Modal.prompt(thePrompt, thePlaceholder,{ theme: "modal_flat", top: 200, autoFocus: false, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args) {
+
+		var fname = args.result;
+
+		// If the user pressed Cancel, exit
+		if (fname == null){
+		  return null;
+		}
+
+		// Strip out any naughty HTML tag characters
+		fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+		if (fname.length == 0){
+		  return null;
+		}      
+
+		// Give it a good extension
+		if (!isDesktopBrowser()){
+
+			// iOS and Android have odd rules about text file saving
+			// Give it a good extension
+			fname = fname.replace(/\..+$/, '');
+			fname = fname + ".txt";
+		}
+
+		var a = document.createElement("a");
+
+		document.body.appendChild(a);
+
+		a.style = "display: none";
+
+		var blob = new Blob([theData], {type: "text/plain"}),
+
+		url = window.URL.createObjectURL(blob);
+		a.href = url;
+		a.download = fname;
+		a.click();
+
+		document.body.removeChild(a);
+
+		setTimeout(function() {
+		  window.URL.revokeObjectURL(url);
+		}, 1000);
+
+	});
+
+}
+
+//
 // Copy to Clipboard Polyfill
 //
 function CopyToClipboard(textToCopy) {
@@ -14632,6 +14685,11 @@ function ExportAll(){
 		modal_msg += '<p class="export_all_text">';
 		modal_msg += 'Image width to export: <input id="export_width" type="number" min="0" step="1" max="4096" title="Image width to export" autocomplete="off"/>';
 		modal_msg += '</p>';
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Developer Share URL Batch Export Tools</p>';
+		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
+		modal_msg += '<input id="exportall_jsonbutton" class="exportall_jsonbutton btn btn-alljsondownload" onclick="BatchJSONExport();" type="button" value="Export all Share URLs as JSON" title="Saves the Share URLs for all the tunes as a JSON file">'
+		modal_msg += '<input id="exportall_csvbutton" class="exportall_csvbutton btn btn-allcsvdownload" onclick="BatchCSVExport();" type="button" value="Export all Share URLs as CSV" title="Saves the Share URLs for all the tunes as a CSV file">'
+		modal_msg += '</p>';
 
 	}
 
@@ -14741,7 +14799,7 @@ function DoBatchImageExport(imageFormat){
 
 	}
 
-	// Make sure there are tunes to covert
+	// Make sure there are tunes to convert
 	var nTunes = CountTunes();
 
 	if (nTunes == 0){
@@ -14915,6 +14973,76 @@ function ExportImageDialog(theABC,callback,val,metronome_state,isWide){
 	initRender();
 
 }
+
+//
+// Export all the tunes Share URL in a JSON file
+//
+function BatchJSONExport(){
+
+	// Make sure there are tunes to convert
+	var nTunes = CountTunes();
+
+	if (nTunes == 0){
+		return;
+	}
+
+	var theJSON = [];
+
+	for (var i=0;i<nTunes;++i){
+
+		var thisTune = getTuneByIndex(i);
+
+		var title = GetTuneAudioDownloadName(thisTune,"");
+
+		//debugger;
+
+		var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
+		theURL+="&name="+title+"&play=1";
+
+		theJSON.push({Name:title,URL:theURL});
+
+	}
+
+	var theJSONString = JSON.stringify(theJSON);
+
+	saveTextFileDeveloper("Please enter a filename for your batch Share URL JSON file:","All_Share_URLs_JSON.txt",theJSONString);
+
+}
+
+//
+// Export all the tunes Share URL in a CSV file
+//
+function BatchCSVExport(){
+
+	// Make sure there are tunes to convert
+	var nTunes = CountTunes();
+
+	if (nTunes == 0){
+		return;
+	}
+
+	var theCSV = "Name,URL\n";
+
+	for (var i=0;i<nTunes;++i){
+
+		var thisTune = getTuneByIndex(i);
+
+		var title = GetTuneAudioDownloadName(thisTune,"");
+
+		var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
+		theURL+="&name="+title+"&play=1";
+
+		theCSV += title;
+		theCSV += ",";
+		theCSV += theURL;
+		theCSV += "\n";
+
+	}
+
+	saveTextFileDeveloper("Please enter a filename for your batch Share URL CSV file:","All_Share_URLs_CSV.txt",theCSV);
+
+}
+
 
 // 
 // Download the current tune as a .WAV file
@@ -15495,7 +15623,7 @@ function DoBatchMP3Export(repeatCount,doClickTrack){
 
 	}
 
-	// Make sure there are tunes to covert
+	// Make sure there are tunes to convert
 	var nTunes = CountTunes();
 
 	if (nTunes == 0){
