@@ -14301,17 +14301,33 @@ function PostProcessSVGImageAfterDownload(){
 //
 // Generate and download the SVG file for the current tune
 //
-function DownloadSVG(){
+var gInDownloadSVG = false;
+
+function DownloadSVG(callback,val){
+
+	// Avoid re-entry
+	if (gInDownloadSVG){
+		return false;
+	}
 
 	// Keep track of export
-	sendGoogleAnalytics("export","DownloadSVG");
+	if (!callback){
+		sendGoogleAnalytics("export","DownloadSVG");
+	}
+
+	gInDownloadSVG = true;
 
 	PreProcessSVGImageForDownload();
 
 	var svgEl = document.querySelector("#playback-paper svg");
 
 	if (!svgEl){
-		return;
+		if (callback){
+			callback(val);
+		}
+		else{
+			return;
+		}
 	}
 
     svgEl.setAttribute("xmlns", "http://www.w3.org/2000/svg");
@@ -14328,22 +14344,46 @@ function DownloadSVG(){
    	document.body.removeChild(downloadLink);
 
    	PostProcessSVGImageAfterDownload();
+
+	gInDownloadSVG = false;
+
+   	if (callback){
+   		callback(val);
+   	}
+
 }
 
 //
 // Generate and download the JPEG file for the current tune
 //
-function DownloadJPEG(){
+var gInDownloadJPEG = false;
+
+function DownloadJPEG(callback, val){
+
+	// Avoid re-entry
+	if (gInDownloadJPEG){
+		return false;
+	}
 
 	// Keep track of export
-	sendGoogleAnalytics("export","DownloadJPEG");
+	if (!callback){
+		sendGoogleAnalytics("export","DownloadJPEG");
+	}
+
+	gInDownloadJPEG = true;
 
 	PreProcessSVGImageForDownload();
 
 	var svg = document.querySelector("#playback-paper svg");
 
 	if (!svg){
-		return;
+
+		if (callback){
+			callback(val);
+		}
+		else{
+			return;
+		}
 	}
 
 	var canvas = document.createElement("canvas");
@@ -14390,6 +14430,12 @@ function DownloadJPEG(){
 	   	document.body.removeChild(downloadLink);
 
 	   	PostProcessSVGImageAfterDownload();
+		
+		gInDownloadJPEG = false;
+
+	   	if (callback){
+	   		callback(val);
+	   	}
 
 	};
 }
@@ -14397,17 +14443,34 @@ function DownloadJPEG(){
 //
 // Generate and download the PNG file for the current tune
 //
-function DownloadPNG(){
+var gInDownloadPNG = false;
+
+function DownloadPNG(callback, val){
+
+	// Avoid re-entry
+	if (gInDownloadPNG){
+		return false;
+	}
 
 	// Keep track of export
-	sendGoogleAnalytics("export","DownloadPNG");
+	if (!callback){
+		sendGoogleAnalytics("export","DownloadPNG");
+	}
+
+	gInDownloadPNG = true;
 
 	PreProcessSVGImageForDownload();
 
 	var svg = document.querySelector("#playback-paper svg");
 
 	if (!svg){
-		return;
+
+		if (callback){
+			callback(val);
+		}
+		else{
+			return;
+		}
 	}
 
 	var canvas = document.createElement("canvas");
@@ -14454,9 +14517,227 @@ function DownloadPNG(){
 	   	document.body.removeChild(downloadLink);
 
 	   	PostProcessSVGImageAfterDownload();
+
+		gInDownloadPNG = false;
+
+	   	if (callback){
+	   		callback(val);
+	   	}
 	};
 }
 
+//
+// Export All Audio and Images
+//
+
+function ExportAll(){
+
+	// Apparently doesn't work on mobile
+	if (isMobileBrowser()){
+
+		var thePrompt = "Batch export is not supported on iOS or Android at this time.";
+		
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 400, scrollWithPage: (AllowDialogsToScroll()), okText:"Ok" });
+	
+		return;
+
+	}
+
+	var modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export All Audio or Images</p>';
+	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export All Tunes Audio</p>';
+	modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
+	modal_msg += '<input id="exportall_mp3button" class="exportall_mp3button btn btn-allmp3download" onclick="BatchMP3Export();" type="button" value="Export all as MP3 Audio" title="Saves the audio for all the tunes as .MP3 files">'
+	modal_msg  += '</p>';
+	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export All Tunes Images</p>';
+	modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
+	modal_msg += '<input id="exportall_jpegbutton" class="exportall_jpegbutton btn btn-alljpegdownload" onclick="BatchJPEGExport();" type="button" value="Export all as JPEG" title="Saves the images for all the tunes as bitmap JPEG files">'
+	modal_msg += '<input id="exportall_pngbutton" class="exportall_pngbutton btn btn-allpngdownload" onclick="BatchPNGExport();" type="button" value="Export all as PNG" title="Saves the images for all the tunes as bitmap PNG files">'
+	modal_msg += '<input id="exportall_svgbutton" class="exportall_svgbutton btn btn-allsvgdownload" onclick="BatchSVGExport();" type="button" value="Export all as SVG" title="Saves the images for all the tunes as vector format SVG files">'
+	modal_msg  += '</p>';
+	modal_msg += '<a id="exportall_help" href="https://michaeleskin.com/abctools/userguide.html#export_all" target="_blank" style="text-decoration:none;" title="Learn more about the audio and image exporter">?</a>';
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) })
+
+}
+
+// 
+// Batch JPEG exporter
+//
+
+var gBatchImageExportCancelRequested = false;
+var gTheBatchImageExportOKButton = null;
+var gTheBatchImageExportStatusText = null;
+
+function BatchJPEGExport(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","BatchJPEGExport");
+
+	DoBatchImageExport("JPEG");
+}
+
+function BatchPNGExport(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","BatchPNGExport");
+
+	DoBatchImageExport("PNG");
+}
+
+function BatchSVGExport(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","BatchSVGExport");
+
+	DoBatchImageExport("SVG");
+}
+
+function DoBatchImageExport(imageFormat){
+
+	var totalTunesToExport;
+
+	function callback2(theOKButton){
+
+		//console.log("callback2 called");
+
+		nTunes--;
+
+		// Dismiss the player
+		theOKButton.click();
+
+		if (!gBatchImageExportCancelRequested){
+
+			if (nTunes != 0){
+
+				setTimeout(function(){
+
+					currentTune++;
+
+					var thisTune = getTuneByIndex(currentTune);
+
+					thisTune = PreProcessPlayABC(thisTune);
+
+					var title = getTuneTitle(thisTune);
+
+					gTheBatchImageExportStatusText.innerText = "Exporting "+imageFormat+" for tune "+ (currentTune+1) + " of "+totalTunesToExport+": "+title;
+
+					PlayABCDialog(thisTune,callback,currentTune,null,false);
+
+				}, 1000);
+
+			}
+			else{
+
+				// We're done, close the status dialog
+				gTheBatchImageExportOKButton.click();
+
+				gBatchImageExportCancelRequested = false;
+			}
+		}
+	}
+
+	function callback(result,theOKButton){
+
+		//console.log("callback called result = "+result);
+
+		switch (imageFormat){
+			case "JPEG":
+			DownloadJPEG(callback2,theOKButton);
+			break;
+			
+			case "PNG":
+			DownloadPNG(callback2,theOKButton);
+			break;
+
+			case "SVG":
+			DownloadSVG(callback2,theOKButton);
+			break;
+
+		}
+
+	}
+
+	// Make sure there are tunes to covert
+	var nTunes = CountTunes();
+
+	if (nTunes == 0){
+		return;
+	}
+
+	totalTunesToExport = nTunes;
+
+	var currentTune = 0;
+
+	gBatchImageExportCancelRequested = false;
+	gTheBatchImageExportOKButton = null;
+	gTheBatchImageExportStatusText = null;
+
+	var thePrompt = "Exporting "+imageFormat+" for tune "+ (currentTune+1) + " of "+totalTunesToExport;
+	
+	// Center the string in the prompt
+	thePrompt = makeCenteredPromptString(thePrompt);
+
+	// Put up batch running dialog
+	DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 290, scrollWithPage: (AllowDialogsToScroll()), okText:"Cancel" }).then(function(args){
+		
+		//console.log("Got cancel");
+		
+		gBatchImageExportCancelRequested = true;
+		
+	});	
+
+	var modals = document.getElementsByClassName("modal_flat_main");
+
+	var nmodals = modals.length;
+
+	modals[nmodals-1].style.zIndex = 100001;
+
+	// Find the OK button
+
+	var theOKButtons = document.getElementsByClassName("modal_flat_ok");
+
+	// Find the button that says "Cancel" to use to close the dialog when the cascade is complete
+	var theOKButton = null;
+
+	for (var i=0;i<theOKButtons.length;++i){
+
+		theOKButton = theOKButtons[i];
+
+		if (theOKButton.innerText == "Cancel"){
+
+			//console.log("Found conversion cancel button");
+			gTheBatchImageExportOKButton = theOKButton;
+
+			break;
+
+		}
+	}
+
+	// Find the status text 
+
+	var theStatusElems = document.getElementsByClassName("modal_flat_content");
+	var nStatus = theStatusElems.length;
+
+	gTheBatchImageExportStatusText = theStatusElems[nStatus-1];
+	gTheBatchImageExportStatusText.style.textAlign = "center";
+
+	var thisTune = getTuneByIndex(currentTune);
+
+	thisTune = PreProcessPlayABC(thisTune);
+
+	var title = getTuneTitle(thisTune);
+	
+	gTheBatchImageExportStatusText.innerText = "Exporting "+imageFormat+" for tune "+ (currentTune+1) + " of "+totalTunesToExport+": "+title;
+
+	// Kick off the conversion cascade
+	PlayABCDialog(thisTune,callback,currentTune,null,false);
+
+	return true;
+
+}
 
 // 
 // Download the current tune as a .WAV file
@@ -14630,6 +14911,8 @@ function DownloadWave(){
 
 }
 
+
+//
 //
 // Batch .MP3 Export
 //
@@ -14932,20 +15215,6 @@ function getTuneRhythmType(tuneABC){
 //
 function BatchMP3Export(){
 
-	// Apparently doesn't work on mobile
-	if (isMobileBrowser()){
-
-		var thePrompt = "Batch export to .MP3 not supported on iOS or Android at this time.";
-		
-		// Center the string in the prompt
-		thePrompt = makeCenteredPromptString(thePrompt);
-
-		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 400, scrollWithPage: (AllowDialogsToScroll()), okText:"Ok" });
-	
-		return;
-
-	}
-
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","BatchMP3Export");
 
@@ -15070,7 +15339,7 @@ function DoBatchMP3Export(repeatCount,doClickTrack){
 	thePrompt = makeCenteredPromptString(thePrompt);
 
 	// Put up batch running dialog
-	DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 400, scrollWithPage: (AllowDialogsToScroll()), okText:"Cancel" }).then(function(args){
+	DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 290, scrollWithPage: (AllowDialogsToScroll()), okText:"Cancel" }).then(function(args){
 		
 		//console.log("Got cancel");
 		
@@ -22399,7 +22668,7 @@ function AdvancedControlsDialog(){
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-subdialog configure_box_advanced " onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"></p>';	
 	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_instrument_explorer" class="configure_instrument_explorer button btn btn-instrumentexplorer" onclick="InstrumentExplorer();" type="button" value="MIDI Instrument Explorer" title="Brings up a tune player where you can experiment playing the current tune with different MIDI soundfonts and melody/chord instruments"><input id="configure_swing_explorer" class="btn btn-swingexplorer configure_swing_explorer " onclick="SwingExplorer()" type="button" value="Swing Explorer" title="Brings up a tune player where you can experiment with different swing factor and offset settings"><input id="configure_grace_explorer" class="btn btn-graceexplorer configure_grace_explorer " onclick="GraceExplorer()" type="button" value="Grace Duration Explorer" title="Brings up a tune player where you can experiment with different grace note duration settings"></p>';
-	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="BatchMP3Export()" type="button" value="Export all Tunes as MP3" title="Exports all the tunes in the ABC text area as .mp3 files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Specific Tag" title="Brings up the Sort by Specific Tag dialog"><input id="ceoltastransform" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransformDialog()" type="button" value="Comhaltas ABC Transform" title="Transforms the ABC to/from Comhaltas format."></p>';
+	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Audio or Images" title="Exports all the tunes in the ABC text area as .mp3 or JPEG files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Specific Tag" title="Brings up the Sort by Specific Tag dialog"><input id="ceoltastransform" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransformDialog()" type="button" value="Comhaltas ABC Transform" title="Transforms the ABC to/from Comhaltas format."></p>';
 	modal_msg += '</div>';
 
 	setTimeout(function(){
@@ -22419,7 +22688,6 @@ function AdvancedControlsDialog(){
 		gInAdvancedControlsDialog = false;
 
 		});
-
 
 }
 
