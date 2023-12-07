@@ -14601,20 +14601,39 @@ function ExportAll(){
 
 	}
 
-	var modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export All Audio or Images</p>';
+	var format = GetRadioValue("notenodertab");
+	
+	var modal_msg = "";
+
+	if (format != "whistle"){
+
+		modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export All Audio or Images</p>';
+
+	}
+	else{
+
+		modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export All Audio</p>';
+
+	}
+
 	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export All Tunes Audio</p>';
 	modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
 	modal_msg += '<input id="exportall_mp3button" class="exportall_mp3button btn btn-allmp3download" onclick="BatchMP3Export();" type="button" value="Export all as MP3 Audio" title="Saves the audio for all the tunes as .MP3 files">'
 	modal_msg  += '</p>';
-	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export All Tunes Images</p>';
-	modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
-	modal_msg += '<input id="exportall_jpegbutton" class="exportall_jpegbutton btn btn-alljpegdownload" onclick="BatchJPEGExport();" type="button" value="Export all as JPEG" title="Saves the images for all the tunes as bitmap JPEG files">'
-	modal_msg += '<input id="exportall_pngbutton" class="exportall_pngbutton btn btn-allpngdownload" onclick="BatchPNGExport();" type="button" value="Export all as PNG" title="Saves the images for all the tunes as bitmap PNG files">'
-	modal_msg += '<input id="exportall_svgbutton" class="exportall_svgbutton btn btn-allsvgdownload" onclick="BatchSVGExport();" type="button" value="Export all as SVG" title="Saves the images for all the tunes as vector format SVG files">'
-	modal_msg += '</p>';
-	modal_msg += '<p class="export_all_text">';
-	modal_msg += 'Image width to export: <input id="export_width" type="number" min="0" step="1" max="4096" title="Image width to export" autocomplete="off"/>';
-	modal_msg += '</p>';
+
+	if (format != "whistle"){
+
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export All Tunes Images</p>';
+		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
+		modal_msg += '<input id="exportall_jpegbutton" class="exportall_jpegbutton btn btn-alljpegdownload" onclick="BatchJPEGExport();" type="button" value="Export all as JPEG" title="Saves the images for all the tunes as bitmap JPEG files">'
+		modal_msg += '<input id="exportall_pngbutton" class="exportall_pngbutton btn btn-allpngdownload" onclick="BatchPNGExport();" type="button" value="Export all as PNG" title="Saves the images for all the tunes as bitmap PNG files">'
+		modal_msg += '<input id="exportall_svgbutton" class="exportall_svgbutton btn btn-allsvgdownload" onclick="BatchSVGExport();" type="button" value="Export all as SVG" title="Saves the images for all the tunes as vector format SVG files">'
+		modal_msg += '</p>';
+		modal_msg += '<p class="export_all_text">';
+		modal_msg += 'Image width to export: <input id="export_width" type="number" min="0" step="1" max="4096" title="Image width to export" autocomplete="off"/>';
+		modal_msg += '</p>';
+
+	}
 
 	modal_msg += '<a id="exportall_help" href="https://michaeleskin.com/abctools/userguide.html#export_all" target="_blank" style="text-decoration:none;" title="Learn more about the audio and image exporter">?</a>';
 
@@ -15687,21 +15706,40 @@ function DownloadMIDI(){
 //
 function ExportAudioOrImage(){
 
-	var modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export Audio or Image</p>';
+	var modal_msg = "";
+	
+	var format = GetRadioValue("notenodertab");
+
+	if (format != "whistle"){
+
+		modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export Audio or Image</p>';
+
+	}
+	else{
+
+		modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export Audio</p>';
+
+	}
+
 	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export Tune Audio</p>';
 	modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
 	modal_msg += '<input id="abcplayer_wavbutton" class="abcplayer_wavbutton btn btn-wavedownload" onclick="DownloadWave();" type="button" value="Save as WAV File" title="Saves the audio for the current tune as a .WAV file">'
 	modal_msg += '<input id="abcplayer_mp3button" class="abcplayer_mp3button btn btn-mp3download" onclick="DownloadMP3();" type="button" value="Save as MP3 File" title="Saves the audio for the current tune as a .MP3 file">'
 	modal_msg += '<input id="abcplayer_midibutton" class="abcplayer_midibutton btn btn-mididownload" onclick="DownloadMIDI();" type="button" value="Save as MIDI File" title="Saves the current tune note events as a MIDI file">'
 	modal_msg  += '</p>';
-	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:42px;">Export Tune Image</p>';
-	modal_msg += '<p style="text-align:center;font-size:20pt;font-family:helvetica"><input id="abcplayer_jpgbutton" class="abcplayer_jpgbutton btn btn-jpgdownload" onclick="DownloadJPEG();" type="button" value="Save as JPEG File" title="Saves the current tune image as a JPEG file">'
-	modal_msg += '<input id="abcplayer_pngbutton" class="abcplayer_pngbutton btn btn-pngdownload" onclick="DownloadPNG();" type="button" value="Save as PNG File" title="Saves the current tune image as a PNG file">'
-	modal_msg += '<input id="abcplayer_svgbutton" class="abcplayer_svgbutton btn btn-svgdownload" onclick="DownloadSVG();" type="button" value="Save as SVG File" title="Saves the current tune image as a SVG file">'
-	modal_msg  += '</p>';
-	modal_msg += '<p class="export_single_text">';
-	modal_msg += 'Image width to export: <input id="export_width" type="number" min="0" step="1" max="4096" title="Image width to export" autocomplete="off"/>';
-	modal_msg += '</p>';
+
+	if (format != "whistle"){
+
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:42px;">Export Tune Image</p>';
+		modal_msg += '<p style="text-align:center;font-size:20pt;font-family:helvetica"><input id="abcplayer_jpgbutton" class="abcplayer_jpgbutton btn btn-jpgdownload" onclick="DownloadJPEG();" type="button" value="Save as JPEG File" title="Saves the current tune image as a JPEG file">'
+		modal_msg += '<input id="abcplayer_pngbutton" class="abcplayer_pngbutton btn btn-pngdownload" onclick="DownloadPNG();" type="button" value="Save as PNG File" title="Saves the current tune image as a PNG file">'
+		modal_msg += '<input id="abcplayer_svgbutton" class="abcplayer_svgbutton btn btn-svgdownload" onclick="DownloadSVG();" type="button" value="Save as SVG File" title="Saves the current tune image as a SVG file">'
+		modal_msg  += '</p>';
+		modal_msg += '<p class="export_single_text">';
+		modal_msg += 'Image width to export: <input id="export_width" type="number" min="0" step="1" max="4096" title="Image width to export" autocomplete="off"/>';
+		modal_msg += '</p>';
+	}
+
 	modal_msg += '<a id="exportaudioimage_help" href="https://michaeleskin.com/abctools/userguide.html#export_audio_image" target="_blank" style="text-decoration:none;" title="Learn more about the audio and image exporter">?</a>';
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) })
