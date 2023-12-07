@@ -14383,6 +14383,9 @@ function DownloadSVG(callback,val){
 	var svg = document.querySelector("#playback-paper svg");
 
 	if (!svg){
+
+		gInDownloadSVG = false;
+		
 		if (callback){
 			callback(val);
 		}
@@ -14460,6 +14463,8 @@ function DownloadJPEG(callback, val){
 	var svg = document.querySelector("#playback-paper svg");
 
 	if (!svg){
+
+		gInDownloadJPEG = false;
 
 		if (callback){
 			callback(val);
@@ -14564,6 +14569,8 @@ function DownloadPNG(callback, val){
 	var svg = document.querySelector("#playback-paper svg");
 
 	if (!svg){
+
+		gInDownloadPNG = false;
 
 		if (callback){
 			callback(val);
@@ -14765,7 +14772,7 @@ function DoBatchImageExport(imageFormat){
 
 					ExportImageDialog(thisTune,callback,currentTune,null,false);
 
-				}, 1000);
+				}, 250);
 
 			}
 			else{
