@@ -14315,13 +14315,21 @@ function DownloadSVG(callback,val){
 		sendGoogleAnalytics("export","DownloadSVG");
 	}
 
+	gExportWidth = document.getElementById("export_width").value;
+
+	gExportWidth = parseInt(gExportWidth);
+
+	if (isNaN(gExportWidth)){
+		gExportWidth = 2400;
+	}
+
 	gInDownloadSVG = true;
 
 	PreProcessSVGImageForDownload();
 
-	var svgEl = document.querySelector("#playback-paper svg");
+	var svg = document.querySelector("#playback-paper svg");
 
-	if (!svgEl){
+	if (!svg){
 		if (callback){
 			callback(val);
 		}
@@ -14330,8 +14338,19 @@ function DownloadSVG(callback,val){
 		}
 	}
 
-    svgEl.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-    var svgData = svgEl.outerHTML;
+	var svgSize = svg.getBoundingClientRect();
+
+	var originalSVGWidth = svgSize.width;
+	var originalSVGHeight = svgSize.height;
+
+	var outputWidth = gExportWidth;
+	var outputHeight = (gExportWidth * originalSVGHeight)/originalSVGWidth;
+
+    svg.setAttribute('width', outputWidth+'px');
+    svg.setAttribute('height', outputHeight+'px');
+
+    svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    var svgData = svg.outerHTML;
     var preface = '<?xml version="1.0" standalone="no"?>\r\n';
     var svgBlob = new Blob([preface, svgData], {type:"image/svg+xml;charset=utf-8"});
     var svgUrl = URL.createObjectURL(svgBlob);
@@ -14346,6 +14365,9 @@ function DownloadSVG(callback,val){
    	PostProcessSVGImageAfterDownload();
 
 	gInDownloadSVG = false;
+
+    svg.setAttribute('width', originalSVGWidth+'px');
+    svg.setAttribute('height', originalSVGHeight+'px');
 
    	if (callback){
    		callback(val);
@@ -14370,6 +14392,14 @@ function DownloadJPEG(callback, val){
 		sendGoogleAnalytics("export","DownloadJPEG");
 	}
 
+	gExportWidth = document.getElementById("export_width").value;
+
+	gExportWidth = parseInt(gExportWidth);
+
+	if (isNaN(gExportWidth)){
+		gExportWidth = 2400;
+	}
+
 	gInDownloadJPEG = true;
 
 	PreProcessSVGImageForDownload();
@@ -14389,14 +14419,20 @@ function DownloadJPEG(callback, val){
 	var canvas = document.createElement("canvas");
 	var svgSize = svg.getBoundingClientRect();
 
-	canvas.width = svgSize.width;
-	canvas.height = svgSize.height;
+	var originalSVGWidth = svgSize.width;
+	var originalSVGHeight = svgSize.height;
 
-	canvas.style.width = svgSize.width;
-	canvas.style.height = svgSize.height;
+	var outputWidth = gExportWidth;
+	var outputHeight = (gExportWidth * originalSVGHeight)/originalSVGWidth;
 
-    svg.setAttribute('width', svgSize.width+'px');
-    svg.setAttribute('height', svgSize.height+'px');
+	canvas.width = outputWidth;
+	canvas.height = outputHeight;
+
+	canvas.style.width = outputWidth;
+	canvas.style.height = outputHeight;
+
+    svg.setAttribute('width', outputWidth+'px');
+    svg.setAttribute('height', outputHeight+'px');
 	
 	var ctx = canvas.getContext( "2d" );
 
@@ -14413,7 +14449,7 @@ function DownloadJPEG(callback, val){
 
 		ctx.drawImage( img, 0, 0 );
 
-		var canvasdata = canvas.toDataURL("image/jpeg",1);
+		var canvasdata = canvas.toDataURL("image/jpeg",0.75);
 
 		var downloadLink = document.createElement("a");
 
@@ -14432,6 +14468,9 @@ function DownloadJPEG(callback, val){
 	   	PostProcessSVGImageAfterDownload();
 		
 		gInDownloadJPEG = false;
+
+	    svg.setAttribute('width', originalSVGWidth+'px');
+	    svg.setAttribute('height', originalSVGHeight+'px');
 
 	   	if (callback){
 	   		callback(val);
@@ -14457,6 +14496,14 @@ function DownloadPNG(callback, val){
 		sendGoogleAnalytics("export","DownloadPNG");
 	}
 
+	gExportWidth = document.getElementById("export_width").value;
+
+	gExportWidth = parseInt(gExportWidth);
+
+	if (isNaN(gExportWidth)){
+		gExportWidth = 2400;
+	}
+
 	gInDownloadPNG = true;
 
 	PreProcessSVGImageForDownload();
@@ -14476,14 +14523,20 @@ function DownloadPNG(callback, val){
 	var canvas = document.createElement("canvas");
 	var svgSize = svg.getBoundingClientRect();
 
-	canvas.width = svgSize.width;
-	canvas.height = svgSize.height;
+	var originalSVGWidth = svgSize.width;
+	var originalSVGHeight = svgSize.height;
 
-	canvas.style.width = svgSize.width;
-	canvas.style.height = svgSize.height;
+	var outputWidth = gExportWidth;
+	var outputHeight = (gExportWidth * originalSVGHeight)/originalSVGWidth;
 
-    svg.setAttribute('width', svgSize.width+'px');
-    svg.setAttribute('height', svgSize.height+'px');
+	canvas.width = outputWidth;
+	canvas.height = outputHeight;
+
+	canvas.style.width = outputWidth;
+	canvas.style.height = outputHeight;
+
+    svg.setAttribute('width', outputWidth+'px');
+    svg.setAttribute('height', outputHeight+'px');
 	
 	var ctx = canvas.getContext( "2d" );
 
@@ -14520,6 +14573,9 @@ function DownloadPNG(callback, val){
 
 		gInDownloadPNG = false;
 
+	    svg.setAttribute('width', originalSVGWidth+'px');
+	    svg.setAttribute('height', originalSVGHeight+'px');
+
 	   	if (callback){
 	   		callback(val);
 	   	}
@@ -14529,7 +14585,6 @@ function DownloadPNG(callback, val){
 //
 // Export All Audio and Images
 //
-
 function ExportAll(){
 
 	// Apparently doesn't work on mobile
@@ -14556,20 +14611,27 @@ function ExportAll(){
 	modal_msg += '<input id="exportall_jpegbutton" class="exportall_jpegbutton btn btn-alljpegdownload" onclick="BatchJPEGExport();" type="button" value="Export all as JPEG" title="Saves the images for all the tunes as bitmap JPEG files">'
 	modal_msg += '<input id="exportall_pngbutton" class="exportall_pngbutton btn btn-allpngdownload" onclick="BatchPNGExport();" type="button" value="Export all as PNG" title="Saves the images for all the tunes as bitmap PNG files">'
 	modal_msg += '<input id="exportall_svgbutton" class="exportall_svgbutton btn btn-allsvgdownload" onclick="BatchSVGExport();" type="button" value="Export all as SVG" title="Saves the images for all the tunes as vector format SVG files">'
-	modal_msg  += '</p>';
+	modal_msg += '</p>';
+	modal_msg += '<p class="export_all_text">';
+	modal_msg += 'Image width to export: <input id="export_width" type="number" min="0" step="1" max="4096" title="Image width to export" autocomplete="off"/>';
+	modal_msg += '</p>';
+
 	modal_msg += '<a id="exportall_help" href="https://michaeleskin.com/abctools/userguide.html#export_all" target="_blank" style="text-decoration:none;" title="Learn more about the audio and image exporter">?</a>';
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) })
 
+	document.getElementById("export_width").value = gExportWidth;
+
 }
 
 // 
-// Batch JPEG exporter
+// Batch image exporters
 //
 
 var gBatchImageExportCancelRequested = false;
 var gTheBatchImageExportOKButton = null;
 var gTheBatchImageExportStatusText = null;
+var gExportWidth = 2400;
 
 function BatchJPEGExport(){
 
@@ -15637,9 +15699,14 @@ function ExportAudioOrImage(){
 	modal_msg += '<input id="abcplayer_pngbutton" class="abcplayer_pngbutton btn btn-pngdownload" onclick="DownloadPNG();" type="button" value="Save as PNG File" title="Saves the current tune image as a PNG file">'
 	modal_msg += '<input id="abcplayer_svgbutton" class="abcplayer_svgbutton btn btn-svgdownload" onclick="DownloadSVG();" type="button" value="Save as SVG File" title="Saves the current tune image as a SVG file">'
 	modal_msg  += '</p>';
+	modal_msg += '<p class="export_single_text">';
+	modal_msg += 'Image width to export: <input id="export_width" type="number" min="0" step="1" max="4096" title="Image width to export" autocomplete="off"/>';
+	modal_msg += '</p>';
 	modal_msg += '<a id="exportaudioimage_help" href="https://michaeleskin.com/abctools/userguide.html#export_audio_image" target="_blank" style="text-decoration:none;" title="Learn more about the audio and image exporter">?</a>';
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) })
+
+	document.getElementById("export_width").value = gExportWidth;
 
 }
 
@@ -22668,7 +22735,7 @@ function AdvancedControlsDialog(){
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_box_advanced" class="btn btn-subdialog configure_box_advanced " onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"></p>';	
 	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_instrument_explorer" class="configure_instrument_explorer button btn btn-instrumentexplorer" onclick="InstrumentExplorer();" type="button" value="MIDI Instrument Explorer" title="Brings up a tune player where you can experiment playing the current tune with different MIDI soundfonts and melody/chord instruments"><input id="configure_swing_explorer" class="btn btn-swingexplorer configure_swing_explorer " onclick="SwingExplorer()" type="button" value="Swing Explorer" title="Brings up a tune player where you can experiment with different swing factor and offset settings"><input id="configure_grace_explorer" class="btn btn-graceexplorer configure_grace_explorer " onclick="GraceExplorer()" type="button" value="Grace Duration Explorer" title="Brings up a tune player where you can experiment with different grace note duration settings"></p>';
-	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Audio or Images" title="Exports all the tunes in the ABC text area as .mp3 or JPEG files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Specific Tag" title="Brings up the Sort by Specific Tag dialog"><input id="ceoltastransform" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransformDialog()" type="button" value="Comhaltas ABC Transform" title="Transforms the ABC to/from Comhaltas format."></p>';
+	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Audio or Images" title="Exports all the tunes in the ABC text area as audio or image files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Specific Tag" title="Brings up the Sort by Specific Tag dialog"><input id="ceoltastransform" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransformDialog()" type="button" value="Comhaltas ABC Transform" title="Transforms the ABC to/from Comhaltas format."></p>';
 	modal_msg += '</div>';
 
 	setTimeout(function(){

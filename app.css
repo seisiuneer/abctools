@@ -797,6 +797,38 @@ padding:12px;
 	}
 }
 
+.export_all_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:36px;
+	text-align: center;
+}
+
+.export_all_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left:8px;
+	width: 85px;
+	margin-top:-7px;
+}
+
+.export_single_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:36px;
+	text-align: center;
+}
+
+.export_single_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left:8px;
+	width: 85px;
+	margin-top:-7px;
+}
+
 
 #abcplayer_pngbutton{
 height:42px;
