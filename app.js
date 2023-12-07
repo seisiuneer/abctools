@@ -14986,6 +14986,9 @@ function BatchJSONExport(){
 		return;
 	}
 
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","BatchJSONExport");
+
 	var theJSON = [];
 
 	for (var i=0;i<nTunes;++i){
@@ -15020,6 +15023,9 @@ function BatchCSVExport(){
 	if (nTunes == 0){
 		return;
 	}
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","BatchCSVExport");
 
 	var theCSV = "Name,URL\n";
 
