@@ -14264,7 +14264,198 @@ function fadeOutAndHide(fadeTarget,callback) {
 	}, 100);
 }
 
+//
+// Remove the player highlight and cursor before image export
+//
+function PreProcessSVGImageForDownload(){
 
+	var lastSelection = document.querySelectorAll("#playback-paper svg .highlight");
+	for (var k = 0; k < lastSelection.length; k++)
+		lastSelection[k].classList.remove("highlight");
+
+	var cursor = document.querySelector("#playback-paper svg .abcjs-cursor");
+
+	if (cursor){
+
+		cursor.style.display = "none";
+
+	}
+
+}
+
+//
+// Restore the player cursor
+//
+function PostProcessSVGImageAfterDownload(){
+
+	var cursor = document.querySelector("#playback-paper svg .abcjs-cursor");
+
+	if (cursor){
+
+		cursor.style.display = "inline";
+
+	}
+
+}
+
+//
+// Generate and download the SVG file for the current tune
+//
+function DownloadSVG(){
+
+	// Keep track of export
+	sendGoogleAnalytics("export","DownloadSVG");
+
+	PreProcessSVGImageForDownload();
+
+	var svgEl = document.querySelector("#playback-paper svg");
+
+	if (!svgEl){
+		return;
+	}
+
+    svgEl.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    var svgData = svgEl.outerHTML;
+    var preface = '<?xml version="1.0" standalone="no"?>\r\n';
+    var svgBlob = new Blob([preface, svgData], {type:"image/svg+xml;charset=utf-8"});
+    var svgUrl = URL.createObjectURL(svgBlob);
+    var downloadLink = document.createElement("a");
+    downloadLink.href = svgUrl;
+	downloadLink.download = GetTuneAudioDownloadName(gPlayerABC,".svg");
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+ 	window.URL.revokeObjectURL(svgUrl);
+   	document.body.removeChild(downloadLink);
+
+   	PostProcessSVGImageAfterDownload();
+}
+
+//
+// Generate and download the JPEG file for the current tune
+//
+function DownloadJPEG(){
+
+	// Keep track of export
+	sendGoogleAnalytics("export","DownloadJPEG");
+
+	PreProcessSVGImageForDownload();
+
+	var svg = document.querySelector("#playback-paper svg");
+
+	if (!svg){
+		return;
+	}
+
+	var canvas = document.createElement("canvas");
+	var svgSize = svg.getBoundingClientRect();
+
+	canvas.width = svgSize.width;
+	canvas.height = svgSize.height;
+
+	canvas.style.width = svgSize.width;
+	canvas.style.height = svgSize.height;
+
+    svg.setAttribute('width', svgSize.width+'px');
+    svg.setAttribute('height', svgSize.height+'px');
+	
+	var ctx = canvas.getContext( "2d" );
+
+	ctx.fillStyle = "#ffffff"; 
+	ctx.fillRect(0, 0, canvas.width, canvas.height); 
+
+	var img = document.createElement( "img" );
+
+	var svgData = new XMLSerializer().serializeToString( svg );
+
+	img.setAttribute( "src", "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData))) );
+
+	img.onload = function() {
+
+		ctx.drawImage( img, 0, 0 );
+
+		var canvasdata = canvas.toDataURL("image/jpeg",1);
+
+		var downloadLink = document.createElement("a");
+
+		downloadLink.download = GetTuneAudioDownloadName(gPlayerABC,".jpg");
+
+		downloadLink.href = canvasdata;
+
+		document.body.appendChild(downloadLink);
+
+		downloadLink.click();
+
+	 	window.URL.revokeObjectURL(canvasdata);
+
+	   	document.body.removeChild(downloadLink);
+
+	   	PostProcessSVGImageAfterDownload();
+
+	};
+}
+
+//
+// Generate and download the PNG file for the current tune
+//
+function DownloadPNG(){
+
+	// Keep track of export
+	sendGoogleAnalytics("export","DownloadPNG");
+
+	PreProcessSVGImageForDownload();
+
+	var svg = document.querySelector("#playback-paper svg");
+
+	if (!svg){
+		return;
+	}
+
+	var canvas = document.createElement("canvas");
+	var svgSize = svg.getBoundingClientRect();
+
+	canvas.width = svgSize.width;
+	canvas.height = svgSize.height;
+
+	canvas.style.width = svgSize.width;
+	canvas.style.height = svgSize.height;
+
+    svg.setAttribute('width', svgSize.width+'px');
+    svg.setAttribute('height', svgSize.height+'px');
+	
+	var ctx = canvas.getContext( "2d" );
+
+	ctx.fillStyle = "#ffffff"; 
+	ctx.fillRect(0, 0, canvas.width, canvas.height); 
+
+	var img = document.createElement( "img" );
+
+	var svgData = new XMLSerializer().serializeToString( svg );
+
+	img.setAttribute( "src", "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData))) );
+
+	img.onload = function() {
+
+		ctx.drawImage( img, 0, 0 );
+
+		var canvasdata = canvas.toDataURL("image/png",1);
+
+		var downloadLink = document.createElement("a");
+
+		downloadLink.download = GetTuneAudioDownloadName(gPlayerABC,".png");
+
+		downloadLink.href = canvasdata;
+
+		document.body.appendChild(downloadLink);
+
+		downloadLink.click();
+
+	 	window.URL.revokeObjectURL(canvasdata);
+
+	   	document.body.removeChild(downloadLink);
+
+	   	PostProcessSVGImageAfterDownload();
+	};
+}
 
 
 // 
@@ -15157,21 +15348,27 @@ function DownloadMIDI(){
 	theMIDILink.click();
 		
 	document.body.removeChild(link);
-		
 
 }
 
 //
-// Export the tune in .WAV, .MP3, or MIDI formats
+// Export the tune in various audio or image formats
 //
-function ExportAudioMIDI(){
+function ExportAudioOrImage(){
 
-	var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica">Save .WAV, .MP3, or MIDI File of Your Tune</p>';
-	modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;margin-top:42px;">';
-	modal_msg += '<input id="abcplayer_wavbutton" class="abcplayer_wavbutton btn btn-wavedownload" onclick="DownloadWave();" type="button" value="Save as .WAV File" title="Saves the audio for the current tune as a .WAV file">'
-	modal_msg += '<input id="abcplayer_mp3button" class="abcplayer_mp3button btn btn-mp3download" onclick="DownloadMP3();" type="button" value="Save as .MP3 File" title="Saves the audio for the current tune as a .MP3 file">'
-	modal_msg += '<input id="abcplayer_midibutton" class="abcplayer_midibutton btn btn-mididownload" onclick="DownloadMIDI();" type="button" value="Save as MIDI File" title="Saves the current tune as a MIDI file">'
+	var modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export Audio or Image</p>';
+	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export Tune Audio</p>';
+	modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
+	modal_msg += '<input id="abcplayer_wavbutton" class="abcplayer_wavbutton btn btn-wavedownload" onclick="DownloadWave();" type="button" value="Save as WAV File" title="Saves the audio for the current tune as a .WAV file">'
+	modal_msg += '<input id="abcplayer_mp3button" class="abcplayer_mp3button btn btn-mp3download" onclick="DownloadMP3();" type="button" value="Save as MP3 File" title="Saves the audio for the current tune as a .MP3 file">'
+	modal_msg += '<input id="abcplayer_midibutton" class="abcplayer_midibutton btn btn-mididownload" onclick="DownloadMIDI();" type="button" value="Save as MIDI File" title="Saves the current tune note events as a MIDI file">'
 	modal_msg  += '</p>';
+	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:42px;">Export Tune Image</p>';
+	modal_msg += '<p style="text-align:center;font-size:20pt;font-family:helvetica"><input id="abcplayer_jpgbutton" class="abcplayer_jpgbutton btn btn-jpgdownload" onclick="DownloadJPEG();" type="button" value="Save as JPEG File" title="Saves the current tune image as a JPEG file">'
+	modal_msg += '<input id="abcplayer_pngbutton" class="abcplayer_pngbutton btn btn-pngdownload" onclick="DownloadPNG();" type="button" value="Save as PNG File" title="Saves the current tune image as a PNG file">'
+	modal_msg += '<input id="abcplayer_svgbutton" class="abcplayer_svgbutton btn btn-svgdownload" onclick="DownloadSVG();" type="button" value="Save as SVG File" title="Saves the current tune image as a SVG file">'
+	modal_msg  += '</p>';
+	modal_msg += '<a id="exportaudioimage_help" href="https://michaeleskin.com/abctools/userguide.html#export_audio_image" target="_blank" style="text-decoration:none;" title="Learn more about the audio and image exporter">?</a>';
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) })
 
@@ -16623,7 +16820,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 
 	   	// Add the download buttons
 		modal_msg += '<p style="text-align:center;margin:0px;margin-top:22px">';
-		modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioMIDI();" type="button" value="Save Audio or MIDI" title="Brings up a dialog where you can export the tune in .WAV, .MP3, or MIDI formats">';
+		modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioOrImage();" type="button" value="Export Audio or Image" title="Brings up a dialog where you can save the tune in various audio and image formats">';
 		modal_msg += '<input id="abcplayer_trainer" class="btn btn-looper abcplayer_trainer" onclick="TuneTrainerLaunchFromPlayer()" type="button" value="Start Tune Trainer" title="Opens the Tune Trainer for practicing tunes with increasing tempos">';;
 		modal_msg += '<input id="abcplayer_metronomebutton" class="abcplayer_metronome button btn btn-metronome" onclick="ToggleMetronome();" type="button" value="Enable Metronome" title="Enables/disables the metronome">';
 
