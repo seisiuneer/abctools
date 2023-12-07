@@ -14639,7 +14639,9 @@ function ExportAll(){
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) })
 
-	document.getElementById("export_width").value = gExportWidth;
+	if (format != "whistle"){
+		document.getElementById("export_width").value = gExportWidth;
+	}
 
 }
 
@@ -14699,13 +14701,11 @@ function DoBatchImageExport(imageFormat){
 
 					var thisTune = getTuneByIndex(currentTune);
 
-					thisTune = PreProcessPlayABC(thisTune);
-
 					var title = getTuneTitle(thisTune);
 
 					gTheBatchImageExportStatusText.innerText = "Exporting "+imageFormat+" for tune "+ (currentTune+1) + " of "+totalTunesToExport+": "+title;
 
-					PlayABCDialog(thisTune,callback,currentTune,null,false);
+					ExportImageDialog(thisTune,callback,currentTune,null,false);
 
 				}, 1000);
 
@@ -14807,16 +14807,112 @@ function DoBatchImageExport(imageFormat){
 
 	var thisTune = getTuneByIndex(currentTune);
 
-	thisTune = PreProcessPlayABC(thisTune);
-
 	var title = getTuneTitle(thisTune);
 	
 	gTheBatchImageExportStatusText.innerText = "Exporting "+imageFormat+" for tune "+ (currentTune+1) + " of "+totalTunesToExport+": "+title;
 
 	// Kick off the conversion cascade
-	PlayABCDialog(thisTune,callback,currentTune,null,false);
+	ExportImageDialog(thisTune,callback,currentTune,null,false);
 
 	return true;
+
+}
+
+// 
+// Export Image Dialog - Used to hold SVG for batch image export
+//
+// callback and val are used for batch export automation
+//
+
+function ExportImageDialog(theABC,callback,val,metronome_state,isWide){
+
+	//console.log("ExportImageDialog "+val);
+
+	gTheOKButton = null;
+	
+	// Cache the tune for the exporter naming
+	gPlayerABC = theABC;
+	
+	var instrument = GetRadioValue("notenodertab");
+
+	var abcOptions = GetABCJSParams(instrument);
+
+	abcOptions.oneSvgPerLine = false;	
+
+	function initRender() {
+
+		// Adapt the top based on the player control size
+		var theTop = 40;
+
+		var theHeight = window.innerHeight - 340;
+
+	   	modal_msg = '<div id="playerholder" style="height:'+theHeight+'px;overflow-y:auto;margin-bottom:15px;">';
+
+		modal_msg += '<div id="abcplayer">';			
+
+	   	modal_msg += '<div id="playback-paper"></div>';
+	   	modal_msg += '</div>';
+
+	   	modal_msg += '</div>';
+
+		modal_msg += '</p>';
+
+	   	// Scale the player for larger screens
+		var windowWidth = window.innerWidth;
+
+		var instrument = GetRadioValue("notenodertab");
+
+		var theWidth;
+
+		if (isDesktopBrowser()){
+
+			theWidth = windowWidth * 0.45;
+
+			if (theWidth < 850){
+				theWidth = 850;
+			}
+
+		}
+		else{
+
+			theWidth = 800;  
+			
+		}
+
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: theTop, width:theWidth, okText:"Close", scrollWithPage: (isMobileBrowser()) });
+
+		var theOKButtons = document.getElementsByClassName("modal_flat_ok");
+
+		var theOKButton = null;
+
+		for (var i=0;i<theOKButtons.length;++i){
+
+			theOKButton = theOKButtons[i];
+
+			if (theOKButton.innerText == "Close"){
+
+				gTheOKButton = theOKButton;
+
+				break;
+
+			}
+		}
+
+		var visualObj = ABCJS.renderAbc("playback-paper", theABC, abcOptions)[0];
+
+		// Post process whistle or note name tab
+		postProcessTab([visualObj], "playback-paper",instrument, true);
+
+		// Do the next tune
+		if (callback){
+			setTimeout(function(){
+				callback(val,gTheOKButton);
+			},10);
+		}
+
+	}
+
+	initRender();
 
 }
 
@@ -15744,7 +15840,9 @@ function ExportAudioOrImage(){
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) })
 
-	document.getElementById("export_width").value = gExportWidth;
+	if (format != "whistle"){
+		document.getElementById("export_width").value = gExportWidth;
+	}
 
 }
 
@@ -17243,6 +17341,16 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 		}
 
 		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: theTop, width:theWidth, okText:"Close", scrollWithPage: (isMobileBrowser()) });
+
+		var format = GetRadioValue("notenodertab");
+		
+		// Change button label for export all for whistle
+		if (format == "whistle"){
+
+			document.getElementById("abcplayer_exportbutton").value = "Export Audio";
+			document.getElementById("abcplayer_exportbutton").title = "Brings up a dialog where you can save the tune in various audio formats";
+
+		}
 
 		// Idle the metronome button
 		if ((metronome_state) && (metronome_state == true)){
@@ -22754,7 +22862,7 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
 	modal_msg  += '<input id="injectallmidiparams" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectAllMIDIParams()" type="button" value="Inject MIDI Programs and Volumes" title="Injects MIDI Soundfont, Melody program, Chord program and volume annotation into one or all tunes">';
 	modal_msg  += '<input id="injectmetronome" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMetronome()" type="button" value="Inject Metronome" title="Injects ABC for a metronome into one or all tunes">';
-	modal_msg  += '<input id="injectclicktrackall" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectRepeatsAndClickTrackAll()" type="button" value="Inject Repeats and Intros" title="Injects repeated copies of tunes and optional style-adaptive two-bar click intros into every tune">';	
+	modal_msg  += '<input id="injectclicktrackall" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectRepeatsAndClickTrackAll()" type="button" value="Inject Repeats + Intros" title="Injects repeated copies of tunes and optional style-adaptive two-bar click intros into every tune">';	
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
 	modal_msg  += '<input id="injectheaderstring" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectHeaderString()" type="button" value="Inject ABC Header String" title="Injects a string into the top or bottom of the ABC header for one or all tunes">';	
@@ -22776,6 +22884,8 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Audio or Images" title="Exports all the tunes in the ABC text area as audio or image files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Specific Tag" title="Brings up the Sort by Specific Tag dialog"><input id="ceoltastransform" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransformDialog()" type="button" value="Comhaltas ABC Transform" title="Transforms the ABC to/from Comhaltas format."></p>';
 	modal_msg += '</div>';
 
+	var format = GetRadioValue("notenodertab");
+	
 	setTimeout(function(){
 
 		// Do an initial idle on the controls
@@ -22793,6 +22903,15 @@ function AdvancedControlsDialog(){
 		gInAdvancedControlsDialog = false;
 
 		});
+
+	// Change button label for export all for whistle
+	if (format == "whistle"){
+
+		document.getElementById("configure_batch_mp3_export").value = "Export All Audio";
+		document.getElementById("configure_batch_mp3_export").title = "Exports all the tunes in the ABC text area as audio files";
+
+	}
+
 
 }
 
