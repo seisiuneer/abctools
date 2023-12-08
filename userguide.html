@@ -291,6 +291,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#settings_dialog">ABC Transcription Tools Settings</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#midi_input">Typing ABC Using a MIDI Input Device</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#configure_fonts">Configuring ABC Rendering Fonts</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#developer_settings">Developer Settings</a></p>
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">Selecting Playback Instruments</button>
@@ -1078,6 +1079,18 @@
             <p>Click <strong>Load from File</strong> to load the ABC rendering font settings from a previously saved file.</p>
             <p>Click <strong>Reset to Default</strong> to reset the ABC rendering font settings to their original defaults.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/UpVXfi4bF3g" title="Configure ABC Rendering Fonts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <hr class="hidden-print" id="developer_settings">
+            <h1 class="page_break_always">Developer Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>Alt-Shift click the <strong>Settings</strong> button on the top toolbar brings up a subdialog where you can configure low-level settings for the tool:</p>
+            <div class="image_holder_p">
+                <img src="img/developer_settings_1.jpg"/>
+            </div>
+            <p style="text-align: center;"><strong>Note: Do not change these values unless you know what you are doing!</strong></p>
+            <p><strong>Image Batch Export Delay in milliseconds (default is 250):</strong> Sets the delay between file saves when doing batch image export.</p>
+            <p>Many faster systems can handle setting this to 100ms or lower.</p>
+            <p>You can try a lower value. If you see any issues or are missing images on batch export, set it back to a higher value.</p>
+            <p><strong>MP3 Batch Export Delay in milliseconds (default is 250):</strong> Sets the delay between file saves when doing batch .MP3 export.</p>            
+            <p>Values are saved in browser storage and restored the next time the tool is run.</p>
             <hr class="hidden-print" id="selecting_the_instruments_for_playback">
             <h1 class="page_break_always h1wide">Choosing the MIDI Soundfont and Instruments for Playback<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>You may choose which instrument sounds are used for the melody and bass/chords when playing tunes.</p>
