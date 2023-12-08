@@ -25570,7 +25570,7 @@ function DoStartup() {
 		document.getElementById("playbuttonicon").style.width = "36px";
 		document.getElementById("playbuttonicon").style.height = "36px";
 		document.getElementById("playbuttonicon").style.bottom = "8px";
-		document.getElementById("playbuttonicon").style.left = "8px"
+		document.getElementById("playbuttonicon").style.right = "8px"
 
 	}
 
