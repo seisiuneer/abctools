@@ -24945,6 +24945,8 @@ function ShowHelp(){
 
 	   	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">About the Full Screen Notation View</p>';
 	   	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">In this view, you may scroll through the tune notation.</p>';
+	  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the Play button at the lower-right to play the current tune.</p>';
+	  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">In the Player you can also export the tune image or audio in multiple formats.</p>';
 	       modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">If you would like to edit the ABC for these tunes or create a PDF tunebook of the notation:</p>';
 	  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the Zoom-In arrows at the upper-right to close the full screen notation view and open the tunes in the ABC editor.</p>';
 	  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">The ABC for all the tunes will be loaded in the editor.</p>';
