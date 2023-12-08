@@ -1321,6 +1321,18 @@ z-index:101;
 display:none;
 }
 
+.playbuttonicon{
+position:fixed;
+width:48px;
+height:48px;
+right:24px;
+bottom:16px;
+padding:4px;
+z-index:101;
+display:none;
+}
+
+
 #notation-placeholder{
 font-family:"Helvetica";
 font-size:12pt;

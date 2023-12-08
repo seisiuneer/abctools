@@ -13025,6 +13025,23 @@ function ShowHelpButton(){
 
 }
 
+//
+// Handle the play button
+//
+
+function ShowPlayButton(){
+
+	document.getElementById("playbuttonicon").style.display = "block";
+
+}
+
+function HidePlayButton(){
+
+	document.getElementById("playbuttonicon").style.display = "none";
+
+}
+
+
 
 function DoMaximize(){
 
@@ -13034,6 +13051,9 @@ function DoMaximize(){
 	gTheNotation.style.float = "none";
 
 	document.getElementById("zoombutton").src = "img/zoomin.png"
+
+	// Add the play button
+	ShowPlayButton();
 
 	gIsMaximized = true;
 
@@ -13063,6 +13083,9 @@ function DoMinimize(){
 	document.getElementById("notation-spacer").style.display = "block";
 
 	document.getElementById("zoombutton").src = "img/zoomout.png"
+
+	// Hide the play button
+	HidePlayButton();
 
 	if (isDesktopBrowser()){
 		gTheNotation.style.display = "inline";
@@ -25528,6 +25551,7 @@ function DoStartup() {
 
 		document.getElementById("zoombutton").style.right = "36px";
 		document.getElementById("helpbutton").style.left = "36px";
+		document.getElementById("playbuttonicon").style.right = "36px";
 	}
 
 	// On iPad, resize the zoom button
@@ -25542,6 +25566,11 @@ function DoStartup() {
 		document.getElementById("helpbutton").style.height = "36px";
 		document.getElementById("helpbutton").style.top = "8px";
 		document.getElementById("helpbutton").style.left = "8px"
+
+		document.getElementById("playbuttonicon").style.width = "36px";
+		document.getElementById("playbuttonicon").style.height = "36px";
+		document.getElementById("playbuttonicon").style.bottom = "8px";
+		document.getElementById("playbuttonicon").style.left = "8px"
 
 	}
 
@@ -25671,6 +25700,12 @@ function DoStartup() {
 	document.getElementById("helpbutton").onclick = 
 		function() {
 			ShowHelp();
+		};
+
+	// Hook up the fullscreen play button
+	document.getElementById("playbuttonicon").onclick = 
+		function() {
+			PlayABC();
 		};
 
 	gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
