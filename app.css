@@ -1745,6 +1745,22 @@ left:-5000px;
 	margin-top:-10px;
 }
 
+.advanced_settings2_form_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:14px;
+	display:flex;
+}
+
+.advanced_settings2_form_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 100px;
+	margin-top:-9px;
+}
+
 .configure_pdf_settings_form_text{
 	font-size:12pt;
 	line-height:16px;

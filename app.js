@@ -14719,7 +14719,12 @@ var gTheBatchImageExportOKButton = null;
 var gTheBatchImageExportStatusText = null;
 var gExportWidth = 2400;
 
+// Milliseconds between exports
+var gBatchExportDelayMS = 250; 
+
 function BatchJPEGExport(){
+
+	console.log("gBatchExportDelayMS = "+gBatchExportDelayMS);
 
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","BatchJPEGExport");
@@ -14772,7 +14777,7 @@ function DoBatchImageExport(imageFormat){
 
 					ExportImageDialog(thisTune,callback,currentTune,null,false);
 
-				}, 250);
+				}, gBatchExportDelayMS);
 
 			}
 			else{
@@ -21588,6 +21593,18 @@ function GetInitialConfigurationSettings(){
 
 	}
 
+	// Batch image export cycle delay
+	val = localStorage.BatchExportDelayMS;
+	if (val){
+		gBatchExportDelayMS = parseInt(val);
+		if (isNaN(gBatchExportDelayMS) || (gBatchExportDelayMS<0)){
+			gBatchExportDelayMS = 250;
+		}
+	}
+	else{
+		gBatchExportDelayMS = 250;
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -21708,6 +21725,8 @@ function SaveConfigurationSettings(){
 		localStorage.LooperSpeedIncrement = gLooperSpeedIncrement;
 		localStorage.LooperCount = gLooperCount;
 
+		// Save the batch export cycle time
+		localStorage.BatchExportDelayMS = gBatchExportDelayMS;
 	}
 }
 
@@ -23057,9 +23076,60 @@ function AdvancedControlsDialog(){
 }
 
 //
+// Backdoor developer settings
+//
+function DeveloperSettings(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","DeveloperSettings");
+
+	// Setup initial values
+	const theData = {
+	  configure_export_delayms: gBatchExportDelayMS,
+	};
+
+	const form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-bottom:32px;">Developer Settings</p>'},
+	  {html: '<p style="margin-bottom:20px;font-size:12pt;font-family:helvetica;margin-bottom:32px;"><strong>Only change these values if you know what you are doing!</strong></p>'},
+	  {name: "Image Batch Export Delay in milliseconds (default is 250):", id: "configure_export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 25, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+
+		// Get the results and store them in the global configuration
+		if (!args.canceled){
+
+			var val = args.result.configure_export_delayms;
+
+			val = parseInt(val);
+
+			if (!isNaN(val)){
+				if (val >= 0){
+					gBatchExportDelayMS = val;
+				}
+			}
+
+			// Save the settings, in case they were initialized
+			SaveConfigurationSettings();
+
+		}
+
+	});
+
+}
+
+//
 // Configuration settings dialog
 //
 function ConfigureToolSettings(e) {
+
+	// Shift + Alt click goes to advanced settings
+	if (e.shiftKey && e.altKey){
+
+		DeveloperSettings();
+		
+		return;
+	}
 
 	// Shift click goes directly to the Box and Anglo concertina settings dialog
 	if (e.shiftKey){
