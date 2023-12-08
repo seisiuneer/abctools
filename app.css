@@ -1749,7 +1749,7 @@ left:-5000px;
 	font-size:12pt;
 	line-height:16px;
 	font-family:helvetica;
-	margin-top:14px;
+	margin-top:20px;
 	display:flex;
 }
 
@@ -1758,7 +1758,7 @@ left:-5000px;
 	font-family:helvetica;
 	margin-left: 12px;
 	width: 100px;
-	margin-top:-9px;
+	margin-top:-8px;
 }
 
 .configure_pdf_settings_form_text{

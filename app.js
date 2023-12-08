@@ -15536,6 +15536,10 @@ function getTuneRhythmType(tuneABC){
 //
 // Batch MP3 export of all the tunes in the ABC area
 //
+
+// Milliseconds between exports
+var gBatchMP3ExportDelayMS = 250; 
+
 function BatchMP3Export(){
 
 	// Keep track of dialogs
@@ -15620,7 +15624,7 @@ function DoBatchMP3Export(repeatCount,doClickTrack){
 
 					PlayABCDialog(thisTune,callback,currentTune,null,false);
 
-				}, 1000);
+				}, gBatchMP3ExportDelayMS);
 
 			}
 			else{
@@ -21605,6 +21609,18 @@ function GetInitialConfigurationSettings(){
 		gBatchExportDelayMS = 250;
 	}
 
+	// Batch MP3 export cycle delay
+	val = localStorage.BatchMP3ExportDelayMS;
+	if (val){
+		gBatchMP3ExportDelayMS = parseInt(val);
+		if (isNaN(gBatchMP3ExportDelayMS) || (gBatchMP3ExportDelayMS<0)){
+			gBatchMP3ExportDelayMS = 250;
+		}
+	}
+	else{
+		gBatchMP3ExportDelayMS = 250;
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -21727,6 +21743,7 @@ function SaveConfigurationSettings(){
 
 		// Save the batch export cycle time
 		localStorage.BatchExportDelayMS = gBatchExportDelayMS;
+		localStorage.BatchMP3ExportDelayMS = gBatchMP3ExportDelayMS;
 	}
 }
 
@@ -23086,12 +23103,14 @@ function DeveloperSettings(){
 	// Setup initial values
 	const theData = {
 	  configure_export_delayms: gBatchExportDelayMS,
+	  configure_mp3export_delayms: gBatchMP3ExportDelayMS,
 	};
 
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-bottom:32px;">Developer Settings</p>'},
 	  {html: '<p style="margin-bottom:20px;font-size:12pt;font-family:helvetica;margin-bottom:32px;"><strong>Only change these values if you know what you are doing!</strong></p>'},
 	  {name: "Image Batch Export Delay in milliseconds (default is 250):", id: "configure_export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
+	  {name: "MP3 Batch Export Delay in milliseconds (default is 250):", id: "configure_mp3export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 25, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
@@ -23106,6 +23125,16 @@ function DeveloperSettings(){
 			if (!isNaN(val)){
 				if (val >= 0){
 					gBatchExportDelayMS = val;
+				}
+			}
+
+			val = args.result.configure_mp3export_delayms;
+
+			val = parseInt(val);
+
+			if (!isNaN(val)){
+				if (val >= 0){
+					gBatchMP3ExportDelayMS = val;
 				}
 			}
 
