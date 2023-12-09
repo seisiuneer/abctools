@@ -36,8 +36,8 @@
 		<link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 		<link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-		<link href="app.css?v=850" media="all" rel="stylesheet" type="text/css">
-				
+		<link href="app.css?v=852" media="all" rel="stylesheet" type="text/css">
+
 	</head>
 
 	<body>
@@ -45,6 +45,7 @@
 			<div id="uioverlay" class="hidden-print">
 				<img id="helpbutton" class="helpbutton" src="img/helpbutton.png"  title="Get help using the ABC Transcription Tools"/>
 				<img id="playbuttonicon" class="playbuttonicon" src="img/playbutton.png"  title="Plays the current tune"/>
+				<img id="pdfbuttonicon" class="pdfbuttonicon" src="img/pdfbutton.png"  title="Export the tunes as a PDF tunebook"/>
 				<img id="zoombutton" class="zoombutton" src="img/zoomout.png"  title="Toggles between showing the ABC editor and displaying the notation full screen"/>
 				<div id="loading-bar-spinner" class="spinner">
 					<div id="spinner-icon" class="spinner-icon"></div>
@@ -78,7 +79,7 @@
 						<label class="abcupload btn btn-top" title="Opens an existing ABC or MusicXML file.&nbsp;&nbsp;You may also drag-and-drop a single ABC or MusicXML file on the editor area to add it." onclick="fileOpenIntercept(event);">Open</label>
 						<input class="newabcfile btn btn-top" id="newabcfile" onclick="AddABC();" type="button" value="Add" title="Add your own tunes, restore from a saved snapshot, or add examples tunes and song templates to the ABC">
 						<input class="saveabcfiledisabled btn btn-top" id="saveabcfile" onclick="SaveABC();" type="button" value="Save" title="Saves the current ABC text to a file">
-						<input class="saveaspdfdisabled btn btn-top" id="saveaspdf" onclick="PDFExportDialog();" type="button" value="Export PDF" title="Exports a PDF tunebook">
+						<input class="saveaspdfdisabled btn btn-top" id="saveaspdf" onclick="PDFExportDialog(true);" type="button" value="Export PDF" title="Exports a PDF tunebook">
 						<input class="copybuttondisabled btn btn-top" id="copybutton" onclick="CopyABC();" type="button" value="Copy All" title="Copies all of the ABC text to the clipboard">
 						<input class="playbuttondisabled btn btn-play" id="playbutton" onclick="PlayABC();" type="button" value="Play" title="Opens the ABC player for the currently selected tune.">
 						<input class="trainerbuttondisabled btn btn-looper" id="trainerbutton" onclick="TuneTrainer()" type="button" value="Tune Trainer" title="Opens the Tune Trainer for practicing tunes with increasing tempos">
@@ -175,19 +176,19 @@
 		</div>
 		
 	</body>
-	<script type="text/javascript" src="jquery-1.11.1.min.js?v=850"></script><!-- jQuery -->
-	<script type="text/javascript" src="jszip.min.js?v=850"></script><!-- zip file handling -->
-	<script type="text/javascript" src="xml2abc-min.js?v=850"></script><!-- to convert MusicXML to ABC -->
-	<script type="text/javascript" src="abcjs-chord-intervals.js?v=850"></script><!-- chord intervals used by abcjs - non-minified -->
-	<script type="text/javascript" src="abcjs-basic-eskin-min.js?v=850"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
-	<script type="text/javascript" src="jspdf.min.js?v=850"></script><!-- to generate PDF using Javscript -->
-	<script type="text/javascript" src="html2image.js?v=850"></script><!-- to convert HTML elements to bitmaps -->
-	<script type="text/javascript" src="qrcode.js?v=850"></script><!-- to generate QR codes for the share links -->
-	<script type="text/javascript" src="lz-string.min.js?v=850"></script><!-- used for share URL generation -->
-	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=850"></script><!-- modal dialog replacement -->
-	<script type="text/javascript" src="lame.min.js?v=850"></script><!-- .mp3 audio encoder -->
-	<script type="text/javascript" src="unmute.min.js?v=850"></script><!-- fixes issue on iOS Safari muting tabs -->
-	<script type="text/javascript" src="tab-injectors-min.js?v=850"></script><!-- Tab generation for ABC injection -->
-	<script type="text/javascript" src="app-min.js?v=850"></script><!-- main application business logic -->
-	<script type="text/javascript" src="api-keys.js?v=850"></script><!-- API keys used by the tool -->
+	<script type="text/javascript" src="jquery-1.11.1.min.js?v=852"></script><!-- jQuery -->
+	<script type="text/javascript" src="jszip.min.js?v=852"></script><!-- zip file handling -->
+	<script type="text/javascript" src="xml2abc-min.js?v=852"></script><!-- to convert MusicXML to ABC -->
+	<script type="text/javascript" src="abcjs-chord-intervals.js?v=852"></script><!-- chord intervals used by abcjs - non-minified -->
+	<script type="text/javascript" src="abcjs-basic-eskin-min.js?v=852"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
+	<script type="text/javascript" src="jspdf.min.js?v=852"></script><!-- to generate PDF using Javscript -->
+	<script type="text/javascript" src="html2image.js?v=852"></script><!-- to convert HTML elements to bitmaps -->
+	<script type="text/javascript" src="qrcode.js?v=852"></script><!-- to generate QR codes for the share links -->
+	<script type="text/javascript" src="lz-string.min.js?v=852"></script><!-- used for share URL generation -->
+	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=852"></script><!-- modal dialog replacement -->
+	<script type="text/javascript" src="lame.min.js?v=852"></script><!-- .mp3 audio encoder -->
+	<script type="text/javascript" src="unmute.min.js?v=852"></script><!-- fixes issue on iOS Safari muting tabs -->
+	<script type="text/javascript" src="tab-injectors-min.js?v=852"></script><!-- Tab generation for ABC injection -->
+	<script type="text/javascript" src="app-min.js?v=852"></script><!-- main application business logic -->
+	<script type="text/javascript" src="api-keys.js?v=852"></script><!-- API keys used by the tool -->
 </html>

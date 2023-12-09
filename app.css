@@ -1332,6 +1332,16 @@ z-index:101;
 display:none;
 }
 
+.pdfbuttonicon{
+position:fixed;
+width:48px;
+height:48px;
+left:24px;
+bottom:16px;
+padding:4px;
+z-index:101;
+display:none;
+}
 
 #notation-placeholder{
 font-family:"Helvetica";

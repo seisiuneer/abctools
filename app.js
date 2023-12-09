@@ -5709,6 +5709,8 @@ function ShowAcrobatURLSizeWarningDialog(){
 //
 // PDF Exporter
 //
+var gOriginalWidthBeforePDFExport;
+
 function ExportPDF(){
 
 	// If currently rendering PDF, exit immediately
@@ -5770,12 +5772,17 @@ function ExportPDF(){
 
 			if (fname){
 
+				// Save off the image display size
+				gOriginalWidthBeforePDFExport = gTheNotation.style.width;
+
+				// Fix the size for the PDF rendering
+				gTheNotation.style.width = "850px";
+
 				ExportNotationPDF(fname);
 			}
 		});
 
 	}
-
 }
 
 //
@@ -6402,6 +6409,9 @@ function ExportNotationPDF(title) {
 
 					gRenderingPDF = false;
 
+					// Fix up any display width changes done for the PDF export
+					gTheNotation.style.width = gOriginalWidthBeforePDFExport;
+
 					// Clean up a bit
 					pdf = null;
 					theBlocks = null;
@@ -6715,6 +6725,9 @@ function ExportNotationPDF(title) {
 
 											gRenderingPDF = false;
 
+											// Fix up any display width changes done for the PDF export
+											gTheNotation.style.width = gOriginalWidthBeforePDFExport;
+
 											Render(true,null);
 
 											// Clear the offscreen rendering div
@@ -6733,6 +6746,9 @@ function ExportNotationPDF(title) {
 										finalize_pdf_export_stage_2();
 
 										gRenderingPDF = false;
+
+										// Fix up any display width changes done for the PDF export
+										gTheNotation.style.width = gOriginalWidthBeforePDFExport;
 
 									}
 
@@ -7700,7 +7716,6 @@ function Render(renderAll,tuneNumber) {
 		// Hide/Show the zoom control
 		if (gDisableEditFromPlayLink){
 			HideMaximizeButton();
-			HideHelpButton();
 		}
 		else{
 			ShowMaximizeButton();
@@ -13041,7 +13056,21 @@ function HidePlayButton(){
 
 }
 
+//
+// Handle the PDF button
+//
 
+function ShowPDFButton(){
+
+	document.getElementById("pdfbuttonicon").style.display = "block";
+
+}
+
+function HidePDFButton(){
+
+	document.getElementById("pdfbuttonicon").style.display = "none";
+
+}
 
 function DoMaximize(){
 
@@ -13054,6 +13083,9 @@ function DoMaximize(){
 
 	// Add the play button
 	ShowPlayButton();
+
+	// Add the PDF button
+	ShowPDFButton();
 
 	gIsMaximized = true;
 
@@ -13086,6 +13118,9 @@ function DoMinimize(){
 
 	// Hide the play button
 	HidePlayButton();
+
+	// Hide the PDF button
+	HidePDFButton();
 
 	if (isDesktopBrowser()){
 		gTheNotation.style.display = "inline";
@@ -13170,7 +13205,7 @@ function ToggleMaximize(){
 
 		if (isDesktopBrowser()){
 
-			gTheNotation.style.width = "855px";
+			gTheNotation.style.width = "850px";
 
 		}
 		else{
@@ -22731,7 +22766,7 @@ function idlePDFExportDialog(){
 	}
 }
 
-function PDFExportDialog(){
+function PDFExportDialog(bShowTopButtons){
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
@@ -22739,8 +22774,12 @@ function PDFExportDialog(){
 	}
 
 	// Keep track of dialogs
-	sendGoogleAnalytics("dialog","PDFExportDialog");
-
+	if (bShowTopButtons){
+		sendGoogleAnalytics("dialog","PDFExportDialog");
+	}
+	else{
+		sendGoogleAnalytics("dialog","PDFExportDialogFS");
+	}
 
     const papersize_list = [
 	    { name: "  Letter", id: "letter" },
@@ -22858,20 +22897,41 @@ function PDFExportDialog(){
 	  configure_fontstyle:dialog_PDFFontStyle,
 	};
 
-	var form = [
-	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Export PDF Tunebook&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#export_pdf_tunebook" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'}, 
-	  {html:'<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Configure PDF Tunebook Features" title="Easily add features to your PDF tunebook including: Title Page, Table of Contents, Index, Page Headers, Page Footers, playback links, and custom QR Code"><input id="pdfinjectlargeprint" class="advancedcontrols btn btn-injectcontrols-headers-pdf" onclick="NotationSpacingExplorer()" type="button" value="Notation Spacing Explorer" title="Find the right spacing and scale values for your notation"></p>'},
-	  {name: "Paper Size:", id: "configure_papersize", type:"select", options:papersize_list, cssClass:"configure_pdf_papersize_select"},
-	  {name: "Orientation:", id: "configure_orientation", type:"select", options:orientation_list, cssClass:"configure_pdf_orientation_select"},
-	  {name: "Tune Layout:", id: "configure_tunelayout", type:"select", options:tunelayout_list, cssClass:"configure_pdf_tunelayout_select"},
-	  {name: "Notes Incipits Columns:", id: "configure_incipitscolumns", type:"select", options:incipits_columns_list, cssClass:"configure_pdf_incipitscolumns_select"},
-	  {name: "Page Number Location:", id: "configure_pagenumber", type:"select", options:pagenumber_list, cssClass:"configure_pdf_pagenumber_select"},
-	  {name: "            Page Number on First Page", id: "configure_pagenumberonfirstpage", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
-	  {html: '<p style="margin-top:36px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</strong></p>'},  
-	  {name: "Font:", id: "configure_fontname", type:"select", options:fontname_list, cssClass:"configure_pdf_fontname_select"},
-	  {name: "Font Style:", id: "configure_fontstyle", type:"select", options:fontstyle_list, cssClass:"configure_pdf_fontstyle_select"},
-	  {html: '<p style="font-size:3pt;">&nbsp;</p>'}	
-	];
+	var form;
+
+	if (bShowTopButtons){
+
+		form = [
+		  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Export PDF Tunebook&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#export_pdf_tunebook" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'}, 
+		  {html: '<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Configure PDF Tunebook Features" title="Easily add features to your PDF tunebook including: Title Page, Table of Contents, Index, Page Headers, Page Footers, playback links, and custom QR Code"><input id="pdfinjectlargeprint" class="advancedcontrols btn btn-injectcontrols-headers-pdf" onclick="NotationSpacingExplorer()" type="button" value="Notation Spacing Explorer" title="Find the right spacing and scale values for your notation"></p>'},
+		  {name: "Paper Size:", id: "configure_papersize", type:"select", options:papersize_list, cssClass:"configure_pdf_papersize_select"},
+		  {name: "Orientation:", id: "configure_orientation", type:"select", options:orientation_list, cssClass:"configure_pdf_orientation_select"},
+		  {name: "Tune Layout:", id: "configure_tunelayout", type:"select", options:tunelayout_list, cssClass:"configure_pdf_tunelayout_select"},
+		  {name: "Notes Incipits Columns:", id: "configure_incipitscolumns", type:"select", options:incipits_columns_list, cssClass:"configure_pdf_incipitscolumns_select"},
+		  {name: "Page Number Location:", id: "configure_pagenumber", type:"select", options:pagenumber_list, cssClass:"configure_pdf_pagenumber_select"},
+		  {name: "            Page Number on First Page", id: "configure_pagenumberonfirstpage", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
+		  {html: '<p style="margin-top:36px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</strong></p>'},  
+		  {name: "Font:", id: "configure_fontname", type:"select", options:fontname_list, cssClass:"configure_pdf_fontname_select"},
+		  {name: "Font Style:", id: "configure_fontstyle", type:"select", options:fontstyle_list, cssClass:"configure_pdf_fontstyle_select"},
+		  {html: '<p style="font-size:3pt;">&nbsp;</p>'}	
+		];
+	}
+	else{
+		form = [
+		  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Export PDF Tunebook&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#export_pdf_tunebook" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'}, 
+		  {name: "Paper Size:", id: "configure_papersize", type:"select", options:papersize_list, cssClass:"configure_pdf_papersize_select"},
+		  {name: "Orientation:", id: "configure_orientation", type:"select", options:orientation_list, cssClass:"configure_pdf_orientation_select"},
+		  {name: "Tune Layout:", id: "configure_tunelayout", type:"select", options:tunelayout_list, cssClass:"configure_pdf_tunelayout_select"},
+		  {name: "Notes Incipits Columns:", id: "configure_incipitscolumns", type:"select", options:incipits_columns_list, cssClass:"configure_pdf_incipitscolumns_select"},
+		  {name: "Page Number Location:", id: "configure_pagenumber", type:"select", options:pagenumber_list, cssClass:"configure_pdf_pagenumber_select"},
+		  {name: "            Page Number on First Page", id: "configure_pagenumberonfirstpage", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
+		  {html: '<p style="margin-top:36px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</strong></p>'},  
+		  {name: "Font:", id: "configure_fontname", type:"select", options:fontname_list, cssClass:"configure_pdf_fontname_select"},
+		  {name: "Font Style:", id: "configure_fontstyle", type:"select", options:fontstyle_list, cssClass:"configure_pdf_fontstyle_select"},
+		  {html: '<p style="font-size:3pt;">&nbsp;</p>'}	
+		];
+
+	}
 
 	setTimeout(function(){
 
@@ -24861,7 +24921,6 @@ function initMIDI(){
 
 }
 
-
 //
 // Show the first run welcome screen
 //
@@ -24882,7 +24941,7 @@ function showWelcomeScreen(){
 	   }
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Click "Settings" to set common tools settings and select the default instrument sounds and volumes to use when playing tunes.</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica"><strong>Once ABC has been entered and notation is displayed:</strong></p>';
-	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click the Zoom-Out arrows at the upper-right to view the notation full screen.</p>';
+	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click the Zoom-Out arrows at the top-right to view the notation full screen.</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Save" to save all the ABC text to an ABC text file.</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Export PDF to export your tunebook in PDF format.</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Play" to play or train on the tune currently being edited.</p>';
@@ -24902,10 +24961,18 @@ function showZoomInstructionsScreen(){
    	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
    	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Since this is your first time using the tools, here is some useful information to help you get started:</p>';
    	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">In this view, you may scroll through the tune notation.</p>';
-       modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">If you would like to edit the ABC for these tunes or create a PDF tunebook of the notation:</p>';
-  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the Zoom-In arrows at the upper-right to close the full screen notation view and open the ABC editor.</p>';
-  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">The ABC for all the tunes will be loaded in the editor.</p>';
-   	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">In the ABC editor, click the Zoom-Out arrows at the upper-right to view notation full screen.</p>';
+  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the Play button at the bottom-right to play or train on the current tune.</p>';
+	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">From the Player you can also export the tune image or audio in multiple formats.</p>';
+ 	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the PDF button at the bottom-left to export the tunes in PDF format.</p>';
+
+ 	   if (!gDisableEditFromPlayLink){
+
+	       modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">If you would like to edit the ABC for these tunes:</p>';
+	  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the Zoom-In arrows at the top-right to close the full screen notation view and open the ABC editor.</p>';
+	  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">The ABC for all the tunes will be loaded in the editor.</p>';
+	   	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">In the ABC editor, click the Zoom-Out arrows at the top-right to view notation full screen.</p>';
+	   }
+
 	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Please visit my <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> page for complete instructions and demo videos on how to use the tools.</p>';
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
@@ -24945,12 +25012,17 @@ function ShowHelp(){
 
 	   	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">About the Full Screen Notation View</p>';
 	   	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">In this view, you may scroll through the tune notation.</p>';
-	  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the Play button at the lower-right to play the current tune.</p>';
-	  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">In the Player you can also export the tune image or audio in multiple formats.</p>';
-	       modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">If you would like to edit the ABC for these tunes or create a PDF tunebook of the notation:</p>';
-	  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the Zoom-In arrows at the upper-right to close the full screen notation view and open the tunes in the ABC editor.</p>';
-	  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">The ABC for all the tunes will be loaded in the editor.</p>';
-	   	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">In the ABC editor, click the Zoom-Out arrows at the upper-right to view the notation full screen.</p>';
+	  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the Play button at the bottom-right to play or train on the current tune.</p>';
+	  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">From the Player you can also export the tune image or audio in multiple formats.</p>';
+		   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the PDF button at the bottom-left to export the tunes in PDF format.</p>';
+
+	  	   if (!gDisableEditFromPlayLink){
+		       modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">If you would like to edit the ABC for these tunes:</p>';
+		  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the Zoom-In arrows at the top-right to close the full screen notation view and open the tunes in the ABC editor.</p>';
+		  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">The ABC for all the tunes will be loaded in the editor.</p>';
+		   	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">In the ABC editor, click the Zoom-Out arrows at the top-right to view the notation full screen.</p>';
+		   }
+		   
 		   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Please visit my <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> page for complete instructions and demo videos on how to use the tools.</p>';
 
 		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
@@ -25554,6 +25626,8 @@ function DoStartup() {
 		document.getElementById("zoombutton").style.right = "36px";
 		document.getElementById("helpbutton").style.left = "36px";
 		document.getElementById("playbuttonicon").style.right = "36px";
+		document.getElementById("pdfbuttonicon").style.left = "36px";
+
 	}
 
 	// On iPad, resize the zoom button
@@ -25573,6 +25647,11 @@ function DoStartup() {
 		document.getElementById("playbuttonicon").style.height = "36px";
 		document.getElementById("playbuttonicon").style.bottom = "8px";
 		document.getElementById("playbuttonicon").style.right = "8px"
+
+		document.getElementById("pdfbuttonicon").style.width = "36px";
+		document.getElementById("pdfbuttonicon").style.height = "36px";
+		document.getElementById("pdfbuttonicon").style.bottom = "8px";
+		document.getElementById("pdfbuttonicon").style.left = "8px"
 
 	}
 
@@ -25708,6 +25787,12 @@ function DoStartup() {
 	document.getElementById("playbuttonicon").onclick = 
 		function() {
 			PlayABC();
+		};
+
+	// Hook up the fullscreen PDF button
+	document.getElementById("pdfbuttonicon").onclick = 
+		function() {
+			PDFExportDialog(false);
 		};
 
 	gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
