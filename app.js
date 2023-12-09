@@ -17703,9 +17703,6 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 			}
 		}
 
-		if (gPlayABCTuneCount > 1)
-
-
 		var format = GetRadioValue("notenodertab");
 		
 		// Change button label for export all for whistle
