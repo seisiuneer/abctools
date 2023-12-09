@@ -13089,6 +13089,8 @@ function DoMaximize(){
 
 	gIsMaximized = true;
 
+	gPlayABCGotMaximizedPlay = false;
+
 	// Fix the display margins
 	HandleWindowResize();
 
@@ -13130,6 +13132,8 @@ function DoMinimize(){
 	}
 
 	gIsMaximized = false;
+
+	gPlayABCGotMaximizedPlay = false;
 
 	// Fix the display margins
 	HandleWindowResize();
@@ -13514,7 +13518,13 @@ function processShareLink() {
 			if (doPlay){
 
 				// Keep track of share play presentation
-				sendGoogleAnalytics("show_player","from_share")
+				sendGoogleAnalytics("show_player","from_share");
+
+				// Get the current tune index and tune count
+				gPlayABCTuneIndex = 0;
+				gPlayABCTuneCount = CountTunes();
+
+				gPlayABCGotMaximizedPlay = true;
 
 				// Pre-process the ABC to inject any requested programs or volumes
 				var theProcessedABC = PreProcessPlayABC(gTheABC.value);
@@ -17245,6 +17255,68 @@ function calc_wide_play_width(offset){
 
 }
 
+// 
+// Play the previous tune
+//
+function PlayPrevious(){
+
+	if (gPlayABCTuneIndex > 0){
+
+		// Close the current player
+		gTheOKButton.click();
+
+		gPlayABCTuneIndex--;
+
+		// Try to find the current tune
+		var theSelectedABC = getTuneByIndex(gPlayABCTuneIndex);
+
+		if (theSelectedABC == ""){
+			// This should never happen
+			return;
+		}
+
+		// Pre-process the ABC to inject any requested programs or volumes
+		theSelectedABC = PreProcessPlayABC(theSelectedABC);
+
+		// Initially normal width
+		gUseWidePlayer = false;
+
+		// Play back locally in-tool	
+		PlayABCDialog(theSelectedABC,null,null,null,gUseWidePlayer);
+	}
+}
+
+// 
+// Play the next tune
+//
+function PlayNext(){
+
+	if (gPlayABCTuneIndex < (gPlayABCTuneCount-1)){
+
+		// Close the current tune
+		gTheOKButton.click();
+
+		gPlayABCTuneIndex++;
+
+		// Try to find the current tune
+		var theSelectedABC = getTuneByIndex(gPlayABCTuneIndex);
+
+		if (theSelectedABC == ""){
+			// This should never happen
+			return;
+		}
+
+		// Pre-process the ABC to inject any requested programs or volumes
+		theSelectedABC = PreProcessPlayABC(theSelectedABC);
+
+		// Initially normal width
+		gUseWidePlayer = false;
+
+		// Play back locally in-tool	
+		PlayABCDialog(theSelectedABC,null,null,null,gUseWidePlayer);
+	}
+}
+
 //
 // Play the ABC
 //
@@ -17252,14 +17324,54 @@ function PlayABC(){
 
 	if (gAllowCopy){
 
-		// Play back locally
+		var theSelectedABC;
 
-		// Try to find the current tune
-		var theSelectedABC = findSelectedTune();
+		if (gIsMaximized){
 
-		if (theSelectedABC == ""){
-			// This should never happen
-			return;
+			if (!gPlayABCGotMaximizedPlay){
+
+				// Try to find the current tune
+				var theSelectedABC = findSelectedTune();
+
+				if (theSelectedABC == ""){
+					// This should never happen
+					return;
+				}
+
+				// Get the current tune index and tune count
+				gPlayABCTuneIndex = findSelectedTuneIndex();
+				gPlayABCTuneCount = CountTunes();
+
+				gPlayABCGotMaximizedPlay = true;
+
+			}
+			else{
+
+				// Try to find the current tune
+				theSelectedABC = getTuneByIndex(gPlayABCTuneIndex);
+
+				if (theSelectedABC == ""){
+					// This should never happen
+					return;
+				}
+			}
+		}
+		else{
+
+			// Try to find the current tune
+			theSelectedABC = findSelectedTune();
+
+			if (theSelectedABC == ""){
+				// This should never happen
+				return;
+			}
+
+			// Get the current tune index and tune count
+			gPlayABCTuneIndex = findSelectedTuneIndex();
+			gPlayABCTuneCount = CountTunes();
+
+			gPlayABCGotMaximizedPlay = false;
+
 		}
 
 		// Pre-process the ABC to inject any requested programs or volumes
@@ -17279,6 +17391,11 @@ function PlayABC(){
 //
 // callback and val are used for batch export automation
 //
+
+// Keep track where you are in the tune collection
+var gPlayABCTuneIndex = 0;
+var gPlayABCTuneCount = 0;
+var gPlayABCGotMaximizedPlay = false;
 
 function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 
@@ -17498,14 +17615,23 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 	   		modal_msg += '<div id="playback-audio"></div>';
 		}
 
-	   	// Add the download buttons
+	   	// Add the action buttons
 		modal_msg += '<p style="text-align:center;margin:0px;margin-top:22px">';
+
+		if (gPlayABCTuneCount > 1){
+			modal_msg += '<input id="abcplayer_previousbutton" class="abcplayer_previousbutton btn btn-playerprevious" onclick="PlayPrevious();" type="button" value="&nbsp;←&nbsp;" title="Play the previous tune">';
+		}
+
 		modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioOrImage();" type="button" value="Export Audio or Image" title="Brings up a dialog where you can save the tune in various audio and image formats">';
 		modal_msg += '<input id="abcplayer_trainer" class="btn btn-looper abcplayer_trainer" onclick="TuneTrainerLaunchFromPlayer()" type="button" value="Start Tune Trainer" title="Opens the Tune Trainer for practicing tunes with increasing tempos">';;
 		modal_msg += '<input id="abcplayer_metronomebutton" class="abcplayer_metronome button btn btn-metronome" onclick="ToggleMetronome();" type="button" value="Enable Metronome" title="Enables/disables the metronome">';
 
 		if (isDesktopBrowser()){
 			modal_msg += '<input id="abcplayer_wideplayerbutton" class="abcplayer_wideplayerbutton button btn btn-wide-player" onclick="ToggleWidePlayer();" type="button" value="Wide View" title="Toggles the player between normal and wide views">';
+		}
+
+		if (gPlayABCTuneCount > 1){
+			modal_msg += '<input id="abcplayer_nextbutton" class="abcplayer_nextbutton btn btn-playernext" onclick="PlayNext();" type="button" value="&nbsp;→&nbsp;" title="Play the next tune">';
 		}
 
 		modal_msg += '<a id="abcplayer_help" href="https://michaeleskin.com/abctools/userguide.html#playing_your_tunes" target="_blank" style="text-decoration:none;" title="Learn more about the Player">?</a>';
@@ -17549,6 +17675,36 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 		}
 
 		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: theTop, width:theWidth, okText:"Close", scrollWithPage: (isMobileBrowser()) });
+
+		// Style previous and next tune buttons depending on tune count state
+		if (gPlayABCTuneCount > 1){
+
+			var elem = document.getElementById("abcplayer_previousbutton");
+
+			if (gPlayABCTuneIndex > 0){
+				elem.disabled = false;
+				elem.style.opacity = 1.0;
+			}
+			else{
+				elem.disabled = true;
+				elem.style.opacity = 0.25;
+			}
+
+
+			elem = document.getElementById("abcplayer_nextbutton")
+
+			if (gPlayABCTuneIndex < (gPlayABCTuneCount-1)){
+				elem.disabled = false;
+				elem.style.opacity = 1.0;
+			}
+			else{
+				elem.disabled = true;
+				elem.style.opacity = 0.25;
+			}
+		}
+
+		if (gPlayABCTuneCount > 1)
+
 
 		var format = GetRadioValue("notenodertab");
 		
@@ -20080,19 +20236,24 @@ function TuneTrainerLaunchFromPlayer(){
 	setTimeout(function() {
 
 		// Launch the trainer
-		TuneTrainer();
+		TuneTrainer(true);
 
 	},250);
 }
 
-function TuneTrainer(){
+function TuneTrainer(bIsFromPlayer){
 
 	if (gAllowCopy){
 
-		// Play back locally
+		var theSelectedABC;
 
-		// Try to find the current tune
-		var theSelectedABC = findSelectedTune();
+		if (bIsFromPlayer){
+			theSelectedABC = getTuneByIndex(gPlayABCTuneIndex);
+		}
+		else{
+			// Try to find the current tune
+			theSelectedABC = findSelectedTune();
+		}
 
 		if (theSelectedABC == ""){
 			// This should never happen
