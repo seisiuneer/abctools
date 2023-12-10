@@ -14420,6 +14420,18 @@ function PostProcessSVGImageAfterDownload(){
 }
 
 //
+// Convert DataURL to Blob
+//
+function dataURLtoBlob(dataurl) {
+    var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+    while(n--){
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], {type:mime});
+}
+
+//
 // Generate and download the SVG file for the current tune
 //
 var gInDownloadSVG = false;
@@ -14436,12 +14448,23 @@ function DownloadSVG(callback,val){
 		sendGoogleAnalytics("export","DownloadSVG");
 	}
 
-	gExportWidth = document.getElementById("export_width").value;
+	var theWidth = document.getElementById("export_width").value;
 
-	gExportWidth = parseInt(gExportWidth);
+	theWidth = parseInt(theWidth);
 
-	if (isNaN(gExportWidth)){
-		gExportWidth = 2400;
+	if (isNaN(theWidth)){
+		theWidth = 2400;
+	}
+
+	if (!callback){
+		
+		gExportWidth = theWidth;
+
+		// Save off the last entered width for next time
+		if (gLocalStorageAvailable){
+			localStorage.ExportWidth = theWidth;
+		}
+
 	}
 
 	gInDownloadSVG = true;
@@ -14464,11 +14487,14 @@ function DownloadSVG(callback,val){
 
 	var svgSize = svg.getBoundingClientRect();
 
+	// Make a clone of the SVG
+	svg = svg.cloneNode(true);
+
 	var originalSVGWidth = svgSize.width;
 	var originalSVGHeight = svgSize.height;
 
-	var outputWidth = gExportWidth;
-	var outputHeight = (gExportWidth * originalSVGHeight)/originalSVGWidth;
+	var outputWidth = theWidth;
+	var outputHeight = (theWidth * originalSVGHeight)/originalSVGWidth;
 
     svg.setAttribute('width', outputWidth+'px');
     svg.setAttribute('height', outputHeight+'px');
@@ -14490,11 +14516,18 @@ function DownloadSVG(callback,val){
 
 	gInDownloadSVG = false;
 
-    svg.setAttribute('width', originalSVGWidth+'px');
-    svg.setAttribute('height', originalSVGHeight+'px');
+	svg = null;
 
    	if (callback){
    		callback(val);
+   	}
+   	else{
+   		document.getElementById("abcplayer_svgbutton").value = "SVG File Saved!"
+
+   		setTimeout(function(){
+   			document.getElementById("abcplayer_svgbutton").value = "Save as SVG File";
+   		},750);
+
    	}
 
 }
@@ -14516,12 +14549,23 @@ function DownloadJPEG(callback, val){
 		sendGoogleAnalytics("export","DownloadJPEG");
 	}
 
-	gExportWidth = document.getElementById("export_width").value;
+	var theWidth = document.getElementById("export_width").value;
 
-	gExportWidth = parseInt(gExportWidth);
+	theWidth = parseInt(theWidth);
 
-	if (isNaN(gExportWidth)){
-		gExportWidth = 2400;
+	if (isNaN(theWidth)){
+		theWidth = 2400;
+	}
+
+	if (!callback){
+
+		gExportWidth = theWidth;
+
+		// Save off the last entered width for next time
+		if (gLocalStorageAvailable){
+			localStorage.ExportWidth = theWidth;
+		}
+
 	}
 
 	gInDownloadJPEG = true;
@@ -14545,11 +14589,14 @@ function DownloadJPEG(callback, val){
 	var canvas = document.createElement("canvas");
 	var svgSize = svg.getBoundingClientRect();
 
+	// Make a clone of the SVG
+	svg = svg.cloneNode(true);
+
 	var originalSVGWidth = svgSize.width;
 	var originalSVGHeight = svgSize.height;
 
-	var outputWidth = gExportWidth;
-	var outputHeight = (gExportWidth * originalSVGHeight)/originalSVGWidth;
+	var outputWidth = theWidth;
+	var outputHeight = (theWidth * originalSVGHeight)/originalSVGWidth;
 
 	canvas.width = outputWidth;
 	canvas.height = outputHeight;
@@ -14577,29 +14624,61 @@ function DownloadJPEG(callback, val){
 
 		var canvasdata = canvas.toDataURL("image/jpeg",0.75);
 
-		var downloadLink = document.createElement("a");
+		if (isDesktopBrowser()){
 
-		downloadLink.download = GetTuneAudioDownloadName(gPlayerABC,".jpg");
+			var downloadLink = document.createElement("a");
 
-		downloadLink.href = canvasdata;
+			downloadLink.download = GetTuneAudioDownloadName(gPlayerABC,".jpg");
 
-		document.body.appendChild(downloadLink);
+			downloadLink.href = canvasdata;
 
-		downloadLink.click();
+			document.body.appendChild(downloadLink);
 
-	 	window.URL.revokeObjectURL(canvasdata);
+			downloadLink.click();
 
-	   	document.body.removeChild(downloadLink);
+		 	window.URL.revokeObjectURL(canvasdata);
+		   	
+		   	document.body.removeChild(downloadLink);
+
+		}
+		else{
+
+		   	var imageBlob = dataURLtoBlob(canvasdata);
+
+		    var imageUrl = URL.createObjectURL(imageBlob);
+		    
+		    var downloadLink = document.createElement("a");
+		    
+		    downloadLink.href = imageUrl;
+			
+			downloadLink.download = GetTuneAudioDownloadName(gPlayerABC,".jpg");
+		    
+		    document.body.appendChild(downloadLink);
+		    
+		    downloadLink.click();
+
+		 	window.URL.revokeObjectURL(imageUrl);
+		   	
+		   	document.body.removeChild(downloadLink);
+
+		}
 
 	   	PostProcessSVGImageAfterDownload();
 		
 		gInDownloadJPEG = false;
 
-	    svg.setAttribute('width', originalSVGWidth+'px');
-	    svg.setAttribute('height', originalSVGHeight+'px');
+		svg = null;
 
 	   	if (callback){
 	   		callback(val);
+	   	}
+	   	else{
+	   		document.getElementById("abcplayer_jpgbutton").value = "JPG File Saved!"
+
+	   		setTimeout(function(){
+	   			document.getElementById("abcplayer_jpgbutton").value = "Save as JPG File";
+	   		},750);
+
 	   	}
 
 	};
@@ -14620,14 +14699,26 @@ function DownloadPNG(callback, val){
 	// Keep track of export
 	if (!callback){
 		sendGoogleAnalytics("export","DownloadPNG");
+
 	}
 
-	gExportWidth = document.getElementById("export_width").value;
+	var theWidth = document.getElementById("export_width").value;
 
-	gExportWidth = parseInt(gExportWidth);
+	theWidth = parseInt(theWidth);
 
-	if (isNaN(gExportWidth)){
-		gExportWidth = 2400;
+	if (isNaN(theWidth)){
+		theWidth = 2400;
+	}
+
+	if (!callback){
+
+		gExportWidth = theWidth;
+
+		// Save off the last entered width for next time
+		if (gLocalStorageAvailable){
+			localStorage.ExportWidth = theWidth;
+		}
+		
 	}
 
 	gInDownloadPNG = true;
@@ -14651,11 +14742,14 @@ function DownloadPNG(callback, val){
 	var canvas = document.createElement("canvas");
 	var svgSize = svg.getBoundingClientRect();
 
+	// Make a clone of the SVG
+	svg = svg.cloneNode(true);
+
 	var originalSVGWidth = svgSize.width;
 	var originalSVGHeight = svgSize.height;
 
-	var outputWidth = gExportWidth;
-	var outputHeight = (gExportWidth * originalSVGHeight)/originalSVGWidth;
+	var outputWidth = theWidth;
+	var outputHeight = (theWidth * originalSVGHeight)/originalSVGWidth;
 
 	canvas.width = outputWidth;
 	canvas.height = outputHeight;
@@ -14683,29 +14777,61 @@ function DownloadPNG(callback, val){
 
 		var canvasdata = canvas.toDataURL("image/png",1);
 
-		var downloadLink = document.createElement("a");
+		if (isDesktopBrowser()){
 
-		downloadLink.download = GetTuneAudioDownloadName(gPlayerABC,".png");
+			var downloadLink = document.createElement("a");
 
-		downloadLink.href = canvasdata;
+			downloadLink.download = GetTuneAudioDownloadName(gPlayerABC,".png");
 
-		document.body.appendChild(downloadLink);
+			downloadLink.href = canvasdata;
 
-		downloadLink.click();
+			document.body.appendChild(downloadLink);
 
-	 	window.URL.revokeObjectURL(canvasdata);
+			downloadLink.click();
 
-	   	document.body.removeChild(downloadLink);
+		 	window.URL.revokeObjectURL(canvasdata);
+
+		   	document.body.removeChild(downloadLink);
+
+		}
+		else{
+
+		   	var imageBlob = dataURLtoBlob(canvasdata);
+
+		    var imageUrl = URL.createObjectURL(imageBlob);
+		    
+		    var downloadLink = document.createElement("a");
+		    
+		    downloadLink.href = imageUrl;
+			
+			downloadLink.download = GetTuneAudioDownloadName(gPlayerABC,".png");
+		    
+		    document.body.appendChild(downloadLink);
+		    
+		    downloadLink.click();
+		
+		 	window.URL.revokeObjectURL(imageUrl);
+		   	
+		   	document.body.removeChild(downloadLink);
+
+		}
 
 	   	PostProcessSVGImageAfterDownload();
 
 		gInDownloadPNG = false;
 
-	    svg.setAttribute('width', originalSVGWidth+'px');
-	    svg.setAttribute('height', originalSVGHeight+'px');
+		svg = null;
 
 	   	if (callback){
 	   		callback(val);
+	   	}
+	   	else{
+	   		document.getElementById("abcplayer_pngbutton").value = "PNG File Saved!"
+
+	   		setTimeout(function(){
+	   			document.getElementById("abcplayer_pngbutton").value = "Save as PNG File";
+	   		},750);
+
 	   	}
 	};
 }
@@ -14773,7 +14899,7 @@ function ExportAll(){
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) })
 
 	if (format != "whistle"){
-		document.getElementById("export_width").value = gExportWidth;
+		document.getElementById("export_width").value = gExportWidthAll;
 	}
 
 }
@@ -14786,13 +14912,12 @@ var gBatchImageExportCancelRequested = false;
 var gTheBatchImageExportOKButton = null;
 var gTheBatchImageExportStatusText = null;
 var gExportWidth = 2400;
+var gExportWidthAll = 2400;
 
 // Milliseconds between exports
-var gBatchExportDelayMS = 250; 
+var gBatchExportDelayMS = 200; 
 
 function BatchJPEGExport(){
-
-	console.log("gBatchExportDelayMS = "+gBatchExportDelayMS);
 
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","BatchJPEGExport");
@@ -14819,6 +14944,18 @@ function BatchSVGExport(){
 function DoBatchImageExport(imageFormat){
 
 	var totalTunesToExport;
+
+	gExportWidthAll = document.getElementById("export_width").value;
+	gExportWidthAll = parseInt(gExportWidthAll);
+
+	if (isNaN(gExportWidthAll)){
+		gExportWidthAll = 2400;
+	}
+
+	// Save off the last entered width for next time
+	if (gLocalStorageAvailable){
+		localStorage.ExportWidthAll = gExportWidthAll;
+	}
 
 	function callback2(theOKButton){
 
@@ -16024,7 +16161,7 @@ function ExportAudioOrImage(){
 	
 	var format = GetRadioValue("notenodertab");
 
-	if ((format != "whistle") && (isDesktopBrowser())){
+	if (format != "whistle"){
 
 		modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export Audio or Image</p>';
 
@@ -16042,7 +16179,7 @@ function ExportAudioOrImage(){
 	modal_msg += '<input id="abcplayer_midibutton" class="abcplayer_midibutton btn btn-mididownload" onclick="DownloadMIDI();" type="button" value="Save as MIDI File" title="Saves the current tune note events as a MIDI file">'
 	modal_msg  += '</p>';
 
-	if ((format != "whistle") && (isDesktopBrowser())){
+	if (format != "whistle"){
 
 		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:42px;">Export Tune Image</p>';
 		modal_msg += '<p style="text-align:center;font-size:20pt;font-family:helvetica"><input id="abcplayer_jpgbutton" class="abcplayer_jpgbutton btn btn-jpgdownload" onclick="DownloadJPEG();" type="button" value="Save as JPEG File" title="Saves the current tune image as a JPEG file">'
@@ -17705,8 +17842,8 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 
 		var format = GetRadioValue("notenodertab");
 		
-		// Change button label for export all for whistle
-		if ((format == "whistle") || (isMobileBrowser())){
+		// Change button label for export for whistle
+		if (format == "whistle"){
 
 			document.getElementById("abcplayer_exportbutton").value = "Export Audio";
 			document.getElementById("abcplayer_exportbutton").title = "Brings up a dialog where you can save the tune in various audio formats";
@@ -21818,11 +21955,11 @@ function GetInitialConfigurationSettings(){
 	if (val){
 		gBatchExportDelayMS = parseInt(val);
 		if (isNaN(gBatchExportDelayMS) || (gBatchExportDelayMS<0)){
-			gBatchExportDelayMS = 250;
+			gBatchExportDelayMS = 200;
 		}
 	}
 	else{
-		gBatchExportDelayMS = 250;
+		gBatchExportDelayMS = 200;
 	}
 
 	// Batch MP3 export cycle delay
@@ -21835,6 +21972,29 @@ function GetInitialConfigurationSettings(){
 	}
 	else{
 		gBatchMP3ExportDelayMS = 250;
+	}
+
+	// Image export resolution
+	val = localStorage.ExportWidth;
+	if (val){
+		gExportWidth = parseInt(val);
+		if (isNaN(gExportWidth) || (gExportWidth<0)){
+			gExportWidth = 2400;
+		}
+	}
+	else{
+		gExportWidth = 2400;
+	}
+
+	val = localStorage.ExportWidthAll;
+	if (val){
+		gExportWidthAll = parseInt(val);
+		if (isNaN(gExportWidthAll) || (gExportWidthAll<0)){
+			gExportWidthAll = 2400;
+		}
+	}
+	else{
+		gExportWidthAll = 2400;
 	}
 
 	// Save the settings, in case they were initialized
@@ -21960,6 +22120,10 @@ function SaveConfigurationSettings(){
 		// Save the batch export cycle time
 		localStorage.BatchExportDelayMS = gBatchExportDelayMS;
 		localStorage.BatchMP3ExportDelayMS = gBatchMP3ExportDelayMS;
+
+		// Save the image export size
+		localStorage.ExportWidth = gExportWidth;	
+		localStorage.ExportWidthAll = gExportWidthAll;	
 	}
 }
 
@@ -23357,7 +23521,7 @@ function DeveloperSettings(){
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-bottom:32px;margin-left:15px;">Developer Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#developer_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
 	  {html: '<p style="margin-bottom:20px;font-size:12pt;font-family:helvetica;margin-bottom:32px;"><strong>Only change these values if you know what you are doing!</strong></p>'},
-	  {name: "Image Batch Export Delay in milliseconds (default is 250):", id: "configure_export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
+	  {name: "Image Batch Export Delay in milliseconds (default is 200):", id: "configure_export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
 	  {name: "MP3 Batch Export Delay in milliseconds (default is 250):", id: "configure_mp3export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
 	];
 
