@@ -16024,7 +16024,7 @@ function ExportAudioOrImage(){
 	
 	var format = GetRadioValue("notenodertab");
 
-	if (format != "whistle"){
+	if ((format != "whistle") && (isDesktopBrowser())){
 
 		modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export Audio or Image</p>';
 
@@ -16042,7 +16042,7 @@ function ExportAudioOrImage(){
 	modal_msg += '<input id="abcplayer_midibutton" class="abcplayer_midibutton btn btn-mididownload" onclick="DownloadMIDI();" type="button" value="Save as MIDI File" title="Saves the current tune note events as a MIDI file">'
 	modal_msg  += '</p>';
 
-	if (format != "whistle"){
+	if ((format != "whistle") && (isDesktopBrowser())){
 
 		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:42px;">Export Tune Image</p>';
 		modal_msg += '<p style="text-align:center;font-size:20pt;font-family:helvetica"><input id="abcplayer_jpgbutton" class="abcplayer_jpgbutton btn btn-jpgdownload" onclick="DownloadJPEG();" type="button" value="Save as JPEG File" title="Saves the current tune image as a JPEG file">'
@@ -17706,7 +17706,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 		var format = GetRadioValue("notenodertab");
 		
 		// Change button label for export all for whistle
-		if (format == "whistle"){
+		if ((format == "whistle") || (isMobileBrowser())){
 
 			document.getElementById("abcplayer_exportbutton").value = "Export Audio";
 			document.getElementById("abcplayer_exportbutton").title = "Brings up a dialog where you can save the tune in various audio formats";
@@ -23323,11 +23323,18 @@ function AdvancedControlsDialog(){
 		});
 
 	// Change button label for export all for whistle
-	if (format == "whistle"){
+	// Hide the batch exporter button on mobile
+	if (isMobileBrowser()){
+		document.getElementById("configure_batch_mp3_export").style.display = "none";
+	}
+	else{
+		
+		if (format == "whistle"){
 
-		document.getElementById("configure_batch_mp3_export").value = "Export All Audio";
-		document.getElementById("configure_batch_mp3_export").title = "Exports all the tunes in the ABC text area as audio files";
+			document.getElementById("configure_batch_mp3_export").value = "Export All Audio";
+			document.getElementById("configure_batch_mp3_export").title = "Exports all the tunes in the ABC text area as audio files";
 
+		}
 	}
 
 
