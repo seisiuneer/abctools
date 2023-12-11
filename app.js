@@ -16347,15 +16347,13 @@ function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 
 	if (instrument == "whistle") {
 
-		//debugger;
-
-		var Tabstriche;
+		var allTopLines;
 
 		if (bIsPlayback){
-			Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > svg > g > g > [class="abcjs-top-line"]');
+			allTopLines = document.querySelectorAll('div[id="' + renderDivID + '"] > svg > g > g > [class="abcjs-top-line"]');
 		}
 		else{
-			Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g > [class="abcjs-top-line"]');
+			allTopLines = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g > [class="abcjs-top-line"]');
 		}
 
 		var nVis = visualObj.length;
@@ -16385,11 +16383,6 @@ function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 
 		var theVisual = visualObj[vis];
 
-		// How many actual staves are in the visual
-		// Other kinds of lines are in the array, like subtitles
-		var nStaffs = 0;
-		var testStaff = -1;
-
 		var nStaffsInVisual = theVisual.lines.length;
 
 		if (nStaffsInVisual == 0){
@@ -16397,46 +16390,65 @@ function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 			return;
 		}
 
+		var theLinesToCheck = [];
+
 		for (var i=0;i<nStaffsInVisual;++i){
 
-			if (theVisual.lines[i].staff){
+			var theStaff = theVisual.lines[i].staff;
 
-				if (testStaff == -1){
-					testStaff = i;
-				}
-
-				nStaffs++;
+			if (theStaff){
+				theLinesToCheck.push(theVisual.lines[i]);
 			}
+
 		}
 
-		if (testStaff == -1){
-			//console.log("postProcessTab: no staffs in visual")
+		var nLinesToCheck = theLinesToCheck.length;
+
+		if (nLinesToCheck == 0){
+			//console.log("postProcessTab: no staff lines in visual")
 			return;
+
 		}
 
-		var linesPerStaff = theVisual.lines[testStaff].staff.length;
+		var theTabTopLines = [];
 
-		//console.log("nStaffs = "+nStaffs);
-		//console.log("linesPerStaff = "+linesPerStaff);
+		for (var i=0;i<nLinesToCheck;++i){
 
-		var tabStaffIndex = linesPerStaff/2;
+			var theLine = theLinesToCheck[i];
 
-		//debugger;
+			var nStaffsInLine = theLine.staff.length;
 
-		for (var x = 0; x < Tabstriche.length; x++) {
+			var tabStaffIndex = nStaffsInLine/2
 
-			if ((x % linesPerStaff) >= tabStaffIndex) {
+			for (j=0;j<nStaffsInLine;++j){
 
-				Tabstriche[x].setAttribute("class", "tabstrich");
-
-				var Geschwisterstriche = getNextSiblings(Tabstriche[x]);
-
-				for (var y = 0; y < Geschwisterstriche.length; y++) {
-					Geschwisterstriche[y].setAttribute("class", "tabstrich");
+				if (j<tabStaffIndex){
+					theTabTopLines.push(false);
+				}
+				else{
+					theTabTopLines.push(true);
 				}
 
 			}
+
 		}
+
+		for (var x = 0; x < allTopLines.length; x++) {
+
+			if (theTabTopLines[x]) {
+
+				allTopLines[x].setAttribute("class", "hiddentabline");
+
+				var theSiblings = getNextSiblings(allTopLines[x]);
+
+				for (var y = 0; y < theSiblings.length; y++) {
+					theSiblings[y].setAttribute("class", "hiddentabline");
+				}
+
+			}
+
+		}
+
 
 		var Tspans;
 
@@ -16548,13 +16560,13 @@ function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 
 		var useSharps = true;
 
-		var Tabstriche;
+		var allTopLines;
 
 		if (bIsPlayback){
-			Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > svg > g > g > [class="abcjs-top-line"]');
+			allTopLines = document.querySelectorAll('div[id="' + renderDivID + '"] > svg > g > g > [class="abcjs-top-line"]');
 		}
 		else{
-			Tabstriche = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g > [class="abcjs-top-line"]');
+			allTopLines = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g > [class="abcjs-top-line"]');
 		}
 
 		var nVis = visualObj.length;
@@ -16584,11 +16596,6 @@ function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 
 		var theVisual = visualObj[vis];
 
-		// How many actual staves are in the visual
-		// Other kinds of lines are in the array, like subtitles
-		var nStaffs = 0;
-		var testStaff = -1;
-
 		var nStaffsInVisual = theVisual.lines.length;
 
 		if (nStaffsInVisual == 0){
@@ -16596,45 +16603,63 @@ function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 			return;
 		}
 
+		var theLinesToCheck = [];
+
 		for (var i=0;i<nStaffsInVisual;++i){
 
-			if (theVisual.lines[i].staff){
+			var theStaff = theVisual.lines[i].staff;
 
-				if (testStaff == -1){
-					testStaff = i;
-				}
-
-				nStaffs++;
+			if (theStaff){
+				theLinesToCheck.push(theVisual.lines[i]);
 			}
+
 		}
 
-		if (testStaff == -1){
-			//console.log("postProcessTab: no staffs in visual")
+		var nLinesToCheck = theLinesToCheck.length;
+
+		if (nLinesToCheck == 0){
+			//console.log("postProcessTab: no staff lines in visual")
 			return;
+
 		}
 
-		var linesPerStaff = theVisual.lines[testStaff].staff.length;
+		var theTabTopLines = [];
 
-		//console.log("nStaffs = "+nStaffs);
-		//console.log("linesPerStaff = "+linesPerStaff);
+		for (var i=0;i<nLinesToCheck;++i){
 
-		var tabStaffIndex = linesPerStaff/2;
+			var theLine = theLinesToCheck[i];
 
-		//debugger;
+			var nStaffsInLine = theLine.staff.length;
 
-		for (var x = 0; x < Tabstriche.length; x++) {
+			var tabStaffIndex = nStaffsInLine/2
 
-			if ((x % linesPerStaff) >= tabStaffIndex) {
+			for (j=0;j<nStaffsInLine;++j){
 
-				Tabstriche[x].setAttribute("class", "tabstrich");
-
-				var Geschwisterstriche = getNextSiblings(Tabstriche[x]);
-
-				for (var y = 0; y < Geschwisterstriche.length; y++) {
-					Geschwisterstriche[y].setAttribute("class", "tabstrich");
+				if (j<tabStaffIndex){
+					theTabTopLines.push(false);
+				}
+				else{
+					theTabTopLines.push(true);
 				}
 
 			}
+
+		}
+
+		for (var x = 0; x < allTopLines.length; x++) {
+
+			if (theTabTopLines[x]) {
+
+				allTopLines[x].setAttribute("class", "hiddentabline");
+
+				var theSiblings = getNextSiblings(allTopLines[x]);
+
+				for (var y = 0; y < theSiblings.length; y++) {
+					theSiblings[y].setAttribute("class", "hiddentabline");
+				}
+
+			}
+
 		}
 
 		// Walk the SVGs
