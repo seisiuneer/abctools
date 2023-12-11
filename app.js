@@ -16337,16 +16337,11 @@ function computeFade(tuneABC){
 //
 function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 
-	//console.log("postProcessTab: renderDivID = "+renderDivID);
-
-	if (!visualObj){
-
-		//console.log("postProcessTab: Got null visualObj");
-		return;
-	}
-
-	if (instrument == "whistle") {
-
+	// 
+	// Hide all the leger lines on the tab staves
+	//
+	function hideTabLines(){
+		
 		var allTopLines;
 
 		if (bIsPlayback){
@@ -16449,6 +16444,20 @@ function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 
 		}
 
+	}
+
+	//console.log("postProcessTab: renderDivID = "+renderDivID);
+
+	if (!visualObj){
+
+		//console.log("postProcessTab: Got null visualObj");
+		return;
+	}
+
+	if (instrument == "whistle") {
+
+		// Hide the leger lines on the tab staves
+		hideTabLines();
 
 		var Tspans;
 
@@ -16560,107 +16569,8 @@ function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 
 		var useSharps = true;
 
-		var allTopLines;
-
-		if (bIsPlayback){
-			allTopLines = document.querySelectorAll('div[id="' + renderDivID + '"] > svg > g > g > [class="abcjs-top-line"]');
-		}
-		else{
-			allTopLines = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g > [class="abcjs-top-line"]');
-		}
-
-		var nVis = visualObj.length;
-
-		// Sanity check the tab replacement state
-		if (nVis == 0){
-			//console.log("postProcessTab: no visualObj entries");
-			return;
-		}
-
-		//
-		// Hide the staff lines on the tab staves
-		//
-
-		// For single tune re-renders, the visual only has one entry
-		var vis = 0;
-
-		// If there is more than one tune being rendered, find it
-		if (nVis > 1){
-			var vis = renderDivID.replace("notation","");
-			vis = parseInt(vis);
-			if (isNaN(vis)){
-				//console.log("postProcessTab: bad renderDivID");
-				return;
-			}
-		}
-
-		var theVisual = visualObj[vis];
-
-		var nStaffsInVisual = theVisual.lines.length;
-
-		if (nStaffsInVisual == 0){
-			//console.log("postProcessTab: no lines in visual")
-			return;
-		}
-
-		var theLinesToCheck = [];
-
-		for (var i=0;i<nStaffsInVisual;++i){
-
-			var theStaff = theVisual.lines[i].staff;
-
-			if (theStaff){
-				theLinesToCheck.push(theVisual.lines[i]);
-			}
-
-		}
-
-		var nLinesToCheck = theLinesToCheck.length;
-
-		if (nLinesToCheck == 0){
-			//console.log("postProcessTab: no staff lines in visual")
-			return;
-
-		}
-
-		var theTabTopLines = [];
-
-		for (var i=0;i<nLinesToCheck;++i){
-
-			var theLine = theLinesToCheck[i];
-
-			var nStaffsInLine = theLine.staff.length;
-
-			var tabStaffIndex = nStaffsInLine/2
-
-			for (j=0;j<nStaffsInLine;++j){
-
-				if (j<tabStaffIndex){
-					theTabTopLines.push(false);
-				}
-				else{
-					theTabTopLines.push(true);
-				}
-
-			}
-
-		}
-
-		for (var x = 0; x < allTopLines.length; x++) {
-
-			if (theTabTopLines[x]) {
-
-				allTopLines[x].setAttribute("class", "hiddentabline");
-
-				var theSiblings = getNextSiblings(allTopLines[x]);
-
-				for (var y = 0; y < theSiblings.length; y++) {
-					theSiblings[y].setAttribute("class", "hiddentabline");
-				}
-
-			}
-
-		}
+		// Hide the leger lines on the tab staves
+		hideTabLines();
 
 		// Walk the SVGs
 
