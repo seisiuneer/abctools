@@ -169,6 +169,7 @@ var gAddPlaybackHyperlinksIncludePrograms = false;
 var gPlaybackHyperlinkMelodyProgram = "";
 var gPlaybackHyperlinkBassChordProgram = "";
 var gPlaybackHyperlinkSoundFont = "";
+var gAddTunebookPlaybackHyperlinks = false;
 
 // Lock out editing on injected playback PDF links
 var gInjectEditDisabled = false;
@@ -2458,8 +2459,115 @@ function PostProcessHeadersAndFooters(thePDF,addPageNumbers,startingPage,nPages,
 //
 var gAcrobatURLLimitExceeded = [];
 var ACROBATMAXURLLENGTH = 2076;
+var gGotURLLengthWarning = false;
 
 function GetAllTuneHyperlinks(theLinks) {
+
+	// Check for max URL length exceeded on a full tunebook hyperlink
+	gGotURLLengthWarning = false;
+
+	function processSingleTunePlaybackInjects(theTune){
+
+		//
+		// Setting swing globally for all hornpipes?
+		//
+
+		// First check if swing disabled
+		if (!gAllNoSwingHornpipesRequested){
+
+			if (gAllSwingHornpipesRequested){
+
+				// Inject %swing into all hornpipes
+				if (tuneIsHornpipe(theTune)){
+
+					// Is there a manual swing disable override?
+					if (theTune.indexOf("%noswing") == -1){
+
+						// Strip out the X: tag
+						var searchRegExp = /^X:.*[\r\n]*/gm 
+
+						theTune = theTune.replace(searchRegExp, "");
+
+						theTune = "X:1\n%swing "+gAllSwingHornpipesSwingFactor+"\n"+theTune;
+
+					}
+
+				}
+
+			}
+
+		}
+		else{
+
+			// Inject %noswing into all hornpipes
+			if (tuneIsHornpipe(theTune)){
+
+				// Is there a manual swing override?
+				if (theTune.indexOf("%swing") == -1){
+
+					// Strip out the X: tag
+					var searchRegExp = /^X:.*[\r\n]*/gm 
+
+					theTune = theTune.replace(searchRegExp, "");
+
+					theTune = "X:1\n%noswing\n"+theTune;
+
+				}
+
+			}
+
+		}
+
+		// If MIDI programs to be injected, do it now
+		if (gAddPlaybackHyperlinksIncludePrograms){
+			
+			// Strip out the X: tag
+			var searchRegExp = /^X:.*[\r\n]*/gm 
+
+			// Strip out X:
+			theTune = theTune.replace(searchRegExp, "");
+
+			theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkBassChordProgram+"\n"+theTune;
+
+		}
+
+		return theTune;
+
+	}
+
+	// 
+	// Process the injections for the entire tunebook
+	function processEntireTunebookPlaybackInjects(){
+
+		var nTunes = CountTunes();
+
+		var theNotes = gTheABC.value;
+		
+		var output = FindPreTuneHeader(theNotes);
+
+		for (var i = 0; i < nTunes; ++i) {
+
+			// See if there is a hyperlink override for this tune
+			var thisTune = getTuneByIndex(i);
+
+			// Don't add hyperlinks to section headers
+			if (theTitles[i].indexOf("*") == 0){
+
+				output+=thisTune;
+
+			}
+			else{
+
+				thisTune = processSingleTunePlaybackInjects(thisTune);
+				output += thisTune;
+
+			}
+
+		}
+
+		return output;
+
+	}
 
 	// Keep track of any tunes that exceed the Acrobat maximum length
 	gAcrobatURLLimitExceeded = [];
@@ -2477,7 +2585,7 @@ function GetAllTuneHyperlinks(theLinks) {
 
 	}
 
-	for (i = 0; i < nTunes; ++i) {
+	for (var i = 0; i < nTunes; ++i) {
 
 		// See if there is a hyperlink override for this tune
 		var thisTune = getTuneByIndex(i);
@@ -2495,88 +2603,61 @@ function GetAllTuneHyperlinks(theLinks) {
 
 			var tuneWithPatch = thisTune;
 
-			//
-			// Setting swing globally for all hornpipes?
-			//
+			if (gAddTunebookPlaybackHyperlinks){
 
-			// First check if swing disabled
-			if (!gAllNoSwingHornpipesRequested){
-
-				if (gAllSwingHornpipesRequested){
-
-					// Inject %swing into all hornpipes
-					if (tuneIsHornpipe(tuneWithPatch)){
-
-						// Is there a manual swing disable override?
-						if (tuneWithPatch.indexOf("%noswing") == -1){
-
-							// Strip out the X: tag
-							var searchRegExp = /^X:.*[\r\n]*/gm 
-
-							tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
-
-							tuneWithPatch = "X:1\n%swing "+gAllSwingHornpipesSwingFactor+"\n"+tuneWithPatch;
-
-						}
-
-					}
-
-				}
+				// Inject any tune swing and other per-tune modifications
+				tuneWithPatch = processEntireTunebookPlaybackInjects();
 
 			}
 			else{
 
-				// Inject %noswing into all hornpipes
-				if (tuneIsHornpipe(tuneWithPatch)){
-
-					// Is there a manual swing override?
-					if (tuneWithPatch.indexOf("%swing") == -1){
-
-						// Strip out the X: tag
-						var searchRegExp = /^X:.*[\r\n]*/gm 
-
-						tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
-
-						tuneWithPatch = "X:1\n%noswing\n"+tuneWithPatch;
-
-					}
-
-				}
+				// Inject any tune swing and other per-tune modifications
+				tuneWithPatch = processSingleTunePlaybackInjects(tuneWithPatch);
 
 			}
-
-			// If MIDI programs to be injected, do it now
-			if (gAddPlaybackHyperlinksIncludePrograms){
-				
-				// Strip out the X: tag
-				var searchRegExp = /^X:.*[\r\n]*/gm 
-
-				// Strip out X:
-				tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
-
-				tuneWithPatch = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkBassChordProgram+"\n"+tuneWithPatch;
-
-			}
-
 
 			// Create a share URL for this tune
 			var theURL = FillUrlBoxWithAbcInLZW(tuneWithPatch,false);
 
-			// Add the play parameter
-			if (gInjectEditDisabled){
-				theURL += "&dx=1"
+			// Test max share URL length and one-time warn if too long
+			if (theURL.length >= 8100 ){
+
+				if (!gGotURLLengthWarning){
+
+					gGotURLLengthWarning = true;
+					
+					if (gAddTunebookPlaybackHyperlinks){
+
+						DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">Share URL for entire tunebook is too long to add to the tunes.</p>',{ theme: "modal_flat", top: 230, scrollWithPage: (AllowDialogsToScroll()) });
+
+					}
+				}
 			}
+			else{
 
-			theURL += "&play=1";
+				// Add play link
+				theURL += "&play=1";
 
-			// Warn if too large for Acrobat Reader
-			if (theURL.length > ACROBATMAXURLLENGTH){
+				// If full tunebook play link, add tune index
+				if (gAddTunebookPlaybackHyperlinks){
+					theURL += "&index="+i;
+				}
 
-				gAcrobatURLLimitExceeded.push({name:theTitles[i],urllength:theURL.length});
+				// Add the play parameter
+				if (gInjectEditDisabled){
+					theURL += "&dx=1"
+				}
 
-			}			
+				// Warn if too large for Acrobat Reader
+				if (theURL.length > ACROBATMAXURLLENGTH){
 
-			theLinks[i].url = theURL;
+					gAcrobatURLLimitExceeded.push({name:theTitles[i],urllength:theURL.length});
+
+				}			
+
+				theLinks[i].url = theURL;
+
+			}
 
 		}
 		else
@@ -4791,6 +4872,21 @@ function ParseCommentCommands(theNotes){
 		}
 	}
 
+	// Should playback links include the entire tunebook
+	gAddTunebookPlaybackHyperlinks = false;
+
+	// Search for a playback links include the entire tunebook
+	searchRegExp = /^%playback_links_are_complete_tunebook.*$/m
+
+	// Detect notation
+	var addTunebookPlaybackHyperlinks = theNotes.match(searchRegExp);
+
+	if ((addTunebookPlaybackHyperlinks) && (addTunebookPlaybackHyperlinks.length > 0)){
+
+		gAddTunebookPlaybackHyperlinks = true;
+
+	}
+
 	// Clear the tunebook toc headerstring
 	theTunebookTOCHeader = "";
 
@@ -5689,14 +5785,26 @@ function ShowAcrobatURLSizeWarningDialog(){
 	sendGoogleAnalytics("dialog","ShowAcrobatURLSizeWarningDialog");
 
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Adobe Acrobat Maximum URL Length Warning</p>';
-	modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;">During PDF export play hyperlink embedding, some very long and complex tunes had play hyperlinks that exceeded the Adobe Acrobat maximum URL length of 2076 characters.</p>';
-	modal_msg += '<p style="font-size:12pt;line-height:18pt;">These play links will work with the built-in PDF reader on most web browsers and online PDF readers, many non-Adobe desktop and mobile PDF readers, but will not open correctly if the tune title is clicked when the PDF is viewed using Adobe Acrobat:</p>';
 
-	var nBadTunes = gAcrobatURLLimitExceeded.length;
-	for (var i=0;i<nBadTunes;++i){
-		modal_msg += '<p style="font-size:12pt;line-height:10pt;">"'+gAcrobatURLLimitExceeded[i].name+'"&nbsp;-&nbsp;URL length: '+gAcrobatURLLimitExceeded[i].urllength+'</p>';
+	// Different messaging if hyperlinks are the entire tunebook
+	if (gAddTunebookPlaybackHyperlinks){
+
+		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;">During PDF export play hyperlink embedding, the entire tunebook play hyperlink length of '+gAcrobatURLLimitExceeded[0].urllength+' characters exceeded the Adobe Acrobat maximum URL length of 2076 characters.</p>';
+		modal_msg += '<p style="font-size:12pt;line-height:18pt;">These play links will work with the built-in PDF reader on most web browsers and online PDF readers, many non-Adobe desktop and mobile PDF readers, but will not open correctly if the tune title is clicked when the PDF is viewed using Adobe Acrobat:</p>';
+		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:24px">If Adobe Acrobat is your target PDF reader, your best option is to use the per-tune %hyperlink directive in these tunes with a shortened play Share URL to the entire tunebook manually generated using the Sharing dialog.</p>';
 	}
-	modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:24px">If Adobe Acrobat is your target PDF reader, your best option is to use the per-tune %hyperlink directive in these tunes with a shortened play Share URL manually generated using the Sharing dialog.</p>';
+	else{
+
+		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;">During PDF export play hyperlink embedding, some very long and complex tunes had play hyperlinks that exceeded the Adobe Acrobat maximum URL length of 2076 characters.</p>';
+		modal_msg += '<p style="font-size:12pt;line-height:18pt;">These play links will work with the built-in PDF reader on most web browsers and online PDF readers, many non-Adobe desktop and mobile PDF readers, but will not open correctly if the tune title is clicked when the PDF is viewed using Adobe Acrobat:</p>';
+
+		var nBadTunes = gAcrobatURLLimitExceeded.length;
+		for (var i=0;i<nBadTunes;++i){
+			modal_msg += '<p style="font-size:12pt;line-height:10pt;">"'+gAcrobatURLLimitExceeded[i].name+'"&nbsp;-&nbsp;URL length: '+gAcrobatURLLimitExceeded[i].urllength+'</p>';
+		}
+		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:24px">If Adobe Acrobat is your target PDF reader, your best option is to use the per-tune %hyperlink directive in these tunes with a shortened play Share URL manually generated using the Sharing dialog.</p>';		
+	}
+
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 75, width: 700,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 
@@ -8607,6 +8715,9 @@ var gPDFTunebookConfig ={
 	// Add playback links?
 	bAdd_add_all_playback_links: true,
 
+	// Inject full tunebook
+	bAdd_add_full_tunebook: false,
+
 	// Inject instruments?
 	bInjectInstruments: true,
 
@@ -8660,6 +8771,9 @@ function resetPDFTunebookConfig(){
 
 		// Add playback links?
 		bAdd_add_all_playback_links: true,
+
+		// Inject full tunebook
+		bAdd_add_full_tunebook: false,
 
 		// Inject instruments?
 		bInjectInstruments: true,
@@ -8742,18 +8856,19 @@ function PDFTunebookBuilder(){
 	  {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Leave any text fields blank for features you don\'t want in your PDF tunebook.</p>'},  
 	  {name: "PDF quality:", id: "pdfquality", type:"select", options:pdf_quality_list, cssClass:"configure_pdfquality_select"},
 	  {name: "Space between tunes (in 1/72\"):", id: "pdf_between_tune_space", type:"number", cssClass:"configure_setuppdftunebook_form_text"},
-	  {name: "Title Page title:", id: "addtitle", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
+	  {name: "Title Page title:", id: "addtitle", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide2"},
 	  {name: "Title Page subtitle:", id: "addsubtitle", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
 	  {name: "Table of Contents title:", id: "addtoc", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
 	  {name: "Index title:", id: "addindex", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
 	  {name: "Page Header:", id: "pageheader", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
 	  {name: "Page Footer:", id: "pagefooter", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
-	  {name: "          Add playback links to each tune to allow playing the tune by clicking the tune title", id: "bAdd_add_all_playback_links", type:"checkbox", cssClass:"configure_setuppdftunebook_form_text"},
+	  {name: "          Add playback links to each tune to allow playing the tune by clicking the tune title", id: "bAdd_add_all_playback_links", type:"checkbox", cssClass:"configure_setuppdftunebook_form_text2"},
+	  {name: "          Playback links contain entire tunebook", id: "bAdd_add_full_tunebook", type:"checkbox", cssClass:"configure_setuppdftunebook_form_text"},
 	  {name: "Soundfont for playback links:", id: "sound_font", type:"select", options:sound_font_options, cssClass:"configure_midi_program_select"},
 	  {name: "Melody instrument for playback links:", id: "melody_instrument", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
 	  {name: "Bass/Chord instrument for playback links:", id: "chord_instrument", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
 	  {name: "          Add a QR Code to the end of the PDF", id: "bAdd_QRCode", type:"checkbox", cssClass:"configure_setuppdftunebook_form_text"},
-	  {html: '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">To override the default Share URL QR Code, enter your own URL below:</p>'},  
+	  {html: '<p style="margin-top:20px;margin-bottom:16px;font-size:12pt;line-height:12pt;font-family:helvetica">To override the default Share URL QR Code, enter your own URL below:</p>'},  
 	  {name: "Custom URL:", id: "qrcode_link", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
 	  {name: "QR Code caption:", id: "caption_for_qrcode", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
 	];
@@ -8780,6 +8895,7 @@ function PDFTunebookBuilder(){
 			// %pageheader This is the Page Header
 			// %pagefooter This is the Page Footer
 			// %add_all_playback_links 0 0 fatboy
+			// %playback_links_are_complete_tunebook
 			// %qrcode https://michaeleskin.com
 			// %caption_for_qrcode Click or Scan to Visit my Home Page
 
@@ -8859,6 +8975,9 @@ function PDFTunebookBuilder(){
 			// Add playback links?
 			gPDFTunebookConfig.bAdd_add_all_playback_links = args.result.bAdd_add_all_playback_links;
 
+			// Playback links are entire tunebook?
+			gPDFTunebookConfig.bAdd_add_full_tunebook = args.result.bAdd_add_full_tunebook;
+
 			// Inject instruments?
 			gPDFTunebookConfig.bInjectInstruments = args.result.bInjectInstruments;
 
@@ -8917,8 +9036,14 @@ function PDFTunebookBuilder(){
 
 				header_to_add += "%add_all_playback_links "+progNumMelody+" "+progNumChord+" "+soundFont+"\n";
 
-			}
+				// Will only add the full tunebook Share URL annotation if the playback links are also enabled
+				if (gPDFTunebookConfig.bAdd_add_full_tunebook){
 
+					header_to_add += "%playback_links_are_complete_tunebook\n";
+
+				}
+
+			}
 
 			// QR Code?
 			gPDFTunebookConfig.bAdd_QRCode = args.result.bAdd_QRCode;
@@ -10086,7 +10211,7 @@ function GenerateQRCode(e) {
 	
 		if (theURL.length > maxURLLength) {
 
-			DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:14pt;">Share URL text is too long to generate a QR Code</p>',{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+			DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:14pt;">Share URL is too long to generate a QR Code</p>',{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 
 			return;
 
@@ -13461,7 +13586,14 @@ function processShareLink() {
 		}
 	}
 
-	// Open for playback
+	// If edit disabled, hide the zoom arrows
+	if (disableEdit){
+		gDisableEditFromPlayLink = true;
+	}
+
+	// Open for playback?
+	// By default play the first tune
+	gPlayABCTuneIndex = 0;
 	var doPlay = false;
 	if (urlParams.has("play")) {
 		var thePlay = urlParams.get("play");
@@ -13470,9 +13602,16 @@ function processShareLink() {
 		}
 	}
 
-	// If edit disabled, hide the zoom arrows
-	if (disableEdit){
-		gDisableEditFromPlayLink = true;
+	// If multiple tunes in the link, which one to open in the player?
+	var gotIndex = false;
+	if (doPlay){
+		if (urlParams.has("index")) {
+
+			var theIndex = urlParams.get("index");
+			tuneIndex = parseInt(theIndex);
+			gPlayABCTuneIndex = tuneIndex;
+			gotIndex = true;
+		}
 	}
 
 	if (doRender) {
@@ -13521,13 +13660,19 @@ function processShareLink() {
 				sendGoogleAnalytics("show_player","from_share");
 
 				// Get the current tune index and tune count
-				gPlayABCTuneIndex = 0;
 				gPlayABCTuneCount = CountTunes();
 
 				gPlayABCGotMaximizedPlay = true;
 
+				var theABCToPlay = gTheABC.value;
+
+				// If index specified, 
+				if (gotIndex){
+					theABCToPlay = getTuneByIndex(gPlayABCTuneIndex)
+				}
+
 				// Pre-process the ABC to inject any requested programs or volumes
-				var theProcessedABC = PreProcessPlayABC(gTheABC.value);
+				var theProcessedABC = PreProcessPlayABC(theABCToPlay);
 
 				// Play back locally in-tool	
 				PlayABCDialog(theProcessedABC, null, null, null, false);
@@ -13893,6 +14038,7 @@ function InjectPDFHeaders(){
 	output += "%urlpagefooter https://michaeleskin.com Page Footer as Hyperlink\n";
 	output += "%add_all_links_to_thesession\n";
 	output += "%add_all_playback_links 0 0 fluid\n";
+	output += "%playback_links_are_complete_tunebook\n";
 	output += "%swing_all_hornpipes 0.25\n";	
 	output += "%noswing_all_hornpipes\n";	
 	output += "%no_edit_allowed\n";
@@ -21819,7 +21965,13 @@ function GetInitialConfigurationSettings(){
     var PDFTunebookConfig = localStorage.PDFTunebookConfig;
 
     if (PDFTunebookConfig){
+
         gPDFTunebookConfig = JSON.parse(PDFTunebookConfig);
+
+        // Fixup config for new full tunebook links field added 11 Dec 2023
+        if ((gPDFTunebookConfig.bAdd_add_full_tunebook == undefined) || (gPDFTunebookConfig.bAdd_add_full_tunebook == null)){
+			gPDFTunebookConfig.bAdd_add_full_tunebook = false;
+        }
     }
     else{
     	resetPDFTunebookConfig();

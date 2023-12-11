@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-                        
+                
         <style>
         p {
         font-size:14pt;
@@ -1303,9 +1303,10 @@
             </div>
             <p>When exporting a PDF from the button on the bottom-left of the full-screen view, the <strong>Configure PDF Tunebook Features</strong> and <strong>Notation Spacing Explorer</strong> buttons are not shown on the dialog.</p>
             <p>Since they possibly modify the ABC itself, they are only available when exporting a PDF from the ABC Editor.</p>
+            <hr>
             <p id="configure_pdf_tunebook_features"><strong>Configure PDF Tunebook Features</strong> - Brings up a dialog that you can use to add annotations at the top of the ABC that will add an optional Title Page, Table of Contents, Index, Page Header, Page Footer, playback links, and/or QR code to an exported PDF tunebook:</p>
             <div class="image_holder_p">
-                <img src="img/configure_pdf_tunebook_features_4.jpg"/>
+                <img src="img/configure_pdf_tunebook_features_5.jpg"/>
             </div>
             <p>Leave any text fields blank for features you don't want in your PDF tunebook.</p>
             <p>The PDF features are added using the tool's ABC comment-based annotations to the top of the ABC.</p>
@@ -1320,19 +1321,29 @@
             <p class="code">% End of PDF Tunebook Features</p>
             <p>from the ABC and click <strong>Configure PDF Tunebook Features</strong>, the tool will not be able to find the original set of features in the ABC to overwrite.</p>
             <p>If this occurs, the new set of requested PDF tunebook features will just be added to the top of the ABC.</p>
-            <p>Brings up a dialog where you can experiment with spacing values for the notation and then optionally inject the values into one or all of the tunes:</p>
+            <hr>
+            <p style="text-align: center;"><strong>Note on use of "Playback links contain entire tunebook"</strong></p>
+            <p>Normally when play links are added to tunes in a tunebook, they just are for the indvidual tunes.</p>
+            <p>If adding playback links to all the tunes by checking <strong>"Add playback links to each tune to allow playing the tune by clicking the tune title"</strong> and this item is also checked, the tool will add annotation to the ABC to add the Share URL for the entire ABC tunebook to each tune.</p>
+            <p>If the entire tunebook playback Share URL is too large to be a valid URL link for opening in the tool (about 8100 characters), you will be presented with a warning when the PDF export is complete, and no playback links will be added to the tunes.</p>
+            <p>Additionally, if the complete tunebook playback Share URL is larger than the maximum allowed by Adobe Acrobat (2076 characters), after the PDF export is complete you will be presented with a warning that the links may not work in Adobe Acrobat but will work with browser-native and many other PDF readers.</p>
+            <p>This will probably happen quite frequently for tunebooks with 5 or more tunes.</p>
+            <hr>
             <p><strong>Notation Spacing Explorer:</strong> Brings up a dialog where you can experiment with spacing values for the notation and then optionally inject the values into one or all of the tunes.</p>
             <p>For complete details, see <a href="#advanced_notationspacingexplorer">Notation Spacing Explorer</a>.</p>
+            <hr>
             <p><strong>Paper Size:</strong></p>
             <p>Choose between Letter or A4 paper size:</p>
             <div class="image_holder_p">
                 <img src="img/paper_size_1.jpg"/>
             </div>
+            <hr>
             <p><strong>Orientation:</strong></p>
             <p>Choose between Portrait or Landscape orientation:</p>
             <div class="image_holder_p">
                 <img src="img/pdf_orientation_1.jpg"/>
             </div>
+            <hr>
             <p><strong>Tune Layout:</strong></p>
             <p>Choose whether you want One Tune per Page, Multiple Tunes per Page, Tune Note Incipits, or ABC Incipits (unsorted or alphabetically sorted by tune name):</p>
             <div class="image_holder_p">
@@ -1372,6 +1383,7 @@
             <p></p>
             <p>Exporting a PDF tunebook with ABC incipits allow you create a "cheat sheet" for the tunebook that includes just the first few measures of the ABC for each tune.</p>
             <p></p>
+            <hr>
             <p><strong>Notes Incipits Columns:</strong></p>
             <p></p>
             <p>When exporting notes incipits, choose whether you want one or two column layout:</p>
@@ -1379,6 +1391,7 @@
                 <img src="img/incipits_columns_1.jpg"/>
             </div>
             <p></p>
+            <hr>
             <p><strong>Page Number Location:</strong></p>
             <div class="image_holder_p">
                 <img src="img/page_number_location_1.jpg"/>
@@ -1386,6 +1399,7 @@
             <p>Choose between: None, Top Left, Top Center, Top Right, Bottom Left, Bottom Center, Bottom Right, Alternating Top Left/Right, Alternating Top Right/Left, Alternating Bottom Left/Right, or Alternating Bottom Right/Left.</p>
             <p>The Alternating Left/Right and Alternating Right/Left settings alternate the location between the left/right or right/left sides of the page for printing on both sides of the paper.</p>
             <p>Default is:&nbsp;&nbsp;None</p>
+            <hr>
             <p><strong>Page Number on First Page:</strong></p>
             <div class="image_holder_p">
                 <img src="img/pagenumber_firstpage_1.jpg"/>
@@ -1393,6 +1407,7 @@
             <p>Check this if you want the page number to be shown on the first page with tunes in the PDF.</p>
             <p>Page numbers are not added to title pages, table of contents, index, or QR code pages.</p>
             <p>Default is:&nbsp;&nbsp;On</p>
+            <hr>
             <p><strong>PDF Tunebook Additions Font Settings</strong></p>
             <p>The following two settings control the font and font style for the PDF tunebook Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits, and QR Code label.</p>
             <p>These settings do not change the fonts in the ABC notation itself, those are configured in the <strong>Settings</strong> dialog <strong>Configure ABC Fonts</strong> sub-dialog.</p>
@@ -1711,6 +1726,11 @@
             <p>This is useful for tunebooks for which you have manually specified all the MIDI soundfont, program, and chordprog information already in the tunes and do not want them overridden when played from the play link.</p>
             <p>Example: To have all tunes played using the FatBoy soundfont and a Harpsichord sound on the melody and a Piano sound on the chords/bass:</p>
             <p class="code">%add_all_playback_links 6 0 fatboy</p>
+            <p>To have the playback links include the entire tunebook ABC, along with %add_all_playback_links also add:</p>
+            <p class="code">%playback_links_are_complete_tunebook</p>            
+            <p>If the entire tunebook playback Share URL is too large to be a valid URL link for opening in the tool (about 8100 characters), you will be presented with a warning when the PDF export is complete, and no playback links will be added to the tunes.</p>
+            <p>Additionally, if the complete tunebook playback Share URL is larger than the maximum allowed by Adobe Acrobat (2076 characters), after the PDF export is complete you will be presented with a warning that the links may not work in Adobe Acrobat but will work with browser-native and many other PDF readers.</p>
+            <p>This will probably happen quite frequently for tunebooks with 5 or more tunes.</p>
             <hr>
             <p><strong>Adding or disabling swing for all Hornpipes in PDF tunebooks with play links:</strong></p>
             <p>If you want to add swing to every Hornpipe when generating PDF tunebooks with play links, add the following comment-based annotation anywhere in the tunebook ABC:</p>
