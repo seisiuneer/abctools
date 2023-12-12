@@ -13795,6 +13795,7 @@ function InjectPDFHeaders(){
 	output += "%swing 0.25 0\n";
 	output += "%noswing\n";
 	output += "%grace_duration_ms 30\n";
+	output += "%abcjs_release_decay_time 200\n";
 
 	output += "\n";
 	
@@ -16211,6 +16212,24 @@ function computeFade(tuneABC){
 						break;
 				}
 			}
+		}
+	}
+
+	// Is there an %abcjs_release_decay_time fade annotation?
+	searchRegExp = /^%abcjs_release_decay_time.*[\r\n]*/gm
+
+	var fadeRequested = tuneABC.match(searchRegExp);
+
+	if ((fadeRequested) && (fadeRequested.length > 0)){
+
+		var theFade = fadeRequested[fadeRequested.length-1].replace("%abcjs_release_decay_time","");
+			
+		theFade = theFade.trim();
+
+		var theFadeValue = parseInt(theFade);
+
+		if (!isNaN(theFadeValue)){
+			theFade = theFadeValue;
 		}
 	}
 
@@ -23660,7 +23679,7 @@ function ConfigureToolSettings(e) {
 
 					// Special release time case case for Dulcimer
 				   	var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica">Special Note on the Dulcimer (15) Instrument</p>';
-				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Selecting the Dulcimer (15) program for either the melody or chords automatically sets all note release times to 4 seconds to allow the notes to ring.</p>';
+				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Selecting the Dulcimer (15) program for either the melody or chords automatically sets all note release decay times to 4 seconds to allow the notes to ring.</p>';
 				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">This can be useful for tunes using solo melody instruments with long release times like Orchestral Harp (46) or Koto (107).</p>';
 				       	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">For those instruments played solo, set the melody instrument program as desired and the chord instrument program to Dulcimer (15).</p>';
 				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In this case, you may not want to include any chords in the ABC, as they will be played using the Dulcimer (15) instrument.</p>';

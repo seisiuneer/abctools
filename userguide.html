@@ -1184,7 +1184,15 @@
             <p>The Säckpipa and Scottish Smallpipes (A) and (D) sounds will automatically "fold" notes above second octave D down an octave.</p>
             <p></p>
             <p>Any General MIDI instrument program number can be selected for the melody and chord sounds.</p>
-            <p></p>
+            <hr>
+            <p style="text-align: center;"><strong>Setting the Release Decay Time for Notes</strong></p>
+            <p>You can manually set the release decay time for notes using:</p>
+            <p class=code>%abcjs_release_decay_time release_decay_time_in_milliseconds</p>
+            <p>This can be useful for lengthening the decay time on note releases for plucked and other instruments.</p>
+            <p>For example to set the release decay time for a specific tune to 500 milliseconds, add this anywhere in the tune ABC:</p>
+            <p class=code>%abcjs_release_decay_time 500</p>
+            <p>The default release decay time for abcjs is 200 milliseconds.</p>
+            <p>When using my custom Hammered Dulcimer samples, the release decay time, unless overridded by this annotation, is 4000 milliseconds.</p> 
             <hr class="hidden-print" id="general_midi_instrument_program_numbers">
             <h1 class="page_break_always">General MIDI Instrument Program Numbers <span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder">
