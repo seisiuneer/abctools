@@ -12376,7 +12376,7 @@ const metronome_list = [
 //
 
 // Metronome volume
-var gMetronomeVolume = 40;
+var gMetronomeVolume = 48;
 
 function inject_one_metronome(tuneABC, showWarnings){
 
@@ -21743,11 +21743,11 @@ function GetInitialConfigurationSettings(){
 	if (val){
 		gMetronomeVolume = parseInt(val);
 		if (isNaN(gMetronomeVolume) || (gMetronomeVolume<0) || (gMetronomeVolume>127)){
-			gMetronomeVolume = 40;
+			gMetronomeVolume = 48;
 		}
 	}
 	else{
-		gMetronomeVolume = 40;
+		gMetronomeVolume = 48;
 	}
 
 	// Save the settings, in case they were initialized
@@ -23278,7 +23278,7 @@ function DeveloperSettings(){
 	  {html: '<p style="margin-bottom:20px;font-size:12pt;font-family:helvetica;margin-bottom:32px;"><strong>Only change these values if you know what you are doing!</strong></p>'},
 	  {name: "Image Batch Export Delay in milliseconds (default is 200):", id: "configure_export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
 	  {name: "MP3 Batch Export Delay in milliseconds (default is 250):", id: "configure_mp3export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
-	  {name: "Metronome volume (default is 40):", id: "configure_metronome_volume", type:"text", cssClass:"advanced_settings2_form_text"},
+	  {name: "Metronome volume (default is 48):", id: "configure_metronome_volume", type:"text", cssClass:"advanced_settings2_form_text"},
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 25, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
