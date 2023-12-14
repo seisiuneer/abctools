@@ -23786,6 +23786,13 @@ function DeveloperSettings(){
 
 			if (gAllowRawMode != originalAllowRawMode){
 
+				if (gAllowRawMode){
+					sendGoogleAnalytics("dialog","Raw_Mode_On");
+				}
+				else{
+					sendGoogleAnalytics("dialog","Raw_Mode_Off");
+				}
+
 				SetupRawModeUI();
 			
 			}
