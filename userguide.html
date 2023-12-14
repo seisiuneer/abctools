@@ -938,7 +938,7 @@
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder_p">
-                <img src="img/abc_transcription_tool_settings_31.jpg"/>
+                <img src="img/abc_transcription_tool_settings_32.jpg"/>
             </div>
             <p><strong>Save an Auto-Snapshot on browser tab close or reload? (Restore it from the Add dialog)</strong> - (Desktop browsers only) When enabled, saves an Auto-Snapshot when closing or reloading the browser tab the tool is running in.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/pp6fD2NOKtw" title="Auto-Snapshots" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
@@ -1015,10 +1015,12 @@
             <p><strong>Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)</strong> - Check this if you want to use the Comhaltas "Blackboard ABC" standard for ABC note names (D' E' F' instead of d e f for octave notes) when in note names tab display mode.</p>
             <p><strong>Important:</strong> While the note Names display will show the Comhaltas-preferred note names, the ABC standard requires that the second octave C in the ABC itself either be represented by c or C' so that may requires some minor changes when pasting in your Comhaltas-formatted tunes.</p>
             <p>Note name font and size in the tab is set by the <strong>Tab number font</strong> setting in the <strong>Configure ABC Fonts dialog</strong>.</p>
-            <p><strong>Configure ABC Fonts</strong> - Brings up a dialog where you can configure all fonts used for rendering the ABC.</p>
-            <p><strong>Configure Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for tablature injection.</p>
-            <p><strong>Configure MusicXML Import</strong> - Brings up a dialog where you can configure all parameters for MusicXML import.</p>
+            <p><strong>Font Settings</strong> - Brings up a dialog where you can configure all fonts used for rendering the ABC.</p>
+            <p><strong>Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for tablature injection.</p>
+            <p><strong>MusicXML Settings</strong> - Brings up a dialog where you can configure all parameters for MusicXML import.</p>
             <p>Details on MusicXML import settings below in the <a style="text-decoration:none;" href="#musicxml">MusicXML Import Settings</a> section.</p>
+            <p><strong>Developer Settings</strong> - (Desktop browsers only) Brings up a dialog where you can configure low level developer settings and enable experimental features.</p>
+            <p>Details on the Developer settings below in the <a style="text-decoration:none;" href="#developer_settings">Developer Settings</a> section.</p>
             <hr class="hidden-print" id="midi_input">
             <h1 class="page_break_always">Typing ABC Using a MIDI Input Device<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>If your browser supports MIDI input, you will find this additional option in the settings dialog: <strong>Allow MIDI input for ABC text entry</strong></p>
@@ -1059,7 +1061,7 @@
             <p>Once you grant permission, you will need to restart Firefox for MIDI input to work.</p>
             <hr class="hidden-print" id="configure_fonts">
             <h1 class="page_break_always">Configuring ABC Rendering Fonts<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>Clicking the <strong>Configure ABC Fonts</strong> button in the tool settings dialog shows a subdialog where you can configure all the fonts used for rendering the ABC.</p>
+            <p>Clicking the <strong>Font Settings</strong> button in the tool settings dialog shows a subdialog where you can configure all the fonts used for rendering the ABC.</p>
             <div class="image_holder_p">
                 <img src="img/rendering_fonts_8.jpg"/>
             </div>
@@ -1071,16 +1073,27 @@
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/UpVXfi4bF3g" title="Configure ABC Rendering Fonts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <hr class="hidden-print" id="developer_settings">
             <h1 class="page_break_always">Developer Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>Alt-Shift click the <strong>Settings</strong> button on the top toolbar brings up a subdialog where you can configure low-level settings for the tool:</p>
             <div class="image_holder_p">
-                <img src="img/developer_settings_4.jpg"/>
+                <img src="img/developer_settings_5.jpg"/>
             </div>
+            <p>These settings are available by clicking the <strong>Developer Settings</strong> button at the bottom of the main <strong>Settings</strong> dialog and are only available on desktop browsers.</p>
             <p style="text-align: center;"><strong>Note: Do not change these values unless you know what you are doing!</strong></p>
             <p><strong>Image Batch Export Delay in milliseconds (default is 200):</strong> Sets the delay between file saves when doing batch image export.</p>
             <p>Many faster systems can handle setting this to 100ms or lower.</p>
             <p>You can try a lower value. If you see any issues or are missing images on batch export, set it back to a higher value.</p>
             <p><strong>MP3 Batch Export Delay in milliseconds (default is 250):</strong> Sets the delay between file saves when doing batch .MP3 export.</p>            
-            <p><strong>Metronome volume (default is 48):</strong> Sets the volume of the metronome drum sounds. Range is 0 - 127.</p>            
+            <p><strong>Metronome volume (default is 48):</strong> Sets the volume of the metronome drum sounds. Range is 0 - 127.</p>  
+            <p style="text-align: center;"><strong>Experimental Features</strong></p>          
+            <p><strong>Replace Tune Trainer toolbar button with Select Mode On/Off button</strong></p>
+            <p>Locate the ABC for any note or element in the notation by clicking on it.</p>
+            <p>The note clicking feature is only available if there is a single tune in the ABC.</p>
+            <p><strong>When Select Mode is On:</strong></p> 
+            <p>- The Tune Trainer is still available from the Player when playing tunes.</p>
+            <p>- Click the notes in the notation to select the corresponding ABC text in the editor.</p> 
+            <p>- All pre-processing of the ABC at notation drawing time is turned off. Any hiding of Annotations/Text/Chords selected in the Advanced dialog as well as automatic injection of staff separation space will be disabled. Your settings will be restored when you turn Select Mode Off.</p> 
+            <p>- PDF tunebook generation will work with no issues.</p> 
+            <p>Once enabled, the Select Mode button will be shown every time you run the tool.</p> 
+            <p>To re-enable the Tune Trainer button in the toolbar, open this dialog and un-check the box. </p>            
             <p>Values are saved in browser storage and restored the next time the tool is run.</p>
             <hr class="hidden-print" id="selecting_the_instruments_for_playback">
             <h1 class="page_break_always h1wide">Choosing the MIDI Soundfont and Instruments for Playback<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -1850,11 +1863,10 @@
             <p>Since the tablature is injected using the ABC chord system, you can easily clear all tab and get back to the original ABC by clicking the <strong>Strip Chords + Injected Tab</strong> button on the <strong>Advanced</strong> features dialog.</p>
             <hr class="hidden-print" id="tablature_settings">
             <h1 class="page_break_always h1wide">Configuring Tablature Fonts and Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>To configure the tablature fonts and other settings, first click the tool's Settings button, then click <strong>Configure Tablature Injection Settings</strong> at the bottom of the dialog to bring up the tablature injections settings dialog:</p>
+            <p>To configure the tablature fonts and other settings, first click the tool's Settings button, then click <strong>Tablature Injection Settings</strong> at the bottom of the dialog to bring up the tablature injections settings dialog:</p>
             <div class="image_holder_p">
                 <img src="img/tab_injection_settings_6.jpg"/>
             </div>
-            <p>You can also Shift-click the Settings button to go directly to the tablature settings dialog.</p>
             <p><strong>Common tablature settings for all instruments:</strong></p>
             <p><strong>Font family</strong> - Font used for all text injected into the tablature.</p>
             <p><strong>Tablature font size</strong> - Font size used for the injected tablature text and symbols.</p>
@@ -1965,7 +1977,6 @@
             <div class="image_holder_p">
                 <img src="img/musicxml_6.jpg">
             </div>
-            <p>You can also Alt-click the Settings button to go directly to the MusicXML import settings dialog.</p>
             <p><b>Bars-per-line:</b>&nbsp;&nbsp;Sets the number of bars per line. Every line of ABC will have the specified
             bars (measures). When both Character-per-line and Bars-per-line options are given, Bars-per-line is ignored. Default is: 4</p>
             <p><b>Characters-per-line:</b>&nbsp;&nbsp;Sets the maximum line length for ABC output to <b>CPL</b> characters. An integer number of bars, at least one, is always output. How many bars fit into the maximum line length is calculated from the note line, not from the lyric lines. Line- and page breaks in MusicXML are translated to '$' after the previous barline [or volta number]. Default is: 0</p>

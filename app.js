@@ -260,6 +260,10 @@ var gIsDirty = false;
 // Is this the first run?
 var gIsFirstRun = false;
 
+// Raw mode?
+var gAllowRawMode = false;
+var gRawMode = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -615,6 +619,108 @@ function GetAllTuneTitles() {
 	return allTitles;
 }
 
+//
+// Setup the Raw mode UI elements
+//
+function SetupRawModeUI(){
+
+	// Clear raw mode
+	gRawMode = false;
+
+	if (gAllowRawMode){
+		
+		var elem = document.getElementById("rawmodebutton");
+		elem.style.display = "inline-block";
+
+		elem.value = "Select: Off";
+
+		gTheABC.style.backgroundColor = "white";
+
+		var nTunes = CountTunes();
+		
+		elem.classList.add("rawmodebutton");
+		elem.classList.remove("rawmodebuttondisabled");
+
+		elem.classList.add("btn-rawmode-off");
+		elem.classList.remove("btn-rawmode-on");
+
+		if (nTunes > 1){
+
+			// Grey it out
+			elem.classList.remove("rawmodebutton");
+			elem.classList.add("rawmodebuttondisabled");
+
+		}
+
+		elem = document.getElementById("trainerbutton");
+		elem.style.display = "none";
+
+		// Redraw the tunes
+		RenderAsync(true,null);
+
+	}
+	else{
+
+		var elem = document.getElementById("rawmodebutton");
+		elem.style.display = "none";
+
+		elem.value = "Select: Off";
+
+		// Grey it out
+		elem.classList.remove("rawmodebutton");
+		elem.classList.add("rawmodebuttondisabled");
+
+		elem.classList.add("btn-rawmode-off");
+		elem.classList.remove("btn-rawmode-on");
+
+		elem = document.getElementById("trainerbutton");
+		elem.style.display = "inline-block";
+
+		gTheABC.style.backgroundColor = "white";
+
+		// Redraw the tunes
+		RenderAsync(true,null);
+
+	}
+}
+
+//
+// Toggle raw mode
+//
+function ToggleRawMode(){
+
+	//console.log("ToggleRawMode");
+
+	if (CountTunes() == 1){
+	
+		gRawMode = !gRawMode;
+
+		var elem = document.getElementById("rawmodebutton");
+
+		if (gRawMode){
+			elem.value = "Select: On";
+
+			elem.classList.add("btn-rawmode-on");
+			elem.classList.remove("btn-rawmode-off");
+		
+			gTheABC.style.backgroundColor = "#F8FDF8";
+
+		}
+		else{
+			elem.value = "Select: Off";
+
+			elem.classList.add("btn-rawmode-off");
+			elem.classList.remove("btn-rawmode-on");
+			
+			gTheABC.style.backgroundColor = "white";
+		}
+
+		// Redraw the tunes
+		RenderAsync(true,null);
+
+	}
+
+}
 
 //
 // Tranpose the ABC up one semitone
@@ -1028,7 +1134,6 @@ function SortTunesByTag(theTag){
 	gTheABC.selectionStart = 0;
     gTheABC.selectionEnd = 0;
 
-
     // Focus after operation
     FocusAfterOperation();
 
@@ -1371,6 +1476,22 @@ function Clear() {
 
 			// Clear dirty flag
 			gIsDirty = false;
+
+			var elem = document.getElementById("rawmodebutton");
+
+			elem.value = "Select: Off";
+
+			// Grey it out
+			elem.classList.remove("rawmodebutton");
+			elem.classList.add("rawmodebuttondisabled");
+
+			elem.classList.add("btn-rawmode-off");
+			elem.classList.remove("btn-rawmode-on");
+
+			gTheABC.style.backgroundColor = "white";
+
+			// Turn off raw mode
+			gRawMode = false;
 
 			// If staff spacing had changed due to a share, restore it
 			RestoreSavedStaffSpacing();
@@ -6385,11 +6506,11 @@ function ExportNotationPDF(title) {
 
 		// Is annotation suppressed allowed, but not enabled, or is text annotation suppression allowed but not enabled, do a render
 		// If tabnames are being shown, hide them
-		if ((gAllowFilterAnnotations && (!gStripAnnotations)) || (gAllowFilterText && (!gStripTextAnnotations)) || (gAllowShowTabNames && (gShowTabNames))){
+		if (gRawMode || (gAllowFilterAnnotations && (!gStripAnnotations)) || (gAllowFilterText && (!gStripTextAnnotations)) || (gAllowShowTabNames && (gShowTabNames))){
 
 			document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"blue\">" + title + "</font>";
 
-			document.getElementById("statustunecount").innerHTML = "Processing incipits for PDF generation";
+			document.getElementById("statustunecount").innerHTML = "Processing Incipits for PDF generation";
 
 			document.getElementById("pagestatustext").innerHTML = "&nbsp;";
 
@@ -6407,8 +6528,14 @@ function ExportNotationPDF(title) {
 					gShowTabNames = false;
 				}
 				
+				// Save off the raw mode
+				var oldRawMode = gRawMode;
+				gRawMode = false;
+
 				// Force a full render 
 				Render(true,null);
+
+				gRawMode = oldRawMode;
 
 				// Restore the advanced controls flags
 				gStripAnnotations = saveStripAnnotations;
@@ -6431,6 +6558,34 @@ function ExportNotationPDF(title) {
 			doPDFStepTwo();
 		}
 
+	}
+	else
+	if (gRawMode){
+
+		document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"blue\">" + title + "</font>";
+
+		document.getElementById("statustunecount").innerHTML = "Processing ABC for PDF generation";
+
+		document.getElementById("pagestatustext").innerHTML = "&nbsp;";
+
+		// Need to provide time for the UI to update
+		setTimeout(function(){
+
+			// Clear raw mode
+			gRawMode = false;
+
+			// Force a full render 
+			Render(true,null);
+
+			// Reset raw mode
+			gRawMode = true;
+
+			// Going to need to clean up later
+			requirePostRender = true;
+
+			doPDFStepTwo();
+
+		},100);
 	}
 	else{
 
@@ -6527,7 +6682,7 @@ function ExportNotationPDF(title) {
 					// Did incipit generation require a re-render?
 					if (requirePostRender){
 						
-						document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Cleaning up incipit generation</font>";
+						document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Cleaning up after PDF generation</font>";
 						
 						RenderAsync(true,null,function(){
 
@@ -6826,7 +6981,7 @@ function ExportNotationPDF(title) {
 									// Did incipit generation require a re-render?
 									if (requirePostRender){
 
-										document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Cleaning up after incipit generation</font>";
+										document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Cleaning up after PDF generation</font>";
 
 										// Need some time for UI update
 										setTimeout(function(){
@@ -7332,6 +7487,30 @@ function RestoreSVGDivsAfterRasterization(){
 }
 
 //
+// Callback for when notes are clicked when Raw Mode is enabled
+//
+function NoteClickListener(abcelem, tuneNumber, classes, analysis, drag, mouseEvent) {
+
+	// Initially, this feature only works if there is a single tune in the ABC
+
+	// The renderer only adds this callback for the single tune case
+	
+	// Problem is that progressive tune div updates mess up the ABC offset relative to the full tune ABC
+
+	setTimeout(function(){
+
+		gTheABC.focus();
+		
+		var theStart = abcelem.startChar;
+		
+		var theEnd = abcelem.endChar;
+		
+		ScrollABCTextIntoView(gTheABC,theStart,theEnd);
+
+	},10);
+}
+
+//
 // Main routine for rendering the notation
 //
 function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
@@ -7374,6 +7553,50 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 	// If there are no tunes to render, exit early
 	if (nTunes == 0){
 		return;
+	}
+
+	//
+	// If we're in Raw mode, setup a callback from abcjs when users click on the notation
+	//
+	if (gRawMode){
+
+		if (isDesktopBrowser()){
+
+			var rawTuneCount = CountTunes();
+
+			// This only works for a single tune
+			if (rawTuneCount == 1){
+
+				// Setup the notation click callback
+				params.clickListener = NoteClickListener;
+
+				// Default to selecting all element types
+				params.selectTypes = true;
+
+				// selectTypes options are:
+				// 	"author"
+				// 	"bar"
+				// 	"brace"
+				// 	"clef"
+				// 	"composer"
+				// 	"dynamicDecoration"
+				// 	"ending"
+				// 	"extraText"
+				// 	"freeText"
+				// 	"keySignature"
+				// 	"note"
+				// 	"part"
+				// 	"partOrder"
+				// 	"rhythm"
+				// 	"slur"
+				// 	"subtitle"
+				// 	"tempo"
+				// 	"timeSignature"
+				// 	"title"
+				// 	"unalignedWords"
+				// 	"voiceName"
+			}
+		}
 	}
 
 	var visualObj = ABCJS.renderAbc(renderDivs, tune, params);
@@ -7773,6 +7996,8 @@ function RenderAsync(renderAll,tuneNumber,callback){
 
 function Render(renderAll,tuneNumber) {
 
+	//console.log("Render renderAll="+renderAll+" tuneNumber="+tuneNumber);
+
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
 		return;
@@ -7868,6 +8093,10 @@ function Render(renderAll,tuneNumber) {
 		// Enable the trainer button
 		document.getElementById("trainerbutton").classList.remove("trainerbuttondisabled");
 		document.getElementById("trainerbutton").classList.add("trainerbutton");
+		
+		// Enable the raw mode button
+		document.getElementById("rawmodebutton").classList.remove("rawmodebuttondisabled");
+		document.getElementById("rawmodebutton").classList.add("rawmodebutton");
 
 		gAllowCopy = true;
 
@@ -7887,114 +8116,138 @@ function Render(renderAll,tuneNumber) {
 			theNotes = getTuneByIndex(tuneNumber);
 		}
 
+		// Can't have raw mode with multiple tunes
+		if (gAllowRawMode && (nTunes > 1)){
 
-		var searchRegExp = "";
+			var elem = document.getElementById("rawmodebutton");
 
-		if (gStripAnnotations) {
+			elem.value = "Select: Off";
 
-			// Strip out tempo markings
-			searchRegExp = /^Q:.*$/gm
+			// Grey it out
+			elem.classList.remove("rawmodebutton");
+			elem.classList.add("rawmodebuttondisabled");
 
-			// Strip out tempo markings
-			theNotes = theNotes.replace(searchRegExp, "% comment");
+			elem.classList.add("btn-rawmode-off");
+			elem.classList.remove("btn-rawmode-on");
 
-			// Strip out Z: annotation
-			searchRegExp = /^Z:.*$/gm
+			gTheABC.style.backgroundColor = "white";
 
-			// Strip out Z: annotation
-			theNotes = theNotes.replace(searchRegExp, "% comment");
-
-			// Strip out R: annotation
-			searchRegExp = /^R:.*$/gm
-
-			// Strip out R: annotation
-			theNotes = theNotes.replace(searchRegExp, "% comment");
-
-			// Strip out S: annotation
-			searchRegExp = /^S:.*$/gm
-
-			// Strip out S: annotation
-			theNotes = theNotes.replace(searchRegExp, "% comment");
-
-			// Strip out N: annotation
-			searchRegExp = /^N:.*$/gm
-
-			// Strip out N: annotation
-			theNotes = theNotes.replace(searchRegExp, "% comment");
-
-			// Strip out D: annotation
-			searchRegExp = /^D:.*$/gm
-
-			// Strip out D: annotation
-			theNotes = theNotes.replace(searchRegExp, "% comment");
-
-			// Strip out H: annotation
-			searchRegExp = /^H:.*$/gm
-
-			// Strip out H: annotation
-			theNotes = theNotes.replace(searchRegExp, "% comment");
-
-			// Strip out B: annotation
-			searchRegExp = /^B:.*$/gm
-
-			// Strip out B: annotation
-			theNotes = theNotes.replace(searchRegExp, "% comment");
-
-			// Strip out C: annotation
-			searchRegExp = /^C:.*$/gm
-
-			// Strip out C: annotation
-			theNotes = theNotes.replace(searchRegExp, "% comment");
-
-			// Strip out O: annotation
-			searchRegExp = /^O:.*$/gm
-
-			// Strip out O: annotation
-			theNotes = theNotes.replace(searchRegExp, "% comment");
+			// Turn off raw mode
+			gRawMode = false;
 
 		}
 
-		if (gStripTextAnnotations) {
+		if (!gRawMode){
 
-			// Strip out text markings
-			searchRegExp = /%%text.*$/gm
+			var searchRegExp = "";
 
-			// Strip out text markings
-			theNotes = theNotes.replace(searchRegExp, "% comment");
+			if (gStripAnnotations) {
 
-			// Strip out %%center annotation
-			searchRegExp = /%%center.*$/gm
+				// Strip out tempo markings
+				searchRegExp = /^Q:.*$/gm
 
-			// Strip out %%center annotation
-			theNotes = theNotes.replace(searchRegExp, "% comment");
+				// Strip out tempo markings
+				theNotes = theNotes.replace(searchRegExp, "% comment");
+
+				// Strip out Z: annotation
+				searchRegExp = /^Z:.*$/gm
+
+				// Strip out Z: annotation
+				theNotes = theNotes.replace(searchRegExp, "% comment");
+
+				// Strip out R: annotation
+				searchRegExp = /^R:.*$/gm
+
+				// Strip out R: annotation
+				theNotes = theNotes.replace(searchRegExp, "% comment");
+
+				// Strip out S: annotation
+				searchRegExp = /^S:.*$/gm
+
+				// Strip out S: annotation
+				theNotes = theNotes.replace(searchRegExp, "% comment");
+
+				// Strip out N: annotation
+				searchRegExp = /^N:.*$/gm
+
+				// Strip out N: annotation
+				theNotes = theNotes.replace(searchRegExp, "% comment");
+
+				// Strip out D: annotation
+				searchRegExp = /^D:.*$/gm
+
+				// Strip out D: annotation
+				theNotes = theNotes.replace(searchRegExp, "% comment");
+
+				// Strip out H: annotation
+				searchRegExp = /^H:.*$/gm
+
+				// Strip out H: annotation
+				theNotes = theNotes.replace(searchRegExp, "% comment");
+
+				// Strip out B: annotation
+				searchRegExp = /^B:.*$/gm
+
+				// Strip out B: annotation
+				theNotes = theNotes.replace(searchRegExp, "% comment");
+
+				// Strip out C: annotation
+				searchRegExp = /^C:.*$/gm
+
+				// Strip out C: annotation
+				theNotes = theNotes.replace(searchRegExp, "% comment");
+
+				// Strip out O: annotation
+				searchRegExp = /^O:.*$/gm
+
+				// Strip out O: annotation
+				theNotes = theNotes.replace(searchRegExp, "% comment");
+
+			}
+
+			if (gStripTextAnnotations) {
+
+				// Strip out text markings
+				searchRegExp = /%%text.*$/gm
+
+				// Strip out text markings
+				theNotes = theNotes.replace(searchRegExp, "% comment");
+
+				// Strip out %%center annotation
+				searchRegExp = /%%center.*$/gm
+
+				// Strip out %%center annotation
+				theNotes = theNotes.replace(searchRegExp, "% comment");
+
+			}
+
+			if (gStripChords) {
+
+				// Strip out chord markings
+				theNotes = StripChordsOne(theNotes)
+			}
+
+			if (gStripTab) {
+
+				// Strip out tab markings
+				theNotes = StripTabOne(theNotes);
+			}
+
+			// Replace standalone %%center directives with %%vskip 12
+			searchRegExp = /%%center$/gm;
+
+			theNotes = theNotes.replace(searchRegExp, "%%vskip 12\n%%center");
+
+			// Add some title and staffspace
+			//theNotes = theNotes + "\n%%musicspace 20\n";
+			// theNotes = theNotes + "%%staffsep "+gStaffSpacing+"\n";
+
+			// Inject %%staffsep 
+			searchRegExp = /^X:.*$/gm
+
+			theNotes = theNotes.replace(searchRegExp, "X:1\n%%musicspace 10\n%%staffsep " + gStaffSpacing);
 
 		}
-
-		if (gStripChords) {
-
-			// Strip out chord markings
-			theNotes = StripChordsOne(theNotes)
-		}
-
-		if (gStripTab) {
-
-			// Strip out tab markings
-			theNotes = StripTabOne(theNotes);
-		}
-
-		// Replace standalone %%center directives with %%vskip 12
-		searchRegExp = /%%center$/gm;
-
-		theNotes = theNotes.replace(searchRegExp, "%%vskip 12\n%%center");
-
-		// Add some title and staffspace
-		//theNotes = theNotes + "\n%%musicspace 20\n";
-		// theNotes = theNotes + "%%staffsep "+gStaffSpacing+"\n";
-
-		// Inject %%staffsep 
-		searchRegExp = /^X:.*$/gm
-
-		theNotes = theNotes.replace(searchRegExp, "X:1\n%%musicspace 10\n%%staffsep " + gStaffSpacing);
 
 		// Render the notes
 		RenderTheNotes(theNotes,radiovalue,renderAll,tuneNumber);
@@ -8029,9 +8282,23 @@ function Render(renderAll,tuneNumber) {
 		document.getElementById("playbutton").classList.remove("playbutton");
 		document.getElementById("playbutton").classList.add("playbuttondisabled");
 
-		// Disable the trainer button
+		// Enable the trainer button
 		document.getElementById("trainerbutton").classList.remove("trainerbutton");
 		document.getElementById("trainerbutton").classList.add("trainerbuttondisabled");
+
+		// Disable the raw mode button
+		document.getElementById("rawmodebutton").classList.remove("rawmodebutton");
+		document.getElementById("rawmodebutton").classList.add("rawmodebuttondisabled");
+
+		document.getElementById("rawmodebutton").classList.add("btn-rawmode-off");
+		document.getElementById("rawmodebutton").classList.remove("btn-rawmode-on");
+
+		document.getElementById("rawmodebutton").value = "Select: Off";
+
+		gTheABC.style.backgroundColor = "white";
+
+		// Turn off raw mode
+		gRawMode = false;
 
 		gAllowCopy = false;
 
@@ -9120,6 +9387,12 @@ function PDFTunebookBuilder(){
 			// Set dirty
 			gIsDirty = true;
 
+			// Have to redraw if in raw mode
+		    if (gRawMode){
+
+				RenderAsync(true,null);
+
+			}
 
 		}
 
@@ -9574,12 +9847,31 @@ function AppendBoxFingeringTemplate(){
 	// Set dirty flag
 	gIsDirty = true;
 
-	// Set the select point
-	gTheABC.selectionStart = 0;
-    gTheABC.selectionEnd = 0;
+	// Have to redraw if in raw mode
+    if (gRawMode){
 
-    // Focus after operation
-    FocusAfterOperation();
+		RenderAsync(true,null,function(){
+			
+			// Set the select point
+			gTheABC.selectionStart = 0;
+		    gTheABC.selectionEnd = 0;
+
+		    // Focus after operation
+		    FocusAfterOperation();
+
+		});
+
+    }
+    else{
+
+    	// Set the select point
+		gTheABC.selectionStart = 0;
+	    gTheABC.selectionEnd = 0;
+
+	    // Focus after operation
+	    FocusAfterOperation();
+
+    }
 	
 }
 
@@ -9916,6 +10208,46 @@ function ProcessAddTune(theValue){
 	});
 }
 
+//
+// To scroll text into view
+// Set forceTop true to put the selected text at the top of the text area
+// Set forceTop false to scroll to middle of the text area
+//
+function ScrollABCTextIntoView(textarea, selectionStart, selectionEnd) {
+
+    // First scroll selection region to view
+    const fullText = textarea.value;
+    
+    textarea.value = fullText.substring(0, selectionEnd);
+
+    // For some unknown reason, you must store the scollHeight to a variable
+    // before setting the textarea value. Otherwise it won't work for long strings
+    
+    const scrollHeight = textarea.scrollHeight;
+    
+    textarea.value = fullText;
+    
+    let scrollTop = scrollHeight;
+    
+    const textareaHeight = textarea.clientHeight;
+
+    if (scrollTop > textareaHeight){
+
+        // scroll selection to center of textarea
+        scrollTop -= textareaHeight / 2;
+
+    } else{
+
+        scrollTop = 0;
+
+    }
+
+    textarea.scrollTop = scrollTop;
+
+    // Continue to set selection range
+    textarea.setSelectionRange(selectionStart, selectionEnd);
+
+}
 
 //
 // Click handler for render divs
@@ -9992,7 +10324,6 @@ function GenerateRenderingDivs(nTunes) {
 
 			// Set up the click handler
 			el.onclick = RenderDivClickHandler;
-
 		}
 
 		notationHolder.appendChild(el);
@@ -12257,13 +12588,32 @@ function InjectAllMIDIParams(){
 
 				}
 
-				// Set the select point
-				gTheABC.selectionStart = 0;
-			    gTheABC.selectionEnd = 0;
+				// Have to redraw if in raw mode
+			    if (gRawMode){
 
-			    // Focus after operation
-			    FocusAfterOperation();
+					RenderAsync(true,null,function(){
+						
+						// Set the select point
+						gTheABC.selectionStart = 0;
+					    gTheABC.selectionEnd = 0;
 
+					    // Focus after operation
+					    FocusAfterOperation();
+
+					});
+
+			    }
+			    else{
+
+			    	// Set the select point
+					gTheABC.selectionStart = 0;
+				    gTheABC.selectionEnd = 0;
+
+				    // Focus after operation
+				    FocusAfterOperation();
+
+			    }
+	
 			}
 			else{
 
@@ -12334,12 +12684,31 @@ function InjectAllMIDIParams(){
 
 				}
 
-				// Set the select point
-				gTheABC.selectionStart = theSelectionStart;
-			    gTheABC.selectionEnd = theSelectionStart;
+				// Have to redraw if in raw mode
+			    if (gRawMode){
 
-			    // Focus after operation
-			    FocusAfterOperation();
+					RenderAsync(true,null,function(){
+						
+						// Set the select point
+						gTheABC.selectionStart = theSelectionStart;
+					    gTheABC.selectionEnd = theSelectionStart;
+
+					    // Focus after operation
+					    FocusAfterOperation();
+
+					});
+
+			    }
+			    else{
+
+			    	// Set the select point
+					gTheABC.selectionStart = theSelectionStart;
+				    gTheABC.selectionEnd = theSelectionStart;
+
+				    // Focus after operation
+				    FocusAfterOperation();
+
+			    }
 				
 			}
 		}
@@ -13700,8 +14069,23 @@ function OnABCTextChange(){
 	}
 	else{
 
-		// Otherwise, just render the tune being worked on
-		Render(false,gCurrentTune);
+		if (gRawMode){
+
+			// In raw mode, we need to redraw everything for any change if there is a single tune
+			if (gTotalTunes == 1){
+				Render(true,null);
+			}
+			else{
+				// Otherwise, just render the tune being worked on
+				Render(false,gCurrentTune);
+			}
+		}
+		else{
+
+			// Otherwise, just render the tune being worked on
+			Render(false,gCurrentTune);
+
+		}
 
 	}
 
@@ -13807,12 +14191,32 @@ function InjectPDFHeaders(){
 	// Set dirty
 	gIsDirty = true;
 
-	// Set the select point
-	gTheABC.selectionStart = 0;
-    gTheABC.selectionEnd = 0;
+	// Have to redraw if in raw mode
+    if (gRawMode){
 
-    // Focus after operation
-    FocusAfterOperation();
+		RenderAsync(true,null,function(){
+			
+			// Set the select point
+			gTheABC.selectionStart = 0;
+		    gTheABC.selectionEnd = 0;
+
+		    // Focus after operation
+		    FocusAfterOperation();
+
+		});
+
+    }
+    else{
+
+    	// Set the select point
+		gTheABC.selectionStart = 0;
+	    gTheABC.selectionEnd = 0;
+
+	    // Focus after operation
+	    FocusAfterOperation();
+
+    }
+
 
 
 }
@@ -18424,16 +18828,36 @@ function SwingExplorerInject(){
 		// For future injects
 		gPlayerABCSwingExplorerOriginal = tuneWithSwing;
 
-		// Set the select point
-		gTheABC.selectionStart = theSelectionStart;
-	    gTheABC.selectionEnd = theSelectionStart;
+		// Have to redraw if in raw mode
+    	if (gRawMode){
 
-	    // Focus after operation
-	    FocusAfterOperation();
+			RenderAsync(true,null,function(){
+				
+				// Set the select point
+				gTheABC.selectionStart = theSelectionStart;
+			    gTheABC.selectionEnd = theSelectionStart;
 
+			    // Focus after operation
+			    FocusAfterOperation();
+
+			});
+
+	    }
+	    else{
+
+	    	// Set the select point
+			gTheABC.selectionStart = theSelectionStart;
+		    gTheABC.selectionEnd = theSelectionStart;
+
+		    // Focus after operation
+		    FocusAfterOperation();
+
+	    }
 	}
 
 }
+
+
 
 // 
 // Swing Explorer Dialog
@@ -19193,12 +19617,31 @@ function InstrumentExplorerInject(){
 	// For future injects
 	gPlayerABCInstrumentExplorerOriginal = gPlayerABCInstrumentExplorerInjected;
 
-	// Set the select point
-	gTheABC.selectionStart = theSelectionStart;
-    gTheABC.selectionEnd = theSelectionStart;
+	// Have to redraw if in raw mode
+	if (gRawMode){
 
-    // Focus after operation
-    FocusAfterOperation();
+		RenderAsync(true,null,function(){
+			
+			// Set the select point
+			gTheABC.selectionStart = theSelectionStart;
+		    gTheABC.selectionEnd = theSelectionStart;
+
+		    // Focus after operation
+		    FocusAfterOperation();
+
+		});
+
+    }
+    else{
+
+    	// Set the select point
+		gTheABC.selectionStart = theSelectionStart;
+	    gTheABC.selectionEnd = theSelectionStart;
+
+	    // Focus after operation
+	    FocusAfterOperation();
+
+    }
 
 }
 
@@ -19796,12 +20239,31 @@ function GraceExplorerInject(){
 		// For future injects
 		gPlayerABCGraceExplorerOriginal = tuneWithGrace;
 
-		// Set the select point
-		gTheABC.selectionStart = theSelectionStart;
-	    gTheABC.selectionEnd = theSelectionStart;
+		// Have to redraw if in raw mode
+    	if (gRawMode){
 
-	    // Focus after operation
-	    FocusAfterOperation();
+			RenderAsync(true,null,function(){
+				
+				// Set the select point
+				gTheABC.selectionStart = theSelectionStart;
+			    gTheABC.selectionEnd = theSelectionStart;
+
+			    // Focus after operation
+			    FocusAfterOperation();
+
+			});
+
+	    }
+	    else{
+
+	    	// Set the select point
+			gTheABC.selectionStart = theSelectionStart;
+		    gTheABC.selectionEnd = theSelectionStart;
+
+		    // Focus after operation
+		    FocusAfterOperation();
+
+	    }
 
 	}
 
@@ -21769,6 +22231,13 @@ function GetInitialConfigurationSettings(){
 		gMetronomeVolume = 48;
 	}
 
+	gAllowRawMode = false;
+
+	val = localStorage.AllowRawMode;
+	if (val){
+		gAllowRawMode = (val == "true");
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -21896,6 +22365,9 @@ function SaveConfigurationSettings(){
 
 		// Save the metronome volume
 		localStorage.MetronomeVolume = gMetronomeVolume;
+
+		// Save the raw mode
+		localStorage.AllowRawMode = gAllowRawMode;
 	}
 }
 
@@ -23284,20 +23756,34 @@ function DeveloperSettings(){
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","DeveloperSettings");
 
+	var originalAllowRawMode = gAllowRawMode;
+
 	// Setup initial values
 	const theData = {
 	  configure_export_delayms: gBatchExportDelayMS,
 	  configure_mp3export_delayms: gBatchMP3ExportDelayMS,
 	  configure_metronome_volume: gMetronomeVolume,
-
+	  configure_allow_raw_mode: gAllowRawMode
 	};
 
 	const form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-bottom:32px;margin-left:15px;">Developer Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#developer_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
-	  {html: '<p style="margin-bottom:20px;font-size:12pt;font-family:helvetica;margin-bottom:32px;"><strong>Only change these values if you know what you are doing!</strong></p>'},
+	  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Developer Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#developer_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
+	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;"><strong>Only change these values if you know what you are doing!</strong></p>'},
 	  {name: "Image Batch Export Delay in milliseconds (default is 200):", id: "configure_export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
 	  {name: "MP3 Batch Export Delay in milliseconds (default is 250):", id: "configure_mp3export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
 	  {name: "Metronome volume (default is 48):", id: "configure_metronome_volume", type:"text", cssClass:"advanced_settings2_form_text"},
+	  {html: '<p style="font-size:16pt;line-height:32px;font-family:helvetica;text-align:center;margin-top:32px;">Experimental Features</p>'},
+	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;"><strong>Locate the ABC for any note or element in the notation by clicking on it:</strong></p>'},
+	  {name: "          Replace Tune Trainer toolbar button with Select Mode On/Off button", id: "configure_allow_raw_mode", type:"checkbox", cssClass:"advanced_settings2_form_text"},
+	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;"><strong>When Select Mode is On:</strong></p>'},
+	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;">- The Tune Trainer is still available from the Player when playing tunes.</p>'},	  
+	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;">- Click the notes in the notation to select the corresponding ABC text in the editor.</p>'},
+	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;">- The note clicking feature is only available if there is a single tune in the ABC.</p>'},
+	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;">- All pre-processing of the ABC at notation drawing time is turned off. Any hiding of Annotations/Text/Chords selected in the Advanced dialog as well as automatic injection of staff separation space will be disabled. Your settings will be restored when you turn Select Mode Off.</p>'},
+	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;">- PDF tunebook generation will work with no issues.</p>'},
+	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;">Once enabled, the Select Mode button will be shown every time you run the tool.</p>'},
+	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;margin-bottom:32px;">To re-enable the Tune Trainer toolbar button, open this dialog and un-check the box.</p>'},
+
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 25, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
@@ -23335,6 +23821,15 @@ function DeveloperSettings(){
 				}
 			}
 
+			// If raw mode allowed, setup the UI buttons
+			gAllowRawMode = args.result.configure_allow_raw_mode;
+
+			if (gAllowRawMode != originalAllowRawMode){
+
+				SetupRawModeUI();
+			
+			}
+
 			// Save the settings, in case they were initialized
 			SaveConfigurationSettings();
 
@@ -23347,31 +23842,7 @@ function DeveloperSettings(){
 //
 // Configuration settings dialog
 //
-function ConfigureToolSettings(e) {
-
-	// Shift + Alt click goes to advanced settings
-	if (e.shiftKey && e.altKey){
-
-		DeveloperSettings();
-		
-		return;
-	}
-
-	// Shift click goes directly to the Box and Anglo concertina settings dialog
-	if (e.shiftKey){
-
-		ConfigureTablatureSettings();
-		
-		return;
-	}
-	
-	// Alt click goes directly to the MusicXML import configuration dialog
-	if (e.altKey){
-
-		ConfigureMusicXMLImport();
-		
-		return;
-	}
+function ConfigureToolSettings() {
 
 	// Keep track of advanced controls dialog
 	sendGoogleAnalytics("dialog","ConfigureToolSettings");
@@ -23504,7 +23975,12 @@ function ConfigureToolSettings(e) {
 		form.push({name: "    Allow MIDI input for ABC text entry", id: "configure_allow_midi_input", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 	};
 
-	form.push({html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Configure ABC Fonts" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Configure Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="Configure MusicXML Import" title="Configure MusicXML import parameters"></p>'});	  
+	if (isDesktopBrowser()){
+		form.push({html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Font Settings" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML Settings" title="Configure MusicXML import parameters"><input id="configure_developer_settings" class="btn btn-subdialog configure_developer_settings" onclick="DeveloperSettings()" type="button" value="Developer Settings" title="Configure Developer Settings"></p>'});	
+	}
+	else{
+		form.push({html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Font Settings" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML Settings" title="Configure MusicXML import parameters"></p>'});	
+	}  
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 780, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
@@ -26137,6 +26613,9 @@ function DoStartup() {
 
 	// Show the help button
 	ShowHelpButton();
+
+	// Setup the Raw mode UI if enabled
+	SetupRawModeUI();
 
 	// And set the focus
     gTheABC.focus();

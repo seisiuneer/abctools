@@ -1246,6 +1246,28 @@ opacity:0.4;
 	}
 }
 
+#rawmodebutton{
+	display:none;
+}
+
+.rawmodebutton{
+margin-left:0px;
+margin-right:12px;
+opacity:1.0;
+}
+
+.rawmodebuttondisabled{
+margin-left:0px;
+margin-right:12px;
+opacity:0.4;
+}
+
+@media (hover: hover) {
+	.rawmodebutton:hover{
+	background: palegreen;
+	}
+}
+
 .playbutton{
 margin-left:0px;
 margin-right:12px;
@@ -2173,7 +2195,7 @@ margin-top:-7px;
 }
 
 #configure_box{
-	margin-left:24px;
+	margin-left:20px;
 	height:42px;
 	margin-top: 9px;
 	padding:12px;
@@ -2185,7 +2207,6 @@ margin-top:-7px;
 	background: palegreen;
 	}
 }
-
 
 .configure_swingexplorer_text{
 	font-size:13pt;
@@ -2348,8 +2369,7 @@ margin-top:-7px;
 	height:42px;
 	margin-top: 9px;
 	padding:12px;
-	margin-left:24px;
-
+	margin-left:20px;
 }
 
 @media (hover: hover) {
@@ -2358,11 +2378,23 @@ margin-top:-7px;
 	}
 }
 
+#configure_developer_settings{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+	margin-left:20px;
+}
+
+@media (hover: hover) {
+	.configure_developer_settings:hover{
+	background: palegreen;
+	}
+}
+
 #configure_fonts{
 	height:42px;
 	margin-top: 9px;
 	padding:12px;
-
 }
 
 @media (hover: hover) {
@@ -2934,6 +2966,11 @@ cursor: pointer;
 padding: 3px;
 }
 
+/* For Anglo concertina button naming dialog */
+.anglobuttonnames {
+  width:66px;
+}
+
 /******************************************************************************/
 /* STYLES RELATED TO EXPERIMENT BUTTONS                                       */
 /******************************************************************************/
@@ -3307,9 +3344,14 @@ padding: 3px;
   --background-color: #C8ECFE;
 }
 
-
-
-/* For Anglo concertina button naming dialog */
-.anglobuttonnames {
-  width:66px;
+.btn-rawmode-on{
+  --color: black;
+  --background-color: #E7F9E7;
 }
+
+.btn-rawmode-off{
+  --color: black;
+  --background-color: #E6E6E6;
+}
+
+
