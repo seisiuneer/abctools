@@ -644,14 +644,6 @@ function SetupRawModeUI(){
 		elem.classList.add("btn-rawmode-off");
 		elem.classList.remove("btn-rawmode-on");
 
-		if (nTunes > 1){
-
-			// Grey it out
-			elem.classList.remove("rawmodebutton");
-			elem.classList.add("rawmodebuttondisabled");
-
-		}
-
 		elem = document.getElementById("trainerbutton");
 		elem.style.display = "none";
 
@@ -691,34 +683,33 @@ function ToggleRawMode(){
 
 	//console.log("ToggleRawMode");
 
-	if (CountTunes() == 1){
+	gRawMode = !gRawMode;
+
+	var elem = document.getElementById("rawmodebutton");
+
+	if (gRawMode){
+
+		elem.value = "Select: On";
+
+		elem.classList.add("btn-rawmode-on");
+		elem.classList.remove("btn-rawmode-off");
 	
-		gRawMode = !gRawMode;
-
-		var elem = document.getElementById("rawmodebutton");
-
-		if (gRawMode){
-			elem.value = "Select: On";
-
-			elem.classList.add("btn-rawmode-on");
-			elem.classList.remove("btn-rawmode-off");
-		
-			gTheABC.style.backgroundColor = "#F8FDF8";
-
-		}
-		else{
-			elem.value = "Select: Off";
-
-			elem.classList.add("btn-rawmode-off");
-			elem.classList.remove("btn-rawmode-on");
-			
-			gTheABC.style.backgroundColor = "white";
-		}
-
-		// Redraw the tunes
-		RenderAsync(true,null);
+		gTheABC.style.backgroundColor = "#F8FDF8";
 
 	}
+	else{
+
+		elem.value = "Select: Off";
+
+		elem.classList.add("btn-rawmode-off");
+		elem.classList.remove("btn-rawmode-on");
+		
+		gTheABC.style.backgroundColor = "white";
+	}
+
+	// Redraw the tunes
+	RenderAsync(true,null);
+
 
 }
 
@@ -7562,40 +7553,34 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 
 		if (isDesktopBrowser()){
 
-			var rawTuneCount = CountTunes();
+			// Setup the notation click callback
+			params.clickListener = NoteClickListener;
 
-			// This only works for a single tune
-			if (rawTuneCount == 1){
+			// Default to selecting all element types
+			params.selectTypes = true;
 
-				// Setup the notation click callback
-				params.clickListener = NoteClickListener;
-
-				// Default to selecting all element types
-				params.selectTypes = true;
-
-				// selectTypes options are:
-				// 	"author"
-				// 	"bar"
-				// 	"brace"
-				// 	"clef"
-				// 	"composer"
-				// 	"dynamicDecoration"
-				// 	"ending"
-				// 	"extraText"
-				// 	"freeText"
-				// 	"keySignature"
-				// 	"note"
-				// 	"part"
-				// 	"partOrder"
-				// 	"rhythm"
-				// 	"slur"
-				// 	"subtitle"
-				// 	"tempo"
-				// 	"timeSignature"
-				// 	"title"
-				// 	"unalignedWords"
-				// 	"voiceName"
-			}
+			// selectTypes options are:
+			// 	"author"
+			// 	"bar"
+			// 	"brace"
+			// 	"clef"
+			// 	"composer"
+			// 	"dynamicDecoration"
+			// 	"ending"
+			// 	"extraText"
+			// 	"freeText"
+			// 	"keySignature"
+			// 	"note"
+			// 	"part"
+			// 	"partOrder"
+			// 	"rhythm"
+			// 	"slur"
+			// 	"subtitle"
+			// 	"tempo"
+			// 	"timeSignature"
+			// 	"title"
+			// 	"unalignedWords"
+			// 	"voiceName"
 		}
 	}
 
@@ -8114,27 +8099,6 @@ function Render(renderAll,tuneNumber) {
 
 			// Just get the ABC for the current tune
 			theNotes = getTuneByIndex(tuneNumber);
-		}
-
-		// Can't have raw mode with multiple tunes
-		if (gAllowRawMode && (nTunes > 1)){
-
-			var elem = document.getElementById("rawmodebutton");
-
-			elem.value = "Select: Off";
-
-			// Grey it out
-			elem.classList.remove("rawmodebutton");
-			elem.classList.add("rawmodebuttondisabled");
-
-			elem.classList.add("btn-rawmode-off");
-			elem.classList.remove("btn-rawmode-on");
-
-			gTheABC.style.backgroundColor = "white";
-
-			// Turn off raw mode
-			gRawMode = false;
-
 		}
 
 		if (!gRawMode){
@@ -14071,14 +14035,9 @@ function OnABCTextChange(){
 
 		if (gRawMode){
 
-			// In raw mode, we need to redraw everything for any change if there is a single tune
-			if (gTotalTunes == 1){
-				Render(true,null);
-			}
-			else{
-				// Otherwise, just render the tune being worked on
-				Render(false,gCurrentTune);
-			}
+			// In raw mode, we need to redraw everything for any change 
+			Render(true,null);
+
 		}
 		else{
 
@@ -23778,7 +23737,8 @@ function DeveloperSettings(){
 	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;"><strong>When Select Mode is On:</strong></p>'},
 	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;">- The Tune Trainer is still available from the Player when playing tunes.</p>'},	  
 	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;">- Click the notes in the notation to select the corresponding ABC text in the editor.</p>'},
-	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;">- The note clicking feature is only available if there is a single tune in the ABC.</p>'},
+	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;">- The note clicking feature requires redrawing all tunes on each change.</p>'},
+	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;">- This may be slow on large numbers of tunes.</p>'},
 	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;">- All pre-processing of the ABC at notation drawing time is turned off. Any hiding of Annotations/Text/Chords selected in the Advanced dialog as well as automatic injection of staff separation space will be disabled. Your settings will be restored when you turn Select Mode Off.</p>'},
 	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;">- PDF tunebook generation will work with no issues.</p>'},
 	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;">Once enabled, the Select Mode button will be shown every time you run the tool.</p>'},
