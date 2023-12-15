@@ -266,6 +266,7 @@ var gRawMode = false;
 var gRawVisual = null;
 var gRawIsDragging = false;
 var gRawLastIndex = -1;
+var gRawFirstTime = true;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -636,33 +637,23 @@ function SetupRawModeUI(){
 	if (gAllowRawMode){
 		
 		var elem = document.getElementById("rawmodebutton");
-		elem.style.display = "inline-block";
 
-		elem.value = "Select Off";
+		elem.value = "Highlighting Off";
 
 		gTheABC.style.backgroundColor = "white";
-
-		var nTunes = CountTunes();
 		
-		elem.classList.add("rawmodebutton");
-		elem.classList.remove("rawmodebuttondisabled");
+		elem.classList.remove("rawmodebutton");
+		elem.classList.add("rawmodebuttondisabled");
 
 		elem.classList.add("btn-rawmode-off");
 		elem.classList.remove("btn-rawmode-on");
-
-		elem = document.getElementById("trainerbutton");
-		elem.style.display = "none";
-
-		// Redraw the tunes
-		RenderAsync(true,null);
 
 	}
 	else{
 
 		var elem = document.getElementById("rawmodebutton");
-		elem.style.display = "none";
 
-		elem.value = "Select Off";
+		elem.value = "Highlighting Off";
 
 		// Grey it out
 		elem.classList.remove("rawmodebutton");
@@ -671,16 +662,31 @@ function SetupRawModeUI(){
 		elem.classList.add("btn-rawmode-off");
 		elem.classList.remove("btn-rawmode-on");
 
-		elem = document.getElementById("trainerbutton");
-		elem.style.display = "inline-block";
-
 		gTheABC.style.backgroundColor = "white";
-
-		// Redraw the tunes
-		RenderAsync(true,null);
 
 	}
 }
+
+//
+// First time Raw mode dialog
+//
+function ShowHighlightingExplanation(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","ShowHighlightingExplanation");
+
+   	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">About Highlighting</p>';
+	   	modal_msg  += '<p style="font-size:14pt;line-height:22pt;font-family:helvetica">Since this is your first time using Highlighting, here is some important information:</p>';
+    modal_msg  += '<p style="font-size:14pt;line-height:22pt;font-family:helvetica">When Highlighting is turned on:</p>'; 
+    modal_msg  += '<p style="font-size:14pt;line-height:22pt;font-family:helvetica">Select ABC text to highlight the corresponding notes in red in the notation.</p>';
+    modal_msg  += '<p style="font-size:14pt;line-height:22pt;font-family:helvetica">Click any element in the notation to select the corresponding ABC text in the editor.</p>';
+    modal_msg  += '<p style="font-size:14pt;line-height:22pt;font-family:helvetica">Highlighting requires redrawing all tunes on each change to the ABC.</p>';
+    modal_msg  += '<p style="font-size:14pt;line-height:22pt;font-family:helvetica">This may be slow on large numbers of tunes.</p>';
+    modal_msg  += '<p style="font-size:14pt;line-height:22pt;font-family:helvetica">All pre-processing of the ABC at notation drawing time is turned off. Any hiding of Annotations/Text/Chords selected in the Advanced dialog as well as automatic injection of staff separation space will be disabled. Your settings will be restored when you turn highlighting off.</p>';
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
+}
+
 
 //
 // Toggle raw mode
@@ -688,6 +694,11 @@ function SetupRawModeUI(){
 function ToggleRawMode(){
 
 	//console.log("ToggleRawMode");
+
+	// Only supported on desktop 
+	if (isMobileBrowser()){
+		return;
+	}
 
 	// Nothing to do if there are no tunes
 	if (CountTunes() == 0){
@@ -703,7 +714,18 @@ function ToggleRawMode(){
 
 	if (gRawMode){
 
-		elem.value = "Select On";
+		// If it is the first time using Highlighting, show the one-time help
+		if (gRawFirstTime){
+			
+			ShowHighlightingExplanation();
+			
+			gRawFirstTime = false;
+
+			SaveConfigurationSettings();
+
+		}
+
+		elem.value = "Highlighting On";
 
 		elem.classList.add("btn-rawmode-on");
 		elem.classList.remove("btn-rawmode-off");
@@ -713,7 +735,7 @@ function ToggleRawMode(){
 	}
 	else{
 
-		elem.value = "Select Off";
+		elem.value = "Highlighting Off";
 
 		elem.classList.add("btn-rawmode-off");
 		elem.classList.remove("btn-rawmode-on");
@@ -1484,7 +1506,7 @@ function Clear() {
 
 			var elem = document.getElementById("rawmodebutton");
 
-			elem.value = "Select Off";
+			elem.value = "Highlighting Off";
 
 			// Grey it out
 			elem.classList.remove("rawmodebutton");
@@ -8136,14 +8158,12 @@ function Render(renderAll,tuneNumber) {
 		// Enable the play button
 		document.getElementById("playbutton").classList.remove("playbuttondisabled");
 		document.getElementById("playbutton").classList.add("playbutton");
-
-		// Enable the trainer button
-		document.getElementById("trainerbutton").classList.remove("trainerbuttondisabled");
-		document.getElementById("trainerbutton").classList.add("trainerbutton");
 		
-		// Enable the raw mode button
-		document.getElementById("rawmodebutton").classList.remove("rawmodebuttondisabled");
-		document.getElementById("rawmodebutton").classList.add("rawmodebutton");
+		// Enable the raw mode button (Desktop only)
+		if (isDesktopBrowser()){
+			document.getElementById("rawmodebutton").classList.remove("rawmodebuttondisabled");
+			document.getElementById("rawmodebutton").classList.add("rawmodebutton");
+		}
 
 		gAllowCopy = true;
 
@@ -8308,10 +8328,6 @@ function Render(renderAll,tuneNumber) {
 		document.getElementById("playbutton").classList.remove("playbutton");
 		document.getElementById("playbutton").classList.add("playbuttondisabled");
 
-		// Enable the trainer button
-		document.getElementById("trainerbutton").classList.remove("trainerbutton");
-		document.getElementById("trainerbutton").classList.add("trainerbuttondisabled");
-
 		// Disable the raw mode button
 		document.getElementById("rawmodebutton").classList.remove("rawmodebutton");
 		document.getElementById("rawmodebutton").classList.add("rawmodebuttondisabled");
@@ -8319,7 +8335,7 @@ function Render(renderAll,tuneNumber) {
 		document.getElementById("rawmodebutton").classList.add("btn-rawmode-off");
 		document.getElementById("rawmodebutton").classList.remove("btn-rawmode-on");
 
-		document.getElementById("rawmodebutton").value = "Select Off";
+		document.getElementById("rawmodebutton").value = "Highlighting Off";
 
 		gTheABC.style.backgroundColor = "white";
 
@@ -22278,11 +22294,10 @@ function GetInitialConfigurationSettings(){
 		gMetronomeVolume = 48;
 	}
 
-	gAllowRawMode = false;
-
-	val = localStorage.AllowRawMode;
+	gRawFirstTime = true;
+	val = localStorage.RawFirstTime;
 	if (val){
-		gAllowRawMode = (val == "true");
+		gRawFirstTime = (val == "true");
 	}
 
 	// Save the settings, in case they were initialized
@@ -22413,8 +22428,9 @@ function SaveConfigurationSettings(){
 		// Save the metronome volume
 		localStorage.MetronomeVolume = gMetronomeVolume;
 
-		// Save the raw mode
-		localStorage.AllowRawMode = gAllowRawMode;
+		// Save first time Raw use
+		localStorage.RawFirstTime = gRawFirstTime;
+
 	}
 }
 
@@ -23792,7 +23808,6 @@ function AdvancedControlsDialog(){
 		}
 	}
 
-
 }
 
 //
@@ -23803,14 +23818,11 @@ function DeveloperSettings(){
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","DeveloperSettings");
 
-	var originalAllowRawMode = gAllowRawMode;
-
 	// Setup initial values
 	const theData = {
 	  configure_export_delayms: gBatchExportDelayMS,
 	  configure_mp3export_delayms: gBatchMP3ExportDelayMS,
 	  configure_metronome_volume: gMetronomeVolume,
-	  configure_allow_raw_mode: gAllowRawMode
 	};
 
 	const form = [
@@ -23819,23 +23831,9 @@ function DeveloperSettings(){
 	  {name: "Image Batch Export Delay in milliseconds (default is 200):", id: "configure_export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
 	  {name: "MP3 Batch Export Delay in milliseconds (default is 250):", id: "configure_mp3export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
 	  {name: "Metronome volume (default is 48):", id: "configure_metronome_volume", type:"text", cssClass:"advanced_settings2_form_text"},
-	  {html: '<p style="font-size:16pt;line-height:32px;font-family:helvetica;text-align:center;margin-top:32px;">Experimental Features</p>'},
-	  {html: '<p style="font-size:12pt;line-height:28px;font-family:helvetica;"><strong>Turn on highlighting the corresponding notation when selecting ABC text and highlight the ABC text for any note or element clicked in the notation by checking:</strong></p>'},
-	  {name: "          Replace Tune Trainer toolbar button with Select Mode On/Off button", id: "configure_allow_raw_mode", type:"checkbox", cssClass:"advanced_settings2_form_text"},
-	  {html: '<p style="font-size:12pt;line-height:18px;font-family:helvetica;"><strong>When Select Mode is On:</strong></p>'},
-	  {html: '<p style="font-size:12pt;line-height:18px;font-family:helvetica;">- Select ABC text to highlight the corresponding notes in the notation.</p>'},
-	  {html: '<p style="font-size:12pt;line-height:18px;font-family:helvetica;">- Click any element in the notation to select the corresponding ABC text in the editor.</p>'},
-	  {html: '<p style="font-size:12pt;line-height:18px;font-family:helvetica;">- Select Mode requires redrawing all tunes on each change.</p>'},
-	  {html: '<p style="font-size:12pt;line-height:18px;font-family:helvetica;">- This may be slow on large numbers of tunes.</p>'},
-	  {html: '<p style="font-size:12pt;line-height:28px;font-family:helvetica;">- All pre-processing of the ABC at notation drawing time is turned off. Any hiding of Annotations/Text/Chords selected in the Advanced dialog as well as automatic injection of staff separation space will be disabled. Your settings will be restored when you turn Select Mode Off.</p>'},
-	  {html: '<p style="font-size:12pt;line-height:18px;font-family:helvetica;">- PDF tunebook generation will work with no issues.</p>'},
-	  {html: '<p style="font-size:12pt;line-height:18px;font-family:helvetica;">- The Tune Trainer is still available from the Player when playing tunes.</p>'},	  
-	  {html: '<p style="font-size:12pt;line-height:18px;font-family:helvetica;">Once enabled, the Select Mode button will be shown every time you run the tool.</p>'},
-	  {html: '<p style="font-size:12pt;line-height:18px;font-family:helvetica;margin-bottom:32px;">To re-enable the Tune Trainer toolbar button, open this dialog and un-check the box.</p>'},
-
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 20, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -23868,22 +23866,6 @@ function DeveloperSettings(){
 				if ((val >= 0) && (val < 128)){
 					gMetronomeVolume = val;
 				}
-			}
-
-			// If raw mode allowed, setup the UI buttons
-			gAllowRawMode = args.result.configure_allow_raw_mode;
-
-			if (gAllowRawMode != originalAllowRawMode){
-
-				if (gAllowRawMode){
-					sendGoogleAnalytics("dialog","Raw_Mode_On");
-				}
-				else{
-					sendGoogleAnalytics("dialog","Raw_Mode_Off");
-				}
-
-				SetupRawModeUI();
-			
 			}
 
 			// Save the settings, in case they were initialized
@@ -26173,6 +26155,8 @@ function DoStartup() {
 		document.getElementById("selectabcfile").removeAttribute("accept");
 	}	
 
+	// gIsIOS = true; // FOOFOOFOO for mobile simulation testing
+
 	//
 	// iOS and Android styling adaptation
 	//
@@ -26680,6 +26664,9 @@ function DoStartup() {
 			}
 
 		};
+
+		// Raw mode is enabled by default
+		gAllowRawMode = true;
 	}
 
 	// Don't count share URL consumption as a tip jar event

@@ -206,6 +206,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#getting_started">Getting Started</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#top_bar_buttons">Top Bar Buttons</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#abc_editor">ABC Editor</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#abc_editor_resize">Resizing the ABC Editor</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#viewing_the_notation_full_screen">Viewing the Notation Full Screen</a></p>
                 </div>
                 
@@ -292,7 +293,6 @@
                     <p class="toc"><a style="text-decoration:none;" href="#midi_input">Typing ABC Using a MIDI Input Device</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#configure_fonts">Configuring ABC Rendering Fonts</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#developer_settings">Developer Settings</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#experimental_features">Experimental Features</a></p>
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">Selecting Playback Instruments</button>
@@ -417,7 +417,7 @@
             <p>On desktop browsers, when the tool is run, you should be seeing a side-by-side view with the ABC editor on the left and the notation on the right:</p>
             <br/>
             <div class="image_holder">
-                <img style="width:700px;" src="img/overview_4.jpg"/>
+                <img style="width:700px;" src="img/overview_5.jpg"/>
             </div>
             <p>Click the <strong>?</strong> at the top-left of the window or any dialog to open the related User Guide topic in a new browser tab.</p>
             <p>When notation is present, click the zoom arrows at the top-right of the window to view the notation full screen.</p>
@@ -428,7 +428,7 @@
             <hr class="hidden-print" id="top_bar_buttons">
             <h1 class="page_break_always">Top Bar Buttons<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder">
-                <img style="width:700px;" src="img/topbar_1.jpg"/>
+                <img style="width:700px;" src="img/topbar_2.jpg"/>
             </div>
             <p>Hover your mouse over any button or control in the tool to show a tooltip with a detailed explanation of what it does.</p>
             <p>The tooltip will tell you exactly what the button or control does for all Shift/Alt combinations.</p>
@@ -493,9 +493,21 @@
             <hr>
             <p><strong>Play</strong>  - Opens the ABC Player where you can play the current tune. Full details below in the <a style="text-decoration:none;" href="#playing_your_tunes">Playing Your Tunes</a> section.</p>
             <hr>
-            <p><strong>Tune Trainer</strong>  - Opens the Tune Trainer where you can play the current tune looped with increasing tempos. Full details below in the <a style="text-decoration:none;" href="#tune_trainer">"Step-Up" Tempo Tune Trainer</a>section.</p>
+            <p><strong>Highlighting On/Off</strong> - Toggles Notation/ABC automatic highlighting.</p>
+            <p>This feature can only be turned on in desktop browsers.</p>
+            <div class="image_holder_p">
+                <img style="width:700px;" src="img/highlighting_1.jpg"/>
+            </div>
+            <p>When highlighting is turned on:</p> 
+            <p>- Select ABC text to highlight the corresponding notes in red in the notation.</p>
+            <p>- Click any element in the notation to select the corresponding ABC text in the editor.</p>
+            <p>- Highlighting requires redrawing all tunes on each change to the ABC.</p>
+            <p>- This may be slow on large numbers of tunes.</p>
+            <p>- All pre-processing of the ABC at notation drawing time is turned off. Any hiding of Annotations/Text/Chords selected in the Advanced dialog as well as automatic injection of staff separation space will be disabled. Your settings will be restored when you turn highlighting off.</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/3YsY-ReSt2k" title="Highlighting demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <hr>
-            <p><strong>Settings</strong>  - Brings up the default playback instrument and other tool-wide settings dialog.</p>
+            <p><strong>Settings</strong>  - Brings up the default playback instruments and other tool-wide settings dialog.</p>
+            <p>Full details in the <a href="#settings_dialog">ABC Transcription Tools Settings</a> section.</p>
             <hr>
             <p><strong>▲/▼</strong> - Click this to hide/show the header at the top and any visible controls below the ABC text area so you can have more room to work on your music.</p>
             <hr class="hidden-print" id="abc_editor">
@@ -509,7 +521,9 @@
             <p>Click on any tune in the ABC to have the notation scroll into view. </p>
             <p>Click in the notation for any tune and the ABC area will be autoscrolled so that the ABC for the tune is displayed (or within a few lines, browser dependent).</p>
             <p><strong>Note:</strong> The tune autoscroll features are <strong>not</strong> available on iOS or Android devices.</p>
-            <p>On desktop systems, the text entry box can be resized by dragging the lower right corner.</p>
+            <hr class="hidden-print" id="abc_editor_resize">
+            <h1 class="page_break_always">Resizing the ABC Editor<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>On desktop systems, the ABC text area can be resized by dragging the lower right corner.</p>
             <p>When you resize the text area while in the "side-by-side" display mode, the notation will slide over to the right as much as it can:</p>
             <div class="image_holder_p">
                 <img src="img/dynamic_resize_2.jpg"/>
@@ -1023,7 +1037,7 @@
             <p><strong>Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for tablature injection.</p>
             <p><strong>MusicXML Settings</strong> - Brings up a dialog where you can configure all parameters for MusicXML import.</p>
             <p>Details on MusicXML import settings below in the <a style="text-decoration:none;" href="#musicxml">MusicXML Import Settings</a> section.</p>
-            <p><strong>Developer Settings</strong> - (Desktop browsers only) Brings up a dialog where you can configure low level developer settings and enable experimental features.</p>
+            <p><strong>Developer Settings</strong> - (Desktop browsers only) Brings up a dialog where you can configure low level developer settings.</p>
             <p>Details on the Developer settings below in the <a style="text-decoration:none;" href="#developer_settings">Developer Settings</a> section.</p>
             <hr class="hidden-print" id="midi_input">
             <h1 class="page_break_always">Typing ABC Using a MIDI Input Device<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -1078,7 +1092,7 @@
             <hr class="hidden-print" id="developer_settings">
             <h1 class="page_break_always">Developer Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">
-                <img src="img/developer_settings_8.jpg"/>
+                <img src="img/developer_settings_9.jpg"/>
             </div>
             <p>These settings are available by clicking the <strong>Developer Settings</strong> button at the bottom of the main <strong>Settings</strong> dialog and are only available on desktop browsers.</p>
             <p style="text-align: center;"><strong>Note: Do not change these values unless you know what you are doing!</strong></p>
@@ -1088,26 +1102,6 @@
             <p><strong>MP3 Batch Export Delay in milliseconds (default is 250):</strong> Sets the delay between file saves when doing batch .MP3 export.</p>            
             <p><strong>Metronome volume (default is 48):</strong> Sets the volume of the metronome drum sounds. Range is 0 - 127.</p>  
             <p>Values are saved in browser storage and restored the next time the tool is run.</p>
-            <hr class="hidden-print" id="experimental_features">
-            <h1 class="page_break_always">Experimental Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>Experimental features for the tool are available at the bottom of the <strong>Developers Setting</strong> dialog:</p>
-            <div class="image_holder_p">
-                <img src="img/developer_settings_8.jpg"/>
-            </div>
-            <p>Turn on highlighting the corresponding notation when selecting ABC text and highlight the ABC text for any note or element clicked in the notation by checking:</p>
-            <p><strong>Replace Tune Trainer toolbar button with Select Mode On/Off button</strong></p>
-            <p>This feature is only available for desktop browsers.</p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/Gk1MDGwI3Oo" title="Select Mode" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p><strong>When Select Mode is On:</strong></p> 
-            <p>- Select ABC text to highlight the corresponding notes in the notation.</p>
-            <p>- Click any element in the notation to select the corresponding ABC text in the editor.</p>
-            <p>- Select Mode requires redrawing all tunes on each change.</p>
-            <p>- This may be slow on large numbers of tunes.</p>
-            <p>- All pre-processing of the ABC at notation drawing time is turned off. Any hiding of Annotations/Text/Chords selected in the Advanced dialog as well as automatic injection of staff separation space will be disabled. Your settings will be restored when you turn Select Mode Off.</p>
-            <p>- PDF tunebook generation will work with no issues.</p>
-            <p>- The Tune Trainer is still available from the Player when playing tunes.</p>
-            <p>Once enabled, the Select Mode button will be shown every time you run the tool.</p>
-            <p>To re-enable the Tune Trainer toolbar button, open this dialog and un-check the box.</p>
             <hr class="hidden-print" id="selecting_the_instruments_for_playback">
             <h1 class="page_break_always h1wide">Choosing the MIDI Soundfont and Instruments for Playback<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>You may choose which instrument sounds are used for the melody and bass/chords when playing tunes.</p>
