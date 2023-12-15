@@ -2702,7 +2702,7 @@ function GetAllTuneHyperlinks(theLinks) {
 
 	theTitles = GetTunebookIndexTitles();
 
-	// There must be a one-to-one coorespondence of tune count to hyperlink record count
+	// There must be a one-to-one correspondence of tune count to hyperlink record count
 	if (nTunes != theLinks.length){
 
 		return false;
@@ -7609,6 +7609,9 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 
 			// Default to selecting all element types
 			params.selectTypes = true;
+
+			// Set the selection highlight color
+			params.selectionColor = "#E00000";
 
 			// selectTypes options are:
 			// 	"author"
@@ -23792,21 +23795,22 @@ function DeveloperSettings(){
 	  {name: "MP3 Batch Export Delay in milliseconds (default is 250):", id: "configure_mp3export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
 	  {name: "Metronome volume (default is 48):", id: "configure_metronome_volume", type:"text", cssClass:"advanced_settings2_form_text"},
 	  {html: '<p style="font-size:16pt;line-height:32px;font-family:helvetica;text-align:center;margin-top:32px;">Experimental Features</p>'},
-	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;"><strong>Locate the ABC for any note or element in the notation by clicking on it:</strong></p>'},
+	  {html: '<p style="font-size:12pt;line-height:28px;font-family:helvetica;"><strong>Turn on highlighting the corresponding notation when selecting ABC text and highlight the ABC text for any note or element clicked in the notation by checking:</strong></p>'},
 	  {name: "          Replace Tune Trainer toolbar button with Select Mode On/Off button", id: "configure_allow_raw_mode", type:"checkbox", cssClass:"advanced_settings2_form_text"},
-	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;"><strong>When Select Mode is On:</strong></p>'},
-	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;">- The Tune Trainer is still available from the Player when playing tunes.</p>'},	  
-	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;">- Click the notes in the notation to select the corresponding ABC text in the editor.</p>'},
-	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;">- The note clicking feature requires redrawing all tunes on each change.</p>'},
-	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;">- This may be slow on large numbers of tunes.</p>'},
-	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;">- All pre-processing of the ABC at notation drawing time is turned off. Any hiding of Annotations/Text/Chords selected in the Advanced dialog as well as automatic injection of staff separation space will be disabled. Your settings will be restored when you turn Select Mode Off.</p>'},
-	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;">- PDF tunebook generation will work with no issues.</p>'},
-	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;">Once enabled, the Select Mode button will be shown every time you run the tool.</p>'},
-	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;margin-bottom:32px;">To re-enable the Tune Trainer toolbar button, open this dialog and un-check the box.</p>'},
+	  {html: '<p style="font-size:12pt;line-height:18px;font-family:helvetica;"><strong>When Select Mode is On:</strong></p>'},
+	  {html: '<p style="font-size:12pt;line-height:18px;font-family:helvetica;">- Select ABC text to highlight the corresponding notes in the notation.</p>'},
+	  {html: '<p style="font-size:12pt;line-height:18px;font-family:helvetica;">- Click any element in the notation to select the corresponding ABC text in the editor.</p>'},
+	  {html: '<p style="font-size:12pt;line-height:18px;font-family:helvetica;">- Select Mode requires redrawing all tunes on each change.</p>'},
+	  {html: '<p style="font-size:12pt;line-height:18px;font-family:helvetica;">- This may be slow on large numbers of tunes.</p>'},
+	  {html: '<p style="font-size:12pt;line-height:28px;font-family:helvetica;">- All pre-processing of the ABC at notation drawing time is turned off. Any hiding of Annotations/Text/Chords selected in the Advanced dialog as well as automatic injection of staff separation space will be disabled. Your settings will be restored when you turn Select Mode Off.</p>'},
+	  {html: '<p style="font-size:12pt;line-height:18px;font-family:helvetica;">- PDF tunebook generation will work with no issues.</p>'},
+	  {html: '<p style="font-size:12pt;line-height:18px;font-family:helvetica;">- The Tune Trainer is still available from the Player when playing tunes.</p>'},	  
+	  {html: '<p style="font-size:12pt;line-height:18px;font-family:helvetica;">Once enabled, the Select Mode button will be shown every time you run the tool.</p>'},
+	  {html: '<p style="font-size:12pt;line-height:18px;font-family:helvetica;margin-bottom:32px;">To re-enable the Tune Trainer toolbar button, open this dialog and un-check the box.</p>'},
 
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 25, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 20, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
