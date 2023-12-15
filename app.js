@@ -689,6 +689,11 @@ function ToggleRawMode(){
 
 	//console.log("ToggleRawMode");
 
+	// Nothing to do if there are no tunes
+	if (CountTunes() == 0){
+		return;
+	}
+
 	gRawMode = !gRawMode;
 
 	var elem = document.getElementById("rawmodebutton");
