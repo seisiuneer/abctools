@@ -263,6 +263,9 @@ var gIsFirstRun = false;
 // Raw mode?
 var gAllowRawMode = false;
 var gRawMode = false;
+var gRawVisual = null;
+var gRawIsDragging = false;
+var gRawLastIndex = -1;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -627,12 +630,15 @@ function SetupRawModeUI(){
 	// Clear raw mode
 	gRawMode = false;
 
+	// Clear last highlight tracker
+	gRawLastIndex = -1;
+
 	if (gAllowRawMode){
 		
 		var elem = document.getElementById("rawmodebutton");
 		elem.style.display = "inline-block";
 
-		elem.value = "Select: Off";
+		elem.value = "Select Off";
 
 		gTheABC.style.backgroundColor = "white";
 
@@ -656,7 +662,7 @@ function SetupRawModeUI(){
 		var elem = document.getElementById("rawmodebutton");
 		elem.style.display = "none";
 
-		elem.value = "Select: Off";
+		elem.value = "Select Off";
 
 		// Grey it out
 		elem.classList.remove("rawmodebutton");
@@ -687,9 +693,12 @@ function ToggleRawMode(){
 
 	var elem = document.getElementById("rawmodebutton");
 
+	// Reset last raw highlight tracker
+	gRawLastIndex = -1;
+
 	if (gRawMode){
 
-		elem.value = "Select: On";
+		elem.value = "Select On";
 
 		elem.classList.add("btn-rawmode-on");
 		elem.classList.remove("btn-rawmode-off");
@@ -699,7 +708,7 @@ function ToggleRawMode(){
 	}
 	else{
 
-		elem.value = "Select: Off";
+		elem.value = "Select Off";
 
 		elem.classList.add("btn-rawmode-off");
 		elem.classList.remove("btn-rawmode-on");
@@ -1470,7 +1479,7 @@ function Clear() {
 
 			var elem = document.getElementById("rawmodebutton");
 
-			elem.value = "Select: Off";
+			elem.value = "Select Off";
 
 			// Grey it out
 			elem.classList.remove("rawmodebutton");
@@ -1483,6 +1492,9 @@ function Clear() {
 
 			// Turn off raw mode
 			gRawMode = false;
+
+			// Clear last tune highlight tracker
+			gRawLastIndex = -1;
 
 			// If staff spacing had changed due to a share, restore it
 			RestoreSavedStaffSpacing();
@@ -7502,6 +7514,45 @@ function NoteClickListener(abcelem, tuneNumber, classes, analysis, drag, mouseEv
 }
 
 //
+// Callback when events happen in the text area in raw mode
+//
+
+function fireSelectionChanged(){
+
+	if (gRawMode){
+
+	    if (CountTunes() > 0){
+
+	    	if (gRawVisual){
+			
+				// If not the current tune, clear the last notation highlight
+				if (gCurrentTune != gRawLastIndex){
+
+					var nVisuals = gRawVisual.length;
+
+					for (var i=0;i<nVisuals;++i){
+
+	    				var engraver = gRawVisual[i].engraver;
+
+						engraver.rangeHighlight(0, 0);
+					}
+
+					gRawLastIndex = gCurrentTune;
+				}
+	    		
+	    		var engraver = gRawVisual[gRawLastIndex].engraver;
+
+	    		if (engraver){
+
+	    			engraver.rangeHighlight(gTheABC.selectionStart, gTheABC.selectionEnd);
+
+	    		}
+	    	}
+	    }
+	}
+}
+
+//
 // Main routine for rendering the notation
 //
 function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
@@ -7585,6 +7636,9 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 	}
 
 	var visualObj = ABCJS.renderAbc(renderDivs, tune, params);
+
+	// Save off the visual for selection handling
+	gRawVisual = visualObj;
 
 	for (var tuneIndex = startTune; tuneIndex < endTune; ++tuneIndex) {
 
@@ -8257,12 +8311,15 @@ function Render(renderAll,tuneNumber) {
 		document.getElementById("rawmodebutton").classList.add("btn-rawmode-off");
 		document.getElementById("rawmodebutton").classList.remove("btn-rawmode-on");
 
-		document.getElementById("rawmodebutton").value = "Select: Off";
+		document.getElementById("rawmodebutton").value = "Select Off";
 
 		gTheABC.style.backgroundColor = "white";
 
 		// Turn off raw mode
 		gRawMode = false;
+
+		// Clear last tune highlight tracker
+		gRawLastIndex = -1;
 
 		gAllowCopy = false;
 
@@ -14037,6 +14094,9 @@ function OnABCTextChange(){
 
 			// In raw mode, we need to redraw everything for any change 
 			Render(true,null);
+
+			// Highlight the notes in the notation
+			fireSelectionChanged();
 
 		}
 		else{
@@ -26275,6 +26335,8 @@ function DoStartup() {
 
 		    MakeTuneVisible(false);
 
+		    fireSelectionChanged();
+
 		}, AUTOSCROLLDEBOUNCEMS);
 
 	//
@@ -26494,6 +26556,8 @@ function DoStartup() {
 		
 		}
 
+
+
 	}
 
 	// And call it once for the initial setup
@@ -26552,6 +26616,41 @@ function DoStartup() {
 		// Hide the desktop zoom message
 		document.getElementById("desktop_use_message").style.display = "none";
 
+	}
+
+	//
+	// Add text area mouse handlers on desktop browsers 
+	//
+	if (isDesktopBrowser()){
+
+		gTheABC.onmousedown = function (e) {
+			
+			if (gRawMode){
+				setTimeout(function(){
+					gRawIsDragging = true;
+					fireSelectionChanged();
+				},0);
+			}
+		};
+
+		gTheABC.onmouseup = function (e) {
+
+			if (gRawMode){
+				gRawIsDragging = false;
+				fireSelectionChanged();
+			}
+
+		};
+
+		gTheABC.onmousemove = function (e) {
+
+			if (gRawMode){
+				if (gRawIsDragging){
+					fireSelectionChanged();
+				}
+			}
+
+		};
 	}
 
 	// Don't count share URL consumption as a tip jar event
