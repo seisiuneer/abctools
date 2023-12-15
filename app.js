@@ -17618,14 +17618,21 @@ function calc_wide_play_width(offset){
 // 
 // Play the previous tune
 //
-function PlayPrevious(){
+// Shift click goes to the first tune
+//
+function PlayPrevious(e){
 
 	if (gPlayABCTuneIndex > 0){
 
 		// Close the current player
 		gTheOKButton.click();
 
-		gPlayABCTuneIndex--;
+		if (e.shiftKey){
+			gPlayABCTuneIndex = 0;
+		}
+		else{ 
+			gPlayABCTuneIndex--;
+		}
 
 		// Try to find the current tune
 		var theSelectedABC = getTuneByIndex(gPlayABCTuneIndex);
@@ -17649,14 +17656,21 @@ function PlayPrevious(){
 // 
 // Play the next tune
 //
-function PlayNext(){
+// Shift click goes to the last tune
+//
+function PlayNext(e){
 
 	if (gPlayABCTuneIndex < (gPlayABCTuneCount-1)){
 
 		// Close the current tune
 		gTheOKButton.click();
 
-		gPlayABCTuneIndex++;
+		if (e.shiftKey){
+			gPlayABCTuneIndex = gPlayABCTuneCount-1;
+		}
+		else{ 
+			gPlayABCTuneIndex++;
+		}
 
 		// Try to find the current tune
 		var theSelectedABC = getTuneByIndex(gPlayABCTuneIndex);
@@ -17979,7 +17993,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 		modal_msg += '<p style="text-align:center;margin:0px;margin-top:22px">';
 
 		if (gPlayABCTuneCount > 1){
-			modal_msg += '<input id="abcplayer_previousbutton" class="abcplayer_previousbutton btn btn-playerprevious" onclick="PlayPrevious();" type="button" value="&nbsp;←&nbsp;" title="Play the previous tune">';
+			modal_msg += '<input id="abcplayer_previousbutton" class="abcplayer_previousbutton btn btn-playerprevious" onclick="PlayPrevious(event);" type="button" value="&nbsp;←&nbsp;" title="Play the previous tune.&nbsp;&nbsp;Shift-click to jump to the first tune.">';
 		}
 
 		modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioOrImage();" type="button" value="Export Audio or Image" title="Brings up a dialog where you can save the tune in various audio and image formats">';
@@ -17991,10 +18005,16 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 		}
 
 		if (gPlayABCTuneCount > 1){
-			modal_msg += '<input id="abcplayer_nextbutton" class="abcplayer_nextbutton btn btn-playernext" onclick="PlayNext();" type="button" value="&nbsp;→&nbsp;" title="Play the next tune">';
+			modal_msg += '<input id="abcplayer_nextbutton" class="abcplayer_nextbutton btn btn-playernext" onclick="PlayNext(event);" type="button" value="&nbsp;→&nbsp;" title="Play the next tune.&nbsp;&nbsp;Shift-click to jump to the last tune.">';
 		}
 
 		modal_msg += '<a id="abcplayer_help" href="https://michaeleskin.com/abctools/userguide.html#playing_your_tunes" target="_blank" style="text-decoration:none;" title="Learn more about the Player">?</a>';
+
+		if (gPlayABCTuneCount > 1){
+
+			modal_msg += '<p id="playerstatus">Tune '+(gPlayABCTuneIndex+1)+' of '+ gPlayABCTuneCount +' </p>';
+
+		}
 
 		modal_msg += '</p>';
 

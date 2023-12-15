@@ -2966,10 +2966,18 @@ cursor: pointer;
 padding: 3px;
 }
 
-/* For Anglo concertina button naming dialog */
 .anglobuttonnames {
   width:66px;
 }
+
+#playerstatus {
+font-family:helvetica;
+font-size:13pt;
+position:absolute;
+left:30px;
+bottom:22px;
+}
+
 
 /******************************************************************************/
 /* STYLES RELATED TO EXPERIMENT BUTTONS                                       */
