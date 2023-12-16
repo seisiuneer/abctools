@@ -17767,6 +17767,18 @@ function PlayABC(){
 			gPlayABCTuneIndex = findSelectedTuneIndex();
 			gPlayABCTuneCount = CountTunes();
 
+			// Fixup weird case of not being to find a selected tune when there are tunes present
+			// Sometimes happens after a paste
+			if (gPlayABCTuneIndex == -1){
+
+				//console.log("PlayABC - bad index case");
+				
+				gPlayABCTuneIndex = 0;
+
+				theSelectedABC = getTuneByIndex(gPlayABCTuneIndex);
+				
+			}
+
 			gPlayABCGotMaximizedPlay = false;
 
 		}
