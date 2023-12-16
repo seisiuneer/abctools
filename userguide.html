@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-                
+                        
         <style>
         p {
         font-size:14pt;
@@ -368,7 +368,6 @@
                     <p class="toc"><a style="text-decoration:none;" href="#tabtranspose">Transposing Notation Independent of Tablature</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#learningtunes">Learning New Tunes Part-by-Part Using ABC</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#clicktrack">Adding a Two-Bar Click Intro to Tunes</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#firstbarstitle">Putting the Tune Title Above the First Few Bars</a></p>
                  </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">iOS-Specific Topics</button>
@@ -960,7 +959,7 @@
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder_p">
-                <img src="img/abc_transcription_tool_settings_32.jpg"/>
+                <img src="img/abc_transcription_tool_settings_33.jpg"/>
             </div>
             <p><strong>Save an Auto-Snapshot on browser tab close or reload? (Restore it from the Add dialog)</strong> - (Desktop browsers only) When enabled, saves an Auto-Snapshot when closing or reloading the browser tab the tool is running in.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/pp6fD2NOKtw" title="Auto-Snapshots" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
@@ -972,6 +971,7 @@
             <p>Minimum value is -40 (corresponds to an ABC %%staffsep of 0)</p>
             <p>Final rendered staff separation depends on the contents of ABC itself, for example the use of chords and other annotations may increase the staff spacing.</p>
             <p>Experiment with this value until you get the result you want.</p>
+            <p><strong>Left-justify all titles and subtitles</strong> When checked, draws all titles and subtitles left-justified instead of centered above the notation.</p>
             <p><strong>Show stringed instrument names on tablature (single-voice tunes only, not shown in the Player))</strong> - Hides/Shows the instrument names and capo settings on the tablature.</p>
             <p>At this time, instrument names below the tablature will only be displayed for single-voice tunes.</p>
             <p><strong>Stringed instrument capo fret postion</strong> - Allows you to set a capo setting from 0 to 12 frets for any of the stringed instruments tabs.</p>
@@ -2232,30 +2232,6 @@
             <p style="text-align: center;"><a href="https://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuDCB7RAbApgTwOQGcoCVx800UoBZcAFgHoqoAZcCGgDigGlwBRAE0QBOUeOBgCAhrwCWAFymIAduLIBSKCvEAjAMYArHAH0ciAK4LeAM0UywFlCam916sAFUcaMOIVgAgtu1BaUUwYzNeMAB3AAs0HwAHFHEMKQUAczAZWLAAW1JEXgwQdRVyAEkAETKweIFENIkcsAAmaDUVNw8vH39AgWCfMPMo2ISklPTM7O1ooJxilVLK6pmg2vqWtpdfACF4W0EpzxkzNAAaME1ELNz8wu6I1f755w7iUkzIxEvxATBtFBSbQAazAqRkdSgADUQNAYc0SuUqjU6g1xE0IM12AA9eAALwAzLjCQAfYlE-EEknQ2FQPGsEn06kkkAAIm4OXZOx2vjAO2aYG4OxJ7M5-L8OzAvB5AHERRVWQAxGjcGgVPzqnYVXwVeVKlVqjV83wyxXU0Vcnl8gVCkUc1ni3ZStAWNJ68SuzzS3xmiBgVkKircRXqi3cAkVEAkgUBgPB0P27jNNIWEnMtn2tCSgAUBO5kqzKbtnKz4rSaGlet8NGrvMVvO19arNZrYHrztd5szObz3LAhdTFtLkt4LrdsY95alPN9-sD8f9ieTFijMfnIcXnO4VBJAF0oEA&format=noten&ssp=0&pdf=multi_a4&pn=none&fp=yes&name=two-bar-click-intro-demo&play=1" target="_blank">Reel with Two-Bar Click Intro</a></p>
             <p style="text-align: center;"><a href="https://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuMAsCmYDSSDOCoCVwCkBLAcygFlwA2AegA4oAZcCOqVcAcQFsBDAKygBheACceAE0IAXQgHsAdjwA2UAKRqeAIwDGfDAH0MsgK7zxAMwVSw5pccLi1asAFUMKHvLABBbdtkikgpgRqbiYADuyF4ADko8AJ6E8sRgUshgXEhKsuIJIGqqZACSACLFYDEissRiXGAATNDqqq7uYJ4+fgFBXqFmkdGV8UkpaRnaCD0YBapFZRWTPVU1jc3O3gBCgjYB4yhSpkgANGCasumZ2bkJHQNLgTNOrUSpUhGyZzwiYNpKhNoANZgZJSapQABqIGgUIahRK5Uq1VqPHqEAa9AAeoIAF4NbF4gA+BPxuIahMh0KgOMohJpFMJIAARBwWd4OGAOFtCUzSkytt4fJtxDzWUhxOFiBKeYImeLNmBeUzxJtvBSWWyOVzNjy+QKhSKNeLJSrdfyOAAxRWsjgAZhADOZrNVCpVhtlSGIKCVKrVGpdYBVHDN+vZaqg-q2geFMrlXutypjTNlxHMqSVPGIPFFTM0qbAxHtFKAA&format=noten&ssp=0&pdf=multi_a4&pn=none&fp=yes&name=two-bar-click-intro-demo&play=1" target="_blank">Jig with Two-Bar Click Intro</a></p>
             <p>You can add an ABC template containing all of these examples from the <strong>Add</strong> dialog and then copy and paste them into your tunes.</p>
-            <hr class="hidden-print" id="firstbarstitle">
-            <h1 class="page_break_always">Putting the Tune Title Above the First Few Bars<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>Here's a simple trick I figured out to help a user who wanted the title of the tune above the first few bars instead of above the center:</p>
-            <p class="code">X: 1<br/>
-            %%titlefont Palatino 0<br/>
-            %%textfont Palatino 18<br/>
-            T: King of the Fairies<br/>
-            M: 4/4<br/>
-            L: 1/8<br/>
-            K: Edor<br/>
-            %%text King of the Fairies<br/>
-            |:B,2|EDEF GFGA|B2B2 G2GA|</p>
-            <p>That hides the centered title, and puts the title above the first few bars, resulting in:</p>
-            <div class="image_holder_p">
-                <img src="img/first_bars_title_1.jpg"/>
-            </div>
-            <p>Another simple solution is to use the %%titleleft annotation:</p>
-            <p class="code">X: 1<br/>
-            %%titleleft<br/>
-            T: King of the Fairies<br/>
-            M: 4/4<br/>
-            L: 1/8<br/>
-            K: Edor<br/>
-            |:B,2|EDEF GFGA|B2B2 G2GA|</p>
             <hr class="hidden-print" id="iphone_ipad_chord_entry_issue_fix">
             <h1 class="page_break_always">iPhone/iPad Chord Entry Issue Fix<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>If you are trying to enter ABC chords, for example "D" or "Am", on an iPhone or iPad, iOS will, by default stick in "smart quotes" instead of standard double quotes.</p>

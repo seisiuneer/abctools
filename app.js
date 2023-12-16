@@ -8280,19 +8280,10 @@ function Render(renderAll,tuneNumber) {
 				theNotes = StripTabOne(theNotes);
 			}
 
-			// Replace standalone %%center directives with %%vskip 12
-			searchRegExp = /%%center$/gm;
-
-			theNotes = theNotes.replace(searchRegExp, "%%vskip 12\n%%center");
-
-			// Add some title and staffspace
-			//theNotes = theNotes + "\n%%musicspace 20\n";
-			// theNotes = theNotes + "%%staffsep "+gStaffSpacing+"\n";
-
 			// Inject %%staffsep 
 			searchRegExp = /^X:.*$/gm
 
-			theNotes = theNotes.replace(searchRegExp, "X:1\n%%musicspace 10\n%%staffsep " + gStaffSpacing);
+			theNotes = theNotes.replace(searchRegExp, "X:1\n%%staffsep " + gStaffSpacing);
 
 		}
 
@@ -11919,15 +11910,10 @@ function NotationSpacingExplorer(){
 
 	// Make initial spacing identical to standard viewer
 
-	// Replace standalone %%center directives with %%vskip 12
-	var searchRegExp = /%%center$/gm;
-
-	theABC = theABC.replace(searchRegExp, "%%vskip 12\n%%center");
-
 	// Inject %%staffsep 
-	searchRegExp = /^X:.*$/gm
+	var searchRegExp = /^X:.*$/gm
 
-	theABC = theABC.replace(searchRegExp, "X:1\n%%musicspace 10\n%%staffsep " + gStaffSpacing);
+	theABC = theABC.replace(searchRegExp, "X:1\n%%staffsep " + gStaffSpacing);
 
 	var originalABC = theABC;
 
@@ -22326,6 +22312,12 @@ function GetInitialConfigurationSettings(){
 		gRawHighlightColor = val;
 	}
 
+	gForceLeftJustifyTitles = false;
+	val = localStorage.ForceLeftJustifyTitles;
+	if (val){
+		gForceLeftJustifyTitles = (val == "true");
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -22459,6 +22451,9 @@ function SaveConfigurationSettings(){
 
 		// Save the raw highlight color
 		localStorage.RawHighlightColor = gRawHighlightColor;
+
+		// Save the force left-justify titles setting
+		localStorage.ForceLeftJustifyTitles = gForceLeftJustifyTitles;
 
 	}
 }
@@ -23854,7 +23849,7 @@ function DeveloperSettings(){
 	  configure_export_delayms: gBatchExportDelayMS,
 	  configure_mp3export_delayms: gBatchMP3ExportDelayMS,
 	  configure_metronome_volume: gMetronomeVolume,
-	  configure_highlight_color: gRawHighlightColor
+	  configure_highlight_color: gRawHighlightColor,
 	};
 
 	const form = [
@@ -23903,13 +23898,13 @@ function DeveloperSettings(){
 
 			gRawHighlightColor = args.result.configure_highlight_color;
 
-			// Highlight color changes, needs a re-render
-			if (gRawHighlightColor != oldHighlightColor){
-
-				if (gRawMode){
-					RenderAsync(true,null);
-				}
+			// Do we need to re-render?
+			if (gRawMode && (gRawHighlightColor != oldHighlightColor)){
+				
+				RenderAsync(true,null);
+				
 			}
+
 
 			// Save the settings, in case they were initialized
 			SaveConfigurationSettings();
@@ -23981,6 +23976,8 @@ function ConfigureToolSettings() {
 
 	var theOldAllowMIDIInput = gAllowMIDIInput;
 
+	var oldLeftJustifyTitles = gForceLeftJustifyTitles;
+
 	// Setup initial values
 	const theData = {
 	  configure_inject_programs: bAlwaysInjectPrograms,
@@ -24004,7 +24001,9 @@ function ConfigureToolSettings() {
 	  configure_comhaltas: gUseComhaltasABC,	  
 	  configure_allow_midi_input: gAllowMIDIInput,	  
 	  configure_auto_swing_hornpipes: gAutoSwingHornpipes,	  
-	  configure_auto_swing_factor: gAutoSwingFactor,	  
+	  configure_auto_swing_factor: gAutoSwingFactor,	
+	  configure_left_justify_titles: gForceLeftJustifyTitles
+  
 	};
 
  	const sound_font_options = [
@@ -24030,6 +24029,7 @@ function ConfigureToolSettings() {
 	const form2 = [
 	  {name: "Full screen tune display scaling (percentage):", id: "configure_fullscreen_scaling", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Staff spacing (default is 10):", id: "configure_staff_spacing", type:"number", cssClass:"configure_settings_form_text"},
+	  {name: "          Left-justify all titles and subtitles", id: "configure_left_justify_titles", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 	  {name: "    Show stringed instrument names on tablature (single-voice tunes only, not shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 	  {name: "Stringed instrument capo fret postion:", id: "configure_capo", type:"number", cssClass:"configure_settings_form_text"},
 	  {name: "Default abcjs soundfont:", id: "configure_soundfont", type:"select", options:sound_font_options, cssClass:"configure_settings_select"}, 
@@ -24351,13 +24351,16 @@ function ConfigureToolSettings() {
 
 			}
 
+			// Left justify titles/subtitles?
+			gForceLeftJustifyTitles = args.result.configure_left_justify_titles;
+
 			// Update local storage
 			SaveConfigurationSettings();
 
 			var radiovalue = GetRadioValue("notenodertab");
 
 			// Do we need to re-render?
-			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || ((radiovalue == "notenames") && (gUseComhaltasABC != theOldComhaltas))){
+			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || ((radiovalue == "notenames") && (gUseComhaltasABC != theOldComhaltas))  || (gForceLeftJustifyTitles != oldLeftJustifyTitles)){
 				
 				RenderAsync(true, null, function(){
 
@@ -26612,8 +26615,6 @@ function DoStartup() {
 		
 		}
 
-
-
 	}
 
 	// And call it once for the initial setup
@@ -26655,6 +26656,11 @@ function DoStartup() {
 	        $(this).toggleClass ('indrag');
 	    });
 
+	    // Disable dragging the text inside the text area
+		$('#abc').on ('dragstart', function (e) {    // this handler makes the element accept drops and generate drop-events
+	        e.preventDefault ();                    
+	    });
+
 	}
 	else{
 		
@@ -26671,6 +26677,12 @@ function DoStartup() {
 
 		// Hide the desktop zoom message
 		document.getElementById("desktop_use_message").style.display = "none";
+
+		// Disable dragging the text inside the text area
+		$('#abc').on ('dragstart', function (e) {    // this handler makes the element accept drops and generate drop-events
+	        e.preventDefault ();                    
+	    });
+
 
 	}
 
