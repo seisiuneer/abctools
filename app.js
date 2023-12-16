@@ -267,6 +267,7 @@ var gRawVisual = null;
 var gRawIsDragging = false;
 var gRawLastIndex = -1;
 var gRawFirstTime = true;
+var gRawHighlightColor = "#F00000";
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -7638,7 +7639,7 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 			params.selectTypes = true;
 
 			// Set the selection highlight color
-			params.selectionColor = "#F00000";
+			params.selectionColor = gRawHighlightColor;
 
 			// selectTypes options are:
 			// 	"author"
@@ -8805,7 +8806,7 @@ function ToggleAnnotations(bDoStrip) {
 
 		StripAnnotations();
 		
-		RenderAsync(true,null)
+		RenderAsync(true,null);
 
 		IdleAdvancedControls(true);
 
@@ -8814,7 +8815,7 @@ function ToggleAnnotations(bDoStrip) {
 
 	gStripAnnotations = !gStripAnnotations;
 
-	RenderAsync(true,null)
+	RenderAsync(true,null);
 
 	IdleAdvancedControls(true);
 
@@ -22319,6 +22320,12 @@ function GetInitialConfigurationSettings(){
 		gRawFirstTime = (val == "true");
 	}
 
+	gRawHighlightColor = "#F00000";
+	val = localStorage.RawHighlightColor;
+	if (val){
+		gRawHighlightColor = val;
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -22449,6 +22456,9 @@ function SaveConfigurationSettings(){
 
 		// Save first time Raw use
 		localStorage.RawFirstTime = gRawFirstTime;
+
+		// Save the raw highlight color
+		localStorage.RawHighlightColor = gRawHighlightColor;
 
 	}
 }
@@ -23837,11 +23847,14 @@ function DeveloperSettings(){
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","DeveloperSettings");
 
+	var oldHighlightColor = gRawHighlightColor;
+
 	// Setup initial values
 	const theData = {
 	  configure_export_delayms: gBatchExportDelayMS,
 	  configure_mp3export_delayms: gBatchMP3ExportDelayMS,
 	  configure_metronome_volume: gMetronomeVolume,
+	  configure_highlight_color: gRawHighlightColor
 	};
 
 	const form = [
@@ -23850,6 +23863,7 @@ function DeveloperSettings(){
 	  {name: "Image Batch Export Delay in milliseconds (default is 200):", id: "configure_export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
 	  {name: "MP3 Batch Export Delay in milliseconds (default is 250):", id: "configure_mp3export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
 	  {name: "Metronome volume (default is 48):", id: "configure_metronome_volume", type:"text", cssClass:"advanced_settings2_form_text"},
+	  {name: "Highlighting color (HTML format) (default is #F00000):", id: "configure_highlight_color", type:"text", cssClass:"advanced_settings2_form_text"},
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
@@ -23884,6 +23898,16 @@ function DeveloperSettings(){
 			if (!isNaN(val)){
 				if ((val >= 0) && (val < 128)){
 					gMetronomeVolume = val;
+				}
+			}
+
+			gRawHighlightColor = args.result.configure_highlight_color;
+
+			// Highlight color changes, needs a re-render
+			if (gRawHighlightColor != oldHighlightColor){
+
+				if (gRawMode){
+					RenderAsync(true,null);
 				}
 			}
 
