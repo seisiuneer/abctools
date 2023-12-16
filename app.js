@@ -17646,9 +17646,6 @@ function PlayPrevious(e){
 
 	if (gPlayABCTuneIndex > 0){
 
-		// Close the current player
-		gTheOKButton.click();
-
 		if (e.shiftKey){
 			gPlayABCTuneIndex = 0;
 		}
@@ -17663,6 +17660,9 @@ function PlayPrevious(e){
 			// This should never happen
 			return;
 		}
+
+		// Close the current player
+		gTheOKButton.click();
 
 		// Pre-process the ABC to inject any requested programs or volumes
 		theSelectedABC = PreProcessPlayABC(theSelectedABC);
@@ -17684,9 +17684,6 @@ function PlayNext(e){
 
 	if (gPlayABCTuneIndex < (gPlayABCTuneCount-1)){
 
-		// Close the current tune
-		gTheOKButton.click();
-
 		if (e.shiftKey){
 			gPlayABCTuneIndex = gPlayABCTuneCount-1;
 		}
@@ -17702,6 +17699,9 @@ function PlayNext(e){
 			return;
 		}
 
+		// Close the current tune
+		gTheOKButton.click();
+
 		// Pre-process the ABC to inject any requested programs or volumes
 		theSelectedABC = PreProcessPlayABC(theSelectedABC);
 
@@ -17711,6 +17711,44 @@ function PlayNext(e){
 		// Play back locally in-tool	
 		PlayABCDialog(theSelectedABC,null,null,null,gUseWidePlayer);
 	}
+}
+
+// 
+// Play a selected tune from the player tune name dropdown
+//
+function PlaySelectedTune(){
+
+	// Get the selected tune index
+	var val = document.getElementById("playertunelist").value;
+
+	val = parseInt(val);
+
+	if (isNaN(val)){
+		return;
+	}
+
+	gPlayABCTuneIndex = val;
+
+	// Try to find the current tune
+	var theSelectedABC = getTuneByIndex(gPlayABCTuneIndex);
+
+	if (theSelectedABC == ""){
+		// This should never happen
+		return;
+	}
+
+	// Close the current tune
+	gTheOKButton.click();
+
+	// Pre-process the ABC to inject any requested programs or volumes
+	theSelectedABC = PreProcessPlayABC(theSelectedABC);
+
+	// Initially normal width
+	gUseWidePlayer = false;
+
+	// Play back locally in-tool	
+	PlayABCDialog(theSelectedABC,null,null,null,gUseWidePlayer);
+
 }
 
 //
@@ -18046,8 +18084,22 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 
 		if (gPlayABCTuneCount > 1){
 
-			modal_msg += '<p id="playerstatus">Tune '+(gPlayABCTuneIndex+1)+' of '+ gPlayABCTuneCount +' </p>';
+			modal_msg += '<p id="playerstatus" class="playerstatus">Tune '+(gPlayABCTuneIndex+1)+' of '+ gPlayABCTuneCount;
 
+			modal_msg += '<br/><select id="playertunelist" onchange="PlaySelectedTune();" title="Select a tune to play from the list">';
+
+			// Have to cache this before calling GetTunebookIndexTitles()
+			totalTunes = CountTunes();
+			var theTuneTitles = GetTunebookIndexTitles();
+			var nTitles = theTuneTitles.length;
+
+			// debugger;
+
+			for (var i=0;i<nTitles;++i){
+				modal_msg += '<option value="'+i+'">'+theTuneTitles[i]+'</option>';
+			}
+            
+          	modal_msg += '</select></p>';
 		}
 
 		modal_msg += '</p>';
@@ -18115,6 +18167,9 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 				elem.disabled = true;
 				elem.style.opacity = 0.25;
 			}
+
+			document.getElementById("playertunelist").value = gPlayABCTuneIndex;
+
 		}
 
 		var format = GetRadioValue("notenodertab");
