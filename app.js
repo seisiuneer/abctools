@@ -108,6 +108,9 @@ var AUTOSCROLLDEBOUNCEMS = 250;
 // For tune autoscroll state
 var gLastAutoScrolledTune = -1;
 
+// Last clicked tune
+var gLastClickedTune = -1;
+
 // Top bar showing?
 var gTopBarShowing = true;
 
@@ -7527,8 +7530,11 @@ function NoteClickListener(abcelem, tuneNumber, classes, analysis, drag, mouseEv
 	// The renderer only adds this callback for the single tune case
 	
 	// Problem is that progressive tune div updates mess up the ABC offset relative to the full tune ABC
-
+	var scrollPos = window.scrollY;
+	
 	setTimeout(function(){
+
+		window.scrollTo(0,scrollPos);
 
 		gTheABC.focus();
 		
@@ -7536,7 +7542,8 @@ function NoteClickListener(abcelem, tuneNumber, classes, analysis, drag, mouseEv
 		
 		var theEnd = abcelem.endChar;
 		
-		ScrollABCTextIntoView(gTheABC,theStart,theEnd);
+		ScrollABCTextIntoView(gTheABC,theStart,theEnd,2);
+
 
 	},10);
 }
@@ -8066,7 +8073,7 @@ function RenderAsync(renderAll,tuneNumber,callback){
 
 function Render(renderAll,tuneNumber) {
 
-	//console.log("Render renderAll="+renderAll+" tuneNumber="+tuneNumber);
+	//console.log("Render renderAll="+renderAll+" tuneNumber="+tuneNumber); //FOOFOO
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
@@ -8336,6 +8343,9 @@ function Render(renderAll,tuneNumber) {
 
 		// Clear last tune highlight tracker
 		gRawLastIndex = -1;
+
+		// Clear the last tune clicked tracker
+		gLastClickedTune = -1;
 
 		gAllowCopy = false;
 
@@ -8761,11 +8771,13 @@ function RestoreDefaults() {
 	gStripTab = false;
 	gTotalTunes = 0;
 	gCurrentTune = 0;
+	gRawLastIndex = -1;
 	gForceFullRender = false;
 	gIsFirstRender = true;
 
 	// Clear the autoscroll state
 	gLastAutoScrolledTune = -1;
+	gLastClickedTune = -1;
 
 	// Reset file selectors
 	let fileElement = document.getElementById('selectabcfile');
@@ -10254,10 +10266,9 @@ function ProcessAddTune(theValue){
 
 //
 // To scroll text into view
-// Set forceTop true to put the selected text at the top of the text area
-// Set forceTop false to scroll to middle of the text area
+// Fraction sets how far down to put the scrolled text as a fraction of the text area height
 //
-function ScrollABCTextIntoView(textarea, selectionStart, selectionEnd) {
+function ScrollABCTextIntoView(textarea, selectionStart, selectionEnd, fraction) {
 
     // First scroll selection region to view
     const fullText = textarea.value;
@@ -10277,8 +10288,8 @@ function ScrollABCTextIntoView(textarea, selectionStart, selectionEnd) {
 
     if (scrollTop > textareaHeight){
 
-        // scroll selection to center of textarea
-        scrollTop -= textareaHeight / 2;
+        // scroll selection to specific fraction of textarea
+        scrollTop -= textareaHeight / fraction;
 
     } else{
 
@@ -10312,20 +10323,22 @@ function RenderDivClickHandler(e){
 		if (clickedTune != ""){
 
 			var clickedTuneIndex = parseInt(clickedTune);
+			
+			//console.log("clickedTuneIndex = "+clickedTuneIndex+" gLastClickedTune = "+gLastClickedTune);
+
+			if (clickedTuneIndex == gLastClickedTune){
+				return;
+			}
+
+			gLastClickedTune = clickedTuneIndex;
 
 			var tuneOffset = findTuneOffsetByIndex(clickedTuneIndex);
-
-			//console.log("Tune index = "+clickedTuneIndex+" offset = "+tuneOffset);
-
-			// Scroll to the middle of the tune
-			var theTune = getTuneByIndex(clickedTuneIndex);
-
-			tuneOffset += (theTune.length / 2);
 
 			if (!gIsMaximized){
 
 				// Scroll the tune ABC into view
-			    gTheABC.selectionEnd = gTheABC.selectionStart = tuneOffset;
+			    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
+
 		    	gTheABC.blur();
 		    	gTheABC.focus();
 
@@ -10339,7 +10352,6 @@ function RenderDivClickHandler(e){
 		    }
 		}
 	}
-
 }
 
 // 
@@ -13965,7 +13977,7 @@ function MakeTuneVisible(forceUpdate){
 		// console.log("------------------------------------");
 		// console.log("------------------------------------");
 
-		// console.log("MakeTuneVisible tuneIndex = "+tuneIndex+" forceUpdate = "+forceUpdate+" gCurrentTune before = "+gCurrentTune);
+		//console.log("MakeTuneVisible tuneIndex = "+tuneIndex+" forceUpdate = "+forceUpdate+" gCurrentTune before = "+gCurrentTune);
 
 		// Save the current tune index
 		gCurrentTune = tuneIndex;
@@ -14044,7 +14056,7 @@ function MakeTuneVisible(forceUpdate){
 			// Handle case where the tune changed since an autoscroll, force a rescroll
 			if ((tuneIndex != gLastAutoScrolledTune) || forceUpdate){
 
-				// console.log("Trigger autoscroll case #1 - selected a different tune or forceUpdate = "+forceUpdate);
+				//console.log("Trigger autoscroll case #1 - selected a different tune or forceUpdate = "+forceUpdate); 
 
 				var newScrollPos = theTuneTop-theNotationSpacerHeight;
 
@@ -14057,7 +14069,7 @@ function MakeTuneVisible(forceUpdate){
 
 				if (!(tuneTopVisible || tuneBottomVisible || tuneOverflowsVisible)){
 
-					// console.log("Trigger autoscroll case #2, tune completely invisible whether current or newly selected tune");
+					//console.log("Trigger autoscroll case #2, tune completely invisible whether current or newly selected tune"); 
 
 					var newScrollPos = theTuneTop-theNotationSpacerHeight;
 
@@ -26111,6 +26123,7 @@ function DoStartup() {
 	gShowTabNames = true;
 	gAllowShowTabNames = false;
 	gLastAutoScrolledTune = -1;
+	gLastClickedTune = -1;
 	gTopBarShowing = true;
 	gCurrentTune = 0;
 	gTotalTunes = 0;
