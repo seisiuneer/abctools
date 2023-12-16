@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-                        
+                      
         <style>
         p {
         font-size:14pt;
@@ -207,6 +207,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#top_bar_buttons">Top Bar Buttons</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#abc_editor">ABC Editor</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#abc_editor_resize">Resizing the ABC Editor</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#highlighting">Notation and ABC Highlighting</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#viewing_the_notation_full_screen">Viewing the Notation Full Screen</a></p>
                 </div>
                 
@@ -419,19 +420,18 @@
             <div class="image_holder">
                 <img style="width:700px;" src="img/overview_5.jpg"/>
             </div>
-            <p>Click the <strong>?</strong> at the top-left of the window or any dialog to open the related User Guide topic in a new browser tab.</p>
-            <p>When notation is present, click the zoom arrows at the top-right of the window to view the notation full screen.</p>
-            <p>If you are seeing the notation below the ABC editor area, or the welcome dialog is taller than the screen, try zooming out your browser view by pressing:</p>
+            <p><strong>On a desktop browser, if you are seeing a single column view with the ABC editor at the top and the notation below, or the welcome dialog is taller than the screen, try zooming your browser view out using the following keystrokes:</strong></p>
             <p><strong>Windows:&nbsp;&nbsp;Ctrl -</strong></p>
             <p><strong>Mac:&nbsp;&nbsp;⌘ -</strong></p>
-            <p>On iOS and Android devices the ABC editor will always be on the top half of the screen and the notation below.</p>
+            <p>Note: On iOS and Android devices the tool runs in a portrait-mode single-column layout with the ABC editor on the top and the notation below.</p>
+            <p>Click the <strong>?</strong> at the top-left of the window or any dialog to open the related User Guide topic in a new browser tab.</p>
+            <p>When notation is present, click the zoom arrows at the top-right of the window to view the notation full screen.</p>
+            <p>Most features in the tool have tool tips you can view by hovering your mouse cursor over the button or other control.</p>
             <hr class="hidden-print" id="top_bar_buttons">
             <h1 class="page_break_always">Top Bar Buttons<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder">
                 <img style="width:700px;" src="img/topbar_2.jpg"/>
             </div>
-            <p>Hover your mouse over any button or control in the tool to show a tooltip with a detailed explanation of what it does.</p>
-            <p>The tooltip will tell you exactly what the button or control does for all Shift/Alt combinations.</p>
             <hr>
             <p class="page_break_always"></p>
             <p><strong>Open</strong> - The tool supports opening both ABC and MusicXML files.</p>
@@ -493,21 +493,11 @@
             <hr>
             <p><strong>Play</strong>  - Opens the ABC Player where you can play the current tune. Full details below in the <a style="text-decoration:none;" href="#playing_your_tunes">Playing Your Tunes</a> section.</p>
             <hr>
-            <p><strong>Highlighting On/Off</strong> - Toggles Notation/ABC automatic highlighting.</p>
-            <p>This feature can only be turned on in desktop browsers.</p>
-            <div class="image_holder_p">
-                <img style="width:700px;" src="img/highlighting_1.jpg"/>
-            </div>
-            <p>When highlighting is turned on:</p> 
-            <p>- Select ABC text to highlight the corresponding notes in red in the notation.</p>
-            <p>- Click any element in the notation to select the corresponding ABC text in the editor.</p>
-            <p>- Highlighting requires redrawing all tunes on each change to the ABC.</p>
-            <p>- This may be slow on large numbers of tunes.</p>
-            <p>- All pre-processing of the ABC at notation drawing time is turned off. Any hiding of Annotations/Text/Chords selected in the Advanced dialog as well as automatic injection of staff separation space will be disabled. Your settings will be restored when you turn highlighting off.</p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/3YsY-ReSt2k" title="Highlighting demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p><strong>Highlighting On/Off</strong> - Toggles Notation/ABC automatic highlighting On/Off.</p>
+            <p>Full details below in the <a href="#highlighting">Notation and ABC Highlighting</a> section.</p>
             <hr>
             <p><strong>Settings</strong>  - Brings up the default playback instruments and other tool-wide settings dialog.</p>
-            <p>Full details in the <a href="#settings_dialog">ABC Transcription Tools Settings</a> section.</p>
+            <p>Full details below in the <a href="#settings_dialog">ABC Transcription Tools Settings</a> section.</p>
             <hr>
             <p><strong>▲/▼</strong> - Click this to hide/show the header at the top and any visible controls below the ABC text area so you can have more room to work on your music.</p>
             <hr class="hidden-print" id="abc_editor">
@@ -523,12 +513,26 @@
             <p><strong>Note:</strong> The tune autoscroll features are <strong>not</strong> available on iOS or Android devices.</p>
             <hr class="hidden-print" id="abc_editor_resize">
             <h1 class="page_break_always">Resizing the ABC Editor<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>On desktop systems, the ABC text area can be resized by dragging the lower right corner.</p>
+            <p>On desktop browsers, the ABC text area can be resized by dragging the lower right corner.</p>
             <p>When you resize the text area while in the "side-by-side" display mode, the notation will slide over to the right as much as it can:</p>
             <div class="image_holder_p">
                 <img src="img/dynamic_resize_2.jpg"/>
             </div>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/zwdsEXrKIp0" title="Dynamic resize demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <hr class="hidden-print" id="highlighting">
+            <h1 class="page_break_always">Notation and ABC Highlighting<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>Notation and ABC Highlighting can be toggled On/Off by clicking the <strong>Highlighting On/Off</strong> button in the top toolbar.</p>
+            <div class="image_holder_p">
+                <img style="width:700px;" src="img/highlighting_1.jpg"/>
+            </div>
+            <p>When Highlighting is turned on:</p> 
+            <p>- Select ABC text to highlight the corresponding notes in red in the notation.</p>
+            <p>- Click any element in the notation to select the corresponding ABC text in the editor.</p>
+            <p>- Highlighting requires redrawing all tunes on each change to the ABC.</p>
+            <p>- This may be slow on large numbers of tunes.</p>
+            <p>- All pre-processing of the ABC at notation drawing time is turned off. Any hiding of Annotations/Text/Chords selected in the Advanced dialog as well as automatic injection of staff separation space will be disabled. Your settings will be restored when you turn highlighting off.</p>
+            <p>This feature is only available for desktop browsers.</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/3YsY-ReSt2k" title="Highlighting demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <hr class="hidden-print" id="viewing_the_notation_full_screen">
             <h1 class="page_break_always">Viewing the Notation Full Screen<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder">

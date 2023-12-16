@@ -7638,7 +7638,7 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 			params.selectTypes = true;
 
 			// Set the selection highlight color
-			params.selectionColor = "#E00000";
+			params.selectionColor = "#F00000";
 
 			// selectTypes options are:
 			// 	"author"
@@ -10227,12 +10227,14 @@ function ProcessAddTune(theValue){
 
 		UpdateNotationTopPosition();
 
+		var nTunes = CountTunes();
+
 		// No autoscroll on mobile
 		if (isMobileBrowser()){
-			return;
-		}
 
-		var nTunes = CountTunes();
+			gCurrentTune = nTunes-1;
+
+		}
 
 		var theTune = getTuneByIndex(nTunes-1);
 
@@ -10242,6 +10244,11 @@ function ProcessAddTune(theValue){
 
 			// Scroll the tune ABC into view
 		    gTheABC.selectionEnd = gTheABC.selectionStart = tuneOffset;
+
+		    if (isMobileBrowser()){
+		    	return;
+		    }
+		    
 	    	gTheABC.blur();
 	    	gTheABC.focus();
 
