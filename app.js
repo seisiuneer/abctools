@@ -10242,12 +10242,12 @@ function ProcessAddTune(theValue){
 
 		var theTune = getTuneByIndex(nTunes-1);
 
-		var tuneOffset = theOriginalLength+(theTune.length / 2);
+		var tuneOffset = gTheABC.value.length-theTune.length;
 
 		if (!gIsMaximized){
 
 			// Scroll the tune ABC into view
-		    gTheABC.selectionEnd = gTheABC.selectionStart = tuneOffset;
+		    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
 
 		    if (isMobileBrowser()){
 		    	return;
@@ -10338,6 +10338,10 @@ function RenderDivClickHandler(e){
 
 				// Scroll the tune ABC into view
 			    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
+
+			    if (isMobileBrowser()){
+			    	return;
+			    }
 
 		    	gTheABC.blur();
 		    	gTheABC.focus();
@@ -13474,6 +13478,11 @@ function DoMinimize(){
 
 				// Scroll the tune ABC into view
 			    gTheABC.selectionEnd = gTheABC.selectionStart = gRenderDivClickOffset;
+
+			    if (isMobileBrowser()){
+			    	return;
+			    }
+
 		    	gTheABC.blur();
 		    	gTheABC.focus();
 
@@ -24751,12 +24760,17 @@ function DoFileRead(file,doAppend){
 
 										var theTune = getTuneByIndex(nTunes-1);
 
-										var tuneOffset = gTheABC.value.length-(theTune.length / 2);
+										var tuneOffset = gTheABC.value.length-theTune.length;
 
 										if (!gIsMaximized){
 
 											// Scroll the tune ABC into view
-										    gTheABC.selectionEnd = gTheABC.selectionStart = tuneOffset;
+										    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
+
+										    if (isMobileBrowser()){
+										    	return;
+										    }
+
 									    	gTheABC.blur();
 									    	gTheABC.focus();
 
@@ -24899,12 +24913,17 @@ function DoFileRead(file,doAppend){
 
 							var theTune = getTuneByIndex(nTunes-1);
 
-							var tuneOffset = gTheABC.value.length-(theTune.length / 2);
+							var tuneOffset = gTheABC.value.length-theTune.length;
 
 							if (!gIsMaximized){
 
 								// Scroll the tune ABC into view
-							    gTheABC.selectionEnd = gTheABC.selectionStart = tuneOffset;
+							    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
+
+							    if (isMobileBrowser()){
+							    	return;
+							    }
+
 						    	gTheABC.blur();
 						    	gTheABC.focus();
 
