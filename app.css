@@ -2972,8 +2972,9 @@ font-family:helvetica;
 font-size:12pt;
 line-height:36pt;
 position:absolute;
-left:30px;
+right:30px;
 bottom:-12px;
+text-align:right;
 }
 
 .playerstatus>select{
