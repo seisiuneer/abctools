@@ -146,7 +146,7 @@ opacity: 0.4;
 
 .toggleadvancedcontrols{
 margin-left:0px;
-margin-right:24px;
+margin-right:22px;
 }
 
 @media (hover: hover) {
@@ -157,7 +157,7 @@ margin-right:24px;
 
 .togglesharecontrols{
 margin-left:0px;
-margin-right:23px;
+margin-right:21px;
 }
 
 @media (hover: hover) {
@@ -231,7 +231,7 @@ padding:12px;}
 
 .snapshotbutton{
 margin-left: 0px;
-margin-right: 23px;
+margin-right: 22px;
 }
 
 @media (hover: hover) {
@@ -242,7 +242,7 @@ margin-right: 23px;
 
 .restorebutton{
 margin-left: 0px;
-margin-right: 24px;
+margin-right: 22px;
 }
 
 @media (hover: hover) {
@@ -2977,7 +2977,16 @@ bottom:-12px;
 text-align:right;
 }
 
-.playerstatus>select{
+#playerstatus_left {
+font-family:helvetica;
+font-size:12pt;
+line-height:36pt;
+position:absolute;
+left:30px;
+bottom:-12px;
+}
+
+.playerstatus>select, .playerstatus_left>select{
 display:inline;
 -webkit-appearance: none;
 -moz-appearance: none;

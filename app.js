@@ -74,7 +74,7 @@ var gAllowQRCodeSave = false
 
 var gShowAllControls = false;
 
-var gAllowControlToggle = false
+var gAllowControlToggle = false;
 
 var gAllowFilterAnnotations = false;
 var gAllowFilterText = false;
@@ -271,6 +271,9 @@ var gRawIsDragging = false;
 var gRawLastIndex = -1;
 var gRawFirstTime = true;
 var gRawHighlightColor = "#F00000";
+
+// Left-handed player status
+var gPlayerStatusOnLeft = false;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -18090,7 +18093,14 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 
 		if (gPlayABCTuneCount > 1){
 
-			modal_msg += '<p id="playerstatus" class="playerstatus"><input id="abcplayer_previousbutton" class="abcplayer_previousbutton btn btn-playerprevious" onclick="PlayPrevious(event);" type="button" value="&nbsp;←&nbsp;" title="Play the previous tune.&nbsp;&nbsp;Shift-click to jump to the first tune.">Tune '+(gPlayABCTuneIndex+1)+' of '+ gPlayABCTuneCount+'<input id="abcplayer_nextbutton" class="abcplayer_nextbutton btn btn-playernext" onclick="PlayNext(event);" type="button" value="&nbsp;→&nbsp;" title="Play the next tune.&nbsp;&nbsp;Shift-click to jump to the last tune.">';
+			if (gPlayerStatusOnLeft){
+				modal_msg += '<p id="playerstatus_left" class="playerstatus_left">';
+			}
+			else{
+				modal_msg += '<p id="playerstatus" class="playerstatus">';
+			}
+
+			modal_msg += '<input id="abcplayer_previousbutton" class="abcplayer_previousbutton btn btn-playerprevious" onclick="PlayPrevious(event);" type="button" value="&nbsp;←&nbsp;" title="Play the previous tune.&nbsp;&nbsp;Shift-click to jump to the first tune.">Tune '+(gPlayABCTuneIndex+1)+' of '+ gPlayABCTuneCount+'<input id="abcplayer_nextbutton" class="abcplayer_nextbutton btn btn-playernext" onclick="PlayNext(event);" type="button" value="&nbsp;→&nbsp;" title="Play the next tune.&nbsp;&nbsp;Shift-click to jump to the last tune.">';
 
 			modal_msg += '<br/><select id="playertunelist" onchange="PlaySelectedTune();" title="Select a tune to play from the list">';
 
@@ -22389,6 +22399,12 @@ function GetInitialConfigurationSettings(){
 		gForceLeftJustifyTitles = (val == "true");
 	}
 
+	gPlayerStatusOnLeft = false;
+	val = localStorage.PlayerStatusOnLeft;
+	if (val){
+		gPlayerStatusOnLeft = (val == "true");
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -22525,6 +22541,9 @@ function SaveConfigurationSettings(){
 
 		// Save the force left-justify titles setting
 		localStorage.ForceLeftJustifyTitles = gForceLeftJustifyTitles;
+
+		// Save the player status on left
+		localStorage.PlayerStatusOnLeft = gPlayerStatusOnLeft;
 
 	}
 }
@@ -23402,7 +23421,7 @@ function SharingControlsDialog(){
 	sendGoogleAnalytics("dialog","SharingControlsDialog");
 
 	// Moving the advanced controls to their own dialog
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">ABC Transcription Tools Sharing Controls&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#sharing_controls" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>';
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Sharing Controls&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#sharing_controls" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>';
 	modal_msg += '<div id="sharing-controls-dialog">';
 	modal_msg += '<p style="margin-top:28px;">';
 	modal_msg += '<input id="testurl" class="urlcontrols btn btn-urlcontrols" onclick="TestShareURL()" type="button" value="Test Share URL" title="Opens the Share URL in a new tab">';
@@ -23816,11 +23835,8 @@ function AdvancedControlsDialog(){
 	// Keep track of advanced controls dialog
 	sendGoogleAnalytics("dialog","AdvancedControlsDialog");
 
-	// Set global flag that we're in the advanced controls dialog
-	gInAdvancedSettingsDialog = true;
-
 	// Moving the advanced controls to their own dialog
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">ABC Transcription Tools Advanced Controls&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_controls" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>';
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">More ABC Tools&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#more_tools" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>';
 	modal_msg += '<div id="advanced-controls-dialog">';
 	
 	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">Show/Hide ABC Features</p>'
@@ -23883,9 +23899,6 @@ function AdvancedControlsDialog(){
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 700,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 					
-		// Clear advanced controls dialog flag
-		gInAdvancedControlsDialog = false;
-
 		});
 
 	// Change button label for export all for whistle
@@ -23906,76 +23919,120 @@ function AdvancedControlsDialog(){
 }
 
 //
-// Backdoor developer settings
+// Backdoor advanced settings
 //
-function DeveloperSettings(){
+function AdvancedSettings(){
 
 	// Keep track of dialogs
-	sendGoogleAnalytics("dialog","DeveloperSettings");
+	sendGoogleAnalytics("dialog","AdvancedSettings");
 
 	var oldHighlightColor = gRawHighlightColor;
 
 	// Setup initial values
-	const theData = {
-	  configure_export_delayms: gBatchExportDelayMS,
-	  configure_mp3export_delayms: gBatchMP3ExportDelayMS,
-	  configure_metronome_volume: gMetronomeVolume,
-	  configure_highlight_color: gRawHighlightColor,
-	};
+	var theData;
 
-	const form = [
-	  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Developer Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#developer_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
-	  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;"><strong>Only change these values if you know what you are doing!</strong></p>'},
-	  {name: "Image Batch Export Delay in milliseconds (default is 200):", id: "configure_export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
-	  {name: "MP3 Batch Export Delay in milliseconds (default is 250):", id: "configure_mp3export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
-	  {name: "Metronome volume (default is 48):", id: "configure_metronome_volume", type:"text", cssClass:"advanced_settings2_form_text"},
-	  {name: "Highlighting color (HTML format) (default is #F00000):", id: "configure_highlight_color", type:"text", cssClass:"advanced_settings2_form_text"},
-	];
+	var form;
+
+	if (isDesktopBrowser()){
+
+		theData = {
+		  configure_export_delayms: gBatchExportDelayMS,
+		  configure_mp3export_delayms: gBatchMP3ExportDelayMS,
+		  configure_metronome_volume: gMetronomeVolume,
+		  configure_highlight_color: gRawHighlightColor,
+		  configure_player_status_on_left: gPlayerStatusOnLeft
+		};
+
+		form = [
+		  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Advanced Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
+		  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;"><strong>Only change these values if you know what you are doing!</strong></p>'},
+		  {name: "Image Batch Export Delay in milliseconds (default is 200):", id: "configure_export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
+		  {name: "MP3 Batch Export Delay in milliseconds (default is 250):", id: "configure_mp3export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
+		  {name: "Metronome volume (default is 48):", id: "configure_metronome_volume", type:"text", cssClass:"advanced_settings2_form_text"},
+		  {name: "Highlighting color (HTML format) (default is #F00000):", id: "configure_highlight_color", type:"text", cssClass:"advanced_settings2_form_text"},
+	  	  {name: "          Player tunebook navigation controls on left side", id: "configure_player_status_on_left", type:"checkbox", cssClass:"advanced_settings2_form_text"},
+		];
+
+	}
+	else{
+
+		theData = {
+		  configure_metronome_volume: gMetronomeVolume,
+		  configure_player_status_on_left: gPlayerStatusOnLeft
+		};
+
+		form = [
+		  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Advanced Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
+		  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;"><strong>Only change these values if you know what you are doing!</strong></p>'},
+		  {name: "Metronome volume (default is 48):", id: "configure_metronome_volume", type:"text", cssClass:"advanced_settings2_form_text"},
+	  	  {name: "          Player tunebook navigation controls on left side", id: "configure_player_status_on_left", type:"checkbox", cssClass:"advanced_settings2_form_text"},
+		];
+
+	}
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
 
-			var val = args.result.configure_export_delayms;
+			if (isDesktopBrowser()){
+				var val = args.result.configure_export_delayms;
 
-			val = parseInt(val);
+				val = parseInt(val);
 
-			if (!isNaN(val)){
-				if (val >= 0){
-					gBatchExportDelayMS = val;
+				if (!isNaN(val)){
+					if (val >= 0){
+						gBatchExportDelayMS = val;
+					}
 				}
-			}
 
-			val = args.result.configure_mp3export_delayms;
+				val = args.result.configure_mp3export_delayms;
 
-			val = parseInt(val);
+				val = parseInt(val);
 
-			if (!isNaN(val)){
-				if (val >= 0){
-					gBatchMP3ExportDelayMS = val;
+				if (!isNaN(val)){
+					if (val >= 0){
+						gBatchMP3ExportDelayMS = val;
+					}
 				}
-			}
 
-			val = args.result.configure_metronome_volume;
+				val = args.result.configure_metronome_volume;
 
-			val = parseInt(val);
+				val = parseInt(val);
 
-			if (!isNaN(val)){
-				if ((val >= 0) && (val < 128)){
-					gMetronomeVolume = val;
+				if (!isNaN(val)){
+					if ((val >= 0) && (val < 128)){
+						gMetronomeVolume = val;
+					}
 				}
+
+				gPlayerStatusOnLeft = args.result.configure_player_status_on_left;
+
+				gRawHighlightColor = args.result.configure_highlight_color;
+
+				// Do we need to re-render?
+				if (gRawMode && (gRawHighlightColor != oldHighlightColor)){
+					
+					RenderAsync(true,null);
+					
+				}
+
 			}
+			else{
 
-			gRawHighlightColor = args.result.configure_highlight_color;
+				var val = args.result.configure_metronome_volume;
 
-			// Do we need to re-render?
-			if (gRawMode && (gRawHighlightColor != oldHighlightColor)){
-				
-				RenderAsync(true,null);
-				
+				val = parseInt(val);
+
+				if (!isNaN(val)){
+					if ((val >= 0) && (val < 128)){
+						gMetronomeVolume = val;
+					}
+				}
+
+				gPlayerStatusOnLeft = args.result.configure_player_status_on_left;
+
 			}
-
 
 			// Save the settings, in case they were initialized
 			SaveConfigurationSettings();
@@ -24127,12 +24184,7 @@ function ConfigureToolSettings() {
 		form.push({name: "    Allow MIDI input for ABC text entry", id: "configure_allow_midi_input", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 	};
 
-	if (isDesktopBrowser()){
-		form.push({html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Font Settings" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML Settings" title="Configure MusicXML import parameters"><input id="configure_developer_settings" class="btn btn-subdialog configure_developer_settings" onclick="DeveloperSettings()" type="button" value="Developer Settings" title="Configure Developer Settings"></p>'});	
-	}
-	else{
-		form.push({html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Font Settings" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML Settings" title="Configure MusicXML import parameters"></p>'});	
-	}  
+	form.push({html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Font Settings" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML Settings" title="Configure MusicXML import parameters"><input id="configure_developer_settings" class="btn btn-subdialog configure_developer_settings" onclick="AdvancedSettings()" type="button" value="Advanced Settings" title="Configure low level tool settings"></p>'});	
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 780, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 

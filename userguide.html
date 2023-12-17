@@ -227,15 +227,15 @@
                     <p class="toc"><a style="text-decoration:none;" href="#basic_tablature">Notation and Tablature Display</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#basic_transpose">Transpose Controls</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#basic_snapshot">Saving and Restoring Snapshots</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#basic_advanced">Showing Advanced Features and Controls</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#basic_more_tools">Showing More ABC Tools</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#basic_sharing">Showing Share Controls</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#basic_clear">Clearing the ABC Editor</a></p>
                 </div>
                 
-                <button class="accordion" title="Click to expand/collapse this section">Advanced Controls and Features</button>
+                <button class="accordion" title="Click to expand/collapse this section">More ABC Tools</button>
                 <div class="tocpanel">
                     
-                    <p class="toc"><a style="text-decoration:none;" href="#advanced_controls">Advanced Controls and Features</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#more_tools">More ABC Tools</a></p>
                     
                     <button class="accordion" title="Click to expand/collapse this section">Hiding/Showing ABC Annotations, Text, and Chords</button>
                     <div class="tocpanel">
@@ -293,7 +293,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#settings_dialog">ABC Transcription Tools Settings</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#midi_input">Typing ABC Using a MIDI Input Device</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#configure_fonts">Configuring ABC Rendering Fonts</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#developer_settings">Developer Settings</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#advanced_settings">Advanced Settings</a></p>
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">Selecting Playback Instruments</button>
@@ -417,7 +417,7 @@
             <p>On desktop browsers, when the tool is run, you should be seeing a side-by-side view with the ABC editor on the left and the notation on the right:</p>
             <br/>
             <div class="image_holder">
-                <img style="width:700px;" src="img/overview_5.jpg"/>
+                <img style="width:700px;" src="img/overview_6.jpg"/>
             </div>
             <p><strong>On a desktop browser, if you are seeing a single column view with the ABC editor at the top and the notation below, or the welcome dialog is taller than the screen, try zooming your browser view out using the following keystrokes:</strong></p>
             <p><strong>Windows:&nbsp;&nbsp;Ctrl -</strong></p>
@@ -515,21 +515,21 @@
             <p>On desktop browsers, the ABC text area can be resized by dragging the lower right corner.</p>
             <p>When you resize the text area while in the "side-by-side" display mode, the notation will slide over to the right as much as it can:</p>
             <div class="image_holder_p">
-                <img src="img/dynamic_resize_2.jpg"/>
+                <img src="img/dynamic_resize_3.jpg"/>
             </div>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/zwdsEXrKIp0" title="Dynamic resize demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <hr class="hidden-print" id="highlighting">
             <h1 class="page_break_always">Notation and ABC Highlighting<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Notation and ABC Highlighting can be toggled On/Off by clicking the <strong>Highlighting On/Off</strong> button in the top toolbar.</p>
             <div class="image_holder_p">
-                <img style="width:700px;" src="img/highlighting_1.jpg"/>
+                <img style="width:700px;" src="img/highlighting_2.jpg"/>
             </div>
             <p>When Highlighting is turned on:</p> 
             <p>- Select ABC text to highlight the corresponding notes in red in the notation.</p>
             <p>- Click any element in the notation to select the corresponding ABC text in the editor.</p>
             <p>- Highlighting requires redrawing all tunes on each change to the ABC.</p>
             <p>- This may be slow on large numbers of tunes.</p>
-            <p>- All pre-processing of the ABC at notation drawing time is turned off. Any hiding of Annotations/Text/Chords selected in the Advanced dialog as well as automatic injection of staff separation space will be disabled. Your settings will be restored when you turn highlighting off.</p>
+            <p>- All pre-processing of the ABC at notation drawing time is turned off. Any hiding of Annotations/Text/Chords selected in the More ABC Tools dialog as well as automatic injection of staff separation space will be disabled. Your settings will be restored when you turn highlighting off.</p>
             <p>This feature is only available for desktop browsers.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/3YsY-ReSt2k" title="Highlighting demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <hr class="hidden-print" id="viewing_the_notation_full_screen">
@@ -560,6 +560,7 @@
             <p>Shift-click on <strong>&nbsp;←&nbsp;</strong> to jump to the first tune, shift-click on <strong>&nbsp;→&nbsp;</strong> to jump to the last tune.</p>
             <p>The text in the lower right corner shows you the tune number of the current tune in the tunebook and the total number of tunes.</p>
             <p>You may also select a tune in the tunebook by title from the pop-up list and the player will switch to that tune.</p>
+            <p>In the <strong>Advanced Settings</strong> dialog there is an option to have the tunebook navigation controls on the left instead of the right.</p>
             <p>Click <strong>Export Audio or Image</strong> to bring up a dialog where you can export your tune in various audio, MIDI, and image formats.</p>
             <p>Full details below in the <a style="text-decoration:none;" href="#export_audio_image">Exporting Tune Audio or Image Files</a> section.</p>
             <p>Click <strong>Start Tune Trainer</strong> to bring up the Tune Trainer.</p>
@@ -611,7 +612,7 @@
             <p><strong>Save as MP3 File</strong>: Saves the audio for the current tune to your system.</p>
             <p>The bitrate for the MP3 file is set in the <strong>Settings</strong> dialog. Default is: 192 kbit/sec.</p>
             <p>This operation may take some time. The button label changes to <strong>Encoding .MP3</strong> while the audio is being encoded.</p>
-            <p>To download all the tunes at once in .MP3 format with repeats and optional two-bar click intros, use the <strong>Export all Tunes as .MP3</strong> feature in the <a style="text-decoration:none;" href="#advanced_controls">Advanced Controls</a> dialog.</p>
+            <p>To download all the tunes at once in .MP3 format with repeats and optional two-bar click intros, use the <strong>Export all Tunes as .MP3</strong> feature in the <a style="text-decoration:none;" href="#more_tools">More ABC Tools</a> dialog.</p>
             <hr>
             <p><strong>Save as MIDI File</strong>: Saves a MIDI file for the current tune to your system:</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/1o3HZD7afL8" title="Download MIDI demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
@@ -712,7 +713,7 @@
             <p>Note: For notes that go below D on of the whistle (lowest note supported is the G below middle-C), the suggested "folded" octave-up fingerings are shown.</p>
             <p style="margin-top:24px;margin-bottom: 12px;"><strong>These buttons perform common operations on the ABC:</strong></p>
             <div class="image_holder" style="margin-top:24px">
-                <img style="width:700px;" src="img/ug5c.jpg"/>
+                <img style="width:700px;" src="img/bottom_toolbar_1.jpg"/>
             </div>
             <p>Up to 8 voices may be displayed with tablature.</p>
             <p id="basic_transpose"><strong>Transpose Down</strong> - Transposes the selected tunes down one semitone. Shift-click transposes down one full step. Alt-click transposes down one octave.</p>
@@ -724,14 +725,14 @@
             <p>If you save a snapshot and leave the tool, the next time you run the tool the snapshot will be available to restore by either clicking the <strong>Restore</strong> button on the main toolbar or the <strong>Restore from Snapshot</strong> button in the <strong>Add</strong> dialog.</p>
             <p><strong>Restore</strong> - If one is available, replaces the current contents of the ABC editor with the last saved snapshot from browser storage.</p>
             <p>Since it completely replaces the contents of the ABC editor, you will be asked to confirm the operation.</p>
-            <p id="basic_advanced"><strong>Advanced</strong> - Shows the <a style="text-decoration:none;" href="#advanced_controls">Advanced Controls</a> dialog with several additional ABC filtering and display controls.</p>
+            <p id="basic_more_tools"><strong>More Tools</strong> - Shows the <a style="text-decoration:none;" href="#more_tools">More ABC Tools</a> dialog with several additional ABC filtering and display controls.</p>
             <p id="basic_sharing"><strong>Sharing</strong> - Shows the <a style="text-decoration:none;" href="#sharing_controls">Sharing Controls</a> dialog with options for sharing your tunes via a share URL or QR code.</p>
             <p id="basic_clear"><strong>Clear</strong> - Clears the ABC Editor so you can start over.</p>
-            <hr class="hidden-print" id="advanced_controls">
-            <h1 class="page_break_always">Advanced Controls and Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>Clicking the <strong>Advanced</strong> button brings up the ABC Transcription Tools Advanced Controls and Features dialog:</p>
+            <hr class="hidden-print" id="more_tools">
+            <h1 class="page_break_always">More ABC Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
             <div class="image_holder_p">
-                <img src="img/advanced_controls_29.jpg"/>
+                <img src="img/more_abc_tools_1.jpg"/>
             </div>
             <p>Click the <strong>?</strong> at the top-left to bring up this section of the user guide in a new browser tab.</p>
             <hr class="hidden-print" id="advanced_showhidefeatures">
@@ -909,8 +910,8 @@
             <p><strong>To Fix:</strong></p>
             <p><strong>Add a |: repeat bar at the start of the tune and regenerate the .MP3 file.</strong></p>
             <p>If you have tunes with chords, you can quickly create a backing track playing continously multiple times through the tune:</p>
-            <p><strong>1:</strong> Mute the melody for all the tunes by clicking the <strong>Inject MIDI Melody</strong> button in the <strong>Advanced Controls</strong> dialog and select the Mute program.</p>
-            <p><strong>2:</strong> Export all the tunes in the tunebook to .MP3 by clicking <strong>Export all as .MP3 Audio</strong> in the <strong>Advanced Controls</strong> <strong>Export All Audio or Images</strong> dialog, and when prompted enter the number of times through each tune.</p>
+            <p><strong>1:</strong> Mute the melody for all the tunes by clicking the <strong>Inject MIDI Melody</strong> button in the <strong>More ABC Tools</strong> dialog and select the Mute program.</p>
+            <p><strong>2:</strong> Export all the tunes in the tunebook to .MP3 by clicking <strong>Export all as .MP3 Audio</strong> in the <strong>More ABC Tools</strong> <strong>Export All Audio or Images</strong> dialog, and when prompted enter the number of times through each tune.</p>
             <hr>
             <p><strong>Export all as JPEG</strong>: Exports all the tunes in the ABC area as individual JPEG bitmap images.</p>
             <p>Image width is set from the <strong>Image width to export:</strong> value.</p>
@@ -960,7 +961,7 @@
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder_p">
-                <img src="img/abc_transcription_tool_settings_33.jpg"/>
+                <img src="img/abc_transcription_tool_settings_34.jpg"/>
             </div>
             <p><strong>Save an Auto-Snapshot on browser tab close or reload? (Restore it from the Add dialog)</strong> - (Desktop browsers only) When enabled, saves an Auto-Snapshot when closing or reloading the browser tab the tool is running in.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/pp6fD2NOKtw" title="Auto-Snapshots" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
@@ -1042,8 +1043,8 @@
             <p><strong>Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for tablature injection.</p>
             <p><strong>MusicXML Settings</strong> - Brings up a dialog where you can configure all parameters for MusicXML import.</p>
             <p>Details on MusicXML import settings below in the <a style="text-decoration:none;" href="#musicxml">MusicXML Import Settings</a> section.</p>
-            <p><strong>Developer Settings</strong> - (Desktop browsers only) Brings up a dialog where you can configure low level developer settings.</p>
-            <p>Details on the Developer settings below in the <a style="text-decoration:none;" href="#developer_settings">Developer Settings</a> section.</p>
+            <p><strong>Advanced Settings</strong> - Brings up a dialog where you can configure low level tool features and settings.</p>
+            <p>Details on the advanced settings below in the <a style="text-decoration:none;" href="#advanced_settings">Advanced Settings</a> section.</p>
             <hr class="hidden-print" id="midi_input">
             <h1 class="page_break_always">Typing ABC Using a MIDI Input Device<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>If your browser supports MIDI input, you will find this additional option in the settings dialog: <strong>Allow MIDI input for ABC text entry</strong></p>
@@ -1094,20 +1095,22 @@
             <p>Click <strong>Load from File</strong> to load the ABC rendering font settings from a previously saved file.</p>
             <p>Click <strong>Reset to Default</strong> to reset the ABC rendering font settings to their original defaults.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/UpVXfi4bF3g" title="Configure ABC Rendering Fonts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <hr class="hidden-print" id="developer_settings">
-            <h1 class="page_break_always">Developer Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <hr class="hidden-print" id="advanced_settings">
+            <h1 class="page_break_always">Advanced Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">
-                <img src="img/developer_settings_10.jpg"/>
+                <img src="img/advanced_settings_1.jpg"/>
             </div>
-            <p>These settings are available by clicking the <strong>Developer Settings</strong> button at the bottom of the main <strong>Settings</strong> dialog and are only available on desktop browsers.</p>
+            <p>These settings are available by clicking the <strong>Advanced Settings</strong> button at the bottom of the main <strong>Settings</strong> dialog.</p>
+            <p>On mobile browsers, the dialog will only show the settings that are available on mobile platforms.</p>
             <p style="text-align: center;"><strong>Note: Do not change these values unless you know what you are doing!</strong></p>
-            <p><strong>Image Batch Export Delay in milliseconds (default is 200):</strong> Sets the delay between file saves when doing batch image export.</p>
+            <p><strong>Image Batch Export Delay in milliseconds (default is 200):</strong> (Desktop browsers only) Sets the delay between file saves when doing batch image export.</p>
             <p>Many faster systems can handle setting this to 100ms or lower.</p>
             <p>You can try a lower value. If you see any issues or are missing images on batch export, set it back to a higher value.</p>
-            <p><strong>MP3 Batch Export Delay in milliseconds (default is 250):</strong> Sets the delay between file saves when doing batch .MP3 export.</p>            
+            <p><strong>MP3 Batch Export Delay in milliseconds (default is 250):</strong> (Desktop browsers only) Sets the delay between file saves when doing batch .MP3 export.</p>            
             <p><strong>Metronome volume (default is 48):</strong> Sets the volume of the metronome drum sounds. Range is 0 - 127.</p> 
-            <p><strong>Highlighting color (HTML format) (default is #F00000):</strong> Sets the color of the notation highlights when Highlighting is on.</p>
+            <p><strong>Highlighting color (HTML format) (default is #F00000):</strong> (Desktop browsers only) Sets the color of the notation highlights when Highlighting is on.</p>
             <p>Value must be an HTML RGB hex color value or HTML named color for example #0000FF or blue.</p>
+            <p><strong>Player tunebook navigation controls on left side</strong> When checked, puts the player tunebook navigation controls on the left side of the player. (default is right)</p> 
             <p>Values are saved in browser storage and restored the next time the tool is run.</p>
             <hr class="hidden-print" id="selecting_the_instruments_for_playback">
             <h1 class="page_break_always h1wide">Choosing the MIDI Soundfont and Instruments for Playback<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -1847,7 +1850,7 @@
             <p style="text-align: center;"><strong>Consider saving or grabbing a Snapshot your work before injecting tab!</strong></p>
             <p>Since the tab injectors modify your original ABC, you may want to grab a Snapshot of the entire ABC (simply click <strong>Snapshot</strong>) before doing the tab injection operation.</p>
             <p>If you grab a Snapshot, after the tab injection operation, if there was an issue, you can click <strong>Restore</strong> to get back your original ABC.</p>
-            <p>You may inject Box or Anglo Concertina tablature into the ABC using the following buttons in the <strong>Advanced Controls</strong> dialog:</p>
+            <p>You may inject Box or Anglo Concertina tablature into the ABC using the following buttons in the <strong>More ABC Tools</strong> dialog:</p>
             <p><strong>Inject B/C Box Tab</strong> - Injects B/C Box tablature into the ABC.</p>
             <p><strong>Inject C#/D Box Tab</strong> - Injects C#/D Box tablature into the ABC.</p>
             <p><strong>Inject Anglo Concertina Tab</strong> - Injects Anglo Concertina tablature into the ABC.</p>
@@ -2017,9 +2020,9 @@
             <hr class="hidden-print" id="sharing_controls">
             <h1 class="page_break_always">Sharing Tunes with Share URLs and QR Codes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/I8KcG4swmUQ" title="Sharing Tunes with Share URLs and QR Codes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p>Clicking the <strong>Sharing</strong> button brings up the ABC Transcription Tools Sharing Controls dialog:</p>
+            <p>Clicking the <strong>Sharing</strong> button brings up the Sharing Controls dialog:</p>
             <div class="image_holder_p">
-                <img style="width:700px;"src="img/share_controls_3.jpg"/>
+                <img style="width:700px;"src="img/share_controls_4.jpg"/>
             </div>
             <p>Share URLs and QR Codes are a quick and easy way to share your ABC tunes with friends or to post tunes on social media sites.</p>
             <p>Anyone with the Share URL or QR Code can view, edit, save, and share their own copy of the tunes.</p>
