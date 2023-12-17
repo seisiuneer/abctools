@@ -24746,38 +24746,36 @@ function DoFileRead(file,doAppend){
 							// Render the notation
 							RenderAsync(true,null,function(){
 
-								if (isDesktopBrowser()){
-
-									// Scroll the last appended tune into view
-									if (doAppend){
-
-										var nTunes = CountTunes();
-
-										var theTune = getTuneByIndex(nTunes-1);
-
-										var tuneOffset = gTheABC.value.length-theTune.length;
-
-										if (!gIsMaximized){
-
-											// Scroll the tune ABC into view
-										    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
-
-										    if (isMobileBrowser()){
-										    	return;
-										    }
-
-									    	gTheABC.blur();
-									    	gTheABC.focus();
-
-									    }
-
-										// Scroll the tune into view
-										MakeTuneVisible(true);						
-									}
-								}
-
 								// Recalculate the notation top position
 								UpdateNotationTopPosition();
+
+								// Scroll the last appended tune into view
+								if (doAppend){
+
+									var nTunes = CountTunes();
+
+									var theTune = getTuneByIndex(nTunes-1);
+
+									var tuneOffset = gTheABC.value.length-theTune.length;
+
+									if (!gIsMaximized){
+
+										// Scroll the tune ABC into view
+									    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
+
+									    if (isMobileBrowser()){
+									    	return;
+									    }
+
+								    	gTheABC.blur();
+								    	gTheABC.focus();
+
+								    }
+
+									// Scroll the tune into view
+									MakeTuneVisible(true);						
+								}
+
 
 							});
 
@@ -24898,39 +24896,36 @@ function DoFileRead(file,doAppend){
 
 				// Render the notation
 				RenderAsync(true,null,function(){
-
-					if (isDesktopBrowser()){
-						
-						// Scroll the last appended tune into view
-						if (doAppend){
-
-							var nTunes = CountTunes();
-
-							var theTune = getTuneByIndex(nTunes-1);
-
-							var tuneOffset = gTheABC.value.length-theTune.length;
-
-							if (!gIsMaximized){
-
-								// Scroll the tune ABC into view
-							    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
-
-							    if (isMobileBrowser()){
-							    	return;
-							    }
-
-						    	gTheABC.blur();
-						    	gTheABC.focus();
-
-						    }
-
-							// Scroll the tune into view
-							MakeTuneVisible(true);						
-						}
-					}
-
+					
 					// Recalculate the notation top position
 					UpdateNotationTopPosition();
+					
+					// Scroll the last appended tune into view
+					if (doAppend){
+
+						var nTunes = CountTunes();
+
+						var theTune = getTuneByIndex(nTunes-1);
+
+						var tuneOffset = gTheABC.value.length-theTune.length;
+
+						if (!gIsMaximized){
+
+							// Scroll the tune ABC into view
+						    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
+
+						    if (isMobileBrowser()){
+						    	return;
+						    }
+
+					    	gTheABC.blur();
+					    	gTheABC.focus();
+
+					    }
+
+						// Scroll the tune into view
+						MakeTuneVisible(true);						
+					}
 
 				});
 
