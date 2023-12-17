@@ -8073,7 +8073,7 @@ function RenderAsync(renderAll,tuneNumber,callback){
 
 function Render(renderAll,tuneNumber) {
 
-	//console.log("Render renderAll="+renderAll+" tuneNumber="+tuneNumber); //FOOFOO
+	//console.log("Render renderAll="+renderAll+" tuneNumber="+tuneNumber); 
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
@@ -18071,29 +18071,26 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 		}
 
 	   	// Add the action buttons
-		modal_msg += '<p style="text-align:center;margin:0px;margin-top:22px">';
-
-		if (gPlayABCTuneCount > 1){
-			modal_msg += '<input id="abcplayer_previousbutton" class="abcplayer_previousbutton btn btn-playerprevious" onclick="PlayPrevious(event);" type="button" value="&nbsp;←&nbsp;" title="Play the previous tune.&nbsp;&nbsp;Shift-click to jump to the first tune.">';
-		}
+		modal_msg += '<p style="text-align:center;margin:0px;margin-top:10px">';
 
 		modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioOrImage();" type="button" value="Export Audio or Image" title="Brings up a dialog where you can save the tune in various audio and image formats">';
-		modal_msg += '<input id="abcplayer_trainer" class="btn btn-looper abcplayer_trainer" onclick="TuneTrainerLaunchFromPlayer()" type="button" value="Start Tune Trainer" title="Opens the Tune Trainer for practicing tunes with increasing tempos">';;
+		modal_msg += '<input id="abcplayer_trainer" class="btn btn-looper abcplayer_trainer" onclick="TuneTrainerLaunchFromPlayer()" type="button" value="Start Tune Trainer" title="Opens the Tune Trainer for practicing tunes with increasing tempos">';
 		modal_msg += '<input id="abcplayer_metronomebutton" class="abcplayer_metronome button btn btn-metronome" onclick="ToggleMetronome();" type="button" value="Enable Metronome" title="Enables/disables the metronome">';
 
 		if (isDesktopBrowser()){
 			modal_msg += '<input id="abcplayer_wideplayerbutton" class="abcplayer_wideplayerbutton button btn btn-wide-player" onclick="ToggleWidePlayer();" type="button" value="Wide View" title="Toggles the player between normal and wide views">';
 		}
 
-		if (gPlayABCTuneCount > 1){
-			modal_msg += '<input id="abcplayer_nextbutton" class="abcplayer_nextbutton btn btn-playernext" onclick="PlayNext(event);" type="button" value="&nbsp;→&nbsp;" title="Play the next tune.&nbsp;&nbsp;Shift-click to jump to the last tune.">';
-		}
+		modal_msg += '</p>';
+
+		// Add a little spacer to give more room for the page controls
+		modal_msg += '<p style="text-align:center;font-size:0pt;font-family:helvetica">&nbsp;</p>';
 
 		modal_msg += '<a id="abcplayer_help" href="https://michaeleskin.com/abctools/userguide.html#playing_your_tunes" target="_blank" style="text-decoration:none;" title="Learn more about the Player">?</a>';
 
 		if (gPlayABCTuneCount > 1){
 
-			modal_msg += '<p id="playerstatus" class="playerstatus">Tune '+(gPlayABCTuneIndex+1)+' of '+ gPlayABCTuneCount;
+			modal_msg += '<p id="playerstatus" class="playerstatus"><input id="abcplayer_previousbutton" class="abcplayer_previousbutton btn btn-playerprevious" onclick="PlayPrevious(event);" type="button" value="&nbsp;←&nbsp;" title="Play the previous tune.&nbsp;&nbsp;Shift-click to jump to the first tune.">Tune '+(gPlayABCTuneIndex+1)+' of '+ gPlayABCTuneCount+'<input id="abcplayer_nextbutton" class="abcplayer_nextbutton btn btn-playernext" onclick="PlayNext(event);" type="button" value="&nbsp;→&nbsp;" title="Play the next tune.&nbsp;&nbsp;Shift-click to jump to the last tune.">';
 
 			modal_msg += '<br/><select id="playertunelist" onchange="PlaySelectedTune();" title="Select a tune to play from the list">';
 
@@ -18110,8 +18107,6 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
             
           	modal_msg += '</select></p>';
 		}
-
-		modal_msg += '</p>';
 
 	   	// Scale the player for larger screens
 		var windowWidth = window.innerWidth;
@@ -26289,7 +26284,8 @@ function DoStartup() {
 	}	
 
 	// gIsIOS = true; // FOOFOOFOO for mobile simulation testing
-
+	// gIsIPhone = true;  // FOOFOOFOO for mobile simulation testing
+	
 	//
 	// iOS and Android styling adaptation
 	//

@@ -680,9 +680,9 @@ padding:12px;
 }
 
 #abcplayer_previousbutton{
-height:42px;
-padding:12px;
-margin-right:20px;
+height:38px;
+padding:10px;
+margin-right:30px;
 }
 
 @media (hover: hover) {
@@ -692,9 +692,9 @@ margin-right:20px;
 }
 
 #abcplayer_nextbutton{
-height:42px;
-padding:12px;
-margin-left:20px;
+height:38px;
+padding:10px;
+margin-left:30px;
 }
 
 @media (hover: hover) {
@@ -2969,11 +2969,11 @@ padding: 3px;
 
 #playerstatus {
 font-family:helvetica;
-font-size:13pt;
-line-height:24pt;
+font-size:12pt;
+line-height:36pt;
 position:absolute;
 left:30px;
-bottom:6px;
+bottom:-12px;
 }
 
 .playerstatus>select{
