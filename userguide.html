@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-                
+        
         <style>
         p {
         font-size:14pt;
@@ -225,7 +225,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#export_audio_image">Exporting Tune Audio or Image Files</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#adding_swing">Adding Playback Swing to Tunes</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#grace_timing">Setting Grace Note Duration for Ornamentation</a></p>
-                    
+                    <p class="toc"><a style="text-decoration:none;" href="#roll_timing">Defining Custom Roll Timing Parameters</a></p>
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">Basic Controls and Features</button>
@@ -729,6 +729,30 @@
             <p class="code">%grace_duration_ms 60</p>
             <p>Setting the %grace_duration_ms value to 0 will disable my custom grace duration solution and for the tune revert back to the original abcjs solution for grace note timing: Graces use half the duration of the following note and the following note duration is reduced by half.</p>
             <p class="code">% Disables custom grace timing solution<br/>%grace_duration_ms 0</p>
+            <hr class="hidden-print" id="roll_timing">
+            <h1 class="page_break_always h1wide">Defining Custom Roll Timing Parameters<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>In abcjs, a ~ preceding a note draws the roll indication above the note, but does not inject a roll into the playback.</p>
+            <p>In this tool, playable rolls (also shows a roll indication drawn above the note) are are added using R or !roll! preceding the note.</p>
+            <p>For example, to indicate a quarter note roll on G in ABC:</p>
+            <p class="code">RG2<br/>% or<br/>!roll!G2</p>
+            <p>To indicate a dotted quarter note roll on A in ABC:</p>
+            <p class="code">RA3<br/>% or<br/>!roll!A3</p>
+            <p>To set the timing and volume parameters for a quarter-note roll, add the following comment-based annotation anywhere in the tune ABC:</p>
+            <p class="code">%roll_2_params timeslot1 timeslot2 fraction1 fraction2 fraction3 volume1 volume2 volume3</p>
+            <p>To set the timing and volume parameters for a dotted quarter-note roll, add the following comment-based annotation anywhere in the tune ABC:</p>
+            <p class="code">%roll_3_params timeslot1 timeslot2 fraction1 fraction2 fraction3 volume1 volume2 volume3</p>
+            <p>All parameters must be positive floating point values.</p>
+            <p>The duration values are based on dividing the note time into three time slots for the whole roll and indicate the relative time slots for the first and second notes of the roll.</p>
+            <p>The third note in the roll will have a time slot of (3 - (duration1 + duration2))</p>
+            <p>The fraction values indicate what fraction of the time slot the roll note should be played.</p>
+            <p>The volume values have a range from 0.0 to 1.0 and scale the playback volume of each note in the roll relative to the normal note volume.</p>
+            <p>Here are the default parameters used for a quarter note roll:</p>
+            <p class="code">%roll_2_params 0.95 0.8 1.0 0.75 0.9 1.0 0.75 1.0</p>
+            <p>Here are the default parameters for a dotted quarter note roll:</p>
+            <p class="code">%%roll_3_params 1.45 0.6 1.0 0.75 0.9 1.0 0.75 1.0</p>
+            <p>If (timeslot1 + timeslot2) >= 3, since there would be no time left for the third note, the roll definition will be ignored.</p>
+            <p>To disable the custom roll parameter system and use the original abcjs "rapid-fire" roll timing solution, add the following comment-based annotation anywhere in the tune ABC:</p>
+            <p class="code">%use_original_abcjs_roll_solution</p>
             <hr class="hidden-print" id="basic_controls">
             <h1 class="page_break_always">Basic Controls and Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p id="basic_tablature" style="margin-top:24px;">These buttons control how the notation and tablature is displayed:</p>

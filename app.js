@@ -14240,6 +14240,9 @@ function InjectPDFHeaders(){
 	output += "%swing 0.25 0\n";
 	output += "%noswing\n";
 	output += "%grace_duration_ms 30\n";
+	output += "%roll_2_params 0.95 0.8 1.0 0.75 0.9 1.0 0.75 1.0\n";
+	output += "%roll_3_params 1.45 0.6 1.0 0.75 0.9 1.0 0.75 1.0\n";
+	output += "%use_original_abcjs_roll_solution\n";
 	output += "%abcjs_release_decay_time 200\n";
 
 	output += "\n";
@@ -17937,8 +17940,8 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 		return;
 	}
 
-	// Setup any swing found
-	ScanTuneForSwingInjection(theABC);
+	// Setup any custom timing found
+	ScanTuneForCustomTimingInjection(theABC);
 	
 	var instrument = GetRadioValue("notenodertab");
 
@@ -18437,9 +18440,9 @@ function tuneIsHornpipe(theTune){
 }
 
 //
-// Scan tune for swing annotation
+// Scan tune for custom timing annotations
 //
-function ScanTuneForSwingInjection(theTune){
+function ScanTuneForCustomTimingInjection(theTune){
 
 	//debugger;
 
@@ -18566,6 +18569,169 @@ function ScanTuneForSwingInjection(theTune){
 
 	// Is this a jig-type rhythm?
 	gGraceTuneType = getTuneRhythmType(theTune);
+
+	// Reset quarter note roll timing defaults
+	gRoll2Duration1 = 0.95; 
+	gRoll2Duration2 = 0.8; 
+	gRoll2Fraction1 = 1.0;
+	gRoll2Fraction2 = 0.75;
+	gRoll2Fraction3 = 0.9; 
+	gRoll2Volume1 = 1.0;
+	gRoll2Volume2 = 0.75; 
+	gRoll2Volume3 = 1.0; 
+
+	// Scan tune for custom quarter note roll
+	searchRegExp = /^%roll_2_params.*$/gm
+
+	// Detect roll_timing annotation
+	var doRoll2Timing = theTune.match(searchRegExp);
+
+	if ((doRoll2Timing) && (doRoll2Timing.length > 0)){
+
+		var theParamString = doRoll2Timing[0].replace("%roll_2_params","");
+
+		theParamString = theParamString.trim();
+
+		var theParams = theParamString.split(" ");
+
+		if (theParams.length == 8){
+
+			var Roll2Duration1 = theParams[0]; 
+			var Roll2Duration2 = theParams[1]; 
+			var Roll2Fraction1 = theParams[2];
+			var Roll2Fraction2 = theParams[3];
+			var Roll2Fraction3 = theParams[4]; 
+			var Roll2Volume1 = theParams[5];
+			var Roll2Volume2 = theParams[6]; 
+			var Roll2Volume3 = theParams[7]; 
+
+			Roll2Duration1 = parseFloat(Roll2Duration1);
+			Roll2Duration2 = parseFloat(Roll2Duration2); 
+			Roll2Fraction1 = parseFloat(Roll2Fraction1);
+			Roll2Fraction2 = parseFloat(Roll2Fraction2);
+			Roll2Fraction3 = parseFloat(Roll2Fraction3); 
+			Roll2Volume1 = parseFloat(Roll2Volume1);
+			Roll2Volume2 = parseFloat(Roll2Volume2); 
+			Roll2Volume3 = parseFloat(Roll2Volume3); 
+
+			if ((!isNaN(Roll2Duration1)) && (!isNaN(Roll2Duration2)) && (!isNaN(Roll2Fraction1)) && (!isNaN(Roll2Fraction2)) &&
+				(!isNaN(Roll2Fraction3)) && (!isNaN(Roll2Volume1)) && (!isNaN(Roll2Volume2)) && (!isNaN(Roll2Volume3))){
+
+				// Sanity check the parameters
+				if ((Roll2Duration1>=0.0) && 
+					(Roll2Duration2>=0.0) &&
+					((Roll2Fraction1>=0.0) && (Roll2Fraction1<=1.0)) &&
+					((Roll2Fraction2>=0.0) && (Roll2Fraction2<=1.0)) &&
+					((Roll2Fraction3>=0.0) && (Roll2Fraction3<=1.0)) &&
+					((Roll2Volume1>=0.0) && (Roll2Volume1<=2.0)) &&
+					((Roll2Volume2>=0.0) && (Roll2Volume2<=2.0)) &&
+					((Roll2Volume3>=0.0) && (Roll2Volume3<=2.0)) &&
+					((Roll2Duration1 + Roll2Duration2) < 3.0)){
+					//console.log("roll2 validation pass");
+					gRoll2Duration1 = Roll2Duration1; 
+					gRoll2Duration2 = Roll2Duration2; 
+					gRoll2Fraction1 = Roll2Fraction1;
+					gRoll2Fraction2 = Roll2Fraction2;
+					gRoll2Fraction3 = Roll2Fraction3; 
+					gRoll2Volume1 = Roll2Volume1;
+					gRoll2Volume2 = Roll2Volume2; 
+					gRoll2Volume3 = Roll2Volume3; 
+				}
+				// else{
+				// 	console.log("roll2 validation fail")
+				// }
+			}
+		}
+	}
+
+	// Reset dotted quarter note roll timing defaults
+	gRoll3Duration1 = 1.45; 
+	gRoll3Duration2 = 0.6; 
+	gRoll3Fraction1 = 1.0;
+	gRoll3Fraction2 = 0.75;
+	gRoll3Fraction3 = 0.9; 
+	gRoll3Volume1 = 1.0;
+	gRoll3Volume2 = 0.75;
+	gRoll3Volume3 = 1.0;  
+
+	// Scan tune for custom dotted quarter note roll
+	searchRegExp = /^%roll_3_params.*$/gm
+
+	// Detect roll_timing annotation
+	var doRoll3Timing = theTune.match(searchRegExp);
+
+	if ((doRoll3Timing) && (doRoll3Timing.length > 0)){
+
+		var theParamString = doRoll3Timing[0].replace("%roll_3_params","");
+
+		theParamString = theParamString.trim();
+
+		var theParams = theParamString.split(" ");
+
+		if (theParams.length == 8){
+
+			var Roll3Duration1 = theParams[0]; 
+			var Roll3Duration2 = theParams[1]; 
+			var Roll3Fraction1 = theParams[2];
+			var Roll3Fraction2 = theParams[3];
+			var Roll3Fraction3 = theParams[4]; 
+			var Roll3Volume1 = theParams[5];
+			var Roll3Volume2 = theParams[6]; 
+			var Roll3Volume3 = theParams[7]; 
+
+			Roll3Duration1 = parseFloat(Roll3Duration1);
+			Roll3Duration2 = parseFloat(Roll3Duration2); 
+			Roll3Fraction1 = parseFloat(Roll3Fraction1);
+			Roll3Fraction2 = parseFloat(Roll3Fraction2);
+			Roll3Fraction3 = parseFloat(Roll3Fraction3); 
+			Roll3Volume1 = parseFloat(Roll3Volume1);
+			Roll3Volume2 = parseFloat(Roll3Volume2); 
+			Roll3Volume3 = parseFloat(Roll3Volume3); 
+
+			if ((!isNaN(Roll3Duration1)) && (!isNaN(Roll3Duration2)) && (!isNaN(Roll3Fraction1)) && (!isNaN(Roll3Fraction2)) &&
+				(!isNaN(Roll3Fraction3)) && (!isNaN(Roll3Volume1)) && (!isNaN(Roll3Volume2)) && (!isNaN(Roll3Volume3))){
+				
+				// Sanity check the parameters
+				if ((Roll3Duration1>=0.0) && 
+					(Roll3Duration2>=0.0) &&
+					((Roll3Fraction1>=0.0) && (Roll3Fraction1<=1.0)) &&
+					((Roll3Fraction2>=0.0) && (Roll3Fraction2<=1.0)) &&
+					((Roll3Fraction3>=0.0) && (Roll3Fraction3<=1.0)) &&
+					((Roll3Volume1>=0.0) && (Roll3Volume1<=2.0)) &&
+					((Roll3Volume2>=0.0) && (Roll3Volume2<=2.0)) &&
+					((Roll3Volume3>=0.0) && (Roll3Volume3<=2.0)) &&
+					((Roll3Duration1 + Roll3Duration2) < 3.0)){
+					//console.log("roll3 validation pass");
+					gRoll3Duration1 = Roll3Duration1; 
+					gRoll3Duration2 = Roll3Duration2; 
+					gRoll3Fraction1 = Roll3Fraction1;
+					gRoll3Fraction2 = Roll3Fraction2;
+					gRoll3Fraction3 = Roll3Fraction3; 
+					gRoll3Volume1 = Roll3Volume1;
+					gRoll3Volume2 = Roll3Volume2; 
+					gRoll3Volume3 = Roll3Volume3; 
+				}
+				// else{
+				// 	console.log("roll3 validation fail")
+				// }
+			}
+		}
+	}
+
+	// Disable original roll solution override
+	gRollUseOriginalRollSolution = false;
+
+	// Scan tune for roll timing override
+	searchRegExp = /^%use_original_abcjs_roll_solution.*$/gm
+
+	// Detect roll_timing annotation
+	var useOriginalRollSolution = theTune.match(searchRegExp);
+
+	if ((useOriginalRollSolution) && (useOriginalRollSolution.length > 0)){
+
+		gRollUseOriginalRollSolution = true;
+
+	}
 
 }
 
@@ -20294,7 +20460,7 @@ function GraceExplorerRegenerate(){
 
 
 //
-// Scan tune for swing annotation for the swing explorer
+// Scan tune for grace annotation for the grace explorer
 //
 function ScanTuneForGraceExplorer(theTune){
 
@@ -20524,7 +20690,6 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 		}
 	}
 	
-
 	function setTune(userAction) {
 
 		synthControl.disable(true);
