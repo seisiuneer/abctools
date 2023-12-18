@@ -286,11 +286,11 @@
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_configuretab">Configure Tablature Injection Settings</a></p>
                     </div>
                     
-                    <p class="toc"><a style="text-decoration:none;" href="#advanced_rollexplorer">Roll Explorer</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#advanced_notationspacingexplorer">Notation Spacing Explorer</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#midi_instrument_explorer">MIDI Instrument Explorer</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#swing_explorer">Swing Explorer</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#grace_duration_explorer">Grace Duration Explorer</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#roll_explorer">Roll Explorer</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#export_all">Export All Audio or Images</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#sort_dialog">Sort by Specific Tag</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#advanced_comhaltas">Comhaltas ABC Transform</a></p>
@@ -927,20 +927,7 @@
             </div>
             <hr>
             <p id="advanced_configuretab"><strong>Configure Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for tablature injection.</p>
-            <hr class="hidden-print" id="advanced_rollexplorer">
-            <h1 class="page_break_always">Roll Explorer<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>Brings up a dialog where you can experiment playing the tune with different roll playback parameters and then optionally inject the values into the tune.</p>
-            <div class="image_holder_p">
-                <img src="img/roll_explorer_1.jpg"/>
-            </div>
-            <p>The roll timing parameters are described in this section: <a href="roll_timing">Defining Custom Roll Timing Parameters</a><p>
-            <p>Click <strong>Reload Tune with Changed Roll Parameters</strong> to reload the player with the roll parameters applied.</p>
-            <p>If any of the values are invalid, you will be presented with an alert explaining the issue.</p>
-            <p>Click the play button to play the tune to check the new settings.</p>
-            <p>If you are happy with your new roll parameters and want to apply them to the tune, click <strong>Inject Roll Parameters into the ABC</strong> to inject your new roll parameters into the tune's ABC, replacing any previous roll parameters.</p>
-            <p>To exit the Roll Explorer, click <strong>Close</strong>.</p>            
-            <p>Once the roll parameters are injected into the ABC, they can be modified in place if additional adjustments are desired.</p>
-            <hr class="hidden-print" id="advanced_notationspacingexplorer">
+             <hr class="hidden-print" id="advanced_notationspacingexplorer">
             <h1 class="page_break_always">Notation Spacing Explorer<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Brings up a dialog where you can experiment with spacing values for the notation and then optionally inject the values into one or all of the tunes:</p>
             <div class="image_holder_p">
@@ -1015,6 +1002,21 @@
             <p>To exit the Grace Duration Explorer, click <strong>Close</strong>.</p>
             <p>For more details on grace duration, see this section:</p>
             <p style="text-align: center;"><a style="text-decoration:none;" href="#grace_timing">Setting Grace Note Duration for Ornamentation</a></p>
+            <hr class="hidden-print" id="roll_explorer">
+            <h1 class="page_break_always">Roll Explorer<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>Brings up a dialog where you can experiment playing the tune with different roll playback parameters and then optionally inject the values into the tune.</p>
+            <div class="image_holder_p">
+                <img src="img/roll_explorer_1.jpg"/>
+            </div>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/72fw8kwG1XQ" title="Roll Explorer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p>The timing and volume parameters for the two available custom roll patterns (Quarter Note and Dotted Quarter Note) are described in detail in this section:</p>
+            <p><a href="roll_timing">Defining Custom Roll Timing Parameters</a><p>
+            <p>Click <strong>Reload Tune with Changed Roll Parameters</strong> to reload the player with the roll parameters applied.</p>
+            <p>If any of the values are invalid, you will be presented with an alert explaining the issue.</p>
+            <p>Click the play button to play the tune to check the new settings.</p>
+            <p>If you are happy with your new roll parameters and want to apply them to the tune, click <strong>Inject Roll Parameters into the ABC</strong> to inject your new roll parameters into the tune's ABC, replacing any previous roll parameters.</p>
+            <p>To exit the Roll Explorer, click <strong>Close</strong>.</p>            
+            <p>Once the roll parameters are injected into the ABC, they can be modified in place if additional adjustments are desired.</p>
             <hr class="hidden-print" id="export_all">
             <h1 class="page_break_always">Export All Audio or Images<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Exports all the tunes in the ABC area as individual .MP3 files or JPG / PNG / SVG images:</p>
