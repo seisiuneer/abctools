@@ -1069,6 +1069,39 @@ left:20px;
 top:20px;
 }
 
+#rollexplorerinject{
+height:42px;
+padding:12px;
+width:auto;
+margin-left:0px;
+}
+
+@media (hover: hover) {
+	.rollexplorerinject:hover{
+	background: palegreen;
+	}
+}
+
+#rollexplorertest{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:36px;
+}
+
+@media (hover: hover) {
+	.rollexplorertest:hover{
+	background: palegreen;
+	}
+}
+
+#rollexplorerhelp{
+font-size:24pt;
+position:absolute;
+left:20px;
+top:20px;
+}
+
 #looperreset{
 height:42px;
 padding:12px;
@@ -2242,26 +2275,26 @@ margin-top:-7px;
 }
 
 .configure_graceexplorer_text{
-	font-size:13pt;
-	font-family:helvetica;
-	margin-top:0px;
-}
-
-.configure_graceexplorer_text>input{
-	font-size:13pt;
-	font-family:helvetica;
-	margin-left: 2px;
-	width: 60px;
-	margin-right:10px;
-}
-
-.configure_graceexplorer_text{
 	font-size:12pt;
 	font-family:helvetica;
 	margin-top:0px;
 }
 
 .configure_graceexplorer_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 2px;
+	width: 60px;
+	margin-right:10px;
+}
+
+.configure_rollexplorer_text{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-top:0px;
+}
+
+.configure_rollexplorer_text>input{
 	font-size:12pt;
 	font-family:helvetica;
 	margin-left: 2px;
@@ -2429,6 +2462,7 @@ margin-top:-7px;
 	height:42px;
 	margin-top: 9px;
 	padding:12px;
+	margin-right:24px;
 }
 
 @media (hover: hover) {
@@ -2471,6 +2505,18 @@ margin-top:-7px;
 
 @media (hover: hover) {
 	.configure_grace_explorer:hover{
+	background: palegreen;
+	}
+}
+
+#configure_roll_explorer{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.configure_roll_explorer:hover{
 	background: palegreen;
 	}
 }
@@ -3317,6 +3363,20 @@ margin-top:4px;
   --background-color: #C8ECFE;
 }
 
+.btn-rollexplorer{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-rollexplorertest{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-rollexplorerinject{
+  --color: black;
+  --background-color: #C8ECFE;
+}
 .btn-instrumentexplorer{
   --color: black;
   --background-color: #C8ECFE;

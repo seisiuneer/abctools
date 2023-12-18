@@ -11812,15 +11812,21 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
           // MAE 17 Dec 2023 - Better roll timing for traditional irish music
           var rollStyle = 0;
 
-          if (runningDuration/shortestNote == 8){
+          //console.log("runningDuration "+runningDuration+ " shortestNote "+shortestNote+" div "+runningDuration/shortestNote);
+
+          var divider = runningDuration/shortestNote;
+
+          if (divider == 8){
               // Quarter note
               rollStyle = 1;
           }
           else
-          if (runningDuration/shortestNote == 12){
+          if (divider == 12){
               // Dotted quarter note
               rollStyle = 2;
           }
+
+          //console.log("rollStyle = "+rollStyle);
 
           switch (rollStyle){
 
@@ -11847,6 +11853,11 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
                 skipRoll = true;
                 break;
               }
+
+              // console.log("---------------")
+              // console.log("gRoll2Duration1 "+gRoll2Duration1+ " gRoll2Duration2 "+gRoll2Duration2);
+              // console.log("gRoll2Fraction1 " + gRoll2Fraction1 +" gRoll2Fraction2 "+gRoll2Fraction2+" gRoll2Fraction3 "+gRoll2Fraction3);
+              // console.log("gRoll2Volume1 "+ gRoll2Volume1 +" gRoll2Volume2 "+gRoll2Volume2+" gRoll2Volume3 "+gRoll2Volume3);
 
               currentTrack.push({
                 cmd: 'note',
@@ -11890,6 +11901,11 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
                 skipRoll = true;
                 break;
               } 
+
+              // console.log("---------------")
+              // console.log("gRoll3Duration1 "+gRoll3Duration1+ " gRoll3Duration2 "+gRoll3Duration2);
+              // console.log("gRoll3Fraction1 "+ gRoll3Fraction1 +" gRoll3Fraction2 "+gRoll3Fraction2+" gRoll3Fraction3 "+gRoll3Fraction3);
+              // console.log("gRoll3Volume1 "+ gRoll3Volume1 +" gRoll3Volume2 "+gRoll3Volume2+" gRoll3Volume3 "+gRoll3Volume3);
 
               currentTrack.push({
                 cmd: 'note',

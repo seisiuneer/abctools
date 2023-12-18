@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-         
+                
         <style>
         p {
         font-size:14pt;
@@ -274,7 +274,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectstaffwidth">Inject %%staffwidth</a></p>
                     </div>
                     
-                    <button class="accordion" title="Click to expand/collapse this section">Injecting Instrument-Specifc Tab Into the ABC</button>
+                    <button class="accordion" title="Click to expand/collapse this section">Injecting Instrument-Specific Tab Into the ABC</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_tabinjectors">Instrument Tablature Injectors</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectbc">Inject B/C Box Tab</a></p>
@@ -286,6 +286,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_configuretab">Configure Tablature Injection Settings</a></p>
                     </div>
                     
+                    <p class="toc"><a style="text-decoration:none;" href="#advanced_rollexplorer">Roll Explorer</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#advanced_notationspacingexplorer">Notation Spacing Explorer</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#midi_instrument_explorer">MIDI Instrument Explorer</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#swing_explorer">Swing Explorer</a></p>
@@ -750,7 +751,7 @@
             <p>Here are the default parameters used for a quarter note roll:</p>
             <p class="code">%roll_2_params 0.95 0.8 1.0 0.75 0.9 1.0 0.75 1.0</p>
             <p>Here are the default parameters for a dotted quarter note roll:</p>
-            <p class="code">%%roll_3_params 1.45 0.6 1.0 0.75 0.9 1.0 0.75 1.0</p>
+            <p class="code">%roll_3_params 1.45 0.6 1.0 0.75 0.9 1.0 0.75 1.0</p>
             <p>If (timeslot1 + timeslot2) >= 3, since there would be no time left for the third note, the roll definition will be ignored.</p>
             <p>To disable the custom roll parameter system and use the original abcjs "rapid-fire" roll timing solution, add the following comment-based annotation anywhere in the tune ABC:</p>
             <p class="code">%use_original_abcjs_roll_solution</p>
@@ -926,6 +927,19 @@
             </div>
             <hr>
             <p id="advanced_configuretab"><strong>Configure Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for tablature injection.</p>
+            <hr class="hidden-print" id="advanced_rollexplorer">
+            <h1 class="page_break_always">Roll Explorer<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>Brings up a dialog where you can experiment playing the tune with different roll playback parameters and then optionally inject the values into the tune.</p>
+            <div class="image_holder_p">
+                <img src="img/roll_explorer_1.jpg"/>
+            </div>
+            <p>The roll timing parameters are described in this section: <a href="roll_timing">Defining Custom Roll Timing Parameters</a><p>
+            <p>Click <strong>Reload Tune with Changed Roll Parameters</strong> to reload the player with the roll parameters applied.</p>
+            <p>If any of the values are invalid, you will be presented with an alert explaining the issue.</p>
+            <p>Click the play button to play the tune to check the new settings.</p>
+            <p>If you are happy with your new roll parameters and want to apply them to the tune, click <strong>Inject Roll Parameters into the ABC</strong> to inject your new roll parameters into the tune's ABC, replacing any previous roll parameters.</p>
+            <p>To exit the Roll Explorer, click <strong>Close</strong>.</p>            
+            <p>Once the roll parameters are injected into the ABC, they can be modified in place if additional adjustments are desired.</p>
             <hr class="hidden-print" id="advanced_notationspacingexplorer">
             <h1 class="page_break_always">Notation Spacing Explorer<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Brings up a dialog where you can experiment with spacing values for the notation and then optionally inject the values into one or all of the tunes:</p>
@@ -970,7 +984,7 @@
             <p><strong>Note:</strong> This feature is primarily for use with single-voice tunes. Unpredictable results may occur with multi-voice tunes.</p>
             <hr class="hidden-print" id="swing_explorer">
             <h1 class="page_break_always">Swing Explorer<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>Brings up a player where you can experiment with playing the currently selected tune using different swing factors and offsets:</p>
+            <p>Brings up a player where you can experiment with playing the currently selected tune using different swing factors and offsets and then optionally inject them into the tune:</p>
             <div class="image_holder_p">
                 <img src="img/swing_explorer_5.jpg"/>
             </div>
@@ -986,7 +1000,7 @@
             <p style="text-align: center;"><a style="text-decoration:none;" href="#adding_swing">Adding Playback Swing to Tunes</a></p>
             <hr class="hidden-print" id="grace_duration_explorer">
             <h1 class="page_break_always">Grace Duration Explorer<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>Brings up a player where you can experiment with playing the currently selected tune using grace durations:</p>
+            <p>Brings up a player where you can experiment with playing the currently selected tune using grace durations and then optionally inject them into the tune:</p>
             <div class="image_holder_p">
                 <img src="img/grace_duration_explorer_2.jpg"/>
             </div>
@@ -1200,7 +1214,7 @@
             <p><strong>Autoscroll player when playing</strong> - Check this if you want have the player autoscroll the notes into view while playing.</p>
             <hr>
             <p><strong>Player/Tune Trainer uses label L/R side click to decrement/increment values</strong> - Check this if you want to decrement or increment values in the Tune Trainer number entry fields by clicking on the left or right side of their labels.</p>
-            <p>Touching to the left or right of the tempo field in any of the Players (Player, MIDI Instrument Explorer, Swing Explorer, Grace Explorer, Tune Trainer) decrements or increments the tempo by 5%.</p>
+            <p>Touching to the left or right of the tempo field in any of the Players (Player, MIDI Instrument Explorer, Swing Explorer, Grace Explorer, Roll Explorer, Tune Trainer) decrements or increments the tempo by 5%.</p>
             <p>This makes it easier to set tempos and increments on touch screen devices.</p>
             <p>Defaults to enabled for Android and iPhone devices.</p>
             <hr>
