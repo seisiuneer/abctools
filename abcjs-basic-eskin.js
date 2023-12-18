@@ -7136,8 +7136,9 @@ var letter_to_accent = function letter_to_accent(line, i) {
       return [1, 'upbow'];
     case 'v':
       return [1, 'downbow'];
+    // MAE 17 Dec 2023 - Change this to 'roll' to use the new timing
     case '~':
-      return [1, 'irishroll'];
+      return [1, 'irishroll']; 
     case '!':
     case '+':
       var ret = tokenizer.getBrackettedSubstring(line, i, 5);
@@ -11759,22 +11760,129 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
           instrument: currentInstrument
         });
         break;
+      //
+      // Original roll solution
+      // case "roll":
+      //   while (runningDuration > 0) {
+      //     currentTrack.push({
+      //       cmd: 'note',
+      //       pitch: p.pitch,
+      //       volume: p.volume,
+      //       start: start,
+      //       duration: shortestNote,
+      //       gap: 0,
+      //       instrument: currentInstrument,
+      //       style: 'decoration'
+      //     });
+      //     runningDuration -= shortestNote * 2;
+      //     start += shortestNote * 2;
+      //   }
+      // break;
       case "roll":
-        while (runningDuration > 0) {
-          currentTrack.push({
-            cmd: 'note',
-            pitch: p.pitch,
-            volume: p.volume,
-            start: start,
-            duration: shortestNote,
-            gap: 0,
-            instrument: currentInstrument,
-            style: 'decoration'
-          });
-          runningDuration -= shortestNote * 2;
-          start += shortestNote * 2;
+
+        // MAE 17 Dec 2023 - Better roll timing for traditional irish music
+        var nNotes = 0;
+        var nToPlay = 2;
+        if (runningDuration/shortestNote == 8){
+           nToPlay = 2;
         }
-        break;
+        else
+        if (runningDuration/shortestNote == 12){
+           nToPlay = 3;
+        }
+        else{
+          nToPlay = 0;
+        }
+        // Quarter note
+        if (nToPlay == 2){
+          while (runningDuration > 0) {
+
+              var theVolume = p.volume;
+              if (nNotes == 1){
+                  theVolume = theVolume * .75
+              }
+              currentTrack.push({
+                cmd: 'note',
+                pitch: p.pitch,
+                volume: theVolume,
+                start: start,
+                duration: shortestNote,
+                gap: 0,
+                instrument: currentInstrument,
+                style: 'decoration'
+              });
+              runningDuration -= shortestNote * 2;
+              start += shortestNote * 2;
+              nNotes++;
+              if (nNotes==nToPlay){
+                 currentTrack.push({
+                  cmd: 'note',
+                  pitch: p.pitch,
+                  volume: p.volume,
+                  start: start,
+                  duration: runningDuration,
+                  gap: 0,
+                  instrument: currentInstrument,
+                  style: 'decoration'
+                });
+                break;
+              }
+            }
+          }
+        else
+        // Dotted quarter note
+        if (nToPlay == 3){
+            var first_weight = 1.45;
+            var second_weight = 0.55;
+            var second_cutoff = 0.75;
+            currentTrack.push({
+              cmd: 'note',
+              pitch: p.pitch,
+              volume: p.volume,
+              start: start,
+              duration: first_weight*(runningDuration/3),
+              gap: 0,
+              instrument: currentInstrument,
+              style: 'decoration'
+            });
+            start += first_weight*(runningDuration/3);
+            currentTrack.push({
+              cmd: 'note',
+              pitch: p.pitch,
+              volume: p.volume*.75,
+              start: start,
+              duration: second_weight*(runningDuration/3)*second_cutoff,
+              gap: 0,
+              instrument: currentInstrument,
+              style: 'decoration'
+            });
+            start += second_weight*(runningDuration/3);
+            currentTrack.push({
+              cmd: 'note',
+              pitch: p.pitch,
+              volume: p.volume,
+              start: start,
+              duration: runningDuration - (first_weight+second_weight)*(runningDuration/3),
+              gap: 0,
+              instrument: currentInstrument,
+              style: 'decoration'
+            });           
+          } 
+          // Fallback case to not ornament other cases 
+          else{
+             currentTrack.push({
+              cmd: 'note',
+              pitch: p.pitch,
+              volume: p.volume,
+              start: start,
+              duration: runningDuration,
+              gap: 0,
+              instrument: currentInstrument,
+              style: 'decoration'
+            });           
+          }      
+
+          break;
     }
   }
   function writeNote(elem, voiceOff) {
