@@ -1790,7 +1790,7 @@ left:-5000px;
 	font-size:12pt;
 	line-height:11px;
 	font-family:helvetica;
-	margin-top:11px;
+	margin-top:12px;
 	display:flex;
 }
 
@@ -1798,7 +1798,7 @@ left:-5000px;
 	font-size:12pt;
 	line-height:11px;
 	font-family:helvetica;
-	margin-top:14px;
+	margin-top:24px;
 	display:flex;
 }
 
@@ -1808,7 +1808,7 @@ left:-5000px;
 	margin-left: 12px;
 	width: 60px;
 	margin-top:-10px;
-	padding:3px;
+	padding:4px;
 }
 
 .advanced_settings2_form_text{
@@ -1825,6 +1825,14 @@ left:-5000px;
 	margin-left: 12px;
 	width: 100px;
 	margin-top:-8px;
+}
+
+.advanced_settings2_form_text_checkbox{
+	font-size:12pt;
+	line-height:11px;
+	font-family:helvetica;
+	margin-top:16px;
+	display:flex;
 }
 
 .configure_pdf_settings_form_text{
@@ -1976,7 +1984,7 @@ font-size:11pt;
 font-family:"Helvetica";
 display:flex;
 margin-right:12px;
-margin-top:18px;
+margin-top:24px;
 }
 
 .configure_midi_program_form_select>select{
@@ -2003,7 +2011,7 @@ margin-top:-7px;
 	font-size:12pt;
 	line-height:24px;
 	font-family:helvetica;
-	margin-top:18px;
+	margin-top:24px;
 	display:flex;
 }
 

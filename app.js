@@ -23919,7 +23919,8 @@ function AdvancedControlsDialog(){
 }
 
 //
-// Backdoor advanced settings
+// Advanced tool settings
+// This is used for less-commonly access settings and options
 //
 function AdvancedSettings(){
 
@@ -23928,46 +23929,50 @@ function AdvancedSettings(){
 
 	var oldHighlightColor = gRawHighlightColor;
 
-	// Setup initial values
-	var theData;
+	var theOldComhaltas = gUseComhaltasABC;
 
-	var form;
+	// Setup initial values
+	const theData = {
+  		configure_fullscreen_scaling: gFullScreenScaling,
+		configure_comhaltas: gUseComhaltasABC,	  
+		configure_highlight_color: gRawHighlightColor,
+		configure_player_status_on_left: gPlayerStatusOnLeft,
+		configure_large_player_controls: gLargePlayerControls,
+		configure_autoscrollplayer: gAutoscrollPlayer,
+		configure_trainer_touch_controls: gTrainerTouchControls,
+		configure_metronome_volume: gMetronomeVolume,
+		configure_mp3_bitrate: gMP3Bitrate,
+		configure_export_delayms: gBatchExportDelayMS,
+		configure_mp3export_delayms: gBatchMP3ExportDelayMS
+	};
+
+	var form = [
+		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Advanced Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
+		{html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;"><strong>Only change these values if you know what you are doing!</strong></p>'},
+  		{name: "Full screen tune display width scaling (percentage) (default is 50):", id: "configure_fullscreen_scaling", type:"number", cssClass:"advanced_settings2_form_text"},
+		{name: "    Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)", id: "configure_comhaltas", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+	];
 
 	if (isDesktopBrowser()){
 
-		theData = {
-		  configure_export_delayms: gBatchExportDelayMS,
-		  configure_mp3export_delayms: gBatchMP3ExportDelayMS,
-		  configure_metronome_volume: gMetronomeVolume,
-		  configure_highlight_color: gRawHighlightColor,
-		  configure_player_status_on_left: gPlayerStatusOnLeft
-		};
-
-		form = [
-		  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Advanced Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
-		  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;"><strong>Only change these values if you know what you are doing!</strong></p>'},
-		  {name: "Image Batch Export Delay in milliseconds (default is 200):", id: "configure_export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
-		  {name: "MP3 Batch Export Delay in milliseconds (default is 250):", id: "configure_mp3export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
-		  {name: "Metronome volume (default is 48):", id: "configure_metronome_volume", type:"text", cssClass:"advanced_settings2_form_text"},
-		  {name: "Highlighting color (HTML format) (default is #F00000):", id: "configure_highlight_color", type:"text", cssClass:"advanced_settings2_form_text"},
-	  	  {name: "          Player tunebook navigation controls on left side", id: "configure_player_status_on_left", type:"checkbox", cssClass:"advanced_settings2_form_text"},
-		];
-
+		form.push({name: "Highlighting color (HTML format) (default is #F00000):", id: "configure_highlight_color", type:"text", cssClass:"advanced_settings2_form_text"})
 	}
-	else{
 
-		theData = {
-		  configure_metronome_volume: gMetronomeVolume,
-		  configure_player_status_on_left: gPlayerStatusOnLeft
-		};
+	form = form.concat([
+		{name: "    Player tunebook navigation controls on left side", id: "configure_player_status_on_left", type:"checkbox", cssClass:"advanced_settings2_form_text"},
+		{name: "    Player uses large controls (easier to touch on phone/tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+		{name: "    Autoscroll player when playing", id: "configure_autoscrollplayer", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+		{name: "    Player/Tune Trainer uses label L/R side click to decrement/increment values", id: "configure_trainer_touch_controls", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+		{name: "Metronome volume (default is 48):", id: "configure_metronome_volume", type:"text", cssClass:"advanced_settings2_form_text"},
+		{name: "MP3 audio export bitrate (kbit/sec) (default is 224):", id: "configure_mp3_bitrate", type:"number", cssClass:"advanced_settings2_form_text"},
+	]);
 
-		form = [
-		  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Advanced Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
-		  {html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;"><strong>Only change these values if you know what you are doing!</strong></p>'},
-		  {name: "Metronome volume (default is 48):", id: "configure_metronome_volume", type:"text", cssClass:"advanced_settings2_form_text"},
-	  	  {name: "          Player tunebook navigation controls on left side", id: "configure_player_status_on_left", type:"checkbox", cssClass:"advanced_settings2_form_text"},
-		];
-
+	// Only show batch export delays on desktop
+	if (isDesktopBrowser()){
+		form = form.concat([
+			{name: "Image Batch Export Delay in milliseconds (default is 200):", id: "configure_export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
+			{name: "MP3 Batch Export Delay in milliseconds (default is 250):", id: "configure_mp3export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
+		]);
 	}
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
@@ -23975,8 +23980,71 @@ function AdvancedSettings(){
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
 
+			// Sanity check the full screen scaling setting
+			gFullScreenScaling = args.result.configure_fullscreen_scaling;
+
+			gFullScreenScaling = gFullScreenScaling.replace("%","");
+			
+			if (isNaN(parseInt(gFullScreenScaling))){
+				gFullScreenScaling = 50;
+			}
+			else{
+				gFullScreenScaling = parseInt(gFullScreenScaling);
+			}
+
+			if (gFullScreenScaling < 25){
+				gFullScreenScaling = 25;
+
+			}
+
+			if (gFullScreenScaling > 100){
+				gFullScreenScaling = 100;
+			}
+
+			gPlayerStatusOnLeft = args.result.configure_player_status_on_left;
+
+			gLargePlayerControls = args.result.configure_large_player_controls;
+
+			gAutoscrollPlayer = args.result.configure_autoscrollplayer;
+
+			gTrainerTouchControls = args.result.configure_trainer_touch_controls;
+
+			gUseComhaltasABC = args.result.configure_comhaltas;
+
+			var val = args.result.configure_metronome_volume;
+
+			val = parseInt(val);
+
+			if (!isNaN(val)){
+				if ((val >= 0) && (val < 128)){
+					gMetronomeVolume = val;
+				}
+			}
+
+			var testMP3Bitrate = parseInt(args.result.configure_mp3_bitrate);
+		
+			if (!isNaN(testMP3Bitrate)){
+
+				gMP3Bitrate = testMP3Bitrate;
+
+				if (gMP3Bitrate < 96){
+					gMP3Bitrate = 96;
+				}
+
+				if (gMP3Bitrate > 384){
+					gMP3Bitrate = 384;
+				}
+			}
+
+			IdleAllowShowTabNames();
+
+			var radiovalue = GetRadioValue("notenodertab");
+
 			if (isDesktopBrowser()){
-				var val = args.result.configure_export_delayms;
+
+				gRawHighlightColor = args.result.configure_highlight_color;
+
+				val = args.result.configure_export_delayms;
 
 				val = parseInt(val);
 
@@ -23996,41 +24064,21 @@ function AdvancedSettings(){
 					}
 				}
 
-				val = args.result.configure_metronome_volume;
-
-				val = parseInt(val);
-
-				if (!isNaN(val)){
-					if ((val >= 0) && (val < 128)){
-						gMetronomeVolume = val;
-					}
-				}
-
-				gPlayerStatusOnLeft = args.result.configure_player_status_on_left;
-
-				gRawHighlightColor = args.result.configure_highlight_color;
-
 				// Do we need to re-render?
-				if (gRawMode && (gRawHighlightColor != oldHighlightColor)){
+				if ((gRawMode && (gRawHighlightColor != oldHighlightColor)) || ((radiovalue == "notenames") && (gUseComhaltasABC != theOldComhaltas))){
 					
 					RenderAsync(true,null);
 					
 				}
-
 			}
 			else{
 
-				var val = args.result.configure_metronome_volume;
-
-				val = parseInt(val);
-
-				if (!isNaN(val)){
-					if ((val >= 0) && (val < 128)){
-						gMetronomeVolume = val;
-					}
+				// Do we need to re-render?
+				if ((radiovalue == "notenames") && (gUseComhaltasABC != theOldComhaltas)){
+					
+					RenderAsync(true,null);
+					
 				}
-
-				gPlayerStatusOnLeft = args.result.configure_player_status_on_left;
 
 			}
 
@@ -24057,6 +24105,20 @@ function ConfigureToolSettings() {
   		midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
   	}
 
+	var theOldSaveLastAutoSnapShot = gSaveLastAutoSnapShot;
+
+	var theOldStaffSpacing = gStaffSpacing - STAFFSPACEOFFSET;
+
+	var oldLeftJustifyTitles = gForceLeftJustifyTitles;
+
+	var theOldShowTabNames = gShowTabNames;
+
+	var theOldCapo = gCapo;
+
+	var theOldSoundFont = gDefaultSoundFont;
+
+	var theOldUseCustomGMSounds = gUseCustomGMSounds;
+
 	var bAlwaysInjectPrograms = gAlwaysInjectPrograms;
 
 	var theMelodyProgram = gTheMelodyProgram;
@@ -24082,56 +24144,32 @@ function ConfigureToolSettings() {
 	var bAlwaysInjectVolumes = gAlwaysInjectVolumes;
 
 	var theBassVolume = gTheBassVolume;
+
 	var theChordVolume = gTheChordVolume;
 
 	var bOverridePlayMIDIParams = gOverridePlayMIDIParams;
 
-	var theFullScreenScaling = gFullScreenScaling;
-
-	var theOldStaffSpacing = gStaffSpacing - STAFFSPACEOFFSET;
-
-	var theOldShowTabNames = gShowTabNames;
-
-	var theOldCapo = gCapo;
-
-	var theOldSoundFont = gDefaultSoundFont;
-
-	var theOldUseCustomGMSounds = gUseCustomGMSounds;
-
-	var theOldSaveLastAutoSnapShot = gSaveLastAutoSnapShot;
-
-	var theOldComhaltas = gUseComhaltasABC;
-
 	var theOldAllowMIDIInput = gAllowMIDIInput;
-
-	var oldLeftJustifyTitles = gForceLeftJustifyTitles;
 
 	// Setup initial values
 	const theData = {
-	  configure_inject_programs: bAlwaysInjectPrograms,
-	  configure_melody_program: selectedMelodyProgram,
-	  configure_chord_program: selectedChordProgram,
-	  configure_inject_volumes: bAlwaysInjectVolumes,
-	  configure_bass_volume: theBassVolume,
-	  configure_chord_volume: theChordVolume,
-	  configure_override_play_midi_params: bOverridePlayMIDIParams,
-	  configure_fullscreen_scaling: theFullScreenScaling,
-	  configure_staff_spacing: theOldStaffSpacing,
-	  configure_large_player_controls: gLargePlayerControls,
-	  configure_trainer_touch_controls: gTrainerTouchControls,
-	  configure_show_tab_names: gShowTabNames,
-	  configure_capo: gCapo,
-	  configure_mp3_bitrate: gMP3Bitrate,
-	  configure_soundfont: gDefaultSoundFont,
-	  configure_autoscrollplayer: gAutoscrollPlayer,
-	  configure_use_custom_gm_sounds: gUseCustomGMSounds,
-	  configure_save_exit_snapshot: gSaveLastAutoSnapShot,
-	  configure_comhaltas: gUseComhaltasABC,	  
-	  configure_allow_midi_input: gAllowMIDIInput,	  
-	  configure_auto_swing_hornpipes: gAutoSwingHornpipes,	  
-	  configure_auto_swing_factor: gAutoSwingFactor,	
-	  configure_left_justify_titles: gForceLeftJustifyTitles
-  
+		configure_save_exit_snapshot: gSaveLastAutoSnapShot,
+		configure_staff_spacing: theOldStaffSpacing,
+		configure_left_justify_titles: gForceLeftJustifyTitles,
+		configure_capo: gCapo,
+		configure_show_tab_names: gShowTabNames,
+		configure_soundfont: gDefaultSoundFont,
+		configure_use_custom_gm_sounds: gUseCustomGMSounds,
+		configure_inject_programs: bAlwaysInjectPrograms,
+		configure_melody_program: selectedMelodyProgram,
+		configure_chord_program: selectedChordProgram,
+		configure_inject_volumes: bAlwaysInjectVolumes,
+		configure_bass_volume: theBassVolume,
+		configure_chord_volume: theChordVolume,
+		configure_override_play_midi_params: bOverridePlayMIDIParams,
+		configure_auto_swing_hornpipes: gAutoSwingHornpipes,	  
+		configure_auto_swing_factor: gAutoSwingFactor,	
+		configure_allow_midi_input: gAllowMIDIInput	  
 	};
 
  	const sound_font_options = [
@@ -24143,42 +24181,31 @@ function ConfigureToolSettings() {
  	];
 
   	// Disallowing auto snapshots on mobile
-
-	var form = [
-	  {html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;">ABC Transcription Tools Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#settings_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'}
+  	var form = [
+		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;">ABC Transcription Tools Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#settings_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'}
 	];
 
 	if (isDesktopBrowser()){
-		form.push(
-	  		{name: "   Save an Auto-Snapshot on browser tab close or reload (Restore it from the Add dialog)", id: "configure_save_exit_snapshot", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"}
-	  );
+		form.push({name: "   Save an Auto-Snapshot on browser tab close or reload (Restore it from the Add dialog)", id: "configure_save_exit_snapshot", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 	}
 
-	const form2 = [
-	  {name: "Full screen tune display scaling (percentage):", id: "configure_fullscreen_scaling", type:"number", cssClass:"configure_settings_form_text"},
-	  {name: "Staff spacing (default is 10):", id: "configure_staff_spacing", type:"number", cssClass:"configure_settings_form_text"},
-	  {name: "          Left-justify all titles and subtitles", id: "configure_left_justify_titles", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-	  {name: "    Show stringed instrument names on tablature (single-voice tunes only, not shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-	  {name: "Stringed instrument capo fret postion:", id: "configure_capo", type:"number", cssClass:"configure_settings_form_text"},
-	  {name: "Default abcjs soundfont:", id: "configure_soundfont", type:"select", options:sound_font_options, cssClass:"configure_settings_select"}, 
-	  {name: "    Use AppCordions custom sounds for Dulcimer, Accordion, Flute, and Whistle", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-	  {name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-	  {name: "Default Melody MIDI program:", id: "configure_melody_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
-	  {name: "Default Bass/Chords MIDI program:", id: "configure_chord_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
-	  {name: "            Use Default Bass/Chord volumes when playing tunes", id: "configure_inject_volumes", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-	  {name: "Default Bass MIDI volume (0-127):", id: "configure_bass_volume", type:"number", cssClass:"configure_settings_form_text"},
-	  {name: "Default Chords MIDI volume (0-127):", id: "configure_chord_volume", type:"number", cssClass:"configure_settings_form_text"},
-	  {name: "            Override all MIDI programs and volumes in the ABC when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-	  {name: "            Automatically swing Hornpipes when playing (enabled if R:Hornpipe is found in the tune)", id: "configure_auto_swing_hornpipes", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-	  {name: "Auto-swing scale factor (range is -0.9 to 0.9, default for Hornpipes is 0.25):", id: "configure_auto_swing_factor", type:"number", cssClass:"configure_settings_form_text"},
-	  {name: "            Autoscroll player when playing", id: "configure_autoscrollplayer", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-	  {name: "MP3 audio export bitrate (kbit/sec):", id: "configure_mp3_bitrate", type:"number", cssClass:"configure_settings_form_text"},
-	  {name: "    Player uses large controls (easier to touch on phone/tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-	  {name: "    Player/Tune Trainer uses label L/R side click to decrement/increment values (for touch devices)", id: "configure_trainer_touch_controls", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-	  {name: "    Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)", id: "configure_comhaltas", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-	];
-
-	form = form.concat(form2);
+	form = form.concat([
+		{name: "Space between the staves (default is 10, minimum is -40):", id: "configure_staff_spacing", type:"number", cssClass:"configure_settings_form_text"},
+		{name: "          Left-justify all titles and subtitles", id: "configure_left_justify_titles", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+		{name: "Stringed instrument capo fret postion:", id: "configure_capo", type:"number", cssClass:"configure_settings_form_text"},
+		{name: "    Show stringed instrument names on tablature (single-voice tunes only, not shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+		{name: "Default abcjs soundfont:", id: "configure_soundfont", type:"select", options:sound_font_options, cssClass:"configure_settings_select"}, 
+		{name: "    Use AppCordions custom sounds for Dulcimer, Accordion, Flute, and Whistle", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+		{name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+		{name: "Default Melody MIDI program:", id: "configure_melody_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
+		{name: "Default Bass/Chords MIDI program:", id: "configure_chord_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
+		{name: "            Use Default Bass/Chord volumes when playing tunes", id: "configure_inject_volumes", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+		{name: "Default Bass MIDI volume (0-127):", id: "configure_bass_volume", type:"number", cssClass:"configure_settings_form_text"},
+		{name: "Default Chords MIDI volume (0-127):", id: "configure_chord_volume", type:"number", cssClass:"configure_settings_form_text"},
+		{name: "            Override all MIDI programs and volumes in the ABC with the defaults when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+		{name: "            Automatically swing Hornpipes when playing (enabled if R:Hornpipe is found in the tune)", id: "configure_auto_swing_hornpipes", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+		{name: "Auto-swing scale factor (range is -0.9 to 0.9, default for Hornpipes is 0.25):", id: "configure_auto_swing_factor", type:"number", cssClass:"configure_settings_form_text"},
+	]);
 
 	if (browserSupportsMIDI()){
 		form.push({name: "    Allow MIDI input for ABC text entry", id: "configure_allow_midi_input", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
@@ -24191,25 +24218,6 @@ function ConfigureToolSettings() {
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
 
-			gAlwaysInjectPrograms = args.result.configure_inject_programs;
-
-			gUseComhaltasABC = args.result.configure_comhaltas;
-
-			gTheMelodyProgram = args.result.configure_melody_program;
-			gTheChordProgram = args.result.configure_chord_program;
-
-			gAlwaysInjectVolumes = args.result.configure_inject_volumes;
-			gTheBassVolume = args.result.configure_bass_volume;
-			gTheChordVolume = args.result.configure_chord_volume;
-
-			gOverridePlayMIDIParams = args.result.configure_override_play_midi_params;
-
-			gLargePlayerControls = args.result.configure_large_player_controls;
-
-			gTrainerTouchControls = args.result.configure_trainer_touch_controls;
-
-			gShowTabNames = args.result.configure_show_tab_names;
-			
 			if (isDesktopBrowser()){
 
 				gSaveLastAutoSnapShot = args.result.configure_save_exit_snapshot;
@@ -24248,25 +24256,6 @@ function ConfigureToolSettings() {
 			
 			}
 
-			// Allow MIDI input if enabled
-			if (browserSupportsMIDI()){
-
-				gAllowMIDIInput = args.result.configure_allow_midi_input;
-
-				// If they've allowed MIDI input, and not currently using it
-				if (theOldAllowMIDIInput != gAllowMIDIInput){
-
-					if (gAllowMIDIInput){
-
-						sendGoogleAnalytics("action","enable_MIDI");
-
-						initMIDI();
-					}
-
-				}
-			}
-
-
 			// Validate the staff spacing value
 			var testStaffSpacing = args.result.configure_staff_spacing;
 
@@ -24282,6 +24271,57 @@ function ConfigureToolSettings() {
 			else{
 				testStaffSpacing = gStaffSpacing;
 			}
+
+			if (testStaffSpacing != theOldStaffSpacing){
+
+				gStaffSpacing = testStaffSpacing + STAFFSPACEOFFSET;
+
+			}
+
+			// Left justify titles/subtitles?
+			gForceLeftJustifyTitles = args.result.configure_left_justify_titles;
+
+			// Sanity check the new capo value
+			var testCapo = args.result.configure_capo;
+
+			if (!isNaN(parseInt(testCapo))){
+
+				var theCapo = parseInt(testCapo);
+				if ((theCapo >= 0) && (theCapo <= 12)){
+
+					gCapo = parseInt(testCapo);
+
+				}
+			}
+
+			gShowTabNames = args.result.configure_show_tab_names;
+
+			gDefaultSoundFont = args.result.configure_soundfont;
+
+			if (theOldSoundFont != gDefaultSoundFont ){
+
+				// Reset the current soundfont to the selected font
+				gTheActiveSoundFont = gDefaultSoundFont
+
+				// Reset the abcjs sounds cache
+				gSoundsCacheABCJS = {};
+
+			}
+
+			gUseCustomGMSounds = args.result.configure_use_custom_gm_sounds;
+
+			// If changing the custom GM sounds setting, clear the abcjs sample cache
+			if (gUseCustomGMSounds != theOldUseCustomGMSounds){
+
+				// Reset the abcjs sounds cache
+				gSoundsCacheABCJS = {};				
+			}
+
+			gAlwaysInjectPrograms = args.result.configure_inject_programs;
+
+			gTheMelodyProgram = args.result.configure_melody_program;
+			
+			gTheChordProgram = args.result.configure_chord_program;
 
 			if (gTheMelodyProgram == 0){
 				gTheMelodyProgram = "mute";
@@ -24328,6 +24368,31 @@ function ConfigureToolSettings() {
 				}
 			}
 
+			if (gUseCustomGMSounds){
+
+				if ((gAlwaysInjectPrograms || gOverridePlayMIDIParams) && ((gTheMelodyProgram == "15") || (gTheChordProgram == "15"))){
+
+					// Special release time case case for Dulcimer
+				   	var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica">Special Note on the Dulcimer (15) Instrument</p>';
+				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Selecting the Dulcimer (15) program for either the melody or chords automatically sets all note release decay times to 4 seconds to allow the notes to ring.</p>';
+				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">This can be useful for tunes using solo melody instruments with long release times like Orchestral Harp (46) or Koto (107).</p>';
+				       	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">For those instruments played solo, set the melody instrument program as desired and the chord instrument program to Dulcimer (15).</p>';
+				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In this case, you may not want to include any chords in the ABC, as they will be played using the Dulcimer (15) instrument.</p>';
+
+				       	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
+						    // Focus after operation
+						    FocusAfterOperation();
+			       		
+				       	});
+				}
+			}
+
+			gAlwaysInjectVolumes = args.result.configure_inject_volumes;
+			
+			gTheBassVolume = args.result.configure_bass_volume;
+			
+			gTheChordVolume = args.result.configure_chord_volume;
 
 			if (isNaN(parseInt(gTheBassVolume))){
 				gTheBassVolume = 0;
@@ -24353,85 +24418,7 @@ function ConfigureToolSettings() {
 				gTheChordVolume = 127;
 			}
 
-			if (gUseCustomGMSounds){
-
-				if ((gAlwaysInjectPrograms || gOverridePlayMIDIParams) && ((gTheMelodyProgram == "15") || (gTheChordProgram == "15"))){
-
-					// Special release time case case for Dulcimer
-				   	var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica">Special Note on the Dulcimer (15) Instrument</p>';
-				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Selecting the Dulcimer (15) program for either the melody or chords automatically sets all note release decay times to 4 seconds to allow the notes to ring.</p>';
-				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">This can be useful for tunes using solo melody instruments with long release times like Orchestral Harp (46) or Koto (107).</p>';
-				       	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">For those instruments played solo, set the melody instrument program as desired and the chord instrument program to Dulcimer (15).</p>';
-				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In this case, you may not want to include any chords in the ABC, as they will be played using the Dulcimer (15) instrument.</p>';
-
-				       	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
-
-						    // Focus after operation
-						    FocusAfterOperation();
-			       		
-				       	});
-				}
-			}
-
-			// Sanity check the full screen scaling setting
-			gFullScreenScaling = args.result.configure_fullscreen_scaling;
-
-			gFullScreenScaling = gFullScreenScaling.replace("%","");
-			
-			if (isNaN(parseInt(gFullScreenScaling))){
-				gFullScreenScaling = 50;
-			}
-
-			if (gFullScreenScaling < 25){
-				gFullScreenScaling = 25;
-
-			}
-
-			if (gFullScreenScaling > 100){
-				gFullScreenScaling = 100;
-			}
-
-			// Sanity check the new capo value
-			var testCapo = args.result.configure_capo;
-
-			if (!isNaN(parseInt(testCapo))){
-
-				var theCapo = parseInt(testCapo);
-				if ((theCapo >= 0) && (theCapo <= 12)){
-
-					gCapo = parseInt(testCapo);
-
-				}
-			}
-
-			var testMP3Bitrate = parseInt(args.result.configure_mp3_bitrate);
-			
-			if (!isNaN(testMP3Bitrate)){
-
-				gMP3Bitrate = testMP3Bitrate;
-
-				if (gMP3Bitrate < 96){
-					gMP3Bitrate = 96;
-				}
-
-				if (gMP3Bitrate > 384){
-					gMP3Bitrate = 384;
-				}
-			}
-
-			gDefaultSoundFont = args.result.configure_soundfont;
-
-			if (theOldSoundFont != gDefaultSoundFont ){
-
-				// Reset the current soundfont to the selected font
-				gTheActiveSoundFont = gDefaultSoundFont
-
-				// Reset the abcjs sounds cache
-				gSoundsCacheABCJS = {};
-
-			}
-
-			gAutoscrollPlayer = args.result.configure_autoscrollplayer;
+			gOverridePlayMIDIParams = args.result.configure_override_play_midi_params;
 
 			gAutoSwingHornpipes = args.result.configure_auto_swing_hornpipes;
 
@@ -24449,22 +24436,25 @@ function ConfigureToolSettings() {
 				}
 			}
 
-			gUseCustomGMSounds = args.result.configure_use_custom_gm_sounds;
+			// Allow MIDI input if enabled
+			if (browserSupportsMIDI()){
 
-			// If changing the custom GM sounds setting, clear the abcjs sample cache
-			if (gUseCustomGMSounds != theOldUseCustomGMSounds){
+				gAllowMIDIInput = args.result.configure_allow_midi_input;
 
-				// Reset the abcjs sounds cache
-				gSoundsCacheABCJS = {};				
+				// If they've allowed MIDI input, and not currently using it
+				if (theOldAllowMIDIInput != gAllowMIDIInput){
+
+					if (gAllowMIDIInput){
+
+						sendGoogleAnalytics("action","enable_MIDI");
+
+						initMIDI();
+					}
+
+				}
 			}
 
 			IdleAllowShowTabNames();
-
-			if (testStaffSpacing != theOldStaffSpacing){
-
-				gStaffSpacing = testStaffSpacing + STAFFSPACEOFFSET;
-
-			}
 
 			// Force change of saved staff spacing if user modifies it in the dialog
 			// Related to avoiding resetting of saved staff spacing if changed by a shared file
@@ -24474,16 +24464,11 @@ function ConfigureToolSettings() {
 
 			}
 
-			// Left justify titles/subtitles?
-			gForceLeftJustifyTitles = args.result.configure_left_justify_titles;
-
 			// Update local storage
 			SaveConfigurationSettings();
 
-			var radiovalue = GetRadioValue("notenodertab");
-
 			// Do we need to re-render?
-			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || ((radiovalue == "notenames") && (gUseComhaltasABC != theOldComhaltas))  || (gForceLeftJustifyTitles != oldLeftJustifyTitles)){
+			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || (gForceLeftJustifyTitles != oldLeftJustifyTitles)){
 				
 				RenderAsync(true, null, function(){
 
@@ -24492,8 +24477,6 @@ function ConfigureToolSettings() {
 
 				});
 			}
-
-
 		}
 		else{
 
@@ -25836,7 +25819,6 @@ function ShowHelp(){
 
 }
 
-
 //
 // Text Area resize observer
 // 
@@ -26330,8 +26312,11 @@ function DoStartup() {
 		document.getElementById("selectabcfile").removeAttribute("accept");
 	}	
 
-	// gIsIOS = true; // FOOFOOFOO for mobile simulation testing
-	// gIsIPhone = true;  // FOOFOOFOO for mobile simulation testing
+	//
+	// Uncomment these lines for mobile simulation testing
+	//
+	// gIsIOS = true; 
+	// gIsIPhone = true;  
 	
 	//
 	// iOS and Android styling adaptation
