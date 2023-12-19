@@ -1239,6 +1239,75 @@ left:20px;
 top:20px;
 }
 
+#reset_roll_parameters{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:0px;
+}
+
+@media (hover: hover) {
+	.reset_roll_parameters:hover{
+	background: palegreen;
+	}
+}
+
+#reset_roll_explorer_2{
+height:32px;
+padding:8px;
+width:auto;
+margin-left:18px;
+margin-right:0px;
+}
+
+@media (hover: hover) {
+	.reset_roll_explorer_2:hover{
+	background: palegreen;
+	}
+}
+
+#reset_roll_explorer_3{
+height:32px;
+padding:8px;
+width:auto;
+margin-left:18px;
+margin-right:0px;
+}
+
+@media (hover: hover) {
+	.reset_roll_explorer_3:hover{
+	background: palegreen;
+	}
+}
+
+#default_roll_explorer_2{
+height:32px;
+padding:8px;
+width:auto;
+margin-left:18px;
+margin-right:0px;
+}
+
+@media (hover: hover) {
+	.default_roll_explorer_2:hover{
+	background: palegreen;
+	}
+}
+
+#default_roll_explorer_3{
+height:32px;
+padding:8px;
+width:auto;
+margin-left:18px;
+margin-right:0px;
+}
+
+@media (hover: hover) {
+	.default_roll_explorer_3:hover{
+	background: palegreen;
+	}
+}
+
 #shareurlcaption{
 margin-top:8px;
 }
@@ -1887,6 +1956,22 @@ left:-5000px;
 	font-family:helvetica;
 	margin-left: 12px;
 	width: 100px;
+	margin-top:-8px;
+}
+
+.advanced_settings2_roll_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:20px;
+	display:flex;
+}
+
+.advanced_settings2_roll_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 460px;
 	margin-top:-8px;
 }
 
@@ -3492,5 +3577,26 @@ margin-top:4px;
   --color: black;
   --background-color: #E6E6E6;
 }
+
+.btn-reset_roll_explorer_2{
+  --color: black;
+  --background-color: #E6E6E6;
+}
+
+.btn-reset_roll_explorer_3{
+  --color: black;
+  --background-color: #E6E6E6;
+}
+
+.btn-default_roll_explorer_2{
+  --color: black;
+  --background-color: #E6E6E6;
+}
+
+.btn-default_roll_explorer_3{
+  --color: black;
+  --background-color: #E6E6E6;
+}
+
 
 

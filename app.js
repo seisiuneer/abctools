@@ -275,6 +275,15 @@ var gRawHighlightColor = "#F00000";
 // Left-handed player status
 var gPlayerStatusOnLeft = false;
 
+// Default roll_2 and roll_2 parameters
+// Equivalent to:
+//
+//%roll_2_params 0.95 0.8 1.0 0.75 0.9 1.0 0.75 1.0
+//%roll_3_params 1.45 0.6 1.0 0.75 0.9 1.0 0.75 1.0
+//
+var gRoll2DefaultParams = "0.95 0.8 1.0 0.75 0.9 1.0 0.75 1.0";
+var gRoll3DefaultParams = "1.45 0.6 1.0 0.75 0.9 1.0 0.75 1.0";
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -11788,6 +11797,11 @@ function NotationSpacingInject(){
 		    FocusAfterOperation();
 
 		});
+
+		var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Spacing Injection Complete!</p>';
+
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
+
 	}
 	else{
 
@@ -11832,6 +11846,9 @@ function NotationSpacingInject(){
 
 		});
 
+	   	var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Spacing Injection Complete!</p>';
+
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
 
 	}
 }
@@ -18440,6 +18457,156 @@ function tuneIsHornpipe(theTune){
 }
 
 //
+// Validate and optionally inject a roll_2 string from an array of params
+//
+function validate_roll_2_params(theParamString, doInject){
+
+	var theParams = theParamString.split(" ");
+
+	if (theParams && (theParams.length != 8)){
+
+		//console.log("roll2 length incorrect");
+
+		return false;
+
+	}
+
+	var Roll2Duration1 = theParams[0]; 
+	var Roll2Duration2 = theParams[1]; 
+	var Roll2Fraction1 = theParams[2];
+	var Roll2Fraction2 = theParams[3];
+	var Roll2Fraction3 = theParams[4]; 
+	var Roll2Volume1 = theParams[5];
+	var Roll2Volume2 = theParams[6]; 
+	var Roll2Volume3 = theParams[7]; 
+
+	Roll2Duration1 = parseFloat(Roll2Duration1);
+	Roll2Duration2 = parseFloat(Roll2Duration2); 
+	Roll2Fraction1 = parseFloat(Roll2Fraction1);
+	Roll2Fraction2 = parseFloat(Roll2Fraction2);
+	Roll2Fraction3 = parseFloat(Roll2Fraction3); 
+	Roll2Volume1 = parseFloat(Roll2Volume1);
+	Roll2Volume2 = parseFloat(Roll2Volume2); 
+	Roll2Volume3 = parseFloat(Roll2Volume3); 
+
+	if ((!isNaN(Roll2Duration1)) && (!isNaN(Roll2Duration2)) && (!isNaN(Roll2Fraction1)) && (!isNaN(Roll2Fraction2)) &&
+		(!isNaN(Roll2Fraction3)) && (!isNaN(Roll2Volume1)) && (!isNaN(Roll2Volume2)) && (!isNaN(Roll2Volume3))){
+
+		// Sanity check the parameters
+		if ((Roll2Duration1>=0.0) && 
+			(Roll2Duration2>=0.0) &&
+			((Roll2Fraction1>=0.0) && (Roll2Fraction1<=1.0)) &&
+			((Roll2Fraction2>=0.0) && (Roll2Fraction2<=1.0)) &&
+			((Roll2Fraction3>=0.0) && (Roll2Fraction3<=1.0)) &&
+			((Roll2Volume1>=0.0) && (Roll2Volume1<=2.0)) &&
+			((Roll2Volume2>=0.0) && (Roll2Volume2<=2.0)) &&
+			((Roll2Volume3>=0.0) && (Roll2Volume3<=2.0)) &&
+			((Roll2Duration1 + Roll2Duration2) < 3.0)){
+
+			//console.log("roll2 validation pass");
+			
+			if (doInject){
+				gRoll2Duration1 = Roll2Duration1; 
+				gRoll2Duration2 = Roll2Duration2; 
+				gRoll2Fraction1 = Roll2Fraction1;
+				gRoll2Fraction2 = Roll2Fraction2;
+				gRoll2Fraction3 = Roll2Fraction3; 
+				gRoll2Volume1 = Roll2Volume1;
+				gRoll2Volume2 = Roll2Volume2; 
+				gRoll2Volume3 = Roll2Volume3; 
+			}
+
+			return true;
+		}
+		else{
+
+			//console.log("roll2 validation fail1");
+
+			return false
+		}
+	}
+
+	//console.log("roll3 validation fail2");
+
+	return false;
+}
+
+//
+// Validate and optionally inject a roll_3 string from an array of params
+//
+function validate_roll_3_params(theParamString, doInject){
+
+	var theParams = theParamString.split(" ");
+
+	if (theParams && (theParams.length != 8)){
+
+		//console.log("roll3 length incorrect");
+		
+		return false;
+
+	}
+	
+	var Roll3Duration1 = theParams[0]; 
+	var Roll3Duration2 = theParams[1]; 
+	var Roll3Fraction1 = theParams[2];
+	var Roll3Fraction2 = theParams[3];
+	var Roll3Fraction3 = theParams[4]; 
+	var Roll3Volume1 = theParams[5];
+	var Roll3Volume2 = theParams[6]; 
+	var Roll3Volume3 = theParams[7]; 
+
+	Roll3Duration1 = parseFloat(Roll3Duration1);
+	Roll3Duration2 = parseFloat(Roll3Duration2); 
+	Roll3Fraction1 = parseFloat(Roll3Fraction1);
+	Roll3Fraction2 = parseFloat(Roll3Fraction2);
+	Roll3Fraction3 = parseFloat(Roll3Fraction3); 
+	Roll3Volume1 = parseFloat(Roll3Volume1);
+	Roll3Volume2 = parseFloat(Roll3Volume2); 
+	Roll3Volume3 = parseFloat(Roll3Volume3); 
+
+	if ((!isNaN(Roll3Duration1)) && (!isNaN(Roll3Duration2)) && (!isNaN(Roll3Fraction1)) && (!isNaN(Roll3Fraction2)) &&
+		(!isNaN(Roll3Fraction3)) && (!isNaN(Roll3Volume1)) && (!isNaN(Roll3Volume2)) && (!isNaN(Roll3Volume3))){
+		
+		// Sanity check the parameters
+		if ((Roll3Duration1>=0.0) && 
+			(Roll3Duration2>=0.0) &&
+			((Roll3Fraction1>=0.0) && (Roll3Fraction1<=1.0)) &&
+			((Roll3Fraction2>=0.0) && (Roll3Fraction2<=1.0)) &&
+			((Roll3Fraction3>=0.0) && (Roll3Fraction3<=1.0)) &&
+			((Roll3Volume1>=0.0) && (Roll3Volume1<=2.0)) &&
+			((Roll3Volume2>=0.0) && (Roll3Volume2<=2.0)) &&
+			((Roll3Volume3>=0.0) && (Roll3Volume3<=2.0)) &&
+			((Roll3Duration1 + Roll3Duration2) < 3.0)){
+
+			//console.log("roll3 validation pass");
+			
+			if (doInject){
+				gRoll3Duration1 = Roll3Duration1; 
+				gRoll3Duration2 = Roll3Duration2; 
+				gRoll3Fraction1 = Roll3Fraction1;
+				gRoll3Fraction2 = Roll3Fraction2;
+				gRoll3Fraction3 = Roll3Fraction3; 
+				gRoll3Volume1 = Roll3Volume1;
+				gRoll3Volume2 = Roll3Volume2; 
+				gRoll3Volume3 = Roll3Volume3; 
+			}
+
+			return true;
+		}
+		else{
+
+			//console.log("roll3 validation fail1");
+
+			return false;
+		}
+	}
+
+	console.log("roll3 validation fail2");
+
+	return false;
+}
+
+//
 // Scan tune for custom timing annotations
 //
 function ScanTuneForCustomTimingInjection(theTune){
@@ -18571,14 +18738,19 @@ function ScanTuneForCustomTimingInjection(theTune){
 	gGraceTuneType = getTuneRhythmType(theTune);
 
 	// Reset quarter note roll timing defaults
-	gRoll2Duration1 = 0.95; 
-	gRoll2Duration2 = 0.8; 
-	gRoll2Fraction1 = 1.0;
-	gRoll2Fraction2 = 0.75;
-	gRoll2Fraction3 = 0.9; 
-	gRoll2Volume1 = 1.0;
-	gRoll2Volume2 = 0.75; 
-	gRoll2Volume3 = 1.0; 
+	var roll2 = validate_roll_2_params(gRoll2DefaultParams,true);
+
+	// Sanity check the default validate
+	if (!roll2){
+		gRoll2Duration1 = 0.95; 
+		gRoll2Duration2 = 0.8; 
+		gRoll2Fraction1 = 1.0;
+		gRoll2Fraction2 = 0.75;
+		gRoll2Fraction3 = 0.9; 
+		gRoll2Volume1 = 1.0;
+		gRoll2Volume2 = 0.75; 
+		gRoll2Volume3 = 1.0; 
+	}
 
 	// Scan tune for custom quarter note roll
 	searchRegExp = /^%roll_2_params.*$/gm
@@ -18592,67 +18764,28 @@ function ScanTuneForCustomTimingInjection(theTune){
 
 		theParamString = theParamString.trim();
 
-		var theParams = theParamString.split(" ");
+		// Validate and inject roll_2_params
+		validate_roll_2_params(theParamString,true);
 
-		if (theParams.length == 8){
-
-			var Roll2Duration1 = theParams[0]; 
-			var Roll2Duration2 = theParams[1]; 
-			var Roll2Fraction1 = theParams[2];
-			var Roll2Fraction2 = theParams[3];
-			var Roll2Fraction3 = theParams[4]; 
-			var Roll2Volume1 = theParams[5];
-			var Roll2Volume2 = theParams[6]; 
-			var Roll2Volume3 = theParams[7]; 
-
-			Roll2Duration1 = parseFloat(Roll2Duration1);
-			Roll2Duration2 = parseFloat(Roll2Duration2); 
-			Roll2Fraction1 = parseFloat(Roll2Fraction1);
-			Roll2Fraction2 = parseFloat(Roll2Fraction2);
-			Roll2Fraction3 = parseFloat(Roll2Fraction3); 
-			Roll2Volume1 = parseFloat(Roll2Volume1);
-			Roll2Volume2 = parseFloat(Roll2Volume2); 
-			Roll2Volume3 = parseFloat(Roll2Volume3); 
-
-			if ((!isNaN(Roll2Duration1)) && (!isNaN(Roll2Duration2)) && (!isNaN(Roll2Fraction1)) && (!isNaN(Roll2Fraction2)) &&
-				(!isNaN(Roll2Fraction3)) && (!isNaN(Roll2Volume1)) && (!isNaN(Roll2Volume2)) && (!isNaN(Roll2Volume3))){
-
-				// Sanity check the parameters
-				if ((Roll2Duration1>=0.0) && 
-					(Roll2Duration2>=0.0) &&
-					((Roll2Fraction1>=0.0) && (Roll2Fraction1<=1.0)) &&
-					((Roll2Fraction2>=0.0) && (Roll2Fraction2<=1.0)) &&
-					((Roll2Fraction3>=0.0) && (Roll2Fraction3<=1.0)) &&
-					((Roll2Volume1>=0.0) && (Roll2Volume1<=2.0)) &&
-					((Roll2Volume2>=0.0) && (Roll2Volume2<=2.0)) &&
-					((Roll2Volume3>=0.0) && (Roll2Volume3<=2.0)) &&
-					((Roll2Duration1 + Roll2Duration2) < 3.0)){
-					//console.log("roll2 validation pass");
-					gRoll2Duration1 = Roll2Duration1; 
-					gRoll2Duration2 = Roll2Duration2; 
-					gRoll2Fraction1 = Roll2Fraction1;
-					gRoll2Fraction2 = Roll2Fraction2;
-					gRoll2Fraction3 = Roll2Fraction3; 
-					gRoll2Volume1 = Roll2Volume1;
-					gRoll2Volume2 = Roll2Volume2; 
-					gRoll2Volume3 = Roll2Volume3; 
-				}
-				// else{
-				// 	console.log("roll2 validation fail")
-				// }
-			}
-		}
 	}
 
 	// Reset dotted quarter note roll timing defaults
-	gRoll3Duration1 = 1.45; 
-	gRoll3Duration2 = 0.6; 
-	gRoll3Fraction1 = 1.0;
-	gRoll3Fraction2 = 0.75;
-	gRoll3Fraction3 = 0.9; 
-	gRoll3Volume1 = 1.0;
-	gRoll3Volume2 = 0.75;
-	gRoll3Volume3 = 1.0;  
+	var roll3 = validate_roll_3_params(gRoll3DefaultParams,true);
+
+	// Sanity check the default validate
+	if (!roll3){
+
+		// Reset dotted quarter note roll timing defaults
+		gRoll3Duration1 = 1.45; 
+		gRoll3Duration2 = 0.6; 
+		gRoll3Fraction1 = 1.0;
+		gRoll3Fraction2 = 0.75;
+		gRoll3Fraction3 = 0.9; 
+		gRoll3Volume1 = 1.0;
+		gRoll3Volume2 = 0.75;
+		gRoll3Volume3 = 1.0;  
+
+	}
 
 	// Scan tune for custom dotted quarter note roll
 	searchRegExp = /^%roll_3_params.*$/gm
@@ -18666,56 +18799,9 @@ function ScanTuneForCustomTimingInjection(theTune){
 
 		theParamString = theParamString.trim();
 
-		var theParams = theParamString.split(" ");
+		// Validate and inject roll_3_params
+		validate_roll_3_params(theParamString,true);
 
-		if (theParams.length == 8){
-
-			var Roll3Duration1 = theParams[0]; 
-			var Roll3Duration2 = theParams[1]; 
-			var Roll3Fraction1 = theParams[2];
-			var Roll3Fraction2 = theParams[3];
-			var Roll3Fraction3 = theParams[4]; 
-			var Roll3Volume1 = theParams[5];
-			var Roll3Volume2 = theParams[6]; 
-			var Roll3Volume3 = theParams[7]; 
-
-			Roll3Duration1 = parseFloat(Roll3Duration1);
-			Roll3Duration2 = parseFloat(Roll3Duration2); 
-			Roll3Fraction1 = parseFloat(Roll3Fraction1);
-			Roll3Fraction2 = parseFloat(Roll3Fraction2);
-			Roll3Fraction3 = parseFloat(Roll3Fraction3); 
-			Roll3Volume1 = parseFloat(Roll3Volume1);
-			Roll3Volume2 = parseFloat(Roll3Volume2); 
-			Roll3Volume3 = parseFloat(Roll3Volume3); 
-
-			if ((!isNaN(Roll3Duration1)) && (!isNaN(Roll3Duration2)) && (!isNaN(Roll3Fraction1)) && (!isNaN(Roll3Fraction2)) &&
-				(!isNaN(Roll3Fraction3)) && (!isNaN(Roll3Volume1)) && (!isNaN(Roll3Volume2)) && (!isNaN(Roll3Volume3))){
-				
-				// Sanity check the parameters
-				if ((Roll3Duration1>=0.0) && 
-					(Roll3Duration2>=0.0) &&
-					((Roll3Fraction1>=0.0) && (Roll3Fraction1<=1.0)) &&
-					((Roll3Fraction2>=0.0) && (Roll3Fraction2<=1.0)) &&
-					((Roll3Fraction3>=0.0) && (Roll3Fraction3<=1.0)) &&
-					((Roll3Volume1>=0.0) && (Roll3Volume1<=2.0)) &&
-					((Roll3Volume2>=0.0) && (Roll3Volume2<=2.0)) &&
-					((Roll3Volume3>=0.0) && (Roll3Volume3<=2.0)) &&
-					((Roll3Duration1 + Roll3Duration2) < 3.0)){
-					//console.log("roll3 validation pass");
-					gRoll3Duration1 = Roll3Duration1; 
-					gRoll3Duration2 = Roll3Duration2; 
-					gRoll3Fraction1 = Roll3Fraction1;
-					gRoll3Fraction2 = Roll3Fraction2;
-					gRoll3Fraction3 = Roll3Fraction3; 
-					gRoll3Volume1 = Roll3Volume1;
-					gRoll3Volume2 = Roll3Volume2; 
-					gRoll3Volume3 = Roll3Volume3; 
-				}
-				// else{
-				// 	console.log("roll3 validation fail")
-				// }
-			}
-		}
 	}
 
 	// Disable original roll solution override
@@ -19169,6 +19255,11 @@ function SwingExplorerInject(){
 		    FocusAfterOperation();
 
 	    }
+
+	   	var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Swing Injection Complete!</p>';
+
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
+
 	}
 
 }
@@ -19961,6 +20052,10 @@ function InstrumentExplorerInject(){
 
     }
 
+   	var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Instrument Injection Complete!</p>';
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
+
 }
 
 //
@@ -20583,6 +20678,10 @@ function GraceExplorerInject(){
 
 	    }
 
+	   	var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Grace Duration Injection Complete!</p>';
+
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
+
 	}
 
 }
@@ -20959,9 +21058,48 @@ function RollExplorer(){
 }
 
 //
-// Reload the player with new roll parameters
+// Roll issue dialog
 //
+function RollParameterIssueAlert(callback){
 
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Please Check the Roll Parameters</p>';
+
+	modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;text-align:center;">There is an issue with the roll parameters</p>';
+	modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:20px;text-align:center;">All values must be positive</p>';
+	modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:20px;text-align:center;">The total of the slot sizes for each of the roll styles must be less than 3</p>';
+	modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:20px;text-align:center;">The fractions must be between 0 and 1</p>';
+	modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:20px;text-align:center;">The volumes must be between 0 and 2</p>';
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 700,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+		if (callback){
+			callback();
+		}
+	});
+}
+
+//
+// Make a roll string from a parameter set
+//
+function makeRollString(roll_array){
+
+	var i;
+	var res = "";
+	var nParams = roll_array.length;
+	for (i=0;i<nParams;++i){
+		if (i != nParams-1){
+			res += roll_array[i]+" ";
+		}
+		else{
+			res += roll_array[i];
+		}
+	}
+
+	return res;
+}
+
+//
+// Validate the roll parameters
+//
 function RollExplorerValidate(){
 
 	var Roll2Duration1 = document.getElementById("roll_2_slot_1").value;
@@ -20986,76 +21124,26 @@ function RollExplorerValidate(){
 	var Roll3Volume2 = document.getElementById("roll_3_volume_2").value;
 	var Roll3Volume3 = document.getElementById("roll_3_volume_3").value;
 
-	Roll2Duration1 = parseFloat(Roll2Duration1);
-	Roll2Duration2 = parseFloat(Roll2Duration2); 
-	Roll2Fraction1 = parseFloat(Roll2Fraction1);
-	Roll2Fraction2 = parseFloat(Roll2Fraction2);
-	Roll2Fraction3 = parseFloat(Roll2Fraction3); 
-	Roll2Volume1 = parseFloat(Roll2Volume1);
-	Roll2Volume2 = parseFloat(Roll2Volume2); 
-	Roll2Volume3 = parseFloat(Roll2Volume3); 
+	var Roll2String = makeRollString([Roll2Duration1,Roll2Duration2,Roll2Fraction1,Roll2Fraction2,Roll2Fraction3,Roll2Volume1,Roll2Volume2,Roll2Volume3]);
+	var Roll3String = makeRollString([Roll3Duration1,Roll3Duration2,Roll3Fraction1,Roll3Fraction2,Roll3Fraction3,Roll3Volume1,Roll3Volume2,Roll3Volume3]);
 
-	Roll3Duration1 = parseFloat(Roll3Duration1);
-	Roll3Duration2 = parseFloat(Roll3Duration2); 
-	Roll3Fraction1 = parseFloat(Roll3Fraction1);
-	Roll3Fraction2 = parseFloat(Roll3Fraction2);
-	Roll3Fraction3 = parseFloat(Roll3Fraction3); 
-	Roll3Volume1 = parseFloat(Roll3Volume1);
-	Roll3Volume2 = parseFloat(Roll3Volume2); 
-	Roll3Volume3 = parseFloat(Roll3Volume3); 
+	// Do validate but don't set
+	var parse1 = validate_roll_2_params(Roll2String,false);
+	var parse2 = validate_roll_3_params(Roll3String,false);
 
-	if ((!isNaN(Roll2Duration1)) && (!isNaN(Roll2Duration2)) && (!isNaN(Roll2Fraction1)) && (!isNaN(Roll2Fraction2)) &&
-	(!isNaN(Roll2Fraction3)) && (!isNaN(Roll2Volume1)) && (!isNaN(Roll2Volume2)) && (!isNaN(Roll2Volume3)) &&
-	(!isNaN(Roll3Duration1)) && (!isNaN(Roll3Duration2)) && (!isNaN(Roll3Fraction1)) && (!isNaN(Roll3Fraction2)) &&
-	(!isNaN(Roll3Fraction3)) && (!isNaN(Roll3Volume1)) && (!isNaN(Roll3Volume2)) && (!isNaN(Roll3Volume3))){
-		// Sanity check the parameters
-		if ((Roll2Duration1>=0.0) && 
-			(Roll2Duration2>=0.0) &&
-			((Roll2Fraction1>=0.0) && (Roll2Fraction1<=1.0)) &&
-			((Roll2Fraction2>=0.0) && (Roll2Fraction2<=1.0)) &&
-			((Roll2Fraction3>=0.0) && (Roll2Fraction3<=1.0)) &&
-			((Roll2Volume1>=0.0) && (Roll2Volume1<=2.0)) &&
-			((Roll2Volume2>=0.0) && (Roll2Volume2<=2.0)) &&
-			((Roll2Volume3>=0.0) && (Roll2Volume3<=2.0)) &&
-			((Roll2Duration1 + Roll2Duration2) < 3.0) &&
-			(Roll3Duration1>=0.0) && 
-			(Roll3Duration2>=0.0) &&
-			((Roll3Fraction1>=0.0) && (Roll3Fraction1<=1.0)) &&
-			((Roll3Fraction2>=0.0) && (Roll3Fraction2<=1.0)) &&
-			((Roll3Fraction3>=0.0) && (Roll3Fraction3<=1.0)) &&
-			((Roll3Volume1>=0.0) && (Roll3Volume1<=2.0)) &&
-			((Roll3Volume2>=0.0) && (Roll3Volume2<=2.0)) &&
-			((Roll3Volume3>=0.0) && (Roll3Volume3<=2.0)) &&
-			((Roll3Duration1 + Roll3Duration2) < 3.0)){
+	if (parse1 && parse2){
+		parse1 = validate_roll_2_params(Roll2String,true);
+		parse2 = validate_roll_3_params(Roll3String,true);
 
-			//console.log("rollexplorer pass");
-
-			gRoll2Duration1 = Roll2Duration1; 
-			gRoll2Duration2 = Roll2Duration2; 
-			gRoll2Fraction1 = Roll2Fraction1;
-			gRoll2Fraction2 = Roll2Fraction2;
-			gRoll2Fraction3 = Roll2Fraction3; 
-			gRoll2Volume1 = Roll2Volume1;
-			gRoll2Volume2 = Roll2Volume2; 
-			gRoll2Volume3 = Roll2Volume3; 
-
-			gRoll3Duration1 = Roll3Duration1; 
-			gRoll3Duration2 = Roll3Duration2; 
-			gRoll3Fraction1 = Roll3Fraction1;
-			gRoll3Fraction2 = Roll3Fraction2;
-			gRoll3Fraction3 = Roll3Fraction3; 
-			gRoll3Volume1 = Roll3Volume1;
-			gRoll3Volume2 = Roll3Volume2; 
-			gRoll3Volume3 = Roll3Volume3; 
-
-			return true
-		}
+		return true;
 	}
 
 	return false;
-
 }
 
+//
+// Transform ~G3 style rolls to a style better for reels
+//
 function RollExplorerTransformReel(useAlternateStyle){
 
 	gRollExplorerTransformed = true;
@@ -21096,6 +21184,9 @@ function RollExplorerTransformReel(useAlternateStyle){
 
 }
 
+//
+// Reload the Roll Explorer with new values
+//
 function RollExplorerRegenerate(){
 
 	//debugger;
@@ -21128,15 +21219,8 @@ function RollExplorerRegenerate(){
 	}
 	else{
 
-		var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Please Check the Roll Parameters</p>';
-
-		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;text-align:center;">There is an issue with the roll parameters</p>';
-		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:20px;text-align:center;">All values must be positive</p>';
-		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:20px;text-align:center;">The total of the slot sizes for each of the roll styles must be less than 3</p>';
-		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:20px;text-align:center;">The fractions must be between 0 and 1</p>';
-		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:20px;text-align:center;">The volumes must be between 0 and 2</p>';
-
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
+		// Show issue with the roll parameters
+		RollParameterIssueAlert(null);
 
 	}
 }
@@ -21221,18 +21305,16 @@ function RollExplorerInject(){
 		    FocusAfterOperation();
 
 	    }
+
+	   	var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Roll Parameter Injection Complete!</p>';
+
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
+
 	}
 	else{
 
-		var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Please Check the Roll Parameters</p>';
-
-		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;text-align:center;">There is an issue with the roll parameters</p>';
-		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:20px;text-align:center;">All values must be positive</p>';
-		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:20px;text-align:center;">The total of the slot sizes for each of the roll styles must be less than 3</p>';
-		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:20px;text-align:center;">The fractions must be between 0 and 1</p>';
-		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:20px;text-align:center;">The volumes must be between 0 and 2</p>';
-
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
+		// Show issue with the roll parameters
+		RollParameterIssueAlert(null);
 
 	}
 
@@ -21267,6 +21349,129 @@ function idleRollExplorer(){
 	document.getElementById("roll_3_volume_1").value = gRoll3Volume1;
 	document.getElementById("roll_3_volume_2").value = gRoll3Volume2;
 	document.getElementById("roll_3_volume_3").value = gRoll3Volume3;
+
+}
+
+//
+// Reset roll values to reasonable defaults
+//
+function RollExplorerResetRoll2(){
+
+	var theDefaultParams = "0.95 0.8 1.0 0.75 0.9 1.0 0.75 1.0";
+
+	validate_roll_2_params(theDefaultParams, true);
+
+	idleRollExplorer();
+
+	RollExplorerRegenerate();
+
+}
+
+function RollExplorerResetRoll3(){
+
+	var theDefaultParams = "1.45 0.6 1.0 0.75 0.9 1.0 0.75 1.0";
+
+	validate_roll_3_params(theDefaultParams, true);
+
+	idleRollExplorer();
+
+	RollExplorerRegenerate();
+}
+
+//
+// Make roll values the new tool roll defaults
+//
+
+function RollExplorerDefaultRoll2(){
+
+	var Roll2Duration1 = document.getElementById("roll_2_slot_1").value;
+	var Roll2Duration2 = document.getElementById("roll_2_slot_2").value;
+
+	var Roll2Fraction1 = document.getElementById("roll_2_fraction_1").value;
+	var Roll2Fraction2 = document.getElementById("roll_2_fraction_2").value;
+	var Roll2Fraction3 = document.getElementById("roll_2_fraction_3").value;
+
+	var Roll2Volume1 = document.getElementById("roll_2_volume_1").value;
+	var Roll2Volume2 = document.getElementById("roll_2_volume_2").value;
+	var Roll2Volume3 = document.getElementById("roll_2_volume_3").value;
+
+	var Roll2String = makeRollString([Roll2Duration1,Roll2Duration2,Roll2Fraction1,Roll2Fraction2,Roll2Fraction3,Roll2Volume1,Roll2Volume2,Roll2Volume3]);
+
+	// Do validate but don't set
+	var parse1 = validate_roll_2_params(Roll2String,false);
+
+	if (parse1){
+		
+		// Make the new values live
+		parse1 = validate_roll_2_params(Roll2String,true);
+
+		gRoll2DefaultParams = Roll2String;
+
+		SaveConfigurationSettings();
+
+		var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Quarter Note Roll Parameters Set as Tool Default</p>';
+
+		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;text-align:center;">You can edit the values in the Advanced Settings dialog.</p>';
+
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, width: 700,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
+			RollExplorerRegenerate();
+
+		});
+
+	}
+	else{
+
+		// Show issue with the roll parameters
+		RollParameterIssueAlert(null);
+
+	}
+
+}
+
+function RollExplorerDefaultRoll3(){
+
+	var Roll3Duration1 = document.getElementById("roll_3_slot_1").value;
+	var Roll3Duration2 = document.getElementById("roll_3_slot_2").value;
+
+	var Roll3Fraction1 = document.getElementById("roll_3_fraction_1").value;
+	var Roll3Fraction2 = document.getElementById("roll_3_fraction_2").value;
+	var Roll3Fraction3 = document.getElementById("roll_3_fraction_3").value;
+
+	var Roll3Volume1 = document.getElementById("roll_3_volume_1").value;
+	var Roll3Volume2 = document.getElementById("roll_3_volume_2").value;
+	var Roll3Volume3 = document.getElementById("roll_3_volume_3").value;
+
+	var Roll3String = makeRollString([Roll3Duration1,Roll3Duration2,Roll3Fraction1,Roll3Fraction2,Roll3Fraction3,Roll3Volume1,Roll3Volume2,Roll3Volume3]);
+
+	// Do validate but don't set
+	var parse1 = validate_roll_3_params(Roll3String,false);
+
+	if (parse1){
+
+		parse1 = validate_roll_3_params(Roll3String,true);
+
+		gRoll3DefaultParams = Roll3String;
+
+		SaveConfigurationSettings();
+
+		var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Dotted Quarter Note Roll Parameters Set as Tool Default</p>';
+
+		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;text-align:center;">You can edit the values in the Advanced Settings dialog.</p>';
+
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, width: 700,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
+			RollExplorerRegenerate();
+
+		});
+
+	}
+	else{
+
+		// Show issue with the roll parameters
+		RollParameterIssueAlert(null);
+
+	}
 
 }
 
@@ -21488,7 +21693,7 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 		}
 
 	   	// Add the roll explorer controls
-		modal_msg += '<p class="configure_rollexplorer_text" style="font-size:14pt;text-align:center;margin:0px;margin-top:15px">Quarter Note Roll Parameters</p>';
+		modal_msg += '<p class="configure_rollexplorer_text" style="font-size:14pt;text-align:center;margin:0px;margin-top:15px;margin-left:224px">Quarter Note Roll Parameters<input id="reset_roll_explorer_2" class="button btn btn-reset_roll_explorer_2" onclick="RollExplorerResetRoll2();" type="button" value="Reset" title="Reset quarter note roll parameters to a known good default"><input id="default_roll_explorer_2" class="button btn btn-default_roll_explorer_2" onclick="RollExplorerDefaultRoll2();" type="button" value="Set as Tool Default" title="Makes the current quarter note roll parameters the default for the tool"></p>';
 		modal_msg += '<p class="configure_rollexplorer_text" style="text-align:center;margin:0px;margin-top:8px">';
 		modal_msg += 'Slot 1: <input style="width:85px;" id="roll_2_slot_1" title="Quarter note slot 1 time" autocomplete="off" type="number" min="0" step="0.05" max="2.95"/>';
 		modal_msg += 'Slot 2: <input style="width:85px;" id="roll_2_slot_2" title="Quarter note slot 2 time" autocomplete="off"  type="number" min="0" step="0.05" max="2.95"/>';
@@ -21503,7 +21708,7 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 		modal_msg += 'Volume 2: <input style="width:85px;" id="roll_2_volume_2" title="Quarter note volume 2" autocomplete="off" type="number" min="0" step="0.05" max="2"/>';
 		modal_msg += 'Volume 3: <input style="width:85px;" id="roll_2_volume_3" title="Quarter note volume 3" autocomplete="off" type="number" min="0" step="0.05" max="2"/>';
 		modal_msg += '</p>';
-		modal_msg += '<p class="configure_rollexplorer_text" style="font-size:14pt;text-align:center;margin:0px;margin-top:8px">Dotted Quarter Note Roll Parameters</p>';
+		modal_msg += '<p class="configure_rollexplorer_text" style="font-size:14pt;text-align:center;margin:0px;margin-top:10px;margin-left:162px">Dotted Quarter Note Roll Parameters<input id="reset_roll_explorer_3" class="reset_roll_explorer_3 button btn btn-reset_roll_explorer_3" onclick="RollExplorerResetRoll3();" type="button" value="Reset" title="Reset dotted quarter note roll parameters to a known good default"><input id="default_roll_explorer_3" class="button btn btn-default_roll_explorer_3" onclick="RollExplorerDefaultRoll3();" type="button" value="Set as Tool Default" title="Makes the current dotted quarter note roll parameters the default for the tool"></p>';
 		modal_msg += '<p class="configure_rollexplorer_text" style="text-align:center;margin:0px;margin-top:8px">';
 		modal_msg += 'Slot 1: <input style="width:85px;" id="roll_3_slot_1" title="Dotted quarter note slot 1 time" autocomplete="off" type="number" min="0" step="0.05" max="2.95"/>';
 		modal_msg += 'Slot 2: <input style="width:85px;" id="roll_3_slot_2" title="Dotted quarter note slot 2 time" autocomplete="off" type="number" min="0" step="0.05" max="2.95"/>';
@@ -21519,7 +21724,7 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 		modal_msg += 'Volume 3: <input style="width:85px;" id="roll_3_volume_3" title="Dotted quarter note volume 3" autocomplete="off" type="number" min="0" step="0.05" max="2"/>';
 		modal_msg += '</p>';		
 		modal_msg += '<p class="configure_rollexplorer_text" style="text-align:center;margin:0px;margin-top:24px">';
-		modal_msg += '<input id="rollexplorertest" class="rollexplorertest button btn btn-rollexplorertest" onclick="RollExplorerRegenerate();" type="button" value="Reload Tune with Parameters" title="Reloads the tune into the player with the entered roll parametesr">';
+		modal_msg += '<input id="rollexplorertest" class="rollexplorertest button btn btn-rollexplorertest" onclick="RollExplorerRegenerate();" type="button" value="Reload Tune with Parameters" title="Reloads the tune into the player with the entered roll parameters">';
 		modal_msg += '<input id="rollexplorerinject" class="rollexplorerinject button btn btn-rollexplorerinject" onclick="RollExplorerInject();" type="button" value="Inject Parameters into ABC" title="Injects the current roll parameters and roll transformations into the tune ABC">';
 		modal_msg += '<input id="rollexplorertransform" class="rollexplorertransform button btn btn-rollexplorertransform" onclick="RollExplorerTransformReel(false);" type="button" value="~G3 → G~G2" title="Transforms ~G3 style rolls to G~G2 style, may be useful for creating a better sounding roll for reels">';
 		modal_msg += '<input id="rollexplorertransform2" style="margin-right:0px" class="rollexplorertransform2 button btn btn-rollexplorertransform" onclick="RollExplorerTransformReel(true);" type="button" value="~G3 → ~G2G" title="Transforms ~G3 style rolls to ~G2G style, may be useful for creating a better sounding roll for reels">';
@@ -21548,7 +21753,7 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 
 		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: theTop, width:theWidth, okText:"Close", scrollWithPage: (isMobileBrowser()) });
 
-		// Set the initial grace duration
+		// Set the initial roll parameters
 		idleRollExplorer();
 
 		var theOKButtons = document.getElementsByClassName("modal_flat_ok");
@@ -23290,6 +23495,40 @@ function GetInitialConfigurationSettings(){
 		gRollUseRollForIrishRoll = (val == "true");
 	}
 
+	gRoll2DefaultParams = "0.95 0.8 1.0 0.75 0.9 1.0 0.75 1.0";
+
+	val = localStorage.Roll2DefaultParams;
+	
+	if (val){
+
+		var checkParams = validate_roll_2_params(val,false);
+		
+		if (checkParams){
+
+			gRoll2DefaultParams = val;
+
+			checkParams = validate_roll_2_params(val,true);
+
+		}
+	}
+
+	gRoll3DefaultParams = "1.45 0.6 1.0 0.75 0.9 1.0 0.75 1.0";
+
+	val = localStorage.Roll3DefaultParams;
+
+	if (val){
+		
+		var checkParams = validate_roll_3_params(val,false);
+		
+		if (checkParams){
+
+			gRoll3DefaultParams = val;
+
+			checkParams = validate_roll_3_params(val,true);
+
+		}
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -23432,6 +23671,10 @@ function SaveConfigurationSettings(){
 
 		// Use the custom roll solution for tilde rolls
 		localStorage.RollUseRollForIrishRoll = gRollUseRollForIrishRoll;
+
+		// Default roll parameters
+		localStorage.Roll2DefaultParams = gRoll2DefaultParams;
+		localStorage.Roll3DefaultParams = gRoll3DefaultParams;
 	}
 }
 
@@ -24808,6 +25051,15 @@ function AdvancedControlsDialog(){
 // Advanced tool settings
 // This is used for less-commonly access settings and options
 //
+
+// Reset the default roll parameter strings
+function ResetRollDefaultParams(){
+
+	$('[name="configure_roll2_default"]').val("0.95 0.8 1.0 0.75 0.9 1.0 0.75 1.0");
+	$('[name="configure_roll3_default"]').val("1.45 0.6 1.0 0.75 0.9 1.0 0.75 1.0");
+
+}
+
 function AdvancedSettings(){
 
 	// Keep track of dialogs
@@ -24830,7 +25082,9 @@ function AdvancedSettings(){
 		configure_mp3_bitrate: gMP3Bitrate,
 		configure_export_delayms: gBatchExportDelayMS,
 		configure_mp3export_delayms: gBatchMP3ExportDelayMS,
-		configure_RollUseRollForIrishRoll: gRollUseRollForIrishRoll
+		configure_RollUseRollForIrishRoll: gRollUseRollForIrishRoll,
+		configure_roll2_default: gRoll2DefaultParams,
+		configure_roll3_default: gRoll3DefaultParams,
 	};
 
 	var form = [
@@ -24862,8 +25116,13 @@ function AdvancedSettings(){
 			{name: "MP3 Batch Export Delay in milliseconds (default is 250):", id: "configure_mp3export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
 		]);
 	}
+	form = form.concat([
+		{name: "Default %roll_2_params:", id: "configure_roll2_default", type:"text", cssClass:"advanced_settings2_roll_text"},
+		{name: "Default %roll_3_params:", id: "configure_roll3_default", type:"text", cssClass:"advanced_settings2_roll_text"},
+		{html: '<p style="text-align:center;margin-top:22px;"><input id="reset_roll_parameters" class="btn btn-subdialog reset_roll_parameters" onclick="ResetRollDefaultParams()" type="button" value="Reset Roll Parameter Strings to Defaults" title="Resets the roll parameter strings to known good default values"></p>'},
+	]);
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 28, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -24924,6 +25183,41 @@ function AdvancedSettings(){
 				if (gMP3Bitrate > 384){
 					gMP3Bitrate = 384;
 				}
+			}
+
+			var the_roll2_raw = args.result.configure_roll2_default;
+			the_roll2_raw = the_roll2_raw.trim();
+
+			var the_roll3_raw = args.result.configure_roll3_default;
+			the_roll3_raw = the_roll3_raw.trim();
+
+			// Validate the roll values
+			var roll2 = validate_roll_2_params(the_roll2_raw,false);
+			var roll3 = validate_roll_3_params(the_roll3_raw,false);
+
+			if (!(roll2 && roll3)){
+				
+				// Show issue with the roll parameters
+				RollParameterIssueAlert(
+
+					function(){
+						setTimeout(function(){
+							AdvancedSettings();
+						},250);
+					}
+				);
+
+			}
+			else{	
+
+				// Set the new roll parameters
+				roll2 = validate_roll_2_params(the_roll2_raw,true);
+				roll3 = validate_roll_3_params(the_roll3_raw,true);
+
+				// And save the default roll parameter string
+				gRoll2DefaultParams = the_roll2_raw;
+				gRoll3DefaultParams = the_roll3_raw;
+
 			}
 
 			IdleAllowShowTabNames();
