@@ -21357,7 +21357,7 @@ function idleRollExplorer(){
 //
 function RollExplorerResetRoll2(){
 
-	var theDefaultParams = "0.95 0.8 1.0 0.75 0.9 1.0 0.75 1.0";
+	var theDefaultParams = gRoll2DefaultParams;
 
 	validate_roll_2_params(theDefaultParams, true);
 
@@ -21369,7 +21369,7 @@ function RollExplorerResetRoll2(){
 
 function RollExplorerResetRoll3(){
 
-	var theDefaultParams = "1.45 0.6 1.0 0.75 0.9 1.0 0.75 1.0";
+	var theDefaultParams = gRoll3DefaultParams;
 
 	validate_roll_3_params(theDefaultParams, true);
 
@@ -21693,7 +21693,7 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 		}
 
 	   	// Add the roll explorer controls
-		modal_msg += '<p class="configure_rollexplorer_text" style="font-size:14pt;text-align:center;margin:0px;margin-top:15px;margin-left:224px">Quarter Note Roll Parameters<input id="reset_roll_explorer_2" class="button btn btn-reset_roll_explorer_2" onclick="RollExplorerResetRoll2();" type="button" value="Reset" title="Reset quarter note roll parameters to a known good default"><input id="default_roll_explorer_2" class="button btn btn-default_roll_explorer_2" onclick="RollExplorerDefaultRoll2();" type="button" value="Set as Tool Default" title="Makes the current quarter note roll parameters the default for the tool"></p>';
+		modal_msg += '<p class="configure_rollexplorer_text" style="font-size:14pt;text-align:center;margin:0px;margin-top:15px;margin-left:224px">Quarter Note Roll Parameters<input id="reset_roll_explorer_2" class="button btn btn-reset_roll_explorer_2" onclick="RollExplorerResetRoll2();" type="button" value="Reset" title="Reset quarter note roll parameters to the current tool defaults"><input id="default_roll_explorer_2" class="button btn btn-default_roll_explorer_2" onclick="RollExplorerDefaultRoll2();" type="button" value="Set as Tool Default" title="Makes the current quarter note roll parameters the default for the tool"></p>';
 		modal_msg += '<p class="configure_rollexplorer_text" style="text-align:center;margin:0px;margin-top:8px">';
 		modal_msg += 'Slot 1: <input style="width:85px;" id="roll_2_slot_1" title="Quarter note slot 1 time" autocomplete="off" type="number" min="0" step="0.05" max="2.95"/>';
 		modal_msg += 'Slot 2: <input style="width:85px;" id="roll_2_slot_2" title="Quarter note slot 2 time" autocomplete="off"  type="number" min="0" step="0.05" max="2.95"/>';
@@ -21708,7 +21708,7 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 		modal_msg += 'Volume 2: <input style="width:85px;" id="roll_2_volume_2" title="Quarter note volume 2" autocomplete="off" type="number" min="0" step="0.05" max="2"/>';
 		modal_msg += 'Volume 3: <input style="width:85px;" id="roll_2_volume_3" title="Quarter note volume 3" autocomplete="off" type="number" min="0" step="0.05" max="2"/>';
 		modal_msg += '</p>';
-		modal_msg += '<p class="configure_rollexplorer_text" style="font-size:14pt;text-align:center;margin:0px;margin-top:10px;margin-left:162px">Dotted Quarter Note Roll Parameters<input id="reset_roll_explorer_3" class="reset_roll_explorer_3 button btn btn-reset_roll_explorer_3" onclick="RollExplorerResetRoll3();" type="button" value="Reset" title="Reset dotted quarter note roll parameters to a known good default"><input id="default_roll_explorer_3" class="button btn btn-default_roll_explorer_3" onclick="RollExplorerDefaultRoll3();" type="button" value="Set as Tool Default" title="Makes the current dotted quarter note roll parameters the default for the tool"></p>';
+		modal_msg += '<p class="configure_rollexplorer_text" style="font-size:14pt;text-align:center;margin:0px;margin-top:10px;margin-left:162px">Dotted Quarter Note Roll Parameters<input id="reset_roll_explorer_3" class="reset_roll_explorer_3 button btn btn-reset_roll_explorer_3" onclick="RollExplorerResetRoll3();" type="button" value="Reset" title="Reset dotted quarter note roll parameters to the current tool defaults"><input id="default_roll_explorer_3" class="button btn btn-default_roll_explorer_3" onclick="RollExplorerDefaultRoll3();" type="button" value="Set as Tool Default" title="Makes the current dotted quarter note roll parameters the default for the tool"></p>';
 		modal_msg += '<p class="configure_rollexplorer_text" style="text-align:center;margin:0px;margin-top:8px">';
 		modal_msg += 'Slot 1: <input style="width:85px;" id="roll_3_slot_1" title="Dotted quarter note slot 1 time" autocomplete="off" type="number" min="0" step="0.05" max="2.95"/>';
 		modal_msg += 'Slot 2: <input style="width:85px;" id="roll_3_slot_2" title="Dotted quarter note slot 2 time" autocomplete="off" type="number" min="0" step="0.05" max="2.95"/>';
