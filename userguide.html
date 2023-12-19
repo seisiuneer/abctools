@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-         
+                
         <style>
         p {
         font-size:14pt;
@@ -1742,6 +1742,17 @@
             <p></p>
             <p>Unlike standard page headers, the index page headers do not support macro expansion.</p>
             <p></p>
+            <p>To suppress page number on the Table of Contents or Index, add either of the following comment-based annotation anywhere in the ABC:</p>
+            <p class="code">%toc_no_page_numbers</p>
+            <p class="code">%index_no_page_numbers</p>
+            <p>These will cause the Table of Contents or Index to be rendered with the tune names in a column down the middle of the page.</p>
+            <p>This can be very effective in combination with setting larger Table of Contents and Index font size and line spacing parameters to make it easy to quickly jump to tunes from the larger text:</p>
+            <p class="code">%toc_no_page_numbers<br/>
+            %tocfontsize 18<br/>
+            %toclinespacing 20<br/>
+            %index_no_page_numbers<br/>
+            %indexfontsize 18<br/>
+            %indexlinespacing 20</p>
             <hr class="hidden-print" id="pdf_section_headers">
             <h1 class="page_break_always h1wide">Adding Table of Contents and Index Section Headers<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/ZdBg6Yd8lNU" title="PDF Tunebook Section Headers" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>

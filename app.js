@@ -1919,6 +1919,12 @@ var TunebookTPSTRequested = false;
 var theTunebookTPST = "";
 var theTunebookTPSTURL = "";
 
+// Did they request a TOC with no page numbers?
+var TunebookTOCWithNoPageNumbers = false;
+
+// Did they request an Index with no page numbers?
+var TunebookIndexWithNoPageNumbers = false;
+
 // Tune page map
 var theTunePageMap = [];
 
@@ -2507,18 +2513,38 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 
 		if (theTitles[i].indexOf("*") != 0){
 
-			if (doPageLinks){
-				thePDF.textWithLink(theTitles[i], INDEXLEFTMARGIN, curTop, {align:"left",pageNumber:theFinalPageNumber});
-			}
-			else{
-				thePDF.text(theTitles[i], INDEXLEFTMARGIN, curTop, {align:"left"});
-			}
+			// Did they request a TOC with no page numbers?
+			if (!TunebookIndexWithNoPageNumbers){
 
-			if (doPageLinks){
-				thePDF.textWithLink(""+thePageNumber, thePaperWidth-INDEXRIGHTMARGIN, curTop, {align:"left",pageNumber:theFinalPageNumber});
+				if (doPageLinks){
+					thePDF.textWithLink(theTitles[i], INDEXLEFTMARGIN, curTop, {align:"left",pageNumber:theFinalPageNumber});
+				}
+				else{
+					thePDF.text(theTitles[i], INDEXLEFTMARGIN, curTop, {align:"left"});
+				}
+
+				if (doPageLinks){
+					thePDF.textWithLink(""+thePageNumber, thePaperWidth-INDEXRIGHTMARGIN, curTop, {align:"left",pageNumber:theFinalPageNumber});
+				}
+				else{
+					thePDF.text(""+thePageNumber, thePaperWidth-INDEXRIGHTMARGIN, curTop, {align:"left"});
+				}
+
 			}
 			else{
-				thePDF.text(""+thePageNumber, thePaperWidth-INDEXRIGHTMARGIN, curTop, {align:"left"});
+
+				var textWidth = thePDF.getTextWidth(theTitles[i]);
+
+				if (doPageLinks){
+
+					thePDF.textWithLink(theTitles[i], (thePDF.internal.pageSize.getWidth()/3.10) - (textWidth/2), curTop, {align:"left",pageNumber:theFinalPageNumber});
+				}
+				else{
+
+					thePDF.text(theTitles[i], (thePDF.internal.pageSize.getWidth()/3.10) - (textWidth/2), curTop, {align:"left"});
+
+				}
+
 			}
 
 			curTop += INDEXLINESPACING;
@@ -3235,25 +3261,45 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 
 		if (theTitles[i].indexOf("*") != 0){
 
-			if (doPageLinks){
+			// Did they request a TOC with no page numbers?
+			if (!TunebookTOCWithNoPageNumbers){
 
-				thePDF.textWithLink(theTitles[i], TOCLEFTMARGIN, curTop, {align:"left",pageNumber:(thePageNumber+pageDelta)});
+				if (doPageLinks){
+
+					thePDF.textWithLink(theTitles[i], TOCLEFTMARGIN, curTop, {align:"left",pageNumber:(thePageNumber+pageDelta)});
+
+				}
+				else{
+
+					thePDF.text(theTitles[i], TOCLEFTMARGIN, curTop, {align:"left"});
+
+				}
+
+				if (doPageLinks){
+
+					thePDF.textWithLink(""+thePageNumber, thePaperWidth-TOCRIGHTMARGIN, curTop, {align:"left",pageNumber:(thePageNumber+pageDelta)});
+
+				}
+				else{
+
+					thePDF.text(""+thePageNumber, thePaperWidth-TOCRIGHTMARGIN, curTop, {align:"left"});
+
+				}
 
 			}
 			else{
 
-				thePDF.text(theTitles[i], TOCLEFTMARGIN, curTop, {align:"left"});
+				var textWidth = thePDF.getTextWidth(theTitles[i]);
 
-			}
+				if (doPageLinks){
 
-			if (doPageLinks){
+					thePDF.textWithLink(theTitles[i], (thePDF.internal.pageSize.getWidth()/3.10) - (textWidth/2), curTop, {align:"left",pageNumber:(thePageNumber+pageDelta)});
+				}
+				else{
 
-				thePDF.textWithLink(""+thePageNumber, thePaperWidth-TOCRIGHTMARGIN, curTop, {align:"left",pageNumber:(thePageNumber+pageDelta)});
+					thePDF.tex(theTitles[i], (thePDF.internal.pageSize.getWidth()/3.10) - (textWidth/2), curTop, {align:"left"});
 
-			}
-			else{
-
-				thePDF.text(""+thePageNumber, thePaperWidth-TOCRIGHTMARGIN, curTop, {align:"left"});
+				}
 
 			}
 
@@ -5199,20 +5245,31 @@ function ParseCommentCommands(theNotes){
 		}
 	}
 
+	// Did they request a TOC with no page numbers?
+	TunebookTOCWithNoPageNumbers = false;
 
-	// Check my work
-	// console.log("theTunebookTP = "+theTunebookTP);
-	// console.log("theTunebookTPST = "+theTunebookTPST);
-	// console.log("theTunebookTPURL = "+theTunebookTPURL);
-	// console.log("theTunebookTPSTURL = "+theTunebookTPSTURL);
-	// console.log("gAddTOCLinkback = "+gAddTOCLinkback);
-	// console.log("gAddIndexLinkback = "+gAddIndexLinkback);
-	// console.log("gAddTheSessionHyperlinks = "+gAddTheSessionHyperlinks);
-	// console.log("gAddPlaybackHyperlinks = "+gAddPlaybackHyperlinks);
-	// console.log("gPlaybackHyperlinkMelodyProgram = "+gPlaybackHyperlinkMelodyProgram);
-	// console.log("gPlaybackHyperlinkBassChordProgram = "+gPlaybackHyperlinkBassChordProgram);
-	// console.log("gPDFFont = "+gPDFFont);
-	// console.log("gPDFFontStyle = "+gPDFFontStyle);
+	searchRegExp = /^%toc_no_page_numbers.*$/m
+
+	var tocNoPageNumbers = theNotes.match(searchRegExp);
+
+	if ((tocNoPageNumbers) && (tocNoPageNumbers.length > 0)){
+
+		TunebookTOCWithNoPageNumbers = true;
+
+	}
+
+	// Did they request an index with no page numbers?
+	TunebookIndexWithNoPageNumbers = false;
+
+	searchRegExp = /^%index_no_page_numbers.*$/m
+
+	var indexNoPageNumbers = theNotes.match(searchRegExp);
+
+	if ((indexNoPageNumbers) && (indexNoPageNumbers.length > 0)){
+
+		TunebookIndexWithNoPageNumbers = true;
+
+	}
 
 }
 
@@ -14211,8 +14268,8 @@ function InjectPDFHeaders(){
 	output += "%\n";
 	output += "%pdfquality .75\n";
 	output += "%pdf_between_tune_space 20\n";
-	output += "%pdfname your_pdf_filename\n"
-	output += "%pdffont fontname style\n"		
+	output += "%pdfname your_pdf_filename\n";
+	output += "%pdffont fontname style\n";		
 	output += "%addtitle Title Page Title\n";
 	output += "%addsubtitle Title Page Subtitle\n";
 	output += "%urladdtitle https://michaeleskin.com Title Page Title as Hyperlink\n";
@@ -14227,7 +14284,7 @@ function InjectPDFHeaders(){
     output += "%tocfontsize 13\n";
     output += "%toclinespacing 12\n";
 	output += "%addindex Unsorted Index\n"
-	output += "%addsortedindex Index Sorted by Tune Name\n"
+	output += "%addsortedindex Index Sorted by Tune Name\n";
 	output += "%addlinkbacktoindex\n";		
 	output += "%indexheader Page Header Text for Index Pages\n";		
     output += "%indextopoffset 30\n";
@@ -14235,9 +14292,11 @@ function InjectPDFHeaders(){
     output += "%indextitlefontsize 18\n";
     output += "%indexfontsize 13\n";
     output += "%indexlinespacing 12\n";
-	output += "%no_toc_or_index_links\n"
-	output += "%pageheader Page Header\n"
-	output += "%pagefooter Page Footer\n"
+	output += "%no_toc_or_index_links\n";
+	output += "%toc_no_page_numbers\n";
+	output += "%index_no_page_numbers\n";
+	output += "%pageheader Page Header\n";
+	output += "%pagefooter Page Footer\n";
 	output += "%urlpageheader https://michaeleskin.com Page Header as Hyperlink\n";
 	output += "%urlpagefooter https://michaeleskin.com Page Footer as Hyperlink\n";
 	output += "%add_all_links_to_thesession\n";
