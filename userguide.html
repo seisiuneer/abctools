@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-          
+                
         <style>
         p {
         font-size:14pt;
@@ -755,6 +755,9 @@
             <p>If (timeslot1 + timeslot2) >= 3, since there would be no time left for the third note, the roll definition will be ignored.</p>
             <p>To disable the custom roll parameter system and use the original abcjs "rapid-fire" roll timing solution, add the following comment-based annotation anywhere in the tune ABC:</p>
             <p class="code">%use_original_abcjs_roll_solution</p>
+            <hr>
+            <p><strong>Using the custom roll playback solution for rolls indicated with ~ before the note in the ABC</strong>
+            <p>If you want to use the custom roll parameter playback solution for rolls indicated before the note with ~ as well those that use an R or !roll!, open the <strong>Advanced Settings</strong> dialog and check <strong>Rolls indicated in the ABC with ~ use the custom abcjs roll playback solution</strong>.</p>
             <hr class="hidden-print" id="basic_controls">
             <h1 class="page_break_always">Basic Controls and Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p id="basic_tablature" style="margin-top:24px;">These buttons control how the notation and tablature is displayed:</p>
@@ -1191,7 +1194,7 @@
             <hr class="hidden-print" id="advanced_settings">
             <h1 class="page_break_always">Advanced Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">
-                <img src="img/advanced_settings_2.jpg"/>
+                <img src="img/advanced_settings_3.jpg"/>
             </div>
             <p>These settings are available by clicking the <strong>Advanced Settings</strong> button at the bottom of the main <strong>Settings</strong> dialog.</p>
             <p>On mobile browsers, the dialog will only show the settings that are available on mobile platforms.</p>
@@ -1209,7 +1212,15 @@
             <p><strong>Highlighting color (HTML format) (default is #F00000):</strong> (Desktop browsers only) Sets the color of the notation highlights when Highlighting is on.</p>
             <p>Value must be an HTML RGB hex color value or HTML named color for example #0000FF or blue.</p>
             <hr>
-            <p><strong>Player tunebook navigation controls on left side</strong> When checked, puts the player tunebook navigation controls on the left side of the player. (default is right)</p>
+            <p><strong>Player tunebook navigation controls on left side</strong> - When checked, puts the player tunebook navigation controls on the left side of the player. (default is right)</p>
+            <hr>
+            <p><strong>Rolls indicated in the ABC with ~ use the custom abcjs roll playback solution</strong></p>
+            <p>By default, abcjs doesn't attempt to play rolls that are indicated using a ~ before the note, it just plays the note without any modification.</p>
+            <p>The abcjs custom roll playback system is normally only enabled for rolls that are indicated using an R or !roll! before the note.</p>
+            <p>When this item is checked, rolls indicated using a ~ before a note in the ABC will use the abcjs custom roll playback system as well as those indicated with R or !roll!</p>
+            <p>Any custom roll parameters you have the ABC will also work with the ~ style rolls when this is turned on.</p>
+            <p>Use this at your own risk, it may not work for all tunes.</p>
+            <p>Uncheck this item to return to the default abcjs behavior.</p>
             <hr>
             <p><strong>Player uses large controls (easier to touch on mobile and tablet)</strong> - Check this if you want to have larger controls in the Player view.</p>
             <hr>
@@ -1220,7 +1231,7 @@
             <p>This makes it easier to set tempos and increments on touch screen devices.</p>
             <p>Defaults to enabled for Android and iPhone devices.</p>
             <hr>
-            <p><strong>Metronome volume (default is 48):</strong> Sets the volume of the metronome drum sounds. Range is 0 - 127.</p>
+            <p><strong>Metronome volume (default is 48):</strong> - Sets the volume of the metronome drum sounds. Range is 0 - 127.</p>
             <hr>
             <p><strong>MP3 audio export bitrate (kbit/sec) (default is 224):</strong> - Sets the bitrate for MP3 stereo audio downloaded from the Player. </p>
             <p>Default value is 224.  Minimum value allowed is 96. Maximum value allowed is 384. Higher values result in higher quality audio.</p>

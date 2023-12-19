@@ -24,6 +24,9 @@ var gPlayerInPause = false;
 // MAE 18 December 2023 - For custom roll timing
 var gRollUseOriginalRollSolution = false;
 
+// If true, will use the custom roll patterns for tilde rolls
+var gRollUseRollForIrishRoll = false;
+
 // Quarter note roll parameters
 var gRoll2Duration1 = 0.95; 
 var gRoll2Duration2 = 0.8; 
@@ -7159,9 +7162,13 @@ var letter_to_accent = function letter_to_accent(line, i) {
       return [1, 'upbow'];
     case 'v':
       return [1, 'downbow'];
-    // MAE 17 Dec 2023 - Change this to 'roll' to use the new timing
+    // MAE 17 Dec 2023 - Allow override of the default behavior to use the custom roll timing on ~ style rolls
     case '~':
-      return [1, 'irishroll']; 
+      if (gRollUseRollForIrishRoll){
+        return [1, 'roll'];
+      }else{
+        return [1, 'irishroll'];
+      }
     case '!':
     case '+':
       var ret = tokenizer.getBrackettedSubstring(line, i, 5);

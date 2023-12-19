@@ -23216,6 +23216,12 @@ function GetInitialConfigurationSettings(){
 		gPlayerStatusOnLeft = (val == "true");
 	}
 
+	gRollUseRollForIrishRoll = false;
+	val = localStorage.RollUseRollForIrishRoll;
+	if (val){
+		gRollUseRollForIrishRoll = (val == "true");
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -23356,6 +23362,8 @@ function SaveConfigurationSettings(){
 		// Save the player status on left
 		localStorage.PlayerStatusOnLeft = gPlayerStatusOnLeft;
 
+		// Use the custom roll solution for tilde rolls
+		localStorage.RollUseRollForIrishRoll = gRollUseRollForIrishRoll;
 	}
 }
 
@@ -24231,7 +24239,6 @@ function SharingControlsDialog(){
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","SharingControlsDialog");
 
-	// Moving the advanced controls to their own dialog
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Sharing Controls&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#sharing_controls" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>';
 	modal_msg += '<div id="sharing-controls-dialog">';
 	modal_msg += '<p style="margin-top:28px;">';
@@ -24754,7 +24761,8 @@ function AdvancedSettings(){
 		configure_metronome_volume: gMetronomeVolume,
 		configure_mp3_bitrate: gMP3Bitrate,
 		configure_export_delayms: gBatchExportDelayMS,
-		configure_mp3export_delayms: gBatchMP3ExportDelayMS
+		configure_mp3export_delayms: gBatchMP3ExportDelayMS,
+		configure_RollUseRollForIrishRoll: gRollUseRollForIrishRoll
 	};
 
 	var form = [
@@ -24771,6 +24779,7 @@ function AdvancedSettings(){
 
 	form = form.concat([
 		{name: "    Player tunebook navigation controls on left side", id: "configure_player_status_on_left", type:"checkbox", cssClass:"advanced_settings2_form_text"},
+		{name: "    Rolls indicated in the ABC with ~ use the custom abcjs roll playback solution", id: "configure_RollUseRollForIrishRoll", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Player uses large controls (easier to touch on phone/tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Autoscroll player when playing", id: "configure_autoscrollplayer", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Player/Tune Trainer uses label L/R side click to decrement/increment values", id: "configure_trainer_touch_controls", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
@@ -24813,6 +24822,8 @@ function AdvancedSettings(){
 			}
 
 			gPlayerStatusOnLeft = args.result.configure_player_status_on_left;
+
+			gRollUseRollForIrishRoll = args.result.configure_RollUseRollForIrishRoll;
 
 			gLargePlayerControls = args.result.configure_large_player_controls;
 
