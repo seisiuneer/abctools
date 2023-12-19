@@ -20950,6 +20950,8 @@ function RollExplorer(){
 		// Pre-process the ABC to inject any requested programs or volumes
 		var theProcessedABC = PreProcessPlayABC(theSelectedABC);
 
+		gRollExplorerTransformed = false;
+
 		// Play back locally in-tool	
 		RollExplorerDialog(theSelectedABC,theProcessedABC,false);
 
@@ -21026,7 +21028,7 @@ function RollExplorerValidate(){
 			((Roll3Volume3>=0.0) && (Roll3Volume3<=2.0)) &&
 			((Roll3Duration1 + Roll3Duration2) < 3.0)){
 
-			console.log("rollexplorer pass");
+			//console.log("rollexplorer pass");
 
 			gRoll2Duration1 = Roll2Duration1; 
 			gRoll2Duration2 = Roll2Duration2; 
@@ -21054,6 +21056,46 @@ function RollExplorerValidate(){
 
 }
 
+function RollExplorerTransformReel(useAlternateStyle){
+
+	gRollExplorerTransformed = true;
+
+	function transformTildes(input) {
+		return input.replace(/(~[a-zA-Z])3/g, function(match, p1) {
+		    return p1.charAt(1) + p1 + "2";
+		});
+	}
+
+	function transformTildes2(input) {
+		return input.replace(/(~[a-zA-Z])3/g, function(match, p1) {
+		    return p1 + "2" + p1.charAt(1);
+		});
+	}
+
+	if (useAlternateStyle){
+
+		gPlayerABCRollExplorerTransformed=transformTildes2(gPlayerABCRollExplorerOriginal);
+		gPlayerABCRollExplorerProcessed = transformTildes2(gPlayerABCRollExplorerProcessed);
+
+	}
+	else{
+
+		gPlayerABCRollExplorerTransformed=transformTildes(gPlayerABCRollExplorerOriginal);
+		gPlayerABCRollExplorerProcessed = transformTildes(gPlayerABCRollExplorerProcessed);
+
+	}
+
+	gTheOKButton.click();
+
+	setTimeout(function() {
+
+		// Launch the player with the roll injected tune
+		RollExplorerDialog(gPlayerABCRollExplorerTransformed,gPlayerABCRollExplorerProcessed,true);
+
+	},250);
+
+}
+
 function RollExplorerRegenerate(){
 
 	//debugger;
@@ -21068,8 +21110,18 @@ function RollExplorerRegenerate(){
 
 		setTimeout(function() {
 
-			// Launch the player with the roll injected tune
-			RollExplorerDialog(gPlayerABCRollExplorerOriginal,gPlayerABCRollExplorerProcessed,true);
+			if (gPlayerABCRollExplorerTransformed){
+
+				// Launch the player with the roll injected tune
+				RollExplorerDialog(gPlayerABCRollExplorerTransformed,gPlayerABCRollExplorerProcessed,true);
+
+			}
+			else{
+
+				// Launch the player with the roll injected tune
+				RollExplorerDialog(gPlayerABCRollExplorerOriginal,gPlayerABCRollExplorerProcessed,true);
+
+			}
 
 		},250);
 
@@ -21107,7 +21159,17 @@ function RollExplorerInject(){
 
 		var searchRegExp = /^%roll_2_params.*[\r\n]*/gm 
 
-		var tuneWithNoRoll = gPlayerABCRollExplorerOriginal.replaceAll(searchRegExp, "");
+		var tuneWithNoRoll;
+
+		if (gPlayerABCRollExplorerTransformed){
+
+			tuneWithNoRoll = gPlayerABCRollExplorerTransformed.replaceAll(searchRegExp, "");
+		}
+		else{
+
+			tuneWithNoRoll = gPlayerABCRollExplorerOriginal.replaceAll(searchRegExp, "");
+
+		}
 		
 		searchRegExp = /^%roll_3_params.*[\r\n]*/gm 
 
@@ -21134,8 +21196,8 @@ function RollExplorerInject(){
 		// For future injects
 		gPlayerABCRollExplorerOriginal = tuneWithRoll;
 
-		// Have to redraw if in raw mode
-    	if (gRawMode){
+		// Have to redraw if in raw mode or ABC was changed
+    	if (gRawMode || gRollExplorerTransformed){
 
 			RenderAsync(true,null,function(){
 				
@@ -21210,6 +21272,9 @@ function idleRollExplorer(){
 
 var gPlayerABCRollExplorerOriginal = null;
 var gPlayerABCRollExplorerProcessed = null;
+var gPlayerABCRollExplorerTransformed = null;
+
+var gRollExplorerTransformed = false;
 
 function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state){
 
@@ -21227,6 +21292,7 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 
 		gPlayerABCRollExplorerOriginal = theOriginalABC;
 		gPlayerABCRollExplorerProcessed = theProcessedABC;
+		gPlayerABCRollExplorerTransformed = null;
 
 	}
 
@@ -21453,8 +21519,10 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 		modal_msg += 'Volume 3: <input style="width:85px;" id="roll_3_volume_3" title="Dotted quarter note volume 3" autocomplete="off" type="number" min="0" step="0.05" max="2"/>';
 		modal_msg += '</p>';		
 		modal_msg += '<p class="configure_rollexplorer_text" style="text-align:center;margin:0px;margin-top:24px">';
-		modal_msg += '<input id="rollexplorertest" class="rollexplorertest button btn btn-rollexplorertest" onclick="RollExplorerRegenerate();" type="button" value="Reload Tune with Changed Roll Parameters" title="Reloads the tune into the player with the entered roll parametesr">';
-		modal_msg += '<input id="rollexplorerinject" class="rollexplorerinject button btn btn-rollexplorerinject" onclick="RollExplorerInject();" type="button" style="margin-right:0px;" value="Inject Roll Parameters into the ABC" title="Injects the current roll parameters into the tune ABC">';
+		modal_msg += '<input id="rollexplorertest" class="rollexplorertest button btn btn-rollexplorertest" onclick="RollExplorerRegenerate();" type="button" value="Reload Tune with Parameters" title="Reloads the tune into the player with the entered roll parametesr">';
+		modal_msg += '<input id="rollexplorerinject" class="rollexplorerinject button btn btn-rollexplorerinject" onclick="RollExplorerInject();" type="button" value="Inject Parameters into ABC" title="Injects the current roll parameters and roll transformations into the tune ABC">';
+		modal_msg += '<input id="rollexplorertransform" class="rollexplorertransform button btn btn-rollexplorertransform" onclick="RollExplorerTransformReel(false);" type="button" value="~G3 → G~G2" title="Transforms ~G3 style rolls to G~G2 style, may be useful for creating a better sounding roll for reels">';
+		modal_msg += '<input id="rollexplorertransform2" style="margin-right:0px" class="rollexplorertransform2 button btn btn-rollexplorertransform" onclick="RollExplorerTransformReel(true);" type="button" value="~G3 → ~G2G" title="Transforms ~G3 style rolls to ~G2G style, may be useful for creating a better sounding roll for reels">';
 		modal_msg += '</p>';
 		modal_msg += '<a id="rollexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#roll_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the Roll Explorer">?</a>';
 

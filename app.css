@@ -1074,6 +1074,8 @@ height:42px;
 padding:12px;
 width:auto;
 margin-left:0px;
+margin-right:20px;
+margin-right:20px;
 }
 
 @media (hover: hover) {
@@ -1082,11 +1084,39 @@ margin-left:0px;
 	}
 }
 
+#rollexplorertransform{
+height:42px;
+padding:12px;
+width:auto;
+margin-left:0px;
+margin-right:20px;
+}
+
+@media (hover: hover) {
+	.rollexplorertransform:hover{
+	background: palegreen;
+	}
+}
+
+#rollexplorertransform2{
+height:42px;
+padding:12px;
+width:auto;
+margin-left:0px;
+}
+
+@media (hover: hover) {
+	.rollexplorertransform2:hover{
+	background: palegreen;
+	}
+}
+
+
 #rollexplorertest{
 height:42px;
 padding:12px;
 width:auto;
-margin-right:36px;
+margin-right:20px;
 }
 
 @media (hover: hover) {
@@ -3377,6 +3407,12 @@ margin-top:4px;
   --color: black;
   --background-color: #C8ECFE;
 }
+
+.btn-rollexplorertransform{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
 .btn-instrumentexplorer{
   --color: black;
   --background-color: #C8ECFE;
