@@ -9518,28 +9518,95 @@ function PDFTunebookBuilder(){
 }
 
 //
+// Capitalize a song name but not certain words between words
+//
+
+function capitalizeSongName(songName) {
+
+  const excludeWords = ['the', 'of', 'and', 'for', 'a', 'an'];
+
+  // Split the song name into an array of words
+  const words = songName.split(' ');
+
+  // Capitalize each word, excluding specified words
+  const capitalizedWords = words.map((word, index) => {
+
+    // Check if the word is not in the exclusion list or is the first word
+    if (!excludeWords.includes(word.toLowerCase()) || index === 0) {
+      // Capitalize the first letter of the word
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    } else {
+      // Keep excluded words in lowercase
+      return word.toLowerCase();
+    }
+
+  });
+
+  // Join the words back into a sentence
+  const capitalizedSongName = capitalizedWords.join(' ');
+
+  return capitalizedSongName;
+}
+
+//
+// Capitalize after an O'
+//
+function capitalizeAfterO(str) {
+  return str.replace(/(O')([a-z])/g, function(match, p1, p2) {
+    return p1 + p2.toUpperCase();
+  });
+}
+
+//
 // Search the parsed tune database for the tune name
 //
 function searchForTunes() {
 
     //debugger;
 
-    if (!gTheParsedTuneDatabase){
-        
-		var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Tune database still loading...</p>';
+    var databaseID = gTheCurrentTuneDatabase;
 
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
+    if (databaseID == 0){
 
-        return;
+	     if (!gTheParsedTuneDatabase){
+	        
+	        var prompt = makeCenteredPromptString("Gavin Heneghan tune database still loading...")
+
+	        DayPilot.Modal.alert(prompt, {
+	            theme: "modal_flat",
+	            top: 200
+	        });
+
+	        return;
+	    }
+    }
+    else{
+
+	    if (!gTheFolkFriendDatabase){
+	        
+	        var prompt = makeCenteredPromptString("FolkFriend tune database still loading...")
+
+	        DayPilot.Modal.alert(prompt, {
+	            theme: "modal_flat",
+	            top: 200
+	        });
+
+	        return;
+	    }
+
+
     }
 
     var tuneNameToSearch = document.getElementById("tuneNameToSearch").value;
 
     if (tuneNameToSearch == ""){
 
-		var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">No Tune Name Entered in the Search Field!</p>';
-
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
+        var prompt = makeCenteredPromptString("No Tune Name Entered in the Search Field")
+ 
+        DayPilot.Modal.alert(prompt, {
+            theme: "modal_flat",
+            top: 200
+        });
 
         return;
     }
@@ -9553,97 +9620,267 @@ function searchForTunes() {
 
     document.getElementById('search_results').value = "";
 
-    var returnOnlyWithChords = document.getElementById('chords_only').checked;
+    if (databaseID == 0){
 
-    var nTunes = gTheParsedTuneDatabase.length;
+	    var returnOnlyWithChords = document.getElementById('chords_only').checked;
 
-    var theOutput = "";
+	    var nTunes = gTheParsedTuneDatabase.length;
 
-    var bFound = false;
+	    var theOutput = "";
 
-    var theTotal = 0;
+	    var theTotal = 0;
 
-    for (var i=0;i<nTunes;++i){
+	    for (var i=0;i<nTunes;++i){
 
-        var theInfo = gTheParsedTuneDatabase[i].info
+	        var theInfo = gTheParsedTuneDatabase[i].info
 
-        var thisTitle = theInfo["T"];
+	        var thisTitle = theInfo["T"];
 
-        thisTitle = thisTitle.toLowerCase();
+	        thisTitle = thisTitle.toLowerCase();
 
-        thisTitle = thisTitle.replace("'","");
-        thisTitle = thisTitle.replace('"',"");
+	        thisTitle = thisTitle.replace("'","");
+	        thisTitle = thisTitle.replace('"',"");
 
-        if (thisTitle.indexOf(tuneNameToSearch) != -1){
+	        if (thisTitle.indexOf(tuneNameToSearch) != -1){
 
-            var theVariations = gTheParsedTuneDatabase[i].variations;
+	            var theVariations = gTheParsedTuneDatabase[i].variations;
 
-            var index = 1;
-            var total = Object.entries(theVariations).length;
+	            var index = 1;
+	            var total = Object.entries(theVariations).length;
 
-            for (const [key, thisTuneABC] of Object.entries(theVariations))
-            {
+	            for (const [key, thisTuneABC] of Object.entries(theVariations))
+	            {
 
-                // Are we only returning tunes with chords?
-                if (returnOnlyWithChords){
+	                // Are we only returning tunes with chords?
+	                if (returnOnlyWithChords){
 
-                    var searchRegExp = /"[^"]*"/gm
+	                    var searchRegExp = /"[^"]*"/gm
 
-                    var chordsPresent = thisTuneABC.match(searchRegExp);
+	                    var chordsPresent = thisTuneABC.match(searchRegExp);
 
-                    if ((chordsPresent) && (chordsPresent.length > 0)){
+	                    if ((chordsPresent) && (chordsPresent.length > 0)){
 
-                        for (const [key2, value2] of Object.entries(theInfo)) {
+	                        for (const [key2, value2] of Object.entries(theInfo)) {
 
-                            theOutput += key2+": "+value2+"\n";
-                        }
+	                            theOutput += key2+": "+value2+"\n";
+	                        }
 
-                        // If multiple variations, label them
-                        if (total > 1){
-                            theOutput+="% Variation "+index+"\n";
-                        }
+	                        // If multiple variations, label them
+	                        if (total > 1){
+	                            theOutput+="% Variation "+index+"\n";
+	                        }
 
-                        theOutput += thisTuneABC+"\n\n";
+	                        theOutput += thisTuneABC+"\n\n";
 
-                        index++;
+	                        index++;
 
-                        theTotal++;
+	                        theTotal++;
 
-                        bFound = true;
+	                        bFound = true;
 
-                    }
+	                    }
 
-                }
-                else{
+	                }
+	                else{
 
-                    for (const [key2, value2] of Object.entries(theInfo)) {
+	                    for (const [key2, value2] of Object.entries(theInfo)) {
 
-                        theOutput += key2+": "+value2+"\n";
-                    }
+	                        theOutput += key2+": "+value2+"\n";
+	                    }
 
-                    // If multiple variations, label them
-                    if (total > 1){
-                        theOutput+="% Variation "+index+" of "+total+"\n";
-                    }
+	                    // If multiple variations, label them
+	                    if (total > 1){
+	                        theOutput+="% Variation "+index+" of "+total+"\n";
+	                    }
 
-                    theOutput += thisTuneABC+"\n\n";
+	                    theOutput += thisTuneABC+"\n\n";
 
-                    index++;
+	                    index++;
 
-                    theTotal++;
+	                    theTotal++;
+	               }
 
-                    bFound = true;
-               }
+	            }
+	        }
+	    }
+	}
+	else{
 
- 
-            }
-        }
-    }
+	    var returnOnlyWithChords = document.getElementById('chords_only').checked;
+ 		    
+ 		// Search FolkFriend session.org database
+	    var rawSettings = gTheFolkFriendDatabase.settings;
+
+	    var settingsMap = [];
+
+ 		for (let key in rawSettings) {
+		
+		    if (rawSettings.hasOwnProperty(key)) {
+		        settingsMap.push(key);
+		    }
+		}
+
+		var nSettings = settingsMap.length;
+
+		//console.log("nSettings = "+nSettings);
+
+	    var rawAliases = gTheFolkFriendDatabase.aliases;
+
+	    var aliasMap = [];
+
+ 		for (let key in rawAliases) {
+		
+		    if (rawAliases.hasOwnProperty(key)) {
+		        aliasMap.push(key);
+		    }
+		
+		}
+
+		var nAliaseSets= aliasMap.length;
+
+	    var theOutput = "";
+
+	    var theTotal = 0;
+
+	    //debugger;
+
+	    for (var i=0;i<nAliaseSets;++i){
+
+	        var thisAlias = gTheFolkFriendDatabase.aliases[aliasMap[i]];
+
+	        var theAliases = [];
+
+			for (let key in thisAlias) {
+			
+			    if (thisAlias.hasOwnProperty(key)) {
+			        theAliases.push(key);
+			    }
+			
+			}
+
+			//debugger;
+
+			var nAliases = theAliases.length;
+	
+	        for (var j=0;j<nAliases;++j){
+
+	        	// Alias ID maps to the tune_id in the setting
+	        	var thisTitle = thisAlias[theAliases[j]];
+
+	        	var theOriginalTitle = thisTitle;
+
+		        thisTitle = thisTitle.toLowerCase();
+
+		        thisTitle = thisTitle.replace("'","");
+		        thisTitle = thisTitle.replace('"',"");
+
+		        if (thisTitle.indexOf(tuneNameToSearch) != -1){
+
+		        	thisTitle = theOriginalTitle;
+
+		        	//debugger;
+
+
+		        	for (k=0;k<nSettings;++k){
+
+		            	var theABCInfo = gTheFolkFriendDatabase.settings[settingsMap[k]];
+
+		            	if (theABCInfo.tune_id == aliasMap[i]){
+
+			                // Are we only returning tunes with chords?
+			                if (returnOnlyWithChords){
+
+			                    var searchRegExp = /"[^"]*"/gm
+
+			                    var chordsPresent = theABCInfo.abc.match(searchRegExp);
+
+			                    if ((chordsPresent) && (chordsPresent.length > 0)){
+
+			                        theTotal++;
+
+						            var theCapitalizedTitle = capitalizeSongName(thisTitle);
+
+									theCapitalizedTitle = capitalizeAfterO(theCapitalizedTitle);
+
+						            theOutput += "X: "+theTotal+"\n";
+
+						            theOutput += "T: "+theCapitalizedTitle+"\n";
+
+						            if (theABCInfo.dance){
+						            	theOutput += "R: "+theABCInfo.dance+"\n";
+						            }
+						            if (theABCInfo.meter){
+						            	theOutput += "M: "+theABCInfo.meter+"\n";
+						            }
+						            if (theABCInfo.mode){
+						            	theOutput += "K: "+theABCInfo.mode+"\n";
+						            }
+
+						            theOutput += "% Source:\n";
+						            theOutput += "% https://thesession.org/tunes/"+theABCInfo.tune_id+"\n";
+
+						            theOutput += theABCInfo.abc+"\n\n";
+
+			                    }
+
+			                }
+			                else
+			                {
+
+			            		theTotal++;
+
+					            var theCapitalizedTitle = capitalizeSongName(thisTitle);
+
+								theCapitalizedTitle = capitalizeAfterO(theCapitalizedTitle);
+
+					            theOutput += "X: "+theTotal+"\n";
+
+					            theOutput += "T: "+theCapitalizedTitle+"\n";
+
+					            if (theABCInfo.dance){
+					            	theOutput += "R: "+theABCInfo.dance+"\n";
+					            }
+					            if (theABCInfo.meter){
+					            	theOutput += "M: "+theABCInfo.meter+"\n";
+					            }
+					            if (theABCInfo.mode){
+					            	theOutput += "K: "+theABCInfo.mode+"\n";
+					            }
+
+					            theOutput += "% Source:\n";
+					            theOutput += "% https://thesession.org/tunes/"+theABCInfo.tune_id+"\n";
+
+					            theOutput += theABCInfo.abc+"\n\n";
+
+					        }
+		            	}
+		        	}
+		        }
+		    }
+	    }
+	}
 
     var elem = document.getElementById("search_result");
     elem.innerHTML = "Search Results:&nbsp;&nbsp;"+theTotal+ " found";
 
     document.getElementById('search_results').value = theOutput;
+
+    elem = document.getElementById('search_results');
+	elem.selectionStart = 0;
+	elem.selectionEnd = 0;
+
+	if(isDesktopBrowser()){
+
+		// And reset the focus
+	    elem.focus();	
+
+	}
+	else{
+
+	    // And clear the focus
+	    elem.blur();
+
+	}
 
     elem = document.getElementById('add-search-results');
 
@@ -9711,10 +9948,115 @@ function idleSearchResults(){
 }
 
 //
+// Switch the search database
+//
+function SwitchTuneDatabase(){
+
+	//console.log("SwitchTuneDatabase")
+
+   	var theDatabase = document.getElementById("databaseselect").value;
+
+   	switch (theDatabase){
+
+   		case "0":
+
+			// For testing with local database
+		    if (gUseLocalJSTuneDatabase){
+		   		
+		   		document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
+
+				gTheParsedTuneDatabase = theLocalTuneDatabase;
+
+			}
+			else
+			if(!gTheParsedTuneDatabase){
+				
+				document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Waiting for tune collection to load...";
+
+		   		// Fetch the Gavin Heneghantune database
+			    fetch('https://michaeleskin.com/abctools/abctunes_gavin_heneghan_10nov2023.json')
+			    .then((response) => response.json())
+			    .then((json) => {
+			    	var elem = document.getElementById("status");
+			    	if (elem){
+			    		if (gTheCurrentTuneDatabase == 0){
+			        		document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
+			        	}
+			        }
+			        gTheParsedTuneDatabase = json;
+			    }); 
+			}
+			else{
+				document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
+			}
+
+			gTheCurrentTuneDatabase = 0;
+
+			// Reset the dialog fields
+    		document.getElementById('search_results').value = "";
+
+		    document.getElementById("search_result").innerHTML = "Search Results:";
+
+			idleSearchResults();
+
+
+	   		break;
+
+   		case "1":
+
+			// For testing with local database
+		    if (gUseLocalJSTuneDatabase){
+		   		
+		   		document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
+
+				gTheFolkFriendDatabase = theLocalFolkFriendDatabase;
+
+			}
+			else
+			if(!gTheFolkFriendDatabase){
+				
+				document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Waiting for tune collection to load...";
+
+		   		// Fetch the FolkFriend database
+			    fetch('https://michaeleskin.com/abctools/folkfriend-non-user-data_21dec2023.json')
+			    .then((response) => response.json())
+			    .then((json) => {
+			    	var elem = document.getElementById("status");
+			    	if (elem){
+			    		if (gTheCurrentTuneDatabase == 1){
+			        		document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
+			        	}
+			        }
+			        gTheFolkFriendDatabase = json;
+			    }); 
+			}
+			else{
+
+				document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
+
+			}
+
+			gTheCurrentTuneDatabase = 1; 
+
+			// Reset the dialog fields
+    		document.getElementById('search_results').value = "";
+
+		    document.getElementById("search_result").innerHTML = "Search Results:";
+
+			idleSearchResults();
+
+			break;
+
+   	}
+}
+
+//
 // Search for a tune 
 //
 var gUseLocalJSTuneDatabase = false;
 var gTheParsedTuneDatabase = null;
+var gTheFolkFriendDatabase = null;
+var gTheCurrentTuneDatabase = 0;
 
 function AddFromSearch(){
 	
@@ -9722,14 +10064,19 @@ function AddFromSearch(){
 
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","AddFromSearch");
-                
+
+	// Always start on the Heneghan database
+	gTheCurrentTuneDatabase = 0;
+
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Search and Add Tunes&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#search_and_add_tunes" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>';
 
-	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:20px;margin-bottom:18px;">Search for text in the tune name:&nbsp;&nbsp;<input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="tuneNameToSearch" title="Enter your search text here" autocomplete="off" autocorrect="off" placeholder="Enter your search text here"/> </p> ';
+	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:20px;margin-bottom:18px;" class="switchtunedatabase">Tune Collection to Search: <select id="databaseselect" onchange="SwitchTuneDatabase();" title="Select your tune search database"><option value="0">Gavin Heneghan\'s Collection (20,000+ Tune Settings)</option><option value="1">FolkFriend.app Collection (45,000+ Tune Settings)</option></select></p>';
 
-	modal_msg+='<label>Only return tunes with chords?&nbsp;&nbsp;</label><input id="chords_only" type="checkbox"/>';
+	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:20px;margin-bottom:18px;">Search for text in the tune name:&nbsp;&nbsp;<input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="tuneNameToSearch" title="Enter your search text here" autocomplete="off" autocorrect="off" placeholder="Enter your search text here"/> </p>';
 
-	modal_msg+='<p style="margin-top:24px;font-size:12pt;">	<input class="btn btn-start-search start-search" id="start-search" onclick="searchForTunes();" type="button" value="Search" title="Start search"><span id="status">&nbsp;&nbsp;&nbsp;Waiting for tune database to load...</span></p>';
+	modal_msg+='<div id="searchonlychords"><label>Only return tunes with chords?&nbsp;&nbsp;</label><input id="chords_only" type="checkbox"/></div>';
+
+	modal_msg+='<p style="margin-top:24px;font-size:12pt;">	<input class="btn btn-start-search start-search" id="start-search" onclick="searchForTunes();" type="button" value="Search" title="Start search"><span id="status">&nbsp;&nbsp;&nbsp;Waiting for tune collection to load...</span></p>';
 
 	modal_msg+='<div style="margin-bottom: 18px;">';
 
@@ -9743,18 +10090,21 @@ function AddFromSearch(){
 
 	modal_msg+='</p>';
 
-    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 75, width: 800,  scrollWithPage: (AllowDialogsToScroll()) });
+    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 58, width: 800,  scrollWithPage: (AllowDialogsToScroll()) });
 
 	document.getElementById("add-search-results").disabled = true;
     
     // For testing with local database
     if (gUseLocalJSTuneDatabase){
+   		
    		document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
-		gTheParsedTuneDatabase= theLocalTuneDatabase;
+
+		gTheParsedTuneDatabase = theLocalTuneDatabase;
+
    	}
    	else{
 
-    	// Fetch the tune database
+    	// Fetch the Gavin Heneghantune database
 	    fetch('https://michaeleskin.com/abctools/abctunes_gavin_heneghan_10nov2023.json')
 	    .then((response) => response.json())
 	    .then((json) => {
@@ -9763,10 +10113,11 @@ function AddFromSearch(){
 	        	document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
 	        }
 	        gTheParsedTuneDatabase = json;
-	    }); 		
+	    }); 
 	}
 
 }
+
 
 //
 // Add an ABC file, sample tune, or template
@@ -24957,11 +25308,6 @@ function PDFExportDialog(bShowTopButtons){
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
-		return;
-	}
-
-	// If no tunes, exit
-	if (!gAllowCopy){
 		return;
 	}
 

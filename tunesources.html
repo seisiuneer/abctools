@@ -39,7 +39,7 @@
   <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
 
   <link rel="stylesheet" href="tunesources.css?v=17"/>
-
+   
   </head>
 
   <body>
@@ -53,59 +53,10 @@
         <p>Full project source may be found on: <a href="https://github.com/seisiuneer/abctools" target="_blank">GitHub</a>.</p>
         <p>Try it out here: <a href="https://michaeleskin.com/abc" target="_blank">ABC Transcription Tools</a>.</p>
         </div>
-        <hr>
-       
-        <div style="text-align: center;">
-          <h2>ABC Tune Search Engine<br/>for Gavin Heneghan's 20,000+ Tune Database</h2>
-        </div>
-
-        <hr>
-        
-        <button class="accordion" title="Click to expand/collapse this section" id="instructions_header">Show Instructions</button>
-        <div class="tocpanel">
-          <p>1)&nbsp;Enter the text you are looking for in the search box.</p>
-          <p>The search engine will return all tunes that include your text anywhere in the tune name.</p>
-          <p>2)&nbsp;If you only want to return versions that include chords, check "Only return tunes with chords?"</p>
-          <p>3)&nbsp;Click "Search".</p>
-          <p>If found, the ABC for any matching tunes will appear in the "Search Results" box.</p>
-          <p>4)&nbsp;Save, Copy or Send the search results:</p>
-          <p>Click "Save Results to a file" to save the results to a file.</p>
-          <p>Click "Copy Results to the clipboard" to copy the results to the system clipboard for pasting into other applications.</p>
-          <p>Click "Send Results to the ABC Transcription Tools" to send the search results directly to my <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a>.</p>
-        </div>
-        
-      </div>
-      
-      <hr>
-      
-      <div style="text-align:left">
-                
-        <p style="margin:0px;margin-top:20px;margin-bottom:12px;">Search for text in the tune name:&nbsp;&nbsp;<input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="tuneNameToSearch" title="Enter your search text here" autocomplete="off" autocorrect="off" placeholder="Enter your search text here"/> </p>   
-        <label>Only return tunes with chords?&nbsp;&nbsp;</label><input id="chords_only" type="checkbox"/>    
-        <p style="margin-top:24px"><button id="searchJSON" class="btn btn-generate" onClick="searchJSON();" title="Start search">Search</button><span id="status">&nbsp;&nbsp;&nbsp;Waiting for tune database to load...</span></p>
-        
-        <div style="margin-bottom: 18px;">
-          
-          <h4 id="search_result">Search Results:</h4>
-          
-        </div>
-        
-        <textarea id="output" placeholder="Search results will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea>
-        
-        <p style="margin-top:20px;text-align: center;">
-          
-          <button id="copybutton" class="btn btn-controls" onClick="copyOutputToClipboard();">Copy Results to the clipboard</button>
-          
-          <button style="margin-left:24px;" class="btn btn-controls" onClick="saveOutput();">Save Results to a file</button>
-          
-          <button style="margin-left:24px;" class="btn btn-controls" onClick="testOutput();">Send Results to the ABC Transcription Tools</button>
-          
-        </p>
-        
       </div>
             
       <hr>
-      <h4 style="text-align:center">Additional Sources for Tunes in ABC Format</h4>
+      <h4 style="text-align:center">Sources for Tunes in ABC Format</h4>
       <p><a href="https://thesession.org/tunes" target="_blank">The Session</a> - Jeremy Keith's legendary site with thousands of tunes in multiple versions.</p>
       <p><a href="http://www.folktunefinder.com/" target="_blank">Folk Tune Finder</a> - Joe Wass' full featured tune search engine with simple ABC pattern search.</p>
       <p><a href="http://abctunesearch.com/" target="_blank">The Reverend's ABC Tune Search</a> - Pete Strickler's full featured tune search engine.</p>
@@ -132,10 +83,5 @@
     </div>
     
   </body>
-  
-  <script src="tunesources.js?v=17" type="text/javascript"></script>
-  <script src="https://michaeleskin.com/abctools/tunedatabase.js?v=17" type="text/javascript"></script>
-  <script type="text/javascript" src="lz-string.min.js?v=17"></script>
-  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=17"></script>
-  
+    
 </html>
