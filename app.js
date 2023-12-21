@@ -9517,6 +9517,205 @@ function PDFTunebookBuilder(){
 	});
 }
 
+//
+// Search the parsed tune database for the tune name
+//
+function searchForTunes() {
+
+    //debugger;
+
+    if (!gTheParsedTuneDatabase){
+        
+        var prompt = makeCenteredPromptString("Tune database still loading...")
+
+        DayPilot.Modal.alert(prompt, {
+            theme: "modal_flat",
+            top: 200
+        });
+
+        return;
+    }
+
+    var tuneNameToSearch = document.getElementById("tuneNameToSearch").value;
+
+    if (tuneNameToSearch == ""){
+
+        var prompt = makeCenteredPromptString("No Tune Name Entered in the Search Field")
+ 
+        DayPilot.Modal.alert(prompt, {
+            theme: "modal_flat",
+            top: 200
+        });
+
+        return;
+    }
+
+    tuneNameToSearch = tuneNameToSearch.trim();
+
+    tuneNameToSearch = tuneNameToSearch.toLowerCase();
+
+    tuneNameToSearch = tuneNameToSearch.replace("'","");
+    tuneNameToSearch = tuneNameToSearch.replace('"',"");
+
+    document.getElementById('search_results').value = "";
+
+    var returnOnlyWithChords = document.getElementById('chords_only').checked;
+
+    var nTunes = gTheParsedTuneDatabase.length;
+
+    var theOutput = "";
+
+    var bFound = false;
+
+    var theTotal = 0;
+
+    for (var i=0;i<nTunes;++i){
+
+        var theInfo = gTheParsedTuneDatabase[i].info
+
+        var thisTitle = theInfo["T"];
+
+        thisTitle = thisTitle.toLowerCase();
+
+        thisTitle = thisTitle.replace("'","");
+        thisTitle = thisTitle.replace('"',"");
+
+        if (thisTitle.indexOf(tuneNameToSearch) != -1){
+
+            var theVariations = gTheParsedTuneDatabase[i].variations;
+
+            var index = 1;
+            var total = Object.entries(theVariations).length;
+
+            for (const [key, thisTuneABC] of Object.entries(theVariations))
+            {
+
+                // Are we only returning tunes with chords?
+                if (returnOnlyWithChords){
+
+                    var searchRegExp = /"[^"]*"/gm
+
+                    var chordsPresent = thisTuneABC.match(searchRegExp);
+
+                    if ((chordsPresent) && (chordsPresent.length > 0)){
+
+                        for (const [key2, value2] of Object.entries(theInfo)) {
+
+                            theOutput += key2+": "+value2+"\n";
+                        }
+
+                        // If multiple variations, label them
+                        if (total > 1){
+                            theOutput+="% Variation "+index+"\n";
+                        }
+
+                        theOutput += thisTuneABC+"\n\n";
+
+                        index++;
+
+                        theTotal++;
+
+                        bFound = true;
+
+                    }
+
+                }
+                else{
+
+                    for (const [key2, value2] of Object.entries(theInfo)) {
+
+                        theOutput += key2+": "+value2+"\n";
+                    }
+
+                    // If multiple variations, label them
+                    if (total > 1){
+                        theOutput+="% Variation "+index+" of "+total+"\n";
+                    }
+
+                    theOutput += thisTuneABC+"\n\n";
+
+                    index++;
+
+                    theTotal++;
+
+                    bFound = true;
+               }
+
+ 
+            }
+        }
+    }
+
+    var elem = document.getElementById("search_result");
+    elem.innerHTML = "Search Results:&nbsp;&nbsp;"+theTotal+ " found";
+
+    document.getElementById('search_results').value = theOutput;
+
+}
+
+//
+// Add the search results to the ABC
+//
+function addSearchResults(){
+
+ 	var theSearchResults = document.getElementById('search_results').value;
+
+ 	ProcessAddTune(theSearchResults);
+
+}
+
+//
+// Search for a tune 
+//
+var gTheParsedTuneDatabase = null;
+
+function AddFromSearch(){
+	
+	//console.log("AddFromSearch");
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","AddFromSearch");
+                
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Search and Add Tunes&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#search_and_add_tunes" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>';
+
+	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:20px;margin-bottom:18px;">Search for text in the tune name:&nbsp;&nbsp;<input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="tuneNameToSearch" title="Enter your search text here" autocomplete="off" autocorrect="off" placeholder="Enter your search text here"/> </p> ';
+
+	modal_msg+='<label>Only return tunes with chords?&nbsp;&nbsp;</label><input id="chords_only" type="checkbox"/>';
+
+	modal_msg+='<p style="margin-top:24px;font-size:12pt;">	<input class="btn btn-start-search start-search" id="start-search" onclick="searchForTunes();" type="button" value="Search" title="Start search"><span id="status">&nbsp;&nbsp;&nbsp;Waiting for tune database to load...</span></p>';
+
+	modal_msg+='<div style="margin-bottom: 18px;">';
+
+	modal_msg+='<h4 id="search_result">Search Results:</h4>';
+
+	modal_msg+='<textarea id="search_results" style="font-family:Courier;font-size:13pt;line-height:16pt;width:724px;height:240px;padding:6px" placeholder="Search results will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea>';
+
+	modal_msg+='<p style="margin-top:20px;text-align: center;">';
+
+	modal_msg += '<input class="btn btn-add-search-results add-search-results" id="add-search-results" onclick="addSearchResults();" type="button" value="Add Results to Tunebook" title="Add Results to Tunebook">';
+
+	modal_msg+='</p>';
+
+    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 800,  scrollWithPage: (AllowDialogsToScroll()) });
+
+    // For testing with local database
+   	//document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
+
+    // Read in the tune database
+    fetch('https://michaeleskin.com/abctools/abctunes_gavin_heneghan_10nov2023.json')
+    .then((response) => response.json())
+    .then((json) => {
+    	var elem = document.getElementById("status");
+    	if (elem){
+        	document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
+        }
+        gTheParsedTuneDatabase = json;
+    });
+}
+
+//
+// Add an ABC file, sample tune, or template
+//
 function AddABC(){
 
 	// Keep track of dialogs
@@ -9524,35 +9723,37 @@ function AddABC(){
 
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Add ABC Tunes, Templates, and PDF Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#add_templates_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>';
 	modal_msg += '<div id="add-new-tune-dialog">';
-	modal_msg += '<p style="text-align:center;margin-top:28px;font-size:18px;margin-bottom:36px">Add Your Own Tunes from an ABC or MusicXML File</p>';
-	modal_msg += '<p style="text-align:center;">';
+	modal_msg += '<p style="text-align:center;margin-top:28px;font-size:18px;">Add Your Own Tunes from an ABC or MusicXML File</p>';
+	modal_msg += '<p style="text-align:center;margin-top:16px;">';
 	modal_msg += '<input type="file" id="addabcfilebutton" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL" hidden/>';
 	modal_msg += '<label class="abcuploaddialog btn btn-top" for="addabcfilebutton" title="Adds tunes from an existing ABC or MusicXML file to the end of the ABC">Choose File to Add</label>';
 	modal_msg += '<input class="dialogrestorebutton btn btn-restorebutton" id="dialogrestorebutton" onclick="RestoreSnapshot(false,true);" type="button" value="Restore from Snapshot" title="Replaces the contents of the ABC editor with a Snapshot saved in browser storage" style="display:none;">';
 	modal_msg += '<input class="dialogrestoreautobutton btn btn-restorebutton" id="dialogrestoreautobutton" onclick="RestoreSnapshot(true,true);" type="button" value="Restore from Auto-Snapshot" title="Replaces the contents of the ABC editor with an Auto-Snapshot saved in browser storage" style="display:none;">';
 	modal_msg += '</p>';
-	modal_msg += '<p style="text-align:center;margin-top:24px;">';
-	modal_msg += '<p style="text-align:center;margin-top:24px;font-size:18px;margin-top:36px;">Add an Example ABC Tune</p>';
-	modal_msg += '<p style="text-align:center;margin-top:24px;">';
+	modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Search and Add Tunes</p>';
+	modal_msg += '<p style="text-align:center;margin-top:16px;">';
+	modal_msg  += '<input id="searchandaddtunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddFromSearch();" type="button" value="Search and Add Tunes" title="Search for tunes to add to your tunebook">';
+	modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Add an Example ABC Tune</p>';
+	modal_msg += '<p style="text-align:center;margin-top:16px;">';
 	modal_msg  += '<input id="addnewreel" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleReel();" type="button" value="Add an Example Reel" title="Adds an example reel (Cooley\'s) to the end of the ABC">';
 	modal_msg  += '<input id="addnewjig" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleJig();" type="button" value="Add an Example Jig" title="Adds an example jig (The Kesh) to the end of the ABC">';
 	modal_msg  += '<input id="addnewhornpipe" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleHornpipe();" type="button" value="Add an Example Hornpipe" title="Adds an example Hornpipe (Alexander\'s) to the end of the ABC">';
 	modal_msg += '</p>';	
-	modal_msg += '<p style="text-align:center;margin-top:24px;">';
+	modal_msg += '<p style="text-align:center;margin-top:16px;">';
 	modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendJSBach();" type="button" value="Add J.S. Bach Two-Part Invention #1" title="Adds the J.S. Bach 2-Part Invention #1 to the end of the ABC">';
 	modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendJSBach2();" type="button" value="Add J.S. Bach BWV570 Fantasia" title="Adds the J.S. Bach BWV570 Fantasia for Pipe Organ to the end of the ABC">';
 	modal_msg += '</p>';
-	modal_msg += '<p style="text-align:center;margin-top:32px;font-size:18px;">Add an ABC Template</p>';
-	modal_msg += '<p style="text-align:center;margin-top:24px;">';
+	modal_msg += '<p style="text-align:center;margin-top:24px;font-size:18px;">Add an ABC Template</p>';
+	modal_msg += '<p style="text-align:center;margin-top:16px;">';
 	modal_msg  += '<input id="addnewsong" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleSong();" type="button" value="Add an Example Song" title="Adds an example song to the end of the ABC">';
 	modal_msg  += '<input id="addsongtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSongTemplate();" type="button" value="Add a Song Template" title="Adds a minimal song template to the end of the ABC">';
 	modal_msg += '</p>';
-	modal_msg += '<p style="text-align:center;margin-top:24px;">';
+	modal_msg += '<p style="text-align:center;margin-top:16px;">';
 	modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendBoxFingeringTemplate();" type="button" value="Add Box Fingering Symbols Template" title="Adds a template with symbols for annotating box fingerings and tablature to the top of the ABC">';
 	modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddClickTrackTemplate();" type="button" value="Add Two-Bar Click Intro Templates" title="Adds two-bar click intro templates for common styles of tunes to the end of the ABC">';
 	modal_msg += '</p>';
-	modal_msg += '<p style="text-align:center;margin-top:32px;font-size:18px;">Configure PDF Tunebook Features</p>';
-	modal_msg += '<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder_add" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Configure PDF Tunebook Features" title="Easily add features to your PDF tunebook including: Title Page, Table of Contents, Index, Page Headers, Page Footers, playback links, and custom QR Code"></p>';
+	modal_msg += '<p style="text-align:center;margin-top:24px;font-size:18px;">Configure PDF Tunebook Features</p>';
+	modal_msg += '<p style="text-align:center;margin-top:16px;"><input id="tunebookbuilder_add" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Configure PDF Tunebook Features" title="Easily add features to your PDF tunebook including: Title Page, Table of Contents, Index, Page Headers, Page Footers, playback links, and custom QR Code"></p>';
 	modal_msg += '<p style="text-align:center;margin-top:24px;">';
 	modal_msg += '</p>';
 	modal_msg += '</div>';
@@ -9563,7 +9764,7 @@ function AddABC(){
 
 	}, 150);
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 75, width: 720,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 720,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 
 			
 	});

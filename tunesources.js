@@ -69,6 +69,8 @@ function searchJSON() {
 
     var originalTuneNameToSearch = tuneNameToSearch;
 
+    tuneNameToSearch = tuneNameToSearch.trim();
+
     tuneNameToSearch = tuneNameToSearch.toLowerCase();
 
     tuneNameToSearch = tuneNameToSearch.replace("'","");

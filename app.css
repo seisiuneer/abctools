@@ -658,7 +658,7 @@ padding:12px;
 margin-right:24px;
 }
 
-#addnewhornpipe,#addsongtemplate,#addboxfingeringtemplate{
+#addnewhornpipe,#addsongtemplate,#addboxfingeringtemplate,#searchandaddtunes{
 height:42px;
 padding:12px;
 }
@@ -1445,6 +1445,24 @@ margin-top:12px;
 
 @media (hover: hover) {
 	.saveabcfile:hover{
+	background: palegreen;
+	}
+}
+
+#start-search,#add-search-results{
+height:42px;
+padding:12px;
+width:auto;
+}
+
+@media (hover: hover) {
+	.start-search:hover{
+	background: palegreen;
+	}
+}
+
+@media (hover: hover) {
+	.add-search-results:hover{
 	background: palegreen;
 	}
 }
@@ -3175,6 +3193,7 @@ padding-left:10px;
 margin-top:4px;
 }
 
+
 /******************************************************************************/
 /* STYLES RELATED TO EXPERIMENT BUTTONS                                       */
 /******************************************************************************/
@@ -3596,6 +3615,16 @@ margin-top:4px;
 .btn-default_roll_explorer_3{
   --color: black;
   --background-color: #E6E6E6;
+}
+
+.btn-start-search{
+  --color: black;
+  --background-color: lavender;
+}
+
+.btn-add-search-results{
+  --color: black;
+  --background-color: lavender;
 }
 
 
