@@ -9696,7 +9696,7 @@ function AddFromSearch(){
 
 	modal_msg+='</p>';
 
-    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 800,  scrollWithPage: (AllowDialogsToScroll()) });
+    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 75, width: 800,  scrollWithPage: (AllowDialogsToScroll()) });
 
     // For testing with local database
    	//document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
@@ -9764,7 +9764,7 @@ function AddABC(){
 
 	}, 150);
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 720,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 720,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 
 			
 	});
