@@ -9526,12 +9526,9 @@ function searchForTunes() {
 
     if (!gTheParsedTuneDatabase){
         
-        var prompt = makeCenteredPromptString("Tune database still loading...")
+		var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Tune database still loading...</p>';
 
-        DayPilot.Modal.alert(prompt, {
-            theme: "modal_flat",
-            top: 200
-        });
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
 
         return;
     }
@@ -9540,12 +9537,9 @@ function searchForTunes() {
 
     if (tuneNameToSearch == ""){
 
-        var prompt = makeCenteredPromptString("No Tune Name Entered in the Search Field")
- 
-        DayPilot.Modal.alert(prompt, {
-            theme: "modal_flat",
-            top: 200
-        });
+		var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">No Tune Name Entered in the Search Field!</p>';
+
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
 
         return;
     }
@@ -9651,6 +9645,19 @@ function searchForTunes() {
 
     document.getElementById('search_results').value = theOutput;
 
+    elem = document.getElementById('add-search-results');
+
+    if (theTotal > 0){
+    	elem.classList.remove("add-search-results-disabled");
+		elem.classList.add("add-search-results");
+		elem.disabled = false;
+     }
+    else{
+		elem.classList.remove("add-search-results");
+    	elem.classList.add("add-search-results-disabled");
+		elem.disabled = true;
+    }
+
 }
 
 //
@@ -9660,13 +9667,53 @@ function addSearchResults(){
 
  	var theSearchResults = document.getElementById('search_results').value;
 
- 	ProcessAddTune(theSearchResults);
+ 	if (theSearchResults && (theSearchResults.length != 0)){
+
+	 	ProcessAddTune(theSearchResults);
+
+		var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Search Results Added to Tunebook!</p>';
+
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
+
+	}
+	else{
+
+		var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Nothing to Add!</p>';
+
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
+	
+	}
+
+}
+
+//
+// Idle the search result inject button
+//
+function idleSearchResults(){
+
+	//console.log("idleSearchResults");
+
+ 	var theSearchResults = document.getElementById('search_results').value;
+
+    var elem = document.getElementById('add-search-results');
+
+ 	if (theSearchResults && (theSearchResults.length > 0)){
+    	elem.classList.remove("add-search-results-disabled");
+		elem.classList.add("add-search-results");
+		elem.disabled = false;
+ 	}
+ 	else{
+		elem.classList.remove("add-search-results");
+    	elem.classList.add("add-search-results-disabled");
+		elem.disabled = true;
+ 	}
 
 }
 
 //
 // Search for a tune 
 //
+var gUseLocalJSTuneDatabase = false;
 var gTheParsedTuneDatabase = null;
 
 function AddFromSearch(){
@@ -9688,29 +9735,37 @@ function AddFromSearch(){
 
 	modal_msg+='<h4 id="search_result">Search Results:</h4>';
 
-	modal_msg+='<textarea id="search_results" style="font-family:Courier;font-size:13pt;line-height:16pt;width:724px;height:240px;padding:6px" placeholder="Search results will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea>';
+	modal_msg+='<textarea id="search_results" style="font-family:Courier;font-size:13pt;line-height:16pt;width:724px;height:240px;padding:6px" placeholder="Search results will appear here" spellcheck="false" autocorrect="off" autocapitalize="none" oninput="idleSearchResults()"></textarea>';
 
 	modal_msg+='<p style="margin-top:20px;text-align: center;">';
 
-	modal_msg += '<input class="btn btn-add-search-results add-search-results" id="add-search-results" onclick="addSearchResults();" type="button" value="Add Results to Tunebook" title="Add Results to Tunebook">';
+	modal_msg += '<input class="btn btn-add-search-results add-search-results-disabled" id="add-search-results" onclick="addSearchResults();" type="button" value="Add Results to Tunebook" title="Add Results to Tunebook">';
 
 	modal_msg+='</p>';
 
     DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 75, width: 800,  scrollWithPage: (AllowDialogsToScroll()) });
 
+	document.getElementById("add-search-results").disabled = true;
+    
     // For testing with local database
-   	//document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
+    if (gUseLocalJSTuneDatabase){
+   		document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
+		gTheParsedTuneDatabase= theLocalTuneDatabase;
+   	}
+   	else{
 
-    // Read in the tune database
-    fetch('https://michaeleskin.com/abctools/abctunes_gavin_heneghan_10nov2023.json')
-    .then((response) => response.json())
-    .then((json) => {
-    	var elem = document.getElementById("status");
-    	if (elem){
-        	document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
-        }
-        gTheParsedTuneDatabase = json;
-    });
+    	// Fetch the tune database
+	    fetch('https://michaeleskin.com/abctools/abctunes_gavin_heneghan_10nov2023.json')
+	    .then((response) => response.json())
+	    .then((json) => {
+	    	var elem = document.getElementById("status");
+	    	if (elem){
+	        	document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
+	        }
+	        gTheParsedTuneDatabase = json;
+	    }); 		
+	}
+
 }
 
 //
@@ -24902,6 +24957,11 @@ function PDFExportDialog(bShowTopButtons){
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
+		return;
+	}
+
+	// If no tunes, exit
+	if (!gAllowCopy){
 		return;
 	}
 

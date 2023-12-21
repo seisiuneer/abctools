@@ -576,7 +576,7 @@ function DoStartup() {
         elem.style.fontFamily = "Helvetica";
     }
     
-    gTheParsedJSON = theTuneDatabase;
+    gTheParsedJSON = theLocalTuneDatabase;
     
     document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
 

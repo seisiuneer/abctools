@@ -1455,6 +1455,15 @@ padding:12px;
 width:auto;
 }
 
+.add-search-results{
+opacity:1.0;
+}
+
+.add-search-results-disabled{
+opacity:.25;
+}
+
+
 @media (hover: hover) {
 	.start-search:hover{
 	background: palegreen;
