@@ -9625,6 +9625,8 @@ function searchForTunes() {
 
 	    var matchTitleStart = document.getElementById('match_title_start').checked;
 
+	    var onlyFirstVariation = document.getElementById('only_first_variation').checked;
+
 	    var nTunes = gTheParsedTuneDatabase.length;
 
 	    var theOutput = "";
@@ -9674,9 +9676,11 @@ function searchForTunes() {
 	                        }
 
 	                        // If multiple variations, label them
-	                        if (total > 1){
-	                            theOutput+="% Variation "+index+"\n";
-	                        }
+	                    	if (!onlyFirstVariation){
+		                        if (total > 1){
+		                            theOutput+="% Variation "+index+"\n";
+		                        }
+		                    }
 
 	                        theOutput += thisTuneABC+"\n\n";
 
@@ -9684,10 +9688,17 @@ function searchForTunes() {
 
 	                        theTotal++;
 
+	                        // Have we hit the max of search results?
 	                        if (theTotal == gTheMaxDatabaseResults){
 	                        	maxResultsHit = true;
 	                        	break;
 	                        }
+
+	                        // Only returning the first variations?
+	                        if (onlyFirstVariation){
+	                        	break;
+	                        }
+
 	                    }
 	                }
 	                else{
@@ -9703,9 +9714,12 @@ function searchForTunes() {
 	                    }
 
 	                    // If multiple variations, label them
-	                    if (total > 1){
-	                        theOutput+="% Variation "+index+" of "+total+"\n";
-	                    }
+	                    // Don't label if returning first variation
+	                    if (!onlyFirstVariation){
+		                    if (total > 1){
+		                        theOutput+="% Variation "+index+" of "+total+"\n";
+		                    }
+		                }
 
 	                    theOutput += thisTuneABC+"\n\n";
 
@@ -9713,10 +9727,17 @@ function searchForTunes() {
 
 	                    theTotal++;
 
+	                    // Have we hit the max of search results?
                     	if (theTotal == gTheMaxDatabaseResults){
                         	maxResultsHit = true;
                         	break;
                         }
+
+                       	// Only returning the first variations?
+                        if (onlyFirstVariation){
+                        	break;
+                        }
+
 	               	}
 	            }
 	        }
@@ -9727,6 +9748,8 @@ function searchForTunes() {
 	    var returnOnlyWithChords = document.getElementById('chords_only').checked;
 
  	    var matchTitleStart = document.getElementById('match_title_start').checked;
+
+	    var onlyFirstVariation = document.getElementById('only_first_variation').checked;
 		    
  		// Search FolkFriend session.org database
 	    var rawSettings = gTheFolkFriendDatabase.settings;
@@ -9761,6 +9784,8 @@ function searchForTunes() {
 	    var theTotal = 0;
 
 	    var maxResultsHit = false;
+
+	    var variations_found = [];
 
 	    for (var i=0;((i<nAliaseSets) && (!maxResultsHit));++i){
 
@@ -9800,16 +9825,69 @@ function searchForTunes() {
 
 		            	if (theABCInfo.tune_id == aliasMap[i]){
 
-			                // Are we only returning tunes with chords?
-			                if (returnOnlyWithChords){
+		            		var ok_to_process = true;
 
-			                    var searchRegExp = /"[^"]*"/gm
+		            		// If only returning first variation, see if the tune_id has already been seen
+		            		if (onlyFirstVariation){
 
-			                    var chordsPresent = theABCInfo.abc.match(searchRegExp);
+		            			var nVariationsSeen = variations_found.length;
+		            			
+		            			for(ii=0;ii<nVariationsSeen;++ii){
+		            				if (variations_found[ii] == theABCInfo.tune_id){
+		            					ok_to_process = false;
+		            				}
+		            			}
 
-			                    if ((chordsPresent) && (chordsPresent.length > 0)){
+		            			variations_found.push(theABCInfo.tune_id);
 
-			                        theTotal++;
+		            		}
+
+		            		if (ok_to_process){
+
+				                // Are we only returning tunes with chords?
+				                if (returnOnlyWithChords){
+
+				                    var searchRegExp = /"[^"]*"/gm
+
+				                    var chordsPresent = theABCInfo.abc.match(searchRegExp);
+
+				                    if ((chordsPresent) && (chordsPresent.length > 0)){
+
+				                        theTotal++;
+
+							            var theCapitalizedTitle = capitalizeSongName(thisTitle);
+
+										theCapitalizedTitle = capitalizeAfterO(theCapitalizedTitle);
+
+							            theOutput += "X: "+theTotal+"\n";
+
+							            theOutput += "T: "+theCapitalizedTitle+"\n";
+
+							            theOutput += "S: https://thesession.org/tunes/"+theABCInfo.tune_id+"\n";
+
+							            if (theABCInfo.dance){
+							            	theOutput += "R: "+theABCInfo.dance+"\n";
+							            }
+							            if (theABCInfo.meter){
+							            	theOutput += "M: "+theABCInfo.meter+"\n";
+							            }
+							            if (theABCInfo.mode){
+							            	theOutput += "K: "+theABCInfo.mode+"\n";
+							            }
+
+							            theOutput += theABCInfo.abc+"\n\n";
+
+							            // Have we hit the max results count?
+							            if (theTotal == gTheMaxDatabaseResults){
+							            	maxResultsHit = true;
+							            }
+				                    }
+
+				                }
+				                else
+				                {
+
+				            		theTotal++;
 
 						            var theCapitalizedTitle = capitalizeSongName(thisTitle);
 
@@ -9818,8 +9896,8 @@ function searchForTunes() {
 						            theOutput += "X: "+theTotal+"\n";
 
 						            theOutput += "T: "+theCapitalizedTitle+"\n";
-
-						            theOutput += "S: https://thesession.org/tunes/"+theABCInfo.tune_id+"\n";
+							        
+							        theOutput += "S: https://thesession.org/tunes/"+theABCInfo.tune_id+"\n";
 
 						            if (theABCInfo.dance){
 						            	theOutput += "R: "+theABCInfo.dance+"\n";
@@ -9831,48 +9909,14 @@ function searchForTunes() {
 						            	theOutput += "K: "+theABCInfo.mode+"\n";
 						            }
 
-
 						            theOutput += theABCInfo.abc+"\n\n";
 
 						            // Have we hit the max results count?
 						            if (theTotal == gTheMaxDatabaseResults){
 						            	maxResultsHit = true;
 						            }
-			                    }
-
-			                }
-			                else
-			                {
-
-			            		theTotal++;
-
-					            var theCapitalizedTitle = capitalizeSongName(thisTitle);
-
-								theCapitalizedTitle = capitalizeAfterO(theCapitalizedTitle);
-
-					            theOutput += "X: "+theTotal+"\n";
-
-					            theOutput += "T: "+theCapitalizedTitle+"\n";
-						        
-						        theOutput += "S: https://thesession.org/tunes/"+theABCInfo.tune_id+"\n";
-
-					            if (theABCInfo.dance){
-					            	theOutput += "R: "+theABCInfo.dance+"\n";
-					            }
-					            if (theABCInfo.meter){
-					            	theOutput += "M: "+theABCInfo.meter+"\n";
-					            }
-					            if (theABCInfo.mode){
-					            	theOutput += "K: "+theABCInfo.mode+"\n";
-					            }
-
-					            theOutput += theABCInfo.abc+"\n\n";
-
-					            // Have we hit the max results count?
-					            if (theTotal == gTheMaxDatabaseResults){
-					            	maxResultsHit = true;
-					            }
-					        }
+						        }
+						    }
 		            	}
 		        	}
 		        }
@@ -10109,7 +10153,7 @@ function AddFromSearch(){
 
 	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:0px;margin-bottom:18px;">Search for text in the tune name:&nbsp;&nbsp;<input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="tuneNameToSearch" title="Enter your search text here" autocomplete="off" autocorrect="off" placeholder="Enter your search text here"/> </p>';
 
-	modal_msg+='<p class="tunesearchoptions">Only return tunes with chords?&nbsp;<input id="chords_only" type="checkbox" style="margin-top:-5px;margin-bottom:0px;"/>&nbsp;&nbsp;&nbsp;Match start of title?&nbsp;<input id="match_title_start" type="checkbox" style="margin-top:-5px;margin-bottom:0px;"/></p>';
+	modal_msg+='<p class="tunesearchoptions">Only return first variation found?&nbsp;<input id="only_first_variation" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" checked/>&nbsp;&nbsp;&nbsp;Match start of title?&nbsp;<input id="match_title_start" type="checkbox" style="margin-top:-5px;margin-bottom:0px;"/>&nbsp;&nbsp;&nbsp;Only return tunes with chords?&nbsp;<input id="chords_only" type="checkbox" style="margin-top:-5px;margin-bottom:0px;"/></p>';
 
 	modal_msg+='<p class="tunesearchoptionsmax">Maximum number of results:<select id="maxtunesearchresults" onchange="SetTuneSearchMaxResults();" title="Maximum number of results" style="margin-top:-7px;"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></p>';
 
