@@ -10105,11 +10105,13 @@ function AddFromSearch(){
 
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Search and Add Tunes&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#search_and_add_tunes" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>';
 
-	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:20px;margin-bottom:18px;" class="switchtunedatabase">Tune Collection to Search: <select id="databaseselect" onchange="SwitchTuneDatabase();" title="Select your tune search database"><option value="0">Gavin Heneghan\'s Collection (20,000+ Tune Settings)</option><option value="1">FolkFriend.app Collection (45,000+ Tune Settings)</option></select></p>';
+	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:20px;margin-bottom:12px;" class="switchtunedatabase">Tune Collection to Search: <select id="databaseselect" onchange="SwitchTuneDatabase();" title="Select your tune search database"><option value="0">Gavin Heneghan\'s Collection (20,000+ Tune Settings)</option><option value="1">FolkFriend.app Collection (45,000+ Tune Settings)</option></select></p>';
 
-	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:20px;margin-bottom:18px;">Search for text in the tune name:&nbsp;&nbsp;<input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="tuneNameToSearch" title="Enter your search text here" autocomplete="off" autocorrect="off" placeholder="Enter your search text here"/> </p>';
+	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:0px;margin-bottom:18px;">Search for text in the tune name:&nbsp;&nbsp;<input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="tuneNameToSearch" title="Enter your search text here" autocomplete="off" autocorrect="off" placeholder="Enter your search text here"/> </p>';
 
-	modal_msg+='<div id="searchonlychords" class="tunesearchoptions"><span>Only return tunes with chords?&nbsp;</span><input id="chords_only" type="checkbox" style="margin-top:-5px;margin-bottom:0px;"/><span>&nbsp;&nbsp;&nbsp;Match start of title?&nbsp;</span><input id="match_title_start" type="checkbox" style="margin-top:-5px;margin-bottom:0px;"/>&nbsp;&nbsp;&nbsp;Maximum number of results:<select id="maxtunesearchresults" onchange="SetTuneSearchMaxResults();" title="Maximum number of results" style="margin-top:-7px;"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></div>';
+	modal_msg+='<p class="tunesearchoptions">Only return tunes with chords?&nbsp;<input id="chords_only" type="checkbox" style="margin-top:-5px;margin-bottom:0px;"/>&nbsp;&nbsp;&nbsp;Match start of title?&nbsp;<input id="match_title_start" type="checkbox" style="margin-top:-5px;margin-bottom:0px;"/></p>';
+
+	modal_msg+='<p class="tunesearchoptionsmax">Maximum number of results:<select id="maxtunesearchresults" onchange="SetTuneSearchMaxResults();" title="Maximum number of results" style="margin-top:-7px;"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></p>';
 
 	modal_msg+='<p style="margin-top:10px;font-size:12pt;">	<input class="btn btn-start-search start-search" id="start-search" onclick="searchForTunes();" type="button" value="Search" title="Start search"><span id="status">&nbsp;&nbsp;&nbsp;Waiting for tune collection to load...</span></p>';
 
@@ -10170,8 +10172,8 @@ function AddABC(){
 	modal_msg += '<div id="add-new-tune-dialog">';
 	modal_msg += '<p style="text-align:center;margin-top:28px;font-size:18px;">Add Your Own Tunes from an ABC or MusicXML File</p>';
 	modal_msg += '<p style="text-align:center;margin-top:16px;">';
-	modal_msg += '<input type="file" id="addabcfilebutton" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL" hidden/>';
-	modal_msg += '<label class="abcuploaddialog btn btn-top" for="addabcfilebutton" title="Adds tunes from an existing ABC or MusicXML file to the end of the ABC">Choose File to Add</label>';
+	//modal_msg += '';
+	modal_msg += '<label class="abcuploaddialog btn btn-top" for="addabcfilebutton" title="Adds tunes from an existing ABC or MusicXML file to the end of the ABC">Choose File to Add <input type="file" id="addabcfilebutton" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL" hidden/></label>';
 	modal_msg += '<input class="dialogrestorebutton btn btn-restorebutton" id="dialogrestorebutton" onclick="RestoreSnapshot(false,true);" type="button" value="Restore from Snapshot" title="Replaces the contents of the ABC editor with a Snapshot saved in browser storage" style="display:none;">';
 	modal_msg += '<input class="dialogrestoreautobutton btn btn-restorebutton" id="dialogrestoreautobutton" onclick="RestoreSnapshot(true,true);" type="button" value="Restore from Auto-Snapshot" title="Replaces the contents of the ABC editor with an Auto-Snapshot saved in browser storage" style="display:none;">';
 	modal_msg += '</p>';
