@@ -10082,7 +10082,7 @@ function AddFromSearch(){
 
 	modal_msg+='<h4 id="search_result">Search Results:</h4>';
 
-	modal_msg+='<textarea id="search_results" style="font-family:Courier;font-size:13pt;line-height:16pt;width:724px;height:240px;padding:6px" placeholder="Search results will appear here" spellcheck="false" autocorrect="off" autocapitalize="none" oninput="idleSearchResults()"></textarea>';
+	modal_msg+='<textarea id="search_results" style="font-family:Courier;font-size:13pt;line-height:16pt;width:724px;height:350px;padding:6px" placeholder="Search results will appear here" spellcheck="false" autocorrect="off" autocapitalize="none" oninput="idleSearchResults()"></textarea>';
 
 	modal_msg+='<p style="margin-top:20px;text-align: center;">';
 
@@ -10090,7 +10090,7 @@ function AddFromSearch(){
 
 	modal_msg+='</p>';
 
-    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 58, width: 800,  scrollWithPage: (AllowDialogsToScroll()) });
+    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 800,  scrollWithPage: (AllowDialogsToScroll()) });
 
 	document.getElementById("add-search-results").disabled = true;
     
