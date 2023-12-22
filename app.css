@@ -3230,6 +3230,33 @@ padding-left:10px;
 margin-top:0px;
 }
 
+.tunesearchoptions{
+font-size:12pt;
+font-family:"Helvetica";
+display:flex;
+margin-top:20px;
+}
+
+.tunesearchoptions>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:85px;
+margin-left:10px;
+padding-left:10px;
+}
+
+
 
 /******************************************************************************/
 /* STYLES RELATED TO EXPERIMENT BUTTONS                                       */

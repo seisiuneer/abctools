@@ -9562,8 +9562,6 @@ function capitalizeAfterO(str) {
 //
 function searchForTunes() {
 
-    //debugger;
-
     var databaseID = gTheCurrentTuneDatabase;
 
     if (databaseID == 0){
@@ -9630,7 +9628,9 @@ function searchForTunes() {
 
 	    var theTotal = 0;
 
-	    for (var i=0;i<nTunes;++i){
+	    var maxResultsHit = false;
+
+	    for (var i=0;((i<nTunes) && (!maxResultsHit));++i){
 
 	        var theInfo = gTheParsedTuneDatabase[i].info
 
@@ -9662,7 +9662,12 @@ function searchForTunes() {
 
 	                        for (const [key2, value2] of Object.entries(theInfo)) {
 
-	                            theOutput += key2+": "+value2+"\n";
+	                        	if (key2 == "X"){
+	                        		theOutput += key2+": "+(theTotal+1)+"\n";
+	                        	}
+	                        	else{
+	                            	theOutput += key2+": "+value2+"\n";
+	                            }
 	                        }
 
 	                        // If multiple variations, label them
@@ -9676,16 +9681,22 @@ function searchForTunes() {
 
 	                        theTotal++;
 
-	                        bFound = true;
-
+	                        if (theTotal == gTheMaxDatabaseResults){
+	                        	maxResultsHit = true;
+	                        	break;
+	                        }
 	                    }
-
 	                }
 	                else{
 
 	                    for (const [key2, value2] of Object.entries(theInfo)) {
 
-	                        theOutput += key2+": "+value2+"\n";
+                        	if (key2 == "X"){
+                        		theOutput += key2+": "+(theTotal+1)+"\n";
+                        	}
+                        	else{
+                            	theOutput += key2+": "+value2+"\n";
+                            }
 	                    }
 
 	                    // If multiple variations, label them
@@ -9698,8 +9709,12 @@ function searchForTunes() {
 	                    index++;
 
 	                    theTotal++;
-	               }
 
+                    	if (theTotal == gTheMaxDatabaseResults){
+                        	maxResultsHit = true;
+                        	break;
+                        }
+	               	}
 	            }
 	        }
 	    }
@@ -9722,8 +9737,6 @@ function searchForTunes() {
 
 		var nSettings = settingsMap.length;
 
-		//console.log("nSettings = "+nSettings);
-
 	    var rawAliases = gTheFolkFriendDatabase.aliases;
 
 	    var aliasMap = [];
@@ -9742,9 +9755,9 @@ function searchForTunes() {
 
 	    var theTotal = 0;
 
-	    //debugger;
+	    var maxResultsHit = false;
 
-	    for (var i=0;i<nAliaseSets;++i){
+	    for (var i=0;((i<nAliaseSets) && (!maxResultsHit));++i){
 
 	        var thisAlias = gTheFolkFriendDatabase.aliases[aliasMap[i]];
 
@@ -9758,11 +9771,9 @@ function searchForTunes() {
 			
 			}
 
-			//debugger;
-
 			var nAliases = theAliases.length;
 	
-	        for (var j=0;j<nAliases;++j){
+	        for (var j=0;((j<nAliases) && (!maxResultsHit));++j){
 
 	        	// Alias ID maps to the tune_id in the setting
 	        	var thisTitle = thisAlias[theAliases[j]];
@@ -9778,10 +9789,7 @@ function searchForTunes() {
 
 		        	thisTitle = theOriginalTitle;
 
-		        	//debugger;
-
-
-		        	for (k=0;k<nSettings;++k){
+		        	for (k=0;((k<nSettings) && (!maxResultsHit));++k){
 
 		            	var theABCInfo = gTheFolkFriendDatabase.settings[settingsMap[k]];
 
@@ -9806,6 +9814,8 @@ function searchForTunes() {
 
 						            theOutput += "T: "+theCapitalizedTitle+"\n";
 
+						            theOutput += "S: https://thesession.org/tunes/"+theABCInfo.tune_id+"\n";
+
 						            if (theABCInfo.dance){
 						            	theOutput += "R: "+theABCInfo.dance+"\n";
 						            }
@@ -9816,11 +9826,13 @@ function searchForTunes() {
 						            	theOutput += "K: "+theABCInfo.mode+"\n";
 						            }
 
-						            theOutput += "% Source:\n";
-						            theOutput += "% https://thesession.org/tunes/"+theABCInfo.tune_id+"\n";
 
 						            theOutput += theABCInfo.abc+"\n\n";
 
+						            // Have we hit the max results count?
+						            if (theTotal == gTheMaxDatabaseResults){
+						            	maxResultsHit = true;
+						            }
 			                    }
 
 			                }
@@ -9836,6 +9848,8 @@ function searchForTunes() {
 					            theOutput += "X: "+theTotal+"\n";
 
 					            theOutput += "T: "+theCapitalizedTitle+"\n";
+						        
+						        theOutput += "S: https://thesession.org/tunes/"+theABCInfo.tune_id+"\n";
 
 					            if (theABCInfo.dance){
 					            	theOutput += "R: "+theABCInfo.dance+"\n";
@@ -9847,11 +9861,12 @@ function searchForTunes() {
 					            	theOutput += "K: "+theABCInfo.mode+"\n";
 					            }
 
-					            theOutput += "% Source:\n";
-					            theOutput += "% https://thesession.org/tunes/"+theABCInfo.tune_id+"\n";
-
 					            theOutput += theABCInfo.abc+"\n\n";
 
+					            // Have we hit the max results count?
+					            if (theTotal == gTheMaxDatabaseResults){
+					            	maxResultsHit = true;
+					            }
 					        }
 		            	}
 		        	}
@@ -9946,6 +9961,19 @@ function idleSearchResults(){
  	}
 
 }
+//
+//
+//
+function SetTuneSearchMaxResults(){
+
+	var theMaxResults = document.getElementById("maxtunesearchresults").value;
+	gTheMaxDatabaseResults = parseInt(theMaxResults);
+
+	if (isNaN(gTheMaxDatabaseResults)){
+		gTheMaxDatabaseResults = 25;
+	}
+
+}
 
 //
 // Switch the search database
@@ -9959,6 +9987,8 @@ function SwitchTuneDatabase(){
    	switch (theDatabase){
 
    		case "0":
+
+			gTheCurrentTuneDatabase = 0;
 
 			// For testing with local database
 		    if (gUseLocalJSTuneDatabase){
@@ -9990,7 +10020,6 @@ function SwitchTuneDatabase(){
 				document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
 			}
 
-			gTheCurrentTuneDatabase = 0;
 
 			// Reset the dialog fields
     		document.getElementById('search_results').value = "";
@@ -10003,6 +10032,8 @@ function SwitchTuneDatabase(){
 	   		break;
 
    		case "1":
+
+			gTheCurrentTuneDatabase = 1; 
 
 			// For testing with local database
 		    if (gUseLocalJSTuneDatabase){
@@ -10036,8 +10067,6 @@ function SwitchTuneDatabase(){
 
 			}
 
-			gTheCurrentTuneDatabase = 1; 
-
 			// Reset the dialog fields
     		document.getElementById('search_results').value = "";
 
@@ -10057,6 +10086,7 @@ var gUseLocalJSTuneDatabase = false;
 var gTheParsedTuneDatabase = null;
 var gTheFolkFriendDatabase = null;
 var gTheCurrentTuneDatabase = 0;
+var gTheMaxDatabaseResults = 25;
 
 function AddFromSearch(){
 	
@@ -10074,9 +10104,9 @@ function AddFromSearch(){
 
 	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:20px;margin-bottom:18px;">Search for text in the tune name:&nbsp;&nbsp;<input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="tuneNameToSearch" title="Enter your search text here" autocomplete="off" autocorrect="off" placeholder="Enter your search text here"/> </p>';
 
-	modal_msg+='<div id="searchonlychords"><label>Only return tunes with chords?&nbsp;&nbsp;</label><input id="chords_only" type="checkbox"/></div>';
+	modal_msg+='<div id="searchonlychords" class="tunesearchoptions"><label>Only return tunes with chords?&nbsp;&nbsp;</label><input id="chords_only" type="checkbox" style="margin-top:-5px;margin-bottom:0px;"/>&nbsp;&nbsp;&nbsp;&nbsp;Maximum number of results:<select id="maxtunesearchresults" onchange="SetTuneSearchMaxResults();" title="Maximum number of results" style="margin-top:-7px;"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></div>';
 
-	modal_msg+='<p style="margin-top:24px;font-size:12pt;">	<input class="btn btn-start-search start-search" id="start-search" onclick="searchForTunes();" type="button" value="Search" title="Start search"><span id="status">&nbsp;&nbsp;&nbsp;Waiting for tune collection to load...</span></p>';
+	modal_msg+='<p style="margin-top:10px;font-size:12pt;">	<input class="btn btn-start-search start-search" id="start-search" onclick="searchForTunes();" type="button" value="Search" title="Start search"><span id="status">&nbsp;&nbsp;&nbsp;Waiting for tune collection to load...</span></p>';
 
 	modal_msg+='<div style="margin-bottom: 18px;">';
 
@@ -10092,8 +10122,12 @@ function AddFromSearch(){
 
     DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 800,  scrollWithPage: (AllowDialogsToScroll()) });
 
+    // Default initial max results to 25
+	document.getElementById("maxtunesearchresults").value = "25";
+	gTheMaxDatabaseResults = 25;
+
 	document.getElementById("add-search-results").disabled = true;
-    
+
     // For testing with local database
     if (gUseLocalJSTuneDatabase){
    		
