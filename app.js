@@ -9599,7 +9599,7 @@ function searchForTunes() {
 
     if (tuneNameToSearch == ""){
 
-        var prompt = makeCenteredPromptString("No Tune Name Entered in the Search Field")
+        var prompt = makeCenteredPromptString("No Text Entered in the Search Field")
  
         DayPilot.Modal.alert(prompt, {
             theme: "modal_flat",
@@ -9609,7 +9609,8 @@ function searchForTunes() {
         return;
     }
 
-    tuneNameToSearch = tuneNameToSearch.trim();
+    // Disabling trim so that words with spaces can be searched for more easily
+    //tuneNameToSearch = tuneNameToSearch.trim();
 
     tuneNameToSearch = tuneNameToSearch.toLowerCase();
 
@@ -9621,6 +9622,8 @@ function searchForTunes() {
     if (databaseID == 0){
 
 	    var returnOnlyWithChords = document.getElementById('chords_only').checked;
+
+	    var matchTitleStart = document.getElementById('match_title_start').checked;
 
 	    var nTunes = gTheParsedTuneDatabase.length;
 
@@ -9641,7 +9644,7 @@ function searchForTunes() {
 	        thisTitle = thisTitle.replace("'","");
 	        thisTitle = thisTitle.replace('"',"");
 
-	        if (thisTitle.indexOf(tuneNameToSearch) != -1){
+	        if (((!matchTitleStart) && (thisTitle.indexOf(tuneNameToSearch) != -1)) || ((matchTitleStart) && (thisTitle.indexOf(tuneNameToSearch) == 0))){
 
 	            var theVariations = gTheParsedTuneDatabase[i].variations;
 
@@ -9722,7 +9725,9 @@ function searchForTunes() {
 	else{
 
 	    var returnOnlyWithChords = document.getElementById('chords_only').checked;
- 		    
+
+ 	    var matchTitleStart = document.getElementById('match_title_start').checked;
+		    
  		// Search FolkFriend session.org database
 	    var rawSettings = gTheFolkFriendDatabase.settings;
 
@@ -9785,7 +9790,7 @@ function searchForTunes() {
 		        thisTitle = thisTitle.replace("'","");
 		        thisTitle = thisTitle.replace('"',"");
 
-		        if (thisTitle.indexOf(tuneNameToSearch) != -1){
+	        	if (((!matchTitleStart) && (thisTitle.indexOf(tuneNameToSearch) != -1)) || ((matchTitleStart) && (thisTitle.indexOf(tuneNameToSearch) == 0))){
 
 		        	thisTitle = theOriginalTitle;
 
@@ -10104,7 +10109,7 @@ function AddFromSearch(){
 
 	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:20px;margin-bottom:18px;">Search for text in the tune name:&nbsp;&nbsp;<input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="tuneNameToSearch" title="Enter your search text here" autocomplete="off" autocorrect="off" placeholder="Enter your search text here"/> </p>';
 
-	modal_msg+='<div id="searchonlychords" class="tunesearchoptions"><label>Only return tunes with chords?&nbsp;&nbsp;</label><input id="chords_only" type="checkbox" style="margin-top:-5px;margin-bottom:0px;"/>&nbsp;&nbsp;&nbsp;&nbsp;Maximum number of results:<select id="maxtunesearchresults" onchange="SetTuneSearchMaxResults();" title="Maximum number of results" style="margin-top:-7px;"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></div>';
+	modal_msg+='<div id="searchonlychords" class="tunesearchoptions"><span>Only return tunes with chords?&nbsp;</span><input id="chords_only" type="checkbox" style="margin-top:-5px;margin-bottom:0px;"/><span>&nbsp;&nbsp;&nbsp;Match start of title?&nbsp;</span><input id="match_title_start" type="checkbox" style="margin-top:-5px;margin-bottom:0px;"/>&nbsp;&nbsp;&nbsp;Maximum number of results:<select id="maxtunesearchresults" onchange="SetTuneSearchMaxResults();" title="Maximum number of results" style="margin-top:-7px;"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></div>';
 
 	modal_msg+='<p style="margin-top:10px;font-size:12pt;">	<input class="btn btn-start-search start-search" id="start-search" onclick="searchForTunes();" type="button" value="Search" title="Start search"><span id="status">&nbsp;&nbsp;&nbsp;Waiting for tune collection to load...</span></p>';
 
