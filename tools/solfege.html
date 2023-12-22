@@ -31,7 +31,7 @@
     <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
     <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-    <link rel="stylesheet" href="solfege.css?v=5"/>
+    <link rel="stylesheet" href="solfege.css?v=6"/>
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
     <script>
@@ -52,17 +52,19 @@
           <h1>Solfege Tablature Generator</h1>
           <h2>Batch Pre-processor for ABC Tunebooks</h2>
         </div>
-        
-        <h4 style="margin-top:32px;">Instructions:&nbsp;&nbsp;<a href="#abcinput">Jump to Tool</a></h4>
-        
+                
+        <button class="accordion" title="Click to expand/collapse this section" id="instructions_header">Show Instructions</button>
+        <div class="tocpanel">
         <p>1)&nbsp;Click "Open an existing .ABC file" to open a file or paste one or more ABC tunes into the box below.</p>
         <p>2)&nbsp;Enter your preferred ABC font sizes, %%staffsep, and %%musicspace values</p>
-        <p>3)&nbsp;Click "Generate Solfege".</p>
+        <p>3)&nbsp;If you want non-movable Solfege based on C Major, check "Force non-movable Solfege"</p>
+        <p>4)&nbsp;Click "Generate Solfege".</p>
         <p>The generated ABC with Solfege tablature will appear in the "Processed ABC Output, with Tablature" box.</p>
-        <p>4)&nbsp;Save, Copy or Test the results:</p>
+        <p>5)&nbsp;Save, Copy or Test the results:</p>
         <p>Click "Save Output to a file" to save the results to a file.</p>
         <p>Click "Copy Output to the clipboard" to copy the results to the system clipboard for pasting into other applications.</p>
         <p>Click "Test Output in the ABC Transcription Tools" to open and test the results in my <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a></p>
+        </div>
         
       </div>
       
@@ -80,23 +82,26 @@
         </div>
         
         <p>
+
           <textarea id="input" placeholder="Enter ABC notation here" spellcheck="false" autocorrect="off" autocapitalize="none">
           </textarea>
         </p>
                 
-        <p>Font family:<span class="inputbox"><input style="width:100px;" id="font_family" type="text"></span><span class="recommended">Recommended:&nbsp;Palatino</span></p>
+        <p class="tabsetup">Font family:<span class="inputbox"><input style="width:100px;" id="font_family" type="text"></span><span class="recommended">Recommended:&nbsp;Palatino</span></p>
         
-        <p>Title font size:<span class="inputbox"><input style="width:100px;" id="title_font_size" type="text"></span><span class="recommended">Recommended:&nbsp;22</span></p>
+        <p class="tabsetup">Title font size:<span class="inputbox"><input style="width:100px;" id="title_font_size" type="text"></span><span class="recommended">Recommended:&nbsp;22</span></p>
         
-        <p>Subtitle font size:<span class="inputbox"><input style="width:100px" id="subtitle_font_size" type="text"></span><span class="recommended">Recommended:&nbsp;18</span></p>
+        <p class="tabsetup">Subtitle font size:<span class="inputbox"><input style="width:100px" id="subtitle_font_size" type="text"></span><span class="recommended">Recommended:&nbsp;18</span></p>
         
-        <p>Info font size:<span class="inputbox"><input style="width:100px" id="info_font_size" type="text"></span><span class="recommended">Recommended:&nbsp;14</span></p>
+        <p class="tabsetup">Info font size:<span class="inputbox"><input style="width:100px" id="info_font_size" type="text"></span><span class="recommended">Recommended:&nbsp;14</span></p>
         
-        <p>Tablature font size:<span class="inputbox"><input style="width:100px" id="tab_font_size" type="text"></span><span class="recommended">Recommended:&nbsp;9</span></p>
+        <p class="tabsetup">Tablature font size:<span class="inputbox"><input style="width:100px" id="tab_font_size" type="text"></span><span class="recommended">Recommended:&nbsp;10</span></p>
         
-        <p>%%staffsep value:<span class="inputbox"><input style="width:100px" id="staff_sep" type="text"></span><span class="recommended">Recommended:&nbsp;80</span></p>
+        <p class="tabsetup">%%staffsep value:<span class="inputbox"><input style="width:100px" id="staff_sep" type="text"></span><span class="recommended">Recommended:&nbsp;60</span></p>
         
-        <p>%%musicspace value:<span class="inputbox"><input style="width:100px" id="music_space" type="text"></span><span class="recommended">Recommended:&nbsp;10</span></p>
+        <p class="tabsetup">%%musicspace value:<span class="inputbox"><input style="width:100px" id="music_space" type="text"></span><span class="recommended">Recommended:&nbsp;10</span></p>
+
+        <p class="tabsetup"><input type="checkbox" id="forceNonMovableSolfege">&nbsp;&nbsp;Force non-movable Solfege</p>
         
         <p style="margin-top:24px"><button id="generateTablature" class="btn btn-generate" onClick="generateTablature();">Generate Solfege</button></p>
         
@@ -136,8 +141,8 @@
     
   </body>
   
-  <script src="solfege.js?v=5" type="text/javascript"></script>
-  <script type="text/javascript" src="lz-string.min.js?v=5"></script>
-  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=5"></script>
+  <script src="solfege.js?v=6" type="text/javascript"></script>
+  <script type="text/javascript" src="lz-string.min.js?v=6"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=6"></script>
   
 </html>

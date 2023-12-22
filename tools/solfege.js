@@ -1,9 +1,9 @@
 //
 // solfege.js
 //
-// ABC Muscial Notation Converter for Sofege
+// ABC Muscial Notation Converter for Solfege
 //
-// Annotates an ABC format tune with tablature
+// Annotates an ABC format tune with Solfege tablature
 //
 // Michael Eskin
 // https://michaeleskin.com
@@ -21,6 +21,8 @@ var abcOutput = "";
 var gKeySignature = null;
 var gTheKey = null;
 var gTheMode = "Major";
+var gNonMovableSolfege = false;
+var gForceNonMovableSolfege = false;
 
 // Suggested filename for save
 var gSaveFilename = "";
@@ -101,6 +103,9 @@ function findKeySignature(abcInput) {
     // Use an "s" to represent a sharp key signature
     gTheKey = gTheKey.replace("#","s")
 
+    // Assume moveable solfege
+    gNonMoveableSolfege = false;
+
     log("Got base key of '" + keySignatureBase + "' and extra of '" + keyExtra + "'");
 
     // Determine musical mode
@@ -125,15 +130,23 @@ function findKeySignature(abcInput) {
         myMap = keySignatureMap(keySignatureBase, 3);
     } else if (keyExtra.search("phr") != -1) {
         log("Mode: Phrygian");
+        // Force non-moveable
+        gNonMovableSolfege = true;
         myMap = keySignatureMap(keySignatureBase, 4);
     } else if (keyExtra.search("loc") != -1) {
         log("Mode: Locrian");
+        // Force non-moveable
+        gNonMovableSolfege = true;
         myMap = keySignatureMap(keySignatureBase, 5);
     } else if (keyExtra.search("lyd") != -1) {
         log("Mode: Lydian");
+        // Force non-moveable
+        gNonMovableSolfege = true;
         myMap = keySignatureMap(keySignatureBase, -1);
     } else if (keyExtra.search("exp") != -1) {
         log("(Accidentals to be explicitly specified)");
+        // Force non-moveable
+        gNonMovableSolfege = true;
         myMap = keySignatureMap("C", 0);
     } else {
         // Unknown
@@ -337,7 +350,14 @@ var modeMap = {
 
 function transformNote(note,gTheKey,gTheMode){
     
+    // Normalize note represention
+
+    // Lower case
     note = note.toLowerCase();
+
+    // No octave marks
+    note = note.replaceAll(",","");
+    note = note.replaceAll("'","");
 
     var isSharpKey = true;
 
@@ -345,8 +365,18 @@ function transformNote(note,gTheKey,gTheMode){
         isSharpKey = false;
     }
 
-    //console.log("isSharpKey: "+isSharpKey);
-    
+    if (gForceNonMovableSolfege){
+
+        gNonMovableSolfege = true;
+
+    }
+
+    // If non-movable Solfege, normalize to C Major
+    if (gNonMovableSolfege){
+        gTheKey = "C";
+        gTheMode = "Major";
+    }
+
     var theOffset = modeMap[gTheKey];
 
     //console.log("theOffset: "+theOffset);
@@ -699,6 +729,8 @@ function generateTablature() {
     var musicSpace = document.getElementById('music_space').value
     var staffSep = document.getElementById('staff_sep').value;
 
+    gForceNonMovableSolfege = document.getElementById('forceNonMovableSolfege').checked;
+
     var result = "";
 
     for (var i = 0; i < nTunes; ++i) {
@@ -1038,8 +1070,8 @@ function DoStartup() {
     document.getElementById('title_font_size').value = 22;
     document.getElementById('subtitle_font_size').value = 18;
     document.getElementById('info_font_size').value = 14;
-    document.getElementById('tab_font_size').value = 9;
-    document.getElementById('staff_sep').value = 80;
+    document.getElementById('tab_font_size').value = 10;
+    document.getElementById('staff_sep').value = 60;
     document.getElementById('music_space').value = 10;
 
     var theValue = "";
@@ -1139,8 +1171,22 @@ function DoStartup() {
 
     }
 
-    // Configure the initial button map
-    //initButtonMap();
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.display === "block") {
+                panel.style.display = "none";
+                document.getElementById("instructions_header").innerHTML = "Show Instructions";
+            } else {
+                panel.style.display = "block";
+                document.getElementById("instructions_header").innerHTML = "Hide Instructions";
+           }
+        });
+    }
 
 }
 
