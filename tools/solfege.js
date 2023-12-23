@@ -23,6 +23,7 @@ var gTheKey = null;
 var gTheMode = "Major";
 var gNonMovableSolfege = false;
 var gForceNonMovableSolfege = false;
+var gMovableLaBasedMinor = false;
 
 // Suggested filename for save
 var gSaveFilename = "";
@@ -387,6 +388,12 @@ function transformNote(note,gTheKey,gTheMode){
 
         var theNoteIndex = scaleMapSharps[note];
 
+        if (!gNonMovableSolfege){
+            if (gMovableLaBasedMinor && (gTheMode == "Minor")){
+                theNoteIndex += 3;
+             }
+        }
+
         theNoteIndex -= theOffset;
 
         if (theNoteIndex < 0){
@@ -401,6 +408,12 @@ function transformNote(note,gTheKey,gTheMode){
     else{
 
         var theNoteIndex = scaleMapFlats[note];
+
+        if (!gNonMovableSolfege){
+            if (gMovableLaBasedMinor && (gTheMode == "Minor")){
+                theNoteIndex += 3;
+             }
+         }
 
         theNoteIndex -= theOffset;
 
@@ -713,9 +726,33 @@ function getTuneByIndex(theABC, tuneNumber) {
 }
 
 //
+//  Idle the controls
+//
+function idleOptions(){
+    var val = document.getElementById('forceNonMovableSolfege').checked; 
+    if (val == true){
+        document.getElementById('movableMinorUsesLa').disabled = true;
+        document.getElementById('movableMinorUsesLaHolder').style.opacity = "0.25";
+    } 
+    else{
+        document.getElementById('movableMinorUsesLa').disabled = false;
+        document.getElementById('movableMinorUsesLaHolder').style.opacity = "1.0";
+       
+    }
+}
+
+//
 // Main processor
 //
 function generateTablature() {
+
+    // Clear all the params
+    gKeySignature = null;
+    gTheKey = null;
+    gTheMode = "Major";
+    gNonMovableSolfege = false;
+    gForceNonMovableSolfege = false;
+    gMovableLaBasedMinor = false;
 
     var theABC = document.getElementById('input').value;
 
@@ -730,6 +767,8 @@ function generateTablature() {
     var staffSep = document.getElementById('staff_sep').value;
 
     gForceNonMovableSolfege = document.getElementById('forceNonMovableSolfege').checked;
+
+    gMovableLaBasedMinor = document.getElementById('movableMinorUsesLa').checked;
 
     var result = "";
 
@@ -750,6 +789,8 @@ function generateTablature() {
 
         result += "\n";
     }
+
+    result = result.replaceAll("\n\n","\n")
 
     document.getElementById("output").value = result;
 
