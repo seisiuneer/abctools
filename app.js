@@ -10060,7 +10060,7 @@ function wait_for_retry(delay){
 
 function fetchWithRetry(url, delay, tries, fetchOptions = {}) {
 
-	//console.log("fetchWithRetry top");
+	//console.log("fetchWithRetry top delay = "+delay+" tries = "+tries);
     
     function onError(err){
 
@@ -10108,7 +10108,7 @@ function SwitchTuneDatabase(){
 				document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Waiting for tune collection to load...";
 
 		   		// Fetch the Gavin Heneghan tune database
-			    fetchWithRetry('https://michaeleskin.com/abctools/abctunes_gavin_heneghan_10nov2023.json',3000,10)
+			    fetchWithRetry('https://michaeleskin.com/abctools/abctunes_gavin_heneghan_10nov2023.json',gTuneDatabaseRetryTimeMS,gTuneDatabaseRetryCount)
 			    .then((response) => response.json())
 			    .then((json) => {
 
@@ -10170,7 +10170,7 @@ function SwitchTuneDatabase(){
 				document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Waiting for tune collection to load...";
 
 		   		// Fetch the FolkFriend database
-			    fetchWithRetry('https://michaeleskin.com/abctools/folkfriend-non-user-data_22dec2023.json',3000,10)
+			    fetchWithRetry('https://michaeleskin.com/abctools/folkfriend-non-user-data_22dec2023.json',gTuneDatabaseRetryTimeMS,gTuneDatabaseRetryCount)
 			    .then((response) => response.json())
 			    .then((json) => {
 
@@ -10236,6 +10236,10 @@ var gTheFolkFriendDatabase = null;
 var gTheCurrentTuneDatabase = 0;
 var gTheMaxDatabaseResults = 25;
 var gDefaultSearchCollection = 0;
+
+// Retry parameters
+var gTuneDatabaseRetryTimeMS = 3000;
+var gTuneDatabaseRetryCount = 10;
 
 function AddFromSearch(e){
 	
@@ -24386,6 +24390,25 @@ function GetInitialConfigurationSettings(){
 		gDefaultTuneDatabase = parseInt(val);
 	}
 
+	// Tune database retry parameters
+
+	gTuneDatabaseRetryTimeMS = 3000;
+
+	val = localStorage.TuneDatabaseRetryTimeMS;
+
+	if (val){
+		gTuneDatabaseRetryTimeMS = parseInt(val);
+	}
+
+	gTuneDatabaseRetryCount = 10;
+
+	val = localStorage.TuneDatabaseRetryCount;
+
+	if (val){
+		gTuneDatabaseRetryCount = parseInt(val);
+	}
+
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -24535,6 +24558,11 @@ function SaveConfigurationSettings(){
 
 		// Default tune collection 
 		localStorage.DefaultTuneDatabase = gDefaultTuneDatabase; 
+
+		// Tune database retry parameters
+		localStorage.TuneDatabaseRetryTimeMS = gTuneDatabaseRetryTimeMS; 
+		localStorage.TuneDatabaseRetryCount = gTuneDatabaseRetryCount; 
+
 	}
 }
 
@@ -25007,7 +25035,7 @@ function ConfigureTablatureSettings(){
 	  {html: '<p style="text-align:center;margin-top:22px;"><input id="configure_anglo_fingerings" class="btn btn-subdialog configure_anglo_fingerings" onclick="ConfigureAngloFingerings()" type="button" value="Configure Anglo Concertina Tablature Button Names" title="Configure the Anglo Concertina tablature button names"></p>'},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 25, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -25319,7 +25347,7 @@ function ConfigureFonts(){
 
 	}, 150);
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 30, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -25945,6 +25973,8 @@ function AdvancedSettings(){
 		configure_RollUseRollForIrishRoll: gRollUseRollForIrishRoll,
 		configure_roll2_default: gRoll2DefaultParams,
 		configure_roll3_default: gRoll3DefaultParams,
+		configure_TuneDatabaseRetryTimeMS: gTuneDatabaseRetryTimeMS,
+		configure_TuneDatabaseRetryCount: gTuneDatabaseRetryCount,
 	};
 
 	var form = [
@@ -25977,12 +26007,14 @@ function AdvancedSettings(){
 		]);
 	}
 	form = form.concat([
+		{name: "Tune search fetch retry delay in milliseconds (default is 3000):", id: "configure_TuneDatabaseRetryTimeMS", type:"text", cssClass:"advanced_settings2_form_text"},
+		{name: "Tune search fetch retry maximum count (default is 10):", id: "configure_TuneDatabaseRetryCount", type:"text", cssClass:"advanced_settings2_form_text"},
 		{name: "Default %roll_2_params:", id: "configure_roll2_default", type:"text", cssClass:"advanced_settings2_roll_text"},
 		{name: "Default %roll_3_params:", id: "configure_roll3_default", type:"text", cssClass:"advanced_settings2_roll_text"},
 		{html: '<p style="text-align:center;margin-top:22px;"><input id="reset_roll_parameters" class="btn btn-subdialog reset_roll_parameters" onclick="ResetRollDefaultParams()" type="button" value="Reset Roll Parameter Strings to Defaults" title="Resets the roll parameter strings to known good default values"></p>'},
 	]);
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 28, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -26043,6 +26075,22 @@ function AdvancedSettings(){
 				if (gMP3Bitrate > 384){
 					gMP3Bitrate = 384;
 				}
+			}
+
+			var theRetryTime = args.result.configure_TuneDatabaseRetryTimeMS;
+
+			theRetryTime = parseInt(theRetryTime);
+
+			if ((!isNaN(theRetryTime)) && (theRetryTime > 0) && (theRetryTime <= 10000)){
+				gTuneDatabaseRetryTimeMS = theRetryTime;
+			}
+
+			var theRetryCount = args.result.configure_TuneDatabaseRetryCount;
+
+			theRetryCount = parseInt(theRetryCount);
+
+			if ((!isNaN(theRetryCount)) && (theRetryCount > 0) && (theRetryTime <= 100)){
+				gTuneDatabaseRetryCount = theRetryCount;
 			}
 
 			var the_roll2_raw = args.result.configure_roll2_default;
