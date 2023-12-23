@@ -10237,12 +10237,16 @@ var gTheCurrentTuneDatabase = 0;
 var gTheMaxDatabaseResults = 25;
 var gDefaultSearchCollection = 0;
 
-function AddFromSearch(){
+function AddFromSearch(e){
 	
 	//console.log("AddFromSearch");
 
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","AddFromSearch");
+
+	if (e){
+		e.preventDefault();
+	}
 
 	// Setup the default search collection
 	gTheCurrentTuneDatabase = gDefaultTuneDatabase;
@@ -27764,6 +27768,7 @@ function showWelcomeScreen(){
 	   if (isDesktopBrowser()){
 	   		modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">You may also drag-and-drop a single ABC or MusicXML file on the editor area to add it.</p>';
 	   }
+	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Click "Search for Tunes" to find tunes by name.</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Click "Settings" to set common tools settings and select the default instrument sounds and volumes to use when playing tunes.</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica"><strong>Once ABC has been entered and notation is displayed:</strong></p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click the Zoom-Out arrows at the top-right to view the notation full screen.</p>';
@@ -28454,10 +28459,10 @@ function DoStartup() {
 	// On iPhone and Android, move the zoom button over a bit
 	if (gIsIPhone || gIsAndroid){
 
-		document.getElementById("zoombutton").style.right = "36px";
-		document.getElementById("helpbutton").style.left = "36px";
-		document.getElementById("playbuttonicon").style.right = "36px";
-		document.getElementById("pdfbuttonicon").style.left = "36px";
+		document.getElementById("zoombutton").style.right = "21px";
+		document.getElementById("helpbutton").style.left = "21px";
+		document.getElementById("playbuttonicon").style.right = "21px";
+		document.getElementById("pdfbuttonicon").style.left = "21px";
 
 	}
 
