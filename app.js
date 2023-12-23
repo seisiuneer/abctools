@@ -10025,6 +10025,39 @@ function SetTuneSearchMaxResults(){
 }
 
 //
+// Fetch with retry
+//
+
+function wait_for_retry(delay){
+
+	//console.log("wait_for_retry delay = "+delay);
+
+    return new Promise((resolve) => setTimeout(resolve, delay));
+
+}
+
+function fetchWithRetry(url, delay, tries, fetchOptions = {}) {
+
+	//console.log("fetchWithRetry top");
+    
+    function onError(err){
+
+        triesLeft = tries - 1;
+		
+		//console.log("fetchWithRetry onError triesLeft = "+triesLeft);
+        
+        if(!triesLeft){
+			//console.log("fetchWithRetry no more retries ");
+            throw err;
+        }
+        
+        return wait_for_retry(delay).then(() => fetchWithRetry(url, delay, triesLeft, fetchOptions));
+    }
+
+    return fetch(url,fetchOptions).catch(onError);
+}
+
+//
 // Switch the search database
 //
 function SwitchTuneDatabase(){
@@ -10052,18 +10085,35 @@ function SwitchTuneDatabase(){
 				
 				document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Waiting for tune collection to load...";
 
-		   		// Fetch the Gavin Heneghantune database
-			    fetch('https://michaeleskin.com/abctools/abctunes_gavin_heneghan_10nov2023.json')
+		   		// Fetch the Gavin Heneghan tune database
+			    fetchWithRetry('https://michaeleskin.com/abctools/abctunes_gavin_heneghan_10nov2023.json',3000,10)
 			    .then((response) => response.json())
 			    .then((json) => {
+
+			    	//console.log("got abctunes_gavin_heneghan_10nov2023 data");
+			    	
 			    	var elem = document.getElementById("status");
 			    	if (elem){
 			    		if (gTheCurrentTuneDatabase == 0){
 			        		document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
 			        	}
 			        }
+
 			        gTheParsedTuneDatabase = json;
+			    })
+			    .catch(function(error) {
+
+			    	var elem = document.getElementById("status");
+
+			    	if (elem){
+
+			    		if (gTheCurrentTuneDatabase == 0){
+			        		document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Unable to load tune collection, please retry later...";
+			        	}
+
+			        }
 			    }); 
+
 			}
 			else{
 				document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
@@ -10098,16 +10148,32 @@ function SwitchTuneDatabase(){
 				document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Waiting for tune collection to load...";
 
 		   		// Fetch the FolkFriend database
-			    fetch('https://michaeleskin.com/abctools/folkfriend-non-user-data_21dec2023.json')
+			    fetchWithRetry('https://michaeleskin.com/abctools/folkfriend-non-user-data_21dec2023.json',3000,10)
 			    .then((response) => response.json())
 			    .then((json) => {
+
+			    	//console.log("got folkfriend-non-user-data_21dec2023 data");
+			    	
 			    	var elem = document.getElementById("status");
 			    	if (elem){
 			    		if (gTheCurrentTuneDatabase == 1){
 			        		document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
 			        	}
 			        }
+
 			        gTheFolkFriendDatabase = json;
+
+			    })
+			    .catch(function(error) {
+			    	
+			    	var elem = document.getElementById("status");
+			    	
+			    	if (elem){
+			    		if (gTheCurrentTuneDatabase == 1){
+			        		document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Unable to load tune collection, please retry later...";
+			        	}
+			        }
+
 			    }); 
 			}
 			else{
@@ -10124,8 +10190,12 @@ function SwitchTuneDatabase(){
 			idleSearchResults();
 
 			break;
-
    	}
+
+   	// Save the selection in browser storage
+   	gDefaultTuneDatabase = gTheCurrentTuneDatabase;
+
+   	SaveConfigurationSettings();
 }
 
 //
@@ -10136,6 +10206,7 @@ var gTheParsedTuneDatabase = null;
 var gTheFolkFriendDatabase = null;
 var gTheCurrentTuneDatabase = 0;
 var gTheMaxDatabaseResults = 25;
+var gDefaultSearchCollection = 0;
 
 function AddFromSearch(){
 	
@@ -10144,8 +10215,8 @@ function AddFromSearch(){
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","AddFromSearch");
 
-	// Always start on the Heneghan database
-	gTheCurrentTuneDatabase = 0;
+	// Setup the default search collection
+	gTheCurrentTuneDatabase = gDefaultTuneDatabase;
 
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Search and Add Tunes&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#search_and_add_tunes" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>';
 
@@ -10179,27 +10250,19 @@ function AddFromSearch(){
 
 	document.getElementById("add-search-results").disabled = true;
 
-    // For testing with local database
-    if (gUseLocalJSTuneDatabase){
-   		
-   		document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
+	// Load the default database
+	if (gTheCurrentTuneDatabase == 0){
 
-		gTheParsedTuneDatabase = theLocalTuneDatabase;
+		document.getElementById("databaseselect").value = "0"
 
-   	}
-   	else{
-
-    	// Fetch the Gavin Heneghantune database
-	    fetch('https://michaeleskin.com/abctools/abctunes_gavin_heneghan_10nov2023.json')
-	    .then((response) => response.json())
-	    .then((json) => {
-	    	var elem = document.getElementById("status");
-	    	if (elem){
-	        	document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
-	        }
-	        gTheParsedTuneDatabase = json;
-	    }); 
 	}
+	else{
+
+		document.getElementById("databaseselect").value = "1"
+
+	}
+
+	SwitchTuneDatabase();
 
 }
 
@@ -24280,6 +24343,16 @@ function GetInitialConfigurationSettings(){
 		}
 	}
 
+	// Get the default tune database
+
+	gDefaultTuneDatabase = 0;
+
+	val = localStorage.DefaultTuneDatabase;
+
+	if (val){
+		gDefaultTuneDatabase = parseInt(val);
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -24426,6 +24499,9 @@ function SaveConfigurationSettings(){
 		// Default roll parameters
 		localStorage.Roll2DefaultParams = gRoll2DefaultParams;
 		localStorage.Roll3DefaultParams = gRoll3DefaultParams;
+
+		// Default tune collection 
+		localStorage.DefaultTuneDatabase = gDefaultTuneDatabase; 
 	}
 }
 
