@@ -9765,6 +9765,8 @@ function searchForTunes() {
 
 		var nSettings = settingsMap.length;
 
+		//console.log("nSettings = "+nSettings);
+
 	    var rawAliases = gTheFolkFriendDatabase.aliases;
 
 	    var aliasMap = [];
@@ -10148,7 +10150,7 @@ function SwitchTuneDatabase(){
 				document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Waiting for tune collection to load...";
 
 		   		// Fetch the FolkFriend database
-			    fetchWithRetry('https://michaeleskin.com/abctools/folkfriend-non-user-data_21dec2023.json',3000,10)
+			    fetchWithRetry('https://michaeleskin.com/abctools/folkfriend-non-user-data_22dec2023.json',3000,10)
 			    .then((response) => response.json())
 			    .then((json) => {
 
@@ -10201,7 +10203,14 @@ function SwitchTuneDatabase(){
 //
 // Search for a tune 
 //
+
+// For local database testing:
+// If gUseLocalJSTuneDatabase is true, add the following two lines to the .html file
+// <script type="text/javascript" src="folkfriend-non-user-data.js"></script><!-- Local database testing -->
+// <script type="text/javascript" src="tunedatabase.js"></script><!-- Local database testing -->
+
 var gUseLocalJSTuneDatabase = false;
+
 var gTheParsedTuneDatabase = null;
 var gTheFolkFriendDatabase = null;
 var gTheCurrentTuneDatabase = 0;
