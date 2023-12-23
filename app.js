@@ -9867,11 +9867,21 @@ function searchForTunes() {
 
 							            theOutput += "S: https://thesession.org/tunes/"+theABCInfo.tune_id+"\n";
 
+							            var doLTag = false;
+
 							            if (theABCInfo.dance){
 							            	theOutput += "R: "+theABCInfo.dance+"\n";
+							            	if (theABCInfo.dance == "polka"){
+							            		doLTag = true;
+							            	}
 							            }
 							            if (theABCInfo.meter){
 							            	theOutput += "M: "+theABCInfo.meter+"\n";
+							            	if (doLTag){
+							            		if (theABCInfo.meter == "2/4"){
+							            			theOutput += "L: 1/8\n";
+							            		}
+							            	}
 							            }
 							            if (theABCInfo.mode){
 							            	theOutput += "K: "+theABCInfo.mode+"\n";
@@ -9901,13 +9911,23 @@ function searchForTunes() {
 							        
 							        theOutput += "S: https://thesession.org/tunes/"+theABCInfo.tune_id+"\n";
 
+						            var doLTag = false;
+
 						            if (theABCInfo.dance){
 						            	theOutput += "R: "+theABCInfo.dance+"\n";
+						            	if (theABCInfo.dance == "polka"){
+						            		doLTag = true;
+						            	}
 						            }
 						            if (theABCInfo.meter){
 						            	theOutput += "M: "+theABCInfo.meter+"\n";
+						            	if (doLTag){
+						            		if (theABCInfo.meter == "2/4"){
+						            			theOutput += "L: 1/8\n";
+						            		}
+						            	}
 						            }
-						            if (theABCInfo.mode){
+					            	if (theABCInfo.mode){
 						            	theOutput += "K: "+theABCInfo.mode+"\n";
 						            }
 
