@@ -37,8 +37,8 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-        
-       <style>
+                
+        <style>
         p {
         font-size:14pt;
         font-family:"Helvetica";
@@ -378,7 +378,12 @@
                     <p class="toc"><a style="text-decoration:none;" href="#learningtunes">Learning New Tunes Part-by-Part Using ABC</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#clicktrack">Adding a Two-Bar Click Intro to Tunes</a></p>
                 </div>
-                
+
+                <button class="accordion" title="Click to expand/collapse this section">Adding Shape Note Shapes</button>
+                <div class="tocpanel">
+                    <p class="toc"><a style="text-decoration:none;" href="#shapenote">Adding Shape Note Shapes</a></p>
+                </div>
+
                 <button class="accordion" title="Click to expand/collapse this section">iOS-Specific Topics</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#iphone_ipad_chord_entry_issue_fix">iPhone/iPad Chord Entry Issue Fix</a></p>
@@ -2494,6 +2499,21 @@
                     <p style="text-align: center;"><a href="https://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuDCB7RAbApgTwOQGcoCVx800UoBZcAFgHoqoAZcCGgDigGlwBRAE0QBOUeOBgCAhrwCWAFymIAduLIBSKCvEAjAMYArHAH0ciAK4LeAM0UywFlCam916sAFUcaMOIVgAgtu1BaUUwYzNeMAB3AAs0HwAHFHEMKQUAczAZWLAAW1JEXgwQdRVyAEkAETKweIFENIkcsAAmaDUVNw8vH39AgWCfMPMo2ISklPTM7O1ooJxilVLK6pmg2vqWtpdfACF4W0EpzxkzNAAaME1ELNz8wu6I1f755w7iUkzIxEvxATBtFBSbQAazAqRkdSgADUQNAYc0SuUqjU6g1xE0IM12AA9eAALwAzLjCQAfYlE-EEknQ2FQPGsEn06kkkAAIm4OXZOx2vjAO2aYG4OxJ7M5-L8OzAvB5AHERRVWQAxGjcGgVPzqnYVXwVeVKlVqjV83wyxXU0Vcnl8gVCkUc1ni3ZStAWNJ68SuzzS3xmiBgVkKircRXqi3cAkVEAkgUBgPB0P27jNNIWEnMtn2tCSgAUBO5kqzKbtnKz4rSaGlet8NGrvMVvO19arNZrYHrztd5szObz3LAhdTFtLkt4LrdsY95alPN9-sD8f9ieTFijMfnIcXnO4VBJAF0oEA&format=noten&ssp=0&pdf=multi_a4&pn=none&fp=yes&name=two-bar-click-intro-demo&play=1" target="_blank">Reel with Two-Bar Click Intro</a></p>
                     <p style="text-align: center;"><a href="https://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuMAsCmYDSSDOCoCVwCkBLAcygFlwA2AegA4oAZcCOqVcAcQFsBDAKygBheACceAE0IAXQgHsAdjwA2UAKRqeAIwDGfDAH0MsgK7zxAMwVSw5pccLi1asAFUMKHvLABBbdtkikgpgRqbiYADuyF4ADko8AJ6E8sRgUshgXEhKsuIJIGqqZACSACLFYDEissRiXGAATNDqqq7uYJ4+fgFBXqFmkdGV8UkpaRnaCD0YBapFZRWTPVU1jc3O3gBCgjYB4yhSpkgANGCasumZ2bkJHQNLgTNOrUSpUhGyZzwiYNpKhNoANZgZJSapQABqIGgUIahRK5Uq1VqPHqEAa9AAeoIAF4NbF4gA+BPxuIahMh0KgOMohJpFMJIAARBwWd4OGAOFtCUzSkytt4fJtxDzWUhxOFiBKeYImeLNmBeUzxJtvBSWWyOVzNjy+QKhSKNeLJSrdfyOAAxRWsjgAZhADOZrNVCpVhtlSGIKCVKrVGpdYBVHDN+vZaqg-q2geFMrlXutypjTNlxHMqSVPGIPFFTM0qbAxHtFKAA&format=noten&ssp=0&pdf=multi_a4&pn=none&fp=yes&name=two-bar-click-intro-demo&play=1" target="_blank">Jig with Two-Bar Click Intro</a></p>
                     <p>You can add an ABC template containing all of these examples from the <strong>Add</strong> dialog and then copy and paste them into your tunes.</p>
+                    <hr class="hidden-print" id="shapenote">
+                    <h1 class="page_break_always">Adding Shape Note Shapes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                    <p>The tool supports the standard shape note shapes for both 4-shape and 7-shape systems.</p>
+                    <p>You can turn any note into a shape note shape by adding any of the following prefixes to the ABC note name:</p>
+                    <p class="code">!style=sn_do! C2<br/>!style=sn_re! D2<br/>!style=sn_mi! E2<br/>!style=sn_fa_l! F2 <br/>!style=sn_so! G2<br/>!style=sn_la! A2<br/>!style=sn_ti! B2<br/>!style=sn_do! c2<br/>!style=sn_re! d2<br/>!style=sn_mi! e2 <br/>!style=sn_fa_r! f2<br/>!style=sn_so! g2<br/>!style=sn_la! a2<br/>!style=sn_ti! b2</p>
+                    <p>Which produces the following notation:</p>
+                    <div class="image_holder_p">
+                        <img src="img/shape_note_1.jpg"/>
+                    </div>
+                    <p>The unfilled versions of the shapes are used for longer notes:</p>
+                    <p class="code">!style=sn_do! C4<br/>!style=sn_re! D4<br/>!style=sn_mi! E4<br/>!style=sn_fa_l! F4 <br/>!style=sn_so! G4<br/>!style=sn_la! A4<br/>!style=sn_ti! B4<br/>!style=sn_do! c4<br/>!style=sn_re! d4<br/>!style=sn_mi! e4<br/>!style=sn_fa_r! f4<br/>!style=sn_so! g4<br/>!style=sn_la! a4<br/>!style=sn_ti!b4</p>
+                    <p>Produces the following notation:</p>
+                    <div class="image_holder_p">
+                        <img src="img/shape_note_2.jpg"/>
+                    </div>
                     <hr class="hidden-print" id="iphone_ipad_chord_entry_issue_fix">
                     <h1 class="page_break_always">iPhone/iPad Chord Entry Issue Fix<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                     <p>If you are trying to enter ABC chords, for example "D" or "Am", on an iPhone or iPad, iOS will, by default stick in "smart quotes" instead of standard double quotes.</p>

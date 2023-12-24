@@ -6140,6 +6140,15 @@ var parseKeyVoice = {};
             case "rhythm":
             case "x":
             case "triangle":
+            // MAE 23 Dec 2023 - For Shaped Note singing
+            case "sn_do":
+            case "sn_re":
+            case "sn_mi":
+            case "sn_fa_l":
+            case "sn_fa_r":
+            case "sn_so":
+            case "sn_la":
+            case "sn_ti":
               multilineVars.style = tokens[0].token;
               tokens.shift();
               break;
@@ -6433,7 +6442,8 @@ var parseKeyVoice = {};
             break;
           case "style":
             attr = tokenizer.getVoiceToken(line, start, end);
-            if (attr.warn !== undefined) warn("Expected value for style in voice: " + attr.warn, line, start);else if (attr.err !== undefined) warn("Expected value for style in voice: " + attr.err, line, start);else if (attr.token === 'normal' || attr.token === 'harmonic' || attr.token === 'rhythm' || attr.token === 'x' || attr.token === 'triangle') multilineVars.voices[id].style = attr.token;else warn("Expected one of [normal, harmonic, rhythm, x, triangle] for voice style", line, start);
+            // MAE 23 Dec 2023 - Added Shaped Note Singing
+            if (attr.warn !== undefined) warn("Expected value for style in voice: " + attr.warn, line, start);else if (attr.err !== undefined) warn("Expected value for style in voice: " + attr.err, line, start);else if (attr.token === 'normal' || attr.token === 'harmonic' || attr.token === 'rhythm' || attr.token === 'x' || attr.token === 'triangle' || attr.token === 'sn_do' || attr.token === 'sn_re' || attr.token === 'sn_mi' || attr.token === 'sn_fa_l' || attr.token === 'sn_fa_r' || attr.token === 'sn_so' || attr.token === 'sn_la' || attr.token === 'sn_ti') multilineVars.voices[id].style = attr.token;else warn("Expected one of [normal, harmonic, rhythm, x, triangle, sn_*] for voice style", line, start);
             start += attr.len;
             break;
           // default:
@@ -7693,7 +7703,8 @@ module.exports = MusicParser;
   \*****************************************/
 /***/ (function(module) {
 
-module.exports.legalAccents = ['trill', 'lowermordent', 'uppermordent', 'mordent', 'pralltriller', 'accent', 'fermata', 'invertedfermata', 'tenuto', '0', '1', '2', '3', '4', '5', '+', 'wedge', 'open', 'thumb', 'snap', 'turn', 'roll', 'breath', 'shortphrase', 'mediumphrase', 'longphrase', 'segno', 'coda', 'D.S.', 'D.C.', 'fine', 'beambr1', 'beambr2', 'slide', 'marcato', 'upbow', 'downbow', '/', '//', '///', '////', 'trem1', 'trem2', 'trem3', 'trem4', 'turnx', 'invertedturn', 'invertedturnx', 'trill(', 'trill)', 'arpeggio', 'xstem', 'mark', 'umarcato', 'style=normal', 'style=harmonic', 'style=rhythm', 'style=x', 'style=triangle', 'D.C.alcoda', 'D.C.alfine', 'D.S.alcoda', 'D.S.alfine', 'editorial', 'courtesy'];
+// MAE 23 Dec 2023 - Added Shaped Note Singing glyphs
+module.exports.legalAccents = ['trill', 'lowermordent', 'uppermordent', 'mordent', 'pralltriller', 'accent', 'fermata', 'invertedfermata', 'tenuto', '0', '1', '2', '3', '4', '5', '+', 'wedge', 'open', 'thumb', 'snap', 'turn', 'roll', 'breath', 'shortphrase', 'mediumphrase', 'longphrase', 'segno', 'coda', 'D.S.', 'D.C.', 'fine', 'beambr1', 'beambr2', 'slide', 'marcato', 'upbow', 'downbow', '/', '//', '///', '////', 'trem1', 'trem2', 'trem3', 'trem4', 'turnx', 'invertedturn', 'invertedturnx', 'trill(', 'trill)', 'arpeggio', 'xstem', 'mark', 'umarcato', 'style=normal', 'style=harmonic', 'style=rhythm', 'style=x', 'style=triangle', 'style=sn_do','style=sn_re','style=sn_mi','style=sn_fa_l','style=sn_fa_r','style=sn_so','style=sn_la','style=sn_ti','D.C.alcoda', 'D.C.alfine', 'D.S.alcoda', 'D.S.alfine', 'editorial', 'courtesy'];
 module.exports.volumeDecorations = ['p', 'pp', 'f', 'ff', 'mf', 'mp', 'ppp', 'pppp', 'fff', 'ffff', 'sfz'];
 module.exports.dynamicDecorations = ['crescendo(', 'crescendo)', 'diminuendo(', 'diminuendo)', 'glissando(', 'glissando)', '~(', '~)'];
 module.exports.accentPseudonyms = [['<', 'accent'], ['>', 'accent'], ['tr', 'trill'], ['plus', '+'], ['emphasis', 'accent'], ['^', 'umarcato'], ['marcato', 'umarcato']];
@@ -18027,6 +18038,103 @@ var chartable = {
     7: "noteheads.triangle.quarter",
     nostem: "noteheads.triangle.quarter"
   },
+  // MAE 23 December 2023 for Shaped Note Glyphs
+  sn_do: {
+    "-1": "noteheads.sn_do.half",
+    0: "noteheads.sn_do.half",
+    1: "noteheads.sn_do.half",
+    2: "noteheads.sn_do.quarter",
+    3: "noteheads.sn_do.quarter",
+    4: "noteheads.sn_do.quarter",
+    5: "noteheads.sn_do.quarter",
+    6: "noteheads.sn_do.quarter",
+    7: "noteheads.sn_do.quarter",
+    nostem: "noteheads.sn_do.quarter"
+  },
+  sn_re: {
+    "-1": "noteheads.sn_re.half",
+    0: "noteheads.sn_re.half",
+    1: "noteheads.sn_re.half",
+    2: "noteheads.sn_re.quarter",
+    3: "noteheads.sn_re.quarter",
+    4: "noteheads.sn_re.quarter",
+    5: "noteheads.sn_re.quarter",
+    6: "noteheads.sn_re.quarter",
+    7: "noteheads.sn_re.quarter",
+    nostem: "noteheads.sn_re.quarter"
+  },
+  sn_mi: {
+    "-1": "noteheads.sn_mi.half",
+    0: "noteheads.sn_mi.half",
+    1: "noteheads.sn_mi.half",
+    2: "noteheads.sn_mi.quarter",
+    3: "noteheads.sn_mi.quarter",
+    4: "noteheads.sn_mi.quarter",
+    5: "noteheads.sn_mi.quarter",
+    6: "noteheads.sn_mi.quarter",
+    7: "noteheads.sn_mi.quarter",
+    nostem: "noteheads.sn_mi.quarter"
+  },
+  sn_fa_l: {
+    "-1": "noteheads.sn_fa_l.half",
+    0: "noteheads.sn_fa_l.half",
+    1: "noteheads.sn_fa_l.half",
+    2: "noteheads.sn_fa_l.quarter",
+    3: "noteheads.sn_fa_l.quarter",
+    4: "noteheads.sn_fa_l.quarter",
+    5: "noteheads.sn_fa_l.quarter",
+    6: "noteheads.sn_fa_l.quarter",
+    7: "noteheads.sn_fa_l.quarter",
+    nostem: "noteheads.sn_fa_l.quarter"
+  },
+  sn_fa_r: {
+    "-1": "noteheads.sn_fa_r.half",
+    0: "noteheads.sn_fa_r.half",
+    1: "noteheads.sn_fa_r.half",
+    2: "noteheads.sn_fa_r.quarter",
+    3: "noteheads.sn_fa_r.quarter",
+    4: "noteheads.sn_fa_r.quarter",
+    5: "noteheads.sn_fa_r.quarter",
+    6: "noteheads.sn_fa_r.quarter",
+    7: "noteheads.sn_fa_r.quarter",
+    nostem: "noteheads.sn_fa_r.quarter"
+  },
+  sn_so: {
+    "-1": "noteheads.dbl",
+    0: "noteheads.whole",
+    1: "noteheads.half",
+    2: "noteheads.quarter",
+    3: "noteheads.quarter",
+    4: "noteheads.quarter",
+    5: "noteheads.quarter",
+    6: "noteheads.quarter",
+    7: "noteheads.quarter",
+    'nostem': "noteheads.quarter"
+  },
+  sn_la: {
+    "-1": "noteheads.sn_la.half",
+    0: "noteheads.sn_la.half",
+    1: "noteheads.sn_la.half",
+    2: "noteheads.sn_la.quarter",
+    3: "noteheads.sn_la.quarter",
+    4: "noteheads.sn_la.quarter",
+    5: "noteheads.sn_la.quarter",
+    6: "noteheads.sn_la.quarter",
+    7: "noteheads.sn_la.quarter",
+    nostem: "noteheads.sn_la.quarter"
+  },
+  sn_ti: {
+    "-1": "noteheads.sn_ti.half",
+    0: "noteheads.sn_ti.half",
+    1: "noteheads.sn_ti.half",
+    2: "noteheads.sn_ti.quarter",
+    3: "noteheads.sn_ti.quarter",
+    4: "noteheads.sn_ti.quarter",
+    5: "noteheads.sn_ti.quarter",
+    6: "noteheads.sn_ti.quarter",
+    7: "noteheads.sn_ti.quarter",
+    nostem: "noteheads.sn_ti.quarter"
+  },
   uflags: {
     3: "flags.u8th",
     4: "flags.u16th",
@@ -18764,6 +18872,56 @@ AbstractEngraver.prototype.addNoteToAbcElement = function (abselem, elem, dot, s
     if (noteHead && noteHead.c === 'noteheads.triangle.quarter') {
       if (dir === 'down') p2 -= 0.7;else p1 -= 1.2;
     }
+
+    // MAE 24 Dec 2023 - Adjust relative position for shaped note heads
+    if (noteHead && noteHead.c === 'noteheads.sn_do.quarter') {
+      if (dir === 'down') p2 -= .25;else p1 -= 1;
+    }
+
+    if (noteHead && noteHead.c === 'noteheads.sn_do.half') {
+      if (dir === 'down') p2 -= .25;else p1 -= 1;
+    }
+
+    if (noteHead && noteHead.c === 'noteheads.sn_re.quarter') {
+      if (dir === 'down') p2 += .2;else p1 -= 0;
+    }
+
+    if (noteHead && noteHead.c === 'noteheads.sn_re.half') {
+      if (dir === 'down') p2 += .2;else p1 -= 0;
+    }
+
+    if (noteHead && noteHead.c === 'noteheads.sn_mi.quarter') {
+      if (dir === 'down') p2 += .2;else p1 -= .2;
+    }
+
+    if (noteHead && noteHead.c === 'noteheads.sn_mi.half') {
+      if (dir === 'down') p2 += .2;else p1 -= .2;
+    }
+
+    if (noteHead && noteHead.c === 'noteheads.sn_fa_l.quarter') {
+      if (dir === 'down') p2 += 1.1;else p1 += 0.55;
+    }
+
+    if (noteHead && noteHead.c === 'noteheads.sn_fa_l.half') {
+      if (dir === 'down') p2 += 1.1;else p1 += 0.55;
+    }
+
+    if (noteHead && noteHead.c === 'noteheads.sn_fa_r.quarter') {
+      if (dir === 'down') p2 += 1.2;else p1 -= 1;
+    }
+
+    if (noteHead && noteHead.c === 'noteheads.sn_fa_r.half') {
+      if (dir === 'down') p2 += 1.2;else p1 -= 1;
+    }
+
+    if (noteHead && noteHead.c === 'noteheads.sn_ti.quarter') {
+      if (dir === 'down') p2 += .45;else p1 -= 0;
+    }
+
+    if (noteHead && noteHead.c === 'noteheads.sn_ti.half') {
+      if (dir === 'down') p2 += .45;else p1 -= 0;
+    }
+
     abselem.addRight(new RelativeElement(null, dx, 0, p1, {
       "type": "stem",
       "pitch2": p2,
@@ -22028,6 +22186,37 @@ glyphs['noteheads.triangle.quarter'] = {
   w: 9,
   h: 9
 };
+
+// MAE 23 December 2023 - For Shaped Note Singing glyphs
+
+glyphs['noteheads.sn_do.half']={d:[['M',4.95,-3.36],['c',0.06,-0.03,0.18,-0.06,0.24,-0.06],['c',0.27,0.00,0.21,-0.09,2.76,3.06],['c',1.29,1.59,2.37,2.97,2.40,3.00],['c',0.06,0.21,0.00,0.48,-0.15,0.63],['c',-0.18,0.15,0.12,0.15,-5.01,0.15],['c',-5.13,0.00,-4.83,0.00,-5.01,-0.15],['c',-0.15,-0.15,-0.21,-0.42,-0.15,-0.63],['c',0.03,-0.03,1.11,-1.41,2.40,-3.00],['c',2.04,-2.49,2.40,-2.94,2.52,-3.00],['z'],['m',1.95,3.54],['c',-0.93,-1.14,-1.68,-2.07,-1.71,-2.07],['l',-1.68,2.07],['l',-1.68,2.04],['l',1.68,0.03],['l',3.36,0.00],['l',1.68,-0.03],['z']],w:10.366,h:6.84};
+
+glyphs['noteheads.sn_do.quarter']={d:[['M',4.68,-3.36],['c',0.06,-0.03,0.18,-0.06,0.27,-0.06],['c',0.27,0.00,0.18,-0.12,2.61,3.06],['c',1.23,1.59,2.25,2.97,2.28,3.00],['c',0.06,0.21,0.00,0.48,-0.15,0.63],['c',-0.18,0.15,0.09,0.15,-4.77,0.15],['c',-4.83,0.00,-4.56,0.00,-4.74,-0.15],['c',-0.15,-0.15,-0.21,-0.42,-0.15,-0.63],['c',0.03,-0.03,1.05,-1.41,2.28,-3.00],['c',1.98,-2.58,2.25,-2.94,2.37,-3.00],['z']],w:9.856,h:6.841};
+
+glyphs['noteheads.sn_re.half']={d:[['M',0.33,-3.36],['c',0.12,-0.06,0.33,-0.06,4.86,-0.06],['c',4.20,0.00,4.71,0.00,4.83,0.06],['c',0.15,0.06,0.24,0.15,0.30,0.27],['c',0.06,0.12,0.06,0.24,0.06,1.17],['c',0.00,0.81,0.00,1.14,-0.06,1.38],['c',-0.15,1.02,-0.69,1.98,-1.53,2.67],['c',-2.04,1.71,-5.16,1.71,-7.20,0.00],['c',-0.75,-0.60,-1.26,-1.44,-1.50,-2.37],['c',-0.06,-0.30,-0.06,-0.36,-0.09,-1.47],['c',0.00,-0.84,0.00,-1.23,0.03,-1.29],['c',0.03,-0.15,0.18,-0.30,0.30,-0.36],['z'],['m',8.88,1.89],['l',0.00,-0.78],['l',-4.02,0.00],['l',-4.02,0.00],['l',0.00,0.78],['c',0.03,0.93,0.06,1.11,0.30,1.59],['c',0.48,1.02,1.50,1.77,2.82,2.04],['c',0.45,0.09,1.35,0.09,1.80,0.00],['c',1.32,-0.27,2.34,-1.02,2.82,-2.04],['c',0.24,-0.48,0.27,-0.66,0.30,-1.59],['z']],w:10.38,h:6.833};
+
+glyphs['noteheads.sn_re.quarter']={d:[['M',0.36,-3.36],['c',0.09,-0.06,0.30,-0.06,4.59,-0.06],['c',4.26,0.00,4.47,0.00,4.59,0.06],['c',0.12,0.06,0.27,0.21,0.30,0.36],['c',0.03,0.06,0.03,0.45,0.03,1.29],['c',-0.03,1.02,-0.03,1.20,-0.09,1.41],['c',-0.18,0.90,-0.60,1.62,-1.20,2.22],['c',-0.42,0.42,-0.81,0.69,-1.29,0.93],['c',-0.48,0.24,-0.81,0.36,-1.35,0.48],['c',-0.33,0.06,-0.45,0.06,-0.99,0.06],['c',-0.57,0.00,-0.69,0.00,-1.02,-0.06],['c',-0.54,-0.12,-0.87,-0.24,-1.32,-0.48],['c',-0.51,-0.24,-0.90,-0.51,-1.29,-0.90],['c',-0.60,-0.57,-0.99,-1.26,-1.17,-2.01],['c',-0.12,-0.45,-0.15,-0.75,-0.15,-1.86],['c',0.00,-0.84,0.00,-1.05,0.06,-1.14],['c',0.06,-0.15,0.15,-0.24,0.30,-0.30],['z']],w:9.87,h:6.81};
+
+glyphs['noteheads.sn_mi.half']={d:[['M',4.74,-3.39],['c',0.09,-0.03,0.27,-0.03,0.36,0.00],['c',0.12,0.03,4.47,2.88,4.59,2.97],['c',0.09,0.09,0.18,0.30,0.18,0.42],['c',0.00,0.12,-0.09,0.33,-0.18,0.42],['c',-0.12,0.09,-4.47,2.94,-4.59,2.97],['c',-0.09,0.03,-0.24,0.03,-0.33,0.00],['c',-0.12,-0.03,-4.47,-2.88,-4.59,-2.97],['c',-0.09,-0.09,-0.18,-0.30,-0.18,-0.42],['c',0.00,-0.12,0.09,-0.33,0.18,-0.42],['c',0.09,-0.06,4.47,-2.94,4.56,-2.97],['z'],['m',1.35,2.34],['c',-0.75,-0.48,-1.38,-0.87,-1.41,-0.90],['c',-0.03,0.00,-0.66,0.39,-1.41,0.90],['l',-1.35,0.87],['l',0.27,0.18],['c',0.15,0.09,0.87,0.57,1.59,1.05],['c',0.75,0.48,1.38,0.87,1.41,0.90],['l',1.41,-0.90],['l',1.35,-0.87],['l',-0.27,-0.18],['c',-0.15,-0.09,-0.87,-0.57,-1.59,-1.05],['z']],w:9.87,h:6.825},
+
+glyphs['noteheads.sn_mi.quarter']={d:[['M',4.74,-3.39],['c',0.09,-0.03,0.27,-0.03,0.36,0.00],['c',0.12,0.03,4.47,2.88,4.59,2.97],['c',0.09,0.09,0.18,0.30,0.18,0.42],['c',0.00,0.12,-0.09,0.33,-0.18,0.42],['c',-0.12,0.09,-4.47,2.94,-4.59,2.97],['c',-0.09,0.03,-0.24,0.03,-0.33,0.00],['c',-0.12,-0.03,-4.47,-2.88,-4.59,-2.97],['c',-0.09,-0.09,-0.18,-0.30,-0.18,-0.42],['c',0.00,-0.12,0.09,-0.33,0.18,-0.42],['c',0.09,-0.06,4.47,-2.94,4.56,-2.97],['z']],w:9.87,h:6.825};
+
+glyphs['noteheads.sn_fa_l.half']={d:[['M',0.36,-3.36],['c',0.09,-0.06,0.30,-0.06,4.83,-0.06],['c',4.20,0.00,4.71,0.00,4.83,0.06],['c',0.15,0.06,0.24,0.15,0.30,0.27],['c',0.06,0.12,0.06,0.27,0.06,3.09],['c',0.00,2.82,0.00,2.97,-0.06,3.06],['c',-0.12,0.30,-0.45,0.42,-0.72,0.33],['c',-0.09,-0.03,-9.33,-5.73,-9.42,-5.79],['c',-0.03,-0.06,-0.09,-0.12,-0.12,-0.21],['c',-0.15,-0.27,0.00,-0.63,0.30,-0.75],['z'],['m',8.85,3.12],['l',0.00,-2.01],['l',-3.27,0.00],['c',-2.76,0.00,-3.27,0.00,-3.21,0.03],['c',0.12,0.12,6.45,3.99,6.45,3.99],['c',0.03,0.00,0.03,-0.90,0.03,-2.01],['z']],w:10.379,h:6.839};
+
+glyphs['noteheads.sn_fa_r.half']={d:[['M',0.36,-3.36],['c',0.12,-0.06,0.30,-0.09,0.42,-0.03],['c',0.09,0.03,9.33,5.73,9.42,5.79],['c',0.09,0.09,0.18,0.30,0.18,0.42],['c',0.00,0.15,-0.09,0.36,-0.18,0.45],['c',-0.18,0.15,0.12,0.15,-5.01,0.15],['c',-4.20,0.00,-4.71,0.00,-4.83,-0.06],['c',-0.15,-0.06,-0.24,-0.15,-0.30,-0.30],['c',-0.06,-0.09,-0.06,-0.24,-0.06,-3.06],['c',0.00,-2.58,0.00,-2.97,0.06,-3.06],['c',0.06,-0.15,0.15,-0.24,0.30,-0.30],['z'],['m',4.05,3.57],['l',-3.21,-1.98],['c',-0.03,0.00,-0.03,0.90,-0.03,2.01],['l',0.00,2.01],['l',3.27,0.00],['c',2.76,0.00,3.27,0.00,3.21,-0.03],['c',-0.03,-0.03,-1.50,-0.93,-3.24,-2.01],['z']],w:10.38,h:6.843};
+
+glyphs['noteheads.sn_fa_l.quarter']={d:[['M',0.36,-3.36],['c',0.09,-0.06,0.30,-0.06,4.56,-0.06],['c',3.96,0.00,4.47,0.00,4.59,0.06],['c',0.15,0.06,0.24,0.15,0.30,0.27],['c',0.06,0.12,0.06,0.27,0.06,3.09],['c',0.00,2.82,0.00,2.97,-0.06,3.06],['c',-0.12,0.30,-0.45,0.42,-0.72,0.33],['c',-0.09,-0.03,-8.79,-5.70,-8.91,-5.79],['c',-0.03,-0.06,-0.09,-0.12,-0.12,-0.21],['c',-0.15,-0.27,0.00,-0.63,0.30,-0.75],['z']],w:9.869,h:6.839};
+
+glyphs['noteheads.sn_fa_r.quarter']={d:[['M',0.36,-3.36],['c',0.12,-0.06,0.30,-0.09,0.42,-0.03],['c',0.09,0.03,8.79,5.70,8.91,5.79],['c',0.09,0.09,0.18,0.30,0.18,0.42],['c',0.00,0.15,-0.09,0.36,-0.18,0.45],['c',-0.18,0.15,0.09,0.15,-4.77,0.15],['c',-3.93,0.00,-4.44,0.00,-4.56,-0.06],['c',-0.15,-0.06,-0.24,-0.15,-0.30,-0.30],['c',-0.06,-0.09,-0.06,-0.24,-0.06,-3.06],['c',0.00,-2.58,0.00,-2.97,0.06,-3.06],['c',0.06,-0.15,0.15,-0.24,0.30,-0.30],['z']],w:9.87,h:6.843};
+
+glyphs['noteheads.sn_la.half']={d:[['M',0.36,-3.36],['c',0.09,-0.06,0.30,-0.06,4.83,-0.06],['c',4.20,0.00,4.71,0.00,4.83,0.06],['c',0.15,0.06,0.24,0.15,0.30,0.27],['c',0.06,0.12,0.06,0.27,0.06,3.09],['c',0.00,2.82,0.00,2.97,-0.06,3.06],['c',-0.06,0.15,-0.15,0.24,-0.30,0.30],['c',-0.12,0.06,-0.63,0.06,-4.83,0.06],['c',-4.20,0.00,-4.71,0.00,-4.83,-0.06],['c',-0.15,-0.06,-0.24,-0.15,-0.30,-0.30],['c',-0.06,-0.09,-0.06,-0.24,-0.06,-3.06],['c',0.00,-2.58,0.00,-2.97,0.06,-3.06],['c',0.06,-0.15,0.15,-0.24,0.30,-0.30],['z'],['m',8.85,3.36],['l',0.00,-2.25],['l',-4.02,0.00],['l',-4.02,0.00],['l',0.00,2.25],['l',0.00,2.25],['l',4.02,0.00],['l',4.02,0.00],['l',0.00,-2.25],['z']],w:10.38,h:6.84};
+
+glyphs['noteheads.sn_la.quarter']={d:[['M',0.36,-3.36],['c',0.09,-0.06,0.30,-0.06,4.56,-0.06],['c',3.96,0.00,4.47,0.00,4.59,0.06],['c',0.15,0.06,0.24,0.15,0.30,0.27],['c',0.06,0.12,0.06,0.27,0.06,3.09],['c',0.00,2.82,0.00,2.97,-0.06,3.06],['c',-0.06,0.15,-0.15,0.24,-0.30,0.30],['c',-0.12,0.06,-0.63,0.06,-4.59,0.06],['c',-3.93,0.00,-4.44,0.00,-4.56,-0.06],['c',-0.15,-0.06,-0.24,-0.15,-0.30,-0.30],['c',-0.06,-0.09,-0.06,-0.24,-0.06,-3.06],['c',0.00,-2.58,0.00,-2.97,0.06,-3.06],['c',0.06,-0.15,0.15,-0.24,0.30,-0.30],['z']],w:9.87,h:6.84};
+
+glyphs['noteheads.sn_ti.half']={d:[['M',4.50,-3.39],['c',0.36,-0.03,0.96,-0.03,1.35,0.00],['c',1.56,0.15,3.15,0.90,4.20,2.01],['c',0.24,0.27,0.33,0.42,0.33,0.60],['c',0.00,0.27,0.03,0.24,-2.46,2.22],['c',-1.29,1.02,-2.40,1.86,-2.49,1.92],['c',-0.18,0.09,-0.30,0.09,-0.48,0.00],['c',-0.09,-0.06,-1.20,-0.90,-2.49,-1.92],['c',-2.49,-1.98,-2.46,-1.95,-2.46,-2.22],['c',0.00,-0.18,0.09,-0.33,0.33,-0.60],['c',1.05,-1.08,2.64,-1.86,4.17,-2.01],['z'],['m',1.29,1.17],['c',-1.47,-0.15,-2.97,0.30,-4.14,1.20],['l',-0.18,0.15],['l',0.06,0.09],['c',0.15,0.12,3.63,2.85,3.66,2.85],['c',0.03,0.00,3.51,-2.73,3.66,-2.85],['l',0.06,-0.09],['l',-0.18,-0.15],['c',-0.84,-0.66,-1.89,-1.08,-2.94,-1.20],['z']],w:10.38,h:6.84};
+
+glyphs['noteheads.sn_ti.quarter']={d:[['M',4.17,-3.36],['c',1.23,-0.15,2.52,0.06,3.63,0.63],['c',0.60,0.30,1.05,0.66,1.56,1.14],['c',0.48,0.51,0.60,0.75,0.45,1.05],['c',-0.03,0.06,-0.57,0.54,-2.28,1.95],['c',-1.23,1.05,-2.28,1.92,-2.34,1.95],['c',-0.09,0.03,-0.18,0.06,-0.27,0.06],['c',-0.06,0.00,-0.15,-0.03,-0.24,-0.06],['c',-0.06,-0.03,-1.11,-0.90,-2.34,-1.95],['c',-1.71,-1.41,-2.25,-1.89,-2.28,-1.95],['c',-0.15,-0.30,-0.03,-0.54,0.45,-1.05],['c',0.99,-0.99,2.28,-1.62,3.66,-1.77],['z']],w:9.871,h:6.78};
+
 var pathClone = function pathClone(pathArray) {
   var res = [];
   for (var i = 0, ii = pathArray.length; i < ii; i++) {
