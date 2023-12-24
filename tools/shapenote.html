@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <link rel="profile" href="http://gmpg.org/xfn/11">
-    <title>Solfege Tablature Generator</title>
+    <title>ABC Shape Note Generator</title>
     <link rel='dns-prefetch' href='//fonts.googleapis.com' />
     <link rel='dns-prefetch' href='//s.w.org' />
     <link rel='preconnect' href='https://secureservercdn.net' crossorigin />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Solfege Tablature Generator" />
-    <meta property="og:description" content="Batch processor for generating ABC notation with solfege tablature." />
-    <meta property="og:url" content="https://michaeleskin.com/tools/solfege.html" />
-    <meta property="og:site_name" content="Solfege Tablature Generator Tablature Generator" />
+    <meta property="og:title" content="ABC Shape Note Generator" />
+    <meta property="og:description" content="Batch processor for generating ABC notation with shape note shapes." />
+    <meta property="og:url" content="https://michaeleskin.com/tools/shapenote.html" />
+    <meta property="og:site_name" content="ABC to Shape Note Generator Tablature Generator" />
     <meta property="og:image" content="https://michaeleskin.com/img/solfege.jpg" />
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
@@ -31,8 +31,16 @@
     <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
     <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-    <link rel="stylesheet" href="solfege.css?v=7"/>
-     
+    <link rel="stylesheet" href="shapenote.css?v=7"/>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VM0N9HL3MK');
+    </script>
+    
   </head>
   <body>
     
@@ -41,19 +49,16 @@
       <div>
         
         <div style="text-align: center;">
-          <h1>Solfege Tablature Generator</h1>
+          <h1>ABC Shape Note Generator</h1>
           <h2>Batch Pre-processor for ABC Tunebooks</h2>
         </div>
                 
         <button class="accordion" title="Click to expand/collapse this section" id="instructions_header">Show Instructions</button>
         <div class="tocpanel">
         <p>1)&nbsp;Click "Open an existing .ABC file" to open a file or paste one or more ABC tunes into the box below.</p>
-        <p>2)&nbsp;Enter your preferred ABC font sizes, %%staffsep, and %%musicspace values</p>
-        <p>3)&nbsp;If you want non-movable Solfege based on C Major, check "Force non-movable Solfege"</p>
-        <p>4)&nbsp;For movable Solfege, check "La-based Minor" if desired (default is Sol) </p>
-        <p>5)&nbsp;Click "Generate Solfege".</p>
-        <p>The generated ABC with Solfege tablature will appear in the "Processed ABC Output, with Tablature" box.</p>
-        <p>6)&nbsp;Save, Copy or Test the results:</p>
+        <p>2)&nbsp;Click "Generate Shape Notes".</p>
+        <p>The generated ABC with the shape note shapes injected will appear in the "Processed ABC Output, with Tablature" box.</p>
+        <p>3)&nbsp;Save, Copy or Test the results:</p>
         <p>Click "Save Output to a file" to save the results to a file.</p>
         <p>Click "Copy Output to the clipboard" to copy the results to the system clipboard for pasting into other applications.</p>
         <p>Click "Test Output in the ABC Transcription Tools" to open and test the results in my <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a></p>
@@ -79,30 +84,16 @@
           <textarea id="input" placeholder="Enter ABC notation here" spellcheck="false" autocorrect="off" autocapitalize="none">
           </textarea>
         </p>
-                
-        <p class="tabsetup">Font family:<span class="inputbox"><input style="width:100px;" id="font_family" type="text"></span><span class="recommended">Recommended:&nbsp;Palatino</span></p>
-        
-        <p class="tabsetup">Title font size:<span class="inputbox"><input style="width:100px;" id="title_font_size" type="text"></span><span class="recommended">Recommended:&nbsp;22</span></p>
-        
-        <p class="tabsetup">Subtitle font size:<span class="inputbox"><input style="width:100px" id="subtitle_font_size" type="text"></span><span class="recommended">Recommended:&nbsp;18</span></p>
-        
-        <p class="tabsetup">Info font size:<span class="inputbox"><input style="width:100px" id="info_font_size" type="text"></span><span class="recommended">Recommended:&nbsp;14</span></p>
-        
-        <p class="tabsetup">Tablature font size:<span class="inputbox"><input style="width:100px" id="tab_font_size" type="text"></span><span class="recommended">Recommended:&nbsp;10</span></p>
-        
-        <p class="tabsetup">%%staffsep value:<span class="inputbox"><input style="width:100px" id="staff_sep" type="text"></span><span class="recommended">Recommended:&nbsp;60</span></p>
-        
-        <p class="tabsetup">%%musicspace value:<span class="inputbox"><input style="width:100px" id="music_space" type="text"></span><span class="recommended">Recommended:&nbsp;10</span></p>
 
-        <p class="tabsetup"><input type="checkbox" id="forceNonMovableSolfege" onchange="idleOptions()">&nbsp;&nbsp;Force non-movable Solfege</p>
-
-        <p class="tabsetup" id="movableMinorUsesLaHolder"><input type="checkbox" id="movableMinorUsesLa">&nbsp;&nbsp;Movable Solfege uses La-based Minor</p>
+        <p class="tabsetup"><input type="checkbox" id="include_names" onchange="idleOptions()">&nbsp;&nbsp;Include fa/sol/la/mi note names below?</p>
         
-        <p style="margin-top:24px"><button id="generateTablature" class="btn btn-generate" onClick="generateTablature();">Generate Solfege</button></p>
+        <p class="tabsetup" id="tab_font_size_holder">Note names font size:<span class="inputbox"><input style="width:100px" id="tab_font_size" type="text"></span><span class="recommended">Recommended:&nbsp;9</span></p>
+                     
+        <p style="margin-top:24px"><button id="generateTablature" class="btn btn-generate" onClick="generateTablature();">Generate Shape Notes</button></p>
         
         <div style="margin-bottom: 18px;">
           
-        <h4>Processed ABC Output, with Solfege:</h4>
+        <h4>Processed ABC Output, with Shape Notes:</h4>
           
         </div>
         
@@ -126,7 +117,7 @@
         
         <p style="text-align: center">Complete source code for this utility may be found on GitHub</p>
         
-        <p style="text-align: center"> <a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">Solfege Tab Generator on Github</a></p>
+        <p style="text-align: center"> <a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">ABC Shape Note Generator on Github</a></p>
         
         <hr style="margin-bottom:50px">
         
@@ -136,7 +127,7 @@
     
   </body>
   
-  <script src="solfege.js?v=7" type="text/javascript"></script>
+  <script src="shapenote.js?v=7" type="text/javascript"></script>
   <script type="text/javascript" src="lz-string.min.js?v=7"></script>
   <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=7"></script>
   
