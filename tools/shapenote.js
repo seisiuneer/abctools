@@ -114,6 +114,7 @@ function findKeySignature(abcInput) {
         myMap = keySignatureMap(keySignatureBase, 0);
     } else if (keyExtra.search("mix") != -1) {
         log("Mode: Mixolydian");
+        gTheMode = "Major";
         myMap = keySignatureMap(keySignatureBase, 1);
     } else if (keyExtra.search("dor") != -1) {
         log("Mode: Dorian");
@@ -1107,19 +1108,21 @@ var gIsChrome = false;
 // Initialization 
 //
 function DoStartup() {
-
     var theValue = "";
     theValue += "X: 1\n";
-    theValue += "T: The Kesh\n";
-    theValue += "R: Jig\n";
-    theValue += "M: 6/8\n";
-    theValue += "L: 1/8\n";
-    theValue += "K: Gmaj\n";
+    theValue += "T: We Wish You a Merry Christmas\n";
     theValue += "C: Traditional\n";
-    theValue += '|:GAG GAB|ABA ABd|edd gdd|edB dBA|\n';
-    theValue += 'GAG GAB|ABA ABd|edd gdB|AGF G3:|\n';
-    theValue += '|:BAB dBd|ege dBA|BAB dBG|ABA AGA|\n';
-    theValue += 'BAB dBd|ege dBd|gfg aga|bgf g3:|\n';
+    theValue += "M: 3/4\n";
+    theValue += "L: 1/4\n";
+    theValue += "K: G\n";
+    theValue += " D | G G/2A/2G/2F/2 | E E E | A A/2B/2A/2G/2 | F D\n"; 
+    theValue += "w: We  wish you a Mer-ry   Christ-mas. We  wish you a Mer-ry Christ-mas.\n";
+    theValue += " D | B B/2c/2B/2A/2 | G E D/2D/2 | E A F | G2 \n";
+    theValue += "w: We  wish you a Mer-ry   Christ-mas, and a    Hap-py  New Year.\n";
+    theValue += " D |  G G G | F2 F | G F E | D2 \n";
+    theValue += "w: Good tid-ings we  bring to  you and your kin.\n";
+    theValue += " A | B A G | d D D/2D/2 | E A F | G2 |]\n";
+    theValue += "w: Good tid-ings for Christ-mas, and a   Hap-py New Year.\n";
 
     document.getElementById('tab_font_size').value = 9;
 
