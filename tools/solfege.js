@@ -352,6 +352,7 @@ var modeMap = {
 function transformNote(note,gTheKey,gTheMode){
     
     // Normalize note represention
+    //debugger;
 
     // Lower case
     note = note.toLowerCase();
@@ -390,8 +391,11 @@ function transformNote(note,gTheKey,gTheMode){
 
         if (!gNonMovableSolfege){
             if (gMovableLaBasedMinor && (gTheMode == "Minor")){
-                theNoteIndex += 3;
-             }
+                theNoteIndex -= 3;
+                if (theNoteIndex < 0){
+                    theNoteIndex += 12;
+                }
+            }
         }
 
         theNoteIndex -= theOffset;
@@ -411,7 +415,10 @@ function transformNote(note,gTheKey,gTheMode){
 
         if (!gNonMovableSolfege){
             if (gMovableLaBasedMinor && (gTheMode == "Minor")){
-                theNoteIndex += 3;
+                theNoteIndex -= 3;
+                if (theNoteIndex < 0){
+                    theNoteIndex += 12;
+                }
              }
          }
 
