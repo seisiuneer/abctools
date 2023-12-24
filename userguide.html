@@ -284,6 +284,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_fiddle">Inject Fiddle Fingerings</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_dulcimer">Inject Dulcimer Tab</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_bamboo">Inject Bamboo Flute Tab</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_shapenoteshapes">Inject Shape Note Shapes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_configuretab">Configure Tablature Injection Settings</a></p>
                     </div>
                     
@@ -338,7 +339,7 @@
                 
                 <button class="accordion" title="Click to expand/collapse this section">Instrument-Specific Tablature Injection</button>
                 <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#injecting_tablature">Injecting B/C Box, C#/D Box, Anglo Concertina, Fiddle Fingerings, Mountain Dulcimer, or Bamboo Flute Tablature Into the ABC Tunes</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#injecting_tablature">Instrument-Specific Tablature Injection</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#clearing_tablature">Clearing the Injected Tablature</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#tablature_settings">Configuring Tablature Fonts and Settings</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#reading_the_box_tablature">Reading the Box Tablature</a></p>
@@ -970,6 +971,11 @@
                 <p id="advanced_bamboo" class="page_break_always"><strong>Inject Bamboo Flute Tab</strong> - After requesting the bamboo flute key, injects numeric notation tab for the selected key into the ABC.</p>
                 <div class="image_holder_p">
                     <img src="img/bamboo_flute_2.jpg"/>
+                </div>
+                <hr>
+                <p id="advanced_shapenoteshapes" class="page_break_always"><strong>Inject Shape Note Shapes</strong> - Injects "4-shape" style shape note shapes into the ABC along with optional fa/sol/la/ti notenames.</p>
+                <div class="image_holder_p">
+                    <img src="img/inject_shape_notes_1.jpg"/>
                 </div>
                 <hr>
                 <p id="advanced_configuretab"><strong>Configure Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for tablature injection.</p>
@@ -2108,19 +2114,24 @@
                     <p style="text-align: center;"><a href="https://blog.hubspot.com/website/web-safe-html-css-fonts" target="_blank">Web Safe CSS Fonts</a></p>
                     <p style="text-align: center;"><a href="http://iosfonts.com/" target="_blank">iOS Fonts</a></p>
                     <hr class="hidden-print" id="injecting_tablature">
-                    <h1 class="page_break_always h1wide">Injecting B/C Box, C#/D Box, Anglo Concertina, Fiddle Fingerings, Mountain Dulcimer, or Bamboo Flute Tablature Into the ABC Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                    <h1 class="page_break_always h1wide">Instrument-Specific Tablature Injection<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                     <p>The tablature injection features add additional text into your ABC to create tablature for the selected instrument.</p>
                     <p style="text-align: center;"><strong>Consider saving or grabbing a Snapshot your work before injecting tab!</strong></p>
                     <p>Since the tab injectors modify your original ABC, you may want to grab a Snapshot of the entire ABC (simply click <strong>Snapshot</strong>) before doing the tab injection operation.</p>
                     <p>If you grab a Snapshot, after the tab injection operation, if there was an issue, you can click <strong>Restore</strong> to get back your original ABC.</p>
                     <p>You may inject Box or Anglo Concertina tablature into the ABC using the following buttons in the <strong>More ABC Tools</strong> dialog:</p>
+                    <hr>
                     <p><strong>Inject B/C Box Tab</strong> - Injects B/C Box tablature into the ABC.</p>
+                    <hr>
                     <p><strong>Inject C#/D Box Tab</strong> - Injects C#/D Box tablature into the ABC.</p>
+                    <hr>
                     <p><strong>Inject Anglo Concertina Tab</strong> - Injects Anglo Concertina tablature into the ABC.</p>
+                    <hr>
                     <p><strong>Inject Fiddle Fingerings</strong> - Injects Fiddle/Mandolin fingerings (which finger to use for the note) into the ABC.</p>
                     <p>Note for Mandolin players:</p>
                     <p>This is distinct from the fret number displayed when showing the Mandolin tablature along with the notation.</p>
                     <p>The Mandolin tablature shows which fret to use on the Mandolin. This shows which finger to use on the fret.</p>
+                    <hr>
                     <p id="advanced_dulcimer"><strong>Inject Dulcimer Tab</strong> - Injects Mountain Dulcimer tablature into the ABC.</p>
                     <p>The tablature generation solution supports both DAD, DGD, or DAA-tuned instruments with a 6-1/2 fret.</p>
                     <p>Select between "Along High-D String" and "Cross-String" style tablature for the DAD and DGD tunings. (DAA is only available as "Along A String").</p>
@@ -2134,9 +2145,15 @@
                     <p>The fret numbers (1, -, and 3 in this example) are then entered, separated by ; which causes the ABC renderer to stack the numbers vertically under the note.</p>
                     <p>Finally, there is a closing " added to complete the tablature entry.</p>
                     <p>If you want to modify the automatically generated tablature, just change the fret numbers to whatever you like. I use - to indicate an open string</p>
+                    <hr>
                     <p><strong>Inject Bamboo Flute Tab</strong> - After requesting the bamboo flute key, injects numeric notation tab for the selected key into the ABC.</p>
                     <div class="image_holder_p">
                         <img src="img/bamboo_flute_2.jpg"/>
+                    </div>
+                    <hr>
+                    <p><strong>Inject Shape Note Shapes</strong> - Injects "4-shape" style shape note shapes into the ABC along with optional fa/sol/la/ti notenames.</p>
+                    <div class="image_holder_p">
+                        <img src="img/inject_shape_notes_1.jpg"/>
                     </div>
                     <hr class="hidden-print" id="clearing_tablature">
                     <h1 class="page_break_always h1wide">Clearing the Injected Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>

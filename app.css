@@ -632,7 +632,7 @@ opacity: 0.4;
 padding:12px;
 }
 
-#ceoltasdialoginverse,#injectallheaders,#injectheaderstring,#injectallmidiparams,#injectbctab,#injectcdtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth, #ceoltasdialog,#injectmetronome{
+#ceoltasdialoginverse,#injectallheaders,#injectheaderstring,#injectallmidiparams,#injectbctab,#injectcdtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth, #ceoltasdialog,#injectmetronome,#injectshapenotes{
 height:42px;
 padding:12px;
 margin-right:24px;
