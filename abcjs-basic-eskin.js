@@ -6140,6 +6140,14 @@ var parseKeyVoice = {};
             case "rhythm":
             case "x":
             case "triangle":
+            // MAE 23 Dec 2023 - For Shaped Note singing
+            case "sn_do":
+            case "sn_re":
+            case "sn_mi":
+            case "sn_fa":
+            case "sn_so":
+            case "sn_la":
+            case "sn_ti":
               multilineVars.style = tokens[0].token;
               tokens.shift();
               break;
@@ -6433,7 +6441,8 @@ var parseKeyVoice = {};
             break;
           case "style":
             attr = tokenizer.getVoiceToken(line, start, end);
-            if (attr.warn !== undefined) warn("Expected value for style in voice: " + attr.warn, line, start);else if (attr.err !== undefined) warn("Expected value for style in voice: " + attr.err, line, start);else if (attr.token === 'normal' || attr.token === 'harmonic' || attr.token === 'rhythm' || attr.token === 'x' || attr.token === 'triangle') multilineVars.voices[id].style = attr.token;else warn("Expected one of [normal, harmonic, rhythm, x, triangle] for voice style", line, start);
+            // MAE 23 Dec 2023 - Added Shaped Note Singing
+            if (attr.warn !== undefined) warn("Expected value for style in voice: " + attr.warn, line, start);else if (attr.err !== undefined) warn("Expected value for style in voice: " + attr.err, line, start);else if (attr.token === 'normal' || attr.token === 'harmonic' || attr.token === 'rhythm' || attr.token === 'x' || attr.token === 'triangle' || attr.token === 'sn_do' || attr.token === 'sn_re' || attr.token === 'sn_mi' || attr.token === 'sn_fa' || attr.token === 'sn_so' || attr.token === 'sn_la' || attr.token === 'sn_ti') multilineVars.voices[id].style = attr.token;else warn("Expected one of [normal, harmonic, rhythm, x, triangle, sn_*] for voice style", line, start);
             start += attr.len;
             break;
           // default:
@@ -7693,7 +7702,8 @@ module.exports = MusicParser;
   \*****************************************/
 /***/ (function(module) {
 
-module.exports.legalAccents = ['trill', 'lowermordent', 'uppermordent', 'mordent', 'pralltriller', 'accent', 'fermata', 'invertedfermata', 'tenuto', '0', '1', '2', '3', '4', '5', '+', 'wedge', 'open', 'thumb', 'snap', 'turn', 'roll', 'breath', 'shortphrase', 'mediumphrase', 'longphrase', 'segno', 'coda', 'D.S.', 'D.C.', 'fine', 'beambr1', 'beambr2', 'slide', 'marcato', 'upbow', 'downbow', '/', '//', '///', '////', 'trem1', 'trem2', 'trem3', 'trem4', 'turnx', 'invertedturn', 'invertedturnx', 'trill(', 'trill)', 'arpeggio', 'xstem', 'mark', 'umarcato', 'style=normal', 'style=harmonic', 'style=rhythm', 'style=x', 'style=triangle', 'D.C.alcoda', 'D.C.alfine', 'D.S.alcoda', 'D.S.alfine', 'editorial', 'courtesy'];
+// MAE 23 Dec 2023 - Added Shaped Note Singing glyphs
+module.exports.legalAccents = ['trill', 'lowermordent', 'uppermordent', 'mordent', 'pralltriller', 'accent', 'fermata', 'invertedfermata', 'tenuto', '0', '1', '2', '3', '4', '5', '+', 'wedge', 'open', 'thumb', 'snap', 'turn', 'roll', 'breath', 'shortphrase', 'mediumphrase', 'longphrase', 'segno', 'coda', 'D.S.', 'D.C.', 'fine', 'beambr1', 'beambr2', 'slide', 'marcato', 'upbow', 'downbow', '/', '//', '///', '////', 'trem1', 'trem2', 'trem3', 'trem4', 'turnx', 'invertedturn', 'invertedturnx', 'trill(', 'trill)', 'arpeggio', 'xstem', 'mark', 'umarcato', 'style=normal', 'style=harmonic', 'style=rhythm', 'style=x', 'style=triangle', 'style=sn_do','style=sn_re','style=sn_mi','style=sn_fa','style=sn_so','style=sn_la','style=sn_ti','D.C.alcoda', 'D.C.alfine', 'D.S.alcoda', 'D.S.alfine', 'editorial', 'courtesy'];
 module.exports.volumeDecorations = ['p', 'pp', 'f', 'ff', 'mf', 'mp', 'ppp', 'pppp', 'fff', 'ffff', 'sfz'];
 module.exports.dynamicDecorations = ['crescendo(', 'crescendo)', 'diminuendo(', 'diminuendo)', 'glissando(', 'glissando)', '~(', '~)'];
 module.exports.accentPseudonyms = [['<', 'accent'], ['>', 'accent'], ['tr', 'trill'], ['plus', '+'], ['emphasis', 'accent'], ['^', 'umarcato'], ['marcato', 'umarcato']];
@@ -18027,6 +18037,97 @@ var chartable = {
     7: "noteheads.triangle.quarter",
     nostem: "noteheads.triangle.quarter"
   },
+  // MAE 23 December 2023 for Shaped Note Glyps
+  sn_do: {
+    "-1": "noteheads.sn_do.quarter",
+    0: "noteheads.sn_do.quarter",
+    1: "noteheads.sn_do.quarter",
+    2: "noteheads.sn_do.quarter",
+    3: "noteheads.sn_do.quarter",
+    4: "noteheads.sn_do.quarter",
+    5: "noteheads.sn_do.quarter",
+    6: "noteheads.sn_do.quarter",
+    7: "noteheads.sn_do.quarter",
+    nostem: "noteheads.sn_do.quarter"
+  },
+  // MAE 23 December 2023 for Shaped Note Glyps
+  sn_re: {
+    "-1": "noteheads.sn_re.quarter",
+    0: "noteheads.sn_re.quarter",
+    1: "noteheads.sn_re.quarter",
+    2: "noteheads.sn_re.quarter",
+    3: "noteheads.sn_re.quarter",
+    4: "noteheads.sn_re.quarter",
+    5: "noteheads.sn_re.quarter",
+    6: "noteheads.sn_re.quarter",
+    7: "noteheads.sn_re.quarter",
+    nostem: "noteheads.sn_re.quarter"
+  },
+  // MAE 23 December 2023 for Shaped Note Glyps
+  sn_mi: {
+    "-1": "noteheads.sn_mi.quarter",
+    0: "noteheads.sn_mi.quarter",
+    1: "noteheads.sn_mi.quarter",
+    2: "noteheads.sn_mi.quarter",
+    3: "noteheads.sn_mi.quarter",
+    4: "noteheads.sn_mi.quarter",
+    5: "noteheads.sn_mi.quarter",
+    6: "noteheads.sn_mi.quarter",
+    7: "noteheads.sn_mi.quarter",
+    nostem: "noteheads.sn_mi.quarter"
+  },
+  // MAE 23 December 2023 for Shaped Note Glyps
+  sn_fa: {
+    "-1": "noteheads.sn_fa.quarter",
+    0: "noteheads.sn_fa.quarter",
+    1: "noteheads.sn_fa.quarter",
+    2: "noteheads.sn_fa.quarter",
+    3: "noteheads.sn_fa.quarter",
+    4: "noteheads.sn_fa.quarter",
+    5: "noteheads.sn_fa.quarter",
+    6: "noteheads.sn_fa.quarter",
+    7: "noteheads.sn_fa.quarter",
+    nostem: "noteheads.sn_fa.quarter"
+  },
+  // MAE 23 December 2023 for Shaped Note Glyps
+  sn_so: {
+    "-1": "noteheads.sn_so.quarter",
+    0: "noteheads.sn_so.quarter",
+    1: "noteheads.sn_so.quarter",
+    2: "noteheads.sn_so.quarter",
+    3: "noteheads.sn_so.quarter",
+    4: "noteheads.sn_so.quarter",
+    5: "noteheads.sn_so.quarter",
+    6: "noteheads.sn_so.quarter",
+    7: "noteheads.sn_so.quarter",
+    nostem: "noteheads.sn_so.quarter"
+  },
+  // MAE 23 December 2023 for Shaped Note Glyps
+  sn_la: {
+    "-1": "noteheads.sn_la.quarter",
+    0: "noteheads.sn_la.quarter",
+    1: "noteheads.sn_la.quarter",
+    2: "noteheads.sn_la.quarter",
+    3: "noteheads.sn_la.quarter",
+    4: "noteheads.sn_la.quarter",
+    5: "noteheads.sn_la.quarter",
+    6: "noteheads.sn_la.quarter",
+    7: "noteheads.sn_la.quarter",
+    nostem: "noteheads.sn_la.quarter"
+  },
+  // MAE 23 December 2023 for Shaped Note Glyps
+  sn_ti: {
+    "-1": "noteheads.sn_ti.quarter",
+    0: "noteheads.sn_ti.quarter",
+    1: "noteheads.sn_ti.quarter",
+    2: "noteheads.sn_ti.quarter",
+    3: "noteheads.sn_ti.quarter",
+    4: "noteheads.sn_ti.quarter",
+    5: "noteheads.sn_ti.quarter",
+    6: "noteheads.sn_ti.quarter",
+    7: "noteheads.sn_ti.quarter",
+    nostem: "noteheads.sn_ti.quarter"
+  },
   uflags: {
     3: "flags.u8th",
     4: "flags.u16th",
@@ -18763,6 +18864,34 @@ AbstractEngraver.prototype.addNoteToAbcElement = function (abselem, elem, dot, s
     }
     if (noteHead && noteHead.c === 'noteheads.triangle.quarter') {
       if (dir === 'down') p2 -= 0.7;else p1 -= 1.2;
+    }
+    // MAE 23 December 2023 - For Shaped Note Singing glyphs
+    if (noteHead && noteHead.c === 'noteheads.sn_do.quarter') {
+      if (dir === 'down') p2 -= 0.6;else p1 -= 1.2;
+    }
+    // MAE 23 December 2023 - For Shaped Note Singing glyphs
+    // if (noteHead && noteHead.c === 'noteheads.sn_re.quarter') {
+    //   if (dir === 'down') p2 -= 0.7;else p1 -= 1.2;
+    // }
+    //MAE 23 December 2023 - For Shaped Note Singing glyphs
+    if (noteHead && noteHead.c === 'noteheads.sn_mi.quarter') {
+       if (dir === 'down') p2 += 0.5;else p1 -= 0.5;
+    }
+    // MAE 23 December 2023 - For Shaped Note Singing glyphs
+    if (noteHead && noteHead.c === 'noteheads.sn_fa.quarter') {
+      if (dir === 'down') p2 += 1.3;else p1 -= 1.2;
+    }
+    // // MAE 23 December 2023 - For Shaped Note Singing glyphs
+    // if (noteHead && noteHead.c === 'noteheads.sn_so.quarter') {
+    //   if (dir === 'down') p2 -= 0.7;else p1 -= 1.2;
+    // }
+    // MAE 23 December 2023 - For Shaped Note Singing glyphs
+    if (noteHead && noteHead.c === 'noteheads.sn_la.quarter') {
+      if (dir === 'down') p2 -= 0.7;else p1 -= 1.2;
+    }
+    // MAE 23 December 2023 - For Shaped Note Singing glyphs
+    if (noteHead && noteHead.c === 'noteheads.sn_ti.quarter') {
+       if (dir === 'down') p2 += 0.6;else p1 -= 0.3;
     }
     abselem.addRight(new RelativeElement(null, dx, 0, p1, {
       "type": "stem",
@@ -22028,6 +22157,56 @@ glyphs['noteheads.triangle.quarter'] = {
   w: 9,
   h: 9
 };
+// MAE 23 December 2023 - For Shaped Note Singing glyphs
+glyphs['noteheads.sn_do.quarter'] = {
+  d: [['M', 0, 4], ['l', 9, 0], ['l', -4.5, -9], ['z']],
+  w: 9,
+  h: 9
+};
+// // MAE 23 December 2023 - For Shaped Note Singing glyphs
+// glyphs['noteheads.sn_re.quarter'] = {
+//   d: [['M', 6.09, -4.05], ['c', 0.36, -0.03, 1.20, 0.00, 1.53, 0.06], ['c', 1.17, 0.24, 1.89, 0.84, 2.16, 1.83], ['c', 0.06, 0.18, 0.06, 0.30, 0.06, 0.66], ['c', 0.00, 0.45, 0.00, 0.63, -0.15, 1.08], ['c', -0.66, 2.04, -3.06, 3.93, -5.52, 4.38], ['c', -0.54, 0.09, -1.44, 0.09, -1.83, 0.03], ['c', -1.23, -0.27, -1.98, -0.87, -2.25, -1.86], ['c', -0.06, -0.18, -0.06, -0.30, -0.06, -0.66], ['c', 0.00, -0.45, 0.00, -0.63, 0.15, -1.08], ['c', 0.24, -0.78, 0.75, -1.53, 1.44, -2.22], ['c', 1.20, -1.20, 2.85, -2.01, 4.47, -2.22], ['z']],
+//   w: 9.81,
+//   h: 8.094
+// };
+// MAE 23 December 2023 - For Shaped Note Singing glyphs , ['a', 4.5, 2.5, 180, 0, 1, 9 ,0],
+glyphs['noteheads.sn_re.quarter'] = {
+  d: [['M', 0, -4.5], ['l', 9, 0], ['l', 0, 4.5], ['a', 4.5, 4, 0, 0, 1, -9, 0], ['z']],
+  w: 9,
+  h: 9
+ };
+
+// MAE 23 December 2023 - For Shaped Note Singing glyphs
+glyphs['noteheads.sn_mi.quarter'] = {
+  d: [['M', 0, 0], ['l',5, -5], ['l', 5, 5], ['l', -5, 5], ['z']],
+  w: 10,
+  h: 10
+};
+// MAE 23 December 2023 - For Shaped Note Singing glyphs
+glyphs['noteheads.sn_fa.quarter'] = {
+  d: [['M', 0, -4.5], ['l', 10, 0], ['l', 0, 10], ['z']],
+  w: 10,
+  h: 10
+};
+// MAE 23 December 2023 - For Shaped Note Singing glyphs
+glyphs['noteheads.sn_so.quarter'] = {
+  d: [['M', 6.09, -4.05], ['c', 0.36, -0.03, 1.20, 0.00, 1.53, 0.06], ['c', 1.17, 0.24, 1.89, 0.84, 2.16, 1.83], ['c', 0.06, 0.18, 0.06, 0.30, 0.06, 0.66], ['c', 0.00, 0.45, 0.00, 0.63, -0.15, 1.08], ['c', -0.66, 2.04, -3.06, 3.93, -5.52, 4.38], ['c', -0.54, 0.09, -1.44, 0.09, -1.83, 0.03], ['c', -1.23, -0.27, -1.98, -0.87, -2.25, -1.86], ['c', -0.06, -0.18, -0.06, -0.30, -0.06, -0.66], ['c', 0.00, -0.45, 0.00, -0.63, 0.15, -1.08], ['c', 0.24, -0.78, 0.75, -1.53, 1.44, -2.22], ['c', 1.20, -1.20, 2.85, -2.01, 4.47, -2.22], ['z']],
+  w: 9.81,
+  h: 8.094
+};
+// MAE 23 December 2023 - For Shaped Note Singing glyphs
+glyphs['noteheads.sn_la.quarter'] = {
+  d: [['M', 0, -4.5], ['l', 9, 0], ['l', 0, 9], ['l', -9, 0], ['z']],
+  w: 9,
+  h: 9
+};
+// MAE 23 December 2023 - For Shaped Note Singing glyphs
+glyphs['noteheads.sn_ti.quarter'] = {
+  d: [['M', 0, -2],['l', 5, 7], ['l', 5, -7], ['a', 5, 2, 0, 0, 0, -10, 0], ['z']],
+  w: 10,
+  h: 10
+};
+
 var pathClone = function pathClone(pathArray) {
   var res = [];
   for (var i = 0, ii = pathArray.length; i < ii; i++) {
