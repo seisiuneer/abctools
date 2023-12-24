@@ -1115,14 +1115,20 @@ function DoStartup() {
     theValue += "M: 3/4\n";
     theValue += "L: 1/4\n";
     theValue += "K: G\n";
-    theValue += " D | G G/2A/2G/2F/2 | E E E | A A/2B/2A/2G/2 | F D\n"; 
-    theValue += "w: We  wish you a Mer-ry   Christ-mas. We  wish you a Mer-ry Christ-mas.\n";
-    theValue += " D | B B/2c/2B/2A/2 | G E D/2D/2 | E A F | G2 \n";
-    theValue += "w: We  wish you a Mer-ry   Christ-mas, and a    Hap-py  New Year.\n";
-    theValue += " D |  G G G | F2 F | G F E | D2 \n";
-    theValue += "w: Good tid-ings we  bring to  you and your kin.\n";
-    theValue += " A | B A G | d D D/2D/2 | E A F | G2 |]\n";
-    theValue += "w: Good tid-ings for Christ-mas, and a   Hap-py New Year.\n";
+    theValue += 'D | "G" G G/2A/2G/2F/2 | "C" E E E | "A" A A/2B/2A/2G/2 | "D" F D\n';
+    theValue += 'w: We  wish you a Mer-ry   Christ-mas. We  wish you a Mer-ry Christ-mas.\n';
+    theValue += 'D | "B7"B B/2c/2B/2A/2 | "Em" G E D/2D/2 | "C" E A "D" F | "G" G2\n'; 
+    theValue += 'w: We  wish you a Mer-ry   Christ-mas, and a    Hap-py  New Year.\n';
+    theValue += 'D |  "G" G G G | "D" F2 F | "Em" G F E | "D" D2\n'; 
+    theValue += 'w: Good tid-ings we  bring to  you and your kin.\n';
+    theValue += 'A | "G" B A G | "Bm" d D D/2D/2 | "C" E A "D" F | "G" G2 |]\n';
+    theValue += 'w: Good tid-ings for Christ-mas, and a   Hap-py New Year.\n';
+    theValue += "%abcjs_soundfont fatboy\n";
+    theValue += "%%MIDI program 0\n";
+    theValue += "%%MIDI chordprog 0\n";
+    theValue += "%%MIDI bassvol 64\n";
+    theValue += "%%MIDI chordvol 64\n";
+    theValue += "%%staffsep 85\n";
 
     document.getElementById('tab_font_size').value = 9;
 
