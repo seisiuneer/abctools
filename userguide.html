@@ -274,20 +274,23 @@
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectabcheader">Inject ABC Header String</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectstaffwidth">Inject %%staffwidth</a></p>
                     </div>
-                    
-                    <button class="accordion" title="Click to expand/collapse this section">Injecting Instrument-Specific Tab Into the ABC</button>
+
+                    <button class="accordion" title="Click to expand/collapse this section">Tablature and Shape Note Injectors</button>
                     <div class="tocpanel">
-                        <p class="toc"><a style="text-decoration:none;" href="#advanced_tabinjectors">Instrument Tablature Injectors</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injectbc">Inject B/C Box Tab</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injectcd">Inject C#/D Box Tab</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injectanglo">Inject Anglo Concertina Tab</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#advanced_fiddle">Inject Fiddle Fingerings</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#advanced_dulcimer">Inject Dulcimer Tab</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#advanced_bamboo">Inject Bamboo Flute Tab</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#injecting_tablature">Tablature and Shape Note Injectors</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#tab_box_bc">Inject B/C Box Tab</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#tab_box_cd">Inject C#/D Box Tab</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#tab_concertina">Inject Anglo Concertina Tab</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#tab_fiddle">Inject Fiddle Fingerings</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#tab_dulcimer">Inject Dulcimer Tab</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#tab_bamboo">Inject Bamboo Flute Tab</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_shapenoteshapes">Inject Shape Note Shapes/Solfège</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#advanced_configuretab">Configure Tablature Injection Settings</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#clearing_tablature">Clearing the Injected Tablature</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#tablature_settings">Configuring Tablature Fonts and Settings</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#reading_the_box_tablature">Reading the Box Tablature</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#reading_the_concertina_tablature">Reading the Anglo Concertina Tablature</a></p>
                     </div>
-                    
+                        
                     <p class="toc"><a style="text-decoration:none;" href="#advanced_notationspacingexplorer">Notation Spacing Explorer</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#midi_instrument_explorer">MIDI Instrument Explorer</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#swing_explorer">Swing Explorer</a></p>
@@ -336,16 +339,7 @@
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#custom_font_overrides">Custom Font Overrides</a></p>
                 </div>
-                
-                <button class="accordion" title="Click to expand/collapse this section">Instrument-Specific Tablature Injection</button>
-                <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#injecting_tablature">Instrument-Specific Tablature Injection</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#clearing_tablature">Clearing the Injected Tablature</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#tablature_settings">Configuring Tablature Fonts and Settings</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#reading_the_box_tablature">Reading the Box Tablature</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#reading_the_concertina_tablature">Reading the Anglo Concertina Tablature</a></p>
-                </div>
-                
+                            
                 <button class="accordion" title="Click to expand/collapse this section">MusicXML Import</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#musicxml">MusicXML Import Settings</a></p>
@@ -937,23 +931,24 @@
             <p>This can be used to change the scale of every tune both for display and PDF generation.</p>
             <p>Generally values above 556 will make the tunes less tall.</p>
             <p>If "Inject all tunes" is not checked, the annotation is added at the current text insertion point.</p>
-            <hr class="hidden-print" id="advanced_tabinjectors">
-            <h1 class="page_break_always">Instrument Tablature Injectors<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>These command all inject instrument tablature into the ABC.</p>
-            <p>These commands are destructive in that they add tablature text to the current ABC.</p>
-            <p>It may be a good idea to save the current ABC or do a <strong>Copy All</strong> or <strong>Snapshot</strong> before using one of these commands if you want to quickly undo the operation.</p>
-            <hr>
-            <p id="advanced_injectbc"><strong>Inject B/C Box Tab</strong> - Injects B/C Box tablature into the ABC.</p>
-            <hr>
-            <p id="advanced_injectcd"><strong>Inject C#/D Box Tab</strong> - Injects C#/D Box tablature into the ABC.</p>
-            <hr>
-            <p id="advanced_injectanglo"><strong>Inject Anglo Concertina Tab</strong> - Injects Anglo Concertina tablature into the ABC.</p>
-            <hr>
-            <p id="advanced_fiddle"><strong>Inject Fiddle Fingerings</strong> - Injects Fiddle/Mandolin fingerings (which finger to use for the note) into the ABC.</p>
+            <hr class="hidden-print" id="injecting_tablature">
+            <h1 class="page_break_always h1wide">Tablature and Shape Note Injectors<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>The tablature injection features add additional text into your ABC to create tablature for the selected instrument or notation style.</p>
+            <p style="text-align: center;"><strong>Consider saving or grabbing a Snapshot your work before injecting tab!</strong></p>
+            <p>Since the tab injectors modify your original ABC, you may want to grab a Snapshot of the entire ABC (simply click <strong>Snapshot</strong>) before doing the tab injection operation.</p>
+            <p>If you grab a Snapshot, after the tab injection operation, if there was an issue, you can click <strong>Restore</strong> to get back your original ABC.</p>
+            <hr id="tab_box_bc">
+            <p><strong>Inject B/C Box Tab</strong> - Injects B/C Box tablature into the ABC.</p>
+            <hr id="tab_box_cd">
+            <p><strong>Inject C#/D Box Tab</strong> - Injects C#/D Box tablature into the ABC.</p>
+            <hr id="tab_concertina">
+            <p><strong>Inject Anglo Concertina Tab</strong> - Injects Anglo Concertina tablature into the ABC.</p>
+            <hr id="tab_fiddle">
+            <p><strong>Inject Fiddle Fingerings</strong> - Injects Fiddle/Mandolin fingerings (which finger to use for the note) into the ABC.</p>
             <p>Note for Mandolin players:</p>
             <p>This is distinct from the fret number displayed when showing the Mandolin tablature along with the notation.</p>
             <p>The Mandolin tablature shows which fret to use on the Mandolin. This shows which finger to use on the fret.</p>
-            <hr>
+            <hr id="tab_dulcimer">
             <p id="advanced_dulcimer"><strong>Inject Dulcimer Tab</strong> - Injects Mountain Dulcimer tablature into the ABC.</p>
             <p>The tablature generation solution supports both DAD, DGD, or DAA-tuned instruments with a 6-1/2 fret.</p>
             <p>Select between "Along High-D String" and "Cross-String" style tablature for the DAD and DGD tunings. (DAA is only available as "Along A String").</p>
@@ -967,21 +962,133 @@
             <p>The fret numbers (1, -, and 3 in this example) are then entered, separated by ; which causes the ABC renderer to stack the numbers vertically under the note.</p>
             <p>Finally, there is a closing " added to complete the tablature entry.</p>
             <p>If you want to modify the automatically generated tablature, just change the fret numbers to whatever you like. I use - to indicate an open string</p>
-            <hr>
-            <p id="advanced_bamboo" class="page_break_always"><strong>Inject Bamboo Flute Tab</strong> - After requesting the bamboo flute key, injects numeric notation tab for the selected key into the ABC.</p>
+            <hr  id="tab_bamboo">
+            <p><strong>Inject Bamboo Flute Tab</strong> - After requesting the bamboo flute key, injects numeric notation tab for the selected key into the ABC.</p>
             <div class="image_holder_p">
                 <img src="img/bamboo_flute_2.jpg"/>
             </div>
-            <hr>
-            <p id="advanced_shapenoteshapes" class="page_break_always"><strong>Inject Shape Note Shapes/Solfège</strong> - Injects "4-shape" or "7-shape" style shape note shapes into the ABC along with optional "fa/sol/la/ti" (4-shape) or "do/re/me/fa/sol/la/ti" (7-shape) solfège note names.</p>
+            <hr id="advanced_shapenoteshapes">
+            <p><strong>Inject Shape Note Shapes/Solfège</strong> - Injects "4-shape" or "7-shape" style shape note shapes into the ABC along with optional "fa/sol/la/ti" (4-shape) or "do/re/me/fa/sol/la/ti" (7-shape) solfège note names.</p>
             <p>It is also possible to inject the solfège note names without the note shapes.</p>
             <div class="image_holder_p">
                 <img src="img/inject_shape_notes_3.jpg"/>
             </div>
             <p>The ABC injected before each note name to select the note head style is one of the following:</p>
             <p class="code">!style=sn_do! C2<br/>!style=sn_re! D2<br/>!style=sn_mi! E2<br/>!style=sn_fa! F2 <br/>!style=sn_so! G2<br/>!style=sn_la! A2<br/>!style=sn_ti! B2<br/>!style=sn_do! c2<br/>!style=sn_re! d2<br/>!style=sn_mi! e2 <br/>!style=sn_fa! f2<br/>!style=sn_so! g2<br/>!style=sn_la! a2<br/>!style=sn_ti! b2</p>
+            <hr class="hidden-print" id="clearing_tablature">
+            <h1 class="page_break_always h1wide">Clearing the Injected Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>Since the tablature is injected using the ABC chord system, you can easily clear all tab and get back to the original ABC by clicking the <strong>Strip Chords + Injected Tab</strong> button on the <strong>More ABC Tools</strong> dialog.</p>
+            <hr class="hidden-print" id="tablature_settings">
+            <h1 class="page_break_always h1wide">Configuring Tablature Fonts and Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>To configure the tablature fonts and other settings, first click the tool's Settings button, then click <strong>Tablature Injection Settings</strong> at the bottom of the dialog to bring up the tablature injections settings dialog:</p>
+            <div class="image_holder_p">
+                <img src="img/tab_injection_settings_6.jpg"/>
+            </div>
+            <p><strong>Common tablature settings for all instruments:</strong></p>
+            <p><strong>Font family</strong> - Font used for all text injected into the tablature.</p>
+            <p><strong>Tablature font size</strong> - Font size used for the injected tablature text and symbols.</p>
+            <p><strong>%%staffsep value</strong> - Sets spacing between the staves.</p>
+            <p><strong>%%musicspace value</strong> - Sets spacing between the title and the staves.</p>
+            <p><strong>Common tablature settings for Box and Anglo Concertina:</strong></p>
+            <p><strong>Character(s) for Push indication</strong> - Sets the character used in the Box and Anglo Concertina tablature to indicate a bellows push.</p>
+            <p><strong>Character(s) for Draw indication</strong> - Sets the character used in the Box and Anglo Concertina tablature to indicate a bellows draw.</p>
+            <p><strong>Note:</strong> Setting either value blank restores the original default "↓" for Push and "↑" for Draw character values.</p>
+            <p><strong>Use a bar over button name to indicate Draw (overrides Push and Draw characters)</strong> - If checked, draws a bar over the button name for a bellows Draw and no bar for bellows Push.</p>
+            <p>If checked, overrides the use of the Push or Draw characters entered above.</p>
+            <p>Select your preferred tablature position relative to the notation (Above or Below) from the selection menu.</p>
+            <p>When injecting tablature below the notation, you have the option to strip all existing chords and tablature from the ABC before injecting the new tab.</p>
+            <p>Injecting tablature above the notation always strips existing chords and tablature from the ABC before injecting the new tab.</p>
+            <p><strong>Anglo Concertina-specific settings:</strong></p>
+            <p>Select your instrument style: (Jeffries or Wheatstone) from the <strong>Concertina style</strong> selection menu.</p>
+            <p>Select your preferred fingering solution from the <strong>Preferred fingerings</strong> selection menu:</p>
+            <p><strong>On-Row:</strong></p>
+            <p>Jim Van Donsel's original fingering solution, favors center row:</p>
+            <p>Favors playing D5 and E5 on the right-side C-row.</p>
+            <p>For Jeffries-style instruments:</p>
+            <p>Favors right-side top-row 2nd button for C#5 and D#5.</p>
+            <p><strong>Cross-Row:</strong></p>
+            <p>A more cross-row friendly fingering solution:</p>
+            <p>Favors playing the D5 and E5 on the left-side G-row.</p>
+            <p>Favors playing C5 on the left-side G-row draw.</p>
+            <p>Favors playing B4 on the right-side C-row draw.</p>
+            <p>For Jeffries-style instruments:</p>
+            <p>Favors right-side top-row 2nd button for C#5 and D#5.</p>
+            <p><strong>Gary Coover style tab (single notes only, overrides button name and direction settings)</strong> - Check this box if you want Anglo Concertina tab to be generated using the Gary Coover style standard:</p>
+            <p class="code" style="text-align: center;">
+                Left&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Right</br>
+                1a&nbsp;2a&nbsp;3a&nbsp;4a&nbsp;5a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1a&nbsp;2a&nbsp;3a&nbsp;4a&nbsp;5a</br>
+                1&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;&nbsp;5</br>
+            &nbsp;6&nbsp;&nbsp;7&nbsp;&nbsp;8&nbsp;&nbsp;9&nbsp;&nbsp;10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;7&nbsp;&nbsp;8&nbsp;&nbsp;9&nbsp;&nbsp;10</p>
+            <p>Left hand note tab is drawn below the staff.</p>
+            <p>Right hand note tab is drawn above the staff.</p>
+            <p>Notes on the push are represented by the button number.</p>
+            <p>Notes on the draw are represented by the button number with a line above it.</p>
+            <p>Only single melody lines are supported (no chords possible)</p>
+            <p>When selecting the Gary Coover style tab, any custom button names or direction settings will be ignored.</p>
+            <p><strong>Configure Anglo Concertina Tablature Button Names</strong> - Brings up a dialog where you can set the names of the buttons used for Anglo Concertina tab generation:</p>
+            <div class="image_holder_p">
+                <img src="img/anglo_button_names_2.jpg"/>
+            </div>
+            <p>Click <strong>Reset to Default</strong> to reset the button names to the original tool values (L1, L2, L3, ...).</p>
+            <p>Values are saved in browser storage and restored the next time the tool is run.</p>
+            <hr class="hidden-print" id="reading_the_box_tablature">
+            <h1 class="page_break_always">Reading the Box Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p><strong>B/C Box</strong> - Shows standard notation and tablature for a standard 21-button B/C tuned box.</p>
+            <p>The button numbers and pitches used for the tablature match those on this chart:</p>
+            <div class="image_holder_p">
+                <img src="img/BC21.jpg">
+            </div>
+            <p>Notes on the C-row are indicated by numbers: <strong>1, 2, 3, ...</strong></p>
+            <p>Notes on the B-row are indicated by numbers in circles: <span style="font-size:18pt">①, ②, ③, ...</span></p>
+            <p>Push is indicated with a "↓" arrow by default (configurable in the Box and Anglo Concertina Tablature Settings dialog).</p>
+            <p>Draw is indicated with an "↑" arrow (configurable in the Box and Anglo Concertina Tablature Settings dialog).</p>
+            <p><strong>C#/D Box</strong> - Shows standard notation and tablature for a standard 21-button C#/D tuned box.</p>
+            <p>The button numbers and pitches used for the tablature match those on this chart:</p>
+            <div class="image_holder_p">
+                <img src="img/CD21.jpg" style="margin-top:0px;" alt="C#/D Box Button Map" style="margin-top: 20px;" title="C#/D Box Button Map">
+            </div>
+            <p>Notes on the D-row are indicated by numbers: <strong>1, 2, 3,...</strong></p>
+            <p>Notes on the C#-row are indicated by numbers in circles: <span style="font-size:18pt">①, ②, ③, ...</span></p>
+            <p>Push is indicated with a "↓" arrow (configurable in the Box and Anglo Concertina Tablature Settings Dialog).</p>
+            <p>Draw is indicated with an "↑" arrow (configurable in the Box and Anglo Concertina Tablature Settings Dialog).</p>
+            <p><strong>Assumptions about the B/C and C#/D Box tablature solutions:</strong></p>
+            <p>The tablature solution assumes that the "magic" notes (E and B on a B/C, F# and C# on a C#/D) that are available on both rows, will be played on the C-row on a B/C box and on the D-row on a C#/D box.</p>
+            <p><strong>Use of the B/C and C#/D Box tablatures on a 23-button instrument:</strong></p>
+            <p>If you are playing a 23-button instrument, you will need to shift your start position one button higher when playing.</p>
+            <p>Consider your first button as "button zero".</p>
+            <p></p>
             <hr>
-            <p id="advanced_configuretab"><strong>Configure Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for tablature injection.</p>
+            <p class="page_break_always" style="text-align: center;"><strong>Tablature Injection Known Issues and Limitations</strong></p>
+            <p><strong>Fails when converting multi-voice tunes:</strong></p>
+            <p>For best results, use source ABC tunes that have a single voice. (i.e. no V: tags)</p>
+            <p>Unpredictable results or a failure to complete the fingering generation may occur with multi-voice ABC files.</p>
+            <p></p>
+            <p><strong>(Anglo Concertina-only) Button direction missing for some less-often used accidentals:</strong></p>
+            <p>After fingering generation, some less-often used accidentals like _E in certain keys may show the correct button, but are missing their direction in the ABC.</p>
+            <p>If you see missing directions on any notes, review the ABC in the ABC editor and correct the direction manually by copying and pasting either a push "↓" or draw "↑" arrow (or other desired symbol) for the missing direction.</p>
+            <p></p>
+            <p><strong>Tunes with key changes mid-tune may not generate correct tablature after the key change:</strong></p>
+            <p>The tablature solutions only use the original key of the tune.</p>
+            <p>If the key changes mid-tune, the tablature solution after that point may not be correct.</p>
+            <p></p>
+            <p><strong>Tunes with [GBd] style chords in square brackets do not generate the correct tablature:</strong></p>
+            <p>You'll need to reduce these down to a single note for the tool to work.</p>
+            <hr class="hidden-print" id="reading_the_concertina_tablature">
+            <h1 class="page_break_always">Reading the Anglo Concertina Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p style="text-align: center;margin-top:36px;"><strong>Wheatstone Layout</strong></p>
+            <div class="image_holder_p">
+                <img src="img/wheatstone_cg.jpg">
+            </div>
+            <p style="text-align: center;margin-top:36px;"><strong>Jeffries Layout</strong></p>
+            <div class="image_holder_p">
+                <img src="img/jeffries_cg.jpg">
+            </div>
+            <p style="text-align: center;margin-top:36px;"><strong>Tablature Button Names</strong></p>
+            <div class="image_holder_p">
+                <img src="img/anglo-fingerings.jpg">
+            </div>
+            <p>Push is indicated with a "↓" arrow by default (configurable in the Box and Anglo Concertina Tablature Settings dialog).</p>
+            <p>Draw is indicated with an "↑" arrow by default (configurable in the Box and Anglo Concertina Tablature Settings dialog).</p>
             <hr class="hidden-print" id="advanced_notationspacingexplorer">
             <h1 class="page_break_always">Notation Spacing Explorer<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Brings up a dialog where you can experiment with spacing values for the notation and then optionally inject the values into one or all of the tunes:</p>
@@ -2116,165 +2223,6 @@
             <p><strong>More information is available here:</strong></p>
             <p style="text-align: center;"><a href="https://blog.hubspot.com/website/web-safe-html-css-fonts" target="_blank">Web Safe CSS Fonts</a></p>
             <p style="text-align: center;"><a href="http://iosfonts.com/" target="_blank">iOS Fonts</a></p>
-            <hr class="hidden-print" id="injecting_tablature">
-            <h1 class="page_break_always h1wide">Instrument-Specific Tablature Injection<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>The tablature injection features add additional text into your ABC to create tablature for the selected instrument.</p>
-            <p style="text-align: center;"><strong>Consider saving or grabbing a Snapshot your work before injecting tab!</strong></p>
-            <p>Since the tab injectors modify your original ABC, you may want to grab a Snapshot of the entire ABC (simply click <strong>Snapshot</strong>) before doing the tab injection operation.</p>
-            <p>If you grab a Snapshot, after the tab injection operation, if there was an issue, you can click <strong>Restore</strong> to get back your original ABC.</p>
-            <p>You may inject Box or Anglo Concertina tablature into the ABC using the following buttons in the <strong>More ABC Tools</strong> dialog:</p>
-            <hr>
-            <p><strong>Inject B/C Box Tab</strong> - Injects B/C Box tablature into the ABC.</p>
-            <hr>
-            <p><strong>Inject C#/D Box Tab</strong> - Injects C#/D Box tablature into the ABC.</p>
-            <hr>
-            <p><strong>Inject Anglo Concertina Tab</strong> - Injects Anglo Concertina tablature into the ABC.</p>
-            <hr>
-            <p><strong>Inject Fiddle Fingerings</strong> - Injects Fiddle/Mandolin fingerings (which finger to use for the note) into the ABC.</p>
-            <p>Note for Mandolin players:</p>
-            <p>This is distinct from the fret number displayed when showing the Mandolin tablature along with the notation.</p>
-            <p>The Mandolin tablature shows which fret to use on the Mandolin. This shows which finger to use on the fret.</p>
-            <hr>
-            <p id="advanced_dulcimer"><strong>Inject Dulcimer Tab</strong> - Injects Mountain Dulcimer tablature into the ABC.</p>
-            <p>The tablature generation solution supports both DAD, DGD, or DAA-tuned instruments with a 6-1/2 fret.</p>
-            <p>Select between "Along High-D String" and "Cross-String" style tablature for the DAD and DGD tunings. (DAA is only available as "Along A String").</p>
-            <p>You may optionally exclude any tunes from the output that don't have complete tablature solutions.</p>
-            <p>This can be very useful when converting large numbers of tunes where you only want to end up with tunes that have complete fret tab solutions.</p>
-            <p>When excluding tunes, a report will be presented after the tab injection with the list of tunes that were excluded from the output.</p>
-            <p>Editing of the tab is possible after the injection.</p>
-            <p>When generating the tab, the following ABC text is added just before every note:</p>
-            <p class="code">"_1;-;3"</p>
-            <p>The "_ tells the ABC renderer to put the tab under the next note.</p>
-            <p>The fret numbers (1, -, and 3 in this example) are then entered, separated by ; which causes the ABC renderer to stack the numbers vertically under the note.</p>
-            <p>Finally, there is a closing " added to complete the tablature entry.</p>
-            <p>If you want to modify the automatically generated tablature, just change the fret numbers to whatever you like. I use - to indicate an open string</p>
-            <hr>
-            <p><strong>Inject Bamboo Flute Tab</strong> - After requesting the bamboo flute key, injects numeric notation tab for the selected key into the ABC.</p>
-            <div class="image_holder_p">
-                <img src="img/bamboo_flute_2.jpg"/>
-            </div>
-            <hr>
-            <p><strong>Inject Shape Note Shapes/Solfège</strong> - Injects "4-shape" or "7-shape" style shape note shapes into the ABC along with optional "fa/sol/la/ti" (4-shape) or "do/re/me/fa/sol/la/ti" (7-shape) solfège note names.</p>
-            <p>It is also possible to inject the solfège note names without the note shapes.</p>
-            <div class="image_holder_p">
-                <img src="img/inject_shape_notes_3.jpg"/>
-            </div>
-            <p>The ABC injected before each note name to select the note head style is one of the following:</p>
-            <p class="code">!style=sn_do! C2<br/>!style=sn_re! D2<br/>!style=sn_mi! E2<br/>!style=sn_fa! F2 <br/>!style=sn_so! G2<br/>!style=sn_la! A2<br/>!style=sn_ti! B2<br/>!style=sn_do! c2<br/>!style=sn_re! d2<br/>!style=sn_mi! e2 <br/>!style=sn_fa! f2<br/>!style=sn_so! g2<br/>!style=sn_la! a2<br/>!style=sn_ti! b2</p>
-            <hr class="hidden-print" id="clearing_tablature">
-            <h1 class="page_break_always h1wide">Clearing the Injected Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>Since the tablature is injected using the ABC chord system, you can easily clear all tab and get back to the original ABC by clicking the <strong>Strip Chords + Injected Tab</strong> button on the <strong>More ABC Tools</strong> dialog.</p>
-            <hr class="hidden-print" id="tablature_settings">
-            <h1 class="page_break_always h1wide">Configuring Tablature Fonts and Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>To configure the tablature fonts and other settings, first click the tool's Settings button, then click <strong>Tablature Injection Settings</strong> at the bottom of the dialog to bring up the tablature injections settings dialog:</p>
-            <div class="image_holder_p">
-                <img src="img/tab_injection_settings_6.jpg"/>
-            </div>
-            <p><strong>Common tablature settings for all instruments:</strong></p>
-            <p><strong>Font family</strong> - Font used for all text injected into the tablature.</p>
-            <p><strong>Tablature font size</strong> - Font size used for the injected tablature text and symbols.</p>
-            <p><strong>%%staffsep value</strong> - Sets spacing between the staves.</p>
-            <p><strong>%%musicspace value</strong> - Sets spacing between the title and the staves.</p>
-            <p><strong>Common tablature settings for Box and Anglo Concertina:</strong></p>
-            <p><strong>Character(s) for Push indication</strong> - Sets the character used in the Box and Anglo Concertina tablature to indicate a bellows push.</p>
-            <p><strong>Character(s) for Draw indication</strong> - Sets the character used in the Box and Anglo Concertina tablature to indicate a bellows draw.</p>
-            <p><strong>Note:</strong> Setting either value blank restores the original default "↓" for Push and "↑" for Draw character values.</p>
-            <p><strong>Use a bar over button name to indicate Draw (overrides Push and Draw characters)</strong> - If checked, draws a bar over the button name for a bellows Draw and no bar for bellows Push.</p>
-            <p>If checked, overrides the use of the Push or Draw characters entered above.</p>
-            <p>Select your preferred tablature position relative to the notation (Above or Below) from the selection menu.</p>
-            <p>When injecting tablature below the notation, you have the option to strip all existing chords and tablature from the ABC before injecting the new tab.</p>
-            <p>Injecting tablature above the notation always strips existing chords and tablature from the ABC before injecting the new tab.</p>
-            <p><strong>Anglo Concertina-specific settings:</strong></p>
-            <p>Select your instrument style: (Jeffries or Wheatstone) from the <strong>Concertina style</strong> selection menu.</p>
-            <p>Select your preferred fingering solution from the <strong>Preferred fingerings</strong> selection menu:</p>
-            <p><strong>On-Row:</strong></p>
-            <p>Jim Van Donsel's original fingering solution, favors center row:</p>
-            <p>Favors playing D5 and E5 on the right-side C-row.</p>
-            <p>For Jeffries-style instruments:</p>
-            <p>Favors right-side top-row 2nd button for C#5 and D#5.</p>
-            <p><strong>Cross-Row:</strong></p>
-            <p>A more cross-row friendly fingering solution:</p>
-            <p>Favors playing the D5 and E5 on the left-side G-row.</p>
-            <p>Favors playing C5 on the left-side G-row draw.</p>
-            <p>Favors playing B4 on the right-side C-row draw.</p>
-            <p>For Jeffries-style instruments:</p>
-            <p>Favors right-side top-row 2nd button for C#5 and D#5.</p>
-            <p><strong>Gary Coover style tab (single notes only, overrides button name and direction settings)</strong> - Check this box if you want Anglo Concertina tab to be generated using the Gary Coover style standard:</p>
-            <p class="code" style="text-align: center;">
-                Left&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Right</br>
-                1a&nbsp;2a&nbsp;3a&nbsp;4a&nbsp;5a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1a&nbsp;2a&nbsp;3a&nbsp;4a&nbsp;5a</br>
-                1&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;&nbsp;5</br>
-            &nbsp;6&nbsp;&nbsp;7&nbsp;&nbsp;8&nbsp;&nbsp;9&nbsp;&nbsp;10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;7&nbsp;&nbsp;8&nbsp;&nbsp;9&nbsp;&nbsp;10</p>
-            <p>Left hand note tab is drawn below the staff.</p>
-            <p>Right hand note tab is drawn above the staff.</p>
-            <p>Notes on the push are represented by the button number.</p>
-            <p>Notes on the draw are represented by the button number with a line above it.</p>
-            <p>Only single melody lines are supported (no chords possible)</p>
-            <p>When selecting the Gary Coover style tab, any custom button names or direction settings will be ignored.</p>
-            <p><strong>Configure Anglo Concertina Tablature Button Names</strong> - Brings up a dialog where you can set the names of the buttons used for Anglo Concertina tab generation:</p>
-            <div class="image_holder_p">
-                <img src="img/anglo_button_names_2.jpg"/>
-            </div>
-            <p>Click <strong>Reset to Default</strong> to reset the button names to the original tool values (L1, L2, L3, ...).</p>
-            <p>Values are saved in browser storage and restored the next time the tool is run.</p>
-            <hr class="hidden-print" id="reading_the_box_tablature">
-            <h1 class="page_break_always">Reading the Box Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p><strong>B/C Box</strong> - Shows standard notation and tablature for a standard 21-button B/C tuned box.</p>
-            <p>The button numbers and pitches used for the tablature match those on this chart:</p>
-            <div class="image_holder_p">
-                <img src="img/BC21.jpg">
-            </div>
-            <p>Notes on the C-row are indicated by numbers: <strong>1, 2, 3, ...</strong></p>
-            <p>Notes on the B-row are indicated by numbers in circles: <span style="font-size:18pt">①, ②, ③, ...</span></p>
-            <p>Push is indicated with a "↓" arrow by default (configurable in the Box and Anglo Concertina Tablature Settings dialog).</p>
-            <p>Draw is indicated with an "↑" arrow (configurable in the Box and Anglo Concertina Tablature Settings dialog).</p>
-            <p><strong>C#/D Box</strong> - Shows standard notation and tablature for a standard 21-button C#/D tuned box.</p>
-            <p>The button numbers and pitches used for the tablature match those on this chart:</p>
-            <div class="image_holder_p">
-                <img src="img/CD21.jpg" style="margin-top:0px;" alt="C#/D Box Button Map" style="margin-top: 20px;" title="C#/D Box Button Map">
-            </div>
-            <p>Notes on the D-row are indicated by numbers: <strong>1, 2, 3,...</strong></p>
-            <p>Notes on the C#-row are indicated by numbers in circles: <span style="font-size:18pt">①, ②, ③, ...</span></p>
-            <p>Push is indicated with a "↓" arrow (configurable in the Box and Anglo Concertina Tablature Settings Dialog).</p>
-            <p>Draw is indicated with an "↑" arrow (configurable in the Box and Anglo Concertina Tablature Settings Dialog).</p>
-            <p><strong>Assumptions about the B/C and C#/D Box tablature solutions:</strong></p>
-            <p>The tablature solution assumes that the "magic" notes (E and B on a B/C, F# and C# on a C#/D) that are available on both rows, will be played on the C-row on a B/C box and on the D-row on a C#/D box.</p>
-            <p><strong>Use of the B/C and C#/D Box tablatures on a 23-button instrument:</strong></p>
-            <p>If you are playing a 23-button instrument, you will need to shift your start position one button higher when playing.</p>
-            <p>Consider your first button as "button zero".</p>
-            <p></p>
-            <hr>
-            <p class="page_break_always" style="text-align: center;"><strong>Tablature Injection Known Issues and Limitations</strong></p>
-            <p><strong>Fails when converting multi-voice tunes:</strong></p>
-            <p>For best results, use source ABC tunes that have a single voice. (i.e. no V: tags)</p>
-            <p>Unpredictable results or a failure to complete the fingering generation may occur with multi-voice ABC files.</p>
-            <p></p>
-            <p><strong>(Anglo Concertina-only) Button direction missing for some less-often used accidentals:</strong></p>
-            <p>After fingering generation, some less-often used accidentals like _E in certain keys may show the correct button, but are missing their direction in the ABC.</p>
-            <p>If you see missing directions on any notes, review the ABC in the ABC editor and correct the direction manually by copying and pasting either a push "↓" or draw "↑" arrow (or other desired symbol) for the missing direction.</p>
-            <p></p>
-            <p><strong>Tunes with key changes mid-tune may not generate correct tablature after the key change:</strong></p>
-            <p>The tablature solutions only use the original key of the tune.</p>
-            <p>If the key changes mid-tune, the tablature solution after that point may not be correct.</p>
-            <p></p>
-            <p><strong>Tunes with [GBd] style chords in square brackets do not generate the correct tablature:</strong></p>
-            <p>You'll need to reduce these down to a single note for the tool to work.</p>
-            <hr class="hidden-print" id="reading_the_concertina_tablature">
-            <h1 class="page_break_always">Reading the Anglo Concertina Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p style="text-align: center;margin-top:36px;"><strong>Wheatstone Layout</strong></p>
-            <div class="image_holder_p">
-                <img src="img/wheatstone_cg.jpg">
-            </div>
-            <p style="text-align: center;margin-top:36px;"><strong>Jeffries Layout</strong></p>
-            <div class="image_holder_p">
-                <img src="img/jeffries_cg.jpg">
-            </div>
-            <p style="text-align: center;margin-top:36px;"><strong>Tablature Button Names</strong></p>
-            <div class="image_holder_p">
-                <img src="img/anglo-fingerings.jpg">
-            </div>
-            <p>Push is indicated with a "↓" arrow by default (configurable in the Box and Anglo Concertina Tablature Settings dialog).</p>
-            <p>Draw is indicated with an "↑" arrow by default (configurable in the Box and Anglo Concertina Tablature Settings dialog).</p>
             <hr class="hidden-print" id="musicxml">
             <h1 class="page_break_always">MusicXML Import Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">
