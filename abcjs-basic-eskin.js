@@ -6144,6 +6144,7 @@ var parseKeyVoice = {};
             case "sn_do":
             case "sn_re":
             case "sn_mi":
+            case "sn_fa":
             case "sn_fa_l":
             case "sn_fa_r":
             case "sn_so":
@@ -6443,7 +6444,7 @@ var parseKeyVoice = {};
           case "style":
             attr = tokenizer.getVoiceToken(line, start, end);
             // MAE 23 Dec 2023 - Added Shaped Note Singing
-            if (attr.warn !== undefined) warn("Expected value for style in voice: " + attr.warn, line, start);else if (attr.err !== undefined) warn("Expected value for style in voice: " + attr.err, line, start);else if (attr.token === 'normal' || attr.token === 'harmonic' || attr.token === 'rhythm' || attr.token === 'x' || attr.token === 'triangle' || attr.token === 'sn_do' || attr.token === 'sn_re' || attr.token === 'sn_mi' || attr.token === 'sn_fa_l' || attr.token === 'sn_fa_r' || attr.token === 'sn_so' || attr.token === 'sn_la' || attr.token === 'sn_ti') multilineVars.voices[id].style = attr.token;else warn("Expected one of [normal, harmonic, rhythm, x, triangle, sn_*] for voice style", line, start);
+            if (attr.warn !== undefined) warn("Expected value for style in voice: " + attr.warn, line, start);else if (attr.err !== undefined) warn("Expected value for style in voice: " + attr.err, line, start);else if (attr.token === 'normal' || attr.token === 'harmonic' || attr.token === 'rhythm' || attr.token === 'x' || attr.token === 'triangle' || attr.token === 'sn_do' || attr.token === 'sn_re' || attr.token === 'sn_mi' || attr.token === 'sn_fa' || attr.token === 'sn_fa_l' || attr.token === 'sn_fa_r' || attr.token === 'sn_so' || attr.token === 'sn_la' || attr.token === 'sn_ti') multilineVars.voices[id].style = attr.token;else warn("Expected one of [normal, harmonic, rhythm, x, triangle, sn_*] for voice style", line, start);
             start += attr.len;
             break;
           // default:
@@ -7704,7 +7705,7 @@ module.exports = MusicParser;
 /***/ (function(module) {
 
 // MAE 23 Dec 2023 - Added Shaped Note Singing glyphs
-module.exports.legalAccents = ['trill', 'lowermordent', 'uppermordent', 'mordent', 'pralltriller', 'accent', 'fermata', 'invertedfermata', 'tenuto', '0', '1', '2', '3', '4', '5', '+', 'wedge', 'open', 'thumb', 'snap', 'turn', 'roll', 'breath', 'shortphrase', 'mediumphrase', 'longphrase', 'segno', 'coda', 'D.S.', 'D.C.', 'fine', 'beambr1', 'beambr2', 'slide', 'marcato', 'upbow', 'downbow', '/', '//', '///', '////', 'trem1', 'trem2', 'trem3', 'trem4', 'turnx', 'invertedturn', 'invertedturnx', 'trill(', 'trill)', 'arpeggio', 'xstem', 'mark', 'umarcato', 'style=normal', 'style=harmonic', 'style=rhythm', 'style=x', 'style=triangle', 'style=sn_do','style=sn_re','style=sn_mi','style=sn_fa_l','style=sn_fa_r','style=sn_so','style=sn_la','style=sn_ti','D.C.alcoda', 'D.C.alfine', 'D.S.alcoda', 'D.S.alfine', 'editorial', 'courtesy'];
+module.exports.legalAccents = ['trill', 'lowermordent', 'uppermordent', 'mordent', 'pralltriller', 'accent', 'fermata', 'invertedfermata', 'tenuto', '0', '1', '2', '3', '4', '5', '+', 'wedge', 'open', 'thumb', 'snap', 'turn', 'roll', 'breath', 'shortphrase', 'mediumphrase', 'longphrase', 'segno', 'coda', 'D.S.', 'D.C.', 'fine', 'beambr1', 'beambr2', 'slide', 'marcato', 'upbow', 'downbow', '/', '//', '///', '////', 'trem1', 'trem2', 'trem3', 'trem4', 'turnx', 'invertedturn', 'invertedturnx', 'trill(', 'trill)', 'arpeggio', 'xstem', 'mark', 'umarcato', 'style=normal', 'style=harmonic', 'style=rhythm', 'style=x', 'style=triangle', 'style=sn_do','style=sn_re','style=sn_mi','style=sn_fa','style=sn_fa_l','style=sn_fa_r','style=sn_so','style=sn_la','style=sn_ti','D.C.alcoda', 'D.C.alfine', 'D.S.alcoda', 'D.S.alfine', 'editorial', 'courtesy'];
 module.exports.volumeDecorations = ['p', 'pp', 'f', 'ff', 'mf', 'mp', 'ppp', 'pppp', 'fff', 'ffff', 'sfz'];
 module.exports.dynamicDecorations = ['crescendo(', 'crescendo)', 'diminuendo(', 'diminuendo)', 'glissando(', 'glissando)', '~(', '~)'];
 module.exports.accentPseudonyms = [['<', 'accent'], ['>', 'accent'], ['tr', 'trill'], ['plus', '+'], ['emphasis', 'accent'], ['^', 'umarcato'], ['marcato', 'umarcato']];
@@ -18075,6 +18076,18 @@ var chartable = {
     7: "noteheads.sn_mi.quarter",
     nostem: "noteheads.sn_mi.quarter"
   },
+  sn_fa: {
+    "-1": "noteheads.sn_fa.half",
+    0: "noteheads.sn_fa.half",
+    1: "noteheads.sn_fa.half",
+    2: "noteheads.sn_fa.quarter",
+    3: "noteheads.sn_fa.quarter",
+    4: "noteheads.sn_fa.quarter",
+    5: "noteheads.sn_fa.quarter",
+    6: "noteheads.sn_fa.quarter",
+    7: "noteheads.sn_fa.quarter",
+    nostem: "noteheads.sn_fa.quarter"
+  },
   sn_fa_l: {
     "-1": "noteheads.sn_fa_l.half",
     0: "noteheads.sn_fa_l.half",
@@ -18854,6 +18867,52 @@ AbstractEngraver.prototype.addNoteToAbcElement = function (abselem, elem, dot, s
     roomTakenRight = Math.max(roomTakenRight, ret.dotshiftx);
   }
 
+  // MAE 25 Dec 2023 - Do we need to do glyph replacement?
+
+  // Corrections for first version
+  if (noteHead && noteHead.c === 'noteheads.sn_fa_l.quarter') {
+    if (dir === 'down'){
+      noteHead.c ='noteheads.sn_fa_r.quarter';
+    }
+  }
+
+  if (noteHead && noteHead.c === 'noteheads.sn_fa_l.half') {
+    if (dir === 'down'){
+      noteHead.c ='noteheads.sn_fa_r.half';
+   }
+  }
+
+  if (noteHead && noteHead.c === 'noteheads.sn_fa_r.quarter') {
+    if (dir != 'down'){
+      noteHead.c ='noteheads.sn_fa_l.quarter';
+    }
+  }
+
+  if (noteHead && noteHead.c === 'noteheads.sn_fa_r.half') {
+    if (dir != 'down'){
+      noteHead.c ='noteheads.sn_fa_l.half';
+    }
+  }
+
+  // Generate sn_fa replacement logic
+  if (noteHead && noteHead.c === 'noteheads.sn_fa.quarter') {
+    if (dir === 'down'){
+      noteHead.c ='noteheads.sn_fa_r.quarter';
+    }
+    else{
+      noteHead.c ='noteheads.sn_fa_l.quarter';    
+    }
+  }
+
+  if (noteHead && noteHead.c === 'noteheads.sn_fa.half') {
+    if (dir === 'down'){
+      noteHead.c ='noteheads.sn_fa_r.half';
+    }
+    else{
+      noteHead.c ='noteheads.sn_fa_l.half';      
+    }
+  }
+
   // draw stem from the furthest note to a pitch above/below the stemmed note
   if (hasStem) {
     var stemHeight = Math.round(70 * this.voiceScale) / 10;
@@ -18865,6 +18924,7 @@ AbstractEngraver.prototype.addNoteToAbcElement = function (abselem, elem, dot, s
     if (p2 < 6 && !stemdir) p2 = 6;
     var dx = dir === "down" || abselem.heads.length === 0 ? 0 : abselem.heads[0].w;
     var width = dir === "down" ? 1 : -1;
+  
     // TODO-PER-HACK: One type of note head has a different placement of the stem. This should be more generically calculated:
     if (noteHead && noteHead.c === 'noteheads.slash.quarter') {
       if (dir === 'down') p2 -= 1;else p1 += 1;
@@ -18899,7 +18959,7 @@ AbstractEngraver.prototype.addNoteToAbcElement = function (abselem, elem, dot, s
     }
 
     if (noteHead && noteHead.c === 'noteheads.sn_fa_l.quarter') {
-      if (dir === 'down') p2 += 1.1;else p1 += 0.55;
+       if (dir === 'down') p2 += 1.1;else p1 += 0.55;
     }
 
     if (noteHead && noteHead.c === 'noteheads.sn_fa_l.half') {
@@ -22200,6 +22260,10 @@ glyphs['noteheads.sn_re.quarter']={d:[['M',0.36,-3.36],['c',0.09,-0.06,0.30,-0.0
 glyphs['noteheads.sn_mi.half']={d:[['M',4.74,-3.39],['c',0.09,-0.03,0.27,-0.03,0.36,0.00],['c',0.12,0.03,4.47,2.88,4.59,2.97],['c',0.09,0.09,0.18,0.30,0.18,0.42],['c',0.00,0.12,-0.09,0.33,-0.18,0.42],['c',-0.12,0.09,-4.47,2.94,-4.59,2.97],['c',-0.09,0.03,-0.24,0.03,-0.33,0.00],['c',-0.12,-0.03,-4.47,-2.88,-4.59,-2.97],['c',-0.09,-0.09,-0.18,-0.30,-0.18,-0.42],['c',0.00,-0.12,0.09,-0.33,0.18,-0.42],['c',0.09,-0.06,4.47,-2.94,4.56,-2.97],['z'],['m',1.35,2.34],['c',-0.75,-0.48,-1.38,-0.87,-1.41,-0.90],['c',-0.03,0.00,-0.66,0.39,-1.41,0.90],['l',-1.35,0.87],['l',0.27,0.18],['c',0.15,0.09,0.87,0.57,1.59,1.05],['c',0.75,0.48,1.38,0.87,1.41,0.90],['l',1.41,-0.90],['l',1.35,-0.87],['l',-0.27,-0.18],['c',-0.15,-0.09,-0.87,-0.57,-1.59,-1.05],['z']],w:9.87,h:6.825},
 
 glyphs['noteheads.sn_mi.quarter']={d:[['M',4.74,-3.39],['c',0.09,-0.03,0.27,-0.03,0.36,0.00],['c',0.12,0.03,4.47,2.88,4.59,2.97],['c',0.09,0.09,0.18,0.30,0.18,0.42],['c',0.00,0.12,-0.09,0.33,-0.18,0.42],['c',-0.12,0.09,-4.47,2.94,-4.59,2.97],['c',-0.09,0.03,-0.24,0.03,-0.33,0.00],['c',-0.12,-0.03,-4.47,-2.88,-4.59,-2.97],['c',-0.09,-0.09,-0.18,-0.30,-0.18,-0.42],['c',0.00,-0.12,0.09,-0.33,0.18,-0.42],['c',0.09,-0.06,4.47,-2.94,4.56,-2.97],['z']],w:9.87,h:6.825};
+
+glyphs['noteheads.sn_fa.half']={d:[['M',0.36,-3.36],['c',0.09,-0.06,0.30,-0.06,4.83,-0.06],['c',4.20,0.00,4.71,0.00,4.83,0.06],['c',0.15,0.06,0.24,0.15,0.30,0.27],['c',0.06,0.12,0.06,0.27,0.06,3.09],['c',0.00,2.82,0.00,2.97,-0.06,3.06],['c',-0.12,0.30,-0.45,0.42,-0.72,0.33],['c',-0.09,-0.03,-9.33,-5.73,-9.42,-5.79],['c',-0.03,-0.06,-0.09,-0.12,-0.12,-0.21],['c',-0.15,-0.27,0.00,-0.63,0.30,-0.75],['z'],['m',8.85,3.12],['l',0.00,-2.01],['l',-3.27,0.00],['c',-2.76,0.00,-3.27,0.00,-3.21,0.03],['c',0.12,0.12,6.45,3.99,6.45,3.99],['c',0.03,0.00,0.03,-0.90,0.03,-2.01],['z']],w:10.379,h:6.839};
+
+glyphs['noteheads.sn_fa.quarter']={d:[['M',0.36,-3.36],['c',0.09,-0.06,0.30,-0.06,4.56,-0.06],['c',3.96,0.00,4.47,0.00,4.59,0.06],['c',0.15,0.06,0.24,0.15,0.30,0.27],['c',0.06,0.12,0.06,0.27,0.06,3.09],['c',0.00,2.82,0.00,2.97,-0.06,3.06],['c',-0.12,0.30,-0.45,0.42,-0.72,0.33],['c',-0.09,-0.03,-8.79,-5.70,-8.91,-5.79],['c',-0.03,-0.06,-0.09,-0.12,-0.12,-0.21],['c',-0.15,-0.27,0.00,-0.63,0.30,-0.75],['z']],w:9.869,h:6.839};
 
 glyphs['noteheads.sn_fa_l.half']={d:[['M',0.36,-3.36],['c',0.09,-0.06,0.30,-0.06,4.83,-0.06],['c',4.20,0.00,4.71,0.00,4.83,0.06],['c',0.15,0.06,0.24,0.15,0.30,0.27],['c',0.06,0.12,0.06,0.27,0.06,3.09],['c',0.00,2.82,0.00,2.97,-0.06,3.06],['c',-0.12,0.30,-0.45,0.42,-0.72,0.33],['c',-0.09,-0.03,-9.33,-5.73,-9.42,-5.79],['c',-0.03,-0.06,-0.09,-0.12,-0.12,-0.21],['c',-0.15,-0.27,0.00,-0.63,0.30,-0.75],['z'],['m',8.85,3.12],['l',0.00,-2.01],['l',-3.27,0.00],['c',-2.76,0.00,-3.27,0.00,-3.21,0.03],['c',0.12,0.12,6.45,3.99,6.45,3.99],['c',0.03,0.00,0.03,-0.90,0.03,-2.01],['z']],w:10.379,h:6.839};
 

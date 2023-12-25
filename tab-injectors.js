@@ -5625,13 +5625,8 @@ var shapeNoteGenerator = function (theABC){
             var glyph = notes[i].glyph;
 
             theTab = glyph;
-
+            
             var theNote = notes[i].normalizedValue;
-
-            // Flip flags for fa if required
-            if ((theNote.toLowerCase() == theNote) && (glyph.indexOf("!style=sn_fa_l!") != -1)){
-                 theTab = theTab.replace("!style=sn_fa_l!","!style=sn_fa_r!");
-            }
 
             var tabLen = theTab.length;
 
@@ -5832,15 +5827,15 @@ var shapeNoteGenerator = function (theABC){
 
         if (gIncludeShapeNoteNames){
             glyph_map = {
-                'c':   '"_fa"!style=sn_fa_l!',
-                '^c':  '"_fa"!style=sn_fa_l!',
+                'c':   '"_fa"!style=sn_fa!',
+                '^c':  '"_fa"!style=sn_fa!',
                 '_d':  '"_sol"!style=sn_so!',
                 'd':   '"_sol"!style=sn_so!',
                 '^d':  '"_sol"!style=sn_so!',
                 '_e':  '"_la"!style=sn_la!',
                 'e':   '"_la"!style=sn_la!',
-                'f':   '"_fa"!style=sn_fa_l!',
-                '^f':  '"_fa"!style=sn_fa_l!',
+                'f':   '"_fa"!style=sn_fa!',
+                '^f':  '"_fa"!style=sn_fa!',
                 '_g':  '"_sol"!style=sn_so!',
                 'g':   '"_sol"!style=sn_so!',
                 '^g':  '"_sol"!style=sn_so!',
@@ -5853,15 +5848,15 @@ var shapeNoteGenerator = function (theABC){
         }
         else{
             glyph_map = {
-                "c":   "!style=sn_fa_l!",
-                "^c":  "!style=sn_fa_l!",
+                "c":   "!style=sn_fa!",
+                "^c":  "!style=sn_fa!",
                 "_d":  "!style=sn_so!",
                 "d":   "!style=sn_so!",
                 "^d":  "!style=sn_so!",
                 "_e":  "!style=sn_la!",
                 "e":   "!style=sn_la!",
-                "f":   "!style=sn_fa_l!",
-                "^f":  "!style=sn_fa_l!",
+                "f":   "!style=sn_fa!",
+                "^f":  "!style=sn_fa!",
                 "_g":  "!style=sn_so!",
                 "g":   "!style=sn_so!",
                 "^g":  "!style=sn_so!",
