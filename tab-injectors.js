@@ -5392,7 +5392,6 @@ var MDTablatureGenerator = function (theABC){
 
 }
 
-
 //
 // shapenote.js
 //
@@ -5825,48 +5824,142 @@ var shapeNoteGenerator = function (theABC){
 
         var glyph_map;
 
-        if (gIncludeShapeNoteNames){
-            glyph_map = {
-                'c':   '"_fa"!style=sn_fa!',
-                '^c':  '"_fa"!style=sn_fa!',
-                '_d':  '"_sol"!style=sn_so!',
-                'd':   '"_sol"!style=sn_so!',
-                '^d':  '"_sol"!style=sn_so!',
-                '_e':  '"_la"!style=sn_la!',
-                'e':   '"_la"!style=sn_la!',
-                'f':   '"_fa"!style=sn_fa!',
-                '^f':  '"_fa"!style=sn_fa!',
-                '_g':  '"_sol"!style=sn_so!',
-                'g':   '"_sol"!style=sn_so!',
-                '^g':  '"_sol"!style=sn_so!',
-                '_a':  '"_la"!style=sn_la!',
-                'a':   '"_la"!style=sn_la!',
-                '^a':  '"_la"!style=sn_la!',
-                '_b':  '"_mi"!style=sn_mi!',
-                'b':   '"_mi"!style=sn_mi!'
-            };
+        switch (gShapeNoteStyle){
+
+            case 0: // Four shape
+                glyph_map = {
+                    "c":   "!style=sn_fa!",
+                    "^c":  "!style=sn_fa!",
+                    "_d":  "!style=sn_so!",
+                    "d":   "!style=sn_so!",
+                    "^d":  "!style=sn_so!",
+                    "_e":  "!style=sn_la!",
+                    "e":   "!style=sn_la!",
+                    "f":   "!style=sn_fa!",
+                    "^f":  "!style=sn_fa!",
+                    "_g":  "!style=sn_so!",
+                    "g":   "!style=sn_so!",
+                    "^g":  "!style=sn_so!",
+                    "_a":  "!style=sn_la!",
+                    "a":   "!style=sn_la!",
+                    "^a":  "!style=sn_la!",
+                    "_b":  "!style=sn_mi!",
+                    "b":   "!style=sn_mi!"
+                };
+                break;
+
+            case 1: // Four shape with note names
+                glyph_map = {
+                    'c':   '"_fa"!style=sn_fa!',
+                    '^c':  '"_fa"!style=sn_fa!',
+                    '_d':  '"_sol"!style=sn_so!',
+                    'd':   '"_sol"!style=sn_so!',
+                    '^d':  '"_sol"!style=sn_so!',
+                    '_e':  '"_la"!style=sn_la!',
+                    'e':   '"_la"!style=sn_la!',
+                    'f':   '"_fa"!style=sn_fa!',
+                    '^f':  '"_fa"!style=sn_fa!',
+                    '_g':  '"_sol"!style=sn_so!',
+                    'g':   '"_sol"!style=sn_so!',
+                    '^g':  '"_sol"!style=sn_so!',
+                    '_a':  '"_la"!style=sn_la!',
+                    'a':   '"_la"!style=sn_la!',
+                    '^a':  '"_la"!style=sn_la!',
+                    '_b':  '"_mi"!style=sn_mi!',
+                    'b':   '"_mi"!style=sn_mi!'
+                };
+                break;
+
+            case 2: // Four shape note names only
+                glyph_map = {
+                    'c':   '"_fa"',
+                    '^c':  '"_fa"',
+                    '_d':  '"_sol"',
+                    'd':   '"_sol"',
+                    '^d':  '"_sol"',
+                    '_e':  '"_la"',
+                    'e':   '"_la"',
+                    'f':   '"_fa"',
+                    '^f':  '"_fa"',
+                    '_g':  '"_sol"',
+                    'g':   '"_sol"',
+                    '^g':  '"_sol"',
+                    '_a':  '"_la"',
+                    'a':   '"_la"',
+                    '^a':  '"_la"',
+                    '_b':  '"_mi"',
+                    'b':   '"_mi"'
+                };
+                break;
+
+            case 3: // Seven shape
+                glyph_map = {
+                    'c':   '!style=sn_do!',
+                    '^c':  '!style=sn_do!',
+                    '_d':  '!style=sn_re!',
+                    'd':   '!style=sn_re!',
+                    '^d':  '!style=sn_re!',
+                    '_e':  '!style=sn_mi!',
+                    'e':   '!style=sn_mi!',
+                    'f':   '!style=sn_fa!',
+                    '^f':  '!style=sn_fa!',
+                    '_g':  '!style=sn_so!',
+                    'g':   '!style=sn_so!',
+                    '^g':  '!style=sn_so!',
+                    '_a':  '!style=sn_la!',
+                    'a':   '!style=sn_la!',
+                    '^a':  '!style=sn_la!',
+                    '_b':  '!style=sn_ti!',
+                    'b':   '!style=sn_ti!'
+                };
+                break;
+
+             case 4: // Seven shape with note names
+               glyph_map = {
+                    'c':   '"_do"!style=sn_do!',
+                    '^c':  '"_do"!style=sn_do!',
+                    '_d':  '"_re"!style=sn_re!',
+                    'd':   '"_re"!style=sn_re!',
+                    '^d':  '"_re"!style=sn_re!',
+                    '_e':  '"_mi"!style=sn_mi!',
+                    'e':   '"_mi"!style=sn_mi!',
+                    'f':   '"_fa"!style=sn_fa!',
+                    '^f':  '"_fa"!style=sn_fa!',
+                    '_g':  '"_sol"!style=sn_so!',
+                    'g':   '"_sol"!style=sn_so!',
+                    '^g':  '"_sol"!style=sn_so!',
+                    '_a':  '"_la"!style=sn_la!',
+                    'a':   '"_la"!style=sn_la!',
+                    '^a':  '"_la"!style=sn_la!',
+                    '_b':  '"_ti"!style=sn_ti!',
+                    'b':   '"_ti"!style=sn_ti!'
+                };
+                break;
+
+            case 5: // Seven shape only note names
+               glyph_map = {
+                    'c':   '"_do"',
+                    '^c':  '"_do"',
+                    '_d':  '"_re"',
+                    'd':   '"_re"',
+                    '^d':  '"_re"',
+                    '_e':  '"_mi"',
+                    'e':   '"_mi"',
+                    'f':   '"_fa"',
+                    '^f':  '"_fa"',
+                    '_g':  '"_sol"',
+                    'g':   '"_sol"',
+                    '^g':  '"_sol"',
+                    '_a':  '"_la"',
+                    'a':   '"_la"',
+                    '^a':  '"_la"',
+                    '_b':  '"_ti"',
+                    'b':   '"_ti"'
+                };
+                break;
+
         }
-        else{
-            glyph_map = {
-                "c":   "!style=sn_fa!",
-                "^c":  "!style=sn_fa!",
-                "_d":  "!style=sn_so!",
-                "d":   "!style=sn_so!",
-                "^d":  "!style=sn_so!",
-                "_e":  "!style=sn_la!",
-                "e":   "!style=sn_la!",
-                "f":   "!style=sn_fa!",
-                "^f":  "!style=sn_fa!",
-                "_g":  "!style=sn_so!",
-                "g":   "!style=sn_so!",
-                "^g":  "!style=sn_so!",
-                "_a":  "!style=sn_la!",
-                "a":   "!style=sn_la!",
-                "^a":  "!style=sn_la!",
-                "_b":  "!style=sn_mi!",
-                "b":   "!style=sn_mi!"
-            };
-        }
+
 
         thisGlyph = glyph_map[note];
 
@@ -6116,7 +6209,8 @@ var shapeNoteGenerator = function (theABC){
             thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%staffsep " + staffSep);
             thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%musicspace " + musicSpace);
 
-            if (gIncludeShapeNoteNames){
+            // If injecting note names, add the annotation font directive
+            if ((gShapeNoteStyle == 1) || (gShapeNoteStyle == 2) || (gShapeNoteStyle == 4) || (gShapeNoteStyle == 5)) {
                 thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
             }
 

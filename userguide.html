@@ -284,7 +284,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_fiddle">Inject Fiddle Fingerings</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_dulcimer">Inject Dulcimer Tab</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_bamboo">Inject Bamboo Flute Tab</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#advanced_shapenoteshapes">Inject Shape Note Shapes</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_shapenoteshapes">Inject Shape Note Shapes/Solfège</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_configuretab">Configure Tablature Injection Settings</a></p>
                     </div>
                     
@@ -861,7 +861,7 @@
             <h1 class="page_break_always">More ABC Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
             <div class="image_holder_p">
-                <img src="img/more_abc_tools_2.jpg"/>
+                <img src="img/more_abc_tools_4.jpg"/>
             </div>
             <hr class="hidden-print" id="advanced_showhidefeatures">
             <h1 class="page_break_always">Hide/Show ABC Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -973,10 +973,13 @@
                 <img src="img/bamboo_flute_2.jpg"/>
             </div>
             <hr>
-            <p id="advanced_shapenoteshapes" class="page_break_always"><strong>Inject Shape Note Shapes</strong> - Injects "4-shape" style shape note shapes into the ABC along with optional fa/sol/la/ti notenames.</p>
+            <p id="advanced_shapenoteshapes" class="page_break_always"><strong>Inject Shape Note Shapes/Solfège</strong> - Injects "4-shape" or "7-shape" style shape note shapes into the ABC along with optional "fa/sol/la/ti" (4-shape) or "do/re/me/fa/sol/la/ti" (7-shape) solfège note names.</p>
+            <p>It is also possible to inject the solfège note names without the note shapes.</p>
             <div class="image_holder_p">
-                <img src="img/inject_shape_notes_1.jpg"/>
+                <img src="img/inject_shape_notes_3.jpg"/>
             </div>
+            <p>The ABC injected before each note name to select the note head style is one of the following:</p>
+            <p class="code">!style=sn_do! C2<br/>!style=sn_re! D2<br/>!style=sn_mi! E2<br/>!style=sn_fa! F2 <br/>!style=sn_so! G2<br/>!style=sn_la! A2<br/>!style=sn_ti! B2<br/>!style=sn_do! c2<br/>!style=sn_re! d2<br/>!style=sn_mi! e2 <br/>!style=sn_fa! f2<br/>!style=sn_so! g2<br/>!style=sn_la! a2<br/>!style=sn_ti! b2</p>
             <hr>
             <p id="advanced_configuretab"><strong>Configure Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for tablature injection.</p>
             <hr class="hidden-print" id="advanced_notationspacingexplorer">
@@ -2151,10 +2154,13 @@
                 <img src="img/bamboo_flute_2.jpg"/>
             </div>
             <hr>
-            <p><strong>Inject Shape Note Shapes</strong> - Injects "4-shape" style shape note shapes into the ABC along with optional fa/sol/la/ti notenames.</p>
+            <p><strong>Inject Shape Note Shapes/Solfège</strong> - Injects "4-shape" or "7-shape" style shape note shapes into the ABC along with optional "fa/sol/la/ti" (4-shape) or "do/re/me/fa/sol/la/ti" (7-shape) solfège note names.</p>
+            <p>It is also possible to inject the solfège note names without the note shapes.</p>
             <div class="image_holder_p">
-                <img src="img/inject_shape_notes_1.jpg"/>
+                <img src="img/inject_shape_notes_3.jpg"/>
             </div>
+            <p>The ABC injected before each note name to select the note head style is one of the following:</p>
+            <p class="code">!style=sn_do! C2<br/>!style=sn_re! D2<br/>!style=sn_mi! E2<br/>!style=sn_fa! F2 <br/>!style=sn_so! G2<br/>!style=sn_la! A2<br/>!style=sn_ti! B2<br/>!style=sn_do! c2<br/>!style=sn_re! d2<br/>!style=sn_mi! e2 <br/>!style=sn_fa! f2<br/>!style=sn_so! g2<br/>!style=sn_la! a2<br/>!style=sn_ti! b2</p>
             <hr class="hidden-print" id="clearing_tablature">
             <h1 class="page_break_always h1wide">Clearing the Injected Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Since the tablature is injected using the ABC chord system, you can easily clear all tab and get back to the original ABC by clicking the <strong>Strip Chords + Injected Tab</strong> button on the <strong>More ABC Tools</strong> dialog.</p>
