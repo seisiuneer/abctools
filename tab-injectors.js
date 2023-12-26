@@ -6354,7 +6354,7 @@ var shapeNoteGenerator = function (theABC){
  
         var nTunes = countTunes(theABC);
 
-        var result = "";
+        var result = FindPreTuneHeader(theABC);
 
         for (var i = 0; i < nTunes; ++i) {
 
