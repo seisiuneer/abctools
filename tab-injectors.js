@@ -523,6 +523,10 @@ var angloFingeringsGenerator = function (theABC, callback){
         }
         keyExtra = keyMatch[3].toLowerCase();
 
+        // Strip any trailing comments
+        var searchExp = /%.*/
+        keyExtra = keyExtra.replace(searchExp,"");
+        keyExtra = keyExtra.trim();
 
         angloLog("Got base key of '" + keySignatureBase + "' and extra of '" + keyExtra + "'");
         
@@ -1072,6 +1076,24 @@ var angloFingeringsGenerator = function (theABC, callback){
 
         }  
 
+        // Sanitize !*! style annotations
+        searchRegExp = /![^!]*!/gm
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }
+
         // Sanitize multi-line comments
         searchRegExp = /^%%begintext((.|\n)*)%%endtext/gm
 
@@ -1588,6 +1610,10 @@ var boxTabGenerator = function (theABC){
         }
         keyExtra = keyMatch[3].toLowerCase();
 
+        // Strip any trailing comments
+        var searchExp = /%.*/
+        keyExtra = keyExtra.replace(searchExp,"");
+        keyExtra = keyExtra.trim();
 
         log("Got base key of '" + keySignatureBase + "' and extra of '" + keyExtra + "'");
 
@@ -2070,6 +2096,24 @@ var boxTabGenerator = function (theABC){
 
         }  
 
+        // Sanitize !*! style annotations
+        searchRegExp = /![^!]*!/gm
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }
+
         // Sanitize multi-line comments
         searchRegExp = /^%%begintext((.|\n)*)%%endtext/gm
 
@@ -2424,6 +2468,10 @@ var bambooFluteTabGenerator = function (theABC){
         }
         keyExtra = keyMatch[3].toLowerCase();
 
+        // Strip any trailing comments
+        var searchExp = /%.*/
+        keyExtra = keyExtra.replace(searchExp,"");
+        keyExtra = keyExtra.trim();
 
         log("Got base key of '" + keySignatureBase + "' and extra of '" + keyExtra + "'");
 
@@ -2893,6 +2941,24 @@ var bambooFluteTabGenerator = function (theABC){
 
         }  
 
+        // Sanitize !*! style annotations
+        searchRegExp = /![^!]*!/gm
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }
+
         // Sanitize multi-line comments
         searchRegExp = /^%%begintext((.|\n)*)%%endtext/gm
 
@@ -3235,6 +3301,10 @@ var ceoltasABCTransformer = function (theABC,doInverse){
         }
         keyExtra = keyMatch[3].toLowerCase();
 
+        // Strip any trailing comments
+        var searchExp = /%.*/
+        keyExtra = keyExtra.replace(searchExp,"");
+        keyExtra = keyExtra.trim();
 
         log("Got base key of '" + keySignatureBase + "' and extra of '" + keyExtra + "'");
 
@@ -3724,6 +3794,24 @@ var ceoltasABCTransformer = function (theABC,doInverse){
 
         }  
 
+        // Sanitize !*! style annotations
+        searchRegExp = /![^!]*!/gm
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }
+
         // Sanitize multi-line comments
         searchRegExp = /^%%begintext((.|\n)*)%%endtext/gm
 
@@ -3999,6 +4087,10 @@ var fiddleFingeringsGenerator = function (theABC){
         }
         keyExtra = keyMatch[3].toLowerCase();
 
+        // Strip any trailing comments
+        var searchExp = /%.*/
+        keyExtra = keyExtra.replace(searchExp,"");
+        keyExtra = keyExtra.trim();
 
         log("Got base key of '" + keySignatureBase + "' and extra of '" + keyExtra + "'");
 
@@ -4278,6 +4370,24 @@ var fiddleFingeringsGenerator = function (theABC){
             }
 
         }  
+
+        // Sanitize !*! style annotations
+        searchRegExp = /![^!]*!/gm
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }
 
         // Sanitize multi-line comments
         searchRegExp = /^%%begintext((.|\n)*)%%endtext/gm
@@ -4606,6 +4716,10 @@ var MDTablatureGenerator = function (theABC){
         }
         keyExtra = keyMatch[3].toLowerCase();
 
+        // Strip any trailing comments
+        var searchExp = /%.*/
+        keyExtra = keyExtra.replace(searchExp,"");
+        keyExtra = keyExtra.trim();
 
         log("Got base key of '" + keySignatureBase + "' and extra of '" + keyExtra + "'");
 
@@ -5082,6 +5196,24 @@ var MDTablatureGenerator = function (theABC){
 
         }  
 
+        // Sanitize !*! style annotations
+        searchRegExp = /![^!]*!/gm
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }
+
         // Sanitize multi-line comments
         searchRegExp = /^%%begintext((.|\n)*)%%endtext/gm
 
@@ -5486,6 +5618,11 @@ var shapeNoteGenerator = function (theABC){
         }
         keyExtra = keyMatch[3].toLowerCase();
 
+        // Strip any trailing comments
+        var searchExp = /%.*/
+        keyExtra = keyExtra.replace(searchExp,"");
+        keyExtra = keyExtra.trim();
+
         gTheKey = keySignatureBase;
 
         // Use an "s" to represent a sharp key signature
@@ -5558,6 +5695,8 @@ var shapeNoteGenerator = function (theABC){
         for (note in explicitSharps) {
             myMap.sharps += explicitSharps[note][1].toUpperCase();
         }
+
+        //console.log("gTheMode = "+gTheMode);
 
         return myMap;
 
@@ -6002,7 +6141,6 @@ var shapeNoteGenerator = function (theABC){
 
             }
 
-
         }
 
         // Sanitize in-abc chords in brackets
@@ -6024,6 +6162,24 @@ var shapeNoteGenerator = function (theABC){
 
         }  
 
+        // Sanitize !*! style annotations
+        searchRegExp = /![^!]*!/gm
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }
+
         // Sanitize multi-line comments
         searchRegExp = /^%%begintext((.|\n)*)%%endtext/gm
 
@@ -6042,7 +6198,7 @@ var shapeNoteGenerator = function (theABC){
 
             }
 
-        } 
+        }         
            
         // Sanitize comments
         searchRegExp = /^%.*$/gm
@@ -6063,7 +6219,7 @@ var shapeNoteGenerator = function (theABC){
             }
 
         }
-
+        
         log("sanitized input:" + sanitizedInput);
 
         // Find all the notes

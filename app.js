@@ -16817,7 +16817,7 @@ function getTuneTitle(thisTune){
 function removeABCTuneHeaders(abcTune) {
 
   // Use a regular expression to match and remove header lines
-  const headerPattern = /^(X:|T:|M:|K:|L:|Q:|W:|Z:|R:|C:|A:|O:|P:|N:|G:|H:|B:|D:|F:|S:|I:|:[A-Za-z]:)[^\r\n]*\r?\n?/gm;
+  const headerPattern = /^(X:|V:|T:|M:|K:|L:|Q:|W:|Z:|R:|C:|A:|O:|P:|N:|G:|H:|B:|D:|F:|S:|I:|:[A-Za-z]:)[^\r\n]*\r?\n?/gm;
   const tuneWithoutHeaders = abcTune.replace(headerPattern, '');
   
   return tuneWithoutHeaders;
