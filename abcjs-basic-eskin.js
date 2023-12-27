@@ -7220,6 +7220,9 @@ var letter_to_accent = function letter_to_accent(line, i) {
       return [1, 'fermata'];
     case 'J':
       return [1, 'slide'];
+    // MAE 27 December 2023 for downward slides
+    case 'j':
+      return [1, 'slidedown'];
     case 'L':
       return [1, 'accent'];
     case 'M':
@@ -7705,7 +7708,7 @@ module.exports = MusicParser;
 /***/ (function(module) {
 
 // MAE 23 Dec 2023 - Added Shaped Note Singing glyphs
-module.exports.legalAccents = ['trill', 'lowermordent', 'uppermordent', 'mordent', 'pralltriller', 'accent', 'fermata', 'invertedfermata', 'tenuto', '0', '1', '2', '3', '4', '5', '+', 'wedge', 'open', 'thumb', 'snap', 'turn', 'roll', 'breath', 'shortphrase', 'mediumphrase', 'longphrase', 'segno', 'coda', 'D.S.', 'D.C.', 'fine', 'beambr1', 'beambr2', 'slide', 'marcato', 'upbow', 'downbow', '/', '//', '///', '////', 'trem1', 'trem2', 'trem3', 'trem4', 'turnx', 'invertedturn', 'invertedturnx', 'trill(', 'trill)', 'arpeggio', 'xstem', 'mark', 'umarcato', 'style=normal', 'style=harmonic', 'style=rhythm', 'style=x', 'style=triangle', 'style=sn_do','style=sn_re','style=sn_mi','style=sn_fa','style=sn_fa_l','style=sn_fa_r','style=sn_so','style=sn_la','style=sn_ti','D.C.alcoda', 'D.C.alfine', 'D.S.alcoda', 'D.S.alfine', 'editorial', 'courtesy'];
+module.exports.legalAccents = ['trill', 'lowermordent', 'uppermordent', 'mordent', 'pralltriller', 'accent', 'fermata', 'invertedfermata', 'tenuto', '0', '1', '2', '3', '4', '5', '+', 'wedge', 'open', 'thumb', 'snap', 'turn', 'roll', 'breath', 'shortphrase', 'mediumphrase', 'longphrase', 'segno', 'coda', 'D.S.', 'D.C.', 'fine', 'beambr1', 'beambr2', 'slide', 'slideup', 'slidedown', 'marcato', 'upbow', 'downbow', '/', '//', '///', '////', 'trem1', 'trem2', 'trem3', 'trem4', 'turnx', 'invertedturn', 'invertedturnx', 'trill(', 'trill)', 'arpeggio', 'xstem', 'mark', 'umarcato', 'style=normal', 'style=harmonic', 'style=rhythm', 'style=x', 'style=triangle', 'style=sn_do','style=sn_re','style=sn_mi','style=sn_fa','style=sn_fa_l','style=sn_fa_r','style=sn_so','style=sn_la','style=sn_ti','D.C.alcoda', 'D.C.alfine', 'D.S.alcoda', 'D.S.alfine', 'editorial', 'courtesy'];
 module.exports.volumeDecorations = ['p', 'pp', 'f', 'ff', 'mf', 'mp', 'ppp', 'pppp', 'fff', 'ffff', 'sfz'];
 module.exports.dynamicDecorations = ['crescendo(', 'crescendo)', 'diminuendo(', 'diminuendo)', 'glissando(', 'glissando)', '~(', '~)'];
 module.exports.accentPseudonyms = [['<', 'accent'], ['>', 'accent'], ['tr', 'trill'], ['plus', '+'], ['emphasis', 'accent'], ['^', 'umarcato'], ['marcato', 'umarcato']];
@@ -19931,11 +19934,12 @@ var closeDecoration = function closeDecoration(voice, decoration, pitch, width, 
       }
       abselem.addFixedX(new RelativeElement(symbol, deltaX, glyphs.getSymbolWidth(symbol), yPos));
     }
+    // MAE 27 December 2023 - Improved visibility for !slide! and J
     if (decoration[i] === "slide" && abselem.heads[0]) {
       var yPos2 = abselem.heads[0].pitch;
       yPos2 -= 2; // TODO-PER: not sure what this fudge factor is.
-      var blank1 = new RelativeElement("", -roomtaken - 15, 0, yPos2 - 1);
-      var blank2 = new RelativeElement("", -roomtaken - 5, 0, yPos2 + 1);
+      var blank1 = new RelativeElement("", -roomtaken - 18, 0, yPos2 - 1);
+      var blank2 = new RelativeElement("", -roomtaken - 7, 0, yPos2 + 1);
       abselem.addFixedX(blank1);
       abselem.addFixedX(blank2);
       voice.addOther(new TieElem({
@@ -19944,7 +19948,37 @@ var closeDecoration = function closeDecoration(voice, decoration, pitch, width, 
         fixedY: true
       }));
     }
+    // MAE 27 December 2023 - for !slideup!
+    if (decoration[i] === "slideup" && abselem.heads[0]) {
+      var yPos2 = abselem.heads[0].pitch;
+      yPos2 -= 2; // TODO-PER: not sure what this fudge factor is.
+      var blank1 = new RelativeElement("", -roomtaken - 18, 0, yPos2 - 1);
+      var blank2 = new RelativeElement("", -roomtaken - 7, 0, yPos2 + 1);
+      abselem.addFixedX(blank1);
+      abselem.addFixedX(blank2);
+      voice.addOther(new TieElem({
+        anchor1: blank1,
+        anchor2: blank2,
+        fixedY: true
+      }));
+    }
+    // MAE 27 December 2023 - for !slidedown! and j
+    if (decoration[i] === "slidedown" && abselem.heads[0]) {
+      var yPos2 = abselem.heads[0].pitch;
+      yPos2 -= 1; // TODO-PER: not sure what this fudge factor is.
+      var blank1 = new RelativeElement("", roomtaken + 5, 0, yPos2 );
+      var blank2 = new RelativeElement("", roomtaken + 16, 0, yPos2 - 2);
+      abselem.addFixedX(blank1);
+      abselem.addFixedX(blank2);
+      voice.addOther(new TieElem({
+        anchor1: blank1,
+        anchor2: blank2,
+        fixedY: true,
+        isSlideDown:true
+      }));
+    }
   }
+ 
   if (yPos === undefined) yPos = pitch;
   return {
     above: yPos,
@@ -21387,8 +21421,8 @@ TieElem.prototype.calcTieDirection = function () {
   // 1) If it is in a grace note group, then the direction is always BELOW.
   // 2) If it is in a single voice, then the direction is always OPPOSITE of the stem (or where the stem would have been in the case of whole notes.)
   // 3) If the stem direction is forced (probably because there are two voices on the same line), then the direction is the SAME as the stem direction.
-
-  if (this.isGrace) this.above = false;else if (this.voiceNumber === 0) this.above = true;else if (this.voiceNumber > 0) this.above = false;else {
+  if (this.isGrace) this.above = false;else if (this.voiceNumber === 0) this.above = true;else if (this.voiceNumber > 0) this.above = false;
+    else {
     var referencePitch;
     if (this.anchor1) referencePitch = this.anchor1.pitch;else if (this.anchor2) referencePitch = this.anchor2.pitch;else referencePitch = 14; // TODO-PER: this can't really happen normally. This would imply that a tie crossed over three lines, something like "C-\nz\nC"
     // Put the arc in the opposite direction of the stem. That isn't always the pitch if one or both of the notes are beamed with something that affects its stem.
@@ -21401,9 +21435,11 @@ TieElem.prototype.calcTieDirection = function () {
 // 2) Slurs are placed over the note heads if all stems go down.
 // 3) If there are both up stems and down stems, prefer placing the slur over.
 // 4) When the staff has opposite stemmed voices, all slurs should be on the stemmed side.
-
+  
 TieElem.prototype.calcSlurDirection = function () {
-  if (this.isGrace) this.above = false;else if (this.voiceNumber === 0) this.above = true;else if (this.voiceNumber > 0) this.above = false;else {
+  // MAE 27 Dec 2023 - for down slides
+  if (this.isGrace) this.above = false;else if (this.isSlidedown) this.above = true;else if (this.voiceNumber === 0) this.above = true;else if (this.voiceNumber > 0) this.above = false;
+  else {
     var hasDownStem = false;
     if (this.anchor1 && this.anchor1.stemDir === "down") hasDownStem = true;
     if (this.anchor2 && this.anchor2.stemDir === "down") hasDownStem = true;
@@ -21467,6 +21503,7 @@ TieElem.prototype.calcSlurY = function () {
     this.startY = this.above ? 14 : 0;
     this.endY = this.above ? 14 : 0;
   }
+
 };
 TieElem.prototype.avoidCollisionAbove = function () {
   // Double check that an interior note in the slur isn't so high that it interferes.
