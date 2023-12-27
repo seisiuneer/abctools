@@ -15543,6 +15543,10 @@ function DoInjectTablature_ShapeNotes(){
 	    { name: "  7-Shape", id: "3" },
 	    { name: "  7-Shape - Include do/re/mi note names below", id: "4" },
 	    { name: "  7-Shape - No shapes, only do/re/mi note names below", id: "5" },
+	    { name: "  Pitch Names", id: "6" },
+	    { name: "  Fixed (Do=C) Solfège", id: "7" },
+	    { name: "  Movable Solfège Do-based Minor", id: "8" },
+	    { name: "  Movable Solfège La-based Minor", id: "9" },
   	];
 
 	// Setup initial values
@@ -15551,14 +15555,14 @@ function DoInjectTablature_ShapeNotes(){
 	};
 
 	const form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Shape Note Shapes/Solfège&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_shapenoteshapes" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
-	  {html: '<p style="margin-top:36px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject Shape Note shapes into all of the tunes in the ABC text area with optional solfège note names below.</p>'},	  
-	  {name: "Shape note style:", id: "shape_note_style", type:"select", options:shape_styles, cssClass:"configure_sn_settings_select"}, 
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Shape Note/Solfège&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_shapenoteshapes" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
+	  {html: '<p style="margin-top:36px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject Shape Note shapes and/or Solfège note names into all the tunes in the ABC text area.</p>'},	  
+	  {name: "Shape Note/Solfège style:", id: "shape_note_style", type:"select", options:shape_styles, cssClass:"configure_sn_settings_select"}, 
 	  {html: '<p style="margin-top:24px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},	  
 
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 680, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -23814,7 +23818,7 @@ var gInjectTab_FontFamily = "Palatino";
 var gInjectTab_TabFontSize = 11;
 var gInjectTab_StaffSep = 80;
 var gInjectTab_MusicSpace = 10;
-var gInjectTab_TabLocation = 0;
+var gInjectTab_TabLocation = 1;
 var gInjectTab_ConcertinaStyle = 0;
 var gInjectTab_ConcertinaFingering = 0;
 var gInjectTab_GaryCoover = false;
@@ -23935,7 +23939,7 @@ function GetInitialConfigurationSettings(){
 		gInjectTab_TabLocation = val;
 	}
 	else{
-		gInjectTab_TabLocation = 0;
+		gInjectTab_TabLocation = 1;
 	}
 
 	val = localStorage.InjectTab_ConcertinaStyle;
@@ -25089,10 +25093,10 @@ function ConfigureTablatureSettings(){
 	};
 
 	const form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Tablature Injection Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#injecting_tablature" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
-	  {html: '<p style="margin-top:18px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>Tablature Font Settings:</strong></p>'},	  
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Tablature/Solfège Injection Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#injecting_tablature" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
+	  {html: '<p style="margin-top:18px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>Tablature/Solfège Font Settings:</strong></p>'},	  
 	  {name: "Font family (Recommended: Palatino):", id: "configure_font_family", type:"text", cssClass:"configure_tab_settings_form_text_wide"},
-	  {name: "Tablature font size (Recommended: 10):", id: "configure_tab_font_size", type:"text", cssClass:"configure_tab_settings_form_text"},
+	  {name: "Tablature/Solfège font size (Recommended: 10):", id: "configure_tab_font_size", type:"text", cssClass:"configure_tab_settings_form_text"},
 	  {name: "%%staffsep value (Recommended: 80):", id: "configure_staffsep", type:"text", cssClass:"configure_tab_settings_form_text"},
 	  {name: "%%musicspace value (Recommended: 10):", id: "configure_musicspace", type:"text", cssClass:"configure_tab_settings_form_text"},
 	  {name: "Character(s) for Push indication (Clearing this field will reset to ↓ ):", id: "configure_pushglyph", type:"text", cssClass:"configure_tab_settings_form_text"},
@@ -25971,7 +25975,7 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<input id="injectmd" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_MD()" type="button" value="Inject Dulcimer Tab" title="Injects Mountain Dulcimer tablature into the ABC">';
 	modal_msg  += '<input id="injectbambooflute" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Bamboo_Flute()" type="button" value="Inject Bamboo Flute Tab" title="Injects Bamboo flute tablature into the ABC">';
 	modal_msg  += '</p>';
-	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="injectshapenotes" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_ShapeNotes()" type="button" value="Inject Shape Note Shapes/Solfège" title="Injects Shape Note shapes with optional solfège note names below into the ABC"><input id="configure_box_advanced" class="btn btn-subdialog configure_box_advanced " onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_roll_explorer" class="btn btn-rollexplorer configure_roll_explorer " onclick="RollExplorer()" type="button" value="Roll Explorer" title="Brings up a tune player where you can experiment with different roll parameters"></p>';	
+	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="injectshapenotes" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_ShapeNotes()" type="button" value="Inject Shape Note/Solfège" title="Injects Shape Note shapes and/or Solfège note names into the ABC"><input id="configure_box_advanced" class="btn btn-subdialog configure_box_advanced " onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_roll_explorer" class="btn btn-rollexplorer configure_roll_explorer " onclick="RollExplorer()" type="button" value="Roll Explorer" title="Brings up a tune player where you can experiment with different roll parameters"></p>';	
 	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_instrument_explorer" class="configure_instrument_explorer button btn btn-instrumentexplorer" onclick="InstrumentExplorer();" type="button" value="MIDI Instrument Explorer" title="Brings up a tune player where you can experiment playing the current tune with different MIDI soundfonts and melody/chord instruments"><input id="configure_swing_explorer" class="btn btn-swingexplorer configure_swing_explorer " onclick="SwingExplorer()" type="button" value="Swing Explorer" title="Brings up a tune player where you can experiment with different swing factor and offset settings"><input id="configure_grace_explorer" class="btn btn-graceexplorer configure_grace_explorer " onclick="GraceExplorer()" type="button" value="Grace Duration Explorer" title="Brings up a tune player where you can experiment with different grace note duration settings"></p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Audio or Images" title="Exports all the tunes in the ABC text area as audio or image files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Specific Tag" title="Brings up the Sort by Specific Tag dialog"><input id="ceoltastransform" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransformDialog()" type="button" value="Comhaltas ABC Transform" title="Transforms the ABC to/from Comhaltas format."></p>';
 	modal_msg += '</div>';

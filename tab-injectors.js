@@ -1077,7 +1077,7 @@ var angloFingeringsGenerator = function (theABC, callback){
         }  
 
         // Sanitize !*! style annotations
-        searchRegExp = /![^!]*!/gm
+        searchRegExp = /![^!\n]*!/gm 
 
         while (m = searchRegExp.exec(sanitizedInput)) {
 
@@ -1134,6 +1134,8 @@ var angloFingeringsGenerator = function (theABC, callback){
 
         }    
 
+        // Sanitize ! 
+        sanitizedInput = sanitizedInput.replaceAll("!","*");
 
         angloLog("orginal input:\n" + input);
 
@@ -2097,7 +2099,7 @@ var boxTabGenerator = function (theABC){
         }  
 
         // Sanitize !*! style annotations
-        searchRegExp = /![^!]*!/gm
+        searchRegExp = /![^!\n]*!/gm 
 
         while (m = searchRegExp.exec(sanitizedInput)) {
 
@@ -2153,6 +2155,9 @@ var boxTabGenerator = function (theABC){
             }
 
         }
+
+        // Sanitize ! 
+        sanitizedInput = sanitizedInput.replaceAll("!","*");
 
         log("sanitized input:" + sanitizedInput);
 
@@ -2942,7 +2947,7 @@ var bambooFluteTabGenerator = function (theABC){
         }  
 
         // Sanitize !*! style annotations
-        searchRegExp = /![^!]*!/gm
+        searchRegExp = /![^!\n]*!/gm 
 
         while (m = searchRegExp.exec(sanitizedInput)) {
 
@@ -2997,7 +3002,10 @@ var bambooFluteTabGenerator = function (theABC){
 
             }
 
-        }        
+        }       
+
+        // Sanitize ! 
+        sanitizedInput = sanitizedInput.replaceAll("!","*");
 
         log("sanitized input:" + sanitizedInput);
 
@@ -3795,7 +3803,7 @@ var ceoltasABCTransformer = function (theABC,doInverse){
         }  
 
         // Sanitize !*! style annotations
-        searchRegExp = /![^!]*!/gm
+        searchRegExp = /![^!\n]*!/gm 
 
         while (m = searchRegExp.exec(sanitizedInput)) {
 
@@ -3850,7 +3858,10 @@ var ceoltasABCTransformer = function (theABC,doInverse){
             }
 
         }
-        
+
+        // Sanitize ! 
+        sanitizedInput = sanitizedInput.replaceAll("!","*");
+      
         log("sanitized input:" + sanitizedInput);
 
         // Find all the notes
@@ -4372,7 +4383,7 @@ var fiddleFingeringsGenerator = function (theABC){
         }  
 
         // Sanitize !*! style annotations
-        searchRegExp = /![^!]*!/gm
+        searchRegExp = /![^!\n]*!/gm 
 
         while (m = searchRegExp.exec(sanitizedInput)) {
 
@@ -4428,6 +4439,9 @@ var fiddleFingeringsGenerator = function (theABC){
             }
 
         }
+
+        // Sanitize ! 
+        sanitizedInput = sanitizedInput.replaceAll("!","*");
 
         log("sanitized input:" + sanitizedInput);
 
@@ -5197,7 +5211,7 @@ var MDTablatureGenerator = function (theABC){
         }  
 
         // Sanitize !*! style annotations
-        searchRegExp = /![^!]*!/gm
+        searchRegExp = /![^!\n]*!/gm 
 
         while (m = searchRegExp.exec(sanitizedInput)) {
 
@@ -5252,7 +5266,10 @@ var MDTablatureGenerator = function (theABC){
             }
 
         }
-        
+
+        // Sanitize ! 
+        sanitizedInput = sanitizedInput.replaceAll("!","*");
+       
         log("sanitized input:" + sanitizedInput);
 
         // Find all the notes
@@ -5895,6 +5912,12 @@ var shapeNoteGenerator = function (theABC){
             isSharpKey = false;
         }
 
+        // Note names and fixed Do are always at C, doesn't do 6 La alteration, but recognizes key signatures for flat/sharps
+        if ((gShapeNoteStyle == 6) || (gShapeNoteStyle == 7)){
+            gTheKey = "C";
+            gTheMode = "Major";
+        }
+
         var theOffset = modeMap[gTheKey];
 
         //console.log("theOffset: "+theOffset);
@@ -5905,10 +5928,13 @@ var shapeNoteGenerator = function (theABC){
 
             var theNoteIndex = scaleMapSharps[note];
 
-            if (gTheMode == "Minor"){
-                theNoteIndex -= 3;
-                if (theNoteIndex < 0){
-                    theNoteIndex += 12;
+            // Note names, fixed Do, or movable do with no La don't do La minor modification
+            if ((gShapeNoteStyle != 6) && (gShapeNoteStyle != 7) && (gShapeNoteStyle != 8)){
+                if (gTheMode == "Minor"){
+                    theNoteIndex -= 3;
+                    if (theNoteIndex < 0){
+                        theNoteIndex += 12;
+                    }
                 }
             }
 
@@ -5927,12 +5953,15 @@ var shapeNoteGenerator = function (theABC){
 
             var theNoteIndex = scaleMapFlats[note];
 
-            if (gTheMode == "Minor"){
-                theNoteIndex -= 3;
-                if (theNoteIndex < 0){
-                    theNoteIndex += 12;
-                }
-             }
+            // Note names, fixed Do, or movable do with no La don't do La minor modification
+            if ((gShapeNoteStyle != 6) && (gShapeNoteStyle != 7) && (gShapeNoteStyle != 8)){
+                if (gTheMode == "Minor"){
+                    theNoteIndex -= 3;
+                    if (theNoteIndex < 0){
+                        theNoteIndex += 12;
+                    }
+                 }
+            }
 
             theNoteIndex -= theOffset;
 
@@ -6097,8 +6126,54 @@ var shapeNoteGenerator = function (theABC){
                 };
                 break;
 
-        }
+           case 6: // Pitch names
+                var glyph_map = {
+                    "c":   '"_C"',
+                    "^c":  '"_C♯"',
+                    "_d":  '"_D♭"',
+                    "d":   '"_D"',
+                    "^d":  '"_D♯"',
+                    "_e":  '"_E♭"',
+                    "e":   '"_E"',
+                    "f":   '"_F"',
+                    "^f":  '"_F♯"',
+                    "_g":  '"_G♭"',
+                    "g":   '"_G"',
+                    "^g":  '"_G♯"',
+                    "_a":  '"_A♭"',
+                    "a":   '"_A"',
+                    "^a":  '"_A♯"',
+                    "_b":  '"_B♭"',
+                    "b":   '"_B"'
+                };
+                break;
 
+            case 7: // Fixed solfege at Do
+            case 8: // Movable solfege
+            case 9: // Movable solfege with la minor
+                var glyph_map = {
+                    "c":   '"_do"',
+                    "^c":  '"_di"',
+                    "_d":  '"_ra"',
+                    "d":   '"_re"',
+                    "^d":  '"_ri"',
+                    "_e":  '"_me"',
+                    "e":   '"_mi"',
+                    "f":   '"_fa"',
+                    "^f":  '"_fi"',
+                    "_g":  '"_se"',
+                    "g":   '"_sol"',
+                    "^g":  '"_si"',
+                    "_a":  '"_le"',
+                    "a":   '"_la"',
+                    "^a":  '"_li"',
+                    "_b":  '"_te"',
+                    "b":   '"_ti"'
+                };
+                break;
+ 
+
+        }
 
         thisGlyph = glyph_map[note];
 
@@ -6163,7 +6238,7 @@ var shapeNoteGenerator = function (theABC){
         }  
 
         // Sanitize !*! style annotations
-        searchRegExp = /![^!]*!/gm
+        searchRegExp = /![^!\n]*!/gm 
 
         while (m = searchRegExp.exec(sanitizedInput)) {
 
@@ -6179,7 +6254,7 @@ var shapeNoteGenerator = function (theABC){
             }
 
         }
-
+ 
         // Sanitize multi-line comments
         searchRegExp = /^%%begintext((.|\n)*)%%endtext/gm
 
@@ -6219,7 +6294,10 @@ var shapeNoteGenerator = function (theABC){
             }
 
         }
-        
+
+        // Sanitize ! 
+        sanitizedInput = sanitizedInput.replaceAll("!","*");
+
         log("sanitized input:" + sanitizedInput);
 
         // Find all the notes
@@ -6366,8 +6444,19 @@ var shapeNoteGenerator = function (theABC){
             thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%musicspace " + musicSpace);
 
             // If injecting note names, add the annotation font directive
-            if ((gShapeNoteStyle == 1) || (gShapeNoteStyle == 2) || (gShapeNoteStyle == 4) || (gShapeNoteStyle == 5)) {
-                thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
+            switch (gShapeNoteStyle){
+                case 1:
+                case 2:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                    thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
+                    break;
+                default:
+                    break;
             }
 
             result += thisTune;
