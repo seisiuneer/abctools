@@ -19070,12 +19070,16 @@ AbstractEngraver.prototype.createNote = function (elem, nostem, isSingleLineStaf
   if (elem.lyric !== undefined) {
     this.addLyric(abselem, elem);
   }
+  // MAE 28 Dec 2023 - To offset downslides left by grace width now passing grace width to createDecoration
+  var graceWidth = 0;
   if (elem.gracenotes !== undefined) {
-    roomtaken += this.addGraceNotes(elem, voice, abselem, notehead, this.stemHeight * this.voiceScale, this.isBagpipes, roomtaken);
-  }
+    graceWidth =  this.addGraceNotes(elem, voice, abselem, notehead, this.stemHeight * this.voiceScale, this.isBagpipes, roomtaken);
+    roomtaken += graceWidth;
+   }
   if (elem.decoration) {
-    this.decoration.createDecoration(voice, elem.decoration, abselem.top, notehead ? notehead.w : 0, abselem, roomtaken, dir, abselem.bottom, elem.positioning, this.hasVocals);
+    this.decoration.createDecoration(voice, elem.decoration, abselem.top, notehead ? notehead.w : 0, abselem, roomtaken, dir, abselem.bottom, elem.positioning, this.hasVocals,graceWidth); // MAE 28 Dec 2023 added graceWidth
   }
+  // MAE 28 Dec 2023 - End of Change
   if (elem.barNumber) {
     abselem.addFixed(new RelativeElement(elem.barNumber, -10, 0, 0, {
       type: "barNumber"
@@ -19246,7 +19250,9 @@ AbstractEngraver.prototype.createBarLine = function (voice, elem, isFirstStaff) 
     abselem.addRight(anchor);
   }
   if (elem.decoration) {
-    this.decoration.createDecoration(voice, elem.decoration, 12, thick ? 3 : 1, abselem, 0, "down", 2, elem.positioning, this.hasVocals);
+
+    // MAE 28 Dec 2023 - Added zero grace width parameter
+    this.decoration.createDecoration(voice, elem.decoration, 12, thick ? 3 : 1, abselem, 0, "down", 2, elem.positioning, this.hasVocals, 0);
   }
   if (thick) {
     dx += 4; //3 hardcoded;
@@ -19905,7 +19911,7 @@ var Decoration = function Decoration() {
   this.minTop = 12; // TODO-PER: this is assuming a 5-line staff. Pass that info in.
   this.minBottom = 0;
 };
-var closeDecoration = function closeDecoration(voice, decoration, pitch, width, abselem, roomtaken, dir, minPitch) {
+var closeDecoration = function closeDecoration(voice, decoration, pitch, width, abselem, roomtaken, dir, minPitch, graceWidth) {
   var yPos;
   for (var i = 0; i < decoration.length; i++) {
     if (decoration[i] === "staccato" || decoration[i] === "tenuto" || decoration[i] === "accent") {
@@ -19966,8 +19972,8 @@ var closeDecoration = function closeDecoration(voice, decoration, pitch, width, 
     if (decoration[i] === "slidedown" && abselem.heads[0]) {
       var yPos2 = abselem.heads[0].pitch;
       yPos2 -= 1; // TODO-PER: not sure what this fudge factor is.
-      var blank1 = new RelativeElement("", roomtaken + 5, 0, yPos2 );
-      var blank2 = new RelativeElement("", roomtaken + 16, 0, yPos2 - 2);
+      var blank1 = new RelativeElement("", roomtaken + 5 - graceWidth, 0, yPos2 );
+      var blank2 = new RelativeElement("", roomtaken + 16 - graceWidth, 0, yPos2 - 2);
       abselem.addFixedX(blank1);
       abselem.addFixedX(blank2);
       voice.addOther(new TieElem({
@@ -20284,7 +20290,8 @@ Decoration.prototype.dynamicDecoration = function (voice, decoration, abselem, p
     voice.addOther(new GlissandoElem(glissando.start, glissando.stop));
   }
 };
-Decoration.prototype.createDecoration = function (voice, decoration, pitch, width, abselem, roomtaken, dir, minPitch, positioning, hasVocals) {
+// MAE 28 Dec 2023 - Added graceWidth for down slide
+Decoration.prototype.createDecoration = function (voice, decoration, pitch, width, abselem, roomtaken, dir, minPitch, positioning, hasVocals, graceWidth) {
   if (!positioning) positioning = {
     ornamentPosition: 'above',
     volumePosition: hasVocals ? 'above' : 'below',
@@ -20296,7 +20303,8 @@ Decoration.prototype.createDecoration = function (voice, decoration, pitch, widt
   compoundDecoration(decoration, pitch, width, abselem, dir);
 
   // treat staccato, accent, and tenuto first (may need to shift other markers)
-  var yPos = closeDecoration(voice, decoration, pitch, width, abselem, roomtaken, dir, minPitch);
+  // MAE 28 Dec 2023 - Added graceWidth for down slide 
+  var yPos = closeDecoration(voice, decoration, pitch, width, abselem, roomtaken, dir, minPitch, graceWidth);
   // yPos is an object containing 'above' and 'below'. That is the placement of the next symbol on either side.
 
   yPos.above = Math.max(yPos.above, this.minTop);
