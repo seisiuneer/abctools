@@ -16795,7 +16795,8 @@ function StringTablature(numLines, lineSpace) {
   this.numLines = numLines;
   this.lineSpace = lineSpace;
   this.verticalSize = this.numLines * this.lineSpace;
-  var pitch = 3;
+  //console.log("StringTablature lineSpace = "+lineSpace);
+  var pitch = lineSpace; // MAE 28 Sep 2023 - Was fixed at 3
   this.bar = {
     pitch: pitch,
     pitch2: lineSpace * numLines,
@@ -17130,6 +17131,10 @@ Plugin.prototype.init = function (abcTune, tuneNumber, params) {
   this.abcTune = abcTune;
   this._super = _super;
   this.linePitch = 3;
+  // MAE 28 Dec 2023 - for less tall text tablature
+  if (params.linePitch){
+    this.linePitch = params.linePitch;
+  }
   this.nbLines = 4;
   this.isTabBig = false;
   this.tabSymbolOffset = 0;

@@ -7387,7 +7387,9 @@ function GetABCJSParams(instrument){
 				label: theLabel,
 				tuning: ['G,,,','G,,','G,'],
 				highestNote: "b'",
-				hideTabSymbol:true
+				hideTabSymbol:true,
+				// Added 28 Dec 2023 for less tall note name tablature
+				linePitch: 2,
 			}],
 			responsive: 'resize',
 			oneSvgPerLine: 'true',
