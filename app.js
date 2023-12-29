@@ -2249,7 +2249,7 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 			thisTitle += " (" + theKey + ")";
 		}
 			
-		theIncipits.push({title:thisTitle,incipit:theTextIncipit});
+		theIncipits.push({title:thisTitle,incipit:theTextIncipit,index:i});
 	}
 
 	// Sorted incipipits requested?
@@ -2260,11 +2260,15 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 
 		var tuneInfo = [];
 		
+		//debugger;
+
 		for (i=0;i<totalTunes;++i){
 
-			tuneInfo.push({title:theIncipits[i].title,incipit:theIncipits[i].incipit});
+			tuneInfo.push({title:theIncipits[i].title,incipit:theIncipits[i].incipit,index:theIncipits[i].index});
 
 		}
+
+		//debugger;
 
 		// sort tunes by name
 		tuneInfo.sort((a, b) => {
@@ -2293,7 +2297,11 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 
 			theIncipits[i].incipit = tuneInfo[i].incipit;
 
+			theIncipits[i].index = tuneInfo[i].index;
+
 		}
+
+		//debugger;
 	}
 
 	for (i=0;i<totalTunes;++i){
@@ -2318,9 +2326,9 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 
 		tunePageMap.push(theCurrentPageNumber);
 
-		if (isSectionHeader){
+		var textWidth = thePDF.getTextWidth(thisTitle);
 
-			var textWidth = thePDF.getTextWidth(thisTitle);
+		if (isSectionHeader){
 
 			thePDF.text(thisTitle, (thePDF.internal.pageSize.getWidth()/3.10) - (textWidth/2), curTop, {align:"left"});
 
@@ -2330,6 +2338,34 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 			thePDF.text(thisTitle, gTEXTINCIPITLEFTMARGIN, curTop, {align:"left"});
 
 			thePDF.text(theTextIncipit, thePaperWidth-gTEXTINCIPITRIGHTMARGIN, curTop, {align:"left"});
+		}
+
+
+		//
+		// Some manual tweaking of the title hyperlink coordinates
+		// is required to get them to match the full notation
+		// hyperlink injection system
+		//
+		var pdfVoff;
+
+		if (gPDFOrientation == "portrait"){
+
+			pdfVoff = 119; 
+
+			if (paperStyle == "a4"){
+				pdfVoff = 125; 
+			}
+
+			gTuneHyperlinks.push({page:theCurrentPageNumber,x:gTEXTINCIPITLEFTMARGIN*1.55,y:(curTop*1.55)-(gTEXTINCIPITTOPOFFSET+pdfVoff),width:(textWidth*1.55),height:TEXTINCIPITLINESPACING*1.55,url:""});
+		}
+		else{
+
+			pdfVoff = 78;
+
+			if (paperStyle == "a4"){
+				pdfVoff = 82;
+			}
+			gTuneHyperlinks.push({page:theCurrentPageNumber,x:gTEXTINCIPITLEFTMARGIN*1.55,y:((curTop-TEXTINCIPITLINESPACING)*1.55)-(gTEXTINCIPITTOPOFFSET+pdfVoff),width:(textWidth*1.55),height:TEXTINCIPITLINESPACING*1.55,url:""});
 
 		}
 
@@ -2363,7 +2399,34 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		}
 	}
 
+	// If sorted, need to shuffle the hyperlink array
+	if (sortTunes){
+
+		// debugger;
+
+		var workingLinks = [];
+
+		for (i=0;i<totalTunes;++i){
+		
+			for (j=0;j<totalTunes;++j){
+		
+				if (theIncipits[j].index == i){
+		
+					workingLinks.push(gTuneHyperlinks[j]);
+		
+					break;
+		
+				}
+			}
+		}
+		
+		// debugger;
+
+		gTuneHyperlinks = workingLinks;
+	}
+
 	return (tunePageMap);
+
 }
 
 //
@@ -2614,6 +2677,37 @@ function GenerateFullTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideF
 		thePDF.setFontSize(FULLTEXTINCIPITFONTSIZE*1.1);
 
 		thePDF.text(thisTitle, FULLTEXTINCIPITLEFTMARGIN, curTop, {align:"left"});
+
+		var textWidth = thePDF.getTextWidth(thisTitle);
+
+		//
+		// Some manual tweaking of the title hyperlink coordinates
+		// is required to get them to match the full notation
+		// hyperlink injection system
+		//
+		var pdfVoff;
+
+		if (gPDFOrientation == "portrait"){
+
+			pdfVoff = 117;
+
+			if (paperStyle == "a4"){
+				pdfVoff = 124;
+			}
+
+			gTuneHyperlinks.push({page:theCurrentPageNumber,x:FULLTEXTINCIPITLEFTMARGIN*1.55,y:(curTop*1.55)-(gTEXTINCIPITTOPOFFSET+pdfVoff),width:(textWidth*1.55),height:1.5*FULLTEXTINCIPITLINESPACING*1.55,url:""});
+		}
+		else{
+
+			pdfVoff = 83;
+
+			if (paperStyle == "a4"){
+				pdfVoff = 83;
+			}
+
+			gTuneHyperlinks.push({page:theCurrentPageNumber,x:FULLTEXTINCIPITLEFTMARGIN*1.55,y:((curTop-FULLTEXTINCIPITLINESPACING)*1.55)-(gTEXTINCIPITTOPOFFSET+pdfVoff),width:(textWidth*1.55),height:1.8*FULLTEXTINCIPITLINESPACING*1.55,url:""});
+
+		}
 
 		curTop += FULLTEXTINCIPITLINESPACING*1.5;
 
@@ -3368,11 +3462,17 @@ function PostProcessTuneHyperlinks(pdf,theLinks,paperStyle,startPage){
 			// Convert the page relative rect to link relative
 			
 			var r = {left:thisLink.x, top:thisLink.y, width: thisLink.width, height: thisLink.height}
+			
+			// // Debug the link location by putting a rect around it
+			// console.log("Link r "+r.left+" "+r.top+" "+r.width+" "+r.height+" "+"URL length: "+thisLink.url.length);
+
+			// pdf.rect(r.left,r.top,r.width,r.height,"S");
 
 			r = pageRect2LinkRect(pdf,r, paperStyle);
-			
+
 			// And the title link
 			pdf.link(r.left,r.top,r.width,r.height,{url:thisLink.url})
+
 
 
 		}
@@ -6546,6 +6646,9 @@ function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform){
 	// Get the position for future page numbers and footers
 	calcPageNumberVerticalOffset(pdf);
 
+	// Track tune hyperlinks
+	gTuneHyperlinks = [];
+
 	setTimeout(function(){
 
 		var theTunePageMap = [];
@@ -6705,6 +6808,10 @@ function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform){
 
 		if (addTOCLinks || addIndexLinks){
 			PostProcessTOCAndIndexLinks(pdf,startPage,endPage,addTOCLinks,theTOCLinkPage,addIndexLinks,theIndexLinkPage);
+		}
+
+		if (gTuneHyperlinks.length > 0){
+			PostProcessTuneHyperlinks(pdf,gTuneHyperlinks,paperStyle,startPage);						
 		}
 		
 		// Did they request a QR code?
