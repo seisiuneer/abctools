@@ -2174,6 +2174,9 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		// Strip out brackets
 		theTextIncipit = theTextIncipit.replace("[","");
 
+		// Strip out brackets
+		theTextIncipit = theTextIncipit.replace("]","");
+
 		// Split the incipit
 		theRawSplits = theTextIncipit.split("|");
 
@@ -2202,6 +2205,8 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		splitAcc = "";
 
 		for(j=0;j<nSplits;++j){
+
+			theSplitIncipit[j] = theSplitIncipit[j].trim();
 
 			splitAcc += theSplitIncipit[j];
 
@@ -2239,11 +2244,11 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 			}
 
 		}
-			
+
 		if (theKey != ""){
 			thisTitle += " (" + theKey + ")";
 		}
-
+			
 		theIncipits.push({title:thisTitle,incipit:theTextIncipit});
 	}
 
@@ -2260,8 +2265,6 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 			tuneInfo.push({title:theIncipits[i].title,incipit:theIncipits[i].incipit});
 
 		}
-
-
 
 		// sort tunes by name
 		tuneInfo.sort((a, b) => {
@@ -2293,8 +2296,6 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		}
 	}
 
-	var firstSectionHeader = true;
-
 	for (i=0;i<totalTunes;++i){
 
 		thisTitle = theIncipits[i].title;
@@ -2309,13 +2310,7 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 			
 			isSectionHeader = true;
 
-			if (!firstSectionHeader){
-
-				curTop += TEXTINCIPITLINESPACING;
-
-			}
-
-			firstSectionHeader = false;
+			curTop += TEXTINCIPITLINESPACING;
 
 		}
 
@@ -2371,6 +2366,327 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 	return (tunePageMap);
 }
 
+//
+// Generate a set of ABC text incipits
+//
+var FULLTEXTINCIPITFONTSIZE = 11;
+var FULLTEXTINCIPITLINESPACING = 9;
+var FULLTEXTINCIPITLEFTMARGIN = 45;
+
+function GenerateFullTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,tunePageMap,sortTunes,bDoCCETransform){
+
+	var thePaperHeight = thePDF.internal.pageSize.getHeight();;
+	var thePaperWidth = thePDF.internal.pageSize.getWidth()/1.55;
+
+	var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + TEXTINCIPITBOTTOMOFFSET);
+
+	var curTop = gTEXTINCIPITTOPOFFSET;
+
+	// Comhaltas tunes are wider, so make the font smaller
+	FULLTEXTINCIPITFONTSIZE = 11;
+	FULLTEXTINCIPITLINESPACING = 9;
+	FULLTEXTINCIPITLEFTMARGIN = 35;
+
+	if (bDoCCETransform){
+		FULLTEXTINCIPITFONTSIZE = 10;
+		FULLTEXTINCIPITLINESPACING = 8;
+		FULLTEXTINCIPITLEFTMARGIN = 30;
+	}
+
+	// Get all the tune titles (uses first T: tag found)
+	var theTitles = GetTunebookIndexTitles();
+
+	var i,j;
+
+	// Set the font size
+	thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
+	thePDF.setFontSize(FULLTEXTINCIPITFONTSIZE);
+
+	var theTune;
+	var theTextIncipit;
+	var theRawSplits;
+	var theSplitIncipit;
+	var searchRegExp;
+	var theLines;
+	var nLines;
+	var nSplits;
+	var splitAcc;
+	var thisTitle;
+	var searchRegExp;
+	var theKey;
+
+	var theIncipits = [];
+
+	// Add the tunes by name and page number
+	for (i=0;i<totalTunes;++i){
+
+		// Get the raw tune ABC
+		theTune = getTuneByIndex(i);
+
+		// If requested, transform it to Comhaltas ABC format
+		// Don't transform section headers
+		if (bDoCCETransform){
+
+			if (theTitles[i].indexOf("*") != 0){
+				theTune = ceoltasABCTransformer(theTune,false,true);
+			}
+
+		}
+
+		// Strip out annotations
+		theTune = StripAnnotationsOne(theTune);
+
+		// Strip out atextnnotations
+		theTune = StripTextAnnotationsOne(theTune);
+
+		// Strip out chord markings
+		theTune = StripChordsOne(theTune);
+
+		// Strip out injected tab
+		theTune = StripTabOne(theTune);
+
+		// We also need to strip the meter markings:
+		searchRegExp = /^M:.*[\r\n]*/gm
+
+		// Strip out tempo markings
+		theTune = theTune.replace(searchRegExp, "");
+
+		// Parse out the first few measures
+		theTune = escape(theTune);
+
+		theLines = theTune.split("%0A");
+
+		nLines = theLines.length;
+
+		// Find the key
+		theKey = "";
+
+		// Find the first line of the tune that has measure separators
+		for (j=0;j<nLines;++j){
+
+			theKey = unescape(theLines[j]); 
+
+			if (theKey.indexOf("K:")!= -1){
+				break;
+			}
+
+		}
+
+		theKey = theKey.replace("K:","");
+		theKey = theKey.trim();
+
+		// Shorten the mode
+		theKey = theKey.replace("Major","maj");
+		theKey = theKey.replace("Minor","min");
+		theKey = theKey.replace("Dorian","dor");
+		theKey = theKey.replace("Mixolydian","mix");
+		theKey = theKey.replace("major","maj");
+		theKey = theKey.replace("minor","min");
+		theKey = theKey.replace("dorian","dor");
+		theKey = theKey.replace("mixolydian","mix");
+		theKey = theKey.replace(" ","");
+
+		var theTextIncipits = [];
+
+		// Find the first line of the tune that has measure separators
+		for (k=0;k<nLines;++k){
+
+			theTextIncipit = unescape(theLines[k]);
+
+			// Skip lines that don't have bar lines
+			if (theTextIncipit.indexOf("|") == -1){
+				continue;
+			}
+
+			// Strip out repeat marks
+			theTextIncipit = theTextIncipit.replace(":","");
+
+			// Strip out brackets
+			theTextIncipit = theTextIncipit.replace("[","");
+
+			// Strip out brackets
+			theTextIncipit = theTextIncipit.replace("]","");
+
+			// Split the incipit
+			theRawSplits = theTextIncipit.split("|");
+
+			theSplitIncipit = [];
+
+			nSplits = theRawSplits.length;
+
+			// Strip out any blank splits
+			for (j=0;j<nSplits;++j){
+
+				if (theRawSplits[j] != ""){
+
+					theSplitIncipit.push(theRawSplits[j]);
+
+				}
+
+			}
+
+			// Use just the first few measures
+			nSplits = theSplitIncipit.length;
+
+			splitAcc = "";
+
+			for(j=0;j<nSplits;++j){
+
+				theSplitIncipit[j] = theSplitIncipit[j].trim();
+
+				splitAcc += theSplitIncipit[j];
+
+				if (j != (nSplits - 1)){
+					splitAcc += " | ";
+				}
+			}
+
+			theTextIncipit = splitAcc;
+
+			// Strip initial bar line
+			if (theTextIncipit.indexOf(" | ") == 0){
+				theTextIncipit = theTextIncipit.substring(3,theTextIncipit.length);
+			}
+
+			theTextIncipits.push(theTextIncipit);
+		}
+
+		thisTitle = theTitles[i];
+
+		thisTitle = thisTitle.trim();
+
+		if (theKey != ""){
+			thisTitle += " (" + theKey + ")";
+		}
+
+		theIncipits.push({title:thisTitle,incipits:theTextIncipits});
+	}
+
+	for (i=0;i<totalTunes;++i){
+
+		thisTitle = theIncipits[i].title;
+
+		var isSectionHeader = false;
+
+		// Strip section header markers
+		if (thisTitle.indexOf("*") == 0){
+
+			thisTitle = thisTitle.replaceAll("*","");
+			thisTitle = thisTitle.trim();
+			
+			isSectionHeader = true;
+
+			curTop += FULLTEXTINCIPITLINESPACING;
+
+		}
+
+		var theTextIncipits = theIncipits[i].incipits;
+
+		var nLines = theTextIncipits.length;
+		
+		// Measure the tune
+		var theTuneHeight = (FULLTEXTINCIPITLINESPACING*1.5);
+		if (nLines > 0){
+			theTuneHeight += ((nLines-1) * FULLTEXTINCIPITLINESPACING);
+		}
+
+		// If it doesn't fit in the remaining space, move it to the next page
+		if ((curTop + theTuneHeight) > pageSizeWithMargins){
+
+			// Bump the page count
+			theCurrentPageNumber++;
+
+			// Add a new page
+			thePDF.addPage(paperStyle,gPDFOrientation); 
+
+			// Set the font size
+			thePDF.setFont("Courier","normal","normal");
+			thePDF.setFontSize(FULLTEXTINCIPITFONTSIZE);
+
+			// Start back at the top
+			curTop = gTEXTINCIPITTOPOFFSET;			
+		}
+
+		tunePageMap.push(theCurrentPageNumber);
+
+		thePDF.setFont(gPDFFont,"bold","normal");
+
+		thePDF.setFontSize(FULLTEXTINCIPITFONTSIZE*1.1);
+
+		thePDF.text(thisTitle, FULLTEXTINCIPITLEFTMARGIN, curTop, {align:"left"});
+
+		curTop += FULLTEXTINCIPITLINESPACING*1.5;
+
+		for (var j=0;j<nLines;++j){
+
+			var theTextIncipit = theTextIncipits[j];
+
+			thePDF.setFont("Courier","normal","normal");
+			
+			thePDF.setFontSize(FULLTEXTINCIPITFONTSIZE);
+
+			thePDF.text(theTextIncipit, FULLTEXTINCIPITLEFTMARGIN, curTop, {align:"left"});
+
+			// Add some space for the next tune
+			if ((j==nLines-1) && (i != (totalTunes-1))){
+
+				curTop += FULLTEXTINCIPITLINESPACING;
+
+			}
+
+			curTop += FULLTEXTINCIPITLINESPACING;
+
+			if (i != (totalTunes - 1)){
+
+				if (curTop > pageSizeWithMargins){
+
+					// Bump the page count
+					theCurrentPageNumber++;
+
+					// Add a new page
+					thePDF.addPage(paperStyle,gPDFOrientation); 
+
+					// Set the font size
+					thePDF.setFont("Courier","normal","normal");
+					thePDF.setFontSize(FULLTEXTINCIPITFONTSIZE);
+
+					// Start back at the top
+					curTop = gTEXTINCIPITTOPOFFSET;
+
+				}
+			}
+
+		}
+
+		if (isSectionHeader){
+
+			curTop += FULLTEXTINCIPITLINESPACING;
+
+		}
+
+		if (i != (totalTunes - 1)){
+
+			if (curTop > pageSizeWithMargins){
+
+				// Bump the page count
+				theCurrentPageNumber++;
+
+				// Add a new page
+				thePDF.addPage(paperStyle,gPDFOrientation); 
+
+				// Set the font size
+				thePDF.setFont("Courier","normal","normal");
+				thePDF.setFontSize(FULLTEXTINCIPITFONTSIZE);
+
+				// Start back at the top
+				curTop = gTEXTINCIPITTOPOFFSET;
+
+			}
+		}
+	}
+
+	return (tunePageMap);
+}
 
 //
 // Tune index page layout constants
@@ -6063,29 +6379,47 @@ function ExportPDF(){
 
 	var thePageOptions = elem.options[elem.selectedIndex].value;
 
+	var textIncipitsRequested = ((thePageOptions == "incipits_abc") || (thePageOptions == "incipits_a4_abc") || (thePageOptions == "incipits_abc_sort") || (thePageOptions == "incipits_a4_abc_sort") || (thePageOptions == "incipits_abc_full") || (thePageOptions == "incipits_a4_abc_full") || (thePageOptions == "incipits_abc_full_cce") || (thePageOptions == "incipits_a4_abc_full_cce"));
+	
 	// Are we doing ABC incipits?
-	var textIncipitsRequested = ((thePageOptions == "incipits_abc") || (thePageOptions == "incipits_a4_abc") || (thePageOptions == "incipits_abc_sort") || (thePageOptions == "incipits_a4_abc_sort"));
+	var bDoFullTunes = ((thePageOptions == "incipits_abc_full") || (thePageOptions == "incipits_a4_abc_full") || (thePageOptions == "incipits_abc_full_cce") || (thePageOptions == "incipits_a4_abc_full_cce"));
+	
+	var bDoCCETransform = ((thePageOptions == "incipits_abc_full_cce") || (thePageOptions == "incipits_a4_abc_full_cce"));
 	
 	// Count the tunes
 	totalTunes = CountTunes();
 	
 	var title = getDescriptiveFileName(totalTunes,true);
 
-	// No, use the normal PDF export path
+	// Exporting text full ABC or text incipits?
 	if (textIncipitsRequested){
 
-		title += "_Incipits";
+		if (bDoFullTunes){
+			if (!bDoCCETransform){
+				title += "_ABC";
+			}
+			else{
+				title += "_Comhaltas";
+			}
+
+		}
+		else{
+			title += "_Incipits";
+		}
 
 		promptForPDFFilename(title,function(fname){
 
 			if (fname){
 
-				ExportTextIncipitsPDF(fname);
+				ExportTextIncipitsPDF(fname,bDoFullTunes,bDoCCETransform);
+
 			}
 		});
 
 	}
 	else{
+
+		// Standard PDF export path
 
 		// Get the page format
 		var elem = document.getElementById("pdfformat");
@@ -6120,7 +6454,7 @@ function ExportPDF(){
 //
 // Export the first few bars of each tune in ABC format
 //
-function ExportTextIncipitsPDF(title){
+function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform){
 
 	// Clear the cancel flag
 	gPDFCancelRequested = false;
@@ -6145,7 +6479,7 @@ function ExportTextIncipitsPDF(title){
 	// What size paper? Letter or A4?
 	var paperStyle = "letter";
 
-	if ((thePageOptions == "incipits_a4_abc") || (thePageOptions == "incipits_a4_abc_sort")) {
+	if ((thePageOptions == "incipits_a4_abc") || (thePageOptions == "incipits_a4_abc_sort")  || (thePageOptions == "incipits_a4_abc_full") || (thePageOptions == "incipits_a4_abc_full_cce")) {
 
 		paperStyle = "a4";
 
@@ -6216,9 +6550,15 @@ function ExportTextIncipitsPDF(title){
 
 		var theTunePageMap = [];
 
-		theTunePageMap = GenerateTextIncipits(pdf,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,TunebookABCSortedIncipitsRequested);
+		if (bDoFullTunes){
+			theTunePageMap = GenerateFullTextIncipits(pdf,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,false,bDoCCETransform);
+			document.getElementById("statustunecount").innerHTML = "Full ABC Text Added!";
+		}
+		else{
+			theTunePageMap = GenerateTextIncipits(pdf,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,TunebookABCSortedIncipitsRequested);
+			document.getElementById("statustunecount").innerHTML = "ABC Incipits Added!";
+		}
 
-		document.getElementById("statustunecount").innerHTML = "ABC Incipits Added!";
 		
 		var totalPages = theCurrentPageNumber;
 
@@ -15167,7 +15507,7 @@ function DoCeoltasTransform(doInverse){
 		sendGoogleAnalytics("inject_tablature","DoCeoltasTransform");
 	}
 
-	gTheABC.value = ceoltasABCTransformer(gTheABC.value,doInverse);
+	gTheABC.value = ceoltasABCTransformer(gTheABC.value,doInverse,false);
 
 	// Set dirty
 	gIsDirty = true;
@@ -25636,9 +25976,11 @@ function PDFExportDialog(bShowTopButtons){
 	    { name: "  One Tune per Page", id: "one" },
 	    { name: "  Multiple Tunes per Page", id: "multi" },
 	    { name: "  Notes Incipits", id: "incipits" },
-	    { name: "  ABC Text Incipits", id: "incipits_abc" },
+ 	    { name: "  ABC Text Incipits", id: "incipits_abc" },
 	    { name: "  ABC Text Incipits Sorted", id: "incipits_abc_sort" },
-  	];
+	    { name: "  ABC Text Complete Tunes", id: "incipits_abc_full" },
+	    { name: "  ABC Text Complete Tunes - Comhaltas ABC", id: "incipits_abc_full_cce" },
+ 	];
 
   	const incipits_columns_list = [
 	    { name: "  One Column", id: 1 },
@@ -25802,6 +26144,14 @@ function PDFExportDialog(bShowTopButtons){
 				if (theTuneLayout == "incipits_abc_sort"){
 					theTuneLayout = "incipits_a4_abc_sort";
 				}
+				else
+				if (theTuneLayout == "incipits_abc_full"){
+					theTuneLayout = "incipits_a4_abc_full";
+				}					
+				else
+				if (theTuneLayout == "incipits_abc_full_cce"){
+					theTuneLayout = "incipits_a4_abc_full_cce";
+				}					
 				else{
 					theTuneLayout += "_a4";
 				}
@@ -25852,8 +26202,6 @@ function PDFExportDialog(bShowTopButtons){
 					gTEXTINCIPITTOPOFFSET = 265;
 					gTEXTINCIPITLEFTMARGIN = 100;
 				 	gTEXTINCIPITRIGHTMARGIN = 210; 
-
-
 				}
 				else{
 					gPageWidth = 785;

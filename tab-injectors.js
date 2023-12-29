@@ -3234,7 +3234,7 @@ var bambooFluteTabGenerator = function (theABC){
 //
 // Put the whole thing in a function for isolation
 //
-var ceoltasABCTransformer = function (theABC,doInverse){
+var ceoltasABCTransformer = function (theABC,doInverse,isForPDF){
 
     var verbose = false;
 
@@ -3250,7 +3250,7 @@ var ceoltasABCTransformer = function (theABC,doInverse){
     //
     // Generate the box tab
     //
-    function transformABC(abcInput,doInverse){
+    function transformABC(abcInput,doInverse,isForPDF){
 
         log("Got input:" + abcInput);
 
@@ -3262,7 +3262,7 @@ var ceoltasABCTransformer = function (theABC,doInverse){
         }
 
         // Generate an array of note objects. Each
-        var notes = getAbcNotes(abcInput,doInverse);
+        var notes = getAbcNotes(abcInput,doInverse,isForPDF);
 
         // Merge the tranformed note names into the ABC notation
         abcOutput = mergeTransformedNotes(abcInput, notes);
@@ -3467,8 +3467,146 @@ var ceoltasABCTransformer = function (theABC,doInverse){
     //
     // From a note name, gets the transformed string
     //
-    function getNoteGlyph(note,doInverse){
+    function getNoteGlyph(note,doInverse,isForPDF){
 
+        if (isForPDF){
+            var glyph_map = {
+                "D,": "D,",
+                "^D,": "D#,",
+                "E,":  "E,",
+                "F,":  "F,",
+                "^F,": "F#,",
+                "_G,": "Gb,",
+                "G,":  "G,",
+                "^G,": "G#,",
+                "_A,": "Ab,",
+                "A,":  "A,",
+                "^A,": "A#,",
+                "_B,": "Bb,",
+                "B,":  "B,",
+                "C":   "C,",
+                "^C":  "C,#",
+                "_D":  "Db",
+                "D":   "D",
+                "^D":  "D#",
+                "_E":  "Eb",
+                "E":   "E",
+                "F":   "F",
+                "^F":  "F#",
+                "_G":  "Gb",
+                "G":   "G",
+                "^G":  "G#",
+                "_A":  "Ab",
+                "A":   "A",
+                "^A":  "A#",
+                "_B":  "Bb",
+                "B":   "B",
+                "c":   "C",
+                "^c":  "C#",
+                "_d":  "Db'",
+                "d":   "D'",
+                "^d":  "D#'",
+                "_e":  "Eb'",
+                "e":   "E'",
+                "f":   "F'",
+                "^f":  "F#'",
+                "_g":  "Gb'",
+                "g":   "G'",
+                "^g":  "G#'",
+                "_a":  "Ab'",
+                "a":   "A'",
+                "^a":  "A#'",
+                "_b":  "Bb'",
+                "b":   "B'",
+                "c'":  "C'",
+                "^c'": "C#'",
+                "_d'": "Db''",
+                "d'":  "D''",
+                "^d'": "D#''",
+                "_e'": "Eb''",
+                "e'":  "E''",
+                "f'":  "F''",
+                "^f'": "F#''",
+                "_g'": "Gb''",
+                "g'": "G''",
+                // Naturals
+                "=D,": "D,",
+                "=E,":  "E,",
+                "=F,":  "F,",
+                "=G,":  "G,",
+                "=A,":  "A,",
+                "=B,":  "B,",
+                "=C":   "C,",
+                "=D":   "D",
+                "=E":   "E",
+                "=F":   "F",
+                "=G":   "G",
+                "=A":   "A",
+                "=B":   "B",
+                "=c":   "C",
+                "=d":   "D'",
+                "=e":   "E'",
+                "=f":   "F'",
+                "=g":   "G'",
+                "=a":   "A'",
+                "=b":   "B'",
+                "=c'":  "C'",
+                "=d'":  "D''",
+                "=e'":  "E''",
+                "=f'":  "F''",
+                "=g'":  "G''",
+                // Don't touch
+                "C'":   "C",
+                "^C'":  "C#",
+                "_D'":  "Db'",
+                "D'":   "D'",
+                "^D'":  "D#'",
+                "_E'":  "Eb'",
+                "E'":   "E'",
+                "F'":   "F'",
+                "^F'":  "F#'",
+                "_G'":  "Gb'",
+                "G'":   "G'",
+                "^G'":  "G#'",
+                "_A'":  "Ab'",
+                "A'":   "A'",
+                "^A'":  "A#'",
+                "_B'":  "Bb'",
+                "B'":   "B'",
+                "C''":  "C'",
+                "^C''": "C#'",
+                "_D''": "Db''",
+                "D''":  "D''",
+                "^D''": "D#''",
+                "_E''": "Eb''",
+                "E''":  "E''",
+                "F''":  "F''",
+                "^F''": "F#''",
+                "_G''": "Gb''",
+                "G''":  "G''",               
+                "=C'":  "C",
+                "=D'":  "D'",
+                "=E'":  "E'",
+                "=F'":  "F'",
+                "=G'":  "G'",
+                "=A'":  "A'",
+                "=B'":  "B'",
+                "=C''": "C'",
+                "=D''": "D''",
+                "=E''": "E''",
+                "=F''": "F''",
+                "=G''": "G''",            
+            };
+
+            var thisGlyph = glyph_map[note];
+
+            if (!thisGlyph){
+                return "x ";
+            }
+
+            return thisGlyph;
+        }
+        else
         if (!doInverse){
 
             var glyph_map = {
@@ -3746,11 +3884,10 @@ var ceoltasABCTransformer = function (theABC,doInverse){
 
             return thisGlyph;           
         }
-
     }
 
     // Returns an array of Notes from the ABC string input
-    function getAbcNotes(input,doInverse) {
+    function getAbcNotes(input,doInverse,isForPDF) {
 
         // Sanitize the input, removing header and footer, but keeping
         // the same offsets for the notes. We'll just replace header
@@ -3879,7 +4016,7 @@ var ceoltasABCTransformer = function (theABC,doInverse){
 
                 log("UnNormalized=" + unNormalizedValue + " normalized=" + normalizedValue);
                 
-                var theGlyph = getNoteGlyph(unNormalizedValue,doInverse);
+                var theGlyph = getNoteGlyph(unNormalizedValue,doInverse,isForPDF);
 
                 notes.push(new Note((m.index), unNormalizedValue, normalizedValue, theGlyph));
             }
@@ -3990,7 +4127,14 @@ var ceoltasABCTransformer = function (theABC,doInverse){
 
             var thisTune = getTuneByIndex(theABC, i);
 
-            thisTune = transformABC(thisTune,doInverse);
+            // Don't inject section header tune fragments
+            if (isSectionHeader(thisTune)){
+                result += thisTune;
+                continue;
+            }
+
+
+            thisTune = transformABC(thisTune,doInverse,isForPDF);
 
             result += thisTune;
 
@@ -6437,6 +6581,14 @@ var shapeNoteGenerator = function (theABC){
         for (var i = 0; i < nTunes; ++i) {
 
             var thisTune = getTuneByIndex(theABC, i);
+
+            // Don't inject section header tune fragments
+            if (isSectionHeader(thisTune)){
+                result += "\n";
+                result += thisTune;
+                result += "\n";
+                continue;
+            }
 
             thisTune = generate_tab(thisTune);
             
