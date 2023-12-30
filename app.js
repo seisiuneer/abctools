@@ -284,6 +284,8 @@ var gPlayerStatusOnLeft = false;
 var gRoll2DefaultParams = "0.95 0.8 1.0 0.75 0.9 1.0 0.75 1.0";
 var gRoll3DefaultParams = "1.45 0.6 1.0 0.75 0.9 1.0 0.75 1.0";
 
+var gDisableNotationRendering = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -8206,6 +8208,11 @@ function fireSelectionChanged(){
 // Main routine for rendering the notation
 //
 function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
+
+	// If notation rendering is disabled, return immediately
+	if (gDisableNotationRendering){
+		return;
+	}
 
 	// Used for rendering time measurement
 	//var currentTime;
@@ -26608,13 +26615,15 @@ function AdvancedSettings(){
 		configure_roll3_default: gRoll3DefaultParams,
 		configure_TuneDatabaseRetryTimeMS: gTuneDatabaseRetryTimeMS,
 		configure_TuneDatabaseRetryCount: gTuneDatabaseRetryCount,
+		configure_DisableRendering: gDisableNotationRendering
 	};
-
 	var form = [
 		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Advanced Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
 		{html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;"><strong>Only change these values if you know what you are doing!</strong></p>'},
   		{name: "Full screen tune display width scaling (percentage) (default is 50):", id: "configure_fullscreen_scaling", type:"number", cssClass:"advanced_settings2_form_text"},
 		{name: "    Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)", id: "configure_comhaltas", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+		{name: "    Disable abcjs notation rendering", id: "configure_DisableRendering", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+
 	];
 
 	if (isDesktopBrowser()){
@@ -26651,6 +26660,9 @@ function AdvancedSettings(){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
+
+			// Disable rendering? (not persistent)
+			gDisableNotationRendering = args.result.configure_DisableRendering;
 
 			// Sanity check the full screen scaling setting
 			gFullScreenScaling = args.result.configure_fullscreen_scaling;
