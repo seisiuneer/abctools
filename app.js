@@ -294,36 +294,47 @@ var gTheABC = document.getElementById("abc");
 // 
 
 //
-// Get the title of a tune from the ABC
-// 
-function getTuneTitle(theTune){
-
-	var neu = escape(theTune);
+// Extract the title from a single tune ABC
+function getTuneTitle(thisTune){
+	
+	var neu = escape(thisTune);
 
 	var Reihe = neu.split("%0D%0A");
 
 	Reihe = neu.split("%0A");
 
+	var title = "";
+
 	for (var j = 0; j < Reihe.length; ++j) {
 
-		Reihe[j] = unescape(Reihe[j]); 
+		Reihe[j] = unescape(Reihe[j]); /* Macht die Steuerzeichen wieder weg */
 
-		var Aktuellereihe = Reihe[j].split(""); 
+		var Aktuellereihe = Reihe[j].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
 
 		if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
 
-			titel = Reihe[j].slice(2);
+			title = Reihe[j].slice(2);
 
-			titel = titel.trim();
+			title = title.trim();
 
-			// Just grab the first title foiund
-			return titel
+			return title;
 
 		}
 	}
 
-	return "Unknown";
+	return "No Title";
+}
 
+//
+// Get the notes for a tune without the header
+//
+function removeABCTuneHeaders(abcTune) {
+
+  // Use a regular expression to match and remove header lines
+  const headerPattern = /^(X:|V:|T:|M:|K:|L:|Q:|W:|Z:|R:|C:|A:|O:|P:|N:|G:|H:|B:|D:|F:|S:|I:|:[A-Za-z]:)[^\r\n]*\r?\n?/gm;
+  const tuneWithoutHeaders = abcTune.replace(headerPattern, '');
+  
+  return tuneWithoutHeaders;
 }
 
 //
@@ -1967,6 +1978,8 @@ function GetTunebookIndexTitles(){
 
 		Reihe = neu.split("%0A");
 
+		var bGotTitle = false;
+
 		for (var j = 0; j < Reihe.length; ++j) {
 
 			Reihe[j] = unescape(Reihe[j]); /* Macht die Steuerzeichen wieder weg */
@@ -1982,10 +1995,17 @@ function GetTunebookIndexTitles(){
 				// Just grab the first title foiund
 				theTitles.push(titel);
 
+				bGotTitle = true;
+
 				break
 
 			}
 		}
+
+		if (!bGotTitle){
+			theTitles.push("No Title");
+		}
+
 	}
 
 	return theTitles;
@@ -17288,97 +17308,12 @@ function DownloadWave(){
 
 
 //
-//
 // Batch .MP3 Export
 //
 
 var gBatchMP3ExportCancelRequested = false;
 var gTheBatchMP3ExportOKButton = null;
 var gTheBatchMP3ExportStatusText = null;
-
-//
-// Extract the title from a single tune ABC
-function getTuneTitle(thisTune){
-	
-	var neu = escape(thisTune);
-
-	var Reihe = neu.split("%0D%0A");
-
-	Reihe = neu.split("%0A");
-
-	var title = "";
-
-	for (var j = 0; j < Reihe.length; ++j) {
-
-		Reihe[j] = unescape(Reihe[j]); /* Macht die Steuerzeichen wieder weg */
-
-		var Aktuellereihe = Reihe[j].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
-
-		if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
-
-			title = Reihe[j].slice(2);
-
-			title = title.trim();
-
-			return title;
-
-		}
-	}
-
-	return title;
-}
-
-//
-// Batch .MP3 Export
-//
-
-var gBatchMP3ExportCancelRequested = false;
-var gTheBatchMP3ExportOKButton = null;
-var gTheBatchMP3ExportStatusText = null;
-
-//
-// Extract the title from a single tune ABC
-function getTuneTitle(thisTune){
-	
-	var neu = escape(thisTune);
-
-	var Reihe = neu.split("%0D%0A");
-
-	Reihe = neu.split("%0A");
-
-	var title = "";
-
-	for (var j = 0; j < Reihe.length; ++j) {
-
-		Reihe[j] = unescape(Reihe[j]); /* Macht die Steuerzeichen wieder weg */
-
-		var Aktuellereihe = Reihe[j].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
-
-		if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
-
-			title = Reihe[j].slice(2);
-
-			title = title.trim();
-
-			return title;
-
-		}
-	}
-
-	return title;
-}
-
-//
-// Get the notes for a tune without the header
-//
-function removeABCTuneHeaders(abcTune) {
-
-  // Use a regular expression to match and remove header lines
-  const headerPattern = /^(X:|V:|T:|M:|K:|L:|Q:|W:|Z:|R:|C:|A:|O:|P:|N:|G:|H:|B:|D:|F:|S:|I:|:[A-Za-z]:)[^\r\n]*\r?\n?/gm;
-  const tuneWithoutHeaders = abcTune.replace(headerPattern, '');
-  
-  return tuneWithoutHeaders;
-}
 
 //
 // Append additional copies of the tune notes for long MP3 generation
