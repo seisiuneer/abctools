@@ -26341,7 +26341,7 @@ function PDFExportDialog(bShowTopButtons){
 					gPAGENUMBERTOP = 296;
 					gTEXTINCIPITTOPOFFSET = 330;
 				 	gTEXTINCIPITLEFTMARGIN = 50;
-				 	gTEXTINCIPITRIGHTMARGIN = 195; 
+				 	gTEXTINCIPITRIGHTMARGIN = 200; 
 				}
 				else{
 					gPageWidth = 535;
@@ -26351,7 +26351,7 @@ function PDFExportDialog(bShowTopButtons){
 					gPAGENUMBERTOP = 313;
 					gTEXTINCIPITTOPOFFSET = 350;
 					gTEXTINCIPITLEFTMARGIN = 50;
-			 		gTEXTINCIPITRIGHTMARGIN = 185;  
+			 		gTEXTINCIPITRIGHTMARGIN = 190;  
 				}
 			}
 			else{
