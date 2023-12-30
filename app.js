@@ -2132,7 +2132,7 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		// Find the key
 		theKey = "";
 
-		// Find the first line of the tune that has measure separators
+		// Find the key
 		for (j=0;j<nLines;++j){
 
 			theKey = unescape(theLines[j]); 
@@ -2157,25 +2157,67 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		theKey = theKey.replace("mixolydian","mix");
 		theKey = theKey.replace(" ","");
 
+		//debugger;
+		//var gotSecondLine = false;
+
 		// Find the first line of the tune that has measure separators
 		for (j=0;j<nLines;++j){
 
 			theTextIncipit = unescape(theLines[j]); 
 
 			if (theTextIncipit.indexOf("|")!= -1){
+
+				//debugger;
+				//console.log("Incipit first line: "+theTextIncipit);
+
+				// Add on the second line line just in case it's a pickup line (KSS case)
+				if (j != (nLines-2)){
+
+					// Find the second line of the tune that has measure separators
+					for (k=j+1;k<nLines;++j){
+
+						var theSecondTextIncipit = unescape(theLines[k]); 
+
+						if (theSecondTextIncipit.indexOf("|")!= -1){
+
+							//debugger;
+
+							//console.log("Incipit second line: "+theSecondTextIncipit);
+
+							//gotSecondLine = true;
+
+							// Add on the second line line just in case it's a pickup line
+							theTextIncipit = theTextIncipit + theSecondTextIncipit;
+							
+							break;
+						}
+
+					}
+
+				}
+
 				break;
 			}
 
 		}
 
+		// if (!gotSecondLine){
+		// 	debugger;
+		// }
+
 		// Strip out repeat marks
-		theTextIncipit = theTextIncipit.replace(":","");
+		theTextIncipit = theTextIncipit.replaceAll(":","");
 
 		// Strip out brackets
-		theTextIncipit = theTextIncipit.replace("[","");
+		theTextIncipit = theTextIncipit.replaceAll("[","");
 
 		// Strip out brackets
-		theTextIncipit = theTextIncipit.replace("]","");
+		theTextIncipit = theTextIncipit.replaceAll("]","");
+
+		// Strip out continuations
+		theTextIncipit = theTextIncipit.replaceAll("\\","");
+
+		//console.log("Final raw incipit : "+theTextIncipit);
 
 		// Split the incipit
 		theRawSplits = theTextIncipit.split("|");
@@ -2221,6 +2263,13 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		if (theTextIncipit.indexOf(" | ") == 0){
 			theTextIncipit = theTextIncipit.substring(3,theTextIncipit.length);
 		}
+
+		// Collapse double spaces to a single space
+		theTextIncipit = theTextIncipit.replaceAll("  "," ");
+
+		//console.log("Final incipit : "+theTextIncipit);
+
+		//console.log("-------------------------");
 
 		thisTitle = theTitles[i];
 
@@ -2330,12 +2379,21 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 
 		if (isSectionHeader){
 
+			thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
+			thePDF.setFontSize(TEXTINCIPITFONTSIZE);
+
 			thePDF.text(thisTitle, (thePDF.internal.pageSize.getWidth()/3.10) - (textWidth/2), curTop, {align:"left"});
 
 		}
 		else{
 
+			thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
+			thePDF.setFontSize(TEXTINCIPITFONTSIZE);
+
 			thePDF.text(thisTitle, gTEXTINCIPITLEFTMARGIN, curTop, {align:"left"});
+
+			thePDF.setFont("Courier","normal","normal");
+			thePDF.setFontSize(TEXTINCIPITFONTSIZE);
 
 			thePDF.text(theTextIncipit, thePaperWidth-gTEXTINCIPITRIGHTMARGIN, curTop, {align:"left"});
 		}
@@ -26283,7 +26341,7 @@ function PDFExportDialog(bShowTopButtons){
 					gPAGENUMBERTOP = 296;
 					gTEXTINCIPITTOPOFFSET = 330;
 				 	gTEXTINCIPITLEFTMARGIN = 50;
-				 	gTEXTINCIPITRIGHTMARGIN = 190; 
+				 	gTEXTINCIPITRIGHTMARGIN = 195; 
 				}
 				else{
 					gPageWidth = 535;
@@ -26293,7 +26351,7 @@ function PDFExportDialog(bShowTopButtons){
 					gPAGENUMBERTOP = 313;
 					gTEXTINCIPITTOPOFFSET = 350;
 					gTEXTINCIPITLEFTMARGIN = 50;
-			 		gTEXTINCIPITRIGHTMARGIN = 185; 
+			 		gTEXTINCIPITRIGHTMARGIN = 185;  
 				}
 			}
 			else{
@@ -26308,7 +26366,7 @@ function PDFExportDialog(bShowTopButtons){
 					gPAGENUMBERTOP = 232;
 					gTEXTINCIPITTOPOFFSET = 265;
 					gTEXTINCIPITLEFTMARGIN = 100;
-				 	gTEXTINCIPITRIGHTMARGIN = 210; 
+				 	gTEXTINCIPITRIGHTMARGIN = 250; 
 				}
 				else{
 					gPageWidth = 785;
@@ -26318,7 +26376,7 @@ function PDFExportDialog(bShowTopButtons){
 					gPAGENUMBERTOP = 232;
 					gTEXTINCIPITTOPOFFSET = 255;
 					gTEXTINCIPITLEFTMARGIN = 105;
-			 		gTEXTINCIPITRIGHTMARGIN = 216; 
+			 		gTEXTINCIPITRIGHTMARGIN = 281; 
 				}
 			}
 
