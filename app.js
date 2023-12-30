@@ -2077,7 +2077,7 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 	// Get all the tune titles (uses first T: tag found)
 	var theTitles = GetTunebookIndexTitles();
 
-	var i,j;
+	var i,j,k;
 
 	// Set the font size
 	thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
@@ -2174,7 +2174,7 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 				if (j != (nLines-2)){
 
 					// Find the second line of the tune that has measure separators
-					for (k=j+1;k<nLines;++j){
+					for (k=j+1;k<nLines;++k){
 
 						var theSecondTextIncipit = unescape(theLines[k]); 
 
@@ -2544,7 +2544,7 @@ function GenerateFullTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideF
 	// Get all the tune titles (uses first T: tag found)
 	var theTitles = GetTunebookIndexTitles();
 
-	var i,j;
+	var i,j,k;
 
 	// Set the font size
 	thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
@@ -10367,7 +10367,7 @@ function searchForTunes() {
 
 		        	thisTitle = theOriginalTitle;
 
-		        	for (k=0;((k<nSettings) && (!maxResultsHit));++k){
+		        	for (var k=0;((k<nSettings) && (!maxResultsHit));++k){
 
 		            	var theABCInfo = gTheFolkFriendDatabase.settings[settingsMap[k]];
 
@@ -10380,7 +10380,7 @@ function searchForTunes() {
 
 		            			var nVariationsSeen = variations_found.length;
 		            			
-		            			for(ii=0;ii<nVariationsSeen;++ii){
+		            			for(var ii=0;ii<nVariationsSeen;++ii){
 		            				if (variations_found[ii] == theABCInfo.tune_id){
 		            					ok_to_process = false;
 		            				}
