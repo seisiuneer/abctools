@@ -2283,6 +2283,16 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 			thisTitle = thisTitle.trim();
 		}
 
+		// Limit the incipit length
+		if (theTextIncipit.length > 40){
+			theTextIncipit = theTextIncipit.substring(0,40);
+			theTextIncipit = theTextIncipit.trim();
+		}
+		else{
+			theTextIncipit = theTextIncipit.trim();
+		}
+
+
 		// If sorting incipits, do the The replacement before appending the key
 		if (sortTunes){
 
@@ -2373,13 +2383,29 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 
 		theTextIncipit = theIncipits[i].incipit;
 
-		tunePageMap.push(theCurrentPageNumber);
-
 		var textWidth = thePDF.getTextWidth(thisTitle);
 
 		if (isSectionHeader){
 
-			thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
+			// Put them on a new page if they aren't the first tune
+			if (i!=0){
+
+				// Bump the page count
+				theCurrentPageNumber++;
+
+				// Add a new page
+				thePDF.addPage(paperStyle,gPDFOrientation); 
+
+				// Set the font size
+				thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
+				thePDF.setFontSize(TEXTINCIPITFONTSIZE);
+
+				// Start back at the top
+				curTop = gTEXTINCIPITTOPOFFSET;
+
+			}
+
+			thePDF.setFont(gPDFFont,"bold","normal");
 			thePDF.setFontSize(TEXTINCIPITFONTSIZE);
 
 			thePDF.text(thisTitle, (thePDF.internal.pageSize.getWidth()/3.10) - (textWidth/2), curTop, {align:"left"});
@@ -2398,6 +2424,7 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 			thePDF.text(theTextIncipit, thePaperWidth-gTEXTINCIPITRIGHTMARGIN, curTop, {align:"left"});
 		}
 
+		tunePageMap.push(theCurrentPageNumber);
 
 		//
 		// Some manual tweaking of the title hyperlink coordinates
@@ -2697,7 +2724,19 @@ function GenerateFullTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideF
 			
 			isSectionHeader = true;
 
-			curTop += FULLTEXTINCIPITLINESPACING;
+			// Put them on a new page if they aren't the first tune
+			if (i != 0){
+
+				// Bump the page count
+				theCurrentPageNumber++;
+
+				// Add a new page
+				thePDF.addPage(paperStyle,gPDFOrientation); 
+
+				// Start back at the top
+				curTop = gTEXTINCIPITTOPOFFSET;
+
+			}
 
 		}
 
@@ -26340,7 +26379,7 @@ function PDFExportDialog(bShowTopButtons){
 					gTOCTOPOFFSET = 330;
 					gPAGENUMBERTOP = 296;
 					gTEXTINCIPITTOPOFFSET = 330;
-				 	gTEXTINCIPITLEFTMARGIN = 50;
+				 	gTEXTINCIPITLEFTMARGIN = 45;
 				 	gTEXTINCIPITRIGHTMARGIN = 200; 
 				}
 				else{
@@ -26350,8 +26389,8 @@ function PDFExportDialog(bShowTopButtons){
 					gTOCTOPOFFSET = 350;
 					gPAGENUMBERTOP = 313;
 					gTEXTINCIPITTOPOFFSET = 350;
-					gTEXTINCIPITLEFTMARGIN = 50;
-			 		gTEXTINCIPITRIGHTMARGIN = 190;  
+					gTEXTINCIPITLEFTMARGIN = 45;
+			 		gTEXTINCIPITRIGHTMARGIN = 195;  
 				}
 			}
 			else{
