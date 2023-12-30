@@ -724,6 +724,20 @@ function ToggleRawMode(){
 
 	//console.log("ToggleRawMode");
 
+	// Standard PDF export not allowed when rendering is disabled
+	if (gDisableNotationRendering){
+
+		var thePrompt = "Highlighting not possible with rendering disabled.";
+		
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+		
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
+
+
 	// Only supported on desktop 
 	if (isMobileBrowser()){
 		return;
@@ -846,6 +860,19 @@ function resetSelectionAfterTranspose(start,end){
 // General purpose tranposer for the currently selected tunes
 //
 function Transpose(transposeAmount) {
+
+	// Transpose requires rendering
+	if (gDisableNotationRendering){
+		
+		var thePrompt = "Transpose not possible with rendering disabled.";
+		
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+		
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
@@ -6638,6 +6665,20 @@ function ExportPDF(){
 	}
 	else{
 
+		// Standard PDF export not allowed when rendering is disabled
+		if (gDisableNotationRendering){
+
+			var thePrompt = "Notation PDF export not possible with rendering disabled.";
+			
+			// Center the string in the prompt
+			thePrompt = makeCenteredPromptString(thePrompt);
+			
+			DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+			return;
+		}
+
+
 		// Standard PDF export path
 
 		// Get the page format
@@ -8231,7 +8272,9 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 
 	// If notation rendering is disabled, return immediately
 	if (gDisableNotationRendering){
+
 		return;
+	
 	}
 
 	// Used for rendering time measurement
@@ -11744,6 +11787,13 @@ function ScrollABCTextIntoView(textarea, selectionStart, selectionEnd, fraction)
 function RenderDivClickHandler(e){
 
 	if (gRenderingPDF){
+
+		return;
+
+	}
+
+	if (gDisableNotationRendering){
+
 		return;
 	}
 
@@ -11795,6 +11845,16 @@ function RenderDivClickHandler(e){
 // Generate the rendering divs
 //
 function GenerateRenderingDivs(nTunes) {
+
+	//console.log("GenerateRenderingDivs");
+
+	if (gDisableNotationRendering){
+
+		//console.log("GenerateRenderingDivs - Rendering disabled");
+
+		return;
+
+	}
 
 	// Clear the div
 	var notationHolder = gTheNotation;
@@ -15418,8 +15478,8 @@ function findSelectedTuneIndex(){
 
 function MakeTuneVisible(forceUpdate){
 
-	// Follows same enable semantics as copy
 
+	// Follows same enable semantics as copy
 	if (gAllowCopy){
 
 		var tuneIndex = findSelectedTuneIndex();
@@ -15438,6 +15498,15 @@ function MakeTuneVisible(forceUpdate){
 			if (isMobileBrowser()){
 				return;
 			}
+		}
+
+		// Rendering disabled.
+		if (gDisableNotationRendering){
+
+			//console.log("MakeTuneVisible - Rendering disabled");
+
+			return;
+			
 		}
 
 		//console.log("Selected tune index = " + tuneIndex);
@@ -26598,6 +26667,28 @@ function AdvancedSettings(){
 
 			// Disable rendering? (not persistent)
 			gDisableNotationRendering = args.result.configure_DisableRendering;
+
+			if (gDisableNotationRendering){
+
+				// Clear the div
+				var notationHolder = gTheNotation;
+				notationHolder.innerHTML = "";
+
+				// Disable raw mode
+				var elem = document.getElementById("rawmodebutton");
+				
+				gRawLastIndex = -1;
+
+				elem.value = "Highlighting Off";
+
+				elem.classList.add("btn-rawmode-off");
+				elem.classList.remove("btn-rawmode-on");
+				
+				gTheABC.style.backgroundColor = "white";
+
+				gRawMode = false;
+
+			}
 
 			// Sanity check the full screen scaling setting
 			gFullScreenScaling = args.result.configure_fullscreen_scaling;
