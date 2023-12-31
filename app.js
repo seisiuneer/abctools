@@ -6691,9 +6691,6 @@ function ExportPDF(){
 		return;
 	}
 
-	// Keep track of use of PDF exporter
-	sendGoogleAnalytics("export","PDF");
-
 	// Get the page format
 	var elem = document.getElementById("pdfformat");
 
@@ -6888,10 +6885,17 @@ function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform){
 		var theTunePageMap = [];
 
 		if (bDoFullTunes){
+
+			// Keep track of use of PDF exporter
+			sendGoogleAnalytics("export","PDFFullText");
+
 			theTunePageMap = GenerateFullTextIncipits(pdf,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,false,bDoCCETransform);
 			document.getElementById("statustunecount").innerHTML = "Full ABC Text Added!";
 		}
 		else{
+			// Keep track of use of PDF exporter
+			sendGoogleAnalytics("export","PDFTextIncipits");
+
 			theTunePageMap = GenerateTextIncipits(pdf,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,TunebookABCSortedIncipitsRequested);
 			document.getElementById("statustunecount").innerHTML = "ABC Incipits Added!";
 		}
@@ -7276,6 +7280,9 @@ function ExportNotationPDF(title) {
 
 	if (incipitsRequested){
 
+		// Keep track of use of PDF exporter
+		sendGoogleAnalytics("export","PDFIncipits");
+
 		// Unless overridden, reduce the space between tunes for single column note incipits
 		if ((gIncipitsColumns == 1) && (!gGotBetweenTuneSpace)){
 
@@ -7378,6 +7385,9 @@ function ExportNotationPDF(title) {
 	}
 
 	function doPDFStepTwo(){
+
+		// Keep track of use of PDF exporter
+		sendGoogleAnalytics("export","PDFFull");
 
 		running_height = PAGETOPOFFSET;
 
@@ -26743,6 +26753,9 @@ function AdvancedSettings(){
 			gDisableNotationRendering = args.result.configure_DisableRendering;
 
 			if (gDisableNotationRendering){
+
+				// Keep track of dialogs
+				sendGoogleAnalytics("action","RenderDisable");
 
 				// Clear the div
 				var notationHolder = gTheNotation;
