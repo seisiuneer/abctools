@@ -2220,7 +2220,7 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 				//console.log("Incipit first line: "+theTextIncipit);
 
 				// Add on the second line line just in case it's a pickup line (KSS case)
-				if (j != (nLines-2)){
+				if (j <= (nLines-2)){
 
 					// Find the second line of the tune that has measure separators
 					for (k=j+1;k<nLines;++k){
