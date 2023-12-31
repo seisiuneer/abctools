@@ -2111,9 +2111,85 @@ var gTEXTINCIPITLEFTMARGIN = 65;
 var gTEXTINCIPITRIGHTMARGIN = 190; 
 var TEXTINCIPITFONTSIZE = 12;
 var TEXTINCIPITLINESPACING = 10;
+var TEXTINCIPITGUTTER = 5;
 //
 // Generate a set of ABC text incipits
 //
+
+//
+// Fit the title and the key in the available space
+// If too wide, truncate with ... 
+//
+function fitIncipitsTitle(thePDF, title, key, widthToFit){
+
+	var thisTitle = title;
+
+	// Should never happen, but catch it anyway
+	if (title == ""){
+
+		thisTitle = "No title";
+
+		if (key != ""){
+			thisTitle += " (" + key + ")";
+		}
+
+		return thisTitle;
+	}
+
+	thisTitle = thisTitle.trim();
+
+	if (key != ""){
+		thisTitle += " (" + key + ")";
+	}
+
+	thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
+	thePDF.setFontSize(TEXTINCIPITFONTSIZE);
+
+	var width = thePDF.getTextWidth(thisTitle);
+
+	if (title == ""){
+		return thisTitle;
+	}
+
+	// Does it fit without modification
+	if (width <= widthToFit){
+		return thisTitle;
+	}
+	// else{
+	// 	console.log("fitIncipitsTitle: "+title+" key: "+key+" widthToFit: "+widthToFit);
+	// 	console.log("width = "+width+" - too wide!");
+	// }
+
+	//debugger;
+
+	// No, need to truncate
+	var postFix = "...";
+	if (key != ""){
+		postFix += " (" + key + ")";
+	}
+
+	var postFixWidth = thePDF.getTextWidth(postFix);
+
+	widthToFit -= postFixWidth;
+	widthToFit -= thePDF.getTextWidth("W");
+
+	var accum = "";
+
+	var titleLength = thisTitle.length;
+	var titleWidth;
+
+	for (var i=0;i<titleLength;++i){
+		accum += thisTitle[i];
+		titleWidth = thePDF.getTextWidth(accum);
+		if (titleWidth > widthToFit){
+			break;
+		}
+	}
+
+	return accum+postFix;
+
+}
+
 function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,tunePageMap,sortTunes){
 
 	var thePaperHeight = thePDF.internal.pageSize.getHeight();;
@@ -2322,16 +2398,6 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 
 		thisTitle = theTitles[i];
 
-		// Limit the title length
-		if (thisTitle.length > 29){
-			thisTitle = thisTitle.substring(0,29);
-			thisTitle = thisTitle.trim();
-			thisTitle += "...";
-		}
-		else{
-			thisTitle = thisTitle.trim();
-		}
-
 		// Limit the incipit length
 		if (theTextIncipit.length > 40){
 			theTextIncipit = theTextIncipit.substring(0,40);
@@ -2353,9 +2419,8 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 
 		}
 
-		if (theKey != ""){
-			thisTitle += " (" + theKey + ")";
-		}
+		// Fit the title in the available space
+		thisTitle = fitIncipitsTitle(thePDF, thisTitle, theKey, ((thePaperWidth-gTEXTINCIPITRIGHTMARGIN) - gTEXTINCIPITLEFTMARGIN) - TEXTINCIPITGUTTER);
 			
 		theIncipits.push({title:thisTitle,incipit:theTextIncipit,index:i});
 	}
@@ -2432,6 +2497,10 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 
 		theTextIncipit = theIncipits[i].incipit;
 
+		// Set the font size
+		thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
+		thePDF.setFontSize(TEXTINCIPITFONTSIZE);
+
 		var textWidth = thePDF.getTextWidth(thisTitle);
 
 		if (isSectionHeader){
@@ -2457,13 +2526,13 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 			thePDF.setFont(gPDFFont,"bold","normal");
 			thePDF.setFontSize(TEXTINCIPITFONTSIZE);
 
+			// Re-measure the section header with the bold font
+			textWidth = thePDF.getTextWidth(thisTitle);
+
 			thePDF.text(thisTitle, (thePDF.internal.pageSize.getWidth()/3.10) - (textWidth/2), curTop, {align:"left"});
 
 		}
 		else{
-
-			thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
-			thePDF.setFontSize(TEXTINCIPITFONTSIZE);
 
 			thePDF.text(thisTitle, gTEXTINCIPITLEFTMARGIN, curTop, {align:"left"});
 
