@@ -2290,6 +2290,11 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 
 			theTextIncipit = unescape(theLines[j]); 
 
+			// Score directives can have bar characters, reject them
+			if (theTextIncipit.indexOf("%%score")!= -1){
+				continue;
+			}
+
 			if (theTextIncipit.indexOf("|")!= -1){
 
 				//debugger;
