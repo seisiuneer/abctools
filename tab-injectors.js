@@ -5988,6 +5988,24 @@ var shapeNoteGenerator = function (theABC){
         "b":  11
     };
 
+    var scaleMapNaturals = {
+        "^b":  0,
+        "=c":  0,
+        "_d":  1,
+        "=d":  2,
+        "_f":  4,
+        "=e":  4,
+        "^e":  5,
+        "=f":  5,
+        "_g":  6,
+        "=g":  7,
+        "_a":  8,
+        "=a":  9,
+        "_b":  10,
+        "=b":  11,
+        "_c":  11
+    };
+
     var inverseScaleMapSharps = {
         "0": "c",
         "1": "^c",
@@ -6004,6 +6022,21 @@ var shapeNoteGenerator = function (theABC){
     };
 
     var inverseScaleMapFlats = {
+        "0": "c",
+        "1": "_d",
+        "2": "d",
+        "3": "_e",
+        "4": "e",
+        "5": "f",
+        "6": "_g",
+        "7": "g",
+        "8": "_a",
+        "9": "a",
+        "10": "_b",
+        "11": "b"
+    };
+
+    var inverseScaleMapNaturals = {
         "0": "c",
         "1": "_d",
         "2": "d",
@@ -6072,15 +6105,33 @@ var shapeNoteGenerator = function (theABC){
 
             var theNoteIndex = scaleMapSharps[note];
 
-            //console.log("doing sharps - theNoteIndex before = "+ theNoteIndex);
+            //console.log("doing sharps - theNoteIndex after scaleMapSharps = "+ theNoteIndex);
 
             var flipAccidental = false;
-            if (!theNoteIndex){
-                theNoteIndex = scaleMapFlats[note];
-                flipAccidental = true;
-            }
+            var isNaturals = false;
+            if (theNoteIndex === undefined){
 
-            //console.log("doing sharps - theNoteIndex after = "+ theNoteIndex);
+                theNoteIndex = scaleMapFlats[note];
+                
+                if ((theNoteIndex !== undefined)){
+
+                    flipAccidental = true;
+
+                    //console.log("doing sharps - theNoteIndex after scaleMapFlats = "+ theNoteIndex);
+
+                }
+                else{
+
+                    //console.log("doing sharps - not sharp or flat: "+note);
+
+                    theNoteIndex = scaleMapNaturals[note];
+
+                    isNaturals = true;
+                    
+                    //console.log("doing sharps - theNoteIndex after scaleMapNaturals = "+ theNoteIndex);
+                }
+
+            }
 
 
             // Note names, fixed Do, or movable do with no La don't do La minor modification
@@ -6106,8 +6157,14 @@ var shapeNoteGenerator = function (theABC){
                 note = inverseScaleMapFlats[theNoteIndex];
 
             }
+            else 
+            if (isNaturals){
+
+                note = inverseScaleMapNaturals[theNoteIndex];
+            
+            } 
             else{
-                
+
                 note = inverseScaleMapSharps[theNoteIndex];
 
             }
@@ -6117,16 +6174,33 @@ var shapeNoteGenerator = function (theABC){
 
             var theNoteIndex = scaleMapFlats[note];
 
-            //console.log("doing flats - theNoteIndex before = "+ theNoteIndex);
+            //console.log("doing flats - theNoteIndex after scaleMapFlats = "+ theNoteIndex);
 
             var flipAccidental = false;
+            var isNaturals = false;
+            if ((theNoteIndex === undefined)){
 
-            if (!theNoteIndex){
                 theNoteIndex = scaleMapSharps[note];
-                flipAccidental = true;
-            }
+                
+                if (theNoteIndex !== undefined){
 
-            //console.log("doing flats - theNoteIndex after = "+ theNoteIndex);
+                    flipAccidental = true;
+
+                    //console.log("doing flats - theNoteIndex after scaleMapSharps = "+ theNoteIndex);
+
+                }
+                else{
+
+                    //console.log("doing flats - not sharp or flat: "+note);
+
+                    theNoteIndex = scaleMapNaturals[note];
+
+                    isNaturals = true;
+                    
+                    //console.log("doing flats - theNoteIndex after scaleMapNaturals = "+ theNoteIndex);
+                }
+
+            }
 
             // Note names, fixed Do, or movable do with no La don't do La minor modification
             if ((gShapeNoteStyle != 6) && (gShapeNoteStyle != 7) && (gShapeNoteStyle != 8)){
@@ -6151,6 +6225,12 @@ var shapeNoteGenerator = function (theABC){
                 note = inverseScaleMapSharps[theNoteIndex];
 
             }
+            else 
+            if (isNaturals){
+
+                note = inverseScaleMapNaturals[theNoteIndex];
+            
+            }  
             else{
 
                 note = inverseScaleMapFlats[theNoteIndex];
@@ -6180,6 +6260,7 @@ var shapeNoteGenerator = function (theABC){
 
             case 0: // Four shape
                 glyph_map = {
+                    "^b":  "!style=sn_fa!",
                     "c":   "!style=sn_fa!",
                     "^c":  "!style=sn_fa!",
                     "_d":  "!style=sn_so!",
@@ -6187,6 +6268,8 @@ var shapeNoteGenerator = function (theABC){
                     "^d":  "!style=sn_so!",
                     "_e":  "!style=sn_la!",
                     "e":   "!style=sn_la!",
+                    "_f":  "!style=sn_la!",
+                    "^e":  "!style=sn_fa!",
                     "f":   "!style=sn_fa!",
                     "^f":  "!style=sn_fa!",
                     "_g":  "!style=sn_so!",
@@ -6196,12 +6279,14 @@ var shapeNoteGenerator = function (theABC){
                     "a":   "!style=sn_la!",
                     "^a":  "!style=sn_la!",
                     "_b":  "!style=sn_mi!",
-                    "b":   "!style=sn_mi!"
+                    "b":   "!style=sn_mi!",
+                    "_c":  "!style=sn_mi!"
                 };
                 break;
 
             case 1: // Four shape with note names
                 glyph_map = {
+                    '^b':  '"_fa"!style=sn_fa!',
                     'c':   '"_fa"!style=sn_fa!',
                     '^c':  '"_fa"!style=sn_fa!',
                     '_d':  '"_sol"!style=sn_so!',
@@ -6209,6 +6294,8 @@ var shapeNoteGenerator = function (theABC){
                     '^d':  '"_sol"!style=sn_so!',
                     '_e':  '"_la"!style=sn_la!',
                     'e':   '"_la"!style=sn_la!',
+                    '_f':  '"_la"!style=sn_la!',
+                    '^e':  '"_fa"!style=sn_fa!',
                     'f':   '"_fa"!style=sn_fa!',
                     '^f':  '"_fa"!style=sn_fa!',
                     '_g':  '"_sol"!style=sn_so!',
@@ -6218,12 +6305,14 @@ var shapeNoteGenerator = function (theABC){
                     'a':   '"_la"!style=sn_la!',
                     '^a':  '"_la"!style=sn_la!',
                     '_b':  '"_mi"!style=sn_mi!',
-                    'b':   '"_mi"!style=sn_mi!'
+                    'b':   '"_mi"!style=sn_mi!',
+                    '_c':  '"_mi"!style=sn_mi!'
                 };
                 break;
 
             case 2: // Four shape note names only
                 glyph_map = {
+                    '^b':  '"_fa"',
                     'c':   '"_fa"',
                     '^c':  '"_fa"',
                     '_d':  '"_sol"',
@@ -6231,6 +6320,8 @@ var shapeNoteGenerator = function (theABC){
                     '^d':  '"_sol"',
                     '_e':  '"_la"',
                     'e':   '"_la"',
+                    '_f':  '"_la"',
+                    '^e':   '"_fa"',
                     'f':   '"_fa"',
                     '^f':  '"_fa"',
                     '_g':  '"_sol"',
@@ -6240,12 +6331,14 @@ var shapeNoteGenerator = function (theABC){
                     'a':   '"_la"',
                     '^a':  '"_la"',
                     '_b':  '"_mi"',
-                    'b':   '"_mi"'
+                    'b':   '"_mi"',
+                    '_c':   '"_mi"'
                 };
                 break;
 
             case 3: // Seven shape
                 glyph_map = {
+                    '^b':  '!style=sn_do!',
                     'c':   '!style=sn_do!',
                     '^c':  '!style=sn_do!',
                     '_d':  '!style=sn_re!',
@@ -6253,6 +6346,8 @@ var shapeNoteGenerator = function (theABC){
                     '^d':  '!style=sn_re!',
                     '_e':  '!style=sn_mi!',
                     'e':   '!style=sn_mi!',
+                    '_f':  '!style=sn_mi!',
+                    '^e':  '!style=sn_fa!',
                     'f':   '!style=sn_fa!',
                     '^f':  '!style=sn_fa!',
                     '_g':  '!style=sn_so!',
@@ -6262,12 +6357,14 @@ var shapeNoteGenerator = function (theABC){
                     'a':   '!style=sn_la!',
                     '^a':  '!style=sn_la!',
                     '_b':  '!style=sn_ti!',
-                    'b':   '!style=sn_ti!'
+                    'b':   '!style=sn_ti!',
+                    '_c':  '!style=sn_ti!'
                 };
                 break;
 
              case 4: // Seven shape with note names
                glyph_map = {
+                    '^b':  '"_do"!style=sn_do!',
                     'c':   '"_do"!style=sn_do!',
                     '^c':  '"_do"!style=sn_do!',
                     '_d':  '"_re"!style=sn_re!',
@@ -6275,6 +6372,8 @@ var shapeNoteGenerator = function (theABC){
                     '^d':  '"_re"!style=sn_re!',
                     '_e':  '"_mi"!style=sn_mi!',
                     'e':   '"_mi"!style=sn_mi!',
+                    '_f':  '"_mi"!style=sn_mi!',
+                    '^e':   '"_fa"!style=sn_fa!',
                     'f':   '"_fa"!style=sn_fa!',
                     '^f':  '"_fa"!style=sn_fa!',
                     '_g':  '"_sol"!style=sn_so!',
@@ -6284,12 +6383,14 @@ var shapeNoteGenerator = function (theABC){
                     'a':   '"_la"!style=sn_la!',
                     '^a':  '"_la"!style=sn_la!',
                     '_b':  '"_ti"!style=sn_ti!',
-                    'b':   '"_ti"!style=sn_ti!'
+                    'b':   '"_ti"!style=sn_ti!',
+                    '_c':  '"_ti"!style=sn_ti!'
                 };
                 break;
 
             case 5: // Seven shape only note names
                glyph_map = {
+                    '^b':  '"_do"',
                     'c':   '"_do"',
                     '^c':  '"_do"',
                     '_d':  '"_re"',
@@ -6297,6 +6398,8 @@ var shapeNoteGenerator = function (theABC){
                     '^d':  '"_re"',
                     '_e':  '"_mi"',
                     'e':   '"_mi"',
+                    '_f':  '"_mi"',
+                    '^e':   '"_fa"',
                     'f':   '"_fa"',
                     '^f':  '"_fa"',
                     '_g':  '"_sol"',
@@ -6306,12 +6409,14 @@ var shapeNoteGenerator = function (theABC){
                     'a':   '"_la"',
                     '^a':  '"_la"',
                     '_b':  '"_ti"',
-                    'b':   '"_ti"'
+                    'b':   '"_ti"',
+                    '_c':  '"_ti"'
                 };
                 break;
 
            case 6: // Pitch names
                 var glyph_map = {
+                    "^b":   '"_C"',
                     "c":   '"_C"',
                     "^c":  '"_C♯"',
                     "_d":  '"_D♭"',
@@ -6319,6 +6424,8 @@ var shapeNoteGenerator = function (theABC){
                     "^d":  '"_D♯"',
                     "_e":  '"_E♭"',
                     "e":   '"_E"',
+                    "_f":  '"_E"',
+                    "^e":   '"_F"',
                     "f":   '"_F"',
                     "^f":  '"_F♯"',
                     "_g":  '"_G♭"',
@@ -6328,7 +6435,8 @@ var shapeNoteGenerator = function (theABC){
                     "a":   '"_A"',
                     "^a":  '"_A♯"',
                     "_b":  '"_B♭"',
-                    "b":   '"_B"'
+                    "b":   '"_B"',
+                    "_c":  '"_B"'
                 };
                 break;
 
@@ -6336,6 +6444,7 @@ var shapeNoteGenerator = function (theABC){
             case 8: // Movable solfege
             case 9: // Movable solfege with la minor
                 var glyph_map = {
+                    "^b":   '"_do"',
                     "c":   '"_do"',
                     "^c":  '"_di"',
                     "_d":  '"_ra"',
@@ -6343,6 +6452,8 @@ var shapeNoteGenerator = function (theABC){
                     "^d":  '"_ri"',
                     "_e":  '"_me"',
                     "e":   '"_mi"',
+                    "_f":  '"_mi"',
+                    "^e":   '"_fa"',
                     "f":   '"_fa"',
                     "^f":  '"_fi"',
                     "_g":  '"_se"',
@@ -6352,7 +6463,8 @@ var shapeNoteGenerator = function (theABC){
                     "a":   '"_la"',
                     "^a":  '"_li"',
                     "_b":  '"_te"',
-                    "b":   '"_ti"'
+                    "b":   '"_ti"',
+                    "_c":  '"_ti"'
                 };
                 break;
  
