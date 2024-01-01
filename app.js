@@ -331,11 +331,13 @@ function getTuneTitle(thisTune){
 function removeABCTuneHeaders(abcTune) {
 
   // Use a regular expression to match and remove header lines
-  const headerPattern = /^(X:|V:|T:|M:|K:|L:|Q:|W:|Z:|R:|C:|A:|O:|P:|N:|G:|H:|B:|D:|F:|S:|I:|:[A-Za-z]:)[^\r\n]*\r?\n?/gm;
+  // Removed V: 1 Jan 2024 but not sure why I added it in the first place
+  const headerPattern = /^(X:|T:|M:|K:|L:|Q:|W:|Z:|R:|C:|A:|O:|P:|N:|G:|H:|B:|D:|F:|S:|I:|:[A-Za-z]:)[^\r\n]*\r?\n?/gm;
   const tuneWithoutHeaders = abcTune.replace(headerPattern, '');
   
   return tuneWithoutHeaders;
 }
+
 
 //
 // Detect a T:* or T: * section header
@@ -10093,7 +10095,7 @@ function PDFTunebookBuilder(){
 
 					progNumMelody = progNumMelody - 1;
 
-					if ((progNumMelody < 0) || (progNumMelody > 136)){
+					if ((progNumMelody < 0) || (progNumMelody > 137)){
 
 						progNumMelody = 0;
 
@@ -10111,7 +10113,7 @@ function PDFTunebookBuilder(){
 
 					progNumChord = progNumChord - 1;
 
-					if ((progNumChord < 0) || (progNumChord > 136)){
+					if ((progNumChord < 0) || (progNumChord > 137)){
 
 						progNumChord = 0;
 
@@ -13956,7 +13958,8 @@ const generalMIDISoundNames = [
   "Concertina",  		// 133
   "Melodica",   		// 134
   "Cajun Accordion",    // 135
-  "Silence"				// 136
+  "Solfège",			// 136
+  "Silence"				// 137
 ];
 
 var gLastInjectedSoundfont = null;
@@ -14091,7 +14094,7 @@ function InjectAllMIDIParams(){
 
 				progNum = progNum - 1;
 
-				if ((progNum < 0) || (progNum > 136)){
+				if ((progNum < 0) || (progNum > 137)){
 					progNum = 0;
 				}
 
@@ -14138,7 +14141,7 @@ function InjectAllMIDIParams(){
 
 				progNumChord = progNumChord - 1;
 
-				if ((progNumChord < 0) || (progNumChord > 136)){
+				if ((progNumChord < 0) || (progNumChord > 137)){
 					progNumChord = 0;
 				}
 
@@ -18199,7 +18202,8 @@ function computeFade(tuneABC){
 					case "133":  // Concertina
 					case "134":  // Melodica
 					case "135":  // Cajun Accordion
-					case "136":  // Silence
+					case "136":  // Solfège
+					case "137":  // Silence
 					case "mute": // Silence
 						theFade = 100;
 						break;
@@ -18218,7 +18222,8 @@ function computeFade(tuneABC){
 					case "133":  // Concertina
 					case "134":  // Melodica
 					case "135":  // Cajun Accordion
-					case "136":  // Silence
+					case "136":  // Solfège
+					case "137":  // Silence
 					case "mute": // Silence
 						theFade = 100;
 						break;
@@ -21378,7 +21383,7 @@ function ScanTuneForInstrumentExplorer(theTune){
 			break;		
 	}
 
-	if (gTheMelodyProgram == "136"){
+	if (gTheMelodyProgram == "137"){
 		gInstrumentExplorerMelodyInstrument = 0;
 	}
 	else{
@@ -21387,7 +21392,7 @@ function ScanTuneForInstrumentExplorer(theTune){
 
 	gInstrumentExplorerMelodyInstrument = ""+gInstrumentExplorerMelodyInstrument;
 
-	if (gTheChordProgram == "136"){
+	if (gTheChordProgram == "137"){
 		gInstrumentExplorerChordInstrument = 0;
 	}
 	else{
@@ -27191,8 +27196,8 @@ function ConfigureToolSettings() {
 					gTheMelodyProgram = 0;
 				}
 
-				if (gTheMelodyProgram > 136){
-					gTheMelodyProgram = 136;
+				if (gTheMelodyProgram > 137){
+					gTheMelodyProgram = 137;
 				}
 			}
 
@@ -27213,8 +27218,8 @@ function ConfigureToolSettings() {
 					gTheChordProgram = 0;
 				}
 
-				if (gTheChordProgram > 136){
-					gTheChordProgram = 136;
+				if (gTheChordProgram > 137){
+					gTheChordProgram = 137;
 				}
 			}
 

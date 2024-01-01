@@ -6072,6 +6072,17 @@ var shapeNoteGenerator = function (theABC){
 
             var theNoteIndex = scaleMapSharps[note];
 
+            //console.log("doing sharps - theNoteIndex before = "+ theNoteIndex);
+
+            var flipAccidental = false;
+            if (!theNoteIndex){
+                theNoteIndex = scaleMapFlats[note];
+                flipAccidental = true;
+            }
+
+            //console.log("doing sharps - theNoteIndex after = "+ theNoteIndex);
+
+
             // Note names, fixed Do, or movable do with no La don't do La minor modification
             if ((gShapeNoteStyle != 6) && (gShapeNoteStyle != 7) && (gShapeNoteStyle != 8)){
                 if (gTheMode == "Minor"){
@@ -6090,12 +6101,32 @@ var shapeNoteGenerator = function (theABC){
 
             theNoteIndex %= 12;
 
-            note = inverseScaleMapSharps[theNoteIndex];
+            if (flipAccidental){
+
+                note = inverseScaleMapFlats[theNoteIndex];
+
+            }
+            else{
+                
+                note = inverseScaleMapSharps[theNoteIndex];
+
+            }
 
         }
         else{
 
             var theNoteIndex = scaleMapFlats[note];
+
+            //console.log("doing flats - theNoteIndex before = "+ theNoteIndex);
+
+            var flipAccidental = false;
+
+            if (!theNoteIndex){
+                theNoteIndex = scaleMapSharps[note];
+                flipAccidental = true;
+            }
+
+            //console.log("doing flats - theNoteIndex after = "+ theNoteIndex);
 
             // Note names, fixed Do, or movable do with no La don't do La minor modification
             if ((gShapeNoteStyle != 6) && (gShapeNoteStyle != 7) && (gShapeNoteStyle != 8)){
@@ -6115,7 +6146,16 @@ var shapeNoteGenerator = function (theABC){
 
             theNoteIndex %= 12;
 
-            note = inverseScaleMapFlats[theNoteIndex];
+            if (flipAccidental){
+
+                note = inverseScaleMapSharps[theNoteIndex];
+
+            }
+            else{
+
+                note = inverseScaleMapFlats[theNoteIndex];
+
+            }
 
         }
         
