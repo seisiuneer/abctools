@@ -6440,9 +6440,35 @@ var shapeNoteGenerator = function (theABC){
                 };
                 break;
 
-            case 7: // Fixed solfege at Do
-            case 8: // Movable solfege
-            case 9: // Movable solfege with la minor
+            case 7: // Fixed solfege at Do no chromatics
+                var glyph_map = {
+                    "^b":  '"_do"',
+                    "c":   '"_do"',
+                    "^c":  '"_do"',
+                    "_d":  '"_re"',
+                    "d":   '"_re"',
+                    "^d":  '"_re"',
+                    "_e":  '"_mi"',
+                    "e":   '"_mi"',
+                    "_f":  '"_mi"',
+                    "^e":  '"_fa"',
+                    "f":   '"_fa"',
+                    "^f":  '"_fa"',
+                    "_g":  '"_sol"',
+                    "g":   '"_sol"',
+                    "^g":  '"_sol"',
+                    "_a":  '"_la"',
+                    "a":   '"_la"',
+                    "^a":  '"_la"',
+                    "_b":  '"_ti"',
+                    "b":   '"_ti"',
+                    "_c":  '"_ti"'
+                };
+                break;
+
+            case 8: // Fixed solfege at Do with chromatics
+            case 9: // Movable solfege
+            case 10: // Movable solfege with la minor
                 var glyph_map = {
                     "^b":   '"_do"',
                     "c":   '"_do"',

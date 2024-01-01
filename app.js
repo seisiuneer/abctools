@@ -16273,9 +16273,10 @@ function DoInjectTablature_ShapeNotes(){
 	    { name: "  7-Shape - Include do/re/mi note names below", id: "4" },
 	    { name: "  7-Shape - No shapes, only do/re/mi note names below", id: "5" },
 	    { name: "  Pitch Names", id: "6" },
-	    { name: "  Fixed (Do=C) Solfège", id: "7" },
-	    { name: "  Movable Solfège Do-based Minor", id: "8" },
-	    { name: "  Movable Solfège La-based Minor", id: "9" },
+	    { name: "  Fixed (Do=C) Solfège - No chromatics", id: "7" },
+	    { name: "  Fixed (Do=C) Solfège - Include chromatics", id: "8" },
+	    { name: "  Movable Solfège Do-based Minor", id: "9" },
+	    { name: "  Movable Solfège La-based Minor", id: "10" },
   	];
 
 	// Setup initial values
