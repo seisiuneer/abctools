@@ -6090,7 +6090,7 @@ var shapeNoteGenerator = function (theABC){
         }
 
         // Note names and fixed Do are always at C, doesn't do 6 La alteration, but recognizes key signatures for flat/sharps
-        if ((gShapeNoteStyle == 6) || (gShapeNoteStyle == 7)){
+        if ((gShapeNoteStyle == 6) || (gShapeNoteStyle == 7) || (gShapeNoteStyle == 8)){
             gTheKey = "C";
             gTheMode = "Major";
         }
