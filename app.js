@@ -19588,7 +19588,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 		// Post process whistle or note name tab
 		postProcessTab([visualObj], "playback-paper",instrument, true);
 
-		var midiBuffer = new ABCJS.synth.CreateSynth();
+		var midiBuffer = new ABCJS.synth.CreateSynth(theABC);
 
 		gMIDIbuffer = midiBuffer;
 
@@ -19893,7 +19893,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 
 		if (ABCJS.synth.supportsAudio()) {
 			
-			synthControl = new ABCJS.synth.SynthController();
+			synthControl = new ABCJS.synth.SynthController(theABC);
 
 			synthControl.load("#playback-audio", cursorControl, {displayLoop: true, displayRestart: true, displayPlay: true, displayProgress: true, displayWarp: true});
 
@@ -20988,7 +20988,7 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 		// Post process whistle or note name tab
 		postProcessTab([visualObj], "playback-paper", instrument, true);
 
-		var midiBuffer = new ABCJS.synth.CreateSynth();
+		var midiBuffer = new ABCJS.synth.CreateSynth(theProcessedABC);
 
 		gMIDIbuffer = midiBuffer;
 
@@ -21191,7 +21191,7 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 
 		if (ABCJS.synth.supportsAudio()) {
 			
-			synthControl = new ABCJS.synth.SynthController();
+			synthControl = new ABCJS.synth.SynthController(theProcessedABC);
 
 			synthControl.load("#playback-audio", cursorControl, {displayLoop: true, displayRestart: true, displayPlay: true, displayProgress: true, displayWarp: true});
 
@@ -21839,7 +21839,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 		// Post process whistle or note name tab
 		postProcessTab([visualObj], "playback-paper", instrument, true);
 
-		var midiBuffer = new ABCJS.synth.CreateSynth();
+		var midiBuffer = new ABCJS.synth.CreateSynth(theProcessedABC);
 
 		gMIDIbuffer = midiBuffer;
 
@@ -22052,7 +22052,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 
 		if (ABCJS.synth.supportsAudio()) {
 			
-			synthControl = new ABCJS.synth.SynthController();
+			synthControl = new ABCJS.synth.SynthController(theProcessedABC);
 
 			synthControl.load("#playback-audio", cursorControl, {displayLoop: true, displayRestart: true, displayPlay: true, displayProgress: true, displayWarp: true});
 
@@ -22403,7 +22403,7 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 		// Post process whistle or note name tab
 		postProcessTab([visualObj], "playback-paper", instrument, true);
 
-		var midiBuffer = new ABCJS.synth.CreateSynth();
+		var midiBuffer = new ABCJS.synth.CreateSynth(theProcessedABC);
 
 		gMIDIbuffer = midiBuffer;
 
@@ -22586,7 +22586,7 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 
 		if (ABCJS.synth.supportsAudio()) {
 			
-			synthControl = new ABCJS.synth.SynthController();
+			synthControl = new ABCJS.synth.SynthController(theProcessedABC);
 
 			synthControl.load("#playback-audio", cursorControl, {displayLoop: true, displayRestart: true, displayPlay: true, displayProgress: true, displayWarp: true});
 
@@ -23192,7 +23192,7 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 		// Post process whistle or note name tab
 		postProcessTab([visualObj], "playback-paper", instrument, true);
 
-		var midiBuffer = new ABCJS.synth.CreateSynth();
+		var midiBuffer = new ABCJS.synth.CreateSynth(theProcessedABC);
 
 		gMIDIbuffer = midiBuffer;
 
@@ -23403,7 +23403,7 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 
 		if (ABCJS.synth.supportsAudio()) {
 			
-			synthControl = new ABCJS.synth.SynthController();
+			synthControl = new ABCJS.synth.SynthController(theProcessedABC);
 
 			synthControl.load("#playback-audio", cursorControl, {displayLoop: true, displayRestart: true, displayPlay: true, displayProgress: true, displayWarp: true});
 
@@ -23780,7 +23780,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 		// Post process whistle or note name tab
 		postProcessTab([visualObj], "playback-paper", instrument, true);
 
-		var midiBuffer = new ABCJS.synth.CreateSynth();
+		var midiBuffer = new ABCJS.synth.CreateSynth(theProcessedABC);
 
 		gMIDIbuffer = midiBuffer;
 
@@ -24375,7 +24375,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 
 		if (ABCJS.synth.supportsAudio()) {
 			
-			synthControl = new ABCJS.synth.SynthController();
+			synthControl = new ABCJS.synth.SynthController(theProcessedABC);
 
 			synthControl.load("#playback-audio", cursorControl, {displayLoop: false, displayRestart: true, displayPlay: true, displayProgress: true, displayWarp: true});
 			

@@ -50,6 +50,113 @@ var gRoll3Volume3 = 1.0;
 // MAE 16 Dec 2023 - For forcing left justified titles
 var gForceLeftJustifyTitles = false;
 
+// MAE 2 Jan 2024 - For Solfege instrument
+var gTheSolfegeABC = null;
+
+var gPitchToNoteNameSharp = {
+  21: 'A0',
+  22: 'As0',
+  23: 'B0',
+  24: 'C1',
+  25: 'Cs1',
+  26: 'D1',
+  27: 'Ds1',
+  28: 'E1',
+  29: 'F1',
+  30: 'Fs1',
+  31: 'G1',
+  32: 'Gs1',
+  33: 'A1',
+  34: 'As1',
+  35: 'B1',
+  36: 'C2',
+  37: 'Cs2',
+  38: 'D2',
+  39: 'Ds2',
+  40: 'E2',
+  41: 'F2',
+  42: 'Fs2',
+  43: 'G2',
+  44: 'Gs2',
+  45: 'A2',
+  46: 'As2',
+  47: 'B2',
+  48: 'C3',
+  49: 'Cs3',
+  50: 'D3',
+  51: 'Ds3',
+  52: 'E3',
+  53: 'F3',
+  54: 'Fs3',
+  55: 'G3',
+  56: 'Gs3',
+  57: 'A3',
+  58: 'As3',
+  59: 'B3',
+  60: 'C4',
+  61: 'Cs4',
+  62: 'D4',
+  63: 'Ds4',
+  64: 'E4',
+  65: 'F4',
+  66: 'Fs4',
+  67: 'G4',
+  68: 'Gs4',
+  69: 'A4',
+  70: 'As4',
+  71: 'B4',
+  72: 'C5',
+  73: 'Cs5',
+  74: 'D5',
+  75: 'Ds5',
+  76: 'E5',
+  77: 'F5',
+  78: 'Fs5',
+  79: 'G5',
+  80: 'Gs5',
+  81: 'A5',
+  82: 'As5',
+  83: 'B5',
+  84: 'C6',
+  85: 'Cs6',
+  86: 'D6',
+  87: 'Ds6',
+  88: 'E6',
+  89: 'F6',
+  90: 'Fs6',
+  91: 'G6',
+  92: 'Gs6',
+  93: 'A6',
+  94: 'As6',
+  95: 'B6',
+  96: 'C7',
+  97: 'Cs7',
+  98: 'D7',
+  99: 'Ds7',
+  100: 'E7',
+  101: 'F7',
+  102: 'Fs7',
+  103: 'G7',
+  104: 'Gs7',
+  105: 'A7',
+  106: 'As7',
+  107: 'B7',
+  108: 'C8',
+  109: 'Cs8',
+  110: 'D8',
+  111: 'Ds8',
+  112: 'E8',
+  113: 'F8',
+  114: 'Fs8',
+  115: 'G8',
+  116: 'Gs8',
+  117: 'A8',
+  118: 'As8',
+  119: 'B8',
+  120: 'C9',
+  121: 'Cs9'
+};
+
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
@@ -14275,8 +14382,19 @@ var alternateSoundFontUrl = "https://paulrosen.github.io/midi-js-soundfonts/Musy
 var alternateSoundFontUrl2 = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
 var alternateSoundFontUrl3 = "https://michaeleskin.com/abctools/soundfonts/canvas/";
 var alternateSoundFontUrl4 = "https://michaeleskin.com/abctools/soundfonts/mscore/";
-function CreateSynth() {
+function CreateSynth(theABC) {
+
+  //debugger;
+
   var self = this;
+  
+  // Keep the ABC around for later solfege parsing and pitch substitution
+  gTheSolfegeABC = null;
+
+  if (theABC){
+    gTheSolfegeABC = theABC;
+  }
+
   self.audioBufferPossible = undefined;
   self.directSource = []; // type: AudioBufferSourceNode
   self.startTimeSec = undefined; // the time (in seconds) that the audio started: used for pause to get the pausedTimeSec.
@@ -14454,6 +14572,57 @@ function CreateSynth() {
         if (event.pitch !== undefined) {
           var pitchNumber = event.pitch;
           var noteName = pitchToNoteName[pitchNumber];
+
+          // MAE 2 Jan 2024
+          if (currentInstrument == "solfege"){
+
+            if (gTheSolfegeABC){
+
+              //console.log("CreateSynth noteName from pitchToNoteName: "+noteName);
+              //
+              // If the note name in the ABC doesn't match the mapped pitch name, then use the sharp form instead
+              //
+              var theOriginalNoteABC = gTheSolfegeABC.substring(event.startChar, event.endChar);
+              //console.log("theOriginalNoteABC: "+theOriginalNoteABC);
+
+              // Strip out chord markings
+              var searchRegExp = /"[^"]*"/gm
+              theOriginalNoteABC = theOriginalNoteABC.replaceAll(searchRegExp,"");
+              //console.log("theOriginalNoteABC after chord trim: "+theOriginalNoteABC);
+            
+              // Strip out any !*! annotations
+              searchRegExp = /![^!\n]*!/gm 
+              theOriginalNoteABC = theOriginalNoteABC.replaceAll(searchRegExp, "");
+              //console.log("theOriginalNoteABC after !*! trim: "+theOriginalNoteABC);
+              
+              theOriginalNoteABC=theOriginalNoteABC.trim();
+              //console.log("theOriginalNoteABC after trim: "+theOriginalNoteABC);
+
+              theOriginalNoteABC=theOriginalNoteABC.toUpperCase();
+              //console.log("theOriginalNoteABC after toUpperCase: "+theOriginalNoteABC);
+
+              theOriginalNoteABC = theOriginalNoteABC.replaceAll("^","");
+              theOriginalNoteABC = theOriginalNoteABC.replaceAll("_","");
+              theOriginalNoteABC = theOriginalNoteABC.replaceAll("=","");
+
+              // Strip out anything that isn't a note name
+              searchRegExp = /[^a-gA-G]/gm
+              theOriginalNoteABC = theOriginalNoteABC.replaceAll(searchRegExp,"");
+              
+              //console.log("theOriginalNoteABC after strip: "+theOriginalNoteABC);
+
+              if (noteName[0] != theOriginalNoteABC[0]){
+                
+                //console.log("CreateSynth name before replacement: "+noteName+" name in ABC: "+theOriginalNoteABC);
+
+                noteName = gPitchToNoteNameSharp[pitchNumber];
+
+                //console.log("Note name after replacement: "+noteName);
+
+              }
+            }
+          }
+
           if (noteName) {
             if (!allNotes[currentInstrument]) allNotes[currentInstrument] = {};
             if (!gSoundsCacheABCJS[currentInstrument] || !gSoundsCacheABCJS[currentInstrument][noteName]) allNotes[currentInstrument][noteName] = true;else {
@@ -14680,7 +14849,21 @@ function CreateSynth() {
       noteMapTracks.forEach(function (noteMap, trackNumber) {
         var panDistance = panDistances && panDistances.length > trackNumber ? panDistances[trackNumber] : 0;
         noteMap.forEach(function (note) {
-          var key = note.instrument + ':' + note.pitch + ':' + note.volume + ':' + Math.round((note.end - note.start) * 1000) / 1000 + ':' + panDistance + ':' + tempoMultiplier + ':' + (note.cents ? note.cents : 0);
+
+          var key;
+
+          if (note.instrument == "solfege"){
+
+            // MAE 2 Jan 2023 - Added startChar and endChar to notesPushed
+            key = note.instrument + ':' + note.pitch + ':' + note.volume + ':' + Math.round((note.end - note.start) * 1000) / 1000 + ':' + panDistance + ':' + tempoMultiplier + ':' + note.startChar + ':' + note.endChar + ':' + (note.cents ? note.cents : 0);
+          
+          }
+          else{
+          
+              key = note.instrument + ':' + note.pitch + ':' + note.volume + ':' + Math.round((note.end - note.start) * 1000) / 1000 + ':' + panDistance + ':' + tempoMultiplier + ':' + (note.cents ? note.cents : 0);
+          
+          }
+
           if (self.debugCallback) self.debugCallback("noteMapTrack " + key);
           if (!uniqueSounds[key]) uniqueSounds[key] = [];
           uniqueSounds[key].push(note.start);
@@ -14693,16 +14876,37 @@ function CreateSynth() {
       for (var key2 = 0; key2 < Object.keys(uniqueSounds).length; key2++) {
         var k = Object.keys(uniqueSounds)[key2];
         var parts = k.split(":");
-        var cents = parts[6] !== undefined ? parseFloat(parts[6]) : 0;
-        parts = {
-          instrument: parts[0],
-          pitch: parseInt(parts[1], 10),
-          volume: parseInt(parts[2], 10),
-          len: parseFloat(parts[3]),
-          pan: parseFloat(parts[4]),
-          tempoMultiplier: parseFloat(parts[5]),
-          cents: cents
-        };
+        
+        // MAE 2 Jan 2023 - Added startChar and endChar to notesPushed when using solfege samples
+        var cents;
+
+        if (parts[0] == "solfege"){
+          cents = parts[8] !== undefined ? parseFloat(parts[8]) : 0;
+          parts = {
+            instrument: parts[0],
+            pitch: parseInt(parts[1], 10),
+            volume: parseInt(parts[2], 10),
+            len: parseFloat(parts[3]),
+            pan: parseFloat(parts[4]),
+            tempoMultiplier: parseFloat(parts[5]),
+            startChar: parseInt(parts[6]),
+            endChar: parseInt(parts[7]),
+            cents: cents
+          };
+        }
+        else{
+          cents = parts[6] !== undefined ? parseFloat(parts[6]) : 0;
+          parts = {
+            instrument: parts[0],
+            pitch: parseInt(parts[1], 10),
+            volume: parseInt(parts[2], 10),
+            len: parseFloat(parts[3]),
+            pan: parseFloat(parts[4]),
+            tempoMultiplier: parseFloat(parts[5]),
+            cents: cents   
+          };
+
+        }
         allPromises.push(placeNote(audioBuffer, activeAudioContext().sampleRate, parts, uniqueSounds[k], self.soundFontVolumeMultiplier, self.programOffsets[parts.instrument], fadeTimeSec, self.noteEnd / 1000, self.debugCallback));
       }
       self.audioBuffers = [audioBuffer];
@@ -15850,7 +16054,61 @@ function placeNote(outputAudioBuffer, sampleRate, sound, startArray, volumeMulti
   len -= noteEndSec;
   if (len < 0) len = 0.005; // Have some small audible length no matter how short the note is.
   var offlineCtx = new OfflineAC(2, Math.floor((len + fadeTimeSec) * sampleRate), sampleRate);
-  var noteName = pitchToNoteName[sound.pitch];
+  
+  // MAE 2 Jan 2024
+  var pitchNumber = sound.pitch;
+
+  var noteName = pitchToNoteName[pitchNumber];
+          
+  if (sound.instrument == "solfege"){
+
+    if (gTheSolfegeABC){
+
+      //console.log("placeNote noteName from pitchToNoteName: "+noteName);
+      
+      //
+      // If the note name in the ABC doesn't match the mapped pitch name, then use the sharp form instead
+      //
+      var theOriginalNoteABC = gTheSolfegeABC.substring(sound.startChar, sound.endChar);
+      //console.log("theOriginalNoteABC: "+theOriginalNoteABC);
+
+      // Strip out chord markings
+      var searchRegExp = /"[^"]*"/gm
+      theOriginalNoteABC = theOriginalNoteABC.replaceAll(searchRegExp,"");
+      //console.log("theOriginalNoteABC after chord trim: "+theOriginalNoteABC);
+    
+      // Strip out any !*! annotations
+      searchRegExp = /![^!\n]*!/gm 
+      theOriginalNoteABC = theOriginalNoteABC.replaceAll(searchRegExp, "");
+      //console.log("theOriginalNoteABC after !*! trim: "+theOriginalNoteABC);
+      
+      theOriginalNoteABC=theOriginalNoteABC.trim();
+      //console.log("theOriginalNoteABC after trim: "+theOriginalNoteABC);
+
+      theOriginalNoteABC=theOriginalNoteABC.toUpperCase();
+      //console.log("theOriginalNoteABC after toUpperCase: "+theOriginalNoteABC);
+
+      theOriginalNoteABC = theOriginalNoteABC.replaceAll("^","");
+      theOriginalNoteABC = theOriginalNoteABC.replaceAll("_","");
+      theOriginalNoteABC = theOriginalNoteABC.replaceAll("=","");
+
+      // Strip out anything that isn't a note name
+      searchRegExp = /[^a-gA-G]/gm
+      theOriginalNoteABC = theOriginalNoteABC.replaceAll(searchRegExp,"");
+      
+      //console.log("theOriginalNoteABC after strip: "+theOriginalNoteABC);
+
+      if (noteName[0] != theOriginalNoteABC[0]){
+
+        //console.log("placeNoteNote name before replacement: "+noteName+" name in ABC: "+theOriginalNoteABC);
+
+        noteName = gPitchToNoteNameSharp[pitchNumber];
+
+        //console.log("Note name after replacement: "+noteName);
+
+      }
+    }
+  }
 
   // MAE START OF CHANGE
   if (!gSoundsCacheABCJS[sound.instrument]) {
@@ -16062,8 +16320,14 @@ var CreateSynthControl = __webpack_require__(/*! ./create-synth-control */ "./sr
 var CreateSynth = __webpack_require__(/*! ./create-synth */ "./src/synth/create-synth.js");
 var TimingCallbacks = __webpack_require__(/*! ../api/abc_timing_callbacks */ "./src/api/abc_timing_callbacks.js");
 var activeAudioContext = __webpack_require__(/*! ./active-audio-context */ "./src/synth/active-audio-context.js");
-function SynthController() {
+function SynthController(theABC) {
   var self = this;
+
+  // MAE 2 Jan 2024
+  if (theABC){
+    self.theABC = theABC;
+  }
+
   self.warp = 100;
   self.cursorControl = null;
   self.visualObj = null;
@@ -16117,7 +16381,8 @@ function SynthController() {
     if (self.control) self.control.setTempo(self.currentTempo);
     self.percent = 0;
     var loadingResponse;
-    if (!self.midiBuffer) self.midiBuffer = new CreateSynth();
+    // MAE 2 Jan 2024 - For Solfege sound font parsing
+    if (!self.midiBuffer) self.midiBuffer = new CreateSynth(self.theABC);
     return activeAudioContext().resume().then(function (response) {
       return self.midiBuffer.init({
         visualObj: self.visualObj,
