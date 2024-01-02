@@ -2192,6 +2192,56 @@ function fitIncipitsTitle(thePDF, title, key, widthToFit){
 
 }
 
+//
+// Clean an incipit line
+//
+function cleanIncipitLine(theTextIncipit){
+
+	//console.log("Starting incipit:");
+	//console.log(theTextIncipit);
+
+	// Strip any embedded voice [V:*]
+	searchRegExp = /\[V:\s*\d+\]/gm
+	theTextIncipit = theTextIncipit.replace(searchRegExp, "");
+	//console.log(theTextIncipit);
+
+	// Strip any embedded voice V: *
+	//searchRegExp = /V: [^ ]+ /gm
+	searchRegExp = /V:\s+\S+\s/gm
+	theTextIncipit = theTextIncipit.replace(searchRegExp, "");
+	//console.log(theTextIncipit);
+
+	// Strip any embedded voice V:*
+	searchRegExp = /V:[^ ]+ /gm
+	theTextIncipit = theTextIncipit.replace(searchRegExp, "");
+	//console.log(theTextIncipit);
+
+	// Sanitize !*! style annotations
+    searchRegExp = /![^!\n]*!/gm 
+	theTextIncipit = theTextIncipit.replace(searchRegExp, "");
+	//console.log(theTextIncipit);
+
+	// Strip out repeat marks
+	theTextIncipit = theTextIncipit.replaceAll(":","");
+	//console.log(theTextIncipit);
+
+	// Strip out brackets
+	theTextIncipit = theTextIncipit.replaceAll("[","");
+	//console.log(theTextIncipit);
+
+	// Strip out brackets
+	theTextIncipit = theTextIncipit.replaceAll("]","");
+	//console.log(theTextIncipit);
+
+	// Strip out continuations
+	theTextIncipit = theTextIncipit.replaceAll("\\","");
+
+	//console.log("Final raw incipit :");
+	//console.log(theTextIncipit);
+
+	return theTextIncipit;
+}
+
 function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,tunePageMap,sortTunes){
 
 	var thePaperHeight = thePDF.internal.pageSize.getHeight();;
@@ -2337,17 +2387,8 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		// 	debugger;
 		// }
 
-		// Strip out repeat marks
-		theTextIncipit = theTextIncipit.replaceAll(":","");
-
-		// Strip out brackets
-		theTextIncipit = theTextIncipit.replaceAll("[","");
-
-		// Strip out brackets
-		theTextIncipit = theTextIncipit.replaceAll("]","");
-
-		// Strip out continuations
-		theTextIncipit = theTextIncipit.replaceAll("\\","");
+		// Clean out the incipit line of any annotations besides notes and bar lines
+		theTextIncipit = cleanIncipitLine(theTextIncipit);
 
 		//console.log("Final raw incipit : "+theTextIncipit);
 
@@ -2771,14 +2812,8 @@ function GenerateFullTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideF
 				continue;
 			}
 
-			// Strip out repeat marks
-			theTextIncipit = theTextIncipit.replace(":","");
-
-			// Strip out brackets
-			theTextIncipit = theTextIncipit.replace("[","");
-
-			// Strip out brackets
-			theTextIncipit = theTextIncipit.replace("]","");
+			// Clean out the incipit line of any annotations besides notes and bar lines
+			theTextIncipit = cleanIncipitLine(theTextIncipit);
 
 			// Split the incipit
 			theRawSplits = theTextIncipit.split("|");
