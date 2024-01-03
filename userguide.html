@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+         
         <style>
         p {
         font-size:14pt;
@@ -227,6 +227,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#adding_swing">Adding Playback Swing to Tunes</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#grace_timing">Setting Grace Note Duration for Ornamentation</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#roll_timing">Defining Custom Roll Timing Parameters</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#sung_solfege">Select the Solfège Instrument to Sing Note Names</a></p>
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">Basic Controls and Features</button>
@@ -807,6 +808,19 @@
             <hr>
             <p><strong>Using the custom roll playback solution for rolls indicated with ~ before the note in the ABC</strong></p>
             <p>If you want to use the custom roll parameter playback solution for rolls indicated before the note with ~ as well those that use an R or !roll!, open the <strong>Advanced Settings</strong> dialog and check <strong>Rolls indicated in the ABC with ~ use the custom abcjs roll playback solution</strong>.</p>
+            <hr class="hidden-print" id="sung_solfege">
+            <h1 class="page_break_always h1wide">Select the Solfège Instrument to Sing Note Names<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>To sing the note names, you can select the Solfège instrument (136) for a voice:</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/vwIVW55WOB4" title="Using the Solfège Instrument to Sing Tunes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p class="code">% Select the Solfège instrument:<br/>%%MIDI program 136</p>
+            <p>If you have injected Fixed (Do=C) Solfège under the notes using the <strong>Inject Shape Note/Solfège</strong> dialog, the sung notes will match the displayed note names.</p>
+            <p>If you have injected either Do-based minor or La-based minor Movable Do Solfège under the notes using the <strong>Inject Shape Note/Solfège</strong> dialog, you can transpose the sound to match without changing the displayed notation by adding the following voice directive to your ABC:</p>
+            <p class="code">% Set the voice transpose:<br/>V:1 transpose=5<br/><br/>% Select the Solfège instrument for this voice:<br/>%%MIDI program 136</p>
+            <p>Change the 5 to whatever is required to get the displayed solfège to match the sung note names.</p>
+            <p>There if the result sounds too high, you can also shift the required offset down by 12, this would be equivalent as far as the sung note names:</p>
+            <p class="code">% Set the voice transpose:<br/>V:1 transpose=-7<br/><br/>% Select the Solfège instrument for this voice:<br/>%%MIDI program 136</p>
+            <p><strong>Note:</strong> When transposed the absolute pitch of the sound when transposed will not be correct as compared with the notation, but this is the best possible at this time. At least the visual display and the sung notes will match.</p>
+            <p>For details on injecting solfège under the notes, see <a href="#advanced_shapenoteshapes">Inject Shape Note/Solfège</a>.</p>
             <hr class="hidden-print" id="basic_controls">
             <h1 class="page_break_always">Basic Controls and Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p id="basic_tablature" style="margin-top:24px;">These buttons control how the notation and tablature is displayed:</p>
@@ -848,7 +862,7 @@
             <hr>
             <p><strong>Transpose Up</strong> - Transposes the selected tunes up one semitone.  Shift-click transposes up one full step. Alt-click transposes up one octave.</p>
             <p>To transpose multiple tunes, just click anywhere in the first tune you want to transpose, and drag to select any part of additional tunes you want transposed.</p>
-            <p>To transpose all the tunes at once, select them all before clicking the Tranpose buttons.</p>
+            <p>To transpose all the tunes at once, select them all before clicking the Transpose buttons.</p>
             <hr>
             <p id="basic_snapshot"><strong>Snapshot</strong> - Saves a snapshot of the contents of the ABC editor to browser storage.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/doPwU-BgCAc " title="Snapshots" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
@@ -1035,8 +1049,6 @@
             </div>
             <p>For shape notes, the ABC injected before each note name to select the note head style is one of the following:</p>
             <p class="code">!style=sn_do! C2<br/>!style=sn_re! D2<br/>!style=sn_mi! E2<br/>!style=sn_fa! F2 <br/>!style=sn_so! G2<br/>!style=sn_la! A2<br/>!style=sn_ti! B2<br/>!style=sn_do! c2<br/>!style=sn_re! d2<br/>!style=sn_mi! e2 <br/>!style=sn_fa! f2<br/>!style=sn_so! g2<br/>!style=sn_la! a2<br/>!style=sn_ti! b2</p>
-            <p>When playing tunes with fixed solfège at Do=C with no chromatics, you can select the Solfège sound (136) to sing the note names.</p>
-            <p>If you are are used to singing Do-based intervals, it might be useful to use the transcribe features of the tool to shift the tune to the key of C.</p>
             <p>See the <a href="#tablature_settings">Configuring Tablature/Solfège Fonts and Settings</a> section below for full details on the tablature font and spacing options.</p>
             <hr class="hidden-print" id="tablature_settings">
             <h1 class="page_break_always h1wide">Configuring Tablature/Solfège Fonts and Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
