@@ -12680,7 +12680,7 @@ function OverrideOneTuneMIDIParams(theTune, melodyProg, bassProg, chordProg, bas
 	var theOutput = theTune;
 
 	// Replace melody programs
-	var searchRegExp = /^%%MIDI program.*$/gm
+	var searchRegExp = /%%MIDI program \d+\s*/gm
 
 	var melodyProgramRequested = theTune.match(searchRegExp);
 
@@ -12688,14 +12688,14 @@ function OverrideOneTuneMIDIParams(theTune, melodyProg, bassProg, chordProg, bas
 
 		for (var i=0;i<melodyProgramRequested.length;++i){
 
-			theOutput = theOutput.replace(melodyProgramRequested[i],"%%MIDI program "+melodyProg);
+			theOutput = theOutput.replace(melodyProgramRequested[i].trim(),"%%MIDI program "+melodyProg);
 
 		}
 
 	}
 
 	// Replace bass programs
-	searchRegExp = /^%%MIDI bassprog.*$/gm
+	searchRegExp = /%%MIDI bassprog \d+\s*/gm
 
 	var bassProgramRequested = theTune.match(searchRegExp);
 
@@ -12703,13 +12703,13 @@ function OverrideOneTuneMIDIParams(theTune, melodyProg, bassProg, chordProg, bas
 
 		for (var i=0;i<bassProgramRequested.length;++i){
 
-			theOutput = theOutput.replace(bassProgramRequested[i],"%%MIDI bassprog "+bassProg);
+			theOutput = theOutput.replace(bassProgramRequested[i].trim(),"%%MIDI bassprog "+bassProg);
 		}
 
 	}
 
 	// Replace chord programs
-	searchRegExp = /^%%MIDI chordprog.*$/gm
+	searchRegExp = /%%MIDI chordprog \d+\s*/gm
 
 	var chordProgramRequested = theTune.match(searchRegExp);
 
@@ -12717,13 +12717,13 @@ function OverrideOneTuneMIDIParams(theTune, melodyProg, bassProg, chordProg, bas
 
 		for (var i=0;i<chordProgramRequested.length;++i){
 
-			theOutput = theOutput.replace(chordProgramRequested[i],"%%MIDI chordprog "+chordProg);
+			theOutput = theOutput.replace(chordProgramRequested[i].trim(),"%%MIDI chordprog "+chordProg);
 		}
 
 	}
 
 	// Replace bass volume
-	searchRegExp = /^%%MIDI bassvol.*$/gm
+	searchRegExp = /%%MIDI bassvol \d+\s*/gm
 
 	var bassVolumeRequested = theTune.match(searchRegExp);
 
@@ -12731,13 +12731,13 @@ function OverrideOneTuneMIDIParams(theTune, melodyProg, bassProg, chordProg, bas
 
 		for (var i=0;i<bassVolumeRequested.length;++i){
 
-			theOutput = theOutput.replace(bassVolumeRequested[i],"%%MIDI bassvol "+bassVol);
+			theOutput = theOutput.replace(bassVolumeRequested[i].trim(),"%%MIDI bassvol "+bassVol);
 		}
 
 	}
 
 	// Replace chord volume
-	searchRegExp = /^%%MIDI chordvol.*$/gm
+	searchRegExp = /%%MIDI chordvol \d+\s*/gm
 
 	var chordVolumeRequested = theTune.match(searchRegExp);
 
@@ -12745,7 +12745,7 @@ function OverrideOneTuneMIDIParams(theTune, melodyProg, bassProg, chordProg, bas
 
 		for (var i=0;i<chordVolumeRequested.length;++i){
 
-			theOutput = theOutput.replace(chordVolumeRequested[i],"%%MIDI chordvol "+chordVol);
+			theOutput = theOutput.replace(chordVolumeRequested[i].trim(),"%%MIDI chordvol "+chordVol);
 		}
 
 	}
