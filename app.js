@@ -20106,18 +20106,38 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 //
 // Based on the global injection configuration, pre-process the %%MIDI directives in the ABC
 function PreProcessPlayABC(theTune){
+	
+	//debugger;
 
 	// Override any ABC play values?
 
 	// Always override programs and volumes?
+	var bForceOverride = false;
 
 	if (gOverridePlayMIDIParams){
 
 		theTune = OverrideOneTuneMIDIParams(theTune, gTheMelodyProgram, gTheBassProgram, gTheChordProgram, gTheBassVolume, gTheChordVolume);
+
+		bForceOverride = true;
 	}
 
 	// Inject programs?
 	if (gAlwaysInjectPrograms){
+
+		// Check first for any existing program messages before replacing
+		var searchRegExp = /^%%MIDI chordprog.*$/m
+
+		var chordProgramRequested = theTune.match(searchRegExp);
+
+		var bUsingDefaultChord = false;
+
+		if (!((chordProgramRequested) && (chordProgramRequested.length > 0))){
+
+			bUsingDefaultChord = true;
+
+			theTune = InjectOneTuneMIDIProgramAboveTune(theTune, gTheChordProgram, false, true);
+
+		}
 
 		// Check first for any existing program messages before replacing
 		var searchRegExp = /^%%MIDI bassprog.*$/m
@@ -20126,19 +20146,30 @@ function PreProcessPlayABC(theTune){
 
 		if (!((bassProgramRequested) && (bassProgramRequested.length > 0))){
 
-			theTune = InjectOneTuneMIDIProgramAboveTune(theTune, gTheBassProgram, true, false);
+			if (bForceOverride){
+				theTune = InjectOneTuneMIDIProgramAboveTune(theTune, gTheBassProgram, true, false);
+			}
+			else{
 
-		}
+				// 4 January 2024 - Legacy tunebook playback override fix
+				// They've manually set a chord prog, but there is no bass set, use the chordprog to match the legacy behavior
+				if (!bUsingDefaultChord){
 
-		// Check first for any existing program messages before replacing
-		var searchRegExp = /^%%MIDI chordprog.*$/m
+					// We must have found a chordprog above
+					var theBassProgram = chordProgramRequested[0].replace("%%MIDI chordprog","");
+					
+					theBassProgam = theBassProgram.trim();
+					
+					theTune = InjectOneTuneMIDIProgramAboveTune(theTune, theBassProgram, true, false);
 
-		var chordProgramRequested = theTune.match(searchRegExp);
+				}
+				else{
 
-		if (!((chordProgramRequested) && (chordProgramRequested.length > 0))){
+					// OK to use the default if they haven't set a chordprog 
+					theTune = InjectOneTuneMIDIProgramAboveTune(theTune, gTheBassProgram, true, false);
 
-			theTune = InjectOneTuneMIDIProgramAboveTune(theTune, gTheChordProgram, false, true);
-
+				}
+			}
 		}
 
 		searchRegExp = /^%%MIDI program.*$/m
