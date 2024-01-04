@@ -157,6 +157,10 @@ var gPitchToNoteNameSharp = {
   121: 'Cs9'
 };
 
+// For fixing broken bass/chord programs
+var gHasChordTrack = false
+var gChordTrackIndex = 0;
+
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
@@ -11409,8 +11413,9 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     chordChannel = voices.length; // first free channel for chords
     chordTrackFinished = false;
     currentChords = [];
-    bassInstrument = midiOptions.bassprog && midiOptions.bassprog.length === 1 ? midiOptions.bassprog[0] : 0;
     chordInstrument = midiOptions.chordprog && midiOptions.chordprog.length === 1 ? midiOptions.chordprog[0] : 0;
+    // MAE 4 Jan 2024 - If no bassprog specified, use the chord instrument (was 0)
+    bassInstrument = midiOptions.bassprog && midiOptions.bassprog.length === 1 ? midiOptions.bassprog[0] : chordInstrument;
     boomVolume = midiOptions.bassvol && midiOptions.bassvol.length === 1 ? midiOptions.bassvol[0] : 64;
     chickVolume = midiOptions.chordvol && midiOptions.chordvol.length === 1 ? midiOptions.chordvol[0] : 48;
     lastChord = undefined;
@@ -11551,7 +11556,15 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     }
     // See if any notes are octaves played at the same time. If so, raise the pitch of the higher one.
     if (options.detuneOctave) findOctaves(tracks, parseInt(options.detuneOctave, 10));
-    if (!chordTrackEmpty()) tracks.push(chordTrack);
+
+    // MAE 4 Jan 2023 - To support having proper bass and chord instruments
+    gHasChordTrack = false;
+    if (!chordTrackEmpty()){
+      gHasChordTrack = true;
+      gChordTrackIndex = tracks.length;
+      tracks.push(chordTrack);
+    }
+
     if (drumTrack.length > 0) tracks.push(drumTrack);
     return {
       tempo: startingTempo,
@@ -14109,7 +14122,8 @@ var createNoteMap = function createNoteMap(sequence) {
   var nextNote = {};
   var currentInstrument = instrumentIndexToName[0];
   // ev.start and ev.duration are in whole notes. Need to turn them into
-  sequence.tracks.forEach(function (track, i) {
+  sequence.tracks.forEach(function (track, i) {  
+    // MAE 4 Jan 2024 - For proper bass and chord instruments
     track.forEach(function (ev) {
       switch (ev.cmd) {
         case "note":
@@ -14120,13 +14134,28 @@ var createNoteMap = function createNoteMap(sequence) {
             var gap = ev.gap ? ev.gap : 0;
             var len = ev.duration;
             gap = Math.min(gap, len * 2 / 3);
-            var obj = {
-              pitch: ev.pitch,
-              instrument: currentInstrument,
-              start: Math.round(ev.start * 1000000) / 1000000,
-              end: Math.round((ev.start + len - gap) * 1000000) / 1000000,
-              volume: ev.volume
-            };
+            // MAE 4 Jan 2024 - For proper bass and chord instruments
+            var obj;
+            if (gHasChordTrack && (i == gChordTrackIndex)){
+              //console.log("chord track instrument: "+ev.instrument+" name: "+instrumentIndexToName[ev.instrument]);
+              obj = {
+                pitch: ev.pitch,
+                instrument: instrumentIndexToName[ev.instrument],
+                start: Math.round(ev.start * 1000000) / 1000000,
+                end: Math.round((ev.start + len - gap) * 1000000) / 1000000,
+                volume: ev.volume
+              };
+
+            }
+            else{
+              obj = {
+                pitch: ev.pitch,
+                instrument: currentInstrument,
+                start: Math.round(ev.start * 1000000) / 1000000,
+                end: Math.round((ev.start + len - gap) * 1000000) / 1000000,
+                volume: ev.volume
+              };
+            }
             if (ev.startChar) obj.startChar = ev.startChar;
             if (ev.endChar) obj.endChar = ev.endChar;
             if (ev.style) obj.style = ev.style;
@@ -14566,7 +14595,9 @@ function CreateSynth(theABC) {
     var cached = [];
     var errorNotes = [];
     var currentInstrument = instrumentIndexToName[0];
-    self.flattened.tracks.forEach(function (track) {
+    // MAE 4 Jan 2024 For bass/chord instrument
+    self.flattened.tracks.forEach(function (track,i) {
+      //console.log("track processing i="+i);
       track.forEach(function (event) {
         if (event.cmd === "program" && instrumentIndexToName[event.instrument]) currentInstrument = instrumentIndexToName[event.instrument];
         if (event.pitch !== undefined) {
@@ -14623,16 +14654,33 @@ function CreateSynth(theABC) {
             }
           }
 
-          if (noteName) {
-            if (!allNotes[currentInstrument]) allNotes[currentInstrument] = {};
-            if (!gSoundsCacheABCJS[currentInstrument] || !gSoundsCacheABCJS[currentInstrument][noteName]) allNotes[currentInstrument][noteName] = true;else {
-              var label2 = currentInstrument + ":" + noteName;
-              if (cached.indexOf(label2) < 0) cached.push(label2);
+          // MAE 4 Jan 2024 - For proper bass/chord processing, pull instrument name from the event, not the track
+          if (gHasChordTrack && (gChordTrackIndex == i)){
+            if (noteName) {
+              var chordInstrument = instrumentIndexToName[event.instrument];
+              if (!allNotes[chordInstrument]) allNotes[chordInstrument] = {};
+              if (!gSoundsCacheABCJS[chordInstrument] || !gSoundsCacheABCJS[chordInstrument][noteName]) allNotes[chordInstrument][noteName] = true;else {
+                var label2 = chordInstrument + ":" + noteName;
+                if (cached.indexOf(label2) < 0) cached.push(label2);
+              }
+            } else {
+              var label = currentInstrument + ":" + noteName;
+              console.log("Can't find note: ", pitchNumber, label);
+              if (errorNotes.indexOf(label) < 0) errorNotes.push(label);
             }
-          } else {
-            var label = currentInstrument + ":" + noteName;
-            console.log("Can't find note: ", pitchNumber, label);
-            if (errorNotes.indexOf(label) < 0) errorNotes.push(label);
+          }
+          else{
+            if (noteName) {
+              if (!allNotes[currentInstrument]) allNotes[currentInstrument] = {};
+              if (!gSoundsCacheABCJS[currentInstrument] || !gSoundsCacheABCJS[currentInstrument][noteName]) allNotes[currentInstrument][noteName] = true;else {
+                var label2 = currentInstrument + ":" + noteName;
+                if (cached.indexOf(label2) < 0) cached.push(label2);
+              }
+            } else {
+              var label = currentInstrument + ":" + noteName;
+              console.log("Can't find note: ", pitchNumber, label);
+              if (errorNotes.indexOf(label) < 0) errorNotes.push(label);
+            }
           }
         }
       });
