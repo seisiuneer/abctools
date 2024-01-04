@@ -16297,9 +16297,6 @@ var gShapeNoteStyle = 0;
 
 function DoInjectTablature_ShapeNotes(){
 
-	// Keep track of tablature injection use
-	sendGoogleAnalytics("inject_tablature","DoInjectTablature_ShapeNotes");
-
  	const shape_styles = [
 	    { name: "  4-Shape", id: "0" },
 	    { name: "  4-Shape - Include fa/sol/la note names below", id: "1" },
@@ -16333,6 +16330,9 @@ function DoInjectTablature_ShapeNotes(){
 		if (!args.canceled){
 
 			gShapeNoteStyle = parseInt(args.result.shape_note_style); 
+
+			// Keep track of tablature injection use
+			sendGoogleAnalytics("inject_tablature","DoInjectTablature_ShapeNotes_"+gShapeNoteStyle);
 
 			// Save the settings, in case they were initialized
 			SaveConfigurationSettings();
@@ -24733,7 +24733,7 @@ function GetInitialConfigurationSettings(){
 	}
 	else{
 
-		if ((gIsIPhone) || (gIsAndroid)){
+		if ((gIsIPhone) || (gIsAndroid) || (gIsIPad)){
 
 			gTrainerTouchControls = true;
 
@@ -29137,14 +29137,6 @@ function DoStartup() {
 
 	// Are we on Safari?
 	gIsSafari = false;
-	if (isSafari()){
-
-		gIsSafari = true;
-
-		// Keep track of browser
-		sendGoogleAnalytics("browser","Safari");
-
-	}
 
 	// Are we on Chrome?
 	gIsChrome = false;
@@ -29153,9 +29145,6 @@ function DoStartup() {
 		if (isChrome()){
 
 			gIsChrome = true;
-
-			// Keep track of browser
-			sendGoogleAnalytics("browser","Chrome");
 		}
 	}
 
@@ -29165,8 +29154,6 @@ function DoStartup() {
 
 		gIsIOS = true;
 
-		// Keep track of platform
-		sendGoogleAnalytics("platform","iOS");
 	}
 	
 	// Are we on an iPad?
@@ -29175,8 +29162,6 @@ function DoStartup() {
 
 		gIsIPad = true;
 
-		// Keep track of platform
-		sendGoogleAnalytics("platform","iPad");
 	}
 
 	// Are we on an iPhone?
@@ -29185,8 +29170,6 @@ function DoStartup() {
 
 		gIsIPhone = true;
 
-		// Keep track of platform
-		sendGoogleAnalytics("platform","iPhone");
 	}
 
 	// Are we on Android?
@@ -29196,8 +29179,6 @@ function DoStartup() {
 
 		gIsAndroid = true;
 
-		// Keep track of platform
-		sendGoogleAnalytics("platform","Android");
 	}
 
 	if (gIsIOS){
@@ -29506,9 +29487,6 @@ function DoStartup() {
     //
 	if (isDesktopBrowser()){
 
-		// Keep track of platform
-		sendGoogleAnalytics("platform","Desktop");
-
 	    if (gSaveLastAutoSnapShot){
 
 	    	AddTabCloseListener();
@@ -29673,14 +29651,6 @@ function DoStartup() {
 		
 		// Use the original placeholder on iOS and Android
 		gTheABC.placeholder = "Enter the ABC for your tunes here";
-
-		if (gIsAndroid || gIsIPhone){
-
-			// Defaulting to large player controls
-			gLargePlayerControls = true;
-
-
-		}
 
 		// Hide the desktop zoom message
 		document.getElementById("desktop_use_message").style.display = "none";
