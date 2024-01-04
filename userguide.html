@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-         
+                
         <style>
         p {
         font-size:14pt;
@@ -922,13 +922,13 @@
             <p>When rendering full tunes, section headers are automatically pushed to the top of a new page in the tunebook.</p>
             <p>When rendering note or text incipits, section headers are not automatically pushed to the top of a new page.</p>
             <hr>
-            <p id="advanced_injectmidi"><strong>Inject MIDI Programs and Volumes</strong> - Injects MIDI Soundfont, Melody program, Chord program and volume annotation into one or all tunes:</p>
+            <p id="advanced_injectmidi"><strong>Inject MIDI Programs and Volumes</strong> - Injects MIDI Soundfont, Melody program, Bass program, Chord program and volume annotations into one or all tunes:</p>
             <div class="image_holder_p">
-                <img src="img/inject_all_midi_3.jpg"/>
+                <img src="img/inject_all_midi_4.jpg"/>
             </div>
             <p>Select your MIDI soundfont from the soundfont selection menu.</p>
-            <p>Select your MIDI instrument for the Melody and Bass/Chords from the instrument program selection menus.</p>
-            <p>To mute the Melody or Bass/Chords, select "Mute" from the instrument program selection menus.</p>
+            <p>Select your MIDI instrument for the Melody, Bass, and Chords from the instrument program selection menus.</p>
+            <p>To mute the Melody, Bass, or Chords, select "Mute" from the instrument program selection menus.</p>
             <p>You may select which of the MIDI parameters you want injected by clicking the checkboxes.</p>
             <p>Select "Inject all tunes" to add the selected MIDI annotations to all tunes.</p>
             <p>If "Inject all tunes" is not checked, the MIDI annotation is added at the current text insertion point.</p>
@@ -1151,17 +1151,17 @@
             <p>Once the spacing values are injected into the ABC, they can be modified in place if additional adjustments are desired.</p>
             <hr class="hidden-print" id="midi_instrument_explorer">
             <h1 class="page_break_always">MIDI Instrument Explorer<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>Brings up a player where you can experiment with playing the currently selected tune using all of the available MIDI soundfonts, melody and bass/chord programs and volumes:</p>
+            <p>Brings up a player where you can experiment with playing the currently selected tune using all of the available MIDI soundfonts, melody, bass, and chord programs/volumes:</p>
             <div class="image_holder_p">
-                <img src="img/midi_instrument_explorer_3.jpg"/>
+                <img src="img/midi_instrument_explorer_4.jpg"/>
             </div>
-            <p>This makes it quick and easy to find the right MIDI soundfont, melody instrument, bass/chord instrument, and bass/chord volumes for any tune:</p>
+            <p>This makes it quick and easy to find the right MIDI soundfont, instruments, and volumes for any tune:</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/QurVTqcO9U4" title="MIDI Instrument Explorer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>The player controls works the same way as the standard player.</p>
-            <p>To test playing the tune with a new soundfont, melody instrument, bass/chord instrument, and or bass/chord volumes, make your changes and then click <strong>Reload Tune with Changed Instruments and Volumes</strong>.</p>
-            <p>The tune will be reloaded into the player with the new MIDI soundfont, melody instrument, bass/chord instrument, and bass/chord volume settings applied.</p>
+            <p>To test playing the tune with a new soundfont, melody instrument, bass instrument, bass volume, chord instrument, and chord volumes, make your changes and then click <strong>Reload Tune with Changed Instruments and Volumes</strong>.</p>
+            <p>The tune will be reloaded into the player with the new MIDI instrument and volume settings applied.</p>
             <p>Click the play button to play the tune to check the new settings.</p>
-            <p>If you are happy with your new MIDI settings and want to apply them to the tune, click <strong>Inject Instruments and Volumes into the ABC</strong> to inject your new MIDI soundfont, program, and volume values into the tune's ABC, replacing any previous MIDI soundfont, melody instrument, bass/chord instrument, and bass/chord volume values.</p>
+            <p>If you are happy with your new MIDI settings and want to apply them to the tune, click <strong>Inject Instruments and Volumes into the ABC</strong> to inject your new MIDI values into the tune's ABC, replacing any previous MIDI instrument and volume settings.</p>
             <p>To exit the MIDI Instrument Explorer, click <strong>Close</strong>.</p>
             <p><strong>Note:</strong> This feature is primarily for use with single-voice tunes. Unpredictable results may occur with multi-voice tunes.</p>
             <hr class="hidden-print" id="swing_explorer">
@@ -1297,7 +1297,7 @@
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder_p">
-                <img src="img/abc_transcription_tool_settings_35.jpg"/>
+                <img src="img/abc_transcription_tool_settings_36.jpg"/>
             </div>
             <hr>
             <p><strong>Save an Auto-Snapshot on browser tab close or reload? (Restore it from the Add dialog)</strong> - (Desktop browsers only) When enabled, saves an Auto-Snapshot when closing or reloading the browser tab the tool is running in.</p>
@@ -1335,11 +1335,13 @@
             <hr>
             <p><strong>Use Default Melody and Bass/Chord programs when playing tunes</strong></p>
             <p>If enabled, will play tunes that don't have Melody or Bass/Chord programs already in the ABC with your preferred instrument sounds. </p>
-            <p>If a %%MIDI program or %%MIDI chordprog directive is already present in the tune when playing, it will take precedence over the default program values.</p>
+            <p>If a %%MIDI program, %%MIDI bassprog, or %%MIDI chordprog directive is already present in the tune when playing, it will take precedence over the default program values.</p>
             <hr>
             <p><strong>Default Melody MIDI program</strong> - Select your default MIDI instrument for the Melody from the instrument selection menu.</p>
             <hr>
-            <p><strong>Default Bass/Chords MIDI program</strong> - Select your default MIDI instrument for the Bass/Chords from the instrument selection menu.</p>
+            <p><strong>Default Bass MIDI program</strong> - Select your default MIDI instrument for the Bass from the instrument selection menu.</p>
+            <hr>
+            <p><strong>Default Chords MIDI program</strong> - Select your default MIDI instrument for the Chords from the instrument selection menu.</p>
             <hr>
             <p><strong>Use Default Melody and Bass/Chord volumes when playing tunes</strong></p>
             <p>If enabled, will play tunes that don't have Bass/Chord volumes already in the ABC with your preferred instrument volumes.</p>
@@ -1353,9 +1355,9 @@
             <p><strong>Override all MIDI programs and volumes in the ABC when playing tunes</strong></p>
             <p>If enabled, will override any existing %%MIDI program, %%MIDI chordprog, %MIDI bassvol, and %MIDI chordvol values found in the ABC with your defaults when you play a tune.</p>
             <p>This can be useful with my Interactive PDF tunebooks with built-in playback features if you want to use your preferred instrument sounds and volumes instead of the instruments and volumes set by the Interactive tunebook play link ABC.</p>
-            <p>For example, if you want to always use a Whistle sound for the Melody and a Piano sound for the Bass and Chords, set your default Melody instrument to Whistle and your default Bass/Chords instrument to Acoustic Grand Piano. Then enable <strong>Override all MIDI programs and volumes in the ABC when playing tunes</strong>.</p>
+            <p>For example, if you want to always use a Whistle sound for the Melody and a Piano sound for the Bass and Chords, set your default Melody instrument to Whistle and your default Bass and Chords instruments to Acoustic Grand Piano. Then enable <strong>Override all MIDI programs and volumes in the ABC when playing tunes</strong>.</p>
             <p>To mute the melody, select the Mute program.</p>
-            <p>To mute the bass/chords, select the Mute program.</p>
+            <p>To mute the bass and chords, select the Mute program.</p>
             <hr>
             <p><strong>Changing the Melody Volume</strong></p>
             <p></p>
@@ -1522,8 +1524,8 @@
             <p>Once you grant permission, you will need to restart Firefox for MIDI input to work.</p>
             <hr class="hidden-print" id="selecting_the_instruments_for_playback">
             <h1 class="page_break_always h1wide">Choosing the MIDI Soundfont and Instruments for Playback<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>You may choose which instrument sounds are used for the melody and bass/chords when playing tunes.</p>
-            <p>By default, the melody and bass/chords instrument used is a piano.</p>
+            <p>You may choose which instrument sounds are used for the melody and bass and chords when playing tunes.</p>
+            <p>By default, the melody, bass, and chords instrument used is a piano.</p>
             <p>You can specify which abcjs General MIDI soundfont to use for a specific tune by adding any of these three comment-based annotations in the ABC header for the tune:</p>
             <p class="code">%abcjs_soundfont fluid</p>
             <p class="code">%abcjs_soundfont musyng</p>
@@ -1560,15 +1562,16 @@
             <p>To change the instrument used for the melody, try changing the MIDI program # above to one of:</p>
             <p>Piano: 0, Harpsichord: 6, Accordion: 21, Fingered Bass: 33, Harp: 46</p>
             <p></p>
-            <p>By default, if you have chords in the ABC, the instrument used for the chord playback is a piano.</p>
+            <p>By default, if you have chords in the ABC, the instrument used for the bass and chord playback is a piano.</p>
             <p></p>
             <p style="page-break-before: always;"><strong>Choosing the Bass and Chord Instrument Sounds</strong></p>
             <p></p>
-            <p>To choose the instrument for the bass and chords, add the following line to your ABC right after any headers and before the ABC notes, for example for a Bass sound:</p>
+            <p>To choose the instrument for the bass and chords, add the following lines to your ABC right after any headers and before the ABC notes, for example for a Bass sound:</p>
             <p></p>
+            <p class="code">%%MIDI bassprog 34</p>
             <p class="code">%%MIDI chordprog 34</p>
             <p></p>
-            <p>Here's the same example where I've added the bass/chords instrument program selection:</p>
+            <p>Here's the same example where I've added the bass and chords instrument program selection:</p>
             <p class="code">X: 1<br/>
                 T: The Kesh<br/>
                 R: Jig<br/>
@@ -1576,13 +1579,14 @@
                 L: 1/8<br/>
                 K: Gmaj<br/>
                 %%MIDI program 21<br/>
+                %%MIDI bassprog 34<br/>
                 %%MIDI chordprog 34<br/>
                 D|: GAG GAB | ABA ABd | edd gdd | edB dBA |<br/>
                 GAG GAB | ABA ABd | edd gdB |1 AGF G2D :|2 AGF G2A||<br/>
                 |: B2B dBd | ege dBA | BAB dBG | ABA AGA |<br/>
             B2 B dBd | ege dBd | gfg aga |1 bgg g2A :|2 bgg g2D |]</p>
             <p></p>
-            <p>To change the instrument used for the bass/chords, try changing the MIDI chordprog # above to one of:</p>
+            <p>To change the instrument used for the bass and chords, try changing the MIDI bassprog or chordprog # above to one of:</p>
             <p></p>
             <p>Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38</p>
             <p></p>
@@ -1607,12 +1611,15 @@
                 % Use an Accordion sound when playing the melody:<br/>
                 %%MIDI program 21<br/>
                 %<br/>
+                % Use an Accordion sound when playing the bass:<br/>
+                %%MIDI bassprog 21<br/>
+                %<br/>
                 % Use an Accordion sound when playing the chords:<br/>
                 %%MIDI chordprog 21<br/>
             %</p>
             <p>The volume range is from 0 to 127.</p>
-            <p>To completely mute the bass/chords, change the MIDI Program to 137 (or mute):</p>
-            <p class="code">%%MIDI chordprog mute</p>
+            <p>To completely mute the bass or chords, change their MIDI Program to 137 (or mute):</p>
+            <p class="code">%%MIDI bassprog mute<br/>%%MIDI chordprog mute</p>
             <p></p>
             <p><strong>The following MIDI instruments now use the same samples as my iOS "Celtic Sounds" and other apps:</strong></p>
             <p></p>
@@ -1677,7 +1684,7 @@
             <hr>
             <p id="configure_pdf_tunebook_features"><strong>Configure PDF Tunebook Features</strong> - Brings up a dialog that you can use to add annotations at the top of the ABC that will add an optional Title Page, Table of Contents, Index, Page Header, Page Footer, playback links, and/or QR code to an exported PDF tunebook:</p>
             <div class="image_holder_p">
-                <img src="img/configure_pdf_tunebook_features_5.jpg"/>
+                <img src="img/configure_pdf_tunebook_features_6.jpg"/>
             </div>
             <p>Leave any text fields blank for features you don't want in your PDF tunebook.</p>
             <p>The PDF features are added using the tool's ABC comment-based annotations to the top of the ABC.</p>
@@ -2079,21 +2086,21 @@
             <hr>
             <p><strong>Adding a playback hyperlink to a specific tune:</strong></p>
             <p></p>
-            <p>To add a hyperlink back to the ABC Transcription Tools for playing a specific tune with specific General MIDI instrument program number sounds for the melody and the bass/chords, add the following comment-based annotation anywhere in the ABC for a specific tune:</p>
+            <p>To add a hyperlink back to the ABC Transcription Tools for playing a specific tune with specific General MIDI instrument program number sounds for the melody, bass and chords, add the following comment-based annotation anywhere in the ABC for a specific tune:</p>
             <p></p>
-            <p class="code">%add_playback_link MELODY_PROGRAM BASS_CHORD_PROGRAM SOUND_FONT</p>
+            <p class="code">%add_playback_link MELODY_PROGRAM BASS_PROGRAM CHORD_PROGRAM SOUND_FONT</p>
             <p></p>
-            <p>The MELODY_PROGRAM, BASS_CHORD_PROGRAM, and SOUND_FONT are optional.</p>
-            <p>If only the MELODY_PROGRAM is specified, the BASS_CHORD_PROGRAM and SOUND_FONT values will be set to the current default soundfont and instrument program number settings for bass/chord playback in the <strong>Settings</strong> dialog.</p>
-            <p>If MELODY_PROGRAM, BASS_CHORD_PROGRAM, and SOUND_FONT are not specified, the play link will be added, but no additional MIDI program or chordprog information will be injected into the tune at playback time.</p>
+            <p>The MELODY_PROGRAM, BASS_PROGRAM CHORD_PROGRAM, and SOUND_FONT are optional.</p>
+            <p>If only the MELODY_PROGRAM is specified, the BASS_PROGRAM, CHORD_PROGRAM, and SOUND_FONT values will be set to the current default soundfont and instrument program number settings for bass and chord playback in the <strong>Settings</strong> dialog.</p>
+            <p>If MELODY_PROGRAM, BASS_PROGRAM, CHORD_PROGRAM, and SOUND_FONT are not specified, the play link will be added, but no additional MIDI program, bassprog, or chordprog information will be injected into the tune at playback time.</p>
             <p></p>
-            <p>Example: To have a specific tune played using the FatBoy soundfont with an Harpsichord sound on the melody and a Piano sound on the chord/bass</p>
+            <p>Example: To have a specific tune played using the FatBoy soundfont with an Harpsichord sound on the melody and a Piano sound on the bass and chords</p>
             <p></p>
             <p class="code">X:1<br/>
                 T:The Tarbolton<br/>
                 M:4/4<br/>
                 K:Edor<br/>
-                %add_playback_link 6 0 fatboy<br/>
+                %add_playback_link 6 0 0 fatboy<br/>
                 Beed e2BA|GBAF GFEF|Dddc d2AG|FAGE FEDF|<br/>
                 Eeed efge|fedf e2BA|GABG FGAF|BGAF GEE2:|<br/>
                 |:gfef gebe|gebe gfec|d2fd Adfd|cdAG FDEF|<br/>
@@ -2101,16 +2108,16 @@
             <p></p>
             <p><strong>Adding playback hyperlinks to every tune in a PDF tunebook:</strong></p>
             <p></p>
-            <p>You may automatically add a hyperlink for every tune back to the ABC Transcription Tools for playing the tune with a specific General MIDI instrument program number sound for the melody and the bass/chords by adding the following comment-based annotation anywhere in the ABC file:</p>
+            <p>You may automatically add a hyperlink for every tune back to the ABC Transcription Tools for playing the tune with a specific General MIDI instrument program number sound for the melody, bass, and chords by adding the following comment-based annotation anywhere in the ABC file:</p>
             <p></p>
-            <p class="code">%add_all_playback_links MELODY_PROGRAM BASS_CHORD_PROGRAM SOUND_FONT</p>
+            <p class="code">%add_all_playback_links MELODY_PROGRAM BASS_PROGRAM CHORD_PROGRAM SOUND_FONT</p>
             <p></p>
-            <p>The MELODY_PROGRAM, BASS_CHORD_PROGRAM, and SOUND_FONT are optional.</p>
-            <p>If only the MELODY_PROGRAM is specified, the BASS_CHORD_PROGRAM and SOUND_FONT values will be set to the current default soundfont and instrument program number settings for bass/chord playback in the <strong>Settings</strong> dialog.</p>
-            <p>If MELODY_PROGRAM, BASS_CHORD_PROGRAM, and SOUND_FONT are not specified, the play link will be added, but no additional MIDI program or chordprog information will be injected into the tune at playback time.</p>
-            <p>This is useful for tunebooks for which you have manually specified all the MIDI soundfont, program, and chordprog information already in the tunes and do not want them overridden when played from the play link.</p>
-            <p>Example: To have all tunes played using the FatBoy soundfont and a Harpsichord sound on the melody and a Piano sound on the chords/bass:</p>
-            <p class="code">%add_all_playback_links 6 0 fatboy</p>
+            <p>The MELODY_PROGRAM, BASS_PROGRAM, CHORD_PROGRAM, and SOUND_FONT are optional.</p>
+            <p>If only the MELODY_PROGRAM is specified, the BASS_PROGRAM, CHORD_PROGRAM, and SOUND_FONT values will be set to the current default soundfont and instrument program number settings for bass and chord playback in the <strong>Settings</strong> dialog.</p>
+            <p>If MELODY_PROGRAM, BASS_PROGRAM, CHORD_PROGRAM, and SOUND_FONT are not specified, the play link will be added, but no additional MIDI program or chordprog information will be injected into the tune at playback time.</p>
+            <p>This is useful for tunebooks for which you have manually specified all the MIDI soundfont, program, bassprog, and chordprog information already in the tunes and do not want them overridden when played from the play link.</p>
+            <p>Example: To have all tunes played using the FatBoy soundfont and a Harpsichord sound on the melody and a Piano sound on the bass and chords:</p>
+            <p class="code">%add_all_playback_links 6 0 0 fatboy</p>
             <p>To have the playback links include the entire tunebook ABC, along with %add_all_playback_links also add:</p>
             <p class="code">%playback_links_are_complete_tunebook</p>
             <p>If the entire tunebook playback Share URL is too large to be a valid URL link for opening in the tool (about 8100 characters), you will be presented with a warning when the PDF export is complete, and no playback links will be added to the tunes.</p>
@@ -2185,7 +2192,7 @@
             <p>>> Link back on each page to the index</p>
             <p>Page headers</p>
             <p>Page footers</p>
-            <p>Playback links on every tune title selecting the Fluid soundfont, Piano sound for the melody, and a Piano sound for the bass/chords</p>
+            <p>Playback links on every tune title selecting the Fluid soundfont, Piano sound for the melody, and a Piano sound for the bass and chords</p>
             <p>QR code with hyperlink and caption at the end of the tunebook</p>
             <p></p>
             <p class="code">%pdfquality .75<br/>
@@ -2198,7 +2205,7 @@
                 %addlinkbacktoindex<br/>
                 %pageheader This is the Page Header<br/>
                 %pagefooter This is the Page Footer<br/>
-                %add_all_playback_links 0 0 fluid<br/>
+                %add_all_playback_links 0 0 0 fluid<br/>
                 %qrcode https://michaeleskin.com<br/>
             %caption_for_qrcode Click or Scan to Visit my Home Page</p>
             <p>You can instantly inject this useful starter set of PDF annotations at the top of your ABC by clicking the <strong>Add PDF Tunebook Annotations</strong> button in the <strong>Add</strong> dialog.</p>

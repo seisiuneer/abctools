@@ -170,7 +170,9 @@ var gAddTheSessionHyperlinks = false;
 var gAddPlaybackHyperlinks = false;
 var gAddPlaybackHyperlinksIncludePrograms = false;
 var gPlaybackHyperlinkMelodyProgram = "";
-var gPlaybackHyperlinkBassChordProgram = "";
+var gPlaybackHyperlinkBassProgram = "";
+var gPlaybackHyperlinkChordProgram = "";
+
 var gPlaybackHyperlinkSoundFont = "";
 var gAddTunebookPlaybackHyperlinks = false;
 
@@ -3387,7 +3389,7 @@ function GetAllTuneHyperlinks(theLinks) {
 			// Strip out X:
 			theTune = theTune.replace(searchRegExp, "");
 
-			theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkBassChordProgram+"\n"+theTune;
+			theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI bassprog "+gPlaybackHyperlinkBassProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkChordProgram+"\n"+theTune;
 
 		}
 
@@ -3556,7 +3558,8 @@ function GetAllTuneHyperlinks(theLinks) {
 
 			// Initially, use the defaults
 			var theMelodyPatch = gTheMelodyProgram;
-			var theBassChordPatch = gTheChordProgram;
+			var theBassPatch = gTheBassProgram;
+			var theChordPatch = gTheChordProgram;
 			var theSoundFont = "fluid";
 
 			if (gDefaultSoundFont.indexOf("Fluid")!=-1){
@@ -3580,8 +3583,8 @@ function GetAllTuneHyperlinks(theLinks) {
 
 				theSoundFont = gPlaybackHyperlinkSoundFont;
 				theMelodyPatch = gPlaybackHyperlinkMelodyProgram;
-				theBassChordPatch = gPlaybackHyperlinkBassChordProgram;
-
+				theBassPatch = gPlaybackHyperlinkBassProgram;
+				theChordPatch = gPlaybackHyperlinkChordProgram;
 			}
 
 			var doAddPatches = false;
@@ -3594,12 +3597,17 @@ function GetAllTuneHyperlinks(theLinks) {
 				}
 
 				if (thePatches.length > 1){
-					theBassChordPatch = thePatches[1];
-					theBassChordPatch = theBassChordPatch.trim();
+					theBassPatch = thePatches[1];
+					theBassPatch = theBassPatch.trim();
 				}
 
 				if (thePatches.length > 2){
-					theSoundFont = thePatches[2];
+					theChordPatch = thePatches[2];
+					theChordPatch = theChordPatch.trim();
+				}
+
+				if (thePatches.length > 3){
+					theSoundFont = thePatches[3];
 					theSoundFont = theSoundFont.trim();
 				}
 
@@ -3615,8 +3623,7 @@ function GetAllTuneHyperlinks(theLinks) {
 				// Strip out tempo markings
 				tuneWithPatch = tuneWithPatch.replace(searchRegExp, "");
 
-				tuneWithPatch = "X:1\n%abcjs_soundfont "+theSoundFont+"\n"+"%%MIDI program "+theMelodyPatch+"\n"+"%%MIDI chordprog "+theBassChordPatch+"\n"+tuneWithPatch;
-
+				tuneWithPatch = "X:1\n%abcjs_soundfont "+theSoundFont+"\n"+"%%MIDI program "+theMelodyPatch+"\n"+"%%MIDI bassprog "+theBassPatch+"\n"+"%%MIDI chordprog "+theChordPatch+"\n"+tuneWithPatch;
 			}
 
 			// Create a share URL for this tune
@@ -5710,7 +5717,8 @@ function ParseCommentCommands(theNotes){
 		var thePatches = thePatch.match(/\b(\w+)\b/g);
 
 		gPlaybackHyperlinkMelodyProgram = gTheMelodyProgram;
-		gPlaybackHyperlinkBassChordProgram = gTheChordProgram;
+		gPlaybackHyperlinkBassProgram = gTheBassProgram;
+		gPlaybackHyperlinkChordProgram = gTheChordProgram;
 		gPlaybackHyperlinkSoundFont = "fluid";
 
 		if (gDefaultSoundFont.indexOf("Fluid")!=-1){
@@ -5739,15 +5747,20 @@ function ParseCommentCommands(theNotes){
 				gPlaybackHyperlinkMelodyProgram = gPlaybackHyperlinkMelodyProgram.trim();
 			}
 
-			if (thePatches.length > 1){
-				gPlaybackHyperlinkBassChordProgram = thePatches[1];
-				gPlaybackHyperlinkBassChordProgram = gPlaybackHyperlinkBassChordProgram.trim();
+			if (thePatches.length > 2){
+				gPlaybackHyperlinkBassProgram = thePatches[1];
+				gPlaybackHyperlinkBassProgram = gPlaybackHyperlinkBassProgram.trim();
 			}	
 
-			if (thePatches.length > 2){
-				gPlaybackHyperlinkSoundFont = thePatches[2];
-				gPlaybackHyperlinkSoundFont = gPlaybackHyperlinkSoundFont.trim();
+			if (thePatches.length > 3){
+				gPlaybackHyperlinkChordProgram = thePatches[2];
+				gPlaybackHyperlinkChordProgram = gPlaybackHyperlinkChordProgram.trim();
 			}	
+
+			if (thePatches.length > 4){
+				gPlaybackHyperlinkSoundFont = thePatches[3];
+				gPlaybackHyperlinkSoundFont = gPlaybackHyperlinkSoundFont.trim();
+			}
 
 		}
 		else{
@@ -9849,7 +9862,10 @@ var gPDFTunebookConfig ={
 	// Melody Instrument
 	melody_instrument: 1,
 
-	// Bass/Chord Instrument
+	// Bass Instrument
+	bass_instrument: 1,
+
+	// Chord Instrument
 	chord_instrument: 1,
 
 	// QR Code?
@@ -9906,7 +9922,10 @@ function resetPDFTunebookConfig(){
 		// Melody Instrument
 		melody_instrument: 1,
 
-		// Bass/Chord Instrument
+		// Bass Instrument
+		bass_instrument: 1,
+
+		// Chord Instrument
 		chord_instrument: 1,
 
 		// QR Code?
@@ -9948,6 +9967,11 @@ function PDFTunebookBuilder(){
 		gPDFTunebookConfig.sound_font = "fluid";
 	}
 
+	// bass_instrument was added later, make sure the field is present
+	if ((!gPDFTunebookConfig.bass_instrument) || (gPDFTunebookConfig.bass_instrument == "")){
+		gPDFTunebookConfig.bass_instrument = 1;
+	}
+
 	var midi_program_list = [];
 
   	for (var i=0;i<138;++i){
@@ -9974,8 +9998,8 @@ function PDFTunebookBuilder(){
 
 	var form = [
 	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Configure PDF Tunebook Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#configure_pdf_tunebook_features" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},  
-	  {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Clicking "OK" will add PDF tunebook feature annotations to the top of your ABC.</p>'},  
-	  {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Leave any text fields blank for features you don\'t want in your PDF tunebook.</p>'},  
+	  {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:14pt;font-family:helvetica">Clicking "OK" will add PDF tunebook feature annotations to the top of your ABC.</p>'},  
+	  {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:14pt;font-family:helvetica">Leave any text fields blank for features you don\'t want in your PDF tunebook.</p>'},  
 	  {name: "PDF quality:", id: "pdfquality", type:"select", options:pdf_quality_list, cssClass:"configure_pdfquality_select"},
 	  {name: "Space between tunes (in 1/72\"):", id: "pdf_between_tune_space", type:"number", cssClass:"configure_setuppdftunebook_form_text"},
 	  {name: "Title Page title:", id: "addtitle", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide2"},
@@ -9986,11 +10010,12 @@ function PDFTunebookBuilder(){
 	  {name: "Page Footer:", id: "pagefooter", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
 	  {name: "          Add playback links to each tune to allow playing the tune by clicking the tune title", id: "bAdd_add_all_playback_links", type:"checkbox", cssClass:"configure_setuppdftunebook_form_text2"},
 	  {name: "          Playback links contain entire tunebook", id: "bAdd_add_full_tunebook", type:"checkbox", cssClass:"configure_setuppdftunebook_form_text"},
-	  {name: "Soundfont for playback links:", id: "sound_font", type:"select", options:sound_font_options, cssClass:"configure_midi_program_select"},
-	  {name: "Melody instrument for playback links:", id: "melody_instrument", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
-	  {name: "Bass/Chord instrument for playback links:", id: "chord_instrument", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
+	  {name: "Soundfont for playback links:", id: "sound_font", type:"select", options:sound_font_options, cssClass:"configure_setuppdftunebook_midi_program_select"},
+	  {name: "Melody instrument for playback links:", id: "melody_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
+	  {name: "Bass instrument for playback links:", id: "bass_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
+	  {name: "Chord instrument for playback links:", id: "chord_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
 	  {name: "          Add a QR Code to the end of the PDF", id: "bAdd_QRCode", type:"checkbox", cssClass:"configure_setuppdftunebook_form_text"},
-	  {html: '<p style="margin-top:20px;margin-bottom:16px;font-size:12pt;line-height:12pt;font-family:helvetica">To override the default Share URL QR Code, enter your own URL below:</p>'},  
+	  {html: '<p style="margin-top:18px;margin-bottom:16px;font-size:12pt;line-height:10pt;font-family:helvetica">To override the default Share URL QR Code, enter your own URL below:</p>'},  
 	  {name: "Custom URL:", id: "qrcode_link", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
 	  {name: "QR Code caption:", id: "caption_for_qrcode", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
 	];
@@ -10001,7 +10026,7 @@ function PDFTunebookBuilder(){
 
 	}, 150);
 
-	const modal = DayPilot.Modal.form(form, gPDFTunebookConfig, { theme: "modal_flat", top: 20, width: 690, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, gPDFTunebookConfig, { theme: "modal_flat", top: 10, width: 690, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 	
 		if (!args.canceled){
 
@@ -10016,7 +10041,7 @@ function PDFTunebookBuilder(){
 			// %addlinkbacktoindex
 			// %pageheader This is the Page Header
 			// %pagefooter This is the Page Footer
-			// %add_all_playback_links 0 0 fatboy
+			// %add_all_playback_links 0 0 0 fatboy
 			// %playback_links_are_complete_tunebook
 			// %qrcode https://michaeleskin.com
 			// %caption_for_qrcode Click or Scan to Visit my Home Page
@@ -10109,7 +10134,10 @@ function PDFTunebookBuilder(){
 			// Melody Instrument
 			gPDFTunebookConfig.melody_instrument = args.result.melody_instrument;
 
-			// Bass/Chord Instrument
+			// Bass Instrument
+			gPDFTunebookConfig.bass_instrument = args.result.bass_instrument;
+
+			// Chord Instrument
 			gPDFTunebookConfig.chord_instrument = args.result.chord_instrument;
 
 			if (gPDFTunebookConfig.bAdd_add_all_playback_links){
@@ -10117,6 +10145,8 @@ function PDFTunebookBuilder(){
 				var soundFont = gPDFTunebookConfig.sound_font;
 
 				var progNumMelody = gPDFTunebookConfig.melody_instrument;
+
+				var progNumBass = gPDFTunebookConfig.bass_instrument;
 
 				var progNumChord = gPDFTunebookConfig.chord_instrument;
 
@@ -10133,6 +10163,24 @@ function PDFTunebookBuilder(){
 					if ((progNumMelody < 0) || (progNumMelody > 137)){
 
 						progNumMelody = 0;
+
+					}
+
+				}
+
+				// Special case for muting voices
+				if (progNumBass == 0){
+
+					progNumBass = "mute";
+
+				}
+				else{
+
+					progNumBass = progNumBass - 1;
+
+					if ((progNumBass < 0) || (progNumBass > 137)){
+
+						progNumBass = 0;
 
 					}
 
@@ -10156,7 +10204,7 @@ function PDFTunebookBuilder(){
 
 				}
 
-				header_to_add += "%add_all_playback_links "+progNumMelody+" "+progNumChord+" "+soundFont+"\n";
+				header_to_add += "%add_all_playback_links "+progNumMelody+" "+progNumBass+" "+progNumChord+" "+soundFont+"\n";
 
 				// Will only add the full tunebook Share URL annotation if the playback links are also enabled
 				if (gPDFTunebookConfig.bAdd_add_full_tunebook){
@@ -11129,8 +11177,8 @@ function AppendSampleReel(){
 	theValue += "% Use an Acoustic Grand Piano sound for the chords:\n";
 	theValue += "%%MIDI chordprog 0\n";
 	theValue += "%\n";
-	theValue += "% Use an Fretless Bass sound for the bass:\n";
-	theValue += "%%MIDI bassprog 35\n";
+	theValue += "% Use an Synth Bass sound for the bass:\n";
+	theValue += "%%MIDI bassprog 38\n";
 	theValue += "%\n";
 	theValue += "% Set a specific amount of swing:\n";
 	theValue += '%swing 0.15\n';
@@ -11221,8 +11269,8 @@ function AppendSampleHornpipe(){
 	theValue += "% Use an Acoustic Grand Piano for the chords:\n";
 	theValue += "%%MIDI chordprog 0\n";
 	theValue += "%\n";
-	theValue += "% Use an Fretless Bass sound for the bass:\n";
-	theValue += "%%MIDI bassprog 35\n";
+	theValue += "% Use an Synth Bass sound for the bass:\n";
+	theValue += "%%MIDI bassprog 38\n";
 	theValue += "%\n";
 	theValue += "% Set a specific amount of swing:\n";
 	theValue += '%swing 0.25\n';
@@ -12627,7 +12675,7 @@ function CopyToClipboard(textToCopy) {
 //
 // Override MIDI program number directive 
 //
-function OverrideOneTuneMIDIParams(theTune, melodyProg, chordProg, bassVol, chordVol){
+function OverrideOneTuneMIDIParams(theTune, melodyProg, bassProg, chordProg, bassVol, chordVol){
 
 	var theOutput = theTune;
 
@@ -12642,6 +12690,20 @@ function OverrideOneTuneMIDIParams(theTune, melodyProg, chordProg, bassVol, chor
 
 			theOutput = theOutput.replace(melodyProgramRequested[i],"%%MIDI program "+melodyProg);
 
+		}
+
+	}
+
+	// Replace bass programs
+	searchRegExp = /^%%MIDI bassprog.*$/gm
+
+	var bassProgramRequested = theTune.match(searchRegExp);
+
+	if ((bassProgramRequested) && (bassProgramRequested.length > 0)){
+
+		for (var i=0;i<bassProgramRequested.length;++i){
+
+			theOutput = theOutput.replace(bassProgramRequested[i],"%%MIDI bassprog "+bassProg);
 		}
 
 	}
@@ -13707,7 +13769,7 @@ function NotationSpacingExplorer(){
 //
 // Inject MIDI program number directive below the tune header
 //
-function InjectOneTuneMIDIProgram(theTune, progNum, bIsChords){
+function InjectOneTuneMIDIProgram(theTune, progNum){
 
 	var thePatchName;
 
@@ -13723,36 +13785,21 @@ function InjectOneTuneMIDIProgram(theTune, progNum, bIsChords){
 		thePatchName = generalMIDISoundNames[progNum+1];
 
 	}
-
-	if (bIsChords){
-
-		toInject = "% Bass/Chord program: "+thePatchName+"\n"+"%%MIDI chordprog " + progNum;
-	}
-	else{
-		toInject = "% Melody program: "+thePatchName+"\n"+"%%MIDI program " + progNum;
-	}
-
+	
+	toInject = "% Melody program: "+thePatchName+"\n"+"%%MIDI program " + progNum;
+	
 	var theOutput; 
 
-	if (bIsChords){
+	theOutput = InjectStringBelowTuneHeader(theTune,toInject);
 
-		theOutput = InjectStringBelowTuneHeader(theTune,toInject);
-
-	}
-	else{
-
-		theOutput = InjectStringBelowTuneHeader(theTune,toInject);
-
-	}
-	
 	return theOutput;
 	
 }
 
 //
-// Inject MIDI bass/chord number and optional volume directives below the tune header
+// Inject MIDI bass number and optional volume directives below the tune header
 //
-function InjectOneTuneMIDIBassChordProgramAndVolumes(theTune, progNum, bassVol, chordVol){
+function InjectOneTuneMIDIBassProgramAndVolumes(theTune, progNum, bassVol){
 
 	var thePatchName;
 
@@ -13769,14 +13816,43 @@ function InjectOneTuneMIDIBassChordProgramAndVolumes(theTune, progNum, bassVol, 
 
 	}
 
-	toInject = "% Bass/Chords program: "+thePatchName+"\n"+"%%MIDI chordprog " + progNum;
+	toInject = "% Bass program: "+thePatchName+"\n"+"%%MIDI bassprog " + progNum;
 
-	toInject += "\n%%MIDI bassvol " + bassVol + "\n" + "%%MIDI chordvol " + chordVol;
+	toInject += "\n%%MIDI bassvol " + bassVol;
+
+	var theOutput = InjectStringBelowTuneHeader(theTune,toInject);
+
+	return theOutput;
+	
+}
+
+//
+// Inject MIDI chord number and optional volume directives below the tune header
+//
+function InjectOneTuneMIDIChordProgramAndVolumes(theTune, progNum, chordVol){
+
+	var thePatchName;
+
+	var toInject = "";
+
+	if (progNum == "mute"){
+
+		thePatchName = "Mute";
+
+	} 
+	else{
+
+		thePatchName = generalMIDISoundNames[progNum+1];
+
+	}
+
+	toInject = "% Chords program: "+thePatchName+"\n"+"%%MIDI chordprog " + progNum;
+
+	toInject += "\n%%MIDI chordvol " + chordVol;
 
 
 	var theOutput = InjectStringBelowTuneHeader(theTune,toInject);
 
-	
 	return theOutput;
 	
 }
@@ -13784,10 +13860,16 @@ function InjectOneTuneMIDIBassChordProgramAndVolumes(theTune, progNum, bassVol, 
 //
 // Inject MIDI program number directive above the tune header
 //
-function InjectOneTuneMIDIProgramAboveTune(theTune, progNum, bIsChords){
+function InjectOneTuneMIDIProgramAboveTune(theTune, progNum, bIsBass, bIsChords){
 
 	var theOutput;
 
+	if (bIsBass){
+
+		theOutput = InjectStringAboveTuneHeader(theTune,"%%MIDI bassprog "+progNum);
+
+	}
+	else
 	if (bIsChords){
 
 		theOutput = InjectStringAboveTuneHeader(theTune,"%%MIDI chordprog "+progNum);
@@ -13846,8 +13928,6 @@ function InjectOneTuneMIDIVolumeAboveTune(theTune, theVolume, bIsChords){
 	return theOutput;
 	
 }
-
-
 
 //
 // Inject MIDI soundfont and instrument related directives
@@ -14008,6 +14088,7 @@ const generalMIDISoundNames = [
 
 var gLastInjectedSoundfont = null;
 var gLastInjectedProgram = 1;
+var gLastInjectedBassProgram = 1;
 var gLastInjectedChordsProgram = 1;
 var gLastInjectedChordVolume = 64;
 var gLastInjectedBassVolume = 64;
@@ -14061,25 +14142,30 @@ function InjectAllMIDIParams(){
 	  configure_inject_soundfont: false,
 	  configure_program:gLastInjectedProgram,
 	  configure_inject_melody_program: false,
+	  configure_bassprogram:gLastInjectedBassProgram,
 	  configure_chordprogram:gLastInjectedChordsProgram,
 	  configure_bassvolume:gLastInjectedBassVolume,
 	  configure_chordvolume:gLastInjectedChordVolume,
 	  configure_inject_chord_program: false,
+	  configure_inject_bass_program: false,
 	  configure_inject_all:true
 	};
 
 	var form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject MIDI Soundfont, Melody, and Chords&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#selecting_the_instruments_for_playback" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
-	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a %abcjs_soundfont directive into the ABC.</p>'},  
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject MIDI Soundfont, Melody, Bass, and Chords&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#selecting_the_instruments_for_playback" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
+	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a %abcjs_soundfont directive into the ABC:</p>'},  
 	  {name: "            Inject abcjs Soundfont", id: "configure_inject_soundfont", type:"checkbox", cssClass:"configure_midi_program_form_text"},
 	  {name: "%abcjs_soundfont value to inject:", id: "configure_soundfont", type:"select", options:sound_fonts_list, cssClass:"configure_soundfont_select"},
-	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a %%MIDI program directive into the ABC.</p>'},  
+	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a %%MIDI program directive into the ABC:</p>'},  
 	  {name: "            Inject MIDI Melody program", id: "configure_inject_melody_program", type:"checkbox", cssClass:"configure_midi_program_form_text"},
 	  {name: "MIDI Melody program to inject:", id: "configure_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
-	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a %%MIDI chordprog with bass and chord volume directives into the ABC.</p>'},  
+	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject %%MIDI bassprog and %%MIDI bassvol directives into the ABC:</p>'},  
+	  {name: "            Inject MIDI Bass program and volumes", id: "configure_inject_bass_program", type:"checkbox", cssClass:"configure_midi_program_form_text"},
+  	  {name: "MIDI Bass program to inject:", id: "configure_bassprogram", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
+	  {name: "MIDI Bass volume (0-127):", id: "configure_bassvolume", type:"text", cssClass:"configure_midi_program_form_number_input"},
+	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject %%MIDI chordprog and %%MIDI chordvol directives into the ABC:</p>'},  
 	  {name: "            Inject MIDI Chord program and volumes", id: "configure_inject_chord_program", type:"checkbox", cssClass:"configure_midi_program_form_text"},
   	  {name: "MIDI Chord program to inject:", id: "configure_chordprogram", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
-	  {name: "MIDI Bass volume (0-127):", id: "configure_bassvolume", type:"text", cssClass:"configure_midi_program_form_number_input"},
 	  {name: "MIDI Chord volume (0-127):", id: "configure_chordvolume", type:"text", cssClass:"configure_midi_program_form_number_input"},
 	  {html: '<p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="https://michaeleskin.com/documents/general_midi_extended_v2.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'},
 	  {name: "            Inject all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_midi_program_form_text"},
@@ -14091,10 +14177,11 @@ function InjectAllMIDIParams(){
 
 			var bDoSoundFont = args.result.configure_inject_soundfont;
 			var bDoMelodyProgram = args.result.configure_inject_melody_program;
-			var bDoChordProgram = args.result.configure_inject_chord_program
+			var bDoBassProgram = args.result.configure_inject_bass_program;
+			var bDoChordProgram = args.result.configure_inject_chord_program;
 
 			// Nothing requested
-			if (!(bDoSoundFont || bDoMelodyProgram || bDoChordProgram)){
+			if (!(bDoSoundFont || bDoMelodyProgram || bDoBassProgram || bDoChordProgram)){
 				//console.log("No MIDI injection requested");
 				return;
 			}
@@ -14144,9 +14231,11 @@ function InjectAllMIDIParams(){
 
 			}
 
+			var progNumBass = args.result.configure_bassprogram;
 			var progNumChord = args.result.configure_chordprogram;
 
 			// Time saver - Save the last injected values for next time
+			gLastInjectedBassProgram = progNumBass;
 			gLastInjectedChordsProgram = progNumChord;
 			gLastInjectedBassVolume = args.result.configure_bassvolume;
 			gLastInjectedChordVolume = args.result.configure_chordvolume;
@@ -14174,7 +14263,23 @@ function InjectAllMIDIParams(){
 			if (gLastInjectedChordVolume > 127){
 				gLastInjectedChordVolume = 127;
 			}
-		
+
+			// Special case for muting voices
+			if (progNumBass == 0){
+
+				progNumBass = "mute";
+
+			}
+			else{
+
+				progNumBass = progNumBass - 1;
+
+				if ((progNumBass < 0) || (progNumBass > 137)){
+					progNumBass = 0;
+				}
+
+			}
+
 			// Special case for muting voices
 			if (progNumChord == 0){
 
@@ -14237,7 +14342,7 @@ function InjectAllMIDIParams(){
 
 						theTunes[i] = "X:"+theTunes[i];
 
-						output += InjectOneTuneMIDIProgram(theTunes[i],progNum,false);
+						output += InjectOneTuneMIDIProgram(theTunes[i],progNum);
 
 					}
 
@@ -14249,6 +14354,32 @@ function InjectAllMIDIParams(){
 
 				}
 				
+				if (bDoBassProgram){
+
+					var nTunes = CountTunes();
+
+					var theNotes = gTheABC.value;
+
+					// Find the tunes
+					var theTunes = theNotes.split(/^X:/gm);
+
+					var output = FindPreTuneHeader(theNotes);
+
+					for (var i=1;i<=nTunes;++i){
+
+						theTunes[i] = "X:"+theTunes[i];
+
+						output += InjectOneTuneMIDIBassProgramAndVolumes(theTunes[i], progNumBass, gLastInjectedBassVolume);
+					}
+
+					// Stuff in the output
+					gTheABC.value = output;
+
+					// Set dirty
+					gIsDirty = true;
+
+				}
+
 				if (bDoChordProgram){
 
 					var nTunes = CountTunes();
@@ -14264,7 +14395,7 @@ function InjectAllMIDIParams(){
 
 						theTunes[i] = "X:"+theTunes[i];
 
-						output += InjectOneTuneMIDIBassChordProgramAndVolumes(theTunes[i], progNumChord, gLastInjectedBassVolume, gLastInjectedChordVolume);
+						output += InjectOneTuneMIDIChordProgramAndVolumes(theTunes[i], progNumChord, gLastInjectedChordVolume);
 					}
 
 					// Stuff in the output
@@ -14274,7 +14405,6 @@ function InjectAllMIDIParams(){
 					gIsDirty = true;
 
 				}
-
 				// Have to redraw if in raw mode
 			    if (gRawMode){
 
@@ -14306,6 +14436,34 @@ function InjectAllMIDIParams(){
 
 				var theSelectionStart = gTheABC.selectionStart;
 
+				if (bDoBassProgram){
+
+					var thePatchName;
+
+					if (progNumBass == "mute"){
+						thePatchName = "Mute";
+					} 
+					else{
+						thePatchName = generalMIDISoundNames[progNumBass+1];
+					}
+
+					var leftSide = gTheABC.value.substring(0,theSelectionStart);
+					
+					var rightSide = gTheABC.value.substring(theSelectionStart);
+
+					var toInject = "% Bass instrument: "+thePatchName+"\n"+"%%MIDI bassprog " + progNumBass;
+
+					toInject += "\n%%MIDI bassvol " + gLastInjectedBassVolume;
+
+					toInject += "\n";
+
+					gTheABC.value = leftSide + toInject + rightSide;
+
+					// Set dirty
+					gIsDirty = true;
+
+				}
+
 				if (bDoChordProgram){
 
 					var thePatchName;
@@ -14321,9 +14479,9 @@ function InjectAllMIDIParams(){
 					
 					var rightSide = gTheABC.value.substring(theSelectionStart);
 
-					var toInject = "% Bass/Chord instrument: "+thePatchName+"\n"+"%%MIDI chordprog " + progNumChord;
+					var toInject = "% Chord instrument: "+thePatchName+"\n"+"%%MIDI chordprog " + progNumChord;
 
-					toInject += "\n%%MIDI bassvol " + gLastInjectedBassVolume + "\n" + "%%MIDI chordvol " + gLastInjectedChordVolume;
+					toInject += "\n%%MIDI chordvol " + gLastInjectedChordVolume;
 
 					toInject += "\n";
 
@@ -14331,7 +14489,6 @@ function InjectAllMIDIParams(){
 
 					// Set dirty
 					gIsDirty = true;
-
 
 				}
 
@@ -15864,7 +16021,7 @@ function InjectPDFHeaders(){
 	output += "%urlpageheader https://michaeleskin.com Page Header as Hyperlink\n";
 	output += "%urlpagefooter https://michaeleskin.com Page Footer as Hyperlink\n";
 	output += "%add_all_links_to_thesession\n";
-	output += "%add_all_playback_links 0 0 fluid\n";
+	output += "%add_all_playback_links 0 0 0 fluid\n";
 	output += "%playback_links_are_complete_tunebook\n";
 	output += "%swing_all_hornpipes 0.25\n";	
 	output += "%noswing_all_hornpipes\n";	
@@ -15876,7 +16033,7 @@ function InjectPDFHeaders(){
 	output += "% These directives can be added to each tune:\n";
 	output += "%hyperlink https://michaeleskin.com\n";
 	output += "%add_link_to_thesession\n";
-	output += "%add_playback_link 0 0 fluid\n";
+	output += "%add_playback_link 0 0 0 fluid\n";
 	output += "%swing 0.25 0\n";
 	output += "%noswing\n";
 	output += "%grace_duration_ms 30\n";
@@ -19956,11 +20113,22 @@ function PreProcessPlayABC(theTune){
 
 	if (gOverridePlayMIDIParams){
 
-		theTune = OverrideOneTuneMIDIParams(theTune, gTheMelodyProgram, gTheChordProgram, gTheBassVolume, gTheChordVolume);
+		theTune = OverrideOneTuneMIDIParams(theTune, gTheMelodyProgram, gTheBassProgram, gTheChordProgram, gTheBassVolume, gTheChordVolume);
 	}
 
 	// Inject programs?
 	if (gAlwaysInjectPrograms){
+
+		// Check first for any existing program messages before replacing
+		var searchRegExp = /^%%MIDI bassprog.*$/m
+
+		var bassProgramRequested = theTune.match(searchRegExp);
+
+		if (!((bassProgramRequested) && (bassProgramRequested.length > 0))){
+
+			theTune = InjectOneTuneMIDIProgramAboveTune(theTune, gTheBassProgram, true, false);
+
+		}
 
 		// Check first for any existing program messages before replacing
 		var searchRegExp = /^%%MIDI chordprog.*$/m
@@ -19969,7 +20137,7 @@ function PreProcessPlayABC(theTune){
 
 		if (!((chordProgramRequested) && (chordProgramRequested.length > 0))){
 
-			theTune = InjectOneTuneMIDIProgramAboveTune(theTune, gTheChordProgram, true);
+			theTune = InjectOneTuneMIDIProgramAboveTune(theTune, gTheChordProgram, false, true);
 
 		}
 
@@ -19979,7 +20147,7 @@ function PreProcessPlayABC(theTune){
 
 		if (!((melodyProgramRequested) && (melodyProgramRequested.length > 0))){
 
-			theTune = InjectOneTuneMIDIProgramAboveTune(theTune, gTheMelodyProgram, false);
+			theTune = InjectOneTuneMIDIProgramAboveTune(theTune, gTheMelodyProgram, false, false);
 
 		}
 	}
@@ -21250,6 +21418,7 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 //
 
 var gInstrumentExplorerMelodyInstruments = null;
+var gInstrumentExplorerBassInstruments = null;
 var gInstrumentExplorerChordInstruments = null;
 var gInstrumentExplorerSoundfonts = null;
 
@@ -21283,6 +21452,12 @@ function InstrumentExplorer(){
 		if (!gInstrumentExplorerMelodyInstruments){
 
 			gInstrumentExplorerMelodyInstruments = InstrumentExplorerBuildDropdown("instrument_explorer_melody_program",generalMIDISoundNames);
+
+		}
+
+		if (!gInstrumentExplorerBassInstruments){
+
+			gInstrumentExplorerBassInstruments = InstrumentExplorerBuildDropdown("instrument_explorer_bass_program",generalMIDISoundNames);
 
 		}
 
@@ -21343,6 +21518,10 @@ function PreProcessTuneInstrumentExplorer(theTune){
 
 	theTune = theTune.replaceAll(searchRegExp,"");
 
+	searchRegExp = /^%%MIDI bassprog.*[\r\n]*/gm
+
+	theTune = theTune.replaceAll(searchRegExp,"");
+
 	searchRegExp = /^%%MIDI chordprog.*[\r\n]*/gm
 
 	theTune = theTune.replaceAll(searchRegExp,"");
@@ -21369,6 +21548,9 @@ function InstrumentExplorerRegenerate(){
 
 	// Grab the melody instrument
 	gInstrumentExplorerMelodyInstrument = document.getElementById("instrument_explorer_melody_program").value;
+
+	// Grab the bass instrument
+	gInstrumentExplorerBassInstrument = document.getElementById("instrument_explorer_bass_program").value;
 
 	// Grab the chord instrument
 	gInstrumentExplorerChordInstrument = document.getElementById("instrument_explorer_chord_program").value;
@@ -21446,6 +21628,15 @@ function ScanTuneForInstrumentExplorer(theTune){
 
 	gInstrumentExplorerChordInstrument = ""+gInstrumentExplorerChordInstrument;
 
+	if (gTheBassProgram == "137"){
+		gInstrumentExplorerBassInstrument = 0;
+	}
+	else{
+		gInstrumentExplorerBassInstrument = parseInt(gTheBassProgram)+1;
+	}
+
+	gInstrumentExplorerBassInstrument = ""+gInstrumentExplorerBassInstrument;
+
 	gInstrumentExplorerBassVolume = gTheBassVolume;
 	gInstrumentExplorerChordVolume = gTheChordVolume;
 
@@ -21509,6 +21700,36 @@ function ScanTuneForInstrumentExplorer(theTune){
 				if (!isNaN(theValue)){
 
 					gInstrumentExplorerMelodyInstrument = ""+(theValue+1);
+
+				}
+			}
+		}
+	}
+
+	searchRegExp = /^%%MIDI bassprog.*$/gm
+
+	theMatch = theTune.match(searchRegExp);
+
+	if ((theMatch) && (theMatch.length > 0)){
+
+		var theParamString = theMatch[0].replace("%%MIDI bassprog","");
+
+		theParamString = theParamString.trim();
+		
+		if (theParamString != ""){
+
+			if (theParamString.toLowerCase() == "mute"){
+
+				gInstrumentExplorerBassInstrument = "0";
+			
+			}
+			else{
+
+				var theValue = parseInt(theParamString);
+
+				if (!isNaN(theValue)){
+
+					gInstrumentExplorerBassInstrument = ""+(theValue+1);
 
 				}
 			}
@@ -21600,6 +21821,9 @@ function InstrumentExplorerInject(){
 
 	// Grab the melody instrument
 	gInstrumentExplorerMelodyInstrument = document.getElementById("instrument_explorer_melody_program").value;
+	
+	// Grab the bass instrument
+	gInstrumentExplorerBassInstrument = document.getElementById("instrument_explorer_bass_program").value;
 
 	// Grab the chord instrument
 	gInstrumentExplorerChordInstrument = document.getElementById("instrument_explorer_chord_program").value;
@@ -21707,8 +21931,16 @@ function InstrumentExplorerDialogInjectThisTune(theTune){
 		theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI program "+theProgram);
 	}
 
+	// Inject bass instrument
+	if (gInstrumentExplorerBassInstrument == "0"){
+		theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI bassprog mute");
+	}
+	else{
+		var theProgram = parseInt(gInstrumentExplorerBassInstrument)-1;
+		theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI bassprog "+theProgram);
+	}
+
 	// Inject chord instrument
-	// Offset by one to deal with mute instrument at offset zero
 	if (gInstrumentExplorerChordInstrument == "0"){
 		theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI chordprog mute");
 	}
@@ -21736,6 +21968,7 @@ function InstrumentExplorerDialogInjectThisTune(theTune){
 
 var gInstrumentExplorerSoundfont = "0";
 var gInstrumentExplorerMelodyInstrument = "0";
+var gInstrumentExplorerBassInstrument = "0";
 var gInstrumentExplorerChordInstrument = "0";
 var gInstrumentExplorerBassVolume = 0;
 var gInstrumentExplorerChordVolume = 0;
@@ -21927,7 +22160,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 		// Adapt the top based on the player control size
 		var theTop = 50;
 
-		var theHeight = window.innerHeight - 465; 
+		var theHeight = window.innerHeight - 515; 
 
 	   	modal_msg = '<div id="playerholder" style="height:'+theHeight+'px;overflow-y:auto;margin-bottom:15px;">';
 
@@ -21952,41 +22185,25 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 		}
 
 	   	// Add the MIDI Instrument Explorer controls
-		if (isMobileBrowser()){
+		modal_msg += '<div class="configure_instrumentexplorer_text" style="text-align:center;margin:0px;margin-top:36px">';
+		modal_msg += '<p class="configure_instrumentexplorer_text">';
+		modal_msg += "Sound font:"+gInstrumentExplorerSoundfonts+"&nbsp;&nbsp;&nbsp;Melody:"+gInstrumentExplorerMelodyInstruments;
+		modal_msg += '</p>';
+		modal_msg += '<p class="configure_instrumentexplorer_text">';
+		modal_msg += "Bass:"+ gInstrumentExplorerBassInstruments+"&nbsp;&nbsp;&nbsp;Chords:"+gInstrumentExplorerChordInstruments;
+		modal_msg += '</p>';
+		modal_msg += '<p class="configure_instrumentexplorer_text">';
+		modal_msg += 'Bass Volume (0-127):&nbsp;&nbsp;<input style="width:90px;" id="instrument_explorer_bass_volume" type="number" min="0" step="1" max="127" title="Bass volume, range is 0-127"  autocomplete="off"/>';
+		modal_msg += 'Chord Volume (0-127):&nbsp;&nbsp;<input style="width:90px;" id="instrument_explorer_chord_volume" type="number" min="0" step="1" max="127" title="Chord volume, range is 0-127" autocomplete="off"/>';
+		modal_msg += '</p>';
+		modal_msg += '<p class="configure_instrumentexplorer_text">';
+		modal_msg += '<input id="instrumentexplorertest" class="instrumentexplorertest button btn btn-instrumentexplorertest" onclick="InstrumentExplorerRegenerate();" type="button" value="Reload Tune with Changed Instruments and Volumes" title="Reloads the tune into the player with the selected MIDI soundfont, melody instrument, bass instrument, bass volumes, chord instrument, and chord volumes">';
+		modal_msg += '<input id="instrumentexplorerinject" class="instrumentexplorerinject button btn btn-instrumentexplorerinject" onclick="InstrumentExplorerInject();" style="margin-right:0px;" type="button" value="Inject Instruments and Volumes into the ABC" title="Injects the current soundfont, melody instrument, bass instrument, bass volume, chord instrument, and chord volumes into the tune ABC">';
+		modal_msg += '</p>';
+		modal_msg += '</div>';
 
-			modal_msg += '<div class="configure_instrumentexplorer_text_mobile" style="text-align:center;margin:0px;margin-top:36px">';
-			modal_msg += '<p class="configure_instrumentexplorer_text_mobile">';
-			modal_msg += "Sound font:"+gInstrumentExplorerSoundfonts+"&nbsp;&nbsp;Melody:"+gInstrumentExplorerMelodyInstruments+"&nbsp;&nbsp;Bass/Chord:"+ gInstrumentExplorerChordInstruments;
-			modal_msg += '</p>';
-			modal_msg += '<p class="configure_instrumentexplorer_text_mobile">';
-			modal_msg += 'Bass Volume (0-127):&nbsp;<input style="width:90px;" id="instrument_explorer_bass_volume" type="number" min="0" step="1" max="127" title="Bass volume, range is 0-127"  autocomplete="off"/>';
-			modal_msg += '&nbsp;&nbsp;Chord Volume (0-127):&nbsp;<input style="width:90px;" id="instrument_explorer_chord_volume" type="number" min="0" step="1" max="127" title="Chord volume, range is 0-127" autocomplete="off"/>';
-			modal_msg += '</p>';
-			modal_msg += '<p class="configure_instrumentexplorer_text_mobile">';
-			modal_msg += '<input id="instrumentexplorertest" class="instrumentexplorertest button btn btn-instrumentexplorertest" onclick="InstrumentExplorerRegenerate();" type="button" value="Reload Tune with Changed Instruments" title="Reloads the tune into the player with the selected MIDI soundfont, melody instrument, bass/chord instrument, and bass/chord volumes">';
-			modal_msg += '<input id="instrumentexplorerinject" class="instrumentexplorerinject button btn btn-instrumentexplorerinject" onclick="InstrumentExplorerInject();" style="margin-right:0px;" type="button" value="Inject Instruments and Volumes into the ABC" title="Injects the current soundfont, melody instrument, bass/chord instrument, and bass/chord volumes into the tune ABC">';
-			modal_msg += '</p>';
-			modal_msg += '</div>';
-
-			modal_msg += '<a id="instrumentexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#midi_instrument_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the MIDI Instrument Explorer">?</a>';
-		}
-		else{
-			modal_msg += '<div class="configure_instrumentexplorer_text" style="text-align:center;margin:0px;margin-top:36px">';
-			modal_msg += '<p class="configure_instrumentexplorer_text">';
-			modal_msg += "Sound font:"+gInstrumentExplorerSoundfonts+"&nbsp;&nbsp;&nbsp;Melody:"+gInstrumentExplorerMelodyInstruments+"&nbsp;&nbsp;&nbsp;Bass/Chord:"+ gInstrumentExplorerChordInstruments;
-			modal_msg += '</p>';
-			modal_msg += '<p class="configure_instrumentexplorer_text">';
-			modal_msg += 'Bass Volume (0-127):&nbsp;&nbsp;<input style="width:90px;" id="instrument_explorer_bass_volume" type="number" min="0" step="1" max="127" title="Bass volume, range is 0-127"  autocomplete="off"/>';
-			modal_msg += 'Chord Volume (0-127):&nbsp;&nbsp;<input style="width:90px;" id="instrument_explorer_chord_volume" type="number" min="0" step="1" max="127" title="Chord volume, range is 0-127" autocomplete="off"/>';
-			modal_msg += '</p>';
-			modal_msg += '<p class="configure_instrumentexplorer_text">';
-			modal_msg += '<input id="instrumentexplorertest" class="instrumentexplorertest button btn btn-instrumentexplorertest" onclick="InstrumentExplorerRegenerate();" type="button" value="Reload Tune with Changed Instruments and Volumes" title="Reloads the tune into the player with the selected MIDI soundfont, melody instrument, bass/chord instrument, and bass/chord volumes">';
-			modal_msg += '<input id="instrumentexplorerinject" class="instrumentexplorerinject button btn btn-instrumentexplorerinject" onclick="InstrumentExplorerInject();" style="margin-right:0px;" type="button" value="Inject Instruments and Volumes into the ABC" title="Injects the current soundfont, melody instrument, bass/chord instrument, and bass/chord volumes into the tune ABC">';
-			modal_msg += '</p>';
-			modal_msg += '</div>';
-
-			modal_msg += '<a id="instrumentexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#midi_instrument_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the MIDI Instrument Explorer">?</a>';			
-		}
+		modal_msg += '<a id="instrumentexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#midi_instrument_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the MIDI Instrument Explorer">?</a>';			
+		
 
 	   	// Scale the player for larger screens
 		var windowWidth = window.innerWidth;
@@ -22013,6 +22230,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 		// Set the initial values
 		document.getElementById("instrument_explorer_soundfont").value = gInstrumentExplorerSoundfont;
 		document.getElementById("instrument_explorer_melody_program").value = gInstrumentExplorerMelodyInstrument;
+		document.getElementById("instrument_explorer_bass_program").value = gInstrumentExplorerBassInstrument;
 		document.getElementById("instrument_explorer_chord_program").value = gInstrumentExplorerChordInstrument;
 		document.getElementById("instrument_explorer_bass_volume").value = gInstrumentExplorerBassVolume;
 		document.getElementById("instrument_explorer_chord_volume").value = gInstrumentExplorerChordVolume;
@@ -24497,6 +24715,7 @@ function IncrementTempo(){
 // Global settings state
 var gAlwaysInjectPrograms = true;
 var gTheMelodyProgram = 0;
+var gTheBassProgram = 0;
 var gTheChordProgram = 0;
 var gAlwaysInjectVolumes = true;
 var gTheBassVolume = 64;
@@ -24549,6 +24768,14 @@ function GetInitialConfigurationSettings(){
 	}
 	else{
 		gTheMelodyProgram = 0;
+	}
+
+	val = localStorage.TheBassProgram;
+	if (val){
+		gTheBassProgram = val;
+	}
+	else{
+		gTheBassProgram = 0;
 	}
 
 	val = localStorage.TheChordProgram;
@@ -25191,6 +25418,7 @@ function SaveConfigurationSettings(){
 
 		localStorage.AlwaysInjectPrograms = gAlwaysInjectPrograms;
 		localStorage.TheMelodyProgram = gTheMelodyProgram;
+		localStorage.TheBassProgram = gTheBassProgram;
 		localStorage.TheChordProgram = gTheChordProgram;
 		localStorage.AlwaysInjectVolumes = gAlwaysInjectVolumes;
 		localStorage.TheBassVolume = gTheBassVolume;
@@ -26655,7 +26883,7 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<input id="injectsectionheader" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectSectionHeader()" type="button" value="Inject PDF Section Header" title="Injects a PDF section header placeholder tune at the cursor insertion point">';
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
-	modal_msg  += '<input id="injectallmidiparams" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectAllMIDIParams()" type="button" value="Inject MIDI Programs and Volumes" title="Injects MIDI Soundfont, Melody program, Chord program and volume annotation into one or all tunes">';
+	modal_msg  += '<input id="injectallmidiparams" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectAllMIDIParams()" type="button" value="Inject MIDI Programs and Volumes" title="Injects MIDI Soundfont, Melody program, Bass program, Chord program, and volume annotations into one or all tunes">';
 	modal_msg  += '<input id="injectmetronome" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMetronome()" type="button" value="Inject Metronome" title="Injects ABC for a metronome into one or all tunes">';
 	modal_msg  += '<input id="injectclicktrackall" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectRepeatsAndClickTrackAll()" type="button" value="Inject Repeats + Intros" title="Injects repeated copies of tunes and optional style-adaptive two-bar click intros into every tune">';	
 	modal_msg  += '</p>';
@@ -27041,6 +27269,16 @@ function ConfigureToolSettings() {
 		selectedChordProgram = parseInt(theChordProgram)+1;
 	}
 
+	var theBassProgram = gTheBassProgram;
+
+	var selectedBassProgram;
+	if (theBassProgram == "mute"){
+		selectedBassProgram = 0;
+	}
+	else{
+		selectedBassProgram = parseInt(theBassProgram)+1;
+	}
+
 	var bAlwaysInjectVolumes = gAlwaysInjectVolumes;
 
 	var theBassVolume = gTheBassVolume;
@@ -27062,6 +27300,7 @@ function ConfigureToolSettings() {
 		configure_use_custom_gm_sounds: gUseCustomGMSounds,
 		configure_inject_programs: bAlwaysInjectPrograms,
 		configure_melody_program: selectedMelodyProgram,
+		configure_bass_program: selectedBassProgram,
 		configure_chord_program: selectedChordProgram,
 		configure_inject_volumes: bAlwaysInjectVolumes,
 		configure_bass_volume: theBassVolume,
@@ -27098,7 +27337,8 @@ function ConfigureToolSettings() {
 		{name: "    Use AppCordions custom sounds for Dulcimer, Accordion, Flute, and Whistle", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "Default Melody MIDI program:", id: "configure_melody_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
-		{name: "Default Bass/Chords MIDI program:", id: "configure_chord_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
+		{name: "Default Bass MIDI program:", id: "configure_bass_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
+		{name: "Default Chords MIDI program:", id: "configure_chord_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
 		{name: "            Use Default Bass/Chord volumes when playing tunes", id: "configure_inject_volumes", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "Default Bass MIDI volume (0-127):", id: "configure_bass_volume", type:"number", cssClass:"configure_settings_form_text"},
 		{name: "Default Chords MIDI volume (0-127):", id: "configure_chord_volume", type:"number", cssClass:"configure_settings_form_text"},
@@ -27221,6 +27461,8 @@ function ConfigureToolSettings() {
 
 			gTheMelodyProgram = args.result.configure_melody_program;
 			
+			gTheBassProgram = args.result.configure_bass_program;
+
 			gTheChordProgram = args.result.configure_chord_program;
 
 			if (gTheMelodyProgram == 0){
@@ -27246,6 +27488,28 @@ function ConfigureToolSettings() {
 				}
 			}
 
+			if (gTheBassProgram == 0){
+				gTheBassProgram = "mute";
+			}
+			else{
+				gTheBassProgram--;
+			}
+
+			if (gTheBassProgram != "mute"){
+
+				if (isNaN(parseInt(gTheBassProgram))){
+					gTheBassProgram = 0;
+				}
+
+				if (gTheBassProgram < 0){
+					gTheBassProgram = 0;
+				}
+
+				if (gTheBassProgram > 137){
+					gTheBassProgram = 137;
+				}
+			}	
+
 			if (gTheChordProgram == 0){
 				gTheChordProgram = "mute";
 			}
@@ -27270,11 +27534,11 @@ function ConfigureToolSettings() {
 
 			if (gUseCustomGMSounds){
 
-				if ((gAlwaysInjectPrograms || gOverridePlayMIDIParams) && ((gTheMelodyProgram == "15") || (gTheChordProgram == "15"))){
+				if ((gAlwaysInjectPrograms || gOverridePlayMIDIParams) && ((gTheMelodyProgram == "15") || (gTheBassProgram == "15") || (gTheChordProgram == "15"))){
 
 					// Special release time case case for Dulcimer
 				   	var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica">Special Note on the Dulcimer (15) Instrument</p>';
-				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Selecting the Dulcimer (15) program for either the melody or chords automatically sets all note release decay times to 4 seconds to allow the notes to ring.</p>';
+				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Selecting the Dulcimer (15) program for either the melody, bass, or chords automatically sets all note release decay times to 4 seconds to allow the notes to ring.</p>';
 				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">This can be useful for tunes using solo melody instruments with long release times like Orchestral Harp (46) or Koto (107).</p>';
 				       	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">For those instruments played solo, set the melody instrument program as desired and the chord instrument program to Dulcimer (15).</p>';
 				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In this case, you may not want to include any chords in the ABC, as they will be played using the Dulcimer (15) instrument.</p>';
