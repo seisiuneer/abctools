@@ -288,6 +288,8 @@ var gRoll3DefaultParams = "1.45 0.6 1.0 0.75 0.9 1.0 0.75 1.0";
 
 var gDisableNotationRendering = false;
 
+var gDisableSelectedPlay = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -19553,6 +19555,151 @@ function PlaySelectedTune(){
 }
 
 //
+// Find just the notes of a tune
+//
+function JustTheNotes(theTune){
+
+	// Don't inject section header tune fragments
+	if (isSectionHeader(theTune)){
+		return theTune;
+	}
+
+	var theOriginalTune = theTune;
+
+	// Find the notes below the header
+	var theNotes = removeABCTuneHeaders(theTune);
+
+	var theLines = theNotes.split("\n");
+
+	// Find the first line that doesn't start with a comment
+	var nLines = theLines.length;
+
+	var firstLine;
+	var bGotNotes = false;
+
+	for (var i=0;i<nLines;++i){
+
+		firstLine = theLines[i];
+
+		if (firstLine.indexOf("%") != 0){
+			bGotNotes = true;
+			var theFirstLineIndex = theNotes.indexOf(firstLine);
+			theNotes = theNotes.substring(theFirstLineIndex);
+			break;
+		} 
+	}
+
+	// Didn't find anything below the header, exit early
+	if (!bGotNotes){
+
+		return(theOriginalTune);
+
+	}
+
+	return theNotes;
+}
+
+//
+// See if there is a select region for the tune and return partial ABC version
+//
+function ProcessSelectRegionForPlay(theABC){
+
+	//console.log("ProcessSelectRegionForPlay");
+
+	// Allow disable from the advanced settings dialog
+	if (gDisableSelectedPlay){
+		return theABC;
+	}
+
+	// Never process selections in full screen mode
+	if (gIsMaximized){
+		return theABC;
+	}
+
+	var start = gTheABC.selectionStart;
+	var end = gTheABC.selectionEnd;
+
+	// No selection region, just return the entire tune
+	if (start == end){
+		return theABC;
+	}
+	
+	// Doesn't work for multivoice tunes
+	if (theABC.indexOf("V:")!= -1){
+		return theABC;
+	}
+
+	var theTuneOffset = findTuneOffsetByIndex(gPlayABCTuneIndex);
+	var length = theABC.length;
+	
+	//console.log("theTuneOffset: "+theTuneOffset+" start: "+start+" end: "+end+" length: "+length);
+
+	//console.log("before \n"+theABC)
+
+	// Find the notes below the header
+	var theNotes = JustTheNotes(theABC);
+
+	//console.log("after \n"+theNotes)
+
+	if (start < theTuneOffset){
+		start = theTuneOffset;
+	}
+
+	if (end > (theTuneOffset + length)){
+		end = (theTuneOffset + length);
+	}
+
+	// Get the start and end relative to the tune
+	start -= theTuneOffset;
+	end -= theTuneOffset;
+
+	// Get the offset to the notes in the tune
+	var notesOffset = theABC.indexOf(theNotes);
+
+	// If there are headers in the ABC, then the indexOf will fail
+	// since they were stripped. Return the whole tune.
+	if (notesOffset == -1){
+		return theABC;
+	}
+
+	// If the selection is entirely in the header, return the whole tune
+	if ((start < notesOffset) && (end < notesOffset)){
+		return theABC;
+	}
+	
+	//console.log("notesOffset: "+notesOffset);
+
+	// If the selection start is in the header, bump it to the start of the ntoes
+	if (start < notesOffset){
+
+		start = notesOffset;
+
+	}
+
+	// Make the start and end relative to the notes
+	start -= notesOffset;
+	end -= notesOffset;
+
+	//console.log("adjusted start: "+start+" end: "+end);
+
+	// Can't have a starting line with just a blank line
+	var onlyTheNotes = theNotes.substring(start,end);
+
+	onlyTheNotes = onlyTheNotes.trim();
+
+	if (onlyTheNotes.indexOf("\n") == 0){
+		onlyTheNotes = onlyTheNotes.substring(1,onlyTheNotes.length);
+		onlyTheNotes = onlyTheNotes.trim();
+	}
+
+	// Return the header plus the selected notes
+	var output = theABC.substring(0,notesOffset)+onlyTheNotes;
+	
+	return output;
+
+}
+
+//
 // Play the ABC
 //
 function PlayABC(){
@@ -19620,6 +19767,9 @@ function PlayABC(){
 			gPlayABCGotMaximizedPlay = false;
 
 		}
+
+		// See if there is a select region and return the partial tune
+		theSelectedABC = ProcessSelectRegionForPlay(theSelectedABC);
 
 		// Pre-process the ABC to inject any requested programs or volumes
 		theSelectedABC = PreProcessPlayABC(theSelectedABC);
@@ -23752,6 +23902,9 @@ function TuneTrainer(bIsFromPlayer){
 		// Fix issue with initial swing not happening
 		ScanTuneForCustomTimingInjection(theSelectedABC);
 
+		// See if there is a select region and return the partial tune
+		theSelectedABC = ProcessSelectRegionForPlay(theSelectedABC);
+
 		// Pre-process the ABC to inject any requested programs or volumes
 		var theProcessedABC = PreProcessPlayABC(theSelectedABC);
 
@@ -25359,6 +25512,12 @@ function GetInitialConfigurationSettings(){
 		gPlayerStatusOnLeft = (val == "true");
 	}
 
+	gDisableSelectedPlay = false;
+	val = localStorage.DisableSelectedPlay;
+	if (val){
+		gDisableSelectedPlay = (val == "true");
+	}
+
 	gRollUseRollForIrishRoll = false;
 	val = localStorage.RollUseRollForIrishRoll;
 	if (val){
@@ -25591,6 +25750,9 @@ function SaveConfigurationSettings(){
 
 		// Preferred shape note style
 		localStorage.ShapeNoteStyle = gShapeNoteStyle;
+
+		// Disable selected play
+		localStorage.DisableSelectedPlay = gDisableSelectedPlay;
 
 	}
 }
@@ -27012,28 +27174,32 @@ function AdvancedSettings(){
 		configure_roll3_default: gRoll3DefaultParams,
 		configure_TuneDatabaseRetryTimeMS: gTuneDatabaseRetryTimeMS,
 		configure_TuneDatabaseRetryCount: gTuneDatabaseRetryCount,
-		configure_DisableRendering: gDisableNotationRendering
+		configure_DisableRendering: gDisableNotationRendering,
+		configure_disable_selected_play:gDisableSelectedPlay
 	};
+
 	var form = [
 		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Advanced Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
 		{html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;"><strong>Only change these values if you know what you are doing!</strong></p>'},
-  		{name: "Full screen tune display width scaling (percentage) (default is 50):", id: "configure_fullscreen_scaling", type:"number", cssClass:"advanced_settings2_form_text"},
-		{name: "    Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)", id: "configure_comhaltas", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Disable abcjs notation rendering", id: "configure_DisableRendering", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
-
+		{name: "    Rolls indicated in the ABC with ~ use the custom abcjs roll playback solution", id: "configure_RollUseRollForIrishRoll", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+		{name: "    Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)", id: "configure_comhaltas", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+		{name: "    Autoscroll player when playing", id: "configure_autoscrollplayer", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+		{name: "    Player/Tune Trainer always plays full tune even if there is a selection region", id: "configure_disable_selected_play", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+		{name: "    Player uses large controls (easier to touch on phone/tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+		{name: "    Player tunebook navigation controls on left side", id: "configure_player_status_on_left", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+		{name: "    Player/Tune Trainer uses label L/R side click to decrement/increment values", id: "configure_trainer_touch_controls", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+  		{name: "Full screen tune display width scaling (percentage) (default is 50):", id: "configure_fullscreen_scaling", type:"number", cssClass:"advanced_settings2_form_text"},
 	];
 
+	// Only show batch export delays on desktop
 	if (isDesktopBrowser()){
-
-		form.push({name: "Highlighting color (HTML format) (default is #F00000):", id: "configure_highlight_color", type:"text", cssClass:"advanced_settings2_form_text"})
+		form = form.concat([
+			{name: "Highlighting color (HTML format) (default is #F00000):", id: "configure_highlight_color", type:"text", cssClass:"advanced_settings2_form_text"}
+		]);
 	}
-
+	
 	form = form.concat([
-		{name: "    Player tunebook navigation controls on left side", id: "configure_player_status_on_left", type:"checkbox", cssClass:"advanced_settings2_form_text"},
-		{name: "    Rolls indicated in the ABC with ~ use the custom abcjs roll playback solution", id: "configure_RollUseRollForIrishRoll", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
-		{name: "    Player uses large controls (easier to touch on phone/tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
-		{name: "    Autoscroll player when playing", id: "configure_autoscrollplayer", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
-		{name: "    Player/Tune Trainer uses label L/R side click to decrement/increment values", id: "configure_trainer_touch_controls", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "Metronome volume (default is 48):", id: "configure_metronome_volume", type:"text", cssClass:"advanced_settings2_form_text"},
 		{name: "MP3 audio export bitrate (kbit/sec) (default is 224):", id: "configure_mp3_bitrate", type:"number", cssClass:"advanced_settings2_form_text"},
 	]);
@@ -27045,6 +27211,7 @@ function AdvancedSettings(){
 			{name: "MP3 Batch Export Delay in milliseconds (default is 250):", id: "configure_mp3export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
 		]);
 	}
+
 	form = form.concat([
 		{name: "Tune search fetch retry delay in milliseconds (default is 3000):", id: "configure_TuneDatabaseRetryTimeMS", type:"text", cssClass:"advanced_settings2_form_text"},
 		{name: "Tune search fetch retry maximum count (default is 10):", id: "configure_TuneDatabaseRetryCount", type:"text", cssClass:"advanced_settings2_form_text"},
@@ -27118,6 +27285,8 @@ function AdvancedSettings(){
 			gTrainerTouchControls = args.result.configure_trainer_touch_controls;
 
 			gUseComhaltasABC = args.result.configure_comhaltas;
+
+			gDisableSelectedPlay = args.result.configure_disable_selected_play;
 
 			var val = args.result.configure_metronome_volume;
 
@@ -29492,8 +29661,8 @@ function DoStartup() {
 	//
 	// Uncomment these lines for mobile simulation testing
 	//
-	// gIsIOS = true; 
-	// gIsIPhone = true;  
+	//gIsIOS = true; 
+	//gIsIPhone = true;  
 	
 	//
 	// iOS and Android styling adaptation
