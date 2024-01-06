@@ -3734,17 +3734,17 @@ function GetAllTuneHyperlinks(theLinks) {
 					theMelodyPatch = theMelodyPatch.trim();
 				}
 
-				if (thePatches.length > 1){
+				if (thePatches.length >= 2){
 					theBassPatch = thePatches[1];
 					theBassPatch = theBassPatch.trim();
 				}
 
-				if (thePatches.length > 2){
+				if (thePatches.length >= 3){
 					theChordPatch = thePatches[2];
 					theChordPatch = theChordPatch.trim();
 				}
 
-				if (thePatches.length > 3){
+				if (thePatches.length >= 4){
 					theSoundFont = thePatches[3];
 					theSoundFont = theSoundFont.trim();
 				}
@@ -6084,17 +6084,17 @@ function ParseCommentCommands(theNotes){
 				gPlaybackHyperlinkMelodyProgram = gPlaybackHyperlinkMelodyProgram.trim();
 			}
 
-			if (thePatches.length > 2){
+			if (thePatches.length >= 2){
 				gPlaybackHyperlinkBassProgram = thePatches[1];
 				gPlaybackHyperlinkBassProgram = gPlaybackHyperlinkBassProgram.trim();
 			}	
 
-			if (thePatches.length > 3){
+			if (thePatches.length >= 3){
 				gPlaybackHyperlinkChordProgram = thePatches[2];
 				gPlaybackHyperlinkChordProgram = gPlaybackHyperlinkChordProgram.trim();
 			}	
 
-			if (thePatches.length > 4){
+			if (thePatches.length >= 4){
 				gPlaybackHyperlinkSoundFont = thePatches[3];
 				gPlaybackHyperlinkSoundFont = gPlaybackHyperlinkSoundFont.trim();
 			}
