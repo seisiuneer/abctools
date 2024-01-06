@@ -3048,6 +3048,75 @@ function GenerateFullTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideF
 //
 function GenerateFullTuneQRCodes(thePDF,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,tunePageMap,callback){
 
+	function processSingleTunePlaybackInjects(theTune){
+
+		//
+		// Setting swing globally for all hornpipes?
+		//
+
+		// First check if swing disabled
+		if (!gAllNoSwingHornpipesRequested){
+
+			if (gAllSwingHornpipesRequested){
+
+				// Inject %swing into all hornpipes
+				if (tuneIsHornpipe(theTune)){
+
+					// Is there a manual swing disable override?
+					if (theTune.indexOf("%noswing") == -1){
+
+						// Strip out the X: tag
+						var searchRegExp = /^X:.*[\r\n]*/gm 
+
+						theTune = theTune.replace(searchRegExp, "");
+
+						theTune = "X:1\n%swing "+gAllSwingHornpipesSwingFactor+"\n"+theTune;
+
+					}
+
+				}
+
+			}
+
+		}
+		else{
+
+			// Inject %noswing into all hornpipes
+			if (tuneIsHornpipe(theTune)){
+
+				// Is there a manual swing override?
+				if (theTune.indexOf("%swing") == -1){
+
+					// Strip out the X: tag
+					var searchRegExp = /^X:.*[\r\n]*/gm 
+
+					theTune = theTune.replace(searchRegExp, "");
+
+					theTune = "X:1\n%noswing\n"+theTune;
+
+				}
+
+			}
+
+		}
+
+		// If MIDI programs to be injected, do it now
+		if (gAddPlaybackHyperlinksIncludePrograms){
+			
+			// Strip out the X: tag
+			var searchRegExp = /^X:.*[\r\n]*/gm 
+
+			// Strip out X:
+			theTune = theTune.replace(searchRegExp, "");
+
+			theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI bassprog "+gPlaybackHyperlinkBassProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkChordProgram+"\n"+theTune;
+
+		}
+
+		return theTune;
+
+	}
+
 	// No tunes, early exit
 	if (totalTunes == 0){
 		callback([]);
@@ -3079,6 +3148,9 @@ function GenerateFullTuneQRCodes(thePDF,addPageNumbers,pageNumberLocation,hideFi
 
 		// Get the raw tune ABC
 		theTune = getTuneByIndex(index);
+
+		// Inject any tune swing and other per-tune modifications
+		theTune = processSingleTunePlaybackInjects(theTune);
 			
 		// This needs the callback because the rasterizer is async
 		AppendPDFTuneQRCode(pdf,paperStyle,theTune,theTitles[index],pdf_qrcode_callback);
