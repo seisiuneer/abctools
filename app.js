@@ -3048,7 +3048,7 @@ function GenerateFullTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideF
 //
 function GenerateFullTuneQRCodes(thePDF,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,tunePageMap,callback){
 
-	function processSingleTunePlaybackInjects(theTune){
+	function processSingleTunePlaybackInjectsQR(theTune){
 
 		//
 		// Setting swing globally for all hornpipes?
@@ -3113,6 +3113,7 @@ function GenerateFullTuneQRCodes(thePDF,addPageNumbers,pageNumberLocation,hideFi
 
 		}
 
+
 		return theTune;
 
 	}
@@ -3149,8 +3150,10 @@ function GenerateFullTuneQRCodes(thePDF,addPageNumbers,pageNumberLocation,hideFi
 		// Get the raw tune ABC
 		theTune = getTuneByIndex(index);
 
-		// Inject any tune swing and other per-tune modifications
-		theTune = processSingleTunePlaybackInjects(theTune);
+		if (gAddPlaybackHyperlinks){
+			// Inject any tune swing and other per-tune modifications
+			theTune = processSingleTunePlaybackInjectsQR(theTune);
+		}
 			
 		// This needs the callback because the rasterizer is async
 		AppendPDFTuneQRCode(pdf,paperStyle,theTune,theTitles[index],pdf_qrcode_callback);
@@ -4413,6 +4416,11 @@ function AppendPDFTuneQRCode(thePDF,paperStyle,theABC,theTitle,callback){
 
 	// Can we make a QR code from the current share link URL?
 	theURL = FillUrlBoxWithAbcInLZW(theABC,false);
+
+	// Adding play links?
+	if (gAddPlaybackHyperlinks){
+		theURL += "&play=1"; 
+	}
 
 	//console.log("theURL = "+theURL);
 
