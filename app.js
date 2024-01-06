@@ -4502,7 +4502,7 @@ function AppendPDFTuneQRCode(thePDF,paperStyle,theABC,theTitle,callback){
 			var theImageSource = theQRCodeImage.src;
 
 			// Add the QR code
-			thePDF.addImage(theImageSource, 'PNG', theHOffset, 150, 256, 256);
+			thePDF.addImage(theImageSource, 'PNG', theHOffset, 150, 256, 256, undefined, "FAST"); 
 
 			// Fix up the page-relative link
 			var r;
@@ -4681,7 +4681,7 @@ function AppendQRCode(thePDF,paperStyle,callback){
 			var theImageSource = theQRCodeImage.src;
 
 			// Add the QR code
-			thePDF.addImage(theImageSource, 'PNG', theHOffset, 150, 256, 256);
+			thePDF.addImage(theImageSource, 'PNG', theHOffset, 150, 256, 256, undefined, "FAST");
 
 			// Full page link example
 			//thePDF.link(0, (thePDF.internal.pageSize.getHeight()/3.10)+pdfVoff, (thePDF.internal.pageSize.getWidth()/1.55), (thePDF.internal.pageSize.getHeight()/1.55), {url:theURL});
