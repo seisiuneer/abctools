@@ -4500,21 +4500,27 @@ function AppendPDFTuneQRCode(thePDF,paperStyle,theABC,theTitle,callback){
 			theQRCodeImage = theQRCodeImage[0];
 
 			var theImageSource = theQRCodeImage.src;
-
-			// Add the QR code
-			thePDF.addImage(theImageSource, 'PNG', theHOffset, 150, 256, 256, undefined, "FAST"); 
+			
+			// Adjust down for 384 size
+			theHOffset -= 64;
 
 			// Fix up the page-relative link
 			var r;
 
 			if (gPDFOrientation == "portrait"){
 
-				r = {left:theHOffset, top: 150, width: 256, height: 256};
+				// Add the QR code
+				thePDF.addImage(theImageSource, 'PNG', theHOffset, 150, 384, 384, undefined, "FAST"); 
+
+				r = {left:theHOffset, top: 150, width: 384, height: 384};
 
 			}
 			else{
 
-				r = {left:theHOffset, top: 139, width: 256, height: 256};
+				// Add the QR code
+				thePDF.addImage(theImageSource, 'PNG', theHOffset, 86, 384, 384, undefined, "FAST"); 
+
+				r = {left:theHOffset, top: 75, width: 384, height: 384};
 
 			}
 			
@@ -4534,6 +4540,10 @@ function AppendPDFTuneQRCode(thePDF,paperStyle,theABC,theTitle,callback){
 				if (paperStyle == "a4"){
 					captionOffset = 575;
 				}
+
+				// Adjust down for 384 size
+				captionOffset += 80;
+
 			}
 			else{
 
@@ -4544,7 +4554,10 @@ function AppendPDFTuneQRCode(thePDF,paperStyle,theABC,theTitle,callback){
 					captionOffset = 500;
 				}
 
+				captionOffset += 32;
+
 			}
+
 
 			// See if there is a QR code caption override
 			var theQRCodeCaption = theTitle;
@@ -4680,8 +4693,8 @@ function AppendQRCode(thePDF,paperStyle,callback){
 
 			var theImageSource = theQRCodeImage.src;
 
-			// Add the QR code
-			thePDF.addImage(theImageSource, 'PNG', theHOffset, 150, 256, 256, undefined, "FAST");
+			// Adjust down for 384 size
+			theHOffset -= 64;
 
 			// Full page link example
 			//thePDF.link(0, (thePDF.internal.pageSize.getHeight()/3.10)+pdfVoff, (thePDF.internal.pageSize.getWidth()/1.55), (thePDF.internal.pageSize.getHeight()/1.55), {url:theURL});
@@ -4691,12 +4704,18 @@ function AppendQRCode(thePDF,paperStyle,callback){
 
 			if (gPDFOrientation == "portrait"){
 
-				r = {left:theHOffset, top: 150, width: 256, height: 256};
+				// Add the QR code
+				thePDF.addImage(theImageSource, 'PNG', theHOffset, 150, 384, 384, undefined, "FAST");
+
+				r = {left:theHOffset, top: 150, width: 384, height: 384};
 
 			}
 			else{
 
-				r = {left:theHOffset, top: 139, width: 256, height: 256};
+				// Add the QR code
+				thePDF.addImage(theImageSource, 'PNG', theHOffset, 86, 384, 384, undefined, "FAST"); 
+
+				r = {left:theHOffset, top: 75, width: 384, height: 384};
 
 			}
 			
@@ -4718,6 +4737,9 @@ function AppendQRCode(thePDF,paperStyle,callback){
 				if (paperStyle == "a4"){
 					captionOffset = 575;
 				}
+
+				// Adjust down for 384 size
+				captionOffset += 80;
 			}
 			else{
 
@@ -4727,6 +4749,8 @@ function AppendQRCode(thePDF,paperStyle,callback){
 				if (paperStyle == "a4"){
 					captionOffset = 500;
 				}
+				
+				captionOffset += 32;
 
 			}
 
@@ -27274,7 +27298,8 @@ function PDFExportDialog(bShowTopButtons){
 				else
 				if (theTuneLayout == "incipits_abc_full_cce"){
 					theTuneLayout = "incipits_a4_abc_full_cce";
-				}					
+				}	
+				else				
 				if (theTuneLayout == "all_qr_codes"){
 					theTuneLayout = "all_qr_codes_a4";
 				}					
