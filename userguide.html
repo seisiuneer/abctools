@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+      
         <style>
         p {
         font-size:14pt;
@@ -1735,12 +1735,14 @@
             <p><strong>Tune Layout:</strong></p>
             <p>Choose whether you want One Tune per Page, Multiple Tunes per Page, Tune Note Incipits, ABC Incipits (unsorted or alphabetically sorted by tune name), or full versions of the ABC notes (with optional Comhaltas ABC transformation):</p>
             <div class="image_holder_p">
-                <img src="img/tune_layout_3.jpg"/>
+                <img src="img/tune_layout_4.jpg"/>
             </div>
             <hr>
-            <p><strong>One Tune per Page</strong>:&nbsp;&nbsp;The notation for each tune is placed on a new page in the PDF.</p>
+            <p><strong>One Tune per Page</strong></p>
+            <p>The notation for each tune is placed on a new page in the PDF.</p>
             <hr>
-            <p><strong>Multiple Tunes per Page</strong>:&nbsp;&nbsp;The notation for each tune is added one after another down each page in the PDF.</p>
+            <p><strong>Multiple Tunes per Page</strong></p>
+            <p>The notation for each tune is added one after another down each page in the PDF.</p>
             <p>When exporting multiple tunes per page to PDF the tool will do its best to layout the output to not split tunes between pages, unless the tune itself is longer than one page.</p>
             <p></p>
             <p>When exporting multiple tunes per page, if you want to manually force a tune to a new page in the PDF, add:</p>
@@ -1752,7 +1754,8 @@
             <p>This will allow you to easily format a tune book where you want to override the automatic tune layout.</p>
             <p></p>
             <hr>
-            <p><strong>Notes Incipits</strong>:&nbsp;&nbsp;The notation for the first line of each tune is added one after another down each page in the PDF.</p>
+            <p><strong>Notes Incipits</strong></p>
+            <p>The notation for the first line of each tune is added one after another down each page in the PDF.</p>
             <p>Exporting a PDF tunebook with notes incipits allow you create a "cheat sheet" for the tunebook that includes just the notation for first line of each tune.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/ik9ObQXlBLU" title="PDF Tunebook Notes Incipits" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p></p>
@@ -1762,21 +1765,32 @@
             <p></p>
             <p>Additionally, manually inserted %%newpage requests are ignored for incipit generation.</p>
             <hr>
-            <p><strong>ABC Text Incipits</strong>:&nbsp;&nbsp;The first few bars of the ABC text for each tune's notes are added one after another down each page in the PDF.</p>
+            <p><strong>ABC Text Incipits</strong></p>
+            <p>The first few bars of the ABC text for each tune's notes are added one after another down each page in the PDF.</p>
             <p>Exporting a PDF tunebook with ABC incipits allow you create a "cheat sheet" for the tunebook that includes just the first few measures of the ABC for each tune.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/OC5uFL2X6yQ" title="PDF Tunebook ABC Incipits" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <hr>
-            <p><strong>ABC Text Incipits Sorted</strong>:&nbsp;&nbsp;The first few bars of the ABC text for each tune's notes are added one after another down each page in the PDF in tune name sorted order.</p>
+            <p><strong>ABC Text Incipits Sorted</strong></p>
+            <p>The first few bars of the ABC text for each tune's notes are added one after another down each page in the PDF in tune name sorted order.</p>
             <hr>
-            <p><strong>ABC Text Complete Tunes</strong>:&nbsp;&nbsp;The full ABC text for each tune's notes are added one after another down each page in the PDF.</p>
+            <p><strong>ABC Text Complete Tunes</strong></p>
+            <p>The full ABC text for each tune's notes are added one after another down each page in the PDF.</p>
             <hr>
-            <p><strong>ABC Text Complete Tunes - Comhaltas ABC</strong>:&nbsp;&nbsp;The full ABC text for each tune's notes are first translated from standard ABC to the Comhaltas "blackboard" ABC format and then added one after another down each page in the PDF.</p>
+            <p><strong>ABC Text Complete Tunes - Comhaltas ABC</strong></p>
+            <p>The full ABC text for each tune's notes are first translated from standard ABC to the Comhaltas "blackboard" ABC format and then added one after another down each page in the PDF.</p>
             <p>The Comhaltas "blackboard" style of ABC uses only upper case letters to represent the notes and is commonly used for teaching.</p>
             <p>In this system, middle C is represented by C, instead of C as would be in standard ABC.</p>
             <p>The C above middle C that would be represented as c in standard ABC is represented by C in the Comhaltas "blackboard" style.</p>
             <hr>
-            <p><strong>QR Code for Each Tune</strong>:&nbsp;&nbsp;A QR code for each tune containing the tune's Share URL is generated and put on its own page.</p>
+            <p><strong>QR Code for Each Tune</strong></p>
+            <p>A QR code for each tune containing the tune's Share URL is generated and put on its own page.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/AUL5oXykIDk" title="QR Code Tunebooks" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p>If play links are being added to the tunes in the PDF tunebook, clicking or scanning the QR code will open the tune in the Player.</p>
+            <p>The QR code can be clicked to open the tune or scanned and openend by a mobile device camera.</p>
+            <p>If the tune is too long for a valid QR Code, you can still click the image to open the tune.</p>
+            <hr>
+            <p><strong>Notation+QR Code for Each Tune</strong></p>
+            <p>Each tune is rendered starting on its own page and then is followed by a QR code for the tune on its own page containing the tune's Share URL.</p>
             <p>If play links are being added to the tunes in the PDF tunebook, clicking or scanning the QR code will open the tune in the Player.</p>
             <p>The QR code can be clicked to open the tune or scanned and openend by a mobile device camera.</p>
             <p>If the tune is too long for a valid QR Code, you can still click the image to open the tune.</p>
