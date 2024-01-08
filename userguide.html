@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-      
+                
         <style>
         p {
         font-size:14pt;
@@ -191,15 +191,7 @@
                 <p class="hidden-print">Try it out here:&nbsp;&nbsp;<a href="https://michaeleskin.com/abc" target="_blank">ABC Transcription Tools</a></p>
                 <p class="hidden-print">YouTube playlist with all the demo videos:&nbsp;&nbsp;<a href="https://www.youtube.com/playlist?list=PLZvjgS80ixQuX2-gMv25U3ECXiceGfTdr" target="_blank">Demo Videos</a></p>
             </div>
-            
-            <hr class="hidden-print">
-            
-            <div style="text-align: left;">
-                <p class="hidden-print">Videos in this document reflect the state of the tool's user interface at the time of the making of the video.</p>
-                <p class="hidden-print">Button and control names may have changed since the original video was posted.</p>
-                <p class="hidden-print">Any references in demonstration or tutorial videos to the "Advanced" button now refer to the "More Tools" button that replaced it in later versions of the tool.</p>
-            </div>
-            
+                        
             <hr id="table_of_contents" class="hidden-print">
             
             <div class="hidden-print">
@@ -212,11 +204,15 @@
                     <p class="toc"><a style="text-decoration:none;" href="#introduction">Introduction</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#getting_started">Getting Started</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#top_bar_buttons">Top Bar Buttons</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#open_dialog">Open an ABC or MusicXML File</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#add_templates_dialog">Adding Your Own Tunes to Your Tunebook</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#change_tune_order">Change the Order of the Tunes</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#search_and_add_tunes">Search and Add Tunes</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#add_examples">Adding Example Tunes to Your Tunebook</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#abc_editor">ABC Editor</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#abc_editor_resize">Resizing the ABC Editor</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#highlighting">Notation and ABC Highlighting</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#viewing_the_notation_full_screen">Viewing the Notation Full Screen</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#search_and_add_tunes">Search and Add Tunes</a></p>
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">Playing Your Tunes</button>
@@ -451,15 +447,47 @@
             <p>When notation is present, click the zoom arrows at the top-right of the window to view the notation full screen.</p>
             <hr>
             <p>Most features in the tool have tool tips you can view by hovering your mouse cursor over the button or other control.</p>
-            <hr>
-            <p>Click <strong>Search for Tunes</strong> to open the <a href="#search_and_add_tunes">Search and Add Tunes</a> dialog described in its own section below.</p>
             <hr class="hidden-print" id="top_bar_buttons">
             <h1 class="page_break_always">Top Bar Buttons<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder">
                 <img style="width:700px;" src="img/topbar_2.jpg"/>
             </div>
             <hr>
+            <p><strong>Open:</strong></p>
+            <p>Opens an ABC or MusicXML file.</p>
+            <p>Details below in the <a href="#open_dialog">Open an ABC or MusicXML File</a> section.</p>
+            <hr>
+            <p><strong>Add:</strong></p>
+            <p>Brings up a dialog where you can add your own ABC or MusicXML tunes, restore from previously saved Snapshots, re-order the tunes, add example ABC tunes, add useful ABC templates, or configure PDF tunebook features.</p>
+            <p>Details below in the <a href="#add_templates_dialog">Adding Your Own Tunes to Your Tunebook</a> section.</p>
+            <hr>
+            <p><strong>Save:</strong></p>
+            <p>Saves the contents of the ABC editor to a file.</p>
+            <hr>
+            <p><strong>Export PDF:</strong></p>
+            <p>Exports the currently displayed score as a high quality PDF file.</p>
+            <p>The saved ABC or PDF file will be in your browser's Downloads directory.</p>
+            <p>On iOS the downloaded files will be found in the "Downloads" directory in the iOS "Files" app.</p>
+            <hr>
+            <p><strong>Copy All:</strong></p>
+            <p>Copies all the ABC text to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
+            <hr>
+            <p><strong>Play:</strong></p>
+            <p>Opens the ABC Player where you can play the current tune. Full details below in the <a style="text-decoration:none;" href="#playing_your_tunes">Playing Your Tunes</a> section.</p>
+            <hr>
+            <p><strong>Highlighting On/Off:</strong></p>
+            <p>Toggles Notation/ABC automatic highlighting On/Off.</p>
+            <p>Full details below in the <a href="#highlighting">Notation and ABC Highlighting</a> section.</p>
+            <hr>
+            <p><strong>Settings:</strong></p>
+            <p>Brings up the default playback instruments and other tool-wide settings dialog.</p>
+            <p>Full details below in the <a href="#settings_dialog">ABC Transcription Tools Settings</a> section.</p>
+            <hr>
+            <p><strong>▲/▼:</strong></p>
+            <p>Click this to hide/show the header at the top and any visible controls below the ABC text area so you can have more room to work on your music.</p>
             <p class="page_break_always"></p>
+            <hr class="hidden-print" id="open_dialog">
+            <h1 class="page_break_always">Open an ABC or MusicXML File<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p><strong>Open:</strong></p>
             <p>The tool supports opening both ABC and MusicXML files.</p>
             <p>The file type being opened depends on the file extension:</p>
@@ -468,11 +496,12 @@
             <p>Details on MusicXML import settings below in the <a style="text-decoration:none;" href="#musicxml">MusicXML Import Settings</a> section.</p>
             <p>On desktop browsers, you may also drag-and-drop a single ABC or MusicXML file on the editor area to add it.</p>
             <p>If you have unsaved work, you will be asked to confirm that you want to abandon your work in progress and load a new ABC file.</p>
-            <hr>
-            <p id="add_templates_dialog"><strong>Add:</strong></p>
-            <p>Brings up a dialog where you can add your own ABC or MusicXML tunes, restore from previously saved Snapshots, add example ABC tunes, add useful ABC templates, or configure PDF tunebook features:</p>
+            <hr class="hidden-print" id="add_templates_dialog">
+            <h1 class="page_break_always h1wide">Adding Your Own Tunes to Your Tunebook<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p><strong>Add:</strong></p>
+            <p>Brings up a dialog where you can add your own ABC or MusicXML tunes, restore from previously saved Snapshots, re-order the tunes, add example ABC tunes, add useful ABC templates, or configure PDF tunebook features:</p>
             <div class="image_holder_p">
-                <img src="img/add_example_template_14.jpg"/>
+                <img src="img/add_example_template_15.jpg"/>
             </div>
             <hr>
             <p><strong>Choose File to Add:</strong></p>
@@ -488,9 +517,36 @@
             <p>When clicked, restores the last Auto-Snapshot, replacing the contents of the ABC editor.</p>
             <p>Since it completely replaces the contents of the ABC editor, you will be asked to confirm the operation.</p>
             <p>On desktop browsers, automatic snapshots when closing or reloading the browser tab the tool is running in can be enabled in the tool's <strong>Settings</strong> dialog. </p>
-            <hr>
-            <p><strong>Search and Add Tunes:</strong></p>
-            <p>Opens the <a href="#search_and_add_tunes">Search and Add Tunes</a> dialog described in its own section below.</p>
+            <hr class="hidden-print" id="change_tune_order">
+            <h1 class="page_break_always h1wide">Change the Order of the Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>   
+            <p>This feature is only available on desktop browsers.</p>         
+            <p>Brings up a dialog where you can drag and drop the tune names to change their order in the tunebook:</p>
+            <div class="image_holder_p">
+                <img src="img/change_order_1.jpg"/>
+            </div>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/yqsbAdJjb5I" title="Changing the order of the tunes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <hr class="hidden-print" id="search_and_add_tunes">
+            <h1 class="page_break_always">Search and Add Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>Brings up a dialog where you search either Gavin Heneghan's tune collection (over 20,000 tune settings) or the FolkFriend.app tune collection (over 45,000 tune settings) by tune name and then optionally add them to your tunebook:</p>
+            <div class="image_holder_p">
+                <img src="img/tune_search_6.jpg"/>
+            </div>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/9HgEBIPXHCU" title="Tune search overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+            <p>When first entering this dialog or changing the search collection, the tool will need to load the tune collection.</p>
+            <p>The status will read "Ready to search" when the tune collection has been loaded.</p>
+            <p>Enter some text to search for in the title of the tunes and click <strong>Search</strong></p>
+            <p>By default, the search will return only the first variation of a tune found.</p>
+            <p>If you want all the variations for a tune, uncheck <strong>Only return first variation found?</strong></p>
+            <p>If you want to match the search text only at the start of the tune name, check <strong>Match start of title?</strong></p>
+            <p>If you want to only match tunes that also have chords, check <strong>Only return tunes with chords?</strong>.</p>
+            <p>Select the maximum number of search results you want from the <strong>Maximum number of results</strong> dropdown.</p>
+            <p>Click <strong>Add Results to Tunebook</strong> to append the search results tunes at the end of the ABC editor.</p>
+            <p>If you don't want all the tunes in the search results added to your tunebook, you can simply copy and paste the results you want back into the ABC editor.</p>
+            <p>You can also get to this dialog by clicking the <strong>Search for Tunes</strong> link at the top of the tool.</p>
+            <hr class="hidden-print" id="add_examples">
+            <h1 class="page_break_always">Adding Example Tunes to Your Tunebook<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>            
+            <p><strong>Add an Example Reel:</strong></p>
+            <p>Adds "Cooley's" as an example of a typical reel.</p>
             <hr>
             <p><strong>Add an Example Reel:</strong></p>
             <p>Adds "Cooley's" as an example of a typical reel.</p>
@@ -526,31 +582,6 @@
             <p><strong>Configure PDF Tunebook Features:</strong></p>
             <p>Brings up a dialog that you can use to add annotations at the top of the ABC that will add an optional Title Page, Table of Contents, Index, Page Header, Page Footer, playback links, and/or QR code to an exported PDF tunebook.</p>
             <p>Full details on PDF tunebook features can be found in the <a href="#configure_pdf_tunebook_features"><strong>Configure PDF Tunebook Features</strong></a> section of <a href="#export_pdf_tunebook"><strong>Exporting a PDF Tunebook</strong></a>.</p>
-            <hr>
-            <p><strong>Save:</strong></p>
-            <p>Saves the contents of the ABC editor to a file.</p>
-            <hr>
-            <p><strong>Export PDF:</strong></p>
-            <p>Exports the currently displayed score as a high quality PDF file.</p>
-            <p>The saved ABC or PDF file will be in your browser's Downloads directory.</p>
-            <p>On iOS the downloaded files will be found in the "Downloads" directory in the iOS "Files" app.</p>
-            <hr>
-            <p><strong>Copy All:</strong></p>
-            <p>Copies all the ABC text to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
-            <hr>
-            <p><strong>Play:</strong></p>
-            <p>Opens the ABC Player where you can play the current tune. Full details below in the <a style="text-decoration:none;" href="#playing_your_tunes">Playing Your Tunes</a> section.</p>
-            <hr>
-            <p><strong>Highlighting On/Off:</strong></p>
-            <p>Toggles Notation/ABC automatic highlighting On/Off.</p>
-            <p>Full details below in the <a href="#highlighting">Notation and ABC Highlighting</a> section.</p>
-            <hr>
-            <p><strong>Settings:</strong></p>
-            <p>Brings up the default playback instruments and other tool-wide settings dialog.</p>
-            <p>Full details below in the <a href="#settings_dialog">ABC Transcription Tools Settings</a> section.</p>
-            <hr>
-            <p><strong>▲/▼:</strong></p>
-            <p>Click this to hide/show the header at the top and any visible controls below the ABC text area so you can have more room to work on your music.</p>
             <hr class="hidden-print" id="abc_editor">
             <h1 class="page_break_always">ABC Editor<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder">
@@ -599,24 +630,6 @@
             <p>The size of the full screen notation as a percentage of the browser window width is set in the <strong>Advanced Settings</strong> dialog. Default is: 50%.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/KagT-Aq8mY8" title="Full-Screen Tune Display Options" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>If the resulting scaled width is less than 850 pixels (820 pixels for iOS/Android) the width will be set to 850 pixels (820 pixels for iOS/Android).</p>
-            <hr class="hidden-print" id="search_and_add_tunes">
-            <h1 class="page_break_always">Search and Add Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>Brings up a dialog where you search either Gavin Heneghan's tune collection (over 20,000 tune settings) or the FolkFriend.app tune collection (over 45,000 tune settings) by tune name and then optionally add them to your tunebook:</p>
-            <div class="image_holder_p">
-                <img src="img/tune_search_6.jpg"/>
-            </div>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/9HgEBIPXHCU" title="Tune search overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
-            <p>When first entering this dialog or changing the search collection, the tool will need to load the tune collection.</p>
-            <p>The status will read "Ready to search" when the tune collection has been loaded.</p>
-            <p>Enter some text to search for in the title of the tunes and click <strong>Search</strong></p>
-            <p>By default, the search will return only the first variation of a tune found.</p>
-            <p>If you want all the variations for a tune, uncheck <strong>Only return first variation found?</strong></p>
-            <p>If you want to match the search text only at the start of the tune name, check <strong>Match start of title?</strong></p>
-            <p>If you want to only match tunes that also have chords, check <strong>Only return tunes with chords?</strong>.</p>
-            <p>Select the maximum number of search results you want from the <strong>Maximum number of results</strong> dropdown.</p>
-            <p>Click <strong>Add Results to Tunebook</strong> to append the search results tunes at the end of the ABC editor.</p>
-            <p>If you don't want all the tunes in the search results added to your tunebook, you can simply copy and paste the results you want back into the ABC editor.</p>
-            <p>You can also get to this dialog by clicking the <strong>Search for Tunes</strong> link at the top of the tool.</p>
             <hr class="hidden-print" id="playing_your_tunes">
             <h1 class="page_break_always">Playing Your Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>To play a specific tune, click anywhere in the ABC for the tune and then click <strong>Play</strong>.</p>

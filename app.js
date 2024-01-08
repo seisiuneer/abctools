@@ -11634,7 +11634,7 @@ function AddFromSearch(e){
 	gTheCurrentTuneDatabase = gDefaultTuneDatabase;
 
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Search and Add Tunes&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#search_and_add_tunes" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>';
-
+	
 	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:20px;margin-bottom:12px;" class="switchtunedatabase">Tune Collection to Search: <select id="databaseselect" onchange="SwitchTuneDatabase();" title="Select your tune search database"><option value="0">Gavin Heneghan\'s Collection (20,000+ Tune Settings)</option><option value="1">FolkFriend.app Collection (45,000+ Tune Settings)</option></select></p>';
 
 	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:0px;margin-bottom:18px;">Search for text in the tune name:&nbsp;&nbsp;<input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="tuneNameToSearch" title="Enter your search text here" autocomplete="off" autocorrect="off" placeholder="Enter your search text here"/> </p>';
@@ -11681,6 +11681,156 @@ function AddFromSearch(e){
 
 }
 
+//
+// Change the tune order using drag and drop
+//
+function ChangeTuneOrder(){
+
+	var i,j,k;
+
+	var originalOrder = [];
+	var newOrder = [];
+
+	totalTunes = CountTunes();
+
+	var theTitles = GetTunebookIndexTitles();
+	var nTitles = theTitles.length;
+
+	if (nTitles == 0){
+
+		var thePrompt = "No tunes to re-order.";
+		
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+		
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
+
+	var theData = {};
+
+	var theSortableDiv = '<div id="sortable-tune-list" style="overflow:auto;height:635px;margin-top:18px">';
+
+	for (i=0;i<nTitles;++i){
+
+		theSortableDiv += '<div class="draggable_tune" draggable="true" data_tune_index="'+i+'">'+theTitles[i]+'</div>';
+	}
+	
+	theSortableDiv += '</div>';
+
+	var form = [
+
+		{html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Change the Order of the Tunes&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#change_tune_order" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
+		{html: '<p style="margin-top:18px;font-size:12pt;">Drag and drop the tune names to change the order of the tunes in the tunebook:</p>'},
+		{html: theSortableDiv}
+	];
+
+	setTimeout(function(){
+
+	    const childDivs = document.querySelectorAll('#sortable-tune-list .draggable_tune');
+
+		// Extract and display data_tune_index values
+		newOrder = Array.from(childDivs).map(div => div.getAttribute('data_tune_index'));
+
+		// Clone it
+		originalOrder = newOrder.slice();
+
+	},100);
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+
+    	if (!args.canceled){
+
+    		var bGotChange = false;
+
+    		for (i=0;i<totalTunes;++i){
+    			if (newOrder[i] != originalOrder[i]){
+    				bGotChange = true;
+    				break;
+    			}
+    		}
+
+    		// If no change, exit
+    		if (!bGotChange){
+
+    			//console.log("No order change detected!")
+    			return;
+    		}
+
+    		// Reorder the tunes
+    		var theABC = gTheABC.value;
+
+    		var result = FindPreTuneHeader(theABC);
+
+    		for (i=0;i<totalTunes;++i){
+    			
+    			var thisTune = getTuneByIndex(parseInt(newOrder[i]));
+
+    			thisTune = thisTune.trim();
+
+    			// Make sure every tune has a carriage return after it
+    			thisTune+="\n\n";
+
+    			result += thisTune;
+    		}
+
+    		// Stuff in the new result
+    		gTheABC.value = result;
+
+    		RenderAsync(true,null, function(){
+
+				gTheABC.selectionStart = 0;
+				gTheABC.selectionEnd = 0;
+
+				// And reset the focus
+				gTheABC.focus();	
+
+				// Scroll to the top
+				MakeTuneVisible(true);
+
+    		});
+
+    	}
+
+    });
+
+	const sortableList = document.getElementById('sortable-tune-list');
+
+	let dragItem = null;
+
+	// Add drag and drop event listeners
+	sortableList.addEventListener('dragstart', function (e) {
+		dragItem = e.target;
+		e.dataTransfer.effectAllowed = 'move';
+		e.dataTransfer.setData('text/plain', dragItem.innerHTML);
+	});
+
+	sortableList.addEventListener('dragover', function (e) {
+		e.preventDefault();
+		const target = e.target;
+		if (target && target !== dragItem && target.classList.contains('draggable_tune')) {
+
+			const rect = target.getBoundingClientRect();
+			
+			const next = (e.clientY - rect.top) / (rect.bottom - rect.top) > 0.5;
+			
+			sortableList.insertBefore(dragItem, next ? target.nextElementSibling : target);
+
+	    	const childDivs = document.querySelectorAll('#sortable-tune-list .draggable_tune');
+
+			// Extract and display data_tune_index values
+			newOrder = Array.from(childDivs).map(div => div.getAttribute('data_tune_index'));
+
+		}
+
+	});
+
+	sortableList.addEventListener('dragend', function () {
+		dragItem = null;
+	});
+
+}
 
 //
 // Add an ABC file, sample tune, or template
@@ -11702,6 +11852,14 @@ function AddABC(){
 	modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Search and Add Tunes</p>';
 	modal_msg += '<p style="text-align:center;margin-top:16px;">';
 	modal_msg  += '<input id="searchandaddtunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddFromSearch();" type="button" value="Search and Add Tunes" title="Search for tunes to add to your tunebook">';
+	
+	// Re-order only available on desktop browsers
+	if (isDesktopBrowser()){
+		modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Change the Order of the Tunes</p>';
+		modal_msg += '<p style="text-align:center;margin-top:16px;">';
+		modal_msg  += '<input id="changetuneorder" class="advancedcontrols btn btn-injectcontrols-headers" onclick="ChangeTuneOrder();" type="button" value="Change the Order of the Tunes" title="Change the order of the tunes">';	
+	}
+	
 	modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Add an Example ABC Tune</p>';
 	modal_msg += '<p style="text-align:center;margin-top:16px;">';
 	modal_msg  += '<input id="addnewreel" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleReel();" type="button" value="Add an Example Reel" title="Adds an example reel (Cooley\'s) to the end of the ABC">';
@@ -11733,7 +11891,7 @@ function AddABC(){
 
 	}, 100);
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 720,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 720,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 
 			
 	});
