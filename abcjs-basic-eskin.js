@@ -9064,6 +9064,35 @@ var Tokenizer = function Tokenizer(lines, multilineVars) {
       //console.log("theReverser The out:"+result); 
 
       return result;
+      
+    }
+
+    if (parseCommon.endsWith(str, ", the")){
+      
+      //debugger;
+
+      //console.log("theReverser The in:"+str); 
+
+      var theTitleNumber = getTitleNumber(str);
+
+      if (theTitleNumber){
+
+        //console.log("theReverser the titlenumber:"+theTitleNumber); 
+
+        str = str.replace(theTitleNumber+".","");
+        str = str.trim();
+      }
+
+      var result = "The " + str.substring(0, str.length - 5);
+
+      if (theTitleNumber){
+        result = theTitleNumber+". "+result;
+      }
+      
+      //console.log("theReverser the out:"+result); 
+
+      return result;
+
     }
 
     if (parseCommon.endsWith(str, ", A")){
@@ -9074,13 +9103,13 @@ var Tokenizer = function Tokenizer(lines, multilineVars) {
 
       if (theTitleNumber){
 
-        //console.log("theReverser The titlenumber:"+theTitleNumber); 
+        //console.log("theReverser A titlenumber:"+theTitleNumber); 
 
         str = str.replace(theTitleNumber+".","");
         str = str.trim();
       }
 
-      //var result = "A " + str.substring(0, str.length - 3);
+      var result = "A " + str.substring(0, str.length - 3);
 
       if (theTitleNumber){
         result = theTitleNumber+". "+result;
@@ -9088,6 +9117,32 @@ var Tokenizer = function Tokenizer(lines, multilineVars) {
     
       //console.log("theReverser A out:"+result);  
       return result;
+
+    } 
+
+    if (parseCommon.endsWith(str, ", a")){
+
+      //console.log("theReverser a in:"+str);  
+
+      var theTitleNumber = getTitleNumber(str);
+
+      if (theTitleNumber){
+
+        //console.log("theReverser a titlenumber:"+theTitleNumber); 
+
+        str = str.replace(theTitleNumber+".","");
+        str = str.trim();
+      }
+
+      var result = "A " + str.substring(0, str.length - 3);
+
+      if (theTitleNumber){
+        result = theTitleNumber+". "+result;
+      }
+    
+      //console.log("theReverser a out:"+result);  
+      return result;
+
     } 
     
     return str;
