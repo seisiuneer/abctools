@@ -16947,6 +16947,11 @@ function AddTuneTitleNumbers(){
 
     var result = FindPreTuneHeader(theNotes);
 
+    // Add a blank line after the header and before the tunes
+    if (result != ""){
+    	result += "\n";
+    }
+
     var tuneCount = 0;
 
     var i, j;
@@ -17080,6 +17085,11 @@ function RemoveTuneTitleNumbers(bDoRedraw){
 	}
 
     var result = FindPreTuneHeader(theNotes);
+    
+    // Add a blank line after the header and before the tunes
+    if (result != ""){
+    	result += "\n";
+    }
 
     var i, j;
 
