@@ -292,6 +292,13 @@ var gDisableSelectedPlay = false;
 
 var gMixedNotationAndQRCode = false;
 
+// For showing and hiding features
+var	gFeaturesShowSearch = true;
+var	gFeaturesShowExamples = true;
+var	gFeaturesShowTemplates = true;
+var	gFeaturesShowTablatures = true;
+var gFeaturesShowExplorers = true;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -10412,6 +10419,27 @@ function idleAddABC(){
 
 	}
 
+	// Find the OK button
+
+	var theOKButtons = document.getElementsByClassName("modal_flat_ok");
+
+	// Find the button that says "OK" to use to close the dialog when changing UI settings
+	var theOKButton = null;
+
+	for (var i=0;i<theOKButtons.length;++i){
+
+		theOKButton = theOKButtons[i];
+
+		if (theOKButton.innerText == "OK"){
+
+			//console.log("Found OK button");
+			gAddABCOKButton = theOKButton;
+
+			break;
+
+		}
+	}
+
 }
 
 //
@@ -11846,12 +11874,73 @@ function ChangeTuneOrder(){
 //
 // Add an ABC file, sample tune, or template
 //
+var gAddABCOKButton = null;
+
+function Configure_AddABC_UI(){
+
+	//console.log("Configure_AddABC_UI");
+
+	var old_gFeaturesShowSearch = gFeaturesShowSearch;
+	var old_gFeaturesShowExamples = gFeaturesShowExamples;
+	var old_gFeaturesShowTemplates = gFeaturesShowTemplates;
+
+	// Setup initial values
+	const theData = {
+	  showsearch: gFeaturesShowSearch,
+	  showexampletunes: gFeaturesShowExamples,
+	  showexampletemplates: gFeaturesShowTemplates,
+
+	};
+
+	var form = [
+	  {html: '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-left:15px;">Select Add ABC Feature Options</p>'},  
+	  {name: "          Show Search and Add Tunes", id: "showsearch", type:"checkbox", cssClass:"configure_ui_options_form_text"},
+	  {name: "          Show Example Tunes", id: "showexampletunes", type:"checkbox", cssClass:"configure_ui_options_form_text"},
+	  {name: "          Show Example Templates", id: "showexampletemplates", type:"checkbox", cssClass:"configure_ui_options_form_text"},
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 500, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+		
+		if (!args.canceled){
+
+			gFeaturesShowSearch = args.result.showsearch;
+			gFeaturesShowExamples = args.result.showexampletunes;
+			gFeaturesShowTemplates = args.result.showexampletemplates;
+
+			// No change, just return;
+			if ((gFeaturesShowSearch == old_gFeaturesShowSearch) && 
+				(gFeaturesShowExamples == old_gFeaturesShowExamples) && 
+				(gFeaturesShowTemplates == old_gFeaturesShowTemplates)){
+
+				//console.log("Configure_AddABC_UI - No change in settings");
+
+				return;
+
+			}
+
+			// Save the settings
+			SaveConfigurationSettings();
+
+			// Close the Add ABC dialog
+			gAddABCOKButton.click();
+
+			// And relaunch it after a short delay
+			setTimeout(function(){
+
+				AddABC();
+
+			},250);
+		}
+
+	});
+}
+
 function AddABC(){
 
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","AddABC");
 
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Add ABC Tunes, Templates, and PDF Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#add_templates_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>';
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Add ABC Tunes, Templates, and PDF Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#add_templates_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span><img id="moreaddabcsettings" class="moreaddabcsettings" src="img/settings.png" title="Add ABC  Settings" onclick="Configure_AddABC_UI()"</img></p>';
 	modal_msg += '<div id="add-new-tune-dialog">';
 	modal_msg += '<p style="text-align:center;margin-top:28px;font-size:18px;">Add Your Own Tunes from an ABC or MusicXML File</p>';
 	modal_msg += '<p style="text-align:center;margin-top:16px;">';
@@ -11860,9 +11949,15 @@ function AddABC(){
 	modal_msg += '<input class="dialogrestorebutton btn btn-restorebutton" id="dialogrestorebutton" onclick="RestoreSnapshot(false,true);" type="button" value="Restore from Snapshot" title="Replaces the contents of the ABC editor with a Snapshot saved in browser storage" style="display:none;">';
 	modal_msg += '<input class="dialogrestoreautobutton btn btn-restorebutton" id="dialogrestoreautobutton" onclick="RestoreSnapshot(true,true);" type="button" value="Restore from Auto-Snapshot" title="Replaces the contents of the ABC editor with an Auto-Snapshot saved in browser storage" style="display:none;">';
 	modal_msg += '</p>';
-	modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Search and Add Tunes</p>';
-	modal_msg += '<p style="text-align:center;margin-top:16px;">';
-	modal_msg  += '<input id="searchandaddtunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddFromSearch();" type="button" value="Search and Add Tunes" title="Search for tunes to add to your tunebook">';
+
+	// Showing search?
+	if (gFeaturesShowSearch){
+
+		modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Search and Add Tunes</p>';
+		modal_msg += '<p style="text-align:center;margin-top:16px;">';
+		modal_msg  += '<input id="searchandaddtunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddFromSearch();" type="button" value="Search and Add Tunes" title="Search for tunes to add to your tunebook">';
+
+	}
 	
 	// Re-order only available on desktop browsers
 	if (isDesktopBrowser()){
@@ -11871,25 +11966,33 @@ function AddABC(){
 		modal_msg  += '<input id="changetuneorder" class="advancedcontrols btn btn-injectcontrols-headers" onclick="ChangeTuneOrder();" type="button" value="Change the Order of the Tunes" title="Change the order of the tunes">';	
 	}
 	
-	modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Add an Example ABC Tune</p>';
-	modal_msg += '<p style="text-align:center;margin-top:16px;">';
-	modal_msg  += '<input id="addnewreel" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleReel();" type="button" value="Add an Example Reel" title="Adds an example reel (Cooley\'s) to the end of the ABC">';
-	modal_msg  += '<input id="addnewjig" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleJig();" type="button" value="Add an Example Jig" title="Adds an example jig (The Kesh) to the end of the ABC">';
-	modal_msg  += '<input id="addnewhornpipe" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleHornpipe();" type="button" value="Add an Example Hornpipe" title="Adds an example Hornpipe (Alexander\'s) to the end of the ABC">';
-	modal_msg += '</p>';	
-	modal_msg += '<p style="text-align:center;margin-top:16px;">';
-	modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendJSBach();" type="button" value="Add J.S. Bach Two-Part Invention #1" title="Adds the J.S. Bach 2-Part Invention #1 to the end of the ABC">';
-	modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendJSBach2();" type="button" value="Add J.S. Bach BWV570 Fantasia" title="Adds the J.S. Bach BWV570 Fantasia for Pipe Organ to the end of the ABC">';
-	modal_msg += '</p>';
-	modal_msg += '<p style="text-align:center;margin-top:24px;font-size:18px;">Add an ABC Template</p>';
-	modal_msg += '<p style="text-align:center;margin-top:16px;">';
-	modal_msg  += '<input id="addnewsong" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleSong();" type="button" value="Add an Example Song" title="Adds an example song to the end of the ABC">';
-	modal_msg  += '<input id="addsongtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSongTemplate();" type="button" value="Add a Song Template" title="Adds a minimal song template to the end of the ABC">';
-	modal_msg += '</p>';
-	modal_msg += '<p style="text-align:center;margin-top:16px;">';
-	modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendBoxFingeringTemplate();" type="button" value="Add Box Fingering Symbols Template" title="Adds a template with symbols for annotating box fingerings and tablature to the top of the ABC">';
-	modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddClickTrackTemplate();" type="button" value="Add Two-Bar Click Intro Templates" title="Adds two-bar click intro templates for common styles of tunes to the end of the ABC">';
-	modal_msg += '</p>';
+	// Showing examples?
+	if (gFeaturesShowExamples){
+		modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Add an Example ABC Tune</p>';
+		modal_msg += '<p style="text-align:center;margin-top:16px;">';
+		modal_msg  += '<input id="addnewreel" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleReel();" type="button" value="Add an Example Reel" title="Adds an example reel (Cooley\'s) to the end of the ABC">';
+		modal_msg  += '<input id="addnewjig" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleJig();" type="button" value="Add an Example Jig" title="Adds an example jig (The Kesh) to the end of the ABC">';
+		modal_msg  += '<input id="addnewhornpipe" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleHornpipe();" type="button" value="Add an Example Hornpipe" title="Adds an example Hornpipe (Alexander\'s) to the end of the ABC">';
+		modal_msg += '</p>';	
+		modal_msg += '<p style="text-align:center;margin-top:16px;">';
+		modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendJSBach();" type="button" value="Add J.S. Bach Two-Part Invention #1" title="Adds the J.S. Bach 2-Part Invention #1 to the end of the ABC">';
+		modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendJSBach2();" type="button" value="Add J.S. Bach BWV570 Fantasia" title="Adds the J.S. Bach BWV570 Fantasia for Pipe Organ to the end of the ABC">';
+		modal_msg += '</p>';
+	}
+
+	// Showing templates?
+	if (gFeaturesShowTemplates){
+		modal_msg += '<p style="text-align:center;margin-top:24px;font-size:18px;">Add an ABC Template</p>';
+		modal_msg += '<p style="text-align:center;margin-top:16px;">';
+		modal_msg  += '<input id="addnewsong" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleSong();" type="button" value="Add an Example Song" title="Adds an example song to the end of the ABC">';
+		modal_msg  += '<input id="addsongtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSongTemplate();" type="button" value="Add a Song Template" title="Adds a minimal song template to the end of the ABC">';
+		modal_msg += '</p>';
+		modal_msg += '<p style="text-align:center;margin-top:16px;">';
+		modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendBoxFingeringTemplate();" type="button" value="Add Box Fingering Symbols Template" title="Adds a template with symbols for annotating box fingerings and tablature to the top of the ABC">';
+		modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddClickTrackTemplate();" type="button" value="Add Two-Bar Click Intro Templates" title="Adds two-bar click intro templates for common styles of tunes to the end of the ABC">';
+		modal_msg += '</p>';
+	}
+
 	modal_msg += '<p style="text-align:center;margin-top:24px;font-size:18px;">Configure PDF Tunebook Features</p>';
 	modal_msg += '<p style="text-align:center;margin-top:16px;"><input id="tunebookbuilder_add" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Configure PDF Tunebook Features" title="Easily add features to your PDF tunebook including: Title Page, Table of Contents, Index, Page Headers, Page Footers, playback links, and custom QR Code"></p>';
 	modal_msg += '<p style="text-align:center;margin-top:24px;">';
@@ -18220,7 +18323,7 @@ function ExportAll(){
 
 	modal_msg += '<a id="exportall_help" href="https://michaeleskin.com/abctools/userguide.html#export_all" target="_blank" style="text-decoration:none;" title="Learn more about the audio and image exporter">?</a>';
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) })
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) })
 
 	if (format != "whistle"){
 		document.getElementById("export_width").value = gExportWidthAll;
@@ -26689,6 +26792,43 @@ function GetInitialConfigurationSettings(){
 		gShapeNoteStyle = val;
 	}
 	
+	// Save feature selections
+	gFeaturesShowSearch = true;
+	val = localStorage.FeaturesShowSearch;
+	if (val){
+		gFeaturesShowSearch = (val == "true");
+	}
+
+	gFeaturesShowExamples = true;
+	val = localStorage.FeaturesShowExamples;
+	if (val){
+		gFeaturesShowExamples = (val == "true");
+	}
+
+	gFeaturesShowTemplates = true;
+	val = localStorage.FeaturesShowTemplates;
+	if (val){
+		gFeaturesShowTemplates = (val == "true");
+	}
+
+	gFeaturesShowTablatures = true;
+	val = localStorage.FeaturesShowTablatures;
+	if (val){
+		gFeaturesShowTablatures = (val == "true");
+	}
+
+	gFeaturesShowExplorers = true;
+	val = localStorage.FeaturesShowExplorers;
+	if (val){
+		gFeaturesShowExplorers = (val == "true");
+	}
+
+	gFeaturesShowExport = true;
+	val = localStorage.FeaturesShowExport;
+	if (val){
+		gFeaturesShowExport = (val == "true");
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -26849,6 +26989,14 @@ function SaveConfigurationSettings(){
 
 		// Disable selected play
 		localStorage.DisableSelectedPlay = gDisableSelectedPlay;
+
+		// Save UI features preferences
+		localStorage.FeaturesShowSearch = gFeaturesShowSearch;
+		localStorage.FeaturesShowExamples = gFeaturesShowExamples;
+		localStorage.FeaturesShowTemplates = gFeaturesShowTemplates;
+		localStorage.FeaturesShowTablatures = gFeaturesShowTablatures;
+		localStorage.FeaturesShowExplorers = gFeaturesShowExplorers;
+		localStorage.FeaturesShowExport = gFeaturesShowExport;
 
 	}
 }
@@ -28152,13 +28300,103 @@ function PDFExportDialog(bShowTopButtons){
 //
 // Advanced controls dialog
 //
+//
+
+// Add an ABC file, sample tune, or template
+//
+var gMoreABCToolsOKButton = null;
+
+function Configure_AdvancedControlsDialog_UI(){
+
+	//console.log("Configure_AdvancedControlsDialog_UI");
+
+	var old_gFeaturesShowTablatures = gFeaturesShowTablatures;
+	var old_gFeaturesShowExplorers = gFeaturesShowExplorers;
+	var old_gFeaturesShowExport = gFeaturesShowExport;
+
+	// Setup initial values
+	const theData = {
+	  showtablatures: gFeaturesShowTablatures,
+	  showexplorers: gFeaturesShowExplorers,
+	  showexport: gFeaturesShowExport
+	};
+
+	var form = [
+	  {html: '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-left:15px;">More ABC Tools Feature Options</p>'},  
+	  {name: "          Show Tablature Injectors", id: "showtablatures", type:"checkbox", cssClass:"configure_ui_options_form_text"},
+	  {name: "          Show MIDI, Swing, Grace, and Roll Explorers", id: "showexplorers", type:"checkbox", cssClass:"configure_ui_options_form_text"},
+	  {name: "          Show Export, Sort, and Comhaltas features", id: "showexport", type:"checkbox", cssClass:"configure_ui_options_form_text"},
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 500, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+		
+		if (!args.canceled){
+
+			gFeaturesShowTablatures = args.result.showtablatures;
+
+			gFeaturesShowExplorers = args.result.showexplorers;
+
+			gFeaturesShowExport = args.result.showexport;
+
+			// No change, just return;
+			if ((gFeaturesShowTablatures == old_gFeaturesShowTablatures) && 
+				(gFeaturesShowExplorers == old_gFeaturesShowExplorers) && 
+				(gFeaturesShowExport == old_gFeaturesShowExport)){
+				
+				//console.log("Configure_AdvancedControlsDialog_UI - No change in settings");
+
+				return;
+
+			}
+
+			// Save the settings
+			SaveConfigurationSettings();
+
+			// Close the ABC tools dialog
+			gMoreABCToolsOKButton.click();
+
+			// And relaunch it after a short delay
+			setTimeout(function(){
+
+				AdvancedControlsDialog();
+
+			},250);
+		}
+
+	});
+}
+
+// Find the OK button for the options dialog use
+function IdleMoreABCTools(){
+
+	// Find the OK button
+	var theOKButtons = document.getElementsByClassName("modal_flat_ok");
+
+	// Find the button that says "OK" to use to close the dialog when changing UI settings
+	var theOKButton = null;
+
+	for (var i=0;i<theOKButtons.length;++i){
+
+		theOKButton = theOKButtons[i];
+
+		if (theOKButton.innerText == "OK"){
+
+			//console.log("Found OK button");
+			gMoreABCToolsOKButton = theOKButton;
+
+			break;
+
+		}
+	}
+}
+
 function AdvancedControlsDialog(){
 
 	// Keep track of advanced controls dialog
 	sendGoogleAnalytics("dialog","AdvancedControlsDialog");
 
 	// Moving the advanced controls to their own dialog
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">More ABC Tools&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#more_tools" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>';
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">More ABC Tools&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#more_tools" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span><img id="moreabctoolssettings" class="moreabctoolssettings" src="img/settings.png"  title="More ABC Tools Settings" onclick="Configure_AdvancedControlsDialog_UI();"</img></p>';
 	modal_msg += '<div id="advanced-controls-dialog">';
 	
 	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">Show/Hide ABC Features</p>'
@@ -28192,22 +28430,42 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<input id="injectstaffwidth" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectStaffWidth()" type="button" value="Inject %%staffwidth" title="Injects a %%staffwidth annotation into one or all tunes">';
 	modal_msg  += '<input id="injectlargeprint" class="advancedcontrols btn btn-injectcontrols-headers" onclick="NotationSpacingExplorer()" type="button" value="Notation Spacing Explorer" title="Find the right spacing and scale values for your notation">';
 	modal_msg  += '</p>';
-	modal_msg  += '<p style="text-align:center;margin-top:22px;">'
-	modal_msg  += '<input id="injectbctab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_BC()" type="button" value="Inject B/C Box Tab" title="Injects B/C box tablature into the ABC">';
-	modal_msg  += '<input id="injectcdtab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_CsD()" type="button" value="Inject C#/D Box Tab" title="Injects C#/D box tablature into the ABC">';
-	modal_msg  += '<input id="injectanglotab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Anglo()" type="button" value="Inject Anglo Concertina Tab" title="Injects Anglo Concertina tablature into the ABC">';
-	modal_msg  += '</p>';
-	modal_msg  += '<p style="text-align:center;margin-top:22px;">'
-	modal_msg  += '<input id="injectfiddlefingerings" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings()" type="button" value="Inject Fiddle Fingerings" title="Injects Fiddle fingerings tablature into the ABC">';
-	modal_msg  += '<input id="injectmd" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_MD()" type="button" value="Inject Dulcimer Tab" title="Injects Mountain Dulcimer tablature into the ABC">';
-	modal_msg  += '<input id="injectbambooflute" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Bamboo_Flute()" type="button" value="Inject Bamboo Flute Tab" title="Injects Bamboo flute tablature into the ABC">';
-	modal_msg  += '</p>';
-	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="injectshapenotes" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_ShapeNotes()" type="button" value="Inject Shape Note/Solfège" title="Injects Shape Note shapes and/or Solfège note names into the ABC"><input id="configure_box_advanced" class="btn btn-subdialog configure_box_advanced " onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_roll_explorer" class="btn btn-rollexplorer configure_roll_explorer " onclick="RollExplorer()" type="button" value="Roll Explorer" title="Brings up a tune player where you can experiment with different roll parameters"></p>';	
-	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_instrument_explorer" class="configure_instrument_explorer button btn btn-instrumentexplorer" onclick="InstrumentExplorer();" type="button" value="MIDI Instrument Explorer" title="Brings up a tune player where you can experiment playing the current tune with different MIDI soundfonts and melody/chord instruments"><input id="configure_swing_explorer" class="btn btn-swingexplorer configure_swing_explorer " onclick="SwingExplorer()" type="button" value="Swing Explorer" title="Brings up a tune player where you can experiment with different swing factor and offset settings"><input id="configure_grace_explorer" class="btn btn-graceexplorer configure_grace_explorer " onclick="GraceExplorer()" type="button" value="Grace Duration Explorer" title="Brings up a tune player where you can experiment with different grace note duration settings"></p>';
-	modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Audio or Images" title="Exports all the tunes in the ABC text area as audio or image files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Specific Tag" title="Brings up the Sort by Specific Tag dialog"><input id="ceoltastransform" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransformDialog()" type="button" value="Comhaltas ABC Transform" title="Transforms the ABC to/from Comhaltas format."></p>';
+
+	// Showing tablature injectors?
+	if (gFeaturesShowTablatures){
+		modal_msg  += '<p style="text-align:center;margin-top:22px;">'
+		modal_msg  += '<input id="injectbctab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_BC()" type="button" value="Inject B/C Box Tab" title="Injects B/C box tablature into the ABC">';
+		modal_msg  += '<input id="injectcdtab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_CsD()" type="button" value="Inject C#/D Box Tab" title="Injects C#/D box tablature into the ABC">';
+		modal_msg  += '<input id="injectanglotab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Anglo()" type="button" value="Inject Anglo Concertina Tab" title="Injects Anglo Concertina tablature into the ABC">';
+		modal_msg  += '</p>';
+		modal_msg  += '<p style="text-align:center;margin-top:22px;">'
+		modal_msg  += '<input id="injectfiddlefingerings" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings()" type="button" value="Inject Fiddle Fingerings" title="Injects Fiddle fingerings tablature into the ABC">';
+		modal_msg  += '<input id="injectmd" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_MD()" type="button" value="Inject Dulcimer Tab" title="Injects Mountain Dulcimer tablature into the ABC">';
+		modal_msg  += '<input id="injectbambooflute" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Bamboo_Flute()" type="button" value="Inject Bamboo Flute Tab" title="Injects Bamboo flute tablature into the ABC">';
+		modal_msg  += '</p>';
+		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="injectshapenotes" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_ShapeNotes()" type="button" value="Inject Shape Note/Solfège" title="Injects Shape Note shapes and/or Solfège note names into the ABC"><input id="configure_box_advanced" class="btn btn-subdialog configure_box_advanced " onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>';	
+	}
+
+	// Showing explorers?
+	if (gFeaturesShowExplorers){
+		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_instrument_explorer" class="configure_instrument_explorer button btn btn-instrumentexplorer" onclick="InstrumentExplorer();" type="button" value="MIDI Instrument Explorer" title="Brings up a tune player where you can experiment playing the current tune with different MIDI soundfonts and melody/chord instruments"><input id="configure_swing_explorer" class="btn btn-swingexplorer configure_swing_explorer " onclick="SwingExplorer()" type="button" value="Swing Explorer" title="Brings up a tune player where you can experiment with different swing factor and offset settings"><input id="configure_grace_explorer" class="btn btn-graceexplorer configure_grace_explorer " onclick="GraceExplorer()" type="button" value="Grace Duration Explorer" title="Brings up a tune player where you can experiment with different grace note duration settings"><input id="configure_roll_explorer" class="btn btn-rollexplorer configure_roll_explorer " onclick="RollExplorer()" type="button" value="Roll Explorer" title="Brings up a tune player where you can experiment with different roll parameters"></p>';
+	}
+
+	// Showing export?
+	if (gFeaturesShowExport){
+		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Audio or Images" title="Exports all the tunes in the ABC text area as audio or image files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Specific Tag" title="Brings up the Sort by Specific Tag dialog"><input id="ceoltastransform" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransformDialog()" type="button" value="Comhaltas ABC Transform" title="Transforms the ABC to/from Comhaltas format."></p>';
+	}
+
 	modal_msg += '</div>';
 
 	var format = GetRadioValue("notenodertab");
+
+	// Find the OK button for the settings dialog
+	setTimeout(function(){
+
+		IdleMoreABCTools();
+	
+	},100);
 	
 	setTimeout(function(){
 
@@ -28220,7 +28478,7 @@ function AdvancedControlsDialog(){
 	}, 200);
 
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 720,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 740,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 					
 		});
 

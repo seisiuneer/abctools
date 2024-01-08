@@ -218,7 +218,6 @@ padding:12px;}
 
 #sortbutton{
 	height:42px;
-	margin-top: 9px;
 	padding:12px;
 	margin-right:24px;
 }
@@ -1536,6 +1535,29 @@ z-index:101;
 display:none;
 }
 
+.moreabctoolssettings{
+position:absolute;
+width:36px;
+height:36px;
+right:20px;
+top:20px;
+padding:4px;
+z-index:101;
+display:block;
+}
+
+.moreaddabcsettings{
+position:absolute;
+width:36px;
+height:36px;
+right:20px;
+top:20px;
+padding:4px;
+z-index:101;
+display:block;
+}
+
+
 #notation-placeholder{
 font-family:"Helvetica";
 font-size:12pt;
@@ -2662,11 +2684,17 @@ margin-top:-7px;
 	left:360px;
 }
 
+.configure_ui_options_form_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:24px;
+	display:flex;
+}
+
 #configure_box_advanced{
 	height:42px;
-	margin-top: 9px;
 	padding:12px;
-	margin-right:24px;
 }
 
 @media (hover: hover) {
@@ -2677,7 +2705,6 @@ margin-top:-7px;
 
 #configure_batch_mp3_export{
 	height:42px;
-	margin-top: 9px;
 	padding:12px;
 	margin-right:24px;
 }
@@ -2690,7 +2717,6 @@ margin-top:-7px;
 
 #configure_swing_explorer{
 	height:42px;
-	margin-top: 9px;
 	padding:12px;
 	margin-right:24px;
 }
@@ -2703,8 +2729,8 @@ margin-top:-7px;
 
 #configure_grace_explorer{
 	height:42px;
-	margin-top: 9px;
 	padding:12px;
+	margin-right:24px;
 }
 
 @media (hover: hover) {
@@ -2715,7 +2741,6 @@ margin-top:-7px;
 
 #configure_roll_explorer{
 	height:42px;
-	margin-top: 9px;
 	padding:12px;
 }
 

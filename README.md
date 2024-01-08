@@ -43,6 +43,7 @@
 <p><a href="https://github.com/zhuker/lamejs" target="_blank">lame.js</a> is used to for converting .wav format to .mp3.</p>  
 <p><a href="https://github.com/swevans/unmute" target="_blank">umute.js</a> is used to for fixing the iOS tab switch audio mute issue.</p> 
 <p>Ui icons created by <a href="https://www.flaticon.com/free-icons/ui" title="ui icons"> Karacis - Flaticon</a>.</p>
+<p>Options icon by Marie Van den Broeck from <a href="https://thenounproject.com/browse/icons/term/options/" target="_blank" title="options Icons">Noun Project</a> (CC BY 3.0)</p>
 <p>This product includes <a href="https://modal.daypilot.org" target="_blank">DayPilot Modal</a> for modal dialog replacements.</p>
 <p>Anglo Concertina fingering solution and ABC parsing methods used by the tab injectors originally developed by <a href="https://jvandonsel.github.io/fingering/fingering.html" target="_blank">Jim Van Donsel</a>.</p>
 <p><a href="https://github.com/TomWyllie/folkfriend" title="FolkFriend" target="_blank">FolkFriend.app Tune Collection</a> by Tom Wyllie, used for the search engine, released under <a href="https://michaeleskin.com/abctools/gpl3.txt" title="GPL3" target="_blank">GPL3</a> licensing.</p>
