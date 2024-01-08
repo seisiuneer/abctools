@@ -28331,7 +28331,7 @@ function Configure_AdvancedControlsDialog_UI(){
 		form.push({name: "          Show Export, Sort, and Comhaltas features", id: "showexport", type:"checkbox", cssClass:"configure_ui_options_form_text"});
 	}
 	else{
-		form.push({name: "          Show Sort, and Comhaltas features", id: "showexport", type:"checkbox", cssClass:"configure_ui_options_form_text"});		
+		form.push({name: "          Show Sort and Comhaltas features", id: "showexport", type:"checkbox", cssClass:"configure_ui_options_form_text"});		
 	}
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 500, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
