@@ -9009,11 +9009,91 @@ var Tokenizer = function Tokenizer(lines, multilineVars) {
       index: index
     };
   };
+
+  //
+  // MAE FOOFOOFOO 8 January 2024 - Had to modify this for tune title numbers
+  //
   this.theReverser = function (str) {
-    if (parseCommon.endsWith(str, ", The")) return "The " + str.substring(0, str.length - 5);
-    if (parseCommon.endsWith(str, ", A")) return "A " + str.substring(0, str.length - 3);
+
+    // Find an optional title number at the start of a tune title
+    function getTitleNumber(theTitle){
+
+      const regex = /^(\d+)\./;
+
+      // Use the exec method to search for the pattern in the string
+      const match = regex.exec(str);
+
+      // Check if a match is found
+      if (match) {
+
+        // The matched number is captured in the first group (index 1)
+        const foundNumber = match[1];
+        return foundNumber;
+
+      } else {
+
+        // Return null if no match is found
+        return null;
+        
+      }
+
+    }
+    
+    if (parseCommon.endsWith(str, ", The")){
+      
+      //debugger;
+
+      //console.log("theReverser The in:"+str); 
+
+      var theTitleNumber = getTitleNumber(str);
+
+      if (theTitleNumber){
+
+        //console.log("theReverser The titlenumber:"+theTitleNumber); 
+
+        str = str.replace(theTitleNumber+".","");
+        str = str.trim();
+      }
+
+      var result = "The " + str.substring(0, str.length - 5);
+
+      if (theTitleNumber){
+        result = theTitleNumber+". "+result;
+      }
+      
+      //console.log("theReverser The out:"+result); 
+
+      return result;
+    }
+
+    if (parseCommon.endsWith(str, ", A")){
+
+      //console.log("theReverser A in:"+str);  
+
+      var theTitleNumber = getTitleNumber(str);
+
+      if (theTitleNumber){
+
+        //console.log("theReverser The titlenumber:"+theTitleNumber); 
+
+        str = str.replace(theTitleNumber+".","");
+        str = str.trim();
+      }
+
+      //var result = "A " + str.substring(0, str.length - 3);
+
+      if (theTitleNumber){
+        result = theTitleNumber+". "+result;
+      }
+    
+      //console.log("theReverser A out:"+result);  
+      return result;
+    } 
+    
     return str;
+
   };
+
   this.stripComment = function (str) {
     var i = str.indexOf('%');
     if (i >= 0) return parseCommon.strip(str.substring(0, i));

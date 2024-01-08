@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-                
+        
         <style>
         p {
         font-size:14pt;
@@ -263,8 +263,9 @@
                     <button class="accordion" title="Click to expand/collapse this section">Useful Utilities for Injecting ABC Annotations and Features</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectionfeatures">ABC Utility Injection Features</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injectallpdf">Inject All Available PDF Tunebook Annotations</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injecttunetitlenumbers">Inject Tune Title Numbers</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectsectionheader">Inject PDF Section Header</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injectallpdf">Inject All PDF Annotations</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectmidi">Inject MIDI Programs and Volumes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectmetronome">Inject Metronome</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#injectrepeatsandtwobarclickintros">Inject Repeats + Intros</a></p>
@@ -901,7 +902,7 @@
             <h1 class="page_break_always">More ABC Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
             <div class="image_holder_p">
-                <img src="img/more_abc_tools_5.jpg"/>
+                <img src="img/more_abc_tools_6.jpg"/>
             </div>
             <hr class="hidden-print" id="advanced_showhidefeatures">
             <h1 class="page_break_always">Hide/Show ABC Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -933,7 +934,20 @@
             <p>These commands are destructive in that they inject additional text into the current ABC.</p>
             <p>It may be a good idea to save the current ABC or do a <strong>Copy All</strong> or <strong>Snapshot</strong> before using one of these commands if you want to quickly undo the operation.</p>
             <hr>
-            <p id="advanced_injectallpdf"><strong>Inject All Available PDF Tunebook Annotations</strong> - Injects all available tool-specific PDF tunebook annotations for title page, table of contents, index generation, etc. at the top of the ABC.</p>
+            <p id="advanced_injecttunetitlenumbers"><strong>Inject Tune Title Numbers</strong> - Brings up a dialog where you can inject or remove incrementing numbers to the tune titles:</p>
+            <div class="image_holder_p">
+                <img src="img/add_tune_title_numbers_1.jpg"/>
+            </div>
+            <p>The numbers injected are in the form:
+            <p>1. Tune #1</p>
+            <p>2. Tune #2</p>
+            <p>3. Tune #2</p>
+            <p>etc.</p>
+            <p>This can be very useful for numbering tunes in tunebooks before PDF generation.</p>
+            <p>When adding tune title numbers, any existing numbers that were previously injected are removed first.</p>
+            <p>This makes it very easy to generate new incrementing tune title numbers after adding, deleting, or re-ordering tunes.</p>
+            <p>Title numbers are not added to PDF section headers.</p>
+            <p>When using numbered titles, it is best to select generating unsorted Table of Contents and Index pages in exported PDF files.</p>
             <hr>
             <p id="advanced_injectsectionheader"><strong>Inject PDF Section Header</strong> - Prompts for a PDF section header to inject at the text cursor insertion point.</p>
             <p>Click on any section header in the Table of Contents or Index to jump to that section of the tunebook.</p>
@@ -942,6 +956,8 @@
             <p>In the sorted Table of Contents and Index, section headers will be displayed at the top without the extra space.</p>
             <p>When rendering full tunes, section headers are automatically pushed to the top of a new page in the tunebook.</p>
             <p>When rendering note or text incipits, section headers are not automatically pushed to the top of a new page.</p>
+            <hr>
+            <p id="advanced_injectallpdf"><strong>Inject All PDF Annotations</strong> - Injects all available tool-specific PDF tunebook annotations for title page, table of contents, index generation, etc. at the top of the ABC.</p>
             <hr>
             <p id="advanced_injectmidi"><strong>Inject MIDI Programs and Volumes</strong> - Injects MIDI Soundfont, Melody program, Bass program, Chord program and volume annotations into one or all tunes:</p>
             <div class="image_holder_p">

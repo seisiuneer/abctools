@@ -7063,6 +7063,13 @@ function promptForPDFFilename(placeholder, callback){
 
 	}
 
+	// With the addition of tune title numbers, clean them from the front of the placeholder
+	placeholder = cleanTitleNumber(placeholder);
+	placeholder = placeholder.trim();
+	// Clean any leading underscore after the title number clean
+	var theregex = /^[_]+/;
+	placeholder = placeholder.replace(theregex, '');
+
 	DayPilot.Modal.prompt("Please enter a filename for your PDF file:", placeholder+".pdf",{ theme: "modal_flat", top: 200, autoFocus: false, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args) {
 
 		var fname = args.result;
@@ -11790,6 +11797,10 @@ function ChangeTuneOrder(){
 				MakeTuneVisible(true);
 
     		});
+
+    		// Set dirty
+			gIsDirty = true;
+
 
     	}
 
@@ -16866,12 +16877,338 @@ function DoCeoltasTransform(doInverse){
 //
 function DoCeoltasTransformDialog(){
 
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Ceoltas ABC Transform</p>';
+	var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Ceoltas ABC Transform&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_comhaltas" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>';
 
-	modal_msg  += '<p style="text-align:center;"><input id="ceoltasdialog" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransform(false)" type="button" value="Standard ABC to Comhaltas ABC" title="Transforms the standard ABC format to Comhaltas format.">';
-	modal_msg  += '<input id="ceoltasdialoginverse" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransform(true)" type="button" value="Comhaltas ABC to Standard ABC" title="Transforms the Comhaltas format to standard ABC format."></p>';
+	modal_msg  += '<p style="text-align:center;"><input id="ceoltasdialog" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransform(false)" type="button" value="Standard ABC to Comhaltas ABC" title="Transforms the standard ABC format to Comhaltas format">';
+
+	modal_msg  += '<input id="ceoltasdialoginverse" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransform(true)" type="button" value="Comhaltas ABC to Standard ABC" title="Transforms the Comhaltas format to standard ABC format"></p>';
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, width: 650,  scrollWithPage: (AllowDialogsToScroll()) });
+
+}
+
+//
+// Inject/remove Tune title numbers
+//
+function TuneTitlesNumbersDialog(){
+	var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Add/Remove Tune Title Numbers&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_injecttunetitlenumbers" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>';
+
+	modal_msg  += '<p style="text-align:center;"><input id="addtunetitlenumbers" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddTuneTitleNumbers()" type="button" value="Add Numbers to Tune Titles" title="Adds incrementing numbers to the tune titles">';
+
+	modal_msg  += '<input id="removetunetitlenumbers" class="advancedcontrols btn btn-injectcontrols" onclick="RemoveTuneTitleNumbers(true)" type="button" value="Remove Tune Title Numbers" title="Removes any tune title numbers that were added"></p>';
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, width: 650,  scrollWithPage: (AllowDialogsToScroll()) });
+
+}
+
+// 
+// Clean a title number from the start of a string
+//
+function cleanTitleNumber(str){
+
+	// Use a regular expression to match the number or period at the start of the string
+	// ^ asserts the start of the string
+	// [0-9.] matches any digit or period
+	// + matches one or more occurrences
+	var theregex = /^[0-9.]+/;
+
+	// Use the replace method to replace the matched pattern with an empty string
+	return str.replace(theregex, '');
+
+}
+//
+// Add tune title numbers
+//
+function AddTuneTitleNumbers(){
+
+    var nTunes = CountTunes();
+
+    // Should never get here, but just to be safe...
+ 	if (nTunes == 0){
+
+		var thePrompt = "No tunes to add tune title numbers.";
+		
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+		
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
+
+	// Keep track of add number use
+	sendGoogleAnalytics("action","AddTuneTitleNumbers");
+
+	// First remove any existing tune title numers
+	var theNotes = RemoveTuneTitleNumbers(false);
+
+	// Stuff it back in the work area so getTuneByIndex() returns st
+    gTheABC.value = theNotes;
+
+    var result = FindPreTuneHeader(theNotes);
+
+    var tuneCount = 0;
+
+    var i, j;
+
+    for (i = 0; i < nTunes; ++i) {
+
+        var thisTune = getTuneByIndex(i);
+
+        // Don't inject section header tune fragments
+        if (isSectionHeader(thisTune)){
+            result += "\n";
+            result += thisTune;
+            result += "\n";
+            continue;
+        }
+
+        tuneCount++;
+
+        // Split the ABC notation into lines
+	    const lines = thisTune.split('\n');
+
+	    // Process each line
+	    var bGotName = false;
+	    var modifiedTune = "";
+
+	    for (let j = 0; j < lines.length; j++) {
+
+	        let line = lines[j];
+
+	        // Only do this for the first title tag in the tune
+	        if (!bGotName){
+
+		        // Check if the line starts with "T: " (indicating a tune name)
+		        if (line.startsWith('T: ')) {
+
+		        	line = line.replace("T:","");
+		        	line = line.trim();
+		        	line = "T: "+tuneCount+". "+line
+		            bGotName = true;
+		        }
+
+		        if (!bGotName){
+
+		        	// Check if the line starts with "T:" (indicating a tune name)
+			        if (line.startsWith('T:')) {
+
+			        	line = line.replace("T:","");
+			        	line = line.trim();
+			        	line = "T:"+tuneCount+". "+line
+			            bGotName = true;
+
+			        }
+		        }
+
+		    }
+
+		    modifiedTune += line;
+		    modifiedTune += "\n";
+	   	}
+
+        result += modifiedTune;
+
+    }
+
+    result = result.replaceAll("\n\n","\n");
+
+    // Stuff the final result back in the editor
+    gTheABC.value = result;
+
+	// Set dirty
+	gIsDirty = true;
+
+	var elem = document.getElementById("addtunetitlenumbers");
+
+	if (elem){
+		elem.value = "Adding Tune Title Numbers";
+	}
+
+	// Redraw
+	RenderAsync(true,null, function (){
+
+		var elem = document.getElementById("addtunetitlenumbers");
+
+		if (elem){
+
+			// Give some feedback
+			elem.value = "Tune Title Numbers Added";
+
+			setTimeout(function(){
+
+				var elem = document.getElementById("addtunetitlenumbers");
+
+				if (elem){
+
+					elem.value = "Add Numbers to Tune Titles";
+				}
+				
+			},750);
+		}
+
+	});
+
+}
+
+//
+// Remove tune title numbers
+// 
+function RemoveTuneTitleNumbers(bDoRedraw){
+
+	var theNotes = gTheABC.value;
+
+    var nTunes = CountTunes();
+
+	if (bDoRedraw){
+
+	    // Should never get here, but just to be safe...
+	 	if (nTunes == 0){
+
+			var thePrompt = "No tunes with title numbers to remove.";
+			
+			// Center the string in the prompt
+			thePrompt = makeCenteredPromptString(thePrompt);
+			
+			DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+			return;
+		}
+
+		sendGoogleAnalytics("action","RemoveTuneTitleNumbers");
+
+	}
+
+    var result = FindPreTuneHeader(theNotes);
+
+    var i, j;
+
+    var bDoRender = false;
+
+    for (i = 0; i < nTunes; ++i) {
+
+        var thisTune = getTuneByIndex(i);
+
+        // Don't inject section header tune fragments
+        if (isSectionHeader(thisTune)){
+            result += "\n";
+            result += thisTune;
+            result += "\n";
+            continue;
+        }
+
+        // Split the ABC notation into lines
+	    const lines = thisTune.split('\n');
+
+	    // Process each line
+	    var bGotName = false;
+	    var modifiedTune = "";
+
+	    for (let j = 0; j < lines.length; j++) {
+
+	        let line = lines[j];
+
+	        // Only do this for the first title tag in the tune
+	        if (!bGotName){
+
+		        // Check if the line starts with "T: " (indicating a tune name)
+		        if (line.startsWith('T: ')) {
+
+		        	var originalLine = line;
+		        	line = line.replace("T:","");
+		        	line = line.trim();
+		        	line = cleanTitleNumber(line);
+		        	line = line.trim();
+		        	line = "T: "+line
+		            bGotName = true;
+
+		            if (originalLine != line){
+		            	bDoRender = true;
+		            }
+
+		        }
+
+		        if (!bGotName){
+
+		        	// Check if the line starts with "T:" (indicating a tune name)
+			        if (line.startsWith('T:')) {
+
+		        		var originalLine = line;
+
+			        	line = line.replace("T:","");
+			        	line = line.trim();
+		        		line = cleanTitleNumber(line);
+		        		line = line.trim();
+			        	line = "T:"+line
+			            bGotName = true;
+
+			            if (originalLine != line){
+			            	bDoRender = true;
+			            }
+
+			        }
+		        }
+		    }
+
+		    modifiedTune += line;
+		    modifiedTune += "\n";
+	   	}
+
+        result += modifiedTune;
+
+    }
+
+    result = result.replaceAll("\n\n","\n");
+
+    // Are we just stripping numbers to inject them?
+    // Yes, just return the stripped version
+    if (!bDoRedraw){
+    	return result;
+    }
+
+    // If any changes made, redraw and mark the work area as dirty
+    if (bDoRender){
+
+    	//console.log("RemoveTuneTitleNumbers render");
+
+	    // Stuff the final result back in the editor
+	    gTheABC.value = result;
+
+		// Set dirty
+		gIsDirty = true;
+
+		// Give some feedback
+		var elem = document.getElementById("removetunetitlenumbers");
+
+		if (elem){
+			elem.value = "Removing Tune Title Numbers";
+		}
+
+		// Redraw
+		RenderAsync(true,null, function (){
+
+			var elem = document.getElementById("removetunetitlenumbers");
+
+			if (elem){
+				
+				// Give some feedback
+				elem.value = "Tune Title Numbers Removed";
+
+				setTimeout(function(){
+
+					var elem = document.getElementById("removetunetitlenumbers");
+
+					if (elem){
+
+						elem.value = "Remove Added Tune Title Numbers";
+					}
+					
+				},750);
+			}
+
+		});
+
+	}
 
 }
 
@@ -27831,8 +28168,9 @@ function AdvancedControlsDialog(){
 	modal_msg  += '</p>';
 	modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">ABC Injection Features</p>'
 	modal_msg  += '<p style="text-align:center;">'
-	modal_msg  += '<input id="injectallheaders" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders()" type="button" value="Inject All Available PDF Tunebook Annotations" title="Injects all available tool-specific PDF tunebook annotations for title page, table of contents, index generation, etc. at the top of the ABC">';	
+	modal_msg  += '<input id="injecttunenumbers" class="advancedcontrols btn btn-injectcontrols-headers" onclick="TuneTitlesNumbersDialog()" type="button" value="Inject Tune Title Numbers" title="Opens a dialog where you can add or remove numbers on the tune titles">';	
 	modal_msg  += '<input id="injectsectionheader" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectSectionHeader()" type="button" value="Inject PDF Section Header" title="Injects a PDF section header placeholder tune at the cursor insertion point">';
+	modal_msg  += '<input id="injectallheaders" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders()" type="button" value="Inject All PDF Annotations" title="Injects all available tool-specific PDF tunebook annotations for title page, table of contents, index generation, etc. at the top of the ABC">'
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
 	modal_msg  += '<input id="injectallmidiparams" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectAllMIDIParams()" type="button" value="Inject MIDI Programs and Volumes" title="Injects MIDI Soundfont, Melody program, Bass program, Chord program, and volume annotations into one or all tunes">';
@@ -27872,7 +28210,7 @@ function AdvancedControlsDialog(){
 	}, 200);
 
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 700,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 720,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 					
 		});
 
