@@ -300,6 +300,9 @@ var	gFeaturesShowTablatures = true;
 var gFeaturesShowExplorers = true;
 var gFeaturesShowTabButtons = true;
 
+// Force an update of local storage for the tab
+var gForceTabSave = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -8805,8 +8808,20 @@ function UpdateLocalStorage(){
 	//
 	if (gLocalStorageAvailable){
 
-		var format = GetRadioValue("notenodertab");
-		localStorage.abcTab = format;
+		//console.log("UpdateLocalStorage");
+		
+		// If coming in from a share link, don't change the default tab
+		if ((!gIsFromShare) || gForceTabSave){
+
+			// if (gForceTabSave){
+			// 	console.log("gForceTabSave");
+			// }
+
+			var format = GetRadioValue("notenodertab");
+			localStorage.abcTab = format;
+
+			gForceTabSave = false;
+		}
 
 		var capo = gCapo;
 		localStorage.abcCapo = capo;
@@ -17746,6 +17761,10 @@ function ChangeTab(){
 
 	// If the tab changes, render all
 	if (theTab != gCurrentTab){
+
+		// Force local storage update of the tab selection
+		//console.log("ChangeTab setting gForceTabSave")
+		gForceTabSave = true;
 
 		// Keep track of tab use
 		sendGoogleAnalytics("ChangeTab",theTab);
