@@ -9573,11 +9573,14 @@ function Render(renderAll,tuneNumber) {
 			ShowMaximizeButton();
 		}
 
-		// Show the play control
-		document.getElementById("playbuttonicon").style.display = "block";
+		if (isDesktopBrowser()){
 
-		// Show the pdf control
-		document.getElementById("pdfbuttonicon").style.display = "block";
+			// Show the play control
+			document.getElementById("playbuttonicon").style.display = "block";
+
+			// Show the pdf control
+			document.getElementById("pdfbuttonicon").style.display = "block";
+		}
 
 		if (gShowAllControls){
 
@@ -16055,11 +16058,15 @@ function DoMaximize(){
 
 	document.getElementById("zoombutton").src = "img/zoomin.png"
 
-	// // Add the play button
-	// ShowPlayButton();
+	// Play and PDF buttons only on full screen for mobile
+	if (!isDesktopBrowser()){
 
-	// // Add the PDF button
-	// ShowPDFButton();
+		// Add the play button
+		ShowPlayButton();
+
+		// Add the PDF button
+		ShowPDFButton();
+	}
 
 	gIsMaximized = true;
 
@@ -16093,10 +16100,13 @@ function DoMinimize(){
 	document.getElementById("zoombutton").src = "img/zoomout.png"
 
 	// // Hide the play button
-	// HidePlayButton();
+	if (!isDesktopBrowser()){
 
-	// // Hide the PDF button
-	// HidePDFButton();
+		HidePlayButton();
+
+		// Hide the PDF button
+		HidePDFButton();
+	}
 
 	if (isDesktopBrowser()){
 		gTheNotation.style.display = "inline";
