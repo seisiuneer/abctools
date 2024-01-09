@@ -298,6 +298,7 @@ var	gFeaturesShowExamples = true;
 var	gFeaturesShowTemplates = true;
 var	gFeaturesShowTablatures = true;
 var gFeaturesShowExplorers = true;
+var gFeaturesShowTabButtons = true;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -26829,6 +26830,12 @@ function GetInitialConfigurationSettings(){
 		gFeaturesShowExport = (val == "true");
 	}
 
+	gFeaturesShowTabButtons = true;
+	val = localStorage.FeaturesShowTabButtons;
+	if (val){
+		gFeaturesShowTabButtons = (val == "true");
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -26997,7 +27004,7 @@ function SaveConfigurationSettings(){
 		localStorage.FeaturesShowTablatures = gFeaturesShowTablatures;
 		localStorage.FeaturesShowExplorers = gFeaturesShowExplorers;
 		localStorage.FeaturesShowExport = gFeaturesShowExport;
-
+		localStorage.FeaturesShowTabButtons = gFeaturesShowTabButtons;
 	}
 }
 
@@ -28879,7 +28886,8 @@ function ConfigureToolSettings() {
 		configure_override_play_midi_params: bOverridePlayMIDIParams,
 		configure_auto_swing_hornpipes: gAutoSwingHornpipes,	  
 		configure_auto_swing_factor: gAutoSwingFactor,	
-		configure_allow_midi_input: gAllowMIDIInput	  
+		configure_allow_midi_input: gAllowMIDIInput,
+		configure_show_tab_buttons: gFeaturesShowTabButtons	  
 	};
 
  	const sound_font_options = [
@@ -28890,11 +28898,13 @@ function ConfigureToolSettings() {
  	    { name: "  MScore", id: "https://michaeleskin.com/abctools/soundfonts/mscore/" },
  	];
 
-  	// Disallowing auto snapshots on mobile
   	var form = [
-		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;">ABC Transcription Tools Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#settings_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'}
+		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;">ABC Transcription Tools Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#settings_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
+		{name: "          Show instrument tablature button bar below ABC editor", id: "configure_show_tab_buttons", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+
 	];
 
+  	// Disallowing auto snapshots on mobile
 	if (isDesktopBrowser()){
 		form.push({name: "   Save an Auto-Snapshot on browser tab close or reload (Restore it from the Add dialog)", id: "configure_save_exit_snapshot", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 	}
@@ -28966,6 +28976,9 @@ function ConfigureToolSettings() {
 				gSaveLastAutoSnapShot = false;
 			
 			}
+
+			// Save the tab button hide preference 
+			gFeaturesShowTabButtons = args.result.configure_show_tab_buttons
 
 			// Validate the staff spacing value
 			var testStaffSpacing = args.result.configure_staff_spacing;
@@ -29201,6 +29214,9 @@ function ConfigureToolSettings() {
 
 			// Update local storage
 			SaveConfigurationSettings();
+
+			// If the user requested hiding of the tab buttons, hide them now
+			ShowHideTabButtons();
 
 			// Do we need to re-render?
 			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || (gForceLeftJustifyTitles != oldLeftJustifyTitles)){
@@ -30813,6 +30829,38 @@ function RemoveTabCloseListener(){
 }
 
 //
+// Hide or show the tab buttons based on the state of gFeaturesShowTabButtons
+//
+function ShowHideTabButtons(){
+	
+	var elem = document.getElementById("tabs-selection");
+
+	if (gFeaturesShowTabButtons){
+
+		elem.style.display = "flex";
+
+		elem = document.getElementById("transpose-controls");
+
+		elem.style.marginTop = "18px";
+
+	}
+	else{
+
+		elem.style.display = "none";
+
+		elem = document.getElementById("transpose-controls");
+
+		elem.style.marginTop = "0px";
+
+	}
+
+	// Recalculate the notation top position
+	UpdateNotationTopPosition();
+
+
+}
+
+//
 // Returns true if on desktop, not mobile
 //
 function isDesktopBrowser(){
@@ -31383,8 +31431,9 @@ function DoStartup() {
 
 	}
 
-	// Recalculate the notation top position
-	UpdateNotationTopPosition();
+	// Set the initial instrument tab button display state
+	// Also does a recalc of notation top position
+	ShowHideTabButtons();
 
 	// Force recalculation of the notation top position on ABC text area resize
 

@@ -297,8 +297,7 @@ margin-bottom:1px;
 }
 
 #notenrechts{
-margin-top:18px;
-margin-left:12px;
+margin-top:16px;
 display:none;
 }
 
@@ -307,6 +306,7 @@ margin-top:18px;
 }
 
 #transpose-controls{
+display:flex;
 margin-top:18px;
 }
 
@@ -371,7 +371,7 @@ font-size:12pt !important;
 margin-left: 36px !important;
 }
 
-#transpose-controls, #tabs-selection{
+#tabs-selection{
 display:flex;
 }
 
@@ -1977,7 +1977,7 @@ left:-5000px;
 	font-size:12pt;
 	line-height:11px;
 	font-family:helvetica;
-	margin-top:24px;
+	margin-top:20px;
 	display:flex;
 }
 

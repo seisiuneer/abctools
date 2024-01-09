@@ -36,94 +36,140 @@
 		<link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 		<link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-		<link href="app.css?v=1006" media="all" rel="stylesheet" type="text/css">
+		<link href="app.css?v=1008" media="all" rel="stylesheet" type="text/css">
 				
 	</head>
 
 	<body>
+
 		<div id="app-container">
+
 			<div id="uioverlay" class="hidden-print">
+
 				<img id="helpbutton" class="helpbutton" src="img/helpbutton.png"  title="Get help using the ABC Transcription Tools"/>
 				<img id="playbuttonicon" class="playbuttonicon" src="img/playbutton.png"  title="Plays the current tune"/>
 				<img id="pdfbuttonicon" class="pdfbuttonicon" src="img/pdfbutton.png"  title="Export the tunes as a PDF tunebook"/>
 				<img id="zoombutton" class="zoombutton" src="img/zoomout.png"  title="Toggles between showing the ABC editor and displaying the notation full screen"/>
+
 				<div id="loading-bar-spinner" class="spinner">
+
 					<div id="spinner-icon" class="spinner-icon"></div>
+
 				</div>
+
 				<div id="pdf-controls" class="modal">
+
 					<div class="modal-content">
+
 						<div id="statuspdfname"></div>
 						<div id="statustunecount"></div>
 						<div id="pagestatustext"></div>
-						<input class="cancelpdf btn btn-cancelpdf" id="cancelpdf" onclick="CancelPDF();" type="button" value="Cancel">
+						<input class="cancelpdf btn btn-cancelpdf" id="cancelpdf" onclick="CancelPDF();" type="button" value="Cancel"/>
+
 					</div>
+
 				</div>
+
 				<div id="fontholder">
+
 					<svg id="fontholdersvg">
 						<style></style>
 					</svg>
+
 				</div>
+
 			</div>
+			
 			<div id="noscroller" class="noscroller">
-				<div id="zoombanner" onclick="HideZoomBanner()"><p style="text-align: left;">&nbsp;&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Want to see the ABC editor and notation side-by-side?&nbsp;&nbsp;Zoom out:&nbsp;&nbsp;&nbsp;Windows:&nbsp;Ctrl -&nbsp;&nbsp;&nbsp;&nbsp;Mac:&nbsp;⌘ -</div>
+
+				<div id="zoombanner" onclick="HideZoomBanner()">
+
+					<p style="text-align: left;">&nbsp;&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Want to see the ABC editor and notation side-by-side?&nbsp;&nbsp;Zoom out:&nbsp;&nbsp;&nbsp;Windows:&nbsp;Ctrl -&nbsp;&nbsp;&nbsp;&nbsp;Mac:&nbsp;⌘ -</p>
+
+				</div>
+
 				<div id="notenlinks" class="hidden-print">
+
 					<div id="topbar">
+
 						<font size="5" face="Comic Sans MS" id="toolpagetitle">ABC Transcription Tools</font>
-						<p><a href="userguide.html" target="_blank">User Guide</a>&nbsp;-&nbsp;<a href="tunesources.html" target="_blank" onclick="AddFromSearch(event);">Search for Tunes</a>&nbsp;-&nbsp;<a href="tunesources.html" target="_blank">Tune Sources</a>&nbsp;-&nbsp;<a href="https://michaeleskin.com/documents/abc_standard_v2.1.pdf" target="_blank">ABC Spec</a>&nbsp;-&nbsp;<a href="https://michaeleskin.com/documents/general_midi_extended_v3.pdf" target="_blank">MIDI</a>&nbsp;-&nbsp;<a href="https://michaeleskin.com/tunebooks.html" target="_blank">Tunebooks</a>&nbsp;-&nbsp;<a href="credits.html" target="_blank">Credits</a>&nbsp;-&nbsp;<a href="support.html" target="_blank">Support</a>&nbsp;-&nbsp;<a href="tipjars.html" target="_blank">Tip Jars</a></p>
+
+						<p>
+							<a href="userguide.html" target="_blank">User Guide</a>&nbsp;-&nbsp;<a href="tunesources.html" target="_blank" onclick="AddFromSearch(event);">Search for Tunes</a>&nbsp;-&nbsp;<a href="tunesources.html" target="_blank">Tune Sources</a>&nbsp;-&nbsp;<a href="https://michaeleskin.com/documents/abc_standard_v2.1.pdf" target="_blank">ABC Spec</a>&nbsp;-&nbsp;<a href="https://michaeleskin.com/documents/general_midi_extended_v3.pdf" target="_blank">MIDI</a>&nbsp;-&nbsp;<a href="https://michaeleskin.com/tunebooks.html" target="_blank">Tunebooks</a>&nbsp;-&nbsp;<a href="credits.html" target="_blank">Credits</a>&nbsp;-&nbsp;<a href="support.html" target="_blank">Support</a>&nbsp;-&nbsp;<a href="tipjars.html" target="_blank">Tip Jars</a>
+						</p>
+
 					</div>
+
 					<!-- name of abc file selected -->
 					<p id="abc-selected">No ABC file selected</p>
+
 					<div id="fileoperations">
+
 						<input type="file" id="selectabcfile" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL"  hidden/>
 						<!--our custom abc file upload button-->
 						<label class="abcupload btn btn-top" title="Opens an existing ABC or MusicXML file.&nbsp;&nbsp;You may also drag-and-drop a single ABC or MusicXML file on the editor area to add it." onclick="fileOpenIntercept(event);">Open</label>
-						<input class="newabcfile btn btn-top" id="newabcfile" onclick="AddABC();" type="button" value="Add" title="Add your own tunes, restore from a saved snapshot, seach for tunes, re-order tunes, or add examples tunes and song templates to the ABC">
-						<input class="saveabcfiledisabled btn btn-top" id="saveabcfile" onclick="SaveABC();" type="button" value="Save" title="Saves the current ABC text to a file">
-						<input class="saveaspdfdisabled btn btn-top" id="saveaspdf" onclick="PDFExportDialog(true);" type="button" value="Export PDF" title="Exports a PDF tunebook">
-						<input class="copybuttondisabled btn btn-top" id="copybutton" onclick="CopyABC();" type="button" value="Copy All" title="Copies all of the ABC text to the clipboard">
-						<input class="playbuttondisabled btn btn-play" id="playbutton" onclick="PlayABC();" type="button" value="Play" title="Opens the ABC player for the currently selected tune.">
-						<input class="rawmodebuttondisabled btn btn-rawmode-off" id="rawmodebutton" onclick="ToggleRawMode()" type="button" value="Highlighting Off" title="When On, highlight notation by selecting the ABC text or highlight ABC text by clicking on the notation.">
-						<input class="configuresettings btn btn-configuresettings"  id="configuresettings" onclick="ConfigureToolSettings();" type="button" value="Settings" title="Click to configure all settings for the tool">
-						<input class="toggletopbar btn btn-top" id="toggletopbar" onclick="ToggleTopBar();" type="button" value="▲" title="Toggles the top bar area">
+						<input class="newabcfile btn btn-top" id="newabcfile" onclick="AddABC();" type="button" value="Add" title="Add your own tunes, restore from a saved snapshot, seach for tunes, re-order tunes, or add examples tunes and song templates to the ABC"/>
+						<input class="saveabcfiledisabled btn btn-top" id="saveabcfile" onclick="SaveABC();" type="button" value="Save" title="Saves the current ABC text to a file"/>
+						<input class="saveaspdfdisabled btn btn-top" id="saveaspdf" onclick="PDFExportDialog(true);" type="button" value="Export PDF" title="Exports a PDF tunebook"/>
+						<input class="copybuttondisabled btn btn-top" id="copybutton" onclick="CopyABC();" type="button" value="Copy All" title="Copies all of the ABC text to the clipboard"/>
+						<input class="playbuttondisabled btn btn-play" id="playbutton" onclick="PlayABC();" type="button" value="Play" title="Opens the ABC player for the currently selected tune."/>
+						<input class="rawmodebuttondisabled btn btn-rawmode-off" id="rawmodebutton" onclick="ToggleRawMode()" type="button" value="Highlighting Off" title="When On, highlight notation by selecting the ABC text or highlight ABC text by clicking on the notation."/>
+						<input class="configuresettings btn btn-configuresettings"  id="configuresettings" onclick="ConfigureToolSettings();" type="button" value="Settings" title="Click to configure all settings for the tool"/>
+						<input class="toggletopbar btn btn-top" id="toggletopbar" onclick="ToggleTopBar();" type="button" value="▲" title="Toggles the top bar area"/>
+
 					</div>
+
 					<div id="inputarea">
+
 						<textarea id="abc" rows="12" cols="70" placeholder="Enter some ABC or drag-and-drop an ABC or MusicXML file here" spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
+
 					</div>
+
 				</div>
+
 				<div id="notenrechts" class="hidden-print">
+
 					<div id="tabs-selection" class="toggle-buttons">
-						<input type="radio" id="b1" value="noten" name="notenodertab" class="hidebutton" onclick="ChangeTab()">
-						<label for="b1" class="btn btn-tab" title="Shows standard music notation">Notation</label>
-						<input type="radio" id="b2" value="notenames" name="notenodertab" class="hidebutton" onclick="ChangeTab()">
-						<label for="b2" class="btn btn-tab" title="Shows note names tablature">Names</label>
-						<input type="radio" id="b3" value="mandolin" name="notenodertab" class="hidebutton" onclick="ChangeTab()" >
-						<label for="b3" class="btn btn-tab" title="Shows GDAE Mandolin tablature">Mandolin</label>
-						<input type="radio" id="b4" value="gdad" name="notenodertab" class="hidebutton" onclick="ChangeTab()">
-						<label for="b4" class="btn btn-tab" title="Shows GDAD Bouzouki tablature">GDAD</label>
-						<input type="radio" id="b5" value="cgdae" name="notenodertab" class="hidebutton" onclick="ChangeTab()">
-						<label for="b5" class="btn btn-tab" title="Shows CGDAE 5-string Fiddle tablature">CGDAE</label>
-						<input type="radio" id="b6" value="guitare" name="notenodertab" class="hidebutton" onclick="ChangeTab()">
-						<label for="b6" class="btn btn-tab" title="Shows standard EADGBE Guitar tablature">Guitar</label>
-						<input type="radio" id="b7" value="guitard" name="notenodertab" class="hidebutton" onclick="ChangeTab()">
-						<label for="b7" class="btn btn-tab" title="Shows DADGAD Guitar tablature">DADGAD</label>
+
+						<input type="radio" id="b1" value="noten" name="notenodertab" class="hidebutton" onclick="ChangeTab()"/>
+						<label for="b1" class="btn btn-tab" title="Shows standard music notation" style="margin-right:16px;">Notation</label>
+						<input type="radio" id="b2" value="notenames" name="notenodertab" class="hidebutton" onclick="ChangeTab()"/>
+						<label for="b2" class="btn btn-tab" title="Shows note names tablature"  style="margin-right:16px;">Names</label>
+						<input type="radio" id="b3" value="mandolin" name="notenodertab" class="hidebutton" onclick="ChangeTab()"/>
+						<label for="b3" class="btn btn-tab" title="Shows GDAE Mandolin tablature"  style="margin-right:16px;">Mandolin</label>
+						<input type="radio" id="b4" value="gdad" name="notenodertab" class="hidebutton" onclick="ChangeTab()"/>
+						<label for="b4" class="btn btn-tab" title="Shows GDAD Bouzouki tablature"  style="margin-right:16px;">GDAD</label>
+						<input type="radio" id="b5" value="cgdae" name="notenodertab" class="hidebutton" onclick="ChangeTab()"/>
+						<label for="b5" class="btn btn-tab" title="Shows CGDAE 5-string Fiddle tablature"  style="margin-right:16px;">CGDAE</label>
+						<input type="radio" id="b6" value="guitare" name="notenodertab" class="hidebutton" onclick="ChangeTab()"/>
+						<label for="b6" class="btn btn-tab" title="Shows standard EADGBE Guitar tablature"  style="margin-right:16px;">Guitar</label>
+						<input type="radio" id="b7" value="guitard" name="notenodertab" class="hidebutton" onclick="ChangeTab()"/>
+						<label for="b7" class="btn btn-tab" title="Shows DADGAD Guitar tablature"  style="margin-right:16px;">DADGAD</label>
 						<input type="radio" id="b8" value="uke" name="notenodertab" class="hidebutton" onclick="ChangeTab()">
-						<label for="b8" class="btn btn-tab" title="Shows Ukulele tablature (G string used for notes lower than C)">Uke</label>
-						<input type="radio" id="b9" value="whistle" name="notenodertab" class="hidebutton" onclick="ChangeTab()" >
-						<label for="b9" class="btn btn-tab" title="Shows Tin Whistle (D) tablature" style="margin-right:13px;">Whistle</label>
+						<label for="b8" class="btn btn-tab" title="Shows Ukulele tablature (G string used for notes lower than C)"  style="margin-right:16px;">Uke</label>
+						<input type="radio" id="b9" value="whistle" name="notenodertab" class="hidebutton" onclick="ChangeTab()"/>
+						<label for="b9" class="btn btn-tab" title="Shows Tin Whistle (D) tablature" style="margin-right:0px;">Whistle</label>
+
 					</div>
+
 					<div id="transpose-controls">
-						<input class="transposedown btn btn-transpose" id="transposedown" onclick="TransposeDown(event)" type="button" value="Transpose Down" title="Transposes the selected tunes down one semitone.&nbsp;&nbsp; Shift-click transposes down one full step.&nbsp;&nbsp;Alt-click transposes down one octave.">
-						<input class="transposeup btn btn-transpose" id="transposeup" onclick="TransposeUp(event)" type="button" value="Transpose Up" title="Transposes the selected tunes up one semitone.&nbsp;&nbsp;Shift-click transposes up one full step.&nbsp;&nbsp;Alt-click transposes up one octave.">
-						<input class="snapshotbutton btn btn-snapshotbutton" id="snapshotbutton" onclick="SaveSnapshot();" type="button" value="Snapshot" title="Saves a Snapshot of the contents of the ABC editor to browser storage">
-						<input class="restorebutton btn btn-restorebutton" id="restorebutton" onclick="RestoreSnapshot(false,false);" type="button" value="Restore" title="Replaces the contents of the ABC editor with a Snapshot saved in browser storage">
-						<input class="toggleadvancedcontrols btn btn-toggleadvancedcontrols" id="toggleadvancedcontrols" onclick="AdvancedControlsDialog()" type="button" value="More Tools" title="Shows the More ABC Tools dialog where you can hide or strip chords and other ABC annotations, inject instrument tablature, as well as perform other ABC operations">
-						<input class="togglesharecontrols btn btn-togglesharecontrols" id="togglesharecontrols" onclick="SharingControlsDialog()" type="button" value="Sharing"  title="Shows the Sharing dialog">
-						<input class="clearbutton btn btn-clearbutton" id="clearbutton" onclick="Clear()" type="button" value="Clear" title="Clears all the ABC">
+
+						<input class="transposedown btn btn-transpose" id="transposedown" onclick="TransposeDown(event)" type="button" value="Transpose Down" title="Transposes the selected tunes down one semitone.&nbsp;&nbsp; Shift-click transposes down one full step.&nbsp;&nbsp;Alt-click transposes down one octave."/>
+						<input class="transposeup btn btn-transpose" id="transposeup" onclick="TransposeUp(event)" type="button" value="Transpose Up" title="Transposes the selected tunes up one semitone.&nbsp;&nbsp;Shift-click transposes up one full step.&nbsp;&nbsp;Alt-click transposes up one octave."/>
+						<input class="snapshotbutton btn btn-snapshotbutton" id="snapshotbutton" onclick="SaveSnapshot();" type="button" value="Snapshot" title="Saves a Snapshot of the contents of the ABC editor to browser storage"/>
+						<input class="restorebutton btn btn-restorebutton" id="restorebutton" onclick="RestoreSnapshot(false,false);" type="button" value="Restore" title="Replaces the contents of the ABC editor with a Snapshot saved in browser storage"/>
+						<input class="toggleadvancedcontrols btn btn-toggleadvancedcontrols" id="toggleadvancedcontrols" onclick="AdvancedControlsDialog()" type="button" value="More Tools" title="Shows the More ABC Tools dialog where you can hide or strip chords and other ABC annotations, inject instrument tablature, as well as perform other ABC operations"/>
+						<input class="togglesharecontrols btn btn-togglesharecontrols" id="togglesharecontrols" onclick="SharingControlsDialog()" type="button" value="Sharing"  title="Shows the Sharing dialog"/>
+						<input class="clearbutton btn btn-clearbutton" id="clearbutton" onclick="Clear()" type="button" value="Clear" title="Clears all the ABC"/>
+
 					</div>
 
 					<div id="pdf-settings" class="toggle-buttons">
+
 						<tspan id="pdfformatlabel">PDF Tunes/Page:</tspan>
+
 						<select id="pdfformat" name="pdfformat" onchange="RecalcShareURLPDF()" title="Sets the PDF tunebook page output format">
+
 							<option value = "one" title="One tune-per-page.&nbsp;&nbsp;Paper size is Letter">&nbsp;One&nbsp;-&nbsp;Letter</option>
 							<option value = "multi" title="Multiple tunes-per-page.&nbsp;&nbsp;Paper size is Letter">&nbsp;Multiple&nbsp;-&nbsp;Letter</option>
 							<option value = "incipits" title="Tune notation incipits.&nbsp;&nbsp;Paper size is Letter">&nbsp;Notes Incipits&nbsp;-&nbsp;Letter</option>
@@ -141,10 +187,14 @@
 							<option value = "all_qr_codes" title="QR Codes for each tune.&nbsp;&nbsp;Paper size is Letter">&nbsp;QR Codes&nbsp;-&nbsp;Letter</option>
 							<option value = "all_qr_codes_a4" title="QR Codes for each tune.&nbsp;&nbsp;Paper size is A4">&nbsp;QR Codes&nbsp;-&nbsp;A4</option>						
 							<option value = "mixed_notation_qr" title="Notation and QR Codes for each tune.&nbsp;&nbsp;Paper size is Letter">&nbsp;Notation and QR Codes&nbsp;-&nbsp;Letter</option>
-							<option value = "mixed_notation_qr_a4" title="Notation and QR Codesfor each tune.&nbsp;&nbsp;Paper size is A4">&nbsp;Notation and QR Codes&nbsp;-&nbsp;A4</option>						
+							<option value = "mixed_notation_qr_a4" title="Notation and QR Codesfor each tune.&nbsp;&nbsp;Paper size is A4">&nbsp;Notation and QR Codes&nbsp;-&nbsp;A4</option>
+
 						</select>
+
 						<tspan id="pagenumberslabel">Page #:</tspan>
+
 						<select id="pagenumbers" name="pagenumbers" onchange="RecalcShareURLPDF()" title="Sets the PDF tunebook page number position">
+
 							<option value = "none">&nbsp;None</option>
 							<option value = "tl">&nbsp;Top Left</option>
 							<option value = "tc">&nbsp;Top Center</option>
@@ -156,25 +206,41 @@
 							<option value = "trl">&nbsp;Top Right/Left</option>
 							<option value = "blr">&nbsp;Bottom Left/Right</option>
 							<option value = "brl">&nbsp;Bottom Right/Left</option>
+
 						</select>
+
 						<tspan id="firstpagelabel"># on Page 1:</tspan>
+
 						<select id="firstpage" name="firstpage" onchange="RecalcShareURLPDF()" title="Sets whether page numbers should appear on the first page of the PDF tunebook">
+
 							<option value = "yes">&nbsp;Yes</option>
 							<option value = "no">&nbsp;No</option>
+
 						</select>
+
 					</div>
+
 				</div>
 				
 			</div>
 			
 			<div id="notation-spacer" class="hidden-print relativebox"></div>
 			
-			<div id="notation-placeholder" class="hidden-print relativebox"><p id="notation-placeholder-text"><strong>Notation will appear here when you enter some ABC.</strong><br><br><br>Click <strong>Open</strong> to open an existing ABC or MusicXML file.<br><br>Click <strong>
-				Add</strong> to add a new ABC tune or tune template.</p><p id="desktop_use_message"><strong>Drag-and-drop</strong> an ABC or MusicXML file on the editor area to add it.<br><br><br><strong>Resize the ABC Editor</strong> by clicking and dragging its lower right corner.</p><p id="notation-placeholder-text-2">Click <strong>Search for Tunes</strong> to find tunes by name.</p><input class="notation-placeholder-button btn btn-placeholder" onclick="showWelcomeScreen();" type="button" value="Show Intro Screen" title="Shows the intro screen"></div>
+			<div id="notation-placeholder" class="hidden-print relativebox">
+
+				<p id="notation-placeholder-text"><strong>Notation will appear here when you enter some ABC.</strong><br><br><br>Click <strong>Open</strong> to open an existing ABC or MusicXML file.<br><br>Click <strong>Add</strong> to add a new ABC tune or tune template.</p>
+
+				<p id="desktop_use_message"><strong>Drag-and-drop</strong> an ABC or MusicXML file on the editor area to add it.<br><br><br><strong>Resize the ABC Editor</strong> by clicking and dragging its lower right corner.</p>
+
+				<p id="notation-placeholder-text-2">Click <strong>Search for Tunes</strong> to find tunes by name.</p>
+
+				<input class="notation-placeholder-button btn btn-placeholder" onclick="showWelcomeScreen();" type="button" value="Show Intro Screen" title="Shows the intro screen"/>
+			
+			</div>
 			
 			<div id="notation-holder" class="notation-holder relativebox pagebreak">
 			</div>
-			
+		
 		</div>
 		
 		<div id="offscreenrender" class="hidden-print">
@@ -182,22 +248,23 @@
 		
 		<div id="qrcode" class="hidden-print">
 		</div>
-		
+	
 	</body>
-	<script type="text/javascript" src="jquery-1.11.1.min.js?v=1006"></script><!-- jQuery -->
-	<script type="text/javascript" src="jszip.min.js?v=1006"></script><!-- zip file handling -->
-	<script type="text/javascript" src="xml2abc-min.js?v=1006"></script><!-- to convert MusicXML to ABC -->
-	<script type="text/javascript" src="abcjs-chord-intervals.js?v=1006"></script><!-- chord intervals used by abcjs - non-minified -->
-	<script type="text/javascript" src="abcjs-basic-eskin-min.js?v=1006"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
-	<script type="text/javascript" src="jspdf.min.js?v=1006"></script><!-- to generate PDF using Javscript -->
-	<script type="text/javascript" src="html2image.js?v=1006"></script><!-- to convert HTML elements to bitmaps -->
-	<script type="text/javascript" src="qrcode.js?v=1006"></script><!-- to generate QR codes for the share links -->
-	<script type="text/javascript" src="lz-string.min.js?v=1006"></script><!-- used for share URL generation -->
-	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1006"></script><!-- modal dialog replacement -->
-	<script type="text/javascript" src="lame.min.js?v=1006"></script><!-- .mp3 audio encoder -->
-	<script type="text/javascript" src="unmute.min.js?v=1006"></script><!-- fixes issue on iOS Safari muting tabs -->
-	<script type="text/javascript" src="tab-injectors-min.js?v=1006"></script><!-- Tab generation for ABC injection -->
-	<script type="text/javascript" src="app-min.js?v=1006"></script><!-- main application business logic -->
-	<script type="text/javascript" src="api-keys.js?v=1006"></script><!-- API keys used by the tool -->
+
+	<script type="text/javascript" src="jquery-1.11.1.min.js?v=1008"></script><!-- jQuery -->
+	<script type="text/javascript" src="jszip.min.js?v=1008"></script><!-- zip file handling -->
+	<script type="text/javascript" src="xml2abc-min.js?v=1008"></script><!-- to convert MusicXML to ABC -->
+	<script type="text/javascript" src="abcjs-chord-intervals.js?v=1008"></script><!-- chord intervals used by abcjs - non-minified -->
+	<script type="text/javascript" src="abcjs-basic-eskin-min.js?v=1008"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
+	<script type="text/javascript" src="jspdf.min.js?v=1008"></script><!-- to generate PDF using Javscript -->
+	<script type="text/javascript" src="html2image.js?v=1008"></script><!-- to convert HTML elements to bitmaps -->
+	<script type="text/javascript" src="qrcode.js?v=1008"></script><!-- to generate QR codes for the share links -->
+	<script type="text/javascript" src="lz-string.min.js?v=1008"></script><!-- used for share URL generation -->
+	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1008"></script><!-- modal dialog replacement -->
+	<script type="text/javascript" src="lame.min.js?v=1008"></script><!-- .mp3 audio encoder -->
+	<script type="text/javascript" src="unmute.min.js?v=1008"></script><!-- fixes issue on iOS Safari muting tabs -->
+	<script type="text/javascript" src="tab-injectors-min.js?v=1008"></script><!-- Tab generation for ABC injection -->
+	<script type="text/javascript" src="app-min.js?v=1008"></script><!-- main application business logic -->
+	<script type="text/javascript" src="api-keys.js?v=1008"></script><!-- API keys used by the tool -->
 
 </html>
