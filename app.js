@@ -9573,6 +9573,12 @@ function Render(renderAll,tuneNumber) {
 			ShowMaximizeButton();
 		}
 
+		// Show the play control
+		document.getElementById("playbuttonicon").style.display = "block";
+
+		// Show the pdf control
+		document.getElementById("pdfbuttonicon").style.display = "block";
+
 		if (gShowAllControls){
 
 			document.getElementById("notenrechts").style.display = "inline-block";
@@ -9796,6 +9802,13 @@ function Render(renderAll,tuneNumber) {
 
 		// Hide the zoom control
 		document.getElementById("zoombutton").style.display = "none";
+
+		// Hide the play control
+		document.getElementById("playbuttonicon").style.display = "none";
+
+		// Hide the pdf control
+		document.getElementById("pdfbuttonicon").style.display = "none";
+
 
 		// Hide the help control
 		//document.getElementById("helpbutton").style.display = "none";
@@ -16042,11 +16055,11 @@ function DoMaximize(){
 
 	document.getElementById("zoombutton").src = "img/zoomin.png"
 
-	// Add the play button
-	ShowPlayButton();
+	// // Add the play button
+	// ShowPlayButton();
 
-	// Add the PDF button
-	ShowPDFButton();
+	// // Add the PDF button
+	// ShowPDFButton();
 
 	gIsMaximized = true;
 
@@ -16079,11 +16092,11 @@ function DoMinimize(){
 
 	document.getElementById("zoombutton").src = "img/zoomout.png"
 
-	// Hide the play button
-	HidePlayButton();
+	// // Hide the play button
+	// HidePlayButton();
 
-	// Hide the PDF button
-	HidePDFButton();
+	// // Hide the PDF button
+	// HidePDFButton();
 
 	if (isDesktopBrowser()){
 		gTheNotation.style.display = "inline";
@@ -27987,11 +28000,17 @@ function idlePDFExportDialog(){
 	}
 }
 
-function PDFExportDialog(bShowTopButtons){
+function PDFExportDialog(){
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
 		return;
+	}
+
+	var bShowTopButtons = true;
+
+	if (gIsMaximized){
+		bShowTopButtons = false;
 	}
 
 	// Keep track of dialogs
@@ -31370,16 +31389,16 @@ function DoStartup() {
 			ShowHelp();
 		};
 
-	// Hook up the fullscreen play button
+	// Hook up the play button
 	document.getElementById("playbuttonicon").onclick = 
 		function() {
 			PlayABC();
 		};
 
-	// Hook up the fullscreen PDF button
+	// Hook up the PDF button
 	document.getElementById("pdfbuttonicon").onclick = 
 		function() {
-			PDFExportDialog(false);
+			PDFExportDialog();
 		};
 
 	gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
