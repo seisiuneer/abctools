@@ -28886,6 +28886,8 @@ function ConfigureToolSettings() {
 
 	var theOldAllowMIDIInput = gAllowMIDIInput;
 
+	var theOldFeaturesShowTabButtons = gFeaturesShowTabButtons;
+
 	// Setup initial values
 	const theData = {
 		configure_save_exit_snapshot: gSaveLastAutoSnapShot,
@@ -28997,7 +28999,15 @@ function ConfigureToolSettings() {
 			}
 
 			// Save the tab button hide preference 
-			gFeaturesShowTabButtons = args.result.configure_show_tab_buttons
+			gFeaturesShowTabButtons = args.result.configure_show_tab_buttons;
+
+			if ((theOldFeaturesShowTabButtons == true) && (gFeaturesShowTabButtons == false)){
+				sendGoogleAnalytics("action","HidingTabButtonBar");
+			}
+
+			if ((theOldFeaturesShowTabButtons == false) && (gFeaturesShowTabButtons == true)){
+				sendGoogleAnalytics("action","ShowingTabButtonBar");
+			}
 
 			// Validate the staff spacing value
 			var testStaffSpacing = args.result.configure_staff_spacing;
