@@ -11904,6 +11904,166 @@ function ChangeTuneOrder(){
 }
 
 //
+// Cull tunes from the tunebook
+//
+
+function CullTunesUpdateKeepList(){
+
+	// Reset the keep list
+	CullTunesKeepList = [];
+
+	const childDivs = document.querySelectorAll('#cullable-tune-list .cullable_tune');
+
+	Array.from(childDivs).map(div => 
+	{
+		if (div.classList.contains('cull_selected')){
+			CullTunesKeepList.push(0);
+		}
+		else{
+			CullTunesKeepList.push(1);
+		}
+	});
+}
+
+function CullToggleSelection(item) {
+  	item.classList.toggle('cull_selected');
+  	CullTunesUpdateKeepList();
+}
+
+function CullSelectAll(){
+	const childDivs = document.querySelectorAll('#cullable-tune-list .cullable_tune');
+	Array.from(childDivs).map(div => div.classList.add('cull_selected'));
+  	CullTunesUpdateKeepList();
+}
+
+function CullClearSelection(){
+	const childDivs = document.querySelectorAll('#cullable-tune-list .cullable_tune');
+	Array.from(childDivs).map(div => div.classList.remove('cull_selected'));
+  	CullTunesUpdateKeepList();
+}
+
+var CullTunesKeepList = [];
+
+function CullTunes(){
+
+	var i,j,k;
+
+	// Clear the delete list
+	CullTunesKeepList = [];
+
+	totalTunes = CountTunes();
+
+	var theTitles = GetTunebookIndexTitles();
+	var nTitles = theTitles.length;
+
+	if (nTitles == 0){
+
+		var thePrompt = "No tunes to remove.";
+		
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+		
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
+
+	var theData = {};
+
+	var theCullableDiv = '<div id="cullable-tune-list" style="overflow:auto;height:580px;margin-top:18px">';
+
+	for (i=0;i<nTitles;++i){
+
+		theCullableDiv += '<div class="cullable_tune" onclick="CullToggleSelection(this)">'+theTitles[i]+'</div>';
+	}
+	
+	theCullableDiv += '</div>';
+
+	var form = [
+
+		{html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Delete Selected Tunes&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#delete_selected_tunes" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
+		{html: theCullableDiv},
+		{html: '<p style="text-align:center;margin-top:36px;"><input id="cull_select_all" class="advancedcontrols btn btn-injectcontrols-headers" onclick="CullSelectAll();" type="button" value="Select All" title="Selects all the tunes for deletion"><input id="cull_clear_selection" class="advancedcontrols btn btn-injectcontrols-headers" onclick="CullClearSelection();" type="button" value="Clear Selection" title="Unselects all the tunes for deletion"></p>'}
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false, okText:"Delete" } ).then(function(args){
+
+    	if (!args.canceled){
+
+    		// Any tunes to delete?
+    		var nKeep = CullTunesKeepList.length;
+    		var nToDelete = 0;
+    		for (i=0;i<nKeep;++i){
+    			if (CullTunesKeepList[i] == 0){
+    				bGotChange = true;
+    				nToDelete ++;
+    			}
+    		}
+
+    		if (nToDelete){
+
+				var thePrompt = "Are you sure you want to delete "+nToDelete;
+
+				if (nToDelete == 1){
+					thePrompt += " tune from your tunebook?";
+				}
+				else{
+					thePrompt += " tunes from your tunebook?";
+
+				}
+
+				// Center the string in the prompt
+				thePrompt = makeCenteredPromptString(thePrompt);
+
+				DayPilot.Modal.confirm(thePrompt,{ top:200, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+					if (!args.canceled){
+
+						// Reorder the tunes
+			    		var theABC = gTheABC.value;
+
+			    		var result = FindPreTuneHeader(theABC);
+
+			    		for (i=0;i<totalTunes;++i){
+
+			    			if (CullTunesKeepList[i] == 1){
+			    			
+				    			var thisTune = getTuneByIndex(i);
+
+				    			thisTune = thisTune.trim();
+
+				    			// Make sure every tune has a carriage return after it
+				    			thisTune+="\n\n";
+
+				    			result += thisTune;
+				    		}
+			    		}
+
+			    		// Stuff in the new result
+			    		gTheABC.value = result;
+
+			    		RenderAsync(true,null, function(){
+
+							gTheABC.selectionStart = 0;
+							gTheABC.selectionEnd = 0;
+
+							// And reset the focus
+							gTheABC.focus();	
+
+							// Scroll to the top
+							MakeTuneVisible(true);
+
+			    		});
+
+			    		// Set dirty
+						gIsDirty = true;
+					}
+				})
+			}
+		}
+    });
+}
+
+//
 // Add an ABC file, sample tune, or template
 //
 var gAddABCOKButton = null;
@@ -11993,9 +12153,18 @@ function AddABC(){
 	
 	// Re-order only available on desktop browsers
 	if (isDesktopBrowser()){
-		modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Change the Order of the Tunes</p>';
+		modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Change the Order or Delete Tunes</p>';
 		modal_msg += '<p style="text-align:center;margin-top:16px;">';
 		modal_msg  += '<input id="changetuneorder" class="advancedcontrols btn btn-injectcontrols-headers" onclick="ChangeTuneOrder();" type="button" value="Change the Order of the Tunes" title="Change the order of the tunes">';	
+		modal_msg  += '<input id="culltunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="CullTunes();" type="button" value="Delete Tunes from the Tunebook" title="Delete selected tunes from the tunebook">';	
+		modal_msg += '</p>';		
+	}
+	else{
+		modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Delete Tunes from the Tunebook</p>';
+		modal_msg += '<p style="text-align:center;margin-top:16px;">';
+		modal_msg  += '<input id="culltunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="CullTunes();" type="button" value="Delete Tunes from the Tunebook" title="Delete selected tunes from the tunebook">';	
+		modal_msg += '</p>';		
+
 	}
 	
 	// Showing examples?

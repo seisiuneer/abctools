@@ -642,13 +642,13 @@ height:42px;
 padding:12px;
 }
 
-#addnewreel,#addnewsong,#addnewjig{
+#addnewreel,#addnewsong,#addnewjig,#changetuneorder,#cull_select_all{
 height:42px;
 padding:12px;
 margin-right:24px;
 }
 
-#addnewhornpipe,#addsongtemplate,#addboxfingeringtemplate,#searchandaddtunes,#changetuneorder{
+#addnewhornpipe,#addsongtemplate,#addboxfingeringtemplate,#searchandaddtunes,#culltunes,#cull_clear_selection{
 height:42px;
 padding:12px;
 }
@@ -3382,6 +3382,21 @@ border: 1px solid #ddd;
 background-color: #f9f9f9;
 font-family:helvetica;
 font-size:16px;
+}
+
+.cullable_tune {
+cursor: grab;
+user-select: none;
+margin: 5px;
+padding: 10px;
+border: 1px solid #ddd;
+background-color: #f9f9f9;
+font-family:helvetica;
+font-size:16px;
+}
+
+.cull_selected {
+	background-color: #FFE5E5;
 }
 
 
