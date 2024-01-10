@@ -11958,7 +11958,7 @@ function CullTunes(){
 
 	if (nTitles == 0){
 
-		var thePrompt = "No tunes to remove.";
+		var thePrompt = "No tunes to delete.";
 		
 		// Center the string in the prompt
 		thePrompt = makeCenteredPromptString(thePrompt);
