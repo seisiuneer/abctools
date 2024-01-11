@@ -12079,18 +12079,23 @@ function ChangeTuneOrder(){
 	const sortableList = document.getElementById('sortable-tune-list');
 
 	let dragItem = null;
-	
+
 	sortableList.addEventListener('click', function (e) {
+
+		var theTarget = e.target;
+
+		if (theTarget.classList && theTarget.classList.contains('draggable_tune')){
 		
-		dragItem = e.target;
+			dragItem = theTarget;
 
-		if (ChangeTuneOrderCurrent){
-			ChangeTuneOrderCurrent.classList.remove('draggable_tune_selected');
+			if (ChangeTuneOrderCurrent){
+				ChangeTuneOrderCurrent.classList.remove('draggable_tune_selected');
+			}
+
+			ChangeTuneOrderCurrent = dragItem;
+
+			dragItem.classList.add('draggable_tune_selected');
 		}
-
-		ChangeTuneOrderCurrent = dragItem;
-
-		dragItem.classList.add('draggable_tune_selected');
 
 	});
 
