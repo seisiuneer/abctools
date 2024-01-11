@@ -12079,6 +12079,20 @@ function ChangeTuneOrder(){
 	const sortableList = document.getElementById('sortable-tune-list');
 
 	let dragItem = null;
+	
+	sortableList.addEventListener('click', function (e) {
+		
+		dragItem = e.target;
+
+		if (ChangeTuneOrderCurrent){
+			ChangeTuneOrderCurrent.classList.remove('draggable_tune_selected');
+		}
+
+		ChangeTuneOrderCurrent = dragItem;
+
+		dragItem.classList.add('draggable_tune_selected');
+
+	});
 
 	// Add drag and drop event listeners
 	sortableList.addEventListener('dragstart', function (e) {
