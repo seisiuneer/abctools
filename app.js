@@ -9573,13 +9573,14 @@ function Render(renderAll,tuneNumber) {
 			ShowMaximizeButton();
 		}
 
-		if (isDesktopBrowser()){
+		if (isDesktopBrowser() || gIsMaximized){
 
-			// Show the play control
-			document.getElementById("playbuttonicon").style.display = "block";
+			// Add the play button
+			ShowPlayButton();
 
-			// Show the pdf control
-			document.getElementById("pdfbuttonicon").style.display = "block";
+			// Add the PDF button
+			ShowPDFButton();
+
 		}
 
 		if (gShowAllControls){
@@ -9806,15 +9807,11 @@ function Render(renderAll,tuneNumber) {
 		// Hide the zoom control
 		document.getElementById("zoombutton").style.display = "none";
 
-		// Hide the play control
-		document.getElementById("playbuttonicon").style.display = "none";
+		// Hide the play button
+		HidePlayButton();
 
-		// Hide the pdf control
-		document.getElementById("pdfbuttonicon").style.display = "none";
-
-
-		// Hide the help control
-		//document.getElementById("helpbutton").style.display = "none";
+		// Hide the PDF button
+		HidePDFButton();
 
 		// Hide the spinner
 		document.getElementById("loading-bar-spinner").style.display = "none";
@@ -16450,16 +16447,6 @@ function DoMaximize(){
 
 	document.getElementById("zoombutton").src = "img/zoomin.png"
 
-	// Play and PDF buttons only on full screen for mobile
-	if (!isDesktopBrowser()){
-
-		// Add the play button
-		ShowPlayButton();
-
-		// Add the PDF button
-		ShowPDFButton();
-	}
-
 	gIsMaximized = true;
 
 	gPlayABCGotMaximizedPlay = false;
@@ -16479,6 +16466,12 @@ function DoMaximize(){
 		gNotationLeftMarginBeforeMaximize = gTheNotation.style.marginLeft;
 
 		gTheNotation.style.marginLeft = "auto";
+
+	}
+	else{
+
+		ShowPDFButton();
+		ShowPlayButton();
 
 	}
 
@@ -31864,6 +31857,12 @@ function DoStartup() {
 
 	}
 	else{
+
+		// Add the play button
+		ShowPlayButton();
+
+		// Add the PDF button
+		ShowPDFButton();
 
 		// First time using the tool?
 		if (gIsFirstRun){
