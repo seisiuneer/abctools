@@ -11749,6 +11749,217 @@ function AddFromSearch(e){
 }
 
 //
+// Change the tune order using up and down buttons for mobile
+// Drag and drop not available on mobile browsers
+//
+
+function ChangeTuneOrderMobileSelect(item){
+
+	if (ChangeTuneOrderCurrent){
+		ChangeTuneOrderCurrent.classList.remove('draggable_tune_mobile_selected');
+	}
+
+	ChangeTuneOrderCurrent = item;
+
+	item.classList.add('draggable_tune_mobile_selected');
+
+}
+
+function ChangeTuneOrderMobileUp(){
+
+	//console.log("ChangeTuneOrderMobileUp");
+
+	if (ChangeTuneOrderCurrent == null){
+		return;
+	}
+
+	// Find the previous sibling div
+	var previousSibling = ChangeTuneOrderCurrent.previousElementSibling;
+
+	// Check if there is a previous sibling 
+	if (previousSibling == null) {
+
+		// Already at the top
+		//console.log("Already at the top");
+		return;
+	}
+
+	const sortableList = document.getElementById('sortable-tune-list-mobile');
+
+	sortableList.insertBefore(ChangeTuneOrderCurrent,previousSibling);
+
+	const childDivs = document.querySelectorAll('#sortable-tune-list-mobile .draggable_tune_mobile');
+
+	// Extract and display data_tune_index values
+	ChangeTuneOrderNewOrder = Array.from(childDivs).map(div => div.getAttribute('data_tune_index'));
+}
+
+function ChangeTuneOrderMobileDown(){
+
+	//console.log("ChangeTuneOrderMobileDown");
+
+	if (ChangeTuneOrderCurrent == null){
+		return;
+	}
+
+	// Find the next sibling div
+	var nextSibling = ChangeTuneOrderCurrent.nextElementSibling;
+
+	// Check if there is a next sibling
+	if (nextSibling == null) {
+		//console.log("Already at the bottom");
+		return;
+	}
+
+	var prevSibling = nextSibling;
+	nextSibling = nextSibling.nextElementSibling;
+
+	const sortableList = document.getElementById('sortable-tune-list-mobile');
+
+	// Check if there is a next sibling
+
+	// Special handling of the last item
+	if (nextSibling == null) {
+		sortableList.insertBefore(prevSibling, ChangeTuneOrderCurrent);
+	}
+	else{
+
+		sortableList.insertBefore(ChangeTuneOrderCurrent, nextSibling);
+	}
+
+	const childDivs = document.querySelectorAll('#sortable-tune-list-mobile .draggable_tune_mobile');
+
+	// Extract and display data_tune_index values
+	ChangeTuneOrderNewOrder = Array.from(childDivs).map(div => div.getAttribute('data_tune_index'));
+
+}
+
+var ChangeTuneOrderCurrent = null;
+var ChangeTuneOrderOriginalOrder = [];
+var ChangeTuneOrderNewOrder = [];
+
+function ChangeTuneOrderMobile(){
+
+	//console.log("ChangeTuneOrderMobile");
+
+	var i,j,k;
+
+	var ChangeTuneOrderOriginalOrder = [];
+	ChangeTuneOrderNewOrder = [];
+
+	ChangeTuneOrderCurrent = null;
+
+	totalTunes = CountTunes();
+
+	var theTitles = GetTunebookIndexTitles();
+	var nTitles = theTitles.length;
+
+	if (nTitles == 0){
+
+		var thePrompt = "No tunes to re-order.";
+		
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+		
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
+
+	var theData = {};
+
+	var theSortableDiv = '<div id="sortable-tune-list-mobile" style="overflow:auto;height:580px;margin-top:18px">';
+
+	for (i=0;i<nTitles;++i){
+
+		theSortableDiv += '<div class="draggable_tune_mobile" data_tune_index="'+i+'" onclick="ChangeTuneOrderMobileSelect(this)">'+theTitles[i]+'</div>';
+	}
+	
+	theSortableDiv += '</div>';
+
+	var form = [
+
+		{html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Change the Order of the Tunes&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#change_tune_order" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
+		{html: theSortableDiv},
+		{html: '<p style="text-align:center;margin-top:36px;"><input id="mobile_tune_order_up" class="advancedcontrols btn btn-injectcontrols-headers" onclick="ChangeTuneOrderMobileUp(this);" type="button" value="Move Up" title="Moves the currently selected tune up one position"><input id="mobile_tune_order_down" class="advancedcontrols btn btn-injectcontrols-headers" onclick="ChangeTuneOrderMobileDown(this);" type="button" value="Move Down" title="Moves the currently selected tune down one position"></p>'}
+	];
+
+	setTimeout(function(){
+
+	    const childDivs = document.querySelectorAll('#sortable-tune-list-mobile .draggable_tune_mobile');
+
+		// Extract and display data_tune_index values
+		ChangeTuneOrderNewOrder = Array.from(childDivs).map(div => div.getAttribute('data_tune_index'));
+
+		// Clone it
+		ChangeTuneOrderOriginalOrder = ChangeTuneOrderNewOrder.slice();
+
+	},100);
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+
+    	if (!args.canceled){
+
+    		var bGotChange = false;
+
+    		for (i=0;i<totalTunes;++i){
+    			if (ChangeTuneOrderNewOrder[i] != ChangeTuneOrderOriginalOrder[i]){
+    				bGotChange = true;
+    				break;
+    			}
+    		}
+
+    		// If no change, exit
+    		if (!bGotChange){
+
+    			//console.log("No order change detected!")
+    			return;
+    		}
+
+    		// Reorder the tunes
+    		var theABC = gTheABC.value;
+
+    		var result = FindPreTuneHeader(theABC);
+
+    		for (i=0;i<totalTunes;++i){
+    			
+    			var thisTune = getTuneByIndex(parseInt(ChangeTuneOrderNewOrder[i]));
+
+    			thisTune = thisTune.trim();
+
+    			// Make sure every tune has a carriage return after it
+    			thisTune+="\n\n";
+
+    			result += thisTune;
+    		}
+
+    		// Stuff in the new result
+    		gTheABC.value = result;
+
+    		RenderAsync(true,null, function(){
+
+				gTheABC.selectionStart = 0;
+				gTheABC.selectionEnd = 0;
+
+				// And reset the focus
+				gTheABC.focus();	
+
+				// Scroll to the top
+				MakeTuneVisible(true);
+
+    		});
+
+    		// Set dirty
+			gIsDirty = true;
+
+
+    	}
+
+    });
+
+}
+
+//
 // Change the tune order using drag and drop
 //
 function ChangeTuneOrder(){
@@ -11757,6 +11968,8 @@ function ChangeTuneOrder(){
 
 	var originalOrder = [];
 	var newOrder = [];
+
+	ChangeTuneOrderCurrent = null;
 
 	totalTunes = CountTunes();
 
@@ -11872,10 +12085,21 @@ function ChangeTuneOrder(){
 
 	// Add drag and drop event listeners
 	sortableList.addEventListener('dragstart', function (e) {
+		
 		dragItem = e.target;
 		e.dataTransfer.effectAllowed = 'move';
 		e.dataTransfer.setData('text/plain', dragItem.innerHTML);
+
+		if (ChangeTuneOrderCurrent){
+			ChangeTuneOrderCurrent.classList.remove('draggable_tune_selected');
+		}
+
+		ChangeTuneOrderCurrent = dragItem;
+
+		dragItem.classList.add('draggable_tune_selected');
+
 	});
+
 
 	sortableList.addEventListener('dragover', function (e) {
 		e.preventDefault();
@@ -12150,23 +12374,22 @@ function AddABC(){
 		modal_msg  += '<input id="searchandaddtunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddFromSearch();" type="button" value="Search and Add Tunes" title="Search for tunes to add to your tunebook">';
 
 	}
-	
-	// Re-order only available on desktop browsers
-	if (isDesktopBrowser()){
-		modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Change the Order or Delete Tunes</p>';
-		modal_msg += '<p style="text-align:center;margin-top:16px;">';
-		modal_msg  += '<input id="changetuneorder" class="advancedcontrols btn btn-injectcontrols-headers" onclick="ChangeTuneOrder();" type="button" value="Change the Order of the Tunes" title="Change the order of the tunes">';	
-		modal_msg  += '<input id="culltunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="CullTunes();" type="button" value="Delete Tunes from the Tunebook" title="Delete selected tunes from the tunebook">';	
-		modal_msg += '</p>';		
-	}
-	else{
-		modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Delete Tunes from the Tunebook</p>';
-		modal_msg += '<p style="text-align:center;margin-top:16px;">';
-		modal_msg  += '<input id="culltunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="CullTunes();" type="button" value="Delete Tunes from the Tunebook" title="Delete selected tunes from the tunebook">';	
-		modal_msg += '</p>';		
 
-	}
+	modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Change the Order or Delete Tunes</p>';
+	modal_msg += '<p style="text-align:center;margin-top:16px;">';
 	
+	// Reorder uses drag and drop on desktop
+	if (isDesktopBrowser()){
+		modal_msg  += '<input id="changetuneorder" class="advancedcontrols btn btn-injectcontrols-headers" onclick="ChangeTuneOrder();" type="button" value="Change the Order of the Tunes" title="Change the order of the tunes">';	
+	}
+	// Reorder uses up / down buttons on mobile
+	else{
+		modal_msg  += '<input id="changetuneorder" class="advancedcontrols btn btn-injectcontrols-headers" onclick="ChangeTuneOrderMobile();" type="button" value="Change the Order of the Tunes" title="Change the order of the tunes">';	
+	}
+
+	modal_msg  += '<input id="culltunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="CullTunes();" type="button" value="Delete Tunes from the Tunebook" title="Delete selected tunes from the tunebook">';	
+	modal_msg += '</p>';		
+
 	// Showing examples?
 	if (gFeaturesShowExamples){
 		modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Add an Example ABC Tune</p>';

@@ -642,13 +642,13 @@ height:42px;
 padding:12px;
 }
 
-#addnewreel,#addnewsong,#addnewjig,#changetuneorder,#cull_select_all{
+#addnewreel,#addnewsong,#addnewjig,#changetuneorder,#cull_select_all,#mobile_tune_order_up{
 height:42px;
 padding:12px;
 margin-right:24px;
 }
 
-#addnewhornpipe,#addsongtemplate,#addboxfingeringtemplate,#searchandaddtunes,#culltunes,#cull_clear_selection{
+#addnewhornpipe,#addsongtemplate,#addboxfingeringtemplate,#searchandaddtunes,#culltunes,#cull_clear_selection,#mobile_tune_order_down{
 height:42px;
 padding:12px;
 }
@@ -3382,6 +3382,25 @@ border: 1px solid #ddd;
 background-color: #f9f9f9;
 font-family:helvetica;
 font-size:16px;
+}
+
+.draggable_tune_mobile{
+cursor: grab;
+user-select: none;
+margin: 5px;
+padding: 10px;
+border: 1px solid #ddd;
+background-color: #f9f9f9;
+font-family:helvetica;
+font-size:16px;
+}
+
+.draggable_tune_selected {
+	background-color: #B0FFB0;
+}
+
+.draggable_tune_mobile_selected {
+	background-color: #B0FFB0;
 }
 
 .cullable_tune {
