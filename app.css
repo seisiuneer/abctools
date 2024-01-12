@@ -642,13 +642,13 @@ height:42px;
 padding:12px;
 }
 
-#addnewreel,#addnewsong,#addnewjig,#changetuneorder,#cull_select_all,#mobile_tune_order_up{
+#addnewreel,#addnewsong,#addnewjig,#changetuneorder,#cull_select_all,#mobile_tune_order_up,#smartdraw_add_set_name,#smartdraw_delete_set_name{
 height:42px;
 padding:12px;
 margin-right:24px;
 }
 
-#addnewhornpipe,#addsongtemplate,#addboxfingeringtemplate,#searchandaddtunes,#culltunes,#cull_clear_selection,#mobile_tune_order_down{
+#addnewhornpipe,#addsongtemplate,#addboxfingeringtemplate,#searchandaddtunes,#culltunes,#cull_clear_selection,#mobile_tune_order_down,#smartdraw_export{
 height:42px;
 padding:12px;
 }
@@ -834,6 +834,17 @@ padding:12px;
 	}
 }
 
+#export_smartdrawbutton{
+height:42px;
+padding:12px;
+}
+
+@media (hover: hover) {
+	.export_smartdrawbutton:hover{
+	background: palegreen;
+	}
+}
+
 .export_all_text{
 	font-size:12pt;
 	line-height:16px;
@@ -865,7 +876,6 @@ padding:12px;
 	width: 90px;
 	margin-top:-7px;
 }
-
 
 #abcplayer_pngbutton{
 height:42px;
@@ -3418,6 +3428,41 @@ font-size:16px;
 	background-color: #FFE5E5;
 }
 
+.smartdraw_export_all_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:36px;
+	text-align: center;
+}
+
+.smartdraw_export_all_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left:4px;
+	width: 75px;
+	margin-top:-7px;
+}
+
+.smartdraw_export_all_text>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:155px;
+margin-left:4px;
+padding-left:10px;
+margin-top:-7px;
+}
 
 /******************************************************************************/
 /* STYLES RELATED TO EXPERIMENT BUTTONS                                       */
@@ -3687,6 +3732,12 @@ font-size:16px;
 
 }
 
+.btn-smartdraw{
+  --color: black;
+  --background-color: #F0F0F0;
+
+}
+
 .btn-batchmp3export{
   --color: black;
   --background-color: lavender;
@@ -3848,6 +3899,11 @@ font-size:16px;
 }
 
 .btn-add-search-results{
+  --color: black;
+  --background-color: lavender;
+}
+
+.btn-smartdraw-export{
   --color: black;
   --background-color: lavender;
 }

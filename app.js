@@ -12098,7 +12098,7 @@ function ChangeTuneOrder(){
 		}
 
 	});
-
+	
 	// Add drag and drop event listeners
 	sortableList.addEventListener('dragstart', function (e) {
 		
@@ -12115,7 +12115,6 @@ function ChangeTuneOrder(){
 		dragItem.classList.add('draggable_tune_selected');
 
 	});
-
 
 	sortableList.addEventListener('dragover', function (e) {
 		e.preventDefault();
@@ -18764,6 +18763,10 @@ function ExportAll(){
 		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
 		modal_msg += '<input id="exportall_jsonbutton" class="exportall_jsonbutton btn btn-alljsondownload" onclick="BatchJSONExport();" type="button" value="Export all Share URLs as JSON" title="Saves the Share URLs for all the tunes as a JSON file">'
 		modal_msg += '<input id="exportall_csvbutton" class="exportall_csvbutton btn btn-allcsvdownload" onclick="BatchCSVExport();" type="button" value="Export all Share URLs as CSV" title="Saves the Share URLs for all the tunes as a CSV file">'
+		
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">SmartDraw Set List Builder</p>';
+		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
+		modal_msg += '<input id="export_smartdrawbutton" class="export_smartdrawbutton btn btn-smartdraw" onclick="SmartDrawExport();" type="button" value="SmartDraw Set List Builder" title="Build a SmartDraw set list using drag and drop">'
 		modal_msg += '</p>';
 
 	}
