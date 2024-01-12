@@ -1197,7 +1197,7 @@ width: auto;
 #configure_instrument_explorer{
 height:42px;
 padding:12px;
-margin-right:24px;
+margin-right:18px;
 }
 
 @media (hover: hover) {
@@ -2728,7 +2728,7 @@ margin-top:-7px;
 #configure_swing_explorer{
 	height:42px;
 	padding:12px;
-	margin-right:24px;
+	margin-right:18px;
 }
 
 @media (hover: hover) {
@@ -2740,7 +2740,7 @@ margin-top:-7px;
 #configure_grace_explorer{
 	height:42px;
 	padding:12px;
-	margin-right:24px;
+	margin-right:18px;
 }
 
 @media (hover: hover) {
