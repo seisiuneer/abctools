@@ -787,11 +787,11 @@ function SDDownloadJPG(callback,val){
 	var outputWidth = SDExportWidthAll;
 	var outputHeight = (SDExportWidthAll * originalSVGHeight)/originalSVGWidth;
 
-	canvas.width = outputWidth;
-	canvas.height = outputHeight;
+	canvas.width = outputWidth*2;
+	canvas.height = outputHeight*2;
 
-	canvas.style.width = outputWidth;
-	canvas.style.height = outputHeight;
+	canvas.style.width = outputWidth*2;
+	canvas.style.height = outputHeight*2;
 
     svg.setAttribute('width', outputWidth+'px');
     svg.setAttribute('height', outputHeight+'px');
@@ -800,6 +800,7 @@ function SDDownloadJPG(callback,val){
 
 	ctx.fillStyle = "#ffffff"; 
 	ctx.fillRect(0, 0, canvas.width, canvas.height); 
+	ctx.scale(2, 2);
 
 	var img = document.createElement( "img" );
 
