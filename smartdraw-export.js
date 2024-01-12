@@ -2,7 +2,7 @@
 // SmartDraw Export
 //
 
-var SDExportWidthAll = 480;
+var SDExportWidthAll = 360;
 var SDBatchImageExportStatusText = "";
 var SDTheBatchImageExportOKButton = null;
 var SDBatchImageExportCancelRequested = false;
@@ -1013,19 +1013,21 @@ function ExportSmartDrawSetList(){
 					// Generate the injected hyperlink tune array
 					SDTuneArray = SDGenerateTuneArray(gTheABC.value);
 
-
 					switch (SDExportFormat){
 						case "0":
+						case "3":
 							// Generate all the JPG data urls
 							SDDoBatchImageExport(callback);
 							break;
 
 						case "1":							
+						case "4":							
 							// Generate the full text incipits versions
 							SDDoFullTextIncipitsExport(callback);
 							break;
 
 						case "2":							
+						case "5":							
 							// Generate the first line text incipits versions
 							SDDoTextIncipitsExport(callback);
 							break;
@@ -1063,7 +1065,7 @@ function ExportSmartDrawSetList(){
 
 					    rootShape.SetLabel(theSetListName);
 
-					   	if (SDExportFormat != "0"){
+					   	if ((SDExportFormat != "0") && (SDExportFormat != "3")){
 					   		rootShape.SetTextFont("Courier");
 					   	}
 
@@ -1077,121 +1079,262 @@ function ExportSmartDrawSetList(){
 					    var tuneIndex = 0;
 					    var setMarkerStaged = false;
 
-				 		for (i=0;i<nDivs;++i){
+					    // Vertical format?
+					    if ((SDExportFormat == "0") || (SDExportFormat == "1") || (SDExportFormat == "2")){
 
-				 			var thisDiv = childDivs[i];
+					 		for (i=0;i<nDivs;++i){
 
-				 			var divName = thisDiv.innerHTML;
+					 			var thisDiv = childDivs[i];
 
-				 			var isSetMarker = false;
+					 			var divName = thisDiv.innerHTML;
 
-				 			if (thisDiv.getAttribute('data_tune_index') == "-1"){
+					 			var isSetMarker = false;
 
-				 				//console.log("Set list marker found: "+divName);
+					 			if (thisDiv.getAttribute('data_tune_index') == "-1"){
 
-				 				isSetMarker = true;
-				 			}
-							
-						    if (isSetMarker){
+					 				//console.log("Set list marker found: "+divName);
 
-						    	//console.log("Adding connector");
+					 				isSetMarker = true;
+					 			}
+								
+							    if (isSetMarker){
 
-					            var myShape = rootConnector.AddShape();
+							    	//console.log("Adding connector");
 
-					            myShape.SetFillColor("#FFFFFF");
-						    	myShape.SetTextColor("#000000");
-					           
-					            myShape.SetLabel(divName);
-					            
-							   	if (SDExportFormat != "0"){
-							   		myShape.SetTextFont("Courier");
-							   	}
+						            var myShape = rootConnector.AddShape();
 
-					           	myShape.SetTextBold(true);
+						            myShape.SetFillColor("#FFFFFF");
+							    	myShape.SetTextColor("#000000");
+						           
+						            myShape.SetLabel(divName);
+						            
+					   				if ((SDExportFormat != "0") && (SDExportFormat != "3")){
+								   		myShape.SetTextFont("Courier");
+								   	}
 
-					            setMarkerStaged = true;
+						           	myShape.SetTextBold(true);
 
-						    }
-						    else{
+						            setMarkerStaged = true;
 
-						    	//console.log("Adding shape");
-
-						    	// Don't actually make a maker a connector unless it has a shape attached to it
-						    	if (setMarkerStaged){
-							    	currentConnector=myShape.AddShapeConnector("Orgchart");
-							    	currentConnector.SetDirection(VS.Directions.Right);
-							    	setMarkerStaged = false;
 							    }
+							    else{
 
-					            var myShape = currentConnector.AddShape();
+							    	//console.log("Adding shape");
 
-					            myShape.SetFillColor("#FFFFFF");
-						    	myShape.SetTextColor("#000000");
+							    	// Don't actually make a maker a connector unless it has a shape attached to it
+							    	if (setMarkerStaged){
+								    	currentConnector=myShape.AddShapeConnector("Orgchart");
+								    	currentConnector.SetDirection(VS.Directions.Right);
+								    	setMarkerStaged = false;
+								    }
 
-						    	// Since there may be set markers, have to keep track of which actually have tunes
-						    	var index = SDTuneOrder[tuneIndex];
+						            var myShape = currentConnector.AddShape();
 
-						    	//console.log("shape image tuneIndex: "+tuneIndex+" index: "+index);
+						            myShape.SetFillColor("#FFFFFF");
+							    	myShape.SetTextColor("#000000");
 
-								switch (SDExportFormat){
+							    	// Since there may be set markers, have to keep track of which actually have tunes
+							    	var index = SDTuneOrder[tuneIndex];
 
-									// Full JPG 
-									case "0":
+							    	//console.log("shape image tuneIndex: "+tuneIndex+" index: "+index);
 
-										// Generate all the JPG data urls
-							            myShape.SetImage(SDTheNotationImages[tuneIndex].data);
-							            
-							            myShape.SetMinWidth(SDTheNotationImages[tuneIndex].width);
-							            
-							            myShape.SetMinHeight(SDTheNotationImages[tuneIndex].height);
+									switch (SDExportFormat){
 
-							            myShape.SetHyperlink(SDTuneArray[index].ShareURL);
+										// Full JPG 
+										case "0":
 
-										break;
+											// Generate all the JPG data urls
+								            myShape.SetImage(SDTheNotationImages[tuneIndex].data);
+								            
+								            myShape.SetMinWidth(SDTheNotationImages[tuneIndex].width);
+								            
+								            myShape.SetMinHeight(SDTheNotationImages[tuneIndex].height);
 
-									// Full text incipits
-									case "1":	
+								            myShape.SetHyperlink(SDTuneArray[index].ShareURL);
 
-										// Generate the text incipits versions
-							            myShape.SetLabel(SDIncipits[tuneIndex]);
+											break;
 
-							            myShape.SetTextFont("Courier");
+										// Full text incipits
+										case "1":	
 
-							            myShape.SetTextBold(true);
+											// Generate the text incipits versions
+								            myShape.SetLabel(SDIncipits[tuneIndex]);
 
-							            myShape.SetTextAlignH("Left");
-							            
-							            myShape.SetTextGrow(VS.TextGrow.Horizontal);
+								            myShape.SetTextFont("Courier");
 
-							            myShape.SetHyperlink(SDTuneArray[index].ShareURL);
+								            myShape.SetTextBold(true);
 
-										break;
+								            myShape.SetTextAlignH("Left");
+								            
+								            myShape.SetTextGrow(VS.TextGrow.Horizontal);
 
+								            myShape.SetHyperlink(SDTuneArray[index].ShareURL);
 
-									// Text incipits
-									case "2":	
-
-										// Generate the text incipits versions
-							            myShape.SetLabel(SDIncipits[tuneIndex]);
-
-							            myShape.SetTextFont("Courier");
-
-							            myShape.SetTextBold(true);
-
-							            myShape.SetTextAlignH("Left");
-							            
-							            myShape.SetTextGrow(VS.TextGrow.Horizontal);
-
-							            myShape.SetHyperlink(SDTuneArray[index].ShareURL);
-
-										break;
-
-								}
+											break;
 
 
-					            tuneIndex++;
+										// Text incipits
+										case "2":	
 
-						    }
+											// Generate the text incipits versions
+								            myShape.SetLabel(SDIncipits[tuneIndex]);
+
+								            myShape.SetTextFont("Courier");
+
+								            myShape.SetTextBold(true);
+
+								            myShape.SetTextAlignH("Left");
+								            
+								            myShape.SetTextGrow(VS.TextGrow.Horizontal);
+
+								            myShape.SetHyperlink(SDTuneArray[index].ShareURL);
+
+											break;
+
+									}
+
+
+						            tuneIndex++;
+
+							    }
+							}
+						}
+						else{
+
+							//debugger;
+
+							var currentStagedShape = null;
+
+							// Horizontal format
+							for (i=0;i<nDivs;++i){
+
+					 			var thisDiv = childDivs[i];
+
+					 			var divName = thisDiv.innerHTML;
+
+					 			var isSetMarker = false;
+
+					 			if (thisDiv.getAttribute('data_tune_index') == "-1"){
+
+					 				//console.log("Set list marker found: "+divName);
+
+					 				isSetMarker = true;
+					 			}
+								
+							    if (isSetMarker){
+
+							    	//console.log("Adding connector");
+
+						            var myShape = rootConnector.AddShape();
+
+						            myShape.SetFillColor("#FFFFFF");
+							    	myShape.SetTextColor("#000000");
+						           
+						            myShape.SetLabel(divName);
+						            
+					   				if ((SDExportFormat != "0") && (SDExportFormat != "3")){
+								   		myShape.SetTextFont("Courier");
+								   	}
+
+						           	myShape.SetTextBold(true);
+
+						            setMarkerStaged = true;
+
+						            currentStagedShape = null;
+
+							    }
+							    else{
+
+							    	//console.log("Adding shape");
+
+							    	// Don't actually make a maker a connector unless it has a shape attached to it
+							    	if (setMarkerStaged){
+								    	currentConnector=myShape.AddShapeConnector("Orgchart");
+								    	currentConnector.SetDirection(VS.Directions.Right);
+								    	setMarkerStaged = false;
+
+								    }
+
+						    		if (currentStagedShape){
+
+								    	currentConnector=currentStagedShape.AddShapeConnector("Orgchart");
+								    	currentConnector.SetDirection(VS.Directions.Right);
+
+									}
+
+
+						            var myShape = currentConnector.AddShape();
+
+						            currentStagedShape = myShape;
+
+						            myShape.SetFillColor("#FFFFFF");
+							    	myShape.SetTextColor("#000000");
+
+							    	// Since there may be set markers, have to keep track of which actually have tunes
+							    	var index = SDTuneOrder[tuneIndex];
+
+							    	//console.log("shape image tuneIndex: "+tuneIndex+" index: "+index);
+
+									switch (SDExportFormat){
+
+										// Full JPG 
+										case "3":
+
+											// Generate all the JPG data urls
+								            myShape.SetImage(SDTheNotationImages[tuneIndex].data);
+								            
+								            myShape.SetMinWidth(SDTheNotationImages[tuneIndex].width);
+								            
+								            myShape.SetMinHeight(SDTheNotationImages[tuneIndex].height);
+
+								            myShape.SetHyperlink(SDTuneArray[index].ShareURL);
+
+											break;
+
+										// Full text incipits
+										case "4":	
+
+											// Generate the text incipits versions
+								            myShape.SetLabel(SDIncipits[tuneIndex]);
+
+								            myShape.SetTextFont("Courier");
+
+								            myShape.SetTextBold(true);
+
+								            myShape.SetTextAlignH("Left");
+								            
+								            myShape.SetTextGrow(VS.TextGrow.Horizontal);
+
+								            myShape.SetHyperlink(SDTuneArray[index].ShareURL);
+
+											break;
+
+
+										// Text incipits
+										case "5":	
+
+											// Generate the text incipits versions
+								            myShape.SetLabel(SDIncipits[tuneIndex]);
+
+								            myShape.SetTextFont("Courier");
+
+								            myShape.SetTextBold(true);
+
+								            myShape.SetTextAlignH("Left");
+								            
+								            myShape.SetTextGrow(VS.TextGrow.Horizontal);
+
+								            myShape.SetHyperlink(SDTuneArray[index].ShareURL);
+
+											break;
+
+									}
+
+
+						            tuneIndex++;
+
+							    }
+							}
 						}
 						
 						var vsJSON = myDocument.toJSON(); 
@@ -1218,7 +1361,7 @@ function SmartDrawExport(){
 	var newOrder = [];
 
 	// Allow the current global setting to linger
-	//SDExportWidthAll = 480;
+	//SDExportWidthAll = 360;
 
 	SDBatchImageExportStatusText = "";
 	SDTheBatchImageExportOKButton = null;
@@ -1265,10 +1408,13 @@ function SmartDrawExport(){
 	modal_msg += theSortableDiv;
 	modal_msg += '<p style="text-align:center;margin-top:24px;"><input id="smartdraw_add_set_name" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddSmartDrawSetName();" type="button" value="Add Set Name" title="Adds a set name element to the list"><input id="smartdraw_delete_set_name" class="advancedcontrols btn btn-injectcontrols-headers" onclick="DeleteSmartDrawSetName();" type="button" value="Delete Set Name" title="Deletes a selected set name element from the list"><input id="smartdraw_export" class="advancedcontrols btn btn-smartdraw-export" onclick="ExportSmartDrawSetList();" type="button" value="Export SmartDraw Set List" title="Exports the set list as a SmartDraw diagram"></p>';
 	modal_msg += '<p class="smartdraw_export_all_text">';
-	modal_msg += 'Tune export format: <select id="smartdraw_format_select" title="Select the SmartDraw export format">';
-	modal_msg += '<option value="0">Notation</option>';
- 	modal_msg += '<option value="1">ABC Full Text</option>';
- 	modal_msg += '<option value="2">ABC Incipits</option>';
+	modal_msg += 'Tune export format: <select id="smartdraw_format_select" title="Select the SmartDraw export format and tune shape flow direction">';
+	modal_msg += '<option value="0">Notation ↓</option>';
+ 	modal_msg += '<option value="1">ABC Full Text ↓</option>';
+ 	modal_msg += '<option value="2">ABC Incipits ↓</option>';
+	modal_msg += '<option value="3">Notation →</option>';
+ 	modal_msg += '<option value="4">ABC Full Text →</option>';
+ 	modal_msg += '<option value="5">ABC Incipits →</option>';
   	modal_msg += '</select>';
 	modal_msg += '&nbsp;&nbsp;&nbsp;Notation width to export: <input id="smartdraw_export_width" type="number" min="0" step="1" max="4096" title="Notation width to export" autocomplete="off"/>';
 	modal_msg += '</p>';
