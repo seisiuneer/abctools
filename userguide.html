@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-         
+               
         <style>
         p {
         font-size:14pt;
@@ -304,9 +304,13 @@
                     <div class="tocpanel">
                         
                         <p class="toc"><a style="text-decoration:none;" href="#export_all">Export All Audio or Images</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#smartdraw_export">SmartDraw Set List Builder</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#sort_dialog">Sort by Specific Tag</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_comhaltas">Comhaltas ABC Transform</a></p>
+                    </div>
+
+                    <button class="accordion" title="Click to expand/collapse this section">SmartDraw Set List Builder</button>
+                    <div class="tocpanel">
+                        <p class="toc"><a style="text-decoration:none;" href="#smartdraw_export">SmartDraw Set List Builder</a></p>
                     </div>
                     
                 </div>
@@ -1352,7 +1356,24 @@
             <p><strong>Export all Share URLs as JSON</strong>: Exports tune names and Share URLs for all of the tunes in a JSON file.</p>
             <hr>
             <p><strong>Export all Share URLs as CSV</strong>: Exports tune names and Share URLs for all of the tunes in a CSV file.</p>
-           <hr class="hidden-print" id="smartdraw_export">
+            <hr class="hidden-print" id="sort_dialog">
+            <h1 class="page_break_always">Sort by Specific Tag<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <hr>
+            <p>Brings up a dialog where you can sort the tunes based on a specified ABC tag:</p>
+            <p style="margin-left:30px;"><strong>Sort by Name (T:)</strong> - Sorts all the tunes by name alphabetically based on the value found in the first T: tag, ignoring an initial "The"</p>
+            <p style="margin-left:30px;"><strong>Sort by Name (T:) - Ignore "A"and "An"</strong> - This also sorts all the tunes by name, ignoring an initial "A" and "An" along with "The".</p>
+            <p style="margin-left:30px;"><strong>Sort by Key (K:)</strong> - This sorts all the tunes by the key value found in the first K: tag in the tune.</p>
+            <p style="margin-left:30px;"><strong>Sort by Meter (M:)</strong> - This sorts all the tunes by the meter value found in the first M: tag in the tune.</p>
+            <p style="margin-left:30px;">Sort order is: C|, C, 4/4, 6/8, 9/8, 12/8, 2/4, 3/4, 6/4, followed by any other meters found, grouped by meter.</p>
+            <hr class="hidden-print" id="advanced_comhaltas">
+            <h1 class="page_break_always">Comhaltas ABC Transform<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <hr>
+            <p>Brings up a dialog where you can choose between transforming the entire ABC from the standard ABC d e f octave note style to the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style, or from the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style to standard ABC d e f octave note style.</p>
+            <p><strong>Important:</strong> While the note Names display will show the Comhaltas-preferred note names, the ABC standard requires that the second octave C in the ABC itself either be represented by c or C' so that may requires some minor changes when pasting in your Comhaltas-formatted tunes.</p>
+            <p><strong>Regarding Comhaltas ABC and instrument tab injection:</strong> The various instrument-specific tab injectors detailed below are not able to work with the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style note names.</p>
+            <p>To inject instrument tab into ABC in this format, you will first need to convert the Comhaltas-preferred ABC to standard ABC the <strong>Comhaltas ABC Transform</strong> dialog's <strong>Comhaltas ABC to Standard ABC</strong> button first, then do the tablature injection.</p>
+            <p>After doing the tab injection, you can then transform the ABC back into the Comhaltas-preferred format using the the <strong>Comhaltas ABC Transform</strong> dialog's <strong>Standard ABC to Comhaltas ABC</strong> button</p>
+            <hr class="hidden-print" id="smartdraw_export">
             <h1 class="page_break_always">SmartDraw Set List Builder<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Brings up a dialog where you can build tune sets and then export them in SmartDraw format.</p>
             <p>Each tune in the SmartDraw diagram has a hyperlink that when clicked, plays the tune.</p>
@@ -1374,23 +1395,6 @@
             <p>Once the SmartDraw file is created and saved to your system, you can import it into SmartDraw from the SmartDraw file and template explorer.</p>
             <p>
             <p>For more information on SmartDraw and to get a free trial, please visit <a href="https://www.smartdraw.com" target="_blank">SmartDraw</a>.</p>
-            <hr class="hidden-print" id="sort_dialog">
-            <h1 class="page_break_always">Sort by Specific Tag<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <hr>
-            <p>Brings up a dialog where you can sort the tunes based on a specified ABC tag:</p>
-            <p style="margin-left:30px;"><strong>Sort by Name (T:)</strong> - Sorts all the tunes by name alphabetically based on the value found in the first T: tag, ignoring an initial "The"</p>
-            <p style="margin-left:30px;"><strong>Sort by Name (T:) - Ignore "A"and "An"</strong> - This also sorts all the tunes by name, ignoring an initial "A" and "An" along with "The".</p>
-            <p style="margin-left:30px;"><strong>Sort by Key (K:)</strong> - This sorts all the tunes by the key value found in the first K: tag in the tune.</p>
-            <p style="margin-left:30px;"><strong>Sort by Meter (M:)</strong> - This sorts all the tunes by the meter value found in the first M: tag in the tune.</p>
-            <p style="margin-left:30px;">Sort order is: C|, C, 4/4, 6/8, 9/8, 12/8, 2/4, 3/4, 6/4, followed by any other meters found, grouped by meter.</p>
-            <hr class="hidden-print" id="advanced_comhaltas">
-            <h1 class="page_break_always">Comhaltas ABC Transform<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <hr>
-            <p>Brings up a dialog where you can choose between transforming the entire ABC from the standard ABC d e f octave note style to the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style, or from the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style to standard ABC d e f octave note style.</p>
-            <p><strong>Important:</strong> While the note Names display will show the Comhaltas-preferred note names, the ABC standard requires that the second octave C in the ABC itself either be represented by c or C' so that may requires some minor changes when pasting in your Comhaltas-formatted tunes.</p>
-            <p><strong>Regarding Comhaltas ABC and instrument tab injection:</strong> The various instrument-specific tab injectors detailed below are not able to work with the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style note names.</p>
-            <p>To inject instrument tab into ABC in this format, you will first need to convert the Comhaltas-preferred ABC to standard ABC the <strong>Comhaltas ABC Transform</strong> dialog's <strong>Comhaltas ABC to Standard ABC</strong> button first, then do the tablature injection.</p>
-            <p>After doing the tab injection, you can then transform the ABC back into the Comhaltas-preferred format using the the <strong>Comhaltas ABC Transform</strong> dialog's <strong>Standard ABC to Comhaltas ABC</strong> button</p>
             <hr class="hidden-print" id="settings_dialog">
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
