@@ -805,30 +805,34 @@ function SDDownloadJPG(callback,val){
 
 	var svgData = new XMLSerializer().serializeToString( svg );
 
-	SDTheNotationImages.push({data:"data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)) ),width:outputWidth,height:outputHeight});
+	//
+	// SmartDraw appears to lose the image if I use SVG
+	//
 
-	callback(val);
+	//SDTheNotationImages.push({data:"data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)) ),width:outputWidth,height:outputHeight});
+
+	//callback(val);
 
 	// Older version that generated JPEG format images
 
-	// img.setAttribute( "src", "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData))) );
+	img.setAttribute( "src", "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData))) );
 
-	// img.onload = function() {
+	img.onload = function() {
 
-	// 	//console.log("Image loaded");
+		//console.log("Image loaded");
 
-	// 	ctx.drawImage( img, 0, 0 );
+		ctx.drawImage( img, 0, 0 );
 
-	// 	var canvasdata = canvas.toDataURL("image/jpeg",0.9);
+		var canvasdata = canvas.toDataURL("image/jpeg",0.9);
 		
-	// 	SDTheNotationImages.push({data:canvasdata,width:outputWidth,height:outputHeight});
+		SDTheNotationImages.push({data:canvasdata,width:outputWidth,height:outputHeight});
 
-	//    	PostProcessSVGImageAfterDownload();
+	   	PostProcessSVGImageAfterDownload();
 
-	// 	svg = null;
+		svg = null;
 
-	// 	callback(val);
-	// }
+		callback(val);
+	}
 }
 
 //
@@ -1057,6 +1061,11 @@ function ExportSmartDrawSetList(){
 					    rootShape.SetTextColor("#000000");
 
 					    rootShape.SetLabel(theSetListName);
+
+					   	if (SDExportFormat != "0"){
+					   		rootShape.SetTextFont("Courier");
+					   	}
+
 					   	rootShape.SetTextBold(true);
 
 					    var rootConnector=rootShape.AddShapeConnector("Orgchart");
@@ -1092,6 +1101,11 @@ function ExportSmartDrawSetList(){
 						    	myShape.SetTextColor("#000000");
 					           
 					            myShape.SetLabel(divName);
+					            
+							   	if (SDExportFormat != "0"){
+							   		myShape.SetTextFont("Courier");
+							   	}
+
 					           	myShape.SetTextBold(true);
 
 					            setMarkerStaged = true;
@@ -1255,7 +1269,7 @@ function SmartDrawExport(){
  	modal_msg += '<option value="1">ABC Full Text</option>';
  	modal_msg += '<option value="2">ABC Incipits</option>';
   	modal_msg += '</select>';
-	modal_msg += '&nbsp;&nbsp;&nbsp;Notation width to export: <input id="smartdraw_export_width" type="number" min="0" step="1" max="4096" title="Notation width to export in 1/100 of an inch increments" autocomplete="off"/>';
+	modal_msg += '&nbsp;&nbsp;&nbsp;Notation width to export: <input id="smartdraw_export_width" type="number" min="0" step="1" max="4096" title="Notation width to export" autocomplete="off"/>';
 	modal_msg += '</p>';
 
 	const modal = DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } );
