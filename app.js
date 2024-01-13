@@ -12423,8 +12423,9 @@ function AddABC(){
 	if (gFeaturesShowTemplates){
 		modal_msg += '<p style="text-align:center;margin-top:24px;font-size:18px;">Add an ABC Template</p>';
 		modal_msg += '<p style="text-align:center;margin-top:16px;">';
-		modal_msg  += '<input id="addnewsong" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleSong();" type="button" value="Add an Example Song" title="Adds an example song to the end of the ABC">';
+		modal_msg  += '<input id="addnewtunetemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendTuneTempate();" type="button" value="Add a Tune Template" title="Adds a tune template to the end of the ABC">';
 		modal_msg  += '<input id="addsongtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSongTemplate();" type="button" value="Add a Song Template" title="Adds a minimal song template to the end of the ABC">';
+		modal_msg  += '<input id="addnewsong" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleSong();" type="button" value="Add an Example Song" title="Adds an example song to the end of the ABC">';
 		modal_msg += '</p>';
 		modal_msg += '<p style="text-align:center;margin-top:16px;">';
 		modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendBoxFingeringTemplate();" type="button" value="Add Box Fingering Symbols Template" title="Adds a template with symbols for annotating box fingerings and tablature to the top of the ABC">';
@@ -12588,6 +12589,61 @@ function AppendSampleHornpipe(){
 	ProcessAddTune(theValue);
 
 }
+
+//
+// Add a new tune template to the ABC
+//
+function AppendTuneTempate(){	
+
+	// Keep track of actions
+	sendGoogleAnalytics("action","AppendTuneTemplate");
+
+	// Stuff in some default ABC with additional options explained
+	var theValue = ""
+
+	var nTunes = CountTunes();
+	
+	if (nTunes > 0){
+		theValue += "\n";
+	}
+
+	theValue += 'X: 1\n';
+	theValue += 'T: Tune Title\n';
+	theValue += 'C: Composer\n';
+	theValue += 'R: Tune style (Reel, Jig, Hornpipe, etc.)\n';
+	theValue += '%\n';
+	theValue += '% Meter:\n';
+	theValue += 'M: 4/4\n';
+	theValue += '%\n';
+	theValue += '% Beat unit:\n';
+	theValue += 'L: 1/8\n';
+	theValue += '%\n';
+	theValue += '% Tempo:\n';
+	theValue += 'Q: 120\n';
+	theValue += '%\n';
+	theValue += '% Key:\n';
+	theValue += 'K: C\n';
+	theValue += '%\n';
+	theValue += '% Soundfont (fluid, musyng, fatboy, canvas, or mscore):\n';
+	theValue += '%abcjs_soundfont fluid\n';
+	theValue += '%\n';
+	theValue += '% Use an Acoustic Grand Piano sound for the melody:\n';
+	theValue += '%%MIDI program 0\n';
+	theValue += '%\n';
+	theValue += '% Use an Acoustic Grand Piano for the chords:\n';
+	theValue += '%%MIDI chordprog 0\n';
+	theValue += '%\n';
+	theValue += '% Use an Synth Bass sound for the bass:\n';
+	theValue += '%%MIDI bassprog 38\n';
+	theValue += '%\n';
+	theValue += "% Add your tune's ABC below:\n";
+	theValue += '"C"C2 D2 E2 F2| G2 A2 B2 c2|]\n';
+
+	// Do common tune addition processing
+	ProcessAddTune(theValue);
+
+}
+
 //
 // Add a new song template to the ABC
 //

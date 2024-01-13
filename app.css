@@ -642,13 +642,13 @@ height:42px;
 padding:12px;
 }
 
-#addnewreel,#addnewsong,#addnewjig,#changetuneorder,#cull_select_all,#mobile_tune_order_up,#smartdraw_add_set_name,#smartdraw_delete_set_name{
+#addnewreel,#addnewjig,#changetuneorder,#cull_select_all,#mobile_tune_order_up,#smartdraw_add_set_name,#smartdraw_delete_set_name,#addnewtunetemplate,#addsongtemplate{
 height:42px;
 padding:12px;
 margin-right:24px;
 }
 
-#addnewhornpipe,#addsongtemplate,#addboxfingeringtemplate,#searchandaddtunes,#culltunes,#cull_clear_selection,#mobile_tune_order_down,#smartdraw_export{
+#addnewhornpipe,#addboxfingeringtemplate,#searchandaddtunes,#culltunes,#cull_clear_selection,#mobile_tune_order_down,#smartdraw_export,#addnewsong{
 height:42px;
 padding:12px;
 }
