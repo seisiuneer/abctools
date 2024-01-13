@@ -949,7 +949,6 @@ function saveVSON(fname, theData) {
         window.URL.revokeObjectURL(url);
     }, 1000);
 
-
 }
 
 function ExportSmartDrawSetList(){
@@ -978,6 +977,9 @@ function ExportSmartDrawSetList(){
 
 				// Get the export format
 				SDExportFormat = document.getElementById("smartdraw_format_select").value;
+
+				// Keep track of exports
+				sendGoogleAnalytics("export","SmartDraw_"+SDExportFormat);
 
 				var theSetListName = args.result;
 
