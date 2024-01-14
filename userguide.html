@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+         
         <style>
         p {
         font-size:14pt;
@@ -1106,10 +1106,13 @@
             <p id="advanced_dulcimer"><strong>Inject Dulcimer Tab</strong> - Injects Mountain Dulcimer tablature into the ABC.</p>
             <p>The tablature generation solution supports both DAD, DGD, or DAA-tuned instruments with a 6-1/2 fret.</p>
             <p>Select between "Along High-D String" and "Cross-String" style tablature for the DAD and DGD tunings. (DAA is only available as "Along A String").</p>
-            <p>You may optionally exclude any tunes from the output that don't have complete tablature solutions.</p>
+             <p>You may optionally exclude any tunes from the output that don't have complete tablature solutions.</p>
             <p>This can be very useful when converting large numbers of tunes where you only want to end up with tunes that have complete fret tab solutions.</p>
             <p>When excluding tunes, a report will be presented after the tab injection with the list of tunes that were excluded from the output.</p>
+            <p>Select "Blank Tablature" if you want to fill in your own tab. This will inject open string tablature for every note.</p>
             <p>Editing of the tab is possible after the injection.</p>
+            <p>The "Highlighting" mode can be very useful in identifying the ABC for each note in the tune for manually adding chords.</p>
+            <p>Click on any note in the notation and the ABC will be highlighted that created that note along with the dulcimer tab that was injected.</p>
             <p>When generating the tab, the following ABC text is added just before every note:</p>
             <p class="code">"_1;-;3"</p>
             <p>The "_ tells the ABC renderer to put the tab under the next note.</p>

@@ -17452,10 +17452,10 @@ function DoCeoltasTransform(doInverse){
 
 	// Keep track of tablature injection use
 	if (doInverse){
-		sendGoogleAnalytics("inject_tablature","DoCeoltasTransform_Inverse");
+		sendGoogleAnalytics("tablature","DoCeoltasTransform_Inverse");
 	}
 	else{
-		sendGoogleAnalytics("inject_tablature","DoCeoltasTransform");
+		sendGoogleAnalytics("tablature","DoCeoltasTransform");
 	}
 
 	gTheABC.value = ceoltasABCTransformer(gTheABC.value,doInverse,false);
@@ -17829,7 +17829,7 @@ function RemoveTuneTitleNumbers(bDoRedraw){
 function DoInjectTablature_BC(){
 
 	// Keep track of tablature injection use
-	sendGoogleAnalytics("inject_tablature","DoInjectTablature_BC");
+	sendGoogleAnalytics("tablature","Inject_BC");
 
 	SetRadioValue("notenodertab","noten");
 
@@ -17862,7 +17862,7 @@ function DoInjectTablature_BC(){
 function DoInjectTablature_CsD(){
 
 	// Keep track of tablature injection use
-	sendGoogleAnalytics("inject_tablature","DoInjectTablature_CsD");
+	sendGoogleAnalytics("tablature","Inject_CsD");
 
 	SetRadioValue("notenodertab","noten");
 
@@ -17895,7 +17895,7 @@ function DoInjectTablature_CsD(){
 function DoInjectTablature_Anglo(){
 
 	// Keep track of tablature injection use
-	sendGoogleAnalytics("inject_tablature","DoInjectTablature_Anglo");
+	sendGoogleAnalytics("tablature","Inject_Anglo");
 
 	SetRadioValue("notenodertab","noten");
 
@@ -17957,7 +17957,7 @@ function DoInjectTablature_Anglo(){
 function DoInjectTablature_Bamboo_Flute(){
 
 	// Keep track of tablature injection use
-	sendGoogleAnalytics("inject_tablature","DoInjectTablature_Bamboo_Flute");
+	sendGoogleAnalytics("tablature","Inject_Bamboo_Flute");
 
  	const bamboo_flute_keys = [
 	    { name: "  C", id: "0" },
@@ -18021,7 +18021,7 @@ function DoInjectTablature_Bamboo_Flute(){
 function DoInjectTablature_Fiddle_Fingerings(){
 
 	// Keep track of tablature injection use
-	sendGoogleAnalytics("inject_tablature","DoInjectTablature_Fiddle_Fingerings");
+	sendGoogleAnalytics("tablature","Inject_Fiddle_Fingerings");
 
 	SetRadioValue("notenodertab","noten");
 
@@ -18083,7 +18083,7 @@ var gExcludedFromMDSolution = [];
 function DoInjectTablature_MD(){
 
 	// Keep track of tablature injection use
-	sendGoogleAnalytics("inject_tablature","DoInjectTablature_MD");
+	sendGoogleAnalytics("tablature","Inject_MD");
 
  	const mountain_dulcimer_styles = [
 	    { name: "  DAD - Along High-D String", id: "0" },
@@ -18091,6 +18091,7 @@ function DoInjectTablature_MD(){
 	    { name: "  DGD - Along High-D String", id: "2" },
 	    { name: "  DGD - Cross-String", id: "3" },
 	    { name: "  DAA - Along A String", id: "4" },
+	    { name: "  Blank Tablature", id: "5" },
   	];
 
 	// Setup initial values
@@ -18197,7 +18198,7 @@ function DoInjectTablature_ShapeNotes(){
 			gShapeNoteStyle = parseInt(args.result.shape_note_style); 
 
 			// Keep track of tablature injection use
-			sendGoogleAnalytics("inject_tablature","DoInjectTablature_ShapeNotes_"+gShapeNoteStyle);
+			sendGoogleAnalytics("tablature","Inject_ShapeNotes_"+gShapeNoteStyle);
 
 			// Save the settings, in case they were initialized
 			SaveConfigurationSettings();

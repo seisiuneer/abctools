@@ -5297,6 +5297,15 @@ var MDTablatureGenerator = function (theABC){
                 return thisGlyph;
 
                 break;
+
+            case 5:
+
+                // Blank tab
+                var thisGlyph = "-;-;-";
+             
+                return thisGlyph;
+
+                break;
         }
 
     }
