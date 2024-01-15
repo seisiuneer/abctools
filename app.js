@@ -18131,7 +18131,7 @@ function DoInjectTablature_MD(){
 	};
 
 	const form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Mountain Dulcimer Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#injecting_tablature" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Mountain Dulcimer Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_dulcimer" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
 	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject tablature for a DAD, DGD, or DAA-tuned Mountain Dulcimer in the style selected below into all of the tunes in the ABC text area:</p>'},	  
 	  {name: "Style:", id: "configure_dulcimer_style", type:"select", options:mountain_dulcimer_styles, cssClass:"configure_md_settings_select"}, 
 	  {name: "          Use - for open strings (default is leave blank using a space)", id: "open_string_symbol", type:"checkbox", cssClass:"configure_md_settings_form_text"},
