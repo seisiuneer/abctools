@@ -16768,6 +16768,18 @@ function b64toutf8(str) {
 };
 
 // 
+// For detecting playback orientation on mobile
+//
+function isLandscapeOrientation() {
+  if (window.matchMedia("(orientation: portrait)").matches) {
+    return false
+  } else if (window.matchMedia("(orientation: landscape)").matches) {
+    return true;
+  }
+  return false;
+}
+
+// 
 // Check for a share link and process it
 //
 function processShareLink() {
@@ -16973,11 +16985,28 @@ function processShareLink() {
 		// Set the inital focus back to the ABC
 		FocusABC();
 
+
 		// Render the tune
 		RenderAsync(true,null,function(){
 
 			// Playback requested?
 			if (doPlay){
+
+				if (isMobileBrowser()){
+					
+					if (isLandscapeOrientation()){
+
+						var thePrompt = "The ABC Transcription Tools tune Player is best used in Portrait mode.<br/>Please rotate your device and click the play button to play the tune.";
+						
+						// Center the string in the prompt
+						thePrompt = makeCenteredPromptString(thePrompt);
+						
+						DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 25, scrollWithPage: (AllowDialogsToScroll()) });
+
+						return;
+
+					}
+				}
 
 				// Keep track of share play presentation
 				sendGoogleAnalytics("show_player","from_share");
@@ -18097,6 +18126,7 @@ function DoInjectTablature_MD(){
 	// Setup initial values
 	const theData = {
 	  configure_dulcimer_style:gMDulcimerStyle,
+	  open_string_symbol:gMDulcimerUseDashForOpenString,
 	  strip_bad_tunes:gMDulcimerStripBadTunes
 	};
 
@@ -18104,6 +18134,7 @@ function DoInjectTablature_MD(){
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Mountain Dulcimer Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#injecting_tablature" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
 	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject tablature for a DAD, DGD, or DAA-tuned Mountain Dulcimer in the style selected below into all of the tunes in the ABC text area:</p>'},	  
 	  {name: "Style:", id: "configure_dulcimer_style", type:"select", options:mountain_dulcimer_styles, cssClass:"configure_md_settings_select"}, 
+	  {name: "          Use - for open strings (default is leave blank using a space)", id: "open_string_symbol", type:"checkbox", cssClass:"configure_md_settings_form_text"},
 	  {name: "          Strip tunes from the result that have no complete tablature solution", id: "strip_bad_tunes", type:"checkbox", cssClass:"configure_md_settings_form_text"},
 	  {html: '<p style="margin-top:24px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},	  
 
@@ -18115,6 +18146,8 @@ function DoInjectTablature_MD(){
 		if (!args.canceled){
 
 			gMDulcimerStyle = args.result.configure_dulcimer_style; 
+
+			gMDulcimerUseDashForOpenString = args.result.open_string_symbol;
 
 			gMDulcimerStripBadTunes = args.result.strip_bad_tunes;
 
@@ -26640,6 +26673,7 @@ var gBambooFluteKey = 1; // Default to D
 // Mountain Dulcimer style
 var gMDulcimerStyle = 0; // Default to high string
 var gMDulcimerStripBadTunes = false; // Don't strip bad tunes on MD injection
+var gMDulcimerUseDashForOpenString = false; // Use a space for open strings
 
 // Get the initial configuration settings from local browser storage, if present
 function GetInitialConfigurationSettings(){
@@ -26896,25 +26930,42 @@ function GetInitialConfigurationSettings(){
 		gMDulcimerStripBadTunes = false;
 	}
 
+	val = localStorage.MDulcimerUseDashForOpenString;
+	if (val){
+		gMDulcimerUseDashForOpenString = (val == "true");
+	}
+	else{
+		gMDulcimerUseDashForOpenString = false;
+	}
+
 	// ABC rendering fonts
     var theRenderingFonts = localStorage.RenderingFonts;
 
     if (theRenderingFonts){
     	
-        gRenderingFonts = JSON.parse(theRenderingFonts);
-        
-        // MAE 24 Nov 2023 - For addition of the tab label font
-        if (!gRenderingFonts.tablabelfont){
+    	try{
 
-        	gRenderingFonts.tablabelfont = "Trebuchet MS 14";
+	        gRenderingFonts = JSON.parse(theRenderingFonts);
+	        
+	        // MAE 24 Nov 2023 - For addition of the tab label font
+	        if (!gRenderingFonts.tablabelfont){
 
-        }
-        // MAE 26 Nov 2023 - For addition of the tab graces font
-        if (!gRenderingFonts.tabgracefont){
+	        	gRenderingFonts.tablabelfont = "Trebuchet MS 14";
 
-        	gRenderingFonts.tabgracefont = "Arial 8";
+	        }
+	        // MAE 26 Nov 2023 - For addition of the tab graces font
+	        if (!gRenderingFonts.tabgracefont){
 
-        }
+	        	gRenderingFonts.tabgracefont = "Arial 8";
+
+	        }
+	    }
+	    catch(err){
+
+	    	// In case font parsing throws an error
+	    	resetABCRenderingFonts();
+	    	
+	    }
     }
     else{
     	resetABCRenderingFonts();
@@ -27400,7 +27451,8 @@ function SaveConfigurationSettings(){
 
 		// Save the mountain dulcimer style and bad tune strip option
 		localStorage.MDulcimerStyle =  gMDulcimerStyle;
-		localStorage.MDulcimerStripBadTunes = gMDulcimerStripBadTunes
+		localStorage.MDulcimerStripBadTunes = gMDulcimerStripBadTunes;
+		localStorage.MDulcimerUseDashForOpenString = gMDulcimerUseDashForOpenString;
 
 		// Save the ABC rendering fonts
 		localStorage.RenderingFonts = JSON.stringify(gRenderingFonts);

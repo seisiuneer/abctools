@@ -5083,6 +5083,10 @@ var MDTablatureGenerator = function (theABC){
                 if (!thisGlyph){
                     return "x;x;x";
                 }
+
+                if (gMDulcimerUseDashForOpenString){
+                    thisGlyph = thisGlyph.replaceAll(" ","-");
+                }
              
                 return thisGlyph;
 
@@ -5134,6 +5138,10 @@ var MDTablatureGenerator = function (theABC){
                 };
 
                 var thisGlyph = glyph_map_cross_string_dad[note];
+
+                if (gMDulcimerUseDashForOpenString){
+                    thisGlyph = thisGlyph.replaceAll(" ","-");
+                }
 
                 if (!thisGlyph){
                     return "x;x;x";
@@ -5190,6 +5198,10 @@ var MDTablatureGenerator = function (theABC){
                 if (!thisGlyph){
                     return "x;x;x";
                 }
+
+                if (gMDulcimerUseDashForOpenString){
+                    thisGlyph = thisGlyph.replaceAll(" ","-");
+                }
              
                 return thisGlyph;
 
@@ -5243,6 +5255,10 @@ var MDTablatureGenerator = function (theABC){
                 if (!thisGlyph){
                     return "x;x;x";
                 }
+
+                if (gMDulcimerUseDashForOpenString){
+                    thisGlyph = thisGlyph.replaceAll(" ","-");
+                }
              
                 return thisGlyph;
                 break; 
@@ -5293,6 +5309,10 @@ var MDTablatureGenerator = function (theABC){
                 if (!thisGlyph){
                     return "x;x;x";
                 }
+
+                if (gMDulcimerUseDashForOpenString){
+                    thisGlyph = thisGlyph.replaceAll(" ","-");
+                }
              
                 return thisGlyph;
 
@@ -5302,6 +5322,10 @@ var MDTablatureGenerator = function (theABC){
 
                 // Blank tab
                 var thisGlyph = " ; ; ";
+
+                if (gMDulcimerUseDashForOpenString){
+                    thisGlyph = "-;-;-";
+                }
              
                 return thisGlyph;
 
