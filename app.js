@@ -172,6 +172,8 @@ var gAddPlaybackHyperlinksIncludePrograms = false;
 var gPlaybackHyperlinkMelodyProgram = "";
 var gPlaybackHyperlinkBassProgram = "";
 var gPlaybackHyperlinkChordProgram = "";
+var gPlaybackHyperlinkBassVolume = "";
+var gPlaybackHyperlinkChordVolume = "";
 
 var gPlaybackHyperlinkSoundFont = "";
 var gAddTunebookPlaybackHyperlinks = false;
@@ -3124,7 +3126,7 @@ function processSingleTunePlaybackInjectsQR(theTune){
 		// Strip out X:
 		theTune = theTune.replace(searchRegExp, "");
 
-		theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI bassprog "+gPlaybackHyperlinkBassProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkChordProgram+"\n"+theTune;
+		theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI bassprog "+gPlaybackHyperlinkBassProgram+"\n"+"%%MIDI bassvol "+gPlaybackHyperlinkBassVolume+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkChordProgram+"\n"+"%%MIDI chordvol "+gPlaybackHyperlinkChordVolume+"\n"+theTune;
 
 	}
 
@@ -3642,7 +3644,7 @@ function GetAllTuneHyperlinks(theLinks) {
 			// Strip out X:
 			theTune = theTune.replace(searchRegExp, "");
 
-			theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI bassprog "+gPlaybackHyperlinkBassProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkChordProgram+"\n"+theTune;
+			theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI bassprog "+gPlaybackHyperlinkBassProgram+"\n"+"%%MIDI bassvol "+gPlaybackHyperlinkBassVolume+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkChordProgram+"\n"+"%%MIDI chordvol "+gPlaybackHyperlinkChordVolume+"\n"+theTune;
 
 		}
 
@@ -6220,6 +6222,38 @@ function ParseCommentCommands(theNotes){
 			// No programs specified, just add the link, but don't inject the programs
 			gAddPlaybackHyperlinksIncludePrograms = false;
 
+		}
+	}
+
+	// Inject the MIDI volumes in the ABC before creating the link
+	gPlaybackHyperlinkBassVolume = gTheBassVolume;
+	gPlaybackHyperlinkChordVolume = gTheChordVolume;
+
+	// Search for a playback volume request
+	searchRegExp = /^%add_all_playback_volumes.*$/m
+
+	// Detect playback volume annotation
+	var addPlaybackVolumes = theNotes.match(searchRegExp);
+
+	if ((addPlaybackVolumes) && (addPlaybackVolumes.length > 0)){
+
+		var thePatch = addPlaybackVolumes[0].replace("%add_all_playback_volumes","");
+
+		thePatch = thePatch.trim();
+
+		var thePatches = thePatch.match(/\b(\w+)\b/g);
+
+		if (thePatches && (thePatches.length > 0)){
+			
+			if (thePatches.length >= 1){
+				gPlaybackHyperlinkBassVolume = thePatches[0];
+				gPlaybackHyperlinkBassVolume = gPlaybackHyperlinkBassVolume.trim();
+			}
+
+			if (thePatches.length >= 2){
+				gPlaybackHyperlinkChordVolume = thePatches[1];
+				gPlaybackHyperlinkChordVolume = gPlaybackHyperlinkChordVolume.trim();
+			}	
 		}
 	}
 
@@ -10522,8 +10556,14 @@ var gPDFTunebookConfig ={
 	// Bass Instrument
 	bass_instrument: 1,
 
+	// Bass Volume
+	bass_volume: 64,
+
 	// Chord Instrument
 	chord_instrument: 1,
+
+	// Chord Volume
+	chord_volume: 64,
 
 	// QR Code?
 	bAdd_QRCode: true,
@@ -10582,8 +10622,14 @@ function resetPDFTunebookConfig(){
 		// Bass Instrument
 		bass_instrument: 1,
 
+		// Bass volume:
+		bass_volume: 64,
+
 		// Chord Instrument
 		chord_instrument: 1,
+
+		// Chord volume:
+		chord_volume: 64,
 
 		// QR Code?
 		bAdd_QRCode: true,
@@ -10629,6 +10675,15 @@ function PDFTunebookBuilder(){
 		gPDFTunebookConfig.bass_instrument = 1;
 	}
 
+	// bass and chord volume was added later, make sure the field is present
+	if ((!gPDFTunebookConfig.bass_volume) || (gPDFTunebookConfig.bass_volume == "")){
+		gPDFTunebookConfig.bass_volume = "64";
+	}
+
+	if ((!gPDFTunebookConfig.chord_volume) || (gPDFTunebookConfig.chord_volume == "")){
+		gPDFTunebookConfig.chord_volume = "64";
+	}
+
 	var midi_program_list = [];
 
   	for (var i=0;i<138;++i){
@@ -10670,7 +10725,9 @@ function PDFTunebookBuilder(){
 	  {name: "Soundfont for playback links:", id: "sound_font", type:"select", options:sound_font_options, cssClass:"configure_setuppdftunebook_midi_program_select"},
 	  {name: "Melody instrument for playback links:", id: "melody_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
 	  {name: "Bass instrument for playback links:", id: "bass_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
+	  {name: "Bass volume (0-127):", id: "bass_volume", type:"number", cssClass:"configure_setuppdftunebook_form_text"},
 	  {name: "Chord instrument for playback links:", id: "chord_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
+	  {name: "Chord volume (0-127):", id: "chord_volume", type:"number", cssClass:"configure_setuppdftunebook_form_text"},
 	  {name: "          Add a QR Code to the end of the PDF", id: "bAdd_QRCode", type:"checkbox", cssClass:"configure_setuppdftunebook_form_text"},
 	  {html: '<p style="margin-top:18px;margin-bottom:16px;font-size:12pt;line-height:10pt;font-family:helvetica">To override the default Share URL QR Code, enter your own URL below:</p>'},  
 	  {name: "Custom URL:", id: "qrcode_link", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
@@ -10794,8 +10851,14 @@ function PDFTunebookBuilder(){
 			// Bass Instrument
 			gPDFTunebookConfig.bass_instrument = args.result.bass_instrument;
 
+			// Bass volume
+			gPDFTunebookConfig.bass_volume = args.result.bass_volume;
+
 			// Chord Instrument
 			gPDFTunebookConfig.chord_instrument = args.result.chord_instrument;
+
+			// Chord volume
+			gPDFTunebookConfig.chord_volume = args.result.chord_volume;
 
 			if (gPDFTunebookConfig.bAdd_add_all_playback_links){
 				
@@ -10861,7 +10924,12 @@ function PDFTunebookBuilder(){
 
 				}
 
+				var volBass = gPDFTunebookConfig.bass_volume;
+
+				var volChord = gPDFTunebookConfig.chord_volume;
+
 				header_to_add += "%add_all_playback_links "+progNumMelody+" "+progNumBass+" "+progNumChord+" "+soundFont+"\n";
+				header_to_add += "%add_all_playback_volumes "+volBass+" "+volChord+"\n";
 
 				// Will only add the full tunebook Share URL annotation if the playback links are also enabled
 				if (gPDFTunebookConfig.bAdd_add_full_tunebook){
@@ -17414,6 +17482,7 @@ function InjectPDFHeaders(){
 	output += "%urlpagefooter https://michaeleskin.com Page Footer as Hyperlink\n";
 	output += "%add_all_links_to_thesession\n";
 	output += "%add_all_playback_links 0 0 0 fluid\n";
+	output += "%add_all_playback_volumes 64 64\n";
 	output += "%playback_links_are_complete_tunebook\n";
 	output += "%swing_all_hornpipes 0.25\n";	
 	output += "%noswing_all_hornpipes\n";	
