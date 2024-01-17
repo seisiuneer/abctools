@@ -172,6 +172,7 @@ var gAddPlaybackHyperlinksIncludePrograms = false;
 var gPlaybackHyperlinkMelodyProgram = "";
 var gPlaybackHyperlinkBassProgram = "";
 var gPlaybackHyperlinkChordProgram = "";
+var gAddPlaybackHyperlinkVolumes = false;
 var gPlaybackHyperlinkBassVolume = "";
 var gPlaybackHyperlinkChordVolume = "";
 
@@ -3126,7 +3127,12 @@ function processSingleTunePlaybackInjectsQR(theTune){
 		// Strip out X:
 		theTune = theTune.replace(searchRegExp, "");
 
-		theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI bassprog "+gPlaybackHyperlinkBassProgram+"\n"+"%%MIDI bassvol "+gPlaybackHyperlinkBassVolume+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkChordProgram+"\n"+"%%MIDI chordvol "+gPlaybackHyperlinkChordVolume+"\n"+theTune;
+		if (gAddPlaybackHyperlinkVolumes){
+			theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI bassprog "+gPlaybackHyperlinkBassProgram+"\n"+"%%MIDI bassvol "+gPlaybackHyperlinkBassVolume+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkChordProgram+"\n"+"%%MIDI chordvol "+gPlaybackHyperlinkChordVolume+"\n"+theTune;
+		}
+		else{
+			theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI bassprog "+gPlaybackHyperlinkBassProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkChordProgram+"\n"+theTune;
+		}
 
 	}
 
@@ -3644,7 +3650,12 @@ function GetAllTuneHyperlinks(theLinks) {
 			// Strip out X:
 			theTune = theTune.replace(searchRegExp, "");
 
-			theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI bassprog "+gPlaybackHyperlinkBassProgram+"\n"+"%%MIDI bassvol "+gPlaybackHyperlinkBassVolume+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkChordProgram+"\n"+"%%MIDI chordvol "+gPlaybackHyperlinkChordVolume+"\n"+theTune;
+			if (gAddPlaybackHyperlinkVolumes){
+				theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI bassprog "+gPlaybackHyperlinkBassProgram+"\n"+"%%MIDI bassvol "+gPlaybackHyperlinkBassVolume+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkChordProgram+"\n"+"%%MIDI chordvol "+gPlaybackHyperlinkChordVolume+"\n"+theTune;
+			}
+			else{
+				theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI bassprog "+gPlaybackHyperlinkBassProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkChordProgram+"\n"+theTune;
+			}
 
 		}
 
@@ -6226,8 +6237,7 @@ function ParseCommentCommands(theNotes){
 	}
 
 	// Inject the MIDI volumes in the ABC before creating the link
-	gPlaybackHyperlinkBassVolume = gTheBassVolume;
-	gPlaybackHyperlinkChordVolume = gTheChordVolume;
+	gAddPlaybackHyperlinkVolumes = false;
 
 	// Search for a playback volume request
 	searchRegExp = /^%add_all_playback_volumes.*$/m
@@ -6237,6 +6247,10 @@ function ParseCommentCommands(theNotes){
 
 	if ((addPlaybackVolumes) && (addPlaybackVolumes.length > 0)){
 
+		// Default to the settings volumes
+		gPlaybackHyperlinkBassVolume = gTheBassVolume;
+		gPlaybackHyperlinkChordVolume = gTheChordVolume;
+
 		var thePatch = addPlaybackVolumes[0].replace("%add_all_playback_volumes","");
 
 		thePatch = thePatch.trim();
@@ -6244,6 +6258,8 @@ function ParseCommentCommands(theNotes){
 		var thePatches = thePatch.match(/\b(\w+)\b/g);
 
 		if (thePatches && (thePatches.length > 0)){
+
+			gAddPlaybackHyperlinkVolumes = true;
 			
 			if (thePatches.length >= 1){
 				gPlaybackHyperlinkBassVolume = thePatches[0];

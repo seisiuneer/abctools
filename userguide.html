@@ -2257,7 +2257,8 @@
             <p>To specify the volumes for the bass and chords to the playback links also add:</p>
             <p class="code">%add_all_playback_volumes BASS_VOLUME CHORD_VOLUME</p>
             <p>Range for both BASS_VOLUME and CHORD_VOLUME is 0 to 127.</p>
-            <p>If %add_all_playback_volumes is not present, the volumes injected into each tune will be whatever you have set as your default bass and chord volume in the tool's <strong>Settings</strong>.</p>
+            <p>If %add_all_playback_volumes is not present, no volumes will be injected into each tune.</p>
+            <p>If no other tune-specific volume directives are in the tunes, the bass and chords will play at whatever default volumes the user has set in their tool's <strong>Settings</strong>.</p>
             <p>For example, to set the bass volume to 48 and the chord volume to 64:</p>
             <p class="code">%add_all_playback_volumes 48 64</p>
             <p>To have the playback links include the entire tunebook ABC, along with %add_all_playback_links also add:</p>
