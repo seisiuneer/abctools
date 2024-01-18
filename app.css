@@ -228,6 +228,18 @@ padding:12px;}
 	}
 }
 
+#incipitsbuilder{
+	height:42px;
+	padding:12px;
+	margin-right:24px;
+}
+
+@media (hover: hover) {
+	.incipitsbuilder:hover{
+	background: palegreen;
+	}
+}
+
 .snapshotbutton{
 margin-left: 0px;
 margin-right: 22px;
@@ -3464,6 +3476,31 @@ padding-left:10px;
 margin-top:-7px;
 }
 
+.incipits_builder_form_text_checkbox{
+	font-size:12pt;
+	line-height:11px;
+	font-family:helvetica;
+	margin-top:20px;
+	display:flex;
+}
+
+.incipits_builder_form_text{
+	font-size:12pt;
+	line-height:11px;
+	font-family:helvetica;
+	margin-top:20px;
+	display:flex;
+}
+
+.incipits_builder_form_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 60px;
+	margin-top:-10px;
+	padding:4px;
+}
+
 /******************************************************************************/
 /* STYLES RELATED TO EXPERIMENT BUTTONS                                       */
 /******************************************************************************/
@@ -3569,6 +3606,11 @@ margin-top:-7px;
 .btn-sortbutton{
   --color: black;
   --background-color: #F0F0F0;
+}
+
+.btn-incipitsbuilder{
+  --color: black;
+  --background-color: #f0fff0;
 }
 
 .btn-snapshotbutton{

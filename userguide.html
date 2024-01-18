@@ -304,8 +304,9 @@
                     <div class="tocpanel">
                         
                         <p class="toc"><a style="text-decoration:none;" href="#export_all">Export All Audio or Images</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#sort_dialog">Sort by Specific Tag</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#advanced_comhaltas">Comhaltas ABC Transform</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#sort_dialog">Sort by Tag</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#incipits_builder">Incipits Builder</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_comhaltas">Comhaltas Transform</a></p>
                     </div>
 
                     <button class="accordion" title="Click to expand/collapse this section">SmartDraw Set List Builder</button>
@@ -935,11 +936,11 @@
             <h1 class="page_break_always">More ABC Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
             <div class="image_holder_p">
-                <img src="img/more_abc_tools_7.jpg"/>
+                <img src="img/more_abc_tools_8.jpg"/>
             </div>
             <p>If you would like to only show the buttons for the features you commonly use and hide the others, click the controls icon at the top-right of the dialog to choose features of the dialog you would like to show/hide:</p>
             <div class="image_holder_p">
-                <img src="img/more_abc_tools_feature_options_1.jpg"/>
+                <img src="img/more_abc_tools_feature_options_2.jpg"/>
             </div>
             <p>The most commonly used buttons are always shown.</p>
             <p>Your preferences are saved and restored the next time you use the tool.</p>
@@ -1360,7 +1361,7 @@
             <hr>
             <p><strong>Export all Share URLs as CSV</strong>: Exports tune names and Share URLs for all of the tunes in a CSV file.</p>
             <hr class="hidden-print" id="sort_dialog">
-            <h1 class="page_break_always">Sort by Specific Tag<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <h1 class="page_break_always">Sort by Tag<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <hr>
             <p>Brings up a dialog where you can sort the tunes based on a specified ABC tag:</p>
             <p style="margin-left:30px;"><strong>Sort by Name (T:)</strong> - Sorts all the tunes by name alphabetically based on the value found in the first T: tag, ignoring an initial "The"</p>
@@ -1368,8 +1369,25 @@
             <p style="margin-left:30px;"><strong>Sort by Key (K:)</strong> - This sorts all the tunes by the key value found in the first K: tag in the tune.</p>
             <p style="margin-left:30px;"><strong>Sort by Meter (M:)</strong> - This sorts all the tunes by the meter value found in the first M: tag in the tune.</p>
             <p style="margin-left:30px;">Sort order is: C|, C, 4/4, 6/8, 9/8, 12/8, 2/4, 3/4, 6/4, followed by any other meters found, grouped by meter.</p>
+            <hr class="hidden-print" id="incipits_builder">
+            <h1 class="page_break_always">Incipits Builder<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <hr>
+            <p>Brings up a dialog where you can easily format the ABC specifically for notation incipits PDF export with only a couple of bars per tune:</p>
+            <div class="image_holder_p">
+                <img src="img/incipits_builder_1.jpg"/>
+            </div>
+            <p>Since this modifies the ABC, you may want to grab a <strong>Snapshot</strong> before running this command.</p>
+            <p><strong>Bars per staff</strong> - Sets the number of measures shown in the incipit. Default is 3.</p>
+            <p><strong>Staff width</strong> - Compresses the horizontal size of the incipit notation compared to the standard of 556. Default is 300.</p>
+            <p><strong>Add tune title numbers</strong> - When checked, prepends the tune titles with incrementing numbers.</p>
+            <p><strong>Left justify titles</strong> - When checked, will enable the "Left-justify all titles and subtitles" in the tool's <strong>Settings</strong></p>
+            <p>When <strong>Left justify titles</strong> is checked, you will need to manually reset the setting in the tool's settings after exporting the incipits as a PDF.</p>
+            <p>Here is an example of a two-column notation incipits PDF exported using the default settings:</p>
+            <div class="image_holder_p">
+                <img src="img/incipits_builder_example_1.jpg"/>
+            </div>
             <hr class="hidden-print" id="advanced_comhaltas">
-            <h1 class="page_break_always">Comhaltas ABC Transform<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <h1 class="page_break_always">Comhaltas Transform<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <hr>
             <p>Brings up a dialog where you can choose between transforming the entire ABC from the standard ABC d e f octave note style to the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style, or from the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style to standard ABC d e f octave note style.</p>
             <p><strong>Important:</strong> While the note Names display will show the Comhaltas-preferred note names, the ABC standard requires that the second octave C in the ABC itself either be represented by c or C' so that may requires some minor changes when pasting in your Comhaltas-formatted tunes.</p>

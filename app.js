@@ -3136,6 +3136,24 @@ function processSingleTunePlaybackInjectsQR(theTune){
 
 	}
 
+	// Strip injected incipit formatting metadata
+	// This is for play links that were created from formatted incipits
+	var incipitStart = theTune.indexOf("%incipits_inject_start");
+
+	if (incipitStart != -1){
+
+		var output = theTune.substring(0,incipitStart);
+
+		var endMarker = "%incipits_inject_end";
+		var incipitEnd = theTune.indexOf(endMarker);
+		incipitEnd += endMarker.length+1;
+
+		output += theTune.substring(incipitEnd,theTune.length);
+
+		theTune = output;
+
+	}
+
 
 	return theTune;
 
@@ -3656,6 +3674,24 @@ function GetAllTuneHyperlinks(theLinks) {
 			else{
 				theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI bassprog "+gPlaybackHyperlinkBassProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkChordProgram+"\n"+theTune;
 			}
+
+		}
+		
+		// Strip injected incipit formatting metadata
+		// This is for play links that were created from formatted incipits
+		var incipitStart = theTune.indexOf("%incipits_inject_start");
+
+		if (incipitStart != -1){
+
+			var output = theTune.substring(0,incipitStart);
+
+			var endMarker = "%incipits_inject_end";
+			var incipitEnd = theTune.indexOf(endMarker);
+			incipitEnd += endMarker.length+1;
+
+			output += theTune.substring(incipitEnd,theTune.length);
+
+			theTune = output;
 
 		}
 
@@ -17616,6 +17652,122 @@ function TuneTitlesNumbersDialog(){
 
 }
 
+//
+// Incipits builder dialog
+//
+var gIncipitsBuilderBars = 3;
+var gIncipitsBuilderWidth = 300;
+var gIncipitsBuilderLeftJustify = true;
+var gIncipitsBuilderInjectNumbers = true;
+
+function IncipitsBuilderDialog(){
+
+	// Setup initial values
+	const theData = {
+  		IncipitsBuilderBars: gIncipitsBuilderBars,
+ 		IncipitsBuilderWidth: gIncipitsBuilderWidth,
+ 		IncipitsBuilderLeftJustify: gIncipitsBuilderLeftJustify,
+ 		IncipitsBuilderInjectNumbers: gIncipitsBuilderInjectNumbers
+	};
+
+	var form = [
+		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Incipits Builder&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#incipits_builder" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
+  		{name: "Number of bars: (Default is 3)", id: "IncipitsBuilderBars", type:"number", cssClass:"incipits_builder_form_text"},
+  		{name: "Staff width: (Default is 300, full width is 556)", id: "IncipitsBuilderWidth", type:"number", cssClass:"incipits_builder_form_text"},
+		{name: "    Left justify incipits titles. Requires manual reset after in the Settings.", id: "IncipitsBuilderLeftJustify", type:"checkbox", cssClass:"incipits_builder_form_text_checkbox"},
+		{name: "    Add numbers before titles", id: "IncipitsBuilderInjectNumbers", type:"checkbox", cssClass:"incipits_builder_form_text_checkbox"},
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+
+		if (!args.canceled){
+
+			sendGoogleAnalytics("action","IncipitsBuilder");
+
+			gIncipitsBuilderBars = args.result.IncipitsBuilderBars; 
+			var nBars = parseInt(gIncipitsBuilderBars);
+
+			if (isNaN(nBars)){
+				nBars = 3;
+				gIncipitsBuilderBars = 3;
+			}
+			
+			gIncipitsBuilderWidth = args.result.IncipitsBuilderWidth; 
+			var theWidth = parseInt(gIncipitsBuilderWidth);
+
+			if (isNaN(theWidth)){
+				theWidth = 300;
+				gIncipitsBuilderWidth = 300;
+			}
+			
+			gIncipitsBuilderLeftJustify = args.result.IncipitsBuilderLeftJustify; 
+			gIncipitsBuilderInjectNumbers = args.result.IncipitsBuilderInjectNumbers; 
+
+    		var nTunes = CountTunes();
+
+		    // Should never get here, but just to be safe...
+		 	if (nTunes == 0){
+
+				var thePrompt = "No tunes for incipits building.";
+				
+				// Center the string in the prompt
+				thePrompt = makeCenteredPromptString(thePrompt);
+				
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+				return;
+			}
+
+			var theNotes = gTheABC.value;
+
+			// Find the tunes
+			var theTunes = theNotes.split(/^X:/gm);
+
+			var output = FindPreTuneHeader(theNotes);
+
+			for (var i=1;i<=nTunes;++i){
+
+				var theTune = "X:"+theTunes[i];
+
+				// Inject an easily identified block of annotations
+				var stringToInject = "%incipits_inject_start\n%%noexpandtowidest\n%%barsperstaff "+nBars+"\n%%staffwidth "+theWidth+"\n%incipits_inject_end";
+
+				output += InjectStringBelowTuneHeader(theTune,stringToInject);
+
+			}
+
+			gTheABC.value = output;
+
+			if (gIncipitsBuilderLeftJustify){
+
+				gForceLeftJustifyTitles = true;
+
+			}
+
+			if (gIncipitsBuilderInjectNumbers){
+				
+				// First remove any existing tune title numers
+				var theNotes = RemoveTuneTitleNumbers(false);
+
+				// Stuff it back in the work area so getTuneByIndex() returns st
+			    gTheABC.value = theNotes;
+
+			    var result = processTuneTitleNumbers(nTunes,theNotes);
+
+			    // Stuff the final result back in the editor
+			    gTheABC.value = result;
+
+			}
+
+			RenderAsync(true,null);
+
+		}
+
+	});
+
+}
+
+
 // 
 // Clean a title number from the start of a string
 //
@@ -17634,33 +17786,9 @@ function cleanTitleNumber(str){
 //
 // Add tune title numbers
 //
-function AddTuneTitleNumbers(){
-
-    var nTunes = CountTunes();
-
-    // Should never get here, but just to be safe...
- 	if (nTunes == 0){
-
-		var thePrompt = "No tunes to add tune title numbers.";
-		
-		// Center the string in the prompt
-		thePrompt = makeCenteredPromptString(thePrompt);
-		
-		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
-
-		return;
-	}
-
-	// Keep track of add number use
-	sendGoogleAnalytics("action","AddTuneTitleNumbers");
-
-	// First remove any existing tune title numers
-	var theNotes = RemoveTuneTitleNumbers(false);
-
-	// Stuff it back in the work area so getTuneByIndex() returns st
-    gTheABC.value = theNotes;
-
-    var result = FindPreTuneHeader(theNotes);
+function processTuneTitleNumbers(nTunes,theNotes){
+	
+	var result = FindPreTuneHeader(theNotes);
 
     // Add a blank line after the header and before the tunes
     if (result != ""){
@@ -17732,6 +17860,37 @@ function AddTuneTitleNumbers(){
     }
 
     result = result.replaceAll("\n\n","\n");
+
+    return result;
+}
+
+function AddTuneTitleNumbers(){
+
+    var nTunes = CountTunes();
+
+    // Should never get here, but just to be safe...
+ 	if (nTunes == 0){
+
+		var thePrompt = "No tunes to add tune title numbers.";
+		
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+		
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
+
+	// Keep track of add number use
+	sendGoogleAnalytics("action","AddTuneTitleNumbers");
+
+	// First remove any existing tune title numers
+	var theNotes = RemoveTuneTitleNumbers(false);
+
+	// Stuff it back in the work area so getTuneByIndex() returns st
+    gTheABC.value = theNotes;
+
+    result = processTuneTitleNumbers(nTunes,theNotes);
 
     // Stuff the final result back in the editor
     gTheABC.value = result;
@@ -22181,6 +22340,24 @@ function PreProcessPlayABC(theTune){
 			theTune = InjectOneTuneMIDIVolumeAboveTune(theTune, gTheChordVolume, true);
 
 		}
+
+	}
+
+	// Strip injected incipit formatting metadata
+	// This is for play links that were created from formatted incipits
+	var incipitStart = theTune.indexOf("%incipits_inject_start");
+
+	if (incipitStart != -1){
+
+		var output = theTune.substring(0,incipitStart);
+
+		var endMarker = "%incipits_inject_end";
+		var incipitEnd = theTune.indexOf(endMarker);
+		incipitEnd += endMarker.length+1;
+
+		output += theTune.substring(incipitEnd,theTune.length);
+
+		theTune = output;
 
 	}
 
@@ -28984,10 +29161,10 @@ function Configure_AdvancedControlsDialog_UI(){
 	];
 
 	if (isDesktopBrowser()){
-		form.push({name: "          Show Export, Sort, and Comhaltas features", id: "showexport", type:"checkbox", cssClass:"configure_ui_options_form_text"});
+		form.push({name: "          Show Export, Sort, Incipits, and Comhaltas features", id: "showexport", type:"checkbox", cssClass:"configure_ui_options_form_text"});
 	}
 	else{
-		form.push({name: "          Show Sort and Comhaltas features", id: "showexport", type:"checkbox", cssClass:"configure_ui_options_form_text"});		
+		form.push({name: "          Show Sort, Incipits, and Comhaltas features", id: "showexport", type:"checkbox", cssClass:"configure_ui_options_form_text"});		
 	}
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 500, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
@@ -29115,7 +29292,7 @@ function AdvancedControlsDialog(){
 
 	// Showing export?
 	if (gFeaturesShowExport){
-		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Audio or Images" title="Exports all the tunes in the ABC text area as audio or image files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Specific Tag" title="Brings up the Sort by Specific Tag dialog"><input id="ceoltastransform" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransformDialog()" type="button" value="Comhaltas ABC Transform" title="Transforms the ABC to/from Comhaltas format."></p>';
+		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Audio or Images" title="Exports all the tunes in the ABC text area as audio or image files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag" title="Brings up the Sort by Specific Tag dialog"><input class="incipitsbuilder btn btn-incipitsbuilder" id="incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Incipits Builder" title="Formats the ABC for notation incipits PDF export"><input id="ceoltastransform" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransformDialog()" type="button" value="Comhaltas Transform" title="Transforms the ABC to/from Comhaltas format."></p>';
 	}
 
 	modal_msg += '</div>';
