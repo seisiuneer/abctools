@@ -1981,6 +1981,9 @@ var TunebookTPSTRequested = false;
 var theTunebookTPST = "";
 var theTunebookTPSTURL = "";
 
+// Have bookmarks been added
+var TunebookBookmarksAdded = false;
+
 // Did they request a TOC with no page numbers?
 var TunebookTOCWithNoPageNumbers = false;
 
@@ -3465,8 +3468,16 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 			if (!TunebookIndexWithNoPageNumbers){
 
 				if (doPageLinks){
+
 					thePDF.textWithLink(theTitles[i], INDEXLEFTMARGIN, curTop, {align:"left",pageNumber:theFinalPageNumber});
-				}
+    				
+    				if (!TunebookBookmarksAdded){
+
+    					thePDF.outline.add(null, theTitles[i], {pageNumber:theFinalPageNumber});
+
+    				}
+
+ 				}
 				else{
 					thePDF.text(theTitles[i], INDEXLEFTMARGIN, curTop, {align:"left"});
 				}
@@ -3486,6 +3497,12 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 				if (doPageLinks){
 
 					thePDF.textWithLink(theTitles[i], (thePDF.internal.pageSize.getWidth()/3.10) - (textWidth/2), curTop, {align:"left",pageNumber:theFinalPageNumber});
+    				
+    				if (!TunebookBookmarksAdded){
+
+    					thePDF.outline.add(null, theTitles[i], {pageNumber:theFinalPageNumber});
+
+    				}
 				}
 				else{
 
@@ -3522,7 +3539,15 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 			}
 
 			if (doPageLinks){
+				
 				thePDF.textWithLink(theSectionName, (thePDF.internal.pageSize.getWidth()/3.10) - (textWidth/2), curTop, {align:"left",pageNumber:theFinalPageNumber});
+				
+				if (!TunebookBookmarksAdded){
+
+					thePDF.outline.add(null, theSectionName, {pageNumber:theFinalPageNumber});
+
+				}
+
 			}
 			else{
 				thePDF.text(theSectionName, (thePDF.internal.pageSize.getWidth()/3.10) - (textWidth/2), curTop, {align:"left"});
@@ -4250,6 +4275,11 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 
 					thePDF.textWithLink(theTitles[i], TOCLEFTMARGIN, curTop, {align:"left",pageNumber:(thePageNumber+pageDelta)});
 
+     				thePDF.outline.add(null, theTitles[i], {pageNumber:(thePageNumber+pageDelta)});
+
+     				TunebookBookmarksAdded = true;
+
+ 
 				}
 				else{
 
@@ -4276,6 +4306,11 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 				if (doPageLinks){
 
 					thePDF.textWithLink(theTitles[i], (thePDF.internal.pageSize.getWidth()/3.10) - (textWidth/2), curTop, {align:"left",pageNumber:(thePageNumber+pageDelta)});
+
+     				thePDF.outline.add(null, theTitles[i], {pageNumber:(thePageNumber+pageDelta)});
+
+     				TunebookBookmarksAdded = true;
+
 				}
 				else{
 
@@ -4311,6 +4346,11 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 
 			if (doPageLinks){
 				thePDF.textWithLink(theSectionName, (thePDF.internal.pageSize.getWidth()/3.10) - (textWidth/2), curTop, {align:"left",pageNumber:(thePageNumber+pageDelta)});
+     			
+     			thePDF.outline.add(null, theSectionName, {pageNumber:(thePageNumber+pageDelta)});
+
+     			TunebookBookmarksAdded = true;
+
 			}
 			else{
 				thePDF.text(theSectionName, (thePDF.internal.pageSize.getWidth()/3.10) - (textWidth/2), curTop, {align:"left"});
@@ -5579,6 +5619,8 @@ function ParseCommentCommands(theNotes){
 		theTunebookSortedIndexTitle = theTunebookSortedIndexTitle.trim();
 	}
 
+	// Clear bookmarks rendered
+	TunebookBookmarksAdded = false;
 
 	// Clear the tunebook toc string
 	theTunebookTOCTitle = "";
