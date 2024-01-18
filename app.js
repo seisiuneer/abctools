@@ -17656,7 +17656,7 @@ function TuneTitlesNumbersDialog(){
 // Incipits builder dialog
 //
 var gIncipitsBuilderBars = 3;
-var gIncipitsBuilderWidth = 300;
+var gIncipitsBuilderWidth = 400;
 var gIncipitsBuilderLeftJustify = true;
 var gIncipitsBuilderInjectNumbers = true;
 
@@ -17673,7 +17673,7 @@ function IncipitsBuilderDialog(){
 	var form = [
 		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Incipits Builder&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#incipits_builder" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px">?</a></span></p>'},
   		{name: "Number of bars: (Default is 3)", id: "IncipitsBuilderBars", type:"number", cssClass:"incipits_builder_form_text"},
-  		{name: "Staff width: (Default is 300, full width is 556)", id: "IncipitsBuilderWidth", type:"number", cssClass:"incipits_builder_form_text"},
+  		{name: "Staff width: (Default is 400, full width is 556)", id: "IncipitsBuilderWidth", type:"number", cssClass:"incipits_builder_form_text"},
 		{name: "    Left justify incipits titles. Requires manual reset after in the Settings.", id: "IncipitsBuilderLeftJustify", type:"checkbox", cssClass:"incipits_builder_form_text_checkbox"},
 		{name: "    Add numbers before titles", id: "IncipitsBuilderInjectNumbers", type:"checkbox", cssClass:"incipits_builder_form_text_checkbox"},
 	];
@@ -17696,8 +17696,8 @@ function IncipitsBuilderDialog(){
 			var theWidth = parseInt(gIncipitsBuilderWidth);
 
 			if (isNaN(theWidth)){
-				theWidth = 300;
-				gIncipitsBuilderWidth = 300;
+				theWidth = 400;
+				gIncipitsBuilderWidth = 400;
 			}
 			
 			gIncipitsBuilderLeftJustify = args.result.IncipitsBuilderLeftJustify; 
