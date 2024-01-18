@@ -4279,7 +4279,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 				}
 				else{
 
-					thePDF.tex(theTitles[i], (thePDF.internal.pageSize.getWidth()/3.10) - (textWidth/2), curTop, {align:"left"});
+					thePDF.text(theTitles[i], (thePDF.internal.pageSize.getWidth()/3.10) - (textWidth/2), curTop, {align:"left"});
 
 				}
 
