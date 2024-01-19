@@ -306,6 +306,9 @@ var gFeaturesShowTabButtons = true;
 // Force an update of local storage for the tab
 var gForceTabSave = false;
 
+// ABC Editor font size
+var gABCEditorFontsize = 13;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -27697,6 +27700,17 @@ function GetInitialConfigurationSettings(){
 		gFeaturesShowTabButtons = (val == "true");
 	}
 
+    val = localStorage.ABCEditorFontSize;
+	if (val){
+		gABCEditorFontsize = parseInt(val);
+		if (isNaN(gABCEditorFontsize)){
+			gABCEditorFontsize = 13;
+		}
+	}
+	else{
+		gABCEditorFontsize = 13;
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -27867,6 +27881,9 @@ function SaveConfigurationSettings(){
 		localStorage.FeaturesShowExplorers = gFeaturesShowExplorers;
 		localStorage.FeaturesShowExport = gFeaturesShowExport;
 		localStorage.FeaturesShowTabButtons = gFeaturesShowTabButtons;
+
+		// Save Editor font size
+		localStorage.ABCEditorFontSize = gABCEditorFontsize;
 	}
 }
 
@@ -29740,6 +29757,7 @@ function ConfigureToolSettings() {
 	// Setup initial values
 	const theData = {
 		configure_save_exit_snapshot: gSaveLastAutoSnapShot,
+		configure_editor_fontsize: gABCEditorFontsize,
 		configure_staff_spacing: theOldStaffSpacing,
 		configure_left_justify_titles: gForceLeftJustifyTitles,
 		configure_capo: gCapo,
@@ -29777,6 +29795,7 @@ function ConfigureToolSettings() {
   	// Disallowing auto snapshots on mobile
 	if (isDesktopBrowser()){
 		form.push({name: "   Save an Auto-Snapshot on browser tab close or reload (Restore it from the Add dialog)", id: "configure_save_exit_snapshot", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
+		form.push({name: "ABC Editor Font Size (default is 13):", id: "configure_editor_fontsize", type:"number", cssClass:"configure_settings_form_text"});
 	}
 
 	form = form.concat([
@@ -30081,6 +30100,26 @@ function ConfigureToolSettings() {
 			}
 
 			IdleAllowShowTabNames();
+
+			if (isDesktopBrowser()){
+
+				var testEditorFontSize = args.result.configure_editor_fontsize;
+
+				testEditorFontSize = parseInt(testEditorFontSize);
+
+				if (!isNaN(testEditorFontSize)){
+
+					// Sanity check the font size value
+					if ((testEditorFontSize >= 6) && (testEditorFontSize <= 36)){
+
+						gABCEditorFontsize = testEditorFontSize;
+
+						updateABCEditorFont();
+
+					}	
+
+				}
+			}
 
 			// Force change of saved staff spacing if user modifies it in the dialog
 			// Related to avoiding resetting of saved staff spacing if changed by a shared file
@@ -31588,6 +31627,23 @@ function CleanSmartQuotes(){
 }
 
 //
+// Update the editor font size
+//
+function updateABCEditorFont(){
+
+	// Make sure the default still looks the same
+	if (gABCEditorFontsize == 13){
+		gTheABC.style.fontSize = "13pt";
+		gTheABC.style.lineHeight = "16pt";
+	}
+	else{
+		// Scale the line height based on the font size
+		gTheABC.style.fontSize = gABCEditorFontsize + "pt";
+		gTheABC.style.lineHeight = (gABCEditorFontsize+(gABCEditorFontsize*.23)) + "pt";
+	}
+}
+
+//
 // Fix the iOS 17 URL encoded paste issue
 //
 function FixIOS17(){
@@ -32376,6 +32432,9 @@ function DoStartup() {
 			}
 		
 		}
+
+		// Set the ABC Editor font from the value read from local storage
+		updateABCEditorFont();
 
 	}
 

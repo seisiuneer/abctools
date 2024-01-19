@@ -1991,7 +1991,7 @@ left:-5000px;
 	font-size:12pt;
 	line-height:11px;
 	font-family:helvetica;
-	margin-top:12px;
+	margin-top:10px;
 	display:flex;
 }
 
@@ -1999,14 +1999,14 @@ left:-5000px;
 	font-size:12pt;
 	line-height:11px;
 	font-family:helvetica;
-	margin-top:20px;
+	margin-top:16px;
 	display:flex;
 }
 
 .configure_settings_form_text>input{
 	font-size:12pt;
 	font-family:helvetica;
-	margin-left: 12px;
+	margin-left:12px;
 	width: 60px;
 	margin-top:-10px;
 	padding:4px;
