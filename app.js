@@ -313,8 +313,41 @@ var gABCEditorFontsize = 13;
 var gTheABC = document.getElementById("abc");
 
 //
+// Replacements getters and setters for legacy hidden PDF formatting select code
+//
+
+var gPDFFormat = "one";
+var gPageNumbers = "none";
+var gFirstPage = "yes";
+
+function setPDFFormat(val){
+	gPDFFormat = val;
+}
+
+function getPDFFormat(){
+	return gPDFFormat;
+}
+
+function setPageNumbers(val){
+	gPageNumbers = val;
+}
+
+function getPageNumbers(){
+	return gPageNumbers;
+}
+
+function setFirstPage(val){
+	gFirstPage = val;
+}
+
+function getFirstPage(){
+	return gFirstPage;
+}
+
+//
 // Tune utility functions
 // 
+
 
 //
 // Extract the title from a single tune ABC
@@ -7375,9 +7408,9 @@ function ExportPDF(){
 	}
 
 	// Get the page format
-	var elem = document.getElementById("pdfformat");
+	var elem;
 
-	var thePageOptions = elem.options[elem.selectedIndex].value;
+	var thePageOptions = getPDFFormat();
 
 	var textIncipitsRequested = ((thePageOptions == "incipits_abc") || (thePageOptions == "incipits_a4_abc") || (thePageOptions == "incipits_abc_sort") || (thePageOptions == "incipits_a4_abc_sort") || (thePageOptions == "incipits_abc_full") || (thePageOptions == "incipits_a4_abc_full") || (thePageOptions == "incipits_abc_full_cce") || (thePageOptions == "incipits_a4_abc_full_cce"));
 
@@ -7404,7 +7437,7 @@ function ExportPDF(){
 
 		// We know the user requests mixed notation and QR, set the page options back to one tune per page
 		// Future operations read this value
-		document.getElementById("pdfformat").value = thePageOptions;
+		setPDFFormat(thePageOptions);
 
 	}
 
@@ -7473,9 +7506,9 @@ function ExportPDF(){
 		// Standard PDF export path
 
 		// Get the page format
-		var elem = document.getElementById("pdfformat");
+		var elem;
 
-		var thePageOptions = elem.options[elem.selectedIndex].value;
+		var thePageOptions = getPDFFormat();
 
 		var incipitsRequested = ((thePageOptions == "incipits") || (thePageOptions == "incipits_a4"));
 		
@@ -7518,18 +7551,16 @@ function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform, bDoQRCodes)
 	gPDFCancelRequested = false;
 
 	// Get the page format
-	var elem = document.getElementById("pdfformat");
+	var elem;
 
-	var thePageOptions = elem.options[elem.selectedIndex].value;
+	var thePageOptions = getPDFFormat();
 
 	// Show the PDF status modal
 	var pdfstatus = document.getElementById("pdf-controls");
 	pdfstatus.style.display = "block";
 
 	// Page number location
-	elem = document.getElementById("pagenumbers");
-
-	var pageNumberLocation = elem.options[elem.selectedIndex].value;
+	var pageNumberLocation = getPageNumbers();
 
 	// Add page numbers?
 	var addPageNumbers = (pageNumberLocation != "none");
@@ -7555,9 +7586,7 @@ function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform, bDoQRCodes)
 	// Hide page numbers on page 1?
 	var hideFirstPageNumber = false;
 
-	elem = document.getElementById("firstpage");
-
-	var firstPageNumbers = elem.options[elem.selectedIndex].value;
+	var firstPageNumbers = getFirstPage();
 
 	if (firstPageNumbers == "no"){
 
@@ -7918,7 +7947,6 @@ function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform, bDoQRCodes)
 						 	pdf.save(title);
 					 	}
 
-
 						document.getElementById("statuspdfname").innerHTML = "&nbsp;";
 
 						document.getElementById("statustunecount").innerHTML = "&nbsp;";
@@ -7941,7 +7969,6 @@ function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform, bDoQRCodes)
 	},250);
 }
 
-
 //
 // Export a PDF document with notation, either full or first line incipits
 //
@@ -7958,14 +7985,12 @@ function ExportNotationPDF(title) {
 	pdfstatus.style.display = "block";
 
 	// Get the page format
-	var elem = document.getElementById("pdfformat");
+	var elem;
 
-	var thePageOptions = elem.options[elem.selectedIndex].value;
+	var thePageOptions = getPDFFormat();
 
 	// Page number location
-	elem = document.getElementById("pagenumbers");
-
-	var pageNumberLocation = elem.options[elem.selectedIndex].value;
+	var pageNumberLocation = getPageNumbers();
 
 	var doSinglePage = ((thePageOptions == "one") || (thePageOptions == "one_a4"));
 
@@ -7986,9 +8011,7 @@ function ExportNotationPDF(title) {
 	// Hide page numbers on page 1?
 	var hideFirstPageNumber = false;
 
-	elem = document.getElementById("firstpage");
-
-	var firstPageNumbers = elem.options[elem.selectedIndex].value;
+	var firstPageNumbers = getFirstPage();
 
 	if (firstPageNumbers == "no"){
 
@@ -8272,10 +8295,10 @@ function ExportNotationPDF(title) {
 						//console.log("gMixedNotationAndQRCode - Resetting pdfformat - Cancelled");
 
 						if (paperStyle == "a4"){
-							document.getElementById("pdfformat").value = "mixed_notation_qr_a4";
+							setPDFFormat("mixed_notation_qr_a4");
 						}
 						else{
-							document.getElementById("pdfformat").value = "mixed_notation_qr";
+							setPDFFormat("mixed_notation_qr");
 						}
 
 						SavePDFSettings();
@@ -8642,10 +8665,10 @@ function ExportNotationPDF(title) {
 												//console.log("gMixedNotationAndQRCode - Resetting pdfformat - Normal");
 
 												if (paperStyle == "a4"){
-													document.getElementById("pdfformat").value = "mixed_notation_qr_a4";
+													setPDFFormat("mixed_notation_qr_a4");
 												}
 												else{
-													document.getElementById("pdfformat").value = "mixed_notation_qr";
+													setPDFFormat("mixed_notation_qr");
 												}
 
 												SavePDFSettings();
@@ -8997,13 +9020,13 @@ function UpdateLocalStorage(){
 			localStorage.abcStaffSpacing = ssp;
 		}
 
-		var pdfformat = document.getElementById("pdfformat").value;
+		var pdfformat = getPDFFormat();
 		localStorage.abcTunesPerPage = pdfformat;
 
-		var pagenumbers = document.getElementById("pagenumbers").value;
+		var pagenumbers = getPageNumbers();
 		localStorage.abcPageNumberLocation = pagenumbers;
 
-		var firstpage = document.getElementById("firstpage").value;
+		var firstpage = getFirstPage();
 		localStorage.abcPageNumberOnPageOne = firstpage;
 
 		var topbar = gTopBarShowing;
@@ -13652,11 +13675,11 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
 
 	var ssp = gStaffSpacing-STAFFSPACEOFFSET;
 
-	var pdfformat = document.getElementById("pdfformat").value;
+	var pdfformat = getPDFFormat();
 
-	var pagenumbers = document.getElementById("pagenumbers").value;
+	var pagenumbers = getPageNumbers();
 
-	var firstpage = document.getElementById("firstpage").value;
+	var firstpage = getFirstPage();
 
 	var url = getUrlWithoutParams() + "?lzw=" + abcInLZW + "&format=" + format + "&ssp=" + ssp + "&pdf=" + pdfformat + "&pn=" + pagenumbers + "&fp=" + firstpage;
 
@@ -17080,31 +17103,31 @@ function processShareLink() {
 	// Handler for pdf format pdf parameter
 	if (urlParams.has("pdf")) {
 		var thePDF = urlParams.get("pdf");
-		document.getElementById("pdfformat").value = thePDF;
+		setPDFFormat(thePDF);
 	}
 	else{
 		// Default is one tune per page
-		document.getElementById("pdfformat").value = "one";
+		setPDFFormat("one");
 	}
 
 	// Handler for page number pn parameter
 	if (urlParams.has("pn")) {
 		var thePN = urlParams.get("pn");
-		document.getElementById("pagenumbers").value = thePN;
+		setPageNumbers(thePN);
 	}
 	else{
-		// Default is bottom center
-		document.getElementById("pagenumbers").value = "none";
+		// Default is none
+		setPageNumbers("none");
 	}
 
 	// Handler for first page fp parameter
 	if (urlParams.has("fp")) {
 		var theFP = urlParams.get("fp");
-		document.getElementById("firstpage").value = theFP;
+		setFirstPage(theFP);
 	}
 	else{
 		// Default is to put page numbers on page 1
-		document.getElementById("firstpage").value = "yes";
+		setFirstPage("yes");
 	}
 
 	// Is editing disabled?
@@ -28956,16 +28979,16 @@ function PDFExportDialog(){
 
 	var thePaperSize = "letter";
 
-	var theTuneLayout = document.getElementById("pdfformat").value;
+	var theTuneLayout = getPDFFormat();
 	
 	if (theTuneLayout.indexOf("a4") != -1){
 		thePaperSize = "a4"
 		theTuneLayout = theTuneLayout.replace("_a4","");
 	}
 
-	var pagenumbers = document.getElementById("pagenumbers").value;
+	var pagenumbers = getPageNumbers();
 
-	var firstpage = document.getElementById("firstpage").value;
+	var firstpage = getFirstPage();
 
 	var theFirstPage = (firstpage == "yes");
 
@@ -29163,17 +29186,17 @@ function PDFExportDialog(){
 				}
 			}
 
-			document.getElementById("pdfformat").value = theTuneLayout;
+			setPDFFormat(theTuneLayout);
 
 			var thePageNumber = args.result.configure_pagenumber;
-			document.getElementById("pagenumbers").value = thePageNumber;
+			setPageNumbers(thePageNumber);
 
 			var thePageNumberOnFirstPage = args.result.configure_pagenumberonfirstpage;
 			if (thePageNumberOnFirstPage){
-				document.getElementById("firstpage").value = "yes";
+				setFirstPage("yes");
 			}
 			else{
-				document.getElementById("firstpage").value = "no";
+				setFirstPage("no");
 			}
 
 			var theFontName = args.result.configure_fontname;
@@ -30862,7 +30885,7 @@ function restoreStateFromLocalStorage(){
 
 	if (theTunesPerPage){
 
-		document.getElementById("pdfformat").value = theTunesPerPage;
+		setPDFFormat(theTunesPerPage);
 
 	}
 
@@ -30871,7 +30894,7 @@ function restoreStateFromLocalStorage(){
 
 	if (thePageNumberLocation){
 
-		document.getElementById("pagenumbers").value = thePageNumberLocation;
+		setPageNumbers(thePageNumberLocation);
 
 	}
 
@@ -30880,7 +30903,7 @@ function restoreStateFromLocalStorage(){
 
 	if (thePageNumberOnPageOne){
 
-		document.getElementById("firstpage").value = thePageNumberOnPageOne;
+		setFirstPage(thePageNumberOnPageOne);
 
 	}
 
@@ -32287,13 +32310,13 @@ function DoStartup() {
 	SetRadioValue("notenodertab", "noten");
 
 	// Reset the paging control
-	document.getElementById("pdfformat").value = "one";
+	setPDFFormat("one");
 
 	// Reset the page number control
-	document.getElementById("pagenumbers").value = "none";
+	setPageNumbers("none");
 
 	// Reset the first page page number control
-	document.getElementById("firstpage").value = "yes";
+	setFirstPage("yes");
 
 	// Hook up the zoom button
 	document.getElementById("zoombutton").onclick = 

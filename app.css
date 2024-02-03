@@ -322,10 +322,6 @@ display:flex;
 margin-top:18px;
 }
 
-#pdf-settings{
-display:none;
-}
-
 #pdf-controls{
 display:none;
 }
@@ -453,7 +449,6 @@ margin-left:11px;
 margin-right:0px;
 user-select: none;
 }
-
 
 #pagenumbers,#pagenumbers_dialog{
 font-size:11pt;
