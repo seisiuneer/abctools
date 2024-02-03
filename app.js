@@ -1381,6 +1381,12 @@ function SortTunes(stripAn){
 
 			}
 
+			if (thisTitle.indexOf("Da ")==0){
+
+				thisTitle = thisTitle.substring(3,thisTitle.length)+", Da";
+
+			}
+
 			if (stripAn){
 
 				if (thisTitle.indexOf("An ")==0){
@@ -2482,12 +2488,18 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		}
 
 
-		// If sorting incipits, do the The replacement before appending the key
+		// If sorting incipits, do the The and Da replacement before appending the key
 		if (sortTunes){
 
 			if (thisTitle.indexOf("The ")==0){
 
 				thisTitle = thisTitle.substring(4,thisTitle.length)+", The";
+
+			}
+
+			if (thisTitle.indexOf("Da ")==0){
+
+				thisTitle = thisTitle.substring(3,thisTitle.length)+", Da";
 
 			}
 
@@ -2502,7 +2514,6 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 	// Sorted incipipits requested?
 	if (sortTunes){
 
-		// Move "The" to the end
 		var thisTitle;
 
 		var tuneInfo = [];
@@ -3406,6 +3417,13 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 
 				theTitles[i] = thisTitle;
 			}
+
+			if (thisTitle.indexOf("Da ")==0){
+
+				thisTitle = thisTitle.substring(3,thisTitle.length)+", Da";
+
+				theTitles[i] = thisTitle;
+			}
 		
 		}
 
@@ -4216,6 +4234,13 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 				theTitles[i] = thisTitle;
 			}
 
+			if (thisTitle.indexOf("Da ")==0){
+
+				thisTitle = thisTitle.substring(3,thisTitle.length)+", Da";
+
+				theTitles[i] = thisTitle;
+			}
+
 		}
 
 
@@ -4444,6 +4469,13 @@ function DryRunAddTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperSty
 			if (thisTitle.indexOf("The ")==0){
 
 				thisTitle = thisTitle.substring(4,thisTitle.length)+", The";
+
+				theTitles[i] = thisTitle;
+			}
+
+			if (thisTitle.indexOf("Da ")==0){
+
+				thisTitle = thisTitle.substring(3,thisTitle.length)+", Da";
 
 				theTitles[i] = thisTitle;
 			}

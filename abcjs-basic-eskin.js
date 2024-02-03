@@ -9144,10 +9144,40 @@ var Tokenizer = function Tokenizer(lines, multilineVars) {
       return result;
 
     } 
+
+    if (parseCommon.endsWith(str, ", Da")){
+      
+      //debugger;
+
+      //console.log("theReverser Da in:"+str); 
+
+      var theTitleNumber = getTitleNumber(str);
+
+      if (theTitleNumber){
+
+        //console.log("theReverser Da titlenumber:"+theTitleNumber); 
+
+        str = str.replace(theTitleNumber+".","");
+        str = str.trim();
+      }
+
+      var result = "Da " + str.substring(0, str.length - 4);
+
+      if (theTitleNumber){
+        result = theTitleNumber+". "+result;
+      }
+      
+      //console.log("theReverser Da out:"+result); 
+
+      return result;
+      
+    }
     
     return str;
 
   };
+
+
 
   this.stripComment = function (str) {
     var i = str.indexOf('%');
