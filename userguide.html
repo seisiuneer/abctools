@@ -312,6 +312,10 @@
                     <p class="toc"><a style="text-decoration:none;" href="#settings_dialog">ABC Transcription Tools Settings</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#advanced_settings">Advanced Settings</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#configure_fonts">Configuring ABC Rendering Fonts</a></p>
+                </div>
+
+                <button class="accordion" title="Click to expand/collapse this section">Typing ABC Using a MIDI Input Device</button>
+                <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#midi_input">Typing ABC Using a MIDI Input Device</a></p>
                 </div>
                 
@@ -1413,7 +1417,7 @@
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder_p">
-                <img src="img/abc_transcription_tool_settings_38.jpg"/>
+                <img src="img/abc_transcription_tool_settings_39.jpg"/>
             </div>
             <hr>
             <p><strong>Show instrument tablature button bar below ABC editor</strong> - If checked shows the instrument tablature button bar below the editor.</p>
@@ -1508,8 +1512,11 @@
             <p>For full details on swing factor and swing offset, see this section:</p>
             <p style="text-align: center;"><a style="text-decoration:none;" href="#adding_swing">Adding Playback Swing to Tunes</a></p>
             <hr>
-            <p>If your browser supports MIDI input, you will find this additional option in the settings dialog:</p>
+            <p>If your browser supports MIDI input, you will find these two additional options in the settings dialog:</p>
             <p><strong>Allow MIDI input for ABC text entry</strong></p>
+            <p>For full details on MIDI input, see this section:</p>
+            <p style="text-align: center;"><a style="text-decoration:none;" href="#midi_input">Typing ABC Using a MIDI Input Device</a></p>
+            <p><strong>MIDI input is key and mode aware (if unchecked, enters note names with no accidentals)</strong></p>
             <p>For full details on MIDI input, see this section:</p>
             <p style="text-align: center;"><a style="text-decoration:none;" href="#midi_input">Typing ABC Using a MIDI Input Device</a></p>
             <hr>
@@ -1616,32 +1623,39 @@
             <p>If checked, you can enter ABC melody notes (chords are not supported) into the editor area using a USB or Bluetooth MIDI keyboard or other MIDI input device:</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/8aV_iRAj_7E" title="MIDI Keyboard Input" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
             <p>This feature has been verified to work with the desktop version of Chrome and Firefox on a Mac, other browsers may also work as well.</p>
-            <p>The note text entered will have only the note name and octave without any sharp, flat, or natural indication: (G, A, B, C D E F G A B c d e f g a b c' d' etc.)</p>
-            <p>If you require specific sharps, flats, or naturals on the notes, you will need to add them manually.</p>
             <p>This feature has been tested with both USB and Bluetooth MIDI keyboards as well as a USB WARBL wind controller on a Mac running Chrome.</p>
             <p>To add a space, bar line, or other common useful ABC staff construction patterns after entering a MIDI note, you can use the MIDI text macro shortcuts described below.</p>
-            <p>The range of the ABC notes for MIDI note entry is from C, to c'' (MIDI notes 48 - 96).</p>
-            <p>The octave below C, starting on C,, (MIDI note 36) is used for inserting useful common ABC text macros.</p>
+            <p>There are two available modes for MIDI input, depending on whether you have also checked <strong>MIDI input is key and mode aware (if unchecked, enters note names with no accidentals)</strong>.</p>
+            <p><strong>When unchecked:</strong></p>
+            <p>The note text entered will have only the note name and octave without any sharp, flat, or natural indication: (G, A, B, C D E F G A B c d e f g a b c' d' etc.)</p>
+            <p>If you require specific sharps, flats, or naturals on the notes, you will need to add them manually.</p>
+            <p><strong>When checked:</strong></p>
+            <p>The MIDI input is aware of the key and mode of the current tune and will enter additional sharps, flats, or naturals as required.</p>
+            <p>Note that since these accidentals will carry forward in playback to notes afterwards in the measure.</p>
+            <p>For example, you may have to manually edit the ABC after entering a natural note if a sharp or flat note will follow in the same measure.</p>
+            <p><strong>For both MIDI input modes:</strong></p>
+            <p>The range of the ABC notes for MIDI note entry is from C,, to c'' (MIDI notes 36 - 96).</p>
+            <p>The octave below C,, starting on C,,, (MIDI note 24) is used for inserting useful common ABC text macros.</p>
             <p>This map shows the MIDI note number and the text inserted:</p>
-            <p class="code">36: Space<br/>
-                37: Backspace<br/>
-                38: |<br/>
-                39: /<br/>
-                40: 2 <br/>
-                41: 3<br/>
-                42: 4<br/>
-                43: (3<br/>
-                44: |:<br/>
-                45: :|<br/>
-                46: ||<br/>
-            47: |]</p>
+            <p class="code">24: Space<br/>
+                25: Backspace<br/>
+                26: |<br/>
+                27: /<br/>
+                28: 2 <br/>
+                29: 3<br/>
+                30: 4<br/>
+                31: (3<br/>
+                32: |:<br/>
+                33: :|<br/>
+                34: ||<br/>
+            35: |]</p>
             <p>When using a MIDI wind controller like the WARBL, you should set up the response curves to generate as few transient notes as possible.</p>
             <p>Additionally, you can map the buttons on the back of the WARBL to send three of the text macro triggers, which makes it possible to enter entire staves of ABC just from the WARBL.</p>
             <p>Here are the WARBL breath settings and button mappings I use:</p>
             <div class="image_holder_p">
-                <img src="img/warbl_settings_1.jpg"/>
+                <img src="img/warbl_settings_2.jpg"/>
             </div>
-            <p>I've configured the three buttons on the back of the WARBL to insert a space, bar line, and backspace (MIDI notes 36, 38, and 37).</p>
+            <p>I've configured the three buttons on the back of the WARBL to insert a space, bar line, and backspace (MIDI notes 24, 26, and 25).</p>
             <p>Setting them to "Momentary" speeds up the button response.</p>
             <p>Here's a demo video showing entering the notes and bar lines for "The Kesh" jig into the tool entirely from my WARBL:</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/fFWkVW9dtqc" title="WARBL ABC Input" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>

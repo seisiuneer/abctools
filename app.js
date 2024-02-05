@@ -259,6 +259,7 @@ var gNotationLeftMarginBeforeMaximize = "auto";
 var gTheNotation = document.getElementById("notation-holder");
 
 var gAllowMIDIInput = false;
+var gMIDIChromatic = false;
 
 var gIsFromShare = false;
 
@@ -27473,6 +27474,11 @@ function GetInitialConfigurationSettings(){
 		gAllowMIDIInput = (val == "true");
 	}
 
+	val = localStorage.MIDIChromatic;
+	if (val){
+		gMIDIChromatic = (val == "true");
+	}
+
 	// PDF Features
     var PDFTunebookConfig = localStorage.PDFTunebookConfig;
 
@@ -27875,6 +27881,9 @@ function SaveConfigurationSettings(){
 
 		// Save the allow MIDI input state
 		localStorage.AllowMIDIInput = gAllowMIDIInput;
+
+		// Save the chromatic MIDI parsing state
+		localStorage.MIDIChromatic = gMIDIChromatic;
 
 		// Save the PDF features 
 		localStorage.PDFTunebookConfig = JSON.stringify(gPDFTunebookConfig);
@@ -29830,6 +29839,7 @@ function ConfigureToolSettings() {
 		configure_auto_swing_hornpipes: gAutoSwingHornpipes,	  
 		configure_auto_swing_factor: gAutoSwingFactor,	
 		configure_allow_midi_input: gAllowMIDIInput,
+		configure_midi_chromatic: gMIDIChromatic,
 		configure_show_tab_buttons: gFeaturesShowTabButtons	  
 	};
 
@@ -29874,6 +29884,7 @@ function ConfigureToolSettings() {
 
 	if (browserSupportsMIDI()){
 		form.push({name: "    Allow MIDI input for ABC text entry", id: "configure_allow_midi_input", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
+		form.push({name: "    MIDI input is key and mode aware (if unchecked, enters note names with no accidentals)", id: "configure_midi_chromatic", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 	};
 
 	form.push({html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Font Settings" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML Settings" title="Configure MusicXML import parameters"><input id="configure_developer_settings" class="btn btn-subdialog configure_developer_settings" onclick="AdvancedSettings()" type="button" value="Advanced Settings" title="Configure low level tool settings"></p>'});	
@@ -30140,6 +30151,7 @@ function ConfigureToolSettings() {
 			if (browserSupportsMIDI()){
 
 				gAllowMIDIInput = args.result.configure_allow_midi_input;
+				gMIDIChromatic = args.result.configure_midi_chromatic;
 
 				// If they've allowed MIDI input, and not currently using it
 				if (theOldAllowMIDIInput != gAllowMIDIInput){
@@ -31075,84 +31087,32 @@ function HandleWindowResize(){
 //
 function getMIDI_note_name(note){
 
- // var MIDI_note_map_full = {
- //        "36":"C,,",
- //        "37":"^C,,",
- //        "38":"D,,",
- //        "39":"^D,,",
- //        "40":"E,,",
- //        "41":"F,,",
- //        "42":"^F,,",
- //        "43":"G,,",
- //        "44":"^G,,",
- //        "45":"A,,",
- //        "46":"^A,,",
- //        "47":"B,,",        
- //        "48":"C,",
- //        "49":"^C,",
- //        "50":"D,",
- //        "51":"^D,",
- //        "52":"E,",
- //        "53":"F,",
- //        "54":"^F,",
- //        "55":"G,",
- //        "56":"^G,",
- //        "57":"A,",
- //        "58":"^A,",
- //        "59":"B,",
- //        "60": "C",
- //        "61":"^C",
- //        "62":"D",
- //        "63":"^D",
- //        "64":"E",
- //        "65":"F",
- //        "66":"^F",
- //        "67":"G",
- //        "68":"^G",
- //        "69":"A",
- //        "70":"^A",
- //        "71":"B",
- //        "72":"c",
- //        "73":"^c",
- //        "74":"d",
- //        "75":"^d",
- //        "76":"e",
- //        "77":"f",
- //        "78":"^f",
- //        "79":"g",
- //        "80":"^g",
- //        "81":"a",
- //        "82":"^a",
- //        "83":"b",
- //        "84":"c'",
- //        "85":"^c'",
- //        "86":"d'",
- //        "87":"^d'",
- //        "88":"e'",
- //        "89":"f'",
- //        "90":"^f'",
- //        "91":"g'",
- //        "92":"^g'",
- //        "93":"a'",
- //        "94":"^a'",
- //        "95":"b'",
- //        "96":"c''"
- //    };
-
 	var MIDI_note_map = {
 		// Special common ABC macros for WARBL and other controllers
-        "36":" ", 	// C,,
-        "37":"BACKSPACE", // ^C,,
-        "38":"|",   // D,,
-        "39":"/", 	// ^D,,
-        "40":"2", 	// E,,
-        "41":"3", 	// F,,
-        "42":"4", 	// ^F,,
-        "43":"(3", 	// G,,
-        "44":"|:", 	// ^G,,
-        "45":":|", 	// A,,
-        "46":"||", 	// ^A,,
-        "47":"|]",	// B,,
+        "24":" ", 	// C,,,
+        "25":"BACKSPACE", // ^C,,,
+        "26":"|",   // D,,,
+        "27":"/", 	// ^D,,,
+        "28":"2", 	// E,,,
+        "29":"3", 	// F,,,
+        "30":"4", 	// ^F,,,
+        "31":"(3", 	// G,,,
+        "32":"|:", 	// ^G,,,
+        "33":":|", 	// A,,,
+        "34":"||", 	// ^A,,,
+        "35":"|]",	// B,,,
+        "36":"C,,",
+        "37":"C,,",
+        "38":"D,,",
+        "39":"D,,",
+        "40":"E,,",
+        "41":"F,,",
+        "42":"F,,",
+        "43":"G,,",
+        "44":"G,,",
+        "45":"A,,",
+        "46":"A,,",
+        "47":"B,,", 
         "48":"C,",
         "49":"C,",
         "50":"D,",
@@ -31164,7 +31124,7 @@ function getMIDI_note_name(note){
         "56":"G,",
         "57":"A,",
         "58":"A,",
-        "59":"B,",
+        "59":"B,", 
         "60":"C",
         "61":"C",
         "62":"D",
@@ -31209,6 +31169,267 @@ function getMIDI_note_name(note){
 	return result;
 }
 
+const sharpNotes= ["c", "^c", "d", "^d", "e", "f", "^f", "g", "^g", "a", "^a", "b" ]
+const flatNotes= ["c", "_d", "d", "_e", "e", "f", "_g", "g", "_a", "a", "_b", "b" ]
+
+const sharps= [6,1,8,3,10,5]
+const flats= [10,3,8,1,6,11]
+
+// Determines the key signature
+// abcInput: ABC input string
+// returns: key signature map to use, or null on error.
+function midiFindKeySignature(abcInput) {
+
+    var myMap = null;
+
+    var keyMatch = abcInput.match(/^K: *([A-G])([b#])? *(.*?)$/m);
+    if (keyMatch == null || keyMatch.length < 3) {
+        return null;
+    }
+
+    var keySignatureBase;
+    var keyExtra;
+
+    if (keyMatch[2] == undefined) {
+        keySignatureBase = keyMatch[1];
+    } else {
+        keySignatureBase = keyMatch[1] + keyMatch[2];
+    }
+    keyExtra = keyMatch[3].toLowerCase();
+
+    // Strip any trailing comments
+    var searchExp = /%.*/
+    keyExtra = keyExtra.replace(searchExp,"");
+    keyExtra = keyExtra.trim();
+
+    //console.log("Got base key of '" + keySignatureBase + "' and extra of '" + keyExtra + "'");
+    
+    // Determine musical mode
+    if (keyExtra == "" ||
+        keyExtra.search("maj") != -1 ||
+        keyExtra.search("ion") != -1) {
+        //console.log("Mode: Ionian (major)");
+        myMap = midiKeySignatureMap(keySignatureBase, 0);
+    } else if (keyExtra.search("mix") != -1) {
+        //console.log("Mode: Mixolydian");
+        myMap = midiKeySignatureMap(keySignatureBase, 1);
+    } else if (keyExtra.search("dor") != -1) {
+        //console.log("Mode: Dorian");
+        myMap = midiKeySignatureMap(keySignatureBase, 2);
+    } else if ((keyExtra.search("m") != -1 && keyExtra.search("mix") == -1) ||
+        keyExtra.search("min") != -1 ||
+        keyExtra.search("aeo") != -1) {
+        //console.log("Mode: Aeolian (minor)");
+        myMap = midiKeySignatureMap(keySignatureBase, 3);
+    } else if (keyExtra.search("phr") != -1) {
+        //console.log("Mode: Phrygian");
+        myMap = midiKeySignatureMap(keySignatureBase, 4);
+    } else if (keyExtra.search("loc") != -1) {
+        //console.log("Mode: Locrian");
+        myMap = midiKeySignatureMap(keySignatureBase, 5);
+    } else if (keyExtra.search("lyd") != -1) {
+        //console.log("Mode: Lydian");
+        myMap = midiKeySignatureMap(keySignatureBase, -1);
+    } else if (keyExtra.search("exp") != -1) {
+        //console.log("(Accidentals to be explicitly specified)");
+        myMap = midiKeySignatureMap("C", 0);
+    } else {
+        // Unknown
+        //console.log("Failed to determine key signature mode");
+        myMap = null;
+    }
+
+    if (myMap == null) {
+        return myMap;
+    }
+
+    // Handle explicit accidentals
+    var explicitFlats = keyExtra.match(/_./g);
+    var explicitSharps = keyExtra.match(/\^./g);
+
+    for (note in explicitFlats) {
+        myMap.flats += explicitFlats[note][1].toUpperCase();
+    }
+
+    for (note in explicitSharps) {
+        myMap.sharps += explicitSharps[note][1].toUpperCase();
+    }
+
+    return myMap;
+
+}
+
+// Calculates a key signature map given a tonic and a mode
+function midiKeySignatureMap(tonic, modeFlatness) {
+
+    var circleOfFifths = "FCGDAEB";
+
+    var signature = {
+        sharps: "",
+        flats: ""
+    };
+
+    var baseSharpness = circleOfFifths.indexOf(tonic[0]) - 1;
+
+    if (baseSharpness == -2) {
+        //console("Bad tonic: " + tonic);
+        return null;
+    }
+
+    if (tonic.slice(1) == "b") {
+        baseSharpness -= 7;
+    } else if (tonic.slice(1) == "#") {
+        baseSharpness += 7;
+    }
+
+    var totalSharpness = baseSharpness - modeFlatness;
+
+    if (totalSharpness > 7) {
+        //console.log("Too many sharps: " + totalSharpness);
+        return null;
+    } else if (totalSharpness < -7) {
+        //console.log("Too many flats: " + (totalSharpness * -1));
+        return null;
+    } else if (totalSharpness > 0) {
+        signature.sharps = circleOfFifths.slice(0, totalSharpness);
+    } else if (totalSharpness < 0) {
+        signature.flats = circleOfFifths.slice(totalSharpness);
+    }
+
+    signature.accidentalSharps = "";
+    signature.accidentalFlats = "";
+    signature.accidentalNaturals = "";
+
+    return signature;
+}
+
+
+////////////////////////////////////////////////////////////
+//
+// translate from MIDI index to ABC note
+//
+////////////////////////////////////////////////////////////
+function lookupAbcNote(index, useFlat) {
+
+    var pos= index % 12 // numerical note in the octave
+    var octave= Math.floor(index/12) // C0 = 0
+ 
+    var note= useFlat ? flatNotes[pos] : sharpNotes[pos]
+
+    if (octave < 5) {
+        note= note.toUpperCase()
+        var commas= 4-octave
+        note= note + ",".repeat(commas)
+    }
+    else {
+        var apos= octave - 5
+        note= note + "'".repeat(apos)
+    }
+
+    return note
+}
+
+//
+// Key and mode aware MIDI note names solution
+// 
+function getMIDI_note_name_chromatic(note) {
+
+	var MIDI_note_map = {
+		// Special common ABC macros for WARBL and other controllers
+        "24":" ", 	// C,,
+        "25":"BACKSPACE", // ^C,,
+        "26":"|",   // D,,
+        "27":"/", 	// ^D,,
+        "28":"2", 	// E,,
+        "29":"3", 	// F,,
+        "30":"4", 	// ^F,,
+        "31":"(3", 	// G,,
+        "32":"|:", 	// ^G,,
+        "33":":|", 	// A,,
+        "34":"||", 	// ^A,,
+        "35":"|]",	// B,,
+    };
+
+    if (note < 24){
+    	console.log("out of range");
+    	return;
+    }
+
+    if ((note >= 24) && (note <= 35)){
+
+    	return MIDI_note_map[note];
+
+    }
+
+    //console.log("Note index: " + note)
+
+    // MAE 4 Feb 2024 - This locates the current tune
+    var thisTuneIndex = findSelectedTuneIndex();
+    var thisTune = getTuneByIndex(thisTuneIndex);
+
+    // This returns a structure that includes the sharps and flats for the current key and mode
+    // You can use this instead of your current system for sharp and flat parsing
+    // Structure includes sharps and flats as a string
+    var theKeySignature = midiFindKeySignature(thisTune);
+
+    // No key signature found
+    if (theKeySignature == null){
+    	theKeySignature = {sharps:"", flats:""};
+    }
+
+    //debugger;
+    
+    // The rest is your original code...
+    
+    var index= (parseInt(note) -12) // start from C0
+    var pos= index % 12 // numerical note in the octave
+
+    var modifier= 0;
+    var prefix= "";
+
+    var isSharpKey = true;
+    var isFlatKey = false;
+
+    if (theKeySignature.flats != ""){
+        isSharpKey = false;
+        isFlatKey = true;
+    }
+
+    if (isSharpKey) {
+
+        var nSharps=theKeySignature.sharps.length;
+
+        var shs= sharps.slice(0,nSharps) // get the sharps for this sig
+
+        if (shs.includes(pos)) 
+            modifier-- // remove sharp since it's already in the sig
+        else if (shs.includes(pos+1)) // naturals precede sharps
+            prefix="=" // add natural to override the sig
+  
+    }
+    else{
+
+        var nFlats = theKeySignature.flats.length;
+
+        var fls= flats.slice(0,nFlats) // get the flats for this sig
+
+        if (fls.indexOf(pos)!=-1)
+            modifier++ // remove flat since it's already in the sig
+        else if (fls.includes(pos-1)) // naturals follow flats
+            prefix="=" // add natural to override the sig
+  
+    }
+
+    var result= prefix+ lookupAbcNote (index + modifier, isFlatKey)
+    
+    //console.log("MIDI index: " + index + 
+    //            "   Original note: " + lookupAbcNote (index, isFlatKey) + 
+    //            "   in signature: " + result)
+                        
+    return result
+}
+
+
 //
 // MIDI input handler
 //
@@ -31218,7 +31439,14 @@ function MIDI_NoteOn(data){
 	
 	//console.log("MIDI_NoteOn data:"+data);
 
-	var theNoteName = getMIDI_note_name(data);
+	var theNoteName;
+
+	if (gMIDIChromatic){
+		theNoteName = getMIDI_note_name_chromatic(data);
+	}
+	else{
+		theNoteName = getMIDI_note_name(data);
+	}
 
 	if (theNoteName){
 
