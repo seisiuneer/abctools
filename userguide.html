@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
- 
+       
         <style>
 
 		p {
@@ -172,14 +172,18 @@
 		page-break-before: avoid;
 		}
 
-		iframe
-		{
-		  transition: transform .3s ease-in-out 0s;
-		}
+        @media (hover: hover) {
 
-		iframe:hover {
-		    transform: matrix(1.05, 0, 0, 1.05, 0, 0); 
-		}
+    		iframe
+    		{
+    		  transition: transform .2s ease-in-out 0s;
+    		}
+
+    		iframe:hover {
+    		    transform: matrix(1.05, 0, 0, 1.05, 0, 0); 
+    		}
+
+        }
 
 
 	</style>

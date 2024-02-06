@@ -1704,7 +1704,19 @@ left:-5000px;
 }
 
 @media (hover: hover) {
+	.playbuttonicon:hover{
+	background: palegreen;
+	}
+}
+
+@media (hover: hover) {
 	.helpbutton:hover{
+	background: palegreen;
+	}
+}
+
+@media (hover: hover) {
+	.pdfbuttonicon:hover{
 	background: palegreen;
 	}
 }
@@ -3515,7 +3527,6 @@ margin-top:-7px;
   border-radius: 0.5rem;
   user-select: none;
   box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.25), 0 -0.1rem 0.5rem rgba(0, 0, 0, 0.1) inset;
-  transition: box-shadow 64ms ease-out;
   -webkit-appearance:none;
 }
 .btn:after {
@@ -3528,7 +3539,6 @@ margin-top:-7px;
   left: 12.5%;
   border-radius: 50%;
   filter: blur(0.15rem);
-  transition: opacity 64ms ease-out;
 }
 .btn:active {
   box-shadow: 0 0 0 rgba(0, 0, 0, 0.4), 0 0.4rem 1rem rgba(0, 0, 0, 0.3) inset;
@@ -3944,6 +3954,73 @@ margin-top:-7px;
   --color: black;
   --background-color: lavender;
 }
+
+@media (hover: hover) {
+	
+	.btn
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.btn:hover {
+	    transform: matrix(1.04, 0, 0, 1.04, 0, 0); 
+	}
+
+	.modal_flat_ok
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.modal_flat_ok:hover {
+	    transform: matrix(1.04, 0, 0, 1.04, 0, 0); 
+	}
+
+	.modal_flat_cancel
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.modal_flat_cancel:hover {
+	    transform: matrix(1.04, 0, 0, 1.04, 0, 0); 
+	}
+
+	.helpbutton
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.helpbutton:hover {
+	    transform: matrix(1.05, 0, 0, 1.05, 0, 0); 
+	}
+
+	.playbuttonicon
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.playbuttonicon:hover {
+	    transform: matrix(1.05, 0, 0, 1.05, 0, 0); 
+	}
+
+	.zoombutton
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.zoombutton:hover {
+	    transform: matrix(1.05, 0, 0, 1.05, 0, 0); 
+	}
+
+	.pdfbuttonicon
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.pdfbuttonicon:hover {
+	    transform: matrix(1.05, 0, 0, 1.05, 0, 0); 
+	}
+}
+
 
 
 
