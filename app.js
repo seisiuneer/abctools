@@ -28680,6 +28680,17 @@ function defaultFontSettings(){
 	});
 }
 
+//
+// Load the font settings
+//
+function loadFontSettingsClickHandler(){
+
+	var elem = document.getElementById("load_rendering_fonts_fs");
+
+	elem.click();
+
+}
+
 function ConfigureFonts(){
 
 	// Keep track of dialogs
@@ -28723,7 +28734,7 @@ function ConfigureFonts(){
 	  {name: "Parts font (Default: Palatino 13):", id: "configure_partsfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
 	  {name: "Vocal font (Default: Palatino 13):", id: "configure_vocalfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
 	  {name: "Words font (Default: Palatino 13):", id: "configure_wordsfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
-	  {html: '<p style="text-align:center;margin-top:22px;"><input id="save_rendering_fonts" class="btn btn-top save_rendering_fonts" onclick="saveFontSettings()" type="button" value="Save to File" title="Saves the ABC rendering font settings to a file"><input type="file" id="load_rendering_fonts_fs" accept=".txt,.TXT" hidden/><label class="btn btn-top load_rendering_fonts" for="load_rendering_fonts_fs" id="load_rendering_fonts" title="Loads the ABC rendering font settings from a file">Load from File</label><input id="default_rendering_fonts" class="btn btn-clearbutton default_rendering_fonts" onclick="defaultFontSettings()" type="button" value="Reset to Default" title="Reset the ABC rendering fonts to their default values"></p>'}
+	  {html: '<p style="text-align:center;margin-top:22px;"><input id="save_rendering_fonts" class="btn btn-top save_rendering_fonts" onclick="saveFontSettings()" type="button" value="Save to File" title="Saves the ABC rendering font settings to a file"><input type="file" id="load_rendering_fonts_fs" accept=".txt,.TXT" hidden/><input class="btn btn-top load_rendering_fonts" type="button" id="load_rendering_fonts" title="Loads the ABC rendering font settings from a file" value="Load from File" onclick="loadFontSettingsClickHandler()"/><input id="default_rendering_fonts" class="btn btn-clearbutton default_rendering_fonts" onclick="defaultFontSettings()" type="button" value="Reset to Default" title="Reset the ABC rendering fonts to their default values"></p>'}
 	];
 	
 	setTimeout(function(){
