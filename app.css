@@ -4019,6 +4019,28 @@ margin-top:-7px;
 	.pdfbuttonicon:hover {
 	    transform: matrix(1.05, 0, 0, 1.05, 0, 0); 
 	}
+
+	.dialogcornerbutton
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.dialogcornerbutton:hover {
+	    transform: matrix(1.06, 0, 0, 1.06, 0, 0); 
+	}
+
+	.moresettingsbutton
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.moresettingsbutton:hover{
+		background: palegreen;
+	}
+
+	.moresettingsbutton:hover {
+	    transform: matrix(1.06, 0, 0, 1.06, 0, 0); 
+	}
 }
 
 
