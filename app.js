@@ -1294,7 +1294,7 @@ function DoSortTunesByMeter() {
 	var elem = document.getElementById("sortbutton");
 	if (elem){
 		// Give some feedback
-		elem.value = "Sorting by Meter";
+		elem.value = "Sorting...";
 	}
 
 	setTimeout(function(){
@@ -1314,7 +1314,7 @@ function DoSortTunesByMeter() {
 
 				var elem = document.getElementById("sortbutton");
 				if (elem){
-					elem.value = "Sort by Specific Tag";
+					elem.value = "Sort by Tag";
 				}
 
 			},1000);
@@ -1340,7 +1340,7 @@ function DoSortTunesByKey() {
 	var elem = document.getElementById("sortbutton");
 	if (elem){
 		// Give some feedback
-		elem.value = "Sorting by Key";
+		elem.value = "Sorting...";
 	}
 
 	setTimeout(function(){
@@ -1360,7 +1360,7 @@ function DoSortTunesByKey() {
 
 				var elem = document.getElementById("sortbutton");
 				if (elem){
-					elem.value = "Sort by Specific Tag";
+					elem.value = "Sort by Tag";
 				}
 
 			},1000);
@@ -1506,7 +1506,7 @@ function DoSortTunesByName(stripAn) {
 	var elem = document.getElementById("sortbutton");
 
 	if (elem){
-		elem.value = "Sorting by Name";
+		elem.value = "Sorting...";
 	}
 
 	setTimeout(function(){
@@ -1526,7 +1526,7 @@ function DoSortTunesByName(stripAn) {
 
 				var elem = document.getElementById("sortbutton");
 				if (elem){
-					elem.value = "Sort by Specific Tag";
+					elem.value = "Sort by Tag";
 				}
 
 			},1000);
