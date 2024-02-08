@@ -11300,7 +11300,24 @@ function searchForTunes() {
 
 	    for (var i=0;((i<nTunes) && (!maxResultsHit));++i){
 
-	        var theInfo = gTheParsedTuneDatabase[i].info
+	        var theInfo = gTheParsedTuneDatabase[i].info;
+
+	        // Filtering by style?
+	        if (gTheTuneSearchStyle != ""){
+
+	        	var thisStyle = theInfo["R"];
+	        	
+	        	if (!thisStyle){
+	        		continue;
+	        	}
+	        	
+	        	thisStyle = thisStyle.toLowerCase();
+	        	
+	        	if (thisStyle != gTheTuneSearchStyle){
+	        		continue;
+	        	}
+
+	        }
 
 	        var thisTitle = theInfo["T"];
 
@@ -11487,6 +11504,23 @@ function searchForTunes() {
 		        	for (var k=0;((k<nSettings) && (!maxResultsHit));++k){
 
 		            	var theABCInfo = gTheFolkFriendDatabase.settings[settingsMap[k]];
+
+		            	// Filtering by style?
+				        if (gTheTuneSearchStyle != ""){
+
+				        	var thisStyle = theABCInfo.dance;
+				        	
+				        	if (!thisStyle){
+				        		continue;
+				        	}
+				        	
+				        	thisStyle = thisStyle.toLowerCase();
+				        	
+				        	if (thisStyle != gTheTuneSearchStyle){
+				        		continue;
+				        	}
+
+				        }
 
 		            	if (theABCInfo.tune_id == aliasMap[i]){
 
@@ -11695,8 +11729,9 @@ function idleSearchResults(){
  	}
 
 }
+
 //
-//
+// Set the maximum search results
 //
 function SetTuneSearchMaxResults(){
 
@@ -11708,6 +11743,19 @@ function SetTuneSearchMaxResults(){
 	}
 
 }
+
+//
+// Set the tune style
+//
+
+function SetTuneSearchStyle(){
+
+	gTheTuneSearchStyle = document.getElementById("tunesearchstyle").value;
+
+	//console.log("gTheTuneSearchStyle = "+gTheTuneSearchStyle);
+
+}
+
 
 //
 // Fetch with retry
@@ -11899,6 +11947,7 @@ var gTheFolkFriendDatabase = null;
 var gTheCurrentTuneDatabase = 0;
 var gTheMaxDatabaseResults = 25;
 var gDefaultSearchCollection = 0;
+var gTheTuneSearchStyle = "";
 
 // Retry parameters
 var gTuneDatabaseRetryTimeMS = 3000;
@@ -11925,8 +11974,8 @@ function AddFromSearch(e){
 	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:0px;margin-bottom:18px;">Search for text in the tune name:&nbsp;&nbsp;<input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="tuneNameToSearch" title="Enter your search text here" autocomplete="off" autocorrect="off" placeholder="Enter your search text here"/> </p>';
 
 	modal_msg+='<p class="tunesearchoptions">Only return first variation found?&nbsp;<input id="only_first_variation" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" checked/>&nbsp;&nbsp;&nbsp;Match start of title?&nbsp;<input id="match_title_start" type="checkbox" style="margin-top:-5px;margin-bottom:0px;"/>&nbsp;&nbsp;&nbsp;Only return tunes with chords?&nbsp;<input id="chords_only" type="checkbox" style="margin-top:-5px;margin-bottom:0px;"/></p>';
-
-	modal_msg+='<p class="tunesearchoptionsmax">Maximum number of results:<select id="maxtunesearchresults" onchange="SetTuneSearchMaxResults();" title="Maximum number of results" style="margin-top:-7px;"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></p>';
+	
+	modal_msg+='<p class="tunesearchoptionsmax">Tune style:<select id="tunesearchstyle" onchange="SetTuneSearchStyle();" title="Tune style to search" style="margin-top:-7px;width:130px"><option value="">All Tunes</option> <option value="jig">Jigs</option> <option value="reel">Reels</option> <option value="slip jig">Slip Jigs</option> <option value="hornpipe">Hornpipes</option> <option value="polka">Polkas</option> <option value="slide">Slides</option> <option value="waltz">Waltzes</option> <option value="barndance">Barndances</option> <option value="strathspey">Strathspeys</option> <option value="three-two">Three-Twos</option> <option value="mazurka">Mazurkas</option> <option value="march">Marches</option></select>&nbsp;&nbsp;&nbsp;&nbsp;Maximum number of results:<select id="maxtunesearchresults" onchange="SetTuneSearchMaxResults();" title="Maximum number of results" style="margin-top:-7px;"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></p>';
 
 	modal_msg+='<p style="margin-top:10px;font-size:12pt;">	<input class="btn btn-start-search start-search" id="start-search" onclick="searchForTunes();" type="button" value="Search" title="Start search"><span id="status">&nbsp;&nbsp;&nbsp;Waiting for tune collection to load...</span></p>';
 
@@ -11947,6 +11996,10 @@ function AddFromSearch(e){
     // Default initial max results to 25
 	document.getElementById("maxtunesearchresults").value = "25";
 	gTheMaxDatabaseResults = 25;
+
+	// Initially search all tunes
+	document.getElementById("tunesearchstyle").value = "";
+	gTheTuneSearchStyle = "";
 
 	document.getElementById("add-search-results").disabled = true;
 
