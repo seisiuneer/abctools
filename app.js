@@ -26684,7 +26684,12 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 		        clearInterval(countdownInterval);
 		        elem.style.display = "none";
 
-		        callback();
+		        // Show the player for one second before start
+		        setTimeout(function(){
+
+		        	callback();
+
+		        },1000);
 		      }
 
 		    }, 1000); // Update every 1 second
