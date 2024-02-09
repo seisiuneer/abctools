@@ -19,6 +19,7 @@ var gGraceMissingTempo = false;
 // MAE 6 Nov 2023 - For tune trainer
 var gLoopCallback = null;
 var gStartPlayCallback = null;
+var gPreStartPlayCallback = null;
 var gPlayerInPause = false;
 
 // MAE 18 December 2023 - For custom roll timing
@@ -16671,14 +16672,25 @@ function SynthController(theABC) {
     return activeAudioContext().resume().then(function () {
       self.isStarted = !self.isStarted;
       if (self.isStarted) {
-        if (self.cursorControl && self.cursorControl.onStart && typeof self.cursorControl.onStart === 'function') self.cursorControl.onStart();
-        self.midiBuffer.start();
-        self.timer.start(self.percent);
-        if (self.control) self.control.pushPlay(true);
-        // MAE Start of Play
-        if (gStartPlayCallback != null){
-          gStartPlayCallback();
-          gStartPlayCallback = null;
+        if (gPreStartPlayCallback != null){
+          //console.log("Waiting on prestart");
+          gPreStartPlayCallback(_play2);
+          gPreStartPlayCallback = null;
+        }
+        else{
+          //console.log("Not waiting on prestart");
+          _play2();
+        }
+        function _play2(){
+          if (self.cursorControl && self.cursorControl.onStart && typeof self.cursorControl.onStart === 'function') self.cursorControl.onStart();
+          self.midiBuffer.start();
+          self.timer.start(self.percent);
+          if (self.control) self.control.pushPlay(true);
+          // MAE Start of Play
+          if (gStartPlayCallback != null){
+            gStartPlayCallback();
+            gStartPlayCallback = null;
+          }
         }
         // MAE End of change
       } else {

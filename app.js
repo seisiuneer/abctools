@@ -22118,6 +22118,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 		// Clear the looper callback
 		gLoopCallback = null;
 		gStartPlayCallback = null;
+		gPreStartPlayCallback = null;
 
 		// Clear the player in pause flag
 		gPlayerInPause = false;
@@ -23573,6 +23574,7 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 		// Clear the looper callback
 		gLoopCallback = null;
 		gStartPlayCallback = null;
+		gPreStartPlayCallback = null;
 
 		// Clear the player in pause flag
 		gPlayerInPause = false;
@@ -24489,6 +24491,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 		// Clear the looper callback
 		gLoopCallback = null;
 		gStartPlayCallback = null;
+		gPreStartPlayCallback = null;
 
 		// Clear the player in pause flag
 		gPlayerInPause = false;
@@ -25038,6 +25041,7 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 		// Clear the looper callback
 		gLoopCallback = null;
 		gStartPlayCallback = null;
+		gPreStartPlayCallback = null;
 		
 		// Clear the player in pause flag
 		gPlayerInPause = false;
@@ -25827,6 +25831,7 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 		// Clear the looper callback
 		gLoopCallback = null;
 		gStartPlayCallback = null;
+		gPreStartPlayCallback = null;
 		
 		// Clear the player in pause flag
 		gPlayerInPause = false;
@@ -26111,6 +26116,7 @@ function TuneTrainerReset(){
 		// Clear the looper callback
 		gLoopCallback = null;
 		gStartPlayCallback = null;
+		gPreStartPlayCallback = null;
 
 		// Clear the player in pause flag
 		gPlayerInPause = false;
@@ -26214,6 +26220,41 @@ function ToggleTuneTrainerWidePlayer(){
 	},250);		
 
 }
+
+// 
+// Save the count-in enable state
+//
+function ToggleLoopCountIn(){
+
+	gLooperDoCountdown = document.getElementById("looper_docountdown").checked;
+
+	if (gLocalStorageAvailable){
+		localStorage.LooperDoCountdown = gLooperDoCountdown;
+	}
+}
+
+// 
+// Save the count-in state
+//
+function SaveLoopCountIn(){
+	
+	gLooperCountdown = document.getElementById("looper_countdown").value;
+
+	gLooperCountdown = parseInt(gLooperCountdown);
+
+	if (isNaN(gLooperCountdown)){
+		gLooperCountdown = 5;
+	}
+
+	if (gLooperCountdown < 1){
+		gLooperCountdown = 5;
+	}
+
+	if (gLocalStorageAvailable){
+		localStorage.LooperCountdown = gLooperCountdown;
+	}
+}
+
 // 
 // Tune trainer Dialog
 //
@@ -26229,6 +26270,8 @@ var gPlayerLooperOriginal = null;
 var gPlayerLooperProcessed = null;
 var gLooperMetronomeState = false;
 var gTouchIncrementFive = false;
+var gLooperDoCountdown = true;
+var gLooperCountdown = 5;
 
 function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide){
 
@@ -26371,7 +26414,8 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 
 					// Setup the callbacks
 					gLoopCallback = LoopCallback;
-					gStartPlayCallback = StartCallback;
+					gStartPlayCallback = StartPlayCallback;
+					gPreStartPlayCallback = PreStartPlayCallback;
 
 					// Are we using the trainer touch controls
 					if (gTrainerTouchControls){
@@ -26578,7 +26622,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 	}
 
 	// Called when the user first clicks play
-	function StartCallback(){
+	function StartPlayCallback(){
 
 		var elem = document.getElementById("looperstatus");
 
@@ -26593,6 +26637,62 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 		// Update the progress bar
 		UpdateProgressBar();
 
+	}
+
+	// Called once when the user first clicks play before the play starts
+	function PreStartPlayCallback(callback){
+
+		//console.log("PreStartPlayCallback");
+
+		gLooperDoCountdown = document.getElementById("looper_docountdown").checked;
+		gLooperCountdown = document.getElementById("looper_countdown").value;
+
+		gLooperCountdown = parseInt(gLooperCountdown);
+
+		if (isNaN(gLooperCountdown)){
+			gLooperCountdown = 5;
+		}
+
+		if (gLooperCountdown < 1){
+			gLooperCountdown = 5;
+		}
+
+		if (gLocalStorageAvailable){
+			localStorage.LooperDoCountdown = gLooperDoCountdown;
+			localStorage.LooperCountdown = gLooperCountdown;
+		}
+
+		if (gLooperDoCountdown){
+
+			var elem = document.getElementById("loopercountdown");
+
+			elem.style.display = "block";
+
+		    var count = gLooperCountdown; 
+
+		    var countdownElement = document.getElementById('loopercountdowntext');
+		     
+		    countdownElement.textContent = count;
+
+		    var countdownInterval = setInterval(function() {
+
+		      count--;
+		      
+		      countdownElement.textContent = count;
+
+		      if (count <= 0) {
+		        clearInterval(countdownInterval);
+		        elem.style.display = "none";
+
+		        callback();
+		      }
+
+		    }, 1000); // Update every 1 second
+		}
+		else{
+			// No delay, start immediately
+			callback();
+		}
 	}
 
 	// 
@@ -26747,6 +26847,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 		// Clear the looper callback
 		gLoopCallback = null;
 		gStartPlayCallback = null;
+		gPreStartPlayCallback = null;
 
 		// Clear the player in pause flag
 		gPlayerInPause = false;
@@ -26786,7 +26887,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 		modal_msg += '<span id="looper_text_3">Tempo increment:</span> <input style="width:75px;margin-right:4px;" id="looper_increment" type="number" min="0" step="1" max="400" title="Tempo increment percentage" autocomplete="off"/><span id="looper_percent_span_3">%</span>';
 		modal_msg += '</p>';
 		modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
-		modal_msg += '<span id="looper_text_4">Increment tempo after how many loops:</span> <input style="width:75px;" id="looper_count" type="number" min="1" step="1" max="100" title="Increment tempo after this many times through the tune" autocomplete="off"/>';
+		modal_msg += '<span id="looper_text_4">Increment tempo after how many loops:</span> <input style="width:60px;margin-right:24px;" id="looper_count" type="number" min="1" step="1" max="100" title="Increment tempo after this many times through the tune" autocomplete="off"/><span id="looper_text_5">Count-in?</span><input style="width:18px;margin-left:8px;margin-right:24px;" id="looper_docountdown" type="checkbox" onchange="ToggleLoopCountIn();"/><span id="looper_text_6">Count-in seconds:</span><input style="width:60px;margin-left:8px;" id="looper_countdown" type="number" min="1" step="1" max="30" title="Count-in seconds" autocomplete="off" onchange="SaveLoopCountIn();"/>';
 		modal_msg += '</p>';
 		modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
 		modal_msg += '<input id="looperreset" class="looperreset button btn btn-looperreset" onclick="TuneTrainerReset();" type="button" value="Apply Tune Trainer Settings and Reload the Player" title="Applies the entered tune trainer settings and reloads the player">';
@@ -26799,6 +26900,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 		modal_msg += '<p id="looperstatus"></p>';
 		modal_msg += '<div id="looperstatusbar"></div>';
 		modal_msg += '<div id="looperstatusbaroverlay"></div>';
+		modal_msg += '<div id="loopercountdown" class="looper-modal"><div class="looper-modal-content"><div class="looper-modal-text" id="loopercountdowntext"></div></div></div>';
 
 	   	// Scale the player for larger screens
 		var windowWidth = window.innerWidth;
@@ -26843,6 +26945,9 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 		document.getElementById("looper_increment").value = gLooperSpeedIncrement;
 		document.getElementById("looper_count").value = gLooperCount;
 
+		document.getElementById("looper_docountdown").checked = gLooperDoCountdown;
+		document.getElementById("looper_countdown").value = gLooperCountdown;
+	
 		// Are we using the trainer touch controls
 		if (gTrainerTouchControls){
 
@@ -27593,6 +27698,25 @@ function GetInitialConfigurationSettings(){
 		gLooperCount = 1;
 	}
 
+	val = localStorage.LooperDoCountdown;
+	if (val){
+		gLooperDoCountdown = (val == "true");
+	}
+	else{
+		gLooperDoCountdown = true;
+	}
+
+	val = localStorage.LooperCountdown;
+	if (val){
+		gLooperCountdown = parseInt(val);
+		if (isNaN(gLooperCountdown)){
+			gLooperCountdown = 5;
+		}
+	}
+	else{
+		gLooperCountdown = 5;
+	}
+
 	val = localStorage.abcStaffSpacing;
 	if (val){
 		gStaffSpacing = STAFFSPACEOFFSET + parseInt(val);
@@ -27946,6 +28070,8 @@ function SaveConfigurationSettings(){
 		localStorage.LooperSpeedEnd = gLooperSpeedEnd;
 		localStorage.LooperSpeedIncrement = gLooperSpeedIncrement;
 		localStorage.LooperCount = gLooperCount;
+		localStorage.LooperDoCountdown = gLooperDoCountdown;
+		localStorage.LooperCountdown = gLooperCountdown;
 
 		// Save the batch export cycle time
 		localStorage.BatchExportDelayMS = gBatchExportDelayMS;
@@ -32362,6 +32488,7 @@ function DoStartup() {
 	// Uncomment these lines for mobile simulation testing
 	//
 	//gIsIOS = true; 
+	//gIsIPad = true;  
 	//gIsIPhone = true;  
 	
 	//

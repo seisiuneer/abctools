@@ -1200,6 +1200,30 @@ width: auto;
 	}
 }
 
+.looper-modal {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.75);
+z-index: 9999;
+}
+
+.looper-modal-content {
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100%;
+}
+
+.looper-modal-text {
+text-align: center;
+font-family:"Helvetica";
+font-size:100pt;
+color: #fff;
+}
 
 #configure_instrument_explorer{
 height:42px;
@@ -2639,7 +2663,7 @@ margin-top:-7px;
 	margin-right:10px;
 }
 
-#looper_text_1,#looper_text_2,#looper_text_3,#looper_text_4,#looper_percent_span_1,#looper_percent_span_2,#looper_percent_span_3{
+#looper_text_1,#looper_text_2,#looper_text_3,#looper_text_4,#looper_text_5,#looper_text_6,#looper_percent_span_1,#looper_percent_span_2,#looper_percent_span_3{
 	-webkit-user-select: none;
     user-select: none;
 }
