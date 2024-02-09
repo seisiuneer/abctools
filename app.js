@@ -26695,12 +26695,8 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 		    }, 1000); // Update every 1 second
 		}
 		else{
-	        // Show the player for one second before start
-	        setTimeout(function(){
-
-	        	callback();
-
-	        },1000);
+			// Start immediately
+	        callback();
 		}
 	}
 
