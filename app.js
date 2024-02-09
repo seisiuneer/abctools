@@ -26222,9 +26222,9 @@ function ToggleTuneTrainerWidePlayer(){
 }
 
 // 
-// Save the count-in enable state
+// Save the countdown enable state
 //
-function ToggleLoopCountIn(){
+function ToggleLoopCountdown(){
 
 	gLooperDoCountdown = document.getElementById("looper_docountdown").checked;
 
@@ -26234,9 +26234,9 @@ function ToggleLoopCountIn(){
 }
 
 // 
-// Save the count-in state
+// Save the countdown state
 //
-function SaveLoopCountIn(){
+function SaveLoopCountdown(){
 	
 	gLooperCountdown = document.getElementById("looper_countdown").value;
 
@@ -26887,7 +26887,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 		modal_msg += '<span id="looper_text_3">Tempo increment:</span> <input style="width:75px;margin-right:4px;" id="looper_increment" type="number" min="0" step="1" max="400" title="Tempo increment percentage" autocomplete="off"/><span id="looper_percent_span_3">%</span>';
 		modal_msg += '</p>';
 		modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
-		modal_msg += '<span id="looper_text_4">Increment tempo after how many loops:</span> <input style="width:60px;margin-right:24px;" id="looper_count" type="number" min="1" step="1" max="100" title="Increment tempo after this many times through the tune" autocomplete="off"/><span id="looper_text_5">Count-in?</span><input style="width:18px;margin-left:8px;margin-right:24px;" id="looper_docountdown" type="checkbox" onchange="ToggleLoopCountIn();"/><span id="looper_text_6">Count-in seconds:</span><input style="width:60px;margin-left:8px;" id="looper_countdown" type="number" min="1" step="1" max="30" title="Count-in seconds" autocomplete="off" onchange="SaveLoopCountIn();"/>';
+		modal_msg += '<span id="looper_text_4">Increment tempo after how many loops:</span> <input style="width:60px;margin-right:14px;" id="looper_count" type="number" min="1" step="1" max="100" title="Increment tempo after this many times through the tune" autocomplete="off"/><span id="looper_text_5">Countdown?</span><input style="width:18px;margin-left:8px;margin-right:14px;" id="looper_docountdown" type="checkbox" onchange="ToggleLoopCountdown();"/><span id="looper_text_6">Countdown secs:</span><input style="width:60px;margin-left:8px;" id="looper_countdown" type="number" min="1" step="1" max="30" title="Countdown secs" autocomplete="off" onchange="SaveLoopCountdown();"/>';
 		modal_msg += '</p>';
 		modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
 		modal_msg += '<input id="looperreset" class="looperreset button btn btn-looperreset" onclick="TuneTrainerReset();" type="button" value="Apply Tune Trainer Settings and Reload the Player" title="Applies the entered tune trainer settings and reloads the player">';
