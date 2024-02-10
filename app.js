@@ -14431,10 +14431,17 @@ function InjectRepeatsAndClickTrackAll(){
 		return;
 	}
 
+	const before_tune_actions = [
+	    { name: "Do nothing", id: 0 },
+	    { name: "Inject two bars of silence", id: 1 },
+	    { name: "Inject a two-bar style-appropriate click intro", id: 2 },
+	    { name: "Inject both two bars of silence and click intro", id: 3 }
+  	];
+
 	// Setup initial values
 	const theData = {
 	  configure_repeats:1,
-	  configure_inject_click:false
+	  configure_before_each_tune: 0
 	};
 
 	const form = [
@@ -14442,7 +14449,7 @@ function InjectRepeatsAndClickTrackAll(){
 	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject repeats into each tune in the ABC area by  appending the entire ABC for each tune to itself multiple times.</p>'},	  
 	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">You may also optionally inject a two-bar click intro before each tune.</p>'},	  
 	  {name: "How many times through each tune:", id: "configure_repeats", type:"number", cssClass:"configure_repeats_form_text"}, 
-	  {name: "            Inject a two-bar style-appropriate click intro before each tune", id: "configure_inject_click", type:"checkbox", cssClass:"configure_repeats_form_text"},
+	  {name: "Before each tune:", id: "configure_before_each_tune", type:"select", options:before_tune_actions, cssClass:"configure_mp3_before_tune_select"},
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:18pt;font-family:helvetica"><strong>To only append a two-bar click intro before each tune:</strong></p>'},	  
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:18pt;font-family:helvetica">1) Set <strong>How many times through each tune:</strong> to 1</p>'},	  
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:18pt;font-family:helvetica">2) Check <strong>Inject a two-bar style-appropriate click intro before each tune</strong>.</p>'},	  
@@ -14472,7 +14479,34 @@ function InjectRepeatsAndClickTrackAll(){
 				return;
 			}
 
-			var doClickTrack = args.result.configure_inject_click;
+			var beforeTuneAction = args.result.configure_before_each_tune;
+
+			var doClickTrack = false;
+			var doInjectSilence = false;
+
+			switch (beforeTuneAction){
+
+				case 0: // Do nothing
+					doClickTrack = false;
+					doInjectSilence = false;
+					break;
+
+				case 1: // Inject silence
+					doClickTrack = false;
+					doInjectSilence = true;
+					break;
+
+				case 2: // Inject click intro
+					doClickTrack = true;
+					doInjectSilence = false;
+					break;
+
+				case 3: // Inject both silence and click intro
+					doClickTrack = true;
+					doInjectSilence = true;
+					break;
+
+			}
 
 			var theNotes = gTheABC.value;
 
@@ -14484,7 +14518,7 @@ function InjectRepeatsAndClickTrackAll(){
 
 				var rhythmType = getTuneRhythmType(thisTune);
 
-				thisTune = AddDuplicatesForMp3(thisTune, rhythmType, repeatCount, doClickTrack, false);
+				thisTune = AddDuplicatesForMp3(thisTune, rhythmType, repeatCount, doClickTrack, doInjectSilence);
 
 				output += thisTune;
 
@@ -19871,35 +19905,6 @@ function AddDuplicatesForMp3(theTune, rhythmType, count, doClickTrack, doInjectS
 
 	theTune = theTune.substring(0,theNotesIndex);
 
-	if (doClickTrack){
-
-		//console.log("Adding click track for rhythm type "+rhythmType);
-
-		switch (rhythmType){
-			case "reel":
-				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz3 ^Cz3|^Cz3 ^Cz3|\nV:1\nz8|z8|\n";
-				break;
-			case "jig":
-				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz2 ^Cz2|^Cz2 ^Cz2|\nV:1\nz6|z6|\n";
-				break;
-			case "slide":
-				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz2 ^Cz2 ^Cz2 ^Cz2|\nV:1\nz12|\n";
-				break;
-			case "slipjig":
-				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz2 ^Cz2 ^Cz2|^Cz2 ^Cz2 ^Cz2|\nV:1\nz9|z9|\n";
-				break;
-			case "polka":
-				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz ^Cz|^Cz ^Cz|\nV:1\nz4|z4|\n";
-				break;
-			case "waltz":
-				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz ^Cz ^Cz|^Cz ^Cz ^Cz|\nV:1\nz6|z6|\n";
-				break;
-			default:
-				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz3 ^Cz3|^Cz3 ^Cz3|\nV:1\nz8|z8|\n";
-				break;			
-		}
-	}
-	else
 	if (doInjectSilence){
 
 		//console.log("Adding silence for rhythm type "+rhythmType);
@@ -19928,6 +19933,35 @@ function AddDuplicatesForMp3(theTune, rhythmType, count, doClickTrack, doInjectS
 				break;			
 		}
 
+	}
+
+	if (doClickTrack){
+
+		//console.log("Adding click track for rhythm type "+rhythmType);
+
+		switch (rhythmType){
+			case "reel":
+				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz3 ^Cz3|^Cz3 ^Cz3|\nV:1\nz8|z8|\n";
+				break;
+			case "jig":
+				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz2 ^Cz2|^Cz2 ^Cz2|\nV:1\nz6|z6|\n";
+				break;
+			case "slide":
+				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz2 ^Cz2 ^Cz2 ^Cz2|\nV:1\nz12|\n";
+				break;
+			case "slipjig":
+				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz2 ^Cz2 ^Cz2|^Cz2 ^Cz2 ^Cz2|\nV:1\nz9|z9|\n";
+				break;
+			case "polka":
+				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz ^Cz|^Cz ^Cz|\nV:1\nz4|z4|\n";
+				break;
+			case "waltz":
+				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz ^Cz ^Cz|^Cz ^Cz ^Cz|\nV:1\nz6|z6|\n";
+				break;
+			default:
+				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz3 ^Cz3|^Cz3 ^Cz3|\nV:1\nz8|z8|\n";
+				break;			
+		}
 	}
 
 	theTune += theNotes;
@@ -20064,7 +20098,8 @@ function BatchMP3Export(){
 	const before_tune_actions = [
 	    { name: "Do nothing", id: 0 },
 	    { name: "Inject two bars of silence", id: 1 },
-	    { name: "Inject a two-bar style-appropriate click intro", id: 2 }
+	    { name: "Inject a two-bar style-appropriate click intro", id: 2 },
+	    { name: "Inject both two bars of silence and click intro", id: 3 }
   	];
 
 	// Setup initial values
@@ -20120,9 +20155,14 @@ function BatchMP3Export(){
 					doInjectSilence = true;
 					break;
 
-				case 2: //
+				case 2: // Inject click intro
 					doClickTrack = true;
 					doInjectSilence = false;
+					break;
+
+				case 3: // Inject both silence and click intro
+					doClickTrack = true;
+					doInjectSilence = true;
 					break;
 
 			}
