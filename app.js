@@ -14484,7 +14484,7 @@ function InjectRepeatsAndClickTrackAll(){
 
 				var rhythmType = getTuneRhythmType(thisTune);
 
-				thisTune = AddDuplicatesForMp3(thisTune, rhythmType, repeatCount, doClickTrack);
+				thisTune = AddDuplicatesForMp3(thisTune, rhythmType, repeatCount, doClickTrack, false);
 
 				output += thisTune;
 
@@ -19815,10 +19815,11 @@ var gTheBatchMP3ExportStatusText = null;
 //
 // Append additional copies of the tune notes for long MP3 generation
 //
-function AddDuplicatesForMp3(theTune, rhythmType, count, doClickTrack){
+function AddDuplicatesForMp3(theTune, rhythmType, count, doClickTrack, doInjectSilence){
 
 	// Nothing to do?
-	if ((count == 1) && (!doClickTrack)){
+	if ((count == 1) && (!doClickTrack) && (!doInjectSilence)){
+		//console.log("AddDuplicatesForMp3 - nothing to do!");
 		return theTune;
 	}
 
@@ -19872,6 +19873,8 @@ function AddDuplicatesForMp3(theTune, rhythmType, count, doClickTrack){
 
 	if (doClickTrack){
 
+		//console.log("Adding click track for rhythm type "+rhythmType);
+
 		switch (rhythmType){
 			case "reel":
 				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz3 ^Cz3|^Cz3 ^Cz3|\nV:1\nz8|z8|\n";
@@ -19895,6 +19898,36 @@ function AddDuplicatesForMp3(theTune, rhythmType, count, doClickTrack){
 				theTune+="V:1\nV:2\n%%MIDI program 128\n^Cz3 ^Cz3|^Cz3 ^Cz3|\nV:1\nz8|z8|\n";
 				break;			
 		}
+	}
+	else
+	if (doInjectSilence){
+
+		//console.log("Adding silence for rhythm type "+rhythmType);
+
+		switch (rhythmType){
+			case "reel":
+				theTune+="V:1\nV:2\n%%MIDI program 128\nz8|z8|\nV:1\nz8|z8|\n";
+				break;
+			case "jig":
+				theTune+="V:1\nV:2\n%%MIDI program 128\nz6|z6|\nV:1\nz6|z6|\n";
+				break;
+			case "slide":
+				theTune+="V:1\nV:2\n%%MIDI program 128\nz12|\nV:1\nz12|\n";
+				break;
+			case "slipjig":
+				theTune+="V:1\nV:2\n%%MIDI program 128\nz9|z9|\nV:1\nz9|z9|\n";
+				break;
+			case "polka":
+				theTune+="V:1\nV:2\n%%MIDI program 128\nz4|z4|\nV:1\nz4|z4|\n";
+				break;
+			case "waltz":
+				theTune+="V:1\nV:2\n%%MIDI program 128\nz6|z6|\nV:1\nz6|z6|\n";
+				break;
+			default:
+				theTune+="V:1\nV:2\n%%MIDI program 128\nz8|z8|\nV:1\nz8|z8|\n";
+				break;			
+		}
+
 	}
 
 	theTune += theNotes;
@@ -20014,7 +20047,6 @@ function getTuneRhythmType(tuneABC){
 	// Default to reel
 	return "reel";
 
-
 }
 
 //
@@ -20029,17 +20061,23 @@ function BatchMP3Export(){
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","BatchMP3Export");
 
+	const before_tune_actions = [
+	    { name: "Do nothing", id: 0 },
+	    { name: "Inject two bars of silence", id: 1 },
+	    { name: "Inject a two-bar style-appropriate click intro", id: 2 }
+  	];
+
 	// Setup initial values
 	const theData = {
 	  configure_repeats:1,
-	  configure_inject_click:false
+	  configure_before_each_tune: 0
 	};
 
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Export All Tunes as MP3&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#export_all_tunes_as_mp3" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will export all the tunes in the ABC area as .MP3 files with one or more repeats.</p>'},	  
 	  {name: "How many times to repeat each tune in the MP3:", id: "configure_repeats", type:"number", cssClass:"configure_repeats_form_text"}, 
-	  {name: "            Inject a two-bar style-appropriate click intro before each tune", id: "configure_inject_click", type:"checkbox", cssClass:"configure_repeats_form_text"},
+	  {name: "Before each tune:", id: "configure_before_each_tune", type:"select", options:before_tune_actions, cssClass:"configure_mp3_before_tune_select"},
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:18pt;font-family:helvetica"><strong>For best results with repeated tunes:</strong></p>'},	  
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:18pt;font-family:helvetica">For clean repeats, your tunes must not have extraneous pickup or trailing notes and must have proper and complete timing.</p>'},	  
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:18pt;font-family:helvetica">If there is a repeat at the end of the first part of a tune, either standalone or in a first ending, there must be a matching |: bar at the start of the tune for the tune repeats to work properly.</p>'},	  
@@ -20065,15 +20103,37 @@ function BatchMP3Export(){
 				return;
 			}
 
-			var doClickTrack = args.result.configure_inject_click;
+			var beforeTuneAction = args.result.configure_before_each_tune;
 
-			DoBatchMP3Export(repeatCount,doClickTrack);
+			var doClickTrack = false;
+			var doInjectSilence = false;
+
+			switch (beforeTuneAction){
+
+				case 0: // Do nothing
+					doClickTrack = false;
+					doInjectSilence = false;
+					break;
+
+				case 1: // Inject silence
+					doClickTrack = false;
+					doInjectSilence = true;
+					break;
+
+				case 2: //
+					doClickTrack = true;
+					doInjectSilence = false;
+					break;
+
+			}
+
+			DoBatchMP3Export(repeatCount,doClickTrack,doInjectSilence);
 		}
 
 	});
 }
 
-function DoBatchMP3Export(repeatCount,doClickTrack){
+function DoBatchMP3Export(repeatCount,doClickTrack,doInjectSilence){
 
 	var totalTunesToExport;
 
@@ -20098,7 +20158,7 @@ function DoBatchMP3Export(repeatCount,doClickTrack){
 
 					var rhythmType = getTuneRhythmType(thisTune);
 
-					thisTune = AddDuplicatesForMp3(thisTune, rhythmType, repeatCount, doClickTrack);
+					thisTune = AddDuplicatesForMp3(thisTune, rhythmType, repeatCount, doClickTrack, doInjectSilence);
 
 					thisTune = PreProcessPlayABC(thisTune);
 
@@ -20197,7 +20257,7 @@ function DoBatchMP3Export(repeatCount,doClickTrack){
 
 	var rhythmType = getTuneRhythmType(thisTune);
 
-	thisTune = AddDuplicatesForMp3(thisTune, rhythmType, repeatCount, doClickTrack);
+	thisTune = AddDuplicatesForMp3(thisTune, rhythmType, repeatCount, doClickTrack, doInjectSilence);
 	
 	thisTune = PreProcessPlayABC(thisTune);
 
