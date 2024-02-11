@@ -194,7 +194,7 @@ var gAngloButtonNames = [];
 // Fonts used for rendering
 var gRenderingFonts = {
 	titlefont: "Palatino 18",
-	subtitlefont: "Palatino 13",
+	subtitlefont: "Palatino 18",
 	infofont: "Palatino 13",
 	partsfont: "Palatino 13",
 	tempofont: "Palatino 13",
@@ -28919,7 +28919,7 @@ function resetABCRenderingFonts(){
 	// Default fonts used for rendering
 	gDialogRenderingFonts = {
 		titlefont: "Palatino 18",
-		subtitlefont: "Palatino 13",
+		subtitlefont: "Palatino 18",
 		infofont: "Palatino 13",
 		partsfont: "Palatino 13",
 		tempofont: "Palatino 13",
