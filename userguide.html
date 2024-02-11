@@ -293,7 +293,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectionfeatures">ABC Utility Injection Features</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injecttunetitlenumbers">Inject Tune Title Numbers</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectsectionheader">Inject PDF Section Header</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injectallpdf">Inject All PDF Annotations</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_inject_font_settings">Inject Font Settings</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectmidi">Inject MIDI Programs and Volumes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectmetronome">Inject Metronome</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#injectrepeatsandtwobarclickintros">Inject Repeats + Intros</a></p>
@@ -376,6 +376,11 @@
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#custom_font_overrides">Custom Font Overrides</a></p>
                 </div>
+
+                <button class="accordion" title="Click to expand/collapse this section">All Available PDF Tunebook Annotations</button>
+                <div class="tocpanel">
+                    <p class="toc"><a style="text-decoration:none;" href="#all_pdf_annotations">All Available PDF Tunebook Annotations</a></p>
+                </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">MusicXML Import</button>
                 <div class="tocpanel">
@@ -416,7 +421,7 @@
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#shapenote">Adding Shape Note Shapes</a></p>
                 </div>
-                
+
                 <button class="accordion" title="Click to expand/collapse this section">iOS-Specific Topics</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#iphone_ipad_chord_entry_issue_fix">iPhone/iPad Chord Entry Issue Fix</a></p>
@@ -963,7 +968,7 @@
             <h1 class="page_break_always">More ABC Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
             <div class="image_holder_p">
-                <img class="image" src="img/more_abc_tools_8.jpg"/>
+                <img class="image" src="img/more_abc_tools_9.jpg"/>
             </div>
             <p>If you would like to only show the buttons for the features you commonly use and hide the others, click the controls icon at the top-right of the dialog to choose features of the dialog you would like to show/hide:</p>
             <div class="image_holder_p">
@@ -1025,7 +1030,7 @@
             <p>When rendering full tunes, section headers are automatically pushed to the top of a new page in the tunebook.</p>
             <p>When rendering note or text incipits, section headers are not automatically pushed to the top of a new page.</p>
             <hr>
-            <p id="advanced_injectallpdf"><strong>Inject All PDF Annotations</strong> - Injects all available tool-specific PDF tunebook annotations for title page, table of contents, index generation, etc. at the top of the ABC.</p>
+            <p id="advanced_inject_font_settings"><strong>Inject Font Settings</strong> - Injects all current tool font settings (set in the <strong>Font Settings</strong> dialog) at the top of the ABC for when you want to make absolutely sure that the rendered ABC on a shared ABC file exactly matches what you see on your system independent of the user's font settings.</p>
             <hr>
             <p id="advanced_injectmidi"><strong>Inject MIDI Programs and Volumes</strong> - Injects MIDI Soundfont, Melody program, Bass program, Chord program and volume annotations into one or all tunes:</p>
             <div class="image_holder_p">
@@ -2470,6 +2475,65 @@
             <p><strong>More information is available here:</strong></p>
             <p style="text-align: center;"><a href="https://blog.hubspot.com/website/web-safe-html-css-fonts" target="_blank">Web Safe CSS Fonts</a></p>
             <p style="text-align: center;"><a href="http://iosfonts.com/" target="_blank">iOS Fonts</a></p>
+            <hr class="hidden-print" id="all_pdf_annotations">
+            <h1 class="page_break_always">All Available PDF Tunebook Annotations<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>Here are examples of all the possible PDF comment-based annotations in the tool:</p>
+            <p class="code">
+            %pdfquality .75<br/>
+            %pdf_between_tune_space 20<br/>
+            %pdfname your_pdf_filename<br/>
+            %pdffont fontname style<br/>      
+            %addtitle Title Page Title<br/>
+            %addsubtitle Title Page Subtitle<br/>
+            %urladdtitle https://michaeleskin.com Title Page Title as Hyperlink<br/>
+            %urladdsubtitle https://michaeleskin.com Title Page Subtitle as Hyperlink<br/>
+            %addtoc Table of Contents<br/>
+            %addsortedtoc Table of Contents Sorted by Tune Name<br/>
+            %addlinkbacktotoc<br/>    
+            %tocheader Page Header Text for Table of Contents Pages<br/>      
+            %toctopoffset 30<br/>
+            %toctitleoffset 35<br/>
+            %toctitlefontsize 18<br/>
+            %tocfontsize 13<br/>
+            %toclinespacing 12<br/>
+            %addindex Unsorted Index\n"
+            %addsortedindex Index Sorted by Tune Name<br/>
+            %addlinkbacktoindex<br/>      
+            %indexheader Page Header Text for Index Pages<br/>        
+            %indextopoffset 30<br/>
+            %indextitleoffset 35<br/>
+            %indextitlefontsize 18<br/>
+            %indexfontsize 13<br/>
+            %indexlinespacing 12<br/>
+            %no_toc_or_index_links<br/>
+            %toc_no_page_numbers<br/>
+            %index_no_page_numbers<br/>
+            %pageheader Page Header<br/>
+            %pagefooter Page Footer<br/>
+            %urlpageheader https://michaeleskin.com Page Header as Hyperlink<br/>
+            %urlpagefooter https://michaeleskin.com Page Footer as Hyperlink<br/>
+            %add_all_links_to_thesession<br/>
+            %add_all_playback_links 0 0 0 fluid<br/>
+            %add_all_playback_volumes 64 64<br/>
+            %playback_links_are_complete_tunebook<br/>
+            %swing_all_hornpipes 0.25<br/>    
+            %noswing_all_hornpipes<br/>   
+            %no_edit_allowed<br/>
+            %qrcode<br/>
+            %qrcode https://michaeleskin.com<br/>
+            %caption_for_qrcode Caption for the QR code<br/>
+            %<br/>
+            % These directives can be added to each tune:<br/>
+            %hyperlink https://michaeleskin.com<br/>
+            %add_link_to_thesession<br/>
+            %add_playback_link 0 0 0 fluid<br/>
+            %swing 0.25 0<br/>
+            %noswing<br/>
+            %grace_duration_ms 30<br/>
+            %roll_2_params 0.95 0.8 1.0 0.75 0.9 1.0 0.75 1.0<br/>
+            %roll_3_params 1.45 0.6 1.0 0.75 0.9 1.0 0.75 1.0<br/>
+            %use_original_abcjs_roll_solution<br/>
+            %abcjs_release_decay_time 200</p>
             <hr class="hidden-print" id="musicxml">
             <h1 class="page_break_always">MusicXML Import Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">

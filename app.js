@@ -194,7 +194,7 @@ var gAngloButtonNames = [];
 // Fonts used for rendering
 var gRenderingFonts = {
 	titlefont: "Palatino 18",
-	subtitlefont: "Palatino 18",
+	subtitlefont: "Palatino 13",
 	infofont: "Palatino 13",
 	partsfont: "Palatino 13",
 	tempofont: "Palatino 13",
@@ -15052,6 +15052,144 @@ function InjectStaffWidth(){
 }
 
 //
+// Inject all the fonts at the top of one or all tunes
+//
+function InjectFontSettings(){
+
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
+
+	// Setup initial values
+	const theData = {
+	  configure_inject_all:true
+	};
+
+	var theSelectedTuneIndex = findSelectedTuneIndex();
+
+	var form = [
+	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Inject Font Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_inject_font_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
+	  {html: '<p style="margin-top:24px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">Clicking "OK" will inject all the fonts from your font settings into the tunes.</p>'},  
+	  {name: "          Inject all tunes", id: "injectalltunes", type:"checkbox", cssClass:"configure_injectheaderstring_form_text"},
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+		
+		// Keep track of dialogs
+		sendGoogleAnalytics("action","InjectFontHeaders");
+	
+		if (!args.canceled){
+
+			//debugger;
+
+			var injectAllTunes = args.result.injectalltunes;
+
+			var stringToInject = 
+				"%%titlefont "+gRenderingFonts.titlefont+"\n"+
+				"%%subtitlefont "+gRenderingFonts.subtitlefont+"\n"+
+				"%%infofont "+gRenderingFonts.infofont+"\n"+
+				"%%partsfont "+gRenderingFonts.partsfont+"\n"+
+				"%%tempofont "+gRenderingFonts.tempofont+"\n"+
+				"%%textfont "+gRenderingFonts.textfont+"\n"+
+				"%%composerfont "+gRenderingFonts.composerfont+"\n"+
+				"%%annotationfont "+gRenderingFonts.annotationfont+"\n"+
+				"%%gchordfont "+gRenderingFonts.gchordfont+"\n"+
+				"%%vocalfont "+gRenderingFonts.vocalfont+"\n"+
+				"%%wordsfont "+gRenderingFonts.wordsfont+"\n"+
+				"%%tablabelfont "+gRenderingFonts.tablabelfont+"\n"+
+				"%%tabnumberfont "+gRenderingFonts.tabnumberfont+"\n"+
+				"%%tabgracefont "+gRenderingFonts.tabgracefont+"\n"+
+				"%%historyfont "+gRenderingFonts.historyfont+"\n"+
+				"%%voicefont "+gRenderingFonts.voicefont;
+
+			// Injecting all tunes?
+			if (injectAllTunes){
+
+				var nTunes = CountTunes();
+
+				var theNotes = gTheABC.value;
+
+				// Find the tunes
+				var theTunes = theNotes.split(/^X:/gm);
+
+				var output = FindPreTuneHeader(theNotes);
+
+				for (var i=1;i<=nTunes;++i){
+
+					var theTune = "X:"+theTunes[i];
+
+					output += InjectStringAboveTuneHeader(theTune,stringToInject);
+
+				}
+
+				// Stuff in the output
+				gTheABC.value = output;
+				
+				// Set dirty
+				gIsDirty = true;
+
+				// Force a redraw
+				RenderAsync(true,null,function(){
+
+					// Set the select point
+					gTheABC.selectionStart = 0;
+				    gTheABC.selectionEnd = 0;
+
+				    // Focus after operation
+				    FocusAfterOperation();
+
+				});
+			}
+			else{
+
+				// Try to find the current tune
+				var theSelectedABC = findSelectedTune();
+
+				if (theSelectedABC == ""){
+					// This should never happen
+					return;
+				}
+
+				var theInjectedTune = theSelectedABC;
+
+				theInjectedTune = InjectStringAboveTuneHeader(theInjectedTune,stringToInject);
+
+				// Seeing extra line breaks after the inject
+				theInjectedTune = theInjectedTune.replace("\n\n","");
+
+				// Try and keep the same tune after the redraw for immediate play
+				var theSelectionStart = gTheABC.selectionStart;
+
+				// Stuff in the injected ABC
+				var theABC = gTheABC.value;
+				theABC = theABC.replace(theSelectedABC,theInjectedTune);
+
+				gTheABC.value = theABC;
+
+				// Set dirty
+				gIsDirty = true;
+
+				// Force a redraw of the tune
+				RenderAsync(false,theSelectedTuneIndex,function(){
+
+					// Set the select point
+					gTheABC.selectionStart = theSelectionStart;
+				    gTheABC.selectionEnd = theSelectionStart;
+
+				    // Focus after operation
+				    FocusAfterOperation();
+
+				});
+
+
+			}
+		}
+
+	});
+}
+
+//
 // Notation Spacing Explorer
 // Test and inject notation spacing values 
 //
@@ -17671,117 +17809,6 @@ function PrepareWhistleFont(){
 
 }
 
-//
-// Inject all PDF-related headers at the top of the file
-//
-function InjectPDFHeaders(){
-
-	// If currently rendering PDF, exit immediately
-	if (gRenderingPDF) {
-		return;
-	}
-
-	var theNotes = gTheABC.value;
-
-	var output = "";
-	output += "%\n";
-	output += "% Here are all the available PDF tunebook annotations:\n";
-	output += "%\n";
-	output += "%pdfquality .75\n";
-	output += "%pdf_between_tune_space 20\n";
-	output += "%pdfname your_pdf_filename\n";
-	output += "%pdffont fontname style\n";		
-	output += "%addtitle Title Page Title\n";
-	output += "%addsubtitle Title Page Subtitle\n";
-	output += "%urladdtitle https://michaeleskin.com Title Page Title as Hyperlink\n";
-	output += "%urladdsubtitle https://michaeleskin.com Title Page Subtitle as Hyperlink\n";
-	output += "%addtoc Table of Contents\n";
-	output += "%addsortedtoc Table of Contents Sorted by Tune Name\n";
-	output += "%addlinkbacktotoc\n";	
-	output += "%tocheader Page Header Text for Table of Contents Pages\n";		
-	output += "%toctopoffset 30\n";
-    output += "%toctitleoffset 35\n";
-    output += "%toctitlefontsize 18\n";
-    output += "%tocfontsize 13\n";
-    output += "%toclinespacing 12\n";
-	output += "%addindex Unsorted Index\n"
-	output += "%addsortedindex Index Sorted by Tune Name\n";
-	output += "%addlinkbacktoindex\n";		
-	output += "%indexheader Page Header Text for Index Pages\n";		
-    output += "%indextopoffset 30\n";
-    output += "%indextitleoffset 35\n";
-    output += "%indextitlefontsize 18\n";
-    output += "%indexfontsize 13\n";
-    output += "%indexlinespacing 12\n";
-	output += "%no_toc_or_index_links\n";
-	output += "%toc_no_page_numbers\n";
-	output += "%index_no_page_numbers\n";
-	output += "%pageheader Page Header\n";
-	output += "%pagefooter Page Footer\n";
-	output += "%urlpageheader https://michaeleskin.com Page Header as Hyperlink\n";
-	output += "%urlpagefooter https://michaeleskin.com Page Footer as Hyperlink\n";
-	output += "%add_all_links_to_thesession\n";
-	output += "%add_all_playback_links 0 0 0 fluid\n";
-	output += "%add_all_playback_volumes 64 64\n";
-	output += "%playback_links_are_complete_tunebook\n";
-	output += "%swing_all_hornpipes 0.25\n";	
-	output += "%noswing_all_hornpipes\n";	
-	output += "%no_edit_allowed\n";
-	output += "%qrcode\n";
-	output += "%qrcode https://michaeleskin.com\n";
-	output += "%caption_for_qrcode Caption for the QR code\n";
-	output += "%\n";
-	output += "% These directives can be added to each tune:\n";
-	output += "%hyperlink https://michaeleskin.com\n";
-	output += "%add_link_to_thesession\n";
-	output += "%add_playback_link 0 0 0 fluid\n";
-	output += "%swing 0.25 0\n";
-	output += "%noswing\n";
-	output += "%grace_duration_ms 30\n";
-	output += "%roll_2_params 0.95 0.8 1.0 0.75 0.9 1.0 0.75 1.0\n";
-	output += "%roll_3_params 1.45 0.6 1.0 0.75 0.9 1.0 0.75 1.0\n";
-	output += "%use_original_abcjs_roll_solution\n";
-	output += "%abcjs_release_decay_time 200\n";
-
-	output += "\n";
-	
-	output += theNotes;
-
-	// Stuff in the final output
-	gTheABC.value = output;
-
-	// Set dirty
-	gIsDirty = true;
-
-	// Have to redraw if in raw mode
-    if (gRawMode){
-
-		RenderAsync(true,null,function(){
-			
-			// Set the select point
-			gTheABC.selectionStart = 0;
-		    gTheABC.selectionEnd = 0;
-
-		    // Focus after operation
-		    FocusAfterOperation();
-
-		});
-
-    }
-    else{
-
-    	// Set the select point
-		gTheABC.selectionStart = 0;
-	    gTheABC.selectionEnd = 0;
-
-	    // Focus after operation
-	    FocusAfterOperation();
-
-    }
-
-
-
-}
 
 //
 // Do Ceoltas Transform
@@ -28919,7 +28946,7 @@ function resetABCRenderingFonts(){
 	// Default fonts used for rendering
 	gDialogRenderingFonts = {
 		titlefont: "Palatino 18",
-		subtitlefont: "Palatino 18",
+		subtitlefont: "Palatino 13",
 		infofont: "Palatino 13",
 		partsfont: "Palatino 13",
 		tempofont: "Palatino 13",
@@ -29006,7 +29033,7 @@ function ConfigureFonts(){
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Configure ABC Rendering Fonts&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#configure_fonts" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 	  {name: "Title font (Default: Palatino 18):", id: "configure_titlefont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
-	  {name: "Subtitle font (Default: Palatino 18):", id: "configure_subtitlefont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
+	  {name: "Subtitle font (Default: Palatino 13):", id: "configure_subtitlefont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
 	  {name: "Info font (Default: Palatino 13):", id: "configure_infofont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
 	  {name: "Composer font (Default: Palatino 13):", id: "configure_composerfont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
 	  {name: "Tempo font (Default: Palatino 13):", id: "configure_tempofont", type:"text", cssClass:"configure_font_settings_form_text_wide"},
@@ -29678,7 +29705,7 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<p style="text-align:center;">'
 	modal_msg  += '<input id="injecttunenumbers" class="advancedcontrols btn btn-injectcontrols-headers" onclick="TuneTitlesNumbersDialog()" type="button" value="Inject Tune Title Numbers" title="Opens a dialog where you can add or remove numbers on the tune titles">';	
 	modal_msg  += '<input id="injectsectionheader" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectSectionHeader()" type="button" value="Inject PDF Section Header" title="Injects a PDF section header placeholder tune at the cursor insertion point">';
-	modal_msg  += '<input id="injectallheaders" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectPDFHeaders()" type="button" value="Inject All PDF Annotations" title="Injects all available tool-specific PDF tunebook annotations for title page, table of contents, index generation, etc. at the top of the ABC">'
+	modal_msg  += '<input id="injectfontsettings" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectFontSettings()" type="button" value="Inject Font Settings" title="Injects all ABC font directives at the top of the current or all tunes from the current font settings">'
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
 	modal_msg  += '<input id="injectallmidiparams" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectAllMIDIParams()" type="button" value="Inject MIDI Programs and Volumes" title="Injects MIDI Soundfont, Melody program, Bass program, Chord program, and volume annotations into one or all tunes">';
