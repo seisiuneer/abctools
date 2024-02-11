@@ -415,6 +415,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#learningtunes">Learning New Tunes Part-by-Part Using ABC</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#clicktrack">Adding a Two-Bar Click Intro to Tunes</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#abcadditions">Additional Tool-Specific ABC Directives</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#sequential_play">Creating Sets of Tunes that Will Play Sequentially in the Player</a></p>
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">Adding Shape Note Shapes</button>
@@ -2790,6 +2791,16 @@
             <div class="image_holder_p">
                 <img class="image" src="img/slide_demo_1.jpg"/>
             </div>
+            <hr class="hidden-print" id="sequential_play">
+            <h1 class="page_break_always h1wide">Creating Sets of Tunes that Will Play Sequentially in the Player<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>This video demonstrates how to create a set of tunes that will play continuously in the player:</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" src="https://www.youtube.com/embed/ck2kbpBgXRQ" title="Creating a set of tunes for sequential playback" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>   
+            <p>Summary of the process shown in the video:</p>
+            <p>1) Remove the X: tags from all but the first tune.</p>
+            <p>2) Make sure the tunes are all run together by deleting any extra blank lines between the tunes.</p>
+            <p>3) Delete the R: tags on all but the first tune to get rid of the stacked style directives at the top.</p>
+            <p>4) Add space above the T: tags for the tunes after the first one using a %%text directive.</p>
+            <p>5) Add a matching %%titlefont and %%subtitle font directives to the top of the set so that all the titles display with the same font.</p>
             <hr class="hidden-print" id="shapenote">
             <h1 class="page_break_always">Adding Shape Note Shapes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>The tool supports the standard shape note shapes for both 4-shape and 7-shape systems.</p>
