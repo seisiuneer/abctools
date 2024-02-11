@@ -15069,6 +15069,28 @@ function InjectStaffWidth(){
 //
 // Inject all the fonts at the top of one or all tunes
 //
+
+// Setup initial values
+const gTheFontInjectData = {
+	configure_injectall:true,
+	configure_titlefont:false,
+	configure_subtitlefont:false,
+	configure_infofont:false,
+	configure_partsfont:false,
+	configure_tempofont:false,
+	configure_textfont:false,
+	configure_composerfont:false,
+	configure_annotationfont:false,
+	configure_gchordfont:false,
+	configure_vocalfont:false,
+	configure_wordsfont:false,
+	configure_tablabelfont:false,
+	configure_tabnumberfont:false,
+	configure_tabgracefont:false,
+	configure_historyfont:false,
+	configure_voicefont:false
+};
+
 function InjectFontSettings(){
 
 	// If currently rendering PDF, exit immediately
@@ -15076,128 +15098,224 @@ function InjectFontSettings(){
 		return;
 	}
 
-	// Setup initial values
-	const theData = {
-	  configure_inject_all:true
-	};
-
 	var theSelectedTuneIndex = findSelectedTuneIndex();
 
 	var form = [
 	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Inject Font Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_inject_font_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
-	  {html: '<p style="margin-top:24px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">Clicking "OK" will inject all the fonts from your font settings into the tunes.</p>'},  
-	  {name: "          Inject all tunes", id: "injectalltunes", type:"checkbox", cssClass:"configure_injectheaderstring_form_text"},
+	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">Click "OK" to inject the checked fonts below from your Font Settings into the tunes.</p>'},  
+	  {name: "Title font: "+gRenderingFonts.titlefont, id: "configure_titlefont", type:"checkbox", cssClass:"configure_injectfontstring_form_text"},
+	  {name: "Subtitle font: "+gRenderingFonts.subtitlefont, id: "configure_subtitlefont", type:"checkbox", cssClass:"configure_injectfontstring_form_text"},
+	  {name: "Info font: "+gRenderingFonts.infofont, id: "configure_infofont", type:"checkbox", cssClass:"configure_injectfontstring_form_text"},
+	  {name: "Parts font: "+gRenderingFonts.partsfont, id: "configure_partsfont", type:"checkbox", cssClass:"configure_injectfontstring_form_text"},
+	  {name: "Tempo font: "+gRenderingFonts.tempofont, id: "configure_tempofont", type:"checkbox", cssClass:"configure_injectfontstring_form_text"},
+	  {name: "Text font: "+gRenderingFonts.textfont, id: "configure_textfont", type:"checkbox", cssClass:"configure_injectfontstring_form_text"},
+	  {name: "Composer font: "+gRenderingFonts.composerfont, id: "configure_composerfont", type:"checkbox", cssClass:"configure_injectfontstring_form_text"},
+	  {name: "Annotation font: "+gRenderingFonts.annotationfont, id: "configure_annotationfont", type:"checkbox", cssClass:"configure_injectfontstring_form_text"},
+	  {name: "Guitar chord font: "+gRenderingFonts.gchordfont, id: "configure_gchordfont", type:"checkbox", cssClass:"configure_injectfontstring_form_text"},
+	  {name: "Vocal font: "+gRenderingFonts.vocalfont, id: "configure_vocalfont", type:"checkbox", cssClass:"configure_injectfontstring_form_text"},
+	  {name: "Words font: "+gRenderingFonts.wordsfont, id: "configure_wordsfont", type:"checkbox", cssClass:"configure_injectfontstring_form_text"},
+	  {name: "Tab label font: "+gRenderingFonts.tablabelfont, id: "configure_tablabelfont", type:"checkbox", cssClass:"configure_injectfontstring_form_text"},
+	  {name: "Tab number font: "+gRenderingFonts.tabnumberfont, id: "configure_tabnumberfont", type:"checkbox", cssClass:"configure_injectfontstring_form_text"},
+	  {name: "Tab grace font: "+gRenderingFonts.tabgracefont, id: "configure_tabgracefont", type:"checkbox", cssClass:"configure_injectfontstring_form_text"},
+	  {name: "History font: "+gRenderingFonts.historyfont, id: "configure_historyfont", type:"checkbox", cssClass:"configure_injectfontstring_form_text"},
+	  {name: "Voice font: "+gRenderingFonts.voicefont, id: "configure_voicefont", type:"checkbox", cssClass:"configure_injectfontstring_form_text"},
+	  {html: '<p style="margin-top:0px;font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">&nbsp;</p>'},  
+	  {name: "Inject all tunes ", id: "configure_injectall", type:"checkbox", cssClass:"configure_injectfontstring_form_text"},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, gTheFontInjectData, { theme: "modal_flat", top: 75, width: 675, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 		
 		// Keep track of dialogs
-		sendGoogleAnalytics("action","InjectFontHeaders");
+		sendGoogleAnalytics("action","InjectFontSettings");
 	
 		if (!args.canceled){
 
 			//debugger;
 
-			var injectAllTunes = args.result.injectalltunes;
+			// Keep checkbox state for next time
+			gTheFontInjectData.configure_injectall=false;
+			gTheFontInjectData.configure_titlefont=false;
+			gTheFontInjectData.configure_subtitlefont=false;
+			gTheFontInjectData.configure_infofont=false;
+			gTheFontInjectData.configure_partsfont=false;
+			gTheFontInjectData.configure_tempofont=false;
+			gTheFontInjectData.configure_textfont=false;
+			gTheFontInjectData.configure_composerfont=false;
+			gTheFontInjectData.configure_annotationfont=false;
+			gTheFontInjectData.configure_gchordfont=false;
+			gTheFontInjectData.configure_vocalfont=false;
+			gTheFontInjectData.configure_wordsfont=false;
+			gTheFontInjectData.configure_tablabelfont=false;
+			gTheFontInjectData.configure_tabnumberfont=false;
+			gTheFontInjectData.configure_tabgracefont=false;
+			gTheFontInjectData.configure_historyfont=false;
+			gTheFontInjectData.configure_voicefont=false;
 
-			var stringToInject = 
-				"%%titlefont "+gRenderingFonts.titlefont+"\n"+
-				"%%subtitlefont "+gRenderingFonts.subtitlefont+"\n"+
-				"%%infofont "+gRenderingFonts.infofont+"\n"+
-				"%%partsfont "+gRenderingFonts.partsfont+"\n"+
-				"%%tempofont "+gRenderingFonts.tempofont+"\n"+
-				"%%textfont "+gRenderingFonts.textfont+"\n"+
-				"%%composerfont "+gRenderingFonts.composerfont+"\n"+
-				"%%annotationfont "+gRenderingFonts.annotationfont+"\n"+
-				"%%gchordfont "+gRenderingFonts.gchordfont+"\n"+
-				"%%vocalfont "+gRenderingFonts.vocalfont+"\n"+
-				"%%wordsfont "+gRenderingFonts.wordsfont+"\n"+
-				"%%tablabelfont "+gRenderingFonts.tablabelfont+"\n"+
-				"%%tabnumberfont "+gRenderingFonts.tabnumberfont+"\n"+
-				"%%tabgracefont "+gRenderingFonts.tabgracefont+"\n"+
-				"%%historyfont "+gRenderingFonts.historyfont+"\n"+
-				"%%voicefont "+gRenderingFonts.voicefont;
+			var injectAllTunes = args.result.configure_injectall;
 
-			// Injecting all tunes?
 			if (injectAllTunes){
-
-				var nTunes = CountTunes();
-
-				var theNotes = gTheABC.value;
-
-				// Find the tunes
-				var theTunes = theNotes.split(/^X:/gm);
-
-				var output = FindPreTuneHeader(theNotes);
-
-				for (var i=1;i<=nTunes;++i){
-
-					var theTune = "X:"+theTunes[i];
-
-					output += InjectStringAboveTuneHeader(theTune,stringToInject);
-
-				}
-
-				// Stuff in the output
-				gTheABC.value = output;
-				
-				// Set dirty
-				gIsDirty = true;
-
-				// Force a redraw
-				RenderAsync(true,null,function(){
-
-					// Set the select point
-					gTheABC.selectionStart = 0;
-				    gTheABC.selectionEnd = 0;
-
-				    // Focus after operation
-				    FocusAfterOperation();
-
-				});
+				gTheFontInjectData.configure_injectall = true;
 			}
-			else{
 
-				// Try to find the current tune
-				var theSelectedABC = findSelectedTune();
+			var stringToInject = "";
 
-				if (theSelectedABC == ""){
-					// This should never happen
-					return;
+			if ( args.result.configure_titlefont){
+				gTheFontInjectData.configure_titlefont = true;
+				stringToInject += "%%titlefont "+gRenderingFonts.titlefont+"\n";
+			}
+			if ( args.result.configure_subtitlefont){
+				gTheFontInjectData.configure_subtitlefont = true;
+				stringToInject += "%%subtitlefont "+gRenderingFonts.subtitlefont+"\n";
+			}
+			if ( args.result.configure_infofont){
+				gTheFontInjectData.configure_infofont = true;
+				stringToInject += "%%infofont "+gRenderingFonts.infofont+"\n";
+			}
+			if ( args.result.configure_partsfont){
+				gTheFontInjectData.configure_partsfont = true;
+				stringToInject += "%%partsfont "+gRenderingFonts.partsfont+"\n";
+			}
+			if ( args.result.configure_tempofont){
+				gTheFontInjectData.configure_tempofont = true;
+				stringToInject += "%%tempofont "+gRenderingFonts.tempofont+"\n";
+			}
+			if ( args.result.configure_textfont){
+				gTheFontInjectData.configure_textfont = true;
+				stringToInject += "%%textfont "+gRenderingFonts.textfont+"\n";
+			}
+			if ( args.result.configure_composerfont){
+				gTheFontInjectData.configure_composerfont = true;
+				stringToInject += "%%composerfont "+gRenderingFonts.composerfont+"\n";
+			}
+			if ( args.result.configure_annotationfont){
+				gTheFontInjectData.configure_annotationfont = true;
+				stringToInject += "%%annotationfont "+gRenderingFonts.annotationfont+"\n";
+			}
+			if ( args.result.configure_gchordfont){
+				gTheFontInjectData.configure_gchordfont = true;
+				stringToInject += "%%gchordfont "+gRenderingFonts.gchordfont+"\n";
+			}
+			if ( args.result.configure_vocalfont){
+				gTheFontInjectData.configure_vocalfont = true;
+				stringToInject += "%%vocalfont "+gRenderingFonts.vocalfont+"\n";
+			}
+			if ( args.result.configure_wordsfont){
+				gTheFontInjectData.configure_wordsfont = true;
+				stringToInject += "%%wordsfont "+gRenderingFonts.wordsfont+"\n";
+			}
+			if ( args.result.configure_tablabelfont){
+				gTheFontInjectData.configure_tablabelfont = true;
+				stringToInject += "%%tablabelfont "+gRenderingFonts.tablabelfont+"\n";
+			}
+			if ( args.result.configure_tabnumberfont){
+				gTheFontInjectData.configure_tabnumberfont = true;
+				stringToInject += "%%tabnumberfont "+gRenderingFonts.tabnumberfont+"\n";
+			}
+			if ( args.result.configure_tabgracefont){
+				gTheFontInjectData.configure_tabgracefont = true;
+				stringToInject += "%%tabgracefont "+gRenderingFonts.tabgracefont+"\n";
+			}
+			if ( args.result.configure_historyfont){
+				gTheFontInjectData.configure_historyfont = true;
+				stringToInject += "%%historyfont "+gRenderingFonts.historyfont+"\n";
+			}
+			if ( args.result.configure_voicefont){
+				gTheFontInjectData.configure_voicefont = true;
+				stringToInject += "%%voicefont "+gRenderingFonts.voicefont+"\n";
+			}
+
+			if (stringToInject != ""){
+
+				// Injecting all tunes?
+				if (injectAllTunes){
+
+					stringToInject += "\n";
+
+					var nTunes = CountTunes();
+
+					var theNotes = gTheABC.value;
+
+					// Find the tunes
+					var theTunes = theNotes.split(/^X:/gm);
+
+					var output = FindPreTuneHeader(theNotes);
+
+					for (var i=1;i<=nTunes;++i){
+
+						var theTune = "X:"+theTunes[i];
+
+						theTune = InjectStringAboveTuneHeader(theTune,stringToInject);
+
+						// Seeing extra line breaks after the inject
+						theTune = theTune.replace("\n\n","");
+
+						output += theTune;
+
+					}
+
+					// Stuff in the output
+					gTheABC.value = output;
+					
+					// Set dirty
+					gIsDirty = true;
+
+					// Force a redraw
+					RenderAsync(true,null,function(){
+
+						// Set the select point
+						gTheABC.selectionStart = 0;
+					    gTheABC.selectionEnd = 0;
+
+					    // Focus after operation
+					    FocusAfterOperation();
+
+					});
 				}
+				else{
 
-				var theInjectedTune = theSelectedABC;
+					// Try to find the current tune
+					var theSelectedABC = findSelectedTune();
 
-				theInjectedTune = InjectStringAboveTuneHeader(theInjectedTune,stringToInject);
+					if (theSelectedABC == ""){
+						// This should never happen
+						return;
+					}
 
-				// Seeing extra line breaks after the inject
-				theInjectedTune = theInjectedTune.replace("\n\n","");
+					stringToInject += "\n";
 
-				// Try and keep the same tune after the redraw for immediate play
-				var theSelectionStart = gTheABC.selectionStart;
+					var theInjectedTune = theSelectedABC;
 
-				// Stuff in the injected ABC
-				var theABC = gTheABC.value;
-				theABC = theABC.replace(theSelectedABC,theInjectedTune);
+					theInjectedTune = InjectStringAboveTuneHeader(theInjectedTune,stringToInject);
 
-				gTheABC.value = theABC;
+					// Seeing extra line breaks after the inject
+					theInjectedTune = theInjectedTune.replace("\n\n","");
 
-				// Set dirty
-				gIsDirty = true;
+					// Try and keep the same tune after the redraw for immediate play
+					var theSelectionStart = gTheABC.selectionStart;
 
-				// Force a redraw of the tune
-				RenderAsync(false,theSelectedTuneIndex,function(){
+					// Stuff in the injected ABC
+					var theABC = gTheABC.value;
+					theABC = theABC.replace(theSelectedABC,theInjectedTune);
 
-					// Set the select point
-					gTheABC.selectionStart = theSelectionStart;
-				    gTheABC.selectionEnd = theSelectionStart;
+					gTheABC.value = theABC;
 
-				    // Focus after operation
-				    FocusAfterOperation();
+					// Set dirty
+					gIsDirty = true;
 
-				});
+					// Force a redraw of the tune
+					RenderAsync(false,theSelectedTuneIndex,function(){
+
+						// Set the select point
+						gTheABC.selectionStart = theSelectionStart;
+					    gTheABC.selectionEnd = theSelectionStart;
+
+					    // Focus after operation
+					    FocusAfterOperation();
+
+					});
 
 
+				}
 			}
 		}
 
