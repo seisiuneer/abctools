@@ -9447,7 +9447,6 @@ function StripTextAnnotations(){
 	// Set dirty
 	gIsDirty = true;
 
-
 }
 
 //
@@ -9456,9 +9455,12 @@ function StripTextAnnotations(){
 function StripTextAnnotationsOne(theNotes){
 
 	// Strip out text markings
-	var searchRegExp = /%%text.*[\r\n]*/gm
+	var searchRegExp = /%%text .*[\r\n]*/gm
 
-	// Strip out text markings
+	theNotes = theNotes.replace(searchRegExp, "");
+
+	searchRegExp = /%%text[\r\n]/gm
+
 	theNotes = theNotes.replace(searchRegExp, "");
 
 	// Strip out %%center annotation
@@ -9901,10 +9903,13 @@ function Render(renderAll,tuneNumber) {
 			if (gStripTextAnnotations) {
 
 				// Strip out text markings
-				searchRegExp = /%%text.*$/gm
+				searchRegExp = /%%text .*$/gm
 
-				// Strip out text markings
 				theNotes = theNotes.replace(searchRegExp, "% comment");
+
+				searchRegExp = /%%text[\r\n]/gm
+
+				theNotes = theNotes.replace(searchRegExp, "% comment\n");
 
 				// Strip out %%center annotation
 				searchRegExp = /%%center.*$/gm
@@ -10162,11 +10167,21 @@ function IdleAdvancedControls(bUpdateUI){
 
 	gotMatch = false;
 
-	// Detect text markings
-	searchRegExp = /%%text.*$/gm
+	// Detect text annotation
+	searchRegExp = /%%text .*$/gm
 
-	// Detect text markings
+	// Detect text annotation
 	gotMatch = theNotes.search(searchRegExp) != -1;
+
+	if (!gotMatch){
+
+		// Detect %%text annotation
+		searchRegExp = /%%text[\r\n]/gm
+
+		// Detect %%text annotation
+		gotMatch = theNotes.search(searchRegExp) != -1;
+
+	}
 
 	if (!gotMatch){
 
