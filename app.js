@@ -179,6 +179,8 @@ var gPlaybackHyperlinkChordVolume = "";
 var gPlaybackHyperlinkSoundFont = "";
 var gAddTunebookPlaybackHyperlinks = false;
 
+var gAddAllFonts = false;
+
 // Lock out editing on injected playback PDF links
 var gInjectEditDisabled = false;
 
@@ -3187,6 +3189,11 @@ function processSingleTunePlaybackInjectsQR(theTune){
 
 	}
 
+	// Font injection requested?
+	if (gAddAllFonts){
+		theTune = injectAllFonts(theTune);
+	}
+
 	// Strip injected incipit formatting metadata
 	// This is for play links that were created from formatted incipits
 	var incipitStart = theTune.indexOf("%incipits_inject_start");
@@ -3676,11 +3683,72 @@ function PostProcessHeadersAndFooters(thePDF,addPageNumbers,startingPage,nPages,
 }
 
 //
-// Get all the tune titles
+// Process tune hyperlinks
 //
+
 var gAcrobatURLLimitExceeded = [];
 var ACROBATMAXURLLENGTH = 2076;
 var gGotURLLengthWarning = false;
+
+// Inject all fonts used by the tune
+function injectAllFonts(theTune){
+
+	//console.log("injectAllFonts");
+	
+	var stringToInject = "";
+
+	// These are always injected
+	stringToInject += "%%titlefont "+gRenderingFonts.titlefont+"\n";
+	stringToInject += "%%subtitlefont "+gRenderingFonts.subtitlefont+"\n";
+	stringToInject += "%%infofont "+gRenderingFonts.infofont+"\n";
+	stringToInject += "%%tempofont "+gRenderingFonts.tempofont+"\n";
+	stringToInject += "%%gchordfont "+gRenderingFonts.gchordfont+"\n";
+	stringToInject += "%%annotationfont "+gRenderingFonts.annotationfont+"\n";
+	stringToInject += "%%textfont "+gRenderingFonts.textfont+"\n";
+
+	// The rest are only injected if used
+
+	if (theTune.indexOf("C:") != -1){
+		stringToInject += "%%composerfont "+gRenderingFonts.composerfont+"\n";
+	}
+
+	if (theTune.indexOf("H:") != -1){
+		stringToInject += "%%historyfont "+gRenderingFonts.historyfont+"\n";
+	}
+
+	if (theTune.indexOf("V:") != -1){
+		stringToInject += "%%voicefont "+gRenderingFonts.voicefont+"\n";
+	}
+
+	if (theTune.indexOf("P:") != -1){
+		stringToInject += "%%partsfont "+gRenderingFonts.partsfont+"\n";
+	}
+
+	if (theTune.indexOf("w:") != -1){
+		stringToInject += "%%vocalfont "+gRenderingFonts.vocalfont+"\n";
+	}
+
+	if (theTune.indexOf("W:") != -1){
+		stringToInject += "%%wordsfont "+gRenderingFonts.wordsfont+"\n";
+	}
+
+	var tabs = GetRadioValue("notenodertab");
+
+	if (tabs != "noten"){
+		stringToInject += "%%tablabelfont "+gRenderingFonts.tablabelfont+"\n";
+		stringToInject += "%%tabnumberfont "+gRenderingFonts.tabnumberfont+"\n";
+		stringToInject += "%%tabgracefont "+gRenderingFonts.tabgracefont+"\n";
+	}
+
+	// Strip out the X: tag
+	var searchRegExp = /^X:.*[\r\n]*/gm 
+
+	theTune = theTune.replace(searchRegExp, "");
+
+	theTune = "X:1\n"+stringToInject+theTune;
+
+	return theTune;
+}
 
 function GetAllTuneHyperlinks(theLinks) {
 
@@ -3755,6 +3823,11 @@ function GetAllTuneHyperlinks(theLinks) {
 				theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI bassprog "+gPlaybackHyperlinkBassProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkChordProgram+"\n"+theTune;
 			}
 
+		}
+
+		// Font injection requested?
+		if (gAddAllFonts){
+			theTune = injectAllFonts(theTune);
 		}
 		
 		// Strip injected incipit formatting metadata
@@ -6381,6 +6454,17 @@ function ParseCommentCommands(theNotes){
 			gAddPlaybackHyperlinksIncludePrograms = false;
 
 		}
+	}
+
+	// Search for a font inject request
+	gAddAllFonts = false;
+	searchRegExp = /^%add_all_fonts.*$/m
+
+	// Detect font inject request
+	var addAllFonts = theNotes.match(searchRegExp);
+	if ((addAllFonts) && (addAllFonts.length > 0)){
+		//console.log("Got gAddAllFonts!");
+		gAddAllFonts = true;
 	}
 
 	// Inject the MIDI volumes in the ABC before creating the link
@@ -10733,6 +10817,9 @@ var gPDFTunebookConfig ={
 	// Chord Volume
 	chord_volume: 64,
 
+	// Add all required fonts
+	bAdd_add_fonts: false,
+
 	// QR Code?
 	bAdd_QRCode: true,
 
@@ -10798,6 +10885,9 @@ function resetPDFTunebookConfig(){
 
 		// Chord volume:
 		chord_volume: 64,
+
+		// Add all required fonts
+		bAdd_add_fonts: false,
 
 		// QR Code?
 		bAdd_QRCode: true,
@@ -10877,11 +10967,11 @@ function PDFTunebookBuilder(){
   	}
 
 	var form = [
-	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Configure PDF Tunebook Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#configure_pdf_tunebook_features" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
+	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:18px">Configure PDF Tunebook Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#configure_pdf_tunebook_features" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
 	  {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:14pt;font-family:helvetica">Clicking "OK" will add PDF tunebook feature annotations to the top of your ABC.</p>'},  
 	  {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:14pt;font-family:helvetica">Leave any text fields blank for features you don\'t want in your PDF tunebook.</p>'},  
 	  {name: "PDF quality:", id: "pdfquality", type:"select", options:pdf_quality_list, cssClass:"configure_pdfquality_select"},
-	  {name: "Space between tunes (in 1/72\"):", id: "pdf_between_tune_space", type:"number", cssClass:"configure_setuppdftunebook_form_text"},
+	  {name: "Space between tunes (in 1/72\"):", id: "pdf_between_tune_space", type:"number", cssClass:"configure_setuppdftunebook_form_text3"},
 	  {name: "Title Page title:", id: "addtitle", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide2"},
 	  {name: "Title Page subtitle:", id: "addsubtitle", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
 	  {name: "Table of Contents title:", id: "addtoc", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
@@ -10896,6 +10986,7 @@ function PDFTunebookBuilder(){
 	  {name: "Bass volume (0-127):", id: "bass_volume", type:"number", cssClass:"configure_setuppdftunebook_form_text"},
 	  {name: "Chord instrument for playback links:", id: "chord_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
 	  {name: "Chord volume (0-127):", id: "chord_volume", type:"number", cssClass:"configure_setuppdftunebook_form_text"},
+	  {name: "          Inject all required fonts into the ABC in the playback links", id: "bAdd_add_fonts", type:"checkbox", cssClass:"configure_setuppdftunebook_form_text"},
 	  {name: "          Add a QR Code to the end of the PDF", id: "bAdd_QRCode", type:"checkbox", cssClass:"configure_setuppdftunebook_form_text"},
 	  {html: '<p style="margin-top:18px;margin-bottom:16px;font-size:12pt;line-height:10pt;font-family:helvetica">To override the default Share URL QR Code, enter your own URL below:</p>'},  
 	  {name: "Custom URL:", id: "qrcode_link", type:"text", cssClass:"configure_setuppdftunebook_form_text_wide"},
@@ -10912,7 +11003,7 @@ function PDFTunebookBuilder(){
 	
 		if (!args.canceled){
 
-			//debugger;
+			// debugger;
 			// %pdfquality .75
 			// %pdf_between_tune_space 20
 			// %addtitle Tunebook Title
@@ -10925,6 +11016,7 @@ function PDFTunebookBuilder(){
 			// %pagefooter This is the Page Footer
 			// %add_all_playback_links 0 0 0 fatboy
 			// %playback_links_are_complete_tunebook
+			// %add_all_fonts
 			// %qrcode https://michaeleskin.com
 			// %caption_for_qrcode Click or Scan to Visit my Home Page
 
@@ -11104,6 +11196,13 @@ function PDFTunebookBuilder(){
 
 					header_to_add += "%playback_links_are_complete_tunebook\n";
 
+				}
+
+				// Add required fonts
+				gPDFTunebookConfig.bAdd_add_fonts = args.result.bAdd_add_fonts;
+
+				if (gPDFTunebookConfig.bAdd_add_fonts){
+					header_to_add += "%add_all_fonts\n";
 				}
 
 			}
@@ -27915,6 +28014,11 @@ function GetInitialConfigurationSettings(){
         // Fixup config for new full tunebook links field added 11 Dec 2023
         if ((gPDFTunebookConfig.bAdd_add_full_tunebook == undefined) || (gPDFTunebookConfig.bAdd_add_full_tunebook == null)){
 			gPDFTunebookConfig.bAdd_add_full_tunebook = false;
+        }
+
+        // Fixup config for fonts inject field added 12 Feb 2024
+        if ((gPDFTunebookConfig.bAdd_add_fonts == undefined) || (gPDFTunebookConfig.bAdd_add_fonts == null)){
+			gPDFTunebookConfig.bAdd_add_fonts = false;
         }
     }
     else{
