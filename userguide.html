@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
- 
+       
         <style>
 
 		p {
@@ -351,6 +351,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#selecting_the_instruments_for_playback">Choosing the MIDI Soundfont and Instruments for Playback</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#general_midi_instrument_program_numbers">General MIDI Instrument Program Numbers</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#general_midi_percussion_map">General MIDI Drum Sound ABC Note Map</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#bodhran_map">Using the Bodhran (MIDI progam #117) Instrument</a></p>
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">Custom Backup Rhythms</button>
@@ -1449,7 +1450,7 @@
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder_p">
-                <img class="image" src="img/abc_transcription_tool_settings_39.jpg"/>
+                <img class="image" src="img/abc_transcription_tool_settings_40.jpg"/>
             </div>
             <hr>
             <p><strong>Show instrument tablature button bar below ABC editor</strong> - If checked shows the instrument tablature button bar below the editor.</p>
@@ -1490,8 +1491,8 @@
             <p>For more details on the soundfonts, visit: <a href="https://paulrosen.github.io/midi-js-soundfonts/" target="_blank">midi-js-soundfonts on GitHub</a></p>
             <p>Your default soundfont choice is saved in browser storage and restored the next time the tool is run.</p>
             <hr>
-            <p><strong>Use AppCordions custom sounds for Dulcimer, Accordion, Flute, and Whistle</strong></p>
-            <p>If this is enabled (on by default), for all soundfonts, my custom sampled instruments for Dulcimer, Accordion, Flute, and Whistle will override the soundfont sounds.</p>
+            <p><strong>Use AppCordions custom sounds for Dulcimer, Accordion, Flute, Whistle, and Melodic Tom</strong></p>
+            <p>If this is enabled (on by default), for all soundfonts, my custom sampled instruments for Dulcimer, Accordion, Flute, Whistle, and Bodhran (remapped from Melodic Tom) will override the soundfont sounds.</p>
             <hr>
             <p><strong>Use Default Melody and Bass/Chord programs when playing tunes</strong></p>
             <p>If enabled, will play tunes that don't have Melody or Bass/Chord programs already in the ABC with your preferred instrument sounds. </p>
@@ -1795,7 +1796,7 @@
             <p></p>
             <p><strong>The following MIDI instruments now use the same samples as my iOS "Celtic Sounds" and other apps:</strong></p>
             <p></p>
-            <p><strong>Hammered Dulcimer: 15, Accordion: 21, Flute: 73, Whistle: 78, Uilleann Pipes: 129, Scottish Smallpipes (D): 130, Scottish Smallpipes (A): 131, Säckpipa: 132, Concertina: 133, Melodica: 134, Cajun Accordion: 135, Solfège: 136, Silence: 137 (or mute)</strong></p>
+            <p><strong>Hammered Dulcimer: 15, Accordion: 21, Flute: 73, Whistle: 78, Bodhran: 117, Uilleann Pipes: 129, Scottish Smallpipes (D): 130, Scottish Smallpipes (A): 131, Säckpipa: 132, Concertina: 133, Melodica: 134, Cajun Accordion: 135, Solfège: 136, Silence: 137 (or mute)</strong></p>
             <p>The Scottish Smallpipes (A) samples are from an instrument tuned in A, but the note numbers mapped to D so that they have the same transposed MIDI note range as the flute or whistle.</p>
             <p>The Flute, Whistle (if <strong>Use AppCordions custom sounds for Dulcimer, Accordion, Flute, and Whistle</strong> in the <strong>Settings</strong> is enabled), and Uilleann pipes sounds will automatically "fold" notes below first octave D up an octave.</p>
             <p>The Säckpipa and Scottish Smallpipes (A) and (D) sounds will automatically "fold" notes above second octave D down an octave.</p>
@@ -1813,7 +1814,7 @@
             <hr class="hidden-print" id="general_midi_instrument_program_numbers">
             <h1 class="page_break_always">General MIDI Instrument Program Numbers <span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder">
-                <img class="image" style="width:700px;" src="img/gm_extended_8.jpg"/>
+                <img class="image" style="width:700px;" src="img/gm_extended_9.jpg"/>
             </div>
             <p>Use program #137 Silence (or mute) to mute MIDI voices.</p>
             <p>This can be used, for example, to create "Music Minus One" recordings consisting only of backing bass and chord tracks.</p>
@@ -1823,6 +1824,52 @@
                 <img class="image" style="width:700px;" src="img/gm_drum_map_1.jpg"/>
             </div>
             <p>Use program #128 (Percussion) on it's own voice for MIDI click tracks.</p>
+            <hr class="hidden-print" id="bodhran_map">
+            <h1 class="page_break_always h1wide">Using the Bodhran (MIDI progam #117) Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>If you have <strong>Use AppCordions custom sounds for Dulcimer, Accordion, Flute, Whistle, and Bodhran</strong> checked in your settings, MIDI instrument #117 (Melodic Tom) is remapped to bodhran sounds with the following note map:</p>
+            <p class="code">
+                C4  - Hit level 1<br/>
+                C#4 - Hit level 1<br/>
+                D4  - Hit level 2<br/>
+                D#4 - Hit level 2<br/>
+                E4  - Hit level 3<br/>
+                F4  - Hit level 4<br/>
+                F#4 - Hit level 4<br/>
+                G4  - Scrape<br/>
+                G#4 - Scrape<br/>
+                A4  - Edge tap<br/>
+                A#4 - Edge tap
+            </p>
+            <p>To use the bodhran sound for a percussion backing track, create a two-voice tune with the bodhran on it's own voice:</p>
+            <p class="code">
+                X: 1<br/>
+                T: The Kesh<br/>
+                R: Jig<br/>
+                M: 6/8<br/>
+                L: 1/8<br/>
+                Q: 3/8=120<br/>
+                K: Gmaj<br/>
+                V:1<br/> 
+                %%MIDI program 78<br/>
+                V:2<br/>
+                % Use MIDI program 117 for the Bodhran sound<br/>
+                %%MIDI program 117<br/>
+                % Melody voice<br/>         
+                V:1<br/>
+                z6|z6|z6|z6|<br/>
+                |:GAG GAB|ABA ABd|edd gdd|edB dBA|<br/>
+                GAG GAB|ABA ABd|edd gdB|AGF G3:|<br/>
+                |:BAB dBd|ege dBA|BAB dBG|ABA AGA|<br/>
+                BAB dBd|ege dBd|gfg aga|bgf g3:|<br/>
+                % Bodhran voice<br/>
+                V:2<br/>
+                  FzD FCC | FzD FCC | FzD FCC | FCC F3 |<br/>
+                |:FzD FCC | FzD FCC | FzD FCC | FzD FCC |<br/>
+                  FzD FCC | FzD FCC | FzD FCC | FCC F3 :|<br/>
+                |:FAD FCG | FAD FCG | FAD FCG | FAD FCG |<br/>
+                  FAD FCG | FAD FCG | FAD FCG | FCC F3 :|
+            </p>
+            <p>If the bodhran sound is too loud, try adding an !mf! or other ABC dynamic indication before the first note of the bodhran voice ABC.</p>
             <hr class="hidden-print" id="custom_backup_rhythms">
             <h1 class="page_break_always">Custom Backup Rhythms<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>You may customize the backup rhythm used for any meter in a single tune with chords by adding the following comment-based directive anywhere in the tune's ABC:</p>

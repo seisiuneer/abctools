@@ -46,7 +46,8 @@
 <p>Options icon by Marie Van den Broeck from <a href="https://thenounproject.com/browse/icons/term/options/" target="_blank" title="options Icons">Noun Project</a> (CC BY 3.0)</p>
 <p>This product includes <a href="https://modal.daypilot.org" target="_blank">DayPilot Modal</a> for modal dialog replacements.</p>
 <p>Anglo Concertina fingering solution and ABC parsing methods used by the tab injectors originally developed by <a href="https://jvandonsel.github.io/fingering/fingering.html" target="_blank">Jim Van Donsel</a>.</p>
-<p><a href="https://github.com/TomWyllie/folkfriend" title="FolkFriend" target="_blank">FolkFriend.app Tune Collection</a> by Tom Wyllie, used for the search engine, released under <a href="https://michaeleskin.com/abctools/gpl3.txt" title="GPL3" target="_blank">GPL3</a> licensing.</p>
+<p><a href="https://github.com/TomWyllie/folkfriend" title="FolkFriend" target="_blank">FolkFriend.app Tune Collection</a> by Tom Wyllie, used for the search engine, used under <a href="https://michaeleskin.com/abctools/gpl3.txt" title="GPL3" target="_blank">GPL3</a> licensing.</p>
+<p><a href="https://freesound.org/people/bosone/packs/4209/" title="Bodrhan Samples by Bosone" target="_blank">Bodrhan Samples by Bosone</a> used under <a href="https://creativecommons.org/licenses/by-nc/4.0/" title="by-nc" target="_blank">CC BY-NC 4.0</a> licensing.</p>
 <p>Without these free open-source resources this project would not have been possible.</p><p></p>
 <hr>
 <p><strong>Project Contributors:</strong></p>

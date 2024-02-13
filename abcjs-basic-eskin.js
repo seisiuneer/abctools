@@ -14710,6 +14710,7 @@ function CreateSynth(theABC) {
               "accordion": 50,   // 21
               "flute": 50,       // 73
               "whistle": 50,     // 78
+              "melodic_tom": 0,  // 117
               "uilleann": 50,    // 129
               "smallpipesd": 50, // 130
               "smallpipesa":50,  // 131
@@ -15884,6 +15885,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
         case "accordion":   // 21
         case "flute":       // 73
         case "whistle":     // 78
+        case "melodic_tom": // 117
         case "uilleann":    // 129 
         case "smallpipesd": // 130
         case "smallpipesa": // 131

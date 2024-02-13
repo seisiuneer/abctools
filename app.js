@@ -232,7 +232,7 @@ var gAllSwingHornpipesRequested = false;
 var gAllSwingHornpipesSwingFactor = 0.25;
 var gAllNoSwingHornpipesRequested = false;
 
-// Use the custom GM sounds for dulcimer, accordion, flute, and whistle
+// Use the custom GM sounds for dulcimer, accordion, flute, whistle, and melodic tom
 var gUseCustomGMSounds = true;
 
 // Use count for tip jar reminder
@@ -16098,7 +16098,7 @@ const generalMIDISoundNames = [
   "Steel Drums",
   "Woodblock",
   "Taiko Drum",
-  "Melodic Tom",
+  "Bodhran",
   "Synth Drum",
   "Reverse Cymbal",
   "Guitar Fret Noise",
@@ -16205,7 +16205,7 @@ function InjectAllMIDIParams(){
 	  {name: "            Inject MIDI Chord program and volumes", id: "configure_inject_chord_program", type:"checkbox", cssClass:"configure_midi_program_form_text"},
   	  {name: "MIDI Chord program to inject:", id: "configure_chordprogram", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
 	  {name: "MIDI Chord volume (0-127):", id: "configure_chordvolume", type:"text", cssClass:"configure_midi_program_form_number_input"},
-	  {html: '<p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="https://michaeleskin.com/documents/general_midi_extended_v2.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'},
+	  {html: '<p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="https://michaeleskin.com/documents/general_midi_extended_v4.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'},
 	  {name: "            Inject all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_midi_program_form_text"},
 	];
 
@@ -20898,6 +20898,7 @@ function computeFade(tuneABC){
 					case "21":   // Accordion
 					case "73":   // Flute
 					case "78":   // Whistle
+					case "117":  // Melodic tom
 					case "129":  // Uilleann pipes
 					case "130":  // Smallpipes D
 					case "131":  // Smallpipes A
@@ -30431,7 +30432,7 @@ function ConfigureToolSettings() {
 		{name: "Stringed instrument capo fret postion:", id: "configure_capo", type:"number", cssClass:"configure_settings_form_text"},
 		{name: "    Show stringed instrument names on tablature (single-voice tunes only, not shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "Default abcjs soundfont:", id: "configure_soundfont", type:"select", options:sound_font_options, cssClass:"configure_settings_select"}, 
-		{name: "    Use AppCordions custom sounds for Dulcimer, Accordion, Flute, and Whistle", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+		{name: "    Use AppCordions custom sounds for Dulcimer, Accordion, Flute, Whistle, and Bodhran", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "Default Melody MIDI program:", id: "configure_melody_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
 		{name: "Default Bass MIDI program:", id: "configure_bass_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
