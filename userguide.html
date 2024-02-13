@@ -1823,7 +1823,7 @@
             <div class="image_holder">
                 <img class="image" style="width:700px;" src="img/gm_drum_map_1.jpg"/>
             </div>
-            <p>Use program #128 (Percussion) on it's own voice for MIDI click tracks.</p>
+            <p>Use program #128 (Percussion) on its own voice for MIDI click tracks.</p>
             <hr class="hidden-print" id="bodhran_map">
             <h1 class="page_break_always h1wide">Using the Bodhran (MIDI progam #117) Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>If you have <strong>Use AppCordions custom sounds for Dulcimer, Accordion, Flute, Whistle, and Bodhran</strong> checked in your settings, MIDI instrument #117 (Melodic Tom) is remapped to bodhran sounds with the following note map:</p>
@@ -1840,36 +1840,73 @@
                 A4  - Edge tap<br/>
                 A#4 - Edge tap
             </p>
-            <p>To use the bodhran sound for a percussion backing track, create a two-voice tune with the bodhran on it's own voice:</p>
+            <p>To use the bodhran sound for a percussion backing track, create a two-voice tune with the bodhran on its own voice:</p>
+            <p>Example Jig:</p>
             <p class="code">
-                X: 1<br/>
-                T: The Kesh<br/>
-                R: Jig<br/>
-                M: 6/8<br/>
-                L: 1/8<br/>
-                Q: 3/8=120<br/>
-                K: Gmaj<br/>
-                V:1<br/> 
-                %%MIDI program 78<br/>
-                V:2<br/>
-                % Use MIDI program 117 for the Bodhran sound<br/>
-                %%MIDI program 117<br/>
-                % Melody voice<br/>         
-                V:1<br/>
-                z6|z6|z6|z6|<br/>
-                |:GAG GAB|ABA ABd|edd gdd|edB dBA|<br/>
-                GAG GAB|ABA ABd|edd gdB|AGF G3:|<br/>
-                |:BAB dBd|ege dBA|BAB dBG|ABA AGA|<br/>
-                BAB dBd|ege dBd|gfg aga|bgf g3:|<br/>
-                % Bodhran voice<br/>
-                V:2<br/>
-                  FzD FCC | FzD FCC | FzD FCC | FCC F3 |<br/>
-                |:FzD FCC | FzD FCC | FzD FCC | FzD FCC |<br/>
-                  FzD FCC | FzD FCC | FzD FCC | FCC F3 :|<br/>
-                |:FAD FCG | FAD FCG | FAD FCG | FAD FCG |<br/>
-                  FAD FCG | FAD FCG | FAD FCG | FCC F3 :|
+            X: 1<br/>
+            T: The Kesh - Bodhran Demo<br/>
+            R: Jig<br/>
+            M: 6/8<br/>
+            L: 1/8<br/>
+            Q: 3/8=120<br/>
+            K: Gmaj<br/>
+            V:1 name="Melody"<br/>
+            % Use MIDI program 78 for the melody Tin Whistle sound<br/>
+            %%MIDI program 78<br/>
+            V:2 name="Bodhran"<br/>
+            % Use MIDI program 117 for the Bodhran sound<br/>
+            %%MIDI program 117<br/>
+            % Melody voice<br/>
+            V:1<br/>
+            z6|z6|z6|z6|<br/>
+            |:GAG GAB|ABA ABd|edd gdd|edB dBA|<br/>
+            GAG GAB|ABA ABd|edd gdB|AGF G3:|<br/>
+            |:BAB dBd|ege dBA|BAB dBG|ABA AGA|<br/>
+            BAB dBd|ege dBd|gfg aga|bgf g3:|<br/>
+            % Bodhran voice<br/>
+            V:2<br/>
+            FzD FCC | FzD FCC | FzD FCC | FCC !>!F3 |<br/>
+            |:FzD FCC | FzD FCC | FzD FCC | FzD FCC |<br/>
+            FzD FCC | FzD FCC | FzD FCC | FCC !>!F3 :|<br/>
+            |:FzD FCC | FzD FCC | FzD FCC | FzD FCC |<br/>
+            FzD FCC | FzD FCC | FzD FCC | FzD !>!F3 :|
             </p>
-            <p>If the bodhran sound is too loud, try adding an !mf! or other ABC dynamic indication before the first note of the bodhran voice ABC.</p>
+            <p>Example Reel:</p>
+            <p class="code">
+            X: 1<br/>
+            T: Cooley's - Bodhran Demo<br/>
+            C: Traditional<br/>
+            R: Reel<br/>
+            M: 4/4<br/>
+            L: 1/8<br/>
+            Q: 1/2=90<br/>
+            K: Edor<br/>
+            %%staffsep 50<br/>
+            % Set a specific amount of swing:<br/>
+            %swing 0.15<br/>
+            %<br/>
+            V:1 name="Melody"<br/>
+            %%MIDI program 78<br/>
+            V:2 name="Bodhran"<br/>
+            % Use MIDI program 117 for the Bodhran sound<br/>
+            %%MIDI program 117<br/>
+            % Melody voice<br/>
+            V:1<br/>
+            z8|z8|z8|z8|<br/>
+            |:EBBA B2 EB|B2 AB dBAG|F/E/D AD BDAD|F/E/D AD BAGF|<br/>
+            EBBA B2 EB|B2 AB defg|afge dBAF|1 DEFD E3D:|2 DEFD E2gf||<br/>
+            |:eB (3BBB eBgf|eBB2 gedB|A/A/A FA DAFA|A/A/A FA defg|<br/>
+            eB (3BBB eBgf|eBBB defg|afge dBAF|1 DEFD E2gf:|2 DEFD E4|]<br/>
+            % Bodhran voice<br/>
+            V:2<br/>
+            CCFC  CCFC | CCFC CCFC| CCFC CCFC | CC!>!F/E/D !>!F4 |<br/>
+            |:CCFC CCFC |CCFC CCFC |CCFC CCFC |CCFC CCFC |<br/>
+            CCFC CCFC |CCFC CCFC |CCFC CCFC |1 CC!>!F/E/D !>!F4 :|2 CC!>!F/E/D !>!F4 ||<br/>
+            |:CCFC CCFC |CCFC CCFC |CCFC CCFC |CCFC CCFC |<br/>
+            CCFC CCFC |CCFC CCFC |CCFC CCFC |1 CC!>!F/E/D !>!F4 :|2 CC!>!F/E/D !>!F4 |]
+            </p>
+            <p>To strongly emphasize a hit, preceed the note with a !>! accent indication as shown in the above examples.</p>
+            <p>If the bodhran sound is too loud, try adding an !mp! or other ABC dynamic indication before the first note of the bodhran voice ABC.</p>
             <hr class="hidden-print" id="custom_backup_rhythms">
             <h1 class="page_break_always">Custom Backup Rhythms<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>You may customize the backup rhythm used for any meter in a single tune with chords by adding the following comment-based directive anywhere in the tune's ABC:</p>
