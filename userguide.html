@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-
+       
         <style>
 
 		p {
@@ -1983,9 +1983,15 @@
             </p>
             <p>To strongly emphasize a hit, preceed the note with a !>! accent indication as shown in the above examples.</p>
             <p>If the bodhran sound is too loud, try adding an !mp! or other ABC dynamic indication before the first note of the bodhran voice ABC.</p>
-            <p>When using the pitched sounds starting on C5, if you want to avoid excessive ledger lines, you can set an octave up transpose in the voice declaration:</p>
+            <p>When using the higher pitched sounds starting on C5, if you want to avoid excessive ledger lines, you can set an octave up transpose in the voice declaration:</p>
             <p class="code">
                 V:2 name="Bodhran" transpose=12<br/>
+                % Use MIDI program 117 for the Bodhran sound<br/>
+                %%MIDI program 117
+            </p>
+            <p>When using the lower pitched sounds starting on C1, if you want to avoid excessive ledger lines, you can set an octave down transpose in the voice declaration:</p>
+            <p class="code">
+                V:2 name="Bodhran" transpose=-36<br/>
                 % Use MIDI program 117 for the Bodhran sound<br/>
                 %%MIDI program 117
             </p>
