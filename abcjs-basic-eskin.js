@@ -15367,7 +15367,7 @@ function CreateSynth(theABC) {
       case "slipjig":
       case "slide":
 
-        // console.log("addSwing: "+style);
+        //console.log("addSwing: "+style);
 
         swing = parseFloat(swing)
         if (isNaN(swing))
@@ -15401,9 +15401,12 @@ function CreateSynth(theABC) {
             
             var theStart = event.start - (gSwingOffset * 0.125);
 
+            //console.log("theStart: "+theStart+" duration: "+duration)
+
             if (theStart >= 0){
 
-              if (duration == 0.125){
+              // 17 Feb 2024 - Additional check for slurred notes duration
+              if ((duration >= 0.125) && (duration <= 0.127)){
 
                 if ((theStart % (beatLength * 3)) == 0.125) {
 
@@ -15495,9 +15498,12 @@ function CreateSynth(theABC) {
 
             var theStart = event.start - (gSwingOffset * 0.125);
 
+            //console.log("theStart: "+theStart+" duration: "+duration)
+
             if (theStart >= 0){
 
-              if (duration == 0.125){
+              // 17 Feb 2024 - Additional check for slurred notes duration
+              if ((duration >= 0.125) && (duration <= 0.127)){
 
                 if ((theStart % (beatLength * 2)) == 0.125) {
 
@@ -15578,9 +15584,12 @@ function CreateSynth(theABC) {
             
             var theStart = event.start - (gSwingOffset * 0.125);
 
+            //console.log("theStart: "+theStart+" duration: "+duration)
+
             if (theStart >= 0){
 
-              if (duration == 0.125){
+              // 17 Feb 2024 - Additional check for slurred notes duration
+              if ((duration >= 0.125) && (duration <= 0.127)){
 
                 if ((theStart % (beatLength * 2)) == 0.125) {
 
