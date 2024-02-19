@@ -12887,6 +12887,7 @@ function AddBodhranReelTemplate(){
 	theValue += "K:C\n";
 	theValue += "%%staffsep 50\n";
 	theValue += "%abcjs_soundfont fatboy\n";
+	theValue += "%swing 0.15\n";
 	theValue += "%\n";
 	theValue += "% This template uses two voices:\n";
 	theValue += "% Voice 1 - Melody\n";
@@ -12953,6 +12954,7 @@ function AddBodhranJigTemplate(){
 	theValue += "K:C\n";
 	theValue += "%%staffsep 50\n";
 	theValue += "%abcjs_soundfont fatboy\n";
+	theValue += "%swing 0.25\n";
 	theValue += "%\n";
 	theValue += "% This template uses two voices:\n";
 	theValue += "% Voice 1 - Melody\n";
@@ -13015,6 +13017,7 @@ function AddBodhranSlipJigTemplate(){
 	theValue += "K:C\n";
 	theValue += "%%staffsep 50\n";
 	theValue += "%abcjs_soundfont fatboy\n";
+	theValue += "%swing 0.25\n";
 	theValue += "%\n";
 	theValue += "% This template uses two voices:\n";
 	theValue += "% Voice 1 - Melody\n";
@@ -13073,6 +13076,7 @@ function AddBodhranSlideTemplate(){
 	theValue += "K:C\n";
 	theValue += "%%staffsep 50\n";
 	theValue += "%abcjs_soundfont fatboy\n";
+	theValue += "%swing 0.25\n";
 	theValue += "%\n";
 	theValue += "% This template uses two voices:\n";
 	theValue += "% Voice 1 - Melody\n";
