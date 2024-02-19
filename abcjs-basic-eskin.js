@@ -15894,7 +15894,6 @@ var getNote = function getNote(url, instrument, name, audioContext) {
         case "accordion":   // 21
         case "flute":       // 73
         case "whistle":     // 78
-        case "melodic_tom": // 117
         case "uilleann":    // 129 
         case "smallpipesd": // 130
         case "smallpipesa": // 131
@@ -15904,6 +15903,11 @@ var getNote = function getNote(url, instrument, name, audioContext) {
         case "cajun":       // 135
         case "silence":     // 137
           url = "https://michaeleskin.com/abctools/soundfonts/";
+          isOgg = true;
+          break;
+
+        case "melodic_tom": // 117
+          url = "https://michaeleskin.com/abctools/soundfonts/bodhran/";
           isOgg = true;
           break;
 
