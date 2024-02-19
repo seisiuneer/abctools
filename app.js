@@ -12883,6 +12883,7 @@ function AddBodhranReelTemplate(){
 	theValue += "R:Reel\n";
 	theValue += "M:4/4\n";
 	theValue += "L:1/8\n";
+	theValue += "Q:1/2=90\n";	
 	theValue += "K:C\n";
 	theValue += "%%staffsep 50\n";
 	theValue += "%abcjs_soundfont fatboy\n";
@@ -12948,6 +12949,7 @@ function AddBodhranJigTemplate(){
 	theValue += "R:Jig\n";
 	theValue += "M:6/8\n";
 	theValue += "L:1/8\n";
+	theValue += "Q:3/8=120\n";
 	theValue += "K:C\n";
 	theValue += "%%staffsep 50\n";
 	theValue += "%abcjs_soundfont fatboy\n";
@@ -13009,6 +13011,7 @@ function AddBodhranSlipJigTemplate(){
 	theValue += "R:Slip Jig\n";
 	theValue += "M:9/8\n";
 	theValue += "L:1/8\n";
+	theValue += "Q:3/8=120\n";
 	theValue += "K:C\n";
 	theValue += "%%staffsep 50\n";
 	theValue += "%abcjs_soundfont fatboy\n";
@@ -13066,6 +13069,7 @@ function AddBodhranSlideTemplate(){
 	theValue += "R:Slide\n";
 	theValue += "M:12/8\n";
 	theValue += "L:1/8\n";
+	theValue += "Q:3/8=130\n";
 	theValue += "K:C\n";
 	theValue += "%%staffsep 50\n";
 	theValue += "%abcjs_soundfont fatboy\n";
@@ -13123,6 +13127,7 @@ function AddBodhranPolkaTemplate(){
 	theValue += "R:Polka\n";
 	theValue += "M:2/4\n";
 	theValue += "L:1/8\n";
+	theValue += "Q:1/4=130\n";
 	theValue += "K:C\n";
 	theValue += "%%staffsep 50\n";
 	theValue += "%abcjs_soundfont fatboy\n";
@@ -13180,6 +13185,7 @@ function AddBodhranHornpipeTemplate(){
 	theValue += "R:Reel\n";
 	theValue += "M:4/4\n";
 	theValue += "L:1/8\n";
+	theValue += "Q:1/2=80\n";
 	theValue += "K:C\n";
 	theValue += "%%staffsep 50\n";
 	theValue += "%abcjs_soundfont fatboy\n";
