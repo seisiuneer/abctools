@@ -12816,8 +12816,8 @@ function AddABC(){
 		modal_msg  += '<input id="addnewsong" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleSong();" type="button" value="Add an Example Song" title="Adds an example song to the end of the ABC">';
 		modal_msg += '</p>';
 		modal_msg += '<p style="text-align:center;margin-top:16px;">';
+		modal_msg  += '<input id="addbodhrantemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddBodhranTemplate();" type="button" value="Add Bodhran Backing Track Tune Template" title="Opens a dialog where you can choose a bodhran backing track template of common tune styles to add to the end of the ABC">';
 		modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendBoxFingeringTemplate();" type="button" value="Add Box Fingering Symbols Template" title="Adds a template with symbols for annotating box fingerings and tablature to the top of the ABC">';
-		modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddClickTrackTemplate();" type="button" value="Add Two-Bar Click Intro Templates" title="Adds two-bar click intro templates for common styles of tunes to the end of the ABC">';
 		modal_msg += '</p>';
 	}
 
@@ -12833,10 +12833,390 @@ function AddABC(){
 
 	}, 100);
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 720,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 730,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 
 			
 	});
+
+}
+
+//
+// Bodhran templates
+//
+function AddBodhranTemplate(){
+
+	var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Add Bodhran Backing Track Tune Template&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#bodhran_map" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+	modal_msg += '<p style="text-align:center;">';
+	modal_msg  += '<input id="bodhranreel" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddBodhranReelTemplate()" type="button" value="Add Reel Template" title="Adds a reel bodhran template to the end of the ABC">';
+	modal_msg  += '<input id="bodhranjig" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddBodhranJigTemplate()" type="button" value="Add Jig Template" title="Adds a jig bodhran template to the end of the ABC">';
+	modal_msg += '</p>';
+
+	modal_msg += '<p style="text-align:center;margin-top:24px;">';
+	modal_msg  += '<input id="bodhranslipjig" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddBodhranSlipJigTemplate()" type="button" value="Add Slip Jig Template" title="Adds a slip jig bodhran template to the end of the ABC">';
+	modal_msg  += '<input id="bodhranslide" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddBodhranSlideTemplate()" type="button" value="Add Slide Template" title="Adds a slide bodhran template to the end of the ABC">';
+	modal_msg += '</p>';
+
+	modal_msg += '<p style="text-align:center;margin-top:24px;">';
+	modal_msg  += '<input id="bodhranhornpipe" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddBodhranHornpipeTemplate()" type="button" value="Add Hornpipe Template" title="Adds a hornpipe bodhran template to the end of the ABC">';
+	modal_msg  += '<input id="bodhranpolka" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddBodhranPolkaTemplate()" type="button" value="Add Polka Template" title="Adds a polka bodhran template to the end of the ABC">';
+	modal_msg += '</p>';
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, width: 650,  scrollWithPage: (AllowDialogsToScroll()) });
+
+}
+
+function AddBodhranReelTemplate(){
+	// Keep track of actions
+	sendGoogleAnalytics("action","AddBodhranReelTemplate");
+
+	// Stuff in some default ABC with additional options explained
+	var theValue = ""
+
+	var nTunes = CountTunes();
+
+	if (nTunes > 0){
+		theValue += "\n";
+	}
+
+	theValue += "X:1\n";
+	theValue += "T:Reel Bodhran Template\n";
+	theValue += "R:Reel\n";
+	theValue += "M:4/4\n";
+	theValue += "L:1/8\n";
+	theValue += "K:C\n";
+	theValue += "%%staffsep 50\n";
+	theValue += "%abcjs_soundfont fatboy\n";
+	theValue += "%\n";
+	theValue += "% This template uses two voices:\n";
+	theValue += "% Voice 1 - Melody\n";
+	theValue += "% Voice 2 - Bodhran backing track\n";
+	theValue += "%\n";
+	theValue += "% Melody voice definition:\n";
+	theValue += "%\n";
+	theValue += "V:1\n";
+	theValue += "%%MIDI program 0\n";
+	theValue += "%\n";
+	theValue += "% Bodhran voice definition:\n";
+	theValue += "%\n";
+	theValue += "V:2 transpose=-24\n";
+	theValue += "%%MIDI program 117\n";
+	theValue += "%\n";
+	theValue += "% Voice 1 - Replace this with your Reel melody:\n";
+	theValue += "%\n";
+	theValue += "V:1\n";
+	theValue += "|: z8 | z8 | z8 | z8 |\n";
+	theValue += "   z8 | z8 | z8 | z8 :|\n";
+	theValue += "|: z8 | z8 | z8 | z8 |\n";
+	theValue += "   z8 | z8 | z8 | z8 :|\n";
+	theValue += "|: z8 | z8 | z8 | z8 |\n";
+	theValue += "   z8 | z8 | z8 | z8 :|\n";
+	theValue += "|: z8 | z8 | z8 | z8 |\n";
+	theValue += "   z8 | z8 | z8 | z8 :|\n";
+	theValue += "%\n";
+	theValue += "% Voice 2 - Bodhran backing patterns:\n";
+	theValue += "%\n";
+	theValue += "V:2\n";
+	theValue += "|: C,C,F,C,  C,C,F,C, | C,C,F,C, C,C,F,C, | C,C,F,C, C,C,F,C, | C,C,!>!F,/E,/D, !>!F,4 |\n";
+	theValue += "   C,C,F,C,  C,C,F,C, | C,C,F,C, C,C,F,C, | C,C,F,C, C,C,F,C, | C,C,!>!F,/E,/D, !>!F,4 :|\n";
+	theValue += "|: ^d2AA ^FG^GA | ^A2=AA ^A2=AA | ^ACCC CCA2 | ^ACCC ^A2=AA |\n";
+	theValue += "   ^d2AA ^FG^GA | ^A2=AA ^A2=AA | ^ACCC CCA2 | ^ACCC ^A2=AA :|\n";
+	theValue += "|: ^d2AA B2AA | ^ACFC ACFC | G/G/G GA ^G2^AA | ^d^A=AA G2AA |\n";
+	theValue += "   ^d2AA B2AA | ^ACFC ACFC | G/G/G GA ^G2^AA | ^d^A=AA G2AA :| \n";
+	theValue += "|: ^dCCe DDf^D | ^ACFC ^A2=AA | A3d c2AA | G^GAA e2GG |\n";
+	theValue += "   ^dCCe DDf^D | ^ACFC ^A2=AA | A3d c2AA | G^GAA e2GG :|\n";
+
+	// Do common tune addition processing
+	ProcessAddTune(theValue);
+
+}
+
+function AddBodhranJigTemplate(){
+	// Keep track of actions
+	sendGoogleAnalytics("action","AddBodhranJigTemplate");
+
+	// Stuff in some default ABC with additional options explained
+	var theValue = ""
+
+	var nTunes = CountTunes();
+
+	if (nTunes > 0){
+		theValue += "\n";
+	}
+
+	theValue += "X:1\n";
+	theValue += "T:Jig Bodhran Template\n";
+	theValue += "R:Jig\n";
+	theValue += "M:6/8\n";
+	theValue += "L:1/8\n";
+	theValue += "K:C\n";
+	theValue += "%%staffsep 50\n";
+	theValue += "%abcjs_soundfont fatboy\n";
+	theValue += "%\n";
+	theValue += "% This template uses two voices:\n";
+	theValue += "% Voice 1 - Melody\n";
+	theValue += "% Voice 2 - Bodhran backing track\n";
+	theValue += "%\n";
+	theValue += "% Melody voice definition:\n";
+	theValue += "%\n";
+	theValue += "V:1\n";
+	theValue += "%%MIDI program 0\n";
+	theValue += "%\n";
+	theValue += "% Bodhran voice definition:\n";
+	theValue += "%\n";
+	theValue += "V:2 transpose=-24\n";
+	theValue += "%%MIDI program 117\n";
+	theValue += "%\n";
+	theValue += "% Voice 1 - Replace this with your Jig melody:\n";
+	theValue += "%\n";
+	theValue += "V:1\n";
+	theValue += "|: z6 | z6 | z6 | z6 |\n";
+	theValue += "   z6 | z6 | z6 | z6 :|\n";
+	theValue += "|: z6 | z6 | z6 | z6 |\n";
+	theValue += "   z6 | z6 | z6 | z6 :|\n";
+	theValue += "|: z6 | z6 | z6 | z6 |\n";
+	theValue += "   z6 | z6 | z6 | z6 :|\n";
+	theValue += "%\n";
+	theValue += "% Voice 2 - Bodhran backing patterns:\n";
+	theValue += "%\n";
+	theValue += "V:2\n";
+	theValue += "|: F,zD, F,C,C, | F,zD, F,C,C, | F,zD, F,C,C, | F,zD, F,C,C, |\n";
+	theValue += "   F,zD, F,C,C, | F,zD, F,C,C, | F,zD, F,C,C, | F,C,C, !>!F,3 :|\n";
+	theValue += "|: ^dCC FCC | ^d2C AEA | ^A2C FCC|^dCC AEA |\n";
+	theValue += "   ^dCC FCC | ^d2C AEA | ^A2C FCC|^dCC AEA :|\n";
+	theValue += "|: ^dCC F/F/FC | ^A2=d FC=A | =dc/B/^A ^dCF | AEE =d3 |\n";
+	theValue += "   ^dCC F/F/FC | ^A2=d FC=A | =dc/B/^A ^dCF | AEE =d3 :| \n";
+
+	// Do common tune addition processing
+	ProcessAddTune(theValue);
+
+}
+
+function AddBodhranSlipJigTemplate(){
+	// Keep track of actions
+	sendGoogleAnalytics("action","AddBodhranSlipJigTemplate");
+
+	// Stuff in some default ABC with additional options explained
+	var theValue = ""
+
+	var nTunes = CountTunes();
+
+	if (nTunes > 0){
+		theValue += "\n";
+	}
+
+	theValue += "X:1\n";
+	theValue += "T:Slip Jig Bodhran Template\n";
+	theValue += "R:Slip Jig\n";
+	theValue += "M:9/8\n";
+	theValue += "L:1/8\n";
+	theValue += "K:C\n";
+	theValue += "%%staffsep 50\n";
+	theValue += "%abcjs_soundfont fatboy\n";
+	theValue += "%\n";
+	theValue += "% This template uses two voices:\n";
+	theValue += "% Voice 1 - Melody\n";
+	theValue += "% Voice 2 - Bodhran backing track\n";
+	theValue += "%\n";
+	theValue += "% Melody voice definition:\n";
+	theValue += "%\n";
+	theValue += "V:1\n";
+	theValue += "%%MIDI program 0\n";
+	theValue += "%\n";
+	theValue += "% Bodhran voice definition:\n";
+	theValue += "%\n";
+	theValue += "V:2 transpose=-24\n";
+	theValue += "%%MIDI program 117\n";
+	theValue += "%\n";
+	theValue += "% Voice 1 - Replace this with your Slip Jig melody:\n";
+	theValue += "%\n";
+	theValue += "V:1\n";
+	theValue += "|: z9 | z9 | z9 | z9 |\n";
+	theValue += "   z9 | z9 | z9 | z9 :|\n";
+	theValue += "|: z9 | z9 | z9 | z9 |\n";
+	theValue += "   z9 | z9 | z9 | z9 :|\n";
+	theValue += "%\n";
+	theValue += "% Voice 2 - Bodhran backing patterns:\n";
+	theValue += "%\n";
+	theValue += "V:2\n";
+	theValue += "|: F,zD, F,C,C, !>!F,3 | F,zD, F,C,C, F,C,C, | F,zD, F,C,C, !>!F,3 | F,zD, F,C,C, F,C,C, |\n";
+	theValue += "   F,zD, F,C,C, !>!F,3 | F,zD, F,C,C, F,C,C, | F,zD, F,C,C, !>!F,3 | F,zD, F,C,C, F,C,C, :|\n";
+	theValue += "|: ^dCC FCC FCC | ^d2C FCC AEA | ^A2C FCC A2A | ^dCC FCF A3 |\n";
+	theValue += "   ^dCC FCC FCC | ^d2C FCC AEA | ^A2C FCC A2A | ^dCC FCF A3 :|\n";
+
+	// Do common tune addition processing
+	ProcessAddTune(theValue);
+
+}
+
+function AddBodhranSlideTemplate(){
+	// Keep track of actions
+	sendGoogleAnalytics("action","AddBodhranSlideTemplate");
+
+	// Stuff in some default ABC with additional options explained
+	var theValue = ""
+
+	var nTunes = CountTunes();
+
+	if (nTunes > 0){
+		theValue += "\n";
+	}
+
+	theValue += "X:1\n";
+	theValue += "T:Slide Bodhran Template\n";
+	theValue += "R:Slide\n";
+	theValue += "M:12/8\n";
+	theValue += "L:1/8\n";
+	theValue += "K:C\n";
+	theValue += "%%staffsep 50\n";
+	theValue += "%abcjs_soundfont fatboy\n";
+	theValue += "%\n";
+	theValue += "% This template uses two voices:\n";
+	theValue += "% Voice 1 - Melody\n";
+	theValue += "% Voice 2 - Bodhran backing track\n";
+	theValue += "%\n";
+	theValue += "% Melody voice definition:\n";
+	theValue += "%\n";
+	theValue += "V:1\n";
+	theValue += "%%MIDI program 0\n";
+	theValue += "%\n";
+	theValue += "% Bodhran voice definition:\n";
+	theValue += "%\n";
+	theValue += "V:2 transpose=-24\n";
+	theValue += "%%MIDI program 117\n";
+	theValue += "%\n";
+	theValue += "% Voice 1 - Replace this with your Slide melody:\n";
+	theValue += "%\n";
+	theValue += "V:1\n";
+	theValue += "|: z12 | z12 |\n";
+	theValue += "   z12 | z12 :|\n";
+	theValue += "|: z12 | z12 |\n";
+	theValue += "   z12 | z12 :|\n";
+	theValue += "%\n";
+	theValue += "% Voice 2 - Bodhran backing patterns:\n";
+	theValue += "%\n";
+	theValue += "V:2\n";
+	theValue += "|: F,zD, F,C,C, F,C,C, !>!F,3 | F,zD, F,C,C, F,C,C, !>!F,3 |\n";
+	theValue += "   F,zD, F,C,C, F,C,C, !>!F,3 | F,zD, F,C,C, F,C,C, !>!F,3 :|\n";
+	theValue += "|: ^A2=F ^dF^A =d2=A ^c2^G | ^A2=F ^dF^A B3 B2^F |\n";
+	theValue += "   ^A2=F ^dF^A =d2=A ^c2^G | ^AC=F ^dF^A F3 ^A3 :|\n";
+
+	// Do common tune addition processing
+	ProcessAddTune(theValue);
+
+}
+
+function AddBodhranPolkaTemplate(){
+	// Keep track of actions
+	sendGoogleAnalytics("action","AddBodhranPolkaTemplate");
+
+	// Stuff in some default ABC with additional options explained
+	var theValue = ""
+
+	var nTunes = CountTunes();
+
+	if (nTunes > 0){
+		theValue += "\n";
+	}
+
+	theValue += "X:1\n";
+	theValue += "T:Polka Bodhran Template\n";
+	theValue += "R:Polka\n";
+	theValue += "M:2/4\n";
+	theValue += "L:1/8\n";
+	theValue += "K:C\n";
+	theValue += "%%staffsep 50\n";
+	theValue += "%abcjs_soundfont fatboy\n";
+	theValue += "%\n";
+	theValue += "% This template uses two voices:\n";
+	theValue += "% Voice 1 - Melody\n";
+	theValue += "% Voice 2 - Bodhran backing track\n";
+	theValue += "%\n";
+	theValue += "% Melody voice definition:\n";
+	theValue += "%\n";
+	theValue += "V:1\n";
+	theValue += "%%MIDI program 0\n";
+	theValue += "%\n";
+	theValue += "% Bodhran voice definition:\n";
+	theValue += "%\n";
+	theValue += "V:2 transpose=-24\n";
+	theValue += "%%MIDI program 117\n";
+	theValue += "%\n";
+	theValue += "% Voice 1 - Replace this with your Polka melody:\n";
+	theValue += "%\n";
+	theValue += "V:1\n";
+	theValue += "|: z4 | z4 | z4 | z4 |\n";
+	theValue += "   z4 | z4 | z4 | z4 :|\n";
+	theValue += "|: z4 | z4 | z4 | z4 |\n";
+	theValue += "   z4 | z4 | z4 | z4 :|\n";
+	theValue += "%\n";
+	theValue += "% Voice 2 - Bodhran backing patterns:\n";
+	theValue += "%\n";
+	theValue += "V:2\n";
+	theValue += "|: C,2 C,F, | C,F, C,F, | C,F, C,F, | C,2F,2 |\n";
+	theValue += "   C,2 C,F, | C,F, C,F, | C,F, C,F, | C,2F,2 :|\n";
+	theValue += "|: ^A/A/A C^A | ^F^A CA | ^A=A/A/ =FA | ^A2E^c |\n";
+	theValue += "   ^A/A/A C^A | ^F^A CA | ^A=A/A/ =FA | ^A2E^c :|\n";
+
+	// Do common tune addition processing
+	ProcessAddTune(theValue);
+
+}
+
+function AddBodhranHornpipeTemplate(){
+	// Keep track of actions
+	sendGoogleAnalytics("action","AddBodhranHornpipeTemplate");
+
+	// Stuff in some default ABC with additional options explained
+	var theValue = ""
+
+	var nTunes = CountTunes();
+
+	if (nTunes > 0){
+		theValue += "\n";
+	}
+
+	theValue += "X:1\n";
+	theValue += "T:Hornpipe Bodhran Template\n";
+	theValue += "R:Reel\n";
+	theValue += "M:4/4\n";
+	theValue += "L:1/8\n";
+	theValue += "K:C\n";
+	theValue += "%%staffsep 50\n";
+	theValue += "%abcjs_soundfont fatboy\n";
+	theValue += "%swing 0.25\n";
+	theValue += "%\n";
+	theValue += "% This template uses two voices:\n";
+	theValue += "% Voice 1 - Melody\n";
+	theValue += "% Voice 2 - Bodhran backing track\n";
+	theValue += "%\n";
+	theValue += "% Melody voice definition:\n";
+	theValue += "%\n";
+	theValue += "V:1\n";
+	theValue += "%%MIDI program 0\n";
+	theValue += "%\n";
+	theValue += "% Bodhran voice definition:\n";
+	theValue += "%\n";
+	theValue += "V:2 transpose=-24\n";
+	theValue += "%%MIDI program 117\n";
+	theValue += "%\n";
+	theValue += "% Voice 1 - Replace this with your Hornpipe melody:\n";
+	theValue += "%\n";
+	theValue += "V:1\n";
+	theValue += "|: z8 | z8 | z8 | z8 |\n";
+	theValue += "   z8 | z8 | z8 | z8 :|\n";
+	theValue += "|: z8 | z8 | z8 | z8 |\n";
+	theValue += "   z8 | z8 | z8 | z8 :|\n";
+	theValue += "%\n";
+	theValue += "% Voice 2 - Bodhran backing patterns:\n";
+	theValue += "%\n";
+	theValue += "V:2\n";
+	theValue += "|: F,C, F,C, F,C, F,C, | F,C, (3!>!F,C,C, !>!F,z F,C | F,C, F,C, F,C, F,C, |F,C, (3F,C,C, !>!F,z F,C |\n";
+	theValue += "   F,C, F,C, F,C, F,C, | F,C, (3!>!F,C,C, !>!F,z F,C | F,C, F,C, F,C, F,C, | F,C, (3F,C,C, !>!F,z F,C :|\n";
+	theValue += "|: F,C, F,C, F,C, F,C, | F,C, F,C, F,C, F,C, | F,C, F,C, F,C, F,C, | F,C, (3!>!F,C,C, !>!F,z F,C |\n"; 
+	theValue += "   F,C, F,C, F,C, F,C, | F,C, F,C, F,C, F,C, | F,C, F,C, F,C, F,C, | F,C, (3!>!F,C,C, !>!F,z F,C :|\n";
+
+	// Do common tune addition processing
+	ProcessAddTune(theValue);
 
 }
 
@@ -13326,102 +13706,6 @@ function AppendBoxFingeringTemplate(){
 	
 }
 
-//
-// Add a click track template to the top of the ABC
-//
-function AddClickTrackTemplate(){
-
-	// Keep track of actions
-	sendGoogleAnalytics("action","AddClickTrackTemplate");
-
-	var output = "";
-
-	var nTunes = CountTunes();
-
-	if (nTunes > 0){
-		output += "\n";
-	}
-
-	output += 'X: 1\n';
-	output += 'T: Two-Bar Click Intro Templates\n';
-	output += 'Q: 1/8\n';
-	output += '%\n';
-	output += '%%text Copy and paste these templates at the start of the notes for any tune.\n';
-	output += '%%text Make sure that any tune first-part repeats, including first-endings, have a starting |:\n';
-	output += '%%text For a higher pitched click, change the ^C values in the patterns to =C\n';
-	output += '%%text\n';
-	output += '%\n';
-	output += '%%text Reel two-bar click intro:\n';
-	output += '%%text\n';
-	output += 'M: 4/4\n';
-	output += '%\n';
-	output += 'V:1\n';
-	output += 'V:2\n';
-	output += '%%MIDI program 128\n';
-	output += '^Cz3 ^Cz3|^Cz3 ^Cz3|\n';
-	output += 'V:1\n';
-	output += 'z8|z8|\n';
-	output += '%\n';
-	output += '%%text\n';
-	output += '%%text Jig two-bar click intro:\n';
-	output += 'M: 6/8\n';
-	output += '%\n';
-	output += 'V:1\n';
-	output += 'V:2\n';
-	output += '%%MIDI program 128\n';
-	output += '^Cz2 ^Cz2|^Cz2 ^Cz2|\n';
-	output += 'V:1\n';
-	output += 'z6|z6|\n';
-	output += '%\n';
-	output += '%%text\n';
-	output += '%%text Slide two-bar click intro:\n';
-	output += 'M: 12/8\n';
-	output += '%\n';
-	output += 'V:1\n';
-	output += 'V:2\n';
-	output += '%%MIDI program 128\n';
-	output += '^Cz2 ^Cz2 ^Cz2 ^Cz2|\n';
-	output += 'V:1\n';
-	output += 'z12|\n';
-	output += '%\n';
-	output += '%%text\n';
-	output += '%%text Slip Jig two-bar click intro:\n';
-	output += 'M: 9/8\n';
-	output += '%\n';
-	output += 'V:1\n';
-	output += 'V:2\n';
-	output += '%%MIDI program 128\n';
-	output += '^Cz2 ^Cz2 ^Cz2|^Cz2 ^Cz2 ^Cz2|\n';
-	output += 'V:1\n';
-	output += 'z9|z9|\n';
-	output += '%\n';
-	output += '%%text\n';
-	output += '%%text Polka two-bar click intro:\n';
-	output += 'M: 2/4\n';
-	output += '%\n';
-	output += 'V:1\n';
-	output += 'V:2\n';
-	output += '%%MIDI program 128\n';
-	output += '^Cz ^Cz|^Cz ^Cz|\n';
-	output += 'V:1\n';
-	output += 'z4|z4|\n';
-	output += '%\n';
-	output += '%%text\n';
-	output += '%%text Waltz two-bar click intro:\n';
-	output += 'M: 3/4\n';
-	output += '%\n';
-	output += 'V:1\n';
-	output += 'V:2\n';
-	output += '%%MIDI program 128\n';
-	output += '^Cz ^Cz ^Cz|^Cz ^Cz ^Cz|\n';
-	output += 'V:1\n';
-	output += 'z6|z6|\n';
-	output += "\n";
-
-	// Do common tune addition processing
-	ProcessAddTune(output);
-
-}
 
 //
 // Add the J.S. Bach 2-Part Invention #1
@@ -18075,7 +18359,7 @@ function DoCeoltasTransform(doInverse){
 //
 function DoCeoltasTransformDialog(){
 
-	var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Ceoltas ABC Transform&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_comhaltas" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+	var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Comhaltas ABC Transform&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_comhaltas" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 
 	modal_msg  += '<p style="text-align:center;"><input id="ceoltasdialog" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransform(false)" type="button" value="Standard ABC to Comhaltas ABC" title="Transforms the standard ABC format to Comhaltas format">';
 
