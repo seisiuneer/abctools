@@ -54,5 +54,5 @@
 <p>Thank you to Philip McGarvey for the share link export feature addition!</p>
 <p>Thank you to Gavin Heneghan for allowing me to use his 20,000+ tune database for the tune search page.</p>
 <p>Thank you to Matteo Brusa for prototyping work on the key/mode aware MIDI input system.</p>
-<p>Thank you to Ben Hockenberry for contributing to the Bodhran backing track templates</p>
+<p>Thank you to <a href="https://www.youtube.com/@BenjaminHockenberry" target="_blank">Ben Hockenberry</a> for contributing to the Bodhran backing track templates</p>
 <hr>

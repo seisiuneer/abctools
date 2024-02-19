@@ -12918,14 +12918,14 @@ function AddBodhranReelTemplate(){
 	theValue += "% Voice 2 - Bodhran backing patterns:\n";
 	theValue += "%\n";
 	theValue += "V:2\n";
-	theValue += "|: C,C,F,C,  C,C,F,C, | C,C,F,C, C,C,F,C, | C,C,F,C, C,C,F,C, | C,C,!>!F,/E,/D, !>!F,4 |\n";
-	theValue += "   C,C,F,C,  C,C,F,C, | C,C,F,C, C,C,F,C, | C,C,F,C, C,C,F,C, | C,C,!>!F,/E,/D, !>!F,4 :|\n";
-	theValue += "|: ^d2AA ^FG^GA | ^A2=AA ^A2=AA | ^ACCC CCA2 | ^ACCC ^A2=AA |\n";
-	theValue += "   ^d2AA ^FG^GA | ^A2=AA ^A2=AA | ^ACCC CCA2 | ^ACCC ^A2=AA :|\n";
-	theValue += "|: ^d2AA B2AA | ^ACFC ACFC | G/G/G GA ^G2^AA | ^d^A=AA G2AA |\n";
-	theValue += "   ^d2AA B2AA | ^ACFC ACFC | G/G/G GA ^G2^AA | ^d^A=AA G2AA :| \n";
-	theValue += "|: ^dCCe DDf^D | ^ACFC ^A2=AA | A3d c2AA | G^GAA e2GG |\n";
-	theValue += "   ^dCCe DDf^D | ^ACFC ^A2=AA | A3d c2AA | G^GAA e2GG :|\n";
+	theValue += "|: =C,C,=F,C,  C,C,F,C, | =C,C,=F,C, C,C,F,C, | =C,C,=F,C, C,C,F,C, | =C,C,=F,C, C,C,F,C, |\n";
+	theValue += "   =C,C,=F,C,  C,C,F,C, | =C,C,=F,C, C,C,F,C, | =C,C,=F,C, C,C,F,C, | =C,C,!>!=F,/E,/D, !>!F,4 :|\n";
+	theValue += "|: ^d2AA ^F=G^GA | ^A2=AA ^A2=AA | ^A=CCC CCA2 | ^A=CCC ^A2=AA |\n";
+	theValue += "   ^d2AA ^F=G^GA | ^A2=AA ^A2=AA | ^A=CCC CCA2 | ^A=CCC ^A2=AA :|\n";
+	theValue += "|: ^d2AA B2AA | ^A=C=FC ACFC | =G/G/G GA ^G2^AA | ^d^A=AA =G2AA |\n";
+	theValue += "   ^d2AA B2AA | ^A=C=FC ACFC | =G/G/G GA ^G2^AA | ^d^A=AA =G2AA :| \n";
+	theValue += "|: ^d=CCe DD=f^D | ^A=C=FC ^A2=AA | A3d =c2AA | =G^GAA e2GG |\n";
+	theValue += "   ^d=CCe DD=f^D | ^A=C=FC ^A2=AA | A3d =c2AA | =G^GAA e2GG :|\n";
 
 	// Do common tune addition processing
 	ProcessAddTune(theValue);
@@ -12983,12 +12983,12 @@ function AddBodhranJigTemplate(){
 	theValue += "% Voice 2 - Bodhran backing patterns:\n";
 	theValue += "%\n";
 	theValue += "V:2\n";
-	theValue += "|: F,zD, F,C,C, | F,zD, F,C,C, | F,zD, F,C,C, | F,zD, F,C,C, |\n";
-	theValue += "   F,zD, F,C,C, | F,zD, F,C,C, | F,zD, F,C,C, | F,C,C, !>!F,3 :|\n";
-	theValue += "|: ^dCC FCC | ^d2C AEA | ^A2C FCC|^dCC AEA |\n";
-	theValue += "   ^dCC FCC | ^d2C AEA | ^A2C FCC|^dCC AEA :|\n";
-	theValue += "|: ^dCC F/F/FC | ^A2=d FC=A | =dc/B/^A ^dCF | AEE =d3 |\n";
-	theValue += "   ^dCC F/F/FC | ^A2=d FC=A | =dc/B/^A ^dCF | AEE =d3 :| \n";
+	theValue += "|: =F,zD, F,=C,C, | =F,zD, F,=C,C, | =F,zD, F,=C,C, | =F,zD, F,=C,C, |\n";
+	theValue += "   =F,zD, F,=C,C, | =F,zD, F,=C,C, | =F,zD, F,=C,C, | =F,=C,C, !>!F,3 :|\n";
+	theValue += "|: ^d=CC =FCC | ^d2=C AEA | ^A2=C =FCC|^d=CC AEA |\n";
+	theValue += "   ^d=CC =FCC | ^d2=C AEA | ^A2=C =FCC|^d=CC AEA :|\n";
+	theValue += "|: ^d=CC =F/F/FC | ^A2d =F=C=A | d=c/=B/^A ^d=C=F | AEE d3 |\n";
+	theValue += "   ^d=CC =F/F/FC | ^A2d =F=C=A | d=c/=B/^A ^d=C=F | AEE d3 :| \n";
 
 	// Do common tune addition processing
 	ProcessAddTune(theValue);
@@ -13044,10 +13044,10 @@ function AddBodhranSlipJigTemplate(){
 	theValue += "% Voice 2 - Bodhran backing patterns:\n";
 	theValue += "%\n";
 	theValue += "V:2\n";
-	theValue += "|: F,zD, F,C,C, !>!F,3 | F,zD, F,C,C, F,C,C, | F,zD, F,C,C, !>!F,3 | F,zD, F,C,C, F,C,C, |\n";
-	theValue += "   F,zD, F,C,C, !>!F,3 | F,zD, F,C,C, F,C,C, | F,zD, F,C,C, !>!F,3 | F,zD, F,C,C, F,C,C, :|\n";
-	theValue += "|: ^dCC FCC FCC | ^d2C FCC AEA | ^A2C FCC A2A | ^dCC FCF A3 |\n";
-	theValue += "   ^dCC FCC FCC | ^d2C FCC AEA | ^A2C FCC A2A | ^dCC FCF A3 :|\n";
+	theValue += "|: =F,zD, F,=C,C, !>!=F,3 | =F,zD, F,=C,C, F,C,C, | =F,zD, F,=C,C, !>!F,3 | =F,zD, F,=C,C, F,C,C, |\n";
+	theValue += "   =F,zD, F,=C,C, !>!=F,3 | =F,zD, F,=C,C, F,C,C, | =F,zD, F,=C,C, !>!F,3 | =F,zD, F,=C,C, F,C,C, :|\n";
+	theValue += "|: ^d=CC =FCC FCC | ^d2=C =FCC AEA | ^A2=C =FCC A2A | ^d=CC =FCF A3 |\n";
+	theValue += "   ^d=CC =FCC FCC | ^d2=C =FCC AEA | ^A2=C =FCC A2A | ^d=CC =FCF A3 :|\n";
 
 	// Do common tune addition processing
 	ProcessAddTune(theValue);
@@ -13103,10 +13103,10 @@ function AddBodhranSlideTemplate(){
 	theValue += "% Voice 2 - Bodhran backing patterns:\n";
 	theValue += "%\n";
 	theValue += "V:2\n";
-	theValue += "|: F,zD, F,C,C, F,C,C, !>!F,3 | F,zD, F,C,C, F,C,C, !>!F,3 |\n";
-	theValue += "   F,zD, F,C,C, F,C,C, !>!F,3 | F,zD, F,C,C, F,C,C, !>!F,3 :|\n";
-	theValue += "|: ^A2=F ^dF^A =d2=A ^c2^G | ^A2=F ^dF^A B3 B2^F |\n";
-	theValue += "   ^A2=F ^dF^A =d2=A ^c2^G | ^AC=F ^dF^A F3 ^A3 :|\n";
+	theValue += "|: =F,zD, F,=C,C, F,C,C, !>!F,3 | =F,zD, F,=C,C, F,C,C, !>!F,3 |\n";
+	theValue += "   =F,zD, F,=C,C, F,C,C, !>!F,3 | =F,zD, F,=C,C, F,C,C, !>!F,3 :|\n";
+	theValue += "|: ^A2=F ^dF^A =d2=A ^c2^G | ^A2=F ^dF^A =B3 B2^F |\n";
+	theValue += "   ^A2=F ^dF^A =d2=A ^c2^G | ^A=C=F ^dF^A F3 ^A3 :|\n";
 
 	// Do common tune addition processing
 	ProcessAddTune(theValue);
@@ -13161,10 +13161,10 @@ function AddBodhranPolkaTemplate(){
 	theValue += "% Voice 2 - Bodhran backing patterns:\n";
 	theValue += "%\n";
 	theValue += "V:2\n";
-	theValue += "|: C,2 C,F, | C,F, C,F, | C,F, C,F, | C,2F,2 |\n";
-	theValue += "   C,2 C,F, | C,F, C,F, | C,F, C,F, | C,2F,2 :|\n";
-	theValue += "|: ^A/A/A C^A | ^F^A CA | ^A=A/A/ =FA | ^A2E^c |\n";
-	theValue += "   ^A/A/A C^A | ^F^A CA | ^A=A/A/ =FA | ^A2E^c :|\n";
+	theValue += "|: =C,2 C,=F, | =C,=F, C,F, | =C,=F, C,F, | =C,2 =F,2 |\n";
+	theValue += "   =C,2 C,=F, | =C,=F, C,F, | =C,=F, C,F, | =C,2 =F,2 :|\n";
+	theValue += "|: ^A/A/A =C^A | ^F^A =CA | ^A=A/A/ =FA | ^A2E^c |\n";
+	theValue += "   ^A/A/A =C^A | ^F^A =CA | ^A=A/A/ =FA | ^A2E^c :|\n";
 
 	// Do common tune addition processing
 	ProcessAddTune(theValue);
@@ -13220,10 +13220,10 @@ function AddBodhranHornpipeTemplate(){
 	theValue += "% Voice 2 - Bodhran backing patterns:\n";
 	theValue += "%\n";
 	theValue += "V:2\n";
-	theValue += "|: F,C, F,C, F,C, F,C, | F,C, (3!>!F,C,C, !>!F,z F,C | F,C, F,C, F,C, F,C, |F,C, (3F,C,C, !>!F,z F,C |\n";
-	theValue += "   F,C, F,C, F,C, F,C, | F,C, (3!>!F,C,C, !>!F,z F,C | F,C, F,C, F,C, F,C, | F,C, (3F,C,C, !>!F,z F,C :|\n";
-	theValue += "|: F,C, F,C, F,C, F,C, | F,C, F,C, F,C, F,C, | F,C, F,C, F,C, F,C, | F,C, (3!>!F,C,C, !>!F,z F,C |\n"; 
-	theValue += "   F,C, F,C, F,C, F,C, | F,C, F,C, F,C, F,C, | F,C, F,C, F,C, F,C, | F,C, (3!>!F,C,C, !>!F,z F,C :|\n";
+	theValue += "|: =F,=C, F,C, F,C, F,C, | =F,=C, (3!>!F,C,C, !>!F,z F,C, | =F,=C, F,C, F,C, F,C, |=F,=C, (3F,C,C, !>!F,z F,C, |\n";
+	theValue += "   =F,=C, F,C, F,C, F,C, | =F,=C, (3!>!F,C,C, !>!F,z F,C, | =F,=C, F,C, F,C, F,C, | =F,=C, (3F,C,C, !>!F,z F,C, :|\n";
+	theValue += "|: =F,=C, F,C, F,C, F,C, | =F,=C, F,C, F,C, F,C, | =F,=C, F,C, F,C, F,C, | =F,=C, (3!>!F,C,C, !>!F,z F,C, |\n"; 
+	theValue += "   =F,=C, F,C, F,C, F,C, | =F,=C, F,C, F,C, F,C, | =F,=C, F,C, F,C, F,C, | =F,=C, (3!>!F,C,C, !>!F,z F,C, :|\n";
 
 	// Do common tune addition processing
 	ProcessAddTune(theValue);
