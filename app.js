@@ -13186,7 +13186,7 @@ function AddBodhranHornpipeTemplate(){
 
 	theValue += "X:1\n";
 	theValue += "T:Hornpipe Bodhran Template\n";
-	theValue += "R:Reel\n";
+	theValue += "R:Hornpipe\n";
 	theValue += "M:4/4\n";
 	theValue += "L:1/8\n";
 	theValue += "Q:1/2=80\n";
