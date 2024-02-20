@@ -15907,7 +15907,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
           break;
 
         case "melodic_tom": // 117
-          url = "https://michaeleskin.com/abctools/soundfonts/bodhran/";
+          url = "https://michaeleskin.com/abctools/soundfonts/bodhran_a/";
           isOgg = true;
           break;
 
