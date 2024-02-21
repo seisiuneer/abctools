@@ -15885,8 +15885,6 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
     var isOgg = false;
 
-    var cacheBust = false;
-
     // Are we overriding the default GM sounds with our own?
     if (gUseCustomGMSounds){
 
@@ -15909,8 +15907,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
           break;
 
         case "melodic_tom": // 117
-          url = "https://michaeleskin.com/abctools/soundfonts/";
-          cacheBust = true;
+          url = "https://michaeleskin.com/abctools/soundfonts/bodhran_a/";
           isOgg = true;
           break;
 
@@ -15960,6 +15957,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
           break;
       }
 
+
     }
 
     var xhr = new XMLHttpRequest();
@@ -15975,11 +15973,6 @@ var getNote = function getNote(url, instrument, name, audioContext) {
         noteUrl = url + instrument + "-mp3/" + name + ".mp3"; 
       } 
 
-    }
-
-    // Busting cache?
-    if (cacheBust){
-      noteUrl += "?v=1";
     }
 
     xhr.open("GET", noteUrl, true);
