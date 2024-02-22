@@ -220,6 +220,10 @@ var gMP3Bitrate = 224;
 var gDefaultSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
 var gTheActiveSoundFont = gDefaultSoundFont;
 
+// Bodhran pitch
+var gDefaultBodhranPitch = "a";
+var gTheActiveBodhranPitch = gDefaultBodhranPitch;
+
 // Allow player to autoscroll
 var gAutoscrollPlayer = true;
 
@@ -12904,6 +12908,12 @@ function AddBodhranReelTemplate(){
 	theValue += "V:2 transpose=-24\n";
 	theValue += "%%MIDI program 117\n";
 	theValue += "%\n";
+	theValue += "% Set the pitch of the Bodhran:\n";
+	theValue += "% Valid values are:\n";
+	theValue += "% C, C#, Db, D, D#, Eb, E, F, F#, Gb, G, G#, Ab, A, A#, Bb, or B.\n";
+	theValue += "%\n";
+	theValue += "%bodhran_pitch A\n";
+	theValue += "%\n";
 	theValue += "% Voice 1 - Replace this with your Reel melody:\n";
 	theValue += "%\n";
 	theValue += "V:1\n";
@@ -12972,6 +12982,12 @@ function AddBodhranJigTemplate(){
 	theValue += "V:2 transpose=-24\n";
 	theValue += "%%MIDI program 117\n";
 	theValue += "%\n";
+	theValue += "% Set the pitch of the Bodhran:\n";
+	theValue += "% Valid values are:\n";
+	theValue += "% C, C#, Db, D, D#, Eb, E, F, F#, Gb, G, G#, Ab, A, A#, Bb, or B.\n";
+	theValue += "%\n";
+	theValue += "%bodhran_pitch A\n";
+	theValue += "%\n";
 	theValue += "% Voice 1 - Replace this with your Jig melody:\n";
 	theValue += "%\n";
 	theValue += "V:1\n";
@@ -13036,6 +13052,12 @@ function AddBodhranSlipJigTemplate(){
 	theValue += "V:2 transpose=-24\n";
 	theValue += "%%MIDI program 117\n";
 	theValue += "%\n";
+	theValue += "% Set the pitch of the Bodhran:\n";
+	theValue += "% Valid values are:\n";
+	theValue += "% C, C#, Db, D, D#, Eb, E, F, F#, Gb, G, G#, Ab, A, A#, Bb, or B.\n";
+	theValue += "%\n";
+	theValue += "%bodhran_pitch A\n";
+	theValue += "%\n";
 	theValue += "% Voice 1 - Replace this with your Slip Jig melody:\n";
 	theValue += "%\n";
 	theValue += "V:1\n";
@@ -13096,6 +13118,12 @@ function AddBodhranSlideTemplate(){
 	theValue += "V:2 transpose=-24\n";
 	theValue += "%%MIDI program 117\n";
 	theValue += "%\n";
+	theValue += "% Set the pitch of the Bodhran:\n";
+	theValue += "% Valid values are:\n";
+	theValue += "% C, C#, Db, D, D#, Eb, E, F, F#, Gb, G, G#, Ab, A, A#, Bb, or B.\n";
+	theValue += "%\n";
+	theValue += "%bodhran_pitch A\n";
+	theValue += "%\n";
 	theValue += "% Voice 1 - Replace this with your Slide melody:\n";
 	theValue += "%\n";
 	theValue += "V:1\n";
@@ -13154,6 +13182,12 @@ function AddBodhranPolkaTemplate(){
 	theValue += "%\n";
 	theValue += "V:2 transpose=-24\n";
 	theValue += "%%MIDI program 117\n";
+	theValue += "%\n";
+	theValue += "% Set the pitch of the Bodhran:\n";
+	theValue += "% Valid values are:\n";
+	theValue += "% C, C#, Db, D, D#, Eb, E, F, F#, Gb, G, G#, Ab, A, A#, Bb, or B.\n";
+	theValue += "%\n";
+	theValue += "%bodhran_pitch A\n";
 	theValue += "%\n";
 	theValue += "% Voice 1 - Replace this with your Polka melody:\n";
 	theValue += "%\n";
@@ -13214,6 +13248,12 @@ function AddBodhranHornpipeTemplate(){
 	theValue += "%\n";
 	theValue += "V:2 transpose=-24\n";
 	theValue += "%%MIDI program 117\n";
+	theValue += "%\n";
+	theValue += "% Set the pitch of the Bodhran:\n";
+	theValue += "% Valid values are:\n";
+	theValue += "% C, C#, Db, D, D#, Eb, E, F, F#, Gb, G, G#, Ab, A, A#, Bb, or B.\n";
+	theValue += "%\n";
+	theValue += "%bodhran_pitch A\n";
 	theValue += "%\n";
 	theValue += "% Voice 1 - Replace this with your Hornpipe melody:\n";
 	theValue += "%\n";
@@ -22665,6 +22705,36 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 		}
 	}
 
+	var bodhranPitchRequested = ScanTuneForBodhranPitch(theABC);
+
+	if (bodhranPitchRequested){
+
+		var theOriginalBodhranPitch = gTheActiveBodhranPitch;
+
+		gTheActiveBodhranPitch = bodhranPitchRequested;
+
+		// New soundfont requested, clear the cache
+		if (gTheActiveBodhranPitch != theOriginalBodhranPitch){
+			
+			// Clear the soundfont cache
+			gSoundsCacheABCJS = {};
+
+		}
+
+	}
+	else{
+
+		// No sound font requested, lets see if the current font is the user default
+		if (gTheActiveBodhranPitch != gDefaultBodhranPitch){
+
+			gTheActiveBodhranPitch = gDefaultBodhranPitch;
+
+			// Clear the soundfont cache
+			gSoundsCacheABCJS = {};
+
+		}
+	}
+
 	// Setup any custom boom-chick rhythm patterns found
 	var boomChickOK = ScanTuneForBoomChick(theABC);
 
@@ -23795,6 +23865,34 @@ function ScanTuneForSoundFont(theTune){
 }
 
 //
+// Scan tune for bodhran tune request
+//
+function ScanTuneForBodhranPitch(theTune){
+
+	var bodhranPitchFound = null;
+
+	// Search for a bodhran pitch request
+	var searchRegExp = /^%bodhran_pitch.*$/gm
+
+	// Detect bodhran pitch annotation
+	var bodhranPitch = theTune.match(searchRegExp);
+
+	if ((bodhranPitch) && (bodhranPitch.length > 0)){
+
+		bodhranPitchFound = bodhranPitch[bodhranPitch.length-1].replace("%bodhran_pitch","");
+		
+		bodhranPitchFound = bodhranPitchFound.trim();
+
+		bodhranPitchFound = bodhranPitchFound.toLowerCase();
+
+	}
+
+	//console.log("ScanTuneForBodhranPitch returning "+bodhranPitchFound);
+
+	return bodhranPitchFound;
+}
+
+//
 // Swing Explorer
 //
 function SwingExplorer(){
@@ -24113,6 +24211,36 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 		if (gTheActiveSoundFont != gDefaultSoundFont){
 
 			gTheActiveSoundFont = gDefaultSoundFont;
+
+			// Clear the soundfont cache
+			gSoundsCacheABCJS = {};
+
+		}
+	}
+
+	var bodhranPitchRequested = ScanTuneForBodhranPitch(theProcessedABC);
+
+	if (bodhranPitchRequested){
+
+		var theOriginalBodhranPitch = gTheActiveBodhranPitch;
+
+		gTheActiveBodhranPitch = bodhranPitchRequested;
+
+		// New soundfont requested, clear the cache
+		if (gTheActiveBodhranPitch != theOriginalBodhranPitch){
+			
+			// Clear the soundfont cache
+			gSoundsCacheABCJS = {};
+
+		}
+
+	}
+	else{
+
+		// No sound font requested, lets see if the current font is the user default
+		if (gTheActiveBodhranPitch != gDefaultBodhranPitch){
+
+			gTheActiveBodhranPitch = gDefaultBodhranPitch;
 
 			// Clear the soundfont cache
 			gSoundsCacheABCJS = {};
@@ -25047,6 +25175,36 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 		}
 	}
 
+	var bodhranPitchRequested = ScanTuneForBodhranPitch(theProcessedABC);
+
+	if (bodhranPitchRequested){
+
+		var theOriginalBodhranPitch = gTheActiveBodhranPitch;
+
+		gTheActiveBodhranPitch = bodhranPitchRequested;
+
+		// New soundfont requested, clear the cache
+		if (gTheActiveBodhranPitch != theOriginalBodhranPitch){
+			
+			// Clear the soundfont cache
+			gSoundsCacheABCJS = {};
+
+		}
+
+	}
+	else{
+
+		// No sound font requested, lets see if the current font is the user default
+		if (gTheActiveBodhranPitch != gDefaultBodhranPitch){
+
+			gTheActiveBodhranPitch = gDefaultBodhranPitch;
+
+			// Clear the soundfont cache
+			gSoundsCacheABCJS = {};
+
+		}
+	}
+
 	// Setup any custom boom-chick rhythm patterns found
 	var boomChickOK = ScanTuneForBoomChick(theProcessedABC);
 
@@ -25583,6 +25741,36 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 		if (gTheActiveSoundFont != gDefaultSoundFont){
 
 			gTheActiveSoundFont = gDefaultSoundFont;
+
+			// Clear the soundfont cache
+			gSoundsCacheABCJS = {};
+
+		}
+	}
+
+	var bodhranPitchRequested = ScanTuneForBodhranPitch(theProcessedABC);
+
+	if (bodhranPitchRequested){
+
+		var theOriginalBodhranPitch = gTheActiveBodhranPitch;
+
+		gTheActiveBodhranPitch = bodhranPitchRequested;
+
+		// New soundfont requested, clear the cache
+		if (gTheActiveBodhranPitch != theOriginalBodhranPitch){
+			
+			// Clear the soundfont cache
+			gSoundsCacheABCJS = {};
+
+		}
+
+	}
+	else{
+
+		// No sound font requested, lets see if the current font is the user default
+		if (gTheActiveBodhranPitch != gDefaultBodhranPitch){
+
+			gTheActiveBodhranPitch = gDefaultBodhranPitch;
 
 			// Clear the soundfont cache
 			gSoundsCacheABCJS = {};
@@ -26380,6 +26568,35 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 		}
 	}
 
+	var bodhranPitchRequested = ScanTuneForBodhranPitch(theProcessedABC);
+
+	if (bodhranPitchRequested){
+
+		var theOriginalBodhranPitch = gTheActiveBodhranPitch;
+
+		gTheActiveBodhranPitch = bodhranPitchRequested;
+
+		// New soundfont requested, clear the cache
+		if (gTheActiveBodhranPitch != theOriginalBodhranPitch){
+			
+			// Clear the soundfont cache
+			gSoundsCacheABCJS = {};
+
+		}
+
+	}
+	else{
+
+		// No sound font requested, lets see if the current font is the user default
+		if (gTheActiveBodhranPitch != gDefaultBodhranPitch){
+
+			gTheActiveBodhranPitch = gDefaultBodhranPitch;
+
+			// Clear the soundfont cache
+			gSoundsCacheABCJS = {};
+
+		}
+	}
 	// Setup any custom boom-chick rhythm patterns found
 	var boomChickOK = ScanTuneForBoomChick(theProcessedABC);
 
@@ -27017,6 +27234,35 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 		}
 	}
 
+	var bodhranPitchRequested = ScanTuneForBodhranPitch(theProcessedABC);
+
+	if (bodhranPitchRequested){
+
+		var theOriginalBodhranPitch = gTheActiveBodhranPitch;
+
+		gTheActiveBodhranPitch = bodhranPitchRequested;
+
+		// New soundfont requested, clear the cache
+		if (gTheActiveBodhranPitch != theOriginalBodhranPitch){
+			
+			// Clear the soundfont cache
+			gSoundsCacheABCJS = {};
+
+		}
+
+	}
+	else{
+
+		// No sound font requested, lets see if the current font is the user default
+		if (gTheActiveBodhranPitch != gDefaultBodhranPitch){
+
+			gTheActiveBodhranPitch = gDefaultBodhranPitch;
+
+			// Clear the soundfont cache
+			gSoundsCacheABCJS = {};
+
+		}
+	}
 	// Setup any custom boom-chick rhythm patterns found
 	var boomChickOK = ScanTuneForBoomChick(theProcessedABC);
 

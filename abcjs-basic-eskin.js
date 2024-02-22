@@ -15907,7 +15907,54 @@ var getNote = function getNote(url, instrument, name, audioContext) {
           break;
 
         case "melodic_tom": // 117
-          url = "https://michaeleskin.com/abctools/soundfonts/bodhran_a/";
+
+          // Get path to the samples based on the bodhran pitch
+          switch (gTheActiveBodhranPitch){
+            case "c":
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_c/";
+              break;
+            case "c#":
+            case "db":
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_db/";
+              break;
+            case "d":
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_d/";
+              break;
+            case "d#":
+            case "eb":
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_eb/";
+              break;
+            case "e":
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_e/";
+              break;
+            case "f":
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_f/";
+              break;
+            case "f#":
+            case "gb":
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_gb/";
+              break;
+            case "g":
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_g/";
+              break;
+            case "g#":
+            case "ab":
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_ab/";
+            break;            
+            case "a":
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_a/";
+              break;
+            case "a#":
+            case "bb":
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_bb/";
+              break;
+            case "b":
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_b/";
+              break;
+            default:
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_a/";
+              break;
+          }
           isOgg = true;
           break;
 
