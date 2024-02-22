@@ -12908,11 +12908,11 @@ function AddBodhranReelTemplate(){
 	theValue += "V:2 transpose=-24\n";
 	theValue += "%%MIDI program 117\n";
 	theValue += "%\n";
-	theValue += "% Set the pitch of the Bodhran\n";
+	theValue += "% Set the Bodhran tuning\n";
 	theValue += "% Valid values are:\n";
 	theValue += "% C, C#, Db, D, D#, Eb, E, F, F#, Gb, G, G#, Ab, A, A#, Bb, or B.\n";
 	theValue += "%\n";
-	theValue += "%bodhran_pitch A\n";
+	theValue += "%bodhran_tuning A\n";
 	theValue += "%\n";
 	theValue += "% Voice 1 - Replace this with your Reel melody:\n";
 	theValue += "%\n";
@@ -12982,11 +12982,11 @@ function AddBodhranJigTemplate(){
 	theValue += "V:2 transpose=-24\n";
 	theValue += "%%MIDI program 117\n";
 	theValue += "%\n";
-	theValue += "% Set the pitch of the Bodhran\n";
+	theValue += "% Set the Bodhran tuning\n";
 	theValue += "% Valid values are:\n";
 	theValue += "% C, C#, Db, D, D#, Eb, E, F, F#, Gb, G, G#, Ab, A, A#, Bb, or B.\n";
 	theValue += "%\n";
-	theValue += "%bodhran_pitch A\n";
+	theValue += "%bodhran_tuning A\n";
 	theValue += "%\n";
 	theValue += "% Voice 1 - Replace this with your Jig melody:\n";
 	theValue += "%\n";
@@ -13052,11 +13052,11 @@ function AddBodhranSlipJigTemplate(){
 	theValue += "V:2 transpose=-24\n";
 	theValue += "%%MIDI program 117\n";
 	theValue += "%\n";
-	theValue += "% Set the pitch of the Bodhran\n";
+	theValue += "% Set the Bodhran tuning\n";
 	theValue += "% Valid values are:\n";
 	theValue += "% C, C#, Db, D, D#, Eb, E, F, F#, Gb, G, G#, Ab, A, A#, Bb, or B.\n";
 	theValue += "%\n";
-	theValue += "%bodhran_pitch A\n";
+	theValue += "%bodhran_tuning A\n";
 	theValue += "%\n";
 	theValue += "% Voice 1 - Replace this with your Slip Jig melody:\n";
 	theValue += "%\n";
@@ -13118,11 +13118,11 @@ function AddBodhranSlideTemplate(){
 	theValue += "V:2 transpose=-24\n";
 	theValue += "%%MIDI program 117\n";
 	theValue += "%\n";
-	theValue += "% Set the pitch of the Bodhran\n";
+	theValue += "% Set the Bodhran tuning\n";
 	theValue += "% Valid values are:\n";
 	theValue += "% C, C#, Db, D, D#, Eb, E, F, F#, Gb, G, G#, Ab, A, A#, Bb, or B.\n";
 	theValue += "%\n";
-	theValue += "%bodhran_pitch A\n";
+	theValue += "%bodhran_tuning A\n";
 	theValue += "%\n";
 	theValue += "% Voice 1 - Replace this with your Slide melody:\n";
 	theValue += "%\n";
@@ -13183,11 +13183,11 @@ function AddBodhranPolkaTemplate(){
 	theValue += "V:2 transpose=-24\n";
 	theValue += "%%MIDI program 117\n";
 	theValue += "%\n";
-	theValue += "% Set the pitch of the Bodhran\n";
+	theValue += "% Set the Bodhran tuning\n";
 	theValue += "% Valid values are:\n";
 	theValue += "% C, C#, Db, D, D#, Eb, E, F, F#, Gb, G, G#, Ab, A, A#, Bb, or B.\n";
 	theValue += "%\n";
-	theValue += "%bodhran_pitch A\n";
+	theValue += "%bodhran_tuning A\n";
 	theValue += "%\n";
 	theValue += "% Voice 1 - Replace this with your Polka melody:\n";
 	theValue += "%\n";
@@ -13249,11 +13249,11 @@ function AddBodhranHornpipeTemplate(){
 	theValue += "V:2 transpose=-24\n";
 	theValue += "%%MIDI program 117\n";
 	theValue += "%\n";
-	theValue += "% Set the pitch of the Bodhran\n";
+	theValue += "% Set the Bodhran tuning\n";
 	theValue += "% Valid values are:\n";
 	theValue += "% C, C#, Db, D, D#, Eb, E, F, F#, Gb, G, G#, Ab, A, A#, Bb, or B.\n";
 	theValue += "%\n";
-	theValue += "%bodhran_pitch A\n";
+	theValue += "%bodhran_tuning A\n";
 	theValue += "%\n";
 	theValue += "% Voice 1 - Replace this with your Hornpipe melody:\n";
 	theValue += "%\n";
@@ -23871,19 +23871,39 @@ function ScanTuneForBodhranPitch(theTune){
 
 	var bodhranPitchFound = null;
 
-	// Search for a bodhran pitch request
-	var searchRegExp = /^%bodhran_pitch.*$/gm
+	// Search for a bodhran tuning request
+	var searchRegExp = /^%bodhran_tuning.*$/gm
 
-	// Detect bodhran pitch annotation
+	// Detect bodhran tuning annotation
 	var bodhranPitch = theTune.match(searchRegExp);
 
 	if ((bodhranPitch) && (bodhranPitch.length > 0)){
 
-		bodhranPitchFound = bodhranPitch[bodhranPitch.length-1].replace("%bodhran_pitch","");
+		bodhranPitchFound = bodhranPitch[bodhranPitch.length-1].replace("%bodhran_tuning","");
 		
 		bodhranPitchFound = bodhranPitchFound.trim();
 
 		bodhranPitchFound = bodhranPitchFound.toLowerCase();
+
+	}
+
+	if (!bodhranPitchFound){
+
+		// Search for a bodhran pitch request
+		searchRegExp = /^%bodhran_pitch.*$/gm
+
+		// Detect bodhran pitch annotation
+		bodhranPitch = theTune.match(searchRegExp);
+
+		if ((bodhranPitch) && (bodhranPitch.length > 0)){
+
+			bodhranPitchFound = bodhranPitch[bodhranPitch.length-1].replace("%bodhran_pitch","");
+			
+			bodhranPitchFound = bodhranPitchFound.trim();
+
+			bodhranPitchFound = bodhranPitchFound.toLowerCase();
+
+		}
 
 	}
 
