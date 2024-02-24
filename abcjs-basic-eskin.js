@@ -14708,8 +14708,8 @@ function CreateSynth(theABC) {
             self.programOffsets = {
               "dulcimer":50,     // 15
               "accordion": 50,   // 21
-              "flute": 50,       // 73
-              "whistle": 50,     // 78
+              "flute": 0,       // 73 - Was 50, now truncated
+              "whistle": 0,     // 78 - Was 50, now truncated
               "melodic_tom": 0,  // 117
               "uilleann": 50,    // 129
               "smallpipesd": 50, // 130
@@ -15892,8 +15892,6 @@ var getNote = function getNote(url, instrument, name, audioContext) {
       switch (instrument){
         case "dulcimer":    // 15
         case "accordion":   // 21
-        case "flute":       // 73
-        case "whistle":     // 78
         case "uilleann":    // 129 
         case "smallpipesd": // 130
         case "smallpipesa": // 131
@@ -15958,7 +15956,9 @@ var getNote = function getNote(url, instrument, name, audioContext) {
           isOgg = true;
           break;
 
-        // Force solfege to use mp3
+        // Force flute, whistle, and solfege to use mp3
+        case "flute":       // 73
+        case "whistle":     // 78
         case "solfege":     // 136
           url = "https://michaeleskin.com/abctools/soundfonts/";
           isOgg = false;
