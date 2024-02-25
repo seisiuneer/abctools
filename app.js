@@ -25694,6 +25694,11 @@ function ScanTuneForGraceExplorer(theTune){
 
 function GraceExplorerInject(){
 
+	// Doing all tunes
+	var do_inject_all = document.getElementById("grace_explorer_inject_all").checked;
+	
+	//console.log("do_inject_all: "+do_inject_all);
+
 	var bDoInjectGraceDuration = false;
 
 	// Grab the swing factor
@@ -25713,57 +25718,121 @@ function GraceExplorerInject(){
 		//
 		// Strip any existing %grace_duration_ms out of the current tune
 		//
-
 		var searchRegExp = /^%grace_duration_ms.*[\r\n]*/gm 
 
-		var tuneWithNoGrace = gPlayerABCGraceExplorerOriginal.replaceAll(searchRegExp, "");
+		if (!do_inject_all){
 
-		var tuneWithGrace = InjectStringBelowTuneHeader(tuneWithNoGrace,theInjectString);
+			var tuneWithNoGrace = gPlayerABCGraceExplorerOriginal.replaceAll(searchRegExp, "");
 
-		// Seeing extra line breaks after the inject
-		tuneWithGrace = tuneWithGrace.replace("\n\n","");
+			var tuneWithGrace = InjectStringBelowTuneHeader(tuneWithNoGrace,theInjectString);
 
-		// Try and keep the same tune after the redraw for immediate play
-		var theSelectionStart = gTheABC.selectionStart;
+			// Seeing extra line breaks after the inject
+			tuneWithGrace = tuneWithGrace.replace("\n\n","");
 
-		// Stuff in the injected ABC
-		var theABC = gTheABC.value;
+			// Try and keep the same tune after the redraw for immediate play
+			var theSelectionStart = gTheABC.selectionStart;
 
-		theABC = theABC.replace(gPlayerABCGraceExplorerOriginal,tuneWithGrace);
-		
-		gTheABC.value = theABC;
+			// Stuff in the injected ABC
+			var theABC = gTheABC.value;
 
-		// Set dirty
-		gIsDirty = true;
+			theABC = theABC.replace(gPlayerABCGraceExplorerOriginal,tuneWithGrace);
+			
+			gTheABC.value = theABC;
 
-		// For future injects
-		gPlayerABCGraceExplorerOriginal = tuneWithGrace;
+			// Set dirty
+			gIsDirty = true;
 
-		// Have to redraw if in raw mode
-    	if (gRawMode){
+			// For future injects
+			gPlayerABCGraceExplorerOriginal = tuneWithGrace;
 
-			RenderAsync(true,null,function(){
-				
-				// Set the select point
+			// Have to redraw if in raw mode
+	    	if (gRawMode){
+
+				RenderAsync(true,null,function(){
+					
+					// Set the select point
+					gTheABC.selectionStart = theSelectionStart;
+				    gTheABC.selectionEnd = theSelectionStart;
+
+				    // Focus after operation
+				    FocusAfterOperation();
+
+				});
+
+		    }
+		    else{
+
+		    	// Set the select point
 				gTheABC.selectionStart = theSelectionStart;
 			    gTheABC.selectionEnd = theSelectionStart;
 
 			    // Focus after operation
 			    FocusAfterOperation();
 
-			});
+		    }
+		}
+		else{
 
-	    }
-	    else{
+			// Inject all the tunes
+			var nTunes = CountTunes();
 
-	    	// Set the select point
-			gTheABC.selectionStart = theSelectionStart;
-		    gTheABC.selectionEnd = theSelectionStart;
+			var theNotes = gTheABC.value;
 
-		    // Focus after operation
-		    FocusAfterOperation();
+			// Find the tunes
+			var theTunes = theNotes.split(/^X:/gm);
 
-	    }
+			var output = FindPreTuneHeader(theNotes);
+
+			for (var i=1;i<=nTunes;++i){
+
+				theTunes[i] = "X:"+theTunes[i];
+
+				var tuneWithNoGrace = theTunes[i].replaceAll(searchRegExp, "");
+
+				var tuneWithGrace = InjectStringBelowTuneHeader(tuneWithNoGrace,theInjectString);
+
+				// Seeing extra line breaks after the inject
+				tuneWithGrace = tuneWithGrace.replace("\n\n","");
+
+				output+= tuneWithGrace;
+
+				output+="\n\n";
+
+			}
+
+			// Stuff in the output
+			gTheABC.value = output;
+
+			// Set dirty
+			gIsDirty = true;
+
+			// Have to redraw if in raw mode
+		    if (gRawMode){
+
+				RenderAsync(true,null,function(){
+					
+					// Set the select point
+					gTheABC.selectionStart = 0;
+				    gTheABC.selectionEnd = 0;
+
+				    // Focus after operation
+				    FocusAfterOperation();
+
+				});
+
+		    }
+		    else{
+
+		    	// Set the select point
+				gTheABC.selectionStart = 0;
+			    gTheABC.selectionEnd = 0;
+
+			    // Focus after operation
+			    FocusAfterOperation();
+
+		    }
+
+		}
 
 	   	var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Grace Duration Injection Complete!</p>';
 
@@ -26025,6 +26094,7 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 		modal_msg += '<p class="configure_graceexplorer_text" style="text-align:center;margin:0px;margin-top:22px">';
 
 		modal_msg += 'Grace duration in milliseconds (range is 1-150): <input style="width:90px;" id="grace_explorer_duration" type="number" min="0" step="1" max="150" title="Grace duration in milliseconds, range is 1 to 150, 0 disables the custom grace duration feature and uses original abcjs default behavior" autocomplete="off"/>';
+		modal_msg += '<span style="font-size:12pt;font-family:helvetica;">Inject all tunes:</span><input style="width:16px;margin-left:8px;margin-right:24px;" id="grace_explorer_inject_all" type="checkbox"/>';
 		modal_msg += '</p>';
 		modal_msg += '<p class="configure_graceexplorer_text" style="text-align:center;margin:0px;margin-top:22px">';
 		modal_msg += '<input id="graceexplorertest" class="graceexplorertest button btn btn-graceexplorertest" onclick="GraceExplorerRegenerate();" type="button" value="Reload Tune with Changed Grace Duration" title="Reloads the tune into the player with the entered grace duration">';
