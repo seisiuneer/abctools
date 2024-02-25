@@ -24965,6 +24965,10 @@ function ScanTuneForInstrumentExplorer(theTune){
 //
 function InstrumentExplorerInject(){
 
+	// Doing all tunes
+	var do_inject_all = document.getElementById("instrumentexplorer_inject_all").checked;
+	//console.log("do_inject_all: "+do_inject_all);
+
 	// Grab the sound font
 	gInstrumentExplorerSoundfont = document.getElementById("instrument_explorer_soundfont").value;
 
@@ -24993,49 +24997,108 @@ function InstrumentExplorerInject(){
 		gInstrumentExplorerChordVolume = theChordVolume;
 	}
 
-	gPlayerABCInstrumentExplorerInjected = InstrumentExplorerDialogInjectThisTune(gPlayerABCInstrumentExplorerProcessed);
+	if (!do_inject_all){
 
-	// Try and keep the same tune after the redraw for immediate play
-	var theSelectionStart = gTheABC.selectionStart;
+		gPlayerABCInstrumentExplorerInjected = InstrumentExplorerDialogInjectThisTune(gPlayerABCInstrumentExplorerProcessed);
 
-	// Stuff in the injected ABC
-	var theABC = gTheABC.value;
+		// Try and keep the same tune after the redraw for immediate play
+		var theSelectionStart = gTheABC.selectionStart;
 
-	theABC = theABC.replace(gPlayerABCInstrumentExplorerOriginal,gPlayerABCInstrumentExplorerInjected);
-	
-	gTheABC.value = theABC;
+		// Stuff in the injected ABC
+		var theABC = gTheABC.value;
 
-	// Set dirty
-	gIsDirty = true;
+		theABC = theABC.replace(gPlayerABCInstrumentExplorerOriginal,gPlayerABCInstrumentExplorerInjected);
+		
+		gTheABC.value = theABC;
 
-	// For future injects
-	gPlayerABCInstrumentExplorerOriginal = gPlayerABCInstrumentExplorerInjected;
+		// Set dirty
+		gIsDirty = true;
 
-	// Have to redraw if in raw mode
-	if (gRawMode){
+		// For future injects
+		gPlayerABCInstrumentExplorerOriginal = gPlayerABCInstrumentExplorerInjected;
 
-		RenderAsync(true,null,function(){
-			
-			// Set the select point
+		// Have to redraw if in raw mode
+		if (gRawMode){
+
+			RenderAsync(true,null,function(){
+				
+				// Set the select point
+				gTheABC.selectionStart = theSelectionStart;
+			    gTheABC.selectionEnd = theSelectionStart;
+
+			    // Focus after operation
+			    FocusAfterOperation();
+
+			});
+
+	    }
+	    else{
+
+	    	// Set the select point
 			gTheABC.selectionStart = theSelectionStart;
 		    gTheABC.selectionEnd = theSelectionStart;
 
 		    // Focus after operation
 		    FocusAfterOperation();
 
-		});
+	    }
 
-    }
-    else{
+	}
+	else{
 
-    	// Set the select point
-		gTheABC.selectionStart = theSelectionStart;
-	    gTheABC.selectionEnd = theSelectionStart;
+		// Inject all the tunes
+		var nTunes = CountTunes();
 
-	    // Focus after operation
-	    FocusAfterOperation();
+		var theNotes = gTheABC.value;
 
-    }
+		// Find the tunes
+		var theTunes = theNotes.split(/^X:/gm);
+
+		var output = FindPreTuneHeader(theNotes);
+
+		for (var i=1;i<=nTunes;++i){
+
+			theTunes[i] = "X:"+theTunes[i];
+
+			output+= InstrumentExplorerDialogInjectThisTune(theTunes[i]);
+
+			output+="\n\n";
+
+		}
+
+		// Stuff in the output
+		gTheABC.value = output;
+
+		// Set dirty
+		gIsDirty = true;
+
+		// Have to redraw if in raw mode
+	    if (gRawMode){
+
+			RenderAsync(true,null,function(){
+				
+				// Set the select point
+				gTheABC.selectionStart = 0;
+			    gTheABC.selectionEnd = 0;
+
+			    // Focus after operation
+			    FocusAfterOperation();
+
+			});
+
+	    }
+	    else{
+
+	    	// Set the select point
+			gTheABC.selectionStart = 0;
+		    gTheABC.selectionEnd = 0;
+
+		    // Focus after operation
+		    FocusAfterOperation();
+
+	    }
+
+	}
 
    	var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Instrument Injection Complete!</p>';
 
@@ -25375,6 +25438,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 		modal_msg += '<p class="configure_instrumentexplorer_text">';
 		modal_msg += 'Bass Volume (0-127):&nbsp;&nbsp;<input style="width:90px;" id="instrument_explorer_bass_volume" type="number" min="0" step="1" max="127" title="Bass volume, range is 0-127"  autocomplete="off"/>';
 		modal_msg += 'Chord Volume (0-127):&nbsp;&nbsp;<input style="width:90px;" id="instrument_explorer_chord_volume" type="number" min="0" step="1" max="127" title="Chord volume, range is 0-127" autocomplete="off"/>';
+  		modal_msg += '<span style="font-size:12pt;font-family:helvetica;">Inject all tunes:</span><input style="width:16px;margin-left:8px;margin-right:24px;" id="instrumentexplorer_inject_all" type="checkbox"/>';
 		modal_msg += '</p>';
 		modal_msg += '<p class="configure_instrumentexplorer_text">';
 		modal_msg += '<input id="instrumentexplorertest" class="instrumentexplorertest button btn btn-instrumentexplorertest" onclick="InstrumentExplorerRegenerate();" type="button" value="Reload Tune with Changed Instruments and Volumes" title="Reloads the tune into the player with the selected MIDI soundfont, melody instrument, bass instrument, bass volumes, chord instrument, and chord volumes">';
@@ -33426,9 +33490,9 @@ function DoStartup() {
 	//
 	// Uncomment these lines for mobile simulation testing
 	//
-	//gIsIOS = true; 
-	//gIsIPad = true;  
-	//gIsIPhone = true;  
+	// gIsIOS = true; 
+	// gIsIPad = true;  
+	// gIsIPhone = true;  
 	
 	//
 	// iOS and Android styling adaptation
