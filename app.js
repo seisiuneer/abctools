@@ -15240,6 +15240,16 @@ function InjectSectionHeader(){
 // Inject a string into the top or bottom of the tune header
 //
 
+var gIdleHeaderInjectValue = "";
+
+function idleHeaderInject(){
+	gIdleHeaderInjectValue = document.getElementById("headers_to_inject").value;
+}
+
+function keydownHeaderInject(e){
+	e.stopPropagation();
+}
+
 function InjectHeaderString(){
 
 	// If currently rendering PDF, exit immediately
@@ -15257,17 +15267,18 @@ function InjectHeaderString(){
 	// Setup initial values
 	const theData = {
 	  injectlocation:1,
-	  injectstring:"",
 	  injectalltunes: true
 	};
 
 	var form = [
-	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Inject ABC Header String&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_controls" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
-	  {html: '<p style="margin-top:24px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">Clicking "OK" will inject the string into the header of your ABC tune(s).</p>'},  
+	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Inject ABC Header Text&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_injectabcheader" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
+	  {html: '<p style="margin-top:24px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">Clicking "OK" will inject the text into the header of your ABC tune(s).</p>'},  
 	  {name: "Header inject location:", id: "injectlocation", type:"select", options:inject_location_list, cssClass:"configure_injectheaderstring_select"},
-	  {name: "String to inject:", id: "injectstring", type:"text", cssClass:"configure_injectheaderstring_form_text"},
+	  {html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;">Header text to inject:</p><textarea id="headers_to_inject" style="font-family:Courier;font-size:13pt;line-height:16pt;width:578px;height:340px;padding:6px" placeholder="Enter header text to inject here" spellcheck="false" autocorrect="off" autocapitalize="none" oninput="idleHeaderInject()" onkeydown="keydownHeaderInject(event)"></textarea>'},
 	  {name: "          Inject all tunes", id: "injectalltunes", type:"checkbox", cssClass:"configure_injectheaderstring_form_text"},
 	];
+
+	gIdleHeaderInjectValue = "";
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 		
@@ -15278,7 +15289,9 @@ function InjectHeaderString(){
 
 			var theLocation = args.result.injectlocation;
 			var injectAllTunes = args.result.injectalltunes;
-			var stringToInject = args.result.injectstring;
+			var stringToInject = gIdleHeaderInjectValue;
+
+			stringToInject = stringToInject.trim();
 
 			if (stringToInject != ""){
 
@@ -30581,7 +30594,7 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<input id="injectclicktrackall" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectRepeatsAndClickTrackAll()" type="button" value="Inject Repeats + Intros" title="Injects repeated copies of tunes and optional style-adaptive two-bar click intros into every tune">';	
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
-	modal_msg  += '<input id="injectheaderstring" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectHeaderString()" type="button" value="Inject ABC Header String" title="Injects a string into the top or bottom of the ABC header for one or all tunes">';	
+	modal_msg  += '<input id="injectheaderstring" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectHeaderString()" type="button" value="Inject ABC Header Text" title="Injects text at the top or bottom of the ABC header for one or all tunes">';	
 	modal_msg  += '<input id="injectstaffwidth" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectStaffWidth()" type="button" value="Inject %%staffwidth" title="Injects a %%staffwidth annotation into one or all tunes">';
 	modal_msg  += '<input id="injectlargeprint" class="advancedcontrols btn btn-injectcontrols-headers" onclick="NotationSpacingExplorer()" type="button" value="Notation Spacing Explorer" title="Find the right spacing and scale values for your notation">';
 	modal_msg  += '</p>';
