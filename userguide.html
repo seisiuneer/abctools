@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-
+       
         <style>
 
 		p {
@@ -1733,6 +1733,11 @@
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/fUz5I0Vk78Q" title="All about soundfonts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p>For more details on the soundfonts, visit: <a href="https://paulrosen.github.io/midi-js-soundfonts/" target="_blank">midi-js-soundfonts on GitHub</a></p>
             <p>If <strong>Use AppCordions custom sounds for Dulcimer, Accordion, Flute, and Whistle</strong> is enabled in the Settings (on by default), for all soundfonts, my custom sampled instruments for Dulcimer, Accordion, Flute, and Whistle will override the soundfont sounds.</p>
+            <p>If you wish to override the AppCordions custom sound setting for a specific tune, add one of the following comment-based annotations anywhere in the tune:</p>
+            <p class="code">% Force use of AppCordions custom sounds for this tune:<br/>
+            %use_custom_gm_sounds true</p>
+            <p class="code">% Disable use of AppCordions custom sounds for this tune:<br/>
+            %use_custom_gm_sounds false</p>
             <p></p>
             <p><strong>Choosing the Melody Instrument Sound</strong></p>
             <p></p>
@@ -2740,6 +2745,7 @@
             %qrcode<br/>
             %qrcode https://michaeleskin.com<br/>
             %caption_for_qrcode Caption for the QR code<br/>
+            %abcjs_soundfont fluid<br/>
             %<br/>
             % These directives can be added to each tune:<br/>
             %hyperlink https://michaeleskin.com<br/>
@@ -2753,7 +2759,8 @@
             %roll_2_params 0.95 0.8 1.0 0.75 0.9 1.0 0.75 1.0<br/>
             %roll_3_params 1.45 0.6 1.0 0.75 0.9 1.0 0.75 1.0<br/>
             %use_original_abcjs_roll_solution<br/>
-            %abcjs_release_decay_time 200</p>
+            %abcjs_release_decay_time 200<br/>
+            %use_custom_gm_sounds true</p>
             <hr class="hidden-print" id="musicxml">
             <h1 class="page_break_always">MusicXML Import Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">

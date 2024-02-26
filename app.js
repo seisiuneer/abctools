@@ -238,6 +238,8 @@ var gAllNoSwingHornpipesRequested = false;
 
 // Use the custom GM sounds for dulcimer, accordion, flute, whistle, and melodic tom
 var gUseCustomGMSounds = true;
+var gOverrideCustomGMSounds = false;
+var gCustomGMSoundsOverride = false;
 
 // Use count for tip jar reminder
 var gTipJarCount = 0;
@@ -21240,8 +21242,16 @@ function computeFade(tuneABC){
 
 			var thisPatch = thePatchElements[0];
 
+		    // Are we overriding the default GM sounds with our own?
+		    var useCustomSounds = gUseCustomGMSounds;
+
+		    // Overriden for a specific tune?
+		    if (gOverrideCustomGMSounds){
+		      useCustomSounds = gCustomGMSoundsOverride;
+		    }
+
 			// Only override the default fade for GM instruments if using our own
-			if (gUseCustomGMSounds){
+			if (useCustomSounds){
 
 				// Is this one of ours?
 				switch(thisPatch){
@@ -21310,9 +21320,16 @@ function computeFade(tuneABC){
 			var thisPatch = thePatchElements[0];
 
 			// Special case for dulcimer on bass/chords
+		    // Are we overriding the default GM sounds with our own?
+		    var useCustomSounds = gUseCustomGMSounds;
+
+		    // Overriden for a specific tune?
+		    if (gOverrideCustomGMSounds){
+		      useCustomSounds = gCustomGMSoundsOverride;
+		    }
 
 			// Only override if using our own samples for GM sounds
-			if (gUseCustomGMSounds){
+			if (useCustomSounds){
 				switch(thisPatch){
 					case "15":   // Dulcimer
 						theFade = 4000;
@@ -22718,6 +22735,9 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 		}
 	}
 
+	// Is there a GM instrument override request in the tune?
+	ScanTuneForGMOverride(theABC);
+
 	var bodhranPitchRequested = ScanTuneForBodhranPitch(theABC);
 
 	if (bodhranPitchRequested){
@@ -23878,6 +23898,54 @@ function ScanTuneForSoundFont(theTune){
 }
 
 //
+// Scan tune for GM custom sounds override request
+//
+function ScanTuneForGMOverride(theTune){
+
+	var old_gOverrideCustomGMSounds = gOverrideCustomGMSounds;
+	var old_gCustomGMSoundsOverride = gCustomGMSoundsOverride;
+
+	gOverrideCustomGMSounds = false;
+	gCustomGMSoundsOverride = false;
+
+	var customSoundsFound = null;
+
+	// Search for a use_custom_gm_sounds request
+	var searchRegExp = /^%use_custom_gm_sounds.*$/gm
+
+	// Detect use_custom_gm_sounds annotation
+	var customSounds = theTune.match(searchRegExp);
+
+	if ((customSounds) && (customSounds.length > 0)){
+
+		customSoundsFound = customSounds[customSounds.length-1].replace("%use_custom_gm_sounds","");
+		
+		customSoundsFound = customSoundsFound.trim();
+
+		customSoundsFound = customSoundsFound.toLowerCase();
+
+		if (customSoundsFound == "true"){
+			console.log("ScanTuneForGMOverride true");
+			gOverrideCustomGMSounds = true;
+			gCustomGMSoundsOverride = true;
+		}
+		if (customSoundsFound == "false"){
+			console.log("ScanTuneForGMOverride false");
+			gOverrideCustomGMSounds = true;
+			gCustomGMSoundsOverride = false;
+		}
+	}
+
+	// Do we need to clear the instrument cache?
+	if ((gOverrideCustomGMSounds != old_gOverrideCustomGMSounds) || (old_gCustomGMSoundsOverride != gCustomGMSoundsOverride)){
+		// Clear the soundfont cache
+		gSoundsCacheABCJS = {};
+
+	}
+
+}
+
+//
 // Scan tune for bodhran tune request
 //
 function ScanTuneForBodhranPitch(theTune){
@@ -24250,6 +24318,9 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 
 		}
 	}
+
+	// Is there a GM instrument override request in the tune?
+	ScanTuneForGMOverride(theProcessedABC);
 
 	var bodhranPitchRequested = ScanTuneForBodhranPitch(theProcessedABC);
 
@@ -25271,6 +25342,9 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 		}
 	}
 
+	// Is there a GM instrument override request in the tune?
+	ScanTuneForGMOverride(theProcessedABC);
+
 	var bodhranPitchRequested = ScanTuneForBodhranPitch(theProcessedABC);
 
 	if (bodhranPitchRequested){
@@ -25913,6 +25987,9 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 
 		}
 	}
+
+	// Is there a GM instrument override request in the tune?
+	ScanTuneForGMOverride(theProcessedABC);
 
 	var bodhranPitchRequested = ScanTuneForBodhranPitch(theProcessedABC);
 
@@ -26735,6 +26812,9 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 		}
 	}
 
+	// Is there a GM instrument override request in the tune?
+	ScanTuneForGMOverride(theProcessedABC);
+
 	var bodhranPitchRequested = ScanTuneForBodhranPitch(theProcessedABC);
 
 	if (bodhranPitchRequested){
@@ -27400,6 +27480,9 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 
 		}
 	}
+
+	// Is there a GM instrument override request in the tune?
+	ScanTuneForGMOverride(theProcessedABC);
 
 	var bodhranPitchRequested = ScanTuneForBodhranPitch(theProcessedABC);
 

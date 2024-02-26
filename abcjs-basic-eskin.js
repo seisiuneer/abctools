@@ -14702,9 +14702,16 @@ function CreateSynth(theABC) {
       if (isSafari){
 
           // If using Celtic Sound .mp3 sound fonts on Safari, set the offsets to 50 msec (Adobe Audition artifact)
+          var useCustomSounds = gUseCustomGMSounds;
+
+          // Overriden for a specific tune?
+          if (gOverrideCustomGMSounds){
+            useCustomSounds = gCustomGMSoundsOverride;
+          }
 
           // Are we overriding the standard GM sounds with our own?
-          if (gUseCustomGMSounds){
+          if (useCustomSounds)
+          {
             self.programOffsets = {
               "dulcimer":50,     // 15
               "accordion": 50,   // 21
@@ -15881,12 +15888,23 @@ var getNote = function getNote(url, instrument, name, audioContext) {
     isSafari = true;
   }
 
+  // Track custom instrument use for redirect detect on fetch
+  var isCustomInstrument = false;
+
   if (!instrumentCache[name]) instrumentCache[name] = new Promise(function (resolve, reject) {
 
     var isOgg = false;
 
     // Are we overriding the default GM sounds with our own?
-    if (gUseCustomGMSounds){
+    var useCustomSounds = gUseCustomGMSounds;
+
+    // Overriden for a specific tune?
+    if (gOverrideCustomGMSounds){
+      useCustomSounds = gCustomGMSoundsOverride;
+    }
+
+    // Are we overriding the default GM sounds with our own?
+    if (useCustomSounds){
 
       // MAE 28 June 29023 - Override Celtic Sound instruments with my own
       switch (instrument){
@@ -15902,6 +15920,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
         case "silence":     // 137
           url = "https://michaeleskin.com/abctools/soundfonts/";
           isOgg = true;
+          isCustomInstrument = true;
           break;
 
         case "melodic_tom": // 117
@@ -15962,6 +15981,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
         case "solfege":     // 136
           url = "https://michaeleskin.com/abctools/soundfonts/";
           isOgg = false;
+          isCustomInstrument = true;
           break;
 
         case "percussion":  // 128
@@ -15987,12 +16007,16 @@ var getNote = function getNote(url, instrument, name, audioContext) {
         case "silence":     // 137
           url = "https://michaeleskin.com/abctools/soundfonts/";
           isOgg = true;
+          isCustomInstrument = true;
+
           break;
 
         // Force solfege to use mp3
         case "solfege":     // 136
           url = "https://michaeleskin.com/abctools/soundfonts/";
           isOgg = false;
+          isCustomInstrument = true;
+
           break;
 
         case "percussion":  // 128
@@ -16020,26 +16044,42 @@ var getNote = function getNote(url, instrument, name, audioContext) {
       } 
 
     }
-
+ 
     // Use the fetch API instead of XMLHttpRequest
     fetch(noteUrl)
     .then(response => {
-        if (!response.ok){
-          throw new Error(`HTTP error, status = ${response.status}`);
-        }
-        response.arrayBuffer().then(theBuffer => {
-          var noteDecoded = function noteDecoded(audioBuffer) {
-            resolve({
-              instrument: instrument,
-              name: name,
-              status: "loaded",
-              audioBuffer: audioBuffer
+
+        try{
+
+          if (!response.ok){
+            throw new Error(`HTTP error, status = ${response.status}`);
+          }
+
+          // If a custom instrument and redirected, means sample not found
+          if (isCustomInstrument && response.redirected){
+            throw new Error(`HTTP redirect on custom GM instrument`);
+          }
+
+          response.arrayBuffer().then(theBuffer => {
+            var noteDecoded = function noteDecoded(audioBuffer) {
+              resolve({
+                instrument: instrument,
+                name: name,
+                status: "loaded",
+                audioBuffer: audioBuffer
+              });
+            };
+            var maybePromise = audioContext.decodeAudioData(theBuffer, noteDecoded, function () {
+               reject(Error("Can't decode sound at " + noteUrl));
             });
-          };
-          var maybePromise = audioContext.decodeAudioData(theBuffer, noteDecoded, function () {
-             reject(Error("Can't decode sound at " + noteUrl));
           });
-        });
+
+        }
+        catch(error){
+          //console.log("note fetch error: "+error);
+          reject(Error("Can't load sound at " + noteUrl + ' status=' + error));
+        }
+        
     })
     .catch(error => {
         reject(Error("Can't load sound at " + noteUrl + ' status=' + error));
