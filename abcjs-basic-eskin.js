@@ -16007,7 +16007,6 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
     }
 
-    var xhr = new XMLHttpRequest();
     var noteUrl = url + instrument + "-mp3/" + name + ".mp3";
 
     // If replacing a default sound, choose .ogg or .wav depending on the platform
@@ -16022,36 +16021,66 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
     }
 
-    xhr.open("GET", noteUrl, true);
-    xhr.responseType = "arraybuffer";
-    xhr.onload = function () {
-      if (xhr.status !== 200) {
-        reject(Error("Can't load sound at " + noteUrl + ' status=' + xhr.status));
-        return;
-      }
-      var noteDecoded = function noteDecoded(audioBuffer) {
-        resolve({
-          instrument: instrument,
-          name: name,
-          status: "loaded",
-          audioBuffer: audioBuffer
+    // Use the fetch API instead of XMLHttpRequest
+    fetch(noteUrl)
+    .then(response => {
+        if (!response.ok){
+          throw new Error(`HTTP error, status = ${response.status}`);
+        }
+        response.arrayBuffer().then(theBuffer => {
+          var noteDecoded = function noteDecoded(audioBuffer) {
+            resolve({
+              instrument: instrument,
+              name: name,
+              status: "loaded",
+              audioBuffer: audioBuffer
+            });
+          };
+          var maybePromise = audioContext.decodeAudioData(theBuffer, noteDecoded, function () {
+             reject(Error("Can't decode sound at " + noteUrl));
+          });
         });
-      };
-      var maybePromise = audioContext.decodeAudioData(xhr.response, noteDecoded, function () {
-        reject(Error("Can't decode sound at " + noteUrl));
-      });
-      // In older browsers `BaseAudioContext.decodeAudio()` did not return a promise
-      if (maybePromise && typeof maybePromise["catch"] === "function") maybePromise["catch"](reject);
-    };
-    xhr.onerror = function () {
-      reject(Error("Can't load sound at " + noteUrl));
-    };
-    xhr.send();
-  })["catch"](function (err) {
-    console.error("Didn't load note", instrument, name, ":", err.message);
-    throw err;
+    })
+    .catch(error => {
+        reject(Error("Can't load sound at " + noteUrl + ' status=' + error));
+        throw error;
+    });
+
   });
+
+  //var xhr = new XMLHttpRequest();
+  //   xhr.open("GET", noteUrl, true);
+  //   xhr.responseType = "arraybuffer";
+  //   xhr.onload = function () {
+  //     if (xhr.status !== 200) {
+  //       reject(Error("Can't load sound at " + noteUrl + ' status=' + xhr.status));
+  //       return;
+  //     }
+  //     var noteDecoded = function noteDecoded(audioBuffer) {
+  //       resolve({
+  //         instrument: instrument,
+  //         name: name,
+  //         status: "loaded",
+  //         audioBuffer: audioBuffer
+  //       });
+  //     };
+  //     var maybePromise = audioContext.decodeAudioData(xhr.response, noteDecoded, function () {
+  //       reject(Error("Can't decode sound at " + noteUrl));
+  //     });
+  //     // In older browsers `BaseAudioContext.decodeAudio()` did not return a promise
+  //     if (maybePromise && typeof maybePromise["catch"] === "function") maybePromise["catch"](reject);
+  //   };
+  //   xhr.onerror = function () {
+  //     reject(Error("Can't load sound at " + noteUrl));
+  //   };
+  //   xhr.send();
+  // })["catch"](function (err) {
+  //   console.error("Didn't load note", instrument, name, ":", err.message);
+  //   throw err;
+  // });
+  
   return instrumentCache[name];
+
 };
 
 module.exports = getNote;
