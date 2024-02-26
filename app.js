@@ -22659,35 +22659,9 @@ function PlayABC(){
 // callback and val are used for batch export automation
 //
 
-// Keep track where you are in the tune collection
-var gPlayABCTuneIndex = 0;
-var gPlayABCTuneCount = 0;
-var gPlayABCGotMaximizedPlay = false;
+function PlayerSetupCommon(theABC){
 
-function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
-
-	// Keep track of dialogs
-	sendGoogleAnalytics("dialog","PlayABCDialog");
-
-	gMIDIbuffer = null;
-	gTheOKButton = null;
-	gPlayMetronome = false;
-
-	// We came in because of a metronome state change, don't init the tune cache
-	if (metronome_state){
-
-		gPlayMetronome = metronome_state;
-
-	}
-	else{
-
-		gPlayerABC = theABC;
-
-		gPlayMetronome = false;
-
-		gPlayerABCMetronome = null;
-
-	}
+	//console.log("PlayerSetupCommon");
 
 	var soundFontRequested = ScanTuneForSoundFont(theABC);
 
@@ -22776,6 +22750,46 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 
 		DayPilot.Modal.alert('<p style="font-family:helvetica;font-size:14pt;"><strong>There is an issue with your custom rhythm directive:</strong></p><p style="font-family:helvetica;font-size:14pt;"><strong>'+boomChickOK+'</strong></p><p style="font-family:helvetica;font-size:14pt;">Format should be:</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick meter rhythm_pattern_string partial_measure</p><p style="font-family:helvetica;font-size:14pt;">Valid rhythm_pattern_string characters are:</p><p style="font-family:helvetica;font-size:14pt;">B - Boom, b - Alternate Boom, c - Chick, and x - Silence.</p><p style="font-family:helvetica;font-size:14pt;">Examples:</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick 7/8 Bccbxbx 3</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick 10/8 Bccbccbxbx 5</p><p style="font-family:helvetica;font-size:14pt;">The number of characters in the pattern_string must match the meter numerator.</p><p style="font-family:helvetica;font-size:14pt;">partial_measure sets how many beats must be present in a partial measure in the ABC to use the custom pattern.</p><p style="font-family:helvetica;font-size:14pt;">partial_measure is optional and defaults to half of the meter numerator rounded down to the next lowest integer (min is 1).</p>',{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
 
+		return false;
+	}
+
+	return true;
+
+}
+
+
+// Keep track where you are in the tune collection
+var gPlayABCTuneIndex = 0;
+var gPlayABCTuneCount = 0;
+var gPlayABCGotMaximizedPlay = false;
+
+function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","PlayABCDialog");
+
+	gMIDIbuffer = null;
+	gTheOKButton = null;
+	gPlayMetronome = false;
+
+	// We came in because of a metronome state change, don't init the tune cache
+	if (metronome_state){
+
+		gPlayMetronome = metronome_state;
+
+	}
+	else{
+
+		gPlayerABC = theABC;
+
+		gPlayMetronome = false;
+
+		gPlayerABCMetronome = null;
+
+	}
+
+	// Do common setup of soundfont and custom timing injection
+	if (!PlayerSetupCommon(theABC)){
 		return;
 	}
 
@@ -22796,7 +22810,6 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 			abcOptions.tablature[0].label = "";
 		}
 	}
-	
 
 	function setTune(userAction) {
 
@@ -24273,93 +24286,8 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 
 	}
 
-	var soundFontRequested = ScanTuneForSoundFont(theProcessedABC);
-
-	if (soundFontRequested){
-
-		var theOriginalSoundFont = gTheActiveSoundFont;
-
-		switch (soundFontRequested){
-			case "fluid":
-				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
-				break;
-			case "musyng":
-				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/";
-				break;
-			case "fatboy":
-				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
-				break;
-			case "canvas":
-				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/canvas/";
-				break;
-			case "mscore":
-				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/mscore/";
-				break;
-		}
-
-		// New soundfont requested, clear the cache
-		if (gTheActiveSoundFont != theOriginalSoundFont){
-			
-			// Clear the soundfont cache
-			gSoundsCacheABCJS = {};
-
-		}
-
-	}
-	else{
-
-		// No sound font requested, lets see if the current font is the user default
-		if (gTheActiveSoundFont != gDefaultSoundFont){
-
-			gTheActiveSoundFont = gDefaultSoundFont;
-
-			// Clear the soundfont cache
-			gSoundsCacheABCJS = {};
-
-		}
-	}
-
-	// Is there a GM instrument override request in the tune?
-	ScanTuneForGMOverride(theProcessedABC);
-
-	var bodhranPitchRequested = ScanTuneForBodhranPitch(theProcessedABC);
-
-	if (bodhranPitchRequested){
-
-		var theOriginalBodhranPitch = gTheActiveBodhranPitch;
-
-		gTheActiveBodhranPitch = bodhranPitchRequested;
-
-		// New soundfont requested, clear the cache
-		if (gTheActiveBodhranPitch != theOriginalBodhranPitch){
-			
-			// Clear the soundfont cache
-			gSoundsCacheABCJS = {};
-
-		}
-
-	}
-	else{
-
-		// No sound font requested, lets see if the current font is the user default
-		if (gTheActiveBodhranPitch != gDefaultBodhranPitch){
-
-			gTheActiveBodhranPitch = gDefaultBodhranPitch;
-
-			// Clear the soundfont cache
-			gSoundsCacheABCJS = {};
-
-		}
-	}
-
-	// Setup any custom boom-chick rhythm patterns found
-	var boomChickOK = ScanTuneForBoomChick(theProcessedABC);
-
-	// Incorrectly formatted %abcjs_boomchick detected, put up an alert
-	if (boomChickOK != ""){
-
-		DayPilot.Modal.alert('<p style="font-family:helvetica;font-size:14pt;"><strong>There is an issue with your custom rhythm directive:</strong></p><p style="font-family:helvetica;font-size:14pt;"><strong>'+boomChickOK+'</strong></p><p style="font-family:helvetica;font-size:14pt;">Format should be:</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick meter rhythm_pattern_string partial_measure</p><p style="font-family:helvetica;font-size:14pt;">Valid rhythm_pattern_string characters are:</p><p style="font-family:helvetica;font-size:14pt;">B - Boom, b - Alternate Boom, c - Chick, and x - Silence.</p><p style="font-family:helvetica;font-size:14pt;">Examples:</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick 7/8 Bccbxbx 3</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick 10/8 Bccbccbxbx 5</p><p style="font-family:helvetica;font-size:14pt;">The number of characters in the pattern_string must match the meter numerator.</p><p style="font-family:helvetica;font-size:14pt;">partial_measure sets how many beats must be present in a partial measure in the ABC to use the custom pattern.</p><p style="font-family:helvetica;font-size:14pt;">partial_measure is optional and defaults to half of the meter numerator rounded down to the next lowest integer (min is 1).</p>',{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
-
+	// Do common setup of soundfont and custom timing injection
+	if (!PlayerSetupCommon(theProcessedABC)){
 		return;
 	}
 
@@ -25296,93 +25224,8 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 
 	gPlayerABCInstrumentExplorerInjected = theProcessedABC;
 
-	var soundFontRequested = ScanTuneForSoundFont(theProcessedABC);
-
-	if (soundFontRequested){
-
-		var theOriginalSoundFont = gTheActiveSoundFont;
-
-		switch (soundFontRequested){
-			case "fluid":
-				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
-				break;
-			case "musyng":
-				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/";
-				break;
-			case "fatboy":
-				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
-				break;
-			case "canvas":
-				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/canvas/";
-				break;
-			case "mscore":
-				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/mscore/";
-				break;
-		}
-
-		// New soundfont requested, clear the cache
-		if (gTheActiveSoundFont != theOriginalSoundFont){
-			
-			// Clear the soundfont cache
-			gSoundsCacheABCJS = {};
-
-		}
-
-	}
-	else{
-
-		// No sound font requested, lets see if the current font is the user default
-		if (gTheActiveSoundFont != gDefaultSoundFont){
-
-			gTheActiveSoundFont = gDefaultSoundFont;
-
-			// Clear the soundfont cache
-			gSoundsCacheABCJS = {};
-
-		}
-	}
-
-	// Is there a GM instrument override request in the tune?
-	ScanTuneForGMOverride(theProcessedABC);
-
-	var bodhranPitchRequested = ScanTuneForBodhranPitch(theProcessedABC);
-
-	if (bodhranPitchRequested){
-
-		var theOriginalBodhranPitch = gTheActiveBodhranPitch;
-
-		gTheActiveBodhranPitch = bodhranPitchRequested;
-
-		// New soundfont requested, clear the cache
-		if (gTheActiveBodhranPitch != theOriginalBodhranPitch){
-			
-			// Clear the soundfont cache
-			gSoundsCacheABCJS = {};
-
-		}
-
-	}
-	else{
-
-		// No sound font requested, lets see if the current font is the user default
-		if (gTheActiveBodhranPitch != gDefaultBodhranPitch){
-
-			gTheActiveBodhranPitch = gDefaultBodhranPitch;
-
-			// Clear the soundfont cache
-			gSoundsCacheABCJS = {};
-
-		}
-	}
-
-	// Setup any custom boom-chick rhythm patterns found
-	var boomChickOK = ScanTuneForBoomChick(theProcessedABC);
-
-	// Incorrectly formatted %abcjs_boomchick detected, put up an alert
-	if (boomChickOK != ""){
-
-		DayPilot.Modal.alert('<p style="font-family:helvetica;font-size:14pt;"><strong>There is an issue with your custom rhythm directive:</strong></p><p style="font-family:helvetica;font-size:14pt;"><strong>'+boomChickOK+'</strong></p><p style="font-family:helvetica;font-size:14pt;">Format should be:</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick meter rhythm_pattern_string partial_measure</p><p style="font-family:helvetica;font-size:14pt;">Valid rhythm_pattern_string characters are:</p><p style="font-family:helvetica;font-size:14pt;">B - Boom, b - Alternate Boom, c - Chick, and x - Silence.</p><p style="font-family:helvetica;font-size:14pt;">Examples:</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick 7/8 Bccbxbx 3</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick 10/8 Bccbccbxbx 5</p><p style="font-family:helvetica;font-size:14pt;">The number of characters in the pattern_string must match the meter numerator.</p><p style="font-family:helvetica;font-size:14pt;">partial_measure sets how many beats must be present in a partial measure in the ABC to use the custom pattern.</p><p style="font-family:helvetica;font-size:14pt;">partial_measure is optional and defaults to half of the meter numerator rounded down to the next lowest integer (min is 1).</p>',{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
-
+	// Do common setup of soundfont and custom timing injection
+	if (!PlayerSetupCommon(theProcessedABC)){
 		return;
 	}
 	
@@ -25941,94 +25784,8 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 		gPlayerABCGraceExplorerProcessed = theProcessedABC;
 
 	}
-
-	var soundFontRequested = ScanTuneForSoundFont(theProcessedABC);
-
-	if (soundFontRequested){
-
-		var theOriginalSoundFont = gTheActiveSoundFont;
-
-		switch (soundFontRequested){
-			case "fluid":
-				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
-				break;
-			case "musyng":
-				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/";
-				break;
-			case "fatboy":
-				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
-				break;
-			case "canvas":
-				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/canvas/";
-				break;
-			case "mscore":
-				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/mscore/";
-				break;
-		}
-
-		// New soundfont requested, clear the cache
-		if (gTheActiveSoundFont != theOriginalSoundFont){
-			
-			// Clear the soundfont cache
-			gSoundsCacheABCJS = {};
-
-		}
-
-	}
-	else{
-
-		// No sound font requested, lets see if the current font is the user default
-		if (gTheActiveSoundFont != gDefaultSoundFont){
-
-			gTheActiveSoundFont = gDefaultSoundFont;
-
-			// Clear the soundfont cache
-			gSoundsCacheABCJS = {};
-
-		}
-	}
-
-	// Is there a GM instrument override request in the tune?
-	ScanTuneForGMOverride(theProcessedABC);
-
-	var bodhranPitchRequested = ScanTuneForBodhranPitch(theProcessedABC);
-
-	if (bodhranPitchRequested){
-
-		var theOriginalBodhranPitch = gTheActiveBodhranPitch;
-
-		gTheActiveBodhranPitch = bodhranPitchRequested;
-
-		// New soundfont requested, clear the cache
-		if (gTheActiveBodhranPitch != theOriginalBodhranPitch){
-			
-			// Clear the soundfont cache
-			gSoundsCacheABCJS = {};
-
-		}
-
-	}
-	else{
-
-		// No sound font requested, lets see if the current font is the user default
-		if (gTheActiveBodhranPitch != gDefaultBodhranPitch){
-
-			gTheActiveBodhranPitch = gDefaultBodhranPitch;
-
-			// Clear the soundfont cache
-			gSoundsCacheABCJS = {};
-
-		}
-	}
-
-	// Setup any custom boom-chick rhythm patterns found
-	var boomChickOK = ScanTuneForBoomChick(theProcessedABC);
-
-	// Incorrectly formatted %abcjs_boomchick detected, put up an alert
-	if (boomChickOK != ""){
-
-		DayPilot.Modal.alert('<p style="font-family:helvetica;font-size:14pt;"><strong>There is an issue with your custom rhythm directive:</strong></p><p style="font-family:helvetica;font-size:14pt;"><strong>'+boomChickOK+'</strong></p><p style="font-family:helvetica;font-size:14pt;">Format should be:</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick meter rhythm_pattern_string partial_measure</p><p style="font-family:helvetica;font-size:14pt;">Valid rhythm_pattern_string characters are:</p><p style="font-family:helvetica;font-size:14pt;">B - Boom, b - Alternate Boom, c - Chick, and x - Silence.</p><p style="font-family:helvetica;font-size:14pt;">Examples:</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick 7/8 Bccbxbx 3</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick 10/8 Bccbccbxbx 5</p><p style="font-family:helvetica;font-size:14pt;">The number of characters in the pattern_string must match the meter numerator.</p><p style="font-family:helvetica;font-size:14pt;">partial_measure sets how many beats must be present in a partial measure in the ABC to use the custom pattern.</p><p style="font-family:helvetica;font-size:14pt;">partial_measure is optional and defaults to half of the meter numerator rounded down to the next lowest integer (min is 1).</p>',{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
-
+	// Do common setup of soundfont and custom timing injection
+	if (!PlayerSetupCommon(theProcessedABC)){
 		return;
 	}
 
@@ -26765,93 +26522,8 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 		gPlayerABCRollExplorerTransformed = null;
 
 	}
-
-	var soundFontRequested = ScanTuneForSoundFont(theProcessedABC);
-
-	if (soundFontRequested){
-
-		var theOriginalSoundFont = gTheActiveSoundFont;
-
-		switch (soundFontRequested){
-			case "fluid":
-				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
-				break;
-			case "musyng":
-				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/";
-				break;
-			case "fatboy":
-				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
-				break;
-			case "canvas":
-				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/canvas/";
-				break;
-			case "mscore":
-				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/mscore/";
-				break;
-		}
-
-		// New soundfont requested, clear the cache
-		if (gTheActiveSoundFont != theOriginalSoundFont){
-			
-			// Clear the soundfont cache
-			gSoundsCacheABCJS = {};
-
-		}
-
-	}
-	else{
-
-		// No sound font requested, lets see if the current font is the user default
-		if (gTheActiveSoundFont != gDefaultSoundFont){
-
-			gTheActiveSoundFont = gDefaultSoundFont;
-
-			// Clear the soundfont cache
-			gSoundsCacheABCJS = {};
-
-		}
-	}
-
-	// Is there a GM instrument override request in the tune?
-	ScanTuneForGMOverride(theProcessedABC);
-
-	var bodhranPitchRequested = ScanTuneForBodhranPitch(theProcessedABC);
-
-	if (bodhranPitchRequested){
-
-		var theOriginalBodhranPitch = gTheActiveBodhranPitch;
-
-		gTheActiveBodhranPitch = bodhranPitchRequested;
-
-		// New soundfont requested, clear the cache
-		if (gTheActiveBodhranPitch != theOriginalBodhranPitch){
-			
-			// Clear the soundfont cache
-			gSoundsCacheABCJS = {};
-
-		}
-
-	}
-	else{
-
-		// No sound font requested, lets see if the current font is the user default
-		if (gTheActiveBodhranPitch != gDefaultBodhranPitch){
-
-			gTheActiveBodhranPitch = gDefaultBodhranPitch;
-
-			// Clear the soundfont cache
-			gSoundsCacheABCJS = {};
-
-		}
-	}
-	// Setup any custom boom-chick rhythm patterns found
-	var boomChickOK = ScanTuneForBoomChick(theProcessedABC);
-
-	// Incorrectly formatted %abcjs_boomchick detected, put up an alert
-	if (boomChickOK != ""){
-
-		DayPilot.Modal.alert('<p style="font-family:helvetica;font-size:14pt;"><strong>There is an issue with your custom rhythm directive:</strong></p><p style="font-family:helvetica;font-size:14pt;"><strong>'+boomChickOK+'</strong></p><p style="font-family:helvetica;font-size:14pt;">Format should be:</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick meter rhythm_pattern_string partial_measure</p><p style="font-family:helvetica;font-size:14pt;">Valid rhythm_pattern_string characters are:</p><p style="font-family:helvetica;font-size:14pt;">B - Boom, b - Alternate Boom, c - Chick, and x - Silence.</p><p style="font-family:helvetica;font-size:14pt;">Examples:</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick 7/8 Bccbxbx 3</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick 10/8 Bccbccbxbx 5</p><p style="font-family:helvetica;font-size:14pt;">The number of characters in the pattern_string must match the meter numerator.</p><p style="font-family:helvetica;font-size:14pt;">partial_measure sets how many beats must be present in a partial measure in the ABC to use the custom pattern.</p><p style="font-family:helvetica;font-size:14pt;">partial_measure is optional and defaults to half of the meter numerator rounded down to the next lowest integer (min is 1).</p>',{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
-
+	// Do common setup of soundfont and custom timing injection
+	if (!PlayerSetupCommon(theProcessedABC)){
 		return;
 	}
 
@@ -27435,92 +27107,8 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 		localStorage.LooperCount = gLooperCount;
 	}
 
-	var soundFontRequested = ScanTuneForSoundFont(theProcessedABC);
-
-	if (soundFontRequested){
-
-		var theOriginalSoundFont = gTheActiveSoundFont;
-
-		switch (soundFontRequested){
-			case "fluid":
-				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
-				break;
-			case "musyng":
-				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/";
-				break;
-			case "fatboy":
-				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
-				break;
-			case "canvas":
-				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/canvas/";
-				break;
-			case "mscore":
-				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/mscore/";
-				break;
-		}
-
-		// New soundfont requested, clear the cache
-		if (gTheActiveSoundFont != theOriginalSoundFont){
-			
-			// Clear the soundfont cache
-			gSoundsCacheABCJS = {};
-
-		}
-
-	}
-	else{
-
-		// No sound font requested, lets see if the current font is the user default
-		if (gTheActiveSoundFont != gDefaultSoundFont){
-
-			gTheActiveSoundFont = gDefaultSoundFont;
-
-			// Clear the soundfont cache
-			gSoundsCacheABCJS = {};
-
-		}
-	}
-
-	// Is there a GM instrument override request in the tune?
-	ScanTuneForGMOverride(theProcessedABC);
-
-	var bodhranPitchRequested = ScanTuneForBodhranPitch(theProcessedABC);
-
-	if (bodhranPitchRequested){
-
-		var theOriginalBodhranPitch = gTheActiveBodhranPitch;
-
-		gTheActiveBodhranPitch = bodhranPitchRequested;
-
-		// New soundfont requested, clear the cache
-		if (gTheActiveBodhranPitch != theOriginalBodhranPitch){
-			
-			// Clear the soundfont cache
-			gSoundsCacheABCJS = {};
-
-		}
-
-	}
-	else{
-
-		// No sound font requested, lets see if the current font is the user default
-		if (gTheActiveBodhranPitch != gDefaultBodhranPitch){
-
-			gTheActiveBodhranPitch = gDefaultBodhranPitch;
-
-			// Clear the soundfont cache
-			gSoundsCacheABCJS = {};
-
-		}
-	}
-	// Setup any custom boom-chick rhythm patterns found
-	var boomChickOK = ScanTuneForBoomChick(theProcessedABC);
-
-	// Incorrectly formatted %abcjs_boomchick detected, put up an alert
-	if (boomChickOK != ""){
-
-		DayPilot.Modal.alert('<p style="font-family:helvetica;font-size:14pt;"><strong>There is an issue with your custom rhythm directive:</strong></p><p style="font-family:helvetica;font-size:14pt;"><strong>'+boomChickOK+'</strong></p><p style="font-family:helvetica;font-size:14pt;">Format should be:</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick meter rhythm_pattern_string partial_measure</p><p style="font-family:helvetica;font-size:14pt;">Valid rhythm_pattern_string characters are:</p><p style="font-family:helvetica;font-size:14pt;">B - Boom, b - Alternate Boom, c - Chick, and x - Silence.</p><p style="font-family:helvetica;font-size:14pt;">Examples:</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick 7/8 Bccbxbx 3</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick 10/8 Bccbccbxbx 5</p><p style="font-family:helvetica;font-size:14pt;">The number of characters in the pattern_string must match the meter numerator.</p><p style="font-family:helvetica;font-size:14pt;">partial_measure sets how many beats must be present in a partial measure in the ABC to use the custom pattern.</p><p style="font-family:helvetica;font-size:14pt;">partial_measure is optional and defaults to half of the meter numerator rounded down to the next lowest integer (min is 1).</p>',{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
-
+	// Do common setup of soundfont and custom timing injection
+	if (!PlayerSetupCommon(theProcessedABC)){
 		return;
 	}
 	
