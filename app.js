@@ -18055,6 +18055,10 @@ function processShareLink() {
 				if (gotIndex){
 					theABCToPlay = getTuneByIndex(gPlayABCTuneIndex)
 				}
+				else{
+					// Added 27 Feb 2024 for share links with multiple tunes and GM override bug
+					theABCToPlay = getTuneByIndex(0);					
+				}
 
 				// Pre-process the ABC to inject any requested programs or volumes
 				var theProcessedABC = PreProcessPlayABC(theABCToPlay);
@@ -23939,12 +23943,12 @@ function ScanTuneForGMOverride(theTune){
 		customSoundsFound = customSoundsFound.toLowerCase();
 
 		if (customSoundsFound == "true"){
-			console.log("ScanTuneForGMOverride true");
+			//console.log("ScanTuneForGMOverride true");
 			gOverrideCustomGMSounds = true;
 			gCustomGMSoundsOverride = true;
 		}
 		if (customSoundsFound == "false"){
-			console.log("ScanTuneForGMOverride false");
+			//console.log("ScanTuneForGMOverride false");
 			gOverrideCustomGMSounds = true;
 			gCustomGMSoundsOverride = false;
 		}
