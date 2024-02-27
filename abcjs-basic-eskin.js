@@ -15979,9 +15979,15 @@ var getNote = function getNote(url, instrument, name, audioContext) {
         // Force flute, whistle, and solfege to use mp3
         case "flute":       // 73
         case "whistle":     // 78
-        case "banjo":       // 105
         case "solfege":     // 136
           url = "https://michaeleskin.com/abctools/soundfonts/";
+          isOgg = false;
+          isCustomInstrument = true;
+          break;
+
+        // Force banjo to use mp3
+        case "banjo":       // 105
+          url = "https://michaeleskin.com/abctools/soundfonts/banjo/";
           isOgg = false;
           isCustomInstrument = true;
           break;
