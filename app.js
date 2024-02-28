@@ -225,7 +225,7 @@ var gDefaultBodhranPitch = "a";
 var gTheActiveBodhranPitch = gDefaultBodhranPitch;
 
 // Banjo style
-var gDefaultBanjoStyle = "1";
+var gDefaultBanjoStyle = "2";
 var gTheActiveBanjoStyle = gDefaultBanjoStyle;
 
 // Allow player to autoscroll
