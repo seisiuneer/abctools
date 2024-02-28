@@ -15991,7 +15991,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
           // Get path to the samples based on the banjo style
           switch (gTheActiveBanjoStyle){
             case "1":
-              url = "https://michaeleskin.com/abctools/soundfonts/banjo_1/";
+              url = "https://michaeleskin.com/abctools/soundfonts/banjo_1a/";
               break;
             case "2":
               url = "https://michaeleskin.com/abctools/soundfonts/banjo_2/";
