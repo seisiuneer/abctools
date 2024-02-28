@@ -15997,7 +15997,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
               url = "https://michaeleskin.com/abctools/soundfonts/banjo_2/";
               break;
             case "3":
-              url = "https://michaeleskin.com/abctools/soundfonts/banjo_3/";
+              url = "https://michaeleskin.com/abctools/soundfonts/banjo_3a/";
               break;
             case "4":
               url = "https://michaeleskin.com/abctools/soundfonts/banjo_4/";
