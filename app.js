@@ -224,6 +224,10 @@ var gTheActiveSoundFont = gDefaultSoundFont;
 var gDefaultBodhranPitch = "a";
 var gTheActiveBodhranPitch = gDefaultBodhranPitch;
 
+// Banjo style
+var gDefaultBanjoStyle = "1";
+var gTheActiveBanjoStyle = gDefaultBanjoStyle;
+
 // Allow player to autoscroll
 var gAutoscrollPlayer = true;
 
@@ -22747,6 +22751,36 @@ function PlayerSetupCommon(theABC){
 		}
 	}
 
+	var banjoStyleRequested = ScanTuneForBanjoStyle(theABC);
+
+	if (banjoStyleRequested){
+
+		var theOriginalBanjoStyle = gTheActiveBanjoStyle;
+
+		gTheActiveBanjoStyle = banjoStyleRequested;
+
+		// New soundfont requested, clear the cache
+		if (banjoStyleRequested != theOriginalBanjoStyle){
+			
+			// Clear the soundfont cache
+			gSoundsCacheABCJS = {};
+
+		}
+
+	}
+	else{
+
+		// No sound font requested, lets see if the current font is the user default
+		if (gTheActiveBanjoStyle != gDefaultBanjoStyle){
+
+			gTheActiveBanjoStyle = gDefaultBanjoStyle;
+
+			// Clear the soundfont cache
+			gSoundsCacheABCJS = {};
+
+		}
+	}
+
 	// Setup any custom boom-chick rhythm patterns found
 	var boomChickOK = ScanTuneForBoomChick(theABC);
 
@@ -24009,6 +24043,40 @@ function ScanTuneForBodhranPitch(theTune){
 	//console.log("ScanTuneForBodhranPitch returning "+bodhranPitchFound);
 
 	return bodhranPitchFound;
+}
+
+//
+// Scan tune for banjo style
+//
+function ScanTuneForBanjoStyle(theTune){
+
+	var banjoStyleFound = null;
+
+	// Search for a banjo style request
+	var searchRegExp = /^%banjo_style.*$/gm
+
+	// Detect banjo style annotation
+	var banjoStyle = theTune.match(searchRegExp);
+
+	if ((banjoStyle) && (banjoStyle.length > 0)){
+
+		banjoStyleFound = banjoStyle[banjoStyle.length-1].replace("%banjo_style","");
+		
+		banjoStyleFound = banjoStyleFound.trim();
+	}
+
+	//console.log("ScanTuneForBanjoStyle returning "+banjoStyleFound);
+
+	switch (banjoStyleFound){
+		case "1":
+		case "2":
+		case "3":
+			break;
+		default:
+			return null;
+	}
+
+	return banjoStyleFound;
 }
 
 //

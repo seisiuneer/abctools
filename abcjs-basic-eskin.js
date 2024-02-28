@@ -15974,6 +15974,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
               break;
           }
           isOgg = true;
+          isCustomInstrument = true;
           break;
 
         // Force flute, whistle, and solfege to use mp3
@@ -15987,9 +15988,23 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
         // Force banjo to use mp3
         case "banjo":       // 105
-          url = "https://michaeleskin.com/abctools/soundfonts/banjo/";
-          isOgg = false;
+          // Get path to the samples based on the bodhran pitch
+          switch (gTheActiveBanjoStyle){
+            case "1":
+              url = "https://michaeleskin.com/abctools/soundfonts/banjo_1/";
+              break;
+            case "2":
+              url = "https://michaeleskin.com/abctools/soundfonts/banjo_2/";
+              break;
+            case "3":
+              url = "https://michaeleskin.com/abctools/soundfonts/banjo_3/";
+              break;
+            default:
+              url = "https://michaeleskin.com/abctools/soundfonts/banjo_1/";
+              break;
+          }
           isCustomInstrument = true;
+          isOgg = false;
           break;
 
         case "percussion":  // 128

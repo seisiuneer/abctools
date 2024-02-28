@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-       
+
         <style>
 
 		p {
@@ -355,7 +355,8 @@
                     <p class="toc"><a style="text-decoration:none;" href="#selecting_the_instruments_for_playback">Choosing the MIDI Soundfont and Instruments for Playback</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#general_midi_instrument_program_numbers">General MIDI Instrument Program Numbers</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#general_midi_percussion_map">General MIDI Drum Sound ABC Note Map</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#bodhran_map">Using the Bodhran (MIDI progam #117) Instrument</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#bodhran_map">Using the Bodhran (MIDI program #117) Instrument</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#banjo_style">Using the Tenor Banjo (MIDI program #105) Instrument</a></p>
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">Custom Backup Rhythms</button>
@@ -654,7 +655,7 @@
             <p>Valid values are: C, C#, Db, D, D#, Eb, E, F, F#, Gb, G, G#, Ab, A, A#, Bb, or B.</p>
             <p>If no pitch is specified, the default is A.</p>
             <p>Full details on the Bodhran ABC note-to-sound mapping are available in the following section:</p>
-            <p style="text-align: center;"><a href="#bodhran_map"><strong>Using the Bodhran (MIDI progam #117) Instrument</strong></a></p>
+            <p style="text-align: center;"><a href="#bodhran_map"><strong>Using the Bodhran (MIDI program #117) Instrument</strong></a></p>
             <hr>
             <p><strong>Add Box Fingering Symbols Template:</strong></p>
             <p>Add a template with symbols for annotating box fingerings and tablature at the top of the ABC editor text.</p>
@@ -1851,7 +1852,7 @@
             </div>
             <p>Use program #128 (Percussion) on its own voice for MIDI click tracks.</p>
             <hr class="hidden-print" id="bodhran_map">
-            <h1 class="page_break_always h1wide">Using the Bodhran (MIDI progam #117) Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <h1 class="page_break_always h1wide">Using the Bodhran (MIDI program #117) Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/GTdzE90itkU" title="High and Low Pitch Bodhran Instrument Demos" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/5dLeBddFrPI" title="High and Low Pitch Bodhran Solo Instrument Demos" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/sfpJRgQPg7k" title="Melody Contour Tracking Example" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -2033,6 +2034,22 @@
                 % Use MIDI program 117 for the Bodhran sound<br/>
                 %%MIDI program 117
             </p>
+            <hr class="hidden-print" id="banjo_style">
+            <h1 class="page_break_always h1wide">Using the Tenor Banjo (MIDI program #105) Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>If %%MIDI program 105 (Banjo) is used in a tune, you may choose between one of three different custom Tenor Banjo sounds using one of the following comment-based annotations anywhere in the tune's ABC:</p>
+            <p class=code>% Dark tone<br/>
+            %banjo_style 1<br/><br/>
+            % Medium bright tone<br/>
+            %banjo_style 2<br/><br/>
+            % Bright tone<br/>
+            %banjo_style 3</p>
+            <p>Only the first instance of a %banjo_style annotation found in a tune will be used for that tune.</p>
+            <p>If no banjo style is specified in a tune, the default is style 1.</p>
+            <p>If you wish to override the AppCordions custom sound setting for a specific tune, add one of the following comment-based annotations anywhere in the tune:</p>
+            <p class="code">% Force use of AppCordions custom sounds for this tune:<br/>
+            %use_custom_gm_sounds true</p>
+            <p class="code">% Disable use of AppCordions custom sounds for this tune:<br/>
+            %use_custom_gm_sounds false</p>
             <hr class="hidden-print" id="custom_backup_rhythms">
             <h1 class="page_break_always">Custom Backup Rhythms<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>You may customize the backup rhythm used for any meter in a single tune with chords by adding the following comment-based directive anywhere in the tune's ABC:</p>
