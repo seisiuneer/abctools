@@ -15988,7 +15988,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
         // Force banjo to use mp3
         case "banjo":       // 105
-          // Get path to the samples based on the bodhran pitch
+          // Get path to the samples based on the banjo style
           switch (gTheActiveBanjoStyle){
             case "1":
               url = "https://michaeleskin.com/abctools/soundfonts/banjo_1/";
@@ -15998,6 +15998,9 @@ var getNote = function getNote(url, instrument, name, audioContext) {
               break;
             case "3":
               url = "https://michaeleskin.com/abctools/soundfonts/banjo_3/";
+              break;
+            case "4":
+              url = "https://michaeleskin.com/abctools/soundfonts/banjo_4/";
               break;
             default:
               url = "https://michaeleskin.com/abctools/soundfonts/banjo_2/";
