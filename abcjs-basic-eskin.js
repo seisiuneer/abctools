@@ -2731,7 +2731,7 @@ var create;
             } 
             else
             // MAE 1 Jan 2024 - Custom MIDI instrument processing
-            if (event.instrument == 137){
+            if (event.instrument == 139){
               midi.setChannelMute(event.channel, pan);
               midi.setInstrument(0);              
             }
@@ -2760,6 +2760,14 @@ var create;
 
                 case 136: // Solfege
                   theInstrument = 52; // Choral Aahs
+                  break;
+
+                case 137: // Chorus nylon guitar
+                  theInstrument = 24; // Nylon string guitar
+                  break;
+
+                case 138: // Chorus steel guitar
+                  theInstrument = 25; // Steel string guitar
                   break;
 
                 default:
@@ -4299,14 +4307,14 @@ var parseDirective = {};
     } else if (midiCmdParam1Integer.indexOf(midi_cmd) >= 0) {
 
       //
-      // MAE 1 January 2023 - Stuff in silence patch 137 if mute selected as the chordprog or bassprog
+      // MAE 1 January 2023 - Stuff in silence patch 139 if mute selected as the chordprog or bassprog
       //
       if ((midi_cmd == "chordprog") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "mute")){
         //console.log("Got mute program request for "+midi_cmd);
         midi[0].type = 'number';
-        midi[0].token = "137";
-        midi[0].intt = 137;
-        midi[0].floatt = 137;
+        midi[0].token = "139";
+        midi[0].intt = 139;
+        midi[0].floatt = 139;
         midi[0].contineId = false;
         midi[0].start = 10;
         midi[0].end = 13;
@@ -4315,9 +4323,9 @@ var parseDirective = {};
       if ((midi_cmd == "bassprog") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "mute")){
         //console.log("Got mute program request for "+midi_cmd);
         midi[0].type = 'number';
-        midi[0].token = "137";
-        midi[0].intt = 137;
-        midi[0].floatt = 137;
+        midi[0].token = "139";
+        midi[0].intt = 139;
+        midi[0].floatt = 139;
         midi[0].contineId = false;
         midi[0].start = 9;
         midi[0].end = 12;
@@ -4328,15 +4336,15 @@ var parseDirective = {};
     } else if (midiCmdParam1Integer1OptionalInteger.indexOf(midi_cmd) >= 0) {
       
       //
-      // MAE 1 Jan 2024 - Stuff in silence patch 137 if mute selected as the program
+      // MAE 1 Jan 2024 - Stuff in silence patch 139 if mute selected as the program
       //
       //debugger;
       if ((midi_cmd == "program") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "mute")){
         //console.log("Got mute program request for "+midi_cmd);
         midi[0].type = 'number';
-        midi[0].token = "137";
-        midi[0].intt = 137;
-        midi[0].floatt = 137;
+        midi[0].token = "139";
+        midi[0].intt = 139;
+        midi[0].floatt = 139;
         midi[0].contineId = false;
         midi[0].start = 8;
         midi[0].end = 11;
@@ -14727,7 +14735,9 @@ function CreateSynth(theABC) {
               "melodica": 50,    // 134
               "cajun": 50,       // 135
               "solfege": 0,      // 136 - These have no offset
-              "silence": 50      // 137
+              "chorus_guitar_nylon": 0, // 137 - These have no offset
+              "chorus_guitar_steel": 0, // 138 - These have no offset
+              "silence": 50      // 139
             }
           }
           else{
@@ -14740,7 +14750,9 @@ function CreateSynth(theABC) {
               "melodica": 50,    // 134
               "cajun": 50,       // 135
               "solfege": 0,      // 136 - These have no offset
-              "silence": 50      // 137
+              "chorus_guitar_nylon": 0, // 137 - These have no offset
+              "chorus_guitar_steel": 0, // 138 - These have no offset
+              "silence": 50      // 139
             }
           }
       }
@@ -15855,7 +15867,7 @@ module.exports = svg;
 /***/ (function(module) {
 
 // MAE Start of Change to add custom instruments
-var instrumentIndexToName = ["acoustic_grand_piano", "bright_acoustic_piano", "electric_grand_piano", "honkytonk_piano", "electric_piano_1", "electric_piano_2", "harpsichord", "clavinet", "celesta", "glockenspiel", "music_box", "vibraphone", "marimba", "xylophone", "tubular_bells", "dulcimer", "drawbar_organ", "percussive_organ", "rock_organ", "church_organ", "reed_organ", "accordion", "harmonica", "tango_accordion", "acoustic_guitar_nylon", "acoustic_guitar_steel", "electric_guitar_jazz", "electric_guitar_clean", "electric_guitar_muted", "overdriven_guitar", "distortion_guitar", "guitar_harmonics", "acoustic_bass", "electric_bass_finger", "electric_bass_pick", "fretless_bass", "slap_bass_1", "slap_bass_2", "synth_bass_1", "synth_bass_2", "violin", "viola", "cello", "contrabass", "tremolo_strings", "pizzicato_strings", "orchestral_harp", "timpani", "string_ensemble_1", "string_ensemble_2", "synth_strings_1", "synth_strings_2", "choir_aahs", "voice_oohs", "synth_choir", "orchestra_hit", "trumpet", "trombone", "tuba", "muted_trumpet", "french_horn", "brass_section", "synth_brass_1", "synth_brass_2", "soprano_sax", "alto_sax", "tenor_sax", "baritone_sax", "oboe", "english_horn", "bassoon", "clarinet", "piccolo", "flute", "recorder", "pan_flute", "blown_bottle", "shakuhachi", "whistle", "ocarina", "lead_1_square", "lead_2_sawtooth", "lead_3_calliope", "lead_4_chiff", "lead_5_charang", "lead_6_voice", "lead_7_fifths", "lead_8_bass_lead", "pad_1_new_age", "pad_2_warm", "pad_3_polysynth", "pad_4_choir", "pad_5_bowed", "pad_6_metallic", "pad_7_halo", "pad_8_sweep", "fx_1_rain", "fx_2_soundtrack", "fx_3_crystal", "fx_4_atmosphere", "fx_5_brightness", "fx_6_goblins", "fx_7_echoes", "fx_8_scifi", "sitar", "banjo", "shamisen", "koto", "kalimba", "bagpipe", "fiddle", "shanai", "tinkle_bell", "agogo", "steel_drums", "woodblock", "taiko_drum", "melodic_tom", "synth_drum", "reverse_cymbal", "guitar_fret_noise", "breath_noise", "seashore", "bird_tweet", "telephone_ring", "helicopter", "applause", "gunshot", "percussion", "uilleann", "smallpipesd", "smallpipesa", "sackpipa", "concertina", "melodica", "cajun", "solfege", "silence"];
+var instrumentIndexToName = ["acoustic_grand_piano", "bright_acoustic_piano", "electric_grand_piano", "honkytonk_piano", "electric_piano_1", "electric_piano_2", "harpsichord", "clavinet", "celesta", "glockenspiel", "music_box", "vibraphone", "marimba", "xylophone", "tubular_bells", "dulcimer", "drawbar_organ", "percussive_organ", "rock_organ", "church_organ", "reed_organ", "accordion", "harmonica", "tango_accordion", "acoustic_guitar_nylon", "acoustic_guitar_steel", "electric_guitar_jazz", "electric_guitar_clean", "electric_guitar_muted", "overdriven_guitar", "distortion_guitar", "guitar_harmonics", "acoustic_bass", "electric_bass_finger", "electric_bass_pick", "fretless_bass", "slap_bass_1", "slap_bass_2", "synth_bass_1", "synth_bass_2", "violin", "viola", "cello", "contrabass", "tremolo_strings", "pizzicato_strings", "orchestral_harp", "timpani", "string_ensemble_1", "string_ensemble_2", "synth_strings_1", "synth_strings_2", "choir_aahs", "voice_oohs", "synth_choir", "orchestra_hit", "trumpet", "trombone", "tuba", "muted_trumpet", "french_horn", "brass_section", "synth_brass_1", "synth_brass_2", "soprano_sax", "alto_sax", "tenor_sax", "baritone_sax", "oboe", "english_horn", "bassoon", "clarinet", "piccolo", "flute", "recorder", "pan_flute", "blown_bottle", "shakuhachi", "whistle", "ocarina", "lead_1_square", "lead_2_sawtooth", "lead_3_calliope", "lead_4_chiff", "lead_5_charang", "lead_6_voice", "lead_7_fifths", "lead_8_bass_lead", "pad_1_new_age", "pad_2_warm", "pad_3_polysynth", "pad_4_choir", "pad_5_bowed", "pad_6_metallic", "pad_7_halo", "pad_8_sweep", "fx_1_rain", "fx_2_soundtrack", "fx_3_crystal", "fx_4_atmosphere", "fx_5_brightness", "fx_6_goblins", "fx_7_echoes", "fx_8_scifi", "sitar", "banjo", "shamisen", "koto", "kalimba", "bagpipe", "fiddle", "shanai", "tinkle_bell", "agogo", "steel_drums", "woodblock", "taiko_drum", "melodic_tom", "synth_drum", "reverse_cymbal", "guitar_fret_noise", "breath_noise", "seashore", "bird_tweet", "telephone_ring", "helicopter", "applause", "gunshot", "percussion", "uilleann", "smallpipesd", "smallpipesa", "sackpipa", "concertina", "melodica", "cajun", "solfege", "chorus_guitar_nylon","chorus_guitar_steel","silence"];
 // MAE End of Change
 module.exports = instrumentIndexToName;
 
@@ -15918,14 +15930,13 @@ var getNote = function getNote(url, instrument, name, audioContext) {
         case "concertina":  // 133
         case "melodica":    // 134
         case "cajun":       // 135
-        case "silence":     // 137
+        case "silence":     // 139
           url = "https://michaeleskin.com/abctools/soundfonts/";
           isOgg = true;
           isCustomInstrument = true;
           break;
 
         case "melodic_tom": // 117
-
           // Get path to the samples based on the bodhran pitch
           switch (gTheActiveBodhranPitch){
             case "c":
@@ -15974,6 +15985,18 @@ var getNote = function getNote(url, instrument, name, audioContext) {
               break;
           }
           isOgg = true;
+          isCustomInstrument = true;
+          break;
+
+        case "chorus_guitar_nylon":     // 137
+          url = "https://michaeleskin.com/abctools/soundfonts/chorus-guitar-nylon/";
+          isOgg = false;
+          isCustomInstrument = true;
+          break;
+
+        case "chorus_guitar_steel":     // 138
+          url = "https://michaeleskin.com/abctools/soundfonts/chorus-guitar-steel/";
+          isOgg = false;
           isCustomInstrument = true;
           break;
 
@@ -16030,7 +16053,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
         case "concertina":  // 133
         case "melodica":    // 134
         case "cajun":       // 135
-        case "silence":     // 137
+        case "silence":     // 139
           url = "https://michaeleskin.com/abctools/soundfonts/";
           isOgg = true;
           isCustomInstrument = true;
@@ -16040,6 +16063,22 @@ var getNote = function getNote(url, instrument, name, audioContext) {
         // Force solfege to use mp3
         case "solfege":     // 136
           url = "https://michaeleskin.com/abctools/soundfonts/";
+          isOgg = false;
+          isCustomInstrument = true;
+
+          break;
+
+        // Force chorus guitars to use mp3
+        case "chorus_guitar_nylon":     // 137
+          url = "https://michaeleskin.com/abctools/soundfonts/chorus-guitar-nylon/";
+          isOgg = false;
+          isCustomInstrument = true;
+
+          break;
+
+        // Force chorus guitars to use mp3
+        case "chorus_guitar_steel":     // 138
+          url = "https://michaeleskin.com/abctools/soundfonts/chorus-guitar-steel/";
           isOgg = false;
           isCustomInstrument = true;
 
