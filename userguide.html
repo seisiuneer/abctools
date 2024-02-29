@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
- 
+       
         <style>
 
 		p {
@@ -2038,8 +2038,10 @@
             </p>
             <hr class="hidden-print" id="banjo_style">
             <h1 class="page_break_always h1wide">Using the Tenor Banjo (MIDI program #105) Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>If %%MIDI program 105 (Banjo) is used in a tune, you may choose between one of four different custom Tenor Banjo sounds using one of the following comment-based annotations anywhere in the tune's ABC:</p>
+            <p>If %%MIDI program 105 (Banjo) is used in a tune, you may choose between one of five different custom Tenor Banjo sounds using one of the following comment-based annotations anywhere in the tune's ABC:</p>
             <p class=code>% Dark tone<br/>
+            %banjo_style 0<br/><br/>
+            % Use the current soundfont default banjo sound<br/>
             %banjo_style 1<br/><br/>
             % Medium bright tone<br/>
             %banjo_style 2<br/><br/>

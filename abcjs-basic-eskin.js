@@ -16011,8 +16011,15 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
         // Force banjo to use mp3
         case "banjo":       // 105
+
+          var bUseCustomBanjo = true;
+
           // Get path to the samples based on the banjo style
           switch (gTheActiveBanjoStyle){
+            case "0":
+              // Use the default soundfont banjo sound
+              bUseCustomBanjo = false;
+              break;
             case "1":
               url = "https://michaeleskin.com/abctools/soundfonts/banjo_1a/";
               break;
@@ -16029,8 +16036,12 @@ var getNote = function getNote(url, instrument, name, audioContext) {
               url = "https://michaeleskin.com/abctools/soundfonts/banjo_2/";
               break;
           }
-          isCustomInstrument = true;
-          isOgg = false;
+          
+          if (bUseCustomBanjo){
+            isCustomInstrument = true;
+            isOgg = false;
+          }
+
           break;
 
         case "percussion":  // 128
