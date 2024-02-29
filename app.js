@@ -21281,11 +21281,13 @@ function computeFade(tuneABC){
 					case "134":  // Melodica
 					case "135":  // Cajun Accordion
 					case "136":  // Solfège
-					case "137":  // Chorused Nylon Guitar
-					case "138":  // Chorused Steel Guitar
 					case "139":  // Silence
 					case "mute": // Silence
 						theFade = 100;
+						break;
+					case "137":  // Chorused Nylon Guitar
+					case "138":  // Chorused Steel Guitar
+						theFade = 200;
 						break;
 					default:
 						break;
@@ -21303,11 +21305,13 @@ function computeFade(tuneABC){
 					case "134":  // Melodica
 					case "135":  // Cajun Accordion
 					case "136":  // Solfège
-					case "137":  // Chorused Nylon Guitar
-					case "138":  // Chorused Steel Guitar
 					case "139":  // Silence
 					case "mute": // Silence
 						theFade = 100;
+						break;
+					case "137":  // Chorused Nylon Guitar
+					case "138":  // Chorused Steel Guitar
+						theFade = 200;
 						break;
 					default:
 						break;
