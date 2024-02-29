@@ -13805,6 +13805,7 @@ function AppendJSBach(){
 	theValue += '%abcjs_soundfont fluid\n';	
 	theValue += '%\n';	
 	theValue += '%%staffsep 40\n';
+	theValue += '%%stretchlast true\n';
 	theValue += '%\n';
 	theValue += '% Try changing these to %%MIDI program mute\n';
 	theValue += '% to isolate individual voices:\n';
