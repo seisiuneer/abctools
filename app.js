@@ -10954,7 +10954,7 @@ function PDFTunebookBuilder(){
 
 	var midi_program_list = [];
 
-  	for (var i=0;i<140;++i){
+  	for (var i=0;i<141;++i){
   		midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
   	}
 
@@ -10972,7 +10972,7 @@ function PDFTunebookBuilder(){
  	    { name: "  MScore", id: "mscore" },
  	];
 
-  	for (var i=0;i<140;++i){
+  	for (var i=0;i<141;++i){
   		midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
   	}
 
@@ -11150,7 +11150,7 @@ function PDFTunebookBuilder(){
 
 					progNumMelody = progNumMelody - 1;
 
-					if ((progNumMelody < 0) || (progNumMelody > 139)){
+					if ((progNumMelody < 0) || (progNumMelody > 140)){
 
 						progNumMelody = 0;
 
@@ -11168,7 +11168,7 @@ function PDFTunebookBuilder(){
 
 					progNumBass = progNumBass - 1;
 
-					if ((progNumBass < 0) || (progNumBass > 139)){
+					if ((progNumBass < 0) || (progNumBass > 140)){
 
 						progNumBass = 0;
 
@@ -11186,7 +11186,7 @@ function PDFTunebookBuilder(){
 
 					progNumChord = progNumChord - 1;
 
-					if ((progNumChord < 0) || (progNumChord > 139)){
+					if ((progNumChord < 0) || (progNumChord > 140)){
 
 						progNumChord = 0;
 
@@ -16483,7 +16483,8 @@ const generalMIDISoundNames = [
   "Solfège",			// 136
   "Chorused Guitar (nylon)", // 137
   "Chorused Guitar (steel)", // 138
-  "Silence"				// 139
+  "Irish Bouzouki", 	// 139
+  "Silence"				// 140
 ];
 
 var gLastInjectedSoundfont = null;
@@ -16505,7 +16506,7 @@ function InjectAllMIDIParams(){
 
     var midi_program_list = [];
 
-  	for (var i=0;i<140;++i){
+  	for (var i=0;i<141;++i){
   		midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
   	}
 
@@ -16567,7 +16568,7 @@ function InjectAllMIDIParams(){
 	  {name: "            Inject MIDI Chord program and volumes", id: "configure_inject_chord_program", type:"checkbox", cssClass:"configure_midi_program_form_text"},
   	  {name: "MIDI Chord program to inject:", id: "configure_chordprogram", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
 	  {name: "MIDI Chord volume (0-127):", id: "configure_chordvolume", type:"text", cssClass:"configure_midi_program_form_number_input"},
-	  {html: '<p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="https://michaeleskin.com/documents/general_midi_extended_v5.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'},
+	  {html: '<p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="https://michaeleskin.com/documents/general_midi_extended_v6.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'},
 	  {name: "            Inject all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_midi_program_form_text"},
 	];
 
@@ -16625,7 +16626,7 @@ function InjectAllMIDIParams(){
 
 				progNum = progNum - 1;
 
-				if ((progNum < 0) || (progNum > 139)){
+				if ((progNum < 0) || (progNum > 140)){
 					progNum = 0;
 				}
 
@@ -16674,7 +16675,7 @@ function InjectAllMIDIParams(){
 
 				progNumBass = progNumBass - 1;
 
-				if ((progNumBass < 0) || (progNumBass > 139)){
+				if ((progNumBass < 0) || (progNumBass > 140)){
 					progNumBass = 0;
 				}
 
@@ -16690,7 +16691,7 @@ function InjectAllMIDIParams(){
 
 				progNumChord = progNumChord - 1;
 
-				if ((progNumChord < 0) || (progNumChord > 139)){
+				if ((progNumChord < 0) || (progNumChord > 140)){
 					progNumChord = 0;
 				}
 
@@ -21282,12 +21283,13 @@ function computeFade(tuneABC){
 					case "134":  // Melodica
 					case "135":  // Cajun Accordion
 					case "136":  // Solfège
-					case "139":  // Silence
+					case "140":  // Silence
 					case "mute": // Silence
 						theFade = 100;
 						break;
 					case "137":  // Chorused Nylon Guitar
 					case "138":  // Chorused Steel Guitar
+					case "139":  // Bouzouki
 						theFade = 200;
 						break;
 					default:
@@ -21306,12 +21308,13 @@ function computeFade(tuneABC){
 					case "134":  // Melodica
 					case "135":  // Cajun Accordion
 					case "136":  // Solfège
-					case "139":  // Silence
+					case "140":  // Silence
 					case "mute": // Silence
 						theFade = 100;
 						break;
 					case "137":  // Chorused Nylon Guitar
 					case "138":  // Chorused Steel Guitar
+					case "139":  // Bouzouki
 						theFade = 200;
 						break;
 					default:
@@ -24857,7 +24860,7 @@ function ScanTuneForInstrumentExplorer(theTune){
 			break;		
 	}
 
-	if (gTheMelodyProgram == "139"){
+	if (gTheMelodyProgram == "140"){
 		gInstrumentExplorerMelodyInstrument = 0;
 	}
 	else{
@@ -24866,7 +24869,7 @@ function ScanTuneForInstrumentExplorer(theTune){
 
 	gInstrumentExplorerMelodyInstrument = ""+gInstrumentExplorerMelodyInstrument;
 
-	if (gTheChordProgram == "139"){
+	if (gTheChordProgram == "140"){
 		gInstrumentExplorerChordInstrument = 0;
 	}
 	else{
@@ -24875,7 +24878,7 @@ function ScanTuneForInstrumentExplorer(theTune){
 
 	gInstrumentExplorerChordInstrument = ""+gInstrumentExplorerChordInstrument;
 
-	if (gTheBassProgram == "139"){
+	if (gTheBassProgram == "140"){
 		gInstrumentExplorerBassInstrument = 0;
 	}
 	else{
@@ -30789,7 +30792,7 @@ function ConfigureToolSettings() {
 
     var midi_program_list = [];
 
-  	for (var i=0;i<140;++i){
+  	for (var i=0;i<141;++i){
   		midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
   	}
 
@@ -31063,8 +31066,8 @@ function ConfigureToolSettings() {
 					gTheMelodyProgram = 0;
 				}
 
-				if (gTheMelodyProgram > 139){
-					gTheMelodyProgram = 139;
+				if (gTheMelodyProgram > 140){
+					gTheMelodyProgram = 140;
 				}
 			}
 
@@ -31085,8 +31088,8 @@ function ConfigureToolSettings() {
 					gTheBassProgram = 0;
 				}
 
-				if (gTheBassProgram > 139){
-					gTheBassProgram = 139;
+				if (gTheBassProgram > 140){
+					gTheBassProgram = 140;
 				}
 			}	
 
@@ -31107,8 +31110,8 @@ function ConfigureToolSettings() {
 					gTheChordProgram = 0;
 				}
 
-				if (gTheChordProgram > 139){
-					gTheChordProgram = 139;
+				if (gTheChordProgram > 140){
+					gTheChordProgram = 140;
 				}
 			}
 
