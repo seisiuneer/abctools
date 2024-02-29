@@ -2039,9 +2039,9 @@
             <hr class="hidden-print" id="banjo_style">
             <h1 class="page_break_always h1wide">Using the Tenor Banjo (MIDI program #105) Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>If %%MIDI program 105 (Banjo) is used in a tune, you may choose between one of five different custom Tenor Banjo sounds using one of the following comment-based annotations anywhere in the tune's ABC:</p>
-            <p class=code>% Dark tone<br/>
+            <p class=code>% Use the default banjo sound from the current soundfont<br/>
             %banjo_style 0<br/><br/>
-            % Use the current soundfont default banjo sound<br/>
+            % Dark tone<br/>
             %banjo_style 1<br/><br/>
             % Medium bright tone<br/>
             %banjo_style 2<br/><br/>
@@ -2051,7 +2051,8 @@
             %banjo_style 4</p>
             <p>Only the first instance of a %banjo_style annotation found in a tune will be used for that tune.</p>
             <p>If no banjo style is specified in a tune, the default is style 2.</p>
-            <p>If you wish to override the AppCordions custom sound setting for a specific tune, add one of the following comment-based annotations anywhere in the tune:</p>
+            <p>If banjo style 0 is selected, the default banjo sound from the current soundfont selected for the tune (or the tool default if not specified in the tune) will be used.</p>
+            <p>If you wish to override all AppCordions custom sound setting for a specific tune, add one of the following comment-based annotations anywhere in the tune:</p>
             <p class="code">% Force use of AppCordions custom sounds for this tune:<br/>
             %use_custom_gm_sounds true</p>
             <p class="code">% Disable use of AppCordions custom sounds for this tune:<br/>
