@@ -16052,7 +16052,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
         // Force bouzouki to use mp3
         case "bouzouki":     // 139
-          url = "https://michaeleskin.com/abctools/soundfonts/bouzouki_1/";
+          url = "https://michaeleskin.com/abctools/soundfonts/bouzouki_2/";
           isOgg = false;
           isCustomInstrument = true;
 
@@ -16111,7 +16111,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
         // Force bouzouki to use mp3
         case "bouzouki":     // 139
-          url = "https://michaeleskin.com/abctools/soundfonts/bouzouki_1/";
+          url = "https://michaeleskin.com/abctools/soundfonts/bouzouki_2/";
           isOgg = false;
           isCustomInstrument = true;
 
