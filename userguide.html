@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-       
+ 
         <style>
 
 		p {
@@ -823,7 +823,8 @@
             <p>137: Chorused Guitar (nylon) -> 24: Acoustic Guitar (nylon)</p>
             <p>138: Chorused Guitar (steel) -> 25: Acoustic Guitar (steel)</p>
             <p>139: Irish Bouzouki -> 25: Acoustic Guitar (steel)</p>
-            <p>Muted voices using MIDI instrument 140 or "mute" will be changed to program 0 (Acoustic Grand Piano) and the volume set to zero.</p>
+            <p>140: Irish Bouzouki 2 -> 25: Acoustic Guitar (steel)</p>
+            <p>Muted voices using MIDI instrument 141 or "mute" will be changed to program 0 (Acoustic Grand Piano) and the volume set to zero.</p>
             <hr>
             <p><strong>Save as JPEG File</strong>: Saves the image for the current tune to your system as a bitmap in JPEG format.</p>
             <p>Image width is set from the <strong>Image width to export:</strong> value.</p>
@@ -1803,7 +1804,7 @@
             <p></p>
             <p>Most standard dynamics indications are supported, for example: !ppp!, !pp!, !p!, !mf!, !f!</p>
             <p></p>
-            <p>To completely mute the melody, change the MIDI Program to 140 (or mute):</p>
+            <p>To completely mute the melody, change the MIDI Program to 141 (or mute):</p>
             <p class="code">%%MIDI program mute</p>
             <p>To change the volume of the bass and chords, add the following two chordvol and bassvol %%MIDI directives immediately before any %%MIDI program and %%MIDI chordprog directives:</p>
             <p></p>
@@ -1821,12 +1822,12 @@
                 %%MIDI chordprog 21<br/>
             %</p>
             <p>The volume range is from 0 to 127.</p>
-            <p>To completely mute the bass or chords, change their MIDI Program to 140 (or mute):</p>
+            <p>To completely mute the bass or chords, change their MIDI Program to 141 (or mute):</p>
             <p class="code">%%MIDI bassprog mute<br/>%%MIDI chordprog mute</p>
             <p></p>
             <p><strong>The following MIDI instruments now use the same samples as my iOS "Celtic Sounds" and other apps:</strong></p>
             <p></p>
-            <p><strong>Hammered Dulcimer: 15, Accordion: 21, Flute: 73, Whistle: 78, Banjo: 105, Bodhran: 117, Uilleann Pipes: 129, Scottish Smallpipes (D): 130, Scottish Smallpipes (A): 131, Säckpipa: 132, Concertina: 133, Melodica: 134, Cajun Accordion: 135, Solfège: 136, Chorused Guitar (nylon): 137, Chorused Guitar (steel): 138, Irish Bouzouki: 139, Silence: 140 (or mute)</strong></p>
+            <p><strong>Hammered Dulcimer: 15, Accordion: 21, Flute: 73, Whistle: 78, Banjo: 105, Bodhran: 117, Uilleann Pipes: 129, Scottish Smallpipes (D): 130, Scottish Smallpipes (A): 131, Säckpipa: 132, Concertina: 133, Melodica: 134, Cajun Accordion: 135, Solfège: 136, Chorused Guitar (nylon): 137, Chorused Guitar (steel): 138, Irish Bouzouki: 139, Irish Bouzouki 2: 140, Silence: 141 (or mute)</strong></p>
             <p>The Scottish Smallpipes (A) samples are from an instrument tuned in A, but the note numbers mapped to D so that they have the same transposed MIDI note range as the flute or whistle.</p>
             <p>The Flute, Whistle (if <strong>Use AppCordions custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, and Bodhran</strong> in the <strong>Settings</strong> is enabled), and Uilleann pipes sounds will automatically "fold" notes below first octave D up an octave.</p>
             <p>The Säckpipa and Scottish Smallpipes (A) and (D) sounds will automatically "fold" notes above second octave D down an octave.</p>
@@ -1846,7 +1847,7 @@
             <div class="image_holder">
                 <img class="image" loading="lazy" style="width:700px;" src="img/gm_extended_9.jpg"/>
             </div>
-            <p>Use program #140 Silence (or mute) to mute MIDI voices.</p>
+            <p>Use program #141 Silence (or mute) to mute MIDI voices.</p>
             <p>This can be used, for example, to create "Music Minus One" recordings consisting only of backing bass and chord tracks.</p>
             <hr class="hidden-print" id="general_midi_percussion_map">
             <h1 class="page_break_always">General MIDI Drum Sound ABC Note Map<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
