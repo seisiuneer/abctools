@@ -21294,7 +21294,7 @@ function computeFade(tuneABC){
 						theFade = 200;
 						break;
 					case "140":   // Bouzouki2
-						theFade = 150;
+						theFade = 125;
 						break;
 					default:
 						break;
@@ -21322,7 +21322,7 @@ function computeFade(tuneABC){
 						theFade = 200;
 						break;
 					case "140":   // Bouzouki2
-						theFade = 150;
+						theFade = 125;
 						break;
 					default:
 						break;
