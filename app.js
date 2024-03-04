@@ -240,7 +240,7 @@ var gAllSwingHornpipesRequested = false;
 var gAllSwingHornpipesSwingFactor = 0.25;
 var gAllNoSwingHornpipesRequested = false;
 
-// Use the custom GM sounds for dulcimer, accordion, flute, whistle, banjo, and melodic tom
+// Use the custom GM sounds for dulcimer, accordion, flute, whistle, banjo, fiddle, and melodic tom
 var gUseCustomGMSounds = true;
 var gOverrideCustomGMSounds = false;
 var gCustomGMSoundsOverride = false;
@@ -21275,6 +21275,7 @@ function computeFade(tuneABC){
 					case "73":   // Flute
 					case "78":   // Whistle
 					case "105":  // Banjo
+					case "110":  // Fiddle
 					case "117":  // Melodic tom
 					case "129":  // Uilleann pipes
 					case "130":  // Smallpipes D
@@ -30912,7 +30913,7 @@ function ConfigureToolSettings() {
 		{name: "Stringed instrument capo fret postion:", id: "configure_capo", type:"number", cssClass:"configure_settings_form_text"},
 		{name: "    Show stringed instrument names on tablature (single-voice tunes only, not shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "Default abcjs soundfont:", id: "configure_soundfont", type:"select", options:sound_font_options, cssClass:"configure_settings_select"}, 
-		{name: "    Use AppCordions custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, and Bodhran", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+		{name: "    Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Fiddle, and Bodhran", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "Default Melody MIDI program:", id: "configure_melody_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
 		{name: "Default Bass MIDI program:", id: "configure_bass_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},

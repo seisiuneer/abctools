@@ -14734,6 +14734,7 @@ function CreateSynth(theABC) {
               "flute": 0,       // 73 - Was 50, now truncated
               "whistle": 0,     // 78 - Was 50, now truncated
               "banjo": 0,       // 105
+              "fiddle": 0,      // 110
               "melodic_tom": 0,  // 117
               "uilleann": 50,    // 129
               "smallpipesd": 50, // 130
@@ -16054,6 +16055,13 @@ var getNote = function getNote(url, instrument, name, audioContext) {
             isOgg = false;
           }
 
+          break;
+
+        // Force fiddle to use mp3
+        case "fiddle":      // 110
+          url = "https://michaeleskin.com/abctools/soundfonts/fiddle_1/";
+          isOgg = false;
+          isCustomInstrument = true;
           break;
 
         // Force bouzouki to use mp3
