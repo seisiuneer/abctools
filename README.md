@@ -49,6 +49,7 @@
 <p><a href="https://github.com/TomWyllie/folkfriend" title="FolkFriend" target="_blank">FolkFriend.app Tune Collection</a> by Tom Wyllie, used for the search engine, used under <a href="https://michaeleskin.com/abctools/gpl3.txt" title="GPL3" target="_blank">GPL3</a> licensing.</p>
 <p><a href="https://freesound.org/people/bosone/packs/4209/" title="Bodrhan Samples by Bosone" target="_blank">Bodrhan Samples by Bosone</a> used under <a href="https://creativecommons.org/licenses/by-nc/4.0/" title="by-nc" target="_blank">CC BY-NC 4.0</a> licensing.</p>
 <p><a href="https://ko-fi.com/s/573c321432" title="Irish Bouzouki (Kontakt Sample Instrument)" target="_blank">Irish Bouzouki (Kontakt Sample Instrument)</a> by Eamon Coughlan (sampled from an instrument built by Daniel Hoban) used as the basis for the Irish Bouzouki 2 instrument.</p>
+<p><a href="https://www.arachnosoft.com/main/soundfont.php?documentation=fullscreen#copyright" title="Arachno Soundfont Licenses" target="_blank">Arachno Soundfont</a> used under a variety of non-commercial use licenses.</p>
 <p>Without these free open-source resources this project would not have been possible.</p><p></p>
 <hr>
 <p><strong>Project Contributors:</strong></p>

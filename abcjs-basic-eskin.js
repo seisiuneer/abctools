@@ -14593,6 +14593,8 @@ var alternateSoundFontUrl = "https://paulrosen.github.io/midi-js-soundfonts/Musy
 var alternateSoundFontUrl2 = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
 var alternateSoundFontUrl3 = "https://michaeleskin.com/abctools/soundfonts/canvas/";
 var alternateSoundFontUrl4 = "https://michaeleskin.com/abctools/soundfonts/mscore/";
+var alternateSoundFontUrl5 = "https://michaeleskin.com/abctools/soundfonts/arachno/";
+
 function CreateSynth(theABC) {
 
   //debugger;
@@ -14647,7 +14649,7 @@ function CreateSynth(theABC) {
         self.soundFontVolumeMultiplier = 3.0;
     }
     else
-    if (self.soundFontUrl === alternateSoundFontUrl || self.soundFontUrl === alternateSoundFontUrl2 || self.soundFontUrl === alternateSoundFontUrl3 || self.soundFontUrl === alternateSoundFontUrl4){
+    if (self.soundFontUrl === alternateSoundFontUrl || self.soundFontUrl === alternateSoundFontUrl2 || self.soundFontUrl === alternateSoundFontUrl3 || self.soundFontUrl === alternateSoundFontUrl4 || self.soundFontUrl === alternateSoundFontUrl5){
         self.soundFontVolumeMultiplier = 3.0;
     }
     else 

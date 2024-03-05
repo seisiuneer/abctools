@@ -4041,6 +4041,9 @@ function GetAllTuneHyperlinks(theLinks) {
 			}else
 			if (gDefaultSoundFont.indexOf("mscore")!=-1){
 				theSoundFont = "mscore";
+			}else
+			if (gDefaultSoundFont.indexOf("arachno")!=-1){
+				theSoundFont = "arachno";
 			}
 
 			// If adding complete tunebook patches, they take precedence over the defaults
@@ -6430,6 +6433,9 @@ function ParseCommentCommands(theNotes){
 		}else
 		if (gDefaultSoundFont.indexOf("mscore")!=-1){
 			gPlaybackHyperlinkSoundFont = "mscore";
+		}else
+		if (gDefaultSoundFont.indexOf("arachno")!=-1){
+			gPlaybackHyperlinkSoundFont = "arachno";
 		}
 
 		if (thePatches && (thePatches.length > 0)){
@@ -10970,6 +10976,7 @@ function PDFTunebookBuilder(){
 	    { name: "  FatBoy", id: "fatboy" },
  	    { name: "  Canvas", id: "canvas" },
  	    { name: "  MScore", id: "mscore" },
+ 	    { name: "  Arachno", id: "arachno" },
  	];
 
   	for (var i=0;i<142;++i){
@@ -13454,7 +13461,7 @@ function AppendTuneTempate(){
 	theValue += '% Key:\n';
 	theValue += 'K: C\n';
 	theValue += '%\n';
-	theValue += '% Soundfont (fluid, musyng, fatboy, canvas, or mscore):\n';
+	theValue += '% Soundfont (fluid, musyng, fatboy, canvas, mscore, or arachno):\n';
 	theValue += '%abcjs_soundfont fluid\n';
 	theValue += '%\n';
 	theValue += '% Use an Acoustic Grand Piano sound for the melody:\n';
@@ -13800,7 +13807,7 @@ function AppendJSBach(){
 	theValue += 'K:C\n';
 	theValue += '%\n';
 	theValue += '% Try changing the abcjs_soundfont value to\n';
-	theValue += '% fluid, musyng, fatboy, canvas, or mscore for different harpsichord sounds:\n';
+	theValue += '% fluid, musyng, fatboy, canvas, mscore, or arachno for different sounds:\n';
 	theValue += '%\n';	
 	theValue += '%abcjs_soundfont fluid\n';	
 	theValue += '%\n';	
@@ -13878,7 +13885,7 @@ function AppendJSBach2(){
 	theValue += 'K:C\n';
 	theValue += '%\n';
 	theValue += '% Try changing the abcjs_soundfont value to\n';
-	theValue += '% fluid, musyng, fatboy, canvas, or mscore for different organ sounds:\n';
+	theValue += '% fluid, musyng, fatboy, canvas, mscore, or arachno for different sounds:\n';
 	theValue += '%\n';	
 	theValue += '%abcjs_soundfont fluid\n';	
 	theValue += '%\n';		
@@ -16336,7 +16343,8 @@ const soundfontNames = [
 	"Musyng Kite",
 	"FatBoy",
 	"Canvas",
-	"MScore"
+	"MScore",
+	"Arachno"
 ];
 
 const generalMIDISoundNames = [
@@ -16527,7 +16535,10 @@ function InjectAllMIDIParams(){
 		}else
 		if (gDefaultSoundFont.indexOf("mscore")!=-1){
 			gLastInjectedSoundfont = "4";
-		}
+		}else
+		if (gDefaultSoundFont.indexOf("arachno")!=-1){
+			gLastInjectedSoundfont = "5";
+		}	
 	}
 
     const sound_fonts_list = [
@@ -16536,6 +16547,7 @@ function InjectAllMIDIParams(){
 	    { name: "  FatBoy", id: "2" },
 	    { name: "  Canvas", id: "3" },
 	    { name: "  MScore", id: "4" },
+	    { name: "  Arachno", id: "5" },
   	];
 
 	// Setup initial values
@@ -16609,6 +16621,9 @@ function InjectAllMIDIParams(){
 					break;
 				case "4":
 					soundFontToInject = "mscore";
+					break;
+				case "5":
+					soundFontToInject = "arachno";
 					break;
 			}
 
@@ -22717,6 +22732,9 @@ function PlayerSetupCommon(theABC){
 			case "mscore":
 				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/mscore/";
 				break;
+			case "arachno":
+				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/arachno/";
+				break;
 		}
 
 		// New soundfont requested, clear the cache
@@ -24864,6 +24882,9 @@ function ScanTuneForInstrumentExplorer(theTune){
 		case "https://michaeleskin.com/abctools/soundfonts/mscore/":
 			gInstrumentExplorerSoundfont = "4";
 			break;
+		case "https://michaeleskin.com/abctools/soundfonts/arachno/":
+			gInstrumentExplorerSoundfont = "5";
+			break;
 		default:
 			gInstrumentExplorerSoundfont = "0";
 			break;		
@@ -24930,6 +24951,9 @@ function ScanTuneForInstrumentExplorer(theTune){
 					break;
 				case "mscore":
 					gInstrumentExplorerSoundfont = "4";
+					break;
+				case "arachno":
+					gInstrumentExplorerSoundfont = "5";
 					break;
 			}
 		}
@@ -25237,6 +25261,9 @@ function InstrumentExplorerDialogInjectThisTune(theTune){
 			break;
 		case "4":
 			theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont mscore");
+			break;
+		case "5":
+			theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont arachno");
 			break;
 		default:
 			theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont fluid");
@@ -30894,6 +30921,7 @@ function ConfigureToolSettings() {
 	    { name: "  FatBoy", id: "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/" },
  	    { name: "  Canvas", id: "https://michaeleskin.com/abctools/soundfonts/canvas/" },
  	    { name: "  MScore", id: "https://michaeleskin.com/abctools/soundfonts/mscore/" },
+ 	    { name: "  Arachno", id: "https://michaeleskin.com/abctools/soundfonts/arachno/" },
  	];
 
   	var form = [

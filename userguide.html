@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-       
+ 
         <style>
 
 		p {
@@ -1505,12 +1505,13 @@
             <hr>
             <p>The following controls select default MIDI soundfont, programs, and volumes to use for the Melody, Bass, and Chords:</p>
             <hr>
-            <p><strong>Default abcjs soundfont:</strong> - Choose between the five General MIDI soundfonts available in abcjs to use by default when playing tunes:</p>
+            <p><strong>Default abcjs soundfont:</strong> - Choose between the six General MIDI soundfonts available in abcjs to use by default when playing tunes:</p>
             <p>Fluid<br/>
                 Musyng Kite<br/>
                 FatBoy<br/>
                 Canvas (Based on a Roland JV-1010)<br/>
-            MScore (Based on the MuseScore General MIT licensed soundfont)</p>
+            MScore (Based on the MuseScore General MIT licensed soundfont)<br/>
+            Arachno</p>
             <p>On first run, the default is set to Fluid.</p>
             <p>Each soundfont is a full General MIDI implementation, but has somewhat different sounds for each instrument.</p>
             <p>If no %abcjs_soundfont soundfont is specified in a tune, the default soundfont chosen in the tool's <strong>Settings</strong> dialog is used.</p>
@@ -1725,12 +1726,13 @@
             <h1 class="page_break_always h1wide">Choosing the MIDI Soundfont and Instruments for Playback<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>You may choose which instrument sounds are used for the melody and bass and chords when playing tunes.</p>
             <p>By default, the melody, bass, and chords instrument used is a piano.</p>
-            <p>You can specify which abcjs General MIDI soundfont to use for a specific tune by adding any of these five comment-based annotations in the ABC header for the tune:</p>
+            <p>You can specify which abcjs General MIDI soundfont to use for a specific tune by adding any of these six comment-based annotations in the ABC header for the tune:</p>
             <p class="code">%abcjs_soundfont fluid</p>
             <p class="code">%abcjs_soundfont musyng</p>
             <p class="code">%abcjs_soundfont fatboy</p>
             <p class="code">%abcjs_soundfont canvas</p>
             <p class="code">%abcjs_soundfont mscore</p>
+            <p class="code">%abcjs_soundfont arachno</p>
             <p>Each soundfont is a full General MIDI implementation, but has somewhat different sounds for each instrument.</p>
             <p>If no %abcjs_soundfont soundfont is specified in a tune, the default soundfont chosen in the tool's <strong>Settings</strong> dialog is used.</p>
             <p>It is not possible to change soundfonts within a tune.</p>
