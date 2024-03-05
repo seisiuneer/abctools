@@ -1517,8 +1517,8 @@
             <p>For more details on the soundfonts, visit: <a href="https://paulrosen.github.io/midi-js-soundfonts/" target="_blank">midi-js-soundfonts on GitHub</a></p>
             <p>Your default soundfont choice is saved in browser storage and restored the next time the tool is run.</p>
             <hr>
-            <p><strong>Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Fiddle, and Bodhran</strong></p>
-            <p>If this is enabled (on by default), for all soundfonts, my custom sampled instruments for Dulcimer, Accordion, Flute, Whistle, Banjo, Fiddle, and Bodhran (remapped from Melodic Tom) will override the soundfont sounds.</p>
+            <p><strong>Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipes, Fiddle, and Bodhran</strong></p>
+            <p>If this is enabled (on by default), for all soundfonts, my custom sampled instruments for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipes, Fiddle, and Bodhran (remapped from Melodic Tom) will override the soundfont sounds.</p>
             <hr>
             <p><strong>Use Default Melody and Bass/Chord programs when playing tunes</strong></p>
             <p>If enabled, will play tunes that don't have Melody or Bass/Chord programs already in the ABC with your preferred instrument sounds. </p>
@@ -1560,7 +1560,7 @@
             <p></p>
             <p>In this case, you may not want to include any chords in the ABC, as they will be played using the Dulcimer (15) instrument.</p>
             <p></p>
-            <p>This only applies if <strong>Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Fiddle, and Bodhran</strong> is enabled (see below).</p>
+            <p>This only applies if <strong>Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipes, Fiddle, and Bodhran</strong> is enabled (see below).</p>
             <hr>
             <p><strong>Automatically swing Hornpipes when playing (enabled if R:Hornpipe is found in the tune)</strong> - If checked, automatically swings Hornpipes if</p>
             <p class="code">R:Hornpipe</p>
@@ -1737,7 +1737,7 @@
             <p>If multiple instancs of %abcjs_soundfont are found in a tune, only the first one is used.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/fUz5I0Vk78Q" title="All about soundfonts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p>For more details on the soundfonts, visit: <a href="https://paulrosen.github.io/midi-js-soundfonts/" target="_blank">midi-js-soundfonts on GitHub</a></p>
-            <p>If <strong>Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Fiddle, and Bodhran</strong> is enabled in the Settings (on by default), for all soundfonts, my custom sampled instruments for Dulcimer, Accordion, Flute, Whistle, Banjo, Fiddle, and Bodhran (overrides Melodic Tom) will override the soundfont sounds.</p>
+            <p>If <strong>Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipes, Fiddle, and Bodhran</strong> is enabled in the Settings (on by default), for all soundfonts, my custom sampled instruments for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipes, Fiddle, and Bodhran (overrides Melodic Tom) will override the soundfont sounds.</p>
             <p>If you wish to override the custom sound setting for a specific tune, add one of the following comment-based annotations anywhere in the tune:</p>
             <p class="code">% Force use of custom sounds for this tune:<br/>
             %use_custom_gm_sounds true</p>
@@ -1829,7 +1829,7 @@
             <p></p>
             <p><strong>Hammered Dulcimer: 15, Accordion: 21, Flute: 73, Whistle: 78, Banjo: 105, Bodhran: 117, Uilleann Pipes: 129, Scottish Smallpipes (D): 130, Scottish Smallpipes (A): 131, Säckpipa: 132, Concertina: 133, Melodica: 134, Cajun Accordion: 135, Solfège: 136, Chorused Guitar (nylon): 137, Chorused Guitar (steel): 138, Irish Bouzouki: 139, Irish Bouzouki 2: 140, Silence: 141 (or mute)</strong></p>
             <p>The Scottish Smallpipes (A) samples are from an instrument tuned in A, but the note numbers mapped to D so that they have the same transposed MIDI note range as the flute or whistle.</p>
-            <p>The Flute, Whistle (if <strong>Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Fiddle, and Bodhran</strong> in the <strong>Settings</strong> is enabled), and Uilleann pipes sounds will automatically "fold" notes below first octave D up an octave.</p>
+            <p>The Flute, Whistle (if <strong>Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipes, Fiddle, and Bodhran</strong> in the <strong>Settings</strong> is enabled), and Uilleann pipes sounds will automatically "fold" notes below first octave D up an octave.</p>
             <p>The Säckpipa and Scottish Smallpipes (A) and (D) sounds will automatically "fold" notes above second octave D down an octave.</p>
             <p></p>
             <p>Any General MIDI instrument program number can be selected for the melody and chord sounds.</p>
@@ -1860,7 +1860,7 @@
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/GTdzE90itkU" title="High and Low Pitch Bodhran Instrument Demos" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/5dLeBddFrPI" title="High and Low Pitch Bodhran Solo Instrument Demos" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/sfpJRgQPg7k" title="Melody Contour Tracking Example" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-            <p>If you have <strong>Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Fiddle, and Bodhran</strong> checked in the tool's Settings, MIDI instrument #117 (Melodic Tom) is remapped to bodhran sounds with the following note map:</p>
+            <p>If you have <strong>Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipes, Fiddle, and Bodhran</strong> checked in the tool's Settings, MIDI instrument #117 (Melodic Tom) is remapped to bodhran sounds with the following note map:</p>
             <p class="code">
                 %<br/>
                 % Basic low pitch strikes start at C1<br/>
