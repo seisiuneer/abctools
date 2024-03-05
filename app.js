@@ -240,7 +240,7 @@ var gAllSwingHornpipesRequested = false;
 var gAllSwingHornpipesSwingFactor = 0.25;
 var gAllNoSwingHornpipesRequested = false;
 
-// Use the custom GM sounds for dulcimer, accordion, flute, whistle, banjo, bagpipes, fiddle, and melodic tom
+// Use the custom GM sounds for dulcimer, accordion, flute, whistle, banjo, bagpipe, fiddle, and melodic tom
 var gUseCustomGMSounds = true;
 var gOverrideCustomGMSounds = false;
 var gCustomGMSoundsOverride = false;
@@ -16450,7 +16450,7 @@ const generalMIDISoundNames = [
   "Shamisen",
   "Koto",
   "Kalimba",
-  "Bagpipes",
+  "Bagpipe",
   "Fiddle",
   "Shanai",
   "Tinkle Bell",
@@ -20538,25 +20538,25 @@ function AddDuplicatesForMp3(theTune, rhythmType, count, doClickTrack, doInjectS
 
 		switch (rhythmType){
 			case "reel":
-				theTune+="V:1\nV:2\n%%MIDI program 128\nz8|z8|\nV:1\nz8|z8|\n";
+				theTune+="V:1\nV:2\nz8|z8|\nV:1\nz8|z8|\n";
 				break;
 			case "jig":
-				theTune+="V:1\nV:2\n%%MIDI program 128\nz6|z6|\nV:1\nz6|z6|\n";
+				theTune+="V:1\nV:2\nz6|z6|\nV:1\nz6|z6|\n";
 				break;
 			case "slide":
-				theTune+="V:1\nV:2\n%%MIDI program 128\nz12|\nV:1\nz12|\n";
+				theTune+="V:1\nV:2\nz12|\nV:1\nz12|\n";
 				break;
 			case "slipjig":
-				theTune+="V:1\nV:2\n%%MIDI program 128\nz9|z9|\nV:1\nz9|z9|\n";
+				theTune+="V:1\nV:2\nz9|z9|\nV:1\nz9|z9|\n";
 				break;
 			case "polka":
-				theTune+="V:1\nV:2\n%%MIDI program 128\nz4|z4|\nV:1\nz4|z4|\n";
+				theTune+="V:1\nV:2\nz4|z4|\nV:1\nz4|z4|\n";
 				break;
 			case "waltz":
-				theTune+="V:1\nV:2\n%%MIDI program 128\nz6|z6|\nV:1\nz6|z6|\n";
+				theTune+="V:1\nV:2\nz6|z6|\nV:1\nz6|z6|\n";
 				break;
 			default:
-				theTune+="V:1\nV:2\n%%MIDI program 128\nz8|z8|\nV:1\nz8|z8|\n";
+				theTune+="V:1\nV:2\nz8|z8|\nV:1\nz8|z8|\n";
 				break;			
 		}
 
@@ -30914,7 +30914,7 @@ function ConfigureToolSettings() {
 		{name: "Stringed instrument capo fret postion:", id: "configure_capo", type:"number", cssClass:"configure_settings_form_text"},
 		{name: "    Show stringed instrument names on tablature (single-voice tunes only, not shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "Default abcjs soundfont:", id: "configure_soundfont", type:"select", options:sound_font_options, cssClass:"configure_settings_select"}, 
-		{name: "    Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipes, Fiddle, and Bodhran", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+		{name: "    Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "Default Melody MIDI program:", id: "configure_melody_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
 		{name: "Default Bass MIDI program:", id: "configure_bass_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
