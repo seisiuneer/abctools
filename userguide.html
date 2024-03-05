@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
- 
+       
         <style>
 
 		p {
@@ -253,6 +253,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#grace_timing">Setting Grace Note Duration for Ornamentation</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#roll_timing">Defining Custom Roll Timing Parameters</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#sung_solfege">Select the Solfège Instrument to Sing Note Names</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#highlighting_control">Controlling Note Highlighting in the Player</a></p>
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">Controls and Features</button>
@@ -931,6 +932,26 @@
             <p class="code">% Set the voice transpose:<br/>V:1 transpose=-7<br/><br/>% Select the Solfège instrument for this voice:<br/>%%MIDI program 136</p>
             <p><strong>Note:</strong> When transposed the absolute pitch of the sound when transposed will not be correct as compared with the notation, but this is the best possible at this time. At least the visual display and the sung notes will match.</p>
             <p>For details on injecting solfège under the notes, see <a href="#advanced_shapenoteshapes">Inject Shape Note/Solfège</a>.</p>
+            <hr class="hidden-print" id="highlighting_control">
+            <h1 class="page_break_always h1wide">Controlling Note Highlighting in the Player<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>For certain kinds of scores, for example two-part Bagpipe scores that have the melody and drone on the same staff using:</p>
+            <p class="code">% This directive combines the two voices on one stave:<br/>
+            %%score (1 2)<br/>
+            %<br/>
+            % Set both voices to use the Bagpipe sound:<br/>
+            V:1<br/>
+            %%MIDI program 109<br/>
+            V:2 <br/>
+            %%MIDI program 109<br/>
+            %<br/>
+            % This directive hides the drone voice ABC<br/>
+            %%voicecolor transparent</p>
+            <p>When playing the tune, you may only want the voice 1 melody line to be highlighted.</p>
+            <p>This may be useful for other multi-voice, single-staff tunes where you want to hide all voices except the melody during playback.</p>
+            <p>To accomplish this, you can add the following comment-based annotation anywhere in the tune ABC:</p>
+            <p class="code">%play_highlight_v1_only</p>
+            <p>If you want to disable all highlighting of notes during playback, you can add the following comment-based annotation anywhere in the tune ABC:</p>
+            <p class="code">%disable_play_highlight</p>
             <hr class="hidden-print" id="basic_controls">
             <h1 class="page_break_always">Basic Controls and Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p id="basic_tablature" style="margin-top:24px;">The instrument tablature button bar controls how the notation and tablature is displayed:</p>
@@ -2789,7 +2810,9 @@
             %roll_3_params 1.45 0.6 1.0 0.75 0.9 1.0 0.75 1.0<br/>
             %use_original_abcjs_roll_solution<br/>
             %abcjs_release_decay_time 200<br/>
-            %use_custom_gm_sounds true</p>
+            %use_custom_gm_sounds true<br/>
+            %disable_play_highlight<br/>
+            %play_highlight_v1_only</p>
             <hr class="hidden-print" id="musicxml">
             <h1 class="page_break_always">MusicXML Import Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">

@@ -228,6 +228,12 @@ var gTheActiveBodhranPitch = gDefaultBodhranPitch;
 var gDefaultBanjoStyle = "2";
 var gTheActiveBanjoStyle = gDefaultBanjoStyle;
 
+// Disable highlighting on all but the first voice
+var gOnlyHighlightV1 = false;
+
+// Disable highlighting on playback
+var gDisablePlayHighlight = false;
+
 // Allow player to autoscroll
 var gAutoscrollPlayer = true;
 
@@ -9079,6 +9085,12 @@ function GetABCJSParams(instrument){
 				params.tablature.push(theTab);
 			}
 		}
+	}
+
+	// Adding classes for V1 highlighting filter?
+	if (gOnlyHighlightV1){
+		//console.log("Adding classes");
+		params.add_classes = true;
 	}
 
 	return params;
@@ -22161,14 +22173,27 @@ function CursorControl() {
 		if (ev.measureStart && ev.left === null)
 			return; // this was the second part of a tie across a measure line. Just ignore it.
 
-		var lastSelection = document.querySelectorAll("#playback-paper svg .highlight");
-		for (var k = 0; k < lastSelection.length; k++)
-			lastSelection[k].classList.remove("highlight");
+		if (!gDisablePlayHighlight){
 
-		for (var i = 0; i < ev.elements.length; i++ ) {
-			var note = ev.elements[i];
-			for (var j = 0; j < note.length; j++) {
-				note[j].classList.add("highlight");
+			var lastSelection = document.querySelectorAll("#playback-paper svg .highlight");
+			for (var k = 0; k < lastSelection.length; k++)
+				lastSelection[k].classList.remove("highlight");
+
+			for (var i = 0; i < ev.elements.length; i++ ) {
+				var note = ev.elements[i];
+				for (var j = 0; j < note.length; j++) {
+
+					if (gOnlyHighlightV1){
+						// Only highlight first voice events 
+						if (note[j].classList.contains("abcjs-v0")){
+							note[j].classList.add("highlight");
+						}
+					}
+					else{
+						note[j].classList.add("highlight");
+					}
+
+				}
 			}
 		}
 
@@ -22831,6 +22856,19 @@ function PlayerSetupCommon(theABC){
 		DayPilot.Modal.alert('<p style="font-family:helvetica;font-size:14pt;"><strong>There is an issue with your custom rhythm directive:</strong></p><p style="font-family:helvetica;font-size:14pt;"><strong>'+boomChickOK+'</strong></p><p style="font-family:helvetica;font-size:14pt;">Format should be:</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick meter rhythm_pattern_string partial_measure</p><p style="font-family:helvetica;font-size:14pt;">Valid rhythm_pattern_string characters are:</p><p style="font-family:helvetica;font-size:14pt;">B - Boom, b - Alternate Boom, c - Chick, and x - Silence.</p><p style="font-family:helvetica;font-size:14pt;">Examples:</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick 7/8 Bccbxbx 3</p><p style="font-family:helvetica;font-size:14pt;">%abcjs_boomchick 10/8 Bccbccbxbx 5</p><p style="font-family:helvetica;font-size:14pt;">The number of characters in the pattern_string must match the meter numerator.</p><p style="font-family:helvetica;font-size:14pt;">partial_measure sets how many beats must be present in a partial measure in the ABC to use the custom pattern.</p><p style="font-family:helvetica;font-size:14pt;">partial_measure is optional and defaults to half of the meter numerator rounded down to the next lowest integer (min is 1).</p>',{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
 
 		return false;
+	}
+
+	// Only highlighting first voice when playing
+	gOnlyHighlightV1 = false;
+	gOnlyHighlightV1 = ScanTuneForV1OnlyHighlight(theABC);
+
+	// Has play highlighting been disabled?
+	gDisablePlayHighlight = false;
+	gDisablePlayHighlight = ScanTuneForDisablePlayHighlight(theABC);
+
+	// No need to add classes if play highlight disabled
+	if (gDisablePlayHighlight){
+		gOnlyHighlightV1 = false;
 	}
 
 	return true;
@@ -24120,6 +24158,42 @@ function ScanTuneForBanjoStyle(theTune){
 	}
 
 	return banjoStyleFound;
+}
+
+//
+// Scan tune for only highlighting first voice
+//
+function ScanTuneForV1OnlyHighlight(theTune){
+
+	// Search for a V1 only highlight
+	var searchRegExp = /^%play_highlight_v1_only.*$/gm
+
+	// Detect bagpipes score annotation
+	var isV1Only = theTune.match(searchRegExp);
+
+	if ((isV1Only) && (isV1Only.length > 0)){
+		return true;
+	}
+
+	return false;
+}
+
+//
+// Scan tune for disable highlight 
+//
+function ScanTuneForDisablePlayHighlight(theTune){
+
+	// Search for a play highlight disable
+	var searchRegExp = /^%disable_play_highlight.*$/gm
+
+	// Detect disable highlight annotation
+	var isDisableHighlight = theTune.match(searchRegExp);
+
+	if ((isDisableHighlight) && (isDisableHighlight.length > 0)){
+		return true;
+	}
+
+	return false;
 }
 
 //
