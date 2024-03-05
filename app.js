@@ -16450,7 +16450,7 @@ const generalMIDISoundNames = [
   "Shamisen",
   "Koto",
   "Kalimba",
-  "Bag pipe",
+  "Bagpipes",
   "Fiddle",
   "Shanai",
   "Tinkle Bell",
