@@ -13553,7 +13553,7 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
     drumBars = parseInt(drumBars, 10);
     drumIntro = parseInt(drumIntro, 10);
     var bagpipes = abctune.formatting.bagpipes; // If it is bagpipes, then the gracenotes are played on top of the main note.
-    if (bagpipes) program = 71;
+    if (bagpipes) program = 109;  // MAE 5 Mar 2024 was 71, why?
 
     // %%MIDI fermatafixed
     // %%MIDI fermataproportional
