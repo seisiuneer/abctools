@@ -1703,8 +1703,17 @@ function RestoreSavedStaffSpacing(){
 
 		var val = localStorage.abcStaffSpacing;
 
-		if (val){
-			gStaffSpacing = STAFFSPACEOFFSET + parseInt(val);
+		val = parseInt(val);
+
+		if (!isNaN(val)){
+
+			gStaffSpacing = STAFFSPACEOFFSET + val;
+
+		}
+		else{
+
+			gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
+
 		}
 	}
 }
@@ -17919,13 +17928,25 @@ function processShareLink() {
 	// Handler for capo parameter
 	if (urlParams.has("capo")) {
 		var capo = urlParams.get("capo");
-		gCapo = parseInt(capo);
+		var testCapo = parseInt(capo);
+		if (!isNaN(testCapo)){
+			gCapo = testCapo;
+		}
+		else{
+			gCapo = 0;
+		}
 	}
 
 	// Handler for staffspacing ssp parameter
 	if (urlParams.has("ssp")) {
 		var ssp = urlParams.get("ssp");
-		gStaffSpacing = STAFFSPACEOFFSET + parseInt(ssp);
+		var testssp = parseInt(ssp);
+		if (!isNaN(testssp)){
+			gStaffSpacing = STAFFSPACEOFFSET + testssp;
+		}
+		else{
+			gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
+		}
 	}
 	else{
 		gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
@@ -28675,7 +28696,13 @@ function GetInitialConfigurationSettings(){
 
 	val = localStorage.abcStaffSpacing;
 	if (val){
-		gStaffSpacing = STAFFSPACEOFFSET + parseInt(val);
+		var testVal = parseInt(val);
+		if (!isNaN(testVal)){
+			gStaffSpacing = STAFFSPACEOFFSET + testVal;
+		}
+		else{
+			gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
+		}
 	}
 	else{
 
@@ -31103,12 +31130,16 @@ function ConfigureToolSettings() {
 				}
 			}
 			else{
-				testStaffSpacing = gStaffSpacing;
+				testStaffSpacing = gStaffSpacing - STAFFSPACEOFFSET;
 			}
 
-			if (testStaffSpacing != theOldStaffSpacing){
+			if (!isNaN(testStaffSpacing)){
 
-				gStaffSpacing = testStaffSpacing + STAFFSPACEOFFSET;
+				if (testStaffSpacing != theOldStaffSpacing){
+
+					gStaffSpacing = testStaffSpacing + STAFFSPACEOFFSET;
+
+				}
 
 			}
 
@@ -32071,7 +32102,18 @@ function restoreStateFromLocalStorage(){
 
 	if (theCapo){
 
-		gCapo = parseInt(theCapo);
+		var testCapo = parseInt(theCapo);
+
+		if (!isNaN(testCapo)){
+
+			gCapo = testCapo;
+
+		}
+		else{
+
+			gCapo = 0;
+
+		}
 
 	}
 
@@ -32080,7 +32122,19 @@ function restoreStateFromLocalStorage(){
 
 	if (theStaffSpacing){
 
-		gStaffSpacing = STAFFSPACEOFFSET + parseInt(theStaffSpacing);
+		var testSpacing = parseInt(theStaffSpacing);
+
+		if (!isNaN(testSpacing)){
+
+			gStaffSpacing = STAFFSPACEOFFSET + testSpacing;
+
+		}
+		else{
+
+			gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
+
+		}
+
 
 	}
 
