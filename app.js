@@ -32125,6 +32125,41 @@ function restoreStateFromLocalStorage(){
 
 }
 
+// 
+// Restore the application state from local storage on share link open
+//
+function restorePDFStateFromLocalStorage(){
+
+	// PDF Tunes/page
+	var theTunesPerPage = localStorage.abcTunesPerPage;
+
+	if (theTunesPerPage){
+
+		setPDFFormat(theTunesPerPage);
+
+	}
+
+	// Page number
+	var thePageNumberLocation = localStorage.abcPageNumberLocation;
+
+	if (thePageNumberLocation){
+
+		setPageNumbers(thePageNumberLocation);
+
+	}
+
+	// Page number on first page
+	var thePageNumberOnPageOne = localStorage.abcPageNumberOnPageOne;
+
+	if (thePageNumberOnPageOne){
+
+		setFirstPage(thePageNumberOnPageOne);
+
+	}
+
+}
+
+
 //
 // Drag/drop handler
 //
@@ -33811,6 +33846,9 @@ function DoStartup() {
 			showZoomInstructionsScreen();
 
 		}
+
+		// Update only the application PDF state from local storage if available
+		restorePDFStateFromLocalStorage();
 
 		// Save the state in the share link to local storage
 		UpdateLocalStorage();
