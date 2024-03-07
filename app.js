@@ -14218,13 +14218,7 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
 
 	var ssp = gStaffSpacing-STAFFSPACEOFFSET;
 
-	var pdfformat = getPDFFormat();
-
-	var pagenumbers = getPageNumbers();
-
-	var firstpage = getFirstPage();
-
-	var url = getUrlWithoutParams() + "?lzw=" + abcInLZW + "&format=" + format + "&ssp=" + ssp + "&pdf=" + pdfformat + "&pn=" + pagenumbers + "&fp=" + firstpage;
+	var url = getUrlWithoutParams() + "?lzw=" + abcInLZW + "&format=" + format + "&ssp=" + ssp;
 
 	// Add a capo parameter for mandolin and guitar
 	var postfix = "";
@@ -17968,36 +17962,6 @@ function processShareLink() {
 
 		}
 
-	}
-
-	// Handler for pdf format pdf parameter
-	if (urlParams.has("pdf")) {
-		var thePDF = urlParams.get("pdf");
-		setPDFFormat(thePDF);
-	}
-	else{
-		// Default is one tune per page
-		setPDFFormat("one");
-	}
-
-	// Handler for page number pn parameter
-	if (urlParams.has("pn")) {
-		var thePN = urlParams.get("pn");
-		setPageNumbers(thePN);
-	}
-	else{
-		// Default is none
-		setPageNumbers("none");
-	}
-
-	// Handler for first page fp parameter
-	if (urlParams.has("fp")) {
-		var theFP = urlParams.get("fp");
-		setFirstPage(theFP);
-	}
-	else{
-		// Default is to put page numbers on page 1
-		setFirstPage("yes");
 	}
 
 	// Is editing disabled?
