@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
- 
+       
         <style>
 
 		p {
@@ -920,11 +920,14 @@
             <hr>
             <p><strong>Using the custom roll playback solution for rolls indicated with ~ before the note in the ABC</strong></p>
             <p>If you want to use the custom roll parameter playback solution for rolls indicated before the note with ~ as well those that use an R or !roll!, open the <strong>Advanced Settings</strong> dialog and check <strong>Rolls indicated in the ABC with ~ use the custom abcjs roll playback solution</strong>.</p>
+            <hr>
+            <p style="text-align: center"><strong>Enabling/Disabling ~ Roll Playback in a Tune</strong></p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/a61-HP8GVWw" title="Irish Roll Control Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p>To override the default settings and force playback to use the custom roll playback solution for a specific tune you can include the following comment-based annotation anywhere in the tune's ABC:</p>
             <p class="code">%irish_rolls_on</p>
             <p>To override the default settings and disable playback of the custom roll playback solution for a specific tune you can include the following comment-based annotation anywhere in the tune's ABC:</p>
             <p class="code">%irish_rolls_off</p>
-            <hr class="hidden-print" id="sung_solfege">
+             <hr class="hidden-print" id="sung_solfege">
             <h1 class="page_break_always h1wide">Select the Solfège Instrument to Sing Note Names<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>To sing the note names, you can select the Solfège instrument (136) for a voice:</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/vwIVW55WOB4" title="Using the Solfège Instrument to Sing Tunes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -1660,6 +1663,9 @@
             <p>Any custom roll parameters you have the ABC will also work with the ~ style rolls when this is turned on.</p>
             <p>Use this at your own risk, it may not work for all tunes.</p>
             <p>Uncheck this item to return to the default abcjs behavior.</p>
+            <hr>
+            <p style="text-align: center"><strong>Enabling/Disabling ~ Roll Playback in a Tune</strong></p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/a61-HP8GVWw" title="Irish Roll Control Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p>To override the settings and force playback to use the custom roll playback solution for a specific tune you can include the following comment-based annotation anywhere in the tune's ABC:</p>
             <p class="code">%irish_rolls_on</p>
             <p>To override the  settings and disable playback of the custom roll playback solution for a specific tune you can include the following comment-based annotation anywhere in the tune's ABC:</p>
