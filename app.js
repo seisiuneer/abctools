@@ -22851,6 +22851,13 @@ function PlayerSetupCommon(theABC){
 	gDisablePlayHighlight = false;
 	gDisablePlayHighlight = ScanTuneForDisablePlayHighlight(theABC);
 
+	// Has tilde roll render force on or off
+	gForceRollUseRollForIrishRoll = false;
+	gForceRollUseRollForIrishRoll = ScanTuneForForceIrishRoll(theABC);
+
+	gForceRollUseRollForIrishRollDisable = false;
+	gForceRollUseRollForIrishRollDisable = ScanTuneForForceIrishRollDisable(theABC);
+
 	// No need to add classes if play highlight disabled
 	if (gDisablePlayHighlight){
 		gOnlyHighlightV1 = false;
@@ -24175,6 +24182,43 @@ function ScanTuneForDisablePlayHighlight(theTune){
 	var isDisableHighlight = theTune.match(searchRegExp);
 
 	if ((isDisableHighlight) && (isDisableHighlight.length > 0)){
+		return true;
+	}
+
+	return false;
+}
+
+//
+// Scan tune for force Irish rolls on 
+//
+function ScanTuneForForceIrishRoll(theTune){
+
+	// Search for play rolls
+	var searchRegExp = /^%irish_rolls_on.*$/gm
+
+	// Detect disable highlight annotation
+	var isTildeRolls = theTune.match(searchRegExp);
+
+	if ((isTildeRolls) && (isTildeRolls.length > 0)){
+		return true;
+	}
+
+	return false;
+
+}
+
+//
+// Scan tune for disable Irish rolls
+//
+function ScanTuneForForceIrishRollDisable(theTune){
+
+	// Search for disable rolls
+	var searchRegExp = /^%irish_rolls_off.*$/gm
+
+	// Detect disable highlight annotation
+	var isTildeRolls = theTune.match(searchRegExp);
+
+	if ((isTildeRolls) && (isTildeRolls.length > 0)){
 		return true;
 	}
 

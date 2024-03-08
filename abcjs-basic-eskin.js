@@ -27,6 +27,8 @@ var gRollUseOriginalRollSolution = false;
 
 // If true, will use the custom roll patterns for tilde rolls
 var gRollUseRollForIrishRoll = false;
+var gForceRollUseRollForIrishRoll = false;
+var gForceRollUseRollForIrishRollDisable = false;
 
 // Quarter note roll parameters
 var gRoll2Duration1 = 0.95; 
@@ -7308,7 +7310,7 @@ var letter_to_accent = function letter_to_accent(line, i) {
       return [1, 'downbow'];
     // MAE 17 Dec 2023 - Allow override of the default behavior to use the custom roll timing on ~ style rolls
     case '~':
-      if (gRollUseRollForIrishRoll){
+      if ((gRollUseRollForIrishRoll || gForceRollUseRollForIrishRoll) && (!gForceRollUseRollForIrishRollDisable)){
         return [1, 'roll'];
       }else{
         return [1, 'irishroll'];
