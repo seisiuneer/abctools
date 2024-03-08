@@ -15957,48 +15957,48 @@ var getNote = function getNote(url, instrument, name, audioContext) {
           // Get path to the samples based on the bodhran pitch
           switch (gTheActiveBodhranPitch){
             case "c":
-              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_c/";
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_c_2/";
               break;
             case "c#":
             case "db":
-              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_db/";
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_db_2/";
               break;
             case "d":
-              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_d/";
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_d_2/";
               break;
             case "d#":
             case "eb":
-              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_eb/";
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_eb_2/";
               break;
             case "e":
-              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_e/";
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_e_2/";
               break;
             case "f":
-              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_f/";
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_f_2/";
               break;
             case "f#":
             case "gb":
-              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_gb/";
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_gb_2/";
               break;
             case "g":
-              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_g/";
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_g_2/";
               break;
             case "g#":
             case "ab":
-              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_ab/";
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_ab_2/";
             break;            
             case "a":
-              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_a/";
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_a_2/";
               break;
             case "a#":
             case "bb":
-              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_bb/";
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_bb_2/";
               break;
             case "b":
-              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_b/";
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_b_2/";
               break;
             default:
-              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_a/";
+              url = "https://michaeleskin.com/abctools/soundfonts/bodhran_a_2/";
               break;
           }
           isOgg = true;
