@@ -10981,7 +10981,7 @@ function PDFTunebookBuilder(){
 
 	var midi_program_list = [];
 
-  	for (var i=0;i<142;++i){
+  	for (var i=0;i<143;++i){
   		midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
   	}
 
@@ -11000,7 +11000,7 @@ function PDFTunebookBuilder(){
  	    { name: "  Arachno", id: "arachno" },
  	];
 
-  	for (var i=0;i<142;++i){
+  	for (var i=0;i<143;++i){
   		midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
   	}
 
@@ -11178,7 +11178,7 @@ function PDFTunebookBuilder(){
 
 					progNumMelody = progNumMelody - 1;
 
-					if ((progNumMelody < 0) || (progNumMelody > 141)){
+					if ((progNumMelody < 0) || (progNumMelody > 142)){
 
 						progNumMelody = 0;
 
@@ -11196,7 +11196,7 @@ function PDFTunebookBuilder(){
 
 					progNumBass = progNumBass - 1;
 
-					if ((progNumBass < 0) || (progNumBass > 141)){
+					if ((progNumBass < 0) || (progNumBass > 142)){
 
 						progNumBass = 0;
 
@@ -11214,7 +11214,7 @@ function PDFTunebookBuilder(){
 
 					progNumChord = progNumChord - 1;
 
-					if ((progNumChord < 0) || (progNumChord > 141)){
+					if ((progNumChord < 0) || (progNumChord > 142)){
 
 						progNumChord = 0;
 
@@ -16508,7 +16508,8 @@ const generalMIDISoundNames = [
   "Chorused Guitar (steel)", // 138
   "Irish Bouzouki", 	// 139
   "Irish Bouzouki 2", 	// 140
-  "Silence"				// 141
+  "Mandolin",			// 141
+  "Silence"				// 142
 ];
 
 var gLastInjectedSoundfont = null;
@@ -16530,7 +16531,7 @@ function InjectAllMIDIParams(){
 
     var midi_program_list = [];
 
-  	for (var i=0;i<142;++i){
+  	for (var i=0;i<143;++i){
   		midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
   	}
 
@@ -16657,7 +16658,7 @@ function InjectAllMIDIParams(){
 
 				progNum = progNum - 1;
 
-				if ((progNum < 0) || (progNum > 141)){
+				if ((progNum < 0) || (progNum > 142)){
 					progNum = 0;
 				}
 
@@ -16706,7 +16707,7 @@ function InjectAllMIDIParams(){
 
 				progNumBass = progNumBass - 1;
 
-				if ((progNumBass < 0) || (progNumBass > 141)){
+				if ((progNumBass < 0) || (progNumBass > 142)){
 					progNumBass = 0;
 				}
 
@@ -16722,7 +16723,7 @@ function InjectAllMIDIParams(){
 
 				progNumChord = progNumChord - 1;
 
-				if ((progNumChord < 0) || (progNumChord > 141)){
+				if ((progNumChord < 0) || (progNumChord > 142)){
 					progNumChord = 0;
 				}
 
@@ -21297,7 +21298,7 @@ function computeFade(tuneABC){
 					case "134":  // Melodica
 					case "135":  // Cajun Accordion
 					case "136":  // Solfège
-					case "141":  // Silence
+					case "142":  // Silence
 					case "mute": // Silence
 						theFade = 100;
 						break;
@@ -21305,6 +21306,7 @@ function computeFade(tuneABC){
 					case "137":  // Chorused Nylon Guitar
 					case "138":  // Chorused Steel Guitar
 					case "139":  // Bouzouki
+					case "141":  // Mandolin
 						theFade = 200;
 						break;
 					case "140":   // Bouzouki2
@@ -21326,13 +21328,14 @@ function computeFade(tuneABC){
 					case "134":  // Melodica
 					case "135":  // Cajun Accordion
 					case "136":  // Solfège
-					case "141":  // Silence
+					case "142":  // Silence
 					case "mute": // Silence
 						theFade = 100;
 						break;
 					case "137":  // Chorused Nylon Guitar
 					case "138":  // Chorused Steel Guitar
 					case "139":  // Bouzouki
+					case "141":  // Mandolin
 						theFade = 200;
 						break;
 					case "140":   // Bouzouki2
@@ -24993,7 +24996,7 @@ function ScanTuneForInstrumentExplorer(theTune){
 			break;		
 	}
 
-	if (gTheMelodyProgram == "141"){
+	if (gTheMelodyProgram == "142"){
 		gInstrumentExplorerMelodyInstrument = 0;
 	}
 	else{
@@ -25002,7 +25005,7 @@ function ScanTuneForInstrumentExplorer(theTune){
 
 	gInstrumentExplorerMelodyInstrument = ""+gInstrumentExplorerMelodyInstrument;
 
-	if (gTheChordProgram == "141"){
+	if (gTheChordProgram == "142"){
 		gInstrumentExplorerChordInstrument = 0;
 	}
 	else{
@@ -25011,7 +25014,7 @@ function ScanTuneForInstrumentExplorer(theTune){
 
 	gInstrumentExplorerChordInstrument = ""+gInstrumentExplorerChordInstrument;
 
-	if (gTheBassProgram == "141"){
+	if (gTheBassProgram == "142"){
 		gInstrumentExplorerBassInstrument = 0;
 	}
 	else{
@@ -30937,7 +30940,7 @@ function ConfigureToolSettings() {
 
     var midi_program_list = [];
 
-  	for (var i=0;i<142;++i){
+  	for (var i=0;i<143;++i){
   		midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
   	}
 
@@ -31216,8 +31219,8 @@ function ConfigureToolSettings() {
 					gTheMelodyProgram = 0;
 				}
 
-				if (gTheMelodyProgram > 141){
-					gTheMelodyProgram = 141;
+				if (gTheMelodyProgram > 142){
+					gTheMelodyProgram = 142;
 				}
 			}
 
@@ -31238,8 +31241,8 @@ function ConfigureToolSettings() {
 					gTheBassProgram = 0;
 				}
 
-				if (gTheBassProgram > 141){
-					gTheBassProgram = 141;
+				if (gTheBassProgram > 142){
+					gTheBassProgram = 142;
 				}
 			}	
 
@@ -31260,8 +31263,8 @@ function ConfigureToolSettings() {
 					gTheChordProgram = 0;
 				}
 
-				if (gTheChordProgram > 141){
-					gTheChordProgram = 141;
+				if (gTheChordProgram > 142){
+					gTheChordProgram = 142;
 				}
 			}
 
