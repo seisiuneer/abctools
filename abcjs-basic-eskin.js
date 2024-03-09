@@ -16105,7 +16105,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
         // Force mandolin to use mp3
         case "mandolin":     // 141 
-          url = "https://michaeleskin.com/abctools/soundfonts/mandolin_1/";
+          url = "https://michaeleskin.com/abctools/soundfonts/mandolin_2/";
           isOgg = false;
           isCustomInstrument = true;
           break;
@@ -16173,7 +16173,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
         // Force mandolin to use mp3
         case "mandolin":     // 141 
-          url = "https://michaeleskin.com/abctools/soundfonts/mandolin_1/";
+          url = "https://michaeleskin.com/abctools/soundfonts/mandolin_2/";
           isOgg = false;
           isCustomInstrument = true;
           break;
