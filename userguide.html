@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
- 
+       
         <style>
 
 		p {
@@ -338,6 +338,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#sort_dialog">Sort by Tag</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#incipits_builder">Incipits Builder</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#advanced_comhaltas">Comhaltas Transform</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#advanced_compliance">ABC Compliance Transform</a></p>
                 </div>
                     
                 <button class="accordion" title="Click to expand/collapse this section">Tool Settings</button>
@@ -1048,11 +1049,11 @@
             <h1 class="page_break_always">More ABC Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/more_abc_tools_10.jpg"/>
+                <img class="image" loading="lazy" src="img/more_abc_tools_11.jpg"/>
             </div>
             <p>If you would like to only show the buttons for the features you commonly use and hide the others, click the controls icon at the top-right of the dialog to choose features of the dialog you would like to show/hide:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/more_abc_tools_feature_options_2.jpg"/>
+                <img class="image" loading="lazy" src="img/more_abc_tools_feature_options_3.jpg"/>
             </div>
             <p>The most commonly used buttons are always shown.</p>
             <p>Your preferences are saved and restored the next time you use the tool.</p>
@@ -1528,6 +1529,29 @@
             <p><strong>Regarding Comhaltas ABC and instrument tab injection:</strong> The various instrument-specific tab injectors detailed below are not able to work with the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style note names.</p>
             <p>To inject instrument tab into ABC in this format, you will first need to convert the Comhaltas-preferred ABC to standard ABC the <strong>Comhaltas ABC Transform</strong> dialog's <strong>Comhaltas ABC to Standard ABC</strong> button first, then do the tablature injection.</p>
             <p>After doing the tab injection, you can then transform the ABC back into the Comhaltas-preferred format using the the <strong>Comhaltas ABC Transform</strong> dialog's <strong>Standard ABC to Comhaltas ABC</strong> button</p>
+            <hr class="hidden-print" id="advanced_compliance">
+            <h1 class="page_break_always">ABC Compliance Transform<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>Brings up a dialog where you transform all the private tool-specific directives in the ABC to an ABC 2.1 standard-compliant format for cleaner interchange with other ABC tools.</p>
+            <p>I wrote this tool before I was aware that there was a preferred ABC standard for adding additional tool-specific directives.</p>
+            <p>All the private tool-specific directives use the ABC comment syntax and should be transparent to other ABC applications.</p>
+            <p>However, some users may prefer that the private tool-specific directives use the ABC standard tool-specific syntax instead.</p>
+            <p>Examples:</p>
+            <p class="code">% Private tool-specific comment-based directive:<br/>
+                %irish_rolls_on<br/>
+                <br/>
+                % ABC Standard tool-specific directive syntax:<br/>
+                %%abctt:irish_rolls_on<br/>
+                <br/>
+                % Private tool-specific comment-based directive:<br/>
+                %%abcjs_soundfont fatboy<br/>
+                <br/>
+                % ABC Standard tool-specific directive syntax:<br/>
+            %%abctt:abcjs_soundfont fatboy</p>
+            <p>Transforms are provided for both private tool-specific to ABC standard syntax and ABC standard syntax to private tool-specific.</p>
+            <p>The tool can play back tunes with either the private tool-specific or ABC standard syntax directives.</p>
+            <p>The MIDI Instrument Explorer, Swing Explorer, Grace Exporer, and Roll Explorer work best with the private tool-specific directives.</p>
+            <p>You will need to manually transform the ABC from the ABC standard syntax to the private tool-specific directives if you wish to use these features.</p>
+            <p>Additionally, all ABC standard tool-specific directives in the ABC are transformed to private tool-specific format when exporting PDF files.</p>
             <hr class="hidden-print" id="settings_dialog">
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
@@ -2809,7 +2833,7 @@
             %toctitlefontsize 18<br/>
             %tocfontsize 13<br/>
             %toclinespacing 12<br/>
-            %addindex Unsorted Index\n"
+            %addindex Unsorted Index<br/>
             %addsortedindex Index Sorted by Tune Name<br/>
             %addlinkbacktoindex<br/>      
             %indexheader Page Header Text for Index Pages<br/>        
@@ -2854,7 +2878,9 @@
             %abcjs_release_decay_time 200<br/>
             %use_custom_gm_sounds true<br/>
             %disable_play_highlight<br/>
-            %play_highlight_v1_only</p>
+            %play_highlight_v1_only<br/>
+            %irish_rolls_on<br/>
+            %irish_rolls_off</p>
             <hr class="hidden-print" id="musicxml">
             <h1 class="page_break_always">MusicXML Import Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">
