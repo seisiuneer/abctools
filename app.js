@@ -18576,7 +18576,7 @@ function DoComplianceTransform(doInverse){
 
 function DoComplianceTransformDialog(){
 
-	var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">ABC Directive Compliance Transforms&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_compliance" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+	var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">ABC Directive Compliance Transform&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_compliance" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 
 	modal_msg  += '<p style="text-align:center;"><input id="compliancedialog" class="advancedcontrols btn btn-injectcontrols" onclick="DoComplianceTransform(false)" type="button" value="Private Directives to ABC Compliant" title="Transforms private tool directives to %%abctt: ABC standard application-specific private directives">';
 
