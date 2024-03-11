@@ -1557,6 +1557,12 @@
             <p>The MIDI Instrument Explorer, Swing Explorer, Grace Exporer, and Roll Explorer work best with the private tool-specific directives.</p>
             <p>You will need to manually transform the ABC from the ABC standard syntax to the private tool-specific directives if you wish to use these features.</p>
             <p>Additionally, all ABC standard tool-specific directives in the ABC are transformed to private tool-specific format when exporting PDF files.</p>
+            <hr>
+            <p style="text-align: center"><strong>Custom Instrument MIDI Program Number Interoperability</strong></p>
+            <p>My custom instruments use %%MIDI program numbers greater than 127 that only work in my tool.</p>
+            <p>Other ABC software may ignore these values, or may have issues with these values when attempting to play the tunes.</p>
+            <p>When importing any ABC created in my tool that use custom instruments with MIDI program numbers greater than 127, you will almost certainly need to change them to another program number in the range of 0-127 for the ABC to play in other software.</p>
+            <p>If you do a MIDI export from the Player, the custom MIDI program numbers in the resulting MIDI file are automatically remapped to values in the standard MIDI program range.</p>
             <hr class="hidden-print" id="settings_dialog">
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
