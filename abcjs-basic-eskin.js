@@ -25180,6 +25180,7 @@ var roundNumber = __webpack_require__(/*! ./round-number */ "./src/write/draw/ro
 function drawTriplet(renderer, params, selectables) {
   renderer.paper.openGroup({
     klass: renderer.controller.classes.generate('triplet ' + params.durationClass),
+    fill: renderer.foregroundColor, // MAE 12 March 2024 - Discovered color issue with bagpipes demo tuples on drum track
     "data-name": "triplet"
   });
   if (!params.hasBeam) {
