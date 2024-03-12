@@ -16052,19 +16052,19 @@ var getNote = function getNote(url, instrument, name, audioContext) {
               bUseCustomBanjo = false;
               break;
             case "1":
-              url = "https://michaeleskin.com/abctools/soundfonts/banjo_1a/";
+              url = "https://michaeleskin.com/abctools/soundfonts/banjo_1b/";
               break;
             case "2":
-              url = "https://michaeleskin.com/abctools/soundfonts/banjo_2/";
+              url = "https://michaeleskin.com/abctools/soundfonts/banjo_2b/";
               break;
             case "3":
-              url = "https://michaeleskin.com/abctools/soundfonts/banjo_3a/";
+              url = "https://michaeleskin.com/abctools/soundfonts/banjo_3b/";
               break;
             case "4":
-              url = "https://michaeleskin.com/abctools/soundfonts/banjo_4/";
+              url = "https://michaeleskin.com/abctools/soundfonts/banjo_4b/";
               break;
             default:
-              url = "https://michaeleskin.com/abctools/soundfonts/banjo_2/";
+              url = "https://michaeleskin.com/abctools/soundfonts/banjo_2b/";
               break;
           }
           
