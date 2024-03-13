@@ -234,6 +234,9 @@ var gOnlyHighlightV1 = false;
 // Disable highlighting on playback
 var gDisablePlayHighlight = false;
 
+// Tuning array
+var gVoiceTuning = null;
+
 // Allow player to autoscroll
 var gAutoscrollPlayer = true;
 
@@ -18522,7 +18525,8 @@ function complianceABCTransformer(theABC,doInverse){
 	    "%disable_play_highlight",
 	    "%play_highlight_v1_only",
 	    "%irish_rolls_on",
-	    "%irish_rolls_off"
+	    "%irish_rolls_off",
+	    "%voice_tuning_cents"
 	];
 
 	if (doInverse){
@@ -23011,8 +23015,51 @@ function PlayerSetupCommon(theABC){
 		gOnlyHighlightV1 = false;
 	}
 
+	// Are we tuning the voices
+	gVoiceTuning = null;
+	gSequenceCallback = null;
+	gVoiceTuning = ScanTuneForVoiceTuning(theABC);
+
+	if (gVoiceTuning && (gVoiceTuning.length > 0)){
+		gSequenceCallback = VoiceTuningCallback;
+	}
+
 	return true;
 
+}
+
+//
+// Voice tuning callback
+//
+function VoiceTuningCallback(notes,context){
+
+	//console.log("VoiceTuningCallback");
+
+	var nVoices = notes.length;
+
+	var nTunings = gVoiceTuning.length;
+
+	if (nTunings < nVoices){
+		nVoices = nTunings;
+	}
+
+	var i,j;
+
+	for (i=0;i<nVoices;++i){
+
+		var thisVoiceTuning = gVoiceTuning[i];
+		
+		var thisVoice = notes[i];
+		
+		var nNotes = thisVoice.length;
+		
+		for (j=0;j<nNotes;++j){
+
+			thisVoice[j].cents = thisVoiceTuning;
+
+		}
+
+	}
 }
 
 
@@ -24374,6 +24421,53 @@ function ScanTuneForForceIrishRollDisable(theTune){
 	}
 
 	return false;
+}
+
+//
+// Scan tune for voice tuning
+//
+function ScanTuneForVoiceTuning(theTune){
+
+	// Search for disable rolls
+	var searchRegExp = /^%voice_tuning_cents.*$/gm
+
+	var isVoiceTuning = theTune.match(searchRegExp);
+
+	if ((isVoiceTuning) && (isVoiceTuning.length > 0)){
+
+		var theTunings = isVoiceTuning[0].replace("%voice_tuning_cents","");
+
+		theTunings = theTunings.match(/(?:^|\s)(-?\d+(?:\.\d+)?)(?=\s|$)/g);
+
+		var nTunings = theTunings.length;
+
+		if (nTunings > 0){
+			var i;
+			var testVal;
+			var theFinalTuning = [];
+
+			for (i=0;i<nTunings;++i){
+				testVal = parseFloat(theTunings[i]);
+				if (!isNaN(testVal)){
+					theFinalTuning.push(testVal);
+				}
+				else{
+					theFinalTuning.push(0);					
+				}
+			}
+
+			return theFinalTuning;
+
+		}
+		else{
+
+			return null;
+
+		}
+
+	}
+
+	return null;
 }
 
 //

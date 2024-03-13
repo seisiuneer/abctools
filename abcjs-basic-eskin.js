@@ -164,6 +164,9 @@ var gPitchToNoteNameSharp = {
 var gHasChordTrack = false
 var gChordTrackIndex = 0;
 
+// For tuning callback
+var gSequenceCallback = null;
+
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
@@ -15101,6 +15104,10 @@ function CreateSynth(theABC) {
       // MAE 25 Oct 2023 -  End for swing injection
 
       if (self.sequenceCallback) self.sequenceCallback(noteMapTracks, self.callbackContext);
+
+      // MAE 13 Mar 2024 - I'm not seeing sequence callbacks, so have my own
+      if (gSequenceCallback) gSequenceCallback(noteMapTracks, self.callbackContext);
+
       var panDistances = setPan(noteMapTracks.length, self.pan);
 
       // Create a simple list of all the unique sounds in this music and where they should be placed.
@@ -16649,6 +16656,8 @@ function placeNote(outputAudioBuffer, sampleRate, sound, startArray, volumeMulti
     source.gainNode.gain.value = volume; // Math.min(2, Math.max(0, volume));
     source.gainNode.gain.linearRampToValueAtTime(source.gainNode.gain.value, len);
     source.gainNode.gain.linearRampToValueAtTime(0.0, len + fadeTimeSec);
+
+    // MAE 13 Mar 2024 - Now able to set tuning 
     if (sound.cents) {
       source.playbackRate.value = centsToFactor(sound.cents);
     }

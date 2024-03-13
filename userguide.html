@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-       
+ 
         <style>
 
 		p {
@@ -248,10 +248,25 @@
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#playing_your_tunes">Playing Your Tunes</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#tune_trainer">"Step-Up" Tempo Tune Trainer</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#export_audio_image">Exporting Tune Audio or Image Files</a></p>
+                </div>
+
+                <button class="accordion" title="Click to expand/collapse this section">Selecting Playback Instruments</button>
+                <div class="tocpanel">
+                    <p class="toc"><a style="text-decoration:none;" href="#selecting_the_instruments_for_playback">Choosing the MIDI Soundfont and Instruments for Playback</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#general_midi_instrument_program_numbers">General MIDI Instrument Program Numbers</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#general_midi_percussion_map">General MIDI Drum Sound ABC Note Map</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#banjo_style">Using the Tenor Banjo (MIDI program #105) Instrument</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#bodhran_map">Using the Bodhran (MIDI program #117) Instrument</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#voice_tuning">Setting the Tuning Offset for Individual Voices</a></p>
+                </div>
+
+                <button class="accordion" title="Click to expand/collapse this section">Advanced Playback Features</button>
+                <div class="tocpanel">
+                    <p class="toc"><a style="text-decoration:none;" href="#export_audio_image">Exporting Tune Audio or Image Files from the Player</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#adding_swing">Adding Playback Swing to Tunes</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#grace_timing">Setting Grace Note Duration for Ornamentation</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#roll_timing">Defining Custom Roll Timing Parameters</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#custom_backup_rhythms">Custom Backup Rhythms</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#sung_solfege">Select the Solfège Instrument to Sing Note Names</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#voice_hiding">Voice Combining and Hiding</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#highlighting_control">Controlling Note Highlighting in the Player</a></p>
@@ -352,21 +367,7 @@
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#midi_input">Typing ABC Using a MIDI Input Device</a></p>
                 </div>
-                
-                <button class="accordion" title="Click to expand/collapse this section">Selecting Playback Instruments</button>
-                <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#selecting_the_instruments_for_playback">Choosing the MIDI Soundfont and Instruments for Playback</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#general_midi_instrument_program_numbers">General MIDI Instrument Program Numbers</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#general_midi_percussion_map">General MIDI Drum Sound ABC Note Map</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#bodhran_map">Using the Bodhran (MIDI program #117) Instrument</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#banjo_style">Using the Tenor Banjo (MIDI program #105) Instrument</a></p>
-                </div>
-                
-                <button class="accordion" title="Click to expand/collapse this section">Custom Backup Rhythms</button>
-                <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#custom_backup_rhythms">Custom Backup Rhythms</a></p>
-                </div>
-                
+                                
                 <button class="accordion" title="Click to expand/collapse this section">PDF Tunebook Generation</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#export_pdf_tunebook">Exporting a PDF Tunebook</a></p>
@@ -731,7 +732,7 @@
             <p>In the <strong>Settings</strong> dialog there is an option to have the tunebook navigation controls on the left instead of the right.</p>
             <hr>
             <p>Click <strong>Export Audio or Image</strong> to bring up a dialog where you can export your tune in various audio, MIDI, and image formats.</p>
-            <p>Full details below in the <a style="text-decoration:none;" href="#export_audio_image">Exporting Tune Audio or Image Files</a> section.</p>
+            <p>Full details below in the <a style="text-decoration:none;" href="#export_audio_image">Exporting Tune Audio or Image Files from the Player</a> section.</p>
             <hr>
             <p>Click <strong>Start Tune Trainer</strong> to bring up the Tune Trainer.</p>
             <p>Full details below in the <a style="text-decoration:none;" href="#tune_trainer">"Step-Up" Tempo Tune Trainer</a> section.</p>
@@ -793,8 +794,381 @@
             <p>Clicking this button toggles between wide and normal views of the Tune Trainer.</p>
             <hr>
             <p>To exit the Tune Trainer, click <strong>Close</strong>.</p>
+            <hr class="hidden-print" id="selecting_the_instruments_for_playback">
+            <h1 class="page_break_always h1wide">Choosing the MIDI Soundfont and Instruments for Playback<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>You may choose which instrument sounds are used for the melody and bass and chords when playing tunes.</p>
+            <p>By default, the melody, bass, and chords instrument used is a piano.</p>
+            <p>You can specify which abcjs General MIDI soundfont to use for a specific tune by adding any of these six comment-based annotations in the ABC header for the tune:</p>
+            <p class="code">%abcjs_soundfont fluid</p>
+            <p class="code">%abcjs_soundfont musyng</p>
+            <p class="code">%abcjs_soundfont fatboy</p>
+            <p class="code">%abcjs_soundfont canvas</p>
+            <p class="code">%abcjs_soundfont mscore</p>
+            <p class="code">%abcjs_soundfont arachno</p>
+            <p>Each soundfont is a full General MIDI implementation, but has somewhat different sounds for each instrument.</p>
+            <p>If no %abcjs_soundfont soundfont is specified in a tune, the default soundfont chosen in the tool's <strong>Settings</strong> dialog is used.</p>
+            <p>It is not possible to change soundfonts within a tune.</p>
+            <p>If multiple instancs of %abcjs_soundfont are found in a tune, only the first one is used.</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/fUz5I0Vk78Q" title="All about soundfonts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+            <p>For more details on the soundfonts, visit: <a href="https://paulrosen.github.io/midi-js-soundfonts/" target="_blank">midi-js-soundfonts on GitHub</a></p>
+            <p>If <strong>Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran</strong> is enabled in the Settings (on by default), for all soundfonts, my custom sampled instruments for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran (overrides Melodic Tom) will override the soundfont sounds.</p>
+            <p>If you wish to override the custom sound setting for a specific tune, add one of the following comment-based annotations anywhere in the tune:</p>
+            <p class="code">% Force use of custom sounds for this tune:<br/>
+            %use_custom_gm_sounds true</p>
+            <p class="code">% Disable use of custom sounds for this tune:<br/>
+            %use_custom_gm_sounds false</p>
+            <p></p>
+            <p><strong>Choosing the Melody Instrument Sound</strong></p>
+            <p></p>
+            <p>To choose the instrument used for the melody, add the following line to your ABC right after any headers and before the ABC notes, for example for an Accordion sound:</p>
+            <p></p>
+            <p class="code">%%MIDI program 21</p>
+            <p></p>
+            <p><strong>Example:</strong></p>
+            <p class="code">X: 1<br/>
+                T: The Kesh<br/>
+                R: Jig<br/>
+                M: 6/8<br/>
+                L: 1/8<br/>
+                K: Gmaj<br/>
+                %%MIDI program 21<br/>
+                D|: GAG GAB | ABA ABd | edd gdd | edB dBA |<br/>
+                GAG GAB | ABA ABd | edd gdB |1 AGF G2D :|2 AGF G2A||<br/>
+                |: B2B dBd | ege dBA | BAB dBG | ABA AGA |<br/>
+            B2 B dBd | ege dBd | gfg aga |1 bgg g2A :|2 bgg g2D |]</p>
+            <p></p>
+            <p>To change the instrument used for the melody, try changing the MIDI program # above to one of:</p>
+            <p>Piano: 0, Harpsichord: 6, Accordion: 21, Fingered Bass: 33, Harp: 46</p>
+            <p></p>
+            <p>By default, if you have chords in the ABC, the instrument used for the bass and chord playback is a piano.</p>
+            <p></p>
+            <p style="page-break-before: always;"><strong>Choosing the Bass and Chord Instrument Sounds</strong></p>
+            <p></p>
+            <p>To choose the instrument for the bass and chords, add the following lines to your ABC right after any headers and before the ABC notes, for example for a Bass sound:</p>
+            <p></p>
+            <p class="code">%%MIDI bassprog 34</p>
+            <p class="code">%%MIDI chordprog 34</p>
+            <p></p>
+            <p>Here's the same example where I've added the bass and chords instrument program selection:</p>
+            <p class="code">X: 1<br/>
+                T: The Kesh<br/>
+                R: Jig<br/>
+                M: 6/8<br/>
+                L: 1/8<br/>
+                K: Gmaj<br/>
+                %%MIDI program 21<br/>
+                %%MIDI bassprog 34<br/>
+                %%MIDI chordprog 34<br/>
+                D|: GAG GAB | ABA ABd | edd gdd | edB dBA |<br/>
+                GAG GAB | ABA ABd | edd gdB |1 AGF G2D :|2 AGF G2A||<br/>
+                |: B2B dBd | ege dBA | BAB dBG | ABA AGA |<br/>
+            B2 B dBd | ege dBd | gfg aga |1 bgg g2A :|2 bgg g2D |]</p>
+            <p></p>
+            <p>To change the instrument used for the bass and chords, try changing the MIDI bassprog or chordprog # above to one of:</p>
+            <p></p>
+            <p>Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38</p>
+            <p></p>
+            <p><strong>Changing the Playback Volume of the Melody, Bass, and Chords</strong></p>
+            <p></p>
+            <p>To change the volume of the melody, add a dynamics indication in the ABC itself before all the notes.</p>
+            <p></p>
+            <p>For example, to make the melody very soft, you can inject a !ppp! pianissimo annotation:</p>
+            <p></p>
+            <p class="code">!ppp! |:"Em"EBBA B2 EB|"Em"B2 AB dBAG|"D"F/E/D AD BDAD|"D"F/E/D AD BAGF|</p>
+            <p></p>
+            <p>Most standard dynamics indications are supported, for example: !ppp!, !pp!, !p!, !mf!, !f!</p>
+            <p></p>
+            <p>To completely mute the melody, change the MIDI Program to 142 (or mute):</p>
+            <p class="code">%%MIDI program mute</p>
+            <p>To change the volume of the bass and chords, add the following two chordvol and bassvol %%MIDI directives immediately before any %%MIDI program and %%MIDI chordprog directives:</p>
+            <p></p>
+            <p class="code">% Set the chord and bass volume (0-127)<br/>
+                %%MIDI chordvol 16<br/>
+                %%MIDI bassvol 16<br/>
+                %<br/>
+                % Use an Accordion sound when playing the melody:<br/>
+                %%MIDI program 21<br/>
+                %<br/>
+                % Use an Accordion sound when playing the bass:<br/>
+                %%MIDI bassprog 21<br/>
+                %<br/>
+                % Use an Accordion sound when playing the chords:<br/>
+                %%MIDI chordprog 21<br/>
+            %</p>
+            <p>The volume range is from 0 to 127.</p>
+            <p>To completely mute the bass or chords, change their MIDI Program to 142 (or mute):</p>
+            <p class="code">%%MIDI bassprog mute<br/>%%MIDI chordprog mute</p>
+            <p></p>
+            <p><strong>The following MIDI instruments now use the same samples as my iOS "Celtic Sounds" and other apps:</strong></p>
+            <p></p>
+            <p><strong>Hammered Dulcimer: 15, Accordion: 21, Flute: 73, Whistle: 78, Banjo: 105, Bagpipe: 109, Fiddle: 110, Bodhran: 117, Uilleann Pipes: 129, Scottish Smallpipes (D): 130, Scottish Smallpipes (A): 131, Säckpipa: 132, Concertina: 133, Melodica: 134, Cajun Accordion: 135, Solfège: 136, Chorused Guitar (nylon): 137, Chorused Guitar (steel): 138, Irish Bouzouki: 139, Irish Bouzouki 2: 140, Mandolin: 141, Silence: 142 (or mute)</strong></p>
+            <p>The Scottish Smallpipes (A) samples are from an instrument tuned in A, but the note numbers mapped to D so that they have the same transposed MIDI note range as the flute or whistle.</p>
+            <p>The Flute, Whistle (if <strong>Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran</strong> in the <strong>Settings</strong> is enabled), and Uilleann pipes sounds will automatically "fold" notes below first octave D up an octave.</p>
+            <p>The Säckpipa and Scottish Smallpipes (A) and (D) sounds will automatically "fold" notes above second octave D down an octave.</p>
+            <p></p>
+            <p>Any General MIDI instrument program number can be selected for the melody and chord sounds.</p>
+            <hr>
+            <p style="text-align: center;"><strong>Setting the Release Decay Time for Notes</strong></p>
+            <p>You can manually set the release decay time for notes using:</p>
+            <p class=code>%abcjs_release_decay_time release_decay_time_in_milliseconds</p>
+            <p>This can be useful for lengthening the decay time on note releases for plucked and other instruments.</p>
+            <p>For example to set the release decay time for a specific tune to 500 milliseconds, add this anywhere in the tune ABC:</p>
+            <p class=code>%abcjs_release_decay_time 500</p>
+            <p>The default release decay time for abcjs is 200 milliseconds.</p>
+            <p>When using my custom Hammered Dulcimer samples, the release decay time, unless overridden by this annotation, is 4000 milliseconds.</p>
+            <hr class="hidden-print" id="general_midi_instrument_program_numbers">
+            <h1 class="page_break_always">General MIDI Instrument Program Numbers <span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <div class="image_holder">
+                <img class="image" loading="lazy" style="width:700px;" src="img/gm_extended_9.jpg"/>
+            </div>
+            <p>Use program #142 Silence (or mute) to mute MIDI voices.</p>
+            <p>This can be used, for example, to create "Music Minus One" recordings consisting only of backing bass and chord tracks.</p>
+            <hr class="hidden-print" id="general_midi_percussion_map">
+            <h1 class="page_break_always">General MIDI Drum Sound ABC Note Map<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <div class="image_holder">
+                <img class="image" loading="lazy" style="width:700px;" src="img/gm_drum_map_1.jpg"/>
+            </div>
+            <p>Use program #128 (Percussion) on its own voice for MIDI click tracks.</p>
+             <hr class="hidden-print" id="banjo_style">
+            <h1 class="page_break_always h1wide">Using the Tenor Banjo (MIDI program #105) Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>If %%MIDI program 105 (Banjo) is used in a tune, you may choose between one of five different custom Tenor Banjo sounds using one of the following comment-based annotations anywhere in the tune's ABC:</p>
+            <p class=code>% Use the default banjo sound from the current soundfont<br/>
+            %banjo_style 0<br/><br/>
+            % Dark tone<br/>
+            %banjo_style 1<br/><br/>
+            % Medium bright tone<br/>
+            %banjo_style 2<br/><br/>
+            % Bright tone<br/>
+            %banjo_style 3<br/><br/>
+            % Medium bright tone, slightly rough<br/>
+            %banjo_style 4</p>
+            <p>Only the first instance of a %banjo_style annotation found in a tune will be used for that tune.</p>
+            <p>If no banjo style is specified in a tune, the default is style 2.</p>
+            <p>If banjo style 0 is selected, the default banjo sound from the current soundfont selected for the tune (or the tool default if not specified in the tune) will be used.</p>
+            <p>If you wish to override all custom sound setting for a specific tune, add one of the following comment-based annotations anywhere in the tune:</p>
+            <p class="code">% Force use of custom sounds for this tune:<br/>
+            %use_custom_gm_sounds true</p>
+            <p class="code">% Disable use of custom sounds for this tune:<br/>
+            %use_custom_gm_sounds false</p>
+            <hr class="hidden-print" id="bodhran_map">
+            <h1 class="page_break_always h1wide">Using the Bodhran (MIDI program #117) Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/GTdzE90itkU" title="High and Low Pitch Bodhran Instrument Demos" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/5dLeBddFrPI" title="High and Low Pitch Bodhran Solo Instrument Demos" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/sfpJRgQPg7k" title="Melody Contour Tracking Example" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+            <p>If you have <strong>Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran</strong> checked in the tool's Settings, MIDI instrument #117 (Melodic Tom) is remapped to bodhran sounds with the following note map:</p>
+            <p class="code">
+                %<br/>
+                % Basic low pitch strikes start at C1<br/>
+                %<br/>
+                C1  - Strike velocity low<br/>
+                C#1 - Strike velocity low<br/>
+                D1  - Strike velocity medium low<br/>
+                D#1 - Strike velocity medium low<br/>
+                E1  - Strike velocity medium high<br/>
+                F1  - Strike velocity high<br/>
+                F#1 - Strike velocity high<br/>
+                G1  - Strike velocity medium low - Scale Root</br/>
+                G#1 - Strike velocity medium low - Major 2nd </br/>
+                A1  - Strike velocity medium low - Major 3rd</br/>
+                A#1 - Strike velocity medium low - Major 4th</br/>
+                B1  - Strike velocity medium low - Major 5th</br/>
+                %<br/>
+                % Low pitch pitched strike versions at multiple velocities and pitches start at C2<br/>
+                %<br/>
+                C2  - Strike velocity low - Scale Root</br/>
+                C#2 - Strike velocity low - Major 2nd</br/>
+                D2  - Strike velocity low - Major 3rd</br/>
+                D#2 - Strike velocity low - Major 4th</br/>
+                E2  - Strike velocity low - Major 5th</br/>
+                F2  - Strike velocity medium low - Scale Root</br/>
+                F#2 - Strike velocity medium low - Major 2nd</br/>
+                G2  - Strike velocity medium low - Major 3rd</br/>
+                G#2 - Strike velocity medium low - Major 4th</br/>
+                A2  - Strike velocity medium low - Major 5th</br/>
+                A#2 - Strike velocity medium high - Scale Root</br/>
+                B2  - Strike velocity medium high - Major 2nd</br/>
+                C3  - Strike velocity medium high - Major 3rd</br/>
+                C#3 - Strike velocity medium high - Major 4th</br/>
+                D3  - Strike velocity medium high - Major 5th</br/>
+                D#3 - Strike velocity high - Scale Root</br/>
+                E3  - Strike velocity high - Major 2nd</br/>
+                F3  - Strike velocity high - Major 3rd</br/>
+                F#3 - Strike velocity high - Major 4th</br/>
+                G3  - Strike velocity high - Major 5th</br/>                
+                %<br/>
+                % Scrapes and taps start at G#3<br/>
+                %<br/>
+                G#3 - Scrape<br/>
+                A3  - Edge tap velocity low<br/>
+                A#3 - Edge tap velocity medium<br/>
+                B3  - Edge tap velocity high<br/>
+                %<br/>
+                % High pitch strikes start at C4<br/>
+                %<br/>
+                C4  - Strike velocity low<br/>
+                C#4 - Strike velocity low<br/>
+                D4  - Strike velocity medium low<br/>
+                D#4 - Strike velocity medium low<br/>
+                E4  - Strike velocity medium high<br/>
+                F4  - Strike velocity high<br/>
+                F#4 - Strike velocity high<br/>
+                G4  - Strike velocity medium low - Scale Root</br/>
+                G#4 - Strike velocity medium low - Major 2nd</br/>
+                A4  - Strike velocity medium low - Major 3rd</br/>
+                A#4 - Strike velocity medium low - Major 4th</br/>
+                B4  - Strike velocity medium low - Major 5th</br/>
+                %<br/>
+                % High pitch pitched strike versions at multiple velocities and pitches start at C5<br/>
+                %<br/>
+                C5  - Strike velocity low - Scale Root</br/>
+                C#5 - Strike velocity low - Major 2nd</br/>
+                D5  - Strike velocity low - Major 3rd</br/>
+                D#5 - Strike velocity low - Major 4th</br/>
+                E5  - Strike velocity low - Major 5th</br/>
+                F5  - Strike velocity medium low - Scale Root</br/>
+                F#5 - Strike velocity medium low - Major 2nd</br/>
+                G5  - Strike velocity medium low - Major 3rd</br/>
+                G#5 - Strike velocity medium low - Major 4th</br/>
+                A5  - Strike velocity medium low - Major 5th</br/>
+                A#5 - Strike velocity medium high - Scale Root</br/>
+                B5  - Strike velocity medium high - Major 2nd</br/>
+                C6  - Strike velocity medium high - Major 3rd</br/>
+                C#6 - Strike velocity medium high - Major 4th</br/>
+                D6  - Strike velocity medium high - Major 5th</br/>
+                D#6 - Strike velocity high - Scale Root</br/>
+                E6  - Strike velocity high - Major 2nd</br/>
+                F6  - Strike velocity high - Major 3rd</br/>
+                F#6 - Strike velocity high - Major 4th</br/>
+                G6  - Strike velocity high - Major 5th</br/>
+            </p>
+            <p>The tuning of the bodhran for a tune can be set using either of the following comment-based annotations anywhere in the tune's ABC:</p>
+            <p class=code>%bodhran_tuning (drum pitch)<br/>
+            %bodhran_pitch (drum pitch)</p>
+            <p>Where the drum fundamental pitch can be:</p>
+            <p>C, C#, Db, D, D#, Eb, E, F, F#, Gb, G, G#, Ab, A, A#, Bb, or B.</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/dtrc0CbwaDs" title="Setting the Bodhran pitch" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+            <p>If no pitch is specified the default fundamental pitch is A.</p>
+            <p>Demo of the complete bodhran instrument note map:</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/8hR5kTbR7TM" title="Bodhran Instrument Note Mapping Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+            <p>To use the bodhran sound for a percussion backing track, create a two-voice tune with the bodhran on its own voice:</p>
+            <p>Example Jig:</p>
+            <p class="code">
+            X: 1<br/>
+            T: The Kesh - Bodhran Demo<br/>
+            R: Jig<br/>
+            M: 6/8<br/>
+            L: 1/8<br/>
+            Q: 3/8=120<br/>
+            K: Gmaj<br/>
+            V:1 name="Melody"<br/>
+            % Use MIDI program 78 for the melody Tin Whistle sound<br/>
+            %%MIDI program 78<br/>
+            V:2 name="Bodhran"<br/>
+            % Use MIDI program 117 for the Bodhran sound<br/>
+            %%MIDI program 117<br/>
+            % Set the Bodhran tuning to A<br/>
+            %bodhran_tuning A<br/>
+            % Melody voice<br/>
+            V:1<br/>
+            z6|z6|z6|z6|<br/>
+            |:GAG GAB|ABA ABd|edd gdd|edB dBA|<br/>
+            GAG GAB|ABA ABd|edd gdB|AGF G3:|<br/>
+            |:BAB dBd|ege dBA|BAB dBG|ABA AGA|<br/>
+            BAB dBd|ege dBd|gfg aga|bgf g3:|<br/>
+            % Bodhran voice<br/>
+            V:2<br/>
+            FzD FCC | FzD FCC | FzD FCC | FCC !>!F3 |<br/>
+            |:FzD FCC | FzD FCC | FzD FCC | FzD FCC |<br/>
+            FzD FCC | FzD FCC | FzD FCC | FCC !>!F3 :|<br/>
+            |:FzD FCC | FzD FCC | FzD FCC | FzD FCC |<br/>
+            FzD FCC | FzD FCC | FzD FCC | FzD !>!F3 :|
+            </p>
+            <p>Example Reel:</p>
+            <p class="code">
+            X: 1<br/>
+            T: Cooley's - Bodhran Demo<br/>
+            C: Traditional<br/>
+            R: Reel<br/>
+            M: 4/4<br/>
+            L: 1/8<br/>
+            Q: 1/2=90<br/>
+            K: Edor<br/>
+            %%staffsep 50<br/>
+            % Set a specific amount of swing:<br/>
+            %swing 0.15<br/>
+            %<br/>
+            V:1 name="Melody"<br/>
+            %%MIDI program 78<br/>
+            V:2 name="Bodhran"<br/>
+            % Use MIDI program 117 for the Bodhran sound<br/>
+            %%MIDI program 117<br/>
+            % Set the Bodhran tuning to A<br/>
+            %bodhran_tuning A<br/>
+            % Melody voice<br/>
+            V:1<br/>
+            z8|z8|z8|z8|<br/>
+            |:EBBA B2 EB|B2 AB dBAG|F/E/D AD BDAD|F/E/D AD BAGF|<br/>
+            EBBA B2 EB|B2 AB defg|afge dBAF|1 DEFD E3D:|2 DEFD E2gf||<br/>
+            |:eB (3BBB eBgf|eBB2 gedB|A/A/A FA DAFA|A/A/A FA defg|<br/>
+            eB (3BBB eBgf|eBBB defg|afge dBAF|1 DEFD E2gf:|2 DEFD E4|]<br/>
+            % Bodhran voice<br/>
+            V:2<br/>
+            CCFC  CCFC | CCFC CCFC| CCFC CCFC | CC!>!F/E/D !>!F4 |<br/>
+            |:CCFC CCFC |CCFC CCFC |CCFC CCFC |CCFC CCFC |<br/>
+            CCFC CCFC |CCFC CCFC |CCFC CCFC |1 CC!>!F/E/D !>!F4 :|2 CC!>!F/E/D !>!F4 ||<br/>
+            |:CCFC CCFC |CCFC CCFC |CCFC CCFC |CCFC CCFC |<br/>
+            CCFC CCFC |CCFC CCFC |CCFC CCFC |1 CC!>!F/E/D !>!F4 :|2 CC!>!F/E/D !>!F4 |]
+            </p>
+            <p>To strongly emphasize a hit, preceed the note with a !>! accent indication as shown in the above examples.</p>
+            <p>If the bodhran sound is too loud, try adding an !mp! or other ABC dynamic indication before the first note of the bodhran voice ABC.</p>
+            <p>When using the higher pitched sounds starting on C5, if you want to avoid excessive ledger lines, you can set an octave up transpose in the voice declaration:</p>
+            <p class="code">
+                V:2 name="Bodhran" transpose=12<br/>
+                % Use MIDI program 117 for the Bodhran sound<br/>
+                %%MIDI program 117
+            </p>
+            <p>When using the lower pitched sounds starting on C1, if you want to avoid excessive ledger lines, you can set an octave down transpose in the voice declaration:</p>
+            <p class="code">
+                V:2 name="Bodhran" transpose=-36<br/>
+                % Use MIDI program 117 for the Bodhran sound<br/>
+                %%MIDI program 117
+            </p>
+            <hr class="hidden-print" id="voice_tuning">
+            <h1 class="page_break_always">Setting the Tuning Offset for Individual Voices<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>You may set the playback tuning offset in cents for each voice in the ABC using the following comment-based annotation:</p>
+            <p class="code">%voice_tuning_cents (voice 1 cents offset) (voice 2 cents offset) (voice 3 cents offset)...</p>
+            <p>Where the cents offsets can be either positive or negative floating point numbers.</p>
+            <p>One semitone = 100 cents</p>
+            <p>This feature can be used to create chorusing effects, wet Accordion sounds, or massed Bagpipes band effects on multi-voice tunes.</p>
+            <p><strong>Example: Wet-tuned LMM Accordion Simulation</strong></p>
+            <p>On an Accordion tune with three identical voices, create an LMM wet sounding instrument using the basic Accordion sound:</p>
+            <p class="code">% Set the tuning of each voice in cents<br/>
+                %voice_tuning_cents -15 15 0<br/>
+                %<br/>
+                % Voice 1 gets a negative tuning of 15 cents<br/>
+                V:1<br/>
+                %%MIDI program 21<br/>
+                %<br/>
+                % Voice 2 gets a positive tuning of 15 cents<br/>
+                V:2<br/>
+                %%MIDI program 21<br/>
+                % <br/>
+                % Voice 3 has no tuning offset but is transposed down an octave<br/>
+                V:3 transpose=-12<br/>
+                %%MIDI program 21<br/>
+                %<br/>
+                % Followed by three identical voices with the same ABC<br/>
+                % Added !p! dynamics to reduce the volume of the total mix<br/>
+                V:1<br/>
+                !p! GAG GAB | ABA ABd |<br/>
+                V:2<br/>
+                !p! GAG GAB | ABA ABd |<br/>
+                V:3<br/>
+            !p! GAG GAB | ABA ABd |</p>
+            <p>When layering multiple identical but de-tuned voices, you may want to add !p! style dynamics to the start of each voice's ABC to reduce the overall mixed instrument volume.</p>
+            <p>If there are also bass/chords specified in the ABC using "G" style annotation, the backup track will have a voice number one higher than the total number of melody voices.</p>
             <hr class="hidden-print" id="export_audio_image">
-            <h1 class="page_break_always">Exporting Tune Audio or Image Files<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <h1 class="page_break_always h1wide">Exporting Tune Audio or Image Files from the Player<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>If you click <strong>Export Audio or Image</strong> in the <strong>Player</strong>, a dialog will appear where you can save out the audio of your tune in either .WAV or .MP3 format, the note playback events as a MIDI file, or the tune image in .JPG, .PNG, or .SVG formats:</p>
             <div class="image_holder_p">
                 <img class="image" loading="lazy" src="img/export_audio_image_2.jpg"/>
@@ -929,7 +1303,26 @@
             <p class="code">%irish_rolls_on</p>
             <p>To override the default settings and disable playback of the custom roll playback solution for a specific tune you can include the following comment-based annotation anywhere in the tune's ABC:</p>
             <p class="code">%irish_rolls_off</p>
-             <hr class="hidden-print" id="sung_solfege">
+            <hr class="hidden-print" id="custom_backup_rhythms">
+            <h1 class="page_break_always">Custom Backup Rhythms<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>You may customize the backup rhythm used for any meter in a single tune with chords by adding the following comment-based directive anywhere in the tune's ABC:</p>
+            <p class="code">%abcjs_boomchick meter rhythm_pattern_string partial_measure_threshold</p>
+            <p>This is particularly useful for meters that may have multiple commomly played subdivision groupings like 7/8 and 10/8.</p>
+            <p>Valid rhythm_pattern_string characters are:</p>
+            <p>B - Boom, b - Alternate Boom, c - Chick, and x - Silence.</p>
+            <p>Examples:</p>
+            <p class="code">%abcjs_boomchick 5/4 Bxcbc 2</p>
+            <p class="code">%abcjs_boomchick 5/8 Bxxbx 2</p>
+            <p class="code">%abcjs_boomchick 7/8 Bccbxbx 3</p>
+            <p class="code">%abcjs_boomchick 10/8 Bccbccbxbx 5</p>
+            <p>The number of characters in the pattern_string must match the meter numerator.</p>
+            <p>partial_measure_threshold sets how many beats must be present in a partial measure in the ABC to use the custom pattern.</p>
+            <p>partial_measure_threshold is optional and if not included, defaults to half of the meter numerator rounded down to the next lowest integer (minimum is 1).</p>
+            <p>If you have an incorrectly formatted %abcjs_boomchick directive in a tune, you will be alerted when trying to play the tune.</p>
+            <p>You may have multiple custom rhythm directives for different meters in a single tune.</p>
+            <p>If you have the same meter specified twice in custom rhythm directives in a tune, only the first one will be used.</p>
+            <p>This directive is specific to this tool and will not work with other ABC players.</p>
+            <hr class="hidden-print" id="sung_solfege">
             <h1 class="page_break_always h1wide">Select the Solfège Instrument to Sing Note Names<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>To sing the note names, you can select the Solfège instrument (136) for a voice:</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/vwIVW55WOB4" title="Using the Solfège Instrument to Sing Tunes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -988,7 +1381,7 @@
             <p class="code">%play_highlight_v1_only</p>
             <p>If you want to disable all highlighting of notes during playback, you can add the following comment-based annotation anywhere in the tune ABC:</p>
             <p class="code">%disable_play_highlight</p>
-             <hr class="hidden-print" id="basic_controls">
+            <hr class="hidden-print" id="basic_controls">
             <h1 class="page_break_always">Basic Controls and Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p id="basic_tablature" style="margin-top:24px;">The instrument tablature button bar controls how the notation and tablature is displayed:</p>
             <div class="image_holder">
@@ -1820,364 +2213,6 @@
             <p><strong>Note on using the MIDI Input feature on Firefox:</strong></p>
             <p>When first enabling MIDI input on Firefox, you will be asked by the browser to give the tool permission to access MIDI devices on your computer.</p>
             <p>Once you grant permission, you will need to restart Firefox for MIDI input to work.</p>
-            <hr class="hidden-print" id="selecting_the_instruments_for_playback">
-            <h1 class="page_break_always h1wide">Choosing the MIDI Soundfont and Instruments for Playback<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>You may choose which instrument sounds are used for the melody and bass and chords when playing tunes.</p>
-            <p>By default, the melody, bass, and chords instrument used is a piano.</p>
-            <p>You can specify which abcjs General MIDI soundfont to use for a specific tune by adding any of these six comment-based annotations in the ABC header for the tune:</p>
-            <p class="code">%abcjs_soundfont fluid</p>
-            <p class="code">%abcjs_soundfont musyng</p>
-            <p class="code">%abcjs_soundfont fatboy</p>
-            <p class="code">%abcjs_soundfont canvas</p>
-            <p class="code">%abcjs_soundfont mscore</p>
-            <p class="code">%abcjs_soundfont arachno</p>
-            <p>Each soundfont is a full General MIDI implementation, but has somewhat different sounds for each instrument.</p>
-            <p>If no %abcjs_soundfont soundfont is specified in a tune, the default soundfont chosen in the tool's <strong>Settings</strong> dialog is used.</p>
-            <p>It is not possible to change soundfonts within a tune.</p>
-            <p>If multiple instancs of %abcjs_soundfont are found in a tune, only the first one is used.</p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/fUz5I0Vk78Q" title="All about soundfonts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-            <p>For more details on the soundfonts, visit: <a href="https://paulrosen.github.io/midi-js-soundfonts/" target="_blank">midi-js-soundfonts on GitHub</a></p>
-            <p>If <strong>Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran</strong> is enabled in the Settings (on by default), for all soundfonts, my custom sampled instruments for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran (overrides Melodic Tom) will override the soundfont sounds.</p>
-            <p>If you wish to override the custom sound setting for a specific tune, add one of the following comment-based annotations anywhere in the tune:</p>
-            <p class="code">% Force use of custom sounds for this tune:<br/>
-            %use_custom_gm_sounds true</p>
-            <p class="code">% Disable use of custom sounds for this tune:<br/>
-            %use_custom_gm_sounds false</p>
-            <p></p>
-            <p><strong>Choosing the Melody Instrument Sound</strong></p>
-            <p></p>
-            <p>To choose the instrument used for the melody, add the following line to your ABC right after any headers and before the ABC notes, for example for an Accordion sound:</p>
-            <p></p>
-            <p class="code">%%MIDI program 21</p>
-            <p></p>
-            <p><strong>Example:</strong></p>
-            <p class="code">X: 1<br/>
-                T: The Kesh<br/>
-                R: Jig<br/>
-                M: 6/8<br/>
-                L: 1/8<br/>
-                K: Gmaj<br/>
-                %%MIDI program 21<br/>
-                D|: GAG GAB | ABA ABd | edd gdd | edB dBA |<br/>
-                GAG GAB | ABA ABd | edd gdB |1 AGF G2D :|2 AGF G2A||<br/>
-                |: B2B dBd | ege dBA | BAB dBG | ABA AGA |<br/>
-            B2 B dBd | ege dBd | gfg aga |1 bgg g2A :|2 bgg g2D |]</p>
-            <p></p>
-            <p>To change the instrument used for the melody, try changing the MIDI program # above to one of:</p>
-            <p>Piano: 0, Harpsichord: 6, Accordion: 21, Fingered Bass: 33, Harp: 46</p>
-            <p></p>
-            <p>By default, if you have chords in the ABC, the instrument used for the bass and chord playback is a piano.</p>
-            <p></p>
-            <p style="page-break-before: always;"><strong>Choosing the Bass and Chord Instrument Sounds</strong></p>
-            <p></p>
-            <p>To choose the instrument for the bass and chords, add the following lines to your ABC right after any headers and before the ABC notes, for example for a Bass sound:</p>
-            <p></p>
-            <p class="code">%%MIDI bassprog 34</p>
-            <p class="code">%%MIDI chordprog 34</p>
-            <p></p>
-            <p>Here's the same example where I've added the bass and chords instrument program selection:</p>
-            <p class="code">X: 1<br/>
-                T: The Kesh<br/>
-                R: Jig<br/>
-                M: 6/8<br/>
-                L: 1/8<br/>
-                K: Gmaj<br/>
-                %%MIDI program 21<br/>
-                %%MIDI bassprog 34<br/>
-                %%MIDI chordprog 34<br/>
-                D|: GAG GAB | ABA ABd | edd gdd | edB dBA |<br/>
-                GAG GAB | ABA ABd | edd gdB |1 AGF G2D :|2 AGF G2A||<br/>
-                |: B2B dBd | ege dBA | BAB dBG | ABA AGA |<br/>
-            B2 B dBd | ege dBd | gfg aga |1 bgg g2A :|2 bgg g2D |]</p>
-            <p></p>
-            <p>To change the instrument used for the bass and chords, try changing the MIDI bassprog or chordprog # above to one of:</p>
-            <p></p>
-            <p>Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38</p>
-            <p></p>
-            <p><strong>Changing the Playback Volume of the Melody, Bass, and Chords</strong></p>
-            <p></p>
-            <p>To change the volume of the melody, add a dynamics indication in the ABC itself before all the notes.</p>
-            <p></p>
-            <p>For example, to make the melody very soft, you can inject a !ppp! pianissimo annotation:</p>
-            <p></p>
-            <p class="code">!ppp! |:"Em"EBBA B2 EB|"Em"B2 AB dBAG|"D"F/E/D AD BDAD|"D"F/E/D AD BAGF|</p>
-            <p></p>
-            <p>Most standard dynamics indications are supported, for example: !ppp!, !pp!, !p!, !mf!, !f!</p>
-            <p></p>
-            <p>To completely mute the melody, change the MIDI Program to 142 (or mute):</p>
-            <p class="code">%%MIDI program mute</p>
-            <p>To change the volume of the bass and chords, add the following two chordvol and bassvol %%MIDI directives immediately before any %%MIDI program and %%MIDI chordprog directives:</p>
-            <p></p>
-            <p class="code">% Set the chord and bass volume (0-127)<br/>
-                %%MIDI chordvol 16<br/>
-                %%MIDI bassvol 16<br/>
-                %<br/>
-                % Use an Accordion sound when playing the melody:<br/>
-                %%MIDI program 21<br/>
-                %<br/>
-                % Use an Accordion sound when playing the bass:<br/>
-                %%MIDI bassprog 21<br/>
-                %<br/>
-                % Use an Accordion sound when playing the chords:<br/>
-                %%MIDI chordprog 21<br/>
-            %</p>
-            <p>The volume range is from 0 to 127.</p>
-            <p>To completely mute the bass or chords, change their MIDI Program to 142 (or mute):</p>
-            <p class="code">%%MIDI bassprog mute<br/>%%MIDI chordprog mute</p>
-            <p></p>
-            <p><strong>The following MIDI instruments now use the same samples as my iOS "Celtic Sounds" and other apps:</strong></p>
-            <p></p>
-            <p><strong>Hammered Dulcimer: 15, Accordion: 21, Flute: 73, Whistle: 78, Banjo: 105, Bagpipe: 109, Fiddle: 110, Bodhran: 117, Uilleann Pipes: 129, Scottish Smallpipes (D): 130, Scottish Smallpipes (A): 131, Säckpipa: 132, Concertina: 133, Melodica: 134, Cajun Accordion: 135, Solfège: 136, Chorused Guitar (nylon): 137, Chorused Guitar (steel): 138, Irish Bouzouki: 139, Irish Bouzouki 2: 140, Mandolin: 141, Silence: 142 (or mute)</strong></p>
-            <p>The Scottish Smallpipes (A) samples are from an instrument tuned in A, but the note numbers mapped to D so that they have the same transposed MIDI note range as the flute or whistle.</p>
-            <p>The Flute, Whistle (if <strong>Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran</strong> in the <strong>Settings</strong> is enabled), and Uilleann pipes sounds will automatically "fold" notes below first octave D up an octave.</p>
-            <p>The Säckpipa and Scottish Smallpipes (A) and (D) sounds will automatically "fold" notes above second octave D down an octave.</p>
-            <p></p>
-            <p>Any General MIDI instrument program number can be selected for the melody and chord sounds.</p>
-            <hr>
-            <p style="text-align: center;"><strong>Setting the Release Decay Time for Notes</strong></p>
-            <p>You can manually set the release decay time for notes using:</p>
-            <p class=code>%abcjs_release_decay_time release_decay_time_in_milliseconds</p>
-            <p>This can be useful for lengthening the decay time on note releases for plucked and other instruments.</p>
-            <p>For example to set the release decay time for a specific tune to 500 milliseconds, add this anywhere in the tune ABC:</p>
-            <p class=code>%abcjs_release_decay_time 500</p>
-            <p>The default release decay time for abcjs is 200 milliseconds.</p>
-            <p>When using my custom Hammered Dulcimer samples, the release decay time, unless overridden by this annotation, is 4000 milliseconds.</p>
-            <hr class="hidden-print" id="general_midi_instrument_program_numbers">
-            <h1 class="page_break_always">General MIDI Instrument Program Numbers <span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <div class="image_holder">
-                <img class="image" loading="lazy" style="width:700px;" src="img/gm_extended_9.jpg"/>
-            </div>
-            <p>Use program #142 Silence (or mute) to mute MIDI voices.</p>
-            <p>This can be used, for example, to create "Music Minus One" recordings consisting only of backing bass and chord tracks.</p>
-            <hr class="hidden-print" id="general_midi_percussion_map">
-            <h1 class="page_break_always">General MIDI Drum Sound ABC Note Map<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <div class="image_holder">
-                <img class="image" loading="lazy" style="width:700px;" src="img/gm_drum_map_1.jpg"/>
-            </div>
-            <p>Use program #128 (Percussion) on its own voice for MIDI click tracks.</p>
-            <hr class="hidden-print" id="bodhran_map">
-            <h1 class="page_break_always h1wide">Using the Bodhran (MIDI program #117) Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/GTdzE90itkU" title="High and Low Pitch Bodhran Instrument Demos" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/5dLeBddFrPI" title="High and Low Pitch Bodhran Solo Instrument Demos" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/sfpJRgQPg7k" title="Melody Contour Tracking Example" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-            <p>If you have <strong>Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran</strong> checked in the tool's Settings, MIDI instrument #117 (Melodic Tom) is remapped to bodhran sounds with the following note map:</p>
-            <p class="code">
-                %<br/>
-                % Basic low pitch strikes start at C1<br/>
-                %<br/>
-                C1  - Strike velocity low<br/>
-                C#1 - Strike velocity low<br/>
-                D1  - Strike velocity medium low<br/>
-                D#1 - Strike velocity medium low<br/>
-                E1  - Strike velocity medium high<br/>
-                F1  - Strike velocity high<br/>
-                F#1 - Strike velocity high<br/>
-                G1  - Strike velocity medium low - Scale Root</br/>
-                G#1 - Strike velocity medium low - Major 2nd </br/>
-                A1  - Strike velocity medium low - Major 3rd</br/>
-                A#1 - Strike velocity medium low - Major 4th</br/>
-                B1  - Strike velocity medium low - Major 5th</br/>
-                %<br/>
-                % Low pitch pitched strike versions at multiple velocities and pitches start at C2<br/>
-                %<br/>
-                C2  - Strike velocity low - Scale Root</br/>
-                C#2 - Strike velocity low - Major 2nd</br/>
-                D2  - Strike velocity low - Major 3rd</br/>
-                D#2 - Strike velocity low - Major 4th</br/>
-                E2  - Strike velocity low - Major 5th</br/>
-                F2  - Strike velocity medium low - Scale Root</br/>
-                F#2 - Strike velocity medium low - Major 2nd</br/>
-                G2  - Strike velocity medium low - Major 3rd</br/>
-                G#2 - Strike velocity medium low - Major 4th</br/>
-                A2  - Strike velocity medium low - Major 5th</br/>
-                A#2 - Strike velocity medium high - Scale Root</br/>
-                B2  - Strike velocity medium high - Major 2nd</br/>
-                C3  - Strike velocity medium high - Major 3rd</br/>
-                C#3 - Strike velocity medium high - Major 4th</br/>
-                D3  - Strike velocity medium high - Major 5th</br/>
-                D#3 - Strike velocity high - Scale Root</br/>
-                E3  - Strike velocity high - Major 2nd</br/>
-                F3  - Strike velocity high - Major 3rd</br/>
-                F#3 - Strike velocity high - Major 4th</br/>
-                G3  - Strike velocity high - Major 5th</br/>                
-                %<br/>
-                % Scrapes and taps start at G#3<br/>
-                %<br/>
-                G#3 - Scrape<br/>
-                A3  - Edge tap velocity low<br/>
-                A#3 - Edge tap velocity medium<br/>
-                B3  - Edge tap velocity high<br/>
-                %<br/>
-                % High pitch strikes start at C4<br/>
-                %<br/>
-                C4  - Strike velocity low<br/>
-                C#4 - Strike velocity low<br/>
-                D4  - Strike velocity medium low<br/>
-                D#4 - Strike velocity medium low<br/>
-                E4  - Strike velocity medium high<br/>
-                F4  - Strike velocity high<br/>
-                F#4 - Strike velocity high<br/>
-                G4  - Strike velocity medium low - Scale Root</br/>
-                G#4 - Strike velocity medium low - Major 2nd</br/>
-                A4  - Strike velocity medium low - Major 3rd</br/>
-                A#4 - Strike velocity medium low - Major 4th</br/>
-                B4  - Strike velocity medium low - Major 5th</br/>
-                %<br/>
-                % High pitch pitched strike versions at multiple velocities and pitches start at C5<br/>
-                %<br/>
-                C5  - Strike velocity low - Scale Root</br/>
-                C#5 - Strike velocity low - Major 2nd</br/>
-                D5  - Strike velocity low - Major 3rd</br/>
-                D#5 - Strike velocity low - Major 4th</br/>
-                E5  - Strike velocity low - Major 5th</br/>
-                F5  - Strike velocity medium low - Scale Root</br/>
-                F#5 - Strike velocity medium low - Major 2nd</br/>
-                G5  - Strike velocity medium low - Major 3rd</br/>
-                G#5 - Strike velocity medium low - Major 4th</br/>
-                A5  - Strike velocity medium low - Major 5th</br/>
-                A#5 - Strike velocity medium high - Scale Root</br/>
-                B5  - Strike velocity medium high - Major 2nd</br/>
-                C6  - Strike velocity medium high - Major 3rd</br/>
-                C#6 - Strike velocity medium high - Major 4th</br/>
-                D6  - Strike velocity medium high - Major 5th</br/>
-                D#6 - Strike velocity high - Scale Root</br/>
-                E6  - Strike velocity high - Major 2nd</br/>
-                F6  - Strike velocity high - Major 3rd</br/>
-                F#6 - Strike velocity high - Major 4th</br/>
-                G6  - Strike velocity high - Major 5th</br/>
-            </p>
-            <p>The tuning of the bodhran for a tune can be set using either of the following comment-based annotations anywhere in the tune's ABC:</p>
-            <p class=code>%bodhran_tuning (drum pitch)<br/>
-            %bodhran_pitch (drum pitch)</p>
-            <p>Where the drum fundamental pitch can be:</p>
-            <p>C, C#, Db, D, D#, Eb, E, F, F#, Gb, G, G#, Ab, A, A#, Bb, or B.</p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/dtrc0CbwaDs" title="Setting the Bodhran pitch" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-            <p>If no pitch is specified the default fundamental pitch is A.</p>
-            <p>Demo of the complete bodhran instrument note map:</p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/8hR5kTbR7TM" title="Bodhran Instrument Note Mapping Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-            <p>To use the bodhran sound for a percussion backing track, create a two-voice tune with the bodhran on its own voice:</p>
-            <p>Example Jig:</p>
-            <p class="code">
-            X: 1<br/>
-            T: The Kesh - Bodhran Demo<br/>
-            R: Jig<br/>
-            M: 6/8<br/>
-            L: 1/8<br/>
-            Q: 3/8=120<br/>
-            K: Gmaj<br/>
-            V:1 name="Melody"<br/>
-            % Use MIDI program 78 for the melody Tin Whistle sound<br/>
-            %%MIDI program 78<br/>
-            V:2 name="Bodhran"<br/>
-            % Use MIDI program 117 for the Bodhran sound<br/>
-            %%MIDI program 117<br/>
-            % Set the Bodhran tuning to A<br/>
-            %bodhran_tuning A<br/>
-            % Melody voice<br/>
-            V:1<br/>
-            z6|z6|z6|z6|<br/>
-            |:GAG GAB|ABA ABd|edd gdd|edB dBA|<br/>
-            GAG GAB|ABA ABd|edd gdB|AGF G3:|<br/>
-            |:BAB dBd|ege dBA|BAB dBG|ABA AGA|<br/>
-            BAB dBd|ege dBd|gfg aga|bgf g3:|<br/>
-            % Bodhran voice<br/>
-            V:2<br/>
-            FzD FCC | FzD FCC | FzD FCC | FCC !>!F3 |<br/>
-            |:FzD FCC | FzD FCC | FzD FCC | FzD FCC |<br/>
-            FzD FCC | FzD FCC | FzD FCC | FCC !>!F3 :|<br/>
-            |:FzD FCC | FzD FCC | FzD FCC | FzD FCC |<br/>
-            FzD FCC | FzD FCC | FzD FCC | FzD !>!F3 :|
-            </p>
-            <p>Example Reel:</p>
-            <p class="code">
-            X: 1<br/>
-            T: Cooley's - Bodhran Demo<br/>
-            C: Traditional<br/>
-            R: Reel<br/>
-            M: 4/4<br/>
-            L: 1/8<br/>
-            Q: 1/2=90<br/>
-            K: Edor<br/>
-            %%staffsep 50<br/>
-            % Set a specific amount of swing:<br/>
-            %swing 0.15<br/>
-            %<br/>
-            V:1 name="Melody"<br/>
-            %%MIDI program 78<br/>
-            V:2 name="Bodhran"<br/>
-            % Use MIDI program 117 for the Bodhran sound<br/>
-            %%MIDI program 117<br/>
-            % Set the Bodhran tuning to A<br/>
-            %bodhran_tuning A<br/>
-            % Melody voice<br/>
-            V:1<br/>
-            z8|z8|z8|z8|<br/>
-            |:EBBA B2 EB|B2 AB dBAG|F/E/D AD BDAD|F/E/D AD BAGF|<br/>
-            EBBA B2 EB|B2 AB defg|afge dBAF|1 DEFD E3D:|2 DEFD E2gf||<br/>
-            |:eB (3BBB eBgf|eBB2 gedB|A/A/A FA DAFA|A/A/A FA defg|<br/>
-            eB (3BBB eBgf|eBBB defg|afge dBAF|1 DEFD E2gf:|2 DEFD E4|]<br/>
-            % Bodhran voice<br/>
-            V:2<br/>
-            CCFC  CCFC | CCFC CCFC| CCFC CCFC | CC!>!F/E/D !>!F4 |<br/>
-            |:CCFC CCFC |CCFC CCFC |CCFC CCFC |CCFC CCFC |<br/>
-            CCFC CCFC |CCFC CCFC |CCFC CCFC |1 CC!>!F/E/D !>!F4 :|2 CC!>!F/E/D !>!F4 ||<br/>
-            |:CCFC CCFC |CCFC CCFC |CCFC CCFC |CCFC CCFC |<br/>
-            CCFC CCFC |CCFC CCFC |CCFC CCFC |1 CC!>!F/E/D !>!F4 :|2 CC!>!F/E/D !>!F4 |]
-            </p>
-            <p>To strongly emphasize a hit, preceed the note with a !>! accent indication as shown in the above examples.</p>
-            <p>If the bodhran sound is too loud, try adding an !mp! or other ABC dynamic indication before the first note of the bodhran voice ABC.</p>
-            <p>When using the higher pitched sounds starting on C5, if you want to avoid excessive ledger lines, you can set an octave up transpose in the voice declaration:</p>
-            <p class="code">
-                V:2 name="Bodhran" transpose=12<br/>
-                % Use MIDI program 117 for the Bodhran sound<br/>
-                %%MIDI program 117
-            </p>
-            <p>When using the lower pitched sounds starting on C1, if you want to avoid excessive ledger lines, you can set an octave down transpose in the voice declaration:</p>
-            <p class="code">
-                V:2 name="Bodhran" transpose=-36<br/>
-                % Use MIDI program 117 for the Bodhran sound<br/>
-                %%MIDI program 117
-            </p>
-            <hr class="hidden-print" id="banjo_style">
-            <h1 class="page_break_always h1wide">Using the Tenor Banjo (MIDI program #105) Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>If %%MIDI program 105 (Banjo) is used in a tune, you may choose between one of five different custom Tenor Banjo sounds using one of the following comment-based annotations anywhere in the tune's ABC:</p>
-            <p class=code>% Use the default banjo sound from the current soundfont<br/>
-            %banjo_style 0<br/><br/>
-            % Dark tone<br/>
-            %banjo_style 1<br/><br/>
-            % Medium bright tone<br/>
-            %banjo_style 2<br/><br/>
-            % Bright tone<br/>
-            %banjo_style 3<br/><br/>
-            % Medium bright tone, slightly rough<br/>
-            %banjo_style 4</p>
-            <p>Only the first instance of a %banjo_style annotation found in a tune will be used for that tune.</p>
-            <p>If no banjo style is specified in a tune, the default is style 2.</p>
-            <p>If banjo style 0 is selected, the default banjo sound from the current soundfont selected for the tune (or the tool default if not specified in the tune) will be used.</p>
-            <p>If you wish to override all custom sound setting for a specific tune, add one of the following comment-based annotations anywhere in the tune:</p>
-            <p class="code">% Force use of custom sounds for this tune:<br/>
-            %use_custom_gm_sounds true</p>
-            <p class="code">% Disable use of custom sounds for this tune:<br/>
-            %use_custom_gm_sounds false</p>
-            <hr class="hidden-print" id="custom_backup_rhythms">
-            <h1 class="page_break_always">Custom Backup Rhythms<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>You may customize the backup rhythm used for any meter in a single tune with chords by adding the following comment-based directive anywhere in the tune's ABC:</p>
-            <p class="code">%abcjs_boomchick meter rhythm_pattern_string partial_measure_threshold</p>
-            <p>This is particularly useful for meters that may have multiple commomly played subdivision groupings like 7/8 and 10/8.</p>
-            <p>Valid rhythm_pattern_string characters are:</p>
-            <p>B - Boom, b - Alternate Boom, c - Chick, and x - Silence.</p>
-            <p>Examples:</p>
-            <p class="code">%abcjs_boomchick 5/4 Bxcbc 2</p>
-            <p class="code">%abcjs_boomchick 5/8 Bxxbx 2</p>
-            <p class="code">%abcjs_boomchick 7/8 Bccbxbx 3</p>
-            <p class="code">%abcjs_boomchick 10/8 Bccbccbxbx 5</p>
-            <p>The number of characters in the pattern_string must match the meter numerator.</p>
-            <p>partial_measure_threshold sets how many beats must be present in a partial measure in the ABC to use the custom pattern.</p>
-            <p>partial_measure_threshold is optional and if not included, defaults to half of the meter numerator rounded down to the next lowest integer (minimum is 1).</p>
-            <p>If you have an incorrectly formatted %abcjs_boomchick directive in a tune, you will be alerted when trying to play the tune.</p>
-            <p>You may have multiple custom rhythm directives for different meters in a single tune.</p>
-            <p>If you have the same meter specified twice in custom rhythm directives in a tune, only the first one will be used.</p>
-            <p>This directive is specific to this tool and will not work with other ABC players.</p>
             <hr class="hidden-print" id="export_pdf_tunebook">
             <h1 class="page_break_always">Exporting a PDF Tunebook<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/PqgjtQXpRYA" title="Export PDF Tunebook Dialog Walkthrough" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -2891,7 +2926,8 @@
             %disable_play_highlight<br/>
             %play_highlight_v1_only<br/>
             %irish_rolls_on<br/>
-            %irish_rolls_off</p>
+            %irish_rolls_off<br/>
+            %voice_tuning_cents</p>
             <hr class="hidden-print" id="musicxml">
             <h1 class="page_break_always">MusicXML Import Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">
