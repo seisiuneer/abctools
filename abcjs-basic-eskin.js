@@ -15955,7 +15955,6 @@ var getNote = function getNote(url, instrument, name, audioContext) {
       switch (instrument){
         case "dulcimer":    // 15
         case "accordion":   // 21
-        case "uilleann":    // 129 
         case "smallpipesd": // 130
         case "smallpipesa": // 131
         case "sackpipa":    // 132
@@ -15964,6 +15963,12 @@ var getNote = function getNote(url, instrument, name, audioContext) {
         case "cajun":       // 135
         case "silence":     // 142
           url = "https://michaeleskin.com/abctools/soundfonts/";
+          isOgg = true;
+          isCustomInstrument = true;
+          break;
+
+        case "uilleann":    // 129 
+          url = "https://michaeleskin.com/abctools/soundfonts/uilleann_1/";
           isOgg = true;
           isCustomInstrument = true;
           break;
@@ -16130,7 +16135,6 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
       // MAE 28 June 29023 - Override Celtic Sound instruments with my own
       switch (instrument){        
-        case "uilleann":    // 129 
         case "smallpipesd": // 130
         case "smallpipesa": // 131
         case "sackpipa":    // 132
@@ -16139,6 +16143,12 @@ var getNote = function getNote(url, instrument, name, audioContext) {
         case "cajun":       // 135
         case "silence":     // 142
           url = "https://michaeleskin.com/abctools/soundfonts/";
+          isOgg = true;
+          isCustomInstrument = true;
+          break;
+
+        case "uilleann":    // 129 
+          url = "https://michaeleskin.com/abctools/soundfonts/uilleann_1/";
           isOgg = true;
           isCustomInstrument = true;
           break;
