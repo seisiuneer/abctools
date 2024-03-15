@@ -15968,7 +15968,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
           break;
 
         case "uilleann":    // 129 
-          url = "https://michaeleskin.com/abctools/soundfonts/uilleann_1/";
+          url = "https://michaeleskin.com/abctools/soundfonts/uilleann_3/";
           isOgg = true;
           isCustomInstrument = true;
           break;
@@ -16148,7 +16148,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
           break;
 
         case "uilleann":    // 129 
-          url = "https://michaeleskin.com/abctools/soundfonts/uilleann_1/";
+          url = "https://michaeleskin.com/abctools/soundfonts/uilleann_3/";
           isOgg = true;
           isCustomInstrument = true;
           break;
