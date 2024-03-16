@@ -3602,7 +3602,7 @@ margin-top:-7px;
 }
 
 .diagnostics{
-display="none";
+display:none;
 width:826px;
 height:90px;
 overflow: auto;

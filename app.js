@@ -34331,10 +34331,10 @@ function DoStartup() {
 		// Set the ABC Editor font from the value read from local storage
 		updateABCEditorFont();
 
-		// Update diagnostics
-		updateDiagnostics();
-
 	}
+
+	// Update diagnostics area display
+	updateDiagnostics();
 
 	// And call it once for the initial setup
 	HandleWindowResize();
