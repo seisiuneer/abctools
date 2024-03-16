@@ -332,6 +332,9 @@ var gForceTabSave = false;
 // ABC Editor font size
 var gABCEditorFontsize = 13;
 
+// Showing diagnostics?
+var gShowDiagnostics = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -1676,6 +1679,9 @@ function Clear() {
 			// And set the focus
 		    gTheABC.focus();
 
+		    // Clear the diagnostics area
+		    elem = document.getElementById("diagnostics");
+		    elem.innerHTML = "";		
 		}
 
 	});
@@ -9336,6 +9342,25 @@ function fireSelectionChanged(){
 	}
 }
 
+function ReceiveDiagnostics(data){
+
+	var elem = document.getElementById("diagnostics");
+
+	if (data){
+		var allMessages = "";
+		var nMessages = data.length;
+		var i;
+		for (i=0;i<nMessages;++i){
+			allMessages += '<p class="diagnostics_message">'+data[i]+"</p>"
+		}
+		elem.innerHTML = allMessages;
+	}
+	else{
+		elem.innerHTML = '<p class="diagnostics_message">No issues found</p>';		
+	}
+
+}
+
 //
 // Main routine for rendering the notation
 //
@@ -9429,6 +9454,13 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 		}
 	}
 
+	// Generate diagnostics for this tune?
+	if (gShowDiagnostics && ((!renderAll) || (nTunes == 1))){
+
+		params.sendDiagnostics = ReceiveDiagnostics;
+
+	}
+	
 	var visualObj = ABCJS.renderAbc(renderDivs, tune, params);
 
 	// Save off the visual for selection handling
@@ -10144,6 +10176,11 @@ function Render(renderAll,tuneNumber) {
 		gABCFromFile = false;
 
 		gIsFirstRender = true;
+
+		// Also clear the diagnostics area
+	    elem = document.getElementById("diagnostics");
+	    elem.innerHTML = "";		
+
 
 		// Recalculate the notation top position
 		UpdateNotationTopPosition();
@@ -29208,6 +29245,12 @@ function GetInitialConfigurationSettings(){
 		gABCEditorFontsize = 13;
 	}
 
+	gShowDiagnostics = false;
+	val = localStorage.ShowDiagnostics;
+	if (val){
+		gShowDiagnostics = (val == "true");
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -29387,6 +29430,10 @@ function SaveConfigurationSettings(){
 
 		// Save Editor font size
 		localStorage.ABCEditorFontSize = gABCEditorFontsize;
+
+		// Save diagnostics state
+		localStorage.ShowDiagnostics = gShowDiagnostics;
+
 	}
 }
 
@@ -30968,12 +31015,15 @@ function AdvancedSettings(){
 		configure_TuneDatabaseRetryTimeMS: gTuneDatabaseRetryTimeMS,
 		configure_TuneDatabaseRetryCount: gTuneDatabaseRetryCount,
 		configure_DisableRendering: gDisableNotationRendering,
-		configure_disable_selected_play:gDisableSelectedPlay
+		configure_disable_selected_play:gDisableSelectedPlay,
+		configure_show_diagnostics: gShowDiagnostics	  	
+
 	};
 
 	var form = [
 		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Advanced Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
-		{html: '<p style="font-size:12pt;line-height:24px;font-family:helvetica;"><strong>Only change these values if you know what you are doing!</strong></p>'},
+		{html: '<p style="font-size:12pt;line-height:12px;font-family:helvetica;"><strong>Only change these values if you know what you are doing!</strong></p>'},
+		{name: "          Show ABC syntax validation panel", id: "configure_show_diagnostics", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Disable abcjs notation rendering", id: "configure_DisableRendering", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Rolls indicated in the ABC with ~ use the custom abcjs roll playback solution", id: "configure_RollUseRollForIrishRoll", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)", id: "configure_comhaltas", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
@@ -31017,6 +31067,10 @@ function AdvancedSettings(){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
+
+			// Show/hide the diagnostics panel
+			gShowDiagnostics = args.result.configure_show_diagnostics;
+			updateDiagnostics();
 
 			// Disable rendering? (not persistent)
 			gDisableNotationRendering = args.result.configure_DisableRendering;
@@ -31306,7 +31360,7 @@ function ConfigureToolSettings() {
 		configure_auto_swing_factor: gAutoSwingFactor,	
 		configure_allow_midi_input: gAllowMIDIInput,
 		configure_midi_chromatic: gMIDIChromatic,
-		configure_show_tab_buttons: gFeaturesShowTabButtons	  
+		configure_show_tab_buttons: gFeaturesShowTabButtons,
 	};
 
  	const sound_font_options = [
@@ -33436,6 +33490,11 @@ function CleanSmartQuotes(){
 
 	gTheABC.value = val;
 
+	// Also clear the diagnostics area
+    elem = document.getElementById("diagnostics");
+    elem.innerHTML = "";		
+
+
 }
 
 //
@@ -33452,6 +33511,21 @@ function updateABCEditorFont(){
 		// Scale the line height based on the font size
 		gTheABC.style.fontSize = gABCEditorFontsize + "pt";
 		gTheABC.style.lineHeight = (gABCEditorFontsize+(gABCEditorFontsize*.23)) + "pt";
+	}
+}
+
+//
+// Show or hide the diagnostics
+//
+function updateDiagnostics(){
+
+	var elem = document.getElementById("diagnostics");
+
+	if (gShowDiagnostics){
+		elem.style.display = "block";
+	}
+	else{
+		elem.style.display = "none";		
 	}
 }
 
@@ -33826,9 +33900,9 @@ function DoStartup() {
 	//
 	// Uncomment these lines for mobile simulation testing
 	//
-	// gIsIOS = true; 
-	// gIsIPad = true;  
-	// gIsIPhone = true;  
+	//gIsIOS = true; 
+	//gIsIPad = true;  
+	//gIsIPhone = true;  
 	
 	//
 	// iOS and Android styling adaptation
@@ -33908,6 +33982,11 @@ function DoStartup() {
 		// Resize the UI overlay
 		elem = document.getElementById("uioverlay");
 		elem.style.width = "860px";
+		elem.style.display = "block";
+
+		// Resize the diagnostics
+		elem = document.getElementById("diagnostics");
+		elem.style.width = "836px";
 		elem.style.display = "block";
 
 		// Move the spinner
@@ -34251,6 +34330,9 @@ function DoStartup() {
 
 		// Set the ABC Editor font from the value read from local storage
 		updateABCEditorFont();
+
+		// Update diagnostics
+		updateDiagnostics();
 
 	}
 

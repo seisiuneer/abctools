@@ -1170,6 +1170,15 @@ var renderAbc = function renderAbc(output, abc, parserParams, engraverParams, re
       }
     }
   }
+
+  // MAE 16 Mar 2024 - For parsing diagnostics 
+  function doSendDiagnostics(abcString,callback){
+      var abcParser = new Parse();
+      abcParser.parse(abcString);
+      var warnings = abcParser.getWarnings();
+      callback(warnings);
+  }
+
   function callback(div, tune, tuneNumber, abcString) {
     var removeDiv = false;
     if (div === "*") {
@@ -1185,8 +1194,12 @@ var renderAbc = function renderAbc(output, abc, parserParams, engraverParams, re
     if (params.afterParsing) params.afterParsing(tune, tuneNumber, abcString);
     renderOne(div, tune, params, tuneNumber, 0);
     if (removeDiv) div.parentNode.removeChild(div);
+
+    if (params.sendDiagnostics) doSendDiagnostics(abcString,params.sendDiagnostics);
+
     return null;
   }
+
   return tunebook.renderEngine(callback, output, abc, params);
 };
 function doLineWrapping(div, tune, tuneNumber, abcString, params) {
@@ -1200,7 +1213,7 @@ function doLineWrapping(div, tune, tuneNumber, abcString, params) {
     var warnings = abcParser.getWarnings();
     if (warnings) tune.warnings = warnings;
   }
-  if (params.afterParsing) params.afterParsing(tune, tuneNumber, abcString);
+  if (params.afterParsing) params.afterParsing(tune, tuneNumber, abcString);  
   renderOne(div, tune, ret.revisedParams, tuneNumber, 0);
   tune.explanation = ret.explanation;
   return tune;
@@ -15968,7 +15981,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
           break;
 
         case "uilleann":    // 129 
-          url = "https://michaeleskin.com/abctools/soundfonts/uilleann_3/";
+          url = "https://michaeleskin.com/abctools/soundfonts/uilleann_5/";
           isOgg = true;
           isCustomInstrument = true;
           break;
@@ -16148,7 +16161,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
           break;
 
         case "uilleann":    // 129 
-          url = "https://michaeleskin.com/abctools/soundfonts/uilleann_3/";
+          url = "https://michaeleskin.com/abctools/soundfonts/uilleann_5/";
           isOgg = true;
           isCustomInstrument = true;
           break;

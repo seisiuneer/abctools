@@ -2057,7 +2057,7 @@ left:-5000px;
 
 .advanced_settings2_form_text{
 	font-size:12pt;
-	line-height:16px;
+	line-height:10px;
 	font-family:helvetica;
 	margin-top:17px;
 	display:flex;
@@ -2068,7 +2068,7 @@ left:-5000px;
 	font-family:helvetica;
 	margin-left: 12px;
 	width: 100px;
-	margin-top:-8px;
+	margin-top:-11px;
 }
 
 .advanced_settings2_roll_text{
@@ -3600,6 +3600,26 @@ margin-left:10px;
 padding-left:10px;
 margin-top:-7px;
 }
+
+.diagnostics{
+display="none";
+width:826px;
+height:90px;
+overflow: auto;
+border:1px;
+background: #FFFDE0;
+text-align: left;
+padding:12px;
+}
+
+.diagnostics_message{
+font-size:11pt;
+font-family:"Helvetica";
+line-height: 16pt;
+margin-top:0px;
+margin-bottom:4px;
+}
+
 
 /******************************************************************************/
 /* STYLES RELATED TO EXPERIMENT BUTTONS                                       */
