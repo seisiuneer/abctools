@@ -16143,7 +16143,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
         // Force marching drums to use mp3
         case "marchingdrums":  // 142 
-          url = "https://michaeleskin.com/abctools/soundfonts/marchingdrums_1/";
+          url = "https://michaeleskin.com/abctools/soundfonts/marchingdrums_2/";
           isOgg = false;
           isCustomInstrument = true;
           break;
@@ -16223,7 +16223,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
         // Force marching drums to use mp3
         case "marchingdrums":  // 142 
-          url = "https://michaeleskin.com/abctools/soundfonts/marchingdrums_1/";
+          url = "https://michaeleskin.com/abctools/soundfonts/marchingdrums_2/";
           isOgg = false;
           isCustomInstrument = true;
           break;
