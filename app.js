@@ -9342,25 +9342,6 @@ function fireSelectionChanged(){
 	}
 }
 
-function ReceiveDiagnostics(data){
-
-	var elem = document.getElementById("diagnostics");
-
-	if (data){
-		var allMessages = "";
-		var nMessages = data.length;
-		var i;
-		for (i=0;i<nMessages;++i){
-			allMessages += '<p class="diagnostics_message">'+data[i]+"</p>"
-		}
-		elem.innerHTML = allMessages;
-	}
-	else{
-		elem.innerHTML = '<p class="diagnostics_message">No issues found</p>';		
-	}
-
-}
-
 //
 // Main routine for rendering the notation
 //
@@ -9454,14 +9435,33 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 		}
 	}
 
+	var visualObj = ABCJS.renderAbc(renderDivs, tune, params);
+
 	// Generate diagnostics for this tune?
 	if (gShowDiagnostics && ((!renderAll) || (nTunes == 1))){
 
-		params.sendDiagnostics = ReceiveDiagnostics;
+		if ((visualObj) && (visualObj[0])){
+
+			var data = visualObj[0].warnings;
+
+			var elem = document.getElementById("diagnostics");
+
+			if (data){
+				var allMessages = "";
+				var nMessages = data.length;
+				var i;
+				for (i=0;i<nMessages;++i){
+					allMessages += '<p class="diagnostics_message">'+data[i]+"</p>"
+				}
+				elem.innerHTML = allMessages;
+			}
+			else{
+				elem.innerHTML = '<p class="diagnostics_message">No issues found</p>';		
+			}
+		}
 
 	}
-	
-	var visualObj = ABCJS.renderAbc(renderDivs, tune, params);
+
 
 	// Save off the visual for selection handling
 	gRawVisual = visualObj;
