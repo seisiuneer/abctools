@@ -21467,6 +21467,7 @@ function computeFade(tuneABC){
 					case "73":   // Flute
 					case "78":   // Whistle
 					case "105":  // Banjo
+					case "109":  // Bagpipes
 					case "110":  // Fiddle
 					case "117":  // Melodic tom
 					case "129":  // Uilleann pipes
@@ -21477,16 +21478,15 @@ function computeFade(tuneABC){
 					case "134":  // Melodica
 					case "135":  // Cajun Accordion
 					case "136":  // Solfège
+					case "142":  // Marching Drums
 					case "143":  // Silence
 					case "mute": // Silence
 						theFade = 100;
 						break;
-					case "109":  // Bagpipes
 					case "137":  // Chorused Nylon Guitar
 					case "138":  // Chorused Steel Guitar
 					case "139":  // Bouzouki
 					case "141":  // Mandolin
-					case "142":  // Marching Drums
 						theFade = 200;
 						break;
 					case "140":   // Bouzouki2
@@ -21508,6 +21508,7 @@ function computeFade(tuneABC){
 					case "134":  // Melodica
 					case "135":  // Cajun Accordion
 					case "136":  // Solfège
+					case "142":  // Marching Drums
 					case "143":  // Silence
 					case "mute": // Silence
 						theFade = 100;
@@ -21516,7 +21517,6 @@ function computeFade(tuneABC){
 					case "138":  // Chorused Steel Guitar
 					case "139":  // Bouzouki
 					case "141":  // Mandolin
-					case "142":  // Marching Drums
 						theFade = 200;
 						break;
 					case "140":   // Bouzouki2
