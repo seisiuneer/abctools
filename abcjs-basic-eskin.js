@@ -16098,7 +16098,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
         // Force bagpipes to use mp3
         case "bagpipe":      // 109
-          url = "https://michaeleskin.com/abctools/soundfonts/bagpipe_1/";
+          url = "https://michaeleskin.com/abctools/soundfonts/bagpipe_2/";
           isOgg = false;
           isCustomInstrument = true;
           break;
