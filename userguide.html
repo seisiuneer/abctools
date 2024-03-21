@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-       
+
         <style>
 
 		p {
@@ -1214,6 +1214,15 @@
             !p! GAG GAB | ABA ABd |</p>
             <p>When layering multiple identical but de-tuned voices, you may want to add !p! style dynamics to the start of each voice's ABC to reduce the overall mixed instrument volume.</p>
             <p>If there are also bass/chords specified in the ABC using "G" style annotation, the backup track will have a voice number one higher than the total number of melody voices.</p>
+            <p>To create a modern Scottish bagpipes tuning of 480 Hz from a bagpipe score based in A, you can add the following two annotations to the melody and drone voices:</p>
+            <p class="code">% Add this to the melody and drones voice descriptions<br/>
+                %%MIDI transpose 1<br/>
+                %<br/>
+                % Shift the tuning up to 480 Hz for all the voices<br/>
+                % Assumes the drum voices are using ^A for both bass and snare<br/>
+            %voice_tuning_cents 48 48 48 48</p>
+            <p>Here is an example, the tune "Cullen Bay" with the pitch at 480 Hz:</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/PIZI12jPoc4" title="Cullen Bay at 480 Hz" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>            
             <hr class="hidden-print" id="export_audio_image">
             <h1 class="page_break_always h1wide">Exporting Tune Audio or Image Files from the Player<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>If you click <strong>Export Audio or Image</strong> in the <strong>Player</strong>, a dialog will appear where you can save out the audio of your tune in either .WAV or .MP3 format, the note playback events as a MIDI file, or the tune image in .JPG, .PNG, or .SVG formats:</p>
