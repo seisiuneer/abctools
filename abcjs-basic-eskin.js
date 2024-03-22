@@ -477,15 +477,21 @@ var abcTablatures = {
       var curStaff = line.staff;
       if (curStaff) {
         var maxStaves = curStaff.length;
-        // MAE 22 Mar 2024 - For first staff tab only case
+
+        // MAE 22 Mar 2024 - For first staff tab only or exclude cases
         var nStaves = curStaff.length;
         var firstStave = 0;
         if (gTabFirstStaffOnly){
           nStaves = 1;
         }
         else
-        if ((gTabSecondStaffOnly) && (nStaves > 1)){
-          firstStave = 1;
+        if (gTabSecondStaffOnly){
+          if (nStaves > 1){
+            firstStave = 1;
+          }
+          else{
+            return;
+          }
         }
         for (var jj = firstStave; jj < nStaves; jj++) { 
           if (tabs[jj] && jj < maxStaves) {
