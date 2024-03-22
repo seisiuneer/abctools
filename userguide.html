@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-
+       
         <style>
 
 		p {
@@ -1472,10 +1472,15 @@
             <hr>
             <p>Up to 8 voices may be displayed with tablature.</p>
             <hr>
-            <p>To only show the tablature on the first voice of a multi-voice tune using one of the stringed instrument tablatures (doesn't work for note names or whistle tab), add the following comment based annotation anywhere in the tune:</p>
+            <p style="text-align: center;"><strong>Showing/Hiding Stringed Instrument Tablature in Multi-Voice ABC Tunes</strong></p>
+            <p>The two following annotations only work for stringed instrument tablatures and not the note names or whistle tablature.</p> 
+            <p>To show the tablature on the first voice of a multi-voice tune and hide it on all the others, add the following comment based annotation anywhere in the tune:</p>
             <p class="code">%tab_first_voice_only</p>
-            <p>If a tunebook contains multiple tunes, all of the tunes in the tunebook should all either contain or not contain this annotation.</p>
-            <p>Mixed use of this annotation across multiple tunes in a tunebook may not produce the desired result.</p>
+            <p>To hide the tablature on the first voice of a multi-voice tune and show it on all the others, add the following comment based annotation anywhere in the tune:</p>
+            <p class="code">%tab_first_voice_exclude</p>
+            <p>If both are present in a tune, %tab_first_voice_only takes precedence over %tab_first_voice_exclude.</p>
+            <p>If a tunebook contains multiple tunes, all of the tunes in the tunebook should all either contain or not contain these annotations.</p>
+            <p>Mixed use of these annotations across multiple tunes in a tunebook may not produce the desired result.</p>
             <hr>
             <p style="margin-top:24px;margin-bottom: 12px;"><strong>These buttons perform common operations on the ABC:</strong></p>
             <div class="image_holder" style="margin-top:24px;">
@@ -2991,7 +2996,8 @@
             %irish_rolls_on<br/>
             %irish_rolls_off<br/>
             %voice_tuning_cents<br/>
-            %tab_first_voice_only</p>
+            %tab_first_voice_only<br/>
+            %tab_first_voice_exclude</p>
             <hr class="hidden-print" id="musicxml">
             <h1 class="page_break_always">MusicXML Import Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">

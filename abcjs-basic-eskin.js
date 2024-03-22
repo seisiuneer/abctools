@@ -169,6 +169,7 @@ var gSequenceCallback = null;
 
 // For single staff tab
 var gTabFirstStaffOnly = false;
+var gTabSecondStaffOnly = false;
 
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
@@ -478,10 +479,15 @@ var abcTablatures = {
         var maxStaves = curStaff.length;
         // MAE 22 Mar 2024 - For first staff tab only case
         var nStaves = curStaff.length;
+        var firstStave = 0;
         if (gTabFirstStaffOnly){
           nStaves = 1;
         }
-        for (var jj = 0; jj < nStaves; jj++) { 
+        else
+        if ((gTabSecondStaffOnly) && (nStaves > 1)){
+          firstStave = 1;
+        }
+        for (var jj = firstStave; jj < nStaves; jj++) { 
           if (tabs[jj] && jj < maxStaves) {
              // tablature requested for staff
             var tabPlugin = tabs[jj];
