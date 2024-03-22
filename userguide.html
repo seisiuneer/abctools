@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-
+       
         <style>
 
 		p {
@@ -1471,6 +1471,9 @@
             <p>Note: For notes that go below D on of the whistle (lowest note supported is the G below middle-C), the suggested "folded" octave-up fingerings are shown.</p>
             <hr>
             <p>Up to 8 voices may be displayed with tablature.</p>
+            <hr>
+            <p>To only show the tablature on the first voice of a multi-voice tune using one of the stringed instrument tablatures (doesn't work for note names or whistle tab), add the following comment based annotation anywhere in the tune:</p>
+            <p class="code">%tab_first_voice_only</p>
             <hr>
             <p style="margin-top:24px;margin-bottom: 12px;"><strong>These buttons perform common operations on the ABC:</strong></p>
             <div class="image_holder" style="margin-top:24px;">
@@ -2985,7 +2988,8 @@
             %play_highlight_v1_only<br/>
             %irish_rolls_on<br/>
             %irish_rolls_off<br/>
-            %voice_tuning_cents</p>
+            %voice_tuning_cents<br/>
+            %tab_first_voice_only</p>
             <hr class="hidden-print" id="musicxml">
             <h1 class="page_break_always">MusicXML Import Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">

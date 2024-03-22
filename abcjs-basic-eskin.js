@@ -167,6 +167,9 @@ var gChordTrackIndex = 0;
 // For tuning callback
 var gSequenceCallback = null;
 
+// For single staff tab
+var gTabFirstStaffOnly = false;
+
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
@@ -467,13 +470,18 @@ var abcTablatures = {
    */
   layoutTablatures: function layoutTablatures(renderer, abcTune) {
     var tabs = abcTune.tablatures;
-    // chack tabs request for each staffs
-    for (var ii = 0; ii < abcTune.lines.length; ii++) {
+    // check tabs request for each staffs
+    for (var ii = 0; ii < abcTune.lines.length; ii++) { 
       var line = abcTune.lines[ii];
       var curStaff = line.staff;
       if (curStaff) {
-        var maxStaves = curStaff.length
-        for (var jj = 0; jj < curStaff.length; jj++) {
+        var maxStaves = curStaff.length;
+        // MAE 22 Mar 2024 - For first staff tab only case
+        var nStaves = curStaff.length;
+        if (gTabFirstStaffOnly){
+          nStaves = 1;
+        }
+        for (var jj = 0; jj < nStaves; jj++) { 
           if (tabs[jj] && jj < maxStaves) {
              // tablature requested for staff
             var tabPlugin = tabs[jj];

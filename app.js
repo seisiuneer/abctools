@@ -9434,7 +9434,9 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 			// 	"voiceName"
 		}
 	}
-
+	
+	gTabFirstStaffOnly = ScanTuneForTabFirstStaffOnly(tune, instrument);
+	
 	var visualObj = ABCJS.renderAbc(renderDivs, tune, params);
 
 	// Generate diagnostics for this tune?
@@ -18566,7 +18568,8 @@ function complianceABCTransformer(theABC,doInverse){
 	    "%play_highlight_v1_only",
 	    "%irish_rolls_on",
 	    "%irish_rolls_off",
-	    "%voice_tuning_cents"
+	    "%voice_tuning_cents",
+	    "%tab_first_voice_only"
 	];
 
 	if (doInverse){
@@ -23066,6 +23069,10 @@ function PlayerSetupCommon(theABC){
 		gSequenceCallback = VoiceTuningCallback;
 	}
 
+	var instrument = GetRadioValue("notenodertab");
+
+	gTabFirstStaffOnly = ScanTuneForTabFirstStaffOnly(theABC, instrument);
+
 	return true;
 
 }
@@ -24510,6 +24517,27 @@ function ScanTuneForVoiceTuning(theTune){
 	}
 
 	return null;
+}
+
+// Only showing tab for first staff?
+function ScanTuneForTabFirstStaffOnly(theTune, instrument){
+
+	// Doesn't work for whistle or names
+	if ((instrument == "whistle") || (instrument == "notenames")){
+		return false;
+	}
+
+	// Search for disable rolls
+	var searchRegExp = /^%tab_first_voice_only.*$/gm
+
+	var isTabFirstStaff = theTune.match(searchRegExp);
+
+	if ((isTabFirstStaff) && (isTabFirstStaff.length > 0)){
+		return true;
+	}
+
+	return false;
+
 }
 
 //
