@@ -22938,7 +22938,8 @@ function PlayerSetupCommon(theABC){
 				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/";
 				break;
 			case "fatboy":
-				gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
+				//gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
+	    		gTheActiveSoundFont =  "https://michaeleskin.com/abctools/soundfonts/fatboy_1/";
 				break;
 			case "canvas":
 				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/canvas/";
@@ -22947,7 +22948,7 @@ function PlayerSetupCommon(theABC){
 				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/mscore/";
 				break;
 			case "arachno":
-				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/arachno/";
+				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/arachno_2/";
 				break;
 		}
 
@@ -25327,7 +25328,8 @@ function ScanTuneForInstrumentExplorer(theTune){
 		case "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/":
 			gInstrumentExplorerSoundfont = "1";
 			break;
-		case "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/":
+		//case "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/":
+		case "https://michaeleskin.com/abctools/soundfonts/fatboy_1/":
 			gInstrumentExplorerSoundfont = "2";
 			break;
 		case "https://michaeleskin.com/abctools/soundfonts/canvas/":
@@ -25336,7 +25338,7 @@ function ScanTuneForInstrumentExplorer(theTune){
 		case "https://michaeleskin.com/abctools/soundfonts/mscore/":
 			gInstrumentExplorerSoundfont = "4";
 			break;
-		case "https://michaeleskin.com/abctools/soundfonts/arachno/":
+		case "https://michaeleskin.com/abctools/soundfonts/arachno_2/":
 			gInstrumentExplorerSoundfont = "5";
 			break;
 		default:
@@ -31432,10 +31434,11 @@ function ConfigureToolSettings() {
  	const sound_font_options = [
 	    { name: "  Fluid", id: "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/" },
 	    { name: "  Musyng Kite", id: "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/" },
-	    { name: "  FatBoy", id: "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/" },
+	    //{ name: "  FatBoy", id: "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/" },
+	    { name: "  FatBoy", id: "https://michaeleskin.com/abctools/soundfonts/fatboy_1/" },
  	    { name: "  Canvas", id: "https://michaeleskin.com/abctools/soundfonts/canvas/" },
  	    { name: "  MScore", id: "https://michaeleskin.com/abctools/soundfonts/mscore/" },
- 	    { name: "  Arachno", id: "https://michaeleskin.com/abctools/soundfonts/arachno/" },
+ 	    { name: "  Arachno", id: "https://michaeleskin.com/abctools/soundfonts/arachno_2/" },
  	];
 
   	var form = [

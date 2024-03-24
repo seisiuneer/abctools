@@ -14627,10 +14627,11 @@ var originalSoundFontUrl = "https://paulrosen.github.io/midi-js-soundfonts/abcjs
 var defaultSoundFontUrl = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
 var alternateSoundFontUrl = "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/";
 // MAE 21 Nov 2023
-var alternateSoundFontUrl2 = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
+//var alternateSoundFontUrl2 = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
+var alternateSoundFontUrl2 = "https://michaeleskin.com/abctools/soundfonts/fatboy_1/";
 var alternateSoundFontUrl3 = "https://michaeleskin.com/abctools/soundfonts/canvas/";
 var alternateSoundFontUrl4 = "https://michaeleskin.com/abctools/soundfonts/mscore/";
-var alternateSoundFontUrl5 = "https://michaeleskin.com/abctools/soundfonts/arachno/";
+var alternateSoundFontUrl5 = "https://michaeleskin.com/abctools/soundfonts/arachno_2/";
 
 function CreateSynth(theABC) {
 
@@ -14686,8 +14687,13 @@ function CreateSynth(theABC) {
         self.soundFontVolumeMultiplier = 3.0;
     }
     else
-    if (self.soundFontUrl === alternateSoundFontUrl || self.soundFontUrl === alternateSoundFontUrl2 || self.soundFontUrl === alternateSoundFontUrl3 || self.soundFontUrl === alternateSoundFontUrl4 || self.soundFontUrl === alternateSoundFontUrl5){
+    if (self.soundFontUrl === alternateSoundFontUrl || self.soundFontUrl === alternateSoundFontUrl3 || self.soundFontUrl === alternateSoundFontUrl4 || self.soundFontUrl === alternateSoundFontUrl5){
         self.soundFontVolumeMultiplier = 3.0;
+    }
+    else 
+    // MAE 24 Mar 2024 - Regenrated FatBoy soundfont
+    if (self.soundFontUrl == alternateSoundFontUrl2){
+        self.soundFontVolumeMultiplier = 3.25;
     }
     else 
     if (self.soundFontUrl === originalSoundFontUrl){
@@ -14697,6 +14703,9 @@ function CreateSynth(theABC) {
         self.soundFontVolumeMultiplier = 1.0;
     }
     
+    // MAE 24 Mar 2024
+    //console.log("soundFontVolumeMultiplier = "+self.soundFontVolumeMultiplier);
+
     // Can't use .ogg files on Safari, falls back to .mp3 with offsets
     var isSafari = false
     if (/Safari/i.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
@@ -16160,7 +16169,8 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
         case "percussion":  // 128
           // The percussion on the alternate sound fonts is too loud, use the default in all cases
-          url = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
+          //url = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
+          url = "https://michaeleskin.com/abctools/soundfonts/percussion_1/";
           break;
 
         default:
@@ -16240,7 +16250,8 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
         case "percussion":  // 128
           // The percussion on the alternate sound fonts is too loud, use the default in all cases
-          url = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
+          //url = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
+          url = "https://michaeleskin.com/abctools/soundfonts/percussion_1/";
           break;
 
         default:
