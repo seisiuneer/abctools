@@ -28882,6 +28882,10 @@ function GetInitialConfigurationSettings(){
 	// Sound font
 	val = localStorage.theSoundFont;
 	if (val){
+		// 24 March 2024 - Moved the Fatboy soundfont to my own site, adjust the URL for anyone previously using FatBoy as the default
+		if (val == "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/"){
+			val = "https://michaeleskin.com/abctools/soundfonts/fatboy_1/";
+		}
 		gDefaultSoundFont = val;
 		gTheActiveSoundFont = val;
 	}
