@@ -14631,10 +14631,10 @@ var defaultSoundFontUrl = "https://paulrosen.github.io/midi-js-soundfonts/FluidR
 var alternateSoundFontUrl = "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/";
 // MAE 21 Nov 2023
 //var alternateSoundFontUrl2 = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
-var alternateSoundFontUrl2 = "https://michaeleskin.com/abctools/soundfonts/fatboy_1/";
+var alternateSoundFontUrl2 = "https://michaeleskin.com/abctools/soundfonts/fatboy_2/";
 var alternateSoundFontUrl3 = "https://michaeleskin.com/abctools/soundfonts/canvas/";
 var alternateSoundFontUrl4 = "https://michaeleskin.com/abctools/soundfonts/mscore/";
-var alternateSoundFontUrl5 = "https://michaeleskin.com/abctools/soundfonts/arachno_2/";
+var alternateSoundFontUrl5 = "https://michaeleskin.com/abctools/soundfonts/arachno_3/";
 
 function CreateSynth(theABC) {
 
