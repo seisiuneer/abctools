@@ -33913,6 +33913,9 @@ function DoStartup() {
 	gFullScreenScaling = 50;
 	gIsDirty = false;
 
+	// Check if online (always returns true for normal case)
+	doOnlineCheck();
+
 	// Startup in blank screen
 	
 	HideMaximizeButton();

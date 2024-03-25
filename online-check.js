@@ -1,4 +1,6 @@
 // Check if online
-gSamplesOnline = navigator.onLine;
+function doOnlineCheck(){
+	gSamplesOnline = navigator.onLine;
+	//console.log("online-check.js - gSamplesOnLine = "+gSamplesOnline);
+}
 
-//console.log("gSamplesOnLine = "+gSamplesOnline);
