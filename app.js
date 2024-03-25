@@ -33913,9 +33913,6 @@ function DoStartup() {
 	gFullScreenScaling = 50;
 	gIsDirty = false;
 
-	// Get the online status for audio samples
-	gSamplesOnline = navigator.onLine;
-
 	// Startup in blank screen
 	
 	HideMaximizeButton();
