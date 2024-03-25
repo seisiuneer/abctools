@@ -1,3 +1,6 @@
+// MAE 25 Mar 2024
+var gSamplesOnline = true;
+
 // MAE 12 Sep 2023 - I need this to be global to be able to clear the cache from the ABC tool on soundfont change
 var gSoundsCacheABCJS = {};
 
@@ -14678,6 +14681,11 @@ function CreateSynth(theABC) {
 
     if (self.soundFontUrl[self.soundFontUrl.length - 1] !== '/') self.soundFontUrl += '/';
 
+    // Force offline use of Fatboy piano sound
+    if (!gSamplesOnline){
+      self.soundFontUrl == alternateSoundFontUrl2
+    }
+
     // Determine the volume multiplier
     if (params.soundFontVolumeMultiplier || params.soundFontVolumeMultiplier === 0){
         self.soundFontVolumeMultiplier = params.soundFontVolumeMultiplier;
@@ -14702,7 +14710,7 @@ function CreateSynth(theABC) {
     else{
         self.soundFontVolumeMultiplier = 1.0;
     }
-    
+
     // MAE 24 Mar 2024
     //console.log("soundFontVolumeMultiplier = "+self.soundFontVolumeMultiplier);
 
@@ -16273,47 +16281,101 @@ var getNote = function getNote(url, instrument, name, audioContext) {
       } 
 
     }
+
+    if (gSamplesOnline){
  
-    // Use the fetch API instead of XMLHttpRequest
-    fetch(noteUrl)
-    .then(response => {
+      // Use the fetch API instead of XMLHttpRequest
+      fetch(noteUrl)
+      .then(response => {
 
-        try{
+          try{
 
-          if (!response.ok){
-            throw new Error(`HTTP error, status = ${response.status}`);
-          }
+            if (!response.ok){
+              throw new Error(`HTTP error, status = ${response.status}`);
+            }
 
-          // If a custom instrument and redirected, means sample not found
-          if (isCustomInstrument && response.redirected){
-            throw new Error(`HTTP redirect on custom GM instrument`);
-          }
+            // If a custom instrument and redirected, means sample not found
+            if (isCustomInstrument && response.redirected){
+              throw new Error(`HTTP redirect on custom GM instrument`);
+            }
 
-          response.arrayBuffer().then(theBuffer => {
-            var noteDecoded = function noteDecoded(audioBuffer) {
-              resolve({
-                instrument: instrument,
-                name: name,
-                status: "loaded",
-                audioBuffer: audioBuffer
+            response.arrayBuffer().then(theBuffer => {
+              var noteDecoded = function noteDecoded(audioBuffer) {
+                resolve({
+                  instrument: instrument,
+                  name: name,
+                  status: "loaded",
+                  audioBuffer: audioBuffer
+                });
+              };
+              var maybePromise = audioContext.decodeAudioData(theBuffer, noteDecoded, function () {
+                 reject(Error("Can't decode sound at " + noteUrl));
               });
-            };
-            var maybePromise = audioContext.decodeAudioData(theBuffer, noteDecoded, function () {
-               reject(Error("Can't decode sound at " + noteUrl));
             });
-          });
 
-        }
-        catch(error){
-          //console.log("note fetch error: "+error);
+          }
+          catch(error){
+            //console.log("note fetch error: "+error);
+            reject(Error("Can't load sound at " + noteUrl + ' status=' + error));
+          }
+          
+      })
+      .catch(error => {
           reject(Error("Can't load sound at " + noteUrl + ' status=' + error));
+          throw error;
+      });
+    }
+    else{
+
+      //console.log("Offline: Get "+name+" from local instrument");
+
+      function dataURItoBuffer(dataURI) {
+
+        // Split the data URI into metadata and data parts
+        var parts = dataURI.split(',');
+
+        // Extract the base64 encoded data portion
+        var data = parts[1];
+
+        // Decode the base64 encoded data
+        var binaryString = window.atob(data);
+
+        // Create a byte array to hold the binary data
+        var byteArray = new Uint8Array(binaryString.length);
+
+        // Populate the byte array with binary data
+        for (var i = 0; i < binaryString.length; i++) {
+            byteArray[i] = binaryString.charCodeAt(i);
         }
-        
-    })
-    .catch(error => {
-        reject(Error("Can't load sound at " + noteUrl + ' status=' + error));
-        throw error;
-    });
+
+        // Return the byte array as an ArrayBuffer
+        return byteArray.buffer;
+      }
+
+      var theNoteData;
+
+      // Only instruments supported offline are piano and percussion
+      if (instrument == "percussion"){
+        theNoteData = MIDI.Soundfont.percussion[name];
+      }
+      else{
+        theNoteData = MIDI.Soundfont.acoustic_grand_piano[name];        
+      }
+
+      var theNoteDataBuffer = dataURItoBuffer(theNoteData);
+
+      var noteDecodedLocal = function noteDecodedLocal(audioBuffer) {
+        resolve({
+          instrument: instrument,
+          name: name,
+          status: "loaded",
+          audioBuffer: audioBuffer
+        });
+      };
+      var maybePromise = audioContext.decodeAudioData(theNoteDataBuffer, noteDecodedLocal, function () {
+         reject(Error("Can't decode sound at " + noteUrl));
+      });
+    }
 
   });
 
