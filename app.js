@@ -22823,7 +22823,7 @@ function ProcessSelectRegionForPlay(theABC){
 //
 // Play the ABC
 //
-function PlayABC(){
+function PlayABC(e){
 
 	if (gAllowCopy){
 
@@ -22861,27 +22861,46 @@ function PlayABC(){
 		}
 		else{
 
-			// Try to find the current tune
-			theSelectedABC = findSelectedTune();
+			// Select random tune if user clicks play with the alt keys pressed
+			if (e && e.altKey){
 
-			if (theSelectedABC == ""){
-				// This should never happen
-				return;
-			}
+				gPlayABCTuneCount = CountTunes();
 
-			// Get the current tune index and tune count
-			gPlayABCTuneIndex = findSelectedTuneIndex();
-			gPlayABCTuneCount = CountTunes();
-
-			// Fixup weird case of not being to find a selected tune when there are tunes present
-			// Sometimes happens after a paste
-			if (gPlayABCTuneIndex == -1){
-
-				//console.log("PlayABC - bad index case");
-				
-				gPlayABCTuneIndex = 0;
+				gPlayABCTuneIndex = Math.floor(Math.random() * gPlayABCTuneCount);
 
 				theSelectedABC = getTuneByIndex(gPlayABCTuneIndex);
+
+				if (theSelectedABC == ""){
+					// This should never happen
+					return;
+				}
+
+			}
+			else{
+
+				// Try to find the current tune
+				theSelectedABC = findSelectedTune();
+
+				if (theSelectedABC == ""){
+					// This should never happen
+					return;
+				}
+
+				// Get the current tune index and tune count
+				gPlayABCTuneIndex = findSelectedTuneIndex();
+				gPlayABCTuneCount = CountTunes();
+
+				// Fixup weird case of not being to find a selected tune when there are tunes present
+				// Sometimes happens after a paste
+				if (gPlayABCTuneIndex == -1){
+
+					//console.log("PlayABC - bad index case");
+					
+					gPlayABCTuneIndex = 0;
+
+					theSelectedABC = getTuneByIndex(gPlayABCTuneIndex);
+					
+				}
 				
 			}
 
@@ -34253,7 +34272,7 @@ function DoStartup() {
 	// Hook up the play button
 	document.getElementById("playbuttonicon").onclick = 
 		function() {
-			PlayABC();
+			PlayABC(null);
 		};
 
 	// Hook up the PDF button
