@@ -111,7 +111,7 @@
 						<input class="saveabcfiledisabled btn btn-top" id="saveabcfile" onclick="SaveABC();" type="button" value="Save" title="Saves the current ABC text to a file"/>
 						<input class="saveaspdfdisabled btn btn-top" id="saveaspdf" onclick="PDFExportDialog();" type="button" value="Export PDF" title="Exports a PDF tunebook"/>
 						<input class="copybuttondisabled btn btn-top" id="copybutton" onclick="CopyABC();" type="button" value="Copy All" title="Copies all of the ABC text to the clipboard"/>
-						<input class="playbuttondisabled btn btn-play" id="playbutton" onclick="PlayABC();" type="button" value="Play" title="Opens the ABC player for the currently selected tune.&nbsp;&nbsp;Alt-click to play a random tune in the current ABC tunebook."/>
+						<input class="playbuttondisabled btn btn-play" id="playbutton" onclick="PlayABC(event);" type="button" value="Play" title="Opens the ABC player for the currently selected tune.&nbsp;&nbsp;Alt-click to play a random tune in the current ABC tunebook."/>
 						<input class="rawmodebuttondisabled btn btn-rawmode-off" id="rawmodebutton" onclick="ToggleRawMode()" type="button" value="Highlighting Off" title="When On, highlight notation by selecting the ABC text or highlight ABC text by clicking on the notation."/>
 						<input class="configuresettings btn btn-configuresettings"  id="configuresettings" onclick="ConfigureToolSettings();" type="button" value="Settings" title="Click to configure all settings for the tool"/>
 						<input class="toggletopbar btn btn-top" id="toggletopbar" onclick="ToggleTopBar();" type="button" value="▲" title="Toggles the top bar area"/>
