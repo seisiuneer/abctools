@@ -4058,7 +4058,7 @@ function GetAllTuneHyperlinks(theLinks) {
 			if (gDefaultSoundFont.indexOf("Musyng")!=-1){
 				theSoundFont = "musyng";
 			}else
-			if (gDefaultSoundFont.indexOf("FatBoy")!=-1){
+			if (gDefaultSoundFont.indexOf("fatboy")!=-1){
 				theSoundFont = "fatboy";
 			}else
 			if (gDefaultSoundFont.indexOf("canvas")!=-1){
@@ -6450,7 +6450,7 @@ function ParseCommentCommands(theNotes){
 		if (gDefaultSoundFont.indexOf("Musyng")!=-1){
 			gPlaybackHyperlinkSoundFont = "musyng";
 		}else
-		if (gDefaultSoundFont.indexOf("FatBoy")!=-1){
+		if (gDefaultSoundFont.indexOf("fatboy")!=-1){
 			gPlaybackHyperlinkSoundFont = "fatboy";
 		}else
 		if (gDefaultSoundFont.indexOf("canvas")!=-1){
@@ -16597,7 +16597,7 @@ function InjectAllMIDIParams(){
 		if (gDefaultSoundFont.indexOf("Musyng")!=-1){
 			gLastInjectedSoundfont = "1";
 		}else
-		if (gDefaultSoundFont.indexOf("FatBoy")!=-1){
+		if (gDefaultSoundFont.indexOf("fatboy")!=-1){
 			gLastInjectedSoundfont = "2";
 		}else
 		if (gDefaultSoundFont.indexOf("canvas")!=-1){
