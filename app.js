@@ -22958,7 +22958,7 @@ function PlayerSetupCommon(theABC){
 				break;
 			case "fatboy":
 				//gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
-	    		gTheActiveSoundFont =  "https://michaeleskin.com/abctools/soundfonts/fatboy_2/";
+	    		gTheActiveSoundFont =  "https://michaeleskin.com/abctools/soundfonts/fatboy_3/";
 				break;
 			case "canvas":
 				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/canvas/";
@@ -25348,7 +25348,7 @@ function ScanTuneForInstrumentExplorer(theTune){
 			gInstrumentExplorerSoundfont = "1";
 			break;
 		//case "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/":
-		case "https://michaeleskin.com/abctools/soundfonts/fatboy_2/":
+		case "https://michaeleskin.com/abctools/soundfonts/fatboy_3/":
 			gInstrumentExplorerSoundfont = "2";
 			break;
 		case "https://michaeleskin.com/abctools/soundfonts/canvas/":
@@ -28899,19 +28899,8 @@ function GetInitialConfigurationSettings(){
 	}
 
 	// Sound font
-	val = localStorage.theSoundFont;
+	val = localStorage.theSoundFont2;
 	if (val){
-		// 24 March 2024 - Moved the Fatboy soundfont to my own site, adjust the URL for anyone previously using FatBoy as the default
-		if (val == "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/"){
-			val = "https://michaeleskin.com/abctools/soundfonts/fatboy_2/";
-		}
-		// 25 March 2024 - Additional adjustments for shorter piano samples on fatboy and arachno
-		if (val == "https://michaeleskin.com/abctools/soundfonts/fatboy_1/"){
-			val = "https://michaeleskin.com/abctools/soundfonts/fatboy_2/";
-		}
-		if (val == "https://michaeleskin.com/abctools/soundfonts/arachno_2/"){
-			val = "https://michaeleskin.com/abctools/soundfonts/arachno_3/";
-		}
 		gDefaultSoundFont = val;
 		gTheActiveSoundFont = val;
 	}
@@ -29429,7 +29418,7 @@ function SaveConfigurationSettings(){
 		localStorage.MP3Bitrate = gMP3Bitrate;
 
 		// Save the soundfont preference
-		localStorage.theSoundFont = gDefaultSoundFont;
+		localStorage.theSoundFont2 = gDefaultSoundFont;
 
 		// Save the player autoscroll preference
 		localStorage.AutoscrollPlayer = gAutoscrollPlayer;
@@ -31465,7 +31454,7 @@ function ConfigureToolSettings() {
 	    { name: "  Fluid", id: "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/" },
 	    { name: "  Musyng Kite", id: "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/" },
 	    //{ name: "  FatBoy", id: "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/" },
-	    { name: "  FatBoy", id: "https://michaeleskin.com/abctools/soundfonts/fatboy_2/" },
+	    { name: "  FatBoy", id: "https://michaeleskin.com/abctools/soundfonts/fatboy_3/" },
  	    { name: "  Canvas", id: "https://michaeleskin.com/abctools/soundfonts/canvas/" },
  	    { name: "  MScore", id: "https://michaeleskin.com/abctools/soundfonts/mscore/" },
  	    { name: "  Arachno", id: "https://michaeleskin.com/abctools/soundfonts/arachno_3/" },
