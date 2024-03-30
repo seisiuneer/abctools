@@ -22974,7 +22974,7 @@ function PlayerSetupCommon(theABC){
 				break;
 			case "fatboy":
 				//gTheActiveSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
-	    		gTheActiveSoundFont =  "https://michaeleskin.com/abctools/soundfonts/fatboy_3/";
+	    		gTheActiveSoundFont =  "https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
 				break;
 			case "canvas":
 				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/canvas/";
@@ -25367,7 +25367,7 @@ function ScanTuneForInstrumentExplorer(theTune){
 			gInstrumentExplorerSoundfont = "1";
 			break;
 		//case "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/":
-		case "https://michaeleskin.com/abctools/soundfonts/fatboy_3/":
+		case "https://michaeleskin.com/abctools/soundfonts/fatboy_4/":
 			gInstrumentExplorerSoundfont = "2";
 			break;
 		case "https://michaeleskin.com/abctools/soundfonts/canvas/":
@@ -28927,7 +28927,7 @@ function GetInitialConfigurationSettings(){
 	}
 
 	// Sound font
-	val = localStorage.theSoundFont2;
+	val = localStorage.theSoundFont3;
 	if (val){
 		gDefaultSoundFont = val;
 		gTheActiveSoundFont = val;
@@ -29446,7 +29446,7 @@ function SaveConfigurationSettings(){
 		localStorage.MP3Bitrate = gMP3Bitrate;
 
 		// Save the soundfont preference
-		localStorage.theSoundFont2 = gDefaultSoundFont;
+		localStorage.theSoundFont3 = gDefaultSoundFont;
 
 		// Save the player autoscroll preference
 		localStorage.AutoscrollPlayer = gAutoscrollPlayer;
@@ -31482,7 +31482,7 @@ function ConfigureToolSettings() {
 	    { name: "  Fluid", id: "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/" },
 	    { name: "  Musyng Kite", id: "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/" },
 	    //{ name: "  FatBoy", id: "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/" },
-	    { name: "  FatBoy", id: "https://michaeleskin.com/abctools/soundfonts/fatboy_3/" },
+	    { name: "  FatBoy", id: "https://michaeleskin.com/abctools/soundfonts/fatboy_4/" },
  	    { name: "  Canvas", id: "https://michaeleskin.com/abctools/soundfonts/canvas/" },
  	    { name: "  MScore", id: "https://michaeleskin.com/abctools/soundfonts/mscore/" },
  	    { name: "  Arachno", id: "https://michaeleskin.com/abctools/soundfonts/arachno_3/" },
