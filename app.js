@@ -4052,7 +4052,7 @@ function GetAllTuneHyperlinks(theLinks) {
 			var theChordPatch = gTheChordProgram;
 			var theSoundFont = "fluid";
 
-			if (gDefaultSoundFont.indexOf("Fluid")!=-1){
+			if (gDefaultSoundFont.indexOf("FluidR3_GM")!=-1){
 				theSoundFont = "fluid";
 			}else
 			if (gDefaultSoundFont.indexOf("Musyng")!=-1){
@@ -4069,6 +4069,9 @@ function GetAllTuneHyperlinks(theLinks) {
 			}else
 			if (gDefaultSoundFont.indexOf("arachno")!=-1){
 				theSoundFont = "arachno";
+			}else
+			if (gDefaultSoundFont.indexOf("fluidhq")!=-1){
+				theSoundFont = "fluidhq";
 			}
 
 			// If adding complete tunebook patches, they take precedence over the defaults
@@ -6444,7 +6447,7 @@ function ParseCommentCommands(theNotes){
 		gPlaybackHyperlinkChordProgram = gTheChordProgram;
 		gPlaybackHyperlinkSoundFont = "fluid";
 
-		if (gDefaultSoundFont.indexOf("Fluid")!=-1){
+		if (gDefaultSoundFont.indexOf("FluidR3_GM")!=-1){
 			gPlaybackHyperlinkSoundFont = "fluid";
 		}else
 		if (gDefaultSoundFont.indexOf("Musyng")!=-1){
@@ -6461,6 +6464,9 @@ function ParseCommentCommands(theNotes){
 		}else
 		if (gDefaultSoundFont.indexOf("arachno")!=-1){
 			gPlaybackHyperlinkSoundFont = "arachno";
+		}else
+		if (gDefaultSoundFont.indexOf("fluidhq")!=-1){
+			theSoundFont = "fluidhq";
 		}
 
 		if (thePatches && (thePatches.length > 0)){
@@ -11049,6 +11055,7 @@ function PDFTunebookBuilder(){
  	    { name: "  Canvas", id: "canvas" },
  	    { name: "  MScore", id: "mscore" },
  	    { name: "  Arachno", id: "arachno" },
+ 	    { name: "  FluidHQ", id: "fluidhq"}
  	];
 
   	for (var i=0;i<=MIDI_PATCH_COUNT;++i){
@@ -13533,7 +13540,8 @@ function AppendTuneTempate(){
 	theValue += '% Key:\n';
 	theValue += 'K: C\n';
 	theValue += '%\n';
-	theValue += '% Soundfont (fluid, musyng, fatboy, canvas, mscore, or arachno):\n';
+	theValue += '% Soundfont\n';
+	theValue += '% fluid, fluidhq, musyng, fatboy, canvas, mscore, arachno:\n';
 	theValue += '%abcjs_soundfont fluid\n';
 	theValue += '%\n';
 	theValue += '% Use an Acoustic Grand Piano sound for the melody:\n';
@@ -13879,7 +13887,7 @@ function AppendJSBach(){
 	theValue += 'K:C\n';
 	theValue += '%\n';
 	theValue += '% Try changing the abcjs_soundfont value to\n';
-	theValue += '% fluid, musyng, fatboy, canvas, mscore, or arachno for different sounds:\n';
+	theValue += '% fluid, fluidhq, musyng, fatboy, canvas, mscore, or arachno:\n';
 	theValue += '%\n';	
 	theValue += '%abcjs_soundfont fluid\n';	
 	theValue += '%\n';	
@@ -13957,7 +13965,7 @@ function AppendJSBach2(){
 	theValue += 'K:C\n';
 	theValue += '%\n';
 	theValue += '% Try changing the abcjs_soundfont value to\n';
-	theValue += '% fluid, musyng, fatboy, canvas, mscore, or arachno for different sounds:\n';
+	theValue += '% fluid, fluidhq, musyng, fatboy, canvas, mscore, or arachno:\n';
 	theValue += '%\n';	
 	theValue += '%abcjs_soundfont fluid\n';	
 	theValue += '%\n';		
@@ -16410,7 +16418,8 @@ const soundfontNames = [
 	"FatBoy",
 	"Canvas",
 	"MScore",
-	"Arachno"
+	"Arachno",
+	"FluidHQ"
 ];
 
 const generalMIDISoundNames = [
@@ -16591,7 +16600,7 @@ function InjectAllMIDIParams(){
 
 	// Set the injector initially based on the default chosen in the settings
 	if (gLastInjectedSoundfont == null){
-		if (gDefaultSoundFont.indexOf("Fluid")!=-1){
+		if (gDefaultSoundFont.indexOf("FluidR3_GM")!=-1){
 			gLastInjectedSoundfont = "0";
 		}else
 		if (gDefaultSoundFont.indexOf("Musyng")!=-1){
@@ -16608,6 +16617,9 @@ function InjectAllMIDIParams(){
 		}else
 		if (gDefaultSoundFont.indexOf("arachno")!=-1){
 			gLastInjectedSoundfont = "5";
+		}else
+		if (gDefaultSoundFont.indexOf("fluidhq")!=-1){
+			gLastInjectedSoundfont = "6";
 		}	
 	}
 
@@ -16618,6 +16630,7 @@ function InjectAllMIDIParams(){
 	    { name: "  Canvas", id: "3" },
 	    { name: "  MScore", id: "4" },
 	    { name: "  Arachno", id: "5" },
+	    { name: "  FluidHQ", id: "6" },
   	];
 
 	// Setup initial values
@@ -16694,6 +16707,9 @@ function InjectAllMIDIParams(){
 					break;
 				case "5":
 					soundFontToInject = "arachno";
+					break;
+				case "6":
+					soundFontToInject = "fluidhq";
 					break;
 			}
 
@@ -22969,6 +22985,9 @@ function PlayerSetupCommon(theABC){
 			case "arachno":
 				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/arachno_3/";
 				break;
+			case "fluidhq":
+				gTheActiveSoundFont = "https://michaeleskin.com/abctools/soundfonts/fluidhq_1/";
+				break;
 		}
 
 		// New soundfont requested, clear the cache
@@ -25360,6 +25379,9 @@ function ScanTuneForInstrumentExplorer(theTune){
 		case "https://michaeleskin.com/abctools/soundfonts/arachno_3/":
 			gInstrumentExplorerSoundfont = "5";
 			break;
+		case "https://michaeleskin.com/abctools/soundfonts/fluidhq_1/":
+			gInstrumentExplorerSoundfont = "6";
+			break;
 		default:
 			gInstrumentExplorerSoundfont = "0";
 			break;		
@@ -25429,6 +25451,9 @@ function ScanTuneForInstrumentExplorer(theTune){
 					break;
 				case "arachno":
 					gInstrumentExplorerSoundfont = "5";
+					break;
+				case "fluidhq":
+					gInstrumentExplorerSoundfont = "6";
 					break;
 			}
 		}
@@ -25739,6 +25764,9 @@ function InstrumentExplorerDialogInjectThisTune(theTune){
 			break;
 		case "5":
 			theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont arachno");
+			break;
+		case "6":
+			theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont fluidhq");
 			break;
 		default:
 			theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont fluid");
@@ -31458,7 +31486,8 @@ function ConfigureToolSettings() {
  	    { name: "  Canvas", id: "https://michaeleskin.com/abctools/soundfonts/canvas/" },
  	    { name: "  MScore", id: "https://michaeleskin.com/abctools/soundfonts/mscore/" },
  	    { name: "  Arachno", id: "https://michaeleskin.com/abctools/soundfonts/arachno_3/" },
- 	];
+  	    { name: "  FluidHQ", id: "https://michaeleskin.com/abctools/soundfonts/fluidhq_1/" },
+	];
 
   	var form = [
 		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;">ABC Transcription Tools Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#settings_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},

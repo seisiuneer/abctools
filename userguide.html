@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-       
+ 
         <style>
 
 		p {
@@ -809,6 +809,7 @@
             <p class="code">%abcjs_soundfont canvas</p>
             <p class="code">%abcjs_soundfont mscore</p>
             <p class="code">%abcjs_soundfont arachno</p>
+            <p class="code">%abcjs_soundfont fluidhq</p>
             <p>Each soundfont is a full General MIDI implementation, but has somewhat different sounds for each instrument.</p>
             <p>If no %abcjs_soundfont soundfont is specified in a tune, the default soundfont chosen in the tool's <strong>Settings</strong> dialog is used.</p>
             <p>It is not possible to change soundfonts within a tune.</p>
@@ -2058,13 +2059,14 @@
             <hr>
             <p>The following controls select default MIDI soundfont, programs, and volumes to use for the Melody, Bass, and Chords:</p>
             <hr>
-            <p><strong>Default abcjs soundfont:</strong> - Choose between the six General MIDI soundfonts available in abcjs to use by default when playing tunes:</p>
-            <p>Fluid<br/>
+            <p><strong>Default abcjs soundfont:</strong> - Choose between the General MIDI soundfonts available to use by default when playing tunes:</p>
+            <p>Fluid (fastest to load, but samples are limited to 3 seconds in length)<br/>
                 Musyng Kite<br/>
                 FatBoy<br/>
                 Canvas (Based on a Roland JV-1010)<br/>
             MScore (Based on the MuseScore General MIT licensed soundfont)<br/>
-            Arachno</p>
+            Arachno<br/>
+            FluidHQ (higher quality, longer samples than the default Fluid soundfont)</p>
             <p>On first run, the default is set to Fluid.</p>
             <p>Each soundfont is a full General MIDI implementation, but has somewhat different sounds for each instrument.</p>
             <p>If no %abcjs_soundfont soundfont is specified in a tune, the default soundfont chosen in the tool's <strong>Settings</strong> dialog is used.</p>

@@ -14635,6 +14635,7 @@ var alternateSoundFontUrl2 = "https://michaeleskin.com/abctools/soundfonts/fatbo
 var alternateSoundFontUrl3 = "https://michaeleskin.com/abctools/soundfonts/canvas/";
 var alternateSoundFontUrl4 = "https://michaeleskin.com/abctools/soundfonts/mscore/";
 var alternateSoundFontUrl5 = "https://michaeleskin.com/abctools/soundfonts/arachno_3/";
+var alternateSoundFontUrl6 = "https://michaeleskin.com/abctools/soundfonts/fluidhq_1/";
 
 function CreateSynth(theABC) {
 
@@ -14692,11 +14693,15 @@ function CreateSynth(theABC) {
     } 
     else 
     if (self.soundFontUrl === defaultSoundFontUrl){
-        self.soundFontVolumeMultiplier = 3.0;
+        self.soundFontVolumeMultiplier = 2.0;
     }
     else
     if (self.soundFontUrl === alternateSoundFontUrl || self.soundFontUrl === alternateSoundFontUrl3 || self.soundFontUrl === alternateSoundFontUrl4 || self.soundFontUrl === alternateSoundFontUrl5){
         self.soundFontVolumeMultiplier = 3.0;
+    }
+    else
+    if (self.soundFontUrl === alternateSoundFontUrl6){
+        self.soundFontVolumeMultiplier = 2.0;
     }
     else 
     // MAE 24 Mar 2024 - Regenrated FatBoy soundfont
