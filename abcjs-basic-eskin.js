@@ -14633,7 +14633,7 @@ var alternateSoundFontUrl = "https://paulrosen.github.io/midi-js-soundfonts/Musy
 //var alternateSoundFontUrl2 = "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/";
 var alternateSoundFontUrl2 = "https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
 var alternateSoundFontUrl3 = "https://michaeleskin.com/abctools/soundfonts/canvas/";
-var alternateSoundFontUrl4 = "https://michaeleskin.com/abctools/soundfonts/mscore/";
+var alternateSoundFontUrl4 = "https://michaeleskin.com/abctools/soundfonts/mscore_2/";
 var alternateSoundFontUrl5 = "https://michaeleskin.com/abctools/soundfonts/arachno_3/";
 var alternateSoundFontUrl6 = "https://michaeleskin.com/abctools/soundfonts/fluidhq_1/";
 
