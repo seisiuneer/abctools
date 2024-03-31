@@ -24649,7 +24649,7 @@ function ScanTuneForReverb(theTune){
 
 		thePatch = thePatch.trim();
 
-		var thePatches = thePatch.match(/\b([a-zA-Z0-9_.]+)\b/g);
+		var thePatches = thePatch.match(/[a-zA-Z0-9.]+/g);
 
 		if (thePatches && (thePatches.length > 0)){
 			
@@ -24684,6 +24684,7 @@ function ScanTuneForReverb(theTune){
 			}
 
 			if (gotStyle && gotDry && gotWet){
+
 				//console.log("Reverb - Got complete definition: "+theStyle+" "+theDry+" "+theWet);
 				gEnableReverb = true;
 				gReverbStyle = theStyle;
