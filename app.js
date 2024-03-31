@@ -18592,7 +18592,8 @@ function complianceABCTransformer(theABC,doInverse){
 	    "%irish_rolls_off",
 	    "%voice_tuning_cents",
 	    "%tab_first_voice_only",
-	    "%tab_first_voice_exclude"
+	    "%tab_first_voice_exclude",
+	    "%reverb"
 	];
 
 	if (doInverse){
@@ -23124,6 +23125,9 @@ function PlayerSetupCommon(theABC){
 		gTabSecondStaffOnly = ScanTuneForTabSecondStaffOnly(theABC, instrument);
 	}
 
+	// Scan tune for reverb commands
+	ScanTuneForReverb(theABC);
+
 	return true;
 
 }
@@ -24610,6 +24614,88 @@ function ScanTuneForTabSecondStaffOnly(theTune, instrument){
 
 	return false;
 
+}
+
+
+// Reverb requested
+function ScanTuneForReverb(theTune){
+
+	//console.log("ScanTuneForReverb");
+
+	// Valid reverb styles
+	var reverbStyles = ["room","room1","room2","room3","chamber","chamber1","chamber2","chamber3","hall","hall1","hall2","hall3","church","church1"];
+	
+	gEnableReverb = false;
+	gReverbNode = null;
+
+	// Search for reverb request
+	var searchRegExp = /^%reverb.*$/gm
+
+	// Detect reverb annotation
+	var setReverb = theTune.match(searchRegExp);
+
+	if ((setReverb) && (setReverb.length > 0)){
+
+		// Enable reverb
+		var gotStyle = false;
+		var gotDry = false;
+		var gotWet = false;
+
+		var theStyle;
+		var theDry;
+		var theWet;
+
+		var thePatch = setReverb[0].replace("%reverb","");
+
+		thePatch = thePatch.trim();
+
+		var thePatches = thePatch.match(/\b([a-zA-Z0-9_.]+)\b/g);
+
+		if (thePatches && (thePatches.length > 0)){
+			
+			if (thePatches.length >= 1){
+				theStyle = thePatches[0];
+				theStyle = theStyle.trim();
+
+				for (var i=0;i<reverbStyles.length;++i){
+					if (theStyle == reverbStyles[i]){
+						gotStyle = true;
+						break;
+					}
+				}
+			}
+
+			if (thePatches.length >= 2){
+				theDry = thePatches[1];
+				theDry = theDry.trim();
+				theDry = parseFloat(theDry);
+				if ((!isNaN(theDry)) && (theDry >= 0)){
+					gotDry = true;
+				}
+			}	
+
+			if (thePatches.length >= 3){
+				theWet = thePatches[2];
+				theWet = theWet.trim();
+				theWet = parseFloat(theWet);
+				if ((!isNaN(theWet)) && (theWet >= 0)){
+					gotWet = true;
+				}
+			}
+
+			if (gotStyle && gotDry && gotWet){
+				//console.log("Reverb - Got complete definition: "+theStyle+" "+theDry+" "+theWet);
+				gEnableReverb = true;
+				gReverbStyle = theStyle;
+				gReverbDry = theDry;
+				gReverbWet = theWet;
+
+				// Force a reload of the kernel
+				gSoundsCacheABCJS = {};
+
+			}
+		}
+	}
 }
 
 //

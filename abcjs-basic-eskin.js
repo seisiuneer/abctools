@@ -174,6 +174,13 @@ var gSequenceCallback = null;
 var gTabFirstStaffOnly = false;
 var gTabSecondStaffOnly = false;
 
+// For reverb
+var gEnableReverb = false;
+var gReverbStyle = null;
+var gReverbDry = 0.7;
+var gReverbWet = 0.3;
+var gReverbNode = null;
+
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
@@ -14614,6 +14621,7 @@ module.exports = CreateSynthControl;
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var getNote = __webpack_require__(/*! ./load-note */ "./src/synth/load-note.js");
+var getReverbKernel = __webpack_require__(/*! ./load-reverb-kernel */ "./src/synth/load-reverb-kernel.js");
 var createNoteMap = __webpack_require__(/*! ./create-note-map */ "./src/synth/create-note-map.js");
 var registerAudioContext = __webpack_require__(/*! ./register-audio-context */ "./src/synth/register-audio-context.js");
 var activeAudioContext = __webpack_require__(/*! ./active-audio-context */ "./src/synth/active-audio-context.js");
@@ -14971,6 +14979,7 @@ function CreateSynth(theABC) {
       batches.push(notes.slice(i, i + CHUNK));
     }
     return new Promise(function (resolve, reject) {
+
       var results = {
         cached: cached,
         error: errorNotes,
@@ -15004,7 +15013,13 @@ function CreateSynth(theABC) {
     batch.forEach(function (item) {
       if (self.debugCallback) self.debugCallback("getNote " + item.instrument + ':' + item.note);
       promises.push(getNote(soundFontUrl, item.instrument, item.note, activeAudioContext()));
+
     });
+
+    if (gSamplesOnline && gEnableReverb){
+      promises.push(getReverbKernel(activeAudioContext()));
+    }
+
     return Promise.all(promises).then(function (response) {
       if (self.debugCallback) self.debugCallback("mp3 load time = " + Math.floor((activeAudioContext().currentTime - startTime) * 1000) + "ms");
       var loaded = [];
@@ -15384,14 +15399,46 @@ function CreateSynth(theABC) {
     }
     return true;
   };
+
   self._kickOffSound = function (seconds) {
+
     self.isRunning = true;
     self.directSource = [];
-    self.audioBuffers.forEach(function (audioBuffer, trackNum) {
-      self.directSource[trackNum] = activeAudioContext().createBufferSource(); // creates a sound source
-      self.directSource[trackNum].buffer = audioBuffer; // tell the source which sound to play
-      self.directSource[trackNum].connect(activeAudioContext().destination); // connect the source to the context's destination (the speakers)
-    });
+
+    // If offline, reverb disabled, or reverb enabled but no convolution reverb node available
+    if ((!gSamplesOnline) || (!gEnableReverb) || (gEnableReverb && (gReverbNode==null))){
+      self.audioBuffers.forEach(function (audioBuffer, trackNum) {
+        self.directSource[trackNum] = activeAudioContext().createBufferSource(); // creates a sound source
+        self.directSource[trackNum].buffer = audioBuffer; // tell the source which sound to play
+        self.directSource[trackNum].connect(activeAudioContext().destination); // connect the source to the context's destination (the speakers)
+      });
+    }
+    else{
+
+      // Using reverb
+      var wet = activeAudioContext().createGain();
+      var dry = activeAudioContext().createGain();
+      var mixer = activeAudioContext().createGain();
+   
+      self.audioBuffers.forEach(function (audioBuffer, trackNum) {
+        self.directSource[trackNum] = activeAudioContext().createBufferSource(); // creates a sound source
+        self.directSource[trackNum].buffer = audioBuffer; // tell the source which sound to play
+        self.directSource[trackNum].connect(gReverbNode); // connect the source to the reverb node
+        self.directSource[trackNum].connect(dry); // connect the source to the dry mixer
+      });
+
+      gReverbNode.connect(wet);
+
+      dry.gain.value = gReverbDry;
+      wet.gain.value = gReverbWet;
+
+      dry.connect(mixer);
+      wet.connect(mixer);
+
+      mixer.gain.value = 1.0;
+      mixer.connect(activeAudioContext().destination);
+
+    }
 
     self.directSource.forEach(function (source) {
       source.start(0, seconds);
@@ -15401,6 +15448,7 @@ function CreateSynth(theABC) {
         self.onEnded(self.callbackContext);
       };
     }
+
   };
 
   // this is a first attempt at adding a little bit of swing to the output
@@ -16423,6 +16471,113 @@ module.exports = getNote;
 
 /***/ }),
 
+/***/ "./src/synth/load-reverb-kernel.js":
+/*!********************************!*\
+  !*** ./src/synth/load-reverb-kernel ***!
+  \********************************/
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+// Get the reverb convolution kernel
+var getReverbKernel = function getReverbKernel(audioContext){
+
+  //debugger;
+
+  //console.log("getReverbKernel top - style="+gReverbStyle);
+
+  gReverbNode = null;
+
+  var reverbPromise = new Promise(function (resolve, reject){
+
+      var theReverbURL;
+
+      switch (gReverbStyle){
+        case "room1":
+          theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/room1.wav";
+          break;
+        case "room2":
+          theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/room2.wav";
+          break;
+        case "room":
+        case "room3":
+          theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/room3.wav";
+          break;
+        case "chamber1":
+          theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/chamber1.wav";
+          break;
+        case "chamber":
+        case "chamber2":
+          theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/chamber2.wav";
+          break;
+        case "chamber3":
+          theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/chamber3.wav";
+          break;
+        case "hall1":
+          theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/hall1.wav";
+          break;
+        case "hall":
+        case "hall2":
+          theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/hall2.wav";
+          break;
+        case "hall3":
+          theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/hall3.wav";
+          break;
+        case "church":
+        case "church1":
+          theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/church1.wav";
+          break;
+        default:
+          theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/hall1.wav";
+          break;       
+      }
+      fetch(theReverbURL)
+      .then(response => {
+
+          try{
+
+            if (!response.ok){
+              throw new Error(`HTTP error, status = ${response.status}`);
+            }
+
+            response.arrayBuffer().then(theBuffer => {
+
+              var kernelDecoded = function kernelDecoded(audioBuffer) {
+                
+                gReverbNode = audioContext.createConvolver();
+
+                gReverbNode.buffer = audioBuffer;
+
+                //console.log("getReverbKernel resolve");
+
+                resolve();
+
+              };
+              var maybePromise = audioContext.decodeAudioData(theBuffer, kernelDecoded, function () {
+                 reject(Error("Can't decode reverb kernel"));
+              });
+            });
+
+          }
+          catch(error){
+            reject(Error("Can't load reverb kernel - status=" + error));
+          }
+          
+      })
+      .catch(error => {
+          reject(Error("Can't load reverb kernel - status=" + error));
+          throw error;
+      });
+
+  });
+  
+  //console.log("getReverbKernel end");
+  
+  return reverbPromise;
+
+};
+
+module.exports = getReverbKernel;
+
+/***/ }),
 /***/ "./src/synth/note-to-midi.js":
 /*!***********************************!*\
   !*** ./src/synth/note-to-midi.js ***!
@@ -16766,6 +16921,7 @@ function placeNote(outputAudioBuffer, sampleRate, sound, startArray, volumeMulti
     if (debugCallback) debugCallback('placeNote skipped: ' + sound.instrument + ':' + noteName);
     return Promise.resolve();
   }
+
   return noteBufferPromise.then(function (response) {
     // create audio buffer
     var source = offlineCtx.createBufferSource();

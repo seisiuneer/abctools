@@ -37,7 +37,16 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
- 
+       
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-5C74XEDW40"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-5C74XEDW40');
+        </script>
+
         <style>
 
 		p {
@@ -260,6 +269,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#uilleann_map">Using the Uilleann Pipes (MIDI program #129) Instrument</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#marching_drums_map">Using the Marching Drums (MIDI program #142) Instrument</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#voice_tuning">Setting the Tuning Offset for Individual Voices</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#reverb">Adding Reverb When Playing Tunes</a></p>
                 </div>
 
                 <button class="accordion" title="Click to expand/collapse this section">Advanced Playback Features</button>
@@ -1225,7 +1235,33 @@
                 % Assumes the drum voices are using ^A for both bass and snare<br/>
             %voice_tuning_cents 48 48 48 48</p>
             <p>Here is an example, the tune "Cullen Bay" with the pitch at 480 Hz:</p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/PIZI12jPoc4" title="Cullen Bay at 480 Hz" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>            
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/PIZI12jPoc4" title="Cullen Bay at 480 Hz" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p> 
+            <hr class="hidden-print" id="reverb">
+            <h1 class="page_break_always h1wide">Adding Reverb When Playing Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>You may add reverb when playing a tune by adding any of the following annotations anywhere in the tune's ABC:</p>
+            <p class="code">%reverb reverb_style dry_mix_fraction wet_mix_fraction</p>
+            <p>Where <strong>reverb_style</strong> is one of:</p>
+            <p>room1<br/>
+            room2<br/>
+            room3<br/>
+            chamber1<br/>
+            chamber2<br/>
+            chamber3<br/>
+            hall1<br/>
+            hall2<br/>
+            hall3<br/>
+            church1<br/>
+            room (same as room3)<br/>
+            chamber (same as chamber2<br/>
+            hall (same as hall2)<br/>
+            church (same as church1)</p>
+            <p><strong>dry_mix_fraction</strong> and <strong>wet_mix_fraction</strong> are fractional values that indicate how much of the original "dry" sound and reverb "wet" sound should be in the final playback mix.</p>
+            <p>Generally <strong>dry_mix_fraction</strong> and <strong>wet_mix_fraction</strong> should add up to 1.0, but any values are allowed.</p>
+            <p>For example, here's how to select the hall2 style reverb with .7 of the original sound and .3 of the reverb in the final mix:</p>
+            <p class="code">%reverb hall2 0.7 0.3</p>
+            <p>For example, here's how to select the chamber1 style reverb with .8 of the original sound and .2 of the reverb in the final mix:</p>
+            <p class="code">%reverb chamber1 0.8 0.2</p>  
+            <p><strong>Note:</strong> Reverb is only applied during live play, it does not get added to exported .wav or .mp3 audio files.</p>                    
             <hr class="hidden-print" id="export_audio_image">
             <h1 class="page_break_always h1wide">Exporting Tune Audio or Image Files from the Player<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>If you click <strong>Export Audio or Image</strong> in the <strong>Player</strong>, a dialog will appear where you can save out the audio of your tune in either .WAV or .MP3 format, the note playback events as a MIDI file, or the tune image in .JPG, .PNG, or .SVG formats:</p>
