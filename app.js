@@ -12864,8 +12864,9 @@ function AddABC(){
 	modal_msg += '<p style="text-align:center;margin-top:16px;">';
 	//modal_msg += '';
 	modal_msg += '<label class="abcuploaddialog btn btn-top" for="addabcfilebutton" title="Adds tunes from an existing ABC or MusicXML file to the end of the ABC">Choose File to Add <input type="file" id="addabcfilebutton" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL" hidden/></label>';
-	modal_msg += '<input class="dialogrestorebutton btn btn-restorebutton" id="dialogrestorebutton" onclick="RestoreSnapshot(false,true);" type="button" value="Restore from Snapshot" title="Replaces the contents of the ABC editor with a Snapshot saved in browser storage" style="display:none;">';
-	modal_msg += '<input class="dialogrestoreautobutton btn btn-restorebutton" id="dialogrestoreautobutton" onclick="RestoreSnapshot(true,true);" type="button" value="Restore from Auto-Snapshot" title="Replaces the contents of the ABC editor with an Auto-Snapshot saved in browser storage" style="display:none;">';
+	modal_msg += '<input id="loadremoteabc" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="LoadRemoteABC();" type="button" value="Add ABC from URL" title="Adds tunes read from a remote URL to the end of the ABC">';
+	modal_msg += '<input class="dialogrestorebutton btn btn-restorebutton" id="dialogrestorebutton" onclick="RestoreSnapshot(false,true);" type="button" value="Restore Snapshot" title="Replaces the contents of the ABC editor with a Snapshot saved in browser storage" style="display:none;">';
+	modal_msg += '<input class="dialogrestoreautobutton btn btn-restorebutton" id="dialogrestoreautobutton" onclick="RestoreSnapshot(true,true);" type="button" value="Restore Auto-Snapshot" title="Replaces the contents of the ABC editor with an Auto-Snapshot saved in browser storage" style="display:none;">';
 	modal_msg += '</p>';
 
 	// Showing search?
@@ -12932,11 +12933,65 @@ function AddABC(){
 
 	}, 100);
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 730,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 750,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 
 			
 	});
 
+}
+
+//
+// Load ABC from a remote URL
+//
+function LoadRemoteABC(){
+
+	DayPilot.Modal.prompt("Please enter a URL to read tunes from:", "",{ theme: "modal_flat", top: 200, autoFocus: false, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args) {
+
+		if (!args.canceled){
+
+			var theURL = args.result;
+
+			//console.log("theURL = "+theURL);
+
+			theURL = theURL.trim();
+
+			if ((theURL.indexOf("http://")!=0) && (theURL.indexOf("https://")!=0)){
+
+				var thePrompt = "URL must start with http:// or https://";
+				
+				// Center the string in the prompt
+				thePrompt = makeCenteredPromptString(thePrompt);
+				
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+				return;
+
+			}
+
+			//console.log("URL OK, proceeding with read");
+
+			// Fetch the ABC
+		    fetchWithRetry(theURL,500,3)
+		    .then((response) => response.text())
+		    .then((theABC) => {
+
+		    	// Do common tune addition processing
+				ProcessAddTune(theABC);
+
+		    })
+		    .catch(function(error) {
+
+				var thePrompt = "Unabled to read ABC from "+theURL;
+				
+				// Center the string in the prompt
+				thePrompt = makeCenteredPromptString(thePrompt);
+				
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+		    }); 
+
+		}
+	});
 }
 
 //
@@ -33904,7 +33959,7 @@ function fileOpenIntercept(e){
 	else{
 
 		elem.click();
-
+		
 	}
 }
 
