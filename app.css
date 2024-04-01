@@ -265,7 +265,7 @@ margin-right: 22px;
 #dialogrestorebutton{
 	height:42px;
 	padding:12px;
-	margin-left:20px;
+	margin-left:24px;
 }
 
 @media (hover: hover) {
@@ -277,23 +277,11 @@ margin-right: 22px;
 #dialogrestoreautobutton{
 	height:42px;
 	padding:12px;
-	margin-left:20px;
+	margin-left:24px;
 }
 
 @media (hover: hover) {
 	.dialogrestoreautobutton:hover{
-	background: palegreen;
-	}
-}
-
-#loadremoteabc{
-	height:42px;
-	padding:12px;
-	margin-left:20px;
-}
-
-@media (hover: hover) {
-	.loadremoteabc:hover{
 	background: palegreen;
 	}
 }
@@ -656,8 +644,7 @@ padding:12px;
 margin-right:24px;
 }
 
-
-#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#ceoltastransform,#looper_metronomebutton,#injectlargeprint,#pdfinjectlargeprint,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#tunebookbuilder_add{
+#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#ceoltastransform,#looper_metronomebutton,#injectlargeprint,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse{
 height:42px;
 padding:12px;
 }
