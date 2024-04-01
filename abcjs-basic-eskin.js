@@ -15415,6 +15415,13 @@ function CreateSynth(theABC) {
     }
     else{
 
+      try {
+        gReverbNode.disconnect();
+      }
+      catch(err){
+        console.log("Reverb node not connected");
+      }
+
       // Using reverb
       var wet = activeAudioContext().createGain();
       var dry = activeAudioContext().createGain();
@@ -16488,45 +16495,45 @@ var getReverbKernel = function getReverbKernel(audioContext){
 
   var reverbPromise = new Promise(function (resolve, reject){
 
-      var theReverbURL;
+      var theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/"
 
       switch (gReverbStyle){
         case "room1":
-          theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/room1.wav";
+          theReverbURL += "room1.wav";
           break;
         case "room2":
-          theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/room2.wav";
+          theReverbURL = "room2.wav";
           break;
         case "room":
         case "room3":
-          theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/room3.wav";
+          theReverbURL += "room3.wav";
           break;
         case "chamber1":
-          theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/chamber1.wav";
+          theReverbURL += "chamber1.wav";
           break;
         case "chamber":
         case "chamber2":
-          theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/chamber2.wav";
+          theReverbURL += "chamber2.wav";
           break;
         case "chamber3":
-          theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/chamber3.wav";
+          theReverbURL += "chamber3.wav";
           break;
         case "hall1":
-          theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/hall1.wav";
+          theReverbURL += "hall1.wav";
           break;
         case "hall":
         case "hall2":
-          theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/hall2.wav";
+          theReverbURL += "hall2.wav";
           break;
         case "hall3":
-          theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/hall3.wav";
+          theReverbURL += "hall3.wav";
           break;
         case "church":
         case "church1":
-          theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/church1.wav";
+          theReverbURL += "church1.wav";
           break;
         default:
-          theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/hall1.wav";
+          theReverbURL += "hall1.wav";
           break;       
       }
       fetch(theReverbURL)

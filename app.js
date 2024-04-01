@@ -24656,7 +24656,6 @@ function ScanTuneForReverb(theTune){
 	var reverbStyles = ["room","room1","room2","room3","chamber","chamber1","chamber2","chamber3","hall","hall1","hall2","hall3","church","church1"];
 	
 	gEnableReverb = false;
-	gReverbNode = null;
 
 	// Search for reverb request
 	var searchRegExp = /^%reverb.*$/gm
@@ -24715,15 +24714,23 @@ function ScanTuneForReverb(theTune){
 
 			if (gotStyle && gotDry && gotWet){
 
+				var oldReverbStyle = gReverbStyle;
+
 				//console.log("Reverb - Got complete definition: "+theStyle+" "+theDry+" "+theWet);
+				//console.log("oldReverbStyle = "+oldReverbStyle);
+				
 				gEnableReverb = true;
 				gReverbStyle = theStyle;
 				gReverbDry = theDry;
 				gReverbWet = theWet;
 
-				// Force a reload of the kernel
-				gSoundsCacheABCJS = {};
+				if (gReverbStyle != oldReverbStyle){
 
+					//console.log("Force reverb kernel reload");
+
+					// Force a reload of the reverb convolution kernel
+					gSoundsCacheABCJS = {};
+				}
 			}
 		}
 	}
