@@ -12971,7 +12971,7 @@ function LoadRemoteABC(){
 			//console.log("URL OK, proceeding with read");
 
 			// Fetch the ABC
-		    fetchWithRetry(theURL,500,3)
+		    fetchWithRetry(theURL,1000,5)
 		    .then((response) => response.text())
 		    .then((theABC) => {
 
