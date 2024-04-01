@@ -24652,6 +24652,11 @@ function ScanTuneForReverb(theTune){
 
 	//console.log("ScanTuneForReverb");
 
+	// No reverb during offline use
+	if (!gSamplesOnline){
+		return;
+	}
+
 	// Valid reverb styles
 	var reverbStyles = ["room","room1","room2","room3","chamber","chamber1","chamber2","chamber3","hall","hall1","hall2","hall3","church","church1"];
 	
@@ -25359,7 +25364,7 @@ function InstrumentExplorer(){
 
 			gInstrumentExplorerChordInstruments = InstrumentExplorerBuildDropdown("instrument_explorer_chord_program",generalMIDISoundNames);
 
-		}
+		}		
 
 		// Fix issue with initial swing not happening
 		ScanTuneForCustomTimingInjection(theSelectedABC);
@@ -25427,6 +25432,20 @@ function PreProcessTuneInstrumentExplorer(theTune){
 	searchRegExp = /^%%MIDI chordvol.*[\r\n]*/gm
 
 	theTune = theTune.replaceAll(searchRegExp,"");
+
+	// Inject default reverb?
+	if (gReverbString && (gReverbString != "")){
+
+		// Check first for any reverb annotations before replacing
+		var searchRegExp = /^%reverb.*$/m
+
+		var reverbRequested = theTune.match(searchRegExp);
+
+		if (!((reverbRequested) && (reverbRequested.length > 0))){
+
+			theTune = InjectReverbAboveTune(theTune, gReverbString);
+		}
+	}	
 
 	return theTune;
 
