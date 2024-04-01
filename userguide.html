@@ -1253,6 +1253,7 @@
             <p class="code">%reverb hall2 0.7 0.3</p>
             <p>For example, here's how to select the chamber1 style reverb with .8 of the original sound and .2 of the reverb in the final mix:</p>
             <p class="code">%reverb chamber1 0.8 0.2</p>  
+            <p>If you wish to have reverb enabled by default for tunes that do not already have a %reverb annotation in them, there is a setting on the <a href="#advanced_settings"><strong>Advanced Settings</strong></a> dialog where you can enter a default set of %reverb parameters to apply when playing tunes. By default, automatic reverb injection is disabled</p>
             <p><strong>Note:</strong> Reverb is only applied during live play, it does not get added to exported .wav or .mp3 audio files.</p>                    
             <hr class="hidden-print" id="export_audio_image">
             <h1 class="page_break_always h1wide">Exporting Tune Audio or Image Files from the Player<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -2175,7 +2176,7 @@
             <hr class="hidden-print" id="advanced_settings">
             <h1 class="page_break_always">Advanced Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/advanced_settings_8.jpg"/>
+                <img class="image" loading="lazy" src="img/advanced_settings_9.jpg"/>
             </div>
             <p>These settings are available by clicking the <strong>Advanced Settings</strong> button at the bottom of the main <strong>Settings</strong> dialog.</p>
             <p>On mobile browsers, the dialog will only show the settings that are available on mobile platforms.</p>
@@ -2228,6 +2229,13 @@
             <hr>
             <p><strong>Highlighting color (HTML format) (default is #F00000):</strong> (Desktop browsers only) Sets the color of the notation highlights when Highlighting is on.</p>
             <p>Value must be an HTML RGB hex color value or HTML named color for example #0000FF or blue.</p>
+            <hr>
+            <p><strong>Default %reverb annotation (default is blank = no reverb)</strong></p>
+            <p>If you wish to have reverb enabled by default if there is no other %reverb already present in a tune, enter the parameters for the %reverb annotation here.</p>
+            <p>For example, if you want to have the chamber reverb turned on by default, with a 0.8 dry and 0.2 wet mix, enter the following value:</p>
+            <p>chamber 0.8 0.2</p>
+            <p>At tune play time, if this setting is not blank, and no other %reverb annotation is found in the tune, a %reverb annotation with the settings will be automatically injected at the top of the tune before playback.</p>
+            <p>For more details on the reverb parameters, please see the <a href="#reverb"><strong>Adding Reverb When Playing Tunes</strong></a> section.</p>
             <hr>
             <p><strong>Metronome volume (default is 48):</strong> - Sets the volume of the metronome drum sounds. Range is 0 - 127.</p>
             <hr>

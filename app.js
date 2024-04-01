@@ -335,6 +335,9 @@ var gABCEditorFontsize = 13;
 // Showing diagnostics?
 var gShowDiagnostics = false;
 
+// Reverb string to inject
+var gReverbString = "";
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -16409,6 +16412,19 @@ function InjectOneTuneMIDIVolumeAboveTune(theTune, theVolume, bIsChords){
 }
 
 //
+// Inject reverb directivetune header
+//
+function InjectReverbAboveTune(theTune, theReverbString){
+
+	var theOutput;
+
+	theOutput = InjectStringAboveTuneHeader(theTune,"%reverb "+theReverbString);
+
+	return theOutput
+	
+}
+
+//
 // Inject MIDI soundfont and instrument related directives
 //
 
@@ -23689,6 +23705,20 @@ function PreProcessPlayABC(theTune){
 
 	}
 
+	// Inject default reverb?
+	if (gReverbString && (gReverbString != "")){
+
+		// Check first for any reverb annotations before replacing
+		var searchRegExp = /^%reverb.*$/m
+
+		var reverbRequested = theTune.match(searchRegExp);
+
+		if (!((reverbRequested) && (reverbRequested.length > 0))){
+
+			theTune = InjectReverbAboveTune(theTune, gReverbString);
+		}
+	}	
+
 	// Strip injected incipit formatting metadata
 	// This is for play links that were created from formatted incipits
 	var incipitStart = theTune.indexOf("%incipits_inject_start");
@@ -29453,6 +29483,13 @@ function GetInitialConfigurationSettings(){
 		gShowDiagnostics = (val == "true");
 	}
 
+	// Default reverb string
+	gReverbString = "";
+	val = localStorage.ReverbString;
+	if (val){
+		gReverbString = val;
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -29635,6 +29672,9 @@ function SaveConfigurationSettings(){
 
 		// Save diagnostics state
 		localStorage.ShowDiagnostics = gShowDiagnostics;
+
+		// Save default reverb string
+		localStorage.ReverbString = gReverbString;
 
 	}
 }
@@ -31218,8 +31258,8 @@ function AdvancedSettings(){
 		configure_TuneDatabaseRetryCount: gTuneDatabaseRetryCount,
 		configure_DisableRendering: gDisableNotationRendering,
 		configure_disable_selected_play:gDisableSelectedPlay,
-		configure_show_diagnostics: gShowDiagnostics	  	
-
+		configure_show_diagnostics: gShowDiagnostics,
+		configure_reverb: gReverbString,	  	
 	};
 
 	var form = [
@@ -31245,7 +31285,8 @@ function AdvancedSettings(){
 	}
 	
 	form = form.concat([
-		{name: "Metronome volume (default is 48):", id: "configure_metronome_volume", type:"text", cssClass:"advanced_settings2_form_text"},
+		{name: "Default %reverb annotation (default is blank = no reverb):", id: "configure_reverb", type:"text", cssClass:"advanced_settings2_reverb_text"},
+		{name: "Metronome volume (default is 48):", id: "configure_metronome_volume", type:"text", cssClass:"advanced_settings2_reverb_text"},
 		{name: "MP3 audio export bitrate (kbit/sec) (default is 224):", id: "configure_mp3_bitrate", type:"number", cssClass:"advanced_settings2_form_text"},
 	]);
 
@@ -31336,6 +31377,8 @@ function AdvancedSettings(){
 			gUseComhaltasABC = args.result.configure_comhaltas;
 
 			gDisableSelectedPlay = args.result.configure_disable_selected_play;
+
+			gReverbString = args.result.configure_reverb;
 
 			var val = args.result.configure_metronome_volume;
 
