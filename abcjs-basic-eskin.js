@@ -180,6 +180,7 @@ var gReverbStyle = null;
 var gReverbDry = 0.7;
 var gReverbWet = 0.3;
 var gReverbNode = null;
+var gReverbKernels = []; // Cache impulse kernel reads
 
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
@@ -16493,6 +16494,35 @@ var getReverbKernel = function getReverbKernel(audioContext){
 
   gReverbNode = null;
 
+  // Lets see if the kernel is already in the cache
+  var nKernels = gReverbKernels.length;
+
+  var i;
+
+  for (i=0;i<nKernels;++i){
+
+    if (gReverbKernels[i].style == gReverbStyle){
+
+      //console.log("Kernel for "+gReverbStyle+" Found in cache");
+
+      gReverbNode = audioContext.createConvolver();
+
+      gReverbNode.buffer = gReverbKernels[i].kernel;
+      
+      var reverbPromise = new Promise(function (resolve, reject){
+
+          resolve();
+
+      });
+
+      return reverbPromise;
+
+    }
+
+  }
+
+  //console.log("Kernel for "+gReverbStyle+" not found in cache, proceeding with fetch");
+
   var reverbPromise = new Promise(function (resolve, reject){
 
       var theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/"
@@ -16502,7 +16532,7 @@ var getReverbKernel = function getReverbKernel(audioContext){
           theReverbURL += "room1.wav";
           break;
         case "room2":
-          theReverbURL = "room2.wav";
+          theReverbURL += "room2.wav";
           break;
         case "room":
         case "room3":
@@ -16552,6 +16582,8 @@ var getReverbKernel = function getReverbKernel(audioContext){
                 gReverbNode = audioContext.createConvolver();
 
                 gReverbNode.buffer = audioBuffer;
+
+                gReverbKernels.push({style:gReverbStyle,kernel:audioBuffer});
 
                 //console.log("getReverbKernel resolve");
 
