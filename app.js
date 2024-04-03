@@ -10756,6 +10756,7 @@ function ToggleTab(bDoStrip) {
 	IdleAdvancedControls(true);
 
 }
+
 //
 // Add a new ABC tune template, song template, or PDF tunebook annotation template to the current ABC
 //
@@ -24658,7 +24659,7 @@ function ScanTuneForReverb(theTune){
 	}
 
 	// Valid reverb styles
-	var reverbStyles = ["room","room1","room2","room3","chamber","chamber1","chamber2","chamber3","hall","hall1","hall2","hall3","church","church1"];
+	var reverbStyles = ["room","room1","room2","room3","chamber","chamber1","chamber2","chamber3","hall","hall1","hall2","hall3","church","church1","custom"];
 	
 	gEnableReverb = false;
 
@@ -31255,6 +31256,141 @@ function ResetRollDefaultParams(){
 
 }
 
+//
+//  Read a custom reverb impulse .wav file
+//
+// Function to read a .wav file and convert it to an ArrayBuffer
+function readWavFile(file) {
+
+  return new Promise((resolve, reject) => {
+    
+    const reader = new FileReader();
+    
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+    
+    reader.onerror = reject;
+    
+    reader.readAsArrayBuffer(file);
+
+  });
+}
+
+//
+// Add a new ABC tune template, song template, or PDF tunebook annotation template to the current ABC
+//
+function idleAdvancedSettings(){
+
+	if (gIsIOS){
+
+		document.getElementById("loadimpulsebutton").removeAttribute("accept");
+	
+	}	
+
+	//
+	// Setup the file import control
+	//
+	document.getElementById("loadimpulsebutton").onchange = async () => {
+
+		let fileElement = document.getElementById("loadimpulsebutton");
+
+		// check if user had selected a file
+		if (fileElement.files.length === 0) {
+
+			var thePrompt = "Please select an custom reverb impulse .wav file";
+			
+			// Center the string in the prompt
+			thePrompt = makeCenteredPromptString(thePrompt);
+
+			DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+			return;
+
+		}
+
+		let file = fileElement.files[0];
+
+		if (file) {
+			try {
+
+		      	var AudioContext = window.AudioContext || window.webkitAudioContext;
+
+		      	if (AudioContext){
+		      		audioContext = new AudioContext();
+		      	}
+		      	else{
+		      		throw("Can't create the audio context to decode the reverb impulse")
+		      	} 
+
+				const theBuffer = await readWavFile(file);
+
+			    var kernelDecoded = function kernelDecoded(audioBuffer) {
+
+				   	// Lets see if the kernel is already in the cache
+				   	var newKernels = [];
+
+					var nKernels = gReverbKernels.length;
+
+					var i;
+
+					// Replace any existing custom kernel
+					for (i=0;i<nKernels;++i){
+
+						var thisKernel = gReverbKernels[i]
+
+						if (thisKernel.style != "custom"){
+
+						 	newKernels.push(thisKernel);
+
+						}
+					}
+
+					gReverbKernels = newKernels;
+				      
+				    gReverbKernels.push({style:"custom",kernel:audioBuffer});
+
+				    // Force a reload of the reverb convolution kernels
+					gSoundsCacheABCJS = {};
+
+					var thePrompt = "Custom reverb impulse file load successful!";
+					
+					// Center the string in the prompt
+					thePrompt = makeCenteredPromptString(thePrompt);
+
+					DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 300, scrollWithPage: (AllowDialogsToScroll()) });
+
+					return;
+
+
+			    };
+
+			    await audioContext.decodeAudioData(theBuffer, kernelDecoded);
+
+
+			} catch (error) {
+
+			 	//console.log('Error reading reverb impulse .wav file:', error);
+
+				var thePrompt = "There was an issue reading the custom reverb impulse file.";
+				
+				// Center the string in the prompt
+				thePrompt = makeCenteredPromptString(thePrompt);
+
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 300, scrollWithPage: (AllowDialogsToScroll()) });
+
+				return;
+
+			}
+		}
+
+		// Reset file selectors
+		fileElement.value = "";
+
+	}
+
+}
+
 function AdvancedSettings(){
 
 	// Keep track of dialogs
@@ -31329,8 +31465,15 @@ function AdvancedSettings(){
 		{name: "Tune search fetch retry maximum count (default is 10):", id: "configure_TuneDatabaseRetryCount", type:"text", cssClass:"advanced_settings2_form_text"},
 		{name: "Default %roll_2_params:", id: "configure_roll2_default", type:"text", cssClass:"advanced_settings2_roll_text"},
 		{name: "Default %roll_3_params:", id: "configure_roll3_default", type:"text", cssClass:"advanced_settings2_roll_text"},
-		{html: '<p style="text-align:center;margin-top:22px;"><input id="reset_roll_parameters" class="btn btn-subdialog reset_roll_parameters" onclick="ResetRollDefaultParams()" type="button" value="Reset Roll Parameter Strings to Defaults" title="Resets the roll parameter strings to known good default values"></p>'},
+		{html: '<p style="text-align:center;margin-top:22px;"><input id="reset_roll_parameters" class="btn btn-subdialog reset_roll_parameters" onclick="ResetRollDefaultParams()" type="button" value="Reset Roll Parameter Strings to Defaults" title="Resets the roll parameter strings to known good default values"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label></p>'},
 	]);
+
+	// Set up the reverb impulse load callback
+	setTimeout(function(){
+
+		idleAdvancedSettings();
+
+	}, 100);
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 

@@ -1286,13 +1286,28 @@ top:20px;
 height:42px;
 padding:12px;
 width:auto;
-margin-right:0px;
+margin-right:24px;
 }
 
 @media (hover: hover) {
 	.reset_roll_parameters:hover{
 	background: palegreen;
 	}
+}
+
+.loadimpulsebutton {
+	display: inline-block;
+}
+
+#loadimpulsebutton{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:0px;
+}
+
+.loadimpulsebutton:hover{
+	background: palegreen;
 }
 
 #reset_roll_explorer_2{
@@ -4170,6 +4185,7 @@ margin-bottom:4px;
 	.moresettingsbutton:hover {
 	    transform: matrix(1.06, 0, 0, 1.06, 0, 0); 
 	}
+
 }
 
 

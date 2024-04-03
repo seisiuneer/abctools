@@ -16563,7 +16563,8 @@ var getReverbKernel = function getReverbKernel(audioContext){
           theReverbURL += "church1.wav";
           break;
         default:
-          theReverbURL += "hall1.wav";
+          // Default to chamber2
+          theReverbURL += "chamber2.wav";
           break;       
       }
       fetch(theReverbURL)
