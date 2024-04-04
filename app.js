@@ -338,6 +338,9 @@ var gShowDiagnostics = false;
 // Reverb string to inject
 var gReverbString = "";
 
+// For restoration of saved custom reverb impulse
+var gReverbImpulseRestored = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -23718,6 +23721,7 @@ function PreProcessPlayABC(theTune){
 
 			theTune = InjectReverbAboveTune(theTune, gReverbString);
 		}
+
 	}	
 
 	// Strip injected incipit formatting metadata
@@ -24737,6 +24741,19 @@ function ScanTuneForReverb(theTune){
 					// Force a reload of the reverb convolution kernel
 					gSoundsCacheABCJS = {};
 				}
+
+				if (theStyle == "custom"){
+
+					if (!gReverbImpulseRestored){
+
+						//console.log("Restoring impulse");
+						
+			    		restoreSavedImpulse();
+
+			    		gReverbImpulseRestored = true;
+
+			    	}
+			    }
 			}
 		}
 	}
@@ -31312,6 +31329,7 @@ function idleAdvancedSettings(){
 		let file = fileElement.files[0];
 
 		if (file) {
+
 			try {
 
 		      	var AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -31324,6 +31342,9 @@ function idleAdvancedSettings(){
 		      	} 
 
 				const theBuffer = await readWavFile(file);
+
+				// Save the impulse in the database
+				saveImpulse_DB(theBuffer);
 
 			    var kernelDecoded = function kernelDecoded(audioBuffer) {
 
@@ -31361,7 +31382,6 @@ function idleAdvancedSettings(){
 					DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 300, scrollWithPage: (AllowDialogsToScroll()) });
 
 					return;
-
 
 			    };
 
@@ -34884,7 +34904,11 @@ function DoStartup() {
 	// Setup the Raw mode UI if enabled
 	SetupRawModeUI();
 
-	// And set the focus
+    // Init the IndexedDB database for the reverb custom impulses
+    // If successful, read in any previously saved custom impulse
+    initImpulseDB();
+	
+   	// And set the focus
     gTheABC.focus();
 
 }

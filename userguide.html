@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-  
+
         <style>
 
 		p {
@@ -1254,7 +1254,7 @@
             <p class="code">%reverb chamber1 0.8 0.2</p>  
             <p>If you wish to have reverb enabled by default for tunes that do not already have a %reverb annotation in them, there is a setting on the <a href="#advanced_settings"><strong>Advanced Settings</strong></a> dialog where you can enter a default set of %reverb parameters to apply when playing tunes. By default, automatic reverb injection is disabled</p>
             <p>Additionally, if you want to experiment with custom convolution reverb acoustic impulses, you can load a custom reverb impulse .wav file from the <a href="#custom_reverb"><strong>Advanced Settings</strong></a> dialog to use during a single session.</p>
-            <p>Once loaded, custom reverb response files are not saved and must be loaded manually each time the tool is used.</p>
+            <p>Once loaded, the custom reverb impulse file is saved in browser storage and will be used the next time the custom reverb style is requested.</p>
             <p><strong>Note:</strong> Reverb is only applied during live play, it does not get added to exported .wav or .mp3 audio files.</p>                    
             <hr class="hidden-print" id="export_audio_image">
             <h1 class="page_break_always h1wide">Exporting Tune Audio or Image Files from the Player<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -2259,14 +2259,14 @@
             <p><a href="#roll_timing">Custom Roll Timing</a></p>
             <hr>
             <p><strong>Reset Roll Parameter Strings to Defaults</strong> - Resets the roll_2_params and roll_3_params roll default parameter strings to their original known good default values.</p>
-            <hr>
-            <p>All the values listed above are saved in browser storage and restored the next time the tool is run.</p>
             <hr id="custom_reverb">
             <p><strong>Load Custom Reverb Impulse</strong> - This button on the <strong>Advanced Settings</strong> dialog allows you to load a custom convolution reverb impulse .wav file to use when specifying "custom" as the reverb type for the current tool session.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/RyMBJcT54FE" title="Custom Acoustic Environments" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>            
             <p>You will find many reverb impulse files for free download at: <a href="https://www.openair.hosted.york.ac.uk/?page_id=36" target="_blank">Open Air Acoustic Impulse Responses</a></p>
-            <p>Once loaded, custom convolution reverb impulse files are not saved and must be loaded manually each time the tool is used.</p>            
-             <hr class="hidden-print" id="configure_fonts">
+            <p>Once loaded, the custom reverb impulse file is saved in browser storage and will be used the next time the custom reverb style is requested.</p>
+            <hr>
+            <p>All the values listed above are saved in browser storage and restored the next time the tool is run.</p>
+            <hr class="hidden-print" id="configure_fonts">
             <h1 class="page_break_always">Configuring ABC Rendering Fonts<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Font Settings</strong> button in the tool settings dialog shows a subdialog where you can configure all the fonts used for rendering the ABC.</p>
             <div class="image_holder_p">
