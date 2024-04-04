@@ -89,6 +89,7 @@ function getImpulse_DB(callback) {
 
 	if (!gImpulseDB){
 		console.log("No impulse database available");
+		callback(null);
 		return;
 	}
 
@@ -98,6 +99,7 @@ function getImpulse_DB(callback) {
 
 	request.onerror = function(event) {
 		console.log("Error retrieving impulse: " + event.target.errorCode);
+		callback(null);
 	};
 
 	request.onsuccess = function(event) {
