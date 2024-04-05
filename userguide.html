@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-
+       
         <style>
 
 		p {
@@ -1231,7 +1231,10 @@
             <p>You may add reverb when playing a tune by adding the following annotation anywhere in the tune's ABC:</p>
             <p class="code">%reverb reverb_style dry_mix_fraction wet_mix_fraction</p>
             <p>Where <strong>reverb_style</strong> is one of:</p>
-            <p>room1<br/>
+            <p>
+            off<br/>
+            none<br/>
+            room1<br/>
             room2<br/>
             room3<br/>
             chamber1<br/>
@@ -1252,6 +1255,8 @@
             <p class="code">%reverb hall2 0.7 0.3</p>
             <p>For example, here's how to select the chamber1 style reverb with .8 of the original sound and .2 of the reverb in the final mix:</p>
             <p class="code">%reverb chamber1 0.8 0.2</p>
+            <p>To disable the reverb for a tune, include one of the following:</p>
+            <p class="code">%reverb none<br/>%reverb off</p>
             <p>When the tool is first run, the default reverb is set to:</p>
             <p class="code">chamber 0.95 0.05</p>  
             <p>If you wish to change the default reverb there is a setting on the <a href="#default_reverb"><strong>Advanced Settings</strong></a> dialog where you can enter your preferred set of default %reverb parameters to apply when playing tunes.</p>
