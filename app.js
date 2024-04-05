@@ -336,7 +336,7 @@ var gABCEditorFontsize = 13;
 var gShowDiagnostics = false;
 
 // Reverb string to inject
-var gReverbString = "";
+var gReverbString = "chamber 0.95 0.05";
 
 // For restoration of saved custom reverb impulse
 var gReverbImpulseRestored = false;
@@ -29528,8 +29528,8 @@ function GetInitialConfigurationSettings(){
 	}
 
 	// Default reverb string
-	gReverbString = "";
-	val = localStorage.ReverbString;
+	gReverbString = "chamber 0.95 0.05";
+	val = localStorage.ReverbString2;
 	if (val){
 		gReverbString = val;
 	}
@@ -29718,7 +29718,7 @@ function SaveConfigurationSettings(){
 		localStorage.ShowDiagnostics = gShowDiagnostics;
 
 		// Save default reverb string
-		localStorage.ReverbString = gReverbString;
+		localStorage.ReverbString2 = gReverbString;
 
 	}
 }
@@ -31467,7 +31467,7 @@ function AdvancedSettings(){
 	}
 	
 	form = form.concat([
-		{name: "Default %reverb annotation (default is blank = no reverb):", id: "configure_reverb", type:"text", cssClass:"advanced_settings2_reverb_text"},
+		{name: "Default %reverb annotation (blank = no reverb):", id: "configure_reverb", type:"text", cssClass:"advanced_settings2_reverb_text"},
 		{name: "Metronome volume (default is 48):", id: "configure_metronome_volume", type:"text", cssClass:"advanced_settings2_reverb_text"},
 		{name: "MP3 audio export bitrate (kbit/sec) (default is 224):", id: "configure_mp3_bitrate", type:"number", cssClass:"advanced_settings2_form_text"},
 	]);
