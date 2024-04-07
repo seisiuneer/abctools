@@ -12022,47 +12022,63 @@ function SwitchTuneDatabase(){
 
 			gTheCurrentTuneDatabase = 0;
 
-			// For testing with local database
-		    if (gUseLocalJSTuneDatabase){
-		   		
-		   		document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
-
-				gTheParsedTuneDatabase = theLocalTuneDatabase;
-
-			}
-			else
 			if(!gTheParsedTuneDatabase){
 				
 				document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Waiting for tune collection to load...";
 
-		   		// Fetch the Gavin Heneghan tune database
-			    fetchWithRetry('https://michaeleskin.com/abctools/abctunes_gavin_heneghan_10nov2023.json',gTuneDatabaseRetryTimeMS,gTuneDatabaseRetryCount)
-			    .then((response) => response.json())
-			    .then((json) => {
+				getTuneDatabase_DB(false,function(theTunes){
 
-			    	//console.log("got abctunes_gavin_heneghan_10nov2023 data");
-			    	
-			    	var elem = document.getElementById("status");
-			    	if (elem){
-			    		if (gTheCurrentTuneDatabase == 0){
-			        		document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
-			        	}
-			        }
+					//debugger;
+					
+					if (theTunes && (theTunes.length>0)){	
 
-			        gTheParsedTuneDatabase = json;
-			    })
-			    .catch(function(error) {
+						//console.log("Heneghan database was found")
 
-			    	var elem = document.getElementById("status");
+						var elem = document.getElementById("status");
+				    	if (elem){
+				        	document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
+				        }
 
-			    	if (elem){
+				        gTheParsedTuneDatabase = theTunes[0];
 
-			    		if (gTheCurrentTuneDatabase == 0){
-			        		document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Unable to load tune collection, please retry later...";
-			        	}
+					}
+					else{
 
-			        }
-			    }); 
+						//console.log("Heneghan tunes not in database, fetching...");
+
+				   		// Fetch the Gavin Heneghan tune database
+					    fetchWithRetry('https://michaeleskin.com/abctools/abctunes_gavin_heneghan_10nov2023.json',gTuneDatabaseRetryTimeMS,gTuneDatabaseRetryCount)
+					    .then((response) => response.json())
+					    .then((json) => {
+
+					    	//console.log("got abctunes_gavin_heneghan_10nov2023 data");
+					    	
+					    	var elem = document.getElementById("status");
+					    	if (elem){
+				    			if (gTheCurrentTuneDatabase == 0){
+					        		document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
+					        	}
+					        }
+
+					        gTheParsedTuneDatabase = json;
+
+					        // Persist the database for later reads
+					        saveTuneDatabase_DB(json, false);
+					    })
+					    .catch(function(error) {
+
+					    	var elem = document.getElementById("status");
+
+					    	if (elem){
+
+					    		if (gTheCurrentTuneDatabase == 0){
+					        		document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Unable to load tune collection, please retry later...";
+					        	}
+
+					        }
+					    }); 
+					}
+				});
 
 			}
 			else{
@@ -12084,52 +12100,66 @@ function SwitchTuneDatabase(){
 
 			gTheCurrentTuneDatabase = 1; 
 
-			// For testing with local database
-		    if (gUseLocalJSTuneDatabase){
-		   		
-		   		document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
-
-				gTheFolkFriendDatabase = theLocalFolkFriendDatabase;
-
-			}
-			else
 			if(!gTheFolkFriendDatabase){
 				
 				document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Waiting for tune collection to load...";
+				
+				getTuneDatabase_DB(true,function(theTunes){
 
-		   		// Fetch the FolkFriend database
-			    fetchWithRetry('https://michaeleskin.com/abctools/folkfriend-non-user-data_22dec2023.json',gTuneDatabaseRetryTimeMS,gTuneDatabaseRetryCount)
-			    .then((response) => response.json())
-			    .then((json) => {
+					//debugger;
+						
+					if (theTunes && (theTunes.length>0)){
+						
+						//console.log("FolkFriend database was found")
 
-			    	//console.log("got folkfriend-non-user-data_21dec2023 data");
-			    	
-			    	var elem = document.getElementById("status");
-			    	if (elem){
-			    		if (gTheCurrentTuneDatabase == 1){
-			        		document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
-			        	}
-			        }
+						var elem = document.getElementById("status");
+						if (elem){
+				        	document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
+				        }
 
-			        gTheFolkFriendDatabase = json;
+				        gTheFolkFriendDatabase = theTunes[0];
 
-			    })
-			    .catch(function(error) {
-			    	
-			    	var elem = document.getElementById("status");
-			    	
-			    	if (elem){
-			    		if (gTheCurrentTuneDatabase == 1){
-			        		document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Unable to load tune collection, please retry later...";
-			        	}
-			        }
+					}
+					else{
 
-			    }); 
+						//console.log("FolkFriend tunes not in database, fetching...");
+
+				   		// Fetch the FolkFriend database
+					    fetchWithRetry('https://michaeleskin.com/abctools/folkfriend-non-user-data_22dec2023.json',gTuneDatabaseRetryTimeMS,gTuneDatabaseRetryCount)
+					    .then((response) => response.json())
+					    .then((json) => {
+
+					    	//console.log("got folkfriend-non-user-data_21dec2023 data");
+					    	
+					    	var elem = document.getElementById("status");
+					    	if (elem){
+					    		if (gTheCurrentTuneDatabase == 1){
+					        		document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
+					        	}
+					        }
+
+					        gTheFolkFriendDatabase = json;
+
+					        // Persist the database for later reads
+					        saveTuneDatabase_DB(json, true);
+
+					    })
+					    .catch(function(error) {
+					    	
+					    	var elem = document.getElementById("status");
+					    	
+					    	if (elem){
+					    		if (gTheCurrentTuneDatabase == 1){
+					        		document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Unable to load tune collection, please retry later...";
+					        	}
+
+					        }
+					    }); 
+					}
+				});
 			}
 			else{
-
 				document.getElementById("status").innerHTML="&nbsp;&nbsp;&nbsp;Ready to search";
-
 			}
 
 			// Reset the dialog fields
@@ -12151,13 +12181,6 @@ function SwitchTuneDatabase(){
 //
 // Search for a tune 
 //
-
-// For local database testing:
-// If gUseLocalJSTuneDatabase is true, add the following two lines to the .html file
-// <script type="text/javascript" src="folkfriend-non-user-data.js"></script><!-- Local database testing -->
-// <script type="text/javascript" src="tunedatabase.js"></script><!-- Local database testing -->
-
-var gUseLocalJSTuneDatabase = false;
 
 var gTheParsedTuneDatabase = null;
 var gTheFolkFriendDatabase = null;
@@ -34907,6 +34930,9 @@ function DoStartup() {
     // Init the IndexedDB database for the reverb custom impulses
     // If successful, read in any previously saved custom impulse
     initImpulseDB();
+
+    // Init the tune search database
+    initTuneDB();
 	
    	// And set the focus
     gTheABC.focus();
