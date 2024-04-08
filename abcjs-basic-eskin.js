@@ -16511,7 +16511,8 @@ var getReverbKernel = function getReverbKernel(audioContext){
       
       var reverbPromise = new Promise(function (resolve, reject){
 
-          resolve();
+        //console.log("getReverbKernel cache resolve");
+        resolve();
 
       });
 
@@ -16520,15 +16521,15 @@ var getReverbKernel = function getReverbKernel(audioContext){
     }
 
   }
+        
+  var reverbPromise = new Promise(function (resolve, reject){
 
-  // If not in cache, first try the database
-  getImpulse_DB(gReverbStyle, function(theImpulse){
+    // If not in cache, first try the database
+    getImpulse_DB(gReverbStyle, function(theImpulse){
 
-    //debugger;
+      //debugger;
 
-    if (theImpulse && theImpulse.impulse && (theImpulse.impulse.byteLength != 0)){
-
-      var dbPromise = new Promise(function (resolve, reject){
+      if (theImpulse && theImpulse.impulse && (theImpulse.impulse.byteLength != 0)){
 
         try{
        
@@ -16544,7 +16545,7 @@ var getReverbKernel = function getReverbKernel(audioContext){
 
             gReverbKernels.push({style:gReverbStyle,kernel:audioBuffer});
 
-            //console.log("getReverbKernel resolve");
+            //console.log("getReverbKernel database resolve");
 
             resolve();
 
@@ -16557,19 +16558,13 @@ var getReverbKernel = function getReverbKernel(audioContext){
         catch(error){
           reject(Error("Can't load reverb kernel database case - status=" + error));
         }
-      });
 
-      return dbPromise;
+      }
+      else {
 
-    }
-    else
-    {
-      //console.log("Kernel for "+gReverbStyle+" not found in cache or database, proceeding with fetch");
-
-      var reverbPromise = new Promise(function (resolve, reject){
-
+        //console.log("Kernel for "+gReverbStyle+" not found in cache or database, proceeding with fetch");
         var saveToDB = true;
- 
+
         var theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/"
 
         switch (gReverbStyle){
@@ -16613,6 +16608,7 @@ var getReverbKernel = function getReverbKernel(audioContext){
             theReverbURL += "chamber2.wav";
             break;       
         }
+
         fetch(theReverbURL)
         .then(response => {
 
@@ -16635,7 +16631,7 @@ var getReverbKernel = function getReverbKernel(audioContext){
                     gReverbKernels.push({style:gReverbStyle,kernel:audioBuffer});
                   }
 
-                  //console.log("getReverbKernel resolve");
+                  //console.log("getReverbKernel fetch resolve");
    
                   resolve();
 
@@ -16664,15 +16660,16 @@ var getReverbKernel = function getReverbKernel(audioContext){
             throw error;
         });
 
+      }
+
     });
 
-    return reverbPromise;
-
-    }
-
   });
-  
-  //console.log("getReverbKernel end");
+
+  //console.log("getReverbKernel end reverbPromise = "+reverbPromise);
+
+  return reverbPromise;
+
 
 };
 
