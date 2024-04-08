@@ -1286,7 +1286,7 @@ top:20px;
 height:42px;
 padding:12px;
 width:auto;
-margin-right:24px;
+margin-right:20px;
 }
 
 @media (hover: hover) {
@@ -1307,6 +1307,22 @@ margin-right:0px;
 }
 
 .loadimpulsebutton:hover{
+	background: palegreen;
+}
+
+.deletealldatabases {
+	display: inline-block;
+}
+
+#deletealldatabases{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:0px;
+margin-left:20px;
+}
+
+.deletealldatabases:hover{
 	background: palegreen;
 }
 
@@ -4098,6 +4114,12 @@ margin-bottom:4px;
   --color: black;
   --background-color: lavender;
 }
+
+.btn-deletealldatabases{
+  --color: black;
+  --background-color: #FFCCCC;	
+}
+
 
 @media (hover: hover) {
 	

@@ -31400,6 +31400,36 @@ function idleAdvancedSettings(){
 
 }
 
+// Clear all the databases
+function DeleteAllDatabases(){
+
+	var thePrompt = "This will delete the notes, reverb impulse, and tune search local databases. Are you sure?";
+
+	// Center the string in the prompt
+	thePrompt = makeCenteredPromptString(thePrompt);
+
+	DayPilot.Modal.confirm(thePrompt,{ top:300, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+		if (!args.canceled){
+
+			// Wipe all the databases
+			delete_all_DB();
+
+			setTimeout(function(){
+
+				var thePrompt = "All databases cleared. Click OK to reload the tool.";
+				
+				// Center the string in the prompt
+				thePrompt = makeCenteredPromptString(thePrompt);
+
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 320, scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+					window.location.reload();
+				});
+
+			},1000);
+		}
+	});
+}
+
 function AdvancedSettings(){
 
 	// Keep track of dialogs
@@ -31474,7 +31504,7 @@ function AdvancedSettings(){
 		{name: "Tune search fetch retry maximum count (default is 10):", id: "configure_TuneDatabaseRetryCount", type:"text", cssClass:"advanced_settings2_form_text"},
 		{name: "Default %roll_2_params:", id: "configure_roll2_default", type:"text", cssClass:"advanced_settings2_roll_text"},
 		{name: "Default %roll_3_params:", id: "configure_roll3_default", type:"text", cssClass:"advanced_settings2_roll_text"},
-		{html: '<p style="text-align:center;margin-top:22px;"><input id="reset_roll_parameters" class="btn btn-subdialog reset_roll_parameters" onclick="ResetRollDefaultParams()" type="button" value="Reset Roll Parameter Strings to Defaults" title="Resets the roll parameter strings to known good default values"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label></p>'},
+		{html: '<p style="text-align:center;margin-top:22px;"><input id="reset_roll_parameters" class="btn btn-subdialog reset_roll_parameters" onclick="ResetRollDefaultParams()" type="button" value="Reset Roll Parameter Strings to Defaults" title="Resets the roll parameter strings to known good default values"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><input id="deletealldatabases" class="btn btn-deletealldatabases deletealldatabases" onclick="DeleteAllDatabases()" type="button" value="Delete all Databases" title="Deletes the sample, reverb impulse, and tune search browser local IndexedDB databases.&nbsp;&nbsp;Tool will restart after the operation."></p>'},
 	]);
 
 	// Set up the reverb impulse load callback
@@ -31484,7 +31514,7 @@ function AdvancedSettings(){
 
 	}, 100);
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 800, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -34893,12 +34923,14 @@ function DoStartup() {
 	// Setup the Raw mode UI if enabled
 	SetupRawModeUI();
 
-    // Init the IndexedDB database for the reverb custom impulses
-    // If successful, read in any previously saved custom impulse
+    // Init the reverb custom impulses database
     initImpulseDB();
 
     // Init the tune search database
     initTuneDB();
+
+    // Init the samples database
+    initSamplesDB();
 	
    	// And set the focus
     gTheABC.focus();

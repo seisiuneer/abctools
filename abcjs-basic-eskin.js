@@ -16344,46 +16344,86 @@ var getNote = function getNote(url, instrument, name, audioContext) {
     }
 
     if (gSamplesOnline){
- 
-      // Use the fetch API instead of XMLHttpRequest
-      fetch(noteUrl)
-      .then(response => {
+
+      // If not in cache, first try the database
+      getSample_DB(noteUrl, function(theSample){
+
+        //debugger;
+
+        if (theSample && theSample.sample && (theSample.sample.byteLength != 0)){
 
           try{
+         
+            //console.log("Sample for url "+noteUrl+" found in database");
 
-            if (!response.ok){
-              throw new Error(`HTTP error, status = ${response.status}`);
-            }
-
-            // If a custom instrument and redirected, means sample not found
-            if (isCustomInstrument && response.redirected){
-              throw new Error(`HTTP redirect on custom GM instrument`);
-            }
-
-            response.arrayBuffer().then(theBuffer => {
-              var noteDecoded = function noteDecoded(audioBuffer) {
-                resolve({
-                  instrument: instrument,
-                  name: name,
-                  status: "loaded",
-                  audioBuffer: audioBuffer
-                });
-              };
-              var maybePromise = audioContext.decodeAudioData(theBuffer, noteDecoded, function () {
-                 reject(Error("Can't decode sound at " + noteUrl));
+            var noteDecoded2 = function noteDecoded(audioBuffer) {
+              resolve({
+                instrument: instrument,
+                name: name,
+                status: "loaded",
+                audioBuffer: audioBuffer
               });
+            };
+  
+            var maybePromise = audioContext.decodeAudioData(theSample.sample, noteDecoded2, function () {
+               reject(Error("Can't decode sound at " + noteUrl));
             });
 
           }
           catch(error){
-            //console.log("note fetch error: "+error);
-            reject(Error("Can't load sound at " + noteUrl + ' status=' + error));
+            reject(Error("Can't load reverb kernel database case - status=" + error));
           }
-          
-      })
-      .catch(error => {
-          reject(Error("Can't load sound at " + noteUrl + ' status=' + error));
-          throw error;
+
+        }
+        else {
+
+          //console.log("Fetching "+noteUrl);
+
+          // Use the fetch API instead of XMLHttpRequest
+          fetch(noteUrl)
+          .then(response => {
+
+            try{
+
+              if (!response.ok){
+                throw new Error(`HTTP error, status = ${response.status}`);
+              }
+
+              // If a custom instrument and redirected, means sample not found
+              if (isCustomInstrument && response.redirected){
+                throw new Error(`HTTP redirect on custom GM instrument`);
+              }
+
+              response.arrayBuffer().then(theBuffer => {
+                var noteDecoded = function noteDecoded(audioBuffer) {
+                  resolve({
+                    instrument: instrument,
+                    name: name,
+                    status: "loaded",
+                    audioBuffer: audioBuffer
+                  });
+                };
+
+                // Save the sample in the database
+                saveSample_DB(noteUrl,theBuffer);
+
+                var maybePromise = audioContext.decodeAudioData(theBuffer, noteDecoded, function () {
+                   reject(Error("Can't decode sound at " + noteUrl));
+                });
+              });
+
+            }
+            catch(error){
+              //console.log("note fetch error: "+error);
+              reject(Error("Can't load sound at " + noteUrl + ' status=' + error + "- case 1"));
+            }              
+          })
+          .catch(error => {
+            reject(Error("Can't load sound at " + noteUrl + ' status=' + error + "- case 2"));
+            //throw error;
+          });
+        }
+
       });
     }
     else{
@@ -16439,37 +16479,6 @@ var getNote = function getNote(url, instrument, name, audioContext) {
     }
 
   });
-
-  //var xhr = new XMLHttpRequest();
-  //   xhr.open("GET", noteUrl, true);
-  //   xhr.responseType = "arraybuffer";
-  //   xhr.onload = function () {
-  //     if (xhr.status !== 200) {
-  //       reject(Error("Can't load sound at " + noteUrl + ' status=' + xhr.status));
-  //       return;
-  //     }
-  //     var noteDecoded = function noteDecoded(audioBuffer) {
-  //       resolve({
-  //         instrument: instrument,
-  //         name: name,
-  //         status: "loaded",
-  //         audioBuffer: audioBuffer
-  //       });
-  //     };
-  //     var maybePromise = audioContext.decodeAudioData(xhr.response, noteDecoded, function () {
-  //       reject(Error("Can't decode sound at " + noteUrl));
-  //     });
-  //     // In older browsers `BaseAudioContext.decodeAudio()` did not return a promise
-  //     if (maybePromise && typeof maybePromise["catch"] === "function") maybePromise["catch"](reject);
-  //   };
-  //   xhr.onerror = function () {
-  //     reject(Error("Can't load sound at " + noteUrl));
-  //   };
-  //   xhr.send();
-  // })["catch"](function (err) {
-  //   console.error("Didn't load note", instrument, name, ":", err.message);
-  //   throw err;
-  // });
   
   return instrumentCache[name];
 
