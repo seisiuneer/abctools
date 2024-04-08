@@ -16490,7 +16490,7 @@ var getReverbKernel = function getReverbKernel(audioContext){
 
   //debugger;
 
-  //console.log("getReverbKernel top - style="+gReverbStyle);
+  //console.log("getReverbKernel top - style= "+gReverbStyle);
 
   gReverbNode = null;
 
@@ -16503,7 +16503,7 @@ var getReverbKernel = function getReverbKernel(audioContext){
 
     if (gReverbKernels[i].style == gReverbStyle){
 
-      //console.log("Kernel for "+gReverbStyle+" Found in cache");
+      //console.log("Impulse for "+gReverbStyle+" Found in cache");
 
       gReverbNode = audioContext.createConvolver();
 
@@ -16521,97 +16521,158 @@ var getReverbKernel = function getReverbKernel(audioContext){
 
   }
 
-  //console.log("Kernel for "+gReverbStyle+" not found in cache, proceeding with fetch");
+  // If not in cache, first try the database
+  getImpulse_DB(gReverbStyle, function(theImpulse){
 
-  var reverbPromise = new Promise(function (resolve, reject){
+    //debugger;
 
-      var theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/"
+    if (theImpulse && theImpulse.impulse && (theImpulse.impulse.byteLength != 0)){
 
-      switch (gReverbStyle){
-        case "room1":
-          theReverbURL += "room1.wav";
-          break;
-        case "room2":
-          theReverbURL += "room2.wav";
-          break;
-        case "room":
-        case "room3":
-          theReverbURL += "room3.wav";
-          break;
-        case "chamber1":
-          theReverbURL += "chamber1.wav";
-          break;
-        case "chamber":
-        case "chamber2":
-          theReverbURL += "chamber2.wav";
-          break;
-        case "chamber3":
-          theReverbURL += "chamber3.wav";
-          break;
-        case "hall1":
-          theReverbURL += "hall1.wav";
-          break;
-        case "hall":
-        case "hall2":
-          theReverbURL += "hall2.wav";
-          break;
-        case "hall3":
-          theReverbURL += "hall3.wav";
-          break;
-        case "church":
-        case "church1":
-          theReverbURL += "church1.wav";
-          break;
-        default:
-          // Default to chamber2
-          theReverbURL += "chamber2.wav";
-          break;       
-      }
-      fetch(theReverbURL)
-      .then(response => {
+      var dbPromise = new Promise(function (resolve, reject){
 
-          try{
-
-            if (!response.ok){
-              throw new Error(`HTTP error, status = ${response.status}`);
-            }
-
-            response.arrayBuffer().then(theBuffer => {
-
-              var kernelDecoded = function kernelDecoded(audioBuffer) {
-                
-                gReverbNode = audioContext.createConvolver();
-
-                gReverbNode.buffer = audioBuffer;
-
-                gReverbKernels.push({style:gReverbStyle,kernel:audioBuffer});
-
-                //console.log("getReverbKernel resolve");
-
-                resolve();
-
-              };
-              var maybePromise = audioContext.decodeAudioData(theBuffer, kernelDecoded, function () {
-                 reject(Error("Can't decode reverb kernel"));
-              });
-            });
-
-          }
-          catch(error){
-            reject(Error("Can't load reverb kernel - status=" + error));
-          }
+        try{
+       
+          //console.log("Impulse for style "+gReverbStyle+" found in database");
           
-      })
-      .catch(error => {
-          reject(Error("Can't load reverb kernel - status=" + error));
-          throw error;
+          var kernelDecoded = function kernelDecoded(audioBuffer) {
+            
+            gReverbNode = audioContext.createConvolver();
+
+            gReverbNode.buffer = audioBuffer;
+
+            //console.log("Adding database version to cache");
+
+            gReverbKernels.push({style:gReverbStyle,kernel:audioBuffer});
+
+            //console.log("getReverbKernel resolve");
+
+            resolve();
+
+          };
+
+          var maybePromise = audioContext.decodeAudioData(theImpulse.impulse, kernelDecoded, function () {
+             reject(Error("Can't decode reverb kernel - database case"));
+          });
+        }
+        catch(error){
+          reject(Error("Can't load reverb kernel database case - status=" + error));
+        }
       });
+
+      return dbPromise;
+
+    }
+    else
+    {
+      //console.log("Kernel for "+gReverbStyle+" not found in cache or database, proceeding with fetch");
+
+      var reverbPromise = new Promise(function (resolve, reject){
+
+        var saveToDB = true;
+ 
+        var theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/"
+
+        switch (gReverbStyle){
+          case "room1":
+            theReverbURL += "room1.wav";
+            break;
+          case "room2":
+            theReverbURL += "room2.wav";
+            break;
+          case "room":
+          case "room3":
+            theReverbURL += "room3.wav";
+            break;
+          case "chamber1":
+            theReverbURL += "chamber1.wav";
+            break;
+          case "chamber":
+          case "chamber2":
+            theReverbURL += "chamber2.wav";
+            break;
+          case "chamber3":
+            theReverbURL += "chamber3.wav";
+            break;
+          case "hall1":
+            theReverbURL += "hall1.wav";
+            break;
+          case "hall":
+          case "hall2":
+            theReverbURL += "hall2.wav";
+            break;
+          case "hall3":
+            theReverbURL += "hall3.wav";
+            break;
+          case "church":
+          case "church1":
+            theReverbURL += "church1.wav";
+            break;
+          default:
+            // Default to chamber2
+            saveToDB = false;
+            theReverbURL += "chamber2.wav";
+            break;       
+        }
+        fetch(theReverbURL)
+        .then(response => {
+
+            try{
+
+              if (!response.ok){
+                throw new Error(`HTTP error, status = ${response.status}`);
+              }
+
+              response.arrayBuffer().then(theBuffer => {
+
+                var kernelDecoded = function kernelDecoded(audioBuffer) {
+                  
+                  gReverbNode = audioContext.createConvolver();
+
+                  gReverbNode.buffer = audioBuffer;
+
+                  if (saveToDB){
+                    //console.log("Caching impulse for "+gReverbStyle);
+                    gReverbKernels.push({style:gReverbStyle,kernel:audioBuffer});
+                  }
+
+                  //console.log("getReverbKernel resolve");
+   
+                  resolve();
+
+                };
+
+                // Save the impulse in the database
+
+                if (saveToDB){
+                  //console.log("Saving impulse for "+gReverbStyle+" in the database ");
+                  saveImpulse_DB(gReverbStyle,theBuffer);
+                }
+
+                var maybePromise = audioContext.decodeAudioData(theBuffer, kernelDecoded, function () {
+                   reject(Error("Can't decode reverb kernel"));
+                });
+              });
+
+            }
+            catch(error){
+              reject(Error("Can't load reverb kernel - status=" + error));
+            }
+            
+        })
+        .catch(error => {
+            reject(Error("Can't load reverb kernel - status=" + error));
+            throw error;
+        });
+
+    });
+
+    return reverbPromise;
+
+    }
 
   });
   
   //console.log("getReverbKernel end");
-  
-  return reverbPromise;
 
 };
 

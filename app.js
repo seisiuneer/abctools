@@ -338,9 +338,6 @@ var gShowDiagnostics = false;
 // Reverb string to inject
 var gReverbString = "chamber 0.95 0.05";
 
-// For restoration of saved custom reverb impulse
-var gReverbImpulseRestored = false;
-
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -24680,6 +24677,8 @@ function ScanTuneForReverb(theTune){
 
 	//console.log("ScanTuneForReverb");
 
+	//debugger;
+
 	// No reverb during offline use
 	if (!gSamplesOnline){
 		return;
@@ -24764,19 +24763,6 @@ function ScanTuneForReverb(theTune){
 					// Force a reload of the reverb convolution kernel
 					gSoundsCacheABCJS = {};
 				}
-
-				if (theStyle == "custom"){
-
-					if (!gReverbImpulseRestored){
-
-						//console.log("Restoring impulse");
-						
-			    		restoreSavedImpulse();
-
-			    		gReverbImpulseRestored = true;
-
-			    	}
-			    }
 			}
 		}
 	}
@@ -31355,61 +31341,41 @@ function idleAdvancedSettings(){
 
 			try {
 
-		      	var AudioContext = window.AudioContext || window.webkitAudioContext;
-
-		      	if (AudioContext){
-		      		audioContext = new AudioContext();
-		      	}
-		      	else{
-		      		throw("Can't create the audio context to decode the reverb impulse")
-		      	} 
-
 				const theBuffer = await readWavFile(file);
 
 				// Save the impulse in the database
-				saveImpulse_DB(theBuffer);
+				saveImpulse_DB("custom", theBuffer);
 
-			    var kernelDecoded = function kernelDecoded(audioBuffer) {
+				var thePrompt = "Custom reverb impulse file load successful!";
 
-				   	// Lets see if the kernel is already in the cache
-				   	var newKernels = [];
+				// Clear any old custom impulse in the cache
+			   	var newKernels = [];
 
-					var nKernels = gReverbKernels.length;
+				var nKernels = gReverbKernels.length;
 
-					var i;
+				var i;
 
-					// Replace any existing custom kernel
-					for (i=0;i<nKernels;++i){
+				// Replace any existing custom kernel
+				for (i=0;i<nKernels;++i){
 
-						var thisKernel = gReverbKernels[i]
+					var thisKernel = gReverbKernels[i]
 
-						if (thisKernel.style != "custom"){
+					if (thisKernel.style != "custom"){
 
-						 	newKernels.push(thisKernel);
+					 	newKernels.push(thisKernel);
 
-						}
 					}
+				}
 
-					gReverbKernels = newKernels;
-				      
-				    gReverbKernels.push({style:"custom",kernel:audioBuffer});
+				gReverbKernels = newKernels;
+				
+				// Center the string in the prompt
+				thePrompt = makeCenteredPromptString(thePrompt);
 
-				    // Force a reload of the reverb convolution kernels
-					gSoundsCacheABCJS = {};
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 300, scrollWithPage: (AllowDialogsToScroll()) });
 
-					var thePrompt = "Custom reverb impulse file load successful!";
-					
-					// Center the string in the prompt
-					thePrompt = makeCenteredPromptString(thePrompt);
-
-					DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 300, scrollWithPage: (AllowDialogsToScroll()) });
-
-					return;
-
-			    };
-
-			    await audioContext.decodeAudioData(theBuffer, kernelDecoded);
-
+			    // Force a reload of the reverb convolution kernels
+				gSoundsCacheABCJS = {};
 
 			} catch (error) {
 
