@@ -31403,7 +31403,7 @@ function idleAdvancedSettings(){
 // Clear all the databases
 function DeleteAllDatabases(){
 
-	var thePrompt = "This will delete the notes, reverb impulse, and tune search local databases. Are you sure?";
+	var thePrompt = "This will clear the notes, reverb impulse, and tune search cache databases. Are you sure?";
 
 	// Center the string in the prompt
 	thePrompt = makeCenteredPromptString(thePrompt);
