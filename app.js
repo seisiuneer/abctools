@@ -31962,7 +31962,12 @@ function AdvancedControlsDialog(){
 	if (gFeaturesShowExport && gFeaturesShowExplorers){
 		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_reverb_explorer" class="btn btn-reverbexplorer configure_reverb_explorer " onclick="ReverbExplorer()" type="button" value="Reverb Explorer" title="Brings up a tune player where you can experiment with different reverb parameters"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Audio or Images" title="Exports all the tunes in the ABC text area as audio or image files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag" title="Brings up the Sort by Specific Tag dialog"><input class="incipitsbuilder btn btn-incipitsbuilder" id="incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Incipits Builder" title="Formats the ABC for notation incipits PDF export"></p>';
 	}
-	else{
+	else
+	if ((!gFeaturesShowExport) && gFeaturesShowExplorers){
+		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_reverb_explorer" class="btn btn-reverbexplorer configure_reverb_explorer " style="margin-right:0px" onclick="ReverbExplorer()" type="button" value="Reverb Explorer" title="Brings up a tune player where you can experiment with different reverb parameters"></p>';
+	}
+	else
+	if (gFeaturesShowExport && (!gFeaturesShowExplorers)){
 		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Audio or Images" title="Exports all the tunes in the ABC text area as audio or image files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag" title="Brings up the Sort by Specific Tag dialog"><input class="incipitsbuilder btn btn-incipitsbuilder" id="incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Incipits Builder" title="Formats the ABC for notation incipits PDF export"></p>';
 
 	}
@@ -32000,20 +32005,24 @@ function AdvancedControlsDialog(){
 		});
 
 	// Change button label for export all for whistle
-	// Hide the batch exporter button on mobile
-	if (isMobileBrowser()){
-		document.getElementById("configure_batch_mp3_export").style.display = "none";
-	}
-	else{
-		
-		if (format == "whistle"){
 
-			document.getElementById("configure_batch_mp3_export").value = "Export All Audio";
-			document.getElementById("configure_batch_mp3_export").title = "Exports all the tunes in the ABC text area as audio files";
+	var elem = document.getElementById("configure_batch_mp3_export");
 
+	if (elem){
+		// Hide the batch exporter button on mobile
+		if (isMobileBrowser()){
+			document.getElementById("configure_batch_mp3_export").style.display = "none";
+		}
+		else{
+			
+			if (format == "whistle"){
+
+				document.getElementById("configure_batch_mp3_export").value = "Export All Audio";
+				document.getElementById("configure_batch_mp3_export").title = "Exports all the tunes in the ABC text area as audio files";
+
+			}
 		}
 	}
-
 }
 
 //
