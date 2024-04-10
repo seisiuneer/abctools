@@ -25738,6 +25738,13 @@ const reverbSettingsNames = [
 	"Custom"
 ];
 
+// Idle the load reverb kernel button
+function idleReverbExplorer(){
+
+	// Shared code with the advanced settings
+	idleAdvancedSettings();
+}
+
 function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_state){
 
 	//console.log("ReverbExplorerDialog");
@@ -25926,8 +25933,9 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 			modal_msg += '</p>';
 
 			modal_msg += '<p class="configure_reverbexplorer_text_mobile" style="text-align:center;margin:0px;margin-top:22px">';
-			modal_msg += '<input id="reverbexplorertest" class="reverbexplorertest button btn btn-reverbexplorertest" onclick="ReverbExplorerRegenerate();" type="button" value="Reload Tune with Changed Reverb Settings" title="Reloads the tune into the player with the entered reverb settings">';
-			modal_msg += '<input id="reverbexplorerinject" class="reverbexplorerinject button btn btn-reverbexplorerinject" onclick="ReverbExplorerInject();" type="button" style="margin-right:0px;" value="Inject Reverb into the ABC" title="Injects the current reverb settings into the tune ABC">';
+			modal_msg += '<input id="reverbexplorertest" class="reverbexplorertest button btn btn-reverbexplorertest" onclick="ReverbExplorerRegenerate();" type="button" value="Reload with Changed Reverb Settings" title="Reloads the tune into the player with the entered reverb settings">';
+			modal_msg += '<input id="reverbexplorerinject" class="reverbexplorerinject button btn btn-reverbexplorerinject" onclick="ReverbExplorerInject();" type="button" style="margin-right:24px;" value="Inject Reverb into the ABC" title="Injects the current reverb settings into the tune ABC">';
+			modal_msg += '<label class="loadimpulsebutton btn btn-reverbexplorerinject" for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label>'
 			modal_msg += '</p>';
 			modal_msg += '<a id="reverbexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#reverb_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the Reverb Explorer" class="dialogcornerbutton">?</a>';
 		}
@@ -25944,7 +25952,8 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 
 			modal_msg += '<p class="configure_reverbexplorer_text" style="text-align:center;margin:0px;margin-top:22px">';
 			modal_msg += '<input id="reverbexplorertest" class="reverbexplorertest button btn btn-reverbexplorertest" onclick="ReverbExplorerRegenerate();" type="button" value="Reload Tune with Changed Reverb Settings" title="Reloads the tune into the player with the entered reverb settings">';
-			modal_msg += '<input id="reverbexplorerinject" class="reverbexplorerinject button btn btn-reverbexplorerinject" onclick="ReverbExplorerInject();" type="button" style="margin-right:0px;" value="Inject Reverb into the ABC" title="Injects the current reverb settings into the tune ABC">';
+			modal_msg += '<input id="reverbexplorerinject" class="reverbexplorerinject button btn btn-reverbexplorerinject" onclick="ReverbExplorerInject();" type="button" style="margin-right:24px;" value="Inject Reverb into the ABC" title="Injects the current reverb settings into the tune ABC">';
+			modal_msg += '<label class="loadimpulsebutton btn btn-reverbexplorerinject" for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label>'
 			modal_msg += '</p>';
 			modal_msg += '<a id="reverbexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#reverb_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the Swing Explorer" class="dialogcornerbutton">?</a>';
 
@@ -25971,6 +25980,13 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 		}
 
 		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: theTop, width:theWidth, okText:"Close", scrollWithPage: (isMobileBrowser()) });
+
+		// Set up the reverb impulse load callback
+		setTimeout(function(){
+
+			idleReverbExplorer();
+
+		}, 100);
 
 		// Set the initial reverb configuration
 		document.getElementById("reverb_explorer_dry").value = gReverbExplorerDry;

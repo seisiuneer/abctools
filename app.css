@@ -3751,7 +3751,7 @@ margin-top:-7px;
 height:42px;
 padding:12px;
 width:auto;
-margin-right:36px;
+margin-right:24px;
 }
 
 @media (hover: hover) {
@@ -3759,7 +3759,6 @@ margin-right:36px;
 	background: palegreen;
 	}
 }
-
 
 #reverbexplorerinject{
 height:42px;
