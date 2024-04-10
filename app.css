@@ -638,13 +638,13 @@ opacity: 0.4;
 padding:12px;
 }
 
-#ceoltasdialog,#injectheaderstring,#injectallmidiparams,#injectbctab,#injectcdtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth,#injectmetronome,#injectshapenotes,#injectsectionheader,#injecttunenumbers,#addtunetitlenumbers,#compliancedialog{
+#ceoltasdialog,#injectheaderstring,#injectallmidiparams,#injectbctab,#injectcdtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth,#injectmetronome,#injectshapenotes,#injectsectionheader,#injecttunenumbers,#addtunetitlenumbers,#compliancedialog,#ceoltastransform{
 height:42px;
 padding:12px;
 margin-right:24px;
 }
 
-#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#ceoltastransform,#looper_metronomebutton,#injectlargeprint,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse{
+#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#injectlargeprint,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse{
 height:42px;
 padding:12px;
 }
@@ -2875,6 +2875,18 @@ margin-top:-7px;
 	}
 }
 
+#configure_reverb_explorer{
+	height:42px;
+	padding:12px;
+	margin-right:24px;
+}
+
+@media (hover: hover) {
+	.configure_reverb_explorer:hover{
+	background: palegreen;
+	}
+}
+
 #configure_anglo_fingerings{
 	height:42px;
 	margin-top: 9px;
@@ -3667,6 +3679,108 @@ margin-top:0px;
 margin-bottom:4px;
 }
 
+.configure_reverbexplorer_text{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-top:24px;
+}
+
+.configure_reverbexplorer_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 2px;
+	width: 60px;
+	margin-right:10px;
+}
+
+.configure_reverbexplorer_text>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:120px;
+margin-left:8px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_reverbexplorer_text_mobile{
+	font-size:10pt;
+	font-family:helvetica;
+	margin-top:24px;
+}
+
+.configure_reverbexplorer_text_mobile>input{
+	font-size:11pt;
+	font-family:helvetica;
+	margin-left: 2px;
+	width: 60px;
+	margin-right:10px;
+}
+
+.configure_reverbexplorer_text_mobile>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:120px;
+margin-left:4px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+#reverbexplorertest{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:36px;
+}
+
+@media (hover: hover) {
+	.reverbexplorertest:hover{
+	background: palegreen;
+	}
+}
+
+
+#reverbexplorerinject{
+height:42px;
+padding:12px;
+width:auto;
+margin-left:0px;
+}
+
+@media (hover: hover) {
+	.reverbexplorerinject:hover{
+	background: palegreen;
+	}
+}
+
+#reverbexplorerhelp{
+font-size:24pt;
+position:absolute;
+left:20px;
+top:20px;
+}
+
 
 /******************************************************************************/
 /* STYLES RELATED TO EXPERIMENT BUTTONS                                       */
@@ -4000,6 +4114,11 @@ margin-bottom:4px;
   --background-color: #C8ECFE;
 }
 
+.btn-reverbexplorer{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
 .btn-instrumentexplorer{
   --color: black;
   --background-color: #C8ECFE;
@@ -4120,6 +4239,15 @@ margin-bottom:4px;
   --background-color: #FFCCCC;	
 }
 
+.btn-reverbexplorertest{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-reverbexplorerinject{
+  --color: black;
+  --background-color: #C8ECFE;
+}
 
 @media (hover: hover) {
 	

@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-       
+
         <style>
 
 		p {
@@ -321,9 +321,9 @@
                     </div>
                 </div>
 
-                <button class="accordion" title="Click to expand/collapse this section">Tablature, Shape Note, and Solfège Injectors</button>
+                <button class="accordion" title="Click to expand/collapse this section">Tablature, Comhaltas Transform, Shape Note, and Solfège Injectors</button>
                 <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#injecting_tablature">Tablature, Shape Note, and Solfège Injectors</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#injecting_tablature">Tablature, Comhaltas Transform, Shape Note, and Solfège Injectors</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#tab_box_bc">Inject B/C Box Tab</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#tab_box_cd">Inject C#/D Box Tab</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#reading_the_box_tablature">Reading the Box Tablature</a></p>
@@ -332,19 +332,21 @@
                     <p class="toc"><a style="text-decoration:none;" href="#tab_fiddle">Inject Fiddle Fingerings</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#tab_dulcimer">Inject Dulcimer Tab</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#tab_bamboo">Inject Bamboo Flute Tab</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#advanced_comhaltas">Comhaltas Transform</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#advanced_shapenoteshapes">Inject Shape Note/Solfège</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#tablature_settings">Configuring Tablature/Solfège Fonts and Settings</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#clearing_tablature">Clearing the Injected Tablature</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#tablature_limitations">Tablature/Solfège Injection Issues and Limitations</a></p>
                 </div>
                     
-                <button class="accordion" title="Click to expand/collapse this section">Notation, MIDI, Swing, Grace Duration, and Roll Explorers</button>
+                <button class="accordion" title="Click to expand/collapse this section">Spacing, MIDI Instrument, Swing, Grace Duration, Roll, and Reverb Explorers</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#advanced_notationspacingexplorer">Notation Spacing Explorer</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#midi_instrument_explorer">MIDI Instrument Explorer</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#swing_explorer">Swing Explorer</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#grace_duration_explorer">Grace Duration Explorer</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#roll_explorer">Roll Explorer</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#reverb_explorer">Reverb Explorer</a></p>
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">Export All Audio or Images + Other Utilities</button>
@@ -353,7 +355,6 @@
                     <p class="toc"><a style="text-decoration:none;" href="#smartdraw_export">SmartDraw Set List Builder</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#sort_dialog">Sort by Tag</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#incipits_builder">Incipits Builder</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#advanced_comhaltas">Comhaltas Transform</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#advanced_compliance">ABC Compliance Transform</a></p>
                 </div>
                     
@@ -1234,7 +1235,6 @@
             <p>Where <strong>reverb_style</strong> is one of:</p>
             <p>
             off<br/>
-            none<br/>
             room1<br/>
             room2<br/>
             room3<br/>
@@ -1256,8 +1256,8 @@
             <p class="code">%reverb hall2 0.7 0.3</p>
             <p>For example, here's how to select the chamber1 style reverb with .8 of the original sound and .2 of the reverb in the final mix:</p>
             <p class="code">%reverb chamber1 0.8 0.2</p>
-            <p>To disable the reverb for a tune, include one of the following:</p>
-            <p class="code">%reverb none<br/>%reverb off</p>
+            <p>To disable the reverb for a tune, include:</p>
+            <p class="code">%reverb off</p>
             <p>When the tool is first run, the default reverb is set to:</p>
             <p class="code">chamber 0.95 0.05</p>  
             <p>If you wish to change the default reverb there is a setting on the <a href="#default_reverb"><strong>Advanced Settings</strong></a> dialog where you can enter your preferred set of default %reverb parameters to apply when playing tunes.</p>
@@ -1550,7 +1550,7 @@
             <h1 class="page_break_always">More ABC Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/more_abc_tools_11.jpg"/>
+                <img class="image" loading="lazy" src="img/more_abc_tools_12.jpg"/>
             </div>
             <p>If you would like to only show the buttons for the features you commonly use and hide the others, click the controls icon at the top-right of the dialog to choose features of the dialog you would like to show/hide:</p>
             <div class="image_holder_p">
@@ -1647,7 +1647,7 @@
             <p>Generally values above 556 will make the tunes less tall.</p>
             <p>If "Inject all tunes" is not checked, the annotation is added at the current text insertion point.</p>
             <hr class="hidden-print" id="injecting_tablature">
-            <h1 class="page_break_always h1wide">Tablature, Shape Note, and Solfège Injectors<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <h1 class="page_break_always h1wide">Tablature, Comhaltas Transform, Shape Note, and Solfège Injectors<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>The tablature/solfège injection features add additional text into your ABC to create tablature for the selected instrument or notation style.</p>
             <p style="text-align: center;"><strong>Consider saving or grabbing a Snapshot your work before injecting tab!</strong></p>
             <p>Since the tab injectors modify your original ABC, you may want to grab a Snapshot of the entire ABC (simply click <strong>Snapshot</strong>) before doing the tab injection operation.</p>
@@ -1736,6 +1736,15 @@
                 <img class="image" loading="lazy" src="img/bamboo_flute_2.jpg"/>
             </div>
             <p>See the <a href="#tablature_settings">Configuring Tablature/Solfège Fonts and Settings</a> section below for full details on the tablature font and spacing options.</p>
+            <hr id="advanced_comhaltas">
+            <p><strong>Comhaltas Transform</strong> - Brings up a dialog where you can choose between transforming the entire ABC from the standard ABC d e f octave note style to the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style, or from the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style to standard ABC d e f octave note style.</p>
+            <div class="image_holder_p">
+                <img class="image" loading="lazy" src="img/comhaltas_1.jpg"/>
+            </div>
+            <p><strong>Important:</strong> While the note Names display will show the Comhaltas-preferred note names, the ABC standard requires that the second octave C in the ABC itself either be represented by c or C' so that may requires some minor changes when pasting in your Comhaltas-formatted tunes.</p>
+            <p><strong>Regarding Comhaltas ABC and instrument tab injection:</strong> The various instrument-specific tab injectors detailed below are not able to work with the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style note names.</p>
+            <p>To inject instrument tab into ABC in this format, you will first need to convert the Comhaltas-preferred ABC to standard ABC the <strong>Comhaltas ABC Transform</strong> dialog's <strong>Comhaltas ABC to Standard ABC</strong> button first, then do the tablature injection.</p>
+            <p>After doing the tab injection, you can then transform the ABC back into the Comhaltas-preferred format using the the <strong>Comhaltas ABC Transform</strong> dialog's <strong>Standard ABC to Comhaltas ABC</strong> button</p>
             <hr id="advanced_shapenoteshapes">
             <p><strong>Inject Shape Note/Solfège</strong> - Injects "4-shape" or "7-shape" style shape note shapes into the ABC along with optional "fa/sol/la/ti" (4-shape) or "do/re/me/fa/sol/la/ti" (7-shape) solfège note names.</p>
             <p>There are also additional options for injecting pitch names, fixed solfège at Do=C with or without chromatic note names, movable solfège based on key/mode, or movable solfège based on key/mode with shift for minor La.</p>
@@ -1922,6 +1931,21 @@
             <p>To exit the Roll Explorer, click <strong>Close</strong>.</p>
             <hr>
             <p>Once the roll parameters are injected into the ABC, they can be modified in place if additional adjustments are desired.</p>
+            <hr class="hidden-print" id="reverb_explorer">
+            <h1 class="page_break_always">Reverb Explorer<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>Brings up a dialog where you can experiment playing the tune with different reverb styles and settings and then optionally inject the values into the tune.</p>
+            <div class="image_holder_p">
+                <img class="image" loading="lazy" src="img/reverb_explorer_1.jpg"/>
+            </div>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/jrcugan1JhQ" title="Reverb Explorer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+            <p>Select your reverb style from the <strong>Reverb style</strong> dropdown.</p>
+            <p>Enter the dry, and wet mix fractional values (must be >= 0) into the <strong>Dry signal fraction</strong> and <strong>Wet signal fraction</strong> fields.</p>
+            <p>Ideally Dry + Wet should equal 1.0, but that is not a requirement, the tool will allow you to experiment with any values.</p>
+            <p>If the Dry + Wet > 1.0, the mixed sound will be louder than normal.</p>
+            <p>Click <strong>Reload Tune with Changed Reverb Settings</strong> to reload the player with the reverb parameters applied.</p>
+            <p>Click the play button to play the tune to check the new settings.</p>
+            <p>If you are happy with your new reverb settings and want to apply them to the tune, click <strong>Inject Reverb into the ABC</strong> to inject your new reverb settings into the tune's ABC, replacing any previous reverb settings.</p>
+            <p>To exit the Reverb Explorer, click <strong>Close</strong>.</p>
             <hr class="hidden-print" id="export_all">
             <h1 class="page_break_always">Export All Audio or Images<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>These features are only available on desktop browsers.</p>
@@ -2022,16 +2046,6 @@
             <div class="image_holder_p">
                 <img class="image" loading="lazy" src="img/incipits_builder_example_2.jpg"/>
             </div>
-            <hr class="hidden-print" id="advanced_comhaltas">
-            <h1 class="page_break_always">Comhaltas Transform<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/comhaltas_1.jpg"/>
-            </div>
-            <p>Brings up a dialog where you can choose between transforming the entire ABC from the standard ABC d e f octave note style to the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style, or from the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style to standard ABC d e f octave note style.</p>
-            <p><strong>Important:</strong> While the note Names display will show the Comhaltas-preferred note names, the ABC standard requires that the second octave C in the ABC itself either be represented by c or C' so that may requires some minor changes when pasting in your Comhaltas-formatted tunes.</p>
-            <p><strong>Regarding Comhaltas ABC and instrument tab injection:</strong> The various instrument-specific tab injectors detailed below are not able to work with the Comhaltas-preferred "Blackboard ABC" D' E' F' octave note style note names.</p>
-            <p>To inject instrument tab into ABC in this format, you will first need to convert the Comhaltas-preferred ABC to standard ABC the <strong>Comhaltas ABC Transform</strong> dialog's <strong>Comhaltas ABC to Standard ABC</strong> button first, then do the tablature injection.</p>
-            <p>After doing the tab injection, you can then transform the ABC back into the Comhaltas-preferred format using the the <strong>Comhaltas ABC Transform</strong> dialog's <strong>Standard ABC to Comhaltas ABC</strong> button</p>
             <hr class="hidden-print" id="advanced_compliance">
             <h1 class="page_break_always">ABC Compliance Transform<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">
