@@ -31824,10 +31824,10 @@ function Configure_AdvancedControlsDialog_UI(){
 	];
 
 	if (isDesktopBrowser()){
-		form.push({name: "          Show Export, Sort, Incipits, and Comhaltas features", id: "showexport", type:"checkbox", cssClass:"configure_ui_options_form_text"});
+		form.push({name: "          Show Export, Sort, and Incipits features", id: "showexport", type:"checkbox", cssClass:"configure_ui_options_form_text"});
 	}
 	else{
-		form.push({name: "          Show Sort, Incipits, and Comhaltas features", id: "showexport", type:"checkbox", cssClass:"configure_ui_options_form_text"});		
+		form.push({name: "          Show Sort and Incipits features", id: "showexport", type:"checkbox", cssClass:"configure_ui_options_form_text"});		
 	}
 
 	form.push({name: "          Show ABC Private Directive Compliance Tools", id: "showcompliance", type:"checkbox", cssClass:"configure_ui_options_form_text"});
