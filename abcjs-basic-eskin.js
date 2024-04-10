@@ -12788,11 +12788,16 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     }
     var arr = remaining.split('/');
     chick = chordNotes(bass, arr[0]);
-    // If the 5th is altered then the bass is altered. Normally the bass is 7 from the root, so adjust if it isn't.
-    if (chick.length >= 3) {
-      var fifth = chick[2] - chick[0];
-      bass2 = bass2 + fifth - 7;
+
+    // Special case for power chords, don't alter the bass
+    if ((remaining.indexOf("5(8)") != 0) && (remaining.indexOf("5add8") != 0)){
+      // If the 5th is altered then the bass is altered. Normally the bass is 7 from the root, so adjust if it isn't.
+      if (chick.length >= 3) {
+        var fifth = chick[2] - chick[0];
+        bass2 = bass2 + fifth - 7;
+      }
     }
+
     if (arr.length === 2) {
       var explicitBass = basses[arr[1].substring(0, 1)];
       if (explicitBass) {
@@ -12813,7 +12818,8 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       chick: chick
     };
   }
- //
+
+  //
   // MAE 16 Aug 2023 - Chord interval map moved external after finding minifier issues
   //
 
@@ -12832,7 +12838,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     return notes;
   }
   function writeBoom(boom, beatLength, volume, beat, noteLength) {
-    // undefined means there is a stop time.
+     // undefined means there is a stop time.
     if (boom !== undefined) chordTrack.push({
       cmd: 'note',
       pitch: boom,
