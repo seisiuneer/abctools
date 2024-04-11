@@ -28413,6 +28413,9 @@ function TuneTrainer(bIsFromPlayer){
 		// Fix issue with initial swing not happening
 		ScanTuneForCustomTimingInjection(theSelectedABC);
 
+		// Fixes bug reported by Alix on 11 Apr 2024 for tunes with tags at the end and extra blank lines
+		theSelectedABC = theSelectedABC.trim();
+
 		// See if there is a select region and return the partial tune
 		theSelectedABC = ProcessSelectRegionForPlay(theSelectedABC);
 
