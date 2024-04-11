@@ -268,7 +268,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#grace_timing">Setting Grace Note Duration for Ornamentation</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#roll_timing">Defining Custom Roll Timing Parameters</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#custom_backup_rhythms">Custom Backup Rhythms</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#custom_backup_beat_fraction">Custom Backup Beat Fraction</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#custom_backup_beat_fractions">Custom Backup Beat Fractions</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#sung_solfege">Select the Solfège Instrument to Sing Note Names</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#voice_hiding">Voice Combining and Hiding</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#highlighting_control">Controlling Note Highlighting in the Player</a></p>
@@ -1421,15 +1421,22 @@
             <p>You may have multiple custom rhythm directives for different meters in a single tune.</p>
             <p>If you have the same meter specified twice in custom rhythm directives in a tune, only the first one will be used.</p>
             <p>This directive is specific to this tool and will not work with other ABC players.</p>
-            <hr class="hidden-print" id="custom_backup_beat_fraction">
-            <h1 class="page_break_always">Custom Backup Beat Fraction<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>If you want to change the duration of the backup bass and chord notes, you can include the following comment-based annotation anywhere in the tune's ABC:</p>
-            <p class="code">%backup_beat_fraction beat_fraction</p>
+            <hr class="hidden-print" id="custom_backup_beat_fractions">
+            <h1 class="page_break_always">Custom Backup Beat Fractions<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>If you want to change the duration of the backup bass and chord notes at once, you can include the following comment-based annotation anywhere in the tune's ABC:</p>
+            <p class="code">%backup_fraction beat_fraction</p>
             <p>Where beat_fraction ranges from 0 to 1 and is the fraction of the beat to use for the duration of the backup bass and chord notes.</p>
             <p>The default value is 0.5. </p>
-            <p>For example, to have the bass and chord note duration be 0.6 of the beat instead of the default of 0.5, add the following to the tune:</p>
-            <p class="code">%backup_beat_fraction 0.6</p>
-            <p>This directive is specific to this tool and will not work with other ABC players.</p>
+            <p>For example, to have the bass and chord note duration both be 0.6 of the beat instead of the default of 0.5, add the following to the tune:</p>
+            <p class="code">%backup_fraction 0.6</p>
+            <p>If you want to change the duration of the bass and chords of the backup independently, you can include either or both of the following comment-based annotations anywhere in the tune's ABC:</p>
+            <p class="code">%backup_bass_fraction beat_fraction</p>
+            <p class="code">%backup_chord_fraction beat_fraction</p>
+            <p>Where beat_fraction ranges from 0 to 1 and is the fraction of the beat to use for the duration of the backup bass and/or chords.</p>
+            <p>The default value is 0.5. </p>
+            <p>For example, to have the bass duration set to 0.6 and the chord duration set to 0.25 of the beat, add the following to the tune:</p>
+            <p class="code">%backup_bass_fraction 0.6<br/>%backup_chord_fraction 0.25</p>
+            <p>These directives are specific to this tool and will not work with other ABC players.</p>
             <hr class="hidden-print" id="sung_solfege">
             <h1 class="page_break_always h1wide">Select the Solfège Instrument to Sing Note Names<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>To sing the note names, you can select the Solfège instrument (136) for a voice:</p>
@@ -3090,7 +3097,9 @@
             %tab_first_voice_exclude<br/>
             %abcjs_boomchick 4/4 Bcbc 2<br/>
             %reverb chamber 0.8 0.2<br/>
-            %backup_beat_fraction 0.5</p>
+            %backup_fraction 0.5<br/>
+            %backup_bass_fraction 0.5<br/>
+            %backup_chord_fraction 0.5</p>
             <hr class="hidden-print" id="musicxml">
             <h1 class="page_break_always">MusicXML Import Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">

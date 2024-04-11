@@ -183,7 +183,8 @@ var gReverbNode = null;
 var gReverbKernels = []; // Cache impulse kernel reads
 
 // For backup note length adjustment
-var gBackupFraction = 0.5;
+var gBackupBoomFraction = 0.5;
+var gBackupChickFraction = 0.5;
 
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
@@ -12908,7 +12909,8 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     var den = meter.den;
 
     var beatLength = 1 / den;
-    var noteLength = beatLength * gBackupFraction;  // MAE Added 11 Apr 2024
+    var boomNoteLength = beatLength * gBackupBoomFraction;  // MAE Added 11 Apr 2024
+    var chickNoteLength = beatLength * gBackupChickFraction;  // MAE Added 11 Apr 2024
 
     var patternWork = null;
     var bIsCustomPattern = false;
@@ -13020,13 +13022,13 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
         if (!hasRhythmHead) {
           switch (pattern[m]) {
             case 'boom':
-              writeBoom(currentChords[0].chord.boom, beatLength, boomVolume, m, noteLength);
+              writeBoom(currentChords[0].chord.boom, beatLength, boomVolume, m, boomNoteLength);
               break;
             case 'boom2':
-              writeBoom(currentChords[0].chord.boom2, beatLength, boomVolume, m, noteLength);
+              writeBoom(currentChords[0].chord.boom2, beatLength, boomVolume, m, boomNoteLength);
               break;
             case 'chick':
-              writeChick(currentChords[0].chord.chick, beatLength, chickVolume, m, noteLength);
+              writeChick(currentChords[0].chord.chick, beatLength, chickVolume, m, chickNoteLength);
               break;
           }
         }
@@ -13056,32 +13058,32 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
           case 'boom':
            if (beats['' + (m2 + 1)]){
               // If there is not a chord change on the next beat, play a bass note.
-              writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, noteLength);
+              writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, chickNoteLength);
             }
             else {
-              writeBoom(thisChord.chord.boom, beatLength, boomVolume, m2, noteLength);
+              writeBoom(thisChord.chord.boom, beatLength, boomVolume, m2, boomNoteLength);
               lastBoom = thisChord.chord.boom;
             }           
             break;
           case 'boom2':
-            if (beats['' + (m2 + 1)]) writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, noteLength);else {
+            if (beats['' + (m2 + 1)]) writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, chickNoteLength);else {
               // If there is the same root as the last chord, use the alternating bass, otherwise play the root.
               if (lastBoom === thisChord.chord.boom) {
-                writeBoom(thisChord.chord.boom2, beatLength, boomVolume, m2, noteLength);
+                writeBoom(thisChord.chord.boom2, beatLength, boomVolume, m2, boomNoteLength);
                 lastBoom = undefined;
               } else {
-                writeBoom(thisChord.chord.boom, beatLength, boomVolume, m2, noteLength);
+                writeBoom(thisChord.chord.boom, beatLength, boomVolume, m2, boomNoteLength);
                 lastBoom = thisChord.chord.boom;
               }
             }
             break;
           case 'chick':
-            writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, noteLength);
+            writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, chickNoteLength);
             break;
           case '':
             if (beats['' + m2])
               // If there is an explicit chord on this beat, play it.
-              writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, noteLength);
+              writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, chickNoteLength);
             break;
         }
       }
