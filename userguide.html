@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-       
+ 
         <style>
 
 		p {
@@ -268,7 +268,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#grace_timing">Setting Grace Note Duration for Ornamentation</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#roll_timing">Defining Custom Roll Timing Parameters</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#custom_backup_rhythms">Custom Backup Rhythms</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#custom_backup_beat_fractions">Custom Backup Beat Fractions</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#custom_backup_beat_timing">Custom Backup Beat Timing</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#sung_solfege">Select the Solfège Instrument to Sing Note Names</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#voice_hiding">Voice Combining and Hiding</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#highlighting_control">Controlling Note Highlighting in the Player</a></p>
@@ -1421,8 +1421,9 @@
             <p>You may have multiple custom rhythm directives for different meters in a single tune.</p>
             <p>If you have the same meter specified twice in custom rhythm directives in a tune, only the first one will be used.</p>
             <p>This directive is specific to this tool and will not work with other ABC players.</p>
-            <hr class="hidden-print" id="custom_backup_beat_fractions">
-            <h1 class="page_break_always">Custom Backup Beat Fractions<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <hr class="hidden-print" id="custom_backup_beat_timing">
+            <h1 class="page_break_always">Custom Backup Beat Timing<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/y3aAqhiCJeU" title="Custom Backup Timing" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p>If you want to change the duration of the backup bass and chord notes at once, you can include the following comment-based annotation anywhere in the tune's ABC:</p>
             <p class="code">%backup_fraction beat_fraction</p>
             <p>Where beat_fraction ranges from 0 to 1 and is the fraction of the beat to use for the duration of the backup bass and chord notes.</p>
