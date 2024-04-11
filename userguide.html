@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
- 
+  
         <style>
 
 		p {
@@ -1426,14 +1426,14 @@
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/y3aAqhiCJeU" title="Custom Backup Timing" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p>If you want to change the duration of the backup bass and chord notes at once, you can include the following comment-based annotation anywhere in the tune's ABC:</p>
             <p class="code">%backup_fraction beat_fraction</p>
-            <p>Where beat_fraction ranges from 0 to 1 and is the fraction of the beat to use for the duration of the backup bass and chord notes.</p>
+            <p>Where beat_fraction is greater than 0 and less than or equal to 1 and is the fraction of the beat to use for the duration of the backup bass and chord notes.</p>
             <p>The default value is 0.5. </p>
             <p>For example, to have the bass and chord note duration both be 0.6 of the beat instead of the default of 0.5, add the following to the tune:</p>
             <p class="code">%backup_fraction 0.6</p>
             <p>If you want to change the duration of the bass and chords of the backup independently, you can include either or both of the following comment-based annotations anywhere in the tune's ABC:</p>
             <p class="code">%backup_bass_fraction beat_fraction</p>
             <p class="code">%backup_chord_fraction beat_fraction</p>
-            <p>Where beat_fraction ranges from 0 to 1 and is the fraction of the beat to use for the duration of the backup bass and/or chords.</p>
+            <p>Where beat_fraction is greater than 0 and less than or equal to 1 and is the fraction of the beat to use for the duration of the backup bass and chord notes.</p>
             <p>The default value is 0.5. </p>
             <p>For example, to have the bass duration set to 0.6 and the chord duration set to 0.25 of the beat, add the following to the tune:</p>
             <p class="code">%backup_bass_fraction 0.6<br/>%backup_chord_fraction 0.25</p>
