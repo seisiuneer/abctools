@@ -18633,7 +18633,9 @@ function complianceABCTransformer(theABC,doInverse){
 	    "%voice_tuning_cents",
 	    "%tab_first_voice_only",
 	    "%tab_first_voice_exclude",
-	    "%reverb"
+	    "%reverb",
+	    "%abcjs_boomchick",
+	    "%backup_beat_fraction"
 	];
 
 	if (doInverse){
@@ -23127,6 +23129,9 @@ function PlayerSetupCommon(theABC){
 		return false;
 	}
 
+	// Check if backup timing altered
+	ScanTuneForBackupFraction(theABC);
+
 	// Only highlighting first voice when playing
 	gOnlyHighlightV1 = false;
 	gOnlyHighlightV1 = ScanTuneForV1OnlyHighlight(theABC);
@@ -24184,6 +24189,39 @@ function ScanTuneForCustomTimingInjection(theTune){
 
 }
 
+//
+// Scan tune for altered backup timing
+//
+function ScanTuneForBackupFraction(theTune){
+
+	// Scan tune for modified fractional value
+	gBackupFraction = 0.5;
+
+	// Search for a backup timing request
+	var searchRegExp = /^%backup_beat_fraction.*$/gm
+
+	// Detect backup fraction annotation
+	var backupFraction = theTune.match(searchRegExp);
+
+	if ((backupFraction) && (backupFraction.length > 0)){
+
+		var theParamString = backupFraction[0].replace("%backup_beat_fraction","");
+
+		theParamString = theParamString.trim();
+
+		var fracValue = parseFloat(theParamString);
+
+		if (!isNaN(fracValue)){
+
+			if ((fracValue > 0.0) && (fracValue <= 1.0)){
+
+				//console.log("Got backup fraction = "+fracValue);
+				gBackupFraction = fracValue;
+			}
+
+		}
+	}
+}
 
 //
 // Scan tune for custom rhythm pattern request

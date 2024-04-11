@@ -182,6 +182,9 @@ var gReverbWet = 0.3;
 var gReverbNode = null;
 var gReverbKernels = []; // Cache impulse kernel reads
 
+// For backup note length adjustment
+var gBackupFraction = 0.5;
+
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
@@ -12905,7 +12908,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     var den = meter.den;
 
     var beatLength = 1 / den;
-    var noteLength = beatLength / 2;
+    var noteLength = beatLength * gBackupFraction;  // MAE Added 11 Apr 2024
 
     var patternWork = null;
     var bIsCustomPattern = false;
