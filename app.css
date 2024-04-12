@@ -748,6 +748,18 @@ margin-right:30px;
 	}
 }
 
+#abcplayer_wavreverbbutton{
+height:42px;
+padding:12px;
+margin-right:0px;
+}
+
+@media (hover: hover) {
+	.abcplayer_wavreverbbutton:hover{
+	background: palegreen;
+	}
+}
+
 #abcplayer_mp3button{
 height:42px;
 padding:12px;
@@ -3981,6 +3993,12 @@ top:20px;
 }
 
 .btn-wavedownload{
+  --color: black;
+  --background-color: lavender;
+
+}
+
+.btn-wavereverbdownload{
   --color: black;
   --background-color: lavender;
 

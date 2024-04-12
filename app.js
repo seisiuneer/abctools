@@ -21451,6 +21451,10 @@ function ExportAudioOrImage(){
 	modal_msg += '<input id="abcplayer_midibutton" class="abcplayer_midibutton btn btn-mididownload" onclick="DownloadMIDI();" type="button" value="Save as MIDI File" title="Saves the current tune note events as a MIDI file">'
 	modal_msg  += '</p>';
 
+	modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
+	modal_msg += '<input id="abcplayer_wavreverbbutton" class="abcplayer_wavreverbbutton btn btn-wavereverbdownload" onclick="DownloadWaveWithReverb();" type="button" value="Save as WAV File with Reverb" title="Saves the audio for the current tune as a .WAV file including reverb">'
+	modal_msg  += '</p>';
+
 	if (format != "whistle"){
 
 		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:42px;">Export Tune Image</p>';
