@@ -196,6 +196,14 @@ function DownloadWaveWithReverb() {
 	// console.log("gReverbWet = " + gReverbWet);
 	// console.log("gReverbStyle = " + gReverbStyle);
 
+	var elem = document.getElementById("abcplayer_wavreverbbutton");
+
+	if (elem){
+		elem.value = "Saving WAV File With Reverb";
+	}
+
+	document.getElementById("loading-bar-spinner").style.display = "block";
+
 	// Create an audio context
 	var audioContext = new window.AudioContext();
 
@@ -235,7 +243,17 @@ function DownloadWaveWithReverb() {
 
 					// Adding reverb failed, just download the raw WAV file with no reverb
 					if (!outputBuffer) {
+
+						var elem = document.getElementById("abcplayer_wavreverbbutton");
+
+						if (elem){
+							elem.value = "Save WAV File With Reverb";
+						}
+
+						document.getElementById("loading-bar-spinner").style.display = "none";
+
 						DownloadWave();
+
 						return;
 					}
 
@@ -259,9 +277,27 @@ function DownloadWaveWithReverb() {
 
 					document.body.removeChild(link);
 
+					var elem = document.getElementById("abcplayer_wavreverbbutton");
+
+					if (elem){
+						elem.value = "Save WAV File With Reverb";
+					}
+
+					document.getElementById("loading-bar-spinner").style.display = "none";
+
+
 				});
 			}, function(err) {
 				console.error('Failed to decode audio file:', err);
+				
+				var elem = document.getElementById("abcplayer_wavreverbbutton");
+
+				if (elem){
+					elem.value = "Save WAV File With Reverb";
+				}
+
+				document.getElementById("loading-bar-spinner").style.display = "none";
+
 			});
 
 		}
@@ -273,6 +309,15 @@ function DownloadWaveWithReverb() {
 
 		//console.warn("Problem exporting .wav:", e)
 		// Nope, exit
+
+		var elem = document.getElementById("abcplayer_wavreverbbutton");
+
+		if (elem){
+			elem.value = "Save WAV File With Reverb";
+		}
+
+		document.getElementById("loading-bar-spinner").style.display = "none";
+
 		var thePrompt = "A problem occured when exporting the .wav file.";
 
 		// Center the string in the prompt
