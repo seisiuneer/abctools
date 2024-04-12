@@ -21317,8 +21317,14 @@ function DownloadMP3(callback,val){
 	gMIDIbuffer.prime().then(function(t) {
 
 		if (!callback){
-			document.getElementById("abcplayer_mp3button").value = "Encoding .MP3";
+
+			var elem = document.getElementById("abcplayer_mp3button");
+
+			if (elem){
+				elem.value = "Encoding .MP3";
+			}
 		}
+		
 		document.getElementById("loading-bar-spinner").style.display = "block";
 
 		// Give the UI a chance to update
@@ -21357,10 +21363,17 @@ function DownloadMP3(callback,val){
 				document.body.removeChild(link);
 
 				if (!callback){
-					document.getElementById("abcplayer_mp3button").value = "Save as .MP3";
+
+					var elem = document.getElementById("abcplayer_mp3button");
+
+					if (elem){
+						elem.value = "Save as .MP3";
+					}
+
 				}
 
 				document.getElementById("loading-bar-spinner").style.display = "none";
+
 				gInDownloadMP3 = false;
 
 				if (callback){
@@ -21383,10 +21396,17 @@ function DownloadMP3(callback,val){
 		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 
 		if (!callback){
-			document.getElementById("abcplayer_mp3button").value = "Save as .MP3";
+
+			var elem = document.getElementById("abcplayer_mp3button");
+
+			if (elem){
+				elem.value = "Save as .MP3";
+			}
+
 		}
 
 		document.getElementById("loading-bar-spinner").style.display = "none";
+
 		gInDownloadMP3 = false;
 
 
@@ -21452,7 +21472,7 @@ function ExportAudioOrImage(){
 	modal_msg  += '</p>';
 
 	modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
-	modal_msg += '<input id="abcplayer_wavreverbbutton" class="abcplayer_wavreverbbutton btn btn-wavereverbdownload" onclick="DownloadWaveWithReverb();" type="button" value="Save as WAV File with Reverb" title="Saves the audio for the current tune as a .WAV file including reverb">'
+	modal_msg += '<input id="abcplayer_wavreverbbutton" class="abcplayer_wavreverbbutton btn btn-wavereverbdownload" onclick="DownloadWaveWithReverb();" type="button" value="Save as WAV File with Reverb" title="Saves the audio for the current tune as a .WAV file including reverb"><input id="abcplayer_mp3reverbbutton" class="abcplayer_mp3reverbbutton btn btn-mp3reverbdownload" onclick="DownloadMP3WithReverb();" type="button" value="Save as MP3 File with Reverb" title="Saves the audio for the current tune as a .MP3 file including reverb">'
 	modal_msg  += '</p>';
 
 	if (format != "whistle"){

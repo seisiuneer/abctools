@@ -177,7 +177,7 @@ function addReverbOffline(audioBuffer, callback) {
 }
 
 //
-// Download the current tune audio including any reverb
+// Download the current tune audio in .WAV format including any reverb
 //
 function DownloadWaveWithReverb() {
 
@@ -334,4 +334,270 @@ function DownloadWaveWithReverb() {
 		}));
 		
 	},100);
+}
+
+//
+// Download the current tune audio in .MP3 format including any reverb
+//
+function DownloadMP3WithReverb(){
+
+	//console.log("DownloadMP3WithReverb");
+
+	// Keep track of export
+	sendGoogleAnalytics("export","DownloadMP3WithReverb");
+
+	// If no reverb, just download the mp3 file
+	if (!gEnableReverb) {
+		DownloadMP3();
+		return;
+	}
+
+	// Avoid re-entry
+	if (gInDownloadMP3){
+		return false;
+	}
+
+	gInDownloadMP3 = true;
+
+	function convertToMp3(wav){
+
+	    var arrayBuffer = wav;
+	    var buffer = new Uint8Array(arrayBuffer);
+	  
+	    var data = parseWav(buffer);
+	    var dataSize = data.samples.length;
+	    var nSamples = dataSize / 4;
+
+	    // Create the MP3 encoder
+	    var theSampleRate = data.sampleRate;
+		var mp3encoder = new lamejs.Mp3Encoder(2, theSampleRate, gMP3Bitrate);
+		var mp3Data = [];
+
+		var data16 = new Int16Array(data.samples.buffer);
+
+		//
+		// Test zeroing out the first 10ms of data
+		// to eliminate mp3 encoding pop
+		//
+		for (let i = 0; i < 882; i++) {
+			data16[i] = 0;
+		}
+
+		// Calculate the length of the resulting arrays (even and odd)
+		const evenLength = Math.ceil(dataSize / 2);
+		const oddLength = dataSize - evenLength;
+
+		// Create new Int16Arrays for even and odd values
+		var evenArray = new Int16Array(evenLength);
+		var oddArray = new Int16Array(oddLength);
+
+		// Split the original array into even and odd arrays
+		for (let i = 0; i < (nSamples*2); i++) {
+		  if (i % 2 === 0) {
+		    evenArray[i / 2] = data16[i];
+		  } else {
+		    oddArray[(i - 1) / 2] = data16[i];
+		  }
+		}
+
+		var sampleBlockSize = 1152; //can be anything but make it a multiple of 576 to make encoders life easier
+
+		for (var i = 0; i < nSamples; i += sampleBlockSize) {
+		  var leftChunk = evenArray.subarray(i, i + sampleBlockSize);
+		  var rightChunk = oddArray.subarray(i, i + sampleBlockSize);
+		  var mp3buf = mp3encoder.encodeBuffer(leftChunk, rightChunk);
+		  if (mp3buf.length > 0) {
+		    mp3Data.push(mp3buf);
+		  }
+		}
+		var mp3buf = mp3encoder.flush();   //finish writing mp3
+
+		if (mp3buf.length > 0) {
+		    mp3Data.push(mp3buf);
+		}
+
+	    return mp3Data;
+
+	};
+
+	function parseWav(wav) {
+	  function readInt(i, bytes) {
+	    var ret = 0,
+	        shft = 0;
+
+	    while (bytes) {
+	      ret += wav[i] << shft;
+	      shft += 8;
+	      i++;
+	      bytes--;
+	    }
+	    return ret;
+	  }
+
+	  //if (readInt(20, 2) != 1) throw 'Invalid compression code, not PCM';
+	  //if (readInt(22, 2) != 1) throw 'Invalid number of channels, not 1';
+	  return {
+	    sampleRate: readInt(24, 4),
+	    bitsPerSample: readInt(34, 2),
+	    samples: wav.subarray(44)
+	  };
+	}
+	var elem = document.getElementById("abcplayer_mp3reverbbutton");
+
+	if (elem){
+		elem.value = "Saving MP3 File With Reverb";
+	}
+
+	document.getElementById("loading-bar-spinner").style.display = "block";
+
+	setTimeout(function(){
+
+		// Create an audio context
+		var audioContext = new window.AudioContext();
+
+		// Fix timing bug for jig-like tunes with no tempo specified
+		gMIDIbuffer.millisecondsPerMeasure  = isJigWithNoTiming(gPlayerABC,gMIDIbuffer.millisecondsPerMeasure);
+
+		// Adjust the sample fade time if required
+		var theFade = computeFade(gPlayerABC);
+
+		gMIDIbuffer.fadeLength = theFade;
+
+		gMIDIbuffer.prime().then(async function(t) {
+		
+			var wavDataURL = gMIDIbuffer.download();
+
+			var wavData = await fetch(wavDataURL).then(r => r.blob());
+
+			var fileReader = new FileReader();
+
+			fileReader.onload = function(event) {
+
+				var buffer = event.target.result;
+
+				audioContext.decodeAudioData(buffer, function(buffer) {
+
+					// Add additional silence at the end for reverb tails
+					var silenceSecs = 5;
+
+					// Custom reverb styles can have really long tails
+					if (gReverbStyle == "custom"){
+						silenceSecs = 7;
+					}
+
+					var bufferWithSilence = addSilenceAtEnd(buffer, audioContext, silenceSecs);
+
+					addReverbOffline(bufferWithSilence, async function(outputBuffer) {
+
+						// Adding reverb failed, just download the raw WAV file with no reverb
+						if (!outputBuffer) {
+
+							var elem = document.getElementById("abcplayer_mp3reverbbutton");
+
+							if (elem){
+								elem.value = "Save as MP3 File With Reverb";
+							}
+
+							document.getElementById("loading-bar-spinner").style.display = "none";
+
+							gInDownloadMP3 = false;
+
+							DownloadMP3();
+
+							return;
+						}
+
+						//debugger;
+
+						var theDownloadBuffer = bufferToWaveOffline(outputBuffer);
+
+						var fileReader2 = new FileReader();
+
+						fileReader2.onload = function(event) {
+
+							//debugger;
+
+							var buffer = event.target.result;
+
+							var mp3Data = convertToMp3(buffer);
+
+							var blob = new Blob(mp3Data, {type: 'audio/mp3'});
+
+							var url = window.URL.createObjectURL(blob);
+
+							var link = document.createElement("a");
+							
+							document.body.appendChild(link);
+							
+							link.setAttribute("style", "display: none;");
+							
+							link.href = url;
+							
+							link.download = GetTuneAudioDownloadName(gPlayerABC,".mp3");
+							
+							link.click();
+							
+							window.URL.revokeObjectURL(url);
+							
+							document.body.removeChild(link);
+
+							var elem = document.getElementById("abcplayer_mp3reverbbutton");
+
+							if (elem){
+								elem.value = "Save as MP3 File With Reverb";
+							}
+
+							document.getElementById("loading-bar-spinner").style.display = "none";
+
+							gInDownloadMP3 = false;
+
+						}
+
+						fileReader2.readAsArrayBuffer(theDownloadBuffer);
+
+					});
+				}, function(err) {
+					console.error('Failed to decode audio file:', err);
+					
+					var elem = document.getElementById("abcplayer_mp3reverbbutton");
+
+					if (elem){
+						elem.value = "Save as MP3 File With Reverb";
+					}
+
+					document.getElementById("loading-bar-spinner").style.display = "none";
+
+					gInDownloadMP3 = false;
+
+				});
+
+			}
+
+			fileReader.readAsArrayBuffer(wavData);
+
+		}	
+	    ).catch((function(e) {
+
+			var thePrompt = "A problem occured when exporting the .mp3 file.";
+			
+			// Center the string in the prompt
+			thePrompt = makeCenteredPromptString(thePrompt);
+
+			DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+			var elem = document.getElementById("abcplayer_mp3reverbbutton");
+
+			if (elem){
+				elem.value = "Save as MP3 File With Reverb";
+			}
+
+			document.getElementById("loading-bar-spinner").style.display = "none";
+
+			gInDownloadMP3 = false;
+
+
+	    }));
+
+	},100);
+
 }

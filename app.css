@@ -751,11 +751,23 @@ margin-right:30px;
 #abcplayer_wavreverbbutton{
 height:42px;
 padding:12px;
-margin-right:0px;
+margin-right:30px;
 }
 
 @media (hover: hover) {
 	.abcplayer_wavreverbbutton:hover{
+	background: palegreen;
+	}
+}
+
+#abcplayer_mp3reverbbutton{
+height:42px;
+padding:12px;
+margin-right:0px;
+}
+
+@media (hover: hover) {
+	.abcplayer_mp3reverbbutton:hover{
 	background: palegreen;
 	}
 }
@@ -3999,6 +4011,12 @@ top:20px;
 }
 
 .btn-wavereverbdownload{
+  --color: black;
+  --background-color: lavender;
+
+}
+
+.btn-mp3reverbdownload{
   --color: black;
   --background-color: lavender;
 
