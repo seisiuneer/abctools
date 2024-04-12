@@ -20995,7 +20995,8 @@ function BatchMP3Export(){
 	// Setup initial values
 	const theData = {
 	  configure_repeats:1,
-	  configure_before_each_tune: 0
+	  configure_before_each_tune: 0,
+	  configure_include_reverb:false
 	};
 
 	const form = [
@@ -21003,6 +21004,7 @@ function BatchMP3Export(){
 	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will export all the tunes in the ABC area as .MP3 files with one or more repeats.</p>'},	  
 	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">You may also optionally inject two bars of silence and/or a click intro before each tune.</p>'},	  
 	  {name: "How many times to repeat each tune in the MP3:", id: "configure_repeats", type:"number", cssClass:"configure_repeats_form_text"}, 
+	  {name: "         Include reverb effects in the MP3", id: "configure_include_reverb", type:"checkbox", cssClass:"configure_repeats_form_text"},
 	  {name: "Before each tune:", id: "configure_before_each_tune", type:"select", options:before_tune_actions, cssClass:"configure_mp3_before_tune_select"},
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:18pt;font-family:helvetica"><strong>To append two-bars of silence and/or a click intro before each tune:</strong></p>'},	  
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:18pt;font-family:helvetica">Select your option for silence and/or click intro from the <strong>Before each tune:</strong> dropdown.</p>'},	  
@@ -21060,13 +21062,15 @@ function BatchMP3Export(){
 
 			}
 
-			DoBatchMP3Export(repeatCount,doClickTrack,doInjectSilence);
+			var doIncludeReverb = args.result.configure_include_reverb
+
+			DoBatchMP3Export(repeatCount,doClickTrack,doInjectSilence,doIncludeReverb);
 		}
 
 	});
 }
 
-function DoBatchMP3Export(repeatCount,doClickTrack,doInjectSilence){
+function DoBatchMP3Export(repeatCount,doClickTrack,doInjectSilence,doIncludeReverb){
 
 	var totalTunesToExport;
 
@@ -21116,9 +21120,19 @@ function DoBatchMP3Export(repeatCount,doClickTrack,doInjectSilence){
 
 	function callback(result,theOKButton){
 
-		//console.log("callback called result = "+result);
+		//debugger;
 
-		DownloadMP3(callback2,theOKButton);
+		//console.log("callback called result = "+result);
+		if (doIncludeReverb){
+
+			DownloadMP3WithReverb(callback2,theOKButton);
+
+		}
+		else{
+
+			DownloadMP3(callback2,theOKButton);
+
+		}
 
 	}
 

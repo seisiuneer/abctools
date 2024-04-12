@@ -339,7 +339,7 @@ function DownloadWaveWithReverb() {
 //
 // Download the current tune audio in .MP3 format including any reverb
 //
-function DownloadMP3WithReverb(){
+function DownloadMP3WithReverb(callback,val){
 
 	//console.log("DownloadMP3WithReverb");
 
@@ -348,7 +348,7 @@ function DownloadMP3WithReverb(){
 
 	// If no reverb, just download the mp3 file
 	if (!gEnableReverb) {
-		DownloadMP3();
+		DownloadMP3(callback,val);
 		return;
 	}
 
@@ -442,10 +442,14 @@ function DownloadMP3WithReverb(){
 	    samples: wav.subarray(44)
 	  };
 	}
-	var elem = document.getElementById("abcplayer_mp3reverbbutton");
 
-	if (elem){
-		elem.value = "Saving MP3 File With Reverb";
+	if (!callback){
+
+		var elem = document.getElementById("abcplayer_mp3reverbbutton");
+
+		if (elem){
+			elem.value = "Saving MP3 File With Reverb";
+		}
 	}
 
 	document.getElementById("loading-bar-spinner").style.display = "block";
@@ -492,17 +496,20 @@ function DownloadMP3WithReverb(){
 						// Adding reverb failed, just download the raw WAV file with no reverb
 						if (!outputBuffer) {
 
-							var elem = document.getElementById("abcplayer_mp3reverbbutton");
+							if (!callback){
 
-							if (elem){
-								elem.value = "Save as MP3 File With Reverb";
+								var elem = document.getElementById("abcplayer_mp3reverbbutton");
+
+								if (elem){
+									elem.value = "Save as MP3 File With Reverb";
+								}
 							}
 
 							document.getElementById("loading-bar-spinner").style.display = "none";
 
 							gInDownloadMP3 = false;
 
-							DownloadMP3();
+							DownloadMP3(callback,val);
 
 							return;
 						}
@@ -540,16 +547,23 @@ function DownloadMP3WithReverb(){
 							window.URL.revokeObjectURL(url);
 							
 							document.body.removeChild(link);
+							
+							if (!callback){
 
-							var elem = document.getElementById("abcplayer_mp3reverbbutton");
+								var elem = document.getElementById("abcplayer_mp3reverbbutton");
 
-							if (elem){
-								elem.value = "Save as MP3 File With Reverb";
+								if (elem){
+									elem.value = "Save as MP3 File With Reverb";
+								}
 							}
 
 							document.getElementById("loading-bar-spinner").style.display = "none";
 
 							gInDownloadMP3 = false;
+
+							if (callback){
+								callback(val);
+							}
 
 						}
 
@@ -559,11 +573,13 @@ function DownloadMP3WithReverb(){
 				}, function(err) {
 					console.error('Failed to decode audio file:', err);
 					
-					var elem = document.getElementById("abcplayer_mp3reverbbutton");
+					if (!callback){
+						var elem = document.getElementById("abcplayer_mp3reverbbutton");
 
-					if (elem){
-						elem.value = "Save as MP3 File With Reverb";
-					}
+						if (elem){
+							elem.value = "Save as MP3 File With Reverb";
+						}
+					}	
 
 					document.getElementById("loading-bar-spinner").style.display = "none";
 
@@ -585,10 +601,13 @@ function DownloadMP3WithReverb(){
 
 			DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 
-			var elem = document.getElementById("abcplayer_mp3reverbbutton");
+			if (!callback){
 
-			if (elem){
-				elem.value = "Save as MP3 File With Reverb";
+				var elem = document.getElementById("abcplayer_mp3reverbbutton");
+
+				if (elem){
+					elem.value = "Save as MP3 File With Reverb";
+				}
 			}
 
 			document.getElementById("loading-bar-spinner").style.display = "none";
