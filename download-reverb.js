@@ -3,6 +3,37 @@
 //
 
 //
+// Add silence at the end of an audio buffer
+//
+function addSilenceAtEnd(originalBuffer, context, nSec) {
+
+    // Get the original buffer's length
+    const originalLength = originalBuffer.length;
+    
+    // Calculate the new length (original length + nSec seconds)
+    const newLength = originalLength + context.sampleRate * nSec; 
+    
+    // Create a new AudioBuffer with the new length
+    const newBuffer = context.createBuffer(originalBuffer.numberOfChannels, newLength, context.sampleRate);
+    
+    // Copy data from the original buffer to the new buffer
+    for (let channel = 0; channel < originalBuffer.numberOfChannels; channel++) {
+        const originalChannelData = originalBuffer.getChannelData(channel);
+        const newChannelData = newBuffer.getChannelData(channel);
+        
+        // Copy original data
+        newChannelData.set(originalChannelData);
+        
+        // Fill the remaining part with silence
+        for (let i = originalLength; i < newLength; i++) {
+            newChannelData[i] = 0; // Set to silence (zero)
+        }
+    }
+    
+    return newBuffer;
+}
+
+//
 // Convert an AudioBuffer to a Blob using WAVE representation
 //
 function bufferToWaveOffline(audioBuffer) {
@@ -190,7 +221,17 @@ function DownloadWaveWithReverb() {
 
 			audioContext.decodeAudioData(buffer, function(buffer) {
 
-				addReverbOffline(buffer, function(outputBuffer) {
+				// Add additional silence at the end for reverb tails
+				var silenceSecs = 5;
+
+				// Custom reverb styles can have really long tails
+				if (gReverbStyle == "custom"){
+					silenceSecs = 7;
+				}
+
+				var bufferWithSilence = addSilenceAtEnd(buffer, audioContext, silenceSecs);
+
+				addReverbOffline(bufferWithSilence, function(outputBuffer) {
 
 					// Adding reverb failed, just download the raw WAV file with no reverb
 					if (!outputBuffer) {
