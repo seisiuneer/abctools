@@ -204,45 +204,80 @@ function DownloadWaveWithReverb() {
 
 	document.getElementById("loading-bar-spinner").style.display = "block";
 
-	// Create an audio context
-	var audioContext = new window.AudioContext();
+	setTimeout(function(){
 
-	// Fix timing bug for jig-like tunes with no tempo specified
-	gMIDIbuffer.millisecondsPerMeasure = isJigWithNoTiming(gPlayerABC, gMIDIbuffer.millisecondsPerMeasure);
+		// Create an audio context
+		var audioContext = new window.AudioContext();
 
-	// Adjust the sample fade time if required
-	var theFade = computeFade(gPlayerABC);
+		// Fix timing bug for jig-like tunes with no tempo specified
+		gMIDIbuffer.millisecondsPerMeasure = isJigWithNoTiming(gPlayerABC, gMIDIbuffer.millisecondsPerMeasure);
 
-	gMIDIbuffer.fadeLength = theFade;
+		// Adjust the sample fade time if required
+		var theFade = computeFade(gPlayerABC);
 
-	gMIDIbuffer.prime().then((async function(t) {
+		gMIDIbuffer.fadeLength = theFade;
 
-		var wavDataURL = gMIDIbuffer.download();
+		gMIDIbuffer.prime().then((async function(t) {
 
-		var wavData = await fetch(wavDataURL).then(r => r.blob());
+			var wavDataURL = gMIDIbuffer.download();
 
-		var fileReader = new FileReader();
+			var wavData = await fetch(wavDataURL).then(r => r.blob());
 
-		fileReader.onload = function(event) {
+			var fileReader = new FileReader();
 
-			var buffer = event.target.result;
+			fileReader.onload = function(event) {
 
-			audioContext.decodeAudioData(buffer, function(buffer) {
+				var buffer = event.target.result;
 
-				// Add additional silence at the end for reverb tails
-				var silenceSecs = 5;
+				audioContext.decodeAudioData(buffer, function(buffer) {
 
-				// Custom reverb styles can have really long tails
-				if (gReverbStyle == "custom"){
-					silenceSecs = 7;
-				}
+					// Add additional silence at the end for reverb tails
+					var silenceSecs = 5;
 
-				var bufferWithSilence = addSilenceAtEnd(buffer, audioContext, silenceSecs);
+					// Custom reverb styles can have really long tails
+					if (gReverbStyle == "custom"){
+						silenceSecs = 7;
+					}
 
-				addReverbOffline(bufferWithSilence, function(outputBuffer) {
+					var bufferWithSilence = addSilenceAtEnd(buffer, audioContext, silenceSecs);
 
-					// Adding reverb failed, just download the raw WAV file with no reverb
-					if (!outputBuffer) {
+					addReverbOffline(bufferWithSilence, function(outputBuffer) {
+
+						// Adding reverb failed, just download the raw WAV file with no reverb
+						if (!outputBuffer) {
+
+							var elem = document.getElementById("abcplayer_wavreverbbutton");
+
+							if (elem){
+								elem.value = "Save WAV File With Reverb";
+							}
+
+							document.getElementById("loading-bar-spinner").style.display = "none";
+
+							DownloadWave();
+
+							return;
+						}
+
+						//debugger;
+
+						var theDownloadBuffer = getWaveDownloadBuffer(outputBuffer);
+
+						var link = document.createElement("a");
+
+						document.body.appendChild(link);
+
+						link.setAttribute("style", "display: none;");
+
+						link.href = theDownloadBuffer;
+
+						link.download = GetTuneAudioDownloadName(gPlayerABC, ".wav");
+
+						link.click();
+
+						window.URL.revokeObjectURL(wavData);
+
+						document.body.removeChild(link);
 
 						var elem = document.getElementById("abcplayer_wavreverbbutton");
 
@@ -252,31 +287,11 @@ function DownloadWaveWithReverb() {
 
 						document.getElementById("loading-bar-spinner").style.display = "none";
 
-						DownloadWave();
 
-						return;
-					}
-
-					//debugger;
-
-					var theDownloadBuffer = getWaveDownloadBuffer(outputBuffer);
-
-					var link = document.createElement("a");
-
-					document.body.appendChild(link);
-
-					link.setAttribute("style", "display: none;");
-
-					link.href = theDownloadBuffer;
-
-					link.download = GetTuneAudioDownloadName(gPlayerABC, ".wav");
-
-					link.click();
-
-					window.URL.revokeObjectURL(wavData);
-
-					document.body.removeChild(link);
-
+					});
+				}, function(err) {
+					console.error('Failed to decode audio file:', err);
+					
 					var elem = document.getElementById("abcplayer_wavreverbbutton");
 
 					if (elem){
@@ -285,49 +300,38 @@ function DownloadWaveWithReverb() {
 
 					document.getElementById("loading-bar-spinner").style.display = "none";
 
-
 				});
-			}, function(err) {
-				console.error('Failed to decode audio file:', err);
-				
-				var elem = document.getElementById("abcplayer_wavreverbbutton");
 
-				if (elem){
-					elem.value = "Save WAV File With Reverb";
-				}
+			}
 
-				document.getElementById("loading-bar-spinner").style.display = "none";
+			fileReader.readAsArrayBuffer(wavData);
 
+
+		})).catch((function(e) {
+
+			//console.warn("Problem exporting .wav:", e)
+			// Nope, exit
+
+			var elem = document.getElementById("abcplayer_wavreverbbutton");
+
+			if (elem){
+				elem.value = "Save WAV File With Reverb";
+			}
+
+			document.getElementById("loading-bar-spinner").style.display = "none";
+
+			var thePrompt = "A problem occured when exporting the .wav file.";
+
+			// Center the string in the prompt
+			thePrompt = makeCenteredPromptString(thePrompt);
+
+			DayPilot.Modal.alert(thePrompt, {
+				theme: "modal_flat",
+				top: 200,
+				scrollWithPage: (AllowDialogsToScroll())
 			});
 
-		}
-
-		fileReader.readAsArrayBuffer(wavData);
-
-
-	})).catch((function(e) {
-
-		//console.warn("Problem exporting .wav:", e)
-		// Nope, exit
-
-		var elem = document.getElementById("abcplayer_wavreverbbutton");
-
-		if (elem){
-			elem.value = "Save WAV File With Reverb";
-		}
-
-		document.getElementById("loading-bar-spinner").style.display = "none";
-
-		var thePrompt = "A problem occured when exporting the .wav file.";
-
-		// Center the string in the prompt
-		thePrompt = makeCenteredPromptString(thePrompt);
-
-		DayPilot.Modal.alert(thePrompt, {
-			theme: "modal_flat",
-			top: 200,
-			scrollWithPage: (AllowDialogsToScroll())
-		});
-
-	}));
+		}));
+		
+	},100);
 }
