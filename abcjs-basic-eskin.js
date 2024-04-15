@@ -7893,7 +7893,8 @@ module.exports = MusicParser;
 
 // MAE 23 Dec 2023 - Added Shaped Note Singing glyphs
 module.exports.legalAccents = ['trill', 'lowermordent', 'uppermordent', 'mordent', 'pralltriller', 'accent', 'fermata', 'invertedfermata', 'tenuto', '0', '1', '2', '3', '4', '5', '+', 'wedge', 'open', 'thumb', 'snap', 'turn', 'roll', 'breath', 'shortphrase', 'mediumphrase', 'longphrase', 'segno', 'coda', 'D.S.', 'D.C.', 'fine', 'beambr1', 'beambr2', 'slide', 'slideup', 'slidedown', 'marcato', 'upbow', 'downbow', '/', '//', '///', '////', 'trem1', 'trem2', 'trem3', 'trem4', 'turnx', 'invertedturn', 'invertedturnx', 'trill(', 'trill)', 'arpeggio', 'xstem', 'mark', 'umarcato', 'style=normal', 'style=harmonic', 'style=rhythm', 'style=x', 'style=triangle', 'style=sn_do','style=sn_re','style=sn_mi','style=sn_fa','style=sn_fa_l','style=sn_fa_r','style=sn_so','style=sn_la','style=sn_ti','D.C.alcoda', 'D.C.alfine', 'D.S.alcoda', 'D.S.alfine', 'editorial', 'courtesy'];
-module.exports.volumeDecorations = ['p', 'pp', 'f', 'ff', 'mf', 'mp', 'ppp', 'pppp', 'fff', 'ffff', 'sfz'];
+// MAE 15 April 2024 - Added ppppp
+module.exports.volumeDecorations = ['p', 'pp', 'f', 'ff', 'mf', 'mp', 'ppp', 'pppp', 'fff', 'ffff', 'sfz', 'ppppp'];
 module.exports.dynamicDecorations = ['crescendo(', 'crescendo)', 'diminuendo(', 'diminuendo)', 'glissando(', 'glissando)', '~(', '~)'];
 module.exports.accentPseudonyms = [['<', 'accent'], ['>', 'accent'], ['tr', 'trill'], ['plus', '+'], ['emphasis', 'accent'], ['^', 'umarcato'], ['marcato', 'umarcato']];
 module.exports.accentDynamicPseudonyms = [['<(', 'crescendo('], ['<)', 'crescendo)'], ['>(', 'diminuendo('], ['>)', 'diminuendo)']];
@@ -13725,6 +13726,8 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
       if (line.staff) {
         var setDynamics = function setDynamics(elem) {
           var volumes = {
+            // MAE 15 April 2024 - Added ppppp for tacet
+            'ppppp': [0, 0, 0, 1],
             'pppp': [15, 10, 5, 1],
             'ppp': [30, 20, 10, 1],
             'pp': [45, 35, 20, 1],
@@ -13738,7 +13741,7 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
           };
           var dynamicType;
           if (elem.decoration) {
-            if (elem.decoration.indexOf('pppp') >= 0) dynamicType = 'pppp';else if (elem.decoration.indexOf('ppp') >= 0) dynamicType = 'ppp';else if (elem.decoration.indexOf('pp') >= 0) dynamicType = 'pp';else if (elem.decoration.indexOf('p') >= 0) dynamicType = 'p';else if (elem.decoration.indexOf('mp') >= 0) dynamicType = 'mp';else if (elem.decoration.indexOf('mf') >= 0) dynamicType = 'mf';else if (elem.decoration.indexOf('f') >= 0) dynamicType = 'f';else if (elem.decoration.indexOf('ff') >= 0) dynamicType = 'ff';else if (elem.decoration.indexOf('fff') >= 0) dynamicType = 'fff';else if (elem.decoration.indexOf('ffff') >= 0) dynamicType = 'ffff';
+            if (elem.decoration.indexOf('ppppp') >= 0) dynamicType = 'ppppp';else if (elem.decoration.indexOf('pppp') >= 0) dynamicType = 'pppp';else if (elem.decoration.indexOf('ppp') >= 0) dynamicType = 'ppp';else if (elem.decoration.indexOf('pp') >= 0) dynamicType = 'pp';else if (elem.decoration.indexOf('p') >= 0) dynamicType = 'p';else if (elem.decoration.indexOf('mp') >= 0) dynamicType = 'mp';else if (elem.decoration.indexOf('mf') >= 0) dynamicType = 'mf';else if (elem.decoration.indexOf('f') >= 0) dynamicType = 'f';else if (elem.decoration.indexOf('ff') >= 0) dynamicType = 'ff';else if (elem.decoration.indexOf('fff') >= 0) dynamicType = 'fff';else if (elem.decoration.indexOf('ffff') >= 0) dynamicType = 'ffff';
             if (dynamicType) {
               currentVolume = volumes[dynamicType].slice(0);
               voices[voiceNumber].push({
@@ -21221,6 +21224,8 @@ var volumeDecoration = function volumeDecoration(voice, decoration, abselem, pos
       case "ffff":
       case "sfz":
       case "mf":
+      // MAE 15 April 2024 - Added ppppp
+      case "ppppp":
         var elem = new DynamicDecoration(abselem, decoration[i], positioning);
         voice.addOther(elem);
     }
