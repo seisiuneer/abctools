@@ -2114,14 +2114,14 @@ left:-5000px;
 	font-size:12pt;
 	line-height:10px;
 	font-family:helvetica;
-	margin-top:16px;
+	margin-top:14px;
 	display:flex;
 }
 
 .advanced_settings2_form_text>input{
 	font-size:12pt;
 	font-family:helvetica;
-	margin-left: 12px;
+	margin-left:12px;
 	width: 100px;
 	margin-top:-11px;
 }
@@ -2130,7 +2130,7 @@ left:-5000px;
 	font-size:12pt;
 	line-height:16px;
 	font-family:helvetica;
-	margin-top:20px;
+	margin-top:14px;
 	display:flex;
 }
 
@@ -2142,11 +2142,26 @@ left:-5000px;
 	margin-top:-8px;
 }
 
+.advanced_settings2_tinyurl_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:14px;
+	display:flex;
+}
+
+.advanced_settings2_tinyurl_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 500px;
+	margin-top:-8px;
+}
 .advanced_settings2_reverb_text{
 	font-size:12pt;
 	line-height:16px;
 	font-family:helvetica;
-	margin-top:20px;
+	margin-top:14px;
 	display:flex;
 }
 
@@ -2162,7 +2177,7 @@ left:-5000px;
 	font-size:12pt;
 	line-height:11px;
 	font-family:helvetica;
-	margin-top:10px;
+	margin-top:8px;
 	display:flex;
 }
 

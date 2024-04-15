@@ -338,6 +338,10 @@ var gShowDiagnostics = false;
 // Reverb string to inject
 var gReverbString = "chamber 0.95 0.05";
 
+// TinyURL API override
+var gDoTinyURLAPIKeyOverride = false;
+var gTinyURLAPIKeyOverride = "";
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -17427,11 +17431,21 @@ function ShortenURL(){
 	
 	}
 
+	// Either use my own or the user's TinyURL key
+	var theAPIKey = gTinyURLAPIKey;
+
+	if (gDoTinyURLAPIKeyOverride){
+
+		theAPIKey = "Bearer "+gTinyURLAPIKeyOverride;
+
+	}
+
+
 	fetch(`https://api.tinyurl.com/create`, {
 	    method: `POST`,
 	    headers: {
 	      accept: `application/json`,
-	      authorization: gTinyURLAPIKey,
+	      authorization: theAPIKey,
 	      'content-type': `application/json`,
 	    },
 	    body: JSON.stringify(body)
@@ -30420,6 +30434,15 @@ function GetInitialConfigurationSettings(){
 		gReverbString = val;
 	}
 
+	// TinyURL override
+	gDoTinyURLAPIKeyOverride = false;
+	gTinyURLAPIKeyOverride = "";
+	val = localStorage.TinyURLAPIKeyOverride;
+	if (val && (val != "")){
+		gDoTinyURLAPIKeyOverride = true;
+		gTinyURLAPIKeyOverride = val;
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -30605,6 +30628,9 @@ function SaveConfigurationSettings(){
 
 		// Save default reverb string
 		localStorage.ReverbString2 = gReverbString;
+
+		// Save the TinyURL API key override
+		localStorage.TinyURLAPIKeyOverride = gTinyURLAPIKeyOverride;
 
 	}
 }
@@ -32350,7 +32376,8 @@ function AdvancedSettings(){
 		configure_DisableRendering: gDisableNotationRendering,
 		configure_disable_selected_play:gDisableSelectedPlay,
 		configure_show_diagnostics: gShowDiagnostics,
-		configure_reverb: gReverbString,	  	
+		configure_reverb: gReverbString,
+		configure_tinyurl: gTinyURLAPIKeyOverride	  	
 	};
 
 	var form = [
@@ -32394,6 +32421,8 @@ function AdvancedSettings(){
 		{name: "Tune search fetch retry maximum count (default is 10):", id: "configure_TuneDatabaseRetryCount", type:"text", cssClass:"advanced_settings2_form_text"},
 		{name: "Default %roll_2_params:", id: "configure_roll2_default", type:"text", cssClass:"advanced_settings2_roll_text"},
 		{name: "Default %roll_3_params:", id: "configure_roll3_default", type:"text", cssClass:"advanced_settings2_roll_text"},
+		{name: "Private TinyURL API Token:", id: "configure_tinyurl", type:"text", cssClass:"advanced_settings2_tinyurl_text"},
+
 		{html: '<p style="text-align:center;margin-top:22px;"><input id="reset_roll_parameters" class="btn btn-subdialog reset_roll_parameters" onclick="ResetRollDefaultParams()" type="button" value="Reset Roll Parameter Strings to Defaults" title="Resets the roll parameter strings to known good default values"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><input id="deletealldatabases" class="btn btn-deletealldatabases deletealldatabases" onclick="DeleteAllDatabases()" type="button" value="Clear All Caches" title="Clears and deletes the sample, reverb impulse, and tune search browser local IndexedDB cache databases.&nbsp;&nbsp;Tool will restart after the operation.&nbsp;&nbsp;New cache databases will be created after restart."></p>'},
 	]);
 
@@ -32552,6 +32581,17 @@ function AdvancedSettings(){
 				gRoll2DefaultParams = the_roll2_raw;
 				gRoll3DefaultParams = the_roll3_raw;
 
+			}
+
+			// Save the TinyURL API key
+			var theTinyURLKey = args.result.configure_tinyurl;
+			if (theTinyURLKey && (theTinyURLKey != "")){
+				gTinyURLAPIKeyOverride = theTinyURLKey;
+				gDoTinyURLAPIKeyOverride = true;
+			}
+			else{
+				gTinyURLAPIKeyOverride = "";
+				gDoTinyURLAPIKeyOverride = false;
 			}
 
 			IdleAllowShowTabNames();
