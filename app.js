@@ -17440,7 +17440,6 @@ function ShortenURL(){
 
 	}
 
-
 	fetch(`https://api.tinyurl.com/create`, {
 	    method: `POST`,
 	    headers: {
@@ -32585,6 +32584,11 @@ function AdvancedSettings(){
 
 			// Save the TinyURL API key
 			var theTinyURLKey = args.result.configure_tinyurl;
+
+			if (theTinyURLKey){
+				theTinyURLKey = theTinyURLKey.trim();
+			}
+			
 			if (theTinyURLKey && (theTinyURLKey != "")){
 				gTinyURLAPIKeyOverride = theTinyURLKey;
 				gDoTinyURLAPIKeyOverride = true;
