@@ -23442,13 +23442,14 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 	   	// Add the action buttons
 		modal_msg += '<p style="text-align:center;margin:0px;margin-top:10px">';
 
-		modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioOrImage();" type="button" value="Export Audio or Image" title="Brings up a dialog where you can save the tune in various audio and image formats">';
 		modal_msg += '<input id="abcplayer_trainer" class="btn btn-looper abcplayer_trainer" onclick="TuneTrainerLaunchFromPlayer()" type="button" value="Start Tune Trainer" title="Opens the Tune Trainer for practicing tunes with increasing tempos">';
 		modal_msg += '<input id="abcplayer_metronomebutton" class="abcplayer_metronome button btn btn-metronome" onclick="ToggleMetronome();" type="button" value="Enable Metronome" title="Enables/disables the metronome">';
 
 		if (isDesktopBrowser()){
 			modal_msg += '<input id="abcplayer_wideplayerbutton" class="abcplayer_wideplayerbutton button btn btn-wide-player" onclick="ToggleWidePlayer();" type="button" value="Wide View" title="Toggles the player between normal and wide views">';
 		}
+
+		modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioOrImage();" type="button" value="Export Audio or Image" title="Brings up a dialog where you can save the tune in various audio and image formats">';
 
 		modal_msg += '</p>';
 
