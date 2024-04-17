@@ -12245,6 +12245,15 @@ function AddFromSearch(e){
 
 	document.getElementById("add-search-results").disabled = true;
 
+	document.getElementById("tuneNameToSearch").addEventListener("keydown", function(event) {
+    	// Check if the pressed key is Enter 
+	    if (event.key === "Enter") {
+	        event.stopPropagation();
+	        event.preventDefault();
+	        searchForTunes();
+	    }
+	});
+
 	// Load the default database
 	if (gTheCurrentTuneDatabase == 0){
 
