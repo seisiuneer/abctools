@@ -32620,7 +32620,9 @@ function AdvancedSettings(){
 			
 			if (theTinyURLKey && (theTinyURLKey != "")){
 
-				sendGoogleAnalytics("sharing","custom_tinyurl_token");
+				if (!gDoTinyURLAPIKeyOverride){
+					sendGoogleAnalytics("sharing","custom_tinyurl_token_entered");
+				}
 
 				gTinyURLAPIKeyOverride = theTinyURLKey;
 				gDoTinyURLAPIKeyOverride = true;
