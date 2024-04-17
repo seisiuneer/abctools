@@ -341,6 +341,7 @@ var gReverbString = "chamber 0.95 0.05";
 // TinyURL API override
 var gDoTinyURLAPIKeyOverride = false;
 var gTinyURLAPIKeyOverride = "";
+var gTinyURLCount = 0;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -17473,6 +17474,23 @@ function ShortenURL(){
 	   	modal_msg += '<p style="text-align:center;font-size:14pt;line-height:19pt;font-family:helvetica"><a href="'+data.data.tiny_url+'" target="_blank">'+data.data.tiny_url+'</a></p>';
 
 		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+			
+		if (!gDoTinyURLAPIKeyOverride){
+
+			// Keep track of default TinyURL token use
+			gTinyURLCount++;
+
+			if (gLocalStorageAvailable){
+				localStorage.TinyURLCount = gTinyURLCount;
+			}
+
+			// Remind them on 5th use about custom TinyURL tokens
+			if ((gTinyURLCount == 5) || (gTinyURLCount == 10)){
+
+				TinyURLReminderDialog();
+
+			}
+		}
 
 	  })
 	  .catch(
@@ -30443,6 +30461,13 @@ function GetInitialConfigurationSettings(){
 		gTinyURLAPIKeyOverride = val;
 	}
 
+	// TinyURL use count
+	gTinyURLCount = 0;
+	val = localStorage.TinyURLCount;
+	if (val){
+		gTinyURLCount = val;
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -30631,6 +30656,9 @@ function SaveConfigurationSettings(){
 
 		// Save the TinyURL API key override
 		localStorage.TinyURLAPIKeyOverride = gTinyURLAPIKeyOverride;
+
+		// Save the TinyURL use count
+		localStorage.TinyURLCount = gTinyURLCount;
 
 	}
 }
@@ -32591,6 +32619,9 @@ function AdvancedSettings(){
 			}
 			
 			if (theTinyURLKey && (theTinyURLKey != "")){
+
+				sendGoogleAnalytics("sharing","custom_tinyurl_token");
+
 				gTinyURLAPIKeyOverride = theTinyURLKey;
 				gDoTinyURLAPIKeyOverride = true;
 			}
@@ -34711,6 +34742,31 @@ function TipJarReminderDialog(){
 }
 
 //
+// Show the TinyURL reminder
+//
+function TinyURLReminderDialog(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","TinyURLReminderDialog");
+
+    var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">TinyURL Use Request</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:14pt;font-family:helvetica;text-align:center;margin-top:32px;">I get a limited number of free shortened URLs from TinyURL each month.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center;">If you plan on creating many shortened URLs, please sign up<br/>for your own free or paid TinyURL account at:</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:14pt;font-family:helvetica;text-align:center;"><strong><a href="https://tinyurl.com" target="_blank" title="TinyURL">TinyURL</a></strong></p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:14pt;font-family:helvetica;text-align:center;">After signing up, you can obtain a private API token from:</p>';
+	   
+	   modal_msg += '<p style="font-size:12pt;line-height:14pt;font-family:helvetica;text-align:center;"><strong><a href="https://tinyurl.com/app/settings/api" target="_blank" title="TinyURL API">TinyURL API Settings</a></strong></p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:14pt;font-family:helvetica;text-align:center;">And then enter it on the <strong>Advanced Settings</strong> dialog.</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:14pt;font-family:helvetica;text-align:center;">More details here:</p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:14pt;font-family:helvetica;text-align:center;"><strong><a href="https://michaeleskin.com/abctools/userguide.html#private_tinyurl_token" target="_blank" title="Private TinyURL Token">Using a Private TinyURL API Token</a></strong></p>';
+	   modal_msg += '<p style="font-size:12pt;line-height:14pt;font-family:helvetica;text-align:center;margin-top:36px;">Cheers and thanks!</p>';
+	   modal_msg += '<div style="text-align:center"><img style="width:150px;" src="img/michael.jpg"/></div>';
+	   modal_msg += '<p style="font-size:12pt;line-height:14pt;font-family:helvetica;text-align:center;">Michael Eskin</p>';
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, scrollWithPage: (AllowDialogsToScroll()) });
+
+}
+//
 // Show help when in fullscreen mode
 //
 function ShowHelp(){
@@ -35866,7 +35922,7 @@ function DoStartup() {
 
     // Init the samples database
     initSamplesDB();
-	
+
    	// And set the focus
     gTheABC.focus();
 
