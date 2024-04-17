@@ -35885,16 +35885,13 @@ function DoStartup() {
 		gAllowRawMode = true;
 	}
 
-	// Don't count share URL consumption as a tip jar event
-	if (!isFromShare){
+	// Reminder about the tip jar
+	gTipJarCount++;
 
-		gTipJarCount++;
-
-		if (gLocalStorageAvailable){
-			localStorage.TipJarCount = gTipJarCount;
-		}
-
+	if (gLocalStorageAvailable){
+		localStorage.TipJarCount = gTipJarCount;
 	}
+
 
 	// Occasional reminder
 	if ((gTipJarCount == 25) || (gTipJarCount == 75) || (gTipJarCount == 150) || (gTipJarCount == 300)){
