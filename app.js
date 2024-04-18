@@ -34695,7 +34695,7 @@ function showWelcomeScreen(){
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica"><strong>Once ABC has been entered and notation is displayed:</strong></p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click the Zoom-Out arrows at the top-right to view the notation full screen.</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Save" to save all the ABC text to an ABC text file.</p>';
-	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Export PDF to export your tunebook in PDF format.</p>';
+	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Export PDF" to export your tunebook in PDF format.</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Play" to play or train on the tune currently being edited.</p>';
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, scrollWithPage: (AllowDialogsToScroll()) });
