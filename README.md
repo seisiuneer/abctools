@@ -39,6 +39,7 @@
 <p><a href="https://davidshimjs.github.io/qrcodejs/">qrcode.js</a> is used to generate the QR codes.</p> 
 <p><a href="https://github.com/pieroxy/lz-string">lz-string.js</a> is used to for LZW compression of the tunes for share links.</p> 
 <p><a href="https://wim.vree.org/js/xml2abc-js_index.html" target="_blank">xml2abc.js</a> is used to for converting MusicXML format to ABC.</p> 
+<p><a href="https://wim.vree.org/svgParse/abc2xml.html" target="_blank">abc2xml</a> is used for converting ABC format to MusicXML.</p> 
 <p><a href="https://stuk.github.io/jszip/" target="_blank">jszip.js</a> is used to unzip compressed .mxl files.</p>
 <p><a href="https://github.com/zhuker/lamejs" target="_blank">lame.js</a> is used to for converting .wav format to .mp3.</p>  
 <p><a href="https://github.com/swevans/unmute" target="_blank">umute.js</a> is used to for fixing the iOS tab switch audio mute issue.</p> 
