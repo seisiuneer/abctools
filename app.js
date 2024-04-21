@@ -14659,7 +14659,7 @@ function SaveABCAsMusicXML(fname){
 
 	//debugger;
 
-	fetch(`http://seisiuneer.pythonanywhere.com/abc2xml`, {
+	fetch(`https://seisiuneer.pythonanywhere.com/abc2xml`, {
 	    method: 'POST',
 	    body: theData
 	  })
@@ -14742,11 +14742,17 @@ function saveABCFile(thePrompt, thePlaceholder, theData){
 
 		if ((fname.endsWith(".xml")) || (fname.endsWith(".XML"))){
 
+			// Keep track of exports
+			sendGoogleAnalytics("export","SaveXML");
+
 			SaveABCAsMusicXML(fname);
 
 			return;
 
 		}
+
+		// Keep track of exports
+		sendGoogleAnalytics("export","SaveABC");
 
 		// Give it a good extension
 		if (isDesktopBrowser()){
@@ -17626,9 +17632,6 @@ function CopyShareURL(){
 function SaveABC(){
 
 	if (gAllowSave){
-
-		// Keep track of exports
-		sendGoogleAnalytics("export","SaveABC");
 
 		var theData = gTheABC.value;
 
