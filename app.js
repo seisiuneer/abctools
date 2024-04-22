@@ -14651,6 +14651,73 @@ function GenerateQRCode(e) {
 }
 
 //
+// Save the ABC file converted to XML
+//
+function SaveABCAsMusicXML(theTune, fname){
+
+	//debugger;
+
+	fetch(`https://seisiuneer.pythonanywhere.com/abc2xml`, {
+	    method: 'POST',
+	    body: theTune
+	  })
+	.then(response => {
+
+	    return response.text();
+
+	  })
+	  .then(data => {;
+
+		var a = document.createElement("a");
+
+		document.body.appendChild(a);
+
+		a.style = "display: none";
+
+		var blob = new Blob([data], {type: "text/plain"}),
+
+		url = window.URL.createObjectURL(blob);
+		a.href = url;
+		a.download = fname;
+		a.click();
+
+		document.body.removeChild(a);
+
+		setTimeout(function() {
+		  window.URL.revokeObjectURL(url);
+		}, 1000);		
+
+		// Update the displayed name
+		gDisplayedName = fname;
+
+		// Mark ABC as from a file
+		gABCFromFile = true;
+
+		// Update the displayed filename
+		var fileSelected = document.getElementById('abc-selected');
+		fileSelected.innerText = fname;
+
+		// Clear the dirty count
+		gIsDirty = false;
+
+	  })
+	  .catch(
+	  	error => {
+
+			var thePrompt = "There was an issue converting the ABC to MusicXML.";
+
+			// Center the string in the prompt
+			thePrompt = makeCenteredPromptString(thePrompt);
+
+			DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+			return;
+
+
+	  });
+}
+
+//
 // Save the ABC file
 //
 function saveABCFile(thePrompt, thePlaceholder, theData){
@@ -14669,7 +14736,22 @@ function saveABCFile(thePrompt, thePlaceholder, theData){
 
 		if (fname.length == 0){
 		  return null;
-		}      
+		}   
+
+
+		// Keep this around
+		if ((fname.endsWith(".xml")) || (fname.endsWith(".XML"))){
+
+			// Keep track of exports
+			sendGoogleAnalytics("export","SaveXML");
+
+			var thisTune = getTuneByIndex(0);
+
+			SaveABCAsMusicXML(thisTune, fname);
+
+			return;
+
+		}
 
 		// Keep track of exports
 		sendGoogleAnalytics("export","SaveABC");
