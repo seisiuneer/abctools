@@ -876,6 +876,17 @@ padding:12px;
 	}
 }
 
+#exportall_musicxmlbutton{
+height:42px;
+padding:12px;
+}
+
+@media (hover: hover) {
+	.exportall_musicxmlbutton:hover{
+	background: palegreen;
+	}
+}
+
 #export_smartdrawbutton{
 height:42px;
 padding:12px;
@@ -4086,6 +4097,12 @@ top:20px;
 }
 
 .btn-allsvgdownload{
+  --color: black;
+  --background-color: lavender;
+
+}
+
+.btn-allmusicxmldownload{
   --color: black;
   --background-color: lavender;
 

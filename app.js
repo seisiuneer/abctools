@@ -14651,75 +14651,6 @@ function GenerateQRCode(e) {
 }
 
 //
-// Save the ABC file converted to XML
-//
-function SaveABCAsMusicXML(fname){
-
-	var theData = gTheABC.value;
-
-	//debugger;
-
-	fetch(`https://seisiuneer.pythonanywhere.com/abc2xml`, {
-	    method: 'POST',
-	    body: theData
-	  })
-	.then(response => {
-
-	    return response.text();
-
-	  })
-	  .then(data => {;
-
-		var a = document.createElement("a");
-
-		document.body.appendChild(a);
-
-		a.style = "display: none";
-
-		var blob = new Blob([data], {type: "text/plain"}),
-
-		url = window.URL.createObjectURL(blob);
-		a.href = url;
-		a.download = fname;
-		a.click();
-
-		document.body.removeChild(a);
-
-		setTimeout(function() {
-		  window.URL.revokeObjectURL(url);
-		}, 1000);		
-
-		// Update the displayed name
-		gDisplayedName = fname;
-
-		// Mark ABC as from a file
-		gABCFromFile = true;
-
-		// Update the displayed filename
-		var fileSelected = document.getElementById('abc-selected');
-		fileSelected.innerText = fname;
-
-		// Clear the dirty count
-		gIsDirty = false;
-
-	  })
-	  .catch(
-	  	error => {
-
-			var thePrompt = "There was an issue converting the ABC to MusicXML.";
-
-			// Center the string in the prompt
-			thePrompt = makeCenteredPromptString(thePrompt);
-
-			DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
-
-			return;
-
-
-	  });
-}
-
-//
 // Save the ABC file
 //
 function saveABCFile(thePrompt, thePlaceholder, theData){
@@ -14739,17 +14670,6 @@ function saveABCFile(thePrompt, thePlaceholder, theData){
 		if (fname.length == 0){
 		  return null;
 		}      
-
-		if ((fname.endsWith(".xml")) || (fname.endsWith(".XML"))){
-
-			// Keep track of exports
-			sendGoogleAnalytics("export","SaveXML");
-
-			SaveABCAsMusicXML(fname);
-
-			return;
-
-		}
 
 		// Keep track of exports
 		sendGoogleAnalytics("export","SaveABC");
@@ -17646,13 +17566,13 @@ function SaveABC(){
 
 				theName += ".abc";
 
-				saveABCFile("Please enter an .abc, .txt, or .xml filename for your ABC file:  ",theName,theData);
+				saveABCFile("Please enter a filename for your ABC file:  ",theName,theData);
 			}
 			else{
 
 				theName += ".txt";
 
-				saveABCFile("Please enter an .abc, .txt, or .xml filename for your ABC file:  ",theName,theData);
+				saveABCFile("Please enter a filename for your ABC file:  ",theName,theData);
 			}
 
 		}
@@ -20262,27 +20182,16 @@ function ExportAll(){
 
 	var format = GetRadioValue("notenodertab");
 	
-	var modal_msg = "";
+	var modal_msg = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export All Tunes</p>';
 
-	if (format != "whistle"){
-
-		modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export All Audio or Images</p>';
-
-	}
-	else{
-
-		modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export All Audio</p>';
-
-	}
-
-	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export All Tunes Audio</p>';
+	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export All Tunes as Audio</p>';
 	modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
 	modal_msg += '<input id="exportall_mp3button" class="exportall_mp3button btn btn-allmp3download" onclick="BatchMP3Export();" type="button" value="Export all as MP3 Audio" title="Saves the audio for all the tunes as .MP3 files">'
 	modal_msg  += '</p>';
 
 	if (format != "whistle"){
 
-		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export All Tunes Images</p>';
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export All Tunes as Images</p>';
 		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
 		modal_msg += '<input id="exportall_jpegbutton" class="exportall_jpegbutton btn btn-alljpegdownload" onclick="BatchJPEGExport();" type="button" value="Export all as JPEG" title="Saves the images for all the tunes as bitmap JPEG files">'
 		modal_msg += '<input id="exportall_pngbutton" class="exportall_pngbutton btn btn-allpngdownload" onclick="BatchPNGExport();" type="button" value="Export all as PNG" title="Saves the images for all the tunes as bitmap PNG files">'
@@ -20291,6 +20200,9 @@ function ExportAll(){
 		modal_msg += '<p class="export_all_text">';
 		modal_msg += 'Image width to export: <input id="export_width" type="number" min="0" step="1" max="4096" title="Image width to export" autocomplete="off"/>';
 		modal_msg += '</p>';
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export All Tunes as MusicXML</p>';
+		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
+		modal_msg += '<input id="exportall_musicxmlbutton" class="exportall_musicxmlbutton btn btn-allmusicxmldownload" onclick="BatchMusicXMLExport();" type="button" value="Export all Tunes as MusicXML" title="Saves each tune in its own MusicXML file">'
 		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Developer Share URL Batch Export Tools</p>';
 		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
 		modal_msg += '<input id="exportall_jsonbutton" class="exportall_jsonbutton btn btn-alljsondownload" onclick="BatchJSONExport();" type="button" value="Export all Share URLs as JSON" title="Saves the Share URLs for all the tunes as a JSON file">'
@@ -20601,6 +20513,189 @@ function ExportImageDialog(theABC,callback,val,metronome_state,isWide){
 }
 
 //
+// Export all the tunes in MusicXML Format
+//
+
+function BatchMusicXMLExport(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","BatchMusicXMLExport");
+
+	var totalTunesToExport;
+
+	function callback(){
+
+		//console.log("callback2 called");
+
+		nTunes--;
+
+		if (!gBatchImageExportCancelRequested){
+
+			if (nTunes != 0){
+
+				setTimeout(function(){
+
+					currentTune++;
+
+					var thisTune = getTuneByIndex(currentTune);
+
+					var title = getTuneTitle(thisTune);
+
+					gTheBatchImageExportStatusText.innerText = "Exporting MusicXML for tune "+ (currentTune+1) + " of "+totalTunesToExport+": "+title;
+
+					var fname = GetTuneAudioDownloadName(thisTune,".xml");
+
+					ExportMusicXML(thisTune,fname,callback,null);
+
+				}, 1000);
+
+			}
+			else{
+
+				// We're done, close the status dialog
+				gTheBatchImageExportOKButton.click();
+
+				gBatchImageExportCancelRequested = false;
+			}
+		}
+	}
+
+	// Make sure there are tunes to convert
+	var nTunes = CountTunes();
+
+	if (nTunes == 0){
+		return;
+	}
+
+	totalTunesToExport = nTunes;
+
+	var currentTune = 0;
+
+	gBatchImageExportCancelRequested = false;
+	gTheBatchImageExportOKButton = null;
+	gTheBatchImageExportStatusText = null;
+
+	var thePrompt = "Exporting MusicXML for tune "+ (currentTune+1) + " of "+totalTunesToExport;
+	
+	// Center the string in the prompt
+	thePrompt = makeCenteredPromptString(thePrompt);
+
+	// Put up batch running dialog
+	DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 290, scrollWithPage: (AllowDialogsToScroll()), okText:"Cancel" }).then(function(args){
+		
+		//console.log("Got cancel");
+		
+		gBatchImageExportCancelRequested = true;
+		
+	});	
+
+	var modals = document.getElementsByClassName("modal_flat_main");
+
+	var nmodals = modals.length;
+
+	modals[nmodals-1].style.zIndex = 100001;
+
+	// Find the OK button
+
+	var theOKButtons = document.getElementsByClassName("modal_flat_ok");
+
+	// Find the button that says "Cancel" to use to close the dialog when the cascade is complete
+	var theOKButton = null;
+
+	for (var i=0;i<theOKButtons.length;++i){
+
+		theOKButton = theOKButtons[i];
+
+		if (theOKButton.innerText == "Cancel"){
+
+			//console.log("Found conversion cancel button");
+			gTheBatchImageExportOKButton = theOKButton;
+
+			break;
+
+		}
+	}
+
+	// Find the status text 
+
+	var theStatusElems = document.getElementsByClassName("modal_flat_content");
+	var nStatus = theStatusElems.length;
+
+	gTheBatchImageExportStatusText = theStatusElems[nStatus-1];
+	gTheBatchImageExportStatusText.style.textAlign = "center";
+
+	var thisTune = getTuneByIndex(currentTune);
+
+	var title = getTuneTitle(thisTune);
+	
+	gTheBatchImageExportStatusText.innerText = "Exporting MusicXML for tune "+ (currentTune+1) + " of "+totalTunesToExport+": "+title;
+	
+	var fname = GetTuneAudioDownloadName(thisTune,".xml");
+
+	// Kick off the conversion cascade
+	ExportMusicXML(thisTune,fname, callback,null);
+
+	return true;
+
+}
+
+// 
+// Convert and export one tune to MusicXML
+//
+function ExportMusicXML(theABC,fname,callback,errorCallback){
+	
+	fetch(`https://seisiuneer.pythonanywhere.com/abc2xml`, {
+	    method: 'POST',
+	    body: theABC
+	  })
+	.then(response => {
+
+	    return response.text();
+
+	  })
+	  .then(data => {
+
+	  	//console.log("ExportMusicXML success!")
+
+		var a = document.createElement("a");
+
+		document.body.appendChild(a);
+
+		a.style = "display: none";
+
+		var blob = new Blob([data], {type: "text/plain"}),
+
+		url = window.URL.createObjectURL(blob);
+		a.href = url;
+		a.download = fname;
+		a.click();
+
+		document.body.removeChild(a);
+
+		setTimeout(function() {
+		  window.URL.revokeObjectURL(url);
+		}, 1000);		
+
+		callback();
+
+	  })
+	  .catch(
+	  	error => {
+
+	  		console.log("ExportMusicXML - MusicXML conversion failed on "+fname);
+
+	  		if (errorCallback){
+	  			errorCallback();
+	  		}
+	  		else{
+				callback();
+			}
+
+	  });
+
+}
+
+//
 // Export all the tunes Share URL in a JSON file
 //
 function BatchJSONExport(){
@@ -20674,6 +20769,8 @@ function BatchCSVExport(){
 	saveTextFileDeveloper("Please enter a filename for your batch Share URL CSV file:","All_Share_URLs_CSV.txt",theCSV);
 
 }
+
+
 
 
 // 
@@ -32237,7 +32334,7 @@ function AdvancedControlsDialog(){
 
 	// Showing export and explorers?
 	if (gFeaturesShowExport && gFeaturesShowExplorers){
-		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_reverb_explorer" class="btn btn-reverbexplorer configure_reverb_explorer " onclick="ReverbExplorer()" type="button" value="Reverb Explorer" title="Brings up a tune player where you can experiment with different reverb parameters"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Audio or Images" title="Exports all the tunes in the ABC text area as audio or image files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag" title="Brings up the Sort by Specific Tag dialog"><input class="incipitsbuilder btn btn-incipitsbuilder" id="incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Incipits Builder" title="Formats the ABC for notation incipits PDF export"></p>';
+		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_reverb_explorer" class="btn btn-reverbexplorer configure_reverb_explorer " onclick="ReverbExplorer()" type="button" value="Reverb Explorer" title="Brings up a tune player where you can experiment with different reverb parameters"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Tunes" title="Exports all the tunes in the ABC text area as audio, image, MusicXML, and other formats"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag" title="Brings up the Sort by Specific Tag dialog"><input class="incipitsbuilder btn btn-incipitsbuilder" id="incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Incipits Builder" title="Formats the ABC for notation incipits PDF export"></p>';
 	}
 	else
 	if ((!gFeaturesShowExport) && gFeaturesShowExplorers){
@@ -32245,7 +32342,7 @@ function AdvancedControlsDialog(){
 	}
 	else
 	if (gFeaturesShowExport && (!gFeaturesShowExplorers)){
-		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Audio or Images" title="Exports all the tunes in the ABC text area as audio or image files"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag" title="Brings up the Sort by Specific Tag dialog"><input class="incipitsbuilder btn btn-incipitsbuilder" id="incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Incipits Builder" title="Formats the ABC for notation incipits PDF export"></p>';
+		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Tunes" title="Exports all the tunes in the ABC text area as audio, image, MusicXML, and other formats"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag" title="Brings up the Sort by Specific Tag dialog"><input class="incipitsbuilder btn btn-incipitsbuilder" id="incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Incipits Builder" title="Formats the ABC for notation incipits PDF export"></p>';
 
 	}
 
