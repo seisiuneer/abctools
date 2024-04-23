@@ -1197,6 +1197,7 @@ function SortTunesByTag(theTag){
 	    { name:"7/8", weight:17}, 
 	    { name:"9/8", weight:5},
 	    { name:"10/8", weight:18},
+	    { name:"11/8", weight:19},
 	    { name:"12/8", weight:6}
 	];
 
@@ -17223,6 +17224,7 @@ const metronome_list = [
     { name:"7/8", pattern:"dzdzdzz 76 76 76 32 32 32"}, 
     { name:"9/8", pattern:"dzzdzzdzz 76 76 76 32 32 32"},
     { name:"10/8", pattern:"dzzdzzdzdz 76 76 76 76 32 32 32 32"},
+    { name:"11/8", pattern:"dzzdzzdzdzz 76 76 76 76 32 32 32 32"},
     { name:"12/8", pattern:"dzzdzzdzzdzz 76 76 76 76 32 32 32 32"}
 ];
 

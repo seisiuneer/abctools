@@ -12867,8 +12867,9 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       });
     }
   }
- //
+  //
   // MAE 19 Sep 2023 - Added 5/8, 7/4, 7/8, and 10/8 reworked partial measure handling
+  // MAE 23 Apr 2024 - Added 11/8
   //
   var rhythmPatterns = {
     "2/2": ['boom', 'chick'],
@@ -12884,6 +12885,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     "7/8": ['boom', 'chick', 'chick', 'boom2', 'chick', 'boom2', 'chick'],
     "9/8": ['boom', '', 'chick', 'boom2', '', 'chick', 'boom2', '', 'chick'],
     "10/8": ['boom', 'chick', 'chick', 'boom2', 'chick', 'chick', 'boom2', 'chick', 'boom2', 'chick'],
+    "11/8": ['boom', 'chick', 'chick', 'boom2', 'chick', 'chick', 'boom2', 'chick', 'boom2', 'chick', 'chick'],
     "12/8": ['boom', '', 'chick', 'boom2', '', 'chick', 'boom', '', 'chick', 'boom2', '', 'chick']
   };
 
@@ -12901,6 +12903,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     "7/8": 2,
     "9/8": 2,
     "10/8": 2,
+    "11/8": 2,
     "12/8": 2
   };
 
