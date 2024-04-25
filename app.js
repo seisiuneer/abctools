@@ -14292,7 +14292,14 @@ function GenerateRenderingDivs(nTunes) {
 //
 function getUrlWithoutParams() {
 
-	return window.location.protocol + "//" + window.location.host + window.location.pathname;
+	var theURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+
+	// If running locally, point the share link at the public site
+	if (theURL.indexOf("file:")==0){
+		theURL = "https://michaeleskin.com/abctools/abctools.html"
+	}
+
+	return theURL;
 
 }
 
