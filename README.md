@@ -31,7 +31,7 @@
 <hr>
 <p><strong>Open Source Info:</strong></p>
 <p>The converter uses open source Javascript libraries and forks of other projects:</p>
-<p><a href="https://www.abctransposer.de/" target="_blank">Jens Wollschlager's abc transposer</a> I started in January 2023 with a fork of Jens Wollschlager's transposer tool.</p> 
+<p><a href="https://www.abctransposer.de/" target="_blank">Jens Wollschlager's ABC Transposer</a> was the initial inspiration for the development of this tool.</p> 
 <p><a href="https://www.abcjs.net/">abcjs</a> by Paul Rosen and Gregory Dyke to convert abc to sheet music.</p>
 <p><a href="https://www.npmjs.com/package/html-to-image">html-to-image</a> is used to prepare the html sheet music for PDF conversion.</p>
 <p><a href="https://github.com/parallax/jsPDF">jsPDF</a> is used to actually create the PDF.</p>
@@ -39,10 +39,12 @@
 <p><a href="https://davidshimjs.github.io/qrcodejs/">qrcode.js</a> is used to generate the QR codes.</p> 
 <p><a href="https://github.com/pieroxy/lz-string">lz-string.js</a> is used to for LZW compression of the tunes for share links.</p> 
 <p><a href="https://wim.vree.org/js/xml2abc-js_index.html" target="_blank">xml2abc.js</a> is used to for converting MusicXML format to ABC.</p> 
-<p><a href="https://wim.vree.org/svgParse/abc2xml.html" target="_blank">abc2xml</a> is used for converting ABC format to MusicXML.</p> 
+<p><a href="https://wim.vree.org/svgParse/abc2xml.html" target="_blank">abc2xml</a> is used for the ABC format to MusicXML transcoding web service.</p> 
+<p><a href="https://github.com/cuthbertLab/music21" target="_blank">Music21</a> is used for the MIDI to MusicXML transcoding Python web service.</p> 
 <p><a href="https://stuk.github.io/jszip/" target="_blank">jszip.js</a> is used to unzip compressed .mxl files.</p>
 <p><a href="https://github.com/zhuker/lamejs" target="_blank">lame.js</a> is used to for converting .wav format to .mp3.</p>  
 <p><a href="https://github.com/swevans/unmute" target="_blank">umute.js</a> is used to for fixing the iOS tab switch audio mute issue.</p> 
+<p><a href="https://musescore.org/en/handbook/3/soundfonts-and-sfz-files" target="_blank">MuseScore General</a> is the basis for the rendered MuseScore soundfont.</p> 
 <p>Ui icons created by <a href="https://www.flaticon.com/free-icons/ui" title="ui icons"> Karacis - Flaticon</a>.</p>
 <p>Options icon by Marie Van den Broeck from <a href="https://thenounproject.com/browse/icons/term/options/" target="_blank" title="options Icons">Noun Project</a> (CC BY 3.0)</p>
 <p>This product includes <a href="https://modal.daypilot.org" target="_blank">DayPilot Modal</a> for modal dialog replacements.</p>
@@ -51,6 +53,7 @@
 <p><a href="https://freesound.org/people/bosone/packs/4209/" title="Bodhran Samples by Bosone" target="_blank">Bodhran Samples by Bosone</a> used under <a href="https://creativecommons.org/licenses/by-nc/4.0/" title="by-nc" target="_blank">CC BY-NC 4.0</a> licensing.</p>
 <p><a href="https://ko-fi.com/s/573c321432" title="Irish Bouzouki (Kontakt Sample Instrument)" target="_blank">Irish Bouzouki (Kontakt Sample Instrument)</a> by Eamon Coughlan (sampled from an instrument built by Daniel Hoban) used as the basis for the Irish Bouzouki 2 instrument.</p>
 <p><a href="https://www.arachnosoft.com/main/soundfont.php?documentation=fullscreen#copyright" title="Arachno Soundfont Licenses" target="_blank">Arachno Soundfont</a> used under a variety of non-commercial use licenses.</p>
+<p><a href="https://github.com/marmooo/midi2abc" target="_blank">midi2abc</a> is used for the standalone MIDI to ABC transcoding.</p> 
 <p>Without these free open-source resources this project would not have been possible.</p><p></p>
 <hr>
 <p><strong>Project Contributors:</strong></p>

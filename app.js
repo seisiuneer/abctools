@@ -343,6 +343,9 @@ var gDoTinyURLAPIKeyOverride = false;
 var gTinyURLAPIKeyOverride = "";
 var gTinyURLCount = 0;
 
+// MIDI import warning delivered
+var gMIDIImportWarned = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -10223,10 +10226,10 @@ function ensureABCFile(filename) {
 		fileExtension = filename.substring(filename.lastIndexOf(".") + 1, filename.length);
 	}
 
-	if ((fileExtension.toLowerCase() == "abc") || (fileExtension.toLowerCase() == "txt") || (fileExtension.toLowerCase() == "xml") || (fileExtension.toLowerCase() == "musicxml") || (fileExtension.toLowerCase() == "mxl")){
+	if ((fileExtension.toLowerCase() == "abc") || (fileExtension.toLowerCase() == "txt") || (fileExtension.toLowerCase() == "xml") || (fileExtension.toLowerCase() == "musicxml") || (fileExtension.toLowerCase() == "mxl") || (fileExtension.toLowerCase() == "mid") || (fileExtension.toLowerCase() == "midi")){
 		return true;
 	} else {
-		var thePrompt = "Sorry, only .abc, .txt, .xml, .musicxml, or .mxl files are supported.";
+		var thePrompt = "Sorry, only .abc, .txt, .xml, .musicxml, .mxl, .mid, or .midi files are supported.";
 		
 		// Center the string in the prompt
 		thePrompt = makeCenteredPromptString(thePrompt);
@@ -10784,7 +10787,7 @@ function idleAddABC(){
 		// check if user had selected a file
 		if (fileElement.files.length === 0) {
 
-			var thePrompt = "Please select an ABC or MusicXML file";
+			var thePrompt = "Please select an ABC, MusicXML, or MIDI file";
 			
 			// Center the string in the prompt
 			thePrompt = makeCenteredPromptString(thePrompt);
@@ -12899,10 +12902,10 @@ function AddABC(){
 
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Add ABC Tunes, Templates, and PDF Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#add_templates_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span><img id="moreaddabcsettings" class="moreaddabcsettings moresettingsbutton" src="img/settings.png" title="Add ABC Settings" onclick="Configure_AddABC_UI()"></img></p>';
 	modal_msg += '<div id="add-new-tune-dialog">';
-	modal_msg += '<p style="text-align:center;margin-top:28px;font-size:18px;">Add Your Own Tunes from an ABC or MusicXML File</p>';
+	modal_msg += '<p style="text-align:center;margin-top:28px;font-size:18px;">Add Your Own Tunes from an ABC, MusicXML, or MIDI File</p>';
 	modal_msg += '<p style="text-align:center;margin-top:16px;">';
 	//modal_msg += '';
-	modal_msg += '<label class="abcuploaddialog btn btn-top" for="addabcfilebutton" title="Adds tunes from an existing ABC or MusicXML file to the end of the ABC">Choose File to Add <input type="file" id="addabcfilebutton" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL" hidden/></label>';
+	modal_msg += '<label class="abcuploaddialog btn btn-top" for="addabcfilebutton" title="Adds tunes from an existing ABC, MusicXML, or MIDI file to the end of the ABC">Choose File to Add <input type="file" id="addabcfilebutton" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL,.mid,.MID,.midi,.MIDI" hidden/></label>';
 	modal_msg += '<input class="dialogrestorebutton btn btn-restorebutton" id="dialogrestorebutton" onclick="RestoreSnapshot(false,true);" type="button" value="Restore from Snapshot" title="Replaces the contents of the ABC editor with a Snapshot saved in browser storage" style="display:none;">';
 	modal_msg += '<input class="dialogrestoreautobutton btn btn-restorebutton" id="dialogrestoreautobutton" onclick="RestoreSnapshot(true,true);" type="button" value="Restore from Auto-Snapshot" title="Replaces the contents of the ABC editor with an Auto-Snapshot saved in browser storage" style="display:none;">';
 	modal_msg += '</p>';
@@ -30745,6 +30748,13 @@ function GetInitialConfigurationSettings(){
 		gTinyURLCount = val;
 	}
 
+	// MIDI import warning
+	gMIDIImportWarned = false;
+	val = localStorage.MIDIImportWarned;
+	if (val){
+		gMIDIImportWarned = (val == "true");
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -31046,7 +31056,7 @@ function ConfigureMusicXMLImport(){
 	// Copy the original options object for later possible restore
 	var originalMusicXMLImportOptions = JSON.parse(JSON.stringify(gMusicXMLImportOptions));
 
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Configure MusicXML Import&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#musicxml" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></p>';
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">MusicXML/MIDI Import Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#musicxml" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></p>';
 
     modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Bars-per-line:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_bpl" type="text" pattern="\d+" title="Default: 3"/></div>\n';
     modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Characters-per-line:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_cpl" type="text" pattern="\d+" title="Default: 0 - ignore"/></div>\n';
@@ -31062,7 +31072,7 @@ function ConfigureMusicXMLImport(){
     modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Translate stem directions:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_stems" type="checkbox"/></div>\n';
     modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Inject Q: tag if not present:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_addq" type="checkbox"/></div>\n';
     modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Q: tag value to inject:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_q" type="text" pattern="\d+" title="Default: 100"/></div>\n';
-	modal_msg += '<p style="text-align:center;margin-top:22px;"><input id="default_musicxml_settings" class="btn btn-clearbutton default_musicxml_settings" onclick="defaultMusicXMLSettings()" type="button" value="Reset to Default" title="Reset the MusicXML import settings to their default values"></p>\n';
+	modal_msg += '<p style="text-align:center;margin-top:22px;"><input id="default_musicxml_settings" class="btn btn-clearbutton default_musicxml_settings" onclick="defaultMusicXMLSettings()" type="button" value="Reset to Default" title="Reset the MusicXML/MIDI import settings to their default values"></p>\n';
 
 	const form = [
 	  {html: modal_msg}
@@ -33108,7 +33118,7 @@ function ConfigureToolSettings() {
 		form.push({name: "    MIDI input is key and mode aware (if unchecked, enters note names with no accidentals)", id: "configure_midi_chromatic", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 	};
 
-	form.push({html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Font Settings" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML Settings" title="Configure MusicXML import parameters"><input id="configure_developer_settings" class="btn btn-subdialog configure_developer_settings" onclick="AdvancedSettings()" type="button" value="Advanced Settings" title="Configure low level tool settings"></p>'});	
+	form.push({html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Font Settings" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML/MIDI Settings" title="Configure MusicXML/MIDI import parameters"><input id="configure_developer_settings" class="btn btn-subdialog configure_developer_settings" onclick="AdvancedSettings()" type="button" value="Advanced Settings" title="Configure low level tool settings"></p>'});	
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 790, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
@@ -33567,9 +33577,6 @@ function InjectQTag(theTune,theTempo){
 // Import MusicXML format
 //
 function importMusicXML(theXML){
-
-	// Keep track of actions
-	sendGoogleAnalytics("action","DoFileRead_XML");
  
     var xmldata = $.parseXML (theXML);    // abc_code is a (unicode) string with one abc tune.
 
@@ -33610,10 +33617,123 @@ function importMusicXML(theXML){
 //
 // Common file read routine for Open and Drop
 //
+
+//
+// Shared functionality for all file reads
+//
+function DoReadCommon(theText,doAppend){
+
+    // Handle appending for drag and drop
+	if (doAppend){
+
+		var nTunes = CountTunes();
+		
+		if (nTunes > 0){
+			
+			// Do we need to add a new line before the next tune?
+			var theLength = gTheABC.value.length;
+
+			if (gTheABC.value.substring(theLength-1) != "\n"){
+
+				gTheABC.value += "\n";
+			}
+
+			gTheABC.value += "\n";
+		}
+		
+		gTheABC.value += theText;
+
+		gIsDirty = true;
+
+		CleanSmartQuotes();
+
+	}
+	else{
+
+		gTheABC.value = theText;
+
+		CleanSmartQuotes();
+
+	}
+
+	// Refocus back on the ABC
+	FocusABC();
+
+	setTimeout(function() {
+
+		// Reset the defaults
+		RestoreDefaults();
+
+		// Reset the window scroll
+		window.scrollTo(
+			{
+			  top: 0,
+			}
+		)
+
+		// Mark that this ABC was from a file
+		gABCFromFile = true;
+
+		// Don't restore saved staff spacing if appending to a share
+		if (!doAppend){
+
+			// Not from share
+			gIsFromShare = false;
+
+			// If staff spacing had changed due to a share, restore it
+			RestoreSavedStaffSpacing();
+
+			// Clear dirty flag
+			gIsDirty = false;
+
+		}
+
+		// Render the notation
+		RenderAsync(true,null,function(){
+			
+			// Recalculate the notation top position
+			UpdateNotationTopPosition();
+			
+			// Scroll the last appended tune into view
+			if (doAppend){
+
+				var nTunes = CountTunes();
+
+				var theTune = getTuneByIndex(nTunes-1);
+
+				var tuneOffset = gTheABC.value.length-theTune.length;
+
+				if (!gIsMaximized){
+
+					// Scroll the tune ABC into view
+				    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
+
+				    if (isMobileBrowser()){
+				    	return;
+				    }
+
+			    	gTheABC.blur();
+			    	gTheABC.focus();
+
+			    }
+
+				// Scroll the tune into view
+				MakeTuneVisible(true);						
+			}
+
+		});
+
+	}, 100);
+}
+
 function DoFileRead(file,doAppend){
+
+	var midiOKButton = null;
 
 	// Check the filename extension
 	if (ensureABCFile(file.name)) {
+
+		var isMIDI = (file.name.toLowerCase().indexOf(".mid") != -1);
 
 		var isMXL = (file.name.toLowerCase().indexOf(".mxl") != -1);
 
@@ -33660,6 +33780,9 @@ function DoFileRead(file,doAppend){
 						// Check for MusicXML format
 						if (isXML(theText)){
 
+							// Keep track of actions
+							sendGoogleAnalytics("action","DoFileRead_MXL");
+
 							theText = importMusicXML(theText);
 
 						}
@@ -33674,107 +33797,7 @@ function DoFileRead(file,doAppend){
 
 						}
 
-						// Handle appending for drag and drop
-						if (doAppend){
-
-							var nTunes = CountTunes();
-							
-							if (nTunes > 0){
-
-								// Do we need to add a new line before the next tune?
-								var theLength = gTheABC.value.length;
-
-								if (gTheABC.value.substring(theLength-1) != "\n"){
-									gTheABC.value += "\n";
-								}
-
-								gTheABC.value += "\n";
-							}
-							
-							gTheABC.value += theText;
-
-							gIsDirty = true;
-
-							CleanSmartQuotes();
-
-						}
-						else{
-
-							gTheABC.value = theText;
-							
-							CleanSmartQuotes();
-
-						}
-
-						// Refocus back on the ABC
-						FocusABC();
-
-						setTimeout(function() {
-
-							// Reset the defaults
-							RestoreDefaults();
-
-							// Reset the window scroll
-							window.scrollTo(
-								{
-								  top: 0,
-								}
-							)
-
-							// Mark that this ABC was from a file
-							gABCFromFile = true;
-
-							// Only reset the spacing if not appending to a share
-							if (!doAppend){
-
-								// Not from share
-								gIsFromShare = false;
-
-								// If staff spacing had changed due to a share, restore it
-								RestoreSavedStaffSpacing();
-
-								// Clear the dirty flag
-								gIsDirty = false;
-
-							}
-
-							// Render the notation
-							RenderAsync(true,null,function(){
-
-								// Recalculate the notation top position
-								UpdateNotationTopPosition();
-
-								// Scroll the last appended tune into view
-								if (doAppend){
-
-									var nTunes = CountTunes();
-
-									var theTune = getTuneByIndex(nTunes-1);
-
-									var tuneOffset = gTheABC.value.length-theTune.length;
-
-									if (!gIsMaximized){
-
-										// Scroll the tune ABC into view
-									    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
-
-									    if (isMobileBrowser()){
-									    	return;
-									    }
-
-								    	gTheABC.blur();
-								    	gTheABC.focus();
-
-								    }
-
-									// Scroll the tune into view
-									MakeTuneVisible(true);						
-								}
-
-
-							});
-
-						}, 100);
+						DoReadCommon(theText,doAppend);
 
 	                });                
 
@@ -33783,6 +33806,7 @@ function DoFileRead(file,doAppend){
                 }, function() {
 
 					var thePrompt = "This is not a valid MXL file.";
+
 					thePrompt = makeCenteredPromptString(thePrompt);
 
 					DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
@@ -33796,6 +33820,7 @@ function DoFileRead(file,doAppend){
 		    }, function() {
 
 				var thePrompt = "This is not a valid MXL file.";
+
 				thePrompt = makeCenteredPromptString(thePrompt);
 
 				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
@@ -33807,6 +33832,205 @@ function DoFileRead(file,doAppend){
 			return;
 		}
 
+		if (isMIDI){
+
+			// First time MIDI import warning
+			if (!gMIDIImportWarned){
+
+			   	var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica">First Time Use Notes on MIDI Import</p>';	
+			   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">MIDI Import is an experimental feature that depends on an external service.</p>';
+			   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">It may sometimes produce complete garbage, odd results, fail, or even crash or lock up the tool.</p>';
+			   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">If the tool crashes during notation rendering after MIDI import is complete, reload the page to restart.</p>';
+			   		modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Imported notes are quantized to sixteenth note durations.</p>'; 		   	
+			   		modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">MIDI Import is limited to a maximum file length of 20 KBytes.</p>'; 		   	
+
+				gMIDIImportWarned = true;
+
+				if (gLocalStorageAvailable){
+
+					localStorage.MIDIImportWarned = true;
+
+				}
+
+				DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+
+					MIDIImportCommon();
+
+				});
+
+			}
+			else{
+
+				// Just do the import
+				MIDIImportCommon();
+
+			}
+
+			function MIDIImportCommon(){
+
+				// Find the OK button
+				var thePrompt = "Importing "+file.name;
+				
+				thePrompt = makeCenteredPromptString(thePrompt);
+
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 100, scrollWithPage: (AllowDialogsToScroll()) });
+
+				var theOKButtons = document.getElementsByClassName("modal_flat_ok");
+
+				// Find the button that says "OK" to use to close the dialog when changing UI settings
+
+				var theOKButton = null;
+
+				for (var i=0;i<theOKButtons.length;++i){
+
+					theOKButton = theOKButtons[i];
+
+					if (theOKButton.innerText == "OK"){
+
+						//console.log("Found OK button");
+						midiOKButton = theOKButton;
+
+						break;
+
+					}
+				}
+
+				document.getElementById("loading-bar-spinner").style.display = "block";
+
+				const reader = new FileReader();
+
+				reader.onload = function(event) {
+
+					const midiData = event.target.result;
+
+					if (midiData.byteLength > 20480){
+
+						document.getElementById("loading-bar-spinner").style.display = "none";
+
+						try{
+							midiOKButton.click();
+						}
+						catch(error){
+							
+						}
+
+						var thePrompt = "MIDI file import is limited to a maximum file size of 20 KBytes.";
+						
+						thePrompt = makeCenteredPromptString(thePrompt);
+
+						DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+						return;
+
+					}
+
+					// Keep track of actions
+					sendGoogleAnalytics("action","DoFileRead_MIDI");
+
+					// Send MIDI data to web service
+					sendMIDIToWebService(midiData);
+
+				};
+
+				reader.onerror = function() {
+
+					document.getElementById("loading-bar-spinner").style.display = "none";
+
+					try{
+						midiOKButton.click();
+					}
+					catch(error){
+						
+					}
+
+					var thePrompt = "There was an issue converting the MIDI file.";
+					
+					thePrompt = makeCenteredPromptString(thePrompt);
+
+					DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+				};
+
+				reader.readAsArrayBuffer(file);
+
+				function sendMIDIToWebService(midiData) {
+
+					//debugger;
+
+					// Create a Blob from the ArrayBuffer
+					var blob = new Blob([midiData]);
+
+					// Create a FormData object
+					var formData = new FormData();
+					formData.append('array_buffer', blob, 'midi.mid');
+
+					fetch(`https://seisiuneer.pythonanywhere.com/midi2xml`, {
+						method: 'POST',
+						body: formData
+					})
+					.then(response => {
+
+						//debugger;
+
+						if (!response.ok) {
+
+						    if (!response.ok) {
+						      throw new Error('Failed to upload MIDI file');
+						    }
+
+						}
+
+						return response.text();
+
+						})
+						.then(data => {
+
+							//debugger;
+							document.getElementById("loading-bar-spinner").style.display = "none";
+
+							try{
+								midiOKButton.click();
+							}
+							catch(error){
+
+							}
+
+							data = data.replaceAll("Music21 Fragment","Imported from "+file.name);
+							data = data.replaceAll("Music21","");
+
+							// Handle response from server
+							var theText = importMusicXML(data);
+
+							DoReadCommon(theText,doAppend);
+
+					})
+					.catch(error => {
+
+						document.getElementById("loading-bar-spinner").style.display = "none";
+
+						try{
+							midiOKButton.click();
+						}
+						catch(error){
+							
+						}
+
+						var thePrompt = "There was an issue converting the MIDI file.";
+
+						thePrompt = makeCenteredPromptString(thePrompt);
+
+						DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+					});
+				}
+			}
+
+			return;
+
+		}
+
+		// Not MXL or MIDI, just read the file
+		// If XML, decode
 		const reader = new FileReader();
 
 		reader.addEventListener('load', (event) => {
@@ -33815,6 +34039,10 @@ function DoFileRead(file,doAppend){
 
 			// Check for MusicXML format
 			if (isXML(theText)){
+				
+				// Keep track of actions
+				sendGoogleAnalytics("action","DoFileRead_XML");
+
 				theText = importMusicXML(theText);
 			}
 			else{
@@ -33824,112 +34052,13 @@ function DoFileRead(file,doAppend){
 
 			}
 
-			// Handle appending for  drag and drop
-			if (doAppend){
-
-				var nTunes = CountTunes();
-				
-				if (nTunes > 0){
-					
-					// Do we need to add a new line before the next tune?
-					var theLength = gTheABC.value.length;
-
-					if (gTheABC.value.substring(theLength-1) != "\n"){
-
-						gTheABC.value += "\n";
-					}
-
-					gTheABC.value += "\n";
-				}
-				
-				gTheABC.value += theText;
-
-				gIsDirty = true;
-
-				CleanSmartQuotes();
-
-			}
-			else{
-
-				gTheABC.value = theText;
-
-				CleanSmartQuotes();
-
-			}
-
-			// Refocus back on the ABC
-			FocusABC();
-
-			setTimeout(function() {
-
-				// Reset the defaults
-				RestoreDefaults();
-
-				// Reset the window scroll
-				window.scrollTo(
-					{
-					  top: 0,
-					}
-				)
-
-				// Mark that this ABC was from a file
-				gABCFromFile = true;
-
-				// Don't restore saved staff spacing if appending to a share
-				if (!doAppend){
-
-					// Not from share
-					gIsFromShare = false;
-
-					// If staff spacing had changed due to a share, restore it
-					RestoreSavedStaffSpacing();
-
-					// Clear dirty flag
-					gIsDirty = false;
-
-				}
-
-				// Render the notation
-				RenderAsync(true,null,function(){
-					
-					// Recalculate the notation top position
-					UpdateNotationTopPosition();
-					
-					// Scroll the last appended tune into view
-					if (doAppend){
-
-						var nTunes = CountTunes();
-
-						var theTune = getTuneByIndex(nTunes-1);
-
-						var tuneOffset = gTheABC.value.length-theTune.length;
-
-						if (!gIsMaximized){
-
-							// Scroll the tune ABC into view
-						    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
-
-						    if (isMobileBrowser()){
-						    	return;
-						    }
-
-					    	gTheABC.blur();
-					    	gTheABC.focus();
-
-					    }
-
-						// Scroll the tune into view
-						MakeTuneVisible(true);						
-					}
-
-				});
-
-			}, 100);
+			DoReadCommon(theText,doAppend);
 
 		});
 
 		reader.readAsText(file);
 	}
+
 }
 
 //
@@ -34953,7 +35082,7 @@ function showWelcomeScreen(){
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">To begin, type or paste tunes in ABC format into the text area.</p>'; 
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Each ABC tune <strong>must</strong> begin with an X: tag.</p>'; 
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Notation updates instantly as you make changes to the ABC.</p>'; 
-	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Click "Open" to open an ABC or MusicXML file from your system.</p>';
+	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Click "Open" to open an ABC, MusicXML, or MIDI file from your system.</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Click "Add" to add a new ABC tune or tune template.</p>';
 	   if (isDesktopBrowser()){
 	   		modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">You may also drag-and-drop a single ABC or MusicXML file on the editor area to add it.</p>';
@@ -35841,7 +35970,7 @@ function DoStartup() {
 		// check if user had selected a file
 		if (fileElement.files.length === 0) {
 
-			var thePrompt = "Please select an ABC or MusicXML file";
+			var thePrompt = "Please select an ABC, MusicXML, or MIDI file";
 
 			// Center the string in the prompt
 			thePrompt = makeCenteredPromptString(thePrompt);

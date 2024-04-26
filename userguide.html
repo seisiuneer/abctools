@@ -230,7 +230,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#introduction">Introduction</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#getting_started">Getting Started</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#top_bar_buttons">Top Bar Buttons</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#open_dialog">Open an ABC or MusicXML File</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#open_dialog">Open an ABC, MusicXML, or MIDI File</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#add_templates_dialog">Adding Your Own Tunes to Your Tunebook</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#search_and_add_tunes">Search and Add Tunes</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#change_tune_order">Change the Order of the Tunes</a></p>
@@ -399,9 +399,9 @@
                     <p class="toc"><a style="text-decoration:none;" href="#all_pdf_annotations">All Available PDF Tunebook Annotations</a></p>
                 </div>
                 
-                <button class="accordion" title="Click to expand/collapse this section">MusicXML Import</button>
+                <button class="accordion" title="Click to expand/collapse this section">MusicXML/MIDI Import</button>
                 <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#musicxml">MusicXML Import Settings</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#musicxml">MusicXML/MIDI Import Settings</a></p>
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">Sharing Tunes via Share URLs and QR Codes</button>
@@ -471,8 +471,9 @@
             <hr class="hidden-print" id="introduction">
             <h1 class="page_break_never">Introduction<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/qmeG2sRdEWQ" title="ABC Transcription Tools Webinar" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-            <p>ABC Transcription Tools is a free, web-based, open-source tool for converting music in ABC and MusicXML format to both standard notation and tablature for a wide variety of instruments.</p>
-            <p>Search for tunes by name from a built-in database of over 60,000 ABC tune settings and quickly add them to your tunebooks.</p>
+            <p>ABC Transcription Tools is a free, web-based, open-source tool for converting music in ABC, MusicXML, and MIDI format to both standard notation and tablature for a wide variety of instruments.</p>
+            <p>Imports and exports tunes in ABC, MusicXML, and MIDI formats.</p>
+            <p>Search for ABC tunes by name from a built-in database of over 60,000 ABC tune settings and quickly add them to your tunebooks.</p>
             <p>Play your tunes with over 500 high-quality, sampled instruments.</p>
             <p>Use the Tune Trainer to practice your tunes with increasing tempos.</p>
             <p>Create PDF tunebooks with title pages, table of contents, tune index, custom headers, footers, hyperlinks, tune incipits (notation or raw ABC), and sharing QR codes using the tool's built-in Export PDF feature.</p>
@@ -509,11 +510,11 @@
             </div>
             <hr>
             <p><strong>Open:</strong></p>
-            <p>Opens an ABC or MusicXML file.</p>
-            <p>Details below in the <a href="#open_dialog">Open an ABC or MusicXML File</a> section.</p>
+            <p>Opens an ABC, MusicXML, or MIDI file.</p>
+            <p>Details below in the <a href="#open_dialog">Open an ABC, MusicXML, or MIDI File</a> section.</p>
             <hr>
             <p><strong>Add:</strong></p>
-            <p>Brings up a dialog where you can add your own ABC or MusicXML tunes, restore from previously saved Snapshots, re-order the tunes, add example ABC tunes, add useful ABC templates, or configure PDF tunebook features.</p>
+            <p>Brings up a dialog where you can add your own ABC, MusicXML, or MIDI tunes, restore from previously saved Snapshots, re-order the tunes, add example ABC tunes, add useful ABC templates, or configure PDF tunebook features.</p>
             <p>Details below in the <a href="#add_templates_dialog">Adding Your Own Tunes to Your Tunebook</a> section.</p>
             <hr>
             <p><strong>Save:</strong></p>
@@ -546,21 +547,22 @@
             <p>Click this to hide/show the header at the top and any visible controls below the ABC text area so you can have more room to work on your music.</p>
             <p class="page_break_always"></p>
             <hr class="hidden-print" id="open_dialog">
-            <h1 class="page_break_always">Open an ABC or MusicXML File<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <h1 class="page_break_always">Open an ABC, MusicXML, or MIDI File<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p><strong>Open:</strong></p>
-            <p>The tool supports opening both ABC and MusicXML files.</p>
+            <p>The tool supports opening both ABC, MusicXML, and MIDI files.</p>
             <p>The file type being opened depends on the file extension:</p>
             <p>.abc or .txt - Opens an ABC file from your computer and loads it into the ABC Editor.</p>
             <p>.xml, .musicxml, or .mxl - Imports a MusicXML file form your computer, converts it to ABC, and loads it into the ABC Editor.</p>
-            <p>Details on MusicXML import settings below in the <a style="text-decoration:none;" href="#musicxml">MusicXML Import Settings</a> section.</p>
-            <p>On desktop browsers, you may also drag-and-drop a single ABC or MusicXML file on the editor area to add it.</p>
+            <p>.mid, or .midi - Imports a MIDI file from your computer, converts it first to MusicXML, converts the MusicXML to ABC, and loads it into the ABC Editor.</p>
+            <p>Details on MusicXML and MIDI import settings below in the <a style="text-decoration:none;" href="#musicxml">MusicXML/MIDI Import Settings</a> section.</p>
+            <p>On desktop browsers, you may also drag-and-drop a single ABC, MusicXML, or MIDI file on the editor area to add it.</p>
             <p>If you have unsaved work, you will be asked to confirm that you want to abandon your work in progress and load a new ABC file.</p>
             <hr class="hidden-print" id="add_templates_dialog">
             <h1 class="page_break_always h1wide">Adding Your Own Tunes to Your Tunebook<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p><strong>Add:</strong></p>
-            <p>Brings up a dialog where you can add your own ABC or MusicXML tunes, restore from previously saved Snapshots, re-order the tunes, delete tunes, add example ABC tunes, add useful ABC templates, or configure PDF tunebook features:</p>
+            <p>Brings up a dialog where you can add your own ABC, MusicXML, or MIDI tunes, restore from previously saved Snapshots, re-order the tunes, delete tunes, add example ABC tunes, add useful ABC templates, or configure PDF tunebook features:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/add_example_template_19.jpg"/>
+                <img class="image" loading="lazy" src="img/add_example_template_20.jpg"/>
             </div>
             <p>If you would like to only show the buttons for the features you commonly use and hid the others, click the controls icon at the top-right of the dialog to choose features of the dialog you would like to show/hide:</p>
             <div class="image_holder_p">
@@ -570,7 +572,7 @@
             <p>Your preferences are saved and restored the next time you use the tool.</p>
             <hr>
             <p><strong>Choose File to Add:</strong></p>
-            <p>Browse your system for an ABC or MusicXML file with one or more tunes to add to the end of the current tunes.</p>
+            <p>Browse your system for an ABC, MusicXML, or MIDI file with one or more tunes to add to the end of the current tunes.</p>
             <hr>
             <p><strong>Restore from Snapshot:</strong></p>
             <p>This button appears if there is a saved Snapshot available in browser storage.</p>
@@ -2129,7 +2131,7 @@
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_42.jpg"/>
+                <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_43.jpg"/>
             </div>
             <hr>
             <p><strong>Show instrument tablature button bar below ABC editor</strong> - If checked shows the instrument tablature button bar below the editor.</p>
@@ -2240,8 +2242,8 @@
             <hr>
             <p><strong>Tablature Injection Settings</strong> - Brings up a dialog where you can configure all parameters for tablature/solfège injection.</p>
             <hr>
-            <p><strong>MusicXML Settings</strong> - Brings up a dialog where you can configure all parameters for MusicXML import.</p>
-            <p>Details on MusicXML import settings below in the <a style="text-decoration:none;" href="#musicxml">MusicXML Import Settings</a> section.</p>
+            <p><strong>MusicXML/MIDI Settings</strong> - Brings up a dialog where you can configure all parameters for MusicXML/MIDI import.</p>
+            <p>Details on MusicXML/MIDI import settings below in the <a style="text-decoration:none;" href="#musicxml">MusicXML/MIDI Import Settings</a> section.</p>
             <hr>
             <p><strong>Advanced Settings</strong> - Brings up a dialog where you can configure low level tool features and settings.</p>
             <p>Details on the advanced settings below in the <a style="text-decoration:none;" href="#advanced_settings">Advanced Settings</a> section.</p>
@@ -3139,10 +3141,11 @@
             %backup_bass_fraction 0.5<br/>
             %backup_chord_fraction 0.5</p>
             <hr class="hidden-print" id="musicxml">
-            <h1 class="page_break_always">MusicXML Import Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <h1 class="page_break_always">MusicXML/MIDI Import Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/musicxml_6.jpg">
+                <img class="image" loading="lazy" src="img/musicxml_7.jpg">
             </div>
+            <p>These settings are also used for MIDI import since MIDI is first converted to MusicXML and then imported.</p>
             <p><b>Bars-per-line:</b>&nbsp;&nbsp;Sets the number of bars per line. Every line of ABC will have the specified
             bars (measures). When both Character-per-line and Bars-per-line options are given, Bars-per-line is ignored. Default is: 4</p>
             <p><b>Characters-per-line:</b>&nbsp;&nbsp;Sets the maximum line length for ABC output to <b>CPL</b> characters. An integer number of bars, at least one, is always output. How many bars fit into the maximum line length is calculated from the note line, not from the lyric lines. Line- and page breaks in MusicXML are translated to '$' after the previous barline [or volta number]. Default is: 0</p>
@@ -3164,13 +3167,8 @@
             <p><b>Translate stem directions:</b>&nbsp;&nbsp;Translates stem directions present in the XML. Default is: Unchecked</p>
             <p><b>Inject Q: tag if not present:</b>&nbsp;&nbsp;If checked, will inject a Q: temp tag if not present in the imported ABC. Default is: Checked</p>
             <p><b>Q: tag value to inject:</b>&nbsp;&nbsp;If <b>Inject Q: tag if not present:</b> is checked, this is the Q: tempo tag value to inject. Default is: 100</p>
-            <p>Click <strong>Reset to Default</strong> to reset the MusicXML import settings to their original defaults.</p>
+            <p>Click <strong>Reset to Default</strong> to reset the MusicXML/MIDI import settings to their original defaults.</p>
             <p>Values are saved in browser storage and restored the next time the tool is run.</p>
-            <hr>
-            <p style="text-align: center"><strong>Exporting ABC to MusicXML Requires a Desktop ABC Application</strong></p>
-            <p>The tool is not able to export ABC back out to MusicXML, but several desktop ABC applications are able to do this.</p>
-            <p>Here is a demo of how to use the free "EasyABC" desktop application, available for both Mac and Windows, to transcode ABC to MusicXML:</p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/RpS2cElh3cw" title="ABC to MusicXML Transcode Using EasyABC" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <hr class="hidden-print" id="sharing_controls">
             <h1 class="page_break_always">Sharing Tunes with Share URLs and QR Codes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/I8KcG4swmUQ" title="Sharing Tunes with Share URLs and QR Codes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
