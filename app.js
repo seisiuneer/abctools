@@ -33842,7 +33842,7 @@ function DoFileRead(file,doAppend){
 			   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">It may sometimes produce complete garbage, odd results, fail, or even crash or lock up the tool.</p>';
 			   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">If the tool crashes during notation rendering after MIDI import is complete, reload the page to restart.</p>';
 			   		modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Imported notes are quantized to sixteenth note durations.</p>'; 		   	
-			   		modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">MIDI Import is limited to a maximum file length of 20 KBytes.</p>'; 		   	
+			   		modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">MIDI Import is limited to a maximum file length of 30 KBytes.</p>'; 		   	
 
 				gMIDIImportWarned = true;
 
@@ -33903,7 +33903,7 @@ function DoFileRead(file,doAppend){
 
 					const midiData = event.target.result;
 
-					if (midiData.byteLength > 20480){
+					if (midiData.byteLength > 30720){
 
 						document.getElementById("loading-bar-spinner").style.display = "none";
 
@@ -33914,7 +33914,7 @@ function DoFileRead(file,doAppend){
 							
 						}
 
-						var thePrompt = "MIDI file import is limited to a maximum file size of 20 KBytes.";
+						var thePrompt = "MIDI file import is limited to a maximum file size of 30 KBytes.";
 						
 						thePrompt = makeCenteredPromptString(thePrompt);
 
