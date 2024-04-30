@@ -1679,6 +1679,56 @@ function DoSortTunesByID() {
 	},750);
 
 }
+
+//
+// RenumberXTags command
+//
+function RenumberXTags() {
+
+	//debugger;
+
+	// Get all the tunes
+	var theNotes = gTheABC.value;
+
+	var theTunes = theNotes.split(/(^X:.*$)/gm);
+
+	var nTunes = theTunes.length;
+
+	var thePrefixABC = theTunes[0];
+
+	//console.log("thePrefixABC: "+thePrefixABC);
+	theNotes = "";
+	theNotes += thePrefixABC;
+
+	var tuneIndex = 1;
+
+	// Aggregate the results
+	for (i=1;i<nTunes;++i){
+
+		if (i % 2){
+			theNotes += "X:"+tuneIndex;
+			tuneIndex++;
+		}
+		else{
+			theNotes += theTunes[i];
+		}
+	}
+
+	// Put them back in the ABC area
+	gTheABC.value = theNotes; 
+
+	// Set dirty
+	gIsDirty = true;
+
+	// Reset the selection
+	gTheABC.selectionStart = 0;
+    gTheABC.selectionEnd = 0;
+
+    // Focus after operation
+    FocusAfterOperation();
+
+}
+
 //
 // Sort Dialog
 //
@@ -1698,6 +1748,7 @@ function SortDialog(){
 	    { name: "  Sort by Meter (M:)", id: "3" },
 	    { name: "  Sort by Rhythm (R:)", id: "4" },
 	    { name: "  Sort by ID (X:)", id: "5" },
+	    { name: "  Renumber all X: Tags", id: "6" },
 
   	];
 
@@ -1739,6 +1790,9 @@ function SortDialog(){
 					break;
 				case "5":
 					DoSortTunesByID();
+					break;
+				case "6":
+					RenumberXTags();
 					break;
 				default:
 					DoSortTunesByName(false);
