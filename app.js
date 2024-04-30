@@ -1180,7 +1180,7 @@ function GetAllTuneTags(theTag,totalTunes){
 //
 // Sort the tunes in the ABC text area
 //
-function SortTunesByTag(theTag){
+function SortTunesByTag(theTag,doCase){
 
 	const meterWeights = [
 	    { name:"C|",  weight:1}, 
@@ -1264,6 +1264,10 @@ function SortTunesByTag(theTag){
 
 			thisTag = theTags[nProcessed];
 
+			if (doCase){
+				thisTag = thisTag.toLowerCase();
+			}
+
 			nProcessed++;
 
 			//console.log("Tune #"+nProcessed+": "+theTunes[(i*2)+1]+theTunes[(i*2)+2]);
@@ -1336,8 +1340,11 @@ function DoSortTunesByMeter() {
 
 	setTimeout(function(){
 
+		// Sort the tunes by name
+		SortTunes(false);
+
 		// Sort the tunes
-		SortTunesByTag("M");
+		SortTunesByTag("M",false);
 
 		// Redraw
 		RenderAsync(true,null,function(){
@@ -1382,8 +1389,11 @@ function DoSortTunesByKey() {
 
 	setTimeout(function(){
 
+		// Sort the tunes by name first
+		SortTunes(false);
+
 		// Sort the tunes by key
-		SortTunesByTag("K");
+		SortTunesByTag("K",false);
 
 		// Redraw
 		RenderAsync(true,null,function(){
@@ -1575,6 +1585,101 @@ function DoSortTunesByName(stripAn) {
 }
 
 //
+// DoSortTunesByRhythm command
+//
+function DoSortTunesByRhythm() {
+
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
+
+	// Give some feedback
+	var elem = document.getElementById("sortbutton");
+	if (elem){
+		// Give some feedback
+		elem.value = "Sorting...";
+	}
+
+	setTimeout(function(){
+
+		// Sort the tunes by name first
+		SortTunes(false);
+
+		// Sort the tunes by rhythm
+		SortTunesByTag("R",true);
+
+		// Redraw
+		RenderAsync(true,null,function(){
+
+			var elem = document.getElementById("sortbutton");
+			if (elem){
+				elem.value = "   Sorted!   ";
+			}
+		
+			setTimeout(function(){
+
+				var elem = document.getElementById("sortbutton");
+				if (elem){
+					elem.value = "Sort by Tag";
+				}
+
+			},1000);
+
+		});
+
+	},750);
+
+}
+
+//
+// DoSortTunesByID command
+//
+function DoSortTunesByID() {
+
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
+
+	// Give some feedback
+	var elem = document.getElementById("sortbutton");
+	if (elem){
+		// Give some feedback
+		elem.value = "Sorting...";
+	}
+
+	setTimeout(function(){
+		
+		// Sort the tunes by name first
+		SortTunes(false);
+
+		// Sort the tunes by key
+		SortTunesByTag("X",false);
+
+		// Redraw
+		RenderAsync(true,null,function(){
+
+			var elem = document.getElementById("sortbutton");
+			if (elem){
+				elem.value = "   Sorted!   ";
+			}
+		
+			setTimeout(function(){
+
+				var elem = document.getElementById("sortbutton");
+				if (elem){
+					elem.value = "Sort by Tag";
+				}
+
+			},1000);
+
+		});
+
+	},750);
+
+}
+//
 // Sort Dialog
 //
 // Prompts for the sorting key
@@ -1591,6 +1696,9 @@ function SortDialog(){
 	    { name: '  Sort by Name (T:) - Ignore "A"and "An"' , id: "1" },
 	    { name: "  Sort by Key (K:)", id: "2" },
 	    { name: "  Sort by Meter (M:)", id: "3" },
+	    { name: "  Sort by Rhythm (R:)", id: "4" },
+	    { name: "  Sort by ID (X:)", id: "5" },
+
   	];
 
 	// Setup initial values
@@ -1625,6 +1733,12 @@ function SortDialog(){
 					break;
 				case "3":
 					DoSortTunesByMeter();
+					break;
+				case "4":
+					DoSortTunesByRhythm();
+					break;
+				case "5":
+					DoSortTunesByID();
 					break;
 				default:
 					DoSortTunesByName(false);
