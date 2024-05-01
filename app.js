@@ -35351,20 +35351,23 @@ function ShowHelp(){
 
 	if (gIsMaximized){
 
-	   	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">About the Full Screen Notation View</p>';
-	   	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">In this view, you may scroll through the tune notation.</p>';
-	  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the Play button at the bottom-right to play or train on the current tune.</p>';
-	  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">From the Player you can also export the tune image or audio in multiple formats.</p>';
-		   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the PDF button at the bottom-left to export the tunes in PDF format.</p>';
+	   	var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica">About the Full Screen Notation View</p>';
 
-	  	   if (!gDisableEditFromPlayLink){
-		       modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">If you would like to edit the ABC for these tunes:</p>';
-		  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the Zoom-In arrows at the top-right to close the full screen notation view and open the tunes in the ABC editor.</p>';
-		  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">The ABC for all the tunes will be loaded in the editor.</p>';
-		   	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">In the ABC editor, click the Zoom-Out arrows at the top-right to view the notation full screen.</p>';
-		   }
-		   
-		   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Please visit my <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> page for complete instructions and demo videos on how to use the tools.</p>';
+   	   	modal_msg  += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">In this view, you may scroll through the tune notation.</p>';
+  	   	modal_msg  += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click the Play button at the bottom-right to play or train on the current tune.</p>';
+  	   	modal_msg  += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">From the Player you can also export the tune image or audio in multiple formats.</p>';
+	   	modal_msg  += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click the PDF button at the bottom-left to export the tunes in PDF format.</p>';
+
+  	   	if (!gDisableEditFromPlayLink){
+	       modal_msg  += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">If you would like to edit the ABC for these tunes:</p>';
+	  	   modal_msg  += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click the Zoom-In arrows at the top-right to close the full screen notation view and open the tunes in the ABC editor.</p>';
+	  	   modal_msg  += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">The ABC for all the tunes will be loaded in the editor.</p>';
+	   	   modal_msg  += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">In the ABC editor, click the Zoom-Out arrows at the top-right to view the notation full screen.</p>';
+	   	}	
+	   
+	   	modal_msg  += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Please visit my <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> page for complete instructions and demo videos on how to use the tools.</p>';
+	   	modal_msg  += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click the Settings button below to bring up the tool settings where you can set default playback instruments, volumes, and overrides:</p>';	   	
+		modal_msg += '<p style="text-align:center;"><input id="configuresettingsfromhelp" class="configuresettingsfromhelp button btn btn-configuresettingsfromhelp" onclick="ConfigureToolSettings();" type="button" value="Settings" title="Brings up the tool settings dialog"></p>';
 
 		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
 	}

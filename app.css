@@ -3830,6 +3830,17 @@ left:20px;
 top:20px;
 }
 
+.configuresettingsfromhelp{
+	height:42px;
+	padding:12px !important;
+	width:auto;
+}
+
+@media (hover: hover) {
+	.configuresettingsfromhelp:hover{
+	background: palegreen;
+	}
+}
 
 /******************************************************************************/
 /* STYLES RELATED TO EXPERIMENT BUTTONS                                       */
@@ -4316,6 +4327,12 @@ top:20px;
   --background-color: #C8ECFE;
 }
 
+.btn-configuresettingsfromhelp{
+  --color: black;
+  --background-color: lavender;
+}
+
+
 @media (hover: hover) {
 	
 	.btn
@@ -4402,7 +4419,6 @@ top:20px;
 	.moresettingsbutton:hover {
 	    transform: matrix(1.06, 0, 0, 1.06, 0, 0); 
 	}
-
 }
 
 
