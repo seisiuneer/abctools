@@ -1341,7 +1341,7 @@ function DoSortTunesByMeter() {
 	setTimeout(function(){
 
 		// Sort the tunes by name
-		SortTunes(false);
+		SortTunes(true);
 
 		// Sort the tunes
 		SortTunesByTag("M",false);
@@ -1390,7 +1390,7 @@ function DoSortTunesByKey() {
 	setTimeout(function(){
 
 		// Sort the tunes by name first
-		SortTunes(false);
+		SortTunes(true);
 
 		// Sort the tunes by key
 		SortTunesByTag("K",false);
@@ -1604,7 +1604,7 @@ function DoSortTunesByRhythm() {
 	setTimeout(function(){
 
 		// Sort the tunes by name first
-		SortTunes(false);
+		SortTunes(true);
 
 		// Sort the tunes by rhythm
 		SortTunesByTag("R",true);
@@ -1652,7 +1652,7 @@ function DoSortTunesByID() {
 	setTimeout(function(){
 		
 		// Sort the tunes by name first
-		SortTunes(false);
+		SortTunes(true);
 
 		// Sort the tunes by key
 		SortTunesByTag("X",false);
