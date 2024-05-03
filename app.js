@@ -9781,6 +9781,18 @@ function StripAnnotationsOne(theNotes){
 	// Strip out O: annotation
 	theNotes = theNotes.replace(searchRegExp, "");
 
+	// Strip out A: annotation
+	searchRegExp = /^A:.*[\r\n]*/gm
+
+	// Strip out A: annotation
+	theNotes = theNotes.replace(searchRegExp, "");
+
+	// Strip out P: annotation
+	searchRegExp = /^P:.*[\r\n]*/gm
+
+	// Strip out P: annotation
+	theNotes = theNotes.replace(searchRegExp, "");
+
 	return theNotes
 }
 
@@ -10251,6 +10263,17 @@ function Render(renderAll,tuneNumber) {
 				// Strip out O: annotation
 				theNotes = theNotes.replace(searchRegExp, "% comment");
 
+				// Strip out A: annotation
+				searchRegExp = /^A:.*$/gm
+
+				// Strip out A: annotation
+				theNotes = theNotes.replace(searchRegExp, "% comment");
+
+				// Strip out P: annotation
+				searchRegExp = /^P:.*$/gm
+
+				// Strip out P: annotation
+				theNotes = theNotes.replace(searchRegExp, "% comment");
 			}
 
 			if (gStripTextAnnotations) {
@@ -10517,6 +10540,26 @@ function IdleAdvancedControls(bUpdateUI){
 		searchRegExp = /^O:.*$/gm
 
 		// Detect O: annotation
+		gotMatch = theNotes.search(searchRegExp) != -1;
+
+	}
+
+	if (!gotMatch){
+
+		// Detect A: annotation
+		searchRegExp = /^A:.*$/gm
+
+		// Detect A: annotation
+		gotMatch = theNotes.search(searchRegExp) != -1;
+
+	}
+
+	if (!gotMatch){
+
+		// Detect P: annotation
+		searchRegExp = /^P:.*$/gm
+
+		// Detect P: annotation
 		gotMatch = theNotes.search(searchRegExp) != -1;
 
 	}
