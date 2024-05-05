@@ -1341,7 +1341,7 @@ function DoSortTunesByMeter() {
 	setTimeout(function(){
 
 		// Sort the tunes by name
-		SortTunes(true);
+		SortTunes();
 
 		// Sort the tunes
 		SortTunesByTag("M",false);
@@ -1390,7 +1390,7 @@ function DoSortTunesByKey() {
 	setTimeout(function(){
 
 		// Sort the tunes by name first
-		SortTunes(true);
+		SortTunes();
 
 		// Sort the tunes by key
 		SortTunesByTag("K",false);
@@ -1421,7 +1421,7 @@ function DoSortTunesByKey() {
 //
 // Sort the tunes in the ABC text area
 //
-function SortTunes(stripAn){
+function SortTunes(){
 
 	// Get all the tunes
 	var theNotes = gTheABC.value;
@@ -1468,19 +1468,15 @@ function SortTunes(stripAn){
 
 			}
 
-			if (stripAn){
+			if (thisTitle.indexOf("An ")==0){
 
-				if (thisTitle.indexOf("An ")==0){
+				thisTitle = thisTitle.substring(3,thisTitle.length)+", An";
 
-					thisTitle = thisTitle.substring(3,thisTitle.length)+", An";
+			}
 
-				}
+			if (thisTitle.indexOf("A ")==0){
 
-				if (thisTitle.indexOf("A ")==0){
-
-					thisTitle = thisTitle.substring(2,thisTitle.length)+", A";
-
-				}
+				thisTitle = thisTitle.substring(2,thisTitle.length)+", A";
 
 			}
 
@@ -1542,7 +1538,7 @@ function SortTunes(stripAn){
 //
 // DoSortTunesByName command
 //
-function DoSortTunesByName(stripAn) {
+function DoSortTunesByName() {
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
@@ -1559,7 +1555,7 @@ function DoSortTunesByName(stripAn) {
 	setTimeout(function(){
 
 		// Sort the tunes
-		SortTunes(stripAn);
+		SortTunes();
 
 		// Redraw
 		RenderAsync(true,null,function(){
@@ -1604,7 +1600,7 @@ function DoSortTunesByRhythm() {
 	setTimeout(function(){
 
 		// Sort the tunes by name first
-		SortTunes(true);
+		SortTunes();
 
 		// Sort the tunes by rhythm
 		SortTunesByTag("R",true);
@@ -1652,7 +1648,7 @@ function DoSortTunesByID() {
 	setTimeout(function(){
 		
 		// Sort the tunes by name first
-		SortTunes(true);
+		SortTunes();
 
 		// Sort the tunes by key
 		SortTunesByTag("X",false);
@@ -1743,12 +1739,11 @@ function SortDialog(){
 
  	const sorting_options = [
 	    { name: "  Sort by Name (T:)", id: "0" },
-	    { name: '  Sort by Name (T:) - Ignore "A"and "An"' , id: "1" },
-	    { name: "  Sort by Key (K:)", id: "2" },
-	    { name: "  Sort by Meter (M:)", id: "3" },
-	    { name: "  Sort by Rhythm (R:)", id: "4" },
-	    { name: "  Sort by ID (X:)", id: "5" },
-	    { name: "  Renumber all X: Tags", id: "6" },
+	    { name: "  Sort by Key (K:)", id: "1" },
+	    { name: "  Sort by Meter (M:)", id: "2" },
+	    { name: "  Sort by Rhythm (R:)", id: "3" },
+	    { name: "  Sort by ID (X:)", id: "4" },
+	    { name: "  Renumber all X: Tags", id: "5" },
 
   	];
 
@@ -1774,28 +1769,25 @@ function SortDialog(){
 			switch (args.result.configure_sort){
 
 				case "0":
-					DoSortTunesByName(false);
+					DoSortTunesByName();
 					break;
 				case "1":
-					DoSortTunesByName(true);
-					break;
-				case "2":
 					DoSortTunesByKey();
 					break;
-				case "3":
+				case "2":
 					DoSortTunesByMeter();
 					break;
-				case "4":
+				case "3":
 					DoSortTunesByRhythm();
 					break;
-				case "5":
+				case "4":
 					DoSortTunesByID();
 					break;
-				case "6":
+				case "5":
 					RenumberXTags();
 					break;
 				default:
-					DoSortTunesByName(false);
+					DoSortTunesByName();
 					break;
 			}
 		}
@@ -2739,7 +2731,7 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		}
 
 
-		// If sorting incipits, do the The and Da replacement before appending the key
+		// If sorting incipits, do the The, Da, A, and An replacement before appending the key
 		if (sortTunes){
 
 			if (thisTitle.indexOf("The ")==0){
@@ -2751,6 +2743,18 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 			if (thisTitle.indexOf("Da ")==0){
 
 				thisTitle = thisTitle.substring(3,thisTitle.length)+", Da";
+
+			}
+
+			if (thisTitle.indexOf("An ")==0){
+
+				thisTitle = thisTitle.substring(3,thisTitle.length)+", An";
+
+			}
+
+			if (thisTitle.indexOf("A ")==0){
+
+				thisTitle = thisTitle.substring(2,thisTitle.length)+", A";
 
 			}
 
@@ -3660,7 +3664,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 	// Sorted index requested?
 	if (sortTunes){
 
-		// Move "The" to the end
+		// Move "The", "Da ", "An ", or "A " to the end
 		var thisTitle;
 
 		for (i=0;i<totalTunes;++i){
@@ -3681,6 +3685,21 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 				theTitles[i] = thisTitle;
 			}
 		
+			if (thisTitle.indexOf("An ")==0){
+
+				thisTitle = thisTitle.substring(3,thisTitle.length)+", An";
+
+				theTitles[i] = thisTitle;
+
+			}
+
+			if (thisTitle.indexOf("A ")==0){
+
+				thisTitle = thisTitle.substring(2,thisTitle.length)+", A";
+
+				theTitles[i] = thisTitle;
+
+			}
 		}
 
 		var tuneInfo = [];
@@ -4569,8 +4588,23 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 				theTitles[i] = thisTitle;
 			}
 
-		}
+			if (thisTitle.indexOf("An ")==0){
 
+				thisTitle = thisTitle.substring(3,thisTitle.length)+", An";
+
+				theTitles[i] = thisTitle;
+
+			}
+
+			if (thisTitle.indexOf("A ")==0){
+
+				thisTitle = thisTitle.substring(2,thisTitle.length)+", A";
+				
+				theTitles[i] = thisTitle;
+
+			}
+
+		}
 
 		var tuneInfo = [];
 		
@@ -4806,6 +4840,22 @@ function DryRunAddTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperSty
 				thisTitle = thisTitle.substring(3,thisTitle.length)+", Da";
 
 				theTitles[i] = thisTitle;
+			}
+
+			if (thisTitle.indexOf("An ")==0){
+
+				thisTitle = thisTitle.substring(3,thisTitle.length)+", An";
+
+				theTitles[i] = thisTitle;
+
+			}
+
+			if (thisTitle.indexOf("A ")==0){
+
+				thisTitle = thisTitle.substring(2,thisTitle.length)+", A";
+				
+				theTitles[i] = thisTitle;
+
 			}
 
 		}
