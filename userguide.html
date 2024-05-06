@@ -2082,7 +2082,7 @@
             <hr>
             <p>Brings up a dialog where you can sort the tunes based on a specified ABC tag:</p>
             <p>All tag sorts other than by name and X: tag renumbering first sort the tunes by name before sorting by the specific tag.</p>
-            <p style="margin-left:30px;"><strong>Sort by Name (T:)</strong> - Sorts all the tunes by name alphabetically based on the value found in the first T: tag, ignoring an initial "The ", "Da ", "A ", or "An "</p>
+            <p style="margin-left:30px;"><strong>Sort by Name (T:)</strong> - Sorts all the tunes by name alphabetically based on the value found in the first T: tag, ignoring an initial "The ", "Da ", "A ", "An ", "Le ", or "La "</p>
             <p style="margin-left:30px;"><strong>Sort by Key (K:)</strong> - This sorts all the tunes by the key value found in the first K: tag in the tune.</p>
             <p style="margin-left:30px;"><strong>Sort by Meter (M:)</strong> - This sorts all the tunes by the meter value found in the first M: tag in the tune.</p>
             <p style="margin-left:30px;">Sort order is: C|, C, 4/4, 6/8, 9/8, 12/8, 2/4, 3/4, 6/4, followed by any other meters found, grouped by meter.</p>
@@ -2142,7 +2142,7 @@
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_43.jpg"/>
+                <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_44.jpg"/>
             </div>
             <hr>
             <p><strong>Show instrument tablature button bar below ABC editor</strong> - If checked shows the instrument tablature button bar below the editor.</p>
@@ -2248,6 +2248,8 @@
             <p><strong>MIDI input is key and mode aware (if unchecked, enters note names with no accidentals)</strong></p>
             <p>For full details on MIDI input, see this section:</p>
             <p style="text-align: center;"><a style="text-decoration:none;" href="#midi_input">Typing ABC Using a MIDI Input Device</a></p>
+            <hr>
+            <p><strong>Show all T: titles for a tune when generating Table of Contents or Index</strong> - When checked, if a tune has multiple T: titles, it will join them together separated by a / when generating a Table of Contents or Index entry for the tune.</p>
             <hr>
             <p><strong>Font Settings</strong> - Brings up a dialog where you can configure all fonts used for rendering the ABC.</p>
             <hr>
@@ -2696,7 +2698,7 @@
             <p></p>
             <p class="code">%addsortedtoc (sorted table of contents title text)</p>
             <p></p>
-            <p>Tune names that start with "The", "Da ", "A " or "An "will have the "The", "Da ", "A ", or "An " moved to the end of the tune name before the sorting.</p>
+            <p>Tune names that start with "The", "Da ", "A ", "An ", "Le ", or "La " will have the "The", "Da ", "A ", "An ", "Le ", or "La " moved to the end of the tune name before the sorting.</p>
             <p></p>
             <p>To add a hyperlink (displayed as <<) on the left side of each page that links back to the tunebook table of contents, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
@@ -2716,7 +2718,7 @@
             <p></p>
             <p class="code">%addsortedindex (sorted index title text)</p>
             <p></p>
-            <p>Tune names that start with "The", "Da ", "A " or "An "will have the "The", "Da ", "A ", or "An " moved to the end of the tune name before the sorting.</p>
+            <p>Tune names that start with "The", "Da ", "A ", "An ", "Le ", or "La " will have the "The", "Da ", "A ", "An ", "Le ", or "La " moved to the end of the tune name before the sorting.</p>
             <p></p>
             <p>Only the first instance of the %addtoc, %addsortedtoc, %addindex, and %addsortedindex annotations are processed, any additional instances are ignored.</p>
             <p></p>

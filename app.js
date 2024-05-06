@@ -346,6 +346,9 @@ var gTinyURLCount = 0;
 // MIDI import warning delivered
 var gMIDIImportWarned = false;
 
+// Show multiple titles in TOC and Index
+var gTOCIndexMultipleTitles = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -1466,6 +1469,18 @@ function processTitleForSorting(thisTitle){
 
 		}
 
+		if (thisPart.indexOf("Le ")==0){
+
+			thisPart = thisPart.substring(3,thisPart.length)+", Le";
+
+		}
+
+		if (thisPart.indexOf("La ")==0){
+
+			thisPart = thisPart.substring(3,thisPart.length)+", La";
+
+		}
+
 		if (i==0){
 
 			titleAccum = thisPart;
@@ -2343,10 +2358,19 @@ function GetTunebookIndexTitles(){
 				// Append all the titles together
 
 				if (!bGotTitle){
+
 					titleAccum = title;
+
+					// If not showing all titles on TOC and Index, exit now
+					if (!gTOCIndexMultipleTitles){
+						bGotTitle = true;
+						break;
+					}
 				}
 				else{
+
 					titleAccum = titleAccum + " / " + title;
+
 				}
 
 				bGotTitle = true;
@@ -30968,6 +30992,13 @@ function GetInitialConfigurationSettings(){
 		gMIDIImportWarned = (val == "true");
 	}
 
+	// Show multiple titles in the TOC and index
+	gTOCIndexMultipleTitles = false;
+	val = localStorage.TOCIndexMultipleTitles;
+	if (val){
+		gTOCIndexMultipleTitles = (val == "true");
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -31159,6 +31190,9 @@ function SaveConfigurationSettings(){
 
 		// Save the TinyURL use count
 		localStorage.TinyURLCount = gTinyURLCount;
+
+		// Save the TOC and Index show multiple titles state
+		localStorage.TOCIndexMultipleTitles = gTOCIndexMultipleTitles;
 
 	}
 }
@@ -33282,6 +33316,7 @@ function ConfigureToolSettings() {
 		configure_allow_midi_input: gAllowMIDIInput,
 		configure_midi_chromatic: gMIDIChromatic,
 		configure_show_tab_buttons: gFeaturesShowTabButtons,
+		configure_show_all_titles: gTOCIndexMultipleTitles
 	};
 
  	const sound_font_options = [
@@ -33330,6 +33365,8 @@ function ConfigureToolSettings() {
 		form.push({name: "    Allow MIDI input for ABC text entry", id: "configure_allow_midi_input", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 		form.push({name: "    MIDI input is key and mode aware (if unchecked, enters note names with no accidentals)", id: "configure_midi_chromatic", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 	};
+	
+	form.push({name: "    Show all T: titles for a tune when generating Table of Contents or Index", id: "configure_show_all_titles", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 
 	form.push({html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Font Settings" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML/MIDI Settings" title="Configure MusicXML/MIDI import parameters"><input id="configure_developer_settings" class="btn btn-subdialog configure_developer_settings" onclick="AdvancedSettings()" type="button" value="Advanced Settings" title="Configure low level tool settings"></p>'});	
 
@@ -33643,6 +33680,9 @@ function ConfigureToolSettings() {
 				localStorage.abcStaffSpacing = testStaffSpacing;
 
 			}
+
+			// Showing all T: titles in TOC and index?
+			gTOCIndexMultipleTitles = args.result.configure_show_all_titles;
 
 			// Update local storage
 			SaveConfigurationSettings();
