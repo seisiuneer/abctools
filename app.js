@@ -1419,6 +1419,70 @@ function DoSortTunesByKey() {
 }
 
 //
+// Process a title for sorting
+//
+function processTitleForSorting(thisTitle){
+
+	//debugger;
+
+	// Split the title looking for the multi-title delimiter
+	var parts = thisTitle.split(/\//);
+
+	if (parts.length == 0){
+
+		return thisTitle;
+	
+	}
+
+	var titleAccum = "";
+
+	for (var i=0;i<parts.length;++i){
+
+		var thisPart = parts[i];
+
+		thisPart = thisPart.trim();
+
+		if (thisPart.indexOf("The ")==0){
+
+			thisPart = thisPart.substring(4,thisPart.length)+", The";
+
+		}
+
+		if (thisPart.indexOf("Da ")==0){
+
+			thisPart = thisPart.substring(3,thisPart.length)+", Da";
+
+		}
+
+		if (thisPart.indexOf("An ")==0){
+
+			thisPart = thisPart.substring(3,thisPart.length)+", An";
+
+		}
+
+		if (thisPart.indexOf("A ")==0){
+
+			thisPart = thisPart.substring(2,thisPart.length)+", A";
+
+		}
+
+		if (i==0){
+
+			titleAccum = thisPart;
+
+		}
+		else{
+
+			titleAccum = titleAccum + " / " + thisPart;
+			
+		}
+
+	}
+
+	return titleAccum;
+}
+
+//
 // Sort the tunes in the ABC text area
 //
 function SortTunes(){
@@ -1456,29 +1520,7 @@ function SortTunes(){
 
 			thisTitle = theTitles[nProcessed];
 
-			if (thisTitle.indexOf("The ")==0){
-
-				thisTitle = thisTitle.substring(4,thisTitle.length)+", The";
-
-			}
-
-			if (thisTitle.indexOf("Da ")==0){
-
-				thisTitle = thisTitle.substring(3,thisTitle.length)+", Da";
-
-			}
-
-			if (thisTitle.indexOf("An ")==0){
-
-				thisTitle = thisTitle.substring(3,thisTitle.length)+", An";
-
-			}
-
-			if (thisTitle.indexOf("A ")==0){
-
-				thisTitle = thisTitle.substring(2,thisTitle.length)+", A";
-
-			}
+			thisTitle = processTitleForSorting(thisTitle);
 
 			nProcessed++;
 
@@ -2284,30 +2326,39 @@ function GetTunebookIndexTitles(){
 
 		var bGotTitle = false;
 
+		var titleAccum = "";
+
 		for (var j = 0; j < Reihe.length; ++j) {
 
-			Reihe[j] = unescape(Reihe[j]); /* Macht die Steuerzeichen wieder weg */
+			Reihe[j] = unescape(Reihe[j]); 
 
-			var Aktuellereihe = Reihe[j].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
+			var Aktuellereihe = Reihe[j].split(""); 
 
 			if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
 
-				titel = Reihe[j].slice(2);
+				var title = Reihe[j].slice(2);
 
-				titel = titel.trim();
+				title = title.trim();
 
-				// Just grab the first title foiund
-				theTitles.push(titel);
+				// Append all the titles together
+
+				if (!bGotTitle){
+					titleAccum = title;
+				}
+				else{
+					titleAccum = titleAccum + " / " + title;
+				}
 
 				bGotTitle = true;
-
-				break
 
 			}
 		}
 
 		if (!bGotTitle){
 			theTitles.push("No Title");
+		}
+		else{
+			theTitles.push(titleAccum);
 		}
 
 	}
@@ -2734,29 +2785,7 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		// If sorting incipits, do the The, Da, A, and An replacement before appending the key
 		if (sortTunes){
 
-			if (thisTitle.indexOf("The ")==0){
-
-				thisTitle = thisTitle.substring(4,thisTitle.length)+", The";
-
-			}
-
-			if (thisTitle.indexOf("Da ")==0){
-
-				thisTitle = thisTitle.substring(3,thisTitle.length)+", Da";
-
-			}
-
-			if (thisTitle.indexOf("An ")==0){
-
-				thisTitle = thisTitle.substring(3,thisTitle.length)+", An";
-
-			}
-
-			if (thisTitle.indexOf("A ")==0){
-
-				thisTitle = thisTitle.substring(2,thisTitle.length)+", A";
-
-			}
+			thisTitle = processTitleForSorting(thisTitle);
 
 		}
 
@@ -3671,35 +3700,10 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 
 			thisTitle = theTitles[i];
 
-			if (thisTitle.indexOf("The ")==0){
+			thisTitle = processTitleForSorting(thisTitle);
+			
+			theTitles[i] = thisTitle;
 
-				thisTitle = thisTitle.substring(4,thisTitle.length)+", The";
-
-				theTitles[i] = thisTitle;
-			}
-
-			if (thisTitle.indexOf("Da ")==0){
-
-				thisTitle = thisTitle.substring(3,thisTitle.length)+", Da";
-
-				theTitles[i] = thisTitle;
-			}
-		
-			if (thisTitle.indexOf("An ")==0){
-
-				thisTitle = thisTitle.substring(3,thisTitle.length)+", An";
-
-				theTitles[i] = thisTitle;
-
-			}
-
-			if (thisTitle.indexOf("A ")==0){
-
-				thisTitle = thisTitle.substring(2,thisTitle.length)+", A";
-
-				theTitles[i] = thisTitle;
-
-			}
 		}
 
 		var tuneInfo = [];
@@ -4574,35 +4578,9 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 
 			thisTitle = theTitles[i];
 
-			if (thisTitle.indexOf("The ")==0){
-
-				thisTitle = thisTitle.substring(4,thisTitle.length)+", The";
-
-				theTitles[i] = thisTitle;
-			}
-
-			if (thisTitle.indexOf("Da ")==0){
-
-				thisTitle = thisTitle.substring(3,thisTitle.length)+", Da";
-
-				theTitles[i] = thisTitle;
-			}
-
-			if (thisTitle.indexOf("An ")==0){
-
-				thisTitle = thisTitle.substring(3,thisTitle.length)+", An";
-
-				theTitles[i] = thisTitle;
-
-			}
-
-			if (thisTitle.indexOf("A ")==0){
-
-				thisTitle = thisTitle.substring(2,thisTitle.length)+", A";
-				
-				theTitles[i] = thisTitle;
-
-			}
+			thisTitle = processTitleForSorting(thisTitle);
+			
+			theTitles[i] = thisTitle;
 
 		}
 
@@ -4828,35 +4806,9 @@ function DryRunAddTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperSty
 
 			thisTitle = theTitles[i];
 
-			if (thisTitle.indexOf("The ")==0){
-
-				thisTitle = thisTitle.substring(4,thisTitle.length)+", The";
-
-				theTitles[i] = thisTitle;
-			}
-
-			if (thisTitle.indexOf("Da ")==0){
-
-				thisTitle = thisTitle.substring(3,thisTitle.length)+", Da";
-
-				theTitles[i] = thisTitle;
-			}
-
-			if (thisTitle.indexOf("An ")==0){
-
-				thisTitle = thisTitle.substring(3,thisTitle.length)+", An";
-
-				theTitles[i] = thisTitle;
-
-			}
-
-			if (thisTitle.indexOf("A ")==0){
-
-				thisTitle = thisTitle.substring(2,thisTitle.length)+", A";
-				
-				theTitles[i] = thisTitle;
-
-			}
+			thisTitle = processTitleForSorting(thisTitle);
+			
+			theTitles[i] = thisTitle;
 
 		}
 
