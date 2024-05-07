@@ -30942,13 +30942,6 @@ function GetInitialConfigurationSettings(){
 		gMIDIImportWarned = (val == "true");
 	}
 
-	// Show multiple titles in the TOC and index
-	gTOCIndexMultipleTitles = false;
-	val = localStorage.TOCIndexMultipleTitles;
-	if (val){
-		gTOCIndexMultipleTitles = (val == "true");
-	}
-
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -31140,9 +31133,6 @@ function SaveConfigurationSettings(){
 
 		// Save the TinyURL use count
 		localStorage.TinyURLCount = gTinyURLCount;
-
-		// Save the TOC and Index show multiple titles state
-		localStorage.TOCIndexMultipleTitles = gTOCIndexMultipleTitles;
 
 	}
 }
