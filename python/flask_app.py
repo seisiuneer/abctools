@@ -41,7 +41,7 @@ def midi2xml():
 
     try:
         # Convert MIDI to MusicXML
-        musicxml_score = converter.parseData(binary_data)
+        musicxml_score = converter.parseData(binary_data, quarterLengthDivisors=(4,6))
 
         musicxml_score.write('musicxml', fp=musicXMLFile)
 
