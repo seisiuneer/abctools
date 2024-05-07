@@ -346,9 +346,6 @@ var gTinyURLCount = 0;
 // MIDI import warning delivered
 var gMIDIImportWarned = false;
 
-// Show multiple titles in TOC and Index
-var gTOCIndexMultipleTitles = false;
-
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -1428,73 +1425,44 @@ function processTitleForSorting(thisTitle){
 
 	//debugger;
 
-	// Split the title looking for the multi-title delimiter
-	var parts = thisTitle.split(/\//);
+	if (thisTitle.indexOf("The ")==0){
 
-	if (parts.length == 0){
-
-		return thisTitle;
-	
-	}
-
-	var titleAccum = "";
-
-	for (var i=0;i<parts.length;++i){
-
-		var thisPart = parts[i];
-
-		thisPart = thisPart.trim();
-
-		if (thisPart.indexOf("The ")==0){
-
-			thisPart = thisPart.substring(4,thisPart.length)+", The";
-
-		}
-
-		if (thisPart.indexOf("Da ")==0){
-
-			thisPart = thisPart.substring(3,thisPart.length)+", Da";
-
-		}
-
-		if (thisPart.indexOf("An ")==0){
-
-			thisPart = thisPart.substring(3,thisPart.length)+", An";
-
-		}
-
-		if (thisPart.indexOf("A ")==0){
-
-			thisPart = thisPart.substring(2,thisPart.length)+", A";
-
-		}
-
-		if (thisPart.indexOf("Le ")==0){
-
-			thisPart = thisPart.substring(3,thisPart.length)+", Le";
-
-		}
-
-		if (thisPart.indexOf("La ")==0){
-
-			thisPart = thisPart.substring(3,thisPart.length)+", La";
-
-		}
-
-		if (i==0){
-
-			titleAccum = thisPart;
-
-		}
-		else{
-
-			titleAccum = titleAccum + " / " + thisPart;
-			
-		}
+		thisTitle = thisTitle.substring(4,thisTitle.length)+", The";
 
 	}
 
-	return titleAccum;
+	if (thisTitle.indexOf("Da ")==0){
+
+		thisTitle = thisTitle.substring(3,thisTitle.length)+", Da";
+
+	}
+
+	if (thisTitle.indexOf("An ")==0){
+
+		thisTitle = thisTitle.substring(3,thisTitle.length)+", An";
+
+	}
+
+	if (thisTitle.indexOf("A ")==0){
+
+		thisTitle = thisTitle.substring(2,thisTitle.length)+", A";
+
+	}
+
+	if (thisTitle.indexOf("Le ")==0){
+
+		thisTitle = thisTitle.substring(3,thisTitle.length)+", Le";
+
+	}
+
+	if (thisTitle.indexOf("La ")==0){
+
+		thisTitle = thisTitle.substring(3,thisTitle.length)+", La";
+
+	}
+
+
+	return thisTitle;
 }
 
 //
@@ -2341,48 +2309,30 @@ function GetTunebookIndexTitles(){
 
 		var bGotTitle = false;
 
-		var titleAccum = "";
-
 		for (var j = 0; j < Reihe.length; ++j) {
 
-			Reihe[j] = unescape(Reihe[j]); 
+			Reihe[j] = unescape(Reihe[j]); /* Macht die Steuerzeichen wieder weg */
 
-			var Aktuellereihe = Reihe[j].split(""); 
+			var Aktuellereihe = Reihe[j].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
 
 			if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
 
-				var title = Reihe[j].slice(2);
+				titel = Reihe[j].slice(2);
 
-				title = title.trim();
+				titel = titel.trim();
 
-				// Append all the titles together
-
-				if (!bGotTitle){
-
-					titleAccum = title;
-
-					// If not showing all titles on TOC and Index, exit now
-					if (!gTOCIndexMultipleTitles){
-						bGotTitle = true;
-						break;
-					}
-				}
-				else{
-
-					titleAccum = titleAccum + " / " + title;
-
-				}
+				// Just grab the first title foiund
+				theTitles.push(titel);
 
 				bGotTitle = true;
+
+				break
 
 			}
 		}
 
 		if (!bGotTitle){
 			theTitles.push("No Title");
-		}
-		else{
-			theTitles.push(titleAccum);
 		}
 
 	}
@@ -33316,7 +33266,6 @@ function ConfigureToolSettings() {
 		configure_allow_midi_input: gAllowMIDIInput,
 		configure_midi_chromatic: gMIDIChromatic,
 		configure_show_tab_buttons: gFeaturesShowTabButtons,
-		configure_show_all_titles: gTOCIndexMultipleTitles
 	};
 
  	const sound_font_options = [
@@ -33366,8 +33315,6 @@ function ConfigureToolSettings() {
 		form.push({name: "    MIDI input is key and mode aware (if unchecked, enters note names with no accidentals)", id: "configure_midi_chromatic", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 	};
 	
-	form.push({name: "    Show all T: titles for a tune when generating Table of Contents or Index", id: "configure_show_all_titles", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
-
 	form.push({html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Font Settings" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML/MIDI Settings" title="Configure MusicXML/MIDI import parameters"><input id="configure_developer_settings" class="btn btn-subdialog configure_developer_settings" onclick="AdvancedSettings()" type="button" value="Advanced Settings" title="Configure low level tool settings"></p>'});	
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 790, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
@@ -33680,9 +33627,6 @@ function ConfigureToolSettings() {
 				localStorage.abcStaffSpacing = testStaffSpacing;
 
 			}
-
-			// Showing all T: titles in TOC and index?
-			gTOCIndexMultipleTitles = args.result.configure_show_all_titles;
 
 			// Update local storage
 			SaveConfigurationSettings();
