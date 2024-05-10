@@ -23457,7 +23457,12 @@ function PlayABC(e){
 			}
 		}
 		else{
-
+			// If shift key click on play, open the Tune Trainer
+			if (e && e.shiftKey){
+				TuneTrainer(false);
+				return;
+			}
+			else
 			// Select random tune if user clicks play with the alt keys pressed
 			if (e && e.altKey){
 
