@@ -4166,7 +4166,7 @@ var ceoltasABCTransformer = function (theABC,doInverse,isForPDF){
 //
 // Put the whole thing in a function for isolation
 //
-var fiddleFingeringsGenerator = function (theABC){
+var fiddleFingeringsGenerator = function (theABC,doStringNames){
 
     var verbose = false;
 
@@ -4475,6 +4475,68 @@ var fiddleFingeringsGenerator = function (theABC){
         
     }
 
+    //
+    // From a note name, gets the string name and fingering
+    //
+    function getNoteGlyphWithStringName(note){
+
+        var glyph_map = {
+            "G,":  "G0",
+            "^G,": "G1",
+            "_A,": "G1",
+            "A,":  "G1",
+            "^A,": "G2",
+            "_B,": "G2",
+            "B,":  "G2",
+            "C":   "G3",
+            "^C":  "G3",
+            "_D":  "G3",
+            "D":   "D0",
+            "^D":  "D1",
+            "_E":  "D1",
+            "E":   "D1",
+            "F":   "D2",
+            "^F":  "D2",
+            "_G":  "D2",
+            "G":   "D3",
+            "^G":  "D3",
+            "_A":  "D3",
+            "A":   "A0",
+            "^A":  "A1",
+            "_B":  "A1",
+            "B":   "A1",
+            "c":   "A2",
+            "^c":  "A2",
+            "_d":  "A2",
+            "d":   "A3",
+            "^d":  "A3",
+            "_e":  "A3",
+            "e":   "E0",
+            "f":   "E1",
+            "^f":  "E1",
+            "_g":  "E1",
+            "g":   "E2",
+            "^g":  "E2",
+            "_a":  "E2",
+            "a":   "E3",
+            "^a":  "E3",
+            "_b":  "E3",
+            "b":   "E4",
+            "c'":  "E4",
+            "^c'": "E4",
+            "_d'": "E4",
+            "d'":  "E4",
+        };
+
+        var thisGlyph = glyph_map[note];
+
+        if (!thisGlyph){
+            return "x ";
+        }
+
+        return thisGlyph;
+        
+    }
     // Returns an array of Notes from the ABC string input
     function getAbcNotes(input,style) {
 
@@ -4604,7 +4666,13 @@ var fiddleFingeringsGenerator = function (theABC){
 
                 log("UnNormalized=" + unNormalizedValue + " normalized=" + normalizedValue);
                 
-                var theGlyph = getNoteGlyph(normalizedValue,style);
+                var theGlyph;
+                if (doStringNames){
+                    theGlyph = getNoteGlyphWithStringName(normalizedValue,style);
+                }
+                else{
+                    theGlyph = getNoteGlyph(normalizedValue,style);
+                }
 
                 notes.push(new Note((m.index), unNormalizedValue, normalizedValue, theGlyph));
             }

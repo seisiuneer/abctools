@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
- 
+       
         <style>
 
 		p {
@@ -261,9 +261,13 @@
                     <p class="toc"><a style="text-decoration:none;" href="#reverb">Adding Reverb When Playing Tunes</a></p>
                 </div>
 
+                <button class="accordion" title="Click to expand/collapse this section">Exporting Tune Audio or Image Files from the Player</button>
+                <div class="tocpanel">
+                   <p class="toc"><a style="text-decoration:none;" href="#export_audio_image">Exporting Tune Audio or Image Files from the Player</a></p>
+                </div>
+
                 <button class="accordion" title="Click to expand/collapse this section">Advanced Playback Features</button>
                 <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#export_audio_image">Exporting Tune Audio or Image Files from the Player</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#adding_swing">Adding Playback Swing to Tunes</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#grace_timing">Setting Grace Note Duration for Ornamentation</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#roll_timing">Defining Custom Roll Timing Parameters</a></p>
@@ -1753,6 +1757,9 @@
             <p>Draw is indicated with an "↑" arrow by default (configurable in the Box and Anglo Concertina Tablature Settings dialog).</p>
             <hr id="tab_fiddle">
             <p><strong>Inject Fiddle Fingerings</strong> - Injects Fiddle/Mandolin fingerings (which finger to use for the note) into the ABC.</p>
+            <p>Options are:</p>
+            <p><strong>Finger Number Only</strong> - Injects only the finger to use (0-Open, 1, 2, 3, 4)</p>
+            <p><strong>String Name + Finger Number</strong> - Injects both the string names (G, D, A, E) and finger to use (0-Open, 1, 2, 3, 4)</p>
             <p>Note for Mandolin players:</p>
             <p>This is distinct from the fret number displayed when showing the Mandolin tablature along with the notation.</p>
             <p>The Mandolin tablature shows which fret to use on the Mandolin. This shows which finger to use on the fret.</p>

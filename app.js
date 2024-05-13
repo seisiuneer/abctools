@@ -19688,9 +19688,24 @@ function DoInjectTablature_Bamboo_Flute(){
 }
 
 //
-// Do Fiddle Fingerings Tab Injection
+// Fiddle Fingerings Tab Injection dialog
 //
-function DoInjectTablature_Fiddle_Fingerings(){
+function DoInjectTablature_Fiddle_Fingerings_Dialog(){
+
+	var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Fiddle Fingerings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_fiddle" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+
+	modal_msg  += '<p style="text-align:center;"><input id="fiddlefingeringsdialog" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(false)" type="button" value="Finger Number Only" title="Injects finger number (0, 1, 2, 3, 4) only.&nbsp;&nbsp;0 is an open string.">';
+
+	modal_msg  += '<input id="fiddlefingeringsdialog2" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(true)" type="button" value="String Name + Finger Number" title="Injects string name (G, D, A, E) + finger number (0, 1, 2, 3, 4).&nbsp;&nbsp;0 is an open string."></p>';
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, width: 650,  scrollWithPage: (AllowDialogsToScroll()) });
+
+}
+
+//
+// Fiddle Fingerings Tab Injection
+//
+function DoInjectTablature_Fiddle_Fingerings(doStringNames){
 
 	// Keep track of tablature injection use
 	sendGoogleAnalytics("tablature","Inject_Fiddle_Fingerings");
@@ -19699,7 +19714,7 @@ function DoInjectTablature_Fiddle_Fingerings(){
 
 	gCurrentTab = "noten";
 
-	gTheABC.value = fiddleFingeringsGenerator(gTheABC.value);
+	gTheABC.value = fiddleFingeringsGenerator(gTheABC.value,doStringNames);
 
 	// Set dirty
 	gIsDirty = true;
@@ -32613,7 +32628,7 @@ function AdvancedControlsDialog(){
 		modal_msg  += '<input id="injectanglotab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Anglo()" type="button" value="Inject Anglo Concertina Tab" title="Injects Anglo Concertina tablature into the ABC">';
 		modal_msg  += '</p>';
 		modal_msg  += '<p style="text-align:center;margin-top:22px;">'
-		modal_msg  += '<input id="injectfiddlefingerings" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings()" type="button" value="Inject Fiddle Fingerings" title="Injects Fiddle fingerings tablature into the ABC">';
+		modal_msg  += '<input id="injectfiddlefingerings" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings_Dialog()" type="button" value="Inject Fiddle Fingerings" title="Injects Fiddle fingerings tablature with either finger numbers or string names and finger numbers into the ABC">';
 		modal_msg  += '<input id="injectmd" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_MD()" type="button" value="Inject Dulcimer Tab" title="Injects Mountain Dulcimer tablature into the ABC">';
 		modal_msg  += '<input id="injectbambooflute" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Bamboo_Flute()" type="button" value="Inject Bamboo Flute Tab" title="Injects Bamboo flute tablature into the ABC">';
 		modal_msg  += '</p>';
