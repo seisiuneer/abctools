@@ -19694,9 +19694,13 @@ function DoInjectTablature_Fiddle_Fingerings_Dialog(){
 
 	var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Fiddle Fingerings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_fiddle" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 
-	modal_msg  += '<p style="text-align:center;"><input id="fiddlefingeringsdialog" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(false)" type="button" value="Finger Number Only" title="Injects finger number (0, 1, 2, 3, 4) only.&nbsp;&nbsp;0 is an open string.">';
+	modal_msg  += '<p style="text-align:center;"><input id="fiddlefingeringsdialog" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(0)" type="button" value="Finger Number Only" title="Injects finger number (0, 1, 2, 3, 4) only.&nbsp;&nbsp;0 is an open string."></p>';
 
-	modal_msg  += '<input id="fiddlefingeringsdialog2" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(true)" type="button" value="String Name + Finger Number" title="Injects string name (G, D, A, E) + finger number (0, 1, 2, 3, 4).&nbsp;&nbsp;0 is an open string."></p>';
+	modal_msg  += '<p style="text-align:center;"><input id="fiddlefingeringsdialog2" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(1)" type="button" value="String Name + Finger Number (Inline)" title="Injects string name (G, D, A, E) + finger number (0, 1, 2, 3, 4) together on one line.&nbsp;&nbsp;0 is an open string."></p>';
+	
+	modal_msg  += '<p style="text-align:center;"><input id="fiddlefingeringsdialog3" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(2)" type="button" value="String Name + Finger Number (Name over Number)" title="Injects string name (G, D, A, E) + finger number (0, 1, 2, 3, 4) stacked vertically Name over Number.&nbsp;&nbsp;0 is an open string."></p>';
+
+	modal_msg  += '<p style="text-align:center;"><input id="fiddlefingeringsdialog4" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(3)" type="button" value="String Name + Finger Number (Number over Name)" title="Injects string name (G, D, A, E) + finger number (0, 1, 2, 3, 4) stacked vertically Number over Name.&nbsp;&nbsp;0 is an open string."></p>';
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, width: 650,  scrollWithPage: (AllowDialogsToScroll()) });
 
@@ -19705,7 +19709,7 @@ function DoInjectTablature_Fiddle_Fingerings_Dialog(){
 //
 // Fiddle Fingerings Tab Injection
 //
-function DoInjectTablature_Fiddle_Fingerings(doStringNames){
+function DoInjectTablature_Fiddle_Fingerings(tab_style){
 
 	// Keep track of tablature injection use
 	sendGoogleAnalytics("tablature","Inject_Fiddle_Fingerings");
@@ -19714,7 +19718,7 @@ function DoInjectTablature_Fiddle_Fingerings(doStringNames){
 
 	gCurrentTab = "noten";
 
-	gTheABC.value = fiddleFingeringsGenerator(gTheABC.value,doStringNames);
+	gTheABC.value = fiddleFingeringsGenerator(gTheABC.value,tab_style);
 
 	// Set dirty
 	gIsDirty = true;

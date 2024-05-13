@@ -4166,7 +4166,7 @@ var ceoltasABCTransformer = function (theABC,doInverse,isForPDF){
 //
 // Put the whole thing in a function for isolation
 //
-var fiddleFingeringsGenerator = function (theABC,doStringNames){
+var fiddleFingeringsGenerator = function (theABC,stringNameStyle){
 
     var verbose = false;
 
@@ -4537,6 +4537,133 @@ var fiddleFingeringsGenerator = function (theABC,doStringNames){
         return thisGlyph;
         
     }
+
+
+    //
+    // From a note name, gets the string name and fingering
+    //
+    function getNoteGlyphWithStringName2(note){
+
+        var glyph_map = {
+            "G,":  "G;0",
+            "^G,": "G;1",
+            "_A,": "G;1",
+            "A,":  "G;1",
+            "^A,": "G;2",
+            "_B,": "G;2",
+            "B,":  "G;2",
+            "C":   "G;3",
+            "^C":  "G;3",
+            "_D":  "G;3",
+            "D":   "D;0",
+            "^D":  "D;1",
+            "_E":  "D;1",
+            "E":   "D;1",
+            "F":   "D;2",
+            "^F":  "D;2",
+            "_G":  "D;2",
+            "G":   "D;3",
+            "^G":  "D;3",
+            "_A":  "D;3",
+            "A":   "A;0",
+            "^A":  "A;1",
+            "_B":  "A;1",
+            "B":   "A;1",
+            "c":   "A;2",
+            "^c":  "A;2",
+            "_d":  "A;2",
+            "d":   "A;3",
+            "^d":  "A;3",
+            "_e":  "A;3",
+            "e":   "E;0",
+            "f":   "E;1",
+            "^f":  "E;1",
+            "_g":  "E;1",
+            "g":   "E;2",
+            "^g":  "E;2",
+            "_a":  "E;2",
+            "a":   "E;3",
+            "^a":  "E;3",
+            "_b":  "E;3",
+            "b":   "E;4",
+            "c'":  "E;4",
+            "^c'": "E;4",
+            "_d'": "E;4",
+            "d'":  "E;4",
+        };
+
+        var thisGlyph = glyph_map[note];
+
+        if (!thisGlyph){
+            return "x ";
+        }
+
+        return thisGlyph;
+        
+    }
+
+    //
+    // From a note name, gets the string name and fingering
+    //
+    function getNoteGlyphWithStringName3(note){
+
+        var glyph_map = {
+            "G,":  "0;G",
+            "^G,": "1;G",
+            "_A,": "1;G",
+            "A,":  "1;G",
+            "^A,": "2;G",
+            "_B,": "2;G",
+            "B,":  "2;G",
+            "C":   "3;G",
+            "^C":  "3;G",
+            "_D":  "3;G",
+            "D":   "0;D",
+            "^D":  "1;D",
+            "_E":  "1;D",
+            "E":   "1;D",
+            "F":   "2;D",
+            "^F":  "2;D",
+            "_G":  "2;D",
+            "G":   "3;D",
+            "^G":  "3;D",
+            "_A":  "3;D",
+            "A":   "0;A",
+            "^A":  "1;A",
+            "_B":  "1;A",
+            "B":   "1;A",
+            "c":   "2;A",
+            "^c":  "2;A",
+            "_d":  "2;A",
+            "d":   "3;A",
+            "^d":  "3;A",
+            "_e":  "3;A",
+            "e":   "0;E",
+            "f":   "1;E",
+            "^f":  "1;E",
+            "_g":  "1;E",
+            "g":   "2;E",
+            "^g":  "2;E",
+            "_a":  "2;E",
+            "a":   "3;E",
+            "^a":  "3;E",
+            "_b":  "3;E",
+            "b":   "4;E",
+            "c'":  "4;E",
+            "^c'": "4;E",
+            "_d'": "4;E",
+            "d'":  "4;E",
+        };
+
+        var thisGlyph = glyph_map[note];
+
+        if (!thisGlyph){
+            return "x ";
+        }
+
+        return thisGlyph;
+        
+    }
     // Returns an array of Notes from the ABC string input
     function getAbcNotes(input,style) {
 
@@ -4667,11 +4794,24 @@ var fiddleFingeringsGenerator = function (theABC,doStringNames){
                 log("UnNormalized=" + unNormalizedValue + " normalized=" + normalizedValue);
                 
                 var theGlyph;
-                if (doStringNames){
-                    theGlyph = getNoteGlyphWithStringName(normalizedValue,style);
-                }
-                else{
-                    theGlyph = getNoteGlyph(normalizedValue,style);
+
+                switch (stringNameStyle){
+                    case 0:
+                        theGlyph = getNoteGlyph(normalizedValue);
+                        break
+                    case 1:
+                        theGlyph = getNoteGlyphWithStringName(normalizedValue);
+                        break
+                    case 2:
+                        theGlyph = getNoteGlyphWithStringName2(normalizedValue);
+                        break
+                    case 3:
+                        theGlyph = getNoteGlyphWithStringName3(normalizedValue);
+                        break
+                    default:
+                        theGlyph = getNoteGlyph(normalizedValue);
+                        break
+
                 }
 
                 notes.push(new Note((m.index), unNormalizedValue, normalizedValue, theGlyph));

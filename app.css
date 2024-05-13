@@ -644,9 +644,13 @@ padding:12px;
 margin-right:24px;
 }
 
-#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#injectlargeprint,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog2{
+#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#injectlargeprint,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4{
 height:42px;
 padding:12px;
+}
+
+#fiddlefingeringsdialog2, #fiddlefingeringsdialog3, #fiddlefingeringsdialog4{
+	margin-top:16px;
 }
 
 #addnewreel,#addnewjig,#changetuneorder,#cull_select_all,#mobile_tune_order_up,#smartdraw_add_set_name,#smartdraw_delete_set_name,#addnewtunetemplate,#addsongtemplate,#addbodhrantemplate{
