@@ -26857,20 +26857,6 @@ function PreProcessTuneInstrumentExplorer(theTune){
 
 	theTune = theTune.replaceAll(searchRegExp,"");
 
-	// Inject default reverb?
-	if (gReverbString && (gReverbString != "")){
-
-		// Check first for any reverb annotations before replacing
-		var searchRegExp = /^%reverb.*$/m
-
-		var reverbRequested = theTune.match(searchRegExp);
-
-		if (!((reverbRequested) && (reverbRequested.length > 0))){
-
-			theTune = InjectReverbAboveTune(theTune, gReverbString);
-		}
-	}	
-
 	return theTune;
 
 }
@@ -27421,6 +27407,21 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 
 	// Transform any att: directives
 	theProcessedABC = TransformABCCompliantDirectives(theProcessedABC);
+
+	// Inject default reverb?
+	if (gReverbString && (gReverbString != "")){
+
+		// Check first for any reverb annotations before replacing
+		var searchRegExp = /^%reverb.*$/m
+
+		var reverbRequested = theProcessedABC.match(searchRegExp);
+
+		if (!((reverbRequested) && (reverbRequested.length > 0))){
+
+			theProcessedABC = InjectReverbAboveTune(theProcessedABC, gReverbString);
+		}
+
+	}	
 
 	// Do common setup of soundfont and custom timing injection
 	if (!PlayerSetupCommon(theProcessedABC)){
