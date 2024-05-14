@@ -524,7 +524,7 @@
             <p>Details below in the <a href="#open_dialog">Open an ABC, MusicXML, or MIDI File</a> section.</p>
             <hr>
             <p><strong>Add:</strong></p>
-            <p>Brings up a dialog where you can add your own ABC, MusicXML, or MIDI tunes, restore from previously saved Snapshots, re-order the tunes, add example ABC tunes, add useful ABC templates, or configure PDF tunebook features.</p>
+            <p>Brings up a dialog where you can add your own ABC, MusicXML, or MIDI tunes, restore from previously saved Snapshots, re-order the tunes, add example ABC tunes, add useful ABC templates, or inject PDF tunebook feature commands.</p>
             <p>Details below in the <a href="#add_templates_dialog">Adding Your Own Tunes to Your Tunebook</a> section.</p>
             <hr>
             <p><strong>Save:</strong></p>
@@ -571,9 +571,9 @@
             <hr class="hidden-print" id="add_templates_dialog">
             <h1 class="page_break_always h1wide">Adding Your Own Tunes to Your Tunebook<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p><strong>Add:</strong></p>
-            <p>Brings up a dialog where you can add your own ABC, MusicXML, or MIDI tunes, restore from previously saved Snapshots, re-order the tunes, delete tunes, add example ABC tunes, add useful ABC templates, or configure PDF tunebook features:</p>
+            <p>Brings up a dialog where you can add your own ABC, MusicXML, or MIDI tunes, restore from previously saved Snapshots, re-order the tunes, delete tunes, add example ABC tunes, add useful ABC templates, or inject the commands for PDF tunebook features:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/add_example_template_20.jpg"/>
+                <img class="image" loading="lazy" src="img/add_example_template_21.jpg"/>
             </div>
             <p>If you would like to only show the buttons for the features you commonly use and hid the others, click the controls icon at the top-right of the dialog to choose features of the dialog you would like to show/hide:</p>
             <div class="image_holder_p">
@@ -687,9 +687,9 @@
             <p><strong>Add Box Fingering Symbols Template:</strong></p>
             <p>Add a template with symbols for annotating box fingerings and tablature at the top of the ABC editor text.</p>
             <hr>
-            <p><strong>Configure PDF Tunebook Features:</strong></p>
+            <p><strong>Inject PDF Tunebook Features:</strong></p>
             <p>Brings up a dialog that you can use to add annotations at the top of the ABC that will add an optional Title Page, Table of Contents, Index, Page Header, Page Footer, playback links, and/or QR code to an exported PDF tunebook.</p>
-            <p>Full details on PDF tunebook features can be found in the <a href="#configure_pdf_tunebook_features"><strong>Configure PDF Tunebook Features</strong></a> section of <a href="#export_pdf_tunebook"><strong>Exporting a PDF Tunebook</strong></a>.</p>
+            <p>Full details on PDF tunebook features can be found in the <a href="#inject_pdf_tunebook_features"><strong>Inject PDF Tunebook Features</strong></a> section of <a href="#export_pdf_tunebook"><strong>Exporting a PDF Tunebook</strong></a>.</p>
             <hr class="hidden-print" id="abc_editor">
             <h1 class="page_break_always">ABC Editor<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder">
@@ -2447,14 +2447,14 @@
             <p>It can format PDF tunebooks with one or multiple tunes per page, something the native browser's Print command cannot accomplish.</p>
             <p>When you click <strong>Export PDF</strong>, the following dialog will appear where you select your PDF formatting preferences:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/export_pdf_tunebook_6.jpg"/>
+                <img class="image" loading="lazy" src="img/export_pdf_tunebook_7.jpg"/>
             </div>
-            <p>When exporting a PDF from the button on the bottom-left of the full-screen view, the <strong>Configure PDF Tunebook Features</strong> and <strong>Notation Spacing Explorer</strong> buttons are not shown on the dialog.</p>
+            <p>When exporting a PDF from the button on the bottom-left of the full-screen view, the <strong>Inject PDF Tunebook Features</strong> and <strong>Notation Spacing Explorer</strong> buttons are not shown on the dialog.</p>
             <p>Since they possibly modify the ABC itself, they are only available when exporting a PDF from the ABC Editor.</p>
             <hr>
-            <p id="configure_pdf_tunebook_features"><strong>Configure PDF Tunebook Features</strong> - Brings up a dialog that you can use to add annotations at the top of the ABC that will add an optional Title Page, Table of Contents, Index, Page Header, Page Footer, playback links, required fonts for ABC in playback links, and/or QR code to an exported PDF tunebook:</p>
+            <p id="inject_pdf_tunebook_features"><strong>Inject PDF Tunebook Features</strong> - Brings up a dialog that you can use to add annotations at the top of the ABC that will add an optional Title Page, Table of Contents, Index, Page Header, Page Footer, playback links, required fonts for ABC in playback links, and/or QR code to an exported PDF tunebook:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/configure_pdf_tunebook_features_8.jpg"/>
+                <img class="image" loading="lazy" src="img/inject_pdf_tunebook_features_1.jpg"/>
             </div>
             <p>Leave any text fields blank for features you don't want in your PDF tunebook.</p>
             <p>The PDF features are added using the tool's ABC comment-based annotations to the top of the ABC.</p>
@@ -2464,10 +2464,10 @@
             <p>The PDF features are separated by two marker lines:</p>
             <p class="code">% Start of PDF Tunebook Features<br/>% End of PDF Tunebook Features</p>
             <p>These two lines are used by the tool to locate the tunebook feature settings in the ABC.</p>
-            <p>If you click <strong>Configure PDF Tunebook Features</strong> again, everything in that block of ABC will be replaced with the newly configured PDF tunebook features.</p>
+            <p>If you click <strong>Inject PDF Tunebook Features</strong> again, everything in that block of ABC will be replaced with the newly injected PDF tunebook feature commands.</p>
             <p><strong>Note:</strong> If you add features to your tunebook using the dialog and then manually delete:</p>
             <p class="code">% End of PDF Tunebook Features</p>
-            <p>from the ABC and click <strong>Configure PDF Tunebook Features</strong>, the tool will not be able to find the original set of features in the ABC to overwrite.</p>
+            <p>from the ABC and click <strong>Inject PDF Tunebook Features</strong>, the tool will not be able to find the original set of feature commands in the ABC to overwrite.</p>
             <p>If this occurs, the new set of requested PDF tunebook features will just be added to the top of the ABC.</p>
             <hr>
             <p style="text-align: center;"><strong>Note on use of "Playback links contain entire tunebook"</strong></p>

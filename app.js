@@ -11322,8 +11322,8 @@ function PDFTunebookBuilder(){
   	}
 
 	var form = [
-	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:18px">Configure PDF Tunebook Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#configure_pdf_tunebook_features" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
-	  {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:14pt;font-family:helvetica">Clicking "OK" will add PDF tunebook feature annotations to the top of your ABC.</p>'},  
+	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:18px">Inject PDF Tunebook Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#inject_pdf_tunebook_features" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
+	  {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:14pt;font-family:helvetica">Clicking "OK" will inject PDF tunebook feature commands at the top of your ABC.</p>'},  
 	  {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:14pt;font-family:helvetica">Leave any text fields blank for features you don\'t want in your PDF tunebook.</p>'},  
 	  {name: "PDF quality:", id: "pdfquality", type:"select", options:pdf_quality_list, cssClass:"configure_pdfquality_select"},
 	  {name: "Space between tunes (in 1/72\"):", id: "pdf_between_tune_space", type:"number", cssClass:"configure_setuppdftunebook_form_text3"},
@@ -13204,12 +13204,12 @@ function AddABC(){
 		modal_msg += '</p>';
 		modal_msg += '<p style="text-align:center;margin-top:16px;">';
 		modal_msg  += '<input id="addbodhrantemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddBodhranTemplate();" type="button" value="Add Bodhran Backing Track Tune Template" title="Opens a dialog where you can choose a bodhran backing track template of common tune styles to add to the end of the ABC">';
-		modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendBoxFingeringTemplate();" type="button" value="Add Box Fingering Symbols Template" title="Adds a template with symbols for annotating box fingerings and tablature to the top of the ABC">';
+		modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendBoxFingeringTemplate();" type="button" value="Add Box Fingering Symbols Template" title="Adds a template with symbols for annotating box fingerings and tablature at the top of the ABC">';
 		modal_msg += '</p>';
 	}
 
-	modal_msg += '<p style="text-align:center;margin-top:24px;font-size:18px;">Configure PDF Tunebook Features</p>';
-	modal_msg += '<p style="text-align:center;margin-top:16px;"><input id="tunebookbuilder_add" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Configure PDF Tunebook Features" title="Easily add features to your PDF tunebook including: Title Page, Table of Contents, Index, Page Headers, Page Footers, playback links, and custom QR Code"></p>';
+	modal_msg += '<p style="text-align:center;margin-top:24px;font-size:18px;">Inject PDF Tunebook Features</p>';
+	modal_msg += '<p style="text-align:center;margin-top:16px;"><input id="tunebookbuilder_add" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Inject PDF Tunebook Features" title="Inject commands at the top of your PDF tunebook for adding a Title Page, Table of Contents, Index, Page Headers, Page Footers, Playback Links, and Custom QR Code"></p>';
 	modal_msg += '<p style="text-align:center;margin-top:24px;">';
 	modal_msg += '</p>';
 	modal_msg += '</div>';
@@ -32341,7 +32341,7 @@ function PDFExportDialog(){
 
 		form = [
 		  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Export PDF Tunebook&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#export_pdf_tunebook" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'}, 
-		  {html: '<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Configure PDF Tunebook Features" title="Easily add features to your PDF tunebook including: Title Page, Table of Contents, Index, Page Headers, Page Footers, playback links, and custom QR Code"><input id="pdfinjectlargeprint" class="advancedcontrols btn btn-injectcontrols-headers-pdf" onclick="NotationSpacingExplorer()" type="button" value="Notation Spacing Explorer" title="Find the right spacing and scale values for your notation"></p>'},
+		  {html: '<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Inject PDF Tunebook Features" title="Inject commands at the top of your PDF tunebook for adding a Title Page, Table of Contents, Index, Page Headers, Page Footers, Playback Links, and Custom QR Code"><input id="pdfinjectlargeprint" class="advancedcontrols btn btn-injectcontrols-headers-pdf" onclick="NotationSpacingExplorer()" type="button" value="Notation Spacing Explorer" title="Find the right spacing and scale values for your notation"></p>'},
 		  {name: "Paper Size:", id: "configure_papersize", type:"select", options:papersize_list, cssClass:"configure_pdf_papersize_select"},
 		  {name: "Orientation:", id: "configure_orientation", type:"select", options:orientation_list, cssClass:"configure_pdf_orientation_select"},
 		  {name: "Tune Layout:", id: "configure_tunelayout", type:"select", options:tunelayout_list, cssClass:"configure_pdf_tunelayout_select"},
