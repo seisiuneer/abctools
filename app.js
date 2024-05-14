@@ -421,7 +421,7 @@ function getTuneTitle(thisTune){
 //
 // Get the notes for a tune without the header
 //
-function removeABCTuneHeaders(abcTune) {
+function stripAllABCTuneHeaders(abcTune) {
 
   // Use a regular expression to match and remove header lines
   // Removed V: 1 Jan 2024 but not sure why I added it in the first place
@@ -430,6 +430,65 @@ function removeABCTuneHeaders(abcTune) {
   
   return tuneWithoutHeaders;
 }
+
+//
+// Get the notes for a tune without the header
+//
+function removeABCTuneHeaders(abcTune) {
+
+	// All possible headers
+  	var theHeaders = "XTMKLQWZRCAOPNGHBDFSI";
+
+  	var nHeaders = theHeaders.length;
+
+  	var tuneAccum = "";
+
+	var theLines = abcTune.split("\n");
+
+	var i, j, theLines, theWords, doSkip;
+
+	var keepTesting = true;
+
+	for (var j = 0; j < theLines.length; ++j) {
+
+		if (keepTesting){
+
+			theChars = theLines[j].split("");
+
+			doSkip = false;
+
+		  	for (i=0;i<nHeaders;++i){
+
+		  		if (theChars[0] == "%") {
+		  			doSkip = true;
+		  			break;
+		  		}
+
+		  		if (theChars[0] == theHeaders[i] && theChars[1] == ":") {
+		  			doSkip = true;
+		  			break;
+		  		}
+		  	}
+		}
+
+	  	if (!doSkip){
+	  		
+	  		keepTesting = false;
+
+	  		tuneAccum += theLines[j];
+	  		
+	  		if (j!=(theLines.length - 1)){
+	  			tuneAccum += "\n";
+	  		}
+	  		
+	  	}
+
+	}
+
+	return tuneAccum;
+
+}
+
 
 
 //
@@ -23377,6 +23436,8 @@ function ProcessSelectRegionForPlay(theABC){
 	var theNotes = JustTheNotes(theABC);
 
 	//console.log("after \n"+theNotes)
+
+	//debugger;
 
 	if (start < theTuneOffset){
 		start = theTuneOffset;
