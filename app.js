@@ -445,11 +445,11 @@ function removeABCTuneHeaders(abcTune) {
 
 	var theLines = abcTune.split("\n");
 
-	var i, j, theLines, theWords, doSkip;
+	var i, j, theChars, doSkip;
 
 	var keepTesting = true;
 
-	for (var j = 0; j < theLines.length; ++j) {
+	for (j = 0; j < theLines.length; ++j) {
 
 		if (keepTesting){
 
