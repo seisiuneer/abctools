@@ -4346,7 +4346,7 @@ var parseDirective = {};
   };
   var midiCmdParam0 = ["nobarlines", "barlines", "beataccents", "nobeataccents", "droneon", "droneoff", "drumon", "drumoff", "fermatafixed", "fermataproportional", "gchordon", "gchordoff", "controlcombo", "temperamentnormal", "noportamento"];
   var midiCmdParam1String = ["gchord", "ptstress", "beatstring"];
-  var midiCmdParam1Integer = ["bassvol", "chordvol", "bassprog", "chordprog", "c", "channel", "beatmod", "deltaloudness", "drumbars", "gracedivider", "makechordchannels", "randomchordattack", "chordattack", "stressmodel", "transpose", "rtranspose", "vol", "volinc"];
+  var midiCmdParam1Integer = ["bassvol", "chordvol", "bassprog", "chordprog", "c", "channel", "beatmod", "deltaloudness", "drumbars", "gracedivider", "makechordchannels", "randomchordattack", "chordattack", "stressmodel", "transpose", "rtranspose", "vol", "volinc", "abctt:boomchick_fraction", "abctt:boom_fraction", "abctt:chick_fraction"];
   var midiCmdParam1Integer1OptionalInteger = ["program"];
   var midiCmdParam2Integer = ["ratio", "snt", "bendvelocity", "pitchbend", "control", "temperamentlinear"];
   var midiCmdParam4Integer = ["beat"];
@@ -4366,7 +4366,22 @@ var parseDirective = {};
       // ONE STRING PARAMETER
       if (midi.length !== 1) warn("Expected one parameter in MIDI " + midi_cmd, restOfString, 0);else midi_params.push(midi[0].token);
     } else if (midiCmdParam1Integer.indexOf(midi_cmd) >= 0) {
-
+      // MAE 17 May 2024
+      if (midi_cmd == "abctt:boomchick_fraction"){
+        //console.log("Got boomchick_fraction");
+        midi_cmd = "boomchick_fraction";
+      }
+      else
+      if (midi_cmd == "abctt:boom_fraction"){
+        //console.log("Got boom_fraction");
+        midi_cmd = "boom_fraction";
+      }
+      else
+      if (midi_cmd == "abctt:chick_fraction"){
+        //console.log("Got chick_fraction");
+        midi_cmd = "chick_fraction";
+      }
+      else
       //
       // MAE 1 January 2023 - Stuff in silence patch 143 if mute selected as the chordprog or bassprog
       //
@@ -4418,6 +4433,7 @@ var parseDirective = {};
       }
     } else if (midiCmdParam2Integer.indexOf(midi_cmd) >= 0) {
       // TWO INT PARAMETERS
+
       if (midi.length !== 2) warn("Expected two parameters in MIDI " + midi_cmd, restOfString, 0);else if (midi[0].type !== "number" || midi[1].type !== "number") warn("Expected two integer parameters in MIDI " + midi_cmd, restOfString, 0);else {
         midi_params.push(midi[0].intt);
         midi_params.push(midi[1].intt);
@@ -11770,6 +11786,27 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     }      
   }
 
+  function processBoomChickFraction(theFraction){
+    //console.log("processBoomChickFraction "+theFraction);
+    if ((!isNaN(theFraction)) && (theFraction >= 0) && (theFraction <= 100)){
+       gBackupBoomFraction = gBackupChickFraction = theFraction/100;  
+    }
+  }
+
+  function processBoomFraction(theFraction){
+    //console.log("processBoomFraction "+theFraction);
+    if ((!isNaN(theFraction)) && (theFraction >= 0) && (theFraction <= 100)){
+       gBackupBoomFraction = theFraction/100;  
+    }
+  }
+
+  function processChickFraction(theFraction){
+    //console.log("processChickFraction "+theFraction);
+    if ((!isNaN(theFraction)) && (theFraction >= 0) && (theFraction <= 100)){
+      gBackupChickFraction = theFraction/100;
+    }
+  }
+
   flatten = function flatten(voices, options, percmap_, midiOptions) {
     if (!options) options = {};
     if (!midiOptions) midiOptions = {};
@@ -11822,11 +11859,30 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     drumDefinition = {};
     drumBars = 1;
 
-    // Handle boomchick overrides
+    // MAE 17 May 2024 - Handle boomchick overrides
     gRhythmPatternOverrides = {};
     if (midiOptions.boomchick && midiOptions.boomchick[0]){
       //console.log("Handle initial boomchick");
       processBoomChick(midiOptions.boomchick[0]);
+    }
+
+    // MAE 17 May 2024 - Handle boom and chick fraction overrides
+    gBackupBoomFraction = 0.5;
+    gBackupChickFraction = 0.5;
+
+    if (midiOptions.boomchick_fraction && midiOptions.boomchick_fraction[0]){
+      //console.log("Handle boomchick_fraction");
+      processBoomChickFraction(midiOptions.boomchick_fraction[0]);
+    }
+
+    if (midiOptions.boom_fraction && midiOptions.boom_fraction[0]){
+      //console.log("Handle boom_fraction");
+      processBoomFraction(midiOptions.boom_fraction[0]);
+    }
+
+    if (midiOptions.chick_fraction && midiOptions.chick_fraction[0]){
+      //console.log("Handle chick_fraction");
+      processChickFraction(midiOptions.chick_fraction[0]);
     }
 
     if (voices.length > 0 && voices[0].length > 0) pickupLength = voices[0][0].pickupLength;
@@ -11936,6 +11992,22 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             //console.log("got inline boomchick");
             processBoomChick(element.value);
             break;
+          // MAE 17 May 2024
+          case "boomchick_fraction":
+            //console.log("got inline boomchick_fraction");
+            processBoomChickFraction(element.value);
+            break;
+          // MAE 17 May 2024
+          case "boom_fraction":
+            //console.log("got inline boom_fraction");
+            processBoomFraction(element.value);
+            break;
+          // MAE 17 May 2024
+          case "chick_fraction":
+            //console.log("got inline chick_fraction");
+            processChickFraction(element.value);
+            break;
+
           default:
             // This should never happen
             console.log("MIDI creation. Unknown el_type: " + element.el_type + "\n"); // jshint ignore:line
@@ -14279,6 +14351,28 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                         value: elem.params[0]
                       });
                       break;
+                    case "boomchick_fraction": // MAE 17 May 2024
+                      //console.log("Handle inline boomchick_fraction");
+                      voices[voiceNumber].push({
+                        el_type: 'boomchick_fraction',
+                        value: elem.params[0],
+                      });
+                      break;
+                    case "boom_fraction": // MAE 17 May 2024
+                      //console.log("Handle inline boom_fraction");
+                      voices[voiceNumber].push({
+                        el_type: 'boom_fraction',
+                        value: elem.params[0],
+                      });
+                      break;
+                    case "chick_fraction": // MAE 17 May 2024
+                      //console.log("Handle inline chick_fraction");
+                      voices[voiceNumber].push({
+                        el_type: 'chick_fraction',
+                        value: elem.params[0],
+                      });
+                      break;
+
                     default:
                       console.log("MIDI seq: midi cmd not handled: ", elem.cmd, elem);
                   }

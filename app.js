@@ -19015,9 +19015,6 @@ function complianceABCTransformer(theABC,doInverse){
 	    "%tab_first_voice_only",
 	    "%tab_first_voice_exclude",
 	    "%reverb",
-	    "%backup_fraction",
-	    "%backup_bass_fraction",
-	    "%backup_chord_fraction"
 	];
 
 	if (doInverse){
@@ -23743,9 +23740,6 @@ function PlayerSetupCommon(theABC){
 		}
 	}
 
-	// Check if backup timing altered
-	ScanTuneForBackupFraction(theABC);
-
 	// Only highlighting first voice when playing
 	gOnlyHighlightV1 = false;
 	gOnlyHighlightV1 = ScanTuneForV1OnlyHighlight(theABC);
@@ -24800,93 +24794,6 @@ function ScanTuneForCustomTimingInjection(theTune){
 
 		gRollUseOriginalRollSolution = true;
 
-	}
-
-}
-
-//
-// Scan tune for altered backup timing
-//
-function ScanTuneForBackupFraction(theTune){
-
-	// Scan tune for modified fractional value
-	gBackupBoomFraction = 0.5;
-	gBackupChickFraction = 0.5
-
-	// Search for a backup timing request
-	var searchRegExp = /^%backup_fraction.*$/gm
-
-	// Detect backup fraction annotation
-	var backupFraction = theTune.match(searchRegExp);
-
-	if ((backupFraction) && (backupFraction.length > 0)){
-
-		var theParamString = backupFraction[0].replace("%backup_fraction","");
-
-		theParamString = theParamString.trim();
-
-		var fracValue = parseFloat(theParamString);
-
-		if (!isNaN(fracValue)){
-
-			if ((fracValue > 0.0) && (fracValue <= 1.0)){
-
-				//console.log("Got backup fraction = "+fracValue);
-				gBackupBoomFraction = fracValue;
-				gBackupChickFraction = fracValue;
-			}
-
-		}
-	}
-
-	// Search for a bass timing request
-	searchRegExp = /^%backup_bass_fraction.*$/gm
-
-	// Detect backup fraction annotation
-	backupFraction = theTune.match(searchRegExp);
-
-	if ((backupFraction) && (backupFraction.length > 0)){
-
-		var theParamString = backupFraction[0].replace("%backup_bass_fraction","");
-
-		theParamString = theParamString.trim();
-
-		var fracValue = parseFloat(theParamString);
-
-		if (!isNaN(fracValue)){
-
-			if ((fracValue > 0.0) && (fracValue <= 1.0)){
-
-				//console.log("Got backup boom fraction = "+fracValue);
-				gBackupBoomFraction = fracValue;
-			}
-
-		}
-	}
-
-	// Search for a chord timing request
-	searchRegExp = /^%backup_chord_fraction.*$/gm
-
-	// Detect backup fraction annotation
-	backupFraction = theTune.match(searchRegExp);
-
-	if ((backupFraction) && (backupFraction.length > 0)){
-
-		var theParamString = backupFraction[0].replace("%backup_chord_fraction","");
-
-		theParamString = theParamString.trim();
-
-		var fracValue = parseFloat(theParamString);
-
-		if (!isNaN(fracValue)){
-
-			if ((fracValue > 0.0) && (fracValue <= 1.0)){
-
-				//console.log("Got backup chick fraction = "+fracValue);
-				gBackupChickFraction = fracValue;
-			}
-
-		}
 	}
 
 }
