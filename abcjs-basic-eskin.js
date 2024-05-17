@@ -4353,7 +4353,9 @@ var parseDirective = {};
   var midiCmdParam5Integer = ["drone"];
   var midiCmdParam1String1Integer = ["portamento"];
   var midiCmdParamFraction = ["expand", "grace", "trim"];
-  var midiCmdParam1StringVariableIntegers = ["drum", "chordname"];
+  var midiCmdParam1StringVariableIntegers = ["drum", "chordname"]; 
+  // MAE 17 May 2024 - Added abctt:boomchick
+  var midiCmdParamNumberPuncNumberStringOptionalInteger = ["abctt:boomchick"]; 
    var parseMidiCommand = function parseMidiCommand(midi, tune, restOfString) {
     var midi_cmd = midi.shift().token;
     var midi_params = [];
@@ -4478,6 +4480,7 @@ var parseDirective = {};
       }
     } else if (midiCmdParam1StringVariableIntegers.indexOf(midi_cmd) >= 0) {
       // ONE STRING, VARIABLE INT PARAMETERS
+      // MAE FOOFOO 17 May 2024
       if (midi.length < 2) warn("Expected string parameter and at least one integer parameter in MIDI " + midi_cmd, restOfString, 0);else if (midi[0].type !== "alpha") warn("Expected string parameter and at least one integer parameter in MIDI " + midi_cmd, restOfString, 0);else {
         var p = midi.shift();
         midi_params.push(p.token);
@@ -4487,7 +4490,31 @@ var parseDirective = {};
           midi_params.push(p.intt);
         }
       }
+    } else if (midiCmdParamNumberPuncNumberStringOptionalInteger.indexOf(midi_cmd) >= 0) { 
+      // MAE 17 May 2024 Added boomchick 
+      //console.log(midi_cmd);
+      if (midi.length < 4) warn("Expected time signature and abctt:boomchick string in MIDI " + midi_cmd, restOfString, 0);else if ((midi[0].type !== "number") || (midi[1].token !== "/") || (midi[2].type !== "number") || (midi[3].type !== "alpha")) warn("Expected time signature and abctt:boomchick string in the MIDI " + midi_cmd, restOfString, 0);else {
+
+        //debugger;
+        var accum = ""
+        var nTokens = midi.length;
+        accum += midi.shift().token; // Time signature numerator
+        accum +=  midi.shift().token; // divider symbol
+        accum +=  midi.shift().token; // Time signature denominator
+        accum += " ";
+        accum += midi.shift().token; // Boomchick string
+
+        if (nTokens == 5){
+          accum += " ";
+          accum += midi.shift().token; // Boomchick minimum apply beats
+        }
+
+        midi_params.push(accum);
+        midi_cmd = "boomchick";
+        //console.log("midi_cmd: "+midi_cmd+" boomchick string: "+accum);
+      }   
     }
+
     if (tuneBuilder.hasBeginMusic()) tuneBuilder.appendElement('midi', -1, -1, {
       cmd: midi_cmd,
       params: midi_params
@@ -4982,6 +5009,7 @@ var parseDirective = {};
         // TODO-PER: Actually handle the parameters of these
         tune.formatting[cmd] = restOfString;
         break;
+
       default:
         return "Unknown directive: " + cmd;
     }
@@ -11620,6 +11648,128 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
   var slurredBreakBetweenNotes = -0.001; // make the slurred notes actually overlap
   var staccatoBreakBetweenNotes = 0.4; // some people say staccato is half duration, some say 3/4 so this splits it
 
+  // MAE 17 May 2024 - Added %%MIDI abctt:boomchick handling
+  function processBoomChick(params){
+
+    //debugger;
+
+    // Split the directive
+    var theSplits = params.split(" ");
+
+    if ((theSplits.length == 2 || theSplits.length == 3)){
+      
+      var theMeter = theSplits[0];
+
+      var theBoomChick = theSplits[1];
+
+      var theMeterSplits = theMeter.split("/");
+
+      if (theMeterSplits.length != 2){
+        //console.log("ScanTuneForBoomChick: Bad meter")
+        return;
+      }
+
+      // Sanity check the meter
+      var theNum = theMeterSplits[0];
+
+      if (isNaN(parseInt(theNum))){
+        //console.log("ScanTuneForBoomChick: Bad numerator")
+        return;
+      }
+
+      theNum = parseInt(theNum);
+
+      var theDenom = theMeterSplits[1];
+
+      if (isNaN(parseInt(theDenom))){
+        //console.log("ScanTuneForBoomChick: Bad denominator")
+        return;
+      }
+
+      theDenom = parseInt(theDenom);
+
+      var theThreshold;
+
+      // If threshold specified, use it
+      if (theSplits.length == 3){
+
+        theThreshold = theSplits[2];
+
+        // Sanity check the threshold
+        if (isNaN(parseInt(theThreshold))){
+          //console.log("ScanTuneForBoomChick: Bad threshold")
+          return;
+        }
+
+        theThreshold = parseInt(theThreshold);
+
+        // Sanity check the threshold again
+        if ((theThreshold < 1) || (theThreshold > theNum)){
+          //console.log("ScanTuneForBoomChick: Threshold negative or larger than pattern length")
+          return;
+        }
+
+      }
+      else{
+
+        // Otherwise default to half of the pattern length
+        theThreshold = theNum / 2;
+        
+        theThreshold = Math.floor(theThreshold);
+
+        if (theThreshold == 0){
+          theThreshold = 1;
+        }
+        
+        //console.log("Computed theThreshold for theNum "+theNum+" is "+theThreshold);
+
+      }
+
+      // Split the boom chick pattern
+      var theBoomChickSplits = theBoomChick.split("");
+
+      var nPatternElements = theBoomChickSplits.length;
+
+      // Sanity check the pattern
+      if (nPatternElements != theNum){
+        //console.log("ScanTuneForBoomChick: Mismatch of meter and beat string length")
+        return;
+      }
+
+      // Map the boom-chicks
+      var thePattern = [];
+
+      for (var j=0;j<nPatternElements;++j){
+
+        var thisSplit = theBoomChickSplits[j];
+
+        switch (thisSplit){
+          case "B":
+            thePattern.push("boom");
+            break;
+          case "b":
+            thePattern.push("boom2");
+            break;
+          case "c":
+            thePattern.push("chick");
+            break;
+          case "x":
+            thePattern.push("");
+            break;
+          default:
+            //console.log("got bad pattern")
+            return;
+            break;
+        }
+
+      }
+
+      // Set the custom pattern for the meter
+      gRhythmPatternOverrides[theMeter] = {pattern:thePattern,threshold:theThreshold};
+
+    }      
+  }
+
   flatten = function flatten(voices, options, percmap_, midiOptions) {
     if (!options) options = {};
     if (!midiOptions) midiOptions = {};
@@ -11671,6 +11821,14 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     drumTrackFinished = false;
     drumDefinition = {};
     drumBars = 1;
+
+    // Handle boomchick overrides
+    gRhythmPatternOverrides = {};
+    if (midiOptions.boomchick && midiOptions.boomchick[0]){
+      //console.log("Handle initial boomchick");
+      processBoomChick(midiOptions.boomchick[0]);
+    }
+
     if (voices.length > 0 && voices[0].length > 0) pickupLength = voices[0][0].pickupLength;
 
     // First adjust the input to resolve ties, set the starting time for each note, etc. That will make the rest of the logic easier
@@ -11772,6 +11930,11 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             break;
           case "beataccents":
             doBeatAccents = element.value;
+            break;
+          // MAE 17 May 2024
+          case "boomchick":
+            //console.log("got inline boomchick");
+            processBoomChick(element.value);
             break;
           default:
             // This should never happen
@@ -12977,7 +13140,8 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
      
       for (var p = 0; p < beatsPresent; p++) {
 
-        if ((!portionOfAMeasure) || (!patternWork)){
+        // MAE FOOFOO
+        if ((!bIsCustomPattern) && ((!portionOfAMeasure) || (!patternWork))){
 
           pattern.push("chick");
 
@@ -13070,7 +13234,15 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             }           
             break;
           case 'boom2':
-            if (beats['' + (m2 + 1)]) writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, chickNoteLength);else {
+            if (beats['' + (m2 + 1)]) {
+                if (!bIsCustomPattern){
+                  writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, chickNoteLength);
+                }
+                else{
+                  writeBoom(thisChord.chord.boom2, beatLength, boomVolume, m2, boomNoteLength);
+                }
+              }
+            else {
               // If there is the same root as the last chord, use the alternating bass, otherwise play the root.
               if (lastBoom === thisChord.chord.boom) {
                 writeBoom(thisChord.chord.boom2, beatLength, boomVolume, m2, boomNoteLength);
@@ -13086,8 +13258,10 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             break;
           case '':
             if (beats['' + m2])
-              // If there is an explicit chord on this beat, play it.
-              writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, chickNoteLength);
+              if (!bIsCustomPattern){
+                // If there is an explicit chord on this beat, play it.
+                writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, chickNoteLength);
+              }
             break;
         }
       }
@@ -14096,6 +14270,13 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                       voices[voiceNumber].push({
                         el_type: 'volinc',
                         volume: elem.params[0]
+                      });
+                      break;
+                    case "boomchick": // MAE 17 May 2024
+                      //console.log("Handle inline boomchick");
+                      voices[voiceNumber].push({
+                        el_type: 'boomchick',
+                        value: elem.params[0]
                       });
                       break;
                     default:
