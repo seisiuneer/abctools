@@ -11867,8 +11867,8 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     }
 
     // MAE 17 May 2024 - Handle boom and chick fraction overrides
-    gBackupBoomFraction = 0.8;
-    gBackupChickFraction = 0.4;
+    gBackupBoomFraction = 0.5;
+    gBackupChickFraction = 0.5;
 
     if (voices.length > 0 && voices[0].length > 0) pickupLength = voices[0][0].pickupLength;
 
@@ -11907,8 +11907,6 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
           case "meter":
             //console.log("Got meter");
 
-            //debugger;
-
             if (!startingMeter) startingMeter = element;
             meter = element;
             beatFraction = getBeatFraction(meter);
@@ -11919,6 +11917,19 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
               if ((meter.num == '6') || (meter.num == '9') || (meter.num == '12')) {
                 gBackupBoomFraction = 1.25;
                 gBackupChickFraction = 0.4;
+              }
+            }
+
+            // Reels/hornpipes have their own override
+            if (meter.den == '4'){
+              if (meter.num == '4'){
+                gBackupBoomFraction = 0.8;
+                gBackupChickFraction = 0.4;
+              }
+              // Polkas have their own override
+              if (meter.num == '2'){
+                gBackupBoomFraction = 0.6;
+                gBackupChickFraction = 0.6;
               }
             }
 
