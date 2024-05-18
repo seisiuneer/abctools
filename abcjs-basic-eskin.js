@@ -12012,12 +12012,12 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             break;
           // MAE 17 May 2024
           case "boom_fraction":
-            console.log("got inline boom_fraction");
+            //console.log("got inline boom_fraction");
             processBoomFraction(element.value);
             break;
           // MAE 17 May 2024
           case "chick_fraction":
-            console.log("got inline chick_fraction");
+            //console.log("got inline chick_fraction");
             processChickFraction(element.value);
             break;
 
