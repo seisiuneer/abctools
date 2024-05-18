@@ -1467,18 +1467,19 @@
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/9YNtOwPYWMw" title="Custom Backup Timing" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p>If you want to change the duration of the backup boom and chick notes length as a percentage of the beat to the same value, you can include the following annotation anywhere in the tune's ABC:</p>
             <p class="code">%%MIDI abctt:boomchick_fraction beat_fraction</p>
-            <p>Where beat_fraction is greater than 0 and less than or equal to 100 and is the percentage of the beat to use for the duration of the backup boom and chick notes.</p>
+            <p>Where beat_fraction is the percentage of the beat to use for the duration of the backup boom and chick notes.</p>
             <p>The default value for both is 50. </p>
             <p>For example, to have the boom and chick note duration both be 75% of the beat instead of the default of 50%, add the following to the tune:</p>
             <p class="code">%%MIDI abctt:boomchick_fraction 75</p>
             <p>If you want to change the duration of the boom and chick of the backup independently, you can include either or both of the following comment-based annotations anywhere in the tune's ABC:</p>
             <p class="code">%%MIDI abctt:boom_fraction beat_fraction</p>
             <p class="code">%%MIDI abctt:chick_fraction beat_fraction</p>
-            <p>Where beat_fraction is greater than or equal to 0 and less than or equal to 100 and is the percentage of the beat to use for the duration of the backup boom and chick notes.</p>
+            <p>Where beat_fraction is the percentage of the beat to use for the duration of the backup boom and chick notes.</p>
             <p>For example, to have the boom duration set to 75% and the chick duration set to 25% of the beat, add the following to the tune:</p>
             <p class="code">%%MIDI abctt:boom_fraction 75<br/>%%MIDI abctt:chick_fraction 25</p>
             <p>Boom and chick fractions may be changed mid-staff using an inline MIDI directive:</p>
             <p class="code">[I:MIDI=abctt:boomchick_fraction 50]<br/>[I:MIDI=abctt:boom_fraction 75]<br/>[I:MIDI=abctt:chick_fraction 25]</p>
+            <p>Fractional values over 100 are supported to lengthen a note over a gap in a custom boomchick pattern created using an x in the pattern string.</p>
             <p>These directives are private to this tool and will not work with other ABC players.</p>
             <hr class="hidden-print" id="sung_solfege">
             <h1 class="page_break_always h1wide">Select the Solfège Instrument to Sing Note Names<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>

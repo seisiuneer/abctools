@@ -11788,21 +11788,21 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
 
   function processBoomChickFraction(theFraction){
     //console.log("processBoomChickFraction "+theFraction);
-    if ((!isNaN(theFraction)) && (theFraction >= 0) && (theFraction <= 100)){
+    if ((!isNaN(theFraction)) && (theFraction >= 0)){
        gBackupBoomFraction = gBackupChickFraction = theFraction/100;  
     }
   }
 
   function processBoomFraction(theFraction){
     //console.log("processBoomFraction "+theFraction);
-    if ((!isNaN(theFraction)) && (theFraction >= 0) && (theFraction <= 100)){
+    if ((!isNaN(theFraction)) && (theFraction >= 0)){
        gBackupBoomFraction = theFraction/100;  
     }
   }
 
   function processChickFraction(theFraction){
     //console.log("processChickFraction "+theFraction);
-    if ((!isNaN(theFraction)) && (theFraction >= 0) && (theFraction <= 100)){
+    if ((!isNaN(theFraction)) && (theFraction >= 0)){
       gBackupChickFraction = theFraction/100;
     }
   }
