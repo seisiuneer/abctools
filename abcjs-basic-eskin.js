@@ -11867,23 +11867,8 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     }
 
     // MAE 17 May 2024 - Handle boom and chick fraction overrides
-    gBackupBoomFraction = 0.5;
-    gBackupChickFraction = 0.5;
-
-    if (midiOptions.boomchick_fraction && midiOptions.boomchick_fraction[0]){
-      //console.log("Handle boomchick_fraction");
-      processBoomChickFraction(midiOptions.boomchick_fraction[0]);
-    }
-
-    if (midiOptions.boom_fraction && midiOptions.boom_fraction[0]){
-      //console.log("Handle boom_fraction");
-      processBoomFraction(midiOptions.boom_fraction[0]);
-    }
-
-    if (midiOptions.chick_fraction && midiOptions.chick_fraction[0]){
-      //console.log("Handle chick_fraction");
-      processChickFraction(midiOptions.chick_fraction[0]);
-    }
+    gBackupBoomFraction = 0.8;
+    gBackupChickFraction = 0.4;
 
     if (voices.length > 0 && voices[0].length > 0) pickupLength = voices[0][0].pickupLength;
 
@@ -11920,10 +11905,38 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             accidentals = setKeySignature(element);
             break;
           case "meter":
+            //console.log("Got meter");
+
+            //debugger;
+
             if (!startingMeter) startingMeter = element;
             meter = element;
             beatFraction = getBeatFraction(meter);
             alignDrumToMeter();
+
+            // MAE 18 May 2024 - Change the default feel for jig, slip jig, and slide backup
+            if (meter.den == '8'){
+              if ((meter.num == '6') || (meter.num == '9') || (meter.num == '12')) {
+                gBackupBoomFraction = 1.25;
+                gBackupChickFraction = 0.4;
+              }
+            }
+
+            if (midiOptions.boomchick_fraction && midiOptions.boomchick_fraction[0]){
+              //console.log("Handle boomchick_fraction");
+              processBoomChickFraction(midiOptions.boomchick_fraction[0]);
+            }
+
+            if (midiOptions.boom_fraction && midiOptions.boom_fraction[0]){
+              //console.log("Handle boom_fraction");
+              processBoomFraction(midiOptions.boom_fraction[0]);
+            }
+
+            if (midiOptions.chick_fraction && midiOptions.chick_fraction[0]){
+              //console.log("Handle chick_fraction");
+              processChickFraction(midiOptions.chick_fraction[0]);
+            }
+
             break;
           case "tempo":
             if (!startingTempo) startingTempo = element.qpm;else tempoChangeFactor = element.qpm ? startingTempo / element.qpm : 1;
@@ -11999,12 +12012,12 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             break;
           // MAE 17 May 2024
           case "boom_fraction":
-            //console.log("got inline boom_fraction");
+            console.log("got inline boom_fraction");
             processBoomFraction(element.value);
             break;
           // MAE 17 May 2024
           case "chick_fraction":
-            //console.log("got inline chick_fraction");
+            console.log("got inline chick_fraction");
             processChickFraction(element.value);
             break;
 
