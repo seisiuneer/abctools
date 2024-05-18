@@ -11931,6 +11931,11 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
                 gBackupBoomFraction = 0.6;
                 gBackupChickFraction = 0.6;
               }
+              // Waltzes have their own override
+              if (meter.num == '3'){
+                gBackupBoomFraction = 0.75;
+                gBackupChickFraction = 0.5;
+              }
             }
 
             if (midiOptions.boomchick_fraction && midiOptions.boomchick_fraction[0]){
