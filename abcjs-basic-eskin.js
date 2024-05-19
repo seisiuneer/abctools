@@ -13326,8 +13326,9 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
         switch (pattern[m2]) {
           case 'boom':
            if (beats['' + (m2 + 1)]){
-              // If there is not a chord change on the next beat, play a bass note.
-              writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, chickNoteLength);
+              //writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, chickNoteLength);
+              // MAE 19 May 2024 - Removed chick substitution
+              writeBoom(thisChord.chord.boom, beatLength, boomVolume, m2, boomNoteLength);
             }
             else {
               writeBoom(thisChord.chord.boom, beatLength, boomVolume, m2, boomNoteLength);
@@ -13337,7 +13338,9 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
           case 'boom2':
             if (beats['' + (m2 + 1)]) {
                 if (!bIsCustomPattern){
-                  writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, chickNoteLength);
+                  //writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, chickNoteLength);
+                  // MAE 19 May 2024 - Removed chick substitution
+                  writeBoom(thisChord.chord.boom2, beatLength, boomVolume, m2, boomNoteLength);
                 }
                 else{
                   writeBoom(thisChord.chord.boom2, beatLength, boomVolume, m2, boomNoteLength);
