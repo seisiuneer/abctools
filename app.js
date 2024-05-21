@@ -17824,7 +17824,6 @@ function ShortenURL(){
 		var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica">Shortened URL Copied to the Clipboard</p>';
 	   	modal_msg += '<p style="text-align:center;font-size:14pt;line-height:19pt;font-family:helvetica">Short URL:</p>';
 	   	modal_msg += '<p style="text-align:center;font-size:14pt;line-height:19pt;font-family:helvetica"><a href="'+data.data.tiny_url+'" target="_blank">'+data.data.tiny_url+'</a></p>';
-	   	modal_msg += '<p style="text-align:center;font-size:14pt;line-height:19pt;font-family:helvetica;margin-top:24px;">Note: As of May 15, 2024, Facebook has erroneously started flagging TinyURL links as violations of Community Standards and not allowing them to be posted in groups.</p>';
 
 		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 			
