@@ -1383,6 +1383,21 @@
             <p class="code">% This will result in the swing being disabled<br/><br/>
             %noswing</p>
             <p>%noswing takes precedence over any default Hornpipe swing or manually added %swing</p>
+            <p>You may also use a MIDI command to add swing:</p>
+            <p class="code">%%MIDI abctt:swing swing_percentage (Range is -100 to 100) swing_offset (optional: If used, generally set to 1 or 2)</p>
+            <p>For example to swing a slip jig with a 25% swing factor and two pickup eighth notes preceding the main tune:</p>
+            <p><strong>Example 1:</strong> To swing a reel with a 0.25 swing factor and no swing offset:</p>
+            <p class="code">%%MIDI abctt:swing 25</p>
+            <p><strong>Example 2:</strong> To swing a jig with a 0.25 swing factor and a single pickup eighth note preceding the main tune:</p>
+            <p class="code">%%MIDI abctt:swing 25 1</p>
+            <p><strong>Example 3:</strong> To swing a slip jig with a 0.25 swing factor and two pickup eighth notes preceding the main tune:</p>
+            <p class="code">%%MIDI abctt:swing 25 2</p>
+            <p><strong>Example 4:</strong></p>
+            <p>To get a typical Scottish snap feel in a Hornpipe with a shortened first beat, lengthened second beat, with no swing offset:</p>
+            <p class="code">%%%MIDI abctt:swing -50</p>
+            <p>You can also disable the swing with a MIDI command:</p>
+            <p class="code">%%MIDI abctt:swing 0</p>
+            <p><strong>Note:</strong> Since swing is applied after all the tune notes are generated, there can only be one swing value for a tune, determined by the last %swing or %%MIDI abctt:swing command found in the ABC.</p>
             <hr class="hidden-print" id="grace_timing">
             <h1 class="page_break_always h1wide">Setting Grace Note Duration for Ornamentation<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/sdFeN33sQdo" title="Grace Note Duration Control" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>

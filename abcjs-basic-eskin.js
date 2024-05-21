@@ -4352,7 +4352,7 @@ var parseDirective = {};
   var midiCmdParam0 = ["nobarlines", "barlines", "beataccents", "nobeataccents", "droneon", "droneoff", "drumon", "drumoff", "fermatafixed", "fermataproportional", "gchordon", "gchordoff", "controlcombo", "temperamentnormal", "noportamento"];
   var midiCmdParam1String = ["gchord", "ptstress", "beatstring","abctt:strum_chords"];
   var midiCmdParam1Integer = ["bassvol", "chordvol", "bassprog", "chordprog", "c", "channel", "beatmod", "deltaloudness", "drumbars", "gracedivider", "makechordchannels", "randomchordattack", "chordattack", "stressmodel", "transpose", "rtranspose", "vol", "volinc", "abctt:boomchick_fraction", "abctt:boom_fraction", "abctt:chick_fraction", "abctt:strum_chords_divider"];
-  var midiCmdParam1Integer1OptionalInteger = ["program"];
+  var midiCmdParam1Integer1OptionalInteger = ["program","abctt:swing"];
   var midiCmdParam2Integer = ["ratio", "snt", "bendvelocity", "pitchbend", "control", "temperamentlinear"];
   var midiCmdParam4Integer = ["beat"];
   var midiCmdParam5Integer = ["drone"];
@@ -4441,12 +4441,18 @@ var parseDirective = {};
 
       // ONE INT PARAMETER, ONE OPTIONAL PARAMETER
       if (midi.length !== 1 && midi.length !== 2) warn("Expected one or two parameters in MIDI " + midi_cmd, restOfString, 0);else if (midi[0].type !== "number") warn("Expected integer parameter in MIDI " + midi_cmd, restOfString, 0);else if (midi.length === 2 && midi[1].type !== "number") warn("Expected integer parameter in MIDI " + midi_cmd, restOfString, 0);else {
+
+        // MAE 21 May 2024
+        if (midi_cmd == "abctt:swing"){
+          //console.log("Got swing");
+          midi_cmd = "swing";
+        }
+
         midi_params.push(midi[0].intt);
         if (midi.length === 2) midi_params.push(midi[1].intt);
       }
     } else if (midiCmdParam2Integer.indexOf(midi_cmd) >= 0) {
       // TWO INT PARAMETERS
-
       if (midi.length !== 2) warn("Expected two parameters in MIDI " + midi_cmd, restOfString, 0);else if (midi[0].type !== "number" || midi[1].type !== "number") warn("Expected two integer parameters in MIDI " + midi_cmd, restOfString, 0);else {
         midi_params.push(midi[0].intt);
         midi_params.push(midi[1].intt);
@@ -11840,6 +11846,29 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
 
   }
 
+  function processSwing(swing, offset){
+
+    //console.log("processSwing "+swing+" "+offset);
+    
+    if (!isNaN(swing)){
+
+      if (((swing > 0) && (swing <= 100)) || ((swing < 0) && (swing >= -100))) {
+        gSwingFactor = swing/100;
+        gAddSwing = true;
+      }
+      else{
+        gSwingFactor = 0;
+        gAddSwing = false;
+      }
+    }
+
+    if (offset && (!isNaN(offset)) && (offset > 0)){
+      gSwingOffset = offset;
+    }
+
+  }
+
+
   flatten = function flatten(voices, options, percmap_, midiOptions) {
     if (!options) options = {};
     if (!midiOptions) midiOptions = {};
@@ -11902,14 +11931,19 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
 
     // MAE 20 May 2024
     gStrumChords = false;
-    if (midiOptions.strum_chords  && midiOptions.strum_chords[0]){
+    if (midiOptions.strum_chords && midiOptions.strum_chords[0]){
       processStrumChords(midiOptions.strum_chords[0]);
     }
 
     // MAE 20 May 2024
     gStrumChordsDivider = 8;
-    if (midiOptions.strum_chords_divider  && midiOptions.strum_chords_divider[0]){
+    if (midiOptions.strum_chords_divider && midiOptions.strum_chords_divider[0]){
       processStrumChordsDivider(midiOptions.strum_chords_divider[0]);
+    }
+
+    // MAE 20 May 2024
+    if (midiOptions.swing && ((midiOptions.swing[0]!=null) && (midiOptions.swing[0]!=undefined))){
+      processSwing(midiOptions.swing[0], midiOptions.swing[1]);
     }
 
     // MAE 17 May 2024 - Handle boom and chick fraction overrides
@@ -11984,17 +12018,17 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
               }
             }
 
-            if (midiOptions.boomchick_fraction && midiOptions.boomchick_fraction[0]){
+            if (midiOptions.boomchick_fraction && ((midiOptions.boomchick_fraction[0]!=null) && (midiOptions.boomchick_fraction[0]!=undefined))){
               //console.log("Handle boomchick_fraction");
               processBoomChickFraction(midiOptions.boomchick_fraction[0]);
             }
 
-            if (midiOptions.boom_fraction && midiOptions.boom_fraction[0]){
+            if (midiOptions.boom_fraction && ((midiOptions.boom_fraction[0]!=null) && (midiOptions.boom_fraction[0]!=undefined))){
               //console.log("Handle boom_fraction");
               processBoomFraction(midiOptions.boom_fraction[0]);
             }
 
-            if (midiOptions.chick_fraction && midiOptions.chick_fraction[0]){
+            if (midiOptions.chick_fraction && ((midiOptions.chick_fraction[0]!=null) && (midiOptions.chick_fraction[0]!=undefined))){
               //console.log("Handle chick_fraction");
               processChickFraction(midiOptions.chick_fraction[0]);
             }
@@ -12089,7 +12123,10 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
           case "strum_chords_divider":
             processStrumChordsDivider(element.value);
             break;
-         
+          // MAE 21 May 2024
+          case "swing":
+            processSwing(element.swing,element.offset);
+            break;          
           default:
             // This should never happen
             console.log("MIDI creation. Unknown el_type: " + element.el_type + "\n"); // jshint ignore:line
@@ -14477,6 +14514,15 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                         value: elem.params[0],
                       });
                       break;
+
+                     case "swing": // MAE 21 May 2024
+                        console.log("Handle inline swing");
+                        voices[voiceNumber].push({
+                          el_type: 'swing',
+                          swing: elem.params[0],
+                          offset: elem.params[1]
+                        });
+                        break;
 
                     default:
                       console.log("MIDI seq: midi cmd not handled: ", elem.cmd, elem);
