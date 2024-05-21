@@ -1502,8 +1502,9 @@
             <p>The default divider_value is 8.</p>
             <p>Strumming enable and divider can also be changed mid-staff using inline MIDI directives:</p>
             <p class="code">[I:MIDI=abctt:strum_chords on]<br/>[I:MIDI=abctt:strum_chords_divider 10]</p>
-            <p>To have the strummed chords ring longer, you can experiment with different values for the backup chick timing fraction, for example</p>
-            <p class="code">%%MIDI abctt:chick_fraction 70</p>
+            <p>To have the bass and strummed chords ring longer, you can experiment with different values for the backup boom and chick timing fractions, for example</p>
+            <p class="code">%%MIDI abctt:boom_fraction 100<br/>%%MIDI abctt:chick_fraction 100</p>
+            <p>Full details on the boom and chick beat timing fractions can be found in the <a href="#custom_backup_beat_timing">Custom Backup Beat Timing Section</a> above.</p>
             <p>These directives are private to this tool and will not work with other ABC players.</p>            
             <hr class="hidden-print" id="sung_solfege">
             <h1 class="page_break_always h1wide">Select the Solfège Instrument to Sing Note Names<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
