@@ -186,6 +186,11 @@ var gReverbKernels = []; // Cache impulse kernel reads
 var gBackupBoomFraction = 0.5;
 var gBackupChickFraction = 0.5;
 
+// Added 20 May 2024
+// For strummed chords
+var gStrumChords = false;
+var gStrumChordsDivider = 8;
+
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
@@ -4345,8 +4350,8 @@ var parseDirective = {};
     return null;
   };
   var midiCmdParam0 = ["nobarlines", "barlines", "beataccents", "nobeataccents", "droneon", "droneoff", "drumon", "drumoff", "fermatafixed", "fermataproportional", "gchordon", "gchordoff", "controlcombo", "temperamentnormal", "noportamento"];
-  var midiCmdParam1String = ["gchord", "ptstress", "beatstring"];
-  var midiCmdParam1Integer = ["bassvol", "chordvol", "bassprog", "chordprog", "c", "channel", "beatmod", "deltaloudness", "drumbars", "gracedivider", "makechordchannels", "randomchordattack", "chordattack", "stressmodel", "transpose", "rtranspose", "vol", "volinc", "abctt:boomchick_fraction", "abctt:boom_fraction", "abctt:chick_fraction"];
+  var midiCmdParam1String = ["gchord", "ptstress", "beatstring","abctt:strum_chords"];
+  var midiCmdParam1Integer = ["bassvol", "chordvol", "bassprog", "chordprog", "c", "channel", "beatmod", "deltaloudness", "drumbars", "gracedivider", "makechordchannels", "randomchordattack", "chordattack", "stressmodel", "transpose", "rtranspose", "vol", "volinc", "abctt:boomchick_fraction", "abctt:boom_fraction", "abctt:chick_fraction", "abctt:strum_chords_divider"];
   var midiCmdParam1Integer1OptionalInteger = ["program"];
   var midiCmdParam2Integer = ["ratio", "snt", "bendvelocity", "pitchbend", "control", "temperamentlinear"];
   var midiCmdParam4Integer = ["beat"];
@@ -4365,6 +4370,10 @@ var parseDirective = {};
     } else if (midiCmdParam1String.indexOf(midi_cmd) >= 0) {
       // ONE STRING PARAMETER
       if (midi.length !== 1) warn("Expected one parameter in MIDI " + midi_cmd, restOfString, 0);else midi_params.push(midi[0].token);
+      // MAE 20 May 2024 - For strumming chords
+      if (midi_cmd == "abctt:strum_chords"){
+        midi_cmd = "strum_chords";
+      }
     } else if (midiCmdParam1Integer.indexOf(midi_cmd) >= 0) {
       // MAE 17 May 2024
       if (midi_cmd == "abctt:boomchick_fraction"){
@@ -4382,7 +4391,11 @@ var parseDirective = {};
         midi_cmd = "chick_fraction";
       }
       else
-      //
+      if (midi_cmd == "abctt:strum_chords_divider"){
+        //console.log("Got strum_chords_divider");
+        midi_cmd = "strum_chords_divider";
+      }
+      else      //
       // MAE 1 January 2023 - Stuff in silence patch 143 if mute selected as the chordprog or bassprog
       //
       if ((midi_cmd == "chordprog") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "mute")){
@@ -11807,6 +11820,26 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     }
   }
 
+  function processStrumChords(bEnable){
+
+    gStrumChords = false;
+
+    if ((bEnable == "true") || (bEnable == "on")){
+      gStrumChords = true;
+    }
+
+  }
+
+  function processStrumChordsDivider(theDivider){
+
+    //console.log("processStrumChordsDivider "+theFraction);
+    gStrumChordsDivider = 8;
+    if ((!isNaN(theDivider)) && (theDivider >= 1)){
+      gStrumChordsDivider = theDivider;
+    }
+
+  }
+
   flatten = function flatten(voices, options, percmap_, midiOptions) {
     if (!options) options = {};
     if (!midiOptions) midiOptions = {};
@@ -11859,11 +11892,24 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     drumDefinition = {};
     drumBars = 1;
 
+
     // MAE 17 May 2024 - Handle boomchick overrides
     gRhythmPatternOverrides = {};
     if (midiOptions.boomchick && midiOptions.boomchick[0]){
       //console.log("Handle initial boomchick");
       processBoomChick(midiOptions.boomchick[0]);
+    }
+
+    // MAE 20 May 2024
+    gStrumChords = false;
+    if (midiOptions.strum_chords  && midiOptions.strum_chords[0]){
+      processStrumChords(midiOptions.strum_chords[0]);
+    }
+
+    // MAE 20 May 2024
+    gStrumChordsDivider = 8;
+    if (midiOptions.strum_chords_divider  && midiOptions.strum_chords_divider[0]){
+      processStrumChordsDivider(midiOptions.strum_chords_divider[0]);
     }
 
     // MAE 17 May 2024 - Handle boom and chick fraction overrides
@@ -12036,7 +12082,14 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             //console.log("got inline chick_fraction");
             processChickFraction(element.value);
             break;
-
+          // MAE 20 May 2024
+          case "strum_chords":
+            processStrumChords(element.value);
+            break;
+          case "strum_chords_divider":
+            processStrumChordsDivider(element.value);
+            break;
+         
           default:
             // This should never happen
             console.log("MIDI creation. Unknown el_type: " + element.el_type + "\n"); // jshint ignore:line
@@ -13119,12 +13172,18 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     });
   }
   function writeChick(chick, beatLength, volume, beat, noteLength) {
+
+    // Added strummed chord option
+    var theOffset = 0;
+    if (gStrumChords){
+      theOffset = (0.125/gStrumChordsDivider);
+    }
     for (var c = 0; c < chick.length; c++) {
       chordTrack.push({
         cmd: 'note',
         pitch: chick[c],
         volume: volume,
-        start: lastBarTime + beat * durationRounded(beatLength),
+        start: lastBarTime + beat * durationRounded(beatLength)+(c*theOffset), //MAE FOOFOO
         duration: durationRounded(noteLength),
         gap: 0,
         instrument: chordInstrument
@@ -14401,6 +14460,20 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                       //console.log("Handle inline chick_fraction");
                       voices[voiceNumber].push({
                         el_type: 'chick_fraction',
+                        value: elem.params[0],
+                      });
+                      break;
+                    case "strum_chords": // MAE 20 May 2024
+                      //console.log("Handle inline strum chords");
+                      voices[voiceNumber].push({
+                        el_type: 'strum_chords',
+                        value: elem.params[0],
+                      });
+                      break;
+                    case "strum_chords_divider": // MAE 20 May 2024
+                      //console.log("Handle inline strum chords divider");
+                      voices[voiceNumber].push({
+                        el_type: 'strum_chords_divider',
                         value: elem.params[0],
                       });
                       break;
