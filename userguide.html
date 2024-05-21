@@ -1376,24 +1376,24 @@
             <p><strong>Example 4:</strong> To swing a slip jig with a 0.25 swing factor and two pickup eighth notes preceding the main tune:</p>
             <p class="code">%swing .25 2</p>
             <p><strong>Example 5:</strong></p>
-            <p>To get a typical Scottish snap feel in a Hornpipe with a shortened first beat, lengthened second beat, with no swing offset:</p>
+            <p>To get a typical Scottish snap feel in a Hornpipe with a -0.5 swing factor resulting in a shortened first beat, lengthened second beat, with no swing offset:</p>
             <p class="code">%swing -0.5</p>
             <p>Any manually added %swing value always overrides the automatic injected swing factor for Hornpipes.</p>
             <p>To disable swing for a Hornpipe, you may add %noswing anywhere in the tune ABC:</p>
             <p class="code">% This will result in the swing being disabled<br/><br/>
             %noswing</p>
             <p>%noswing takes precedence over any default Hornpipe swing or manually added %swing</p>
-            <p>You may also use a MIDI command to add swing:</p>
+            <p><strong>MIDI command to add swing</strong></p>
+            <p>You may also use a MIDI command to add swing, swing_percentages is an integer percentage instead of a fractional value as used for the %swing directive</p>
             <p class="code">%%MIDI abctt:swing swing_percentage (Range is -100 to 100) swing_offset (optional: If used, generally set to 1 or 2)</p>
-            <p>For example to swing a slip jig with a 25% swing factor and two pickup eighth notes preceding the main tune:</p>
-            <p><strong>Example 1:</strong> To swing a reel with a 0.25 swing factor and no swing offset:</p>
+            <p><strong>Example 1:</strong> To swing a reel with a 25% swing factor and no swing offset:</p>
             <p class="code">%%MIDI abctt:swing 25</p>
-            <p><strong>Example 2:</strong> To swing a jig with a 0.25 swing factor and a single pickup eighth note preceding the main tune:</p>
+            <p><strong>Example 2:</strong> To swing a jig with a 25% swing factor and a single pickup eighth note preceding the main tune:</p>
             <p class="code">%%MIDI abctt:swing 25 1</p>
-            <p><strong>Example 3:</strong> To swing a slip jig with a 0.25 swing factor and two pickup eighth notes preceding the main tune:</p>
-            <p class="code">%%MIDI abctt:swing 25 2</p>
+            <p><strong>Example 3:</strong> To swing a slip jig with a 15% swing factor and two pickup eighth notes preceding the main tune:</p>
+            <p class="code">%%MIDI abctt:swing 15 2</p>
             <p><strong>Example 4:</strong></p>
-            <p>To get a typical Scottish snap feel in a Hornpipe with a shortened first beat, lengthened second beat, with no swing offset:</p>
+            <p>To get a typical Scottish snap feel in a Hornpipe with a -50% swing factor resulting in a shortened first beat, lengthened second beat, with no swing offset:</p>
             <p class="code">%%%MIDI abctt:swing -50</p>
             <p>You can also disable the swing with a MIDI command:</p>
             <p class="code">%%MIDI abctt:swing 0</p>
