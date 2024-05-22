@@ -11905,6 +11905,12 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     lastChord = undefined;
     chordLastBar = undefined;
     gChordTacet = options.chordsOff ? true : false;
+
+    // MAE 22 May 2024 for initial gchordoff before ABC
+    if (midiOptions.gchordoff){
+      gChordTacet = true;
+    }
+
     hasRhythmHead = false;
     doBeatAccents = true;
     stressBeat1 = 105;
@@ -11920,7 +11926,6 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     drumTrackFinished = false;
     drumDefinition = {};
     drumBars = 1;
-
 
     // MAE 17 May 2024 - Handle boomchick overrides
     gRhythmPatternOverrides = {};
