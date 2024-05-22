@@ -12126,7 +12126,20 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
           // MAE 21 May 2024
           case "swing":
             processSwing(element.swing,element.offset);
-            break;          
+            break;  
+          // MAE 22 May 2024
+          case "bassprog":
+            bassInstrument = element.value;   
+            break;
+          case "chordprog":
+            chordInstrument = element.value;   
+            break;
+          case "bassvol":
+            boomVolume = element.value;   
+            break;
+          case "chordvol":
+            chickVolume = element.value;   
+            break;
           default:
             // This should never happen
             console.log("MIDI creation. Unknown el_type: " + element.el_type + "\n"); // jshint ignore:line
@@ -14515,12 +14528,44 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                       });
                       break;
 
-                     case "swing": // MAE 21 May 2024
-                        console.log("Handle inline swing");
+                    case "swing": // MAE 21 May 2024
+                      //console.log("Handle inline swing");
+                      voices[voiceNumber].push({
+                        el_type: 'swing',
+                        swing: elem.params[0],
+                        offset: elem.params[1]
+                      });
+                      break;
+
+                    case "bassprog": // MAE 22 May 2024
+                      //console.log("Handle inline bassprog");
+                      voices[voiceNumber].push({
+                        el_type: 'bassprog',
+                        value: elem.params[0]
+                      });
+                        break;
+
+                    case "chordprog": // MAE 22 May 2024
+                        //console.log("Handle inline chordprog");
                         voices[voiceNumber].push({
-                          el_type: 'swing',
-                          swing: elem.params[0],
-                          offset: elem.params[1]
+                          el_type: 'chordprog',
+                          value: elem.params[0]
+                        });
+                        break;
+
+                    case "bassvol": // MAE 22 May 2024
+                        //console.log("Handle inline bassvol");
+                        voices[voiceNumber].push({
+                          el_type: 'bassvol',
+                          value: elem.params[0]
+                        });
+                        break;
+
+                    case "chordvol": // MAE 22 May 2024
+                        //console.log("Handle inline chordvol");
+                        voices[voiceNumber].push({
+                          el_type: 'chordvol',
+                          value: elem.params[0]
                         });
                         break;
 
