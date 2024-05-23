@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-       
+ 
         <style>
 
 		p {
@@ -895,6 +895,12 @@
             <p>To change the instrument used for the bass and chords, try changing the MIDI bassprog or chordprog # above to one of:</p>
             <p></p>
             <p>Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38</p>
+            <p></p>
+            <p>You can shift the bass and chords up one or two octaves by adding octave=1 or octave=2 to the bassprog or chordprog commands:</p>
+            <p class=code>%%MIDI bassprog 34 octave=1<br/>%%MIDI chordprog 0 octave=2</p>
+            <p>The octave shift values for the bass and chords are maintained until changed.</p>
+            <p>To restore the octave to normal use octave=0:</p>
+            <p class=code>%%MIDI bassprog 34 octave=0<br/>%%MIDI chordprog 0 octave=0</p>
             <p></p>
             <p><strong>Changing the Playback Volume of the Melody, Bass, and Chords</strong></p>
             <p></p>

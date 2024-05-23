@@ -191,6 +191,11 @@ var gBackupChickFraction = 0.5;
 var gStrumChords = false;
 var gStrumChordsDivider = 8;
 
+// Added 22 May 2024 
+// For octave shifted bass and chords
+var gBassOctaveShift = 0;
+var gChordOctaveShift = 0;
+
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
@@ -4351,8 +4356,9 @@ var parseDirective = {};
   };
   var midiCmdParam0 = ["nobarlines", "barlines", "beataccents", "nobeataccents", "droneon", "droneoff", "drumon", "drumoff", "fermatafixed", "fermataproportional", "gchordon", "gchordoff", "controlcombo", "temperamentnormal", "noportamento"];
   var midiCmdParam1String = ["gchord", "ptstress", "beatstring","abctt:strum_chords"];
-  var midiCmdParam1Integer = ["bassvol", "chordvol", "bassprog", "chordprog", "c", "channel", "beatmod", "deltaloudness", "drumbars", "gracedivider", "makechordchannels", "randomchordattack", "chordattack", "stressmodel", "transpose", "rtranspose", "vol", "volinc", "abctt:boomchick_fraction", "abctt:boom_fraction", "abctt:chick_fraction", "abctt:strum_chords_divider"];
+  var midiCmdParam1Integer = ["bassvol", "chordvol", "c", "channel", "beatmod", "deltaloudness", "drumbars", "gracedivider", "makechordchannels", "randomchordattack", "chordattack", "stressmodel", "transpose", "rtranspose", "vol", "volinc", "abctt:boomchick_fraction", "abctt:boom_fraction", "abctt:chick_fraction", "abctt:strum_chords_divider"];
   var midiCmdParam1Integer1OptionalInteger = ["program","abctt:swing"];
+  var midiCmdParam1Integer1OptionalString = ["bassprog", "chordprog"];
   var midiCmdParam2Integer = ["ratio", "snt", "bendvelocity", "pitchbend", "control", "temperamentlinear"];
   var midiCmdParam4Integer = ["beat"];
   var midiCmdParam5Integer = ["drone"];
@@ -4395,30 +4401,6 @@ var parseDirective = {};
         //console.log("Got strum_chords_divider");
         midi_cmd = "strum_chords_divider";
       }
-      else      //
-      // MAE 1 January 2023 - Stuff in silence patch 143 if mute selected as the chordprog or bassprog
-      //
-      if ((midi_cmd == "chordprog") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "mute")){
-        //console.log("Got mute program request for "+midi_cmd);
-        midi[0].type = 'number';
-        midi[0].token = "143";
-        midi[0].intt = 143;
-        midi[0].floatt = 143;
-        midi[0].contineId = false;
-        midi[0].start = 10;
-        midi[0].end = 13;
-      }
-      else
-      if ((midi_cmd == "bassprog") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "mute")){
-        //console.log("Got mute program request for "+midi_cmd);
-        midi[0].type = 'number';
-        midi[0].token = "143";
-        midi[0].intt = 143;
-        midi[0].floatt = 143;
-        midi[0].contineId = false;
-        midi[0].start = 9;
-        midi[0].end = 12;
-      }
 
       // ONE INT PARAMETER
       if (midi.length !== 1) warn("Expected one parameter in MIDI " + midi_cmd, restOfString, 0);else if (midi[0].type !== "number") warn("Expected one integer parameter in MIDI " + midi_cmd, restOfString, 0);else midi_params.push(midi[0].intt);
@@ -4434,7 +4416,7 @@ var parseDirective = {};
         midi[0].token = "143";
         midi[0].intt = 143;
         midi[0].floatt = 143;
-        midi[0].contineId = false;
+        midi[0].continueId = false;
         midi[0].start = 8;
         midi[0].end = 11;
       }
@@ -4548,6 +4530,57 @@ var parseDirective = {};
         midi_cmd = "boomchick";
         //console.log("midi_cmd: "+midi_cmd+" boomchick string: "+accum);
       }   
+    }
+    else if (midiCmdParam1Integer1OptionalString.indexOf(midi_cmd) >= 0){
+
+      // MAE 1 January 2023 - Stuff in silence patch 143 if mute selected as the chordprog or bassprog
+      //
+      if ((midi_cmd == "chordprog") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "mute")){
+        //console.log("Got mute program request for "+midi_cmd);
+        midi[0].type = 'number';
+        midi[0].token = "143";
+        midi[0].intt = 143;
+        midi[0].floatt = 143;
+        midi[0].continueId = false;
+        midi[0].start = 10;
+        midi[0].end = 13;
+      }
+      else
+      if ((midi_cmd == "bassprog") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "mute")){
+        //console.log("Got mute program request for "+midi_cmd);
+        midi[0].type = 'number';
+        midi[0].token = "143";
+        midi[0].intt = 143;
+        midi[0].floatt = 143;
+        midi[0].continueId = false;
+        midi[0].start = 9;
+        midi[0].end = 12;
+      }
+
+      // ONE INT PARAMETER, ONE OPTIONAL string
+      if (midi.length !== 1 && midi.length !== 2) warn("Expected one or two parameters in MIDI " + midi_cmd, restOfString, 0);else if (midi[0].type !== "number") warn("Expected integer parameter in MIDI " + midi_cmd, restOfString, 0);else if (midi.length === 2 && midi[1].type !== "alpha") warn("Expected alpha parameter in MIDI " + midi_cmd, restOfString, 0);else {
+        midi_params.push(midi[0].intt);
+        if (midi.length === 2){
+          var cmd = midi[1].token;
+          if (cmd.indexOf("octave=") != -1){
+            cmd = cmd.replace("octave=","");
+            cmd = parseInt(cmd);
+            if (!isNaN(cmd)){
+              if (cmd < 0){
+                cmd = 0;
+              }
+              if (cmd > 2){
+                cmd = 2;
+              }
+              midi_params.push(cmd);
+            }
+          }
+          else{
+            warn("Expected octave= in MIDI");
+          }
+        }
+      }
+
     }
 
     if (tuneBuilder.hasBeginMusic()) tuneBuilder.appendElement('midi', -1, -1, {
@@ -11897,9 +11930,9 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     chordChannel = voices.length; // first free channel for chords
     chordTrackFinished = false;
     currentChords = [];
-    chordInstrument = midiOptions.chordprog && midiOptions.chordprog.length === 1 ? midiOptions.chordprog[0] : 0;
+    chordInstrument = midiOptions.chordprog && ((midiOptions.chordprog.length === 1) || (midiOptions.chordprog.length === 2)) ? midiOptions.chordprog[0] : 0;
     // MAE 4 Jan 2024 - If no bassprog specified, use the chord instrument (was 0)
-    bassInstrument = midiOptions.bassprog && midiOptions.bassprog.length === 1 ? midiOptions.bassprog[0] : chordInstrument;
+    bassInstrument = midiOptions.bassprog && ((midiOptions.bassprog.length === 1) || (midiOptions.bassprog.length === 2)) ? midiOptions.bassprog[0] : chordInstrument;
     boomVolume = midiOptions.bassvol && midiOptions.bassvol.length === 1 ? midiOptions.bassvol[0] : 64;
     chickVolume = midiOptions.chordvol && midiOptions.chordvol.length === 1 ? midiOptions.chordvol[0] : 48;
     lastChord = undefined;
@@ -11927,6 +11960,10 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     drumDefinition = {};
     drumBars = 1;
 
+    // For bass and chord octave shifts
+    gBassOctaveShift = 0;
+    gChordOctaveShift = 0;
+
     // MAE 17 May 2024 - Handle boomchick overrides
     gRhythmPatternOverrides = {};
     if (midiOptions.boomchick && midiOptions.boomchick[0]){
@@ -11949,6 +11986,14 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     // MAE 20 May 2024
     if (midiOptions.swing && ((midiOptions.swing[0]!=null) && (midiOptions.swing[0]!=undefined))){
       processSwing(midiOptions.swing[0], midiOptions.swing[1]);
+    }
+
+    if (midiOptions.bassprog && ((midiOptions.bassprog[1]!=null) && (midiOptions.bassprog[1]!=undefined))){
+      gBassOctaveShift = midiOptions.bassprog[1];
+    }
+
+    if (midiOptions.chordprog && ((midiOptions.chordprog[1]!=null) && (midiOptions.chordprog[1]!=undefined))){
+      gChordOctaveShift = midiOptions.chordprog[1];
     }
 
     // MAE 17 May 2024 - Handle boom and chick fraction overrides
@@ -12134,10 +12179,16 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             break;  
           // MAE 22 May 2024
           case "bassprog":
-            bassInstrument = element.value;   
+            bassInstrument = element.value;
+            if ((element.octaveShift != undefined) && (element.octaveShift != null)){
+              gBassOctaveShift = element.octaveShift;
+            }
             break;
           case "chordprog":
             chordInstrument = element.value;   
+            if ((element.octaveShift != undefined) && (element.octaveShift != null)){
+              gChordOctaveShift = element.octaveShift;
+            }  
             break;
           case "bassvol":
             boomVolume = element.value;   
@@ -13149,6 +13200,12 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       chordTranspose -= 12;
     }
     bass += chordTranspose;
+
+    // MAE 22 May 2024 - Supporting octave shifted bass and chords
+    var unshiftedBass = bass;
+
+    bass += gBassOctaveShift*12
+
     var bass2 = bass - 5; // The alternating bass is a 4th below
     var chick;
     if (name.length === 1) chick = chordNotes(bass, '');
@@ -13164,7 +13221,9 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       remaining = remaining.substring(1);
     }
     var arr = remaining.split('/');
-    chick = chordNotes(bass, arr[0]);
+
+    // MAE 22 May 2024 - For octave shifted chords
+    chick = chordNotes(unshiftedBass, arr[0]);
 
     // Special case for power chords, don't alter the bass
     if ((remaining.indexOf("5(8)") != 0) && (remaining.indexOf("5add8") != 0)){
@@ -13186,6 +13245,10 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
           '♭': -1
         }[bassAcc] || 0;
         bass = basses[arr[1].substring(0, 1)] + bassShift + chordTranspose;
+
+        // MAE 22 May 2024 - Supporting octave shifted bass and chords
+        bass += gBassOctaveShift*12
+
         bass2 = bass;
       }
     }
@@ -13208,6 +13271,10 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     }
     // MAE END OF CHANGE
     bass += 12; // the chord is an octave above the bass note.
+
+    // MAE 22 May 2024 - For chick octave shift
+    bass += (gChordOctaveShift * 12);
+    
     var notes = [];
     for (var i = 0; i < intervals.length; i++) {
       notes.push(bass + intervals[i]);
@@ -14546,15 +14613,17 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                       //console.log("Handle inline bassprog");
                       voices[voiceNumber].push({
                         el_type: 'bassprog',
-                        value: elem.params[0]
+                        value: elem.params[0],
+                        octaveShift: elem.params[1]
                       });
-                        break;
+                      break;
 
                     case "chordprog": // MAE 22 May 2024
                         //console.log("Handle inline chordprog");
                         voices[voiceNumber].push({
                           el_type: 'chordprog',
-                          value: elem.params[0]
+                          value: elem.params[0],
+                          octaveShift: elem.params[1]
                         });
                         break;
 
