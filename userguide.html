@@ -896,11 +896,19 @@
             <p></p>
             <p>Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38</p>
             <p></p>
+            <p><strong>Shifting the Bass or Chords Up One, Two, or Three Octaves</strong></p>
             <p>You can shift the bass and chords up one, two, or three octaves by adding octave=1, octave=2, octave=3 to the bassprog or chordprog commands:</p>
             <p class=code>%%MIDI bassprog 34 octave=1<br/>%%MIDI chordprog 0 octave=2<br/>%%MIDI chordprog 0 octave=3</p>
+            <p class="hidden-print" style="margin-top:36px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/pBMbU7kDhZ0" title="Bass and Chord Octave Shifts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p>The octave shift values for the bass and chords are maintained until changed.</p>
             <p>To restore the octave to normal use octave=0:</p>
             <p class=code>%%MIDI bassprog 34 octave=0<br/>%%MIDI chordprog 0 octave=0</p>
+            <p>The inline MIDI equivalent commands also work and can be used mid-staff if desired:</p>
+            <p class="code">[I:MIDI=bassprog 38 octave=1]<br/>
+            [I:MIDI=chordprog 0 octave=2]<br/>
+            [I:MIDI=bassprog 0 octave=3]<br/>
+            [I:MIDI=bassprog 38 octave=0]<br/>
+            [I:MIDI=chordprog 0 octave=0]</p>
             <p></p>
             <p><strong>Changing the Playback Volume of the Melody, Bass, and Chords</strong></p>
             <p></p>
