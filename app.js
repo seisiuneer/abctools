@@ -18471,8 +18471,16 @@ function processShareLink() {
 			setupCGDA();
 		}
 
+		if (format == "gdad"){
+			setupGDAD();
+		}
+
 		if (format == "dgdae"){
 			setupDGDAE();
+		}
+
+		if (format == "cgdae"){
+			setupCGDAE();
 		}
 
 		SetRadioValue("notenodertab", format);
