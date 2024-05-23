@@ -33593,6 +33593,11 @@ function ConfigureToolSettings() {
 				setupCGDAE();				
 			}
 
+			// If was from a share, no matter what, if on the multi tab option buttons, force a redraw to keep everything in sync.
+			var tabs = GetRadioValue("notenodertab");
+
+			var bTabForceRedraw = gIsFromShare && ((tabs == "gdad") || (tabs == "cgda") || (tabs == "dgdae") || (tabs == "cgdae"));
+			
 			IdleAllowShowTabNames();
 
 			if (isDesktopBrowser()){
@@ -33630,7 +33635,7 @@ function ConfigureToolSettings() {
 			ShowHideTabButtons();
 
 			// Do we need to re-render?
-			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || (gForceLeftJustifyTitles != oldLeftJustifyTitles) || (oldCGDA != gShowCGDATab) || (oldDGDAE != gShowDGDAETab)){
+			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || (gForceLeftJustifyTitles != oldLeftJustifyTitles) || (oldCGDA != gShowCGDATab) || (oldDGDAE != gShowDGDAETab) || bTabForceRedraw){
 				
 				RenderAsync(true, null, function(){
 
