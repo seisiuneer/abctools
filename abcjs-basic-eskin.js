@@ -4569,8 +4569,8 @@ var parseDirective = {};
               if (cmd < 0){
                 cmd = 0;
               }
-              if (cmd > 2){
-                cmd = 2;
+              if (cmd > 3){
+                cmd = 3;
               }
               midi_params.push(cmd);
             }
