@@ -346,6 +346,12 @@ var gTinyURLCount = 0;
 // MIDI import warning delivered
 var gMIDIImportWarned = false;
 
+// Show DGDAE tab
+var gShowDGDAETab = false;
+
+// Show CGDA tab
+var gShowCGDATab = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -5459,8 +5465,14 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
 			case "gdad":
 				postfix = "_GDAD";
 				break;
+			case "cgda":
+				postfix = "_CGDA";
+				break;
 			case "cgdae":
 				postfix = "_CGDAE";
+				break;
+			case "dgdae":
+				postfix = "_DGDAE";
 				break;
 			case "guitare":
 				postfix = "_Guitar";
@@ -5490,7 +5502,9 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
 
 			case "mandolin":
 			case "gdad":
+			case "cgda":
 			case "cgdae":
+			case "dgdae":
 			case "guitare":
 			case "guitard":
 			case "uke":
@@ -9127,8 +9141,16 @@ function GetABCJSParams(instrument){
 					theLabel = 'GDAD'+postfix;
 					break;
 
+				case "cgda":
+					theLabel = 'CGDA'+postfix;
+					break;
+
 				case "cgdae":
 					theLabel = 'CGDAE'+postfix;
+					break;
+
+				case "dgdae":
+					theLabel = 'DGDAE'+postfix;
 					break;
 
 				case "guitare":
@@ -9205,12 +9227,42 @@ function GetABCJSParams(instrument){
 			selectTypes: false,
 			format: commonFontFormat
 		}	
+	} else if (instrument == "cgda") {
+		params = {
+			tablature: [{
+				instrument: 'violin',
+				label: theLabel,
+				tuning: ['C,', 'G,', 'D', 'A'],
+				highestNote: "f'",
+				capo: gCapo
+			}],
+			responsive: 'resize',
+			oneSvgPerLine: 'true',
+			expandToWidest: 'true',
+			selectTypes: false,
+			format: commonFontFormat
+		}	
 	} else if (instrument == "cgdae") {
 		params = {
 			tablature: [{
 				instrument: 'fivestring',
 				label: theLabel,
 				tuning: ['C,', 'G,', 'D', 'A', 'e'],
+				highestNote: "f'",
+				capo: gCapo
+			}],
+			responsive: 'resize',
+			oneSvgPerLine: 'true',
+			expandToWidest: 'true',
+			selectTypes: false,
+			format: commonFontFormat
+		}		
+	} else if (instrument == "dgdae") {
+		params = {
+			tablature: [{
+				instrument: 'fivestring',
+				label: theLabel,
+				tuning: ['D,', 'G,', 'D', 'A', 'e'],
 				highestNote: "f'",
 				capo: gCapo
 			}],
@@ -14589,7 +14641,9 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
 
 		case "mandolin":
 		case "gdad":
+		case "cgda":
 		case "cgdae":
+		case "dgdae":
 		case "guitare":
 		case "guitard":
 		case "uke":
@@ -14829,8 +14883,22 @@ function GenerateQRCode(e) {
 					}
 					postfix += ")";
 					break;
+				case "cgda":
+					postfix = "<br/><br/>(Mandola CGDA Tab";
+					if (gCapo != 0){
+						postfix += " - Capo on "+gCapo;
+					}
+					postfix += ")";
+					break;
 				case "cgdae":
 					postfix = "<br/><br/>(CGDAE Tab";
+					if (gCapo != 0){
+						postfix += " - Capo on "+gCapo;
+					}
+					postfix += ")";
+					break;
+				case "dgdae":
+					postfix = "<br/><br/>(DGDAE Tab";
 					if (gCapo != 0){
 						postfix += " - Capo on "+gCapo;
 					}
@@ -18279,7 +18347,9 @@ function IdleAllowShowTabNames(){
 
 		case "mandolin":
 		case "gdad":
+		case "cgda":
 		case "cgdae":
+		case "dgdae":
 		case "guitare":
 		case "guitard":
 		case "uke":
@@ -18395,6 +18465,14 @@ function processShareLink() {
 
 			format = "noten";
 			
+		}
+
+		if (format == "cgda"){
+			setupCGDA();
+		}
+
+		if (format == "dgdae"){
+			setupDGDAE();
 		}
 
 		SetRadioValue("notenodertab", format);
@@ -29910,6 +29988,50 @@ function IncrementTempo(){
 }
 
 //
+// Setup DGDAE tab button
+//
+function setupDGDAE(){
+	var elem = document.getElementById("b5");
+	elem.value = "dgdae";
+	elem = document.getElementById("b5label");
+	elem.title = "Shows DGDAE 5-string Bouzouki tablature";
+	elem.innerHTML = "DGDAE";
+}
+
+//
+// Setup CGDAE tab button
+//
+function setupCGDAE(){
+	var elem = document.getElementById("b5");
+	elem.value = "cgdae";
+	elem = document.getElementById("b5label");
+	elem.title = "Shows CGDAE 5-string Fiddle tablature";
+	elem.innerHTML = "CGDAE";
+}
+
+//
+// Setup CGDA tab button
+//
+function setupCGDA(){
+	var elem = document.getElementById("b4");
+	elem.value = "cgda";
+	elem = document.getElementById("b4label");
+	elem.title = "Shows CGDA Mandola/Mandocello tablature";
+	elem.innerHTML = "CGDA";
+}
+
+//
+// Setup GDAD tab button
+//
+function setupGDAD(){
+	var elem = document.getElementById("b4");
+	elem.value = "gdad";
+	elem = document.getElementById("b4label");
+	elem.title = "Shows GDAD Bouzouki tablature";
+	elem.innerHTML = "GDAD";
+}
+
+//
 // Save/load global configuration to/from local browser storage
 //
 
@@ -30759,6 +30881,28 @@ function GetInitialConfigurationSettings(){
 		gMIDIImportWarned = (val == "true");
 	}
 
+	// Show DGDAE Tab
+	gShowDGDAETab = false;
+	val = localStorage.ShowDGDAETab;
+	if (val){
+		gShowDGDAETab = (val == "true");
+
+		if (gShowDGDAETab){
+			setupDGDAE();
+		}
+	}
+
+	// Show CGDA Tab
+	gShowCGDATab = false;
+	val = localStorage.ShowCGDATab;
+	if (val){
+		gShowCGDATab = (val == "true");
+
+		if (gShowCGDATab){
+			setupCGDA();
+		}
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -30950,6 +31094,12 @@ function SaveConfigurationSettings(){
 
 		// Save the TinyURL use count
 		localStorage.TinyURLCount = gTinyURLCount;
+
+		// Save the show DGDAE state
+		localStorage.ShowDGDAETab = gShowDGDAETab;
+
+		// Show the show CGDA state
+		localStorage.ShowCGDATab = gShowCGDATab;
 
 	}
 }
@@ -33073,6 +33223,8 @@ function ConfigureToolSettings() {
 		configure_allow_midi_input: gAllowMIDIInput,
 		configure_midi_chromatic: gMIDIChromatic,
 		configure_show_tab_buttons: gFeaturesShowTabButtons,
+		configure_show_dgdae: gShowDGDAETab,
+		configure_show_cgda: gShowCGDATab,
 	};
 
  	const sound_font_options = [
@@ -33101,6 +33253,8 @@ function ConfigureToolSettings() {
 	form = form.concat([
 		{name: "Space between the staves (default is 10, minimum is -40):", id: "configure_staff_spacing", type:"number", cssClass:"configure_settings_form_text"},
 		{name: "          Left-justify all titles and subtitles", id: "configure_left_justify_titles", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+		{name: "          Show CGDA as a 4-string tab option (default is GDAD)", id: "configure_show_cgda", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+		{name: "          Show DGDAE as a 5-string tab option (default is CGDAE)", id: "configure_show_dgdae", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "Stringed instrument capo fret postion:", id: "configure_capo", type:"number", cssClass:"configure_settings_form_text"},
 		{name: "    Show stringed instrument names on tablature (single-voice tunes only, not shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "Default abcjs soundfont:", id: "configure_soundfont", type:"select", options:sound_font_options, cssClass:"configure_settings_select"}, 
@@ -33405,6 +33559,32 @@ function ConfigureToolSettings() {
 				}
 			}
 
+			// Setup alternate tab buttons if requested
+
+			// For tab format change detect
+			var oldCGDA = gShowCGDATab;
+
+			gShowCGDATab = args.result.configure_show_cgda;
+
+			if (gShowCGDATab){
+				setupCGDA();
+			}
+			else{
+				setupGDAD();				
+			}
+
+			// For tab format change detect
+			var oldDGDAE = gShowDGDAETab;
+
+			gShowDGDAETab = args.result.configure_show_dgdae;
+
+			if (gShowDGDAETab){
+				setupDGDAE();
+			}
+			else{
+				setupCGDAE();				
+			}
+
 			IdleAllowShowTabNames();
 
 			if (isDesktopBrowser()){
@@ -33442,7 +33622,7 @@ function ConfigureToolSettings() {
 			ShowHideTabButtons();
 
 			// Do we need to re-render?
-			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || (gForceLeftJustifyTitles != oldLeftJustifyTitles)){
+			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || (gForceLeftJustifyTitles != oldLeftJustifyTitles) || (oldCGDA != gShowCGDATab) || (oldDGDAE != gShowDGDAETab)){
 				
 				RenderAsync(true, null, function(){
 

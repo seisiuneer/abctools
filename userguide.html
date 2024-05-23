@@ -241,7 +241,18 @@
                     <p class="toc"><a style="text-decoration:none;" href="#highlighting">Notation and ABC Highlighting</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#viewing_the_notation_full_screen">Viewing the Notation Full Screen</a></p>
                 </div>
-                
+
+                <button class="accordion" title="Click to expand/collapse this section">Controls and Features</button>
+                <div class="tocpanel">
+                    <p class="toc"><a style="text-decoration:none;" href="#basic_controls">Basic Controls and Features</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#basic_tablature">Notation and Tablature Display</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#basic_transpose">Transpose Controls</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#basic_snapshot">Saving and Restoring Snapshots</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#basic_more_tools">Showing More ABC Tools</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#basic_sharing">Showing Share Controls</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#basic_clear">Clearing the ABC Editor</a></p>
+                </div>
+               
                 <button class="accordion" title="Click to expand/collapse this section">Playing Your Tunes</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#playing_your_tunes">Playing Your Tunes</a></p>
@@ -278,18 +289,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#voice_hiding">Voice Combining and Hiding</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#highlighting_control">Controlling Note Highlighting in the Player</a></p>
                 </div>
-                
-                <button class="accordion" title="Click to expand/collapse this section">Controls and Features</button>
-                <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#basic_controls">Basic Controls and Features</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#basic_tablature">Notation and Tablature Display</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#basic_transpose">Transpose Controls</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#basic_snapshot">Saving and Restoring Snapshots</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#basic_more_tools">Showing More ABC Tools</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#basic_sharing">Showing Share Controls</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#basic_clear">Clearing the ABC Editor</a></p>
-                </div>
-                
+                                
                 <button class="accordion" title="Click to expand/collapse this section">More ABC Tools</button>
                 <div class="tocpanel">
                     
@@ -741,6 +741,75 @@
             <p>The size of the full screen notation as a percentage of the browser window width is set in the <strong>Advanced Settings</strong> dialog. Default is: 50%.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/KagT-Aq8mY8" title="Full-Screen Tune Display Options" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p>If the resulting scaled width is less than 850 pixels (820 pixels for iOS/Android) the width will be set to 850 pixels (820 pixels for iOS/Android).</p>
+           <hr class="hidden-print" id="basic_controls">
+            <h1 class="page_break_always">Basic Controls and Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p id="basic_tablature" style="margin-top:24px;">The instrument tablature button bar controls how the notation and tablature is displayed:</p>
+            <div class="image_holder">
+                <img class="image" loading="lazy" style="width:700px;margin-top:24px;" src="img/tab_options_2.jpg"/>
+            </div>
+            <p>The instrument tablature button bar is shown by default, but can be hidden if desired.</p>
+            <p>See the <a href="#settings_dialog">ABC Transcription Tools Settings</a> section for details.</p>
+            <hr>
+            <p><strong>Notation</strong> - Standard notation only.</p>
+            <hr>
+            <p><strong>Names</strong> - Shows standard notation with note names below.</p>
+            <p>Choose between standard ABC d e f style octave notes or Comhaltas-preferred "Blackboard ABC" D' E' F' octave note display in the <strong>Advanced Settings</strong> dialog.</p>
+            <p><strong>Important:</strong> While the note Names display will show the Comhaltas-preferred note names, the ABC standard requires that the second octave C in the ABC itself either be represented by c or C' so that may requires some minor changes when pasting in your Comhaltas-formatted tunes.</p>
+            <p>Note names font and size in the tab is set by the <strong>Tab number font</strong> value in the <strong>Configure ABC Rendering Fonts</strong> dialog.</p>
+            <hr>
+            <p><strong>Mandolin</strong> - Shows standard notation and tablature for Mandolin.</p>
+            <hr>
+            <p><strong>GDAD</strong> - Shows standard notation and tablature for GDAD-tuned Irish Bouzouki.</p>
+            <p>This can be changed to <strong>CGDA</strong> for CGDA-tuned Mandola or Mandocello in the tool's Settings dialog.</strong>
+            <hr>
+            <p><strong>CGDAE</strong> - Shows standard notation and tablature for 5-string CGDAE-tuned Fiddle.</p>
+            <p>This can be changed to <strong>DGDAE</strong> for 5-string DGDAE-tuned Bouzouki in the tool's Settings dialog.</p>
+            <hr>
+            <p><strong>Guitar</strong> - Shows standard notation and tablature for standard EADGBE-tuned Guitar.</p>
+            <hr>
+            <p><strong>DADGAD</strong> - Shows standard notation and tablature for DADGAD-tuned Guitar.</p>
+            <hr>
+            <p><strong>Uke</strong> - Shows standard notation and tablature for GCEA tuned Ukulele.</p>
+            <p>This tablature solution puts the majority of the notes on the CEA strings and only uses the G string for notes lower than C.</p>
+            <hr>
+            <p><strong>Whistle</strong> - Shows standard notation and fingering tablature for Tin Whistle in the key of D.</p>
+            <p>Note: For notes that go below D on of the whistle (lowest note supported is the G below middle-C), the suggested "folded" octave-up fingerings are shown.</p>
+            <hr>
+            <p>Up to 8 voices may be displayed with tablature.</p>
+            <hr>
+            <p style="text-align: center;"><strong>Showing/Hiding Stringed Instrument Tablature in Multi-Voice ABC Tunes</strong></p>
+            <p>The two following annotations only work for stringed instrument tablatures and not the note names or whistle tablature.</p> 
+            <p>To show the tablature on the first voice of a multi-voice tune and hide it on all the others, add the following comment based annotation anywhere in the tune:</p>
+            <p class="code">%tab_first_voice_only</p>
+            <p>To hide the tablature on the first voice of a multi-voice tune and show it on all the others, add the following comment based annotation anywhere in the tune:</p>
+            <p class="code">%tab_first_voice_exclude</p>
+            <p>If both are present in a tune, %tab_first_voice_only takes precedence over %tab_first_voice_exclude.</p>
+            <p>If a tunebook contains multiple tunes, all of the tunes in the tunebook should all either contain or not contain these annotations.</p>
+            <p>Mixed use of these annotations across multiple tunes in a tunebook may not produce the desired result.</p>
+            <hr>
+            <p style="margin-top:24px;margin-bottom: 12px;"><strong>These buttons perform common operations on the ABC:</strong></p>
+            <div class="image_holder" style="margin-top:24px;">
+                <img class="image" loading="lazy" style="width:700px;" src="img/bottom_toolbar_1.jpg"/>
+            </div>
+            <hr>
+            <p id="basic_transpose"><strong>Transpose Down</strong> - Transposes the selected tunes down one semitone. Shift-click transposes down one full step. Alt-click transposes down one octave.</p>
+            <hr>
+            <p><strong>Transpose Up</strong> - Transposes the selected tunes up one semitone.  Shift-click transposes up one full step. Alt-click transposes up one octave.</p>
+            <p>To transpose multiple tunes, just click anywhere in the first tune you want to transpose, and drag to select any part of additional tunes you want transposed.</p>
+            <p>To transpose all the tunes at once, select them all before clicking the Transpose buttons.</p>
+            <hr>
+            <p id="basic_snapshot"><strong>Snapshot</strong> - Saves a snapshot of the contents of the ABC editor to browser storage.</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/doPwU-BgCAc " title="Snapshots" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+            <p>If you save a snapshot and leave the tool, the next time you run the tool the snapshot will be available to restore by either clicking the <strong>Restore</strong> button on the main toolbar or the <strong>Restore from Snapshot</strong> button in the <strong>Add</strong> dialog.</p>
+            <hr>
+            <p><strong>Restore</strong> - If one is available, replaces the current contents of the ABC editor with the last saved snapshot from browser storage.</p>
+            <p>Since it completely replaces the contents of the ABC editor, you will be asked to confirm the operation.</p>
+            <hr>
+            <p id="basic_more_tools"><strong>More Tools</strong> - Shows the <a style="text-decoration:none;" href="#more_tools">More ABC Tools</a> dialog with several additional ABC filtering and display controls.</p>
+            <hr>
+            <p id="basic_sharing"><strong>Sharing</strong> - Shows the <a style="text-decoration:none;" href="#sharing_controls">Sharing Controls</a> dialog with options for sharing your tunes via a share URL or QR code.</p>
+            <hr>
+            <p id="basic_clear"><strong>Clear</strong> - Clears the ABC Editor so you can start over.</p>
             <hr class="hidden-print" id="playing_your_tunes">
             <h1 class="page_break_always">Playing Your Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>To play a specific tune, click anywhere in the ABC for the tune and then click <strong>Play</strong>.</p>
@@ -896,19 +965,11 @@
             <p></p>
             <p>Piano: 0, Electric Piano: 5, Guitar: 25, Bass: 34, Synth Bass: 38</p>
             <p></p>
-            <p><strong>Shifting the Bass or Chords Up One, Two, or Three Octaves</strong></p>
             <p>You can shift the bass and chords up one, two, or three octaves by adding octave=1, octave=2, octave=3 to the bassprog or chordprog commands:</p>
             <p class=code>%%MIDI bassprog 34 octave=1<br/>%%MIDI chordprog 0 octave=2<br/>%%MIDI chordprog 0 octave=3</p>
-            <p class="hidden-print" style="margin-top:36px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/pBMbU7kDhZ0" title="Bass and Chord Octave Shifts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p>The octave shift values for the bass and chords are maintained until changed.</p>
             <p>To restore the octave to normal use octave=0:</p>
             <p class=code>%%MIDI bassprog 34 octave=0<br/>%%MIDI chordprog 0 octave=0</p>
-            <p>The inline MIDI equivalent commands also work and can be used mid-staff if desired:</p>
-            <p class="code">[I:MIDI=bassprog 38 octave=1]<br/>
-            [I:MIDI=chordprog 0 octave=2]<br/>
-            [I:MIDI=bassprog 0 octave=3]<br/>
-            [I:MIDI=bassprog 38 octave=0]<br/>
-            [I:MIDI=chordprog 0 octave=0]</p>
             <p></p>
             <p><strong>Changing the Playback Volume of the Melody, Bass, and Chords</strong></p>
             <p></p>
@@ -1595,73 +1656,6 @@
             <p class="code">%play_highlight_v1_only</p>
             <p>If you want to disable all highlighting of notes during playback, you can add the following comment-based annotation anywhere in the tune ABC:</p>
             <p class="code">%disable_play_highlight</p>
-            <hr class="hidden-print" id="basic_controls">
-            <h1 class="page_break_always">Basic Controls and Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p id="basic_tablature" style="margin-top:24px;">The instrument tablature button bar controls how the notation and tablature is displayed:</p>
-            <div class="image_holder">
-                <img class="image" loading="lazy" style="width:700px;margin-top:24px;" src="img/tab_options_2.jpg"/>
-            </div>
-            <p>The instrument tablature button bar is shown by default, but can be hidden if desired.</p>
-            <p>See the <a href="#settings_dialog">ABC Transcription Tools Settings</a> section for details.</p>
-            <hr>
-            <p><strong>Notation</strong> - Standard notation only.</p>
-            <hr>
-            <p><strong>Names</strong> - Shows standard notation with note names below.</p>
-            <p>Choose between standard ABC d e f style octave notes or Comhaltas-preferred "Blackboard ABC" D' E' F' octave note display in the <strong>Advanced Settings</strong> dialog.</p>
-            <p><strong>Important:</strong> While the note Names display will show the Comhaltas-preferred note names, the ABC standard requires that the second octave C in the ABC itself either be represented by c or C' so that may requires some minor changes when pasting in your Comhaltas-formatted tunes.</p>
-            <p>Note names font and size in the tab is set by the <strong>Tab number font</strong> value in the <strong>Configure ABC Rendering Fonts</strong> dialog.</p>
-            <hr>
-            <p><strong>Mandolin</strong> - Shows standard notation and tablature for Mandolin.</p>
-            <hr>
-            <p><strong>GDAD</strong> - Shows standard notation and tablature for GDAD-tuned Irish Bouzouki.</p>
-            <hr>
-            <p><strong>CGDAE</strong> - Shows standard notation and tablature for 5-string CGDAE-tuned Mandolin.</p>
-            <hr>
-            <p><strong>Guitar</strong> - Shows standard notation and tablature for standard EADGBE-tuned Guitar.</p>
-            <hr>
-            <p><strong>DADGAD</strong> - Shows standard notation and tablature for DADGAD-tuned Guitar.</p>
-            <hr>
-            <p><strong>Uke</strong> - Shows standard notation and tablature for GCEA tuned Ukulele.</p>
-            <p>This tablature solution puts the majority of the notes on the CEA strings and only uses the G string for notes lower than C.</p>
-            <hr>
-            <p><strong>Whistle</strong> - Shows standard notation and fingering tablature for Tin Whistle in the key of D.</p>
-            <p>Note: For notes that go below D on of the whistle (lowest note supported is the G below middle-C), the suggested "folded" octave-up fingerings are shown.</p>
-            <hr>
-            <p>Up to 8 voices may be displayed with tablature.</p>
-            <hr>
-            <p style="text-align: center;"><strong>Showing/Hiding Stringed Instrument Tablature in Multi-Voice ABC Tunes</strong></p>
-            <p>The two following annotations only work for stringed instrument tablatures and not the note names or whistle tablature.</p> 
-            <p>To show the tablature on the first voice of a multi-voice tune and hide it on all the others, add the following comment based annotation anywhere in the tune:</p>
-            <p class="code">%tab_first_voice_only</p>
-            <p>To hide the tablature on the first voice of a multi-voice tune and show it on all the others, add the following comment based annotation anywhere in the tune:</p>
-            <p class="code">%tab_first_voice_exclude</p>
-            <p>If both are present in a tune, %tab_first_voice_only takes precedence over %tab_first_voice_exclude.</p>
-            <p>If a tunebook contains multiple tunes, all of the tunes in the tunebook should all either contain or not contain these annotations.</p>
-            <p>Mixed use of these annotations across multiple tunes in a tunebook may not produce the desired result.</p>
-            <hr>
-            <p style="margin-top:24px;margin-bottom: 12px;"><strong>These buttons perform common operations on the ABC:</strong></p>
-            <div class="image_holder" style="margin-top:24px;">
-                <img class="image" loading="lazy" style="width:700px;" src="img/bottom_toolbar_1.jpg"/>
-            </div>
-            <hr>
-            <p id="basic_transpose"><strong>Transpose Down</strong> - Transposes the selected tunes down one semitone. Shift-click transposes down one full step. Alt-click transposes down one octave.</p>
-            <hr>
-            <p><strong>Transpose Up</strong> - Transposes the selected tunes up one semitone.  Shift-click transposes up one full step. Alt-click transposes up one octave.</p>
-            <p>To transpose multiple tunes, just click anywhere in the first tune you want to transpose, and drag to select any part of additional tunes you want transposed.</p>
-            <p>To transpose all the tunes at once, select them all before clicking the Transpose buttons.</p>
-            <hr>
-            <p id="basic_snapshot"><strong>Snapshot</strong> - Saves a snapshot of the contents of the ABC editor to browser storage.</p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/doPwU-BgCAc " title="Snapshots" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-            <p>If you save a snapshot and leave the tool, the next time you run the tool the snapshot will be available to restore by either clicking the <strong>Restore</strong> button on the main toolbar or the <strong>Restore from Snapshot</strong> button in the <strong>Add</strong> dialog.</p>
-            <hr>
-            <p><strong>Restore</strong> - If one is available, replaces the current contents of the ABC editor with the last saved snapshot from browser storage.</p>
-            <p>Since it completely replaces the contents of the ABC editor, you will be asked to confirm the operation.</p>
-            <hr>
-            <p id="basic_more_tools"><strong>More Tools</strong> - Shows the <a style="text-decoration:none;" href="#more_tools">More ABC Tools</a> dialog with several additional ABC filtering and display controls.</p>
-            <hr>
-            <p id="basic_sharing"><strong>Sharing</strong> - Shows the <a style="text-decoration:none;" href="#sharing_controls">Sharing Controls</a> dialog with options for sharing your tunes via a share URL or QR code.</p>
-            <hr>
-            <p id="basic_clear"><strong>Clear</strong> - Clears the ABC Editor so you can start over.</p>
             <hr class="hidden-print" id="more_tools">
             <h1 class="page_break_always">More ABC Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
@@ -2218,7 +2212,7 @@
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_45.jpg"/>
+                <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_46.jpg"/>
             </div>
             <hr>
             <p><strong>Show instrument tablature button bar below ABC editor</strong> - If checked shows the instrument tablature button bar below the editor.</p>
@@ -2240,6 +2234,9 @@
             <hr>
             <p><strong>Left-justify all titles and subtitles</strong> - When checked, draws all titles and subtitles left-justified instead of centered above the notation.</p>
             <hr>
+            <p><strong>Show CGDA as a 4-string tab option (default is GDAD)</strong> - When checked replaces the GDAD tab button with a CDGA tab button for CGDA-tuned Mandola.</p>
+            <hr>
+            <p><strong>Show DGDAE as a 5-string tab option (default is CGDAE)</strong> - When checked replaces the CGDAE tab button with a DGDAE tab button for 5-string DGDAE-tuned bouzouki.</p>
             <p><strong>Stringed instrument capo fret postion</strong> - Allows you to set a capo setting from 0 to 12 frets for any of the stringed instruments tabs.</p>
             <hr>
             <p><strong>Show stringed instrument names on tablature (single-voice tunes only, not shown in the Player)</strong> - Hides/Shows the instrument names and capo settings on the tablature.</p>
