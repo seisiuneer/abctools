@@ -13166,6 +13166,74 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     'F': 41,
     'G': 43
   };
+
+  // 
+  // Chord inversions are represented by a : and a number after the chord name
+  //
+  function processInversion(chordName){
+
+    var theSplits = chordName.split(":");
+    
+    var theChordName = theSplits[0];
+    var theInversion = theSplits[1];
+
+    if (theInversion != undefined){
+
+      switch (theInversion){
+        case "a":
+          theInversion = 0;
+          break;
+        case "b":
+          theInversion = 1;
+          break;
+        case "c":
+          theInversion = 2;
+          break;
+        case "d":
+          theInversion = 3;
+          break;
+        case "e":
+          theInversion = 4;
+          break;
+        case "f":
+          theInversion = 5;
+          break;
+        case "g":
+          theInversion = 6;
+          break;
+        case "h":
+          theInversion = 7;
+          break;
+        case "i":
+          theInversion = 8;
+          break;
+        case "j":
+          theInversion = 9;
+          break;
+        case "k":
+          theInversion = 10;
+          break;
+        case "l":
+          theInversion = 11;
+          break;
+        case "m":
+          theInversion = 12;
+          break;
+        case "n":
+          theInversion = 13;
+          break;
+        default:
+          theInversion = 0;
+          break;
+      }
+    }
+    else{
+      theInversion = 0;
+    }
+ 
+    return {name:theChordName,inversion:theInversion};
+  }
+
   function interpretChord(name) {
     // chords have the format:
     // [root][acc][modifier][/][bass][acc]
@@ -13181,6 +13249,15 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     if (name === 'break') return {
       chick: []
     };
+
+    // MAE 23 May 2024 - Experimenting with chord inversions
+    var chordInfo = processInversion(name);
+
+    name = chordInfo.name;
+    var inversion = chordInfo.inversion;
+
+    //console.log("chord name: "+name+" inversion: "+inversion);
+
     var root = name.substring(0, 1);
     if (root === '(') {
       name = name.substring(1, name.length - 2);
@@ -13188,9 +13265,11 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       root = name.substring(0, 1);
     }
     var bass = basses[root];
-    if (!bass)
+    if (!bass){ 
       // If the bass note isn't listed, then this was an unknown root. Only A-G are accepted.
       return undefined;
+    }
+
     // Don't transpose the chords more than an octave.
     var chordTranspose = transpose;
     while (chordTranspose < -8) {
@@ -13207,15 +13286,20 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     bass += gBassOctaveShift*12
 
     var bass2 = bass - 5; // The alternating bass is a 4th below
+
     var chick;
-    if (name.length === 1) chick = chordNotes(bass, '');
+    
+    //if (name.length === 1) chick = chordNotes(bass, '', 0).notes;
+
     var remaining = name.substring(1);
     var acc = remaining.substring(0, 1);
     if (acc === 'b' || acc === '♭') {
+      unshiftedBass--;
       bass--;
       bass2--;
       remaining = remaining.substring(1);
     } else if (acc === '#' || acc === '♯') {
+      unshiftedBass++;
       bass++;
       bass2++;
       remaining = remaining.substring(1);
@@ -13223,7 +13307,12 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     var arr = remaining.split('/');
 
     // MAE 22 May 2024 - For octave shifted chords
-    chick = chordNotes(unshiftedBass, arr[0]);
+    var invertedInfo = chordNotes(unshiftedBass, arr[0], inversion);
+
+    chick = invertedInfo.notes;
+    var invertedNotes = invertedInfo.invertedNotes;
+
+    //debugger;
 
     // Special case for power chords, don't alter the bass
     if ((remaining.indexOf("5(8)") != 0) && (remaining.indexOf("5add8") != 0)){
@@ -13255,7 +13344,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     return {
       boom: bass,
       boom2: bass2,
-      chick: chick
+      chick: invertedNotes
     };
   }
 
@@ -13263,24 +13352,76 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
   // MAE 16 Aug 2023 - Chord interval map moved external after finding minifier issues
   //
 
-  function chordNotes(bass, modifier) {
+  function chordNotes(bass, modifier, inversion) {
+
+    var originalInversion = inversion;
+
     // MAE 16 Aug 2023 - The chord intervals array was getting trashed by the minifier, moved it outside    
     var intervals = gChordIntervals[modifier]; 
+
     if (!intervals) {
+
       if (modifier.slice(0, 2).toLowerCase() === 'ma' || modifier[0] === 'M') intervals = gChordIntervals.M;else if (modifier[0] === 'm' || modifier[0] === '-') intervals = gChordIntervals.m;else intervals = gChordIntervals.M;
+
     }
+
+    var finalIntervals = intervals.slice();
+
+    if (inversion != 0){
+
+      var rawIntervals = intervals.slice();
+
+      if (inversion >= (intervals.length+1)){
+
+          inversion = inversion % (rawIntervals.length + 1);
+
+      }
+
+      for (i=0;i<inversion;++i){
+
+        rawIntervals.push(intervals[i]+12)
+
+      }
+
+      finalIntervals = [];
+
+      for (i=0;i<intervals.length;++i){
+
+        finalIntervals.push(rawIntervals[i+inversion]);
+
+      }
+      
+    }
+
+    //if (inversion != 0){
+      // console.log("bass: "+bass+" modified: "+modifier+" originalInversion: "+originalInversion+" inversion: "+inversion);
+      // console.log("notes: "+intervals+" inverted: "+finalIntervals);
+      // console.log("-----------");
+    //}
+
     // MAE END OF CHANGE
     bass += 12; // the chord is an octave above the bass note.
 
     // MAE 22 May 2024 - For chick octave shift
     bass += (gChordOctaveShift * 12);
-    
+
+
     var notes = [];
     for (var i = 0; i < intervals.length; i++) {
       notes.push(bass + intervals[i]);
     }
-    return notes;
+
+    //debugger;
+
+    var invertedNotes = [];
+    for (var i = 0; i < finalIntervals.length; i++) {
+      invertedNotes.push(bass + finalIntervals[i]);
+    }
+
+    return {notes:notes,invertedNotes:invertedNotes};
+
   }
+
   function writeBoom(boom, beatLength, volume, beat, noteLength) {
      // undefined means there is a stop time.
     if (boom !== undefined) chordTrack.push({

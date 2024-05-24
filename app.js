@@ -13747,10 +13747,10 @@ function AppendSampleReel(){
 	theValue += "% Set a specific amount of swing:\n";
 	theValue += '%swing 0.15\n';
 	theValue += "%\n";
-	theValue += '|:"Em"EBBA B2 EB|"Em"B2 AB dBAG|"D"F/E/D AD BDAD|"D"F/E/D AD BAGF|\n';
-	theValue += '"Em"EBBA B2 EB|"Em"B2 AB defg|"D"afge dBAF|1 "D"DEFD "Em"E3D:|2 "D"DEFD "Em"E2gf||\n';
-	theValue += '|:"Em"eB (3BBB eBgf|"Em"eBB2 gedB|"D"A/A/A FA DAFA|"D"A/A/A FA defg|\n';
-	theValue += '"Em"eB (3BBB eBgf|"Em"eBBB defg|"D"afge dBAF|1 "D"DEFD "Em"E2gf:|2 "D"DEFD "Em"E4|]\n';
+	theValue += '|:"Em"EBBA B2 EB|B2 AB dBAG|"D"F/E/D AD BDAD|F/E/D AD BAGF|\n';
+	theValue += '"Em"EBBA B2 EB|B2 AB defg|"D"afge dBAF|1 DEFD "Em"E3D:|2 DEFD "Em"E2gf||\n';
+	theValue += '|:"Em"eB (3BBB eBgf|eBB2 gedB|"D"A/A/A FA DAFA|A/A/A FA defg|\n';
+	theValue += '"Em"eB (3BBB eBgf|eBBB defg|"D"afge dBAF|1 DEFD "Em"E2gf:|2 DEFD "Em"E4|]\n';
 
 	// Do common tune addition processing
 	ProcessAddTune(theValue);

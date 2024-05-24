@@ -437,6 +437,7 @@
                 
                 <button class="accordion" title="Click to expand/collapse this section">ABC Tricks and Tips</button>
                 <div class="tocpanel">
+                    <p class="toc"><a style="text-decoration:none;" href="#inversions">Specifying Chord Inversions in the ABC</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#largeprint">"Large Print" Edition Tune Notation</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#tabtranspose">Transposing Notation Independent of Tablature</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#learningtunes">Learning New Tunes Part-by-Part Using ABC</a></p>
@@ -3390,6 +3391,21 @@
             <p>If you wish to opt-out of the "expand to widest" layout for a specific tune, I've added a new first-class (starts with %%) ABC directive that can be put into any tune to force abcjs to use the original abcjs 6.2.2 layout calculation system:</p>
             <p class="code">%%noexpandtowidest</p>
             <p>Put this anywhere in a tune to use the original staff width calculation and layout solution for that tune. </p>
+            <hr class="hidden-print" id="inversions">
+            <h1 class="page_break_always">Specifying Chord Inversions in the ABC<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>If you want to specify that a chord in the ABC play with an inversion, you can append a : and then the letters a-n</p>
+            <p>a = no inversion</p>
+            <p>b = 1st inversion</p>
+            <p>c = 2nd inversion</p>
+            <p>d = 3nd inversion (octave up for simple 3-note chords)</p>
+            <p>etc.</p>
+            <p><strong>Example 1:</strong> E Minor chord, first inversion:</p>
+            <p class="code">"Em:b"</p>
+            <p><strong>Example 2:</strong> G chord, second inversion:</p>
+            <p class="code">"G:c"</p>
+            <p><strong>Example 3:</strong> D Major chord, one octave higher:</p>
+            <p class="code">"D:d"</p>
+            <p>The inversion values allow up to a full octave transform of the original chord, and then will wrap around to the original chord and subsequent inversions.</p> 
             <hr class="hidden-print" id="largeprint">
             <h1 class="page_break_always">"Large Print" Edition Tune Notation<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Most of the time, people have asked how to cram as many tunes on a page as possible, but sometimes you want to go the other way, make the notation larger.</p>
