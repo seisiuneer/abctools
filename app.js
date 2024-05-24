@@ -10504,10 +10504,10 @@ function ensureABCFile(filename) {
 		fileExtension = filename.substring(filename.lastIndexOf(".") + 1, filename.length);
 	}
 
-	if ((fileExtension.toLowerCase() == "abc") || (fileExtension.toLowerCase() == "txt") || (fileExtension.toLowerCase() == "xml") || (fileExtension.toLowerCase() == "musicxml") || (fileExtension.toLowerCase() == "mxl") || (fileExtension.toLowerCase() == "mid") || (fileExtension.toLowerCase() == "midi")){
+	if ((fileExtension.toLowerCase() == "abc") || (fileExtension.toLowerCase() == "txt") || (fileExtension.toLowerCase() == "xml") || (fileExtension.toLowerCase() == "musicxml") || (fileExtension.toLowerCase() == "mxl") || (fileExtension.toLowerCase() == "mid") || (fileExtension.toLowerCase() == "midi") || (fileExtension.toLowerCase() == "bww") || (fileExtension.toLowerCase() == "BWW")){
 		return true;
 	} else {
-		var thePrompt = "Sorry, only .abc, .txt, .xml, .musicxml, .mxl, .mid, or .midi files are supported.";
+		var thePrompt = "Sorry, only .abc, .txt, .xml, .musicxml, .mxl, .bww, .mid, or .midi files are supported.";
 		
 		// Center the string in the prompt
 		thePrompt = makeCenteredPromptString(thePrompt);
@@ -13200,10 +13200,10 @@ function AddABC(){
 
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Add ABC Tunes, Templates, and PDF Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#add_templates_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span><img id="moreaddabcsettings" class="moreaddabcsettings moresettingsbutton" src="img/settings.png" title="Add ABC Settings" onclick="Configure_AddABC_UI()"></img></p>';
 	modal_msg += '<div id="add-new-tune-dialog">';
-	modal_msg += '<p style="text-align:center;margin-top:28px;font-size:18px;">Add Your Own Tunes from an ABC, MusicXML, or MIDI File</p>';
+	modal_msg += '<p style="text-align:center;margin-top:28px;font-size:18px;">Add Your Own Tunes from an ABC, MusicXML, BWW, or MIDI File</p>';
 	modal_msg += '<p style="text-align:center;margin-top:16px;">';
 	//modal_msg += '';
-	modal_msg += '<label class="abcuploaddialog btn btn-top" for="addabcfilebutton" title="Adds tunes from an existing ABC, MusicXML, or MIDI file to the end of the ABC">Choose File to Add <input type="file" id="addabcfilebutton" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL,.mid,.MID,.midi,.MIDI" hidden/></label>';
+	modal_msg += '<label class="abcuploaddialog btn btn-top" for="addabcfilebutton" title="Adds tunes from an existing ABC, MusicXML, BWW, or MIDI file to the end of the ABC">Choose File to Add <input type="file" id="addabcfilebutton" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL,.mid,.MID,.midi,.MIDI,.bww,.BWW" hidden/></label>';
 	modal_msg += '<input class="dialogrestorebutton btn btn-restorebutton" id="dialogrestorebutton" onclick="RestoreSnapshot(false,true);" type="button" value="Restore from Snapshot" title="Replaces the contents of the ABC editor with a Snapshot saved in browser storage" style="display:none;">';
 	modal_msg += '<input class="dialogrestoreautobutton btn btn-restorebutton" id="dialogrestoreautobutton" onclick="RestoreSnapshot(true,true);" type="button" value="Restore from Auto-Snapshot" title="Replaces the contents of the ABC editor with an Auto-Snapshot saved in browser storage" style="display:none;">';
 	modal_msg += '</p>';
@@ -33670,6 +33670,20 @@ function isXML(theText){
     return false;
 }
 
+// 
+// Is a file BWW data
+//
+function isBWWFile(theText){
+
+   	var xs = theText.slice (0, 100);   // only look at the beginning of the file
+
+    if ((xs.indexOf ('Bagpipe Reader') != -1) || (xs.indexOf ('Bagpipe Music Writer') != -1)){ 
+    	return true; 
+    }
+
+    return false;
+}
+
 //
 // Inject a Q tag into the ABC
 //
@@ -34244,9 +34258,21 @@ function DoFileRead(file,doAppend){
 			}
 			else{
 
+
+			}
+
+			// Importing BWW?
+			if (isBWWFile(theText)){
+
+				// Keep track of actions
+				sendGoogleAnalytics("action","DoFileRead_BWW");
+
+				theText = convert_bww_to_abc(theText);
+
+			}
+			else{
 				// Keep track of actions
 				sendGoogleAnalytics("action","DoFileRead_ABC");
-
 			}
 
 			DoReadCommon(theText,doAppend);

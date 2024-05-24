@@ -230,7 +230,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#introduction">Introduction</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#getting_started">Getting Started</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#top_bar_buttons">Top Bar Buttons</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#open_dialog">Open an ABC, MusicXML, or MIDI File</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#open_dialog">Open an ABC, MusicXML, BWW, or MIDI File</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#add_templates_dialog">Adding Your Own Tunes to Your Tunebook</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#search_and_add_tunes">Search and Add Tunes</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#change_tune_order">Change the Order of the Tunes</a></p>
@@ -482,8 +482,9 @@
             <hr class="hidden-print" id="introduction">
             <h1 class="page_break_never">Introduction<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/qmeG2sRdEWQ" title="ABC Transcription Tools Webinar" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-            <p>ABC Transcription Tools is a free, web-based, open-source tool for converting music in ABC, MusicXML, and MIDI format to both standard notation and tablature for a wide variety of instruments.</p>
+            <p>ABC Transcription Tools is a free, web-based, open-source tool for converting music in ABC, MusicXML, BWW, and MIDI format to both standard notation and tablature for a wide variety of instruments.</p>
             <p>Imports and exports tunes in ABC, MusicXML, and MIDI formats.</p>
+            <p>Imports bagpipes tunes in BWW format.</p>
             <p>Search for ABC tunes by name from a built-in database of over 60,000 ABC tune settings and quickly add them to your tunebooks.</p>
             <p>Play your tunes with over 500 high-quality, sampled instruments.</p>
             <p>Use the Tune Trainer to practice your tunes with increasing tempos.</p>
@@ -522,11 +523,11 @@
             </div>
             <hr>
             <p><strong>Open:</strong></p>
-            <p>Opens an ABC, MusicXML, or MIDI file.</p>
-            <p>Details below in the <a href="#open_dialog">Open an ABC, MusicXML, or MIDI File</a> section.</p>
+            <p>Opens an ABC, MusicXML, BWW, or MIDI file.</p>
+            <p>Details below in the <a href="#open_dialog">Open an ABC, MusicXML, BWW, or MIDI File</a> section.</p>
             <hr>
             <p><strong>Add:</strong></p>
-            <p>Brings up a dialog where you can add your own ABC, MusicXML, or MIDI tunes, restore from previously saved Snapshots, re-order the tunes, add example ABC tunes, add useful ABC templates, or inject PDF tunebook feature commands.</p>
+            <p>Brings up a dialog where you can add your own ABC, MusicXML, BWW, or MIDI tunes, restore from previously saved Snapshots, re-order the tunes, add example ABC tunes, add useful ABC templates, or inject PDF tunebook feature commands.</p>
             <p>Details below in the <a href="#add_templates_dialog">Adding Your Own Tunes to Your Tunebook</a> section.</p>
             <hr>
             <p><strong>Save:</strong></p>
@@ -560,22 +561,23 @@
             <p>Click this to hide/show the header at the top and any visible controls below the ABC text area so you can have more room to work on your music.</p>
             <p class="page_break_always"></p>
             <hr class="hidden-print" id="open_dialog">
-            <h1 class="page_break_always">Open an ABC, MusicXML, or MIDI File<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <h1 class="page_break_always">Open an ABC, MusicXML, BWW, or MIDI File<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p><strong>Open:</strong></p>
-            <p>The tool supports reading ABC, MusicXML, and MIDI files.</p>
+            <p>The tool supports reading ABC, MusicXML, BWW, and MIDI files.</p>
             <p>The file of type being opened depends on the file extension:</p>
             <p>.abc or .txt - Opens an ABC file from your computer and loads it into the ABC Editor.</p>
-            <p>.xml, .musicxml, or .mxl - Imports a MusicXML file form your computer, converts it to ABC, and loads it into the ABC Editor.</p>
+            <p>.xml, .musicxml, or .mxl - Imports a MusicXML file from your computer, converts it to ABC, and loads it into the ABC Editor.</p>
+            <p>.bww - Imports a Bagpipes Reader/Player .bww file from your computer, converts it to ABC, and loads it into the ABC Editor.</p>
             <p>.mid, or .midi - Imports a MIDI file from your computer, converts it first to MusicXML, converts the MusicXML to ABC, and loads it into the ABC Editor.</p>
             <p>Details on MusicXML and MIDI import settings below in the <a style="text-decoration:none;" href="#musicxml">MusicXML/MIDI Import Settings</a> section.</p>
-            <p>On desktop browsers, you may also drag-and-drop a single ABC, MusicXML, or MIDI file on the editor area to add it.</p>
+            <p>On desktop browsers, you may also drag-and-drop a single ABC, MusicXML, BWW, or MIDI file on the editor area to add it.</p>
             <p>If you have unsaved work, you will be asked to confirm that you want to abandon your work in progress and load a new ABC file.</p>
             <hr class="hidden-print" id="add_templates_dialog">
             <h1 class="page_break_always h1wide">Adding Your Own Tunes to Your Tunebook<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p><strong>Add:</strong></p>
-            <p>Brings up a dialog where you can add your own ABC, MusicXML, or MIDI tunes, restore from previously saved Snapshots, re-order the tunes, delete tunes, add example ABC tunes, add useful ABC templates, or inject the commands for PDF tunebook features:</p>
+            <p>Brings up a dialog where you can add your own ABC, MusicXML, BWW, or MIDI tunes, restore from previously saved Snapshots, re-order the tunes, delete tunes, add example ABC tunes, add useful ABC templates, or inject the commands for PDF tunebook features:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/add_example_template_21.jpg"/>
+                <img class="image" loading="lazy" src="img/add_example_template_22.jpg"/>
             </div>
             <p>If you would like to only show the buttons for the features you commonly use and hid the others, click the controls icon at the top-right of the dialog to choose features of the dialog you would like to show/hide:</p>
             <div class="image_holder_p">
@@ -585,7 +587,7 @@
             <p>Your preferences are saved and restored the next time you use the tool.</p>
             <hr>
             <p><strong>Choose File to Add:</strong></p>
-            <p>Browse your system for an ABC, MusicXML, or MIDI file with one or more tunes to add to the end of the current tunes.</p>
+            <p>Browse your system for an ABC, MusicXML, BWW, or MIDI file with one or more tunes to add to the end of the current tunes.</p>
             <hr>
             <p><strong>Restore from Snapshot:</strong></p>
             <p>This button appears if there is a saved Snapshot available in browser storage.</p>
