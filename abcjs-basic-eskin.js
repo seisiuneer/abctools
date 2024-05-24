@@ -13181,45 +13181,59 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
 
       switch (theInversion){
         case "a":
+        case "0":
           theInversion = 0;
           break;
         case "b":
+        case "1":
           theInversion = 1;
           break;
         case "c":
+        case "2":
           theInversion = 2;
           break;
         case "d":
+        case "3":
           theInversion = 3;
           break;
         case "e":
+        case "4":
           theInversion = 4;
           break;
         case "f":
+        case "5":
           theInversion = 5;
           break;
         case "g":
+        case "6":
           theInversion = 6;
           break;
         case "h":
+        case "7":
           theInversion = 7;
           break;
         case "i":
+        case "8":
           theInversion = 8;
           break;
         case "j":
+        case "9":
           theInversion = 9;
           break;
         case "k":
+        case "10":
           theInversion = 10;
           break;
         case "l":
+        case "11":
           theInversion = 11;
           break;
         case "m":
+        case "12":
           theInversion = 12;
           break;
         case "n":
+        case "13":
           theInversion = 13;
           break;
         default:
