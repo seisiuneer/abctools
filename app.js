@@ -33677,7 +33677,9 @@ function isBWWFile(theText){
 
    	var xs = theText.slice (0, 100);   // only look at the beginning of the file
 
-    if ((xs.indexOf ('Bagpipe Reader') != -1) || (xs.indexOf ('Bagpipe Music Writer') != -1)){ 
+   	xs = xs.trim();
+
+    if ((xs.indexOf ('Bagpipe Reader') == 0) || (xs.indexOf ('Bagpipe Music Writer') == 0)){ 
     	return true; 
     }
 
