@@ -41,7 +41,7 @@
 <p><a href="https://wim.vree.org/js/xml2abc-js_index.html" target="_blank">xml2abc.js</a> is used to for converting MusicXML format to ABC.</p> 
 <p><a href="https://wim.vree.org/svgParse/abc2xml.html" target="_blank">abc2xml</a> is used for the ABC format to MusicXML transcoding web service.</p> 
 <p><a href="https://github.com/cuthbertLab/music21" target="_blank">Music21</a> is used for the MIDI to MusicXML transcoding Python web service.</p> 
-<p><a href="http://moinejf.free.fr/bww2abc" title="bww2abc" target="_blank">BWW2ABC</a> is used for BWW to ABC conversion under a GPL3+ license.</p>
+<p><a href="http://moinejf.free.fr/bww2abc" title="bww2abc" target="_blank">bww2abc</a> by Jean-Francois Moine is used for BWW to ABC conversion under a GPL3+ license.</p>
 <p><a href="https://stuk.github.io/jszip/" target="_blank">jszip.js</a> is used to unzip compressed .mxl files.</p>
 <p><a href="https://github.com/zhuker/lamejs" target="_blank">lame.js</a> is used to for converting .wav format to .mp3.</p>  
 <p><a href="https://github.com/swevans/unmute" target="_blank">umute.js</a> is used to for fixing the iOS tab switch audio mute issue.</p> 
