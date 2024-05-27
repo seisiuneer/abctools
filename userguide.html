@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
- 
+       
         <style>
 
 		p {
@@ -2181,16 +2181,31 @@
             </div>
             <hr class="hidden-print" id="advanced_injectbagpipedrones">
             <h1 class="page_break_always">Inject Great Highland Bagpipe Drones<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/BBHoSt2coCg" title="Great Highland Bagpipe Drones" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/PqHO54rLrJw" title="Great Highland Bagpipe Drones" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <div class="image_holder_p">
                 <img class="image" loading="lazy" src="img/inject_ghb_drones_2.jpg"/>
             </div>
             <p>Brings up a dialog where you can inject Great Highland Bagpipe drones as a second voice for a bagpipe score for the current tune or all tunes in the ABC work area.</p>
             <p>You may optionally show or hide the drone voice (default is hide).</p>
             <p>This feature works best with bagpipe tunes previously imported from BWW files.</p>
-            <p>The code attempts to create a long drone note using ABC ties (via the "-"character) that has the same duration as each line of the tune.</p>
             <p>The drone note samples are approximately 30 seconds in length and unfortunately abcjs does not support looping samples.</p>
             <p>To work around this limitation, the drones are re-articulated at the start of each line when a tune with drones is played.</p>
+            <hr>
+            <p><strong>Technical details on drone injection:</strong></p>
+            <p>The drones are injected by analyzing the original melody and creating a second voice with same number of lines as the original tune.</p>
+            <p>Each line in the drone voice contains a long drone note using ABC ties (via the "-" character) that has the same duration as each line of the tune.</p>
+            <p>The melody is shifted up one semitone in the melody voice declaration.</p>
+            <p class="code">% Transpose the melody up one semitone<br/>K:Hp exp ^f ^c transpose=1</p>
+            <p>The tuning of the melody and drones is done using the following ABC command:</p>
+            <p class="code">% Adjust the tuning from A:440 to A:480<br/>%voice_tuning_cents 48 148</p>
+            <p>The drone hiding is done using the following ABC commands to put both voices on one staff:</p>
+            <p class="code">% Combine the two voices on one staff<br/>%%score (1 2)</p>
+            <p>In the voice declarations for the drones, the voice is set to be transparent:</p>
+            <p class="code">% Hide the drone notes<br/>%%voicecolor transparent</p>
+            <p>The drones are shifted and transposed as required to have them play at the correct pitch and display in the same visual space as the melody as to not increase the staff height:</p>
+            <p class="code">% Transpose the drones as required to overlay the melody<br/>V:2 stems=down octave=4 transpose=-48<br/>%%MIDI transpose -48</p>
+            <p>Additionally, when playing, this command will limit the note highlighting to only the melody voice:</p>
+            <p class="code">% Only highlight the melody voice when playing<br/>%play_highlight_v1_only</p>
             <hr class="hidden-print" id="advanced_compliance">
             <h1 class="page_break_always">ABC Compliance Transform<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">
