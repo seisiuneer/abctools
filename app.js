@@ -325,6 +325,7 @@ var	gFeaturesShowTablatures = true;
 var gFeaturesShowExplorers = true;
 var gFeaturesShowTabButtons = true;
 var gFeaturesShowCompliance = false;
+var gFeaturesShowBagpipeDrones = true;
 
 // Force an update of local storage for the tab
 var gForceTabSave = false;
@@ -2649,7 +2650,7 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		// Strip out annotations
 		theTune = StripAnnotationsOne(theTune);
 
-		// Strip out atextnnotations
+		// Strip out text annotations
 		theTune = StripTextAnnotationsOne(theTune);
 
 		// Strip out chord markings
@@ -19151,6 +19152,303 @@ function DoComplianceTransform(doInverse){
 
 }
 
+//
+// Inject a second voice of drones for bagpipe scores
+//
+function InjectOneBagpipeDrones(theTune,droneStyle){
+
+	function StripCommentsOne(abcNotation) {
+	  return abcNotation
+	    .split('\n')          // Split the input into lines
+	    .filter(line => !line.trim().startsWith('%')) // Filter out lines that start with '%'
+	    .join('\n');          // Join the remaining lines back into a single string
+	}
+
+	function getLastTwoCharacters(line) {
+	    // Check if the line length is less than 2, return the line itself
+	    if (line.length < 2) {
+	        return line;
+	    }
+	    
+	    // Use slice to get the last two characters
+	    return line.slice(-2);
+	}
+
+	function getNumberInNote(str) {
+	    // Use a regular expression to find a trailing number
+	    const match = str.match(/(\d+)/);
+	    
+	    // If a match is found, return the number
+	    if (match) {
+	        return match[0];
+	    }
+
+	    // If no trailing number is found, return blank string
+	    return "";
+	}
+
+
+	function getTempoFromABC(abcString) {
+	  // Regular expression to match the Q: field
+	  const tempoRegex = /^Q:([^\n]*)/gm;
+	  const match = tempoRegex.exec(abcString);
+
+	  if (!match) {
+	    return null;  // Tempo not found
+	  }
+
+	  const tempoString = match[1].trim();
+
+	  // Try to parse the tempo in the form of Q:1/4=90
+	  const complexTempoRegex = /^(\d+\/\d+)?=*(\d+)$/;
+	  const complexMatch = complexTempoRegex.exec(tempoString);
+
+	  if (complexMatch) {
+	    const noteValue = complexMatch[1];
+	    const bpm = parseInt(complexMatch[2], 10);
+
+	    // If note value is specified, you can use it for further calculations
+	    // Here we simply return the bpm value
+	    return bpm;
+	  }
+
+	  // Try to parse the tempo in the form of Q:90
+	  const simpleTempoRegex = /^(\d+)$/;
+	  const simpleMatch = simpleTempoRegex.exec(tempoString);
+
+	  if (simpleMatch) {
+	    return parseInt(simpleMatch[1], 10);
+	  }
+
+	  // Handle other possible formats if needed
+
+	  return null;  // Unable to parse the tempo
+	}
+
+
+	function removeLastHyphen(str) {
+	    // Find the last occurrence of the hyphen
+	    const lastHyphenIndex = str.lastIndexOf('-');
+
+	    // If there's no hyphen, return the string as is
+	    if (lastHyphenIndex === -1) {
+	        return str;
+	    }
+
+	    // Remove the last hyphen by slicing the string
+	    return str.slice(0, lastHyphenIndex) + str.slice(lastHyphenIndex + 1);
+	}
+
+	function replaceNotes(abcLine, toInject) {
+	    // Regular expression to match notes in ABC notation
+	    // This covers A-G notes with optional sharps, flats, and octave indicators (',)
+	    // and optional duration (numbers)
+	    const noteRegex = /([A-Ga-gzZ][',]?[\d*\/]?[',\/>]?)(\d*)/g;
+
+	    return abcLine.replace(noteRegex, (match, note, duration) => {
+	        
+	        // Replace note with [A, A] and append the duration with a dash
+	        //console.log("match "+match+" note "+note+" duration "+duration);
+	        
+	        var postFix = getNumberInNote(match);
+
+	        if (match.indexOf("/")!= -1){
+	        	postFix += "/";
+	        }
+
+	        if (match.indexOf(">")!= -1){
+	        	postFix += ">";
+	        }
+
+	        var retVal = `${toInject}${duration ? duration : ''}${postFix}-`;
+
+	        //console.log("retVal "+retVal);
+
+	        return retVal;
+	    });
+	}
+
+	var theInjectedTune;
+
+	var theDroneNotes;
+
+	theInjectedTune = InjectStringBelowTuneHeader(theTune,"%\n%%staffsep 60\n%\n%%score 1 2\n%\n%play_highlight_v1_only\n%\nV:1 stems=down");				
+
+	theInjectedTune = theInjectedTune.trim();
+
+	theInjectedTune += "\n%\n% Injected drones\n%\n";
+									
+	theDroneNotes = "[A,,,, A,,,]";
+		 	
+	var theTempo = getTempoFromABC(theTune);
+
+	var theNotes = JustTheNotes(theTune);
+
+	// Strip all extra stuff that's not notes
+	theNotes = StripCommentsOne(theNotes);
+	theNotes = StripTextAnnotationsOne(theNotes);
+	theNotes = StripChordsOne(theNotes);
+	theNotes = StripTabOne(theNotes);	
+	theNotes = StripOrnamentsOne(theNotes);
+
+	var theLines = theNotes.split("\n");
+
+	var nLines = theLines.length;
+
+	var accum = "";
+
+	for (var i=0;i<nLines;++i){
+
+		var thisLine = theLines[i];
+
+		thisLine = replaceNotes(thisLine,theDroneNotes);
+
+		var doVoiceInject = true;
+
+		// Slower tunes need more frequent restarts
+		if (theTempo && (theTempo < 75)){
+			thisLine = removeLastHyphen(thisLine);
+			doVoiceInject = true;
+		}
+		else
+		if (i%2 == 1){
+			thisLine = removeLastHyphen(thisLine);
+			doVoiceInject = false;
+		}
+
+		if (doVoiceInject){
+			if (thisLine != ""){
+				thisLine = "V:2 stems=down octave=4 transpose=-48\n%%MIDI transpose -48\n" + thisLine;
+			}
+		}
+
+		accum += thisLine;
+
+		accum += "\n"
+
+	}
+
+	theInjectedTune += accum;
+
+	return theInjectedTune.trim();
+}
+
+function InjectBagpipeDrones(){
+	//console.log("InjectBagpipeDrones");
+
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
+
+	var theSelectedTuneIndex = findSelectedTuneIndex();
+
+	// Setup initial values
+	const theData = {
+	  	injectalltunes: true
+	};
+
+	var form = [
+	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Inject Great Highland Bagpipe Drones&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_injectbagpipedrones" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
+	  {html: '<p style="margin-top:24px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Clicking "OK" will inject Great Highland Bagpipe drones as a second voice of your ABC bagpipe tune(s).</p>'},  
+	  {html: '<p style="margin-top:24px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">This feature works best with bagpipe tunes previously imported from BWW files.</p>'},  
+	  {name: "          Inject all tunes", id: "injectalltunes", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+		
+		// Keep track of dialogs
+		sendGoogleAnalytics("action","InjectBagpipeDrones");
+	
+		if (!args.canceled){
+
+			var injectAllTunes = args.result.injectalltunes;
+
+			// Injecting all tunes?
+			if (injectAllTunes){
+
+				var nTunes = CountTunes();
+
+				var theNotes = gTheABC.value;
+
+				var output = FindPreTuneHeader(theNotes);
+
+				for (var i=0;i<nTunes;++i){
+
+					var theTune = getTuneByIndex(i);
+
+					theTune = InjectOneBagpipeDrones(theTune);
+
+					theTune = theTune.trim();
+
+					output += theTune + "\n\n";
+
+				}
+
+				// Stuff in the output
+				gTheABC.value = output;
+				
+				// Set dirty
+				gIsDirty = true;
+
+				// Force a redraw
+				RenderAsync(true,null,function(){
+
+					// Set the select point
+					gTheABC.selectionStart = 0;
+				    gTheABC.selectionEnd = 0;
+
+				    // Focus after operation
+				    FocusAfterOperation();
+
+				});
+			}
+			else{
+
+				// Try to find the current tune
+				var theSelectedABC = findSelectedTune();
+
+				if (theSelectedABC == ""){
+					// This should never happen
+					return;
+				}
+
+				var theInjectedTune = theSelectedABC;
+
+				theInjectedTune = InjectOneBagpipeDrones(theInjectedTune);
+
+				// Seeing extra line breaks after the inject
+				theInjectedTune = theInjectedTune.trim();
+
+				// Try and keep the same tune after the redraw for immediate play
+				var theSelectionStart = gTheABC.selectionStart;
+
+				// Stuff in the injected ABC
+				var theABC = gTheABC.value;
+				theABC = theABC.replace(theSelectedABC,theInjectedTune);
+
+				gTheABC.value = theABC;
+
+				// Set dirty
+				gIsDirty = true;
+
+				// Force a redraw of the tune
+				RenderAsync(true,theSelectedTuneIndex,function(){
+
+					// Set the select point
+					gTheABC.selectionStart = theSelectionStart;
+				    gTheABC.selectionEnd = theSelectionStart;
+
+				    // Focus after operation
+				    FocusAfterOperation();
+
+				});
+			}
+		}
+	});
+}
+
+
 function DoComplianceTransformDialog(){
 
 	var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">ABC Directive Compliance Transform&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_compliance" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
@@ -30836,6 +31134,12 @@ function GetInitialConfigurationSettings(){
 		gFeaturesShowCompliance = (val == "true");
 	}
 
+	gFeaturesShowBagpipeDrones = true;
+	val = localStorage.FeaturesShowBagpipeDrones;
+	if (val){
+		gFeaturesShowBagpipeDrones = (val == "true");
+	}
+
 	gFeaturesShowTabButtons = true;
 	val = localStorage.FeaturesShowTabButtons;
 	if (val){
@@ -31087,6 +31391,7 @@ function SaveConfigurationSettings(){
 		localStorage.FeaturesShowExport = gFeaturesShowExport;
 		localStorage.FeaturesShowCompliance = gFeaturesShowCompliance;
 		localStorage.FeaturesShowTabButtons = gFeaturesShowTabButtons;
+		localStorage.FeaturesShowBagpipeDrones = gFeaturesShowBagpipeDrones;
 
 		// Save Editor font size
 		localStorage.ABCEditorFontSize = gABCEditorFontsize;
@@ -32445,13 +32750,15 @@ function Configure_AdvancedControlsDialog_UI(){
 	var old_gFeaturesShowExplorers = gFeaturesShowExplorers;
 	var old_gFeaturesShowExport = gFeaturesShowExport;
 	var old_gFeaturesShowCompliance = gFeaturesShowCompliance;
+	var old_gFeaturesShowBagpipeDrones = gFeaturesShowBagpipeDrones;
 
 	// Setup initial values
 	const theData = {
 	  showtablatures: gFeaturesShowTablatures,
 	  showexplorers: gFeaturesShowExplorers,
 	  showexport: gFeaturesShowExport,
-	  showcompliance: gFeaturesShowCompliance
+	  showcompliance: gFeaturesShowCompliance,
+	  showbagpipedrones: gFeaturesShowBagpipeDrones
 	};
 
 	var form = [
@@ -32468,6 +32775,7 @@ function Configure_AdvancedControlsDialog_UI(){
 	}
 
 	form.push({name: "          Show ABC Private Directive Compliance Tools", id: "showcompliance", type:"checkbox", cssClass:"configure_ui_options_form_text"});
+	form.push({name: "          Show Great Highland Bagpipe Drones Tools", id: "showbagpipedrones", type:"checkbox", cssClass:"configure_ui_options_form_text"});
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 500, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 		
@@ -32481,11 +32789,15 @@ function Configure_AdvancedControlsDialog_UI(){
 
 			gFeaturesShowCompliance = args.result.showcompliance;
 
+			gFeaturesShowBagpipeDrones = args.result.showbagpipedrones;
+
 			// No change, just return;
 			if ((gFeaturesShowTablatures == old_gFeaturesShowTablatures) && 
 				(gFeaturesShowExplorers == old_gFeaturesShowExplorers) && 
 				(gFeaturesShowExport == old_gFeaturesShowExport) &&
-				(gFeaturesShowCompliance == old_gFeaturesShowCompliance)){
+				(gFeaturesShowCompliance == old_gFeaturesShowCompliance) &&
+				(gFeaturesShowBagpipeDrones == old_gFeaturesShowBagpipeDrones)
+				){
 				
 				//console.log("Configure_AdvancedControlsDialog_UI - No change in settings");
 
@@ -32609,9 +32921,19 @@ function AdvancedControlsDialog(){
 
 	}
 
-	// Showing compliance tools?
-	if (gFeaturesShowCompliance){
-		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="compliancetransform" class="advancedcontrols btn btn-injectcontrols" onclick="DoComplianceTransformDialog()" type="button" value="ABC Compliance Transform" title="Brings up a dialog where you can transforms any private tool-specific directives to/from ABC 2.1 compliant tool-specific directive interchange format"></p>';
+	// Showing compliance tools and bagpipes drones
+	if (gFeaturesShowCompliance && gFeaturesShowBagpipeDrones){
+		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="compliancetransform" class="advancedcontrols btn btn-injectcontrols" style="margin-right:24px;" onclick="DoComplianceTransformDialog()" type="button" value="ABC Compliance Transform" title="Brings up a dialog where you can transforms any private tool-specific directives to/from ABC 2.1 compliant tool-specific directive interchange format"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeDrones()" type="button" value="Inject Great Highland Bagpipe Drones" title="Injects Great Highland Bagpipe drones as a second voice for a bagpipe score"></p>';
+	}
+
+	// Showing only bagpipes drones tools?
+	if ((!gFeaturesShowCompliance) && gFeaturesShowBagpipeDrones){
+		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="injectbagpipesdrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeDrones()" type="button" value="Inject Bagpipe Drones" title="Injects drones as a second voice for a bagpipe score"></p>';
+	}
+
+	// Showing bagpipes drones tools?
+	if (gFeaturesShowCompliance && (!gFeaturesShowBagpipeDrones)){
+		modal_msg  += '<p style="text-align:center;margin-top:22px;"><p style="text-align:center;margin-top:22px;"><input id="compliancetransform" class="advancedcontrols btn btn-injectcontrols" onclick="DoComplianceTransformDialog()" type="button" value="ABC Compliance Transform" title="Brings up a dialog where you can transforms any private tool-specific directives to/from ABC 2.1 compliant tool-specific directive interchange format"></p>';
 	}
 
 

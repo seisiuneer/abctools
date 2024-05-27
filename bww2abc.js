@@ -498,7 +498,8 @@ function convert_bww_to_abc_single(theBWW) {
 		break
 	}
 
-	accum = accum +('L:1/8\nK:Hp exp ' + key)+ "\n"; 
+	accum = accum +('L:1/8\nK:Hp exp ' + key +" transpose=1")+ "\n"; 
+	accum = accum + "%voice_tuning_cents 48 148\n";
 
 	// Parse the music
 	for ( ; i < p.length; i++) {
@@ -585,11 +586,11 @@ function convert_bww_to_abc_single(theBWW) {
 				continue
 			case '^':
 				switch (t[1]) {
-				case 't':		// tie
+				case 't':		// tie 
 					if (t[2] == 's')	// new format
 						tie = true
-					if (t[2] != 'e')	// old format
-						o += '-'
+					// if (t[2] != 'e')	// MAE 26 May 2024 - Commented out, was causing playback issues
+					//  	o += '-'
 //					else
 //						conflict
 					break

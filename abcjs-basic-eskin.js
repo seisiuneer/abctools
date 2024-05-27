@@ -14625,6 +14625,7 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                 case 'scale':
                 case 'break':
                 case 'font':
+                case 'color': // MAE 26 May 2024
                   // These elements don't affect sound
                   break;
                 case 'midi':
@@ -16913,7 +16914,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
         // Force bagpipes to use mp3
         case "bagpipe":      // 109
-          url = "https://michaeleskin.com/abctools/soundfonts/bagpipe_5/";
+          url = "https://michaeleskin.com/abctools/soundfonts/bagpipe_6/";
           isOgg = false;
           isCustomInstrument = true;
           break;

@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-       
+ 
         <style>
 
 		p {
@@ -364,6 +364,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#smartdraw_export">SmartDraw Set List Builder</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#sort_dialog">Sort by Tag</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#incipits_builder">Incipits Builder</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#advanced_injectbagpipedrones">Inject Great Highland Bagpipe Drones</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#advanced_compliance">ABC Compliance Transform</a></p>
                 </div>
                     
@@ -565,10 +566,18 @@
             <p><strong>Open:</strong></p>
             <p>The tool supports reading ABC, MusicXML, BWW, and MIDI files.</p>
             <p>The file of type being opened depends on the file extension:</p>
-            <p>.abc or .txt - Opens an ABC file from your computer and loads it into the ABC Editor.</p>
-            <p>.xml, .musicxml, or .mxl - Imports a MusicXML file from your computer, converts it to ABC, and loads it into the ABC Editor.</p>
-            <p>.bww - Imports a Bagpipes Reader/Player .bww file from your computer, converts it to ABC, and loads it into the ABC Editor.</p>
-            <p>.mid, or .midi - Imports a MIDI file from your computer, converts it first to MusicXML, converts the MusicXML to ABC, and loads it into the ABC Editor.</p>
+            <p><strong>.abc or .txt</strong></p>
+            <p>Opens an ABC file from your computer and loads it into the ABC Editor.</p>
+            <p><strong>.xml, .musicxml, or .mxl</strong></p>
+            <p>Imports a MusicXML file from your computer, converts it to ABC, and loads it into the ABC Editor.</p>
+            <p><strong>.bww</strong></p>
+            <p>Imports a Bagpipes Reader/Player .bww file from your computer, converts it to ABC, and loads it into the ABC Editor.</p>
+            <p>Pitch is shifted to A=480 Hz using the following directive:</p>
+            <p class="code">%voice_tuning_cents 48 148</p>
+            <p>For more information on the %voice_tuning_cents directive, see the <a href="#voice_tuning">Setting the Tuning Offset for Individual Voices</a> section below.</p>
+            <p>If Great Highland Bagpipe drones are injected into an imported BWW tune as a second ABC voice using the <a href="#advanced_injectbagpipedrones">Inject Great Highland Bagpipe Drones</a> command on the <strong>More Tools</strong> dialog, they will also be automatically pitch shifted to A=480 Hz via the second value in the %voice_tuning_cents directive listed above.</p>
+            <p><strong>.mid, or .midi</strong></p>
+            <p>Imports a MIDI file from your computer, converts it first to MusicXML, converts the MusicXML to ABC, and loads it into the ABC Editor.</p>
             <p>Details on MusicXML and MIDI import settings below in the <a style="text-decoration:none;" href="#musicxml">MusicXML/MIDI Import Settings</a> section.</p>
             <p>On desktop browsers, you may also drag-and-drop a single ABC, MusicXML, BWW, or MIDI file on the editor area to add it.</p>
             <p>If you have unsaved work, you will be asked to confirm that you want to abandon your work in progress and load a new ABC file.</p>
@@ -1321,15 +1330,6 @@
             !p! GAG GAB | ABA ABd |</p>
             <p>When layering multiple identical but de-tuned voices, you may want to add !p! style dynamics to the start of each voice's ABC to reduce the overall mixed instrument volume.</p>
             <p>If there are also bass/chords specified in the ABC using "G" style annotation, the backup track will have a voice number one higher than the total number of melody voices.</p>
-            <p>To create a modern Scottish bagpipes tuning of 480 Hz from a bagpipe score based in A, you can add the following two annotations to the melody and drone voices:</p>
-            <p class="code">% Add this to the melody and drones voice descriptions<br/>
-                %%MIDI transpose 1<br/>
-                %<br/>
-                % Shift the tuning up to 480 Hz for all the voices<br/>
-                % Assumes the drum voices are using ^A for both bass and snare<br/>
-            %voice_tuning_cents 48 48 48 48</p>
-            <p>Here is an example, the tune "Cullen Bay" with the pitch at 480 Hz:</p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/PIZI12jPoc4" title="Cullen Bay at 480 Hz" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p> 
             <hr class="hidden-print" id="reverb">
             <h1 class="page_break_always h1wide">Adding Reverb When Playing Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/6Gy3Iiec3L8" title="Reverb Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -1663,7 +1663,7 @@
             <h1 class="page_break_always">More ABC Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/more_abc_tools_13.jpg"/>
+                <img class="image" loading="lazy" src="img/more_abc_tools_14.jpg"/>
             </div>
             <p>If you would like to only show the buttons for the features you commonly use and hide the others, click the controls icon at the top-right of the dialog to choose features of the dialog you would like to show/hide:</p>
             <div class="image_holder_p">
@@ -2162,7 +2162,7 @@
             <p style="margin-left:30px;"><strong>Sort by Rhythm (R:)</strong> - This sorts all the tunes by the rhythm value (case insensitive) found in the first R: tag in the tune.</p>
             <p style="margin-left:30px;"><strong>Sort by ID (X:)</strong> - This sorts all the tunes by the value found in X: tag in the tune.</p>
             <p style="margin-left:30px;"><strong>Renumber all X: Tags</strong> - This renumbers all the X: tags in the tunebook starting at 1.</p>
-             <hr class="hidden-print" id="incipits_builder">
+            <hr class="hidden-print" id="incipits_builder">
             <h1 class="page_break_always">Incipits Builder<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Brings up a dialog where you can easily format the ABC specifically for notation incipits PDF export with only a couple of bars per tune:</p>
             <div class="image_holder_p">
@@ -2179,6 +2179,18 @@
             <div class="image_holder_p">
                 <img class="image" loading="lazy" src="img/incipits_builder_example_2.jpg"/>
             </div>
+            <hr class="hidden-print" id="advanced_injectbagpipedrones">
+            <h1 class="page_break_always">Inject Great Highland Bagpipe Drones<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <div class="image_holder_p">
+                <img class="image" loading="lazy" src="img/inject_ghb_drones_1.jpg"/>
+            </div>
+            <p>Brings up a dialog where you can inject Great Highland Bagpipe drones as a second voice for a bagpipe score for the current tune or all tunes in the ABC work area.</p>
+            <p>This feature works best with bagpipe tunes previously imported from BWW files.</p>
+            <p>The code attempts to create a long drone note using ABC ties (via the "-"character) that has the same duration as one or more lines of the score, depending on the tempo.</p>
+            <p>The drone note samples are approximately 30 seconds in length and unfortunately abcjs does not support looping samples.</p>
+            <p>As a result, the drones need to be re-articulated periodically when a tune with drones is played.</p>
+            <p>If you find that the drones cut off early, find the "-" at the end of the line before the sound cuts off and delete it.</p>
+            <p>The visual results aren't pretty, but it usually does the job as far as playback.</p>
             <hr class="hidden-print" id="advanced_compliance">
             <h1 class="page_break_always">ABC Compliance Transform<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">
