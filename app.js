@@ -32928,7 +32928,7 @@ function AdvancedControlsDialog(){
 
 	// Showing only bagpipes drones tools?
 	if ((!gFeaturesShowCompliance) && gFeaturesShowBagpipeDrones){
-		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="injectbagpipesdrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeDrones()" type="button" value="Inject Bagpipe Drones" title="Injects drones as a second voice for a bagpipe score"></p>';
+		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeDrones()" type="button" value="Inject Great Highland Bagpipe Drones" title="Injects Great Highland Bagpipe drones as a second voice for a bagpipe score"></p>';
 	}
 
 	// Showing bagpipes drones tools?
