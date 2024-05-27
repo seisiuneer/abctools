@@ -19155,7 +19155,7 @@ function DoComplianceTransform(doInverse){
 //
 // Inject a second voice of drones for bagpipe scores
 //
-function InjectOneBagpipeDrones(theTune,hideDroneVoice){
+function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice){
 
 	function StripCommentsOne(abcNotation) {
 	  return abcNotation
@@ -19223,6 +19223,28 @@ function InjectOneBagpipeDrones(theTune,hideDroneVoice){
 
 	var theDroneNotes;
 
+	// Change the transpose and tuning based on the instrument style
+	switch (droneStyle){
+
+		case 0: // Great Highland Bagpipe at 480 Hz
+		 	break;
+
+		case 1: // Great Highland Bagpipe at 473 Hz (Concert Bb)
+			theTune = theTune.replaceAll("%voice_tuning_cents 48 148","%voice_tuning_cents 0 100");
+		 	break;
+
+		case 2: // Smallpipes in A
+			theTune = theTune.replaceAll("transpose=1","transpose=0");
+			theTune = theTune.replaceAll("%voice_tuning_cents 48 148","%voice_tuning_cents 0 0");
+		 	break;
+
+		case 3: // Smallpipes in D
+			theTune = theTune.replaceAll("transpose=1","transpose=0");
+			theTune = theTune.replaceAll("%voice_tuning_cents 48 148","%voice_tuning_cents -700 500");
+		 	break;
+
+	}
+
 	if (hideDroneVoice){
 		theInjectedTune = InjectStringBelowTuneHeader(theTune,"%\n%%score (1 2)\n%\n%play_highlight_v1_only\n%\nV:1 stems=down");
 	}
@@ -19289,21 +19311,31 @@ function InjectBagpipeDrones(){
 
 	var theSelectedTuneIndex = findSelectedTuneIndex();
 
+   	const drone_style_list = [
+	    { name: "  Great Highland Bagpipe - A=480 Hz (Pipe band high pitch)", id: 0 },
+	    { name: "  Great Highland Bagpipe - A=466 Hz (Standard B-flat)", id: 1 },
+	    { name: "  Smallpipes in A - (Standard A)", id: 2 },
+	    { name: "  Smallpipes in D - (Standard D)", id: 3 }
+  	];
+
 	// Setup initial values
 	const theData = {
 		hidedronevoice: true,
-	  	injectalltunes: true
+	  	injectalltunes: true,
+	  	dronestyle: 0
 	};
 
 	var form = [
 	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Inject Great Highland Bagpipe Drones&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_injectbagpipedrones" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
 	  {html: '<p style="margin-top:24px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Clicking "OK" will inject Great Highland Bagpipe drones as a second voice of your ABC bagpipe tune(s).</p>'},  
+	  {html: '<p style="margin-top:24px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Selecting the Smallpipes in A or Smallpipes in D option will transpose the melody and drones to that key.</p>'},  
 	  {html: '<p style="margin-top:24px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">This feature works best with bagpipe tunes previously imported from BWW files.</p>'},  
+	  {name: "Drone style to inject:", id: "dronestyle", type:"select", options:drone_style_list, cssClass:"configure_drones_select"},
 	  {name: "          Hide drone voice", id: "hidedronevoice", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	  {name: "          Inject all tunes", id: "injectalltunes", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 150, width: 675, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 		
 		// Keep track of dialogs
 		sendGoogleAnalytics("action","InjectBagpipeDrones");
@@ -19325,7 +19357,7 @@ function InjectBagpipeDrones(){
 
 					var theTune = getTuneByIndex(i);
 
-					theTune = InjectOneBagpipeDrones(theTune,args.result.hidedronevoice);
+					theTune = InjectOneBagpipeDrones(theTune,args.result.dronestyle,args.result.hidedronevoice);
 
 					theTune = theTune.trim();
 
@@ -19363,7 +19395,7 @@ function InjectBagpipeDrones(){
 
 				var theInjectedTune = theSelectedABC;
 
-				theInjectedTune = InjectOneBagpipeDrones(theInjectedTune,args.result.hidedronevoice);
+				theInjectedTune = InjectOneBagpipeDrones(theInjectedTune,args.result.dronestyle,args.result.hidedronevoice);
 
 				// Seeing extra line breaks after the inject
 				theInjectedTune = theInjectedTune.trim();

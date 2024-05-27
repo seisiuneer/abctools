@@ -355,7 +355,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#reverb_explorer">Reverb Explorer</a></p>
                 </div>
                 
-                <button class="accordion" title="Click to expand/collapse this section">Export All Tunes, Sort by Tag, Incipits Builder, and Other Utilities</button>
+                <button class="accordion" title="Click to expand/collapse this section">Export All Tunes, Sort by Tag, Incipits Builder, Drone Injection, and Other Utilities</button>
                 <div class="tocpanel">               
                     <p class="toc"><a style="text-decoration:none;" href="#export_all">Export All Tunes</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#export_all_as_mp3">Export All Tunes as Audio</a></p>
@@ -575,7 +575,7 @@
             <p>Pitch is shifted to A=480 Hz using the following directive:</p>
             <p class="code">%voice_tuning_cents 48 148</p>
             <p>For more information on the %voice_tuning_cents directive, see the <a href="#voice_tuning">Setting the Tuning Offset for Individual Voices</a> section below.</p>
-            <p>If Great Highland Bagpipe drones are injected into an imported BWW tune as a second ABC voice using the <a href="#advanced_injectbagpipedrones">Inject Great Highland Bagpipe Drones</a> command on the <strong>More Tools</strong> dialog, they will also be automatically pitch shifted to A=480 Hz via the second value in the %voice_tuning_cents directive listed above.</p>
+            <p>To inject drones into a tune imported from a BWW file, check out the <a href="#advanced_injectbagpipedrones">Inject Great Highland Bagpipe Drones</a> command on the <strong>More Tools</strong> dialog.</p>
             <p><strong>.mid, or .midi</strong></p>
             <p>Imports a MIDI file from your computer, converts it first to MusicXML, converts the MusicXML to ABC, and loads it into the ABC Editor.</p>
             <p>Details on MusicXML and MIDI import settings below in the <a style="text-decoration:none;" href="#musicxml">MusicXML/MIDI Import Settings</a> section.</p>
@@ -2182,10 +2182,12 @@
             <hr class="hidden-print" id="advanced_injectbagpipedrones">
             <h1 class="page_break_always">Inject Great Highland Bagpipe Drones<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/PqHO54rLrJw" title="Great Highland Bagpipe Drones" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-            <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/inject_ghb_drones_2.jpg"/>
-            </div>
             <p>Brings up a dialog where you can inject Great Highland Bagpipe drones as a second voice for a bagpipe score for the current tune or all tunes in the ABC work area.</p>
+            <div class="image_holder_p">
+                <img class="image" loading="lazy" src="img/inject_ghb_drones_3.jpg"/>
+            </div>
+            <p>You may choose between drones at A=480 Hz for the Great Highland Bagpipe (Pipe band high pitch), drones at A=466 Hz (standard B-flat), drones at standard A for Smallpipes in the key of A, or drones at standard D for Smallpipes in the key of D.</p>
+            <p>Choosing either of the Smallpipes options will automatically change the tuning of both the melody and drones to match the selected key.</p>
             <p>You may optionally show or hide the drone voice (default is hide).</p>
             <p>This feature works best with bagpipe tunes previously imported from BWW files.</p>
             <p>The drone note samples are approximately 30 seconds in length and unfortunately abcjs does not support looping samples.</p>
@@ -2193,6 +2195,7 @@
             <hr>
             <p><strong>Transposing the tunes and drones to different keys:</strong></p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/IuF_D6yrU3s" title="Tranposing BWW imported tunes for Smallpipes in A and D" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+            <p><strong>Note:</strong>This feature is now built into the tool, but the information may be useful for working with other pitched bagpipes.</p>
             <p>These instructions assume your instrument is at standard concert-pitch A=440 Hz tuning.</p> 
             <p><strong>Smallpipes in A</strong></p>
             <p>After injecting drones into an imported BWW file, make the following changes to the ABC:</p>
