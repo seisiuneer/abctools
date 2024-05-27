@@ -2192,7 +2192,8 @@
             <p>To work around this limitation, the drones are re-articulated at the start of each line when a tune with drones is played.</p>
             <hr>
             <p><strong>Transposing the tunes and drones to different keys:</strong></p>
-            <p>These instructions assume your instrument is at standard concert-pitch A=440 tuning.</p> 
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/IuF_D6yrU3s" title="Tranposing BWW imported tunes for Smallpipes in A and D" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+            <p>These instructions assume your instrument is at standard concert-pitch A=440 Hz tuning.</p> 
             <p><strong>Smallpipes in A</strong></p>
             <p>After injecting drones into an imported BWW file, make the following changes to the ABC:</p>
             <p class="code">% Change the following two lines near the top from:<br/>%<br/>K:Hp exp ^f ^c transpose=1<br/>%voice_tuning_cents 48 148<br/>%<br/>% to:<br/>%<br/>K:Hp exp ^f ^c transpose=0<br/>%voice_tuning_cents 0 0</p>
@@ -2206,7 +2207,7 @@
             <p>The melody is shifted up one semitone in the melody voice declaration.</p>
             <p class="code">% Transpose the melody up one semitone<br/>K:Hp exp ^f ^c transpose=1</p>
             <p>The tuning of the melody and drones is done using the following ABC command:</p>
-            <p class="code">% Adjust the tuning from A:440 to A:480<br/>%voice_tuning_cents 48 148</p>
+            <p class="code">% Adjust the tuning from A=440 Hz to A=480 Hz<br/>%voice_tuning_cents 48 148</p>
             <p>The drone hiding is done using the following ABC commands to put both voices on one staff:</p>
             <p class="code">% Combine the two voices on one staff<br/>%%score (1 2)</p>
             <p>In the voice declarations for the drones, the voice is set to be transparent:</p>
