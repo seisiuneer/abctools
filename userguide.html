@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-
+ 
         <style>
 
 		p {
@@ -2183,22 +2183,14 @@
             <h1 class="page_break_always">Inject Great Highland Bagpipe Drones<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/BBHoSt2coCg" title="Great Highland Bagpipe Drones" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/inject_ghb_drones_1.jpg"/>
+                <img class="image" loading="lazy" src="img/inject_ghb_drones_2.jpg"/>
             </div>
             <p>Brings up a dialog where you can inject Great Highland Bagpipe drones as a second voice for a bagpipe score for the current tune or all tunes in the ABC work area.</p>
+            <p>You may optionally show or hide the drone voice (default is hide).</p>
             <p>This feature works best with bagpipe tunes previously imported from BWW files.</p>
-            <p>The code attempts to create a long drone note using ABC ties (via the "-"character) that has the same duration as one or more lines of the score, depending on the tempo.</p>
+            <p>The code attempts to create a long drone note using ABC ties (via the "-"character) that has the same duration as each line of the tune.</p>
             <p>The drone note samples are approximately 30 seconds in length and unfortunately abcjs does not support looping samples.</p>
-            <p>As a result, the drones need to be re-articulated periodically when a tune with drones is played.</p>
-            <p>If you find that the drones cut off early, find the "-" at the end of the line before the sound cuts off and delete it.</p>
-            <p>If you want to hide the drone notes after injection, change the first instance of these two lines in the ABC:</p>
-            <p class="code">V:2 stems=down octave=4 transpose=-48<br/>%%MIDI transpose -48</p>
-            <p>to:
-            <p class="code">V:2 stems=down octave=4 transpose=-48<br/>%<br/>% Add this line:<br/>%%voicecolor transparent<br/>%<br/>%%MIDI transpose -48</p>
-            <p>The second voice staff lines will still be visible, but at least the drone notes are hidden.</p>
-            <p>I'll be the first to admit that the visual results aren't optimal.</p>
-            <p>Combining the two voices on one staff resulted in a problematic interaction between the two pitch shifts used by the melody and drones, so I was forced to render them as separate staves.</p>
-            <p>Perhaps the visuals can be improved in the future, but it usually produces good results far as playback of drones along with the tune.</p>
+            <p>To work around this limitation, the drones are re-articulated at the start of each line when a tune with drones is played.</p>
             <hr class="hidden-print" id="advanced_compliance">
             <h1 class="page_break_always">ABC Compliance Transform<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">

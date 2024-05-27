@@ -396,7 +396,7 @@ function convert_bww_to_abc_single(theBWW) {
 
 	var p = theBWW.split('\n');
 
-	accum = "X:1\n%%MIDI program 109\n";
+	accum = "X:1\n%%MIDI program 109\n%%staffsep 70\n";
 
 	// header
 	for (i = 0; i < p.length; i++) {

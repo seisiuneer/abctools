@@ -19155,23 +19155,13 @@ function DoComplianceTransform(doInverse){
 //
 // Inject a second voice of drones for bagpipe scores
 //
-function InjectOneBagpipeDrones(theTune,droneStyle){
+function InjectOneBagpipeDrones(theTune,hideDroneVoice){
 
 	function StripCommentsOne(abcNotation) {
 	  return abcNotation
 	    .split('\n')          // Split the input into lines
 	    .filter(line => !line.trim().startsWith('%')) // Filter out lines that start with '%'
 	    .join('\n');          // Join the remaining lines back into a single string
-	}
-
-	function getLastTwoCharacters(line) {
-	    // Check if the line length is less than 2, return the line itself
-	    if (line.length < 2) {
-	        return line;
-	    }
-	    
-	    // Use slice to get the last two characters
-	    return line.slice(-2);
 	}
 
 	function getNumberInNote(str) {
@@ -19186,45 +19176,6 @@ function InjectOneBagpipeDrones(theTune,droneStyle){
 	    // If no trailing number is found, return blank string
 	    return "";
 	}
-
-
-	function getTempoFromABC(abcString) {
-	  // Regular expression to match the Q: field
-	  const tempoRegex = /^Q:([^\n]*)/gm;
-	  const match = tempoRegex.exec(abcString);
-
-	  if (!match) {
-	    return null;  // Tempo not found
-	  }
-
-	  const tempoString = match[1].trim();
-
-	  // Try to parse the tempo in the form of Q:1/4=90
-	  const complexTempoRegex = /^(\d+\/\d+)?=*(\d+)$/;
-	  const complexMatch = complexTempoRegex.exec(tempoString);
-
-	  if (complexMatch) {
-	    const noteValue = complexMatch[1];
-	    const bpm = parseInt(complexMatch[2], 10);
-
-	    // If note value is specified, you can use it for further calculations
-	    // Here we simply return the bpm value
-	    return bpm;
-	  }
-
-	  // Try to parse the tempo in the form of Q:90
-	  const simpleTempoRegex = /^(\d+)$/;
-	  const simpleMatch = simpleTempoRegex.exec(tempoString);
-
-	  if (simpleMatch) {
-	    return parseInt(simpleMatch[1], 10);
-	  }
-
-	  // Handle other possible formats if needed
-
-	  return null;  // Unable to parse the tempo
-	}
-
 
 	function removeLastHyphen(str) {
 	    // Find the last occurrence of the hyphen
@@ -19272,7 +19223,12 @@ function InjectOneBagpipeDrones(theTune,droneStyle){
 
 	var theDroneNotes;
 
-	theInjectedTune = InjectStringBelowTuneHeader(theTune,"%\n%%staffsep 60\n%\n%%score 1 2\n%\n%play_highlight_v1_only\n%\nV:1 stems=down");				
+	if (hideDroneVoice){
+		theInjectedTune = InjectStringBelowTuneHeader(theTune,"%\n%%score (1 2)\n%\n%play_highlight_v1_only\n%\nV:1 stems=down");
+	}
+	else{
+		theInjectedTune = InjectStringBelowTuneHeader(theTune,"%\n%%score 1 2\n%\n%play_highlight_v1_only\n%\nV:1 stems=down");
+	}				
 
 	theInjectedTune = theInjectedTune.trim();
 
@@ -19280,8 +19236,6 @@ function InjectOneBagpipeDrones(theTune,droneStyle){
 									
 	theDroneNotes = "[A,,,, A,,,]";
 		 	
-	var theTempo = getTempoFromABC(theTune);
-
 	var theNotes = JustTheNotes(theTune);
 
 	// Strip all extra stuff that's not notes
@@ -19303,22 +19257,14 @@ function InjectOneBagpipeDrones(theTune,droneStyle){
 
 		thisLine = replaceNotes(thisLine,theDroneNotes);
 
-		var doVoiceInject = true;
+		thisLine = removeLastHyphen(thisLine);
+		if (thisLine != ""){
 
-		// Slower tunes need more frequent restarts
-		if (theTempo && (theTempo < 75)){
-			thisLine = removeLastHyphen(thisLine);
-			doVoiceInject = true;
-		}
-		else
-		if (i%2 == 1){
-			thisLine = removeLastHyphen(thisLine);
-			doVoiceInject = false;
-		}
-
-		if (doVoiceInject){
-			if (thisLine != ""){
-				thisLine = "V:2 stems=down octave=4 transpose=-48\n%%MIDI transpose -48\n" + thisLine;
+			if (hideDroneVoice){
+				thisLine = "V:2 stems=down octave=4 transpose=-48\n%%MIDI transpose -48\n%%voicecolor transparent\n" + thisLine;
+			}
+			else{
+				thisLine = "V:2 stems=down octave=4 transpose=-48\n%%MIDI transpose -48\n" + thisLine;				
 			}
 		}
 
@@ -19345,6 +19291,7 @@ function InjectBagpipeDrones(){
 
 	// Setup initial values
 	const theData = {
+		hidedronevoice: true,
 	  	injectalltunes: true
 	};
 
@@ -19352,6 +19299,7 @@ function InjectBagpipeDrones(){
 	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Inject Great Highland Bagpipe Drones&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_injectbagpipedrones" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
 	  {html: '<p style="margin-top:24px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Clicking "OK" will inject Great Highland Bagpipe drones as a second voice of your ABC bagpipe tune(s).</p>'},  
 	  {html: '<p style="margin-top:24px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">This feature works best with bagpipe tunes previously imported from BWW files.</p>'},  
+	  {name: "          Hide drone voice", id: "hidedronevoice", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	  {name: "          Inject all tunes", id: "injectalltunes", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	];
 
@@ -19377,7 +19325,7 @@ function InjectBagpipeDrones(){
 
 					var theTune = getTuneByIndex(i);
 
-					theTune = InjectOneBagpipeDrones(theTune);
+					theTune = InjectOneBagpipeDrones(theTune,args.result.hidedronevoice);
 
 					theTune = theTune.trim();
 
@@ -19415,7 +19363,7 @@ function InjectBagpipeDrones(){
 
 				var theInjectedTune = theSelectedABC;
 
-				theInjectedTune = InjectOneBagpipeDrones(theInjectedTune);
+				theInjectedTune = InjectOneBagpipeDrones(theInjectedTune,args.result.hidedronevoice);
 
 				// Seeing extra line breaks after the inject
 				theInjectedTune = theInjectedTune.trim();
