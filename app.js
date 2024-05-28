@@ -19364,6 +19364,35 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice){
 	return theInjectedTune.trim();
 }
 
+// Function to get the tune name from the first T: tag in an ABC file content
+function getTuneName(abcContent) {
+    // Regular expression to match the T: tag and capture the tune name
+    const tuneNameRegex = /^T:\s*(.*)$/m;
+
+    // Search for the first occurrence of the T: tag in the ABC content
+    const match = abcContent.match(tuneNameRegex);
+
+    // If a match is found, return the captured tune name, otherwise return null
+    return match ? match[1] : null;
+}
+
+// 
+// Warn if any drone injects failed due to not being BWW files
+//
+function ShowDronesInjectIssues(badTunes){
+
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Some Tunes Were Not Drone Injected</p>';
+
+		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;">One or more tunes were not originally imported from BWW and unable to have drones injected:</p>';
+
+		var nBadTunes = badTunes.length;
+		for (var i=0;i<nBadTunes;++i){
+			modal_msg += '<p style="font-size:12pt;line-height:10pt;">'+badTunes[i]+'</p>';
+		}
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 125, width: 650,  scrollWithPage: (AllowDialogsToScroll()) });
+}
+
 function InjectBagpipeDrones(){
 	//console.log("InjectBagpipeDrones");
 
@@ -19393,17 +19422,18 @@ function InjectBagpipeDrones(){
 
 	var form = [
 	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Inject Great Highland Bagpipe Drones&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_injectbagpipedrones" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
-	  {html: '<p style="margin-top:24px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Clicking "OK" will inject Great Highland Bagpipe drones as a second voice of your ABC bagpipe tune(s).</p>'},  
-	  {html: '<p style="margin-top:24px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Selecting an instrument in the key of A or D will transpose the melody and drones to the selected key when played.</p>'},  
-	  {html: '<p style="margin-top:24px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Border Pipes use pitch-shifted Great Highland Bagpipe sounds.</p>'},  
-	  {html: '<p style="margin-top:24px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Smallpipes, or Säckpipa change the melody sound to the selected instrument.</p>'},  
-	  {html: '<p style="margin-top:24px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">This feature works best with bagpipe tunes previously imported from BWW files.</p>'},  
+	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Clicking "OK" will inject Great Highland Bagpipe drones as a second voice of your ABC bagpipe tune(s).</p>'},  
+	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Selecting an instrument in the key of A or D will transpose the melody and drones to the selected key when played.</p>'},  
+	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Border Pipes use pitch-shifted Great Highland Bagpipe sounds.</p>'},  
+	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Smallpipes, or Säckpipa change the melody sound to the selected instrument.</p>'},  
+	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">This feature only works with bagpipe tunes originally imported from BWW files.</p>'},  
+	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Tunes previously injected with drones will be skipped.</p>'},  
 	  {name: "Drone style to inject:", id: "dronestyle", type:"select", options:drone_style_list, cssClass:"configure_drones_select"},
 	  {name: "          Hide drone voice", id: "hidedronevoice", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	  {name: "          Inject all tunes", id: "injectalltunes", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 125, width: 675, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 675, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 		
 		// Keep track of dialogs
 		sendGoogleAnalytics("action","InjectBagpipeDrones");
@@ -19411,6 +19441,10 @@ function InjectBagpipeDrones(){
 		if (!args.canceled){
 
 			var injectAllTunes = args.result.injectalltunes;
+
+			var errorList = [];
+
+			var doRenderAfterInject = false;
 
 			// Injecting all tunes?
 			if (injectAllTunes){
@@ -19425,7 +19459,25 @@ function InjectBagpipeDrones(){
 
 					var theTune = getTuneByIndex(i);
 
-					theTune = InjectOneBagpipeDrones(theTune,args.result.dronestyle,args.result.hidedronevoice);
+					// Validate the tune was imported from a BWW file
+					if (theTune.indexOf("% Converted to ABC using bww2abc") == -1){
+
+						var theName = getTuneName(theTune);
+						errorList.push(theName);
+
+					}
+					else{
+
+						doRenderAfterInject = true;
+
+						// Don't re-inject already injected tunes
+						if (theTune.indexOf("% Injected drones") == -1){
+
+							theTune = InjectOneBagpipeDrones(theTune,args.result.dronestyle,args.result.hidedronevoice);
+
+						}
+
+					}
 
 					theTune = theTune.trim();
 
@@ -19433,23 +19485,31 @@ function InjectBagpipeDrones(){
 
 				}
 
-				// Stuff in the output
-				gTheABC.value = output;
-				
-				// Set dirty
-				gIsDirty = true;
+				// Were any non BWW tunes detected?
+				if (errorList.length > 0){
+					ShowDronesInjectIssues(errorList);
+				}
 
-				// Force a redraw
-				RenderAsync(true,null,function(){
+				if (doRenderAfterInject){
 
-					// Set the select point
-					gTheABC.selectionStart = 0;
-				    gTheABC.selectionEnd = 0;
+					// Stuff in the output
+					gTheABC.value = output;
+					
+					// Set dirty
+					gIsDirty = true;
 
-				    // Focus after operation
-				    FocusAfterOperation();
+					// Force a redraw
+					RenderAsync(true,null,function(){
 
-				});
+						// Set the select point
+						gTheABC.selectionStart = 0;
+					    gTheABC.selectionEnd = 0;
+
+					    // Focus after operation
+					    FocusAfterOperation();
+
+					});
+				}
 			}
 			else{
 
@@ -19461,36 +19521,52 @@ function InjectBagpipeDrones(){
 					return;
 				}
 
-				var theInjectedTune = theSelectedABC;
+				// Validate the tune was imported from a BWW file
+				if (theSelectedABC.indexOf("% Converted to ABC using bww2abc") == -1){
 
-				theInjectedTune = InjectOneBagpipeDrones(theInjectedTune,args.result.dronestyle,args.result.hidedronevoice);
+					var theName = getTuneName(theSelectedABC);
+					errorList.push(theName);
+					ShowDronesInjectIssues(errorList);
 
-				// Seeing extra line breaks after the inject
-				theInjectedTune = theInjectedTune.trim();
+				}
+				else{
 
-				// Try and keep the same tune after the redraw for immediate play
-				var theSelectionStart = gTheABC.selectionStart;
+					var theInjectedTune = theSelectedABC;
 
-				// Stuff in the injected ABC
-				var theABC = gTheABC.value;
-				theABC = theABC.replace(theSelectedABC,theInjectedTune);
+					// Don't re-inject already injected tunes
+					if (theInjectedTune.indexOf("% Injected drones") == -1){
 
-				gTheABC.value = theABC;
+						theInjectedTune = InjectOneBagpipeDrones(theInjectedTune,args.result.dronestyle,args.result.hidedronevoice);
 
-				// Set dirty
-				gIsDirty = true;
+					}
 
-				// Force a redraw of the tune
-				RenderAsync(true,theSelectedTuneIndex,function(){
+					// Seeing extra line breaks after the inject
+					theInjectedTune = theInjectedTune.trim();
 
-					// Set the select point
-					gTheABC.selectionStart = theSelectionStart;
-				    gTheABC.selectionEnd = theSelectionStart;
+					// Try and keep the same tune after the redraw for immediate play
+					var theSelectionStart = gTheABC.selectionStart;
 
-				    // Focus after operation
-				    FocusAfterOperation();
+					// Stuff in the injected ABC
+					var theABC = gTheABC.value;
+					theABC = theABC.replace(theSelectedABC,theInjectedTune);
 
-				});
+					gTheABC.value = theABC;
+
+					// Set dirty
+					gIsDirty = true;
+
+					// Force a redraw of the tune
+					RenderAsync(true,theSelectedTuneIndex,function(){
+
+						// Set the select point
+						gTheABC.selectionStart = theSelectionStart;
+					    gTheABC.selectionEnd = theSelectionStart;
+
+					    // Focus after operation
+					    FocusAfterOperation();
+
+					});
+				}
 			}
 		}
 	});
