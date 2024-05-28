@@ -19233,12 +19233,12 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice){
 			theTune = theTune.replaceAll("%voice_tuning_cents 48 148","%voice_tuning_cents 0 100");
 		 	break;
 
-		case 2: // Smallpipes in A
+		case 2: // Border pipes in A
 			theTune = theTune.replaceAll("transpose=1","transpose=0");
 			theTune = theTune.replaceAll("%voice_tuning_cents 48 148","%voice_tuning_cents 0 0");
 		 	break;
 
-		case 3: // Smallpipes in D
+		case 3: // Border pipes in D
 			theTune = theTune.replaceAll("transpose=1","transpose=0");
 			theTune = theTune.replaceAll("%voice_tuning_cents 48 148","%voice_tuning_cents -700 500");
 		 	break;
@@ -19314,8 +19314,8 @@ function InjectBagpipeDrones(){
    	const drone_style_list = [
 	    { name: "  Great Highland Bagpipe - A=480 Hz (Pipe band high pitch)", id: 0 },
 	    { name: "  Great Highland Bagpipe - A=466 Hz (Standard B-flat)", id: 1 },
-	    { name: "  Smallpipes in A - (Standard A)", id: 2 },
-	    { name: "  Smallpipes in D - (Standard D)", id: 3 }
+	    { name: "  Border Pipes in A - (Standard A)", id: 2 },
+	    { name: "  Border Pipes in D - (Standard D)", id: 3 }
   	];
 
 	// Setup initial values
@@ -19328,7 +19328,7 @@ function InjectBagpipeDrones(){
 	var form = [
 	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Inject Great Highland Bagpipe Drones&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_injectbagpipedrones" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
 	  {html: '<p style="margin-top:24px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Clicking "OK" will inject Great Highland Bagpipe drones as a second voice of your ABC bagpipe tune(s).</p>'},  
-	  {html: '<p style="margin-top:24px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Selecting the Smallpipes in A or Smallpipes in D option will transpose the melody and drones to that key.</p>'},  
+	  {html: '<p style="margin-top:24px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Selecting the Border Pipes in A or Border Pipes in D option will transpose the melody and drones to that key.</p>'},  
 	  {html: '<p style="margin-top:24px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">This feature works best with bagpipe tunes previously imported from BWW files.</p>'},  
 	  {name: "Drone style to inject:", id: "dronestyle", type:"select", options:drone_style_list, cssClass:"configure_drones_select"},
 	  {name: "          Hide drone voice", id: "hidedronevoice", type:"checkbox", cssClass:"configure_injectdrones_form_text"},

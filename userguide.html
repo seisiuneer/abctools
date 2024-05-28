@@ -2184,10 +2184,10 @@
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/fDY_L93-sAM" title="Great Highland Bagpipe Drones Injection" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p>Brings up a dialog where you can inject Great Highland Bagpipe drones as a second voice for a bagpipe score for the current tune or all tunes in the ABC work area.</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/inject_ghb_drones_3.jpg"/>
+                <img class="image" loading="lazy" src="img/inject_ghb_drones_4.jpg"/>
             </div>
-            <p>You may choose between drones at A=480 Hz for the Great Highland Bagpipe (Pipe band high pitch), drones at A=466 Hz (standard B-flat), drones at standard A for Smallpipes in the key of A, or drones at standard D for Smallpipes in the key of D.</p>
-            <p>Choosing either of the Smallpipes options will automatically change the tuning of both the melody and drones to match the selected key.</p>
+            <p>You may choose between drones at A=480 Hz for the Great Highland Bagpipe (Pipe band high pitch), drones at A=466 Hz (standard B-flat), drones at standard A for Border Pipes in the key of A, or drones at standard D for Border Pipes in the key of D.</p>
+            <p>Choosing either of the Border Pipes options will automatically change the tuning of both the melody and drones to match the selected key.</p>
             <p>You may optionally show or hide the drone voice (default is hide).</p>
             <p>This feature works best with bagpipe tunes previously imported from BWW files.</p>
             <p>The drone note samples are approximately 30 seconds in length and unfortunately abcjs does not support looping samples.</p>
@@ -2197,10 +2197,10 @@
             <p><strong>Note:</strong> This feature is now built into the tool, but the information may be useful for working with other pitched bagpipes.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/IuF_D6yrU3s" title="Tranposing BWW imported tunes for Smallpipes in A and D" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p>These instructions assume your instrument is at standard concert-pitch A=440 Hz tuning.</p> 
-            <p><strong>Smallpipes in A</strong></p>
+            <p><strong>Border Pipes in A</strong></p>
             <p>After injecting drones into an imported BWW file, make the following changes to the ABC:</p>
             <p class="code">% Change the following two lines near the top from:<br/>%<br/>K:Hp exp ^f ^c transpose=1<br/>%voice_tuning_cents 48 148<br/>%<br/>% to:<br/>%<br/>K:Hp exp ^f ^c transpose=0<br/>%voice_tuning_cents 0 0</p>
-            <p><strong>Smallpipes in D</strong></p>
+            <p><strong>Border Pipes in D</strong></p>
             <p>After injecting drones into an imported BWW file, make the following changes to the ABC:</p>
             <p class="code">% Change the following two lines near the top from:<br/>%<br/>K:Hp exp ^f ^c transpose=1<br/>%voice_tuning_cents 48 148<br/>%<br/>% to:<br/>%<br/>K:Hp exp ^f ^c transpose=0<br/>%voice_tuning_cents -700 500</p>
             <hr>
