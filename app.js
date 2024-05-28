@@ -19223,40 +19223,69 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice){
 
 	var theDroneNotes;
 
+	var postFix = "";
+
 	// Change the transpose and tuning based on the instrument style
 	switch (droneStyle){
 
 		case 0: // Great Highland Bagpipe at 480 Hz
+			theDroneNotes = "[A,,,, A,,,]";
 		 	break;
 
 		case 1: // Great Highland Bagpipe at 473 Hz (Concert Bb)
 			theTune = theTune.replaceAll("%voice_tuning_cents 48 148","%voice_tuning_cents 0 100");
+			theDroneNotes = "[A,,,, A,,,]";
 		 	break;
 
 		case 2: // Border pipes in A
 			theTune = theTune.replaceAll("transpose=1","transpose=0");
 			theTune = theTune.replaceAll("%voice_tuning_cents 48 148","%voice_tuning_cents 0 0");
+			theDroneNotes = "[A,,,, A,,,]";
 		 	break;
 
 		case 3: // Border pipes in D
 			theTune = theTune.replaceAll("transpose=1","transpose=0");
 			theTune = theTune.replaceAll("%voice_tuning_cents 48 148","%voice_tuning_cents -700 500");
+			theDroneNotes = "[A,,,, A,,,]";
+		 	break;
+
+		case 4: // Smallpipes in A
+			theTune = theTune.replaceAll("%%MIDI program 109","%%MIDI program 131");
+			theTune = theTune.replaceAll("transpose=1","transpose=0");
+			theTune = theTune.replaceAll("%voice_tuning_cents 48 148","%voice_tuning_cents 0 0");
+			theDroneNotes = "[A,,,, A,]";
+			postFix = " transpose=-7";
+		 	break;
+
+		case 5: // Smallpipes in D
+			theTune = theTune.replaceAll("%%MIDI program 109","%%MIDI program 130");
+			theTune = theTune.replaceAll("transpose=1","transpose=0");
+			theTune = theTune.replaceAll("%voice_tuning_cents 48 148","%voice_tuning_cents 0 500");
+			theDroneNotes = "[A,,,, A,]";
+			postFix = " transpose=-7";
+		 	break;
+
+		case 6: // Sackpipa
+			theTune = theTune.replaceAll("%%MIDI program 109","%%MIDI program 132");
+			theTune = theTune.replaceAll("transpose=1","transpose=0");
+			theTune = theTune.replaceAll("%voice_tuning_cents 48 148","%voice_tuning_cents 0 500");
+			theDroneNotes = "[A,,,, A,]";
+			postFix = " transpose=-7";
 		 	break;
 
 	}
 
 	if (hideDroneVoice){
-		theInjectedTune = InjectStringBelowTuneHeader(theTune,"%\n%%score (1 2)\n%\n%play_highlight_v1_only\n%\nV:1 stems=down");
+		theInjectedTune = InjectStringBelowTuneHeader(theTune,"%\n%%score (1 2)\n%\n%play_highlight_v1_only\n%\nV:1 stems=down"+postFix);
 	}
 	else{
-		theInjectedTune = InjectStringBelowTuneHeader(theTune,"%\n%%score 1 2\n%\n%play_highlight_v1_only\n%\nV:1 stems=down");
+		theInjectedTune = InjectStringBelowTuneHeader(theTune,"%\n%%score 1 2\n%\n%play_highlight_v1_only\n%\nV:1 stems=down"+postFix);
 	}				
 
 	theInjectedTune = theInjectedTune.trim();
 
 	theInjectedTune += "\n%\n% Injected drones\n%\n";
 									
-	theDroneNotes = "[A,,,, A,,,]";
 		 	
 	var theNotes = JustTheNotes(theTune);
 
@@ -19273,6 +19302,21 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice){
 
 	var accum = "";
 
+	switch (droneStyle){
+
+		case 0: // Great Highland Bagpipe at 480 Hz
+		case 1: // Great Highland Bagpipe at 473 Hz (Concert Bb)
+		case 2: // Border pipes in A
+		case 3: // Border pipes in D
+		 	break;
+
+		case 4: // Smallpipes in A
+		case 5: // Smallpipes in D
+		case 6: // Sackpipa
+			accum = "V:2\n%%MIDI program 109\n";
+		 	break;
+	}
+
 	for (var i=0;i<nLines;++i){
 
 		var thisLine = theLines[i];
@@ -19280,13 +19324,32 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice){
 		thisLine = replaceNotes(thisLine,theDroneNotes);
 
 		thisLine = removeLastHyphen(thisLine);
-		if (thisLine != ""){
 
-			if (hideDroneVoice){
-				thisLine = "V:2 stems=down octave=4 transpose=-48\n%%MIDI transpose -48\n%%voicecolor transparent\n" + thisLine;
-			}
-			else{
-				thisLine = "V:2 stems=down octave=4 transpose=-48\n%%MIDI transpose -48\n" + thisLine;				
+		if (thisLine != ""){
+			switch (droneStyle){
+
+				case 0: // Great Highland Bagpipe at 480 Hz
+				case 1: // Great Highland Bagpipe at 473 Hz (Concert Bb)
+				case 2: // Border pipes in A
+				case 3: // Border pipes in D
+					if (hideDroneVoice){
+						thisLine = "V:2 stems=down octave=4 transpose=-48\n%%MIDI transpose -48\n%%voicecolor transparent\n" + thisLine;
+					}
+					else{
+						thisLine = "V:2 stems=down octave=4 transpose=-48\n%%MIDI transpose -48\n" + thisLine;				
+					}
+				 	break;
+
+				case 4: // Smallpipes in A
+				case 5: // Smallpipes in D
+				case 6: // Sackpipa
+					if (hideDroneVoice){
+						thisLine = "V:2 stems=down octave=3 transpose=-36\n%%MIDI transpose -36\n%%voicecolor transparent\n" + thisLine;
+					}
+					else{
+						thisLine = "V:2 stems=down octave=3 transpose=-36\n%%MIDI transpose -36\n" + thisLine;				
+					}
+				 	break;
 			}
 		}
 
@@ -19315,7 +19378,10 @@ function InjectBagpipeDrones(){
 	    { name: "  Great Highland Bagpipe - A=480 Hz (Pipe band high pitch)", id: 0 },
 	    { name: "  Great Highland Bagpipe - A=466 Hz (Standard B-flat)", id: 1 },
 	    { name: "  Border Pipes in A - (Standard A)", id: 2 },
-	    { name: "  Border Pipes in D - (Standard D)", id: 3 }
+	    { name: "  Border Pipes in D - (Standard D)", id: 3 },
+	    { name: "  Smallpipes in A - (Standard A)", id: 4 },
+	    { name: "  Smallpipes in D - (Standard D)", id: 5 },
+	    { name: "  Swedish Säckpipa in D - (Standard D)", id: 6 }
   	];
 
 	// Setup initial values
@@ -19328,14 +19394,16 @@ function InjectBagpipeDrones(){
 	var form = [
 	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Inject Great Highland Bagpipe Drones&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_injectbagpipedrones" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
 	  {html: '<p style="margin-top:24px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Clicking "OK" will inject Great Highland Bagpipe drones as a second voice of your ABC bagpipe tune(s).</p>'},  
-	  {html: '<p style="margin-top:24px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Selecting the Border Pipes in A or Border Pipes in D option will transpose the melody and drones to that key.</p>'},  
+	  {html: '<p style="margin-top:24px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Selecting an instrument in the key of A or D will transpose the melody and drones to the selected key when played.</p>'},  
+	  {html: '<p style="margin-top:24px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Border Pipes use pitch-shifted Great Highland Bagpipe sounds.</p>'},  
+	  {html: '<p style="margin-top:24px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Smallpipes, or Säckpipa change the melody sound to the selected instrument.</p>'},  
 	  {html: '<p style="margin-top:24px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">This feature works best with bagpipe tunes previously imported from BWW files.</p>'},  
 	  {name: "Drone style to inject:", id: "dronestyle", type:"select", options:drone_style_list, cssClass:"configure_drones_select"},
 	  {name: "          Hide drone voice", id: "hidedronevoice", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	  {name: "          Inject all tunes", id: "injectalltunes", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 150, width: 675, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 125, width: 675, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 		
 		// Keep track of dialogs
 		sendGoogleAnalytics("action","InjectBagpipeDrones");
