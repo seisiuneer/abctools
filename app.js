@@ -19381,9 +19381,9 @@ function getTuneName(abcContent) {
 //
 function ShowDronesInjectIssues(badTunes){
 
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Some Tunes Were Not Drone Injected</p>';
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Some Tunes Were Not Injected</p>';
 
-		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;">One or more tunes were not originally imported from BWW and unable to have drones injected:</p>';
+		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;">One or more tunes were not originally imported from a BWW file and unable to have the chanter instrument and drones voice injected:</p>';
 
 		var nBadTunes = badTunes.length;
 		for (var i=0;i<nBadTunes;++i){
@@ -19406,11 +19406,11 @@ function InjectBagpipeDrones(){
    	const drone_style_list = [
 	    { name: "  Great Highland Bagpipe - A=480 Hz (Pipe band high pitch)", id: 0 },
 	    { name: "  Great Highland Bagpipe - A=466 Hz (Standard B-flat)", id: 1 },
-	    { name: "  Border Pipes in A - (Standard A)", id: 2 },
-	    { name: "  Border Pipes in D - (Standard D)", id: 3 },
-	    { name: "  Smallpipes in A - (Standard A)", id: 4 },
-	    { name: "  Smallpipes in D - (Standard D)", id: 5 },
-	    { name: "  Swedish Säckpipa in D - (Standard D)", id: 6 }
+	    { name: "  Border Pipes in A", id: 2 },
+	    { name: "  Border Pipes in D", id: 3 },
+	    { name: "  Smallpipes in A", id: 4 },
+	    { name: "  Smallpipes in D", id: 5 },
+	    { name: "  Swedish Säckpipa in D", id: 6 }
   	];
 
 	// Setup initial values
@@ -19421,14 +19421,14 @@ function InjectBagpipeDrones(){
 	};
 
 	var form = [
-	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Inject Great Highland Bagpipe Drones&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_injectbagpipedrones" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
+	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Inject Bagpipe Sounds into Imported BWW Tunes<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_injectbagpipedrones" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
+	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">This feature only works with bagpipe tunes originally imported from a BWW file.</p>'},  
 	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Clicking "OK" will inject Great Highland Bagpipe drones as a second voice of your ABC bagpipe tune(s).</p>'},  
 	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Selecting an instrument in the key of A or D will transpose the melody and drones to the selected key when played.</p>'},  
-	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Border Pipes use pitch-shifted Great Highland Bagpipe sounds.</p>'},  
+	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Border Pipes use pitch-shifted Great Highland Bagpipe for the melody sound.</p>'},  
 	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Smallpipes, or Säckpipa change the melody sound to the selected instrument.</p>'},  
-	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">This feature only works with bagpipe tunes originally imported from BWW files.</p>'},  
 	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">Tunes previously injected with drones will be skipped.</p>'},  
-	  {name: "Drone style to inject:", id: "dronestyle", type:"select", options:drone_style_list, cssClass:"configure_drones_select"},
+	  {name: "Bagpipe style to inject:", id: "dronestyle", type:"select", options:drone_style_list, cssClass:"configure_drones_select"},
 	  {name: "          Hide drone voice", id: "hidedronevoice", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	  {name: "          Inject all tunes", id: "injectalltunes", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	];
@@ -32899,7 +32899,7 @@ function Configure_AdvancedControlsDialog_UI(){
 	}
 
 	form.push({name: "          Show ABC Private Directive Compliance Tools", id: "showcompliance", type:"checkbox", cssClass:"configure_ui_options_form_text"});
-	form.push({name: "          Show Great Highland Bagpipe Drones Tools", id: "showbagpipedrones", type:"checkbox", cssClass:"configure_ui_options_form_text"});
+	form.push({name: "          Show Imported BWW Tunes Bagpipe Tools", id: "showbagpipedrones", type:"checkbox", cssClass:"configure_ui_options_form_text"});
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 500, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 		
@@ -33047,12 +33047,12 @@ function AdvancedControlsDialog(){
 
 	// Showing compliance tools and bagpipes drones
 	if (gFeaturesShowCompliance && gFeaturesShowBagpipeDrones){
-		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="compliancetransform" class="advancedcontrols btn btn-injectcontrols" style="margin-right:24px;" onclick="DoComplianceTransformDialog()" type="button" value="ABC Compliance Transform" title="Brings up a dialog where you can transforms any private tool-specific directives to/from ABC 2.1 compliant tool-specific directive interchange format"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeDrones()" type="button" value="Inject Great Highland Bagpipe Drones" title="Injects Great Highland Bagpipe drones as a second voice for a bagpipe score"></p>';
+		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="compliancetransform" class="advancedcontrols btn btn-injectcontrols" style="margin-right:24px;" onclick="DoComplianceTransformDialog()" type="button" value="ABC Compliance Transform" title="Brings up a dialog where you can transforms any private tool-specific directives to/from ABC 2.1 compliant tool-specific directive interchange format"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeDrones()" type="button" value="Inject Bagpipe Sounds into Imported BWW Tunes" title="Injects Great Highland Bagpipe drones as a second voice for a bagpipe score with many melody instrument options"></p>';
 	}
 
 	// Showing only bagpipes drones tools?
 	if ((!gFeaturesShowCompliance) && gFeaturesShowBagpipeDrones){
-		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeDrones()" type="button" value="Inject Great Highland Bagpipe Drones" title="Injects Great Highland Bagpipe drones as a second voice for a bagpipe score"></p>';
+		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeDrones()" type="button" value="Inject Bagpipe Sounds into Imported BWW Tunes" title="Injects Great Highland Bagpipe drones as a second voice for a bagpipe score with many melody instrument options"></p>';
 	}
 
 	// Showing bagpipes drones tools?
