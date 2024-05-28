@@ -33047,12 +33047,12 @@ function AdvancedControlsDialog(){
 
 	// Showing compliance tools and bagpipes drones
 	if (gFeaturesShowCompliance && gFeaturesShowBagpipeDrones){
-		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="compliancetransform" class="advancedcontrols btn btn-injectcontrols" style="margin-right:24px;" onclick="DoComplianceTransformDialog()" type="button" value="ABC Compliance Transform" title="Brings up a dialog where you can transforms any private tool-specific directives to/from ABC 2.1 compliant tool-specific directive interchange format"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeDrones()" type="button" value="Inject Bagpipe Sounds into Imported BWW Tunes" title="Injects Great Highland Bagpipe drones as a second voice for a bagpipe score with many melody instrument options"></p>';
+		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="compliancetransform" class="advancedcontrols btn btn-injectcontrols" style="margin-right:24px;" onclick="DoComplianceTransformDialog()" type="button" value="ABC Compliance Transform" title="Brings up a dialog where you can transforms any private tool-specific directives to/from ABC 2.1 compliant tool-specific directive interchange format"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeDrones()" type="button" value="Inject Bagpipe Sounds into Imported BWW Tunes" title="Injects Great Highland Bagpipe drones as a second voice for a bagpipe score with many chanter instrument options"></p>';
 	}
 
 	// Showing only bagpipes drones tools?
 	if ((!gFeaturesShowCompliance) && gFeaturesShowBagpipeDrones){
-		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeDrones()" type="button" value="Inject Bagpipe Sounds into Imported BWW Tunes" title="Injects Great Highland Bagpipe drones as a second voice for a bagpipe score with many melody instrument options"></p>';
+		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeDrones()" type="button" value="Inject Bagpipe Sounds into Imported BWW Tunes" title="Injects Great Highland Bagpipe drones as a second voice for a bagpipe score with many chanter instrument options"></p>';
 	}
 
 	// Showing bagpipes drones tools?
