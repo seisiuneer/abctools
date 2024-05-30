@@ -16914,7 +16914,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
         // Force bagpipes to use mp3
         case "bagpipe":      // 109
-          url = "https://michaeleskin.com/abctools/soundfonts/bagpipe_7/";
+          url = "https://michaeleskin.com/abctools/soundfonts/bagpipe_8/";
           isOgg = false;
           isCustomInstrument = true;
           break;
@@ -17663,14 +17663,139 @@ module.exports = pitchesToPerc;
   \*********************************/
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
+function extendAudioBufferIfRequired(audioContext, sound, response, duration){
+
+  //debugger;
+
+  // Only extend if using custom bagpipes samples, and only for drone notes
+  if (!gUseCustomGMSounds){
+
+    //console.log("Not using custom sounds, using original");
+    return response.audioBuffer;
+
+  }
+
+  //console.log("instrument "+response.instrument+" note "+response.name);
+
+  var processLoop = false;
+
+  // Restrict looping to bagpipe instruments
+  switch (response.instrument){
+
+    case "bagpipe":
+        switch (response.name){
+          case "A0":
+          case "A1":
+          case "A2":
+          case "A3":
+            processLoop = true;
+
+        }
+      break;
+
+  }
+
+  // Not a custom GHB drone note, return the original
+  if (!processLoop){
+    //console.log("using original")
+    return response.audioBuffer;
+  }
+  
+  //console.log("processing loop")
+
+  var originalBuffer = response.audioBuffer;
+
+  // Duplicate the buffer
+  var original_duration = originalBuffer.duration;
+
+  // Need to account for tuning since readout is faster if sound.cents > 0
+  if (sound.cents){
+
+    // Only need to lengthen buffers for positive cents 
+    if (sound.cents > 0){
+
+      //debugger;
+
+      var scale_factor = sound.cents / 1200;
+
+      //console.log("scale_factor "+scale_factor);
+
+      var octave_shift = Math.trunc(scale_factor);
+      
+      //console.log("octave_shift "+octave_shift);
+
+      var remaining_shift = sound.cents - (octave_shift * 1200);
+
+      //console.log("remaining_shift "+remaining_shift);
+
+      // Octaves are exponential 
+      var octave_shift_exp = (2**octave_shift);
+
+      //console.log("octave_shift_exp "+octave_shift_exp);
+
+      //console.log("duration before octave shift "+duration);
+
+      duration = duration * octave_shift_exp;
+
+      //console.log("duration after octave shift "+duration);
+     
+      duration = duration * (1 + (remaining_shift / 1200));
+
+      //console.log("duration after octave and partial shift "+duration);
+
+    }
+
+  }
+
+  if (original_duration >= duration){
+    return originalBuffer;
+  }
+
+  var nDuplicates = Math.ceil(duration/original_duration)+1;
+
+  // Desired length in seconds (e.g., extend the buffer to be twice as long)
+  const originalLength = originalBuffer.length;
+  const sampleRate = originalBuffer.sampleRate;
+  const newLength = originalLength * nDuplicates;
+
+  // Create a new AudioBuffer with the desired length
+  const numberOfChannels = originalBuffer.numberOfChannels;
+  const newBuffer = audioContext.createBuffer(
+    numberOfChannels,
+    newLength,
+    sampleRate
+  );
+
+  // Copy the data from the original buffer to the new buffer
+  for (let channel = 0; channel < numberOfChannels; channel++) {
+
+    const originalData = originalBuffer.getChannelData(channel);
+    const newData = newBuffer.getChannelData(channel);
+
+    // Make multiple copies if required
+    for (let i = 0; i < nDuplicates; i++) {
+      // Not all notes are exactly the same length, so for drones, only use 0.9 of the total length
+      newData.set(originalData, i * originalData.length);
+    }
+
+  }
+
+  return newBuffer;
+
+}
+
 var pitchToNoteName = __webpack_require__(/*! ./pitch-to-note-name */ "./src/synth/pitch-to-note-name.js");
 var centsToFactor = __webpack_require__(/*! ./cents-to-factor */ "./src/synth/cents-to-factor.js");
 function placeNote(outputAudioBuffer, sampleRate, sound, startArray, volumeMultiplier, ofsMs, fadeTimeSec, noteEndSec, debugCallback) {
+  
   // sound contains { instrument, pitch, volume, len, pan, tempoMultiplier
   // len is in whole notes. Multiply by tempoMultiplier to get seconds.
   // ofsMs is an offset to subtract from the note to line up programs that have different length onsets.
   var OfflineAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
   var len = sound.len * sound.tempoMultiplier;
+
+  //console.log("incoming len: "+len);
+
   if (ofsMs) len += ofsMs / 1000;
   len -= noteEndSec;
   if (len < 0) len = 0.005; // Have some small audible length no matter how short the note is.
@@ -17749,8 +17874,15 @@ function placeNote(outputAudioBuffer, sampleRate, sound, startArray, volumeMulti
 
   return noteBufferPromise.then(function (response) {
     // create audio buffer
+    //debugger; // MAE FOOFOO 29 May 2024
+
+    var source_buffer = response.audioBuffer;
+
+    source_buffer = extendAudioBufferIfRequired(offlineCtx,sound,response,len);
+
     var source = offlineCtx.createBufferSource();
-    source.buffer = response.audioBuffer;
+
+    source.buffer = source_buffer;
 
     // add gain
     // volume can be between 1 to 127. This translation to gain is just trial and error.

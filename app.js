@@ -19308,14 +19308,27 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice){
 		case 1: // Great Highland Bagpipe at 473 Hz (Concert Bb)
 		case 2: // Border pipes in A
 		case 3: // Border pipes in D
+			if (hideDroneVoice){
+				accum += "V:2 stems=down octave=4 transpose=-48\n%%MIDI program 109\n%%MIDI transpose -48\n%%voicecolor transparent\n";
+			}
+			else{
+				accum += "V:2 stems=down octave=4 transpose=-48\n%%MIDI program 109\n%%MIDI transpose -48\n";				
+			}
 		 	break;
 
 		case 4: // Smallpipes in A
 		case 5: // Smallpipes in D
 		case 6: // Sackpipa
-			accum = "V:2\n%%MIDI program 109\n";
+			if (hideDroneVoice){
+				accum += "V:2 stems=down octave=3 transpose=-36\n%%MIDI program 109\n%%MIDI transpose -36\n%%voicecolor transparent\n";
+			}
+			else{
+				accum += "V:2 stems=down octave=3 transpose=-36\n%%MIDI program 109\n%%MIDI transpose -36\n";				
+			}
 		 	break;
 	}
+
+	var injected_dynamics = false;
 
 	for (var i=0;i<nLines;++i){
 
@@ -19323,33 +19336,15 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice){
 
 		thisLine = replaceNotes(thisLine,theDroneNotes);
 
-		thisLine = removeLastHyphen(thisLine);
-
+		// Inject dynamics into the first line with notes
 		if (thisLine != ""){
-			switch (droneStyle){
 
-				case 0: // Great Highland Bagpipe at 480 Hz
-				case 1: // Great Highland Bagpipe at 473 Hz (Concert Bb)
-				case 2: // Border pipes in A
-				case 3: // Border pipes in D
-					if (hideDroneVoice){
-						thisLine = "V:2 stems=down octave=4 transpose=-48\n%%MIDI transpose -48\n%%voicecolor transparent\n" + thisLine;
-					}
-					else{
-						thisLine = "V:2 stems=down octave=4 transpose=-48\n%%MIDI transpose -48\n" + thisLine;				
-					}
-				 	break;
-
-				case 4: // Smallpipes in A
-				case 5: // Smallpipes in D
-				case 6: // Sackpipa
-					if (hideDroneVoice){
-						thisLine = "V:2 stems=down octave=3 transpose=-36\n%%MIDI transpose -36\n%%voicecolor transparent\n" + thisLine;
-					}
-					else{
-						thisLine = "V:2 stems=down octave=3 transpose=-36\n%%MIDI transpose -36\n" + thisLine;				
-					}
-				 	break;
+			if (!injected_dynamics){
+			
+				thisLine = "!mf! "+thisLine;
+			
+				injected_dynamics = true;
+			
 			}
 		}
 
