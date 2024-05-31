@@ -1282,8 +1282,6 @@
             <h1 class="page_break_always">Automatic Looping Bagpipe Drones<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>The custom bagpipe instruments have automatically looping drones when playing specific notes used for the drones.</p>
             <p>On these specific bagpipe instruments and notes, using the ABC "-" tie indicator after the note, you can create notes as long as you want and the tool will take care of extending the drone sound instrument sample as required to the full length of the note when playing.</p>
-            <p>Example:</p>
-            <p class="code">D,,8- | D,,8- | D,,8- | D,,8- |<br/>D,,8- | D,,8- | D,,8- | D,,8- |<br/>D,,8- | D,,8- | D,,8- | D,,8- |<br/>D,,8- | D,,8- | D,,8- | D,,8- |<br/></p>
             <hr>
             <p><strong>Great Highland Bagpipe</strong><br/>%%MIDI program 109</p>
             <p>Bass drone low volume:<br/>A,,,,</p>
@@ -1299,6 +1297,20 @@
             <p><strong>Scottish Smallpipes in A</strong><br/>%%MIDI program 131</p>
             <p><strong>Swedish Säckpipa in D</strong><br/>%%MIDI program 132</p>
             <p>Drones:<br/>D,,</p>
+            <hr>
+            <p style="text-align: center;"><strong>ABC Drone Voice Examples</strong></p>
+            <hr>
+            <p>A useful pattern is to create a dedicated second ABC voice just for the drones.</p>
+            <p>Here are a few examples assuming a 4/4 tune with four measures per staff:</p>
+            <hr>
+            <p><strong>Example 1 - Scottish Smallpipes</strong></p>
+            <p class="code">%<br/>% Setup a second voice for the drones<br/>V:2<br/>%<br/>% Select the Scottish Smallpipes in D<br/>%%MIDI program 130<br/>%<br/>D,,8- | D,,8- | D,,8- | D,,8- |<br/>D,,8- | D,,8- | D,,8- | D,,8- |<br/>D,,8- | D,,8- | D,,8- | D,,8- |<br/>D,,8- | D,,8- | D,,8- | D,,8- |<br/></p>
+            <hr>
+            <p><strong>Example 2 - Uilleann Pipes - Crowley-style Drones</strong></p>
+            <p class="code">%<br/>% Setup a second voice for the drones<br/>V:2<br/>%<br/>% Select the Uilleann Pipes<br/>%%MIDI program 129<br/>%<br/>D,8- | D,8- | D,8- | D,8- |<br/>D,8- | D,8- | D,8- | D,8- |<br/>D,8- | D,8- | D,8- | D,8- |<br/>D,8- | D,8- | D,8- | D,8- |<br/></p>
+            <hr>
+            <p><strong>Example 3 - Great Highland Bagpipe</strong></p>
+            <p class="code">%<br/>% Setup a second voice for the drones<br/>V:2<br/>%<br/>% Select the Great Highland Bagpipe<br/>%MIDI program 109<br/>%<br/>[A,,,, A,,,]8- | [A,,,, A,,,]8- | [A,,,, A,,,]8- | [A,,,, A,,,]8- |<br/>[A,,,, A,,,]8- | [A,,,, A,,,]8- | [A,,,, A,,,]8- | [A,,,, A,,,]8- |<br/>[A,,,, A,,,]8- | [A,,,, A,,,]8- | [A,,,, A,,,]8- | [A,,,, A,,,]8- |<br/>[A,,,, A,,,]8- | [A,,,, A,,,]8- | [A,,,, A,,,]8- | [A,,,, A,,,]8- |<br/></p>
             <hr>
             <p>The Great Highland Bagpipe drones loop seamlessly.</p>
             <p>All others re-articulate automatically approximately every 30 seconds with minimal disruption to the flow of the sound.</p>
