@@ -15525,10 +15525,10 @@ function CreateSynth(theABC) {
               "bagpipe":0,     // 109 
               "fiddle": 0,      // 110
               "melodic_tom": 0,  // 117
-              "uilleann": 50,    // 129
-              "smallpipesd": 50, // 130
-              "smallpipesa":50,  // 131
-              "sackpipa": 50,    // 132
+              "uilleann": 0,    // 129
+              "smallpipesd": 0, // 130
+              "smallpipesa":0,  // 131
+              "sackpipa": 0,    // 132
               "concertina": 50,  // 133
               "melodica": 50,    // 134
               "cajun": 50,       // 135
@@ -15544,10 +15544,10 @@ function CreateSynth(theABC) {
           }
           else{
             self.programOffsets = {
-              "uilleann": 50,    // 129
-              "smallpipesd": 50, // 130
-              "smallpipesa":50,  // 131
-              "sackpipa": 50,    // 132
+              "uilleann": 0,    // 129
+              "smallpipesd": 0, // 130
+              "smallpipesa":0,  // 131
+              "sackpipa": 0,    // 132
               "concertina": 50,  // 133
               "melodica": 50,    // 134
               "cajun": 50,       // 135
@@ -16780,9 +16780,6 @@ var getNote = function getNote(url, instrument, name, audioContext) {
       switch (instrument){
         case "dulcimer":    // 15
         case "accordion":   // 21
-        case "smallpipesd": // 130
-        case "smallpipesa": // 131
-        case "sackpipa":    // 132
         case "concertina":  // 133
         case "melodica":    // 134
         case "cajun":       // 135
@@ -16792,8 +16789,26 @@ var getNote = function getNote(url, instrument, name, audioContext) {
           isCustomInstrument = true;
           break;
 
+        case "smallpipesd": // 130
+          url = "https://michaeleskin.com/abctools/soundfonts/smallpipesd_1/";
+          isOgg = true;
+          isCustomInstrument = true;
+          break;
+
+        case "smallpipesa": // 131
+          url = "https://michaeleskin.com/abctools/soundfonts/smallpipesa_1/";
+          isOgg = true;
+          isCustomInstrument = true;
+          break;
+
+        case "sackpipa":    // 132
+          url = "https://michaeleskin.com/abctools/soundfonts/sackpipa_1/";
+          isOgg = true;
+          isCustomInstrument = true;
+          break;
+
         case "uilleann":    // 129 
-          url = "https://michaeleskin.com/abctools/soundfonts/uilleann_5/";
+          url = "https://michaeleskin.com/abctools/soundfonts/uilleann_6/";
           isOgg = true;
           isCustomInstrument = true;
           break;
@@ -16968,9 +16983,6 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
       // MAE 28 June 29023 - Override Celtic Sound instruments with my own
       switch (instrument){        
-        case "smallpipesd": // 130
-        case "smallpipesa": // 131
-        case "sackpipa":    // 132
         case "concertina":  // 133
         case "melodica":    // 134
         case "cajun":       // 135
@@ -16980,8 +16992,26 @@ var getNote = function getNote(url, instrument, name, audioContext) {
           isCustomInstrument = true;
           break;
 
+        case "smallpipesd": // 130
+          url = "https://michaeleskin.com/abctools/soundfonts/smallpipesd_1/";
+          isOgg = true;
+          isCustomInstrument = true;
+          break;
+
+        case "smallpipesa": // 131
+          url = "https://michaeleskin.com/abctools/soundfonts/smallpipesa_1/";
+          isOgg = true;
+          isCustomInstrument = true;
+          break;
+
+        case "sackpipa":    // 132
+          url = "https://michaeleskin.com/abctools/soundfonts/sackpipa_1/";
+          isOgg = true;
+          isCustomInstrument = true;
+          break;
+
         case "uilleann":    // 129 
-          url = "https://michaeleskin.com/abctools/soundfonts/uilleann_5/";
+          url = "https://michaeleskin.com/abctools/soundfonts/uilleann_6/";
           isOgg = true;
           isCustomInstrument = true;
           break;
@@ -17689,20 +17719,37 @@ function extendAudioBufferIfRequired(audioContext, sound, response, duration){
           case "A2":
           case "A3":
             processLoop = true;
+        }
+      break;
 
+    case "uilleann":
+        switch (response.name){
+          case "D3":
+          case "E3":
+            //console.log("looping Uilleann drones");
+            processLoop = true;
+        }
+      break;
+
+    case "smallpipesa":
+    case "smallpipesd":
+    case "sackpipa":
+        switch (response.name){
+          case "D2":
+            //console.log("looping Smallpipes or Sackpipa drones");
+            processLoop = true;
         }
       break;
 
   }
 
-  // Not a custom GHB drone note, return the original
+  // Not a custom drone note, return the original
   if (!processLoop){
     //console.log("using original")
     return response.audioBuffer;
   }
   
   //console.log("processing loop")
-
   var originalBuffer = response.audioBuffer;
 
   // Duplicate the buffer

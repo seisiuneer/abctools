@@ -264,10 +264,11 @@
                     <p class="toc"><a style="text-decoration:none;" href="#selecting_the_instruments_for_playback">Choosing the MIDI Soundfont and Instruments for Playback</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#general_midi_instrument_program_numbers">General MIDI Instrument Program Numbers</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#general_midi_percussion_map">General MIDI Drum Sound ABC Note Map</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#banjo_style">Using the Tenor Banjo (MIDI program #105) Instrument</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#bodhran_map">Using the Bodhran (MIDI program #117) Instrument</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#uilleann_map">Using the Uilleann Pipes (MIDI program #129) Instrument</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#marching_drums_map">Using the Marching Drums (MIDI program #142) Instrument</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#banjo_style">Using the Tenor Banjo (%%MIDI program 105) Instrument</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#bodhran_map">Using the Bodhran (%%MIDI program 117) Instrument</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#uilleann_map">Using the Uilleann Pipes (%%MIDI program 129) Instrument</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#looping_drones">Automatic Looping Bagpipe Drones</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#marching_drums_map">Using the Marching Drums (%%MIDI program 142) Instrument</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#voice_tuning">Setting the Tuning Offset for Individual Voices</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#reverb">Adding Reverb When Playing Tunes</a></p>
                 </div>
@@ -695,7 +696,7 @@
             <p>Valid values are: C, C#, Db, D, D#, Eb, E, F, F#, Gb, G, G#, Ab, A, A#, Bb, or B.</p>
             <p>If no pitch is specified, the default is A.</p>
             <p>Full details on the Bodhran ABC note-to-sound mapping are available in the following section:</p>
-            <p style="text-align: center;"><a href="#bodhran_map"><strong>Using the Bodhran (MIDI program #117) Instrument</strong></a></p>
+            <p style="text-align: center;"><a href="#bodhran_map"><strong>Using the Bodhran (%%MIDI program 117) Instrument</strong></a></p>
             <hr>
             <p><strong>Add Box Fingering Symbols Template:</strong></p>
             <p>Add a template with symbols for annotating box fingerings and tablature at the top of the ABC editor text.</p>
@@ -1048,7 +1049,7 @@
             </div>
             <p>Use program #128 (Percussion) on its own voice for MIDI click tracks.</p>
              <hr class="hidden-print" id="banjo_style">
-            <h1 class="page_break_always h1wide">Using the Tenor Banjo (MIDI program #105) Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <h1 class="page_break_always h1wide">Using the Tenor Banjo (%%MIDI program 105) Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>If %%MIDI program 105 (Banjo) is used in a tune, you may choose between one of five different custom Tenor Banjo sounds using one of the following comment-based annotations anywhere in the tune's ABC:</p>
             <p class=code>% Use the default banjo sound from the current soundfont<br/>
             %banjo_style 0<br/><br/>
@@ -1069,7 +1070,7 @@
             <p class="code">% Disable use of custom sounds for this tune:<br/>
             %use_custom_gm_sounds false</p>
             <hr class="hidden-print" id="bodhran_map">
-            <h1 class="page_break_always h1wide">Using the Bodhran (MIDI program #117) Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <h1 class="page_break_always h1wide">Using the Bodhran (%%MIDI program 117) Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/GTdzE90itkU" title="High and Low Pitch Bodhran Instrument Demos" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/5dLeBddFrPI" title="High and Low Pitch Bodhran Solo Instrument Demos" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/sfpJRgQPg7k" title="Melody Contour Tracking Example" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -1252,9 +1253,9 @@
                 %%MIDI program 117
             </p>
             <hr class="hidden-print" id="uilleann_map">
-            <h1 class="page_break_always h1wide">Using the Uilleann Pipes (MIDI program #129) Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <h1 class="page_break_always h1wide">Using the Uilleann Pipes (%%MIDI program 129) Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/nKMF4amtpio" title="Uilleann Pipes Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-            <p>The Uilleann pipes instrument, MIDI program #129, has chanter sounds over the range of ABC notes G, to D''.
+            <p>The Uilleann pipes instrument, %%MIDI program 129, has chanter sounds over the range of ABC notes G, to D''.
             <p>The notes from G, to ^C are a copy of G to ^c for automatic octave folding when playing tunes that would be on the G string on a fiddle.</p>
             <p>Two styles of drones and all available regulator pitches found on a full set are available on the following ABC notes:</p>
             <p class="code">
@@ -1277,9 +1278,33 @@
                 B,,</br/>
                 C,</br/>
             </p>
+            <hr class="hidden-print" id="looping_drones">
+            <h1 class="page_break_always">Automatic Looping Bagpipe Drones<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>The custom bagpipe instruments have automatically looping drones when playing specific notes.</p>
+            <p>On these specific bagpipe instruments and notes, using the ABC "-" tie indicator after the note, you can create notes as long as you want and the tool will take care of extending the drone sound instrument sample as required to the full length of the note when playing.</p>
+            <p>Example:</p>
+            <p class="code">D,,8- | D,,8- | D,,8- | D,,8- |<br/>D,,8- | D,,8- | D,,8- | D,,8- |<br/>D,,8- | D,,8- | D,,8- | D,,8- |<br/>D,,8- | D,,8- | D,,8- | D,,8- |<br/></p>
+            <hr>
+            <p><strong>Great Highland Bagpipe</strong><br/>%%MIDI program 109</p>
+            <p>Bass drone low volume:<br/>A,,,,</p>
+            <p>Tenor drone low volume:<br/>A,,,</p>
+            <p>Bass drone normal volume:<br/>A,,</p>
+            <p>Tenor drone normal volume:<br/>A,</p>
+            <hr>
+            <p><strong>Uilleann Pipes</strong><br/>%%MIDI program 129</p>
+            <p>Crowley-style drones:<br/>D,</p>
+            <p>Lynch-style drones:<br/>E,</p>
+            <hr>
+            <p><strong>Scottish Smallpipes in D</strong><br/>%%MIDI program 130</p>
+            <p><strong>Scottish Smallpipes in A</strong><br/>%%MIDI program 131</p>
+            <p><strong>Swedish Säckpipa in D</strong><br/>%%MIDI program 132</p>
+            <p>Drones:<br/>D,,</p>
+            <hr>
+            <p>The Great Highland Bagpipe drones loop seamlessly.</p>
+            <p>All others rearticulate automatically approximately every 30 seconds with minimal disruption to the flow of the sound.</p>
             <hr class="hidden-print" id="marching_drums_map">
-            <h1 class="page_break_always h1wide">Using the Marching Drums (MIDI program #142) Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>The Marching Drums instrument, MIDI program #142, has a wide variety of percussion sounds useful for creating marching band drum backing tracks.</p>
+            <h1 class="page_break_always h1wide">Using the Marching Drums (%%MIDI program 142) Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>The Marching Drums instrument, %%MIDI program 142, has a wide variety of percussion sounds useful for creating marching band drum backing tracks.</p>
             <p>Here is the map of MIDI note names to drum sounds:</p>
             <p class="code">
                 C,,,&nbsp;-&nbsp;^D,&nbsp;&nbsp;Bass Drum 1 at various pitches<br/>    
@@ -1402,7 +1427,7 @@
             <p>129: Uilleann -> 109: Bagpipe</p>
             <p>130: Smallpipes D -> 109: Bagpipe</p>
             <p>131: Smallpipes A -> 109: Bagpipe</p>
-            <p>132: Sackpipa -> 109: Bagpipe</p>
+            <p>132: Säckpipa -> 109: Bagpipe</p>
             <p>133: Concertina -> 22: Harmonica</p>
             <p>134: Melodica -> 22: Harmonica</p>
             <p>135: Cajun Accordion -> 21: Accordion</p>
