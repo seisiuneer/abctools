@@ -23563,7 +23563,7 @@ function ShowPlayerSettings(){
 	}
 
 	// Show the player settings
-	ConfigureToolSettingsFS(player_settings_callback);
+	ConfigurePlayerSettings(player_settings_callback);
 
 }
 
@@ -24599,7 +24599,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 
 		modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioOrImage();" type="button" value="Export Audio or Image" title="Brings up a dialog where you can save the tune in various audio and image formats">';
 
-		modal_msg += '<input id="abcplayer_settingsbutton" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ShowPlayerSettings();" type="button" value="Settings" title="Brings up the Player Instrument Settings dialog where you can select the instruments for playback">';
+		modal_msg += '<input id="abcplayer_settingsbutton" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ShowPlayerSettings();" type="button" value="Settings" title="Brings up the Player Instrument Settings dialog where you can select the default abcjs soundfont, MIDI instruments, and MIDI volumes to use when playing tunes">';
 
 		modal_msg += '</p>';
 
@@ -33671,13 +33671,12 @@ function AdvancedSettings(){
 }
 
 //
-// Limited configuration settings dialog for full screen view
-// Presents only instrument and volume related settings
+// Configure default instruments and volumes for the player
 //
-function ConfigureToolSettingsFS(player_callback) {
+function ConfigurePlayerSettings(player_callback) {
 
 	// Keep track of advanced controls dialog
-	sendGoogleAnalytics("dialog","ConfigureToolSettingsFS");
+	sendGoogleAnalytics("dialog","ConfigurePlayerSettings");
 
     var midi_program_list = [];
 
@@ -33728,7 +33727,6 @@ function ConfigureToolSettingsFS(player_callback) {
 	// Setup initial values
 	const theData = {
 		configure_soundfont: gDefaultSoundFont,
-		configure_inject_programs: bAlwaysInjectPrograms,
 		configure_melody_program: selectedMelodyProgram,
 		configure_bass_program: selectedBassProgram,
 		configure_chord_program: selectedChordProgram,
@@ -33776,8 +33774,6 @@ function ConfigureToolSettingsFS(player_callback) {
 				gSoundsCacheABCJS = {};
 
 			}
-
-			gAlwaysInjectPrograms = args.result.configure_inject_programs;
 
 			gTheMelodyProgram = args.result.configure_melody_program;
 			
@@ -33937,12 +33933,6 @@ function ConfigureToolSettings() {
 	// Keep track of advanced controls dialog
 	sendGoogleAnalytics("dialog","ConfigureToolSettings");
 
-    var midi_program_list = [];
-
-  	for (var i=0;i<=MIDI_PATCH_COUNT;++i){
-  		midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
-  	}
-
 	var theOldSaveLastAutoSnapShot = gSaveLastAutoSnapShot;
 
 	var theOldStaffSpacing = gStaffSpacing - STAFFSPACEOFFSET;
@@ -33953,53 +33943,15 @@ function ConfigureToolSettings() {
 
 	var theOldCapo = gCapo;
 
-	var theOldSoundFont = gDefaultSoundFont;
-
 	var theOldUseCustomGMSounds = gUseCustomGMSounds;
-
-	var bAlwaysInjectPrograms = gAlwaysInjectPrograms;
-
-	var theMelodyProgram = gTheMelodyProgram;
-
-	var selectedMelodyProgram;
-	if (theMelodyProgram == "mute"){
-		selectedMelodyProgram = 0;
-	}
-	else{
-		selectedMelodyProgram = parseInt(theMelodyProgram)+1;
-	}
-
-	var theChordProgram = gTheChordProgram;
-
-	var selectedChordProgram;
-	if (theChordProgram == "mute"){
-		selectedChordProgram = 0;
-	}
-	else{
-		selectedChordProgram = parseInt(theChordProgram)+1;
-	}
-
-	var theBassProgram = gTheBassProgram;
-
-	var selectedBassProgram;
-	if (theBassProgram == "mute"){
-		selectedBassProgram = 0;
-	}
-	else{
-		selectedBassProgram = parseInt(theBassProgram)+1;
-	}
-
-	var bAlwaysInjectVolumes = gAlwaysInjectVolumes;
-
-	var theBassVolume = gTheBassVolume;
-
-	var theChordVolume = gTheChordVolume;
-
-	var bOverridePlayMIDIParams = gOverridePlayMIDIParams;
 
 	var theOldAllowMIDIInput = gAllowMIDIInput;
 
 	var theOldFeaturesShowTabButtons = gFeaturesShowTabButtons;
+
+	var bAlwaysInjectPrograms = gAlwaysInjectPrograms;
+
+	var bAlwaysInjectVolumes = gAlwaysInjectVolumes;
 
 	// Setup initial values
 	const theData = {
@@ -34009,16 +33961,9 @@ function ConfigureToolSettings() {
 		configure_left_justify_titles: gForceLeftJustifyTitles,
 		configure_capo: gCapo,
 		configure_show_tab_names: gShowTabNames,
-		configure_soundfont: gDefaultSoundFont,
 		configure_use_custom_gm_sounds: gUseCustomGMSounds,
 		configure_inject_programs: bAlwaysInjectPrograms,
-		configure_melody_program: selectedMelodyProgram,
-		configure_bass_program: selectedBassProgram,
-		configure_chord_program: selectedChordProgram,
 		configure_inject_volumes: bAlwaysInjectVolumes,
-		configure_bass_volume: theBassVolume,
-		configure_chord_volume: theChordVolume,
-		configure_override_play_midi_params: bOverridePlayMIDIParams,
 		configure_auto_swing_hornpipes: gAutoSwingHornpipes,	  
 		configure_auto_swing_factor: gAutoSwingFactor,	
 		configure_allow_midi_input: gAllowMIDIInput,
@@ -34027,16 +33972,6 @@ function ConfigureToolSettings() {
 		configure_show_dgdae: gShowDGDAETab,
 		configure_show_cgda: gShowCGDATab,
 	};
-
- 	const sound_font_options = [
-	    { name: "  Fluid", id: "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/" },
-	    { name: "  Musyng Kite", id: "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/" },
-	    { name: "  FatBoy", id: "https://michaeleskin.com/abctools/soundfonts/fatboy_4/" },
- 	    { name: "  Canvas", id: "https://michaeleskin.com/abctools/soundfonts/canvas/" },
- 	    { name: "  MScore", id: "https://michaeleskin.com/abctools/soundfonts/mscore_2/" },
- 	    { name: "  Arachno", id: "https://michaeleskin.com/abctools/soundfonts/arachno_3/" },
-  	    { name: "  FluidHQ", id: "https://michaeleskin.com/abctools/soundfonts/fluidhq_1/" },
-	];
 
   	var form = [
 		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;">ABC Transcription Tools Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#settings_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
@@ -34057,16 +33992,10 @@ function ConfigureToolSettings() {
 		{name: "          Show DGDAE as a 5-string tab option (default is CGDAE)", id: "configure_show_dgdae", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "Stringed instrument capo fret postion:", id: "configure_capo", type:"number", cssClass:"configure_settings_form_text"},
 		{name: "    Show stringed instrument names on tablature (single-voice tunes only, not shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-		{name: "Default abcjs soundfont:", id: "configure_soundfont", type:"select", options:sound_font_options, cssClass:"configure_settings_select"}, 
+		{html: '<p style="text-align:center;"><input id="abcplayer_settingsbutton" style="margin-left:0px" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ConfigurePlayerSettings(null);" type="button" value="Select Default Player Instruments and Volumes" title="Brings up the Player Instrument Settings dialog where you can select the default abcjs soundfont, MIDI instruments, and MIDI volumes to use when playing tunes"></p>'},
 		{name: "    Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-		{name: "Default Melody MIDI program:", id: "configure_melody_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
-		{name: "Default Bass MIDI program:", id: "configure_bass_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
-		{name: "Default Chords MIDI program:", id: "configure_chord_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
 		{name: "            Use Default Bass/Chord volumes when playing tunes", id: "configure_inject_volumes", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-		{name: "Default Bass MIDI volume (0-127):", id: "configure_bass_volume", type:"number", cssClass:"configure_settings_form_text"},
-		{name: "Default Chords MIDI volume (0-127):", id: "configure_chord_volume", type:"number", cssClass:"configure_settings_form_text"},
-		{name: "            Override all MIDI programs and volumes in the ABC with the defaults when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "            Automatically swing Hornpipes when playing (enabled if R:Hornpipe is found in the tune)", id: "configure_auto_swing_hornpipes", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "Auto-swing scale factor (range is -0.9 to 0.9, default for Hornpipes is 0.25):", id: "configure_auto_swing_factor", type:"number", cssClass:"configure_settings_form_text"},
 	]);
@@ -34176,18 +34105,6 @@ function ConfigureToolSettings() {
 
 			gShowTabNames = args.result.configure_show_tab_names;
 
-			gDefaultSoundFont = args.result.configure_soundfont;
-
-			if (theOldSoundFont != gDefaultSoundFont ){
-
-				// Reset the current soundfont to the selected font
-				gTheActiveSoundFont = gDefaultSoundFont;
-
-				// Reset the abcjs sounds cache
-				gSoundsCacheABCJS = {};
-
-			}
-
 			gUseCustomGMSounds = args.result.configure_use_custom_gm_sounds;
 
 			// If changing the custom GM sounds setting, clear the abcjs sample cache
@@ -34198,79 +34115,6 @@ function ConfigureToolSettings() {
 			}
 
 			gAlwaysInjectPrograms = args.result.configure_inject_programs;
-
-			gTheMelodyProgram = args.result.configure_melody_program;
-			
-			gTheBassProgram = args.result.configure_bass_program;
-
-			gTheChordProgram = args.result.configure_chord_program;
-
-			if (gTheMelodyProgram == 0){
-				gTheMelodyProgram = "mute";
-			}
-			else{
-				gTheMelodyProgram--;
-			}
-
-			if (gTheMelodyProgram != "mute"){
-
-				// Sanity check the values
-				if (isNaN(parseInt(gTheMelodyProgram))){
-					gTheMelodyProgram = 0;
-				}
-
-				if (gTheMelodyProgram < 0){
-					gTheMelodyProgram = 0;
-				}
-
-				if (gTheMelodyProgram > MIDI_PATCH_COUNT){
-					gTheMelodyProgram = MIDI_PATCH_COUNT;
-				}
-			}
-
-			if (gTheBassProgram == 0){
-				gTheBassProgram = "mute";
-			}
-			else{
-				gTheBassProgram--;
-			}
-
-			if (gTheBassProgram != "mute"){
-
-				if (isNaN(parseInt(gTheBassProgram))){
-					gTheBassProgram = 0;
-				}
-
-				if (gTheBassProgram < 0){
-					gTheBassProgram = 0;
-				}
-
-				if (gTheBassProgram > MIDI_PATCH_COUNT){
-					gTheBassProgram = MIDI_PATCH_COUNT;
-				}
-			}	
-
-			if (gTheChordProgram == 0){
-				gTheChordProgram = "mute";
-			}
-			else{
-				gTheChordProgram--;
-			}
-
-			if (gTheChordProgram != "mute"){
-
-				if (isNaN(parseInt(gTheChordProgram))){
-					gTheChordProgram = 0;
-				}
-
-				if (gTheChordProgram < 0){
-					gTheChordProgram = 0;
-				}
-
-				if (gTheChordProgram > MIDI_PATCH_COUNT){
-					gTheChordProgram = MIDI_PATCH_COUNT;
-				}
-			}
 
 			if (gUseCustomGMSounds){
 
@@ -34294,36 +34138,6 @@ function ConfigureToolSettings() {
 
 			gAlwaysInjectVolumes = args.result.configure_inject_volumes;
 			
-			gTheBassVolume = args.result.configure_bass_volume;
-			
-			gTheChordVolume = args.result.configure_chord_volume;
-
-			if (isNaN(parseInt(gTheBassVolume))){
-				gTheBassVolume = 0;
-			}
-
-			if (gTheBassVolume < 0){
-				gTheBassVolume = 0;
-			}
-
-			if (gTheBassVolume > 127){
-				gTheBassVolume = 127;
-			}
-
-			if (isNaN(parseInt(gTheChordVolume))){
-				gTheChordVolume = 0;
-			}
-
-			if (gTheChordVolume < 0){
-				gTheChordVolume = 0;
-			}
-
-			if (gTheChordVolume > 127){
-				gTheChordVolume = 127;
-			}
-
-			gOverridePlayMIDIParams = args.result.configure_override_play_midi_params;
-
 			gAutoSwingHornpipes = args.result.configure_auto_swing_hornpipes;
 
 			// Sanity check the autoswing factor value

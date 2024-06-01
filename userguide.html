@@ -864,7 +864,8 @@
             <p><strong>Override all MIDI programs and volumes in the ABC with the defaults when playing tunes</strong></p> 
             <p>If you do this, the tune will be reloaded and will play with the new settings.</p>
             <p>If you want to no longer override the abcjs soundfont, MIDI instrument, and MIDI volume values already in the ABC for tunes, open this dialog and uncheck the box.</p>
-            <p>These values can also be set in the main <strong>Settings</strong> dialog.</p>      
+            <p>The <strong>Player Settings</strong> dialog is also available from the main <strong>Settings</strong> dialog.</p>  
+            <p>See <a href="#default_player_settings">Select Default Player Instruments and Volumes</a> below for full details on the values in this dialog.</p>    
             <hr>
             <p style="text-align: center;"><strong>Notes on Playing Selected Notes</strong></p>
             <p>The selected playback works with most tunes but there are a few exceptions:</p>
@@ -2315,7 +2316,7 @@
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_46.jpg"/>
+                <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_47.jpg"/>
             </div>
             <hr>
             <p><strong>Show instrument tablature button bar below ABC editor</strong> - If checked shows the instrument tablature button bar below the editor.</p>
@@ -2344,8 +2345,11 @@
             <hr>
             <p><strong>Show stringed instrument names on tablature (single-voice tunes only, not shown in the Player)</strong> - Hides/Shows the instrument names and capo settings on the tablature.</p>
             <p>At this time, instrument names below the tablature will only be displayed for single-voice tunes.</p>
-            <hr>
-            <p>The following controls select default MIDI soundfont, programs, and volumes to use for the Melody, Bass, and Chords:</p>
+            <hr id="default_player_settings">
+            <p>Click <strong>Select Default Player Instruments and Volumes</strong> to bring up a dialog where you can select default MIDI soundfont, programs, and volumes to use for the Melody, Bass, and Chords:</p>
+            <div class="image_holder_p">
+                <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_fs_1.jpg"/>
+            </div>
             <hr>
             <p><strong>Default abcjs soundfont:</strong> - Choose between the General MIDI soundfonts available to use by default when playing tunes:</p>
             <p>Fluid (fastest to load, but samples are limited to 3 seconds in length)<br/>
@@ -2361,22 +2365,11 @@
             <p>For more details on the soundfonts, visit: <a href="https://paulrosen.github.io/midi-js-soundfonts/" target="_blank">midi-js-soundfonts on GitHub</a></p>
             <p>Your default soundfont choice is saved in browser storage and restored the next time the tool is run.</p>
             <hr>
-            <p><strong>Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran</strong></p>
-            <p>If this is enabled (on by default), for all soundfonts, my custom sampled instruments for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran (remapped from Melodic Tom) will override the soundfont sounds.</p>
-            <hr>
-            <p><strong>Use Default Melody and Bass/Chord programs when playing tunes</strong></p>
-            <p>If enabled, will play tunes that don't have Melody or Bass/Chord programs already in the ABC with your preferred instrument sounds. </p>
-            <p>If a %%MIDI program, %%MIDI bassprog, or %%MIDI chordprog directive is already present in the tune when playing, it will take precedence over the default program values.</p>
-            <hr>
             <p><strong>Default Melody MIDI program</strong> - Select your default MIDI instrument for the Melody from the instrument selection menu.</p>
             <hr>
             <p><strong>Default Bass MIDI program</strong> - Select your default MIDI instrument for the Bass from the instrument selection menu.</p>
             <hr>
             <p><strong>Default Chords MIDI program</strong> - Select your default MIDI instrument for the Chords from the instrument selection menu.</p>
-            <hr>
-            <p><strong>Use Default Melody and Bass/Chord volumes when playing tunes</strong></p>
-            <p>If enabled, will play tunes that don't have Bass/Chord volumes already in the ABC with your preferred instrument volumes.</p>
-            <p>If a %%MIDI bassvol or %%MIDI chordvol directive is already present in the tune when playing, it will take precedence over the default volume values.</p>
             <hr>
             <p><strong>Default Bass MIDI volume (0-127)</strong> - Select your default MIDI volume for the Bass when playing backup patterns.</p>
             <hr>
@@ -2389,6 +2382,17 @@
             <p>For example, if you want to always use a Whistle sound for the Melody and a Piano sound for the Bass and Chords, set your default Melody instrument to Whistle and your default Bass and Chords instruments to Acoustic Grand Piano. Then enable <strong>Override all MIDI programs and volumes in the ABC when playing tunes</strong>.</p>
             <p>To mute the melody, select the Mute program.</p>
             <p>To mute the bass and chords, select the Mute program.</p>
+            <hr>
+            <p><strong>Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran</strong></p>
+            <p>If this is enabled (on by default), for all soundfonts, my custom sampled instruments for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran (remapped from Melodic Tom) will override the soundfont sounds.</p>
+            <hr>
+            <p><strong>Use Default Melody and Bass/Chord programs when playing tunes</strong></p>
+            <p>If enabled, will play tunes that don't have Melody or Bass/Chord programs already in the ABC with your preferred instrument sounds. </p>
+            <p>If a %%MIDI program, %%MIDI bassprog, or %%MIDI chordprog directive is already present in the tune when playing, it will take precedence over the default program values.</p>
+            <hr>
+            <p><strong>Use Default Bass/Chord volumes when playing tunes</strong></p>
+            <p>If enabled, will play tunes that don't have Melody or Bass/Chord volumes already in the ABC with your preferred instrument volumes. </p>
+            <p>If a %%MIDI bassvol, or %%MIDI chordvol directive is already present in the tune when playing, it will take precedence over the default volume values.</p>
             <hr>
             <p><strong>Changing the Melody Volume</strong></p>
             <p></p>
