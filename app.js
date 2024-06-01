@@ -23532,6 +23532,42 @@ function ToggleMetronome(){
 }
 
 //
+// Show the player settings, reload player if changes made
+//
+function ShowPlayerSettings(){
+
+	function player_settings_callback(doReload){
+
+		if (doReload){
+
+			gTheOKButton.click();
+
+			// Try to find the current tune
+			var theSelectedABC = getTuneByIndex(gPlayABCTuneIndex);
+
+			if (theSelectedABC == ""){
+				// This should never happen
+				return;
+			}
+
+			// Pre-process the ABC to inject any requested programs or volumes
+			theSelectedABC = PreProcessPlayABC(theSelectedABC);
+
+			setTimeout(function() {
+
+				// Launch the modified tune
+				PlayABCDialog(theSelectedABC,null,null,false,gUseWidePlayer);
+
+			},250);		
+		}
+	}
+
+	// Show the player settings
+	ConfigureToolSettingsFS(player_settings_callback);
+
+}
+
+//
 // Toggle wide player view
 //
 function ToggleWidePlayer(){
@@ -24562,6 +24598,8 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 		}
 
 		modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioOrImage();" type="button" value="Export Audio or Image" title="Brings up a dialog where you can save the tune in various audio and image formats">';
+
+		modal_msg += '<input id="abcplayer_settingsbutton" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ShowPlayerSettings();" type="button" value="Settings" title="Brings up the Player Instrument Settings dialog where you can select the instruments for playback">';
 
 		modal_msg += '</p>';
 
@@ -33636,7 +33674,7 @@ function AdvancedSettings(){
 // Limited configuration settings dialog for full screen view
 // Presents only instrument and volume related settings
 //
-function ConfigureToolSettingsFS() {
+function ConfigureToolSettingsFS(player_callback) {
 
 	// Keep track of advanced controls dialog
 	sendGoogleAnalytics("dialog","ConfigureToolSettingsFS");
@@ -33710,7 +33748,7 @@ function ConfigureToolSettingsFS() {
 	];
 
   	var form = [
-		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;">Player Instrument Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#settings_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;">Player Instrument Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#playing_your_tunes" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 		{html: '<p class="configure_settings_form_text_fs">The following values are used as the instrument and volume defaults if not already specified in a tune:</p>'},
 		{name: "Default abcjs soundfont:", id: "configure_soundfont", type:"select", options:sound_font_options, cssClass:"configure_settings_select_fs"}, 
 		{name: "Default Melody MIDI program:", id: "configure_melody_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
@@ -33867,13 +33905,25 @@ function ConfigureToolSettingsFS() {
 			// Update local storage
 			SaveConfigurationSettings();
 
+			// Need to reload player
+			if (player_callback){
+				player_callback(true);
+			}
+
 		}
 		else{
 
 		    // Focus after operation
 		    FocusAfterOperation();
 
+		    // No need to reload player
+		    if (player_callback){
+				player_callback(false);
+			}
+
+
 		}
+
 
 	});
 
@@ -36164,10 +36214,7 @@ function ShowHelp(){
 	   	   modal_msg  += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">In the ABC editor, click the Zoom-Out arrows at the top-right to view the notation full screen.</p>';
 	   	}	
 	   
-	   	modal_msg  += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Please visit my <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> page for complete instructions and demo videos on how to use the tools.</p>';
-	   	modal_msg  += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click the Player Instrument Settings button below to bring up a settings dialog where you can set default playback instruments, volumes, and overrides:</p>';	 
-
-		modal_msg += '<p style="text-align:center;"><input id="configuresettingsfromhelp" class="configuresettingsfromhelp button btn btn-configuresettingsfromhelp" onclick="ConfigureToolSettingsFS();" type="button" value="Player Instrument Settings" title="Brings up the Player Instrument Settings dialog"></p>';
+	   	modal_msg  += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Please visit the <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> page for complete instructions and demo videos on how to use the tools.</p>';
 
 		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
 	}

@@ -727,6 +727,18 @@ margin-left:24px;
 	}
 }
 
+#abcplayer_settingsbutton{
+height:42px;
+padding:12px;
+margin-left:24px;
+}
+
+@media (hover: hover) {
+	.abcplayer_settingsbutton:hover{
+	background: palegreen;
+	}
+}
+
 #abcplayer_trainer{
 	height:42px;
 	margin-top: 9px;
@@ -4158,7 +4170,7 @@ top:20px;
 
 .btn-exportaudiomidi{
   --color: black;
-  --background-color: lavender;
+  --background-color: #DCFFFF;
 
 }
 
