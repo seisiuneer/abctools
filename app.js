@@ -15303,9 +15303,62 @@ function CopyToClipboard(textToCopy) {
 //
 // Override MIDI program number directive 
 //
-function OverrideOneTuneMIDIParams(theTune, melodyProg, bassProg, chordProg, bassVol, chordVol){
+function OverrideOneTuneMIDIParams(theTune, soundFont, melodyProg, bassProg, chordProg, bassVol, chordVol){
 
 	var theOutput = theTune;
+
+	// Replace soundfont 
+
+	var theOldSoundFont = gTheActiveSoundFont;
+
+	searchRegExp = /%abcjs_soundfont .+\s*/gm
+
+	var soundfontRequested = theTune.match(searchRegExp);
+
+	if ((soundfontRequested) && (soundfontRequested.length > 0)){
+
+		// Map sound font to ABC name
+		var theSoundFont = "fluid";
+
+		if (soundFont.indexOf("FluidR3_GM")!=-1){
+			theSoundFont = "fluid";
+		}else
+		if (soundFont.indexOf("Musyng")!=-1){
+			theSoundFont = "musyng";
+		}else
+		if (soundFont.indexOf("fatboy")!=-1){
+			theSoundFont = "fatboy";
+		}else
+		if (soundFont.indexOf("canvas")!=-1){
+			theSoundFont = "canvas";
+		}else
+		if (soundFont.indexOf("mscore")!=-1){
+			theSoundFont = "mscore";
+		}else
+		if (soundFont.indexOf("arachno")!=-1){
+			theSoundFont = "arachno";
+		}else
+		if (soundFont.indexOf("fluidhq")!=-1){
+			theSoundFont = "fluidhq";
+		}
+
+		for (var i=0;i<soundfontRequested.length;++i){
+
+			theOutput = theOutput.replace(soundfontRequested[i].trim(),"%abcjs_soundfont "+theSoundFont);
+
+			if (theOldSoundFont != soundFont){
+
+				// Reset the current soundfont to the selected font
+				gTheActiveSoundFont = soundFont;
+
+				// Reset the abcjs sounds cache
+				gSoundsCacheABCJS = {};
+
+			}
+
+		}
+
+	}
 
 	// Replace melody programs
 	var searchRegExp = /%%MIDI program \d+\s*/gm
@@ -15377,6 +15430,8 @@ function OverrideOneTuneMIDIParams(theTune, melodyProg, bassProg, chordProg, bas
 		}
 
 	}
+
+	//console.log(theOutput);
 
 	return theOutput;
 	
@@ -24742,7 +24797,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 // Based on the global injection configuration, pre-process the %%MIDI directives in the ABC
 function PreProcessPlayABC(theTune){
 	
-	//debugger;
+	//console.log("PreProcessPlayABC");
 
 	// Override any ABC play values?
 
@@ -24751,7 +24806,7 @@ function PreProcessPlayABC(theTune){
 
 	if (gOverridePlayMIDIParams){
 
-		theTune = OverrideOneTuneMIDIParams(theTune, gTheMelodyProgram, gTheBassProgram, gTheChordProgram, gTheBassVolume, gTheChordVolume);
+		theTune = OverrideOneTuneMIDIParams(theTune, gDefaultSoundFont, gTheMelodyProgram, gTheBassProgram, gTheChordProgram, gTheBassVolume, gTheChordVolume);
 
 		bForceOverride = true;
 	}
@@ -33578,6 +33633,253 @@ function AdvancedSettings(){
 }
 
 //
+// Limited configuration settings dialog for full screen view
+// Presents only instrument and volume related settings
+//
+function ConfigureToolSettingsFS() {
+
+	// Keep track of advanced controls dialog
+	sendGoogleAnalytics("dialog","ConfigureToolSettingsFS");
+
+    var midi_program_list = [];
+
+  	for (var i=0;i<=MIDI_PATCH_COUNT;++i){
+  		midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
+  	}
+
+	var theOldSoundFont = gDefaultSoundFont;
+
+	var bAlwaysInjectPrograms = gAlwaysInjectPrograms;
+
+	var theMelodyProgram = gTheMelodyProgram;
+
+	var selectedMelodyProgram;
+	if (theMelodyProgram == "mute"){
+		selectedMelodyProgram = 0;
+	}
+	else{
+		selectedMelodyProgram = parseInt(theMelodyProgram)+1;
+	}
+
+	var theChordProgram = gTheChordProgram;
+
+	var selectedChordProgram;
+	if (theChordProgram == "mute"){
+		selectedChordProgram = 0;
+	}
+	else{
+		selectedChordProgram = parseInt(theChordProgram)+1;
+	}
+
+	var theBassProgram = gTheBassProgram;
+
+	var selectedBassProgram;
+	if (theBassProgram == "mute"){
+		selectedBassProgram = 0;
+	}
+	else{
+		selectedBassProgram = parseInt(theBassProgram)+1;
+	}
+
+	var theBassVolume = gTheBassVolume;
+
+	var theChordVolume = gTheChordVolume;
+
+	var bOverridePlayMIDIParams = gOverridePlayMIDIParams;
+
+	// Setup initial values
+	const theData = {
+		configure_soundfont: gDefaultSoundFont,
+		configure_inject_programs: bAlwaysInjectPrograms,
+		configure_melody_program: selectedMelodyProgram,
+		configure_bass_program: selectedBassProgram,
+		configure_chord_program: selectedChordProgram,
+		configure_bass_volume: theBassVolume,
+		configure_chord_volume: theChordVolume,
+		configure_override_play_midi_params: bOverridePlayMIDIParams,
+	};
+
+ 	const sound_font_options = [
+	    { name: "  Fluid", id: "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/" },
+	    { name: "  Musyng Kite", id: "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/" },
+	    { name: "  FatBoy", id: "https://michaeleskin.com/abctools/soundfonts/fatboy_4/" },
+ 	    { name: "  Canvas", id: "https://michaeleskin.com/abctools/soundfonts/canvas/" },
+ 	    { name: "  MScore", id: "https://michaeleskin.com/abctools/soundfonts/mscore_2/" },
+ 	    { name: "  Arachno", id: "https://michaeleskin.com/abctools/soundfonts/arachno_3/" },
+  	    { name: "  FluidHQ", id: "https://michaeleskin.com/abctools/soundfonts/fluidhq_1/" },
+	];
+
+  	var form = [
+		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;">Player Instrument Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#settings_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+		{html: '<p class="configure_settings_form_text_fs">The following values are used as the instrument and volume defaults if not already specified in a tune:</p>'},
+		{name: "Default abcjs soundfont:", id: "configure_soundfont", type:"select", options:sound_font_options, cssClass:"configure_settings_select_fs"}, 
+		{name: "Default Melody MIDI program:", id: "configure_melody_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
+		{name: "Default Bass MIDI program:", id: "configure_bass_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
+		{name: "Default Chords MIDI program:", id: "configure_chord_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
+		{name: "Default Bass MIDI volume (0-127):", id: "configure_bass_volume", type:"number", cssClass:"configure_settings_form_text_fs"},
+		{name: "Default Chords MIDI volume (0-127):", id: "configure_chord_volume", type:"number", cssClass:"configure_settings_form_text_fs"},
+		{html: '<p class="configure_settings_form_text_fs">Check the following box if you want the above values to override any instruments or volumes already specified in a tune when playing.</p>'},
+		{name: "            Override all MIDI programs and volumes in the ABC with the defaults when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text_checkbox_fs"},
+	];
+	
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 790, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+
+		// Get the results and store them in the global configuration
+		if (!args.canceled){
+
+			gDefaultSoundFont = args.result.configure_soundfont;
+
+			if (theOldSoundFont != gDefaultSoundFont ){
+
+				// Reset the current soundfont to the selected font
+				gTheActiveSoundFont = gDefaultSoundFont;
+
+				// Reset the abcjs sounds cache
+				gSoundsCacheABCJS = {};
+
+			}
+
+			gAlwaysInjectPrograms = args.result.configure_inject_programs;
+
+			gTheMelodyProgram = args.result.configure_melody_program;
+			
+			gTheBassProgram = args.result.configure_bass_program;
+
+			gTheChordProgram = args.result.configure_chord_program;
+
+			if (gTheMelodyProgram == 0){
+				gTheMelodyProgram = "mute";
+			}
+			else{
+				gTheMelodyProgram--;
+			}
+
+			if (gTheMelodyProgram != "mute"){
+
+				// Sanity check the values
+				if (isNaN(parseInt(gTheMelodyProgram))){
+					gTheMelodyProgram = 0;
+				}
+
+				if (gTheMelodyProgram < 0){
+					gTheMelodyProgram = 0;
+				}
+
+				if (gTheMelodyProgram > MIDI_PATCH_COUNT){
+					gTheMelodyProgram = MIDI_PATCH_COUNT;
+				}
+			}
+
+			if (gTheBassProgram == 0){
+				gTheBassProgram = "mute";
+			}
+			else{
+				gTheBassProgram--;
+			}
+
+			if (gTheBassProgram != "mute"){
+
+				if (isNaN(parseInt(gTheBassProgram))){
+					gTheBassProgram = 0;
+				}
+
+				if (gTheBassProgram < 0){
+					gTheBassProgram = 0;
+				}
+
+				if (gTheBassProgram > MIDI_PATCH_COUNT){
+					gTheBassProgram = MIDI_PATCH_COUNT;
+				}
+			}	
+
+			if (gTheChordProgram == 0){
+				gTheChordProgram = "mute";
+			}
+			else{
+				gTheChordProgram--;
+			}
+
+			if (gTheChordProgram != "mute"){
+
+				if (isNaN(parseInt(gTheChordProgram))){
+					gTheChordProgram = 0;
+				}
+
+				if (gTheChordProgram < 0){
+					gTheChordProgram = 0;
+				}
+
+				if (gTheChordProgram > MIDI_PATCH_COUNT){
+					gTheChordProgram = MIDI_PATCH_COUNT;
+				}
+			}
+
+			if (gUseCustomGMSounds){
+
+				if ((gAlwaysInjectPrograms || gOverridePlayMIDIParams) && ((gTheMelodyProgram == "15") || (gTheBassProgram == "15") || (gTheChordProgram == "15"))){
+
+					// Special release time case case for Dulcimer
+				   	var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica">Special Note on the Dulcimer (15) Instrument</p>';
+				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Selecting the Dulcimer (15) program for either the melody, bass, or chords automatically sets all note release decay times to 4 seconds to allow the notes to ring.</p>';
+				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">This can be useful for tunes using solo melody instruments with long release times like Orchestral Harp (46) or Koto (107).</p>';
+				       	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">For those instruments played solo, set the melody instrument program as desired and the chord instrument program to Dulcimer (15).</p>';
+				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In this case, you may not want to include any chords in the ABC, as they will be played using the Dulcimer (15) instrument.</p>';
+
+				       	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
+						    // Focus after operation
+						    FocusAfterOperation();
+			       		
+				       	});
+				}
+			}
+			
+			gTheBassVolume = args.result.configure_bass_volume;
+			
+			gTheChordVolume = args.result.configure_chord_volume;
+
+			if (isNaN(parseInt(gTheBassVolume))){
+				gTheBassVolume = 0;
+			}
+
+			if (gTheBassVolume < 0){
+				gTheBassVolume = 0;
+			}
+
+			if (gTheBassVolume > 127){
+				gTheBassVolume = 127;
+			}
+
+			if (isNaN(parseInt(gTheChordVolume))){
+				gTheChordVolume = 0;
+			}
+
+			if (gTheChordVolume < 0){
+				gTheChordVolume = 0;
+			}
+
+			if (gTheChordVolume > 127){
+				gTheChordVolume = 127;
+			}
+
+			gOverridePlayMIDIParams = args.result.configure_override_play_midi_params;
+
+			// Update local storage
+			SaveConfigurationSettings();
+
+		}
+		else{
+
+		    // Focus after operation
+		    FocusAfterOperation();
+
+		}
+
+	});
+
+}
+
+//
 // Configuration settings dialog
 //
 function ConfigureToolSettings() {
@@ -33679,7 +33981,6 @@ function ConfigureToolSettings() {
  	const sound_font_options = [
 	    { name: "  Fluid", id: "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/" },
 	    { name: "  Musyng Kite", id: "https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/" },
-	    //{ name: "  FatBoy", id: "https://paulrosen.github.io/midi-js-soundfonts/FatBoy/" },
 	    { name: "  FatBoy", id: "https://michaeleskin.com/abctools/soundfonts/fatboy_4/" },
  	    { name: "  Canvas", id: "https://michaeleskin.com/abctools/soundfonts/canvas/" },
  	    { name: "  MScore", id: "https://michaeleskin.com/abctools/soundfonts/mscore_2/" },
@@ -33830,7 +34131,7 @@ function ConfigureToolSettings() {
 			if (theOldSoundFont != gDefaultSoundFont ){
 
 				// Reset the current soundfont to the selected font
-				gTheActiveSoundFont = gDefaultSoundFont
+				gTheActiveSoundFont = gDefaultSoundFont;
 
 				// Reset the abcjs sounds cache
 				gSoundsCacheABCJS = {};
@@ -35864,8 +36165,9 @@ function ShowHelp(){
 	   	}	
 	   
 	   	modal_msg  += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Please visit my <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> page for complete instructions and demo videos on how to use the tools.</p>';
-	   	modal_msg  += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click the Settings button below to bring up the tool settings where you can set default playback instruments, volumes, and overrides:</p>';	   	
-		modal_msg += '<p style="text-align:center;"><input id="configuresettingsfromhelp" class="configuresettingsfromhelp button btn btn-configuresettingsfromhelp" onclick="ConfigureToolSettings();" type="button" value="Settings" title="Brings up the tool settings dialog"></p>';
+	   	modal_msg  += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click the Player Instrument Settings button below to bring up a settings dialog where you can set default playback instruments, volumes, and overrides:</p>';	 
+
+		modal_msg += '<p style="text-align:center;"><input id="configuresettingsfromhelp" class="configuresettingsfromhelp button btn btn-configuresettingsfromhelp" onclick="ConfigureToolSettingsFS();" type="button" value="Player Instrument Settings" title="Brings up the Player Instrument Settings dialog"></p>';
 
 		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
 	}
