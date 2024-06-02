@@ -33364,12 +33364,10 @@ function AdvancedSettings(){
 
 	var oldHighlightColor = gRawHighlightColor;
 
-	var theOldComhaltas = gUseComhaltasABC;
 
 	// Setup initial values
 	const theData = {
   		configure_fullscreen_scaling: gFullScreenScaling,
-		configure_comhaltas: gUseComhaltasABC,	  
 		configure_highlight_color: gRawHighlightColor,
 		configure_player_status_on_left: gPlayerStatusOnLeft,
 		configure_large_player_controls: gLargePlayerControls,
@@ -33379,7 +33377,6 @@ function AdvancedSettings(){
 		configure_mp3_bitrate: gMP3Bitrate,
 		configure_export_delayms: gBatchExportDelayMS,
 		configure_mp3export_delayms: gBatchMP3ExportDelayMS,
-		configure_RollUseRollForIrishRoll: gRollUseRollForIrishRoll,
 		configure_roll2_default: gRoll2DefaultParams,
 		configure_roll3_default: gRoll3DefaultParams,
 		configure_TuneDatabaseRetryTimeMS: gTuneDatabaseRetryTimeMS,
@@ -33396,8 +33393,6 @@ function AdvancedSettings(){
 		{html: '<p style="font-size:12pt;line-height:12px;font-family:helvetica;"><strong>Only change these values if you know what you are doing!</strong></p>'},
 		{name: "          Show ABC syntax validation panel", id: "configure_show_diagnostics", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Disable abcjs notation rendering", id: "configure_DisableRendering", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
-		{name: "    Rolls indicated in the ABC with ~ use the custom abcjs roll playback solution", id: "configure_RollUseRollForIrishRoll", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
-		{name: "    Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)", id: "configure_comhaltas", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Autoscroll player when playing", id: "configure_autoscrollplayer", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Player/Tune Trainer always plays full tune even if there is a selection region", id: "configure_disable_selected_play", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Player uses large controls (easier to touch on phone/tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
@@ -33504,15 +33499,11 @@ function AdvancedSettings(){
 
 			gPlayerStatusOnLeft = args.result.configure_player_status_on_left;
 
-			gRollUseRollForIrishRoll = args.result.configure_RollUseRollForIrishRoll;
-
 			gLargePlayerControls = args.result.configure_large_player_controls;
 
 			gAutoscrollPlayer = args.result.configure_autoscrollplayer;
 
 			gTrainerTouchControls = args.result.configure_trainer_touch_controls;
-
-			gUseComhaltasABC = args.result.configure_comhaltas;
 
 			gDisableSelectedPlay = args.result.configure_disable_selected_play;
 
@@ -33617,8 +33608,6 @@ function AdvancedSettings(){
 
 			IdleAllowShowTabNames();
 
-			var radiovalue = GetRadioValue("notenodertab");
-
 			if (isDesktopBrowser()){
 
 				gRawHighlightColor = args.result.configure_highlight_color;
@@ -33644,21 +33633,11 @@ function AdvancedSettings(){
 				}
 
 				// Do we need to re-render?
-				if ((gRawMode && (gRawHighlightColor != oldHighlightColor)) || ((radiovalue == "notenames") && (gUseComhaltasABC != theOldComhaltas))){
+				if (gRawMode && (gRawHighlightColor != oldHighlightColor)){
 					
 					RenderAsync(true,null);
 					
 				}
-			}
-			else{
-
-				// Do we need to re-render?
-				if ((radiovalue == "notenames") && (gUseComhaltasABC != theOldComhaltas)){
-					
-					RenderAsync(true,null);
-					
-				}
-
 			}
 
 			// Save the settings, in case they were initialized
@@ -33953,6 +33932,8 @@ function ConfigureToolSettings() {
 
 	var bAlwaysInjectVolumes = gAlwaysInjectVolumes;
 
+	var theOldComhaltas = gUseComhaltasABC;
+
 	// Setup initial values
 	const theData = {
 		configure_save_exit_snapshot: gSaveLastAutoSnapShot,
@@ -33971,6 +33952,9 @@ function ConfigureToolSettings() {
 		configure_show_tab_buttons: gFeaturesShowTabButtons,
 		configure_show_dgdae: gShowDGDAETab,
 		configure_show_cgda: gShowCGDATab,
+		configure_comhaltas: gUseComhaltasABC,	
+		configure_RollUseRollForIrishRoll: gRollUseRollForIrishRoll,
+
 	};
 
   	var form = [
@@ -33988,9 +33972,10 @@ function ConfigureToolSettings() {
 	form = form.concat([
 		{name: "Space between the staves (default is 10, minimum is -40):", id: "configure_staff_spacing", type:"number", cssClass:"configure_settings_form_text"},
 		{name: "          Left-justify all titles and subtitles", id: "configure_left_justify_titles", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+		{name: "    Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)", id: "configure_comhaltas", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "          Show CGDA as a 4-string tab option (default is GDAD)", id: "configure_show_cgda", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "          Show DGDAE as a 5-string tab option (default is CGDAE)", id: "configure_show_dgdae", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-		{name: "Stringed instrument capo fret postion:", id: "configure_capo", type:"number", cssClass:"configure_settings_form_text"},
+		{name: "Stringed instrument capo fret position:", id: "configure_capo", type:"number", cssClass:"configure_settings_form_text"},
 		{name: "    Show stringed instrument names on tablature (single-voice tunes only, not shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{html: '<p style="text-align:center;"><input id="abcplayer_settingsbutton" style="margin-left:0px" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ConfigurePlayerSettings(null);" type="button" value="Select Default Player Instruments and Volumes" title="Brings up the Player Instrument Settings dialog where you can select the default abcjs soundfont, MIDI instruments, and MIDI volumes to use when playing tunes"></p>'},
 		{name: "    Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
@@ -33998,6 +33983,7 @@ function ConfigureToolSettings() {
 		{name: "            Use Default Bass/Chord volumes when playing tunes", id: "configure_inject_volumes", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "            Automatically swing Hornpipes when playing (enabled if R:Hornpipe is found in the tune)", id: "configure_auto_swing_hornpipes", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "Auto-swing scale factor (range is -0.9 to 0.9, default for Hornpipes is 0.25):", id: "configure_auto_swing_factor", type:"number", cssClass:"configure_settings_form_text"},
+		{name: "    Rolls indicated in the ABC with ~ use the custom abcjs roll playback solution", id: "configure_RollUseRollForIrishRoll", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 	]);
 
 	if (browserSupportsMIDI()){
@@ -34199,6 +34185,10 @@ function ConfigureToolSettings() {
 				setupCGDAE();				
 			}
 
+			gUseComhaltasABC = args.result.configure_comhaltas;
+			
+			gRollUseRollForIrishRoll = args.result.configure_RollUseRollForIrishRoll;
+
 			// If was from a share, no matter what, if on the multi tab option buttons, force a redraw to keep everything in sync.
 			var tabs = GetRadioValue("notenodertab");
 
@@ -34240,8 +34230,11 @@ function ConfigureToolSettings() {
 			// If the user requested hiding of the tab buttons, hide them now
 			ShowHideTabButtons();
 
+			var radiovalue = GetRadioValue("notenodertab");
+
 			// Do we need to re-render?
-			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || (gForceLeftJustifyTitles != oldLeftJustifyTitles) || (oldCGDA != gShowCGDATab) || (oldDGDAE != gShowDGDAETab) || bTabForceRedraw){
+			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || (gForceLeftJustifyTitles != oldLeftJustifyTitles) || (oldCGDA != gShowCGDATab) || (oldDGDAE != gShowDGDAETab) || bTabForceRedraw
+				|| ((radiovalue == "notenames") && (gUseComhaltasABC != theOldComhaltas))){
 				
 				RenderAsync(true, null, function(){
 

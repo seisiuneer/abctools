@@ -764,7 +764,7 @@
             <p><strong>Notation</strong> - Standard notation only.</p>
             <hr>
             <p><strong>Names</strong> - Shows standard notation with note names below.</p>
-            <p>Choose between standard ABC d e f style octave notes or Comhaltas-preferred "Blackboard ABC" D' E' F' octave note display in the <strong>Advanced Settings</strong> dialog.</p>
+            <p>Choose between standard ABC d e f style octave notes or Comhaltas-preferred "Blackboard ABC" D' E' F' octave note display in the <strong>Settings</strong> dialog.</p>
             <p><strong>Important:</strong> While the note Names display will show the Comhaltas-preferred note names, the ABC standard requires that the second octave C in the ABC itself either be represented by c or C' so that may requires some minor changes when pasting in your Comhaltas-formatted tunes.</p>
             <p>Note names font and size in the tab is set by the <strong>Tab number font</strong> value in the <strong>Configure ABC Rendering Fonts</strong> dialog.</p>
             <hr>
@@ -1572,7 +1572,7 @@
             <p class="code">%use_original_abcjs_roll_solution</p>
             <hr>
             <p><strong>Using the custom roll playback solution for rolls indicated with ~ before the note in the ABC</strong></p>
-            <p>If you want to use the custom roll parameter playback solution for rolls indicated before the note with ~ as well those that use an R or !roll!, open the <strong>Advanced Settings</strong> dialog and check <strong>Rolls indicated in the ABC with ~ use the custom abcjs roll playback solution</strong>.</p>
+            <p>If you want to use the custom roll parameter playback solution for rolls indicated before the note with ~ as well those that use an R or !roll!, open the <strong>Settings</strong> dialog and check <strong>Rolls indicated in the ABC with ~ use the custom abcjs roll playback solution</strong>.</p>
             <hr>
             <p style="text-align: center"><strong>Enabling/Disabling ~ Roll Playback in a Tune</strong></p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/a61-HP8GVWw" title="Irish Roll Control Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -2316,7 +2316,7 @@
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_47.jpg"/>
+                <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_48.jpg"/>
             </div>
             <hr>
             <p><strong>Show instrument tablature button bar below ABC editor</strong> - If checked shows the instrument tablature button bar below the editor.</p>
@@ -2338,9 +2338,14 @@
             <hr>
             <p><strong>Left-justify all titles and subtitles</strong> - When checked, draws all titles and subtitles left-justified instead of centered above the notation.</p>
             <hr>
+            <p><strong>Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)</strong> - Check this if you want to use the Comhaltas "Blackboard ABC" standard for ABC note names (D' E' F' instead of d e f for octave notes) when in note names tab display mode.</p>
+            <p><strong>Important:</strong> While the note Names display will show the Comhaltas-preferred note names, the ABC standard requires that the second octave C in the ABC itself either be represented by c or C' so that may requires some minor changes when pasting in your Comhaltas-formatted tunes.</p>
+            <p>Note name font and size in the tab is set by the <strong>Tab number font</strong> setting in the <strong>Configure ABC Fonts dialog</strong>.</p>
+            <hr>
             <p><strong>Show CGDA as a 4-string tab option (default is GDAD)</strong> - When checked replaces the GDAD tab button with a CDGA tab button for CGDA-tuned Mandola.</p>
             <hr>
             <p><strong>Show DGDAE as a 5-string tab option (default is CGDAE)</strong> - When checked replaces the CGDAE tab button with a DGDAE tab button for 5-string DGDAE-tuned bouzouki.</p>
+            <hr>
             <p><strong>Stringed instrument capo fret postion</strong> - Allows you to set a capo setting from 0 to 12 frets for any of the stringed instruments tabs.</p>
             <hr>
             <p><strong>Show stringed instrument names on tablature (single-voice tunes only, not shown in the Player)</strong> - Hides/Shows the instrument names and capo settings on the tablature.</p>
@@ -2421,6 +2426,21 @@
             <p>For full details on swing factor and swing offset, see this section:</p>
             <p style="text-align: center;"><a style="text-decoration:none;" href="#adding_swing">Adding Playback Swing to Tunes</a></p>
             <hr>
+            <p><strong>Rolls indicated in the ABC with ~ use the custom abcjs roll playback solution</strong></p>
+            <p>By default, abcjs doesn't attempt to play rolls that are indicated using a ~ before the note, it just plays the note without any modification.</p>
+            <p>The abcjs custom roll playback system is normally only enabled for rolls that are indicated using an R or !roll! before the note.</p>
+            <p>When this item is checked, rolls indicated using a ~ before a note in the ABC will use the abcjs custom roll playback system as well as those indicated with R or !roll!</p>
+            <p>Any custom roll parameters you have the ABC will also work with the ~ style rolls when this is turned on.</p>
+            <p>Use this at your own risk, it may not work for all tunes.</p>
+            <p>Uncheck this item to return to the default abcjs behavior (no rendering of ~ style rolls).</p>
+            <hr>
+            <p style="text-align: center"><strong>Enabling/Disabling ~ Roll Playback in a Tune</strong></p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/a61-HP8GVWw" title="Irish Roll Control Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+            <p>To override the settings and force playback to use the custom roll playback solution for a specific tune you can include the following comment-based annotation anywhere in the tune's ABC:</p>
+            <p class="code">%irish_rolls_on</p>
+            <p>To override the  settings and disable playback of the custom roll playback solution for a specific tune you can include the following comment-based annotation anywhere in the tune's ABC:</p>
+            <p class="code">%irish_rolls_off</p>
+            <hr>
             <p>If your browser supports MIDI input, you will find these two additional options in the settings dialog:</p>
             <p><strong>Allow MIDI input for ABC text entry</strong></p>
             <p>For full details on MIDI input, see this section:</p>
@@ -2441,7 +2461,7 @@
             <hr class="hidden-print" id="advanced_settings">
             <h1 class="page_break_always">Advanced Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/advanced_settings_14.jpg"/>
+                <img class="image" loading="lazy" src="img/advanced_settings_15.jpg"/>
             </div>
             <p>These settings are available by clicking the <strong>Advanced Settings</strong> button at the bottom of the main <strong>Settings</strong> dialog.</p>
             <p>On mobile browsers, the dialog will only show the settings that are available on mobile platforms.</p>
@@ -2449,31 +2469,13 @@
             <p style="text-align: center;"><strong>Note: Do not change these values unless you know what you are doing!</strong></p>
             <hr>
             <p><strong>Show ABC syntax validation panel</strong> - When checked, shows any ABC syntax errors detected by abcjs for the tune currently being edited in a panel below the ABC editor.</p>
+            <hr>
             <p><strong>Disable abcjs notation rendering</strong> - Check this if you want to completely disable the rendering of the notation.</p>
             <p>This can be very useful with very large tunebooks to speed up the process of generating text incipits or full ABC text PDF exports, where the rendered notation isn't required to generate the PDF.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/ty2SWBqZd9o" title="Disable abcjs rendering demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p>If you want any of the built-in tablatures shown when a user clicks on the title of one of your text incipits or full ABC text export play links with rendering disabled, click the desired tablature button (i.e. Mandolin, Guitar, Whistle, etc.) before doing the text incipits or full text export.</p>
             <p>The current tablature selection is always injected into the share links for the tunes when the PDF is generated even if rendering is disabled.</p>
             <p>This setting is turned off every time the tool is run.</p>
-            <hr>
-            <p><strong>Rolls indicated in the ABC with ~ use the custom abcjs roll playback solution</strong></p>
-            <p>By default, abcjs doesn't attempt to play rolls that are indicated using a ~ before the note, it just plays the note without any modification.</p>
-            <p>The abcjs custom roll playback system is normally only enabled for rolls that are indicated using an R or !roll! before the note.</p>
-            <p>When this item on the Advanced Settings panel is checked, rolls indicated using a ~ before a note in the ABC will use the abcjs custom roll playback system as well as those indicated with R or !roll!</p>
-            <p>Any custom roll parameters you have the ABC will also work with the ~ style rolls when this is turned on.</p>
-            <p>Use this at your own risk, it may not work for all tunes.</p>
-            <p>Uncheck this item to return to the default abcjs behavior.</p>
-            <hr>
-            <p style="text-align: center"><strong>Enabling/Disabling ~ Roll Playback in a Tune</strong></p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/a61-HP8GVWw" title="Irish Roll Control Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-            <p>To override the settings and force playback to use the custom roll playback solution for a specific tune you can include the following comment-based annotation anywhere in the tune's ABC:</p>
-            <p class="code">%irish_rolls_on</p>
-            <p>To override the  settings and disable playback of the custom roll playback solution for a specific tune you can include the following comment-based annotation anywhere in the tune's ABC:</p>
-            <p class="code">%irish_rolls_off</p>
-            <hr>
-            <p><strong>Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)</strong> - Check this if you want to use the Comhaltas "Blackboard ABC" standard for ABC note names (D' E' F' instead of d e f for octave notes) when in note names tab display mode.</p>
-            <p><strong>Important:</strong> While the note Names display will show the Comhaltas-preferred note names, the ABC standard requires that the second octave C in the ABC itself either be represented by c or C' so that may requires some minor changes when pasting in your Comhaltas-formatted tunes.</p>
-            <p>Note name font and size in the tab is set by the <strong>Tab number font</strong> setting in the <strong>Configure ABC Fonts dialog</strong>.</p>
             <hr>
             <p><strong>Autoscroll player when playing</strong> - Check this if you want have the player autoscroll the notes into view while playing.</p>
             <hr>
