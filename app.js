@@ -22019,11 +22019,22 @@ function isJigWithNoTiming(tuneABC,millisecondsPerMeasure){
 //
 function DownloadWave(){
 
+	//debugger;
+
+	var originalMS;
+
 	// Keep track of export
 	sendGoogleAnalytics("export","DownloadWave");
 
 	// Fix timing bug for jig-like tunes with no tempo specified
 	gMIDIbuffer.millisecondsPerMeasure  = isJigWithNoTiming(gPlayerABC,gMIDIbuffer.millisecondsPerMeasure);
+
+	originalMS = gMIDIbuffer.millisecondsPerMeasure;
+
+	// Adjust for the player tempo percentage
+	if (gSynthControl && gSynthControl.warp){
+		gMIDIbuffer.millisecondsPerMeasure *= (100 / gSynthControl.warp);
+	}
 
 	// Adjust the sample fade time if required
 	var theFade = computeFade(gPlayerABC);
@@ -22033,6 +22044,8 @@ function DownloadWave(){
 	gMIDIbuffer.prime().then((function(t) {
 		
 		var wavData = gMIDIbuffer.download();
+
+		gMIDIbuffer.millisecondsPerMeasure = originalMS;
 
 		var link = document.createElement("a");
 		
@@ -22659,8 +22672,17 @@ function DownloadMP3(callback,val){
 	  };
 	}
 
+	var originalMS;
+
 	// Fix timing bug for jig-like tunes with no tempo specified
 	gMIDIbuffer.millisecondsPerMeasure  = isJigWithNoTiming(gPlayerABC,gMIDIbuffer.millisecondsPerMeasure);
+
+	originalMS = gMIDIbuffer.millisecondsPerMeasure;
+
+	// Adjust for the player tempo percentage
+	if (gSynthControl && gSynthControl.warp){
+		gMIDIbuffer.millisecondsPerMeasure *= (100 / gSynthControl.warp);
+	}
 
 	// Adjust the sample fade time if required
 	var theFade = computeFade(gPlayerABC);
@@ -22686,6 +22708,9 @@ function DownloadMP3(callback,val){
 			var wavDataURL = gMIDIbuffer.download();
 
 			var wavData = await fetch(wavDataURL).then(r => r.blob());
+
+			// Restore the buffer timing
+			gMIDIbuffer.millisecondsPerMeasure = originalMS;
 
 			var fileReader = new FileReader();
 
@@ -22827,8 +22852,6 @@ function ExportAudioOrImage(){
 	modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
 	modal_msg += '<input id="abcplayer_wavreverbbutton" class="abcplayer_wavreverbbutton btn btn-wavereverbdownload" onclick="DownloadWaveWithReverb();" type="button" value="Save as WAV File with Reverb" title="Saves the audio for the current tune as a .WAV file including reverb"><input id="abcplayer_mp3reverbbutton" class="abcplayer_mp3reverbbutton btn btn-mp3reverbdownload" onclick="DownloadMP3WithReverb();" type="button" value="Save as MP3 File with Reverb" title="Saves the audio for the current tune as a .MP3 file including reverb">'
 	modal_msg  += '</p>';
-	modal_msg  += '<p style="font-size:12pt;font-family:helvetica;"><strong>Note:</strong> Audio or MIDI is exported at the Player 100% speed.</p>';
-	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;">To export slowed-down tunes, add a Q: tag with the desired tempo to the tune ABC.</p>';
 
 	if (format != "whistle"){
 

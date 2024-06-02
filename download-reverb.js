@@ -206,11 +206,20 @@ function DownloadWaveWithReverb() {
 
 	setTimeout(function(){
 
+		var originalMS;
+
 		// Create an audio context
 		var audioContext = new window.AudioContext();
 
 		// Fix timing bug for jig-like tunes with no tempo specified
 		gMIDIbuffer.millisecondsPerMeasure = isJigWithNoTiming(gPlayerABC, gMIDIbuffer.millisecondsPerMeasure);
+
+		originalMS = gMIDIbuffer.millisecondsPerMeasure;
+		
+		// Adjust for the player tempo percentage
+		if (gSynthControl && gSynthControl.warp){
+			gMIDIbuffer.millisecondsPerMeasure *= (100 / gSynthControl.warp);
+		}
 
 		// Adjust the sample fade time if required
 		var theFade = computeFade(gPlayerABC);
@@ -222,6 +231,9 @@ function DownloadWaveWithReverb() {
 			var wavDataURL = gMIDIbuffer.download();
 
 			var wavData = await fetch(wavDataURL).then(r => r.blob());
+
+			// Restore original timing
+			gMIDIbuffer.millisecondsPerMeasure = originalMS;
 
 			var fileReader = new FileReader();
 
@@ -456,11 +468,20 @@ function DownloadMP3WithReverb(callback,val){
 
 	setTimeout(function(){
 
+		var originalMS;
+
 		// Create an audio context
 		var audioContext = new window.AudioContext();
 
 		// Fix timing bug for jig-like tunes with no tempo specified
 		gMIDIbuffer.millisecondsPerMeasure  = isJigWithNoTiming(gPlayerABC,gMIDIbuffer.millisecondsPerMeasure);
+
+		originalMS = gMIDIbuffer.millisecondsPerMeasure;
+
+		// Adjust for the player tempo percentage
+		if (gSynthControl && gSynthControl.warp){
+			gMIDIbuffer.millisecondsPerMeasure *= (100 / gSynthControl.warp);
+		}
 
 		// Adjust the sample fade time if required
 		var theFade = computeFade(gPlayerABC);
@@ -472,6 +493,9 @@ function DownloadMP3WithReverb(callback,val){
 			var wavDataURL = gMIDIbuffer.download();
 
 			var wavData = await fetch(wavDataURL).then(r => r.blob());
+
+			// Restore original timing
+			gMIDIbuffer.millisecondsPerMeasure = originalMS;
 
 			var fileReader = new FileReader();
 
