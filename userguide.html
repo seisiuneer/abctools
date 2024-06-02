@@ -365,7 +365,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#smartdraw_export">SmartDraw Set List Builder</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#sort_dialog">Sort by Tag</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#incipits_builder">Incipits Builder</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#advanced_injectbagpipedrones">Inject Bagpipe Sounds into Imported BWW Tunes</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#advanced_injectbagpipesounds">Inject Bagpipe Sounds</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#advanced_compliance">ABC Compliance Transform</a></p>
                 </div>
                     
@@ -576,7 +576,7 @@
             <p>Pitch is shifted to A=480 Hz using the following directive:</p>
             <p class="code">%voice_tuning_cents 48 148</p>
             <p>For more information on the %voice_tuning_cents directive, see the <a href="#voice_tuning">Setting the Tuning Offset for Individual Voices</a> section below.</p>
-            <p>To inject drone and chanter sounds into a tune imported from a BWW file, check out the <a href="#advanced_injectbagpipedrones">Inject Bagpipe Sounds into Imported BWW Tunes</a> command on the <strong>More Tools</strong> dialog.</p>
+            <p>To inject drone and chanter sounds into a tune imported from a BWW file, check out the <a href="#advanced_injectbagpipesounds">Inject Bagpipe Sounds</a> command on the <strong>More Tools</strong> dialog.</p>
             <p><strong>.mid, or .midi</strong></p>
             <p>Imports a MIDI file from your computer, converts it first to MusicXML, converts the MusicXML to ABC, and loads it into the ABC Editor.</p>
             <p>Details on MusicXML and MIDI import settings below in the <a style="text-decoration:none;" href="#musicxml">MusicXML/MIDI Import Settings</a> section.</p>
@@ -1422,7 +1422,7 @@
             <h1 class="page_break_always h1wide">Exporting Tune Audio or Image Files from the Player<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>If you click <strong>Export Audio or Image</strong> in the <strong>Player</strong>, a dialog will appear where you can save out the audio of your tune in either .WAV or .MP3 format, the note playback events as a MIDI file, or the tune image in .JPG, .PNG, or .SVG formats:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/export_audio_image_4.jpg"/>
+                <img class="image" loading="lazy" src="img/export_audio_image_5.jpg"/>
             </div>
             <hr>
             <p><strong>Important Note:</strong></p>
@@ -1719,11 +1719,11 @@
             <h1 class="page_break_always">More ABC Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/more_abc_tools_15.jpg"/>
+                <img class="image" loading="lazy" src="img/more_abc_tools_16.jpg"/>
             </div>
             <p>If you would like to only show the buttons for the features you commonly use and hide the others, click the controls icon at the top-right of the dialog to choose features of the dialog you would like to show/hide:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/more_abc_tools_feature_options_4.jpg"/>
+                <img class="image" loading="lazy" src="img/more_abc_tools_feature_options_5.jpg"/>
             </div>
             <p>The most commonly used buttons are always shown.</p>
             <p>Your preferences are saved and restored the next time you use the tool.</p>
@@ -2235,15 +2235,14 @@
             <div class="image_holder_p">
                 <img class="image" loading="lazy" src="img/incipits_builder_example_2.jpg"/>
             </div>
-            <hr class="hidden-print" id="advanced_injectbagpipedrones">
-            <h1 class="page_break_always h1wide">Inject Bagpipe Sounds into Imported BWW Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <hr class="hidden-print" id="advanced_injectbagpipesounds">
+            <h1 class="page_break_always h1wide">Inject Bagpipe Sounds<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/8OV-4XaLKHA" title="Great Highland Bagpipe Drones Injection" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-            <p>This feature only works with bagpipe tunes originally imported from a BWW file by this tool.</p>
-            <p>Brings up a dialog where you can change the chanter sound and inject Great Highland Bagpipe drones as a second voice for a bagpipe score for the current tune or all tunes in the ABC work area.</p>
+            <p>Brings up a dialog where you can change the melody sound to various bagpipes and inject bagpipe drones as a second voice for the current tune or all tunes in the ABC work area.</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/inject_ghb_drones_9.jpg"/>
+                <img class="image" loading="lazy" src="img/inject_bagpipe_drones_1.jpg"/>
             </div>
-            <p>You may choose between the following Melody/Drone configurations:</p> 
+            <p>You may choose between the following Chanter/Drone configurations:</p> 
             <p>Great Highland Bagpipe - A=480 Hz (Pipe band high pitch)</p> 
             <p>Great Highland Bagpipe - A=466 Hz (Standard B-flat)</p> 
             <p>Border Pipes in A</p> 
@@ -2251,12 +2250,25 @@
             <p>Smallpipes in A</p> 
             <p>Smallpipes in D</p> 
             <p>Swedish Säckpipa in D</p> 
-            <p>The Great Highland Bagpipe and Border Pipes use pitch shifted Great Highland Bagpipe sounds for the melody.</p>
-            <p>For Smallpipes and Swedish Säckpipa the melody instrument is changed to match the selected instrument.</p>
-            <p>All injected drones use the Great Highland Bagpipe drone sounds, but balanced differently for the Smallpipes and Swedish Säckpipa.</p>
-            <p>You may optionally show or hide the drone voice (default is hide).</p>
-            <p>Tunes previously injected with drones will be skipped.</p>
-            <p>After the inject operation is complete, if any tunes were not originally imported from a BWW file, you will be presented with a list of tunes that were not injected.</p>
+            <p>Uilleann Pipes in D (Crowley-style drones)</p> 
+            <p>Uilleann Pipes in D (Lynch-style drones)</p> 
+            <p>Uilleann Pipes Flat Set in D (Crowley-style drones)</p> 
+            <p>Uilleann Pipes Flat Set in D (Lynch-style drones)</p> 
+            <p>Uilleann Pipes Flat Set in C# (Crowley-style drones)</p> 
+            <p>Uilleann Pipes Flat Set in C# (Lynch-style drones)</p> 
+            <p>Uilleann Pipes Flat Set in C (Crowley-style drones)</p> 
+            <p>Uilleann Pipes Flat Set in C (Lynch-style drones)</p> 
+            <p>Uilleann Pipes Flat Set in B (Crowley-style drones)</p> 
+            <p>Uilleann Pipes Flat Set in B (Lynch-style drones)</p> 
+            <p>Uilleann Pipes Flat Set in Bb (Crowley-style drones)</p> 
+            <p>Uilleann Pipes Flat Set in Bb (Lynch-style drones)</p> 
+            <p>Uilleann Pipes Flat Set in A (Crowley-style drones)</p> 
+            <p>Uilleann Pipes Flat Set in A (Lynch-style drones)</p> 
+            <p>Clicking "OK" will change the melody sound to the selected bagpipe instrument and inject drones as a second voice of the tune(s).</p> 
+            <p>Bagpipe tunes imported from a BWW files assume the drones are consonant with the note A in the ABC notation for all styles of injected bagpipes.</p> 
+            <p>For all other tunes, the Great Highland Bagpipe, Border Pipes, and Smallpipes drones are consonant with the note A in the ABC notation and the Säckpipa, and Uilleann Pipes drones are consonant with the note D in the ABC notation.</p> 
+            <p>In these cases, you may need to transpose your tunes before using this feature to sound best with the drones, for example transposing a D Mixolydian tune to A Mixolydian or the inverse.</p> 
+            <p>Tunes previously injected with drones will be skipped.</p>             
             <hr>
             <p><strong>Transposing the tunes and drones to different keys:</strong></p>
             <p><strong>Note:</strong> This feature is now built into the tool, but the information may be useful for working with other pitched bagpipes.</p>
