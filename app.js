@@ -22019,11 +22019,20 @@ function isJigWithNoTiming(tuneABC,millisecondsPerMeasure){
 //
 function DownloadWave(){
 
+	var originalMS;
+
 	// Keep track of export
 	sendGoogleAnalytics("export","DownloadWave");
 
 	// Fix timing bug for jig-like tunes with no tempo specified
 	gMIDIbuffer.millisecondsPerMeasure  = isJigWithNoTiming(gPlayerABC,gMIDIbuffer.millisecondsPerMeasure);
+
+	originalMS = gMIDIbuffer.millisecondsPerMeasure;
+
+	// Adjust for the player tempo percentage
+	if (gSynthControl && gSynthControl.warp){
+		gMIDIbuffer.millisecondsPerMeasure *= (100 / gSynthControl.warp);
+	}
 
 	// Adjust the sample fade time if required
 	var theFade = computeFade(gPlayerABC);
@@ -22033,6 +22042,8 @@ function DownloadWave(){
 	gMIDIbuffer.prime().then((function(t) {
 		
 		var wavData = gMIDIbuffer.download();
+
+		gMIDIbuffer.millisecondsPerMeasure = originalMS;
 
 		var link = document.createElement("a");
 		
@@ -22659,8 +22670,17 @@ function DownloadMP3(callback,val){
 	  };
 	}
 
+	var originalMS;
+
 	// Fix timing bug for jig-like tunes with no tempo specified
 	gMIDIbuffer.millisecondsPerMeasure  = isJigWithNoTiming(gPlayerABC,gMIDIbuffer.millisecondsPerMeasure);
+
+	originalMS = gMIDIbuffer.millisecondsPerMeasure;
+
+	// Adjust for the player tempo percentage
+	if (gSynthControl && gSynthControl.warp){
+		gMIDIbuffer.millisecondsPerMeasure *= (100 / gSynthControl.warp);
+	}
 
 	// Adjust the sample fade time if required
 	var theFade = computeFade(gPlayerABC);
@@ -22686,6 +22706,9 @@ function DownloadMP3(callback,val){
 			var wavDataURL = gMIDIbuffer.download();
 
 			var wavData = await fetch(wavDataURL).then(r => r.blob());
+
+			// Restore the buffer timing
+			gMIDIbuffer.millisecondsPerMeasure = originalMS;
 
 			var fileReader = new FileReader();
 
@@ -22827,8 +22850,6 @@ function ExportAudioOrImage(){
 	modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
 	modal_msg += '<input id="abcplayer_wavreverbbutton" class="abcplayer_wavreverbbutton btn btn-wavereverbdownload" onclick="DownloadWaveWithReverb();" type="button" value="Save as WAV File with Reverb" title="Saves the audio for the current tune as a .WAV file including reverb"><input id="abcplayer_mp3reverbbutton" class="abcplayer_mp3reverbbutton btn btn-mp3reverbdownload" onclick="DownloadMP3WithReverb();" type="button" value="Save as MP3 File with Reverb" title="Saves the audio for the current tune as a .MP3 file including reverb">'
 	modal_msg  += '</p>';
-	modal_msg  += '<p style="font-size:12pt;font-family:helvetica;"><strong>Note:</strong> Audio or MIDI is exported at the Player 100% speed.</p>';
-	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;">To export slowed-down tunes, add a Q: tag with the desired tempo to the tune ABC.</p>';
 
 	if (format != "whistle"){
 
@@ -24706,6 +24727,8 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 					if (callback){
 						callback(val,gTheOKButton);
 					}
+					
+					gSynthControl = synthControl;
 
 					// Are we using the trainer touch controls
 					if (gTrainerTouchControls){
@@ -24716,8 +24739,6 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 						var elems2 = document.getElementsByClassName("abcjs-midi-current-tempo-wrapper");
 
 						if (elems1 && elems2 && (elems1.length > 0) && (elems2.length > 0)){
-
-							gSynthControl = synthControl;
 							
 							var elem = elems1[0];
 							elem.onclick = DecrementTempo;
@@ -26356,6 +26377,8 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 				synthControl.setTune(visualObj, userAction, {fadeLength:fadeLength}).then(function (response) {
 					
 					console.log("Audio successfully loaded.");
+					
+					gSynthControl = synthControl;
 
 					// Are we using the trainer touch controls
 					if (gTrainerTouchControls){
@@ -26367,8 +26390,6 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 
 						if (elems1 && elems2 && (elems1.length > 0) && (elems2.length > 0)){
 							
-							gSynthControl = synthControl;
-
 							var elem = elems1[0];
 							elem.onclick = DecrementTempo;
 							elem = elems2[0];
@@ -27083,6 +27104,7 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 				synthControl.setTune(visualObj, userAction, {fadeLength:fadeLength}).then(function (response) {
 					
 					console.log("Audio successfully loaded.");
+					gSynthControl = synthControl;
 
 					// Are we using the trainer touch controls
 					if (gTrainerTouchControls){
@@ -27093,8 +27115,6 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 						var elems2 = document.getElementsByClassName("abcjs-midi-current-tempo-wrapper");
 
 						if (elems1 && elems2 && (elems1.length > 0) && (elems2.length > 0)){
-							
-							gSynthControl = synthControl;
 
 							var elem = elems1[0];
 							elem.onclick = DecrementTempo;
@@ -28064,6 +28084,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 				synthControl.setTune(visualObj, userAction, {fadeLength:fadeLength}).then(function (response) {
 					
 					console.log("Audio successfully loaded.");
+					gSynthControl = synthControl;
 
 					// Are we using the trainer touch controls
 					if (gTrainerTouchControls){
@@ -28075,8 +28096,6 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 
 						if (elems1 && elems2 && (elems1.length > 0) && (elems2.length > 0)){
 							
-							gSynthControl = synthControl;
-
 							var elem = elems1[0];
 							elem.onclick = DecrementTempo;
 							elem = elems2[0];
@@ -28635,6 +28654,7 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 				synthControl.setTune(visualObj, userAction, {fadeLength:fadeLength}).then(function (response) {
 					
 					console.log("Audio successfully loaded.");
+					gSynthControl = synthControl;
 
 					// Are we using the trainer touch controls
 					if (gTrainerTouchControls){
@@ -28645,8 +28665,6 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 						var elems2 = document.getElementsByClassName("abcjs-midi-current-tempo-wrapper");
 
 						if (elems1 && elems2 && (elems1.length > 0) && (elems2.length > 0)){
-							
-							gSynthControl = synthControl;
 
 							var elem = elems1[0];
 							elem.onclick = DecrementTempo;
@@ -29377,6 +29395,7 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 				synthControl.setTune(visualObj, userAction, {fadeLength:fadeLength}).then(function (response) {
 					
 					console.log("Audio successfully loaded.");
+					gSynthControl = synthControl;
 
 					// Are we using the trainer touch controls
 					if (gTrainerTouchControls){
@@ -29388,8 +29407,6 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 
 						if (elems1 && elems2 && (elems1.length > 0) && (elems2.length > 0)){
 							
-							gSynthControl = synthControl;
-
 							var elem = elems1[0];
 							elem.onclick = DecrementTempo;
 							elem = elems2[0];
@@ -29974,6 +29991,8 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 					gStartPlayCallback = StartPlayCallback;
 					gPreStartPlayCallback = PreStartPlayCallback;
 
+					gSynthControl = synthControl;
+
 					// Are we using the trainer touch controls
 					if (gTrainerTouchControls){
 
@@ -29984,7 +30003,6 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 
 						if (elems1 && elems2 && (elems1.length > 0) && (elems2.length > 0)){
 
-							gSynthControl = synthControl;
 							
 							var elem = elems1[0];
 							elem.onclick = DecrementTempo;
