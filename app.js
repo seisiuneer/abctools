@@ -24724,12 +24724,12 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 					
 					console.log("Audio successfully loaded.");
 
+					gSynthControl = synthControl;
+
 					if (callback){
 						callback(val,gTheOKButton);
 					}
 					
-					gSynthControl = synthControl;
-
 					// Are we using the trainer touch controls
 					if (gTrainerTouchControls){
 
