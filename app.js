@@ -17090,10 +17090,11 @@ const generalMIDISoundNames = [
   "Irish Bouzouki 2", 	// 140
   "Mandolin",			// 141
   "Marching Drums",		// 142
-  "Silence"				// 143
+  "Border Pipes",		// 143
+  "Silence"				// 144
 ];
 
-var MIDI_PATCH_COUNT = 143
+var MIDI_PATCH_COUNT = 144;
 
 var gLastInjectedSoundfont = null;
 var gLastInjectedProgram = 1;
@@ -19289,7 +19290,7 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice){
 			theDroneNotes = "[A,,,, A,,,]";
 
 			if (isNotBWW){
-				postFix = " stems=auto transpose=1\n%%MIDI program 109\n%voice_tuning_cents 48 148";
+				postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 148 148";
 			}
 			else{
 				postFix = " transpose=0\n%%MIDI program 109";
@@ -19301,7 +19302,7 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice){
 			theDroneNotes = "[A,,,, A,,,]";
 
 			if (isNotBWW){
-				postFix = " stems=auto transpose=1\n%%MIDI program 109\n%voice_tuning_cents 0 100";
+				postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 100 100";
 			}
 			else{
 				theTune = theTune.replaceAll("%voice_tuning_cents 48 148","%voice_tuning_cents 0 100");
@@ -19313,7 +19314,7 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice){
 			theDroneNotes = "[A,,,, A,,,]";
 
 			if (isNotBWW){
-				postFix = " stems=auto transpose=0\n%%MIDI program 109\n%voice_tuning_cents 0 0";
+				postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 0 0";
 			}
 			else{
 				theTune = theTune.replaceAll("transpose=1","transpose=0");
@@ -19326,7 +19327,7 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice){
 			theDroneNotes = "[A,,,, A,,,]";
 
 			if (isNotBWW){
-				postFix = " stems=auto transpose=-7\n%%MIDI program 109\n%voice_tuning_cents 0 500";
+				postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents -700 500";
 			}
 			else{
 				theTune = theTune.replaceAll("transpose=1","transpose=0");
@@ -22983,7 +22984,8 @@ function computeFade(tuneABC){
 					case "135":  // Cajun Accordion
 					case "136":  // Solfège
 					case "142":  // Marching Drums
-					case "143":  // Silence
+					case "143":  // Border Pipes
+					case "144":  // Silence
 					case "mute": // Silence
 						theFade = 100;
 						break;
@@ -23013,7 +23015,8 @@ function computeFade(tuneABC){
 					case "135":  // Cajun Accordion
 					case "136":  // Solfège
 					case "142":  // Marching Drums
-					case "143":  // Silence
+					case "143":  // Border Pipes
+					case "144":  // Silence
 					case "mute": // Silence
 						theFade = 100;
 						break;
@@ -27590,7 +27593,7 @@ function ScanTuneForInstrumentExplorer(theTune){
 			break;		
 	}
 
-	if (gTheMelodyProgram == "143"){
+	if (gTheMelodyProgram == "144"){
 		gInstrumentExplorerMelodyInstrument = 0;
 	}
 	else{
@@ -27599,7 +27602,7 @@ function ScanTuneForInstrumentExplorer(theTune){
 
 	gInstrumentExplorerMelodyInstrument = ""+gInstrumentExplorerMelodyInstrument;
 
-	if (gTheChordProgram == "143"){
+	if (gTheChordProgram == "144"){
 		gInstrumentExplorerChordInstrument = 0;
 	}
 	else{
@@ -27608,7 +27611,7 @@ function ScanTuneForInstrumentExplorer(theTune){
 
 	gInstrumentExplorerChordInstrument = ""+gInstrumentExplorerChordInstrument;
 
-	if (gTheBassProgram == "143"){
+	if (gTheBassProgram == "144"){
 		gInstrumentExplorerBassInstrument = 0;
 	}
 	else{
