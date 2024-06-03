@@ -22346,13 +22346,16 @@ function BatchMP3Export(){
 	const theData = {
 	  configure_repeats:1,
 	  configure_before_each_tune: 0,
-	  configure_include_reverb:false
+	  configure_include_reverb:true,
+	  configure_percent_speed:100
 	};
 
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Export All Tunes as MP3&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#export_all_as_mp3" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will export all the tunes in the ABC area as .MP3 files with one or more repeats.</p>'},	  
+	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">You may optionally set the playback speed as a percentage of the original.</p>'},	  
 	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">You may also optionally inject two bars of silence and/or a click intro before each tune.</p>'},	  
+	  {name: "Playback speed (percentage, default is 100):", id: "configure_percent_speed", type:"number", cssClass:"configure_repeats_form_text"}, 
 	  {name: "How many times to repeat each tune in the .MP3:", id: "configure_repeats", type:"number", cssClass:"configure_repeats_form_text"}, 
 	  {name: "         Include reverb effects in the .MP3", id: "configure_include_reverb", type:"checkbox", cssClass:"configure_repeats_form_text"},
 	  {name: "Before each tune:", id: "configure_before_each_tune", type:"select", options:before_tune_actions, cssClass:"configure_mp3_before_tune_select"},
@@ -22412,15 +22415,42 @@ function BatchMP3Export(){
 
 			}
 
-			var doIncludeReverb = args.result.configure_include_reverb
+			var doIncludeReverb = args.result.configure_include_reverb;
 
-			DoBatchMP3Export(repeatCount,doClickTrack,doInjectSilence,doIncludeReverb);
+			// Get the speed percentage
+			var percentSpeedStr = args.result.configure_percent_speed;
+
+			var percentSpeed = 100;
+
+			if (percentSpeedStr != null){
+
+				percentSpeedStr = percentSpeedStr.replace("%","");
+
+				var percentSpeed = parseInt(percentSpeedStr);
+
+				if ((isNaN(percentSpeed)) || (percentSpeed == undefined)){
+					percentSpeed = 100;
+				}
+
+				// Minimum speed is 5%
+				if (percentSpeedStr <= 5){
+					percentSpeed = 5;
+				}
+
+				// Maximum spped is 400%
+				if (percentSpeedStr > 400){
+					percentSpeed = 400;
+				}
+			}
+
+			DoBatchMP3Export(repeatCount,doClickTrack,doInjectSilence,doIncludeReverb,percentSpeed);
 		}
 
 	});
 }
 
-function DoBatchMP3Export(repeatCount,doClickTrack,doInjectSilence,doIncludeReverb){
+
+function DoBatchMP3Export(repeatCount,doClickTrack,doInjectSilence,doIncludeReverb,percentSpeed){
 
 	var totalTunesToExport;
 
@@ -22471,6 +22501,9 @@ function DoBatchMP3Export(repeatCount,doClickTrack,doInjectSilence,doIncludeReve
 	function callback(result,theOKButton){
 
 		//debugger;
+
+		// Set the speed
+		gSynthControl.warp = percentSpeed; 
 
 		//console.log("callback called result = "+result);
 		if (doIncludeReverb){
