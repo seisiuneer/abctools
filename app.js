@@ -22433,12 +22433,12 @@ function BatchMP3Export(){
 				}
 
 				// Minimum speed is 5%
-				if (percentSpeedStr <= 5){
+				if (percentSpeed <= 5){
 					percentSpeed = 5;
 				}
 
 				// Maximum spped is 400%
-				if (percentSpeedStr > 400){
+				if (percentSpeed > 400){
 					percentSpeed = 400;
 				}
 			}
