@@ -10130,13 +10130,25 @@ function StripOrnaments(theNotes){
 //
 function StripOrnamentsOne(theNotes, doTilde){
 
+	function replaceUnlessStartsWithScore(text, regex, replacement) {
+	    return text.replace(regex, (match) => {
+	        if (match.startsWith('%%score')) {
+	            return match; // Do not replace if match starts with %%score
+	        }
+	        return replacement; // Replace otherwise
+	    });
+	}
+
 	// Strip out all ornaments
 
-	//  NOTE %%score directives potentially use brackets, so filter for them
-	// Strip out all ornaments
-	var searchRegExp = /{[^}]*}/gm
+	//  NOTE: %%score directives potentially use brackets, so filter for them
 
-	theNotes = theNotes.replace(searchRegExp,"");
+	// Strip out all ornaments
+	//var searchRegExp = /{[^}]*}/gm
+
+	var searchRegExp = /%%score \{[^}]*\}|\{([^}]*)\}/gm
+
+	theNotes = replaceUnlessStartsWithScore(theNotes, searchRegExp,"");
 
 	if (doTilde){
 		theNotes = theNotes.replaceAll("~","");
@@ -10146,7 +10158,6 @@ function StripOrnamentsOne(theNotes, doTilde){
 	return theNotes;
 
 }
-
 
 //
 // Shared ABC features stripping between render and play
@@ -10775,10 +10786,30 @@ function IdleAdvancedControls(bUpdateUI){
 	if (!gotMatch){
 
 		// %%score directives potentially use brackets, so filter for them
-		//searchRegExp = /(?<!%%score )\{([^}]*)\}/gm
-		searchRegExp = /{[^}]*}/gm
+		searchRegExp = /%%score \{[^}]*\}|\{([^}]*)\}/gm
 
-		gotMatch = theNotes.search(searchRegExp) != -1;
+		//debugger;
+
+		theMatch = theNotes.match(searchRegExp);
+
+		if (theMatch && theMatch.length){
+
+			var nMatches = theMatch.length;
+
+			for (var i=0;i<nMatches;++i){
+
+				if (theMatch[i].indexOf("{") == 0){
+
+					gotMatch = true;
+					break;
+
+				}
+			}
+		}
+
+		// Simple regex for text in brackets
+		//searchRegExp = /{[^}]*}/gm
+		//gotMatch = theNotes.search(searchRegExp) != -1;
 
 	}
 
