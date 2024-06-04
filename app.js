@@ -19365,6 +19365,103 @@ function DoComplianceTransform(doInverse){
 //
 function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes){
 
+
+	// Replace a note with another, avoiding chords and text annotations
+	function replaceOutsideQuotes(str, target, replacement) {
+	    return str.replace(/"[^"]*"|[^"]/g, (match) => {
+	        if (match.startsWith('"')) {
+	            return match; // If it's inside quotes, return the match as is
+	        } else {
+	            return match.replace(new RegExp(target, 'g'), replacement); // If it's outside quotes, replace the target
+	        }
+	    });
+	}
+
+	//
+	// Fold the notes into the chanter range
+	//
+	function FoldTheNotes(theTune,theKey){
+
+		var theOriginalTune = theTune;
+
+		// Find the notes below the header
+		var theNotes = JustTheNotes(theTune);
+
+		var theLines = theNotes.split("\n");
+
+		// Find the first line that doesn't start with a comment
+		var nLines = theLines.length;
+
+		var bGotNotes = false;
+
+		var theLine;
+
+		var accum = "";
+
+		for (var i=0;i<nLines;++i){
+
+			theLine = theLines[i];
+
+			if (theLine.indexOf("%") != 0){
+
+				bGotNotes = true;
+
+				switch (theKey){
+
+					case "A":
+					theLine = theLine.replaceAll("G,","G");
+					theLine = theLine.replaceAll("A,","A");
+					theLine = theLine.replaceAll("B,","B");
+					theLine = replaceOutsideQuotes(theLine,"C","c");
+					theLine = replaceOutsideQuotes(theLine,"D","d");
+					theLine = replaceOutsideQuotes(theLine,"E","e");
+					theLine = replaceOutsideQuotes(theLine,"F","f");
+					theLine = theLine.replaceAll("b","B");
+					theLine = theLine.replaceAll("c'","c");
+					theLine = theLine.replaceAll("d'","d");
+					theLine = theLine.replaceAll("e'","e");
+					theLine = theLine.replaceAll("f'","f");
+					theLine = theLine.replaceAll("g'","g");
+					theLine = theLine.replaceAll("a'","a");
+
+					break;
+
+					case "D":
+					theLine = theLine.replaceAll("G,","G");
+					theLine = theLine.replaceAll("A,","A");
+					theLine = theLine.replaceAll("B,","B");
+					theLine = theLine.replaceAll("e","E");
+					theLine = theLine.replaceAll("f","F");
+					theLine = theLine.replaceAll("g","G");
+					theLine = theLine.replaceAll("a","A");
+					theLine = theLine.replaceAll("b","B");
+					theLine = theLine.replaceAll("c'","C");
+					theLine = theLine.replaceAll("d'","D");
+
+					break;
+				}
+
+			} 
+
+			accum += theLine + "\n";
+
+		}
+
+		// Didn't find anything below the header, exit early
+		if (!bGotNotes){
+
+			return(theOriginalTune);
+
+		}
+		else{
+			// Replace the original notes with the folded version
+			accum = accum.trim();
+			return theOriginalTune.replace(theNotes,accum);
+		}
+
+		return accum;
+	}
+
 	function StripCommentsOne(abcNotation) {
 	  return abcNotation
 	    .split('\n')          // Split the input into lines
@@ -19433,6 +19530,10 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes){
 
 	var postFix = "";
 
+	var doVisibleFolding = false;
+
+	var visibleFoldingKey = "A";
+
 	var isNotBWW = (theTune.indexOf("% Converted to ABC using bww2abc") == -1);
 
 	// Change the transpose and tuning based on the instrument style
@@ -19442,6 +19543,9 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes){
 			theDroneNotes = "[A,,,, A,,,]";
 
 			if (isNotBWW){
+
+				doVisibleFolding = foldNotes;
+
 				if (foldNotes){
 					postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 148 148";
 				}
@@ -19459,6 +19563,9 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes){
 			theDroneNotes = "[A,,,, A,,,]";
 
 			if (isNotBWW){
+
+				doVisibleFolding = foldNotes;
+
 				if (foldNotes){
 					postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 100 100";
 				}
@@ -19476,6 +19583,9 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes){
 			theDroneNotes = "[A,,,, A,,,]";
 
 			if (isNotBWW){
+
+				doVisibleFolding = foldNotes;
+
 				if (foldNotes){
 					postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 0 0";
 				}
@@ -19494,6 +19604,9 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes){
 			theDroneNotes = "[A,,,, A,,,]";
 
 			if (isNotBWW){
+
+				doVisibleFolding = foldNotes;
+
 				if (foldNotes){
 					postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents -700 500";
 				}
@@ -19511,6 +19624,9 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes){
 		case 4: // Smallpipes in A - Smallpipes drones
 			theDroneNotes = "D,,";
 			if (isNotBWW){
+
+				doVisibleFolding = foldNotes;
+
 				postFix = " stems=auto transpose=-7\n%%MIDI program 131";
 			}
 			else{
@@ -19523,6 +19639,9 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes){
 		case 5: // Smallpipes in D - Smallpipes drones
 			theDroneNotes = "D,,";
 			if (isNotBWW){
+
+				doVisibleFolding = foldNotes;
+
 				postFix = " stems=auto transpose=-7\n%%MIDI program 130";
 			}
 			else{
@@ -19535,6 +19654,11 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes){
 		case 6: // Sackpipa - Sackpipa drones
 			theDroneNotes = "D,,";
 			if (isNotBWW){
+				
+				doVisibleFolding = foldNotes;
+
+				visibleFoldingKey = "D";
+
 				postFix = " stems=auto transpose=0\n%%MIDI program 132";
 			}
 			else{
@@ -19699,9 +19823,13 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes){
 
 	theInjectedTune = theInjectedTune.trim();
 
+	// Folding the notation?
+	if (doVisibleFolding){
+		theInjectedTune = FoldTheNotes(theInjectedTune,visibleFoldingKey);
+	}
+
 	theInjectedTune += "\n%\n% Injected drones\n%\n";
 									
-		 	
 	var theNotes = JustTheNotes(theTune);
 
 	// Strip all extra stuff that's not notes
@@ -19880,7 +20008,8 @@ function InjectBagpipeSounds(){
 	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:16pt;font-family:helvetica;">In these cases, you may need to transpose your tunes before using this feature to sound best with the drones, for example transposing a D Mixolydian tune to A Mixolydian or the inverse.</p>'},  
 	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:16pt;font-family:helvetica;">Tunes previously injected with drones will be skipped.</p>'},  
 	  {name: "Bagpipe style to inject:", id: "dronestyle", type:"select", options:drone_style_list, cssClass:"configure_drones_select"},  
-	  {name: "          For Great Highland Bagpipe and Border Pipes, fold notes into the chanter range", id: "foldnotes", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
+	  {name: "          Fold the displayed and played notes into the chanter range", id: "foldnotes", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
+	  {html: '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:12pt;font-family:helvetica;">Note: Smallpipes and Säckpipa always fold played notes into the chanter range.</p>'},  
 	  {name: "          Hide drone voice", id: "hidedronevoice", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	  {name: "          Inject all tunes", id: "injectalltunes", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	];
