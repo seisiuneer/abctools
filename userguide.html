@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-       
+ 
         <style>
 
 		p {
@@ -296,22 +296,24 @@
                     
                     <p class="toc"><a style="text-decoration:none;" href="#more_tools">More ABC Tools</a></p>
                     
-                    <button class="accordion" title="Click to expand/collapse this section">Hiding/Showing ABC Annotations, Text, and Chords</button>
+                    <button class="accordion" title="Click to expand/collapse this section">Hiding/Showing ABC Annotations, Text, Chords, Tab, and Ornaments</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_showhidefeatures">Hide/Show ABC Features</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_showhideannotations">Hide/Show Annotations</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_showhidetext">Hide/Show Text</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_showhidechords">Hide/Show Chords</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_showhidetab">Hide/Show Injected Tab</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_showhideornaments">Hide/Show Ornaments</a></p>
                     </div>
                     
-                    <button class="accordion" title="Click to expand/collapse this section">Stripping Out ABC Annotation, Text, and Chords</button>
+                    <button class="accordion" title="Click to expand/collapse this section">Stripping Out ABC Annotation, Text, Chords, Tab, and Ornaments</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_stripfeatures">Strip ABC Features</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_stripannotations">Strip Annotations</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_striptext">Strip Text</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_stripchords">Strip Chords</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_striptab">Strip Injected Tab</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_stripornaments">Strip Ornaments</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">Useful Utilities for Injecting ABC Annotations and Features</button>
@@ -1723,7 +1725,7 @@
             <h1 class="page_break_always">More ABC Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/more_abc_tools_16.jpg"/>
+                <img class="image" loading="lazy" src="img/more_abc_tools_17.jpg"/>
             </div>
             <p>If you would like to only show the buttons for the features you commonly use and hide the others, click the controls icon at the top-right of the dialog to choose features of the dialog you would like to show/hide:</p>
             <div class="image_holder_p">
@@ -1733,7 +1735,10 @@
             <p>Your preferences are saved and restored the next time you use the tool.</p>
             <hr class="hidden-print" id="advanced_showhidefeatures">
             <h1 class="page_break_always">Hide/Show ABC Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>The ABC filtering buttons are enabled if Annotations, Text, Chords, Injected Tab, or Ornaments are detected in the ABC.</p>
             <p>These commands are non-destructive and only hide the elements chosen in the rendered notation.</p>
+            <p>This is primarily for filtering displayed elements before doing a PDF export.</p>
+            <p>The Player will always show all elements.</p>
             <hr>
             <p id="advanced_showhideannotations"><strong>Hide/Show Annotations</strong>  - Hides/Shows most ABC annotations like Composer, Discography, History, Tempo, etc. in the displayed notation.</p>
             <hr>
@@ -1742,9 +1747,11 @@
             <p id="advanced_showhidechords"><strong>Hide/Show Chords</strong>- Hides/Shows any chords present in the ABC in the displayed notation.</p>
             <hr>
             <p id="advanced_showhidetab"><strong>Hide/Show Injected Tab</strong> - Hides/Shows any text-annotation based injected tablature present in the ABC in the displayed notation.</p>
-            <p>The ABC filtering buttons are enabled if Annotations, Text, Chords, or Injected Tab is detected in the ABC.</p>
+            <hr>
+            <p id="advanced_showhideornaments"><strong>Hide/Show Ornaments</strong> - Hides/Shows any ~ or {} style ornamentation present in the ABC in the displayed notation.</p>
             <hr class="hidden-print" id="advanced_stripfeatures">
             <h1 class="page_break_always">Strip ABC Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>The ABC stripping buttons are enabled if Annotations, Text, Chords, Injected Tab, or Ornaments are detected in the ABC.</p>
             <p>These commands are destructive in that they remove text from the current ABC.</p>
             <p>It may be a good idea to save the current ABC or do a <strong>Copy All</strong> or <strong>Snapshot</strong> before using one of these commands if you want to quickly undo the operation.</p>
             <hr>
@@ -1755,7 +1762,8 @@
             <p id="advanced_stripchords"><strong>Strip Chords</strong> - Removes any chords present in the ABC.</p>
             <hr>
             <p id="advanced_striptab"><strong>Strip Injected Tab</strong> - Removes any text-annotation based injected tablature present in the ABC.</p>
-            <p>The ABC stripping buttons are enabled if Annotations, Text, Chords, or Injected Tab is detected in the ABC.</p>
+            <hr>
+            <p id="advanced_stripornaments"><strong>Strip Ornaments</strong> - Removes any ~ or {} style ornamentation present in the ABC.</p>
             <hr class="hidden-print" id="advanced_injectionfeatures">
             <h1 class="page_break_always">ABC Utility Injection Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>These commands are destructive in that they inject additional text into the current ABC.</p>

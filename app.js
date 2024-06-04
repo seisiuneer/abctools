@@ -35,6 +35,7 @@ var gStripAnnotations = false;
 var gStripTextAnnotations = false;
 var gStripChords = false;
 var gStripTab = false;
+var gStripOrnaments = false;
 
 var STAFFSPACEMIN = 0;
 var STAFFSPACEDEFAULT = 10;
@@ -80,6 +81,7 @@ var gAllowFilterAnnotations = false;
 var gAllowFilterText = false;
 var gAllowFilterChords = false;
 var gAllowFilterTab = false;
+var gAllowFilterOrnaments = false;
 
 var gCapo = 0;
 
@@ -10092,18 +10094,39 @@ function StripTabOne(theNotes){
 // 
 // Strip all the ornaments in the ABC
 //
-function StripOrnamentsOne(theNotes){
+function StripOrnaments(theNotes){
+
+	var theNotes = gTheABC.value;
+
+	theNotes = StripOrnamentsOne(theNotes,true);
+
+	// Replace the ABC
+	gTheABC.value = theNotes;
+
+	// Set dirty
+	gIsDirty = true;
+}
+
+// 
+// Strip all the ornaments in the ABC
+//
+function StripOrnamentsOne(theNotes, doTilde){
 
 	// Strip out all ornaments
-	var searchRegExp = /{[^}]*}/gm
+
+	// %%score directives potentially use brackets, so filter for them
+	var searchRegExp = /(?<!%%score )\{([^}]*)\}/gm
 
 	theNotes = theNotes.replace(searchRegExp,"");
+
+	if (doTilde){
+		theNotes = theNotes.replaceAll("~","");
+	}
 
 	// Replace the ABC
 	return theNotes;
 
 }
-
 
 // 
 // Allow putting up a spiner before the synchronous Render() function
@@ -10395,6 +10418,13 @@ function Render(renderAll,tuneNumber) {
 				theNotes = StripTabOne(theNotes);
 			}
 
+			if (gStripOrnaments) {
+
+				// Strip out ornaments markings
+				theNotes = StripOrnamentsOne(theNotes,true);
+			}
+
+
 			// Inject %%staffsep 
 			searchRegExp = /^X:.*$/gm
 
@@ -10533,6 +10563,7 @@ function IdleAdvancedControls(bUpdateUI){
 	var EnableAnnotations = false;
 	var EnableText = false;
 	var EnableChords = false;
+	var EnableOrnaments = false;
 
 	var gotMatch = false;
 
@@ -10698,12 +10729,30 @@ function IdleAdvancedControls(bUpdateUI){
 	// Detect tab markings
 	searchRegExp = /"[^"]*"/gm
 
-	var theMatch = theNotes.match(searchRegExp);
+	theMatch = theNotes.match(searchRegExp);
 
 	// Detect tab markings
 	gotMatch = IsTabInMatch(theNotes,theMatch);
 
 	EnableTab = gotMatch;
+
+	// Detect ornaments
+	gotMatch = false;
+
+	if (theNotes.indexOf("~") != -1){
+		gotMatch = true;
+	}
+
+	if (!gotMatch){
+
+		// %%score directives potentially use brackets, so filter for them
+		searchRegExp = /(?<!%%score )\{([^}]*)\}/gm
+
+		gotMatch = theNotes.search(searchRegExp) != -1;
+
+	}
+
+	EnableOrnaments = gotMatch;
 
 	// Now set the button styling based on the results
 	if (EnableAnnotations){
@@ -10836,6 +10885,38 @@ function IdleAdvancedControls(bUpdateUI){
 		}			
 	}
 
+	if (EnableOrnaments){
+
+		gAllowFilterOrnaments = true;
+		
+		if (bUpdateUI){
+
+			// Enable the Toggle Ornaments button
+			document.getElementById("toggleornaments").classList.remove("advancedcontrolsdisabled");
+			document.getElementById("toggleornaments").classList.add("advancedcontrols");
+
+			// Enable the Strip Ornaments button
+			document.getElementById("stripornaments").classList.remove("advancedcontrolsdisabled");
+			document.getElementById("stripornaments").classList.add("advancedcontrols");
+		}	
+	}
+	else{
+
+		gAllowFilterOrnaments = false;
+		
+		if (bUpdateUI){
+
+			// Disable the Toggle Ornaments button
+			document.getElementById("toggleornaments").classList.remove("advancedcontrols");
+			document.getElementById("toggleornaments").classList.add("advancedcontrolsdisabled");
+
+			// Disable the Strip Ornaments button
+			document.getElementById("stripornaments").classList.remove("advancedcontrols");
+			document.getElementById("stripornaments").classList.add("advancedcontrolsdisabled");
+		}	
+
+	}
+
 	if (bUpdateUI){
 
 		// Now idle the button labels based on the global states
@@ -10884,6 +10965,17 @@ function IdleAdvancedControls(bUpdateUI){
 
 		}
 
+		if (gStripOrnaments){
+
+			document.getElementById("toggleornaments").value = "Show Ornaments";
+
+		}
+		else{
+
+			document.getElementById("toggleornaments").value = "Hide Ornaments";
+
+		}
+
 	}
 
 }
@@ -10915,6 +11007,7 @@ function RestoreDefaults() {
 	gStripTextAnnotations = false;
 	gStripChords = false;
 	gStripTab = false;
+	gStripOrnaments = false;
 	gTotalTunes = 0;
 	gCurrentTune = 0;
 	gRawLastIndex = -1;
@@ -11025,7 +11118,6 @@ function ToggleChords(bDoStrip) {
 		return;
 	}
 
-
 	gStripChords = !gStripChords;
 
 	RenderAsync(true,null)
@@ -11064,6 +11156,38 @@ function ToggleTab(bDoStrip) {
 	IdleAdvancedControls(true);
 
 }
+
+//
+// Toggle ornaments
+//
+function ToggleOrnaments(bDoStrip) {
+
+	if (!gAllowFilterOrnaments){
+
+		return;
+	
+	}
+
+	// Strips the ornamentation in the actual ABC and re-renders
+	if (bDoStrip){
+
+		StripOrnaments();
+		
+		RenderAsync(true,null)
+
+		IdleAdvancedControls(true);
+
+		return;
+	}
+
+	gStripOrnaments = !gStripOrnaments;
+
+	RenderAsync(true,null)
+
+	IdleAdvancedControls(true);
+
+}
+
 
 //
 // Add a new ABC tune template, song template, or PDF tunebook annotation template to the current ABC
@@ -19557,7 +19681,7 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes){
 	theNotes = StripTextAnnotationsOne(theNotes);
 	theNotes = StripChordsOne(theNotes);
 	theNotes = StripTabOne(theNotes);	
-	theNotes = StripOrnamentsOne(theNotes);
+	theNotes = StripOrnamentsOne(theNotes,false);
 
 	var theLines = theNotes.split("\n");
 
@@ -33354,10 +33478,11 @@ function AdvancedControlsDialog(){
 	
 	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">Show/Hide ABC Features</p>'
 	modal_msg  += '<p style="text-align:center;">'
-	modal_msg  += '<input id="toggleannotations" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleAnnotations(false)" type="button" value="Hide Annotations" title="Hides/Shows common annotations in the ABC notation">';
-	modal_msg  += 	'<input id="toggletext" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTextAnnotations(false)" type="button" value="Hide Text" title="Hides/Shows any text in the ABC notation">';
-	modal_msg  += 	'<input id="togglechords" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleChords(false)" type="button" value="Hide Chords" title="Hides/Shows any chords in the ABC notation">';
-	modal_msg  += 	'<input id="toggletab" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTab(false)" type="button" value="Hide Injected Tab" title="Hides/Shows any injected tablature">';
+	modal_msg  += '<input id="toggleannotations" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleAnnotations(false)" type="button" value="Hide Annotations" title="Hides/Shows common annotations in the ABC notation.&nbsp;&nbsp;Player always shows hidden annotations.">';
+	modal_msg  += 	'<input id="toggletext" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTextAnnotations(false)" type="button" value="Hide Text" title="Hides/Shows any text in the ABC notation&nbsp;&nbsp;Player always shows hidden text.">';
+	modal_msg  += 	'<input id="togglechords" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleChords(false)" type="button" value="Hide Chords" title="Hides/Shows any chords in the ABC notation.&nbsp;&nbsp;Player always shows hidden chords.">';
+	modal_msg  += 	'<input id="toggletab" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTab(false)" type="button" value="Hide Injected Tab" title="Hides/Shows any injected tablature.&nbsp;&nbsp;Player always shows hidden tablature.">';
+	modal_msg  += 	'<input id="toggleornaments" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleOrnaments(false)" type="button" value="Hide Ornaments" title="Hides/Shows any ~ and {} style ornaments.&nbsp;&nbsp;Player always shows hidden ornaments.">';
 	modal_msg  += '</p>';
 	
 	modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">Strip ABC Features</p>'
@@ -33365,7 +33490,8 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<input id="stripannotations" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleAnnotations(true)" type="button" value="Strip Annotations" title="Strips common annotations from the ABC">';
 	modal_msg  += 	'<input id="striptext" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleTextAnnotations(true)" type="button" value="Strip Text" title="Strips all text from the ABC">';
 	modal_msg  += 	'<input id="stripchords" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleChords(true)" type="button" value="Strip Chords" title="Strips all chords from the ABC">';
-	modal_msg  += 	'<input id="striptab" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleTab(true)" type="button" value="Strip Injected Tab" title="Strips all injected tablature">';
+	modal_msg  += 	'<input id="striptab" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleTab(true)" type="button" value="Strip Injected Tab" title="Strips all injected tablature from the ABC">';
+	modal_msg  += 	'<input id="stripornaments" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleOrnaments(true)" type="button" value="Strip Ornaments" title="Strips all injected ~ and {} style ornaments from the ABC">';
 	modal_msg  += '</p>';
 	modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">ABC Injection Features</p>'
 	modal_msg  += '<p style="text-align:center;">'
@@ -36771,6 +36897,7 @@ function DoStartup() {
 	gStripTextAnnotations = false;
 	gStripChords = false;
 	gStripTab = false;
+	gStripOrnaments = false;
 	gRenderingPDF = false;
 	gAllowSave = false;
 	gAllowURLSave = false;
@@ -36780,6 +36907,7 @@ function DoStartup() {
 	gAllowFilterText = false;
 	gAllowFilterChords = false;
 	gAllowFilterTab = false;
+	gAllowFilterOrnaments = false;
 	gIsMaximized = false;
 	gCapo = 0;
 	gABCFromFile = false;

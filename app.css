@@ -600,24 +600,24 @@ font-family:"Helvetica";
 font-size:12pt;
 }
 
-#toggleannotations, #toggletext,#togglechords{
-margin-right:24px;
+#toggleannotations, #toggletext,#togglechords,#toggletab{
+margin-right:13px;
 height:42px;
 padding:12px;
 }
 
-#toggletab{
+#toggleornaments{
 height:42px;
 padding:12px;
 }
 
-#stripannotations, #striptext, #stripchords{
-margin-right:24px;
+#stripannotations, #striptext, #stripchords,  #striptab {
+margin-right:13px;
 height:42px;
 padding:12px;
 }
 
-#striptab{
+#stripornaments{
 height:42px;
 padding:12px;
 }
