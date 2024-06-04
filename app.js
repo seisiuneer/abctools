@@ -19211,7 +19211,7 @@ function DoComplianceTransform(doInverse){
 //
 // Inject a second voice of drones for bagpipe scores
 //
-function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice){
+function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes){
 
 	function StripCommentsOne(abcNotation) {
 	  return abcNotation
@@ -19290,7 +19290,12 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice){
 			theDroneNotes = "[A,,,, A,,,]";
 
 			if (isNotBWW){
-				postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 148 148";
+				if (foldNotes){
+					postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 148 148";
+				}
+				else{
+					postFix = " stems=auto transpose=0\n%%MIDI program 109\n%voice_tuning_cents 148 148";					
+				}
 			}
 			else{
 				postFix = " transpose=0\n%%MIDI program 109";
@@ -19302,7 +19307,12 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice){
 			theDroneNotes = "[A,,,, A,,,]";
 
 			if (isNotBWW){
-				postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 100 100";
+				if (foldNotes){
+					postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 100 100";
+				}
+				else{
+					postFix = " stems=auto transpose=0\n%%MIDI program 109\n%voice_tuning_cents 100 100";					
+				}
 			}
 			else{
 				theTune = theTune.replaceAll("%voice_tuning_cents 48 148","%voice_tuning_cents 0 100");
@@ -19314,7 +19324,12 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice){
 			theDroneNotes = "[A,,,, A,,,]";
 
 			if (isNotBWW){
-				postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 0 0";
+				if (foldNotes){
+					postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 0 0";
+				}
+				else{
+					postFix = " stems=auto transpose=0\n%%MIDI program 109\n%voice_tuning_cents 0 0";					
+				}
 			}
 			else{
 				theTune = theTune.replaceAll("transpose=1","transpose=0");
@@ -19327,7 +19342,12 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice){
 			theDroneNotes = "[A,,,, A,,,]";
 
 			if (isNotBWW){
-				postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents -700 500";
+				if (foldNotes){
+					postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents -700 500";
+				}
+				else{
+					postFix = " stems=auto transpose=0\n%%MIDI program 109\n%voice_tuning_cents -700 500";					
+				}
 			}
 			else{
 				theTune = theTune.replaceAll("transpose=1","transpose=0");
@@ -19696,7 +19716,8 @@ function InjectBagpipeSounds(){
 		hidedronevoice: true,
 	  	injectalltunes: true,
 	  	dronestyle: gLastInjectedBagpipeSound,
-	  	transposemelody: false
+	  	transposemelody: false,
+	  	foldnotes: true
 	};
 
 	var form = [
@@ -19707,11 +19728,12 @@ function InjectBagpipeSounds(){
 	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:16pt;font-family:helvetica;">In these cases, you may need to transpose your tunes before using this feature to sound best with the drones, for example transposing a D Mixolydian tune to A Mixolydian or the inverse.</p>'},  
 	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:16pt;font-family:helvetica;">Tunes previously injected with drones will be skipped.</p>'},  
 	  {name: "Bagpipe style to inject:", id: "dronestyle", type:"select", options:drone_style_list, cssClass:"configure_drones_select"},  
+	  {name: "          For Great Highland Bagpipe and Border Pipes, fold notes into the chanter range", id: "foldnotes", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	  {name: "          Hide drone voice", id: "hidedronevoice", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	  {name: "          Inject all tunes", id: "injectalltunes", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 685, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 75, width: 685, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 		
 		// Keep track of dialogs
 		sendGoogleAnalytics("action","InjectBagpipeSounds");
@@ -19741,7 +19763,7 @@ function InjectBagpipeSounds(){
 					// Don't re-inject already injected tunes
 					if (theTune.indexOf("% Injected drones") == -1){
 
-						theTune = InjectOneBagpipeDrones(theTune,args.result.dronestyle,args.result.hidedronevoice);
+						theTune = InjectOneBagpipeDrones(theTune,args.result.dronestyle,args.result.hidedronevoice,args.result.foldnotes);
 
 						doRenderAfterInject = true;
 
@@ -19789,7 +19811,7 @@ function InjectBagpipeSounds(){
 				// Don't re-inject already injected tunes
 				if (theInjectedTune.indexOf("% Injected drones") == -1){
 
-					theInjectedTune = InjectOneBagpipeDrones(theInjectedTune,args.result.dronestyle,args.result.hidedronevoice);
+					theInjectedTune = InjectOneBagpipeDrones(theInjectedTune,args.result.dronestyle,args.result.hidedronevoice,args.result.foldnotes);
 					
 					doRenderAfterInject = true;
 
