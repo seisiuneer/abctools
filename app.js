@@ -33491,16 +33491,16 @@ function AdvancedControlsDialog(){
 	
 	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">Show/Hide ABC Features</p>'
 	modal_msg  += '<p style="text-align:center;">'
-	modal_msg  += '<input id="toggleannotations" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleAnnotations(false)" type="button" value="Hide Annotations" title="Hides/Shows common annotations in the ABC notation.&nbsp;&nbsp;Player always shows hidden annotations.">';
-	modal_msg  += 	'<input id="toggletext" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTextAnnotations(false)" type="button" value="Hide Text" title="Hides/Shows any text in the ABC notation">';
-	modal_msg  += 	'<input id="togglechords" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleChords(false)" type="button" value="Hide Chords" title="Hides/Shows any chords in the ABC notation.">';
-	modal_msg  += 	'<input id="toggletab" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTab(false)" type="button" value="Hide Injected Tab" title="Hides/Shows any injected tablature.">';
-	modal_msg  += 	'<input id="toggleornaments" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleOrnaments(false)" type="button" value="Hide Ornaments" title="Hides/Shows any ~ and {} style ornaments.">';
+	modal_msg  += '<input id="toggleannotations" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleAnnotations(false)" type="button" value="Hide Annotations" title="Hides/Shows all common annotations in the ABC">';
+	modal_msg  += 	'<input id="toggletext" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTextAnnotations(false)" type="button" value="Hide Text" title="Hides/Shows all text in the ABC">';
+	modal_msg  += 	'<input id="togglechords" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleChords(false)" type="button" value="Hide Chords" title="Hides/Shows all chords in the ABC">';
+	modal_msg  += 	'<input id="toggletab" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTab(false)" type="button" value="Hide Injected Tab" title="Hides/Shows all injected tablature in the ABC">';
+	modal_msg  += 	'<input id="toggleornaments" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleOrnaments(false)" type="button" value="Hide Ornaments" title="Hides/Shows all ~ and {} style ornaments in the ABC">';
 	modal_msg  += '</p>';
 	
 	modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">Strip ABC Features</p>'
 	modal_msg  += '<p style="text-align:center;">';
-	modal_msg  += '<input id="stripannotations" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleAnnotations(true)" type="button" value="Strip Annotations" title="Strips common annotations from the ABC">';
+	modal_msg  += '<input id="stripannotations" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleAnnotations(true)" type="button" value="Strip Annotations" title="Strips all common annotations from the ABC">';
 	modal_msg  += 	'<input id="striptext" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleTextAnnotations(true)" type="button" value="Strip Text" title="Strips all text from the ABC">';
 	modal_msg  += 	'<input id="stripchords" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleChords(true)" type="button" value="Strip Chords" title="Strips all chords from the ABC">';
 	modal_msg  += 	'<input id="striptab" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleTab(true)" type="button" value="Strip Injected Tab" title="Strips all injected tablature from the ABC">';
