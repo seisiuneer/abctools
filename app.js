@@ -37343,27 +37343,28 @@ function DoStartup() {
 
 		function(e){
 
-			// // Pastes over the contents sometimes don't result in the proper redraw behavior
-			// // Detect if there is a tune in the paste and then force a full redraw if detected
+			// Pastes over the contents sometimes don't result in the proper redraw behavior
+			// Detect if there is a tune in the paste and then force a full redraw if detected
 
-			// var forceRender = false;
+			var forceRender = false;
 
-			// // Get the contents
-			// var clipboardData = (e.clipboardData || window.clipboardData);
+			// Get the contents
+			var clipboardData = (e.clipboardData || window.clipboardData);
 
-			// if (clipboardData){
+			if (clipboardData){
 
-			// 	var thePasteContents = clipboardData.getData("text");
+				var thePasteContents = clipboardData.getData("text");
 
-			// 	if (thePasteContents && (thePasteContents.indexOf("X:") != -1)){
+				// Heuristic - Look for an X: tag in the paste contents to force a complete redraw
+				if (thePasteContents && (thePasteContents.indexOf("X:") != -1)){
 
-			// 		console.log("\n---\nTune paste detected, forcing full redraw")
+					//console.log("\n---\nTune paste detected, forcing full redraw")
 
-			// 		forceRender = true;
+					forceRender = true;
 		    		
-			// 	}
+				}
 
-			// }
+			}
 
 			setTimeout(function(){
 
@@ -37379,16 +37380,16 @@ function DoStartup() {
 					FixIOS17();
 
 				}
+				else
+				// Forcing a full redraw after paste?
+				if (forceRender){
 
-				// // Forcing a full redraw after paste?
-				// if (forceRender){
+					setTimeout(function(){
 
-				// 	setTimeout(function(){
+		    			RenderAsync(true,null);
 
-		  //   			RenderAsync(true,null);
-
-		  //   		}, 250);
-		  //   	}
+		    		}, 250);
+		    	}
 
 			},0);
 		};
