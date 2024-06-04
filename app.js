@@ -355,6 +355,9 @@ var gShowDGDAETab = false;
 // Show CGDA tab
 var gShowCGDATab = false;
 
+// Confirm clear
+var gConfirmClear = true;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -1892,6 +1895,49 @@ function SortDialog(){
 //
 function Clear() {
 
+	function doClear(){
+
+		// Start over
+		gIsFromShare = false;
+
+		// Clear dirty flag
+		gIsDirty = false;
+
+		var elem = document.getElementById("rawmodebutton");
+
+		elem.value = "Highlighting Off";
+
+		// Grey it out
+		elem.classList.remove("rawmodebutton");
+		elem.classList.add("rawmodebuttondisabled");
+
+		elem.classList.add("btn-rawmode-off");
+		elem.classList.remove("btn-rawmode-on");
+
+		gTheABC.style.backgroundColor = "white";
+
+		// Turn off raw mode
+		gRawMode = false;
+
+		// Clear last tune highlight tracker
+		gRawLastIndex = -1;
+
+		// If staff spacing had changed due to a share, restore it
+		RestoreSavedStaffSpacing();
+
+		ClearNoRender();
+
+		RenderAsync(true,null);
+
+		// And set the focus
+	    gTheABC.focus();
+
+	    // Clear the diagnostics area
+	    elem = document.getElementById("diagnostics");
+	    elem.innerHTML = "";		
+		
+	}
+
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
 		return;
@@ -1900,56 +1946,28 @@ function Clear() {
 	// Keep track of actions
 	sendGoogleAnalytics("action","Clear");
 
-	var thePrompt = "Are you sure you want to erase all the ABC and start over?";
+	if (gConfirmClear){
 
-	// Center the string in the prompt
-	thePrompt = makeCenteredPromptString(thePrompt);
+		var thePrompt = "Are you sure you want to erase all the ABC and start over?";
 
-	DayPilot.Modal.confirm(thePrompt,{ top:200, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
 
-		if (!args.canceled){
+		DayPilot.Modal.confirm(thePrompt,{ top:200, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
 
-			// Start over
-			gIsFromShare = false;
+			if (!args.canceled){
 
-			// Clear dirty flag
-			gIsDirty = false;
+				doClear();
 
-			var elem = document.getElementById("rawmodebutton");
+			}
 
-			elem.value = "Highlighting Off";
+		});
+	}
+	else{
 
-			// Grey it out
-			elem.classList.remove("rawmodebutton");
-			elem.classList.add("rawmodebuttondisabled");
+		doClear();
 
-			elem.classList.add("btn-rawmode-off");
-			elem.classList.remove("btn-rawmode-on");
-
-			gTheABC.style.backgroundColor = "white";
-
-			// Turn off raw mode
-			gRawMode = false;
-
-			// Clear last tune highlight tracker
-			gRawLastIndex = -1;
-
-			// If staff spacing had changed due to a share, restore it
-			RestoreSavedStaffSpacing();
-
-			ClearNoRender();
-
-			RenderAsync(true,null);
-
-			// And set the focus
-		    gTheABC.focus();
-
-		    // Clear the diagnostics area
-		    elem = document.getElementById("diagnostics");
-		    elem.innerHTML = "";		
-		}
-
-	});
+	}
 
 }
 
@@ -31849,6 +31867,13 @@ function GetInitialConfigurationSettings(){
 		}
 	}
 
+	// Confirm Clear
+	gConfirmClear = true;
+	val = localStorage.ConfirmClear;
+	if (val){
+		gConfirmClear = (val == "true");
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -32047,6 +32072,9 @@ function SaveConfigurationSettings(){
 
 		// Show the show CGDA state
 		localStorage.ShowCGDATab = gShowCGDATab;
+
+		// Confirm Clear
+		localStorage.ConfirmClear = gConfirmClear;
 
 	}
 }
@@ -33809,12 +33837,14 @@ function AdvancedSettings(){
 		configure_disable_selected_play:gDisableSelectedPlay,
 		configure_show_diagnostics: gShowDiagnostics,
 		configure_reverb: gReverbString,
-		configure_tinyurl: gTinyURLAPIKeyOverride	  	
+		configure_tinyurl: gTinyURLAPIKeyOverride,
+		configure_confirm_clear: gConfirmClear	  	
 	};
 
 	var form = [
 		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Advanced Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 		{html: '<p style="font-size:12pt;line-height:12px;font-family:helvetica;"><strong>Only change these values if you know what you are doing!</strong></p>'},
+		{name: "          Always confirm before deletion when clicking Clear", id: "configure_confirm_clear", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "          Show ABC syntax validation panel", id: "configure_show_diagnostics", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Disable abcjs notation rendering", id: "configure_DisableRendering", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Autoscroll player when playing", id: "configure_autoscrollplayer", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
@@ -33867,6 +33897,9 @@ function AdvancedSettings(){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
+
+			// Confirm clear
+			gConfirmClear = args.result.configure_confirm_clear
 
 			// Show/hide the diagnostics panel
 			gShowDiagnostics = args.result.configure_show_diagnostics;
