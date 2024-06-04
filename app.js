@@ -10128,6 +10128,129 @@ function StripOrnamentsOne(theNotes, doTilde){
 
 }
 
+
+//
+// Shared ABC features stripping between render and play
+//
+function processAllStripping(theNotes){
+
+	var searchRegExp = "";
+
+	if (gStripAnnotations) {
+
+		// Strip out tempo markings
+		searchRegExp = /^Q:.*$/gm
+
+		// Strip out tempo markings
+		theNotes = theNotes.replace(searchRegExp, "% comment");
+
+		// Strip out Z: annotation
+		searchRegExp = /^Z:.*$/gm
+
+		// Strip out Z: annotation
+		theNotes = theNotes.replace(searchRegExp, "% comment");
+
+		// Strip out R: annotation
+		searchRegExp = /^R:.*$/gm
+
+		// Strip out R: annotation
+		theNotes = theNotes.replace(searchRegExp, "% comment");
+
+		// Strip out S: annotation
+		searchRegExp = /^S:.*$/gm
+
+		// Strip out S: annotation
+		theNotes = theNotes.replace(searchRegExp, "% comment");
+
+		// Strip out N: annotation
+		searchRegExp = /^N:.*$/gm
+
+		// Strip out N: annotation
+		theNotes = theNotes.replace(searchRegExp, "% comment");
+
+		// Strip out D: annotation
+		searchRegExp = /^D:.*$/gm
+
+		// Strip out D: annotation
+		theNotes = theNotes.replace(searchRegExp, "% comment");
+
+		// Strip out H: annotation
+		searchRegExp = /^H:.*$/gm
+
+		// Strip out H: annotation
+		theNotes = theNotes.replace(searchRegExp, "% comment");
+
+		// Strip out B: annotation
+		searchRegExp = /^B:.*$/gm
+
+		// Strip out B: annotation
+		theNotes = theNotes.replace(searchRegExp, "% comment");
+
+		// Strip out C: annotation
+		searchRegExp = /^C:.*$/gm
+
+		// Strip out C: annotation
+		theNotes = theNotes.replace(searchRegExp, "% comment");
+
+		// Strip out O: annotation
+		searchRegExp = /^O:.*$/gm
+
+		// Strip out O: annotation
+		theNotes = theNotes.replace(searchRegExp, "% comment");
+
+		// Strip out A: annotation
+		searchRegExp = /^A:.*$/gm
+
+		// Strip out A: annotation
+		theNotes = theNotes.replace(searchRegExp, "% comment");
+
+		// Strip out P: annotation
+		searchRegExp = /^P:.*$/gm
+
+		// Strip out P: annotation
+		theNotes = theNotes.replace(searchRegExp, "% comment");
+	}
+
+	if (gStripTextAnnotations) {
+
+		// Strip out text markings
+		searchRegExp = /%%text .*$/gm
+
+		theNotes = theNotes.replace(searchRegExp, "% comment");
+
+		searchRegExp = /%%text[\r\n]/gm
+
+		theNotes = theNotes.replace(searchRegExp, "% comment\n");
+
+		// Strip out %%center annotation
+		searchRegExp = /%%center.*$/gm
+
+		// Strip out %%center annotation
+		theNotes = theNotes.replace(searchRegExp, "% comment");
+
+	}
+
+	if (gStripChords) {
+
+		// Strip out chord markings
+		theNotes = StripChordsOne(theNotes)
+	}
+
+	if (gStripTab) {
+
+		// Strip out tab markings
+		theNotes = StripTabOne(theNotes);
+	}
+
+	if (gStripOrnaments) {
+
+		// Strip out ornaments markings
+		theNotes = StripOrnamentsOne(theNotes,true);
+	}
+
+	return theNotes;
+}
+
 // 
 // Allow putting up a spiner before the synchronous Render() function
 //
@@ -10310,123 +10433,10 @@ function Render(renderAll,tuneNumber) {
 
 		if (!gRawMode){
 
-			var searchRegExp = "";
-
-			if (gStripAnnotations) {
-
-				// Strip out tempo markings
-				searchRegExp = /^Q:.*$/gm
-
-				// Strip out tempo markings
-				theNotes = theNotes.replace(searchRegExp, "% comment");
-
-				// Strip out Z: annotation
-				searchRegExp = /^Z:.*$/gm
-
-				// Strip out Z: annotation
-				theNotes = theNotes.replace(searchRegExp, "% comment");
-
-				// Strip out R: annotation
-				searchRegExp = /^R:.*$/gm
-
-				// Strip out R: annotation
-				theNotes = theNotes.replace(searchRegExp, "% comment");
-
-				// Strip out S: annotation
-				searchRegExp = /^S:.*$/gm
-
-				// Strip out S: annotation
-				theNotes = theNotes.replace(searchRegExp, "% comment");
-
-				// Strip out N: annotation
-				searchRegExp = /^N:.*$/gm
-
-				// Strip out N: annotation
-				theNotes = theNotes.replace(searchRegExp, "% comment");
-
-				// Strip out D: annotation
-				searchRegExp = /^D:.*$/gm
-
-				// Strip out D: annotation
-				theNotes = theNotes.replace(searchRegExp, "% comment");
-
-				// Strip out H: annotation
-				searchRegExp = /^H:.*$/gm
-
-				// Strip out H: annotation
-				theNotes = theNotes.replace(searchRegExp, "% comment");
-
-				// Strip out B: annotation
-				searchRegExp = /^B:.*$/gm
-
-				// Strip out B: annotation
-				theNotes = theNotes.replace(searchRegExp, "% comment");
-
-				// Strip out C: annotation
-				searchRegExp = /^C:.*$/gm
-
-				// Strip out C: annotation
-				theNotes = theNotes.replace(searchRegExp, "% comment");
-
-				// Strip out O: annotation
-				searchRegExp = /^O:.*$/gm
-
-				// Strip out O: annotation
-				theNotes = theNotes.replace(searchRegExp, "% comment");
-
-				// Strip out A: annotation
-				searchRegExp = /^A:.*$/gm
-
-				// Strip out A: annotation
-				theNotes = theNotes.replace(searchRegExp, "% comment");
-
-				// Strip out P: annotation
-				searchRegExp = /^P:.*$/gm
-
-				// Strip out P: annotation
-				theNotes = theNotes.replace(searchRegExp, "% comment");
-			}
-
-			if (gStripTextAnnotations) {
-
-				// Strip out text markings
-				searchRegExp = /%%text .*$/gm
-
-				theNotes = theNotes.replace(searchRegExp, "% comment");
-
-				searchRegExp = /%%text[\r\n]/gm
-
-				theNotes = theNotes.replace(searchRegExp, "% comment\n");
-
-				// Strip out %%center annotation
-				searchRegExp = /%%center.*$/gm
-
-				// Strip out %%center annotation
-				theNotes = theNotes.replace(searchRegExp, "% comment");
-
-			}
-
-			if (gStripChords) {
-
-				// Strip out chord markings
-				theNotes = StripChordsOne(theNotes)
-			}
-
-			if (gStripTab) {
-
-				// Strip out tab markings
-				theNotes = StripTabOne(theNotes);
-			}
-
-			if (gStripOrnaments) {
-
-				// Strip out ornaments markings
-				theNotes = StripOrnamentsOne(theNotes,true);
-			}
-
+			theNotes = processAllStripping(theNotes);
 
 			// Inject %%staffsep 
-			searchRegExp = /^X:.*$/gm
+			var searchRegExp = /^X:.*$/gm
 
 			theNotes = theNotes.replace(searchRegExp, "X:1\n%%staffsep " + gStaffSpacing);
 
@@ -25251,6 +25261,9 @@ function PreProcessPlayABC(theTune){
 
 	// Override any ABC play values?
 
+	// Strip any features hidden from the More Tools dialog
+	theTune = processAllStripping(theTune);
+
 	// Always override programs and volumes?
 	var bForceOverride = false;
 
@@ -33479,10 +33492,10 @@ function AdvancedControlsDialog(){
 	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">Show/Hide ABC Features</p>'
 	modal_msg  += '<p style="text-align:center;">'
 	modal_msg  += '<input id="toggleannotations" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleAnnotations(false)" type="button" value="Hide Annotations" title="Hides/Shows common annotations in the ABC notation.&nbsp;&nbsp;Player always shows hidden annotations.">';
-	modal_msg  += 	'<input id="toggletext" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTextAnnotations(false)" type="button" value="Hide Text" title="Hides/Shows any text in the ABC notation&nbsp;&nbsp;Player always shows hidden text.">';
-	modal_msg  += 	'<input id="togglechords" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleChords(false)" type="button" value="Hide Chords" title="Hides/Shows any chords in the ABC notation.&nbsp;&nbsp;Player always shows hidden chords.">';
-	modal_msg  += 	'<input id="toggletab" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTab(false)" type="button" value="Hide Injected Tab" title="Hides/Shows any injected tablature.&nbsp;&nbsp;Player always shows hidden tablature.">';
-	modal_msg  += 	'<input id="toggleornaments" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleOrnaments(false)" type="button" value="Hide Ornaments" title="Hides/Shows any ~ and {} style ornaments.&nbsp;&nbsp;Player always shows hidden ornaments.">';
+	modal_msg  += 	'<input id="toggletext" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTextAnnotations(false)" type="button" value="Hide Text" title="Hides/Shows any text in the ABC notation">';
+	modal_msg  += 	'<input id="togglechords" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleChords(false)" type="button" value="Hide Chords" title="Hides/Shows any chords in the ABC notation.">';
+	modal_msg  += 	'<input id="toggletab" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTab(false)" type="button" value="Hide Injected Tab" title="Hides/Shows any injected tablature.">';
+	modal_msg  += 	'<input id="toggleornaments" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleOrnaments(false)" type="button" value="Hide Ornaments" title="Hides/Shows any ~ and {} style ornaments.">';
 	modal_msg  += '</p>';
 	
 	modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">Strip ABC Features</p>'
