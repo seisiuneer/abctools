@@ -10132,8 +10132,9 @@ function StripOrnamentsOne(theNotes, doTilde){
 
 	// Strip out all ornaments
 
-	// %%score directives potentially use brackets, so filter for them
-	var searchRegExp = /(?<!%%score )\{([^}]*)\}/gm
+	//  NOTE %%score directives potentially use brackets, so filter for them
+	// Strip out all ornaments
+	var searchRegExp = /{[^}]*}/gm
 
 	theNotes = theNotes.replace(searchRegExp,"");
 
@@ -10774,7 +10775,8 @@ function IdleAdvancedControls(bUpdateUI){
 	if (!gotMatch){
 
 		// %%score directives potentially use brackets, so filter for them
-		searchRegExp = /(?<!%%score )\{([^}]*)\}/gm
+		//searchRegExp = /(?<!%%score )\{([^}]*)\}/gm
+		searchRegExp = /{[^}]*}/gm
 
 		gotMatch = theNotes.search(searchRegExp) != -1;
 
@@ -37339,7 +37341,29 @@ function DoStartup() {
 	//
 	document.getElementById('abc').onpaste = 
 
-		function(){
+		function(e){
+
+			// // Pastes over the contents sometimes don't result in the proper redraw behavior
+			// // Detect if there is a tune in the paste and then force a full redraw if detected
+
+			// var forceRender = false;
+
+			// // Get the contents
+			// var clipboardData = (e.clipboardData || window.clipboardData);
+
+			// if (clipboardData){
+
+			// 	var thePasteContents = clipboardData.getData("text");
+
+			// 	if (thePasteContents && (thePasteContents.indexOf("X:") != -1)){
+
+			// 		console.log("\n---\nTune paste detected, forcing full redraw")
+
+			// 		forceRender = true;
+		    		
+			// 	}
+
+			// }
 
 			setTimeout(function(){
 
@@ -37355,6 +37379,16 @@ function DoStartup() {
 					FixIOS17();
 
 				}
+
+				// // Forcing a full redraw after paste?
+				// if (forceRender){
+
+				// 	setTimeout(function(){
+
+		  //   			RenderAsync(true,null);
+
+		  //   		}, 250);
+		  //   	}
 
 			},0);
 		};
