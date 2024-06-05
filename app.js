@@ -20089,8 +20089,8 @@ function InjectBagpipeSounds(){
 
 					var theTune = getTuneByIndex(i);
 
-					// Don't re-inject already injected tunes
-					if (theTune.indexOf("% Injected drones") == -1){
+					// Don't re-inject already injected tunes and skip section headers
+					if ((theTune.indexOf("% Injected drones") == -1) && (!isSectionHeader(theTune))){
 
 						theTune = InjectOneBagpipeDrones(theTune,args.result.dronestyle,args.result.hidedronevoice,args.result.foldnotes,args.result.injectdronevoice);
 
@@ -20137,8 +20137,8 @@ function InjectBagpipeSounds(){
 
 				var theInjectedTune = theSelectedABC;
 
-				// Don't re-inject already injected tunes
-				if (theInjectedTune.indexOf("% Injected drones") == -1){
+				// Don't re-inject already injected and skip section headers
+				if ((theInjectedTune.indexOf("% Injected drones") == -1) && (!isSectionHeader(theInjectedTune))){
 
 					theInjectedTune = InjectOneBagpipeDrones(theInjectedTune,args.result.dronestyle,args.result.hidedronevoice,args.result.foldnotes,args.result.injectdronevoice);
 					
