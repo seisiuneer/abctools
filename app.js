@@ -19404,7 +19404,7 @@ function DoComplianceTransform(doInverse){
 //
 // Inject a second voice of drones for bagpipe scores
 //
-function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,injectDrones){
+function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,injectDrones,droneMatchesTuneKey){
 
 
 	// Replace a note with another, avoiding chords and text annotations
@@ -19416,6 +19416,116 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 	            return match.replace(new RegExp(target, 'g'), replacement); // If it's outside quotes, replace the target
 	        }
 	    });
+	}
+
+	// 
+	// Get the drone pitch shift for a tune based on key
+	//
+	function getDroneShift(theTune){
+
+		// Parse out the first few measures
+		theTune = escape(theTune);
+
+		theLines = theTune.split("%0A");
+
+		nLines = theLines.length;
+
+		// Find the key
+		theKey = "";
+
+		// Find the key
+		for (j=0;j<nLines;++j){
+
+			theKey = unescape(theLines[j]); 
+
+			if (theKey.indexOf("K:")!= -1){
+				break;
+			}
+
+		}
+
+		//debugger;
+
+		var theRawKey = theKey.replace("K:","");
+		theRawKey = theRawKey.trim();
+
+		if (theRawKey.length == 0){
+			return 0;
+		}
+
+		var theRootKey = theRawKey[0];
+
+		// Check for accidental
+		if (theRawKey.length > 1){
+			if ((theRawKey[1] == "#")||(theRawKey[1] == "b")){
+				theRootKey = theRawKey.substring(0,2);
+			}
+		}
+
+		theRootKey = theRootKey.toUpperCase();
+
+		switch (theRootKey){
+			case "B#":
+			case "C":
+				return 300;
+				break;
+
+			case "C#":
+			case "Db":
+				return 400;
+				break;
+
+			case "D":
+				return 500;
+				break;
+
+			case "D#":
+			case "Eb":
+				return 600;
+				break;
+
+			case "E":
+			case "Fb":
+				return -500;
+				break;
+
+			case "E#":
+			case "F":
+				return -400;
+				break;
+
+			case "F#":
+			case "Gb":
+				return -300;
+				break;
+
+			case "G":
+				return -200;
+				break;
+
+			case "G#":
+			case "Ab":
+				return -100;
+				break;
+
+			case "A":
+				return 0;
+				break;
+
+			case "A#":
+			case "Bb":
+				return 100;
+				break;
+
+			case "B":
+			case "Cb":
+				return 200;
+				break;
+
+			default:
+				return 0;
+				break;
+		}
 	}
 
 	//
@@ -19443,7 +19553,8 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 
 			theLine = theLines[i];
 
-			if (theLine.indexOf("%") != 0){
+			// Don't translate characters in comments, annotations, or voice declarations
+			if ((theLine.indexOf("%") != 0) && (theLine.indexOf("V:") == -1)){
 
 				bGotNotes = true;
 
@@ -19575,7 +19686,20 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 
 	var visibleFoldingKey = "A";
 
+	// Sackpipa and Uilleann are based on the key of D
+	if (droneStyle >= 6){
+		visibleFoldingKey = "D";
+	}
+
 	var isNotBWW = (theTune.indexOf("% Converted to ABC using bww2abc") == -1);
+
+	// Shifting the drones to match the key of the tune?
+	var theDroneShift = 0;
+	if (droneMatchesTuneKey){
+
+		theDroneShift = getDroneShift(theTune);
+
+	}
 
 	// Change the transpose and tuning based on the instrument style
 	switch (droneStyle){
@@ -19585,13 +19709,15 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 
 			if (isNotBWW){
 
-				doVisibleFolding = foldNotes;
+				doVisibleFolding = foldNotes; 
+
+				theDroneShift = 148 + theDroneShift;
 
 				if (foldNotes){
-					postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 148 148";
+					postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 148 "+theDroneShift;
 				}
 				else{
-					postFix = " stems=auto transpose=0\n%%MIDI program 109\n%voice_tuning_cents 148 148";					
+					postFix = " stems=auto transpose=0\n%%MIDI program 109\n%voice_tuning_cents 148 "+theDroneShift;					
 				}
 			}
 			else{
@@ -19603,15 +19729,17 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 		case 1: // Great Highland Bagpipe at 473 Hz (Concert Bb)
 			theDroneNotes = "[A,,,, A,,,]";
 
+			theDroneShift = 100 + theDroneShift;
+
 			if (isNotBWW){
 
 				doVisibleFolding = foldNotes;
 
 				if (foldNotes){
-					postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 100 100";
+					postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 100 "+theDroneShift;
 				}
 				else{
-					postFix = " stems=auto transpose=0\n%%MIDI program 109\n%voice_tuning_cents 100 100";					
+					postFix = " stems=auto transpose=0\n%%MIDI program 109\n%voice_tuning_cents 100 "+theDroneShift;					
 				}
 			}
 			else{
@@ -19628,10 +19756,10 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 				doVisibleFolding = foldNotes;
 
 				if (foldNotes){
-					postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 0 0";
+					postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 0 "+theDroneShift;
 				}
 				else{
-					postFix = " stems=auto transpose=0\n%%MIDI program 109\n%voice_tuning_cents 0 0";					
+					postFix = " stems=auto transpose=0\n%%MIDI program 109\n%voice_tuning_cents 0 "+theDroneShift;					
 				}
 			}
 			else{
@@ -19648,11 +19776,13 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 
 				doVisibleFolding = foldNotes;
 
+				theDroneShift = 500 + theDroneShift;
+
 				if (foldNotes){
-					postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents -700 500";
+					postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents -700 "+theDroneShift;
 				}
 				else{
-					postFix = " stems=auto transpose=0\n%%MIDI program 109\n%voice_tuning_cents -700 500";					
+					postFix = " stems=auto transpose=0\n%%MIDI program 109\n%voice_tuning_cents -700 "+theDroneShift;					
 				}
 			}
 			else{
@@ -19668,7 +19798,12 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 
 				doVisibleFolding = foldNotes;
 
-				postFix = " stems=auto transpose=-7\n%%MIDI program 131";
+				// Higher drones only
+				if (theDroneShift < 0){
+					theDroneShift += 1200;
+				}
+
+				postFix = " stems=auto transpose=-7\n%%MIDI program 131\n%voice_tuning_cents 0 "+theDroneShift;
 			}
 			else{
 				theTune = theTune.replaceAll("%%MIDI program 109","%%MIDI program 131");
@@ -19683,7 +19818,12 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 
 				doVisibleFolding = foldNotes;
 
-				postFix = " stems=auto transpose=-7\n%%MIDI program 130";
+				// Higher drones only
+				if (theDroneShift < 0){
+					theDroneShift += 1200;
+				}
+
+				postFix = " stems=auto transpose=-7\n%%MIDI program 130\n%voice_tuning_cents 0 "+theDroneShift;
 			}
 			else{
 				theTune = theTune.replaceAll("%%MIDI program 109","%%MIDI program 130");
@@ -19694,13 +19834,20 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 
 		case 6: // Sackpipa - Sackpipa drones
 			theDroneNotes = "D,,";
-			if (isNotBWW){
+
+			if (droneMatchesTuneKey){
+
+				theDroneShift = theDroneShift + 700;
+
+				if (theDroneShift > 500){
+					theDroneShift -= 1200;
+				}
 				
+			}
+
+			if (isNotBWW){
 				doVisibleFolding = foldNotes;
-
-				visibleFoldingKey = "D";
-
-				postFix = " stems=auto transpose=0\n%%MIDI program 132";
+				postFix = " stems=auto transpose=0\n%%MIDI program 132\n%voice_tuning_cents 0 "+theDroneShift;
 			}
 			else{
 				theTune = theTune.replaceAll("%%MIDI program 109","%%MIDI program 132");
@@ -19711,8 +19858,19 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 
 		case 7: // Uilleann Pipes in D - Crowley-style drones
 			theDroneNotes = "D,";
+
+			if (droneMatchesTuneKey){
+
+				theDroneShift = theDroneShift + 700;
+
+				if (theDroneShift > 500){
+					theDroneShift -= 1200;
+				}
+
+			}
+
 			if (isNotBWW){
-				postFix = " stems=auto transpose=0\n%%MIDI program 129";
+				postFix = " stems=auto transpose=0\n%%MIDI program 129\n%voice_tuning_cents 0 "+theDroneShift;
 			}
 			else{
 				theTune = theTune.replaceAll("%%MIDI program 109","%%MIDI program 129");
@@ -19723,8 +19881,19 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 
 		case 8: // Uilleann Pipes in D - Lynch-style drones
 			theDroneNotes = "E,";
+
+			if (droneMatchesTuneKey){
+
+				theDroneShift = theDroneShift + 700;
+
+				if (theDroneShift > 500){
+					theDroneShift -= 1200;
+				}
+
+			}
+			
 			if (isNotBWW){
-				postFix = " stems=auto transpose=0\n%%MIDI program 129";
+				postFix = " stems=auto transpose=0\n%%MIDI program 129\n%voice_tuning_cents 0 "+theDroneShift;
 			}
 			else{
 				theTune = theTune.replaceAll("%%MIDI program 109","%%MIDI program 129");
@@ -19735,8 +19904,22 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 
 		case 9: // Uilleann Pipes in C# - Crowley-style drones
 			theDroneNotes = "D,";
+
+			theDroneShift = theDroneShift-100;
+			
+			if (droneMatchesTuneKey){
+
+				theDroneShift = theDroneShift + 700;
+
+				if (theDroneShift > 500){
+					theDroneShift -= 1200;
+				}
+				
+			}
+			
 			if (isNotBWW){
-				postFix = " stems=auto transpose=0\n%%MIDI program 129\n%voice_tuning_cents -100 -100";
+
+				postFix = " stems=auto transpose=0\n%%MIDI program 129\n%voice_tuning_cents -100 "+theDroneShift;
 			}
 			else{
 				theTune = theTune.replaceAll("%%MIDI program 109","%%MIDI program 129");
@@ -19747,8 +19930,21 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 
 		case 10: // Uilleann Pipes in C# - Lynch-style drones
 			theDroneNotes = "E,";
+
+			theDroneShift = theDroneShift-100;
+
+			if (droneMatchesTuneKey){
+
+				theDroneShift = theDroneShift + 700;
+
+				if (theDroneShift > 500){
+					theDroneShift -= 1200;
+				}
+				
+			}
+			
 			if (isNotBWW){
-				postFix = " stems=auto transpose=0\n%%MIDI program 129\n%voice_tuning_cents -100 -100";
+				postFix = " stems=auto transpose=0\n%%MIDI program 129\n%voice_tuning_cents -100 "+theDroneShift;
 			}
 			else{
 				theTune = theTune.replaceAll("%%MIDI program 109","%%MIDI program 129");
@@ -19759,8 +19955,21 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 
 		case 11: // Uilleann Pipes in C - Crowley-style drones
 			theDroneNotes = "D,";
+
+			theDroneShift = theDroneShift-200;
+
+			if (droneMatchesTuneKey){
+
+				theDroneShift = theDroneShift + 700;
+
+				if (theDroneShift > 500){
+					theDroneShift -= 1200;
+				}
+				
+			}
+			
 			if (isNotBWW){
-				postFix = " stems=auto transpose=0\n%%MIDI program 129\n%voice_tuning_cents -200 -200";
+				postFix = " stems=auto transpose=0\n%%MIDI program 129\n%voice_tuning_cents -200 "+theDroneShift;
 			}
 			else{
 				theTune = theTune.replaceAll("%%MIDI program 109","%%MIDI program 129");
@@ -19771,8 +19980,21 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 
 		case 12: // Uilleann Pipes in C - Lynch-style drones
 			theDroneNotes = "E,";
+
+			theDroneShift = theDroneShift-200;
+			
+			if (droneMatchesTuneKey){
+
+				theDroneShift = theDroneShift + 700;
+
+				if (theDroneShift > 500){
+					theDroneShift -= 1200;
+				}
+				
+			}
+			
 			if (isNotBWW){
-				postFix = " stems=auto transpose=0\n%%MIDI program 129\n%voice_tuning_cents -200 -200";
+				postFix = " stems=auto transpose=0\n%%MIDI program 129\n%voice_tuning_cents -200 "+theDroneShift;
 			}
 			else{
 				theTune = theTune.replaceAll("%%MIDI program 109","%%MIDI program 129");
@@ -19783,8 +20005,21 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 
 		case 13: // Uilleann Pipes in B - Crowley-style drones
 			theDroneNotes = "D,";
+
+			theDroneShift = theDroneShift-300;
+			
+			if (droneMatchesTuneKey){
+
+				theDroneShift = theDroneShift + 700;
+
+				if (theDroneShift > 500){
+					theDroneShift -= 1200;
+				}
+				
+			}
+			
 			if (isNotBWW){
-				postFix = " stems=auto transpose=0\n%%MIDI program 129\n%voice_tuning_cents -300 -300";
+				postFix = " stems=auto transpose=0\n%%MIDI program 129\n%voice_tuning_cents -300 "+theDroneShift;
 			}
 			else{
 				theTune = theTune.replaceAll("%%MIDI program 109","%%MIDI program 129");
@@ -19795,8 +20030,21 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 
 		case 14: // Uilleann Pipes in B - Lynch-style drones
 			theDroneNotes = "E,";
+
+			theDroneShift = theDroneShift-300;
+			
+			if (droneMatchesTuneKey){
+
+				theDroneShift = theDroneShift + 700;
+
+				if (theDroneShift > 500){
+					theDroneShift -= 1200;
+				}
+				
+			}
+			
 			if (isNotBWW){
-				postFix = " stems=auto transpose=0\n%%MIDI program 129\n%voice_tuning_cents -300 -300";
+				postFix = " stems=auto transpose=0\n%%MIDI program 129\n%voice_tuning_cents -300 "+theDroneShift;
 			}
 			else{
 				theTune = theTune.replaceAll("%%MIDI program 109","%%MIDI program 129");
@@ -19807,8 +20055,21 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 
 		case 15: // Uilleann Pipes in Bb - Crowley-style drones
 			theDroneNotes = "D,";
+
+			theDroneShift = theDroneShift-400;
+			
+			if (droneMatchesTuneKey){
+
+				theDroneShift = theDroneShift + 700;
+
+				if (theDroneShift > 500){
+					theDroneShift -= 1200;
+				}
+				
+			}
+			
 			if (isNotBWW){
-				postFix = " stems=auto transpose=0\n%%MIDI program 129\n%voice_tuning_cents -400 -400";
+				postFix = " stems=auto transpose=0\n%%MIDI program 129\n%voice_tuning_cents -400 "+theDroneShift;
 			}
 			else{
 				theTune = theTune.replaceAll("%%MIDI program 109","%%MIDI program 129");
@@ -19819,8 +20080,21 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 
 		case 16: // Uilleann Pipes in Bb - Lynch-style drones
 			theDroneNotes = "E,";
+
+			theDroneShift = theDroneShift-400;
+			
+			if (droneMatchesTuneKey){
+
+				theDroneShift = theDroneShift + 700;
+
+				if (theDroneShift > 500){
+					theDroneShift -= 1200;
+				}
+				
+			}
+			
 			if (isNotBWW){
-				postFix = " stems=auto transpose=0\n%%MIDI program 129\n%voice_tuning_cents -400 -400";
+				postFix = " stems=auto transpose=0\n%%MIDI program 129\n%voice_tuning_cents -400 "+theDroneShift;
 			}
 			else{
 				theTune = theTune.replaceAll("%%MIDI program 109","%%MIDI program 129");
@@ -19831,8 +20105,21 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 
 		case 17: // Uilleann Pipes in A - Crowley-style drones
 			theDroneNotes = "D,";
+
+			theDroneShift = theDroneShift-500;
+			
+			if (droneMatchesTuneKey){
+
+				theDroneShift = theDroneShift + 700;
+
+				if (theDroneShift > 500){
+					theDroneShift -= 1200;
+				}
+				
+			}
+			
 			if (isNotBWW){
-				postFix = " stems=auto transpose=0\n%%MIDI program 129\n%voice_tuning_cents -500 -500";
+				postFix = " stems=auto transpose=0\n%%MIDI program 129\n%voice_tuning_cents -500 "+theDroneShift;
 			}
 			else{
 				theTune = theTune.replaceAll("%%MIDI program 109","%%MIDI program 129");
@@ -19843,8 +20130,21 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 
 		case 18: // Uilleann Pipes in A - Lynch-style drones
 			theDroneNotes = "E,";
+			
+			theDroneShift = theDroneShift-500;
+
+			if (droneMatchesTuneKey){
+
+				theDroneShift = theDroneShift + 700;
+
+				if (theDroneShift > 500){
+					theDroneShift -= 1200;
+				}
+				
+			}
+
 			if (isNotBWW){
-				postFix = " stems=auto transpose=0\n%%MIDI program 129\n%voice_tuning_cents -500 -500";
+				postFix = " stems=auto transpose=0\n%%MIDI program 129\n%voice_tuning_cents -500 "+theDroneShift;
 			}
 			else{
 				theTune = theTune.replaceAll("%%MIDI program 109","%%MIDI program 129");
@@ -20044,7 +20344,8 @@ function InjectBagpipeSounds(){
 	  	dronestyle: gLastInjectedBagpipeSound,
 	  	transposemelody: false,
 	  	foldnotes: true,
-	  	injectdronevoice:true
+	  	injectdronevoice:true,
+	  	matchtunekey: false
 	};
 
 	var form = [
@@ -20058,6 +20359,7 @@ function InjectBagpipeSounds(){
 	  {name: "          Fold the displayed and played notes into the chanter range", id: "foldnotes", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	  {html: '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:12pt;font-family:helvetica;">Note: Smallpipes and Säckpipa always fold played notes into the chanter range.</p>'},  
 	  {name: "          Inject drones", id: "injectdronevoice", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
+	  {name: "          Shift drone pitch to match tune key (non-BWW imported tunes only)", id: "matchtunekey", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	  {name: "          Hide drone voice", id: "hidedronevoice", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	  {name: "          Inject all tunes", id: "injectalltunes", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	];
@@ -20092,7 +20394,7 @@ function InjectBagpipeSounds(){
 					// Don't re-inject already injected tunes and skip section headers
 					if ((theTune.indexOf("% Injected drones") == -1) && (!isSectionHeader(theTune))){
 
-						theTune = InjectOneBagpipeDrones(theTune,args.result.dronestyle,args.result.hidedronevoice,args.result.foldnotes,args.result.injectdronevoice);
+						theTune = InjectOneBagpipeDrones(theTune,args.result.dronestyle,args.result.hidedronevoice,args.result.foldnotes,args.result.injectdronevoice,args.result.matchtunekey);
 
 						doRenderAfterInject = true;
 
@@ -20140,7 +20442,7 @@ function InjectBagpipeSounds(){
 				// Don't re-inject already injected and skip section headers
 				if ((theInjectedTune.indexOf("% Injected drones") == -1) && (!isSectionHeader(theInjectedTune))){
 
-					theInjectedTune = InjectOneBagpipeDrones(theInjectedTune,args.result.dronestyle,args.result.hidedronevoice,args.result.foldnotes,args.result.injectdronevoice);
+					theInjectedTune = InjectOneBagpipeDrones(theInjectedTune,args.result.dronestyle,args.result.hidedronevoice,args.result.foldnotes,args.result.injectdronevoice,args.result.matchtunekey);
 					
 					doRenderAfterInject = true;
 
