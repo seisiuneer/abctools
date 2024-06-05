@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-       
+
         <style>
 
 		p {
@@ -2252,9 +2252,9 @@
             <hr class="hidden-print" id="advanced_injectbagpipesounds">
             <h1 class="page_break_always h1wide">Inject Bagpipe Sounds<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/cfkLNtqcLQ0" title="Inject Bagpipe Sounds Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-            <p>Brings up a dialog where you can change the melody sound to various bagpipes and inject bagpipe drones as a second voice for the current tune or all tunes in the ABC work area.</p>
+            <p>Brings up a dialog where you can change the melody sound to various bagpipes and optionally inject bagpipe drones as a second voice for the current tune or all tunes in the ABC work area.</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/inject_bagpipe_drones_3.jpg"/>
+                <img class="image" loading="lazy" src="img/inject_bagpipe_drones_4.jpg"/>
             </div>
             <p>You may choose between the following Chanter/Drone configurations:</p> 
             <p>Great Highland Bagpipe - A=480 Hz (Pipe band high pitch)</p> 
@@ -2278,12 +2278,17 @@
             <p>Uilleann Pipes Flat Set in Bb (Lynch-style drones)</p> 
             <p>Uilleann Pipes Flat Set in A (Crowley-style drones)</p> 
             <p>Uilleann Pipes Flat Set in A (Lynch-style drones)</p> 
-            <p>Clicking "OK" will change the melody sound to the selected bagpipe instrument and inject drones as a second voice of the tune(s).</p> 
-            <p>You can choose whether you want the notes outside the range of the real chanter to be "folded" into the chanter range.</p>
+            <p>Check the <strong>Fold the displayed and played notes into the chanter range</strong> checkbox if you want to "fold" the notes of the melody outside the range of the chanter to the range of the chanter:</p>
+            <p>Great Highland Bagpipe, Border Pipes, and Smallpipes:<br/>ABC notes G to a</p>
+            <p>Swedish Säckpipa:<br/>ABC notes C to d</p>
+            <p>If you want to only change the melody to the selected bagpipe chanter sound and not inject drones, uncheck the <strong>Inject drones</strong> checkbox.</p>
+            <p>If you want to hide the injected drone voice in the notation, check the <strong>Hide drone voice</strong> checkbox.</p>
+            <p>If you want to add bagpipe sounds injection to all the tunes in the tunebook, check the <strong>Inject all tunes</strong> checkbox. If this box is not checked, only the current tune will be modified.</p>
+            <p>Click <strong>OK</strong> to perform the operation or <strong>Cancel</strong> to exit without applying any changes.</p> 
+            <p>Tunes previously injected with drones will be skipped.</p>             
             <p>Bagpipe tunes imported from a BWW files assume the drones are consonant with the note A in the ABC notation for all styles of injected bagpipes.</p> 
             <p>For all other tunes, the Great Highland Bagpipe, Border Pipes, and Smallpipes drones are consonant with the note A in the ABC notation and the Säckpipa, and Uilleann Pipes drones are consonant with the note D in the ABC notation.</p> 
             <p>In these cases, you may need to transpose your tunes before using this feature to sound best with the drones, for example transposing a D Mixolydian tune to A Mixolydian or the inverse.</p> 
-            <p>Tunes previously injected with drones will be skipped.</p>             
             <hr>
             <p><strong>Transposing the tunes and drones to different keys:</strong></p>
             <p><strong>Note:</strong> This feature is now built into the tool, but the information may be useful for working with other pitched bagpipes.</p>

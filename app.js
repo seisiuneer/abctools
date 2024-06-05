@@ -19404,7 +19404,7 @@ function DoComplianceTransform(doInverse){
 //
 // Inject a second voice of drones for bagpipe scores
 //
-function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes){
+function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,injectDrones){
 
 
 	// Replace a note with another, avoiding chords and text annotations
@@ -19869,128 +19869,133 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes){
 		theInjectedTune = FoldTheNotes(theInjectedTune,visibleFoldingKey);
 	}
 
-	theInjectedTune += "\n%\n% Injected drones\n%\n";
-									
-	var theNotes = JustTheNotes(theTune);
+	// Injecting drones?
+	if (injectDrones){
 
-	// Strip all extra stuff that's not notes
-	theNotes = StripCommentsOne(theNotes);
-	theNotes = StripTextAnnotationsOne(theNotes);
-	theNotes = StripChordsOne(theNotes);
-	theNotes = StripTabOne(theNotes);	
-	theNotes = StripOrnamentsOne(theNotes,false);
+		theInjectedTune += "\n%\n% Injected drones\n%\n";
+										
+		var theNotes = JustTheNotes(theTune);
 
-	var theLines = theNotes.split("\n");
+		// Strip all extra stuff that's not notes
+		theNotes = StripCommentsOne(theNotes);
+		theNotes = StripTextAnnotationsOne(theNotes);
+		theNotes = StripChordsOne(theNotes);
+		theNotes = StripTabOne(theNotes);	
+		theNotes = StripOrnamentsOne(theNotes,false);
 
-	var nLines = theLines.length;
+		var theLines = theNotes.split("\n");
 
-	var accum = "";
+		var nLines = theLines.length;
 
-	var theInitialDynamics = "!mf! ";
+		var accum = "";
 
-	switch (droneStyle){
+		var theInitialDynamics = "!mf! ";
 
-		case 0: // Great Highland Bagpipe at 480 Hz
-		case 1: // Great Highland Bagpipe at 473 Hz (Concert Bb)
-		case 2: // Border pipes in A - Highland drones
-		case 3: // Border pipes in D - Highland drones
-			if (hideDroneVoice){
-				accum += "V:2 stems=down octave=4 transpose=-48\n%%MIDI program 109\n%%MIDI transpose -48\n%%voicecolor transparent\n";
-			}
-			else{
-				accum += "V:2 stems=down octave=4 transpose=-48\n%%MIDI program 109\n%%MIDI transpose -48\n";				
-			}
-		 	break;
+		switch (droneStyle){
 
-		case 4: // Smallpipes in A - Smallpipes drones
-			if (hideDroneVoice){
-				accum += "V:2 stems=down octave=3 transpose=-36\n%%MIDI program 131\n%%MIDI transpose -36\n%%voicecolor transparent\n";
-			}
-			else{
-				accum += "V:2 stems=down octave=3 transpose=-36\n%%MIDI program 131\n%%MIDI transpose -36\n";				
-			}
-			theInitialDynamics = "!pp! "
-		 	break;
+			case 0: // Great Highland Bagpipe at 480 Hz
+			case 1: // Great Highland Bagpipe at 473 Hz (Concert Bb)
+			case 2: // Border pipes in A - Highland drones
+			case 3: // Border pipes in D - Highland drones
+				if (hideDroneVoice){
+					accum += "V:2 stems=down octave=4 transpose=-48\n%%MIDI program 109\n%%MIDI transpose -48\n%%voicecolor transparent\n";
+				}
+				else{
+					accum += "V:2 stems=down octave=4 transpose=-48\n%%MIDI program 109\n%%MIDI transpose -48\n";				
+				}
+			 	break;
 
-		case 5: // Smallpipes in D - Smallpipes drones
-			if (hideDroneVoice){
-				accum += "V:2 stems=down octave=3 transpose=-36\n%%MIDI program 130\n%%MIDI transpose -36\n%%voicecolor transparent\n";
-			}
-			else{
-				accum += "V:2 stems=down octave=3 transpose=-36\n%%MIDI program 130\n%%MIDI transpose -36\n";				
-			}
-			theInitialDynamics = "!pp! "
-		 	break;
+			case 4: // Smallpipes in A - Smallpipes drones
+				if (hideDroneVoice){
+					accum += "V:2 stems=down octave=3 transpose=-36\n%%MIDI program 131\n%%MIDI transpose -36\n%%voicecolor transparent\n";
+				}
+				else{
+					accum += "V:2 stems=down octave=3 transpose=-36\n%%MIDI program 131\n%%MIDI transpose -36\n";				
+				}
+				theInitialDynamics = "!pp! "
+			 	break;
 
-		case 6: // Sackpipa in D - Sackpipa drones
-			if (hideDroneVoice){
-				accum += "V:2 stems=down octave=3 transpose=-36\n%%MIDI program 132\n%%MIDI transpose -36\n%%voicecolor transparent\n";
-			}
-			else{
-				accum += "V:2 stems=down octave=3 transpose=-36\n%%MIDI program 132\n%%MIDI transpose -36\n";				
-			}
-			theInitialDynamics = "!pp! "
-			break;
+			case 5: // Smallpipes in D - Smallpipes drones
+				if (hideDroneVoice){
+					accum += "V:2 stems=down octave=3 transpose=-36\n%%MIDI program 130\n%%MIDI transpose -36\n%%voicecolor transparent\n";
+				}
+				else{
+					accum += "V:2 stems=down octave=3 transpose=-36\n%%MIDI program 130\n%%MIDI transpose -36\n";				
+				}
+				theInitialDynamics = "!pp! "
+			 	break;
 
-		case 7: // Uilleann Pipes in D - Uilleann Crowley drones
-		case 9: // Uilleann Pipes in C# - Uilleann Crowley drones
-		case 11: // Uilleann Pipes in C - Uilleann Crowley drones
-		case 13: // Uilleann Pipes in B - Uilleann Crowley drones
-		case 15: // Uilleann Pipes in Bb - Uilleann Crowley drones
-		case 17: // Uilleann Pipes in A - Uilleann Crowley drones
-			if (hideDroneVoice){
-				accum += "V:2 stems=down octave=2 transpose=-24\n%%MIDI program 129\n%%MIDI transpose -24\n%%voicecolor transparent\n";
-			}
-			else{
-				accum += "V:2 stems=down octave=2 transpose=-24\n%%MIDI program 129\n%%MIDI transpose -24\n";				
-			}
-			theInitialDynamics = "!p! "
-			break;
+			case 6: // Sackpipa in D - Sackpipa drones
+				if (hideDroneVoice){
+					accum += "V:2 stems=down octave=3 transpose=-36\n%%MIDI program 132\n%%MIDI transpose -36\n%%voicecolor transparent\n";
+				}
+				else{
+					accum += "V:2 stems=down octave=3 transpose=-36\n%%MIDI program 132\n%%MIDI transpose -36\n";				
+				}
+				theInitialDynamics = "!pp! "
+				break;
 
-		case 8: // Uilleann Pipes in D - Uilleann Lynch drones
-		case 10: // Uilleann Pipes in C# - Uilleann Lynch drones
-		case 12: // Uilleann Pipes in C - Uilleann Lynch drones
-		case 14: // Uilleann Pipes in B - Uilleann Lynch drones
-		case 16: // Uilleann Pipes in Bb - Uilleann Lynch drones
-		case 18: // Uilleann Pipes in Bb - Uilleann Lynch drones
-			if (hideDroneVoice){
-				accum += "V:2 stems=down octave=2 transpose=-24\n%%MIDI program 129\n%%MIDI transpose -24\n%%voicecolor transparent\n";
-			}
-			else{
-				accum += "V:2 stems=down octave=2 transpose=-24\n%%MIDI program 129\n%%MIDI transpose -24\n";				
-			}
-			theInitialDynamics = "!mp! "
-			break;
+			case 7: // Uilleann Pipes in D - Uilleann Crowley drones
+			case 9: // Uilleann Pipes in C# - Uilleann Crowley drones
+			case 11: // Uilleann Pipes in C - Uilleann Crowley drones
+			case 13: // Uilleann Pipes in B - Uilleann Crowley drones
+			case 15: // Uilleann Pipes in Bb - Uilleann Crowley drones
+			case 17: // Uilleann Pipes in A - Uilleann Crowley drones
+				if (hideDroneVoice){
+					accum += "V:2 stems=down octave=2 transpose=-24\n%%MIDI program 129\n%%MIDI transpose -24\n%%voicecolor transparent\n";
+				}
+				else{
+					accum += "V:2 stems=down octave=2 transpose=-24\n%%MIDI program 129\n%%MIDI transpose -24\n";				
+				}
+				theInitialDynamics = "!p! "
+				break;
 
-	}
+			case 8: // Uilleann Pipes in D - Uilleann Lynch drones
+			case 10: // Uilleann Pipes in C# - Uilleann Lynch drones
+			case 12: // Uilleann Pipes in C - Uilleann Lynch drones
+			case 14: // Uilleann Pipes in B - Uilleann Lynch drones
+			case 16: // Uilleann Pipes in Bb - Uilleann Lynch drones
+			case 18: // Uilleann Pipes in Bb - Uilleann Lynch drones
+				if (hideDroneVoice){
+					accum += "V:2 stems=down octave=2 transpose=-24\n%%MIDI program 129\n%%MIDI transpose -24\n%%voicecolor transparent\n";
+				}
+				else{
+					accum += "V:2 stems=down octave=2 transpose=-24\n%%MIDI program 129\n%%MIDI transpose -24\n";				
+				}
+				theInitialDynamics = "!mp! "
+				break;
 
-	var injected_dynamics = false;
-
-	for (var i=0;i<nLines;++i){
-
-		var thisLine = theLines[i];
-
-		thisLine = replaceNotes(thisLine,theDroneNotes);
-
-		// Inject dynamics into the first line with notes
-		if (thisLine != ""){
-
-			if (!injected_dynamics){
-			
-				thisLine = theInitialDynamics+thisLine;
-			
-				injected_dynamics = true;
-			
-			}
 		}
 
-		accum += thisLine;
+		var injected_dynamics = false;
 
-		accum += "\n"
+		for (var i=0;i<nLines;++i){
+
+			var thisLine = theLines[i];
+
+			thisLine = replaceNotes(thisLine,theDroneNotes);
+
+			// Inject dynamics into the first line with notes
+			if (thisLine != ""){
+
+				if (!injected_dynamics){
+				
+					thisLine = theInitialDynamics+thisLine;
+				
+					injected_dynamics = true;
+				
+				}
+			}
+
+			accum += thisLine;
+
+			accum += "\n"
+
+		}
+
+		theInjectedTune += accum;
 
 	}
-
-	theInjectedTune += accum;
 
 	return theInjectedTune.trim();
 }
@@ -20038,12 +20043,13 @@ function InjectBagpipeSounds(){
 	  	injectalltunes: true,
 	  	dronestyle: gLastInjectedBagpipeSound,
 	  	transposemelody: false,
-	  	foldnotes: true
+	  	foldnotes: true,
+	  	injectdronevoice:true
 	};
 
 	var form = [
 	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Inject Bagpipe Sounds<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_injectbagpipesounds" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
-	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:16pt;font-family:helvetica;">Clicking "OK" will change the melody sound to the selected bagpipe instrument and inject drones as a second voice of the tune(s).</p>'},  
+	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:16pt;font-family:helvetica;">Clicking "OK" will change the melody sound to the selected bagpipe instrument and optionally inject drones as a second voice of the tune(s).</p>'},  
 	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:16pt;font-family:helvetica;">Bagpipe tunes imported from a BWW files assume the drones are consonant with the note A in the ABC notation for all styles of injected bagpipes.</p>'},
 	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:16pt;font-family:helvetica;">For all other tunes, the Great Highland Bagpipe, Border Pipes, and Smallpipes drones are consonant with the note A in the ABC notation and the Säckpipa, and Uilleann Pipes drones are consonant with the note D in the ABC notation.</p>'},  
 	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:16pt;font-family:helvetica;">In these cases, you may need to transpose your tunes before using this feature to sound best with the drones, for example transposing a D Mixolydian tune to A Mixolydian or the inverse.</p>'},  
@@ -20051,6 +20057,7 @@ function InjectBagpipeSounds(){
 	  {name: "Bagpipe style to inject:", id: "dronestyle", type:"select", options:drone_style_list, cssClass:"configure_drones_select"},  
 	  {name: "          Fold the displayed and played notes into the chanter range", id: "foldnotes", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	  {html: '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:12pt;font-family:helvetica;">Note: Smallpipes and Säckpipa always fold played notes into the chanter range.</p>'},  
+	  {name: "          Inject drones", id: "injectdronevoice", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	  {name: "          Hide drone voice", id: "hidedronevoice", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	  {name: "          Inject all tunes", id: "injectalltunes", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	];
@@ -20085,7 +20092,7 @@ function InjectBagpipeSounds(){
 					// Don't re-inject already injected tunes
 					if (theTune.indexOf("% Injected drones") == -1){
 
-						theTune = InjectOneBagpipeDrones(theTune,args.result.dronestyle,args.result.hidedronevoice,args.result.foldnotes);
+						theTune = InjectOneBagpipeDrones(theTune,args.result.dronestyle,args.result.hidedronevoice,args.result.foldnotes,args.result.injectdronevoice);
 
 						doRenderAfterInject = true;
 
@@ -20133,7 +20140,7 @@ function InjectBagpipeSounds(){
 				// Don't re-inject already injected tunes
 				if (theInjectedTune.indexOf("% Injected drones") == -1){
 
-					theInjectedTune = InjectOneBagpipeDrones(theInjectedTune,args.result.dronestyle,args.result.hidedronevoice,args.result.foldnotes);
+					theInjectedTune = InjectOneBagpipeDrones(theInjectedTune,args.result.dronestyle,args.result.hidedronevoice,args.result.foldnotes,args.result.injectdronevoice);
 					
 					doRenderAfterInject = true;
 
