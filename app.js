@@ -10146,7 +10146,7 @@ function StripOrnamentsOne(theNotes, doTilde){
 	// Strip out all ornaments
 	//var searchRegExp = /{[^}]*}/gm
 
-	var searchRegExp = /%%score \{[^}]*\}|\{([^}]*)\}/gm
+	var searchRegExp = /%%score \{[^}]*\}|\{[^}]*\}/gm
 
 	theNotes = replaceUnlessStartsWithScore(theNotes, searchRegExp,"");
 
@@ -10786,7 +10786,8 @@ function IdleAdvancedControls(bUpdateUI){
 	if (!gotMatch){
 
 		// %%score directives potentially use brackets, so filter for them
-		searchRegExp = /%%score \{[^}]*\}|\{([^}]*)\}/gm
+		//searchRegExp = /%%score \{[^}]*\}|\{([^}]*)\}/gm
+		searchRegExp = /%%score \{[^}]*\}|\{[^}]*\}/gm
 
 		//debugger;
 
@@ -11069,6 +11070,13 @@ function RestoreDefaults() {
 	gStripChords = false;
 	gStripTab = false;
 	gStripOrnaments = false;
+	
+	gAllowFilterAnnotations = false;
+	gAllowFilterText = false;
+	gAllowFilterChords = false;
+	gAllowFilterTab = false;
+	gAllowFilterOrnaments = false;
+
 	gTotalTunes = 0;
 	gCurrentTune = 0;
 	gRawLastIndex = -1;
