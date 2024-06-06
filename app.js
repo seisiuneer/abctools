@@ -20039,7 +20039,7 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 	var visibleFoldingKey = "A";
 
 	// Sackpipa and Uilleann are based on the key of D
-	if (droneStyle >= 6){
+	if ((droneStyle >= 6) && (droneStyle != 19)){
 		visibleFoldingKey = "D";
 	}
 
