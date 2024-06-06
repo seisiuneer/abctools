@@ -19426,15 +19426,15 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 		// Parse out the first few measures
 		theTune = escape(theTune);
 
-		theLines = theTune.split("%0A");
+		var theLines = theTune.split("%0A");
 
-		nLines = theLines.length;
-
-		// Find the key
-		theKey = "";
+		var nLines = theLines.length;
 
 		// Find the key
-		for (j=0;j<nLines;++j){
+		var theKey = "";
+
+		// Find the key
+		for (var j=0;j<nLines;++j){
 
 			theKey = unescape(theLines[j]); 
 
