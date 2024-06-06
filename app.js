@@ -20100,6 +20100,31 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 			}	
 		 	break;
 
+		case 19: // Great Highland Bagpipe at 454 Hz (Practice chanter)
+			theDroneNotes = "[A,,,, A,,,]";
+
+			if (isNotBWW){
+
+				doVisibleFolding = foldNotes; 
+
+				theDroneShift = 54 + theDroneShift;
+
+				if (foldNotes){
+					postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 54 "+theDroneShift;
+				}
+				else{
+					postFix = " stems=auto transpose=0\n%%MIDI program 109\n%voice_tuning_cents 54 "+theDroneShift;					
+				}
+			}
+			else{
+				theTune = theTune.replaceAll("transpose=1","transpose=0");
+				theTune = theTune.replaceAll("%voice_tuning_cents 48 148","%voice_tuning_cents 54 54");
+				postFix = " transpose=0\n%%MIDI program 109";
+			}	
+
+		 	break;
+
+
 		case 2: // Border pipes in A - Highland drones
 			theDroneNotes = "[A,,,, A,,,]";
 
@@ -20549,6 +20574,7 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 			case 1: // Great Highland Bagpipe at 473 Hz (Concert Bb)
 			case 2: // Border pipes in A - Highland drones
 			case 3: // Border pipes in D - Highland drones
+			case 19: // Great Highland Bagpipe at 454 Hz
 				if (hideDroneVoice){
 					accum += "V:2 stems=down octave=4 transpose=-48\n%%MIDI program 109\n%%MIDI transpose -48\n%%voicecolor transparent\n";
 				}
@@ -20670,7 +20696,8 @@ function InjectBagpipeSounds(){
    	const drone_style_list = [
 	    { name: "  Great Highland Bagpipe - A=480 Hz (Pipe band high pitch)", id: 0 },
 	    { name: "  Great Highland Bagpipe - A=466 Hz (Standard B-flat)", id: 1 },
-	    { name: "  Border Pipes in A", id: 2 },
+	    { name: "  Great Highland Bagpipe - A=454 Hz (Practice chanter)", id: 19 },
+	    { name: "  Border Pipes in A - A=440 Hz", id: 2 },
 	    { name: "  Border Pipes in D", id: 3 },
 	    { name: "  Smallpipes in A", id: 4 },
 	    { name: "  Smallpipes in D", id: 5 },
