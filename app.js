@@ -1197,6 +1197,367 @@ function TransposeDown(e) {
 }
 
 //
+// Transpose to Key dialog
+//
+
+function getTuneRootKey(theTune){
+
+	// Parse out the first few measures
+	var theTune = escape(theTune);
+
+	var theLines = theTune.split("%0A");
+
+	var nLines = theLines.length;
+
+	// Find the key
+	var theKey = "";
+
+	var gotKey = false;
+
+	// Find the key
+	for (var j=0;j<nLines;++j){
+
+		theKey = unescape(theLines[j]); 
+
+		if (theKey.indexOf("K:")!= -1){
+			gotKey = true;
+			break;
+		}
+
+	}
+
+	if (!gotKey){
+		return "C";
+	}
+
+	//debugger;
+
+	theKey = theKey.replace("K:","");
+	theKey = theKey.trim();
+
+	var theRootKey = theKey[0].toUpperCase();
+
+	// Check for accidental
+	if (theKey.length > 1){
+		if ((theKey[1] == "#")||(theKey[1] == "b")){
+			theRootKey = theKey.substring(0,2);
+		}
+	}
+
+	return theRootKey;
+}
+
+//
+// Transpose All to Key dialog
+//
+var gLastTransposeToKey = "A";
+
+function TransposeToKeyDialog(){
+
+ 	const tranpose_options = [
+		{ name: "C", id: "C" },
+		{ name: "C#", id: "C#" },
+		{ name: "Db", id: "Db" },
+		{ name: "D", id: "D" },
+		{ name: "D#", id: "D#" },
+		{ name: "Eb", id: "Eb" },
+		{ name: "E", id: "E" },
+		{ name: "F", id: "F" },
+		{ name: "F#", id: "F#" },
+		{ name: "Gb", id: "Gb" },
+		{ name: "G", id: "G" },
+		{ name: "G#", id: "G#" },
+		{ name: "Ab", id: "Ab" },
+		{ name: "A", id: "A" },
+		{ name: "A#", id: "A#" },
+		{ name: "Bb", id: "Bb" },
+		{ name: "B", id: "B" }
+  	];
+
+	// Setup initial values
+	const theData = {
+	  transposekey: gLastTransposeToKey,
+	  transposeall: false
+	};
+
+	const form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Transpose to Key&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_transposetokey" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+	  {html: '<p style="margin-top:36px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">This will transpose the current tune or all the tunes to the specified root key.</p>'},
+	  {html: '<p style="margin-bottom:48px;font-size:12pt;line-height:18pt;font-family:helvetica">Any modes specified in the tune keys will be preserved.</p>'},	  	  
+	  {name: "Root key:", id: "transposekey", type:"select", options:tranpose_options, cssClass:"configure_transpose_settings_select"}, 	
+	  {html: '<p style="font-size:12pt;font-family:helvetica">&nbsp;</p>'},	  
+	  {name: "          Transpose all tunes", id: "transposeall", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
+	  {html: '<p style="font-size:12pt;font-family:helvetica">&nbsp;</p>'},	  
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+
+		// Get the results and store them in the global configuration
+		if (!args.canceled){
+			
+			gLastTransposeToKey = args.result.transposekey;
+
+			DoTransposeToKey(gLastTransposeToKey, args.result.transposeall);
+		}
+	});
+}
+
+//
+// General purpose tranposer for one or all tunes
+//
+function DoTransposeToKey(targetKey,transposeAll) {
+
+ 	function getScaleDegree(key){
+
+		const scale_degrees = [
+	 		{ name: "C", degree: 0 },
+			{ name: "C#", degree: 1 },
+			{ name: "Db", degree: 1 },
+			{ name: "D", degree: 2 },
+			{ name: "D#", degree: 3 },
+			{ name: "Eb", degree: 3 },
+			{ name: "E", degree: 4 },
+			{ name: "F", degree: 5 },
+			{ name: "F#", degree: 6 },
+			{ name: "Gb", degree: 6 },
+			{ name: "G", degree: 7 },
+			{ name: "G#", degree: 8 },
+			{ name: "Ab", degree: 8 },
+			{ name: "A", degree: 9 },
+			{ name: "A#", degree: 10 },
+			{ name: "Bb", degree: 10 },
+			{ name: "B", degree: 11 }
+	 	];
+
+ 		var nDegrees = scale_degrees.length;
+
+ 		for (var i=0;i<nDegrees;++i){
+ 			if (scale_degrees[i].name == key){
+ 				return scale_degrees[i].degree;
+ 			}
+ 		}
+
+ 		// Failed to match, return C
+ 		return 0;
+ 	}
+
+ 	//console.log("DoTransposeToKey targetKey = "+targetKey);
+
+	var theTargetScaleDegree = getScaleDegree(targetKey);
+
+	//console.log("targetKey scale degree = "+theTargetScaleDegree);
+
+	// Transpose requires rendering
+	if (gDisableNotationRendering){
+		
+		var thePrompt = "Transpose not possible with rendering disabled.";
+		
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+		
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
+
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","TransposeToKey");
+
+	document.getElementById("loading-bar-spinner").style.display = "block";
+
+	// Need a timeout to allow the spinner to show before processing the ABC,
+	setTimeout(function(){
+
+		// Get the rendering params
+		var params = GetABCJSParams();
+
+		var nTunes = CountTunes();
+
+		var theSelectedTuneIndex = 0;
+
+		if (!transposeAll){
+			theSelectedTuneIndex = findSelectedTuneIndex();
+		}
+
+		// Create the render div ID array
+		var renderDivs = [];
+
+		var id;
+
+		for (var i = 0; i < nTunes; ++i) {
+
+			id = "notation" + i;
+			
+			renderDivs.push(id);
+
+			if (transposeAll || (i == theSelectedTuneIndex)){
+
+				// Flash reduction
+				var elem = document.getElementById(id);
+
+				elem.style.opacity = 0.0;
+			}
+
+		}
+
+
+		var theNotes = gTheABC.value;
+
+		var output = FindPreTuneHeader(theNotes);
+
+		for (var i=0;i<nTunes;++i){
+
+			var visualObj = null;
+
+			var theTune = getTuneByIndex(i);
+
+			// Skip section headers
+			if (isSectionHeader(theTune)){
+
+				output += theTune;
+				continue;
+			}
+
+			// Wrap this in a try-catch since sometimes the transposer fails catastrophically
+			try {
+
+				//console.log("Transposing tune "+i);
+				var theTuneKey = getTuneRootKey(theTune);
+
+				var theTuneScaleDegree = getScaleDegree(theTuneKey);
+
+				//console.log("Tune "+i+" of "+nTunes+" Key: "+theTuneKey+" Scale degree: "+theTuneScaleDegree);
+
+				// Find shortest distance to transpose
+
+				var delta1 = theTargetScaleDegree - theTuneScaleDegree;
+
+				var delta1save = delta1;
+
+				//console.log("delta1: "+delta1)
+
+				if (delta1 < 0){
+					delta1 *= -1;
+				}
+
+				var delta2 = (theTargetScaleDegree+12) - theTuneScaleDegree;
+
+				var delta2save = delta2;
+
+				//console.log("delta2: "+delta2)
+
+				if (delta2 < 0){
+					delta2 *= -1;
+				}
+
+				if (delta1 <= delta2){
+					transposeAmount = delta1save;
+				}
+				else{
+					transposeAmount = delta2save;
+				}
+
+				var original_transposeAmount = transposeAmount;
+
+				if (!transposeAll){
+
+					if (i==theSelectedTuneIndex){
+
+						visualObj = ABCJS.renderAbc(renderDivs[i], theTune, params);
+
+						output += ABCJS.strTranspose(theTune, visualObj, transposeAmount);
+
+					}
+					else{
+
+						output += theTune;
+
+					}
+				}
+				else{
+
+					//console.log("transposeAmount: "+transposeAmount);
+
+					visualObj = ABCJS.renderAbc(renderDivs[i], theTune, params);
+
+					output += ABCJS.strTranspose(theTune, visualObj, transposeAmount);
+
+				}
+
+
+			}
+			catch (error){
+
+				var thePrompt = "Unable to tranpose one or more tunes.";
+				
+				// Center the string in the prompt
+				thePrompt = makeCenteredPromptString(thePrompt);
+
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+				
+				output += theTune;
+
+			}
+		}
+
+		// Stuff in the transposed output
+		gTheABC.value = output;
+
+		// Set dirty
+		gIsDirty = true;
+
+		// Force a full render
+		RenderAsync(true, null, function(){
+
+			// Reset the selection
+			if (!transposeAll){
+				// Reset the selection point to the current tune
+				resetSelectionAfterTranspose(theSelectedTuneIndex,theSelectedTuneIndex);
+			}
+			else{
+				// Set the select point
+				gTheABC.selectionStart = 0;
+			    gTheABC.selectionEnd = 0;
+
+			}
+
+		    // Focus after operation
+		    FocusAfterOperation();
+
+		    // For flash reduction
+
+				setTimeout(function(){
+
+					for (var i = 0; i < nTunes; ++i) {
+
+						id = "notation" + i;
+
+						if (transposeAll || (i == theSelectedTuneIndex)){
+
+							// Flash reduction
+							var elem = document.getElementById(id);
+
+							elem.style.opacity = 1.0;
+
+						}
+
+					}
+
+				},100);
+			//}
+
+		});
+
+	},100);
+	
+}
+
+//
 // Get the tune index titles
 //
 function GetAllTuneTags(theTag,totalTunes){
@@ -19423,54 +19784,24 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 	//
 	function getDroneShift(theTune){
 
-		// Parse out the first few measures
-		theTune = escape(theTune);
+		// Get the key for the tune
+		var theRootKey = getTuneRootKey(theTune);
 
-		var theLines = theTune.split("%0A");
-
-		var nLines = theLines.length;
-
-		// Find the key
-		var theKey = "";
-
-		// Find the key
-		for (var j=0;j<nLines;++j){
-
-			theKey = unescape(theLines[j]); 
-
-			if (theKey.indexOf("K:")!= -1){
-				break;
-			}
-
-		}
-
-		//debugger;
-
-		var theRawKey = theKey.replace("K:","");
-		theRawKey = theRawKey.trim();
-
-		if (theRawKey.length == 0){
-			return 0;
-		}
-
-		var theRootKey = theRawKey[0];
-
-		// Check for accidental
-		if (theRawKey.length > 1){
-			if ((theRawKey[1] == "#")||(theRawKey[1] == "b")){
-				theRootKey = theRawKey.substring(0,2);
-			}
-		}
-
-		theRootKey = theRootKey.toUpperCase();
+		//console.log("theRootKey: "+theRootKey)
 
 		switch (theRootKey){
 			case "B#":
+				return 300;
+				break;
+
 			case "C":
 				return 300;
 				break;
 
 			case "C#":
+				return 400;
+				break;
+
 			case "Db":
 				return 400;
 				break;
@@ -19480,21 +19811,33 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 				break;
 
 			case "D#":
+				return 600;
+				break;
+
 			case "Eb":
 				return 600;
 				break;
 
 			case "E":
+				return -500;
+				break;
+
 			case "Fb":
 				return -500;
 				break;
 
 			case "E#":
+				return -400;
+				break;
+
 			case "F":
 				return -400;
 				break;
 
 			case "F#":
+				return -300;
+				break;
+
 			case "Gb":
 				return -300;
 				break;
@@ -19504,6 +19847,9 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 				break;
 
 			case "G#":
+				return -100;
+				break;
+
 			case "Ab":
 				return -100;
 				break;
@@ -19513,11 +19859,17 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 				break;
 
 			case "A#":
+				return 100;
+				break;
+
 			case "Bb":
 				return 100;
 				break;
 
 			case "B":
+				return 200;
+				break;
+
 			case "Cb":
 				return 200;
 				break;
@@ -33916,7 +34268,7 @@ function Configure_AdvancedControlsDialog_UI(){
 	}
 
 	form.push({name: "          Show ABC Private Directive Compliance Tools", id: "showcompliance", type:"checkbox", cssClass:"configure_ui_options_form_text"});
-	form.push({name: "          Show Inject Bagpipe Sounds", id: "showbagpipedrones", type:"checkbox", cssClass:"configure_ui_options_form_text"});
+	form.push({name: "          Show Transpose to Key and Inject Bagpipe Sounds", id: "showbagpipedrones", type:"checkbox", cssClass:"configure_ui_options_form_text"});
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 500, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 		
@@ -34064,14 +34416,14 @@ function AdvancedControlsDialog(){
 
 	}
 
-	// Showing compliance tools and bagpipes drones
+	// Showing compliance tools and bagpipes drones/transpose tools
 	if (gFeaturesShowCompliance && gFeaturesShowBagpipeDrones){
-		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="compliancetransform" class="advancedcontrols btn btn-injectcontrols" style="margin-right:24px;" onclick="DoComplianceTransformDialog()" type="button" value="ABC Compliance Transform" title="Brings up a dialog where you can transforms any private tool-specific directives to/from ABC 2.1 compliant tool-specific directive interchange format"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeSounds()" type="button" value="Inject Bagpipe Sounds" title="Changes the melody sound to one of several bagpipe instruments and inject drones as a second voice of the tune(s)"></p>';
+		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="compliancetransform" class="advancedcontrols btn btn-injectcontrols" style="margin-right:24px;" onclick="DoComplianceTransformDialog()" type="button" value="ABC Compliance Transform" title="Brings up a dialog where you can transforms any private tool-specific directives to/from ABC 2.1 compliant tool-specific directive interchange format"><input class="transposetokey btn btn-transposetokey" id="transposetokey" onclick="TransposeToKeyDialog()" type="button" value="Transpose to Key" title="Transposes one or all the tunes to a specific key"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeSounds()" type="button" value="Inject Bagpipe Sounds" title="Changes the melody sound to one of several bagpipe instruments and inject drones as a second voice of the tune(s)"></p>';
 	}
 
-	// Showing only bagpipes drones tools?
+	// Showing only bagpipes drones/tranpose tools?
 	if ((!gFeaturesShowCompliance) && gFeaturesShowBagpipeDrones){
-		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeSounds()" type="button" value="Inject Bagpipe Sounds" title="Changes the melody sound to one of several bagpipe instruments and inject drones as a second voice of the tune(s)"></p>';
+		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input class="transposetokey btn btn-transposetokey" id="transposetokey" onclick="TransposeToKeyDialog()" type="button" value="Transpose to Key" title="Transposes one or all the tunes to a specific key"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeSounds()" type="button" value="Inject Bagpipe Sounds" title="Changes the melody sound to one of several bagpipe instruments and inject drones as a second voice of the tune(s)"></p>';
 	}
 
 	// Showing bagpipes drones tools?
