@@ -20608,6 +20608,10 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 		theInjectedTune = InjectStringBelowTuneHeader(theTune,"%\n%%score 1 2\n%\n%play_highlight_v1_only\n%\nV:1"+postFix);
 	}				
 
+	// Fixes issue with tunes that have comments after them before the next tune
+	// Strip all blank lines
+	theInjectedTune = theInjectedTune.replace(/^\s*[\r\n]/gm, '');
+
 	theInjectedTune = theInjectedTune.trim();
 
 	// Folding the notation?
