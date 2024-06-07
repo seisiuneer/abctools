@@ -1284,8 +1284,7 @@ function TransposeToKeyDialog(){
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Transpose to Key&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_transposetokey" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 	  {html: '<p style="margin-top:36px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">This will transpose the current tune or all the tunes to the specified root key.</p>'},
 	  {html: '<p style="margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Any modes specified in the tune keys will be preserved.</p>'},	  	  
-	  {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">If the transposed results are too high or too low:</p>'},
-	  {html: '<p style="margin-top:12px;margin-bottom:42px;font-size:12pt;line-height:18pt;font-family:helvetica">Click in a single tune or select across one or more tunes in the ABC editor then Alt-Click on the toolbar <strong>Transpose Up</strong> or <strong>Transpose Down</strong> buttons to transpose the tune(s) down or up an octave.</p>'},
+	  {html: '<p style="margin-top:12px;margin-bottom:42px;font-size:12pt;line-height:18pt;font-family:helvetica"><strong>If the Transpose to Key results are too high or too low:</strong><br/>Click in a single tune or select across one or more tunes in the ABC editor then <strong>Alt-Click</strong> the lower toolbar <strong>Transpose Up</strong> or <strong>Transpose Down</strong> buttons to transpose the tune(s) down or up an octave.</p>'},
 	  {name: "Root key:", id: "transposekey", type:"select", options:tranpose_options, cssClass:"configure_transpose_settings_select"}, 	
 	  {name: "          Transpose all tunes", id: "transposeall", type:"checkbox", cssClass:"configure_transposetokey_text"},
 	  {html: '<p style="font-size:12pt;font-family:helvetica">&nbsp;</p>'},	  
@@ -1406,10 +1405,11 @@ function DoTransposeToKey(targetKey,transposeAll) {
 
 		}
 
-
 		var theNotes = gTheABC.value;
 
 		var output = FindPreTuneHeader(theNotes);
+
+		//console.log("theTargetScaleDegree: "+theTargetScaleDegree);
 
 		for (var i=0;i<nTunes;++i){
 
@@ -1427,6 +1427,8 @@ function DoTransposeToKey(targetKey,transposeAll) {
 			// Wrap this in a try-catch since sometimes the transposer fails catastrophically
 			try {
 
+				//debugger;
+
 				//console.log("Transposing tune "+i);
 				var theTuneKey = getTuneRootKey(theTune);
 
@@ -1436,38 +1438,111 @@ function DoTransposeToKey(targetKey,transposeAll) {
 
 				// Find shortest distance to transpose
 
-				var delta1 = theTargetScaleDegree - theTuneScaleDegree;
+				if (theTargetScaleDegree <= theTuneScaleDegree){
 
-				var delta1save = delta1;
+					//console.log("target scale degree less than tune scale degree");
 
-				//console.log("delta1: "+delta1)
+					var delta1 = -1*(theTuneScaleDegree - theTargetScaleDegree);
 
-				if (delta1 < 0){
-					delta1 *= -1;
-				}
+					var delta1save = delta1;
 
-				var delta2 = (theTargetScaleDegree+12) - theTuneScaleDegree;
+					//console.log("delta1: "+delta1)
 
-				var delta2save = delta2;
+					// Interested in absolute value comparisons
+					if (delta1 < 0){
+						delta1 *= -1;
+					}
 
-				//console.log("delta2: "+delta2)
+					var delta2 = ((theTargetScaleDegree+12) - theTuneScaleDegree);
 
-				if (delta2 < 0){
-					delta2 *= -1;
-				}
+					var delta2save = delta2;
 
-				if (delta1 <= delta2){
-					transposeAmount = delta1save;
+					//console.log("delta2: "+delta2)
+
+					// Interested in absolute value comparisons
+					if (delta2 < 0){
+						delta2 *= -1;
+					}
+
+					if (delta1 <= delta2){
+						transposeAmount = delta1save;
+					}
+					else{
+						transposeAmount = delta2save;
+					}
 				}
 				else{
-					transposeAmount = delta2save;
+
+					//debugger;
+
+					//console.log("tune scale degree less than target scale degree");
+
+					var delta1 = theTargetScaleDegree - theTuneScaleDegree;
+
+					var delta1save = delta1;
+
+					//console.log("delta1: "+delta1)
+
+					// Interested in absolute value comparisons
+					if (delta1 < 0){
+						delta1 *= -1;
+					}
+
+					var delta2 = ((theTuneScaleDegree+12)-theTargetScaleDegree);
+
+					if (delta2 > 12){
+						delta2 -= 12;
+					}
+					delta2 = -1 * delta2;
+
+					var delta2save = delta2;
+
+					//console.log("delta2: "+delta2)
+
+					// Interested in absolute value comparisons
+					if (delta2 < 0){
+						delta2 *= -1;
+					}
+
+					if (delta1 <= delta2){
+						transposeAmount = delta1save;
+					}
+					else{
+						transposeAmount = delta2save;
+					}
 				}
 
-				var original_transposeAmount = transposeAmount;
+				//console.log("Final transpose: "+transposeAmount);
 
 				if (!transposeAll){
 
-					if (i==theSelectedTuneIndex){
+					// Is there a transpose to apply?
+					if (transposeAmount != 0){
+
+						if (i==theSelectedTuneIndex){
+
+							visualObj = ABCJS.renderAbc(renderDivs[i], theTune, params);
+
+							output += ABCJS.strTranspose(theTune, visualObj, transposeAmount);
+
+						}
+						else{
+
+							output += theTune;
+
+						}
+					}
+					else{
+
+						//console.log("No transpose required, tune skipped");
+						output += theTune;
+
+					}
+				}
+				else{
+
+					// Is there a transpose to apply?
+					if (transposeAmount != 0){
 
 						visualObj = ABCJS.renderAbc(renderDivs[i], theTune, params);
 
@@ -1476,20 +1551,13 @@ function DoTransposeToKey(targetKey,transposeAll) {
 					}
 					else{
 
+						//console.log("No transpose required, tune skipped");
 						output += theTune;
 
 					}
-				}
-				else{
 
-					//console.log("transposeAmount: "+transposeAmount);
-
-					visualObj = ABCJS.renderAbc(renderDivs[i], theTune, params);
-
-					output += ABCJS.strTranspose(theTune, visualObj, transposeAmount);
 
 				}
-
 
 			}
 			catch (error){
