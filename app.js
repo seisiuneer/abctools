@@ -34782,6 +34782,9 @@ function resetAllSettingsToDefault(callback){
 //
 function ResetSettingsDialog(){
 
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","ResetSettings");
+
 	// Setup initial values
 	const theData = {
 	  resetsettings: false,
