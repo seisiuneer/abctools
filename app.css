@@ -1373,11 +1373,11 @@ margin-right:0px;
 	background: palegreen;
 }
 
-.deletealldatabases {
+.resetsettings {
 	display: inline-block;
 }
 
-#deletealldatabases{
+#resetsettings{
 height:42px;
 padding:12px;
 width:auto;
@@ -1385,7 +1385,7 @@ margin-right:0px;
 margin-left:20px;
 }
 
-.deletealldatabases:hover{
+.resetsettings:hover{
 	background: palegreen;
 }
 
@@ -2370,6 +2370,14 @@ margin-top:-7px;
 }
 
 .configure_transposetokey_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:30px;
+	display:flex;
+}
+
+.configure_resetsettings_text{
 	font-size:12pt;
 	line-height:16px;
 	font-family:helvetica;
@@ -4498,7 +4506,7 @@ top:20px;
   --background-color: lavender;
 }
 
-.btn-deletealldatabases{
+.btn-resetsettings{
   --color: black;
   --background-color: #FFCCCC;	
 }

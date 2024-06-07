@@ -34710,10 +34710,12 @@ function idleAdvancedSettings(){
 
 }
 
+//
 // Clear all the databases
-function DeleteAllDatabases(){
+//
+function DeleteAllDatabases(callback){
 
-	var thePrompt = "This will clear the notes, reverb impulse, and tune search cache databases. Are you sure?";
+	var thePrompt = "This will clear the notes, reverb impulse, and tune search cache databases.<br/><br/>Are you sure?";
 
 	// Center the string in the prompt
 	thePrompt = makeCenteredPromptString(thePrompt);
@@ -34724,18 +34726,145 @@ function DeleteAllDatabases(){
 			// Wipe all the databases
 			delete_all_DB();
 
-			setTimeout(function(){
+			//console.log("Deleting the databases");
+			callback(true);
 
-				var thePrompt = "All databases cleared. Click OK to reload the tool.";
-				
-				// Center the string in the prompt
-				thePrompt = makeCenteredPromptString(thePrompt);
+		}
+		else{
 
-				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 320, scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
-					window.location.reload();
-				});
+			//console.log("Cancelled database delete");
 
-			},1000);
+			callback(false);
+
+		}
+	});
+}
+
+//
+// Reset all tool settings to the defaults
+//
+function resetAllSettingsToDefault(callback){
+
+	// No point asking if they don't have localstorage available
+	if (!gLocalStorageAvailable){
+
+		callback(false);
+
+		return;
+	}
+
+	var thePrompt = "This will reset the tool settings to the original defaults.<br/><br/>Are you sure?";
+
+	// Center the string in the prompt
+	thePrompt = makeCenteredPromptString(thePrompt);
+
+	DayPilot.Modal.confirm(thePrompt,{ top:300, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+		if (!args.canceled){
+
+			//console.log("Resetting the settings");
+
+			localStorage.clear();
+			
+			callback(true);
+
+		}
+		else{
+			
+			//console.log("Cancelled settings reset");
+
+			callback(false);
+		}
+
+	});
+}
+//
+// Reset the settings and/or clear the databases
+//
+function ResetSettingsDialog(){
+
+	// Setup initial values
+	const theData = {
+	  resetsettings: false,
+	  deletedatabases: false
+	};
+
+	const form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Reset Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_resetsettings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Reset all settings to default</strong> will restore the tool settings to the original first-run state.</p>'},
+	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Clear all databases</strong> will clear and delete the sample, reverb impulse, and tune search browser local IndexedDB cache databases.<br/>New databases will be created after the tool is restarted.'},
+	  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">If you enable either of these options, the tool will be restarted.</p>'},
+	  {name: "          Reset all tool settings to default", id: "resetsettings", type:"checkbox", cssClass:"configure_resetsettings_text"},
+	  {name: "          Clear all databases", id: "deletedatabases", type:"checkbox", cssClass:"configure_resetsettings_text"},
+	  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+
+		// Get the results and store them in the global configuration
+		if (!args.canceled){
+
+			var doSettingsRestart = false;
+			var doDatabaseClear = false;
+
+			if (args.result.resetsettings){
+
+				// Clear the setttings
+				//console.log("reset settings requested");
+
+				resetAllSettingsToDefault(callback);
+
+			}
+			else{
+
+				callback(false);
+
+			}
+
+			function callback(restartRequested){
+
+				doSettingsRestart = restartRequested;
+
+				if (args.result.deletedatabases){
+
+					// Clear the setttings
+					//console.log("delete databases requested");
+
+					doRestart = true;
+
+					DeleteAllDatabases(callback2);
+				}
+				else{
+
+					callback2(false);
+
+				}
+
+			}
+
+			function callback2(restartRequested){
+
+				doDatabaseClear = restartRequested;
+
+				if (doSettingsRestart || doDatabaseClear){
+
+					setTimeout(function(){
+
+						var thePrompt = "All changes applied. Click OK to reload the tool.";
+						
+						// Center the string in the prompt
+						thePrompt = makeCenteredPromptString(thePrompt);
+
+						DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 320, scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
+							//console.log("reload would happen")
+
+							window.location.reload();
+
+						});
+
+					},1000);
+				}
+			}
 		}
 	});
 }
@@ -34814,7 +34943,7 @@ function AdvancedSettings(){
 		{name: "Default %roll_3_params:", id: "configure_roll3_default", type:"text", cssClass:"advanced_settings2_roll_text"},
 		{name: "Private TinyURL API Token:", id: "configure_tinyurl", type:"text", cssClass:"advanced_settings2_tinyurl_text"},
 
-		{html: '<p style="text-align:center;margin-top:22px;"><input id="reset_roll_parameters" class="btn btn-subdialog reset_roll_parameters" onclick="ResetRollDefaultParams()" type="button" value="Reset Roll Parameter Strings to Defaults" title="Resets the roll parameter strings to known good default values"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><input id="deletealldatabases" class="btn btn-deletealldatabases deletealldatabases" onclick="DeleteAllDatabases()" type="button" value="Clear All Caches" title="Clears and deletes the sample, reverb impulse, and tune search browser local IndexedDB cache databases.&nbsp;&nbsp;Tool will restart after the operation.&nbsp;&nbsp;New cache databases will be created after restart."></p>'},
+		{html: '<p style="text-align:center;margin-top:22px;"><input id="reset_roll_parameters" class="btn btn-subdialog reset_roll_parameters" onclick="ResetRollDefaultParams()" type="button" value="Reset Roll Parameter Strings to Defaults" title="Resets the roll parameter strings to known good default values"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset Settings" title="Opens a dialog where you can reset all tool settings to the default and/or clear and deletes the sample, reverb impulse, and tune search browser local IndexedDB cache databases."></p>'},
 	]);
 
 	// Set up the reverb impulse load callback
