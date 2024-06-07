@@ -1283,10 +1283,11 @@ function TransposeToKeyDialog(){
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Transpose to Key&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_transposetokey" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 	  {html: '<p style="margin-top:36px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">This will transpose the current tune or all the tunes to the specified root key.</p>'},
-	  {html: '<p style="margin-bottom:48px;font-size:12pt;line-height:18pt;font-family:helvetica">Any modes specified in the tune keys will be preserved.</p>'},	  	  
+	  {html: '<p style="margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Any modes specified in the tune keys will be preserved.</p>'},	  	  
+	  {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">If the transposed results are too high or too low:</p>'},
+	  {html: '<p style="margin-top:12px;margin-bottom:42px;font-size:12pt;line-height:18pt;font-family:helvetica">Click in a single tune or select across one or more tunes in the ABC editor then Alt-Click on the toolbar <strong>Transpose Up</strong> or <strong>Transpose Down</strong> buttons to transpose the tune(s) down or up an octave.</p>'},
 	  {name: "Root key:", id: "transposekey", type:"select", options:tranpose_options, cssClass:"configure_transpose_settings_select"}, 	
-	  {html: '<p style="font-size:12pt;font-family:helvetica">&nbsp;</p>'},	  
-	  {name: "          Transpose all tunes", id: "transposeall", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
+	  {name: "          Transpose all tunes", id: "transposeall", type:"checkbox", cssClass:"configure_transposetokey_text"},
 	  {html: '<p style="font-size:12pt;font-family:helvetica">&nbsp;</p>'},	  
 	];
 
