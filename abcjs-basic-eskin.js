@@ -13438,16 +13438,32 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
   }
 
   function writeBoom(boom, beatLength, volume, beat, noteLength) {
-     // undefined means there is a stop time.
-    if (boom !== undefined) chordTrack.push({
-      cmd: 'note',
-      pitch: boom,
-      volume: volume,
-      start: lastBarTime + beat * durationRounded(beatLength),
-      duration: durationRounded(noteLength),
-      gap: 0,
-      instrument: bassInstrument
-    });
+
+    // If the melody voice has tuning adjustment, apply it to the boom
+    if (gVoiceTuning && (gVoiceTuning.length > 0)){
+      if (boom !== undefined) chordTrack.push({
+        cmd: 'note',
+        pitch: boom,
+        volume: volume,
+        start: lastBarTime + beat * durationRounded(beatLength),
+        duration: durationRounded(noteLength),
+        gap: 0,
+        instrument: bassInstrument,
+        cents: gVoiceTuning[0]
+      });
+    }
+    else{
+      // Original code (Do no harm!)
+      if (boom !== undefined) chordTrack.push({
+        cmd: 'note',
+        pitch: boom,
+        volume: volume,
+        start: lastBarTime + beat * durationRounded(beatLength),
+        duration: durationRounded(noteLength),
+        gap: 0,
+        instrument: bassInstrument
+      });
+    }
   }
   function writeChick(chick, beatLength, volume, beat, noteLength) {
 
@@ -13456,16 +13472,36 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     if (gStrumChords){
       theOffset = (0.125/gStrumChordsDivider);
     }
-    for (var c = 0; c < chick.length; c++) {
-      chordTrack.push({
-        cmd: 'note',
-        pitch: chick[c],
-        volume: volume,
-        start: lastBarTime + beat * durationRounded(beatLength)+(c*theOffset), //MAE FOOFOO
-        duration: durationRounded(noteLength),
-        gap: 0,
-        instrument: chordInstrument
-      });
+
+    // If the melody voice has tuning adjustment, apply it to the chick
+    if (gVoiceTuning && (gVoiceTuning.length > 0)){
+      for (var c = 0; c < chick.length; c++) {
+        chordTrack.push({
+          cmd: 'note',
+          pitch: chick[c],
+          volume: volume,
+          start: lastBarTime + beat * durationRounded(beatLength)+(c*theOffset), //MAE FOOFOO
+          duration: durationRounded(noteLength),
+          gap: 0,
+          instrument: chordInstrument,
+          cents: gVoiceTuning[0]
+        });
+      }
+    }
+    else{
+      // Original code (do no harm!)
+      for (var c = 0; c < chick.length; c++) {
+        chordTrack.push({
+          cmd: 'note',
+          pitch: chick[c],
+          volume: volume,
+          start: lastBarTime + beat * durationRounded(beatLength)+(c*theOffset), //MAE FOOFOO
+          duration: durationRounded(noteLength),
+          gap: 0,
+          instrument: chordInstrument
+        });
+      }
+
     }
   }
   //
