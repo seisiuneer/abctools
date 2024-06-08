@@ -2459,7 +2459,7 @@ function DoSaveLastAutoSnapShot(){
 //
 // Save the current ABC to browser storage
 //
-function SaveSnapshot(){
+function SaveSnapshot(e){
 
 	if (gLocalStorageAvailable){
 
@@ -2468,9 +2468,36 @@ function SaveSnapshot(){
 
 		var theABC = gTheABC.value;
 
-		localStorage.SavedSnapshot = theABC;
+		var postfix;
 
-		document.getElementById("snapshotbutton").value = "  Saved!  ";
+		if (e && (e.shiftKey && e.altKey)){
+
+			postfix = "4";
+			localStorage.SavedSnapshot4 = theABC;
+
+		}
+		else 
+		if (e && e.altKey){
+
+			postfix = "3";
+			localStorage.SavedSnapshot3 = theABC;
+
+		}
+		else
+		if (e && e.shiftKey){
+
+			postfix = "2";
+			localStorage.SavedSnapshot2 = theABC;
+
+		}
+		else{
+
+			postfix = "1"
+			localStorage.SavedSnapshot = theABC;
+
+		}
+
+		document.getElementById("snapshotbutton").value = "  Saved #"+postfix+"!  ";
 		
 		setTimeout(function(){
 
@@ -2499,7 +2526,7 @@ function SaveSnapshot(){
 // Restores either a user snapshot or an automatically saved snapshot
 //
 
-function RestoreSnapshot(bRestoreAutoSnapshot,bIsAddDialogButton){
+function RestoreSnapshot(e, bRestoreAutoSnapshot,bIsAddDialogButton){
 	
 	if (gLocalStorageAvailable){
 
@@ -2508,7 +2535,7 @@ function RestoreSnapshot(bRestoreAutoSnapshot,bIsAddDialogButton){
 
 		var theABC = gTheABC.value;
 
-		var theSnapshot;
+		var theSnapshot, theSnapshot1, theSnapshot2, theSnapshot3, theSnapshot4;
 
 		var thePrompt, theErrorPrompt;
 
@@ -2523,11 +2550,76 @@ function RestoreSnapshot(bRestoreAutoSnapshot,bIsAddDialogButton){
 		}
 		else{
 
-			theSnapshot = localStorage.SavedSnapshot;
+			var isModifier = true;
 
-			thePrompt = "Replace the contents of the ABC editor with the Snapshot?";
+			var postfix;
+			
+			theSnapshot1 = localStorage.SavedSnapshot;
+			theSnapshot2 = localStorage.SavedSnapshot2;
+			theSnapshot3 = localStorage.SavedSnapshot3;
+			theSnapshot4 = localStorage.SavedSnapshot4;
 
-			theErrorPrompt = "No saved Snapshot available to restore.";
+			if (e && (e.shiftKey && e.altKey)){
+
+				theSnapshot = theSnapshot4;
+				postfix = "4";
+
+			}
+			else
+			if (e && e.altKey){
+
+				theSnapshot = theSnapshot3;
+				postfix = "3";
+
+			}
+			else
+			if (e && e.shiftKey){
+
+				theSnapshot = theSnapshot2;
+				postfix = "2";
+
+			}
+			else{
+
+				theSnapshot = theSnapshot1;
+				isModifier = false;
+				postfix = "1";
+
+			}
+
+			if (bIsAddDialogButton){
+
+				if (!isModifier){
+
+					// Is there a snapshot1?
+					if ((theSnapshot1) && (theSnapshot1 != "")){
+						theSnapshot = theSnapshot1;
+						postfix = "1";
+
+					}
+					else
+					if ((theSnapshot2) && (theSnapshot2 != "")){
+						theSnapshot = theSnapshot2;
+						postfix = "2";
+
+					}
+					else
+					if ((theSnapshot3) && (theSnapshot3 != "")){
+						theSnapshot = theSnapshot3;
+						postfix = "3";
+					}
+					else
+					if ((theSnapshot4) && (theSnapshot4 != "")){
+						theSnapshot = theSnapshot4;
+						postfix = "4";
+
+					}
+				}
+			}
+
+			thePrompt = "Replace the contents of the ABC editor with Snapshot #"+postfix+"?";
+
+			theErrorPrompt = "No saved Snapshot #"+postfix+" available to restore.";
 
 		}
 
@@ -11742,8 +11834,11 @@ function idleAddABC(){
 	if (gLocalStorageAvailable){
 
 		var theSnapshot = localStorage.SavedSnapshot;
+		var theSnapshot2 = localStorage.SavedSnapshot2;
+		var theSnapshot3 = localStorage.SavedSnapshot3;
+		var theSnapshot4 = localStorage.SavedSnapshot4;
 
-		var bTheSnapShotAvailable = ((theSnapshot) && (theSnapshot != ""));
+		var bTheSnapShotAvailable = (((theSnapshot) && (theSnapshot != "")) || ((theSnapshot2) && (theSnapshot2 != "")) || ((theSnapshot3) && (theSnapshot3 != "")) || ((theSnapshot4) && (theSnapshot4 != "")));
 
 		var theLastAutoSnapShot = localStorage.LastAutoSnapShot;
 
@@ -13828,8 +13923,8 @@ function AddABC(){
 	modal_msg += '<p style="text-align:center;margin-top:16px;">';
 	//modal_msg += '';
 	modal_msg += '<label class="abcuploaddialog btn btn-top" for="addabcfilebutton" title="Adds tunes from an existing ABC, MusicXML, BWW, or MIDI file to the end of the ABC">Choose File to Add <input type="file" id="addabcfilebutton" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL,.mid,.MID,.midi,.MIDI,.bww,.BWW" hidden/></label>';
-	modal_msg += '<input class="dialogrestorebutton btn btn-restorebutton" id="dialogrestorebutton" onclick="RestoreSnapshot(false,true);" type="button" value="Restore from Snapshot" title="Replaces the contents of the ABC editor with a Snapshot saved in browser storage" style="display:none;">';
-	modal_msg += '<input class="dialogrestoreautobutton btn btn-restorebutton" id="dialogrestoreautobutton" onclick="RestoreSnapshot(true,true);" type="button" value="Restore from Auto-Snapshot" title="Replaces the contents of the ABC editor with an Auto-Snapshot saved in browser storage" style="display:none;">';
+	modal_msg += '<input class="dialogrestorebutton btn btn-restorebutton" id="dialogrestorebutton" onclick="RestoreSnapshot(event,false,true);" type="button" value="Restore from Snapshot" title="Replaces the contents of the ABC editor with a Snapshot saved in browser storage.&nbsp;&nbsp;Click for Snapshot #1, Shift-click for Snapshot #2, Alt-click for Snapshot #3, Shift-Alt-click for Snapshot #4." style="display:none;">';
+	modal_msg += '<input class="dialogrestoreautobutton btn btn-restorebutton" id="dialogrestoreautobutton" onclick="RestoreSnapshot(event,true,true);" type="button" value="Restore from Auto-Snapshot" title="Replaces the contents of the ABC editor with an Auto-Snapshot saved in browser storage" style="display:none;">';
 	modal_msg += '</p>';
 
 	// Showing search?
@@ -32359,6 +32454,21 @@ function GetInitialConfigurationSettings(){
 	val = localStorage.SavedSnapshot;
 	if (!val){
 		localStorage.SavedSnapshot = "";
+	}
+
+	val = localStorage.SavedSnapshot2;
+	if (!val){
+		localStorage.SavedSnapshot2 = "";
+	}
+
+	val = localStorage.SavedSnapshot3;
+	if (!val){
+		localStorage.SavedSnapshot3 = "";
+	}
+
+	val = localStorage.SavedSnapshot4;
+	if (!val){
+		localStorage.SavedSnapshot4 = "";
 	}
 
 	// Setup initial saved exit snapshot
