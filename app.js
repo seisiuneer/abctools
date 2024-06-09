@@ -20077,6 +20077,17 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 				switch (theKey){
 
 					case "A":
+					theLine = theLine.replaceAll("C,,","c");
+					theLine = theLine.replaceAll("D,,","d");
+					theLine = theLine.replaceAll("E,,","e");
+					theLine = theLine.replaceAll("F,,","f");
+					theLine = theLine.replaceAll("G,,","G");
+					theLine = theLine.replaceAll("A,,","A");
+					theLine = theLine.replaceAll("B,,","B");
+					theLine = theLine.replaceAll("C,","c");
+					theLine = theLine.replaceAll("D,","d");
+					theLine = theLine.replaceAll("E,","e");
+					theLine = theLine.replaceAll("F,","f");
 					theLine = theLine.replaceAll("G,","G");
 					theLine = theLine.replaceAll("A,","A");
 					theLine = theLine.replaceAll("B,","B");
@@ -20091,10 +20102,22 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 					theLine = theLine.replaceAll("f'","f");
 					theLine = theLine.replaceAll("g'","g");
 					theLine = theLine.replaceAll("a'","a");
+					theLine = theLine.replaceAll("b'","b");
 
 					break;
 
 					case "D":
+					theLine = theLine.replaceAll("C,,","C");
+					theLine = theLine.replaceAll("D,,","D");
+					theLine = theLine.replaceAll("E,,","E");
+					theLine = theLine.replaceAll("F,,","F");
+					theLine = theLine.replaceAll("G,,","G");
+					theLine = theLine.replaceAll("A,,","A");
+					theLine = theLine.replaceAll("B,,","B");
+					theLine = theLine.replaceAll("C,","C");
+					theLine = theLine.replaceAll("D,","D");
+					theLine = theLine.replaceAll("E,","E");
+					theLine = theLine.replaceAll("F,","F");
 					theLine = theLine.replaceAll("G,","G");
 					theLine = theLine.replaceAll("A,","A");
 					theLine = theLine.replaceAll("B,","B");
