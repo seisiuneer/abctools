@@ -2018,6 +2018,13 @@ var Tune = function Tune() {
       bpm = 180;
       // Compensate for compound meter, where the beat isn't a beat.
       var meter = this.getMeterFraction();
+      // MAE 9 Jun 2024
+      // Adjust default tempo for cut time to not be so fast
+      if (meter && meter.num == 2 && meter.den === 2) {
+        //console.log("Adjusting tempo for cut time");
+        bpm = 90;
+      }
+      else
       if (meter && meter.num !== 3 && meter.num % 3 === 0) {
         bpm = 120;
       }
