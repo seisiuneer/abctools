@@ -2497,7 +2497,7 @@ function SaveSnapshot(e){
 
 		}
 
-		document.getElementById("snapshotbutton").value = "  Saved #"+postfix+"!  ";
+		document.getElementById("snapshotbutton").value = "Saved #"+postfix;
 		
 		setTimeout(function(){
 
