@@ -338,6 +338,9 @@ var gABCEditorFontsize = 13;
 // Showing diagnostics?
 var gShowDiagnostics = false;
 
+// Showing rendering progress in the Javascript console
+var gShowABCJSRenderProgress = false;
+
 // Reverb string to inject
 var gReverbString = "chamber 0.95 0.05";
 
@@ -397,6 +400,34 @@ function getFirstPage(){
 // Tune utility functions
 // 
 
+//
+// Is a tune a multi-voice tune
+//
+function isMultiVoiceTune(theTune){
+
+	// Split the text into lines
+    const lines = theTune.split('\n');
+    
+    // Create a set to store unique voice identifiers
+    const voices = new Set();
+    
+    // Regular expression to match voice fields
+    const voiceRegex = /^V:\s*(\S+)/;
+    
+    // Iterate over each line
+    for (const line of lines) {
+        const match = line.match(voiceRegex);
+        if (match) {
+            // Add the voice identifier to the set
+            voices.add(match[1]);
+        }
+    }
+
+    console.log("isMultiVoice = "+(voices.size > 1));
+    
+    // Check if there are multiple voices
+    return voices.size > 1;
+}
 
 //
 // Extract the title from a single tune ABC
@@ -20961,8 +20992,8 @@ function InjectBagpipeSounds(){
 
 					var theTune = getTuneByIndex(i);
 
-					// Don't re-inject already injected tunes and skip section headers
-					if ((theTune.indexOf("% Injected drones") == -1) && (!isSectionHeader(theTune))){
+					// Don't re-inject already injected tunes and skip section headers and multi-voice tunes
+					if ((theTune.indexOf("% Injected drones") == -1) && ((!isSectionHeader(theTune)) && (!isMultiVoiceTune(theTune)))){
 
 						theTune = InjectOneBagpipeDrones(theTune,args.result.dronestyle,args.result.hidedronevoice,args.result.foldnotes,args.result.injectdronevoice,args.result.matchtunekey);
 
@@ -21009,8 +21040,8 @@ function InjectBagpipeSounds(){
 
 				var theInjectedTune = theSelectedABC;
 
-				// Don't re-inject already injected and skip section headers
-				if ((theInjectedTune.indexOf("% Injected drones") == -1) && (!isSectionHeader(theInjectedTune))){
+				// Don't re-inject already injected and skip section headers and multi-voice tunes
+				if ((theInjectedTune.indexOf("% Injected drones") == -1) && ((!isSectionHeader(theInjectedTune)) && (!isMultiVoiceTune(theInjectedTune)))){
 
 					theInjectedTune = InjectOneBagpipeDrones(theInjectedTune,args.result.dronestyle,args.result.hidedronevoice,args.result.foldnotes,args.result.injectdronevoice,args.result.matchtunekey);
 					
@@ -35034,7 +35065,9 @@ function AdvancedSettings(){
 		configure_show_diagnostics: gShowDiagnostics,
 		configure_reverb: gReverbString,
 		configure_tinyurl: gTinyURLAPIKeyOverride,
-		configure_confirm_clear: gConfirmClear	  	
+		configure_confirm_clear: gConfirmClear,
+		configure_show_render_progress: gShowABCJSRenderProgress,
+
 	};
 
 	var form = [
@@ -35042,6 +35075,7 @@ function AdvancedSettings(){
 		{html: '<p style="font-size:12pt;line-height:12px;font-family:helvetica;"><strong>Only change these values if you know what you are doing!</strong></p>'},
 		{name: "          Always confirm before deletion when clicking Clear", id: "configure_confirm_clear", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "          Show ABC syntax validation panel", id: "configure_show_diagnostics", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+		{name: "          Show tune rendering progress in Javascript console", id: "configure_show_render_progress", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Disable abcjs notation rendering", id: "configure_DisableRendering", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Autoscroll player when playing", id: "configure_autoscrollplayer", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Player/Tune Trainer always plays full tune even if there is a selection region", id: "configure_disable_selected_play", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
@@ -35128,6 +35162,9 @@ function AdvancedSettings(){
 				gRawMode = false;
 
 			}
+
+			// Show render progress in the Javascript console? (not persistent)
+			gShowABCJSRenderProgress = args.result.configure_show_render_progress;
 
 			// Sanity check the full screen scaling setting
 			gFullScreenScaling = args.result.configure_fullscreen_scaling;

@@ -943,6 +943,12 @@ var tunebook = {};
       } else if (typeof div === "string") div = document.getElementById(div);
       if (div) {
         if (currentTune >= 0 && currentTune < book.tunes.length) {
+
+          // If streaming render progress to the console
+          if (gShowABCJSRenderProgress){
+            console.log("Before render - Tune #"+i+" - "+book.tunes[i].title);
+          }
+
           abcParser.parse(book.tunes[currentTune].abc, params, book.tunes[currentTune].startPos - book.header.length);
           var tune = abcParser.getTune();
           //
@@ -1217,6 +1223,12 @@ var renderAbc = function renderAbc(output, abc, parserParams, engraverParams, re
   }
 
   function callback(div, tune, tuneNumber, abcString) {
+
+    // If streaming render progress to the console
+    if (gShowABCJSRenderProgress){
+      console.log("After render - Tune #"+tuneNumber+" - "+tune.metaText.title);
+    }
+
     var removeDiv = false;
     if (div === "*") {
       removeDiv = true;

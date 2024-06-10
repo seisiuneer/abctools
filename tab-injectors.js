@@ -1424,8 +1424,8 @@ var angloFingeringsGenerator = function (theABC, callback){
 
             var originalTune = thisTune;
 
-            // Don't inject section header tune fragments
-            if (isSectionHeader(thisTune)){
+            // Don't inject section header tune fragments or multi-voice tunes
+            if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
                 result += thisTune;
                 continue;
             }
@@ -2306,8 +2306,8 @@ var boxTabGenerator = function (theABC){
 
             var thisTune = getTuneByIndex(theABC, i);
 
-            // Don't inject section header tune fragments
-            if (isSectionHeader(thisTune)){
+            // Don't inject section header tune fragments or multi-voice tunes
+            if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
                 result += thisTune;
                 continue;
             }
@@ -3146,8 +3146,8 @@ var bambooFluteTabGenerator = function (theABC){
 
             var thisTune = getTuneByIndex(theABC, i);
 
-            // Don't inject section header tune fragments
-            if (isSectionHeader(thisTune)){
+            // Don't inject section header tune fragments or multi-voice tunes
+            if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
                 result += thisTune;
                 continue;
             }
@@ -4127,8 +4127,8 @@ var ceoltasABCTransformer = function (theABC,doInverse,isForPDF){
 
             var thisTune = getTuneByIndex(theABC, i);
 
-            // Don't inject section header tune fragments
-            if (isSectionHeader(thisTune)){
+            // Don't inject section header tune fragments or multi-voice tunes
+            if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
                 result += thisTune;
                 continue;
             }
@@ -4933,8 +4933,8 @@ var fiddleFingeringsGenerator = function (theABC,stringNameStyle){
 
             var thisTune = getTuneByIndex(theABC, i);
 
-            // Don't inject section header tune fragments
-            if (isSectionHeader(thisTune)){
+            // Don't inject section header tune fragments or multi-voice tunes
+            if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
                 result += thisTune;
                 continue;
             }
@@ -5860,8 +5860,8 @@ var MDTablatureGenerator = function (theABC){
 
             var thisTune = getTuneByIndex(theABC, i);
 
-            // Don't inject section header tune fragments
-            if (isSectionHeader(thisTune)){
+            // Don't inject section header tune fragments or multi-voice tunes
+            if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
                 result += thisTune;
                 continue;
             }
