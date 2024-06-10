@@ -422,8 +422,6 @@ function isMultiVoiceTune(theTune){
             voices.add(match[1]);
         }
     }
-
-    console.log("isMultiVoice = "+(voices.size > 1));
     
     // Check if there are multiple voices
     return voices.size > 1;
