@@ -1051,6 +1051,29 @@ function resetSelectionAfterTranspose(start,end){
 
 }
 
+// 
+// Warn if there were any tunes excluded fromt he transpose
+//
+function ShowTransposeWarningDialog(errorList){
+
+    // Keep track of dialogs
+    sendGoogleAnalytics("dialog","ShowTransposeWarningDialog");
+
+    var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Some Tunes Were Not Tranposed</p>';
+
+    modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;">During the operation some tunes were not able to be transposed:</p>';
+
+    var nBadTunes = errorList.length;
+
+    for (var i=0;i<nBadTunes;++i){
+		modal_msg += '<p style="font-size:12pt;line-height:12pt;">'
+        modal_msg += errorList[i];
+		modal_msg += '</p>'
+    }
+
+    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 630,  scrollWithPage: (AllowDialogsToScroll()) });
+}
+
 //
 // General purpose tranposer for the currently selected tunes
 //
@@ -1116,9 +1139,14 @@ function Transpose(transposeAmount) {
 
 		var output = FindPreTuneHeader(theNotes);
 
+		var gotError = false;
+		var errorList = [];
+
 		for (var i=1;i<=nTunes;++i){
 
 			theTunes[i] = "X:"+theTunes[i];
+
+			var theTitle = getTuneTitle(theTunes[i]);
 
 			var visualObj = null;
 
@@ -1134,15 +1162,17 @@ function Transpose(transposeAmount) {
 					output += ABCJS.strTranspose(theTunes[i], visualObj, transposeAmount);
 				}
 				catch (error){
-
-					var thePrompt = "Unable to tranpose one or more tunes.";
 					
-					// Center the string in the prompt
-					thePrompt = makeCenteredPromptString(thePrompt);
+					gotError = true;
 
-					DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
-					
 					output += theTunes[i];
+
+					// Keep track of errors
+					errorList.push(theTitle);
+
+					if (gShowABCJSRenderProgress){
+						console.log("Transpose failed: "+theTitle);
+					}
 
 				}
 			}
@@ -1152,7 +1182,7 @@ function Transpose(transposeAmount) {
 			}
 
 		}
-	
+
 		// Stuff in the transposed output
 		gTheABC.value = output;
 
@@ -1161,24 +1191,36 @@ function Transpose(transposeAmount) {
 
 		// Reset the selection point to the current tune
 		resetSelectionAfterTranspose(theTuneRange.start,theTuneRange.end);
+		
+		// Give a bit of time for garbage collection before the render
+		setTimeout(function(){
 
-		// Force a full render
-		RenderAsync(true, null, function(){
+			// Force a full render
+			RenderAsync(true, null, function(){
 
-			setTimeout(function(){
+				setTimeout(function(){
 
-				for (var i = 0; i < nTunes; ++i) {
+					for (var i = 0; i < nTunes; ++i) {
 
-					// Flash reduction
-					var elem = document.getElementById(id);
+						// Flash reduction
+						var elem = document.getElementById(id);
 
-					elem.style.opacity = 1.0;
+						elem.style.opacity = 1.0;
 
-				}
+					}
 
-			},100);
+					// If any errors, show the list of tunes that had issues
+					if (gotError){
 
-		});
+						ShowTransposeWarningDialog(errorList);
+
+					}
+
+				},100);
+
+			});
+
+		}, 100);
 
 
 	},100);
@@ -1440,6 +1482,10 @@ function DoTransposeToKey(targetKey,transposeAll) {
 
 		//console.log("theTargetScaleDegree: "+theTargetScaleDegree);
 
+		var gotError = false;
+		var errorList = [];
+		var theTitle;
+
 		for (var i=0;i<nTunes;++i){
 
 			var visualObj = null;
@@ -1550,6 +1596,8 @@ function DoTransposeToKey(targetKey,transposeAll) {
 
 						if (i==theSelectedTuneIndex){
 
+							theTitle = getTuneTitle(theTune);
+
 							visualObj = ABCJS.renderAbc(renderDivs[i], theTune, params);
 
 							output += ABCJS.strTranspose(theTune, visualObj, transposeAmount);
@@ -1572,6 +1620,8 @@ function DoTransposeToKey(targetKey,transposeAll) {
 
 					// Is there a transpose to apply?
 					if (transposeAmount != 0){
+						
+						theTitle = getTuneTitle(theTune);
 
 						visualObj = ABCJS.renderAbc(renderDivs[i], theTune, params);
 
@@ -1591,12 +1641,14 @@ function DoTransposeToKey(targetKey,transposeAll) {
 			}
 			catch (error){
 
-				var thePrompt = "Unable to tranpose one or more tunes.";
-				
-				// Center the string in the prompt
-				thePrompt = makeCenteredPromptString(thePrompt);
+				gotError = true;
 
-				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+				// Keep track of errors
+				errorList.push(theTitle);
+
+				if (gShowABCJSRenderProgress){
+					console.log("Transpose failed: "+theTitle);
+				}
 				
 				output += theTune;
 
@@ -1609,47 +1661,60 @@ function DoTransposeToKey(targetKey,transposeAll) {
 		// Set dirty
 		gIsDirty = true;
 
-		// Force a full render
-		RenderAsync(true, null, function(){
+		// Give a bit of time for garbage collection before the render
+		setTimeout(function(){
 
-			// Reset the selection
-			if (!transposeAll){
-				// Reset the selection point to the current tune
-				resetSelectionAfterTranspose(theSelectedTuneIndex,theSelectedTuneIndex);
-			}
-			else{
-				// Set the select point
-				gTheABC.selectionStart = 0;
-			    gTheABC.selectionEnd = 0;
+			// Force a full render
+			RenderAsync(true, null, function(){
 
-			}
+				// Reset the selection
+				if (!transposeAll){
+					// Reset the selection point to the current tune
+					resetSelectionAfterTranspose(theSelectedTuneIndex,theSelectedTuneIndex);
+				}
+				else{
+					// Set the select point
+					gTheABC.selectionStart = 0;
+				    gTheABC.selectionEnd = 0;
 
-		    // Focus after operation
-		    FocusAfterOperation();
+				}
 
-		    // For flash reduction
+			    // Focus after operation
+			    FocusAfterOperation();
 
-				setTimeout(function(){
+			    // For flash reduction
 
-					for (var i = 0; i < nTunes; ++i) {
+					setTimeout(function(){
 
-						id = "notation" + i;
+						for (var i = 0; i < nTunes; ++i) {
 
-						if (transposeAll || (i == theSelectedTuneIndex)){
+							id = "notation" + i;
 
-							// Flash reduction
-							var elem = document.getElementById(id);
+							if (transposeAll || (i == theSelectedTuneIndex)){
 
-							elem.style.opacity = 1.0;
+								// Flash reduction
+								var elem = document.getElementById(id);
+
+								elem.style.opacity = 1.0;
+
+							}
 
 						}
 
-					}
+						// If any errors, show the list of tunes that had issues
+						if (gotError){
 
-				},100);
-			//}
+							ShowTransposeWarningDialog(errorList);
 
-		});
+						}
+
+
+					},100);
+				//}
+
+			});
+
+		},100);
 
 	},100);
 	
