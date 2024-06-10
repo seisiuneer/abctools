@@ -1119,24 +1119,6 @@ function Transpose(transposeAmount) {
 		// Find the tunes
 		var theTunes = theNotes.split(/^X:/gm);
 
-		// Create the render div ID array
-		var renderDivs = [];
-
-		var id;
-
-		for (var i = 0; i < nTunes; ++i) {
-
-			id = "notation" + i;
-			
-			renderDivs.push(id);
-
-			// Flash reduction
-			var elem = document.getElementById(id);
-
-			elem.style.opacity = 0.0;
-
-		}
-
 		var output = FindPreTuneHeader(theNotes);
 
 		var gotError = false;
@@ -1157,7 +1139,7 @@ function Transpose(transposeAmount) {
 
 					//console.log("Transposing tune "+i);
 
-					visualObj = ABCJS.renderAbc(renderDivs[i-1], theTunes[i], params);
+					visualObj = ABCJS.renderAbc("*", theTunes[i], params);
 
 					output += ABCJS.strTranspose(theTunes[i], visualObj, transposeAmount);
 				}
@@ -1198,25 +1180,12 @@ function Transpose(transposeAmount) {
 			// Force a full render
 			RenderAsync(true, null, function(){
 
-				setTimeout(function(){
+				// If any errors, show the list of tunes that had issues
+				if (gotError){
 
-					for (var i = 0; i < nTunes; ++i) {
+					ShowTransposeWarningDialog(errorList);
 
-						// Flash reduction
-						var elem = document.getElementById(id);
-
-						elem.style.opacity = 1.0;
-
-					}
-
-					// If any errors, show the list of tunes that had issues
-					if (gotError){
-
-						ShowTransposeWarningDialog(errorList);
-
-					}
-
-				},100);
+				}
 
 			});
 
@@ -1455,27 +1424,6 @@ function DoTransposeToKey(targetKey,transposeAll) {
 			theSelectedTuneIndex = findSelectedTuneIndex();
 		}
 
-		// Create the render div ID array
-		var renderDivs = [];
-
-		var id;
-
-		for (var i = 0; i < nTunes; ++i) {
-
-			id = "notation" + i;
-			
-			renderDivs.push(id);
-
-			if (transposeAll || (i == theSelectedTuneIndex)){
-
-				// Flash reduction
-				var elem = document.getElementById(id);
-
-				elem.style.opacity = 0.0;
-			}
-
-		}
-
 		var theNotes = gTheABC.value;
 
 		var output = FindPreTuneHeader(theNotes);
@@ -1598,7 +1546,7 @@ function DoTransposeToKey(targetKey,transposeAll) {
 
 							theTitle = getTuneTitle(theTune);
 
-							visualObj = ABCJS.renderAbc(renderDivs[i], theTune, params);
+							visualObj = ABCJS.renderAbc("*", theTune, params);
 
 							output += ABCJS.strTranspose(theTune, visualObj, transposeAmount);
 
@@ -1623,7 +1571,7 @@ function DoTransposeToKey(targetKey,transposeAll) {
 						
 						theTitle = getTuneTitle(theTune);
 
-						visualObj = ABCJS.renderAbc(renderDivs[i], theTune, params);
+						visualObj = ABCJS.renderAbc("*", theTune, params);
 
 						output += ABCJS.strTranspose(theTune, visualObj, transposeAmount);
 
@@ -1667,51 +1615,45 @@ function DoTransposeToKey(targetKey,transposeAll) {
 			// Force a full render
 			RenderAsync(true, null, function(){
 
-				// Reset the selection
-				if (!transposeAll){
-					// Reset the selection point to the current tune
-					resetSelectionAfterTranspose(theSelectedTuneIndex,theSelectedTuneIndex);
-				}
-				else{
-					// Set the select point
-					gTheABC.selectionStart = 0;
-				    gTheABC.selectionEnd = 0;
+			   	var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Transpose to Key Complete!</p>';
 
-				}
+			   	// Force a raw mode visual refresh
+			   	gRawLastIndex = -1;
 
-			    // Focus after operation
-			    FocusAfterOperation();
+				DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 500,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+					
+					// Try and keep the same tune after the redraw for immediate play
+					var theSelectionStart = gTheABC.selectionStart;
 
-			    // For flash reduction
+					// Reset the selection
+					if (!transposeAll){
 
-					setTimeout(function(){
+						gCurrentTune = theSelectedTuneIndex;
 
-						for (var i = 0; i < nTunes; ++i) {
+						// Reset the selection point to the current tune
+						resetSelectionAfterTranspose(theSelectedTuneIndex,theSelectedTuneIndex);
 
-							id = "notation" + i;
+					}
+					else{
+						// Set the select point
+						gTheABC.selectionStart = 0;
+					    gTheABC.selectionEnd = 0;
 
-							if (transposeAll || (i == theSelectedTuneIndex)){
+					    gCurrentTune = 0;
 
-								// Flash reduction
-								var elem = document.getElementById(id);
+					}
 
-								elem.style.opacity = 1.0;
+				    // Focus after operation
+				    FocusAfterOperation();
 
-							}
+				    // If any errors, show the list of tunes that had issues
+					if (gotError){
 
-						}
+						ShowTransposeWarningDialog(errorList);
 
-						// If any errors, show the list of tunes that had issues
-						if (gotError){
-
-							ShowTransposeWarningDialog(errorList);
-
-						}
-
-
-					},100);
-				//}
-
+					}
+				    
+				});
 			});
 
 		},100);
@@ -2740,6 +2682,7 @@ function RestoreSnapshot(e, bRestoreAutoSnapshot,bIsAddDialogButton){
 							// If staff spacing had changed due to a share, restore it
 							RestoreSavedStaffSpacing();
 
+
 							// Set dirty flag
 							gIsDirty = true;
 
@@ -2753,6 +2696,11 @@ function RestoreSnapshot(e, bRestoreAutoSnapshot,bIsAddDialogButton){
 									document.getElementById("restorebutton").value = "Restore";
 
 								},1000);
+
+								// Reset the current tune
+								// Force a raw mode visual refresh
+							   	gRawLastIndex = -1;
+							   	gCurrentTune = 0;
 
 							});
 
@@ -2832,6 +2780,12 @@ function RestoreSnapshot(e, bRestoreAutoSnapshot,bIsAddDialogButton){
 									}
 
 								},1000);
+
+								// Reset the current tune
+								// Force a raw mode visual refresh
+							   	gRawLastIndex = -1;
+							   	gCurrentTune = 0;
+
 
 							});
 
@@ -10224,7 +10178,7 @@ function fireSelectionChanged(){
 	    if (CountTunes() > 0){
 
 	    	if (gRawVisual){
-			
+
 				// If not the current tune, clear the last notation highlight
 				if (gCurrentTune != gRawLastIndex){
 
@@ -17260,18 +17214,19 @@ function NotationSpacingInject(){
 		// Force a redraw
 		RenderAsync(true,null,function(){
 
-			// Set the select point
-			gTheABC.selectionStart = 0;
-		    gTheABC.selectionEnd = 0;
+			var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Spacing Injection Complete!</p>';
 
-		    // Focus after operation
-		    FocusAfterOperation();
+			DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 500,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
+				// Set the select point
+				gTheABC.selectionStart = 0;
+			    gTheABC.selectionEnd = 0;
+
+			    // Focus after operation
+			    FocusAfterOperation();
+			});
 
 		});
-
-		var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Spacing Injection Complete!</p>';
-
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
 
 	}
 	else{
@@ -17308,18 +17263,20 @@ function NotationSpacingInject(){
 		// Force a redraw of the tune
 		RenderAsync(false,theSelectedTuneIndex,function(){
 
-			// Set the select point
-			gTheABC.selectionStart = theSelectionStart;
-		    gTheABC.selectionEnd = theSelectionStart;
+		    var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Spacing Injection Complete!</p>';
 
-		    // Focus after operation
-		    FocusAfterOperation();
+			DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 500,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
+				// Set the select point
+				gTheABC.selectionStart = theSelectionStart;
+			    gTheABC.selectionEnd = theSelectionStart;
+
+			    // Focus after operation
+			    FocusAfterOperation();
+			});
+
 
 		});
-
-	   	var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Spacing Injection Complete!</p>';
-
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
 
 	}
 }
@@ -21042,6 +20999,8 @@ function InjectBagpipeSounds(){
 
 			var doRenderAfterInject = false;
 
+			var theSelectedTuneIndex = 0;
+
 			// Injecting all tunes?
 			if (injectAllTunes){
 
@@ -21081,19 +21040,39 @@ function InjectBagpipeSounds(){
 					// Force a redraw
 					RenderAsync(true,null,function(){
 
-						// Set the select point
-						gTheABC.selectionStart = 0;
-					    gTheABC.selectionEnd = 0;
+						// Force a raw mode visual refresh
+					   	gRawLastIndex = -1;
 
-					    // Focus after operation
-					    FocusAfterOperation();
+						var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Inject Bagpipe Sounds Complete!</p>';
+
+						DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 500,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+							
+							gCurrentTune = 0;
+
+							// Set the select point
+							gTheABC.selectionStart = 0;
+						    gTheABC.selectionEnd = 0;
+
+						    // Focus after operation
+						    FocusAfterOperation();
+
+						});
 
 					});
+
+				}
+				else{
+
+					var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Inject Bagpipe Sounds Complete!</p>';
+
+					DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 500,  scrollWithPage: (AllowDialogsToScroll()) });
 				}
 			}
 			else{
-
+				
 				// Try to find the current tune
+				theSelectedTuneIndex = findSelectedTuneIndex();
+
 				var theSelectedABC = findSelectedTune();
 
 				if (theSelectedABC == ""){
@@ -21117,9 +21096,6 @@ function InjectBagpipeSounds(){
 					// Seeing extra line breaks after the inject
 					theInjectedTune = theInjectedTune.trim();
 
-					// Try and keep the same tune after the redraw for immediate play
-					var theSelectionStart = gTheABC.selectionStart;
-
 					// Stuff in the injected ABC
 					var theABC = gTheABC.value;
 					theABC = theABC.replace(theSelectedABC,theInjectedTune);
@@ -21132,16 +21108,36 @@ function InjectBagpipeSounds(){
 					// Force a redraw of the tune
 					RenderAsync(true,theSelectedTuneIndex,function(){
 
-						// Set the select point
-						gTheABC.selectionStart = theSelectionStart;
-					    gTheABC.selectionEnd = theSelectionStart;
+					   	// Force a raw mode visual refresh
+					   	gRawLastIndex = -1;
 
-					    // Focus after operation
-					    FocusAfterOperation();
+						var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Inject Bagpipe Sounds Complete!</p>';
+
+						DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 500,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
+							// Try and keep the same tune after the redraw for immediate play
+							var theSelectionStart = gTheABC.selectionStart;
+
+							gCurrentTune = theSelectedTuneIndex;
+
+							// Set the select point
+							gTheABC.selectionStart = theSelectionStart;
+						    gTheABC.selectionEnd = theSelectionStart;
+								
+							// Focus after operation
+					    	FocusAfterOperation();
+
+					    });
 
 					});
+
 				}
-				
+				else{
+
+					var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Inject Bagpipe Sounds Complete!</p>';
+
+					DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 500,  scrollWithPage: (AllowDialogsToScroll()) });
+				}
 			}
 		}
 	});
@@ -27616,7 +27612,28 @@ function SwingExplorerInject(){
     	if (gRawMode){
 
 			RenderAsync(true,null,function(){
+
+				var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Swing Injection Complete!</p>';
+
+				DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 500,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
+					// Set the select point
+					gTheABC.selectionStart = theSelectionStart;
+				    gTheABC.selectionEnd = theSelectionStart;
+
+				    // Focus after operation
+				    FocusAfterOperation();
+				});
 				
+			});
+
+	    }
+	    else{
+
+			var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Swing Injection Complete!</p>';
+
+			DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 500,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
 				// Set the select point
 				gTheABC.selectionStart = theSelectionStart;
 			    gTheABC.selectionEnd = theSelectionStart;
@@ -27627,20 +27644,6 @@ function SwingExplorerInject(){
 			});
 
 	    }
-	    else{
-
-	    	// Set the select point
-			gTheABC.selectionStart = theSelectionStart;
-		    gTheABC.selectionEnd = theSelectionStart;
-
-		    // Focus after operation
-		    FocusAfterOperation();
-
-	    }
-
-	   	var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Swing Injection Complete!</p>';
-
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
 
 	}
 
@@ -28261,31 +28264,40 @@ function ReverbExplorerInject(){
     	if (gRawMode){
 
 			RenderAsync(true,null,function(){
+
+				var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Reverb Injection Complete!</p>';
+
+				DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 500,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
+					// Set the select point
+					gTheABC.selectionStart = theSelectionStart;
+				    gTheABC.selectionEnd = theSelectionStart;
+
+				    // Focus after operation
+				    FocusAfterOperation();
+				    
+				});
 				
+			});
+
+	    }
+	    else{
+
+			var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Reverb Injection Complete!</p>';
+
+			DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 500,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
 				// Set the select point
 				gTheABC.selectionStart = theSelectionStart;
 			    gTheABC.selectionEnd = theSelectionStart;
 
 			    // Focus after operation
 			    FocusAfterOperation();
-
+			    
 			});
 
 	    }
-	    else{
 
-	    	// Set the select point
-			gTheABC.selectionStart = theSelectionStart;
-		    gTheABC.selectionEnd = theSelectionStart;
-
-		    // Focus after operation
-		    FocusAfterOperation();
-
-	    }
-
-	   	var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Reverb Injection Complete!</p>';
-
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
 
 	}
 
@@ -29181,25 +29193,37 @@ function InstrumentExplorerInject(){
 		if (gRawMode){
 
 			RenderAsync(true,null,function(){
+
+				var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Instrument Injection Complete!</p>';
+
+				DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 500,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
+					// Set the select point
+					gTheABC.selectionStart = theSelectionStart;
+				    gTheABC.selectionEnd = theSelectionStart;
+
+				    // Focus after operation
+				    FocusAfterOperation();
+				    
+				});
 				
+			});
+
+	    }
+	    else{
+
+			var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Instrument Injection Complete!</p>';
+
+			DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 500,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
 				// Set the select point
 				gTheABC.selectionStart = theSelectionStart;
 			    gTheABC.selectionEnd = theSelectionStart;
 
 			    // Focus after operation
 			    FocusAfterOperation();
-
+			    
 			});
-
-	    }
-	    else{
-
-	    	// Set the select point
-			gTheABC.selectionStart = theSelectionStart;
-		    gTheABC.selectionEnd = theSelectionStart;
-
-		    // Focus after operation
-		    FocusAfterOperation();
 
 	    }
 
@@ -29236,33 +29260,41 @@ function InstrumentExplorerInject(){
 	    if (gRawMode){
 
 			RenderAsync(true,null,function(){
-				
-				// Set the select point
-				gTheABC.selectionStart = 0;
-			    gTheABC.selectionEnd = 0;
 
-			    // Focus after operation
-			    FocusAfterOperation();
+				var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Instrument Injection Complete!</p>';
+
+				DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 500,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
+					// Set the select point
+					gTheABC.selectionStart = 0;
+				    gTheABC.selectionEnd = 0;
+
+				    // Focus after operation
+				    FocusAfterOperation();
+				    
+				});
 
 			});
 
 	    }
 	    else{
 
-	    	// Set the select point
-			gTheABC.selectionStart = 0;
-		    gTheABC.selectionEnd = 0;
+			var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Instrument Injection Complete!</p>';
 
-		    // Focus after operation
-		    FocusAfterOperation();
+			DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 500,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
+				// Set the select point
+				gTheABC.selectionStart = 0;
+			    gTheABC.selectionEnd = 0;
+
+			    // Focus after operation
+			    FocusAfterOperation();
+			    
+			});
 
 	    }
 
 	}
-
-   	var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Instrument Injection Complete!</p>';
-
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
 
 }
 
@@ -29837,25 +29869,37 @@ function GraceExplorerInject(){
 	    	if (gRawMode){
 
 				RenderAsync(true,null,function(){
+
+					var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Grace Duration Injection Complete!</p>';
+
+					DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 500,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
+						// Set the select point
+						gTheABC.selectionStart = theSelectionStart;
+					    gTheABC.selectionEnd = theSelectionStart;
+
+					    // Focus after operation
+					    FocusAfterOperation();
+					    
+					});
 					
+				});
+
+		    }
+		    else{
+
+				var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Grace Duration Injection Complete!</p>';
+
+				DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 500,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
 					// Set the select point
 					gTheABC.selectionStart = theSelectionStart;
 				    gTheABC.selectionEnd = theSelectionStart;
 
 				    // Focus after operation
 				    FocusAfterOperation();
-
+				    
 				});
-
-		    }
-		    else{
-
-		    	// Set the select point
-				gTheABC.selectionStart = theSelectionStart;
-			    gTheABC.selectionEnd = theSelectionStart;
-
-			    // Focus after operation
-			    FocusAfterOperation();
 
 		    }
 		}
@@ -29899,32 +29943,40 @@ function GraceExplorerInject(){
 
 				RenderAsync(true,null,function(){
 					
-					// Set the select point
-					gTheABC.selectionStart = 0;
-				    gTheABC.selectionEnd = 0;
+					var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Grace Duration Injection Complete!</p>';
 
-				    // Focus after operation
-				    FocusAfterOperation();
+					DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 500,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
+						// Set the select point
+						gTheABC.selectionStart = 0;
+					    gTheABC.selectionEnd = 0;
+
+					    // Focus after operation
+					    FocusAfterOperation();
+					    
+					});
 
 				});
 
 		    }
 		    else{
 
-		    	// Set the select point
-				gTheABC.selectionStart = 0;
-			    gTheABC.selectionEnd = 0;
+				var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Grace Duration Injection Complete!</p>';
 
-			    // Focus after operation
-			    FocusAfterOperation();
+				DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 500,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
+					// Set the select point
+					gTheABC.selectionStart = 0;
+				    gTheABC.selectionEnd = 0;
+
+				    // Focus after operation
+				    FocusAfterOperation();
+				    
+				});
 
 		    }
 
 		}
-
-	   	var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Grace Duration Injection Complete!</p>';
-
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
 
 	}
 
@@ -30481,30 +30533,38 @@ function RollExplorerInject(){
 
 			RenderAsync(true,null,function(){
 				
-				// Set the select point
-				gTheABC.selectionStart = theSelectionStart;
-			    gTheABC.selectionEnd = theSelectionStart;
+				var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Roll Parameter Injection Complete!</p>';
 
-			    // Focus after operation
-			    FocusAfterOperation();
+				DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 500,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
+					// Set the select point
+					gTheABC.selectionStart = theSelectionStart;
+				    gTheABC.selectionEnd = theSelectionStart;
+
+				    // Focus after operation
+				    FocusAfterOperation();
+				    
+				});
 
 			});
 
 	    }
 	    else{
 
-	    	// Set the select point
-			gTheABC.selectionStart = theSelectionStart;
-		    gTheABC.selectionEnd = theSelectionStart;
+			var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Roll Parameter Injection Complete!</p>';
 
-		    // Focus after operation
-		    FocusAfterOperation();
+			DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 500,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
+				// Set the select point
+				gTheABC.selectionStart = theSelectionStart;
+			    gTheABC.selectionEnd = theSelectionStart;
+
+			    // Focus after operation
+			    FocusAfterOperation();
+				    
+				});
 
 	    }
-
-	   	var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Roll Parameter Injection Complete!</p>';
-
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
 
 	}
 	else{
