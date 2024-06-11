@@ -1216,10 +1216,10 @@ function Transpose(transposeAmount) {
 			}
 
 
-		}, 100);
+		}, 0);
 
 
-	},100);
+	},0);
 	
 }
 
@@ -1697,9 +1697,9 @@ function DoTransposeToKey(targetKey,transposeAll) {
 				});
 			});
 
-		},100);
+		},0);
 
-	},100);
+	},0);
 	
 }
 
@@ -10949,7 +10949,7 @@ function RenderRangeAsync(start,end,callback){
 			callback();
 		}
 
-	}, 100);
+	}, 10);
 
 }
 
@@ -10991,7 +10991,7 @@ function RenderAsync(renderAll,tuneNumber,callback){
 			}
 
 
-		}, 100);
+		}, 10);
 	}
 	else{
 
@@ -14142,7 +14142,7 @@ function AddABC(){
 
 		idleAddABC();
 
-	}, 100);
+	}, 25);
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 730,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 
@@ -34933,7 +34933,7 @@ function AdvancedControlsDialog(){
 
 		IdleMoreABCTools();
 	
-	},100);
+	},25);
 	
 	setTimeout(function(){
 
@@ -34943,7 +34943,7 @@ function AdvancedControlsDialog(){
 		// Idle the show tab names control
 		IdleAllowShowTabNames();
 
-	}, 200);
+	}, 50);
 
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 20, width: 740,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
@@ -35349,7 +35349,7 @@ function AdvancedSettings(){
 
 		idleAdvancedSettings();
 
-	}, 100);
+	}, 25);
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 800, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
