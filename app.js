@@ -12017,6 +12017,8 @@ function idleAddABC(){
 
 	// Find the button that says "OK" to use to close the dialog when changing UI settings
 	var theOKButton = null;
+	
+	gAddABCOKButton = null;
 
 	for (var i=0;i<theOKButtons.length;++i){
 
@@ -13369,7 +13371,7 @@ var gTheTuneSearchStyle = "";
 var gTuneDatabaseRetryTimeMS = 3000;
 var gTuneDatabaseRetryCount = 10;
 
-function AddFromSearch(e){
+function AddFromSearch(e,callback){
 	
 	//console.log("AddFromSearch");
 
@@ -13407,7 +13409,11 @@ function AddFromSearch(e){
 
 	modal_msg+='</p>';
 
-    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 800,  scrollWithPage: (AllowDialogsToScroll()) });
+    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 800,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+    	if (callback){
+    		callback();
+    	}
+    })
 
     // Default initial max results to 25
 	document.getElementById("maxtunesearchresults").value = "25";
@@ -14065,6 +14071,18 @@ function Configure_AddABC_UI(){
 	});
 }
 
+//
+// Close the Add dialog after adding tunes to the workarea
+//
+function AddABCCallback(){
+
+	// Close the Add ABC dialog
+	if (gAddABCOKButton){
+		gAddABCOKButton.click();
+	}
+
+}
+
 function AddABC(){
 
 	// Keep track of dialogs
@@ -14085,7 +14103,7 @@ function AddABC(){
 
 		modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Search and Add Tunes</p>';
 		modal_msg += '<p style="text-align:center;margin-top:16px;">';
-		modal_msg  += '<input id="searchandaddtunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddFromSearch();" type="button" value="Search and Add Tunes" title="Search for tunes to add to your tunebook">';
+		modal_msg  += '<input id="searchandaddtunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddFromSearch(null,AddABCCallback);" type="button" value="Search and Add Tunes" title="Search for tunes to add to your tunebook">';
 
 	}
 
