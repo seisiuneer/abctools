@@ -1106,7 +1106,17 @@ function Transpose(transposeAmount) {
 
 	//console.log("getTuneRangeForTranspose start = "+theTuneRange.start+" end = "+theTuneRange.end);
 
-	document.getElementById("loading-bar-spinner").style.display = "block";
+	var nToTranspose = (theTuneRange.end-theTuneRange.start)+1;
+
+	// Should never happen
+	if (nToTranspose <= 0){
+		return;
+	}
+
+	// Only show the spinner for a large number of tunes
+	if (nToTranspose > 5){
+		document.getElementById("loading-bar-spinner").style.display = "block";
+	}
 
 	// Need a timeout to allow the spinner to show before processing the ABC,
 	setTimeout(function(){
@@ -1177,17 +1187,34 @@ function Transpose(transposeAmount) {
 		// Give a bit of time for garbage collection before the render
 		setTimeout(function(){
 
-			// Force a full render
-			RenderAsync(true, null, function(){
+			// When highlighting is on, need to re-render everything
+			if (gRawMode){
 
-				// If any errors, show the list of tunes that had issues
-				if (gotError){
+				RenderAsync(true,null, function(){
 
-					ShowTransposeWarningDialog(errorList);
+					// If any errors, show the list of tunes that had issues
+					if (gotError){
 
-				}
+						ShowTransposeWarningDialog(errorList);
 
-			});
+					}
+
+				});
+			}
+			else{
+				// Render the range
+				RenderRangeAsync(theTuneRange.start, theTuneRange.end, function(){
+
+					// If any errors, show the list of tunes that had issues
+					if (gotError){
+
+						ShowTransposeWarningDialog(errorList);
+
+					}
+
+				});
+			}
+
 
 		}, 100);
 
@@ -1609,11 +1636,24 @@ function DoTransposeToKey(targetKey,transposeAll) {
 		// Set dirty
 		gIsDirty = true;
 
+		var redrawAll = transposeAll;
+
+		var redrawIndex = theSelectedTuneIndex;
+
+		// Have to do a complete redraw for raw mode
+		if (gRawMode){
+			redrawAll = true;
+		}
+
+		if (redrawAll){
+			redrawIndex = null;
+		}
+
 		// Give a bit of time for garbage collection before the render
 		setTimeout(function(){
 
-			// Force a full render
-			RenderAsync(true, null, function(){
+			// Force a full render if transposing all
+			RenderAsync(redrawAll, redrawIndex, function(){
 
 			   	var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Transpose to Key Complete!</p>';
 
@@ -1635,6 +1675,7 @@ function DoTransposeToKey(targetKey,transposeAll) {
 
 					}
 					else{
+
 						// Set the select point
 						gTheABC.selectionStart = 0;
 					    gTheABC.selectionEnd = 0;
@@ -10851,6 +10892,67 @@ function processAllStripping(theNotes){
 	return theNotes;
 }
 
+//
+// Render a range of tunes async
+//
+function RenderRangeAsync(start,end,callback){
+
+	//console.log("RenderRangeAsync start: "+start+" end: "+end);
+
+	// Don't allow a re-render during PDF generation
+	if (gRenderingPDF){
+		if (callback && (callback != undefined)){
+			callback();
+		}
+		return;
+	}
+	
+	var nTunes = (end - start)+1;
+
+	// Should never happen
+	if (nTunes <= 0){
+		if (callback && (callback != undefined)){
+			callback();
+		}
+		return;
+	}
+
+	// Start with spinner hidden
+	document.getElementById("loading-bar-spinner").style.display = "none";
+
+	// Show the spinner for a large number of tunes
+	var showSpinner = false;
+
+	if (nTunes > 5){
+		showSpinner = true;
+	}
+
+	if (showSpinner){
+
+		document.getElementById("loading-bar-spinner").style.display = "block";
+
+	}
+
+	// Render after a short delay
+	setTimeout(function(){
+
+		for (var i=start;i<=end;++i){
+
+			Render(false,i);
+
+		}
+
+		// Hide the spinner
+		document.getElementById("loading-bar-spinner").style.display = "none";
+
+		if (callback && (callback != undefined)){
+			callback();
+		}
+
+	}, 100);
+
+}
+
 // 
 // Allow putting up a spiner before the synchronous Render() function
 //
@@ -10858,6 +10960,9 @@ function RenderAsync(renderAll,tuneNumber,callback){
 
 	// Don't allow a re-render during PDF generation
 	if (gRenderingPDF){
+		if (callback && (callback != undefined)){
+			callback();
+		}
 		return;
 	}
 
