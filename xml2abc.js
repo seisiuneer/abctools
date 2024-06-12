@@ -1193,12 +1193,16 @@ Parser.prototype.ntAbc = function (ptc, oct, $note, v, ntrec, isTab) {  // pitch
         }
         else{
             gotBadOther = true;
-            if ((theSMUFL.toLowerCase().indexOf("raise") != -1) || (theSMUFL.toLowerCase().indexOf("sharp") != -1)){
+             if ((theSMUFL.toLowerCase().indexOf("raise") != -1) || (theSMUFL.toLowerCase().indexOf("sharp") != -1)){
                 theSMUFL = "♯?";
             }
             else
             if ((theSMUFL.toLowerCase().indexOf("lower") != -1) || (theSMUFL.toLowerCase().indexOf("flat") != -1)){
                 theSMUFL = "♭?";
+            }
+            else
+            if (theSMUFL.toLowerCase().indexOf("natural") != -1){
+                theSMUFL = "♮?";
             }
             else{
                 theSMUFL = "?";
@@ -1223,6 +1227,7 @@ Parser.prototype.ntAbc = function (ptc, oct, $note, v, ntrec, isTab) {  // pitch
             alt = theSMUFL;
         }
         else{
+            // If not found in this lookup, alt will be undefined
             alt = acc2alt[acc];
         }
     } else {                        // now see if we really must add an accidental
@@ -1242,7 +1247,34 @@ Parser.prototype.ntAbc = function (ptc, oct, $note, v, ntrec, isTab) {  // pitch
         p = '"_'+theSMUFL+'"' + p;
     }
     else{
-        p = ['_/','__','_','=','^','^^','^/'][alt+3] + p; 
+
+        if (alt == undefined){
+
+            //console.log("acc before: "+acc);
+
+            if ((acc.toLowerCase().indexOf("raise") != -1) || (acc.toLowerCase().indexOf("sharp") != -1)){
+                acc = "♯?";
+            }
+            else
+            if ((acc.toLowerCase().indexOf("lower") != -1) || (acc.toLowerCase().indexOf("flat") != -1)){
+                acc = "♭?";
+            }
+            else
+            if (acc.toLowerCase().indexOf("natural") != -1){
+                acc = "♮?";
+            }
+            else{
+                acc = "?";
+            }
+            
+            //console.log("acc after: "+acc)
+
+            p = '"_'+acc+'"' + p;
+        }
+        else{
+
+            p = ['_/','__','_','=','^','^^','^/'][alt+3] + p;
+        }
     }
 
     return p;
