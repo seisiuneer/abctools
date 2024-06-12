@@ -1194,7 +1194,7 @@ Parser.prototype.ntAbc = function (ptc, oct, $note, v, ntrec, isTab) {  // pitch
         else{
             gotBadOther = true;
             if ((theSMUFL.toLowerCase().indexOf("raise") != -1) || (theSMUFL.toLowerCase().indexOf("sharp") != -1)){
-                theSMUFL = "#?";
+                theSMUFL = "♯?";
             }
             else
             if ((theSMUFL.toLowerCase().indexOf("lower") != -1) || (theSMUFL.toLowerCase().indexOf("flat") != -1)){
@@ -1244,7 +1244,6 @@ Parser.prototype.ntAbc = function (ptc, oct, $note, v, ntrec, isTab) {  // pitch
     else{
         p = ['_/','__','_','=','^','^^','^/'][alt+3] + p; 
     }
-    console.log(p);
 
     return p;
 }
