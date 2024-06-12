@@ -12458,7 +12458,8 @@ function PDFTunebookBuilder(){
 
 				header_to_add += "%addtoc "+gPDFTunebookConfig.addtoc+"\n";
 				header_to_add += "%addlinkbacktotoc\n";
-
+				header_to_add += "%tocleftoffset 0\n";
+				header_to_add += "%tocrightoffset 0\n";
 			}
 
 			// Index Title
@@ -12468,6 +12469,8 @@ function PDFTunebookBuilder(){
 
 				header_to_add += "%addsortedindex "+gPDFTunebookConfig.addindex+"\n";
 				header_to_add += "%addlinkbacktoindex\n";
+				header_to_add += "%indexleftoffset 0\n";
+				header_to_add += "%indexrightoffset 0\n";
 
 			}
 
