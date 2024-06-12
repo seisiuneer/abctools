@@ -36439,11 +36439,10 @@ function InjectQTag(theTune,theTempo){
 
 }
 
-
 //
 // Import MusicXML format
 //
-function importMusicXML(theXML){
+function importMusicXML(theXML,fileName){
  
     var xmldata = $.parseXML (theXML);    // abc_code is a (unicode) string with one abc tune.
 
@@ -36475,6 +36474,33 @@ function importMusicXML(theXML){
 
     	abcText = InjectQTag(abcText,theTempoToInject);
 
+    }
+
+    // If no title in the XML after conversion, inject the filename instead
+    if (abcText.indexOf("T:Title")!= -1){
+
+    	// Strip the extension
+		fileName = fileName.replace(/\..+$/, '');
+
+		// Replace any _ or - with spaces
+		fileName = fileName.replaceAll("_"," ");
+		fileName = fileName.replaceAll("-"," ");
+
+		// Init cap all the words
+		fileName = fileName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+
+		// Lower case connecting words in the middle of the title
+		fileName = fileName.replaceAll(" And "," and ");
+		fileName = fileName.replaceAll(" Or "," or ");
+		fileName = fileName.replaceAll(" The "," the ");
+		fileName = fileName.replaceAll(" To "," to ");
+		fileName = fileName.replaceAll(" In "," in ");
+		fileName = fileName.replaceAll(" On "," on ");
+		fileName = fileName.replaceAll(" From "," from ");
+		fileName = fileName.replaceAll(" Of "," of ");
+
+
+    	abcText = abcText.replace("T:Title","T:"+fileName);
     }
 
     return abcText;
@@ -36650,7 +36676,7 @@ function DoFileRead(file,doAppend){
 							// Keep track of actions
 							sendGoogleAnalytics("action","DoFileRead_MXL");
 
-							theText = importMusicXML(theText);
+							theText = importMusicXML(theText,gDisplayedName);
 
 						}
 						else{
@@ -36866,7 +36892,7 @@ function DoFileRead(file,doAppend){
 							data = data.replaceAll("Music21","");
 
 							// Handle response from server
-							var theText = importMusicXML(data);
+							var theText = importMusicXML(data,gDisplayedName);
 
 							DoReadCommon(theText,doAppend);
 
@@ -36910,13 +36936,9 @@ function DoFileRead(file,doAppend){
 				// Keep track of actions
 				sendGoogleAnalytics("action","DoFileRead_XML");
 
-				theText = importMusicXML(theText);
+				theText = importMusicXML(theText,gDisplayedName);
 			}
-			else{
-
-
-			}
-
+			else
 			// Importing BWW?
 			if (isBWWFile(theText)){
 
