@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
- 
+
         <style>
 
 		p {
@@ -1384,7 +1384,7 @@
             <h1 class="page_break_always">Setting the Tuning Offset for Individual Voices<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/zobhYk_roVU" title="%voice_tuning_cents Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p>You may set the playback tuning offset in cents for each voice in the ABC using the following comment-based annotation:</p>
-            <p class="code">%voice_tuning_cents (voice 1 cents offset) (voice 2 cents offset) (voice 3 cents offset)...</p>
+            <p class="code">%voice_tuning_cents voice_1_cents_offset (voice_2_cents_offset voice_3_cents_offset...</p>
             <p>Where the cents offsets can be either positive or negative floating point numbers.</p>
             <p>One semitone = 100 cents</p>
             <p>This feature can be used to create chorusing effects, wet Accordion sounds, or massed Bagpipes band effects on multi-voice tunes.</p>
@@ -2943,22 +2943,22 @@
             <p></p>
             <p>To add a title page to your PDF tunebook, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p class="code">%addtitle (title text)</p>
+            <p class="code">%addtitle title_text</p>
             <p></p>
             <p>To add a smaller subtitle below the title on the title page, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p class="code">%addsubtitle (title page subtitle text)</p>
+            <p class="code">%addsubtitle title_page_subtitle_text</p>
             <p></p>
             <p>Note: The subtitle only appears if a title page is requested.</p>
             <p>For a title page with just a subtitle and no subtitle, just enter %addtitle with no text after it and then add %addsubtitle with your subtitle text.</p>
             <p></p>
             <p>To add a title page to your PDF tunebook as a hyperlink, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p class="code">%urladdtitle URL (title text)</p>
+            <p class="code">%urladdtitle URL title_text</p>
             <p></p>
             <p>To add a smaller subtitle as a hyperlink below the title on the title page, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p class="code">%urladdsubtitle URL (title page subtitle text)</p>
+            <p class="code">%urladdsubtitle URL title_page_subtitle_text</p>
             <p></p>
             <p>Examples:</p>
             <p class="code">%urladdtitle https://michaeleskin.com Tunebook Title with Hyperlink</p>
@@ -2976,11 +2976,11 @@
             <p></p>
             <p>To add a table of contents to the start of of your PDF tunebook listing each tune name and page number in the same order the tunes appear in the ABC along with hyperlinks to each tune, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p class="code">%addtoc (table of contents title text)</p>
+            <p class="code">%addtoc table_of_contents_title_text</p>
             <p></p>
             <p>To append an sorted tunebook table of contents to the start of your PDF tunebook listing each tune name and page number in alphabetical order by tune name along with hyperlinks to each tune, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p class="code">%addsortedtoc (sorted table of contents title text)</p>
+            <p class="code">%addsortedtoc sorted_table_of_contents_title_text</p>
             <p></p>
             <p>Tune names that start with "The", "Da ", "A ", "An ", "Le ", or "La " will have the "The", "Da ", "A ", "An ", "Le ", or "La " moved to the end of the tune name before the sorting.</p>
             <p></p>
@@ -2990,17 +2990,17 @@
             <p></p>
             <p>To add some text above the table of contents pages as a page header, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p class="code">%tocheader (table of contents page header text here)</p>
+            <p class="code">%tocheader table_of_contents_page_header_text</p>
             <p></p>
             <p>Unlike standard page headers, the table of contents page headers do not support macro expansion.</p>
             <p></p>
             <p>To append an unsorted tunebook index to the end of your PDF tunebook listing each tune name and page number in the same order they are in the ABC along with hyperlinks to each tune, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p class="code">%addindex (index unsorted title text)</p>
+            <p class="code">%addindex index_unsorted_title_text</p>
             <p></p>
             <p>To append an sorted tunebook index to the end of your PDF tunebook listing each tune name and page number in alphabetical order by tune name along with hyperlinks to each tune, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p class="code">%addsortedindex (sorted index title text)</p>
+            <p class="code">%addsortedindex sorted_index_title_text</p>
             <p></p>
             <p>Tune names that start with "The", "Da ", "A ", "An ", "Le ", or "La " will have the "The", "Da ", "A ", "An ", "Le ", or "La " moved to the end of the tune name before the sorting.</p>
             <p></p>
@@ -3016,7 +3016,7 @@
             <p></p>
             <p>To add some text above the index pages as a page header, simply add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p class="code">%indexheader (index page header text here)</p>
+            <p class="code">%indexheader index_page_header_text</p>
             <p></p>
             <p>Unlike standard page headers, the index page headers do not support macro expansion.</p>
             <p></p>
@@ -3056,33 +3056,33 @@
             <h1 class="page_break_always">Table of Contents and Index Font Size and Spacing Overrides<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>You may override various spacing offsets and font sizes for the Table of Contents and Index by adding the following comment-based annotations anywhere in your ABC:</p>
             <p><strong>Table of Contents offset and font overrides:</strong></p>
-            <p class="code">%toctopoffset (top offset) - Vertical offset as a multiple of 1/30" from the page header to the top of the Table of Contents title. Default is: 30.</p>
-            <p class="code">%toctitleoffset (title offset) - Vertical offset as a multiple of 1/30" from the title to the first entry in the Table of Contents. Default is: 35.</p>
-            <p class="code">%toctitlefontsize (font size) - Font size for the Table of Contents title. Default is: 18.</p>
-            <p class="code">%tocfontsize (font size) - Font size for tune names in the Table of Contents. Default is: 13.</p>
-            <p class="code">%tocleftoffset (left offset) - Left offset as a multiple of 1/30" for the Table of Contents entries from their default position. Positive values move the entries left. Default offset is: 0.</p>
-            <p class="code">%tocrightoffset (right offset) - Right offset as a multiple of 1/30" for the Table of Contents numbers from their default position. Positive values move the numbers right. Default offset is: 0.</p>
-            <p class="code">%toclinespacing (line spacing) - Line spacing for tune names in the Table of Contents. Default is: 12.</p>
+            <p class="code">%toctopoffset top_offset - Vertical offset as a multiple of 1/30" from the page header to the top of the Table of Contents title. Default is: 30.</p>
+            <p class="code">%toctitleoffset title_offset - Vertical offset as a multiple of 1/30" from the title to the first entry in the Table of Contents. Default is: 35.</p>
+            <p class="code">%toctitlefontsize font_size - Font size for the Table of Contents title. Default is: 18.</p>
+            <p class="code">%tocfontsize font_size - Font size for tune names in the Table of Contents. Default is: 13.</p>
+            <p class="code">%tocleftoffset left_offset - Left offset as a multiple of 1/30" for the Table of Contents entries from their default position. Positive values move the entries left. Default offset is: 0.</p>
+            <p class="code">%tocrightoffset right_offset - Right offset as a multiple of 1/30" for the Table of Contents numbers from their default position. Positive values move the numbers right. Default offset is: 0.</p>
+            <p class="code">%toclinespacing line_spacing - Line spacing for tune names in the Table of Contents. Default is: 12.</p>
             <p><strong>Index offset and font overrides:</strong></p>
-            <p class="code">%indextopoffset (top offset) - Vertical offset as a multiple of 1/30" from the page header to the top of the Index title. Default is: 30.</p>
-            <p class="code">%indextitleoffset (title offset) - Left offset as a multiple of 1/30" from the title to the first entry in the Index. Default is: 35.</p>
-            <p class="code">%indextitlefontsize (font size) - Font size for the Index title. Default is: 18.</p>
-            <p class="code">%indexfontsize (font size) - Font size for tune names in the Index. Default is: 13.</p>
-            <p class="code">%indexleftoffset (left offset) - Left offset as a multiple of 1/30" for the Index entries from their default position. Positive values move the entries left. Default offset is: 0.</p>
-            <p class="code">%indexrightoffset (right offset) - Right offset as a multiple of 1/30" for the Index numbers from their default position. Positive values move the numbers right.  Default offset is: 0.</p>
-            <p class="code">%indexlinespacing (line spacing) - Line spacing for tune names in the Index. Default is: 12.</p>
+            <p class="code">%indextopoffset top_offset - Vertical offset as a multiple of 1/30" from the page header to the top of the Index title. Default is: 30.</p>
+            <p class="code">%indextitleoffset title_offset - Left offset as a multiple of 1/30" from the title to the first entry in the Index. Default is: 35.</p>
+            <p class="code">%indextitlefontsize font_size - Font size for the Index title. Default is: 18.</p>
+            <p class="code">%indexfontsize font_size - Font size for tune names in the Index. Default is: 13.</p>
+            <p class="code">%indexleftoffset left_offset - Left offset as a multiple of 1/30" for the Index entries from their default position. Positive values move the entries left. Default offset is: 0.</p>
+            <p class="code">%indexrightoffset right_offset - Right offset as a multiple of 1/30" for the Index numbers from their default position. Positive values move the numbers right.  Default offset is: 0.</p>
+            <p class="code">%indexlinespacing line_spacing - Line spacing for tune names in the Index. Default is: 12.</p>
             <p>As with all previously described PDF annotations, only the first instance of these annotations are processed, any additional instances are ignored.</p>
             <hr class="hidden-print" id="pdf_page_headers_and_footers">
             <h1 class="page_break_always">PDF Page Headers and Footers<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>You may add custom page headers and footers to your exported PDF files by including the following ABC comment-based annotations anywhere in your ABC:</p>
             <p></p>
-            <p class="code">%pageheader (header text)</p>
-            <p class="code">%pagefooter (footer text)</p>
+            <p class="code">%pageheader header_text</p>
+            <p class="code">%pagefooter footer_text</p>
             <p></p>
             <p>If you'd like to link to a specific URL when users click in the PDF page header or footer, include either the following ABC comment-based annotations anywhere in your ABC:</p>
             <p></p>
-            <p class="code">%urlpageheader (URL) (header text)</p>
-            <p class="code">%urlpagefooter (URL) (footer text)</p>
+            <p class="code">%urlpageheader URL header_text</p>
+            <p class="code">%urlpagefooter URL footer_text</p>
             <p></p>
             <p>Examples:</p>
             <p class="code">%urlpageheader https://michaeleskin.com/abc Click in this page header to visit my home page</p>
@@ -3132,7 +3132,7 @@
             <p><strong>Forcing a Specific Filename for PDF Export</strong></p>
             <p>If you want to force a specific filename to be used by default every time you export the PDF file, add the following comment-based directive anywhere in the ABC:</p>
             <p></p>
-            <p class="code">%pdfname your_pdf_filename_here</p>
+            <p class="code">%pdfname your_pdf_filename</p>
             <p></p>
             <hr class="hidden-print" id="tunebook_hyperlinks">
             <h1 class="page_break_always h1wide">PDF Tunebook Hyperlinks and Automatic Play Links<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -3251,7 +3251,7 @@
             <p>The alert lists the names of the tunes that have the long URLs, along with the URL length for each tune.</p>
             <p>These play links will work with the built-in PDF reader on most web browsers and online PDF readers, many non-Adobe desktop and mobile PDF readers, but will not open correctly if the tune title is clicked when the PDF is viewed using Adobe Acrobat.</p>
             <p>If Adobe Acrobat is your target PDF reader, your best option is to use the available per-tune %hyperlink directive in these tunes with a shortened play Share URL manually generated using the <strong>Sharing</strong> dialog:</p>
-            <p class="code">%hyperlink your_shortened_Share_URL_here</p>
+            <p class="code">%hyperlink your_shortened_Share_URL</p>
             <hr>
             <p><strong>Disabling access to the tune editor from tunes linked from PDF tunebooks.</strong></p>
             <p>To disable access to the editor (hides the Zoom arrows in the full screen view) from a tune link created with one of the above directives, add:</p>
@@ -3562,7 +3562,7 @@
             <p></p>
             <p>To override the default generated caption that is shown under the QR code added to a PDF file, add the following comment-based annotation anywhere in the ABC:</p>
             <p></p>
-            <p class="code">%caption_for_qrcode YOUR_CAPTION_FOR_THE_QR_CODE_HERE</p>
+            <p class="code">%caption_for_qrcode your_caption_for_the_qr_code</p>
             <p></p>
             <p>The QR code image and caption in the PDF file now have clickable hyperlinks to the same URL used to generate the QR code.</p>
             <p></p>
