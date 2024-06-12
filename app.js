@@ -10350,6 +10350,12 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 	
 	var visualObj = ABCJS.renderAbc(renderDivs, tune, params);
 
+	// Odd case where diagnostics work with highlighting, but only if there is a single tune
+	if (gShowDiagnostics && gRawMode && renderAll && (nTunes > 1)){
+		var elem = document.getElementById("diagnostics");
+		elem.innerHTML = '<p class="diagnostics_message">Diagnostics are not available if Highlighting is on and there are multiple tunes in the ABC editor.</p>';		
+	}
+	else
 	// Generate diagnostics for this tune?
 	if (gShowDiagnostics && ((!renderAll) || (nTunes == 1))){
 
@@ -10377,7 +10383,12 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 
 
 	// Save off the visual for selection handling
-	gRawVisual = visualObj;
+	if (gRawMode){
+		gRawVisual = visualObj;
+	}
+	else{
+		gRawVisual = null;
+	}
 
 	for (var tuneIndex = startTune; tuneIndex < endTune; ++tuneIndex) {
 
@@ -10387,6 +10398,9 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 		postProcessTab(visualObj, renderDivID, instrument, false);
 
 	}
+
+	// Early release of the abcjs visual
+	visualObj = null;
 }
 
 function SetRadioValue(radioName, value) {
@@ -19905,11 +19919,12 @@ function OnABCTextChange(){
 
 		if (gRawMode){
 
-			// In raw mode, we need to redraw everything for any change 
-			Render(true,null);
+			RenderAsync(true,null,function(){
 
-			// Highlight the notes in the notation
-			fireSelectionChanged();
+				// Highlight the notes in the notation
+				fireSelectionChanged();
+				
+			});
 
 		}
 		else{
