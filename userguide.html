@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-       
+ 
         <style>
 
 		p {
@@ -3054,18 +3054,22 @@
             <p>Do not put more than one T:* section header tag in the placeholder tune, only the first T: tag should be marked with the *.</p>
             <hr class="hidden-print" id="table_of_contents_and_index_font_size_and_line_spacing_overrides">
             <h1 class="page_break_always">Table of Contents and Index Font Size and Line Spacing Overrides<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>You may override the top offset to title, offset from title to the index or table of contents entries, default tune name font sizes and line spacing, by adding the following comment-based annotations anywhere in your ABC:</p>
+            <p>You may override various spacing offsets and font sizes for the Table of Contents and Index by adding the following comment-based annotations anywhere in your ABC:</p>
             <p><strong>Table of Contents offset and font overrides:</strong></p>
-            <p class="code">%toctopoffset (top offset) - 72 dpi offset from the page header for the top of the table of contents title. Default is: 30.</p>
-            <p class="code">%toctitleoffset (title offset) - 72 dpi offset from the title to the first entry in the table of contents. Default is: 35.</p>
+            <p class="code">%toctopoffset (top offset) - 1/30" offset from the page header for the top of the table of contents title. Default is: 30.</p>
+            <p class="code">%toctitleoffset (title offset) - 1/30" offset from the title to the first entry in the table of contents. Default is: 35.</p>
             <p class="code">%toctitlefontsize (font size) - Font size for the table of contents title. Default is: 18.</p>
             <p class="code">%tocfontsize (font size) - Font size for tune names in the table of contents. Default is: 13.</p>
+            <p class="code">%tocleftoffset (left offset) - 1/30" left offset for the table of contents entries from their default position. Positive values move the entries left. Default offset is: 0.</p>
+            <p class="code">%tocrightoffset (rightoffset) - 1/30" right offset for the table of contents numbers from their default position. Positive values move the numbers right. Default offset is: 0.</p>
             <p class="code">%toclinespacing (line spacing) - Line spacing for tune names in the table of contents. Default is: 12.</p>
             <p><strong>Index offset and font overrides:</strong></p>
-            <p class="code">%indextopoffset (top offset) - 72 dpi offset from the page header for the top of the index title. Default is: 30.</p>
-            <p class="code">%indextitleoffset (title offset) - 72 dpi offset from the title to the first entry in the index. Default is: 35.</p>
+            <p class="code">%indextopoffset (top offset) - 1/30" offset from the page header for the top of the index title. Default is: 30.</p>
+            <p class="code">%indextitleoffset (title offset) - 1/30" offset from the title to the first entry in the index. Default is: 35.</p>
             <p class="code">%indextitlefontsize (font size) - Font size for the index title. Default is: 18.</p>
             <p class="code">%indexfontsize (font size) - Font size for tune names in the index. Default is: 13.</p>
+            <p class="code">%indexleftoffset (left offset) - 1/30" left offset for the index entries from their default position. Positive values move the entries left. Default offset is: 0.</p>
+            <p class="code">%indexrightoffset (right offset) - 1/30" right offset for the index numbers from their default position. Postive values move the numbers right.  Default offset is: 0.</p>
             <p class="code">%indexlinespacing (line spacing) - Line spacing for tune names in the index. Default is: 12.</p>
             <p>As with all previously described annotation, only the first instance these annotations are processed, any additional instances are ignored.</p>
             <hr class="hidden-print" id="pdf_page_headers_and_footers">

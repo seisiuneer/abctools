@@ -4308,6 +4308,8 @@ var INDEXRIGHTMARGIN = 105;
 var INDEXTITLESIZE = 18;
 var INDEXFONTSIZE = 13;
 var INDEXLINESPACING = 12;
+var gINDEXLEFTOFFSET = 0;
+var gINDEXRIGHTOFFSET = 0;
 
 //
 // Generate and append a tune index to the current PDF
@@ -4440,7 +4442,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 
 				if (doPageLinks){
 
-					thePDF.textWithLink(theTitles[i], INDEXLEFTMARGIN, curTop, {align:"left",pageNumber:theFinalPageNumber});
+					thePDF.textWithLink(theTitles[i], INDEXLEFTMARGIN - gINDEXLEFTOFFSET, curTop, {align:"left",pageNumber:theFinalPageNumber});
     				
     				if (!TunebookBookmarksAdded){
 
@@ -4450,14 +4452,14 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 
  				}
 				else{
-					thePDF.text(theTitles[i], INDEXLEFTMARGIN, curTop, {align:"left"});
+					thePDF.text(theTitles[i], INDEXLEFTMARGIN - gINDEXLEFTOFFSET, curTop, {align:"left"});
 				}
 
 				if (doPageLinks){
-					thePDF.textWithLink(""+thePageNumber, thePaperWidth-INDEXRIGHTMARGIN, curTop, {align:"left",pageNumber:theFinalPageNumber});
+					thePDF.textWithLink(""+thePageNumber, thePaperWidth-INDEXRIGHTMARGIN + gINDEXRIGHTOFFSET, curTop, {align:"left",pageNumber:theFinalPageNumber});
 				}
 				else{
-					thePDF.text(""+thePageNumber, thePaperWidth-INDEXRIGHTMARGIN, curTop, {align:"left"});
+					thePDF.text(""+thePageNumber, thePaperWidth-INDEXRIGHTMARGIN + gINDEXRIGHTOFFSET, curTop, {align:"left"});
 				}
 
 			}
@@ -5185,6 +5187,8 @@ var TOCRIGHTMARGIN = 105;
 var TOCTITLESIZE = 18;
 var TOCFONTSIZE = 13;
 var TOCLINESPACING = 12;
+var gTOCLEFTOFFSET = 0;
+var gTOCRIGHTOFFSET = 0;
 
 //
 // Generate and append a tune index to the current PDF
@@ -5312,7 +5316,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 
 				if (doPageLinks){
 
-					thePDF.textWithLink(theTitles[i], TOCLEFTMARGIN, curTop, {align:"left",pageNumber:(thePageNumber+pageDelta)});
+					thePDF.textWithLink(theTitles[i], TOCLEFTMARGIN - gTOCLEFTOFFSET, curTop, {align:"left",pageNumber:(thePageNumber+pageDelta)});
 
      				thePDF.outline.add(null, theTitles[i], {pageNumber:(thePageNumber+pageDelta)});
 
@@ -5322,18 +5326,18 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 				}
 				else{
 
-					thePDF.text(theTitles[i], TOCLEFTMARGIN, curTop, {align:"left"});
+					thePDF.text(theTitles[i], TOCLEFTMARGIN - gTOCLEFTOFFSET, curTop, {align:"left"});
 
 				}
 
 				if (doPageLinks){
 
-					thePDF.textWithLink(""+thePageNumber, thePaperWidth-TOCRIGHTMARGIN, curTop, {align:"left",pageNumber:(thePageNumber+pageDelta)});
+					thePDF.textWithLink(""+thePageNumber, thePaperWidth-TOCRIGHTMARGIN + gTOCRIGHTOFFSET, curTop, {align:"left",pageNumber:(thePageNumber+pageDelta)});
 
 				}
 				else{
 
-					thePDF.text(""+thePageNumber, thePaperWidth-TOCRIGHTMARGIN, curTop, {align:"left"});
+					thePDF.text(""+thePageNumber, thePaperWidth-TOCRIGHTMARGIN + gTOCRIGHTOFFSET, curTop, {align:"left"});
 
 				}
 
@@ -6786,6 +6790,7 @@ function ParseCommentCommands(theNotes){
 		}
 	}
 
+
 	// Set the default tunebook top offset override
 	INDEXTITLESIZE = 18;
 
@@ -6973,6 +6978,102 @@ function ParseCommentCommands(theNotes){
 		if ((!isNaN(theTopOffsetInt)) && (theTopOffsetInt >= 0)){
 
 			gTOCTOPOFFSET = theTopOffsetInt + 300;
+
+		}
+	}
+
+	// Set the default tunebook TOC left offset 
+	gTOCLEFTOFFSET = 0;
+
+	// Search for a tunebook TOC left offset override request
+	searchRegExp = /^%tocleftoffset.*$/m
+
+	// Detect tunebook TOC left offset annotation
+	var overrideTOCLeftOffset = theNotes.match(searchRegExp);
+
+	if ((overrideTOCLeftOffset) && (overrideTOCLeftOffset.length > 0)){
+
+		var theTOCLeftOffset = overrideTOCLeftOffset[0].replace("%tocleftoffset","");
+
+		theTOCLeftOffset = theTOCLeftOffset.trim();
+		
+		var theTOCLeftOffsetInt = parseInt(theTOCLeftOffset);
+		
+		if (!isNaN(theTOCLeftOffsetInt)){
+
+			gTOCLEFTOFFSET = theTOCLeftOffsetInt;
+
+		}
+	}
+
+	// Set the default tunebook Index left offset 
+	gINDEXLEFTOFFSET = 0;
+
+	// Search for a tunebook index left offset annotation
+	searchRegExp = /^%indexleftoffset.*$/m
+
+	// Detect tunebook index line spacing annotation
+	var overrideIndexLeftOffset = theNotes.match(searchRegExp);
+
+	if ((overrideIndexLeftOffset) && (overrideIndexLeftOffset.length > 0)){
+
+		var theIndexLeftOffset = overrideIndexLeftOffset[0].replace("%indexleftoffset","");
+
+		theIndexLeftOffset = theIndexLeftOffset.trim();
+		
+		var theIndexLeftOffsetInt = parseInt(theIndexLeftOffset);
+		
+		if (!isNaN(theIndexLeftOffsetInt)){
+
+			gINDEXLEFTOFFSET = theIndexLeftOffsetInt;
+
+		}
+	}
+
+	// Set the default tunebook TOC right offset 
+	gTOCRIGHTOFFSET = 0;
+
+	// Search for a tunebook TOC right offset override request
+	searchRegExp = /^%tocrightoffset.*$/m
+
+	// Detect tunebook TOC right offset annotation
+	var overrideTOCRightOffset = theNotes.match(searchRegExp);
+
+	if ((overrideTOCRightOffset) && (overrideTOCRightOffset.length > 0)){
+
+		var theTOCRightOffset = overrideTOCRightOffset[0].replace("%tocrightoffset","");
+
+		theTOCRightOffset = theTOCRightOffset.trim();
+		
+		var theTOCRightOffsetInt = parseInt(theTOCRightOffset);
+		
+		if (!isNaN(theTOCRightOffsetInt)){
+
+			gTOCRIGHTOFFSET = theTOCRightOffsetInt;
+
+		}
+	}
+
+	// Set the default tunebook Index right offset 
+	gINDEXRIGHTOFFSET = 0;
+
+	// Search for a tunebook Index right offset override request
+	searchRegExp = /^%indexrightoffset.*$/m
+
+	// Detect tunebook Index right offset annotation
+	var overrideIndexRightOffset = theNotes.match(searchRegExp);
+
+	if ((overrideIndexRightOffset) && (overrideIndexRightOffset.length > 0)){
+
+		var theIndexRightOffset = overrideIndexRightOffset[0].replace("%indexrightoffset","");
+
+		theIndexRightOffset = theIndexRightOffset.trim();
+		
+		var theIndexRightOffsetInt = parseInt(theIndexRightOffset);
+		
+		if (!isNaN(theIndexRightOffsetInt)){
+
+			gINDEXRIGHTOFFSET = theIndexRightOffsetInt;
 
 		}
 	}
