@@ -1179,9 +1179,11 @@ Parser.prototype.ntAbc = function (ptc, oct, $note, v, ntrec, isTab) {  // pitch
     var acc = $note.find ('accidental').text ();    // should be the notated accidental
     // MAE 12 Jun 2024 - for MuseScore half sharps and flats
     // If accidental is other, must look in the smufl attribute
+    var gotBadOther = false;
+    var theSMUFL;
     if (acc == 'other'){
         var theAccidental = $note.find('accidental');
-        var theSMUFL = theAccidental.attr('smufl');
+        theSMUFL = theAccidental.attr('smufl');
         if (theSMUFL == "accidentalLowerOneUndecimalQuartertone"){
             acc = 'quarter-flat';
         }
@@ -1189,7 +1191,21 @@ Parser.prototype.ntAbc = function (ptc, oct, $note, v, ntrec, isTab) {  // pitch
         if (theSMUFL == "accidentalRaiseOneUndecimalQuartertone"){
             acc = 'quarter-sharp';
         }
+        else{
+            gotBadOther = true;
+            if ((theSMUFL.toLowerCase().indexOf("raise") != -1) || (theSMUFL.toLowerCase().indexOf("sharp") != -1)){
+                theSMUFL = "#?";
+            }
+            else
+            if ((theSMUFL.toLowerCase().indexOf("lower") != -1) || (theSMUFL.toLowerCase().indexOf("flat") != -1)){
+                theSMUFL = "♭?";
+            }
+            else{
+                theSMUFL = "?";
+            }
+        }
     }
+
     var alt = $note.find ('pitch>alter').text ();   // pitch alteration (midi)
     if (ntrec.tab) return this.tabnote (alt, ptc, oct, v, ntrec);   // implies s.tstep is true (options.t was given)
     else if (isTab && this.tstep) {
@@ -1203,7 +1219,12 @@ Parser.prototype.ntAbc = function (ptc, oct, $note, v, ntrec, isTab) {  // pitch
     if (acc === '' && alt === '') {
         return p;                   // no acc, no alt
     } else if (acc != '') {
-        alt = acc2alt [acc];
+        if (gotBadOther){
+            alt = theSMUFL;
+        }
+        else{
+            alt = acc2alt[acc];
+        }
     } else {                        // now see if we really must add an accidental
         alt = parseFloat (alt);     // some xml files do have floats in <alter>
         if (p_v in this.curalts) {  // the note in this voice has been altered before
@@ -1213,8 +1234,18 @@ Parser.prototype.ntAbc = function (ptc, oct, $note, v, ntrec, isTab) {  // pitch
         if (xs.some (function (x) { return $(x).attr ('type') == 'stop'; })) return p; // don't alter tied notes
         infof ('accidental %d added in part %d, measure %d, voice %d note %s', [alt, this.msr.ixp+1, this.msr.ixm+1, v+1, p] );
     }
+
     this.curalts [p_v] = alt;
-    p = ['_/','__','_','=','^','^^','^/'][alt+3] + p; // and finally ... prepend the accidental
+
+    // Prepend the accidental
+    if (gotBadOther){
+        p = '"_'+theSMUFL+'"' + p;
+    }
+    else{
+        p = ['_/','__','_','=','^','^^','^/'][alt+3] + p; 
+    }
+    console.log(p);
+
     return p;
 }
 Parser.prototype.doNote = function ($n) {
