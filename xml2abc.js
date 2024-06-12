@@ -1177,6 +1177,19 @@ Parser.prototype.ntAbc = function (ptc, oct, $note, v, ntrec, isTab) {  // pitch
     var acc2alt = {'quarter-flat':-3,'double-flat':-2,'flat-flat':-2,'flat':-1,'natural':0,'sharp':1,'sharp-sharp':2,'double-sharp':2,'quarter-sharp':3};
     oct += this.clefOct [this.curStf [v]] || 0;     // current clef-octave-change value
     var acc = $note.find ('accidental').text ();    // should be the notated accidental
+    // MAE 12 Jun 2024 - for MuseScore half sharps and flats
+    // If accidental is other, must look in the smufl attribute
+    if (acc == 'other'){
+        var theAccidental = $note.find('accidental');
+        var theSMUFL = theAccidental.attr('smufl');
+        if (theSMUFL == "accidentalLowerOneUndecimalQuartertone"){
+            acc = 'quarter-flat';
+        }
+        else
+        if (theSMUFL == "accidentalRaiseOneUndecimalQuartertone"){
+            acc = 'quarter-sharp';
+        }
+    }
     var alt = $note.find ('pitch>alter').text ();   // pitch alteration (midi)
     if (ntrec.tab) return this.tabnote (alt, ptc, oct, v, ntrec);   // implies s.tstep is true (options.t was given)
     else if (isTab && this.tstep) {
