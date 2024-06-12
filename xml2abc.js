@@ -1174,7 +1174,7 @@ Parser.prototype.tabnote = function (alt, ptc, oct, v, ntrec) {
     return nt;                          // ABC code always in key C (with midi pitch alterations)
 }
 Parser.prototype.ntAbc = function (ptc, oct, $note, v, ntrec, isTab) {  // pitch, octave -> abc notation
-    var acc2alt = {'double-flat':-2,'flat-flat':-2,'flat':-1,'natural':0,'sharp':1,'sharp-sharp':2,'double-sharp':2};
+    var acc2alt = {'quarter-flat':-3,'double-flat':-2,'flat-flat':-2,'flat':-1,'natural':0,'sharp':1,'sharp-sharp':2,'double-sharp':2,'quarter-sharp':3};
     oct += this.clefOct [this.curStf [v]] || 0;     // current clef-octave-change value
     var acc = $note.find ('accidental').text ();    // should be the notated accidental
     var alt = $note.find ('pitch>alter').text ();   // pitch alteration (midi)
@@ -1201,7 +1201,7 @@ Parser.prototype.ntAbc = function (ptc, oct, $note, v, ntrec, isTab) {  // pitch
         infof ('accidental %d added in part %d, measure %d, voice %d note %s', [alt, this.msr.ixp+1, this.msr.ixm+1, v+1, p] );
     }
     this.curalts [p_v] = alt;
-    p = ['__','_','=','^','^^'][alt+2] + p; // and finally ... prepend the accidental
+    p = ['_/','__','_','=','^','^^','^/'][alt+3] + p; // and finally ... prepend the accidental
     return p;
 }
 Parser.prototype.doNote = function ($n) {
