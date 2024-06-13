@@ -512,10 +512,38 @@ ABCoutput.prototype.writeall = function () {
 
     // If there were microtonal accents injected, set the annotation font size
     if (gGotMicrotonalAccidental){
-        str = str.replace("X:1\n","X:1\n% Injected for microtonal accidental annotations\n%%annotationfont Palatino 9\n")
+
+        str = replaceXWithText(str,"% Injected for microtonal accidental annotations\n%%annotationfont Palatino 9");
     }
 
     return [str, this.infolist.join ('\n')];
+}
+
+function replaceXWithText(inputText, additionalText) {
+
+    // Split the input text into lines
+    let lines = inputText.split('\n');
+    
+    // Create a new array to hold the modified lines
+    let modifiedLines = [];
+    
+    // Regular expression to match lines starting with "X:" followed by an integer
+    let regex = /^X:\d+/;
+    
+    for (let i = 0; i < lines.length; i++) {
+        if (regex.test(lines[i])) {
+            // If the line matches the pattern, add it to the modified lines
+            modifiedLines.push(lines[i]);
+            // Add the additional text on the next line
+            modifiedLines.push(additionalText);
+        } else {
+            // If the line does not match the pattern, just add it to the modified lines
+            modifiedLines.push(lines[i]);
+        }
+    }
+    
+    // Join the modified lines back into a single string
+    return modifiedLines.join('\n');
 }
 
 //----------------
