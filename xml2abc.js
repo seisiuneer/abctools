@@ -8,6 +8,9 @@
 var xml2abc_VERSION = 118;
 var vertaal;
 
+// MAE 13 June 2024
+var gGotMicrotonalAccidental = false;
+
 (function () {  // all definitions inside an anonymous function
 'use strict'
 function repstr (n, s) { return new Array (n + 1).join (s); }   // repeat string s n times
@@ -506,6 +509,12 @@ ABCoutput.prototype.mkHeader = function (stfmap, partlist, midimap, vmpdct, kopp
 ABCoutput.prototype.writeall = function () {
     var str = abcOut.outlist.join ('');
     if (this.dojef) str = perc2map (str);
+
+    // If there were microtonal accents injected, set the annotation font size
+    if (gGotMicrotonalAccidental){
+        str = str.replace("X:1\n","X:1\n% Injected for microtonal accidental annotations\n%%annotationfont Palatino 9\n")
+    }
+
     return [str, this.infolist.join ('\n')];
 }
 
@@ -1193,7 +1202,11 @@ Parser.prototype.ntAbc = function (ptc, oct, $note, v, ntrec, isTab) {  // pitch
         }
         else{
             gotBadOther = true;
-             if ((theSMUFL.toLowerCase().indexOf("raise") != -1) || (theSMUFL.toLowerCase().indexOf("sharp") != -1)){
+            
+            // Force annotation font injection
+            gGotMicrotonalAccidental = true;
+
+            if ((theSMUFL.toLowerCase().indexOf("raise") != -1) || (theSMUFL.toLowerCase().indexOf("sharp") != -1)){
                 theSMUFL = "♯?";
             }
             else
@@ -1252,24 +1265,147 @@ Parser.prototype.ntAbc = function (ptc, oct, $note, v, ntrec, isTab) {  // pitch
 
             //console.log("acc before: "+acc);
 
-            if ((acc.toLowerCase().indexOf("raise") != -1) || (acc.toLowerCase().indexOf("sharp") != -1)){
-                acc = "♯?";
+            var gotMatch = true;
+
+            // Force annotation font injection
+            gGotMicrotonalAccidental = true;
+
+            switch (acc){
+                case "natural-sharp":
+                    acc = "♮♯";  
+                    break;
+                case "natural-flat":    
+                    acc = "♮♭";  
+                    break;
+                case "three-quarters-flat":     
+                    acc = "♭;3/4";  
+                    break;
+                case "three-quarters-sharp":    
+                    acc = "♯;3/4";  
+                    break;
+                case "sharp-down":  
+                    acc = "↓♯";  
+                    break;
+                case "sharp-up":    
+                    acc = "♯↑";  
+                    break;
+                case "natural-down":    
+                    acc = "♮↓";  
+                    break;
+                case "natural-up":  
+                    acc = "↑♮";  
+                    break;
+                case "flat-down":   
+                    acc = "↓♭";  
+                    break;
+                case "flat-up":     
+                    acc = "↑♭";  
+                    break;
+                case "double-sharp-down":  
+                    acc = "↓♯♯";  
+                    break;
+                case "double-sharp-up":     
+                    acc = "♯♯↑";  
+                    break;
+                case "flat-flat-down":  
+                    acc = "↓♭♭";  
+                    break;
+                case "flat-flat-up":   
+                    acc = "♭♭↑";  
+                    break;
+                case "arrow-down":  
+                    acc = "↓";  
+                    break;
+                case "arrow-up":    
+                    acc = "↑";  
+                    break;
+                case "triple-sharp":    
+                    acc = "♯♯♯";  
+                    break;
+                case "triple-flat":     
+                    acc = "♭♭♭";  
+                    break;
+                case "slash-quarter-sharp":     
+                    acc = "♯/4";  
+                    break;
+                case "slash-quarter-flat":     
+                    acc = "♭/4";  
+                    break;
+                case "slash-sharp":     
+                    acc = "/♯";  
+                    break;
+                case "slash-flat":
+                    acc = "/♭";  
+                    break;
+                case "double-slash-flat":   
+                    acc = "//♭";
+                    break;
+                case "double-slash-sharp":   
+                    acc = "//♯";
+                    break;
+                case "sharp-1":     
+                    acc = "♯1";  
+                    break;
+                case "sharp-2":     
+                    acc = "♯2";  
+                    break;
+                case "sharp-3":     
+                    acc = "♯3";  
+                    break;
+                case "sharp-4":     
+                    acc = "♯4";  
+                    break;
+                case "sharp-5":     
+                    acc = "♯5";  
+                    break;
+                case "flat-1":  
+                    acc = "♭1";  
+                    break;
+                case "flat-2":  
+                    acc = "♭2";  
+                    break;
+                case "flat-3":  
+                    acc = "♭3";  
+                    break;
+                case "flat-4":  
+                    acc = "♭4";  
+                    break;
+                case "flat-5":  
+                    acc = "♭5";  
+                    break;
+                case "sori":
+                    acc = "sori"; 
+                    break;
+                case "koron":
+                    acc = "koron"; 
+                    break;
+                default:
+                    gotMatch = false;
+                    break;
             }
-            else
-            if ((acc.toLowerCase().indexOf("lower") != -1) || (acc.toLowerCase().indexOf("flat") != -1)){
-                acc = "♭?";
-            }
-            else
-            if (acc.toLowerCase().indexOf("natural") != -1){
-                acc = "♮?";
-            }
-            else{
-                acc = "?";
+
+            // Some other accidental, try to match it with something reasonable
+            if (!gotMatch){
+
+                if ((acc.toLowerCase().indexOf("raise") != -1) || (acc.toLowerCase().indexOf("sharp") != -1)){
+                    acc = "♯?";
+                }
+                else
+                if ((acc.toLowerCase().indexOf("lower") != -1) || (acc.toLowerCase().indexOf("flat") != -1)){
+                    acc = "♭?";
+                }
+                else
+                if (acc.toLowerCase().indexOf("natural") != -1){
+                    acc = "♮?";
+                }
+                else{
+                    acc = "?";
+                }
             }
             
             //console.log("acc after: "+acc)
-
             p = '"_'+acc+'"' + p;
+
         }
         else{
 
@@ -1980,6 +2116,10 @@ Parser.prototype.parse = function (xmltree) {
 }
 
 vertaal = function (xmltree, options_parm) {   // publish in the global name space
+
+    // MAE 13 June 2024 - Initially, no microtonal accidentals
+    gGotMicrotonalAccidental = false;
+
     var fnm = '', pad = '', X = 0;  // fnm, pad are not used anywhere ...
     var options = { u:0, b:0, n:0,  // unfold repeats (1), bars per line, chars per line
                     c:0, v:0, d:0,  // credit text filter level (0-6), no volta on higher voice numbers (1), denominator unit length (L:)
