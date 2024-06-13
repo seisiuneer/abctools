@@ -1228,25 +1228,138 @@ Parser.prototype.ntAbc = function (ptc, oct, $note, v, ntrec, isTab) {  // pitch
         if (theSMUFL == "accidentalRaiseOneUndecimalQuartertone"){
             acc = 'quarter-sharp';
         }
+        else
+        if (theSMUFL == "accidentalDoubleFlatOneArrowDown"){
+            acc = 'flat-flat-down';
+        }
+        else
+        if (theSMUFL == "accidentalFlatOneArrowDown"){
+            acc = 'flat-down';
+        }
+        else
+        if (theSMUFL == "accidentalNaturalOneArrowDown"){
+            acc = 'natural-down';
+        }
+        else
+        if (theSMUFL == "accidentalSharpOneArrowDown"){
+            acc = 'sharp-down';
+        }
+        else
+        if (theSMUFL == "accidentalDoubleSharpOneArrowDown"){
+            acc = 'double-sharp-down';
+        }
+        else
+        if (theSMUFL == "accidentalDoubleFlatOneArrowUp"){
+            acc = 'flat-flat-up';
+        }
+        else
+        if (theSMUFL == "accidentalFlatOneArrowUp"){
+            acc = 'flat-up';
+        }
+        else
+        if (theSMUFL == "accidentalNaturalOneArrowUp"){
+            acc = 'natural-up';
+        }
+        else
+        if (theSMUFL == "accidentalSharpOneArrowUp"){
+            acc = 'sharp-up';
+        }
+        else
+        if (theSMUFL == "accidentalDoubleSharpOneArrowUp"){
+            acc = 'double-sharp-up';
+        }
         else{
+
             gotBadOther = true;
             
             // Force annotation font injection
             gGotMicrotonalAccidental = true;
 
-            if ((theSMUFL.toLowerCase().indexOf("raise") != -1) || (theSMUFL.toLowerCase().indexOf("sharp") != -1)){
-                theSMUFL = "♯?";
-            }
-            else
-            if ((theSMUFL.toLowerCase().indexOf("lower") != -1) || (theSMUFL.toLowerCase().indexOf("flat") != -1)){
-                theSMUFL = "♭?";
-            }
-            else
-            if (theSMUFL.toLowerCase().indexOf("natural") != -1){
-                theSMUFL = "♮?";
-            }
-            else{
-                theSMUFL = "?";
+            var gotSMUFL = true;
+
+            // Map additional SMUFL values to strings
+            switch (theSMUFL){
+                case "accidentalDoubleFlatTwoArrowsDown":
+                    theSMUFL = "♭♭↓↓";
+                    break;
+                case "accidentalFlatTwoArrowsDown":
+                    theSMUFL = "♭↓↓";
+                    break;
+                case "accidentalNaturalTwoArrowsDown":
+                    theSMUFL = "♮↓↓";
+                    break;
+                case "accidentalSharpTwoArrowsDown":
+                    theSMUFL = "♯↓↓";
+                    break;
+                case "accidentalDoubleSharpTwoArrowsDown":
+                    theSMUFL = "♯♯↓↓";
+                    break;
+                case "accidentalDoubleFlatTwoArrowsUp":
+                    theSMUFL = "♭♭↑↑";
+                    break;
+                case "accidentalFlatTwoArrowsUp":
+                    theSMUFL = "♭↑↑";
+                    break;
+                case "accidentalNaturalTwoArrowsUp":
+                    theSMUFL = "♮↑↑";
+                    break;
+                case "accidentalSharpTwoArrowsUp":
+                    theSMUFL = "♯↑↑";
+                    break;
+                case "accidentalDoubleSharpTwoArrowsUp":
+                    theSMUFL = "♯♯↑↑";
+                    break;
+                case "accidentalDoubleFlatThreeArrowsDown":
+                    theSMUFL = "♭♭↓↓↓";
+                    break;
+                case "accidentalFlatThreeArrowsDown":
+                    theSMUFL = "♭↓↓↓";
+                    break;
+                case "accidentalNaturalThreeArrowsDown":
+                    theSMUFL = "♮↓↓↓";
+                    break;
+                case "accidentalSharpThreeArrowsDown":
+                    theSMUFL = "♯↓↓↓";
+                    break;
+                case "accidentalDoubleSharpThreeArrowsDown":
+                    theSMUFL = "♯♯↓↓↓";
+                    break;
+                case "accidentalDoubleFlatThreeArrowsUp":
+                    theSMUFL = "♭♭↑↑↑";
+                    break;
+                case "accidentalFlatThreeArrowsUp":
+                    theSMUFL = "♭↑↑↑";
+                    break;
+                case "accidentalNaturalThreeArrowsUp":
+                    theSMUFL = "♮↑↑↑";
+                    break;
+                case "accidentalSharpThreeArrowsUp":
+                    theSMUFL = "♯↑↑↑";
+                    break;
+                case "accidentalDoubleSharpThreeArrowsUp":
+                    theSMUFL = "♯♯↑↑↑";
+                    break;  
+                default:
+                    gotSMUFL=false;
+                    break;
+            }        
+
+            if (!gotSMUFL){
+
+                if ((theSMUFL.toLowerCase().indexOf("raise") != -1) || (theSMUFL.toLowerCase().indexOf("sharp") != -1)){
+                    theSMUFL = "♯?";
+                }
+                else
+                if ((theSMUFL.toLowerCase().indexOf("lower") != -1) || (theSMUFL.toLowerCase().indexOf("flat") != -1)){
+                    theSMUFL = "♭?";
+                }
+                else
+                if (theSMUFL.toLowerCase().indexOf("natural") != -1){
+                    theSMUFL = "♮?";
+                }
+                else{
+                    theSMUFL = "?";
+                }
             }
         }
     }
@@ -1406,7 +1519,7 @@ Parser.prototype.ntAbc = function (ptc, oct, $note, v, ntrec, isTab) {  // pitch
                     break;
                 case "koron":
                     acc = "koron"; 
-                    break;
+                    break;    
                 default:
                     gotMatch = false;
                     break;
