@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-
+       
         <style>
 
 		p {
@@ -420,6 +420,7 @@
                 <button class="accordion" title="Click to expand/collapse this section">MusicXML/MIDI Import</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#musicxml">MusicXML/MIDI Import Settings</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#microtonal">Importing MusicXML With Microtonal Accidentals</a></p>
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">Sharing Tunes via Share URLs and QR Codes</button>
@@ -3475,6 +3476,22 @@
             <p><b>Q: tag value to inject:</b>&nbsp;&nbsp;If <b>Inject Q: tag if not present:</b> is checked, this is the Q: tempo tag value to inject. Default is: 100</p>
             <p>Click <strong>Reset to Default</strong> to reset the MusicXML/MIDI import settings to their original defaults.</p>
             <p>Values are saved in browser storage and restored the next time the tool is run.</p>
+            <hr class="hidden-print" id="microtonal">
+            <h1 class="page_break_always h1wide">Importing MusicMXL With Microtonal Accidentals<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>These are the only two microtonal accidentals that abcjs can display and play and that the MusicXML transcoder can deal with, the quarter-flat and quarter-sharp.</p>
+            <p>When importing MusicXML, for the rest of the microtonal accidentals supported by MusicXML that can't be rendered or played by abcjs, the MusicXML transcoder will now put the accidental symbol under the note using ABC annotations strings.</p>
+            <p>Here are all the native MusicXML accidentals that the MusicXML transcoder can now handle:</p>
+            <p style="text-align: center;"><a href="https://www.w3.org/2021/06/musicxml40/musicxml-reference/data-types/accidental-value/" target="_blank">MusicXML Native Accidentals</a></p>
+            <p>Additionally, some software like MuseScore have their own SMUFL font-based private method for specifying microntonal accidentals and don't exclusively use the MusicXML standard accidentals.</p>
+            <p>In this case, the tool will detect many of the more common SMUFL font glyph directives and transcode them to a ABC version, but if it does not have a mapping, the ABC will show with a ♭?  or ♯? based on parsing the glyph name requested and trying to come up with something at least showing it should be "flat-ish" or "sharp-ish".</p>
+            <p>Here's a screenshot showing a mix of abcjs supported microtonal accidentals and injected annotations for those unsupported in abcjs from a MuseScore MusicXML export:</p>
+            <div class="image_holder_p">
+                <img class="image" loading="lazy" src="img/microtonal1_1.jpg">
+            </div>
+            <p>Here are all the MuseScore exported MusicXML supported accidentals:</p>
+            <div class="image_holder_p">
+                <img class="image" loading="lazy" src="img/microtonal2_1.jpg">
+            </div>
             <hr class="hidden-print" id="sharing_controls">
             <h1 class="page_break_always">Sharing Tunes with Share URLs and QR Codes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/I8KcG4swmUQ" title="Sharing Tunes with Share URLs and QR Codes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
