@@ -458,7 +458,9 @@ ABCoutput.prototype.mkHeader = function (stfmap, partlist, midimap, vmpdct, kopp
     defL = d [d.length-1][0];
     defL = this.denL ? this.denL : defL;    // override default unit length with -d option
     hd.push (format ('L:1/%d\n%sM:%s\n', [defL, tempo, this.mtr]));
-    hd.push (format ('I:linebreak $\nK:%s\n', [this.key]));
+    // MAE 13 June 2024 - I find the linebreak $ thing annoying
+    //hd.push (format ('I:linebreak $\nK:%s\n', [this.key]));
+    hd.push (format ('K:%s\n', [this.key]));
     if (this.stemless) hd.push ('U:s=!stemless!\n');
     var vxs = Object.keys (vmpdct).sort ();
     for (i = 0; i < vxs.length; ++i) hd = hd.concat (vmpdct [vxs [i]]);
