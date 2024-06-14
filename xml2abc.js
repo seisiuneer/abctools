@@ -408,6 +408,8 @@ function ABCoutput (fnmext, pad, X, options) {
     this.leftmargin = '';       // in cm
     this.rightmargin = '';      // in cm
     this.shiftStem = options.s; // shift note heads 3 units left
+    // MAE 14 June 2024
+    this.nolbrk = options.x; // generate no linebreaks ($)
     this.mnum = options.mnum;   // measure numbers
     if (options.p.length == 4) {
         this.scale = options.p [0] != '' ? parseFloat (options.p [0]) : '';
@@ -457,10 +459,17 @@ ABCoutput.prototype.mkHeader = function (stfmap, partlist, midimap, vmpdct, kopp
     d = sortitems (d);  // -> [[unitLength, numberOfTimes]], sorted on numberOfTimes (when tie select smallest unitL)
     defL = d [d.length-1][0];
     defL = this.denL ? this.denL : defL;    // override default unit length with -d option
+
     hd.push (format ('L:1/%d\n%sM:%s\n', [defL, tempo, this.mtr]));
-    // MAE 13 June 2024 - I find the linebreak $ thing annoying
-    hd.push (format ('I:linebreak $\nK:%s\n', [this.key]));
-    //hd.push (format ('K:%s\n', [this.key]));
+
+    // MAE 13 June 2024 - Only inject the linebreak annotation if actually being used
+    if (this.nolbrk){
+        hd.push (format ('K:%s\n', [this.key])); 
+    }
+    else{
+        hd.push (format ('I:linebreak $\nK:%s\n', [this.key]));
+    }
+
     if (this.stemless) hd.push ('U:s=!stemless!\n');
     var vxs = Object.keys (vmpdct).sort ();
     for (i = 0; i < vxs.length; ++i) hd = hd.concat (vmpdct [vxs [i]]);
