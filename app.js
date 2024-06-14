@@ -18900,10 +18900,17 @@ function ShortenURLFallback(){
 // If it fails, fall back to the old manual assist system
 //
 
-function ShortenURL(){
+function ShortenURL(e){
 
 	if (!gAllowURLSave){
 		return;
+	}
+
+	// If you hold down the Shift and Alt key when clicking the shorten button, it will inject a %hyperlink annotation into the tune
+	var autoInject = false;
+
+	if (e && e.shiftKey && e.altKey){
+		autoInject = true;
 	}
 
 	// Keep track of URL shortening
@@ -18961,6 +18968,45 @@ function ShortenURL(){
 	   	modal_msg += '<p style="text-align:center;font-size:14pt;line-height:19pt;font-family:helvetica"><a href="'+data.data.tiny_url+'" target="_blank">'+data.data.tiny_url+'</a></p>';
 
 		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+		// Auto-injecting the shortened URL as a hyperlink?
+		if (autoInject){
+
+			var nTunes = CountTunes();
+
+			var theNotes = gTheABC.value;
+
+			// Find the tunes
+			var theTunes = theNotes.split(/^X:/gm);
+
+			var output = FindPreTuneHeader(theNotes);
+
+			for (var i=1;i<=nTunes;++i){
+
+				var theTune = "X:"+theTunes[i];
+
+				output += InjectStringBelowTuneHeader(theTune,"%hyperlink "+data.data.tiny_url);
+
+			}
+
+			// Stuff in the output
+			gTheABC.value = output;
+			
+			// Set dirty
+			gIsDirty = true;
+
+			// Force a redraw
+			RenderAsync(true,null,function(){
+
+				// Set the select point
+				gTheABC.selectionStart = 0;
+			    gTheABC.selectionEnd = 0;
+
+			    // Focus after operation
+			    FocusAfterOperation();
+
+			});
+		}
 			
 		if (!gDoTinyURLAPIKeyOverride){
 
@@ -34428,7 +34474,7 @@ function SharingControlsDialog(){
 	modal_msg += '<input id="testurl" class="urlcontrols btn btn-urlcontrols" onclick="TestShareURL()" type="button" value="Test Share URL" title="Opens the Share URL in a new tab">';
 	modal_msg += '<input id="copyurl" class="urlcontrols btn btn-urlcontrols" onclick="CopyShareURL()" type="button" value="Copy Share URL" title="Copies the Share URL to the clipboard">';
 	modal_msg += '<input id="saveurl" class="urlcontrols btn btn-urlcontrols" onclick="SaveShareURL()" type="button" value="Save Share URL" title="Saves the Share URL to a file">';
-	modal_msg += '<input id="shortenurl" class="urlcontrols btn btn-urlcontrols" onclick="ShortenURL()" type="button" value="Shorten URL" title="Shortens the Share URL and copies it to the clipboard">';
+	modal_msg += '<input id="shortenurl" class="urlcontrols btn btn-urlcontrols" onclick="ShortenURL(event)" type="button" value="Shorten URL" title="Shortens the Share URL and copies it to the clipboard">';
 	modal_msg += '<input id="generateqrcode" class="urlcontrolslast btn btn-urlcontrols" onclick="GenerateQRCode(event)" type="button" value="Generate QR Code" title="Generates a QR Code for the Share URL.&nbsp;&nbsp;Even if this button is greyed-out, Shift-click attempts to generate a QR code from the text in the Share URL box.">';
 	modal_msg += '</p>';
 	modal_msg += '<p style="margin-top:24px;">';
