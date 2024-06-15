@@ -33677,7 +33677,7 @@ function defaultMusicXMLSettings(){
 	// Keep track of actions
 	sendGoogleAnalytics("action","defaultMusicXMLSettings");
 
-	var thePrompt = "Are you sure you want to reset the MIDI/MusicXML Import Settings to their default values?";
+	var thePrompt = "Are you sure you want to reset the MusicXML/MIDI Import Settings to their default values?";
 
 	// Center the string in the prompt
 	thePrompt = makeCenteredPromptString(thePrompt);
