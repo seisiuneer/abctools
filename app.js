@@ -32708,7 +32708,7 @@ function GetInitialConfigurationSettings(){
     	resetAngloButtonNames();
     }
 
-    var theMusicXMLImportSettings = localStorage.musicXMLImportOptionsV5;
+    var theMusicXMLImportSettings = localStorage.musicXMLImportOptionsV4;
 
     if (theMusicXMLImportSettings){
         gMusicXMLImportOptions = JSON.parse(theMusicXMLImportSettings);
@@ -33425,7 +33425,7 @@ function SaveConfigurationSettings(){
 		localStorage.angloButtonNames = JSON.stringify(gAngloButtonNames);
 
 		// MusicXML import options
-		localStorage.musicXMLImportOptionsV5 = JSON.stringify(gMusicXMLImportOptions);
+		localStorage.musicXMLImportOptionsV4 = JSON.stringify(gMusicXMLImportOptions);
 
 		// Large player control player options
 		localStorage.LargePlayerControls = gLargePlayerControls;
@@ -33599,7 +33599,7 @@ function resetMusicXMLImportOptions(){
 		c:0,
 		v:0,
 		d:4,
-		x:0,
+		x:1,
 		noped:0,
 		p:'',
 		v1:0,
@@ -33729,7 +33729,7 @@ function ConfigureMusicXMLImport(){
 		    // Save the MusicXML settings
 		    if (gLocalStorageAvailable){
 
-		        localStorage.musicXMLImportOptionsV5 = JSON.stringify(gMusicXMLImportOptions);
+		        localStorage.musicXMLImportOptionsV4 = JSON.stringify(gMusicXMLImportOptions);
 
 		    }
 		}

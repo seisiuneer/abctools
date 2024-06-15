@@ -3485,74 +3485,6 @@ var Parse = function Parse() {
       }
     }
   }
-
-  // Does the lines start with an ABC tag or %
-  function isTagLine(text) {
-      const prefixes = ["X:","T:","M:","K:","L:","Q:","W:","Z:","R:","C:","A:","O:","P:","N:","G:","H:","B:","D:","F:","S:","I:","V:","%"];
-      for (const prefix of prefixes) {
-          if (text.startsWith(prefix)) {
-              return true;
-          }
-      }
-      return false;
-  }
-
-  function replaceLastCharIfMatch(str, targetChar, replacementChar) {
-
-    // Check if the string ends with the target character
-    if (str.endsWith(targetChar)) {
-        // Replace the last character with the replacement character
-        return str.slice(0, -1) + replacementChar;
-    }
-    // If the string does not end with the target character, return the original string
-    return str;
-  }
-
-  function replaceFirstCharIfMatch(str, targetChar, replacementChar) {
-
-    // Check if the string ends with the target character
-    if (str.startsWith(targetChar)) {
-        // Replace the first character with the replacement character
-        return replacementChar + str.slice(1);
-    }
-
-    // If the string does not start with the target character, return the original string
-    return str;
-  }
-
-
-  function replaceLineBreaks(text,lbChar) {
-
-    // Split the text into lines
-    const lines = text.split('\n');
-    
-    // Iterate over each line
-    const modifiedLines = lines.map(line => {
-
-      // Check if the line is a tag
-      if (isTagLine(line)) {
-        // Return the line unchanged if it matches the condition
-        return line;
-      }
-      else 
-      {
-
-        // If the line starts with a linebreak, suppress it by injecting a space
-        line = replaceFirstCharIfMatch(line,lbChar," ");
-
-        // If the line ends with a linebreak, suppress it by injecting a space
-        line = replaceLastCharIfMatch(line,lbChar," ");
-
-        // Replace all instances of the lbChar with a a new line
-        return line.replaceAll(lbChar, '\n'); 
-        
-      }
-    });
-    
-    // Join the modified lines back into a single string
-    return modifiedLines.join('\n');
-  }
-
   this.parse = function (strTune, switches, startPos) {
     // the switches are optional and cause a difference in the way the tune is parsed.
     // switches.header_only : stop parsing when the header is finished
@@ -3580,54 +3512,6 @@ var Parse = function Parse() {
       }
       strTune = arr.join("  "); //. the split removed two characters, so this puts them back
     }
-
-    // MAE 14 Jun 2024 - Is there a linebreak character request
-    var searchRegExp = /^I:linebreak.*$/m
-
-    // Detect linebreak character request
-    var doLBReplacement = false;
-    var gotLineBreakRequest = strTune.match(searchRegExp);
-    var theLBchar = "";
-
-    if ((gotLineBreakRequest) && (gotLineBreakRequest.length > 0)){
-
-      theLBchar = gotLineBreakRequest[0].replace("I:linebreak","");
-      
-      theLBchar = theLBchar.trim();
-
-      if (theLBchar.length > 0){
-        doLBReplacement = true;
-        theLBchar = theLBchar[0];
-      }
-    }
-
-    // Try an alternative form
-    if (!doLBReplacement){
-
-      searchRegExp = /^I: linebreak.*$/m
-      gotLineBreakRequest = strTune.match(searchRegExp);
-
-      if ((gotLineBreakRequest) && (gotLineBreakRequest.length > 0)){
-
-        theLBchar = gotLineBreakRequest[0].replace("I: linebreak","");
-        
-        theLBchar = theLBchar.trim();
-
-        if (theLBchar.length > 0){
-          doLBReplacement = true;
-          theLBchar = theLBchar[0];
-        }
-      }
- 
-    }
-
-    if (doLBReplacement){
-      //console.log("Doing LB replacement, theLBchar: "+theLBchar);
-      strTune = replaceLineBreaks(strTune,theLBchar);
-    }
-
-    // MAE 14 Jun 2024 - End of handler for linebreak character request
-
     // take care of line continuations right away, but keep the same number of characters
     strTune = strTune.replace(/\\([ \t]*)(%.*)*\n/g, function (all, backslash, comment) {
       var padding = comment ? Array(comment.length + 1).join(' ') : "";
