@@ -464,11 +464,14 @@ ABCoutput.prototype.mkHeader = function (stfmap, partlist, midimap, vmpdct, kopp
 
     // MAE 13 June 2024 - Only inject the linebreak annotation if actually being used
     if (this.nolbrk){
-        hd.push (format ('K:%s\n%%stretchlast true\n', [this.key])); 
+        hd.push (format ('K:%s\n', [this.key])); 
     }
     else{
-        hd.push (format ('I:linebreak $\nK:%s\n%%stretchlast true\n', [this.key]));
+        hd.push (format ('I:linebreak $\nK:%s\n', [this.key]));
     }
+
+    // MAE 15 June 2025 - Add stretchlast
+    hd.push("%%stretchlast true\n");
 
     if (this.stemless) hd.push ('U:s=!stemless!\n');
     var vxs = Object.keys (vmpdct).sort ();
