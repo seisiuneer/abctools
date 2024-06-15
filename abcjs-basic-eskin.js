@@ -3497,6 +3497,30 @@ var Parse = function Parse() {
       return false;
   }
 
+  function replaceLastCharIfMatch(str, targetChar, replacementChar) {
+
+    // Check if the string ends with the target character
+    if (str.endsWith(targetChar)) {
+        // Replace the last character with the replacement character
+        return str.slice(0, -1) + replacementChar;
+    }
+    // If the string does not end with the target character, return the original string
+    return str;
+  }
+
+  function replaceFirstCharIfMatch(str, targetChar, replacementChar) {
+
+    // Check if the string ends with the target character
+    if (str.startsWith(targetChar)) {
+        // Replace the first character with the replacement character
+        return replacementChar + str.slice(1);
+    }
+
+    // If the string does not start with the target character, return the original string
+    return str;
+  }
+
+
   function replaceLineBreaks(text,lbChar) {
 
     // Split the text into lines
@@ -3504,6 +3528,7 @@ var Parse = function Parse() {
     
     // Iterate over each line
     const modifiedLines = lines.map(line => {
+
       // Check if the line is a tag
       if (isTagLine(line)) {
         // Return the line unchanged if it matches the condition
@@ -3511,8 +3536,16 @@ var Parse = function Parse() {
       }
       else 
       {
+
+        // If the line starts with a linebreak, suppress it by injecting a space
+        line = replaceFirstCharIfMatch(line,lbChar," ");
+
+        // If the line ends with a linebreak, suppress it by injecting a space
+        line = replaceLastCharIfMatch(line,lbChar," ");
+
         // Replace all instances of the lbChar with a a new line
         return line.replaceAll(lbChar, '\n'); 
+        
       }
     });
     
