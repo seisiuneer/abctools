@@ -33619,24 +33619,38 @@ function resetMusicXMLImportOptions(){
 
 function setMusicXMLOptions () {
 
+    gMusicXMLImportOptions.x = $('#musicxml_nlb').prop ('checked') ? 1 : 0;
+
+	// If allowing linebreaks, can't have end-of-stave numbers
+	if (gMusicXMLImportOptions.x == 0){
+		gMusicXMLImportOptions.addstavenum = 0;
+		$('#musicxml_addstavenum').prop('checked',false);
+	}
+	else{
+		gMusicXMLImportOptions.addstavenum = $('#musicxml_addstavenum').prop ('checked') ? 1 : 0;
+	}
+
     gMusicXMLImportOptions.u = $('#musicxml_unfld').prop ('checked') ? 1 : 0;
     gMusicXMLImportOptions.b = parseInt ($('#musicxml_bpl').val () || 4);
     gMusicXMLImportOptions.n = parseInt ($('#musicxml_cpl').val () || 0);
     gMusicXMLImportOptions.c = parseInt ($('#musicxml_crf').val () || 0);
     gMusicXMLImportOptions.d = parseInt ($('#musicxml_den').val () || 4);
     gMusicXMLImportOptions.m = parseInt ($('#musicxml_midi').val () || 0);
-    gMusicXMLImportOptions.x = $('#musicxml_nlb').prop ('checked') ? 1 : 0;
     gMusicXMLImportOptions.noped = $('#musicxml_noped').prop ('checked') ? 1 : 0;
     gMusicXMLImportOptions.v1 = $('#musicxml_v1').prop ('checked') ? 1 : 0;
     gMusicXMLImportOptions.stm = $('#musicxml_stems').prop ('checked') ? 1 : 0;
     gMusicXMLImportOptions.mnum = parseInt ($('#musicxml_mnum').val () || -1);
     gMusicXMLImportOptions.addq = $('#musicxml_addq').prop ('checked') ? 1 : 0;
     gMusicXMLImportOptions.q = parseInt ($('#musicxml_q').val () || 100);;
-    gMusicXMLImportOptions.addstavenum = $('#musicxml_addstavenum').prop ('checked') ? 1 : 0;
 
  }
 
 function idleXMLImport(){
+
+	// If allowing linebreaks, can't have end-of-stave numbers
+	if (gMusicXMLImportOptions.x == 0){
+		gMusicXMLImportOptions.addstavenum = 0;
+	}
 
 	$('#musicxml_unfld').prop('checked',(gMusicXMLImportOptions.u == 1));
 	$('#musicxml_bpl').val(gMusicXMLImportOptions.b);
@@ -33663,7 +33677,7 @@ function defaultMusicXMLSettings(){
 	// Keep track of actions
 	sendGoogleAnalytics("action","defaultMusicXMLSettings");
 
-	var thePrompt = "Are you sure you want to reset the MusicXML import options to their default values?";
+	var thePrompt = "Are you sure you want to reset the MIDI/MusicXML Import Settings to their default values?";
 
 	// Center the string in the prompt
 	thePrompt = makeCenteredPromptString(thePrompt);
