@@ -36688,7 +36688,19 @@ function importMusicXML(theXML,fileName){
     //                 p:'', s:0,   // page format: scale (1.0), width, left- and right margin in cm, shift note heads in tablature (1)
     //                 addstavenum:1 };  // Add stave numbers at the end of the staves
 
+    // Suppress stave measure numbers if doing linebreaks
+    var replacedStaveNum = false;
+
+    if ((gMusicXMLImportOptions.x == 0) && (gMusicXMLImportOptions.addstavenum == 1)){
+    	replacedStaveNum = true;
+    	gMusicXMLImportOptions.addstavenum = 0;
+    }
+
     var result = vertaal (xmldata, gMusicXMLImportOptions);
+
+    if (replacedStaveNum){
+    	gMusicXMLImportOptions.addstavenum = 1;
+    }
 
     var abcText = result [0];               // the translation (string)
 
