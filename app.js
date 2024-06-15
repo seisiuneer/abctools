@@ -36740,7 +36740,12 @@ function importMusicXML(theXML,fileName){
     if (abcText.indexOf("T:Title")!= -1){
 
     	// Strip the extension
-		fileName = fileName.replace(/\..+$/, '');
+		fileName = fileName.replace(".mxl","");
+		fileName = fileName.replace(".xml","");
+		fileName = fileName.replace(".musicxml","");
+		fileName = fileName.replace(".MXL","");
+		fileName = fileName.replace(".XML","");
+		fileName = fileName.replace(".MUSICXML","");
 
 		// Replace any _ or - with spaces
 		fileName = fileName.replaceAll("_"," ");
