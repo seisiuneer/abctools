@@ -32708,7 +32708,7 @@ function GetInitialConfigurationSettings(){
     	resetAngloButtonNames();
     }
 
-    var theMusicXMLImportSettings = localStorage.musicXMLImportOptionsV4;
+    var theMusicXMLImportSettings = localStorage.musicXMLImportOptionsV5;
 
     if (theMusicXMLImportSettings){
         gMusicXMLImportOptions = JSON.parse(theMusicXMLImportSettings);
@@ -33425,7 +33425,7 @@ function SaveConfigurationSettings(){
 		localStorage.angloButtonNames = JSON.stringify(gAngloButtonNames);
 
 		// MusicXML import options
-		localStorage.musicXMLImportOptionsV4 = JSON.stringify(gMusicXMLImportOptions);
+		localStorage.musicXMLImportOptionsV5 = JSON.stringify(gMusicXMLImportOptions);
 
 		// Large player control player options
 		localStorage.LargePlayerControls = gLargePlayerControls;
@@ -33599,7 +33599,7 @@ function resetMusicXMLImportOptions(){
 		c:0,
 		v:0,
 		d:4,
-		x:1,
+		x:0,
 		noped:0,
 		p:'',
 		v1:0,
@@ -33729,7 +33729,7 @@ function ConfigureMusicXMLImport(){
 		    // Save the MusicXML settings
 		    if (gLocalStorageAvailable){
 
-		        localStorage.musicXMLImportOptionsV4 = JSON.stringify(gMusicXMLImportOptions);
+		        localStorage.musicXMLImportOptionsV5 = JSON.stringify(gMusicXMLImportOptions);
 
 		    }
 		}
@@ -36539,6 +36539,140 @@ function doTitleCaps(title){
 
 }
 
+// Does the lines start with an ABC tag or %
+function isTagLine(text) {
+  const prefixes = ["X:","T:","M:","K:","L:","Q:","W:","Z:","R:","C:","A:","O:","P:","N:","G:","H:","B:","D:","F:","S:","I:","V:","%"];
+  for (const prefix of prefixes) {
+      if (text.startsWith(prefix)) {
+          return true;
+      }
+  }
+  return false;
+}
+
+function splitTextAtLineBreak(input, lbChar) {
+// Split the input text at each $ character
+const splits = input.split(lbChar);
+
+// Initialize an array to hold the resulting substrings
+let resultArray = [];
+
+// Loop through each split substring
+for (let split of splits) {
+  // Trim the split substring to remove any leading or trailing whitespace
+  let trimmedSplit = split.trim();
+
+  // Push the trimmed substring to the result array if it's not empty
+  if (trimmedSplit) {
+    resultArray.push(trimmedSplit);
+  }
+}
+
+return resultArray;
+}
+
+// Split the ABC music only at the linebreaks
+function replaceLineBreaks(input, lbChar) {
+
+// Split the input text into an array of lines
+const lines = input.split('\n');
+
+// Initialize an array to hold the combined lines
+let combinedLines = [];
+let currentLine = '';
+
+var gotLB = false;
+// Loop through each line in the input text
+for (let line of lines) {
+
+  // Check if the line starts with a tag
+  if (!(/^(X:|T:|M:|K:|L:|Q:|W:|Z:|R:|C:|A:|O:|P:|N:|G:|H:|B:|D:|F:|S:|I:|V:|w:|%)/.test(line))) {
+
+    if (line.indexOf(lbChar) != -1){
+      gotLB = true;
+      break;
+    }
+  }
+}
+
+// Line breaks requested, but none detected, just return the original split text
+if (!gotLB){
+  return input;
+}
+
+// Line breaks detected, pass through the tag lines but combine and split the ABC notes
+
+// Loop through each line in the input text
+for (let line of lines) {
+
+  // Check if the line starts with A:, B:, C:, or %
+  if (/^(X:|T:|M:|K:|L:|Q:|W:|Z:|R:|C:|A:|O:|P:|N:|G:|H:|B:|D:|F:|S:|I:|V:|w:|%)/.test(line)) {
+
+    // If currentLine is not empty, push it to combinedLines and reset it
+    if (currentLine) {
+      combinedLines.push(currentLine);
+      currentLine = '';
+    }
+    // Push the current line as it starts with a tag
+    combinedLines.push(line);
+
+  } else {
+
+    // Append the line to currentLine if it doesn't start with a tag
+    currentLine += (currentLine ? ' ' : '') + line;
+
+  }
+
+}
+
+// Push the last combined line if it exists
+if (currentLine) {
+  combinedLines.push(currentLine);
+}
+
+var newLines = [];
+
+// Iterate over each line
+const modifiedLines = combinedLines.map(line => {
+
+  // Check if the line is a tag
+  if (isTagLine(line)) {
+    // Return the line unchanged if it matches the condition
+    return newLines.push(line);
+  }
+  else 
+  {
+    var theSplits =  splitTextAtLineBreak(line,lbChar);
+
+    var nSplits = theSplits.length;
+    
+    for (var j=0;j<nSplits;++j){
+      var thisSplit = theSplits[j];
+      thisSplit = thisSplit.trim();
+      if (thisSplit != ""){
+        // Include the split marks at the end of the lines
+        newLines.push(thisSplit);
+      }
+    }
+    
+  }
+});
+
+return newLines.join("\n");
+
+}
+
+function removeLinesStartingWithILinebreak(text) {
+    // Split the text into an array of lines
+    let lines = text.split('\n');
+
+    // Filter out lines that start with 'I:linebreak'
+    lines = lines.filter(line => !line.startsWith('I:linebreak'));
+
+    // Join the remaining lines back into a single string
+    return lines.join('\n');
+}
+
 //
 // Import MusicXML format
 //
@@ -36591,6 +36725,37 @@ function importMusicXML(theXML,fileName){
 
     	abcText = abcText.replace("T:Title","T:"+fileName);
     }
+
+    // MAE 15 Jun 2024 - Is there a linebreak character request
+    var searchRegExp = /^I:linebreak.*$/m
+
+    // Detect linebreak character request
+    var doLBReplacement = false;
+    var gotLineBreakRequest = abcText.match(searchRegExp);
+    var theLBchar = "";
+
+    if ((gotLineBreakRequest) && (gotLineBreakRequest.length > 0)){
+
+      theLBchar = gotLineBreakRequest[0].replace("I:linebreak","");
+      
+      theLBchar = theLBchar.trim();
+
+      if ((theLBchar.length > 0) && ((theLBchar == "!") || (theLBchar == "$"))){
+        doLBReplacement = true;
+        theLBchar = theLBchar[0];
+      }
+    }
+
+    // Do the line break replacement?
+    if (doLBReplacement){
+
+      //console.log("Doing LB replacement, theLBchar: "+theLBchar);
+      abcText = replaceLineBreaks(abcText,theLBchar);
+     
+    }
+
+    // Remove the linebreak request from the ABC
+    abcText = removeLinesStartingWithILinebreak(abcText);
 
     return abcText;
 

@@ -3485,6 +3485,7 @@ var Parse = function Parse() {
       }
     }
   }
+
   this.parse = function (strTune, switches, startPos) {
     // the switches are optional and cause a difference in the way the tune is parsed.
     // switches.header_only : stop parsing when the header is finished
@@ -3493,6 +3494,7 @@ var Parse = function Parse() {
     // switches.format: a hash of the desired formatting commands.
     // switches.hint_measures: put the next measure at the end of the current line.
     // switches.transpose: change the key signature, chords, and notes by a number of half-steps.
+
     if (!switches) switches = {};
     if (!startPos) startPos = 0;
     tune.reset();
@@ -3512,6 +3514,7 @@ var Parse = function Parse() {
       }
       strTune = arr.join("  "); //. the split removed two characters, so this puts them back
     }
+
     // take care of line continuations right away, but keep the same number of characters
     strTune = strTune.replace(/\\([ \t]*)(%.*)*\n/g, function (all, backslash, comment) {
       var padding = comment ? Array(comment.length + 1).join(' ') : "";
