@@ -3486,6 +3486,17 @@ var Parse = function Parse() {
     }
   }
 
+  // Does the lines start with an ABC tag or %
+  function isTagLine(text) {
+      const prefixes = ["X:","T:","M:","K:","L:","Q:","W:","Z:","R:","C:","A:","O:","P:","N:","G:","H:","B:","D:","F:","S:","I:","V:","%"];
+      for (const prefix of prefixes) {
+          if (text.startsWith(prefix)) {
+              return true;
+          }
+      }
+      return false;
+  }
+
   function replaceLineBreaks(text,lbChar) {
 
     // Split the text into lines
@@ -3493,11 +3504,13 @@ var Parse = function Parse() {
     
     // Iterate over each line
     const modifiedLines = lines.map(line => {
-      // Check if the line starts with "I: linebreak" or "I:linebreak"
-      if (line.startsWith('I: linebreak') || line.startsWith('I:linebreak')) {
+      // Check if the line is a tag
+      if (isTagLine(line)) {
         // Return the line unchanged if it matches the condition
         return line;
-      } else {
+      }
+      else 
+      {
         // Replace all instances of the lbChar with a a new line
         return line.replaceAll(lbChar, '\n'); 
       }
