@@ -27061,9 +27061,6 @@ function ScanTuneForCustomTimingInjection(theTune){
 	// Default is typical hornpipe swing factor
 	gSwingFactor = gAutoSwingFactor;
 
-	// Zero out the swing offset
-	gSwingOffset = 0;
-
 	var searchRegExp;
 	var doAddSwing;
 
@@ -27103,18 +27100,6 @@ function ScanTuneForCustomTimingInjection(theTune){
 			}
 		}
 
-		if (theParams.length > 1){
-
-			var theSwingOffsetValueFound = theParams[1];
-			
-			var swingOffsetValue = parseInt(theSwingOffsetValueFound);
-
-			if (!isNaN(swingOffsetValue)){
-
-				gSwingOffset = swingOffsetValue;
-
-			}
-		}
 	}
 
 	// Have they disabled swing?
@@ -27707,7 +27692,7 @@ function SwingExplorer(){
 }
 
 //
-// Reload the player with a new swing offset
+// Reload the player with a new swing setting
 //
 function SwingExplorerRegenerate(){
 
@@ -27723,19 +27708,6 @@ function SwingExplorerRegenerate(){
 		gSwingFactor = theSwingFactor;
 
 		bDoReload = true;
-	}
-
-	// Grab the swing offset
-	var theSwingOffset = document.getElementById("swing_explorer_offset").value;
-
-	theSwingOffset = parseInt(theSwingOffset);
-
-	if ((!isNaN(theSwingOffset)) && (theSwingOffset >= 0)){
-
-		gSwingOffset = theSwingOffset;
-
-		bDoReload = true;
-
 	}
 
 	if (bDoReload){
@@ -27765,9 +27737,6 @@ function ScanTuneForSwingExplorer(theTune){
 
 	// Default is typical hornpipe swing factor
 	gSwingFactor = 0.0;
-
-	// Zero out the swing offset
-	gSwingOffset = 0;
 
 	// Check if autoswing enabled
 	if (gAutoSwingHornpipes){
@@ -27811,18 +27780,6 @@ function ScanTuneForSwingExplorer(theTune){
 			}
 		}
 
-		if (theParams.length > 1){
-
-			var theSwingOffsetValueFound = theParams[1];
-			
-			var swingOffsetValue = parseInt(theSwingOffsetValueFound);
-
-			if (!isNaN(swingOffsetValue)){
-
-				gSwingOffset = swingOffsetValue;
-
-			}
-		}
 	}
 
 }
@@ -27844,28 +27801,9 @@ function SwingExplorerInject(){
 		bDoInjectSwingFactor = true;
 	}
 
-	var bDoInjectSwingOffset = false;
-
 	if (bDoInjectSwingFactor){
 
-		// Grab the swing offset
-		var theSwingOffset = document.getElementById("swing_explorer_offset").value;
-
-		theSwingOffset = parseInt(theSwingOffset);
-
-		if ((!isNaN(theSwingOffset)) && (theSwingOffset >= 0)){
-
-			bDoInjectSwingOffset = true;
-
-		}
-
 		var theInjectString = "%swing "+theSwingFactor;
-
-		if (bDoInjectSwingOffset){
-
-			theInjectString += " "+theSwingOffset;
-
-		}
 
 		//
 		// Strip any existing %swing out of the current tune
@@ -27943,8 +27881,6 @@ function SwingExplorerInject(){
 // Swing Explorer Dialog
 //
 
-var gSwingExplorerFactor = 0;
-var gSwingExplorerOffset = 0;
 var gPlayerABCSwingExplorerOriginal = null;
 var gPlayerABCSwingExplorerProcessed = null;
 
@@ -28119,12 +28055,11 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 			modal_msg += '<p class="configure_swingexplorer_text_mobile" style="text-align:center;margin:0px;margin-top:22px">';
 
 			modal_msg += 'Swing factor: <input style="width:80px;" id="swing_explorer_factor" type="number" min="-0.9" step="0.05" max=".9" title="Swing factor, range is -0.9 to 0.9" autocomplete="off"/>';
-			modal_msg += 'Swing offset (1/8 notes): <input style="width:50px;margin-right:0px;" id="swing_explorer_offset" type="number" min="0" step="1" max="12" title="Swing offset in 1/8 notes" autocomplete="off"/>';
 			modal_msg += '</p>';
 
 			modal_msg += '<p class="configure_swingexplorer_text_mobile" style="text-align:center;margin:0px;margin-top:22px">';
-			modal_msg += '<input id="swingexplorertest" class="swingexplorertest button btn btn-swingexplorertest" onclick="SwingExplorerRegenerate();" type="button" value="Reload Tune with Changed Swing Settings" title="Reloads the tune into the player with the entered swing factor and offset">';
-			modal_msg += '<input id="swingexplorerinject" class="swingexplorerinject button btn btn-swingexplorerinject" onclick="SwingExplorerInject();" type="button" style="margin-right:0px;" value="Inject Swing into the ABC" title="Injects the current swing factor and offset into the tune ABC">';
+			modal_msg += '<input id="swingexplorertest" class="swingexplorertest button btn btn-swingexplorertest" onclick="SwingExplorerRegenerate();" type="button" value="Reload Tune with Changed Swing Setting" title="Reloads the tune into the player with the entered swing factor">';
+			modal_msg += '<input id="swingexplorerinject" class="swingexplorerinject button btn btn-swingexplorerinject" onclick="SwingExplorerInject();" type="button" style="margin-right:0px;" value="Inject Swing into the ABC" title="Injects the current swing factor into the tune ABC">';
 			modal_msg += '</p>';
 			modal_msg += '<a id="swingexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#swing_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the Swing Explorer" class="dialogcornerbutton">?</a>';
 		}
@@ -28133,11 +28068,10 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 			modal_msg += '<p class="configure_swingexplorer_text" style="text-align:center;margin:0px;margin-top:22px">';
 
 			modal_msg += 'Swing factor (range is -0.9 to 0.9): <input style="width:90px;" id="swing_explorer_factor" type="number" min="-0.9" step="0.05" max=".9" title="Swing factor, range is -0.9 to 0.9" autocomplete="off"/>';
-			modal_msg += 'Swing offset (1/8 notes): <input style="width:60px;margin-right:0px;" id="swing_explorer_offset" type="number" min="0" step="1" max="12" title="Swing offset in 1/8 notes" autocomplete="off"/>';
 			modal_msg += '</p>';
 			modal_msg += '<p class="configure_swingexplorer_text" style="text-align:center;margin:0px;margin-top:22px">';
-			modal_msg += '<input id="swingexplorertest" class="swingexplorertest button btn btn-swingexplorertest" onclick="SwingExplorerRegenerate();" type="button" value="Reload Tune with Changed Swing Settings" title="Reloads the tune into the player with the entered swing factor and offset">';
-			modal_msg += '<input id="swingexplorerinject" class="swingexplorerinject button btn btn-swingexplorerinject" onclick="SwingExplorerInject();" type="button" style="margin-right:0px;" value="Inject Swing into the ABC" title="Injects the current swing factor and offset into the tune ABC">';
+			modal_msg += '<input id="swingexplorertest" class="swingexplorertest button btn btn-swingexplorertest" onclick="SwingExplorerRegenerate();" type="button" value="Reload Tune with Changed Swing Setting" title="Reloads the tune into the player with the entered swing factor">';
+			modal_msg += '<input id="swingexplorerinject" class="swingexplorerinject button btn btn-swingexplorerinject" onclick="SwingExplorerInject();" type="button" style="margin-right:0px;" value="Inject Swing into the ABC" title="Injects the current swing factor into the tune ABC">';
 			modal_msg += '</p>';
 			modal_msg += '<a id="swingexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#swing_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the Swing Explorer" class="dialogcornerbutton">?</a>';
 
@@ -28167,7 +28101,6 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 
 		// Set the initial swing factor and offset
 		document.getElementById("swing_explorer_factor").value = gSwingFactor;
-		document.getElementById("swing_explorer_offset").value = gSwingOffset;
 
 		var theOKButtons = document.getElementsByClassName("modal_flat_ok");
 

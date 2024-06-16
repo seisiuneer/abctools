@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-       
+ 
         <style>
 
 		p {
@@ -1522,28 +1522,26 @@
             <p class="code">R:Hornpipe</p>
             <p>detected in the ABC will automatically have swing added during playback.</p>
             <p>The auto-swing factor may be set in the <strong>Settings</strong> dialog.</p>
+            <p><strong>Note:</strong> Since this video was made, you no longer have to specify a swing offset, the tool now automatically offsets the swing for you if required.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/xQp3tuFyBPM" title="Hornpipe Swing" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <hr>
             <p style="text-align: center;"><strong>Manually Adding Swing to Tunes</strong></p>
+            <p><strong>Note:</strong> Since this video was made, you no longer have to specify a swing offset, the tool now automatically offsets the swing for you if required.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/NpgJzVDRHwA" title="Adding Swing Manually" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p>If the tune is not marked as a Hornpipe, you can manually add swing to any tune in 2/4, 3/4, 4/4, 6/8, 9/8, and 12/8 meter by including the following comment-based annotation anywhere in the tune ABC:</p>
-            <p class="code">%swing swing_factor (optional: Range is -0.9 to 0.9) swing_offset (optional: If used, generally set to 1 or 2)</p>
+            <p class="code">%swing swing_factor (optional: Range is -0.9 to 0.9)</p>
             <p>The swing factor lengthens the primary beats by the swing factor and shorten subsequent beats accordingly.</p>
-            <p>The swing offset offsets the swing pattern by the specified number of eighth notes.</p>
-            <p>Swing factor must be specified to use the swing offset feature.</p>
-            <p>The optional swing_offset parameter is required for tunes if there is a one or two eighth note pickup (most commonly found in Jigs, Slip Jigs, and Slides), otherwise the swing pattern will be out-of-sync with the tune.</p>
             <p>If no swing factor is provided, it will default to the Hornpipe swing factor set in the <strong>Settings</strong> dialog.</p>
-            <p>If no swing offset is provided, it is set to zero.</p>
-            <p><strong>Example 1:</strong> To swing a reel with the default Hornpipe swing factor and no swing offset:</p>
+            <p><strong>Example 1:</strong> To swing a reel with the default Hornpipe swing factor:</p>
             <p class="code">%swing</p>
-            <p><strong>Example 2:</strong> To swing a reel with a 0.25 swing factor and no swing offset:</p>
+            <p><strong>Example 2:</strong> To swing a reel with a 0.25 swing factor:</p>
             <p class="code">%swing .25</p>
-            <p><strong>Example 3:</strong> To swing a jig with a 0.25 swing factor and a single pickup eighth note preceding the main tune:</p>
-            <p class="code">%swing .25 1</p>
-            <p><strong>Example 4:</strong> To swing a slip jig with a 0.25 swing factor and two pickup eighth notes preceding the main tune:</p>
-            <p class="code">%swing .25 2</p>
+            <p><strong>Example 3:</strong> To swing a jig with a 0.25 swing factor:</p>
+            <p class="code">%swing .25</p>
+            <p><strong>Example 4:</strong> To swing a slip jig with a 0.25 swing factor:</p>
+            <p class="code">%swing .25</p>
             <p><strong>Example 5:</strong></p>
-            <p>To get a typical Scottish snap feel in a Hornpipe with a -0.5 swing factor resulting in a shortened first beat, lengthened second beat, with no swing offset:</p>
+            <p>To get a typical Scottish snap feel in a Hornpipe with a -0.5 swing factor resulting in a shortened first beat, lengthened second beat:</p>
             <p class="code">%swing -0.5</p>
             <p>Any manually added %swing value always overrides the automatic injected swing factor for Hornpipes.</p>
             <p>To disable swing for a Hornpipe, you may add %noswing anywhere in the tune ABC:</p>
@@ -1552,15 +1550,15 @@
             <p>%noswing takes precedence over any default Hornpipe swing or manually added %swing</p>
             <p><strong>MIDI command to add swing</strong></p>
             <p>You may also use a MIDI command to add swing, swing_percentages is an integer percentage instead of a fractional value as used for the %swing directive</p>
-            <p class="code">%%MIDI abctt:swing swing_percentage (Range is -100 to 100) swing_offset (optional: If used, generally set to 1 or 2)</p>
-            <p><strong>Example 1:</strong> To swing a reel with a 25% swing factor and no swing offset:</p>
+            <p class="code">%%MIDI abctt:swing swing_percentage (Range is -100 to 100)</p>
+            <p><strong>Example 1:</strong> To swing a reel with a 25% swing factor:</p>
             <p class="code">%%MIDI abctt:swing 25</p>
-            <p><strong>Example 2:</strong> To swing a jig with a 25% swing factor and a single pickup eighth note preceding the main tune:</p>
-            <p class="code">%%MIDI abctt:swing 25 1</p>
-            <p><strong>Example 3:</strong> To swing a slip jig with a 15% swing factor and two pickup eighth notes preceding the main tune:</p>
-            <p class="code">%%MIDI abctt:swing 15 2</p>
+            <p><strong>Example 2:</strong> To swing a jig with a 25% swing factor:</p>
+            <p class="code">%%MIDI abctt:swing 25</p>
+            <p><strong>Example 3:</strong> To swing a slip jig with a 15% swing factor:</p>
+            <p class="code">%%MIDI abctt:swing 15</p>
             <p><strong>Example 4:</strong></p>
-            <p>To get a typical Scottish snap feel in a Hornpipe with a -50% swing factor resulting in a shortened first beat, lengthened second beat, with no swing offset:</p>
+            <p>To get a typical Scottish snap feel in a Hornpipe with a -50% swing factor resulting in a shortened first beat, lengthened second beat:</p>
             <p class="code">%%%MIDI abctt:swing -50</p>
             <p>You can also disable the swing with a MIDI command:</p>
             <p class="code">%%MIDI abctt:swing 0</p>
@@ -2079,19 +2077,20 @@
             <p><strong>Note:</strong> This feature is primarily for use with single-voice tunes. Unpredictable results may occur with multi-voice tunes.</p>
             <hr class="hidden-print" id="swing_explorer">
             <h1 class="page_break_always">Swing Explorer<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>Brings up a player where you can experiment with playing the currently selected tune using different swing factors and offsets and then optionally inject them into the tune:</p>
+            <p>Brings up a player where you can experiment with playing the currently selected tune using different swing factors and then optionally inject them into the tune:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/swing_explorer_5.jpg"/>
+                <img class="image" loading="lazy" src="img/swing_explorer_6.jpg"/>
             </div>
             <p>This makes it quick and easy to find the right swing settings for any tune:</p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/MyeSi46LsY8" title="Swing Explorer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+            <p><strong>Note:</strong> Since this video was made, you no longer have to specify a swing offset, the tool now automatically offsets the swing for you if required.</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/MyeSi46LsY8" title="Swing Explorer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>            
             <p>The player controls works the same way as the standard player.</p>
-            <p>To test playing the tune with a new swing factor and swing offset, enter a swing factor (Range is -0.9 to 0.9) and swing offset (in 1/8th notes, set to the number of pickup notes for jigs and other */8 (and possibly 3/4) meter tunes to align the swing with the tune) and then click <strong>Reload Tune with Changed Swing Settings</strong>.</p>
-            <p>The tune will be reloaded into the player with the new swing settings applied.</p>
-            <p>Click the play button to play the tune to check the new swing settings.</p>
-            <p>If you are happy with your new swing settings and want to apply them to the tune, click <strong>Inject Swing into the ABC</strong> to inject your new swing values into the tune's ABC, replacing any previous swing factor and swing offset values.</p>
+            <p>To test playing the tune with a new swing factor, enter a swing factor (Range is -0.9 to 0.9) and then click <strong>Reload Tune with Changed Swing Setting</strong>.</p>
+            <p>The tune will be reloaded into the player with the new swing setting applied.</p>
+            <p>Click the play button to play the tune to check the new swing setting.</p>
+            <p>If you are happy with your new swing setting and want to apply them to the tune, click <strong>Inject Swing into the ABC</strong> to inject your new swing value into the tune's ABC, replacing any previous swing factor value.</p>
             <p>To exit the Swing Explorer, click <strong>Close</strong>.</p>
-            <p>For more details on swing factor and swing offset, see this section:</p>
+            <p>For more details on swing factor, see this section:</p>
             <p style="text-align: center;"><a style="text-decoration:none;" href="#adding_swing">Adding Playback Swing to Tunes</a></p>
             <hr class="hidden-print" id="grace_duration_explorer">
             <h1 class="page_break_always">Grace Duration Explorer<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -3229,7 +3228,7 @@
             %hyperlink https://michaeleskin.com<br/>
             %add_link_to_thesession<br/>
             %add_playback_link 0 0 0 fluid<br/>
-            %swing 0.25 0<br/>
+            %swing 0.25<br/>
             %noswing<br/>
             %bodhran_tuning A<br/>
             %bodhran_pitch A<br/>
@@ -3367,7 +3366,7 @@
             <hr>
             <p><strong>Auto-swing scale factor (range is -0.9 to 0.9, default for Hornpipes is 0.25)</strong> - Sets the level of swing used by the Hornpipe play auto-swing feature.</p>
             <p>The swing factor lengthens the primary beats by the swing factor and shorten subsequent beats accordingly.</p>
-            <p>For full details on swing factor and swing offset, see this section:</p>
+            <p>For full details on swing factor, see this section:</p>
             <p style="text-align: center;"><a style="text-decoration:none;" href="#adding_swing">Adding Playback Swing to Tunes</a></p>
             <hr>
             <p><strong>Rolls indicated in the ABC with ~ use the custom abcjs roll playback solution</strong></p>

@@ -12,7 +12,6 @@ var gRhythmPatternOverrides = {};
 // MAE 23 Oct 2023 - For adding swing
 var gAddSwing = false;
 var gSwingFactor = 0.25;
-var gSwingOffset = 0;
 
 // MAE 2 Nov 2023 - For gracenotes
 var gGraceDuration = 0.045;
@@ -4450,7 +4449,6 @@ var parseDirective = {};
         }
 
         midi_params.push(midi[0].intt);
-        if (midi.length === 2) midi_params.push(midi[1].intt);
       }
     } else if (midiCmdParam2Integer.indexOf(midi_cmd) >= 0) {
       // TWO INT PARAMETERS
@@ -11898,7 +11896,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
 
   }
 
-  function processSwing(swing, offset){
+  function processSwing(swing){
 
     //console.log("processSwing "+swing+" "+offset);
     
@@ -11914,12 +11912,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       }
     }
 
-    if (offset && (!isNaN(offset)) && (offset > 0)){
-      gSwingOffset = offset;
-    }
-
   }
-
 
   flatten = function flatten(voices, options, percmap_, midiOptions) {
     if (!options) options = {};
@@ -12004,7 +11997,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
 
     // MAE 20 May 2024
     if (midiOptions.swing && ((midiOptions.swing[0]!=null) && (midiOptions.swing[0]!=undefined))){
-      processSwing(midiOptions.swing[0], midiOptions.swing[1]);
+      processSwing(midiOptions.swing[0]);
     }
 
     if (midiOptions.bassprog && ((midiOptions.bassprog[1]!=null) && (midiOptions.bassprog[1]!=undefined))){
@@ -12194,7 +12187,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             break;
           // MAE 21 May 2024
           case "swing":
-            processSwing(element.swing,element.offset);
+            processSwing(element.swing);
             break;  
           // MAE 22 May 2024
           case "bassprog":
@@ -14811,8 +14804,7 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                       //console.log("Handle inline swing");
                       voices[voiceNumber].push({
                         el_type: 'swing',
-                        swing: elem.params[0],
-                        offset: elem.params[1]
+                        swing: elem.params[0]                      
                       });
                       break;
 
@@ -15620,6 +15612,9 @@ function CreateSynth(theABC) {
       self.flattened = options.visualObj.setUpAudio(params);
       var meter = options.visualObj.getMeterFraction();
       if (meter.den) self.meterSize = options.visualObj.getMeterFraction().num / options.visualObj.getMeterFraction().den;
+
+      self.pickupLength = options.visualObj.getPickupLength();
+
     } else if (options.sequence) self.flattened = options.sequence;else return Promise.reject(new Error("Must pass in either a visualObj or a sequence"));
     self.millisecondsPerMeasure = options.millisecondsPerMeasure ? options.millisecondsPerMeasure : options.visualObj ? options.visualObj.millisecondsPerMeasure(self.flattened.tempo) : 1000;
     self.beatsPerMeasure = options.visualObj ? options.visualObj.getBeatsPerMeasure() : 4;
@@ -15849,11 +15844,16 @@ function CreateSynth(theABC) {
 
       // MAE 25 Oct 2023 - Start for swing injection
 
-      //debugger;
-
       if (gAddSwing){
 
         var beatsPerMeasure = self.beatsPerMeasure;
+
+        // MAE 16 June 2024 -  Can now get the pickup length from the tune
+        // No need to manually inject it
+        var theSwingOffset = self.pickupLength/0.125;
+        theSwingOffset = Math.floor(theSwingOffset);
+
+        //console.log("theSwingOffset = "+theSwingOffset);
 
         switch (beatsPerMeasure){
 
@@ -15861,19 +15861,19 @@ function CreateSynth(theABC) {
 
             if (self.meterSize == .5){
 
-              addSwing(noteMapTracks, gSwingFactor, beatsPerMeasure, "polka");
+              addSwing(noteMapTracks, gSwingFactor, theSwingOffset, beatsPerMeasure, "polka");
 
             }
             else
             if (self.meterSize == .75){
 
-              addSwing(noteMapTracks, gSwingFactor, beatsPerMeasure, "jig");
+              addSwing(noteMapTracks, gSwingFactor, theSwingOffset, beatsPerMeasure, "jig");
 
             }
             else
             if (self.meterSize == 1){
 
-              addSwing(noteMapTracks, gSwingFactor, beatsPerMeasure*4, "hornpipe");
+              addSwing(noteMapTracks, gSwingFactor, theSwingOffset, beatsPerMeasure*4, "hornpipe");
 
             }
 
@@ -15883,13 +15883,13 @@ function CreateSynth(theABC) {
 
             if (self.meterSize == 0.75){
 
-              addSwing(noteMapTracks, gSwingFactor, beatsPerMeasure, "waltz");
+              addSwing(noteMapTracks, gSwingFactor, theSwingOffset, beatsPerMeasure, "waltz");
 
             }
             else
             if (self.meterSize == 1.125){
 
-              addSwing(noteMapTracks, gSwingFactor, beatsPerMeasure, "slipjig");
+              addSwing(noteMapTracks, gSwingFactor, theSwingOffset, beatsPerMeasure, "slipjig");
 
             }
 
@@ -15899,13 +15899,13 @@ function CreateSynth(theABC) {
 
             if (self.meterSize == 1){
 
-              addSwing(noteMapTracks, gSwingFactor, beatsPerMeasure*2, "hornpipe");
+              addSwing(noteMapTracks, gSwingFactor, theSwingOffset, beatsPerMeasure*2, "hornpipe");
 
             }
             else
             if (self.meterSize == 1.5){
               
-              addSwing(noteMapTracks, gSwingFactor, beatsPerMeasure, "slide");
+              addSwing(noteMapTracks, gSwingFactor, theSwingOffset, beatsPerMeasure, "slide");
 
             }
             break;
@@ -16205,9 +16205,9 @@ function CreateSynth(theABC) {
   };
 
   // this is a first attempt at adding a little bit of swing to the output
-  function addSwing(noteMapTracks, swing, beatsPerMeasure, style) {
+  function addSwing(noteMapTracks, swing, offset, beatsPerMeasure, style) {
 
-    // console.log("addSwing", noteMapTracks, swing, beatsPerMeasure)
+    // console.log("addSwing", noteMapTracks, swing, offset, beatsPerMeasure)
     // Swing should be between -0.9 and 0.9. Make sure the input is between them.
     // Then that is the percentage to add to the first beat, so a negative number moves the second beat earlier.
     // A value of zero is the same as no swing at all.
@@ -16242,7 +16242,7 @@ function CreateSynth(theABC) {
           
             var event = track[i];
 
-            var theStart = event.start - (gSwingOffset * 0.125);
+            var theStart = event.start - (offset * 0.125);
 
             if (theStart >= 0){
           
@@ -16303,7 +16303,7 @@ function CreateSynth(theABC) {
 
             var duration = (event.end - event.start);
             
-            var theStart = event.start - (gSwingOffset * 0.125);
+            var theStart = event.start - (offset * 0.125);
 
             //console.log("theStart: "+theStart+" duration: "+duration)
 
@@ -16400,7 +16400,7 @@ function CreateSynth(theABC) {
 
             var duration = (event.end - event.start);
 
-            var theStart = event.start - (gSwingOffset * 0.125);
+            var theStart = event.start - (offset * 0.125);
 
             //console.log("theStart: "+theStart+" duration: "+duration)
 
@@ -16486,7 +16486,7 @@ function CreateSynth(theABC) {
 
             var duration = (event.end - event.start);
             
-            var theStart = event.start - (gSwingOffset * 0.125);
+            var theStart = event.start - (offset * 0.125);
 
             //console.log("theStart: "+theStart+" duration: "+duration)
 
