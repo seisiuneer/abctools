@@ -11899,7 +11899,6 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
   function processSwing(swing){
 
     //console.log("processSwing "+swing+" "+offset);
-    
     if (!isNaN(swing)){
 
       if (((swing > 0) && (swing <= 100)) || ((swing < 0) && (swing >= -100))) {
