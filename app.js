@@ -37081,7 +37081,7 @@ function DoFileRead(file,doAppend){
 
 					const midiData = event.target.result;
 
-					if (midiData.byteLength > 30720){
+					if (midiData.byteLength > 40960){
 
 						document.getElementById("loading-bar-spinner").style.display = "none";
 
@@ -37092,7 +37092,7 @@ function DoFileRead(file,doAppend){
 							
 						}
 
-						var thePrompt = "MIDI file import is limited to a maximum file size of 30 KBytes.";
+						var thePrompt = "MIDI file import is limited to a maximum file size of 40 KBytes.";
 						
 						thePrompt = makeCenteredPromptString(thePrompt);
 
@@ -37173,7 +37173,19 @@ function DoFileRead(file,doAppend){
 
 							}
 
-							data = data.replaceAll("Music21 Fragment","Imported from "+file.name);
+							var fileName = file.name.replace(".mid","");
+							fileName = fileName.replace(".MID","");
+							fileName = fileName.replace(".midi","");
+							fileName = fileName.replace(".MIDI","");
+
+							// Replace any _ or - with spaces
+							fileName = fileName.replaceAll("_"," ");
+							fileName = fileName.replaceAll("-"," ");
+
+							// Intelligent title capitalize
+							fileName = doTitleCaps(fileName);
+
+							data = data.replaceAll("Music21 Fragment",fileName);
 							data = data.replaceAll("Music21","");
 
 							// Handle response from server
