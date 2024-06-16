@@ -36750,6 +36750,7 @@ function importMusicXML(theXML,fileName){
 		// Replace any _ or - with spaces
 		fileName = fileName.replaceAll("_"," ");
 		fileName = fileName.replaceAll("-"," ");
+		fileName = fileName.replaceAll("  "," ");
 
 		// Intelligent title capitalize
 		fileName = doTitleCaps(fileName);
@@ -37181,6 +37182,7 @@ function DoFileRead(file,doAppend){
 							// Replace any _ or - with spaces
 							fileName = fileName.replaceAll("_"," ");
 							fileName = fileName.replaceAll("-"," ");
+							fileName = fileName.replaceAll("  "," ");
 
 							// Intelligent title capitalize
 							fileName = doTitleCaps(fileName);
