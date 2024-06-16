@@ -191,6 +191,10 @@ var gStrumChordsDivider = 8;
 var gBassOctaveShift = 0;
 var gChordOctaveShift = 0;
 
+// Added 16 Jun 2024 
+// For Paul Rosen's gchord implementation
+var gUseGChord = false;
+
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
@@ -11674,6 +11678,7 @@ module.exports = strTranspose;
 // It also extracts guitar chords to a separate voice and resolves their rhythm.
 
 var flatten;
+var ChordTrack = __webpack_require__(/*! ./chord-track */ "./src/synth/chord-track.js");
 var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/abc_common.js");
 var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pitches-to-perc.js");
 (function () {
@@ -12013,10 +12018,25 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
 
     if (voices.length > 0 && voices[0].length > 0) pickupLength = voices[0][0].pickupLength;
 
+    if (gUseGChord){
+
+      // For resolving chords.
+      if (options.bassprog !== undefined && !midiOptions.bassprog) midiOptions.bassprog = [options.bassprog];
+      if (options.bassvol !== undefined && !midiOptions.bassvol) midiOptions.bassvol = [options.bassvol];
+      if (options.chordprog !== undefined && !midiOptions.chordprog) midiOptions.chordprog = [options.chordprog];
+      if (options.chordvol !== undefined && !midiOptions.chordvol) midiOptions.chordvol = [options.chordvol];
+      if (options.gchord !== undefined && !midiOptions.gchord) midiOptions.gchord = [options.gchord];
+
+      chordTrack = new ChordTrack(voices.length, options.chordsOff, midiOptions, meter);
+    }
+
     // First adjust the input to resolve ties, set the starting time for each note, etc. That will make the rest of the logic easier
     preProcess(voices, options);
     for (var i = 0; i < voices.length; i++) {
       transpose = 0;
+      if (gUseGChord){
+        chordTrack.setTranspose(transpose);
+      }
       lastNoteDurationPosition = -1;
       var voice = voices[i];
       currentTrack = [{
@@ -12026,6 +12046,9 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       }];
       currentTrackName = undefined;
       lastBarTime = 0;
+      if (gUseGChord){
+        chordTrack.setLastBarTime(0);
+      }
       var voiceOff = false;
       if (options.voicesOff === true) voiceOff = true;else if (options.voicesOff && options.voicesOff.length && options.voicesOff.indexOf(i) >= 0) voiceOff = true;
       for (var j = 0; j < voice.length; j++) {
@@ -12039,8 +12062,13 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             };
             break;
           case "note":
-            var setChordTrack = writeNote(element, voiceOff);
-            if (setChordTrack) chordSourceTrack = i;
+            if (gUseGChord){
+              writeNote(element, voiceOff);
+            }
+            else{
+              var setChordTrack = writeNote(element, voiceOff);
+              if (setChordTrack) chordSourceTrack = i;
+            }
             break;
           case "key":
             accidentals = setKeySignature(element);
@@ -12050,32 +12078,39 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
 
             if (!startingMeter) startingMeter = element;
             meter = element;
+            if (gUseGChord){
+              chordTrack.setMeter(meter);
+            }
             beatFraction = getBeatFraction(meter);
             alignDrumToMeter();
 
-            // MAE 18 May 2024 - Change the default feel for jig, slip jig, and slide backup
-            if (meter.den == '8'){
-              if ((meter.num == '6') || (meter.num == '9') || (meter.num == '12')) {
-                gBackupBoomFraction = 1.25;
-                gBackupChickFraction = 0.4;
-              }
-            }
+            // Dont change the boom chick fractions from the default if using gchord
+            if (!gUseGChord){
 
-            // Reels/hornpipes have their own override
-            if (meter.den == '4'){
-              if (meter.num == '4'){
-                gBackupBoomFraction = 0.8;
-                gBackupChickFraction = 0.4;
+              // MAE 18 May 2024 - Change the default feel for jig, slip jig, and slide backup
+              if (meter.den == '8'){
+                if ((meter.num == '6') || (meter.num == '9') || (meter.num == '12')) {
+                  gBackupBoomFraction = 1.25;
+                  gBackupChickFraction = 0.4;
+                }
               }
-              // Polkas have their own override
-              if (meter.num == '2'){
-                gBackupBoomFraction = 0.6;
-                gBackupChickFraction = 0.6;
-              }
-              // Waltzes have their own override
-              if (meter.num == '3'){
-                gBackupBoomFraction = 0.75;
-                gBackupChickFraction = 0.5;
+
+              // Reels/hornpipes have their own override
+              if (meter.den == '4'){
+                if (meter.num == '4'){
+                  gBackupBoomFraction = 0.8;
+                  gBackupChickFraction = 0.4;
+                }
+                // Polkas have their own override
+                if (meter.num == '2'){
+                  gBackupBoomFraction = 0.6;
+                  gBackupChickFraction = 0.6;
+                }
+                // Waltzes have their own override
+                if (meter.num == '3'){
+                  gBackupBoomFraction = 0.75;
+                  gBackupChickFraction = 0.5;
+                }
               }
             }
 
@@ -12097,22 +12132,42 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             break;
           case "tempo":
             if (!startingTempo) startingTempo = element.qpm;else tempoChangeFactor = element.qpm ? startingTempo / element.qpm : 1;
+
+            if (gUseGChord){
+              chordTrack.setTempoChangeFactor(tempoChangeFactor);
+            }
             break;
           case "transpose":
             transpose = element.transpose;
+            if (gUseGChord){
+              chordTrack.setTranspose(transpose);
+            }
             break;
           case "bar":
-            if (chordTrack.length > 0 && (chordSourceTrack === false || i === chordSourceTrack)) {
-              resolveChords(lastBarTime, timeToRealTime(element.time));
-              currentChords = [];
+            if (gUseGChord){
+              chordTrack.barEnd(element);
+            }
+            else{
+              if (chordTrack.length > 0 && (chordSourceTrack === false || i === chordSourceTrack)) {
+                resolveChords(lastBarTime, timeToRealTime(element.time));
+                currentChords = [];
+              }
             }
             barAccidentals = [];
             if (i === 0)
               // Only write the drum part on the first voice so that it is not duplicated.
               writeDrum(voices.length + 1);
-            hasRhythmHead = false; // decide whether there are rhythm heads each measure.
-            chordLastBar = lastChord;
+            if (gUseGChord){
+              chordTrack.setRhythmHead(false); // decide whether there are rhythm heads 
+            }
+            if (!gUseGChord){
+              hasRhythmHead = false; // decide whether there are rhythm heads each measure.
+              chordLastBar = lastChord;
+            }
             lastBarTime = timeToRealTime(element.time);
+            if (gUseGChord){
+              chordTrack.setLastBarTime(lastBarTime);
+            }
             break;
           case "bagpipes":
             bagpipes = true;
@@ -12139,8 +12194,13 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             drumDefinition = normalizeDrumDefinition(element.params);
             alignDrumToMeter();
             break;
-          case "gchord":
-            if (!options.chordsOff) gChordTacet = element.tacet;
+          case "gchordOn":
+            if (gUseGChord){
+              chordTrack.gChordOn(element);
+            }
+            else{
+              if (!options.chordsOff) gChordTacet = element.tacet;
+            }
             break;
           case "beat":
             stressBeat1 = element.beats[0];
@@ -12157,6 +12217,13 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
           case "beataccents":
             doBeatAccents = element.value;
             break;
+
+          case "gchord":
+            if (gUseGChord){
+              chordTrack.paramChange(element);
+            }
+            break;
+
           // MAE 17 May 2024
           case "boomchick":
             //console.log("got inline boomchick");
@@ -12188,24 +12255,43 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
           case "swing":
             processSwing(element.swing);
             break;  
+
           // MAE 22 May 2024
           case "bassprog":
-            bassInstrument = element.value;
-            if ((element.octaveShift != undefined) && (element.octaveShift != null)){
-              gBassOctaveShift = element.octaveShift;
+            if (gUseGChord){
+              chordTrack.paramChange(element);
+            }
+            else{
+              bassInstrument = element.value;
+              if ((element.octaveShift != undefined) && (element.octaveShift != null)){
+                gBassOctaveShift = element.octaveShift;
+              }
             }
             break;
           case "chordprog":
-            chordInstrument = element.value;   
-            if ((element.octaveShift != undefined) && (element.octaveShift != null)){
-              gChordOctaveShift = element.octaveShift;
-            }  
+            if (gUseGChord){
+              chordTrack.paramChange(element);
+            }
+            else{
+              chordInstrument = element.value;   
+              if ((element.octaveShift != undefined) && (element.octaveShift != null)){
+                gChordOctaveShift = element.octaveShift;
+              }  
+            }
             break;
           case "bassvol":
-            boomVolume = element.value;   
+            if (gUseGChord){
+              chordTrack.paramChange(element);
+            }else{
+              boomVolume = element.value;   
+            }
             break;
           case "chordvol":
-            chickVolume = element.value;   
+            if (gUseGChord){
+              chordTrack.paramChange(element);
+            }else{
+              chickVolume = element.value;   
+            }
             break;
           default:
             // This should never happen
@@ -12216,9 +12302,14 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       if (currentTrack[0].instrument === undefined) currentTrack[0].instrument = instrument ? instrument : 0;
       if (currentTrackName) currentTrack.unshift(currentTrackName);
       tracks.push(currentTrack);
-      if (!chordTrackEmpty())
-        // Don't do chords on more than one track, so turn off chord detection after we create it.
-        chordTrackFinished = true;
+      if (gUseGChord){
+        chordTrack.finish();
+      }
+      else{
+        if (!chordTrackEmpty())
+          // Don't do chords on more than one track, so turn off chord detection after we create it.
+          chordTrackFinished = true;
+      }
       if (drumTrack.length > 0)
         // Don't do drums on more than one track, so turn off drum after we create it.
         drumTrackFinished = true;
@@ -12226,8 +12317,13 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     // See if any notes are octaves played at the same time. If so, raise the pitch of the higher one.
     if (options.detuneOctave) findOctaves(tracks, parseInt(options.detuneOctave, 10));
 
-    if (!chordTrackEmpty()){
-      tracks.push(chordTrack);
+    if (gUseGChord){
+      chordTrack.addTrack(tracks);
+    }
+    else{
+      if (!chordTrackEmpty()){
+        tracks.push(chordTrack);
+      }
     }
 
     if (drumTrack.length > 0) tracks.push(drumTrack);
@@ -12785,7 +12881,15 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
 
     var trackStartingIndex = currentTrack.length;
     var velocity = processVolume(timeToRealTime(elem.time), voiceOff);
-    var setChordTrack = processChord(elem);
+    
+    var setChordTrack;
+
+    if (gUseGChord){
+      chordTrack.processChord(elem);
+    }
+    else{
+      setChordTrack = processChord(elem);
+    }
 
     // if there are grace notes, then also play them.
     // I'm not sure there is an exact rule for the length of the notes. My rule, unless I find
@@ -12837,13 +12941,18 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       // TODO-PER: Can also make a different sound on style=x and style=harmonic
       var ePitches = elem.pitches;
       if (elem.style === "rhythm") {
-        hasRhythmHead = true;
-        if (lastChord && lastChord.chick) {
-          ePitches = [];
-          for (var i2 = 0; i2 < lastChord.chick.length; i2++) {
-            var note2 = parseCommon.clone(elem.pitches[0]);
-            note2.actualPitch = lastChord.chick[i2];
-            ePitches.push(note2);
+        if (gUseGChord){
+          ePitches = chordTrack.setRhythmHead(true, elem);
+        }
+        else{
+          hasRhythmHead = true;
+          if (lastChord && lastChord.chick) {
+            ePitches = [];
+            for (var i2 = 0; i2 < lastChord.chick.length; i2++) {
+              var note2 = parseCommon.clone(elem.pitches[0]);
+              note2.actualPitch = lastChord.chick[i2];
+              ePitches.push(note2);
+            }
           }
         }
       }
@@ -14715,16 +14824,16 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                       });
                       break;
                     case "gchordoff":
-                      voices[voiceNumber].push({
-                        el_type: 'gchord',
-                        tacet: true
-                      });
+                       voices[voiceNumber].push({
+                          el_type: 'gchordOn',
+                          tacet: true
+                        });
                       break;
                     case "gchordon":
-                      voices[voiceNumber].push({
-                        el_type: 'gchord',
-                        tacet: false
-                      });
+                        voices[voiceNumber].push({
+                          el_type: 'gchordOn',
+                          tacet: false
+                        });
                       break;
                     case "beat":
                       voices[voiceNumber].push({
@@ -14817,29 +14926,39 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                       break;
 
                     case "chordprog": // MAE 22 May 2024
-                        //console.log("Handle inline chordprog");
-                        voices[voiceNumber].push({
-                          el_type: 'chordprog',
-                          value: elem.params[0],
-                          octaveShift: elem.params[1]
-                        });
-                        break;
+                      //console.log("Handle inline chordprog");
+                      voices[voiceNumber].push({
+                        el_type: 'chordprog',
+                        value: elem.params[0],
+                        octaveShift: elem.params[1]
+                      });
+                      break;
 
                     case "bassvol": // MAE 22 May 2024
-                        //console.log("Handle inline bassvol");
-                        voices[voiceNumber].push({
-                          el_type: 'bassvol',
-                          value: elem.params[0]
-                        });
-                        break;
+                      //console.log("Handle inline bassvol");
+                      voices[voiceNumber].push({
+                        el_type: 'bassvol',
+                        value: elem.params[0]
+                      });
+                      break;
 
                     case "chordvol": // MAE 22 May 2024
-                        //console.log("Handle inline chordvol");
+                      //console.log("Handle inline chordvol");
+                      voices[voiceNumber].push({
+                        el_type: 'chordvol',
+                        value: elem.params[0]
+                      });
+                      break;
+
+                    // MAE 16 Jun 2024
+                    case "gchord":
+                      if (gUseGChord){
                         voices[voiceNumber].push({
-                          el_type: 'chordvol',
-                          value: elem.params[0]
+                          el_type: elem.cmd,
+                          param: elem.params[0]
                         });
-                        break;
+                      }
+                      break;
 
                     default:
                       console.log("MIDI seq: midi cmd not handled: ", elem.cmd, elem);
@@ -15090,6 +15209,507 @@ function centsToFactor(cents) {
   return Math.pow(2, cents / 1200);
 }
 module.exports = centsToFactor;
+
+/***/ }),
+/***/ "./src/synth/chord-track.js":
+/*!**********************************!*\
+  !*** ./src/synth/chord-track.js ***!
+  \**********************************/
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+//
+// The algorithm for chords is:
+// - The chords are done in a separate track.
+// - If there are notes before the first chord, then put that much silence to start the track.
+// - The pattern of chord expression depends on the meter, and how many chords are in a measure.
+// - There is a possibility that a measure will have an incorrect number of beats, if that is the case, then
+// start the pattern anew on the next measure number.
+// - If a chord root is not A-G, then ignore it as if the chord wasn't there at all.
+// - If a chord modification isn't in our supported list, change it to a major triad.
+//
+// - There is a standard pattern of boom-chick for each time sig, or it can be overridden.
+// - For any unrecognized meter, play the full chord on each beat.
+//
+//  - If there is a chord specified that is not on a beat, move it earlier to the previous beat, unless there is already a chord on that beat.
+//  - Otherwise, move it later, unless there is already a chord on that beat.
+//  - Otherwise, ignore it. (TODO-PER: expand this as more support is added.)
+//
+// If there is any note in the melody that has a rhythm head, then assume the melody controls the rhythm, so there is no chord added for that entire measure.
+
+var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/abc_common.js");
+var ChordTrack = function ChordTrack(numVoices, chordsOff, midiOptions, meter) {
+  this.chordTrack = [];
+  this.chordTrackFinished = false;
+  this.chordChannel = numVoices; // first free channel for chords
+  this.currentChords = [];
+  this.lastChord;
+  this.chordLastBar;
+  this.chordsOff = !!chordsOff;
+  this.gChordTacet = this.chordsOff;
+  this.hasRhythmHead = false;
+  this.transpose = 0;
+  this.lastBarTime = 0;
+  this.meter = meter;
+  this.tempoChangeFactor = 1;
+  this.bassInstrument = midiOptions.bassprog && midiOptions.bassprog.length === 1 ? midiOptions.bassprog[0] : 0;
+  this.chordInstrument = midiOptions.chordprog && midiOptions.chordprog.length === 1 ? midiOptions.chordprog[0] : 0;
+  this.boomVolume = midiOptions.bassvol && midiOptions.bassvol.length === 1 ? midiOptions.bassvol[0] : 64;
+  this.chickVolume = midiOptions.chordvol && midiOptions.chordvol.length === 1 ? midiOptions.chordvol[0] : 48;
+
+  // This allows for an initial %%MIDI gchord with no string
+  if (midiOptions.gchord && (midiOptions.gchord.length>0)){
+    this.overridePattern = midiOptions.gchord ? parseGChord(midiOptions.gchord[0]) : undefined;
+  }
+  else{
+    this.overridePattern = undefined;
+  }
+};
+ChordTrack.prototype.setMeter = function (meter) {
+  this.meter = meter;
+};
+ChordTrack.prototype.setTempoChangeFactor = function (tempoChangeFactor) {
+  this.tempoChangeFactor = tempoChangeFactor;
+};
+ChordTrack.prototype.setLastBarTime = function (lastBarTime) {
+  this.lastBarTime = lastBarTime;
+};
+ChordTrack.prototype.setTranspose = function (transpose) {
+  this.transpose = transpose;
+};
+ChordTrack.prototype.setRhythmHead = function (isRhythmHead, elem) {
+  this.hasRhythmHead = isRhythmHead;
+  var ePitches = [];
+  if (isRhythmHead) {
+    if (this.lastChord && this.lastChord.chick) {
+      for (var i2 = 0; i2 < this.lastChord.chick.length; i2++) {
+        var note2 = parseCommon.clone(elem.pitches[0]);
+        note2.actualPitch = this.lastChord.chick[i2];
+        ePitches.push(note2);
+      }
+    }
+  }
+  return ePitches;
+};
+ChordTrack.prototype.barEnd = function (element) {
+  if (this.chordTrack.length > 0 && !this.chordTrackFinished) {
+    this.resolveChords(this.lastBarTime, timeToRealTime(element.time));
+    this.currentChords = [];
+  }
+  this.chordLastBar = this.lastChord;
+};
+ChordTrack.prototype.gChordOn = function (element) {
+  if (!this.chordsOff) this.gChordTacet = element.tacet;
+};
+ChordTrack.prototype.paramChange = function (element) {
+  switch (element.el_type) {
+    case "gchord":
+      this.overridePattern = parseGChord(element.param);
+      break;
+    case "bassprog":
+      this.bassInstrument = element.param;
+      break;
+    case "chordprog":
+      this.chordInstrument = element.param;
+      break;
+    case "bassvol":
+      this.boomVolume = element.param;
+      break;
+    case "chordvol":
+      this.chickVolume = element.param;
+      break;
+    default:
+      console.log("unhandled midi param", element);
+  }
+};
+ChordTrack.prototype.finish = function () {
+  if (!this.chordTrackEmpty())
+    // Don't do chords on more than one track, so turn off chord detection after we create it.
+    this.chordTrackFinished = true;
+};
+ChordTrack.prototype.addTrack = function (tracks) {
+  if (!this.chordTrackEmpty()) tracks.push(this.chordTrack);
+};
+ChordTrack.prototype.findChord = function (elem) {
+  if (this.gChordTacet) return 'break';
+
+  // TODO-PER: Just using the first chord if there are more than one.
+  if (this.chordTrackFinished || !elem.chord || elem.chord.length === 0) return null;
+
+  // Return the first annotation that is a regular chord: that is, it is in the default place or is a recognized "tacet" phrase.
+  for (var i = 0; i < elem.chord.length; i++) {
+    var ch = elem.chord[i];
+    if (ch.position === 'default') return ch.name;
+    if (this.breakSynonyms.indexOf(ch.name.toLowerCase()) >= 0) return 'break';
+  }
+  return null;
+};
+ChordTrack.prototype.interpretChord = function (name) {
+  // chords have the format:
+  // [root][acc][modifier][/][bass][acc]
+  // (The chord might be surrounded by parens. Just ignore them.)
+  // root must be present and must be from A-G.
+  // acc is optional and can be # or b
+  // The modifier can be a wide variety of things, like "maj7". As they are discovered, more are supported here.
+  // If there is a slash, then there is a bass note, which can be from A-G, with an optional acc.
+  // If the root is unrecognized, then "undefined" is returned and there is no chord.
+  // If the modifier is unrecognized, a major triad is returned.
+  // If the bass notes is unrecognized, it is ignored.
+  if (name.length === 0) return undefined;
+  if (name === 'break') return {
+    chick: []
+  };
+  var root = name.substring(0, 1);
+  if (root === '(') {
+    name = name.substring(1, name.length - 2);
+    if (name.length === 0) return undefined;
+    root = name.substring(0, 1);
+  }
+  var bass = this.basses[root];
+  if (!bass)
+    // If the bass note isn't listed, then this was an unknown root. Only A-G are accepted.
+    return undefined;
+  // Don't transpose the chords more than an octave.
+  var chordTranspose = this.transpose;
+  while (chordTranspose < -8) {
+    chordTranspose += 12;
+  }
+  while (chordTranspose > 8) {
+    chordTranspose -= 12;
+  }
+  bass += chordTranspose;
+  var bass2 = bass - 5; // The alternating bass is a 4th below
+  var chick;
+  if (name.length === 1) chick = this.chordNotes(bass, '');
+  var remaining = name.substring(1);
+  var acc = remaining.substring(0, 1);
+  if (acc === 'b' || acc === '♭') {
+    bass--;
+    bass2--;
+    remaining = remaining.substring(1);
+  } else if (acc === '#' || acc === '♯') {
+    bass++;
+    bass2++;
+    remaining = remaining.substring(1);
+  }
+  var arr = remaining.split('/');
+  chick = this.chordNotes(bass, arr[0]);
+  // If the 5th is altered then the bass is altered. Normally the bass is 7 from the root, so adjust if it isn't.
+  if (chick.length >= 3) {
+    var fifth = chick[2] - chick[0];
+    bass2 = bass2 + fifth - 7;
+  }
+  if (arr.length === 2) {
+    var explicitBass = this.basses[arr[1].substring(0, 1)];
+    if (explicitBass) {
+      var bassAcc = arr[1].substring(1);
+      var bassShift = {
+        '#': 1,
+        '♯': 1,
+        'b': -1,
+        '♭': -1
+      }[bassAcc] || 0;
+      bass = this.basses[arr[1].substring(0, 1)] + bassShift + chordTranspose;
+      bass2 = bass;
+    }
+  }
+  return {
+    boom: bass,
+    boom2: bass2,
+    chick: chick
+  };
+};
+ChordTrack.prototype.chordNotes = function (bass, modifier) {
+  var intervals = gChordIntervals[modifier];
+  if (!intervals) {
+    if (modifier.slice(0, 2).toLowerCase() === 'ma' || modifier[0] === 'M') intervals =gChordIntervals.M;else if (modifier[0] === 'm' || modifier[0] === '-') intervals = gChordIntervals.m;else intervals = gChordIntervals.M;
+  }
+  bass += 12; // the chord is an octave above the bass note.
+  var notes = [];
+  for (var i = 0; i < intervals.length; i++) {
+    notes.push(bass + intervals[i]);
+  }
+  return notes;
+};
+ChordTrack.prototype.writeNote = function (note, beatLength, volume, beat, noteLength, instrument) {
+  // undefined means there is a stop time.
+  if (note !== undefined) this.chordTrack.push({
+    cmd: 'note',
+    pitch: note,
+    volume: volume,
+    start: this.lastBarTime + beat * durationRounded(beatLength, this.tempoChangeFactor),
+    duration: durationRounded(noteLength, this.tempoChangeFactor),
+    gap: 0,
+    instrument: instrument
+  });
+};
+ChordTrack.prototype.chordTrackEmpty = function () {
+  var isEmpty = true;
+  for (var i = 0; i < this.chordTrack.length && isEmpty; i++) {
+    if (this.chordTrack[i].cmd === 'note') isEmpty = false;
+  }
+  return isEmpty;
+};
+ChordTrack.prototype.resolveChords = function (startTime, endTime) {
+  // If there is a rhythm head anywhere in the measure then don't add a separate rhythm track
+  if (this.hasRhythmHead) return;
+  var num = this.meter.num;
+  var den = this.meter.den;
+  var beatLength = 1 / den;
+
+  // MAE 16 Jun 2024 - For beat length extension
+  //var noteLength = beatLength / 2;
+
+  var boomNoteLength = beatLength * gBackupBoomFraction;  
+  var chickNoteLength = beatLength * gBackupChickFraction;  
+
+  var thisMeasureLength = parseInt(num, 10) / parseInt(den, 10);
+  var portionOfAMeasure = thisMeasureLength - (endTime - startTime) / this.tempoChangeFactor;
+  if (Math.abs(portionOfAMeasure) < 0.00001) portionOfAMeasure = 0;
+
+  // there wasn't a new chord this measure, so use the last chord declared.
+  // also the case where there is a chord declared in the measure, but not on its first beat.
+  if (this.currentChords.length === 0 || this.currentChords[0].beat !== 0) {
+    this.currentChords.unshift({
+      beat: 0,
+      chord: this.chordLastBar
+    });
+  }
+
+  //console.log(this.currentChords)
+  var currentChordsExpanded = expandCurrentChords(this.currentChords, 8 * num / den, beatLength);
+  //console.log(currentChordsExpanded)
+  var thisPattern = this.overridePattern ? this.overridePattern : this.rhythmPatterns[num + '/' + den];
+  if (portionOfAMeasure) {
+    thisPattern = [];
+    var beatsPresent = (endTime - startTime) / this.tempoChangeFactor * 8;
+    for (var p = 0; p < beatsPresent / 2; p += 2) {
+      thisPattern.push("chick");
+      thisPattern.push("");
+    }
+  }
+  if (!thisPattern) {
+    thisPattern = [];
+    for (var p = 0; p < 8 * num / den / 2; p++) {
+      thisPattern.push('chick');
+      thisPattern.push("");
+    }
+  }
+  var firstBoom = true;
+  // If the pattern is overridden, it might be longer than the length of a measure. If so, then ignore the rest of it
+  var minLength = Math.min(thisPattern.length, currentChordsExpanded.length);
+  for (var p = 0; p < minLength; p++) {
+    if (p > 0 && currentChordsExpanded[p - 1] && currentChordsExpanded[p] && currentChordsExpanded[p - 1].boom !== currentChordsExpanded[p].boom) firstBoom = true;
+    var type = thisPattern[p];
+    var isBoom = type.indexOf('boom') >= 0;
+    // If we changed chords at a time when we're not expecting a bass note, then add an extra bass note in.
+    var newBass = !isBoom && p !== 0 && (!currentChordsExpanded[p - 1] || currentChordsExpanded[p - 1].boom !== currentChordsExpanded[p].boom);
+    var pitches = resolvePitch(currentChordsExpanded[p], type, firstBoom, newBass);
+    if (isBoom) firstBoom = false;
+    for (var oo = 0; oo < pitches.length; oo++) {
+
+      // Allow for control of boom and chick lengths
+      var noteLength;
+      if (isBoom){
+        noteLength = boomNoteLength
+      }
+      else{
+        noteLength = chickNoteLength
+      }
+
+      this.writeNote(pitches[oo], 0.125, isBoom || newBass ? this.boomVolume : this.chickVolume, p, noteLength, isBoom || newBass ? this.bassInstrument : this.chordInstrument);
+      if (newBass) newBass = false;else isBoom = false; // only the first note in a chord is a bass note. This handles the case where bass and chord are played at the same time.
+    }
+  }
+
+  return;
+};
+ChordTrack.prototype.processChord = function (elem) {
+  if (this.chordTrackFinished) return;
+  var chord = this.findChord(elem);
+  if (chord) {
+    var c = this.interpretChord(chord);
+    // If this isn't a recognized chord, just completely ignore it.
+    if (c) {
+      // If we ever have a chord in this voice, then we add the chord track.
+      // However, if there are chords on more than one voice, then just use the first voice.
+      if (this.chordTrack.length === 0) {
+        this.chordTrack.push({
+          cmd: 'program',
+          channel: this.chordChannel,
+          instrument: this.chordInstrument
+        });
+      }
+      this.lastChord = c;
+      var barBeat = calcBeat(this.lastBarTime, timeToRealTime(elem.time));
+      this.currentChords.push({
+        chord: this.lastChord,
+        beat: barBeat,
+        start: timeToRealTime(elem.time)
+      });
+    }
+  }
+};
+function resolvePitch(currentChord, type, firstBoom, newBass) {
+  var ret = [];
+  if (!currentChord) return ret;
+  if (type.indexOf('boom') >= 0) ret.push(firstBoom ? currentChord.boom : currentChord.boom2);else if (newBass) ret.push(currentChord.boom);
+  if (type.indexOf('chick') >= 0) {
+    for (var i = 0; i < currentChord.chick.length; i++) {
+      ret.push(currentChord.chick[i]);
+    }
+  }
+  switch (type) {
+    case 'DO':
+      ret.push(currentChord.chick[0]);
+      break;
+    case 'MI':
+      ret.push(currentChord.chick[1]);
+      break;
+    case 'SOL':
+      ret.push(currentChord.chick[2]);
+      break;
+    case 'TI':
+      currentChord.chick.length > 3 ? ret.push(currentChord.chick[2]) : ret.push(currentChord.chick[0] + 12);
+      break;
+    case 'TOP':
+      currentChord.chick.length > 4 ? ret.push(currentChord.chick[2]) : ret.push(currentChord.chick[1] + 12);
+      break;
+    case 'do':
+      ret.push(currentChord.chick[0] + 12);
+      break;
+    case 'mi':
+      ret.push(currentChord.chick[1] + 12);
+      break;
+    case 'sol':
+      ret.push(currentChord.chick[2] + 12);
+      break;
+    case 'ti':
+      currentChord.chick.length > 3 ? ret.push(currentChord.chick[2] + 12) : ret.push(currentChord.chick[0] + 24);
+      break;
+    case 'top':
+      currentChord.chick.length > 4 ? ret.push(currentChord.chick[2] + 12) : ret.push(currentChord.chick[1] + 24);
+      break;
+  }
+  return ret;
+}
+function parseGChord(gchord) {
+  // TODO-PER: The spec is more complicated than this but for now this will not try to do anything with error cases like the wrong number of beats.
+  var pattern = [];
+  for (var i = 0; i < gchord.length; i++) {
+    var ch = gchord[i];
+    switch (ch) {
+      case 'z':
+        pattern.push('');
+        break;
+      case '2':
+        pattern.push('');
+        break;
+      // TODO-PER: This should extend the last note, but that's a small effect
+      case 'c':
+        pattern.push('chick');
+        break;
+      case 'b':
+        pattern.push('boom&chick');
+        break;
+      case 'f':
+        pattern.push('boom');
+        break;
+      case 'G':
+        pattern.push('DO');
+        break;
+      case 'H':
+        pattern.push('MI');
+        break;
+      case 'I':
+        pattern.push('SOL');
+        break;
+      case 'J':
+        pattern.push('TI');
+        break;
+      case 'K':
+        pattern.push('TOP');
+        break;
+      case 'g':
+        pattern.push('do');
+        break;
+      case 'h':
+        pattern.push('mi');
+        break;
+      case 'i':
+        pattern.push('sol');
+        break;
+      case 'j':
+        pattern.push('ti');
+        break;
+      case 'k':
+        pattern.push('top');
+        break;
+    }
+  }
+  return pattern;
+}
+
+// This returns an array that has a chord for each 1/8th note position in the current measure
+function expandCurrentChords(currentChords, num8thNotes, beatLength) {
+  beatLength = beatLength * 8; // this is expressed as a fraction, so that 0.25 is a quarter notes. We want it to be the number of 8th notes
+  var chords = [];
+  if (currentChords.length === 0) return chords;
+  var currentChord = currentChords[0].chord;
+  for (var i = 1; i < currentChords.length; i++) {
+    var current = currentChords[i];
+    while (chords.length < current.beat) {
+      chords.push(currentChord);
+    }
+    currentChord = current.chord;
+  }
+  while (chords.length < num8thNotes) {
+    chords.push(currentChord);
+  }
+  return chords;
+}
+function calcBeat(measureStart, currTime) {
+  var distanceFromStart = currTime - measureStart;
+  return distanceFromStart * 8;
+}
+ChordTrack.prototype.breakSynonyms = ['break', '(break)', 'no chord', 'n.c.', 'tacet'];
+ChordTrack.prototype.basses = {
+  'A': 33,
+  'B': 35,
+  'C': 36,
+  'D': 38,
+  'E': 40,
+  'F': 41,
+  'G': 43
+}
+
+ChordTrack.prototype.rhythmPatterns = {
+  "2/2": ['boom', '', '', '', 'chick', '', '', ''],
+  "3/2": ['boom', '', '', '', 'chick', '', '', '', 'chick', '', '', ''],
+  "4/2": ['boom', '', '', '', 'chick', '', '', '', 'boom', '', '', '', 'chick', '', '', ''],
+  "2/4": ['boom', '', 'chick', ''],
+  "3/4": ['boom', '', 'chick', '', 'chick', ''],
+  "4/4": ['boom', '', 'chick', '', 'boom', '', 'chick', ''],
+  "5/4": ['boom', '', 'chick', '', 'chick', '', 'boom', '', 'chick', ''],
+  "6/4": ['boom', '', 'chick', '', 'boom', '', 'chick', '', 'boom', '', 'chick', ''],
+  "3/8": ['boom', '', 'chick'],
+  "5/8": ['boom', 'chick', 'chick', 'boom', 'chick'],
+  "6/8": ['boom', '', 'chick', 'boom', '', 'chick'],
+  "7/8": ['boom', 'chick', 'chick', 'boom', 'chick', 'boom', 'chick'],
+  "9/8": ['boom', '', 'chick', 'boom', '', 'chick', 'boom', '', 'chick'],
+  "10/8": ['boom', 'chick', 'chick', 'boom', 'chick', 'chick', 'boom', 'chick', 'boom', 'chick'],
+  "11/8": ['boom', 'chick', 'chick', 'boom', 'chick', 'chick', 'boom', 'chick', 'boom', 'chick', 'chick'],
+  "12/8": ['boom', '', 'chick', 'boom', '', 'chick', 'boom', '', 'chick', 'boom', '', 'chick']
+};
+
+// TODO-PER: these are repeated in flattener. Can it be shared?
+
+function timeToRealTime(time) {
+  return time / 1000000;
+}
+function durationRounded(duration, tempoChangeFactor) {
+  return Math.round(duration * tempoChangeFactor * 1000000) / 1000000;
+}
+module.exports = ChordTrack;
 
 /***/ }),
 

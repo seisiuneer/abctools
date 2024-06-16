@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-
+       
         <style>
 
 		p {
@@ -288,6 +288,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#custom_backup_rhythms">Custom Backup Rhythms</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#custom_backup_beat_timing">Custom Backup Beat Timing</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#strummed_chords">Enabling Strummed Chords</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#midigchord">%%MIDI gchord Overrides Some Custom Backup Features</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#sung_solfege">Select the Solfège Instrument to Sing Note Names</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#voice_hiding">Voice Combining and Hiding</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#highlighting_control">Controlling Note Highlighting in the Player</a></p>
@@ -1643,6 +1644,9 @@
             <p>Here is a demonstration of custom backup patterns, live in the tool:</p>
             <p style="text-align: center;"><a href="https://tinyurl.com/d2pk84ps" target="_blank">Cooley's reel with on-the-fly boom-chick backup pattern changes</a></p>
             <p>This directive is private to this tool and will not work with other ABC players.</p>
+            <p><strong>Note:</strong> The custom boomchick feature is not available if using:</p>
+            <p class="code">%%MIDI gchord optional_gchord_string</p>
+            <p>as a custom backup pattern specification for a tune.</p>
             <hr class="hidden-print" id="custom_backup_beat_timing">
             <h1 class="page_break_always">Custom Backup Beat Timing<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/9YNtOwPYWMw" title="Custom Backup Timing" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -1686,7 +1690,20 @@
             <p class="code">%%MIDI abctt:boom_fraction 100<br/>%%MIDI abctt:chick_fraction 100</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/tLyuoT2_XnI" title="Sustained Strummed Chords" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p>Full details on the boom and chick beat timing fractions can be found in the <a href="#custom_backup_beat_timing">Custom Backup Beat Timing Section</a> above.</p>
-            <p>These directives are private to this tool and will not work with other ABC players.</p>            
+            <p>These directives are private to this tool and will not work with other ABC players.</p>  
+            <p><strong>Note:</strong> The strummed chord features are not available if using:</p>
+            <p class="code">%%MIDI gchord optional_gchord_string</p>
+            <p>as a custom backup pattern specification for a tune.</p>
+            <hr class="hidden-print" id="midigchord">
+            <h1 class="page_break_always h1wide">%%MIDI gchord Overrides Some Custom Backup Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>When playing, if:</p>
+            <p class="code">%%MIDI gchord optional_gchord_string</p>
+            <p>is detected in the ABC for a tune, the new abcjs gchord-based backup system (released 16 June 2024) will be used instead of any custom backup directives.</p>
+            <p>When the default abcjs gchord-based backup system is being used, the following custom backup annotations will be ignored if present in the ABC:</p>
+            <p class="code">%%MIDI abctt:boomchick<br/>%%MIDI abctt:strum_chords<br/>%%MIDI abctt:strum_chords_divider</p>
+            <p>When the default abcjs gchord-based backup system is being used, the following custom backup annotations can still be used:</p>
+            <p class="code">%%MIDI abctt:boomchick_fraction<br/>%%MIDI abctt:boom_fraction<br/>%%MIDI abctt:chick_fraction</p>
+            <p>Additionally, any "G:1" style chord inversions indicated with a colon and an inversion number or letter after the chord name will be ignored.</p>
             <hr class="hidden-print" id="sung_solfege">
             <h1 class="page_break_always h1wide">Select the Solfège Instrument to Sing Note Names<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>To sing the note names, you can select the Solfège instrument (136) for a voice:</p>
@@ -3519,7 +3536,7 @@
             <hr>
             <p>Click <strong>Reset to Default</strong> to reset the ABC rendering font settings to their original defaults.</p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/UpVXfi4bF3g" title="Configure ABC Rendering Fonts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                        <hr class="hidden-print" id="musicxml">
+            <hr class="hidden-print" id="musicxml">
             <h1 class="page_break_always">MusicXML/MIDI Import Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">
                 <img class="image" loading="lazy" src="img/musicxml_8.jpg">
@@ -3612,7 +3629,10 @@
             <p>The inversions also include any octave shifts you might have specified on the %%MIDI chordprog octave=1 style commands for the chord instrument.</p> 
             <p>This style of indicating inversions was inspired by a system described at this Wikipedia page:</p>
             <p style="text-align: center;"><a href="https://en.wikipedia.org/wiki/Inversion_(music)" target="_blank">Inversion (music) on Wikipedia</a></p>
-            <p><strong>Note:</strong> This extended chord syntax for the inversions may not be compatible with other ABC tools.</p>
+            <p>This extended chord syntax for the inversions may not be compatible with other ABC tools.</p>
+            <p><strong>Note:</strong> The chord inversion features are not available if using:</p>
+            <p class="code">%%MIDI gchord optional_gchord_string</p>
+            <p>as a custom backup pattern specification for a tune.</p>
             <hr class="hidden-print" id="largeprint">
             <h1 class="page_break_always">"Large Print" Edition Tune Notation<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Most of the time, people have asked how to cram as many tunes on a page as possible, but sometimes you want to go the other way, make the notation larger.</p>

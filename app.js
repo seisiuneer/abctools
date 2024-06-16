@@ -26781,7 +26781,6 @@ function PreProcessPlayABC(theTune){
 		}
 	}
 
-
 	// Inject volumes?
 	if (gAlwaysInjectVolumes){
 
@@ -26839,6 +26838,22 @@ function PreProcessPlayABC(theTune){
 
 		theTune = output;
 
+	}
+
+	// MAE 16 Jun 2024
+	// Using a %%MIDI gchord string for this tune?
+
+	// Initially disable gchord use
+	gUseGChord = false;
+
+	var searchRegExp = /%%MIDI gchord\b/;
+
+	var gchordRequested = searchRegExp.test(theTune);
+
+	if (gchordRequested){
+
+		//console.log("Using gchord");
+		gUseGChord = true;
 	}
 
 	return(theTune);
