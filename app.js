@@ -28099,7 +28099,7 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 
 		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: theTop, width:theWidth, okText:"Close", scrollWithPage: (isMobileBrowser()) });
 
-		// Set the initial swing factor and offset
+		// Set the initial swing factor 
 		document.getElementById("swing_explorer_factor").value = gSwingFactor;
 
 		var theOKButtons = document.getElementsByClassName("modal_flat_ok");
@@ -35021,7 +35021,7 @@ function AdvancedControlsDialog(){
 
 	// Showing explorers?
 	if (gFeaturesShowExplorers){
-		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_instrument_explorer" class="configure_instrument_explorer button btn btn-instrumentexplorer" onclick="InstrumentExplorer();" type="button" value="MIDI Instrument Explorer" title="Brings up a tune player where you can experiment playing the current tune with different MIDI soundfonts and melody/chord instruments"><input id="configure_swing_explorer" class="btn btn-swingexplorer configure_swing_explorer " onclick="SwingExplorer()" type="button" value="Swing Explorer" title="Brings up a tune player where you can experiment with different swing factor and offset settings"><input id="configure_grace_explorer" class="btn btn-graceexplorer configure_grace_explorer " onclick="GraceExplorer()" type="button" value="Grace Duration Explorer" title="Brings up a tune player where you can experiment with different grace note duration settings"><input id="configure_roll_explorer" class="btn btn-rollexplorer configure_roll_explorer " onclick="RollExplorer()" type="button" value="Roll Explorer" title="Brings up a tune player where you can experiment with different roll parameters"></p>';
+		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_instrument_explorer" class="configure_instrument_explorer button btn btn-instrumentexplorer" onclick="InstrumentExplorer();" type="button" value="MIDI Instrument Explorer" title="Brings up a tune player where you can experiment playing the current tune with different MIDI soundfonts and melody/chord instruments"><input id="configure_swing_explorer" class="btn btn-swingexplorer configure_swing_explorer " onclick="SwingExplorer()" type="button" value="Swing Explorer" title="Brings up a tune player where you can experiment with different swing factor settings"><input id="configure_grace_explorer" class="btn btn-graceexplorer configure_grace_explorer " onclick="GraceExplorer()" type="button" value="Grace Duration Explorer" title="Brings up a tune player where you can experiment with different grace note duration settings"><input id="configure_roll_explorer" class="btn btn-rollexplorer configure_roll_explorer " onclick="RollExplorer()" type="button" value="Roll Explorer" title="Brings up a tune player where you can experiment with different roll parameters"></p>';
 	}
 
 	// Showing export and explorers?
