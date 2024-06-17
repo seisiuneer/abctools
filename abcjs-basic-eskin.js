@@ -15498,11 +15498,21 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
   // If the pattern is overridden, it might be longer than the length of a measure. If so, then ignore the rest of it
   var minLength = Math.min(thisPattern.length, currentChordsExpanded.length);
   for (var p = 0; p < minLength; p++) {
-    if (p > 0 && currentChordsExpanded[p - 1] && currentChordsExpanded[p] && currentChordsExpanded[p - 1].boom !== currentChordsExpanded[p].boom) firstBoom = true;
+    if (p > 0 && currentChordsExpanded[p - 1] && currentChordsExpanded[p] && currentChordsExpanded[p - 1].boom !== currentChordsExpanded[p].boom){
+      firstBoom = true; 
+    }
     var type = thisPattern[p];
     var isBoom = type.indexOf('boom') >= 0;
     // If we changed chords at a time when we're not expecting a bass note, then add an extra bass note in.
     var newBass = !isBoom && p !== 0 && (!currentChordsExpanded[p - 1] || currentChordsExpanded[p - 1].boom !== currentChordsExpanded[p].boom);
+    // MAE FOOFOO - Code was dropping booms in at inappropriate times
+    if (newBass){
+      newBass = false;
+    }
+    if (!isBoom){
+      firstBoom = false;
+    }
+    // MAE FOOFOO End
     var pitches = resolvePitch(currentChordsExpanded[p], type, firstBoom, newBass);
     if (isBoom) firstBoom = false;
     for (var oo = 0; oo < pitches.length; oo++) {
