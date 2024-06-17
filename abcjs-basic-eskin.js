@@ -4587,8 +4587,9 @@ var parseDirective = {};
             cmd = cmd.replace("octave=","");
             cmd = parseInt(cmd);
             if (!isNaN(cmd)){
-              if (cmd < 0){
-                cmd = 0;
+              // Limit range from -1 to 3 octaves
+              if (cmd < -1){
+                cmd = -1;
               }
               if (cmd > 3){
                 cmd = 3;
