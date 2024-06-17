@@ -37135,10 +37135,11 @@ function DoFileRead(file,doAppend){
 
 							}
 
-							var fileName = file.name.replace(".mid","");
-							fileName = fileName.replace(".MID","");
-							fileName = fileName.replace(".midi","");
+							// Strip the extension
+							var fileName = file.name.replace(".midi","");
 							fileName = fileName.replace(".MIDI","");
+							fileName = fileName.replace(".mid","");
+							fileName = fileName.replace(".MID","");
 
 							// Replace any _ or - with spaces
 							fileName = fileName.replaceAll("_"," ");
