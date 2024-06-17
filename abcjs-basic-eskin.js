@@ -12263,9 +12263,9 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             }
             else{
               bassInstrument = element.value;
-              if ((element.octaveShift != undefined) && (element.octaveShift != null)){
-                gBassOctaveShift = element.octaveShift;
-              }
+            }
+            if ((element.octaveShift != undefined) && (element.octaveShift != null)){
+              gBassOctaveShift = element.octaveShift;
             }
             break;
           case "chordprog":
@@ -12274,10 +12274,10 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             }
             else{
               chordInstrument = element.value;   
-              if ((element.octaveShift != undefined) && (element.octaveShift != null)){
-                gChordOctaveShift = element.octaveShift;
-              }  
             }
+            if ((element.octaveShift != undefined) && (element.octaveShift != null)){
+              gChordOctaveShift = element.octaveShift;
+            }  
             break;
           case "bassvol":
             if (gUseGChord){
@@ -13413,7 +13413,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     // MAE 22 May 2024 - Supporting octave shifted bass and chords
     var unshiftedBass = bass;
 
-    bass += gBassOctaveShift*12
+    bass += gBassOctaveShift*12;
 
     var bass2 = bass - 5; // The alternating bass is a 4th below
 
@@ -13466,7 +13466,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
         bass = basses[arr[1].substring(0, 1)] + bassShift + chordTranspose;
 
         // MAE 22 May 2024 - Supporting octave shifted bass and chords
-        bass += gBassOctaveShift*12
+        bass += gBassOctaveShift*12;
 
         bass2 = bass;
       }
@@ -13534,7 +13534,6 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
 
     // MAE 22 May 2024 - For chick octave shift
     bass += (gChordOctaveShift * 12);
-
 
     var notes = [];
     for (var i = 0; i < intervals.length; i++) {
@@ -15251,8 +15250,11 @@ var ChordTrack = function ChordTrack(numVoices, chordsOff, midiOptions, meter) {
   this.lastBarTime = 0;
   this.meter = meter;
   this.tempoChangeFactor = 1;
-  this.bassInstrument = midiOptions.bassprog && midiOptions.bassprog.length === 1 ? midiOptions.bassprog[0] : 0;
-  this.chordInstrument = midiOptions.chordprog && midiOptions.chordprog.length === 1 ? midiOptions.chordprog[0] : 0;
+
+  // MAE 17 Jun 2024 - To allow for bass and chord instrument octave shifts
+  this.bassInstrument = midiOptions.bassprog && ((midiOptions.bassprog.length === 1) || (midiOptions.bassprog.length === 2)) ? midiOptions.bassprog[0] : 0;
+  this.chordInstrument = midiOptions.chordprog && ((midiOptions.chordprog.length === 1) || (midiOptions.chordprog.length === 2)) ? midiOptions.chordprog[0] : 0;
+  
   this.boomVolume = midiOptions.bassvol && midiOptions.bassvol.length === 1 ? midiOptions.bassvol[0] : 64;
   this.chickVolume = midiOptions.chordvol && midiOptions.chordvol.length === 1 ? midiOptions.chordvol[0] : 48;
 
@@ -15380,22 +15382,30 @@ ChordTrack.prototype.interpretChord = function (name) {
     chordTranspose -= 12;
   }
   bass += chordTranspose;
+
+  // MAE 17 Jun 2024 - Supporting octave shifted bass and chords
+  var unshiftedBass = bass;
+
+  bass += gBassOctaveShift*12;
+
   var bass2 = bass - 5; // The alternating bass is a 4th below
   var chick;
-  if (name.length === 1) chick = this.chordNotes(bass, '');
+  if (name.length === 1) chick = this.chordNotes(unshiftedBass, '');
   var remaining = name.substring(1);
   var acc = remaining.substring(0, 1);
   if (acc === 'b' || acc === '♭') {
+    unshiftedBass--;
     bass--;
     bass2--;
     remaining = remaining.substring(1);
   } else if (acc === '#' || acc === '♯') {
+    unshiftedBass++;
     bass++;
     bass2++;
     remaining = remaining.substring(1);
   }
   var arr = remaining.split('/');
-  chick = this.chordNotes(bass, arr[0]);
+  chick = this.chordNotes(unshiftedBass, arr[0]);
   // If the 5th is altered then the bass is altered. Normally the bass is 7 from the root, so adjust if it isn't.
   if (chick.length >= 3) {
     var fifth = chick[2] - chick[0];
@@ -15412,6 +15422,10 @@ ChordTrack.prototype.interpretChord = function (name) {
         '♭': -1
       }[bassAcc] || 0;
       bass = this.basses[arr[1].substring(0, 1)] + bassShift + chordTranspose;
+
+      // MAE 22 May 2024 - Supporting octave shifted bass and chords
+      bass += gBassOctaveShift*12;
+
       bass2 = bass;
     }
   }
@@ -15427,6 +15441,10 @@ ChordTrack.prototype.chordNotes = function (bass, modifier) {
     if (modifier.slice(0, 2).toLowerCase() === 'ma' || modifier[0] === 'M') intervals =gChordIntervals.M;else if (modifier[0] === 'm' || modifier[0] === '-') intervals = gChordIntervals.m;else intervals = gChordIntervals.M;
   }
   bass += 12; // the chord is an octave above the bass note.
+  
+  // MAE 22 May 2024 - For chick octave shift
+  bass += (gChordOctaveShift * 12);
+
   var notes = [];
   for (var i = 0; i < intervals.length; i++) {
     notes.push(bass + intervals[i]);
