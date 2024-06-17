@@ -15303,7 +15303,10 @@ ChordTrack.prototype.gChordOn = function (element) {
 ChordTrack.prototype.paramChange = function (element) {
   switch (element.el_type) {
     case "gchord":
-      this.overridePattern = parseGChord(element.param);
+      // Skips gchord elements that don't have pattern strings
+      if (element.param && element.param.length>0){
+        this.overridePattern = parseGChord(element.param);
+      }
       break;
     case "bassprog":
       this.bassInstrument = element.param;
@@ -15480,41 +15483,79 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
   //console.log(currentChordsExpanded)
   var thisPattern = this.overridePattern ? this.overridePattern : this.rhythmPatterns[num + '/' + den];
   if (portionOfAMeasure) {
+
+    var originalPattern = thisPattern.slice();
+
+    var originalPatternLength = originalPattern.length;
+
+    //console.log("portionOfAMeasure true, patternLength: "+originalPatternLength);
+
     thisPattern = [];
     var beatsPresent = (endTime - startTime) / this.tempoChangeFactor * 8;
-    for (var p = 0; p < beatsPresent / 2; p += 2) {
-      thisPattern.push("chick");
-      thisPattern.push("");
+
+    // Don't use a pattern during pickup lines
+    if (beatsPresent > 2){
+
+      for (var p = 0; p < beatsPresent; p++) {
+
+        if (p<originalPatternLength){
+
+          thisPattern.push(originalPattern[p]);
+
+        }
+        else{
+
+           thisPattern.push("");
+
+        }
+      }
+
+    }
+    else{
+
+      for (var p = 0; p < beatsPresent; p++) {
+
+         thisPattern.push("");
+
+      }
     }
   }
+
+  // If no pattern, just push silence for the remaining beats
   if (!thisPattern) {
     thisPattern = [];
     for (var p = 0; p < 8 * num / den / 2; p++) {
-      thisPattern.push('chick');
+      thisPattern.push("");
       thisPattern.push("");
     }
   }
+
   var firstBoom = true;
+
   // If the pattern is overridden, it might be longer than the length of a measure. If so, then ignore the rest of it
   var minLength = Math.min(thisPattern.length, currentChordsExpanded.length);
+
   for (var p = 0; p < minLength; p++) {
+
     if (p > 0 && currentChordsExpanded[p - 1] && currentChordsExpanded[p] && currentChordsExpanded[p - 1].boom !== currentChordsExpanded[p].boom){
       firstBoom = true; 
     }
     var type = thisPattern[p];
+
     var isBoom = type.indexOf('boom') >= 0;
+
     // If we changed chords at a time when we're not expecting a bass note, then add an extra bass note in.
-    var newBass = !isBoom && p !== 0 && (!currentChordsExpanded[p - 1] || currentChordsExpanded[p - 1].boom !== currentChordsExpanded[p].boom);
-    // MAE FOOFOO - Code was dropping booms in at inappropriate times
-    if (newBass){
-      newBass = false;
-    }
+    //var newBass = !isBoom && p !== 0 && (!currentChordsExpanded[p - 1] || currentChordsExpanded[p - 1].boom !== currentChordsExpanded[p].boom);
+    
+    // Disable injecting extra booms
+    var newBass = false;
+
     if (!isBoom){
       firstBoom = false;
     }
     // MAE FOOFOO End
     var pitches = resolvePitch(currentChordsExpanded[p], type, firstBoom, newBass);
-    if (isBoom) firstBoom = false;
+    
     for (var oo = 0; oo < pitches.length; oo++) {
 
       // Allow for control of boom and chick lengths

@@ -26846,14 +26846,27 @@ function PreProcessPlayABC(theTune){
 	// Initially disable gchord use
 	gUseGChord = false;
 
-	var searchRegExp = /%%MIDI gchord\b/;
+	var searchRegExp = /%%MIDI gchord\b/
 
 	var gchordRequested = searchRegExp.test(theTune);
 
 	if (gchordRequested){
 
-		//console.log("Using gchord");
+		//console.log("Using discrete gchord");
 		gUseGChord = true;
+	}
+
+	if (!gUseGChord){
+
+		var searchRegExp = /\[I:\s*MIDI[\s=]+gchord\s.*\]/
+
+		var gchordRequested = searchRegExp.test(theTune);
+
+		if (gchordRequested){
+
+			//console.log("Using inline gchord");
+			gUseGChord = true;
+		}
 	}
 
 	return(theTune);
