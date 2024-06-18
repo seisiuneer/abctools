@@ -16,12 +16,20 @@ var gSaveFilename = "";
 //
 // Generate an ABC Transcription Tools Share Link from ABC with specified share name and optional auto-play when opened
 //
+<<<<<<< HEAD
 function generateShareLink(abcText,shareName,tablatureOption,addAutoPlay) {
+=======
+function generateShareLink(abcText,shareName,addAutoPlay) {
+>>>>>>> 6bfd8f58d605652d321896d7646be8aa4dcdbfce
 
     // LZW compress the ABC
     var abcInLZW = LZString.compressToEncodedURIComponent(abcText);
 
+<<<<<<< HEAD
     var url = "https://michaeleskin.com/abctools/abctools.html?lzw=" + abcInLZW + "&format="+tablatureOption+"&ssp=45&name=" + shareName;
+=======
+    var url = "https://michaeleskin.com/abctools/abctools.html?lzw=" + abcInLZW + "&format=noten&ssp=45&name=" + shareName;
+>>>>>>> 6bfd8f58d605652d321896d7646be8aa4dcdbfce
 
     if (addAutoPlay){
         url += "&play=1";
@@ -63,6 +71,7 @@ function UI_GenerateShareLink(){
     
     }
 
+<<<<<<< HEAD
     // Get the tablature option from the dropdown
     var tablatureOption = document.getElementById('tablature_options').value;
 
@@ -70,6 +79,12 @@ function UI_GenerateShareLink(){
     // Generate the Share Link
     //
     var url = generateShareLink(abcText,"Share_Link_Test",tablatureOption,addAutoPlay)
+=======
+    //
+    // Generate the Share Link
+    //
+    var url = generateShareLink(abcText,"Share_Link_Test",addAutoPlay)
+>>>>>>> 6bfd8f58d605652d321896d7646be8aa4dcdbfce
 
     if (url == null){
        DayPilot.Modal.alert("ABC text is too long to generate a valid Share Link!", {
