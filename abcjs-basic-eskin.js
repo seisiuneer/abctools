@@ -15471,7 +15471,7 @@ ChordTrack.prototype.chordTrackEmpty = function () {
   }
   return isEmpty;
 };
-ChordTrack.prototype.resolveChords = function (startTime, endTime) {
+ChordTrack.prototype.resolveChords = function (startTime, endTime) {	
   // If there is a rhythm head anywhere in the measure then don't add a separate rhythm track
   if (this.hasRhythmHead) return;
   var num = this.meter.num;
@@ -15564,10 +15564,10 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
     var isBoom = type.indexOf('boom') >= 0;
 
     // If we changed chords at a time when we're not expecting a bass note, then add an extra bass note in.
-    //var newBass = !isBoom && p !== 0 && (!currentChordsExpanded[p - 1] || currentChordsExpanded[p - 1].boom !== currentChordsExpanded[p].boom);
+   	var newBass = !isBoom && p !== 0 && thisPattern[0].indexOf('boom') >= 0 && (!currentChordsExpanded[p - 1] || currentChordsExpanded[p - 1].boom !== currentChordsExpanded[p].boom);
     
     // Disable injecting extra booms
-    var newBass = false;
+    //var newBass = false;
 
     if (!isBoom){
       firstBoom = false;
