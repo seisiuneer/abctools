@@ -361,6 +361,9 @@ var gShowCGDATab = false;
 // Confirm clear
 var gConfirmClear = true;
 
+// Use Base2048 for share links
+var gUseBase2048 = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -4159,6 +4162,7 @@ function IntermixTuneQRCodes(thePDF,paperStyle,tunePageMap,totalPages,callback){
 
 	// No tunes, early exit
 	if (totalTunes == 0){
+		callback();
 		return;
 	}
 
@@ -4845,7 +4849,7 @@ function GetAllTuneHyperlinks(theLinks) {
 			}
 
 			// Create a share URL for this tune
-			var theURL = FillUrlBoxWithAbcInLZW(tuneWithPatch,false);
+			var theURL = FillUrlBoxWithAbcInLZW(tuneWithPatch,false,false);
 
 			// Test max share URL length and one-time warn if too long
 			if (theURL.length >= 8100 ){
@@ -4999,7 +5003,7 @@ function GetAllTuneHyperlinks(theLinks) {
 			}
 
 			// Create a share URL for this tune
-			var theURL = FillUrlBoxWithAbcInLZW(tuneWithPatch,false);
+			var theURL = FillUrlBoxWithAbcInLZW(tuneWithPatch,false,false);
 			
 			// Add the play parameter
 			if (gInjectEditDisabled){
@@ -5659,7 +5663,7 @@ function AppendPDFTuneQRCode(thePDF,paperStyle,theABC,theTitle,callback){
 	var theURL;
 
 	// Can we make a QR code from the current share link URL?
-	theURL = FillUrlBoxWithAbcInLZW(theABC,false);
+	theURL = FillUrlBoxWithAbcInLZW(theABC,false,false);
 
 	// Adding play links?
 	if (gAddPlaybackHyperlinks){
@@ -5673,7 +5677,7 @@ function AppendPDFTuneQRCode(thePDF,paperStyle,theABC,theTitle,callback){
 	if (theURL.length > 2300){
 
 		// URL too long for QR code...
-		theURL = FillUrlBoxWithAbcInLZW("X:1\nT:"+theTitle+"\nT:Tune ABC was too long to generate a valid QR Code\n",false);
+		theURL = FillUrlBoxWithAbcInLZW("X:1\nT:"+theTitle+"\nT:Tune ABC was too long to generate a valid QR Code\n",false,false);
 
 		isValidURL = false;
 
@@ -5847,7 +5851,7 @@ function AppendQRCode(thePDF,paperStyle,callback){
 	if (!gDoForceQRCodeURLOverride){
 
 		// Can we make a QR code from the current share link URL?
-		theURL = FillUrlBoxWithAbcInLZW(null,false);
+		theURL = FillUrlBoxWithAbcInLZW(null,false,false);
 
 		if (!gAllowQRCodeSave){
 
@@ -15605,6 +15609,7 @@ function getUrlWithoutParams() {
 
 	// If running locally, point the share link at the public site
 	if (theURL.indexOf("file:")==0){
+		// MAE FOOFOO Base2048
 		theURL = "https://michaeleskin.com/abctools/abctools.html"
 	}
 
@@ -15615,7 +15620,7 @@ function getUrlWithoutParams() {
 //
 // Generate a share link for either all the tunes or just what's passed in
 //
-function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
+function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI,allowBase2048) {
 
 	// Encode all the tunes or just what's passed in?
 	var abcText = "";
@@ -15629,13 +15634,31 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
 
 	var abcInLZW = LZString.compressToEncodedURIComponent(abcText);
 
+	var encodingString = "?lzw=";
+
+	// Base2048 encode the encoded URL if enabled
+	if (gUseBase2048 && allowBase2048){
+
+		// Create a Uint8Array from the string
+	    const encoder = new TextEncoder();
+	    const uint8Array = encoder.encode(abcInLZW);
+
+	    //console.log("encode 2048 - Size before: "+abcInLZW.length);
+	    
+		abcInLZW = encodeBase2048(uint8Array);
+
+	    //console.log("encode 2048 - Size after: "+abcInLZW.length);
+
+	    encodingString = "?lzw2="
+	}
+
 	var format = GetRadioValue("notenodertab");
 
 	var capo = gCapo;
 
 	var ssp = gStaffSpacing-STAFFSPACEOFFSET;
 
-	var url = getUrlWithoutParams() + "?lzw=" + abcInLZW + "&format=" + format + "&ssp=" + ssp;
+	var url = getUrlWithoutParams() + encodingString + abcInLZW + "&format=" + format + "&ssp=" + ssp;
 
 	// Add a capo parameter for mandolin and guitar
 	var postfix = "";
@@ -15768,7 +15791,7 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
 
 function CreateURLfromHTML() {
 
-	FillUrlBoxWithAbcInLZW(null,true);
+	FillUrlBoxWithAbcInLZW(null,true,true);
 
 	urltextbox = document.getElementById("urltextbox");
 	urltextbox.focus();
@@ -15794,6 +15817,15 @@ function clearQRCode() {
 }
 
 function GenerateQRCode(e) {
+
+	// Can't generate QR codes using Base2048 URL encoding
+	if (gUseBase2048){
+
+		DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:14pt;">QR Code generation is not available with Base2048 encoding.</p>',{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+
+	}
 
 	// Keep track of dialogs
 	sendGoogleAnalytics("sharing","generate_qr_code");
@@ -19540,9 +19572,28 @@ function processShareLink() {
 	// Process URL params
 
 	// Handler for lzw ABC data parameter
-	if (urlParams.has("lzw")) {
+	if (urlParams.has("lzw") || urlParams.has("lzw2")) {
 
-		var originalAbcInLZW = urlParams.get("lzw");
+		var originalABCInLZW;
+
+		if (urlParams.has("lzw")){
+
+			// Standard share link
+			originalAbcInLZW = urlParams.get("lzw");
+
+		}
+		else{
+
+			// Base2048 encoded share link
+			originalAbcInLZW = urlParams.get("lzw2");
+
+			originalAbcInLZW = decodeBase2048(originalAbcInLZW);
+
+			const decoder = new TextDecoder('utf-8');
+
+			originalAbcInLZW = decoder.decode(originalAbcInLZW);
+
+		}
 
 		abcInLZW = LZString.decompressFromEncodedURIComponent(originalAbcInLZW);
 
@@ -23444,7 +23495,7 @@ function BatchJSONExport(){
 
 		//debugger;
 
-		var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
+		var theURL = FillUrlBoxWithAbcInLZW(thisTune,false,false);
 		theURL+="&name="+title+"&play=1";
 
 		theJSON.push({Name:title,URL:theURL});
@@ -23480,7 +23531,7 @@ function BatchCSVExport(){
 
 		var title = GetTuneAudioDownloadName(thisTune,"");
 
-		var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
+		var theURL = FillUrlBoxWithAbcInLZW(thisTune,false,false);
 		theURL+="&name="+title+"&play=1";
 
 		theCSV += title;
@@ -33341,6 +33392,13 @@ function GetInitialConfigurationSettings(){
 		gConfirmClear = (val == "true");
 	}
 
+	// Use Base2048 for share links?
+	gUseBase2048 = false;
+	val = localStorage.UseBase2048;
+	if (val){
+		gUseBase2048 = (val == "true");
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -33542,6 +33600,9 @@ function SaveConfigurationSettings(){
 
 		// Confirm Clear
 		localStorage.ConfirmClear = gConfirmClear;
+
+		// Use Base2048 for share links
+		localStorage.UseBase2048 = gUseBase2048;
 
 	}
 }
@@ -34456,7 +34517,12 @@ function SharingControlsDialog(){
 	modal_msg += '<textarea id="urltextbox" rows="10" cols="80" spellcheck="false" autocorrect="off" autocapitalize="off" placeholder="URL for sharing will appear here" >';
 	modal_msg += '</textarea>';
 	modal_msg += '</p>';
-	modal_msg += '<p id="shareurlcaption">Share URL</p>';
+	if (!gUseBase2048){
+		modal_msg += '<p id="shareurlcaption">Share URL</p>';
+	}
+	else{
+		modal_msg += '<p id="shareurlcaption">Share URL (Base2048 Encoded)</p>';		
+	}
 	modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="addautoplay" class="urlcontrols btn btn-urlcontrols" onclick="AddAutoPlay()" type="button" value="Add Auto-Play" title="Adds &play=1 to the ShareURL.&nbsp;&nbsp;Tune will open in the player."><input id="adddisableediting" class="urlcontrolslast btn btn-urlcontrols" onclick="AddDisableEditing()" type="button" value="Add Disable Editing" title="Adds &dx=1 to the ShareURL.&nbsp;&nbsp;Entering the editor from the full screen tune view will be disabled."></p>';
 
 	modal_msg += '</div>';
@@ -35453,15 +35519,16 @@ function AdvancedSettings(){
 		configure_tinyurl: gTinyURLAPIKeyOverride,
 		configure_confirm_clear: gConfirmClear,
 		configure_show_render_progress: gShowABCJSRenderProgress,
-
+		configure_use_base2048: gUseBase2048
 	};
 
 	var form = [
 		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Advanced Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 		{html: '<p style="font-size:12pt;line-height:12px;font-family:helvetica;"><strong>Only change these values if you know what you are doing!</strong></p>'},
-		{name: "          Always confirm before deletion when clicking Clear", id: "configure_confirm_clear", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
-		{name: "          Show ABC syntax validation panel", id: "configure_show_diagnostics", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
-		{name: "          Show tune rendering progress in Javascript console", id: "configure_show_render_progress", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+		{name: "    Always confirm before deletion when clicking Clear", id: "configure_confirm_clear", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+		{name: "    Show ABC syntax validation panel", id: "configure_show_diagnostics", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+		{name: "    Show tune rendering progress in Javascript console", id: "configure_show_render_progress", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+		{name: "    Use Base2048 encoding for Share URLs (~30% shorter URLs) (experimental)", id: "configure_use_base2048", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Disable abcjs notation rendering", id: "configure_DisableRendering", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Autoscroll player when playing", id: "configure_autoscrollplayer", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Player/Tune Trainer always plays full tune even if there is a selection region", id: "configure_disable_selected_play", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
@@ -35515,7 +35582,10 @@ function AdvancedSettings(){
 		if (!args.canceled){
 
 			// Confirm clear
-			gConfirmClear = args.result.configure_confirm_clear
+			gConfirmClear = args.result.configure_confirm_clear;
+
+			// Use Base2048
+			gUseBase2048 = args.result.configure_use_base2048;
 
 			// Show/hide the diagnostics panel
 			gShowDiagnostics = args.result.configure_show_diagnostics;
