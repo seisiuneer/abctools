@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
- 
+
         <style>
 
 		p {
@@ -2552,12 +2552,23 @@
             <p style="text-align: center;"><a href="https://flic.kr/s/aHBqjArRJZ" target="_blank">ABC Tune Set QR Codes on Flickr</a></p>
             <hr class="hidden-print" id="generate_share_link">
             <h1 class="page_break_always h1wide">Adding Tune Share Link Generation to Your Website<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>If you have an existing website written using Javascript and would like to add a feature to allow users to create share links for ABC tunes and open them in my ABC Transcription Tools, I have sample code for a share link generator and consumer tool at:</p>
+            <p>If you have an existing website written using Javascript and would like to add a feature to allow users to create share links for ABC tunes and open them in my ABC Transcription Tools, I have sample code for a share link generator and tester tool at:</p>
             <p style="text-align: center;"><a href="https://michaeleskin.com/tools/generate_share_link.html">Generate ABC Transcription Tools Share Link</a></p>
             <p>Source code is available on the GitHub site:</p>
             <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">Generate ABC Transcription Tools Share Link on GitHub</a></p>
-            <p>The source files you will need are:</p>
-            <p>generate_share_link.html<br/>generate_share_link.css<br/>generate_share_link.js<br/>lz-string.min.js (for LZW compression of the ABC)<br/>daypilot-modal.min-3.10.1.js (only required to run the demo tool, used for dialogs and alerts)</p>
+            <p>To run the demo, the source files you should download:</p>
+            <p>generate_share_link.html</p>
+            <p>generate_share_link.css</p>
+            <p>generate_share_link.js</p>
+            <p>lz-string.min.js (for LZW compression of the ABC)</p>
+            <p>daypilot-modal.min-3.10.1.js (only required to run the demo tool, used for dialogs and alerts)</p>
+            <p>To run the demo locally, after downloading the source files, double-click generate_share_link.html to open it in your browser.</p>
+            <hr>
+            <p>If you want to add share link encoding to your website or Javascript tool, all you need to include is:</p>
+            <p>lz-string.min.js</p>
+            <p>and the</p>
+            <p>function generateShareLink(abcText,shareName,tablatureOption,addAutoPlay)</p>
+            <p>function at the top of generate_share_link.js.</p>
             <hr class="hidden-print" id="export_pdf_tunebook">
             <h1 class="page_break_always">Exporting a PDF Tunebook<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/PqgjtQXpRYA" title="Export PDF Tunebook Dialog Walkthrough" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
