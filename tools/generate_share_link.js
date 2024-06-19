@@ -10,12 +10,15 @@
 // https://creativecommons.org/share-your-work/public-domain/cc0/
 //
 
-// Suggested filename for save
-var gSaveFilename = "";
-
+// ********************************************************************************************************************
 //
 // Generate an ABC Transcription Tools Share Link from ABC with specified share name and optional auto-play when opened
 //
+// If you are building share link generation into your own web page or Javascript tool, all you need is the
+// generateShareLink() function and including the lz-string.min.js file in your project.
+//
+// ********************************************************************************************************************
+
 function generateShareLink(abcText,shareName,tablatureOption,addAutoPlay) {
 
     // LZW compress the ABC
@@ -35,6 +38,17 @@ function generateShareLink(abcText,shareName,tablatureOption,addAutoPlay) {
     return url;
 }
 
+// ********************************************************************************************************************
+//
+// The rest of this Javascript is specfically for use by the Share Link demo application.
+// You do not need to include it in your own web page or Javascript tool
+//
+// ********************************************************************************************************************
+
+// Globals
+
+// Suggested filename for save
+var gSaveFilename = "";
 
 //
 // Main processor
