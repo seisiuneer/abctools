@@ -1711,13 +1711,19 @@
             <p>Additionally, any "G:1" style chord inversions indicated with a colon and an inversion number or letter after the chord name will be ignored.</p>
             <p>For full details on the %%MIDI gchord backup pattern string, please visit:</p> 
             <p style="text-align: center;"><a href="https://abcmidi.sourceforge.io/#gchord" target="_blank">ABCMIDI %%MIDI gchord specification</a></p>
-            <p>Additionally, the dynamics of the gchord backup pattern may be set using the following private annotation:</p>
+            <hr>
+            <p style="text-align: center;"><strong>Controlling %%MIDI gchord-based Backup Dynamics</strong></p>
+            <p>The dynamics of the gchord backup pattern may be set using the following private %%MIDI command:</p>
             <p class="code">%%MIDI abctt:gchordstress stress_pattern</p>
-            <p>Where stress pattern is a sequence of floating point numbers that have a 1-to-1 coorespondence to the %%MIDI gchord control string entries and scale the %%MIDI bassvol or %%MIDI chordvol playing volume of each gchord entry by the specified value.</p>
-            <p>For example, here is a pair of gchord and abctt:gchordstress commands for a reel where the second half of the pattern is played slightly quieter:</p>
-            <p class="code">%%MIDI gchord fzczfzcz<br/>%%MIDI abctt:gchordstress 1.0 1.0 1.0 1.0 0.75 0.75. 0.75 0.75</p>
+            <p>Where stress_pattern is a sequence of floating point numbers that have a 1-to-1 coorespondence to the %%MIDI gchord control string entries.</p>
+            <p>Each value in the sequence multiplies the %%MIDI bassvol or %%MIDI chordvol playing volume of each cooresponding gchord entry by the specified value.</p>
+            <p>The scaled values are limited to a range of 0 - 127.</p>
+            <p>If the number of values in the stress_pattern is less than the gchord pattern length, it will be automatically filled out with 1.0 to match the gchord pattern length.</p>
+            <p>For example, here is a pair of gchord and abctt:gchordstress commands for a reel where the second half of the pattern is played quieter:</p>
+            <p class="code">%%MIDI gchord fzczfzcz<br/>%%MIDI abctt:gchordstress 1.0 1.0 1.0 1.0 0.5 0.5. 0.5 0.5</p>
             <p>%%MIDI abctt:gchordstress can also be used as an inline MIDI command:</p>
-            <p class="code:">[I: MIDI=abctt:gchordstress 1.0 1.0 1.0 1.0 0.75 0.75. 0.75 0.75]</p>
+            <p class="code">[I: MIDI=abctt:gchordstress 1.0 1.0 1.0 1.0 0.5 0.5. 0.5 0.5]</p>
+            <p>The %%MIDI abctt:gchordstress command is private to this tool and will have no effect in other ABC tools.</p>
             <hr class="hidden-print" id="sung_solfege">
             <h1 class="page_break_always h1wide">Select the Solfège Instrument to Sing Note Names<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>To sing the note names, you can select the Solfège instrument (136) for a voice:</p>

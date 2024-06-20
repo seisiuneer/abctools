@@ -15540,6 +15540,7 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
   //console.log(this.currentChords)
   var currentChordsExpanded = expandCurrentChords(this.currentChords, 8 * num / den, beatLength);
   //console.log(currentChordsExpanded)
+  
   var thisPattern = this.overridePattern ? this.overridePattern : this.rhythmPatterns[num + '/' + den];
 
   var thisGChordStressPattern = this.abcttgchordstress;
@@ -15633,12 +15634,9 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
 
     var stress = thisGChordStressPattern[p];
 
-    // Range check the stress
+    // Range check the stress, can't be negative
     if (stress<0){
       stress = 0;
-    }
-    if (stress > 1){
-      stress = 1.0;
     }
 
     //console.log('type: '+type+" stress: "+stress);
@@ -15648,19 +15646,17 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
     // If we changed chords at a time when we're not expecting a bass note, then add an extra bass note in.
    	var newBass = !isBoom && p !== 0 && thisPattern[0].indexOf('boom') >= 0 && (!currentChordsExpanded[p - 1] || currentChordsExpanded[p - 1].boom !== currentChordsExpanded[p].boom);
     
-    // Disable injecting extra booms
-    //var newBass = false;
-
     if (!isBoom){
       firstBoom = false;
     }
-    // MAE FOOFOO End
+
     var pitches = resolvePitch(currentChordsExpanded[p], type, firstBoom, newBass);
     
     for (var oo = 0; oo < pitches.length; oo++) {
 
       // Allow for control of boom and chick lengths
       var noteLength;
+
       if (isBoom){
         noteLength = boomNoteLength
       }
@@ -15668,9 +15664,31 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
         noteLength = chickNoteLength
       }
 
-      this.writeNote(pitches[oo], 0.125, isBoom || newBass ? (this.boomVolume * stress)  : (this.chickVolume * stress), p, noteLength, isBoom || newBass ? this.bassInstrument : this.chordInstrument);
+      // Limit range of stressed notes to 0 - 127
+      var boomVolume = Math.floor(this.boomVolume * stress);
+
+      if (boomVolume < 0){
+        boomVolume = 0;
+      }
+
+      if (boomVolume > 127){
+        boomVolume = 127;
+      }
+
+      var chickVolume = Math.floor(this.chickVolume * stress);
+
+      if (chickVolume < 0){
+        chickVolume = 0;
+      }
+      
+      if (chickVolume > 127){
+        chickVolume = 127;
+      }
+
+      this.writeNote(pitches[oo], 0.125, isBoom || newBass ? boomVolume  : chickVolume, p, noteLength, isBoom || newBass ? this.bassInstrument : this.chordInstrument);
 
       if (newBass) newBass = false;else isBoom = false; // only the first note in a chord is a bass note. This handles the case where bass and chord are played at the same time.
+
     }
   }
 
