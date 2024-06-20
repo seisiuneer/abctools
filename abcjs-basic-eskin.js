@@ -4387,6 +4387,7 @@ var parseDirective = {};
   var midiCmdParam1String1Integer = ["portamento"];
   var midiCmdParamFraction = ["expand", "grace", "trim"];
   var midiCmdParam1StringVariableIntegers = ["drum", "chordname"]; 
+  var midiCmdParamVariableFloat = ["abctt:gchordstress"]; 
   // MAE 17 May 2024 - Added abctt:boomchick
   var midiCmdParamNumberPuncNumberStringOptionalInteger = ["abctt:boomchick"]; 
    var parseMidiCommand = function parseMidiCommand(midi, tune, restOfString) {
@@ -4602,7 +4603,20 @@ var parseDirective = {};
           }
         }
       }
-
+    }
+    else if (midiCmdParamVariableFloat.indexOf(midi_cmd) >= 0){
+      if (midi.length < 1) warn("Expected least one float parameter in MIDI " + midi_cmd, restOfString, 0);else {
+        var arr = [];
+        while (midi.length > 0) {
+          p = midi.shift();
+          if (p.type !== "number") warn("Expected number parameter in MIDI " + midi_cmd, restOfString, 0);
+          arr.push(p.floatt);
+        }
+        if (midi_cmd == "abctt:gchordstress"){
+          midi_cmd = "abcttgchordstress";
+        }
+        midi_params.push(arr);
+      }
     }
 
     if (tuneBuilder.hasBeginMusic()) tuneBuilder.appendElement('midi', -1, -1, {
@@ -12294,6 +12308,13 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
               chickVolume = element.value;   
             }
             break;
+          // Added 20 Jun 2024
+          case "abcttgchordstress":
+            if (gUseGChord){
+              chordTrack.paramChange(element);
+            }
+            break;
+
           default:
             // This should never happen
             console.log("MIDI creation. Unknown el_type: " + element.el_type + "\n"); // jshint ignore:line
@@ -14960,6 +14981,18 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                       }
                       break;
 
+                    // MAE 20 Jun 2024
+                    case "abcttgchordstress":{
+                      //console.log("Handle inline abcttgchordstress");
+                      if (gUseGChord){
+                        voices[voiceNumber].push({
+                          el_type: 'abcttgchordstress',
+                          param: elem.params[0]
+                        });
+                      }
+                    }
+                    break;
+
                     default:
                       console.log("MIDI seq: midi cmd not handled: ", elem.cmd, elem);
                   }
@@ -15266,6 +15299,10 @@ var ChordTrack = function ChordTrack(numVoices, chordsOff, midiOptions, meter) {
   else{
     this.overridePattern = undefined;
   }
+
+  // Is there a gchord stress model?
+  this.abcttgchordstress = (midiOptions.abcttgchordstress && (midiOptions.abcttgchordstress.length === 1))? midiOptions.abcttgchordstress[0] : undefined;
+
 };
 ChordTrack.prototype.setMeter = function (meter) {
   this.meter = meter;
@@ -15310,6 +15347,9 @@ ChordTrack.prototype.paramChange = function (element) {
       if (element.param && element.param.length>0){
         this.overridePattern = parseGChord(element.param);
       }
+      break;
+    case "abcttgchordstress":
+      this.abcttgchordstress = element.param;
       break;
     case "bassprog":
       this.bassInstrument = element.param;
@@ -15501,15 +15541,39 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
   var currentChordsExpanded = expandCurrentChords(this.currentChords, 8 * num / den, beatLength);
   //console.log(currentChordsExpanded)
   var thisPattern = this.overridePattern ? this.overridePattern : this.rhythmPatterns[num + '/' + den];
+
+  var thisGChordStressPattern = this.abcttgchordstress;
+  
+  // No stress pattern? Create a unity gain version
+  if (!thisGChordStressPattern){
+    arr = [];
+    for (var i=0;i<thisPattern.length;++i){
+      arr.push(1.0);
+    }
+    thisGChordStressPattern = arr;
+  }
+
+  // Stress pattern too short? Fill it out.
+  if (thisGChordStressPattern.length < thisPattern.length){
+    var nToAdd = thisPattern.length - thisGChordStressPattern.length;
+   for (var i=0;i<nToAdd;++i){
+      thisGChordStressPattern.push(1.0);
+    }
+  }
+
   if (portionOfAMeasure) {
 
     var originalPattern = thisPattern.slice();
+
+    var originalStressPattern = thisGChordStressPattern.slice();
 
     var originalPatternLength = originalPattern.length;
 
     //console.log("portionOfAMeasure true, patternLength: "+originalPatternLength);
 
     thisPattern = [];
+    thisStressPattern = [];
+
     var beatsPresent = (endTime - startTime) / this.tempoChangeFactor * 8;
 
     // Don't use a pattern during pickup lines
@@ -15520,11 +15584,14 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
         if (p<originalPatternLength){
 
           thisPattern.push(originalPattern[p]);
+          thisGChordStressPattern.push(originalStressPattern[p]);
+
 
         }
         else{
 
            thisPattern.push("");
+           thisGChordStressPattern.push(1.0);
 
         }
       }
@@ -15535,6 +15602,7 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
       for (var p = 0; p < beatsPresent; p++) {
 
          thisPattern.push("");
+         thisGChordStressPattern.push(1.0);
 
       }
     }
@@ -15546,6 +15614,8 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
     for (var p = 0; p < 8 * num / den / 2; p++) {
       thisPattern.push("");
       thisPattern.push("");
+      thisGChordStressPattern.push(1.0);
+      thisGChordStressPattern.push(1.0);
     }
   }
 
@@ -15560,6 +15630,18 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
       firstBoom = true; 
     }
     var type = thisPattern[p];
+
+    var stress = thisGChordStressPattern[p];
+
+    // Range check the stress
+    if (stress<0){
+      stress = 0;
+    }
+    if (stress > 1){
+      stress = 1.0;
+    }
+
+    //console.log('type: '+type+" stress: "+stress);
 
     var isBoom = type.indexOf('boom') >= 0;
 
@@ -15586,7 +15668,8 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
         noteLength = chickNoteLength
       }
 
-      this.writeNote(pitches[oo], 0.125, isBoom || newBass ? this.boomVolume : this.chickVolume, p, noteLength, isBoom || newBass ? this.bassInstrument : this.chordInstrument);
+      this.writeNote(pitches[oo], 0.125, isBoom || newBass ? (this.boomVolume * stress)  : (this.chickVolume * stress), p, noteLength, isBoom || newBass ? this.bassInstrument : this.chordInstrument);
+
       if (newBass) newBass = false;else isBoom = false; // only the first note in a chord is a bass note. This handles the case where bass and chord are played at the same time.
     }
   }
