@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-
+ 
         <style>
 
 		p {
@@ -1715,10 +1715,11 @@
             <p style="text-align: center;"><a href="https://abcmidi.sourceforge.io/#gchord" target="_blank">ABCMIDI %%MIDI gchord specification</a></p>
             <hr>
             <p style="text-align: center;"><strong>Controlling %%MIDI gchord-based Backup Dynamics</strong></p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/pyb2KPskPdg" title="%%MIDI gchord Dynamics" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p>The dynamics of the gchord backup pattern may be set using the following private %%MIDI command:</p>
             <p class="code">%%MIDI abctt:gchordstress stress_pattern</p>
-            <p>Where stress_pattern is a sequence of floating point numbers that have a 1-to-1 coorespondence to the %%MIDI gchord control string entries.</p>
-            <p>Each value in the sequence multiplies the %%MIDI bassvol or %%MIDI chordvol playing volume of each cooresponding gchord entry by the specified value.</p>
+            <p>Where stress_pattern is a sequence of floating point numbers that have a 1-to-1 correspondence to the %%MIDI gchord control string entries.</p>
+            <p>Each value in the sequence multiplies the %%MIDI bassvol or %%MIDI chordvol playing volume of each corresponding gchord entry by the specified value.</p>
             <p>The scaled values are limited to a range of 0 - 127.</p>
             <p>If the number of values in the stress_pattern is less than the gchord pattern length, it will be automatically filled out with 1.0 to match the gchord pattern length.</p>
             <p>For example, here is a pair of gchord and abctt:gchordstress commands for a reel where the second half of the pattern is played quieter:</p>
@@ -1727,8 +1728,8 @@
             <p class="code">[I: MIDI=abctt:gchordstress 1.0 1.0 1.0 1.0 0.5 0.5 0.5 0.5]</p>
             <p>Duration of the notes in the gchord pattern can be changed using the following private %%MIDI command:</p>
             <p class="code">%%MIDI abctt:gchorddurationscale duration_scale_pattern</p>
-            <p>Where duration_scale_pattern is a sequence of floating point numbers that have a 1-to-1 coorespondence to the %%MIDI gchord control string entries.</p>
-            <p>Each value in the sequence multiplies the default duration (generally 1/8th note) of each cooresponding gchord entry by the specified value.</p>
+            <p>Where duration_scale_pattern is a sequence of floating point numbers that have a 1-to-1 correspondence to the %%MIDI gchord control string entries.</p>
+            <p>Each value in the sequence multiplies the default duration (generally 1/8th note) of each corresponding gchord entry by the specified value.</p>
             <p>If the number of values in the duration_scale_pattern is less than the gchord pattern length, it will be automatically filled out with 1.0 to match the gchord pattern length.</p>
             <p>For example, here is a pair of gchord and abctt:gchorddurationscale commands for a reel where the second half of the pattern is played with longer notes:</p>
             <p class="code">%%MIDI gchord fzczfzcz<br/>%%MIDI abctt:gchorddurationscale 1.0 1.0 1.0 1.0 2.0 2.0 2.0 2.0</p>
