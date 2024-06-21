@@ -15778,8 +15778,13 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
         chickVolume = 127;
       }
 
-      this.writeNote(pitches[oo], 0.125, isBoom || newBass ? boomVolume  : chickVolume, p, thisNoteLength, isBoom || newBass ? this.bassInstrument : this.chordInstrument);
+      // Make sure not writing a bad pitch
+      if (pitches[oo]){
 
+        this.writeNote(pitches[oo], 0.125, isBoom || newBass ? boomVolume  : chickVolume, p, thisNoteLength, isBoom || newBass ? this.bassInstrument : this.chordInstrument);
+
+      }
+ 
       if (newBass) newBass = false;else isBoom = false; // only the first note in a chord is a bass note. This handles the case where bass and chord are played at the same time.
 
     }
@@ -15816,12 +15821,35 @@ ChordTrack.prototype.processChord = function (elem) {
 function resolvePitch(currentChord, type, firstBoom, newBass) {
   var ret = [];
   if (!currentChord) return ret;
-  if (type.indexOf('boom') >= 0) ret.push(firstBoom ? currentChord.boom : currentChord.boom2);else if (newBass) ret.push(currentChord.boom);
+
+  if (type.indexOf('boom') >= 0){
+
+    // Testing for breaks
+    if (!currentChord.boom){
+      //console.log("Got break, early return 1")
+      return ret;
+    }
+
+    ret.push(firstBoom ? currentChord.boom : currentChord.boom2) 
+  } 
+  else
+  if (newBass){
+
+      // Testing for breaks
+      if (!currentChord.boom){
+        //console.log("Got break, early return 2")
+        return ret;
+      }
+
+      ret.push(currentChord.boom);
+  }
+
   if (type.indexOf('chick') >= 0) {
     for (var i = 0; i < currentChord.chick.length; i++) {
       ret.push(currentChord.chick[i]);
     }
   }
+
   switch (type) {
     case 'DO':
       ret.push(currentChord.chick[0]);
