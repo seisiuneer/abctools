@@ -492,7 +492,7 @@
             
             <hr class="hidden-print" id="introduction">
             <h1 class="page_break_never">Introduction<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/qmeG2sRdEWQ" title="ABC Transcription Tools Webinar" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/NYCfRW8EbXM" title="ABC Transcription Tools Webinar" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p>ABC Transcription Tools is a free, web-based, open-source tool for converting music in ABC, MusicXML, BWW, and MIDI format to both standard notation and tablature for a wide variety of instruments.</p>
             <p>Imports and exports tunes in ABC, MusicXML, and MIDI formats.</p>
             <p>Imports bagpipes tunes in BWW format.</p>
@@ -1537,13 +1537,11 @@
             <p>If no swing factor is provided, it will default to the Hornpipe swing factor set in the <strong>Settings</strong> dialog.</p>
             <p><strong>Example 1:</strong> To swing a reel with the default Hornpipe swing factor:</p>
             <p class="code">%swing</p>
-            <p><strong>Example 2:</strong> To swing a reel with a 0.25 swing factor:</p>
-            <p class="code">%swing .25</p>
+            <p><strong>Example 2:</strong> To swing a reel with a 0.15 swing factor:</p>
+            <p class="code">%swing .15</p>
             <p><strong>Example 3:</strong> To swing a jig with a 0.25 swing factor:</p>
             <p class="code">%swing .25</p>
-            <p><strong>Example 4:</strong> To swing a slip jig with a 0.25 swing factor:</p>
-            <p class="code">%swing .25</p>
-            <p><strong>Example 5:</strong></p>
+            <p><strong>Example 4:</strong></p>
             <p>To get a typical Scottish snap feel in a Hornpipe with a -0.5 swing factor resulting in a shortened first beat, lengthened second beat:</p>
             <p class="code">%swing -0.5</p>
             <p>Any manually added %swing value always overrides the automatic injected swing factor for Hornpipes.</p>
@@ -1555,13 +1553,11 @@
             <p style="text-align: center;"><strong>MIDI command to add swing</strong></p>
             <p>You may also use a MIDI command to add swing, swing_percentages is an integer percentage instead of a fractional value as used for the %swing directive</p>
             <p class="code">%%MIDI abctt:swing swing_percentage (Range is -100 to 100)</p>
-            <p><strong>Example 1:</strong> To swing a reel with a 25% swing factor:</p>
-            <p class="code">%%MIDI abctt:swing 25</p>
+            <p><strong>Example 1:</strong> To swing a reel with a 15% swing factor:</p>
+            <p class="code">%%MIDI abctt:swing 15</p>
             <p><strong>Example 2:</strong> To swing a jig with a 25% swing factor:</p>
             <p class="code">%%MIDI abctt:swing 25</p>
-            <p><strong>Example 3:</strong> To swing a slip jig with a 15% swing factor:</p>
-            <p class="code">%%MIDI abctt:swing 15</p>
-            <p><strong>Example 4:</strong></p>
+             <p><strong>Example 3:</strong></p>
             <p>To get a typical Scottish snap feel in a Hornpipe with a -50% swing factor resulting in a shortened first beat, lengthened second beat:</p>
             <p class="code">%%%MIDI abctt:swing -50</p>
             <p>You can also disable the swing with a MIDI command:</p>
