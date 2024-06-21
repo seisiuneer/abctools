@@ -14971,7 +14971,7 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                       break;
 
                     case "abcttswing": // MAE 20 Jun 2024
-                      console.log("Handle inline abcttswing");
+                      //console.log("Handle inline abcttswing");
                       voices[voiceNumber].push({
                         el_type: 'abcttswing',
                         swing: elem.params[0]                      
@@ -14979,7 +14979,7 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                       break;
 
                     case "swing": // MAE 20 Jun 2024
-                      console.log("Handle inline swing");
+                      //console.log("Handle inline swing");
                       voices[voiceNumber].push({
                         el_type: elem.cmd,
                         swing: elem.params[0]
