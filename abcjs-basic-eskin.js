@@ -13,6 +13,10 @@ var gRhythmPatternOverrides = {};
 var gAddSwing = false;
 var gSwingFactor = 0.25;
 
+// MAE 20 Jun 2024 - For ABCJS swing
+var gAddABCJSSwing = false;
+var gABCJSSwingFactor = 50;
+
 // MAE 2 Nov 2023 - For gracenotes
 var gGraceDuration = 0.045;
 var gGraceTuneType = "";
@@ -4378,8 +4382,8 @@ var parseDirective = {};
   };
   var midiCmdParam0 = ["nobarlines", "barlines", "beataccents", "nobeataccents", "droneon", "droneoff", "drumon", "drumoff", "fermatafixed", "fermataproportional", "gchordon", "gchordoff", "controlcombo", "temperamentnormal", "noportamento"];
   var midiCmdParam1String = ["gchord", "ptstress", "beatstring","abctt:strum_chords"];
-  var midiCmdParam1Integer = ["bassvol", "chordvol", "c", "channel", "beatmod", "deltaloudness", "drumbars", "gracedivider", "makechordchannels", "randomchordattack", "chordattack", "stressmodel", "transpose", "rtranspose", "vol", "volinc", "abctt:boomchick_fraction", "abctt:boom_fraction", "abctt:chick_fraction", "abctt:strum_chords_divider"];
-  var midiCmdParam1Integer1OptionalInteger = ["program","abctt:swing"];
+  var midiCmdParam1Integer = ["bassvol", "chordvol", "c", "channel", "beatmod", "deltaloudness", "drumbars", "gracedivider", "makechordchannels", "randomchordattack", "chordattack", "stressmodel", "transpose", "rtranspose", "vol", "volinc", "abctt:boomchick_fraction", "abctt:boom_fraction", "abctt:chick_fraction", "abctt:strum_chords_divider","abctt:swing","swing"];
+  var midiCmdParam1Integer1OptionalInteger = ["program"];
   var midiCmdParam1Integer1OptionalString = ["bassprog", "chordprog"];
   var midiCmdParam2Integer = ["ratio", "snt", "bendvelocity", "pitchbend", "control", "temperamentlinear"];
   var midiCmdParam4Integer = ["beat"];
@@ -4424,6 +4428,11 @@ var parseDirective = {};
         //console.log("Got strum_chords_divider");
         midi_cmd = "strum_chords_divider";
       }
+      else
+      if (midi_cmd == "abctt:swing"){
+        //console.log("Got abctt:swing");
+        midi_cmd = "abcttswing";
+      }
 
       // ONE INT PARAMETER
       if (midi.length !== 1) warn("Expected one parameter in MIDI " + midi_cmd, restOfString, 0);else if (midi[0].type !== "number") warn("Expected one integer parameter in MIDI " + midi_cmd, restOfString, 0);else midi_params.push(midi[0].intt);
@@ -4446,13 +4455,6 @@ var parseDirective = {};
 
       // ONE INT PARAMETER, ONE OPTIONAL PARAMETER
       if (midi.length !== 1 && midi.length !== 2) warn("Expected one or two parameters in MIDI " + midi_cmd, restOfString, 0);else if (midi[0].type !== "number") warn("Expected integer parameter in MIDI " + midi_cmd, restOfString, 0);else if (midi.length === 2 && midi[1].type !== "number") warn("Expected integer parameter in MIDI " + midi_cmd, restOfString, 0);else {
-
-        // MAE 21 May 2024
-        if (midi_cmd == "abctt:swing"){
-          //console.log("Got swing");
-          midi_cmd = "swing";
-        }
-
         midi_params.push(midi[0].intt);
       }
     } else if (midiCmdParam2Integer.indexOf(midi_cmd) >= 0) {
@@ -11920,9 +11922,11 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
 
   }
 
-  function processSwing(swing){
+  // 
+  // Handle the abctt:swing command
+  //
+  function processABCTTSwing(swing){
 
-    //console.log("processSwing "+swing+" "+offset);
     if (!isNaN(swing)){
 
       if (((swing > 0) && (swing <= 100)) || ((swing < 0) && (swing >= -100))) {
@@ -11934,10 +11938,27 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
         gAddSwing = false;
       }
     }
-
   }
 
-  flatten = function flatten(voices, options, percmap_, midiOptions) {
+  // 
+  // Handle the swing command
+  //
+  function processABCJSSwing(swing){
+
+    if (!isNaN(swing)){
+
+      if ((swing > 0) && (swing <= 100)) {
+        gABCJSSwingFactor = swing;
+        gAddABCJSSwing = true;
+      }
+      else{
+        gSwingABCJSFactor = 50;
+        gAddABCJSSwing = false;
+      }
+    }
+  }
+
+  flatten = function flatten(voices, options, percmap_, midiOptions) {    
     if (!options) options = {};
     if (!midiOptions) midiOptions = {};
     barAccidentals = [];
@@ -11974,9 +11995,18 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     chordLastBar = undefined;
     gChordTacet = options.chordsOff ? true : false;
 
-    // MAE 22 May 2024 for initial gchordoff before ABC
+    // MAE 22 May 2024 - For initial gchordoff before ABC
     if (midiOptions.gchordoff){
       gChordTacet = true;
+    }
+
+    // MAE 20 Jun 2024 - For initial abctt:swing
+    if (midiOptions.swing){
+      processABCJSSwing(midiOptions.swing[0]);
+    }
+    else
+    if (midiOptions.abcttswing){
+      processABCTTSwing(midiOptions.abcttswing[0]);
     }
 
     hasRhythmHead = false;
@@ -12016,11 +12046,6 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     gStrumChordsDivider = 8;
     if (midiOptions.strum_chords_divider && midiOptions.strum_chords_divider[0]){
       processStrumChordsDivider(midiOptions.strum_chords_divider[0]);
-    }
-
-    // MAE 20 May 2024
-    if (midiOptions.swing && ((midiOptions.swing[0]!=null) && (midiOptions.swing[0]!=undefined))){
-      processSwing(midiOptions.swing[0]);
     }
 
     if (midiOptions.bassprog && ((midiOptions.bassprog[1]!=null) && (midiOptions.bassprog[1]!=undefined))){
@@ -12270,9 +12295,14 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
           case "strum_chords_divider":
             processStrumChordsDivider(element.value);
             break;
-          // MAE 21 May 2024
+
+          // MAE 20 Jun 2024
+          case "abcttswing":
+            processABCTTSwing(element.swing);
+            break;  
+
           case "swing":
-            processSwing(element.swing);
+            processABCJSSwing(element.swing);
             break;  
 
           // MAE 22 May 2024
@@ -14940,11 +14970,19 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                       });
                       break;
 
-                    case "swing": // MAE 21 May 2024
-                      //console.log("Handle inline swing");
+                    case "abcttswing": // MAE 20 Jun 2024
+                      console.log("Handle inline abcttswing");
                       voices[voiceNumber].push({
-                        el_type: 'swing',
+                        el_type: 'abcttswing',
                         swing: elem.params[0]                      
+                      });
+                      break;
+
+                    case "swing": // MAE 20 Jun 2024
+                      console.log("Handle inline swing");
+                      voices[voiceNumber].push({
+                        el_type: elem.cmd,
+                        swing: elem.params[0]
                       });
                       break;
 
@@ -16205,6 +16243,7 @@ function attachListeners(self) {
   if (hasWarp) self.parent.querySelector(".abcjs-midi-tempo").addEventListener("change", function (ev) {
     acResumerMiddleWare(self.options.warpHandler, ev, playBtn, self.options.afterResume);
   });
+
 }
 module.exports = CreateSynthControl;
 
@@ -16466,6 +16505,12 @@ function CreateSynth(theABC) {
     self.sequenceCallback = params.sequenceCallback;
     self.callbackContext = params.callbackContext;
     self.onEnded = params.onEnded;
+
+    // MAE Added 20 Jun 2024
+    self.meterFraction = options.visualObj ? options.visualObj.getMeterFraction() : {
+      den: 1
+    }
+
     var allNotes = {};
     var cached = [];
     var errorNotes = [];
@@ -16661,6 +16706,7 @@ function CreateSynth(theABC) {
       if (self.debugCallback) self.debugCallback("loadBatch catch " + error.message);
     });
   };
+
   self.prime = function () {
     // At this point all of the notes are loaded. This function writes them into the output buffer.
     // Most music has a lot of repeating notes. If a note is the same pitch, volume, length, etc. as another one,
@@ -16687,9 +16733,19 @@ function CreateSynth(theABC) {
       self.stop();
       var noteMapTracks = createNoteMap(self.flattened);
 
-      // MAE 25 Oct 2023 - Start for swing injection
+      // Either use Paul's ABCJSswing or mine, not both
+      if (gAddABCJSSwing){
+        
+        //console.log("using abcjs swing: "+gABCJSSwingFactor);
+        
+        addABCJSSwing(noteMapTracks, gABCJSSwingFactor, self.meterFraction, self.pickupLength);
 
+      }
+      else
+      // Using abctt:swing
       if (gAddSwing){
+        
+        //console.log("using abctt:swing: "+gSwingFactor);
 
         var beatsPerMeasure = self.beatsPerMeasure;
 
@@ -16706,19 +16762,19 @@ function CreateSynth(theABC) {
 
             if (self.meterSize == .5){
 
-              addSwing(noteMapTracks, gSwingFactor, theSwingOffset, beatsPerMeasure, "polka");
+              addABCTTSwing(noteMapTracks, gSwingFactor, theSwingOffset, beatsPerMeasure, "polka");
 
             }
             else
             if (self.meterSize == .75){
 
-              addSwing(noteMapTracks, gSwingFactor, theSwingOffset, beatsPerMeasure, "jig");
+              addABCTTSwing(noteMapTracks, gSwingFactor, theSwingOffset, beatsPerMeasure, "jig");
 
             }
             else
             if (self.meterSize == 1){
 
-              addSwing(noteMapTracks, gSwingFactor, theSwingOffset, beatsPerMeasure*4, "hornpipe");
+              addABCTTSwing(noteMapTracks, gSwingFactor, theSwingOffset, beatsPerMeasure*4, "hornpipe");
 
             }
 
@@ -16728,13 +16784,13 @@ function CreateSynth(theABC) {
 
             if (self.meterSize == 0.75){
 
-              addSwing(noteMapTracks, gSwingFactor, theSwingOffset, beatsPerMeasure, "waltz");
+              addABCTTSwing(noteMapTracks, gSwingFactor, theSwingOffset, beatsPerMeasure, "waltz");
 
             }
             else
             if (self.meterSize == 1.125){
 
-              addSwing(noteMapTracks, gSwingFactor, theSwingOffset, beatsPerMeasure, "slipjig");
+              addABCTTSwing(noteMapTracks, gSwingFactor, theSwingOffset, beatsPerMeasure, "slipjig");
 
             }
 
@@ -16744,13 +16800,13 @@ function CreateSynth(theABC) {
 
             if (self.meterSize == 1){
 
-              addSwing(noteMapTracks, gSwingFactor, theSwingOffset, beatsPerMeasure*2, "hornpipe");
+              addABCTTSwing(noteMapTracks, gSwingFactor, theSwingOffset, beatsPerMeasure*2, "hornpipe");
 
             }
             else
             if (self.meterSize == 1.5){
               
-              addSwing(noteMapTracks, gSwingFactor, theSwingOffset, beatsPerMeasure, "slide");
+              addABCTTSwing(noteMapTracks, gSwingFactor, theSwingOffset, beatsPerMeasure, "slide");
 
             }
             break;
@@ -17048,11 +17104,74 @@ function CreateSynth(theABC) {
     }
 
   };
+  
+  //
+  // 20 Jun 2024 - Added Paul Rosen's Swing solution 
+  //
+  function addABCJSSwing(noteMapTracks, swing, meterFraction, pickupLength) {
+    
+    // we can only swing in X/4 and X/8 meters.
+    if (meterFraction.den != 4 && meterFraction.den != 8) return;
 
+    swing = parseFloat(swing);
+
+    // 50 (or less) is no swing, 
+    if (isNaN(swing) || swing <= 50) return;
+
+    // 66 is triplet swing 2:1, and 
+    // 60 is swing with a ratio of 3:2. 
+    // 75 is the maximum swing where the first eight is played as a dotted eight and the second as a sixteenth. 
+    if (swing > 75) swing = 75;
+
+    // convert the swing percentage to a percentage of increase for the first half of the beat
+    swing = swing / 50 - 1;
+
+    // The volume of the swung notes is increased by this factor
+    // could be also in the settings. Try out values such 0.1, 0.2
+    var volumeIncrease = 0.0;
+
+    // the beatLength in X/8 meters
+    var beatLength = 0.25;
+
+    // in X/8 meters the 16s swing so the beatLength is halved
+    if (meterFraction.den === 8) beatLength = beatLength / 2;
+
+    // duration of a half beat
+    var halfbeatLength = beatLength / 2;
+
+    // the extra duration of the first swung notes and the delay of the second notes
+    var swingDuration = halfbeatLength * swing;
+    for (var t = 0; t < noteMapTracks.length; t++) {
+      var track = noteMapTracks[t];
+      for (var i = 0; i < track.length; i++) {
+        var event = track[i];
+        if (
+        // is halfbeat
+        (event.start - pickupLength) % halfbeatLength == 0 && (event.start - pickupLength) % beatLength != 0 && (
+        // the previous note is on the beat or before OR there is no previous note 
+        i == 0 || track[i - 1].start <= track[i].start - halfbeatLength) && (
+        // the next note is on the beat or after OR there is no next note
+        i == track.length - 1 || track[i + 1].start >= track[i].start + halfbeatLength)) {
+          var oldEventStart = event.start;
+          event.start += swingDuration;
+
+          // Increase volume of swung notes
+          event.volume *= 1 + volumeIncrease;
+
+          // if there is a previous note ending at the start of this note, extend its end
+          // and decrease its volume
+          if (i > 0 && track[i - 1].end == oldEventStart) {
+            track[i - 1].end = event.start;
+            track[i - 1].volume *= 1 - volumeIncrease;
+          }
+        }
+      }
+    }
+  }
   // this is a first attempt at adding a little bit of swing to the output
-  function addSwing(noteMapTracks, swing, offset, beatsPerMeasure, style) {
+  function addABCTTSwing(noteMapTracks, swing, offset, beatsPerMeasure, style) {
 
-    // console.log("addSwing", noteMapTracks, swing, offset, beatsPerMeasure)
+    // console.log("addABCTTSwing", noteMapTracks, swing, offset, beatsPerMeasure)
     // Swing should be between -0.9 and 0.9. Make sure the input is between them.
     // Then that is the percentage to add to the first beat, so a negative number moves the second beat earlier.
     // A value of zero is the same as no swing at all.
@@ -17061,7 +17180,7 @@ function CreateSynth(theABC) {
 
       case "hornpipe":
       
-        // console.log("addSwing: Reel/Hornpipe");
+        // console.log("addABCTTSwing: Reel/Hornpipe");
 
         swing = parseFloat(swing)
 
@@ -17116,7 +17235,7 @@ function CreateSynth(theABC) {
       case "slipjig":
       case "slide":
 
-        //console.log("addSwing: "+style);
+        //console.log("addABCTTSwing: "+style);
 
         swing = parseFloat(swing)
         if (isNaN(swing))
@@ -17211,7 +17330,7 @@ function CreateSynth(theABC) {
 
       case "polka":
         
-        //console.log("addSwing: "+style);
+        //console.log("addABCTTSwing: "+style);
 
         //debugger;
 
@@ -17297,7 +17416,7 @@ function CreateSynth(theABC) {
 
         case "waltz":
 
-        //console.log("addSwing: "+style);
+        //console.log("addABCTTSwing: "+style);
       
         swing = parseFloat(swing)
         if (isNaN(swing))

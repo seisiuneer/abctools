@@ -27087,6 +27087,9 @@ function ScanTuneForCustomTimingInjection(theTune){
 	// Default is no swing
 	gAddSwing = false;
 
+	// MAE 20 Jun 2024 - To support Paul's swing algorithm
+	gAddABCJSSwing = false;
+
 	// Default is typical hornpipe swing factor
 	gSwingFactor = gAutoSwingFactor;
 
