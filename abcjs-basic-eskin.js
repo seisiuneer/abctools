@@ -12545,10 +12545,12 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     var distanceFromStart = currTime - measureStart;
     return distanceFromStart / beatLength;
   }
+  
   function processVolume(beat, voiceOff) {
     if (voiceOff) return 0;
     var volume;
-    if (nextVolume) {
+    // MAE 21 Jun 2024 - Wasn't allowing zero volume to be applied
+    if (nextVolume != undefined) {
       volume = nextVolume;
       nextVolume = undefined;
     } else if (!doBeatAccents) {
@@ -12568,6 +12570,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     if (volume > 127) volume = 127;
     return voiceOff ? 0 : volume;
   }
+
   function processChord(elem) {
     var firstChord = false;
     var chord = findChord(elem);
