@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
- 
+       
         <style>
 
 		p {
@@ -1566,7 +1566,6 @@
             <p class="code">%%%MIDI abctt:swing -50</p>
             <p>You can also disable the swing with a MIDI command:</p>
             <p class="code">%%MIDI abctt:swing 0</p>
-            <p><strong>Note:</strong> Since swing is applied after all the tune notes are generated, there can only be one swing value for a tune, determined by the last %swing or %%MIDI abctt:swing command found in the ABC.</p>
             <hr>
             <p style="text-align: center;"><strong>The native abcjs %%MIDI swing command is also supported</strong></p>
             <p>The tool also now supports the native abcjs:</p>
@@ -1576,7 +1575,13 @@
             <p>66 is triplet swing 2:1</p>
             <p>60 is swing with a ratio of 3:2</p>
             <p>75 is the maximum swing where the first eighth is played as a dotted eighth and the second as a sixteenth</p>
-            <p>If both the native abcjs %%MIDI swing and the tool-specific %swing or %%MIDI abctt:swing commands are found in the same tune, the abcjs native swing command will take precedence.</p>
+            <hr>
+            <p style="text-align: center;"><strong>Only one swing value is supported for a tune</strong></p>
+            <p>Since swing is applied after all the tune notes are generated, there can only be one swing value for a tune.</p>
+            <p>The swing value used is set by the last %swing, %%MIDI abctt:swing, or %%MIDI swing command found in the ABC.</p>
+            <hr>
+            <p style="text-align: center;"><strong>%%MIDI swing takes precedence over %swing or %%MIDI abctt:swing</strong></p>
+            <p>If both the native abcjs %%MIDI swing and the tool-specific %swing or %%MIDI abctt:swing commands are found in the same tune, the abcjs native %%MIDI swing command will take precedence.</p>
             <hr class="hidden-print" id="grace_timing">
             <h1 class="page_break_always h1wide">Setting Grace Note Duration for Ornamentation<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/sdFeN33sQdo" title="Grace Note Duration Control" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
