@@ -4381,7 +4381,7 @@ var parseDirective = {};
     return null;
   };
   var midiCmdParam0 = ["nobarlines", "barlines", "beataccents", "nobeataccents", "droneon", "droneoff", "drumon", "drumoff", "fermatafixed", "fermataproportional", "gchordon", "gchordoff", "controlcombo", "temperamentnormal", "noportamento"];
-  var midiCmdParam1String = ["gchord", "ptstress", "beatstring","abctt:strum_chords"];
+  var midiCmdParam1String = ["ptstress", "beatstring","abctt:strum_chords"];
   var midiCmdParam1Integer = ["bassvol", "chordvol", "c", "channel", "beatmod", "deltaloudness", "drumbars", "gracedivider", "makechordchannels", "randomchordattack", "chordattack", "stressmodel", "transpose", "rtranspose", "vol", "volinc", "abctt:boomchick_fraction", "abctt:boom_fraction", "abctt:chick_fraction", "abctt:strum_chords_divider","abctt:swing","swing"];
   var midiCmdParam1Integer1OptionalInteger = ["program"];
   var midiCmdParam1Integer1OptionalString = ["bassprog", "chordprog"];
@@ -4392,6 +4392,8 @@ var parseDirective = {};
   var midiCmdParamFraction = ["expand", "grace", "trim"];
   var midiCmdParam1StringVariableIntegers = ["drum", "chordname"]; 
   var midiCmdParamVariableFloat = ["abctt:gchordstress", "abctt:gchorddurationscale"]; 
+  var midiCmdParam1StringOptionalIntegers = ["gchord"];
+
   // MAE 17 May 2024 - Added abctt:boomchick
   var midiCmdParamNumberPuncNumberStringOptionalInteger = ["abctt:boomchick"]; 
    var parseMidiCommand = function parseMidiCommand(midi, tune, restOfString) {
@@ -4529,6 +4531,22 @@ var parseDirective = {};
           p = midi.shift();
           if (p.type !== "number") warn("Expected integer parameter in MIDI " + midi_cmd, restOfString, 0);
           midi_params.push(p.intt);
+        }
+      }
+    } 
+    else if (midiCmdParam1StringOptionalIntegers.indexOf(midi_cmd) >= 0) {
+      // ONE STRING, OPTIONAL INT PARAMETERS
+      // MAE FOOFOO 17 Jun 2024
+      // Initially only for abctt:gchord
+      if (midi.length > 0){
+        var p = midi.shift();
+        midi_params.push(p.token);
+        if (midi.length > 0){
+          while (midi.length > 0) {
+            p = midi.shift();
+            if (p.type !== "number") warn("Expected integer parameter in MIDI " + midi_cmd, restOfString, 0);
+            midi_params.push(p.intt);
+          }
         }
       }
     } else if (midiCmdParamNumberPuncNumberStringOptionalInteger.indexOf(midi_cmd) >= 0) { 
@@ -12262,6 +12280,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             doBeatAccents = element.value;
             break;
 
+          // MAE 21 Jun 2024 - Adding pattern scale
           case "gchord":
             if (gUseGChord){
               chordTrack.paramChange(element);
@@ -15028,7 +15047,8 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                       if (gUseGChord){
                         voices[voiceNumber].push({
                           el_type: elem.cmd,
-                          param: elem.params[0]
+                          param: elem.params[0],
+                          gchordDivider: elem.params[1]
                         });
                       }
                       break;
@@ -15356,6 +15376,14 @@ var ChordTrack = function ChordTrack(numVoices, chordsOff, midiOptions, meter) {
   this.boomVolume = midiOptions.bassvol && midiOptions.bassvol.length === 1 ? midiOptions.bassvol[0] : 64;
   this.chickVolume = midiOptions.chordvol && midiOptions.chordvol.length === 1 ? midiOptions.chordvol[0] : 48;
 
+  // Pass in an optional value for scaling the gchord string
+  this.gchordDivider = midiOptions.gchord && (midiOptions.gchord.length === 2) ? midiOptions.gchord[1] : 1;
+
+  // Restrict gchord divider to 1, 2, or 4
+  if ((this.gchordDivider != 1) && (this.gchordDivider != 2) && (this.gchordDivider != 4)) {
+    this.gchordDivider = 1;
+  }
+
   // This allows for an initial %%MIDI gchord with no string
   if (midiOptions.gchord && (midiOptions.gchord.length>0)){
     this.overridePattern = midiOptions.gchord ? parseGChord(midiOptions.gchord[0]) : undefined;
@@ -15414,6 +15442,14 @@ ChordTrack.prototype.paramChange = function (element) {
       // Skips gchord elements that don't have pattern strings
       if (element.param && element.param.length>0){
         this.overridePattern = parseGChord(element.param);
+
+        // Is there also a pattern divider?
+        if (element.gchordDivider){
+          this.gchordDivider = element.gchordDivider;
+        }
+        else{
+          this.gchordDivider = 1;
+        }
       }
       break;
     case "abcttgchordstress":
@@ -15566,6 +15602,8 @@ ChordTrack.prototype.chordNotes = function (bass, modifier) {
 ChordTrack.prototype.writeNote = function (note, beatLength, volume, beat, noteLength, instrument) {
   // undefined means there is a stop time.
 
+  //console.log("note: "+note+" beatLength: "+beatLength+" beat: "+beat+" noteLength: "+noteLength);
+
   // MAE 22 Jun 2024 - If the melody voice has tuning adjustment, apply it to the note 
   if (gVoiceTuning && (gVoiceTuning.length > 0)){
     if (note !== undefined) this.chordTrack.push({
@@ -15599,17 +15637,26 @@ ChordTrack.prototype.chordTrackEmpty = function () {
   return isEmpty;
 };
 ChordTrack.prototype.resolveChords = function (startTime, endTime) {	
+
+  //debugger;
+
   // If there is a rhythm head anywhere in the measure then don't add a separate rhythm track
   if (this.hasRhythmHead) return;
   var num = this.meter.num;
   var den = this.meter.den;
   var beatLength = 1 / den;
 
+  // Is there a gchord timing divider?
+  if (this.gchordDivider > 1){
+      beatLength /= this.gchordDivider;
+  }
+
   // MAE 16 Jun 2024 - For beat length extension
   var noteLength = beatLength / 2;
 
   var thisMeasureLength = parseInt(num, 10) / parseInt(den, 10);
   var portionOfAMeasure = thisMeasureLength - (endTime - startTime) / this.tempoChangeFactor;
+
   if (Math.abs(portionOfAMeasure) < 0.00001) portionOfAMeasure = 0;
 
   // there wasn't a new chord this measure, so use the last chord declared.
@@ -15622,7 +15669,7 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
   }
 
   //console.log(this.currentChords)
-  var currentChordsExpanded = expandCurrentChords(this.currentChords, 8 * num / den, beatLength);
+  var currentChordsExpanded = expandCurrentChords(this.currentChords, 8 * num / den, beatLength, this.gchordDivider);
   //console.log(currentChordsExpanded)
   
   var thisPattern = this.overridePattern ? this.overridePattern : this.rhythmPatterns[num + '/' + den];
@@ -15630,7 +15677,7 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
   var thisGChordStressPattern = this.abcttgchordstress;
 
   var thisGChordDurationScale  = this.abcttgchorddurationscale;
-  
+
   // No stress pattern? Create a unity gain version
   if (!thisGChordStressPattern){
     arr = [];
@@ -15642,10 +15689,9 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
 
   // Stress pattern too short? Fill it out.
   if (thisGChordStressPattern.length < thisPattern.length){
-    var nToAdd = thisPattern.length - thisGChordStressPattern.length;
-   for (var i=0;i<nToAdd;++i){
-      thisGChordStressPattern.push(1.0);
-    }
+
+    thisGChordStressPattern = extendArray(thisGChordStressPattern,thisPattern.length);
+  
   }
 
   // No duration scale pattern? Create a unity version
@@ -15659,12 +15705,11 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
 
   // Duration scale too short? Fill it out.
   if (thisGChordDurationScale.length < thisPattern.length){
-    var nToAdd = thisPattern.length - thisGChordDurationScale.length;
-   for (var i=0;i<nToAdd;++i){
-      thisGChordDurationScale.push(1.0);
-    }
-  }
 
+    thisGChordDurationScale = extendArray(thisGChordDurationScale,thisPattern.length);
+
+  }
+  
   if (portionOfAMeasure) {
 
     var originalPattern = thisPattern.slice();
@@ -15681,10 +15726,10 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
     thisGChordStressPattern = [];
     thisGChordDurationScale = [];
 
-    var beatsPresent = (endTime - startTime) / this.tempoChangeFactor * 8;
+    var beatsPresent = ((endTime - startTime) / this.tempoChangeFactor * 8) * this.gchordDivider;
 
     // Don't use a pattern during pickup lines
-    if (beatsPresent > 2){
+    if (beatsPresent > (2 * this.gchordDivider)){
 
       for (var p = 0; p < beatsPresent; p++) {
 
@@ -15719,13 +15764,57 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
   // If no pattern, just push silence for the remaining beats
   if (!thisPattern) {
     thisPattern = [];
-    for (var p = 0; p < 8 * num / den / 2; p++) {
-      thisPattern.push("");
-      thisPattern.push("");
-      thisGChordStressPattern.push(1.0);
-      thisGChordStressPattern.push(1.0);
-      thisGChordDurationScale.push(1.0);
-      thisGChordDurationScale.push(1.0);
+    for (var p = 0; (8 * num / den / 2); p++) {
+      switch (this.gchordDivider){
+        case 1:
+          thisPattern.push("");
+          thisPattern.push("");
+          thisGChordStressPattern.push(1.0);
+          thisGChordStressPattern.push(1.0);
+          thisGChordDurationScale.push(1.0);
+          thisGChordDurationScale.push(1.0);
+          break;
+        case 2:
+          thisPattern.push("");
+          thisPattern.push("");
+          thisPattern.push("");
+          thisPattern.push("");
+          thisGChordStressPattern.push(1.0);
+          thisGChordStressPattern.push(1.0);
+          thisGChordStressPattern.push(1.0);
+          thisGChordStressPattern.push(1.0);
+          thisGChordDurationScale.push(1.0);
+          thisGChordDurationScale.push(1.0);
+          thisGChordDurationScale.push(1.0);
+          thisGChordDurationScale.push(1.0);
+          break;
+        case 4:
+          thisPattern.push("");
+          thisPattern.push("");
+          thisPattern.push("");
+          thisPattern.push("");
+          thisPattern.push("");
+          thisPattern.push("");
+          thisPattern.push("");
+          thisPattern.push("");
+          thisGChordStressPattern.push(1.0);
+          thisGChordStressPattern.push(1.0);
+          thisGChordStressPattern.push(1.0);
+          thisGChordStressPattern.push(1.0);
+          thisGChordStressPattern.push(1.0);
+          thisGChordStressPattern.push(1.0);
+          thisGChordStressPattern.push(1.0);
+          thisGChordStressPattern.push(1.0);
+          thisGChordDurationScale.push(1.0);
+          thisGChordDurationScale.push(1.0);
+          thisGChordDurationScale.push(1.0);
+          thisGChordDurationScale.push(1.0);
+          thisGChordDurationScale.push(1.0);
+          thisGChordDurationScale.push(1.0);
+          thisGChordDurationScale.push(1.0);
+          thisGChordDurationScale.push(1.0);
+          break;
+      }
     }
   }
 
@@ -15800,7 +15889,7 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
       // Make sure not writing a bad pitch
       if (pitches[oo]){
 
-        this.writeNote(pitches[oo], 0.125, isBoom || newBass ? boomVolume  : chickVolume, p, thisNoteLength, isBoom || newBass ? this.bassInstrument : this.chordInstrument);
+        this.writeNote(pitches[oo], 0.125/this.gchordDivider, isBoom || newBass ? boomVolume  : chickVolume, p, thisNoteLength, isBoom || newBass ? this.bassInstrument : this.chordInstrument);
 
       }
  
@@ -15837,6 +15926,29 @@ ChordTrack.prototype.processChord = function (elem) {
     }
   }
 };
+
+function extendArray(arr, size) {
+
+    // Check if the desired size is smaller than or equal to the current array size
+    if (size <= arr.length) {
+        return arr.slice(0, size);
+    }
+    
+    // Calculate how many times the array needs to be repeated
+    let repeatCount = Math.floor(size / arr.length);
+    let remainder = size % arr.length;
+    
+    // Create the new extended array by repeating the original array
+    let extendedArray = [];
+    for (let i = 0; i < repeatCount; i++) {
+        extendedArray = extendedArray.concat(arr);
+    }
+    
+    // Add the remaining elements to reach the desired size
+    extendedArray = extendedArray.concat(arr.slice(0, remainder));
+    
+    return extendedArray;
+}
 
 function resolvePitch(currentChord, type, firstBoom, newBass) {
   var ret = [];
@@ -16003,14 +16115,15 @@ function parseGChord(gchord) {
 }
 
 // This returns an array that has a chord for each 1/8th note position in the current measure
-function expandCurrentChords(currentChords, num8thNotes, beatLength) {
+function expandCurrentChords(currentChords, num8thNotes, beatLength, divider) {
+  num8thNotes*=divider;
   beatLength = beatLength * 8; // this is expressed as a fraction, so that 0.25 is a quarter notes. We want it to be the number of 8th notes
   var chords = [];
   if (currentChords.length === 0) return chords;
   var currentChord = currentChords[0].chord;
   for (var i = 1; i < currentChords.length; i++) {
     var current = currentChords[i];
-    while (chords.length < current.beat) {
+    while (chords.length < (current.beat * divider)) {
       chords.push(currentChord);
     }
     currentChord = current.chord;

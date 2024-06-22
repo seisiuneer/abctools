@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-       
+ 
         <style>
 
 		p {
@@ -1722,11 +1722,19 @@
             <p>You can also force the gchord system to switch on by including:</p>
             <p class="code">%%MIDI gchord</p>
             <p>with no pattern string on its own line anywhere in the ABC.</p>
+            <p>The abcjs gchord system assumes one gchord pattern per measure, specified in 1/8th note resolution timeslots.</p>
+            <p>Here are some examples of gchord patterns for a 4/4 meter tune:</p>
+            <p class="code">%%MIDI gchord fzczfzcz<br/>%%MIDI gchord GHIJghij</p>
             <p>When the abcjs gchord-based backup system is being used, the following custom backup annotations will be ignored if present in the ABC:</p>
             <p class="code">%%MIDI abctt:boomchick<br/>%%MIDI abctt:strum_chords<br/>%%MIDI abctt:strum_chords_divider<br/>%%MIDI abctt:boomchick_fraction<br/>%%MIDI abctt:boom_fraction<br/>%%MIDI abctt:chick_fraction</p>
             <p>Additionally, any "G:1" style chord inversions indicated with a colon and an inversion number or letter after the chord name will be ignored.</p>
             <p>For full details on the %%MIDI gchord backup pattern string, please visit:</p> 
             <p style="text-align: center;"><a href="https://abcmidi.sourceforge.io/#gchord" target="_blank">ABCMIDI %%MIDI gchord specification</a></p>
+            <p><strong>Note:</strong> abcjs does not exactly follow the abc2MIDI gchord specification:</p>
+            <p>abcjs does not implement the abc2MIDI gchordbars command.</p>
+            <p>abcjs gchord patterns are currently limited to a single measure.</p>
+            <p>abcjs does not adjust the gchord pattern timing to fit within a single measure.</p>
+            <p>If you want higher resolution gchord patterns than the default 1/8th note resolution see the <strong>1/16th or 1/32nd Note Resolution gchord Patterns</strong> section below.</p>
             <hr>
             <p style="text-align: center;"><strong>Controlling %%MIDI gchord-based Backup Dynamics</strong></p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/pyb2KPskPdg" title="%%MIDI gchord Dynamics" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -1735,21 +1743,44 @@
             <p>Where stress_pattern is a sequence of floating point numbers that have a 1-to-1 correspondence to the %%MIDI gchord control string entries.</p>
             <p>Each value in the sequence multiplies the %%MIDI bassvol or %%MIDI chordvol playing volume of each corresponding gchord entry by the specified value.</p>
             <p>The scaled values are limited to a range of 0 - 127.</p>
-            <p>If the number of values in the stress_pattern is less than the gchord pattern length, it will be automatically filled out with 1.0 to match the gchord pattern length.</p>
+            <p>If the number of values in the stress_pattern is less than the gchord pattern length, it will automatically be filled out copying values from the start of the stress pattern as required to match the gchord pattern length.</p>
             <p>For example, here is a pair of gchord and abctt:gchordstress commands for a reel where the second half of the pattern is played quieter:</p>
             <p class="code">%%MIDI gchord fzczfzcz<br/>%%MIDI abctt:gchordstress 1.0 1.0 1.0 1.0 0.5 0.5 0.5 0.5</p>
             <p>%%MIDI abctt:gchordstress can also be used as an inline MIDI command:</p>
             <p class="code">[I: MIDI=abctt:gchordstress 1.0 1.0 1.0 1.0 0.5 0.5 0.5 0.5]</p>
+            <hr>
             <p>Duration of the notes in the gchord pattern can be changed using the following private %%MIDI command:</p>
             <p class="code">%%MIDI abctt:gchorddurationscale duration_scale_pattern</p>
             <p>Where duration_scale_pattern is a sequence of floating point numbers that have a 1-to-1 correspondence to the %%MIDI gchord control string entries.</p>
             <p>Each value in the sequence multiplies the default duration (generally 1/8th note) of each corresponding gchord entry by the specified value.</p>
-            <p>If the number of values in the duration_scale_pattern is less than the gchord pattern length, it will be automatically filled out with 1.0 to match the gchord pattern length.</p>
+            <p>If the number of values in the duration_scale_pattern is less than the gchord pattern length, it will automatically be filled out copying values from the start of the duration scale pattern as required to match the gchord pattern length.</p>
             <p>For example, here is a pair of gchord and abctt:gchorddurationscale commands for a reel where the second half of the pattern is played with longer notes:</p>
             <p class="code">%%MIDI gchord fzczfzcz<br/>%%MIDI abctt:gchorddurationscale 1.0 1.0 1.0 1.0 2.0 2.0 2.0 2.0</p>
             <p>%%MIDI abctt:gchorddurationscale can also be used as an inline MIDI command:</p>
             <p class="code">[I: MIDI=abctt:gchorddurationscale 1.0 1.0 1.0 1.0 2.0 2.0 2.0 2.0]</p>
             <p>The %%MIDI abctt:gchordstress and %%MIDI abctt:gchorddurationscale commands are private to this tool and will have no effect in other ABC tools.</p>
+            <hr>
+            <p><strong>Examples: Automatic filling out of abctt:gchordstress and abctt:gchorddurationscale patterns</strong></p>
+            <p>Here are some fully specified abctt:gchordstress and abctt:gchorddurationscale patterns:</p>
+            <p class="code">%%MIDI abctt:gchordstress 2 1 1 1 2 1 1 1<br/>%%MIDI abctt:gchorddurationscale 2 2 2 2 2 2 2 2</p>
+            <p>As described above, if the abctt:gchordstress or abctt:gchorddurationscale patterns are shorter than the gchord pattern, they will be filled out by copying values from the beginning of the pattern as required to match the gchord pattern length.</p>
+            <p>Here are some shorter abctt:gchordstress and abctt:gchorddurationscale patterns that are simpler than the above, but will achieve the same result.</p>
+            <p class="code">%%MIDI abctt:gchordstress 2 1 1 1<br/>%%MIDI abctt:gchorddurationscale 2</p>
+            <hr>
+            <p style="text-align: center"><strong>1/16th or 1/32nd Note Resolution gchord Patterns</strong></p>
+            <p>The default resolution for the gchord patterns in abcjs is 1/8th notes.</p>
+            <p>If you want to specify your gchord patterns at a 1/16th or 1/32nd note resolution instead of the default 1/8th, you can append a optional divider value to the %%MIDI gchord command.</p>
+            <p>Valid divider values are 1 (1/8th note resolution - default), 2 (1/16th note resolution), and 4 (1/32nd note resolution)</p>
+            <p>For example, here are two gchord patterns using 1/16th note resolution:</p>
+            <p class="code">%%MIDI gchord bzzzzzczbzzzbzzz 2<br/>%%MIDI gchord GHIJghijGHIJghij 2</p>
+            <p>When specifying a gchord resolution divider, the %%MIDI abctt:gchordstress and %%MIDI abctt:gchorddurationscale patterns can also be longer to match the gchord pattern length.</p>
+            <hr>
+            <p><strong>Examples: Automatic filling out of abctt:gchordstress and abctt:gchorddurationscale patterns</strong></p>
+            <p>Here are fully specified abctt:gchordstress and abctt:gchorddurationscale patterns at 1/16th note resolution:</p>
+            <p class="code">%%MIDI abctt:gchordstress 2 1 1 1 2 1 1 1 2 1 1 1 2 1 1 1<br/>%%MIDI abctt:gchorddurationscale 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2</p>
+            <p>As described above, if the abctt:gchordstress or abctt:gchorddurationscale patterns are shorter than the gchord pattern, they will be filled out by copying values from the beginning of the pattern as required to match the gchord pattern length.</p>
+            <p>Here are some shorter abctt:gchordstress and abctt:gchorddurationscale patterns at 1/16th note resolution that are simpler than the above, but will achieve the same result.</p>
+            <p class="code">%%MIDI abctt:gchordstress 2 1 1 1<br/>%%MIDI abctt:gchorddurationscale 2</p>
             <hr class="hidden-print" id="sung_solfege">
             <h1 class="page_break_always h1wide">Select the Solfège Instrument to Sing Note Names<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>To sing the note names, you can select the Solfège instrument (136) for a voice:</p>
