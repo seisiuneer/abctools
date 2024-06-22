@@ -15565,15 +15565,31 @@ ChordTrack.prototype.chordNotes = function (bass, modifier) {
 };
 ChordTrack.prototype.writeNote = function (note, beatLength, volume, beat, noteLength, instrument) {
   // undefined means there is a stop time.
-  if (note !== undefined) this.chordTrack.push({
-    cmd: 'note',
-    pitch: note,
-    volume: volume,
-    start: this.lastBarTime + beat * durationRounded(beatLength, this.tempoChangeFactor),
-    duration: durationRounded(noteLength, this.tempoChangeFactor),
-    gap: 0,
-    instrument: instrument
-  });
+
+  // MAE 22 Jun 2024 - If the melody voice has tuning adjustment, apply it to the note 
+  if (gVoiceTuning && (gVoiceTuning.length > 0)){
+    if (note !== undefined) this.chordTrack.push({
+      cmd: 'note',
+      pitch: note,
+      volume: volume,
+      start: this.lastBarTime + beat * durationRounded(beatLength, this.tempoChangeFactor),
+      duration: durationRounded(noteLength, this.tempoChangeFactor),
+      gap: 0,
+      instrument: instrument,
+      cents: gVoiceTuning[0]
+    });
+  }
+  else{ // Do no harm, original code!
+    if (note !== undefined) this.chordTrack.push({
+      cmd: 'note',
+      pitch: note,
+      volume: volume,
+      start: this.lastBarTime + beat * durationRounded(beatLength, this.tempoChangeFactor),
+      duration: durationRounded(noteLength, this.tempoChangeFactor),
+      gap: 0,
+      instrument: instrument
+    });
+  }
 };
 ChordTrack.prototype.chordTrackEmpty = function () {
   var isEmpty = true;
