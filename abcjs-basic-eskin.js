@@ -16069,7 +16069,55 @@ function parseGChord(gchord) {
       case '2':
         pattern.push('');
         break;
-      // TODO-PER: This should extend the last note, but that's a small effect
+      case '3':
+        pattern.push('');
+        pattern.push('');
+        break;
+      case '4':
+        pattern.push('');
+        pattern.push('');
+        pattern.push('');
+        break;
+      case '5':
+        pattern.push('');
+        pattern.push('');
+        pattern.push('');
+        pattern.push('');
+        break;
+      case '6':
+        pattern.push('');
+        pattern.push('');
+        pattern.push('');
+        pattern.push('');
+        pattern.push('');
+        break;
+      case '7':
+        pattern.push('');
+        pattern.push('');
+        pattern.push('');
+        pattern.push('');
+        pattern.push('');
+        pattern.push('');
+        break;
+      case '8':
+        pattern.push('');
+        pattern.push('');
+        pattern.push('');
+        pattern.push('');
+        pattern.push('');
+        pattern.push('');
+        pattern.push('');
+        break;
+      case '9':
+        pattern.push('');
+        pattern.push('');
+        pattern.push('');
+        pattern.push('');
+        pattern.push('');
+        pattern.push('');
+        pattern.push('');
+        pattern.push('');
+        break;
       case 'c':
         pattern.push('chick');
         break;
