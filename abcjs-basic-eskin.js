@@ -4382,7 +4382,7 @@ var parseDirective = {};
   };
   var midiCmdParam0 = ["nobarlines", "barlines", "beataccents", "nobeataccents", "droneon", "droneoff", "drumon", "drumoff", "fermatafixed", "fermataproportional", "gchordon", "gchordoff", "controlcombo", "temperamentnormal", "noportamento"];
   var midiCmdParam1String = ["ptstress", "beatstring","abctt:strum_chords"];
-  var midiCmdParam1Integer = ["bassvol", "chordvol", "c", "channel", "beatmod", "deltaloudness", "drumbars", "gracedivider", "makechordchannels", "randomchordattack", "chordattack", "stressmodel", "transpose", "rtranspose", "vol", "volinc", "abctt:boomchick_fraction", "abctt:boom_fraction", "abctt:chick_fraction", "abctt:strum_chords_divider","abctt:swing","swing"];
+  var midiCmdParam1Integer = ["bassvol", "chordvol", "c", "channel", "beatmod", "deltaloudness", "drumbars", "gracedivider", "makechordchannels", "randomchordattack", "chordattack", "stressmodel", "transpose", "rtranspose", "vol", "volinc", "abctt:boomchick_fraction", "abctt:boom_fraction", "abctt:chick_fraction", "abctt:strum_chords_divider","abctt:swing","swing","gchordbars"];
   var midiCmdParam1Integer1OptionalInteger = ["program"];
   var midiCmdParam1Integer1OptionalString = ["bassprog", "chordprog"];
   var midiCmdParam2Integer = ["ratio", "snt", "bendvelocity", "pitchbend", "control", "temperamentlinear"];
@@ -12286,6 +12286,13 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             }
             break;
 
+          // MAE 23 Jun 2024 - Added gchordbars
+          case "gchordbars":
+            if (gUseGChord){
+              chordTrack.paramChange(element);
+            }
+            break;
+
           // MAE 17 May 2024
           case "boomchick":
             //console.log("got inline boomchick");
@@ -15052,6 +15059,16 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                       }
                       break;
 
+                    // MAE 23 Jun 2024
+                    case "gchordbars":
+                      if (gUseGChord){
+                        voices[voiceNumber].push({
+                          el_type: elem.cmd,
+                          value: elem.params[0],
+                         });
+                      }
+                      break;
+
                     // MAE 20 Jun 2024
                     case "abcttgchordstress":{
                       //console.log("Handle inline abcttgchordstress");
@@ -15382,6 +15399,18 @@ var ChordTrack = function ChordTrack(numVoices, chordsOff, midiOptions, meter) {
   // Zero means to derive the divider by the gchord pattern length
   this.gchordDivider = midiOptions.gchord && (midiOptions.gchord.length === 2) ? midiOptions.gchord[1] : 0;
 
+  // MAE 23 Jun 2024 - Added gchordbars
+  this.gchordbars = midiOptions.gchordbars && midiOptions.gchordbars.length === 1 ? midiOptions.gchordbars[0] : 1;
+
+  if (this.gchordbars < 1){
+    this.gchordbars = 1;
+  }
+
+  // Track measure progress through the gchord
+  this.currentgchordbars = 0;
+  
+  //console.log("ChordTrack gchordbars: "+this.gchordbars);
+
   if (this.gchordDivider != 0){
     // Restrict gchord divider to 1, 2, or 4
     if ((this.gchordDivider != 1) && (this.gchordDivider != 2) && (this.gchordDivider != 4)) {
@@ -15489,6 +15518,22 @@ ChordTrack.prototype.paramChange = function (element) {
         this.abcttgchorddurationscale = generateDefaultDurationScale(element.param);
 
       }
+      break;
+    // MAE 23 Jun 2024 - Added gchordbars
+    case "gchordbars":
+      //console.log("ChordTrack gchordbars: "+element.value);
+      this.gchordbars = element.value;
+      
+      if (this.gchordbars < 1){
+        this.gchordbars = 1; 
+      }
+
+      // Reset measure offset 
+      this.currentgchordbars = 0;
+
+      // Trigger recalc of slot divider
+      this.gchordDivider = 0;
+
       break;
     case "abcttgchordstress":
       this.abcttgchordstress = element.param;
@@ -15677,6 +15722,7 @@ ChordTrack.prototype.chordTrackEmpty = function () {
 ChordTrack.prototype.resolveChords = function (startTime, endTime) {	
 
   //debugger;
+  //console.log("resolveChords gchordbars: "+this.gchordbars);
 
   // If there is a rhythm head anywhere in the measure then don't add a separate rhythm track
   if (this.hasRhythmHead) return;
@@ -15697,6 +15743,12 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
     else if (den == 4){
       nSlots = num*2;
     }
+
+    // Save this for later gchordbars slicing
+    var originalNSlots = nSlots;
+
+    // Scale the slot count by the bars the pattern extends over
+    nSlots *= this.gchordbars;
 
     //console.log("resolveChords - nSlots: "+nSlots);
 
@@ -15736,6 +15788,11 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
     // No pattern after parse, shouldn't happen
     this.gchordDivider = 1;
   }
+
+  //console.log("resolveChords - final divider: "+this.gchordDivider);
+
+  // Scale the slot count by the chord divider
+  originalNSlots *= this.gchordDivider;
 
   // Is there a gchord timing divider?
   if (this.gchordDivider > 1){
@@ -15814,6 +15871,31 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
   // console.log(acc);
   // console.log("duration: "+thisGChordDurationScale.join(" "));
   // //console.log("stress:   "+thisGChordStressPattern.join(" "));
+  
+  if (this.overridePattern){
+
+    // console.log("resolveChords - gchordbars: "+this.gchordbars+" currentgchordbars: "+this.currentgchordbars);
+    // console.log("before slice thisPattern: "+thisPattern.join(":"));
+    // console.log("before slice thisGChordStressPattern: "+thisGChordStressPattern.join(":"));
+    // console.log("before slice thisGChordDurationScale: "+thisGChordDurationScale.join(":"));
+
+    // Now offset for any gchordbars offset
+    var theStart = this.currentgchordbars * originalNSlots;
+    var theEnd = theStart + originalNSlots;
+    thisPattern = thisPattern.slice(theStart,theEnd);
+    thisGChordStressPattern = thisGChordStressPattern.slice(theStart,theEnd);
+    thisGChordDurationScale = thisGChordDurationScale.slice(theStart,theEnd);   
+
+    this.currentgchordbars++;
+    if (this.currentgchordbars == this.gchordbars){
+      this.currentgchordbars = 0;
+    }
+
+    // console.log("after slice thisPattern: "+thisPattern.join(":"));
+    // console.log("after slice thisGChordStressPattern: "+thisGChordStressPattern.join(":"));
+    // console.log("after slice thisGChordDurationScale: "+thisGChordDurationScale.join(":"));
+
+  }
 
   if (portionOfAMeasure) {
 
