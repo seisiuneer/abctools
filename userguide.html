@@ -1734,7 +1734,55 @@
             <p>abcjs does not implement the abc2MIDI gchordbars command.</p>
             <p>abcjs gchord patterns are currently limited to a single measure.</p>
             <p>abcjs does not adjust the gchord pattern timing to fit within a single measure.</p>
-            <p>Beat resolution is determined by the number of timeslots in the gchord control string and will either use 1/8th, 1/16th, or 1/32nd note timeslots. (details below)</p>
+            <p>Beat resolution is determined by the number of timeslots in the gchord control string and will either use 1/8th, 1/16th, or 1/32nd note timeslots.</p>
+            <hr>
+            <p style="text-align: center"><strong>Determining the Beat Resolution for gchord Patterns</strong></p>
+            <p>Based on the meter of the tune and number of timeslots in the gchord control string, the tool will determine a default beat resolution to use for the gchord control string entries.</p>
+            <p>For an x/8 meter the 1/8th note resolution will be the numerator of the meter.</p>
+            <p>For an x/4 meter, the 1/8th note resolution will be twice the numerator of the meter.</p>
+            <hr>
+            <p><strong>Case 1: 4/4 meter</strong></p>
+            <p>Number of timeslots in the control string:</p>
+            <p> 1-8: 1/8th note resolution</p>
+            <p> 9-16: 1/16th note resolution</p>
+            <p> >16: 1/32nd note resolution</p>
+            <p>Some examples:</p>
+            <p>8 timeslots, will use 1/8th note resolution:</p>
+            <p class="code">%%MIDI gchord fzczfzcz</p>
+            <p>8 timeslots, will use 1/8th note resolution:</p>
+            <p class="code">%%MIDI gchord f2c2f2c2</p>
+            <p>16 timeslots, will use 1/16th note resolution:</p>
+            <p class="code">%%MIDI gchord f3zc3zf3zc3z</p>
+            <p>32 timeslots, will use 1/32th note resolution:</p>
+            <p class="code">%%MIDI gchord f6z2c6z2f6z2c6z2</p>
+            <p>12 timeslots, will use 1/16th note resolution and pad with silence:</p>
+            <p class="code">%%MIDI gchord f3zc3zf3z</p>
+            <hr>
+            <p><strong>Case 2: 6/8 meter</strong></p>
+            <p>Number of timeslots in the control string:</p>
+            <p> 1-6: 1/8th note resolution</p>
+            <p> 7-12: 1/16th note resolution</p>
+            <p> >12: 1/32nd note resolution</p>
+            <p>Some examples:</p>
+            <p>6 timeslots, will use 1/8th note resolution:</p>
+            <p class="code">%%MIDI gchord fzcfzc</p>
+            <p>6 timeslots, will use 1/8th note resolution:</p>
+            <p class="code">%%MIDI gchord f2cf2c</p>
+            <p>12 timeslots, will use 1/16th note resolution:</p>
+            <p class="code">%%MIDI gchord f2z2c2f2z2c2</p>
+            <p>24 timeslots, will use 1/32th note resolution:</p>
+            <p class="code">%%MIDI gchord f4z4c4f4z4c4</p>
+            <p>8 timeslots, will use 1/16th note resolution and pad with silence:</p>
+            <p class="code">%%MIDI gchord f2z2c2f2</p>
+            <hr>
+            <p>If using %%MIDI abctt:gchordstress and %%MIDI abctt:gchorddurationscale (described below) along with automatic beat divider resolution, you will need to make sure your scaling parameter list lengths match the expected beat resolution.</p>
+            <hr>
+            <p style="text-align: center"><strong>Forcing a Specific gchord Divider</strong></p>
+            <p>If you want to force the tools to interpret your gchord patterns at a 1/16th or 1/32nd note resolution instead of the default 1/8th, you can append a optional divider value to the %%MIDI gchord command.</p>
+            <p>Valid divider values are 1 (1/8th note resolution - default), 2 (1/16th note resolution), and 4 (1/32nd note resolution)</p>
+            <p>For example, here are two gchord patterns forced to use 1/16th note resolution even though they only have 8 timeslot entries:</p>
+            <p class="code">%%MIDI gchord fz5cz 2<br/>%%MIDI gchord GHIJghij 2</p>
+            <p>When specifying a gchord resolution divider, the %%MIDI abctt:gchordstress and %%MIDI abctt:gchorddurationscale patterns (described below) can also be longer to match the gchord pattern length.</p>
             <hr>
             <p style="text-align: center;"><strong>Controlling %%MIDI gchord-based Backup Dynamics</strong></p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/pyb2KPskPdg" title="%%MIDI gchord Dynamics" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -1790,55 +1838,6 @@
             <p>As described above, if the abctt:gchordstress or abctt:gchorddurationscale patterns are shorter than the gchord pattern, they will be filled out by copying values from the beginning of the pattern as required to match the gchord pattern length.</p>
             <p>Here are some shorter abctt:gchordstress and abctt:gchorddurationscale patterns that are simpler than the above, but will achieve the same result.</p>
             <p class="code">%%MIDI abctt:gchordstress 2 1 1 1<br/>%%MIDI abctt:gchorddurationscale 2</p>
-            <hr>
-            <p style="text-align: center"><strong>1/16th or 1/32nd Note Resolution gchord Patterns</strong></p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/jOIVUB5tdCg" title="%%MIDI gchord divider demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-            <p>Based on the meter of the tune and number of timeslots in the gchord control string, the tool will determine a default beat resolution to use for the gchord control string entries.</p>
-            <p>For an x/8 meter the 1/8th note resolution will be the numerator of the meter.</p>
-            <p>For an x/4 meter, the 1/8th note resolution will be twice the numerator of the meter.</p>
-            <hr>
-            <p><strong>Case 1: 4/4 meter</strong></p>
-            <p>Number of timeslots in the control string:</p>
-            <p> 1-8: 1/8th note resolution</p>
-            <p> 9-16: 1/16th note resolution</p>
-            <p> >16: 1/32nd note resolution</p>
-            <p>Some examples:</p>
-            <p>8 timeslots, will use 1/8th note resolution:</p>
-            <p class="code">%%MIDI gchord fzczfzcz</p>
-            <p>8 timeslots, will use 1/8th note resolution:</p>
-            <p class="code">%%MIDI gchord f2c2f2c2</p>
-            <p>16 timeslots, will use 1/16th note resolution:</p>
-            <p class="code">%%MIDI gchord f3zc3zf3zc3z</p>
-            <p>32 timeslots, will use 1/32th note resolution:</p>
-            <p class="code">%%MIDI gchord f6z2c6z2f6z2c6z2</p>
-            <p>12 timeslots, will use 1/16th note resolution and pad with silence:</p>
-            <p class="code">%%MIDI gchord f3zc3zf3z</p>
-            <hr>
-            <p><strong>Case 2: 6/8 meter</strong></p>
-            <p>Number of timeslots in the control string:</p>
-            <p> 1-6: 1/8th note resolution</p>
-            <p> 7-12: 1/16th note resolution</p>
-            <p> >12: 1/32nd note resolution</p>
-            <p>Some examples:</p>
-            <p>6 timeslots, will use 1/8th note resolution:</p>
-            <p class="code">%%MIDI gchord fzcfzc</p>
-            <p>6 timeslots, will use 1/8th note resolution:</p>
-            <p class="code">%%MIDI gchord f2cf2c</p>
-            <p>12 timeslots, will use 1/16th note resolution:</p>
-            <p class="code">%%MIDI gchord f2z2c2f2z2c2</p>
-            <p>24 timeslots, will use 1/32th note resolution:</p>
-            <p class="code">%%MIDI gchord f4z4c4f4z4c4</p>
-            <p>8 timeslots, will use 1/16th note resolution and pad with silence:</p>
-            <p class="code">%%MIDI gchord f2z2c2f2</p>
-            <hr>
-            <p>If using %%MIDI abctt:gchordstress and %%MIDI abctt:gchorddurationscale along with automatic beat divider resolution, you will need to make sure your scaling lists lengths match the expected beat resolution.</p>
-            <hr>
-            <p style="text-align: center"><strong>Forcing a Specific gchord Divider</strong></p>
-            <p>If you want to force the tools to interpret your gchord patterns at a 1/16th or 1/32nd note resolution instead of the default 1/8th, you can append a optional divider value to the %%MIDI gchord command.</p>
-            <p>Valid divider values are 1 (1/8th note resolution - default), 2 (1/16th note resolution), and 4 (1/32nd note resolution)</p>
-            <p>For example, here are two gchord patterns forced to use 1/16th note resolution even though they only have 8 timeslot entries:</p>
-            <p class="code">%%MIDI gchord fz5cz 2<br/>%%MIDI gchord GHIJghij 2</p>
-            <p>When specifying a gchord resolution divider, the %%MIDI abctt:gchordstress and %%MIDI abctt:gchorddurationscale patterns can also be longer to match the gchord pattern length.</p>
             <hr class="hidden-print" id="sung_solfege">
             <h1 class="page_break_always h1wide">Select the Solfège Instrument to Sing Note Names<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>To sing the note names, you can select the Solfège instrument (136) for a voice:</p>
