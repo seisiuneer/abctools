@@ -16083,32 +16083,44 @@ function resolvePitch(currentChord, type, firstBoom, newBass) {
 // Parse the gchord pattern and generate a default duration scale
 function generateDefaultDurationScale(pattern){
 
-  //console.log("pattern: "+pattern);
+  var result = [];
+  var i = 0;
 
-  let result = [];
+  while (i < pattern.length) {
 
-  for (let i = 0; i < pattern.length; i++) {
-    if (i < pattern.length - 1 && /\d/.test(pattern[i + 1])) {
-      var theCount = parseInt(pattern[i + 1]);
-      if (theCount != 0){
-        // Push the duration scaler
-        result.push(theCount);
-        // Now inject unity for the fillers
-        theCount--;
-        for (var j=0;j<theCount;++j){
-          result.push(1);
-        }
-      }
-      else{
+    let char = pattern[i];
+    let digits = '';
+
+    // Move to the next character
+    i++;
+
+    // Collect all digits following the character
+    while (i < pattern.length && /\d/.test(pattern[i])) {
+
+        digits += pattern[i];
+        i++;
+    
+    }
+
+    var thisValue = digits.length > 0 ? parseInt(digits, 10) : 1
+
+    // If there are digits, parse them as an integer, otherwise default to 1
+    result.push(thisValue);
+
+    // If value is not 1, pad to the full duration
+    if (thisValue > 1){
+
+      thisValue--;
+      
+      for (j=0;j<thisValue;++j){
         result.push(1);
       }
-      i++;  // Skip the digit since it's already processed
-    } else {
-      result.push(1);
+
     }
   }
-
-  //console.log("result: "+result.join(" "));
+  
+  // console.log("pattern: "+pattern);
+  // console.log("result: "+result.join(" "));
 
   return result;
 
@@ -16116,104 +16128,81 @@ function generateDefaultDurationScale(pattern){
 
 function parseGChord(gchord) {
   // TODO-PER: The spec is more complicated than this but for now this will not try to do anything with error cases like the wrong number of beats.
+
+
+  // Find all the numbers in the string
+  const regex = /\d+|\D/g;
+  var result = [];
+  var match;
+
+  while ((match = regex.exec(gchord)) !== null) {
+    result.push(match[0]);
+  }
+
+  // console.log("gchord: "+gchord);
+  // console.log("result: "+result.join(" "));
+
   var pattern = [];
-  for (var i = 0; i < gchord.length; i++) {
-    var ch = gchord[i];
-    switch (ch) {
-      case 'z':
-        pattern.push('');
-        break;
-      case '2':
-        pattern.push('');
-        break;
-      case '3':
-        pattern.push('');
-        pattern.push('');
-        break;
-      case '4':
-        pattern.push('');
-        pattern.push('');
-        pattern.push('');
-        break;
-      case '5':
-        pattern.push('');
-        pattern.push('');
-        pattern.push('');
-        pattern.push('');
-        break;
-      case '6':
-        pattern.push('');
-        pattern.push('');
-        pattern.push('');
-        pattern.push('');
-        pattern.push('');
-        break;
-      case '7':
-        pattern.push('');
-        pattern.push('');
-        pattern.push('');
-        pattern.push('');
-        pattern.push('');
-        pattern.push('');
-        break;
-      case '8':
-        pattern.push('');
-        pattern.push('');
-        pattern.push('');
-        pattern.push('');
-        pattern.push('');
-        pattern.push('');
-        pattern.push('');
-        break;
-      case '9':
-        pattern.push('');
-        pattern.push('');
-        pattern.push('');
-        pattern.push('');
-        pattern.push('');
-        pattern.push('');
-        pattern.push('');
-        pattern.push('');
-        break;
-      case 'c':
-        pattern.push('chick');
-        break;
-      case 'b':
-        pattern.push('boom&chick');
-        break;
-      case 'f':
-        pattern.push('boom');
-        break;
-      case 'G':
-        pattern.push('DO');
-        break;
-      case 'H':
-        pattern.push('MI');
-        break;
-      case 'I':
-        pattern.push('SOL');
-        break;
-      case 'J':
-        pattern.push('TI');
-        break;
-      case 'K':
-        pattern.push('TOP');
-        break;
-      case 'g':
-        pattern.push('do');
-        break;
-      case 'h':
-        pattern.push('mi');
-        break;
-      case 'i':
-        pattern.push('sol');
-        break;
-      case 'j':
-        pattern.push('ti');
-        break;
-      case 'k':
-        pattern.push('top');
-        break;
+
+  for (var i = 0; i < result.length; i++) {
+
+    // Special handling for digits found in the string
+    var testInt = parseInt(result[i]);
+
+    if (!isNaN(testInt)){
+      if (testInt > 1){
+        testInt--;
+        for (var j=0;j<testInt;++j){
+          pattern.push('');
+        }
+      }
+    }
+    else{
+      var ch = result[i];
+      switch (ch) {
+        case 'z':
+          pattern.push('');
+          break;
+        case 'c':
+          pattern.push('chick');
+          break;
+        case 'b':
+          pattern.push('boom&chick');
+          break;
+        case 'f':
+          pattern.push('boom');
+          break;
+        case 'G':
+          pattern.push('DO');
+          break;
+        case 'H':
+          pattern.push('MI');
+          break;
+        case 'I':
+          pattern.push('SOL');
+          break;
+        case 'J':
+          pattern.push('TI');
+          break;
+        case 'K':
+          pattern.push('TOP');
+          break;
+        case 'g':
+          pattern.push('do');
+          break;
+        case 'h':
+          pattern.push('mi');
+          break;
+        case 'i':
+          pattern.push('sol');
+          break;
+        case 'j':
+          pattern.push('ti');
+          break;
+        case 'k':
+          pattern.push('top');
+          break;
+      }
     }
   }
   return pattern;

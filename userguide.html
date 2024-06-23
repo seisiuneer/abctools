@@ -1763,7 +1763,6 @@
             <hr>
             <p style="text-align: center"><strong>%%MIDI gchord Duration Scaling</strong></p>
             <p>When a gchord command is found in the ABC, a default duration map is generated for each entry in the gchord pattern, assuming one beat unit, either 1/8th, 1/16th, or 1/32nd note depending on the gchord divider (described below) for each entry, unless the entry is followed by a number, in which its duration will be the number of beat units specified by the number.</p>
-            <p>Duration multipliers following individual gchord elements are currently limited to the single digits 1-9.</p>
             <p>If you wish to override the default duration map, the duration of each of the notes in the gchord pattern can be changed using the following private %%MIDI command:</p>
             <p class="code">%%MIDI abctt:gchorddurationscale duration_scale_pattern</p>
             <p>Where duration_scale_pattern is a sequence of floating point numbers that have a 1-to-1 correspondence to the total beat length of the %%MIDI gchord control string entries.</p>
