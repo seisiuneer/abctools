@@ -15384,9 +15384,13 @@ var ChordTrack = function ChordTrack(numVoices, chordsOff, midiOptions, meter) {
     this.gchordDivider = 1;
   }
 
+  var defaultDurationScale = undefined;
+
   // This allows for an initial %%MIDI gchord with no string
   if (midiOptions.gchord && (midiOptions.gchord.length>0)){
     this.overridePattern = midiOptions.gchord ? parseGChord(midiOptions.gchord[0]) : undefined;
+
+    defaultDurationScale = midiOptions.gchord ? generateDefaultDurationScale(midiOptions.gchord[0]) : undefined;
   }
   else{
     this.overridePattern = undefined;
@@ -15397,7 +15401,7 @@ var ChordTrack = function ChordTrack(numVoices, chordsOff, midiOptions, meter) {
   this.abcttgchordstress = (midiOptions.abcttgchordstress && (midiOptions.abcttgchordstress.length === 1))? midiOptions.abcttgchordstress[0] : undefined;
   
   // Is there a gchord duration scale?
-  this.abcttgchorddurationscale = (midiOptions.abcttgchorddurationscale && (midiOptions.abcttgchorddurationscale.length === 1))? midiOptions.abcttgchorddurationscale[0] : undefined;
+  this.abcttgchorddurationscale = (midiOptions.abcttgchorddurationscale && (midiOptions.abcttgchorddurationscale.length === 1))? midiOptions.abcttgchorddurationscale[0] : defaultDurationScale;
 
 };
 ChordTrack.prototype.setMeter = function (meter) {
@@ -15441,6 +15445,7 @@ ChordTrack.prototype.paramChange = function (element) {
     case "gchord":
       // Skips gchord elements that don't have pattern strings
       if (element.param && element.param.length>0){
+
         this.overridePattern = parseGChord(element.param);
 
         // Is there also a pattern divider?
@@ -15450,6 +15455,10 @@ ChordTrack.prototype.paramChange = function (element) {
         else{
           this.gchordDivider = 1;
         }
+
+        // Generate a default duration scale based on the pattern
+        this.abcttgchorddurationscale = generateDefaultDurationScale(element.param);
+
       }
       break;
     case "abcttgchordstress":
@@ -15709,7 +15718,21 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
     thisGChordDurationScale = extendArray(thisGChordDurationScale,thisPattern.length);
 
   }
-  
+
+  // // Debug - Show the pattern, duration, and stress
+  // var acc = "pattern: "
+  // for (var i=0;i<thisPattern.length;++i){
+  //   if (thisPattern[i] != ""){
+  //     acc += thisPattern[i]+" ";
+  //   }
+  //   else{
+  //     acc += "z ";
+  //   }
+  // }
+  // console.log(acc);
+  // console.log("duration: "+thisGChordDurationScale.join(" "));
+  // //console.log("stress:   "+thisGChordStressPattern.join(" "));
+
   if (portionOfAMeasure) {
 
     var originalPattern = thisPattern.slice();
@@ -16055,6 +16078,40 @@ function resolvePitch(currentChord, type, firstBoom, newBass) {
     }    
   }
   return ret;
+}
+
+// Parse the gchord pattern and generate a default duration scale
+function generateDefaultDurationScale(pattern){
+
+  //console.log("pattern: "+pattern);
+
+  let result = [];
+
+  for (let i = 0; i < pattern.length; i++) {
+    if (i < pattern.length - 1 && /\d/.test(pattern[i + 1])) {
+      var theCount = parseInt(pattern[i + 1]);
+      if (theCount != 0){
+        // Push the duration scaler
+        result.push(theCount);
+        // Now inject unity for the fillers
+        theCount--;
+        for (var j=0;j<theCount;++j){
+          result.push(1);
+        }
+      }
+      else{
+        result.push(1);
+      }
+      i++;  // Skip the digit since it's already processed
+    } else {
+      result.push(1);
+    }
+  }
+
+  //console.log("result: "+result.join(" "));
+
+  return result;
+
 }
 
 function parseGChord(gchord) {
