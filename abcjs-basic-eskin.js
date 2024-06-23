@@ -12190,7 +12190,6 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
               //console.log("Handle chick_fraction");
               processChickFraction(midiOptions.chick_fraction[0]);
             }
-
             break;
           case "tempo":
             if (!startingTempo) startingTempo = element.qpm;else tempoChangeFactor = element.qpm ? startingTempo / element.qpm : 1;
@@ -15355,6 +15354,9 @@ module.exports = centsToFactor;
 
 var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/abc_common.js");
 var ChordTrack = function ChordTrack(numVoices, chordsOff, midiOptions, meter) {
+  
+  //console.log("ChordTrack top");
+  
   this.chordTrack = [];
   this.chordTrackFinished = false;
   this.chordChannel = numVoices; // first free channel for chords
@@ -15377,23 +15379,35 @@ var ChordTrack = function ChordTrack(numVoices, chordsOff, midiOptions, meter) {
   this.chickVolume = midiOptions.chordvol && midiOptions.chordvol.length === 1 ? midiOptions.chordvol[0] : 48;
 
   // Pass in an optional value for scaling the gchord string
-  this.gchordDivider = midiOptions.gchord && (midiOptions.gchord.length === 2) ? midiOptions.gchord[1] : 1;
+  // Zero means to derive the divider by the gchord pattern length
+  this.gchordDivider = midiOptions.gchord && (midiOptions.gchord.length === 2) ? midiOptions.gchord[1] : 0;
 
-  // Restrict gchord divider to 1, 2, or 4
-  if ((this.gchordDivider != 1) && (this.gchordDivider != 2) && (this.gchordDivider != 4)) {
-    this.gchordDivider = 1;
+  if (this.gchordDivider != 0){
+    // Restrict gchord divider to 1, 2, or 4
+    if ((this.gchordDivider != 1) && (this.gchordDivider != 2) && (this.gchordDivider != 4)) {
+      //console.log("ChordTrack - bad divider: "+this.gchordDivider);
+      this.gchordDivider = 0;
+    }
+    else{
+      //console.log("ChordTrack - force divider: "+this.gchordDivider);
+    }
+    
+    //console.log("ChordTrack - final divider: "+this.gchordDivider);
   }
 
   var defaultDurationScale = undefined;
 
   // This allows for an initial %%MIDI gchord with no string
   if (midiOptions.gchord && (midiOptions.gchord.length>0)){
+
     this.overridePattern = midiOptions.gchord ? parseGChord(midiOptions.gchord[0]) : undefined;
 
     defaultDurationScale = midiOptions.gchord ? generateDefaultDurationScale(midiOptions.gchord[0]) : undefined;
+
   }
   else{
     this.overridePattern = undefined;
+    this.gchordDivider = 0;
   }
 
   // MAE Added 20 June 2024
@@ -15405,6 +15419,7 @@ var ChordTrack = function ChordTrack(numVoices, chordsOff, midiOptions, meter) {
 
 };
 ChordTrack.prototype.setMeter = function (meter) {
+  //console.log("setMeter: "+meter.num+ " "+meter.den);
   this.meter = meter;
 };
 ChordTrack.prototype.setTempoChangeFactor = function (tempoChangeFactor) {
@@ -15446,15 +15461,29 @@ ChordTrack.prototype.paramChange = function (element) {
       // Skips gchord elements that don't have pattern strings
       if (element.param && element.param.length>0){
 
+        //console.log("gchord "+element.param);
+
         this.overridePattern = parseGChord(element.param);
+
+        this.gchordDivider = 0;
 
         // Is there also a pattern divider?
         if (element.gchordDivider){
+
           this.gchordDivider = element.gchordDivider;
+          
+          if ((this.gchordDivider != 1) && (this.gchordDivider != 2) && (this.gchordDivider != 4)) {
+          
+            //console.log("paramChange - bad divider: "+this.gchordDivider);
+          
+            this.gchordDivider = 0;
+          
+          }
+          //console.log("paramChange - force divider: "+this.gchordDivider);
+
         }
-        else{
-          this.gchordDivider = 1;
-        }
+        
+        //console.log("paramChange - final divider: "+this.gchordDivider);
 
         // Generate a default duration scale based on the pattern
         this.abcttgchorddurationscale = generateDefaultDurationScale(element.param);
@@ -15654,6 +15683,59 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
   var num = this.meter.num;
   var den = this.meter.den;
   var beatLength = 1 / den;
+
+  // Auto determine the gchord divider if none specified with the gchord
+  if (this.overridePattern){
+    
+    //console.log("resolveChords overridePattern: ["+this.overridePattern.join("][")+"]");
+    
+    var nSlots;
+
+    if (den == 8){
+      nSlots = num;
+    }
+    else if (den == 4){
+      nSlots = num*2;
+    }
+
+    //console.log("resolveChords - nSlots: "+nSlots);
+
+    if (this.gchordDivider == 0){
+
+      var len = this.overridePattern.length;
+      
+      if (len <= nSlots){
+      
+        //console.log("resolveChords - auto divider: 1");
+        this.gchordDivider = 1;
+      
+      }
+      else if (len <= (nSlots*2)){
+      
+        //console.log("resolveChords - auto divider: 2");
+        this.gchordDivider = 2;
+      
+      }
+      else{
+      
+        //console.log("resolveChords - auto divider: 4");
+        this.gchordDivider = 4;
+      
+      }
+    }
+    else{
+
+      //console.log("resolveChords - force divider: "+this.gchordDivider);
+
+    }
+
+    //console.log("resolveChords - final divider: "+this.gchordDivider);
+   
+  }
+  else{
+    // No pattern after parse, shouldn't happen
+    this.gchordDivider = 1;
+  }
 
   // Is there a gchord timing divider?
   if (this.gchordDivider > 1){
