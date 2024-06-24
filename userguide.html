@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
- 
+
         <style>
 
 		p {
@@ -289,6 +289,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#custom_backup_beat_timing">Custom Backup Beat Timing</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#strummed_chords">Enabling Strummed Chords</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#midigchord">Using %%MIDI gchord for Custom Backup Patterns</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#inversions">Specifying Chord Inversions in the ABC</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#sung_solfege">Select the Solfège Instrument to Sing Note Names</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#voice_hiding">Voice Combining and Hiding</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#highlighting_control">Controlling Note Highlighting in the Player</a></p>
@@ -443,7 +444,6 @@
                 
                 <button class="accordion" title="Click to expand/collapse this section">ABC Tricks and Tips</button>
                 <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#inversions">Specifying Chord Inversions in the ABC</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#largeprint">"Large Print" Edition Tune Notation</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#tabtranspose">Transposing Notation Independent of Tablature</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#learningtunes">Learning New Tunes Part-by-Part Using ABC</a></p>
@@ -1843,7 +1843,25 @@
             <p style="text-align: center"><strong>Custom Boomchick Backup is not Available When Using %%MIDI gchord</strong></p>
             <p>When the abcjs gchord-based backup system is being used, the following custom backup annotations will be ignored if present in the ABC:</p>
             <p class="code">%%MIDI abctt:boomchick<br/>%%MIDI abctt:strum_chords<br/>%%MIDI abctt:strum_chords_divider<br/>%%MIDI abctt:boomchick_fraction<br/>%%MIDI abctt:boom_fraction<br/>%%MIDI abctt:chick_fraction</p>
-            <p>Additionally, any "G:1" style chord inversions indicated with a colon and an inversion number or letter after the chord name will be ignored.</p>
+            <hr class="hidden-print" id="inversions">
+            <h1 class="page_break_always">Specifying Chord Inversions in the ABC<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>If you want to specify that a chord in the ABC play with an inversion, you can append a : and then the numbers 0-14 to the root chord name</p>
+            <p>0 = no inversion</p>
+            <p>1 = 1st inversion</p>
+            <p>2 = 2nd inversion</p>
+            <p>3 = 3nd inversion (octave up for simple 3-note chords)</p>
+            <p>etc.</p>
+             <p><strong>Example 1:</strong> E Minor chord, first inversion:</p>
+            <p class="code">"Em:1"</p>
+            <p><strong>Example 2:</strong> G chord, second inversion:</p>
+            <p class="code">"G:2"</p>
+            <p><strong>Example 3:</strong> D Minor 7 chord, one octave higher (four notes in the chord):</p>
+            <p class="code">"Dm7:4"</p>
+            <p>The inversion values allow up to a full octave transform of the original chord, and then will wrap around to the original chord and subsequent inversions.</p> 
+            <p>The inversions also include any octave shifts you might have specified on the %%MIDI chordprog octave=1 style commands for the chord instrument.</p> 
+            <p>This style of indicating inversions was inspired by a system described at this Wikipedia page:</p>
+            <p style="text-align: center;"><a href="https://en.wikipedia.org/wiki/Inversion_(music)" target="_blank">Inversion (music) on Wikipedia</a></p>
+            <p>This extended chord syntax for the inversions may not be compatible with other ABC tools.</p>
             <hr class="hidden-print" id="sung_solfege">
             <h1 class="page_break_always h1wide">Select the Solfège Instrument to Sing Note Names<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>To sing the note names, you can select the Solfège instrument (136) for a voice:</p>
@@ -3762,36 +3780,6 @@
             <p>If you wish to opt-out of the "expand to widest" layout for a specific tune, I've added a new first-class (starts with %%) ABC directive that can be put into any tune to force abcjs to use the original abcjs 6.2.2 layout calculation system:</p>
             <p class="code">%%noexpandtowidest</p>
             <p>Put this anywhere in a tune to use the original staff width calculation and layout solution for that tune. </p>
-            <hr class="hidden-print" id="inversions">
-            <h1 class="page_break_always">Specifying Chord Inversions in the ABC<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/EyTE8jPRNjY" title="Specifying Chord Inversions" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/QLOaA5WH8E4" title="Specifying Chord Inversions" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-            <p>If you want to specify that a chord in the ABC play with an inversion, you can append a : and then the numbers 0-14 or the letters a-n</p>
-            <p>0 = no inversion</p>
-            <p>1 = 1st inversion</p>
-            <p>2 = 2nd inversion</p>
-            <p>3 = 3nd inversion (octave up for simple 3-note chords)</p>
-            <p>etc.</p>
-            <p>Or:</p>
-            <p>a = no inversion</p>
-            <p>b = 1st inversion</p>
-            <p>c = 2nd inversion</p>
-            <p>d = 3nd inversion (octave up for simple 3-note chords)</p>
-            <p>etc.</p>
-            <p><strong>Example 1:</strong> E Minor chord, first inversion:</p>
-            <p class="code">"Em:1"<br/>or<br/>"Em:b"</p>
-            <p><strong>Example 2:</strong> G chord, second inversion:</p>
-            <p class="code">"G:2"<br/>or<br/>"G:c"</p>
-            <p><strong>Example 3:</strong> D Major chord, one octave higher:</p>
-            <p class="code">"D:4"<br/>or<br/>"D:d"</p>
-            <p>The inversion values allow up to a full octave transform of the original chord, and then will wrap around to the original chord and subsequent inversions.</p> 
-            <p>The inversions also include any octave shifts you might have specified on the %%MIDI chordprog octave=1 style commands for the chord instrument.</p> 
-            <p>This style of indicating inversions was inspired by a system described at this Wikipedia page:</p>
-            <p style="text-align: center;"><a href="https://en.wikipedia.org/wiki/Inversion_(music)" target="_blank">Inversion (music) on Wikipedia</a></p>
-            <p>This extended chord syntax for the inversions may not be compatible with other ABC tools.</p>
-            <p><strong>Note:</strong> The chord inversion features are not available if using:</p>
-            <p class="code">%%MIDI gchord optional_gchord_string</p>
-            <p>as a custom backup pattern specification for a tune.</p>
             <hr class="hidden-print" id="largeprint">
             <h1 class="page_break_always">"Large Print" Edition Tune Notation<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Most of the time, people have asked how to cram as many tunes on a page as possible, but sometimes you want to go the other way, make the notation larger.</p>

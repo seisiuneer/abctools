@@ -13387,59 +13387,45 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     if (theInversion != undefined){
 
       switch (theInversion){
-        case "a":
         case "0":
           theInversion = 0;
           break;
-        case "b":
         case "1":
           theInversion = 1;
           break;
-        case "c":
         case "2":
           theInversion = 2;
           break;
-        case "d":
         case "3":
           theInversion = 3;
           break;
-        case "e":
         case "4":
           theInversion = 4;
           break;
-        case "f":
         case "5":
           theInversion = 5;
           break;
-        case "g":
         case "6":
           theInversion = 6;
           break;
-        case "h":
         case "7":
           theInversion = 7;
           break;
-        case "i":
         case "8":
           theInversion = 8;
           break;
-        case "j":
         case "9":
           theInversion = 9;
           break;
-        case "k":
         case "10":
           theInversion = 10;
           break;
-        case "l":
         case "11":
           theInversion = 11;
           break;
-        case "m":
         case "12":
           theInversion = 12;
           break;
-        case "n":
         case "13":
           theInversion = 13;
           break;
@@ -15594,6 +15580,15 @@ ChordTrack.prototype.interpretChord = function (name) {
   if (name === 'break') return {
     chick: []
   };
+
+  // MAE 23 May 2024 - Experimenting with chord inversions
+  var chordInfo = this.processInversion(name);
+
+  name = chordInfo.name;
+  var inversion = chordInfo.inversion;
+
+  //console.log("chord name: "+name+" inversion: "+inversion);
+
   var root = name.substring(0, 1);
   if (root === '(') {
     name = name.substring(1, name.length - 2);
@@ -15621,7 +15616,10 @@ ChordTrack.prototype.interpretChord = function (name) {
 
   var bass2 = bass - 5; // The alternating bass is a 4th below
   var chick;
-  if (name.length === 1) chick = this.chordNotes(unshiftedBass, '');
+  // if (name.length === 1){
+  //   console.log("simple case");
+  //   chick = this.chordNotes(unshiftedBass, '', inversion).notes;
+  // }
   var remaining = name.substring(1);
   var acc = remaining.substring(0, 1);
   if (acc === 'b' || acc === '♭') {
@@ -15636,7 +15634,13 @@ ChordTrack.prototype.interpretChord = function (name) {
     remaining = remaining.substring(1);
   }
   var arr = remaining.split('/');
-  chick = this.chordNotes(unshiftedBass, arr[0]);
+
+  // MAE 22 May 2024 - For octave shifted chords
+  var invertedInfo = this.chordNotes(unshiftedBass, arr[0], inversion);
+
+  chick = invertedInfo.notes;
+  var invertedNotes = invertedInfo.invertedNotes;
+
   // If the 5th is altered then the bass is altered. Normally the bass is 7 from the root, so adjust if it isn't.
   if (chick.length >= 3) {
     var fifth = chick[2] - chick[0];
@@ -15663,14 +15667,120 @@ ChordTrack.prototype.interpretChord = function (name) {
   return {
     boom: bass,
     boom2: bass2,
-    chick: chick
+    chick: invertedNotes
   };
 };
-ChordTrack.prototype.chordNotes = function (bass, modifier) {
+
+// 
+// Chord inversions are represented by a : and a number after the chord name
+//
+ChordTrack.prototype.processInversion = function(chordName){
+
+  var theSplits = chordName.split(":");
+  
+  var theChordName = theSplits[0];
+  var theInversion = theSplits[1];
+
+  if (theInversion != undefined){
+
+    switch (theInversion){
+      case "0":
+        theInversion = 0;
+        break;
+      case "1":
+        theInversion = 1;
+        break;
+      case "2":
+        theInversion = 2;
+        break;
+      case "3":
+        theInversion = 3;
+        break;
+      case "4":
+        theInversion = 4;
+        break;
+      case "5":
+        theInversion = 5;
+        break;
+      case "6":
+        theInversion = 6;
+        break;
+      case "7":
+        theInversion = 7;
+        break;
+      case "8":
+        theInversion = 8;
+        break;
+      case "9":
+        theInversion = 9;
+        break;
+      case "10":
+        theInversion = 10;
+        break;
+      case "11":
+        theInversion = 11;
+        break;
+      case "12":
+        theInversion = 12;
+        break;
+      case "13":
+        theInversion = 13;
+        break;
+      default:
+        theInversion = 0;
+        break;
+    }
+  }
+  else{
+    theInversion = 0;
+  }
+
+  return {name:theChordName,inversion:theInversion};
+}
+
+ChordTrack.prototype.chordNotes = function (bass, modifier,inversion) {
+
+  var originalInversion = inversion;
+
   var intervals = gChordIntervals[modifier];
   if (!intervals) {
     if (modifier.slice(0, 2).toLowerCase() === 'ma' || modifier[0] === 'M') intervals =gChordIntervals.M;else if (modifier[0] === 'm' || modifier[0] === '-') intervals = gChordIntervals.m;else intervals = gChordIntervals.M;
   }
+
+  var finalIntervals = intervals.slice();
+
+  if (inversion != 0){
+
+    var rawIntervals = intervals.slice();
+
+    if (inversion >= (intervals.length+1)){
+
+        inversion = inversion % (rawIntervals.length + 1);
+
+    }
+
+    for (i=0;i<inversion;++i){
+
+      rawIntervals.push(intervals[i]+12)
+
+    }
+
+    finalIntervals = [];
+
+    for (i=0;i<intervals.length;++i){
+
+      finalIntervals.push(rawIntervals[i+inversion]);
+
+    }
+    
+  }
+
+  // if (inversion != 0){
+  //   console.log("bass: "+bass+" modified: "+modifier+" originalInversion: "+originalInversion+" inversion: "+inversion);
+  //   console.log("notes: "+intervals+" inverted: "+finalIntervals);
+  //   console.log("-----------");
+  // }
+
   bass += 12; // the chord is an octave above the bass note.
   
   // MAE 22 May 2024 - For chick octave shift
@@ -15680,8 +15790,15 @@ ChordTrack.prototype.chordNotes = function (bass, modifier) {
   for (var i = 0; i < intervals.length; i++) {
     notes.push(bass + intervals[i]);
   }
-  return notes;
+
+  var invertedNotes = [];
+  for (var i = 0; i < finalIntervals.length; i++) {
+    invertedNotes.push(bass + finalIntervals[i]);
+  }
+
+  return {notes:notes,invertedNotes:invertedNotes};
 };
+
 ChordTrack.prototype.writeNote = function (note, beatLength, volume, beat, noteLength, instrument) {
   // undefined means there is a stop time.
 
