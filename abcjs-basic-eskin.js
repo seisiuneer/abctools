@@ -16908,6 +16908,7 @@ function CreateSynth(theABC) {
     }
 
     // Determine the volume multiplier
+
     if (params.soundFontVolumeMultiplier || params.soundFontVolumeMultiplier === 0){
         self.soundFontVolumeMultiplier = params.soundFontVolumeMultiplier;
     } 
@@ -16916,12 +16917,16 @@ function CreateSynth(theABC) {
         self.soundFontVolumeMultiplier = 2.0;
     }
     else
-    if (self.soundFontUrl === alternateSoundFontUrl || self.soundFontUrl === alternateSoundFontUrl3 || self.soundFontUrl === alternateSoundFontUrl4 || self.soundFontUrl === alternateSoundFontUrl5){
+    if (self.soundFontUrl === alternateSoundFontUrl){
         self.soundFontVolumeMultiplier = 3.0;
     }
     else
-    if (self.soundFontUrl === alternateSoundFontUrl6){
+    if (self.soundFontUrl === alternateSoundFontUrl3 || self.soundFontUrl === alternateSoundFontUrl5 || self.soundFontUrl === alternateSoundFontUrl6){
         self.soundFontVolumeMultiplier = 2.0;
+    }
+    else
+    if (self.soundFontUrl === alternateSoundFontUrl4 ){
+        self.soundFontVolumeMultiplier = 2.5;      
     }
     else 
     // MAE 24 Mar 2024 - Regenrated FatBoy soundfont
@@ -16937,7 +16942,8 @@ function CreateSynth(theABC) {
     }
 
     // MAE 24 Mar 2024
-    //console.log("soundFontVolumeMultiplier = "+self.soundFontVolumeMultiplier);
+    // console.log("soundFontUrl = "+self.soundFontUrl);
+    // console.log("soundFontVolumeMultiplier = "+self.soundFontVolumeMultiplier);
 
     // Can't use .ogg files on Safari, falls back to .mp3 with offsets
     var isSafari = false
@@ -17436,6 +17442,9 @@ function CreateSynth(theABC) {
         
         // MAE 2 Jan 2023 - Added startChar and endChar to notesPushed when using solfege samples
         var cents;
+
+        // MAE FOOFOO 25 June 2024
+        //console.log("parts[0]: "+parts[0]);
 
         if (parts[0] == "solfege"){
           cents = parts[8] !== undefined ? parseFloat(parts[8]) : 0;
@@ -19419,6 +19428,8 @@ var pitchToNoteName = __webpack_require__(/*! ./pitch-to-note-name */ "./src/syn
 var centsToFactor = __webpack_require__(/*! ./cents-to-factor */ "./src/synth/cents-to-factor.js");
 function placeNote(outputAudioBuffer, sampleRate, sound, startArray, volumeMultiplier, ofsMs, fadeTimeSec, noteEndSec, debugCallback) {
   
+  //console.log("placeNote sound.instrument: "+sound.instrument+" volumeMultiplier: "+volumeMultiplier);
+  
   // sound contains { instrument, pitch, volume, len, pan, tempoMultiplier
   // len is in whole notes. Multiply by tempoMultiplier to get seconds.
   // ofsMs is an offset to subtract from the note to line up programs that have different length onsets.
@@ -19485,6 +19496,12 @@ function placeNote(outputAudioBuffer, sampleRate, sound, startArray, volumeMulti
 
       }
     }
+  }
+
+  // MAE 25 June 2025
+  // The percussion track always uses the same soundfont and instrument, so standardize the gain
+  if (sound.instrument == "percussion"){
+    volumeMultiplier = 3.25;
   }
 
   // MAE START OF CHANGE
