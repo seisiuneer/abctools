@@ -19501,7 +19501,7 @@ function placeNote(outputAudioBuffer, sampleRate, sound, startArray, volumeMulti
   // MAE 25 June 2025
   // The percussion track always uses the same soundfont and instrument, so standardize the gain
   if (sound.instrument == "percussion"){
-    volumeMultiplier = 3.25;
+    volumeMultiplier = 2.5;
   }
 
   // MAE START OF CHANGE
