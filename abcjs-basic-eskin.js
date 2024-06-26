@@ -15535,13 +15535,19 @@ ChordTrack.prototype.paramChange = function (element) {
       this.bassInstrument = element.value;
       if ((element.octaveShift != undefined) && (element.octaveShift != null)){
         this.bassOctaveShift = element.octaveShift;
-      }  
+      }
+      else{
+        this.bassOctaveShift = 0;
+      }
       break;
     case "chordprog":
       this.chordInstrument = element.value;
       if ((element.octaveShift != undefined) && (element.octaveShift != null)){
         this.chordOctaveShift = element.octaveShift;
-      }  
+      } 
+      else{
+        this.chordOctaveShift = 0;
+      }
       break;
     case "bassvol":
       this.boomVolume = element.param;
