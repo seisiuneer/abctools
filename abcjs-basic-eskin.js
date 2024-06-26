@@ -15377,7 +15377,11 @@ var ChordTrack = function ChordTrack(numVoices, chordsOff, midiOptions, meter) {
   // MAE 17 Jun 2024 - To allow for bass and chord instrument octave shifts
   this.bassInstrument = midiOptions.bassprog && ((midiOptions.bassprog.length === 1) || (midiOptions.bassprog.length === 2)) ? midiOptions.bassprog[0] : 0;
   this.chordInstrument = midiOptions.chordprog && ((midiOptions.chordprog.length === 1) || (midiOptions.chordprog.length === 2)) ? midiOptions.chordprog[0] : 0;
-  
+
+  // MAE For octave shifted bass and chords
+  this.bassOctaveShift = midiOptions.bassprog && midiOptions.bassprog.length === 2 ? midiOptions.bassprog[1] : 0;
+  this.chordOctaveShift = midiOptions.chordprog && midiOptions.chordprog.length === 2 ? midiOptions.chordprog[1] : 0;
+
   this.boomVolume = midiOptions.bassvol && midiOptions.bassvol.length === 1 ? midiOptions.bassvol[0] : 64;
   this.chickVolume = midiOptions.chordvol && midiOptions.chordvol.length === 1 ? midiOptions.chordvol[0] : 48;
 
@@ -15528,10 +15532,16 @@ ChordTrack.prototype.paramChange = function (element) {
       this.abcttgchorddurationscale = element.param;
       break;
     case "bassprog":
-      this.bassInstrument = element.param;
+      this.bassInstrument = element.value;
+      if ((element.octaveShift != undefined) && (element.octaveShift != null)){
+        this.bassOctaveShift = element.octaveShift;
+      }  
       break;
     case "chordprog":
-      this.chordInstrument = element.param;
+      this.chordInstrument = element.value;
+      if ((element.octaveShift != undefined) && (element.octaveShift != null)){
+        this.chordOctaveShift = element.octaveShift;
+      }  
       break;
     case "bassvol":
       this.boomVolume = element.param;
@@ -15612,7 +15622,7 @@ ChordTrack.prototype.interpretChord = function (name) {
   // MAE 17 Jun 2024 - Supporting octave shifted bass and chords
   var unshiftedBass = bass;
 
-  bass += gBassOctaveShift*12;
+  bass += this.bassOctaveShift*12;
 
   var bass2 = bass - 5; // The alternating bass is a 4th below
   var chick;
@@ -15659,7 +15669,7 @@ ChordTrack.prototype.interpretChord = function (name) {
       bass = this.basses[arr[1].substring(0, 1)] + bassShift + chordTranspose;
 
       // MAE 22 May 2024 - Supporting octave shifted bass and chords
-      bass += gBassOctaveShift*12;
+      bass += this.bassOctaveShift*12;
 
       bass2 = bass;
     }
@@ -15784,7 +15794,7 @@ ChordTrack.prototype.chordNotes = function (bass, modifier,inversion) {
   bass += 12; // the chord is an octave above the bass note.
   
   // MAE 22 May 2024 - For chick octave shift
-  bass += (gChordOctaveShift * 12);
+  bass += (this.chordOctaveShift * 12);
 
   var notes = [];
   for (var i = 0; i < intervals.length; i++) {
