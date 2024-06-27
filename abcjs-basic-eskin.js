@@ -12341,6 +12341,9 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             if ((element.octaveShift != undefined) && (element.octaveShift != null)){
               gBassOctaveShift = element.octaveShift;
             }
+            else{
+              gBassOctaveShift = 0;
+            }
             break;
           case "chordprog":
             if (gUseGChord){
@@ -12352,6 +12355,9 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             if ((element.octaveShift != undefined) && (element.octaveShift != null)){
               gChordOctaveShift = element.octaveShift;
             }  
+            else{
+              gChordOctaveShift = 0;
+            }
             break;
           case "bassvol":
             if (gUseGChord){
