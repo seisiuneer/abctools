@@ -1688,7 +1688,7 @@
             <p class="code">%%MIDI gchord optional_gchord_string</p>
             <p>as a custom backup pattern specification for a tune.</p>
             <p>Instead, if using %%MIDI gchord for backup, use the</p>
-            <p class="code">%%MIDI abctt:gchorddurationscale</p>
+            <p class="code">%%MIDI gchordduration</p>
             <p>command described in the <a href="#midigchord">Using %%MIDI gchord for Custom Backup Patterns</a> section below.</p>
             <hr class="hidden-print" id="strummed_chords">
             <h1 class="page_break_always">Enabling Strummed Chords<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -1773,29 +1773,37 @@
             <p>8 timeslots, will use 1/16th note resolution and pad with silence:</p>
             <p class="code">%%MIDI gchord f2z2c2f2</p>
             <hr>
-            <p>If using %%MIDI abctt:gchordstress and %%MIDI abctt:gchorddurationscale (described below) along with automatic beat divider resolution, you will need to make sure your scaling parameter list lengths match the expected beat resolution.</p>
+            <p>If using %%MIDI gchordstress and %%MIDI gchordduration (described below) along with automatic beat divider resolution, you will need to make sure your scaling parameter list lengths match the expected beat resolution.</p>
             <hr>
             <p style="text-align: center"><strong>Forcing a Specific gchord Divider</strong></p>
             <p>If you want to force the tools to interpret your gchord patterns at a 1/16th or 1/32nd note resolution instead of the default 1/8th, you can append a optional divider value to the %%MIDI gchord command.</p>
             <p>Valid divider values are 1 (1/8th note resolution - default), 2 (1/16th note resolution), and 4 (1/32nd note resolution)</p>
             <p>For example, here are two gchord patterns forced to use 1/16th note resolution even though they only have 8 timeslot entries:</p>
             <p class="code">%%MIDI gchord fz5cz 2<br/>%%MIDI gchord GHIJghij 2</p>
-            <p>When specifying a gchord resolution divider, the %%MIDI abctt:gchordstress and %%MIDI abctt:gchorddurationscale patterns (described below) can also be longer to match the gchord pattern length.</p>
+            <p>When specifying a gchord resolution divider, the %%MIDI gchordstress and %%MIDI gchordduration patterns (described below) can also be longer to match the gchord pattern length.</p>
             <hr>
             <p style="text-align: center;"><strong>Controlling %%MIDI gchord-based Backup Dynamics</strong></p>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/pyb2KPskPdg" title="%%MIDI gchord Dynamics" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+            <p><strong>Note:</strong> Since this video was produced, the commands for volume and duration scaling dynamics have promoted to first class ABC commands and changed from:</p>
+            <p>%%MIDI abctt:gchordurationscale duration_scale_pattern</p>
+            <p>to</p>
+            <p>%%MIDI gchordduration duration_scale_pattern</p>
+            <p>and</p>
+            <p>%%MIDI abctt:gchordstress stress_pattern</p>
+            <p>to</p>
+            <p>%%MIDI gchordstress stress_pattern</p> 
             <hr>
             <p style="text-align: center"><strong>%%MIDI gchord Volume Dynamics Scaling</strong></p>
             <p>The volume dynamics of the gchord backup pattern may be set using the following private %%MIDI command:</p>
-            <p class="code">%%MIDI abctt:gchordstress stress_pattern</p>
+            <p class="code">%%MIDI gchordstress stress_pattern</p>
             <p>Where stress_pattern is a sequence of floating point numbers that have a 1-to-1 correspondence to the %%MIDI gchord control string entries.</p>
             <p>Each value in the sequence multiplies the %%MIDI bassvol or %%MIDI chordvol playing volume of each corresponding gchord entry by the specified value.</p>
             <p>The scaled values are limited to a range of 0 - 127.</p>
             <p>If the number of values in the stress_pattern is less than the gchord pattern length, it will automatically be filled out copying values from the start of the stress pattern as required to match the gchord pattern length.</p>
-            <p>For example, here is a pair of gchord and abctt:gchordstress commands for a reel where the second half of the pattern is played quieter:</p>
-            <p class="code">%%MIDI gchord fzczfzcz<br/>%%MIDI abctt:gchordstress 1.0 1.0 1.0 1.0 0.5 0.5 0.5 0.5</p>
-            <p>%%MIDI abctt:gchordstress can also be used as an inline MIDI command:</p>
-            <p class="code">[I: MIDI=abctt:gchordstress 1.0 1.0 1.0 1.0 0.5 0.5 0.5 0.5]</p>
+            <p>For example, here is a pair of gchord and gchordstress commands for a reel where the second half of the pattern is played quieter:</p>
+            <p class="code">%%MIDI gchord fzczfzcz<br/>%%MIDI gchordstress 1.0 1.0 1.0 1.0 0.5 0.5 0.5 0.5</p>
+            <p>%%MIDI gchordstress can also be used as an inline MIDI command:</p>
+            <p class="code">[I: MIDI=gchordstress 1.0 1.0 1.0 1.0 0.5 0.5 0.5 0.5]</p>
             <hr>
             <p style="text-align: center"><strong>Stress scaling if the gchord command string contains numbers</strong></p>
             <p>If your gchord string contains numbers, then you need to account for the number of beat slots that each entry in the gchord actually takes and create stress scale entries assuming the first slot is the note itself and additional rest entries have been added to fill out the note time.</p>
@@ -1804,20 +1812,20 @@
             <p>For the purposes of stress scaling needs to be considered as this expanded string with 8 entries that has additional injected z rests to fill out the time for each scaled entries:</p>
             <p class="code">%%MIDI gchord fzczfzcz</p>
             <p>With the stress scale values only applied to the non-expanded entries and not the injected z rests:</p>
-            <p class="code">%%MIDI abctt:gchordstress 2.0 1.0 2.0 1.0 2.0 1.0 2.0 1.0</p>
+            <p class="code">%%MIDI gchordstress 2.0 1.0 2.0 1.0 2.0 1.0 2.0 1.0</p>
             <p>Applying stress scaling to the rest entries will not break anything (they are silent), but using this format for the entries may make it easier to match them up to the original gchord string.</p>
             <hr>
             <p style="text-align: center"><strong>%%MIDI gchord Duration Scaling</strong></p>
             <p>When a gchord command is found in the ABC, a default duration map is generated for each entry in the gchord pattern, assuming one beat unit, either 1/8th, 1/16th, or 1/32nd note depending on the gchord divider (described below) for each entry, unless the entry is followed by a number, in which its duration will be the number of beat units specified by the number.</p>
             <p>If you wish to override the default duration map, the duration of each of the notes in the gchord pattern can be changed using the following private %%MIDI command:</p>
-            <p class="code">%%MIDI abctt:gchorddurationscale duration_scale_pattern</p>
+            <p class="code">%%MIDI gchordduration duration_scale_pattern</p>
             <p>Where duration_scale_pattern is a sequence of floating point numbers that have a 1-to-1 correspondence to the total beat length of the %%MIDI gchord control string entries.</p>
             <p>Each value in the sequence multiplies the default duration, by default an 1/8th note unless specifying a gchord divider (described below), of each corresponding gchord entry by the specified value.</p>
             <p>If the number of values in the duration_scale_pattern is less than the gchord pattern length, it will automatically be filled out copying values from the start of the duration scale pattern as required to match the gchord pattern length.</p>
-            <p>For example, here is a pair of gchord and abctt:gchorddurationscale commands for a reel where the second half of the pattern is played with longer notes:</p>
-            <p class="code">%%MIDI gchord fzczfzcz<br/>%%MIDI abctt:gchorddurationscale 1.0 1.0 1.0 1.0 2.0 2.0 2.0 2.0</p>
-            <p>%%MIDI abctt:gchorddurationscale can also be used as an inline MIDI command:</p>
-            <p class="code">[I: MIDI=abctt:gchorddurationscale 1.0 1.0 1.0 1.0 2.0 2.0 2.0 2.0]</p>
+            <p>For example, here is a pair of gchord and gchordduration commands for a reel where the second half of the pattern is played with longer notes:</p>
+            <p class="code">%%MIDI gchord fzczfzcz<br/>%%MIDI gchordduration 1.0 1.0 1.0 1.0 2.0 2.0 2.0 2.0</p>
+            <p>%%MIDI gchordduration can also be used as an inline MIDI command:</p>
+            <p class="code">[I: MIDI=gchordduration 1.0 1.0 1.0 1.0 2.0 2.0 2.0 2.0]</p>
             <hr>
             <p style="text-align: center"><strong>Duration scaling if the gchord command string contains numbers</strong></p>
             <p>If your gchord string contains numbers, then you need to account for the number of beat slots that each entry in the gchord actually takes and create duration scale entries assuming the first slot is the note itself and additional rest entries have been added to fill out the note time.</p>
@@ -1826,16 +1834,16 @@
             <p>For the purposes of duration scaling needs to be considered as this expanded string with 8 entries that has additional injected z rests to fill out the time for each scaled entry:</p>
             <p class="code">%%MIDI gchord fzczfzcz</p>
             <p>With the duration scale values ideally only applied to the non-expanded entries and not the injected z rests:</p>
-            <p class="code">%%MIDI abctt:gchorddurationscale 2.0 1.0 2.0 1.0 2.0 1.0 2.0 1.0</p>
+            <p class="code">%%MIDI gchordduration 2.0 1.0 2.0 1.0 2.0 1.0 2.0 1.0</p>
             <p>Applying duration scaling to the rest entries will not break anything (they are silent), but using this format for the entries may make it easier to match them up to the original gchord string.</p>
-            <p>The %%MIDI abctt:gchordstress and %%MIDI abctt:gchorddurationscale commands are private to this tool and will have no effect in other ABC tools.</p>
+            <p>The %%MIDI gchordstress and %%MIDI gchordduration commands are private to this tool and will have no effect in other ABC tools.</p>
             <hr>
-            <p style="text-align: center"><strong>Automatic filling out of abctt:gchordstress and abctt:gchorddurationscale patterns</strong></p>
-            <p>Here are some fully specified abctt:gchordstress and abctt:gchorddurationscale patterns for 4/4 meter:</p>
-            <p class="code">%%MIDI abctt:gchordstress 2 1 1 1 2 1 1 1<br/>%%MIDI abctt:gchorddurationscale 2 2 2 2 2 2 2 2</p>
-            <p>As described above, if the abctt:gchordstress or abctt:gchorddurationscale patterns are shorter than the gchord pattern, they will be filled out by copying values from the beginning of the pattern as required to match the gchord pattern length.</p>
-            <p>Here are some shorter abctt:gchordstress and abctt:gchorddurationscale patterns that are simpler than the above, but will achieve the same result.</p>
-            <p class="code">%%MIDI abctt:gchordstress 2 1 1 1<br/>%%MIDI abctt:gchorddurationscale 2</p>
+            <p style="text-align: center"><strong>Automatic filling out of gchordstress and gchordduration patterns</strong></p>
+            <p>Here are some fully specified gchordstress and gchordduration patterns for 4/4 meter:</p>
+            <p class="code">%%MIDI gchordstress 2 1 1 1 2 1 1 1<br/>%%MIDI gchordduration 2 2 2 2 2 2 2 2</p>
+            <p>As described above, if the gchordstress or gchordduration patterns are shorter than the gchord pattern, they will be filled out by copying values from the beginning of the pattern as required to match the gchord pattern length.</p>
+            <p>Here are some shorter gchordstress and gchordduration patterns that are simpler than the above, but will achieve the same result.</p>
+            <p class="code">%%MIDI gchordstress 2 1 1 1<br/>%%MIDI gchordduration 2</p>
             <hr>
             <p style="text-align: center"><strong>Implementation Differences from abc2MIDI</strong></p>
             <p>This implementation differs from the abc2MIDI document in that it doesn't scale the pattern to fit the measure, there are fixed allocations of 1/8th, 1/16th, or 1/32nd note slots depending on the gchord pattern length and meter.</p>
@@ -1853,7 +1861,7 @@
             <p>2 = 2nd inversion</p>
             <p>3 = 3nd inversion (octave up for simple 3-note chords)</p>
             <p>etc.</p>
-             <p><strong>Example 1:</strong> E Minor chord, first inversion:</p>
+            <p><strong>Example 1:</strong> E Minor chord, first inversion:</p>
             <p class="code">"Em:1"</p>
             <p><strong>Example 2:</strong> G chord, second inversion:</p>
             <p class="code">"G:2"</p>
@@ -1861,6 +1869,7 @@
             <p class="code">"Dm7:4"</p>
             <p>The inversion values allow up to a full octave transform of the original chord, and then will wrap around to the original chord and subsequent inversions.</p> 
             <p>The inversions also include any octave shifts you might have specified on the %%MIDI chordprog octave=1 style commands for the chord instrument.</p> 
+            <p><strong>Note:</strong> The inversion numbers are not drawn in the notation, they are only present in the ABC and used to convey inversion information for playback.</p>
             <p>This style of indicating inversions was inspired by a system described at this Wikipedia page:</p>
             <p style="text-align: center;"><a href="https://en.wikipedia.org/wiki/Inversion_(music)" target="_blank">Inversion (music) on Wikipedia</a></p>
             <p>Chord inversions work both with standard and %%MIDI gchord based backup.</p>

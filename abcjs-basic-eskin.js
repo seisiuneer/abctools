@@ -4391,7 +4391,7 @@ var parseDirective = {};
   var midiCmdParam1String1Integer = ["portamento"];
   var midiCmdParamFraction = ["expand", "grace", "trim"];
   var midiCmdParam1StringVariableIntegers = ["drum", "chordname"]; 
-  var midiCmdParamVariableFloat = ["abctt:gchordstress", "abctt:gchorddurationscale"]; 
+  var midiCmdParamVariableFloat = ["abctt:gchordstress", "abctt:gchorddurationscale", "gchordstress", "gchordduration"]; 
   var midiCmdParam1StringOptionalIntegers = ["gchord"];
 
   // MAE 17 May 2024 - Added abctt:boomchick
@@ -4633,11 +4633,11 @@ var parseDirective = {};
           arr.push(p.floatt);
         }
         if (midi_cmd == "abctt:gchordstress"){
-          midi_cmd = "abcttgchordstress";
+          midi_cmd = "gchordstress";
         }
         else
         if (midi_cmd == "abctt:gchorddurationscale"){
-          midi_cmd = "abcttgchorddurationscale";
+          midi_cmd = "gchordduration";
         }
         midi_params.push(arr);
       }
@@ -12374,14 +12374,14 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             }
             break;
           // Added 20 Jun 2024
-          case "abcttgchordstress":
+          case "gchordstress":
             if (gUseGChord){
               chordTrack.paramChange(element);
             }
             break;
 
          // Added 20 Jun 2024
-          case "abcttgchorddurationscale":
+          case "gchordduration":
             if (gUseGChord){
               chordTrack.paramChange(element);
             }
@@ -15061,29 +15061,29 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                       }
                       break;
 
-                    // MAE 20 Jun 2024
-                    case "abcttgchordstress":{
-                      //console.log("Handle inline abcttgchordstress");
+                    // MAE 30 Jun 2024
+                    case "gchordstress":
+                      //console.log("Handle inline gchordstress");
                       if (gUseGChord){
                         voices[voiceNumber].push({
-                          el_type: 'abcttgchordstress',
+                          el_type: 'gchordstress',
                           param: elem.params[0]
                         });
                       }
-                    }
+                    
                     break;
 
-                    // MAE 20 Jun 2024
-                    case "abcttgchorddurationscale":{
-                      //console.log("Handle inline abcttgchorddurationscale");
+                    case "gchordduration":
+                      //console.log("Handle inline gchordduration");
                       if (gUseGChord){
                         voices[voiceNumber].push({
-                          el_type: 'abcttgchorddurationscale',
+                          el_type: 'gchordduration',
                           param: elem.params[0]
                         });
                       }
-                    }
+                    
                     break;
+
 
                     default:
                       console.log("MIDI seq: midi cmd not handled: ", elem.cmd, elem);
@@ -15437,10 +15437,10 @@ var ChordTrack = function ChordTrack(numVoices, chordsOff, midiOptions, meter) {
 
   // MAE Added 20 June 2024
   // Is there a gchord stress model?
-  this.abcttgchordstress = (midiOptions.abcttgchordstress && (midiOptions.abcttgchordstress.length === 1))? midiOptions.abcttgchordstress[0] : undefined;
+  this.gchordstress = (midiOptions.gchordstress && (midiOptions.gchordstress.length === 1))? midiOptions.gchordstress[0] : undefined;
   
   // Is there a gchord duration scale?
-  this.abcttgchorddurationscale = (midiOptions.abcttgchorddurationscale && (midiOptions.abcttgchorddurationscale.length === 1))? midiOptions.abcttgchorddurationscale[0] : defaultDurationScale;
+  this.gchordduration = (midiOptions.gchordduration && (midiOptions.gchordduration.length === 1))? midiOptions.gchordduration[0] : defaultDurationScale;
 
 };
 ChordTrack.prototype.setMeter = function (meter) {
@@ -15511,7 +15511,7 @@ ChordTrack.prototype.paramChange = function (element) {
         //console.log("paramChange - final divider: "+this.gchordDivider);
 
         // Generate a default duration scale based on the pattern
-        this.abcttgchorddurationscale = generateDefaultDurationScale(element.param);
+        this.gchordduration = generateDefaultDurationScale(element.param);
 
       }
       break;
@@ -15531,11 +15531,11 @@ ChordTrack.prototype.paramChange = function (element) {
       this.gchordDivider = 0;
 
       break;
-    case "abcttgchordstress":
-      this.abcttgchordstress = element.param;
+    case "gchordstress":
+      this.gchordstress = element.param;
       break;
-    case "abcttgchorddurationscale":
-      this.abcttgchorddurationscale = element.param;
+    case "gchordduration":
+      this.gchordduration = element.param;
       break;
     case "bassprog":
       this.bassInstrument = element.value;
@@ -15961,9 +15961,9 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
   
   var thisPattern = this.overridePattern ? this.overridePattern : this.rhythmPatterns[num + '/' + den];
 
-  var thisGChordStressPattern = this.abcttgchordstress;
+  var thisGChordStressPattern = this.gchordstress;
 
-  var thisGChordDurationScale  = this.abcttgchorddurationscale;
+  var thisGChordDurationScale  = this.gchordduration;
 
   // No stress pattern? Create a unity gain version
   if (!thisGChordStressPattern){
@@ -23049,6 +23049,7 @@ var addChord = function addChord(getTextSize, abselem, elem, roomTaken, roomTake
     var rel_position = elem.chord[i].rel_position;
     var chords = elem.chord[i].name.split("\n");
     for (var j = chords.length - 1; j >= 0; j--) {
+      
       // parse these in opposite order because we place them from bottom to top.
       var chord = chords[j];
       var x = 0;
@@ -23061,6 +23062,20 @@ var addChord = function addChord(getTextSize, abselem, elem, roomTaken, roomTake
       } else {
         font = 'gchordfont';
         klass = "chord";
+
+        //console.log("before chord["+j+"] = "+chord); // MAE FOOFOO 30Jun2024
+
+        // Use a regular expression to match the pattern
+        //const match = chord.match(/^(.*?):\d\b/);
+        const match = chord.match(/^(.*?):(\d?)$/);
+        
+        // If there's a match, return the portion before the colon
+        if (match) {
+          chord = match[1];
+        }
+
+        //console.log("after chord["+j+"] = "+chord); // MAE FOOFOO 30Jun2024
+
         chord = translateChord(chord, jazzchords, germanAlphabet);
       }
       var attr = getTextSize.attr(font, klass);
