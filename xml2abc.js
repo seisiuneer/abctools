@@ -1943,7 +1943,9 @@ Parser.prototype.doHarmony = function ($e, i, $es) {    // parse a musicXMl harm
     }
     kind = kind.replace ('79','9').replace ('713','13').replace ('maj6','6');
     bass = $e.find ('bass>bass-step').text () + (altmap [$e.find ('bass>bass-alter').text ()] || '');
-    this.msc.appendElem (vt, '"' + root + alt + kind + sus + (bass && '/' + bass) + '"', 1);
+    
+    // MAE 30 Jun 2024, inserted space before chord to avoid beaming issues
+    this.msc.appendElem (vt, ' "' + root + alt + kind + sus + (bass && '/' + bass) + '"', 1); 
 }
 Parser.prototype.doBarline = function ($e) {
     var $rep = $e.find ('repeat');
