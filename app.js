@@ -10450,7 +10450,23 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 		gTabSecondStaffOnly = ScanTuneForTabSecondStaffOnly(tune, instrument);
 	}
 	
-	var visualObj = ABCJS.renderAbc(renderDivs, tune, params);
+	// Wrap this in a try/catch to see if we can avoid crashing the app on a bad tune
+	try{
+		var visualObj = ABCJS.renderAbc(renderDivs, tune, params);
+	}
+	catch(err){
+
+		var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Tune Rendering Issue</p>';
+
+		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;text-align:center;">During rendering, the following tune caused the tool to crash:</p>';
+
+		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:18px;text-align:center;"><strong>'+gLastRenderedTuneName+'</strong></p>';
+
+		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:18px;text-align:center;">Try isolating this one tune to determine the issue.</p>';
+		
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+	}
 
 	// Odd case where diagnostics work with highlighting, but only if there is a single tune
 	if (gShowDiagnostics && gRawMode && renderAll && (nTunes > 1)){

@@ -199,6 +199,9 @@ var gChordOctaveShift = 0;
 // For Paul Rosen's gchord implementation
 var gUseGChord = false;
 
+// Added 1 July 2024
+var gLastRenderedTuneName = "";
+
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
@@ -938,6 +941,9 @@ var tunebook = {};
     var book = new TuneBook(abc);
     var abcParser = new Parse();
 
+    // Keep track of tune render progress in case one crashes the renderer
+    gLastRenderedTuneName = "";
+
     // output each tune, if it exists. Otherwise clear the div.
     for (var i = 0; i < output.length; i++) {
       var div = output[i];
@@ -946,6 +952,10 @@ var tunebook = {};
       } else if (typeof div === "string") div = document.getElementById(div);
       if (div) {
         if (currentTune >= 0 && currentTune < book.tunes.length) {
+
+          // MAE 1 July 2024
+          // Keep track of the last tune rendered for reporting if it crashes
+          gLastRenderedTuneName = book.tunes[i].title;
 
           // If streaming render progress to the console
           if (gShowABCJSRenderProgress){
