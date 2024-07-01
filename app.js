@@ -10460,9 +10460,11 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 
 		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;text-align:center;">During rendering, the following tune caused the tool to crash:</p>';
 
-		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:18px;text-align:center;"><strong>'+gLastRenderedTuneName+'</strong></p>';
+		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:20px;text-align:center;"><strong>'+gLastRenderedTuneName+'</strong></p>';
 
-		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:18px;text-align:center;">Try isolating this one tune to determine the issue.</p>';
+		modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:20px;text-align:center;">Try isolating this one tune to determine the issue.</p>';
+
+		modal_msg += '<p style="font-size:3pt;line-height:3pt;text-align:center;">&nbsp;</p>';
 		
 		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 
