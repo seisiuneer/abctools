@@ -15831,7 +15831,9 @@ ChordTrack.prototype.chordNotes = function (bass, modifier,inversion) {
   return {notes:notes,invertedNotes:invertedNotes};
 };
 
-ChordTrack.prototype.writeNote = function (note, beatLength, volume, beat, noteLength, instrument) {
+ChordTrack.prototype.writeNote = function (note, beatLength, volume, beat, noteLength, instrument, offset) {
+
+  // MAE 1 July 2024 - Added offset for strummed chords
   // undefined means there is a stop time.
 
   //console.log("note: "+note+" beatLength: "+beatLength+" beat: "+beat+" noteLength: "+noteLength);
@@ -15842,7 +15844,7 @@ ChordTrack.prototype.writeNote = function (note, beatLength, volume, beat, noteL
       cmd: 'note',
       pitch: note,
       volume: volume,
-      start: this.lastBarTime + beat * durationRounded(beatLength, this.tempoChangeFactor),
+      start: this.lastBarTime + beat * durationRounded(beatLength, this.tempoChangeFactor) + offset,
       duration: durationRounded(noteLength, this.tempoChangeFactor),
       gap: 0,
       instrument: instrument,
@@ -15854,7 +15856,7 @@ ChordTrack.prototype.writeNote = function (note, beatLength, volume, beat, noteL
       cmd: 'note',
       pitch: note,
       volume: volume,
-      start: this.lastBarTime + beat * durationRounded(beatLength, this.tempoChangeFactor),
+      start: this.lastBarTime + beat * durationRounded(beatLength, this.tempoChangeFactor) + offset,
       duration: durationRounded(noteLength, this.tempoChangeFactor),
       gap: 0,
       instrument: instrument
@@ -16192,6 +16194,9 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
 
     var pitches = resolvePitch(currentChordsExpanded[p], type, firstBoom, newBass);
     
+    // MAE 1 July 2024 - For strummed chords
+    var theOffset = 0;
+        
     for (var oo = 0; oo < pitches.length; oo++) {
 
       // Allow for control of boom and chick lengths
@@ -16225,7 +16230,16 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
       // Make sure not writing a bad pitch
       if (pitches[oo]){
 
-        this.writeNote(pitches[oo], 0.125/this.gchordDivider, isBoom || newBass ? boomVolume  : chickVolume, p, thisNoteLength, isBoom || newBass ? this.bassInstrument : this.chordInstrument);
+        // MAE 1 July 2024 - For strummed chords
+        // Only strum chicks
+        if (gStrumChords){
+          if (!(isBoom || newBass)){
+            theOffset = oo * (0.125/gStrumChordsDivider);
+            //console.log("Strumming offset: "+theOffset);
+          }
+        }
+
+        this.writeNote(pitches[oo], 0.125/this.gchordDivider, isBoom || newBass ? boomVolume  : chickVolume, p, thisNoteLength, isBoom || newBass ? this.bassInstrument : this.chordInstrument, theOffset);
 
       }
  
