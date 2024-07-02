@@ -19282,8 +19282,6 @@ function DoMaximize(){
 	gTheNotation.style.display = "flex";
 	gTheNotation.style.float = "none";
 
-	document.getElementById("zoombutton").src = "img/zoomin.png"
-
 	gIsMaximized = true;
 
 	gPlayABCGotMaximizedPlay = false;
@@ -19433,6 +19431,9 @@ function ToggleMaximize(){
 	else{
 
 		DoMaximize();
+
+		// 2 Jul 2024 - Moved this here to avoid binding error on Firefox at start
+		document.getElementById("zoombutton").src = "img/zoomin.png"
 
 		if (isDesktopBrowser()){
 
