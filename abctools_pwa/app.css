@@ -1,0 +1,4721 @@
+html {
+  -webkit-text-size-adjust: 100%; /* 2 */
+}
+
+::-webkit-file-upload-button {
+  -webkit-appearance: button; /* 1 */
+  font: inherit; /* 2 */
+}
+
+body {
+padding:0px; 
+margin:0px;
+touch-action: pan-x pan-y;
+}
+
+ /* unvisited link */
+a:link {
+  color: black;
+}
+
+/* visited link */
+a:visited {
+  color: black;
+}
+
+/* mouse over link */
+a:hover {
+  color: #00BB00;
+}
+
+/* selected link */
+a:active {
+  color: black;
+} 
+
+#app-container{
+text-align: center;
+}
+
+.whistle {
+font-family: 'TinWhistleFingering';
+font-size: 50px;
+}
+
+.whistle_small {
+font-family: 'TinWhistleFingering';
+font-size: 20px;
+}
+
+
+.hiddentabline {
+display:none;
+}
+
+svg {
+color:black;
+}
+
+.hidebutton {
+display: none;
+}
+
+.toggle-buttons input[type="radio"] {
+display: none;
+}
+
+.toggle-buttons label {
+margin-right:16px;
+}
+
+.toggle-buttons input:checked + label {
+background: #c0df81;
+color: black;
+user-select: none;
+
+}
+
+@media (hover: hover) {
+	input:hover + label,
+	input:focus + label {
+	background: palegreen;
+	user-select: none;
+	}
+}
+
+#notation-holder {
+text-align: center;
+margin-bottom:50px;
+height:100%;
+display:none;
+width:850px;
+margin-left:auto;
+margin-right:auto;
+flex-flow:column;
+}
+
+#abc {
+font-family:"Courier";
+font-size: 13pt;
+line-height: 16pt;
+padding: 6px;
+margin-top: 0px;
+margin-bottom: 0px;
+-webkit-appearance: none;
+-moz-appearance: none;
+}
+
+.transposeup {
+margin-right:24px;
+margin-left:0px;
+}
+
+@media (hover: hover) {
+	.transposeup:hover{
+	background: palegreen;
+	}
+}
+
+.transposedown {
+margin-right:20px;
+margin-left:0px;
+}
+
+@media (hover: hover) {
+	.transposedown:hover{
+	background: palegreen;
+	}
+}
+
+.saveaspdf {
+margin-left:0px;
+margin-right:12px;
+}
+
+.saveaspdfdisabled {
+margin-left:0px;
+margin-right:12px;
+opacity: 0.4;
+}
+
+@media (hover: hover) {
+	.saveaspdf:hover{
+	background: palegreen;
+	}
+}
+
+.toggleadvancedcontrols{
+margin-left:0px;
+margin-right:22px;
+}
+
+@media (hover: hover) {
+	.toggleadvancedcontrols:hover{
+	background: palegreen;
+	}
+}
+
+.togglesharecontrols{
+margin-left:0px;
+margin-right:21px;
+}
+
+@media (hover: hover) {
+	.togglesharecontrols:hover{
+	background: palegreen;
+	}
+}
+
+.advancedcontrols{
+}
+
+.advancedcontrolsdisabled{
+opacity:0.4;
+}
+
+@media (hover: hover) {
+	.advancedcontrols:hover{
+	background: palegreen;
+	}
+}
+
+.configuresettings{
+margin-right:12px;
+}
+
+@media (hover: hover) {
+	.configuresettings:hover{
+	background: palegreen;
+	}
+}
+
+.urlcontrols{
+margin-right:16px;
+margin-left:0px;
+height:42px;
+padding:12px !important;
+}
+
+.urlcontrolslast{
+margin-left:0px;
+height:42px;
+padding:12px !important;
+}
+
+
+@media (hover: hover) {
+	.urlcontrols:hover{
+	background: palegreen;
+	}
+}
+
+.urlcontrolsdisabled{
+margin-right:21px;
+margin-left:0px;
+opacity:0.4;
+height:42px;
+padding:12px;}
+
+#sortbutton{
+	height:42px;
+	padding:12px;
+	margin-right:24px;
+}
+
+@media (hover: hover) {
+	.sortbutton:hover{
+	background: palegreen;
+	}
+}
+
+#transposetokey{
+	height:42px;
+	padding:12px;
+	margin-right:24px;
+}
+
+@media (hover: hover) {
+	.transposetokey:hover{
+	background: palegreen;
+	}
+}
+
+#incipitsbuilder{
+	height:42px;
+	padding:12px;
+	margin-right:0px;
+}
+
+@media (hover: hover) {
+	.incipitsbuilder:hover{
+	background: palegreen;
+	}
+}
+
+.snapshotbutton{
+margin-left: 0px;
+margin-right: 22px;
+}
+
+@media (hover: hover) {
+	.snapshotbutton:hover{
+	background: palegreen;
+	}
+}
+
+.restorebutton{
+margin-left: 0px;
+margin-right: 22px;
+}
+
+@media (hover: hover) {
+	.restorebutton:hover{
+	background: palegreen;
+	}
+}
+
+#dialogrestorebutton{
+	height:42px;
+	padding:12px;
+	margin-left:24px;
+}
+
+@media (hover: hover) {
+	.dialogrestorebutton:hover{
+	background: palegreen;
+	}
+}
+
+#dialogrestoreautobutton{
+	height:42px;
+	padding:12px;
+	margin-left:24px;
+}
+
+@media (hover: hover) {
+	.dialogrestoreautobutton:hover{
+	background: palegreen;
+	}
+}
+
+.clearbutton{
+margin-left: 0px;
+margin-right: 0px;
+}
+
+@media (hover: hover) {
+	.clearbutton:hover{
+	background: tomato;
+	}
+}
+
+#selectabcfile{
+-webkit-appearance:none !important;
+margin-right:12px;
+}
+
+#abc-selected{
+-webkit-appearance: none !important;
+margin-top:15px;
+margin-bottom:1px;
+}
+
+#notenrechts{
+margin-top:16px;
+display:none;
+}
+
+#inputarea{
+margin-top:18px;
+}
+
+#transpose-controls{
+display:flex;
+margin-top:18px;
+}
+
+#pdf-controls{
+display:none;
+}
+
+#offscreenrender{
+position:absolute; 
+left:-2100px;
+}
+
+#advanced-controls-dialog{
+display:block;
+margin-top:24px;
+margin-bottom:24px;
+}
+
+#add-new-tune-dialog{
+display:block;
+margin-top:24px;
+margin-bottom:24px;
+}
+
+#sharing-controls-dialog{
+display:block;
+margin-top:24px;
+margin-bottom:24px;
+text-align: center;
+}
+
+.full-screen-percentage {
+font-family:"Helvetica" !important;
+font-size:12pt !important;
+margin-left: 12px !important;
+}
+
+#full-screen-percentage{
+padding-top:4px !important;
+padding-bottom:4px !important;
+width:80px !important;
+margin-top:6px !important;
+margin-left:8px !important;
+}
+
+#capo{
+padding-top:4px !important;
+padding-bottom:4px !important;
+width:60px !important;
+margin-top:6px !important;
+margin-right:10px !important;
+margin-left:8px !important;
+}
+
+.capo {
+font-family:"Helvetica" !important;
+font-size:12pt !important;
+margin-left: 36px !important;
+}
+
+#tabs-selection{
+display:flex;
+}
+
+p{
+font-size:11pt;
+font-family:"Helvetica";
+}
+
+#pagestatustext{
+font-family:"Helvetica";
+font-size:11pt;
+}
+
+select {
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+}
+
+#pdfformatlabel{
+font-size:11pt;
+font-family:"Helvetica";
+padding-top: 8px;
+margin-left:0px;
+margin-right:4px;
+user-select: none;
+}
+
+#pdfformatlabel_dialog{
+font-size:11pt;
+font-family:"Helvetica";
+padding-top: 8px;
+margin-left:0px;
+margin-right:0px;
+user-select: none;
+}
+
+
+#pdfformat,#pdfformat_dialog{
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:213px;
+margin-left:4px;
+}
+
+#pagenumberslabel{
+font-size:11pt;
+font-family:"Helvetica";
+padding-top:8px;
+margin-left:11px;
+margin-right:8px;
+user-select: none;
+}
+
+#pagenumberslabel_dialog{
+font-size:11pt;
+font-family:"Helvetica";
+padding-top:8px;
+margin-left:11px;
+margin-right:0px;
+user-select: none;
+}
+
+#pagenumbers,#pagenumbers_dialog{
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:152px;
+margin-left:4px;
+
+}
+
+#firstpagelabel{
+font-size:11pt;
+font-family:"Helvetica";
+padding-top:8px;
+margin-left:11px;
+margin-right:8px;
+user-select: none;
+}
+
+#firstpagelabel_dialog{
+font-size:11pt;
+font-family:"Helvetica";
+padding-top:8px;
+margin-left:11px;
+margin-right:0px;
+user-select: none;
+}
+
+#firstpage, #firstpage_dialog{
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:64px;
+margin-left:4px;
+}
+
+#pdffonts,#pdffonts_dialog{
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:120px;
+margin-left:4px;
+}
+
+#pdffontslabel_dialog{
+font-size:11pt;
+font-family:"Helvetica";
+padding-top:8px;
+margin-left:11px;
+margin-right:0px;
+user-select: none;
+}
+
+#pdffontstyle,#pdffontstyle_dialog{
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:120px;
+margin-left:4px;
+}
+
+#pdffontstylelabel_dialog{
+font-size:11pt;
+font-family:"Helvetica";
+padding-top:8px;
+margin-left:24px;
+margin-right:0px;
+user-select: none;
+}
+
+#pagenumberslabel{
+font-size:11pt;
+font-family:"Helvetica";
+padding-top:8px;
+margin-left:11px;
+margin-right:8px;
+user-select: none;
+}
+
+#pdf-export-dialog{
+margin-top:36px;
+}
+
+#displayformatlabel{
+font-size:11pt;
+font-family:"Helvetica";
+padding-top: 12px;
+margin-left:0px;
+margin-right:8px;
+}
+
+#qrcode{
+position:absolute;
+left:-3000px;
+}
+
+#urlarea{
+display:none;
+margin-top:5px;
+margin-left: -11px;
+}
+
+#urltextbox{
+font-family:"Courier";
+margin-top:8px;
+font-size:11pt;
+resize: none;
+-webkit-appearance: none;
+-moz-appearance: none;
+}
+
+#testurl{
+display:inline;
+}
+
+#copyurl{
+display:inline;
+}
+
+#saveurl{
+display:inline;
+}
+
+#shortenurl{
+display:inline;
+}
+
+#generateqrcode{
+display:inline;
+margin-right: 0px;
+}
+
+#statuspdfname{
+margin-top:22px;
+font-family:"Helvetica";
+font-size:12pt;
+}
+
+#statustunecount{
+margin-top:13px;
+font-family:"Helvetica";
+font-size:12pt;
+}
+
+#pagestatustext{
+margin-top:12px;
+margin-bottom:12px;	
+font-family:"Helvetica";
+font-size:12pt;
+}
+
+#toggleannotations, #toggletext,#togglechords,#toggletab{
+margin-right:13px;
+height:42px;
+padding:12px;
+}
+
+#toggleornaments{
+height:42px;
+padding:12px;
+}
+
+#stripannotations, #striptext, #stripchords,  #striptab {
+margin-right:13px;
+height:42px;
+padding:12px;
+}
+
+#stripornaments{
+height:42px;
+padding:12px;
+}
+
+#toggletabnames {
+height:42px;
+padding:12px;
+}
+
+.toggletabnames {
+height:42px;
+padding:12px;
+}
+
+.toggletabnamesdisabled {
+height:42px;
+opacity: 0.4;
+padding:12px;
+}
+
+#ceoltasdialog,#injectheaderstring,#injectallmidiparams,#injectbctab,#injectcdtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth,#injectmetronome,#injectshapenotes,#injectsectionheader,#injecttunenumbers,#addtunetitlenumbers,#compliancedialog,#ceoltastransform{
+height:42px;
+padding:12px;
+margin-right:24px;
+}
+
+#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#injectlargeprint,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#injectbagpipedrones{
+height:42px;
+padding:12px;
+}
+
+#fiddlefingeringsdialog2, #fiddlefingeringsdialog3, #fiddlefingeringsdialog4{
+	margin-top:16px;
+}
+
+#addnewreel,#addnewjig,#changetuneorder,#cull_select_all,#mobile_tune_order_up,#smartdraw_add_set_name,#smartdraw_delete_set_name,#addnewtunetemplate,#addsongtemplate,#addbodhrantemplate{
+height:42px;
+padding:12px;
+margin-right:24px;
+}
+
+#addnewhornpipe,#searchandaddtunes,#culltunes,#cull_clear_selection,#mobile_tune_order_down,#smartdraw_export,#addnewsong,#adddatabasetemplate{
+height:42px;
+padding:12px;
+}
+
+#bodhranreel,#bodhranslipjig,#bodhranhornpipe{
+height:42px;
+padding:12px;
+margin-right:24px;	
+}
+
+#bodhranjig,#bodhranslide,#bodhranpolka{
+height:42px;
+padding:12px;
+}
+
+#tunebookbuilder{
+height:42px;
+padding:12px;
+margin-right:24px;
+}
+
+#addtunebookheaders{
+height:42px;
+padding:12px;
+}
+
+#addjsbach{
+height:42px;
+padding:12px;
+}
+
+#abcplayer_previousbutton{
+height:38px;
+padding:10px;
+margin-right:30px;
+}
+
+@media (hover: hover) {
+	.abcplayer_previousbutton:hover{
+	background: palegreen;
+	}
+}
+
+#abcplayer_nextbutton{
+height:38px;
+padding:10px;
+margin-left:30px;
+}
+
+@media (hover: hover) {
+	.abcplayer_nextbutton:hover{
+	background: palegreen;
+	}
+}
+
+#abcplayer_exportbutton{
+height:42px;
+padding:12px;
+margin-left:24px;
+}
+
+@media (hover: hover) {
+	.abcplayer_exportbutton:hover{
+	background: palegreen;
+	}
+}
+
+#abcplayer_settingsbutton{
+height:42px;
+padding:12px;
+margin-left:24px;
+}
+
+@media (hover: hover) {
+	.abcplayer_settingsbutton:hover{
+	background: palegreen;
+	}
+}
+
+#abcplayer_trainer{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+	margin-right:24px;
+}
+
+@media (hover: hover) {
+	.abcplayer_trainer:hover{
+	background: palegreen;
+	}
+}
+
+#abcplayer_wavbutton{
+height:42px;
+padding:12px;
+margin-right:30px;
+}
+
+@media (hover: hover) {
+	.abcplayer_wavbutton:hover{
+	background: palegreen;
+	}
+}
+
+#abcplayer_wavreverbbutton{
+height:42px;
+padding:12px;
+margin-right:30px;
+}
+
+@media (hover: hover) {
+	.abcplayer_wavreverbbutton:hover{
+	background: palegreen;
+	}
+}
+
+#abcplayer_mp3reverbbutton{
+height:42px;
+padding:12px;
+margin-right:0px;
+}
+
+@media (hover: hover) {
+	.abcplayer_mp3reverbbutton:hover{
+	background: palegreen;
+	}
+}
+
+#abcplayer_mp3button{
+height:42px;
+padding:12px;
+margin-right:30px;
+}
+
+@media (hover: hover) {
+	.abcplayer_mp3button:hover{
+	background: palegreen;
+	}
+}
+
+#abcplayer_midibutton{
+height:42px;
+padding:12px;
+}
+
+@media (hover: hover) {
+	.abcplayer_midibutton:hover{
+	background: palegreen;
+	}
+}
+
+#abcplayer_jpgbutton{
+height:42px;
+padding:12px;
+margin-right:30px;
+}
+
+@media (hover: hover) {
+	.abcplayer_jpgbutton:hover{
+	background: palegreen;
+	}
+}
+
+#exportall_mp3button{
+height:42px;
+padding:12px;
+}
+
+@media (hover: hover) {
+	.exportall_mp3button:hover{
+	background: palegreen;
+	}
+}
+
+#exportall_jpegbutton{
+height:42px;
+padding:12px;
+margin-right:30px;
+}
+
+@media (hover: hover) {
+	.exportall_jpegbutton:hover{
+	background: palegreen;
+	}
+}
+
+#exportall_pngbutton{
+height:42px;
+padding:12px;
+margin-right:30px;
+}
+
+@media (hover: hover) {
+	.exportall_pngbutton:hover{
+	background: palegreen;
+	}
+}
+
+#exportall_svgbutton{
+height:42px;
+padding:12px;
+}
+
+@media (hover: hover) {
+	.exportall_svgbutton:hover{
+	background: palegreen;
+	}
+}
+
+#exportall_jsonbutton{
+height:42px;
+padding:12px;
+margin-right:30px;
+}
+
+@media (hover: hover) {
+	.exportall_jsonbutton:hover{
+	background: palegreen;
+	}
+}
+
+#exportall_csvbutton{
+height:42px;
+padding:12px;
+}
+
+@media (hover: hover) {
+	.exportall_csvbutton:hover{
+	background: palegreen;
+	}
+}
+
+#exportall_musicxmlbutton{
+height:42px;
+padding:12px;
+}
+
+@media (hover: hover) {
+	.exportall_musicxmlbutton:hover{
+	background: palegreen;
+	}
+}
+
+#export_smartdrawbutton{
+height:42px;
+padding:12px;
+}
+
+@media (hover: hover) {
+	.export_smartdrawbutton:hover{
+	background: palegreen;
+	}
+}
+
+.export_all_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:36px;
+	text-align: center;
+}
+
+.export_all_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left:8px;
+	width: 85px;
+	margin-top:-7px;
+}
+
+.export_single_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:36px;
+	text-align: center;
+}
+
+.export_single_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left:8px;
+	width: 90px;
+	margin-top:-7px;
+}
+
+#abcplayer_pngbutton{
+height:42px;
+padding:12px;
+margin-right:30px;
+}
+
+@media (hover: hover) {
+	.abcplayer_pngbutton:hover{
+	background: palegreen;
+	}
+}
+
+#abcplayer_svgbutton{
+height:42px;
+padding:12px;
+}
+
+@media (hover: hover) {
+	.abcplayer_svgbutton:hover{
+	background: palegreen;
+	}
+}
+
+#exportaudioimage_help{
+font-size:24pt;
+position:absolute;
+left:20px;
+top:20px;
+}
+
+#exportall_help{
+font-size:24pt;
+position:absolute;
+left:20px;
+top:20px;
+}
+
+#abcplayer_metronomebutton{
+height:42px;
+padding:12px;
+}
+
+@media (hover: hover) {
+	.abcplayer_metronomebutton:hover{
+	background: palegreen;
+	}
+}
+
+#abcplayer_wideplayerbutton{
+height:42px;
+padding:12px;
+margin-left:24px;
+}
+
+@media (hover: hover) {
+	.abcplayer_wideplayerbutton:hover{
+	background: palegreen;
+	}
+}
+
+#abcplayer_widetrainerbutton{
+height:42px;
+padding:12px;
+margin-left:24px;
+margin-right:0px;
+width:auto !important;
+}
+
+@media (hover: hover) {
+	.abcplayer_widetrainerbutton:hover{
+	background: palegreen;
+	}
+}
+
+#abcplayer_export{
+height:42px;
+padding:12px;
+}
+
+@media (hover: hover) {
+	.abcplayer_export:hover{
+	background: palegreen;
+	}
+}
+
+#abcplayer_help{
+font-size:24pt;
+position:absolute;
+left:20px;
+top:20px;
+}
+
+#swingexplorerinject{
+height:42px;
+padding:12px;
+width:auto;
+margin-left:0px;
+}
+
+@media (hover: hover) {
+	.swingexplorerinject:hover{
+	background: palegreen;
+	}
+}
+
+#notationspacingexplorerinject{
+height:42px;
+padding:12px;
+width:auto;
+margin-left:0px;
+}
+
+@media (hover: hover) {
+	.notationspacingexplorerinject:hover{
+	background: palegreen;
+	}
+}
+
+#notationspacingexplorertest{
+height:42px;
+padding:12px;
+width:auto;
+margin-left:0px;
+}
+
+@media (hover: hover) {
+	.notationspacingexplorertest:hover{
+	background: palegreen;
+	}
+}
+
+#notationspacingexplorer_help{
+font-size:24pt;
+position:absolute;
+left:9px;
+top:5px;
+}
+
+
+#swingexplorertest{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:36px;
+}
+
+@media (hover: hover) {
+	.swingexplorertest:hover{
+	background: palegreen;
+	}
+}
+
+#swingexplorerhelp{
+font-size:24pt;
+position:absolute;
+left:20px;
+top:20px;
+}
+
+#graceexplorerinject{
+height:42px;
+padding:12px;
+width:auto;
+margin-left:0px;
+}
+
+@media (hover: hover) {
+	.graceexplorerinject:hover{
+	background: palegreen;
+	}
+}
+
+#graceexplorertest{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:36px;
+}
+
+@media (hover: hover) {
+	.graceexplorertest:hover{
+	background: palegreen;
+	}
+}
+
+#graceexplorerhelp{
+font-size:24pt;
+position:absolute;
+left:20px;
+top:20px;
+}
+
+#rollexplorerinject{
+height:42px;
+padding:12px;
+width:auto;
+margin-left:0px;
+margin-right:20px;
+margin-right:20px;
+}
+
+@media (hover: hover) {
+	.rollexplorerinject:hover{
+	background: palegreen;
+	}
+}
+
+#rollexplorertransform{
+height:42px;
+padding:12px;
+width:auto;
+margin-left:0px;
+margin-right:20px;
+}
+
+@media (hover: hover) {
+	.rollexplorertransform:hover{
+	background: palegreen;
+	}
+}
+
+#rollexplorertransform2{
+height:42px;
+padding:12px;
+width:auto;
+margin-left:0px;
+}
+
+@media (hover: hover) {
+	.rollexplorertransform2:hover{
+	background: palegreen;
+	}
+}
+
+
+#rollexplorertest{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:20px;
+}
+
+@media (hover: hover) {
+	.rollexplorertest:hover{
+	background: palegreen;
+	}
+}
+
+#rollexplorerhelp{
+font-size:24pt;
+position:absolute;
+left:20px;
+top:20px;
+}
+
+#looperreset{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:24px;
+}
+
+@media (hover: hover) {
+	.looperreset:hover{
+	background: palegreen;
+	}
+}
+
+#looperhelp{
+font-size:24pt;
+position:absolute;
+left:20px;
+top:20px;
+}
+
+#looperstatus {
+font-size:13pt;
+position:absolute;
+left:50px;
+bottom:34px;
+}
+
+#looperstatusbar {
+position:absolute;
+background-color:green;
+left:52px;
+bottom:23px;
+height:20px;
+width:0px;
+display:none;
+}
+
+#looperstatusbaroverlay {
+position:absolute;
+background-color: transparent;
+left:52px;
+bottom:23px;
+height:20px;
+width:212px;
+outline: 1px solid black;
+display:none;
+}
+
+#looper_metronomebutton{
+height:42px;
+padding:12px;
+margin-right:0px;
+width: auto;
+}
+
+@media (hover: hover) {
+	.looper_metronomebutton:hover{
+	background: palegreen;
+	}
+}
+
+.looper-modal {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.75);
+z-index: 9999;
+}
+
+.looper-modal-content {
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100%;
+}
+
+.looper-modal-text {
+text-align: center;
+font-family:"Helvetica";
+font-size:100pt;
+color: #fff;
+margin-bottom:100px;
+}
+
+#configure_instrument_explorer{
+height:42px;
+padding:12px;
+margin-right:18px;
+}
+
+@media (hover: hover) {
+	.configure_instrument_explorer:hover{
+	background: palegreen;
+	}
+}
+
+#instrumentexplorertest{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:36px;
+}
+
+@media (hover: hover) {
+	.instrumentexplorertest:hover{
+	background: palegreen;
+	}
+}
+
+
+#instrumentexplorerinject{
+height:42px;
+padding:12px;
+width:auto;
+}
+
+@media (hover: hover) {
+	.instrumentexplorerinject:hover{
+	background: palegreen;
+	}
+}
+
+#instrumentexplorerhelp{
+font-size:24pt;
+position:absolute;
+left:20px;
+top:20px;
+}
+
+#reset_roll_parameters{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:20px;
+}
+
+@media (hover: hover) {
+	.reset_roll_parameters:hover{
+	background: palegreen;
+	}
+}
+
+.loadimpulsebutton {
+	display: inline-block;
+}
+
+#loadimpulsebutton{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:0px;
+}
+
+.loadimpulsebutton:hover{
+	background: palegreen;
+}
+
+.resetsettings {
+	display: inline-block;
+}
+
+#resetsettings{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:0px;
+}
+
+.resetsettings:hover{
+	background: palegreen;
+}
+
+.managedatabases {
+	display: inline-block;
+}
+
+#managedatabases{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:0px;
+margin-left:20px;
+}
+
+.managedatabases:hover{
+	background: palegreen;
+}
+
+.managesamples {
+	display: inline-block;
+}
+
+#managesamples{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:20px;
+}
+
+.managesamples:hover{
+	background: palegreen;
+}
+
+.managenotes {
+	display: inline-block;
+	user-select: none;
+}
+
+#managenotes{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:20px;
+}
+
+.managenotes:hover{
+	background: palegreen;
+}
+
+
+.managereverb {
+	display: inline-block;
+}
+
+#managereverb{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:20px;
+}
+
+.managereverb:hover{
+	background: palegreen;
+}
+
+.managesearch {
+	display: inline-block;
+}
+
+#managesearch{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:0px;
+}
+
+.managesearch:hover{
+	background: palegreen;
+}
+
+#reset_roll_explorer_2{
+height:32px;
+padding:8px;
+width:auto;
+margin-left:18px;
+margin-right:0px;
+}
+
+@media (hover: hover) {
+	.reset_roll_explorer_2:hover{
+	background: palegreen;
+	}
+}
+
+#reset_roll_explorer_3{
+height:32px;
+padding:8px;
+width:auto;
+margin-left:18px;
+margin-right:0px;
+}
+
+@media (hover: hover) {
+	.reset_roll_explorer_3:hover{
+	background: palegreen;
+	}
+}
+
+#default_roll_explorer_2{
+height:32px;
+padding:8px;
+width:auto;
+margin-left:18px;
+margin-right:0px;
+}
+
+@media (hover: hover) {
+	.default_roll_explorer_2:hover{
+	background: palegreen;
+	}
+}
+
+#default_roll_explorer_3{
+height:32px;
+padding:8px;
+width:auto;
+margin-left:18px;
+margin-right:0px;
+}
+
+@media (hover: hover) {
+	.default_roll_explorer_3:hover{
+	background: palegreen;
+	}
+}
+
+#shareurlcaption{
+margin-top:8px;
+}
+
+.saveabcfile{
+margin-left:0px;
+margin-right:12px;
+opacity:1.0;
+}
+
+.saveabcfiledisabled{
+margin-left:0px;
+margin-right:12px;
+opacity:0.4;
+}
+
+.toggleallcontrols{
+margin-left:0px;
+margin-right:12px;
+opacity:1.0;
+}
+
+.toggleallcontrolsdisabled{
+margin-left:0px;
+margin-right:12px;
+opacity:0.4;
+}
+
+@media (hover: hover) {
+	.toggleallcontrols:hover{
+	background: palegreen;
+	}
+}
+
+.copybutton{
+margin-left:0px;
+margin-right:12px;
+opacity:1.0;
+}
+
+.copybuttondisabled{
+margin-left:0px;
+margin-right:12px;
+opacity:0.4;
+}
+
+@media (hover: hover) {
+	.copybutton:hover{
+	background: palegreen;
+	}
+}
+
+.trainerbutton{
+margin-left:0px;
+margin-right:12px;
+opacity:1.0;
+}
+
+.trainerbuttondisabled{
+margin-left:0px;
+margin-right:12px;
+opacity:0.4;
+}
+
+@media (hover: hover) {
+	.trainerbutton:hover{
+	background: palegreen;
+	}
+}
+
+.rawmodebutton{
+margin-left:0px;
+margin-right:12px;
+opacity:1.0;
+}
+
+.rawmodebuttondisabled{
+margin-left:0px;
+margin-right:12px;
+opacity:0.4;
+}
+
+@media (hover: hover) {
+	.rawmodebutton:hover{
+	background: palegreen;
+	}
+}
+
+.playbutton{
+margin-left:0px;
+margin-right:12px;
+opacity:1.0;
+}
+
+.playbuttondisabled{
+margin-left:0px;
+margin-right:12px;
+opacity:0.4;
+}
+
+@media (hover: hover) {
+	.playbutton:hover{
+	background: palegreen;
+	}
+}
+
+.newabcfile{
+margin-left:0px;
+margin-right:12px;
+opacity:1.0;
+}
+
+@media (hover: hover) {
+	.newabcfile:hover{
+	background: palegreen;
+	}
+}
+
+.toggletopbar{
+margin-left:0px;
+margin-right:0px;
+opacity:1.0;
+}
+
+@media (hover: hover) {
+	.toggletopbar:hover{
+	background: palegreen;
+	}
+}
+
+#fileoperations{
+text-align:center;
+margin-top:12px;
+}
+
+@media (hover: hover) {
+	.saveabcfile:hover{
+	background: palegreen;
+	}
+}
+
+#start-search,#add-search-results{
+height:42px;
+padding:12px;
+width:auto;
+}
+
+.add-search-results{
+opacity:1.0;
+}
+
+.add-search-results-disabled{
+opacity:.25;
+}
+
+
+@media (hover: hover) {
+	.start-search:hover{
+	background: palegreen;
+	}
+}
+
+@media (hover: hover) {
+	.add-search-results:hover{
+	background: palegreen;
+	}
+}
+
+.noscroller{
+background-color: #FAFAFF;
+position:fixed;
+top: 0px;
+width:850px;
+z-index: 100;
+padding-bottom:16px; 
+display:none;
+margin-right:auto;
+}
+
+#notation-spacer{
+background-color: white;
+width:850px;
+margin-right: 24px;
+}
+
+#shareurlcaption{
+margin-bottom:-16px;
+}
+
+#notenlinks{
+padding-top:12px;
+}
+
+.zoombutton{
+position:fixed;
+width:48px;
+height:48px;
+right:24px;
+top:16px;
+padding:4px;
+z-index:101;
+display:none;
+}
+
+.helpbutton{
+position:fixed;
+width:48px;
+height:48px;
+left:24px;
+top:16px;
+padding:4px;
+z-index:101;
+display:none;
+}
+
+.playbuttonicon{
+position:fixed;
+width:48px;
+height:48px;
+right:24px;
+bottom:16px;
+padding:4px;
+z-index:101;
+display:none;
+}
+
+.pdfbuttonicon{
+position:fixed;
+width:48px;
+height:48px;
+left:24px;
+bottom:16px;
+padding:4px;
+z-index:101;
+display:none;
+}
+
+.moreabctoolssettings{
+position:absolute;
+width:36px;
+height:36px;
+right:20px;
+top:20px;
+padding:4px;
+z-index:101;
+display:block;
+}
+
+.moreaddabcsettings{
+position:absolute;
+width:36px;
+height:36px;
+right:20px;
+top:20px;
+padding:4px;
+z-index:101;
+display:block;
+}
+
+
+#notation-placeholder{
+font-family:"Helvetica";
+font-size:12pt;
+display:none;
+width:850px;
+background-color:white;
+
+}
+
+#notation-placeholder-text{
+margin-top: 64px;
+font-family:"Helvetica";
+font-size:12pt;
+}
+
+#notation-placeholder-text-2{
+margin-top: 40px;
+font-family:"Helvetica";
+font-size:12pt;
+}
+
+
+#desktop_use_message{
+margin-top: 40px;
+font-family:"Helvetica";
+font-size:12pt;
+}
+
+.notation-placeholder-button{
+margin-top:40px;
+margin-left:0px;
+margin-right:0px;
+opacity:1.0;
+}
+
+
+/* Spinner */
+#loading-bar-spinner.spinner {
+left: 50%;
+margin-left: -23px;
+top: 25%;
+margin-top: -23px;
+position: fixed;
+z-index: 100000 !important;
+animation: loading-bar-spinner 400ms linear infinite;
+display:none;
+}
+
+#loading-bar-spinner.spinner .spinner-icon {
+width: 46px;
+height: 46px;
+border:  solid 4px transparent;
+border-top-color:  #00C8B1 !important;
+border-left-color: #00C8B1 !important;
+border-radius: 50%;
+}
+
+@keyframes loading-bar-spinner {
+0%   { transform: rotate(0deg);   transform: rotate(0deg); }
+100% { transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+/* For better tune visual layout on the displayed version.
+   Has no effect on the PDF output.
+*/
+.tunespacer{
+margin-bottom:32px;
+}
+
+
+.relativebox {
+position:relative;
+float:left;
+}
+
+.modal {
+display: none; /* Hidden by default */
+position: fixed; /* Stay in place */
+z-index: 102; /* Sit on top */
+padding-top: 200px; /* Location of the box */
+left: 0;
+top: 0;
+width: 100%; /* Full width */
+height: 100%; /* Full height */
+overflow: auto; /* Enable scroll if needed */
+background-color: rgb(0,0,0); /* Fallback color */
+background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+background-color: #fefefe;
+margin: auto;
+padding: 20px;
+border: 1px solid #888;
+width: 600px;
+}
+
+.cancelpdf {
+font-family:"Helvetica";
+font-size:11pt;
+margin-top: 12px;
+margin-bottom: 12px;
+}
+
+#fontholder{
+position:absolute; 
+left:-5000px;
+}
+
+@media (hover: hover) {
+	.cancelpdf:hover{
+	background: palegreen;
+	}
+}
+
+
+@media (hover: hover) {
+	.toggletabnames:hover{
+	background: palegreen;
+	}
+}
+
+@media (hover: hover) {
+	.zoombutton:hover{
+	background: palegreen;
+	}
+}
+
+@media (hover: hover) {
+	.playbuttonicon:hover{
+	background: palegreen;
+	}
+}
+
+@media (hover: hover) {
+	.helpbutton:hover{
+	background: palegreen;
+	}
+}
+
+@media (hover: hover) {
+	.pdfbuttonicon:hover{
+	background: palegreen;
+	}
+}
+
+@media print {
+  	.hidden-print {
+    display: none !important;
+  }
+}
+
+/* Browser-based print optimizations */
+@media print {
+
+	#app-container{
+		width: 100% !important;
+		padding: 0px !important;
+		margin-left: 0% !important;
+		margin-right: 0% !important;
+	}
+
+	.notation-holder{
+		display: inline-block !important;
+		text-align: center !important;
+		margin-bottom:0px !important;
+		width:97% !important;
+		margin-left: 3% !important;
+		margin-right: 0% !important;
+		position:static !important;
+		left: 0% !important;
+		right: 0% !important;
+		flex-flow: unset !important;
+	}
+
+	.relativebox {
+		position:static !important;
+		float:none !important;
+		flex-flow:unset !important;
+	}
+
+    .pagebreak { 
+     	page-break-after:always !important; 
+		width:97% !important;
+		margin-left: 1% !important;
+		margin-right: 0% !important;
+     	position:static !important;
+     	display: block !important;
+      	flex-flow: unset;
+
+    } 
+}
+
+/* For modal dialog prompt replacement */
+.modal_flat_background { background-color: #000; opacity: 0.4; }
+.modal_flat_main { border: 1px solid #333; box-shadow: 0px 0px 15px -2px rgba(0,0,0,0.75);  }
+
+/* font size only */
+.modal_flat_main, .modal_flat_main input, .modal_flat_main button {  font-size: 16px; }
+
+.modal_flat_main input, .modal_flat_main button {  padding: 5px; box-sizing: border-box; }
+.modal_flat_inner { padding: 10px 30px 30px 30px; background: #fff; color: #000; }
+.modal_flat_content { font-family:"Helvetica"; margin: 20px 0px;}
+.modal_flat_input { margin: 20px 0px;}
+.modal_flat_buttons { text-align:center;margin-top: 40px; }
+.modal_flat_main button { background-color: #ccc; color: #000; padding: 10px 20px; border: 0px; cursor: pointer; outline: none; width: 100px;  }
+.modal_flat_cancel {margin-left: 5px;}
+
+/* For ABCjs playback */
+
+/* Some basic CSS to make the Audio controls in abcjs presentable. */
+
+.abcjs-inline-audio {
+	height: 34px;
+	padding: 0 5px;
+	border-radius: 3px;
+	background-color: #424242;
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+}
+
+.abcjs-inline-audio.abcjs-disabled {
+	opacity: 0.5;
+}
+
+.abcjs-inline-audio .abcjs-btn {
+	display: block;
+	width: 28px;
+	height: 34px;
+	margin-right: 2px;
+	padding: 7px 4px;
+
+	background: none !important;
+	border: 1px solid transparent;
+	box-sizing: border-box;
+	line-height: 1;
+}
+
+.abcjs-btn g {
+	fill: #f4f4f4;
+	stroke: #f4f4f4;
+}
+
+.abcjs-inline-audio .abcjs-btn:hover g {
+	fill: #cccccc;
+	stroke: #cccccc;
+}
+
+.abcjs-inline-audio .abcjs-midi-selection.abcjs-pushed {
+	border: 1px solid #cccccc;
+	background-color: #666666;
+	box-sizing: border-box;
+}
+
+.abcjs-inline-audio .abcjs-midi-loop.abcjs-pushed {
+	border: 1px solid #008800;
+	background-color: #008800 !important;
+	box-sizing: border-box;
+}
+
+.abcjs-inline-audio .abcjs-midi-reset.abcjs-pushed {
+	border: 1px solid #cccccc;
+	background-color: #666666;
+	box-sizing: border-box;
+}
+
+.abcjs-inline-audio .abcjs-midi-start .abcjs-pause-svg {
+	display: none;
+}
+
+.abcjs-inline-audio .abcjs-midi-start .abcjs-loading-svg {
+	display: none;
+}
+
+.abcjs-inline-audio .abcjs-midi-start.abcjs-pushed .abcjs-play-svg {
+	display: none;
+}
+
+.abcjs-inline-audio .abcjs-midi-start.abcjs-loading .abcjs-play-svg {
+	display: none;
+}
+
+.abcjs-inline-audio .abcjs-midi-start.abcjs-pushed .abcjs-pause-svg {
+	display: block;
+}
+
+.abcjs-inline-audio .abcjs-midi-progress-background {
+	background-color: #424242;
+	height: 10px;
+	border-radius: 5px;
+	border: 2px solid #cccccc;
+	margin: 0 8px 0 15px;
+	position: relative;
+	flex: 1;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+.abcjs-inline-audio .abcjs-midi-progress-indicator {
+	width: 20px;
+	margin-left: -10px; /* half of the width */
+	height: 14px;
+	background-color: #f4f4f4;
+	position: absolute;
+	display: inline-block;
+	border-radius: 6px;
+	top: -4px;
+	left: 0;
+	box-sizing: border-box;
+}
+
+.abcjs-inline-audio .abcjs-midi-clock {
+	margin-left: 4px;
+	margin-top: 1px;
+	margin-right: 2px;
+	display: inline-block;
+	font-family: sans-serif;
+	font-size: 16px;
+	box-sizing: border-box;
+	color: #f4f4f4;
+}
+
+.abcjs-inline-audio .abcjs-tempo-wrapper {
+	font-size: 10px;
+	color: #f4f4f4;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+}
+
+.abcjs-inline-audio .abcjs-midi-tempo {
+	border-radius: 2px;
+	border: none;
+	margin: 0 2px 0 4px;
+	width: 55px;
+	padding-left: 2px;
+	box-sizing: border-box;
+}
+
+.abcjs-inline-audio .abcjs-loading .abcjs-loading-svg {
+	display: inherit;
+}
+
+.abcjs-inline-audio .abcjs-loading {
+	outline: none;
+	animation-name: abcjs-spin;
+	animation-duration: 1s;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
+
+}
+.abcjs-inline-audio .abcjs-loading-svg circle {
+	stroke: #f4f4f4;
+}
+
+@keyframes abcjs-spin {
+	from {transform:rotate(0deg);}
+	to {transform:rotate(360deg);}
+}
+
+/* Adding the class "abcjs-large" will make the control easier on a touch device. */
+.abcjs-large .abcjs-inline-audio {
+	height: 52px;
+}
+.abcjs-large .abcjs-btn {
+	width: 56px;
+	height: 52px;
+	font-size: 28px;
+	padding: 6px 8px;
+}
+.abcjs-large .abcjs-midi-progress-background {
+	height: 20px;
+	border: 4px solid #cccccc;
+}
+.abcjs-large .abcjs-midi-progress-indicator {
+	height: 28px;
+	top: -8px;
+	width: 40px;
+}
+.abcjs-large .abcjs-midi-clock {
+	font-size: 32px;
+	margin-right: 10px;
+	margin-left: 10px;
+	margin-top: -1px;
+}
+.abcjs-large .abcjs-midi-tempo {
+	font-size: 20px;
+	width: 50px;
+}
+.abcjs-large .abcjs-tempo-wrapper {
+	font-size: 20px;
+}
+
+.abcjs-css-warning {
+	display: none;
+}
+
+#abcplayer{
+	position:relative;
+}
+
+.highlight {
+	fill: #D00000;
+}
+
+.abcjs-cursor {
+	stroke: blue;
+}
+
+.abcjs-midi-clock,.abcjs-midi-current-tempo-wrapper{
+	-webkit-user-select: none;
+    user-select: none;
+}
+
+#playback-paper{
+	margin-bottom:35px;
+}
+
+.configure_settings_form_text_checkbox{
+	font-size:12pt;
+	line-height:11px;
+	font-family:helvetica;
+	margin-top:12px;
+	display:flex;
+}
+
+.configure_settings_form_text{
+	font-size:12pt;
+	line-height:11px;
+	font-family:helvetica;
+	margin-top:16px;
+	display:flex;
+}
+
+.configure_settings_form_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left:12px;
+	width: 60px;
+	margin-top:-9px;
+	padding:4px;
+}
+
+.configure_settings_form_text_checkbox_fs{
+	font-size:12pt;
+	line-height:11px;
+	font-family:helvetica;
+	margin-top:14px;
+	display:flex;
+}
+
+.configure_settings_form_text_fs{
+	font-size:12pt;
+	line-height:24px;
+	font-family:helvetica;
+	margin-top:20px;
+	display:flex;
+}
+
+.configure_settings_form_text_fs>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left:12px;
+	width: 60px;
+	margin-top:-2px;
+	padding:4px;
+}
+
+.configure_midi_program_form_select_fs{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:20px;
+}
+
+.configure_midi_program_form_select_fs>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:220px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_settings_select_fs{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:20px;
+}
+
+.configure_settings_select_fs>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:150px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.advanced_settings2_form_text{
+	font-size:12pt;
+	line-height:10px;
+	font-family:helvetica;
+	margin-top:14px;
+	display:flex;
+}
+
+.advanced_settings2_form_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left:12px;
+	width: 100px;
+	margin-top:-11px;
+}
+
+.advanced_settings2_roll_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:14px;
+	display:flex;
+}
+
+.advanced_settings2_roll_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 460px;
+	margin-top:-8px;
+}
+
+.advanced_settings2_tinyurl_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:14px;
+	display:flex;
+}
+
+.advanced_settings2_tinyurl_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 500px;
+	margin-top:-8px;
+}
+.advanced_settings2_reverb_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:14px;
+	display:flex;
+}
+
+.advanced_settings2_reverb_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 215px;
+	margin-top:-8px;
+}
+
+.advanced_settings2_form_text_checkbox{
+	font-size:12pt;
+	line-height:11px;
+	font-family:helvetica;
+	margin-top:7px;
+	display:flex;
+}
+
+.configure_pdf_settings_form_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:18px;
+	display:flex;
+}
+
+.configure_pdf_settings_form_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 60px;
+	margin-top:-7px;
+}
+
+.configure_pdfquality{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 60px;
+	margin-top:-7px;
+}
+
+.configure_injectheaderstring_form_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:36px;
+	display:flex;
+}
+
+.configure_injectheaderstring_form_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width:400px;
+	margin-top:-7px;
+}
+
+.configure_injectheaderstring_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:36px;
+}
+
+.configure_injectheaderstring_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:100px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_transposetokey_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:30px;
+	display:flex;
+}
+
+.configure_resetsettings_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:30px;
+	display:flex;
+}
+
+.configure_injectdrones_form_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:18px;
+	display:flex;
+}
+
+.configure_drones_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:24px;
+}
+
+.configure_drones_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:425px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_injectfontstring_form_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:14px;
+	display:flex;
+}
+
+.configure_injectfontstring_form_text>label>input{
+	margin-right:10px;
+	margin-left:18px;
+}
+
+.configure_repeats_form_text{
+	font-size:12pt;
+	line-height:24px;
+	font-family:helvetica;
+	margin-top:18px;
+	display:flex;
+}
+
+.configure_repeats_form_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 60px;
+	margin-top:-4px;
+}
+
+.configure_midi_program_form_text{
+	font-size:12pt;
+	line-height:12px;
+	font-family:helvetica;
+	margin-top:18px;
+	display:flex;
+}
+
+.configure_midi_program_form_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 200px;
+	margin-top:-4px;
+}
+
+.configure_midi_program_form_number_input{
+	font-size:12pt;
+	line-height:24px;
+	font-family:helvetica;
+	margin-top:18px;
+	display:flex;
+}
+
+.configure_midi_program_form_number_input>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 60px;
+	margin-top:-4px;
+}
+
+.configure_midi_program_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:24px;
+}
+
+.configure_midi_program_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:220px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_midi_program_form_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:18px;
+}
+
+.configure_midi_program_form_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:220px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_setuppdftunebook_midi_program_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:14px;
+}
+
+.configure_setuppdftunebook_midi_program_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:220px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_soundfont_form_text{
+	font-size:12pt;
+	line-height:24px;
+	font-family:helvetica;
+	margin-top:24px;
+	display:flex;
+}
+
+.configure_soundfont_form_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 60px;
+	margin-top:-4px;
+}
+
+.configure_soundfont_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:24px;
+}
+
+.configure_soundfont_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:150px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_metronome_form_text{
+	font-size:12pt;
+	line-height:24px;
+	font-family:helvetica;
+	margin-top:18px;
+	display:flex;
+}
+
+.configure_metronome_form_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 60px;
+	margin-top:-4px;
+}
+
+.configure_staffwidth_form_text{
+	font-size:12pt;
+	line-height:24px;
+	font-family:helvetica;
+	margin-top:18px;
+	display:flex;
+}
+
+.configure_staffwidth_form_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 60px;
+	margin-top:-4px;
+}
+
+.configure_sectionheader_form_text{
+	font-size:12pt;
+	line-height:24px;
+	font-family:helvetica;
+	margin-top:18px;
+	display:flex;
+}
+
+.configure_sectionheader_form_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 300px;
+	margin-top:-4px;
+}
+
+.configure_tab_settings_form_text{
+	font-size:12pt;
+	line-height:36px;
+	font-family:helvetica;
+	margin-top:6px;
+	display:flex;
+}
+
+.configure_tab_settings_form_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 60px;
+	margin-top:0px;
+}
+
+.configure_tab_settings_form_text_wide{
+	font-size:12pt;
+	line-height:36px;
+	font-family:helvetica;
+	margin-top:10px;
+	display:flex;
+}
+
+.configure_tab_settings_form_text_wide>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 200px;
+	margin-top:0px;
+}
+
+.configure_tab_settings_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:24px;
+}
+
+.configure_tab_settings_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:130px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_md_settings_form_text{
+	font-size:12pt;
+	line-height:14px;
+	font-family:helvetica;
+	margin-top:20px;
+	display:flex;
+}
+
+.configure_sn_settings_form_text{
+	font-size:12pt;
+	line-height:48px;
+	font-family:helvetica;
+	margin-top:6px;
+	display:flex;
+}
+
+.configure_sn_settings_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:36px;
+}
+
+.configure_sn_settings_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:410px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_box_settings_form_text{
+	font-size:12pt;
+	line-height:18px;
+	font-family:helvetica;
+	margin-top:6px;
+	display:flex;
+}
+
+.configure_box_settings_form_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 60px;
+	margin-top:-5px;
+}
+
+.configure_box_settings_form_text_wide{
+	font-size:12pt;
+	line-height:18px;
+	font-family:helvetica;
+	margin-top:10px;
+	display:flex;
+}
+
+.configure_box_settings_form_text_wide>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 200px;
+	margin-top:-5px;
+}
+
+#configure_box{
+	margin-left:20px;
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+
+}
+
+@media (hover: hover) {
+	.configure_box:hover{
+	background: palegreen;
+	}
+}
+
+.configure_swingexplorer_text{
+	font-size:13pt;
+	font-family:helvetica;
+	margin-top:0px;
+}
+
+.configure_swingexplorer_text>input{
+	font-size:13pt;
+	font-family:helvetica;
+	margin-left: 2px;
+	width: 60px;
+	margin-right:10px;
+}
+
+.configure_swingexplorer_text_mobile{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-top:0px;
+}
+
+.configure_swingexplorer_text_mobile>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 2px;
+	width: 60px;
+	margin-right:10px;
+}
+
+.configure_graceexplorer_text{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-top:0px;
+}
+
+.configure_graceexplorer_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 2px;
+	width: 60px;
+	margin-right:10px;
+}
+
+.configure_rollexplorer_text{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-top:0px;
+}
+
+.configure_rollexplorer_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 2px;
+	width: 60px;
+	margin-right:10px;
+}
+
+.configure_instrumentexplorer_text{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-top:24px;
+}
+
+.configure_instrumentexplorer_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 2px;
+	width: 60px;
+	margin-right:10px;
+}
+
+.configure_instrumentexplorer_text>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:190px;
+margin-left:8px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_instrumentexplorer_text_mobile{
+	font-size:10pt;
+	font-family:helvetica;
+	margin-top:24px;
+}
+
+.configure_instrumentexplorer_text_mobile>input{
+	font-size:11pt;
+	font-family:helvetica;
+	margin-left: 2px;
+	width: 60px;
+	margin-right:10px;
+}
+
+.configure_instrumentexplorer_text_mobile>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:190px;
+margin-left:4px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_looper_text{
+	font-size:13pt;
+	font-family:helvetica;
+	margin-top:0px;
+}
+
+.configure_looper_text>input{
+	font-size:13pt;
+	font-family:helvetica;
+	margin-left: 2px;
+	width: 60px;
+	margin-right:10px;
+}
+
+#looper_text_1,#looper_text_2,#looper_text_3,#looper_text_4,#looper_text_5,#looper_text_6,#looper_percent_span_1,#looper_percent_span_2,#looper_percent_span_3{
+	-webkit-user-select: none;
+    user-select: none;
+}
+
+.configure_layout_text, .configure_layout_text{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-top:0px;
+}
+
+.configure_layout_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 2px;
+	width: 60px;
+	margin-right:10px;
+}
+
+#configure_musicxml_import{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+	margin-left:20px;
+}
+
+@media (hover: hover) {
+	.configure_musicxml_import:hover{
+	background: palegreen;
+	}
+}
+
+#configure_developer_settings{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+	margin-left:20px;
+}
+
+@media (hover: hover) {
+	.configure_developer_settings:hover{
+	background: palegreen;
+	}
+}
+
+#configure_fonts{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.configure_fonts:hover{
+	background: palegreen;
+	}
+}
+
+.configure_font_settings_form_text_wide{
+	font-size:12pt;
+	line-height:33px;
+	font-family:helvetica;
+	margin-top:10px;
+	display:flex;
+}
+
+.configure_font_settings_form_text_wide>input{
+	font-size:12pt;
+	font-family:helvetica;
+	width: 200px;
+	margin-top:0px;
+	position:absolute;
+	left:360px;
+}
+
+.configure_ui_options_form_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:24px;
+	display:flex;
+}
+
+#configure_box_advanced{
+	height:42px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.configure_box_advanced:hover{
+	background: palegreen;
+	}
+}
+
+#configure_batch_mp3_export{
+	height:42px;
+	padding:12px;
+	margin-right:24px;
+}
+
+@media (hover: hover) {
+	.configure_batch_mp3_export:hover{
+	background: palegreen;
+	}
+}
+
+#configure_swing_explorer{
+	height:42px;
+	padding:12px;
+	margin-right:18px;
+}
+
+@media (hover: hover) {
+	.configure_swing_explorer:hover{
+	background: palegreen;
+	}
+}
+
+#configure_grace_explorer{
+	height:42px;
+	padding:12px;
+	margin-right:18px;
+}
+
+@media (hover: hover) {
+	.configure_grace_explorer:hover{
+	background: palegreen;
+	}
+}
+
+#configure_roll_explorer{
+	height:42px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.configure_roll_explorer:hover{
+	background: palegreen;
+	}
+}
+
+#configure_reverb_explorer{
+	height:42px;
+	padding:12px;
+	margin-right:24px;
+}
+
+@media (hover: hover) {
+	.configure_reverb_explorer:hover{
+	background: palegreen;
+	}
+}
+
+#configure_anglo_fingerings{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.configure_anglo_fingerings:hover{
+	background: palegreen;
+	}
+}
+
+#default_anglo_fingerings{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.default_anglo_fingerings:hover{
+	background: palegreen;
+	}
+}
+
+#default_musicxml_settings{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.default_musicxml_settings:hover{
+	background: palegreen;
+	}
+}
+
+#load_rendering_fonts{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+	margin-right:24px;
+}
+
+@media (hover: hover) {
+	.load_rendering_fonts:hover{
+	background: palegreen;
+	}
+}
+
+#save_rendering_fonts{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+	margin-right:24px;
+}
+
+@media (hover: hover) {
+	.save_rendering_fonts:hover{
+	background: palegreen;
+	}
+}
+
+#default_rendering_fonts{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.default_rendering_fonts:hover{
+	background: palegreen;
+	}
+}
+
+.configure_transpose_settings_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:24px;
+}
+
+.configure_transpose_settings_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:90px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_sort_settings_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:24px;
+}
+
+.configure_sort_settings_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:300px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_box_settings_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:24px;
+}
+
+.configure_box_settings_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:130px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_md_settings_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:24px;
+}
+
+.configure_md_settings_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:230px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_settings_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:18px;
+}
+
+.configure_settings_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:150px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_pdf_papersize_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:36px;
+}
+
+.configure_pdf_papersize_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:100px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_pdf_orientation_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:30px;
+}
+
+.configure_pdf_orientation_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:130px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_pdf_tunelayout_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:30px;
+}
+
+.configure_pdf_tunelayout_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:345px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_pdf_incipitscolumns_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:30px;
+}
+
+.configure_pdf_incipitscolumns_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:150px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+.configure_pdf_pagenumber_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:30px;
+}
+
+.configure_pdf_pagenumber_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:245px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_pdf_fontname_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:30px;
+}
+
+.configure_pdf_fontname_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:120px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_pdf_fontstyle_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:30px;
+}
+
+.configure_pdf_fontstyle_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:145px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_pdfquality_select{
+font-size:12pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:24px;
+}
+
+.configure_pdfquality_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:150px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_setuppdftunebook_form_text{
+font-size:12pt;
+line-height:12px;
+font-family:helvetica;
+margin-top:10px;
+display:flex;
+}
+
+.configure_setuppdftunebook_form_text>input{
+font-size:12pt;
+font-family:helvetica;
+width: 40px;
+margin-top:-9px;
+margin-left:12px;
+}
+
+.configure_setuppdftunebook_form_text2{
+font-size:12pt;
+line-height:12px;
+font-family:helvetica;
+margin-top:24px;
+display:flex;
+}
+
+.configure_setuppdftunebook_form_text2>input{
+font-size:12pt;
+font-family:helvetica;
+width: 40px;
+margin-top:-9px;
+margin-left:12px;
+}
+
+.configure_setuppdftunebook_form_text3{
+font-size:12pt;
+line-height:12px;
+font-family:helvetica;
+margin-top:16px;
+display:flex;
+}
+
+.configure_setuppdftunebook_form_text3>input{
+font-size:12pt;
+font-family:helvetica;
+width: 40px;
+margin-top:-9px;
+margin-left:12px;
+}
+
+.configure_setuppdftunebook_form_text_wide{
+font-size:12pt;
+line-height:8px;
+font-family:helvetica;
+margin-top:28px;
+display:flex;
+}
+
+.configure_setuppdftunebook_form_text_wide>input{
+font-size:12pt;
+font-family:helvetica;
+width: 450px;
+margin-top:-9px;
+position:absolute;
+left:200px;
+}
+
+.configure_setuppdftunebook_form_text_wide2{
+font-size:12pt;
+line-height:8px;
+font-family:helvetica;
+margin-top:16px;
+display:flex;
+}
+
+.configure_setuppdftunebook_form_text_wide2>input{
+font-size:12pt;
+font-family:helvetica;
+width: 450px;
+margin-top:-9px;
+position:absolute;
+left:200px;
+}
+.modal_flat_form_item_label{
+font-size: 12pt;
+}
+
+.indrag{ 
+background: #CCCCFF;
+}
+
+#zoombanner{
+display:none;
+}
+
+#zoombanner>p{
+font-size:12pt;
+font-family:helvetica;
+margin-top:0px;
+margin-bottom:0px;
+background-color:#A0FF80;
+cursor: pointer;
+padding: 3px;
+}
+
+.anglobuttonnames {
+  width:66px;
+}
+
+#playerstatus {
+font-family:helvetica;
+font-size:12pt;
+line-height:36pt;
+position:absolute;
+right:30px;
+bottom:-12px;
+text-align:right;
+}
+
+#playerstatus_left {
+font-family:helvetica;
+font-size:12pt;
+line-height:36pt;
+position:absolute;
+left:30px;
+bottom:-12px;
+}
+
+.playerstatus>select, .playerstatus_left>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:12pt;
+font-family:"Helvetica";
+height:32px;
+width:300px;
+margin-left:0px;
+padding-left:10px;
+margin-top:4px;
+}
+
+.switchtunedatabase{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:36px;
+}
+
+.switchtunedatabase>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:415px;
+margin-left:10px;
+padding-left:10px;
+margin-top:0px;
+}
+
+.tunesearchoptions{
+font-size:12pt;
+font-family:"Helvetica";
+margin-top:20px;
+vertical-align: middle;
+cursor: pointer;
+}
+
+.tunesearchoptionsmax{
+font-size:12pt;
+font-family:"Helvetica";
+margin-top:20px;
+vertical-align: middle;
+cursor: pointer;
+}
+
+.tunesearchoptionsmax>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:85px;
+margin-left:10px;
+padding-left:10px;
+}
+
+.abcupload {
+	margin-left:0px;
+	margin-right:12px;
+}
+
+@media (hover: hover) {
+	.abcupload:hover{
+	background: palegreen;
+	}
+}
+
+.abcuploaddialog {
+	display: inline-block;
+}
+
+@media (hover: hover) {
+	.abcuploaddialog:hover{
+	background: palegreen;
+	}
+}
+
+.draggable_tune {
+cursor: grab;
+user-select: none;
+margin: 5px;
+padding: 10px;
+border: 1px solid #ddd;
+background-color: #f9f9f9;
+font-family:helvetica;
+font-size:16px;
+}
+
+.draggable_tune_mobile{
+cursor: grab;
+user-select: none;
+margin: 5px;
+padding: 10px;
+border: 1px solid #ddd;
+background-color: #f9f9f9;
+font-family:helvetica;
+font-size:16px;
+}
+
+.draggable_tune_selected {
+	background-color: #B0FFB0;
+}
+
+.draggable_tune_mobile_selected {
+	background-color: #B0FFB0;
+}
+
+.cullable_tune {
+cursor: grab;
+user-select: none;
+margin: 5px;
+padding: 10px;
+border: 1px solid #ddd;
+background-color: #f9f9f9;
+font-family:helvetica;
+font-size:16px;
+}
+
+.cull_selected {
+	background-color: #FFE5E5;
+}
+
+.smartdraw_export_all_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:36px;
+	text-align: center;
+}
+
+.smartdraw_export_all_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left:4px;
+	width: 75px;
+	margin-top:-7px;
+}
+
+.smartdraw_export_all_text>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:155px;
+margin-left:4px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.incipits_builder_form_text_checkbox{
+	font-size:12pt;
+	line-height:11px;
+	font-family:helvetica;
+	margin-top:20px;
+	display:flex;
+}
+
+.incipits_builder_form_text{
+	font-size:12pt;
+	line-height:11px;
+	font-family:helvetica;
+	margin-top:20px;
+	display:flex;
+}
+
+.incipits_builder_form_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 12px;
+	width: 60px;
+	margin-top:-10px;
+	padding:4px;
+}
+
+.configure_mp3_before_tune_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:18px;
+}
+
+.configure_mp3_before_tune_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:350px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.diagnostics{
+display:none;
+width:826px;
+height:90px;
+overflow: auto;
+border:1px;
+background: #FFFDE0;
+text-align: left;
+padding:12px;
+}
+
+.diagnostics_message{
+font-size:11pt;
+font-family:"Helvetica";
+line-height: 16pt;
+margin-top:0px;
+margin-bottom:4px;
+}
+
+.configure_reverbexplorer_text{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-top:24px;
+}
+
+.configure_reverbexplorer_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	margin-left: 2px;
+	width: 60px;
+	margin-right:10px;
+}
+
+.configure_reverbexplorer_text>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:120px;
+margin-left:8px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_reverbexplorer_text_mobile{
+	font-size:10pt;
+	font-family:helvetica;
+	margin-top:24px;
+}
+
+.configure_reverbexplorer_text_mobile>input{
+	font-size:11pt;
+	font-family:helvetica;
+	margin-left: 2px;
+	width: 60px;
+	margin-right:10px;
+}
+
+.configure_reverbexplorer_text_mobile>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:120px;
+margin-left:4px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+#reverbexplorertest{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:24px;
+}
+
+@media (hover: hover) {
+	.reverbexplorertest:hover{
+	background: palegreen;
+	}
+}
+
+#reverbexplorerinject{
+height:42px;
+padding:12px;
+width:auto;
+margin-left:0px;
+}
+
+@media (hover: hover) {
+	.reverbexplorerinject:hover{
+	background: palegreen;
+	}
+}
+
+#reverbexplorerhelp{
+font-size:24pt;
+position:absolute;
+left:20px;
+top:20px;
+}
+
+.configuresettingsfromhelp{
+	height:42px;
+	padding:12px !important;
+	width:auto;
+}
+
+@media (hover: hover) {
+	.configuresettingsfromhelp:hover{
+	background: palegreen;
+	}
+}
+
+/******************************************************************************/
+/* STYLES RELATED TO EXPERIMENT BUTTONS                                       */
+/******************************************************************************/
+.btn {
+  --color: #000000;
+  --background-color: #d8d8d8;
+  --border-color: darken(#d8d8d8, 7.5%);
+  color: var(--color);
+  font-family: helvetica !important;
+  font-size: 11pt !important;
+  background-color: var(--background-color);
+  padding: 0.7rem 0.7rem;
+  padding-top: 0.8rem;
+  border: solid 1px var(--border-color);
+  outline: none;
+  position: relative;
+  border-radius: 0.5rem;
+  user-select: none;
+  box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.25), 0 -0.1rem 0.5rem rgba(0, 0, 0, 0.1) inset;
+  -webkit-appearance:none;
+}
+.btn:after {
+  content: "";
+  background-color: #ffffff;
+  width: 75%;
+  height: 12.5%;
+  position: absolute;
+  top: 0.15rem;
+  left: 12.5%;
+  border-radius: 50%;
+  filter: blur(0.15rem);
+}
+.btn:active {
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0.4), 0 0.4rem 1rem rgba(0, 0, 0, 0.3) inset;
+}
+.btn:active:after {
+  opacity: 0;
+}
+
+.btn-info {
+  --color: #ffffff;
+  --background-color: #0091ea;
+  --border-color: #0079c4;
+}
+.btn-info:active {
+  --color: #ececec;
+}
+.btn-success {
+  --color: #ffffff;
+  --background-color: #00c853;
+  --border-color: #00a243;
+}
+.btn-success:active {
+  --color: #ececec;
+}
+.btn-warning {
+  --color: #3e2723;
+  --background-color: #ffc400;
+  --border-color: #d9a700;
+}
+.btn-warning:active {
+  --color: #261815;
+}
+.btn-error {
+  --color: #ffffff;
+  --background-color: #d50000;
+  --border-color: #af0000;
+}
+.btn-error:active {
+  --color: #ececec;
+}
+.btn-dark {
+  --color: #ffffff;
+  --background-color: #303030;
+  --border-color: #1d1d1d;
+}
+.btn-dark:active {
+  --color: #ececec;
+}
+
+.btn-play {
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-toggleallcontrols {
+  --color: black;
+  --background-color: #FFF4E6;
+}
+
+.btn-configuresettings{
+  --color: black;
+  --background-color: lavender;
+}
+
+.btn-transpose{
+  --color: black;
+  --background-color: #F0F0F0;
+}
+
+.btn-sortbutton{
+  --color: black;
+  --background-color: #F0F0F0;
+}
+
+.btn-transposetokey{
+  --color: black;
+  --background-color: #f0fff0;
+}
+
+.btn-incipitsbuilder{
+  --color: black;
+  --background-color: #f0fff0;
+}
+
+.btn-snapshotbutton{
+  --color: black;
+  --background-color: #F0E6F0;
+}
+
+.btn-restorebutton{
+  --color: black;
+  --background-color: #F0E6F0;
+}
+
+.btn-togglesharecontrols{
+  --color: black;
+  --background-color: lavender;
+}
+
+.btn-clearbutton{
+  --color: black;
+  --background-color: #FFCCCC;	
+}
+
+.btn-toggleadvancedcontrols{
+  --color: black;
+  --background-color: #DCFFFF;
+}
+
+.btn-advancedcontrols{
+  --color: black;
+  --background-color: #DCFFFF;
+}
+
+.btn-injectcontrols{
+  --color: black;
+  --background-color: #fff5f5;
+}
+
+.btn-injectcontrols-headers{
+  --color: black;
+  --background-color: #f0fff0;
+}
+
+.btn-injectcontrols-injectpdfheaders{
+  --color: black;
+  --background-color: #DCF3FE;
+}
+
+.btn-injectcontrols-tunebookbuilder{
+  --color: black;
+  --background-color: #DCF3FE;
+}
+
+
+.btn-urlcontrols{
+  --color: black;
+  --background-color: lavender;
+}
+
+.btn-top{
+  --color: black;
+  --background-color: #F0F0F0;
+}
+
+.btn-tab{
+  --color: black;
+  --background-color: #F0F0F0;
+}
+
+.btn-placeholder{
+  --color: black;
+  --background-color: #F0F0F0;
+}
+
+.btn-cancelpdf{
+  --color: black;
+  --background-color: #F0F0F0;
+
+}
+
+.btn-subdialog{
+  --color: black;
+  --background-color: #D5EBFD;
+
+}
+
+.btn-exportaudiomidi{
+  --color: black;
+  --background-color: #DCFFFF;
+
+}
+
+.btn-wavedownload{
+  --color: black;
+  --background-color: lavender;
+
+}
+
+.btn-wavereverbdownload{
+  --color: black;
+  --background-color: lavender;
+
+}
+
+.btn-mp3reverbdownload{
+  --color: black;
+  --background-color: lavender;
+
+}
+
+.btn-mididownload{
+  --color: black;
+  --background-color: lavender;
+
+}
+
+.btn-mp3download{
+  --color: black;
+  --background-color: lavender;
+
+}
+
+.btn-pngdownload{
+  --color: black;
+  --background-color: #f0fff0;
+
+}
+
+.btn-jpgdownload{
+  --color: black;
+  --background-color: #f0fff0;
+
+}
+
+.btn-svgdownload{
+  --color: black;
+  --background-color: #f0fff0;
+
+}
+
+.btn-allmp3download{
+  --color: black;
+  --background-color: lavender;
+
+}
+
+.btn-alljpegdownload{
+  --color: black;
+  --background-color: lavender;
+
+}
+
+.btn-allpngdownload{
+  --color: black;
+  --background-color: lavender;
+
+}
+
+.btn-allsvgdownload{
+  --color: black;
+  --background-color: lavender;
+
+}
+
+.btn-allmusicxmldownload{
+  --color: black;
+  --background-color: lavender;
+
+}
+
+.btn-alljsondownload{
+  --color: black;
+  --background-color: #F0F0F0;
+
+}
+
+.btn-allcsvdownload{
+  --color: black;
+  --background-color: #F0F0F0;
+
+}
+
+.btn-smartdraw{
+  --color: black;
+  --background-color: #F0F0F0;
+
+}
+
+.btn-batchmp3export{
+  --color: black;
+  --background-color: lavender;
+}
+
+.btn-swingexplorer{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-swingexplorertest{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-swingexplorerinject{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-graceexplorer{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-graceexplorertest{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-graceexplorerinject{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-rollexplorer{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-rollexplorertest{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-rollexplorerinject{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-rollexplorertransform{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-reverbexplorer{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-instrumentexplorer{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-instrumentexplorertest{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-instrumentexplorerinject{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-looper{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-looperreset{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-metronome{
+  --color: black;
+  --background-color: #ABF2E4;
+}
+
+.btn-wide-player{
+  --color: black;
+  --background-color: #E5CAF2;
+}
+
+.btn-wide-player{
+  --color: black;
+  --background-color: #E5CAF2;
+}
+
+.btn-playerprevious{
+  --color: black;
+  --background-color: #E6E6E6;
+}
+
+.btn-playernext{
+  --color: black;
+  --background-color: #E6E6E6;
+}
+
+.btn-wide-trainer{
+  --color: black;
+  --background-color: #E5CAF2;
+}
+
+.btn-notationspacingexplorertest{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-notationspacingexplorerinject{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-injectcontrols-headers-pdf{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-rawmode-on{
+  --color: black;
+  --background-color: #E7F9E7;
+}
+
+.btn-rawmode-off{
+  --color: black;
+  --background-color: #E6E6E6;
+}
+
+.btn-reset_roll_explorer_2{
+  --color: black;
+  --background-color: #E6E6E6;
+}
+
+.btn-reset_roll_explorer_3{
+  --color: black;
+  --background-color: #E6E6E6;
+}
+
+.btn-default_roll_explorer_2{
+  --color: black;
+  --background-color: #E6E6E6;
+}
+
+.btn-default_roll_explorer_3{
+  --color: black;
+  --background-color: #E6E6E6;
+}
+
+.btn-start-search{
+  --color: black;
+  --background-color: lavender;
+}
+
+.btn-add-search-results{
+  --color: black;
+  --background-color: lavender;
+}
+
+.btn-smartdraw-export{
+  --color: black;
+  --background-color: lavender;
+}
+
+.btn-resetsettings{
+  --color: black;
+  --background-color: #FFCCCC;	
+}
+
+.btn-managedatabases{
+  --color: black;
+  --background-color: lavender;	
+}
+
+.btn-managesamples{
+  --color: black;
+  --background-color: lavender;	
+}
+
+.btn-deletesamples{
+  --color: black;
+  --background-color: #FFCCCC;	
+}
+
+.btn-managereverb{
+  --color: black;
+  --background-color: lavender;	
+}
+
+.btn-managesearch{
+  --color: black;
+  --background-color: lavender;	
+}
+
+.btn-reverbexplorertest{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-reverbexplorerinject{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-configuresettingsfromhelp{
+  --color: black;
+  --background-color: lavender;
+}
+
+@media (hover: hover) {
+	
+	.btn
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.btn:hover {
+	    transform: matrix(1.04, 0, 0, 1.04, 0, 0); 
+	}
+
+	.modal_flat_ok
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.modal_flat_ok:hover {
+	    transform: matrix(1.04, 0, 0, 1.04, 0, 0); 
+	}
+
+	.modal_flat_cancel
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.modal_flat_cancel:hover {
+	    transform: matrix(1.04, 0, 0, 1.04, 0, 0); 
+	}
+
+	.helpbutton
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.helpbutton:hover {
+	    transform: matrix(1.05, 0, 0, 1.05, 0, 0); 
+	}
+
+	.playbuttonicon
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.playbuttonicon:hover {
+	    transform: matrix(1.05, 0, 0, 1.05, 0, 0); 
+	}
+
+	.zoombutton
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.zoombutton:hover {
+	    transform: matrix(1.05, 0, 0, 1.05, 0, 0); 
+	}
+
+	.pdfbuttonicon
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.pdfbuttonicon:hover {
+	    transform: matrix(1.05, 0, 0, 1.05, 0, 0); 
+	}
+
+	.dialogcornerbutton
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.dialogcornerbutton:hover {
+	    transform: matrix(1.06, 0, 0, 1.06, 0, 0); 
+	}
+
+	.moresettingsbutton
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.moresettingsbutton:hover{
+		background: palegreen;
+	}
+
+	.moresettingsbutton:hover {
+	    transform: matrix(1.06, 0, 0, 1.06, 0, 0); 
+	}
+}
+
+
+
+
