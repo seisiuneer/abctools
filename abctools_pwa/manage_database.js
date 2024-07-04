@@ -319,7 +319,7 @@ function idleManageSamplesDialog(showActionButtons){
 				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 275, scrollWithPage: (AllowDialogsToScroll()) });
 
 				// Refresh the sample list
-				fetchAndDisplayItems();
+				fetchAndDisplayItems(showActionButtons);
 
 				gInSampleRetrieval = false;
 			}
@@ -667,7 +667,7 @@ function idleManageSamplesDialog(showActionButtons){
 				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 275, scrollWithPage: (AllowDialogsToScroll()) });
 
 				// Refresh the sample list
-				fetchAndDisplayItems();
+				fetchAndDisplayItems(showActionButtons);
 
 				gInSampleRetrieval = false;
 
