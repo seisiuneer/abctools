@@ -692,7 +692,7 @@ function ManageSamplesDialog(showActionButtons){
 	
 	modal_msg += '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">The table below shows all the instrument notes you have played in the past that are stored in the instrument notes database along with the number of notes saved.</p>';
 
-	var maxHeight = 610;
+	var maxHeight = 560;
 
 	if (showActionButtons){
 
