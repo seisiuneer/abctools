@@ -177,14 +177,14 @@ function ManageDatabasesDialog(){
 	// Only make the database management features available when online
 	if (navigator.onLine){
 
-		modal_msg += '<p style="text-align:center;"><input id="managesamples" class="btn btn-managesamples managesamples" onclick="ManageSamplesDialog()" type="button" value="Instrument Notes Database" title="Opens a dialog where you can view the instruments and notes in the instrument database and load/delete complete sets of notes for instruments">';
+		modal_msg += '<p style="text-align:center;"><input id="managesamples" class="btn btn-managesamples managesamples" onclick="ManageSamplesDialog(true)" type="button" value="Instrument Notes Database" title="Opens a dialog where you can view the instruments and notes in the instrument database and load/delete complete sets of notes for instruments">';
 		
 		modal_msg += '<input id="managereverb" class="btn btn-managereverb managereverb" onclick="ManageReverbDialog()" type="button" value="Reverb Settings Database" title="Opens a dialog where you can load the reverb settings for offline use">';
 		
 		modal_msg += '<input id="managesearch" class="btn btn-managesearch managesearch" onclick="ManageSearchCollectionsDialog()" type="button" value="Search Engine Libraries Database" title="Opens a dialog where you can load the search engine libraries for offline use"></p>';
 	}
 	else{
-		modal_msg += '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Management of the instrument notes, reverb, and tune search collection databases are not available when offline.</p>';
+		modal_msg += '<p style="text-align:center;"><input id="managesamples" style="margin-right:0px" class="btn btn-managesamples managesamples" onclick="ManageSamplesDialog(false)" type="button" value="Instrument Notes Database" title="Opens a dialog where you can view the instruments and notes in the instrument database while offline">';
 	}
 
 	modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset All Tool Settings and Databases (with confirmation)" title="Opens a dialog where you can reset all tool settings to the default and/or clear and deletes the instrument notes, reverb impulse, and tune search browser local IndexedDB cache databases."></p>';
@@ -199,7 +199,7 @@ function ManageDatabasesDialog(){
 //
 var gInSampleRetrieval = false;
 
-function idleManageSamplesDialog(){
+function idleManageSamplesDialog(showActionButtons){
 
 	if (!gSamplesDB){
 
@@ -216,7 +216,7 @@ function idleManageSamplesDialog(){
     const storeName = "samples";
 
 	// Get all the items in the database and populate the 
-	fetchAndDisplayItems();
+	fetchAndDisplayItems(showActionButtons);
 
 	function stripLastItem(url) {
 	  // Create a new URL object
@@ -397,7 +397,7 @@ function idleManageSamplesDialog(){
     	return theSoundFont + replaceAndCapitalize(theName);
 	}
 
-    function fetchAndDisplayItems() {
+    function fetchAndDisplayItems(showActionButtons) {
 
         const transaction = gSamplesDB.transaction([storeName], "readonly");
         const objectStore = transaction.objectStore(storeName);
@@ -471,64 +471,69 @@ function idleManageSamplesDialog(){
 	                countCell.textContent = duplicatesCount[index];
 	                row.appendChild(countCell);
 
-	                const actionsCell = document.createElement('td');
-	                actionsCell.style.padding = "7px";
-	                actionsCell.style.textAlign = "center";
+	                // Only show action buttons if online
+	                if (showActionButtons){
 
-	                // Load button
-	                const loadButton = document.createElement('input');
-	                loadButton.style.width = "100px";
-	                loadButton.style.height = "36px";
-	                loadButton.style.marginRight = "24px";
-	                loadButton.style.textAlign = "center";
-	                loadButton.style.cursor = "pointer";
-	                loadButton.classList.add('btn','btn-managesamples','managenotes');
-	                loadButton.type = 'button'
-	                loadButton.value = 'Load All';
-	                loadButton.onclick = (event) => {
-	                 	event.target.value = "Loading";
-	                	loadItem(originalPath);
-	                }
-	                actionsCell.appendChild(loadButton);
+		                const actionsCell = document.createElement('td');
+		                actionsCell.style.padding = "7px";
+		                actionsCell.style.textAlign = "center";
 
-	                // Delete button
-	                const deleteButton = document.createElement('input');
-	                deleteButton.style.width = "100px";
-	                deleteButton.style.height = "36px";
-	                deleteButton.style.textAlign = "center";
-	                deleteButton.style.cursor = "pointer";
-	                deleteButton.classList.add('btn','btn-deletesamples','managenotes');
-	                deleteButton.type = 'button'
-	                deleteButton.value = 'Delete';
-	                deleteButton.onclick = (event) => {
+		                // Load button
+		                const loadButton = document.createElement('input');
+		                loadButton.style.width = "100px";
+		                loadButton.style.height = "36px";
+		                loadButton.style.marginRight = "24px";
+		                loadButton.style.textAlign = "center";
+		                loadButton.style.cursor = "pointer";
+		                loadButton.classList.add('btn','btn-managesamples','managenotes');
+		                loadButton.type = 'button'
+		                loadButton.value = 'Load All';
+		                loadButton.onclick = (event) => {
+		                 	event.target.value = "Loading";
+		                	loadItem(originalPath);
+		                }
+		                actionsCell.appendChild(loadButton);
 
-	                	var thisInstrument = originalPath   		
-	                	thisInstrument = thisInstrument.replace("https://michaeleskin.com/abctools/soundfonts/","");
-	   					thisInstrument = thisInstrument.replace("https://paulrosen.github.io/midi-js-soundfonts/","");
+		                // Delete button
+		                const deleteButton = document.createElement('input');
+		                deleteButton.style.width = "100px";
+		                deleteButton.style.height = "36px";
+		                deleteButton.style.textAlign = "center";
+		                deleteButton.style.cursor = "pointer";
+		                deleteButton.classList.add('btn','btn-deletesamples','managenotes');
+		                deleteButton.type = 'button'
+		                deleteButton.value = 'Delete';
+		                deleteButton.onclick = (event) => {
 
-	   					thisInstrument = friendlyInstrumentName(thisInstrument);
+		                	var thisInstrument = originalPath   		
+		                	thisInstrument = thisInstrument.replace("https://michaeleskin.com/abctools/soundfonts/","");
+		   					thisInstrument = thisInstrument.replace("https://paulrosen.github.io/midi-js-soundfonts/","");
 
-	                	var thePrompt = "Are you sure you want to delete "+thisInstrument+"?";
+		   					thisInstrument = friendlyInstrumentName(thisInstrument);
 
-						// Center the string in the prompt
-						thePrompt = makeCenteredPromptString(thePrompt);
+		                	var thePrompt = "Are you sure you want to delete "+thisInstrument+"?";
 
-						DayPilot.Modal.confirm(thePrompt,{ top:275, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+							// Center the string in the prompt
+							thePrompt = makeCenteredPromptString(thePrompt);
 
-							if (!args.canceled){
+							DayPilot.Modal.confirm(thePrompt,{ top:275, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
 
-	                			event.target.value = "Deleting";
-	                			deleteItem(originalPath);
+								if (!args.canceled){
 
-							}
+		                			event.target.value = "Deleting";
+		                			deleteItem(originalPath);
 
-						});
+								}
 
-	                }
+							});
 
-	                actionsCell.appendChild(deleteButton);
+		                }
 
-	                row.appendChild(actionsCell);
+		                actionsCell.appendChild(deleteButton);
+
+		                row.appendChild(actionsCell);
+		            }
+
 	                tableBody.appendChild(row);
 
 	            });
@@ -674,25 +679,45 @@ function idleManageSamplesDialog(){
 	}
 }
 
-function ManageSamplesDialog(){
+function ManageSamplesDialog(showActionButtons){
 
-	var modal_msg  = '<p style="text-align:center;margin-bottom:24px;font-size:16pt;font-family:helvetica;margin-left:15px;">Manage Instrument Notes Database&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools_pwa/userguide.html#manage_databases" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+	var modal_msg;
+
+	if (showActionButtons){
+		modal_msg  = '<p style="text-align:center;margin-bottom:24px;font-size:16pt;font-family:helvetica;margin-left:15px;">Manage Instrument Notes Database&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools_pwa/userguide.html#manage_databases" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+	}
+	else{
+		modal_msg  = '<p style="text-align:center;margin-bottom:24px;font-size:16pt;font-family:helvetica;margin-left:15px;">Manage Instrument Notes Database (Offline Mode)&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools_pwa/userguide.html#manage_databases" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+	}
 	
 	modal_msg += '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">The table below shows all the instrument notes you have played in the past that are stored in the instrument notes database along with the number of notes saved.</p>';
 
-	modal_msg += '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click "Load All" to load and save the full set of notes for an instrument to the instrument notes database to make all notes for that instrument available offline.</p>';
+	var maxHeight = 610;
 
-	modal_msg += '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click "Delete" to delete all notes for an instrument from the instrument notes database.</p>';
+	if (showActionButtons){
 
-	var maxHeight = 560;
-	//modal_msg += '<div style="display:flex;justify-content:center;align-items:top;margin-top:24px;height:'+maxHeight+'px;overflow:auto">'	
-	modal_msg += '<div style="margin-top:24px;height:'+maxHeight+'px;overflow:auto">'	
-	modal_msg +='<table id="notes-table" border="1" style="width: 100%;"><thead><tr><th style="padding:7px;">Name</th><th style="padding:7px;">Notes</th><th style="padding:7px;">Actions</th></tr></thead><tbody><!-- Items will be inserted here --></tbody></table></div>';
+		modal_msg += '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click "Load All" to load and save the full set of notes for an instrument to the instrument notes database to make all notes for that instrument available offline.</p>';
+
+		modal_msg += '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click "Delete" to delete all notes for an instrument from the instrument notes database.</p>';
+
+		modal_msg += '<div style="margin-top:24px;height:'+maxHeight+'px;overflow:auto">'	
+
+		modal_msg +='<table id="notes-table" border="1" style="width: 100%;"><thead><tr><th style="padding:7px;">Name</th><th style="padding:7px;">Notes</th><th style="padding:7px;">Actions</th></tr></thead><tbody><!-- Items will be inserted here --></tbody></table></div>';
+	}
+	else{
+		
+		modal_msg += '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">When online, you may also load the full set of notes for an instrument or delete an instrument from the database.</p>';
+
+		modal_msg += '<div style="margin-top:24px;height:'+maxHeight+'px;overflow:auto">'	
+
+		modal_msg +='<table id="notes-table" border="1" style="width: 100%;"><thead><tr><th style="padding:7px;">Name</th><th style="padding:7px;">Notes</th></tr></thead><tbody><!-- Items will be inserted here --></tbody></table></div>';
+
+	}
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 760,  scrollWithPage: (AllowDialogsToScroll()) });
 
 	setTimeout(function(){
-		idleManageSamplesDialog();
+		idleManageSamplesDialog(showActionButtons);
 	}, 100);
 
 }
