@@ -15206,10 +15206,6 @@ function AppendDatabaseTemplate(){
 	theValue += '% and stored in the database for offline use for your\n';
 	theValue += '% specified soundfont and instrument.\n';
 	theValue += '%\n';
-	theValue += '% 5) If you need notes outside the pitch range in this file,\n';
-	theValue += '% add the notes to the ABC as necessary and play the file\n';
-	theValue += '% to read and store the additional notes in the database.\n';
-	theValue += '%\n';
 	theValue += '[|C,,,4 ^C,,,4 D,,,4 ^D,,,4 E,,,4 F,,,4 ^F,,,4 G,,,4 ^G,,,4 A,,,4 ^A,,,4 B,,,4 |\n';
 	theValue += 'C,,4 ^C,,4 D,,4 ^D,,4 E,,4 F,,4 ^F,,4 G,,4 ^G,,4 A,,4 ^A,,4 B,,4 |\n';
 	theValue += 'C,4 ^C,4 D,4, ^D,4 E,4 F,4 ^F,4 G,4 ^G,4 A,4 ^A,4 B,4 |\n';
