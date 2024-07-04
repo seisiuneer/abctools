@@ -172,6 +172,9 @@ function ResetSettingsDialog(){
 //
 function ManageDatabasesDialog(){
 
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","ManageDatabasesDialog");
+
 	var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Manage Databases&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools_pwa/userguide.html#manage_databases" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 
 	// Only make the database management features available when online
@@ -200,18 +203,6 @@ function ManageDatabasesDialog(){
 var gInSampleRetrieval = false;
 
 function idleManageSamplesDialog(showActionButtons){
-
-	if (!gSamplesDB){
-
-		var thePrompt = "No instrument notes database available!";
-	
-		// Center the string in the prompt
-		thePrompt = makeCenteredPromptString(thePrompt);
-		
-		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 275, scrollWithPage: (AllowDialogsToScroll()) });
-
-		return;
-	}
 
     const storeName = "samples";
 
@@ -683,6 +674,21 @@ function ManageSamplesDialog(showActionButtons){
 
 	var modal_msg;
 
+	if (!gSamplesDB){
+
+		var thePrompt = "No instrument notes database available!";
+	
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+		
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 275, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","ManageSamplesDialog");
+
 	if (showActionButtons){
 		modal_msg  = '<p style="text-align:center;margin-bottom:24px;font-size:16pt;font-family:helvetica;margin-left:15px;">Manage Instrument Notes Database&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools_pwa/userguide.html#manage_databases" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 	}
@@ -914,6 +920,9 @@ function ManageReverbDialog(){
 		return;
 	}
 
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","ManageReverbDialog");
+
 	var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Manage Reverb Settings Database&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools_pwa/userguide.html#manage_databases" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 
 	modal_msg+='<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">Save any reverb setting for offline use by clicking the buttons below:</p>',
@@ -1018,6 +1027,9 @@ function ManageSearchCollectionsDialog(){
 
 		return;
 	}
+	
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","ManageSearchCollectionsDialog");
 
 	var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Manage Search Engine Libraries&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools_pwa/userguide.html#manage_databases" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 
