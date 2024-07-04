@@ -2,7 +2,7 @@
 // Service worker for offline use resource caching
 //
 
-const cacheName = 'cache-32';
+const cacheName = 'cache-33';
 
 const contentToCache = [
     'abctools.html',
@@ -127,14 +127,14 @@ self.addEventListener('fetch', (e) => {
 
         if (r){
 
-            console.log(`[Service Worker] Returning cached resource: ${e.request.url}`);
+            //console.log(`[Service Worker] Returning cached resource: ${e.request.url}`);
 
             return r;
         }
 
         try{
 
-            console.log(`[Service Worker] Fetching resource: ${e.request.url}`);
+            //console.log(`[Service Worker] Fetching resource: ${e.request.url}`);
 
             const response = await fetch(e.request);
 
@@ -155,7 +155,7 @@ self.addEventListener('fetch', (e) => {
         }
         catch (error){
 
-            console.log("[Service Worker] fetch error: "+error);
+            //console.log("[Service Worker] fetch error: "+error);
     
         }
     })());
