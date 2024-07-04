@@ -15177,7 +15177,7 @@ function AppendDatabaseTemplate(){
 	theValue += 'M: 4/4\n';
 	theValue += 'L: 1/8\n';
 	theValue += 'K: C\n';
-	theValue += 'Q:400\n';
+	theValue += 'Q: 1/4=400\n';
 	theValue += '%\n';
 	theValue += '% 1) Select the soundfont:\n';
 	theValue += '% Available soundfonts are:\n';
