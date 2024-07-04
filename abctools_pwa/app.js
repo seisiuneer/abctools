@@ -15210,11 +15210,13 @@ function AppendDatabaseTemplate(){
 	theValue += '% add the notes to the ABC as necessary and play the file\n';
 	theValue += '% to read and store the additional notes in the database.\n';
 	theValue += '%\n';
-	theValue += '[|C,,4 ^C,,4 D,,4 ^D,,4 E,,4 F,,4 ^F,,4 G,,4 ^G,,4 A,,4 ^A,,4 B,,4 |\n';
+	theValue += '[|C,,,4 ^C,,,4 D,,,4 ^D,,,4 E,,,4 F,,,4 ^F,,,4 G,,,4 ^G,,,4 A,,,4 ^A,,,4 B,,,4 |\n';
+	theValue += 'C,,4 ^C,,4 D,,4 ^D,,4 E,,4 F,,4 ^F,,4 G,,4 ^G,,4 A,,4 ^A,,4 B,,4 |\n';
 	theValue += 'C,4 ^C,4 D,4, ^D,4 E,4 F,4 ^F,4 G,4 ^G,4 A,4 ^A,4 B,4 |\n';
 	theValue += 'C4 ^C4 D4 ^D4 E4 F4 ^F4 G4 ^G4 A4 ^A4 B4 |\n';
 	theValue += 'c4 ^c4 d4 ^d4 e4 f4 ^f4 g4 ^g4 a4 ^a4 b4 |\n';
-	theValue += "c'4 ^c'4 d'4 ^d'4 e'4 f'4 ^f'4 g'4|]\n";
+	theValue += "c'4 ^c'4 d'4 ^d'4 e'4 f'4 ^f'4 g'4 ^g'4 a'4 ^a'4 b'4|\n";
+	theValue += "c''4 ^c''4 d''4 ^d''4 e''4 f''4 ^f''4 g''4 ^g''4 a''4 ^a''4 b''4|]\n";
 
 	// Do common tune addition processing
 	ProcessAddTune(theValue);
