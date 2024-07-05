@@ -9,7 +9,7 @@
 //
 function DeleteAllDatabases(callback){
 
-	var thePrompt = "This will clear the notes, reverb impulse, and tune search cache databases.<br/><br/>Are you sure?";
+	var thePrompt = "This will clear all the instrument notes, reverb settings, and tune search collections databases.<br/><br/>Are you sure?";
 
 	// Center the string in the prompt
 	thePrompt = makeCenteredPromptString(thePrompt);
@@ -93,7 +93,7 @@ function ResetSettingsDialog(){
 		form = [
 		  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Reset All Tool Settings and Databases&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools_pwa/userguide.html#advanced_resetsettings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 		  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Reset all settings to default</strong> will restore the tool settings to the original first-run state.</p>'},
-		  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Clear all databases</strong> will clear and delete the instrument note, reverb setting, and tune search browser local IndexedDB cache databases.<br/>New databases will be created after the tool is restarted.'},
+		  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Clear all databases</strong> will clear and delete the instrument notes, reverb settings, and tune search collections databases. New databases will be created after the tool is restarted.'},
 		  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">If you enable either of these options, the tool will be restarted after the operation is complete.</p>'},
 		  {name: "          Reset all tool settings to default", id: "resetsettings", type:"checkbox", cssClass:"configure_resetsettings_text"},
 		  {name: "          Clear all databases", id: "deletedatabases", type:"checkbox", cssClass:"configure_resetsettings_text"},
@@ -107,7 +107,7 @@ function ResetSettingsDialog(){
 		  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Reset All Tool Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools_pwa/userguide.html#advanced_resetsettings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 		  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Reset all settings to default</strong> will restore the tool settings to the original first-run state.</p>'},
 		  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">If you enable this option, the tool will be restarted after the operatation is complete.</p>'},
-		  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">When online, you also have the option to clear and delete the instrument note, reverb setting, and tune search browser local IndexedDB cache databases.</p>'},
+		  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">When online, you also have the option to clear and delete the instrument notes, reverb settings, and tune search collections databases.</p>'},
 		  {name: "          Reset all tool settings to default", id: "resetsettings", type:"checkbox", cssClass:"configure_resetsettings_text"},
 		  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},
 		];
@@ -1255,7 +1255,7 @@ function ManageSearchCollectionsDialog(){
 
 	if (!gTuneDB){
 
-		var thePrompt = "No tune search collection database available!";
+		var thePrompt = "No tune search collections database available!";
 	
 		// Center the string in the prompt
 		thePrompt = makeCenteredPromptString(thePrompt);

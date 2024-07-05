@@ -3662,7 +3662,7 @@
             <p><strong>Allow instrument notes and reverb settings database to be used offline (experimental)</strong></p>
             <p>When you open a tune in the Player, the notes and reverb settings used in the tune are automatically added to the instrument notes and reverb settings database.</p>
             <p>You don't have to actually play the tune, when the Player control bar shifts from grey to black, the notes and reverb settings have already been saved in the database.</p>
-            <p>When this option is checked and the tool is offline, it will still allow playback of the specific soundfont instrument notes and use of reverb settings previously cached in the database while online.</p>
+            <p>When this option is checked and the tool is offline, it will still allow playback of the specific soundfont instrument notes and use of reverb settings previously stored in the database while online.</p>
             <p>Any soundfont instruments and notes not played previously, and not in the notes database will result in silence for those notes.</p>
             <p>Similarly, if the reverb setting (room, hall, chamber, church, etc.) is changed offline to one not previously used, then no reverb will be applied.</p>
             <p>You can manage the note and reverb databases to perform actions like loading all notes for the instruments previously played or to load your desired reverb setting for use offline using the <strong><a href="#manage_databases">Manage Databases</a></strong> dialog described below.</p> 
@@ -3773,16 +3773,16 @@
                 <img class="image" loading="lazy" src="img/search_engine_database_1.jpg"/>
             </div>
             <hr id="advanced_resetsettings">
-            <p><strong>Reset All Tool Settings and Databases (with confirmation)</strong> - Click this button on the <strong>Advanced Settings/Manage Databases</strong> dialog to bring up a subdialog where you can reset the tool settings and/or clear the instrument note, reverb settings, and search engine tune collection databases.</p>
+            <p><strong>Reset All Tool Settings and Databases (with confirmation)</strong> - Click this button on the <strong>Advanced Settings/Manage Databases</strong> dialog to bring up a subdialog where you can reset the tool settings and/or clear the instrument note, reverb settings, and search engine tune search collection databases.</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/reset_settings_3.jpg"/>
+                <img class="image" loading="lazy" src="img/reset_settings_4.jpg"/>
             </div>
-            <p>This can be useful to get back to a clean slate if there is any chance that any tool settings or the cache databases used to speed the operation of the tool have been corrupted or you just want to clear out IndexedDB storage space in your browser.</p>
+            <p>This can be useful to get back to a clean slate if there is any chance that any tool settings or the databases used to speed the operation of the tool have been corrupted or you just want to clear out storage space in your browser.</p>
             <p>When offline, only <strong>Reset all tool settings to default</strong> will be available as clearing the database while offline would break offline play.</p>
             <p>Checking <strong>Reset all tool settings to default</strong> will restore the tool settings to the original first-run state.</p>
-            <p>Checking <strong>Clear all databases</strong> will clear and delete the instrument note, reverb impulse, and tune search browser local IndexedDB cache databases.</p>
+            <p>Checking <strong>Clear all databases</strong> will clear and delete the instrument notes, reverb settings, and tune search collections databases.</p>
              <p>If you enable either of these options, the tool will be restarted after the operation is complete.</p>
-            <p>The tool settings and cache databases will be recreated fresh after the tool restart and repopulated as you continue to use the tool.</p>
+            <p>The tool settings and databases will be recreated fresh after the tool restart and repopulated as you continue to use the tool.</p>
             <hr class="hidden-print" id="configure_fonts">
             <h1 class="page_break_always">Configuring ABC Rendering Fonts<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Font Settings</strong> button in the tool settings dialog shows a subdialog where you can configure all the fonts used for rendering the ABC.</p>
