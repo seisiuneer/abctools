@@ -35337,7 +35337,7 @@ function AdvancedSettings(){
 		{name: "    Player uses large controls (easier to touch on phone/tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Player tunebook navigation controls on left side", id: "configure_player_status_on_left", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Player/Tune Trainer uses label L/R side click to decrement/increment values", id: "configure_trainer_touch_controls", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
-		{name: "    Allow previously cached instrument sounds and reverb to be used offline (experimental)", id: "configure_allow_offline_instruments", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+		{name: "    Allow instrument notes and reverb settings database to be used offline (experimental)", id: "configure_allow_offline_instruments", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
   		{name: "Full screen tune display width scaling (percentage) (default is 50):", id: "configure_fullscreen_scaling", type:"number", cssClass:"advanced_settings2_form_text"},
 	];
 
