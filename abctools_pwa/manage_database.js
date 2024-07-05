@@ -242,7 +242,13 @@ function idleManageSamplesDialog(showActionButtons){
 		function gotCancelRequested(){
 			//debugger;
 			//console.log("gotCancelRequested");
+
 			cancelRequested = true;
+
+			if (gInDownloadAll){
+				document.getElementById("managedownloadall").value = "Cancel requested, waiting for current instrument download to finish...";
+			}
+
 		}
 
 		//console.log("downloadAllNotes");
@@ -274,6 +280,8 @@ function idleManageSamplesDialog(showActionButtons){
 			// Show the spinner
 			document.getElementById("loading-bar-spinner").style.display = "block";
 
+			document.getElementById("noteLoadProgress").style.display = "block";
+
 			var thisName = gLoadAllNotesSet[thisInstrumentIndex];
 			thisName = thisName.replace("https://michaeleskin.com/abctools/soundfonts/","");
        		thisName = thisName.replace("https://paulrosen.github.io/midi-js-soundfonts/","");
@@ -294,6 +302,7 @@ function idleManageSamplesDialog(showActionButtons){
 					//console.log("Done!")
 
 					document.getElementById("loading-bar-spinner").style.display = "none";
+					document.getElementById("noteLoadProgress").style.display = "none";
 
 					var thePrompt = "All notes for all instruments successfully saved!";
 
@@ -401,6 +410,12 @@ function idleManageSamplesDialog(showActionButtons){
 		let index = 0;
 
 		function fetchNext() {
+
+			// This is being called from the multi-loader, bump the progress bar
+			if (callback){
+				var elem = document.getElementById("noteLoadBar")
+        		elem.style.width = Math.floor((index/urls.length)*100) + "%";
+			}
 
 			if (index < urls.length) {
 
@@ -544,6 +559,13 @@ function idleManageSamplesDialog(showActionButtons){
         var items = [];
 
 	    cursorRequest.onsuccess = function(event) {
+
+	    	// Check for dialog closed before update response
+	    	const tableBody = document.querySelector("#notes-table tbody");
+	    	if (!tableBody){
+	    		//console.log("fetchAndDisplayItems: Got early out");
+	    		return;
+	    	}
 
 			let cursor = event.target.result;
 	        
@@ -880,7 +902,10 @@ function ManageSamplesDialog(showActionButtons){
 
 		modal_msg +='<table id="notes-table" border="1" style="width: 100%;"><thead><tr><th style="padding:7px;">Name</th><th style="padding:7px;">Notes</th><th style="padding:7px;">Actions</th></tr></thead><tbody><!-- Items will be inserted here --></tbody></table></div>';
 		
-		modal_msg +='<p style="margin-top:36px;text-align:center;"><input id="managedownloadall" class="btn btn-managesearch managesearch" type="button" value="Load All Notes for All Instruments" title="Loads all the notes for all the instruments into the database"></p>';
+		modal_msg +='<p style="margin-top:36px;text-align:center;"><input id="managedownloadall" class="btn btn-managesearch managesearch barber-pole-button" type="button" value="Load All Notes for All Instruments" title="Loads all the notes for all the instruments into the database"></p>';
+
+		// Progress bar
+		modal_msg +='<div id="noteLoadProgress"><div id="noteLoadBar"></div></div>';
 
 	}
 	else{

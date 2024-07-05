@@ -4124,6 +4124,22 @@ top:20px;
 	}
 }
 
+#noteLoadProgress {
+  margin-top:32px;
+  display:none;
+  width: 100%;
+  background-color: #dddddd;
+}
+
+#noteLoadBar {
+  width: 1%;
+  height: 30px;
+  background-color: green;
+  text-align: center; /* To center it horizontally (if you want) */
+  line-height: 30px; /* To center it vertically */
+  color: white;
+}
+
 /******************************************************************************/
 /* STYLES RELATED TO EXPERIMENT BUTTONS                                       */
 /******************************************************************************/
