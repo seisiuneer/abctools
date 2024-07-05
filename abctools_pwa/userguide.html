@@ -432,7 +432,7 @@
                     <p class="toc"><a style="text-decoration:none;" href="#settings_dialog">ABC Transcription Tools Settings</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#advanced_settings">Advanced Settings</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#manage_databases">Managing Notes, Reverb, and Tune Search Databases for Offline Use</a></p>                    
-                    <p class="toc"><a style="text-decoration:none;" href="#advanced_resetsettings">Reset Settings</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#advanced_resetsettings">Reset All Tool Settings and Databases</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#configure_fonts">Configuring ABC Rendering Fonts</a></p>
                 </div>
 
@@ -3660,7 +3660,8 @@
             <p>Defaults to enabled for Android and iPhone devices.</p>
             <hr id="cached_instruments">
             <p><strong>Allow previously cached instrument sounds and reverb to be used offline (experimental)</strong></p>
-            <p>The tool saves all soundfont instrument notes and reverb settings when tunes are played in a local persistent database cache.</p>
+            <p>When you open a tune in the Player, the notes and reverb settings used in the tune are automatically added to the instrument notes and reverb settings database.</p>
+            <p>You don't have to actually play the tune, when the Player control bar shifts from grey to black, the notes and reverb settings have already been saved in the database.</p>
             <p>When this option is checked and the tool is offline, it will still allow playback of the specific soundfont instrument notes and use of reverb settings previously cached in the database while online.</p>
             <p>Any soundfont instruments and notes not played previously, and not in the notes database will result in silence for those notes.</p>
             <p>Similarly, if the reverb setting (room, hall, chamber, church, etc.) is changed offline to one not previously used, then no reverb will be applied.</p>
@@ -3733,6 +3734,8 @@
             <div class="image_holder_p">
                 <img class="image" loading="lazy" src="img/notes_database_2.jpg"/>
             </div>
+            <p>When you open a tune in the Player, the notes and reverb settings used in the tune are automatically added to the instrument notes and reverb settings database.</p>
+            <p>You don't have to actually play the tune, when the Player control bar shifts from grey to black, the notes and reverb settings have already been saved in the database.</p>
             <p>When offline, if <strong>Allow previously cached instrument sounds and reverb to be used offline (experimental)</strong> described above is checked, when playing tunes, notes are read from the tool's notes database that contains every instrument note for every tune ever played by the tool.</p>
             <p>The total number of notes available for each instrument is variable for each soundfont and instrument combination.</p>
             <p>If the number of notes stored for a specific instrument seems low, and you want to ensure that all notes for the instrument are available for playing when offline, click <strong>Load All</strong> next to the instrument name.</p>
@@ -3772,12 +3775,13 @@
             <hr id="advanced_resetsettings">
             <p><strong>Reset All Tool Settings and Databases (with confirmation)</strong> - Click this button on the <strong>Advanced Settings/Manage Databases</strong> dialog to bring up a subdialog where you can reset the tool settings and/or clear the instrument note, reverb settings, and search engine tune collection databases.</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/reset_settings_2.jpg"/>
+                <img class="image" loading="lazy" src="img/reset_settings_3.jpg"/>
             </div>
             <p>This can be useful to get back to a clean slate if there is any chance that any tool settings or the cache databases used to speed the operation of the tool have been corrupted or you just want to clear out IndexedDB storage space in your browser.</p>
-            <p>Checking <strong>Reset all settings to default</strong> will restore the tool settings to the original first-run state.</p>
+            <p>When offline, only <strong>Reset all tool settings to default</strong> will be available as clearing the database while offline would break offline play.</p>
+            <p>Checking <strong>Reset all tool settings to default</strong> will restore the tool settings to the original first-run state.</p>
             <p>Checking <strong>Clear all databases</strong> will clear and delete the instrument note, reverb impulse, and tune search browser local IndexedDB cache databases.</p>
-             <p>If you enable either of these options, the tool will be restarted after the operation is completed.</p>
+             <p>If you enable either of these options, the tool will be restarted after the operation is complete.</p>
             <p>The tool settings and cache databases will be recreated fresh after the tool restart and repopulated as you continue to use the tool.</p>
             <hr class="hidden-print" id="configure_fonts">
             <h1 class="page_break_always">Configuring ABC Rendering Fonts<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>

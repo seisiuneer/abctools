@@ -86,15 +86,33 @@ function ResetSettingsDialog(){
 	  deletedatabases: false
 	};
 
-	const form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Reset All Tool Settings and Databases&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools_pwa/userguide.html#advanced_resetsettings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
-	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Reset all settings to default</strong> will restore the tool settings to the original first-run state.</p>'},
-	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Clear all databases</strong> will clear and delete the sample, reverb impulse, and tune search browser local IndexedDB cache databases.<br/>New databases will be created after the tool is restarted.'},
-	  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">If you enable either of these options, the tool will be restarted.</p>'},
-	  {name: "          Reset all tool settings to default", id: "resetsettings", type:"checkbox", cssClass:"configure_resetsettings_text"},
-	  {name: "          Clear all databases", id: "deletedatabases", type:"checkbox", cssClass:"configure_resetsettings_text"},
-	  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},
-	];
+	var form;
+
+	if (navigator.onLine){
+
+		form = [
+		  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Reset All Tool Settings and Databases&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools_pwa/userguide.html#advanced_resetsettings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+		  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Reset all settings to default</strong> will restore the tool settings to the original first-run state.</p>'},
+		  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Clear all databases</strong> will clear and delete the instrument note, reverb setting, and tune search browser local IndexedDB cache databases.<br/>New databases will be created after the tool is restarted.'},
+		  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">If you enable either of these options, the tool will be restarted after the operation is complete.</p>'},
+		  {name: "          Reset all tool settings to default", id: "resetsettings", type:"checkbox", cssClass:"configure_resetsettings_text"},
+		  {name: "          Clear all databases", id: "deletedatabases", type:"checkbox", cssClass:"configure_resetsettings_text"},
+		  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},
+		];
+	}
+	else{
+
+		form = [
+
+		  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Reset All Tool Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools_pwa/userguide.html#advanced_resetsettings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+		  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Reset all settings to default</strong> will restore the tool settings to the original first-run state.</p>'},
+		  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">If you enable this option, the tool will be restarted after the operatation is complete.</p>'},
+		  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">When online, you also have the option to clear and delete the instrument note, reverb setting, and tune search browser local IndexedDB cache databases.</p>'},
+		  {name: "          Reset all tool settings to default", id: "resetsettings", type:"checkbox", cssClass:"configure_resetsettings_text"},
+		  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},
+		];
+
+	}
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
@@ -185,12 +203,14 @@ function ManageDatabasesDialog(){
 		modal_msg += '<input id="managereverb" class="btn btn-managereverb managereverb" onclick="ManageReverbDialog()" type="button" value="Reverb Settings Database" title="Opens a dialog where you can load the reverb settings for offline use">';
 		
 		modal_msg += '<input id="managesearch" class="btn btn-managesearch managesearch" onclick="ManageSearchCollectionsDialog()" type="button" value="Search Engine Libraries Database" title="Opens a dialog where you can load the search engine libraries for offline use"></p>';
+
+		modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset All Tool Settings and Databases (with confirmation)" title="Opens a dialog where you can reset all tool settings to the default and/or clear and deletes the instrument notes, reverb impulse, and tune search browser local IndexedDB cache databases"></p>';
 	}
 	else{
 		modal_msg += '<p style="text-align:center;"><input id="managesamples" style="margin-right:0px" class="btn btn-managesamples managesamples" onclick="ManageSamplesDialog(false)" type="button" value="Instrument Notes Database" title="Opens a dialog where you can view the instruments and notes in the instrument database while offline">';
-	}
 
-	modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset All Tool Settings and Databases (with confirmation)" title="Opens a dialog where you can reset all tool settings to the default and/or clear and deletes the instrument notes, reverb impulse, and tune search browser local IndexedDB cache databases."></p>';
+		modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset All Tool Settings (with confirmation)" title="Opens a dialog where you can reset all tool settings to the default"></p>';
+	}
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, width: 770,  scrollWithPage: (AllowDialogsToScroll()) });
 

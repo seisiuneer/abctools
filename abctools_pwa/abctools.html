@@ -47,15 +47,15 @@
 		
 		<script>
 		// Register service worker
-		// if ('serviceWorker' in navigator){
-		// 	navigator.serviceWorker.register('https://michaeleskin.com/abctools_pwa/service_worker.js')
-		// 	.then(reg => {
-		// 		console.log("Service Worker Registered!");
-		// 	})
-		// 	.catch(err => {
-		// 		console.log("Service Worker Registration failed: "+err);
-		// 	});
-		// }	
+		if ('serviceWorker' in navigator){
+			navigator.serviceWorker.register('https://michaeleskin.com/abctools_pwa/service_worker.js')
+			.then(reg => {
+				console.log("Service Worker Registered!");
+			})
+			.catch(err => {
+				console.log("Service Worker Registration failed: "+err);
+			});
+		}	
 		</script>		
 		
 		<link rel="manifest" href="https://michaeleskin.com/abctools_pwa/img/abc-manifest.json">
