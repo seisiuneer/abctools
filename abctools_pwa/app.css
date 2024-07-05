@@ -1404,6 +1404,22 @@ margin-left:20px;
 	background: palegreen;
 }
 
+.managedownloadall {
+	display: inline-block;
+}
+
+#managedownloadall{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:0px;
+}
+
+.managedownloadall:hover{
+	background: palegreen;
+}
+
+
 .managesamples {
 	display: inline-block;
 }
