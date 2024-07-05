@@ -222,13 +222,13 @@ function ManageDatabasesDialog(){
 //
 var gInSampleRetrieval = false;
 var gInDownloadAll = false;
+var gSamplesOKButton = null;
 
 function idleManageSamplesDialog(showActionButtons){
 
     const storeName = "samples";
 
 	var gLoadAllNotesSet = null;
-	var gOKButton = null;
 
     // All the notes
 
@@ -236,6 +236,11 @@ function idleManageSamplesDialog(showActionButtons){
 	fetchAndDisplayItems(showActionButtons);
 
 	function downloadAllNotes(){
+
+		// Disallow during other download operations
+        if (gInSampleRetrieval){
+    		return;
+    	}
 
 		var cancelRequested = false;
 
@@ -261,14 +266,14 @@ function idleManageSamplesDialog(showActionButtons){
 
 			// Find the button that says "OK" to use to close the dialog and hide it during the operation	
 
-			gOKButton = null;
+			gSamplesOKButton = null;
 
 			if (theOKButtons && (theOKButtons.length > 0)){		
-				gOKButton = theOKButtons[theOKButtons.length-1];
+				gSamplesOKButton = theOKButtons[theOKButtons.length-1];
 			}
 
-			if (gOKButton){
-				gOKButton.style.display = "none";
+			if (gSamplesOKButton){
+				gSamplesOKButton.style.display = "none";
 			}
 
 			gInDownloadAll = true;
@@ -325,8 +330,8 @@ function idleManageSamplesDialog(showActionButtons){
 
 					gInDownloadAll = false;
 
-					if (gOKButton){
-						gOKButton.style.display = "block";
+					if (gSamplesOKButton){
+						gSamplesOKButton.style.display = "block";
 					}
 
 				}
@@ -411,11 +416,8 @@ function idleManageSamplesDialog(showActionButtons){
 
 		function fetchNext() {
 
-			// This is being called from the multi-loader, bump the progress bar
-			if (callback){
-				var elem = document.getElementById("noteLoadBar")
-        		elem.style.width = Math.floor((index/urls.length)*100) + "%";
-			}
+			var elem = document.getElementById("noteLoadBar")
+    		elem.style.width = Math.floor((index/urls.length)*100) + "%";
 
 			if (index < urls.length) {
 
@@ -459,7 +461,16 @@ function idleManageSamplesDialog(showActionButtons){
 					return;
 				}
 
+				// Hide the spinner
 				document.getElementById("loading-bar-spinner").style.display = "none";
+
+				// Hide the progress bar
+				document.getElementById("noteLoadProgress").style.display = "none";
+
+				// Show the OK button
+				if (gSamplesOKButton){
+					gSamplesOKButton.style.display = "block";
+				}
 
 				var thePrompt = "All notes for "+friendlyInstrumentName(instrumentName)+" successfully saved!";
 			
@@ -657,6 +668,10 @@ function idleManageSamplesDialog(showActionButtons){
 		                		return;
 		                	}
 
+		                	if (gInSampleRetrieval){
+		                		return;
+		                	}
+
 		                 	event.target.value = "Loading";
 		                	loadItem(originalPath,null);
 		                }
@@ -675,6 +690,10 @@ function idleManageSamplesDialog(showActionButtons){
 
 		                	// Disable when downloading all notes
 		                	if (gInDownloadAll){
+		                		return;
+		                	}
+
+		                	if (gInSampleRetrieval){
 		                		return;
 		                	}
 
@@ -776,7 +795,27 @@ function idleManageSamplesDialog(showActionButtons){
    		item = item.replace("https://michaeleskin.com/abctools/soundfonts/","");
    		item = item.replace("https://paulrosen.github.io/midi-js-soundfonts/","");
 
-   		//debugger;
+   		if (!callback){
+
+	   		//debugger;
+			var theOKButtons = document.getElementsByClassName("modal_flat_buttons");
+
+			// Find the button that says "OK" to use to close the dialog and hide it during the operation	
+
+			gSamplesOKButton = null;
+
+			if (theOKButtons && (theOKButtons.length > 0)){		
+				gSamplesOKButton = theOKButtons[theOKButtons.length-1];
+			}
+
+			if (gSamplesOKButton){
+				gSamplesOKButton.style.display = "none";
+			}
+
+			// This is being called from the multi-loader, bump the progress bar
+			document.getElementById("noteLoadProgress").style.display = "block";
+
+		}
 
      	// Get each one and save it to the database
 		fetchUrlsSequentially(item,theURLs,callback);
