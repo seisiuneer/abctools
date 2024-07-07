@@ -35364,11 +35364,11 @@ function ResetSettingsDialog(){
 	  deletedatabases: false
 	};
 
-	const form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Reset Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_resetsettings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+	form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Reset All Tool Settings and Databases&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools_pwa/userguide.html#advanced_resetsettings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Reset all settings to default</strong> will restore the tool settings to the original first-run state.</p>'},
-	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Clear all databases</strong> will clear and delete the sample, reverb impulse, and tune search browser local IndexedDB cache databases.<br/>New databases will be created after the tool is restarted.'},
-	  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">If you enable either of these options, the tool will be restarted.</p>'},
+	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Clear all databases</strong> will clear and delete the instrument notes, reverb settings, and tune search collections databases. New databases will be created after the tool is restarted.'},
+	  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">If you enable either of these options, the tool will be restarted after the operation is complete.</p>'},
 	  {name: "          Reset all tool settings to default", id: "resetsettings", type:"checkbox", cssClass:"configure_resetsettings_text"},
 	  {name: "          Clear all databases", id: "deletedatabases", type:"checkbox", cssClass:"configure_resetsettings_text"},
 	  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},
