@@ -203,13 +203,9 @@ function ManageDatabasesDialog(){
 		modal_msg += '<input id="managereverb" class="btn btn-managereverb managereverb" onclick="ManageReverbDialog()" type="button" value="Reverb Settings Database" title="Opens a dialog where you can load the reverb settings for offline use">';
 		
 		modal_msg += '<input id="managesearch" class="btn btn-managesearch managesearch" onclick="ManageSearchCollectionsDialog()" type="button" value="Search Engine Libraries Database" title="Opens a dialog where you can load the search engine libraries for offline use"></p>';
-
-		modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset All Tool Settings and Databases (with confirmation)" title="Opens a dialog where you can reset all tool settings to the default and/or clear and deletes the instrument notes, reverb impulse, and tune search browser local IndexedDB cache databases"></p>';
 	}
 	else{
-		modal_msg += '<p style="text-align:center;"><input id="managesamples" style="margin-right:0px" class="btn btn-managesamples managesamples" onclick="ManageSamplesDialog(false)" type="button" value="Instrument Notes Database" title="Opens a dialog where you can view the instruments and notes in the instrument database while offline">';
-
-		modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset All Tool Settings (with confirmation)" title="Opens a dialog where you can reset all tool settings to the default"></p>';
+		modal_msg += '<p style="text-align:center;"><input id="managesamples" style="margin-right:0px" class="btn btn-managesamples managesamples" onclick="ManageSamplesDialog(false)" type="button" value="View Instrument Notes Database" title="Opens a dialog where you can view the instruments and notes in the instrument database while offline">';
 	}
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, width: 770,  scrollWithPage: (AllowDialogsToScroll()) });
@@ -957,7 +953,7 @@ function ManageSamplesDialog(showActionButtons){
 
 	}
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 760,  scrollWithPage: (AllowDialogsToScroll()) });
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 10, width: 760,  scrollWithPage: (AllowDialogsToScroll()) });
 
 	setTimeout(function(){
 		idleManageSamplesDialog(showActionButtons);
@@ -1183,7 +1179,7 @@ function ManageReverbDialog(){
 	modal_msg+='<input id="managereverb" style="margin-right:0px" class="btn btn-managereverb managereverb" onclick="SaveReverbSetting(13)" type="button" value="Church 1" title="Load and save Church 1 reverb">'
 	modal_msg+='</p>';
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 75, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
 
 }
 
@@ -1277,7 +1273,7 @@ function ManageSearchCollectionsDialog(){
 
 	modal_msg+='</p>';
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 215, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 175, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
 
 }
 

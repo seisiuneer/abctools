@@ -28844,6 +28844,7 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 			modal_msg += '<input id="reverbexplorertest" class="reverbexplorertest button btn btn-reverbexplorertest" onclick="ReverbExplorerRegenerate();" type="button" value="Reload with Changed Reverb Settings" title="Reloads the tune into the player with the entered reverb settings">';
 			modal_msg += '<input id="reverbexplorerinject" class="reverbexplorerinject button btn btn-reverbexplorerinject" onclick="ReverbExplorerInject();" type="button" style="margin-right:24px;" value="Inject Reverb into the ABC" title="Injects the current reverb settings into the tune ABC">';
 			modal_msg += '<label class="loadimpulsebutton btn btn-reverbexplorerinject" for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label>'
+
 			modal_msg += '</p>';
 			modal_msg += '<a id="reverbexplorerhelp" href="https://michaeleskin.com/abctools_pwa/userguide.html#reverb_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the Reverb Explorer" class="dialogcornerbutton">?</a>';
 		}
@@ -35321,8 +35322,6 @@ function AdvancedSettings(){
 		configure_tinyurl: gTinyURLAPIKeyOverride,
 		configure_confirm_clear: gConfirmClear,
 		configure_show_render_progress: gShowABCJSRenderProgress,
-		configure_allow_offline_instruments: gAllowOfflineInstruments,
-
 	};
 
 	var form = [
@@ -35337,7 +35336,6 @@ function AdvancedSettings(){
 		{name: "    Player uses large controls (easier to touch on phone/tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Player tunebook navigation controls on left side", id: "configure_player_status_on_left", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Player/Tune Trainer uses label L/R side click to decrement/increment values", id: "configure_trainer_touch_controls", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
-		{name: "    Allow instrument notes and reverb settings database to be used offline (experimental)", id: "configure_allow_offline_instruments", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
   		{name: "Full screen tune display width scaling (percentage) (default is 50):", id: "configure_fullscreen_scaling", type:"number", cssClass:"advanced_settings2_form_text"},
 	];
 
@@ -35369,7 +35367,8 @@ function AdvancedSettings(){
 		{name: "Default %roll_3_params:", id: "configure_roll3_default", type:"text", cssClass:"advanced_settings2_roll_text"},
 		{name: "Private TinyURL API Token:", id: "configure_tinyurl", type:"text", cssClass:"advanced_settings2_tinyurl_text"},
 
-		{html: '<p style="text-align:center;margin-top:22px;"><input id="reset_roll_parameters" class="btn btn-subdialog reset_roll_parameters" onclick="ResetRollDefaultParams()" type="button" value="Reset Roll Parameter Strings to Defaults" title="Resets the roll parameter strings to known good default values"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><input id="managedatabases" class="btn btn-managedatabases managedatabases" onclick="ManageDatabasesDialog()" type="button" value="Manage Databases" title="Opens a dialog where you can manage the instrument note, reverb settings, and tune search engine collection databases"></p>'},
+		{html: '<p style="text-align:center;margin-top:22px;"><input id="reset_roll_parameters" class="btn btn-subdialog reset_roll_parameters" onclick="ResetRollDefaultParams()" type="button" value="Reset Roll Parameter Strings to Defaults" title="Resets the roll parameter strings to known good default values"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset Settings" title="Opens a dialog where you can reset all tool settings to the default and/or clear the instrument notes, reverb settings, and tune search engine collection databases"></p>'},
+
 	]);
 
 	// Set up the reverb impulse load callback
@@ -35393,9 +35392,6 @@ function AdvancedSettings(){
 
 			// Disable rendering? (not persistent)
 			gDisableNotationRendering = args.result.configure_DisableRendering;
-
-			// Allow offline instruments?
-			gAllowOfflineInstruments = args.result.configure_allow_offline_instruments;
 
 			if (gDisableNotationRendering){
 
@@ -35903,7 +35899,7 @@ function ConfigureToolSettings() {
 		configure_show_cgda: gShowCGDATab,
 		configure_comhaltas: gUseComhaltasABC,	
 		configure_RollUseRollForIrishRoll: gRollUseRollForIrishRoll,
-
+		configure_allow_offline_instruments: gAllowOfflineInstruments,
 	};
 
   	var form = [
@@ -35926,7 +35922,9 @@ function ConfigureToolSettings() {
 		{name: "          Show DGDAE as a 5-string tab option (default is CGDAE)", id: "configure_show_dgdae", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "Stringed instrument capo fret position:", id: "configure_capo", type:"number", cssClass:"configure_settings_form_text"},
 		{name: "    Show stringed instrument names on tablature (single-voice tunes only, not shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-		{html: '<p style="text-align:center;"><input id="abcplayer_settingsbutton" style="margin-left:0px" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ConfigurePlayerSettings(null);" type="button" value="Select Default Player Instruments and Volumes" title="Brings up the Player Instrument Settings dialog where you can select the default abcjs soundfont, MIDI instruments, and MIDI volumes to use when playing tunes"></p>'},
+		{html: '<p style="text-align:center;"><input id="abcplayer_settingsbutton" style="margin-left:0px" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ConfigurePlayerSettings(null);" type="button" value="Select Default Player Instruments and Volumes" title="Brings up the Player Instrument Settings dialog where you can select the default abcjs soundfont, MIDI instruments, and MIDI volumes to use when playing tunes"><input id="managedatabases" class="btn btn-managedatabases managedatabases" onclick="ManageDatabasesDialog()" type="button" value="Manage Note, Reverb, and Tune Search Databases" title="Opens a dialog where you can manage the instrument note, reverb settings, and tune search engine collection databases"></p>'},
+		{name: "    Allow instrument notes and reverb settings database to be used offline", id: "configure_allow_offline_instruments", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+
 		{name: "    Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "            Use Default Bass/Chord volumes when playing tunes", id: "configure_inject_volumes", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
@@ -35984,6 +35982,9 @@ function ConfigureToolSettings() {
 				gSaveLastAutoSnapShot = false;
 			
 			}
+
+			// Allow offline instruments?
+			gAllowOfflineInstruments = args.result.configure_allow_offline_instruments;
 
 			// Save the tab button hide preference 
 			gFeaturesShowTabButtons = args.result.configure_show_tab_buttons;
