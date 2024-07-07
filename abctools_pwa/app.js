@@ -38605,6 +38605,11 @@ function sendGoogleAnalytics(theCategory,theAction,theLabel){
 		return;
 	}
 
+	// Don't send analytics on iOS Safari
+	if (gIsIOS){
+		return;
+	}
+
 	if (typeof gtag !== "undefined"){
 
 		if ((gtag) && (gtag instanceof Function)){
@@ -38619,10 +38624,11 @@ function sendGoogleAnalytics(theCategory,theAction,theLabel){
 
 		}
 	}
-	else{
-		console.log("sendGoogleAnalytics - gtag not defined ")
+	// else{
 
-	}
+	// 	//console.log("sendGoogleAnalytics - gtag not defined ")
+
+	// }
 
 }
 
