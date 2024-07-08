@@ -626,7 +626,10 @@ function idleManageSamplesDialog(showActionButtons){
 
 	            // Put the the total in the table header
 	            if (basePathSet && basePathSet.length > 0){
-	            	document.getElementById("notes_table_name").textContent = "Name ("+basePathSet.length+")";
+	            	var elem = document.getElementById("notes_table_name");
+	            	if (elem){
+	            		elem.textContent = "Name ("+basePathSet.length+")";
+	            	}
 	            }
 
 	           	basePathSet.forEach((item,index) => {
@@ -963,7 +966,7 @@ function ManageSamplesDialog(showActionButtons){
 
 		modal_msg += '<div style="margin-top:24px;height:'+maxHeight+'px;overflow:auto">'	
 
-		modal_msg +='<table id="notes-table" border="1" style="width: 100%;"><thead><tr><th style="padding:7px;">Name</th><th style="padding:7px;">Notes</th></tr></thead><tbody><!-- Items will be inserted here --></tbody></table></div>';
+		modal_msg +='<table id="notes-table" border="1" style="width: 100%;"><thead><tr><th id="notes_table_name" style="padding:7px;">Name</th><th style="padding:7px;">Notes</th></tr></thead><tbody><!-- Items will be inserted here --></tbody></table></div>';
 
 	}
 
