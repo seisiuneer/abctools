@@ -2,11 +2,15 @@
 // Service worker for abctools offline use resource caching
 //
 //
-// Updated 8 July 2024 1520
+//
+//
+// Updated 8 July 2024 1600
+//
+//
 //
 //
 
-const cacheName = 'cache-83';
+const cacheName = 'cache-88';
 
 const contentToCache = [
     'abctools.html',
@@ -118,6 +122,8 @@ self.addEventListener('activate', event => {
 // Fetching content using Service Worker
 self.addEventListener('fetch', (e) => {
 
+    //console.log(`[Service Worker] fetching: ${e.request.url}`);
+
     // Cache http and https only, skip unsupported chrome-extension:// and file://...
     if (!(
         e.request.url.startsWith('http:') || e.request.url.startsWith('https:')
@@ -127,7 +133,7 @@ self.addEventListener('fetch', (e) => {
 
     e.respondWith((async () => {
 
-        const r = await caches.match(e.request);
+        const r = await caches.match(e.request,{ignoreSearch: true});
 
         if (r){
 
