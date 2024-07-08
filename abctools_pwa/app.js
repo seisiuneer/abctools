@@ -14283,7 +14283,7 @@ function AddABC(){
 		modal_msg += '</p>';
 		modal_msg += '<p style="text-align:center;margin-top:16px;">';
 		modal_msg  += '<input id="addbodhrantemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddBodhranTemplate();" type="button" value="Add Bodhran Backing Track Template" title="Opens a dialog where you can choose a bodhran backing track template of common tune styles to add to the end of the ABC">';
-		modal_msg  += '<input id="adddatabasetemplate" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendDatabaseTemplate();" type="button" value="Add Offline Notes Database Loader Template" title="Adds a template that makes it easy to load a full set of instrument notes and reverb settings into the database">';
+		modal_msg  += '<input id="adddatabasetemplate" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendDatabaseTemplate();" type="button" value="Add Offline Notes Database Loader Templates" title="Adds a template that makes it easy to load a full set of instrument notes and reverb settings into the database">';
 		modal_msg += '</p>';
 	}
 
@@ -15171,27 +15171,30 @@ function AppendDatabaseTemplate(){
 		theValue += "\n";
 	}
 
+	// Tempate 1 - Offline Single Instrument Notes + Reverb Database Loader
+
 	theValue += 'X:1\n';
-	theValue += 'T: Offline Instrument Notes Database Loader\n';
-	theValue += 'R: Reel\n';
+	theValue += 'T: Single Soundfont Instrument Notes + Reverb Setting Database Loader\n';
 	theValue += 'M: 4/4\n';
 	theValue += 'L: 1/8\n';
 	theValue += 'K: C\n';
 	theValue += 'Q: 1/4=400\n';
 	theValue += '%\n';
 	theValue += '% 1) Select the soundfont:\n';
+	theValue += '%\n';	
 	theValue += '% Available soundfonts are:\n';
 	theValue += '% fluid, musyng, fatboy, canvas, mscore, arachno, and fluidhq\n';
 	theValue += '%\n';
 	theValue += '%abcjs_soundfont fluid\n';
 	theValue += '%\n';
 	theValue += '% 2) Select the MIDI instrument program you want to use\n';
-	theValue += '% for the soundfont and have all the notes stored in the database.\n';
+	theValue += '% in the soundfont and have all the notes stored in the database:\n';
 	theValue += '%\n';
 	theValue += '% Example: Acoustic Grand Piano\n';
 	theValue += '%%MIDI program 0\n';
 	theValue += '%\n';
 	theValue += '% 3) Select the reverb environment you want to have stored in the database\n';
+	theValue += '%\n';	
 	theValue += '% Available reverb environments are:\n';
 	theValue += '% off, room1, room2, room3, chamber1, chamber2, chamber3,\n';
 	theValue += '% hall1, hall2, hall3, church1,\n';
@@ -15202,9 +15205,11 @@ function AppendDatabaseTemplate(){
 	theValue += '%\n';
 	theValue += '%reverb chamber 0.9 0.1\n';
 	theValue += '%\n';
-	theValue += '% 4) Play this file and the notes will all be loaded\n';
-	theValue += '% and stored in the database for offline use for your\n';
-	theValue += '% specified soundfont and instrument.\n';
+	theValue += '% 4) While online, click "Play" to load the ABC into the player.\n';
+	theValue += '%\n';	
+	theValue += "% You do not need to actually play the tune, just loading the template\n";
+	theValue += "% into the player is enough to save the notes and reverb setting in\n";
+	theValue += "% the instrument notes and reverb database.\n";
 	theValue += '%\n';
 	theValue += '[|C,,,4 ^C,,,4 D,,,4 ^D,,,4 E,,,4 F,,,4 ^F,,,4 G,,,4 ^G,,,4 A,,,4 ^A,,,4 B,,,4 |\n';
 	theValue += 'C,,4 ^C,,4 D,,4 ^D,,4 E,,4 F,,4 ^F,,4 G,,4 ^G,,4 A,,4 ^A,,4 B,,4 |\n';
@@ -15212,7 +15217,66 @@ function AppendDatabaseTemplate(){
 	theValue += 'C4 ^C4 D4 ^D4 E4 F4 ^F4 G4 ^G4 A4 ^A4 B4 |\n';
 	theValue += 'c4 ^c4 d4 ^d4 e4 f4 ^f4 g4 ^g4 a4 ^a4 b4 |\n';
 	theValue += "c'4 ^c'4 d'4 ^d'4 e'4 f'4 ^f'4 g'4 ^g'4 a'4 ^a'4 b'4|\n";
-	theValue += "c''4 ^c''4 d''4 ^d''4 e''4 f''4 ^f''4 g''4 ^g''4 a''4 ^a''4 b''4|]\n";
+	theValue += "c''4 ^c''4 d''4 ^d''4 e''4 f''4 ^f''4 g''4 ^g''4 a''4 ^a''4 b''4|]\n\n";
+
+	// Template 2 - Complete Soundfont Instrument Notes Database Loader Primer
+	
+	theValue += "X: 2\n";
+	theValue += "T: All Soundfont Instruments Notes Database Primer Loader\n";
+	theValue += "M: 4/4\n";
+	theValue += "L: 1/8\n";
+	theValue += "K: C\n";
+	theValue += "Q: 400\n";
+	theValue += "%\n";
+	theValue += "% Loads one note for each MIDI instrument in an entire soundfont\n";
+	theValue += "% into the instrument notes database to allow you to easily\n";
+	theValue += "% load the rest of the notes for all the instruments.\n";
+	theValue += "%\n";
+	theValue += "% 1) Select the soundfont you want to load:\n";
+	theValue += "%\n";
+	theValue += "% Available soundfonts are:\n"; 
+	theValue += "% fluid, musyng, fatboy, canvas, mscore, arachno, and fluidhq\n";
+	theValue += "%\n";
+	theValue += "%abcjs_soundfont fluid\n";
+	theValue += "%\n";
+	theValue += '% 2) While online, click "Play" to load the ABC into the player.\n';
+	theValue += "%\n";
+	theValue += "% You don't need to actually play the file, just loading the template\n";
+	theValue += "% into the player is enough to create single note placeholder\n";
+	theValue += "% entries in the instrument notes database.\n";
+	theValue += "%\n";
+	theValue += "% 3) Once the player load is complete, you can close the player.\n";
+	theValue += "%\n";
+	theValue += '% 4) Open "Settings"/"Manage Notes, Reverb, and Tune Search Databases"\n';
+	theValue += "%\n";
+	theValue += '% 5) Click "Instrument Notes Database"\n';
+	theValue += "%\n";
+	theValue += '% 6) Click "Load All Notes for All Instruments"\n';
+	theValue += "%\n";
+	theValue += "% 7) The tool will download all the notes for all the instruments.\n";
+	theValue += "%\n";
+	theValue += "% This is a very aggressive use of the database loader feature.\n";
+	theValue += "%\n";
+	theValue += "% While I do not expect there to be any issues, use at your own risk.\n";
+	theValue += "%\n";
+	theValue += '[I:MIDI= program 0] "_0" G4 |[I:MIDI= program 1] "_1" G4 |[I:MIDI= program 2] "_2" G4 |[I:MIDI= program 3] "_3" G4 |[I:MIDI= program 4] "_4" G4 |[I:MIDI= program 5] "_5" G4 |[I:MIDI= program 6] "_6" G4 |[I:MIDI= program 7] "_7" G4 |\n';
+	theValue += '[I:MIDI= program 8] "_8" G4 |[I:MIDI= program 9] "_9" G4 |[I:MIDI= program 10] "_10" G4 |[I:MIDI= program 11] "_11" G4 |[I:MIDI= program 12] "_12" G4 |[I:MIDI= program 13] "_13" G4 |[I:MIDI= program 14] "_14" G4 |[I:MIDI= program 15] "_15" G4 |\n';
+	theValue += '[I:MIDI= program 16] "_16" G4 |[I:MIDI= program 17] "_17" G4 |[I:MIDI= program 18] "_18" G4 |[I:MIDI= program 19] "_19" G4 |[I:MIDI= program 20] "_20" G4 |[I:MIDI= program 21] "_21" G4 |[I:MIDI= program 22] "_22" G4 |[I:MIDI= program 23] "_23" G4 |\n';
+	theValue += '[I:MIDI= program 24] "_24" G4 |[I:MIDI= program 25] "_25" G4 |[I:MIDI= program 26] "_26" G4 |[I:MIDI= program 27] "_27" G4 |[I:MIDI= program 28] "_28" G4 |[I:MIDI= program 29] "_29" G4 |[I:MIDI= program 30] "_30" G4 |[I:MIDI= program 31] "_31" G4 |\n';
+	theValue += '[I:MIDI= program 32] "_32" G4 |[I:MIDI= program 33] "_33" G4 |[I:MIDI= program 34] "_34" G4 |[I:MIDI= program 35] "_35" G4 |[I:MIDI= program 36] "_36" G4 |[I:MIDI= program 37] "_37" G4 |[I:MIDI= program 38] "_38" G4 |[I:MIDI= program 39] "_39" G4 |\n';
+	theValue += '[I:MIDI= program 40] "_40" G4 |[I:MIDI= program 41] "_41" G4 |[I:MIDI= program 42] "_42" G4 |[I:MIDI= program 43] "_43" G4 |[I:MIDI= program 44] "_44" G4 |[I:MIDI= program 45] "_45" G4 |[I:MIDI= program 46] "_46" G4 |[I:MIDI= program 47] "_47" G4 |\n';
+	theValue += '[I:MIDI= program 48] "_48" G4 |[I:MIDI= program 49] "_49" G4 |[I:MIDI= program 50] "_50" G4 |[I:MIDI= program 51] "_51" G4 |[I:MIDI= program 52] "_52" G4 |[I:MIDI= program 53] "_53" G4 |[I:MIDI= program 54] "_54" G4 |[I:MIDI= program 55] "_55" G4 |\n';
+	theValue += '[I:MIDI= program 56] "_56" G4 |[I:MIDI= program 57] "_57" G4 |[I:MIDI= program 58] "_58" G4 |[I:MIDI= program 59] "_59" G4 |[I:MIDI= program 60] "_60" G4 |[I:MIDI= program 61] "_61" G4 |[I:MIDI= program 62] "_62" G4 |[I:MIDI= program 63] "_63" G4 |\n';
+	theValue += '[I:MIDI= program 64] "_64" G4 |[I:MIDI= program 65] "_65" G4 |[I:MIDI= program 66] "_66" G4 |[I:MIDI= program 67] "_67" G4 |[I:MIDI= program 68] "_68" G4 |[I:MIDI= program 69] "_69" G4 |[I:MIDI= program 70] "_70" G4 |[I:MIDI= program 71] "_71" G4 |\n';
+	theValue += '[I:MIDI= program 72] "_72" G4 |[I:MIDI= program 73] "_73" G4 |[I:MIDI= program 74] "_74" G4 |[I:MIDI= program 75] "_75" G4 |[I:MIDI= program 76] "_76" G4 |[I:MIDI= program 77] "_77" G4 |[I:MIDI= program 78] "_78" G4 |[I:MIDI= program 79] "_79" G4 |\n';
+	theValue += '[I:MIDI= program 80] "_80" G4 |[I:MIDI= program 81] "_81" G4 |[I:MIDI= program 82] "_82" G4 |[I:MIDI= program 83] "_83" G4 |[I:MIDI= program 84] "_84" G4 |[I:MIDI= program 85] "_85" G4 |[I:MIDI= program 86] "_86" G4 |[I:MIDI= program 87] "_87" G4 |\n';
+	theValue += '[I:MIDI= program 88] "_88" G4 |[I:MIDI= program 89] "_89" G4 |[I:MIDI= program 90] "_90" G4 |[I:MIDI= program 91] "_91" G4 |[I:MIDI= program 92] "_92" G4 |[I:MIDI= program 93] "_93" G4 |[I:MIDI= program 94] "_94" G4 |[I:MIDI= program 95] "_95" G4 |\n';
+	theValue += '[I:MIDI= program 96] "_96" G4 |[I:MIDI= program 97] "_97" G4 |[I:MIDI= program 98] "_98" G4 |[I:MIDI= program 99] "_99" G4 |[I:MIDI= program 100] "_100" G4 |[I:MIDI= program 101] "_101" G4 |[I:MIDI= program 102] "_102" G4 |[I:MIDI= program 103] "_103" G4 |\n';
+	theValue += '[I:MIDI= program 104] "_104" G4 |[I:MIDI= program 105] "_105" G4 |[I:MIDI= program 106] "_106" G4 |[I:MIDI= program 107] "_107" G4 |[I:MIDI= program 108] "_108" G4 |[I:MIDI= program 109] "_109" G4 |[I:MIDI= program 110] "_110" G4 |[I:MIDI= program 111] "_111" G4 |\n';
+	theValue += '[I:MIDI= program 112] "_112" G4 |[I:MIDI= program 113] "_113" G4 |[I:MIDI= program 114] "_114" G4 |[I:MIDI= program 115] "_115" G4 |[I:MIDI= program 116] "_116" G4 |[I:MIDI= program 117] "_117" G4 |[I:MIDI= program 118] "_118" G4 |[I:MIDI= program 119] "_119" G4 |\n';
+	theValue += '[I:MIDI= program 120] "_120" G4 |[I:MIDI= program 121] "_121" G4 |[I:MIDI= program 122] "_122" G4 |[I:MIDI= program 123] "_123" G4 |[I:MIDI= program 124] "_124" G4 |[I:MIDI= program 125] "_125" G4 |[I:MIDI= program 126] "_126" G4 |[I:MIDI= program 127] "_127" G4 |\n';
+	theValue += '[I:MIDI= program 128] "_128" G4 |[I:MIDI= program 129] "_129" G4 |[I:MIDI= program 130] "_130" G4 |[I:MIDI= program 131] "_131" G4 |[I:MIDI= program 132] "_132" G4 |[I:MIDI= program 133] "_133" G4 |[I:MIDI= program 134] "_134" G4 |[I:MIDI= program 135] "_135" G4 |\n';
+	theValue += '[I:MIDI= program 136] "_136" G4 |[I:MIDI= program 137] "_137" G4 |[I:MIDI= program 138] "_138" G4 |[I:MIDI= program 139] "_139" G4 |[I:MIDI= program 140] "_140" G4 |[I:MIDI= program 141] "_141" G4 |[I:MIDI= program 142] "_142" G4 |[I:MIDI= program 143] "_143" G4 |[I:MIDI= program 144] "_144" G4 |]\n';
 
 	// Do common tune addition processing
 	ProcessAddTune(theValue);
