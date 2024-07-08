@@ -565,12 +565,19 @@ function idleManageSamplesDialog(showActionButtons){
 
         var items = [];
 
-	    cursorRequest.onsuccess = function(event) {
+		// Show the spinner
+		document.getElementById("loading-bar-spinner").style.display = "block";
 
+	    cursorRequest.onsuccess = function(event) {
+			
 	    	// Check for dialog closed before update response
 	    	const tableBody = document.querySelector("#notes-table tbody");
 	    	if (!tableBody){
 	    		//console.log("fetchAndDisplayItems: Got early out");
+
+	    		// Hide the spinner
+				document.getElementById("loading-bar-spinner").style.display = "none";
+
 	    		return;
 	    	}
 
@@ -622,133 +629,126 @@ function idleManageSamplesDialog(showActionButtons){
 	            	document.getElementById("notes_table_name").textContent = "Name ("+basePathSet.length+")";
 	            }
 
-				// Show the spinner
-				document.getElementById("loading-bar-spinner").style.display = "block";
+	           	basePathSet.forEach((item,index) => {
 
-				setTimeout(function(){
+	           		//console.log("item: "+item+" index: "+index+" duplicates: "+duplicatesCount[index])
 
-		           	basePathSet.forEach((item,index) => {
+	           		// Remove soundfont base path
+	           		var originalPath = item;
+	           		item = item.replace("https://michaeleskin.com/abctools/soundfonts/","");
+	           		item = item.replace("https://paulrosen.github.io/midi-js-soundfonts/","");
+	           		item = friendlyInstrumentName(item);
 
-		           		//console.log("item: "+item+" index: "+index+" duplicates: "+duplicatesCount[index])
+	                const row = document.createElement('tr');
+	                const nameCell = document.createElement('td');
+	                nameCell.style.padding = "7px";
+	                nameCell.style.height = "45px";
+	                nameCell.textContent = item;
+	                row.appendChild(nameCell);
 
-		           		// Remove soundfont base path
-		           		var originalPath = item;
-		           		item = item.replace("https://michaeleskin.com/abctools/soundfonts/","");
-		           		item = item.replace("https://paulrosen.github.io/midi-js-soundfonts/","");
-		           		item = friendlyInstrumentName(item);
+	                const countCell = document.createElement('td');
+	                countCell.style.padding = "7px";
+	                countCell.style.textAlign = "center";
+	                countCell.textContent = duplicatesCount[index];
+	                row.appendChild(countCell);
 
-		                const row = document.createElement('tr');
-		                const nameCell = document.createElement('td');
-		                nameCell.style.padding = "7px";
-		                nameCell.style.height = "45px";
-		                nameCell.textContent = item;
-		                row.appendChild(nameCell);
+	                // Only show action buttons if online
+	                if (showActionButtons){
 
-		                const countCell = document.createElement('td');
-		                countCell.style.padding = "7px";
-		                countCell.style.textAlign = "center";
-		                countCell.textContent = duplicatesCount[index];
-		                row.appendChild(countCell);
+		                const actionsCell = document.createElement('td');
+		                actionsCell.style.padding = "7px";
+		                actionsCell.style.textAlign = "center";
 
-		                // Only show action buttons if online
+		                // Load button
+		                const loadButton = document.createElement('input');
+		                loadButton.style.width = "100px";
+		                loadButton.style.height = "36px";
+		                loadButton.style.marginRight = "24px";
+		                loadButton.style.textAlign = "center";
+		                loadButton.style.cursor = "pointer";
+		                loadButton.classList.add('btn','btn-managesamples','managenotes');
+		                loadButton.type = 'button'
+		                loadButton.value = 'Load All';
+		                loadButton.onclick = (event) => {
+
+		                	// Disable when downloading all notes
+		                	if (gInDownloadAll){
+		                		return;
+		                	}
+
+		                	if (gInSampleRetrieval){
+		                		return;
+		                	}
+
+		                 	event.target.value = "Loading";
+		                	loadItem(originalPath,null);
+		                }
+		                actionsCell.appendChild(loadButton);
+
+		                // Delete button
+		                const deleteButton = document.createElement('input');
+		                deleteButton.style.width = "100px";
+		                deleteButton.style.height = "36px";
+		                deleteButton.style.textAlign = "center";
+		                deleteButton.style.cursor = "pointer";
+		                deleteButton.classList.add('btn','btn-deletesamples','managenotes');
+		                deleteButton.type = 'button'
+		                deleteButton.value = 'Delete';
+		                deleteButton.onclick = (event) => {
+
+		                	// Disable when downloading all notes
+		                	if (gInDownloadAll){
+		                		return;
+		                	}
+
+		                	if (gInSampleRetrieval){
+		                		return;
+		                	}
+
+		                	var thisInstrument = originalPath   		
+		                	thisInstrument = thisInstrument.replace("https://michaeleskin.com/abctools/soundfonts/","");
+		   					thisInstrument = thisInstrument.replace("https://paulrosen.github.io/midi-js-soundfonts/","");
+
+		   					thisInstrument = friendlyInstrumentName(thisInstrument);
+
+		                	var thePrompt = "Are you sure you want to delete "+thisInstrument+"?";
+
+							// Center the string in the prompt
+							thePrompt = makeCenteredPromptString(thePrompt);
+
+							DayPilot.Modal.confirm(thePrompt,{ top:275, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+
+								if (!args.canceled){
+
+		                			event.target.value = "Deleting";
+		                			deleteItem(originalPath);
+
+								}
+
+							});
+
+		                }
+
+		                actionsCell.appendChild(deleteButton);
+
+		                row.appendChild(actionsCell);
+
+		                // Add the download all button
 		                if (showActionButtons){
+							document.getElementById("managedownloadall").onclick = downloadAllNotes;
+						}
 
-			                const actionsCell = document.createElement('td');
-			                actionsCell.style.padding = "7px";
-			                actionsCell.style.textAlign = "center";
+		            }
 
-			                // Load button
-			                const loadButton = document.createElement('input');
-			                loadButton.style.width = "100px";
-			                loadButton.style.height = "36px";
-			                loadButton.style.marginRight = "24px";
-			                loadButton.style.textAlign = "center";
-			                loadButton.style.cursor = "pointer";
-			                loadButton.classList.add('btn','btn-managesamples','managenotes');
-			                loadButton.type = 'button'
-			                loadButton.value = 'Load All';
-			                loadButton.onclick = (event) => {
+	                tableBody.appendChild(row);
 
-			                	// Disable when downloading all notes
-			                	if (gInDownloadAll){
-			                		return;
-			                	}
+	            });
+				
+				// Hide the spinner
+				document.getElementById("loading-bar-spinner").style.display = "none";
 
-			                	if (gInSampleRetrieval){
-			                		return;
-			                	}
-
-			                 	event.target.value = "Loading";
-			                	loadItem(originalPath,null);
-			                }
-			                actionsCell.appendChild(loadButton);
-
-			                // Delete button
-			                const deleteButton = document.createElement('input');
-			                deleteButton.style.width = "100px";
-			                deleteButton.style.height = "36px";
-			                deleteButton.style.textAlign = "center";
-			                deleteButton.style.cursor = "pointer";
-			                deleteButton.classList.add('btn','btn-deletesamples','managenotes');
-			                deleteButton.type = 'button'
-			                deleteButton.value = 'Delete';
-			                deleteButton.onclick = (event) => {
-
-			                	// Disable when downloading all notes
-			                	if (gInDownloadAll){
-			                		return;
-			                	}
-
-			                	if (gInSampleRetrieval){
-			                		return;
-			                	}
-
-			                	var thisInstrument = originalPath   		
-			                	thisInstrument = thisInstrument.replace("https://michaeleskin.com/abctools/soundfonts/","");
-			   					thisInstrument = thisInstrument.replace("https://paulrosen.github.io/midi-js-soundfonts/","");
-
-			   					thisInstrument = friendlyInstrumentName(thisInstrument);
-
-			                	var thePrompt = "Are you sure you want to delete "+thisInstrument+"?";
-
-								// Center the string in the prompt
-								thePrompt = makeCenteredPromptString(thePrompt);
-
-								DayPilot.Modal.confirm(thePrompt,{ top:275, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
-
-									if (!args.canceled){
-
-			                			event.target.value = "Deleting";
-			                			deleteItem(originalPath);
-
-									}
-
-								});
-
-			                }
-
-			                actionsCell.appendChild(deleteButton);
-
-			                row.appendChild(actionsCell);
-
-			                // Add the download all button
-			                if (showActionButtons){
-								document.getElementById("managedownloadall").onclick = downloadAllNotes;
-							}
-
-			            }
-
-		                tableBody.appendChild(row);
-
-		            });
-
-					// Hide the spinner
-					document.getElementById("loading-bar-spinner").style.display = "none";
-
-				},10);
 	        };
 	    }
-  
     }
 
     function loadItem(item,callback) {
