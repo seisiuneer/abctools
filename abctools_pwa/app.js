@@ -16069,6 +16069,19 @@ function GenerateQRCode(e) {
 function SaveABCAsMusicXML(theTune, fname){
 
 	//debugger;
+	
+	// Don't allow shortening while offline
+	if (!navigator.onLine){
+
+		var thePrompt = "Save as MusicXML not available while offline.";
+		
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+		
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
 
 	fetch(`https://seisiuneer.pythonanywhere.com/abc2xml`, {
 	    method: 'POST',
@@ -18983,6 +18996,19 @@ function ShortenURLFallback(){
 function ShortenURL(e){
 
 	if (!gAllowURLSave){
+		return;
+	}
+
+	// Don't allow shortening while offline
+	if (!navigator.onLine){
+
+		var thePrompt = "URL shortening not available while offline.";
+		
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+		
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
 		return;
 	}
 
@@ -36911,6 +36937,19 @@ function DoFileRead(file,doAppend){
 		}
 
 		if (isMIDI){
+
+			// Don't allow MIDI import while offline
+			if (!navigator.onLine){
+
+				var thePrompt = "MIDI import not available while offline.";
+				
+				// Center the string in the prompt
+				thePrompt = makeCenteredPromptString(thePrompt);
+				
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+				return;
+			}
 
 			// First time MIDI import warning
 			if (!gMIDIImportWarned){
