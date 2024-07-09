@@ -5,6 +5,65 @@
 //
 
 //
+// Unregister the service worker and force an update
+//
+function ForceUpdate(callback){
+
+	var thePrompt = "This will force the offline version of the tool to be updated after restart.<br/><br/>After the restart, wait 30 seconds and then refresh the page one more time to use the update.<br/><br/>Are you sure?";
+
+	// Center the string in the prompt
+	thePrompt = makeCenteredPromptString(thePrompt);
+
+	DayPilot.Modal.confirm(thePrompt,{ top:262, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+
+		if (!args.canceled){
+
+			console.log("Tool update requested");
+
+			if ('serviceWorker' in navigator) {
+			  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+			    let unregisterPromises = [];
+			    
+			    for (let registration of registrations) {
+			      unregisterPromises.push(registration.unregister());
+			    }
+			    
+			    Promise.all(unregisterPromises).then(function() {
+			      console.log('All service workers unregistered');
+			      // Call your callback function here
+			      callback(true);
+			    }).catch(function(error) {
+			      console.error('Error unregistering service workers:', error);
+			      // Optionally call the callback function in case of error
+			      callback(true);
+			    });
+			  }).catch(function(error) {
+			    console.error('Error getting service worker registrations:', error);
+			    // Optionally call the callback function in case of error
+			    callback(true);
+			  });
+			} 
+			else {
+			 
+				console.warn('Service workers are not supported in this browser.');
+
+				// Optionally call the callback function if service workers are not supported
+				callback(true);
+			}
+
+
+		}
+		else{
+
+			//console.log("Cancelled database delete");
+
+			callback(false);
+
+		}
+	});
+}
+
+//
 // Clear all the databases
 //
 function DeleteAllDatabases(callback){
@@ -83,7 +142,8 @@ function ResetSettingsDialog(){
 	// Setup initial values
 	const theData = {
 	  resetsettings: false,
-	  deletedatabases: false
+	  deletedatabases: false,
+	  forceupdate: false
 	};
 
 	var form;
@@ -91,12 +151,14 @@ function ResetSettingsDialog(){
 	if (navigator.onLine){
 
 		form = [
-		  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Reset All Tool Settings and Databases&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools_pwa/userguide.html#advanced_resetsettings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+		  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Reset All Tool Settings, Clear Databases, Force Update&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools_pwa/userguide.html#advanced_resetsettings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 		  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Reset all settings to default</strong> will restore the tool settings to the original first-run state.</p>'},
 		  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Clear all databases</strong> will clear and delete the instrument notes, reverb settings, and tune search collections databases. New databases will be created after the tool is restarted.'},
-		  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">If you enable either of these options, the tool will be restarted after the operation is complete.</p>'},
+		  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Force tool update after restart</strong> will force the offline version of the tool to be updated after the tool is restarted.'},
+		  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">If you enable any of these options, the tool will be restarted after the operation is complete.</p>'},
 		  {name: "          Reset all tool settings to default", id: "resetsettings", type:"checkbox", cssClass:"configure_resetsettings_text"},
 		  {name: "          Clear all databases", id: "deletedatabases", type:"checkbox", cssClass:"configure_resetsettings_text"},
+		  {name: "          Force tool update after restart", id: "forceupdate", type:"checkbox", cssClass:"configure_resetsettings_text"},
 		  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},
 		];
 	}
@@ -114,13 +176,14 @@ function ResetSettingsDialog(){
 
 	}
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
 
 			var doSettingsRestart = false;
 			var doDatabaseClear = false;
+			var doForceUpdate = false;
 
 			if (args.result.resetsettings){
 
@@ -145,8 +208,6 @@ function ResetSettingsDialog(){
 					// Clear the setttings
 					//console.log("delete databases requested");
 
-					doRestart = true;
-
 					DeleteAllDatabases(callback2);
 				}
 				else{
@@ -161,11 +222,33 @@ function ResetSettingsDialog(){
 
 				doDatabaseClear = restartRequested;
 
-				if (doSettingsRestart || doDatabaseClear){
+				if (args.result.forceupdate){
+
+					// Clear the setttings
+					//console.log("force update requested");
+
+					ForceUpdate(callback3);
+
+				}
+				else{
+
+					callback3(false);
+
+				}
+
+			}
+
+			function callback3(restartRequested){
+
+				doForceUpdate = restartRequested;
+
+				if (doSettingsRestart || doDatabaseClear || doForceUpdate){
+
+					//debugger;
 
 					setTimeout(function(){
 
-						var thePrompt = "All changes applied. Click OK to reload the tool.";
+						var thePrompt = "All changes applied. Click OK to restart the tool.";
 						
 						// Center the string in the prompt
 						thePrompt = makeCenteredPromptString(thePrompt);
