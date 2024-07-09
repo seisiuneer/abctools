@@ -4142,12 +4142,13 @@ top:20px;
 }
 
 .version_number_text{
-font-size:12pt;
+font-size:10pt;
 font-family:helvetica;
 color:grey;
 position:absolute;
 left:20px;
 bottom:22px;
+margin:0px;
 }
 
 /******************************************************************************/
