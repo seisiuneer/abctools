@@ -35300,20 +35300,6 @@ function idleAdvancedSettings(){
 	//
 	document.getElementById("loadimpulsebutton").onchange = async () => {
 
-		// Don't allow shortening while offline
-		if (!navigator.onLine){
-
-			var thePrompt = "Loading a custom reverb impulse .wav file not available while offline.";
-			
-			// Center the string in the prompt
-			thePrompt = makeCenteredPromptString(thePrompt);
-			
-			DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
-
-			return;
-		}
-
-
 		let fileElement = document.getElementById("loadimpulsebutton");
 
 		// check if user had selected a file
