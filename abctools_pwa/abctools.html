@@ -48,7 +48,7 @@
 		<script>
 		// Register service worker
 		if ('serviceWorker' in navigator){
-			navigator.serviceWorker.register('https://michaeleskin.com/abctools_pwa/service_worker.js')
+			navigator.serviceWorker.register('https://michaeleskin.com/abctools_pwa/service_worker.js',{updateViaCache: "none"})
 			.then(reg => {
 				console.log("Service Worker Registered!");
 			})
