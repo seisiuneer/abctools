@@ -1,18 +1,20 @@
 //
 // Service worker for abctools offline use resource caching
 //
-//
-//
-// Updated 8 July 2024 at 2030
-//
-//
+// Updated 9 July 2024 at 0840
 //
 
-const cacheName = 'cache-99';
+const cacheName = 'cache-106';
 
 const contentToCache = [
     'abctools.html',
     'userguide.html',
+    'tunesources.html',
+    'tunesources.css',
+    'credits.html',
+    'tipjars.html',
+    'https://michaeleskin.com/documents/general_midi_extended_v7.pdf',
+    'https://michaeleskin.com/documents/abc_standard_v2.1.pdf',
     'app.css',
     'app-min.js',
     'jquery-1.11.1.min.js',

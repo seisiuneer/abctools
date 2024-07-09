@@ -40,12 +40,6 @@
         
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-5C74XEDW40"></script>
-        <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-5C74XEDW40');
-        </script>
         
         <style>
         
@@ -4208,21 +4202,21 @@
     //
     function ExpandAll(){
     
-    var i;
-    
-    var acc = document.getElementsByClassName("accordion");
-    
-    for (i = 0; i < acc.length; i++) {
-    var thisAcc = acc[i];
-    thisAcc.classList.add("active");
-    }
-    
-    var thePanels = document.getElementsByClassName("tocpanel");
-    
-    for (i = 0; i < thePanels.length; i++) {
-    var thisPanel = thePanels[i];
-    thisPanel.style.display = "block";
-    };
+        var i;
+        
+        var acc = document.getElementsByClassName("accordion");
+        
+        for (i = 0; i < acc.length; i++) {
+            var thisAcc = acc[i];
+            thisAcc.classList.add("active");
+        }
+        
+        var thePanels = document.getElementsByClassName("tocpanel");
+        
+        for (i = 0; i < thePanels.length; i++) {
+            var thisPanel = thePanels[i];
+            thisPanel.style.display = "block";
+        }
     }
     
     //
@@ -4230,21 +4224,21 @@
     //
     function CollapseAll(){
     
-    var i;
-    
-    var acc = document.getElementsByClassName("accordion");
-    
-    for (i = 0; i < acc.length; i++) {
-    var thisAcc = acc[i];
-    thisAcc.classList.remove("active");
-    }
-    
-    var thePanels = document.getElementsByClassName("tocpanel");
-    
-    for (i = 0; i < thePanels.length; i++) {
-    var thisPanel = thePanels[i];
-    thisPanel.style.display = "none";
-    };
+        var i;
+        
+        var acc = document.getElementsByClassName("accordion");
+        
+        for (i = 0; i < acc.length; i++) {
+            var thisAcc = acc[i];
+            thisAcc.classList.remove("active");
+        }
+        
+        var thePanels = document.getElementsByClassName("tocpanel");
+        
+        for (i = 0; i < thePanels.length; i++) {
+            var thisPanel = thePanels[i];
+            thisPanel.style.display = "none";
+        }
     }
     
     
@@ -4253,72 +4247,76 @@
     //
     function isIOS() {
     
-    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
-    return true;
-    } else {
-    return navigator.maxTouchPoints &&
-    navigator.maxTouchPoints > 2 &&
-    /MacIntel/.test(navigator.platform);
-    }
+        if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+            return true;
+        } else {
+            return navigator.maxTouchPoints &&
+            navigator.maxTouchPoints > 2 &&
+            /MacIntel/.test(navigator.platform);
+        }
     }
     
     function DoStartup() {
+        
+        //
+        // iOS Styling adaptation
+        //
+        
+        var gIsIOS = isIOS();
+        
+        if (gIsIOS) {
+            // Fix the title font
+            var elem = document.getElementById("pagetitle");
+            elem.size = 5;
+            elem.style.fontFamily = "Helvetica";
+        }
+        
+        var acc = document.getElementsByClassName("accordion");
+        var i;
+        
+        for (i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var panel = this.nextElementSibling;
+                if (panel.style.display === "block") {
+                    panel.style.display = "none";
+                } else {
+                    panel.style.display = "block";
+                }
+            });
+        }
+        
+        // Start with all topics expanded
+        ExpandAll();
     
-    //
-    // iOS Styling adaptation
-    //
-    
-    var gIsIOS = isIOS();
-    
-    if (gIsIOS) {
-    // Fix the title font
-    var elem = document.getElementById("pagetitle");
-    elem.size = 5;
-    elem.style.fontFamily = "Helvetica";
     }
-    
-    var acc = document.getElementsByClassName("accordion");
-    var i;
-    
-    for (i = 0; i < acc.length; i++) {
-    acc[i].addEventListener("click", function() {
-    this.classList.toggle("active");
-    var panel = this.nextElementSibling;
-    if (panel.style.display === "block") {
-    panel.style.display = "none";
-    } else {
-    panel.style.display = "block";
-    }
-    });
-    }
-    
-    // Start with all topics expanded
-    ExpandAll();
-    
-    }
-    
-    // //
-    // // Wait for the document to be ready, then fire a function
-    // //
-    
-    // function WaitForReady(fn) {
-    // if (document.readyState !== 'loading') {
-    // fn();
-    // return;
-    // }
-    
-    // document.addEventListener('DOMContentLoaded', fn);
-    
-    // }
-    
-    // //
-    // // Wait for the document to be ready, then startup
-    // //
-    
-    // WaitForReady(DoStartup);
     
     DoStartup();
     
+    // If offline, hide all the YouTube videos and images
+    function removeOfflineContent() {
+
+        if (!navigator.onLine) {
+
+            const iframes = document.querySelectorAll('iframe');
+
+            iframes.forEach(iframe => iframe.remove());
+
+            // Remove all the images
+            var divs = document.querySelectorAll('div.image_holder');
+
+            divs.forEach(div => div.remove());
+
+            divs = document.querySelectorAll('div.image_holder_p');
+
+            divs.forEach(div => div.remove());
+
+        }
+    }
+
+    // Run the function on page load
+    document.addEventListener('DOMContentLoaded', removeOfflineContent);
+
     </script>
     
 </html>
