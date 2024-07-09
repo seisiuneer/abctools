@@ -7448,17 +7448,20 @@ var letter_to_chord = function letter_to_chord(line, i) {
   }
   return [0, ""];
 };
-var letter_to_grace = function letter_to_grace(line, i) {
+// MAE 9 Jul 2024 - Brought over rests in graces fix
+var letter_to_grace =  function(line, i) {
   // Grace notes are an array of: startslur, note, endslur, space; where note is accidental, pitch, duration
   if (line[i] === '{') {
     // fetch the gracenotes string and consume that into the array
     var gra = tokenizer.getBrackettedSubstring(line, i, 1, '}');
-    if (!gra[2]) warn("Missing the closing '}' while parsing grace note", line, i);
+    if (!gra[2])
+      warn("Missing the closing '}' while parsing grace note", line, i);
     // If there is a slur after the grace construction, then move it to the last note inside the grace construction
-    if (line[i + gra[0]] === ')') {
+    if (line[i+gra[0]] === ')') {
       gra[0]++;
       gra[1] += ')';
     }
+
     var gracenotes = [];
     var ii = 0;
     var inTie = false;
@@ -7472,30 +7475,43 @@ var letter_to_grace = function letter_to_grace(line, i) {
       if (note !== null) {
         // The grace note durations should not be affected by the default length: they should be based on 1/16, so if that isn't the default, then multiply here.
         note.duration = note.duration / (multilineVars.default_length * 8);
-        if (acciaccatura) note.acciaccatura = true;
-        gracenotes.push(note);
+        if (acciaccatura)
+          note.acciaccatura = true;
+        if (note.rest) {
+          // don't allow rests inside gracenotes
+          warn("Rests not allowed as grace notes '" + gra[1][ii] + "' while parsing grace note", line, i);
+        } else
+          gracenotes.push(note);
+
         if (inTie) {
           note.endTie = true;
           inTie = false;
         }
-        if (note.startTie) inTie = true;
-        ii = note.endChar;
+        if (note.startTie)
+          inTie = true;
+
+        ii  = note.endChar;
         delete note.endChar;
+
         if (note.end_beam) {
           note.endBeam = true;
           delete note.end_beam;
         }
-      } else {
+      }
+      else {
         // We shouldn't get anything but notes or a space here, so report an error
         if (gra[1][ii] === ' ') {
-          if (gracenotes.length > 0) gracenotes[gracenotes.length - 1].endBeam = true;
-        } else warn("Unknown character '" + gra[1][ii] + "' while parsing grace note", line, i);
+          if (gracenotes.length > 0)
+            gracenotes[gracenotes.length-1].endBeam = true;
+        } else
+          warn("Unknown character '" + gra[1][ii] + "' while parsing grace note", line, i);
         ii++;
       }
     }
-    if (gracenotes.length) return [gra[0], gracenotes];
+    if (gracenotes.length)
+      return [gra[0], gracenotes];
   }
-  return [0];
+  return [ 0 ];
 };
 function letter_to_overlay(line, i) {
   if (line[i] === '&') {
