@@ -4141,16 +4141,6 @@ top:20px;
   color: white;
 }
 
-.version_number_text{
-font-size:10pt;
-font-family:helvetica;
-color:grey;
-position:absolute;
-left:20px;
-bottom:22px;
-margin:0px;
-}
-
 /******************************************************************************/
 /* STYLES RELATED TO EXPERIMENT BUTTONS                                       */
 /******************************************************************************/
