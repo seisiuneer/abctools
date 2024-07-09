@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0004_090724_0900";
+var gVersionNumber="0006_090724_1140";
 
 var gShowAdvancedControls = false;
 var gStripAnnotations = false;
