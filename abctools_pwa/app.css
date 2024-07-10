@@ -1839,7 +1839,7 @@ opacity:1.0;
 #loading-bar-spinner.spinner {
 left: 50%;
 margin-left: -23px;
-top: 25%;
+top: 35%;
 margin-top: -23px;
 position: fixed;
 z-index: 100000 !important;
