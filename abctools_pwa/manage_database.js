@@ -9,7 +9,7 @@
 //
 function ForceUpdate(callback){
 
-	var thePrompt = "This will force the offline version of the tool to be updated after restart.<br/><br/>After the restart, wait 30 seconds and then refresh the page one more time to use the update.<br/><br/>Are you sure?";
+	var thePrompt = "This will force the offline version of the tool to be updated after restart.<br/><br/>After the restart, wait 30 seconds and then refresh<br/>the page one more time to use the update.<br/><br/>Are you sure?";
 
 	// Center the string in the prompt
 	thePrompt = makeCenteredPromptString(thePrompt);
