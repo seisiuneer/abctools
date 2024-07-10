@@ -16960,6 +16960,9 @@ function CreateSynth(theABC) {
 
   // Load and cache all needed sounds
   self.init = function (options) {
+    
+    // MAE 10 Jul 2024 - Put spinner up during load
+    document.getElementById("loading-bar-spinner").style.display = "block";
 
     if (!options) options = {};
     //    self.options = options
@@ -17294,6 +17297,10 @@ function CreateSynth(theABC) {
           }, reject);
         } else {
           if (self.debugCallback) self.debugCallback("resolve init");
+          
+          // MAE 10 Jul 2024 - Hide the spinner
+          document.getElementById("loading-bar-spinner").style.display = "none";
+
           resolve(results);
         }
       };
@@ -19839,7 +19846,7 @@ function SynthController(theABC) {
   self.disable = function (isDisabled) {
     if (self.control) self.control.disable(isDisabled);
   };
-  self.setTune = function (visualObj, userAction, audioParams) {
+  self.setTune = function (visualObj, userAction, audioParams) {    
     self.visualObj = visualObj;
     self.disable(false);
     self.options = audioParams;
@@ -19876,6 +19883,7 @@ function SynthController(theABC) {
       loadingResponse = response;
       return self.midiBuffer.prime();
     }).then(function () {
+
       var subdivisions = 16;
       if (self.cursorControl && self.cursorControl.beatSubdivisions !== undefined && parseInt(self.cursorControl.beatSubdivisions, 10) >= 1 && parseInt(self.cursorControl.beatSubdivisions, 10) <= 64) subdivisions = parseInt(self.cursorControl.beatSubdivisions, 10);
 
