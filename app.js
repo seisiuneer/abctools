@@ -29,6 +29,8 @@
  *
  * 
  **/
+// Version number for the advanced settings dialog hidden field
+var gVersionNumber="1414_100724_0925";
 
 var gShowAdvancedControls = false;
 var gStripAnnotations = false;
@@ -35522,7 +35524,7 @@ function AdvancedSettings(){
 		{name: "Default %roll_3_params:", id: "configure_roll3_default", type:"text", cssClass:"advanced_settings2_roll_text"},
 		{name: "Private TinyURL API Token:", id: "configure_tinyurl", type:"text", cssClass:"advanced_settings2_tinyurl_text"},
 
-		{html: '<p style="text-align:center;margin-top:22px;"><input id="reset_roll_parameters" class="btn btn-subdialog reset_roll_parameters" onclick="ResetRollDefaultParams()" type="button" value="Reset Roll Parameter Strings to Defaults" title="Resets the roll parameter strings to known good default values"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset Settings" title="Opens a dialog where you can reset all tool settings to the default and/or clear the instrument notes, reverb settings, and tune search engine collection databases"></p>'},
+		{html: '<p style="text-align:center;margin-top:18px;margin-bottom:6px"><input id="reset_roll_parameters" class="btn btn-subdialog reset_roll_parameters" onclick="ResetRollDefaultParams()" type="button" value="Reset Roll Parameter Strings to Defaults" title="Resets the roll parameter strings to known good default values"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset Settings" title="Opens a dialog where you can reset all tool settings to the default and/or clear the instrument notes, reverb settings, and tune search engine collection databases"></p><p style="font-size:10pt;font-family:helvetica;color:grey;position:absolute;left:20px;bottom:22px;margin:0px;">Version: '+gVersionNumber+'</p>'},
 	]);
 
 	// Set up the reverb impulse load callback
@@ -38944,9 +38946,9 @@ function DoStartup() {
 	//
 	// Uncomment these lines for mobile simulation testing
 	//
-	//gIsIOS = true; 
-	//gIsIPad = true;  
-	//gIsIPhone = true;  
+	// gIsIOS = true; 
+	// gIsIPad = true;  
+	// gIsIPhone = true;  
 	
 	//
 	// iOS and Android styling adaptation
@@ -39035,14 +39037,14 @@ function DoStartup() {
 
 		// Move the spinner
 		elem = document.getElementById("loading-bar-spinner");
-		elem.style.top = "36px"
-		elem.style.left = "36px";	
-		elem.style.marginLeft = "-16px";	
-		elem.style.marginTop = "-16px";	
+		elem.style.top = "25%"
+		// elem.style.left = "36px";	
+		// elem.style.marginLeft = "-16px";	
+		// elem.style.marginTop = "-16px";	
 
-		elem = document.getElementById("spinner-icon");
-		elem.style.width = "32px"
-		elem.style.height = "32px";	
+		// elem = document.getElementById("spinner-icon");
+		// elem.style.width = "32px"
+		// elem.style.height = "32px";	
 
 	}
 
