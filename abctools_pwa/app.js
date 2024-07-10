@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0014_100724_0935";
+var gVersionNumber="0015_100724_1020";
 
 var gShowAdvancedControls = false;
 var gStripAnnotations = false;
@@ -26498,12 +26498,16 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 					
 				}).catch(function (error) {
 					
+			        // MAE 10 Jul 2024 - Hide the spinner
+			        document.getElementById("loading-bar-spinner").style.display = "none";
 					console.log("Problem loading audio for this tune");
 
 				});
 			}
 		}).catch(function (error) {
 
+	        // MAE 10 Jul 2024 - Hide the spinner
+	        document.getElementById("loading-bar-spinner").style.display = "none";
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -28126,12 +28130,16 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 
 				}).catch(function (error) {
 					
+			        // MAE 10 Jul 2024 - Hide the spinner
+			        document.getElementById("loading-bar-spinner").style.display = "none";
 					console.log("Problem loading audio for this tune");
 
 				});
 			}
 		}).catch(function (error) {
 
+	        // MAE 10 Jul 2024 - Hide the spinner
+	        document.getElementById("loading-bar-spinner").style.display = "none";
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -28858,12 +28866,16 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 
 				}).catch(function (error) {
 					
+			        // MAE 10 Jul 2024 - Hide the spinner
+			        document.getElementById("loading-bar-spinner").style.display = "none";
 					console.log("Problem loading audio for this tune");
 
 				});
 			}
 		}).catch(function (error) {
 
+	        // MAE 10 Jul 2024 - Hide the spinner
+	        document.getElementById("loading-bar-spinner").style.display = "none";
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -29859,12 +29871,16 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 
 				}).catch(function (error) {
 					
+			        // MAE 10 Jul 2024 - Hide the spinner
+			        document.getElementById("loading-bar-spinner").style.display = "none";
 					console.log("Problem loading audio for this tune");
 
 				});
 			}
 		}).catch(function (error) {
 
+	        // MAE 10 Jul 2024 - Hide the spinner
+	        document.getElementById("loading-bar-spinner").style.display = "none";
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -30449,12 +30465,16 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 
 				}).catch(function (error) {
 					
+			        // MAE 10 Jul 2024 - Hide the spinner
+			        document.getElementById("loading-bar-spinner").style.display = "none";
 					console.log("Problem loading audio for this tune");
 
 				});
 			}
 		}).catch(function (error) {
 
+	        // MAE 10 Jul 2024 - Hide the spinner
+	        document.getElementById("loading-bar-spinner").style.display = "none";
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -31198,12 +31218,16 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 
 				}).catch(function (error) {
 					
+			        // MAE 10 Jul 2024 - Hide the spinner
+			        document.getElementById("loading-bar-spinner").style.display = "none";
 					console.log("Problem loading audio for this tune");
 
 				});
 			}
 		}).catch(function (error) {
 
+	        // MAE 10 Jul 2024 - Hide the spinner
+	        document.getElementById("loading-bar-spinner").style.display = "none";
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -31794,12 +31818,16 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 
 				}).catch(function (error) {
 					
+			        // MAE 10 Jul 2024 - Hide the spinner
+			        document.getElementById("loading-bar-spinner").style.display = "none";
 					console.log("Problem loading audio for this tune");
 
 				});
 			}
 		}).catch(function (error) {
 
+	        // MAE 10 Jul 2024 - Hide the spinner
+	        document.getElementById("loading-bar-spinner").style.display = "none";
 			console.log("Problem loading audio for this tune");
 
 		});

@@ -16964,6 +16964,9 @@ function CreateSynth(theABC) {
   // Load and cache all needed sounds
   self.init = function (options) {
 
+    // MAE 10 Jul 2024 - Put spinner up during load
+    document.getElementById("loading-bar-spinner").style.display = "block";
+
     if (!options) options = {};
     //    self.options = options
     registerAudioContext(options.audioContext); // This works no matter what - if there is already an ac it is a nop; if the context is not passed in, then it creates one.
@@ -17297,6 +17300,10 @@ function CreateSynth(theABC) {
           }, reject);
         } else {
           if (self.debugCallback) self.debugCallback("resolve init");
+
+          // MAE 10 Jul 2024 - Hide the spinner
+          document.getElementById("loading-bar-spinner").style.display = "none";
+          
           resolve(results);
         }
       };
