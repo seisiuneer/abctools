@@ -16965,7 +16965,15 @@ function CreateSynth(theABC) {
   self.init = function (options) {
 
     // MAE 10 Jul 2024 - Put spinner up during load
-    document.getElementById("loading-bar-spinner").style.display = "block";
+    gMIDIInitStillWaiting = true;
+    setTimeout(function(){
+
+      if (gMIDIInitStillWaiting){
+        //console.log("showing spinner")
+        document.getElementById("loading-bar-spinner").style.display = "block";
+      }
+
+    },600);
 
     if (!options) options = {};
     //    self.options = options
@@ -17302,6 +17310,7 @@ function CreateSynth(theABC) {
           if (self.debugCallback) self.debugCallback("resolve init");
 
           // MAE 10 Jul 2024 - Hide the spinner
+          gMIDIInitStillWaiting = false;
           document.getElementById("loading-bar-spinner").style.display = "none";
           
           resolve(results);

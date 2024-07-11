@@ -31,7 +31,9 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0016_100724_1340";
+var gVersionNumber="0017_100724_1900";
+
+var gMIDIInitStillWaiting = false;
 
 var gShowAdvancedControls = false;
 var gStripAnnotations = false;
@@ -26458,6 +26460,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 		var midiBuffer = new ABCJS.synth.CreateSynth(theABC);
 
 		gMIDIbuffer = midiBuffer;
+        gMIDIInitStillWaiting = false;
 
 		midiBuffer.init({
 			visualObj: visualObj
@@ -26500,6 +26503,8 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 					
 			        // MAE 10 Jul 2024 - Hide the spinner
 			        document.getElementById("loading-bar-spinner").style.display = "none";
+        			gMIDIInitStillWaiting = false;
+ 
 					console.log("Problem loading audio for this tune");
 
 				});
@@ -26508,6 +26513,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 
 	        // MAE 10 Jul 2024 - Hide the spinner
 	        document.getElementById("loading-bar-spinner").style.display = "none";
+        	gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -28093,6 +28099,7 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 		var midiBuffer = new ABCJS.synth.CreateSynth(theProcessedABC);
 
 		gMIDIbuffer = midiBuffer;
+        gMIDIInitStillWaiting = false;
 
 		midiBuffer.init({
 			visualObj: visualObj
@@ -28132,6 +28139,7 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 					
 			        // MAE 10 Jul 2024 - Hide the spinner
 			        document.getElementById("loading-bar-spinner").style.display = "none";
+        			gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
 				});
@@ -28140,6 +28148,7 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 
 	        // MAE 10 Jul 2024 - Hide the spinner
 	        document.getElementById("loading-bar-spinner").style.display = "none";
+        	gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -28830,6 +28839,7 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 		var midiBuffer = new ABCJS.synth.CreateSynth(theProcessedABC);
 
 		gMIDIbuffer = midiBuffer;
+        gMIDIInitStillWaiting = false;
 
 		midiBuffer.init({
 			visualObj: visualObj
@@ -28868,6 +28878,7 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 					
 			        // MAE 10 Jul 2024 - Hide the spinner
 			        document.getElementById("loading-bar-spinner").style.display = "none";
+        			gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
 				});
@@ -28876,6 +28887,7 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 
 	        // MAE 10 Jul 2024 - Hide the spinner
 	        document.getElementById("loading-bar-spinner").style.display = "none";
+        	gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -29835,6 +29847,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 		var midiBuffer = new ABCJS.synth.CreateSynth(theProcessedABC);
 
 		gMIDIbuffer = midiBuffer;
+        gMIDIInitStillWaiting = false;
 
 		midiBuffer.init({
 			visualObj: visualObj
@@ -29873,6 +29886,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 					
 			        // MAE 10 Jul 2024 - Hide the spinner
 			        document.getElementById("loading-bar-spinner").style.display = "none";
+        			gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
 				});
@@ -29881,6 +29895,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 
 	        // MAE 10 Jul 2024 - Hide the spinner
 	        document.getElementById("loading-bar-spinner").style.display = "none";
+        	gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -30429,6 +30444,7 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 		var midiBuffer = new ABCJS.synth.CreateSynth(theProcessedABC);
 
 		gMIDIbuffer = midiBuffer;
+        gMIDIInitStillWaiting = false;
 
 		midiBuffer.init({
 			visualObj: visualObj
@@ -30467,6 +30483,7 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 					
 			        // MAE 10 Jul 2024 - Hide the spinner
 			        document.getElementById("loading-bar-spinner").style.display = "none";
+        			gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
 				});
@@ -30475,6 +30492,7 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 
 	        // MAE 10 Jul 2024 - Hide the spinner
 	        document.getElementById("loading-bar-spinner").style.display = "none";
+        	gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -31182,6 +31200,7 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 		var midiBuffer = new ABCJS.synth.CreateSynth(theProcessedABC);
 
 		gMIDIbuffer = midiBuffer;
+        gMIDIInitStillWaiting = false;
 
 		midiBuffer.init({
 			visualObj: visualObj
@@ -31220,6 +31239,7 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 					
 			        // MAE 10 Jul 2024 - Hide the spinner
 			        document.getElementById("loading-bar-spinner").style.display = "none";
+        			gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
 				});
@@ -31228,6 +31248,7 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 
 	        // MAE 10 Jul 2024 - Hide the spinner
 	        document.getElementById("loading-bar-spinner").style.display = "none";
+        	gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -31769,6 +31790,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 		var midiBuffer = new ABCJS.synth.CreateSynth(theProcessedABC);
 
 		gMIDIbuffer = midiBuffer;
+        gMIDIInitStillWaiting = false;
 
 		midiBuffer.init({
 			visualObj: visualObj
@@ -31820,6 +31842,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 					
 			        // MAE 10 Jul 2024 - Hide the spinner
 			        document.getElementById("loading-bar-spinner").style.display = "none";
+        			gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
 				});
@@ -31828,6 +31851,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 
 	        // MAE 10 Jul 2024 - Hide the spinner
 	        document.getElementById("loading-bar-spinner").style.display = "none";
+        	gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
 		});
