@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1418_100724_1830";
+var gVersionNumber="1419_110724_0700";
 
 var gMIDIInitStillWaiting = false;
 
