@@ -38,8 +38,8 @@
    "density": "4.0"
   }
  ],
- "theme_color": "#055581",
  "display": "minimal-ui",
+ "theme_color": "#055581",
  "background_color": "#055581",
  "start_url": "/abctools_pwa/abctools.html"
 }

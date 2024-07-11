@@ -265,10 +265,19 @@ function ResetSettingsDialog(){
 
 						DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 320, scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 
-							//console.log("reload would happen")
-							
+							// Mostly for iOS which keeps the old page displayed during the update
+							if (isMobileBrowser()){
+
+								var thePrompt = "Tool is being updated and will restart when done.";
+			
+								// Center the string in the prompt
+								thePrompt = makeCenteredPromptString(thePrompt);
+								
+								DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 320, scrollWithPage: (AllowDialogsToScroll()) });
+								
+							}
+
 							// Show the spinner while waiting for the reload
-							// Mostly for iOS which keeps the old page displayed
 							document.getElementById("loading-bar-spinner").style.display = "block";
 
 							window.location.reload();
