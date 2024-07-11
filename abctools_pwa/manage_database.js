@@ -19,37 +19,44 @@ function ForceUpdate(callback){
 		if (!args.canceled){
 
 			console.log("Tool update requested");
+			
+			// Show the spinner
+			document.getElementById("loading-bar-spinner").style.display = "block";
 
-			if ('serviceWorker' in navigator) {
-			  navigator.serviceWorker.getRegistrations().then(function(registrations) {
-			    let unregisterPromises = [];
-			    
-			    for (let registration of registrations) {
-			      unregisterPromises.push(registration.unregister());
-			    }
-			    
-			    Promise.all(unregisterPromises).then(function() {
-			      console.log('All service workers unregistered');
-			      // Call your callback function here
-			      callback(true);
-			    }).catch(function(error) {
-			      console.error('Error unregistering service workers:', error);
-			      // Optionally call the callback function in case of error
-			      callback(true);
-			    });
-			  }).catch(function(error) {
-			    console.error('Error getting service worker registrations:', error);
-			    // Optionally call the callback function in case of error
-			    callback(true);
-			  });
-			} 
-			else {
-			 
-				console.warn('Service workers are not supported in this browser.');
+			// Give some time to show the spinner
+			setTimeout(function(){
+				if ('serviceWorker' in navigator) {
+				  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+				    let unregisterPromises = [];
+				    
+				    for (let registration of registrations) {
+				      unregisterPromises.push(registration.unregister());
+				    }
+				    
+				    Promise.all(unregisterPromises).then(function() {
+				      console.log('All service workers unregistered');
+				      // Call your callback function here
+				      callback(true);
+				    }).catch(function(error) {
+				      console.error('Error unregistering service workers:', error);
+				      // Optionally call the callback function in case of error
+				      callback(true);
+				    });
+				  }).catch(function(error) {
+				    console.error('Error getting service worker registrations:', error);
+				    // Optionally call the callback function in case of error
+				    callback(true);
+				  });
+				} 
+				else {
+				 
+					console.warn('Service workers are not supported in this browser.');
 
-				// Optionally call the callback function if service workers are not supported
-				callback(true);
-			}
+					// Optionally call the callback function if service workers are not supported
+					callback(true);
+				}
+
+			},100);
 
 
 		}
@@ -240,6 +247,9 @@ function ResetSettingsDialog(){
 
 			function callback3(restartRequested){
 
+				// Hide the spinner
+				document.getElementById("loading-bar-spinner").style.display = "none";
+
 				doForceUpdate = restartRequested;
 
 				if (doSettingsRestart || doDatabaseClear || doForceUpdate){
@@ -256,6 +266,10 @@ function ResetSettingsDialog(){
 						DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 320, scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 
 							//console.log("reload would happen")
+							
+							// Show the spinner while waiting for the reload
+							// Mostly for iOS which keeps the old page displayed
+							document.getElementById("loading-bar-spinner").style.display = "block";
 
 							window.location.reload();
 
