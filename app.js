@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1421_110724_1445";
+var gVersionNumber="1422_110724_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19817,8 +19817,12 @@ function processShareLink() {
 			}
 			else{
 				if (openInEditor){
+
+					// Keep track of share presentation
+					sendGoogleAnalytics("show_player","open_in_editor");
+
 					// Open in the editor
-					DoMinimize();
+					ToggleMaximize();
 				}
 			}
 
