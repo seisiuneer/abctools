@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0025_110724_1430";
+var gVersionNumber="0026_110724_1445";
 
 var gMIDIInitStillWaiting = false;
 
@@ -34605,7 +34605,11 @@ function AddAutoPlay(){
 
 	setTimeout(function(){
 
-		document.getElementById("addautoplay").value = "Add Auto-Play";
+		var elem = document.getElementById("addautoplay");
+
+		if (elem){
+			elem.value = "Add Auto-Play";
+		}
 
 	},1500);
 
@@ -34628,7 +34632,11 @@ function AddDisableEditing(){
 
 	setTimeout(function(){
 
-		document.getElementById("adddisableediting").value = "Add Disable Editing";
+		var elem = document.getElementById("adddisableediting");
+
+		if (elem){
+			elem.value = "Add Disable Editing";
+		}
 
 	},1500);
 
@@ -34651,7 +34659,11 @@ function AddOpenInEditor(){
 
 	setTimeout(function(){
 
-		document.getElementById("addopenineditor").value = "Add Open in Editor";
+		var elem = document.getElementById("addopenineditor");
+
+		if (elem){
+			elem.value = "Add Open in Editor";
+		}
 
 	},1500);
 
