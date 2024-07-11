@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1419_110724_0700";
+var gVersionNumber="1420_110724_1415";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19705,17 +19705,31 @@ function processShareLink() {
 		}
 	}
 
+	// Open in editor?
+	var openInEditor = false;
+
+	if (!disableEdit){
+
+		if (urlParams.has("editor")) {
+			var theOpenInEditor = urlParams.get("editor");
+			if (theOpenInEditor == "1"){
+				openInEditor = true;
+				doPlay = false;
+			}
+		}
+	}
+
 	// If multiple tunes in the link, which one to open in the player?
 	var gotIndex = false;
 	if (doPlay){
 		if (urlParams.has("index")) {
-
 			var theIndex = urlParams.get("index");
 			tuneIndex = parseInt(theIndex);
 			gPlayABCTuneIndex = tuneIndex;
 			gotIndex = true;
 		}
 	}
+
 
 	if (doRender) {
 
@@ -19752,7 +19766,6 @@ function processShareLink() {
 
 		// Set the inital focus back to the ABC
 		FocusABC();
-
 
 		// Render the tune
 		RenderAsync(true,null,function(){
@@ -19801,6 +19814,12 @@ function processShareLink() {
 				// Play back locally in-tool	
 				PlayABCDialog(theProcessedABC, null, null, null, false);
 
+			}
+			else{
+				if (openInEditor){
+					// Open in the editor
+					DoMinimize();
+				}
 			}
 
 		});
@@ -34527,6 +34546,28 @@ function AddDisableEditing(){
 
 }
 
+// Add the open in editor parameter to the URL
+function AddOpenInEditor(){
+
+	var theURL = urltextbox.value;
+
+	// Check if a editor directive already present
+	if (theURL.indexOf("&editor=1") == -1){
+		theURL += "&editor=1";
+	}
+
+	urltextbox.value = theURL;
+
+	// Give some feedback
+	document.getElementById("addopenineditor").value = "Open in Editor Added!";
+
+	setTimeout(function(){
+
+		document.getElementById("addopenineditor").value = "Add Open in Editor";
+
+	},1500);
+
+}
 
 function SharingControlsDialog(){
 
@@ -34547,7 +34588,7 @@ function SharingControlsDialog(){
 	modal_msg += '</textarea>';
 	modal_msg += '</p>';
 	modal_msg += '<p id="shareurlcaption">Share URL</p>';
-	modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="addautoplay" class="urlcontrols btn btn-urlcontrols" onclick="AddAutoPlay()" type="button" value="Add Auto-Play" title="Adds &play=1 to the ShareURL.&nbsp;&nbsp;Tune will open in the player."><input id="adddisableediting" class="urlcontrolslast btn btn-urlcontrols" onclick="AddDisableEditing()" type="button" value="Add Disable Editing" title="Adds &dx=1 to the ShareURL.&nbsp;&nbsp;Entering the editor from the full screen tune view will be disabled."></p>';
+	modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="addautoplay" class="urlcontrols btn btn-urlcontrols" onclick="AddAutoPlay()" type="button" value="Add Auto-Play" title="Adds &play=1 to the ShareURL.&nbsp;&nbsp;Tune will open in the player."><input id="addopenineditor" class="urlcontrols btn btn-urlcontrols" onclick="AddOpenInEditor()" type="button" value="Add Open in Editor" title="Adds &editor=1 to the ShareURL.&nbsp;&nbsp;Share links will load in the editor.&nbsp;&nbsp;This setting overrides Add Auto-Play."><input id="adddisableediting" class="urlcontrolslast btn btn-urlcontrols" onclick="AddDisableEditing()" type="button" value="Add Disable Editing" title="Adds &dx=1 to the ShareURL.&nbsp;&nbsp;Entering the editor from the full screen tune view will be disabled.&nbsp;&nbsp;Also overrides Add Open in Editor."></p>';
 
 	modal_msg += '</div>';
 
