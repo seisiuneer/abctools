@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1422_110724_1500";
+var gVersionNumber="1423_110724_1710";
 
 var gMIDIInitStillWaiting = false;
 
@@ -364,6 +364,9 @@ var gShowCGDATab = false;
 
 // Confirm clear
 var gConfirmClear = true;
+
+// Open share links in editor
+var gOpenInEditor = false;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -4868,27 +4871,47 @@ function GetAllTuneHyperlinks(theLinks) {
 			}
 			else{
 
-				// Add play link
-				theURL += "&play=1";
+				// MAE 11 July 2024 - For open in editor
 
-				// If full tunebook play link, add tune index
-				if (gAddTunebookPlaybackHyperlinks){
-					theURL += "&index="+i;
+				if (!gOpenInEditor){
+
+					// Add play link
+					theURL += "&play=1";
+
+					// If full tunebook play link, add tune index
+					if (gAddTunebookPlaybackHyperlinks){
+						theURL += "&index="+i;
+					}
+
+					// Add the play parameter
+					if (gInjectEditDisabled){
+						theURL += "&dx=1"
+					}
+
+					// Warn if too large for Acrobat Reader
+					if (theURL.length > ACROBATMAXURLLENGTH){
+
+						gAcrobatURLLimitExceeded.push({name:theTitles[i],urllength:theURL.length});
+
+					}			
+
+					theLinks[i].url = theURL;
 				}
+				else{
 
-				// Add the play parameter
-				if (gInjectEditDisabled){
-					theURL += "&dx=1"
+					// Add open in editor
+					theURL += "&editor=1";
+
+					// Warn if too large for Acrobat Reader
+					if (theURL.length > ACROBATMAXURLLENGTH){
+
+						gAcrobatURLLimitExceeded.push({name:theTitles[i],urllength:theURL.length});
+
+					}			
+
+					theLinks[i].url = theURL;
+
 				}
-
-				// Warn if too large for Acrobat Reader
-				if (theURL.length > ACROBATMAXURLLENGTH){
-
-					gAcrobatURLLimitExceeded.push({name:theTitles[i],urllength:theURL.length});
-
-				}			
-
-				theLinks[i].url = theURL;
 
 			}
 
@@ -5006,14 +5029,24 @@ function GetAllTuneHyperlinks(theLinks) {
 			// Create a share URL for this tune
 			var theURL = FillUrlBoxWithAbcInLZW(tuneWithPatch,false);
 			
-			// Add the play parameter
-			if (gInjectEditDisabled){
-				// Mark this as a play-only link
-				theURL += "&dx=1"
-			}
+			// MAE 11 Jul 2024 - For open in editor
+			if (!gOpenInEditor){
 
-			// Normal play/edit link
-			theURL += "&play=1"	
+				// Normal play/edit link
+				theURL += "&play=1"	
+
+				// Add the play parameter
+				if (gInjectEditDisabled){
+					// Mark this as a play-only link
+					theURL += "&dx=1"
+				}
+			}
+			else{
+
+				// Open in editor
+				theURL += "&editor=1"	
+
+			}
 
 			// Warn if too large for Acrobat Reader
 			if (theURL.length > ACROBATMAXURLLENGTH){
@@ -7465,6 +7498,32 @@ function ParseCommentCommands(theNotes){
 		else{
 
 			// No programs specified, just add the link, but don't inject the programs
+			gAddPlaybackHyperlinksIncludePrograms = false;
+
+		}
+	}
+
+	// 
+	// MAE 11 Jul 2024 - No open in edit allowed if editing disallowed
+	//
+	// See if open in editor requested
+	gOpenInEditor = false;
+
+	if (!gInjectEditDisabled){	
+		
+		searchRegExp = /^%open_in_editor.*$/m
+
+		// Detect no edit allowed annotatoin
+		var open_in_editor = theNotes.match(searchRegExp);
+
+		if ((open_in_editor) && (open_in_editor.length > 0)){
+
+			gOpenInEditor = true;
+
+			// Turn on link generation
+			gAddPlaybackHyperlinks = true;
+
+			// But don't inject the play information
 			gAddPlaybackHyperlinksIncludePrograms = false;
 
 		}
@@ -19819,7 +19878,7 @@ function processShareLink() {
 				if (openInEditor){
 
 					// Keep track of share presentation
-					sendGoogleAnalytics("show_player","open_in_editor");
+					sendGoogleAnalytics("action","open_in_editor");
 
 					// Open in the editor
 					ToggleMaximize();
@@ -20261,6 +20320,7 @@ function complianceABCTransformer(theABC,doInverse){
 	    "%tab_first_voice_only",
 	    "%tab_first_voice_exclude",
 	    "%reverb",
+	    "%open_in_editor"
 	];
 
 	if (doInverse){
