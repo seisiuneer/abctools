@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1423_110724_1710";
+var gVersionNumber="1424_110724_1735";
 
 var gMIDIInitStillWaiting = false;
 
@@ -7511,7 +7511,7 @@ function ParseCommentCommands(theNotes){
 
 	if (!gInjectEditDisabled){	
 		
-		searchRegExp = /^%open_in_editor.*$/m
+		searchRegExp = /^%links_open_in_editor.*$/m
 
 		// Detect no edit allowed annotatoin
 		var open_in_editor = theNotes.match(searchRegExp);
@@ -20320,7 +20320,7 @@ function complianceABCTransformer(theABC,doInverse){
 	    "%tab_first_voice_only",
 	    "%tab_first_voice_exclude",
 	    "%reverb",
-	    "%open_in_editor"
+	    "%links_open_in_editor"
 	];
 
 	if (doInverse){
