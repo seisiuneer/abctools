@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-                
+         
         <style>
         
         p {
@@ -3265,10 +3265,12 @@
             <p>If Adobe Acrobat is your target PDF reader, your best option is to use the available per-tune %hyperlink directive in these tunes with a shortened play Share URL manually generated using the <strong>Sharing</strong> dialog:</p>
             <p class="code">%hyperlink your_shortened_Share_URL</p>
             <hr>
-            <p><strong>Forcing the tunes to open in the editor instead of the player.</strong></p>
-            <p>To force the tune links to open in the editor instead of the player, add:</p>
+            <p><strong>Forcing the tune links in the PDF to open in the Editor instead of the Player.</strong></p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/JcqyKX7pjlw" title="Opening Share URLs in the editor" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+            <p>To force the tune links in the PDF to open in the Editor instead of the full screen view or Player, add:</p>
             <p class="code">%links_open_in_editor</p>
             <p>anywhere in the ABC file.</p>
+            <p>This works with the other PDF tunebook features like Title Page, Table of Contents, and Index pages, but will override any %add_all_playback_links annotation added to request that tunes in the PDF should open in the Player when you click their titles.</p>
             <p></p>
             <hr>
             <p><strong>Disabling access to the tune editor from tunes linked from PDF tunebooks.</strong></p>
