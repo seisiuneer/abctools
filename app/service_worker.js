@@ -3,12 +3,16 @@
 //
 //
 //
-// Updated 12 July 2024 at 1255
+//
+//
+// Updated 12 July 2024 at 1825
+//
+//
 //
 //
 //
 
-const cacheName = 'cache-147';
+const cacheName = 'cache-149';
 
 const contentToCache = [
     'abctools.html',
@@ -45,8 +49,6 @@ const contentToCache = [
     'bww2abc.js',
     'manage_database.js',
 	'api-keys.js',
-    //'folkfriend-non-user-data_22dec2023.json',
-    //'abctunes_gavin_heneghan_10nov2023.json',
     'img/zoomin.png',
     'img/zoomout.png',
     'img/helpbutton.png',
