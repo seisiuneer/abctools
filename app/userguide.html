@@ -486,10 +486,14 @@
                     <p class="toc"><a style="text-decoration:none;" href="#demovideos">Demo Videos and Tutorials</a></p>
                 </div>
                 
+                <button class="accordion" title="Click to expand/collapse this section">Using the Tool Offline (Airplane Mode)</button>
+                <div class="tocpanel">
+                    <p class="toc"><a style="text-decoration:none;" href="#app">Using the Tool Offline (Airplane Mode)</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#pdf_play_while_offline">Playing Tunes in PDF Files While Offline</a></p>
+                </div>
+
                 <button class="accordion" title="Click to expand/collapse this section">Source Code, Privacy, Support, and Tip Jars</button>
                 <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#app">Running the Tool Offline</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#pdf_offline">Playing Tunes in PDF Files Offline</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#github">Source Code Available on GitHub</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#run_from_source">Notes on Running the Tool from the GitHub Repo</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#privacy">Privacy</a></p>
@@ -4149,7 +4153,7 @@
             <p style="text-align: center;">The full playlist of demo videos and tutorials can be found on YouTube at:</p>
             <p style="text-align: center;"><a href="https://www.youtube.com/playlist?list=PLZvjgS80ixQuX2-gMv25U3ECXiceGfTdr" target="_blank">ABC Transcription Tools Demo Videos and Tutorials</a></p>
             <hr class="hidden-print" id="app">
-            <h1 class="page_break_always">Running the Tool Offline<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <h1 class="page_break_always">Using the Tool Offline (Airplane Mode)<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>This version of the tool is capable of running offline.</p>
             <p>On first run of this version of the tool, the tool will cache all of it's code and resources for later use offline.</p>
             <p>By default, when running the offline-enabled version, all instruments will be replaced by a piano sound which is embedded in the tool source.</p>
@@ -4162,10 +4166,9 @@
             <p>Full details on offline playback using stored notes and managing the offline notes database are in these sections of the User Guide:</p>
             <p><strong><a href="#cached_instruments">Allow instrument notes and reverb settings database to be used offline</strong></a></p>
             <p><strong><a href="#manage_databases">Managing Notes, Reverb, and Tune Search Databases for Offline Use</a></strong></p>
-            <hr>
-            <p>Another more stable option for desktop users who need to run the tool offline is to download the source code archive .zip from my GitHub repo, unzip the source archive, and run abctools-offline.html.</p>
-            <hr class="hidden-print" id="pdf_offline">
-            <h1 class="page_break_always">Playing Tunes in PDF Files Offline<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <hr class="hidden-print" id="pdf_play_while_offline">
+            <h1 class="page_break_always">Playing Tunes in PDF Files While Offline<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/9H7W6M1e8gE" title="Playing tunes in PDF tunebooks while offline" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <p>Tune playback share URLs in exported PDF files always point to the main tool URL:</p>
             <p style="text-align: center"><a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">https://michaeleskin.com/abctools/abctools.html</a></p>
             <p>To enable playing tunes in PDF files while offline you will need to install a browser extension for your default web browser that will automatically redirect all links opened from the PDF to the offline-enabled version URL:</p>
@@ -4174,21 +4177,28 @@
             <hr>
             <p>You will need to visit the offline-enabled tool URL at least once while online so the code for the tool can be stored in the browser for the redirect system to work while offline.</p>
             <hr>
-            <p>For Chrome, I recommend:</p>
+            <p><strong>For Chrome, I recommend:</strong></p>
             <p style="text-align: center"><a href="https://chromewebstore.google.com/detail/inssman-open-source-modif/ghlpdbkhlenlfiglgphledhfhchjfjfk?hl=en-US&utm_source=ext_sidebar" target="_blank">Inssman - Open-Source: Modify HTTP Request</a></p>
             <p>In Inssman, you will need to setup the following redirect rule:</p>
             <div class="image_holder_p">
                 <img class="image" loading="lazy" src="img/inssman_1.jpg"/>
             </div>
             <hr>
-            <p>For Firefox, I recommend:</p>
+            <p><strong>For Firefox, I recommend:</strong></p>
             <p style="text-align: center"><a href="https://addons.mozilla.org/en-US/firefox/addon/redirector/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search" target="_blank">Redirector</a></p>
             <p>In Redirector, you will need to setup the following redirect rule:</p>
             <div class="image_holder_p">
                 <img class="image" loading="lazy" src="img/redirector_1.jpg"/>
             </div>
             <hr>
-            <p>I do not have a recommendation for a way to redirect PDF links on Safari for Mac or iOS devices.</p>
+            <p><strong>For Safari on Macs and iOS, I recommend:</strong></p>
+            <p style="text-align: center"><a href="https://apps.apple.com/us/app/redirect-web-for-safari/id1571283503" target="_blank">Redirect Web for Safari</a></p>
+            <p>In Redirect Web for Safari, you will need to setup the following redirect rule:</p>
+            <div class="image_holder_p">
+                <img class="image" loading="lazy" src="img/redirect_for_web_1.jpg"/>
+            </div>
+            <hr>
+            <p>When opening tunes from PDF files while offline, if you have checked <strong><a href="#cached_instruments">Allow instrument notes and reverb settings database to be used offline</a></strong> on the <strong>Settings</strong> dialog, then you'll need to make sure those instruments are actually available when offline by following the instructions in the <strong><a href="#app">Using the Tool Offline (Airplane Mode)</a></strong> section above.</p>
             <hr class="hidden-print" id="github">
             <h1 class="page_break_always">Source Code Available on GitHub<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p style="text-align: center;">Full project source code may be found at:</p>
