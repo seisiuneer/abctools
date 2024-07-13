@@ -489,6 +489,7 @@
                 <button class="accordion" title="Click to expand/collapse this section">Source Code, Privacy, Support, and Tip Jars</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#app">Running the Tool Offline</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#pdf_offline">Playing Tunes in PDF Files Offline</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#github">Source Code Available on GitHub</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#run_from_source">Notes on Running the Tool from the GitHub Repo</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#privacy">Privacy</a></p>
@@ -4163,6 +4164,31 @@
             <p><strong><a href="#manage_databases">Managing Notes, Reverb, and Tune Search Databases for Offline Use</a></strong></p>
             <hr>
             <p>Another more stable option for desktop users who need to run the tool offline is to download the source code archive .zip from my GitHub repo, unzip the source archive, and run abctools-offline.html.</p>
+            <hr class="hidden-print" id="pdf_offline">
+            <h1 class="page_break_always">Playing Tunes in PDF Files Offline<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>Tune playback share URLs in exported PDF files always point to the main tool URL:</p>
+            <p style="text-align: center"><a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">https://michaeleskin.com/abctools/abctools.html</a></p>
+            <p>To enable playing tunes in PDF files while offline you will need to install a browser extension for your default web browser that will automatically redirect all links opened from the PDF to the offline-enabled version URL:</p>
+            <p style="text-align: center"><a href="https://michaeleskin.com/app/abctools.html" target="_blank">https://michaeleskin.com/app/abctools.html</a></p>
+            <p>which on first run will be saved in your browser for offline use.</p>
+            <hr>
+            <p>You will need to visit the offline-enabled tool URL at least once while online so the code for the tool can be stored in the browser for the redirect system to work while offline.</p>
+            <hr>
+            <p>For Chrome, I recommend:</p>
+            <p style="text-align: center"><a href="https://chromewebstore.google.com/detail/inssman-open-source-modif/ghlpdbkhlenlfiglgphledhfhchjfjfk?hl=en-US&utm_source=ext_sidebar" target="_blank">Inssman - Open-Source: Modify HTTP Request</a></p>
+            <p>In Inssman, you will need to setup the following redirect rule:</p>
+            <div class="image_holder_p">
+                <img class="image" loading="lazy" src="img/inssman_1.jpg"/>
+            </div>
+            <hr>
+            <p>For Firefox, I recommend:</p>
+            <p style="text-align: center"><a href="https://addons.mozilla.org/en-US/firefox/addon/redirector/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search" target="_blank">Redirector</a></p>
+            <p>In Redirector, you will need to setup the following redirect rule:</p>
+            <div class="image_holder_p">
+                <img class="image" loading="lazy" src="img/redirector_1.jpg"/>
+            </div>
+            <hr>
+            <p>I do not have a recommendation for a way to redirect PDF links on Safari for Mac or iOS devices.</p>
             <hr class="hidden-print" id="github">
             <h1 class="page_break_always">Source Code Available on GitHub<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p style="text-align: center;">Full project source code may be found at:</p>

@@ -39,7 +39,7 @@
   }
  ],
  "display": "minimal-ui",
- "theme_color": "#055581",
  "background_color": "#055581",
+ "theme_color": "#055581",
  "start_url": "/app/abctools.html"
 }
