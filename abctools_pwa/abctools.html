@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <title>Michael Eskin's ABC Tools Offline Service Worker Reset</title>
+        
+        <meta charset="UTF-8">
+        <meta http-equiv="Content-Type" content="text/html">
+        <meta content="ABC player transpose jig reel folk folktab folktab.com" name="keywords">
+        <meta content="A simple-to-use ABC to standard music notation converter featuring tune play, transposition, tab generation, PDF export, and much more!" name="description">
+        <meta content="A simple-to-use ABC to standard music notation converter featuring tune play, transposition, tab generation, PDF export, and much more!" name="abstract">
+        <meta property="og:locale" content="en_US" />
+        <meta name="description" content="A simple-to-use ABC to standard music notation converter featuring tune play, transposition, tab generation, PDF export and much more!" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Michael Eskin's ABC Tools Offline Service Worker Reset" />
+        <meta property="og:description" content="A simple-to-use ABC to standard music notation converter featuring tune play, transposition, tab generation, PDF export and much more!" />
+        <meta property="og:url" content="https://michaeleskin.com/abctools_pwa/abctools.html" />
+        <meta property="og:site_name" content="Michael Eskin's ABC Tools Offline Service Worker Reset" />
+        <meta property="og:image" content="https://michaeleskin.com/abctools_pwa/img/abc-icon.png" />
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools_pwa/img/abc-ms-icon-144x144.png">
+        <meta name="theme-color" content="#ffffff">
+        <meta name="apple-mobile-web-app-title" content="ABC Tools">
+        <meta name="application-name" content="ABC Tools">
+        <link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools_pwa/img/abc-apple-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools_pwa/img/abc-apple-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="https://michaeleskin.com/abctools_pwa/img/abc-apple-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="https://michaeleskin.com/abctools_pwa/img/abc-apple-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="https://michaeleskin.com/abctools_pwa/img/abc-apple-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="https://michaeleskin.com/abctools_pwa/img/abc-apple-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="https://michaeleskin.com/abctools_pwa/img/abc-apple-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools_pwa/img/abc-apple-icon-180x180.png">
+        <link rel="icon" type="image/png" sizes="192x192" href="https://michaeleskin.com/abctools_pwa/img/abc-android-icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools_pwa/img/abc-favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools_pwa/img/abc-favicon-96x96.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools_pwa/img/abc-favicon-16x16.png">
+
+        <style>
+        .btn {
+          --color: #000000;
+          --background-color: #d8d8d8;
+          --border-color: darken(#d8d8d8, 7.5%);
+          color: var(--color);
+          font-family: helvetica !important;
+          font-size: 11pt !important;
+          background-color: var(--background-color);
+          padding: 0.7rem 0.7rem;
+          padding-top: 0.8rem;
+          border: solid 1px var(--border-color);
+          outline: none;
+          position: relative;
+          border-radius: 0.5rem;
+          user-select: none;
+          box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.25), 0 -0.1rem 0.5rem rgba(0, 0, 0, 0.1) inset;
+          -webkit-appearance:none;
+        }
+        .btn:after {
+          content: "";
+          background-color: #ffffff;
+          width: 75%;
+          height: 12.5%;
+          position: absolute;
+          top: 0.15rem;
+          left: 12.5%;
+          border-radius: 50%;
+          filter: blur(0.15rem);
+        }
+        .btn:active {
+          box-shadow: 0 0 0 rgba(0, 0, 0, 0.4), 0 0.4rem 1rem rgba(0, 0, 0, 0.3) inset;
+        }
+        .btn:active:after {
+          opacity: 0;
+        }
+
+        .btn-info {
+          --color: black;
+          --background-color: lavender;
+        }
+        .btn-info:active {
+          --color: #ececec;
+        }   
+
+        @media (hover: hover) {
+            .unregistersw:hover{
+            background: palegreen;
+            }
+        }
+
+    </style>
+            
+    <script type="text/javascript">
+
+        // Register service worker
+        if ('serviceWorker' in navigator){
+            navigator.serviceWorker.register('https://michaeleskin.com/abctools_pwa/service_worker.js',{updateViaCache: "none"})
+            .then(reg => {
+                console.log("Service Worker Registered!");
+            })
+            .catch(err => {
+                console.log("Service Worker Registration failed: "+err);
+            });
+        }   
+
+        function unregisterAllServiceWorkers(callback){
+
+            if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.getRegistrations().then(function(registrations) {
+
+                let unregisterPromises = [];
+                
+                for (let registration of registrations) {
+                  unregisterPromises.push(registration.unregister());
+                }
+                
+                Promise.all(unregisterPromises).then(function() {
+                  console.log('All service workers unregistered');
+                  // Call your callback function here
+                  callback();
+                }).catch(function(error) {
+                  console.error('Error unregistering service workers:', error);
+                  // Optionally call the callback function in case of error
+                  callback();
+                });
+
+              }).catch(function(error) {
+                console.error('Error getting service worker registrations:', error);
+                // Optionally call the callback function in case of error
+                callback();
+              });
+
+            } 
+            else {
+             
+                console.warn('Service workers are not supported in this browser.');
+
+                // Optionally call the callback function if service workers are not supported
+                callback();
+            }
+        }
+
+        function doRedirect() {
+
+            window.location.href = "https://michaeleskin.com/app/abctools.html";
+
+        }
+
+
+    </script>
+
+</head>
+<body>
+
+    <p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:36px">ABC Transcription Tools - Transitioning from /abctools_pwa to /app</p>
+
+    <p style="text-align:center;font-size:12pt;font-family:helvetica;margin-top:36px">The location of the offline version of the tool has moved.</p>
+
+    <p style="text-align:center;font-size:12pt;font-family:helvetica;margin-top:36px">Click the button below to unregister the previous version from your browser and redirect to the new app.</p>
+
+    <p style="text-align:center;font-size:12pt;font-family:helvetica;margin-top:36px">After doing this once, in the future you should access the offline version of the tool at:</p>
+    
+    <p style="text-align:center;font-size:12pt;font-family:helvetica;margin-top:36px"><a href="https://michaeleskin.com/app/abctools.html">https://michaeleskin.com/app/abctools.html</a></p>
+
+    <p style="text-align:center;font-size:12pt;font-family:helvetica;margin-top:36px"><input id="unregistersw" class="btn btn-info unregistersw" onclick="unregisterAllServiceWorkers(doRedirect)" type="button" value="Unregister the ABC Transcription Tools Offline Service Worker and redirect to the new ABC Transcription Tools App">
+
+</body>
+</html>
