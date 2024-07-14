@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0048_140724_0805";
+var gVersionNumber="0050_140724_0955";
 
 var gMIDIInitStillWaiting = false;
 
@@ -36444,6 +36444,9 @@ function ConfigureToolSettings() {
 
 						updateABCEditorFont();
 
+						// MAE 14 Jul 2024 - Need to resize text area after font size change
+						HandleWindowResize();
+
 					}	
 
 				}
@@ -37791,10 +37794,15 @@ function HandleWindowResize(){
 				var windowHeight = window.innerHeight;
 
 				// Leave some room for tools
-				windowHeight -= 540;
+				windowHeight -= 375; // MAE was 540
 
-				// About 30 pixels/line
-				var nRows = windowHeight/30;
+				// Adapt the text area size
+				elem = document.getElementById("abc");
+				const style = getComputedStyle(elem);
+				const fontSize = parseFloat(style.fontSize);
+				const lineHeight = parseFloat(style.lineHeight) || fontSize * 1.2; // Fallback to 1.2 * fontSize if line-height is not explicitly set
+
+				const nRows = Math.floor(windowHeight / lineHeight);
 
 				// Set a minimum
 				if (nRows < 12){
