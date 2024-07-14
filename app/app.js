@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0040_140724_0440";
+var gVersionNumber="0041_140724_0445";
 
 var gMIDIInitStillWaiting = false;
 
@@ -13772,7 +13772,7 @@ function ChangeTuneOrderMobile(){
 	var theData = {};
 
 	// MAE 14 Jul 2024 - Make the div fill the screen
-	var theHeight = window.innerHeight - 300;
+	var theHeight = window.innerHeight - 375;
 
 	var theSortableDiv = '<div id="sortable-tune-list-mobile" style="overflow:auto;height:'+theHeight+'px;margin-top:18px">';
 
