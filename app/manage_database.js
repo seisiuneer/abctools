@@ -525,33 +525,53 @@ function idleManageSamplesDialog(showActionButtons){
 
 				let url = urls[index];
 
-				fetch(url)
-					.then(response => {
-						if (!response.ok) {
-							throw new Error(`HTTP error! Status: ${response.status}`);
-						}
-						return response.arrayBuffer();
-					})
-					.then(theBuffer => {
+				// Is this note already in the database?
+				getSample_DB(url, function(theNote){
 
-						//console.log(`Fetched URL: ${url}`, theBuffer);
+					//console.log(theNote);
+					
+					if (!theNote){
 
-		                // Save the sample in the database
-		                saveSample_DB(url,theBuffer);
+						//console.log(url+" not in database, fetching...");
 
-						index++;
+						fetch(url)
+							.then(response => {
+								if (!response.ok) {
+									throw new Error(`HTTP error! Status: ${response.status}`);
+								}
+								return response.arrayBuffer();
+							})
+							.then(theBuffer => {
 
-						fetchNext(); 	// Call fetchNext recursively to fetch the next URL
+								//console.log(`Fetched URL: ${url}`, theBuffer);
 
-					})
-					.catch(error => {
+				                // Save the sample in the database
+				                saveSample_DB(url,theBuffer);
 
-						//console.error('Error fetching URL:', url, error);
-						index++; 		// Move to the next URL even if there's an error
+								index++;
 
-						fetchNext(); 	// Continue to fetch the next URL
+								fetchNext(); 	// Call fetchNext recursively to fetch the next URL
 
-					});
+							})
+							.catch(error => {
+
+								//console.error('Error fetching URL:', url, error);
+								index++; 		// Move to the next URL even if there's an error
+
+								fetchNext(); 	// Continue to fetch the next URL
+
+							});
+					}
+					else{
+
+						//console.log(url+" already in database, skipping...");
+
+						index++; 
+						
+						fetchNext(); 
+
+					}
+				});
 			} else {
 
 				//console.log('All URLs fetched');
