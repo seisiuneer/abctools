@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0045_140724_0510";
+var gVersionNumber="0048_140724_0805";
 
 var gMIDIInitStillWaiting = false;
 
@@ -13586,6 +13586,12 @@ function AddFromSearch(e,callback){
 	// Setup the default search collection
 	gTheCurrentTuneDatabase = gDefaultTuneDatabase;
 
+	var theHeight = window.innerHeight - 650;
+
+	if (isMobileBrowser()){
+		theHeight = window.innerHeight - 675;
+	}
+
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Search and Add Tunes&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/app/userguide.html#search_and_add_tunes" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 	
 	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:20px;margin-bottom:12px;" class="switchtunedatabase">Tune Collection to Search: <select id="databaseselect" onchange="SwitchTuneDatabase();" title="Select your tune search database"><option value="0">Gavin Heneghan\'s Collection (20,000+ Tune Settings)</option><option value="1">FolkFriend.app Collection (45,000+ Tune Settings)</option></select></p>';
@@ -13602,7 +13608,7 @@ function AddFromSearch(e,callback){
 
 	modal_msg+='<h4 id="search_result">Search Results:</h4>';
 
-	modal_msg+='<textarea id="search_results" style="font-family:Courier;font-size:13pt;line-height:16pt;width:724px;height:350px;padding:6px" placeholder="Search results will appear here" spellcheck="false" autocorrect="off" autocapitalize="none" oninput="idleSearchResults()"></textarea>';
+	modal_msg+='<textarea id="search_results" style="font-family:Courier;font-size:13pt;line-height:16pt;width:724px;height:'+theHeight+'px;padding:6px" placeholder="Search results will appear here" spellcheck="false" autocorrect="off" autocapitalize="none" oninput="idleSearchResults()"></textarea>';
 
 	modal_msg+='<p style="margin-top:20px;text-align: center;">';
 
