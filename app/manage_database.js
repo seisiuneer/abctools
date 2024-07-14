@@ -1064,11 +1064,9 @@ function ManageSamplesDialog(showActionButtons){
 	
 	modal_msg += '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">The table below shows all the instrument notes you have played in the past that are stored in the instrument notes database along with the number of notes saved.</p>';
 
-	var maxHeight = 560;
+	var maxHeight = window.innerHeight - 550;
 
 	if (showActionButtons){
-
-		maxHeight = 430;
 
 		modal_msg += '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click "Load All" to load and save the full set of notes for an instrument to the instrument notes database to make all notes for that instrument available offline.</p>';
 
@@ -1087,6 +1085,8 @@ function ManageSamplesDialog(showActionButtons){
 
 	}
 	else{
+
+		maxHeight = window.innerHeight - 365;
 		
 		modal_msg += '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">When online, you may also load the full set of notes for one or all the instruments or delete an instrument from the database.</p>';
 
