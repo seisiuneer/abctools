@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0044_140724_0500";
+var gVersionNumber="0045_140724_0510";
 
 var gMIDIInitStillWaiting = false;
 
@@ -13772,7 +13772,7 @@ function ChangeTuneOrderMobile(){
 	var theData = {};
 
 	// MAE 14 Jul 2024 - Make the div fill the screen
-	var theHeight = window.innerHeight - 375;
+	var theHeight = window.innerHeight - 350;
 
 	var theSortableDiv = '<div id="sortable-tune-list-mobile" style="overflow:auto;height:'+theHeight+'px;margin-top:18px">';
 
@@ -13802,7 +13802,7 @@ function ChangeTuneOrderMobile(){
 
 	},100);
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 25, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
     	if (!args.canceled){
 

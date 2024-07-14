@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1425_120724_1800";
+var gVersionNumber="1426_140724_0505";
 
 var gMIDIInitStillWaiting = false;
 
@@ -13770,7 +13770,10 @@ function ChangeTuneOrderMobile(){
 
 	var theData = {};
 
-	var theSortableDiv = '<div id="sortable-tune-list-mobile" style="overflow:auto;height:580px;margin-top:18px">';
+	// MAE 14 Jul 2024 - Make the div fill the screen
+	var theHeight = window.innerHeight - 350;
+
+	var theSortableDiv = '<div id="sortable-tune-list-mobile" style="overflow:auto;height:'+theHeight+'px;margin-top:18px">';
 
 	for (i=0;i<nTitles;++i){
 
@@ -13798,7 +13801,7 @@ function ChangeTuneOrderMobile(){
 
 	},100);
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 25, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
     	if (!args.canceled){
 
@@ -13892,7 +13895,10 @@ function ChangeTuneOrder(){
 
 	var theData = {};
 
-	var theSortableDiv = '<div id="sortable-tune-list" style="overflow:auto;height:635px;margin-top:18px">';
+	// MAE 14 Jul 2024 - Make the div fill the screen
+	var theHeight = window.innerHeight - 300;
+
+	var theSortableDiv = '<div id="sortable-tune-list" style="overflow:auto;height:'+theHeight+'px;margin-top:18px">';
 
 	for (i=0;i<nTitles;++i){
 
@@ -13920,7 +13926,7 @@ function ChangeTuneOrder(){
 
 	},100);
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 25, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
     	if (!args.canceled){
 
@@ -14114,7 +14120,14 @@ function CullTunes(){
 
 	var theData = {};
 
-	var theCullableDiv = '<div id="cullable-tune-list" style="overflow:auto;height:580px;margin-top:18px">';
+	// MAE 14 Jul 2024 - Make the div fill the screen
+	var theHeight = window.innerHeight - 340;
+
+	if (isMobileBrowser()){
+		theHeight = window.innerHeight - 375;
+	}
+
+	var theCullableDiv = '<div id="cullable-tune-list" style="overflow:auto;height:'+theHeight+'px;margin-top:18px">';
 
 	for (i=0;i<nTitles;++i){
 
@@ -14130,7 +14143,7 @@ function CullTunes(){
 		{html: '<p style="text-align:center;margin-top:36px;"><input id="cull_select_all" class="advancedcontrols btn btn-injectcontrols-headers" onclick="CullSelectAll();" type="button" value="Select All" title="Selects all the tunes for deletion"><input id="cull_clear_selection" class="advancedcontrols btn btn-injectcontrols-headers" onclick="CullClearSelection();" type="button" value="Clear Selection" title="Unselects all the tunes for deletion"></p>'}
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false, okText:"Delete" } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 25, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false, okText:"Delete" } ).then(function(args){
 
     	if (!args.canceled){
 
