@@ -1066,6 +1066,10 @@ function ManageSamplesDialog(showActionButtons){
 
 	var maxHeight = window.innerHeight - 550;
 
+	if (isMobileBrowser()){
+		maxHeight = window.innerHeight - 585;
+	}
+
 	if (showActionButtons){
 
 		modal_msg += '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click "Load All" to load and save the full set of notes for an instrument to the instrument notes database to make all notes for that instrument available offline.</p>';

@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0041_140724_0445";
+var gVersionNumber="0044_140724_0500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14123,6 +14123,10 @@ function CullTunes(){
 
 	// MAE 14 Jul 2024 - Make the div fill the screen
 	var theHeight = window.innerHeight - 340;
+
+	if (isMobileBrowser()){
+		theHeight = window.innerHeight - 375;
+	}
 
 	var theCullableDiv = '<div id="cullable-tune-list" style="overflow:auto;height:'+theHeight+'px;margin-top:18px">';
 
