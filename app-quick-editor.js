@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0006_150724_1400";
+var gVersionNumber="0007_150724_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -15711,13 +15711,7 @@ function GenerateRenderingDivs(nTunes) {
 //
 function getUrlWithoutParams() {
 
-	var theURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-
-	// If running locally, point the share link at the public site
-	if (theURL.indexOf("file:")==0){
-		// Local run shares points to the online site
-		theURL = "https://michaeleskin.com/abctools/abctools.html"
-	}
+	var theURL = "https://michaeleskin.com/abctools/abctools.html"
 
 	return theURL;
 
