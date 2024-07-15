@@ -1,13 +1,13 @@
 /**
  * 
- * apponetune.js - All code for the ABC Transcription Tools Single Tune Player
+ * app-quick-editor.js - All code for the ABC Transcription Tools Quick Editor
  *
  * Project repo at: https://github.com/seisiuneer/abctools
  * 
  * 
  * MIT License
  * 
- * Copyright (c) 2023 Michael Eskin
+ * Copyright (c) 2024 Michael Eskin
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0007_150724_1600";
+var gVersionNumber="0008_150724_1645";
 
 var gMIDIInitStillWaiting = false;
 
@@ -11372,8 +11372,7 @@ function Render(renderAll,tuneNumber) {
 		window.scrollTo(0, scrollTop);
 
 		// MAE 15 Jul 2024 - For quick editor
-		inlinePlayback()
-
+		inlinePlayback();
 
 	} else {
 
@@ -11926,7 +11925,6 @@ function IdleAdvancedControls(bUpdateUI){
 	}
 
 }
-
 
 //
 // Recalculate and update the top position for the music
@@ -37863,7 +37861,6 @@ function HandleWindowResize(){
 				elem = document.getElementById("notation-placeholder-text");
 				elem.style.marginTop = "64px";
 
-
 			}
 			else{
 				
@@ -39225,6 +39222,9 @@ function inlinePlayback(){
 			}
 		}
 
+		// Recalculate the notation top position
+		UpdateNotationTopPosition();
+
 		setInlineTune();
 
 	},100);
@@ -39337,9 +39337,9 @@ function DoStartup() {
 	//
 	// Uncomment these lines for mobile simulation testing
 	//
-	//gIsIOS = true; 
-	//gIsIPad = true;  
-	//gIsIPhone = true;  
+	// gIsIOS = true; 
+	// gIsIPad = true;  
+	// gIsIPhone = true;  
 	
 	//
 	// iOS and Android styling adaptation
