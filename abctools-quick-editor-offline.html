@@ -2,7 +2,7 @@
 <html>
 	<head>
 		
-		<title>Michael Eskin's ABC Tools - Quick Editor</title>
+		<title>Michael Eskin's ABC Tools Quick Editor</title>
 		
 		<meta charset="UTF-8">
 		<meta http-equiv="Content-Type" content="text/html">
@@ -36,7 +36,7 @@
 		<link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 		<link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-		<link href="app.css?v=0003" media="all" rel="stylesheet" type="text/css">
+		<link href="app.css?v=0006" media="all" rel="stylesheet" type="text/css">
 						
 	</head>
 
@@ -128,7 +128,7 @@
 				<div id="diagnostics" class="diagnostics">
 				</div>
 				
-	   			<div id="playback-audio-inline" style="margin-top:12px">
+	   			<div id="playback-audio-inline" style="margin-top:15px;margin-bottom:2px">
 	   			</div>
 
 				<div id="notenrechts" class="hidden-print">
@@ -136,23 +136,19 @@
 					<div id="tabs-selection" class="toggle-buttons">
 
 						<input type="radio" id="b1" value="noten" name="notenodertab" class="hidebutton" onclick="ChangeTab()"/>
-						<label for="b1" class="btn btn-tab" title="Shows standard music notation" style="margin-right:16px;">Notation</label>
-						<input type="radio" id="b2" value="notenames" name="notenodertab" class="hidebutton" onclick="ChangeTab()"/>
-						<label for="b2" class="btn btn-tab" title="Shows note names tablature"  style="margin-right:16px;">Names</label>
+						<label for="b1" class="btn btn-tab" title="Shows standard music notation" style="margin-right:45px;">Notation</label>
 						<input type="radio" id="b3" value="mandolin" name="notenodertab" class="hidebutton" onclick="ChangeTab()"/>
-						<label for="b3" class="btn btn-tab" title="Shows GDAE Mandolin tablature"  style="margin-right:16px;">Mandolin</label>
+						<label for="b3" class="btn btn-tab" title="Shows GDAE Mandolin tablature"  style="margin-right:45px;">Mandolin</label>
 						<input type="radio" id="b4" value="gdad" name="notenodertab" class="hidebutton" onclick="ChangeTab()"/>
-						<label for="b4" class="btn btn-tab" id="b4label" title="Shows GDAD Bouzouki tablature"  style="margin-right:16px;">GDAD</label>
+						<label for="b4" class="btn btn-tab" id="b4label" title="Shows GDAD Bouzouki tablature"  style="margin-right:45px;">GDAD</label>
 						<input type="radio" id="b5" value="cgdae" name="notenodertab" class="hidebutton" onclick="ChangeTab()"/>
-						<label for="b5" class="btn btn-tab" id="b5label" title="Shows CGDAE 5-string Fiddle tablature" style="margin-right:16px;">CGDAE</label>
+						<label for="b5" class="btn btn-tab" id="b5label" title="Shows CGDAE 5-string Fiddle tablature" style="margin-right:45px;">CGDAE</label>
 						<input type="radio" id="b6" value="guitare" name="notenodertab" class="hidebutton" onclick="ChangeTab()"/>
-						<label for="b6" class="btn btn-tab" title="Shows standard EADGBE Guitar tablature"  style="margin-right:16px;">Guitar</label>
+						<label for="b6" class="btn btn-tab" title="Shows standard EADGBE Guitar tablature"  style="margin-right:43px;">Guitar</label>
 						<input type="radio" id="b7" value="guitard" name="notenodertab" class="hidebutton" onclick="ChangeTab()"/>
-						<label for="b7" class="btn btn-tab" title="Shows DADGAD Guitar tablature"  style="margin-right:16px;">DADGAD</label>
+						<label for="b7" class="btn btn-tab" title="Shows DADGAD Guitar tablature"  style="margin-right:43px;">DADGAD</label>
 						<input type="radio" id="b8" value="uke" name="notenodertab" class="hidebutton" onclick="ChangeTab()">
-						<label for="b8" class="btn btn-tab" title="Shows Ukulele tablature (G string used for notes lower than C)"  style="margin-right:16px;">Uke</label>
-						<input type="radio" id="b9" value="whistle" name="notenodertab" class="hidebutton" onclick="ChangeTab()"/>
-						<label for="b9" class="btn btn-tab" title="Shows Tin Whistle (D) tablature" style="margin-right:0px;">Whistle</label>
+						<label for="b8" class="btn btn-tab" title="Shows Ukulele tablature (G string used for notes lower than C)" style="margin-right:0px;">Uke</label>
 
 					</div>
 
@@ -202,28 +198,28 @@
 	
 	</body>
 
-	<script type="text/javascript" src="jquery-1.11.1.min.js?v=0003"></script><!-- jQuery -->
-	<script type="text/javascript" src="jszip.min.js?v=0003"></script><!-- zip file handling -->
-	<script type="text/javascript" src="xml2abc-min.js?v=0003"></script><!-- to convert MusicXML to ABC -->
-	<script type="text/javascript" src="abcjs-chord-intervals.js?v=0003"></script><!-- chord intervals used by abcjs - non-minified -->
-	<script type="text/javascript" src="abcjs-basic-eskin-min.js?v=0003"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
-	<script type="text/javascript" src="jspdf.min.js?v=0003"></script><!-- to generate PDF using Javscript -->
-	<script type="text/javascript" src="html2image.js?v=0003"></script><!-- to convert HTML elements to bitmaps -->
-	<script type="text/javascript" src="qrcode.js?v=0003"></script><!-- to generate QR codes for the share links -->
-	<script type="text/javascript" src="lz-string.min.js?v=0003"></script><!-- used for share URL generation -->
-	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=0003"></script><!-- modal dialog replacement -->
-	<script type="text/javascript" src="lame.min.js?v=0003"></script><!-- .mp3 audio encoder -->
-	<script type="text/javascript" src="unmute.min.js?v=0003"></script><!-- fixes issue on iOS Safari muting tabs -->
-	<script type="text/javascript" src="tab-injectors-min.js?v=0003"></script><!-- Tab generation for ABC injection -->
-	<script type="text/javascript" src="visualscript-sdk.js?v=0003"></script><!-- SmartDraw VSON API -->
-	<script type="text/javascript" src="smartdraw-export-min.js?v=0003"></script><!-- Export to SmartDraw VSON -->
-	<script type="text/javascript" src="acoustic_grand_piano-mp3.js?v=0003"></script><!-- Offline grand piano sound -->
-	<script type="text/javascript" src="percussion-mp3.js?v=0003"></script><!-- Offline percussion -->
-	<script type="text/javascript" src="online-check.js?v=0003"></script><!-- check if online -->
-	<script type="text/javascript" src="database.js?v=0003"></script><!-- IndexedDB related features -->
-	<script type="text/javascript" src="download-reverb.js?v=0003"></script><!-- Downloading tune audio with reverb features -->
-	<script type="text/javascript" src="bww2abc.js?v=0003"></script><!-- Convert from BWW to abc -->
-	<script type="text/javascript" src="app-quick-editor-min.js?v=0003"></script><!-- main application business logic -->
-	<script type="text/javascript" src="api-keys.js?v=0003"></script><!-- API keys used by the tool -->
+	<script type="text/javascript" src="jquery-1.11.1.min.js?v=0006"></script><!-- jQuery -->
+	<script type="text/javascript" src="jszip.min.js?v=0006"></script><!-- zip file handling -->
+	<script type="text/javascript" src="xml2abc-min.js?v=0006"></script><!-- to convert MusicXML to ABC -->
+	<script type="text/javascript" src="abcjs-chord-intervals.js?v=0006"></script><!-- chord intervals used by abcjs - non-minified -->
+	<script type="text/javascript" src="abcjs-basic-eskin-min.js?v=0006"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
+	<script type="text/javascript" src="jspdf.min.js?v=0006"></script><!-- to generate PDF using Javscript -->
+	<script type="text/javascript" src="html2image.js?v=0006"></script><!-- to convert HTML elements to bitmaps -->
+	<script type="text/javascript" src="qrcode.js?v=0006"></script><!-- to generate QR codes for the share links -->
+	<script type="text/javascript" src="lz-string.min.js?v=0006"></script><!-- used for share URL generation -->
+	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=0006"></script><!-- modal dialog replacement -->
+	<script type="text/javascript" src="lame.min.js?v=0006"></script><!-- .mp3 audio encoder -->
+	<script type="text/javascript" src="unmute.min.js?v=0006"></script><!-- fixes issue on iOS Safari muting tabs -->
+	<script type="text/javascript" src="tab-injectors-min.js?v=0006"></script><!-- Tab generation for ABC injection -->
+	<script type="text/javascript" src="visualscript-sdk.js?v=0006"></script><!-- SmartDraw VSON API -->
+	<script type="text/javascript" src="smartdraw-export-min.js?v=0006"></script><!-- Export to SmartDraw VSON -->
+	<script type="text/javascript" src="acoustic_grand_piano-mp3.js?v=0006"></script><!-- Offline grand piano sound -->
+	<script type="text/javascript" src="percussion-mp3.js?v=0006"></script><!-- Offline percussion -->
+	<script type="text/javascript" src="online-check.js?v=0006"></script><!-- check if online -->
+	<script type="text/javascript" src="database.js?v=0006"></script><!-- IndexedDB related features -->
+	<script type="text/javascript" src="download-reverb.js?v=0006"></script><!-- Downloading tune audio with reverb features -->
+	<script type="text/javascript" src="bww2abc.js?v=0006"></script><!-- Convert from BWW to abc -->
+	<script type="text/javascript" src="app-quick-editor-min.js?v=0006"></script><!-- main application business logic -->
+	<script type="text/javascript" src="api-keys.js?v=0006"></script><!-- API keys used by the tool -->
 
 </html>

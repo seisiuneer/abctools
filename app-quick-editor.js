@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0003_150724_1240";
+var gVersionNumber="0006_150724_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -15715,7 +15715,7 @@ function getUrlWithoutParams() {
 
 	// If running locally, point the share link at the public site
 	if (theURL.indexOf("file:")==0){
-		// MAE 15 July 2024 - Point to the quick editor
+		// Local run shares points to the online site
 		theURL = "https://michaeleskin.com/abctools/abctools.html"
 	}
 
@@ -25737,11 +25737,6 @@ function CursorControlOneTune() {
 	};
 
 	self.onFinished = function() {
-		var els = document.querySelectorAll("svg .highlight");
-
-		for (var i = 0; i < els.length; i++ ) {
-			els[i].classList.remove("highlight");
-		}
 		
 		var cursor = document.querySelector("#notation0 svg .abcjs-cursor");
 		
@@ -37892,7 +37887,7 @@ function HandleWindowResize(){
 				var windowHeight = window.innerHeight;
 
 				// Leave some room for tools
-				windowHeight -= 425; // MAE was 540
+				windowHeight -= 440; // MAE was 540
 
 				// Diagnostics showing?
 				if (gShowDiagnostics){

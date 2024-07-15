@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1430_140724_0945";
+var gVersionNumber="1431_150724_1040";
 
 var gMIDIInitStillWaiting = false;
 
@@ -35655,6 +35655,7 @@ function AdvancedSettings(){
 
 	var oldHighlightColor = gRawHighlightColor;
 
+	var oldDiagnostics = gShowDiagnostics;
 
 	// Setup initial values
 	const theData = {
@@ -35940,6 +35941,11 @@ function AdvancedSettings(){
 					RenderAsync(true,null);
 					
 				}
+			}
+
+			// Need to adjust the editor size on diagnostics show/hide
+			if (oldDiagnostics != gShowDiagnostics){
+				HandleWindowResize();
 			}
 
 			// Save the settings, in case they were initialized
@@ -37853,6 +37859,11 @@ function HandleWindowResize(){
 
 				// Leave some room for tools
 				windowHeight -= 375; // MAE was 540
+
+				// Diagnostics showing?
+				if (gShowDiagnostics){
+					windowHeight -= 90;
+				}
 
 				// Adapt the text area size
 				elem = document.getElementById("abc");
