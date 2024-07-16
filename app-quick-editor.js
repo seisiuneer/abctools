@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0008_150724_1645";
+var gVersionNumber="0009_150724_1800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -39106,6 +39106,8 @@ function inlinePlayback(){
 	setTimeout(function(){
 
 		var theABC = gTheABC.value;
+
+		theABC = PreProcessPlayABC(theABC);
 
 		if (!gRawMode){
 
