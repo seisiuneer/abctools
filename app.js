@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1432_160724_0900";
+var gVersionNumber="1433_160724_1550";
 
 var gMIDIInitStillWaiting = false;
 
@@ -11353,6 +11353,7 @@ function Render(renderAll,tuneNumber) {
 		document.getElementById("saveabcfile").classList.add("saveabcfile");
 		gAllowSave = true;
 
+
 		// Enable the control display toggle
 		gAllowControlToggle = true;
 
@@ -11377,6 +11378,16 @@ function Render(renderAll,tuneNumber) {
 		if (isDesktopBrowser()){
 			document.getElementById("rawmodebutton").classList.remove("rawmodebuttondisabled");
 			document.getElementById("rawmodebutton").classList.add("rawmodebutton");
+		}
+
+		// Enable the editor maximize button
+		if (gIsQuickEditor){
+			if (isDesktopBrowser()){
+				if (!gIsOneColumn){
+					document.getElementById("maximizeeditor").classList.remove("maximizeeditordisabled");
+					document.getElementById("maximizeeditor").classList.add("maximizeeditor");
+				}
+			}
 		}
 
 		gAllowCopy = true;
@@ -11449,6 +11460,14 @@ function Render(renderAll,tuneNumber) {
 			// Disable the play button
 			document.getElementById("playbutton").classList.remove("playbutton");
 			document.getElementById("playbutton").classList.add("playbuttondisabled");
+		}
+
+		// Disable the editor maximize button
+		if (gIsQuickEditor){
+			if (isDesktopBrowser()){
+				document.getElementById("maximizeeditor").classList.remove("maximizeeditor");
+				document.getElementById("maximizeeditor").classList.add("maximizeeditordisabled");
+			}
 		}
 
 		// Disable the raw mode button
@@ -38013,6 +38032,12 @@ function HandleWindowResize(){
 				elem = document.getElementById("notation-placeholder-text");
 				elem.style.marginTop = "64px";
 
+				if (gIsQuickEditor){
+					if (isDesktopBrowser()){
+						document.getElementById("maximizeeditor").classList.remove("maximizeeditor");
+						document.getElementById("maximizeeditor").classList.add("maximizeeditordisabled");
+					}
+				}
 
 			}
 			else{
@@ -38067,7 +38092,14 @@ function HandleWindowResize(){
 				elem = document.getElementById("notation-placeholder-text");
 				elem.style.marginTop = "136px";
 
-
+				if (gIsQuickEditor){
+					if (isDesktopBrowser()){
+						if (gAllowCopy){
+							document.getElementById("maximizeeditor").classList.remove("maximizeeditordisabled");
+							document.getElementById("maximizeeditor").classList.add("maximizeeditor");
+						}
+					}
+				}
 			}
 
 		}
@@ -39402,6 +39434,82 @@ function inlinePlayback(){
 
 	},100);
 
+}
+
+// For the QuickEditor
+function MaximizeEditor(){
+
+	//debugger;
+	
+	if (!gAllowCopy){
+		return;
+	}
+
+	if (isMobileBrowser()){
+		return;
+	}
+
+	if (gIsOneColumn){
+		return;
+	}
+
+	gTheABC.style.width = ((window.innerWidth-gTheNotation.offsetWidth)-150)+"px";
+
+	setTimeout(function(){
+
+		var currentWidth = gTheABC.offsetWidth;
+
+		// console.log("current width = "+gTheABC.offsetWidth);
+		// console.log("containerWidth = "+gInitialTextBoxContainerWidth);
+
+		var theOffset = (gInitialTextBoxContainerWidth - gInitialTextBoxWidth)/2;
+
+		// console.log("theOffset = "+theOffset);
+
+		if (currentWidth > gInitialTextBoxContainerWidth){
+
+			// console.log("Setting the marginLeft for stretch");
+
+			var theDelta = ((currentWidth - gInitialTextBoxWidth)/2)-theOffset;
+
+			if (theDelta <= gInitialTextBoxContainerLeft){
+
+				gTheABC.style.marginLeft = -theDelta+"px";
+
+				if (!gIsOneColumn){
+
+					//debugger;
+
+					var theAppContainer = document.getElementById("app-container");
+
+					var theAppContainerMargin = theAppContainer.style.marginLeft;
+
+					if (theAppContainerMargin){
+
+						theAppContainerMargin = theAppContainer.style.marginLeft.replace("px","");
+
+						theAppContainerMarginFloat = parseFloat(theAppContainerMargin);
+
+						if (!isNaN(theAppContainerMarginFloat)){
+
+							// There is some edge delta factor
+							theAppContainerMarginFloat -= 48;
+
+							if (theDelta < theAppContainerMarginFloat){
+
+								// Slide the notation to the right but don't allow wrapping
+								gTheNotation.style.marginLeft = theDelta+"px";
+
+							}
+						}
+
+					}
+
+				}
+
+			}
+		}
+	},100);
 }
 
 function DoStartup() {

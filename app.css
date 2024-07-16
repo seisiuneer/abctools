@@ -1575,6 +1575,21 @@ opacity:1.0;
 	}
 }
 
+.maximizeeditor{
+opacity:1.0;
+}
+
+.maximizeeditordisabled{
+opacity:0.4;
+}
+
+@media (hover: hover) {
+	.maximizeeditor:hover{
+	background: palegreen;
+	}
+}
+
+
 #fileoperations{
 text-align:center;
 margin-top:12px;
