@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0009_150724_1800";
+var gVersionNumber="0010_150724_1810";
 
 var gMIDIInitStillWaiting = false;
 
@@ -37651,14 +37651,12 @@ function restoreStateFromLocalStorage(){
 
 	if (theTab){
 
-		SetRadioValue("notenodertab", theTab);
-
-		if (theTab == "whistle"){
-
-			// If first time using the whistle tab, prep the tin whistle font for embedded SVG styles
-			PrepareWhistleFont();
-			
+		// MAE 15 Jul 2024 - No whistle or note names on the Quick Editor
+		if ((theTab == "whistle") || (theTab == "notenames")){
+			theTab = "noten";
 		}
+
+		SetRadioValue("notenodertab", theTab);
 
 		gCurrentTab = theTab;
 
@@ -38999,7 +38997,7 @@ function sendGoogleAnalytics(theCategory,theAction,theLabel){
 
 			//console.log("Sending gtag abctools event_category: "+theCategory+" event_action: "+theAction+" event_label: "+theLabel);
 
-			gtag('event', 'abc_'+theCategory+"_"+theAction, { event_category: theCategory, event_action: theAction, event_label: theLabel});
+			gtag('event', 'q_abc_'+theCategory+"_"+theAction, { event_category: theCategory, event_action: theAction, event_label: theLabel});
 
 		}
 	}
