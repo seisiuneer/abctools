@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1433_160724_1550";
+var gVersionNumber="1434_160724_1615";
 
 var gMIDIInitStillWaiting = false;
 
@@ -39438,8 +39438,6 @@ function inlinePlayback(){
 
 // For the QuickEditor
 function MaximizeEditor(){
-
-	//debugger;
 	
 	if (!gAllowCopy){
 		return;
@@ -39453,7 +39451,7 @@ function MaximizeEditor(){
 		return;
 	}
 
-	gTheABC.style.width = ((window.innerWidth-gTheNotation.offsetWidth)-150)+"px";
+	gTheABC.style.width = ((window.innerWidth-gTheNotation.offsetWidth)-125)+"px";
 
 	setTimeout(function(){
 
