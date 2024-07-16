@@ -7,7 +7,7 @@
  * 
  * MIT License
  * 
- * Copyright (c) 2023 Michael Eskin
+ * Copyright (c) 2024 Michael Eskin
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1431_150724_1040";
+var gVersionNumber="1432_160724_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -2448,7 +2448,31 @@ function Clear() {
 
 	    // Clear the diagnostics area
 	    elem = document.getElementById("diagnostics");
-	    elem.innerHTML = "";		
+	    elem.innerHTML = "";
+		
+		if (gIsQuickEditor){
+
+			// Clean up last play operation
+			gMIDIbuffer = null;
+
+			// If on iOS and the muting controller installed, dispose it now
+			if (gIsIOS){
+
+				if (gTheMuteHandle){
+					gTheMuteHandle.dispose();
+						gTheMuteHandle = null;
+					}
+			}
+
+			if (gSynthControl){
+					
+				gSynthControl.destroy();
+
+				gSynthControl = null;
+
+			}
+
+		}
 		
 	}
 
@@ -10416,7 +10440,13 @@ function fireSelectionChanged(){
 // Main routine for rendering the notation
 //
 function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
+	if (gIsQuickEditor){
+		// MAE 15 July 2024
+		// Force only one tune
+		renderAll = false;
+		tuneNumber = 0;
 
+	}
 	// If notation rendering is disabled, return immediately
 	if (gDisableNotationRendering){
 
@@ -10429,6 +10459,12 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 
 	// Get the rendering params
 	var params = GetABCJSParams(instrument);
+
+	if (gIsQuickEditor){
+		// MAE 15 July 2024 - For quick editor
+		params.oneSvgPerLine = false;
+
+	}
 
 	// Create the render div ID array
 	var renderDivs = [];
@@ -10581,9 +10617,10 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 		postProcessTab(visualObj, renderDivID, instrument, false);
 
 	}
-
-	// Early release of the abcjs visual
-	visualObj = null;
+	if (!gIsQuickEditor){
+		// Early release of the abcjs visual
+		visualObj = null;
+	}
 }
 
 function SetRadioValue(radioName, value) {
@@ -11154,7 +11191,12 @@ function RenderRangeAsync(start,end,callback){
 // Allow putting up a spiner before the synchronous Render() function
 //
 function RenderAsync(renderAll,tuneNumber,callback){
-
+	if (gIsQuickEditor){
+		// MAE 15 July 2024 - For single tunes
+		renderAll = false;
+		tuneNumber = 0;
+		
+	}
 	// Don't allow a re-render during PDF generation
 	if (gRenderingPDF){
 		if (callback && (callback != undefined)){
@@ -11205,7 +11247,13 @@ function RenderAsync(renderAll,tuneNumber,callback){
 
 function Render(renderAll,tuneNumber) {
 
-	//console.log("Render renderAll="+renderAll+" tuneNumber="+tuneNumber); 
+	//console.log("Render renderAll="+renderAll+" tuneNumber="+tuneNumber);
+	if (gIsQuickEditor){
+		// MAE 15 July 2024 - Force single tune
+		renderAll = true;
+		tuneNumber = 0;
+
+	} 
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
@@ -11214,6 +11262,15 @@ function Render(renderAll,tuneNumber) {
 
 	// Idle the file status display
 	var nTunes = CountTunes();
+
+	if (gIsQuickEditor){
+		// MAE 15 July 2024 - For quick editor
+		if (nTunes > 1){
+			nTunes = 1;
+		}
+
+
+	}
 
 	if ((gTheABC.value != "") && (nTunes > 0)) {
 
@@ -11263,14 +11320,17 @@ function Render(renderAll,tuneNumber) {
 			ShowMaximizeButton();
 		}
 
-		if (isDesktopBrowser() || gIsMaximized){
+		if (!gIsQuickEditor){
 
-			// Add the play button
-			ShowPlayButton();
+			if (isDesktopBrowser() || gIsMaximized){
 
-			// Add the PDF button
-			ShowPDFButton();
+				// Add the play button
+				ShowPlayButton();
 
+				// Add the PDF button
+				ShowPDFButton();
+
+			}
 		}
 
 		if (gShowAllControls){
@@ -11296,19 +11356,23 @@ function Render(renderAll,tuneNumber) {
 		// Enable the control display toggle
 		gAllowControlToggle = true;
 
-		// Enable the PDF generation button
-		document.getElementById("saveaspdf").classList.remove("saveaspdfdisabled");
-		document.getElementById("saveaspdf").classList.add("saveaspdf");
-		gAllowPDF = true;
+		if (!gIsQuickEditor){
+			// Enable the PDF generation button
+			document.getElementById("saveaspdf").classList.remove("saveaspdfdisabled");
+			document.getElementById("saveaspdf").classList.add("saveaspdf");
+			gAllowPDF = true;
+		}
 
 		// Enable the copy button
 		document.getElementById("copybutton").classList.remove("copybuttondisabled");
 		document.getElementById("copybutton").classList.add("copybutton");
 
-		// Enable the play button
-		document.getElementById("playbutton").classList.remove("playbuttondisabled");
-		document.getElementById("playbutton").classList.add("playbutton");
-		
+		if (!gIsQuickEditor){
+			// Enable the play button
+			document.getElementById("playbutton").classList.remove("playbuttondisabled");
+			document.getElementById("playbutton").classList.add("playbutton");
+		}
+			
 		// Enable the raw mode button (Desktop only)
 		if (isDesktopBrowser()){
 			document.getElementById("rawmodebutton").classList.remove("rawmodebuttondisabled");
@@ -11350,6 +11414,12 @@ function Render(renderAll,tuneNumber) {
 		// Maintain scroll position after render
 		window.scrollTo(0, scrollTop);
 
+		if (gIsQuickEditor){
+
+			// MAE 15 Jul 2024 - For quick editor
+			inlinePlayback();
+
+		}
 	} else {
 
 		// Hide all the buttons and notation
@@ -11361,10 +11431,12 @@ function Render(renderAll,tuneNumber) {
 		document.getElementById("saveabcfile").classList.add("saveabcfiledisabled");
 		gAllowSave = false;
 
-		// Disable the generate PDF button
-		document.getElementById("saveaspdf").classList.remove("saveaspdf");
-		document.getElementById("saveaspdf").classList.add("saveaspdfdisabled");
-		gAllowPDF = false;
+		if (!gIsQuickEditor){
+			// Disable the generate PDF button
+			document.getElementById("saveaspdf").classList.remove("saveaspdf");
+			document.getElementById("saveaspdf").classList.add("saveaspdfdisabled");
+			gAllowPDF = false;
+		}
 
 		// Disable the control display toggle
 		gAllowControlToggle = false;
@@ -11373,9 +11445,11 @@ function Render(renderAll,tuneNumber) {
 		document.getElementById("copybutton").classList.remove("copybutton");
 		document.getElementById("copybutton").classList.add("copybuttondisabled");
 
-		// Disable the play button
-		document.getElementById("playbutton").classList.remove("playbutton");
-		document.getElementById("playbutton").classList.add("playbuttondisabled");
+		if (!gIsQuickEditor){
+			// Disable the play button
+			document.getElementById("playbutton").classList.remove("playbutton");
+			document.getElementById("playbutton").classList.add("playbuttondisabled");
+		}
 
 		// Disable the raw mode button
 		document.getElementById("rawmodebutton").classList.remove("rawmodebutton");
@@ -11405,11 +11479,13 @@ function Render(renderAll,tuneNumber) {
 		// Hide the zoom control
 		document.getElementById("zoombutton").style.display = "none";
 
-		// Hide the play button
-		HidePlayButton();
+		if (!gIsQuickEditor){
+			// Hide the play button
+			HidePlayButton();
 
-		// Hide the PDF button
-		HidePDFButton();
+			// Hide the PDF button
+			HidePDFButton();
+		}
 
 		// Hide the spinner
 		document.getElementById("loading-bar-spinner").style.display = "none";
@@ -11431,6 +11507,13 @@ function Render(renderAll,tuneNumber) {
 
 		// Recalculate the notation top position
 		UpdateNotationTopPosition();
+
+		if (gIsQuickEditor){
+			// MAE FOOFOO 15 Jul 2024
+			// Hide playback controls
+			document.getElementById("playback-audio-inline").innerHTML = "";
+
+		}
 
 	}
 
@@ -15328,8 +15411,6 @@ function AppendJSBach(){
 	theValue += 'X:1\n';
 	theValue += "%\n";
 	theValue += "% Example J.S. Bach transcription originally imported from MusicXML\n";
-	theValue += "%\n";	
-	theValue += '% Click "Play" to play\n';
 	theValue += "%\n";
 	theValue += 'T:Two-Part Invention #1\n';
 	theValue += 'C:J.S. Bach\n';
@@ -15405,8 +15486,6 @@ function AppendJSBach2(){
 	theValue += 'X:1\n';
 	theValue += "%\n";
 	theValue += "% Example J.S. Bach transcription originally imported from MusicXML\n";
-	theValue += "%\n";	
-	theValue += '% Click "Play" to play\n';
 	theValue += "%\n";
 	theValue += 'T:Fantasia\n';
 	theValue += 'T:BWV570\n';
@@ -15704,9 +15783,14 @@ function getUrlWithoutParams() {
 
 	var theURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
 
-	// If running locally, point the share link at the public site
-	if (theURL.indexOf("file:")==0){
+	if (gIsQuickEditor){
 		theURL = "https://michaeleskin.com/abctools/abctools.html"
+	}
+	else{
+		// If running locally, point the share link at the public site
+		if (theURL.indexOf("file:")==0){
+			theURL = "https://michaeleskin.com/abctools/abctools.html"
+		}
 	}
 
 	return theURL;
@@ -18937,8 +19021,6 @@ function InjectMetronome(){
 //
 // Copy the ABC to the clipboard
 //
-// If shift key is pressed, copy the text and open the ABC in editor.drawthedots.com
-//
 function CopyABC(){
 
 	if (gAllowCopy){
@@ -19331,13 +19413,17 @@ function ShowHelpButton(){
 
 function ShowPlayButton(){
 
-	document.getElementById("playbuttonicon").style.display = "block";
+	if (!gIsQuickEditor){
+		document.getElementById("playbuttonicon").style.display = "block";
+	}
 
 }
 
 function HidePlayButton(){
 
-	document.getElementById("playbuttonicon").style.display = "none";
+	if (!gIsQuickEditor){
+		document.getElementById("playbuttonicon").style.display = "none";
+	}
 
 }
 
@@ -19347,13 +19433,17 @@ function HidePlayButton(){
 
 function ShowPDFButton(){
 
-	document.getElementById("pdfbuttonicon").style.display = "block";
+	if (!gIsQuickEditor){
+		document.getElementById("pdfbuttonicon").style.display = "block";
+	}
 
 }
 
 function HidePDFButton(){
 
-	document.getElementById("pdfbuttonicon").style.display = "none";
+	if (!gIsQuickEditor){
+		document.getElementById("pdfbuttonicon").style.display = "none";
+	}
 
 }
 
@@ -19387,8 +19477,10 @@ function DoMaximize(){
 	}
 	else{
 
-		ShowPDFButton();
-		ShowPlayButton();
+		if (!gIsQuickEditor){
+			ShowPDFButton();
+			ShowPlayButton();
+		}
 
 	}
 
@@ -19401,13 +19493,15 @@ function DoMinimize(){
 
 	document.getElementById("zoombutton").src = "img/zoomout.png"
 
-	// // Hide the play button
-	if (!isDesktopBrowser()){
+	if (!gIsQuickEditor){
+		// // Hide the play button
+		if (!isDesktopBrowser()){
 
-		HidePlayButton();
+			HidePlayButton();
 
-		// Hide the PDF button
-		HidePDFButton();
+			// Hide the PDF button
+			HidePDFButton();
+		}
 	}
 
 	if (isDesktopBrowser()){
@@ -19963,6 +20057,10 @@ function TextBoxResizeHandler(){
 //
 function findSelectedTuneIndex(){
 
+	if (gIsQuickEditor){
+		// MAE 15 July 2024 - For single tunes
+		return 0;
+	}
 	var theNotes = gTheABC.value;
 
 	// Now find all the X: items
@@ -20031,6 +20129,11 @@ function findSelectedTuneIndex(){
 
 function MakeTuneVisible(forceUpdate){
 
+	if (gIsQuickEditor){
+		// MAE 15 July 2024 - For single tunes
+		gCurrentTune = 0
+		return;
+	}
 
 	// Follows same enable semantics as copy
 	if (gAllowCopy){
@@ -25721,6 +25824,64 @@ function CursorControl() {
 	};
 
 }
+//
+// MAE 15 Jul 2024 - For quick editor
+//
+function CursorControlOneTune() {
+
+	var self = this;
+
+	self.onReady = function() {
+	};
+
+	self.onStart = function() {
+		var svg = document.querySelector("#notation0 svg");
+		var cursor = document.createElementNS("http://www.w3.org/2000/svg", "line");
+		cursor.setAttribute("class", "abcjs-cursor");
+		cursor.setAttributeNS(null, 'x1', 0);
+		cursor.setAttributeNS(null, 'y1', 0);
+		cursor.setAttributeNS(null, 'x2', 0);
+		cursor.setAttributeNS(null, 'y2', 0);
+		svg.appendChild(cursor);
+
+	};
+
+	self.beatSubdivisions = 2;
+
+	self.onBeat = function(beatNumber, totalBeats, totalTime) {
+	};
+
+	self.onEvent = function(ev) {
+
+		if (ev.measureStart && ev.left === null)
+			return; // this was the second part of a tie across a measure line. Just ignore it.
+
+		var cursor = document.querySelector("#notation0 svg .abcjs-cursor");
+
+		if (cursor) {
+
+			cursor.setAttribute("x1", ev.left - 2);
+			cursor.setAttribute("x2", ev.left - 2);
+			cursor.setAttribute("y1", ev.top);
+			cursor.setAttribute("y2", ev.top + ev.height);
+
+		}
+	};
+
+	self.onFinished = function() {
+		
+		var cursor = document.querySelector("#notation0 svg .abcjs-cursor");
+		
+		if (cursor) {
+			cursor.setAttribute("x1", 0);
+			cursor.setAttribute("x2", 0);
+			cursor.setAttribute("y1", 0);
+			cursor.setAttribute("y2", 0);
+		}
+	};
+
+}
+
 
 //
 // Find the largest rectangle of a specific aspect ratio that fit in another rectangle
@@ -37630,13 +37791,25 @@ function restoreStateFromLocalStorage(){
 
 	if (theTab){
 
+		if (gIsQuickEditor){
+			// MAE 15 Jul 2024 - No whistle or note names on the Quick Editor
+			if ((theTab == "whistle") || (theTab == "notenames")){
+				theTab = "noten";
+			}
+
+		}
+
 		SetRadioValue("notenodertab", theTab);
 
-		if (theTab == "whistle"){
+		if (!gIsQuickEditor){
 
-			// If first time using the whistle tab, prep the tin whistle font for embedded SVG styles
-			PrepareWhistleFont();
-			
+			if (theTab == "whistle"){
+
+				// If first time using the whistle tab, prep the tin whistle font for embedded SVG styles
+				PrepareWhistleFont();
+				
+			}
+
 		}
 
 		gCurrentTab = theTab;
@@ -37858,7 +38031,12 @@ function HandleWindowResize(){
 				var windowHeight = window.innerHeight;
 
 				// Leave some room for tools
-				windowHeight -= 375; // MAE was 540
+				if (!gIsQuickEditor){
+					windowHeight -= 375; // MAE was 540
+				}
+				else{
+					windowHeight -= 440; // MAE was 540
+				}
 
 				// Diagnostics showing?
 				if (gShowDiagnostics){
@@ -38501,9 +38679,12 @@ function showWelcomeScreen(){
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica"><strong>Once ABC has been entered and notation is displayed:</strong></p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click the Zoom-Out arrows at the top-right to view the notation full screen.</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Save" to save all the ABC text to an ABC text file.</p>';
-	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Export PDF" to export your tunebook in PDF format.</p>';
-	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Play" to play or train on the tune currently being edited.</p>';
 
+	   if (!gIsQuickEditor){
+			modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Export PDF" to export your tunebook in PDF format.</p>';
+			modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Play" to play or train on the tune currently being edited.</p>';
+	   }
+	   
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, scrollWithPage: (AllowDialogsToScroll()) });
 
 }
@@ -38519,9 +38700,11 @@ function showZoomInstructionsScreen(){
    	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
    	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Since this is your first time using the tools, here is some useful information to help you get started:</p>';
    	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">In this view, you may scroll through the tune notation.</p>';
-  	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the Play button at the bottom-right to play or train on the current tune.</p>';
-	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">From the Player you can also export the tune image or audio in multiple formats.</p>';
- 	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the PDF button at the bottom-left to export the tunes in PDF format.</p>';
+	   if (!gIsQuickEditor){
+			modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the Play button at the bottom-right to play or train on the current tune.</p>';
+			modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">From the Player you can also export the tune image or audio in multiple formats.</p>';
+			modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the PDF button at the bottom-left to export the tunes in PDF format.</p>';
+	   }
 
  	   if (!gDisableEditFromPlayLink){
 
@@ -38984,8 +39167,12 @@ function sendGoogleAnalytics(theCategory,theAction,theLabel){
 
 			//console.log("Sending gtag abctools event_category: "+theCategory+" event_action: "+theAction+" event_label: "+theLabel);
 
-			gtag('event', 'abc_'+theCategory+"_"+theAction, { event_category: theCategory, event_action: theAction, event_label: theLabel});
-
+			if (!gIsQuickEditor){
+				gtag('event', 'abc_'+theCategory+"_"+theAction, { event_category: theCategory, event_action: theAction, event_label: theLabel});
+			}
+			else{
+				gtag('event', 'q_abc_'+theCategory+"_"+theAction, { event_category: theCategory, event_action: theAction, event_label: theLabel});
+			}
 		}
 	}
 
@@ -39061,6 +39248,160 @@ function isChrome(){
 	else{
 		return false;
 	}
+}
+//
+// Update the inline player control on each render
+//
+function inlinePlayback(){
+
+	// Clean up last play operation
+	gMIDIbuffer = null;
+
+	// If on iOS and the muting controller installed, dispose it now
+	if (gIsIOS){
+
+		if (gTheMuteHandle){
+		 	gTheMuteHandle.dispose();
+				gTheMuteHandle = null;
+			}
+	}
+
+	if (gSynthControl){
+			
+		gSynthControl.destroy();
+
+		gSynthControl = null;
+
+	}
+
+	setTimeout(function(){
+
+		var theABC = gTheABC.value;
+
+		theABC = PreProcessPlayABC(theABC);
+
+		if (!gRawMode){
+
+			theABC = processAllStripping(theABC);
+
+			// Inject %%staffsep 
+			var searchRegExp = /^X:.*$/gm
+
+			theABC = theABC.replace(searchRegExp, "X:1\n%%staffsep " + gStaffSpacing);
+
+		}
+
+		// Transform any att: directives
+		theABC = TransformABCCompliantDirectives(theABC);
+
+		// Do common setup of soundfont and custom timing injection
+		if (!PlayerSetupCommon(theABC)){
+			return;
+		}
+			
+		ScanTuneForCustomTimingInjection(theABC);
+
+		// Swing explorer scan overrides the default
+		ScanTuneForSwingExplorer(theABC);
+
+		var instrument = GetRadioValue("notenodertab");
+
+		var abcOptions = GetABCJSParams(instrument);
+
+		abcOptions.oneSvgPerLine = false;
+				
+		function setInlineTune() {
+
+			gSynthControl.disable(true);
+
+			var visualObj = ABCJS.renderAbc("offscreenrenderquickedit", theABC, abcOptions)[0];
+
+			//Post process whistle or note name tab
+			postProcessTab([visualObj], "offscreenrenderquickedit", instrument, true);
+
+			var midiBuffer = new ABCJS.synth.CreateSynth(theABC);
+
+			gMIDIbuffer = midiBuffer;
+		    gMIDIInitStillWaiting = false;
+
+		    //debugger;
+
+			midiBuffer.init({
+				visualObj: visualObj 
+			}).then(function (response) {
+
+				//debugger;
+
+				console.log(response);
+				
+				if (gSynthControl) {
+
+					var fadeLength = computeFade(theABC);
+
+					gSynthControl.setTune(visualObj, false, {fadeLength:fadeLength}).then(function (response) {
+						
+						console.log("Audio successfully loaded.");
+
+						
+					}).catch(function (error) {
+						
+				        // MAE 10 Jul 2024 - Hide the spinner
+		      			gMIDIInitStillWaiting = false;
+				        document.getElementById("loading-bar-spinner").style.display = "none";
+
+						console.log("Problem loading audio for this tune");
+
+					});
+				}
+			}).catch(function (error) {
+
+				//debugger;
+
+		        // MAE 10 Jul 2024 - Hide the spinner
+				gMIDIInitStillWaiting = false;
+
+		        document.getElementById("loading-bar-spinner").style.display = "none";
+
+				console.log("Problem loading audio for this tune");
+
+			});
+		}
+
+		var cursorControl = new CursorControlOneTune();
+
+		gSynthControl = new ABCJS.synth.SynthController(theABC);
+
+		gSynthControl.load("#playback-audio-inline", cursorControl, {displayLoop: true, displayRestart: true, displayPlay: true, displayProgress: true, displayWarp: true});
+
+		//debugger;
+		// Try to deal with tab deactivation muting
+		if (gIsIOS){
+
+			var context = ABCJS.synth.activeAudioContext();
+
+			// Decide on some parameters
+			let allowBackgroundPlayback = false; // default false, recommended false
+			let forceIOSBehavior = false; // default false, recommended false
+
+			gTheMuteHandle = null;
+			
+			// Pass it to unmute if the context exists... ie WebAudio is supported
+			if (context)
+			{
+			  // If you need to be able to disable unmute at a later time, you can use the returned handle's dispose() method
+			  // if you don't need to do that (most folks won't) then you can simply ignore the return value
+			  gTheMuteHandle = unmute(context, allowBackgroundPlayback, forceIOSBehavior);
+			  
+			}
+		}
+
+		// Recalculate the notation top position
+		UpdateNotationTopPosition();
+
+		setInlineTune();
+
+	},100);
+
 }
 
 function DoStartup() {
@@ -39276,8 +39617,11 @@ function DoStartup() {
 
 		document.getElementById("zoombutton").style.right = "21px";
 		document.getElementById("helpbutton").style.left = "21px";
-		document.getElementById("playbuttonicon").style.right = "21px";
-		document.getElementById("pdfbuttonicon").style.left = "21px";
+
+		if (!gIsQuickEditor){
+			document.getElementById("playbuttonicon").style.right = "21px";
+			document.getElementById("pdfbuttonicon").style.left = "21px";
+		}
 
 	}
 
@@ -39294,15 +39638,17 @@ function DoStartup() {
 		document.getElementById("helpbutton").style.top = "8px";
 		document.getElementById("helpbutton").style.left = "8px"
 
-		document.getElementById("playbuttonicon").style.width = "36px";
-		document.getElementById("playbuttonicon").style.height = "36px";
-		document.getElementById("playbuttonicon").style.bottom = "8px";
-		document.getElementById("playbuttonicon").style.right = "8px"
+		if (!gIsQuickEditor){
+			document.getElementById("playbuttonicon").style.width = "36px";
+			document.getElementById("playbuttonicon").style.height = "36px";
+			document.getElementById("playbuttonicon").style.bottom = "8px";
+			document.getElementById("playbuttonicon").style.right = "8px"
 
-		document.getElementById("pdfbuttonicon").style.width = "36px";
-		document.getElementById("pdfbuttonicon").style.height = "36px";
-		document.getElementById("pdfbuttonicon").style.bottom = "8px";
-		document.getElementById("pdfbuttonicon").style.left = "8px"
+			document.getElementById("pdfbuttonicon").style.width = "36px";
+			document.getElementById("pdfbuttonicon").style.height = "36px";
+			document.getElementById("pdfbuttonicon").style.bottom = "8px";
+			document.getElementById("pdfbuttonicon").style.left = "8px"
+		}
 
 	}
 
@@ -39470,16 +39816,18 @@ function DoStartup() {
 		};
 
 	// Hook up the play button
-	document.getElementById("playbuttonicon").onclick = 
-		function() {
-			PlayABC(null);
-		};
+	if (!gIsQuickEditor){
+		document.getElementById("playbuttonicon").onclick = 
+			function() {
+				PlayABC(null);
+			};
 
-	// Hook up the PDF button
-	document.getElementById("pdfbuttonicon").onclick = 
-		function() {
-			PDFExportDialog();
-		};
+		// Hook up the PDF button
+		document.getElementById("pdfbuttonicon").onclick = 
+			function() {
+				PDFExportDialog();
+			};
+	}
 
 	gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
 
@@ -39543,11 +39891,13 @@ function DoStartup() {
 	}
 	else{
 
-		// Add the play button
-		ShowPlayButton();
+		if (!gIsQuickEditor){
+			// Add the play button
+			ShowPlayButton();
 
-		// Add the PDF button
-		ShowPDFButton();
+			// Add the PDF button
+			ShowPDFButton();
+		}
 
 		// First time using the tool?
 		if (gIsFirstRun){
