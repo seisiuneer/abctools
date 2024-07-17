@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0055_160724_1700";
+var gVersionNumber="0056_160724_1720";
 
 var gMIDIInitStillWaiting = false;
 
@@ -37463,7 +37463,7 @@ function HideTopBar(){
 
 }
 
-function ToggleTopBar(){
+function ToggleTopBar(e){
 
 	// MAE 16 Jul 2024
 	if (e.shiftKey){
