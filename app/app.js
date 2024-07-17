@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0054_150724_1735";
+var gVersionNumber="0055_160724_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -37465,6 +37465,12 @@ function HideTopBar(){
 
 function ToggleTopBar(){
 
+	// MAE 16 Jul 2024
+	if (e.shiftKey){
+		MaximizeEditor();
+		return;
+	}
+
 	if (gTopBarShowing){
 
 		HideTopBar();
@@ -39020,6 +39026,79 @@ function isChrome(){
 	}
 }
 
+// For the QuickEditor
+function MaximizeEditor(){
+	
+	if (!gAllowCopy){
+		return;
+	}
+
+	if (isMobileBrowser()){
+		return;
+	}
+
+	if (gIsOneColumn){
+		return;
+	}
+
+	gTheABC.style.width = ((window.innerWidth-gTheNotation.offsetWidth)-125)+"px";
+
+	setTimeout(function(){
+
+		var currentWidth = gTheABC.offsetWidth;
+
+		// console.log("current width = "+gTheABC.offsetWidth);
+		// console.log("containerWidth = "+gInitialTextBoxContainerWidth);
+
+		var theOffset = (gInitialTextBoxContainerWidth - gInitialTextBoxWidth)/2;
+
+		// console.log("theOffset = "+theOffset);
+
+		if (currentWidth > gInitialTextBoxContainerWidth){
+
+			// console.log("Setting the marginLeft for stretch");
+
+			var theDelta = ((currentWidth - gInitialTextBoxWidth)/2)-theOffset;
+
+			if (theDelta <= gInitialTextBoxContainerLeft){
+
+				gTheABC.style.marginLeft = -theDelta+"px";
+
+				if (!gIsOneColumn){
+
+					//debugger;
+
+					var theAppContainer = document.getElementById("app-container");
+
+					var theAppContainerMargin = theAppContainer.style.marginLeft;
+
+					if (theAppContainerMargin){
+
+						theAppContainerMargin = theAppContainer.style.marginLeft.replace("px","");
+
+						theAppContainerMarginFloat = parseFloat(theAppContainerMargin);
+
+						if (!isNaN(theAppContainerMarginFloat)){
+
+							// There is some edge delta factor
+							theAppContainerMarginFloat -= 48;
+
+							if (theDelta < theAppContainerMarginFloat){
+
+								// Slide the notation to the right but don't allow wrapping
+								gTheNotation.style.marginLeft = theDelta+"px";
+
+							}
+						}
+
+					}
+
+				}
+
+			}
+		}
+	},100);
+}
 
 function DoStartup() {
 
