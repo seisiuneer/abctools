@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0058_170724_1500";
+var gVersionNumber="0059_170724_1615";
 
 var gMIDIInitStillWaiting = false;
 
@@ -37465,20 +37465,28 @@ function HideTopBar(){
 
 function ToggleTopBar(e){
 
+	// MAE 17 Jul 2024
+	if (e.shiftKey && e.altKey){
+
+		AlignMeasures(true);
+		return;
+		
+	}
+
+	// MAE 17 Jul 2024
+	if (e.altKey){
+
+		AlignMeasures(false);
+		return;
+		
+	}
+
 	// MAE 16 Jul 2024
 	if (e.shiftKey){
 
 		MaximizeEditor();
 		return;
 
-	}
-
-	// MAE 17 Jul 2024
-	if (e.altKey){
-
-		AlignMeasures();
-		return;
-		
 	}
 
 	if (gTopBarShowing){
@@ -39181,7 +39189,7 @@ function alignMeasureMarkers(abcNotation) {
 //
 // Align all the ABC measure markers
 //
-function AlignMeasures(){
+function AlignMeasures(bDoAll){
 
 	if (!gAllowCopy){
 		return;
@@ -39193,32 +39201,71 @@ function AlignMeasures(){
 
 	sendGoogleAnalytics("action","AlignMeasures");
 
-	var nTunes = CountTunes();
+	if (bDoAll){
 
-	var theNotes = gTheABC.value;
+		var nTunes = CountTunes();
 
-	var output = FindPreTuneHeader(theNotes);
+		var theNotes = gTheABC.value;
 
-	for (var i=0;i<nTunes;++i){
+		var output = FindPreTuneHeader(theNotes);
 
-		var theTune = getTuneByIndex(i);
+		for (var i=0;i<nTunes;++i){
+
+			var theTune = getTuneByIndex(i);
+
+			var theNotes = JustTheNotes(theTune);
+
+			var theNotesAligned = alignMeasureMarkers(theNotes);
+
+			theTune = theTune.replace(theNotes,theNotesAligned);
+
+			theTune = theTune.trim();
+
+			output += theTune + "\n\n";
+
+		}
+
+		gTheABC.value = output;
+
+		// Redraw
+		RenderAsync(true,null);
+
+	}
+	else{
+
+		var theSelectedTuneIndex = findSelectedTuneIndex();
+
+		// Try to find the current tune
+		var theTune = findSelectedTune();
+
+		if (theTune == ""){
+			// This should never happen
+			return;
+		}
+
+		var theInjectedTune = "";
 
 		var theNotes = JustTheNotes(theTune);
 
 		var theNotesAligned = alignMeasureMarkers(theNotes);
 
-		theTune = theTune.replace(theNotes,theNotesAligned);
+		theInjectedTune = theTune.replace(theNotes,theNotesAligned);
 
-		theTune = theTune.trim();
+		theInjectedTune = theInjectedTune.trim();
 
-		output += theTune + "\n\n";
+		// Stuff in the injected ABC
+		var theABC = gTheABC.value;
 
+		theABC = theABC.replace(theTune,theInjectedTune);
+
+		gTheABC.value = theABC;
+
+		// Force a redraw of the tune
+		RenderAsync(false,theSelectedTuneIndex,null);		
 	}
 
-	gTheABC.value = output;
 
-	// Redraw
-	RenderAsync(true,null);
+	gIsDirty = true;
 
 }
 
