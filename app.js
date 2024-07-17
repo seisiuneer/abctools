@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1435_160724_1650";
+var gVersionNumber="1436_170724_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -10440,13 +10440,14 @@ function fireSelectionChanged(){
 // Main routine for rendering the notation
 //
 function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
+
 	if (gIsQuickEditor){
 		// MAE 15 July 2024
-		// Force only one tune
+		// For the Quick Editor
 		renderAll = false;
 		tuneNumber = 0;
-
 	}
+
 	// If notation rendering is disabled, return immediately
 	if (gDisableNotationRendering){
 
@@ -11191,8 +11192,9 @@ function RenderRangeAsync(start,end,callback){
 // Allow putting up a spiner before the synchronous Render() function
 //
 function RenderAsync(renderAll,tuneNumber,callback){
+
 	if (gIsQuickEditor){
-		// MAE 15 July 2024 - For single tunes
+		// MAE 15 July 2024 - For Quick Editor
 		renderAll = false;
 		tuneNumber = 0;
 		
@@ -11248,8 +11250,9 @@ function RenderAsync(renderAll,tuneNumber,callback){
 function Render(renderAll,tuneNumber) {
 
 	//console.log("Render renderAll="+renderAll+" tuneNumber="+tuneNumber);
+
 	if (gIsQuickEditor){
-		// MAE 15 July 2024 - Force single tune
+		// MAE 15 July 2024 - For the Quick Editor
 		renderAll = true;
 		tuneNumber = 0;
 
@@ -11264,7 +11267,7 @@ function Render(renderAll,tuneNumber) {
 	var nTunes = CountTunes();
 
 	if (gIsQuickEditor){
-		// MAE 15 July 2024 - For quick editor
+		// MAE 15 July 2024 - For the Quick Editor
 		if (nTunes > 1){
 			nTunes = 1;
 		}
@@ -20077,7 +20080,7 @@ function TextBoxResizeHandler(){
 function findSelectedTuneIndex(){
 
 	if (gIsQuickEditor){
-		// MAE 15 July 2024 - For single tunes
+		// MAE 15 July 2024 - For the Quick Editor
 		return 0;
 	}
 	var theNotes = gTheABC.value;
@@ -20149,7 +20152,7 @@ function findSelectedTuneIndex(){
 function MakeTuneVisible(forceUpdate){
 
 	if (gIsQuickEditor){
-		// MAE 15 July 2024 - For single tunes
+		// MAE 15 July 2024 - For the Quick Editor
 		gCurrentTune = 0
 		return;
 	}
@@ -24960,7 +24963,7 @@ function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 		
 		var allTopLines;
 
-		if (bIsPlayback){
+		if (bIsPlayback || gIsQuickEditor){
 			allTopLines = document.querySelectorAll('div[id="' + renderDivID + '"] > svg > g > g > [class="abcjs-top-line"]');
 		}
 		else{
@@ -25077,6 +25080,10 @@ function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 
 		var Tspans;
 
+		if (gIsQuickEditor){
+			Tspans = document.querySelectorAll('div[id="' + renderDivID + '"] > svg > g > g[data-name="tabNumber"] > text > tspan');
+		}
+		else
 		if (bIsPlayback){
 			Tspans = document.querySelectorAll('div[id="' + renderDivID + '"] > svg > g > g[data-name="tabNumber"] > text > tspan');
 		}
@@ -25192,6 +25199,10 @@ function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 
 		var SVGs;
 
+		if (gIsQuickEditor){
+			Svgs = document.querySelectorAll('div[id="' + renderDivID + '"] > svg');
+		}
+		else
 		if (bIsPlayback){
 			Svgs = document.querySelectorAll('div[id="' + renderDivID + '"] > svg');
 		}
@@ -25201,7 +25212,7 @@ function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 
 		var nSVGsRequired = 1;
 
-		if (bIsPlayback){
+		if (bIsPlayback || gIsQuickEditor){
 			nSVGsRequired = 0;
 		}
 
@@ -37816,25 +37827,13 @@ function restoreStateFromLocalStorage(){
 
 	if (theTab){
 
-		if (gIsQuickEditor){
-			// MAE 15 Jul 2024 - No whistle or note names on the Quick Editor
-			if ((theTab == "whistle") || (theTab == "notenames")){
-				theTab = "noten";
-			}
-
-		}
-
 		SetRadioValue("notenodertab", theTab);
 
-		if (!gIsQuickEditor){
+		if (theTab == "whistle"){
 
-			if (theTab == "whistle"){
-
-				// If first time using the whistle tab, prep the tin whistle font for embedded SVG styles
-				PrepareWhistleFont();
-				
-			}
-
+			// If first time using the whistle tab, prep the tin whistle font for embedded SVG styles
+			PrepareWhistleFont();
+			
 		}
 
 		gCurrentTab = theTab;
