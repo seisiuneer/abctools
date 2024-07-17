@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0057_170724_1000";
+var gVersionNumber="0058_170724_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -37467,8 +37467,18 @@ function ToggleTopBar(e){
 
 	// MAE 16 Jul 2024
 	if (e.shiftKey){
+
 		MaximizeEditor();
 		return;
+
+	}
+
+	// MAE 17 Jul 2024
+	if (e.altKey){
+
+		AlignMeasures();
+		return;
+		
 	}
 
 	if (gTopBarShowing){
@@ -39026,6 +39036,192 @@ function isChrome(){
 	}
 }
 
+//
+// Format the ABC so all the measure markers align vertically
+//
+function alignMeasureMarkers(abcNotation) {
+
+	function findOffsets(pattern, text) {
+
+	    let regex = new RegExp(pattern, 'g'); // Create a global regex pattern
+	    let result;
+	    let offsets = [];
+	    
+	    while ((result = regex.exec(text)) !== null) {
+
+	        offsets.push({value:result[0],position: result.index});
+
+	    }
+	    
+	    return offsets;
+	}
+
+	//debugger;
+
+    // Split the ABC notation into lines
+    let lines = abcNotation.split('\n');
+    
+    // Find all measure markers and their positions
+    let markers = [];
+    
+    var maxMeasure = [];
+
+    lines.forEach(line => {
+
+       	//debugger;
+
+        let matches = findOffsets(/:\|:|:\|\d*\|\|\d*|:\||\|:|\|\]|\[\||\|\||\|/g, line); 
+       
+        // No measure marker at the front of the line, push a pseudo-marker
+       	if (matches && matches.length > 0){
+
+       		if (matches[0].position > 0){
+       			matches.unshift({value:"", position:0});
+       		}
+
+       	}
+
+       	if (matches.length > maxMeasure.length){
+
+       		var nToPush = matches.length - maxMeasure.length;
+
+       		//console.log("nToPush: "+nToPush);
+       		
+       		for (var i=0;i<nToPush;++i){
+
+       			maxMeasure.push(0);
+
+       		}
+       	}
+
+        markers.push(matches);
+
+        if (matches.length>1){
+        	
+        	for (var i=0;i<matches.length-1;++i){
+
+        		var delta = matches[i+1].position - matches[i].position;
+
+        		if (delta > maxMeasure[i]){
+
+        			maxMeasure[i] = delta;
+
+        		}
+
+        	}
+        }
+        
+    });
+
+    //debugger;
+
+    // Adjust lines to align measure markers
+    var nLines = lines.length;
+
+    var alignedLines = [];
+
+    for (var i=0;i<nLines;++i){
+
+    	if (lines[i].length == 0){
+    		continue;
+    	}
+
+    	var thisLine = "";
+     	
+     	var thisMarker = markers[i];
+   	
+    	if (markers[i].length > 1){
+
+    		for (var j=0;j<markers[i].length-1;++j){
+
+    			var thisSegment = lines[i].substring(thisMarker[j].position,thisMarker[j+1].position);
+
+    			//console.log("thisSegment: "+thisSegment)
+    			
+    			if (thisSegment.length < maxMeasure[j]){
+
+    				var spacesToAdd = maxMeasure[j] - thisSegment.length;
+
+    				//console.log("spacesToAdd "+spacesToAdd);
+    				
+    				for (var k=0;k<spacesToAdd;++k){
+
+    					thisSegment += " ";
+    				
+    				}
+    			}
+    				
+    			thisLine += thisSegment;
+ 
+    		}
+
+		    // Any leftover characters after the last measure marker?
+			if (thisMarker[thisMarker.length-1].position < lines[i].length){
+
+				thisLine += lines[i].substring(thisMarker[thisMarker.length-1].position,lines[i].length);
+
+			}
+
+    	}
+    	else{
+
+    		thisLine = lines[i];
+
+    	}
+
+    	alignedLines.push(thisLine);
+    }
+    
+    // Join lines back into a single string
+    let alignedAbcNotation = alignedLines.join('\n');
+
+    return alignedAbcNotation;
+}
+
+//
+// Align all the ABC measure markers
+//
+function AlignMeasures(){
+
+	if (!gAllowCopy){
+		return;
+	}
+
+	if (isMobileBrowser()){
+		return;
+	}
+
+	sendGoogleAnalytics("action","AlignMeasures");
+
+	var nTunes = CountTunes();
+
+	var theNotes = gTheABC.value;
+
+	var output = FindPreTuneHeader(theNotes);
+
+	for (var i=0;i<nTunes;++i){
+
+		var theTune = getTuneByIndex(i);
+
+		var theNotes = JustTheNotes(theTune);
+
+		var theNotesAligned = alignMeasureMarkers(theNotes);
+
+		theTune = theTune.replace(theNotes,theNotesAligned);
+
+		theTune = theTune.trim();
+
+		output += theTune + "\n\n";
+
+	}
+
+	gTheABC.value = output;
+
+	// Redraw
+	RenderAsync(true,null);
+
+}
+
 // For the QuickEditor
 function MaximizeEditor(){
 	
@@ -39040,6 +39236,8 @@ function MaximizeEditor(){
 	if (gIsOneColumn){
 		return;
 	}
+	
+	sendGoogleAnalytics("action","MaximizeEditor");
 
 	gTheABC.style.width = ((window.innerWidth-gTheNotation.offsetWidth)-125)+"px";
 
