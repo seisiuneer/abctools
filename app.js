@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1446_180724_0815";
+var gVersionNumber="1447_180724_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -39451,6 +39451,16 @@ function inlinePlayback(){
 		var cursorControl = new CursorControlOneTune();
 
 		gSynthControl = new ABCJS.synth.SynthController(theABC);
+
+		// Using large player controls?
+		var elem = document.getElementById("playback-audio-inline");
+
+		if (gLargePlayerControls){
+			elem.classList.add("abcjs-large");
+		}
+		else{
+			elem.classList.remove("abcjs-large");
+		}
 
 		gSynthControl.load("#playback-audio-inline", cursorControl, {displayLoop: true, displayRestart: true, displayPlay: true, displayProgress: true, displayWarp: true});
 
