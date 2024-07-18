@@ -36,7 +36,7 @@
 		<link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 		<link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-		<link href="app.css?v=1439" media="all" rel="stylesheet" type="text/css">
+		<link href="app.css?v=1440" media="all" rel="stylesheet" type="text/css">
 						
 	</head>
 
@@ -104,15 +104,16 @@
 					<p id="abc-selected">No ABC file selected</p>
 
 					<div id="fileoperations">
-						<input type="file" style="margin-right:28px;" id="selectabcfile" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL,.mid,.MID,.midi,.MIDI,.bww,.BWW" hidden /> 
+						<input type="file" style="margin-right:18px;" id="selectabcfile" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL,.mid,.MID,.midi,.MIDI,.bww,.BWW" hidden /> 
 						<!--our custom abc file upload button-->
-						<input class="abcupload btn btn-top" style="margin-right:28px;"  title="Opens an existing ABC, MusicXML, BWW, or MIDI file.&nbsp;&nbsp;You may also drag-and-drop a single ABC, MusicXML, BWW, or MIDI file on the editor area to add it." onclick="fileOpenIntercept(event);" type="button" value="Open"/>
-						<input class="newabcfile btn btn-top" style="margin-right:28px;" id="newabcfile" onclick="AddABC();" type="button" value="Add" title="Add your own tunes, restore from a saved snapshot, seach for tunes, re-order tunes, delete tunes, or add examples tunes and song templates to the ABC"/>
-						<input class="saveabcfiledisabled btn btn-top" style="margin-right:28px;" id="saveabcfile" onclick="SaveABC();" type="button" value="Save" title="Saves the current ABC text to a file"/>
-						<input class="copybuttondisabled btn btn-top" style="margin-right:28px;" id="copybutton" onclick="CopyABC();" type="button" value="Copy All" title="Copies all of the ABC text to the clipboard"/>
-						<input class="rawmodebuttondisabled btn btn-rawmode-off" style="margin-right:28px;" id="rawmodebutton" onclick="ToggleRawMode()" type="button" value="Highlighting Off" title="When On, highlight notation by selecting the ABC text or highlight ABC text by clicking on the notation."/>
-						<input class="configuresettings btn btn-configuresettings"  style="margin-right:28px;" id="configuresettings" onclick="ConfigureToolSettings();" type="button" value="Settings" title="Click to configure all settings for the tool"/>
-						<input class="maximizeeditordisabled btn btn-top" id="maximizeeditor" style="margin-right:28px;" onclick="MaximizeEditor();" type="button" value="←→" title="Maximizes the width of the ABC editor"/>
+						<input class="abcupload btn btn-top" style="margin-right:18px;"  title="Opens an existing ABC, MusicXML, BWW, or MIDI file.&nbsp;&nbsp;You may also drag-and-drop a single ABC, MusicXML, BWW, or MIDI file on the editor area to add it." onclick="fileOpenIntercept(event);" type="button" value="Open"/>
+						<input class="newabcfile btn btn-top" style="margin-right:18px;" id="newabcfile" onclick="AddABC();" type="button" value="Add" title="Add your own tunes, restore from a saved snapshot, seach for tunes, re-order tunes, delete tunes, or add examples tunes and song templates to the ABC"/>
+						<input class="saveabcfiledisabled btn btn-top" style="margin-right:18px;" id="saveabcfile" onclick="SaveABC();" type="button" value="Save" title="Saves the current ABC text to a file"/>
+						<input class="copybuttondisabled btn btn-top" style="margin-right:18px;" id="copybutton" onclick="CopyABC();" type="button" value="Copy All" title="Copies all of the ABC text to the clipboard"/>
+						<input class="rawmodebuttondisabled btn btn-rawmode-off" style="margin-right:18px;" id="rawmodebutton" onclick="ToggleRawMode()" type="button" value="Highlighting Off" title="When On, highlight notation by selecting the ABC text or highlight ABC text by clicking on the notation."/>
+						<input class="configuresettings btn btn-configuresettings"  style="margin-right:18px;" id="configuresettings" onclick="ConfigureToolSettings();" type="button" value="Settings" title="Click to configure all settings for the tool"/>
+						<input class="alignbarsdisabled btn btn-top" id="alignbars" style="margin-right:18px;" onclick="QEAlignBars(event);" type="button" value="| = |" title="Aligns the bars in the current tune ABC.&nbsp;&nbsp;Shift-click to align bars for all tunes in the tunebook."/>
+						<input class="maximizeeditordisabled btn btn-top" id="maximizeeditor" style="margin-right:18px;" onclick="MaximizeEditor();" type="button" value="←→" title="Maximizes the width of the ABC editor"/>
 						<input class="toggletopbar btn btn-top" id="toggletopbar" onclick="ToggleTopBar(event);" type="button" value="▲" title="Toggles display of the top bar and lower button bar.&nbsp;&nbsp;When tunes are present in the editor, Shift-click to maximize the width of the ABC text area.&nbsp;&nbsp;Alt-click to align the bars in the current tune ABC.&nbsp;&nbsp;Shift-Alt-click to align the bars for all the tunes in the ABC."/>
 					</div>
 
@@ -206,28 +207,28 @@
 		var gIsQuickEditor = true;
 	</script>
 
-	<script type="text/javascript" src="jquery-1.11.1.min.js?v=1439"></script><!-- jQuery -->
-	<script type="text/javascript" src="jszip.min.js?v=1439"></script><!-- zip file handling -->
-	<script type="text/javascript" src="xml2abc-min.js?v=1439"></script><!-- to convert MusicXML to ABC -->
-	<script type="text/javascript" src="abcjs-chord-intervals.js?v=1439"></script><!-- chord intervals used by abcjs - non-minified -->
-	<script type="text/javascript" src="abcjs-basic-eskin-min.js?v=1439"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
-	<script type="text/javascript" src="jspdf.min.js?v=1439"></script><!-- to generate PDF using Javscript -->
-	<script type="text/javascript" src="html2image.js?v=1439"></script><!-- to convert HTML elements to bitmaps -->
-	<script type="text/javascript" src="qrcode.js?v=1439"></script><!-- to generate QR codes for the share links -->
-	<script type="text/javascript" src="lz-string.min.js?v=1439"></script><!-- used for share URL generation -->
-	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1439"></script><!-- modal dialog replacement -->
-	<script type="text/javascript" src="lame.min.js?v=1439"></script><!-- .mp3 audio encoder -->
-	<script type="text/javascript" src="unmute.min.js?v=1439"></script><!-- fixes issue on iOS Safari muting tabs -->
-	<script type="text/javascript" src="tab-injectors-min.js?v=1439"></script><!-- Tab generation for ABC injection -->
-	<script type="text/javascript" src="visualscript-sdk.js?v=1439"></script><!-- SmartDraw VSON API -->
-	<script type="text/javascript" src="smartdraw-export-min.js?v=1439"></script><!-- Export to SmartDraw VSON -->
-	<script type="text/javascript" src="acoustic_grand_piano-mp3.js?v=1439"></script><!-- Offline grand piano sound -->
-	<script type="text/javascript" src="percussion-mp3.js?v=1439"></script><!-- Offline percussion -->
-	<script type="text/javascript" src="online-check.js?v=1439"></script><!-- check if online -->
-	<script type="text/javascript" src="database.js?v=1439"></script><!-- IndexedDB related features -->
-	<script type="text/javascript" src="download-reverb.js?v=1439"></script><!-- Downloading tune audio with reverb features -->
-	<script type="text/javascript" src="bww2abc.js?v=1439"></script><!-- Convert from BWW to abc -->
-	<script type="text/javascript" src="app-min.js?v=1439"></script><!-- main application business logic -->
-	<script type="text/javascript" src="api-keys.js?v=1439"></script><!-- API keys used by the tool -->
+	<script type="text/javascript" src="jquery-1.11.1.min.js?v=1440"></script><!-- jQuery -->
+	<script type="text/javascript" src="jszip.min.js?v=1440"></script><!-- zip file handling -->
+	<script type="text/javascript" src="xml2abc-min.js?v=1440"></script><!-- to convert MusicXML to ABC -->
+	<script type="text/javascript" src="abcjs-chord-intervals.js?v=1440"></script><!-- chord intervals used by abcjs - non-minified -->
+	<script type="text/javascript" src="abcjs-basic-eskin-min.js?v=1440"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
+	<script type="text/javascript" src="jspdf.min.js?v=1440"></script><!-- to generate PDF using Javscript -->
+	<script type="text/javascript" src="html2image.js?v=1440"></script><!-- to convert HTML elements to bitmaps -->
+	<script type="text/javascript" src="qrcode.js?v=1440"></script><!-- to generate QR codes for the share links -->
+	<script type="text/javascript" src="lz-string.min.js?v=1440"></script><!-- used for share URL generation -->
+	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1440"></script><!-- modal dialog replacement -->
+	<script type="text/javascript" src="lame.min.js?v=1440"></script><!-- .mp3 audio encoder -->
+	<script type="text/javascript" src="unmute.min.js?v=1440"></script><!-- fixes issue on iOS Safari muting tabs -->
+	<script type="text/javascript" src="tab-injectors-min.js?v=1440"></script><!-- Tab generation for ABC injection -->
+	<script type="text/javascript" src="visualscript-sdk.js?v=1440"></script><!-- SmartDraw VSON API -->
+	<script type="text/javascript" src="smartdraw-export-min.js?v=1440"></script><!-- Export to SmartDraw VSON -->
+	<script type="text/javascript" src="acoustic_grand_piano-mp3.js?v=1440"></script><!-- Offline grand piano sound -->
+	<script type="text/javascript" src="percussion-mp3.js?v=1440"></script><!-- Offline percussion -->
+	<script type="text/javascript" src="online-check.js?v=1440"></script><!-- check if online -->
+	<script type="text/javascript" src="database.js?v=1440"></script><!-- IndexedDB related features -->
+	<script type="text/javascript" src="download-reverb.js?v=1440"></script><!-- Downloading tune audio with reverb features -->
+	<script type="text/javascript" src="bww2abc.js?v=1440"></script><!-- Convert from BWW to abc -->
+	<script type="text/javascript" src="app-min.js?v=1440"></script><!-- main application business logic -->
+	<script type="text/javascript" src="api-keys.js?v=1440"></script><!-- API keys used by the tool -->
 
 </html>

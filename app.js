@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1439_170724_1615";
+var gVersionNumber="1440_170724_1930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -11383,13 +11383,17 @@ function Render(renderAll,tuneNumber) {
 			document.getElementById("rawmodebutton").classList.add("rawmodebutton");
 		}
 
-		// Enable the editor maximize button
+		// Enable the editor maximize and align measures button
 		if (gIsQuickEditor){
 			if (isDesktopBrowser()){
+
 				if (!gIsOneColumn){
 					document.getElementById("maximizeeditor").classList.remove("maximizeeditordisabled");
 					document.getElementById("maximizeeditor").classList.add("maximizeeditor");
 				}
+
+				document.getElementById("alignbars").classList.remove("alignbarsdisabled");
+				document.getElementById("alignbars").classList.add("alignbars");
 			}
 		}
 
@@ -11465,11 +11469,16 @@ function Render(renderAll,tuneNumber) {
 			document.getElementById("playbutton").classList.add("playbuttondisabled");
 		}
 
-		// Disable the editor maximize button
+		// Disable the editor maximize and align bars buttons
 		if (gIsQuickEditor){
+
 			if (isDesktopBrowser()){
+
 				document.getElementById("maximizeeditor").classList.remove("maximizeeditor");
 				document.getElementById("maximizeeditor").classList.add("maximizeeditordisabled");
+
+				document.getElementById("alignbars").classList.remove("alignbars");
+				document.getElementById("alignbars").classList.add("alignbarsdisabled");
 			}
 		}
 
@@ -38058,7 +38067,7 @@ function HandleWindowResize(){
 				if (gIsQuickEditor){
 					if (isDesktopBrowser()){
 						document.getElementById("maximizeeditor").classList.remove("maximizeeditor");
-						document.getElementById("maximizeeditor").classList.add("maximizeeditordisabled");
+						document.getElementById("maximizeeditor").classList.add("maximizeeditordisabled");						
 					}
 				}
 
@@ -38118,8 +38127,13 @@ function HandleWindowResize(){
 				if (gIsQuickEditor){
 					if (isDesktopBrowser()){
 						if (gAllowCopy){
+
 							document.getElementById("maximizeeditor").classList.remove("maximizeeditordisabled");
 							document.getElementById("maximizeeditor").classList.add("maximizeeditor");
+
+							document.getElementById("alignbars").classList.remove("alignbarsdisabled");
+							document.getElementById("alignbars").classList.add("alignbars");
+
 						}
 					}
 				}
@@ -39682,8 +39696,28 @@ function AlignMeasures(bDoAll){
 
 	gIsDirty = true;
 
+}
 
+//
+// Align the measures from the Quick Editor dedicated button
+function QEAlignBars(e){
 
+	if (!gAllowCopy){
+		return;
+	}
+
+	if (isMobileBrowser()){
+		return;
+	}
+
+	if (e.shiftKey){
+		AlignMeasures(true);
+		return;
+	}
+	else{
+		AlignMeasures(false);
+		return;
+	}
 }
 
 // For the QuickEditor
