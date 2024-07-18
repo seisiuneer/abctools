@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1445_170724_2115";
+var gVersionNumber="1446_180724_0815";
 
 var gMIDIInitStillWaiting = false;
 
@@ -11385,6 +11385,7 @@ function Render(renderAll,tuneNumber) {
 
 		// Enable the editor maximize and align measures button
 		if (gIsQuickEditor){
+
 			if (isDesktopBrowser()){
 
 				if (!gIsOneColumn){
@@ -11392,9 +11393,11 @@ function Render(renderAll,tuneNumber) {
 					document.getElementById("maximizeeditor").classList.add("maximizeeditor");
 				}
 
-				document.getElementById("alignbars").classList.remove("alignbarsdisabled");
-				document.getElementById("alignbars").classList.add("alignbars");
 			}
+			
+			document.getElementById("alignbars").classList.remove("alignbarsdisabled");
+			document.getElementById("alignbars").classList.add("alignbars");
+
 		}
 
 		gAllowCopy = true;
@@ -11477,9 +11480,11 @@ function Render(renderAll,tuneNumber) {
 				document.getElementById("maximizeeditor").classList.remove("maximizeeditor");
 				document.getElementById("maximizeeditor").classList.add("maximizeeditordisabled");
 
-				document.getElementById("alignbars").classList.remove("alignbars");
-				document.getElementById("alignbars").classList.add("alignbarsdisabled");
 			}
+			
+			document.getElementById("alignbars").classList.remove("alignbars");
+			document.getElementById("alignbars").classList.add("alignbarsdisabled");
+
 		}
 
 		// Disable the raw mode button
@@ -38065,6 +38070,7 @@ function HandleWindowResize(){
 				elem.style.marginTop = "64px";
 
 				if (gIsQuickEditor){
+
 					if (isDesktopBrowser()){
 						document.getElementById("maximizeeditor").classList.remove("maximizeeditor");
 						document.getElementById("maximizeeditor").classList.add("maximizeeditordisabled");						
@@ -38125,16 +38131,22 @@ function HandleWindowResize(){
 				elem.style.marginTop = "136px";
 
 				if (gIsQuickEditor){
+
 					if (isDesktopBrowser()){
+
 						if (gAllowCopy){
 
 							document.getElementById("maximizeeditor").classList.remove("maximizeeditordisabled");
 							document.getElementById("maximizeeditor").classList.add("maximizeeditor");
 
-							document.getElementById("alignbars").classList.remove("alignbarsdisabled");
-							document.getElementById("alignbars").classList.add("alignbars");
-
 						}
+					}
+
+					if (gAllowCopy){
+
+						document.getElementById("alignbars").classList.remove("alignbarsdisabled");
+						document.getElementById("alignbars").classList.add("alignbars");
+
 					}
 				}
 			}
@@ -39624,10 +39636,6 @@ function AlignMeasures(bDoAll){
 		return;
 	}
 
-	if (isMobileBrowser()){
-		return;
-	}
-
 	sendGoogleAnalytics("action","AlignMeasures");
 
 	if (bDoAll){
@@ -39703,10 +39711,6 @@ function AlignMeasures(bDoAll){
 function QEAlignBars(e){
 
 	if (!gAllowCopy){
-		return;
-	}
-
-	if (isMobileBrowser()){
 		return;
 	}
 

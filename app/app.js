@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0060_170724_2130";
+var gVersionNumber="0061_180724_0815";
 
 var gMIDIInitStillWaiting = false;
 
@@ -39192,10 +39192,6 @@ function alignMeasureMarkers(abcNotation) {
 function AlignMeasures(bDoAll){
 
 	if (!gAllowCopy){
-		return;
-	}
-
-	if (isMobileBrowser()){
 		return;
 	}
 
