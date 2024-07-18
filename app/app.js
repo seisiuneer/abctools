@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0062_180724_1500";
+var gVersionNumber="0063_180724_1530";
 
 var gMIDIInitStillWaiting = false;
 
@@ -39547,13 +39547,10 @@ function DoStartup() {
 		// Move the spinner
 		elem = document.getElementById("loading-bar-spinner");
 		elem.style.top = "25%"
-		// elem.style.left = "36px";	
-		// elem.style.marginLeft = "-16px";	
-		// elem.style.marginTop = "-16px";	
-
-		// elem = document.getElementById("spinner-icon");
-		// elem.style.width = "32px"
-		// elem.style.height = "32px";	
+		
+		// Hide the Highlighting button
+		elem = document.getElementById("rawmodebutton");
+		elem.style.display = "none";
 
 	}
 
