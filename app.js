@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1440_170724_1930";
+var gVersionNumber="1442_170724_2020";
 
 var gMIDIInitStillWaiting = false;
 
@@ -39507,7 +39507,7 @@ function alignMeasureMarkers(abcNotation) {
 
        	//debugger;
 
-        let matches = findOffsets(/:\|:|:\|\d*\|\|\d*|:\||\|:|\|\]|\[\||\|\||\|/g, line); 
+        let matches = findOffsets(/:\|:|::|:\|\d*|\|\d*|:\||\|:|\|\]|\[\||\|\||\|/g, line); 
        
         // No measure marker at the front of the line, push a pseudo-marker
        	if (matches && matches.length > 0){
