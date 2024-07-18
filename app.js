@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1447_180724_1200";
+var gVersionNumber="1448_180724_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -39561,6 +39561,10 @@ function alignMeasureMarkers(abcNotation) {
 
         		var delta = matches[i+1].position - matches[i].position;
 
+        		if (matches[i+1].value.indexOf(":") == 0){
+        			delta++;
+        		}
+
         		if (delta > maxMeasure[i]){
 
         			maxMeasure[i] = delta;
@@ -39600,6 +39604,10 @@ function alignMeasureMarkers(abcNotation) {
     			if (thisSegment.length < maxMeasure[j]){
 
     				var spacesToAdd = maxMeasure[j] - thisSegment.length;
+
+    				if (thisMarker[j+1].value.indexOf(":") == 0){
+    					spacesToAdd--;
+    				}
 
     				//console.log("spacesToAdd "+spacesToAdd);
     				
