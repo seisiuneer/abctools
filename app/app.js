@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0067_200724_1025";
+var gVersionNumber="0068_200724_1345";
 
 var gMIDIInitStillWaiting = false;
 
@@ -11274,7 +11274,8 @@ function Render(renderAll,tuneNumber) {
 
 		}
 
-		if (gShowAllControls){
+		// MAE 20 July 2024 - Avoid showing bottom bar if top bar hidden
+		if (gShowAllControls && gTopBarShowing){
 
 			document.getElementById("notenrechts").style.display = "inline-block";
 
