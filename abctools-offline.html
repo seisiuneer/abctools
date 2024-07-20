@@ -36,7 +36,7 @@
 		<link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 		<link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-		<link href="app.css?v=1455" media="all" rel="stylesheet" type="text/css">
+		<link href="app.css?v=1456" media="all" rel="stylesheet" type="text/css">
 						
 	</head>
 
@@ -113,7 +113,7 @@
 						<input style="margin-right:18px" class="copybuttondisabled btn btn-top" id="copybutton" onclick="CopyABC();" type="button" value="Copy All" title="Copies all of the ABC text to the clipboard"/>
 						<input style="margin-right:18px" class="playbuttondisabled btn btn-play" id="playbutton" onclick="PlayABC(event);" type="button" value="Play" title="Opens the ABC player for the currently selected tune.&nbsp;&nbsp;Shift-click to open the current tune in the Tune Trainer.&nbsp;&nbsp;Alt-click to play a random tune in the current ABC tunebook."/>
 						<input style="margin-right:18px" class="rawmodebuttondisabled btn btn-rawmode-off" id="rawmodebutton" onclick="ToggleRawMode()" type="button" value="Highlighting Off" title="When On, highlight notation by selecting the ABC text or highlight ABC text by clicking on the notation."/>
-						<input class="morecommands btn btn-top context-menu" id="morecommands" type="button" value="..." title="Brings up a menu with additional useful commands"/>
+						<input style="padding-left:20px;padding-right:20px" class="morecommands btn btn-top context-menu" id="morecommands" type="button" value="☰" title="Brings up a menu with additional useful commands"/>
 					</div>
 
 					<div id="inputarea">
@@ -200,29 +200,29 @@
 		var gIsQuickEditor = false;
 	</script>
 
-	<script type="text/javascript" src="jquery-1.11.1.min.js?v=1455"></script><!-- jQuery -->
-	<script type="text/javascript" src="jszip.min.js?v=1455"></script><!-- zip file handling -->
-	<script type="text/javascript" src="xml2abc-min.js?v=1455"></script><!-- to convert MusicXML to ABC -->
-	<script type="text/javascript" src="abcjs-chord-intervals.js?v=1455"></script><!-- chord intervals used by abcjs - non-minified -->
-	<script type="text/javascript" src="abcjs-basic-eskin-min.js?v=1455"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
-	<script type="text/javascript" src="jspdf.min.js?v=1455"></script><!-- to generate PDF using Javscript -->
-	<script type="text/javascript" src="html2image.js?v=1455"></script><!-- to convert HTML elements to bitmaps -->
-	<script type="text/javascript" src="qrcode.js?v=1455"></script><!-- to generate QR codes for the share links -->
-	<script type="text/javascript" src="lz-string.min.js?v=1455"></script><!-- used for share URL generation -->
-	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1455"></script><!-- modal dialog replacement -->
-	<script type="text/javascript" src="lame.min.js?v=1455"></script><!-- .mp3 audio encoder -->
-	<script type="text/javascript" src="unmute.min.js?v=1455"></script><!-- fixes issue on iOS Safari muting tabs -->
-	<script type="text/javascript" src="tab-injectors-min.js?v=1455"></script><!-- Tab generation for ABC injection -->
-	<script type="text/javascript" src="visualscript-sdk.js?v=1455"></script><!-- SmartDraw VSON API -->
-	<script type="text/javascript" src="smartdraw-export-min.js?v=1455"></script><!-- Export to SmartDraw VSON -->
-	<script type="text/javascript" src="acoustic_grand_piano-mp3.js?v=1455"></script><!-- Offline grand piano sound -->
-	<script type="text/javascript" src="percussion-mp3.js?v=1455"></script><!-- Offline percussion -->
-	<script type="text/javascript" src="online-check.js?v=1455"></script><!-- check if online -->
-	<script type="text/javascript" src="database.js?v=1455"></script><!-- IndexedDB related features -->
-	<script type="text/javascript" src="download-reverb.js?v=1455"></script><!-- Downloading tune audio with reverb features -->
-	<script type="text/javascript" src="bww2abc.js?v=1455"></script><!-- Convert from BWW to abc -->
-	<script type="text/javascript" src="context-menu.js?v=1455"></script><!-- Dropdown context menus -->	
-	<script type="text/javascript" src="app-min.js?v=1455"></script><!-- main application business logic -->
-	<script type="text/javascript" src="api-keys.js?v=1455"></script><!-- API keys used by the tool -->
+	<script type="text/javascript" src="jquery-1.11.1.min.js?v=1456"></script><!-- jQuery -->
+	<script type="text/javascript" src="jszip.min.js?v=1456"></script><!-- zip file handling -->
+	<script type="text/javascript" src="xml2abc-min.js?v=1456"></script><!-- to convert MusicXML to ABC -->
+	<script type="text/javascript" src="abcjs-chord-intervals.js?v=1456"></script><!-- chord intervals used by abcjs - non-minified -->
+	<script type="text/javascript" src="abcjs-basic-eskin-min.js?v=1456"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
+	<script type="text/javascript" src="jspdf.min.js?v=1456"></script><!-- to generate PDF using Javscript -->
+	<script type="text/javascript" src="html2image.js?v=1456"></script><!-- to convert HTML elements to bitmaps -->
+	<script type="text/javascript" src="qrcode.js?v=1456"></script><!-- to generate QR codes for the share links -->
+	<script type="text/javascript" src="lz-string.min.js?v=1456"></script><!-- used for share URL generation -->
+	<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1456"></script><!-- modal dialog replacement -->
+	<script type="text/javascript" src="lame.min.js?v=1456"></script><!-- .mp3 audio encoder -->
+	<script type="text/javascript" src="unmute.min.js?v=1456"></script><!-- fixes issue on iOS Safari muting tabs -->
+	<script type="text/javascript" src="tab-injectors-min.js?v=1456"></script><!-- Tab generation for ABC injection -->
+	<script type="text/javascript" src="visualscript-sdk.js?v=1456"></script><!-- SmartDraw VSON API -->
+	<script type="text/javascript" src="smartdraw-export-min.js?v=1456"></script><!-- Export to SmartDraw VSON -->
+	<script type="text/javascript" src="acoustic_grand_piano-mp3.js?v=1456"></script><!-- Offline grand piano sound -->
+	<script type="text/javascript" src="percussion-mp3.js?v=1456"></script><!-- Offline percussion -->
+	<script type="text/javascript" src="online-check.js?v=1456"></script><!-- check if online -->
+	<script type="text/javascript" src="database.js?v=1456"></script><!-- IndexedDB related features -->
+	<script type="text/javascript" src="download-reverb.js?v=1456"></script><!-- Downloading tune audio with reverb features -->
+	<script type="text/javascript" src="bww2abc.js?v=1456"></script><!-- Convert from BWW to abc -->
+	<script type="text/javascript" src="context-menu.js?v=1456"></script><!-- Dropdown context menus -->	
+	<script type="text/javascript" src="app-min.js?v=1456"></script><!-- main application business logic -->
+	<script type="text/javascript" src="api-keys.js?v=1456"></script><!-- API keys used by the tool -->
 
 </html>
