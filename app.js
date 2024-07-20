@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1450_180724_1530";
+var gVersionNumber="1454_200724_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -11383,23 +11383,6 @@ function Render(renderAll,tuneNumber) {
 			document.getElementById("rawmodebutton").classList.add("rawmodebutton");
 		}
 
-		// Enable the editor maximize and align measures button
-		if (gIsQuickEditor){
-
-			if (isDesktopBrowser()){
-
-				if (!gIsOneColumn){
-					document.getElementById("maximizeeditor").classList.remove("maximizeeditordisabled");
-					document.getElementById("maximizeeditor").classList.add("maximizeeditor");
-				}
-
-			}
-			
-			document.getElementById("alignbars").classList.remove("alignbarsdisabled");
-			document.getElementById("alignbars").classList.add("alignbars");
-
-		}
-
 		gAllowCopy = true;
 
 		var radiovalue = GetRadioValue("notenodertab");
@@ -11470,21 +11453,6 @@ function Render(renderAll,tuneNumber) {
 			// Disable the play button
 			document.getElementById("playbutton").classList.remove("playbutton");
 			document.getElementById("playbutton").classList.add("playbuttondisabled");
-		}
-
-		// Disable the editor maximize and align bars buttons
-		if (gIsQuickEditor){
-
-			if (isDesktopBrowser()){
-
-				document.getElementById("maximizeeditor").classList.remove("maximizeeditor");
-				document.getElementById("maximizeeditor").classList.add("maximizeeditordisabled");
-
-			}
-			
-			document.getElementById("alignbars").classList.remove("alignbars");
-			document.getElementById("alignbars").classList.add("alignbarsdisabled");
-
 		}
 
 		// Disable the raw mode button
@@ -37684,10 +37652,6 @@ function ShowTopBar(){
 	elem.style.marginTop = "15px";
 	elem.style.marginBottom = "1px";
 		
-	elem = document.getElementById("toggletopbar");
-
-	elem.value="▲";
-
 	// Also shows the controls if allowed
 	if(gAllowControlToggle){
 		ShowAllControls();
@@ -37715,10 +37679,6 @@ function HideTopBar(){
 		elem.style.marginTop = "4px";
 	}
 
-	elem = document.getElementById("toggletopbar");
-
-	elem.value="▼";
-
 	// Also hides the controls
 	if(gAllowControlToggle){
 		HideAllControls();
@@ -37726,31 +37686,7 @@ function HideTopBar(){
 
 }
 
-function ToggleTopBar(e){
-
-	// MAE 17 Jul 2024
-	if (e.shiftKey && e.altKey){
-
-		AlignMeasures(true);
-		return;
-		
-	}
-
-	// MAE 17 Jul 2024
-	if (e.altKey){
-
-		AlignMeasures(false);
-		return;
-		
-	}
-
-	// MAE 16 Jul 2024
-	if (e.shiftKey){
-
-		MaximizeEditor();
-		return;
-
-	}
+function ToggleTopBar(){
 
 	if (gTopBarShowing){
 
@@ -38071,14 +38007,6 @@ function HandleWindowResize(){
 				elem = document.getElementById("notation-placeholder-text");
 				elem.style.marginTop = "64px";
 
-				if (gIsQuickEditor){
-
-					if (isDesktopBrowser()){
-						document.getElementById("maximizeeditor").classList.remove("maximizeeditor");
-						document.getElementById("maximizeeditor").classList.add("maximizeeditordisabled");						
-					}
-				}
-
 			}
 			else{
 				
@@ -38132,25 +38060,6 @@ function HandleWindowResize(){
 				elem = document.getElementById("notation-placeholder-text");
 				elem.style.marginTop = "136px";
 
-				if (gIsQuickEditor){
-
-					if (isDesktopBrowser()){
-
-						if (gAllowCopy){
-
-							document.getElementById("maximizeeditor").classList.remove("maximizeeditordisabled");
-							document.getElementById("maximizeeditor").classList.add("maximizeeditor");
-
-						}
-					}
-
-					if (gAllowCopy){
-
-						document.getElementById("alignbars").classList.remove("alignbarsdisabled");
-						document.getElementById("alignbars").classList.add("alignbars");
-
-					}
-				}
 			}
 
 		}
@@ -38758,7 +38667,6 @@ function showWelcomeScreen(){
 	   		modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">You may also drag-and-drop a single ABC or MusicXML file on the editor area to add it.</p>';
 	   }
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Click "Search for Tunes" to find tunes by name.</p>';
-	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Click "Settings" to set common tools settings and select the default instrument sounds and volumes to use when playing tunes.</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica"><strong>Once ABC has been entered and notation is displayed:</strong></p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click the Zoom-Out arrows at the top-right to view the notation full screen.</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Save" to save all the ABC text to an ABC text file.</p>';
@@ -38768,7 +38676,7 @@ function showWelcomeScreen(){
 			modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Play" to play or train on the tune currently being edited.</p>';
 	   }
 	   
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, scrollWithPage: (AllowDialogsToScroll()) });
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
 
 }
 
@@ -39747,10 +39655,6 @@ function QEAlignBars(e){
 // For the QuickEditor
 function MaximizeEditor(){
 	
-	if (!gAllowCopy){
-		return;
-	}
-
 	if (isMobileBrowser()){
 		return;
 	}
@@ -40018,12 +39922,6 @@ function DoStartup() {
 		// Move the spinner
 		elem = document.getElementById("loading-bar-spinner");
 		elem.style.top = "25%"
-
-		// Hide the maximize editor button on the Quick Editor
-		if (gIsQuickEditor){
-			elem = document.getElementById("maximizeeditor");
-			elem.style.display = "none";
-		}
 
 		// Hide the Highlighting button
 		elem = document.getElementById("rawmodebutton");
@@ -40505,6 +40403,41 @@ function DoStartup() {
 		// Raw mode is enabled by default
 		gAllowRawMode = true;
 	}
+
+	// Setup context menu
+
+	var items;
+
+	if (isDesktopBrowser()){
+
+		items = [
+		    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+		    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
+		    {},
+		    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
+		    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+		    {},
+		    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
+		    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+		  ];
+	}
+	else{
+
+		items = [
+		    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+		    {},
+		    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
+		    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+		    {},
+		    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
+		    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+		  ];
+
+	}
+
+	var cm1 = new ContextMenu('.context-menu', items);
+
+	//cm1.on('shown', () => console.log('Context menu shown'));
 
 	// Don't count share URL consumption as a tip jar event
 	if (!isFromShare){

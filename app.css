@@ -129,12 +129,10 @@ margin-left:0px;
 
 .saveaspdf {
 margin-left:0px;
-margin-right:12px;
 }
 
 .saveaspdfdisabled {
 margin-left:0px;
-margin-right:12px;
 opacity: 0.4;
 }
 
@@ -1451,13 +1449,11 @@ margin-top:8px;
 
 .saveabcfile{
 margin-left:0px;
-margin-right:12px;
 opacity:1.0;
 }
 
 .saveabcfiledisabled{
 margin-left:0px;
-margin-right:12px;
 opacity:0.4;
 }
 
@@ -1481,13 +1477,11 @@ opacity:0.4;
 
 .copybutton{
 margin-left:0px;
-margin-right:12px;
 opacity:1.0;
 }
 
 .copybuttondisabled{
 margin-left:0px;
-margin-right:12px;
 opacity:0.4;
 }
 
@@ -1517,13 +1511,11 @@ opacity:0.4;
 
 .rawmodebutton{
 margin-left:0px;
-margin-right:12px;
 opacity:1.0;
 }
 
 .rawmodebuttondisabled{
 margin-left:0px;
-margin-right:12px;
 opacity:0.4;
 }
 
@@ -1535,13 +1527,11 @@ opacity:0.4;
 
 .playbutton{
 margin-left:0px;
-margin-right:12px;
 opacity:1.0;
 }
 
 .playbuttondisabled{
 margin-left:0px;
-margin-right:12px;
 opacity:0.4;
 }
 
@@ -1553,7 +1543,6 @@ opacity:0.4;
 
 .newabcfile{
 margin-left:0px;
-margin-right:12px;
 opacity:1.0;
 }
 
@@ -1563,42 +1552,14 @@ opacity:1.0;
 	}
 }
 
-.toggletopbar{
+.morecommands{
 margin-left:0px;
 margin-right:0px;
 opacity:1.0;
 }
 
 @media (hover: hover) {
-	.toggletopbar:hover{
-	background: palegreen;
-	}
-}
-
-.maximizeeditor{
-opacity:1.0;
-}
-
-.maximizeeditordisabled{
-opacity:0.4;
-}
-
-@media (hover: hover) {
-	.maximizeeditor:hover{
-	background: palegreen;
-	}
-}
-
-.alignbars{
-opacity:1.0;
-}
-
-.alignbarsdisabled{
-opacity:0.4;
-}
-
-@media (hover: hover) {
-	.alignbars:hover{
+	.morecommands:hover{
 	background: palegreen;
 	}
 }
@@ -3774,7 +3735,6 @@ padding-left:10px;
 
 .abcupload {
 	margin-left:0px;
-	margin-right:12px;
 }
 
 @media (hover: hover) {
@@ -4060,7 +4020,83 @@ top:20px;
 }
 
 /******************************************************************************/
-/* STYLES RELATED TO EXPERIMENT BUTTONS                                       */
+/* STYLES RELATED TO CONTEXT MENUS                                            */
+/******************************************************************************/
+.contextmenu {
+  float: left;
+  width: 450px;
+  height: 330px;
+  margin-right: 20px;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  color: #444;
+  line-height: 150px;
+  text-align: center;
+}
+
+.ContextMenu {
+  display: none;
+  list-style: none;
+  margin: 0;
+  max-width: 250px;
+  min-width: 125px;
+  padding: 0;
+  position: absolute;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.ContextMenu--theme-default {
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  font-family: Helvetica;
+  font-size: 14px;
+  outline: 0;
+  padding: 2px 0;
+  z-index: 10000;
+}
+
+.ContextMenu--theme-default .ContextMenu-item {
+  padding: 6px 12px;
+}
+
+.ContextMenu--theme-default .ContextMenu-item:focus,
+.ContextMenu--theme-default .ContextMenu-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.ContextMenu--theme-default .ContextMenu-item:focus {
+  outline: 0;
+}
+
+.ContextMenu--theme-default .ContextMenu-divider {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+.ContextMenu.is-open {
+  display: block;
+}
+
+.ContextMenu-item {
+  cursor: pointer;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ContextMenu-divider {
+  height: 1px;
+  margin: 4px 0;
+}
+
+
+/******************************************************************************/
+/* STYLES RELATED TO BUTTONS                                                  */
 /******************************************************************************/
 .btn {
   --color: #000000;

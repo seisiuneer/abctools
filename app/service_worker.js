@@ -2,11 +2,15 @@
 // Service worker for abctools offline use resource caching
 //
 //
-// Updated 18 July 2024 at 1530
+//
+//
+// Updated 20 July 2024 at 0800
+//
+//
 //
 //
 
-const cacheName = 'cache-182';
+const cacheName = 'cache-184';
 
 const contentToCache = [
     'abctools.html',
@@ -42,6 +46,7 @@ const contentToCache = [
     'download-reverb.js',
     'bww2abc.js',
     'manage_database.js',
+    'context-menu.js',
 	'api-keys.js',
     'img/zoomin.png',
     'img/zoomout.png',

@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0063_180724_1530";
+var gVersionNumber="0065_200724_0815";
 
 var gMIDIInitStillWaiting = false;
 
@@ -37421,10 +37421,6 @@ function ShowTopBar(){
 	elem.style.marginTop = "15px";
 	elem.style.marginBottom = "1px";
 		
-	elem = document.getElementById("toggletopbar");
-
-	elem.value="▲";
-
 	// Also shows the controls if allowed
 	if(gAllowControlToggle){
 		ShowAllControls();
@@ -37452,10 +37448,6 @@ function HideTopBar(){
 		elem.style.marginTop = "4px";
 	}
 
-	elem = document.getElementById("toggletopbar");
-
-	elem.value="▼";
-
 	// Also hides the controls
 	if(gAllowControlToggle){
 		HideAllControls();
@@ -37463,31 +37455,8 @@ function HideTopBar(){
 
 }
 
-function ToggleTopBar(e){
+function ToggleTopBar(){
 
-	// MAE 17 Jul 2024
-	if (e.shiftKey && e.altKey){
-
-		AlignMeasures(true);
-		return;
-		
-	}
-
-	// MAE 17 Jul 2024
-	if (e.altKey){
-
-		AlignMeasures(false);
-		return;
-		
-	}
-
-	// MAE 16 Jul 2024
-	if (e.shiftKey){
-
-		MaximizeEditor();
-		return;
-
-	}
 
 	if (gTopBarShowing){
 
@@ -38463,14 +38432,13 @@ function showWelcomeScreen(){
 	   		modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">You may also drag-and-drop a single ABC or MusicXML file on the editor area to add it.</p>';
 	   }
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Click "Search for Tunes" to find tunes by name.</p>';
-	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Click "Settings" to set common tools settings and select the default instrument sounds and volumes to use when playing tunes.</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica"><strong>Once ABC has been entered and notation is displayed:</strong></p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click the Zoom-Out arrows at the top-right to view the notation full screen.</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Save" to save all the ABC text to an ABC text file.</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Export PDF" to export your tunebook in PDF format.</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Play" to play or train on the tune currently being edited.</p>';
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, scrollWithPage: (AllowDialogsToScroll()) });
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
 
 }
 
@@ -40019,6 +39987,41 @@ function DoStartup() {
 		// Raw mode is enabled by default
 		gAllowRawMode = true;
 	}
+
+	// Setup context menu
+
+	var items;
+
+	if (isDesktopBrowser()){
+
+		items = [
+		    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+		    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
+		    {},
+		    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
+		    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+		    {},
+		    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
+		    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+		  ];
+	}
+	else{
+
+		items = [
+		    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+		    {},
+		    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
+		    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+		    {},
+		    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
+		    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+		  ];
+
+	}
+
+	var cm1 = new ContextMenu('.context-menu', items);
+
+	//cm1.on('shown', () => console.log('Context menu shown'));
 
 	// Don't count share URL consumption as a tip jar event
 	if (!isFromShare){
