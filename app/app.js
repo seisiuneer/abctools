@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0068_200724_1345";
+var gVersionNumber="0069_210724_1630";
 
 var gMIDIInitStillWaiting = false;
 
@@ -39318,6 +39318,18 @@ function MaximizeEditor(){
 	},100);
 }
 
+// Open the standard editor in a new tab
+function LaunchStandardEditor(){
+	var url = "https://michaeleskin.com/abctools/abctools.html";
+	window.open(url, '_blank');	
+}
+
+// Open the Offline enabled version section of the User Guide in a new tab
+function LaunchOfflineEditorHelp(){
+	var url = "https://michaeleskin.com/app/userguide.html#app";
+	window.open(url, '_blank');	
+}
+
 function DoStartup() {
 
 	// Init global state
@@ -40004,6 +40016,10 @@ function DoStartup() {
 		    {},
 		    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 		    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+		    {},
+			{ name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
+		    {},
+			{ name: 'About the Offline-Enabled Editor', fn: function(target) { LaunchOfflineEditorHelp(); }},
 		  ];
 	}
 	else{
@@ -40016,6 +40032,10 @@ function DoStartup() {
 		    {},
 		    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 		    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+		    {},
+			{ name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
+		    {},
+			{ name: 'About the Offline-Enabled Editor', fn: function(target) { LaunchOfflineEditorHelp(); }},
 		  ];
 
 	}
