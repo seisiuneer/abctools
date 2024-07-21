@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1457_200724_1330";
+var gVersionNumber="1458_210724_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -38659,6 +38659,11 @@ function showWelcomeScreen(){
 
     var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica"><strong>Please visit my <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> page for complete instructions and demo videos on how to use the tools.</strong></p>';
+	   
+	   if (gIsQuickEditor){
+			modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">The Quick Editor is optimized for editing and playback of a single tune at a time.</p>';
+	   }
+	   
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">To begin, type or paste tunes in ABC format into the text area.</p>'; 
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Each ABC tune <strong>must</strong> begin with an X: tag.</p>'; 
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Notation updates instantly as you make changes to the ABC.</p>'; 
@@ -39725,6 +39730,18 @@ function MaximizeEditor(){
 	},100);
 }
 
+// Open the QuickEditor in a new tab
+function LaunchQuickEditor(){
+	var url = "https://michaeleskin.com/abctools/abctools-quick-editor.html";
+	window.open(url, '_blank');
+}
+
+// Open the standard editor in a new tab
+function LaunchStandardEditor(){
+	var url = "https://michaeleskin.com/abctools/abctools.html";
+	window.open(url, '_blank');	
+}
+
 function DoStartup() {
 
 	// Init global state
@@ -40411,28 +40428,67 @@ function DoStartup() {
 
 	if (isDesktopBrowser()){
 
-		items = [
-		    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
-		    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
-		    {},
-		    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
-		    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
-		    {},
-		    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
-		    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
-		  ];
+		if (gIsQuickEditor){
+
+			items = [
+			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+			    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
+			    {},
+			    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
+			    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+			    {},
+			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
+			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+			    {},
+			    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
+			  ];
+		}
+		else{
+
+			items = [
+			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+			    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
+			    {},
+			    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
+			    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+			    {},
+			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
+			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+			    {},
+			    { name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
+			  ];
+
+		}
 	}
 	else{
+		if (gIsQuickEditor){
 
-		items = [
-		    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
-		    {},
-		    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
-		    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
-		    {},
-		    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
-		    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
-		  ];
+			items = [
+			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+			    {},
+			    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
+			    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+			    {},
+			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
+			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+			    {},
+			    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
+			];
+		}
+		else{
+
+			items = [
+			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+			    {},
+			    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
+			    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+			    {},
+			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
+			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+			    {},
+			    { name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
+			];			
+		}
 
 	}
 
