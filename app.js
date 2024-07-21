@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1458_210724_0900";
+var gVersionNumber="1459_210724_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -39742,6 +39742,13 @@ function LaunchStandardEditor(){
 	window.open(url, '_blank');	
 }
 
+// Open the Quick Editor section of the User Guide in a new tab
+function LaunchQuickEditorHelp(){
+	var url = "https://michaeleskin.com/abctools/userguide.html#quickeditor";
+	window.open(url, '_blank');	
+
+}
+
 function DoStartup() {
 
 	// Init global state
@@ -40441,6 +40448,8 @@ function DoStartup() {
 			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 			    {},
 			    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
+			    {},
+			    { name: 'About the Quick Editor', fn: function(target) { LaunchQuickEditorHelp(); }},
 			  ];
 		}
 		else{
@@ -40473,6 +40482,8 @@ function DoStartup() {
 			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 			    {},
 			    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
+			    {},
+			    { name: 'About the Quick Editor', fn: function(target) { LaunchQuickEditorHelp(); }},
 			];
 		}
 		else{
