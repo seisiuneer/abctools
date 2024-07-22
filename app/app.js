@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0069_210724_1630";
+var gVersionNumber="0070_210724_1745";
 
 var gMIDIInitStillWaiting = false;
 
@@ -1864,25 +1864,59 @@ function SortTunesByTag(theTag,doCase){
 
 	}
 
-	// Sort tunes by name
-	tunesToProcess.sort((a, b) => {
+	if (theTag != "X"){
 
-	  const tagA = a.tag;
-	  
-	  const tagB = b.tag; // ignore upper and lowercase
-	  
-	  if (tagA < tagB) {
-	    return -1;
-	  }
-	  
-	  if (tagA > tagB) {
-	    return 1;
-	  }
+		// Sort tunes by name
+		tunesToProcess.sort((a, b) => {
 
-	  // names must be equal
-	  return 0;
+		  const tagA = a.tag;
+		  
+		  const tagB = b.tag; // ignore upper and lowercase
+		  
+		  if (tagA < tagB) {
+		    return -1;
+		  }
+		  
+		  if (tagA > tagB) {
+		    return 1;
+		  }
 
-	});
+		  // names must be equal
+		  return 0;
+
+		});
+	}
+	else{
+
+		// Compare numerically
+		tunesToProcess.sort((a, b) => {
+
+		  const tagA = parseInt(a.tag);
+
+		  if (isNaN(tagA)){
+		  	tagA = 0;
+		  }
+		  
+		  const tagB = parseInt(b.tag); // ignore upper and lowercase
+
+		  if (isNaN(tagB)){
+		  	tagB = 0;
+		  }
+		  
+		  if (tagA < tagB) {
+		    return -1;
+		  }
+		  
+		  if (tagA > tagB) {
+		    return 1;
+		  }
+
+		  // names must be equal
+		  return 0;
+
+		});
+
+	}
 
 	theNotes = "";
 	theNotes += thePrefixABC;
