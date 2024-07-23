@@ -17068,43 +17068,43 @@ function CreateSynth(theABC) {
         "flute": 2.0,       // 73
         "whistle": 2.0,     // 78 
         "banjo": 2.0,       // 105
-        "bagpipe":2.0,     // 109 
+        "bagpipe":3.0,     // 109 
         "fiddle": 2.0,      // 110
         "melodic_tom": 2.0,  // 117
-        "uilleann": 2.0,    // 129
-        "smallpipesd": 2.0, // 130
-        "smallpipesa":2.0,  // 131
-        "sackpipa": 2.0,    // 132
+        "uilleann": 1.75,    // 129
+        "smallpipesd": 1.75, // 130
+        "smallpipesa":1.75,  // 131
+        "sackpipa": 1.75,    // 132
         "concertina": 2.0,  // 133
         "melodica": 2.0,    // 134
         "cajun": 2.0,       // 135
         "solfege": 2.0,      // 136 
-        "chorus_guitar_nylon": 2.0, // 137 
-        "chorus_guitar_steel": 2.0, // 138 
+        "chorus_guitar_nylon": 3.0, // 137 
+        "chorus_guitar_steel": 3.0, // 138 
         "bouzouki": 2.0,     // 139 
         "bouzouki2": 2.0,    // 140 
         "mandolin": 2.0,     // 141
-        "marchingdrums": 2.0, // 142
-        "borderpipes": 2.0  // 143
+        "marchingdrums": 2.5, // 142
+        "borderpipes": 2.5  // 143
       }
     }
     else{
       self.customVolumeMultiplier = {
-        "uilleann": 2.0,    // 129
-        "smallpipesd": 2.0, // 130
-        "smallpipesa":2.0,  // 131
-        "sackpipa": 2.0,    // 132
+        "uilleann": 1.75,    // 129
+        "smallpipesd": 1.75, // 130
+        "smallpipesa":1.75,  // 131
+        "sackpipa": 1.75,    // 132
         "concertina": 2.0,  // 133
         "melodica": 2.0,    // 134
         "cajun": 2.0,       // 135
         "solfege": 2.0,      // 136 
-        "chorus_guitar_nylon": 2.0, // 137 
-        "chorus_guitar_steel": 2.0, // 138 
+        "chorus_guitar_nylon": 3.0, // 137 
+        "chorus_guitar_steel": 3.0, // 138 
         "bouzouki": 2.0,     // 139 
         "bouzouki2": 2.0,    // 140 
         "mandolin": 2.0,     // 141
-        "marchingdrums": 2.0, // 142
-        "borderpipes": 2.0  // 143
+        "marchingdrums": 2.5, // 142
+        "borderpipes": 2.5  // 143
       }
     } 
 
