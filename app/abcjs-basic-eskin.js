@@ -17049,7 +17049,65 @@ function CreateSynth(theABC) {
     if (gIsIOS){
       isSafari = true;
     }
-      
+     // MAE 23 July 2024 - To balance custom sound volumes
+    self.customVolumeMultiplier = {};
+
+    // If using Celtic Sound .mp3 sound fonts on Safari, set the offsets to 50 msec (Adobe Audition artifact)
+    var useCustomSounds = gUseCustomGMSounds;
+
+    // Overriden for a specific tune?
+    if (gOverrideCustomGMSounds){
+      useCustomSounds = gCustomGMSoundsOverride;
+    }
+
+    // Are we overriding the standard GM sounds with our own?
+    if (useCustomSounds){
+      self.customVolumeMultiplier = {
+        "dulcimer":2.0,     // 15
+        "accordion": 2.0,   // 21
+        "flute": 2.0,       // 73
+        "whistle": 2.0,     // 78 
+        "banjo": 2.0,       // 105
+        "bagpipe":2.0,     // 109 
+        "fiddle": 2.0,      // 110
+        "melodic_tom": 2.0,  // 117
+        "uilleann": 2.0,    // 129
+        "smallpipesd": 2.0, // 130
+        "smallpipesa":2.0,  // 131
+        "sackpipa": 2.0,    // 132
+        "concertina": 2.0,  // 133
+        "melodica": 2.0,    // 134
+        "cajun": 2.0,       // 135
+        "solfege": 2.0,      // 136 
+        "chorus_guitar_nylon": 2.0, // 137 
+        "chorus_guitar_steel": 2.0, // 138 
+        "bouzouki": 2.0,     // 139 
+        "bouzouki2": 2.0,    // 140 
+        "mandolin": 2.0,     // 141
+        "marchingdrums": 2.0, // 142
+        "borderpipes": 2.0  // 143
+      }
+    }
+    else{
+      self.customVolumeMultiplier = {
+        "uilleann": 2.0,    // 129
+        "smallpipesd": 2.0, // 130
+        "smallpipesa":2.0,  // 131
+        "sackpipa": 2.0,    // 132
+        "concertina": 2.0,  // 133
+        "melodica": 2.0,    // 134
+        "cajun": 2.0,       // 135
+        "solfege": 2.0,      // 136 
+        "chorus_guitar_nylon": 2.0, // 137 
+        "chorus_guitar_steel": 2.0, // 138 
+        "bouzouki": 2.0,     // 139 
+        "bouzouki2": 2.0,    // 140 
+        "mandolin": 2.0,     // 141
+        "marchingdrums": 2.0, // 142
+        "borderpipes": 2.0  // 143
+      }
+    } 
+
     if (params.programOffsets) self.programOffsets = params.programOffsets;
     else if (self.soundFontUrl === originalSoundFontUrl) self.programOffsets = {
       "bright_acoustic_piano": 20,
@@ -17545,6 +17603,7 @@ function CreateSynth(theABC) {
 
         // MAE FOOFOO 25 June 2024
         //console.log("parts[0]: "+parts[0]);
+        var thisInstrument = parts[0];
 
         if (parts[0] == "solfege"){
           cents = parts[8] !== undefined ? parseFloat(parts[8]) : 0;
@@ -17573,7 +17632,20 @@ function CreateSynth(theABC) {
           };
 
         }
-        allPromises.push(placeNote(audioBuffer, activeAudioContext().sampleRate, parts, uniqueSounds[k], self.soundFontVolumeMultiplier, self.programOffsets[parts.instrument], fadeTimeSec, self.noteEnd / 1000, self.debugCallback));
+
+        // MAE 23 Jul 2024 - To balance custom instrument volumes
+        var theVolumeMultiplier = self.soundFontVolumeMultiplier;
+
+        //console.log("soundFontUrl:"+self.soundFontUrl+" self.soundFontVolumeMultiplier: "+theVolumeMultiplier+" instrument: "+thisInstrument);
+
+        var thisVolumeMultiplier = self.customVolumeMultiplier[thisInstrument];
+        
+        if (thisVolumeMultiplier){
+            theVolumeMultiplier = thisVolumeMultiplier;
+            //console.log("Got volume multiplier override: "+thisVolumeMultiplier);
+        }
+        
+        allPromises.push(placeNote(audioBuffer, activeAudioContext().sampleRate, parts, uniqueSounds[k], theVolumeMultiplier, self.programOffsets[parts.instrument], fadeTimeSec, self.noteEnd / 1000, self.debugCallback));
       }
       self.audioBuffers = [audioBuffer];
       if (self.debugCallback) {
