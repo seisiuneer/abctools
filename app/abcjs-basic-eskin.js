@@ -17085,7 +17085,8 @@ function CreateSynth(theABC) {
         "bouzouki2": 2.0,    // 140 
         "mandolin": 2.0,     // 141
         "marchingdrums": 2.5, // 142
-        "borderpipes": 2.5  // 143
+        "borderpipes": 2.5,  // 143
+        "percussion": 2.0  // 128
       }
     }
     else{
@@ -17104,7 +17105,8 @@ function CreateSynth(theABC) {
         "bouzouki2": 2.0,    // 140 
         "mandolin": 2.0,     // 141
         "marchingdrums": 2.5, // 142
-        "borderpipes": 2.5  // 143
+        "borderpipes": 2.5,  // 143
+        "percussion": 2.0  // 128
       }
     } 
 
