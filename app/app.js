@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0074_240724_0800";
+var gVersionNumber="0075_250724_1145";
 
 var gMIDIInitStillWaiting = false;
 
@@ -368,6 +368,9 @@ var gConfirmClear = true;
 
 // Open share links in editor
 var gOpenInEditor = false;
+
+// Clean smartquotes on open or paste
+var gCleanSmartQuotes = true;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -33646,6 +33649,13 @@ function GetInitialConfigurationSettings(){
 		gConfirmClear = (val == "true");
 	}
 
+	// Clean smart quotes
+	gCleanSmartQuotes = true;
+	val = localStorage.CleanSmartQuotes;
+	if (val){
+		gCleanSmartQuotes = (val == "true");
+	}
+
 	// 2 July 2024 
 	gAllowOfflineInstruments = false;
 	val = localStorage.AllowOfflineInstruments;
@@ -33856,7 +33866,10 @@ function SaveConfigurationSettings(){
 		localStorage.ConfirmClear = gConfirmClear;
 
 		// Allow offline instruments
-		localStorage.AllowOfflineInstruments = gAllowOfflineInstruments
+		localStorage.AllowOfflineInstruments = gAllowOfflineInstruments;
+
+		// Clean Smart Quotes
+		localStorage.CleanSmartQuotes = gCleanSmartQuotes;
 
 	}
 }
@@ -35641,12 +35654,14 @@ function AdvancedSettings(){
 		configure_tinyurl: gTinyURLAPIKeyOverride,
 		configure_confirm_clear: gConfirmClear,
 		configure_show_render_progress: gShowABCJSRenderProgress,
+		configure_clean_smartquotes: gCleanSmartQuotes,
 	};
 
 	var form = [
 		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Advanced Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/app/userguide.html#advanced_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 		{html: '<p style="font-size:12pt;line-height:12px;font-family:helvetica;"><strong>Only change these values if you know what you are doing!</strong></p>'},
 		{name: "          Always confirm before deletion when clicking Clear", id: "configure_confirm_clear", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+		{name: "          Always replace curly single and double quotes with standard versions on Open or Paste", id: "configure_clean_smartquotes", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "          Show ABC syntax validation panel", id: "configure_show_diagnostics", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "          Show tune rendering progress in Javascript console", id: "configure_show_render_progress", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Disable abcjs notation rendering", id: "configure_DisableRendering", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
@@ -35703,7 +35718,10 @@ function AdvancedSettings(){
 		if (!args.canceled){
 
 			// Confirm clear
-			gConfirmClear = args.result.configure_confirm_clear
+			gConfirmClear = args.result.configure_confirm_clear;
+
+			// Clean smart quotes
+			gCleanSmartQuotes = args.result.configure_clean_smartquotes;
 
 			// Show/hide the diagnostics panel
 			gShowDiagnostics = args.result.configure_show_diagnostics;
@@ -38709,6 +38727,11 @@ function AllowDialogsToScroll(){
 // Clean "smart quotes" from the ABC
 //
 function CleanSmartQuotes(){
+
+	// Smart quote cleaning disabled
+	if (!gCleanSmartQuotes){
+		return;
+	}
 
 	var val = gTheABC.value;
 
