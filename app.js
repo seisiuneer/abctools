@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1467_250724_1120";
+var gVersionNumber="1468_270724_0700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -25908,6 +25908,34 @@ function CursorControlOneTune() {
 		if (ev.measureStart && ev.left === null)
 			return; // this was the second part of a tie across a measure line. Just ignore it.
 
+		// Allow note highlighting if not in raw mode
+		if (!gRawMode){
+
+			if (!gDisablePlayHighlight){
+
+				var lastSelection = document.querySelectorAll("#notation0 svg .highlight");
+				for (var k = 0; k < lastSelection.length; k++)
+					lastSelection[k].classList.remove("highlight");
+
+				for (var i = 0; i < ev.elements.length; i++ ) {
+					var note = ev.elements[i];
+					for (var j = 0; j < note.length; j++) {
+
+						if (gOnlyHighlightV1){
+							// Only highlight first voice events 
+							if (note[j].classList.contains("abcjs-v0")){
+								note[j].classList.add("highlight");
+							}
+						}
+						else{
+							note[j].classList.add("highlight");
+						}
+
+					}
+				}
+			}
+		}
+
 		var cursor = document.querySelector("#notation0 svg .abcjs-cursor");
 
 		if (cursor) {
@@ -25921,6 +25949,13 @@ function CursorControlOneTune() {
 	};
 
 	self.onFinished = function() {
+
+		if (!gRawMode){
+			var els = document.querySelectorAll("svg .highlight");
+			for (var i = 0; i < els.length; i++ ) {
+				els[i].classList.remove("highlight");
+			}
+		}
 		
 		var cursor = document.querySelector("#notation0 svg .abcjs-cursor");
 		
@@ -39368,10 +39403,16 @@ function inlinePlayback(){
 
 			gSynthControl.disable(true);
 
-			var visualObj = ABCJS.renderAbc("offscreenrenderquickedit", theABC, abcOptions)[0];
+			var theRenderDivID = "notation0";
+
+			if (gRawMode){
+				theRenderDivID = "offscreenrenderquickedit";
+			}
+
+			var visualObj = ABCJS.renderAbc(theRenderDivID, theABC, abcOptions)[0];
 
 			//Post process whistle or note name tab
-			postProcessTab([visualObj], "offscreenrenderquickedit", instrument, true);
+			postProcessTab([visualObj], theRenderDivID, instrument, true);
 
 			var midiBuffer = new ABCJS.synth.CreateSynth(theABC);
 
