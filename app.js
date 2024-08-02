@@ -29,8 +29,7 @@
  *
  * 
  **/
-// Version number for the advanced settings dialog hidden field
-var gVersionNumber="1468_270724_0700";
+// Version number for the 010824_1800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -8626,8 +8625,6 @@ function ExportPDF(){
 		return;
 	}
 
-
-
 	// Get the page format
 	var elem;
 
@@ -8746,19 +8743,38 @@ function ExportPDF(){
 
 		}
 
-		promptForPDFFilename(title,function(fname){
+		var individualPDFPerTune = ((thePageOptions == "pdf_per_tune") || (thePageOptions == "pdf_per_tune_a4"));
 
-			if (fname){
+		// Normal path, prompt for filename
+		if (!individualPDFPerTune) {
 
-				// Save off the image display size
-				gOriginalWidthBeforePDFExport = gTheNotation.style.width;
+			promptForPDFFilename(title,function(fname){
 
-				// Fix the size for the PDF rendering
-				gTheNotation.style.width = "850px";
+				if (fname){
 
-				ExportNotationPDF(fname);
-			}
-		});
+					// Save off the image display size
+					gOriginalWidthBeforePDFExport = gTheNotation.style.width;
+
+					// Fix the size for the PDF rendering
+					gTheNotation.style.width = "850px";
+
+					ExportNotationPDF(fname);
+				}
+			});
+		}
+		else{
+
+			// Saving one PDF per tune
+
+			// Save off the image display size
+			gOriginalWidthBeforePDFExport = gTheNotation.style.width;
+
+			// Fix the size for the PDF rendering
+			gTheNotation.style.width = "850px";
+
+			ExportNotationPDF("an Individual PDF File for Each Tune");
+
+		}
 
 	}
 }
@@ -9193,6 +9209,13 @@ function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform, bDoQRCodes)
 //
 // Export a PDF document with notation, either full or first line incipits
 //
+
+// For per-tune PDFs
+var gSplitPdfs;
+var gNSplitPDF;
+var gSplitPDFIndex;
+var gTheSplitPDFTitles;
+
 function ExportNotationPDF(title) {
 
 	// Clear the cancel flag
@@ -9210,10 +9233,17 @@ function ExportNotationPDF(title) {
 
 	var thePageOptions = getPDFFormat();
 
+	// Don't allow per-tune PDFs on mobile
+	if (isMobileBrowser() && ((thePageOptions == "pdf_per_tune") || (thePageOptions == "pdf_per_tune_a4"))){
+		thePageOptions = "one";
+	}
+
 	// Page number location
 	var pageNumberLocation = getPageNumbers();
 
-	var doSinglePage = ((thePageOptions == "one") || (thePageOptions == "one_a4"));
+	var doPDFPerTune = (thePageOptions == "pdf_per_tune") || (thePageOptions == "pdf_per_tune_a4");
+
+	var doSinglePage = ((thePageOptions == "one") || (thePageOptions == "one_a4") || doPDFPerTune);
 
 	// Add page numbers?
 	var addPageNumbers = (pageNumberLocation != "none");
@@ -9221,7 +9251,7 @@ function ExportNotationPDF(title) {
 	// What size paper? Letter or A4?
 	var paperStyle = "letter";
 
-	if ((thePageOptions == "one_a4") || (thePageOptions == "multi_a4") || (thePageOptions == "incipits_a4")){
+	if ((thePageOptions == "one_a4") || (thePageOptions == "multi_a4") || (thePageOptions == "incipits_a4") || (thePageOptions == "pdf_per_tune_a4")){
 
 		paperStyle = "a4";
 
@@ -9242,6 +9272,18 @@ function ExportNotationPDF(title) {
 
 	// Process comment-based PDF commands
 	ParseCommentCommands(gTheABC.value);
+
+	// If doing PDF per tune, need to generate a TOC to get a page map
+	if (doPDFPerTune){
+
+		// Force TOC generation to get a page map for PDF splitting later
+		TunebookTOCRequested = true;
+
+		// No navigation markers on the tunes
+		gAddTOCLinkback = false;
+		gAddIndexLinkback = false;
+
+	}
 
 	// Clear the render time
 	theRenderTime = "";
@@ -9609,41 +9651,52 @@ function ExportNotationPDF(title) {
 
 						// Did they request a tune TOC?
 						if (TunebookTOCRequested){
+
+							if (!doPDFPerTune){
 							
-							document.getElementById("statustunecount").innerHTML = "Adding Table of Contents";
+								document.getElementById("statustunecount").innerHTML = "Adding Table of Contents";
+
+							}
 							
 							AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookTOCTitle,false,false,gIncludePageLinks,theTOCDelta,theTOCStart);
+							
+							if (!doPDFPerTune){
 
-							document.getElementById("statustunecount").innerHTML = "Table of Contents Added!";
+								document.getElementById("statustunecount").innerHTML = "Table of Contents Added!";
+
+							}
 							
 							document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
 							
 						}
 
-						// Did they request a sorted tune TOC?
-						if (TunebookSortedTOCRequested){
-							
-							document.getElementById("statustunecount").innerHTML = "Adding Sorted Table of Contents";
-							
-							AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedTOCTitle,true,false,gIncludePageLinks,theTOCDelta,theTOCSortedStart);
+						if (!doPDFPerTune){
 
-							document.getElementById("statustunecount").innerHTML = "Sorted Table of Contents Added!";
-							
-							document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+							// Did they request a sorted tune TOC?
+							if (TunebookSortedTOCRequested){
+								
+								document.getElementById("statustunecount").innerHTML = "Adding Sorted Table of Contents";
+								
+								AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedTOCTitle,true,false,gIncludePageLinks,theTOCDelta,theTOCSortedStart);
 
-						}
+								document.getElementById("statustunecount").innerHTML = "Sorted Table of Contents Added!";
+								
+								document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
 
-						// Did they request a tunebook title page?
-						if (TunebookTPRequested){
-							
-							document.getElementById("statustunecount").innerHTML = "Adding Title Page";
-							
-							AppendTuneTitlePage(pdf,paperStyle,theTunebookTP,theTunebookTPST);
+							}
 
-							document.getElementById("statustunecount").innerHTML = "Title Page Added!";
-							
-							document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
-							
+							// Did they request a tunebook title page?
+							if (TunebookTPRequested){
+								
+								document.getElementById("statustunecount").innerHTML = "Adding Title Page";
+								
+								AppendTuneTitlePage(pdf,paperStyle,theTunebookTP,theTunebookTPST);
+
+								document.getElementById("statustunecount").innerHTML = "Title Page Added!";
+								
+								document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+								
+							}
 						}
 
 						// How many pages were added before the tunes?
@@ -9660,31 +9713,33 @@ function ExportNotationPDF(title) {
 						// Add all the headers and footers at once
 						PostProcessHeadersAndFooters(pdf,addPageNumbers,theDelta+1,totalPages,pageNumberLocation,hideFirstPageNumber,paperStyle);
 
+						if (!doPDFPerTune){
 
-						// Did they request a tunebook index?
-						if (TunebookIndexRequested){
-							
-							document.getElementById("statustunecount").innerHTML = "Adding Tunebook Index";
+							// Did they request a tunebook index?
+							if (TunebookIndexRequested){
+								
+								document.getElementById("statustunecount").innerHTML = "Adding Tunebook Index";
 
-							AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookIndexTitle,false,false,gIncludePageLinks,theDelta);
+								AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookIndexTitle,false,false,gIncludePageLinks,theDelta);
 
-							document.getElementById("statustunecount").innerHTML = "Tunebook Index Added!";
-							
-							document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
-							
-						}
+								document.getElementById("statustunecount").innerHTML = "Tunebook Index Added!";
+								
+								document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+								
+							}
 
-						// Did they request a sorted tunebook index?
-						if (TunebookSortedIndexRequested){
-							
-							document.getElementById("statustunecount").innerHTML = "Adding Tunebook Sorted Index";
+							// Did they request a sorted tunebook index?
+							if (TunebookSortedIndexRequested){
+								
+								document.getElementById("statustunecount").innerHTML = "Adding Tunebook Sorted Index";
 
-							AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedIndexTitle,true,false,gIncludePageLinks,theDelta);
+								AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedIndexTitle,true,false,gIncludePageLinks,theDelta);
 
-							document.getElementById("statustunecount").innerHTML = "Tunebook Sorted Index Added!";
-							
-							document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
-							
+								document.getElementById("statustunecount").innerHTML = "Tunebook Sorted Index Added!";
+								
+								document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+								
+							}
 						}
 
 						// Add any link back requested to the index or TOC
@@ -9716,7 +9771,7 @@ function ExportNotationPDF(title) {
 						}
 
 						// Did they request a QR code?
-						if (gQRCodeRequested){
+						if (gQRCodeRequested && (!doPDFPerTune)){
 
 							document.getElementById("statustunecount").innerHTML = "Adding Tunebook QR Code";
 
@@ -9781,16 +9836,26 @@ function ExportNotationPDF(title) {
 
 							setTimeout(function(){
 
-									if (title){
+								if (title){
 
-										document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"blue\">" + title + "</font>";
+									document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"blue\">" + title + "</font>";
 
-									}
+								}
 
-									// Save the status up for a bit before saving
+
+								// If PDF per tune requested, split the file
+								if (doPDFPerTune){
+
+									//debugger;
+
+									createSplitPDFs(pdf,theTunePageMap,totalPages,theTOCDelta,postSaveCallback);
+
+								}
+								else{
+
+									// Start the normal PDF save
 									setTimeout(function(){
 
-										// Start the PDF save
 										// On mobile, have to use a different save strategy otherwise the PDF loads in the same tab
 										if (isMobileBrowser()){
 
@@ -9822,85 +9887,90 @@ function ExportNotationPDF(title) {
 										 	pdf.save(title);
 									 	}
 
+									 	// Clean up and finish
+									 	postSaveCallback();
 
-										// Did incipit generation require a re-render?
-										if (requirePostRender){
+									},2000);
+								}
 
-											document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Cleaning up after PDF generation</font>";
+								function postSaveCallback(){
 
-											// Need some time for UI update
-											setTimeout(function(){
+									// Did incipit generation require a re-render?
+									if (requirePostRender){
 
-												gRenderingPDF = false;
+										document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Cleaning up after PDF generation</font>";
 
-												// Fix up any display width changes done for the PDF export
-												gTheNotation.style.width = gOriginalWidthBeforePDFExport;
-
-												Render(true,null);
-
-												// Clear the offscreen rendering div
-												document.getElementById("offscreenrender").innerHTML = ""; 
-
-												finalize_pdf_export_stage_2();
-
-											},100);
-											
-										}
-										else{
-
-											// Catch up on any UI changes during the PDF rendering
-											RestoreSVGDivsAfterRasterization();
-
-											finalize_pdf_export_stage_2();
+										// Need some time for UI update
+										setTimeout(function(){
 
 											gRenderingPDF = false;
 
 											// Fix up any display width changes done for the PDF export
 											gTheNotation.style.width = gOriginalWidthBeforePDFExport;
 
+											Render(true,null);
+
+											// Clear the offscreen rendering div
+											document.getElementById("offscreenrender").innerHTML = ""; 
+
+											finalize_pdf_export_stage_2();
+
+										},100);
+										
+									}
+									else{
+
+										// Catch up on any UI changes during the PDF rendering
+										RestoreSVGDivsAfterRasterization();
+
+										finalize_pdf_export_stage_2();
+
+										gRenderingPDF = false;
+
+										// Fix up any display width changes done for the PDF export
+										gTheNotation.style.width = gOriginalWidthBeforePDFExport;
+
+									}
+								}
+
+								function finalize_pdf_export_stage_2(){
+
+									document.getElementById("statuspdfname").innerHTML = "&nbsp;";
+
+									document.getElementById("statustunecount").innerHTML = "&nbsp;";
+
+									document.getElementById("pagestatustext").innerHTML = "&nbsp;";
+
+									// Hide the PDF status modal
+									var pdfstatus = document.getElementById("pdf-controls");
+									pdfstatus.style.display = "none";
+
+									// Were there any injected URLs that exceeded the Acrobat max?
+									if (gAcrobatURLLimitExceeded.length > 0){
+
+										ShowAcrobatURLSizeWarningDialog();
+
+									}
+
+									// Mixed notation and QR codes resets the format selector to one, so fix it and save it here
+									if (gMixedNotationAndQRCode){
+
+										//console.log("gMixedNotationAndQRCode - Resetting pdfformat - Normal");
+
+										if (paperStyle == "a4"){
+											setPDFFormat("mixed_notation_qr_a4");
+										}
+										else{
+											setPDFFormat("mixed_notation_qr");
 										}
 
+										SavePDFSettings();
 
-										function finalize_pdf_export_stage_2(){
+									}
 
-											document.getElementById("statuspdfname").innerHTML = "&nbsp;";
+								}
 
-											document.getElementById("statustunecount").innerHTML = "&nbsp;";
-
-											document.getElementById("pagestatustext").innerHTML = "&nbsp;";
-
-											// Hide the PDF status modal
-											var pdfstatus = document.getElementById("pdf-controls");
-											pdfstatus.style.display = "none";
-
-											// Were there any injected URLs that exceeded the Acrobat max?
-											if (gAcrobatURLLimitExceeded.length > 0){
-
-												ShowAcrobatURLSizeWarningDialog();
-
-											}
-
-											// Mixed notation and QR codes resets the format selector to one, so fix it and save it here
-											if (gMixedNotationAndQRCode){
-
-												//console.log("gMixedNotationAndQRCode - Resetting pdfformat - Normal");
-
-												if (paperStyle == "a4"){
-													setPDFFormat("mixed_notation_qr_a4");
-												}
-												else{
-													setPDFFormat("mixed_notation_qr");
-												}
-
-												SavePDFSettings();
-
-											}
-
-										}
-
-										return;
-
-									},1500);
+								return;
 
 							},2000);
 						}
@@ -9936,7 +10006,7 @@ function ExportNotationPDF(title) {
 
 			}
 
-		}, 250);
+		}, 250);  
 	}
 }
 
@@ -9947,6 +10017,295 @@ function CancelPDF(){
 	
 	gPDFCancelRequested = true;
 
+}
+
+//
+// Split the PDF into individual PDFs per page
+//
+
+async function createSplitPDFs(thePDF,pageMap,totalPages,TOCDelta,thePostSaveCallback){
+
+	//debugger;
+
+	gTheSplitPDFTitles = GetTunebookIndexTitles();
+
+	TOCDelta--;
+
+	const pdfBlob = thePDF.output('blob');
+
+    // Convert Blob to ArrayBuffer
+    const arrayBuffer = await blobToArrayBuffer(pdfBlob);
+
+    // Utility function to convert Blob to ArrayBuffer
+    function blobToArrayBuffer(blob) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsArrayBuffer(blob);
+        });
+    }
+
+	function countImagesInPDF(dict) {
+
+		const entries = Array.from(dict.dict.entries());
+
+		var nImages = 0;
+
+		var nEntries = entries.length;
+		for (var i = 0; i < nEntries; ++i) {
+			var thisEntry = entries[i];
+
+			if (thisEntry[0].encodedName.indexOf("/I") != -1) {
+
+				nImages++
+			}
+		}
+
+		return nImages;
+
+	}
+
+	const findKeyForValue = (value, dict) => {
+
+		//debugger;
+
+		const entries = Array.from(dict.dict.entries());
+
+		var match = null;
+
+		var nEntries = entries.length;
+		for (var i = 0; i < nEntries; ++i) {
+			var thisEntry = entries[i];
+
+			if (thisEntry[0].encodedName == value) {
+
+				match = thisEntry;
+				break;
+			}
+		}
+
+		if (match) return match[0];
+
+		return undefined;
+	};
+
+	// Parse the content stream for this page and find the images
+	function getImagesInThisPage(thePage){
+
+
+		var theContents = thePage.node.Contents();
+
+		var decoder = new TextDecoder('utf-8');
+		var rawString = decoder.decode(theContents.contents);
+		
+		//console.log(rawString);
+
+		const lines = rawString.split('\n');
+
+		// Filter lines that start with '/I'
+		const filteredLines = lines.filter(line => line.startsWith('/I'));
+
+		var nLines = filteredLines.length;
+
+		var imageList = [];
+
+		for (var i=0;i<nLines;++i){
+
+			var thisLine = filteredLines[i];
+
+			thisLine = thisLine.replace(" Do","");
+			thisLine = thisLine.replace("/I","");
+			thisLine = thisLine.trim();
+
+			imageList.push(parseInt(thisLine));
+		}
+
+		return imageList;
+	}
+
+	async function splitPDF(pdfBytes, ranges) {
+
+		//debugger;
+
+		const {
+			PDFDocument,
+			PDFName,
+			PDFDict
+		} = PDFLib;
+
+		var originalPdf = await PDFDocument.load(pdfBytes);
+
+		const splitPdfs = [];
+
+		for (const range of ranges) {
+
+			//console.log("splitPDF range start: " + range.start + " end: " + range.end + " imageStart: " + range.imageStart + " imageEnd: " + range.imageEnd);
+
+			const newPdf = await PDFDocument.create();
+
+			var newPDFPageCount = 0;
+
+			for (let i = range.start; i <= range.end; i++) {
+
+				const [copiedPage] = await newPdf.copyPages(originalPdf, [i]);
+
+				newPdf.addPage(copiedPage);
+
+				newPDFPageCount++;
+
+			}
+
+			for (let i=0;i<newPDFPageCount;++i){
+
+				const thisPage = newPdf.getPages()[i];
+
+				const xObjects = thisPage.node
+					.Resources()
+					.lookup(PDFName.of('XObject'), PDFDict);
+
+				var nImagesInPDF = countImagesInPDF(xObjects);
+
+				//console.log("Image count in PDF: " + nImagesInPDF);
+
+				var imagesInThisPDF = getImagesInThisPage(thisPage);
+
+				// Get all the images in the command stream
+
+				for (var j = 0; j < nImagesInPDF; ++j) {
+
+					if (!(imagesInThisPDF.includes(j))){
+
+						const key = findKeyForValue('/I' + j, xObjects);
+
+						const imageRef = xObjects.get(key);
+
+						if (imageRef) {
+
+							//console.log("deleting "+ ('/I' + j));
+
+							newPdf.context.delete(imageRef);
+
+						}
+					}
+				}
+			}
+
+			newPdfBytes = await newPdf.save();
+
+			splitPdfs.push(newPdfBytes);
+
+		}
+
+		// Early release
+		originalPdf = null;
+
+		return splitPdfs;
+
+	}
+
+
+	var ranges = [];
+
+	var nTunes = pageMap.length;
+
+	if (nTunes == 0){
+		return;
+	}
+	
+	document.getElementById("statuspdfname").innerHTML = "&nbsp;";
+
+	document.getElementById("statustunecount").innerHTML = "Splitting PDF Tunebook Into Individual Tunes...";
+
+	document.getElementById("pagestatustext").innerHTML = "&nbsp;";
+
+	// Give a little time for UI feedback drawing
+	setTimeout(async function(){
+
+		for (var i=0;i<nTunes;++i){
+
+			//console.log("Processing tune: "+i);
+
+			if (i!=nTunes-1){
+				
+				var nPages = pageMap[i+1] - pageMap[i];
+
+				nPages--;
+
+				//console.log("pushing start: "+(pageMap[i]+TOCDelta)+" end: "+(pageMap[i]+nPages+TOCDelta));
+
+				ranges.push({start: pageMap[i]+TOCDelta, end: pageMap[i]+nPages+TOCDelta})
+			}
+			else{
+
+				//console.log("last pushing start: "+(pageMap[i]+TOCDelta)+" end: "+(pageMap[i]+nPages+TOCDelta));
+
+				var nPages = (totalPages-pageMap[i]);
+
+			 	ranges.push({start: pageMap[i]+TOCDelta, end:pageMap[i]+nPages+TOCDelta})			
+			}
+
+		}
+
+	    gSplitPdfs = await splitPDF(arrayBuffer, ranges);
+
+	    gNSplitPDF = gSplitPdfs.length;
+
+	    gSplitPDFIndex = 0;
+
+	    function saveSplitPDF(pdfBytes,fname,callback){
+
+	    	//debugger;
+	 		document.getElementById("statustunecount").innerHTML = "Saving tune <font color=\"blue\">"+fname+"</font>"
+	       
+	        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+
+	        const link = document.createElement('a');
+	        
+	        link.href = URL.createObjectURL(blob);
+
+	        link.download = `${fname}.pdf`;
+	        
+	        document.body.appendChild(link);
+	        
+	        link.click();
+	        
+	        document.body.removeChild(link);
+
+	        callback()
+
+	    };
+
+
+	    // Sequence the split saves
+	    function splitCallback(){
+
+	    	gSplitPDFIndex++;
+
+	    	if (gSplitPDFIndex < gNSplitPDF){
+
+	    		setTimeout(function(){
+
+	     			saveSplitPDF(gSplitPdfs[gSplitPDFIndex],gTheSplitPDFTitles[gSplitPDFIndex],splitCallback);
+	  			
+	    		},100);
+	    	}
+	    	else{
+
+	    		// All done
+	    		thePostSaveCallback();
+	    	}
+
+	    }
+	    
+
+	    if (gNSplitPDF > 0){
+
+	    	saveSplitPDF(gSplitPdfs[0],gTheSplitPDFTitles[0],splitCallback);
+
+	    }
+
+	}, 1000);
 }
 
 function getNextSiblings(el, filter) {
@@ -35046,17 +35405,35 @@ function PDFExportDialog(){
 	    { name: "  Landscape", id: "landscape" },
   	];
 
-    const tunelayout_list = [
-	    { name: "  One Tune per Page", id: "one" },
-	    { name: "  Multiple Tunes per Page", id: "multi" },
-	    { name: "  Notes Incipits", id: "incipits" },
- 	    { name: "  ABC Text Incipits", id: "incipits_abc" },
-	    { name: "  ABC Text Incipits Sorted", id: "incipits_abc_sort" },
-	    { name: "  ABC Text Complete Tunes", id: "incipits_abc_full" },
-	    { name: "  ABC Text Complete Tunes - Comhaltas ABC", id: "incipits_abc_full_cce" },
-	    { name: "  QR Code for Each Tune", id: "all_qr_codes" },
-	    { name: "  Notation + QR Code for Each Tune", id: "mixed_notation_qr" },
- 	];
+  	var tunelayout_list;
+
+  	if (!isMobileBrowser()){
+	    tunelayout_list = [
+		    { name: "  One Tune per Page", id: "one" },
+		    { name: "  Multiple Tunes per Page", id: "multi" },
+		    { name: "  Notes Incipits", id: "incipits" },
+	 	    { name: "  ABC Text Incipits", id: "incipits_abc" },
+		    { name: "  ABC Text Incipits Sorted", id: "incipits_abc_sort" },
+		    { name: "  ABC Text Complete Tunes", id: "incipits_abc_full" },
+		    { name: "  ABC Text Complete Tunes - Comhaltas ABC", id: "incipits_abc_full_cce" },
+		    { name: "  QR Code for Each Tune", id: "all_qr_codes" },
+		    { name: "  Notation + QR Code for Each Tune", id: "mixed_notation_qr" },
+		    { name: "  Individual PDF File for Each Tune", id: "pdf_per_tune" },
+	 	];
+	}
+	else{
+	    tunelayout_list = [
+		    { name: "  One Tune per Page", id: "one" },
+		    { name: "  Multiple Tunes per Page", id: "multi" },
+		    { name: "  Notes Incipits", id: "incipits" },
+	 	    { name: "  ABC Text Incipits", id: "incipits_abc" },
+		    { name: "  ABC Text Incipits Sorted", id: "incipits_abc_sort" },
+		    { name: "  ABC Text Complete Tunes", id: "incipits_abc_full" },
+		    { name: "  ABC Text Complete Tunes - Comhaltas ABC", id: "incipits_abc_full_cce" },
+		    { name: "  QR Code for Each Tune", id: "all_qr_codes" },
+		    { name: "  Notation + QR Code for Each Tune", id: "mixed_notation_qr" },
+	 	];
+	}
 
   	const incipits_columns_list = [
 	    { name: "  One Column", id: 1 },
