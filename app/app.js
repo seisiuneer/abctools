@@ -7,7 +7,7 @@
  * 
  * MIT License
  * 
- * Copyright (c) 2023 Michael Eskin
+ * Copyright (c) 2024 Michael Eskin
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0078_020824_0830";
+var gVersionNumber="0079_020824_1530";
 
 var gMIDIInitStillWaiting = false;
 
@@ -10173,9 +10173,9 @@ async function createSplitPDFs(thePDF,pageMap,totalPages,TOCDelta,thePostSaveCal
 		return;
 	}
 	
-	document.getElementById("statuspdfname").innerHTML = "&nbsp;";
-
-	document.getElementById("statustunecount").innerHTML = "Splitting PDF Tunebook Into Individual Tunes...";
+	document.getElementById("statuspdfname").innerHTML = "Splitting PDF Tunebook Into Individual Tune PDFs";
+	
+	document.getElementById("statustunecount").innerHTML = "&nbsp;";
 
 	document.getElementById("pagestatustext").innerHTML = "&nbsp;";
 
@@ -10195,7 +10195,8 @@ async function createSplitPDFs(thePDF,pageMap,totalPages,TOCDelta,thePostSaveCal
 	    function saveSplitPDF(pdfBytes,fname,callback){
 
 	    	//debugger;
-	 		document.getElementById("statustunecount").innerHTML = "Saving tune <font color=\"blue\">"+fname+"</font>"
+	 		document.getElementById("statustunecount").innerHTML = "Saving tune <font color=\"red\">"+(gSplitPDFIndex+1)+"</font> of <font color=\"red\">"+gNSplitPDF +"</font>"
+	 		document.getElementById("pagestatustext").innerHTML = "<font color=\"blue\">"+fname+"</font>"
 	       
 	        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
 
@@ -10226,6 +10227,23 @@ async function createSplitPDFs(thePDF,pageMap,totalPages,TOCDelta,thePostSaveCal
 	    async function splitCallback(){
 
 	    	var range;
+
+	    	// Cancel requested?
+	    	if (gPDFCancelRequested){
+
+	 			document.getElementById("statuspdfname").innerHTML = "&nbsp;"
+	    		document.getElementById("statustunecount").innerHTML = "Operation Cancelled";
+		 		document.getElementById("pagestatustext").innerHTML = "&nbsp;"
+
+	    		setTimeout(function(){
+
+	     			thePostSaveCallback();
+	  			
+	    		},2000);
+
+	    		return;
+
+	    	}
 
 	    	gSplitPDFIndex++;
 
@@ -10298,7 +10316,7 @@ async function createSplitPDFs(thePDF,pageMap,totalPages,TOCDelta,thePostSaveCal
 
 	    }
 
-	}, 1500);
+	}, 1000);
 }
 
 function getNextSiblings(el, filter) {
