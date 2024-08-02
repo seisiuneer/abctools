@@ -4,12 +4,14 @@
 //
 //
 //
-// Updated 25 July 2024 at 1145
+//
+// Updated 1 August 2024 at 2130
+//
 //
 //
 //
 
-const cacheName = 'cache-195';
+const cacheName = 'cache-196';
 
 const contentToCache = [
     'abctools.html',
@@ -29,6 +31,7 @@ const contentToCache = [
 	'abcjs-chord-intervals.js',
 	'abcjs-basic-eskin-min.js',
 	'jspdf.min.js',
+    'pdf-lib-min.js',
 	'html2image.js',
 	'qrcode.js',
 	'lz-string.min.js',
