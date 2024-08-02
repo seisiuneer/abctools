@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0077_010824_2205";
+var gVersionNumber="0078_020824_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -9189,7 +9189,6 @@ function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform, bDoQRCodes)
 //
 
 // For per-tune PDFs
-var gSplitPdfs;
 var gNSplitPDF;
 var gSplitPDFIndex;
 var gTheSplitPDFTitles;
@@ -10012,7 +10011,7 @@ async function createSplitPDFs(thePDF,pageMap,totalPages,TOCDelta,thePostSaveCal
 	const pdfBlob = thePDF.output('blob');
 
     // Convert Blob to ArrayBuffer
-    const arrayBuffer = await blobToArrayBuffer(pdfBlob);
+    const pdfArrayBuffer = await blobToArrayBuffer(pdfBlob);
 
     // Utility function to convert Blob to ArrayBuffer
     function blobToArrayBuffer(blob) {
@@ -10071,7 +10070,6 @@ async function createSplitPDFs(thePDF,pageMap,totalPages,TOCDelta,thePostSaveCal
 	// Parse the content stream for this page and find the images
 	function getImagesInThisPage(thePage){
 
-
 		var theContents = thePage.node.Contents();
 
 		var decoder = new TextDecoder('utf-8');
@@ -10102,7 +10100,7 @@ async function createSplitPDFs(thePDF,pageMap,totalPages,TOCDelta,thePostSaveCal
 		return imageList;
 	}
 
-	async function splitPDF(pdfBytes, ranges) {
+	async function splitPDF(originalPdf, range) {
 
 		//debugger;
 
@@ -10112,78 +10110,62 @@ async function createSplitPDFs(thePDF,pageMap,totalPages,TOCDelta,thePostSaveCal
 			PDFDict
 		} = PDFLib;
 
-		var originalPdf = await PDFDocument.load(pdfBytes);
+		//console.log("splitPDF range start: " + range.start + " end: " + range.end );
 
-		const splitPdfs = [];
+		const newPdf = await PDFDocument.create();
 
-		for (const range of ranges) {
+		var newPDFPageCount = 0;
 
-			//console.log("splitPDF range start: " + range.start + " end: " + range.end + " imageStart: " + range.imageStart + " imageEnd: " + range.imageEnd);
+		for (let i = range.start; i <= range.end; i++) {
 
-			const newPdf = await PDFDocument.create();
+			const [copiedPage] = await newPdf.copyPages(originalPdf, [i]);
 
-			var newPDFPageCount = 0;
+			newPdf.addPage(copiedPage);
 
-			for (let i = range.start; i <= range.end; i++) {
-
-				const [copiedPage] = await newPdf.copyPages(originalPdf, [i]);
-
-				newPdf.addPage(copiedPage);
-
-				newPDFPageCount++;
-
-			}
-
-			for (let i=0;i<newPDFPageCount;++i){
-
-				const thisPage = newPdf.getPages()[i];
-
-				const xObjects = thisPage.node
-					.Resources()
-					.lookup(PDFName.of('XObject'), PDFDict);
-
-				var nImagesInPDF = countImagesInPDF(xObjects);
-
-				//console.log("Image count in PDF: " + nImagesInPDF);
-
-				var imagesInThisPDF = getImagesInThisPage(thisPage);
-
-				// Get all the images in the command stream
-
-				for (var j = 0; j < nImagesInPDF; ++j) {
-
-					if (!(imagesInThisPDF.includes(j))){
-
-						const key = findKeyForValue('/I' + j, xObjects);
-
-						const imageRef = xObjects.get(key);
-
-						if (imageRef) {
-
-							//console.log("deleting "+ ('/I' + j));
-
-							newPdf.context.delete(imageRef);
-
-						}
-					}
-				}
-			}
-
-			newPdfBytes = await newPdf.save();
-
-			splitPdfs.push(newPdfBytes);
+			newPDFPageCount++;
 
 		}
 
-		// Early release
-		originalPdf = null;
+		for (let i=0;i<newPDFPageCount;++i){
 
-		return splitPdfs;
+			const thisPage = newPdf.getPages()[i];
+
+			const xObjects = thisPage.node
+				.Resources()
+				.lookup(PDFName.of('XObject'), PDFDict);
+
+			var nImagesInPDF = countImagesInPDF(xObjects);
+
+			//console.log("Image count in PDF: " + nImagesInPDF);
+
+			var imagesInThisPDF = getImagesInThisPage(thisPage);
+
+			// Get all the images in the command stream
+
+			for (var j = 0; j < nImagesInPDF; ++j) {
+
+				if (!(imagesInThisPDF.includes(j))){
+
+					const key = findKeyForValue('/I' + j, xObjects);
+
+					const imageRef = xObjects.get(key);
+
+					if (imageRef) {
+
+						//console.log("deleting "+ ('/I' + j));
+
+						newPdf.context.delete(imageRef);
+
+					}
+				}
+			}
+		}
+
+		newPdfBytes = await newPdf.save();
+
+		return newPdfBytes;
 
 	}
-
-
-	var ranges = [];
 
 	var nTunes = pageMap.length;
 
@@ -10200,34 +10182,13 @@ async function createSplitPDFs(thePDF,pageMap,totalPages,TOCDelta,thePostSaveCal
 	// Give a little time for UI feedback drawing
 	setTimeout(async function(){
 
-		for (var i=0;i<nTunes;++i){
+		const {
+			PDFDocument,
+		} = PDFLib;
 
-			//console.log("Processing tune: "+i);
+		var theOriginalPdf = await PDFDocument.load(pdfArrayBuffer);
 
-			if (i!=nTunes-1){
-				
-				var nPages = pageMap[i+1] - pageMap[i];
-
-				nPages--;
-
-				//console.log("pushing start: "+(pageMap[i]+TOCDelta)+" end: "+(pageMap[i]+nPages+TOCDelta));
-
-				ranges.push({start: pageMap[i]+TOCDelta, end: pageMap[i]+nPages+TOCDelta})
-			}
-			else{
-
-				//console.log("last pushing start: "+(pageMap[i]+TOCDelta)+" end: "+(pageMap[i]+nPages+TOCDelta));
-
-				var nPages = (totalPages-pageMap[i]);
-
-			 	ranges.push({start: pageMap[i]+TOCDelta, end:pageMap[i]+nPages+TOCDelta})			
-			}
-
-		}
-
-	    gSplitPdfs = await splitPDF(arrayBuffer, ranges);
-
-	    gNSplitPDF = gSplitPdfs.length;
+	    gNSplitPDF = nTunes;
 
 	    gSplitPDFIndex = 0;
 
@@ -10239,8 +10200,10 @@ async function createSplitPDFs(thePDF,pageMap,totalPages,TOCDelta,thePostSaveCal
 	        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
 
 	        const link = document.createElement('a');
-	        
-	        link.href = URL.createObjectURL(blob);
+
+	        var href = URL.createObjectURL(blob);
+
+	        link.href = href;
 
 	        link.download = `${fname}.pdf`;
 	        
@@ -10250,21 +10213,48 @@ async function createSplitPDFs(thePDF,pageMap,totalPages,TOCDelta,thePostSaveCal
 	        
 	        document.body.removeChild(link);
 
+	        setTimeout(function() {
+			  window.URL.revokeObjectURL(href);
+			}, 1000);		
+
 	        callback()
 
 	    };
 
 
 	    // Sequence the split saves
-	    function splitCallback(){
+	    async function splitCallback(){
+
+	    	var range;
 
 	    	gSplitPDFIndex++;
 
 	    	if (gSplitPDFIndex < gNSplitPDF){
 
+				if (gSplitPDFIndex!=gNSplitPDF-1){
+					
+					var nPages = pageMap[gSplitPDFIndex+1] - pageMap[gSplitPDFIndex];
+
+					nPages--;
+
+					//console.log("pushing start: "+(pageMap[gSplitPDFIndex]+TOCDelta)+" end: "+(pageMap[gSplitPDFIndex]+nPages+TOCDelta));
+
+					range = {start: pageMap[gSplitPDFIndex]+TOCDelta, end: pageMap[gSplitPDFIndex]+nPages+TOCDelta};
+				}
+				else{
+
+					//console.log("last pushing start: "+(pageMap[gSplitPDFIndex]+TOCDelta)+" end: "+(pageMap[gSplitPDFIndex]+nPages+TOCDelta));
+
+					var nPages = (totalPages-pageMap[gSplitPDFIndex]);
+
+				 	range = {start: pageMap[gSplitPDFIndex]+TOCDelta, end:pageMap[gSplitPDFIndex]+nPages+TOCDelta};		
+				}
+
+				var theSplitPDF = await splitPDF(theOriginalPdf, range)
+
 	    		setTimeout(function(){
 
-	     			saveSplitPDF(gSplitPdfs[gSplitPDFIndex],gTheSplitPDFTitles[gSplitPDFIndex],splitCallback);
+	     			saveSplitPDF(theSplitPDF,gTheSplitPDFTitles[gSplitPDFIndex],splitCallback);
 	  			
 	    		},100);
 	    	}
@@ -10276,14 +10266,39 @@ async function createSplitPDFs(thePDF,pageMap,totalPages,TOCDelta,thePostSaveCal
 
 	    }
 	    
+	    var range;
 
 	    if (gNSplitPDF > 0){
 
-	    	saveSplitPDF(gSplitPdfs[0],gTheSplitPDFTitles[0],splitCallback);
+			//console.log("Processing tune: "+gSplitPDFIndex);
+
+			if (gSplitPDFIndex!=gNSplitPDF-1){
+				
+				var nPages = pageMap[gSplitPDFIndex+1] - pageMap[gSplitPDFIndex];
+
+				nPages--;
+
+				//console.log("pushing start: "+(pageMap[gSplitPDFIndex]+TOCDelta)+" end: "+(pageMap[gSplitPDFIndex]+nPages+TOCDelta));
+
+				range = {start: pageMap[gSplitPDFIndex]+TOCDelta, end: pageMap[gSplitPDFIndex]+nPages+TOCDelta};
+			}
+			else{
+
+				//console.log("last pushing start: "+(pageMap[gSplitPDFIndex]+TOCDelta)+" end: "+(pageMap[gSplitPDFIndex]+nPages+TOCDelta));
+
+				var nPages = (totalPages-pageMap[gSplitPDFIndex]);
+
+			 	range = {start: pageMap[gSplitPDFIndex]+TOCDelta, end:pageMap[gSplitPDFIndex]+nPages+TOCDelta};		
+			}
+				
+
+			var theSplitPDF = await splitPDF(theOriginalPdf, range)
+
+	    	saveSplitPDF(theSplitPDF,gTheSplitPDFTitles[0],splitCallback);
 
 	    }
 
-	}, 1000);
+	}, 1500);
 }
 
 function getNextSiblings(el, filter) {
