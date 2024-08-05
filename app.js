@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1473_02824_1500";
+var gVersionNumber="1474_05824_1330";
 
 var gMIDIInitStillWaiting = false;
 
@@ -13448,6 +13448,14 @@ function searchForTunes() {
 
 	            for (const [key, thisTuneABC] of Object.entries(theVariations))
 	            {
+	            	// Searching by key?
+	            	if (gTheTuneSearchKey != ""){
+	            		if (thisTuneABC.indexOf("K: "+gTheTuneSearchKey) == -1){
+	            			//console.log("Got match, but wrong key");
+	            			continue;
+	            		}
+	            		//console.log("Got match, correct key");
+	            	}
 
 	                // Are we only returning tunes with chords?
 	                if (returnOnlyWithChords){
@@ -13467,13 +13475,6 @@ function searchForTunes() {
 	                            	theOutput += key2+": "+value2+"\n";
 	                            }
 	                        }
-
-	                        // If multiple variations, label them
-	                    	if (!onlyFirstVariation){
-		                        if (total > 1){
-		                            theOutput+="% Variation "+index+"\n";
-		                        }
-		                    }
 
 	                        theOutput += thisTuneABC+"\n\n";
 
@@ -13505,14 +13506,6 @@ function searchForTunes() {
                             	theOutput += key2+": "+value2+"\n";
                             }
 	                    }
-
-	                    // If multiple variations, label them
-	                    // Don't label if returning first variation
-	                    if (!onlyFirstVariation){
-		                    if (total > 1){
-		                        theOutput+="% Variation "+index+" of "+total+"\n";
-		                    }
-		                }
 
 	                    theOutput += thisTuneABC+"\n\n";
 
@@ -13618,6 +13611,7 @@ function searchForTunes() {
 
 		            	var theABCInfo = gTheFolkFriendDatabase.settings[settingsMap[k]];
 
+
 		            	// Filtering by style?
 				        if (gTheTuneSearchStyle != ""){
 
@@ -13636,6 +13630,22 @@ function searchForTunes() {
 				        }
 
 		            	if (theABCInfo.tune_id == aliasMap[i]){
+
+			          		// Searching by key?
+			            	if (gTheTuneSearchKey != ""){
+
+			            		var thisMode = theABCInfo.mode;
+					        	
+					        	if (!thisMode){
+					        		continue;
+					        	}
+
+			            		if (thisMode != gTheTuneSearchKey){
+			            			//console.log("Got match, but wrong key");
+			            			continue;
+			            		}
+			            		//console.log("Got match, correct key");
+			            	}
 
 		            		var ok_to_process = true;
 
@@ -13869,6 +13879,18 @@ function SetTuneSearchStyle(){
 
 }
 
+//
+// Set the tune key
+//
+
+function SetTuneSearchKey(){
+
+	gTheTuneSearchKey = document.getElementById("tunesearchkey").value;
+
+	//console.log("gTheTuneSearchKey = "+gTheTuneSearchKey);
+
+}
+
 
 //
 // Fetch with retry
@@ -14084,6 +14106,7 @@ var gTheCurrentTuneDatabase = 0;
 var gTheMaxDatabaseResults = 25;
 var gDefaultSearchCollection = 0;
 var gTheTuneSearchStyle = "";
+var gTheTuneSearchKey ="";
 
 // Retry parameters
 var gTuneDatabaseRetryTimeMS = 3000;
@@ -14117,7 +14140,7 @@ function AddFromSearch(e,callback){
 
 	modal_msg+='<p class="tunesearchoptions">Only return first variation found?&nbsp;<input id="only_first_variation" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" checked/>&nbsp;&nbsp;&nbsp;Match start of title?&nbsp;<input id="match_title_start" type="checkbox" style="margin-top:-5px;margin-bottom:0px;"/>&nbsp;&nbsp;&nbsp;Only return tunes with chords?&nbsp;<input id="chords_only" type="checkbox" style="margin-top:-5px;margin-bottom:0px;"/></p>';
 	
-	modal_msg+='<p class="tunesearchoptionsmax">Tune style:<select id="tunesearchstyle" onchange="SetTuneSearchStyle();" title="Tune style to search" style="margin-top:-7px;width:130px"><option value="">All Tunes</option> <option value="jig">Jigs</option> <option value="reel">Reels</option> <option value="slip jig">Slip Jigs</option> <option value="hornpipe">Hornpipes</option> <option value="polka">Polkas</option> <option value="slide">Slides</option> <option value="waltz">Waltzes</option> <option value="barndance">Barndances</option> <option value="strathspey">Strathspeys</option> <option value="three-two">Three-Twos</option> <option value="mazurka">Mazurkas</option> <option value="march">Marches</option></select>&nbsp;&nbsp;&nbsp;&nbsp;Maximum number of results:<select id="maxtunesearchresults" onchange="SetTuneSearchMaxResults();" title="Maximum number of results" style="margin-top:-7px;"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></p>';
+	modal_msg+='<p class="tunesearchoptionsmax">Tune style:<select id="tunesearchstyle" onchange="SetTuneSearchStyle();" title="Tune style to search" style="margin-top:-7px;width:130px"><option value="">All Tunes</option> <option value="jig">Jigs</option> <option value="reel">Reels</option> <option value="slip jig">Slip Jigs</option> <option value="hornpipe">Hornpipes</option> <option value="polka">Polkas</option> <option value="slide">Slides</option> <option value="waltz">Waltzes</option> <option value="barndance">Barndances</option> <option value="strathspey">Strathspeys</option> <option value="three-two">Three-Twos</option> <option value="mazurka">Mazurkas</option> <option value="march">Marches</option></select>&nbsp;&nbsp;&nbsp;&nbsp;Key:<select id="tunesearchkey" onchange="SetTuneSearchKey();" title="Filter by Key/Mode" style="margin-top:-7px;width:130px;"><option value="">All Keys</option> <option value="Cmajor">C Major</option> <option value="Cdorian">C Dorian</option> <option value="Dmajor">D Major</option> <option value="Dmixolydian">D Mixolydian</option> <option value="Dminor">D Minor</option> <option value="Ddorian">D Dorian</option> <option value="Emajor">E Major</option> <option value="Emixolydian">E Mixolydian</option> <option value="Eminor">E Minor</option> <option value="Edorian">E Dorian</option> <option value="Fmajor">F Major</option> <option value="Fdorian">F Dorian</option> <option value="Gmajor">G Major</option> <option value="Gmixolydian">G Mixolydian</option> <option value="Gminor">G Minor</option> <option value="Gdorian">G Dorian</option> <option value="Amajor">A Major</option> <option value="Amixolydian">A Mixolydian</option> <option value="Aminor">A Minor</option> <option value="Adorian">A Dorian</option> <option value="Bminor">B Minor</option> <option value="Bmixolydian">B Mixolydian</option> <option value="Bdorian">B Dorian</option> </select>&nbsp;&nbsp;&nbsp;&nbsp;Maximum number of results:<select id="maxtunesearchresults" onchange="SetTuneSearchMaxResults();" title="Maximum number of results" style="margin-top:-7px;"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></p>';
 
 	modal_msg+='<p style="margin-top:10px;font-size:12pt;">	<input class="btn btn-start-search start-search" id="start-search" onclick="searchForTunes();" type="button" value="Search" title="Start search"><span id="status">&nbsp;&nbsp;&nbsp;Waiting for tune collection to load...</span></p>';
 
@@ -14146,6 +14169,10 @@ function AddFromSearch(e,callback){
 	// Initially search all tunes
 	document.getElementById("tunesearchstyle").value = "";
 	gTheTuneSearchStyle = "";
+
+	// Initially search all keys
+	document.getElementById("tunesearchkey").value = "";
+	gTheTuneSearchKey = "";
 
 	document.getElementById("add-search-results").disabled = true;
 
