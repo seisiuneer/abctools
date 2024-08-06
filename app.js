@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1474_05824_1330";
+var gVersionNumber="1475_06824_0945";
 
 var gMIDIInitStillWaiting = false;
 
@@ -13334,6 +13334,155 @@ function capitalizeAfterO(str) {
 }
 
 //
+// Sort the tune search results
+//
+function SortTuneSearchResults(theNotes){
+
+	function getTuneForSearchSort(tuneNumber){
+
+	    // Now find all the X: items
+	    var theTunes = theNotes.split(/^X:/gm);
+
+	 	return ("X:"+theTunes[tuneNumber+1]);
+	}
+
+	var theTunes = theNotes.split(/(^X:.*$)/gm);
+
+	var nTunes = (theTunes.length - 1)/2;
+
+	if (nTunes < 2){
+		return theNotes;
+	}
+
+	var thePrefixABC = theTunes[0];
+
+	//console.log("thePrefixABC: "+thePrefixABC);
+
+	var i;
+
+	var theTitles = [];
+
+	for (i=0;i<nTunes;++i){
+
+		var thisTune = getTuneForSearchSort(i);
+
+		var neu = escape(thisTune);
+
+		var Reihe = neu.split("%0D%0A");
+
+		Reihe = neu.split("%0A");
+
+		var bGotTitle = false;
+
+		for (var j = 0; j < Reihe.length; ++j) {
+
+			Reihe[j] = unescape(Reihe[j]); /* Macht die Steuerzeichen wieder weg */
+
+			var Aktuellereihe = Reihe[j].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
+
+			if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
+
+				titel = Reihe[j].slice(2);
+
+				titel = titel.trim();
+
+				// Just grab the first title foiund
+				theTitles.push(titel);
+
+				bGotTitle = true;
+
+				break
+
+			}
+		}
+
+		if (!bGotTitle){
+			theTitles.push("No Title");
+		}
+
+	}
+
+	var tunesToProcess = [];
+	var nProcessed = 0;
+	var thisTitle;
+
+	for (i=0;i<nTunes;++i){
+
+		if (theTunes[(i*2)+1] != undefined){
+
+			thisTitle = theTitles[nProcessed];
+
+			thisTitle = processTitleForSorting(thisTitle);
+
+			nProcessed++;
+
+			//console.log("Tune #"+nProcessed+": "+theTunes[(i*2)+1]+theTunes[(i*2)+2]);
+
+			tunesToProcess.push({title:thisTitle,tune:theTunes[(i*2)+1]+theTunes[(i*2)+2]});
+
+		}
+
+	}
+
+	// Sort tunes by name
+	tunesToProcess.sort((a, b) => {
+
+	  const nameA = a.title.toUpperCase(); // ignore upper and lowercase
+	  
+	  const nameB = b.title.toUpperCase(); // ignore upper and lowercase
+	  
+	  if (nameA < nameB) {
+	    return -1;
+	  }
+	  
+	  if (nameA > nameB) {
+	    return 1;
+	  }
+
+	  // names must be equal
+	  return 0;
+
+	});
+
+	theNotes = "";
+	theNotes += thePrefixABC;
+
+	// Aggregate the results
+	for (i=0;i<nProcessed;++i){
+
+		theNotes += tunesToProcess[i].tune;
+	}
+
+	// Renumber the tunes
+	theTunes = theNotes.split(/(^X:.*$)/gm);
+
+	nTunes = theTunes.length;
+
+	thePrefixABC = theTunes[0];
+
+	//console.log("thePrefixABC: "+thePrefixABC);
+	theNotes = "";
+	theNotes += thePrefixABC;
+
+	var tuneIndex = 1;
+
+	// Aggregate the results
+	for (i=1;i<nTunes;++i){
+
+		if (i % 2){
+			theNotes += "X:"+tuneIndex;
+			tuneIndex++;
+		}
+		else{
+			theNotes += theTunes[i];
+		}
+	}
+
+	return theNotes;
+
+}
+
+//
 // Search the parsed tune database for the tune name
 //
 function searchForTunes() {
@@ -13768,6 +13917,9 @@ function searchForTunes() {
 
     var elem = document.getElementById("search_result");
     elem.innerHTML = "Search Results:&nbsp;&nbsp;"+theTotal+ " found";
+
+    // Sort the results by tune name
+    theOutput = SortTuneSearchResults(theOutput)
 
     document.getElementById('search_results').value = theOutput;
 
