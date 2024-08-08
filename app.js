@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1479_08824_1400";
+var gVersionNumber="1480_08824_1415";
 
 var gMIDIInitStillWaiting = false;
 
@@ -40550,6 +40550,9 @@ function SR_replaceOne() {
 
     SR_findMatches();
 
+    // Mark text as modified
+    gIsDirty = true;
+
     if (gRawMode){
 
 		RenderAsync(true,null, function(){
@@ -40630,6 +40633,9 @@ function SR_replaceAll(callback) {
     SR_findMatches();
 
     RenderAsync(true,null);
+
+    // Mark text as modified
+    gIsDirty = true;
 
 }
 
