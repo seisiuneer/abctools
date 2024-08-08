@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0081_060824_1000";
+var gVersionNumber="0087_080824_1315";
 
 var gMIDIInitStillWaiting = false;
 
@@ -39965,6 +39965,263 @@ function MaximizeEditor(){
 	},100);
 }
 
+// 
+// Search and replace text
+//
+
+var gSR_currentIndex = -1;
+var gSR_matchIndexes = [];
+var gSR_searchInput = null;
+var gSR_replaceInput = null;
+var gSR_lastSearch = "";
+var gSR_lastReplace = "";
+
+function SR_findMatches() {
+
+	//console.log("SR_findMatches");
+    const text = gTheABC.value;
+
+    const searchValue = gSR_searchInput.value;
+
+    //console.log("searchValue: "+searchValue);
+    
+    gSR_matchIndexes = [];
+
+    if (searchValue === '') return;
+
+    let startIndex = 0;
+    while (startIndex !== -1) {
+        startIndex = text.indexOf(searchValue, startIndex);
+        if (startIndex !== -1) {
+            gSR_matchIndexes.push(startIndex);
+            startIndex += searchValue.length;
+        }
+    }
+}
+
+function SR_highlightMatch(index) {
+
+	//console.log("SR_highlightMatch");
+
+    const searchValue = gSR_searchInput.value;
+
+    if (gSR_matchIndexes.length === 0 || searchValue === '') return;
+
+    gTheABC.focus();
+    gTheABC.setSelectionRange(gSR_matchIndexes[index], gSR_matchIndexes[index] + searchValue.length);
+    
+	ScrollABCTextIntoView(gTheABC,gSR_matchIndexes[index],gSR_matchIndexes[index] + searchValue.length,2);
+
+	// Scroll the tune into view
+	MakeTuneVisible(true);
+
+}
+
+function SR_search(direction) {
+
+	//console.log("SR_search");
+
+	gSR_lastSearch = gSR_searchInput.value;
+
+    if (gSR_matchIndexes.length === 0){
+        
+        var prompt = makeCenteredPromptString(gSR_lastSearch+" not found");
+ 
+        DayPilot.Modal.alert(prompt, {
+            theme: "modal_flat",
+            top: 125
+        });
+
+        return;
+    }
+
+    if (direction === 'next') {
+        gSR_currentIndex = (gSR_currentIndex + 1) % gSR_matchIndexes.length;
+    } else if (direction === 'previous') {
+        gSR_currentIndex = (gSR_currentIndex - 1 + gSR_matchIndexes.length) % gSR_matchIndexes.length;
+    }
+
+    SR_highlightMatch(gSR_currentIndex);
+}
+
+function SR_search_next() {
+
+	//console.log("SR_search_next");
+
+	SR_search("next");
+
+}
+
+function SR_search_previous() {
+
+	//console.log("SR_search_previous");
+
+	SR_search("previous");
+
+}
+
+function SR_replaceOne() {
+
+	//console.log("SR_replaceOne");
+
+	if (gSR_matchIndexes.length == 0){
+		return;
+	}
+
+    if (gSR_currentIndex === -1){
+        
+        var prompt = makeCenteredPromptString("Nothing to replace");
+ 
+        DayPilot.Modal.alert(prompt, {
+            theme: "modal_flat",
+            top: 100
+        });
+
+        return;
+    }
+
+    const searchValue = gSR_searchInput.value;
+
+    if (searchValue == ""){
+    	return;
+    }
+
+    const replaceValue = gSR_replaceInput.value;
+
+	gSR_lastSearch = searchValue;
+	gSR_lastReplace = replaceValue;
+
+    const startIndex = gSR_matchIndexes[gSR_currentIndex];
+    
+    gTheABC.value = gTheABC.value.slice(0, startIndex) + replaceValue + gTheABC.value.slice(startIndex + searchValue.length);
+
+    var thisTune = findTuneByOffset(startIndex);
+
+    SR_findMatches();
+
+    Render(false,thisTune);
+
+    if (gSR_matchIndexes.length > 0){
+    	SR_search('previous');
+   		SR_search('next');
+   	}
+   	else{
+	    if (gSR_matchIndexes.length === 0){
+	        
+	        var prompt = makeCenteredPromptString(searchValue+" not found");
+	 
+	        DayPilot.Modal.alert(prompt, {
+	            theme: "modal_flat",
+	            top: 125
+	        });
+
+	        return;
+	    }
+   	}
+}
+
+function SR_replaceAll(callback) {
+
+	//console.log("SR_replaceAll");
+
+    const searchValue = gSR_searchInput.value;
+
+    if (searchValue == ""){
+    	return;
+    }
+
+    if (gSR_matchIndexes.length === 0){
+        
+        var prompt = makeCenteredPromptString(searchValue+" not found");
+ 
+        DayPilot.Modal.alert(prompt, {
+            theme: "modal_flat",
+            top: 125
+        });
+
+        return;
+    }
+
+    const replaceValue = gSR_replaceInput.value;
+
+	gSR_lastSearch = searchValue;
+	gSR_lastReplace = replaceValue;
+
+    gTheABC.value = gTheABC.value.split(searchValue).join(replaceValue);
+
+    SR_findMatches();
+
+    RenderAsync(true,null);
+
+}
+
+function FindAndReplace(){
+
+	//console.log("FindAndReplace");
+
+	sendGoogleAnalytics("action","FindAndReplace");
+
+	if (!gAllowCopy){
+
+        var prompt = makeCenteredPromptString("No Text in the ABC Editor to Find/Replace")
+ 
+        DayPilot.Modal.alert(prompt, {
+            theme: "modal_flat",
+            top: 200
+        });
+
+        return;	
+   	}
+
+	gSR_currentIndex = -1;
+	gSR_matchIndexes = [];
+
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Find and Replace&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/app/userguide.html#moretoolsdropdown" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+	
+	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Find:<br/><input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="searchText" title="Enter text to find here" autocomplete="off" autocorrect="off" placeholder="Text to find..."/></p>';
+
+	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Replace with:<br/><input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="replacementText" title="Enter replacement text here" autocomplete="off" autocorrect="off" placeholder="Replace with..."/></p>';
+
+	modal_msg+='<p style="font-size:12pt;text-align:center;margin-top:36px;"><input class="btn btn-search-previous search-previous" id="search-previous" onclick="SR_search_previous();" type="button" value="Find Previous" title="Find previous match"/><input class="btn btn-search-next search-next" id="search-next" onclick="SR_search_next();" type="button" value="Find Next" title="Find next match"/><input class="btn btn-search-replace search-replace" id="search-replace" onclick="SR_replaceOne();" type="button" value="Replace" title="Replace one text instance"/><input class="btn btn-search-replace-all search-replace-all" id="search-replace-all" onclick="SR_replaceAll();" type="button" value="Replace All" title="Replace all text instances"/></p>';
+
+	modal_msg+='</p>';
+
+    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 700,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+    });
+
+    gSR_searchInput = document.getElementById("searchText");
+    gSR_replaceInput = document.getElementById("replacementText");
+
+	gSR_searchInput.value = gSR_lastSearch;
+	gSR_replaceInput.value = gSR_lastReplace;
+
+	if (gSR_lastSearch != ""){
+		SR_findMatches();
+	}
+
+	gSR_searchInput.addEventListener("input", function(event) {
+		SR_findMatches();
+	});
+
+	gSR_searchInput.addEventListener("keydown", function(event) {
+    	// Check if the pressed key is Enter 
+	    if (event.key === "Enter") {
+	        event.stopPropagation();
+	        event.preventDefault();
+	        SR_searchNext();
+	    }
+	});
+
+	gSR_replaceInput.addEventListener("keydown", function(event) {
+    	// Check if the pressed key is Enter 
+	    if (event.key === "Enter") {
+	        event.stopPropagation();
+	        event.preventDefault();
+	    }
+	});
+
+}
+
 // Open the standard editor in a new tab
 function LaunchStandardEditor(){
 	var url = "https://michaeleskin.com/abctools/abctools.html";
@@ -40655,6 +40912,8 @@ function DoStartup() {
 	if (isDesktopBrowser()){
 
 		items = [
+		    { name: 'Find and Replace', fn: function(target) { FindAndReplace(); }},
+		    {},
 		    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
 		    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
 		    {},
