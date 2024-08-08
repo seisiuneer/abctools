@@ -663,13 +663,13 @@ padding:12px;
 	margin-top:16px;
 }
 
-#addnewreel,#addnewjig,#changetuneorder,#cull_select_all,#mobile_tune_order_up,#smartdraw_add_set_name,#smartdraw_delete_set_name,#addnewtunetemplate,#addsongtemplate,#addbodhrantemplate{
+#addnewreel,#addnewjig,#changetuneorder,#cull_select_all,#mobile_tune_order_up,#smartdraw_add_set_name,#smartdraw_delete_set_name,#addnewtunetemplate,#addsongtemplate,#addbodhrantemplate,#search-previous,#search-next,#search-replace{
 height:42px;
 padding:12px;
 margin-right:24px;
 }
 
-#addnewhornpipe,#searchandaddtunes,#culltunes,#cull_clear_selection,#mobile_tune_order_down,#smartdraw_export,#addnewsong,#addboxfingeringtemplate{
+#addnewhornpipe,#searchandaddtunes,#culltunes,#cull_clear_selection,#mobile_tune_order_down,#smartdraw_export,#addnewsong,#addboxfingeringtemplate,#search-replace-all{
 height:42px;
 padding:12px;
 }
@@ -1598,6 +1598,30 @@ opacity:.25;
 
 @media (hover: hover) {
 	.add-search-results:hover{
+	background: palegreen;
+	}
+}
+
+@media (hover: hover) {
+	.search-previous:hover{
+	background: palegreen;
+	}
+}
+
+@media (hover: hover) {
+	.search-next:hover{
+	background: palegreen;
+	}
+}
+
+@media (hover: hover) {
+	.search-replace:hover{
+	background: palegreen;
+	}
+}
+
+@media (hover: hover) {
+	.search-replace-all:hover{
 	background: palegreen;
 	}
 }
@@ -4564,6 +4588,27 @@ top:20px;
   --color: black;
   --background-color: lavender;
 }
+
+.btn-search-previous{
+  --color: black;
+  --background-color: lavender;
+}
+
+.btn-search-next{
+  --color: black;
+  --background-color: lavender;
+}
+
+.btn-search-replace{
+  --color: black;
+  --background-color: lavender;
+}
+
+.btn-search-replace-all{
+  --color: black;
+  --background-color: lavender;
+}
+
 
 .btn-smartdraw-export{
   --color: black;
