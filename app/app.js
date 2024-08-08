@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0087_080824_1315";
+var gVersionNumber="0088_080824_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -40095,29 +40095,54 @@ function SR_replaceOne() {
     
     gTheABC.value = gTheABC.value.slice(0, startIndex) + replaceValue + gTheABC.value.slice(startIndex + searchValue.length);
 
-    var thisTune = findTuneByOffset(startIndex);
-
     SR_findMatches();
 
-    Render(false,thisTune);
+    if (gRawMode){
 
-    if (gSR_matchIndexes.length > 0){
-    	SR_search('previous');
-   		SR_search('next');
-   	}
-   	else{
-	    if (gSR_matchIndexes.length === 0){
-	        
-	        var prompt = makeCenteredPromptString(searchValue+" not found");
-	 
-	        DayPilot.Modal.alert(prompt, {
-	            theme: "modal_flat",
-	            top: 125
-	        });
+		RenderAsync(true,null, function(){
+			
+		    if (gSR_matchIndexes.length > 0){
+		    	SR_search('previous');
+		   		SR_search('next');
+		   	}
+		   	else{
+			    if (gSR_matchIndexes.length === 0){
+			        
+			        var prompt = makeCenteredPromptString(searchValue+" not found");
+			 
+			        DayPilot.Modal.alert(prompt, {
+			            theme: "modal_flat",
+			            top: 125
+			        });
 
-	        return;
-	    }
-   	}
+			        return;
+			    }
+   			}			
+		});
+	}
+	else{
+
+    	var thisTune = findTuneByOffset(startIndex);
+    	Render(false,thisTune);
+
+	    if (gSR_matchIndexes.length > 0){
+	    	SR_search('previous');
+	   		SR_search('next');
+	   	}
+	   	else{
+		    if (gSR_matchIndexes.length === 0){
+		        
+		        var prompt = makeCenteredPromptString(searchValue+" not found");
+		 
+		        DayPilot.Modal.alert(prompt, {
+		            theme: "modal_flat",
+		            top: 125
+		        });
+
+		        return;
+		    }
+	   	}
+	}
 }
 
 function SR_replaceAll(callback) {
