@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1480_08824_1415";
+var gVersionNumber="1481_08824_1800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -40426,21 +40426,35 @@ var gSR_currentIndex = -1;
 var gSR_matchIndexes = [];
 var gSR_searchInput = null;
 var gSR_replaceInput = null;
+var gSR_caseSensitive = null;
 var gSR_lastSearch = "";
 var gSR_lastReplace = "";
+var gSR_lastCaseSensitive = true;
 
 function SR_findMatches() {
 
 	//console.log("SR_findMatches");
-    const text = gTheABC.value;
+    var text = gTheABC.value;
 
-    const searchValue = gSR_searchInput.value;
+    var searchValue = gSR_searchInput.value;
 
     //console.log("searchValue: "+searchValue);
-    
+
+    var isCaseSensitive = gSR_caseSensitive.checked;
+
+    gSR_lastCaseSensitive = isCaseSensitive;
+
+    //console.log("isCaseSensitive: "+isCaseSensitive);
+   
     gSR_matchIndexes = [];
 
     if (searchValue === '') return;
+
+    if (!isCaseSensitive){
+    	//console.log("SR_findMatches - Not case sensitive");
+    	text = text.toLowerCase();
+    	searchValue = searchValue.toLowerCase();
+    }
 
     let startIndex = 0;
     while (startIndex !== -1) {
@@ -40539,6 +40553,12 @@ function SR_replaceOne() {
     	return;
     }
 
+    var isCaseSensitive = gSR_caseSensitive.checked;
+
+    // if (!isCaseSensitive){
+    // 	console.log("SR_replaceOne is not case sensitive");
+    // }
+
     const replaceValue = gSR_replaceInput.value;
 
 	gSR_lastSearch = searchValue;
@@ -40605,7 +40625,7 @@ function SR_replaceAll(callback) {
 
 	//console.log("SR_replaceAll");
 
-    const searchValue = gSR_searchInput.value;
+    var searchValue = gSR_searchInput.value;
 
     if (searchValue == ""){
     	return;
@@ -40623,12 +40643,23 @@ function SR_replaceAll(callback) {
         return;
     }
 
+    var isCaseSensitive = gSR_caseSensitive.checked;
+
+    // if (!isCaseSensitive){
+    // 	console.log("SR_replaceAll is not case sensitive");
+    // }
+
     const replaceValue = gSR_replaceInput.value;
 
 	gSR_lastSearch = searchValue;
 	gSR_lastReplace = replaceValue;
 
-    gTheABC.value = gTheABC.value.split(searchValue).join(replaceValue);
+    // Escape any RegEx control characters
+    searchValue = searchValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    const flags = isCaseSensitive ? "g" : "gi";
+    const regex = new RegExp(searchValue, flags);
+    gTheABC.value = gTheABC.value.replace(regex, replaceValue);
 
     SR_findMatches();
 
@@ -40663,21 +40694,23 @@ function FindAndReplace(){
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Find and Replace&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#moretoolsdropdown" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 	
 	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Find:<br/><input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="searchText" title="Enter text to find here" autocomplete="off" autocorrect="off" placeholder="Text to find..."/></p>';
+	
+	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Case sensitive?&nbsp;&nbsp;<input id="searchCaseSensitive" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" onchange="SR_findMatches();" checked/></p>';
 
 	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Replace with:<br/><input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="replacementText" title="Enter replacement text here" autocomplete="off" autocorrect="off" placeholder="Replace with..."/></p>';
 
 	modal_msg+='<p style="font-size:12pt;text-align:center;margin-top:36px;"><input class="btn btn-search-previous search-previous" id="search-previous" onclick="SR_search_previous();" type="button" value="Find Previous" title="Find previous match"/><input class="btn btn-search-next search-next" id="search-next" onclick="SR_search_next();" type="button" value="Find Next" title="Find next match"/><input class="btn btn-search-replace search-replace" id="search-replace" onclick="SR_replaceOne();" type="button" value="Replace" title="Replace one text instance"/><input class="btn btn-search-replace-all search-replace-all" id="search-replace-all" onclick="SR_replaceAll();" type="button" value="Replace All" title="Replace all text instances"/></p>';
-
-	modal_msg+='</p>';
 
     DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 700,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
     });
 
     gSR_searchInput = document.getElementById("searchText");
     gSR_replaceInput = document.getElementById("replacementText");
+    gSR_caseSensitive = document.getElementById("searchCaseSensitive");
 
 	gSR_searchInput.value = gSR_lastSearch;
 	gSR_replaceInput.value = gSR_lastReplace;
+	gSR_caseSensitive.checked = gSR_lastCaseSensitive;
 
 	if (gSR_lastSearch != ""){
 		SR_findMatches();
