@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0091_080824_1830";
+var gVersionNumber="0092_080824_1840";
 
 var gMIDIInitStillWaiting = false;
 
@@ -40238,17 +40238,17 @@ function FindAndReplace(){
 	gSR_currentIndex = -1;
 	gSR_matchIndexes = [];
 
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Find and Replace&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/app/userguide.html#moretoolsdropdown" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:12px;">Find and Replace&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/app/userguide.html#moretoolsdropdown" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 	
-	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Find:<br/><input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="searchText" title="Enter text to find here" autocomplete="off" autocorrect="off" placeholder="Text to find..."/></p>';
+	modal_msg+='<p style="font-size:12pt;line-height:20pt;margin-top:0px;">Find:<br/><input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="searchText" title="Enter text to find here" autocomplete="off" autocorrect="off" placeholder="Text to find..."/></p>';
 	
-	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Case sensitive?&nbsp;&nbsp;<input id="searchCaseSensitive" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" onchange="SR_findMatches();" checked/></p>';
+	modal_msg+='<p style="font-size:12pt;line-height:20pt;margin-top:0px;">Case sensitive?&nbsp;&nbsp;<input id="searchCaseSensitive" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" onchange="SR_findMatches();" checked/></p>';
 
-	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Replace with:<br/><input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="replacementText" title="Enter replacement text here" autocomplete="off" autocorrect="off" placeholder="Replace with..."/></p>';
+	modal_msg+='<p style="font-size:12pt;line-height:18pt;margin-top:0px;">Replace with:<br/><input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="replacementText" title="Enter replacement text here" autocomplete="off" autocorrect="off" placeholder="Replace with..."/></p>';
 
-	modal_msg+='<p style="font-size:12pt;text-align:center;margin-top:36px;"><input class="btn btn-search-previous search-previous" id="search-previous" onclick="SR_search_previous();" type="button" value="Find Previous" title="Find previous match"/><input class="btn btn-search-next search-next" id="search-next" onclick="SR_search_next();" type="button" value="Find Next" title="Find next match"/><input class="btn btn-search-replace search-replace" id="search-replace" onclick="SR_replaceOne();" type="button" value="Replace" title="Replace one text instance"/><input class="btn btn-search-replace-all search-replace-all" id="search-replace-all" onclick="SR_replaceAll();" type="button" value="Replace All" title="Replace all text instances"/></p>';
+	modal_msg+='<p style="font-size:12pt;text-align:center;margin-top:24px;"><input class="btn btn-search-previous search-previous" id="search-previous" onclick="SR_search_previous();" type="button" value="Find Previous" title="Find previous match"/><input class="btn btn-search-next search-next" id="search-next" onclick="SR_search_next();" type="button" value="Find Next" title="Find next match"/><input class="btn btn-search-replace search-replace" id="search-replace" onclick="SR_replaceOne();" type="button" value="Replace" title="Replace one text instance"/><input class="btn btn-search-replace-all search-replace-all" id="search-replace-all" onclick="SR_replaceAll();" type="button" value="Replace All" title="Replace all text instances"/></p>';
 
-    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 700,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 650,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
     });
 
     gSR_searchInput = document.getElementById("searchText");
