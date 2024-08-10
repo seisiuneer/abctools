@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1484_100824_1030";
+var gVersionNumber="1485_100824_1630";
 
 var gMIDIInitStillWaiting = false;
 
@@ -41468,7 +41468,7 @@ function DoStartup() {
 
 			    	var modalDivs = document.querySelector('.modal_flat_main');
 
-			        if (!modalDivs){
+			        if ((!modalDivs) && (!gRenderingPDF)){
 
 			        	// Launch find and replace
 			        	FindAndReplace();
@@ -41491,7 +41491,7 @@ function DoStartup() {
 
 			    	var modalDivs = document.querySelector('.modal_flat_main');
 
-			        if (!modalDivs){
+			        if ((!modalDivs) && (!gRenderingPDF)){
 
 			        	// Launch find and replace
 			        	FindAndReplace();
