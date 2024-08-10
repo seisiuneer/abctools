@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0093_081024_0930";
+var gVersionNumber="0094_081024_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -39520,6 +39520,16 @@ function ShowHideTabButtons(){
 
 }
 
+
+//
+// Returns true if on a Mac
+//
+function isMac(){
+
+	return (navigator.userAgent.indexOf('Macintosh') !== -1 || navigator.userAgent.indexOf('Mac OS X') !== -1);
+
+}
+
 //
 // Returns true if on desktop, not mobile
 //
@@ -40247,6 +40257,9 @@ function FindAndReplace(){
     });
 
     gSR_searchInput = document.getElementById("searchText");
+
+    gSR_searchInput.focus();
+
     gSR_replaceInput = document.getElementById("replacementText");
     gSR_caseSensitive = document.getElementById("searchCaseSensitive");
 
@@ -40962,6 +40975,53 @@ function DoStartup() {
 
 		// Raw mode is enabled by default
 		gAllowRawMode = true;
+
+		if (isMac()){
+
+			document.addEventListener('keydown', function(event) {
+
+			    // Check if the Command key (on Mac) is pressed with the "F" key
+			    if (event.metaKey && event.key === 'f') {
+
+			    	//console.log("Got Command F");
+
+			       	event.preventDefault();  // Prevent the default browser find action
+
+			    	var modalDivs = document.querySelector('.modal_flat_main');
+
+			        if (!modalDivs){
+
+			        	// Launch find and replace
+			        	FindAndReplace();
+
+			        }
+
+			    }
+			},true);
+		}
+		else{
+			
+			document.addEventListener('keydown', function(event) {
+
+			    // Check if the Control key (on Windows/Linux) is pressed with the "F" key
+			    if (event.ctrlKey && event.key === 'f') {
+
+			    	//console.log("Got Control F");
+
+			       	event.preventDefault();  // Prevent the default browser find action
+
+			    	var modalDivs = document.querySelector('.modal_flat_main');
+
+			        if (!modalDivs){
+
+			        	// Launch find and replace
+			        	FindAndReplace();
+
+			        }
+
+			    }
+			},true);
+		}
 	}
 
 	// Setup context menu
@@ -40971,7 +41031,6 @@ function DoStartup() {
 	if (isDesktopBrowser()){
 
 		items = [
-		    { name: 'Find and Replace', fn: function(target) { FindAndReplace(); }},
 		    {},
 		    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
 		    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
@@ -40986,6 +41045,16 @@ function DoStartup() {
 		    {},
 			{ name: 'About the Offline-Enabled Editor', fn: function(target) { LaunchOfflineEditorHelp(); }},
 		  ];
+
+		// Adapt the search and replace key string based on the platform
+		var theFindItem = { name: 'Find and Replace (Ctrl+F)', fn: function(target) { FindAndReplace(); }};
+
+		if (isMac()){
+
+			theFindItem = { name: 'Find and Replace (⌘+F)', fn: function(target) { FindAndReplace(); }};
+		}
+
+		items.unshift(theFindItem);
 	}
 	else{
 
