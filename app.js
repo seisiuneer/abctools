@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1482_08824_1830";
+var gVersionNumber="1488_081024_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -38721,11 +38721,6 @@ function HandleWindowResize(){
 				const lineHeight = parseFloat(style.lineHeight) || fontSize * 1.2; // Fallback to 1.2 * fontSize if line-height is not explicitly set
 
 				const nRows = Math.floor(windowHeight / lineHeight);
-
-				// Set a minimum
-				if (nRows < 12){
-					nRows = 12;
-				}
 
 				// Resize the text box
 				gTheABC.rows = nRows;
