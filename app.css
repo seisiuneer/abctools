@@ -4118,6 +4118,17 @@ top:20px;
   margin: 4px 0;
 }
 
+#searchText,#replacementText {
+font-family:"Courier";
+font-size: 13pt;
+line-height: 16pt;
+padding: 6px;
+margin-top: 0px;
+margin-bottom: 0px;
+-webkit-appearance: none;
+-moz-appearance: none;
+}
+
 
 /******************************************************************************/
 /* STYLES RELATED TO BUTTONS                                                  */
