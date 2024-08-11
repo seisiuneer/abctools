@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0095_081024_1630";
+var gVersionNumber="0096_081124_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14214,7 +14214,7 @@ function AddFromSearch(e,callback){
 
 	modal_msg+='<h4 id="search_result">Search Results:</h4>';
 
-	modal_msg+='<textarea id="search_results" style="font-family:Courier;font-size:13pt;line-height:16pt;width:724px;height:'+theHeight+'px;padding:6px" placeholder="Search results will appear here" spellcheck="false" autocorrect="off" autocapitalize="none" oninput="idleSearchResults()"></textarea>';
+	modal_msg+='<textarea id="search_results" style="font-family:Courier;font-size:13pt;line-height:16pt;width:724px;height:'+theHeight+'px;padding:6px" placeholder="Search results will appear here" spellcheck="false" autocorrect="off" autocapitalize="none" spellcheck="false" oninput="idleSearchResults()"></textarea>';
 
 	modal_msg+='<p style="margin-top:20px;text-align: center;">';
 
@@ -39986,21 +39986,20 @@ var gSR_lastCaseSensitive = true;
 function SR_findMatches() {
 
 	//console.log("SR_findMatches");
+
+	gSR_matchIndexes = [];
+
     var text = gTheABC.value;
 
     var searchValue = gSR_searchInput.value;
+
+    if (searchValue === '') return;
 
     //console.log("searchValue: "+searchValue);
 
     var isCaseSensitive = gSR_caseSensitive.checked;
 
     gSR_lastCaseSensitive = isCaseSensitive;
-
-    //console.log("isCaseSensitive: "+isCaseSensitive);
-   
-    gSR_matchIndexes = [];
-
-    if (searchValue === '') return;
 
     if (!isCaseSensitive){
     	//console.log("SR_findMatches - Not case sensitive");
@@ -40012,6 +40011,7 @@ function SR_findMatches() {
     while (startIndex !== -1) {
         startIndex = text.indexOf(searchValue, startIndex);
         if (startIndex !== -1) {
+        	//console.log("pushing "+startIndex);
             gSR_matchIndexes.push(startIndex);
             startIndex += searchValue.length;
         }
@@ -40040,15 +40040,19 @@ function SR_search(direction) {
 
 	//console.log("SR_search");
 
-	gSR_lastSearch = gSR_searchInput.value;
+	const searchValue = gSR_searchInput.value;
+
+    if (searchValue == ""){
+    	return;
+    }
 
     if (gSR_matchIndexes.length === 0){
         
-        var prompt = makeCenteredPromptString(gSR_lastSearch+" not found");
+        var prompt = makeCenteredPromptString("Search value not found");
  
         DayPilot.Modal.alert(prompt, {
             theme: "modal_flat",
-            top: 125
+            top: 270
         });
 
         return;
@@ -40093,7 +40097,7 @@ function SR_replaceOne() {
  
         DayPilot.Modal.alert(prompt, {
             theme: "modal_flat",
-            top: 100
+            top: 270
         });
 
         return;
@@ -40112,9 +40116,6 @@ function SR_replaceOne() {
     // }
 
     const replaceValue = gSR_replaceInput.value;
-
-	gSR_lastSearch = searchValue;
-	gSR_lastReplace = replaceValue;
 
     const startIndex = gSR_matchIndexes[gSR_currentIndex];
     
@@ -40136,11 +40137,11 @@ function SR_replaceOne() {
 		   	else{
 			    if (gSR_matchIndexes.length === 0){
 			        
-			        var prompt = makeCenteredPromptString(searchValue+" not found");
+			        var prompt = makeCenteredPromptString("Search value not found");
 			 
 			        DayPilot.Modal.alert(prompt, {
 			            theme: "modal_flat",
-			            top: 125
+			            top: 270
 			        });
 
 			        return;
@@ -40160,11 +40161,11 @@ function SR_replaceOne() {
 	   	else{
 		    if (gSR_matchIndexes.length === 0){
 		        
-		        var prompt = makeCenteredPromptString(searchValue+" not found");
+		        var prompt = makeCenteredPromptString("Search value not found");
 		 
 		        DayPilot.Modal.alert(prompt, {
 		            theme: "modal_flat",
-		            top: 125
+		            top: 270
 		        });
 
 		        return;
@@ -40185,11 +40186,11 @@ function SR_replaceAll(callback) {
 
     if (gSR_matchIndexes.length === 0){
         
-        var prompt = makeCenteredPromptString(searchValue+" not found");
+        var prompt = makeCenteredPromptString("Search value not found");
  
         DayPilot.Modal.alert(prompt, {
             theme: "modal_flat",
-            top: 125
+            top: 270
         });
 
         return;
@@ -40203,19 +40204,41 @@ function SR_replaceAll(callback) {
 
     const replaceValue = gSR_replaceInput.value;
 
-	gSR_lastSearch = searchValue;
-	gSR_lastReplace = replaceValue;
-
     // Escape any RegEx control characters
     searchValue = searchValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
     const flags = isCaseSensitive ? "g" : "gi";
     const regex = new RegExp(searchValue, flags);
+    
+    var theMatches = gTheABC.value.match(regex);
+
     gTheABC.value = gTheABC.value.replace(regex, replaceValue);
 
     SR_findMatches();
 
-    RenderAsync(true,null);
+    RenderAsync(true,null,function(){
+
+    	setTimeout(function(){
+
+	    	var thePrompt = "Replaced "+theMatches.length;
+
+	    	if (theMatches.length != 1){
+	    		thePrompt+=" instances.";
+	    	}
+	    	else{
+	    		thePrompt+=" instance.";
+	    	}
+	    	
+	    	var prompt = makeCenteredPromptString(thePrompt);
+	 
+	        DayPilot.Modal.alert(prompt, {
+	            theme: "modal_flat",
+	            top: 270
+	        });
+
+	    },100);
+
+    });
 
     // Mark text as modified
     gIsDirty = true;
@@ -40243,27 +40266,27 @@ function FindAndReplace(){
 	gSR_currentIndex = -1;
 	gSR_matchIndexes = [];
 
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:12px;">Find and Replace&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/app/userguide.html#moretoolsdropdown" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:12px;">Find and Replace&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#moretoolsdropdown" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 	
-	modal_msg+='<p style="font-size:12pt;line-height:20pt;margin-top:0px;">Find:<br/><input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="searchText" title="Enter text to find here" autocomplete="off" autocorrect="off" placeholder="Text to find..."/></p>';
+	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Find:<br/><textarea style="width:625px;padding:6px;" id="searchText" title="Enter text to find here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Text to find..." rows="7"></textarea></p>';
 	
-	modal_msg+='<p style="font-size:12pt;line-height:20pt;margin-top:0px;">Case sensitive?&nbsp;&nbsp;<input id="searchCaseSensitive" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" onchange="SR_findMatches();" checked/></p>';
+	modal_msg+='<p style="font-size:12pt;line-height:12pt;margin-top:0px;">Case sensitive?&nbsp;<input id="searchCaseSensitive" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" onchange="SR_findMatches();" checked/></p>';
 
-	modal_msg+='<p style="font-size:12pt;line-height:18pt;margin-top:0px;">Replace with:<br/><input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="replacementText" title="Enter replacement text here" autocomplete="off" autocorrect="off" placeholder="Replace with..."/></p>';
+	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Replace with:<br/><textarea style="width:625px;padding:6px;" id="replacementText" title="Enter replacement text here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Replace with..." rows="7"></textarea></p>';
 
 	modal_msg+='<p style="font-size:12pt;text-align:center;margin-top:24px;"><input class="btn btn-search-previous search-previous" id="search-previous" onclick="SR_search_previous();" type="button" value="Find Previous" title="Find previous match"/><input class="btn btn-search-next search-next" id="search-next" onclick="SR_search_next();" type="button" value="Find Next" title="Find next match"/><input class="btn btn-search-replace search-replace" id="search-replace" onclick="SR_replaceOne();" type="button" value="Replace" title="Replace one text instance"/><input class="btn btn-search-replace-all search-replace-all" id="search-replace-all" onclick="SR_replaceAll();" type="button" value="Replace All" title="Replace all text instances"/></p>';
 
-    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 650,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 700,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
     });
 
     gSR_searchInput = document.getElementById("searchText");
-
+    
     gSR_searchInput.focus();
 
     gSR_replaceInput = document.getElementById("replacementText");
     gSR_caseSensitive = document.getElementById("searchCaseSensitive");
 
-	gSR_searchInput.value = gSR_lastSearch;
+ 	gSR_searchInput.value = gSR_lastSearch;
 	gSR_replaceInput.value = gSR_lastReplace;
 	gSR_caseSensitive.checked = gSR_lastCaseSensitive;
 
@@ -40272,24 +40295,12 @@ function FindAndReplace(){
 	}
 
 	gSR_searchInput.addEventListener("input", function(event) {
+		gSR_lastSearch = gSR_searchInput.value;;
 		SR_findMatches();
 	});
 
-	gSR_searchInput.addEventListener("keydown", function(event) {
-    	// Check if the pressed key is Enter 
-	    if (event.key === "Enter") {
-	        event.stopPropagation();
-	        event.preventDefault();
-	        SR_searchNext();
-	    }
-	});
-
-	gSR_replaceInput.addEventListener("keydown", function(event) {
-    	// Check if the pressed key is Enter 
-	    if (event.key === "Enter") {
-	        event.stopPropagation();
-	        event.preventDefault();
-	    }
+	gSR_replaceInput.addEventListener("input", function(event) {
+		gSR_lastReplace = gSR_replaceInput.value;
 	});
 
 }
