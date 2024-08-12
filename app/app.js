@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0097_081124_1945";
+var gVersionNumber="0098_081224_1945";
 
 var gMIDIInitStillWaiting = false;
 
@@ -39987,6 +39987,27 @@ var gSR_lastReplace = "";
 var gSR_lastCaseSensitive = true;
 var gSR_lastRegex = false;
 
+function SR_processMatches(value, matches){
+
+	//console.log(matches);
+
+	// Regex uses $& to refer to the whole match in output
+ 	value = value.replaceAll("$&","$0");
+
+	// Replace using the matches array
+	const result = value.replace(/\$(\d+)/g, (match, groupNumber) => {
+
+		//console.log("match: "+match+" groupNumber: "+groupNumber+" matches[groupNumber]:"+matches[groupNumber]);
+
+	    // groupNumber is a string, convert it to a number to index the array
+	    return matches[groupNumber] || match;
+
+	});
+
+	return result;
+
+}
+
 function SR_findMatches() {
 
 	//console.log("SR_findMatches");
@@ -40060,9 +40081,13 @@ function SR_findMatches() {
 	       		return;
 	       	}
 
+	       	//for (var i=0;i<match.length;++i){
+	       	//	console.log("match "+i+": "+match[i]);
+	       	//}
+
 	       	//console.log("pushing "+match.index+" length: "+match[0].length);
 
-    		gSR_matchIndexes.push({offset:match.index,length:match[0].length}); // Store the index of the match
+    		gSR_matchIndexes.push({offset:match.index,length:match[0].length, matches:match}); // Store the index of the match
 		}
 	}
 }
@@ -40177,7 +40202,7 @@ function SR_replaceOne() {
     // 	console.log("SR_replaceOne is not case sensitive");
     // }
 
-    const replaceValue = gSR_replaceInput.value;
+    var replaceValue = gSR_replaceInput.value;
 
     const startIndex = gSR_matchIndexes[gSR_currentIndex].offset;
     
@@ -40185,6 +40210,8 @@ function SR_replaceOne() {
     	gTheABC.value = gTheABC.value.slice(0, startIndex) + replaceValue + gTheABC.value.slice(startIndex + searchValue.length);
     }
     else{
+
+    	replaceValue = SR_processMatches(replaceValue,gSR_matchIndexes[gSR_currentIndex].matches);
      	gTheABC.value = gTheABC.value.slice(0, startIndex) + replaceValue + gTheABC.value.slice(startIndex + gSR_matchIndexes[gSR_currentIndex].length);   	
     }
 
@@ -40269,7 +40296,7 @@ function SR_replaceAll(callback) {
     // 	console.log("SR_replaceAll is not case sensitive");
     // }
 
-    const replaceValue = gSR_replaceInput.value;
+    var replaceValue = gSR_replaceInput.value;
 
     var isRegex = gSR_regex.checked;
 
@@ -40288,12 +40315,19 @@ function SR_replaceAll(callback) {
 	else{
 
  	  	try{
+
+ 	  		//console.log("replaceValue before: "+replaceValue);
+ 	  		replaceValue = replaceValue.replace(/\$0/g, '$$\&');	  		
+ 	  		//console.log("replaceValue after: "+replaceValue);
+
 	    	if (!isCaseSensitive){
 	    		regex = new RegExp(searchValue,"gmi");
 	    	}
 	    	else{
 	    		regex = new RegExp(searchValue,"gm");
 	    	}
+
+
 	    }
 	    catch(error){
 	    	//console.log("Bad regex");
@@ -40363,7 +40397,7 @@ function FindAndReplace(){
 	gSR_currentIndex = -1;
 	gSR_matchIndexes = [];
 
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:12px;">Find and Replace&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#moretoolsdropdown" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:12px;">Find and Replace&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/app/userguide.html#moretoolsdropdown" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 	
 	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Find:<br/><textarea style="width:625px;padding:6px;" id="searchText" title="Enter text to find here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Text to find..." rows="7"></textarea></p>';
 	
