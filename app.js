@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1487_110824_1930";
+var gVersionNumber="1488_120824_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -40439,6 +40439,27 @@ var gSR_lastReplace = "";
 var gSR_lastCaseSensitive = true;
 var gSR_lastRegex = false;
 
+function SR_processMatches(value, matches){
+
+	//console.log(matches);
+
+	// Regex uses $& to refer to the whole match in output
+ 	value = value.replaceAll("$&","$0");
+
+	// Replace using the matches array
+	const result = value.replace(/\$(\d+)/g, (match, groupNumber) => {
+
+		//console.log("match: "+match+" groupNumber: "+groupNumber+" matches[groupNumber]:"+matches[groupNumber]);
+
+	    // groupNumber is a string, convert it to a number to index the array
+	    return matches[groupNumber] || match;
+
+	});
+
+	return result;
+
+}
+
 function SR_findMatches() {
 
 	//console.log("SR_findMatches");
@@ -40512,9 +40533,13 @@ function SR_findMatches() {
 	       		return;
 	       	}
 
+	       	//for (var i=0;i<match.length;++i){
+	       	//	console.log("match "+i+": "+match[i]);
+	       	//}
+
 	       	//console.log("pushing "+match.index+" length: "+match[0].length);
 
-    		gSR_matchIndexes.push({offset:match.index,length:match[0].length}); // Store the index of the match
+    		gSR_matchIndexes.push({offset:match.index,length:match[0].length, matches:match}); // Store the index of the match
 		}
 	}
 }
@@ -40629,7 +40654,7 @@ function SR_replaceOne() {
     // 	console.log("SR_replaceOne is not case sensitive");
     // }
 
-    const replaceValue = gSR_replaceInput.value;
+    var replaceValue = gSR_replaceInput.value;
 
     const startIndex = gSR_matchIndexes[gSR_currentIndex].offset;
     
@@ -40637,6 +40662,8 @@ function SR_replaceOne() {
     	gTheABC.value = gTheABC.value.slice(0, startIndex) + replaceValue + gTheABC.value.slice(startIndex + searchValue.length);
     }
     else{
+
+    	replaceValue = SR_processMatches(replaceValue,gSR_matchIndexes[gSR_currentIndex].matches);
      	gTheABC.value = gTheABC.value.slice(0, startIndex) + replaceValue + gTheABC.value.slice(startIndex + gSR_matchIndexes[gSR_currentIndex].length);   	
     }
 
@@ -40721,7 +40748,7 @@ function SR_replaceAll(callback) {
     // 	console.log("SR_replaceAll is not case sensitive");
     // }
 
-    const replaceValue = gSR_replaceInput.value;
+    var replaceValue = gSR_replaceInput.value;
 
     var isRegex = gSR_regex.checked;
 
@@ -40740,12 +40767,19 @@ function SR_replaceAll(callback) {
 	else{
 
  	  	try{
+
+ 	  		//console.log("replaceValue before: "+replaceValue);
+ 	  		replaceValue = replaceValue.replace(/\$0/g, '$$\&');	  		
+ 	  		//console.log("replaceValue after: "+replaceValue);
+
 	    	if (!isCaseSensitive){
 	    		regex = new RegExp(searchValue,"gmi");
 	    	}
 	    	else{
 	    		regex = new RegExp(searchValue,"gm");
 	    	}
+
+
 	    }
 	    catch(error){
 	    	//console.log("Bad regex");
