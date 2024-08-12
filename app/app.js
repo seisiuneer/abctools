@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0096_081124_1400";
+var gVersionNumber="0097_081124_1945";
 
 var gMIDIInitStillWaiting = false;
 
@@ -39976,12 +39976,16 @@ function MaximizeEditor(){
 
 var gSR_currentIndex = -1;
 var gSR_matchIndexes = [];
+
 var gSR_searchInput = null;
 var gSR_replaceInput = null;
 var gSR_caseSensitive = null;
+var gSR_regex = null;
+
 var gSR_lastSearch = "";
 var gSR_lastReplace = "";
 var gSR_lastCaseSensitive = true;
+var gSR_lastRegex = false;
 
 function SR_findMatches() {
 
@@ -40001,35 +40005,91 @@ function SR_findMatches() {
 
     gSR_lastCaseSensitive = isCaseSensitive;
 
-    if (!isCaseSensitive){
-    	//console.log("SR_findMatches - Not case sensitive");
-    	text = text.toLowerCase();
-    	searchValue = searchValue.toLowerCase();
-    }
+    var isRegex = gSR_regex.checked;
 
-    let startIndex = 0;
-    while (startIndex !== -1) {
-        startIndex = text.indexOf(searchValue, startIndex);
-        if (startIndex !== -1) {
-        	//console.log("pushing "+startIndex);
-            gSR_matchIndexes.push(startIndex);
-            startIndex += searchValue.length;
-        }
+    gSR_lastRegex = isRegex;
+
+    if (isRegex){
+
+    	//console.log("isRegex true");
+
+    	try{
+	    	if (!isCaseSensitive){
+	    		searchValue = new RegExp(searchValue,"gmi");
+	    	}
+	    	else{
+	    		searchValue = new RegExp(searchValue,"gm");
+	    	}
+	    }
+	    catch(error){
+	    	//console.log("Bad regex");
+	    	return;
+	    }
     }
+    else{
+
+	    if (!isCaseSensitive){
+	    	//console.log("SR_findMatches - Not case sensitive");
+	    	text = text.toLowerCase();
+	    	searchValue = searchValue.toLowerCase();
+	    }
+	}
+
+	//console.log("searchValue: "+searchValue);
+
+	if (!isRegex){
+
+	    let startIndex = 0;
+	    while (startIndex !== -1) {
+	        startIndex = text.indexOf(searchValue, startIndex);
+	        if (startIndex !== -1) {
+	        	//console.log("pushing "+startIndex);
+	            gSR_matchIndexes.push({offset:startIndex,length:searchValue.length});
+	            startIndex += searchValue.length;
+	        }
+	    }
+	}
+	else{
+		while ((match = searchValue.exec(text)) !== null) {
+			
+			//debugger;
+	       	
+	       	// If there is a zero match, exit early
+	       	if (match[0].length == 0){
+	       		//console.log("regex zero match, early out!")
+	       		return;
+	       	}
+
+	       	//console.log("pushing "+match.index+" length: "+match[0].length);
+
+    		gSR_matchIndexes.push({offset:match.index,length:match[0].length}); // Store the index of the match
+		}
+	}
 }
 
 function SR_highlightMatch(index) {
 
-	//console.log("SR_highlightMatch");
+	//console.log("SR_highlightMatch index: "+index);
+
+	var isRegex = gSR_regex.checked;
 
     const searchValue = gSR_searchInput.value;
 
     if (gSR_matchIndexes.length === 0 || searchValue === '') return;
 
     gTheABC.focus();
-    gTheABC.setSelectionRange(gSR_matchIndexes[index], gSR_matchIndexes[index] + searchValue.length);
-    
-	ScrollABCTextIntoView(gTheABC,gSR_matchIndexes[index],gSR_matchIndexes[index] + searchValue.length,2);
+  
+  	if (!isRegex){
+  		//console.log("Not regex, setting selection to: "+gSR_matchIndexes[index].offset+" to "+(gSR_matchIndexes[index].offset + searchValue.length));
+    	gTheABC.setSelectionRange(gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + searchValue.length);
+		ScrollABCTextIntoView(gTheABC,gSR_matchIndexes[index].offset,gSR_matchIndexes[index].offset + searchValue.length,2);
+    }
+ 	else{
+ 		//console.log("Is regex, setting selection to: "+gSR_matchIndexes[index].offset+" to "+(gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length));
+ 		gTheABC.setSelectionRange(gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length);
+		ScrollABCTextIntoView(gTheABC,gSR_matchIndexes[index].offset,gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length,2);
+ 	}  
+
 
 	// Scroll the tune into view
 	MakeTuneVisible(true);
@@ -40109,6 +40169,8 @@ function SR_replaceOne() {
     	return;
     }
 
+    var isRegex = gSR_regex.checked;
+
     var isCaseSensitive = gSR_caseSensitive.checked;
 
     // if (!isCaseSensitive){
@@ -40117,9 +40179,14 @@ function SR_replaceOne() {
 
     const replaceValue = gSR_replaceInput.value;
 
-    const startIndex = gSR_matchIndexes[gSR_currentIndex];
+    const startIndex = gSR_matchIndexes[gSR_currentIndex].offset;
     
-    gTheABC.value = gTheABC.value.slice(0, startIndex) + replaceValue + gTheABC.value.slice(startIndex + searchValue.length);
+    if (!isRegex){
+    	gTheABC.value = gTheABC.value.slice(0, startIndex) + replaceValue + gTheABC.value.slice(startIndex + searchValue.length);
+    }
+    else{
+     	gTheABC.value = gTheABC.value.slice(0, startIndex) + replaceValue + gTheABC.value.slice(startIndex + gSR_matchIndexes[gSR_currentIndex].length);   	
+    }
 
     SR_findMatches();
 
@@ -40204,15 +40271,45 @@ function SR_replaceAll(callback) {
 
     const replaceValue = gSR_replaceInput.value;
 
-    // Escape any RegEx control characters
-    searchValue = searchValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    var isRegex = gSR_regex.checked;
 
-    const flags = isCaseSensitive ? "g" : "gi";
-    const regex = new RegExp(searchValue, flags);
-    
-    var theMatches = gTheABC.value.match(regex);
+    var theMatches;
+    var regex;
 
-    gTheABC.value = gTheABC.value.replace(regex, replaceValue);
+    if (!isRegex){
+
+	    // Escape any RegEx control characters
+	    searchValue = searchValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+	    const flags = isCaseSensitive ? "g" : "gi";
+	    regex = new RegExp(searchValue, flags);
+	    
+	}
+	else{
+
+ 	  	try{
+	    	if (!isCaseSensitive){
+	    		regex = new RegExp(searchValue,"gmi");
+	    	}
+	    	else{
+	    		regex = new RegExp(searchValue,"gm");
+	    	}
+	    }
+	    catch(error){
+	    	//console.log("Bad regex");
+	    	return;
+	    }
+
+	}
+	
+	theMatches = gTheABC.value.match(regex);
+
+    if (theMatches && theMatches[0].length == 0){
+   		//console.log("regex zero match, early out!")
+   		return;
+   	}
+
+	gTheABC.value = gTheABC.value.replace(regex, replaceValue);
 
     SR_findMatches();
 
@@ -40270,7 +40367,7 @@ function FindAndReplace(){
 	
 	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Find:<br/><textarea style="width:625px;padding:6px;" id="searchText" title="Enter text to find here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Text to find..." rows="7"></textarea></p>';
 	
-	modal_msg+='<p style="font-size:12pt;line-height:12pt;margin-top:0px;">Case sensitive?&nbsp;<input id="searchCaseSensitive" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" onchange="SR_findMatches();" checked/></p>';
+	modal_msg+='<p style="font-size:12pt;line-height:12pt;margin-top:0px;">Case sensitive?&nbsp;<input id="searchCaseSensitive" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" onchange="SR_findMatches();" checked/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Match using regular expression?&nbsp;<input id="searchRegex" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" onchange="SR_findMatches();"/></p>';
 
 	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Replace with:<br/><textarea style="width:625px;padding:6px;" id="replacementText" title="Enter replacement text here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Replace with..." rows="7"></textarea></p>';
 
@@ -40285,10 +40382,12 @@ function FindAndReplace(){
 
     gSR_replaceInput = document.getElementById("replacementText");
     gSR_caseSensitive = document.getElementById("searchCaseSensitive");
+    gSR_regex = document.getElementById("searchRegex");
 
  	gSR_searchInput.value = gSR_lastSearch;
 	gSR_replaceInput.value = gSR_lastReplace;
 	gSR_caseSensitive.checked = gSR_lastCaseSensitive;
+	gSR_regex.checked = gSR_lastRegex;
 
 	if (gSR_lastSearch != ""){
 		SR_findMatches();
