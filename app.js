@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1489_140824_1400";
+var gVersionNumber="1490_140824_1345";
 
 var gMIDIInitStillWaiting = false;
 
@@ -40962,7 +40962,7 @@ function FindAndReplace(){
 
 	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Replace with:<br/><textarea style="width:625px;padding:6px;" id="replacementText" title="Enter replacement text here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Replace with..." rows="7"></textarea></p>';
 
-	modal_msg+='<p style="font-size:12pt;text-align:center;margin-top:24px;"><input class="btn btn-search-previous search-previous" id="search-previous" onclick="SR_search_previous();" type="button" value="Find Previous" title="Find previous match"/><input class="btn btn-search-next search-next" id="search-next" onclick="SR_search_next();" type="button" value="Find Next" title="Find next match"/><input class="btn btn-search-replace search-replace" id="search-replace" onclick="SR_replaceOne();" type="button" value="Replace" title="Replace one text instance"/><input class="btn btn-search-replace-all search-replace-all" id="search-replace-all" onclick="SR_replaceAll();" type="button" value="Replace All" title="Replace all text instances"/><input type="file" id="load_find_replace_fs" accept=".txt,.TXT" hidden/><input class="btn btn-search-load search-load" id="search-load" onclick="SR_TriggerLoad();" type="button" value="Load" title="Load Find and Replace settings"/><input class="btn btn-search-save search-savel" id="search-save" onclick="SR_save();" type="button" value="Save" title="Save Find and Replace settings"/></p>';
+	modal_msg+='<p style="font-size:12pt;text-align:center;margin-top:24px;"><input class="btn btn-search-previous search-previous" id="search-previous" onclick="SR_search_previous();" type="button" value="Find Previous" title="Find previous match"/><input class="btn btn-search-next search-next" id="search-next" onclick="SR_search_next();" type="button" value="Find Next" title="Find next match"/><input class="btn btn-search-replace search-replace" id="search-replace" onclick="SR_replaceOne();" type="button" value="Replace" title="Replace one text instance"/><input class="btn btn-search-replace-all search-replace-all" id="search-replace-all" onclick="SR_replaceAll();" type="button" value="Replace All" title="Replace all text instances"/><input type="file" id="load_find_replace_fs" accept=".txt,.TXT" hidden/><input class="btn btn-search-load search-load" id="search-load" onclick="SR_TriggerLoad();" type="button" value="Load" title="Load Find and Replace settings"/><input class="btn btn-search-save search-save" id="search-save" onclick="SR_save();" type="button" value="Save" title="Save Find and Replace settings"/></p>';
 
     DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 700,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
     });
