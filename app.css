@@ -663,13 +663,13 @@ padding:12px;
 	margin-top:16px;
 }
 
-#addnewreel,#addnewjig,#changetuneorder,#cull_select_all,#mobile_tune_order_up,#smartdraw_add_set_name,#smartdraw_delete_set_name,#addnewtunetemplate,#addsongtemplate,#addbodhrantemplate,#search-previous,#search-next,#search-replace{
+#addnewreel,#addnewjig,#changetuneorder,#cull_select_all,#mobile_tune_order_up,#smartdraw_add_set_name,#smartdraw_delete_set_name,#addnewtunetemplate,#addsongtemplate,#addbodhrantemplate,#search-previous,#search-next,#search-replace,#search-replace-all,#search-load{
 height:42px;
 padding:12px;
 margin-right:24px;
 }
 
-#addnewhornpipe,#searchandaddtunes,#culltunes,#cull_clear_selection,#mobile_tune_order_down,#smartdraw_export,#addnewsong,#addboxfingeringtemplate,#search-replace-all{
+#addnewhornpipe,#searchandaddtunes,#culltunes,#cull_clear_selection,#mobile_tune_order_down,#smartdraw_export,#addnewsong,#addboxfingeringtemplate,#search-save{
 height:42px;
 padding:12px;
 }
@@ -4620,6 +4620,15 @@ margin-bottom: 0px;
   --background-color: lavender;
 }
 
+.btn-search-load{
+  --color: black;
+  --background-color: lavender;
+}
+
+.btn-search-save{
+  --color: black;
+  --background-color: lavender;
+}
 
 .btn-smartdraw-export{
   --color: black;

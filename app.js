@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1488_120824_1400";
+var gVersionNumber="1489_140824_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -40828,6 +40828,111 @@ function SR_replaceAll(callback) {
 
 }
 
+//
+// Load a Find and Replace state
+//
+function SR_LoadFindAndReplace(file){
+
+	const reader = new FileReader();
+
+	reader.addEventListener('load', (event) => {
+
+		var theText = event.target.result;
+
+		try{
+
+			//debugger;
+
+			var theParsedSettings = JSON.parse(theText);
+
+			// Sanity check a couple of fields
+			if ((theParsedSettings.find == undefined) || (theParsedSettings.replace == undefined) ||  (theParsedSettings.isCaseSensitive == undefined) || (theParsedSettings.isRegex == undefined)){
+
+				var thePrompt = "This is not a valid Find and Replace settings file.";
+
+				// Center the string in the prompt
+				thePrompt = makeCenteredPromptString(thePrompt);
+
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+				return;
+
+			}
+
+			// Stuff in the read values
+			gSR_searchInput.value = theParsedSettings.find;
+
+			gSR_replaceInput.value = theParsedSettings.replace;
+
+			gSR_caseSensitive.checked = theParsedSettings.isCaseSensitive;
+
+			gSR_regex.checked = theParsedSettings.isRegex;
+
+			// Trigger a new match check
+			gSR_lastSearch = gSR_searchInput.value;;
+			gSR_lastReplace = gSR_replaceInput.value;
+
+			SR_findMatches();
+			
+		}
+		catch(err){
+
+			var thePrompt = "This is not a valid Find and Replace settings file.";
+
+			// Center the string in the prompt
+			thePrompt = makeCenteredPromptString(thePrompt);
+
+			DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+			return;
+		
+		}
+
+	});
+
+	reader.readAsText(file);
+
+}
+
+function SR_TriggerLoad(){
+
+	var elem = document.getElementById("load_find_replace_fs");
+
+	elem.click();
+
+}
+
+//
+// Save the current Find and Replace state
+//
+function SR_save(){
+
+	//debugger;
+
+	var theFind = gSR_searchInput.value;
+	var theReplace = gSR_replaceInput.value;
+    var theCaseSensitive = gSR_caseSensitive.checked;
+    var theRegex = gSR_regex.checked;
+
+	var theState = {find:theFind,replace:theReplace,isCaseSensitive:theCaseSensitive,isRegex:theRegex};
+
+	try{
+
+		var theStateStr = JSON.stringify(theState);
+
+		//console.log("theStateStr: "+theStateStr);
+
+		if (theStateStr.length != 0){
+
+			saveTextFile("Please enter a filename for your Find and Replace settings:","find_and_replace.txt",theStateStr);
+		}
+	}
+	catch(err){
+
+	}
+
+}
+
 function FindAndReplace(){
 
 	//console.log("FindAndReplace");
@@ -40857,10 +40962,41 @@ function FindAndReplace(){
 
 	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Replace with:<br/><textarea style="width:625px;padding:6px;" id="replacementText" title="Enter replacement text here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Replace with..." rows="7"></textarea></p>';
 
-	modal_msg+='<p style="font-size:12pt;text-align:center;margin-top:24px;"><input class="btn btn-search-previous search-previous" id="search-previous" onclick="SR_search_previous();" type="button" value="Find Previous" title="Find previous match"/><input class="btn btn-search-next search-next" id="search-next" onclick="SR_search_next();" type="button" value="Find Next" title="Find next match"/><input class="btn btn-search-replace search-replace" id="search-replace" onclick="SR_replaceOne();" type="button" value="Replace" title="Replace one text instance"/><input class="btn btn-search-replace-all search-replace-all" id="search-replace-all" onclick="SR_replaceAll();" type="button" value="Replace All" title="Replace all text instances"/></p>';
+	modal_msg+='<p style="font-size:12pt;text-align:center;margin-top:24px;"><input class="btn btn-search-previous search-previous" id="search-previous" onclick="SR_search_previous();" type="button" value="Find Previous" title="Find previous match"/><input class="btn btn-search-next search-next" id="search-next" onclick="SR_search_next();" type="button" value="Find Next" title="Find next match"/><input class="btn btn-search-replace search-replace" id="search-replace" onclick="SR_replaceOne();" type="button" value="Replace" title="Replace one text instance"/><input class="btn btn-search-replace-all search-replace-all" id="search-replace-all" onclick="SR_replaceAll();" type="button" value="Replace All" title="Replace all text instances"/><input type="file" id="load_find_replace_fs" accept=".txt,.TXT" hidden/><input class="btn btn-search-load search-load" id="search-load" onclick="SR_TriggerLoad();" type="button" value="Load" title="Load Find and Replace settings"/><input class="btn btn-search-save search-savel" id="search-save" onclick="SR_save();" type="button" value="Save" title="Save Find and Replace settings"/></p>';
 
     DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 700,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
     });
+
+    //
+    // Setup the file import control
+	//
+	document.getElementById("load_find_replace_fs").onchange = () => {
+
+		let fileElement = document.getElementById("load_find_replace_fs");
+
+		// check if user had selected a file
+		if (fileElement.files.length === 0) {
+
+			var thePrompt = "Please select a Find and Replace settings file";
+
+			// Center the string in the prompt
+			thePrompt = makeCenteredPromptString(thePrompt);
+
+			DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+			return;
+
+		}
+
+		let file = fileElement.files[0];
+
+		// Read the file and stuff it into the Find and Replace fields
+		SR_LoadFindAndReplace(file);
+
+		// Reset file selectors
+		fileElement.value = "";
+
+	}
 
     gSR_searchInput = document.getElementById("searchText");
     
