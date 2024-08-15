@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0099_081424_1400";
+var gVersionNumber="0100_081524_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -40574,6 +40574,332 @@ function FindAndReplace(){
 
 }
 
+
+//
+// Split long tags and/or text
+//
+
+var gLastSplitLongTagsLength = 80;
+var gLastSplitTags = true;
+var gLastSplitText = true;
+var gLastTagsToSplit = "ABCDFGHNOSTWZ";
+
+function processAndReplaceTextGroups(targetString) {
+
+    // Split the target string into an array of lines
+    let lines = targetString.split('\n');
+    let result = [];
+    let insideGroup = false;
+
+    // Loop through each line in the target string
+    for (let line of lines) {
+        // Check if the line starts with %%begintext
+        if ((line == '%%begintext') || (line.startsWith('%%begintext '))) {
+            insideGroup = true;
+
+            // Check for any text after the %%begintext
+            var restOfLine = line.replace("%%begintext","");
+            restOfLine = restOfLine.trim();
+            if (restOfLine != ""){
+            	result.push('%%text ' + restOfLine);
+            }
+            continue; // Skip adding %%begintext to the result
+        }
+
+        // Check if the line starts with %%endtext
+        if ((line == '%%endtext') || (line.startsWith('%%endtext '))){
+            insideGroup = false;
+            continue; // Skip adding %%endtext to the result
+        }
+
+        // If inside a group of lines, replace each line with one that starts with %%text
+        if (insideGroup) {
+            result.push('%%text ' + line.trim());
+        } else {
+            // If not inside a group, just add the line as is
+            result.push(line);
+        }
+    }
+
+    // Join the result array back into a single string with newlines
+    return result.join('\n');
+}
+
+function splitLinesWithPrefix(targetString, prefix, maxLength) {
+
+    // Split the target string into an array of lines
+    let lines = targetString.split('\n');
+    let result = [];
+
+    // Loop through each line in the target string
+    for (let line of lines) {
+        // Check if the line starts with the prefix
+        if (line.startsWith(prefix)) {
+            // If the line exceeds the specified max length, split it
+            while (line.length > maxLength) {
+                // Find the position to split the line, trying to split on a space or at maxLength
+                let splitPos = line.lastIndexOf(' ', maxLength);
+
+                if (splitPos === -1 || splitPos < prefix.length) {
+                    splitPos = maxLength;
+                }
+                
+                // Push the split part into the result, ensuring it starts with "%%text "
+                result.push(line.slice(0, splitPos));
+                
+                // Update the line to be the remaining part after the split, starting with "%%text "
+                line = prefix + line.slice(splitPos).trim();
+            }
+            
+            // Push the remaining part of the line
+            result.push(line);
+        } else {
+            // If the line does not start with the prefix, just add it as is
+            result.push(line);
+        }
+    }
+
+    // Join the result array back into a single string with newlines
+    return result.join('\n');
+}
+
+function SplitOneTuneTagsText(targetString, controlString, maxLength, splitTags, splitText) {
+
+	// Nothing to do?
+	if ((!splitTags) && (!splitText)){
+		return targetString;
+	}
+
+	var theResult = targetString;
+
+	if (splitTags){
+
+	    // Split the target string into an array of lines
+	    let lines = targetString.split('\n');
+	    let result = [];
+
+	    var gotMatch = false;
+
+	    // Loop through each line in the target string
+	    for (let line of lines) {
+	    	
+	    	gotMatch = false;
+
+		    // Loop through each character in the control string
+		    for (let char of controlString) {
+
+	           // Check if the line starts with the character followed by a colon
+	            if (line.startsWith(`${char}:`)) {
+
+	            	gotMatch = true;
+
+	                // If the line exceeds the specified max length, split it
+	                while (line.length > maxLength) {
+	                    // Find the position to split the line, trying to split on a space or the max length
+	                    let splitPos = line.lastIndexOf(' ', maxLength);
+	                    if (splitPos === -1 || splitPos < `${char}:`.length) {
+	                        splitPos = maxLength;
+	                    }
+	                    
+	                    // Push the split part into the result
+	                    result.push(line.slice(0, splitPos));
+	                    
+	                    // Update the line to be the remaining part after the split
+	                    line = `${char}:` + line.slice(splitPos).trim();
+	                }
+	                
+	                // Push the remaining part of the line
+	                result.push(line);
+	            }
+	        }
+	        if (!gotMatch){
+	            result.push(line);
+	        }
+	    }
+
+		// Join the result array back into a single string with newlines
+	    theResult = result.join('\n');
+
+	    if (!splitText){
+
+		    return theResult;
+
+		}
+	}
+
+
+	// Now split any text 
+	theResult = splitLinesWithPrefix(theResult, "%%text ", maxLength);
+
+	theResult = splitLinesWithPrefix(theResult, "%%center ", maxLength);
+
+	//debugger;
+
+	// And finally handle any %%begintext/%%endtext pairs
+	theResult = processAndReplaceTextGroups(theResult, maxLength);
+
+	// And split those if required
+	theResult = splitLinesWithPrefix(theResult, "%%text ", maxLength);
+
+	return theResult;
+
+}
+
+function SplitLongTextAndTags(){
+
+	//console.log("SplitLongTags");
+
+	sendGoogleAnalytics("action","SplitLongTags");
+
+	if (!gAllowCopy){
+
+        var prompt = makeCenteredPromptString("No Text in the ABC Editor to Split")
+ 
+        DayPilot.Modal.alert(prompt, {
+            theme: "modal_flat",
+            top: 200
+        });
+
+        return;	
+   	}
+
+	const theData = {
+	  max_tag_line_length: gLastSplitLongTagsLength,
+	  bSplitTags: gLastSplitTags,
+	  bSplitText: gLastSplitText,
+	  tags_to_split: gLastTagsToSplit,
+	  bSplitAllTunes:true
+	};
+
+	const form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Split Long Tags and Text&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#moretoolsdropdown" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+	  {html: '<p style="margin-top:36px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will split long strings in tags and/or text at the specified line length.</p>'},
+	  {html: '<p style="font-size:5pt;font-family:helvetica">&nbsp;</p>'},	  
+	  {name: "Maximum line length:", id: "max_tag_line_length", type:"number", cssClass:"splitlongtextandtags"},
+	  {html: '<p style="font-size:5pt;font-family:helvetica">&nbsp;</p>'},	  
+	  {name: "          Split tags", id: "bSplitTags", type:"checkbox", cssClass:"splitlongtextandtags"},
+	  {name: "          Tags to split:", id: "tags_to_split", type:"text", cssClass:"splitlongtextandtags_text"},
+	  {html: '<p style="font-size:5pt;font-family:helvetica">&nbsp;</p>'},	  
+	  {name: "          Split text", id: "bSplitText", type:"checkbox", cssClass:"splitlongtextandtags"},
+	  {html: '<p style="font-size:5pt;font-family:helvetica">&nbsp;</p>'},	  
+	  {name: "          Split all tunes", id: "bSplitAllTunes", type:"checkbox", cssClass:"splitlongtextandtags"},
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+
+		// Get the results and store them in the global configuration
+		if (!args.canceled){
+
+			var testLength = args.result.max_tag_line_length;
+
+			testLength = parseInt(testLength);
+
+			if (!isNaN(testLength)){
+
+				gLastSplitLongTagsLength=testLength;
+
+			}
+
+			gLastSplitTags=args.result.bSplitTags;
+			
+			gLastSplitText=args.result.bSplitText;
+
+			gLastTagsToSplit = args.result.tags_to_split;
+
+			var split_all = args.result.bSplitAllTunes;
+
+			if (split_all){
+
+				var nTunes = CountTunes();
+
+				var theNotes = gTheABC.value;
+
+				// Find the tunes
+				var theTunes = theNotes.split(/^X:/gm);
+
+				var output = FindPreTuneHeader(theNotes);
+
+				for (var i=1;i<=nTunes;++i){
+
+					theTunes[i] = "X:"+theTunes[i];
+
+					var splitTune = SplitOneTuneTagsText(theTunes[i], gLastTagsToSplit, gLastSplitLongTagsLength, gLastSplitTags, gLastSplitText);
+					splitTune = splitTune.trim();
+					output += splitTune;
+
+					if (nTunes > 1){
+						output += "\n\n";
+					}
+
+				}
+
+				// Stuff in the output
+				gTheABC.value = output;
+
+				// Set dirty
+				gIsDirty = true;
+
+				// Force a redraw
+				RenderAsync(true,null,function(){
+
+					// Set the select point
+					gTheABC.selectionStart = 0;
+				    gTheABC.selectionEnd = 0;
+
+				    // Focus after operation
+				    FocusAfterOperation();
+
+				});
+
+			}
+			else{
+
+				var theSelectedTuneIndex = findSelectedTuneIndex();
+
+				// Try to find the current tune
+				var theSelectedABC = findSelectedTune();
+
+				if (theSelectedABC == ""){
+					// This should never happen
+					return;
+				}
+
+				var theSplitABC = SplitOneTuneTagsText(theSelectedABC, gLastTagsToSplit, gLastSplitLongTagsLength, gLastSplitTags, gLastSplitText);
+
+				if (!theSplitABC){
+					return;
+				}
+
+				// Try and keep the same tune after the redraw for immediate play
+				var theSelectionStart = gTheABC.selectionStart;
+
+				// Stuff in the injected ABC
+				var theABC = gTheABC.value;
+				theABC = theABC.replace(theSelectedABC,theSplitABC);
+
+				gTheABC.value = theABC;
+
+				// Set dirty
+				gIsDirty = true;
+
+				// Force a redraw of the tune
+				RenderAsync(false,theSelectedTuneIndex,function(){
+
+					// Set the select point
+					gTheABC.selectionStart = theSelectionStart;
+				    gTheABC.selectionEnd = theSelectionStart;
+
+				    // Focus after operation
+				    FocusAfterOperation();
+
+				});
+
+			}
+
+		}
+	});
+}
+
 // Open the standard editor in a new tab
 function LaunchStandardEditor(){
 	var url = "https://michaeleskin.com/abctools/abctools.html";
@@ -41318,6 +41644,8 @@ function DoStartup() {
 		    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
 		    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
 		    {},
+		    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
+		    {},
 		    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 		    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 		    {},
@@ -41343,6 +41671,8 @@ function DoStartup() {
 		    {},
 		    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
 		    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+		    {},
+		    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 		    {},
 		    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 		    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
