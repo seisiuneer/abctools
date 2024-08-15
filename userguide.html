@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-            
+         
         <style>
         
         p {
@@ -590,10 +590,11 @@
             <p><strong>☰</strong></p>
             <p>Brings up a menu of useful commands:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/moretools_5.jpg"/>
+                <img class="image" loading="lazy" src="img/moretools_6.jpg"/>
             </div>
             <p><strong>Find and Replace</strong> (Desktop browsers only)</p>
             <p>Brings up a dialog where you can search and replace text in the ABC editor.</p>
+            <p>You may use Javascript regular expressions in the Find and capture groups in the Replace.</p>
             <p>Also available by pressing ⌘+F on Mac or Ctrl+F on Windows/Linux when working in the ABC editor.</p>
             <p><strong>Toggle Top/Bottom Toolbars</strong></p>
             <p>Hides/shows the header at the top and any visible controls below the ABC text area so you can have more room to work on your music.</p>
@@ -603,6 +604,13 @@
             <p>Aligns the measures in the ABC text for the current tune you are working on.</p>
             <p><strong>Align Bars (All Tunes)</strong></p>
             <p>Aligns the measures in the ABC text for all the tunes in the tunebook.</p>
+            <p><strong>Split Long Text and Tags</strong></p>
+            <p>abcjs doesn't wrap long text lines in descriptive tags or text annotations:</p>
+            <p>%%text, %%center, or %%begintext / %%endtext blocks.</p>
+            <p>This feature allows you to split any long text in the ABC at a specific length in your tags, text, or both so that they display properly.</p>
+            <p>You may select which tags you want to split.</p>
+            <p>You may choose to split either the current tune being worked on or all tunes in the ABC editor.</p>
+            <p>The splitter attempts to split the text at a word boundary.</p>
             <p><strong>Settings</strong></p>
             <p>Brings up the default playback instruments and other tool-wide settings dialog.</p>
             <p>Full details below in the <a href="#settings_dialog">ABC Transcription Tools Settings</a> section.</p>

@@ -4141,6 +4141,37 @@ margin-bottom: 0px;
 -moz-appearance: none;
 }
 
+.splitlongtextandtags{
+font-size:12pt;
+line-height:12px;
+font-family:helvetica;
+margin-top:10px;
+display:flex;
+}
+
+.splitlongtextandtags>input{
+font-size:12pt;
+font-family:helvetica;
+width: 50px;
+margin-top:-9px;
+margin-left:12px;
+}
+
+.splitlongtextandtags_text{
+font-size:12pt;
+line-height:12px;
+font-family:helvetica;
+margin-top:24px;
+display:flex;
+}
+
+.splitlongtextandtags_text>input{
+font-size:12pt;
+font-family:helvetica;
+width: 300px;
+margin-top:-9px;
+margin-left:12px;
+}
 
 /******************************************************************************/
 /* STYLES RELATED TO BUTTONS                                                  */
