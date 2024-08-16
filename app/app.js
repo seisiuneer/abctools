@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0100_081524_1400";
+var gVersionNumber="0101_081524_1730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -40502,7 +40502,7 @@ function FindAndReplace(){
 	gSR_currentIndex = -1;
 	gSR_matchIndexes = [];
 
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:12px;">Find and Replace&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#moretoolsdropdown" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:12px;">Find and Replace&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/app/userguide.html#moretoolsdropdown" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 	
 	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Find:<br/><textarea style="width:625px;padding:6px;" id="searchText" title="Enter text to find here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Text to find..." rows="7"></textarea></p>';
 	
@@ -40772,7 +40772,7 @@ function SplitLongTextAndTags(){
 	};
 
 	const form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Split Long Tags and Text&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#moretoolsdropdown" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Split Long Tags and Text&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/app/userguide.html#moretoolsdropdown" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 	  {html: '<p style="margin-top:36px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will split long strings in tags and/or text at the specified line length.</p>'},
 	  {html: '<p style="font-size:5pt;font-family:helvetica">&nbsp;</p>'},	  
 	  {name: "Maximum line length:", id: "max_tag_line_length", type:"number", cssClass:"splitlongtextandtags"},
