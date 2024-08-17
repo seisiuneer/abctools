@@ -2065,7 +2065,12 @@ Parser.prototype.mkTitle = function ($e) {
     if (credits.length) title += credits.map (function (c) { return 'T:' + c; }).join ('\n') + '\n';
     if (composer.length) title += composer.map (function (c) { return 'C:' + c; }).join ('\n') + '\n';
     if (lyricist.length) title += lyricist.map (function (c) { return 'Z:' + c; }).join ('\n') + '\n';
+
+    // MAE 17 Aug 2024 - Clean double spaces from the title
+    if (title) title = title.replaceAll("  "," ");
+
     if (title) abcOut.title = title.substr (0, title.length - 1);
+
     this.isSib = $e.find ('identification>encoding>software').text ().indexOf ('Sibelius') >= 0;
     if (this.isSib) infof ('Sibelius MusicXMl is unreliable', []);
 
