@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1495_190824_1400";
+var gVersionNumber="1497_190824_1430";
 
 var gMIDIInitStillWaiting = false;
 
@@ -34374,6 +34374,7 @@ function GetInitialConfigurationSettings(){
 	}
 
 	// Two column display for iPad
+	giPadTwoColumn = false;
 	val = localStorage.iPadTwoColumn;
 	if (val){
 		giPadTwoColumn = (val == "true");
@@ -39902,7 +39903,8 @@ function isMobileBrowser(){
 }
 
 // 
-// Returns true if it's really a desktop browser and not a two-column iPad
+// Returns true if it's really a desktop browser and not a two-column iPad//
+
 //
 function isPureDesktopBrowser(){
 
@@ -39917,10 +39919,14 @@ function makeCenteredPromptString(thePrompt){
 	return '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">'+thePrompt+'</p>';
 }
 
-//
 // Send a Google analytics event
 //
 function sendGoogleAnalytics(theCategory,theAction,theLabel){
+
+	// Don't send analytics on iOS Safari
+	if (gIsIOS){
+		return;
+	}
 
 	if (typeof gtag !== "undefined"){
 
@@ -42037,7 +42043,7 @@ function DoStartup() {
 
 	// Force recalculation of the notation top position on ABC text area resize
 
-	if (isPureDesktopBrowser){
+	if (isPureDesktopBrowser()){
 		new ResizeObserver(TextBoxResizeHandler).observe(gTheABC);
 	}
 
@@ -42057,7 +42063,7 @@ function DoStartup() {
 		// console.log("Initial container width = "+gInitialTextBoxContainerWidth);
 		// console.log("Initial container left = "+gInitialTextBoxContainerLeft);
 
-		if (isPureDesktopBrowser){
+		if (isPureDesktopBrowser()){
 			new ResizeObserver(ResizeTextBox).observe(gTheABC);
 		}
 

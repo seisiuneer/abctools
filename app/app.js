@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0102_081724_1200";
+var gVersionNumber="0103_081924_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -50,6 +50,7 @@ var gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
 
 var gIsIOS = false;
 var gIsIPad = false;
+var giPadTwoColumn = false;
 var gIsIPhone = false;
 var gIsSafari = false;
 var gIsChrome = false;
@@ -8485,7 +8486,7 @@ function promptForPDFFilename(placeholder, callback){
 
 			if (fname.length != 0){
 				// Give it a good extension
-				if (isDesktopBrowser()){
+				if (isPureDesktopBrowser()){
 
 					if (!fname.endsWith(".pdf")){
 
@@ -11742,7 +11743,7 @@ function Render(renderAll,tuneNumber) {
 		document.getElementById("playbutton").classList.add("playbutton");
 		
 		// Enable the raw mode button (Desktop only)
-		if (isDesktopBrowser()){
+		if (isPureDesktopBrowser()){
 			document.getElementById("rawmodebutton").classList.remove("rawmodebuttondisabled");
 			document.getElementById("rawmodebutton").classList.add("rawmodebutton");
 		}
@@ -13841,7 +13842,7 @@ function searchForTunes() {
 	elem.selectionStart = 0;
 	elem.selectionEnd = 0;
 
-	if(isDesktopBrowser()){
+	if(isPureDesktopBrowser()){
 
 		// And reset the focus
 	    elem.focus();	
@@ -14941,7 +14942,7 @@ function AddABC(){
 	modal_msg += '<p style="text-align:center;margin-top:16px;">';
 	
 	// Reorder uses drag and drop on desktop
-	if (isDesktopBrowser()){
+	if (isPureDesktopBrowser()){
 		modal_msg  += '<input id="changetuneorder" class="advancedcontrols btn btn-injectcontrols-headers" onclick="ChangeTuneOrder();" type="button" value="Change the Order of the Tunes" title="Change the order of the tunes">';	
 	}
 	// Reorder uses up / down buttons on mobile
@@ -16353,7 +16354,7 @@ function GenerateRenderingDivs(nTunes) {
 		el.classList.add("pagebreak");
 
 		// Only do this on desktop
-		if (isDesktopBrowser()){
+		if (isPureDesktopBrowser()){
 
 			// Set up the click handler
 			el.onclick = RenderDivClickHandler;
@@ -16876,7 +16877,7 @@ function saveABCFile(thePrompt, thePlaceholder, theData){
 		sendGoogleAnalytics("export","SaveABC");
 
 		// Give it a good extension
-		if (isDesktopBrowser()){
+		if (isPureDesktopBrowser()){
 
 			if ((!fname.endsWith(".abc")) && (!fname.endsWith(".txt")) && (!fname.endsWith(".ABC")) && (!fname.endsWith(".TXT"))){
 
@@ -16951,7 +16952,7 @@ function saveTextFile(thePrompt, thePlaceholder, theData){
 		}      
 
 		// Give it a good extension
-		if (isDesktopBrowser()){
+		if (isPureDesktopBrowser()){
 
 			if ((!fname.endsWith(".txt")) && (!fname.endsWith(".TXT"))){
 
@@ -17013,7 +17014,7 @@ function saveTextFileDeveloper(thePrompt, thePlaceholder, theData){
 		}      
 
 		// Give it a good extension
-		if (!isDesktopBrowser()){
+		if (!isPureDesktopBrowser()){
 
 			// iOS and Android have odd rules about text file saving
 			// Give it a good extension
@@ -19882,7 +19883,7 @@ function SaveABC(){
 			// Derive a suggested name from the ABC
 			var theName = getDescriptiveFileName(theTuneCount,false);
 
-			if (isDesktopBrowser()){
+			if (isPureDesktopBrowser()){
 
 				theName += ".abc";
 
@@ -20071,9 +20072,11 @@ function DoMaximize(){
 
 	if (isDesktopBrowser()){
 
-		// Defer any notation clicks
-		gGotRenderDivClick = false;
-		gRenderDivClickOffset = -1;
+		if (isPureDesktopBrowser()){
+			// Defer any notation clicks
+			gGotRenderDivClick = false;
+			gRenderDivClickOffset = -1;
+		}
 
 		//debugger;
 
@@ -20098,6 +20101,10 @@ function DoMinimize(){
 	document.getElementById("notation-spacer").style.display = "block";
 
 	document.getElementById("zoombutton").src = "img/zoomout.png"
+
+	if (giPadTwoColumn){
+		var elem = document.getElementById("notation-holder").style.width = "850px";
+	}
 
 	// // Hide the play button
 	if (!isDesktopBrowser()){
@@ -20200,6 +20207,7 @@ function ToggleMaximize(){
 
 			gTheNotation.style.width = "850px";
 
+
 		}
 		else{
 
@@ -20212,18 +20220,23 @@ function ToggleMaximize(){
 
 		DoMaximize();
 
-		// To fix Firefox NS_BINDING error
+		// 2 Jul 2024 - Moved this here to avoid binding error on Firefox at start
 		document.getElementById("zoombutton").src = "img/zoomin.png"
 
 		if (isDesktopBrowser()){
 
-			// Scale the full screen up a bit if it makes sense
-			var windowWidth = window.innerWidth;
+			if (giPadTwoColumn){
+				document.getElementById("notation-holder").style.width = "80%";
+			}
+			else{
+				// Scale the full screen up a bit if it makes sense
+				var windowWidth = window.innerWidth;
 
-			if (((windowWidth * gFullScreenScaling)/100.0) > 850){
+				if (((windowWidth * gFullScreenScaling)/100.0) > 850){
 
-				gTheNotation.style.width = gFullScreenScaling+"%";
+					gTheNotation.style.width = gFullScreenScaling+"%";
 
+				}
 			}
 		}
 		else{
@@ -23211,7 +23224,7 @@ function ChangeTab(){
 //
 function FocusAfterOperation(){
 
-	if(isDesktopBrowser()){
+	if(isPureDesktopBrowser()){
 
 		// And reset the focus
 	    gTheABC.focus();	
@@ -23499,7 +23512,7 @@ function DownloadJPEG(callback, val){
 
 		var canvasdata = canvas.toDataURL("image/jpeg",0.75);
 
-		if (isDesktopBrowser()){
+		if (isPureDesktopBrowser()){
 
 			var downloadLink = document.createElement("a");
 
@@ -23652,7 +23665,7 @@ function DownloadPNG(callback, val){
 
 		var canvasdata = canvas.toDataURL("image/png",1);
 
-		if (isDesktopBrowser()){
+		if (isPureDesktopBrowser()){
 
 			var downloadLink = document.createElement("a");
 
@@ -34235,6 +34248,16 @@ function GetInitialConfigurationSettings(){
 		gAllowOfflineInstruments = (val == "true");
 	}
 
+	// Two column display for iPad
+	giPadTwoColumn = false;
+	val = localStorage.iPadTwoColumn;
+	if (val){
+		giPadTwoColumn = (val == "true");
+	}
+	else{
+		giPadTwoColumn = false;
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -34442,6 +34465,10 @@ function SaveConfigurationSettings(){
 
 		// Clean Smart Quotes
 		localStorage.CleanSmartQuotes = gCleanSmartQuotes;
+
+		// iPad two column display
+		localStorage.iPadTwoColumn = giPadTwoColumn;
+
 
 	}
 }
@@ -36221,6 +36248,8 @@ function AdvancedSettings(){
 
 	var oldDiagnostics = gShowDiagnostics;
 
+	var oldiPadTwoColumn = giPadTwoColumn;
+
 	// Setup initial values
 	const theData = {
   		configure_fullscreen_scaling: gFullScreenScaling,
@@ -36245,11 +36274,23 @@ function AdvancedSettings(){
 		configure_confirm_clear: gConfirmClear,
 		configure_show_render_progress: gShowABCJSRenderProgress,
 		configure_clean_smartquotes: gCleanSmartQuotes,
+		configure_ipad_two_column: giPadTwoColumn
+
 	};
 
 	var form = [
 		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Advanced Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/app/userguide.html#advanced_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 		{html: '<p style="font-size:12pt;line-height:12px;font-family:helvetica;"><strong>Only change these values if you know what you are doing!</strong></p>'},
+	];
+
+	// Only show batch export delays on desktop
+	if (gIsIPad){
+		form = form.concat([
+			{name: "    iPad Two-Column View (experimental)", id: "configure_ipad_two_column", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"}
+		]);
+	}
+
+	form = form.concat([
 		{name: "          Always confirm before deletion when clicking Clear", id: "configure_confirm_clear", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "          Always replace curly single and double quotes with standard versions on Open or Paste", id: "configure_clean_smartquotes", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "          Show ABC syntax validation panel", id: "configure_show_diagnostics", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
@@ -36261,10 +36302,10 @@ function AdvancedSettings(){
 		{name: "    Player tunebook navigation controls on left side", id: "configure_player_status_on_left", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Player/Tune Trainer uses label L/R side click to decrement/increment values", id: "configure_trainer_touch_controls", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
   		{name: "Full screen tune display width scaling (percentage) (default is 50):", id: "configure_fullscreen_scaling", type:"number", cssClass:"advanced_settings2_form_text"},
-	];
+	]);
 
 	// Only show batch export delays on desktop
-	if (isDesktopBrowser()){
+	if (isPureDesktopBrowser()){
 		form = form.concat([
 			{name: "Highlighting color (HTML format) (default is #F00000):", id: "configure_highlight_color", type:"text", cssClass:"advanced_settings2_form_text"}
 		]);
@@ -36276,8 +36317,8 @@ function AdvancedSettings(){
 		{name: "MP3 audio export bitrate (kbit/sec) (default is 224):", id: "configure_mp3_bitrate", type:"number", cssClass:"advanced_settings2_form_text"},
 	]);
 
-	// Only show batch export delays on desktop
-	if (isDesktopBrowser()){
+	// Only show batch export delays on desktop 
+	if (isPureDesktopBrowser()){ 
 		form = form.concat([
 			{name: "Image Batch Export Delay in milliseconds (default is 200):", id: "configure_export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
 			{name: "MP3 Batch Export Delay in milliseconds (default is 250):", id: "configure_mp3export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
@@ -36291,8 +36332,7 @@ function AdvancedSettings(){
 		{name: "Default %roll_3_params:", id: "configure_roll3_default", type:"text", cssClass:"advanced_settings2_roll_text"},
 		{name: "Private TinyURL API Token:", id: "configure_tinyurl", type:"text", cssClass:"advanced_settings2_tinyurl_text"},
 
-		{html: '<p style="text-align:center;margin-top:18px;margin-bottom:6px"><input id="reset_roll_parameters" class="btn btn-subdialog reset_roll_parameters" onclick="ResetRollDefaultParams()" type="button" value="Reset Roll Parameter Strings to Defaults" title="Resets the roll parameter strings to known good default values"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset Settings" title="Opens a dialog where you can reset all tool settings to the default, clear the instrument notes, reverb settings, and tune search engine collection databases, and/or force an update of the tool to the latest code"></p><p style="font-size:10pt;font-family:helvetica;color:grey;position:absolute;left:20px;bottom:22px;margin:0px;">Version: '+gVersionNumber+'</p>'},
-
+		{html: '<p style="text-align:center;margin-top:18px;margin-bottom:6px"><input id="reset_roll_parameters" class="btn btn-subdialog reset_roll_parameters" onclick="ResetRollDefaultParams()" type="button" value="Reset Roll Parameter Strings to Defaults" title="Resets the roll parameter strings to known good default values"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset Settings" title="Opens a dialog where you can reset all tool settings to the default and/or clear the instrument notes, reverb settings, and tune search engine collection databases"></p><p style="font-size:10pt;font-family:helvetica;color:grey;position:absolute;left:20px;bottom:22px;margin:0px;">Version: '+gVersionNumber+'</p>'},
 	]);
 
 	// Set up the reverb impulse load callback
@@ -36319,6 +36359,9 @@ function AdvancedSettings(){
 
 			// Disable rendering? (not persistent)
 			gDisableNotationRendering = args.result.configure_DisableRendering;
+
+			// Two column display for iPad?
+			giPadTwoColumn = args.result.configure_ipad_two_column;
 
 			if (gDisableNotationRendering){
 
@@ -36478,9 +36521,28 @@ function AdvancedSettings(){
 				gDoTinyURLAPIKeyOverride = false;
 			}
 
+			// If changing the display mode on iPad, let the user know about restarting the
+			if (oldiPadTwoColumn != giPadTwoColumn){
+
+				var thePrompt;
+
+				if (giPadTwoColumn){
+					thePrompt = "Restart the tool for two-column display on iPad";
+				}
+				else{
+					thePrompt = "Restart the tool for single column display on iPad";					
+				}
+		
+				// Center the string in the prompt
+				thePrompt = makeCenteredPromptString(thePrompt);
+				
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+			}
+
 			IdleAllowShowTabNames();
 
-			if (isDesktopBrowser()){
+			if (isPureDesktopBrowser()){
 
 				gRawHighlightColor = args.result.configure_highlight_color;
 
@@ -36516,6 +36578,7 @@ function AdvancedSettings(){
 			if (oldDiagnostics != gShowDiagnostics){
 				HandleWindowResize();
 			}
+
 
 			// Save the settings, in case they were initialized
 			SaveConfigurationSettings();
@@ -36841,7 +36904,7 @@ function ConfigureToolSettings() {
 	];
 
   	// Disallowing auto snapshots on mobile
-	if (isDesktopBrowser()){
+	if (isPureDesktopBrowser()){
 		form.push({name: "   Save an Auto-Snapshot on browser tab close or reload (Restore it from the Add dialog)", id: "configure_save_exit_snapshot", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 		form.push({name: "ABC Editor Font Size (default is 13):", id: "configure_editor_fontsize", type:"number", cssClass:"configure_settings_form_text"});
 	}
@@ -36877,7 +36940,7 @@ function ConfigureToolSettings() {
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
 
-			if (isDesktopBrowser()){
+			if (isPureDesktopBrowser()){
 
 				gSaveLastAutoSnapShot = args.result.configure_save_exit_snapshot;
 
@@ -38435,6 +38498,14 @@ function HandleWindowResize(){
 				// We should have more room, resize the editor
 				var windowHeight = window.innerHeight;
 
+				// Fix odd display after rotation on iPad
+				if (giPadTwoColumn){
+
+					if (!isLandscapeOrientation()){
+						windowHeight -= 200;
+					}
+				}
+
 				// Leave some room for tools
 				windowHeight -= 375; // MAE was 540
 
@@ -38449,7 +38520,7 @@ function HandleWindowResize(){
 				const fontSize = parseFloat(style.fontSize);
 				const lineHeight = parseFloat(style.lineHeight) || fontSize * 1.2; // Fallback to 1.2 * fontSize if line-height is not explicitly set
 
-				const nRows = Math.floor(windowHeight / lineHeight);
+				var nRows = Math.floor(windowHeight / lineHeight);
 
 				// Resize the text box
 				gTheABC.rows = nRows;
@@ -39066,7 +39137,7 @@ function showWelcomeScreen(){
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Notation updates instantly as you make changes to the ABC.</p>'; 
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Click "Open" to open an ABC, MusicXML, BWW, or MIDI file from your system.</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Click "Add" to add a new ABC tune or tune template.</p>';
-	   if (isDesktopBrowser()){
+	   if (isPureDesktopBrowser()){
 	   		modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">You may also drag-and-drop a single ABC or MusicXML file on the editor area to add it.</p>';
 	   }
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Click "Search for Tunes" to find tunes by name.</p>';
@@ -39430,7 +39501,7 @@ function theTabCloseListener(e){
 
 function AddTabCloseListener(){
 
-	if (isDesktopBrowser()){
+	if (isPureDesktopBrowser()){
 
 		//console.log("Adding tab close listener")
 
@@ -39480,7 +39551,7 @@ function fileOpenIntercept(e){
 //
 function RemoveTabCloseListener(){
 
-	if (isDesktopBrowser()){
+	if (isPureDesktopBrowser()){
 
 		//console.log("Removing tab close listener")
 
@@ -39532,8 +39603,13 @@ function isMac(){
 
 //
 // Returns true if on desktop, not mobile
+// Two column iPad is treated mostly like desktop for many features
 //
 function isDesktopBrowser(){
+
+	if (giPadTwoColumn){
+		return true;
+	}
 
 	return (!(gIsIOS || gIsAndroid));
 
@@ -39545,6 +39621,14 @@ function isDesktopBrowser(){
 function isMobileBrowser(){
 
 	return (gIsIOS || gIsAndroid);
+
+}
+// 
+// Returns true if it's really a desktop browser and not a two-column iPad
+//
+function isPureDesktopBrowser(){
+
+	return (isDesktopBrowser() && (!isMobileBrowser()));
 
 }
 
@@ -41014,7 +41098,19 @@ function DoStartup() {
 	if (gIsIOS){
 		document.getElementById("selectabcfile").removeAttribute("accept");
 	}	
+	
+	// Need this early to configure iPad UI!
 
+	if (localStorage){
+		// Two column display for iPad
+		var val = localStorage.iPadTwoColumn;
+		if (val){
+			giPadTwoColumn = (val == "true");
+		}
+		else{
+			giPadTwoColumn = false;
+		}
+	}
 	//
 	// Uncomment these lines for mobile simulation testing
 	//
@@ -41029,92 +41125,127 @@ function DoStartup() {
 	//
 	if (isMobileBrowser()) {
 
-		// Fix the title font
+		// Fix the title font since no Comic Sans on mobile
 		var elem = document.getElementById("toolpagetitle");
-		elem.size = 4;
 		elem.style.fontFamily = "Helvetica";
 
 		// Add little extra room at the top
-		elem = document.getElementById("notenlinks");
+		var elem = document.getElementById("notenlinks");
 		elem.style.paddingTop = "20px";
-		
-		elem = gTheABC;
 
-		if ((gIsIPhone) || (gIsAndroid)){
-
-			if (gIsIPhone){
-				elem.cols = 60;
-			}
-			else{
-				elem.cols = 58;				
-			}
-
-			elem.style.fontSize = "16pt";
-			elem.style.lineHeight = "18pt";
+		if (giPadTwoColumn){
 
 			// Reset the viewport to avoid scaling
 			var viewport = document.querySelector("meta[name=viewport]");
-			viewport.setAttribute("content","width=860,maximum-scale=1.0,user-scalable=0");
-			
+			viewport.setAttribute("content","width=1800,maximum-scale=1.0,user-scalable=0");
+
+			// Hide the Highlighting button
+			elem = document.getElementById("rawmodebutton");
+			elem.style.display = "none";
+
+			// Resize the notation placeholder
+			elem = document.getElementById("notation-placeholder");
+			elem.style.width = "860px";
+
+			// Resize the UI div
+			elem = document.getElementById("noscroller");
+			elem.style.width = "860px";
+
+			// Resize the notation div
+			elem = gTheNotation;
+			elem.style.width = "860px";
+
+			// Resize the notation spacer
+			elem = document.getElementById("notation-spacer");
+			elem.style.width = "860px";
+
+			// Resize the UI overlay
+			elem = document.getElementById("uioverlay");
+			elem.style.width = "860px";
+
+			// Resize the diagnostics
+			elem = document.getElementById("diagnostics");
+			elem.style.width = "836px";
+
+			// Change the primary control display
+			elem = document.getElementById("transpose-controls");
+			elem.style.display = "inline-block";
+
 		}
 		else{
+			
+			// Reduce title font size
+			elem = document.getElementById("toolpagetitle");
+			elem.size = 4;
 
-			// iPad
-			elem.cols = 73;
-			elem.style.fontSize = "13pt";
-			elem.style.lineHeight = "15pt";
+			if ((gIsIPhone) || (gIsAndroid)){
 
+				elem = gTheABC;
 
+				if (gIsIPhone){
+					elem.cols = 60;
+				}
+				else{
+					elem.cols = 58;				
+				}
+
+				elem.style.fontSize = "16pt";
+				elem.style.lineHeight = "18pt";
+
+				// Reset the viewport to avoid scaling
+				var viewport = document.querySelector("meta[name=viewport]");
+				viewport.setAttribute("content","width=860,maximum-scale=1.0,user-scalable=0");
+				
+			}
+
+			// Resize the app-container
+			elem = document.getElementById("app-container");
+			elem.style.width = "860px";
+			elem.style.display = "block";
+			elem.style.marginLeft = "0px";
+
+			// Resize the notation placeholder
+			elem = document.getElementById("notation-placeholder");
+			elem.style.width = "860px";
+			elem.style.display = "none";
+
+			// Resize the UI div
+			elem = document.getElementById("noscroller");
+			elem.style.width = "860px";
+			elem.style.display = "none"; // Hidden at startup
+
+			// Resize the notation div
+			elem = gTheNotation;
+			elem.style.width = "820px";
+			elem.style.display = "block";
+			elem.style.marginLeft = "20px";
+			elem.style.marginRight = "0px";
+			elem.style.overflow = "hidden";
+
+			// Resize the notation spacer
+			elem = document.getElementById("notation-spacer");
+			elem.style.width = "860px";
+			elem.style.display = "block";
+			elem.style.marginRight = "0px";
+
+			// Resize the UI overlay
+			elem = document.getElementById("uioverlay");
+			elem.style.width = "860px";
+			elem.style.display = "block";
+
+			// Resize the diagnostics
+			elem = document.getElementById("diagnostics");
+			elem.style.width = "836px";
+			elem.style.display = "block";
+
+			// Move the spinner
+			elem = document.getElementById("loading-bar-spinner");
+			elem.style.top = "25%"
+
+			// Hide the Highlighting button
+			elem = document.getElementById("rawmodebutton");
+			elem.style.display = "none";
 		}
-
-		// Resize the app-container
-		elem = document.getElementById("app-container");
-		elem.style.width = "860px";
-		elem.style.display = "block";
-		elem.style.marginLeft = "0px";
-
-		// Resize the notation placeholder
-		elem = document.getElementById("notation-placeholder");
-		elem.style.width = "860px";
-		elem.style.display = "none";
-
-		// Resize the UI div
-		elem = document.getElementById("noscroller");
-		elem.style.width = "860px";
-		elem.style.display = "none"; // Hidden at startup
-
-		// Resize the notation div
-		elem = gTheNotation;
-		elem.style.width = "820px";
-		elem.style.display = "block";
-		elem.style.marginLeft = "20px";
-		elem.style.marginRight = "0px";
-		elem.style.overflow = "hidden";
-
-		// Resize the notation spacer
-		elem = document.getElementById("notation-spacer");
-		elem.style.width = "860px";
-		elem.style.display = "block";
-		elem.style.marginRight = "0px";
-
-		// Resize the UI overlay
-		elem = document.getElementById("uioverlay");
-		elem.style.width = "860px";
-		elem.style.display = "block";
-
-		// Resize the diagnostics
-		elem = document.getElementById("diagnostics");
-		elem.style.width = "836px";
-		elem.style.display = "block";
-
-		// Move the spinner
-		elem = document.getElementById("loading-bar-spinner");
-		elem.style.top = "25%"
-		
-		// Hide the Highlighting button
-		elem = document.getElementById("rawmodebutton");
-		elem.style.display = "none";
-
 	}
 
 	// On iPhone and Android, move the zoom button over a bit
@@ -41130,25 +41261,33 @@ function DoStartup() {
 	// On iPad, resize the zoom button
 	if (gIsIPad){
 
-		document.getElementById("zoombutton").style.width = "36px";
-		document.getElementById("zoombutton").style.height = "36px";
-		document.getElementById("zoombutton").style.top = "8px";
-		document.getElementById("zoombutton").style.right = "8px"
+		var iconSize = "36px";
+		var iconOffset = "8px";
 
-		document.getElementById("helpbutton").style.width = "36px";
-		document.getElementById("helpbutton").style.height = "36px";
-		document.getElementById("helpbutton").style.top = "8px";
-		document.getElementById("helpbutton").style.left = "8px"
+		if (giPadTwoColumn){
+			iconSize = "48px";
+			iconOffset = "16px";
+		}
 
-		document.getElementById("playbuttonicon").style.width = "36px";
-		document.getElementById("playbuttonicon").style.height = "36px";
-		document.getElementById("playbuttonicon").style.bottom = "8px";
-		document.getElementById("playbuttonicon").style.right = "8px"
+		document.getElementById("zoombutton").style.width = iconSize;
+		document.getElementById("zoombutton").style.height = iconSize;
+		document.getElementById("zoombutton").style.top = iconOffset;
+		document.getElementById("zoombutton").style.right = iconOffset;
 
-		document.getElementById("pdfbuttonicon").style.width = "36px";
-		document.getElementById("pdfbuttonicon").style.height = "36px";
-		document.getElementById("pdfbuttonicon").style.bottom = "8px";
-		document.getElementById("pdfbuttonicon").style.left = "8px"
+		document.getElementById("helpbutton").style.width = iconSize;
+		document.getElementById("helpbutton").style.height = iconSize;
+		document.getElementById("helpbutton").style.top = iconOffset;
+		document.getElementById("helpbutton").style.left = iconOffset;
+
+		document.getElementById("playbuttonicon").style.width = iconSize;
+		document.getElementById("playbuttonicon").style.height = iconSize;
+		document.getElementById("playbuttonicon").style.bottom = iconOffset;
+		document.getElementById("playbuttonicon").style.right = iconOffset;
+
+		document.getElementById("pdfbuttonicon").style.width = iconSize;
+		document.getElementById("pdfbuttonicon").style.height = iconSize;
+		document.getElementById("pdfbuttonicon").style.bottom = iconOffset;
+		document.getElementById("pdfbuttonicon").style.left = iconOffset;
 
 	}
 
@@ -41351,7 +41490,7 @@ function DoStartup() {
     //
     // Only allowed on desktop systems
     //
-	if (isDesktopBrowser()){
+	if (isPureDesktopBrowser()){
 
 	    if (gSaveLastAutoSnapShot){
 
@@ -41420,7 +41559,9 @@ function DoStartup() {
 
 	// Force recalculation of the notation top position on ABC text area resize
 
-	new ResizeObserver(TextBoxResizeHandler).observe(gTheABC);
+	if (isPureDesktopBrowser()){
+		new ResizeObserver(TextBoxResizeHandler).observe(gTheABC);
+	}
 
 	if (isDesktopBrowser()){
 
@@ -41438,7 +41579,9 @@ function DoStartup() {
 		// console.log("Initial container width = "+gInitialTextBoxContainerWidth);
 		// console.log("Initial container left = "+gInitialTextBoxContainerLeft);
 
-		new ResizeObserver(ResizeTextBox).observe(gTheABC);
+		if (isPureDesktopBrowser()){
+			new ResizeObserver(ResizeTextBox).observe(gTheABC);
+		}
 
 		// Hook window resize events
 		window.onresize = function(){
@@ -41501,7 +41644,7 @@ function DoStartup() {
 	//
 	// Add drag-and-drop handlers on desktop browsers 
 	//
-	if (isDesktopBrowser()){
+	if (isPureDesktopBrowser()){
 
     	$.event.props.push ("dataTransfer");      // make jQuery copy the dataTransfer attribute
 
@@ -41548,7 +41691,7 @@ function DoStartup() {
 	//
 	// Add text area mouse handlers on desktop browsers 
 	//
-	if (isDesktopBrowser()){
+	if (isPureDesktopBrowser()){
 
 		gTheABC.onmousedown = function (e) {
 			
@@ -41753,3 +41896,5 @@ function WaitForReady(fn) {
 //
 
 WaitForReady(DoStartup);
+
+
