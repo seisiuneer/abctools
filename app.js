@@ -8509,7 +8509,7 @@ function promptForPDFFilename(placeholder, callback){
 
 			if (fname.length != 0){
 				// Give it a good extension
-				if (isDesktopBrowser() && (!giPadTwoColumn)){
+				if (isPureDesktopBrowser()){
 
 					if (!fname.endsWith(".pdf")){
 
@@ -16892,7 +16892,7 @@ function saveABCFile(thePrompt, thePlaceholder, theData){
 		sendGoogleAnalytics("export","SaveABC");
 
 		// Give it a good extension
-		if (isDesktopBrowser()){
+		if (isPureDesktopBrowser()){
 
 			if ((!fname.endsWith(".abc")) && (!fname.endsWith(".txt")) && (!fname.endsWith(".ABC")) && (!fname.endsWith(".TXT"))){
 
@@ -16967,7 +16967,7 @@ function saveTextFile(thePrompt, thePlaceholder, theData){
 		}      
 
 		// Give it a good extension
-		if (isDesktopBrowser()){
+		if (isPureDesktopBrowser()){
 
 			if ((!fname.endsWith(".txt")) && (!fname.endsWith(".TXT"))){
 
@@ -17029,7 +17029,7 @@ function saveTextFileDeveloper(thePrompt, thePlaceholder, theData){
 		}      
 
 		// Give it a good extension
-		if (!isDesktopBrowser()){
+		if (!isPureDesktopBrowser()){
 
 			// iOS and Android have odd rules about text file saving
 			// Give it a good extension
@@ -19883,7 +19883,7 @@ function SaveABC(){
 			// Derive a suggested name from the ABC
 			var theName = getDescriptiveFileName(theTuneCount,false);
 
-			if (isDesktopBrowser()){
+			if (isPureDesktopBrowser()){
 
 				theName += ".abc";
 
@@ -36824,7 +36824,7 @@ function AdvancedSettings(){
 
 			IdleAllowShowTabNames();
 
-			if (isDesktopBrowser()){
+			if (isPureDesktopBrowser()){
 
 				gRawHighlightColor = args.result.configure_highlight_color;
 
@@ -42055,7 +42055,9 @@ function DoStartup() {
 		// console.log("Initial container width = "+gInitialTextBoxContainerWidth);
 		// console.log("Initial container left = "+gInitialTextBoxContainerLeft);
 
-		new ResizeObserver(ResizeTextBox).observe(gTheABC);
+		if (isPureDesktopBrowser){
+			new ResizeObserver(ResizeTextBox).observe(gTheABC);
+		}
 
 		// Hook window resize events
 		window.onresize = function(){
