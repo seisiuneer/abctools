@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1493_190824_1200";
+var gVersionNumber="1495_190824_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -36587,7 +36587,7 @@ function AdvancedSettings(){
 	]);
 
 	// Only show batch export delays on desktop
-	if (isDesktopBrowser()){
+	if (isPureDesktopBrowser()){
 		form = form.concat([
 			{name: "Highlighting color (HTML format) (default is #F00000):", id: "configure_highlight_color", type:"text", cssClass:"advanced_settings2_form_text"}
 		]);
@@ -39880,10 +39880,10 @@ function isMac(){
 
 //
 // Returns true if on desktop, not mobile
+// Two column iPad is treated mostly like desktop for many features
 //
 function isDesktopBrowser(){
 
-	
 	if (giPadTwoColumn){
 		return true;
 	}
@@ -42037,7 +42037,9 @@ function DoStartup() {
 
 	// Force recalculation of the notation top position on ABC text area resize
 
-	new ResizeObserver(TextBoxResizeHandler).observe(gTheABC);
+	if (isPureDesktopBrowser){
+		new ResizeObserver(TextBoxResizeHandler).observe(gTheABC);
+	}
 
 	if (isDesktopBrowser()){
 
