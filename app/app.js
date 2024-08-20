@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0107_081924_1945";
+var gVersionNumber="0108_082024_1115";
 
 var gMIDIInitStillWaiting = false;
 
@@ -36693,10 +36693,45 @@ function AdvancedSettings(){
 				HandleWindowResize();
 			}
 
+			// If changing the display mode on iPad, force large player controls
+			if (oldiPadTwoColumn != giPadTwoColumn){
+
+				if (giPadTwoColumn){
+					gLargePlayerControls = true;
+					sendGoogleAnalytics("action","iPad_Two_Column");
+				}
+				else{
+
+					gLargePlayerControls = false;				
+					sendGoogleAnalytics("action","iPad_One_Column");
+				}
+		
+			}
 
 			// Save the settings, in case they were initialized
 			SaveConfigurationSettings();
 
+			// If changing the display mode on iPad, let the user know about restarting the tool
+			if (oldiPadTwoColumn != giPadTwoColumn){
+
+				var thePrompt;
+
+				if (giPadTwoColumn){
+					thePrompt = "The tool will restart to switch to two-column display.";
+				}
+				else{
+					thePrompt = "The tool will restart to switch to single-column display.";	
+				}
+		
+				// Center the string in the prompt
+				thePrompt = makeCenteredPromptString(thePrompt);
+				
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+
+					window.location.reload();
+
+				});
+			}
 		}
 
 	});
@@ -41289,6 +41324,21 @@ function DoStartup() {
 			// Change the primary control display
 			elem = document.getElementById("transpose-controls");
 			elem.style.display = "inline-block";
+			
+			// Disallow pinch-to-zoom
+			document.addEventListener('touchstart', function(event) {
+			    // If there are more than one touch points, prevent the default behavior
+			    if (event.touches.length > 1) {
+			        event.preventDefault();
+			    }
+			}, { passive: false });
+
+			document.addEventListener('touchmove', function(event) {
+			    // If there are more than one touch points, prevent the default behavior
+			    if (event.touches.length > 1) {
+			        event.preventDefault();
+			    }
+			}, { passive: false });		
 
 		}
 		else{
