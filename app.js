@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1499_190824_1600";
+var gVersionNumber="1501_190824_1730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -36919,9 +36919,12 @@ function AdvancedSettings(){
 
 				if (giPadTwoColumn){
 					thePrompt = "Restart the tool for two-column display on iPad";
+					gLargePlayerControls = true;
 				}
 				else{
-					thePrompt = "Restart the tool for single column display on iPad";					
+
+					thePrompt = "Restart the tool for single column display on iPad";	
+					gLargePlayerControls = false;				
 				}
 		
 				// Center the string in the prompt
