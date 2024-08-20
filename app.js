@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1501_190824_1730";
+var gVersionNumber="1502_190824_1915";
 
 var gMIDIInitStillWaiting = false;
 
@@ -36920,11 +36920,13 @@ function AdvancedSettings(){
 				if (giPadTwoColumn){
 					thePrompt = "Restart the tool for two-column display on iPad";
 					gLargePlayerControls = true;
+					sendGoogleAnalytics("action","iPad_Two_Column");
 				}
 				else{
 
 					thePrompt = "Restart the tool for single column display on iPad";	
 					gLargePlayerControls = false;				
+					sendGoogleAnalytics("action","iPad_One_Column");
 				}
 		
 				// Center the string in the prompt
@@ -40033,11 +40035,6 @@ function makeCenteredPromptString(thePrompt){
 // Send a Google analytics event
 //
 function sendGoogleAnalytics(theCategory,theAction,theLabel){
-
-	// Don't send analytics on iOS Safari
-	if (gIsIOS){
-		return;
-	}
 
 	if (typeof gtag !== "undefined"){
 
