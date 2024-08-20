@@ -36625,35 +36625,6 @@ function AdvancedSettings(){
 				gDoTinyURLAPIKeyOverride = false;
 			}
 
-			// If changing the display mode on iPad, let the user know about restarting the tool
-			if (oldiPadTwoColumn != giPadTwoColumn){
-
-				var thePrompt;
-
-				if (giPadTwoColumn){
-					thePrompt = "The tool will restart to switch to two-column display.";
-					gLargePlayerControls = true;
-					sendGoogleAnalytics("action","iPad_Two_Column");
-				}
-				else{
-
-					thePrompt = "The tool will restart to switch to single-column display.";	
-					gLargePlayerControls = false;				
-					sendGoogleAnalytics("action","iPad_One_Column");
-				}
-		
-				// Center the string in the prompt
-				thePrompt = makeCenteredPromptString(thePrompt);
-				
-				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
-
-					window.location.reload();
-
-					
-				});
-
-			}
-
 			IdleAllowShowTabNames();
 
 			if (isPureDesktopBrowser()){
