@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0106_081924_1730";
+var gVersionNumber="0107_081924_1945";
 
 var gMIDIInitStillWaiting = false;
 
@@ -36625,25 +36625,32 @@ function AdvancedSettings(){
 				gDoTinyURLAPIKeyOverride = false;
 			}
 
-			// If changing the display mode on iPad, let the user know about restarting the
+			// If changing the display mode on iPad, let the user know about restarting the tool
 			if (oldiPadTwoColumn != giPadTwoColumn){
 
 				var thePrompt;
 
 				if (giPadTwoColumn){
-					thePrompt = "Restart the tool for two-column display on iPad";
+					thePrompt = "The tool will restart to switch to two-column display.";
 					gLargePlayerControls = true;
+					sendGoogleAnalytics("action","iPad_Two_Column");
 				}
 				else{
 
-					thePrompt = "Restart the tool for single column display on iPad";	
+					thePrompt = "The tool will restart to switch to single-column display.";	
 					gLargePlayerControls = false;				
+					sendGoogleAnalytics("action","iPad_One_Column");
 				}
 		
 				// Center the string in the prompt
 				thePrompt = makeCenteredPromptString(thePrompt);
 				
-				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+
+					window.location.reload();
+
+					
+				});
 
 			}
 
