@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1505_200824_1130";
+var gVersionNumber="1506_210824_0915";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16284,7 +16284,10 @@ function ScrollABCTextIntoView(textarea, selectionStart, selectionEnd, fraction)
     textarea.scrollTop = scrollTop;
 
     // Continue to set selection range
-    textarea.setSelectionRange(selectionStart, selectionEnd);
+    // MAE 21 Aug 2024 - Avoiding onscreen keyboard lift on iPad
+    if (!giPadTwoColumn){ 
+    	textarea.setSelectionRange(selectionStart, selectionEnd);
+    }
 
 }
 
@@ -16380,8 +16383,9 @@ function GenerateRenderingDivs(nTunes) {
 		// Force page break between tunes when printing from the browser
 		el.classList.add("pagebreak");
 
-		// Only do this on desktop
-		if (isPureDesktopBrowser()){
+		// Only do this on desktop and iPad in two-column mode
+		// MAE 21 Aug 2024
+		if (isDesktopBrowser()){	
 
 			// Set up the click handler
 			el.onclick = RenderDivClickHandler;
