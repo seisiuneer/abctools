@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0109_082124_0915";
+var gVersionNumber="0110_082124_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -51,6 +51,7 @@ var gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
 var gIsIOS = false;
 var gIsIPad = false;
 var giPadTwoColumn = false;
+var giPadPlayerScaling = 60;
 var gIsIPhone = false;
 var gIsSafari = false;
 var gIsChrome = false;
@@ -18393,7 +18394,7 @@ function NotationSpacingExplorer(){
 
 		if (giPadTwoColumn){
 			if (isLandscapeOrientation()){
-				theWidth = windowWidth * 0.6;
+				theWidth = windowWidth * (giPadPlayerScaling / 100);
 			}
 			else{
 				theWidth = windowWidth * 0.9;	
@@ -24041,7 +24042,7 @@ function ExportImageDialog(theABC,callback,val,metronome_state,isWide){
 
 			if (giPadTwoColumn){
 				if (isLandscapeOrientation()){
-					theWidth = windowWidth * 0.6;
+					theWidth = windowWidth * (giPadPlayerScaling / 100);
 				}
 				else{
 					theWidth = windowWidth * 0.9;	
@@ -27396,7 +27397,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 
 				if (giPadTwoColumn){
 					if (isLandscapeOrientation()){
-						theWidth = windowWidth * 0.6;
+						theWidth = windowWidth * (giPadPlayerScaling / 100);
 					}
 					else{
 						theWidth = windowWidth * 0.9;	
@@ -29007,7 +29008,7 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 
 			if (giPadTwoColumn){
 				if (isLandscapeOrientation()){
-					theWidth = windowWidth * 0.6;
+					theWidth = windowWidth * (giPadPlayerScaling / 100);
 				}
 				else{
 					theWidth = windowWidth * 0.9;	
@@ -29769,7 +29770,7 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 
 			if (giPadTwoColumn){
 				if (isLandscapeOrientation()){
-					theWidth = windowWidth * 0.6;
+					theWidth = windowWidth * (giPadPlayerScaling / 100);
 				}
 				else{
 					theWidth = windowWidth * 0.9;	
@@ -30772,7 +30773,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 
 			if (giPadTwoColumn){
 				if (isLandscapeOrientation()){
-					theWidth = windowWidth * 0.6;
+					theWidth = windowWidth * (giPadPlayerScaling / 100);
 				}
 				else{
 					theWidth = windowWidth * 0.9;	
@@ -31371,7 +31372,7 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 
 			if (giPadTwoColumn){
 				if (isLandscapeOrientation()){
-					theWidth = windowWidth * 0.6;
+					theWidth = windowWidth * (giPadPlayerScaling / 100);
 				}
 				else{
 					theWidth = windowWidth * 0.9;	
@@ -32167,7 +32168,7 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 
 			if (giPadTwoColumn){
 				if (isLandscapeOrientation()){
-					theWidth = windowWidth * 0.6;
+					theWidth = windowWidth * (giPadPlayerScaling / 100);
 				}
 				else{
 					theWidth = windowWidth * 0.9;	
@@ -33159,7 +33160,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 
 				if (giPadTwoColumn){
 					if (isLandscapeOrientation()){
-						theWidth = windowWidth * 0.6;
+						theWidth = windowWidth * (giPadPlayerScaling / 100);
 					}
 					else{
 						theWidth = windowWidth * 0.9;	
@@ -34366,6 +34367,15 @@ function GetInitialConfigurationSettings(){
 		gLargePlayerControls = true;
 	}
 
+	// Default to 60% iPad player scaling
+	val = localStorage.iPadPlayerScaling;
+	if (val){
+		giPadPlayerScaling = val;
+	}
+	else{
+		giPadPlayerScaling = 60;
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -34577,6 +34587,8 @@ function SaveConfigurationSettings(){
 		// iPad two column display
 		localStorage.iPadTwoColumn = giPadTwoColumn;
 
+		// iPad Player scaling
+		localStorage.iPadPlayerScaling = giPadPlayerScaling;
 
 	}
 }
@@ -36382,8 +36394,8 @@ function AdvancedSettings(){
 		configure_confirm_clear: gConfirmClear,
 		configure_show_render_progress: gShowABCJSRenderProgress,
 		configure_clean_smartquotes: gCleanSmartQuotes,
-		configure_ipad_two_column: giPadTwoColumn
-
+		configure_ipad_two_column: giPadTwoColumn,
+		configure_ipad_player_scaling: giPadPlayerScaling
 	};
 
 	var form = [
@@ -36394,7 +36406,8 @@ function AdvancedSettings(){
 	// Only show batch export delays on desktop
 	if (gIsIPad){
 		form = form.concat([
-			{name: "    iPad Two-Column View (experimental)", id: "configure_ipad_two_column", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"}
+			{name: "    iPad Two-Column View (experimental)", id: "configure_ipad_two_column", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+  			{name: "iPad Two-Column Landscape Player Width (percentage) (default is 60):", id: "configure_ipad_player_scaling", type:"number", cssClass:"advanced_settings2_form_text"},
 		]);
 	}
 
@@ -36471,6 +36484,27 @@ function AdvancedSettings(){
 			// Two column display for iPad?
 			giPadTwoColumn = args.result.configure_ipad_two_column;
 
+			// Sanity check the iPad player scaling
+			giPadPlayerScaling = args.result.configure_ipad_player_scaling;
+
+			giPadPlayerScaling = giPadPlayerScaling.replace("%","");
+			
+			if (isNaN(parseInt(giPadPlayerScaling))){
+				giPadPlayerScaling = 60;
+			}
+			else{
+				giPadPlayerScaling = parseInt(giPadPlayerScaling);
+			}
+
+			if (giPadPlayerScaling < 50){
+				giPadPlayerScaling = 50;
+
+			}
+
+			if (giPadPlayerScaling > 100){
+				giPadPlayerScaling = 100;
+			}
+			
 			if (gDisableNotationRendering){
 
 				// Keep track of dialogs
