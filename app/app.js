@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0110_082124_1300";
+var gVersionNumber="0111_082224_1815";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14224,7 +14224,13 @@ function AddFromSearch(e,callback){
 
 	modal_msg+='</p>';
 
-    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 800,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+	var theWidth = 800;
+
+	if (giPadTwoColumn){
+		theWidth = 900;
+	}
+
+    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: theWidth,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
     	if (callback){
     		callback();
     	}
