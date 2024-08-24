@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0111_082224_1815";
+var gVersionNumber="0112_082424_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -36487,30 +36487,33 @@ function AdvancedSettings(){
 			// Disable rendering? (not persistent)
 			gDisableNotationRendering = args.result.configure_DisableRendering;
 
-			// Two column display for iPad?
-			giPadTwoColumn = args.result.configure_ipad_two_column;
+			if (gIsIPad){
 
-			// Sanity check the iPad player scaling
-			giPadPlayerScaling = args.result.configure_ipad_player_scaling;
+				// Two column display for iPad?
+				giPadTwoColumn = args.result.configure_ipad_two_column;
 
-			giPadPlayerScaling = giPadPlayerScaling.replace("%","");
-			
-			if (isNaN(parseInt(giPadPlayerScaling))){
-				giPadPlayerScaling = 60;
+				// Sanity check the iPad player scaling
+				giPadPlayerScaling = args.result.configure_ipad_player_scaling;
+
+				giPadPlayerScaling = giPadPlayerScaling.replace("%","");
+				
+				if (isNaN(parseInt(giPadPlayerScaling))){
+					giPadPlayerScaling = 60;
+				}
+				else{
+					giPadPlayerScaling = parseInt(giPadPlayerScaling);
+				}
+
+				if (giPadPlayerScaling < 50){
+					giPadPlayerScaling = 50;
+
+				}
+
+				if (giPadPlayerScaling > 100){
+					giPadPlayerScaling = 100;
+				}
 			}
-			else{
-				giPadPlayerScaling = parseInt(giPadPlayerScaling);
-			}
 
-			if (giPadPlayerScaling < 50){
-				giPadPlayerScaling = 50;
-
-			}
-
-			if (giPadPlayerScaling > 100){
-				giPadPlayerScaling = 100;
-			}
-			
 			if (gDisableNotationRendering){
 
 				// Keep track of dialogs
@@ -36708,44 +36711,50 @@ function AdvancedSettings(){
 				HandleWindowResize();
 			}
 
-			// If changing the display mode on iPad, force large player controls
-			if (oldiPadTwoColumn != giPadTwoColumn){
+			if (gIsIPad){
 
-				if (giPadTwoColumn){
-					gLargePlayerControls = true;
-					sendGoogleAnalytics("action","iPad_Two_Column");
-				}
-				else{
+				// If changing the display mode on iPad, force large player controls
+				if (oldiPadTwoColumn != giPadTwoColumn){
 
-					gLargePlayerControls = false;				
-					sendGoogleAnalytics("action","iPad_One_Column");
+					if (giPadTwoColumn){
+						gLargePlayerControls = true;
+						sendGoogleAnalytics("action","iPad_Two_Column");
+					}
+					else{
+
+						gLargePlayerControls = false;				
+						sendGoogleAnalytics("action","iPad_One_Column");
+					}
+			
 				}
-		
 			}
 
 			// Save the settings, in case they were initialized
 			SaveConfigurationSettings();
 
-			// If changing the display mode on iPad, let the user know about restarting the tool
-			if (oldiPadTwoColumn != giPadTwoColumn){
+			if (gIsIPad){
 
-				var thePrompt;
+				// If changing the display mode on iPad, let the user know about restarting the tool
+				if (oldiPadTwoColumn != giPadTwoColumn){
 
-				if (giPadTwoColumn){
-					thePrompt = "The tool will restart to switch to two-column display.";
+					var thePrompt;
+
+					if (giPadTwoColumn){
+						thePrompt = "The tool will restart to switch to two-column display.";
+					}
+					else{
+						thePrompt = "The tool will restart to switch to single-column display.";	
+					}
+			
+					// Center the string in the prompt
+					thePrompt = makeCenteredPromptString(thePrompt);
+					
+					DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+
+						window.location.reload();
+
+					});
 				}
-				else{
-					thePrompt = "The tool will restart to switch to single-column display.";	
-				}
-		
-				// Center the string in the prompt
-				thePrompt = makeCenteredPromptString(thePrompt);
-				
-				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
-
-					window.location.reload();
-
-				});
 			}
 		}
 
