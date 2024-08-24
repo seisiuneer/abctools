@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1509_220824_1815";
+var gVersionNumber="1511_240824_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -26417,7 +26417,7 @@ function CursorControl() {
 			cursor.setAttribute("y1", ev.top);
 			cursor.setAttribute("y2", ev.top + ev.height);
 
-			// Don't try to autoscroll cursors larger than
+			// Don't try to autoscroll cursors larger than the notation bounding rect
 			if (gAutoscrollPlayer){
 
 				// Get the SVG element's position relative to the container
@@ -26562,7 +26562,57 @@ function CursorControlOneTune() {
 			cursor.setAttribute("y1", ev.top);
 			cursor.setAttribute("y2", ev.top + ev.height);
 
+			// Don't try to autoscroll cursors larger than the notation bounding rect
+			if (gAutoscrollPlayer){
+
+				// Get the SVG element's position relative to the container
+				const svgRect = cursor.getBoundingClientRect();
+
+				var containerHeight = window.innerHeight;
+
+				// Keep several lines visible under the currently playing line
+
+				var theScrollTarget = 2*(containerHeight)/3;
+
+				//console.log("top: "+svgRect.top);
+
+				// Check if the SVG element is above or below the container's visible area
+				if (svgRect.top < 0) {
+
+					//console.log("top case");
+
+					// Scroll up to make the SVG element visible at the top
+					window.scrollBy(0,svgRect.top-32); 
+
+				} else if (svgRect.bottom > theScrollTarget) {
+
+					//console.log("bottom case");
+
+					var cursorHeight = svgRect.bottom - svgRect.top;
+
+					//console.log("cursorHeight "+cursorHeight+" scrollTarget "+theScrollTarget);
+
+					// This prevents very tall scores from jumping up and down on each cursor event
+					if (cursorHeight <= theScrollTarget){
+						
+						//console.log("normal case");
+
+						// Scroll down to make the SVG element visible at the bottom with additional space underneath
+						window.scrollBy(0,svgRect.bottom - theScrollTarget);
+
+					}
+					else{
+
+						//console.log("override case");
+
+						// Scroll up to make the SVG element visible at the top
+						window.scrollBy(0,svgRect.top-32);
+					}
+				}
+			}
+
 		}
+
 	};
 
 	self.onFinished = function() {
