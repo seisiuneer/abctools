@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1513_250824_1000";
+var gVersionNumber="1514_250824_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -26565,50 +26565,55 @@ function CursorControlOneTune() {
 			// Don't try to autoscroll cursors larger than the notation bounding rect
 			if (gAutoscrollPlayer){
 
-				// Get the SVG element's position relative to the container
-				const svgRect = cursor.getBoundingClientRect();
+				// Only autoscroll if two column or full screen
+				if ((!gIsOneColumn) || (gIsOneColumn && gIsMaximized)){
 
-				var containerHeight = window.innerHeight;
+					// Get the SVG element's position relative to the container
+					const svgRect = cursor.getBoundingClientRect();
 
-				// Keep several lines visible under the currently playing line
+					var containerHeight = window.innerHeight;
 
-				var theScrollTarget = 2*(containerHeight)/3;
+					// Keep several lines visible under the currently playing line
 
-				//console.log("top: "+svgRect.top);
+					var theScrollTarget = 2*(containerHeight)/3;
 
-				// Check if the SVG element is above or below the container's visible area
-				if (svgRect.top < 0) {
+					//console.log("top: "+svgRect.top);
 
-					//console.log("top case");
+					// Check if the SVG element is above or below the container's visible area
+					if (svgRect.top < 0) {
 
-					// Scroll up to make the SVG element visible at the top
-					window.scrollBy(0,svgRect.top-32); 
-
-				} else if (svgRect.bottom > theScrollTarget) {
-
-					//console.log("bottom case");
-
-					var cursorHeight = svgRect.bottom - svgRect.top;
-
-					//console.log("cursorHeight "+cursorHeight+" scrollTarget "+theScrollTarget);
-
-					// This prevents very tall scores from jumping up and down on each cursor event
-					if (cursorHeight <= theScrollTarget){
-						
-						//console.log("normal case");
-
-						// Scroll down to make the SVG element visible at the bottom with additional space underneath
-						window.scrollBy(0,svgRect.bottom - theScrollTarget);
-
-					}
-					else{
-
-						//console.log("override case");
+						//console.log("top case");
 
 						// Scroll up to make the SVG element visible at the top
-						window.scrollBy(0,svgRect.top-32);
+						window.scrollBy(0,svgRect.top-32); 
+
+					} else if (svgRect.bottom > theScrollTarget) {
+
+						//console.log("bottom case");
+
+						var cursorHeight = svgRect.bottom - svgRect.top;
+
+						//console.log("cursorHeight "+cursorHeight+" scrollTarget "+theScrollTarget);
+
+						// This prevents very tall scores from jumping up and down on each cursor event
+						if (cursorHeight <= theScrollTarget){
+							
+							//console.log("normal case");
+
+							// Scroll down to make the SVG element visible at the bottom with additional space underneath
+							window.scrollBy(0,svgRect.bottom - theScrollTarget);
+
+						}
+						else{
+
+							//console.log("override case");
+
+							// Scroll up to make the SVG element visible at the top
+							window.scrollBy(0,svgRect.top-32);
+						}
 					}
 				}
+
 			}
 
 		}
