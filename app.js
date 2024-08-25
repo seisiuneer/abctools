@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1512_240824_1000";
+var gVersionNumber="1513_250824_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -18422,7 +18422,7 @@ function NotationSpacingExplorer(){
 			}
 		}
 		else{
-			theWidth = windowWidth * 0.45;
+			theWidth = windowWidth * 0.5;
 		}
 
 		if (theWidth < 850){
@@ -24074,7 +24074,7 @@ function ExportImageDialog(theABC,callback,val,metronome_state,isWide){
 				}
 			}
 			else{
-				theWidth = windowWidth * 0.45;
+				theWidth = windowWidth * 0.5;
 			}
 
 			if (theWidth < 850){
@@ -27582,7 +27582,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 					}
 				}
 				else{
-					theWidth = windowWidth * 0.45;
+					theWidth = windowWidth * 0.5;
 				}
 
 			}
@@ -29195,7 +29195,7 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 				}
 			}
 			else{
-				theWidth = windowWidth * 0.45;
+				theWidth = windowWidth * 0.5;
 			}
 
 			if (theWidth < 850){
@@ -29958,7 +29958,7 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 				}
 			}
 			else{
-				theWidth = windowWidth * 0.45;
+				theWidth = windowWidth * 0.5;
 			}
 
 			if (theWidth < 850){
@@ -30964,7 +30964,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 				}
 			}
 			else{
-				theWidth = windowWidth * 0.45;
+				theWidth = windowWidth * 0.5;
 			}
 
 			if (theWidth < 850){
@@ -31566,7 +31566,7 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 				}
 			}
 			else{
-				theWidth = windowWidth * 0.45;
+				theWidth = windowWidth * 0.5;
 			}
 
 			if (theWidth < 850){
@@ -32363,7 +32363,7 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 				}
 			}
 			else{
-				theWidth = windowWidth * 0.45;
+				theWidth = windowWidth * 0.5;
 			}
 
 			if (theWidth < 850){
@@ -33347,7 +33347,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 			}
 			else{
 
-				theWidth = windowWidth * 0.45;
+				theWidth = windowWidth * 0.5;
 
 				if (giPadTwoColumn){
 					if (isLandscapeOrientation()){
