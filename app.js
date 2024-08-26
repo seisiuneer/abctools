@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1518_250824_1930";
+var gVersionNumber="1519_250824_1930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -20130,6 +20130,10 @@ function DoMaximize(){
 		gNotationLeftMarginBeforeMaximize = gTheNotation.style.marginLeft;
 
 		gTheNotation.style.marginLeft = "auto";
+
+		if (giPadTwoColumn){
+			ShowPlayButton();
+		}
 
 	}
 	else{
