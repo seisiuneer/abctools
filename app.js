@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1519_250824_1930";
+var gVersionNumber="1520_250824_2000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -11759,8 +11759,11 @@ function Render(renderAll,tuneNumber) {
 
 			if (isDesktopBrowser() || gIsMaximized){
 
-				// Add the play button
-				ShowPlayButton();
+				if (isPureDesktopBrowser() || gIsMaximized){
+
+					// Add the play button
+					ShowPlayButton();
+				}
 
 				// Add the PDF button
 				ShowPDFButton();
@@ -20170,6 +20173,14 @@ function DoMinimize(){
 
 			// Hide the PDF button
 			HidePDFButton();
+			
+		}
+		else{
+			if (giPadTwoColumn){
+
+				HidePlayButton();
+
+			}
 		}
 	}
 	else{
