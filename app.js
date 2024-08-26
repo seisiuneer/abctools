@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1517_250824_1830";
+var gVersionNumber="1518_250824_1930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -11769,8 +11769,10 @@ function Render(renderAll,tuneNumber) {
 		}
 		else{
 
-			// Add the play button
-			ShowPlayButton();
+			if (isPureDesktopBrowser()){
+				// Add the play button
+				ShowPlayButton();
+			}
 
 		}
 
@@ -11924,6 +11926,7 @@ function Render(renderAll,tuneNumber) {
 		document.getElementById("zoombutton").style.display = "none";
 
 		if (!gIsQuickEditor){
+
 			// Hide the play button
 			HidePlayButton();
 
@@ -20155,7 +20158,8 @@ function DoMinimize(){
 	}
 
 	if (!gIsQuickEditor){
-		// // Hide the play button
+		
+		// Hide the play button
 		if (!isDesktopBrowser()){
 
 			HidePlayButton();
@@ -20163,6 +20167,16 @@ function DoMinimize(){
 			// Hide the PDF button
 			HidePDFButton();
 		}
+	}
+	else{
+
+		// Hide the play button
+		if (isMobileBrowser()){
+
+			HidePlayButton();
+
+		}
+
 	}
 
 	if (isDesktopBrowser()){
