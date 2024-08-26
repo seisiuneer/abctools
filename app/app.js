@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0115_082524_2000";
+var gVersionNumber="0116_082624_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -26349,14 +26349,22 @@ function CursorControl() {
 	};
 
 	self.onStart = function() {
+
 		var svg = document.querySelector("#playback-paper svg");
-		var cursor = document.createElementNS("http://www.w3.org/2000/svg", "line");
-		cursor.setAttribute("class", "abcjs-cursor");
-		cursor.setAttributeNS(null, 'x1', 0);
-		cursor.setAttributeNS(null, 'y1', 0);
-		cursor.setAttributeNS(null, 'x2', 0);
-		cursor.setAttributeNS(null, 'y2', 0);
-		svg.appendChild(cursor);
+
+		var cursor = document.querySelector("#playback-paper svg .abcjs-cursor");
+
+		if (!cursor){
+
+			cursor = document.createElementNS("http://www.w3.org/2000/svg", "line");
+			cursor.setAttribute("class", "abcjs-cursor");
+			cursor.setAttributeNS(null, 'x1', 0);
+			cursor.setAttributeNS(null, 'y1', 0);
+			cursor.setAttributeNS(null, 'x2', 0);
+			cursor.setAttributeNS(null, 'y2', 0);
+			svg.appendChild(cursor);
+
+		}
 
 	};
 
