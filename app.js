@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1514_250824_1500";
+var gVersionNumber="1517_250824_1830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -11767,6 +11767,13 @@ function Render(renderAll,tuneNumber) {
 
 			}
 		}
+		else{
+
+			// Add the play button
+			ShowPlayButton();
+
+		}
+
 
 		// MAE 20 July 2024 - Avoid showing bottom bar if top bar hidden
 		if (gShowAllControls && gTopBarShowing){
@@ -11922,6 +11929,12 @@ function Render(renderAll,tuneNumber) {
 
 			// Hide the PDF button
 			HidePDFButton();
+		}
+		else{
+
+			// Hide the play button
+			HidePlayButton();
+
 		}
 
 		// Hide the spinner
@@ -20049,19 +20062,20 @@ function ShowHelpButton(){
 // Handle the play button
 //
 
+function QE_PlayButton_Handler(){
+	const button = document.querySelector('button.abcjs-midi-start');
+	button.click();
+}
+
 function ShowPlayButton(){
 
-	if (!gIsQuickEditor){
-		document.getElementById("playbuttonicon").style.display = "block";
-	}
+	document.getElementById("playbuttonicon").style.display = "block";
 
 }
 
 function HidePlayButton(){
 
-	if (!gIsQuickEditor){
-		document.getElementById("playbuttonicon").style.display = "none";
-	}
+	document.getElementById("playbuttonicon").style.display = "none";
 
 }
 
@@ -20120,6 +20134,9 @@ function DoMaximize(){
 		if (!gIsQuickEditor){
 			ShowPDFButton();
 			ShowPlayButton();
+		}
+		else{
+			ShowPlayButton();			
 		}
 
 	}
@@ -41978,9 +41995,9 @@ function DoStartup() {
 
 		document.getElementById("zoombutton").style.right = "21px";
 		document.getElementById("helpbutton").style.left = "21px";
-
+		document.getElementById("playbuttonicon").style.right = "21px";
+		
 		if (!gIsQuickEditor){
-			document.getElementById("playbuttonicon").style.right = "21px";
 			document.getElementById("pdfbuttonicon").style.left = "21px";
 		}
 
@@ -42007,12 +42024,12 @@ function DoStartup() {
 		document.getElementById("helpbutton").style.top = iconOffset;
 		document.getElementById("helpbutton").style.left = iconOffset;
 
-		if (!gIsQuickEditor){
-			document.getElementById("playbuttonicon").style.width = iconSize;
-			document.getElementById("playbuttonicon").style.height = iconSize;
-			document.getElementById("playbuttonicon").style.bottom = iconOffset;
-			document.getElementById("playbuttonicon").style.right = iconOffset;
+		document.getElementById("playbuttonicon").style.width = iconSize;
+		document.getElementById("playbuttonicon").style.height = iconSize;
+		document.getElementById("playbuttonicon").style.bottom = iconOffset;
+		document.getElementById("playbuttonicon").style.right = iconOffset;
 
+		if (!gIsQuickEditor){
 			document.getElementById("pdfbuttonicon").style.width = iconSize;
 			document.getElementById("pdfbuttonicon").style.height = iconSize;
 			document.getElementById("pdfbuttonicon").style.bottom = iconOffset;
@@ -42185,6 +42202,7 @@ function DoStartup() {
 
 	// Hook up the play button
 	if (!gIsQuickEditor){
+
 		document.getElementById("playbuttonicon").onclick = 
 			function() {
 				PlayABC(null);
@@ -42195,6 +42213,9 @@ function DoStartup() {
 			function() {
 				PDFExportDialog();
 			};
+	}
+	else{
+		document.getElementById("playbuttonicon").onclick = QE_PlayButton_Handler;
 	}
 
 	gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
@@ -42266,6 +42287,11 @@ function DoStartup() {
 
 			// Add the PDF button
 			ShowPDFButton();
+		}
+		else{
+
+			ShowPlayButton();
+
 		}
 
 		// First time using the tool?
