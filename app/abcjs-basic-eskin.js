@@ -20072,6 +20072,10 @@ function SynthController(theABC) {
       // MAE 6 Nov 2023 - For tune looper
       gPlayerInPause = true;
       if (self.control) self.control.pushPlay(false);
+
+      // MAE 26 Aug 2024 - To fix out-of-sync cursor after pause/resume
+      self.midiBuffer.seek(self.percent*self.midiBuffer.duration,"seconds");
+
     }
   };
   self.toggleLoop = function () {
