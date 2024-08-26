@@ -627,7 +627,9 @@ var TimingCallbacks = function TimingCallbacks(target, params) {
           }
         }
         self.currentEvent++;
+
       }
+
       if (self.lineEndCallback && self.lineEndTimings.length > self.currentLine && self.lineEndTimings[self.currentLine].milliseconds < self.currentTime && self.currentEvent < self.noteTimings.length) {
         var leftEvent = self.noteTimings[self.currentEvent].milliseconds === self.currentTime ? self.noteTimings[self.currentEvent] : self.noteTimings[self.currentEvent - 1];
         self.lineEndCallback(self.lineEndTimings[self.currentLine], leftEvent, {
@@ -831,6 +833,7 @@ var TimingCallbacks = function TimingCallbacks(target, params) {
     while (self.noteTimings.length > self.currentEvent && self.noteTimings[self.currentEvent].milliseconds < self.currentTime) {
       self.currentEvent++;
     }
+
     if (self.lineEndCallback) {
       self.currentLine = 0;
       while (self.lineEndTimings.length > self.currentLine && self.lineEndTimings[self.currentLine].milliseconds + self.lineEndAnticipation < self.currentTime) {
@@ -20072,6 +20075,10 @@ function SynthController(theABC) {
       // MAE 6 Nov 2023 - For tune looper
       gPlayerInPause = true;
       if (self.control) self.control.pushPlay(false);
+
+      // MAE 26 Aug 2024 - To fix out-of-sync cursor after pause/resume
+      self.midiBuffer.seek(self.percent*self.midiBuffer.duration,"seconds");
+      
     }
   };
   self.toggleLoop = function () {
