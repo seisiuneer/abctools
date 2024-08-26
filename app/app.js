@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0113_082524_1000";
+var gVersionNumber="0115_082524_2000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -11698,8 +11698,11 @@ function Render(renderAll,tuneNumber) {
 
 		if (isDesktopBrowser() || gIsMaximized){
 
-			// Add the play button
-			ShowPlayButton();
+			if (isPureDesktopBrowser() || gIsMaximized){
+
+				// Add the play button
+				ShowPlayButton();
+			}
 
 			// Add the PDF button
 			ShowPDFButton();
@@ -20106,6 +20109,10 @@ function DoMaximize(){
 
 		gTheNotation.style.marginLeft = "auto";
 
+		if (giPadTwoColumn){
+			ShowPlayButton();
+		}
+
 	}
 	else{
 
@@ -20134,6 +20141,13 @@ function DoMinimize(){
 
 		// Hide the PDF button
 		HidePDFButton();
+	}
+	else{
+		if (giPadTwoColumn){
+
+			HidePlayButton();
+
+		}
 	}
 
 	if (isDesktopBrowser()){
@@ -41292,9 +41306,9 @@ function DoStartup() {
 	//
 	// Uncomment these lines for mobile simulation testing
 	//
-	//gIsIOS = true; 
-	//gIsIPad = true;  
-	//gIsIPhone = true;  
+	// gIsIOS = true; 
+	// gIsIPad = true;  
+	// gIsIPhone = true;  
 	
 	//
 	// iOS and Android styling adaptation
