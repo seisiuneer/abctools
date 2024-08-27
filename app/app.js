@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0117_082624_1115";
+var gVersionNumber="0118_082724_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -41480,7 +41480,7 @@ function DoStartup() {
 		var iconOffset = "8px";
 
 		if (giPadTwoColumn){
-			iconSize = "48px";
+			iconSize = "52px";
 			iconOffset = "16px";
 		}
 
