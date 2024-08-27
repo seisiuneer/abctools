@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0118_082724_0900";
+var gVersionNumber="0121_082724_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -11698,11 +11698,8 @@ function Render(renderAll,tuneNumber) {
 
 		if (isDesktopBrowser() || gIsMaximized){
 
-			if (isPureDesktopBrowser() || gIsMaximized){
-
-				// Add the play button
-				ShowPlayButton();
-			}
+			// Add the play button
+			ShowPlayButton();
 
 			// Add the PDF button
 			ShowPDFButton();
@@ -20109,10 +20106,6 @@ function DoMaximize(){
 
 		gTheNotation.style.marginLeft = "auto";
 
-		if (giPadTwoColumn){
-			ShowPlayButton();
-		}
-
 	}
 	else{
 
@@ -20134,20 +20127,13 @@ function DoMinimize(){
 		var elem = document.getElementById("notation-holder").style.width = "850px";
 	}
 
-	// // Hide the play button
+	// Hide the play button
 	if (!isDesktopBrowser()){
 
 		HidePlayButton();
 
 		// Hide the PDF button
 		HidePDFButton();
-	}
-	else{
-		if (giPadTwoColumn){
-
-			HidePlayButton();
-
-		}
 	}
 
 	if (isDesktopBrowser()){
@@ -38731,12 +38717,87 @@ function HandleWindowResize(){
 
 			}
 
+			if (giPadTwoColumn){
+
+				var iconSize;
+				var iconOffset;
+
+				if (!isLandscapeOrientation()){
+
+					iconSize = "80px";
+					iconOffset = "8px";
+
+				}
+				else{
+					iconSize = "54px";
+					iconOffset = "16px";
+				}
+
+				document.getElementById("zoombutton").style.width = iconSize;
+				document.getElementById("zoombutton").style.height = iconSize;
+				document.getElementById("zoombutton").style.top = iconOffset;
+				document.getElementById("zoombutton").style.right = iconOffset;
+
+				document.getElementById("helpbutton").style.width = iconSize;
+				document.getElementById("helpbutton").style.height = iconSize;
+				document.getElementById("helpbutton").style.top = iconOffset;
+				document.getElementById("helpbutton").style.left = iconOffset;
+
+				document.getElementById("playbuttonicon").style.width = iconSize;
+				document.getElementById("playbuttonicon").style.height = iconSize;
+				document.getElementById("playbuttonicon").style.bottom = iconOffset;
+				document.getElementById("playbuttonicon").style.right = iconOffset;
+
+				document.getElementById("pdfbuttonicon").style.width = iconSize;
+				document.getElementById("pdfbuttonicon").style.height = iconSize;
+				document.getElementById("pdfbuttonicon").style.bottom = iconOffset;
+				document.getElementById("pdfbuttonicon").style.left = iconOffset;
+
+			}
+
 		}
 		else{
 
 			var elem = document.getElementById("app-container");
 			
 			elem.style.marginLeft = "0px";
+
+			if (giPadTwoColumn){
+				
+				var iconSize;
+				var iconOffset;
+
+				if (!isLandscapeOrientation()){
+
+					iconSize = "80px";
+					iconOffset = "8px";
+
+				}
+				else{
+					iconSize = "54px";
+					iconOffset = "16px";
+				}
+
+				document.getElementById("zoombutton").style.width = iconSize;
+				document.getElementById("zoombutton").style.height = iconSize;
+				document.getElementById("zoombutton").style.top = iconOffset;
+				document.getElementById("zoombutton").style.right = iconOffset;
+
+				document.getElementById("helpbutton").style.width = iconSize;
+				document.getElementById("helpbutton").style.height = iconSize;
+				document.getElementById("helpbutton").style.top = iconOffset;
+				document.getElementById("helpbutton").style.left = iconOffset;
+
+				document.getElementById("playbuttonicon").style.width = iconSize;
+				document.getElementById("playbuttonicon").style.height = iconSize;
+				document.getElementById("playbuttonicon").style.bottom = iconOffset;
+				document.getElementById("playbuttonicon").style.right = iconOffset;
+
+				document.getElementById("pdfbuttonicon").style.width = iconSize;
+				document.getElementById("pdfbuttonicon").style.height = iconSize;
+				document.getElementById("pdfbuttonicon").style.bottom = iconOffset;
+				document.getElementById("pdfbuttonicon").style.left = iconOffset;
+			}
 
 		}
 	}
@@ -41480,7 +41541,7 @@ function DoStartup() {
 		var iconOffset = "8px";
 
 		if (giPadTwoColumn){
-			iconSize = "52px";
+			iconSize = "54px";
 			iconOffset = "16px";
 		}
 
