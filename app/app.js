@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0121_082724_1300";
+var gVersionNumber="0122_082824_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -37087,6 +37087,9 @@ function ConfigureToolSettings() {
   	// Disallowing auto snapshots on mobile
 	if (isPureDesktopBrowser()){
 		form.push({name: "   Save an Auto-Snapshot on browser tab close or reload (Restore it from the Add dialog)", id: "configure_save_exit_snapshot", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
+	}
+
+	if (isDesktopBrowser()){
 		form.push({name: "ABC Editor Font Size (default is 13):", id: "configure_editor_fontsize", type:"number", cssClass:"configure_settings_form_text"});
 	}
 
