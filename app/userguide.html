@@ -3987,7 +3987,9 @@
             <p class="code">%abcjs_render_params {"foregroundColor":"green"}</p>
             <p>Example #2: Enabling Jazz Chord formatting:</p>
             <p class="code">%abcjs_render_params {"jazzchords":true}</p>
-            <p>Example #3: Forcing 8 bars per staff (requires staffwidth parameter):</p>
+            <p>Example #3: Transpose the written notation up one full step for Bb Clarinet, but plays one note lower:</p>
+            <p class="code">%abcjs_render_params {"visualTranspose":2}</p>
+            <p>Example #4: Forcing 8 bars per staff (requires staffwidth parameter):</p>
             <p class="code">%abcjs_render_params {"staffwidth":1000,"wrap":{"minSpacing":1.8, "maxSpacing":2.7, "preferredMeasuresPerLine":8}}</p>
             <p><strong>Note:</strong> This feature allows very low level control of the abcjs renderer. Improper parameters may cause unpredictable results or crash the tool.</p>
             <p>Additional, use of some low-level abcjs rendering parameters such as "staffwidth" and "wrap" may cause issues with "Highlighting" mode in the tool.</p>
