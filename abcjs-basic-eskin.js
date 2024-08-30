@@ -202,6 +202,49 @@ var gUseGChord = false;
 // Added 1 July 2024
 var gLastRenderedTuneName = "";
 
+// Additional rendering parameters
+var gABCJSRenderingParams = null;
+
+// Scan tune for custom abcjs rendering parameters
+function ScanTuneForABCJSRenderingParams(theTune){
+
+  //console.log("ScanTuneForABCJSRenderingParams");
+
+  var searchRegExp = /^%abcjs_render_params.*$/gm
+
+  var isRenderParams = theTune.match(searchRegExp);
+
+  if ((isRenderParams) && (isRenderParams.length > 0)){
+
+    var theRenderParams = isRenderParams[0].replace("%abcjs_render_params","");
+
+    theRenderParams = theRenderParams.trim();
+
+    //console.log("theRenderParams: "+theRenderParams);
+
+    try{
+
+      var theRenderParamsParsed = JSON.parse(theRenderParams);
+
+      //console.log("theRenderParamsParsed: "+JSON.stringify(theRenderParamsParsed));
+
+      return(theRenderParamsParsed)
+
+
+    }
+    catch(err){
+
+      //console.log("theRenderParamsParsed failed parse");
+
+      return null;
+
+    }
+  }
+
+  return null;
+
+}
+
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
@@ -938,6 +981,7 @@ var tunebook = {};
     if (output === undefined || abc === undefined) return;
     if (!isArray(output)) output = [output];
     if (params === undefined) params = {};
+
     var currentTune = params.startingTune ? parseInt(params.startingTune, 10) : 0;
 
     // parse the abc string
@@ -965,14 +1009,32 @@ var tunebook = {};
             console.log("Before render - Tune #"+i+" - "+book.tunes[i].title);
           }
 
-          abcParser.parse(book.tunes[currentTune].abc, params, book.tunes[currentTune].startPos - book.header.length);
+          var workingParams = params;
+
+          //debugger;
+
+          // Merge any params overrides
+          gABCJSRenderingParams = null;
+          gABCJSRenderingParams = ScanTuneForABCJSRenderingParams(book.tunes[currentTune].abc);
+
+          if (gABCJSRenderingParams){
+
+            // Copy the params
+            workingParams = Object.assign({}, params);
+
+            Object.keys(gABCJSRenderingParams).forEach(key => {
+                workingParams[key] = gABCJSRenderingParams[key];
+            });
+          }
+
+          abcParser.parse(book.tunes[currentTune].abc, workingParams, book.tunes[currentTune].startPos - book.header.length);
           var tune = abcParser.getTune();
           //
           // Init tablatures plugins
           //
-          if (params.tablature) {
+          if (workingParams.tablature) {
             tablatures.init();
-            tune.tablatures = tablatures.preparePlugins(tune, currentTune, params);
+            tune.tablatures = tablatures.preparePlugins(tune, currentTune, workingParams);
           }
           var warnings = abcParser.getWarnings();
           if (warnings) tune.warnings = warnings;
@@ -1208,6 +1270,9 @@ function renderOne(div, tune, params, tuneNumber, lineOffset) {
 //          width: 800 by default. The width in pixels of the output paper
 var renderAbc = function renderAbc(output, abc, parserParams, engraverParams, renderParams) {
   // Note: all parameters have been condensed into the first ones. It doesn't hurt anything to allow the old format, so just copy them here.
+  
+  //debugger;
+
   var params = {};
   var key;
   if (parserParams) {
@@ -1252,12 +1317,33 @@ var renderAbc = function renderAbc(output, abc, parserParams, engraverParams, re
       div.setAttribute("style", "visibility: hidden;");
       document.body.appendChild(div);
     }
-    if (!removeDiv && params.wrap && params.staffwidth) {
-      tune = doLineWrapping(div, tune, tuneNumber, abcString, params);
+
+    // Merge any params overrides
+    var workingParams = params;
+    
+    //debugger;
+
+    // gABCJSRenderingParams is already setup when this is called
+    // gABCJSRenderingParams = null;
+    // gABCJSRenderingParams = ScanTuneForABCJSRenderingParams(abcString);
+
+    if (gABCJSRenderingParams){
+
+      // Copy the original params
+      workingParams = Object.assign({}, params);
+      
+      // Override any keys
+      Object.keys(gABCJSRenderingParams).forEach(key => {
+          workingParams[key] = gABCJSRenderingParams[key];
+      });
+    }
+
+    if (!removeDiv && workingParams.wrap && workingParams.staffwidth) {
+      tune = doLineWrapping(div, tune, tuneNumber, abcString, workingParams);
       return tune;
     }
-    if (params.afterParsing) params.afterParsing(tune, tuneNumber, abcString);
-    renderOne(div, tune, params, tuneNumber, 0);
+    if (workingParams.afterParsing) workingParams.afterParsing(tune, tuneNumber, abcString);
+    renderOne(div, tune, workingParams, tuneNumber, 0);
     if (removeDiv) div.parentNode.removeChild(div);
 
     return null;

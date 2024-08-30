@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1535_290824_2230";
+var gVersionNumber="1536_2300824_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -21125,7 +21125,8 @@ function complianceABCTransformer(theABC,doInverse){
 	    "%tab_first_voice_only",
 	    "%tab_first_voice_exclude",
 	    "%reverb",
-	    "%links_open_in_editor"
+	    "%links_open_in_editor",
+	    "%abcjs_render_params"
 	];
 
 	if (doInverse){
