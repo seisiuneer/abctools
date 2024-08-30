@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0122_082824_0830";
+var gVersionNumber="0124_082924_1730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -373,6 +373,9 @@ var gOpenInEditor = false;
 
 // Clean smartquotes on open or paste
 var gCleanSmartQuotes = true;
+
+// Additional rendering parameters
+var gABCJSRenderingParams = null;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -10857,6 +10860,9 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 	
 	}
 
+	// Transform any att: directives
+	tune = TransformABCCompliantDirectives(tune);
+
 	// Used for rendering time measurement
 	//var currentTime;
 
@@ -10944,6 +10950,16 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 
 	if (!gTabFirstStaffOnly){
 		gTabSecondStaffOnly = ScanTuneForTabSecondStaffOnly(tune, instrument);
+	}
+
+	// Any custom rendering parameters
+	gABCJSRenderingParams = null;
+	gABCJSRenderingParams = ScanTuneForABCJSRenderingParams(tune);
+
+	if (gABCJSRenderingParams){
+		Object.keys(gABCJSRenderingParams).forEach(key => {
+	    	params[key] = gABCJSRenderingParams[key];
+		});
 	}
 	
 	// Wrap this in a try/catch to see if we can avoid crashing the app on a bad tune
@@ -18365,6 +18381,16 @@ function NotationSpacingExplorer(){
 	var abcOptions = GetABCJSParams(instrument);
 
 	abcOptions.oneSvgPerLine = false;
+	
+	// Any custom rendering parameters
+	gABCJSRenderingParams = null;
+	gABCJSRenderingParams = ScanTuneForABCJSRenderingParams(theABC);
+
+	if (gABCJSRenderingParams){
+		Object.keys(gABCJSRenderingParams).forEach(key => {
+	    	abcOptions[key] = gABCJSRenderingParams[key];
+		});
+	}
 
 	// Adapt the top based on the player control size
 	var theTop = 40;
@@ -21073,7 +21099,8 @@ function complianceABCTransformer(theABC,doInverse){
 	    "%tab_first_voice_only",
 	    "%tab_first_voice_exclude",
 	    "%reverb",
-	    "%links_open_in_editor"
+	    "%links_open_in_editor",
+	    "%abcjs_render_params"
 	];
 
 	if (doInverse){
@@ -24018,6 +24045,16 @@ function ExportImageDialog(theABC,callback,val,metronome_state,isWide){
 	var abcOptions = GetABCJSParams(instrument);
 
 	abcOptions.oneSvgPerLine = false;	
+
+	// Any custom rendering parameters
+	gABCJSRenderingParams = null;
+	gABCJSRenderingParams = ScanTuneForABCJSRenderingParams(theABC);
+
+	if (gABCJSRenderingParams){
+		Object.keys(gABCJSRenderingParams).forEach(key => {
+	    	abcOptions[key] = gABCJSRenderingParams[key];
+		});
+	}
 
 	function initRender() {
 
@@ -27119,6 +27156,10 @@ function PlayerSetupCommon(theABC){
 	// Scan tune for reverb commands
 	ScanTuneForReverb(theABC);
 
+	// Any custom rendering parameters
+	gABCJSRenderingParams = null;
+	gABCJSRenderingParams = ScanTuneForABCJSRenderingParams(theABC);
+
 	return true;
 
 }
@@ -27212,6 +27253,13 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 		if (abcOptions.tablature && (abcOptions.tablature.length > 0)){
 			abcOptions.tablature[0].label = "";
 		}
+	}
+
+	// Any custom rendering parameters
+	if (gABCJSRenderingParams){
+		Object.keys(gABCJSRenderingParams).forEach(key => {
+	    	abcOptions[key] = gABCJSRenderingParams[key];
+		});
 	}
 
 	function setTune(userAction) {
@@ -28494,7 +28542,45 @@ function ScanTuneForTabSecondStaffOnly(theTune, instrument){
 	return false;
 
 }
+// Scan tune for custom abcjs rendering parameters
+function ScanTuneForABCJSRenderingParams(theTune){
 
+	//console.log("ScanTuneForABCJSRenderingParams");
+
+	var searchRegExp = /^%abcjs_render_params.*$/gm
+
+	var isRenderParams = theTune.match(searchRegExp);
+
+	if ((isRenderParams) && (isRenderParams.length > 0)){
+
+		var theRenderParams = isRenderParams[0].replace("%abcjs_render_params","");
+
+		theRenderParams = theRenderParams.trim();
+
+		//console.log("theRenderParams: "+theRenderParams);
+
+		try{
+
+			var theRenderParamsParsed = JSON.parse(theRenderParams);
+
+			//console.log("theRenderParamsParsed: "+JSON.stringify(theRenderParamsParsed));
+
+			return(theRenderParamsParsed)
+
+
+		}
+		catch(err){
+
+			//console.log("theRenderParamsParsed failed parse");
+
+			return null;
+
+		}
+	}
+
+	return null;
+
+}
 
 // Reverb requested
 function ScanTuneForReverb(theTune){
@@ -28862,6 +28948,12 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 		}
 	}
 	
+	// Any custom rendering parameters
+	if (gABCJSRenderingParams){
+		Object.keys(gABCJSRenderingParams).forEach(key => {
+	    	abcOptions[key] = gABCJSRenderingParams[key];
+		});
+	}
 
 	function setTune(userAction) {
 
@@ -29614,7 +29706,14 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 			abcOptions.tablature[0].label = "";
 		}
 	}
-	
+		
+	// Any custom rendering parameters
+	if (gABCJSRenderingParams){
+		Object.keys(gABCJSRenderingParams).forEach(key => {
+	    	abcOptions[key] = gABCJSRenderingParams[key];
+		});
+	}
+
 	function setTune(userAction) {
 
 		synthControl.disable(true);
@@ -30635,6 +30734,13 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 		}
 	}
 
+	// Any custom rendering parameters
+	if (gABCJSRenderingParams){
+		Object.keys(gABCJSRenderingParams).forEach(key => {
+	    	abcOptions[key] = gABCJSRenderingParams[key];
+		});
+	}
+
 	function setTune(userAction) {
 
 		synthControl.disable(true);
@@ -31244,6 +31350,13 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 		}
 	}
 	
+	// Any custom rendering parameters
+	if (gABCJSRenderingParams){
+		Object.keys(gABCJSRenderingParams).forEach(key => {
+	    	abcOptions[key] = gABCJSRenderingParams[key];
+		});
+	}
+
 	function setTune(userAction) {
 
 		synthControl.disable(true);
@@ -32012,6 +32125,13 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 			abcOptions.tablature[0].label = "";
 		}
 	}
+
+	// Any custom rendering parameters
+	if (gABCJSRenderingParams){
+		Object.keys(gABCJSRenderingParams).forEach(key => {
+	    	abcOptions[key] = gABCJSRenderingParams[key];
+		});
+	}
 	
 	function setTune(userAction) {
 
@@ -32615,6 +32735,13 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 		}
 	}
 	
+	// Any custom rendering parameters
+	if (gABCJSRenderingParams){
+		Object.keys(gABCJSRenderingParams).forEach(key => {
+	    	abcOptions[key] = gABCJSRenderingParams[key];
+		});
+	}
+
 	function setTune(userAction) {
 
 		synthControl.disable(true);

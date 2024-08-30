@@ -439,6 +439,11 @@
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#printing_your_tunes">Printing Your Tunes Using the Browser's Built-in Print Feature</a></p>
                 </div>
+
+                <button class="accordion" title="Click to expand/collapse this section">Adding Custom abcjs Rendering Parameters</button>
+                <div class="tocpanel">
+                    <p class="toc"><a style="text-decoration:none;" href="#customabcjsparams">Adding Custom abcjs Rendering Parameters</a></p>
+                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">abcjs v6.2.3 Notation Layout Options</button>
                 <div class="tocpanel">
@@ -3517,7 +3522,8 @@
                 %voice_tuning_cents<br/>
                 %tab_first_voice_only<br/>
                 %tab_first_voice_exclude<br/>
-            %reverb chamber 0.8 0.2</p>
+                %reverb chamber 0.8 0.2<br/>
+            %abcjs_render_params {"jazzchords":true}</p>
             <hr class="hidden-print" id="editing_pdf_tunebooks">
             <h1 class="page_break_always">Editing PDF Tunebooks With Other Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>The PDF tunebooks created by this tool can be editing using Adobe Acrobat Pro or other PDF editing tools.</p>
@@ -3974,7 +3980,21 @@
             <p>Additional advanced settings such as printing multiple-pages per page and setting custom margins may be available in your browser's print settings dialog.</p>
             <p>Experiment with both the browser's print settings page orientation and "multiple page on one page" options to see what is possible.</p>
             <p><strong>Note:</strong>If you want to print a tunebook automatically formated with multiple tunes per page, you must use the tool's Export PDF feature.</p>
-            <hr class="hidden-print" id="expandtowidest">
+            <hr class="hidden-print" id="customabcjsparams">
+            <h1 class="page_break_always h1wide">Adding Custom abcjs Rendering Parameters<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>The abcjs renderer has many additional optional parameters that can be specified at tune render time.</p>
+            <p>Full details on the available options are here:</p>
+            <p style="text-align: center"><a href="https://paulrosen.github.io/abcjs/visual/render-abc-options.html" target="_blank">abcjs RenderAbc options</a></p>
+            <p>To add custom abcjs rendering parameters to a tune, you can add the following annotation anywhere in the tune:</p>
+            <p class="code">%abcjs_render_params (JSON parameter string)</p>
+            <p>Where the parameter string is an Javascript object in stringified JSON format.</p>
+            <p>Example #1: Render all the notation in green:</p>
+            <p class="code">%abcjs_render_params {"foregroundColor":"green"}</p>
+            <p>Example #2: Enabling Jazz Chord formatting:</p>
+            <p class="code">%abcjs_render_params {"jazzchords":true}</p>
+            <p>Example #3: Forcing 8 bars per staff (requires staffwidth parameter):</p>
+            <p class="code">%abcjs_render_params {"staffwidth":1000,"wrap":{"minSpacing":1.8, "maxSpacing":2.7, "preferredMeasuresPerLine":8}}</p>
+            <p><strong>Note:</strong> This feature allows very low level control of the abcjs renderer. Improper parameters may cause unpredictable results or crash the tool.</p>            <hr class="hidden-print" id="expandtowidest">
             <h1 class="page_break_always">Opting-out of "Expand to Widest" Layout<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>The original abcjs version 6.2.2 I used for the early versions of the tool would sometimes leave ragged right edges on staves, particulary for staves with many or changing numbers of measures per staff or on complex tunes brought into the tool through MusicXML import.</p>
             <p>As of 20 November 2023, with the release of abcjs version 6.2.3, a significant update to the library, I defaulted to expanding all staves to the widest in the tune, which produces very clean and aligned right staff edges in nearly all cases.</p>
