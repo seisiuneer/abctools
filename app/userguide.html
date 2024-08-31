@@ -3992,6 +3992,11 @@
             <p class="code">%abcjs_render_params {"visualTranspose":2}</p>
             <p>Example #4: Forcing 8 bars per staff (requires staffwidth parameter):</p>
             <p class="code">%abcjs_render_params {"staffwidth":1000,"wrap":{"minSpacing":1.8, "maxSpacing":2.7, "preferredMeasuresPerLine":8}}</p>
+            <p>Example #5: Generating custom Open-G (G-D-G-B) Mandolin tablature:</p>
+            <p class="code">%abcjs_render_params {"tablature": [{"instrument": "violin","label": "Open G - GDGB","tuning": ["G,", "D", "G", "B"],"highestNote": "f'","capo": 0}]}</p>
+            <p>Example #6: Generating custom Open-G (D-G-D-G-B-D) Guitar tablature:</p>
+            <p class="code">%abcjs_render_params {"tablature": [{"instrument": "guitar","label": "Open G - DGDGBD","tuning": ["D,", "G,", "D", "G", "B", "d"],"highestNote": "f'","capo": 0}]}</p>
+
             <p><strong>Note:</strong> This feature allows very low level control of the abcjs renderer. Improper parameters may cause unpredictable results or crash the tool.</p>
             <p>Additional, use of some low-level abcjs rendering parameters such as "staffwidth" and "wrap" may cause issues with "Highlighting" mode in the tool.</p>
             <hr class="hidden-print" id="expandtowidest">
