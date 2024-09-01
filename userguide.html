@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-         
+        
         <style>
         
         p {
@@ -225,6 +225,7 @@
             <div class="hidden-print">
                 
                 <h1 style="margin-bottom:20px;line-height:12px;padding-left:0px;">Table of Contents</h1>
+                <p style="margin-bottom:20px;line-height:12px;padding-left:0px;text-align: center;">Click any topic to toggle display of the subtopics</p>
                 <h1 style="margin-bottom:16px;padding-left:0px;"><button class="expandall" onclick="ExpandAll();">Expand All</button>&nbsp;&nbsp;&nbsp;<button class="expandall" onclick="CollapseAll();">Collapse All</button></h1>
                 
                 <button class="accordion" title="Click to expand/collapse this section">Basic Operation</button>
@@ -4277,8 +4278,8 @@
     });
     }
     
-    // Start with all topics expanded
-    ExpandAll();
+    // Start with all topics collapsed
+    CollapseAll();
     
     }
     
