@@ -13581,6 +13581,10 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
   }
 
   function interpretChord(name) {
+
+    //console.log("interpretChord: "+name+" transpose: "+transpose); // MAE 31 Aug 2024
+    //debugger;
+
     // chords have the format:
     // [root][acc][modifier][/][bass][acc]
     // (The chord might be surrounded by parens. Just ignore them.)
@@ -13625,6 +13629,15 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       chordTranspose -= 12;
     }
     bass += chordTranspose;
+
+    // MAE 31 Aug 2024 - For visual transpose backup issue
+    // If transposed below A or above G, bring it back in range
+    if (bass < 33){
+      bass += 12;
+    }
+    else if (bass > 44){
+      bass -= 12;
+    }
 
     // MAE 22 May 2024 - Supporting octave shifted bass and chords
     var unshiftedBass = bass;
@@ -15721,6 +15734,10 @@ ChordTrack.prototype.findChord = function (elem) {
   return null;
 };
 ChordTrack.prototype.interpretChord = function (name) {
+
+  //console.log("ChordTrack interpretChord: "+name+" transpose: "+this.transpose); // MAE 31 Aug 2024
+  //debugger;
+
   // chords have the format:
   // [root][acc][modifier][/][bass][acc]
   // (The chord might be surrounded by parens. Just ignore them.)
@@ -15763,6 +15780,15 @@ ChordTrack.prototype.interpretChord = function (name) {
     chordTranspose -= 12;
   }
   bass += chordTranspose;
+
+  // MAE 31 Aug 2024 - For visual transpose backup issue
+  // If transposed below A or above G, bring it back in range
+  if (bass < 33){
+    bass += 12;
+  }
+  else if (bass > 44){
+    bass -= 12;
+  }
 
   // MAE 17 Jun 2024 - Supporting octave shifted bass and chords
   var unshiftedBass = bass;
