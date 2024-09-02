@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1537_310824_1930";
+var gVersionNumber="1538_020924_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -8491,9 +8491,10 @@ function promptForPDFFilename(placeholder, callback){
 
 	}
 
-	// With the addition of tune title numbers, clean them from the front of the placeholder
-	placeholder = cleanTitleNumber(placeholder);
+	// Clean any . from the placeholder
+	placeholder = placeholder.replace(/[. ]+/ig, '');
 	placeholder = placeholder.trim();
+
 	// Clean any leading underscore after the title number clean
 	var theregex = /^[_]+/;
 	placeholder = placeholder.replace(theregex, '');
@@ -41801,6 +41802,28 @@ function SplitLongTextAndTags(){
 }
 
 
+// Reset the text box size
+function resetTextBoxResize(){
+
+	// Reset text box symmetrical resize 
+	gTheABC.style.marginLeft = 0+"px";
+	gTheABC.style.width = gInitialTextBoxWidth+"px";
+
+	var elem = document.getElementById("notenlinks");
+	gInitialTextBoxContainerWidth = elem.offsetWidth;
+
+	elem = document.getElementById("noscroller");
+	gInitialTextBoxContainerLeft = elem.offsetLeft;
+
+	gTheNotation.style.marginLeft = "auto";
+
+	// console.log("On window resize:");
+	// console.log("Initial container width = "+gInitialTextBoxContainerWidth);
+	// console.log("Initial container left = "+gInitialTextBoxContainerLeft);
+	
+	ResizeTextBox();
+}
+
 
 // Open the QuickEditor in a new tab
 function LaunchQuickEditor(){
@@ -42463,23 +42486,7 @@ function DoStartup() {
 
 			if (!gIsMaximized){
 
-				// Reset text box symmetrical resize 
-				gTheABC.style.marginLeft = 0+"px";
-				gTheABC.style.width = gInitialTextBoxWidth+"px";
-
-				var elem = document.getElementById("notenlinks");
-				gInitialTextBoxContainerWidth = elem.offsetWidth;
-
-				elem = document.getElementById("noscroller");
-				gInitialTextBoxContainerLeft = elem.offsetLeft;
-
-				gTheNotation.style.marginLeft = "auto";
-
-				// console.log("On window resize:");
-				// console.log("Initial container width = "+gInitialTextBoxContainerWidth);
-				// console.log("Initial container left = "+gInitialTextBoxContainerLeft);
-				
-				ResizeTextBox();
+				resetTextBoxResize();
 				
 				gGotWindowResizeWhileMaximized = false;
 
@@ -42494,6 +42501,12 @@ function DoStartup() {
 
 		// Set the ABC Editor font from the value read from local storage
 		updateABCEditorFont();
+
+		// MAE 2 Sep 2024
+		if (!gIsMaximized){
+
+			resetTextBoxResize();
+		}
 
 	}
 
