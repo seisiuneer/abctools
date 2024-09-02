@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1537_310824_1930";
+var gVersionNumber="1543_020924_1130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -8491,9 +8491,10 @@ function promptForPDFFilename(placeholder, callback){
 
 	}
 
-	// With the addition of tune title numbers, clean them from the front of the placeholder
-	placeholder = cleanTitleNumber(placeholder);
+	// Use the replace method to replace the matched pattern with an empty string
+	placeholder = placeholder.replace(/[. ]+/ig, '');
 	placeholder = placeholder.trim();
+
 	// Clean any leading underscore after the title number clean
 	var theregex = /^[_]+/;
 	placeholder = placeholder.replace(theregex, '');
@@ -20202,15 +20203,29 @@ function DoMinimize(){
 		// Since they are not valid before the UI has been displayed
 		if (gForceInitialTextBoxRecalc){
 
-			// Grab the text box positions and offsets
-			// Setup text box symmetrical resize 
-			gInitialTextBoxWidth = gTheABC.offsetWidth;
+			if (giPadTwoColumn){
 
-			var elem = document.getElementById("notenlinks");
-			gInitialTextBoxContainerWidth = elem.offsetWidth;
+				// Reset text box symmetrical resize 
+				gTheABC.style.marginLeft = "0px";
+				gTheABC.style.width = "832px";
 
-			elem = document.getElementById("noscroller");
-			gInitialTextBoxContainerLeft = elem.offsetLeft;
+				gInitialTextBoxWidth = 832;
+				gInitialTextBoxContainerWidth = 832;
+				gInitialTextBoxContainerLeft = 0;
+
+			}
+			else{
+
+				var elem = document.getElementById("notenlinks");
+				gInitialTextBoxContainerWidth = elem.offsetWidth;
+
+				elem = document.getElementById("noscroller");
+				gInitialTextBoxContainerLeft = elem.offsetLeft;
+
+				// Grab the text box positions and offsets
+				// Setup text box symmetrical resize 
+				gInitialTextBoxWidth = gTheABC.offsetWidth;
+			}
 
 			ResizeTextBox();
 
@@ -39942,7 +39957,7 @@ function ResizeTextBox(){
 
 		// console.log("theOffset = "+theOffset);
 
-		if (currentWidth > gInitialTextBoxContainerWidth){
+		if ((currentWidth > gInitialTextBoxContainerWidth) && (!giPadTwoColumn)){
 
 			// console.log("Setting the marginLeft for stretch");
 
@@ -39988,7 +40003,7 @@ function ResizeTextBox(){
 		}
 		else{
 
-			// console.log("Setting the marginLeft to 0px");
+			//console.log("Setting the marginLeft to 0px");
 
 			gTheABC.style.marginLeft = "0px";
 
@@ -42439,7 +42454,16 @@ function DoStartup() {
 	if (isDesktopBrowser()){
 
 		// Setup text box symmetrical resize 
-		gInitialTextBoxWidth = gTheABC.offsetWidth;
+		if (giPadTwoColumn){
+			// iPad two column is always fixed width
+			gInitialTextBoxWidth = 832;
+			gTheABC.style.marginLeft = 0+"px";
+			gTheABC.style.width = gInitialTextBoxWidth+"px";
+
+		}
+		else{
+			gInitialTextBoxWidth = gTheABC.offsetWidth;
+		}
 
 		var elem = document.getElementById("notenlinks");
 		gInitialTextBoxContainerWidth = elem.offsetWidth;
