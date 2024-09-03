@@ -4554,7 +4554,7 @@ var parseDirective = {};
 
       // ONE INT PARAMETER
       // MAE 11 Jul 2024 - Added check for floats
-      if (midi.length !== 1) warn("Expected one parameter in MIDI " + midi_cmd, restOfString, 0);else if ((midi[0].type !== "number") || (!midi[0].intt)) warn("Expected one integer parameter in MIDI " + midi_cmd, restOfString, 0);else midi_params.push(midi[0].intt);
+      if (midi.length !== 1) warn("Expected one parameter in MIDI " + midi_cmd, restOfString, 0);else if ((midi[0].type !== "number") || (midi[0].intt == undefined)) warn("Expected one integer parameter in MIDI " + midi_cmd, restOfString, 0);else midi_params.push(midi[0].intt);
     } else if (midiCmdParam1Integer1OptionalInteger.indexOf(midi_cmd) >= 0) {
       
       //
