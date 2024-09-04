@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1547_040924_1100";
+var gVersionNumber="1548_040924_1330";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16815,6 +16815,37 @@ function GenerateQRCode(e) {
 }
 
 //
+// Round trip the ABC through MusicXML and back to ABC
+//
+function RoundTripMusicXML(){
+
+	var theTune = gTheABC.value;
+	
+	var theTitle = GetFirstTuneTitle();
+
+	document.getElementById("loading-bar-spinner").style.display = "block";
+
+	try{
+		fetch(`https://seisiuneer.pythonanywhere.com/abc2xml`, {
+		    method: 'POST',
+		    body: theTune
+		  })
+		.then(response => {
+		    return response.text();
+		})
+		.then(data => {
+			gTheABC.value = importMusicXML(data,theTitle);
+			RenderAsync(true,null,function(){
+				document.getElementById("loading-bar-spinner").style.display = "none";
+			});
+		});
+	}
+	catch(err){
+		document.getElementById("loading-bar-spinner").style.display = "none";
+	}
+}
+
+//
 // Save the ABC file converted to XML
 //
 function SaveABCAsMusicXML(theTune, fname){
@@ -16901,7 +16932,6 @@ function saveABCFile(thePrompt, thePlaceholder, theData){
 		if (fname.length == 0){
 		  return null;
 		}   
-
 
 		// Keep this around
 		if ((fname.endsWith(".xml")) || (fname.endsWith(".XML"))){
@@ -42696,6 +42726,8 @@ function DoStartup() {
 			    {},
 			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 			    {},
+			    { name: 'Reformat Using MusicXML', fn: function(target) { RoundTripMusicXML(); }},
+			    {},
 			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 			    {},
@@ -42715,6 +42747,8 @@ function DoStartup() {
 			    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
 			    {},
 			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
+			    {},
+			    { name: 'Reformat Using MusicXML', fn: function(target) { RoundTripMusicXML(); }},
 			    {},
 			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
@@ -42749,6 +42783,8 @@ function DoStartup() {
 			    {},
 			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 			    {},
+			    { name: 'Reformat Using MusicXML', fn: function(target) { RoundTripMusicXML(); }},
+			    {},
 			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 			    {},
@@ -42766,6 +42802,8 @@ function DoStartup() {
 			    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
 			    {},
 			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
+			    {},
+			    { name: 'Reformat Using MusicXML', fn: function(target) { RoundTripMusicXML(); }},
 			    {},
 			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},

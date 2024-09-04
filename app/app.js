@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0132_090424_1100";
+var gVersionNumber="0133_090424_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16767,6 +16767,50 @@ function GenerateQRCode(e) {
 
 	}
 
+}
+
+//
+// Round trip the ABC through MusicXML and back to ABC
+//
+function RoundTripMusicXML(){
+
+	// Don't allow MusicXML round trip while offline
+	if (!navigator.onLine){
+
+		var thePrompt = "Reformat Using MusicXML not available while offline.";
+		
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+		
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
+
+	var theTune = gTheABC.value;
+	
+	var theTitle = GetFirstTuneTitle();
+
+	document.getElementById("loading-bar-spinner").style.display = "block";
+
+	try{
+		fetch(`https://seisiuneer.pythonanywhere.com/abc2xml`, {
+		    method: 'POST',
+		    body: theTune
+		  })
+		.then(response => {
+		    return response.text();
+		})
+		.then(data => {
+			gTheABC.value = importMusicXML(data,theTitle);
+			RenderAsync(true,null,function(){
+				document.getElementById("loading-bar-spinner").style.display = "none";
+			});
+		});
+	}
+	catch(err){
+		document.getElementById("loading-bar-spinner").style.display = "none";
+	}
 }
 
 //
@@ -42104,6 +42148,8 @@ function DoStartup() {
 		    {},
 		    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 		    {},
+		    { name: 'Reformat Using MusicXML', fn: function(target) { RoundTripMusicXML(); }},
+		    {},
 		    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 		    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 		    {},
@@ -42131,6 +42177,8 @@ function DoStartup() {
 		    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
 		    {},
 		    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
+		    {},
+		    { name: 'Reformat Using MusicXML', fn: function(target) { RoundTripMusicXML(); }},
 		    {},
 		    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 		    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
