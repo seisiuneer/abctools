@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1544_030924_1330";
+var gVersionNumber="1545_040924_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19926,13 +19926,13 @@ function SaveABC(){
 
 				theName += ".abc";
 
-				saveABCFile("Please enter a filename for your ABC file:  ",theName,theData);
+				saveABCFile("Please enter a filename for your ABC file:<br/><br/>Using a .xml extension will save as MusicXML (first tune only).",theName,theData);
 			}
 			else{
 
 				theName += ".txt";
 
-				saveABCFile("Please enter a filename for your ABC file:  ",theName,theData);
+				saveABCFile("Please enter a filename for your ABC file:<br/><br/>Using a .xml extension will save as MusicXML (first tune only).",theName,theData);
 			}
 
 		}
