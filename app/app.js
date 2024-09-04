@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0130_090424_1030";
+var gVersionNumber="0132_090424_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19908,7 +19908,14 @@ function SaveABC(){
 			var thePrompt = "Please enter a filename for your ABC file:  ";
 
 			if (navigator.onLine){
-				thePrompt += "<br/><br/>Using a .xml extension will save as MusicXML (first tune only).";
+
+				thePrompt += "<br/><br/>Using a .xml extension will save as MusicXML";
+
+				if (theTuneCount > 1){
+					thePrompt += " (first tune only)";
+				}
+				
+				thePrompt += ".";
 			}
 
 			if (isPureDesktopBrowser()){
