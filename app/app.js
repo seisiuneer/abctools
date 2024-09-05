@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0137_090424_1930";
+var gVersionNumber="0138_090524_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -24187,7 +24187,9 @@ function ExportImageDialog(theABC,callback,val,metronome_state,isWide){
 // Reformat all the tunes by MusicXML Format roundtrip
 //
 
-var gBatchMusicXMLRoundTripAccum = "";
+//
+// Reformat all the tunes by MusicXML Format roundtrip
+//
 
 function BatchMusicXMLRoundTrip(){
 
@@ -24203,6 +24205,45 @@ function BatchMusicXMLRoundTrip(){
 
 		return;
 	}
+
+	// Make sure there are tunes to convert
+	var nTunes = CountTunes();
+
+	// Any tunes to reformat?
+	if (nTunes == 0){
+
+		var thePrompt = "No ABC tunes to reformat.";
+		
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+		
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
+
+	const form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Reformat Using MusicXML&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/app/userguide.html#reformatusingxml" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+	  {html: '<p style="margin-top:36px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click OK to reformat all the tunes in the ABC by exporting all the tunes in MusicXML format and then re-import them using the current MusicXML import settings.</p>'},
+	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">This can be useful for cleaning up notation formatting issues or changing the number of measures per stave.</p>'},
+	  {html: '<p style="text-align:center;margin-top:32px;"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML/MIDI Import Settings" title="Configure MusicXML/MIDI import settings"></p>'},	  
+	  {html: '<p style="margin-top:0px;font-size:12pt;line-height:12pt;font-family:helvetica">&nbsp;</p>'},
+	];
+
+	const modal = DayPilot.Modal.form(form, {}, { theme: "modal_flat", top: 200, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+
+		// Get the results and store them in the global configuration
+		if (!args.canceled){
+			
+			BatchMusicXMLRoundTripWorker();
+		}
+
+	});
+}
+
+var gBatchMusicXMLRoundTripAccum = "";
+
+function BatchMusicXMLRoundTripWorker(){
 
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","BatchMusicXMLRoundTrip");
@@ -24263,19 +24304,6 @@ function BatchMusicXMLRoundTrip(){
 
 	// Make sure there are tunes to convert
 	var nTunes = CountTunes();
-
-	// Any tunes to reformat?
-	if (nTunes == 0){
-
-		var thePrompt = "No ABC tunes to reformat.";
-		
-		// Center the string in the prompt
-		thePrompt = makeCenteredPromptString(thePrompt);
-		
-		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
-
-		return;
-	}
 
 	gBatchMusicXMLRoundTripAccum =	FindPreTuneHeader(gTheABC.value);
 
@@ -37392,7 +37420,7 @@ function ConfigureToolSettings() {
 		form.push({name: "    MIDI input is key and mode aware (if unchecked, enters note names with no accidentals)", id: "configure_midi_chromatic", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 	};
 	
-	form.push({html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Font Settings" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML/MIDI Settings" title="Configure MusicXML/MIDI import parameters"><input id="configure_developer_settings" class="btn btn-subdialog configure_developer_settings" onclick="AdvancedSettings()" type="button" value="Advanced Settings" title="Configure low level tool settings"></p>'});	
+	form.push({html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Font Settings" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML/MIDI Settings" title="Configure MusicXML/MIDI import settings"><input id="configure_developer_settings" class="btn btn-subdialog configure_developer_settings" onclick="AdvancedSettings()" type="button" value="Advanced Settings" title="Configure low level tool settings"></p>'});	
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 790, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
