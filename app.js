@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1549_040924_1700";
+var gVersionNumber="1550_040924_1900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -24229,6 +24229,191 @@ function ExportImageDialog(theABC,callback,val,metronome_state,isWide){
 }
 
 //
+// Reformat all the tunes by MusicXML Format roundtrip
+//
+
+var gBatchMusicXMLRoundTripAccum = "";
+
+function BatchMusicXMLRoundTrip(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","BatchMusicXMLRoundTrip");
+
+	var totalTunesToExport;
+
+	function callback(theTitle,theABC){
+
+		//console.log("callback called");
+
+		gBatchMusicXMLRoundTripAccum += importMusicXML(theABC,theTitle);
+
+		gBatchMusicXMLRoundTripAccum += "\n";
+
+		nTunes--;
+
+		if (!gBatchImageExportCancelRequested){
+
+			if (nTunes != 0){
+
+				setTimeout(function(){
+
+					currentTune++;
+
+					var thisTune = getTuneByIndex(currentTune);
+
+					var title = getTuneTitle(thisTune);
+
+					gTheBatchImageExportStatusText.innerText = "Reformatting tune "+ (currentTune+1) + " of "+totalTunesToExport+": "+title;
+
+					ExportMusicXMLForReformat(thisTune,title,callback);
+
+				}, 1000);
+
+			}
+			else{
+
+				// We're done, close the status dialog
+				gTheBatchImageExportOKButton.click();
+
+				gBatchImageExportCancelRequested = false;
+
+				gTheABC.value = gBatchMusicXMLRoundTripAccum;
+
+				RenderAsync(true,null,function(){
+					document.getElementById("loading-bar-spinner").style.display = "none";
+				});
+			}
+
+		}
+		else{
+
+			// Take down the spinner
+			document.getElementById("loading-bar-spinner").style.display = "none";
+
+		}
+	}
+
+	// Make sure there are tunes to convert
+	var nTunes = CountTunes();
+
+	// Any tunes to reformat?
+	if (nTunes == 0){
+
+		var thePrompt = "No ABC tunes to reformat.";
+		
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+		
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
+
+	gBatchMusicXMLRoundTripAccum =	FindPreTuneHeader(gTheABC.value);
+
+	totalTunesToExport = nTunes;
+
+	var currentTune = 0;
+
+	gBatchImageExportCancelRequested = false;
+	gTheBatchImageExportOKButton = null;
+	gTheBatchImageExportStatusText = null;
+
+	var thePrompt = "Formatting tune "+ (currentTune+1) + " of "+totalTunesToExport;
+	
+	// Center the string in the prompt
+	thePrompt = makeCenteredPromptString(thePrompt);
+
+	// Put up batch running dialog
+	DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 290, scrollWithPage: (AllowDialogsToScroll()), okText:"Cancel" }).then(function(args){
+		
+		//console.log("Got cancel");
+		
+		gBatchImageExportCancelRequested = true;
+		
+	});	
+
+	var modals = document.getElementsByClassName("modal_flat_main");
+
+	var nmodals = modals.length;
+
+	modals[nmodals-1].style.zIndex = 100001;
+
+	// Find the OK button
+
+	var theOKButtons = document.getElementsByClassName("modal_flat_ok");
+
+	// Find the button that says "Cancel" to use to close the dialog when the cascade is complete
+	var theOKButton = null;
+
+	for (var i=0;i<theOKButtons.length;++i){
+
+		theOKButton = theOKButtons[i];
+
+		if (theOKButton.innerText == "Cancel"){
+
+			//console.log("Found conversion cancel button");
+			gTheBatchImageExportOKButton = theOKButton;
+
+			break;
+
+		}
+	}
+
+	// Find the status text 
+
+	var theStatusElems = document.getElementsByClassName("modal_flat_content");
+	var nStatus = theStatusElems.length;
+
+	gTheBatchImageExportStatusText = theStatusElems[nStatus-1];
+	gTheBatchImageExportStatusText.style.textAlign = "center";
+
+	var thisTune = getTuneByIndex(currentTune);
+
+	var title = getTuneTitle(thisTune);
+	
+	gTheBatchImageExportStatusText.innerText = "Reformatting tune "+ (currentTune+1) + " of "+totalTunesToExport+": "+title;
+	
+    document.getElementById("loading-bar-spinner").style.display = "block";
+	
+	// Kick off the conversion cascade
+	ExportMusicXMLForReformat(thisTune,title,callback);
+
+	return true;
+
+}
+
+// 
+// Convert and export one tune to MusicXML
+//
+function ExportMusicXMLForReformat(theABC,title,callback){
+	
+	fetch(`https://seisiuneer.pythonanywhere.com/abc2xml`, {
+	    method: 'POST',
+	    body: theABC
+	  })
+	.then(response => {
+
+	    return response.text();
+
+	  })
+	  .then(data => {
+
+	  	callback(title,data);
+
+	  })
+	  .catch(
+	  	error => {
+	  		
+	  		console.log("ExportMusicXMLForReformat - MusicXML conversion failed on "+title);
+
+			callback(title,"");
+
+	  });
+
+}
+
+//
 // Export all the tunes in MusicXML Format
 //
 
@@ -42741,7 +42926,7 @@ function DoStartup() {
 			    {},
 			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 			    {},
-			    { name: 'Reformat Using MusicXML', fn: function(target) { RoundTripMusicXML(); }},
+			    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 			    {},
 			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
@@ -42763,7 +42948,7 @@ function DoStartup() {
 			    {},
 			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 			    {},
-			    { name: 'Reformat Using MusicXML', fn: function(target) { RoundTripMusicXML(); }},
+			    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 			    {},
 			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
@@ -42798,7 +42983,7 @@ function DoStartup() {
 			    {},
 			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 			    {},
-			    { name: 'Reformat Using MusicXML', fn: function(target) { RoundTripMusicXML(); }},
+			    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 			    {},
 			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
@@ -42818,7 +43003,7 @@ function DoStartup() {
 			    {},
 			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 			    {},
-			    { name: 'Reformat Using MusicXML', fn: function(target) { RoundTripMusicXML(); }},
+			    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 			    {},
 			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
