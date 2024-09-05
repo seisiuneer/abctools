@@ -2402,6 +2402,14 @@ margin-top:-7px;
 	display:flex;
 }
 
+.configure_xmlroundtrip_text{
+	font-size:12pt;
+	line-height:16px;
+	font-family:helvetica;
+	margin-top:30px;
+	display:flex;
+}
+
 .configure_resetsettings_text{
 	font-size:12pt;
 	line-height:16px;

@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1553_050924_1430";
+var gVersionNumber="1554_050924_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -24244,23 +24244,100 @@ function BatchMusicXMLRoundTrip(){
 		return;
 	}
 
+	// Setup initial values
+	const theData = {
+	  reformatall: false
+	};
+
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Reformat Using MusicXML&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#reformatusingxml" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
-	  {html: '<p style="margin-top:36px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click OK to reformat all the tunes in the ABC by exporting all the tunes in MusicXML format and then re-import them using the current MusicXML import settings.</p>'},
+	  {html: '<p style="margin-top:36px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click OK to reformat either the current tune or all the tunes in the ABC by exporting the tune(s) in MusicXML format and then re-import them using the current MusicXML import settings.</p>'},
 	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">This can be useful for cleaning up notation formatting issues or changing the number of measures per stave.</p>'},
 	  {html: '<p style="text-align:center;margin-top:32px;"><input style="margin-left:0px" id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML/MIDI Import Settings" title="Configure MusicXML/MIDI import settings"></p>'},	  
-	  {html: '<p style="margin-top:0px;font-size:12pt;line-height:12pt;font-family:helvetica">&nbsp;</p>'},
+	  {name: "          Reformat all tunes", id: "reformatall", type:"checkbox", cssClass:"configure_xmlroundtrip_text"},
 	];
 
 	const modal = DayPilot.Modal.form(form, {}, { theme: "modal_flat", top: 200, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
+
+			if (args.result.reformatall){
 			
-			BatchMusicXMLRoundTripWorker();
+				BatchMusicXMLRoundTripWorker();
+
+			}
+			else{
+
+				BatchMusicXMLRoundTripCurrentTune();
+
+			}
 		}
 
 	});
+}
+
+function BatchMusicXMLRoundTripCurrentTune(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","BatchMusicXMLRoundTripOne");
+
+	var theSelectedTuneIndex = findSelectedTuneIndex();
+
+	// Try to find the current tune
+	var theTune = findSelectedTune();
+
+	if (theTune == ""){
+		// This should never happen
+		return;
+	}
+
+	var theTitle = getTuneTitle(theTune);
+
+	// Put up the spinner
+    document.getElementById("loading-bar-spinner").style.display = "block";
+
+	try{
+		fetch(`https://seisiuneer.pythonanywhere.com/abc2xml`, {
+		    method: 'POST',
+		    body: theTune
+		  })
+		.then(response => {
+		    return response.text();
+		})
+		.then(data => {
+
+			data = importMusicXML(data,theTitle)
+
+			// Stuff in the injected ABC
+			var theABC = gTheABC.value;
+
+			theABC = theABC.replace(theTune,data);
+
+			gTheABC.value = theABC;
+
+			if (gRawMode){
+
+				RenderAsync(true,null,function(){
+					document.getElementById("loading-bar-spinner").style.display = "none";
+				});
+
+			}
+			else{
+
+				RenderAsync(true,theSelectedTuneIndex,function(){
+					document.getElementById("loading-bar-spinner").style.display = "none";
+				});
+
+			}
+
+			gIsDirty = true;
+
+		});
+	}
+	catch(err){
+		document.getElementById("loading-bar-spinner").style.display = "none";
+	}
 }
 
 var gBatchMusicXMLRoundTripAccum = "";
@@ -24268,7 +24345,7 @@ var gBatchMusicXMLRoundTripAccum = "";
 function BatchMusicXMLRoundTripWorker(){
 
 	// Keep track of dialogs
-	sendGoogleAnalytics("dialog","BatchMusicXMLRoundTrip");
+	sendGoogleAnalytics("dialog","BatchMusicXMLRoundTripAll");
 
 	var totalTunesToExport;
 
@@ -24313,6 +24390,9 @@ function BatchMusicXMLRoundTripWorker(){
 				RenderAsync(true,null,function(){
 					document.getElementById("loading-bar-spinner").style.display = "none";
 				});
+
+				gIsDirty = true;
+
 			}
 
 		}
