@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0138_090524_1400";
+var gVersionNumber="0139_090524_1430";
 
 var gMIDIInitStillWaiting = false;
 
@@ -24187,10 +24187,6 @@ function ExportImageDialog(theABC,callback,val,metronome_state,isWide){
 // Reformat all the tunes by MusicXML Format roundtrip
 //
 
-//
-// Reformat all the tunes by MusicXML Format roundtrip
-//
-
 function BatchMusicXMLRoundTrip(){
 
 	// Don't allow MusicXML round trip while offline
@@ -24226,7 +24222,7 @@ function BatchMusicXMLRoundTrip(){
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Reformat Using MusicXML&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/app/userguide.html#reformatusingxml" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 	  {html: '<p style="margin-top:36px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click OK to reformat all the tunes in the ABC by exporting all the tunes in MusicXML format and then re-import them using the current MusicXML import settings.</p>'},
 	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">This can be useful for cleaning up notation formatting issues or changing the number of measures per stave.</p>'},
-	  {html: '<p style="text-align:center;margin-top:32px;"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML/MIDI Import Settings" title="Configure MusicXML/MIDI import settings"></p>'},	  
+	  {html: '<p style="text-align:center;margin-top:32px;"><input id="configure_musicxml_import" style="margin-left:0px" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML/MIDI Import Settings" title="Configure MusicXML/MIDI import settings"></p>'},	  
 	  {html: '<p style="margin-top:0px;font-size:12pt;line-height:12pt;font-family:helvetica">&nbsp;</p>'},
 	];
 
