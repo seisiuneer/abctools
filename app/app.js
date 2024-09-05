@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0133_090424_1400";
+var gVersionNumber="0135_090424_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16787,7 +16787,22 @@ function RoundTripMusicXML(){
 		return;
 	}
 
-	var theTune = gTheABC.value;
+	// Any tunes to reformat?
+	if (CountTunes() == 0){
+
+		var thePrompt = "No ABC tunes to reformat.";
+		
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+		
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
+
+	var theHeader =	FindPreTuneHeader(gTheABC.value);
+
+	var theTune = getTuneByIndex(0);
 	
 	var theTitle = GetFirstTuneTitle();
 
@@ -16802,7 +16817,7 @@ function RoundTripMusicXML(){
 		    return response.text();
 		})
 		.then(data => {
-			gTheABC.value = importMusicXML(data,theTitle);
+			gTheABC.value = theHeader + importMusicXML(data,theTitle);
 			RenderAsync(true,null,function(){
 				document.getElementById("loading-bar-spinner").style.display = "none";
 			});
