@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1554_050924_1700";
+var gVersionNumber="1555_0570924_2000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -42152,7 +42152,6 @@ function SplitLongTextAndTags(){
 }
 
 
-
 // Open the QuickEditor in a new tab
 function LaunchQuickEditor(){
 	var url = "https://michaeleskin.com/abctools/abctools-quick-editor.html";
@@ -43014,49 +43013,114 @@ function DoStartup() {
 
 		if (gIsQuickEditor){
 
-			items = [
-			    {},
-			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
-			    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
-			    {},
-			    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
-			    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
-			    {},
-			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
-			    {},
-			    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
-			    {},
-			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
-			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
-			    {},
-			    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
-			    {},
-			    { name: 'About the Quick Editor', fn: function(target) { LaunchQuickEditorHelp(); }},
-			  ];
+			if (isPureDesktopBrowser()){
+
+				items = [
+				    {},
+				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
+				    {},
+				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrder(); }},
+				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
+				    {},
+				    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
+				    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+				    {},
+				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
+				    {},
+				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
+				    {},
+				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
+				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+				    {},
+				    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
+				    {},
+				    { name: 'About the Quick Editor', fn: function(target) { LaunchQuickEditorHelp(); }},
+				  ];
+			}
+			else{
+				items = [
+				    {},
+				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
+				    {},
+				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
+				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
+				    {},
+				    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
+				    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+				    {},
+				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
+				    {},
+				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
+				    {},
+				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
+				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+				    {},
+				    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
+				    {},
+				    { name: 'About the Quick Editor', fn: function(target) { LaunchQuickEditorHelp(); }},
+				  ];
+
+			}
 		}
 		else{
 
-			items = [
-			    {},
-			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
-			    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
-			    {},
-			    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
-			    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
-			    {},
-			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
-			    {},
-			    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
-			    {},
-			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
-			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
-			    {},
-			    { name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
-			    {},
-			    { name: 'Launch Offline-Enabled Editor', fn: function(target) { LaunchOfflineEditor(); }},
-			    {},
-			    { name: 'About the Standard Editor', fn: function(target) { LaunchStandardEditorHelp(); }},
-			  ];
+			if (isPureDesktopBrowser()){
+
+				items = [
+				    {},
+				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
+				    {},
+				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrder(); }},
+				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
+				    {},
+				    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
+				    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+				    {},
+				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
+				    {},
+				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
+				    {},
+				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
+				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+				    {},
+				    { name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
+				    {},
+				    { name: 'Launch Offline-Enabled Editor', fn: function(target) { LaunchOfflineEditor(); }},
+				    {},
+				    { name: 'About the Standard Editor', fn: function(target) { LaunchStandardEditorHelp(); }},
+				  ];
+			}
+			else{
+
+				items = [
+				    {},
+				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
+				    {},
+				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
+				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
+				    {},
+				    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
+				    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+				    {},
+				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
+				    {},
+				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
+				    {},
+				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
+				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+				    {},
+				    { name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
+				    {},
+				    { name: 'Launch Offline-Enabled Editor', fn: function(target) { LaunchOfflineEditor(); }},
+				    {},
+				    { name: 'About the Standard Editor', fn: function(target) { LaunchStandardEditorHelp(); }},
+				  ];
+
+			}
 
 		}
 
@@ -43075,6 +43139,9 @@ function DoStartup() {
 
 			items = [
 			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+			    {},
+			    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
+			    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
 			    {},
 			    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
 			    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
@@ -43095,6 +43162,9 @@ function DoStartup() {
 
 			items = [
 			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+			    {},
+			    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
+			    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
 			    {},
 			    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
 			    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
