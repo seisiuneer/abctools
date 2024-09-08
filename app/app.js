@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0140_090524_1700";
+var gVersionNumber="0141_090724_2030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -42444,25 +42444,57 @@ function DoStartup() {
 
 	if (isDesktopBrowser()){
 
-		items = [
-		    {},
-		    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
-		    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
-		    {},
-		    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
-		    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
-		    {},
-		    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
-		    {},
-		    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
-		    {},
-		    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
-		    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
-		    {},
-			{ name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
-		    {},
-			{ name: 'About the Offline-Enabled Editor', fn: function(target) { LaunchOfflineEditorHelp(); }},
-		  ];
+		if (isPureDesktopBrowser()){
+
+			items = [
+			    {},
+			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+			    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
+			    {},
+			    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrder(); }},
+			    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
+			    {},
+			    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
+			    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+			    {},
+			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
+			    {},
+			    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
+			    {},
+			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
+			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+			    {},
+				{ name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
+			    {},
+				{ name: 'About the Offline-Enabled Editor', fn: function(target) { LaunchOfflineEditorHelp(); }},
+			  ];
+		}
+		else{
+
+			items = [
+			    {},
+			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+			    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
+			    {},
+			    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
+			    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
+			    {},
+			    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
+			    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+			    {},
+			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
+			    {},
+			    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
+			    {},
+			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
+			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+			    {},
+				{ name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
+			    {},
+				{ name: 'About the Offline-Enabled Editor', fn: function(target) { LaunchOfflineEditorHelp(); }},
+			  ];
+
+		}
 
 		// Adapt the search and replace key string based on the platform
 		var theFindItem = { name: 'Find and Replace (Ctrl+F)', fn: function(target) { FindAndReplace(); }};
@@ -42478,6 +42510,9 @@ function DoStartup() {
 
 		items = [
 		    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+		    {},
+		    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
+		    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
 		    {},
 		    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
 		    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
