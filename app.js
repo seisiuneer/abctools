@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1555_0570924_2000";
+var gVersionNumber="1556_0570924_2045";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14487,7 +14487,7 @@ function ChangeTuneOrderMobile(){
 
 	if (nTitles == 0){
 
-		var thePrompt = "No tunes to re-order.";
+		var thePrompt = "No tunes to reorder.";
 		
 		// Center the string in the prompt
 		thePrompt = makeCenteredPromptString(thePrompt);
@@ -14612,7 +14612,7 @@ function ChangeTuneOrder(){
 
 	if (nTitles == 0){
 
-		var thePrompt = "No tunes to re-order.";
+		var thePrompt = "No tunes to reorder.";
 		
 		// Center the string in the prompt
 		thePrompt = makeCenteredPromptString(thePrompt);
