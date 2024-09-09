@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1556_0570924_2045";
+var gVersionNumber="1557_090924_2045";
 
 var gMIDIInitStillWaiting = false;
 
@@ -24257,7 +24257,7 @@ function BatchMusicXMLRoundTrip(){
 	  {name: "          Reformat all tunes", id: "reformatall", type:"checkbox", cssClass:"configure_xmlroundtrip_text"},
 	];
 
-	const modal = DayPilot.Modal.form(form, {}, { theme: "modal_flat", top: 200, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, {}, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
