@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1561_091024_0930";
+var gVersionNumber="1562_091024_0945";
 
 var gMIDIInitStillWaiting = false;
 
@@ -43390,7 +43390,7 @@ function DoStartup() {
 			    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
 			    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
 			    {},
-			    { name: 'Align Bars (One Tune) (⌘+/)', fn: function(target) { AlignMeasures(false); }},
+			    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
 				{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
 			    {},
 			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
