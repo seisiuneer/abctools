@@ -30,7 +30,7 @@
  * 
  **/
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1559_091024_0830";
+var gVersionNumber="1560_091024_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -43133,6 +43133,25 @@ function DoStartup() {
 			        }
 
 			    }
+			    else
+			    // Check if the Command key (on Mac) is pressed with the "/" key
+			    if (event.metaKey && event.key === '/') {
+
+			    	//console.log("Got Command /");
+
+			       	event.preventDefault();  // Prevent the default browser action
+
+			    	var modalDivs = document.querySelector('.modal_flat_main');
+
+			        if ((!modalDivs) && (!gRenderingPDF)){
+
+			        	// Do measure align
+			        	AlignMeasures(false);
+
+			        }
+
+			    }
+
 			},true);
 		}
 		else{
@@ -43144,7 +43163,7 @@ function DoStartup() {
 
 			    	//console.log("Got Control F");
 
-			       	event.preventDefault();  // Prevent the default browser find action
+			       	event.preventDefault();  // Prevent the default browser action
 
 			    	var modalDivs = document.querySelector('.modal_flat_main');
 
@@ -43156,6 +43175,25 @@ function DoStartup() {
 			        }
 
 			    }
+			    else
+			   	// Check if the Control key (on Windows/Linux) is pressed with the "/" key
+			    if (event.ctrlKey && event.key === '/') {
+
+			    	//console.log("Got Control \\");
+
+			       	event.preventDefault();  // Prevent the default browser action
+
+			    	var modalDivs = document.querySelector('.modal_flat_main');
+
+			        if ((!modalDivs) && (!gRenderingPDF)){
+
+			        	// Do measure align
+			        	AlignMeasures(false);
+
+			        }
+
+			    }
+ 
 			},true);
 		}
 
@@ -43179,8 +43217,17 @@ function DoStartup() {
 				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrder(); }},
 				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
 				    {},
-				    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
-				    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+				];
+
+				if (isMac()){
+					items.push({ name: 'Align Bars (One Tune) (⌘+/)', fn: function(target) { AlignMeasures(false); }});
+				}
+				else{
+					items.push({ name: 'Align Bars (One Tune) (Ctrl+/)', fn: function(target) { AlignMeasures(false); }});				
+				}
+
+				items = items.concat(
+				    [{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
 				    {},
 				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 				    {},
@@ -43192,7 +43239,7 @@ function DoStartup() {
 				    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
 				    {},
 				    { name: 'About the Quick Editor', fn: function(target) { LaunchQuickEditorHelp(); }},
-				  ];
+				  ]);
 			}
 			else{
 				items = [
@@ -43203,8 +43250,17 @@ function DoStartup() {
 				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
 				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
 				    {},
-				    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
-				    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+				];
+
+				if (isMac()){
+					items.push({ name: 'Align Bars (One Tune) (⌘+/)', fn: function(target) { AlignMeasures(false); }});
+				}
+				else{
+					items.push({ name: 'Align Bars (One Tune) (Ctrl+/)', fn: function(target) { AlignMeasures(false); }});				
+				}
+
+				items = items.concat(
+				    [{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
 				    {},
 				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 				    {},
@@ -43216,7 +43272,7 @@ function DoStartup() {
 				    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
 				    {},
 				    { name: 'About the Quick Editor', fn: function(target) { LaunchQuickEditorHelp(); }},
-				  ];
+				  ]);
 
 			}
 		}
@@ -43232,8 +43288,17 @@ function DoStartup() {
 				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrder(); }},
 				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
 				    {},
-				    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
-				    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+				];
+
+				if (isMac()){
+					items.push({ name: 'Align Bars (One Tune) (⌘+/)', fn: function(target) { AlignMeasures(false); }});
+				}
+				else{
+					items.push({ name: 'Align Bars (One Tune) (Ctrl+/)', fn: function(target) { AlignMeasures(false); }});				
+				}
+
+				items = items.concat(
+					[{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
 				    {},
 				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 				    {},
@@ -43247,7 +43312,7 @@ function DoStartup() {
 				    { name: 'Launch Offline-Enabled Editor', fn: function(target) { LaunchOfflineEditor(); }},
 				    {},
 				    { name: 'About the Standard Editor', fn: function(target) { LaunchStandardEditorHelp(); }},
-				  ];
+				  ]);
 			}
 			else{
 
@@ -43259,8 +43324,17 @@ function DoStartup() {
 				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
 				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
 				    {},
-				    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
-				    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+				];
+
+				if (isMac()){
+					items.push({ name: 'Align Bars (One Tune) (⌘+/)', fn: function(target) { AlignMeasures(false); }});
+				}
+				else{
+					items.push({ name: 'Align Bars (One Tune) (Ctrl+/)', fn: function(target) { AlignMeasures(false); }});				
+				}
+
+				items = items.concat(
+					[{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
 				    {},
 				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 				    {},
@@ -43274,7 +43348,7 @@ function DoStartup() {
 				    { name: 'Launch Offline-Enabled Editor', fn: function(target) { LaunchOfflineEditor(); }},
 				    {},
 				    { name: 'About the Standard Editor', fn: function(target) { LaunchStandardEditorHelp(); }},
-				  ];
+				  ]);
 
 			}
 
@@ -43299,7 +43373,17 @@ function DoStartup() {
 			    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
 			    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
 			    {},
-			    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
+			];
+
+			if (isMac()){
+				items.push({ name: 'Align Bars (One Tune) (⌘+/)', fn: function(target) { AlignMeasures(false); }});
+			}
+			else{
+				items.push({ name: 'Align Bars (One Tune) (Ctrl+/)', fn: function(target) { AlignMeasures(false); }});				
+			}
+
+			items = items.concat(
+			[
 			    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
 			    {},
 			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
@@ -43312,7 +43396,7 @@ function DoStartup() {
 			    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
 			    {},
 			    { name: 'About the Quick Editor', fn: function(target) { LaunchQuickEditorHelp(); }},
-			];
+			]);
 		}
 		else{
 
@@ -43322,7 +43406,17 @@ function DoStartup() {
 			    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
 			    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
 			    {},
-			    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
+			];
+
+			if (isMac()){
+				items.push({ name: 'Align Bars (One Tune) (⌘+/)', fn: function(target) { AlignMeasures(false); }});
+			}
+			else{
+				items.push({ name: 'Align Bars (One Tune) (Ctrl+/)', fn: function(target) { AlignMeasures(false); }});				
+			}
+
+			items = items.concat(
+			[
 			    { name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
 			    {},
 			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
@@ -43337,7 +43431,7 @@ function DoStartup() {
 			    { name: 'Launch Offline-Enabled Editor', fn: function(target) { LaunchOfflineEditor(); }},
 			    {},
 			    { name: 'About the Standard Editor', fn: function(target) { LaunchStandardEditorHelp(); }},
-			];			
+			]);			
 		}
 
 	}
@@ -43413,8 +43507,3 @@ function WaitForReady(fn) {
 //
 
 WaitForReady(DoStartup);
-
-
-
-
-
