@@ -7506,14 +7506,38 @@ var letter_to_chord = function letter_to_chord(line, i) {
       chord[2] = 'right';
     } else if (chord[0] > 0 && chord[1].length > 0 && chord[1][0] === '@') {
       // @-15,5.7
+
+      //debugger;
+
       chord[1] = chord[1].substring(1);
       var x = tokenizer.getFloat(chord[1]);
-      if (x.digits === 0) warn("Missing first position in absolutely positioned annotation.", line, i);
+
+      if (x.digits === 0){
+        warn("Missing first position in absolutely positioned annotation.", line, i);
+        chord[1] = chord[1].replace("@","");
+        chord[2] = 'above';
+        return chord;
+      }
+
       chord[1] = chord[1].substring(x.digits);
-      if (chord[1][0] !== ',') warn("Missing comma absolutely positioned annotation.", line, i);
+
+      if (chord[1][0] !== ','){
+        warn("Missing comma absolutely positioned annotation.", line, i);
+        chord[1] = chord[1].replace("@","");
+        chord[2] = 'above';
+        return chord;
+      }
+       
       chord[1] = chord[1].substring(1);
+
       var y = tokenizer.getFloat(chord[1]);
-      if (y.digits === 0) warn("Missing second position in absolutely positioned annotation.", line, i);
+      if (y.digits === 0){
+        warn("Missing second position in absolutely positioned annotation.", line, i);
+        chord[1] = chord[1].replace("@","");
+        chord[2] = 'above';
+        return chord;
+      }
+
       chord[1] = chord[1].substring(y.digits);
       var ws = tokenizer.skipWhiteSpace(chord[1]);
       chord[1] = chord[1].substring(ws);
