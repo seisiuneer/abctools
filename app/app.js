@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="0143_090924_0950";
+var gVersionNumber="0144_091024_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -2279,6 +2279,102 @@ function DoSortTunesByRhythm() {
 }
 
 //
+// DoSortTunesByNTag command
+//
+function DoSortTunesByNTag() {
+
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
+
+	// Give some feedback
+	var elem = document.getElementById("sortbutton");
+	if (elem){
+		// Give some feedback
+		elem.value = "Sorting...";
+	}
+
+	setTimeout(function(){
+
+		// Sort the tunes by name first
+		SortTunes();
+
+		// Sort the tunes by N tag
+		SortTunesByTag("N",true);
+
+		// Redraw
+		RenderAsync(true,null,function(){
+
+			var elem = document.getElementById("sortbutton");
+			if (elem){
+				elem.value = "   Sorted!   ";
+			}
+		
+			setTimeout(function(){
+
+				var elem = document.getElementById("sortbutton");
+				if (elem){
+					elem.value = "Sort by Tag";
+				}
+
+			},1000);
+
+		});
+
+	},750);
+
+}
+
+//
+// DoSortTunesByOTag command
+//
+function DoSortTunesByOTag() {
+
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
+
+	// Give some feedback
+	var elem = document.getElementById("sortbutton");
+	if (elem){
+		// Give some feedback
+		elem.value = "Sorting...";
+	}
+
+	setTimeout(function(){
+
+		// Sort the tunes by name first
+		SortTunes();
+
+		// Sort the tunes by O tag
+		SortTunesByTag("O",true);
+
+		// Redraw
+		RenderAsync(true,null,function(){
+
+			var elem = document.getElementById("sortbutton");
+			if (elem){
+				elem.value = "   Sorted!   ";
+			}
+		
+			setTimeout(function(){
+
+				var elem = document.getElementById("sortbutton");
+				if (elem){
+					elem.value = "Sort by Tag";
+				}
+
+			},1000);
+
+		});
+
+	},750);
+
+}
+
+//
 // DoSortTunesByID command
 //
 function DoSortTunesByID() {
@@ -2431,9 +2527,15 @@ function SortDialog(){
 					DoSortTunesByRhythm();
 					break;
 				case "4":
-					DoSortTunesByID();
+					DoSortTunesByNTag();
 					break;
 				case "5":
+					DoSortTunesByOTag();
+					break;
+				case "6":
+					DoSortTunesByID();
+					break;
+				case "7":
 					RenumberXTags();
 					break;
 				default:
