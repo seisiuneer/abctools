@@ -29,8 +29,9 @@
  *
  * 
  **/
+
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="1563_091024_1545";
+var gVersionNumber="2000_091124_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -2643,8 +2644,7 @@ function Clear() {
 
 	    // Clear the diagnostics area
 	    elem = document.getElementById("diagnostics");
-	    elem.innerHTML = "";
-		
+	    elem.innerHTML = "";		
 		if (gIsQuickEditor){
 
 			// Clean up last play operation
@@ -2668,7 +2668,6 @@ function Clear() {
 			}
 
 		}
-		
 	}
 
 	// If currently rendering PDF, exit immediately
@@ -11029,7 +11028,6 @@ function fireSelectionChanged(){
 // Main routine for rendering the notation
 //
 function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
-
 	if (gIsQuickEditor){
 		// MAE 15 July 2024
 		// For the Quick Editor
@@ -11049,7 +11047,6 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 
 	// Get the rendering params
 	var params = GetABCJSParams(instrument);
-
 	if (gIsQuickEditor){
 		// MAE 15 July 2024 - For quick editor
 		params.oneSvgPerLine = false;
@@ -11208,6 +11205,7 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 
 	}
 	if (!gIsQuickEditor){
+
 		// Early release of the abcjs visual
 		visualObj = null;
 	}
@@ -11781,13 +11779,13 @@ function RenderRangeAsync(start,end,callback){
 // Allow putting up a spiner before the synchronous Render() function
 //
 function RenderAsync(renderAll,tuneNumber,callback){
-
 	if (gIsQuickEditor){
 		// MAE 15 July 2024 - For Quick Editor
 		renderAll = false;
 		tuneNumber = 0;
 		
 	}
+
 	// Don't allow a re-render during PDF generation
 	if (gRenderingPDF){
 		if (callback && (callback != undefined)){
@@ -11838,8 +11836,7 @@ function RenderAsync(renderAll,tuneNumber,callback){
 
 function Render(renderAll,tuneNumber) {
 
-	//console.log("Render renderAll="+renderAll+" tuneNumber="+tuneNumber);
-
+	//console.log("Render renderAll="+renderAll+" tuneNumber="+tuneNumber); 
 	if (gIsQuickEditor){
 		// MAE 15 July 2024 - For the Quick Editor
 		renderAll = true;
@@ -11854,7 +11851,6 @@ function Render(renderAll,tuneNumber) {
 
 	// Idle the file status display
 	var nTunes = CountTunes();
-
 	if (gIsQuickEditor){
 		// MAE 15 July 2024 - For the Quick Editor
 		if (nTunes > 1){
@@ -11934,6 +11930,7 @@ function Render(renderAll,tuneNumber) {
 			}
 
 		}
+		
 
 		// MAE 20 July 2024 - Avoid showing bottom bar if top bar hidden
 		if (gShowAllControls && gTopBarShowing){
@@ -11956,7 +11953,6 @@ function Render(renderAll,tuneNumber) {
 		document.getElementById("saveabcfile").classList.add("saveabcfile");
 		gAllowSave = true;
 
-
 		// Enable the control display toggle
 		gAllowControlToggle = true;
 
@@ -11976,7 +11972,7 @@ function Render(renderAll,tuneNumber) {
 			document.getElementById("playbutton").classList.remove("playbuttondisabled");
 			document.getElementById("playbutton").classList.add("playbutton");
 		}
-			
+		
 		// Enable the raw mode button (Desktop only)
 		if (isPureDesktopBrowser()){
 			document.getElementById("rawmodebutton").classList.remove("rawmodebuttondisabled");
@@ -12024,6 +12020,7 @@ function Render(renderAll,tuneNumber) {
 			inlinePlayback();
 
 		}
+
 	} else {
 
 		// Hide all the buttons and notation
@@ -12125,6 +12122,7 @@ function Render(renderAll,tuneNumber) {
 			document.getElementById("playback-audio-inline").innerHTML = "";
 
 		}
+
 
 	}
 
@@ -14103,7 +14101,7 @@ function searchForTunes() {
 	elem.selectionStart = 0;
 	elem.selectionEnd = 0;
 
-	if(isPureDesktopBrowser()){ 
+	if(isPureDesktopBrowser()){
 
 		// And reset the focus
 	    elem.focus();	
@@ -15209,7 +15207,7 @@ function AddABC(){
 	modal_msg += '<p style="text-align:center;margin-top:16px;">';
 	
 	// Reorder uses drag and drop on desktop
-	if (isPureDesktopBrowser()){ 
+	if (isPureDesktopBrowser()){
 		modal_msg  += '<input id="changetuneorder" class="advancedcontrols btn btn-injectcontrols-headers" onclick="ChangeTuneOrder();" type="button" value="Change the Order of the Tunes" title="Change the order of the tunes">';	
 	}
 	// Reorder uses up / down buttons on mobile
@@ -15243,8 +15241,8 @@ function AddABC(){
 		modal_msg  += '<input id="addnewsong" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleSong();" type="button" value="Add an Example Song" title="Adds an example song to the end of the ABC">';
 		modal_msg += '</p>';
 		modal_msg += '<p style="text-align:center;margin-top:16px;">';
-		modal_msg  += '<input id="addbodhrantemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddBodhranTemplate();" type="button" value="Add Bodhran Backing Track Tune Template" title="Opens a dialog where you can choose a bodhran backing track template of common tune styles to add to the end of the ABC">';
-		modal_msg  += '<input id="addboxfingeringtemplate" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendBoxFingeringTemplate();" type="button" value="Add Box Fingering Symbols Template" title="Adds a template with symbols for annotating box fingerings and tablature at the top of the ABC">';
+		modal_msg  += '<input id="addbodhrantemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddBodhranTemplate();" type="button" value="Add Bodhran Backing Track Template" title="Opens a dialog where you can choose a bodhran backing track template of common tune styles to add to the end of the ABC">';
+		modal_msg  += '<input id="adddatabasetemplate" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendDatabaseTemplate();" type="button" value="Add Offline Notes Database Loader Templates" title="Adds a template that makes it easy to load a full set of instrument notes and reverb settings into the database">';
 		modal_msg += '</p>';
 	}
 
@@ -16116,76 +16114,133 @@ function AppendSampleSong(){
 }
 
 //
-// Add a box fingering template
+// Add the J.S. Bach 2-Part Invention #1
 //
-function AppendBoxFingeringTemplate(){
+function AppendDatabaseTemplate(){
 
 	// Keep track of actions
-	sendGoogleAnalytics("action","AppendBoxFingeringTemplate");
+	sendGoogleAnalytics("action","AppendDatabaseTemplate");
 
-	var theNotes = gTheABC.value;
+	// Stuff in some default ABC with additional options explained
+	var theValue = ""
 
-	var output = "";
+	var nTunes = CountTunes();
 
-	output += '%\n';
-	output += "% Danny Flynn's symbols for box fingering transcriptions\n";
-	output += '%\n';	
-	output += '% Copy and paste these as chord annotations before the notes:\n';
-	output += '%\n';
-	output += '% Finger 1: "1" "①"\n';
-	output += '% Finger 2: "2" "②"\n';
-	output += '% Finger 3: "3" "③"\n';
-	output += '% Finger 4: "4" "④"\n';
-	output += '% Slide down: "➘"\n';
-	output += '% Slide up: "➚"\n';
-	output += '% Slide straight down: "↓"\n';
-	output += '% Cross over/under: "x"\n';
-	output += '% Push: "⮐"\n';
-	output += '% Draw: "⮑"\n';	
-	output += '%\n';
-	output += '% Additional symbols for button numbering tablature:\n';
-	output += '%\n';
-	output += '% "1" "2" "3" "4" "5" "6" "7" "8" "9" "10" "11" "↑" "↓"\n';
-	output += '% "①" "②" "③" "④" "⑤" "⑥" "⑦" "⑧" "⑨" "⑩" "⑪"\n';
- 	output += '%\n';
- 	output += '\n';
+	if (nTunes > 0){
+		theValue += "\n";
+	}
 
-	output += theNotes;
+	// Tempate 1 - Offline Single Instrument Notes + Reverb Database Loader
 
-	// Stuff in the headers
-	gTheABC.value = output;
+	theValue += 'X:1\n';
+	theValue += 'T: Single Soundfont Instrument Notes + Reverb Setting Database Loader\n';
+	theValue += 'M: 4/4\n';
+	theValue += 'L: 1/8\n';
+	theValue += 'K: C\n';
+	theValue += 'Q: 1/4=400\n';
+	theValue += '%\n';
+	theValue += '% 1) Select the soundfont:\n';
+	theValue += '%\n';	
+	theValue += '% Available soundfonts are:\n';
+	theValue += '% fluid, musyng, fatboy, canvas, mscore, arachno, and fluidhq\n';
+	theValue += '%\n';
+	theValue += '%abcjs_soundfont fluid\n';
+	theValue += '%\n';
+	theValue += '% 2) Select the MIDI instrument program you want to use\n';
+	theValue += '% in the soundfont and have all the notes stored in the database:\n';
+	theValue += '%\n';
+	theValue += '% Example: Acoustic Grand Piano\n';
+	theValue += '%%MIDI program 0\n';
+	theValue += '%\n';
+	theValue += '% 3) Select the reverb environment you want to have stored in the database\n';
+	theValue += '%\n';	
+	theValue += '% Available reverb environments are:\n';
+	theValue += '% off, room1, room2, room3, chamber1, chamber2, chamber3,\n';
+	theValue += '% hall1, hall2, hall3, church1,\n';
+	theValue += '% room (same as room3), chamber (same as chamber2),\n';
+	theValue += '% hall (same as hall2), and church (same as church1)\n';
+	theValue += '%\n';
+	theValue += '% chamber is the default reverb, so probably already stored:\n';
+	theValue += '%\n';
+	theValue += '%reverb chamber 0.9 0.1\n';
+	theValue += '%\n';
+	theValue += '% 4) While online, click "Play" to load the ABC into the player.\n';
+	theValue += '%\n';	
+	theValue += "% You do not need to actually play the tune, just loading the template\n";
+	theValue += "% into the player is enough to save the notes and reverb setting in\n";
+	theValue += "% the instrument notes and reverb database.\n";
+	theValue += '%\n';
+	theValue += '[|C,,,4 ^C,,,4 D,,,4 ^D,,,4 E,,,4 F,,,4 ^F,,,4 G,,,4 ^G,,,4 A,,,4 ^A,,,4 B,,,4 |\n';
+	theValue += 'C,,4 ^C,,4 D,,4 ^D,,4 E,,4 F,,4 ^F,,4 G,,4 ^G,,4 A,,4 ^A,,4 B,,4 |\n';
+	theValue += 'C,4 ^C,4 D,4, ^D,4 E,4 F,4 ^F,4 G,4 ^G,4 A,4 ^A,4 B,4 |\n';
+	theValue += 'C4 ^C4 D4 ^D4 E4 F4 ^F4 G4 ^G4 A4 ^A4 B4 |\n';
+	theValue += 'c4 ^c4 d4 ^d4 e4 f4 ^f4 g4 ^g4 a4 ^a4 b4 |\n';
+	theValue += "c'4 ^c'4 d'4 ^d'4 e'4 f'4 ^f'4 g'4 ^g'4 a'4 ^a'4 b'4|\n";
+	theValue += "c''4 ^c''4 d''4 ^d''4 e''4 f''4 ^f''4 g''4 ^g''4 a''4 ^a''4 b''4|]\n\n";
 
-	// Set dirty flag
-	gIsDirty = true;
-
-	// Have to redraw if in raw mode
-    if (gRawMode){
-
-		RenderAsync(true,null,function(){
-			
-			// Set the select point
-			gTheABC.selectionStart = 0;
-		    gTheABC.selectionEnd = 0;
-
-		    // Focus after operation
-		    FocusAfterOperation();
-
-		});
-
-    }
-    else{
-
-    	// Set the select point
-		gTheABC.selectionStart = 0;
-	    gTheABC.selectionEnd = 0;
-
-	    // Focus after operation
-	    FocusAfterOperation();
-
-    }
+	// Template 2 - Complete Soundfont Instrument Notes Database Loader Primer
 	
-}
+	theValue += "X: 2\n";
+	theValue += "T: All Soundfont Instruments Notes Database Primer Loader\n";
+	theValue += "M: 4/4\n";
+	theValue += "L: 1/8\n";
+	theValue += "K: C\n";
+	theValue += "Q: 400\n";
+	theValue += "%\n";
+	theValue += "% Loads one note for each MIDI instrument in an entire soundfont\n";
+	theValue += "% into the instrument notes database to allow you to easily\n";
+	theValue += "% load the rest of the notes for all the instruments.\n";
+	theValue += "%\n";
+	theValue += "% 1) Select the soundfont you want to load:\n";
+	theValue += "%\n";
+	theValue += "% Available soundfonts are:\n"; 
+	theValue += "% fluid, musyng, fatboy, canvas, mscore, arachno, and fluidhq\n";
+	theValue += "%\n";
+	theValue += "%abcjs_soundfont fluid\n";
+	theValue += "%\n";
+	theValue += '% 2) While online, click "Play" to load the ABC into the player.\n';
+	theValue += "%\n";
+	theValue += "% You don't need to actually play the file, just loading the template\n";
+	theValue += "% into the player is enough to create single note placeholder\n";
+	theValue += "% entries in the instrument notes database.\n";
+	theValue += "%\n";
+	theValue += "% 3) Once the player load is complete, you can close the player.\n";
+	theValue += "%\n";
+	theValue += '% 4) Open "Settings"/"Manage Notes, Reverb, and Tune Search Databases"\n';
+	theValue += "%\n";
+	theValue += '% 5) Click "Instrument Notes Database"\n';
+	theValue += "%\n";
+	theValue += '% 6) Click "Load All Notes for All Instruments"\n';
+	theValue += "%\n";
+	theValue += "% 7) The tool will download all the notes for all the instruments.\n";
+	theValue += "%\n";
+	theValue += "% This is a very aggressive use of the database loader feature.\n";
+	theValue += "%\n";
+	theValue += "% While I do not expect there to be any issues, use at your own risk.\n";
+	theValue += "%\n";
+	theValue += '[I:MIDI= program 0] "_0" G4 |[I:MIDI= program 1] "_1" G4 |[I:MIDI= program 2] "_2" G4 |[I:MIDI= program 3] "_3" G4 |[I:MIDI= program 4] "_4" G4 |[I:MIDI= program 5] "_5" G4 |[I:MIDI= program 6] "_6" G4 |[I:MIDI= program 7] "_7" G4 |\n';
+	theValue += '[I:MIDI= program 8] "_8" G4 |[I:MIDI= program 9] "_9" G4 |[I:MIDI= program 10] "_10" G4 |[I:MIDI= program 11] "_11" G4 |[I:MIDI= program 12] "_12" G4 |[I:MIDI= program 13] "_13" G4 |[I:MIDI= program 14] "_14" G4 |[I:MIDI= program 15] "_15" G4 |\n';
+	theValue += '[I:MIDI= program 16] "_16" G4 |[I:MIDI= program 17] "_17" G4 |[I:MIDI= program 18] "_18" G4 |[I:MIDI= program 19] "_19" G4 |[I:MIDI= program 20] "_20" G4 |[I:MIDI= program 21] "_21" G4 |[I:MIDI= program 22] "_22" G4 |[I:MIDI= program 23] "_23" G4 |\n';
+	theValue += '[I:MIDI= program 24] "_24" G4 |[I:MIDI= program 25] "_25" G4 |[I:MIDI= program 26] "_26" G4 |[I:MIDI= program 27] "_27" G4 |[I:MIDI= program 28] "_28" G4 |[I:MIDI= program 29] "_29" G4 |[I:MIDI= program 30] "_30" G4 |[I:MIDI= program 31] "_31" G4 |\n';
+	theValue += '[I:MIDI= program 32] "_32" G4 |[I:MIDI= program 33] "_33" G4 |[I:MIDI= program 34] "_34" G4 |[I:MIDI= program 35] "_35" G4 |[I:MIDI= program 36] "_36" G4 |[I:MIDI= program 37] "_37" G4 |[I:MIDI= program 38] "_38" G4 |[I:MIDI= program 39] "_39" G4 |\n';
+	theValue += '[I:MIDI= program 40] "_40" G4 |[I:MIDI= program 41] "_41" G4 |[I:MIDI= program 42] "_42" G4 |[I:MIDI= program 43] "_43" G4 |[I:MIDI= program 44] "_44" G4 |[I:MIDI= program 45] "_45" G4 |[I:MIDI= program 46] "_46" G4 |[I:MIDI= program 47] "_47" G4 |\n';
+	theValue += '[I:MIDI= program 48] "_48" G4 |[I:MIDI= program 49] "_49" G4 |[I:MIDI= program 50] "_50" G4 |[I:MIDI= program 51] "_51" G4 |[I:MIDI= program 52] "_52" G4 |[I:MIDI= program 53] "_53" G4 |[I:MIDI= program 54] "_54" G4 |[I:MIDI= program 55] "_55" G4 |\n';
+	theValue += '[I:MIDI= program 56] "_56" G4 |[I:MIDI= program 57] "_57" G4 |[I:MIDI= program 58] "_58" G4 |[I:MIDI= program 59] "_59" G4 |[I:MIDI= program 60] "_60" G4 |[I:MIDI= program 61] "_61" G4 |[I:MIDI= program 62] "_62" G4 |[I:MIDI= program 63] "_63" G4 |\n';
+	theValue += '[I:MIDI= program 64] "_64" G4 |[I:MIDI= program 65] "_65" G4 |[I:MIDI= program 66] "_66" G4 |[I:MIDI= program 67] "_67" G4 |[I:MIDI= program 68] "_68" G4 |[I:MIDI= program 69] "_69" G4 |[I:MIDI= program 70] "_70" G4 |[I:MIDI= program 71] "_71" G4 |\n';
+	theValue += '[I:MIDI= program 72] "_72" G4 |[I:MIDI= program 73] "_73" G4 |[I:MIDI= program 74] "_74" G4 |[I:MIDI= program 75] "_75" G4 |[I:MIDI= program 76] "_76" G4 |[I:MIDI= program 77] "_77" G4 |[I:MIDI= program 78] "_78" G4 |[I:MIDI= program 79] "_79" G4 |\n';
+	theValue += '[I:MIDI= program 80] "_80" G4 |[I:MIDI= program 81] "_81" G4 |[I:MIDI= program 82] "_82" G4 |[I:MIDI= program 83] "_83" G4 |[I:MIDI= program 84] "_84" G4 |[I:MIDI= program 85] "_85" G4 |[I:MIDI= program 86] "_86" G4 |[I:MIDI= program 87] "_87" G4 |\n';
+	theValue += '[I:MIDI= program 88] "_88" G4 |[I:MIDI= program 89] "_89" G4 |[I:MIDI= program 90] "_90" G4 |[I:MIDI= program 91] "_91" G4 |[I:MIDI= program 92] "_92" G4 |[I:MIDI= program 93] "_93" G4 |[I:MIDI= program 94] "_94" G4 |[I:MIDI= program 95] "_95" G4 |\n';
+	theValue += '[I:MIDI= program 96] "_96" G4 |[I:MIDI= program 97] "_97" G4 |[I:MIDI= program 98] "_98" G4 |[I:MIDI= program 99] "_99" G4 |[I:MIDI= program 100] "_100" G4 |[I:MIDI= program 101] "_101" G4 |[I:MIDI= program 102] "_102" G4 |[I:MIDI= program 103] "_103" G4 |\n';
+	theValue += '[I:MIDI= program 104] "_104" G4 |[I:MIDI= program 105] "_105" G4 |[I:MIDI= program 106] "_106" G4 |[I:MIDI= program 107] "_107" G4 |[I:MIDI= program 108] "_108" G4 |[I:MIDI= program 109] "_109" G4 |[I:MIDI= program 110] "_110" G4 |[I:MIDI= program 111] "_111" G4 |\n';
+	theValue += '[I:MIDI= program 112] "_112" G4 |[I:MIDI= program 113] "_113" G4 |[I:MIDI= program 114] "_114" G4 |[I:MIDI= program 115] "_115" G4 |[I:MIDI= program 116] "_116" G4 |[I:MIDI= program 117] "_117" G4 |[I:MIDI= program 118] "_118" G4 |[I:MIDI= program 119] "_119" G4 |\n';
+	theValue += '[I:MIDI= program 120] "_120" G4 |[I:MIDI= program 121] "_121" G4 |[I:MIDI= program 122] "_122" G4 |[I:MIDI= program 123] "_123" G4 |[I:MIDI= program 124] "_124" G4 |[I:MIDI= program 125] "_125" G4 |[I:MIDI= program 126] "_126" G4 |[I:MIDI= program 127] "_127" G4 |\n';
+	theValue += '[I:MIDI= program 128] "_128" G4 |[I:MIDI= program 129] "_129" G4 |[I:MIDI= program 130] "_130" G4 |[I:MIDI= program 131] "_131" G4 |[I:MIDI= program 132] "_132" G4 |[I:MIDI= program 133] "_133" G4 |[I:MIDI= program 134] "_134" G4 |[I:MIDI= program 135] "_135" G4 |\n';
+	theValue += '[I:MIDI= program 136] "_136" G4 |[I:MIDI= program 137] "_137" G4 |[I:MIDI= program 138] "_138" G4 |[I:MIDI= program 139] "_139" G4 |[I:MIDI= program 140] "_140" G4 |[I:MIDI= program 141] "_141" G4 |[I:MIDI= program 142] "_142" G4 |[I:MIDI= program 143] "_143" G4 |[I:MIDI= program 144] "_144" G4 |]\n';
 
+	// Do common tune addition processing
+	ProcessAddTune(theValue);
+
+}
 
 //
 // Add the J.S. Bach 2-Part Invention #1
@@ -16207,6 +16262,8 @@ function AppendJSBach(){
 	theValue += 'X:1\n';
 	theValue += "%\n";
 	theValue += "% Example J.S. Bach transcription originally imported from MusicXML\n";
+	theValue += "%\n";	
+	theValue += '% Click "Play" to play\n';
 	theValue += "%\n";
 	theValue += 'T:Two-Part Invention #1\n';
 	theValue += 'C:J.S. Bach\n';
@@ -16282,6 +16339,8 @@ function AppendJSBach2(){
 	theValue += 'X:1\n';
 	theValue += "%\n";
 	theValue += "% Example J.S. Bach transcription originally imported from MusicXML\n";
+	theValue += "%\n";	
+	theValue += '% Click "Play" to play\n';
 	theValue += "%\n";
 	theValue += 'T:Fantasia\n';
 	theValue += 'T:BWV570\n';
@@ -16413,6 +16472,7 @@ function ProcessAddTune(theValue){
 				// Scroll the tune ABC into view
 			    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
 			}
+
 
 		    if (isMobileBrowser()){
 		    	return;
@@ -16583,19 +16643,7 @@ function GenerateRenderingDivs(nTunes) {
 //
 function getUrlWithoutParams() {
 
-	var theURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-
-	if (gIsQuickEditor){
-		theURL = "https://michaeleskin.com/abctools/abctools.html"
-	}
-	else{
-		// If running locally, point the share link at the public site
-		if (theURL.indexOf("file:")==0){
-			theURL = "https://michaeleskin.com/abctools/abctools.html"
-		}
-	}
-
-	return theURL;
+	return "https://michaeleskin.com/abctools/abctools.html";
 
 }
 
@@ -16975,6 +17023,19 @@ function GenerateQRCode(e) {
 //
 function RoundTripMusicXML(){
 
+	// Don't allow MusicXML round trip while offline
+	if (!navigator.onLine){
+
+		var thePrompt = "Reformat Using MusicXML not available while offline.";
+		
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+		
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
+
 	// Any tunes to reformat?
 	if (CountTunes() == 0){
 
@@ -16991,7 +17052,7 @@ function RoundTripMusicXML(){
 	var theHeader =	FindPreTuneHeader(gTheABC.value);
 
 	var theTune = getTuneByIndex(0);
-
+	
 	var theTitle = GetFirstTuneTitle();
 
 	document.getElementById("loading-bar-spinner").style.display = "block";
@@ -17022,6 +17083,19 @@ function RoundTripMusicXML(){
 function SaveABCAsMusicXML(theTune, fname){
 
 	//debugger;
+	
+	// Don't allow shortening while offline
+	if (!navigator.onLine){
+
+		var thePrompt = "Save as MusicXML not available while offline.";
+		
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+		
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
 
 	fetch(`https://seisiuneer.pythonanywhere.com/abc2xml`, {
 	    method: 'POST',
@@ -17103,6 +17177,7 @@ function saveABCFile(thePrompt, thePlaceholder, theData){
 		if (fname.length == 0){
 		  return null;
 		}   
+
 
 		// Keep this around
 		if ((fname.endsWith(".xml")) || (fname.endsWith(".XML"))){
@@ -19878,6 +19953,8 @@ function InjectMetronome(){
 //
 // Copy the ABC to the clipboard
 //
+// If shift key is pressed, copy the text and open the ABC in editor.drawthedots.com
+//
 function CopyABC(){
 
 	if (gAllowCopy){
@@ -19943,6 +20020,19 @@ function ShortenURLFallback(){
 function ShortenURL(e){
 
 	if (!gAllowURLSave){
+		return;
+	}
+
+	// Don't allow shortening while offline
+	if (!navigator.onLine){
+
+		var thePrompt = "URL shortening not available while offline.";
+		
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+		
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
 		return;
 	}
 
@@ -20123,7 +20213,7 @@ function SaveABC(){
 			// Derive a suggested name from the ABC
 			var theName = getDescriptiveFileName(theTuneCount,false);
 
-			var thePrompt = "Please enter a filename for your ABC file: ";
+			var thePrompt = "Please enter a filename for your ABC file:  ";
 
 			if (isPureDesktopBrowser()){
 
@@ -20269,7 +20359,6 @@ function ShowHelpButton(){
 //
 // Handle the play button
 //
-
 function QE_PlayButton_Handler(){
 	const button = document.querySelector('button.abcjs-midi-start');
 	button.click();
@@ -20362,6 +20451,7 @@ function DoMinimize(){
 		var elem = document.getElementById("notation-holder").style.width = "850px";
 	}
 
+
 	if (!gIsQuickEditor){
 		
 		// Hide the play button
@@ -20384,6 +20474,7 @@ function DoMinimize(){
 		}
 
 	}
+
 
 	if (isDesktopBrowser()){
 		gTheNotation.style.display = "inline";
@@ -20792,17 +20883,18 @@ function processShareLink() {
 		}
 	}
 
+
 	// If multiple tunes in the link, which one to open in the player?
 	var gotIndex = false;
 	if (doPlay){
 		if (urlParams.has("index")) {
+
 			var theIndex = urlParams.get("index");
 			tuneIndex = parseInt(theIndex);
 			gPlayABCTuneIndex = tuneIndex;
 			gotIndex = true;
 		}
 	}
-
 
 	if (doRender) {
 
@@ -20839,6 +20931,7 @@ function processShareLink() {
 
 		// Set the inital focus back to the ABC
 		FocusABC();
+
 
 		// Render the tune
 		RenderAsync(true,null,function(){
@@ -20962,6 +21055,7 @@ function findSelectedTuneIndex(){
 		// MAE 15 July 2024 - For the Quick Editor
 		return 0;
 	}
+
 	var theNotes = gTheABC.value;
 
 	// Now find all the X: items
@@ -23516,7 +23610,7 @@ function ChangeTab(){
 //
 function FocusAfterOperation(){
 
-	if(isPureDesktopBrowser()){ 
+	if(isPureDesktopBrowser()){
 
 		// And reset the focus
 	    gTheABC.focus();	
@@ -23804,7 +23898,7 @@ function DownloadJPEG(callback, val){
 
 		var canvasdata = canvas.toDataURL("image/jpeg",0.75);
 
-		if (isPureDesktopBrowser()){ 
+		if (isPureDesktopBrowser()){
 
 			var downloadLink = document.createElement("a");
 
@@ -23957,7 +24051,7 @@ function DownloadPNG(callback, val){
 
 		var canvasdata = canvas.toDataURL("image/png",1);
 
-		if (isPureDesktopBrowser()){ 
+		if (isPureDesktopBrowser()){
 
 			var downloadLink = document.createElement("a");
 
@@ -24340,7 +24434,6 @@ function ExportImageDialog(theABC,callback,val,metronome_state,isWide){
 			
 		}
 
-
 		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: theTop, width:theWidth, okText:"Close", scrollWithPage: (isMobileBrowser()) });
 
 		var theOKButtons = document.getElementsByClassName("modal_flat_ok");
@@ -24383,6 +24476,19 @@ function ExportImageDialog(theABC,callback,val,metronome_state,isWide){
 //
 
 function BatchMusicXMLRoundTrip(){
+
+	// Don't allow MusicXML round trip while offline
+	if (!navigator.onLine){
+
+		var thePrompt = "Reformat Using MusicXML not available while offline.";
+		
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+		
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
 
 	// Make sure there are tunes to convert
 	var nTunes = CountTunes();
@@ -26966,7 +27072,7 @@ function CursorControl() {
 			cursor.setAttribute("y1", ev.top);
 			cursor.setAttribute("y2", ev.top + ev.height);
 
-			// Don't try to autoscroll cursors larger than the notation bounding rect
+			// Don't try to autoscroll cursors larger than
 			if (gAutoscrollPlayer){
 
 				// Get the SVG element's position relative to the container
@@ -27197,7 +27303,6 @@ function CursorControlOneTune() {
 
 }
 
-
 //
 // Find the largest rectangle of a specific aspect ratio that fit in another rectangle
 //
@@ -27334,7 +27439,6 @@ function PlayPrevious(e){
 		PlayABCDialog(theSelectedABC,null,null,null,gUseWidePlayer);
 	}
 }
-
 // 
 // Play the next tune
 //
@@ -27992,9 +28096,9 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 				}).catch(function (error) {
 					
 			        // MAE 10 Jul 2024 - Hide the spinner
-          			gMIDIInitStillWaiting = false;
 			        document.getElementById("loading-bar-spinner").style.display = "none";
-
+        			gMIDIInitStillWaiting = false;
+ 
 					console.log("Problem loading audio for this tune");
 
 				});
@@ -28002,9 +28106,8 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 		}).catch(function (error) {
 
 	        // MAE 10 Jul 2024 - Hide the spinner
-			gMIDIInitStillWaiting = false;
 	        document.getElementById("loading-bar-spinner").style.display = "none";
-
+        	gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -29229,7 +29332,7 @@ function ScanTuneForReverb(theTune){
 	//debugger;
 
 	// No reverb during offline use
-	if (!gSamplesOnline){
+	if ((!gSamplesOnline) && (!gAllowOfflineInstruments)){
 		return;
 	}
 
@@ -29639,19 +29742,17 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 				}).catch(function (error) {
 					
 			        // MAE 10 Jul 2024 - Hide the spinner
-          			gMIDIInitStillWaiting = false;
 			        document.getElementById("loading-bar-spinner").style.display = "none";
-
+        			gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
 				});
 			}
 		}).catch(function (error) {
-			
-			// MAE 10 Jul 2024 - Hide the spinner
-          	gMIDIInitStillWaiting = false;
-			document.getElementById("loading-bar-spinner").style.display = "none";
 
+	        // MAE 10 Jul 2024 - Hide the spinner
+	        document.getElementById("loading-bar-spinner").style.display = "none";
+        	gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -30390,11 +30491,10 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 
 
 				}).catch(function (error) {
-
-			        // MAE 10 Jul 2024 - Hide the spinner
-          			gMIDIInitStillWaiting = false;
-			        document.getElementById("loading-bar-spinner").style.display = "none";
 					
+			        // MAE 10 Jul 2024 - Hide the spinner
+			        document.getElementById("loading-bar-spinner").style.display = "none";
+        			gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
 				});
@@ -30402,9 +30502,8 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 		}).catch(function (error) {
 
 	        // MAE 10 Jul 2024 - Hide the spinner
-			gMIDIInitStillWaiting = false;
 	        document.getElementById("loading-bar-spinner").style.display = "none";
-
+        	gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -30478,6 +30577,7 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 			modal_msg += '<input id="reverbexplorertest" class="reverbexplorertest button btn btn-reverbexplorertest" onclick="ReverbExplorerRegenerate();" type="button" value="Reload with Changed Reverb Settings" title="Reloads the tune into the player with the entered reverb settings">';
 			modal_msg += '<input id="reverbexplorerinject" class="reverbexplorerinject button btn btn-reverbexplorerinject" onclick="ReverbExplorerInject();" type="button" style="margin-right:24px;" value="Inject Reverb into the ABC" title="Injects the current reverb settings into the tune ABC">';
 			modal_msg += '<label class="loadimpulsebutton btn btn-reverbexplorerinject" for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label>'
+
 			modal_msg += '</p>';
 			modal_msg += '<a id="reverbexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#reverb_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the Reverb Explorer" class="dialogcornerbutton">?</a>';
 		}
@@ -30532,7 +30632,6 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 			theWidth = 800;  
 			
 		}
-
 
 		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: theTop, width:theWidth, okText:"Close", scrollWithPage: (isMobileBrowser()) });
 
@@ -31412,11 +31511,10 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 
 
 				}).catch(function (error) {
-
-			        // MAE 10 Jul 2024 - Hide the spinner
-          			gMIDIInitStillWaiting = false;
-			        document.getElementById("loading-bar-spinner").style.display = "none";
 					
+			        // MAE 10 Jul 2024 - Hide the spinner
+			        document.getElementById("loading-bar-spinner").style.display = "none";
+        			gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
 				});
@@ -31424,9 +31522,8 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 		}).catch(function (error) {
 
 	        // MAE 10 Jul 2024 - Hide the spinner
-			gMIDIInitStillWaiting = false;
 	        document.getElementById("loading-bar-spinner").style.display = "none";
-
+        	gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -31538,7 +31635,6 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 			theWidth = 800;  
 			
 		}
-
 
 		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: theTop, width:theWidth, okText:"Close", scrollWithPage: (isMobileBrowser()) });
 
@@ -32026,9 +32122,8 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 				}).catch(function (error) {
 					
 			        // MAE 10 Jul 2024 - Hide the spinner
-          			gMIDIInitStillWaiting = false;
 			        document.getElementById("loading-bar-spinner").style.display = "none";
-
+        			gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
 				});
@@ -32036,9 +32131,8 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 		}).catch(function (error) {
 
 	        // MAE 10 Jul 2024 - Hide the spinner
-			gMIDIInitStillWaiting = false;
 	        document.getElementById("loading-bar-spinner").style.display = "none";
-
+        	gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -32140,6 +32234,7 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 			theWidth = 800;  
 			
 		}
+		
 
 		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: theTop, width:theWidth, okText:"Close", scrollWithPage: (isMobileBrowser()) });
 
@@ -32796,9 +32891,8 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 				}).catch(function (error) {
 					
 			        // MAE 10 Jul 2024 - Hide the spinner
-          			gMIDIInitStillWaiting = false;
 			        document.getElementById("loading-bar-spinner").style.display = "none";
-
+        			gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
 				});
@@ -32806,9 +32900,8 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 		}).catch(function (error) {
 
 	        // MAE 10 Jul 2024 - Hide the spinner
-			gMIDIInitStillWaiting = false;
 	        document.getElementById("loading-bar-spinner").style.display = "none";
-
+        	gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -32937,7 +33030,6 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 			theWidth = 800;  
 			
 		}
-
 
 		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: theTop, width:theWidth, okText:"Close", scrollWithPage: (isMobileBrowser()) });
 
@@ -33414,9 +33506,8 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 				}).catch(function (error) {
 					
 			        // MAE 10 Jul 2024 - Hide the spinner
-          			gMIDIInitStillWaiting = false;
 			        document.getElementById("loading-bar-spinner").style.display = "none";
-
+        			gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
 				});
@@ -33424,9 +33515,8 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 		}).catch(function (error) {
 
 	        // MAE 10 Jul 2024 - Hide the spinner
-			gMIDIInitStillWaiting = false;
 	        document.getElementById("loading-bar-spinner").style.display = "none";
-
+        	gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -35098,6 +35188,13 @@ function GetInitialConfigurationSettings(){
 		gCleanSmartQuotes = (val == "true");
 	}
 
+	// 2 July 2024 
+	gAllowOfflineInstruments = false;
+	val = localStorage.AllowOfflineInstruments;
+	if (val){
+		gAllowOfflineInstruments = (val == "true");
+	}
+
 	// Two column display for iPad
 	giPadTwoColumn = false;
 	val = localStorage.iPadTwoColumn;
@@ -35107,7 +35204,6 @@ function GetInitialConfigurationSettings(){
 	else{
 		giPadTwoColumn = false;
 	}
-
 	// Force large controls for iPad two-column
 	if (giPadTwoColumn){
 		gLargePlayerControls = true;
@@ -35323,6 +35419,9 @@ function SaveConfigurationSettings(){
 
 		// Confirm Clear
 		localStorage.ConfirmClear = gConfirmClear;
+
+		// Allow offline instruments
+		localStorage.AllowOfflineInstruments = gAllowOfflineInstruments;
 
 		// Clean Smart Quotes
 		localStorage.CleanSmartQuotes = gCleanSmartQuotes;
@@ -37102,168 +37201,6 @@ function idleAdvancedSettings(){
 
 }
 
-//
-// Clear all the databases
-//
-function DeleteAllDatabases(callback){
-
-	var thePrompt = "This will clear the notes, reverb impulse, and tune search cache databases.<br/><br/>Are you sure?";
-
-	// Center the string in the prompt
-	thePrompt = makeCenteredPromptString(thePrompt);
-
-	DayPilot.Modal.confirm(thePrompt,{ top:300, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
-		if (!args.canceled){
-
-			// Wipe all the databases
-			delete_all_DB();
-
-			//console.log("Deleting the databases");
-			callback(true);
-
-		}
-		else{
-
-			//console.log("Cancelled database delete");
-
-			callback(false);
-
-		}
-	});
-}
-
-//
-// Reset all tool settings to the defaults
-//
-function resetAllSettingsToDefault(callback){
-
-	// No point asking if they don't have localstorage available
-	if (!gLocalStorageAvailable){
-
-		callback(false);
-
-		return;
-	}
-
-	var thePrompt = "This will reset the tool settings to the original defaults.<br/><br/>Are you sure?";
-
-	// Center the string in the prompt
-	thePrompt = makeCenteredPromptString(thePrompt);
-
-	DayPilot.Modal.confirm(thePrompt,{ top:300, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
-		if (!args.canceled){
-
-			//console.log("Resetting the settings");
-
-			localStorage.clear();
-			
-			callback(true);
-
-		}
-		else{
-			
-			//console.log("Cancelled settings reset");
-
-			callback(false);
-		}
-
-	});
-}
-//
-// Reset the settings and/or clear the databases
-//
-function ResetSettingsDialog(){
-
-	// Keep track of dialogs
-	sendGoogleAnalytics("dialog","ResetSettings");
-
-	// Setup initial values
-	const theData = {
-	  resetsettings: false,
-	  deletedatabases: false
-	};
-
-	form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Reset All Tool Settings and Databases&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_resetsettings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
-	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Reset all settings to default</strong> will restore the tool settings to the original first-run state.</p>'},
-	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Clear all databases</strong> will clear and delete the instrument notes, reverb settings, and tune search collections databases. New databases will be created after the tool is restarted.'},
-	  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">If you enable either of these options, the tool will be restarted after the operation is complete.</p>'},
-	  {name: "          Reset all tool settings to default", id: "resetsettings", type:"checkbox", cssClass:"configure_resetsettings_text"},
-	  {name: "          Clear all databases", id: "deletedatabases", type:"checkbox", cssClass:"configure_resetsettings_text"},
-	  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},
-	];
-
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
-
-		// Get the results and store them in the global configuration
-		if (!args.canceled){
-
-			var doSettingsRestart = false;
-			var doDatabaseClear = false;
-
-			if (args.result.resetsettings){
-
-				// Clear the setttings
-				//console.log("reset settings requested");
-
-				resetAllSettingsToDefault(callback);
-
-			}
-			else{
-
-				callback(false);
-
-			}
-
-			function callback(restartRequested){
-
-				doSettingsRestart = restartRequested;
-
-				if (args.result.deletedatabases){
-
-					// Clear the setttings
-					//console.log("delete databases requested");
-
-					doRestart = true;
-
-					DeleteAllDatabases(callback2);
-				}
-				else{
-
-					callback2(false);
-
-				}
-
-			}
-
-			function callback2(restartRequested){
-
-				doDatabaseClear = restartRequested;
-
-				if (doSettingsRestart || doDatabaseClear){
-
-					setTimeout(function(){
-
-						var thePrompt = "All changes applied. Click OK to reload the tool.";
-						
-						// Center the string in the prompt
-						thePrompt = makeCenteredPromptString(thePrompt);
-
-						DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 320, scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
-
-							//console.log("reload would happen")
-
-							window.location.reload();
-
-						});
-
-					},1000);
-				}
-			}
-		}
-	});
-}
-
 function AdvancedSettings(){
 
 	// Keep track of dialogs
@@ -37411,7 +37348,6 @@ function AdvancedSettings(){
 				if (giPadPlayerScaling > 100){
 					giPadPlayerScaling = 100;
 				}
-
 			}
 
 			if (gDisableNotationRendering){
@@ -37612,7 +37548,7 @@ function AdvancedSettings(){
 			}
 
 			if (gIsIPad){
-				
+
 				// If changing the display mode on iPad, force large player controls
 				if (oldiPadTwoColumn != giPadTwoColumn){
 
@@ -37634,7 +37570,7 @@ function AdvancedSettings(){
 
 			if (gIsIPad){
 
-				// If changing the display mode on iPad, let the user know about restarting the
+				// If changing the display mode on iPad, let the user know about restarting the tool
 				if (oldiPadTwoColumn != giPadTwoColumn){
 
 					var thePrompt;
@@ -37967,7 +37903,7 @@ function ConfigureToolSettings() {
 		configure_show_cgda: gShowCGDATab,
 		configure_comhaltas: gUseComhaltasABC,	
 		configure_RollUseRollForIrishRoll: gRollUseRollForIrishRoll,
-
+		configure_allow_offline_instruments: gAllowOfflineInstruments,
 	};
 
   	var form = [
@@ -37993,7 +37929,9 @@ function ConfigureToolSettings() {
 		{name: "          Show DGDAE as a 5-string tab option (default is CGDAE)", id: "configure_show_dgdae", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "Stringed instrument capo fret position:", id: "configure_capo", type:"number", cssClass:"configure_settings_form_text"},
 		{name: "    Show stringed instrument names on tablature (single-voice tunes only, not shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-		{html: '<p style="text-align:center;"><input id="abcplayer_settingsbutton" style="margin-left:0px" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ConfigurePlayerSettings(null);" type="button" value="Select Default Player Instruments and Volumes" title="Brings up the Player Instrument Settings dialog where you can select the default abcjs soundfont, MIDI instruments, and MIDI volumes to use when playing tunes"></p>'},
+		{html: '<p style="text-align:center;"><input id="abcplayer_settingsbutton" style="margin-left:0px" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ConfigurePlayerSettings(null);" type="button" value="Select Default Player Instruments and Volumes" title="Brings up the Player Instrument Settings dialog where you can select the default abcjs soundfont, MIDI instruments, and MIDI volumes to use when playing tunes"><input id="managedatabases" class="btn btn-managedatabases managedatabases" onclick="ManageDatabasesDialog()" type="button" value="Manage Notes, Reverb, and Tune Search Databases" title="Opens a dialog where you can manage the instrument notes, reverb settings, and tune search engine collection databases"></p>'},
+		{name: "    Allow instrument notes and reverb settings database to be used offline", id: "configure_allow_offline_instruments", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+
 		{name: "    Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "            Use Default Bass/Chord volumes when playing tunes", id: "configure_inject_volumes", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
@@ -38051,6 +37989,9 @@ function ConfigureToolSettings() {
 				gSaveLastAutoSnapShot = false;
 			
 			}
+
+			// Allow offline instruments?
+			gAllowOfflineInstruments = args.result.configure_allow_offline_instruments;
 
 			// Save the tab button hide preference 
 			gFeaturesShowTabButtons = args.result.configure_show_tab_buttons;
@@ -38917,6 +38858,19 @@ function DoFileRead(file,doAppend){
 
 		if (isMIDI){
 
+			// Don't allow MIDI import while offline
+			if (!navigator.onLine){
+
+				var thePrompt = "MIDI import not available while offline.";
+				
+				// Center the string in the prompt
+				thePrompt = makeCenteredPromptString(thePrompt);
+				
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+				return;
+			}
+
 			// First time MIDI import warning
 			if (!gMIDIImportWarned){
 
@@ -39221,6 +39175,7 @@ function HideTopBar(){
 
 function ToggleTopBar(){
 
+
 	if (gTopBarShowing){
 
 		HideTopBar();
@@ -39509,6 +39464,7 @@ function HideZoomBanner(){
 function HandleWindowResize(){
 
 	// Only executed on responsive desktop browsers
+
 	if (isDesktopBrowser()){
 
 		if (!gIsMaximized){
@@ -39539,12 +39495,11 @@ function HandleWindowResize(){
 				elem = document.getElementById("notation-placeholder-text");
 				elem.style.marginTop = "64px";
 
+
 			}
 			else{
 				
 				// Two column display
-
-				//debugger;
 
 				var elem = document.getElementById("app-container");
 
@@ -39585,7 +39540,7 @@ function HandleWindowResize(){
 				var nRows = Math.floor(windowHeight / lineHeight);
 
 				// Resize the text box
-				gTheABC.rows = nRows; 
+				gTheABC.rows = nRows;
 
 				gIsOneColumn = false;
 
@@ -39594,6 +39549,7 @@ function HandleWindowResize(){
 
 				elem = document.getElementById("notation-placeholder-text");
 				elem.style.marginTop = "136px";
+
 
 			}
 
@@ -39636,7 +39592,6 @@ function HandleWindowResize(){
 					document.getElementById("pdfbuttonicon").style.left = iconOffset;
 
 				}
-
 			}
 
 		}
@@ -39684,6 +39639,7 @@ function HandleWindowResize(){
 					document.getElementById("pdfbuttonicon").style.left = iconOffset;
 				}
 			}
+
 		}
 	}
 }
@@ -40273,29 +40229,27 @@ function showWelcomeScreen(){
 
     var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica"><strong>Please visit my <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> page for complete instructions and demo videos on how to use the tools.</strong></p>';
-	   
 	   if (gIsQuickEditor){
 			modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">The Quick Editor is optimized for editing and playback of a single tune at a time.</p>';
-	   }
-	   
+   		}
+
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">To begin, type or paste tunes in ABC format into the text area.</p>'; 
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Each ABC tune <strong>must</strong> begin with an X: tag.</p>'; 
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Notation updates instantly as you make changes to the ABC.</p>'; 
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Click "Open" to open an ABC, MusicXML, BWW, or MIDI file from your system.</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Click "Add" to add a new ABC tune or tune template.</p>';
-	   if (isPureDesktopBrowser()){ 
+	   if (isPureDesktopBrowser()){
 	   		modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">You may also drag-and-drop a single ABC or MusicXML file on the editor area to add it.</p>';
 	   }
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Click "Search for Tunes" to find tunes by name.</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica"><strong>Once ABC has been entered and notation is displayed:</strong></p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click the Zoom-Out arrows at the top-right to view the notation full screen.</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Save" to save all the ABC text to an ABC text file.</p>';
-
 	   if (!gIsQuickEditor){
 			modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Export PDF" to export your tunebook in PDF format.</p>';
 			modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Play" to play or train on the tune currently being edited.</p>';
-	   }
-	   
+   		}
+
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
 
 }
@@ -40311,11 +40265,11 @@ function showZoomInstructionsScreen(){
    	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
    	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Since this is your first time using the tools, here is some useful information to help you get started:</p>';
    	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">In this view, you may scroll through the tune notation.</p>';
-	   if (!gIsQuickEditor){
+		if (!gIsQuickEditor){
 			modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the Play button at the bottom-right to play or train on the current tune.</p>';
 			modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">From the Player you can also export the tune image or audio in multiple formats.</p>';
 			modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the PDF button at the bottom-left to export the tunes in PDF format.</p>';
-	   }
+		}
 
  	   if (!gDisableEditFromPlayLink){
 
@@ -40495,7 +40449,7 @@ function ResizeTextBox(){
 		}
 		else{
 
-			//console.log("Setting the marginLeft to 0px");
+			// console.log("Setting the marginLeft to 0px");
 
 			gTheABC.style.marginLeft = "0px";
 
@@ -40574,7 +40528,6 @@ function updateABCEditorFont(){
 		gTheABC.style.fontSize = gABCEditorFontsize + "pt";
 		gTheABC.style.lineHeight = (gABCEditorFontsize+(gABCEditorFontsize*.23)) + "pt";
 	}
-
 }
 
 //
@@ -40703,7 +40656,7 @@ function fileOpenIntercept(e){
 //
 function RemoveTabCloseListener(){
 
-	if (isPureDesktopBrowser()){ 
+	if (isPureDesktopBrowser()){
 
 		//console.log("Removing tab close listener")
 
@@ -40743,6 +40696,7 @@ function ShowHideTabButtons(){
 
 }
 
+
 //
 // Returns true if on a Mac
 //
@@ -40774,10 +40728,8 @@ function isMobileBrowser(){
 	return (gIsIOS || gIsAndroid);
 
 }
-
 // 
-// Returns true if it's really a desktop browser and not a two-column iPad//
-
+// Returns true if it's really a desktop browser and not a two-column iPad
 //
 function isPureDesktopBrowser(){
 
@@ -40792,9 +40744,21 @@ function makeCenteredPromptString(thePrompt){
 	return '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">'+thePrompt+'</p>';
 }
 
+//
 // Send a Google analytics event
 //
 function sendGoogleAnalytics(theCategory,theAction,theLabel){
+
+	// Don't send analytics if offline
+	if (!navigator.onLine){
+		//console.log("sendGoogleAnalytics - Offline: Not sending info ")
+		return;
+	}
+
+	// Don't send analytics on iOS Safari
+	if (gIsIOS){
+		return;
+	}
 
 	if (typeof gtag !== "undefined"){
 
@@ -40804,7 +40768,7 @@ function sendGoogleAnalytics(theCategory,theAction,theLabel){
 				theLabel = "none";
 			}
 
-			//console.log("Sending gtag abctools event_category: "+theCategory+" event_action: "+theAction+" event_label: "+theLabel);
+			//console.log("sendGoogleAnalytics - Online: Sending gtag abctools event_category: "+theCategory+" event_action: "+theAction+" event_label: "+theLabel);
 
 			if (!gIsQuickEditor){
 				gtag('event', 'abc_'+theCategory+"_"+theAction, { event_category: theCategory, event_action: theAction, event_label: theLabel});
@@ -40812,8 +40776,14 @@ function sendGoogleAnalytics(theCategory,theAction,theLabel){
 			else{
 				gtag('event', 'q_abc_'+theCategory+"_"+theAction, { event_category: theCategory, event_action: theAction, event_label: theLabel});
 			}
+
 		}
 	}
+	// else{
+
+	// 	//console.log("sendGoogleAnalytics - gtag not defined ")
+
+	// }
 
 }
 
@@ -41058,7 +41028,6 @@ function inlinePlayback(){
 	},100);
 
 }
-
 //
 // Format the ABC so all the measure markers align vertically
 //
@@ -41287,7 +41256,6 @@ function AlignMeasures(bDoAll){
 	gIsDirty = true;
 
 }
-
 //
 // Align the measures from the Quick Editor dedicated button
 function QEAlignBars(e){
@@ -41305,10 +41273,13 @@ function QEAlignBars(e){
 		return;
 	}
 }
-
 // For the QuickEditor
 function MaximizeEditor(){
 	
+	if (!gAllowCopy){
+		return;
+	}
+
 	if (isMobileBrowser()){
 		return;
 	}
@@ -41982,6 +41953,7 @@ function FindAndReplace(){
 
 }
 
+
 //
 // Split long tags and/or text
 //
@@ -42307,34 +42279,28 @@ function SplitLongTextAndTags(){
 	});
 }
 
-
-// Open the QuickEditor in a new tab
-function LaunchQuickEditor(){
-	var url = "https://michaeleskin.com/abctools/abctools-quick-editor.html";
-	window.open(url, '_blank');
-}
-
 // Open the standard editor in a new tab
 function LaunchStandardEditor(){
 	var url = "https://michaeleskin.com/abctools/abctools.html";
 	window.open(url, '_blank');	
 }
 
-// Open the offline enabled editor
-function LaunchOfflineEditor(){
-	var url = "https://michaeleskin.com/app/abctools.html";
+
+// Open the User Guide in a new tab
+function LaunchEditorHelp(){
+	var url = "https://michaeleskin.com/abctools/userguide.html";
+	window.open(url, '_blank');	
+}
+
+// Open the quick editor in a new tab
+function LaunchQuickEditor(){
+	var url = "https://michaeleskin.com/abctools/abctools-quick-editor.html";
 	window.open(url, '_blank');	
 }
 
 // Open the Quick Editor section of the User Guide in a new tab
 function LaunchQuickEditorHelp(){
 	var url = "https://michaeleskin.com/abctools/userguide.html#quickeditor";
-	window.open(url, '_blank');	
-}
-
-// Open the User Guide in a new tab
-function LaunchStandardEditorHelp(){
-	var url = "https://michaeleskin.com/abctools/userguide.html";
 	window.open(url, '_blank');	
 }
 
@@ -42440,7 +42406,7 @@ function DoStartup() {
 	if (gIsIOS){
 		document.getElementById("selectabcfile").removeAttribute("accept");
 	}	
-
+	
 	// Need this early to configure iPad UI!
 
 	if (localStorage){
@@ -42452,13 +42418,12 @@ function DoStartup() {
 		else{
 			giPadTwoColumn = false;
 		}
-
 		// Force large controls for iPad two-column
 		if (giPadTwoColumn){
 			gLargePlayerControls = true;
 		}
+		
 	}
-
 	//
 	// Uncomment these lines for mobile simulation testing
 	//
@@ -42517,8 +42482,8 @@ function DoStartup() {
 
 			// Change the primary control display
 			elem = document.getElementById("transpose-controls");
-			elem.style.display = "inline-block";			
-
+			elem.style.display = "inline-block";
+			
 			// Disallow pinch-to-zoom
 			document.addEventListener('touchstart', function(event) {
 			    // If there are more than one touch points, prevent the default behavior
@@ -42617,7 +42582,6 @@ function DoStartup() {
 		document.getElementById("zoombutton").style.right = "21px";
 		document.getElementById("helpbutton").style.left = "21px";
 		document.getElementById("playbuttonicon").style.right = "21px";
-		
 		if (!gIsQuickEditor){
 			document.getElementById("pdfbuttonicon").style.left = "21px";
 		}
@@ -42821,24 +42785,22 @@ function DoStartup() {
 			ShowHelp();
 		};
 
-	// Hook up the play button
-	if (!gIsQuickEditor){
+		if (!gIsQuickEditor){
 
-		document.getElementById("playbuttonicon").onclick = 
-			function() {
-				PlayABC(null);
-			};
-
-		// Hook up the PDF button
-		document.getElementById("pdfbuttonicon").onclick = 
-			function() {
-				PDFExportDialog();
-			};
-	}
-	else{
-		document.getElementById("playbuttonicon").onclick = QE_PlayButton_Handler;
-	}
-
+			document.getElementById("playbuttonicon").onclick = 
+				function() {
+					PlayABC(null);
+				};
+	
+			// Hook up the PDF button
+			document.getElementById("pdfbuttonicon").onclick = 
+				function() {
+					PDFExportDialog();
+				};
+		}
+		else{
+			document.getElementById("playbuttonicon").onclick = QE_PlayButton_Handler;
+		}
 	gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
 
 	// Clear the text entry area, but don't render
@@ -42993,9 +42955,9 @@ function DoStartup() {
 				// console.log("On window resize:");
 				// console.log("Initial container width = "+gInitialTextBoxContainerWidth);
 				// console.log("Initial container left = "+gInitialTextBoxContainerLeft);
-				
+
 				ResizeTextBox();
-				
+
 				gGotWindowResizeWhileMaximized = false;
 
 			}
@@ -43023,6 +42985,7 @@ function DoStartup() {
 	//
 	ShowAllControls();
 
+
 	if (!isFromShare){
 		document.getElementById("notenrechts").style.display = "none";
 		gAllowControlToggle = false;
@@ -43031,7 +42994,7 @@ function DoStartup() {
 	//
 	// Add drag-and-drop handlers on desktop browsers 
 	//
-	if (isPureDesktopBrowser()){ 
+	if (isPureDesktopBrowser()){
 
     	$.event.props.push ("dataTransfer");      // make jQuery copy the dataTransfer attribute
 
@@ -43163,7 +43126,7 @@ function DoStartup() {
 
 			    	//console.log("Got Control F");
 
-			       	event.preventDefault();  // Prevent the default browser action
+			       	event.preventDefault();  // Prevent the default browser find action
 
 			    	var modalDivs = document.querySelector('.modal_flat_main');
 
@@ -43193,10 +43156,9 @@ function DoStartup() {
 			        }
 
 			    }
- 
+
 			},true);
 		}
-
 	}
 
 	// Setup context menu
@@ -43310,10 +43272,6 @@ function DoStartup() {
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 				    {},
 				    { name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
-				    {},
-				    { name: 'Launch Offline-Enabled Editor', fn: function(target) { LaunchOfflineEditor(); }},
-				    {},
-				    { name: 'About the Standard Editor', fn: function(target) { LaunchStandardEditorHelp(); }},
 				  ]);
 
 				// Adapt the search and replace key string based on the platform
@@ -43348,10 +43306,6 @@ function DoStartup() {
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 				    {},
 				    { name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
-				    {},
-				    { name: 'Launch Offline-Enabled Editor', fn: function(target) { LaunchOfflineEditor(); }},
-				    {},
-				    { name: 'About the Standard Editor', fn: function(target) { LaunchStandardEditorHelp(); }},
 				  ];
 			}
 
@@ -43401,10 +43355,6 @@ function DoStartup() {
 			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 			    {},
 			    { name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
-			    {},
-			    { name: 'Launch Offline-Enabled Editor', fn: function(target) { LaunchOfflineEditor(); }},
-			    {},
-			    { name: 'About the Standard Editor', fn: function(target) { LaunchStandardEditorHelp(); }},
 			];			
 		}
 
@@ -43453,16 +43403,23 @@ function DoStartup() {
     // Init the samples database
     initSamplesDB();
 
+    // Listen for online state changes
+
+    if (!gIsQuickEditor){
+		window.addEventListener('online', doOnlineCheck);
+		window.addEventListener('offline', doOnlineCheck);
+	}
+	
     // Fix up the div sizes on iPad two column if coming in from a share
     if (isFromShare && giPadTwoColumn && (!gOpenInEditor)){
-    	gIsMaximized = false;
-    	ToggleMaximize();
-    }
+		gIsMaximized = false;
+		ToggleMaximize();
+	}
 
    	// And set the focus
     gTheABC.focus();
 
- }
+}
 
 //
 // Wait for the document to be ready, then fire a function
@@ -43481,3 +43438,5 @@ function WaitForReady(fn) {
 //
 
 WaitForReady(DoStartup);
+
+

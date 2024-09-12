@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+                
         <style>
         
         p {
@@ -222,7 +222,7 @@
                 
                 <p style="margin-bottom:20px;line-height:12px;padding-left:0px;text-align: center;">Click any topic to show/hide the subtopics</p>
                 <h1 style="margin-bottom:16px;padding-left:0px;"><button class="expandall" onclick="ExpandAll();">Expand All</button>&nbsp;&nbsp;&nbsp;<button class="expandall" onclick="CollapseAll();">Collapse All</button></h1>
-                
+
                 <button class="accordion" title="Click to expand/collapse this section">Basic Operation</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#introduction">Introduction</a></p>
@@ -416,8 +416,9 @@
                 <button class="accordion" title="Click to expand/collapse this section">Tool Settings and Fonts</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#settings_dialog">ABC Transcription Tools Settings</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#manage_databases">Managing Notes, Reverb, and Tune Search Databases for Offline Use</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#advanced_settings">Advanced Settings</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#advanced_resetsettings">Reset Settings</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#advanced_resetsettings">Reset All Tool Settings</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#configure_fonts">Configuring ABC Rendering Fonts</a></p>
                 </div>
                 
@@ -431,8 +432,8 @@
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#printing_your_tunes">Printing Your Tunes Using the Browser's Built-in Print Feature</a></p>
                 </div>
-
-                <button class="accordion" title="Click to expand/collapse this section">Advanced abcjs Rendering Options</button>
+                
+               <button class="accordion" title="Click to expand/collapse this section">Advanced abcjs Rendering Options</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#customabcjsparams">Adding Custom abcjs Rendering Parameters</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#expandtowidest">Opting-out of "Expand to Widest" Layout</a></p>
@@ -446,6 +447,8 @@
                     <p class="toc"><a style="text-decoration:none;" href="#clicktrack">Adding a Two-Bar Click Intro to Tunes</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#abcadditions">Additional Tool-Specific ABC Directives</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#sequential_play">Creating Sets of Tunes that Will Play Sequentially in the Player</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#boxplayerstemplate">Useful Symbols for Annotating Box Transcriptions</a></p>
+                    
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">Adding Shape Note Shapes</button>
@@ -462,7 +465,8 @@
                 <button class="accordion" title="Click to expand/collapse this section">iOS-Specific Topics</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#iphone_ipad_chord_entry_issue_fix">iPhone/iPad Chord Entry Issue Fix</a></p>
-                    <p class="toc"><a style="text-decoration:none;" href="#goodreader"> Using Interactive PDF Tunebooks with GoodReader</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#goodreader">Using Interactive PDF Tunebooks with GoodReader</a></p>
+                    <p class="toc"><a style="text-decoration:none;" href="#iosreset">Resetting the Offline Version on Safari for iOS</a></p>
                 </div>
                 
                 <button class="accordion" title="Click to expand/collapse this section">ABC 2.1 Specification and Quick Reference Card</button>
@@ -475,15 +479,19 @@
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#demovideos">Demo Videos and Tutorials</a></p>
                 </div>
-                
+
                 <button class="accordion" title="Click to expand/collapse this section">Single Tune Optimized "Quick Editor" Version</button>
                 <div class="tocpanel">
                     <p class="toc"><a style="text-decoration:none;" href="#quickeditor">Single Tune Optimized "Quick Editor" Version</a></p>
                 </div>
-                
+               
+                <button class="accordion" title="Click to expand/collapse this section">Using the Tool Offline (Airplane Mode)</button>
+                <div class="tocpanel">
+                    <p class="toc"><a style="text-decoration:none;" href="#app">Using the Tool Offline (Airplane Mode)</a></p>
+                </div>
+
                 <button class="accordion" title="Click to expand/collapse this section">Source Code, Privacy, Support, and Tip Jars</button>
                 <div class="tocpanel">
-                    <p class="toc"><a style="text-decoration:none;" href="#app">Running the Tool Offline</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#github">Source Code Available on GitHub</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#run_from_source">Notes on Running the Tool from the GitHub Repo</a></p>
                     <p class="toc"><a style="text-decoration:none;" href="#privacy">Privacy</a></p>
@@ -587,11 +595,10 @@
             <p><strong>☰</strong></p>
             <p>Brings up a menu of useful commands:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/moretools_9.jpg"/>
+                <img class="image" loading="lazy" src="img/moretools_offline_7.jpg"/>
             </div>
             <p><strong>Find and Replace</strong> (Desktop browsers only)</p>
             <p>Brings up a dialog where you can search and replace text in the ABC editor.</p>
-            <p>You may use Javascript regular expressions in the Find and capture groups in the Replace.</p>
             <p>Also available by pressing ⌘+F on Mac or Ctrl+F on Windows/Linux when working in the ABC editor.</p>
             <p><strong>Toggle Top/Bottom Toolbars</strong></p>
             <p>Hides/shows the header at the top and any visible controls below the ABC text area so you can have more room to work on your music.</p>
@@ -612,7 +619,7 @@
             <p>This feature allows you to split any long text in the ABC at a specific length in your tags, text, or both so that they display properly.</p>
             <p>You may select which tags you want to split.</p>
             <p>You may choose to split either the current tune being worked on or all tunes in the ABC editor.</p>
-            <p>The splitter attempts to split the text at a word boundary.</p>
+            <p>The splitter attempts to split the text at a word boundary.</p>            
             <p id="reformatusingxml"><strong>Reformat Using MusicXML</strong></p>
             <p>Round-trips either the current tune or all the tunes in the ABC through MusicXML export and import back to ABC.</p>
             <p>This can be useful for cleaning up some ABC files that have odd formatting or use & measure note overlays which sometimes cause rendering and playback issues:</p>
@@ -629,14 +636,10 @@
             <p><strong>Advanced Settings</strong></p>
             <p>Brings up a dialog where you can configure low level tool features and settings.</p>
             <p>Full details below in the <a href="#advanced_settings">ABC Transcription Tools Advanced Settings</a> section.</p>
-            <p><strong>Launch Quick Editor</strong> (Standard Editor only)</p>
-            <p>Launches the Quick Editor in a new tab.</p>
-            <p><strong>Launch Offline-Enable Editor</strong> (Standard Editor only)</p>
-            <p>Launches the Offline-Enabled version of the Editor in a new tab.</p>
-            <p><strong>Launch Standard Editor</strong> (Quick Editor only)</p>
-            <p>Launches the Standard editor in a new tab.</p>
-            <p><strong>About the Quick Editor</strong> (Quick Editor only)</p>
-            <p>Opens the User Guide section for the Quick Editor.</p>
+            <p><strong>Launch Standard Editor</strong></p>
+            <p>Launches the Standard Online-Only editor in a new tab.</p>
+            <p><strong>About the Offline-Enabled Editor</strong></p>
+            <p>Opens the User Guide section on the Offline-Enabled version in a new tab.</p>
             <p class="page_break_always"></p>
             <hr class="hidden-print" id="open_dialog">
             <h1 class="page_break_always">Open an ABC, MusicXML, BWW, or MIDI File<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -664,7 +667,7 @@
             <p><strong>Add:</strong></p>
             <p>Brings up a dialog where you can add your own ABC, MusicXML, BWW, or MIDI tunes, restore from previously saved Snapshots, re-order the tunes, delete tunes, add example ABC tunes, add useful ABC templates, or inject the commands for PDF tunebook features:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/add_example_template_22.jpg"/>
+                <img class="image" loading="lazy" src="img/add_example_template_23.jpg"/>
             </div>
             <p>If you would like to only show the buttons for the features you commonly use and hid the others, click the controls icon at the top-right of the dialog to choose features of the dialog you would like to show/hide:</p>
             <div class="image_holder_p">
@@ -783,8 +786,19 @@
             <p>Full details on the Bodhran ABC note-to-sound mapping are available in the following section:</p>
             <p style="text-align: center;"><a href="#bodhran_map"><strong>Using the Bodhran (%%MIDI program 117) Instrument</strong></a></p>
             <hr>
-            <p><strong>Add Box Fingering Symbols Template:</strong></p>
-            <p>Add a template with symbols for annotating box fingerings and tablature at the top of the ABC editor text.</p>
+            <p><strong>Add Offline Notes Database Loader Templates:</strong></p>
+            <p>Adds two ABC templates to assist with loading notes into the offline instrument notes and reverb settings database:</p>
+            <p><strong>Single Soundfont Instrument Notes + Reverb Setting Database Loader</strong></p>
+            <p>ABC template with all notes for a specific soundfont and MIDI instrument as well as reverb setting to make it easy to load all the notes for a single instrument plus a single reverb setting into the instrument notes and reverb settings database for offline use.</p>
+            <p>After setting your desired MIDI instrument and reverb setting in the template, click <strong>Play</strong> to load the notes and reverb setting into the database.</p>
+            <p>You do not need to actually play the ABC, simply opening the template in the player will fetch the instrument notes and reverb setting and save them in the database.</p>
+            <p><strong>All Soundfont Instruments Notes Database Primer Loader</strong></p>
+            <p>ABC template soundfont MIDI instrument notes database primer loader that includes a single note assigned to each of the 128 MIDI instruments in a soundfont (plus my custom instruments 129-144).</p>
+            <p>After setting your desired soundfont in the template, click <strong>Play</strong> to load the single notes of each instrument into the database.</p>
+            <p>You do not need to actually play the ABC, simply opening the template in the player will fetch the instrument notes save them in the database.</p>
+            <p>Once the single notes for each soundfont instrument are in the database, use the <strong>Load All Notes for All Instruments</strong> feature on the <strong>Manage Notes, Reverb, and Tune Search Databases</strong> / <strong>Instrument Notes Database</strong> dialog to load all the rest of the notes for all the instruments in the soundfont into the database for use offline.</p>
+            <hr>
+            <p>For more details, see the <strong><a href="#manage_databases">Managing Notes, Reverb, and Tune Search Databases for Offline Use</a></strong> section below.</p>
             <hr>
             <p><strong>Inject PDF Tunebook Features:</strong></p>
             <p>Brings up a dialog that you can use to inject commands at the top of the ABC that will add an optional Title Page, Table of Contents, Index, Page Header, Page Footer, playback links, and/or QR code to an exported PDF tunebook.</p>
@@ -1779,8 +1793,6 @@
             <p>Additionally, multiple measure gchord backup patterns are supported via the %%MIDI gchordbars command:</p>
             <p>Here is an example of how to create a two-bar gchord backup pattern:</p>
             <p class="code">%%MIDI gchordbars 2<br/>%%MIDI gchord bzczbzczbzzzbzzz</p>
-            <p><strong>Note:</strong> Use of gchord is currently limited to */4 and */8 meters. It does not work with */2 or C| cut time meters.</p>
-            <p>For the unsupported gchord meters, non-gchord based backup is still supported.</p>
             <p>For full details on the %%MIDI gchord system, please visit:</p>
             <p style="text-align: center;"><a href="https://abcmidi.sourceforge.io/#gchord" target="_blank">ABCMIDI %%MIDI gchord specification</a></p>
             <hr>
@@ -2833,7 +2845,7 @@
             </div>
             <hr>
             <p><strong>Tune Layout:</strong></p>
-            <p>Choose the format of the tunes in the PDF tunebook:</p>
+            <p>Choose whether you want One Tune per Page, Multiple Tunes per Page, Tune Note Incipits, ABC Incipits (unsorted or alphabetically sorted by tune name), or full versions of the ABC notes (with optional Comhaltas ABC transformation):</p>
             <div class="image_holder_p">
                 <img class="image" loading="lazy" src="img/tune_layout_5.jpg"/>
             </div>
@@ -3008,7 +3020,7 @@
             %%sysstaffsep</p>
             <p>Please refer to the <a href="http://abcnotation.com/wiki/abc:standard:v2.1" target="_blank">official ABC 2.1 specification</a> for more details.</p>
             <p>Another good reference is this handy ABC 2.1 Quick Reference Card put together by Stephen Merrony: </p>
-            <p style="text-align: center;"><a href="https://michaeleskin.com/documents/ABCquickRefv0_6.pdf" target="_blank">ABC Quick Reference Card</a></p>
+            <p style="text-align: center;"><a href="ABCquickRefv0_6.pdf" target="_blank">ABC Quick Reference Card</a></p>
             <hr class="hidden-print" id="adding_a_pdf_title_page">
             <h1 class="page_break_always">Adding a PDF Title Page<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p></p>
@@ -3516,8 +3528,7 @@
                 %voice_tuning_cents<br/>
                 %tab_first_voice_only<br/>
                 %tab_first_voice_exclude<br/>
-                %reverb chamber 0.8 0.2<br/>
-            %abcjs_render_params {"jazzchords":true}</p>
+            %reverb chamber 0.8 0.2</p>
             <hr class="hidden-print" id="editing_pdf_tunebooks">
             <h1 class="page_break_always">Editing PDF Tunebooks With Other Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>The PDF tunebooks created by this tool can be editing using Adobe Acrobat Pro or other PDF editing tools.</p>
@@ -3530,7 +3541,7 @@
             <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_48.jpg"/>
+                <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_50.jpg"/>
             </div>
             <hr>
             <p><strong>Show instrument tablature button bar below ABC editor</strong></p>
@@ -3618,6 +3629,69 @@
             <p>For example, if you want to always use a Whistle sound for the Melody and a Piano sound for the Bass and Chords, set your default Melody instrument to Whistle and your default Bass and Chords instruments to Acoustic Grand Piano. Then enable <strong>Override all MIDI programs and volumes in the ABC when playing tunes</strong>.</p>
             <p>To mute the melody, select the Mute program.</p>
             <p>To mute the bass and chords, select the Mute program.</p>
+            <hr id="manage_databases">
+            <p><strong>Manage Notes, Reverb, and Tune Search Databases</strong></p>
+            <p>Click this button on the <strong>Settings</strong> dialog to bring up a dialog with several options for managing the instrument notes, reverb,  and tune search engine databases in the tool for offline use.</p>
+            <div class="image_holder_p">
+                <img class="image" loading="lazy" src="img/manage_databases_2.jpg"/>
+            </div>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/9JcEU9t0xQM" title="Database Management" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/GHvdF-hGUuU" title="Load All Sounds" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+            <hr>
+            <p><strong>Instrument Notes Database</strong></p>
+            <p>Click this button to bring up a dialog showing all instruments currently available in the notes database along with the number of notes currently stored in the database for each instrument.</p>
+            <div class="image_holder_p">
+                <img class="image" loading="lazy" src="img/notes_database_2.jpg"/>
+            </div>
+            <p>When you open a tune in the Player, the notes and reverb settings used in the tune are automatically added to the instrument notes and reverb settings database.</p>
+            <p>You don't have to actually play the tune, when the Player control bar shifts from grey to black, the notes and reverb settings have already been saved in the database.</p>
+            <p>When offline, if <strong>Allow instrument notes and reverb settings database to be used offline</strong> described below is checked, when playing tunes, notes are read from the tool's notes database that contains every instrument note for every tune ever played by the tool.</p>
+            <p>The total number of notes available for each instrument is variable for each soundfont and instrument combination.</p>
+            <p>If the number of notes stored for a specific instrument seems low, and you want to ensure that all notes for the instrument are available for playing when offline, click <strong>Load All</strong> next to the instrument name.</p>
+            <p>You can also delete all the notes for an instrument from the database by clicking <strong>Delete</strong> next to the instrument name.</p>
+            <p>All the notes will be deleted, and the table will be refreshed to show the updated notes database status.</p>
+            <p>Click <strong>Load All Notes for All Instruments</strong> to load all the notes for all the instruments into the notes database.</p>
+            <p>If offline, the <strong>Load All</strong>, <strong>Delete</strong>, and <strong>Load All Notes for All Instruments</strong> action buttons are not shown, only the list of instruments and note counts:</p>
+            <div class="image_holder_p">
+                <img class="image" loading="lazy" src="img/notes_database_offline_1.jpg"/>
+            </div>
+            <p>Using this list, you can easily determine which instruments are best to use while offline.</p>
+            <hr>
+            <p><strong>Manually forcing all specific soundfont instrument notes and reverb settings to be stored in the database:</strong></p>
+            <p>If an instrument in a specific soundfont you want to use for playing tunes offline isn't in the list, do the following while online:</p>
+            <p><strong>Option 1:</strong></p>
+            <p>On the <strong>Add</strong> dialog, click <strong>Add Offline Notes Database Loader Template</strong> to inject an ABC template that, when played, will load all the notes for a specific soundfont and instrument as well as reverb settings into the database.</p>
+            <p><strong>Option 2:</strong></p>
+            <p>1) Add the instrument and soundfont once in a tune using:</p>
+            <p class="code">% Available soundfonts are:<br/>% fluid, musyng, fatboy, canvas<br/>% mscore, arachno, and fluidhq<br/>%<br/>%abcjs_soundfont soundfont_name<br/>
+            %%MIDI program midi_instrument_number</p>
+            <p>For example, to specify the FatBoy soundfont and harpsichord instrument:</p>
+            <p class="code">%abcjs_soundfont fatboy<br/>%%MIDI program 6</p>
+            <p>2) Play the tune once to initially populate the database with the new instrument.</p>
+            <p>3) A new entry for the instrument will be added to the instrument list the next time you open this dialog.</p>
+            <p>4) Click <strong>Load All</strong> to load the complete set of notes for the newly added instrument.</p>
+            <p>All the notes will be loaded, and the table will be refreshed to show the updated notes database status.</p>
+            <hr>
+            <p><strong>Reverb Settings Database</strong></p>
+            <p>Click this button to bring up a dialog where you can load and store any of the available reverb settings in the database for use offline.</p>
+            <div class="image_holder_p">
+                <img class="image" loading="lazy" src="img/reverb_database_1.jpg"/>
+            </div>
+            <hr>
+            <p><strong>Search Engine Libraries Database</strong></p>
+            <p>Click this button to bring up a dialog where you can load and store either or both of the available tune search engine collections in the database for use offline.</p>
+            <div class="image_holder_p">
+                <img class="image" loading="lazy" src="img/search_engine_database_1.jpg"/>
+            </div>
+            <hr id="cached_instruments">
+            <p><strong>Allow instrument notes and reverb settings database to be used offline</strong></p>
+            <p>When you open a tune in the Player, the notes and reverb settings used in the tune are automatically added to the instrument notes and reverb settings database.</p>
+            <p>You don't have to actually play the tune, when the Player control bar shifts from grey to black, the notes and reverb settings have already been saved in the database.</p>
+            <p>When this option is checked and the tool is offline, it will still allow playback of the specific soundfont instrument notes and use of reverb settings previously stored in the database while online.</p>
+            <p>Any soundfont instruments and notes not played previously, and not in the notes database will result in silence for those notes.</p>
+            <p>Similarly, if the reverb setting (room, hall, chamber, church, etc.) is changed offline to one not previously used, then no reverb will be applied.</p>
+            <p>You can manage the note and reverb databases to perform actions like loading all notes for the instruments previously played or to load your desired reverb setting for use offline using the <strong><a href="#manage_databases">Manage Databases</a></strong> dialog described above.</p>
+            <p>If this option is not checked, the tool will default to a piano sound for all sounds and reverb will be disabled. A percussion sound is also available for use with the metronome option in the player.</p>
             <hr>
             <p><strong>Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran</strong></p>
             <p>If this is enabled (on by default), for all soundfonts, my custom sampled instruments for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran (remapped from Melodic Tom) will override the soundfont sounds.</p>
@@ -3698,7 +3772,7 @@
             <hr class="hidden-print" id="advanced_settings">
             <h1 class="page_break_always">Advanced Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/advanced_settings_19.jpg"/>
+                <img class="image" loading="lazy" src="img/advanced_settings_23.jpg"/>
             </div>
             <p>These settings are available by clicking the <strong>Advanced Settings</strong> button at the bottom of the main <strong>Settings</strong> dialog.</p>
             <p>On mobile browsers, the dialog will only show the settings that are available on mobile platforms.</p>
@@ -3823,15 +3897,17 @@
             <p>You will find many reverb impulse files for free download at: <a href="https://www.openair.hosted.york.ac.uk/?page_id=36" target="_blank">Open Air Acoustic Impulse Responses</a></p>
             <p>Once loaded, the custom reverb impulse file is saved in browser storage and will be used the next time the custom reverb style is requested.</p>
             <hr id="advanced_resetsettings">
-            <p><strong>Reset Settings</strong> - Click this button on the <strong>Advanced Settings</strong> dialog to bring up a subdialog where you can reset the tool settings and/or clear the instrument note, reverb settings, and search engine tune search collection databases.</p>
+            <p><strong>Reset Settings</strong> - Click this button on the <strong>Advanced Settings</strong> dialog to bring up a subdialog where you can reset the tool settings, clear the instrument note, reverb settings, and search engine tune search collection databases, or force an update of the tool.</p>
             <div class="image_holder_p">
-                <img class="image" loading="lazy" src="img/reset_settings_4.jpg"/>
+                <img class="image" loading="lazy" src="img/reset_settings_5.jpg"/>
             </div>
             <p>This can be useful to get back to a clean slate if there is any chance that any tool settings or the databases used to speed the operation of the tool have been corrupted or you just want to clear out storage space in your browser.</p>
             <p>When offline, only <strong>Reset all tool settings to default</strong> will be available as clearing the database while offline would break offline play.</p>
             <p>Checking <strong>Reset all tool settings to default</strong> will restore the tool settings to the original first-run state.</p>
             <p>Checking <strong>Clear all databases</strong> will clear and delete the instrument notes, reverb settings, and tune search collections databases.</p>
-            <p>If you enable either of these options, the tool will be restarted after the operation is complete.</p>
+            <p>Checking <strong>Force tool update after restart</strong> will force the offline version of the tool to be updated after a restart.</p>
+            <p>After the tool is updated and restarted, you will need to refresh the tab one more time to see the updated version.</p>
+            <p>If you enable any of these options, the tool will be restarted after the operation is complete.</p>
             <p>The tool settings and databases will be recreated fresh after the tool restart and repopulated as you continue to use the tool.</p>
             <hr class="hidden-print" id="configure_fonts">
             <h1 class="page_break_always">Configuring ABC Rendering Fonts<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -3912,13 +3988,13 @@
             <hr class="hidden-print" id="customabcjsparams">
             <h1 class="page_break_always h1wide">Adding Custom abcjs Rendering Parameters<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/9TZPTf3UW4M" title="%abcjs_render_params Overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-            <p>The abcjs notation renderer has many additional optional parameters that can be specified at tune render time.</p>
+            <p>The abcjs renderer has many additional optional parameters that can be specified at tune render time.</p>
             <p>Full details on the available options are here:</p>
             <p style="text-align: center"><a href="https://paulrosen.github.io/abcjs/visual/render-abc-options.html" target="_blank">abcjs RenderAbc options</a></p>
             <p>To add custom abcjs rendering parameters to a tune, you can add the following annotation anywhere in the tune:</p>
             <p class="code">%abcjs_render_params (JSON parameter string)</p>
             <p>Where the parameter string is an Javascript object in stringified JSON format.</p>
-             <p>Example #1: Render all the notation in green:</p>
+            <p>Example #1: Render all the notation in green:</p>
             <p class="code">%abcjs_render_params {"foregroundColor":"green"}</p>
             <p>Example #2: Enabling Jazz Chord formatting:</p>
             <p class="code">%abcjs_render_params {"jazzchords":true}</p>
@@ -4051,6 +4127,30 @@
             <p>3) Delete the R: tags on all but the first tune to get rid of the stacked style directives at the top.</p>
             <p>4) Add space above the T: tags for the tunes after the first one using a %%text directive.</p>
             <p>5) Add a matching %%titlefont and %%subtitle font directives to the top of the set so that all the titles display with the same font.</p>
+            <hr class="hidden-print" id="boxplayerstemplate">
+            <h1 class="page_break_always h1wide">Useful Symbols for Annotating Box Transcriptions<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>Here are a set of useful symbols that you can copy and paste into the ABC for box transcription annotation:</p>
+            <p class="code">%<br/>
+                % Danny Flynn's symbols for box fingering transcriptions<br/>
+                %<br/>
+                % Copy and paste these as chord annotations before the notes:<br/>
+                %<br/>
+                % Finger 1: "1" "①"<br/>
+                % Finger 2: "2" "②"<br/>
+                % Finger 3: "3" "③"<br/>
+                % Finger 4: "4" "④"<br/>
+                % Slide down: "➘"<br/>
+                % Slide up: "➚"<br/>
+                % Slide straight down: "↓"<br/>
+                % Cross over/under: "x"<br/>
+                % Push: "⮐"<br/>
+                % Draw: "⮑"<br/>
+                %<br/>
+                % Additional symbols for button numbering tablature:<br/>
+                %<br/>
+                % "1" "2" "3" "4" "5" "6" "7" "8" "9" "10" "11" "↑" "↓"<br/>
+                % "①" "②" "③" "④" "⑤" "⑥" "⑦" "⑧" "⑨" "⑩" "⑪"<br/>
+            %</p>
             <hr class="hidden-print" id="shapenote">
             <h1 class="page_break_always">Adding Shape Note Shapes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p>The tool supports the standard shape note shapes for both 4-shape and 7-shape systems.</p>
@@ -4118,19 +4218,24 @@
             <p>After you do this, you will be able to add standard double quotes.</p>
             <hr class="hidden-print" id="goodreader">
             <h1 class="page_break_always h1wide">Using Interactive PDF Tunebooks with GoodReader<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>if you are using GoodReader on iOS as your PDF reader and want to be able to play the tunes in my interactive PDF tunebooks, you'll need to change this one setting, available under the gear menu at the bottom of the app:</p>
+            <p>If you are using GoodReader on iOS as your PDF reader and want to be able to play the tunes in my interactive PDF tunebooks, you'll need to change this one setting, available under the gear menu at the bottom of the app:</p>
             <p>Enable <strong>Use Safari for Internet links</strong>:</p>
             <div class="image_holder_p">
                 <img class="image" loading="lazy" src="img/goodreader_1.jpg"/>
             </div>
+            <hr class="hidden-print" id="iosreset">
+            <h1 class="page_break_always h1wide">Resetting the Offline Version on Safari for iOS<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>If you are having issues updating the offline version of the tool on iOS or it seems to be stuck in an odd state, the best way to fix it is to delete all data from Safari for michaeleskin.com and then reload the offline version of the tool.</p>
+            <p>This video will walk you through the steps:</p>
+            <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/MKSr3Zag8Mg" title="Clearing all tool data from Safari" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
             <hr class="hidden-print" id="abc_specification">
             <h1 class="page_break_always">ABC Specification<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p style="text-align: center;">The full specification for ABC notation can be found at:</p>
-            <p style="text-align: center;"><a href="https://michaeleskin.com/documents/abc_standard_v2.1.pdf" target="_blank">The ABC Music Standard 2.1 (Dec 2011)</a></p>
+            <p style="text-align: center;"><a href="abc_standard_v2.1.pdf" target="_blank">The ABC Music Standard 2.1 (Dec 2011)</a></p>
             <hr class="hidden-print" id="abc_21_quick_reference_card">
             <h1 class="page_break_always">ABC 2.1 Quick Reference Card<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p style="text-align: center;">Handy ABC 2.1 Quick Reference Card put together by Stephen Merrony: </p>
-            <p style="text-align: center;"><a href="https://michaeleskin.com/documents/ABCquickRefv0_6.pdf" target="_blank">ABC Quick Reference Card</a></p>
+            <p style="text-align: center;"><a href="ABCquickRefv0_6.pdf" target="_blank">ABC Quick Reference Card</a></p>
             <hr class="hidden-print" id="demovideos">
             <h1 class="page_break_always">Demo Videos and Tutorials<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p style="text-align: center;">The full playlist of demo videos and tutorials can be found on YouTube at:</p>
@@ -4152,17 +4257,19 @@
             <p>Snapshots are shared between the standard version and Quick Editor version for quick transfer of ABC between the two editors.</p>
             <p>Another way to transfer an ABC from the Quick Editor to the standard version of the tool is to click <strong>Sharing</strong> and then click <strong>Add Open in Editor</strong>, then click on <strong>Test Share URL</strong>. The ABC in the Quick Editor will then open in the Editor for the standard version of the tool.</p>
             <hr class="hidden-print" id="app">
-            <h1 class="page_break_always">Running the Tool Offline<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-            <p>If you want to run the tool offline, while online, you can try loading this version of the tool:</p>
-            <p style="text-align: center;"><a href="https://michaeleskin.com/app/abctools.html">ABC Transcription Tools Web App for Offline Use</a></p>
-            <p>On first run of this version, the tool will cache all of it's code and resources for later use offline.</p>
+            <h1 class="page_break_always">Using the Tool Offline (Airplane Mode)<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+            <p>This version of the tool is capable of running offline.</p>
+            <p>On first run of this version of the tool, the tool will cache all of it's code and resources for later use offline.</p>
             <p>By default, when running the offline-enabled version, all instruments will be replaced by a piano sound which is embedded in the tool source.</p>
             <p>Percussion, primarily for use by the metronome, is also available.</p>
             <p>Also by default, reverb is not available offline since it also depends on reading a settings file from a remote site.</p>
-            <p>Offline playback with your preferred instruments is possible, full details in the User Guide for the offline version:</p>
-            <p style="text-align: center;"><a href="https://michaeleskin.com/app/userguide.html#app">ABC Transcription Tools Web App for Offline Use User Guide</a></p>
             <hr>
-            <p>Another option for desktop users who need to run the tool offline is to download the source code archive .zip from my GitHub repo, unzip the source archive, and run abctools-offline.html.</p>
+            <p><strong>Playing tunes offline with your preferred instruments (requires you to opt-in and be aware of the notes database):</strong></p>
+            <p>When you open a tune in the Player, the notes and reverb settings used in the tune are automatically added to the instrument notes and reverb settings database.</p>
+            <p>It is possible to play tunes offline using the notes and reverb settings stored in the instrument notes and reverb settings database but this is feature you have to opt-in to by checking <strong><a href="#cached_instruments">Allow instrument notes and reverb settings database to be used offline</strong></a> on the <strong>Settings</strong> dialog.</p>
+            <p>Full details on offline playback using stored notes and managing the offline notes database are in these sections of the User Guide:</p>
+            <p><strong><a href="#cached_instruments">Allow instrument notes and reverb settings database to be used offline</strong></a></p>
+            <p><strong><a href="#manage_databases">Managing Notes, Reverb, and Tune Search Databases for Offline Use</a></strong></p>
             <hr class="hidden-print" id="github">
             <h1 class="page_break_always">Source Code Available on GitHub<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
             <p style="text-align: center;">Full project source code may be found at:</p>
@@ -4207,21 +4314,21 @@
     //
     function ExpandAll(){
     
-    var i;
-    
-    var acc = document.getElementsByClassName("accordion");
-    
-    for (i = 0; i < acc.length; i++) {
-    var thisAcc = acc[i];
-    thisAcc.classList.add("active");
-    }
-    
-    var thePanels = document.getElementsByClassName("tocpanel");
-    
-    for (i = 0; i < thePanels.length; i++) {
-    var thisPanel = thePanels[i];
-    thisPanel.style.display = "block";
-    };
+        var i;
+        
+        var acc = document.getElementsByClassName("accordion");
+        
+        for (i = 0; i < acc.length; i++) {
+            var thisAcc = acc[i];
+            thisAcc.classList.add("active");
+        }
+        
+        var thePanels = document.getElementsByClassName("tocpanel");
+        
+        for (i = 0; i < thePanels.length; i++) {
+            var thisPanel = thePanels[i];
+            thisPanel.style.display = "block";
+        }
     }
     
     //
@@ -4229,21 +4336,21 @@
     //
     function CollapseAll(){
     
-    var i;
-    
-    var acc = document.getElementsByClassName("accordion");
-    
-    for (i = 0; i < acc.length; i++) {
-    var thisAcc = acc[i];
-    thisAcc.classList.remove("active");
-    }
-    
-    var thePanels = document.getElementsByClassName("tocpanel");
-    
-    for (i = 0; i < thePanels.length; i++) {
-    var thisPanel = thePanels[i];
-    thisPanel.style.display = "none";
-    };
+        var i;
+        
+        var acc = document.getElementsByClassName("accordion");
+        
+        for (i = 0; i < acc.length; i++) {
+            var thisAcc = acc[i];
+            thisAcc.classList.remove("active");
+        }
+        
+        var thePanels = document.getElementsByClassName("tocpanel");
+        
+        for (i = 0; i < thePanels.length; i++) {
+            var thisPanel = thePanels[i];
+            thisPanel.style.display = "none";
+        }
     }
     
     
@@ -4252,72 +4359,76 @@
     //
     function isIOS() {
     
-    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
-    return true;
-    } else {
-    return navigator.maxTouchPoints &&
-    navigator.maxTouchPoints > 2 &&
-    /MacIntel/.test(navigator.platform);
-    }
+        if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+            return true;
+        } else {
+            return navigator.maxTouchPoints &&
+            navigator.maxTouchPoints > 2 &&
+            /MacIntel/.test(navigator.platform);
+        }
     }
     
     function DoStartup() {
+        
+        //
+        // iOS Styling adaptation
+        //
+        
+        var gIsIOS = isIOS();
+        
+        if (gIsIOS) {
+            // Fix the title font
+            var elem = document.getElementById("pagetitle");
+            elem.size = 5;
+            elem.style.fontFamily = "Helvetica";
+        }
+        
+        var acc = document.getElementsByClassName("accordion");
+        var i;
+        
+        for (i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var panel = this.nextElementSibling;
+                if (panel.style.display === "block") {
+                    panel.style.display = "none";
+                } else {
+                    panel.style.display = "block";
+                }
+            });
+        }
+        
+        // Start with all topics collapsed
+        CollapseAll();
     
-    //
-    // iOS Styling adaptation
-    //
-    
-    var gIsIOS = isIOS();
-    
-    if (gIsIOS) {
-    // Fix the title font
-    var elem = document.getElementById("pagetitle");
-    elem.size = 5;
-    elem.style.fontFamily = "Helvetica";
     }
-    
-    var acc = document.getElementsByClassName("accordion");
-    var i;
-    
-    for (i = 0; i < acc.length; i++) {
-    acc[i].addEventListener("click", function() {
-    this.classList.toggle("active");
-    var panel = this.nextElementSibling;
-    if (panel.style.display === "block") {
-    panel.style.display = "none";
-    } else {
-    panel.style.display = "block";
-    }
-    });
-    }
-    
-    // Start with all topics collapsed
-    CollapseAll();
-    
-    }
-    
-    // //
-    // // Wait for the document to be ready, then fire a function
-    // //
-    
-    // function WaitForReady(fn) {
-    // if (document.readyState !== 'loading') {
-    // fn();
-    // return;
-    // }
-    
-    // document.addEventListener('DOMContentLoaded', fn);
-    
-    // }
-    
-    // //
-    // // Wait for the document to be ready, then startup
-    // //
-    
-    // WaitForReady(DoStartup);
     
     DoStartup();
     
+    // If offline, hide all the YouTube videos and images
+    function removeOfflineContent() {
+
+        if (!navigator.onLine) {
+
+            const iframes = document.querySelectorAll('iframe');
+
+            iframes.forEach(iframe => iframe.remove());
+
+            // Remove all the images
+            var divs = document.querySelectorAll('div.image_holder');
+
+            divs.forEach(div => div.remove());
+
+            divs = document.querySelectorAll('div.image_holder_p');
+
+            divs.forEach(div => div.remove());
+
+        }
+    }
+
+    // Run the function on page load
+    document.addEventListener('DOMContentLoaded', removeOfflineContent);
+
     </script>
     
 </html>

@@ -5,6 +5,8 @@ var gImpulseDB = null;
 
 function initImpulseDB(callback) {
 
+	//console.log("initImpulseDB");
+
 	// Open a database
 	let request = indexedDB.open('reverb_impulses_all', 1);
 
@@ -114,6 +116,8 @@ var gTuneDB = null;
 
 function initTuneDB(callback) {
 
+	//console.log("initTuneDB");
+
 	// Open a database
 	let request = indexedDB.open('tune_search_database', 1);
 
@@ -189,21 +193,30 @@ function saveTuneDatabase_DB(tunes,isFolkFriend) {
 		// Make a request to clear all the data out of the object store
 		const objectStoreRequest = objectStore.clear();
 
-		// Create an object to hold the impulse
-		let newItem = {
-			tunes: tunes
-		};
+		objectStoreRequest.onsuccess = function(event) {
 
-		// Add the object to the object store
-		let request = objectStore.add(newItem);
+			// Create an object to hold the impulse
+			let newItem = {
+				tunes: tunes
+			};
 
-		request.onerror = function(event) {
+			// Add the object to the object store
+			let request = objectStore.add(newItem);
+
+			request.onsuccess = function(event) {
+				//console.log("FolkFriend database saved successfully");
+			};
+
+			request.onerror = function(event) {
+				console.log("Error saving FolkFriend database: " + event.target.errorCode);
+			};
+
+		}
+
+		objectStoreRequest.onerror = function(event) {
 			console.log("Error saving FolkFriend database: " + event.target.errorCode);
-		};
+		}
 
-		request.onsuccess = function(event) {
-			//console.log("FolkFriend database saved successfully");
-		};
 	}
 	else{
 
@@ -213,23 +226,29 @@ function saveTuneDatabase_DB(tunes,isFolkFriend) {
 		// Make a request to clear all the data out of the object store
 		const objectStoreRequest = objectStore.clear();
 
-		// Create an object to hold the impulse
-		let newItem = {
-			tunes: tunes
-		};
+		objectStoreRequest.onsuccess = function(event) {
 
-		// Add the object to the object store
-		let request = objectStore.add(newItem);
+			// Create an object to hold the impulse
+			let newItem = {
+				tunes: tunes
+			};
 
-		request.onerror = function(event) {
+			// Add the object to the object store
+			let request = objectStore.add(newItem);
+
+			request.onsuccess = function(event) {
+				//console.log("Heneghan database saved successfully");
+			};
+
+			request.onerror = function(event) {
+				console.log("Error saving Heneghan database: " + event.target.errorCode);
+			};
+
+		}
+
+		objectStoreRequest.onerror = function(event) {
 			console.log("Error saving Heneghan database: " + event.target.errorCode);
-		};
-
-		request.onsuccess = function(event) {
-			//console.log("Heneghan database saved successfully");
-		};
-
-
+		}
 	}
 }
 
@@ -286,6 +305,8 @@ function getTuneDatabase_DB(isFolkFriend,callback) {
 var gSamplesDB = null;
 
 function initSamplesDB(callback) {
+
+	//console.log("initSamplesDB");
 
 	// Open a database
 	let request = indexedDB.open('samples', 1);

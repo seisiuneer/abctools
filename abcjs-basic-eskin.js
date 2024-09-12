@@ -1,6 +1,9 @@
 // MAE 25 Mar 2024
 var gSamplesOnline = true;
 
+// MAE 2 July 2024
+var gAllowOfflineInstruments = false;
+
 // MAE 12 Sep 2023 - I need this to be global to be able to clear the cache from the ABC tool on soundfont change
 var gSoundsCacheABCJS = {};
 
@@ -670,9 +673,7 @@ var TimingCallbacks = function TimingCallbacks(target, params) {
           }
         }
         self.currentEvent++;
-
       }
-
       if (self.lineEndCallback && self.lineEndTimings.length > self.currentLine && self.lineEndTimings[self.currentLine].milliseconds < self.currentTime && self.currentEvent < self.noteTimings.length) {
         var leftEvent = self.noteTimings[self.currentEvent].milliseconds === self.currentTime ? self.noteTimings[self.currentEvent] : self.noteTimings[self.currentEvent - 1];
         self.lineEndCallback(self.lineEndTimings[self.currentLine], leftEvent, {
@@ -876,7 +877,6 @@ var TimingCallbacks = function TimingCallbacks(target, params) {
     while (self.noteTimings.length > self.currentEvent && self.noteTimings[self.currentEvent].milliseconds < self.currentTime) {
       self.currentEvent++;
     }
-
     if (self.lineEndCallback) {
       self.currentLine = 0;
       while (self.lineEndTimings.length > self.currentLine && self.lineEndTimings[self.currentLine].milliseconds + self.lineEndAnticipation < self.currentTime) {
@@ -981,7 +981,6 @@ var tunebook = {};
     if (output === undefined || abc === undefined) return;
     if (!isArray(output)) output = [output];
     if (params === undefined) params = {};
-
     var currentTune = params.startingTune ? parseInt(params.startingTune, 10) : 0;
 
     // parse the abc string
@@ -1270,9 +1269,6 @@ function renderOne(div, tune, params, tuneNumber, lineOffset) {
 //          width: 800 by default. The width in pixels of the output paper
 var renderAbc = function renderAbc(output, abc, parserParams, engraverParams, renderParams) {
   // Note: all parameters have been condensed into the first ones. It doesn't hurt anything to allow the old format, so just copy them here.
-  
-  //debugger;
-
   var params = {};
   var key;
   if (parserParams) {
@@ -13605,10 +13601,6 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
   }
 
   function interpretChord(name) {
-
-    //console.log("interpretChord: "+name+" transpose: "+transpose); // MAE 31 Aug 2024
-    //debugger;
-
     // chords have the format:
     // [root][acc][modifier][/][bass][acc]
     // (The chord might be surrounded by parens. Just ignore them.)
@@ -15758,10 +15750,6 @@ ChordTrack.prototype.findChord = function (elem) {
   return null;
 };
 ChordTrack.prototype.interpretChord = function (name) {
-
-  //console.log("ChordTrack interpretChord: "+name+" transpose: "+this.transpose); // MAE 31 Aug 2024
-  //debugger;
-
   // chords have the format:
   // [root][acc][modifier][/][bass][acc]
   // (The chord might be surrounded by parens. Just ignore them.)
@@ -17100,7 +17088,7 @@ function CreateSynth(theABC) {
 
   // Load and cache all needed sounds
   self.init = function (options) {
-    
+
     // MAE 10 Jul 2024 - Put spinner up during load
     gMIDIInitStillWaiting = true;
     setTimeout(function(){
@@ -17132,8 +17120,8 @@ function CreateSynth(theABC) {
 
     if (self.soundFontUrl[self.soundFontUrl.length - 1] !== '/') self.soundFontUrl += '/';
 
-    // Force offline use of Fatboy piano sound
-    if (!gSamplesOnline){
+    // Force offline use of Fatboy piano sound unless user has allowed offline soundfonts
+    if ((!gSamplesOnline) && (!gAllowOfflineInstruments)){
       self.soundFontUrl == alternateSoundFontUrl2
     }
 
@@ -17185,8 +17173,7 @@ function CreateSynth(theABC) {
     if (gIsIOS){
       isSafari = true;
     }
-      
-    // MAE 23 July 2024 - To balance custom sound volumes
+     // MAE 23 July 2024 - To balance custom sound volumes
     self.customVolumeMultiplier = {};
 
     // If using Celtic Sound .mp3 sound fonts on Safari, set the offsets to 50 msec (Adobe Audition artifact)
@@ -17223,7 +17210,7 @@ function CreateSynth(theABC) {
         "mandolin": 2.0,     // 141
         "marchingdrums": 2.5, // 142
         "borderpipes": 2.5,  // 143
-        "percussion":2.0 // 128
+        "percussion": 2.0  // 128
       }
     }
     else{
@@ -17243,9 +17230,9 @@ function CreateSynth(theABC) {
         "mandolin": 2.0,     // 141
         "marchingdrums": 2.5, // 142
         "borderpipes": 2.5,  // 143
-        "percussion":2.0 // 128
+        "percussion": 2.0  // 128
       }
-    }
+    } 
 
     if (params.programOffsets) self.programOffsets = params.programOffsets;
     else if (self.soundFontUrl === originalSoundFontUrl) self.programOffsets = {
@@ -17506,11 +17493,11 @@ function CreateSynth(theABC) {
           }, reject);
         } else {
           if (self.debugCallback) self.debugCallback("resolve init");
-          
+
           // MAE 10 Jul 2024 - Hide the spinner
           gMIDIInitStillWaiting = false;
           document.getElementById("loading-bar-spinner").style.display = "none";
-
+          
           resolve(results);
         }
       };
@@ -17526,7 +17513,8 @@ function CreateSynth(theABC) {
 
     });
 
-    if (gSamplesOnline && gEnableReverb){
+    // If user has allowed offline instruments and reverb
+    if ((gSamplesOnline || ((!gSamplesOnline) && gAllowOfflineInstruments)) && gEnableReverb){
       promises.push(getReverbKernel(activeAudioContext()));
     }
 
@@ -17741,7 +17729,6 @@ function CreateSynth(theABC) {
 
         // MAE FOOFOO 25 June 2024
         //console.log("parts[0]: "+parts[0]);
-
         var thisInstrument = parts[0];
 
         if (parts[0] == "solfege"){
@@ -17783,10 +17770,9 @@ function CreateSynth(theABC) {
             theVolumeMultiplier = thisVolumeMultiplier;
             //console.log("Got volume multiplier override: "+thisVolumeMultiplier);
         }
-
+        
         allPromises.push(placeNote(audioBuffer, activeAudioContext().sampleRate, parts, uniqueSounds[k], theVolumeMultiplier, self.programOffsets[parts.instrument], fadeTimeSec, self.noteEnd / 1000, self.debugCallback));
       }
-
       self.audioBuffers = [audioBuffer];
       if (self.debugCallback) {
         self.debugCallback("sampleRate = " + activeAudioContext().sampleRate);
@@ -17951,7 +17937,7 @@ function CreateSynth(theABC) {
     self.directSource = [];
 
     // If offline, reverb disabled, or reverb enabled but no convolution reverb node available
-    if ((!gSamplesOnline) || (!gEnableReverb) || (gEnableReverb && (gReverbNode==null))){
+    if (((!gSamplesOnline) && (!gAllowOfflineInstruments)) || (!gEnableReverb) || (gEnableReverb && (gReverbNode==null))){
       self.audioBuffers.forEach(function (audioBuffer, trackNum) {
         self.directSource[trackNum] = activeAudioContext().createBufferSource(); // creates a sound source
         self.directSource[trackNum].buffer = audioBuffer; // tell the source which sound to play
@@ -18993,7 +18979,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
     }
 
-    if (gSamplesOnline){
+    if (gSamplesOnline || ((!gSamplesOnline) && gAllowOfflineInstruments)){
 
       // If not in cache, first try the database
       getSample_DB(noteUrl, function(theSample){
@@ -20072,7 +20058,7 @@ function SynthController(theABC) {
   self.disable = function (isDisabled) {
     if (self.control) self.control.disable(isDisabled);
   };
-  self.setTune = function (visualObj, userAction, audioParams) {    
+  self.setTune = function (visualObj, userAction, audioParams) {
     self.visualObj = visualObj;
     self.disable(false);
     self.options = audioParams;
@@ -20109,7 +20095,6 @@ function SynthController(theABC) {
       loadingResponse = response;
       return self.midiBuffer.prime();
     }).then(function () {
-
       var subdivisions = 16;
       if (self.cursorControl && self.cursorControl.beatSubdivisions !== undefined && parseInt(self.cursorControl.beatSubdivisions, 10) >= 1 && parseInt(self.cursorControl.beatSubdivisions, 10) <= 64) subdivisions = parseInt(self.cursorControl.beatSubdivisions, 10);
 
@@ -20214,7 +20199,7 @@ function SynthController(theABC) {
 
       // MAE 26 Aug 2024 - To fix out-of-sync cursor after pause/resume
       self.midiBuffer.seek(self.percent*self.midiBuffer.duration,"seconds");
-      
+
     }
   };
   self.toggleLoop = function () {

@@ -37,5 +37,9 @@
    "type": "image\/png",
    "density": "4.0"
   }
- ]
+ ],
+ "display": "minimal-ui",
+ "theme_color": "#055581",
+ "background_color": "#055581",
+ "start_url": "/abctools/abctools.html"
 }

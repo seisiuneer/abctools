@@ -669,7 +669,7 @@ padding:12px;
 margin-right:24px;
 }
 
-#addnewhornpipe,#searchandaddtunes,#culltunes,#cull_clear_selection,#mobile_tune_order_down,#smartdraw_export,#addnewsong,#addboxfingeringtemplate,#search-save{
+#addnewhornpipe,#searchandaddtunes,#culltunes,#cull_clear_selection,#mobile_tune_order_down,#smartdraw_export,#addnewsong,#addboxfingeringtemplate,#search-save,#adddatabasetemplate{
 height:42px;
 padding:12px;
 }
@@ -1387,6 +1387,100 @@ margin-left:20px;
 	background: palegreen;
 }
 
+.managedatabases {
+	display: inline-block;
+}
+
+#managedatabases{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:0px;
+margin-left:12px;
+}
+
+.managedatabases:hover{
+	background: palegreen;
+}
+
+.managedownloadall {
+	display: inline-block;
+}
+
+#managedownloadall{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:0px;
+}
+
+.managedownloadall:hover{
+	background: palegreen;
+}
+
+
+.managesamples {
+	display: inline-block;
+}
+
+#managesamples{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:20px;
+}
+
+.managesamples:hover{
+	background: palegreen;
+}
+
+.managenotes {
+	display: inline-block;
+	user-select: none;
+}
+
+#managenotes{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:20px;
+}
+
+.managenotes:hover{
+	background: palegreen;
+}
+
+
+.managereverb {
+	display: inline-block;
+}
+
+#managereverb{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:20px;
+}
+
+.managereverb:hover{
+	background: palegreen;
+}
+
+.managesearch {
+	display: inline-block;
+}
+
+#managesearch{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:0px;
+}
+
+.managesearch:hover{
+	background: palegreen;
+}
+
 #reset_roll_explorer_2{
 height:32px;
 padding:8px;
@@ -1552,14 +1646,14 @@ opacity:1.0;
 	}
 }
 
-.morecommands{
+.toggletopbar{
 margin-left:0px;
 margin-right:0px;
 opacity:1.0;
 }
 
 @media (hover: hover) {
-	.morecommands:hover{
+	.toggletopbar:hover{
 	background: palegreen;
 	}
 }
@@ -2322,7 +2416,7 @@ margin-top:-7px;
 	font-size:12pt;
 	line-height:11px;
 	font-family:helvetica;
-	margin-top:8px;
+	margin-top:7px;
 	display:flex;
 }
 
@@ -3779,6 +3873,7 @@ padding-left:10px;
 
 .abcupload {
 	margin-left:0px;
+	margin-right:12px;
 }
 
 @media (hover: hover) {
@@ -4061,6 +4156,22 @@ top:20px;
 	.configuresettingsfromhelp:hover{
 	background: palegreen;
 	}
+}
+
+#noteLoadProgress {
+  margin-top:32px;
+  display:none;
+  width: 100%;
+  background-color: #dddddd;
+}
+
+#noteLoadBar {
+  width: 1%;
+  height: 30px;
+  background-color: green;
+  text-align: center; /* To center it horizontally (if you want) */
+  line-height: 30px; /* To center it vertically */
+  color: white;
 }
 
 /******************************************************************************/
@@ -4689,6 +4800,31 @@ margin-left:12px;
 .btn-resetsettings{
   --color: black;
   --background-color: #FFCCCC;	
+}
+
+.btn-managedatabases{
+  --color: black;
+  --background-color: lavender;	
+}
+
+.btn-managesamples{
+  --color: black;
+  --background-color: lavender;	
+}
+
+.btn-deletesamples{
+  --color: black;
+  --background-color: #FFCCCC;	
+}
+
+.btn-managereverb{
+  --color: black;
+  --background-color: lavender;	
+}
+
+.btn-managesearch{
+  --color: black;
+  --background-color: lavender;	
 }
 
 .btn-reverbexplorertest{
