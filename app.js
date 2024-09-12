@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2000_091124_1700";
+var gVersionNumber="2002_091124_2300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -43216,7 +43216,6 @@ function DoStartup() {
 			}
 			else{
 				items = [
-				    {},
 				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
 				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
 				    {},
@@ -43288,7 +43287,6 @@ function DoStartup() {
 			else{
 
 				items = [
-				    {},
 				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
 				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
 				    {},
