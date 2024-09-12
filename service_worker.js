@@ -4,15 +4,13 @@
 //
 //
 //
-//
-// Updated 12 September 2024 at 0900
-//
+// Updated 12 September 2024 at 1200
 //
 //
 //
 //
 
-const cacheName = 'cache-2006';
+const cacheName = 'cache-2007';
 
 const contentToCache = [
     'abctools.html',
@@ -87,7 +85,8 @@ const contentToCache = [
     'img/abc-ms-icon-150x150.png',
     'img/abc-ms-icon-310x310.png',
     'img/abc-ms-icon-70x70.png',
-    'img/abc-manifest.json'
+    'img/abc-manifest.json',
+    'img/abc-manifest-qe.json'
 ];
 
 // Installing Service Worker
