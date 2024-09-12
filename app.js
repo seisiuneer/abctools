@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2004_091224_0800";
+var gVersionNumber="2006_091224_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -43403,10 +43403,10 @@ function DoStartup() {
 
     // Listen for online state changes
 
-    if (!gIsQuickEditor){
+    //if (!gIsQuickEditor){
 		window.addEventListener('online', doOnlineCheck);
 		window.addEventListener('offline', doOnlineCheck);
-	}
+	//}
 	
     // Fix up the div sizes on iPad two column if coming in from a share
     if (isFromShare && giPadTwoColumn && (!gOpenInEditor)){
