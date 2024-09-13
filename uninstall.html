@@ -90,6 +90,67 @@
 			
 		<script>
 		
+		//
+		// Delete all the databases
+		//
+		function delete_all_DB(){
+
+			// Delete legacy reverb impulses database
+			const DBDeleteRequest0 = window.indexedDB.deleteDatabase("reverb_impulses");
+
+			DBDeleteRequest0.onerror = (event) => {
+			  console.log("Error deleting reverb_impulses database.");
+			};
+
+			DBDeleteRequest0.onsuccess = (event) => {
+			  console.log("reverb_impulses database deleted successfully");
+			};
+
+			setTimeout(function(){
+
+				const DBDeleteRequest1 = window.indexedDB.deleteDatabase("reverb_impulses_all");
+
+				DBDeleteRequest1.onerror = (event) => {
+				  console.log("Error deleting reverb_impulses_all database.");
+				};
+
+				DBDeleteRequest1.onsuccess = (event) => {
+				  console.log("reverb_impulses_all database deleted successfully");
+				};
+
+			},500);
+
+			setTimeout(function(){
+
+				const DBDeleteRequest2 = window.indexedDB.deleteDatabase("tune_search_database");
+
+				DBDeleteRequest2.onerror = (event) => {
+				  console.log("Error deleting tune_search_database database.");
+				};
+
+				DBDeleteRequest2.onsuccess = (event) => {
+				  console.log("tune_search_database database deleted successfully");
+				};
+
+			},500);
+
+
+			setTimeout(function(){
+
+				const DBDeleteRequest3 = window.indexedDB.deleteDatabase("samples");
+
+				DBDeleteRequest3.onerror = (event) => {
+				  console.log("Error deleting samples database.");
+				};
+
+				DBDeleteRequest3.onsuccess = (event) => {
+				  console.log("samples database deleted successfully");
+				};
+
+			},500);
+
+		}	
+
 		function unregisterServiceWorker(){
 
 			var alertShown = false;
@@ -125,6 +186,16 @@
 			});
 		}
 
+		function doUninstall(){
+			
+			// Delete the databases
+			delete_all_DB();
+
+			// Unregister the service worker and delete the service worker cache
+			unregisterServiceWorker();
+
+		}
+
 		</script>		
 				
 	</head>
@@ -135,7 +206,7 @@
 
 		<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:48px">Click the button below to uninstall the tools from your browser and delete all cached resources.</p>
 
-		<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:48px"><input id="unregistersw" class="btn btn-info unregistersw" onclick="unregisterServiceWorker()" type="button" value="Click here to Uninstall the ABC Transcription Tools from your Browser">
+		<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:48px"><input id="unregistersw" class="btn btn-info unregistersw" onclick="doUninstall();" type="button" value="Click here to Uninstall the ABC Transcription Tools from your Browser">
 
 		<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:48px"><a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">Click here to relaunch the latest ABC Transcription Tools</a></p>
 
