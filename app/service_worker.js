@@ -3,12 +3,16 @@
 //
 //
 //
-// Updated 12 Sep 2024 at 1730
+//
+//
+// Updated 12 Sep 2024 at 1745
+//
+//
 //
 //
 //
 
-const cacheName = 'cache-002';
+const cacheName = 'notused';
 
 const contentToCache = [
     'abctools.html'
@@ -22,12 +26,12 @@ self.addEventListener('install', (e) => {
     // Make this the current service worker
     self.skipWaiting();
     
-    e.waitUntil((async () => {
-      const cache = await caches.open(cacheName);
-      console.log('[Service Worker] Caching all: app shell and content');
-      await cache.addAll(contentToCache);
-      console.log('[Service Worker] Cache addAll complete!');
-    })());
+    // e.waitUntil((async () => {
+    //   const cache = await caches.open(cacheName);
+    //   console.log('[Service Worker] Caching all: app shell and content');
+    //   await cache.addAll(contentToCache);
+    //   console.log('[Service Worker] Cache addAll complete!');
+    // })());
 
 
   });
