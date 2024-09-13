@@ -2,7 +2,7 @@
 <html>
 	<head>
 		
-		<title>Michael Eskin's ABC Tools Service Worker Reset</title>
+		<title>Michael Eskin's ABC Transcription Tools Uninstaller</title>
 		
 		<meta charset="UTF-8">
 		<meta http-equiv="Content-Type" content="text/html">
@@ -12,10 +12,10 @@
 		<meta property="og:locale" content="en_US" />
 		<meta name="description" content="A simple-to-use ABC to standard music notation converter featuring tune play, transposition, tab generation, PDF export and much more!" />
 		<meta property="og:type" content="website" />
-		<meta property="og:title" content="Michael Eskin's ABC Tools Service Worker Reset" />
+		<meta property="og:title" content="Michael Eskin's ABC Transcription Tools Uninstaller" />
 		<meta property="og:description" content="A simple-to-use ABC to standard music notation converter featuring tune play, transposition, tab generation, PDF export and much more!" />
 		<meta property="og:url" content="https://michaeleskin.com/abctools/abctools.html" />
-		<meta property="og:site_name" content="Michael Eskin's ABC Tools Service Worker Reset" />
+		<meta property="og:site_name" content="MMichael Eskin's ABC Transcription Tools Uninstaller" />
 		<meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png" />
 		<meta name="msapplication-TileColor" content="#ffffff">
 		<meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
@@ -74,7 +74,7 @@
 
 		.btn-info {
 		  --color: black;
-		  --background-color: lavender;
+		  --background-color: #FFDDDD;
 		}
 		.btn-info:active {
 		  --color: #ececec;
@@ -94,12 +94,20 @@
 
 			var alertShown = false;
 
+			// Delete all the caches
+			caches.keys().then((keys) => {
+	          return Promise.all(
+	            keys.map((key) => caches.delete(key))
+	          );
+	        })
+
+
 			// Unregister service worker
 			navigator.serviceWorker.getRegistrations()
 			 .then(registrations => {
 
 			 	if (registrations.length == 0){
-			 		alert("No ABC Transcription Tool service workers to unregister.");
+			 		alert("No installed ABC Transcription Tools found.");
 			 	}
 			 	else
 			 	{
@@ -109,10 +117,11 @@
 						
 						if (!alertShown){
 							alertShown = true;
-							alert("ABC Transcription Tool service worker has been unregistered.");
+							alert("ABC Transcription Tools have been uninstalled.");
 						}
 				   	});
 				}
+
 			});
 		}
 
@@ -122,11 +131,13 @@
 
 	<body>
 
-		<p style="text-align:center;font-size:24pt;font-family:helvetica;margin-top:36px">Unregister the ABC Transcription Tools Offline Service Worker</p>
+		<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-top:36px">Uninstall the ABC Transcription Tools</p>
 
-		<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-top:36px"><input id="unregistersw" class="btn btn-info unregistersw" onclick="unregisterServiceWorker()" type="button" value="Click here to unregister the ABC Transcription Tools Offline Service Worker">
+		<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:48px">Click the button below to uninstall the tools from your browser and delete all cached resources.</p>
 
-		<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-top:36px"><a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">Click here to launch the latest ABC Transcription Tools</a></p>
+		<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:48px"><input id="unregistersw" class="btn btn-info unregistersw" onclick="unregisterServiceWorker()" type="button" value="Click here to Uninstall the ABC Transcription Tools from your Browser">
+
+		<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:48px"><a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">Click here to relaunch the latest ABC Transcription Tools</a></p>
 
 	</body>
 
