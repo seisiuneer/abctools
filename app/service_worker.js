@@ -4,19 +4,12 @@
 //
 //
 //
-//
-// Updated 12 Sep 2024 at 1745
-//
+// Updated 12 Sep 2024 at 1815
 //
 //
 //
 //
-
-const cacheName = 'notused';
-
-const contentToCache = [
-    'abctools.html'
-];
+//
 
 // Installing Service Worker
 self.addEventListener('install', (e) => {
@@ -25,14 +18,6 @@ self.addEventListener('install', (e) => {
 
     // Make this the current service worker
     self.skipWaiting();
-    
-    // e.waitUntil((async () => {
-    //   const cache = await caches.open(cacheName);
-    //   console.log('[Service Worker] Caching all: app shell and content');
-    //   await cache.addAll(contentToCache);
-    //   console.log('[Service Worker] Cache addAll complete!');
-    // })());
-
 
   });
 
@@ -47,13 +32,16 @@ self.addEventListener('activate', event => {
         );
     });
 
+    // Delete all caches
     event.waitUntil(
         caches.keys().then((keys) => {
           return Promise.all(
-            keys.filter((key) => key != cacheName).map((key) => caches.delete(key))
+            keys.map((key) => caches.delete(key))
           );
         })
     );
+
+    console.log("[Service Worker] All caches deleted");
 
 });
   

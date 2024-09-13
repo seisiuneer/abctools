@@ -144,6 +144,23 @@
 
         }
 
+        // Do the unregistration automatically
+        document.addEventListener('DOMContentLoaded', function(){
+
+            console.log("DOMContentLoaded");
+
+            setTimeout(function(){
+
+              function callback2(){
+                 console.log("Service workers unregistered")
+              }
+
+              unregisterAllServiceWorkers(callback2);
+
+            },3000);
+
+        });
+
 
     </script>
 
@@ -154,11 +171,11 @@
 
     <p style="text-align:center;font-size:12pt;font-family:helvetica;margin-top:36px">The standard version of the tool is now offline-enabled.</p>
 
-    <p style="text-align:center;font-size:12pt;font-family:helvetica;margin-top:36px">Click the button below to unregister the previous version from your browser and redirect to the new app.</p>
+    <p style="text-align:center;font-size:12pt;font-family:helvetica;margin-top:36px">Click the button below to unregister the previous version from your browser and redirect to the new URL.</p>
 
     <p style="text-align:center;font-size:12pt;font-family:helvetica;margin-top:36px">After doing this once, in the future you should access the now offline-enabled version of the tool at:</p>
     
-    <p style="text-align:center;font-size:12pt;font-family:helvetica;margin-top:36px"><a href="https://michaeleskin.com/abctools/abctools.html">https://michaeleskin.com/abctools/abctools.html</a></p>
+    <p style="text-align:center;font-size:12pt;font-family:helvetica;margin-top:36px">https://michaeleskin.com/abctools/abctools.html</p>
 
     <p style="text-align:center;font-size:12pt;font-family:helvetica;margin-top:36px"><input id="unregistersw" class="btn btn-info unregistersw" onclick="unregisterAllServiceWorkers(doRedirect)" type="button" value="Unregister the ABC Transcription Tools App Service Worker and redirect to the new offline-enabled ABC Transcription Tools">
 
