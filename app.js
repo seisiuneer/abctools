@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2008_091324_0830";
+var gVersionNumber="2009_091324_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -37201,6 +37201,21 @@ function idleAdvancedSettings(){
 
 }
 
+//
+// Show some info on the browser
+//
+function ShowBrowserInfo(){
+
+   	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Browser Info</p>';
+    modal_msg  += '<p style="font-size:12pt;line-height:22pt;font-family:helvetica">navigator.userAgent: '+navigator.userAgent+'</p>'; 
+    modal_msg  += '<p style="font-size:12pt;line-height:22pt;font-family:helvetica">navigator.platform: '+navigator.platform+'</p>'; 
+    modal_msg  += '<p style="font-size:12pt;line-height:22pt;font-family:helvetica">navigator.vendor: '+navigator.vendor+'</p>'; 
+    modal_msg  += '<p style="font-size:12pt;line-height:22pt;font-family:helvetica">navigator.maxTouchPoints: '+navigator.maxTouchPoints+'</p>'; 
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, scrollWithPage: (AllowDialogsToScroll()) });
+
+}
+
 function AdvancedSettings(){
 
 	// Keep track of dialogs
@@ -37295,7 +37310,7 @@ function AdvancedSettings(){
 		{name: "Default %roll_3_params:", id: "configure_roll3_default", type:"text", cssClass:"advanced_settings2_roll_text"},
 		{name: "Private TinyURL API Token:", id: "configure_tinyurl", type:"text", cssClass:"advanced_settings2_tinyurl_text"},
 
-		{html: '<p style="text-align:center;margin-top:18px;margin-bottom:6px"><input id="reset_roll_parameters" class="btn btn-subdialog reset_roll_parameters" onclick="ResetRollDefaultParams()" type="button" value="Reset Roll Parameter Strings to Defaults" title="Resets the roll parameter strings to known good default values"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset Settings" title="Opens a dialog where you can reset all tool settings to the default and/or clear the instrument notes, reverb settings, and tune search engine collection databases"></p><p style="font-size:10pt;font-family:helvetica;color:grey;position:absolute;left:20px;bottom:22px;margin:0px;">Version: '+gVersionNumber+'</p>'},
+		{html: '<p style="text-align:center;margin-top:18px;margin-bottom:6px"><input id="reset_roll_parameters" class="btn btn-subdialog reset_roll_parameters" onclick="ResetRollDefaultParams()" type="button" value="Reset Roll Parameter Strings to Defaults" title="Resets the roll parameter strings to known good default values"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset Settings" title="Opens a dialog where you can reset all tool settings to the default and/or clear the instrument notes, reverb settings, and tune search engine collection databases"></p><p style="font-size:10pt;font-family:helvetica;color:grey;position:absolute;left:20px;bottom:22px;margin:0px;" onclick="ShowBrowserInfo();">Version: '+gVersionNumber+'</p>'},
 	]);
 
 	// Set up the reverb impulse load callback
