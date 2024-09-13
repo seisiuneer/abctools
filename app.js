@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2007_091224_1200";
+var gVersionNumber="2008_091324_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -40816,9 +40816,14 @@ function isIPhone() {
 // Are we on an iPad?
 //
 function isIPad() {
-	return navigator.maxTouchPoints &&
-		navigator.maxTouchPoints > 2 &&
-		/MacIntel/.test(navigator.platform);
+	return (
+
+		(navigator.maxTouchPoints && navigator.maxTouchPoints > 2 && /MacIntel/.test(navigator.platform))
+		||
+		(navigator.maxTouchPoints && navigator.maxTouchPoints > 2 && /iPad/.test(navigator.platform))
+
+	);
+
 }
 
 //
