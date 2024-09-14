@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2020_091424_1000";
+var gVersionNumber="2021_091424_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -42382,6 +42382,287 @@ function LaunchQuickEditorHelp(){
 	window.open(url, '_blank');	
 }
 
+//
+// Check if an update is available
+// 
+function DoVersionCheck(){
+	try {
+
+		// Get the latest version JSON file	
+	    fetch('https://michaeleskin.com/abctools/abc_tools_version.json')
+	    .then((response) => response.json())
+	    .then((json) => {
+
+	    	// Check if version changed
+	    	if (json && json.version && (json.version != gVersionNumber)){
+
+	    		// Yes, show update option
+	    		SetupContextMenu(true);
+
+	    	}
+	    	else{
+
+	 			SetupContextMenu(false);  
+
+	    	}
+	    })
+	}
+	catch(err){
+
+		SetupContextMenu(false); 
+
+	}
+
+}
+
+//
+// Setup context menu
+//
+
+function SetupContextMenu(showUpdateItem){
+
+	var items;
+
+	if (isDesktopBrowser()){
+
+		if (gIsQuickEditor){
+
+			if (isPureDesktopBrowser()){
+
+				items = [
+				    {},
+				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
+				    {},
+				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrder(); }},
+				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
+				    {},
+				];
+
+				if (isMac()){
+					items.push({ name: 'Align Bars (One Tune) (⌘+/)', fn: function(target) { AlignMeasures(false); }});
+				}
+				else{
+					items.push({ name: 'Align Bars (One Tune) (Ctrl+/)', fn: function(target) { AlignMeasures(false); }});				
+				}
+
+				items = items.concat(
+				    [{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+				    {},
+				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
+				    {},
+				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
+				    {},
+				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
+				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+				    {},
+				    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
+				    {},
+				    { name: 'About the Quick Editor', fn: function(target) { LaunchQuickEditorHelp(); }},
+				]);
+
+				if (showUpdateItem){
+					items = items.concat(
+						[{},
+						{ name: 'A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
+						{ name: 'Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
+				    ]);
+				}
+
+				// Adapt the search and replace key string based on the platform
+				var theFindItem = { name: 'Find and Replace (Ctrl+F)', fn: function(target) { FindAndReplace(); }};
+
+				if (isMac()){
+
+					theFindItem = { name: 'Find and Replace (⌘+F)', fn: function(target) { FindAndReplace(); }};
+				}
+
+				items.unshift(theFindItem);
+
+			}
+			else{
+				items = [
+				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
+				    {},
+				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
+				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
+				    {},
+					{ name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
+					{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+				    {},
+				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
+				    {},
+				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
+				    {},
+				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
+				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+				    {},
+					{ name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
+				    {},
+				    { name: 'About the Quick Editor', fn: function(target) { LaunchQuickEditorHelp(); }},
+				];
+
+				if (showUpdateItem){
+					items = items.concat(
+						[{},
+						{ name: 'A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
+						{ name: 'Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
+				    ]);
+				}
+			}
+		}
+		else{
+
+			if (isPureDesktopBrowser()){
+
+				items = [
+				    {},
+				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
+				    {},
+				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrder(); }},
+				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
+				    {},
+				];
+
+				if (isMac()){
+					items.push({ name: 'Align Bars (One Tune) (⌘+/)', fn: function(target) { AlignMeasures(false); }});
+				}
+				else{
+					items.push({ name: 'Align Bars (One Tune) (Ctrl+/)', fn: function(target) { AlignMeasures(false); }});				
+				}
+
+				items = items.concat(
+					[{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+				    {},
+				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
+				    {},
+				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
+				    {},
+				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
+				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+				    {},
+					{ name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
+				]);
+
+				if (showUpdateItem){
+					items = items.concat(
+						[{},
+						{ name: 'A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
+						{ name: 'Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
+				    ]);
+				}
+
+				// Adapt the search and replace key string based on the platform
+				var theFindItem = { name: 'Find and Replace (Ctrl+F)', fn: function(target) { FindAndReplace(); }};
+
+				if (isMac()){
+
+					theFindItem = { name: 'Find and Replace (⌘+F)', fn: function(target) { FindAndReplace(); }};
+				}
+
+				items.unshift(theFindItem);
+
+			}
+			else{
+
+				items = [
+				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
+				    {},
+				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
+				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
+				    {},
+					{ name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
+					{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+				    {},
+				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
+				    {},
+				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
+				    {},
+				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
+				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+				    {},
+				    { name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
+				];
+
+				if (showUpdateItem){
+					items = items.concat(
+						[{},
+						{ name: 'A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
+						{ name: 'Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
+				    ]);
+				}
+			}
+		}
+	}
+	else{
+		if (gIsQuickEditor){
+
+			items = [
+			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+			    {},
+			    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
+			    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
+			    {},
+				{ name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
+				{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+			    {},
+			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
+			    {},
+			    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
+			    {},
+			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
+			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+			    {},
+			    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
+			    {},
+			    { name: 'About the Quick Editor', fn: function(target) { LaunchQuickEditorHelp(); }},				
+			];
+
+			if (showUpdateItem){
+				items = items.concat(
+					[{},
+					{ name: 'A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
+					{ name: 'Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
+			    ]);
+			}
+		}
+		else{
+
+			items = [
+			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+			    {},
+			    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
+			    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
+			    {},
+			    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
+				{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
+			    {},
+			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
+			    {},
+			    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
+			    {},
+			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
+			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+			    {},
+			    { name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
+			];
+
+			if (showUpdateItem){
+				items = items.concat(
+					[{},
+					{ name: 'A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
+					{ name: 'Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
+			    ]);
+			}
+		}
+	}
+
+	var cm1 = new ContextMenu('.context-menu', items);
+}
+
 function DoStartup() {
 
 	// Init global state
@@ -43239,204 +43520,17 @@ function DoStartup() {
 		}
 	}
 
-	// Setup context menu
+    // Setup the context menu
+    if (!navigator.onLine){
 
-	var items;
+    	SetupContextMenu(false);
 
-	if (isDesktopBrowser()){
+    }
+    else{
 
-		if (gIsQuickEditor){
+    	DoVersionCheck();
 
-			if (isPureDesktopBrowser()){
-
-				items = [
-				    {},
-				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
-				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
-				    {},
-				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrder(); }},
-				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
-				    {},
-				];
-
-				if (isMac()){
-					items.push({ name: 'Align Bars (One Tune) (⌘+/)', fn: function(target) { AlignMeasures(false); }});
-				}
-				else{
-					items.push({ name: 'Align Bars (One Tune) (Ctrl+/)', fn: function(target) { AlignMeasures(false); }});				
-				}
-
-				items = items.concat(
-				    [{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
-				    {},
-				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
-				    {},
-				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
-				    {},
-				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
-				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
-				    {},
-				    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
-				    {},
-				    { name: 'About the Quick Editor', fn: function(target) { LaunchQuickEditorHelp(); }},
-				  ]);
-
-				// Adapt the search and replace key string based on the platform
-				var theFindItem = { name: 'Find and Replace (Ctrl+F)', fn: function(target) { FindAndReplace(); }};
-
-				if (isMac()){
-
-					theFindItem = { name: 'Find and Replace (⌘+F)', fn: function(target) { FindAndReplace(); }};
-				}
-
-				items.unshift(theFindItem);
-
-			}
-			else{
-				items = [
-				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
-				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
-				    {},
-				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
-				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
-				    {},
-					{ name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
-					{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
-				    {},
-				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
-				    {},
-				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
-				    {},
-				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
-				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
-				    {},
-				    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
-				    {},
-				    { name: 'About the Quick Editor', fn: function(target) { LaunchQuickEditorHelp(); }},
-				  ];
-
-			}
-		}
-		else{
-
-			if (isPureDesktopBrowser()){
-
-				items = [
-				    {},
-				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
-				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
-				    {},
-				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrder(); }},
-				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
-				    {},
-				];
-
-				if (isMac()){
-					items.push({ name: 'Align Bars (One Tune) (⌘+/)', fn: function(target) { AlignMeasures(false); }});
-				}
-				else{
-					items.push({ name: 'Align Bars (One Tune) (Ctrl+/)', fn: function(target) { AlignMeasures(false); }});				
-				}
-
-				items = items.concat(
-					[{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
-				    {},
-				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
-				    {},
-				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
-				    {},
-				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
-				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
-				    {},
-				    { name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
-				  ]);
-
-				// Adapt the search and replace key string based on the platform
-				var theFindItem = { name: 'Find and Replace (Ctrl+F)', fn: function(target) { FindAndReplace(); }};
-
-				if (isMac()){
-
-					theFindItem = { name: 'Find and Replace (⌘+F)', fn: function(target) { FindAndReplace(); }};
-				}
-
-				items.unshift(theFindItem);
-
-			}
-			else{
-
-				items = [
-				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
-				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
-				    {},
-				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
-				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
-				    {},
-					{ name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
-					{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
-				    {},
-				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
-				    {},
-				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
-				    {},
-				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
-				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
-				    {},
-				    { name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
-				  ];
-			}
-
-		}
-
-	}
-	else{
-		if (gIsQuickEditor){
-
-			items = [
-			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
-			    {},
-			    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
-			    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
-			    {},
-				{ name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
-				{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
-			    {},
-			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
-			    {},
-			    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
-			    {},
-			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
-			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
-			    {},
-			    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
-			    {},
-			    { name: 'About the Quick Editor', fn: function(target) { LaunchQuickEditorHelp(); }},
-			];
-		}
-		else{
-
-			items = [
-			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
-			    {},
-			    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
-			    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
-			    {},
-			    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
-				{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
-			    {},
-			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
-			    {},
-			    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
-			    {},
-			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
-			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
-			    {},
-			    { name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
-			];			
-		}
-
-	}
-
-	var cm1 = new ContextMenu('.context-menu', items);
+    }
 
 	//cm1.on('shown', () => console.log('Context menu shown'));
 
