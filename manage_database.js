@@ -57,7 +57,7 @@ function UpdateToLatestVersion(){
 
 function ForceUpdate(callback){
 
-	var thePrompt = "This will force the offline version of the tool to be updated after restart.<br/><br/>After the restart, wait 30 seconds and then refresh<br/>the page one more time to use the update.<br/><br/>Are you sure?";
+	var thePrompt = "This will force the version of the tool stored in your browser to be updated after a restart.<br/><br/>After the restart, wait 10 seconds and then refresh<br/>the page one more time to use the update.<br/><br/>Are you sure?";
 
 	// Center the string in the prompt
 	thePrompt = makeCenteredPromptString(thePrompt);
@@ -209,7 +209,7 @@ function ResetSettingsDialog(){
 		  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Reset All Tool Settings, Clear Databases, Force Update&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_resetsettings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 		  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Reset all settings to default</strong> will restore the tool settings to the original first-run state.</p>'},
 		  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Clear all databases</strong> will clear and delete the instrument notes, reverb settings, and tune search collections databases. New databases will be created after the tool is restarted.'},
-		  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Force tool update after restart</strong> will force the offline version of the tool to be updated after the tool is restarted.'},
+		  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Checking <strong>Force tool update after restart</strong> will force the version of the tool stored in your browser to be updated to the latest version after the tool is restarted.'},
 		  {html: '<p style="margin-top:24px;margin-bottom:8px;font-size:12pt;line-height:18pt;font-family:helvetica">If you enable any of these options, the tool will be restarted after the operation is complete.</p>'},
 		  {name: "          Reset all tool settings to default", id: "resetsettings", type:"checkbox", cssClass:"configure_resetsettings_text"},
 		  {name: "          Clear all databases", id: "deletedatabases", type:"checkbox", cssClass:"configure_resetsettings_text"},
@@ -798,7 +798,7 @@ function idleManageSamplesDialog(showActionButtons){
 	            // Save the complete set of notes for load all
 	            gLoadAllNotesSet = basePathSet;
 
-	            // Put the the total in the table header
+	            // Put the total in the table header
 	            if (basePathSet && basePathSet.length > 0){
 	            	var elem = document.getElementById("notes_table_name");
 	            	if (elem){
