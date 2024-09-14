@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2011_091324_1730";
+var gVersionNumber="2012_091324_1800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -20949,6 +20949,9 @@ function processShareLink() {
 		if (urlParams.has("name")) {
 
 			theName = urlParams.get("name");
+
+			// Inject spaces back into the name
+			theName = theName.replaceAll("_"," ");
 
 		}
 		else{
