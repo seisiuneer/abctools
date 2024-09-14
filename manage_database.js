@@ -51,6 +51,7 @@ function UpdateToLatestVersion(){
 
 			},1000);
 		}
+	}
 }
 
 
