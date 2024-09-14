@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2012_091324_1800";
+var gVersionNumber="2013_091324_1830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -25118,8 +25118,9 @@ function GetTuneAudioDownloadName(tuneABC,extension){
 			fname = fname.trim();
 
 			// Strip out any naughty HTML tag characters
-			fname = fname.replace(/[ ]+/ig, '_',)
-			fname = fname.replace(/[^a-zA-Z0-9_\-.]+/ig, '');
+			// MAE 13 Sep 2024 - Allow spaces in filenames
+			//fname = fname.replace(/[ ]+/ig, '_',)
+			fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
 
 			return fname+extension;
 
