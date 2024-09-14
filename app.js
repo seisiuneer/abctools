@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2009_091324_1000";
+var gVersionNumber="2011_091324_1730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -739,7 +739,7 @@ function findSelectedTune(){
 //
 // Get the title of the first tune
 //
-function GetFirstTuneTitle() {
+function GetFirstTuneTitle(bAllowSpaces) {
 
 	var title = "";
 	
@@ -761,11 +761,21 @@ function GetFirstTuneTitle() {
 			
 			title = title.trim();
 
-			// Strip out any naughty HTML tag characters
-			title = title.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+			if (bAllowSpaces){
+				// Strip out any naughty HTML tag characters
+				title = title.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
 
-			// Replace any spaces
-			title = title.replace(/\s/g, '_');
+				// Replace any spaces
+				title = title.replace(/\s/g, ' ');
+			}
+			else{
+
+				// Strip out any naughty HTML tag characters
+				title = title.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+				// Replace any spaces
+				title = title.replace(/\s/g, '_');
+			}
 
 			// Replace any quotes
 			title = title.replace(/\'/g, '_');
@@ -6297,7 +6307,7 @@ function AppendQRCode(thePDF,paperStyle,callback){
 //
 // Get a good filename for the PDF or share name either from the current filename or tunes themselves
 //
-function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
+function getDescriptiveFileName(tuneCount,bIncludeTabInfo,bAllowSpaces){
 
 	var title = "";
 
@@ -6311,11 +6321,23 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
 		// Trim any whitespace
 		title = title.trim();
 
-		// Strip out any naughty HTML tag characters
-		title = title.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+		if (!bAllowSpaces){
 
-		// Replace any spaces
-		title = title.replace(/\s/g, '_');
+			// Strip out any naughty HTML tag characters
+			title = title.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+			// Replace any spaces
+			title = title.replace(/\s/g, '_');
+		}
+		else{
+
+			// Strip out any naughty HTML tag characters
+			title = title.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+			// Replace any spaces
+			title = title.replace(/\s/g, ' ');
+
+		}
 
 		// Strip the extension
 		title = title.replace(/\..+$/, '');
@@ -6324,12 +6346,17 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
 	else{
 
 		// Get the title from the first tune in the ABC
-		title = GetFirstTuneTitle();
+		title = GetFirstTuneTitle(bAllowSpaces);
 
 		// If there is more than one tune, make the name reflect that it is a set
 		if (tuneCount > 1){
 
-			title += "_Set";
+			if (bAllowSpaces){
+				title += " Set";
+			}
+			else{
+				title += "_Set";
+			}
 
 		}
 	}
@@ -6380,6 +6407,10 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
 				break;
 		}
 
+		if (bAllowSpaces){
+			postfix = postfix.replaceAll("_"," ");
+		}
+
 		title += postfix;
 
 		postfix = "";
@@ -6401,7 +6432,13 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo){
 			case "guitard":
 			case "uke":
 				if (gCapo > 0){
-					postfix = "_Capo_" + gCapo;
+
+					if (bAllowSpaces){
+						postfix = " Capo " + gCapo;
+					}
+					else{
+						postfix = "_Capo_" + gCapo;
+					}
 				}
 				break;
 		}
@@ -8003,7 +8040,7 @@ function ParseCommentCommands(theNotes){
 
 function ProcessHeaderFooter(str,pageNumber,pageCount){
 
-	var theFileName = getDescriptiveFileName(pageCount,true);
+	var theFileName = getDescriptiveFileName(pageCount,true,true);
 
 	// If forcing a specific PDF export name, inject it now.
 	if (gDoForcePDFFilename){
@@ -8647,7 +8684,10 @@ function promptForPDFFilename(placeholder, callback){
 	}
 
 	// Use the replace method to replace the matched pattern with an empty string
-	placeholder = placeholder.replace(/[. ]+/ig, '');
+	// MAE 13 Sep 2024 - Allow spaces in filenames
+	//placeholder = placeholder.replace(/[. ]+/ig, '');
+	placeholder = placeholder.replace(/[.]+/ig, '');
+
 	placeholder = placeholder.trim();
 
 	// Clean any leading underscore after the title number clean
@@ -8821,11 +8861,12 @@ function ExportPDF(){
 	// Count the tunes
 	totalTunes = CountTunes();
 	
-	var title = getDescriptiveFileName(totalTunes,true);
+	var title = getDescriptiveFileName(totalTunes,true,true);
 
 	if (bQRCodesRequested){
 		
-		title += "_QR_Codes";
+		// MAE 13 Sep 2024 - Allow spaces in filenames
+		title += " QR Codes";
 
 		promptForPDFFilename(title,function(fname){
 
@@ -8842,16 +8883,17 @@ function ExportPDF(){
 	if (textIncipitsRequested){
 
 		if (bDoFullTunes){
+			// MAE 13 Sep 2024 - Allow spaces in filenames
 			if (!bDoCCETransform){
-				title += "_ABC";
+				title += " ABC";
 			}
 			else{
-				title += "_Comhaltas";
+				title += " Comhaltas";
 			}
 
 		}
 		else{
-			title += "_Incipits";
+			title += " Incipits";
 		}
 
 		promptForPDFFilename(title,function(fname){
@@ -8892,13 +8934,15 @@ function ExportPDF(){
 		// If doing incipits add a PDF filename suffix
 		if (incipitsRequested){
 
-			title += "_Incipits";
+			// MAE 13 Sep 2024 - Allow spaces in filenames
+			title += " Incipits";
 		}
 
 		// If mixing notation and QR add a PDF filename suffix
 		if (gMixedNotationAndQRCode){
 
-			title += "_Notation_QR";
+			// MAE 13 Sep 2024 - Allow spaces in filenames
+			title += " Notation QR";
 
 		}
 
@@ -16718,7 +16762,7 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
 	// Add the tune set name
 	var theTuneCount = CountTunes();
 
-	var theName = getDescriptiveFileName(theTuneCount,false);
+	var theName = getDescriptiveFileName(theTuneCount,false,false);
 
 	url += "&name=" + theName;
 
@@ -16978,7 +17022,7 @@ function GenerateQRCode(e) {
 			var theTuneCount = CountTunes();
 
 			// Derive a suggested name from the ABC
-			theImageName = getDescriptiveFileName(theTuneCount,true);
+			theImageName = getDescriptiveFileName(theTuneCount,true,true);
 
 		}
 		
@@ -17053,7 +17097,7 @@ function RoundTripMusicXML(){
 
 	var theTune = getTuneByIndex(0);
 	
-	var theTitle = GetFirstTuneTitle();
+	var theTitle = GetFirstTuneTitle(true);
 
 	document.getElementById("loading-bar-spinner").style.display = "block";
 
@@ -20211,7 +20255,7 @@ function SaveABC(){
 			var theTuneCount = CountTunes();
 
 			// Derive a suggested name from the ABC
-			var theName = getDescriptiveFileName(theTuneCount,false);
+			var theName = getDescriptiveFileName(theTuneCount,false,true);
 
 			var thePrompt = "Please enter a filename for your ABC file:  ";
 
@@ -20249,9 +20293,10 @@ function SaveShareURL(){
 			var theTuneCount = CountTunes();
 
 			// Derive a suggested name from the ABC
-			var theName = getDescriptiveFileName(theTuneCount,false);
+			var theName = getDescriptiveFileName(theTuneCount,false,true);
 
-			saveTextFile("Please enter a filename for your Share URL file:",theName+"_Share_URL.txt",theData);
+			// MAE 13 Sep 2024 - Allow spaces in filenames
+			saveTextFile("Please enter a filename for your Share URL file:",theName+" Share URL.txt",theData);
 		}
 	}
 }
@@ -20911,7 +20956,7 @@ function processShareLink() {
 			var theTuneCount = CountTunes();
 
 			// Derive the name from the ABC
-			theName = getDescriptiveFileName(theTuneCount,false);
+			theName = getDescriptiveFileName(theTuneCount,false,true);
 			
 		}
 
