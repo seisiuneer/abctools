@@ -7,6 +7,53 @@
 //
 // Unregister the service worker and force an update
 //
+
+function UpdateToLatestVersion(){
+
+	ForceUpdate(callback);
+
+	function callback(restartRequested){
+
+		// Hide the spinner
+		document.getElementById("loading-bar-spinner").style.display = "none";
+
+		if (restartRequested){
+
+			//debugger;
+
+			setTimeout(function(){
+
+				var thePrompt = "All changes applied. Click OK to restart the tool.";
+				
+				// Center the string in the prompt
+				thePrompt = makeCenteredPromptString(thePrompt);
+
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 320, scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
+					// Mostly for iOS which keeps the old page displayed during the update
+					if (isMobileBrowser()){
+
+						var thePrompt = "Tool is being updated and will restart when done.";
+
+						// Center the string in the prompt
+						thePrompt = makeCenteredPromptString(thePrompt);
+						
+						DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 320, scrollWithPage: (AllowDialogsToScroll()) });
+						
+					}
+
+					// Show the spinner while waiting for the reload
+					document.getElementById("loading-bar-spinner").style.display = "block";
+
+					window.location.reload();
+
+				});
+
+			},1000);
+		}
+}
+
+
 function ForceUpdate(callback){
 
 	var thePrompt = "This will force the offline version of the tool to be updated after restart.<br/><br/>After the restart, wait 30 seconds and then refresh<br/>the page one more time to use the update.<br/><br/>Are you sure?";
