@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2019_091424_1000";
+var gVersionNumber="2020_091424_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -43276,8 +43276,6 @@ function DoStartup() {
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 				    {},
-				    { name: 'Update to Latest Version', fn: function(target) { UpdateToLatestVersion(); }},
-				    {},
 				    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
 				    {},
 				    { name: 'About the Quick Editor', fn: function(target) { LaunchQuickEditorHelp(); }},
@@ -43311,8 +43309,6 @@ function DoStartup() {
 				    {},
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
-				    {},
-				    { name: 'Update to Latest Version', fn: function(target) { UpdateToLatestVersion(); }},
 				    {},
 				    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
 				    {},
@@ -43352,8 +43348,6 @@ function DoStartup() {
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 				    {},
-				    { name: 'Update to Latest Version', fn: function(target) { UpdateToLatestVersion(); }},
-				    {},
 				    { name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
 				  ]);
 
@@ -43387,8 +43381,6 @@ function DoStartup() {
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 				    {},
-				    { name: 'Update to Latest Version', fn: function(target) { UpdateToLatestVersion(); }},
-				    {},
 				    { name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
 				  ];
 			}
@@ -43415,8 +43407,6 @@ function DoStartup() {
 			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 			    {},
-			    { name: 'Update to Latest Version', fn: function(target) { UpdateToLatestVersion(); }},
-			    {},
 			    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
 			    {},
 			    { name: 'About the Quick Editor', fn: function(target) { LaunchQuickEditorHelp(); }},
@@ -43439,8 +43429,6 @@ function DoStartup() {
 			    {},
 			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
-			    {},
-			    { name: 'Update to Latest Version', fn: function(target) { UpdateToLatestVersion(); }},
 			    {},
 			    { name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
 			];			
