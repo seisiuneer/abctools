@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2023_091424_1700";
+var gVersionNumber="2022_091424_1640";
 
 var gMIDIInitStillWaiting = false;
 
@@ -43521,7 +43521,7 @@ function DoStartup() {
 	}
 
     // Setup the context menu
-    if (gIsOfflineVersion || (!navigator.onLine)){
+    if (!navigator.onLine){
 
     	SetupContextMenu(false);
 
@@ -43574,8 +43574,11 @@ function DoStartup() {
     initSamplesDB();
 
     // Listen for online state changes
-	window.addEventListener('online', doOnlineCheck);
-	window.addEventListener('offline', doOnlineCheck);
+
+    //if (!gIsQuickEditor){
+		window.addEventListener('online', doOnlineCheck);
+		window.addEventListener('offline', doOnlineCheck);
+	//}
 	
     // Fix up the div sizes on iPad two column if coming in from a share
     if (isFromShare && giPadTwoColumn && (!gOpenInEditor)){
