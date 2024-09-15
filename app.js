@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2024_091424_1730";
+var gVersionNumber="2025_091424_1745";
 
 var gMIDIInitStillWaiting = false;
 
@@ -43525,14 +43525,13 @@ function DoStartup() {
 
 	if (window.location.protocol.indexOf("file:")==0){
 		isRunningFromDisk = true;
+    	console.log("Tool is running from disk.")
 	}
 
     // Setup the context menu
     if (isRunningFromDisk || (!navigator.onLine)){
 
     	SetupContextMenu(false);
-
-    	console.log("Tool is running from disk.")
 
     }
     else{
