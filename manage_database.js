@@ -10,6 +10,8 @@
 
 function UpdateToLatestVersion(){
 
+	sendGoogleAnalytics("action","UpdateToLatestVersion");
+
 	ForceUpdate(callback);
 
 	function callback(restartRequested){
@@ -244,7 +246,8 @@ function ResetSettingsDialog(){
 
 				// Clear the setttings
 				//console.log("reset settings requested");
-
+				sendGoogleAnalytics("action","ResetAllSettings");
+				
 				resetAllSettingsToDefault(callback);
 
 			}
@@ -262,6 +265,7 @@ function ResetSettingsDialog(){
 
 					// Clear the setttings
 					//console.log("delete databases requested");
+					sendGoogleAnalytics("action","DeleteAllDatabases");
 
 					DeleteAllDatabases(callback2);
 				}
@@ -281,6 +285,8 @@ function ResetSettingsDialog(){
 
 					// Clear the setttings
 					//console.log("force update requested");
+
+					sendGoogleAnalytics("action","ForceUpdateFromDialog");
 
 					ForceUpdate(callback3);
 
