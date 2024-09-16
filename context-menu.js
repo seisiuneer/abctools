@@ -87,16 +87,33 @@ class ContextMenu {
         // Insert a divider
         li.className = 'ContextMenu-divider';
       } else {
-        li.className = 'ContextMenu-item';
-        li.textContent = item.name;
-        li.setAttribute('data-contextmenuitem', index);
-        li.setAttribute('tabindex', 0);
-        li.addEventListener('click', this.select.bind(this, li));
-        li.addEventListener('keyup', (e) => {
-          if (e.which === 13) {
-            this.select(li);
-          }
-        });
+
+        if (item.name.indexOf("*") == -1){
+          li.className = 'ContextMenu-item';
+          li.textContent = item.name;
+          li.setAttribute('data-contextmenuitem', index);
+          li.setAttribute('tabindex', 0);
+          li.addEventListener('click', this.select.bind(this, li));
+          li.addEventListener('keyup', (e) => {
+            if (e.which === 13) {
+              this.select(li);
+            }
+          });
+        }
+        else{
+          item.name = item.name.replace("*","");
+          li.className = 'ContextMenu-item-red';
+          li.textContent = item.name;
+          li.setAttribute('data-contextmenuitem', index);
+          li.setAttribute('tabindex', 0);
+          li.addEventListener('click', this.select.bind(this, li));
+          li.addEventListener('keyup', (e) => {
+            if (e.which === 13) {
+              this.select(li);
+            }
+          });
+
+        }
       }
 
       this.menu.appendChild(li);

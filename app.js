@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2029_091624_1000";
+var gVersionNumber="2030_091624_1015";
 
 var gMIDIInitStillWaiting = false;
 
@@ -42464,8 +42464,8 @@ function SetupContextMenu(showUpdateItem){
 				if (showUpdateItem){
 					items = items.concat(
 						[{},
-						{ name: 'A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
-						{ name: 'Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
+						{ name: '*A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
+						{ name: '*Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
 				    ]);
 				}
 
@@ -42506,8 +42506,8 @@ function SetupContextMenu(showUpdateItem){
 				if (showUpdateItem){
 					items = items.concat(
 						[{},
-						{ name: 'A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
-						{ name: 'Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
+						{ name: '*A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
+						{ name: '*Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
 				    ]);
 				}
 			}
@@ -42549,8 +42549,8 @@ function SetupContextMenu(showUpdateItem){
 				if (showUpdateItem){
 					items = items.concat(
 						[{},
-						{ name: 'A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
-						{ name: 'Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
+						{ name: '*A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
+						{ name: '*Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
 				    ]);
 				}
 
@@ -42590,8 +42590,8 @@ function SetupContextMenu(showUpdateItem){
 				if (showUpdateItem){
 					items = items.concat(
 						[{},
-						{ name: 'A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
-						{ name: 'Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
+						{ name: '*A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
+						{ name: '*Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
 				    ]);
 				}
 			}
@@ -42624,8 +42624,8 @@ function SetupContextMenu(showUpdateItem){
 			if (showUpdateItem){
 				items = items.concat(
 					[{},
-					{ name: 'A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
-					{ name: 'Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
+					{ name: '*A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
+					{ name: '*Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
 			    ]);
 			}
 		}
@@ -42653,8 +42653,8 @@ function SetupContextMenu(showUpdateItem){
 			if (showUpdateItem){
 				items = items.concat(
 					[{},
-					{ name: 'A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
-					{ name: 'Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
+					{ name: '*A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
+					{ name: '*Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
 			    ]);
 			}
 		}

@@ -4215,7 +4215,11 @@ top:20px;
   z-index: 10000;
 }
 
-.ContextMenu--theme-default .ContextMenu-item {
+.ContextMenu--theme-default .ContextMenu-item{
+  padding: 6px 12px;
+}
+
+.ContextMenu--theme-default .ContextMenu-item-red{
   padding: 6px 12px;
 }
 
@@ -4242,6 +4246,15 @@ top:20px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.ContextMenu-item-red {
+  cursor: pointer;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #CC0000;
 }
 
 .ContextMenu-divider {
