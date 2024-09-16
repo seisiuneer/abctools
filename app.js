@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2028_091624_0845";
+var gVersionNumber="2029_091624_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -37321,7 +37321,7 @@ function AdvancedSettings(){
 	// Only show batch export delays on desktop
 	if (gIsIPad){
 		form = form.concat([
-			{name: "    iPad Two-Column View (experimental)", id: "configure_ipad_two_column", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+			{name: "    iPad Two-Column View", id: "configure_ipad_two_column", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
   			{name: "iPad Two-Column Landscape Player Width (percentage) (default is 60):", id: "configure_ipad_player_scaling", type:"number", cssClass:"advanced_settings2_form_text"},
 		]);
 	}
