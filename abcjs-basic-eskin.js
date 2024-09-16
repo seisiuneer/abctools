@@ -25253,6 +25253,7 @@ module.exports = StaffGroupElement;
 /***/ (function(module) {
 
 function Subtitle(spaceAbove, formatting, info, center, paddingLeft, getTextSize) {
+
   this.rows = [];
   if (spaceAbove) this.rows.push({
     move: spaceAbove
@@ -28857,8 +28858,13 @@ EngraverController.prototype.engraveTune = function (abcTune, tuneNumber, lineOf
                 if (entry.subtitle){
 
                   //console.log("Got centered subtitle: "+entry.subtitle.text);
-
-                  thisRow.left = (maxWidth/2) + this.renderer.padding.left;
+                  // MAE 16 Sep 2024 - Fixed left justified subtitles
+                  if (gForceLeftJustifyTitles){
+                    thisRow.left = this.renderer.padding.left;
+                  }
+                  else{
+                    thisRow.left = (maxWidth/2) + this.renderer.padding.left;
+                  }
 
                 }
                 else
