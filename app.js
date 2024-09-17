@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2030_091624_1015";
+var gVersionNumber="2032_091624_1930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -37283,8 +37283,6 @@ function AdvancedSettings(){
 
 	var oldDiagnostics = gShowDiagnostics;
 
-	var oldiPadTwoColumn = giPadTwoColumn;
-
 	// Setup initial values
 	const theData = {
   		configure_fullscreen_scaling: gFullScreenScaling,
@@ -37309,22 +37307,12 @@ function AdvancedSettings(){
 		configure_confirm_clear: gConfirmClear,
 		configure_show_render_progress: gShowABCJSRenderProgress,
 		configure_clean_smartquotes: gCleanSmartQuotes,
-		configure_ipad_two_column: giPadTwoColumn,
-		configure_ipad_player_scaling: giPadPlayerScaling
 	};
 
 	var form = [
 		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Advanced Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 		{html: '<p style="font-size:12pt;line-height:12px;font-family:helvetica;"><strong>Only change these values if you know what you are doing!</strong></p>'},
 	];
-
-	// Only show batch export delays on desktop
-	if (gIsIPad){
-		form = form.concat([
-			{name: "    iPad Two-Column View", id: "configure_ipad_two_column", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
-  			{name: "iPad Two-Column Landscape Player Width (percentage) (default is 60):", id: "configure_ipad_player_scaling", type:"number", cssClass:"advanced_settings2_form_text"},
-		]);
-	}
 
 	form = form.concat([
 		{name: "          Always confirm before deletion when clicking Clear", id: "configure_confirm_clear", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
@@ -37395,33 +37383,6 @@ function AdvancedSettings(){
 
 			// Disable rendering? (not persistent)
 			gDisableNotationRendering = args.result.configure_DisableRendering;
-
-			if (gIsIPad){
-
-				// Two column display for iPad?
-				giPadTwoColumn = args.result.configure_ipad_two_column;
-
-				// Sanity check the iPad player scaling
-				giPadPlayerScaling = args.result.configure_ipad_player_scaling;
-
-				giPadPlayerScaling = giPadPlayerScaling.replace("%","");
-				
-				if (isNaN(parseInt(giPadPlayerScaling))){
-					giPadPlayerScaling = 60;
-				}
-				else{
-					giPadPlayerScaling = parseInt(giPadPlayerScaling);
-				}
-
-				if (giPadPlayerScaling < 50){
-					giPadPlayerScaling = 50;
-
-				}
-
-				if (giPadPlayerScaling > 100){
-					giPadPlayerScaling = 100;
-				}
-			}
 
 			if (gDisableNotationRendering){
 
@@ -37620,51 +37581,8 @@ function AdvancedSettings(){
 				HandleWindowResize();
 			}
 
-			if (gIsIPad){
-
-				// If changing the display mode on iPad, force large player controls
-				if (oldiPadTwoColumn != giPadTwoColumn){
-
-					if (giPadTwoColumn){
-						gLargePlayerControls = true;
-						sendGoogleAnalytics("action","iPad_Two_Column");
-					}
-					else{
-
-						gLargePlayerControls = false;				
-						sendGoogleAnalytics("action","iPad_One_Column");
-					}
-			
-				}
-			}
-
 			// Save the settings, in case they were initialized
 			SaveConfigurationSettings();
-
-			if (gIsIPad){
-
-				// If changing the display mode on iPad, let the user know about restarting the tool
-				if (oldiPadTwoColumn != giPadTwoColumn){
-
-					var thePrompt;
-
-					if (giPadTwoColumn){
-						thePrompt = "The tool will restart to switch to two-column display.";
-					}
-					else{
-						thePrompt = "The tool will restart to switch to single-column display.";	
-					}
-			
-					// Center the string in the prompt
-					thePrompt = makeCenteredPromptString(thePrompt);
-					
-					DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
-
-						window.location.reload();
-
-					});
-				}
-			}
 		}
 
 	});
@@ -37956,6 +37874,8 @@ function ConfigureToolSettings() {
 
 	var theOldComhaltas = gUseComhaltasABC;
 
+	var oldiPadTwoColumn = giPadTwoColumn;
+
 	// Setup initial values
 	const theData = {
 		configure_save_exit_snapshot: gSaveLastAutoSnapShot,
@@ -37977,13 +37897,25 @@ function ConfigureToolSettings() {
 		configure_comhaltas: gUseComhaltasABC,	
 		configure_RollUseRollForIrishRoll: gRollUseRollForIrishRoll,
 		configure_allow_offline_instruments: gAllowOfflineInstruments,
+		configure_ipad_two_column: giPadTwoColumn,
+		configure_ipad_player_scaling: giPadPlayerScaling
 	};
 
-  	var form = [
-		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;">ABC Transcription Tools Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#settings_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
-		{name: "          Show instrument tablature button bar below ABC editor", id: "configure_show_tab_buttons", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-
+	var form = [
+			{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;">ABC Transcription Tools Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#settings_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 	];
+
+	// Only show batch export delays on desktop
+	if (gIsIPad){
+		form = form.concat([
+			{name: "    iPad Side-by-Side View (similar to desktop)", id: "configure_ipad_two_column", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+  			{name: "iPad Side-by-Side Landscape Player Width (percentage) (default is 60):", id: "configure_ipad_player_scaling", type:"number", cssClass:"configure_settings_form_text"},
+		]);
+	}
+
+   form = form.concat([
+		{name: "          Show instrument tablature button bar below ABC editor", id: "configure_show_tab_buttons", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+	]);
 
   	// Disallowing auto snapshots on mobile
 	if (isPureDesktopBrowser()){
@@ -38061,6 +37993,33 @@ function ConfigureToolSettings() {
 			
 				gSaveLastAutoSnapShot = false;
 			
+			}
+
+			if (gIsIPad){
+
+				// Two column display for iPad?
+				giPadTwoColumn = args.result.configure_ipad_two_column;
+
+				// Sanity check the iPad player scaling
+				giPadPlayerScaling = args.result.configure_ipad_player_scaling;
+
+				giPadPlayerScaling = giPadPlayerScaling.replace("%","");
+				
+				if (isNaN(parseInt(giPadPlayerScaling))){
+					giPadPlayerScaling = 60;
+				}
+				else{
+					giPadPlayerScaling = parseInt(giPadPlayerScaling);
+				}
+
+				if (giPadPlayerScaling < 50){
+					giPadPlayerScaling = 50;
+
+				}
+
+				if (giPadPlayerScaling > 100){
+					giPadPlayerScaling = 100;
+				}
 			}
 
 			// Allow offline instruments?
@@ -38257,8 +38216,53 @@ function ConfigureToolSettings() {
 
 			}
 
+			if (gIsIPad){
+
+				// If changing the display mode on iPad, force large player controls
+				if (oldiPadTwoColumn != giPadTwoColumn){
+
+					if (giPadTwoColumn){
+						gLargePlayerControls = true;
+						sendGoogleAnalytics("action","iPad_Two_Column");
+					}
+					else{
+
+						gLargePlayerControls = false;				
+						sendGoogleAnalytics("action","iPad_One_Column");
+					}
+			
+				}
+			}
+
 			// Update local storage
 			SaveConfigurationSettings();
+
+			if (gIsIPad){
+
+				// If changing the display mode on iPad, let the user know about restarting the tool
+				if (oldiPadTwoColumn != giPadTwoColumn){
+
+					var thePrompt;
+
+					if (giPadTwoColumn){
+						thePrompt = "The tool will restart to switch to two-column display.";
+					}
+					else{
+						thePrompt = "The tool will restart to switch to single-column display.";	
+					}
+			
+					// Center the string in the prompt
+					thePrompt = makeCenteredPromptString(thePrompt);
+					
+					DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+
+						window.location.reload();
+
+					});
+
+					return;
+				}
+			}
 
 			// If the user requested hiding of the tab buttons, hide them now
 			ShowHideTabButtons();
