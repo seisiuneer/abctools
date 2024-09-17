@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
- 
+        
         <style>
         
         p {
@@ -108,21 +108,40 @@
         padding: 14px !important;
         width: 100% !important;
         text-align: left !important;
-        border: none !important;
+        border: .5px solid #000 !important;;
         outline: none !important;
-        margin-bottom:5px;
+        margin-bottom:8px;
         }
-        
+
+        .accordion::after {
+            content: "+";
+            font-size: 14pt;
+            font-weight: bold;
+            position: absolute;
+            right: 14px; /* Adjust this value as needed */
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
         .active {
-        background-color: #cfc;
+            background-color: #eee;
         }
-        
+
+        .active::after {
+            content: "-";
+            font-size: 18pt;
+            font-weight: bold;
+            position: absolute;
+            right: 14px; /* Adjust this value as needed */
+            top: 50%;
+            transform: translateY(-50%);
+        }
+       
         @media not all and (pointer: coarse) {
-        .accordion:hover {
-        background-color: #9f9;
+            .accordion:hover {
+                background-color: #9f9;
+            }
         }
-        }
-        
         
         .expandall{
         font-size:11pt  !important;
@@ -137,9 +156,9 @@
         }
         
         @media not all and (pointer: coarse) {
-        .expandall:hover {
-        background-color: #9f9;
-        }
+            .expandall:hover {
+                background-color: #9f9;
+            }
         }
         
         .tocpanel {
@@ -202,7 +221,6 @@
         }
         
         }
-        
         
         </style>
         
@@ -294,7 +312,10 @@
                 <button class="accordion" title="Click to expand/collapse this section">More ABC Tools</button>
                 <div class="tocpanel">
                     
-                    <p class="toc"><a style="text-decoration:none;" href="#more_tools">More ABC Tools</a></p>
+                    <button class="accordion" title="Click to expand/collapse this section">More ABC Tools</button>
+                    <div class="tocpanel">
+                        <p class="toc"><a style="text-decoration:none;" href="#more_tools">More ABC Tools</a></p>
+                    </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">Hiding/Showing ABC Annotations, Text, Chords, Tab, and Ornaments</button>
                     <div class="tocpanel">
