@@ -3,15 +3,12 @@
 //
 //
 //
-//
-//
-// Updated 17 September 2024 at 1200
-//
+// Updated 18 September 2024 at 1030
 //
 //
 //
 
-const cacheName = 'abctoolscache-2034';
+const cacheName = 'abctoolscache-2035';
 
 const contentToCache = [
     'abctools.html',
@@ -122,7 +119,7 @@ self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys().then((keys) => {
           return Promise.all(
-            keys.filter((key) => key != cacheName).map((key) => {if (key.indexOf("abctoolscache") != -1){caches.delete(key)}})
+            keys.filter((key) => key != cacheName).map((key) => {if ((key.indexOf("abctoolscache") != -1) || (key.indexOf("cache-20") != -1)){caches.delete(key)}})
           );
         })
     );
