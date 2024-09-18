@@ -11,7 +11,7 @@
 //
 //
 
-const cacheName = 'cache-2033';
+const cacheName = 'abctoolscache-2034';
 
 const contentToCache = [
     'abctools.html',
@@ -122,7 +122,7 @@ self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys().then((keys) => {
           return Promise.all(
-            keys.filter((key) => key != cacheName).map((key) => caches.delete(key))
+            keys.filter((key) => key != cacheName).map((key) => {if (key.indexOf("abctoolscache") != -1){caches.delete(key)}})
           );
         })
     );
