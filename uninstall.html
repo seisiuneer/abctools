@@ -155,14 +155,6 @@
 
 			var alertShown = false;
 
-			// Delete all the caches
-			caches.keys().then((keys) => {
-	          return Promise.all(
-	            keys.map((key) => caches.delete(key))
-	          );
-	        })
-
-
 			// Unregister service worker
 			navigator.serviceWorker.getRegistrations()
 			 .then(registrations => {
@@ -174,7 +166,10 @@
 			 	{
 				   	registrations.map(r => {
 
-						r.unregister();
+				   		if (r.scope.indexOf("abctools") != -1){
+				   			console.log("Unregistering ABC Transcription Tools service worker at scope: "+r.scope);
+							r.unregister();
+						}
 						
 						if (!alertShown){
 							alertShown = true;
@@ -186,10 +181,23 @@
 			});
 		}
 
+		function deleteCaches(){ 
+
+			caches.keys().then((keys) => {
+	          return Promise.all(
+	            keys.map((key) => {if ((key.indexOf("abctoolscache") != -1) || (key.indexOf("cache-20") != -1)){caches.delete(key)}})
+	          );
+        	})
+
+		}
+
 		function doUninstall(){
 			
 			// Delete the databases
 			delete_all_DB();
+
+			// Delete all caches
+			deleteCaches();
 
 			// Unregister the service worker and delete the service worker cache
 			unregisterServiceWorker();

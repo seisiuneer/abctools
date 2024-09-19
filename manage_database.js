@@ -80,7 +80,10 @@ function ForceUpdate(callback){
 				    let unregisterPromises = [];
 				    
 				    for (let registration of registrations) {
-				      unregisterPromises.push(registration.unregister());
+				      if (registration.scope.indexOf("abctools") != -1){
+				      	console.log("Unregistering service worker with scope: "+registration.scope);
+				      	unregisterPromises.push(registration.unregister());
+				      }
 				    }
 				    
 				    Promise.all(unregisterPromises).then(function() {
