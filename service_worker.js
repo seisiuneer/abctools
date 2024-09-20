@@ -4,13 +4,15 @@
 //
 //
 //
+//
 // Updated 19 September 2024 at 0730
 //
 //
 //
 //
+//
 
-const cacheName = 'abctoolscache-2036';
+const cacheName = 'abctoolscache-2037';
 
 const contentToCache = [
     'abctools.html',
@@ -142,7 +144,7 @@ self.addEventListener('fetch', (e) => {
 
     e.respondWith((async () => {
 
-        const r = await caches.match(e.request,{ignoreSearch: true});
+        const r = await caches.match(e.request,{ignoreSearch: true, ignoreVary:true});
 
         if (r){
 
