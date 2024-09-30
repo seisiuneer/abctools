@@ -12804,7 +12804,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     var shortestNote = durationRounded(1.0 / gOrnamentDivider);
     switch (noteModification) {
       case "trill":
-        var note = 1;
+        var note = 2;
         while (runningDuration > 0) {
           currentTrack.push({
             cmd: 'note',
@@ -12816,7 +12816,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             instrument: currentInstrument,
             style: 'decoration'
           });
-          note = note === 1 ? 0 : 1;
+          note = note === 2 ? 0 : 2;
           runningDuration -= shortestNote;
           start += shortestNote;
         }
@@ -12836,7 +12836,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
         start += shortestNote;
         currentTrack.push({
           cmd: 'note',
-          pitch: p.pitch + 1,
+          pitch: p.pitch + 2,
           volume: p.volume,
           start: start,
           duration: shortestNote,
@@ -12871,7 +12871,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
         start += shortestNote;
         currentTrack.push({
           cmd: 'note',
-          pitch: p.pitch - 1,
+          pitch: p.pitch - 2,
           volume: p.volume,
           start: start,
           duration: shortestNote,
@@ -12892,10 +12892,10 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
         });
         break;
       case "turn":
-        shortestNote = p.duration / 5;
+        shortestNote = p.duration / 4;
         currentTrack.push({
           cmd: 'note',
-          pitch: p.pitch,
+          pitch: p.pitch + 2,
           volume: p.volume,
           start: start,
           duration: shortestNote,
@@ -12905,7 +12905,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
         });
         currentTrack.push({
           cmd: 'note',
-          pitch: p.pitch + 1,
+          pitch: p.pitch,
           volume: p.volume,
           start: start + shortestNote,
           duration: shortestNote,
@@ -12915,7 +12915,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
         });
         currentTrack.push({
           cmd: 'note',
-          pitch: p.pitch,
+          pitch: p.pitch - 1,
           volume: p.volume,
           start: start + shortestNote * 2,
           duration: shortestNote,
@@ -12925,22 +12925,13 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
         });
         currentTrack.push({
           cmd: 'note',
-          pitch: p.pitch - 1,
+          pitch: p.pitch,
           volume: p.volume,
           start: start + shortestNote * 3,
           duration: shortestNote,
           gap: 0,
           instrument: currentInstrument,
           style: 'decoration'
-        });
-        currentTrack.push({
-          cmd: 'note',
-          pitch: p.pitch,
-          volume: p.volume,
-          start: start + shortestNote * 4,
-          duration: shortestNote,
-          gap: 0,
-          instrument: currentInstrument
         });
         break;
  
