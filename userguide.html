@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-        
+                
         <style>
         
         p {
@@ -303,6 +303,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#adding_swing">Adding Playback Swing to Tunes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#grace_timing">Setting Grace Note Duration for Ornamentation</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#roll_timing">Defining Custom Roll Timing Parameters</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#custom_ornament_timing">Custom Timing and Offsets for Trills, Mordents, and Turns</a></p>                        
                         <p class="toc"><a style="text-decoration:none;" href="#custom_backup_rhythms">Custom Backup Rhythms</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#custom_backup_beat_timing">Custom Backup Beat Timing</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#strummed_chords">Enabling Strummed Chords</a></p>
@@ -1737,11 +1738,18 @@
                 <p class="code">%irish_rolls_on</p>
                 <p>To override the default settings and disable playback of the custom roll playback solution for a specific tune you can include the following comment-based annotation anywhere in the tune's ABC:</p>
                 <p class="code">%irish_rolls_off</p>
-                <hr>
+                <hr class="hidden-print" id="custom_ornament_timing">
+                <h1 class="page_break_always h1wide">Custom Timing and Offsets for Trills, Mordents, and Turns<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>By default, trills and mordents use a beat divider of 32 for their timing.</p>
                 <p>If you want to change the timing of trills and mordents, you can include the following comment-based annotation anywhere in the tune's ABC:</p>
                 <p class="code">%ornament_divider beat_divider</p>
                 <p>Where beat_divider can be any value from 2 to 64.</p>
+                <hr>
+                <p>By default, trills, mordents, and turns use an offset of 2 semitones when playing.</p>
+                <p>If you want to change the semitone offset of trills, mordents, or turns you can include the following comment-based annotation anywhere in the tune's ABC:</p>
+                <p class="code">%ornament_offset semitones</p>
+                <p>Where semitones can be any integer value greater than zero.</p>
+                <p>For turns, the ornament_offset only changes the upper note, the lower note is always one semitone below.</p>
                 <hr class="hidden-print" id="custom_backup_rhythms">
                 <h1 class="page_break_always">Custom Backup Rhythms<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/eXD1rNbfe7I" title="Custom Backup Rhythms" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>

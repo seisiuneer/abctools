@@ -59,8 +59,9 @@ var gRoll3Volume1 = 1.0;
 var gRoll3Volume2 = 0.75; 
 var gRoll3Volume3 = 1.0; 
 
-// Ornament divider
+// Ornament divider and offset
 var gOrnamentDivider = 32;
+var gOrnamentOffset = 2;
 
 // MAE 16 Dec 2023 - For forcing left justified titles
 var gForceLeftJustifyTitles = false;
@@ -12804,7 +12805,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     var shortestNote = durationRounded(1.0 / gOrnamentDivider);
     switch (noteModification) {
       case "trill":
-        var note = 2;
+        var note = gOrnamentOffset;
         while (runningDuration > 0) {
           currentTrack.push({
             cmd: 'note',
@@ -12816,7 +12817,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             instrument: currentInstrument,
             style: 'decoration'
           });
-          note = note === 2 ? 0 : 2;
+          note = note === gOrnamentOffset ? 0 : gOrnamentOffset;
           runningDuration -= shortestNote;
           start += shortestNote;
         }
@@ -12836,7 +12837,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
         start += shortestNote;
         currentTrack.push({
           cmd: 'note',
-          pitch: p.pitch + 2,
+          pitch: p.pitch + gOrnamentOffset,
           volume: p.volume,
           start: start,
           duration: shortestNote,
@@ -12871,7 +12872,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
         start += shortestNote;
         currentTrack.push({
           cmd: 'note',
-          pitch: p.pitch - 2,
+          pitch: p.pitch - gOrnamentOffset,
           volume: p.volume,
           start: start,
           duration: shortestNote,
@@ -12895,7 +12896,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
         shortestNote = p.duration / 4;
         currentTrack.push({
           cmd: 'note',
-          pitch: p.pitch + 2,
+          pitch: p.pitch + gOrnamentOffset,
           volume: p.volume,
           start: start,
           duration: shortestNote,

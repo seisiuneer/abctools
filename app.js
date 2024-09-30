@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2038_092924_1700";
+var gVersionNumber="2039_093024_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -29094,6 +29094,43 @@ function ScanTuneForCustomTimingInjection(theTune){
 		}
 
 	}
+
+	// Next search for an ornament_offset
+
+	gOrnamentOffset = 2;
+
+	searchRegExp = /^%ornament_offset.*$/gm
+
+	// Detect gOrnamentOffset annotation
+	var doOrnamentOffset = theTune.match(searchRegExp);
+
+	if ((doOrnamentOffset) && (doOrnamentOffset.length > 0)){
+
+		var theParamString = doOrnamentOffset[0].replace("%ornament_offset","");
+
+		theParamString = theParamString.trim();
+
+		var theParams = theParamString.split(" ");
+
+		if (theParams.length >= 1){
+
+			var theOrnamentOffsetFound = theParams[0];
+
+			var ornamentOffset = parseInt(theOrnamentOffsetFound);
+
+			if (!isNaN(ornamentOffset)){
+
+				if (ornamentOffset >= 0){
+
+					gOrnamentOffset = ornamentOffset;
+
+				}
+
+			}
+		}
+
+	}
+
 
 }
 
