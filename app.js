@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2037_092024_1600";
+var gVersionNumber="2038_092924_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -29056,6 +29056,42 @@ function ScanTuneForCustomTimingInjection(theTune){
 	if ((useOriginalRollSolution) && (useOriginalRollSolution.length > 0)){
 
 		gRollUseOriginalRollSolution = true;
+
+	}
+
+	// Next search for an ornament_divider
+
+	gOrnamentDivider = 32;
+
+	searchRegExp = /^%ornament_divider.*$/gm
+
+	// Detect ornament_divider annotation
+	var doOrnamentDivider = theTune.match(searchRegExp);
+
+	if ((doOrnamentDivider) && (doOrnamentDivider.length > 0)){
+
+		var theParamString = doOrnamentDivider[0].replace("%ornament_divider","");
+
+		theParamString = theParamString.trim();
+
+		var theParams = theParamString.split(" ");
+
+		if (theParams.length >= 1){
+
+			var theOrnamentDividerFound = theParams[0];
+
+			var ornamentDivider = parseFloat(theOrnamentDividerFound);
+
+			if (!isNaN(ornamentDivider)){
+
+				if ((ornamentDivider >= 2) && (ornamentDivider <= 64)){
+
+					gOrnamentDivider = ornamentDivider;
+
+				}
+
+			}
+		}
 
 	}
 

@@ -59,6 +59,9 @@ var gRoll3Volume1 = 1.0;
 var gRoll3Volume2 = 0.75; 
 var gRoll3Volume3 = 1.0; 
 
+// Ornament divider
+var gOrnamentDivider = 32;
+
 // MAE 16 Dec 2023 - For forcing left justified titles
 var gForceLeftJustifyTitles = false;
 
@@ -12798,7 +12801,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     var start = p.start;
     var pp;
     var runningDuration = p.duration;
-    var shortestNote = durationRounded(1.0 / 32);
+    var shortestNote = durationRounded(1.0 / gOrnamentDivider);
     switch (noteModification) {
       case "trill":
         var note = 1;
