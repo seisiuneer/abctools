@@ -12925,7 +12925,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
         });
         currentTrack.push({
           cmd: 'note',
-          pitch: p.pitch + 1,
+          pitch: p.pitch - 1,
           volume: p.volume,
           start: start + shortestNote * 3,
           duration: shortestNote,
