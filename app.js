@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2041_100124_1130";
+var gVersionNumber="2042_101124_2100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -638,6 +638,21 @@ function findTuneByOffset(start){
 // Return the tune ABC at a specific index
 //
 //
+
+function getLinesUpToFirstBlank(text) {
+    const lines = text.split('\n');
+    let result = [];
+
+    for (let line of lines) {
+        if (line.trim() === "") {
+            break;  // Stop at the first blank line
+        }
+        result.push(line);
+    }
+
+    return result.join('\n');
+}
+
 function getTuneByIndex(tuneNumber){
 
 	var theNotes = gTheABC.value;
@@ -645,7 +660,11 @@ function getTuneByIndex(tuneNumber){
     // Now find all the X: items
     var theTunes = theNotes.split(/^X:/gm);
 
- 	return ("X:"+theTunes[tuneNumber+1]);
+ 	var theTune = "X:"+theTunes[tuneNumber+1];
+
+ 	theTune = getLinesUpToFirstBlank(theTune);
+
+ 	return theTune;
 
 }
 
