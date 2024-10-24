@@ -1298,17 +1298,7 @@ function testOutput() {
 
     }
 
-    var shareName = "Irish_Box_BC_Tablature_Test";
-
-    var index = document.getElementById('layout').selectedIndex;
-    var options = document.getElementById('layout').options;
-    var val = options[index].value;
-
-    if (val == "CD") {
-
-        shareName = "Irish_Box_CD_Tablature_Test";
-
-    }
+    var shareName = "Tablature_Test";
 
     var abcInLZW = LZString.compressToEncodedURIComponent(abcText);
 
