@@ -1722,7 +1722,6 @@ var boxTabGenerator = function (theABC){
     //
     function mergeTablature(input, notes) {
 
-
         var result = input;
         
         var insertedTotal = 0;
@@ -1748,6 +1747,60 @@ var boxTabGenerator = function (theABC){
                 direction = glyph.substr(2,glyphLen-1);
             }
 
+            // Using push/pull tab style
+            //debugger;
+            if (gInjectTab_BoxTabStyle == 1){
+
+                switch (buttonNumber){
+                    case "①":
+                        buttonNumber = "1'";
+                        break;
+                    case "②":
+                        buttonNumber = "2'";
+                        break;
+                    case "③":
+                        buttonNumber = "3'";
+                        break;
+                    case "④":
+                        buttonNumber = "4'";
+                        break;
+                    case "⑤":
+                        buttonNumber = "5'";
+                        break;
+                    case "⑥":
+                        buttonNumber = "6'";
+                        break;
+                    case "⑦":
+                        buttonNumber = "7'";
+                        break;
+                    case "⑧":
+                        buttonNumber = "8'";
+                        break;
+                    case "⑨":
+                        buttonNumber = "9'";
+                        break;
+                    case "⑩":
+                        buttonNumber = "10'";
+                        break;
+                    case "⑪":
+                        buttonNumber = "11'";
+                        break;
+                }
+
+                if (direction == PUSH_NAME){
+
+                    theTab = "\"_" + buttonNumber + ";-; \"";
+
+                }
+                else{
+                    
+                    theTab = "\"_ ;-;" + buttonNumber + "\"";
+                   
+                }
+
+            }
+            else
+            // Default tab style
             if (gInjectTab_UseBarForDraw){
 
                 switch (location){

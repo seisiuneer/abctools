@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2042_101124_2100";
+var gVersionNumber="2043_102424_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -34455,6 +34455,7 @@ var gInjectTab_TabLocation = 1;
 var gInjectTab_ConcertinaStyle = 0;
 var gInjectTab_ConcertinaFingering = 0;
 var gInjectTab_GaryCoover = false;
+var gInjectTab_BoxTabStyle = 0;
 
 // Box and Concertina Push and draw tablature glyphs
 var gInjectTab_PushGlyph = "↓";
@@ -34606,6 +34607,14 @@ function GetInitialConfigurationSettings(){
 	}
 	else{
 		gInjectTab_GaryCoover = false;
+	}
+
+	val = localStorage.InjectTab_BoxTabStyle;
+	if (val){
+		gInjectTab_BoxTabStyle = val;
+	}
+	else{
+		gInjectTab_BoxTabStyle = 0;
 	}
 
 	val = localStorage.InjectTab_StripChords;
@@ -35400,6 +35409,7 @@ function SaveConfigurationSettings(){
 		localStorage.InjectTab_ConcertinaStyle = gInjectTab_ConcertinaStyle;
 		localStorage.InjectTab_ConcertinaFingering = gInjectTab_ConcertinaFingering;
 		localStorage.InjectTab_GaryCoover = gInjectTab_GaryCoover;
+		localStorage.InjectTab_BoxTabStyle = gInjectTab_BoxTabStyle;
 
 		// Accordion and concertina tab bellows direction glyphs
 		localStorage.InjectTab_PushGlyph = gInjectTab_PushGlyph;
@@ -36010,9 +36020,9 @@ function ConfigureTablatureSettings(){
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","ConfigureTablatureSettings");
 
-    const box_styles = [
-	    { name: "  B/C", id: "0" },
-	    { name: "  C#/D", id: "1" },
+    const box_tab_styles = [
+	    { name: "  Default (Uses settings below for push/draw characters and tab location)", id: "0" },
+	    { name: "  Push/Draw (Single quote for outside row, tab drawn below notes)", id: "1" },
   	];
 
   	const concertina_fingerings = [
@@ -36044,6 +36054,7 @@ function ConfigureTablatureSettings(){
 	  configure_drawglyph:gInjectTab_DrawGlyph,
 	  configure_use_bar_for_draw:gInjectTab_UseBarForDraw,
 	  configure_gary_coover:gInjectTab_GaryCoover,
+	  configure_box_tab_style:gInjectTab_BoxTabStyle
 	};
 
 	const form = [
@@ -36053,22 +36064,23 @@ function ConfigureTablatureSettings(){
 	  {name: "Tablature/Solfège font size (Recommended: 10):", id: "configure_tab_font_size", type:"text", cssClass:"configure_tab_settings_form_text"},
 	  {name: "%%staffsep value (Recommended: 80):", id: "configure_staffsep", type:"text", cssClass:"configure_tab_settings_form_text"},
 	  {name: "%%musicspace value (Recommended: 10):", id: "configure_musicspace", type:"text", cssClass:"configure_tab_settings_form_text"},
+	  {name: "Box tab style:", id: "configure_box_tab_style", type:"select", options:box_tab_styles, cssClass:"configure_tab_settings_select_box_style"}, 
 	  {name: "Character(s) for Push indication (Clearing this field will reset to ↓ ):", id: "configure_pushglyph", type:"text", cssClass:"configure_tab_settings_form_text"},
 	  {name: "Character(s) for Draw indication (Clearing this field will reset to ↑ ):", id: "configure_drawglyph", type:"text", cssClass:"configure_tab_settings_form_text"},
 	  {name: "    Use a bar over button name to indicate Draw (overrides Push and Draw characters)", id: "configure_use_bar_for_draw", type:"checkbox", cssClass:"configure_tab_settings_form_text"},
 	  {name: "Tab location relative to notation:", id: "configure_tab_location", type:"select", options:tab_locations, cssClass:"configure_tab_settings_select"},
 	  {name: "    Strip all chords and tab before injecting tab (Tab below only. Tab above always strips.)", id: "configure_strip_chords", type:"checkbox", cssClass:"configure_tab_settings_form_text"},
-	  {html: '<p style="margin-top:20px;font-size:12pt;line-height:12pt;font-family:helvetica"><strong>Anglo Concertina Tablature Settings:</strong></p>'},	  
+	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:12pt;font-family:helvetica"><strong>Anglo Concertina Tablature Settings:</strong></p>'},	  
 	  {name: "Concertina style:", id: "configure_concertina_style", type:"select", options:concertina_styles, cssClass:"configure_tab_settings_select"}, 
 	  {name: "Preferred fingerings:", id: "configure_concertina_fingering", type:"select", options:concertina_fingerings, cssClass:"configure_tab_settings_select"},
-	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:12pt;font-family:helvetica">On-Row: Favors D5 and E5 on right-side C-row.</p>'},	  
-	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">Cross-Row: Favors D5 and E5 on the left-side G-row.</p>'},	  
-	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">Favors C5 on the left-side G-row draw, B4 on the right-side C-row draw.</p>'},	  
+	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">On-Row: Favors D5 and E5 on right-side C-row.</p>'},	  
+	  {html: '<p style="margin-top:8px;font-size:12pt;line-height:12pt;font-family:helvetica">Cross-Row: Favors D5 and E5 on the left-side G-row.</p>'},	  
+	  {html: '<p style="margin-top:8px;font-size:12pt;line-height:12pt;font-family:helvetica">Favors C5 on the left-side G-row draw, B4 on the right-side C-row draw.</p>'},	  
 	  {name: "    Gary Coover style tab (single notes only, overrides button name and direction settings)", id: "configure_gary_coover", type:"checkbox", cssClass:"configure_tab_settings_form_text"},
-	  {html: '<p style="text-align:center;margin-top:22px;"><input id="configure_anglo_fingerings" class="btn btn-subdialog configure_anglo_fingerings" onclick="ConfigureAngloFingerings()" type="button" value="Configure Anglo Concertina Tablature Button Names" title="Configure the Anglo Concertina tablature button names"></p>'},
+	  {html: '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fingerings" class="btn btn-subdialog configure_anglo_fingerings" onclick="ConfigureAngloFingerings()" type="button" value="Configure Anglo Concertina Tablature Button Names" title="Configure the Anglo Concertina tablature button names"></p>'},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 35, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -36081,8 +36093,8 @@ function ConfigureTablatureSettings(){
 			gInjectTab_ConcertinaStyle = args.result.configure_concertina_style;
 			gInjectTab_ConcertinaFingering = args.result.configure_concertina_fingering;
 			gInjectTab_StripChords = args.result.configure_strip_chords;
-			gInjectTab_GaryCoover = args.result.configure_gary_coover
-
+			gInjectTab_GaryCoover = args.result.configure_gary_coover;
+			gInjectTab_BoxTabStyle = args.result.configure_box_tab_style;
 
 			// Do some sanity checking on the push and draw glyphs
 			gInjectTab_PushGlyph = args.result.configure_pushglyph;
