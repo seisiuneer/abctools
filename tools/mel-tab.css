@@ -98,6 +98,14 @@ background-color: #efefef;
 color:black;
 }
 
+#tabstyle{
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:515px;
+margin-left:0px;
+margin-right:24px;
+}
 
 #layout{
 font-size:11pt;

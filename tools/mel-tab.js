@@ -204,10 +204,11 @@ function mergeTablature(input, notes) {
     var insertedTotal = 0;
 
     var location = document.getElementById('tab_location').selectedIndex;
-    var useBarForDraw = document.getElementById('useBarForDraw').checked
+    var useBarForDraw = document.getElementById('useBarForDraw').checked;
+
+    var tabStyle = document.getElementById('tabstyle').selectedIndex;
 
     var theTab;
-
 
     for (var i = 0; i < notes.length; ++i) {
 
@@ -231,6 +232,62 @@ function mergeTablature(input, notes) {
             direction = glyph.substr(2,glyphLen-1);
         }
 
+        if (tabStyle == 1){
+            
+            // Using push/pull tab style
+
+            switch (buttonNumber){
+                case "①":
+                    buttonNumber = "1";
+                    break;
+                case "②":
+                    buttonNumber = "2";
+                    break;
+                case "③":
+                    buttonNumber = "3";
+                    break;
+                case "④":
+                    buttonNumber = "4";
+                    break;
+                case "⑤":
+                    buttonNumber = "5";
+                    break;
+                case "⑥":
+                    buttonNumber = "6";
+                    break;
+                case "⑦":
+                    buttonNumber = "7";
+                    break;
+                case "⑧":
+                    buttonNumber = "8";
+                    break;
+                case "⑨":
+                    buttonNumber = "9";
+                    break;
+                case "⑩":
+                    buttonNumber = "10";
+                    break;
+                case "⑪":
+                    buttonNumber = "11";
+                    break;
+                default:
+                    buttonNumber += "'";
+                    break;
+            }
+
+            if (direction == PUSH_NAME){
+
+                theTab = "\"_" + buttonNumber + ";-; \"";
+
+            }
+            else{
+                
+                theTab = "\"_ ;-;" + buttonNumber + "\"";
+               
+            }
+
+        }
+        else
         if (useBarForDraw){
 
             switch (location){
@@ -448,7 +505,6 @@ function getNoteGlyph(note,style){
 
     switch (style){
 
-        
         case 0:
             //DG3A
 
@@ -588,7 +644,6 @@ function getNoteGlyph(note,style){
        
          var glyph_map = {
          
-         
                "^C,": "①"+PUSH_NAME,
                 "_D,": "①"+PUSH_NAME,
                 "^A,":  "1"+PUSH_NAME,
@@ -633,398 +688,7 @@ function getNoteGlyph(note,style){
                 "b'": "⑩"+PUSH_NAME,
                 "e'":  "10"+PUSH_NAME,
                 "d'": "⑪"+PUSH_NAME,
-    
             
-            };
-
-            var thisGlyph = glyph_map[note];
-
-            if (!thisGlyph){
-                return "x ";
-            }
-
-        break;
-        
-       case 3:
-            //DG3B
-       
-         var glyph_map = {
- "^G,": "1"+PUSH_NAME,
- "_A,": "1"+PUSH_NAME,
- "_B,": "1"+DRAW_NAME,
-"^A,": "1"+DRAW_NAME,
- "F,":  "2"+PUSH_NAME,
-                "_E,":  "2"+DRAW_NAME,
-                "^D,":  "2"+DRAW_NAME,
-                 "A,": "3"+PUSH_NAME,
-                "^C,": "3"+DRAW_NAME,
-                "_D,": "3"+DRAW_NAME,
-               "D,":  "4"+PUSH_NAME,
-             "^F,":  "4"+DRAW_NAME,
-                "_G,":  "4"+DRAW_NAME,
-               "D":  "5"+PUSH_NAME,
-                 "E":  "5"+DRAW_NAME,
-                "G":   "6"+PUSH_NAME,
-                "A":   "6"+DRAW_NAME,
-                "^F":  "7"+PUSH_NAME,
-                "_G":  "7"+PUSH_NAME,
-                "B":   "8"+PUSH_NAME,
-                "C":   "8"+DRAW_NAME,
-               "A":  "9"+PUSH_NAME,
-                 "B":  "9"+DRAW_NAME,
-                "D":   "10"+PUSH_NAME,
-                "E":   "10"+DRAW_NAME,
-                "D":   "10"+DRAW_NAME,
-                "^C":  "11"+DRAW_NAME,
-                "_D":  "11"+DRAW_NAME,
-               "G":   "12"+PUSH_NAME,
-                "^f":  "12"+DRAW_NAME,
-                "_g":  "12"+DRAW_NAME,
-               "^f":  "13"+PUSH_NAME,
-                "_g":  "13"+PUSH_NAME,
-                "e":  "13"+DRAW_NAME,
-              "b":   "14"+PUSH_NAME,
-                "a":   "14"+DRAW_NAME,
-               "a":  "15"+PUSH_NAME,
-                "g":   "15"+DRAW_NAME,
-                "d":   "16"+PUSH_NAME,
-                 "c":   "16"+DRAW_NAME,
-               "d":   "17"+PUSH_NAME,
-                "b":  "17"+DRAW_NAME,
-                 "g'":  "18"+PUSH_NAME,
-                "e":   "18"+DRAW_NAME,
-                 "^f'":  "19"+PUSH_NAME,
-                "_g'":  "19"+PUSH_NAME,
-                "^c":  "19"+DRAW_NAME,
-                "_d":  "19"+DRAW_NAME,
-               "b'": "20"+PUSH_NAME,
-                "^f":   "20"+DRAW_NAME,
-                "_g":   "20"+DRAW_NAME,
-               "a'": "21"+PUSH_NAME,
-                "e'": "21"+DRAW_NAME,
-                
-               
-            };
-
-            var thisGlyph = glyph_map[note];
-
-            if (!thisGlyph){
-                return "x ";
-            }
-
-        break;
-        
-        case 4:
-            //DG4B
-       
-         var glyph_map = {
-                 "^G,": "1"+PUSH_NAME,
-                "_A,": "1"+PUSH_NAME,
-                 "_B,": "1"+DRAW_NAME,
-                "^A,": "1"+DRAW_NAME,
-                "F,":  "2"+PUSH_NAME,
-                 "_E,":  "2"+DRAW_NAME,
-                "^D,":  "2"+DRAW_NAME,
-                "^F,": "3"+PUSH_NAME,
-                "_G,": "3"+PUSH_NAME,
-                  "A,": "3"+DRAW_NAME,
-               "D,":  "4"+PUSH_NAME,
-                "B,":  "4"+DRAW_NAME,
-              "^C":  "5"+DRAW_NAME,
-                "_D":  "5"+DRAW_NAME,
-               "D":   "6"+PUSH_NAME,
-               "^F":   "6"+DRAW_NAME,
-                "_G":   "6"+DRAW_NAME,
-               "D":  "7"+PUSH_NAME,
-                "E":   "7"+DRAW_NAME,
-               "G":   "8"+PUSH_NAME,
-                "A":   "8"+DRAW_NAME,
-                "^F":  "9"+PUSH_NAME,
-                "_G":  "9"+PUSH_NAME,
-                 "G":  "9"+DRAW_NAME,
-             "B":   "10"+PUSH_NAME,
-                "C":   "10"+DRAW_NAME,
-              "A":   "11"+DRAW_NAME,
-                "B":  "11"+DRAW_NAME,
-                "d":   "12"+PUSH_NAME,
-                "e":   "12"+DRAW_NAME,
-                "d":  "13"+PUSH_NAME,
-                "^c":  "13"+DRAW_NAME,
-                "_d":  "13"+DRAW_NAME,
-                "g":   "14"+PUSH_NAME,
-                "^f":   "14"+DRAW_NAME,
-                "_g":   "14"+DRAW_NAME,
-               "^f":  "15"+PUSH_NAME,
-                "_g":  "15"+PUSH_NAME,
-             "b":   "16"+PUSH_NAME,
-                "a":   "16"+DRAW_NAME,
-                "a":   "17"+PUSH_NAME,
-                "g":  "17"+DRAW_NAME,
-                "d'":  "18"+PUSH_NAME,
-                "c":   "18"+DRAW_NAME,
-               "d'": "19"+PUSH_NAME,
-                "b":  "19"+DRAW_NAME,
-                "g'":  "20"+PUSH_NAME,
-                "e":   "20"+DRAW_NAME,
-            "^f'": "21"+PUSH_NAME,
-                "_g'": "21"+PUSH_NAME,
-                  "^c'": "21"+DRAW_NAME,
-                "_d'": "21"+DRAW_NAME,
-                
-            };
-
-            var thisGlyph = glyph_map[note];
-
-            if (!thisGlyph){
-                return "x ";
-            }
-
-        break;
-        
-        case 5:
-            //GC3B
-       
-         var glyph_map = {
-               "^C,": "1"+PUSH_NAME,
-                "_D,": "1"+PUSH_NAME,
-                   "^D,": "1"+DRAW_NAME,
-                "_E,": "1"+DRAW_NAME,
-                "^A,":  "2"+PUSH_NAME,
-                "_B,":  "2"+PUSH_NAME,
-                "^G,":  "2"+DRAW_NAME,
-                "_A,":  "2"+DRAW_NAME,
-                "D,": "3"+PUSH_NAME,
-                "^F,": "3"+DRAW_NAME,
-                "_G,": "3"+DRAW_NAME,
-                "G,":  "4"+PUSH_NAME,
-                "B,":  "4"+DRAW_NAME,
-               "A":  "5"+PUSH_NAME,
-                "G":  "5"+DRAW_NAME,
-              "C":   "6"+PUSH_NAME,
-                "D":   "6"+DRAW_NAME,
-               "B":  "7"+PUSH_NAME,
-                 "C":   "7"+DRAW_NAME,
-              "E":   "8"+PUSH_NAME,
-                "F":   "8"+DRAW_NAME,
-               "D":  "9"+PUSH_NAME,
-                 "E":  "9"+DRAW_NAME,
-               "G":   "10"+PUSH_NAME,
-               "A":   "10"+DRAW_NAME,
-               "^F":  "11"+DRAW_NAME,
-                "_G":  "11"+DRAW_NAME,
-               "c":   "12"+PUSH_NAME,
-               "B" :   "12"+DRAW_NAME,
-               "b":  "13"+PUSH_NAME,
-                "a":  "13"+DRAW_NAME,
-                 "e":   "14"+PUSH_NAME,
-                "d":   "14"+DRAW_NAME,
-               "d":  "15"+PUSH_NAME,
-                 "c":   "15"+DRAW_NAME,
-              "g":   "16"+PUSH_NAME,
-                "f":   "16"+DRAW_NAME,
-              "e":  "17"+DRAW_NAME,
-                 "g":   "17"+PUSH_NAME,
-               "c'":  "18"+PUSH_NAME,
-                "a":   "18"+DRAW_NAME,
-               "b'": "19"+PUSH_NAME,
-                "^f":  "19"+DRAW_NAME,
-                "_g":  "19"+DRAW_NAME,
-                "e'":  "20"+PUSH_NAME,
-                "b":   "20"+DRAW_NAME,
-               "d'": "21"+PUSH_NAME,
-                "a'": "21"+DRAW_NAME,};
-
-            var thisGlyph = glyph_map[note];
-
-            if (!thisGlyph){
-                return "x ";
-            }
-
-        break;
-        
-        case 6:
-            //G3B (D/G)
-       
-         var glyph_map = {
-               "_E,":  "2"+DRAW_NAME,
-                "^D,":  "2"+DRAW_NAME,
-                // "A,": "3"+PUSH_NAME,
-               // "^C,": "3"+DRAW_NAME,
-              //  "_D,": "3"+DRAW_NAME,
-               "D,":  "4"+PUSH_NAME,
-             "^F,":  "4"+DRAW_NAME,
-                "_G,":  "4"+DRAW_NAME,
-             //  "D":  "5"+PUSH_NAME,
-              //   "E":  "5"+DRAW_NAME,
-                "G":   "6"+PUSH_NAME,
-                "A":   "6"+DRAW_NAME,
-               // "^F":  "7"+PUSH_NAME,
-              //  "_G":  "7"+PUSH_NAME,
-                "B":   "8"+PUSH_NAME,
-                "C":   "8"+DRAW_NAME,
-              // "A":  "9"+PUSH_NAME,
-               //  "B":  "9"+DRAW_NAME,
-                "D":   "10"+PUSH_NAME,
-                "E":   "10"+DRAW_NAME,
-                "D":   "10"+DRAW_NAME,
-              //  "^C":  "11"+DRAW_NAME,
-              //  "_D":  "11"+DRAW_NAME,
-               "G":   "12"+PUSH_NAME,
-                "^f":  "12"+DRAW_NAME,
-                "_g":  "12"+DRAW_NAME,
-             //  "^f":  "13"+PUSH_NAME,
-              //  "_g":  "13"+PUSH_NAME,
-                "e":  "13"+DRAW_NAME,
-              "b":   "14"+PUSH_NAME,
-                "a":   "14"+DRAW_NAME,
-             //  "a":  "15"+PUSH_NAME,
-               // "g":   "15"+DRAW_NAME,
-                "d":   "16"+PUSH_NAME,
-                 "c":   "16"+DRAW_NAME,
-              // "d":   "17"+PUSH_NAME,
-              //  "b":  "17"+DRAW_NAME,
-                 "g'":  "18"+PUSH_NAME,
-                "e":   "18"+DRAW_NAME,
-               //  "^f'":  "19"+PUSH_NAME,
-             //   "_g'":  "19"+PUSH_NAME,
-               // "^c":  "19"+DRAW_NAME,
-              //  "_d":  "19"+DRAW_NAME,
-               "b'": "20"+PUSH_NAME,
-                "^f":   "20"+DRAW_NAME,
-                "_g":   "20"+DRAW_NAME,
-             //  "a'": "21"+PUSH_NAME
-              //  "e'": "21"+DRAW_NAME,
-              
-               };
-
-            var thisGlyph = glyph_map[note];
-
-            if (!thisGlyph){
-                return "x ";
-            }
-
-        break;
-        
-        case 7:
-            //G4B (D/G)
-       
-         var glyph_map = {
-         // "^G,": "1"+PUSH_NAME,
-             //   "_A,": "1"+PUSH_NAME,
-              //   "_B,": "1"+DRAW_NAME,
-              //  "^A,": "1"+DRAW_NAME,
-                "F,":  "2"+PUSH_NAME,
-                 "_E,":  "2"+DRAW_NAME,
-                "^D,":  "2"+DRAW_NAME,
-             //   "^F,": "3"+PUSH_NAME,
-              //  "_G,": "3"+PUSH_NAME,
-               //   "A,": "3"+DRAW_NAME,
-               "D,":  "4"+PUSH_NAME,
-                "B,":  "4"+DRAW_NAME,
-             // "^C":  "5"+DRAW_NAME,
-             //   "_D":  "5"+DRAW_NAME,
-               "D":   "6"+PUSH_NAME,
-               "^F":   "6"+DRAW_NAME,
-                "_G":   "6"+DRAW_NAME,
-             //  "D":  "7"+PUSH_NAME,
-              // "E":   "7"+DRAW_NAME,
-               "G":   "8"+PUSH_NAME,
-                "A":   "8"+DRAW_NAME,
-               // "^F":  "9"+PUSH_NAME,
-               // "_G":  "9"+PUSH_NAME,
-               //  "G":  "9"+DRAW_NAME,
-             "B":   "10"+PUSH_NAME,
-                "C":   "10"+DRAW_NAME,
-              //"A":   "11"+DRAW_NAME,
-               // "B":  "11"+DRAW_NAME,
-                "d":   "12"+PUSH_NAME,
-                "e":   "12"+DRAW_NAME,
-               // "d":  "13"+PUSH_NAME,
-               // "^c":  "13"+DRAW_NAME,
-               // "_d":  "13"+DRAW_NAME,
-                "g":   "14"+PUSH_NAME,
-                "^f":   "14"+DRAW_NAME,
-                "_g":   "14"+DRAW_NAME,
-              // "^f":  "15"+PUSH_NAME,
-               // "_g":  "15"+PUSH_NAME,
-             "b":   "16"+PUSH_NAME,
-                "a":   "16"+DRAW_NAME,
-              //  "a":   "17"+PUSH_NAME,
-              //  "g":  "17"+DRAW_NAME,
-                "d'":  "18"+PUSH_NAME,
-                "c":   "18"+DRAW_NAME,
-              // "d'": "19"+PUSH_NAME,
-              //  "b":  "19"+DRAW_NAME,
-                "g'":  "20"+PUSH_NAME,
-                "e":   "20"+DRAW_NAME,
-           // "^f'": "21"+PUSH_NAME,
-              //  "_g'": "21"+PUSH_NAME
-               //   "^c'": "21"+DRAW_NAME,
-              //  "_d'": "21"+DRAW_NAME,
-              
-              };
-
-            var thisGlyph = glyph_map[note];
-
-            if (!thisGlyph){
-                return "x ";
-            }
-
-        break;
-        
-        case 8:
-            //G3B (G/C)
-       
-         var glyph_map = {
-          "^C,": "1"+PUSH_NAME,
-                "_D,": "1"+PUSH_NAME,
-                   "^D,": "1"+DRAW_NAME,
-                "_E,": "1"+DRAW_NAME,
-                //"^A,":  "2"+PUSH_NAME,
-               // "_B,":  "2"+PUSH_NAME,
-               // "^G,":  "2"+DRAW_NAME,
-               // "_A,":  "2"+DRAW_NAME,
-                "D,": "3"+PUSH_NAME,
-                "^F,": "3"+DRAW_NAME,
-                "_G,": "3"+DRAW_NAME,
-               //"G,":  "4"+PUSH_NAME,
-               // "B,":  "4"+DRAW_NAME,
-               "A":  "5"+PUSH_NAME,
-                "G":  "5"+DRAW_NAME,
-             //"C":   "6"+PUSH_NAME,
-               // "D":   "6"+DRAW_NAME,
-               "B":  "7"+PUSH_NAME,
-                 "C":   "7"+DRAW_NAME,
-              //"E":   "8"+PUSH_NAME,
-               // "F":   "8"+DRAW_NAME,
-               "D":  "9"+PUSH_NAME,
-                 "E":  "9"+DRAW_NAME,
-               //"G":   "10"+PUSH_NAME,
-              // "A":   "10"+DRAW_NAME,
-               "^F":  "11"+DRAW_NAME,
-                "_G":  "11"+DRAW_NAME,
-              // "c":   "12"+PUSH_NAME,
-              // "B" :   "12"+DRAW_NAME,
-               "b":  "13"+PUSH_NAME,
-                "a":  "13"+DRAW_NAME,
-               //  "e":   "14"+PUSH_NAME,
-              //  "d":   "14"+DRAW_NAME,
-               "d":  "15"+PUSH_NAME,
-                 "c":   "15"+DRAW_NAME,
-             // "g":   "16"+PUSH_NAME,
-              //  "f":   "16"+DRAW_NAME,
-              "e":  "17"+DRAW_NAME,
-                 "g":   "17"+PUSH_NAME,
-              // "c'":  "18"+PUSH_NAME,
-              //  "a":   "18"+DRAW_NAME,
-               "b'": "19"+PUSH_NAME,
-                "^f":  "19"+DRAW_NAME,
-                "_g":  "19"+DRAW_NAME,
-               // "e'":  "20"+PUSH_NAME,
-              //  "b":   "20"+DRAW_NAME,
-               "d'": "21"+PUSH_NAME,
-                "a'": "21"+DRAW_NAME,
-
             };
 
             var thisGlyph = glyph_map[note];
