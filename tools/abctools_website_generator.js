@@ -248,7 +248,7 @@ function generateWebsite() {
     theOutput +="        <h1>ABC Transcription Tools Generated Website</h1>\n";
     theOutput +="        <h2>Select a tune from the dropdown to load it into the frame below:</h2>\n";
     theOutput +='        <select id="tuneSelector">\n';
-    theOutput +='            <option value="">Click to Select a Tune</option>\n';
+    theOutput +='            <option value="">Select a Tune</option>\n';
     theOutput +="        </select>\n";
     theOutput +='        <iframe id="tuneFrame" src="" title="Embedded ABC Transcription Tools" height="900" width="900"></iframe>\n';
     theOutput +="    </div>\n";
