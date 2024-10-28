@@ -4,13 +4,15 @@
 //
 //
 //
-// Updated 27 October 2024 at 0830
+//
+// Updated 28 October 2024 at 1400
+//
 //
 //
 //
 //
 
-const cacheName = 'abctoolscache-2044';
+const cacheName = 'abctoolscache-2045';
 
 const contentToCache = [
     'abctools.html',
@@ -48,6 +50,7 @@ const contentToCache = [
     'download-reverb.js',
     'bww2abc.js',
     'manage_database.js',
+    'website_generator.js',
     'context-menu.js',
 	'api-keys.js',
     'img/zoomin.png',

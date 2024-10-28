@@ -924,6 +924,17 @@ padding:12px;
 	}
 }
 
+#export_websitebutton{
+height:42px;
+padding:12px;
+}
+
+@media (hover: hover) {
+	.export_websitebutton:hover{
+	background: palegreen;
+	}
+}
+
 .export_all_text{
 	font-size:12pt;
 	line-height:16px;
@@ -4629,6 +4640,12 @@ margin-left:12px;
 }
 
 .btn-smartdraw{
+  --color: black;
+  --background-color: #F0F0F0;
+
+}
+
+.btn-exportwebsite{
   --color: black;
   --background-color: #F0F0F0;
 

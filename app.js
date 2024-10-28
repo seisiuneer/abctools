@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2044_102724_0830";
+var gVersionNumber="2045_102824_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -24223,7 +24223,10 @@ function ExportAll(){
 		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
 		modal_msg += '<input id="exportall_jsonbutton" class="exportall_jsonbutton btn btn-alljsondownload" onclick="BatchJSONExport();" type="button" value="Export all Share URLs as JSON" title="Saves the Share URLs for all the tunes as a JSON file">'
 		modal_msg += '<input id="exportall_csvbutton" class="exportall_csvbutton btn btn-allcsvdownload" onclick="BatchCSVExport();" type="button" value="Export all Share URLs as CSV" title="Saves the Share URLs for all the tunes as a CSV file">'
-		
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Automatic Tunebook Website Builder</p>';
+		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
+		modal_msg += '<input id="export_websitebutton" class="export_websitebutton btn btn-exportwebsite" onclick="generateWebsite();" type="button" value="Generate Tunebook Website" title="Automatically build a website for the tunes">'
+		modal_msg += '</p>';		
 		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">SmartDraw Set List Builder</p>';
 		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
 		modal_msg += '<input id="export_smartdrawbutton" class="export_smartdrawbutton btn btn-smartdraw" onclick="SmartDrawExport();" type="button" value="SmartDraw Set List Builder" title="Build a SmartDraw set list using drag and drop">'
@@ -24233,7 +24236,7 @@ function ExportAll(){
 
 	modal_msg += '<a id="exportall_help" href="https://michaeleskin.com/abctools/userguide.html#export_all" target="_blank" style="text-decoration:none;" title="Learn more about the audio and image exporter" class="dialogcornerbutton">?</a>';
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) })
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, scrollWithPage: (AllowDialogsToScroll()) })
 
 	if (format != "whistle"){
 		document.getElementById("export_width").value = gExportWidthAll;
