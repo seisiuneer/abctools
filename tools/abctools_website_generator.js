@@ -398,11 +398,11 @@ function copyOutputToClipboard() {
     copyToClipboard(textToCopy);
 
     // Give some feedback
-    document.getElementById("copybutton").innerHTML = "Output copied to the clipboard!";
+    document.getElementById("copybutton").innerHTML = "Website code copied to the clipboard!";
 
     setTimeout(function() {
 
-        document.getElementById("copybutton").innerHTML = "Copy output to the clipboard";
+        document.getElementById("copybutton").innerHTML = "Copy Website code to the clipboard";
 
     }, 1250);
 }
