@@ -127,7 +127,7 @@ function BatchJSONExport(theABC){
 
         var titleURL = title.replaceAll(" ","_");
 
-        theURL+="&name="+titleURL+"&play=1";
+        theURL+="&name="+titleURL;
 
         theJSON.push({Name:title,URL:theURL});
 
