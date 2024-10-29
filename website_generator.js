@@ -177,7 +177,6 @@ function generateAndSaveWebsite() {
     theOutput +="    }\n";
     theOutput +="\n";
     theOutput +="    .container {\n";
-    theOutput +="        max-width: 1024px;\n";
     theOutput +="        margin: 0 auto;\n";
     theOutput +="        text-align: center;\n";
     theOutput +="    }\n";
@@ -227,7 +226,8 @@ function generateAndSaveWebsite() {
     theOutput +='        <select id="tuneSelector">\n';
     theOutput +='            <option value="">Click to Select a Tune</option>\n';
     theOutput +="        </select>\n";
-    theOutput +='        <iframe id="tuneFrame" src="" title="Embedded ABC Transcription Tools" height="'+gWebsiteHeight+'" width="'+gWebsiteWidth+'"></iframe>\n';
+    theOutput +="        <br/>\n";
+    theOutput +='        <iframe id="tuneFrame" src="" title="Embedded ABC Transcription Tools" width="'+gWebsiteWidth+'" height="'+gWebsiteHeight+'"></iframe>\n';
     theOutput +="    </div>\n";
     theOutput +="\n";
 
