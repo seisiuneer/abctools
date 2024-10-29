@@ -4428,6 +4428,23 @@ margin-top:-9px;
 margin-left:12px;
 }
 
+.configure_website_form_text4{
+font-size:12pt;
+line-height:12px;
+font-family:helvetica;
+margin-top:36px;
+margin-bottom:12px;
+display:flex;
+}
+
+.configure_website_form_text4>input{
+font-size:12pt;
+font-family:helvetica;
+width: 100px;
+margin-top:-9px;
+margin-left:12px;
+}
+
 /******************************************************************************/
 /* STYLES RELATED TO BUTTONS                                                  */
 /******************************************************************************/

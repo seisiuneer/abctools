@@ -227,7 +227,12 @@ function generateAndSaveWebsite() {
     theOutput +='            <option value="">Click to Select a Tune</option>\n';
     theOutput +="        </select>\n";
     theOutput +="        <br/>\n";
-    theOutput +='        <iframe id="tuneFrame" src="" title="Embedded ABC Transcription Tools" width="'+gWebsiteWidth+'" height="'+gWebsiteHeight+'"></iframe>\n';
+    if (!gWebsiteResponsive){
+        theOutput +='        <iframe id="tuneFrame" src="" title="Embedded ABC Transcription Tools" width="'+gWebsiteWidth+'" height="'+gWebsiteHeight+'"></iframe>\n';
+    }
+    else{
+        theOutput +='        <iframe id="tuneFrame" src="" title="Embedded ABC Transcription Tools"></iframe>\n';        
+    }
     theOutput +="    </div>\n";
     theOutput +="\n";
 
@@ -249,10 +254,25 @@ function generateAndSaveWebsite() {
     theOutput +="            tuneSelector.appendChild(option);\n";
     theOutput +="        });\n";
     theOutput +="\n";
-    theOutput +="    // Update iframe src when an option is selected\n";
-    theOutput +="    tuneSelector.addEventListener('change', () => {\n";
-    theOutput +="        tuneFrame.src = tuneSelector.value;\n";
-    theOutput +="        });\n";
+    theOutput +="       // Update iframe src when an option is selected\n";
+    theOutput +="       tuneSelector.addEventListener('change', () => {\n";
+    theOutput +="           tuneFrame.src = tuneSelector.value;\n";
+    theOutput +="       });\n";
+    if (gWebsiteResponsive){
+        theOutput +="\n";
+        theOutput +="       function resizeIframe() {\n";
+        theOutput +="           const iframe = document.getElementById('tuneFrame');\n";
+        theOutput +="           iframe.style.width = window.innerWidth + 'px';\n";
+        theOutput +="           iframe.style.height = (window.innerHeight-300) + 'px';\n";
+        theOutput +="       }\n";
+        theOutput +="\n";
+        theOutput +="       // Resize the iframe on window resize\n";
+        theOutput +="       window.addEventListener('resize', resizeIframe);\n";
+        theOutput +="\n";
+        theOutput +="       // Initial call to ensure it fits when the page loads\n";
+        theOutput +="       resizeIframe();\n";
+        theOutput +="\n";
+    }
     theOutput +="    });\n";    
     theOutput +="\n";
     theOutput +="</script>\n";
@@ -355,6 +375,7 @@ var gWebsiteSubtitle = "Select a tune from the dropdown to load it into the fram
 var gWebsiteWidth = 900;
 var gWebsiteHeight = 900;
 var gWebsiteColor = "#FFFFFF";
+var gWebsiteResponsive = false;
 
 var gWebsiteConfig ={
 
@@ -392,7 +413,10 @@ var gWebsiteConfig ={
     website_height: gWebsiteHeight,
 
     // Background color
-    website_color: gWebsiteColor
+    website_color: gWebsiteColor,
+
+    // Responsive
+    bResponsive: gWebsiteResponsive
 
 }
 
@@ -423,6 +447,7 @@ function generateWebsite(){
       {html: '<p style="margin-top:12px;margin-bottom:18px;font-size:12pt;line-height:14pt;font-family:helvetica">Clicking "OK" will export a tunebook player website with the settings you enter below:</p>'},  
       {name: "Website title:", id: "website_title", type:"text", cssClass:"configure_website_form_text_wide"},
       {name: "Website subtitle:", id: "website_subtitle", type:"text", cssClass:"configure_website_form_text_wide2"},
+      {name: "        Responsive player size (ignores width and height below, may have issues on mobile)", id: "bResponsive", type:"checkbox", cssClass:"configure_website_form_text4"},
       {name: "Website player width (pixels):", id: "website_width", type:"number", cssClass:"configure_website_form_text3"},
       {name: "Website player height (pixels):", id: "website_height", type:"number", cssClass:"configure_website_form_text2"},
       {name: "Website background color (HTML color):", id: "website_color", type:"text",cssClass:"configure_website_form_text2"},      
@@ -452,6 +477,10 @@ function generateWebsite(){
             // Subtitle
             gWebsiteSubtitle = args.result.website_subtitle;
             gWebsiteConfig.website_subtitle = gWebsiteSubtitle;
+
+            // Responsive
+            gWebsiteResponsive = args.result.bResponsive;
+            gWebsiteConfig.bResponsive = gWebsiteResponsive;
 
             // Width
             gWebsiteWidth = args.result.website_width;
