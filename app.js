@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2046_102924_1000";
+var gVersionNumber="2047_102924_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -24225,12 +24225,20 @@ function ExportAll(){
 		modal_msg += '<input id="exportall_csvbutton" class="exportall_csvbutton btn btn-allcsvdownload" onclick="BatchCSVExport();" type="button" value="Export all Share URLs as CSV" title="Saves the Share URLs for all the tunes as a CSV file">'
 		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Automatic Tunebook Website Builder</p>';
 		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
-		modal_msg += '<input id="export_websitebutton" class="export_websitebutton btn btn-exportwebsite" onclick="generateWebsite();" type="button" value="Generate Tunebook Website" title="Automatically build a website for the tunes">'
-		modal_msg += '</p>';		
+		modal_msg  += '<input id="export_websitebutton" class="export_websitebutton btn btn-exportwebsite" onclick="generateWebsite();" type="button" value="Generate Tunebook Website" title="Automatically build a website for the tunes">'
+		modal_msg += '</p>';	
 		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">SmartDraw Set List Builder</p>';
 		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
 		modal_msg += '<input id="export_smartdrawbutton" class="export_smartdrawbutton btn btn-smartdraw" onclick="SmartDrawExport();" type="button" value="SmartDraw Set List Builder" title="Build a SmartDraw set list using drag and drop">'
 		modal_msg += '</p>';
+
+	}
+	else{
+
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Automatic Tunebook Website Builder</p>';
+		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
+		modal_msg  += '<input id="export_websitebutton" class="export_websitebutton btn btn-exportwebsite" onclick="generateWebsite();" type="button" value="Generate Tunebook Website" title="Automatically build a website for the tunes">'
+		modal_msg += '</p>';	
 
 	}
 
@@ -37227,8 +37235,8 @@ function AdvancedControlsDialog(){
 			
 			if (format == "whistle"){
 
-				document.getElementById("configure_batch_mp3_export").value = "Export All Audio";
-				document.getElementById("configure_batch_mp3_export").title = "Exports all the tunes in the ABC text area as audio files";
+				document.getElementById("configure_batch_mp3_export").value = "Export All as Audio or Website";
+				document.getElementById("configure_batch_mp3_export").title = "Exports all the tunes in the ABC text area as audio files or as a website";
 
 			}
 		}
