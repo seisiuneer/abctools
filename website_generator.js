@@ -162,6 +162,11 @@ function generateAndSaveWebsite() {
     theOutput +="<head>\n";
     theOutput +="\n";
     theOutput +='<meta charset="UTF-8">\n';
+
+    if (gWebsiteResponsive){
+        theOutput +='<meta name="viewport" content="width=860" />\n'; 
+    }
+
     theOutput +="\n";
     theOutput +="<title>"+gWebsiteTitle+"</title>\n";
     theOutput +="\n";
@@ -447,7 +452,7 @@ function generateWebsite(){
       {html: '<p style="margin-top:12px;margin-bottom:18px;font-size:12pt;line-height:14pt;font-family:helvetica">Clicking "OK" will export a tunebook player website with the settings you enter below:</p>'},  
       {name: "Website title:", id: "website_title", type:"text", cssClass:"configure_website_form_text_wide"},
       {name: "Website subtitle:", id: "website_subtitle", type:"text", cssClass:"configure_website_form_text_wide2"},
-      {name: "        Responsive player size (ignores width and height below, may have issues on mobile)", id: "bResponsive", type:"checkbox", cssClass:"configure_website_form_text4"},
+      {name: "        Responsive player size (ignores width and height below)", id: "bResponsive", type:"checkbox", cssClass:"configure_website_form_text4"},
       {name: "Website player width (pixels):", id: "website_width", type:"number", cssClass:"configure_website_form_text3"},
       {name: "Website player height (pixels):", id: "website_height", type:"number", cssClass:"configure_website_form_text2"},
       {name: "Website background color (HTML color):", id: "website_color", type:"text",cssClass:"configure_website_form_text2"},      
