@@ -9,6 +9,62 @@
 // https://michaeleskin.com
 //
 
+
+//
+// Inject the MIDI parameters into this tune
+//
+function WebsiteInjectInstruments(theTune){
+
+    // Inject soundfont
+    switch (gWebsiteSoundFont){
+
+        case "fluid":
+            theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont fluid");
+            break;
+        case "musyng":
+            theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont musyng");
+            break;
+        case "fatboy":
+            theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont fatboy");
+            break;
+        case "canvas":
+            theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont canvas");
+            break;
+        case "mscore":
+            theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont mscore");
+            break;
+        case "arachno":
+            theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont arachno");
+            break;
+        case "fluidhq":
+            theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont fluidhq");
+            break;
+        default:
+            theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont fluid");
+            break;
+    }
+
+    // Inject instrument
+    // Offset by one to deal with mute instrument at offset zero
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI program "+gWebsiteMelodyInstrumentInject);
+ 
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI bassprog "+gWebsiteBassInstrumentInject);
+    
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI chordprog "+gWebsiteChordInstrumentInject);
+   
+    // Inject bass volume
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI bassvol "+gWebsiteBassVolume);
+
+    // Inject chord volume
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI chordvol "+gWebsiteChordVolume);
+    
+    // Seeing extra linefeeds after the inject
+    theTune = theTune.replace("\n\n","");
+
+    return(theTune);
+
+}
+
 //
 // Export all the tunes Share URL in a JSON file
 //
@@ -29,6 +85,11 @@ function BatchJSONExportForWebGenerator(theABC){
     for (var i=0;i<nTunes;++i){
 
         var thisTune = getTuneByIndex(i);
+
+        if (gWebsiteInjectInstruments){
+
+            thisTune = WebsiteInjectInstruments(thisTune);
+        }
 
         var title = GetTuneAudioDownloadName(thisTune,"");
 
@@ -51,7 +112,7 @@ function BatchJSONExportForWebGenerator(theABC){
 //
 // Generate the website
 //
-function generateWebsite() {
+function generateAndSaveWebsite() {
 
     var theOutput = "";
 
@@ -71,6 +132,9 @@ function generateWebsite() {
 
         return;
     }
+
+    // Keep track of actions
+    sendGoogleAnalytics("action","generateWebsite");
 
     var theJSON = BatchJSONExportForWebGenerator(theABC);
 
@@ -99,7 +163,7 @@ function generateWebsite() {
     theOutput +="\n";
     theOutput +='<meta charset="UTF-8">\n';
     theOutput +="\n";
-    theOutput +="<title>ABC Transcription Tools Generated Website</title>\n";
+    theOutput +="<title>"+gWebsiteTitle+"</title>\n";
     theOutput +="\n";
 
     // CSS
@@ -107,7 +171,7 @@ function generateWebsite() {
     theOutput +="\n";
     theOutput +="    body {\n";
     theOutput +="        font-family: Arial, sans-serif;\n";
-    theOutput +="        background-color: #ffffff;\n";
+    theOutput +="        background-color: "+gWebsiteColor+";\n";
     theOutput +="        margin: 0px;\n";
     theOutput +="        padding: 0px;\n";
     theOutput +="    }\n";
@@ -147,6 +211,7 @@ function generateWebsite() {
     theOutput +="\n";
     theOutput +="    iframe {\n";
     theOutput +="        border: 1px solid #ccc;\n";
+    theOutput +="        background-color: #ffffff;\n";
     theOutput +="    }\n";
     theOutput +="</style>\n";
     theOutput +="\n";
@@ -157,12 +222,12 @@ function generateWebsite() {
     theOutput +="<body>\n";
     theOutput +="\n";
     theOutput +='    <div class="container">\n';
-    theOutput +="        <h1>ABC Transcription Tools Generated Website</h1>\n";
-    theOutput +="        <h2>Select a tune from the dropdown to load it into the frame below:</h2>\n";
+    theOutput +="        <h1>"+gWebsiteTitle+"</h1>\n";
+    theOutput +="        <h2>"+gWebsiteSubtitle+"</h2>\n";
     theOutput +='        <select id="tuneSelector">\n';
     theOutput +='            <option value="">Click to Select a Tune</option>\n';
     theOutput +="        </select>\n";
-    theOutput +='        <iframe id="tuneFrame" src="" title="Embedded ABC Transcription Tools" height="900" width="900"></iframe>\n';
+    theOutput +='        <iframe id="tuneFrame" src="" title="Embedded ABC Transcription Tools" height="'+gWebsiteHeight+'" width="'+gWebsiteWidth+'"></iframe>\n';
     theOutput +="    </div>\n";
     theOutput +="\n";
 
@@ -273,4 +338,221 @@ function generateWebsite() {
 
     });
 
+}
+
+var gWebsiteSoundFont = "fluid";
+var gWebsiteInjectInstruments = false;
+var gWebsiteBassInstrument = 1;
+var gWebsiteBassInstrumentInject = 1;
+var gWebsiteChordInstrument = 1;
+var gWebsiteChordInstrumentInject = 1;
+var gWebsiteBassVolume = 64;
+var gWebsiteChordVolume = 64;
+var gWebsiteMelodyInstrument = 1;
+var gWebsiteMelodyInstrumentInject = 1;
+var gWebsiteTitle = "ABC Transcription Tools Generated Website";
+var gWebsiteSubtitle = "Select a tune from the dropdown to load it into the frame below:";
+var gWebsiteWidth = 900;
+var gWebsiteHeight = 900;
+var gWebsiteColor = "#FFFFFF";
+
+var gWebsiteConfig ={
+
+    // Title
+    website_title: gWebsiteTitle,
+
+    // Subtitle
+    website_subtitle: gWebsiteSubtitle,
+
+    // Inject instruments?
+    bInjectInstruments: gWebsiteInjectInstruments,
+
+    // Sound font
+    sound_font: gWebsiteSoundFont,
+
+    // Melody Instrument
+    melody_instrument: gWebsiteMelodyInstrument,
+
+    // Bass Instrument
+    bass_instrument: gWebsiteBassInstrument,
+
+    // Bass Volume
+    bass_volume: gWebsiteBassVolume,
+
+    // Chord Instrument
+    chord_instrument: gWebsiteChordInstrument,
+
+    // Chord Volume
+    chord_volume: gWebsiteChordVolume,
+
+    // Website frame width
+    website_width: gWebsiteWidth,
+
+    // Website frame height
+    website_height: gWebsiteHeight,
+
+    // Background color
+    website_color: gWebsiteColor
+
+}
+
+function generateWebsite(){
+
+    var midi_program_list = [];
+
+    for (var i=0;i<=MIDI_PATCH_COUNT;++i){
+        midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
+    }
+
+    const sound_font_options = [
+        { name: "  Fluid", id: "fluid" },
+        { name: "  Musyng Kite", id: "musyng" },
+        { name: "  FatBoy", id: "fatboy" },
+        { name: "  Canvas", id: "canvas" },
+        { name: "  MScore", id: "mscore" },
+        { name: "  Arachno", id: "arachno" },
+        { name: "  FluidHQ", id: "fluidhq"}
+    ];
+
+    for (var i=0;i<=MIDI_PATCH_COUNT;++i){
+        midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
+    }
+
+    var form = [
+      {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:18px">Generate Tunebook Website&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#generate_website" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
+      {html: '<p style="margin-top:12px;margin-bottom:18px;font-size:12pt;line-height:14pt;font-family:helvetica">Clicking "OK" will export a tunebook player website with the settings you enter below:</p>'},  
+      {name: "Website title:", id: "website_title", type:"text", cssClass:"configure_website_form_text_wide"},
+      {name: "Website subtitle:", id: "website_subtitle", type:"text", cssClass:"configure_website_form_text_wide2"},
+      {name: "Website player width (pixels):", id: "website_width", type:"number", cssClass:"configure_website_form_text3"},
+      {name: "Website player height (pixels):", id: "website_height", type:"number", cssClass:"configure_website_form_text2"},
+      {name: "Website background color (HTML color):", id: "website_color", type:"text",cssClass:"configure_website_form_text2"},      
+      {name: "          Add instruments and volume overrides to each tune ", id: "bInjectInstruments", type:"checkbox", cssClass:"configure_website_form_text2"},
+      {name: "Soundfont:", id: "sound_font", type:"select", options:sound_font_options, cssClass:"configure_setuppdftunebook_midi_program_select"},
+      {name: "Melody instrument:", id: "melody_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
+      {name: "Bass instrument:", id: "bass_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
+      {name: "Bass volume (0-127):", id: "bass_volume", type:"number", cssClass:"configure_website_form_text"},
+      {name: "Chord instrument:", id: "chord_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
+      {name: "Chord volume (0-127):", id: "chord_volume", type:"number", cssClass:"configure_website_form_text"},
+    ];
+
+    setTimeout(function(){
+
+        idlePDFTunebookBuilder();
+
+    }, 150);
+
+    const modal = DayPilot.Modal.form(form, gWebsiteConfig, { theme: "modal_flat", top: 50, width: 730, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+    
+        if (!args.canceled){
+
+            // Title
+            gWebsiteTitle = args.result.website_title;
+            gWebsiteConfig.website_title = gWebsiteTitle;
+
+            // Subtitle
+            gWebsiteSubtitle = args.result.website_subtitle;
+            gWebsiteConfig.website_subtitle = gWebsiteSubtitle;
+
+            // Width
+            gWebsiteWidth = args.result.website_width;
+            gWebsiteConfig.website_width = gWebsiteWidth;
+
+            // Height
+            gWebsiteHeight = args.result.website_height;
+            gWebsiteConfig.website_height = gWebsiteHeight;
+
+            // Background color
+            gWebsiteColor = args.result.website_color;
+            gWebsiteConfig.website_color = gWebsiteColor;
+
+            // Add instruments?
+            gWebsiteInjectInstruments = args.result.bInjectInstruments;
+            gWebsiteConfig.bInjectInstruments = gWebsiteInjectInstruments;
+
+            // Soundfont
+            gWebsiteSoundFont = args.result.sound_font;
+            gWebsiteConfig.sound_font = gWebsiteSoundFont;
+
+            // Melody Instrument
+            gWebsiteMelodyInstrument = args.result.melody_instrument;
+            gWebsiteConfig.melody_instrument = gWebsiteMelodyInstrument;
+
+            // Bass Instrument
+            gWebsiteBassInstrument = args.result.bass_instrument;
+            gWebsiteConfig.bass_instrument = gWebsiteBassInstrument;
+
+            // Bass volume
+            gWebsiteBassVolume = args.result.bass_volume;
+            gWebsiteConfig.bass_volume = gWebsiteBassVolume;
+
+            // Chord Instrument
+            gWebsiteChordInstrument = args.result.chord_instrument;
+            gWebsiteConfig.chord_instrument = gWebsiteChordInstrument;
+
+            // Chord volume
+            gWebsiteChordVolume = args.result.chord_volume;
+            gWebsiteConfig.chord_volume = gWebsiteChordVolume;
+
+            if (gWebsiteInjectInstruments){
+                
+                // Special case for muting voices
+                if (gWebsiteMelodyInstrument == 0){
+
+                    gWebsiteMelodyInstrumentInject = "mute";
+
+                }
+                else{
+
+                    gWebsiteMelodyInstrumentInject = gWebsiteMelodyInstrument - 1;
+
+                    if ((gWebsiteMelodyInstrumentInject < 0) || (gWebsiteMelodyInstrumentInject > MIDI_PATCH_COUNT)){
+
+                        gWebsiteMelodyInstrumentInject = 0;
+
+                    }
+                }
+
+                // Special case for muting voices
+                if (gWebsiteBassInstrument == 0){
+
+                    gWebsiteBassInstrumentInject = "mute";
+
+                }
+                else{
+
+                    gWebsiteBassInstrumentInject = gWebsiteBassInstrument - 1;
+
+                    if ((gWebsiteBassInstrumentInject < 0) || (gWebsiteBassInstrumentInject > MIDI_PATCH_COUNT)){
+
+                        gWebsiteBassInstrumentInject = 0;
+
+                    }
+
+                }
+
+                // Special case for muting voices
+                if (gWebsiteChordInstrument == 0){
+
+                    gWebsiteChordInstrumentInject = "mute";
+
+                }
+                else{
+
+                    gWebsiteChordInstrumentInject = gWebsiteChordInstrument - 1;
+
+                    if ((gWebsiteChordInstrumentInject < 0) || (gWebsiteChordInstrumentInject > MIDI_PATCH_COUNT)){
+
+                        gWebsiteChordInstrumentInject = 0;
+
+                    }
+
+                }
+
+            }
+
+            generateAndSaveWebsite();
+
+        }
+
+    });
 }
