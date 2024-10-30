@@ -390,7 +390,7 @@ var gWebsiteFooter2 = "";
 var gWebsiteWidth = 900;
 var gWebsiteHeight = 900;
 var gWebsiteColor = "#FFFFFF";
-var gWebsiteResponsive = false;
+var gWebsiteResponsive = true;
 
 var gWebsiteConfig ={
 

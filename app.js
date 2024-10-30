@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2051_103024_0930";
+var gVersionNumber="2052_103024_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -36627,10 +36627,17 @@ function idlePDFExportDialog(){
 	}
 }
 
-function PDFExportDialog(){
+function PDFExportDialog(event){
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
+		return;
+	}
+
+
+	// Shift key down, export a website instead
+	if (event && (event.shiftKey)){
+		generateWebsite();
 		return;
 	}
 
@@ -43263,22 +43270,23 @@ function DoStartup() {
 			ShowHelp();
 		};
 
-		if (!gIsQuickEditor){
+	if (!gIsQuickEditor){
 
-			document.getElementById("playbuttonicon").onclick = 
-				function() {
-					PlayABC(null);
-				};
+		document.getElementById("playbuttonicon").onclick = 
+			function() {
+				PlayABC(null);
+			};
+
+		// Hook up the PDF button
+		document.getElementById("pdfbuttonicon").onclick = 
+			function() {
+				PDFExportDialog(event);
+			};
+	}
+	else{
+		document.getElementById("playbuttonicon").onclick = QE_PlayButton_Handler;
+	}
 	
-			// Hook up the PDF button
-			document.getElementById("pdfbuttonicon").onclick = 
-				function() {
-					PDFExportDialog();
-				};
-		}
-		else{
-			document.getElementById("playbuttonicon").onclick = QE_PlayButton_Handler;
-		}
 	gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
 
 	// Clear the text entry area, but don't render
