@@ -238,6 +238,14 @@ function generateAndSaveWebsite() {
     else{
         theOutput +='        <iframe id="tuneFrame" src="" title="Embedded ABC Transcription Tools"></iframe>\n';        
     }
+    if (gWebsiteFooter1 && (gWebsiteFooter1 != "")){
+        theOutput +='        <p>'+gWebsiteFooter1+'</p>\n';
+
+    }
+    if (gWebsiteFooter2 && (gWebsiteFooter2 != "")){
+        theOutput +='        <p>'+gWebsiteFooter2+'</p>\n';
+
+    }
     theOutput +="    </div>\n";
     theOutput +="\n";
 
@@ -377,6 +385,8 @@ var gWebsiteMelodyInstrument = 1;
 var gWebsiteMelodyInstrumentInject = 1;
 var gWebsiteTitle = "ABC Transcription Tools Generated Website";
 var gWebsiteSubtitle = "Select a tune from the dropdown to load it into the frame below:";
+var gWebsiteFooter1 = "";
+var gWebsiteFooter2 = "";
 var gWebsiteWidth = 900;
 var gWebsiteHeight = 900;
 var gWebsiteColor = "#FFFFFF";
@@ -389,6 +399,12 @@ var gWebsiteConfig ={
 
     // Subtitle
     website_subtitle: gWebsiteSubtitle,
+
+    // Footer1
+    website_footer1: gWebsiteFooter1,
+
+    // Footer2
+    website_footer2: gWebsiteFooter2,
 
     // Inject instruments?
     bInjectInstruments: gWebsiteInjectInstruments,
@@ -452,6 +468,8 @@ function generateWebsite(){
       {html: '<p style="margin-top:12px;margin-bottom:18px;font-size:12pt;line-height:14pt;font-family:helvetica">Clicking "OK" will export a tunebook player website with the settings you enter below:</p>'},  
       {name: "Website title:", id: "website_title", type:"text", cssClass:"configure_website_form_text_wide"},
       {name: "Website subtitle:", id: "website_subtitle", type:"text", cssClass:"configure_website_form_text_wide2"},
+      {name: "Website footer #1:", id: "website_footer1", type:"text", cssClass:"configure_website_form_text_wide2"},
+      {name: "Website footer #2:", id: "website_footer2", type:"text", cssClass:"configure_website_form_text_wide2"},
       {name: "        Responsive player size (ignores width and height below)", id: "bResponsive", type:"checkbox", cssClass:"configure_website_form_text4"},
       {name: "Website player width (pixels):", id: "website_width", type:"number", cssClass:"configure_website_form_text3"},
       {name: "Website player height (pixels):", id: "website_height", type:"number", cssClass:"configure_website_form_text2"},
@@ -482,6 +500,14 @@ function generateWebsite(){
             // Subtitle
             gWebsiteSubtitle = args.result.website_subtitle;
             gWebsiteConfig.website_subtitle = gWebsiteSubtitle;
+
+            // Footer 1
+            gWebsiteFooter1 = args.result.website_footer1;
+            gWebsiteConfig.website_footer1 = gWebsiteFooter1;
+
+            // Footer 2
+            gWebsiteFooter2 = args.result.website_footer2;
+            gWebsiteConfig.website_footer2 = gWebsiteFooter2;
 
             // Responsive
             gWebsiteResponsive = args.result.bResponsive;
