@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2053_103124_1100";
+var gVersionNumber="2054_103124_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -161,6 +161,8 @@ var gPDFOrientation = "portrait";
 var gPDFPaperSize = "letter";
 var gPageWidth = 535;
 var gRenderPixelRatio = 2.0;
+
+var gPDFFileName = "";
 
 // Include page links on tunebook index pages
 var gIncludePageLinks = true;
@@ -8713,6 +8715,14 @@ function promptForPDFFilename(placeholder, callback){
 	var theregex = /^[_]+/;
 	placeholder = placeholder.replace(theregex, '');
 
+	// Reuse last placeholder
+	if (!gDoForcePDFFilename){
+		if (gPDFFileName != ""){
+			placeholder = gPDFFileName;
+			placeholder = placeholder.replace(".pdf","");
+		}
+	}
+
 	DayPilot.Modal.prompt("Please enter a filename for your PDF file:", placeholder+".pdf",{ theme: "modal_flat", top: 200, autoFocus: false, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args) {
 
 		var fname = args.result;
@@ -8743,6 +8753,10 @@ function promptForPDFFilename(placeholder, callback){
 					fname = fname + ".pdf";
 
 				}
+
+				// Save the previous name
+				gPDFFileName = fname;
+
 			}
 			else{
 
@@ -12713,6 +12727,9 @@ function RestoreDefaults() {
 	// Clear the autoscroll state
 	gLastAutoScrolledTune = -1;
 	gLastClickedTune = -1;
+
+	gPDFFileName = "";
+	gWebsiteFilename = "";
 
 	// Reset file selectors
 	let fileElement = document.getElementById('selectabcfile');

@@ -306,7 +306,10 @@ function generateAndSaveWebsite() {
         return;
     }
 
-    var thePlaceholder = "abctools_website.html";
+    var thePlaceholder = gWebsiteFilename;
+    if (thePlaceholder == ""){
+        thePlaceholder = "abctools_website.html";
+    }
 
     var thePrompt = "Please enter a filename for your output website HTML file:";
 
@@ -347,6 +350,8 @@ function generateAndSaveWebsite() {
             fname = fname + ".txt";
 
         }
+
+        gWebsiteFilename = fname;
 
         var a = document.createElement("a");
 
@@ -391,6 +396,7 @@ var gWebsiteWidth = 900;
 var gWebsiteHeight = 900;
 var gWebsiteColor = "#FFFFFF";
 var gWebsiteResponsive = true;
+var gWebsiteFilename = "";
 
 var gWebsiteConfig ={
 
