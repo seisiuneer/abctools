@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2052_103024_1600";
+var gVersionNumber="2053_103124_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -36629,11 +36629,14 @@ function idlePDFExportDialog(){
 
 function PDFExportDialog(event){
 
+	if (!gAllowCopy){
+		return;
+	}
+
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
 		return;
 	}
-
 
 	// Shift key down, export a website instead
 	if (event && (event.shiftKey)){
