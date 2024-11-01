@@ -97,7 +97,11 @@ function BatchJSONExportForWebGenerator(theABC){
 
         var titleURL = title.replaceAll(" ","_");
 
-        theURL+="&name="+titleURL+"&play=1";
+        theURL+="&name="+titleURL;
+
+        if (gWebsiteOpenInPlayer){
+            theURL+="&play=1";
+        }
 
         theJSON.push({Name:title,URL:theURL});
 
@@ -238,14 +242,17 @@ function generateAndSaveWebsite() {
     else{
         theOutput +='        <iframe id="tuneFrame" src="" title="Embedded ABC Transcription Tools"></iframe>\n';        
     }
+
+    var bottomDelta = 195;
     if (gWebsiteFooter1 && (gWebsiteFooter1 != "")){
         theOutput +='        <p>'+gWebsiteFooter1+'</p>\n';
-
+        bottomDelta += 55;
     }
     if (gWebsiteFooter2 && (gWebsiteFooter2 != "")){
         theOutput +='        <p>'+gWebsiteFooter2+'</p>\n';
-
+        bottomDelta += 55;
     }
+
     theOutput +="    </div>\n";
     theOutput +="\n";
 
@@ -276,7 +283,7 @@ function generateAndSaveWebsite() {
         theOutput +="       function resizeIframe() {\n";
         theOutput +="           const iframe = document.getElementById('tuneFrame');\n";
         theOutput +="           iframe.style.width = window.innerWidth + 'px';\n";
-        theOutput +="           iframe.style.height = (window.innerHeight-300) + 'px';\n";
+        theOutput +="           iframe.style.height = (window.innerHeight-"+bottomDelta+") + 'px';\n";
         theOutput +="       }\n";
         theOutput +="\n";
         theOutput +="       // Resize the iframe on window resize\n";
@@ -397,6 +404,7 @@ var gWebsiteHeight = 900;
 var gWebsiteColor = "#FFFFFF";
 var gWebsiteResponsive = true;
 var gWebsiteFilename = "";
+var gWebsiteOpenInPlayer = true;
 
 var gWebsiteConfig ={
 
@@ -443,7 +451,11 @@ var gWebsiteConfig ={
     website_color: gWebsiteColor,
 
     // Responsive
-    bResponsive: gWebsiteResponsive
+    bResponsive: gWebsiteResponsive,
+
+    // Open in player
+    bOpenInPlayer: gWebsiteOpenInPlayer
+
 
 }
 
@@ -480,6 +492,7 @@ function generateWebsite(){
       {name: "Website player width (pixels):", id: "website_width", type:"number", cssClass:"configure_website_form_text3"},
       {name: "Website player height (pixels):", id: "website_height", type:"number", cssClass:"configure_website_form_text2"},
       {name: "Website background color (HTML color):", id: "website_color", type:"text",cssClass:"configure_website_form_text2"},      
+      {name: "          Tunes open in player ", id: "bOpenInPlayer", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "          Add instruments and volume overrides to each tune ", id: "bInjectInstruments", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "Soundfont:", id: "sound_font", type:"select", options:sound_font_options, cssClass:"configure_setuppdftunebook_midi_program_select"},
       {name: "Melody instrument:", id: "melody_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
@@ -518,6 +531,10 @@ function generateWebsite(){
             // Responsive
             gWebsiteResponsive = args.result.bResponsive;
             gWebsiteConfig.bResponsive = gWebsiteResponsive;
+
+            // Open in player
+            gWebsiteOpenInPlayer = args.result.bOpenInPlayer;
+            gWebsiteConfig.bOpenInPlayer = gWebsiteOpenInPlayer;
 
             // Width
             gWebsiteWidth = args.result.website_width;
