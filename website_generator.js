@@ -215,7 +215,7 @@ function generateAndSaveWebsite() {
     theOutput +="        color:black;\n";
     theOutput +="        font-size: 18px;\n";
     theOutput +="        padding: 5px;\n";
-    theOutput +="        margin-bottom: 20px;\n";
+    theOutput +="        margin-bottom: 16px;\n";
     theOutput +="        width: 350px;\n";
     theOutput +="    }\n";
     theOutput +="\n";
@@ -245,7 +245,7 @@ function generateAndSaveWebsite() {
         theOutput +='        <iframe id="tuneFrame" src="" title="Embedded ABC Transcription Tools"></iframe>\n';        
     }
 
-    var bottomDelta = 165;
+    var bottomDelta = 161;
 
     var footerCount = 0;
     if (gWebsiteFooter1 && (gWebsiteFooter1 != "")){
