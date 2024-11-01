@@ -188,17 +188,19 @@ function generateAndSaveWebsite() {
     theOutput +="    .container {\n";
     theOutput +="        margin: 0 auto;\n";
     theOutput +="        text-align: center;\n";
+    theOutput +="        overflow-x: hidden;\n";
     theOutput +="    }\n";
     theOutput +="\n";
     theOutput +="    h1 {\n";
     theOutput +="        font-size: 28px;\n";
     theOutput +="        margin-top: 20px;\n";
-    theOutput +="        margin-bottom: 20px;\n";
+    theOutput +="        margin-bottom: 0px;\n";
     theOutput +="    }\n";
     theOutput +="\n";
     theOutput +="    h2 {\n";
     theOutput +="        font-size: 18px;\n";
-    theOutput +="        margin-bottom: 20px;\n";
+    theOutput +="        margin-top: 10px;\n";
+    theOutput +="        margin-bottom: 10px;\n";
     theOutput +="    }\n";
     theOutput +="\n";
     theOutput +="    select {\n";
@@ -243,14 +245,27 @@ function generateAndSaveWebsite() {
         theOutput +='        <iframe id="tuneFrame" src="" title="Embedded ABC Transcription Tools"></iframe>\n';        
     }
 
-    var bottomDelta = 195;
+    var bottomDelta = 165;
+
+    var footerCount = 0;
     if (gWebsiteFooter1 && (gWebsiteFooter1 != "")){
         theOutput +='        <p>'+gWebsiteFooter1+'</p>\n';
-        bottomDelta += 55;
+        footerCount++;
     }
     if (gWebsiteFooter2 && (gWebsiteFooter2 != "")){
         theOutput +='        <p>'+gWebsiteFooter2+'</p>\n';
-        bottomDelta += 55;
+        footerCount++;
+    }
+
+    switch (footerCount){
+        case 0:
+            break;
+        case 1:
+            bottomDelta+=45;
+            break;
+        case 2:
+            bottomDelta+=75;
+            break;
     }
 
     theOutput +="    </div>\n";
@@ -282,7 +297,7 @@ function generateAndSaveWebsite() {
         theOutput +="\n";
         theOutput +="       function resizeIframe() {\n";
         theOutput +="           const iframe = document.getElementById('tuneFrame');\n";
-        theOutput +="           iframe.style.width = window.innerWidth + 'px';\n";
+        theOutput +="           iframe.style.width = (window.innerWidth-3) + 'px';\n";
         theOutput +="           iframe.style.height = (window.innerHeight-"+bottomDelta+") + 'px';\n";
         theOutput +="       }\n";
         theOutput +="\n";
