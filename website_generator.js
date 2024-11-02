@@ -215,7 +215,7 @@ function generateAndSaveWebsite() {
     theOutput +="        color:black;\n";
     theOutput +="        font-size: 18px;\n";
     theOutput +="        padding: 5px;\n";
-    theOutput +="        margin-top: 18px;\n";
+    theOutput +="        margin-top: 12px;\n";
     theOutput +="        margin-bottom: 16px;\n";
     theOutput +="        width: 350px;\n";
     theOutput +="    }\n";
