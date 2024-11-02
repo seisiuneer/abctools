@@ -193,14 +193,14 @@ function generateAndSaveWebsite() {
     theOutput +="\n";
     theOutput +="    h1 {\n";
     theOutput +="        font-size: 28px;\n";
-    theOutput +="        margin-top: 20px;\n";
+    theOutput +="        margin-top: 16px;\n";
     theOutput +="        margin-bottom: 0px;\n";
     theOutput +="    }\n";
     theOutput +="\n";
     theOutput +="    h2 {\n";
     theOutput +="        font-size: 18px;\n";
-    theOutput +="        margin-top: 10px;\n";
-    theOutput +="        margin-bottom: 10px;\n";
+    theOutput +="        margin-top: 16px;\n";
+    theOutput +="        margin-bottom: 0px;\n";
     theOutput +="    }\n";
     theOutput +="\n";
     theOutput +="    select {\n";
@@ -215,6 +215,7 @@ function generateAndSaveWebsite() {
     theOutput +="        color:black;\n";
     theOutput +="        font-size: 18px;\n";
     theOutput +="        padding: 5px;\n";
+    theOutput +="        margin-top: 18px;\n";
     theOutput +="        margin-bottom: 16px;\n";
     theOutput +="        width: 350px;\n";
     theOutput +="    }\n";
@@ -222,6 +223,16 @@ function generateAndSaveWebsite() {
     theOutput +="    iframe {\n";
     theOutput +="        border: 1px solid #ccc;\n";
     theOutput +="        background-color: #ffffff;\n";
+    theOutput +="    }\n";
+    theOutput +="\n";
+    theOutput +="    #footer1{\n";
+    theOutput +="        margin-top:12px;\n";
+    theOutput +="        margin-bottom:12px;\n";
+    theOutput +="    }\n";
+    theOutput +="\n";
+    theOutput +="    #footer2{\n";
+    theOutput +="        margin-top:12px;\n";
+    theOutput +="        margin-bottom:0px;\n";
     theOutput +="    }\n";
     theOutput +="</style>\n";
     theOutput +="\n";
@@ -232,9 +243,22 @@ function generateAndSaveWebsite() {
     theOutput +="<body>\n";
     theOutput +="\n";
     theOutput +='    <div class="container">\n';
-    theOutput +="        <h1>"+gWebsiteTitle+"</h1>\n";
-    theOutput +="        <h2>"+gWebsiteSubtitle+"</h2>\n";
-    theOutput +='        <select id="tuneSelector">\n';
+    var gotTitle = false;
+    if (gWebsiteTitle && (gWebsiteTitle != "")){
+        theOutput +="        <h1 id=\"title\">"+gWebsiteTitle+"</h1>\n";
+        gotTitle = true;
+    }
+    var gotSubTitle = false;
+    if (gWebsiteSubtitle && (gWebsiteSubtitle != "")){
+        theOutput +="        <h2 id=\"subtitle\">"+gWebsiteSubtitle+"</h2>\n";
+        gotSubTitle = true;
+    }
+    if (gotTitle || gotSubTitle){
+    	theOutput +='        <select id="tuneSelector">\n';
+    }
+    else{
+    	theOutput +='        <select id="tuneSelector" style="margin-top:18px;">\n';
+    }
     theOutput +='            <option value="">Click to Select a Tune</option>\n';
     theOutput +="        </select>\n";
     theOutput +="        <br/>\n";
@@ -245,27 +269,19 @@ function generateAndSaveWebsite() {
         theOutput +='        <iframe id="tuneFrame" src="" title="Embedded ABC Transcription Tools"></iframe>\n';        
     }
 
-    var bottomDelta = 161;
-
-    var footerCount = 0;
+    var gotFooter = false;
     if (gWebsiteFooter1 && (gWebsiteFooter1 != "")){
-        theOutput +='        <p>'+gWebsiteFooter1+'</p>\n';
-        footerCount++;
+        theOutput +='        <p id="footer1">'+gWebsiteFooter1+'</p>\n';
+        gotFooter = true;
     }
     if (gWebsiteFooter2 && (gWebsiteFooter2 != "")){
-        theOutput +='        <p>'+gWebsiteFooter2+'</p>\n';
-        footerCount++;
-    }
 
-    switch (footerCount){
-        case 0:
-            break;
-        case 1:
-            bottomDelta+=45;
-            break;
-        case 2:
-            bottomDelta+=75;
-            break;
+    	if (gotFooter){
+        	theOutput +='        <p id="footer2">'+gWebsiteFooter2+'</p>\n';
+        }
+        else{
+        	theOutput +='        <p id="footer2" style="margin-bottom:14px;">'+gWebsiteFooter2+'</p>\n';        	
+        }
     }
 
     theOutput +="    </div>\n";
@@ -293,12 +309,41 @@ function generateAndSaveWebsite() {
     theOutput +="       tuneSelector.addEventListener('change', () => {\n";
     theOutput +="           tuneFrame.src = tuneSelector.value;\n";
     theOutput +="       });\n";
+
     if (gWebsiteResponsive){
+        theOutput +="\n";
+        theOutput +="       function getElementsTotalHeight() {\n";
+        theOutput +="\n";
+        theOutput +="           const ids = ['title', 'subtitle', 'tuneSelector', 'footer1', 'footer2'];\n";
+        theOutput +="           let totalHeight = 0;\n";
+        theOutput +="\n";
+        theOutput +="           ids.forEach(id => {\n";
+        theOutput +="               const element = document.getElementById(id);\n";
+        theOutput +="               if (element && (element.textContent.trim() !== \"\")) {\n";
+        theOutput +="                   //debugger;\n";
+
+        theOutput +="                   const elementHeight = element.offsetHeight;\n";
+        theOutput +="                   const computedStyle = window.getComputedStyle(element);\n";
+        theOutput +="\n";
+        theOutput +="                   // Include margins\n";
+        theOutput +="                   const marginTop = parseFloat(computedStyle.marginTop);\n";
+        theOutput +="                   const marginBottom = parseFloat(computedStyle.marginBottom);\n";
+        theOutput +="                   totalHeight += elementHeight + marginTop + marginBottom + 1;\n";
+        theOutput +="               }\n";
+        theOutput +="           });\n";
+        if ((!gotTitle) || (!gotSubTitle)){
+        	theOutput +="           return totalHeight+5;\n";
+        }
+        else{
+        	theOutput +="           return totalHeight+3;\n";
+        }
+        theOutput +="       }\n";
         theOutput +="\n";
         theOutput +="       function resizeIframe() {\n";
         theOutput +="           const iframe = document.getElementById('tuneFrame');\n";
         theOutput +="           iframe.style.width = (window.innerWidth-3) + 'px';\n";
-        theOutput +="           iframe.style.height = (window.innerHeight-"+bottomDelta+") + 'px';\n";
+        theOutput +="           var otherElementsHeight = getElementsTotalHeight();\n";
+        theOutput +="           iframe.style.height = (window.innerHeight-otherElementsHeight) + 'px';\n";
         theOutput +="       }\n";
         theOutput +="\n";
         theOutput +="       // Resize the iframe on window resize\n";
@@ -308,6 +353,7 @@ function generateAndSaveWebsite() {
         theOutput +="       resizeIframe();\n";
         theOutput +="\n";
     }
+
     theOutput +="    });\n";    
     theOutput +="\n";
     theOutput +="</script>\n";
