@@ -103,6 +103,10 @@ function BatchJSONExportForWebGenerator(theABC){
             theURL+="&play=1";
         }
 
+        if (gWebsiteDisableEdit){
+            theURL+="&dx=1";
+        }
+
         theJSON.push({Name:title,URL:theURL});
 
     }
@@ -195,12 +199,34 @@ function generateAndSaveWebsite() {
     theOutput +="        font-size: 28px;\n";
     theOutput +="        margin-top: 16px;\n";
     theOutput +="        margin-bottom: 0px;\n";
+    theOutput +="        color: "+gWebsiteTextColor+";\n";
     theOutput +="    }\n";
     theOutput +="\n";
     theOutput +="    h2 {\n";
     theOutput +="        font-size: 18px;\n";
     theOutput +="        margin-top: 14px;\n";
     theOutput +="        margin-bottom: 0px;\n";
+    theOutput +="        color: "+gWebsiteTextColor+";\n";
+    theOutput +="    }\n";
+    theOutput +="\n";
+    theOutput +="    p {\n";
+    theOutput +="        color: "+gWebsiteTextColor+";\n";
+    theOutput +="    }\n";
+    theOutput +="\n";
+    theOutput +="    a {\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+    theOutput +="    }\n";
+    theOutput +="    a:link {\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+    theOutput +="    }\n";
+    theOutput +="    a:visited {\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+    theOutput +="    }\n";    
+    theOutput +="    a:hover {\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+    theOutput +="    }\n";    
+    theOutput +="    a:active {\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
     theOutput +="    }\n";
     theOutput +="\n";
     theOutput +="    select {\n";
@@ -228,11 +254,13 @@ function generateAndSaveWebsite() {
     theOutput +="    #footer1{\n";
     theOutput +="        margin-top:12px;\n";
     theOutput +="        margin-bottom:12px;\n";
+    theOutput +="        color:"+gWebsiteTextColor+";\n";
     theOutput +="    }\n";
     theOutput +="\n";
     theOutput +="    #footer2{\n";
     theOutput +="        margin-top:12px;\n";
     theOutput +="        margin-bottom:0px;\n";
+    theOutput +="        color:"+gWebsiteTextColor+";\n";
     theOutput +="    }\n";
     theOutput +="</style>\n";
     theOutput +="\n";
@@ -447,7 +475,7 @@ function generateAndSaveWebsite() {
 }
 
 var gWebsiteSoundFont = "fluid";
-var gWebsiteInjectInstruments = false;
+var gWebsiteInjectInstruments = true;
 var gWebsiteBassInstrument = 1;
 var gWebsiteBassInstrumentInject = 1;
 var gWebsiteChordInstrument = 1;
@@ -463,9 +491,12 @@ var gWebsiteFooter2 = "";
 var gWebsiteWidth = 900;
 var gWebsiteHeight = 900;
 var gWebsiteColor = "#FFFFFF";
+var gWebsiteTextColor = "#000000";
+var gWebsiteHyperlinkColor = "#000000";
 var gWebsiteResponsive = true;
 var gWebsiteFilename = "";
 var gWebsiteOpenInPlayer = true;
+var gWebsiteDisableEdit = false;
 
 var gWebsiteConfig ={
 
@@ -511,12 +542,20 @@ var gWebsiteConfig ={
     // Background color
     website_color: gWebsiteColor,
 
+    // Text color
+    website_textcolor: gWebsiteTextColor,
+
+    // Hyperlink color
+    website_hyperlinkcolor: gWebsiteHyperlinkColor,
+
     // Responsive
     bResponsive: gWebsiteResponsive,
 
     // Open in player
-    bOpenInPlayer: gWebsiteOpenInPlayer
+    bOpenInPlayer: gWebsiteOpenInPlayer,
 
+    // Disable editor
+    bDisableEdit: gWebsiteDisableEdit
 
 }
 
@@ -553,6 +592,9 @@ function generateWebsite(){
       {name: "Website player width (pixels):", id: "website_width", type:"number", cssClass:"configure_website_form_text3"},
       {name: "Website player height (pixels):", id: "website_height", type:"number", cssClass:"configure_website_form_text2"},
       {name: "Website background color (HTML color):", id: "website_color", type:"text",cssClass:"configure_website_form_text2"},      
+      {name: "Text color (HTML color):", id: "website_textcolor", type:"text",cssClass:"configure_website_form_text2"},      
+      {name: "Hyperlink color (HTML color):", id: "website_hyperlinkcolor", type:"text",cssClass:"configure_website_form_text2"},      
+      {name: "          Disable access to editor ", id: "bDisableEdit", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "          Tunes open in player ", id: "bOpenInPlayer", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "          Add instruments and volume overrides to each tune ", id: "bInjectInstruments", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "Soundfont:", id: "sound_font", type:"select", options:sound_font_options, cssClass:"configure_setuppdftunebook_midi_program_select"},
@@ -569,7 +611,7 @@ function generateWebsite(){
 
     }, 150);
 
-    const modal = DayPilot.Modal.form(form, gWebsiteConfig, { theme: "modal_flat", top: 50, width: 730, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+    const modal = DayPilot.Modal.form(form, gWebsiteConfig, { theme: "modal_flat", top: 25, width: 730, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
     
         if (!args.canceled){
 
@@ -593,6 +635,10 @@ function generateWebsite(){
             gWebsiteResponsive = args.result.bResponsive;
             gWebsiteConfig.bResponsive = gWebsiteResponsive;
 
+            // Disable edit
+            gWebsiteDisableEdit = args.result.bDisableEdit
+            gWebsiteConfig.bDisableEdit = gWebsiteDisableEdit;
+
             // Open in player
             gWebsiteOpenInPlayer = args.result.bOpenInPlayer;
             gWebsiteConfig.bOpenInPlayer = gWebsiteOpenInPlayer;
@@ -608,6 +654,14 @@ function generateWebsite(){
             // Background color
             gWebsiteColor = args.result.website_color;
             gWebsiteConfig.website_color = gWebsiteColor;
+
+            // Text color
+            gWebsiteTextColor = args.result.website_textcolor;
+            gWebsiteConfig.website_textcolor = gWebsiteTextColor;
+
+            // Hyperlink color
+            gWebsiteHyperlinkColor = args.result.website_hyperlinkcolor;
+            gWebsiteConfig.website_hyperlinkcolor = gWebsiteHyperlinkColor;
 
             // Add instruments?
             gWebsiteInjectInstruments = args.result.bInjectInstruments;
