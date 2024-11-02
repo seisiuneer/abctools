@@ -263,10 +263,10 @@ function generateAndSaveWebsite() {
     theOutput +="        </select>\n";
     theOutput +="        <br/>\n";
     if (!gWebsiteResponsive){
-        theOutput +='        <iframe id="tuneFrame" src="" title="Embedded ABC Transcription Tools" width="'+gWebsiteWidth+'" height="'+gWebsiteHeight+'"></iframe>\n';
+        theOutput +='        <iframe id="tuneFrame" src="" width="'+gWebsiteWidth+'" height="'+gWebsiteHeight+'"></iframe>\n';
     }
     else{
-        theOutput +='        <iframe id="tuneFrame" src="" title="Embedded ABC Transcription Tools"></iframe>\n';        
+        theOutput +='        <iframe id="tuneFrame" src=""></iframe>\n';        
     }
 
     var gotFooter = false;
