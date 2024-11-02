@@ -199,7 +199,7 @@ function generateAndSaveWebsite() {
     theOutput +="\n";
     theOutput +="    h2 {\n";
     theOutput +="        font-size: 18px;\n";
-    theOutput +="        margin-top: 16px;\n";
+    theOutput +="        margin-top: 14px;\n";
     theOutput +="        margin-bottom: 0px;\n";
     theOutput +="    }\n";
     theOutput +="\n";
