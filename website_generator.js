@@ -9,6 +9,299 @@
 // https://michaeleskin.com
 //
 
+//
+// Load Website settings
+//
+function LoadWebsiteSettings(){
+
+    if (gLocalStorageAvailable){
+
+        //debugger;
+
+        var val = localStorage.WebsiteSoundFont;
+
+        if (val){
+            gWebsiteSoundFont = val;
+        }
+        else{
+            gWebsiteSoundFont = "fluid";
+        }
+
+        val = localStorage.WebsiteInjectInstruments;
+        if (val){
+            gWebsiteInjectInstruments = (val == "true");
+        }
+        else{
+            gWebsiteInjectInstruments = true;
+        }
+
+        val = localStorage.WebsiteBassInstrument;
+        if (val){
+            gWebsiteBassInstrument = val;
+        }
+        else{
+            gWebsiteBassInstrument = 1;
+        }
+
+        val = localStorage.WebsiteBassInstrumentInject;
+        if (val){
+            gWebsiteBassInstrumentInject = val;
+        }
+        else{
+            gWebsiteBassInstrumentInject = 1;
+        }
+
+        val = localStorage.WebsiteChordInstrument;
+        if (val){
+            gWebsiteChordInstrument = val;
+        }
+        else{
+            gWebsiteChordInstrument = 1;
+        }
+
+        val = localStorage.WebsiteChordInstrumentInject;
+        if (val){
+            gWebsiteChordInstrumentInject = val;
+        }
+        else{
+            gWebsiteChordInstrumentInject = 1;
+        }
+
+        val = localStorage.WebsiteBassVolume;
+        if (val){
+            gWebsiteBassVolume = val;
+        }
+        else{
+            gWebsiteBassVolume = 64;
+        }
+
+        val = localStorage.WebsiteChordVolume;
+        if (val){
+            gWebsiteChordVolume = val;
+        }
+        else{
+            gWebsiteChordVolume = 64;
+        }
+
+        val = localStorage.WebsiteMelodyInstrument;
+        if (val){
+            gWebsiteMelodyInstrument = val;
+        }
+        else{
+            gWebsiteMelodyInstrument = 1;
+        }
+
+        val = localStorage.WebsiteMelodyInstrumentInject;
+        if (val){
+            gWebsiteMelodyInstrumentInject = val;
+        }
+        else{
+            gWebsiteMelodyInstrumentInject = 1;
+        }
+
+        val = localStorage.WebsiteTitle;
+        if (val || (val == "")){
+            gWebsiteTitle = val;
+        }
+        else{
+            gWebsiteTitle = "ABC Transcription Tools Generated Website";
+        }
+
+        val = localStorage.WebsiteSubtitle;
+        if (val || (val == "")){
+            gWebsiteSubtitle = val;
+        }
+        else{
+            gWebsiteSubtitle = "Select a tune from the dropdown to load it into the frame below:";
+        }
+
+        val = localStorage.WebsiteFooter1;
+        if (val || (val == "")){
+            gWebsiteFooter1 = val;
+        }
+        else{
+            gWebsiteFooter1 = "";
+        }
+
+        val = localStorage.WebsiteFooter2;
+        if (val || (val == "")){
+            gWebsiteFooter2 = val;
+        }
+        else{
+            gWebsiteFooter2 = "";
+        }
+
+        val = localStorage.WebsiteWidth;
+        if (val){
+            gWebsiteWidth = val;
+        }
+        else{
+            gWebsiteWidth = 900;
+        }
+
+        val = localStorage.WebsiteHeight;
+        if (val){
+            gWebsiteHeight = val;
+        }
+        else{
+            gWebsiteHeight = 900;
+        }
+
+        val = localStorage.WebsiteColor;
+        if (val){
+            gWebsiteColor = val;
+        }
+        else{
+            gWebsiteColor = "#FFFFFF";
+        }
+
+        val = localStorage.WebsiteTextColor;
+        if (val){
+            gWebsiteTextColor = val;
+        }
+        else{
+            gWebsiteTextColor = "#000000";
+        }
+
+        val = localStorage.WebsiteHyperlinkColor;
+        if (val){
+            gWebsiteHyperlinkColor = val;
+        }
+        else{
+            gWebsiteHyperlinkColor = "#000000";
+        }
+
+        val = localStorage.WebsiteResponsive;
+        if (val){
+            gWebsiteResponsive = (val == "true");
+        }
+        else{
+            gWebsiteResponsive = true;
+        }
+
+        val = localStorage.WebsiteFilename;
+        if (val){
+            gWebsiteFilename = val;
+        }
+        else{
+            gWebsiteFilename = "";
+        }
+
+        val = localStorage.WebsiteOpenInPlayer;
+        if (val){
+            gWebsiteOpenInPlayer = (val == "true");
+        }
+        else{
+            gWebsiteOpenInPlayer = true;
+        }
+
+        val = localStorage.WebsiteDisableEdit;
+        if (val){
+            gWebsiteDisableEdit = (val == "true");
+        }
+        else{
+            gWebsiteDisableEdit = false;
+        }
+
+        // Stuff the updated config
+        gWebsiteConfig ={
+
+            // Title
+            website_title: gWebsiteTitle,
+
+            // Subtitle
+            website_subtitle: gWebsiteSubtitle,
+
+            // Footer1
+            website_footer1: gWebsiteFooter1,
+
+            // Footer2
+            website_footer2: gWebsiteFooter2,
+
+            // Inject instruments?
+            bInjectInstruments: gWebsiteInjectInstruments,
+
+            // Sound font
+            sound_font: gWebsiteSoundFont,
+
+            // Melody Instrument
+            melody_instrument: gWebsiteMelodyInstrument,
+
+            // Bass Instrument
+            bass_instrument: gWebsiteBassInstrument,
+
+            // Bass Volume
+            bass_volume: gWebsiteBassVolume,
+
+            // Chord Instrument
+            chord_instrument: gWebsiteChordInstrument,
+
+            // Chord Volume
+            chord_volume: gWebsiteChordVolume,
+
+            // Website frame width
+            website_width: gWebsiteWidth,
+
+            // Website frame height
+            website_height: gWebsiteHeight,
+
+            // Background color
+            website_color: gWebsiteColor,
+
+            // Text color
+            website_textcolor: gWebsiteTextColor,
+
+            // Hyperlink color
+            website_hyperlinkcolor: gWebsiteHyperlinkColor,
+
+            // Responsive
+            bResponsive: gWebsiteResponsive,
+
+            // Open in player
+            bOpenInPlayer: gWebsiteOpenInPlayer,
+
+            // Disable editor
+            bDisableEdit: gWebsiteDisableEdit
+
+        }
+    }
+}
+
+//
+// Save Website settings
+//
+function SaveWebsiteSettings(){
+
+    if (gLocalStorageAvailable){
+
+        //debugger;
+
+        localStorage.WebsiteSoundFont = gWebsiteSoundFont;
+        localStorage.WebsiteInjectInstruments = gWebsiteInjectInstruments;
+        localStorage.WebsiteBassInstrument = gWebsiteBassInstrument;
+        localStorage.WebsiteBassInstrumentInject = gWebsiteBassInstrumentInject;
+        localStorage.WebsiteChordInstrument = gWebsiteChordInstrument;
+        localStorage.WebsiteChordInstrumentInject = gWebsiteChordInstrumentInject;
+        localStorage.WebsiteBassVolume = gWebsiteBassVolume;
+        localStorage.WebsiteChordVolume = gWebsiteChordVolume;
+        localStorage.WebsiteMelodyInstrument = gWebsiteMelodyInstrument;
+        localStorage.WebsiteMelodyInstrumentInject = gWebsiteMelodyInstrumentInject;
+        localStorage.WebsiteTitle = gWebsiteTitle;
+        localStorage.WebsiteSubtitle = gWebsiteSubtitle;
+        localStorage.WebsiteFooter1 = gWebsiteFooter1;
+        localStorage.WebsiteFooter2 = gWebsiteFooter2;
+        localStorage.WebsiteWidth = gWebsiteWidth;
+        localStorage.WebsiteHeight = gWebsiteHeight;
+        localStorage.WebsiteColor = gWebsiteColor;
+        localStorage.WebsiteTextColor = gWebsiteTextColor;
+        localStorage.WebsiteHyperlinkColor = gWebsiteHyperlinkColor;
+        localStorage.WebsiteResponsive = gWebsiteResponsive;
+        localStorage.WebsiteFilename = gWebsiteFilename;
+        localStorage.WebsiteOpenInPlayer = gWebsiteOpenInPlayer;
+        localStorage.WebsiteDisableEdit = gWebsiteDisableEdit;
+
+    }
+}
 
 //
 // Inject the MIDI parameters into this tune
@@ -561,6 +854,9 @@ var gWebsiteConfig ={
 
 function generateWebsite(){
 
+    // Restore saved settings
+    LoadWebsiteSettings();
+
     var midi_program_list = [];
 
     for (var i=0;i<=MIDI_PATCH_COUNT;++i){
@@ -747,6 +1043,9 @@ function generateWebsite(){
                 }
 
             }
+
+            // Restore saved settings
+            SaveWebsiteSettings();
 
             generateAndSaveWebsite();
 
