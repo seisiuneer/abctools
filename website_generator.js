@@ -296,7 +296,6 @@ function SaveWebsiteSettings(){
         localStorage.WebsiteTextColor = gWebsiteTextColor;
         localStorage.WebsiteHyperlinkColor = gWebsiteHyperlinkColor;
         localStorage.WebsiteResponsive = gWebsiteResponsive;
-        localStorage.WebsiteFilename = gWebsiteFilename;
         localStorage.WebsiteOpenInPlayer = gWebsiteOpenInPlayer;
         localStorage.WebsiteDisableEdit = gWebsiteDisableEdit;
 
@@ -741,6 +740,10 @@ function generateAndSaveWebsite() {
         }
 
         gWebsiteFilename = fname;
+
+        if (gLocalStorageAvailable){
+            localStorage.WebsiteFilename = gWebsiteFilename;
+        }
 
         var a = document.createElement("a");
 
