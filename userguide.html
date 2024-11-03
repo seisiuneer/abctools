@@ -518,11 +518,11 @@
                 <div style="text-align: center;">
                     <font id="pagetitle" face="Comic Sans MS" size="5">ABC Transcription Tools User Guide</font><br/>
                 </div>
-                
-                <hr class="hidden-print">
-                
-                <div class="hidden-print">
-                    
+                               
+                <div id="mobile_table_of_contents" class="hidden-print">
+
+                 	<hr class="hidden-print">
+                   
                     <p style="margin-bottom:20px;line-height:12px;padding-left:0px;text-align: center;">To search for any subject press Ctrl+F (Windows) or ⌘+F (Mac)</p>
                     <hr>
                     <p style="margin-bottom:20px;line-height:12px;padding-left:0px;text-align: center;">Click any topic to show/hide the subtopics</p>
@@ -4830,8 +4830,13 @@
 	    	}
 
 	    	if (gIsIOS || gIsAndroid) {
-	    		// Hide the sidebar navigation
+	    		// Hide the sidebar navigation on mobile
 	    		elem = document.getElementById("sidebar");
+	    		elem.style.display = "none";
+	    	}
+	    	else{
+	    		// Hide the accordion navigation on desktop
+	    		elem = document.getElementById("mobile_table_of_contents");
 	    		elem.style.display = "none";
 	    	}
 
@@ -4851,7 +4856,9 @@
 	    	}
 
 	    	// Start with all topics collapsed
-	    	CollapseAll();
+	    	if (gIsIOS || gIsAndroid) {
+	    		CollapseAll();
+	    	}
 	    }
 
 	    DoStartup();
