@@ -4445,6 +4445,23 @@ margin-top:-9px;
 margin-left:12px;
 }
 
+.configure_website_form_text_wide5{
+font-size:12pt;
+line-height:12px;
+font-family:helvetica;
+margin-top:16px;
+margin-bottom:18px;
+display:flex;
+}
+
+.configure_website_form_text_wide5>input{
+font-size:12pt;
+font-family:helvetica;
+width: 507px;
+margin-top:-9px;
+margin-left:12px;
+}
+
 /******************************************************************************/
 /* STYLES RELATED TO BUTTONS                                                  */
 /******************************************************************************/

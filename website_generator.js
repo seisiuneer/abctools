@@ -476,7 +476,12 @@ function generateAndSaveWebsite() {
     theOutput +="\n";
     theOutput +="    body {\n";
     theOutput +="        font-family: Arial, sans-serif;\n";
-    theOutput +="        background-color: "+gWebsiteColor+";\n";
+    if ((gWebsiteColor.indexOf("gradient") == -1) && (gWebsiteColor.indexOf("url(") == -1)){
+        theOutput +="        background-color: "+gWebsiteColor+";\n";
+    }
+    else{
+        theOutput +="        background-image: "+gWebsiteColor+";\n";        
+    }
     theOutput +="        margin: 0px;\n";
     theOutput +="        padding: 0px;\n";
     theOutput +="    }\n";
@@ -890,7 +895,8 @@ function generateWebsite(){
       {name: "        Responsive player size (ignores width and height below)", id: "bResponsive", type:"checkbox", cssClass:"configure_website_form_text4"},
       {name: "Website player width (pixels):", id: "website_width", type:"number", cssClass:"configure_website_form_text3"},
       {name: "Website player height (pixels):", id: "website_height", type:"number", cssClass:"configure_website_form_text2"},
-      {name: "Website background color (HTML color):", id: "website_color", type:"text",cssClass:"configure_website_form_text2"},      
+      {html: '<p style="margin-top:12px;margin-bottom:18px;font-size:12pt;line-height:14pt;font-family:helvetica">Background can be an HTML color, HTML gradient, or url(\'path_to_image\') image:</p>'},  
+      {name: "Website background:", id: "website_color", type:"text",cssClass:"configure_website_form_text_wide5"},      
       {name: "Text color (HTML color):", id: "website_textcolor", type:"text",cssClass:"configure_website_form_text2"},      
       {name: "Hyperlink color (HTML color):", id: "website_hyperlinkcolor", type:"text",cssClass:"configure_website_form_text2"},      
       {name: "          Disable access to editor ", id: "bDisableEdit", type:"checkbox", cssClass:"configure_website_form_text2"},
