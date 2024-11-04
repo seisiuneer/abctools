@@ -142,6 +142,21 @@ opacity: 0.4;
 	}
 }
 
+.saveaswebsite {
+margin-left:0px;
+}
+
+.saveaswebsitedisabled {
+margin-left:0px;
+opacity: 0.4;
+}
+
+@media (hover: hover) {
+	.saveaswebsite:hover{
+	background: palegreen;
+	}
+}
+
 .toggleadvancedcontrols{
 margin-left:0px;
 margin-right:22px;

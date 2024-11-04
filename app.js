@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2066_110324_1400";
+var gVersionNumber="2067_110324_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -99,6 +99,8 @@ var gABCFromFile = false;
 var gAllowCopy = false;
 
 var gAllowPDF = false;
+
+var gAllowWebExport = false;
 
 var gDisplayedName = "";
 
@@ -12038,6 +12040,12 @@ function Render(renderAll,tuneNumber) {
 			document.getElementById("saveaspdf").classList.remove("saveaspdfdisabled");
 			document.getElementById("saveaspdf").classList.add("saveaspdf");
 			gAllowPDF = true;
+
+			// Enable the website generation button
+			document.getElementById("saveaswebsite").classList.remove("saveaswebsitedisabled");
+			document.getElementById("saveaswebsite").classList.add("saveaswebsite");
+			gAllowWebExport = true;
+
 		}
 
 		// Enable the copy button
@@ -12114,6 +12122,11 @@ function Render(renderAll,tuneNumber) {
 			document.getElementById("saveaspdf").classList.remove("saveaspdf");
 			document.getElementById("saveaspdf").classList.add("saveaspdfdisabled");
 			gAllowPDF = false;
+
+			// Disable the generate website button
+			document.getElementById("saveaswebsite").classList.remove("saveaswebsite");
+			document.getElementById("saveaswebsite").classList.add("saveaswebsitedisabled");
+			gAllowWebExport = false;
 		}
 
 		// Disable the control display toggle
@@ -24240,22 +24253,10 @@ function ExportAll(){
 		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
 		modal_msg += '<input id="exportall_jsonbutton" class="exportall_jsonbutton btn btn-alljsondownload" onclick="BatchJSONExport();" type="button" value="Export all Share URLs as JSON" title="Saves the Share URLs for all the tunes as a JSON file">'
 		modal_msg += '<input id="exportall_csvbutton" class="exportall_csvbutton btn btn-allcsvdownload" onclick="BatchCSVExport();" type="button" value="Export all Share URLs as CSV" title="Saves the Share URLs for all the tunes as a CSV file">'
-		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Automatic Tunebook Website Builder</p>';
-		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
-		modal_msg  += '<input id="export_websitebutton" class="export_websitebutton btn btn-exportwebsite" onclick="generateWebsite();" type="button" value="Generate Tunebook Website" title="Automatically build a website for the tunes">'
-		modal_msg += '</p>';	
 		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">SmartDraw Set List Builder</p>';
 		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
 		modal_msg += '<input id="export_smartdrawbutton" class="export_smartdrawbutton btn btn-smartdraw" onclick="SmartDrawExport();" type="button" value="SmartDraw Set List Builder" title="Build a SmartDraw set list using drag and drop">'
 		modal_msg += '</p>';
-
-	}
-	else{
-
-		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Automatic Tunebook Website Builder</p>';
-		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
-		modal_msg  += '<input id="export_websitebutton" class="export_websitebutton btn btn-exportwebsite" onclick="generateWebsite();" type="button" value="Generate Tunebook Website" title="Automatically build a website for the tunes">'
-		modal_msg += '</p>';	
 
 	}
 
@@ -36644,7 +36645,7 @@ function idlePDFExportDialog(){
 	}
 }
 
-function PDFExportDialog(event){
+function PDFExportDialog(){
 
 	if (!gAllowCopy){
 		return;
@@ -36652,12 +36653,6 @@ function PDFExportDialog(event){
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
-		return;
-	}
-
-	// Shift key down, export a website instead
-	if (event && (event.shiftKey)){
-		generateWebsite();
 		return;
 	}
 
@@ -37262,8 +37257,8 @@ function AdvancedControlsDialog(){
 			
 			if (format == "whistle"){
 
-				document.getElementById("configure_batch_mp3_export").value = "Export All as Audio or Website";
-				document.getElementById("configure_batch_mp3_export").title = "Exports all the tunes in the ABC text area as audio files or as a website";
+				document.getElementById("configure_batch_mp3_export").value = "Export All as Audio";
+				document.getElementById("configure_batch_mp3_export").title = "Exports all the tunes in the ABC text area as audio files";
 
 			}
 		}
@@ -42834,6 +42829,7 @@ function DoStartup() {
 	gABCFromFile = false;
 	gAllowCopy = false;
 	gAllowPDF = false;
+	gAllowWebExport = false;
 	gShowTabNames = true;
 	gAllowShowTabNames = false;
 	gLastAutoScrolledTune = -1;
@@ -43300,7 +43296,7 @@ function DoStartup() {
 		// Hook up the PDF button
 		document.getElementById("pdfbuttonicon").onclick = 
 			function() {
-				PDFExportDialog(event);
+				PDFExportDialog();
 			};
 	}
 	else{

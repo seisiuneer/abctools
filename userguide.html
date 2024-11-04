@@ -393,10 +393,7 @@
             <a style="text-decoration:none;" href="#export_all_as_mp3">Export All Tunes as Audio</a>
             <a style="text-decoration:none;" href="#export_all_images">Export All Tunes as Images</a>
             <a style="text-decoration:none;" href="#export_all_musicxml">Export All Tunes as MusicXML</a>
-            
-            <h3>Generate Tunebook Website</h3>
-            <a style="text-decoration:none;" href="#generate_website">Generate Tunebook Website</a>
-            
+
             <h3>SmartDraw Set List Builder</h3>
             <a style="text-decoration:none;" href="#smartdraw_export">SmartDraw Set List Builder</a>
             
@@ -439,6 +436,9 @@
             
             <h3>Editing PDF Tunebooks With Other Tools</h3>
             <a style="text-decoration:none;" href="#editing_pdf_tunebooks">Editing PDF Tunebooks With Other Tools</a>
+
+            <h3>Export Tunebook Website</h3>
+            <a style="text-decoration:none;" href="#generate_website">Export Tunebook Website</a>
             
             <h3>Tool Settings and Fonts</h3>
             <a style="text-decoration:none;" href="#settings_dialog">ABC Transcription Tools Settings</a>
@@ -467,13 +467,11 @@
             <a style="text-decoration:none;" href="#sequential_play">Creating Sets of Tunes that Will Play Sequentially in the Player</a>
             <a style="text-decoration:none;" href="#boxplayerstemplate">Useful Symbols for Annotating Box Transcriptions</a>
             
-            
             <h3>Adding Shape Note Shapes</h3>
             <a style="text-decoration:none;" href="#shapenote">Adding Shape Note Shapes</a>
             
             <h3>Typing ABC Using a MIDI Input Device</h3>
             <a style="text-decoration:none;" href="#midi_input">Typing ABC Using a MIDI Input Device</a>
-            
             
             <h3>iOS-Specific Topics</h3>
             <a style="text-decoration:none;" href="#iphone_ipad_chord_entry_issue_fix">iPhone/iPad Chord Entry Issue Fix</a>
@@ -492,7 +490,6 @@
             
             <h3>Using the Tool Offline (Airplane Mode)</h3>
             <a style="text-decoration:none;" href="#app">Using the Tool Offline (Airplane Mode)</a>
-            
             
             <h3>Updating the Tool</h3>
             <a style="text-decoration:none;" href="#updatingthetool">Updating the Tool</a>
@@ -675,11 +672,6 @@
                         <p class="toc"><a style="text-decoration:none;" href="#export_all_musicxml">Export All Tunes as MusicXML</a></p>
                     </div>
 
-                    <button class="accordion" title="Click to expand/collapse this section">Generate Tunebook Website</button>
-                    <div class="tocpanel">
-                       <p class="toc"><a style="text-decoration:none;" href="#generate_website">Generate Tunebook Website</a></p>
-                    </div>
-
                     <button class="accordion" title="Click to expand/collapse this section">SmartDraw Set List Builder</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#smartdraw_export">SmartDraw Set List Builder</a></p>
@@ -737,6 +729,11 @@
                     <button class="accordion" title="Click to expand/collapse this section">Editing PDF Tunebooks With Other Tools</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#editing_pdf_tunebooks">Editing PDF Tunebooks With Other Tools</a></p>
+                    </div>
+
+                    <button class="accordion" title="Click to expand/collapse this section">Export Tunebook Website</button>
+                    <div class="tocpanel">
+                       <p class="toc"><a style="text-decoration:none;" href="#generate_website">Export Tunebook Website</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">Tool Settings and Fonts</button>
@@ -864,7 +861,7 @@
                 <p>On desktop browsers, when the tool is run, you should be seeing a side-by-side view with the ABC editor on the left and the notation on the right:</p>
                 <br/>
                 <div class="image_holder">
-                    <img class="image" loading="lazy" style="width:700px;" src="img/overview_11.jpg"/>
+                    <img class="image" loading="lazy" style="width:700px;" src="img/overview_12.jpg"/>
                 </div>
                 <p><strong>On a desktop browser, if you are seeing a single column view with the ABC editor at the top and the notation below, or the welcome dialog is taller than the screen, try zooming your browser view out using the following keystrokes:</strong></p>
                 <p><strong>Windows:&nbsp;&nbsp;Ctrl -</strong></p>
@@ -905,7 +902,7 @@
                 <hr class="hidden-print" id="top_bar_buttons">
                 <h1 class="page_break_always">Top Bar Buttons<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <div class="image_holder">
-                    <img class="image" loading="lazy" style="width:700px;" src="img/topbar_4.jpg"/>
+                    <img class="image" loading="lazy" style="width:700px;" src="img/topbar_5.jpg"/>
                 </div>
                 <hr>
                 <p><strong>Open:</strong></p>
@@ -921,12 +918,16 @@
                 <p>If you specify .xml as the file extension, the first ABC tune in the editor will be saved out as a MusicXML file with the entered filename.</p>
                 <hr>
                 <p><strong>Export PDF:</strong></p>
-                <p>Exports the currently displayed score as a high quality PDF file.</p>
-                <p>The saved ABC or PDF file will be in your browser's Downloads directory.</p>
+                <p>Exports the entire tunebook as a high quality PDF file.</p>
+                <p>The saved PDF file will be in your browser's Downloads directory.</p>
+                <p>Full details below in the <a href="#export_pdf_tunebook">Export PDF Tunebook</a> section below.</p>
                 <p>On iOS the downloaded files will be found in the "Downloads" directory in the iOS "Files" app.</p>
-                <p>Hold down the Shift key when clicking this button to generate and export a tunebook website instead.</p>
-                <p>Full details below in the <a href="#generate_website">Generate Tunebook Website</a> section below.</p>
-                <p>When visible, you can also click or shift-click the PDF icon at bottom-left of the window.</p>
+                <hr>
+                <p><strong>Export Website:</strong></p>
+                <p>Exports the entire tunebook as an HTML/CSS/Javascript website.</p>
+                <p>The saved .html file will be in your browser's Downloads directory.</p>
+                <p>On iOS the downloaded files will be found in the "Downloads" directory in the iOS "Files" app.</p>
+                <p>Full details below in the <a href="#generate_website">Export Tunebook Website</a> section below.</p>
                 <hr>
                 <p><strong>Copy All:</strong></p>
                 <p>Copies all the ABC text to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
@@ -2780,7 +2781,7 @@
                 <p>These features are only available on desktop browsers.</p>
                 <p>This dialog contains options to export all the tunes in the ABC area in multiple formats:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/export_all_6.jpg"/>
+                    <img class="image" loading="lazy" src="img/export_all_7.jpg"/>
                 </div>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/fhYsYut_-5A" title="Export All Images" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <hr id="export_all_as_mp3">
@@ -2838,11 +2839,11 @@
                 <hr>
                 <p><strong>Export all Share URLs as CSV</strong>: Exports tune names and Share URLs for all of the tunes in a CSV file.</p>
                 <hr class="hidden-print" id="generate_website">
-                <h1 class="page_break_always">Generate Tunebook Website<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <h1 class="page_break_always">Export Tunebook Website<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>This will generate a complete standalone website for you from the ABC tunes in the editor without any coding required.</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/MfZEeW1pYcs" title="Generate Tunebook Website Walkthrough" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/UnVm7ac6qgI" title="Export Tunebook Website Walkthrough" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/generate_website_8.jpg"/>
+                    <img class="image" loading="lazy" src="img/generate_website_9.jpg"/>
                 </div>
                 <p>You may customize the title, subtitle, footers, background color, text color, hyperlink color, and width and height of the player frame.</p>
                 <p>The website background color can be an HTML color, HTML gradient description, or a url('path_to_image').</p>
@@ -2863,6 +2864,7 @@
                 <p>You can take the resulting .html file, customize it if you want, run it locally, or host it on your own web hosting service.</p>
                 <p>Here is an example of a site created with the feature:</p>
                 <p style="text-align: center;"><a href="https://michaeleskin.com/ocarolan_responsive.html" target="_blank">Example Responsive O'Carolan Tunebook Website</a></p>
+                <p>On iOS and Android devices, because of platform restrictions, the resulting file will be saved with a .txt extension.</p>
                 <hr class="hidden-print" id="smartdraw_export">
                 <h1 class="page_break_always">SmartDraw Set List Builder<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Brings up a dialog where you can build tune sets and then export them in SmartDraw format.</p>
