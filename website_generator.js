@@ -480,7 +480,15 @@ function generateAndSaveWebsite() {
         theOutput +="        background-color: "+gWebsiteColor+";\n";
     }
     else{
-        theOutput +="        background-image: "+gWebsiteColor+";\n";        
+        // Center the image and fill the page
+        if (gWebsiteColor.indexOf("url(") != -1){
+            theOutput +="        background: center "+gWebsiteColor+";\n";   
+            theOutput +="        background-size: cover;\n";   
+        }
+        else{
+            // Just inject the gradient
+            theOutput +="        background-image: "+gWebsiteColor+";\n";   
+        }
     }
     theOutput +="        margin: 0px;\n";
     theOutput +="        padding: 0px;\n";
