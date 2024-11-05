@@ -622,21 +622,26 @@ function generateAndSaveWebsite() {
     theOutput +="    document.addEventListener('DOMContentLoaded', () => {\n";
     theOutput +="        const tuneSelector = document.getElementById('tuneSelector');\n";
     theOutput +="        const tuneFrame = document.getElementById('tuneFrame');\n";
+    theOutput +="        if (tunes.length > 1){\n";
+    theOutput +="           tunes.forEach(tune => {\n";
+    theOutput +="               const option = document.createElement('option');\n";
+    theOutput +="               option.value = tune.URL;\n";
+    theOutput +="               option.textContent = tune.Name;\n";
+    theOutput +="               tuneSelector.appendChild(option);\n";
+    theOutput +="           });\n";
     theOutput +="\n";
-    theOutput +="       tunes.forEach(tune => {\n";
-    theOutput +="            const option = document.createElement('option');\n";
-    theOutput +="            option.value = tune.URL;\n";
-    theOutput +="            option.textContent = tune.Name;\n";
-    theOutput +="            tuneSelector.appendChild(option);\n";
-    theOutput +="        });\n";
-    theOutput +="\n";
-    theOutput +="       // Update iframe src when an option is selected\n";
-    theOutput +="       tuneSelector.addEventListener('change', () => {\n";
+    theOutput +="           // Update iframe src when an option is selected\n";
+    theOutput +="           tuneSelector.addEventListener('change', () => {\n";
     theOutput +="           tuneFrame.src = tuneSelector.value;\n";
-    theOutput +="       });\n";
+    theOutput +="           });\n";
+    theOutput +="       }\n";
+    theOutput +="       else{\n";
+     theOutput +="           tuneFrame.src = tunes[0].URL;\n";
+    theOutput +="           tuneSelector.style.display=\"none\";\n";
+    theOutput +="       }\n";
+    theOutput +=" \n";
 
     if (gWebsiteResponsive){
-        theOutput +="\n";
         theOutput +="       function getElementsTotalHeight() {\n";
         theOutput +="\n";
         theOutput +="           const ids = ['title', 'subtitle', 'tuneSelector', 'footer1', 'footer2'];\n";
