@@ -639,7 +639,7 @@ function generateAndSaveWebsite() {
     theOutput +="           tuneSelector.style.display=\"none\";\n";
     theOutput +="           setTimeout(function(){\n"; 
     theOutput +="               tuneFrame.src = tunes[0].URL;\n";
-    theOutput +="           },500);\n";
+    theOutput +="           },250);\n";
     theOutput +="       }\n";
     theOutput +=" \n";
 
