@@ -636,8 +636,10 @@ function generateAndSaveWebsite() {
     theOutput +="           });\n";
     theOutput +="       }\n";
     theOutput +="       else{\n";
-     theOutput +="           tuneFrame.src = tunes[0].URL;\n";
     theOutput +="           tuneSelector.style.display=\"none\";\n";
+    theOutput +="           setTimeout(function(){\n"; 
+    theOutput +="               tuneFrame.src = tunes[0].URL;\n";
+    theOutput +="           },500);\n";
     theOutput +="       }\n";
     theOutput +=" \n";
 
