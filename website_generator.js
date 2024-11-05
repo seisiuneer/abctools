@@ -734,20 +734,12 @@ function generateAndSaveWebsite() {
         }
 
         // Give it a good extension
-        if ((!gIsAndroid) && (!gIsIOS)) {
+ 
+        if (!fname.endsWith(".html")) {
 
-            if ((!fname.endsWith(".html")) && (!fname.endsWith(".txt")) && (!fname.endsWith(".HTML")) && (!fname.endsWith(".TXT"))) {
-
-                // Give it a good extension
-                fname = fname.replace(/\..+$/, '');
-                fname = fname + ".html";
-
-            }
-        } else {
-            // iOS and Android have odd rules about text file saving
             // Give it a good extension
             fname = fname.replace(/\..+$/, '');
-            fname = fname + ".txt";
+            fname = fname + ".html";
 
         }
 
@@ -764,9 +756,9 @@ function generateAndSaveWebsite() {
         a.style = "display: none";
 
         var blob = new Blob([theData], {
-                type: "text/plain"
-            }),
-
+                    type: "text/html"
+                }),
+ 
         url = window.URL.createObjectURL(blob);
         a.href = url;
         a.download = fname;
