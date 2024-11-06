@@ -131,22 +131,6 @@ function LoadWebsiteSettings(){
             gWebsiteFooter2 = "";
         }
 
-        val = localStorage.WebsiteWidth;
-        if (val){
-            gWebsiteWidth = val;
-        }
-        else{
-            gWebsiteWidth = 900;
-        }
-
-        val = localStorage.WebsiteHeight;
-        if (val){
-            gWebsiteHeight = val;
-        }
-        else{
-            gWebsiteHeight = 900;
-        }
-
         val = localStorage.WebsiteColor;
         if (val){
             gWebsiteColor = val;
@@ -169,14 +153,6 @@ function LoadWebsiteSettings(){
         }
         else{
             gWebsiteHyperlinkColor = "#000000";
-        }
-
-        val = localStorage.WebsiteResponsive;
-        if (val){
-            gWebsiteResponsive = (val == "true");
-        }
-        else{
-            gWebsiteResponsive = true;
         }
 
         val = localStorage.WebsiteFilename;
@@ -239,12 +215,6 @@ function LoadWebsiteSettings(){
             // Chord Volume
             chord_volume: gWebsiteChordVolume,
 
-            // Website frame width
-            website_width: gWebsiteWidth,
-
-            // Website frame height
-            website_height: gWebsiteHeight,
-
             // Background color
             website_color: gWebsiteColor,
 
@@ -253,9 +223,6 @@ function LoadWebsiteSettings(){
 
             // Hyperlink color
             website_hyperlinkcolor: gWebsiteHyperlinkColor,
-
-            // Responsive
-            bResponsive: gWebsiteResponsive,
 
             // Open in player
             bOpenInPlayer: gWebsiteOpenInPlayer,
@@ -290,12 +257,9 @@ function SaveWebsiteSettings(){
         localStorage.WebsiteSubtitle = gWebsiteSubtitle;
         localStorage.WebsiteFooter1 = gWebsiteFooter1;
         localStorage.WebsiteFooter2 = gWebsiteFooter2;
-        localStorage.WebsiteWidth = gWebsiteWidth;
-        localStorage.WebsiteHeight = gWebsiteHeight;
         localStorage.WebsiteColor = gWebsiteColor;
         localStorage.WebsiteTextColor = gWebsiteTextColor;
         localStorage.WebsiteHyperlinkColor = gWebsiteHyperlinkColor;
-        localStorage.WebsiteResponsive = gWebsiteResponsive;
         localStorage.WebsiteOpenInPlayer = gWebsiteOpenInPlayer;
         localStorage.WebsiteDisableEdit = gWebsiteDisableEdit;
 
@@ -463,9 +427,7 @@ function generateAndSaveWebsite() {
     theOutput +="\n";
     theOutput +='<meta charset="UTF-8">\n';
 
-    if (gWebsiteResponsive){
-        theOutput +='<meta name="viewport" content="width=860" />\n'; 
-    }
+    theOutput +='<meta name="viewport" content="width=860" />\n'; 
 
     theOutput +="\n";
     theOutput +="<title>"+gWebsiteTitle+"</title>\n";
@@ -595,12 +557,7 @@ function generateAndSaveWebsite() {
     theOutput +='            <option value="">Click to Select a Tune</option>\n';
     theOutput +="        </select>\n";
     theOutput +="        <br/>\n";
-    if (!gWebsiteResponsive){
-        theOutput +='        <iframe id="tuneFrame" src="" width="'+gWebsiteWidth+'" height="'+gWebsiteHeight+'"></iframe>\n';
-    }
-    else{
-        theOutput +='        <iframe id="tuneFrame" src=""></iframe>\n';        
-    }
+    theOutput +='        <iframe id="tuneFrame" src=""></iframe>\n';        
 
     var gotFooter = false;
     if (gWebsiteFooter1 && (gWebsiteFooter1 != "")){
@@ -651,48 +608,46 @@ function generateAndSaveWebsite() {
     theOutput +="       }\n";
     theOutput +=" \n";
 
-    if (gWebsiteResponsive){
-        theOutput +="       function getElementsTotalHeight() {\n";
-        theOutput +="\n";
-        theOutput +="           const ids = ['title', 'subtitle', 'tuneSelector', 'footer1', 'footer2'];\n";
-        theOutput +="           let totalHeight = 0;\n";
-        theOutput +="\n";
-        theOutput +="           ids.forEach(id => {\n";
-        theOutput +="               const element = document.getElementById(id);\n";
-        theOutput +="               if (element && (element.textContent.trim() !== \"\")) {\n";
-        theOutput +="                   //debugger;\n";
+    theOutput +="       function getElementsTotalHeight() {\n";
+    theOutput +="\n";
+    theOutput +="           const ids = ['title', 'subtitle', 'tuneSelector', 'footer1', 'footer2'];\n";
+    theOutput +="           let totalHeight = 0;\n";
+    theOutput +="\n";
+    theOutput +="           ids.forEach(id => {\n";
+    theOutput +="               const element = document.getElementById(id);\n";
+    theOutput +="               if (element && (element.textContent.trim() !== \"\")) {\n";
+    theOutput +="                   //debugger;\n";
 
-        theOutput +="                   const elementHeight = element.offsetHeight;\n";
-        theOutput +="                   const computedStyle = window.getComputedStyle(element);\n";
-        theOutput +="\n";
-        theOutput +="                   // Include margins\n";
-        theOutput +="                   const marginTop = parseFloat(computedStyle.marginTop);\n";
-        theOutput +="                   const marginBottom = parseFloat(computedStyle.marginBottom);\n";
-        theOutput +="                   totalHeight += elementHeight + marginTop + marginBottom + 1;\n";
-        theOutput +="               }\n";
-        theOutput +="           });\n";
-        if ((!gotTitle) || (!gotSubTitle)){
-        	theOutput +="           return totalHeight+5;\n";
-        }
-        else{
-        	theOutput +="           return totalHeight+3;\n";
-        }
-        theOutput +="       }\n";
-        theOutput +="\n";
-        theOutput +="       function resizeIframe() {\n";
-        theOutput +="           const iframe = document.getElementById('tuneFrame');\n";
-        theOutput +="           iframe.style.width = (window.innerWidth-3) + 'px';\n";
-        theOutput +="           var otherElementsHeight = getElementsTotalHeight();\n";
-        theOutput +="           iframe.style.height = (window.innerHeight-otherElementsHeight) + 'px';\n";
-        theOutput +="       }\n";
-        theOutput +="\n";
-        theOutput +="       // Resize the iframe on window resize\n";
-        theOutput +="       window.addEventListener('resize', resizeIframe);\n";
-        theOutput +="\n";
-        theOutput +="       // Initial call to ensure it fits when the page loads\n";
-        theOutput +="       resizeIframe();\n";
-        theOutput +="\n";
+    theOutput +="                   const elementHeight = element.offsetHeight;\n";
+    theOutput +="                   const computedStyle = window.getComputedStyle(element);\n";
+    theOutput +="\n";
+    theOutput +="                   // Include margins\n";
+    theOutput +="                   const marginTop = parseFloat(computedStyle.marginTop);\n";
+    theOutput +="                   const marginBottom = parseFloat(computedStyle.marginBottom);\n";
+    theOutput +="                   totalHeight += elementHeight + marginTop + marginBottom + 1;\n";
+    theOutput +="               }\n";
+    theOutput +="           });\n";
+    if ((!gotTitle) || (!gotSubTitle)){
+    	theOutput +="           return totalHeight+5;\n";
     }
+    else{
+    	theOutput +="           return totalHeight+3;\n";
+    }
+    theOutput +="       }\n";
+    theOutput +="\n";
+    theOutput +="       function resizeIframe() {\n";
+    theOutput +="           const iframe = document.getElementById('tuneFrame');\n";
+    theOutput +="           iframe.style.width = (window.innerWidth-3) + 'px';\n";
+    theOutput +="           var otherElementsHeight = getElementsTotalHeight();\n";
+    theOutput +="           iframe.style.height = (window.innerHeight-otherElementsHeight) + 'px';\n";
+    theOutput +="       }\n";
+    theOutput +="\n";
+    theOutput +="       // Resize the iframe on window resize\n";
+    theOutput +="       window.addEventListener('resize', resizeIframe);\n";
+    theOutput +="\n";
+    theOutput +="       // Initial call to ensure it fits when the page loads\n";
+    theOutput +="       resizeIframe();\n";
+    theOutput +="\n";
 
     theOutput +="    });\n";    
     theOutput +="\n";
@@ -796,12 +751,9 @@ var gWebsiteTitle = "ABC Transcription Tools Generated Website";
 var gWebsiteSubtitle = "Select a tune from the dropdown to load it into the frame below:";
 var gWebsiteFooter1 = "";
 var gWebsiteFooter2 = "";
-var gWebsiteWidth = 900;
-var gWebsiteHeight = 900;
 var gWebsiteColor = "#FFFFFF";
 var gWebsiteTextColor = "#000000";
 var gWebsiteHyperlinkColor = "#000000";
-var gWebsiteResponsive = true;
 var gWebsiteFilename = "";
 var gWebsiteOpenInPlayer = true;
 var gWebsiteDisableEdit = false;
@@ -841,12 +793,6 @@ var gWebsiteConfig ={
     // Chord Volume
     chord_volume: gWebsiteChordVolume,
 
-    // Website frame width
-    website_width: gWebsiteWidth,
-
-    // Website frame height
-    website_height: gWebsiteHeight,
-
     // Background color
     website_color: gWebsiteColor,
 
@@ -855,9 +801,6 @@ var gWebsiteConfig ={
 
     // Hyperlink color
     website_hyperlinkcolor: gWebsiteHyperlinkColor,
-
-    // Responsive
-    bResponsive: gWebsiteResponsive,
 
     // Open in player
     bOpenInPlayer: gWebsiteOpenInPlayer,
@@ -904,10 +847,7 @@ function generateWebsite(){
       {name: "Website subtitle:", id: "website_subtitle", type:"text", cssClass:"configure_website_form_text_wide2"},
       {name: "Website footer #1:", id: "website_footer1", type:"text", cssClass:"configure_website_form_text_wide2"},
       {name: "Website footer #2:", id: "website_footer2", type:"text", cssClass:"configure_website_form_text_wide2"},
-      {name: "        Responsive player size (ignores width and height below)", id: "bResponsive", type:"checkbox", cssClass:"configure_website_form_text4"},
-      {name: "Website player width (pixels):", id: "website_width", type:"number", cssClass:"configure_website_form_text3"},
-      {name: "Website player height (pixels):", id: "website_height", type:"number", cssClass:"configure_website_form_text2"},
-      {html: '<p style="margin-top:10px;margin-bottom:18px;font-size:12pt;line-height:14pt;font-family:helvetica">Background can be an HTML color, HTML gradient, or url(\'path_to_image\') image:</p>'},  
+      {html: '<p style="margin-top:28px;margin-bottom:18px;font-size:12pt;line-height:14pt;font-family:helvetica">Background can be an HTML color, HTML gradient, or url(\'path_to_image\') image:</p>'},  
       {name: "Website background:", id: "website_color", type:"text",cssClass:"configure_website_form_text_wide5"},      
       {name: "Text color (HTML color):", id: "website_textcolor", type:"text",cssClass:"configure_website_form_text2"},      
       {name: "Hyperlink color (HTML color):", id: "website_hyperlinkcolor", type:"text",cssClass:"configure_website_form_text2"},      
@@ -922,7 +862,7 @@ function generateWebsite(){
       {name: "Chord volume (0-127):", id: "chord_volume", type:"number", cssClass:"configure_website_form_text"},
     ];
 
-    const modal = DayPilot.Modal.form(form, gWebsiteConfig, { theme: "modal_flat", top: 10, width: 730, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+    const modal = DayPilot.Modal.form(form, gWebsiteConfig, { theme: "modal_flat", top: 50, width: 730, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
     
         if (!args.canceled){
 
@@ -942,10 +882,6 @@ function generateWebsite(){
             gWebsiteFooter2 = args.result.website_footer2;
             gWebsiteConfig.website_footer2 = gWebsiteFooter2;
 
-            // Responsive
-            gWebsiteResponsive = args.result.bResponsive;
-            gWebsiteConfig.bResponsive = gWebsiteResponsive;
-
             // Disable edit
             gWebsiteDisableEdit = args.result.bDisableEdit
             gWebsiteConfig.bDisableEdit = gWebsiteDisableEdit;
@@ -953,14 +889,6 @@ function generateWebsite(){
             // Open in player
             gWebsiteOpenInPlayer = args.result.bOpenInPlayer;
             gWebsiteConfig.bOpenInPlayer = gWebsiteOpenInPlayer;
-
-            // Width
-            gWebsiteWidth = args.result.website_width;
-            gWebsiteConfig.website_width = gWebsiteWidth;
-
-            // Height
-            gWebsiteHeight = args.result.website_height;
-            gWebsiteConfig.website_height = gWebsiteHeight;
 
             // Background color
             gWebsiteColor = args.result.website_color;
