@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2076_110624_1000";
+var gVersionNumber="2077_110724_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -24230,9 +24230,10 @@ function ExportAll(){
 	
 	var modal_msg = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export All Tunes</p>';
 
-	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export All Tunes as Audio</p>';
+	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export All Tunes as Audio/MIDI</p>';
 	modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
 	modal_msg += '<input id="exportall_mp3button" class="exportall_mp3button btn btn-allmp3download" onclick="BatchMP3Export();" type="button" value="Export all as MP3 Audio" title="Saves the audio for all the tunes as .MP3 files">'
+	modal_msg += '<input id="exportall_midibutton" class="exportall_midibutton btn btn-allmididownload" onclick="BatchMIDIExport();" type="button" value="Export all as MIDI" title="Saves the MIDI file for all the tunes">'
 	modal_msg  += '</p>';
 
 	if (format != "whistle"){
@@ -24307,6 +24308,14 @@ function BatchSVGExport(){
 	DoBatchImageExport("SVG");
 }
 
+function BatchMIDIExport(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","BatchMIDIExport");
+
+	DoBatchImageExport("MIDI");
+}
+
 function DoBatchImageExport(imageFormat){
 
 	var totalTunesToExport;
@@ -24366,6 +24375,10 @@ function DoBatchImageExport(imageFormat){
 		//console.log("callback called result = "+result);
 
 		switch (imageFormat){
+			case "MIDI":
+			DownloadMIDI(callback2,theOKButton);
+			break;
+
 			case "JPEG":
 			DownloadJPEG(callback2,theOKButton);
 			break;
@@ -26071,10 +26084,12 @@ function DownloadMP3(callback,val){
 //
 // Generate and download the MIDI file for the current tune
 //
-function DownloadMIDI(){
+function DownloadMIDI(callback, val){
 
 	// Keep track of export
-	sendGoogleAnalytics("export","DownloadMIDI");
+	if (!callback){
+		sendGoogleAnalytics("export","DownloadMIDI");
+	}
 
 	var midiData = ABCJS.synth.getMidiFile(gPlayerABC, { midiOutputType: "link" });
 
@@ -26095,6 +26110,11 @@ function DownloadMIDI(){
 	theMIDILink.click();
 		
 	document.body.removeChild(link);
+
+	if (callback){
+   		callback(val);
+   	}
+
 
 }
 
@@ -37257,8 +37277,8 @@ function AdvancedControlsDialog(){
 			
 			if (format == "whistle"){
 
-				document.getElementById("configure_batch_mp3_export").value = "Export All as Audio";
-				document.getElementById("configure_batch_mp3_export").title = "Exports all the tunes in the ABC text area as audio files";
+				document.getElementById("configure_batch_mp3_export").value = "Export All as Audio/MIDI";
+				document.getElementById("configure_batch_mp3_export").title = "Exports all the tunes in the ABC text area as audio or MIDI files";
 
 			}
 		}

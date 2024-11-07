@@ -851,10 +851,22 @@ margin-right:30px;
 #exportall_mp3button{
 height:42px;
 padding:12px;
+margin-right:30px;
 }
 
 @media (hover: hover) {
 	.exportall_mp3button:hover{
+	background: palegreen;
+	}
+}
+
+#exportall_midibutton{
+height:42px;
+padding:12px;
+}
+
+@media (hover: hover) {
+	.exportall_midibutton:hover{
 	background: palegreen;
 	}
 }
@@ -4730,6 +4742,12 @@ margin-left:12px;
 }
 
 .btn-allmp3download{
+  --color: black;
+  --background-color: lavender;
+
+}
+
+.btn-allmididownload{
   --color: black;
   --background-color: lavender;
 
