@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2077_110724_0800";
+var gVersionNumber="2078_110724_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -24320,16 +24320,20 @@ function DoBatchImageExport(imageFormat){
 
 	var totalTunesToExport;
 
-	gExportWidthAll = document.getElementById("export_width").value;
-	gExportWidthAll = parseInt(gExportWidthAll);
+	if (imageFormat != "MIDI"){
 
-	if (isNaN(gExportWidthAll)){
-		gExportWidthAll = 2400;
-	}
+		gExportWidthAll = document.getElementById("export_width").value;
+		gExportWidthAll = parseInt(gExportWidthAll);
 
-	// Save off the last entered width for next time
-	if (gLocalStorageAvailable){
-		localStorage.ExportWidthAll = gExportWidthAll;
+		if (isNaN(gExportWidthAll)){
+			gExportWidthAll = 2400;
+		}
+
+		// Save off the last entered width for next time
+		if (gLocalStorageAvailable){
+			localStorage.ExportWidthAll = gExportWidthAll;
+		}
+
 	}
 
 	function callback2(theOKButton){
