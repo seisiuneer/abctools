@@ -179,6 +179,14 @@ function LoadWebsiteSettings(){
             gWebsiteDisableEdit = false;
         }
 
+        val = localStorage.WebsiteTabSelector;
+        if (val){
+            gWebsiteTabSelector = (val == "true");
+        }
+        else{
+            gWebsiteTabSelector = false;
+        }
+
         // Stuff the updated config
         gWebsiteConfig ={
 
@@ -228,7 +236,10 @@ function LoadWebsiteSettings(){
             bOpenInPlayer: gWebsiteOpenInPlayer,
 
             // Disable editor
-            bDisableEdit: gWebsiteDisableEdit
+            bDisableEdit: gWebsiteDisableEdit,
+
+            // Add tab selector
+            bTabSelector: gWebsiteTabSelector
 
         }
     }
@@ -262,6 +273,7 @@ function SaveWebsiteSettings(){
         localStorage.WebsiteHyperlinkColor = gWebsiteHyperlinkColor;
         localStorage.WebsiteOpenInPlayer = gWebsiteOpenInPlayer;
         localStorage.WebsiteDisableEdit = gWebsiteDisableEdit;
+        localStorage.WebsiteTabSelector = gWebsiteTabSelector;
 
     }
 }
@@ -549,13 +561,35 @@ function generateAndSaveWebsite() {
         gotSubTitle = true;
     }
     if (gotTitle || gotSubTitle){
-    	theOutput +='        <select id="tuneSelector">\n';
+        if (gWebsiteTabSelector){
+    	   theOutput +='        <select id="tuneSelector" style="margin-right:12px;">\n';
+        }
+        else{
+           theOutput +='        <select id="tuneSelector">\n';            
+        }
     }
     else{
-    	theOutput +='        <select id="tuneSelector" style="margin-top:18px;">\n';
+        if (gWebsiteTabSelector){
+    	   theOutput +='        <select id="tuneSelector" style="margin-top:18px;margin-right:12px;">\n';
+        }
+        else{
+           theOutput +='        <select id="tuneSelector" style="margin-top:18px;">\n';            
+        }
     }
     theOutput +='            <option value="">Click to Select a Tune</option>\n';
     theOutput +="        </select>\n";
+
+    if (gWebsiteTabSelector){
+        theOutput +='        <select id="displayOptions" style="width:200px;">\n';
+        theOutput +='           <option value="-1">Tablature Display</option>\n';
+        theOutput +='           <option value="0">Standard Notation</option>\n';
+        theOutput +='           <option value="1">Mandolin</option>\n';
+        theOutput +='           <option value="2">Standard Guitar</option>\n';
+        theOutput +='           <option value="3">DADGAD</option>\n';
+        theOutput +='           <option value="4">Whistle</option>\n';
+        theOutput +='        </select>\n'
+    }
+
     theOutput +="        <br/>\n";
     theOutput +='        <iframe id="tuneFrame" src=""></iframe>\n';        
 
@@ -597,27 +631,96 @@ function generateAndSaveWebsite() {
     theOutput +="\n";
     theOutput +="           // Update iframe src when an option is selected\n";
     theOutput +="           tuneSelector.addEventListener('change', () => {\n";
-    theOutput +="           tuneFrame.src = tuneSelector.value;\n";
+    theOutput +="             var theURL = tuneSelector.value;\n";
+    if (gWebsiteTabSelector){
+        theOutput +="               theURL = theURL.replace(/&format=([^&]+)/g,\"&format=\"+tabStyle);\n";        
+    }
+    theOutput +="             tuneFrame.src = theURL;\n";
     theOutput +="           });\n";
-    theOutput +="       }\n";
-    theOutput +="       else{\n";
+    theOutput +="        }\n";
+    theOutput +="        else{\n";
     theOutput +="           tuneSelector.style.display=\"none\";\n";
     theOutput +="           setTimeout(function(){\n"; 
-    theOutput +="               tuneFrame.src = tunes[0].URL;\n";
-    theOutput +="           },250);\n";
-    theOutput +="       }\n";
+    theOutput +="             var theURL = tunes[0].URL;\n"
+    if (gWebsiteTabSelector){
+        theOutput +="             theURL = theURL.replace(/&format=([^&]+)/g,\"&format=\"+tabStyle);\n";        
+    }
+    theOutput +="             tuneFrame.src = theURL;\n";
+    theOutput +="           },250);\n";        
+
+    theOutput +="        }\n";
     theOutput +=" \n";
+
+    if (gWebsiteTabSelector){
+
+        theOutput +="        var tabStyle = \"noten\";\n";
+
+        theOutput +=" \n";
+
+        theOutput +="        const displayOptions = document.getElementById('displayOptions');\n";
+
+        // Update iframe src when an option is selected
+        theOutput +="          displayOptions.addEventListener('change', () => {\n";
+
+        theOutput +="            var origTabStyle = tabStyle;\n";
+
+        theOutput +="             if (displayOptions.value == \"-1\"){\n";
+        theOutput +="                 return;\n";
+        theOutput +="             }\n";
+
+        theOutput +="             switch (displayOptions.value){\n";
+        theOutput +="                 case \"0\": // Standard notation\n";
+        theOutput +="                     tabStyle = \"noten\";\n";
+        theOutput +="                     break;\n";
+        theOutput +="                     case \"1\": // Mandolin\n";
+        theOutput +="                     tabStyle = \"mandolin\";\n";
+        theOutput +="                     break;\n";
+        theOutput +="                 case \"2\": // Guitar\n";
+        theOutput +="                     tabStyle = \"guitare\";\n";
+        theOutput +="                     break;\n";
+        theOutput +="                 case \"3\": // DADGAD\n";
+        theOutput +="                     tabStyle = \"guitard\";\n";
+        theOutput +="                     break;\n";
+        theOutput +="                 case \"4\": // Whistle\n";
+        theOutput +="                     tabStyle = \"whistle\";\n";
+        theOutput +="                     break;\n";
+        theOutput +="                 default:\n";
+        theOutput +="                     tabStyle = \"noten\";\n";
+        theOutput +="                     break;\n";
+        theOutput +="             }\n";
+
+        theOutput +="             var theURL;\n";
+        theOutput +="             if (tunes.length > 1){\n";
+        theOutput +="                theURL = tuneSelector.value;\n";
+        theOutput +="             }\n";
+        theOutput +="             else {\n";
+        theOutput +="                theURL = tunes[0].URL;\n";
+        theOutput +="             }\n";
+
+        //theOutput +="debugger;\n";
+
+        theOutput +="             theURL = theURL.replace(/&format=([^&]+)/g,\"&format=\"+tabStyle);\n";
+        theOutput +="             tuneFrame.src = theURL;\n";
+
+        theOutput +="        });\n";
+        theOutput +=" \n";
+    }
 
     theOutput +="       function getElementsTotalHeight() {\n";
     theOutput +="\n";
-    theOutput +="           const ids = ['title', 'subtitle', 'tuneSelector', 'footer1', 'footer2'];\n";
+
+    if (gWebsiteTabSelector){
+        theOutput +="           const ids = ['title', 'subtitle', 'displayOptions', 'footer1', 'footer2'];\n";
+    }
+    else{
+        theOutput +="           const ids = ['title', 'subtitle', 'tuneSelector', 'footer1', 'footer2'];\n";       
+    }
+
     theOutput +="           let totalHeight = 0;\n";
     theOutput +="\n";
     theOutput +="           ids.forEach(id => {\n";
     theOutput +="               const element = document.getElementById(id);\n";
     theOutput +="               if (element && (element.textContent.trim() !== \"\")) {\n";
-    theOutput +="                   //debugger;\n";
-
     theOutput +="                   const elementHeight = element.offsetHeight;\n";
     theOutput +="                   const computedStyle = window.getComputedStyle(element);\n";
     theOutput +="\n";
@@ -757,6 +860,7 @@ var gWebsiteHyperlinkColor = "#000000";
 var gWebsiteFilename = "";
 var gWebsiteOpenInPlayer = true;
 var gWebsiteDisableEdit = false;
+var gWebsiteTabSelector = false;
 
 var gWebsiteConfig ={
 
@@ -806,7 +910,10 @@ var gWebsiteConfig ={
     bOpenInPlayer: gWebsiteOpenInPlayer,
 
     // Disable editor
-    bDisableEdit: gWebsiteDisableEdit
+    bDisableEdit: gWebsiteDisableEdit,
+
+    // Add tab selector
+    bTabSelector: gWebsiteTabSelector
 
 }
 
@@ -851,6 +958,7 @@ function generateWebsite(){
       {name: "Website background:", id: "website_color", type:"text",cssClass:"configure_website_form_text_wide5"},      
       {name: "Text color (HTML color):", id: "website_textcolor", type:"text",cssClass:"configure_website_form_text2"},      
       {name: "Hyperlink color (HTML color):", id: "website_hyperlinkcolor", type:"text",cssClass:"configure_website_form_text2"},      
+      {name: "          Add tablature selector dropdown (Notation, Mandolin, Guitar, DADGAD, Tin Whistle) ", id: "bTabSelector", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "          Disable access to editor ", id: "bDisableEdit", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "          Tunes open in player ", id: "bOpenInPlayer", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "          Add instruments and volume overrides to each tune ", id: "bInjectInstruments", type:"checkbox", cssClass:"configure_website_form_text2"},
@@ -885,6 +993,10 @@ function generateWebsite(){
             // Disable edit
             gWebsiteDisableEdit = args.result.bDisableEdit
             gWebsiteConfig.bDisableEdit = gWebsiteDisableEdit;
+
+            // Add tab selector
+            gWebsiteTabSelector = args.result.bTabSelector
+            gWebsiteConfig.bTabSelector = gWebsiteTabSelector;
 
             // Open in player
             gWebsiteOpenInPlayer = args.result.bOpenInPlayer;
