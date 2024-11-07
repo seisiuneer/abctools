@@ -586,7 +586,7 @@ function generateAndSaveWebsite() {
         theOutput +='           <option value="1">Mandolin</option>\n';
         theOutput +='           <option value="2">Standard Guitar</option>\n';
         theOutput +='           <option value="3">DADGAD</option>\n';
-        theOutput +='           <option value="4">Whistle</option>\n';
+        theOutput +='           <option value="4">Tin Whistle</option>\n';
         theOutput +='        </select>\n'
     }
 
