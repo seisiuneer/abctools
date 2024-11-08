@@ -584,9 +584,10 @@ function generateAndSaveWebsite() {
         theOutput +='           <option value="-1">Tablature Display</option>\n';
         theOutput +='           <option value="0">Standard Notation</option>\n';
         theOutput +='           <option value="1">Mandolin</option>\n';
-        theOutput +='           <option value="2">Standard Guitar</option>\n';
-        theOutput +='           <option value="3">DADGAD</option>\n';
-        theOutput +='           <option value="4">Tin Whistle</option>\n';
+        theOutput +='           <option value="2">GDAD Bouzouki</option>\n';
+        theOutput +='           <option value="3">Standard Guitar</option>\n';
+        theOutput +='           <option value="4">DADGAD</option>\n';
+        theOutput +='           <option value="5">Tin Whistle</option>\n';
         theOutput +='        </select>\n'
     }
 
@@ -672,16 +673,19 @@ function generateAndSaveWebsite() {
         theOutput +="                 case \"0\": // Standard notation\n";
         theOutput +="                     tabStyle = \"noten\";\n";
         theOutput +="                     break;\n";
-        theOutput +="                     case \"1\": // Mandolin\n";
+        theOutput +="                 case \"1\": // Mandolin\n";
         theOutput +="                     tabStyle = \"mandolin\";\n";
         theOutput +="                     break;\n";
-        theOutput +="                 case \"2\": // Guitar\n";
+        theOutput +="                 case \"2\": // GDAD\n";
+        theOutput +="                     tabStyle = \"gdad\";\n";
+        theOutput +="                     break;\n";
+        theOutput +="                 case \"3\": // Guitar\n";
         theOutput +="                     tabStyle = \"guitare\";\n";
         theOutput +="                     break;\n";
-        theOutput +="                 case \"3\": // DADGAD\n";
+        theOutput +="                 case \"4\": // DADGAD\n";
         theOutput +="                     tabStyle = \"guitard\";\n";
         theOutput +="                     break;\n";
-        theOutput +="                 case \"4\": // Whistle\n";
+        theOutput +="                 case \"5\": // Whistle\n";
         theOutput +="                     tabStyle = \"whistle\";\n";
         theOutput +="                     break;\n";
         theOutput +="                 default:\n";
@@ -958,7 +962,7 @@ function generateWebsite(){
       {name: "Website background:", id: "website_color", type:"text",cssClass:"configure_website_form_text_wide5"},      
       {name: "Text color (HTML color):", id: "website_textcolor", type:"text",cssClass:"configure_website_form_text2"},      
       {name: "Hyperlink color (HTML color):", id: "website_hyperlinkcolor", type:"text",cssClass:"configure_website_form_text2"},      
-      {name: "          Add tablature selector dropdown (Notation, Mandolin, Guitar, DADGAD, Tin Whistle) ", id: "bTabSelector", type:"checkbox", cssClass:"configure_website_form_text2"},
+      {name: "          Add tablature selector dropdown (Notation, Mandolin, GDAD, Guitar, DADGAD, Tin Whistle) ", id: "bTabSelector", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "          Disable access to editor ", id: "bDisableEdit", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "          Tunes open in player ", id: "bOpenInPlayer", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "          Add instruments and volume overrides to each tune ", id: "bInjectInstruments", type:"checkbox", cssClass:"configure_website_form_text2"},
@@ -970,7 +974,7 @@ function generateWebsite(){
       {name: "Chord volume (0-127):", id: "chord_volume", type:"number", cssClass:"configure_website_form_text"},
     ];
 
-    const modal = DayPilot.Modal.form(form, gWebsiteConfig, { theme: "modal_flat", top: 50, width: 750, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+    const modal = DayPilot.Modal.form(form, gWebsiteConfig, { theme: "modal_flat", top: 50, width: 760, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
     
         if (!args.canceled){
 
