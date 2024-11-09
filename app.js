@@ -908,7 +908,7 @@ function SetupRawModeUI(){
 		
 		var elem = document.getElementById("rawmodebutton");
 
-		elem.value = "Highlighting Off";
+		elem.value = "Highlighting";
 
 		gTheABC.style.backgroundColor = "white";
 		
@@ -923,7 +923,7 @@ function SetupRawModeUI(){
 
 		var elem = document.getElementById("rawmodebutton");
 
-		elem.value = "Highlighting Off";
+		elem.value = "Highlighting";
 
 		// Grey it out
 		elem.classList.remove("rawmodebutton");
@@ -1009,7 +1009,7 @@ function ToggleRawMode(){
 
 		}
 
-		elem.value = "Highlighting On";
+		elem.value = "Highlighting";
 
 		elem.classList.add("btn-rawmode-on");
 		elem.classList.remove("btn-rawmode-off");
@@ -1019,7 +1019,7 @@ function ToggleRawMode(){
 	}
 	else{
 
-		elem.value = "Highlighting Off";
+		elem.value = "Highlighting";
 
 		elem.classList.add("btn-rawmode-off");
 		elem.classList.remove("btn-rawmode-on");
@@ -2648,7 +2648,7 @@ function Clear() {
 
 		var elem = document.getElementById("rawmodebutton");
 
-		elem.value = "Highlighting Off";
+		elem.value = "Highlighting";
 
 		// Grey it out
 		elem.classList.remove("rawmodebutton");
@@ -12149,7 +12149,7 @@ function Render(renderAll,tuneNumber) {
 		document.getElementById("rawmodebutton").classList.add("btn-rawmode-off");
 		document.getElementById("rawmodebutton").classList.remove("btn-rawmode-on");
 
-		document.getElementById("rawmodebutton").value = "Highlighting Off";
+		document.getElementById("rawmodebutton").value = "Highlighting";
 
 		gTheABC.style.backgroundColor = "white";
 
@@ -37559,7 +37559,7 @@ function AdvancedSettings(){
 				
 				gRawLastIndex = -1;
 
-				elem.value = "Highlighting Off";
+				elem.value = "Highlighting";
 
 				elem.classList.add("btn-rawmode-off");
 				elem.classList.remove("btn-rawmode-on");
