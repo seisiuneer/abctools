@@ -416,7 +416,7 @@ function SDEncodeABCToolsShareURL(theABC,setName,displayFormat,staffSpacing,addP
     setName = setName.trim();
 
     // Strip out any naughty HTML tag characters
-    setName = setName.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+	setName = setName.replace(/[^a-zA-Z'áÁóÓúÚíÍéÉäÄöÖüÜÀàÈèÌìÒòÙù0-9_\-. ]+/ig, '');
 
     // Replace any spaces
     setName = setName.replace(/\s/g, '_');
@@ -919,7 +919,7 @@ function saveVSON(fname, theData) {
     }
 
     // Strip out any naughty HTML tag characters
-    fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+	fname = fname.replace(/[^a-zA-Z'áÁóÓúÚíÍéÉäÄöÖüÜÀàÈèÌìÒòÙù0-9_\-. ]+/ig, '');
 
     if (fname.length == 0) {
         return null;

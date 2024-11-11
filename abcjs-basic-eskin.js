@@ -18522,7 +18522,12 @@ var generateMidiDownloadLink = function generateMidiDownloadLink(tune, midiParam
   var title = tune.metaText && tune.metaText.title ? tune.metaText.title : 'Untitled';
   var label;
   if (midiParams.downloadLabel && isFunction(midiParams.downloadLabel)) label = midiParams.downloadLabel(tune, index);else if (midiParams.downloadLabel) label = midiParams.downloadLabel.replace(/%T/, title);else label = "Download MIDI for \"" + title + "\"";
-  title = title.toLowerCase().replace(/'/g, '').replace(/\W/g, '_').replace(/__/g, '_');
+  // MAE 11 Nov 2024 - For fada and other diacriticals
+  title = title.toLowerCase();
+  title = title.replace(/'/g, '');
+  //title = title.replace(/\W/g, '_');
+  title = title.replace(/[^a-zA-Z'áÁóÓúÚíÍéÉäÄöÖüÜÀàÈèÌìÒòÙù0-9_\-. ]+/ig, '');
+  title = title.replace(/__/g, '_');
   var filename = midiParams.fileName ? midiParams.fileName : title + '.midi';
   html += '<a download="' + filename + '" href="' + midi + '">' + label + '</a>';
   if (midiParams.postTextDownload) html += midiParams.postTextDownload;

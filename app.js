@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2082_110924_0930";
+var gVersionNumber="2083_111124_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -418,6 +418,13 @@ function getFirstPage(){
 // 
 
 //
+// Clean a filename
+//
+function cleanFileName(fname){
+	return fname.replace(/[^a-zA-Z'áÁóÓúÚíÍéÉäÄöÖüÜÀàÈèÌìÒòÙù0-9_\-. ]+/ig, '');
+}
+
+//
 // Is a tune a multi-voice tune
 //
 function isMultiVoiceTune(theTune){
@@ -786,7 +793,7 @@ function GetFirstTuneTitle(bAllowSpaces) {
 
 			if (bAllowSpaces){
 				// Strip out any naughty HTML tag characters
-				title = title.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+				title = cleanFileName(title);
 
 				// Replace any spaces
 				title = title.replace(/\s/g, ' ');
@@ -794,14 +801,15 @@ function GetFirstTuneTitle(bAllowSpaces) {
 			else{
 
 				// Strip out any naughty HTML tag characters
-				title = title.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+				title = cleanFileName(title);
 
 				// Replace any spaces
 				title = title.replace(/\s/g, '_');
 			}
 
 			// Replace any quotes
-			title = title.replace(/\'/g, '_');
+			// MAE FOOFOO 11 Nov 2024
+			//title = title.replace(/\'/g, '_');
 
 			break;
 		}
@@ -6347,7 +6355,7 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo,bAllowSpaces){
 		if (!bAllowSpaces){
 
 			// Strip out any naughty HTML tag characters
-			title = title.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+			title = cleanFileName(title);
 
 			// Replace any spaces
 			title = title.replace(/\s/g, '_');
@@ -6355,7 +6363,7 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo,bAllowSpaces){
 		else{
 
 			// Strip out any naughty HTML tag characters
-			title = title.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+			title = cleanFileName(title);
 
 			// Replace any spaces
 			title = title.replace(/\s/g, ' ');
@@ -8733,7 +8741,7 @@ function promptForPDFFilename(placeholder, callback){
 		if (fname != null){
 
 			// Strip out any naughty HTML tag characters
-			fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+			fname = cleanFileName(fname);
 
 			if (fname.length != 0){
 				// Give it a good extension
@@ -17265,7 +17273,7 @@ function saveABCFile(thePrompt, thePlaceholder, theData){
 		}
 
 		// Strip out any naughty HTML tag characters
-		fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+		fname = cleanFileName(fname);
 
 		if (fname.length == 0){
 		  return null;
@@ -17358,7 +17366,7 @@ function saveTextFile(thePrompt, thePlaceholder, theData){
 		}
 
 		// Strip out any naughty HTML tag characters
-		fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+		fname = cleanFileName(fname);
 
 		if (fname.length == 0){
 		  return null;
@@ -17420,7 +17428,7 @@ function saveTextFileDeveloper(thePrompt, thePlaceholder, theData){
 		}
 
 		// Strip out any naughty HTML tag characters
-		fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+		fname = cleanFileName(fname);
 
 		if (fname.length == 0){
 		  return null;
@@ -25192,9 +25200,7 @@ function GetTuneAudioDownloadName(tuneABC,extension){
 			fname = fname.trim();
 
 			// Strip out any naughty HTML tag characters
-			// MAE 13 Sep 2024 - Allow spaces in filenames
-			//fname = fname.replace(/[ ]+/ig, '_',)
-			fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+			fname = cleanFileName(fname);
 
 			return fname+extension;
 
