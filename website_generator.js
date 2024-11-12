@@ -187,6 +187,22 @@ function LoadWebsiteSettings(){
             gWebsiteTabSelector = false;
         }
 
+        val = localStorage.WebsiteAddHelp;
+        if (val){
+            gWebsiteAddHelp = (val == "true");
+        }
+        else{
+            gWebsiteAddHelp = false;
+        }
+
+        val = localStorage.WebsiteHelpURL;
+        if (val){
+            gWebsiteHelpURL = val;
+        }
+        else{
+            gWebsiteHelpURL = "";
+        }
+
         // Stuff the updated config
         gWebsiteConfig ={
 
@@ -239,7 +255,13 @@ function LoadWebsiteSettings(){
             bDisableEdit: gWebsiteDisableEdit,
 
             // Add tab selector
-            bTabSelector: gWebsiteTabSelector
+            bTabSelector: gWebsiteTabSelector,
+
+            // Add help
+            bAddHelp: gWebsiteAddHelp,
+
+            // Website help url
+            website_helpurl: gWebsiteHelpURL
 
         }
     }
@@ -274,7 +296,8 @@ function SaveWebsiteSettings(){
         localStorage.WebsiteOpenInPlayer = gWebsiteOpenInPlayer;
         localStorage.WebsiteDisableEdit = gWebsiteDisableEdit;
         localStorage.WebsiteTabSelector = gWebsiteTabSelector;
-
+        localStorage.WebsiteAddHelp = gWebsiteAddHelp;
+        localStorage.WebsiteHelpURL = gWebsiteHelpURL;
     }
 }
 
@@ -541,6 +564,29 @@ function generateAndSaveWebsite() {
     theOutput +="        margin-bottom:0px;\n";
     theOutput +="        color:"+gWebsiteTextColor+";\n";
     theOutput +="    }\n";
+
+    if (gWebsiteAddHelp){
+        // There is a title or subtitle present
+        if ((gWebsiteTitle && (gWebsiteTitle != "")) || (gWebsiteSubtitle && (gWebsiteSubtitle != ""))){
+            theOutput +="    #website_help{\n";
+            theOutput +="        font-size:28pt;\n";
+            theOutput +="        position:absolute;\n";
+            theOutput +="        left:28px;\n";
+            theOutput +="        top:20px;\n";
+            theOutput +="        color:"+gWebsiteHyperlinkColor+";\n";
+            theOutput +="    }\n";
+        }
+        else{
+            theOutput +="    #website_help{\n";
+            theOutput +="        font-size:28pt;\n";
+            theOutput +="        position:absolute;\n";
+            theOutput +="        left:18px;\n";
+            theOutput +="        top:10px;\n";
+            theOutput +="        color:"+gWebsiteHyperlinkColor+";\n";
+            theOutput +="    }\n";
+        }
+    }
+
     theOutput +="</style>\n";
     theOutput +="\n";
     theOutput +="</head>\n";
@@ -550,6 +596,10 @@ function generateAndSaveWebsite() {
     theOutput +="<body>\n";
     theOutput +="\n";
     theOutput +='    <div class="container">\n';
+    if (gWebsiteAddHelp){
+        theOutput +='    <a id="website_help" href="'+gWebsiteHelpURL+'" target="_blank" style="text-decoration:none;" title="Information about using this tunebook" class="cornerbutton">?</a>';
+    }
+
     var gotTitle = false;
     if (gWebsiteTitle && (gWebsiteTitle != "")){
         theOutput +="        <h1 id=\"title\">"+gWebsiteTitle+"</h1>\n";
@@ -865,6 +915,8 @@ var gWebsiteFilename = "";
 var gWebsiteOpenInPlayer = true;
 var gWebsiteDisableEdit = false;
 var gWebsiteTabSelector = false;
+var gWebsiteAddHelp = false;
+var gWebsiteHelpURL = "";
 
 var gWebsiteConfig ={
 
@@ -917,7 +969,13 @@ var gWebsiteConfig ={
     bDisableEdit: gWebsiteDisableEdit,
 
     // Add tab selector
-    bTabSelector: gWebsiteTabSelector
+    bTabSelector: gWebsiteTabSelector,
+
+   // Add help
+    bAddHelp: gWebsiteAddHelp,
+
+    // Website help url
+    website_helpurl: gWebsiteHelpURL
 
 }
 
@@ -961,9 +1019,11 @@ function generateWebsite(){
       {html: '<p style="margin-top:28px;margin-bottom:18px;font-size:12pt;line-height:14pt;font-family:helvetica">Background can be an HTML color, HTML gradient, or url(\'path_to_image\') image:</p>'},  
       {name: "Website background:", id: "website_color", type:"text",cssClass:"configure_website_form_text_wide5"},      
       {name: "Text color (HTML color):", id: "website_textcolor", type:"text",cssClass:"configure_website_form_text2"},      
-      {name: "Hyperlink color (HTML color):", id: "website_hyperlinkcolor", type:"text",cssClass:"configure_website_form_text2"},      
+      {name: "Hyperlink color (HTML color, also used for help icon):", id: "website_hyperlinkcolor", type:"text",cssClass:"configure_website_form_text2"},      
       {name: "          Add tablature selector dropdown (Notation, Mandolin, GDAD, Guitar, DADGAD, Tin Whistle) ", id: "bTabSelector", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "          Disable access to editor ", id: "bDisableEdit", type:"checkbox", cssClass:"configure_website_form_text2"},
+      {name: "          Add ? tunebook help icon at upper left corner ", id: "bAddHelp", type:"checkbox", cssClass:"configure_website_form_text2"},
+      {name: "Tunebook help URL:", id: "website_helpurl", type:"text",cssClass:"configure_website_form_text_wide5"},      
       {name: "          Tunes open in player ", id: "bOpenInPlayer", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "          Add instruments and volume overrides to each tune ", id: "bInjectInstruments", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "Soundfont:", id: "sound_font", type:"select", options:sound_font_options, cssClass:"configure_setuppdftunebook_midi_program_select"},
@@ -974,7 +1034,7 @@ function generateWebsite(){
       {name: "Chord volume (0-127):", id: "chord_volume", type:"number", cssClass:"configure_website_form_text"},
     ];
 
-    const modal = DayPilot.Modal.form(form, gWebsiteConfig, { theme: "modal_flat", top: 50, width: 760, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+    const modal = DayPilot.Modal.form(form, gWebsiteConfig, { theme: "modal_flat", top: 25, width: 760, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
     
         if (!args.canceled){
 
@@ -1017,6 +1077,14 @@ function generateWebsite(){
             // Hyperlink color
             gWebsiteHyperlinkColor = args.result.website_hyperlinkcolor;
             gWebsiteConfig.website_hyperlinkcolor = gWebsiteHyperlinkColor;
+
+            // Add help?
+            gWebsiteAddHelp = args.result.bAddHelp;
+            gWebsiteConfig.bAddHelp = gWebsiteAddHelp;
+
+            // Help URL
+            gWebsiteHelpURL = args.result.website_helpurl;
+            gWebsiteConfig.website_helpurl = gWebsiteHelpURL;
 
             // Add instruments?
             gWebsiteInjectInstruments = args.result.bInjectInstruments;
