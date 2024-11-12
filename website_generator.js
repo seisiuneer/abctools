@@ -1022,7 +1022,7 @@ function generateWebsite(){
       {name: "Hyperlink color (HTML color, also used for help icon):", id: "website_hyperlinkcolor", type:"text",cssClass:"configure_website_form_text2"},      
       {name: "          Add tablature selector dropdown (Notation, Mandolin, GDAD, Guitar, DADGAD, Tin Whistle) ", id: "bTabSelector", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "          Disable access to editor ", id: "bDisableEdit", type:"checkbox", cssClass:"configure_website_form_text2"},
-      {name: "          Add ? tunebook help icon at upper left corner ", id: "bAddHelp", type:"checkbox", cssClass:"configure_website_form_text2"},
+      {name: "          Add ? tunebook help icon at upper left corner ", id: "bAddHelp", type:"checkbox", cssClass:"configure_website_form_text6"},
       {name: "Tunebook help URL:", id: "website_helpurl", type:"text",cssClass:"configure_website_form_text_wide5"},      
       {name: "          Tunes open in player ", id: "bOpenInPlayer", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "          Add instruments and volume overrides to each tune ", id: "bInjectInstruments", type:"checkbox", cssClass:"configure_website_form_text2"},
@@ -1034,7 +1034,7 @@ function generateWebsite(){
       {name: "Chord volume (0-127):", id: "chord_volume", type:"number", cssClass:"configure_website_form_text"},
     ];
 
-    const modal = DayPilot.Modal.form(form, gWebsiteConfig, { theme: "modal_flat", top: 25, width: 760, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+    const modal = DayPilot.Modal.form(form, gWebsiteConfig, { theme: "modal_flat", top: 10, width: 760, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
     
         if (!args.canceled){
 

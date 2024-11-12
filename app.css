@@ -4427,7 +4427,7 @@ font-size:12pt;
 line-height:12px;
 font-family:helvetica;
 margin-top:12px;
-margin-bottom:14px;
+margin-bottom:12px;
 display:flex;
 }
 
@@ -4485,6 +4485,23 @@ display:flex;
 font-size:12pt;
 font-family:helvetica;
 width: 495px;
+margin-top:-9px;
+margin-left:12px;
+}
+
+.configure_website_form_text6{
+font-size:12pt;
+line-height:12px;
+font-family:helvetica;
+margin-top:12px;
+margin-bottom:24px;
+display:flex;
+}
+
+.configure_website_form_text6>input{
+font-size:12pt;
+font-family:helvetica;
+width: 100px;
 margin-top:-9px;
 margin-left:12px;
 }
