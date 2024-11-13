@@ -630,14 +630,17 @@ function generateAndSaveWebsite() {
     theOutput +="        </select>\n";
 
     if (gWebsiteTabSelector){
-        theOutput +='        <select id="displayOptions" style="width:200px;">\n';
+        theOutput +='        <select id="displayOptions" style="width:220px;">\n';
         theOutput +='           <option value="-1">Tablature Display</option>\n';
         theOutput +='           <option value="0">Standard Notation</option>\n';
         theOutput +='           <option value="1">Mandolin</option>\n';
-        theOutput +='           <option value="2">GDAD Bouzouki</option>\n';
-        theOutput +='           <option value="3">Standard Guitar</option>\n';
-        theOutput +='           <option value="4">DADGAD</option>\n';
-        theOutput +='           <option value="5">Tin Whistle</option>\n';
+        theOutput +='           <option value="2">Tenor Banjo</option>\n';
+        theOutput +='           <option value="3">GDAD Bouzouki</option>\n';
+        theOutput +='           <option value="4">Standard Guitar</option>\n';
+        theOutput +='           <option value="5">DADGAD</option>\n';
+        theOutput +='           <option value="6">Tin Whistle</option>\n';
+        theOutput +='           <option value="7">Irish Flute</option>\n';
+        theOutput +='           <option value="8">Hammered Dulcimer</option>\n';
         theOutput +='        </select>\n'
     }
 
@@ -668,6 +671,16 @@ function generateAndSaveWebsite() {
     theOutput += "    "+theJSON;
     theOutput +="\n";
     theOutput +="\n";
+
+    if (gWebsiteTabSelector){
+        // Add LZW library
+        theOutput +='    var LZString=function(){function o(o,r){if(!t[o]){t[o]={};for(var n=0;n<o.length;n++)t[o][o.charAt(n)]=n}return t[o][r]}var r=String.fromCharCode,n="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",e="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-$",t={},i={compressToBase64:function(o){if(null==o)return"";var r=i._compress(o,6,function(o){return n.charAt(o)});switch(r.length%4){default:case 0:return r;case 1:return r+"===";case 2:return r+"==";case 3:return r+"="}},decompressFromBase64:function(r){return null==r?"":""==r?null:i._decompress(r.length,32,function(e){return o(n,r.charAt(e))})},compressToUTF16:function(o){return null==o?"":i._compress(o,15,function(o){return r(o+32)})+" "},decompressFromUTF16:function(o){return null==o?"":""==o?null:i._decompress(o.length,16384,function(r){return o.charCodeAt(r)-32})},compressToUint8Array:function(o){for(var r=i.compress(o),n=new Uint8Array(2*r.length),e=0,t=r.length;t>e;e++){var s=r.charCodeAt(e);n[2*e]=s>>>8,n[2*e+1]=s%256}return n},decompressFromUint8Array:function(o){if(null===o||void 0===o)return i.decompress(o);for(var n=new Array(o.length/2),e=0,t=n.length;t>e;e++)n[e]=256*o[2*e]+o[2*e+1];var s=[];return n.forEach(function(o){s.push(r(o))}),i.decompress(s.join(""))},compressToEncodedURIComponent:function(o){return null==o?"":i._compress(o,6,function(o){return e.charAt(o)})},decompressFromEncodedURIComponent:function(r){return null==r?"":""==r?null:(r=r.replace(/ /g,"+"),i._decompress(r.length,32,function(n){return o(e,r.charAt(n))}))},compress:function(o){return i._compress(o,16,function(o){return r(o)})},_compress:function(o,r,n){if(null==o)return"";var e,t,i,s={},p={},u="",c="",a="",l=2,f=3,h=2,d=[],m=0,v=0;for(i=0;i<o.length;i+=1)if(u=o.charAt(i),Object.prototype.hasOwnProperty.call(s,u)||(s[u]=f++,p[u]=!0),c=a+u,Object.prototype.hasOwnProperty.call(s,c))a=c;else{if(Object.prototype.hasOwnProperty.call(p,a)){if(a.charCodeAt(0)<256){for(e=0;h>e;e++)m<<=1,v==r-1?(v=0,d.push(n(m)),m=0):v++;for(t=a.charCodeAt(0),e=0;8>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}else{for(t=1,e=0;h>e;e++)m=m<<1|t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t=0;for(t=a.charCodeAt(0),e=0;16>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}l--,0==l&&(l=Math.pow(2,h),h++),delete p[a]}else for(t=s[a],e=0;h>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;l--,0==l&&(l=Math.pow(2,h),h++),s[c]=f++,a=String(u)}if(""!==a){if(Object.prototype.hasOwnProperty.call(p,a)){if(a.charCodeAt(0)<256){for(e=0;h>e;e++)m<<=1,v==r-1?(v=0,d.push(n(m)),m=0):v++;for(t=a.charCodeAt(0),e=0;8>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}else{for(t=1,e=0;h>e;e++)m=m<<1|t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t=0;for(t=a.charCodeAt(0),e=0;16>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}l--,0==l&&(l=Math.pow(2,h),h++),delete p[a]}else for(t=s[a],e=0;h>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;l--,0==l&&(l=Math.pow(2,h),h++)}for(t=2,e=0;h>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;for(;;){if(m<<=1,v==r-1){d.push(n(m));break}v++}return d.join("")},decompress:function(o){return null==o?"":""==o?null:i._decompress(o.length,32768,function(r){return o.charCodeAt(r)})},_decompress:function(o,n,e){var t,i,s,p,u,c,a,l,f=[],h=4,d=4,m=3,v="",w=[],A={val:e(0),position:n,index:1};for(i=0;3>i;i+=1)f[i]=i;for(p=0,c=Math.pow(2,2),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;switch(t=p){case 0:for(p=0,c=Math.pow(2,8),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;l=r(p);break;case 1:for(p=0,c=Math.pow(2,16),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;l=r(p);break;case 2:return""}for(f[3]=l,s=l,w.push(l);;){if(A.index>o)return"";for(p=0,c=Math.pow(2,m),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;switch(l=p){case 0:for(p=0,c=Math.pow(2,8),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;f[d++]=r(p),l=d-1,h--;break;case 1:for(p=0,c=Math.pow(2,16),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;f[d++]=r(p),l=d-1,h--;break;case 2:return w.join("")}if(0==h&&(h=Math.pow(2,m),m++),f[l])v=f[l];else{if(l!==d)return null;v=s+s.charAt(0)}w.push(v),f[d++]=s+v.charAt(0),h--,s=v,0==h&&(h=Math.pow(2,m),m++)}}};return i}();"function"==typeof define&&define.amd?define(function(){return LZString}):"undefined"!=typeof module&&null!=module&&(module.exports=LZString);\n';
+
+        theOutput +="    var isBanjo = false;\n";
+        theOutput +="    var isFlute = false;\n";
+        theOutput +="    var isDulcimer = false;\n";
+    }
+
     theOutput +="    // Populate the selector with options from JSON\n";
     theOutput +="    document.addEventListener('DOMContentLoaded', () => {\n";
     theOutput +="        const tuneSelector = document.getElementById('tuneSelector');\n";
@@ -685,6 +698,7 @@ function generateAndSaveWebsite() {
     theOutput +="             var theURL = tuneSelector.value;\n";
     if (gWebsiteTabSelector){
         theOutput +="               theURL = theURL.replace(/&format=([^&]+)/g,\"&format=\"+tabStyle);\n";        
+        theOutput +="               theURL = injectInstrument(theURL);\n";
     }
     theOutput +="             tuneFrame.src = theURL;\n";
     theOutput +="           });\n";
@@ -694,7 +708,8 @@ function generateAndSaveWebsite() {
     theOutput +="           setTimeout(function(){\n"; 
     theOutput +="             var theURL = tunes[0].URL;\n"
     if (gWebsiteTabSelector){
-        theOutput +="             theURL = theURL.replace(/&format=([^&]+)/g,\"&format=\"+tabStyle);\n";        
+        theOutput +="             theURL = theURL.replace(/&format=([^&]+)/g,\"&format=\"+tabStyle);\n";    
+        theOutput +="             theURL = injectInstrument(theURL);\n";
     }
     theOutput +="             tuneFrame.src = theURL;\n";
     theOutput +="           },250);\n";        
@@ -708,9 +723,76 @@ function generateAndSaveWebsite() {
 
         theOutput +=" \n";
 
-        theOutput +="        const displayOptions = document.getElementById('displayOptions');\n";
+        theOutput +="        //\n";
+        theOutput +="        // Decompress the tune LZW, replace the instrument and volumes\n";
+        theOutput +="        //\n";
+        theOutput +=" \n";
+        theOutput +="        function extractLZWParameter(url) {\n";
+        theOutput +="           // Use a regular expression to find the part starting with &lzw= followed by any characters until the next &\n";
+        theOutput +="            const match = url.match(/lzw=([^&]*)/);\n";
+        theOutput +=" \n";
+        theOutput +="            // If a match is found, return the part after &lzw=\n";
+        theOutput +="            return match ? match[0] : null;\n";
+        theOutput +="        }\n";
+        theOutput +=" \n";
+        theOutput +="        function injectInstrument(theURL){\n";
+        theOutput +=" \n";
+        theOutput +="            var originalAbcInLZW = extractLZWParameter(theURL);\n";
+        theOutput +=" \n";
+        theOutput +='            originalAbcInLZW = originalAbcInLZW.replace("lzw=","");\n';
+        theOutput +=" \n";
+        theOutput +="            var abcInLZW = LZString.decompressFromEncodedURIComponent(originalAbcInLZW);\n";
+        theOutput +=" \n";
+        theOutput +="            switch (tabStyle){\n";
+        theOutput +='                case "mandolin":\n';
+        theOutput +='                    if (isBanjo){\n';
+        theOutput +='                        abcInLZW = abcInLZW.replace("%%MIDI program '+gWebsiteMelodyInstrumentInject+'","%%MIDI program 105");\n';
+        theOutput +="                    }\n";
+        theOutput +="                    else{\n";
+        theOutput +='                        abcInLZW = abcInLZW.replace("%%MIDI program '+gWebsiteMelodyInstrumentInject+'","%%MIDI program 141");\n';                       
+        theOutput +="                    }\n";
+        theOutput +="                    break;\n";
+        theOutput +='                case "gdad":\n';
+        theOutput +='                    abcInLZW = abcInLZW.replace("%%MIDI program '+gWebsiteMelodyInstrumentInject+'","%%MIDI program 140");\n';
+        theOutput +="                    break;\n";
+        theOutput +='                case "guitare":\n';
+        theOutput +='                case "guitard":\n';
+        theOutput +='                    abcInLZW = abcInLZW.replace("%%MIDI program '+gWebsiteMelodyInstrumentInject+'","%%MIDI program 24\\n%%MIDI transpose -12");\n';
+        theOutput +="                    break;\n";
+        theOutput +='                case "whistle":\n';
+        theOutput +="                    if (isFlute){\n";
+        theOutput +='                        abcInLZW = abcInLZW.replace("%%MIDI program '+gWebsiteMelodyInstrumentInject+'","%%MIDI program 73");\n';
+        theOutput +=" \n";
+        theOutput +="                    }\n";
+        theOutput +="                    else{\n";
+        theOutput +='                        abcInLZW = abcInLZW.replace("%%MIDI program '+gWebsiteMelodyInstrumentInject+'","%%MIDI program 78");\n';
+        theOutput +="                    }\n";
+        theOutput +='                    abcInLZW = abcInLZW.replace("%%MIDI bassvol '+gWebsiteBassVolume+'","%%MIDI bassvol 64");\n';
+        theOutput +='                    abcInLZW = abcInLZW.replace("%%MIDI chordvol '+gWebsiteChordVolume+'","%%MIDI chordvol 64");\n';
+        theOutput +="                    break;\n";
+        theOutput +='                case "noten":\n';
+        theOutput +="                    if (isDulcimer){\n";
+        theOutput +='                        abcInLZW = abcInLZW.replace("%%MIDI program '+gWebsiteMelodyInstrumentInject+'","%%MIDI program 15");\n';
+        theOutput +='                        abcInLZW = abcInLZW.replace("%%MIDI bassprog '+gWebsiteBassInstrumentInject+'","%%MIDI bassprog mute");\n';
+        theOutput +='                        abcInLZW = abcInLZW.replace("%%MIDI chordprog '+gWebsiteChordInstrumentInject+'","%%MIDI chordprog mute");\n';
+        theOutput +="                    }\n";
+        theOutput +="                    else{\n";
+        theOutput +="                        return theURL;\n";
+        theOutput +="                    }\n";
+        theOutput +="                    break;\n";
+        theOutput +="            }\n";
+        theOutput +=" \n";
+        theOutput +='            var newLZWparam = "lzw="+LZString.compressToEncodedURIComponent(abcInLZW);\n';
+        theOutput +=" \n";
+        theOutput +='            originalAbcInLZW = "lzw="+originalAbcInLZW;\n';
+        theOutput +=" \n";
+        theOutput +="            theURL = theURL.replace(originalAbcInLZW,newLZWparam);\n";
+        theOutput +=" \n";
+        theOutput +="            return theURL;\n";
+        theOutput +="        }\n";
 
         // Update iframe src when an option is selected
+        theOutput +="        const displayOptions = document.getElementById('displayOptions');\n";
         theOutput +="          displayOptions.addEventListener('change', () => {\n";
 
         theOutput +="            var origTabStyle = tabStyle;\n";
@@ -718,7 +800,11 @@ function generateAndSaveWebsite() {
         theOutput +="             if (displayOptions.value == \"-1\"){\n";
         theOutput +="                 return;\n";
         theOutput +="             }\n";
-
+        theOutput +=" \n";
+        theOutput +="             isBanjo = false;\n";
+        theOutput +="             isFlute = false;\n";
+        theOutput +="             isDulcimer = false;\n";
+        theOutput +=" \n";
         theOutput +="             switch (displayOptions.value){\n";
         theOutput +="                 case \"0\": // Standard notation\n";
         theOutput +="                     tabStyle = \"noten\";\n";
@@ -726,17 +812,29 @@ function generateAndSaveWebsite() {
         theOutput +="                 case \"1\": // Mandolin\n";
         theOutput +="                     tabStyle = \"mandolin\";\n";
         theOutput +="                     break;\n";
-        theOutput +="                 case \"2\": // GDAD\n";
+        theOutput +="                 case \"2\": // Tenor banjo\n";
+        theOutput +="                     isBanjo = true;\n";
+        theOutput +="                     tabStyle = \"mandolin\";\n";
+        theOutput +="                     break;\n";
+        theOutput +="                 case \"3\": // GDAD\n";
         theOutput +="                     tabStyle = \"gdad\";\n";
         theOutput +="                     break;\n";
-        theOutput +="                 case \"3\": // Guitar\n";
+        theOutput +="                 case \"4\": // Guitar\n";
         theOutput +="                     tabStyle = \"guitare\";\n";
         theOutput +="                     break;\n";
-        theOutput +="                 case \"4\": // DADGAD\n";
+        theOutput +="                 case \"5\": // DADGAD\n";
         theOutput +="                     tabStyle = \"guitard\";\n";
         theOutput +="                     break;\n";
-        theOutput +="                 case \"5\": // Whistle\n";
+        theOutput +="                 case \"6\": // Whistle\n";
         theOutput +="                     tabStyle = \"whistle\";\n";
+        theOutput +="                     break;\n";
+        theOutput +="                 case \"7\": // Irish flute\n";
+        theOutput +="                     isFlute = true;\n";
+        theOutput +="                     tabStyle = \"whistle\";\n";
+        theOutput +="                     break;\n";
+        theOutput +="                 case \"8\": // Hammered dulcimer\n";
+        theOutput +="                     isDulcimer = true;\n";
+        theOutput +="                     tabStyle = \"noten\";\n";
         theOutput +="                     break;\n";
         theOutput +="                 default:\n";
         theOutput +="                     tabStyle = \"noten\";\n";
@@ -754,6 +852,7 @@ function generateAndSaveWebsite() {
         //theOutput +="debugger;\n";
 
         theOutput +="             theURL = theURL.replace(/&format=([^&]+)/g,\"&format=\"+tabStyle);\n";
+        theOutput +="             theURL = injectInstrument(theURL);\n";
         theOutput +="             tuneFrame.src = theURL;\n";
 
         theOutput +="        });\n";
@@ -1020,7 +1119,7 @@ function generateWebsite(){
       {name: "Website background:", id: "website_color", type:"text",cssClass:"configure_website_form_text_wide5"},      
       {name: "Text color (HTML color):", id: "website_textcolor", type:"text",cssClass:"configure_website_form_text2"},      
       {name: "Hyperlink color (HTML color, also used for help icon):", id: "website_hyperlinkcolor", type:"text",cssClass:"configure_website_form_text2"},      
-      {name: "          Add tablature selector dropdown (Notation, Mandolin, GDAD, Guitar, DADGAD, Tin Whistle) ", id: "bTabSelector", type:"checkbox", cssClass:"configure_website_form_text2"},
+      {name: "          Add tablature/instrument selector dropdown ", id: "bTabSelector", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "          Disable access to editor ", id: "bDisableEdit", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "          Add ? tunebook help icon at upper left corner ", id: "bAddHelp", type:"checkbox", cssClass:"configure_website_form_text6"},
       {name: "Tunebook help URL:", id: "website_helpurl", type:"text",cssClass:"configure_website_form_text_wide5"},      
