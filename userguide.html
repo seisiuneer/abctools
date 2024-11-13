@@ -3132,6 +3132,8 @@
                 <p>If "Add tablature/instrument selector dropdown" is checked, a dropdown will be added to the website to the right of the tune selector that allows you to change which tablature style is displayed along with using a matching instrument sound for playback.</p>
                 <p>The dropdown will include:</p>
                 <p><strong>Standard Notation<br/>Mandolin<br/>Tenor Banjo<br/>GDAD Bouzouki<br/>Standard Guitar<br/>DADGAD<br/>Tin Whistle<br/>Irish Flute<br/>Hammered Dulcimer</strong></p>
+                <p>When using the tablature/instrument selector dropdown, if you wish to have the tablature change but not the playback instrument, in the exported .html file, comment out or remove all of the lines with:</p>
+                <p class="code">theURL = injectInstrument(theURL);</p>
                 <p>If "Disable access to editor" is checked, the generated website will prevent users from closing the fullscreen view and entering the ABC editor.</p>
                 <p>If "Add ? tunebook help icon at upper left corner" is checked, a "?" with the color specified in the Hyperlink color will be shown in the upper left corner of the website.</p>
                 <p>Clicking the "?" on the exported website will open the URL specified in the "Tunebook help URL" field.</p>
