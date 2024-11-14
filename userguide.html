@@ -3132,11 +3132,7 @@
                 <p>If "Add tablature/instrument selector dropdown" is checked, a dropdown will be added to the website to the right of the tune selector that allows you to change which tablature style is displayed along with using a matching instrument sound for playback.</p>
                 <p>The dropdown will include:</p>
                 <p><strong>Standard Notation<br/>Mandolin<br/>Tenor Banjo<br/>GDAD Bouzouki<br/>Standard Guitar<br/>DADGAD<br/>Tin Whistle<br/>Irish Flute<br/>Hammered Dulcimer</strong></p>
-                <p>When using the tablature/instrument selector dropdown, if you wish to have the tablature change but not the playback instrument, in the exported .html file, change this one line of Javascript from:</p>
-                <p class="code">var gAllowInstrumentChanges = true;</p>
-                <p>to:
-                <p class="code">var gAllowInstrumentChanges = false;</p>
-                <p>And then save the modified .html file.</p>
+                <p>Information on modifying the behavior of the tablature dropdown by editing the exported .html file can be found in the <a href="#export_website_devnotes">Export Tunebook Website Developer Notes</a> section below.</p>
                 <p>If "Disable access to editor" is checked, the generated website will prevent users from closing the fullscreen view and entering the ABC editor.</p>
                 <p>If "Add ? tunebook help icon at upper left corner" is checked, a "?" with the color specified in the Hyperlink color will be shown in the upper left corner of the website.</p>
                 <p>Clicking the "?" on the exported website will open the URL specified in the "Tunebook help URL" field.</p>
@@ -3151,10 +3147,24 @@
                 <p style="text-align: center;"><a href="https://michaeleskin.com/documents/ocarolan_responsive.html" target="_blank">O'Carolan Tunebook Website</a></p>
                 <p style="text-align: center;"><a href="https://michaeleskin.com/documents/sd_cce_tunes_responsive.html" target="_blank">San Diego Comhaltas Tune Learning Tunebook Website</a></p>
                 <p style="text-align: center;"><a href="https://michaeleskin.com/tunebook_websites/ultimate_demos_7nov2024.html" target="_blank">Ultimate ABC Demos</a></p>
+                <hr id="export_website_devnotes">
+                <h1 class="h1wide">Export Tunebook Website Developer Notes</h1>
                 <hr>
                 <p style="text-align: center;"><strong>Speeding up the Export Tunebook Website workflow by disabling rendering</strong></p>
                 <p>If you want to speed up the workflow for export of websites for very large tunebooks (over 100-200 tunes), since drawing the tunes isn't required for website export, you might find the "Disable abcjs notation rendering" option on the <strong>Advanced Settings</strong> dialog useful:</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/e2_wBY8nFw8" title="Disable abcjs rendering website generation demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <hr>
+                <p style="text-align: center;"><strong>Changing the instruments shown in the tablature dropdown</strong></p>
+                <p>When enabling the tablature/instrument selector dropdown, the following markup is added to the .html file:</p>
+                <p class="code">&lt;select id="displayOptions" style="width:220px;"&gt;<br/> &nbsp;&nbsp;&lt;option value="-1">Tablature Display&lt;/option&gt;<br/> &nbsp;&nbsp;&lt;option value="0">Standard Notation&lt;/option&gt;<br/> &nbsp;&nbsp;&lt;option value="1">Mandolin&lt;/option&gt;<br/> &nbsp;&nbsp;&lt;option value="2">Tenor Banjo&lt;/option&gt;<br/> &nbsp;&nbsp;&lt;option value="3">GDAD Bouzouki&lt;/option&gt;<br/> &nbsp;&nbsp;&lt;option value="4">Standard Guitar&lt;/option&gt;<br/> &nbsp;&nbsp;&lt;option value="5">DADGAD&lt;/option&gt;<br/> &nbsp;&nbsp;&lt;option value="6">Tin Whistle&lt;/option&gt;<br/> &nbsp;&nbsp;&lt;option value="7">Irish Flute&lt;/option&gt;<br/> &nbsp;&nbsp;&lt;option value="8">Hammered Dulcimer&lt;/option&gt;<br/> &lt;/select&gt;</p>
+                <p>Remove the &lt;option&gt; line for any instruments you don't want to show up in the dropdown from this list and save the modified .html file.</p>
+                <hr>
+                <p style="text-align: center;"><strong>Disabling instrument changes on tablature change</strong></p>
+                <p>When enabling the tablature/instrument selector dropdown, if you wish to have the tablature change but not the playback instrument, in the exported .html file, change this one line of Javascript from:</p>
+                <p class="code">var gAllowInstrumentChanges = true;</p>
+                <p>to:
+                <p class="code">var gAllowInstrumentChanges = false;</p>
+                <p>And then save the modified .html file.</p>
                 <hr class="hidden-print" id="more_tools">
                 <h1 class="page_break_always">More ABC Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
