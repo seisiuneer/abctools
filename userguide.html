@@ -3156,11 +3156,16 @@
                 <hr>
                 <p style="text-align: center;"><strong>Changing the instruments shown in the tablature dropdown</strong></p>
                 <p>When enabling the tablature/instrument selector dropdown, the following markup is added to the .html file:</p>
-                <p class="code">&lt;select id="displayOptions" style="width:220px;"&gt;<br/> &nbsp;&nbsp;&lt;option value="-1">Tablature Display&lt;/option&gt;<br/> &nbsp;&nbsp;&lt;option value="0">Standard Notation&lt;/option&gt;<br/> &nbsp;&nbsp;&lt;option value="1">Mandolin&lt;/option&gt;<br/> &nbsp;&nbsp;&lt;option value="2">Tenor Banjo&lt;/option&gt;<br/> &nbsp;&nbsp;&lt;option value="3">GDAD Bouzouki&lt;/option&gt;<br/> &nbsp;&nbsp;&lt;option value="4">Standard Guitar&lt;/option&gt;<br/> &nbsp;&nbsp;&lt;option value="5">DADGAD&lt;/option&gt;<br/> &nbsp;&nbsp;&lt;option value="6">Tin Whistle&lt;/option&gt;<br/> &nbsp;&nbsp;&lt;option value="7">Irish Flute&lt;/option&gt;<br/> &nbsp;&nbsp;&lt;option value="8">Hammered Dulcimer&lt;/option&gt;<br/> &lt;/select&gt;</p>
+                <p class="code">&lt;select id="displayOptions" style="width:220px;"&gt;<br/>&nbsp;&nbsp;&lt;option value="-1">Tablature Display&lt;/option&gt;<br/>&nbsp;&nbsp;&lt;option value="0">Standard Notation&lt;/option&gt;<br/>&nbsp;&nbsp;&lt;option value="1">Mandolin&lt;/option&gt;<br/>&nbsp;&nbsp;&lt;option value="2">Tenor Banjo&lt;/option&gt;<br/>&nbsp;&nbsp;&lt;option value="3">GDAD Bouzouki&lt;/option&gt;<br/> &nbsp;&nbsp;&lt;option value="4">Standard Guitar&lt;/option&gt;<br/> &nbsp;&nbsp;&lt;option value="5">DADGAD&lt;/option&gt;<br/>&nbsp;&nbsp;&lt;option value="6">Tin Whistle&lt;/option&gt;<br/>&nbsp;&nbsp;&lt;option value="7">Irish Flute&lt;/option&gt;<br/>&nbsp;&nbsp;&lt;option value="8">Hammered Dulcimer&lt;/option&gt;<br/> &lt;/select&gt;</p>
                 <p>Remove the &lt;option&gt; line for any instruments you don't want to show up in the dropdown from this list and save the modified .html file.</p>
+                <p>For example, here is a version with only mandolin and tin whistle:</p>
+                <p class="code">&lt;select id="displayOptions" style="width:220px;"&gt;<br/> &nbsp;&nbsp;&lt;option value="-1">Tablature Display&lt;/option&gt;<br/>&nbsp;&nbsp;&lt;option value="0">Standard Notation&lt;/option&gt;<br/>&nbsp;&nbsp;&lt;option value="1">Mandolin&lt;/option&gt;<br/>&nbsp;&nbsp;&lt;option value="6">Tin Whistle&lt;/option&gt;<br/>&lt;/select&gt;</p>
+                <p>The default tablature style (Standard Notation) is set in the following line in the Javascript:</p>
+                <p class="code">var tabStyle = "noten";</p>
+                <p>Changing the noten value to mandolin, gdad, guitare, guitard, or whistle and saving the modified .html file will change the default tab displayed.</p>
                 <hr>
                 <p style="text-align: center;"><strong>Disabling instrument changes on tablature change</strong></p>
-                <p>When enabling the tablature/instrument selector dropdown, if you wish to have the tablature change but not the playback instrument, in the exported .html file, change this one line of Javascript from:</p>
+                <p>When enabling the tablature/instrument selector dropdown, if you wish to have the displayed tablature change but not the playback instrument, in the exported .html file, change this one line of Javascript from:</p>
                 <p class="code">var gAllowInstrumentChanges = true;</p>
                 <p>to:
                 <p class="code">var gAllowInstrumentChanges = false;</p>
