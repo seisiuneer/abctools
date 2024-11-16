@@ -510,19 +510,30 @@ function generateAndSaveWebsite() {
     theOutput +="    }\n";
     theOutput +="\n";
     theOutput +="    h1 {\n";
-    theOutput +="        font-size: 28px;\n";
+    theOutput +="        font-size: 24px;\n";
     theOutput +="        margin-top: 16px;\n";
     theOutput +="        margin-bottom: 0px;\n";
     theOutput +="        color: "+gWebsiteTextColor+";\n";
     theOutput +="    }\n";
     theOutput +="\n";
-    theOutput +="    h2 {\n";
-    theOutput +="        font-size: 18px;\n";
-    theOutput +="        margin-top: 14px;\n";
-    theOutput +="        margin-bottom: 0px;\n";
-    theOutput +="        color: "+gWebsiteTextColor+";\n";
-    theOutput +="    }\n";
+
+    if (gWebsiteTitle && (gWebsiteTitle != "")) {   
+        theOutput +="    h2 {\n";
+        theOutput +="        font-size: 16px;\n";
+        theOutput +="        margin-top: 8px;\n";
+        theOutput +="        margin-bottom: 0px;\n";
+        theOutput +="        color: "+gWebsiteTextColor+";\n";
+        theOutput +="    }\n";
+    }else{
+        theOutput +="    h2 {\n";
+        theOutput +="        font-size: 16px;\n";
+        theOutput +="        margin-top: 14px;\n";
+        theOutput +="        margin-bottom: 0px;\n";
+        theOutput +="        color: "+gWebsiteTextColor+";\n";
+        theOutput +="    }\n";       
+    }
     theOutput +="\n";
+
     theOutput +="    p {\n";
     theOutput +="        color: "+gWebsiteTextColor+";\n";
     theOutput +="    }\n";
