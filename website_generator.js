@@ -184,7 +184,7 @@ function LoadWebsiteSettings(){
             gWebsiteTabSelector = (val == "true");
         }
         else{
-            gWebsiteTabSelector = false;
+            gWebsiteTabSelector = true;
         }
 
         val = localStorage.WebsiteAddHelp;
@@ -201,6 +201,14 @@ function LoadWebsiteSettings(){
         }
         else{
             gWebsiteHelpURL = "";
+        }
+
+        val = localStorage.WebsiteAddFullscreen;
+        if (val){
+            gWebsiteAddFullscreen = (val == "true");
+        }
+        else{
+            gWebsiteAddFullscreen = true;
         }
 
         // Stuff the updated config
@@ -261,7 +269,10 @@ function LoadWebsiteSettings(){
             bAddHelp: gWebsiteAddHelp,
 
             // Website help url
-            website_helpurl: gWebsiteHelpURL
+            website_helpurl: gWebsiteHelpURL,
+
+            // Add fullscreen
+            bAddFullscreen: gWebsiteAddFullscreen
 
         }
     }
@@ -298,6 +309,7 @@ function SaveWebsiteSettings(){
         localStorage.WebsiteTabSelector = gWebsiteTabSelector;
         localStorage.WebsiteAddHelp = gWebsiteAddHelp;
         localStorage.WebsiteHelpURL = gWebsiteHelpURL;
+        localStorage.WebsiteAddFullscreen = gWebsiteAddFullscreen;
     }
 }
 
@@ -531,6 +543,26 @@ function generateAndSaveWebsite() {
     theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
     theOutput +="    }\n";
     theOutput +="\n";
+    if (gWebsiteAddFullscreen){
+        theOutput +="    #fullscreenbutton {\n";
+        theOutput +="        position: fixed;\n";
+        theOutput +="        top: 20px;   /* Distance from the top of the page */\n";
+        theOutput +="        right: 20px; /* Distance from the right of the page */\n";
+        theOutput +="        padding: 10px 20px;\n";
+        theOutput +="        background-color: #007BFF;\n";
+        theOutput +="        color: white;\n";
+        theOutput +="        border: none;\n";
+        theOutput +="        border-radius: 5px;\n";
+        theOutput +="        cursor: pointer;\n";
+        theOutput +="        font-size: 14px;\n";
+        theOutput +="        z-index: 1000; /* Ensures it stays above other content */\n";
+        theOutput +="    }\n";
+        theOutput +="\n";
+        theOutput +="    #fullscreenbutton:hover {\n";
+        theOutput +="        background-color: #0056b3;\n";
+        theOutput +="    }\n";
+        theOutput +="\n";
+    }
     theOutput +="    select {\n";
     theOutput +="        -webkit-appearance: none;\n";
     theOutput +="        -moz-appearance: none;\n";
@@ -597,7 +629,11 @@ function generateAndSaveWebsite() {
     theOutput +="\n";
     theOutput +='    <div class="container">\n';
     if (gWebsiteAddHelp){
-        theOutput +='    <a id="website_help" href="'+gWebsiteHelpURL+'" target="_blank" style="text-decoration:none;" title="Information about using this tunebook" class="cornerbutton">?</a>';
+        theOutput +='        <a id="website_help" href="'+gWebsiteHelpURL+'" target="_blank" style="text-decoration:none;" title="Information about using this tunebook" class="cornerbutton">?</a>\n';
+    }
+
+    if (gWebsiteAddFullscreen){
+        theOutput +='        <button id="fullscreenbutton">Full Screen</button>\n';
     }
 
     var gotTitle = false;
@@ -686,8 +722,25 @@ function generateAndSaveWebsite() {
         theOutput +="\n";
     }
 
+    if (gWebsiteAddFullscreen){
+        theOutput +='    var lastURL = "";\n';
+        theOutput +="\n";
+    }
+
     theOutput +="    // Populate the selector with options from JSON\n";
     theOutput +="    document.addEventListener('DOMContentLoaded', () => {\n";
+    
+    theOutput +="\n";
+
+    if (gWebsiteAddFullscreen){
+        theOutput +="        document.getElementById('fullscreenbutton').addEventListener('click', function() {\n";
+        theOutput +='            if (lastURL != ""){\n';
+        theOutput +="             window.open(lastURL, '_blank');\n";
+        theOutput +="            }\n";
+        theOutput +="        });\n";
+        theOutput +="\n";
+    }
+
     theOutput +="        const tuneSelector = document.getElementById('tuneSelector');\n";
     theOutput +="        const tuneFrame = document.getElementById('tuneFrame');\n";
     theOutput +="        if (tunes.length > 1){\n";
@@ -710,6 +763,10 @@ function generateAndSaveWebsite() {
     }
     theOutput +=" \n";
     theOutput +="               tuneFrame.src = theURL;\n";
+    if (gWebsiteAddFullscreen){
+        theOutput +="               lastURL = theURL;\n";
+    }
+
     theOutput +=" \n";
     theOutput +="           });\n";
     theOutput +="        }\n";
@@ -726,6 +783,11 @@ function generateAndSaveWebsite() {
     }
     theOutput +=" \n";
     theOutput +="             tuneFrame.src = theURL;\n";
+
+    if (gWebsiteAddFullscreen){
+        theOutput +="             lastURL = theURL;\n";
+    }
+
     theOutput +=" \n";
     theOutput +="           },250);\n";        
 
@@ -805,9 +867,11 @@ function generateAndSaveWebsite() {
         theOutput +=" \n";
         theOutput +="            return theURL;\n";
         theOutput +="        }\n";
+        theOutput +=" \n";
 
         // Update iframe src when an option is selected
         theOutput +="        const displayOptions = document.getElementById('displayOptions');\n";
+        theOutput +="\n";
         theOutput +="          displayOptions.addEventListener('change', () => {\n";
         theOutput +=" \n";
 
@@ -856,15 +920,16 @@ function generateAndSaveWebsite() {
         theOutput +="                     tabStyle = \"noten\";\n";
         theOutput +="                     break;\n";
         theOutput +="             }\n";
-
+        theOutput +="\n";
         theOutput +="             var theURL;\n";
+        theOutput +="\n";
         theOutput +="             if (tunes.length > 1){\n";
         theOutput +="                theURL = tuneSelector.value;\n";
         theOutput +="             }\n";
         theOutput +="             else {\n";
         theOutput +="                theURL = tunes[0].URL;\n";
         theOutput +="             }\n";
-
+        theOutput +="\n";
         theOutput +="             theURL = theURL.replace(/&format=([^&]+)/g,\"&format=\"+tabStyle);\n";
         theOutput +=" \n";
         theOutput +="             if (gAllowInstrumentChanges){\n";   
@@ -872,6 +937,9 @@ function generateAndSaveWebsite() {
         theOutput +="             }\n"; 
         theOutput +=" \n";
         theOutput +="             tuneFrame.src = theURL;\n";
+        if (gWebsiteAddFullscreen){
+            theOutput +="             lastURL = theURL;\n";
+        }
         theOutput +=" \n";
 
         theOutput +="        });\n";
@@ -888,6 +956,7 @@ function generateAndSaveWebsite() {
         theOutput +="           const ids = ['title', 'subtitle', 'tuneSelector', 'footer1', 'footer2'];\n";       
     }
 
+    theOutput +="\n";
     theOutput +="           let totalHeight = 0;\n";
     theOutput +="\n";
     theOutput +="           ids.forEach(id => {\n";
@@ -1032,9 +1101,10 @@ var gWebsiteHyperlinkColor = "#000000";
 var gWebsiteFilename = "";
 var gWebsiteOpenInPlayer = true;
 var gWebsiteDisableEdit = false;
-var gWebsiteTabSelector = false;
+var gWebsiteTabSelector = true;
 var gWebsiteAddHelp = false;
 var gWebsiteHelpURL = "";
+var gWebsiteAddFullscreen = true;
 
 var gWebsiteConfig ={
 
@@ -1089,11 +1159,14 @@ var gWebsiteConfig ={
     // Add tab selector
     bTabSelector: gWebsiteTabSelector,
 
-   // Add help
+    // Add help
     bAddHelp: gWebsiteAddHelp,
 
     // Website help url
-    website_helpurl: gWebsiteHelpURL
+    website_helpurl: gWebsiteHelpURL,
+
+    // Add fullscreen
+    bAddFullscreen: gWebsiteAddFullscreen
 
 }
 
@@ -1140,8 +1213,9 @@ function generateWebsite(){
       {name: "Hyperlink color (HTML color, also used for help icon):", id: "website_hyperlinkcolor", type:"text",cssClass:"configure_website_form_text2"},      
       {name: "          Add tablature/instrument selector dropdown ", id: "bTabSelector", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "          Disable access to editor ", id: "bDisableEdit", type:"checkbox", cssClass:"configure_website_form_text2"},
-      {name: "          Add ? tunebook help icon at upper left corner ", id: "bAddHelp", type:"checkbox", cssClass:"configure_website_form_text6"},
+      {name: "          Add a ? help icon at top-left corner ", id: "bAddHelp", type:"checkbox", cssClass:"configure_website_form_text6"},
       {name: "Tunebook help URL:", id: "website_helpurl", type:"text",cssClass:"configure_website_form_text_wide5"},      
+      {name: "          Add a \"Full Screen\" button at top-right corner that opens the current tune in a new tab", id: "bAddFullscreen", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "          Tunes open in player ", id: "bOpenInPlayer", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "          Add instruments and volume overrides to each tune ", id: "bInjectInstruments", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "Soundfont:", id: "sound_font", type:"select", options:sound_font_options, cssClass:"configure_setuppdftunebook_midi_program_select"},
@@ -1203,6 +1277,10 @@ function generateWebsite(){
             // Help URL
             gWebsiteHelpURL = args.result.website_helpurl;
             gWebsiteConfig.website_helpurl = gWebsiteHelpURL;
+
+            // Add fullscreen?
+            gWebsiteAddFullscreen = args.result.bAddFullscreen;
+            gWebsiteConfig.bAddFullscreen = gWebsiteAddFullscreen;
 
             // Add instruments?
             gWebsiteInjectInstruments = args.result.bInjectInstruments;
