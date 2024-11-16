@@ -546,8 +546,8 @@ function generateAndSaveWebsite() {
     if (gWebsiteAddFullscreen){
         theOutput +="    #fullscreenbutton {\n";
         theOutput +="        position: fixed;\n";
-        theOutput +="        top: 20px;   /* Distance from the top of the page */\n";
-        theOutput +="        right: 20px; /* Distance from the right of the page */\n";
+        theOutput +="        top: 16px;   /* Distance from the top of the page */\n";
+        theOutput +="        right: 16px; /* Distance from the right of the page */\n";
         theOutput +="        padding: 10px 20px;\n";
         theOutput +="        background-color: #007BFF;\n";
         theOutput +="        color: white;\n";
