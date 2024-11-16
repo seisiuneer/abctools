@@ -554,7 +554,7 @@ function generateAndSaveWebsite() {
         theOutput +="        border: none;\n";
         theOutput +="        border-radius: 5px;\n";
         theOutput +="        cursor: pointer;\n";
-        theOutput +="        font-size: 14px;\n";
+        theOutput +="        font-size: 15px;\n";
         theOutput +="        z-index: 1000; /* Ensures it stays above other content */\n";
         theOutput +="    }\n";
         theOutput +="\n";
