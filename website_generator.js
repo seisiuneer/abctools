@@ -603,8 +603,8 @@ function generateAndSaveWebsite() {
             theOutput +="    #website_help{\n";
             theOutput +="        font-size:28pt;\n";
             theOutput +="        position:absolute;\n";
-            theOutput +="        left:28px;\n";
-            theOutput +="        top:20px;\n";
+            theOutput +="        left:16px;\n";
+            theOutput +="        top:16px;\n";
             theOutput +="        color:"+gWebsiteHyperlinkColor+";\n";
             theOutput +="    }\n";
         }
@@ -612,7 +612,7 @@ function generateAndSaveWebsite() {
             theOutput +="    #website_help{\n";
             theOutput +="        font-size:28pt;\n";
             theOutput +="        position:absolute;\n";
-            theOutput +="        left:18px;\n";
+            theOutput +="        left:16px;\n";
             theOutput +="        top:10px;\n";
             theOutput +="        color:"+gWebsiteHyperlinkColor+";\n";
             theOutput +="    }\n";
