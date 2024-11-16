@@ -859,7 +859,6 @@ function generateAndSaveWebsite() {
         theOutput +='                case "whistle":\n';
         theOutput +="                    if (isFlute){\n";
         theOutput +='                        abcInLZW = abcInLZW.replace("%%MIDI program '+gWebsiteMelodyInstrumentInject+'","%%MIDI program 73");\n';
-        theOutput +=" \n";
         theOutput +="                    }\n";
         theOutput +="                    else{\n";
         theOutput +='                        abcInLZW = abcInLZW.replace("%%MIDI program '+gWebsiteMelodyInstrumentInject+'","%%MIDI program 78");\n';
