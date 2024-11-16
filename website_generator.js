@@ -596,6 +596,7 @@ function generateAndSaveWebsite() {
     theOutput +="        margin-bottom:0px;\n";
     theOutput +="        color:"+gWebsiteTextColor+";\n";
     theOutput +="    }\n";
+    theOutput +="\n";
 
     if (gWebsiteAddHelp){
         // There is a title or subtitle present
@@ -604,9 +605,10 @@ function generateAndSaveWebsite() {
             theOutput +="        font-size:28pt;\n";
             theOutput +="        position:absolute;\n";
             theOutput +="        left:16px;\n";
-            theOutput +="        top:16px;\n";
+            theOutput +="        top:12px;\n";
             theOutput +="        color:"+gWebsiteHyperlinkColor+";\n";
             theOutput +="    }\n";
+            theOutput +="\n";
         }
         else{
             theOutput +="    #website_help{\n";
@@ -616,6 +618,7 @@ function generateAndSaveWebsite() {
             theOutput +="        top:10px;\n";
             theOutput +="        color:"+gWebsiteHyperlinkColor+";\n";
             theOutput +="    }\n";
+            theOutput +="\n";
         }
     }
 
@@ -742,8 +745,11 @@ function generateAndSaveWebsite() {
     }
 
     theOutput +="        const tuneSelector = document.getElementById('tuneSelector');\n";
+    theOutput +="\n";
     theOutput +="        const tuneFrame = document.getElementById('tuneFrame');\n";
+    theOutput +="\n";
     theOutput +="        if (tunes.length > 1){\n";
+    theOutput +="\n";
     theOutput +="           tunes.forEach(tune => {\n";
     theOutput +="               const option = document.createElement('option');\n";
     theOutput +="               option.value = tune.URL;\n";
@@ -753,6 +759,7 @@ function generateAndSaveWebsite() {
     theOutput +="\n";
     theOutput +="           // Update iframe src when an option is selected\n";
     theOutput +="           tuneSelector.addEventListener('change', () => {\n";
+    theOutput +="\n";
     theOutput +="               var theURL = tuneSelector.value;\n";
     if (gWebsiteTabSelector){
         theOutput +="               theURL = theURL.replace(/&format=([^&]+)/g,\"&format=\"+tabStyle);\n";   
@@ -771,7 +778,9 @@ function generateAndSaveWebsite() {
     theOutput +="           });\n";
     theOutput +="        }\n";
     theOutput +="        else{\n";
+    theOutput +="\n";
     theOutput +="           tuneSelector.style.display=\"none\";\n";
+    theOutput +="\n";
     theOutput +="           setTimeout(function(){\n"; 
     theOutput +="             var theURL = tunes[0].URL;\n"
     if (gWebsiteTabSelector){
@@ -876,6 +885,7 @@ function generateAndSaveWebsite() {
         theOutput +=" \n";
 
         theOutput +="             var origTabStyle = tabStyle;\n";
+        theOutput +="\n";
 
         theOutput +="             if (displayOptions.value == \"-1\"){\n";
         theOutput +="                 return;\n";
@@ -960,7 +970,9 @@ function generateAndSaveWebsite() {
     theOutput +="           let totalHeight = 0;\n";
     theOutput +="\n";
     theOutput +="           ids.forEach(id => {\n";
+    theOutput +="\n";
     theOutput +="               const element = document.getElementById(id);\n";
+    theOutput +="\n";
     theOutput +="               if (element && (element.textContent.trim() !== \"\")) {\n";
     theOutput +="                   const elementHeight = element.offsetHeight;\n";
     theOutput +="                   const computedStyle = window.getComputedStyle(element);\n";
