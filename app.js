@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2098_111824_1115";
+var gVersionNumber="2103_111824_1215";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28279,17 +28279,19 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 
 		// Adapt the top based on the player control size
         var theTop;
-
 		var theHeight;
 
-		// iframe case
-		if (window.self !== window.top) {
-			theHeight = window.innerHeight - 282;
-			theTop = 20;
-		} else {
-			theTop = 40;
-		    theHeight = window.innerHeight - 340;
+		if ((!gIsIPad) && (gIsIPhone || gIsAndroid)){
+			theHeight = window.innerHeight - 304;
 		}
+		else{
+			theHeight = window.innerHeight - 284;
+			if (isDesktopBrowser() && isSafari()){
+				theHeight -= 10;
+			}
+		}
+
+		theTop = 20;
 
 	   	modal_msg = '<div id="playerholder" style="height:'+theHeight+'px;overflow-y:auto;margin-bottom:15px;">';
 
@@ -34151,14 +34153,17 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 
 		var theHeight;
 
-		// iframe case
-		if (window.self !== window.top) {
-			theHeight = window.innerHeight - 392;
-			theTop = 20;
-		} else {
-			theTop = 45;
-		    theHeight = window.innerHeight - 450;
+		if ((!gIsIPad) && (gIsIPhone || gIsAndroid)){
+			theHeight = window.innerHeight - 414;
 		}
+		else{
+			theHeight = window.innerHeight - 394;
+			if (isDesktopBrowser() && isSafari()){
+				theHeight -= 10;
+			}
+		}
+
+		theTop = 20;
 
 	   	modal_msg = '<div id="playerholder" style="height:'+theHeight+'px;overflow-y:auto;margin-bottom:15px;">';
 
@@ -42916,6 +42921,7 @@ function DoStartup() {
 		if (isChrome()){
 
 			gIsChrome = true;
+
 		}
 	}
 
@@ -42976,9 +42982,9 @@ function DoStartup() {
 	//
 	// Uncomment these lines for mobile simulation testing
 	//
-	// gIsIOS = true; 
-	// gIsIPad = true;  
-	// gIsIPhone = true;  
+	//gIsIOS = true; 
+	//gIsIPad = true;  
+	//gIsIPhone = true;  
 	
 	//
 	// iOS and Android styling adaptation
