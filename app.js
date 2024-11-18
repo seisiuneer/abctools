@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2103_111824_1215";
+var gVersionNumber="2104_111824_1215";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28281,11 +28281,11 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
         var theTop;
 		var theHeight;
 
-		if ((!gIsIPad) && (gIsIPhone || gIsAndroid)){
-			theHeight = window.innerHeight - 304;
+		if (gLargePlayerControls){
+			theHeight = window.innerHeight - 306;
 		}
 		else{
-			theHeight = window.innerHeight - 284;
+			theHeight = window.innerHeight - 286;
 			if (isDesktopBrowser() && isSafari()){
 				theHeight -= 10;
 			}
@@ -34153,11 +34153,11 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 
 		var theHeight;
 
-		if ((!gIsIPad) && (gIsIPhone || gIsAndroid)){
-			theHeight = window.innerHeight - 414;
+		if (gLargePlayerControls){
+			theHeight = window.innerHeight - 416;
 		}
 		else{
-			theHeight = window.innerHeight - 394;
+			theHeight = window.innerHeight - 396;
 			if (isDesktopBrowser() && isSafari()){
 				theHeight -= 10;
 			}
