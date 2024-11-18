@@ -583,7 +583,7 @@ function generateAndSaveWebsite() {
     theOutput +="        background-position: calc(100% - 10px) center;\n";
     theOutput +="        background-repeat: no-repeat;\n";
     theOutput +="        background-color: #efefef;\n";
-    theOutput +="        color:black;\n";
+    theOutput +="        color: black;\n";
     theOutput +="        font-size: 17px;\n";
     theOutput +="        padding: 5px;\n";
     theOutput +="        margin-top: 12px;\n";
@@ -597,15 +597,15 @@ function generateAndSaveWebsite() {
     theOutput +="    }\n";
     theOutput +="\n";
     theOutput +="    #footer1{\n";
-    theOutput +="        margin-top:12px;\n";
-    theOutput +="        margin-bottom:12px;\n";
-    theOutput +="        color:"+gWebsiteTextColor+";\n";
+    theOutput +="        margin-top: 12px;\n";
+    theOutput +="        margin-bottom: 12px;\n";
+    theOutput +="        color: "+gWebsiteTextColor+";\n";
     theOutput +="    }\n";
     theOutput +="\n";
     theOutput +="    #footer2{\n";
-    theOutput +="        margin-top:12px;\n";
-    theOutput +="        margin-bottom:0px;\n";
-    theOutput +="        color:"+gWebsiteTextColor+";\n";
+    theOutput +="        margin-top: 12px;\n";
+    theOutput +="        margin-bottom: 0px;\n";
+    theOutput +="        color: "+gWebsiteTextColor+";\n";
     theOutput +="    }\n";
     theOutput +="\n";
 
@@ -613,21 +613,21 @@ function generateAndSaveWebsite() {
         // There is a title or subtitle present
         if ((gWebsiteTitle && (gWebsiteTitle != "")) || (gWebsiteSubtitle && (gWebsiteSubtitle != ""))){
             theOutput +="    #website_help{\n";
-            theOutput +="        font-size:28pt;\n";
-            theOutput +="        position:absolute;\n";
-            theOutput +="        left:16px;\n";
-            theOutput +="        top:12px;\n";
-            theOutput +="        color:"+gWebsiteHyperlinkColor+";\n";
+            theOutput +="        font-size: 28pt;\n";
+            theOutput +="        position: absolute;\n";
+            theOutput +="        left: 16px;\n";
+            theOutput +="        top: 12px;\n";
+            theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
             theOutput +="    }\n";
             theOutput +="\n";
         }
         else{
             theOutput +="    #website_help{\n";
-            theOutput +="        font-size:28pt;\n";
-            theOutput +="        position:absolute;\n";
-            theOutput +="        left:16px;\n";
-            theOutput +="        top:10px;\n";
-            theOutput +="        color:"+gWebsiteHyperlinkColor+";\n";
+            theOutput +="        font-size: 28pt;\n";
+            theOutput +="        position: absolute;\n";
+            theOutput +="        left: 16px;\n";
+            theOutput +="        top: 10px;\n";
+            theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
             theOutput +="    }\n";
             theOutput +="\n";
         }
