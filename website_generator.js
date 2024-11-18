@@ -584,7 +584,7 @@ function generateAndSaveWebsite() {
     theOutput +="        background-repeat: no-repeat;\n";
     theOutput +="        background-color: #efefef;\n";
     theOutput +="        color:black;\n";
-    theOutput +="        font-size: 16px;\n";
+    theOutput +="        font-size: 17px;\n";
     theOutput +="        padding: 5px;\n";
     theOutput +="        margin-top: 12px;\n";
     theOutput +="        margin-bottom: 16px;\n";
