@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2097_111824_1030";
+var gVersionNumber="2098_111824_1115";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28278,9 +28278,18 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 		gPlayerInPause = false;
 
 		// Adapt the top based on the player control size
-		var theTop = 40;
+        var theTop;
 
-		var theHeight = window.innerHeight - 340;
+		var theHeight;
+
+		// iframe case
+		if (window.self !== window.top) {
+			theHeight = window.innerHeight - 282;
+			theTop = 20;
+		} else {
+			theTop = 40;
+		    theHeight = window.innerHeight - 340;
+		}
 
 	   	modal_msg = '<div id="playerholder" style="height:'+theHeight+'px;overflow-y:auto;margin-bottom:15px;">';
 
@@ -34138,9 +34147,18 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 		gPlayerInPause = false;
 
 		// Adapt the top based on the player control size
-		var theTop = 45;
+        var theTop;
 
-		var theHeight = window.innerHeight - 450;
+		var theHeight;
+
+		// iframe case
+		if (window.self !== window.top) {
+			theHeight = window.innerHeight - 392;
+			theTop = 20;
+		} else {
+			theTop = 45;
+		    theHeight = window.innerHeight - 450;
+		}
 
 	   	modal_msg = '<div id="playerholder" style="height:'+theHeight+'px;overflow-y:auto;margin-bottom:15px;">';
 
