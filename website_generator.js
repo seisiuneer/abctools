@@ -680,7 +680,12 @@ function generateAndSaveWebsite() {
     theOutput +="        </select>\n";
 
     if (gWebsiteTabSelector){
-        theOutput +='        <select id="displayOptions" style="width:220px;margin-top:18px">\n';
+        if (gotTitle || gotSubTitle){
+            theOutput +='        <select id="displayOptions" style="width:220px;">\n';
+        }
+        else{
+            theOutput +='        <select id="displayOptions" style="width:220px;margin-top:18px;">\n';
+        }
         theOutput +='           <option value="-1">Tablature Display</option>\n';
         theOutput +='           <option value="0">Standard Notation</option>\n';
         theOutput +='           <option value="1">Note Names</option>\n';
