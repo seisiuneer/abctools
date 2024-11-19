@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2106_111924_0730";
+var gVersionNumber="2107_111924_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -42613,6 +42613,7 @@ function SetupContextMenu(showUpdateItem){
 
 	var items;
 
+
 	if (isDesktopBrowser()){
 
 		if (gIsQuickEditor){
@@ -42657,6 +42658,12 @@ function SetupContextMenu(showUpdateItem){
 						{ name: '*A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
 						{ name: '*Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
 				    ]);
+
+					// Turn the button red
+				    var elem = document.getElementById("morecommands");
+				    elem.style.color = "red";
+				    elem.style.backgroundColor = "#FFE0E0";
+				    elem.title = "An update to the tool is available!"
 				}
 
 				// Adapt the search and replace key string based on the platform
@@ -42699,6 +42706,12 @@ function SetupContextMenu(showUpdateItem){
 						{ name: '*A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
 						{ name: '*Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
 				    ]);
+
+					// Turn the button red
+				    var elem = document.getElementById("morecommands");
+				    elem.style.color = "red";
+				    elem.style.backgroundColor = "#FFE0E0";
+				    elem.title = "An update to the tool is available!"
 				}
 			}
 		}
@@ -42742,6 +42755,12 @@ function SetupContextMenu(showUpdateItem){
 						{ name: '*A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
 						{ name: '*Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
 				    ]);
+
+					// Turn the button red
+				    var elem = document.getElementById("morecommands");
+				    elem.style.color = "red";
+				    elem.style.backgroundColor = "#FFE0E0";
+				    elem.title = "An update to the tool is available!"
 				}
 
 				// Adapt the search and replace key string based on the platform
@@ -42783,6 +42802,12 @@ function SetupContextMenu(showUpdateItem){
 						{ name: '*A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
 						{ name: '*Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
 				    ]);
+
+					// Turn the button red
+				    var elem = document.getElementById("morecommands");
+				    elem.style.color = "red";
+				    elem.style.backgroundColor = "#FFE0E0";
+				    elem.title = "An update to the tool is available!"
 				}
 			}
 		}
@@ -42817,6 +42842,12 @@ function SetupContextMenu(showUpdateItem){
 					{ name: '*A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
 					{ name: '*Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
 			    ]);
+
+				// Turn the button red
+			    var elem = document.getElementById("morecommands");
+			    elem.style.color = "red";
+			    elem.style.backgroundColor = "#FFE0E0";
+			    elem.title = "An update to the tool is available!"
 			}
 		}
 		else{
@@ -42846,6 +42877,12 @@ function SetupContextMenu(showUpdateItem){
 					{ name: '*A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
 					{ name: '*Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
 			    ]);
+			    
+				// Turn the button red
+			    var elem = document.getElementById("morecommands");
+			    elem.style.color = "red";
+			    elem.style.backgroundColor = "#FFE0E0";
+			    elem.title = "An update to the tool is available!"
 			}
 		}
 	}
