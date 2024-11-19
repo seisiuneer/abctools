@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2107_111924_1000";
+var gVersionNumber="2108_111924_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -42877,7 +42877,7 @@ function SetupContextMenu(showUpdateItem){
 					{ name: '*A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
 					{ name: '*Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
 			    ]);
-			    
+
 				// Turn the button red
 			    var elem = document.getElementById("morecommands");
 			    elem.style.color = "red";
