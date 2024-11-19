@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2104_111824_1215";
+var gVersionNumber="2106_111924_0730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -18957,6 +18957,9 @@ function NotationSpacingExplorer(){
 
 		theABC = InjectOneTuneSpacingHeader(originalABC,gNotationSpacingStaffSep, gNotationSpacingLeftMargin,gNotationSpacingRightMargin,gNotationSpacingStaffWidth,gNotationSpacingNoExpand);
 
+		// Strip titlespace
+		theABC = theABC.replace(/%%titlespace\s.*\r?\n/g, '');
+
 		var visualObj = ABCJS.renderAbc("notationspacingexplorer-paper", theABC, abcOptions)[0];
 
 		// Post process whistle or note name tab
@@ -18967,6 +18970,9 @@ function NotationSpacingExplorer(){
 		theSVG[0].style.boxShadow = "inset 0px 0px 0px 1px #b8b8b8";
 
 	}
+
+	// Strip titlespace
+	theABC = theABC.replace(/%%titlespace\s.*\r?\n/g, '');
 
 	var visualObj = ABCJS.renderAbc("notationspacingexplorer-paper", theABC, abcOptions)[0];
 
@@ -21043,22 +21049,6 @@ function processShareLink() {
 
 			// Playback requested?
 			if (doPlay){
-
-				if (isMobileBrowser()){
-					
-					if ((!giPadTwoColumn) && isLandscapeOrientation()){
-
-						var thePrompt = "The ABC Transcription Tools tune Player is best used in Portrait mode.<br/>Please rotate your device and click the play button to play the tune.";
-						
-						// Center the string in the prompt
-						thePrompt = makeCenteredPromptString(thePrompt);
-						
-						DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 25, scrollWithPage: (AllowDialogsToScroll()) });
-
-						return;
-
-					}
-				}
 
 				// Keep track of share play presentation
 				sendGoogleAnalytics("show_player","from_share");
@@ -28740,6 +28730,9 @@ function PreProcessPlayABC(theTune){
 		}
 	}
 
+	// Strip titlespace
+	theTune = theTune.replace(/%%titlespace\s.*\r?\n/g, '');
+
 	return(theTune);
 
 }
@@ -31687,7 +31680,10 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 
 		synthControl.disable(true);
 
-		var visualObj = ABCJS.renderAbc("playback-paper", theProcessedABC, abcOptions)[0];
+		// Strip titlespace
+		var strippedABC = theProcessedABC.replace(/%%titlespace\s.*\r?\n/g, '');
+
+		var visualObj = ABCJS.renderAbc("playback-paper", strippedABC, abcOptions)[0];
 
 		// Post process whistle or note name tab
 		postProcessTab([visualObj], "playback-paper", instrument, true);
