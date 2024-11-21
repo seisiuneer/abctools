@@ -50,7 +50,18 @@ font-size: 20px;
 .recorder {
 font-family: 'RecorderFingering';
 font-size: 21px;
+font-weight: normal; 
+font-style: normal;
 }
+
+.recorderSafari {
+font-family: 'RecorderFingering';
+font-size: 21px;
+font-weight: 600;
+font-style: normal;
+-webkit-font-smoothing: antialiased;
+}
+
 
 .hiddentabline {
 display:none;
