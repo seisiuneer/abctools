@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2111_112024_1600";
+var gVersionNumber="2112_112024_1630";
 
 var gMIDIInitStillWaiting = false;
 
@@ -20932,16 +20932,14 @@ function processShareLink() {
 			
 		}
 
+		var warnRecorder = false;
+
 		if (format == "recorder"){
 
 			// Not allowed to use recorder tab on Safari or iOS, hope to resolve in the future
 			if (isSafari() || gIsIOS){
 
-				var modal_msg  = '<p style="text-align:center;font-size:16pt;line-height:24pt;font-family:helvetica">Recorder tablature is not available in Safari or on iOS</p>';
-				 	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;">On desktop systems please use Chrome or Firefox instead.</p>';
-				 	   modal_msg += '<p style="font-size:14pt;line-height:16pt;font-family:helvetica;">Switching to Whistle tablature.</p>';
-				
-				DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+				warnRecorder = true;
 
 				// Switch to whistle
 
@@ -21107,7 +21105,6 @@ function processShareLink() {
 		// Set the inital focus back to the ABC
 		FocusABC();
 
-
 		// Render the tune
 		RenderAsync(true,null,function(){
 
@@ -21139,6 +21136,7 @@ function processShareLink() {
 				// Play back locally in-tool	
 				PlayABCDialog(theProcessedABC, null, null, null, false);
 
+
 			}
 			else{
 				if (openInEditor){
@@ -21149,6 +21147,16 @@ function processShareLink() {
 					// Open in the editor
 					ToggleMaximize();
 				}
+			}
+
+			if (warnRecorder){
+				
+				var modal_msg  = '<p style="text-align:center;font-size:16pt;line-height:24pt;font-family:helvetica">Recorder tablature is not available in Safari or on iOS</p>';
+		 	   	modal_msg += '<p style="font-size:14pt;line-height:14pt;margin-top:32px;font-family:helvetica;">Recorder tablature is supported on desktop Chrome and Firefox</p>';
+		 	   	modal_msg += '<p style="font-size:14pt;line-height:14pt;margin-top:24px;font-family:helvetica;">Whistle tablature will be used instead on Safari and iOS</p>';
+		 	   	modal_msg += '<p style="font-size:14pt;line-height:14pt;margin-top:12px;font-family:helvetica;">&nbsp;</p>';
+			
+				DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 			}
 
 		});
