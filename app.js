@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2109_111924_1715";
+var gVersionNumber="2111_112024_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -109,6 +109,9 @@ var gAllowShowTabNames = false;
 
 // Has the tin whistle font been loaded?
 var gWhistleFontPrepared = false;
+
+// Has the recorder font been loaded?
+var gRecorderFontPrepared = false;
 
 // Debounce time for text area change render requests
 var DEBOUNCEMS = 280;
@@ -6436,6 +6439,9 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo,bAllowSpaces){
 			case "whistle":
 				postfix = "_Whistle";
 				break;
+			case "recorder":
+				postfix = "_Recorder";
+				break;
 		}
 
 		if (bAllowSpaces){
@@ -6452,6 +6458,7 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo,bAllowSpaces){
 			case "noten":
 			case "notenames":
 			case "whistle":
+			case "recorder":
 				break;
 
 			case "mandolin":
@@ -9733,7 +9740,7 @@ function ExportNotationPDF(title) {
 		// This is to work around the issue where on Safari and mobile Safari, we often are missing the first line of whistle tab
 		// the first time the notation is rasterized
 
-		if (gPDFTabselected == "whistle") {
+		if ((gPDFTabselected == "whistle") || (gPDFTabselected == "recorder"))  {
 
 			PrimeWhistleRender(theBlocks,Rasterize);
 
@@ -10629,6 +10636,10 @@ function GetABCJSParams(instrument){
 					theLabel = " ";
 					break;
 
+				case "recorder":
+					theLabel = " ";
+					break;
+
 				case "mandolin":
 					theLabel = 'Mandolin'+postfix;
 					break;
@@ -10849,7 +10860,23 @@ function GetABCJSParams(instrument){
 			selectTypes: false,
 			format: commonFontFormat
 		}
-
+	} else if (instrument == "recorder") {
+		// Suppress the tab icon
+		gDrawTabSymbol = false;
+		params = {
+			tablature: [{
+				instrument: 'violin',
+				label: theLabel,
+				tuning: ['G,'],
+				highestNote: "^a'",
+				hideTabSymbol:true
+			}],
+			responsive: 'resize',
+			oneSvgPerLine: 'true',
+			expandToWidest: 'true',
+			selectTypes: false,
+			format: commonFontFormat
+		}
 	}
 	else{
 		// Default for deprecated instruments
@@ -16781,6 +16808,7 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
 		case "noten":
 		case "notenames":
 		case "whistle":
+		case "recorder":
 			break;
 
 		case "mandolin":
@@ -17071,6 +17099,9 @@ function GenerateQRCode(e) {
 					break;
 				case "whistle":
 					postfix = "<br/><br/>(Whistle Tab)";
+					break;
+				case "recorder":
+					postfix = "<br/><br/>(Recorder Tab)";
 					break;
 			}
 
@@ -20752,6 +20783,7 @@ function IdleAllowShowTabNames(){
 		case "noten":
 		case "notenames":
 		case "whistle":
+		case "recorder":
 			break;
 
 		case "mandolin":
@@ -20892,14 +20924,46 @@ function processShareLink() {
 			setupCGDAE();
 		}
 
-		SetRadioValue("notenodertab", format);
-
 		if (format == "whistle"){
 
 			// If first time using the whistle tab, prep the tin whistle font for embedded SVG styles
+			setupWhistleTab();
 			PrepareWhistleFont();
 			
 		}
+
+		if (format == "recorder"){
+
+			// Not allowed to use recorder tab on Safari or iOS, hope to resolve in the future
+			if (isSafari() || gIsIOS){
+
+				var modal_msg  = '<p style="text-align:center;font-size:16pt;line-height:24pt;font-family:helvetica">Recorder tablature is not available in Safari or on iOS</p>';
+				 	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;">On desktop systems please use Chrome or Firefox instead.</p>';
+				 	   modal_msg += '<p style="font-size:14pt;line-height:16pt;font-family:helvetica;">Switching to Whistle tablature.</p>';
+				
+				DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+				// Switch to whistle
+
+				// If first time using the whistle tab, prep the tin whistle font for embedded SVG styles
+				setupWhistleTab();
+
+				PrepareWhistleFont();
+
+				format = "whistle";
+
+			}
+			else{
+
+				// If first time using the recorder tab, prep the recorder font for embedded SVG styles
+				setupRecorderTab();
+				PrepareRecorderFont();
+
+			}
+			
+		}
+
+		SetRadioValue("notenodertab", format);
 
 		gCurrentTab = format;
 
@@ -21430,6 +21494,33 @@ function PrepareWhistleFont(){
 
 }
 
+//
+// Prepare the recorder font 
+//
+function PrepareRecorderFont(){
+
+	// Recorder tab not supported on Safari or iOS
+	if (isSafari() || gIsIOS){
+		return;
+    }
+
+	if (!gRecorderFontPrepared){
+
+		var theFontHolderSVG = document.querySelectorAll('div[id="fontholder"] > svg > style');
+
+		//
+		// Interesting hack/fix on 9 Mar 2023
+		// Apparently it is sufficient to just have the font embedded in the first SVG notation div and it will work for all the rest
+		// and works for the PDF generation.
+		//
+		theFontHolderSVG[0].innerHTML += "@font-face { font-family: 'RecorderFingering'; src: url(data:application/font-woff2;charset=utf-8;base64,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) format('woff2'),url(data:application/font-woff;charset=utf-8;base64,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) format('woff')}";
+		
+		// Only do this the first time
+		gRecorderFontPrepared = true;
+
+	}
+
+}
 
 //
 // Do Ceoltas Transform
@@ -23681,6 +23772,13 @@ function ChangeTab(){
 
 	}
 
+	if (theTab == "recorder"){
+
+		// If first time using the recorder tab, prep the recorder font for embedded SVG styles
+		PrepareRecorderFont();
+		
+	}
+
 	// If the tab changes, render all
 	if (theTab != gCurrentTab){
 
@@ -24234,7 +24332,7 @@ function ExportAll(){
 	modal_msg += '<input id="exportall_midibutton" class="exportall_midibutton btn btn-allmididownload" onclick="BatchMIDIExport();" type="button" value="Export all as MIDI" title="Saves the MIDI file for all the tunes">'
 	modal_msg  += '</p>';
 
-	if (format != "whistle"){
+	if ((format != "whistle") && (format != "recorder")){
 
 		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export All Tunes as Images</p>';
 		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
@@ -24263,7 +24361,7 @@ function ExportAll(){
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, scrollWithPage: (AllowDialogsToScroll()) })
 
-	if (format != "whistle"){
+	if ((format != "whistle") && (format != "recorder")){
 		document.getElementById("export_width").value = gExportWidthAll;
 	}
 
@@ -26127,7 +26225,7 @@ function ExportAudioOrImage(){
 	
 	var format = GetRadioValue("notenodertab");
 
-	if (format != "whistle"){
+	if ((format != "whistle") && (format != "recorder")){
 
 		modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export Audio or Image</p>';
 
@@ -26149,7 +26247,7 @@ function ExportAudioOrImage(){
 	modal_msg += '<input id="abcplayer_wavreverbbutton" class="abcplayer_wavreverbbutton btn btn-wavereverbdownload" onclick="DownloadWaveWithReverb();" type="button" value="Save as WAV File with Reverb" title="Saves the audio for the current tune as a .WAV file including reverb"><input id="abcplayer_mp3reverbbutton" class="abcplayer_mp3reverbbutton btn btn-mp3reverbdownload" onclick="DownloadMP3WithReverb();" type="button" value="Save as MP3 File with Reverb" title="Saves the audio for the current tune as a .MP3 file including reverb">'
 	modal_msg  += '</p>';
 
-	if (format != "whistle"){
+	if ((format != "whistle") && (format != "recorder")){
 
 		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Export Tune Image</p>';
 		modal_msg += '<p style="text-align:center;font-size:20pt;font-family:helvetica"><input id="abcplayer_jpgbutton" class="abcplayer_jpgbutton btn btn-jpgdownload" onclick="DownloadJPEG();" type="button" value="Save as JPEG File" title="Saves the current tune image as a JPEG file">'
@@ -26165,7 +26263,7 @@ function ExportAudioOrImage(){
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 150, scrollWithPage: (AllowDialogsToScroll()) })
 
-	if (format != "whistle"){
+	if ((format != "whistle") && (format != "recorder")){
 		document.getElementById("export_width").value = gExportWidth;
 	}
 
@@ -26588,6 +26686,107 @@ function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 				Tspans[x].innerHTML = "M";
 			} else if (Tspans[x].innerHTML == "38") {
 				Tspans[x].innerHTML = "A";
+			}
+			else {
+				// No mapped note, put an x
+				Tspans[x].setAttribute("class", "whistle_small");
+				
+				Tspans[x].setAttribute("dy","-23");
+
+				Tspans[x].innerHTML = "x";
+			}
+		}
+	}
+
+	if (instrument == "recorder") {
+
+		// Hide the leger lines on the tab staves
+		hideTabLines();
+
+		var Tspans;
+
+		if (gIsQuickEditor){
+			Tspans = document.querySelectorAll('div[id="' + renderDivID + '"] > svg > g > g[data-name="tabNumber"] > text > tspan');
+		}
+		else
+		if (bIsPlayback){
+			Tspans = document.querySelectorAll('div[id="' + renderDivID + '"] > svg > g > g[data-name="tabNumber"] > text > tspan');
+		}
+		else{
+			Tspans = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g[data-name="tabNumber"] > text > tspan');
+		}
+
+		for (x = 0; x < Tspans.length; x++) {
+			
+			Tspans[x].setAttribute("class", "recorder");
+
+			//This fixes the + cutoff issue below the second octave notes
+			Tspans[x].setAttribute("dy","-30"); 
+
+			if (Tspans[x].innerHTML == "0") {
+				Tspans[x].innerHTML = "g";
+			} else if (Tspans[x].innerHTML == "1") {
+				Tspans[x].innerHTML = "V";
+			} else if (Tspans[x].innerHTML == "2") {
+				Tspans[x].innerHTML = "h";
+			} else if (Tspans[x].innerHTML == "3") {
+				Tspans[x].innerHTML = "H";
+			} else if (Tspans[x].innerHTML == "4") {
+				Tspans[x].innerHTML = "j";
+			} else if (Tspans[x].innerHTML == "5") {
+				Tspans[x].innerHTML = "a";
+			} else if (Tspans[x].innerHTML == "6") {
+				Tspans[x].innerHTML = "A";
+			} else if (Tspans[x].innerHTML == "7") {
+				Tspans[x].innerHTML = "s";
+			} else if (Tspans[x].innerHTML == "8") {
+				Tspans[x].innerHTML = "S";
+			} else if (Tspans[x].innerHTML == "9") {
+				Tspans[x].innerHTML = "d";
+			} else if (Tspans[x].innerHTML == "10") {
+				Tspans[x].innerHTML = "f";
+			} else if (Tspans[x].innerHTML == "11") {
+				Tspans[x].innerHTML = "F";
+			} else if (Tspans[x].innerHTML == "12") {
+				Tspans[x].innerHTML = "g";
+			} else if (Tspans[x].innerHTML == "13") {
+				Tspans[x].innerHTML = "V";
+			} else if (Tspans[x].innerHTML == "14") {
+				Tspans[x].innerHTML = "h";
+			} else if (Tspans[x].innerHTML == "15") {
+				Tspans[x].innerHTML = "H";
+			} else if (Tspans[x].innerHTML == "16") {
+				Tspans[x].innerHTML = "j";
+			} else if (Tspans[x].innerHTML == "17") {
+				Tspans[x].innerHTML = "q";
+			} else if (Tspans[x].innerHTML == "18") {
+				Tspans[x].innerHTML = "Q";
+			} else if (Tspans[x].innerHTML == "19") {
+				Tspans[x].innerHTML = "w";
+			} else if (Tspans[x].innerHTML == "20") {
+				Tspans[x].innerHTML = "W";
+			} else if (Tspans[x].innerHTML == "21") {
+				Tspans[x].innerHTML = "e";
+			} else if (Tspans[x].innerHTML == "22") {
+				Tspans[x].innerHTML = "r";
+			} else if (Tspans[x].innerHTML == "23") {
+				Tspans[x].innerHTML = "R";
+			} else if (Tspans[x].innerHTML == "24") {
+				Tspans[x].innerHTML = "t";
+			} else if (Tspans[x].innerHTML == "25") {
+				Tspans[x].innerHTML = "T";
+			} else if (Tspans[x].innerHTML == "26") {
+				Tspans[x].innerHTML = "y";
+			} else if (Tspans[x].innerHTML == "27") {
+				Tspans[x].innerHTML = "Y";
+			} else if (Tspans[x].innerHTML == "28") {
+				Tspans[x].innerHTML = "u";
+			} else if (Tspans[x].innerHTML == "29") {
+				Tspans[x].innerHTML = "i";
+			} else if (Tspans[x].innerHTML == "30") {
+				Tspans[x].innerHTML = "I";
+			} else if (Tspans[x].innerHTML == "31") {
+				Tspans[x].innerHTML = "o";
 			}
 			else {
 				// No mapped note, put an x
@@ -28433,8 +28632,8 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 
 		var format = GetRadioValue("notenodertab");
 		
-		// Change button label for export for whistle
-		if (format == "whistle"){
+		// Change button label for export for whistle and recorder
+		if ((format == "whistle") || (format == "recorder")){
 
 			document.getElementById("abcplayer_exportbutton").value = "Export Audio";
 			document.getElementById("abcplayer_exportbutton").title = "Brings up a dialog where you can save the tune in various audio formats";
@@ -29498,7 +29697,7 @@ function ScanTuneForVoiceTuning(theTune){
 function ScanTuneForTabFirstStaffOnly(theTune, instrument){
 
 	// Doesn't work for whistle or names
-	if ((instrument == "whistle") || (instrument == "notenames")){
+	if ((instrument == "whistle") || (instrument == "recorder") || (instrument == "notenames") ){
 		return false;
 	}
 
@@ -29519,7 +29718,7 @@ function ScanTuneForTabFirstStaffOnly(theTune, instrument){
 function ScanTuneForTabSecondStaffOnly(theTune, instrument){
 
 	// Doesn't work for whistle or names
-	if ((instrument == "whistle") || (instrument == "notenames")){
+	if ((instrument == "whistle") || (instrument == "recorder") || (instrument == "notenames") ){
 		return false;
 	}
 
@@ -34510,6 +34709,28 @@ function setupGDAD(){
 }
 
 //
+// Setup whistle tab button
+//
+function setupWhistleTab(){
+	var elem = document.getElementById("b9");
+	elem.value = "whistle";
+	elem = document.getElementById("b9label");
+	elem.title = "Shows Tin Whistle (D) tablature";
+	elem.innerHTML = "Whistle";
+}
+
+//
+// Setup recorder tab button
+//
+function setupRecorderTab(){
+	var elem = document.getElementById("b9");
+	elem.value = "recorder";
+	elem = document.getElementById("b9label");
+	elem.title = "Shows Baroque Recorder (Soprano/Tenor) tablature";
+	elem.innerHTML = "Recorder";
+}
+
+//
 // Save/load global configuration to/from local browser storage
 //
 
@@ -35411,6 +35632,18 @@ function GetInitialConfigurationSettings(){
 		}
 	}
 
+	// Show CGDA Tab
+	gShowRecorderTab = false;
+	val = localStorage.ShowRecorderTab;
+	if (val){
+		gShowRecorderTab = (val == "true");
+
+		if (gShowRecorderTab){
+			setupRecorderTab();
+		}
+	}
+
+
 	// Confirm Clear
 	gConfirmClear = true;
 	val = localStorage.ConfirmClear;
@@ -35654,6 +35887,9 @@ function SaveConfigurationSettings(){
 
 		// Show the show CGDA state
 		localStorage.ShowCGDATab = gShowCGDATab;
+
+		// Show the recorder tab
+		localStorage.ShowRecorderTab = gShowRecorderTab;
 
 		// Confirm Clear
 		localStorage.ConfirmClear = gConfirmClear;
@@ -37304,7 +37540,7 @@ function AdvancedControlsDialog(){
 		}
 		else{
 			
-			if (format == "whistle"){
+			if ((format == "whistle") || (format == "recorder")) {
 
 				document.getElementById("configure_batch_mp3_export").value = "Export All as Audio/MIDI";
 				document.getElementById("configure_batch_mp3_export").title = "Exports all the tunes in the ABC text area as audio or MIDI files";
@@ -38062,6 +38298,10 @@ function ConfigureToolSettings() {
 
 	var oldiPadTwoColumn = giPadTwoColumn;
 
+	var oldRecorderTab = gShowRecorderTab;
+
+	var oldTabSelected = GetRadioValue("notenodertab");
+
 	// Setup initial values
 	const theData = {
 		configure_save_exit_snapshot: gSaveLastAutoSnapShot,
@@ -38080,6 +38320,7 @@ function ConfigureToolSettings() {
 		configure_show_tab_buttons: gFeaturesShowTabButtons,
 		configure_show_dgdae: gShowDGDAETab,
 		configure_show_cgda: gShowCGDATab,
+		configure_show_recorder: gShowRecorderTab,
 		configure_comhaltas: gUseComhaltasABC,	
 		configure_RollUseRollForIrishRoll: gRollUseRollForIrishRoll,
 		configure_allow_offline_instruments: gAllowOfflineInstruments,
@@ -38116,10 +38357,20 @@ function ConfigureToolSettings() {
 		{name: "Space between the staves (default is 10, minimum is -40):", id: "configure_staff_spacing", type:"number", cssClass:"configure_settings_form_text"},
 		{name: "          Left-justify all titles and subtitles", id: "configure_left_justify_titles", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "    Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)", id: "configure_comhaltas", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-		{name: "          Show CGDA as a 4-string tab option (default is GDAD)", id: "configure_show_cgda", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-		{name: "          Show DGDAE as a 5-string tab option (default is CGDAE)", id: "configure_show_dgdae", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+		{name: "          Show CGDA as the 4-string tab option (default is GDAD)", id: "configure_show_cgda", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+		{name: "          Show DGDAE as the 5-string tab option (default is CGDAE)", id: "configure_show_dgdae", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "Stringed instrument capo fret position:", id: "configure_capo", type:"number", cssClass:"configure_settings_form_text"},
 		{name: "    Show stringed instrument names on tablature (single-voice tunes only, not shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+	]);
+
+	// Recorder tab doesn't work on Safari or iOS
+	if ((!isSafari()) && (!gIsIOS)){
+		form = form.concat([
+			{name: "          Show Recorder tab button instead of the Whistle tab button", id: "configure_show_recorder", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+			]);
+	}
+
+	form = form.concat([
 		{html: '<p style="text-align:center;"><input id="abcplayer_settingsbutton" style="margin-left:0px" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ConfigurePlayerSettings(null);" type="button" value="Select Default Player Instruments and Volumes" title="Brings up the Player Instrument Settings dialog where you can select the default abcjs soundfont, MIDI instruments, and MIDI volumes to use when playing tunes"><input id="managedatabases" class="btn btn-managedatabases managedatabases" onclick="ManageDatabasesDialog()" type="button" value="Manage Notes, Reverb, and Tune Search Databases" title="Opens a dialog where you can manage the instrument notes, reverb settings, and tune search engine collection databases"></p>'},
 		{name: "    Allow instrument notes and reverb settings database to be used offline", id: "configure_allow_offline_instruments", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 
@@ -38360,6 +38611,35 @@ function ConfigureToolSettings() {
 				setupCGDAE();				
 			}
 
+			// For tab format change detect
+			gShowRecorderTab = args.result.configure_show_recorder;
+
+			if (gShowRecorderTab){
+				setupRecorderTab();
+			}
+			else{
+				setupWhistleTab();				
+			}
+
+			if (gShowRecorderTab != oldRecorderTab){
+				
+				gWhistleFontPrepared = false;
+				gRecorderFontPrepared = false;
+
+				if ((oldTabSelected == "whistle") && (gShowRecorderTab)){
+					SetRadioValue("notenodertab", "recorder");
+					gCurrentTab = "recorder";	
+					PrepareRecorderFont();
+				}
+				else{
+					if ((oldTabSelected == "recorder") && (!gShowRecorderTab)){
+						SetRadioValue("notenodertab", "whistle");
+						gCurrentTab = "whistle";
+						PrepareWhistleFont();
+					}
+				}
+			}
+
 			gUseComhaltasABC = args.result.configure_comhaltas;
 			
 			gRollUseRollForIrishRoll = args.result.configure_RollUseRollForIrishRoll;
@@ -38367,7 +38647,7 @@ function ConfigureToolSettings() {
 			// If was from a share, no matter what, if on the multi tab option buttons, force a redraw to keep everything in sync.
 			var tabs = GetRadioValue("notenodertab");
 
-			var bTabForceRedraw = gIsFromShare && ((tabs == "gdad") || (tabs == "cgda") || (tabs == "dgdae") || (tabs == "cgdae"));
+			var bTabForceRedraw = gIsFromShare && ((tabs == "gdad") || (tabs == "cgda") || (tabs == "dgdae") || (tabs == "cgdae") || (tabs == "whistle") || (tabs == "recorder"));
 			
 			IdleAllowShowTabNames();
 
@@ -38456,7 +38736,7 @@ function ConfigureToolSettings() {
 			var radiovalue = GetRadioValue("notenodertab");
 
 			// Do we need to re-render?
-			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || (gForceLeftJustifyTitles != oldLeftJustifyTitles) || (oldCGDA != gShowCGDATab) || (oldDGDAE != gShowDGDAETab) || bTabForceRedraw
+			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || (gForceLeftJustifyTitles != oldLeftJustifyTitles) || (oldCGDA != gShowCGDATab) || (oldDGDAE != gShowDGDAETab) || (oldRecorderTab != gShowRecorderTab) || bTabForceRedraw
 				|| ((radiovalue == "notenames") && (gUseComhaltasABC != theOldComhaltas))){
 				
 				RenderAsync(true, null, function(){
@@ -39556,6 +39836,14 @@ function restoreStateFromLocalStorage(){
 			PrepareWhistleFont();
 			
 		}
+
+		if (theTab == "recorder"){
+
+			// If first time using the recorder tab, prep the recorder font for embedded SVG styles
+			PrepareRecorderFont();
+			
+		}
+
 
 		gCurrentTab = theTab;
 
