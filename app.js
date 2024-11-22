@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2116_112224_1030";
+var gVersionNumber="2117_112224_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -374,6 +374,9 @@ var gShowCGDATab = false;
 
 // Show Recorder tab
 var gShowRecorderTab = false;
+
+// Recorder tab is alto
+var gRecorderAlto = false;
 
 // Confirm clear
 var gConfirmClear = true;
@@ -26710,88 +26713,188 @@ function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 			//This fixes the + cutoff issue below the second octave notes
 			Tspans[x].setAttribute("dy","-8"); 
 
-			if (Tspans[x].innerHTML == "0") {
-				Tspans[x].innerHTML = "8";
-			} else if (Tspans[x].innerHTML == "1") {
-				Tspans[x].innerHTML = "9";
-			} else if (Tspans[x].innerHTML == "2") {
-				Tspans[x].innerHTML = "0";
-			} else if (Tspans[x].innerHTML == "3") {
-				Tspans[x].innerHTML = "-";
-			} else if (Tspans[x].innerHTML == "4") {
-				Tspans[x].innerHTML = "=";
-			} else if (Tspans[x].innerHTML == "5") {
-				Tspans[x].innerHTML = "1";
-			} else if (Tspans[x].innerHTML == "6") {
-				Tspans[x].innerHTML = "2";
-			} else if (Tspans[x].innerHTML == "7") {
-				Tspans[x].innerHTML = "3";
-			} else if (Tspans[x].innerHTML == "8") {
-				Tspans[x].innerHTML = "4";
-			} else if (Tspans[x].innerHTML == "9") {
-				Tspans[x].innerHTML = "5";
-			} else if (Tspans[x].innerHTML == "10") {
-				Tspans[x].innerHTML = "6";
-			} else if (Tspans[x].innerHTML == "11") {
-				Tspans[x].innerHTML = "7";
-			} else if (Tspans[x].innerHTML == "12") {
-				Tspans[x].innerHTML = "8";
-			} else if (Tspans[x].innerHTML == "13") {
-				Tspans[x].innerHTML = "9";
-			} else if (Tspans[x].innerHTML == "14") {
-				Tspans[x].innerHTML = "0";
-			} else if (Tspans[x].innerHTML == "15") {
-				Tspans[x].innerHTML = "-";
-			} else if (Tspans[x].innerHTML == "16") {
-				Tspans[x].innerHTML = "=";
-			} else if (Tspans[x].innerHTML == "17") {
-				Tspans[x].innerHTML = "q";
-			} else if (Tspans[x].innerHTML == "18") {
-				Tspans[x].innerHTML = "w";
-			} else if (Tspans[x].innerHTML == "19") {
-				Tspans[x].innerHTML = "e";
-			} else if (Tspans[x].innerHTML == "20") {
-				Tspans[x].innerHTML = "r";
-			} else if (Tspans[x].innerHTML == "21") {
-				Tspans[x].innerHTML = "t";
-			} else if (Tspans[x].innerHTML == "22") {
-				Tspans[x].innerHTML = "y";
-			} else if (Tspans[x].innerHTML == "23") {
-				Tspans[x].innerHTML = "u";
-			} else if (Tspans[x].innerHTML == "24") {
-				Tspans[x].innerHTML = "i";
-			} else if (Tspans[x].innerHTML == "25") {
-				Tspans[x].innerHTML = "o";
-			} else if (Tspans[x].innerHTML == "26") {
-				Tspans[x].innerHTML = "p";
-			} else if (Tspans[x].innerHTML == "27") {
-				Tspans[x].innerHTML = "[";
-			} else if (Tspans[x].innerHTML == "28") {
-				Tspans[x].innerHTML = "]";
-			} else if (Tspans[x].innerHTML == "29") {
-				Tspans[x].innerHTML = "a";
-			} else if (Tspans[x].innerHTML == "30") {
-				Tspans[x].innerHTML = "s";
-			} else if (Tspans[x].innerHTML == "31") {
-				Tspans[x].innerHTML = "d";
-			} else if (Tspans[x].innerHTML == "32") {
-				Tspans[x].innerHTML = "f";
-			} else if (Tspans[x].innerHTML == "33") {
-				Tspans[x].innerHTML = "g";
-			} else if (Tspans[x].innerHTML == "34") {
-				Tspans[x].innerHTML = "h";
-			} else if (Tspans[x].innerHTML == "35") {
-				Tspans[x].innerHTML = "j";
-			} else if (Tspans[x].innerHTML == "36") {
-				Tspans[x].innerHTML = "k";
-			}
-			else {
-				// No mapped note, put an x
-				Tspans[x].setAttribute("class", "whistle_small");
-				
-				Tspans[x].setAttribute("dy","-23");
+			if (gRecorderAlto){
 
-				Tspans[x].innerHTML = "x";
+				// Alto recorder fingerings
+				if (Tspans[x].innerHTML == "0") {
+					Tspans[x].innerHTML = "3";
+				} else if (Tspans[x].innerHTML == "1") {
+					Tspans[x].innerHTML = "4";
+				} else if (Tspans[x].innerHTML == "2") {
+					Tspans[x].innerHTML = "5";
+				} else if (Tspans[x].innerHTML == "3") {
+					Tspans[x].innerHTML = "6";
+				} else if (Tspans[x].innerHTML == "4") {
+					Tspans[x].innerHTML = "7";
+				} else if (Tspans[x].innerHTML == "5") {
+					Tspans[x].innerHTML = "8";
+				} else if (Tspans[x].innerHTML == "6") {
+					Tspans[x].innerHTML = "9";
+				} else if (Tspans[x].innerHTML == "7") {
+					Tspans[x].innerHTML = "0";
+				} else if (Tspans[x].innerHTML == "8") {
+					Tspans[x].innerHTML = "-";
+				} else if (Tspans[x].innerHTML == "9") {
+					Tspans[x].innerHTML = "=";
+				} else if (Tspans[x].innerHTML == "10") {
+					Tspans[x].innerHTML = "1";
+				} else if (Tspans[x].innerHTML == "11") {
+					Tspans[x].innerHTML = "2";
+				} else if (Tspans[x].innerHTML == "12") {
+					Tspans[x].innerHTML = "3";
+				} else if (Tspans[x].innerHTML == "13") {
+					Tspans[x].innerHTML = "4";
+				} else if (Tspans[x].innerHTML == "14") {
+					Tspans[x].innerHTML = "5";
+				} else if (Tspans[x].innerHTML == "15") {
+					Tspans[x].innerHTML = "6";
+				} else if (Tspans[x].innerHTML == "16") {
+					Tspans[x].innerHTML = "7";
+				} else if (Tspans[x].innerHTML == "17") {
+					Tspans[x].innerHTML = "8";
+				} else if (Tspans[x].innerHTML == "18") {
+					Tspans[x].innerHTML = "9";
+				} else if (Tspans[x].innerHTML == "19") {
+					Tspans[x].innerHTML = "0";
+				} else if (Tspans[x].innerHTML == "20") {
+					Tspans[x].innerHTML = "-";
+				} else if (Tspans[x].innerHTML == "21") {
+					Tspans[x].innerHTML = "=";
+				} else if (Tspans[x].innerHTML == "22") {
+					Tspans[x].innerHTML = "q";
+				} else if (Tspans[x].innerHTML == "23") {
+					Tspans[x].innerHTML = "w";
+				} else if (Tspans[x].innerHTML == "24") {
+					Tspans[x].innerHTML = "e";
+				} else if (Tspans[x].innerHTML == "25") {
+					Tspans[x].innerHTML = "r";
+				} else if (Tspans[x].innerHTML == "26") {
+					Tspans[x].innerHTML = "t";
+				} else if (Tspans[x].innerHTML == "27") {
+					Tspans[x].innerHTML = "y";
+				} else if (Tspans[x].innerHTML == "28") {
+					Tspans[x].innerHTML = "u";
+				} else if (Tspans[x].innerHTML == "29") {
+					Tspans[x].innerHTML = "i";
+				} else if (Tspans[x].innerHTML == "30") {
+					Tspans[x].innerHTML = "o";
+				} else if (Tspans[x].innerHTML == "31") {
+					Tspans[x].innerHTML = "p";
+				} else if (Tspans[x].innerHTML == "32") {
+					Tspans[x].innerHTML = "[";
+				} else if (Tspans[x].innerHTML == "33") {
+					Tspans[x].innerHTML = "]";
+				} else if (Tspans[x].innerHTML == "34") {
+					Tspans[x].innerHTML = "a";
+				} else if (Tspans[x].innerHTML == "35") {
+					Tspans[x].innerHTML = "s";
+				} else if (Tspans[x].innerHTML == "36") {
+					Tspans[x].innerHTML = "d";
+				} else if (Tspans[x].innerHTML == "37") {
+					Tspans[x].innerHTML = "f";
+				} else if (Tspans[x].innerHTML == "38") {
+					Tspans[x].innerHTML = "g";
+				} else if (Tspans[x].innerHTML == "39") {
+					Tspans[x].innerHTML = "h";
+				} else if (Tspans[x].innerHTML == "40") {
+					Tspans[x].innerHTML = "j";
+				} else if (Tspans[x].innerHTML == "41") {
+					Tspans[x].innerHTML = "k";
+				}
+				else {
+					// No mapped note, put an x
+					Tspans[x].setAttribute("class", "whistle_small");
+					
+					Tspans[x].setAttribute("dy","-23");
+
+					Tspans[x].innerHTML = "x";
+				}
+			}
+			else{
+				// Soprano recorder fingerings
+				if (Tspans[x].innerHTML == "0") {
+					Tspans[x].innerHTML = "8";
+				} else if (Tspans[x].innerHTML == "1") {
+					Tspans[x].innerHTML = "9";
+				} else if (Tspans[x].innerHTML == "2") {
+					Tspans[x].innerHTML = "0";
+				} else if (Tspans[x].innerHTML == "3") {
+					Tspans[x].innerHTML = "-";
+				} else if (Tspans[x].innerHTML == "4") {
+					Tspans[x].innerHTML = "=";
+				} else if (Tspans[x].innerHTML == "5") {
+					Tspans[x].innerHTML = "1";
+				} else if (Tspans[x].innerHTML == "6") {
+					Tspans[x].innerHTML = "2";
+				} else if (Tspans[x].innerHTML == "7") {
+					Tspans[x].innerHTML = "3";
+				} else if (Tspans[x].innerHTML == "8") {
+					Tspans[x].innerHTML = "4";
+				} else if (Tspans[x].innerHTML == "9") {
+					Tspans[x].innerHTML = "5";
+				} else if (Tspans[x].innerHTML == "10") {
+					Tspans[x].innerHTML = "6";
+				} else if (Tspans[x].innerHTML == "11") {
+					Tspans[x].innerHTML = "7";
+				} else if (Tspans[x].innerHTML == "12") {
+					Tspans[x].innerHTML = "8";
+				} else if (Tspans[x].innerHTML == "13") {
+					Tspans[x].innerHTML = "9";
+				} else if (Tspans[x].innerHTML == "14") {
+					Tspans[x].innerHTML = "0";
+				} else if (Tspans[x].innerHTML == "15") {
+					Tspans[x].innerHTML = "-";
+				} else if (Tspans[x].innerHTML == "16") {
+					Tspans[x].innerHTML = "=";
+				} else if (Tspans[x].innerHTML == "17") {
+					Tspans[x].innerHTML = "q";
+				} else if (Tspans[x].innerHTML == "18") {
+					Tspans[x].innerHTML = "w";
+				} else if (Tspans[x].innerHTML == "19") {
+					Tspans[x].innerHTML = "e";
+				} else if (Tspans[x].innerHTML == "20") {
+					Tspans[x].innerHTML = "r";
+				} else if (Tspans[x].innerHTML == "21") {
+					Tspans[x].innerHTML = "t";
+				} else if (Tspans[x].innerHTML == "22") {
+					Tspans[x].innerHTML = "y";
+				} else if (Tspans[x].innerHTML == "23") {
+					Tspans[x].innerHTML = "u";
+				} else if (Tspans[x].innerHTML == "24") {
+					Tspans[x].innerHTML = "i";
+				} else if (Tspans[x].innerHTML == "25") {
+					Tspans[x].innerHTML = "o";
+				} else if (Tspans[x].innerHTML == "26") {
+					Tspans[x].innerHTML = "p";
+				} else if (Tspans[x].innerHTML == "27") {
+					Tspans[x].innerHTML = "[";
+				} else if (Tspans[x].innerHTML == "28") {
+					Tspans[x].innerHTML = "]";
+				} else if (Tspans[x].innerHTML == "29") {
+					Tspans[x].innerHTML = "a";
+				} else if (Tspans[x].innerHTML == "30") {
+					Tspans[x].innerHTML = "s";
+				} else if (Tspans[x].innerHTML == "31") {
+					Tspans[x].innerHTML = "d";
+				} else if (Tspans[x].innerHTML == "32") {
+					Tspans[x].innerHTML = "f";
+				} else if (Tspans[x].innerHTML == "33") {
+					Tspans[x].innerHTML = "g";
+				} else if (Tspans[x].innerHTML == "34") {
+					Tspans[x].innerHTML = "h";
+				} else if (Tspans[x].innerHTML == "35") {
+					Tspans[x].innerHTML = "j";
+				} else if (Tspans[x].innerHTML == "36") {
+					Tspans[x].innerHTML = "k";
+				}
+				else {
+					// No mapped note, put an x
+					Tspans[x].setAttribute("class", "whistle_small");
+					
+					Tspans[x].setAttribute("dy","-23");
+
+					Tspans[x].innerHTML = "x";
+				}				
 			}
 		}
 	}
@@ -34723,8 +34826,15 @@ function setupRecorderTab(){
 	var elem = document.getElementById("b9");
 	elem.value = "recorder";
 	elem = document.getElementById("b9label");
-	elem.title = "Shows Baroque Recorder (Soprano/Tenor) tablature";
-	elem.innerHTML = "Recorder";
+
+	if (gRecorderAlto){
+		elem.title = "Shows Baroque Recorder (Alto in F) tablature";
+		elem.innerHTML = "Alto";
+	}
+	else{
+		elem.title = "Shows Baroque Recorder (Soprano in C) tablature";
+		elem.innerHTML = "Soprano";		
+	}
 }
 
 //
@@ -35629,7 +35739,14 @@ function GetInitialConfigurationSettings(){
 		}
 	}
 
-	// Show CGDA Tab
+	// Recorder tab is in F
+	gRecorderAlto = false;
+	val = localStorage.RecorderAlto;
+	if (val){
+		gRecorderAlto = (val == "true");
+	}
+
+	// Show Recorder Tab
 	gShowRecorderTab = false;
 	val = localStorage.ShowRecorderTab;
 	if (val){
@@ -35639,7 +35756,6 @@ function GetInitialConfigurationSettings(){
 			setupRecorderTab();
 		}
 	}
-
 
 	// Confirm Clear
 	gConfirmClear = true;
@@ -35887,6 +36003,9 @@ function SaveConfigurationSettings(){
 
 		// Show the recorder tab
 		localStorage.ShowRecorderTab = gShowRecorderTab;
+
+		// Recorder tab is Alto
+		localStorage.RecorderAlto = gRecorderAlto;
 
 		// Confirm Clear
 		localStorage.ConfirmClear = gConfirmClear;
@@ -38297,6 +38416,8 @@ function ConfigureToolSettings() {
 
 	var oldRecorderTab = gShowRecorderTab;
 
+	var oldRecorderAlto = gRecorderAlto;
+
 	var oldTabSelected = GetRadioValue("notenodertab");
 
 	// Setup initial values
@@ -38318,6 +38439,7 @@ function ConfigureToolSettings() {
 		configure_show_dgdae: gShowDGDAETab,
 		configure_show_cgda: gShowCGDATab,
 		configure_show_recorder: gShowRecorderTab,
+		configure_recorder_alto: gRecorderAlto,
 		configure_comhaltas: gUseComhaltasABC,	
 		configure_RollUseRollForIrishRoll: gRollUseRollForIrishRoll,
 		configure_allow_offline_instruments: gAllowOfflineInstruments,
@@ -38359,6 +38481,7 @@ function ConfigureToolSettings() {
 		{name: "Stringed instrument capo fret position:", id: "configure_capo", type:"number", cssClass:"configure_settings_form_text"},
 		{name: "    Show stringed instrument names on tablature (single-voice tunes only, not shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "          Show Recorder tab button instead of the Whistle tab button", id: "configure_show_recorder", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+		{name: "          Recorder tab is for Alto in F (default is Soprano in C)", id: "configure_recorder_alto", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{html: '<p style="text-align:center;"><input id="abcplayer_settingsbutton" style="margin-left:0px" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ConfigurePlayerSettings(null);" type="button" value="Select Default Player Instruments and Volumes" title="Brings up the Player Instrument Settings dialog where you can select the default abcjs soundfont, MIDI instruments, and MIDI volumes to use when playing tunes"><input id="managedatabases" class="btn btn-managedatabases managedatabases" onclick="ManageDatabasesDialog()" type="button" value="Manage Notes, Reverb, and Tune Search Databases" title="Opens a dialog where you can manage the instrument notes, reverb settings, and tune search engine collection databases"></p>'},
 		{name: "    Allow instrument notes and reverb settings database to be used offline", id: "configure_allow_offline_instruments", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "    Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
@@ -38601,6 +38724,9 @@ function ConfigureToolSettings() {
 			// For tab format change detect
 			gShowRecorderTab = args.result.configure_show_recorder;
 
+			// Is alto?
+			gRecorderAlto = args.result.configure_recorder_alto;
+
 			if (gShowRecorderTab){
 				setupRecorderTab();
 			}
@@ -38608,7 +38734,7 @@ function ConfigureToolSettings() {
 				setupWhistleTab();				
 			}
 
-			if (gShowRecorderTab != oldRecorderTab){
+			if ((gShowRecorderTab != oldRecorderTab) || (gRecorderAlto != oldRecorderAlto)){
 				
 				gWhistleFontPrepared = false;
 				gRecorderFontPrepared = false;
@@ -38723,7 +38849,7 @@ function ConfigureToolSettings() {
 			var radiovalue = GetRadioValue("notenodertab");
 
 			// Do we need to re-render?
-			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || (gForceLeftJustifyTitles != oldLeftJustifyTitles) || (oldCGDA != gShowCGDATab) || (oldDGDAE != gShowDGDAETab) || (oldRecorderTab != gShowRecorderTab) || bTabForceRedraw
+			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || (gForceLeftJustifyTitles != oldLeftJustifyTitles) || (oldCGDA != gShowCGDATab) || (oldDGDAE != gShowDGDAETab) || (oldRecorderTab != gShowRecorderTab) || (gRecorderAlto != oldRecorderAlto)|| bTabForceRedraw
 				|| ((radiovalue == "notenames") && (gUseComhaltasABC != theOldComhaltas))){
 				
 				RenderAsync(true, null, function(){
