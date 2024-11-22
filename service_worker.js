@@ -2,12 +2,11 @@
 // Service worker for abctools offline use resource caching
 //
 //
-// Updated 21 November 2024 at 0800
-//
+// Updated 22 November 2024 at 0800
 //
 //
 
-const cacheName = 'abctoolscache-2113';
+const cacheName = 'abctoolscache-21145';
 
 const contentToCache = [
     'abctools.html',

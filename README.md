@@ -55,6 +55,7 @@
 <p><a href="https://ko-fi.com/s/573c321432" title="Irish Bouzouki (Kontakt Sample Instrument)" target="_blank">Irish Bouzouki (Kontakt Sample Instrument)</a> by Eamon Coughlan (sampled from an instrument built by Daniel Hoban) used as the basis for the Irish Bouzouki 2 instrument.</p>
 <p><a href="https://www.arachnosoft.com/main/soundfont.php?documentation=fullscreen#copyright" title="Arachno Soundfont Licenses" target="_blank">Arachno Soundfont</a> used under a variety of non-commercial use licenses.</p>
 <p><a href="https://github.com/marmooo/midi2abc" target="_blank">midi2abc</a> is used for the standalone MIDI to ABC transcoding.</p> 
+<p><a href="https://www.fontspace.com/recorders-font-f18231" target="_blank">Hiawatha's Recorder Fingering Font</a> is used for Baroque Recorder fingering tablature.</p>
 <p>Without these free open-source resources this project would not have been possible.</p><p></p>
 <hr>
 <p><strong>Project Contributors:</strong></p>
