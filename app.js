@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2115_112224_0800";
+var gVersionNumber="2116_112224_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -371,6 +371,9 @@ var gShowDGDAETab = false;
 
 // Show CGDA tab
 var gShowCGDATab = false;
+
+// Show Recorder tab
+var gShowRecorderTab = false;
 
 // Confirm clear
 var gConfirmClear = true;
