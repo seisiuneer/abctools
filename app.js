@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2117_112224_1100";
+var gVersionNumber="2118_112224_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16845,6 +16845,16 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
 
 	url += postfix;
 
+	// Transmit recorder format
+	if (format == "recorder"){
+		if (gRecorderAlto){
+			url += "&alto=1";
+		}
+		else{
+			url += "&alto=0";			
+		}
+	}
+
 	// If just encoding some ABC, return it now
 	if (ABCtoEncode){
 		return url;
@@ -20934,6 +20944,7 @@ function processShareLink() {
 
 			// If first time using the whistle tab, prep the tin whistle font for embedded SVG styles
 			setupWhistleTab();
+
 			PrepareWhistleFont();
 			
 		}
@@ -20941,6 +20952,26 @@ function processShareLink() {
 		var warnRecorder = false;
 
 		if (format == "recorder"){
+
+			// Is this for alto recorder?
+			if (urlParams.has("alto")) {
+				var alto = urlParams.get("alto");
+				var testAlto = parseInt(alto);
+				if (!isNaN(testAlto)){
+					if (testAlto == 1){
+						gRecorderAlto = true;
+					}
+					else{
+						gRecorderAlto = false;	
+					}
+				}
+				else{
+					gRecorderAlto = false;				
+				}
+			}
+			else{
+				gRecorderAlto = false;
+			}
 
 			// If first time using the recorder tab, prep the recorder font for embedded SVG styles
 			setupRecorderTab();
