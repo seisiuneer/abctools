@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2118_112224_1200";
+var gVersionNumber="2119_112324_0700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -34848,6 +34848,7 @@ function setupWhistleTab(){
 	elem = document.getElementById("b9label");
 	elem.title = "Shows Tin Whistle (D) tablature";
 	elem.innerHTML = "Whistle";
+	elem.style.padding = "0.8rem 0.7rem 0.7rem 0.7rem";
 }
 
 //
@@ -34861,10 +34862,12 @@ function setupRecorderTab(){
 	if (gRecorderAlto){
 		elem.title = "Shows Baroque Recorder (Alto in F) tablature";
 		elem.innerHTML = "Alto";
+		elem.style.padding = "0.8rem 22px 0.7rem 22px";
 	}
 	else{
 		elem.title = "Shows Baroque Recorder (Soprano in C) tablature";
 		elem.innerHTML = "Soprano";		
+		elem.style.padding = "0.8rem 7px 0.7rem 7px";
 	}
 }
 
@@ -39972,7 +39975,15 @@ function restoreStateFromLocalStorage(){
 
 	if (theTab){
 
+		// Case where user came in from a recorder share link previously, but doesn't want recorder tab in general
+		if ((theTab == "recorder") && (!gShowRecorderTab)){
+
+			theTab = "whistle";
+			
+		}
+
 		SetRadioValue("notenodertab", theTab);
+
 
 		if (theTab == "whistle"){
 
