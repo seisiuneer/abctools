@@ -2922,7 +2922,7 @@ var create;
             } 
             else
             // MAE 1 Jan 2024 - Custom MIDI instrument processing
-            if (event.instrument == 144){
+            if (event.instrument == 148){
               midi.setChannelMute(event.channel, pan);
               midi.setInstrument(0);              
             }
@@ -2976,6 +2976,13 @@ var create;
 
                 case 142: // Marching Drums
                   theInstrument = 117; // Melodic Tom
+                  break;
+
+                case 144: // Soprano recorder
+                case 145: // Alto recorder
+                case 146: // Tenor recorder
+                case 147: // Bass recorder
+                  theInstrument = 74; // Recorder
                   break;
 
                 default:
@@ -4558,15 +4565,15 @@ var parseDirective = {};
     } else if (midiCmdParam1Integer1OptionalInteger.indexOf(midi_cmd) >= 0) {
       
       //
-      // MAE 1 Jan 2024 - Stuff in silence patch 144 if mute selected as the program
+      // MAE 1 Jan 2024 - Stuff in silence patch 148 if mute selected as the program
       //
       //debugger;
       if ((midi_cmd == "program") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "mute")){
         //console.log("Got mute program request for "+midi_cmd);
         midi[0].type = 'number';
-        midi[0].token = "144";
-        midi[0].intt = 144;
-        midi[0].floatt = 144;
+        midi[0].token = "148";
+        midi[0].intt = 148;
+        midi[0].floatt = 148;
         midi[0].continueId = false;
         midi[0].start = 8;
         midi[0].end = 11;
@@ -4692,14 +4699,14 @@ var parseDirective = {};
     }
     else if (midiCmdParam1Integer1OptionalString.indexOf(midi_cmd) >= 0){
 
-      // MAE 1 January 2023 - Stuff in silence patch 144 if mute selected as the chordprog or bassprog
+      // MAE 1 January 2023 - Stuff in silence patch 148 if mute selected as the chordprog or bassprog
       //
       if ((midi_cmd == "chordprog") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "mute")){
         //console.log("Got mute program request for "+midi_cmd);
         midi[0].type = 'number';
-        midi[0].token = "144";
-        midi[0].intt = 144;
-        midi[0].floatt = 144;
+        midi[0].token = "148";
+        midi[0].intt = 148;
+        midi[0].floatt = 148;
         midi[0].continueId = false;
         midi[0].start = 10;
         midi[0].end = 13;
@@ -4708,9 +4715,9 @@ var parseDirective = {};
       if ((midi_cmd == "bassprog") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "mute")){
         //console.log("Got mute program request for "+midi_cmd);
         midi[0].type = 'number';
-        midi[0].token = "144";
-        midi[0].intt = 144;
-        midi[0].floatt = 144;
+        midi[0].token = "148";
+        midi[0].intt = 148;
+        midi[0].floatt = 148;
         midi[0].continueId = false;
         midi[0].start = 9;
         midi[0].end = 12;
@@ -17205,8 +17212,12 @@ function CreateSynth(theABC) {
         "mandolin": 2.0,     // 141
         "marchingdrums": 2.5, // 142
         "borderpipes": 2.5,  // 143
-        "percussion": 2.0  // 128
-      }
+        "percussion": 2.0,  // 128
+        "soprano_recorder": 3.5, // 144
+        "alto_recorder": 3.5, // 145
+        "tenor_recorder": 3.5, // 146
+        "bass_recorder": 3.5, // 147
+     }
     }
     else{
       self.customVolumeMultiplier = {
@@ -17225,7 +17236,11 @@ function CreateSynth(theABC) {
         "mandolin": 2.0,     // 141
         "marchingdrums": 2.5, // 142
         "borderpipes": 2.5,  // 143
-        "percussion": 2.0  // 128
+        "percussion": 2.0,  // 128
+        "soprano_recorder": 3.5, // 144
+        "alto_recorder": 3.5, // 145
+        "tenor_recorder": 3.5, // 146
+        "bass_recorder": 3.5, // 147        
       }
     } 
 
@@ -17312,7 +17327,11 @@ function CreateSynth(theABC) {
               "mandolin": 0,     // 141
               "marchingdrums": 0, // 142
               "borderpipes": 0,  // 143
-              "silence": 50      // 144
+              "soprano_recorder": 0, // 144
+              "alto_recorder": 0, // 145
+              "tenor_recorder": 0, // 146
+              "bass_recorder": 0, // 147
+              "silence": 50      // 148
             }
           }
           else{
@@ -17332,7 +17351,11 @@ function CreateSynth(theABC) {
               "mandolin": 0,     // 141
               "marchingdrums": 0, // 142
               "borderpipes": 0,  // 143
-              "silence": 50      // 144
+              "soprano_recorder": 0, // 144
+              "alto_recorder": 0, // 145
+              "tenor_recorder": 0, // 146
+              "bass_recorder": 0, // 147
+              "silence": 50      // 148
             }
           }
       }
@@ -18599,7 +18622,7 @@ module.exports = svg;
 /***/ (function(module) {
 
 // MAE Start of Change to add custom instruments
-var instrumentIndexToName = ["acoustic_grand_piano", "bright_acoustic_piano", "electric_grand_piano", "honkytonk_piano", "electric_piano_1", "electric_piano_2", "harpsichord", "clavinet", "celesta", "glockenspiel", "music_box", "vibraphone", "marimba", "xylophone", "tubular_bells", "dulcimer", "drawbar_organ", "percussive_organ", "rock_organ", "church_organ", "reed_organ", "accordion", "harmonica", "tango_accordion", "acoustic_guitar_nylon", "acoustic_guitar_steel", "electric_guitar_jazz", "electric_guitar_clean", "electric_guitar_muted", "overdriven_guitar", "distortion_guitar", "guitar_harmonics", "acoustic_bass", "electric_bass_finger", "electric_bass_pick", "fretless_bass", "slap_bass_1", "slap_bass_2", "synth_bass_1", "synth_bass_2", "violin", "viola", "cello", "contrabass", "tremolo_strings", "pizzicato_strings", "orchestral_harp", "timpani", "string_ensemble_1", "string_ensemble_2", "synth_strings_1", "synth_strings_2", "choir_aahs", "voice_oohs", "synth_choir", "orchestra_hit", "trumpet", "trombone", "tuba", "muted_trumpet", "french_horn", "brass_section", "synth_brass_1", "synth_brass_2", "soprano_sax", "alto_sax", "tenor_sax", "baritone_sax", "oboe", "english_horn", "bassoon", "clarinet", "piccolo", "flute", "recorder", "pan_flute", "blown_bottle", "shakuhachi", "whistle", "ocarina", "lead_1_square", "lead_2_sawtooth", "lead_3_calliope", "lead_4_chiff", "lead_5_charang", "lead_6_voice", "lead_7_fifths", "lead_8_bass_lead", "pad_1_new_age", "pad_2_warm", "pad_3_polysynth", "pad_4_choir", "pad_5_bowed", "pad_6_metallic", "pad_7_halo", "pad_8_sweep", "fx_1_rain", "fx_2_soundtrack", "fx_3_crystal", "fx_4_atmosphere", "fx_5_brightness", "fx_6_goblins", "fx_7_echoes", "fx_8_scifi", "sitar", "banjo", "shamisen", "koto", "kalimba", "bagpipe", "fiddle", "shanai", "tinkle_bell", "agogo", "steel_drums", "woodblock", "taiko_drum", "melodic_tom", "synth_drum", "reverse_cymbal", "guitar_fret_noise", "breath_noise", "seashore", "bird_tweet", "telephone_ring", "helicopter", "applause", "gunshot", "percussion", "uilleann", "smallpipesd", "smallpipesa", "sackpipa", "concertina", "melodica", "cajun", "solfege", "chorus_guitar_nylon","chorus_guitar_steel","bouzouki","bouzouki2","mandolin","marchingdrums","borderpipes","silence"];
+var instrumentIndexToName = ["acoustic_grand_piano", "bright_acoustic_piano", "electric_grand_piano", "honkytonk_piano", "electric_piano_1", "electric_piano_2", "harpsichord", "clavinet", "celesta", "glockenspiel", "music_box", "vibraphone", "marimba", "xylophone", "tubular_bells", "dulcimer", "drawbar_organ", "percussive_organ", "rock_organ", "church_organ", "reed_organ", "accordion", "harmonica", "tango_accordion", "acoustic_guitar_nylon", "acoustic_guitar_steel", "electric_guitar_jazz", "electric_guitar_clean", "electric_guitar_muted", "overdriven_guitar", "distortion_guitar", "guitar_harmonics", "acoustic_bass", "electric_bass_finger", "electric_bass_pick", "fretless_bass", "slap_bass_1", "slap_bass_2", "synth_bass_1", "synth_bass_2", "violin", "viola", "cello", "contrabass", "tremolo_strings", "pizzicato_strings", "orchestral_harp", "timpani", "string_ensemble_1", "string_ensemble_2", "synth_strings_1", "synth_strings_2", "choir_aahs", "voice_oohs", "synth_choir", "orchestra_hit", "trumpet", "trombone", "tuba", "muted_trumpet", "french_horn", "brass_section", "synth_brass_1", "synth_brass_2", "soprano_sax", "alto_sax", "tenor_sax", "baritone_sax", "oboe", "english_horn", "bassoon", "clarinet", "piccolo", "flute", "recorder", "pan_flute", "blown_bottle", "shakuhachi", "whistle", "ocarina", "lead_1_square", "lead_2_sawtooth", "lead_3_calliope", "lead_4_chiff", "lead_5_charang", "lead_6_voice", "lead_7_fifths", "lead_8_bass_lead", "pad_1_new_age", "pad_2_warm", "pad_3_polysynth", "pad_4_choir", "pad_5_bowed", "pad_6_metallic", "pad_7_halo", "pad_8_sweep", "fx_1_rain", "fx_2_soundtrack", "fx_3_crystal", "fx_4_atmosphere", "fx_5_brightness", "fx_6_goblins", "fx_7_echoes", "fx_8_scifi", "sitar", "banjo", "shamisen", "koto", "kalimba", "bagpipe", "fiddle", "shanai", "tinkle_bell", "agogo", "steel_drums", "woodblock", "taiko_drum", "melodic_tom", "synth_drum", "reverse_cymbal", "guitar_fret_noise", "breath_noise", "seashore", "bird_tweet", "telephone_ring", "helicopter", "applause", "gunshot", "percussion", "uilleann", "smallpipesd", "smallpipesa", "sackpipa", "concertina", "melodica", "cajun", "solfege", "chorus_guitar_nylon","chorus_guitar_steel","bouzouki","bouzouki2","mandolin","marchingdrums","borderpipes","soprano_recorder","alto_recorder","tenor_recorder","bass_recorder","silence"];
 // MAE End of Change
 module.exports = instrumentIndexToName;
 
@@ -18658,7 +18681,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
         case "concertina":  // 133
         case "melodica":    // 134
         case "cajun":       // 135
-        case "silence":     // 144
+        case "silence":     // 148
           url = "https://michaeleskin.com/abctools/soundfonts/";
           isOgg = true;
           isCustomInstrument = true;
@@ -18850,6 +18873,30 @@ var getNote = function getNote(url, instrument, name, audioContext) {
           isCustomInstrument = true;
           break;
 
+        case "soprano_recorder": // 144
+          url = "https://michaeleskin.com/abctools/soundfonts/soprano_recorder_1/";
+          isOgg = false;
+          isCustomInstrument = true;
+          break;
+
+        case "alto_recorder":     // 145
+          url = "https://michaeleskin.com/abctools/soundfonts/alto_recorder_1/";
+          isOgg = false;
+          isCustomInstrument = true;
+          break;
+
+        case "tenor_recorder":     // 146
+          url = "https://michaeleskin.com/abctools/soundfonts/tenor_recorder_1/";
+          isOgg = false;
+          isCustomInstrument = true;
+          break;
+
+        case "bass_recorder":     // 147
+          url = "https://michaeleskin.com/abctools/soundfonts/bass_recorder_1/";
+          isOgg = false;
+          isCustomInstrument = true;
+          break;
+
         case "percussion":  // 128
           // The percussion on the alternate sound fonts is too loud, use the default in all cases
           //url = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
@@ -18867,7 +18914,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
         case "concertina":  // 133
         case "melodica":    // 134
         case "cajun":       // 135
-        case "silence":     // 144
+        case "silence":     // 148
           url = "https://michaeleskin.com/abctools/soundfonts/";
           isOgg = true;
           isCustomInstrument = true;
@@ -18948,6 +18995,30 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
         case "borderpipes":  // 143
           url = "https://michaeleskin.com/abctools/soundfonts/borderpipes_1/";
+          isOgg = false;
+          isCustomInstrument = true;
+          break;
+
+        case "soprano_recorder": // 144
+          url = "https://michaeleskin.com/abctools/soundfonts/soprano_recorder_1/";
+          isOgg = false;
+          isCustomInstrument = true;
+          break;
+
+        case "alto_recorder":     // 145
+          url = "https://michaeleskin.com/abctools/soundfonts/alto_recorder_1/";
+          isOgg = false;
+          isCustomInstrument = true;
+          break;
+
+        case "tenor_recorder":     // 146
+          url = "https://michaeleskin.com/abctools/soundfonts/tenor_recorder_1/";
+          isOgg = false;
+          isCustomInstrument = true;
+          break;
+
+        case "bass_recorder":     // 147
+          url = "https://michaeleskin.com/abctools/soundfonts/bass_recorder_1/";
           isOgg = false;
           isCustomInstrument = true;
           break;

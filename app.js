@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2119_112324_0700";
+var gVersionNumber="2120_112324_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16369,7 +16369,8 @@ function AppendDatabaseTemplate(){
 	theValue += '[I:MIDI= program 112] "_112" G4 |[I:MIDI= program 113] "_113" G4 |[I:MIDI= program 114] "_114" G4 |[I:MIDI= program 115] "_115" G4 |[I:MIDI= program 116] "_116" G4 |[I:MIDI= program 117] "_117" G4 |[I:MIDI= program 118] "_118" G4 |[I:MIDI= program 119] "_119" G4 |\n';
 	theValue += '[I:MIDI= program 120] "_120" G4 |[I:MIDI= program 121] "_121" G4 |[I:MIDI= program 122] "_122" G4 |[I:MIDI= program 123] "_123" G4 |[I:MIDI= program 124] "_124" G4 |[I:MIDI= program 125] "_125" G4 |[I:MIDI= program 126] "_126" G4 |[I:MIDI= program 127] "_127" G4 |\n';
 	theValue += '[I:MIDI= program 128] "_128" G4 |[I:MIDI= program 129] "_129" G4 |[I:MIDI= program 130] "_130" G4 |[I:MIDI= program 131] "_131" G4 |[I:MIDI= program 132] "_132" G4 |[I:MIDI= program 133] "_133" G4 |[I:MIDI= program 134] "_134" G4 |[I:MIDI= program 135] "_135" G4 |\n';
-	theValue += '[I:MIDI= program 136] "_136" G4 |[I:MIDI= program 137] "_137" G4 |[I:MIDI= program 138] "_138" G4 |[I:MIDI= program 139] "_139" G4 |[I:MIDI= program 140] "_140" G4 |[I:MIDI= program 141] "_141" G4 |[I:MIDI= program 142] "_142" G4 |[I:MIDI= program 143] "_143" G4 |[I:MIDI= program 144] "_144" G4 |]\n';
+	theValue += '[I:MIDI= program 136] "_136" G4 |[I:MIDI= program 137] "_137" G4 |[I:MIDI= program 138] "_138" G4 |[I:MIDI= program 139] "_139" G4 |[I:MIDI= program 140] "_140" G4 |[I:MIDI= program 141] "_141" G4 |[I:MIDI= program 142] "_142" G4 |[I:MIDI= program 143] "_143" G4 |[I:MIDI= program 144] "_144" G4 |\n';
+	theValue += '[I:MIDI= program 145] "_145" G4 |[I:MIDI= program 146] "_146" G4 |[I:MIDI= program 147] "_147" G4 |[I:MIDI= program 148] "_148" G4 |]\n';
 
 	// Do common tune addition processing
 	ProcessAddTune(theValue);
@@ -19372,10 +19373,14 @@ const generalMIDISoundNames = [
   "Mandolin",			// 141
   "Marching Drums",		// 142
   "Border Pipes",		// 143
-  "Silence"				// 144
+  "Soprano Recorder",	// 144
+  "Alto Recorder",		// 145
+  "Tenor Recorder",		// 146
+  "Bass Recorder",		// 147
+  "Silence"				// 148
 ];
 
-var MIDI_PATCH_COUNT = 144;
+var MIDI_PATCH_COUNT = 148;
 
 var gLastInjectedSoundfont = null;
 var gLastInjectedProgram = 1;
@@ -26368,7 +26373,11 @@ function computeFade(tuneABC){
 					case "136":  // Solfège
 					case "142":  // Marching Drums
 					case "143":  // Border Pipes
-					case "144":  // Silence
+					case "144":  // Soprano Recorder
+					case "145":  // Alto Recorder
+					case "146":  // Tenor Recorder
+					case "147":  // Bass Recorder
+					case "148":  // Silence
 					case "mute": // Silence
 						theFade = 100;
 						break;
@@ -26399,8 +26408,11 @@ function computeFade(tuneABC){
 					case "136":  // Solfège
 					case "142":  // Marching Drums
 					case "143":  // Border Pipes
-					case "144":  // Silence
-					case "mute": // Silence
+					case "144":  // Soprano Recorder
+					case "145":  // Alto Recorder
+					case "146":  // Tenor Recorder
+					case "147":  // Bass Recorder
+					case "148":  // Silence
 						theFade = 100;
 						break;
 					case "137":  // Chorused Nylon Guitar
@@ -31483,7 +31495,7 @@ function ScanTuneForInstrumentExplorer(theTune){
 			break;		
 	}
 
-	if (gTheMelodyProgram == "144"){
+	if (gTheMelodyProgram == "148"){
 		gInstrumentExplorerMelodyInstrument = 0;
 	}
 	else{
@@ -31492,7 +31504,7 @@ function ScanTuneForInstrumentExplorer(theTune){
 
 	gInstrumentExplorerMelodyInstrument = ""+gInstrumentExplorerMelodyInstrument;
 
-	if (gTheChordProgram == "144"){
+	if (gTheChordProgram == "148"){
 		gInstrumentExplorerChordInstrument = 0;
 	}
 	else{
@@ -31501,7 +31513,7 @@ function ScanTuneForInstrumentExplorer(theTune){
 
 	gInstrumentExplorerChordInstrument = ""+gInstrumentExplorerChordInstrument;
 
-	if (gTheBassProgram == "144"){
+	if (gTheBassProgram == "148"){
 		gInstrumentExplorerBassInstrument = 0;
 	}
 	else{

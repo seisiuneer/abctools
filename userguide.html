@@ -1153,7 +1153,7 @@
                 <p>After setting your desired MIDI instrument and reverb setting in the template, click <strong>Play</strong> to load the notes and reverb setting into the database.</p>
                 <p>You do not need to actually play the ABC, simply opening the template in the player will fetch the instrument notes and reverb setting and save them in the database.</p>
                 <p><strong>All Soundfont Instruments Notes Database Primer Loader</strong></p>
-                <p>ABC template soundfont MIDI instrument notes database primer loader that includes a single note assigned to each of the 128 MIDI instruments in a soundfont (plus my custom instruments 129-144).</p>
+                <p>ABC template soundfont MIDI instrument notes database primer loader that includes a single note assigned to each of the 128 MIDI instruments in a soundfont (plus my custom instruments 129-148).</p>
                 <p>After setting your desired soundfont in the template, click <strong>Play</strong> to load the single notes of each instrument into the database.</p>
                 <p>You do not need to actually play the ABC, simply opening the template in the player will fetch the instrument notes save them in the database.</p>
                 <p>Once the single notes for each soundfont instrument are in the database, use the <strong>Load All Notes for All Instruments</strong> feature on the <strong>Manage Notes, Reverb, and Tune Search Databases</strong> / <strong>Instrument Notes Database</strong> dialog to load all the rest of the notes for all the instruments in the soundfont into the database for use offline.</p>
@@ -1473,7 +1473,7 @@
                 <p>To mute just a section of a tune use the following annotation in the ABC (specific to this tool):</p>
                 <p class="code">!ppppp!</p>
                 <p></p>
-                <p>To completely mute the melody, change the MIDI Program to 144 (or mute):</p>
+                <p>To completely mute the melody, change the MIDI Program to 148 (or mute):</p>
                 <p class="code">%%MIDI program mute</p>
                 <p>To change the volume of the bass and chords, add the following two chordvol and bassvol %%MIDI directives immediately before any %%MIDI program and %%MIDI chordprog directives:</p>
                 <p></p>
@@ -1491,12 +1491,12 @@
                     %%MIDI chordprog 21<br/>
                 %</p>
                 <p>The volume range is from 0 to 127.</p>
-                <p>To completely mute the bass or chords, change their MIDI Program to 144 (or mute):</p>
+                <p>To completely mute the bass or chords, change their MIDI Program to 148 (or mute):</p>
                 <p class="code">%%MIDI bassprog mute<br/>%%MIDI chordprog mute</p>
                 <p></p>
-                <p><strong>The following MIDI instruments now use the same samples as my iOS "Celtic Sounds" and other apps:</strong></p>
+                <p><strong>The following MIDI instruments are custom sampled instruments:</strong></p>
                 <p></p>
-                <p><strong>Hammered Dulcimer: 15, Accordion: 21, Flute: 73, Whistle: 78, Banjo: 105, Bagpipe: 109, Fiddle: 110, Bodhran: 117, Uilleann Pipes: 129, Scottish Smallpipes (D): 130, Scottish Smallpipes (A): 131, Säckpipa: 132, Concertina: 133, Melodica: 134, Cajun Accordion: 135, Solfège: 136, Chorused Guitar (nylon): 137, Chorused Guitar (steel): 138, Irish Bouzouki: 139, Irish Bouzouki 2: 140, Mandolin: 141, Marching Drums: 142, Border Pipes: 143, Silence: 144 (or mute)</strong></p>
+                <p><strong>Hammered Dulcimer: 15, Accordion: 21, Flute: 73, Whistle: 78, Banjo: 105, Bagpipe: 109, Fiddle: 110, Bodhran: 117, Uilleann Pipes: 129, Scottish Smallpipes (D): 130, Scottish Smallpipes (A): 131, Säckpipa: 132, Concertina: 133, Melodica: 134, Cajun Accordion: 135, Solfège: 136, Chorused Guitar (nylon): 137, Chorused Guitar (steel): 138, Irish Bouzouki: 139, Irish Bouzouki 2: 140, Mandolin: 141, Marching Drums: 142, Border Pipes: 143, Soprano Recorder: 144, Alto Recorder: 145, Tenor Recorder: 146, Bass Recorder: 147, Silence: 148 (or mute)</strong></p>
                 <p>The Scottish Smallpipes (A) samples are from an instrument tuned in A, but the note numbers mapped to D so that they have the same transposed MIDI note range as the flute or whistle.</p>
                 <p>The Flute, Whistle (if <strong>Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran</strong> in the <strong>Settings</strong> is enabled), and Uilleann pipes sounds will automatically "fold" notes below first octave D up an octave.</p>
                 <p>The Säckpipa and Scottish Smallpipes (A) and (D) sounds will automatically "fold" notes above second octave D down an octave.</p>
@@ -1514,9 +1514,9 @@
                 <hr class="hidden-print" id="general_midi_instrument_program_numbers">
                 <h1 class="page_break_always">General MIDI Instrument Program Numbers <span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <div class="image_holder">
-                    <img class="image" loading="lazy" style="width:700px;" src="img/gm_extended_11.jpg"/>
+                    <img class="image" loading="lazy" style="width:700px;" src="img/gm_extended_12.jpg"/>
                 </div>
-                <p>Use program #144 Silence (or mute) to mute MIDI voices.</p>
+                <p>Use program #148 Silence (or mute) to mute MIDI voices.</p>
                 <p>This can be used, for example, to create "Music Minus One" recordings consisting only of backing bass and chord tracks.</p>
                 <hr class="hidden-print" id="general_midi_percussion_map">
                 <h1 class="page_break_always">General MIDI Drum Sound ABC Note Map<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -1938,7 +1938,11 @@
                 <p>141: Mandolin -> 25: Acoustic Guitar (steel)</p>
                 <p>142: Marching Drums -> 117: Melodic Tom</p>
                 <p>143: Border Pipes -> 109: Bagpipe</p>
-                <p>Muted voices using MIDI instrument 144 or "mute" will be changed to program 0 (Acoustic Grand Piano) and the volume set to zero.</p>
+                <p>144: Soprano Recorder -> 74: Recorder</p>
+                <p>145: Alto Recorder -> 74: Recorder</p>
+                <p>146: Tenor Recorder -> 74: Recorder</p>
+                <p>147: Bass Recorder -> 74: Recorder</p>
+                <p>Muted voices using MIDI instrument 148 or "mute" will be changed to program 0 (Acoustic Grand Piano) and the volume set to zero.</p>
                 <hr>
                 <p><strong>Save as JPEG File</strong>: Saves the image for the current tune to your system as a bitmap in JPEG format.</p>
                 <p>Image width is set from the <strong>Image width to export:</strong> value.</p>
