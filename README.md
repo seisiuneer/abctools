@@ -56,6 +56,7 @@
 <p><a href="https://www.arachnosoft.com/main/soundfont.php?documentation=fullscreen#copyright" title="Arachno Soundfont Licenses" target="_blank">Arachno Soundfont</a> used under a variety of non-commercial use licenses.</p>
 <p><a href="https://github.com/marmooo/midi2abc" target="_blank">midi2abc</a> is used for the standalone MIDI to ABC transcoding.</p> 
 <p><a href="https://www.fontspace.com/recorders-font-f18231" target="_blank">Hiawatha's Recorder Fingering Font</a> is used for Baroque Recorder fingering tablature.</p>
+<p><a href="https://versilian-studios.com/vcsl/" target="_blank">Versilian Community Sample Library</a> CC0 Baroque Recorder samples were the starting point for the SATB Recorder instruments.</p>
 <p>Without these free open-source resources this project would not have been possible.</p><p></p>
 <hr>
 <p><strong>Project Contributors:</strong></p>
