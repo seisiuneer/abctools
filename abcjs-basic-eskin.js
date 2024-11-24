@@ -17215,8 +17215,8 @@ function CreateSynth(theABC) {
         "percussion": 2.0,  // 128
         "soprano_recorder": 3.5, // 144
         "alto_recorder": 3.5, // 145
-        "tenor_recorder": 3.5, // 146
-        "bass_recorder": 3.5, // 147
+        "tenor_recorder": 6.1, // 146
+        "bass_recorder": 3.1, // 147
      }
     }
     else{
@@ -17239,8 +17239,8 @@ function CreateSynth(theABC) {
         "percussion": 2.0,  // 128
         "soprano_recorder": 3.5, // 144
         "alto_recorder": 3.5, // 145
-        "tenor_recorder": 3.5, // 146
-        "bass_recorder": 3.5, // 147        
+        "tenor_recorder": 6.1, // 146
+        "bass_recorder": 3.1, // 147        
       }
     } 
 
