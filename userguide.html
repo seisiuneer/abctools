@@ -2073,7 +2073,7 @@
                 <p>By default, trills and mordents use a beat divider of 32 for their timing.</p>
                 <p>If you want to change the timing of trills and mordents, you can include the following comment-based annotation anywhere in the tune's ABC:</p>
                 <p class="code">%ornament_divider beat_divider</p>
-                <p>Where beat_divider can be any value from 2 to 64.</p>
+                <p>Where beat_divider can be any value from 2 to 256.</p>
                 <hr>
                 <p>By default, trills, mordents, and turns use an offset of 2 semitones when playing.</p>
                 <p>If you want to change the semitone offset of trills, mordents, or turns you can include the following comment-based annotation anywhere in the tune's ABC:</p>
@@ -3117,7 +3117,9 @@
                     %voice_tuning_cents<br/>
                     %tab_first_voice_only<br/>
                     %tab_first_voice_exclude<br/>
-                %reverb chamber 0.8 0.2</p>
+                    %reverb chamber 0.8 0.2<br/>
+                    %ornament_divider<br/>
+                    %ornament_offset</p>
                 <hr class="hidden-print" id="editing_pdf_tunebooks">
                 <h1 class="page_break_always">Editing PDF Tunebooks With Other Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>The PDF tunebooks created by this tool can be editing using Adobe Acrobat Pro or other PDF editing tools.</p>

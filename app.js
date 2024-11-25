@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2123_112424_1400";
+var gVersionNumber="2124_112524_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -29508,7 +29508,7 @@ function ScanTuneForCustomTimingInjection(theTune){
 
 			if (!isNaN(ornamentDivider)){
 
-				if ((ornamentDivider >= 2) && (ornamentDivider <= 64)){
+				if ((ornamentDivider >= 2) && (ornamentDivider <= 256)){
 
 					gOrnamentDivider = ornamentDivider;
 
