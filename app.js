@@ -16423,7 +16423,6 @@ function AppendJSBach(){
 	theValue += 'V:2 bass\n';
 	theValue += '%%MIDI program 6\n';
 	theValue += 'V:1\n';
-	theValue += '[Q:1/4=84]\n';	
 	theValue += 'z CDE FDEC G2c2 B/A/Bc2 | dGAB cABG d2g2 f/e/fg2 |\n'; 
 	theValue += 'eagf egfa gfed cedf | edcB AcBd cBAG ^FAGB |\n'; 
 	theValue += 'A2D2 c/B/c2d BAG^F EGFA | GBAc Bdce dB/c/dg B/c/BAG |\n';
@@ -16433,10 +16432,9 @@ function AppendJSBach(){
 	theValue += 'z E^F^G AFGE edce dcBd | ca^gb aefd ^Gfed c/d/cBA |\n';
 	theValue += 'Aagf egfa g8- | gefg afge f8 |\n';
 	theValue += 'z gfe dfeg f8- | fdef gefd e8- |\n';
-	theValue += "ecde fdec defg afge | fgab c'abg [Q:1/4=78]c'2g2 [Q:1/4=70]e/f/edc|\n";
-	theValue += 'c_BAG [Q:1/4=62]FAGB [Q:1/4=54]A=BcE [Q:1/4=46]Dc[Q:1/4=28]FB | [EGc]16|]\n'; 
+	theValue += "ecde fdec defg afge | fgab c'abg c'2g2 e/f/edc|\n";
+	theValue += '[Q:1/4=56]c_BAG FAGB A=BcE DcFB | [EGc]16|]\n'; 
 	theValue += 'V:2\n';
-	theValue += '[Q:1/4=84]\n';	
 	theValue += 'z8 z C,D,E, F,D,E,C, | G,2G,,2 z4 z G,A,B, CA,B,G, |\n'; 
 	theValue += 'C2B,2C2D2 E2G,2A,2B,2 | C2E,2^F,2G,2 A,2B,2 C4- |\n';
 	theValue += 'CD,E,^F, G,E,F,D, G,2B,,2C,2D,2 | E,2^F,2G,2E,2 B,,2>C,2 D,2D,,2 |\n';
@@ -16447,7 +16445,7 @@ function AppendJSBach(){
 	theValue += 'A,2A,,2 z4 z EDC B,D^CE | D8- DA,B,C DB,CA, |\n';
 	theValue += 'B,8- B,DCB, A,CB,D | C8- CG,A,_B, CA,B,G, |\n';
 	theValue += 'A,2_B,2A,2G,2 F,2D2C2B,2 | A,2F2E2D2 ED,E,F, G,E,F,D, |\n';
-	theValue += 'E,2C,2D,2E,2 F,D,E,F, [Q:1/4=46]G,2[Q:1/4=28]G,,2 | [C,,C,]16 |]\n';
+	theValue += '[Q:1/4=56]E,2C,2D,2E,2 F,D,E,F, G,2G,,2 | [C,,C,]16 |]\n';
 
 	// Do common tune addition processing
 	ProcessAddTune(theValue);
