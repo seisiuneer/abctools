@@ -16433,7 +16433,7 @@ function AppendJSBach(){
 	theValue += 'Aagf egfa g8- | gefg afge f8 |\n';
 	theValue += 'z gfe dfeg f8- | fdef gefd e8- |\n';
 	theValue += "ecde fdec defg afge | fgab c'abg c'2g2 e/f/edc|\n";
-	theValue += '[Q:1/4=56]c_BAG FAGB A=BcE DcFB | [EGc]16|]\n'; 
+	theValue += '[][Q:1/4=56][M:2/4]c_BAG FAGB|[Q:1/4=42]A=BcE DcFB |[M:4/4][EGc]16|]\n'; 
 	theValue += 'V:2\n';
 	theValue += 'z8 z C,D,E, F,D,E,C, | G,2G,,2 z4 z G,A,B, CA,B,G, |\n'; 
 	theValue += 'C2B,2C2D2 E2G,2A,2B,2 | C2E,2^F,2G,2 A,2B,2 C4- |\n';
@@ -16445,7 +16445,7 @@ function AppendJSBach(){
 	theValue += 'A,2A,,2 z4 z EDC B,D^CE | D8- DA,B,C DB,CA, |\n';
 	theValue += 'B,8- B,DCB, A,CB,D | C8- CG,A,_B, CA,B,G, |\n';
 	theValue += 'A,2_B,2A,2G,2 F,2D2C2B,2 | A,2F2E2D2 ED,E,F, G,E,F,D, |\n';
-	theValue += '[Q:1/4=56]E,2C,2D,2E,2 F,D,E,F, G,2G,,2 | [C,,C,]16 |]\n';
+	theValue += '[][Q:1/4=56][M:2/4]E,2C,2D,2E,2|[Q:1/4=42]F,D,E,F, G,2G,,2 |[M:4/4][C,,C,]16 |]\n';
 
 	// Do common tune addition processing
 	ProcessAddTune(theValue);
