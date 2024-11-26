@@ -17368,7 +17368,7 @@ function CreateSynth(theABC) {
           if (useCustomSounds)
           {
             self.programOffsets = {
-              "dulcimer":95,     // 15 was 95
+              "dulcimer":95,     // 15 
               "accordion": 50,   // 21
               "flute": 0,       // 73 - Was 50, now truncated
               "whistle": 0,     // 78 - Was 50, now truncated
