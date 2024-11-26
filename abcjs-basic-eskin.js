@@ -17176,8 +17176,12 @@ function CreateSynth(theABC) {
     if (gIsIOS){
       isSafari = true;
     }
-     // MAE 23 July 2024 - To balance custom sound volumes
+
+    // MAE 23 July 2024 - To balance custom sound volumes
     self.customVolumeMultiplier = {};
+
+    // MAE 26 Nov 2024 - To force custom fades
+    self.customFade = {};
 
     // If using Celtic Sound .mp3 sound fonts on Safari, set the offsets to 50 msec (Adobe Audition artifact)
     var useCustomSounds = gUseCustomGMSounds;
@@ -17219,6 +17223,38 @@ function CreateSynth(theABC) {
         "tenor_recorder": 5.8, // 146
         "bass_recorder": 3.1, // 147
      }
+
+     // Custom fade values for our custom instruments and overrides
+     self.customFade = {
+        "dulcimer":4000,     // 15
+        "accordion": 100,   // 21
+        "flute": 100,       // 73
+        "whistle": 100,     // 78 
+        "banjo": 100,       // 105
+        "bagpipe":100,     // 109 
+        "fiddle": 100,      // 110
+        "melodic_tom": 100,  // 117
+        "uilleann": 100,    // 129
+        "smallpipesd": 100, // 130
+        "smallpipesa":100,  // 131
+        "sackpipa": 100,    // 132
+        "concertina": 100,  // 133
+        "melodica": 100,    // 134
+        "cajun": 100,       // 135
+        "solfege": 100,      // 136 
+        "chorus_guitar_nylon": 200, // 137 
+        "chorus_guitar_steel": 200, // 138 
+        "bouzouki": 200,     // 139 
+        "bouzouki2": 125,    // 140 
+        "mandolin": 200,     // 141
+        "marchingdrums": 100, // 142
+        "borderpipes": 100,  // 143
+        "soprano_recorder": 100, // 144
+        "alto_recorder": 100, // 145
+        "tenor_recorder": 100, // 146
+        "bass_recorder": 120, // 147
+        "silence":100, // 148         
+     }
     }
     else{
       self.customVolumeMultiplier = {
@@ -17243,6 +17279,30 @@ function CreateSynth(theABC) {
         "tenor_recorder": 5.8, // 146
         "bass_recorder": 3.1, // 147        
       }
+
+      // Custom fade values for only our custom instruments
+      self.customFade = {
+        "uilleann": 100,    // 129
+        "smallpipesd": 100, // 130
+        "smallpipesa":100,  // 131
+        "sackpipa": 100,    // 132
+        "concertina": 100,  // 133
+        "melodica": 100,    // 134
+        "cajun": 100,       // 135
+        "solfege": 100,      // 136 
+        "chorus_guitar_nylon": 200, // 137 
+        "chorus_guitar_steel": 200, // 138 
+        "bouzouki": 200,     // 139 
+        "bouzouki2": 125,    // 140 
+        "mandolin": 200,     // 141
+        "marchingdrums": 100, // 142
+        "borderpipes": 100,  // 143
+        "soprano_recorder": 100, // 144
+        "alto_recorder": 100, // 145
+        "tenor_recorder": 100, // 146
+        "bass_recorder": 120, // 147
+        "silence":100, // 148     
+     }
     } 
 
     if (params.programOffsets) self.programOffsets = params.programOffsets;
@@ -17789,8 +17849,30 @@ function CreateSynth(theABC) {
             theVolumeMultiplier = thisVolumeMultiplier;
             //console.log("Got volume multiplier override: "+thisVolumeMultiplier);
         }
+
+        // Using a custom fade time for this instrument?
+        var thisCustomFade = self.customFade[thisInstrument];
         
-        allPromises.push(placeNote(audioBuffer, activeAudioContext().sampleRate, parts, uniqueSounds[k], theVolumeMultiplier, self.programOffsets[parts.instrument], fadeTimeSec, self.noteEnd / 1000, self.debugCallback));
+        var theFade = fadeTimeSec;
+
+        // Only check for custom fades if not overriden by the application
+        if (theFade == 0.2){
+
+          if (thisCustomFade){
+              theFade = thisCustomFade / 1000;
+              //console.log("Got custom fade for "+thisInstrument+": "+theFade);
+
+          }
+          // else{
+          //     console.log("Got standard fade for "+thisInstrument+": "+theFade);
+          // }
+
+        }
+        // else{
+        //   console.log("Got fade override from the application: ",theFade);
+        // }
+        
+        allPromises.push(placeNote(audioBuffer, activeAudioContext().sampleRate, parts, uniqueSounds[k], theVolumeMultiplier, self.programOffsets[parts.instrument], theFade, self.noteEnd / 1000, self.debugCallback));
       }
       self.audioBuffers = [audioBuffer];
       if (self.debugCallback) {

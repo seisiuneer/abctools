@@ -1507,10 +1507,9 @@
                 <p>You can manually set the release decay time for notes using:</p>
                 <p class=code>%abcjs_release_decay_time release_decay_time_in_milliseconds</p>
                 <p>This can be useful for lengthening the decay time on note releases for plucked and other instruments.</p>
-                <p>For example to set the release decay time for a specific tune to 500 milliseconds, add this anywhere in the tune ABC:</p>
+                <p>For example to set the release decay time for all instruments in a specific tune to 500 milliseconds, add this anywhere in the tune ABC:</p>
                 <p class=code>%abcjs_release_decay_time 500</p>
                 <p>The default release decay time for abcjs is 200 milliseconds.</p>
-                <p>When using my custom Hammered Dulcimer samples, the release decay time, unless overridden by this annotation, is 4000 milliseconds.</p>
                 <hr class="hidden-print" id="general_midi_instrument_program_numbers">
                 <h1 class="page_break_always">General MIDI Instrument Program Numbers <span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <div class="image_holder">
@@ -4177,18 +4176,6 @@
                 <p>To change the Melody volume, add a dynamics indication such as !pppp!, !ppp!, !pp!, !p!, !mf!, !f!, !ff!, !fff!, or !ffff! immediately before the first note in the ABC.</p>
                 <p>To mute just a section of a tune use the following annotation in the ABC (specific to this tool):</p>
                 <p class="code">!ppppp!</p>
-                <hr>
-                <p><strong>Special Note on the Dulcimer (15) Instrument</strong></p>
-                <p></p>
-                <p>Selecting the Dulcimer (15) program for either the melody or chords automatically sets all note release times to 4 seconds to allow the notes to ring.</p>
-                <p></p>
-                <p>This can be useful for tunes using solo melody instruments with long release times like Orchestral Harp (46) or Koto (107).</p>
-                <p></p>
-                <p>For those instruments played solo, set the melody instrument program as desired and the chord instrument program to Dulcimer (15).</p>
-                <p></p>
-                <p>In this case, you may not want to include any chords in the ABC, as they will be played using the Dulcimer (15) instrument.</p>
-                <p></p>
-                <p>This only applies if <strong>Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran</strong> is enabled (see below).</p>
                 <hr>
                 <p><strong>Automatically swing Hornpipes when playing (enabled if R:Hornpipe is found in the tune)</strong></p>
                 <p>If checked, automatically swings Hornpipes if</p>

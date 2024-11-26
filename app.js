@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2125_112524_1200";
+var gVersionNumber="2126_112624_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -26304,171 +26304,6 @@ function computeFade(tuneABC){
 
 	var theFade = 200;
 
-	// Check for a custom sound font first
-
-	// var searchRegExp = /^%abcjs_soundfont canvas.*$/m
-
-	// var isCustomSoundFont = tuneABC.match(searchRegExp);
-	
-	// if ((isCustomSoundFont) && (isCustomSoundFont.length > 0)){
-	// 	theFade = 100;
-	// }
-
-	// searchRegExp = /^%abcjs_soundfont mscore.*$/m
-
-	// isCustomSoundFont = tuneABC.match(searchRegExp);
-	
-	// if ((isCustomSoundFont) && (isCustomSoundFont.length > 0)){
-	// 	theFade = 100;
-	// }
-
-	var searchRegExp = /^%%MIDI program.*[\r\n]*/gm
-
-	var melodyProgramRequested = tuneABC.match(searchRegExp);
-
-	if ((melodyProgramRequested) && (melodyProgramRequested.length > 0)){
-
-		var thePatchString = melodyProgramRequested[melodyProgramRequested.length-1].replace("%%MIDI program","");
-			
-		thePatchString = thePatchString.trim();
-
-		var thePatchElements = thePatchString.split(" ");
-
-		if (thePatchElements && (thePatchElements.length > 0)){
-
-			var thisPatch = thePatchElements[0];
-
-		    // Are we overriding the default GM sounds with our own?
-		    var useCustomSounds = gUseCustomGMSounds;
-
-		    // Overriden for a specific tune?
-		    if (gOverrideCustomGMSounds){
-		      useCustomSounds = gCustomGMSoundsOverride;
-		    }
-
-			// Only override the default fade for GM instruments if using our own
-			if (useCustomSounds){
-
-				// Is this one of ours?
-				switch(thisPatch){
-					case "15":   // Dulcimer
-						theFade = 4000;
-						break;
-					case "21":   // Accordion
-					case "73":   // Flute
-					case "78":   // Whistle
-					case "105":  // Banjo
-					case "109":  // Bagpipes
-					case "110":  // Fiddle
-					case "117":  // Melodic tom
-					case "129":  // Uilleann pipes
-					case "130":  // Smallpipes D
-					case "131":  // Smallpipes A
-					case "132":  // Sackpipa
-					case "133":  // Concertina
-					case "134":  // Melodica
-					case "135":  // Cajun Accordion
-					case "136":  // Solfège
-					case "142":  // Marching Drums
-					case "143":  // Border Pipes
-					case "144":  // Soprano Recorder
-					case "145":  // Alto Recorder
-					case "146":  // Tenor Recorder
-					case "147":  // Bass Recorder
-					case "148":  // Silence
-					case "mute": // Silence
-						theFade = 100;
-						break;
-					case "137":  // Chorused Nylon Guitar
-					case "138":  // Chorused Steel Guitar
-					case "139":  // Bouzouki
-					case "141":  // Mandolin
-						theFade = 200;
-						break;
-					case "140":   // Bouzouki2
-						theFade = 125;
-						break;
-					default:
-						break;
-				}
-			}
-			else{
-				// Only check for patches above 128
-				// Is this one of ours?
-				switch(thisPatch){
-					case "129":  // Uilleann pipes
-					case "130":  // Smallpipes D
-					case "131":  // Smallpipes A
-					case "132":  // Sackpipa
-					case "133":  // Concertina
-					case "134":  // Melodica
-					case "135":  // Cajun Accordion
-					case "136":  // Solfège
-					case "142":  // Marching Drums
-					case "143":  // Border Pipes
-					case "144":  // Soprano Recorder
-					case "145":  // Alto Recorder
-					case "146":  // Tenor Recorder
-					case "147":  // Bass Recorder
-					case "148":  // Silence
-						theFade = 100;
-						break;
-					case "137":  // Chorused Nylon Guitar
-					case "138":  // Chorused Steel Guitar
-					case "139":  // Bouzouki
-					case "141":  // Mandolin
-						theFade = 200;
-						break;
-					case "140":   // Bouzouki2
-						theFade = 125;
-						break;
-					default:
-						break;
-				}
-
-			}
-		}
-	}
-
-	// Now look for a chordprog
-	searchRegExp = /^%%MIDI chordprog.*[\r\n]*/gm
-
-	var chordProgramRequested = tuneABC.match(searchRegExp);
-
-	if ((chordProgramRequested) && (chordProgramRequested.length > 0)){
-
-		var thePatchString = chordProgramRequested[chordProgramRequested.length-1].replace("%%MIDI chordprog","");
-			
-		thePatchString = thePatchString.trim();
-
-		var thePatchElements = thePatchString.split(" ");
-
-		if (thePatchElements && (thePatchElements.length > 0)){
-
-			var thisPatch = thePatchElements[0];
-
-			// Special case for dulcimer on bass/chords
-		    // Are we overriding the default GM sounds with our own?
-		    var useCustomSounds = gUseCustomGMSounds;
-
-		    // Overriden for a specific tune?
-		    if (gOverrideCustomGMSounds){
-		      useCustomSounds = gCustomGMSoundsOverride;
-		    }
-
-			// Only override if using our own samples for GM sounds
-			if (useCustomSounds){
-				switch(thisPatch){
-					case "15":   // Dulcimer
-						theFade = 4000;
-						break;
-					default:
-						break;
-				}
-			}
-		}
-	}
-
 	// Is there an %abcjs_release_decay_time fade annotation?
 	searchRegExp = /^%abcjs_release_decay_time.*[\r\n]*/gm
 
@@ -38348,26 +38183,6 @@ function ConfigurePlayerSettings(player_callback) {
 					gTheChordProgram = MIDI_PATCH_COUNT;
 				}
 			}
-
-			if (gUseCustomGMSounds){
-
-				if ((gAlwaysInjectPrograms || gOverridePlayMIDIParams) && ((gTheMelodyProgram == "15") || (gTheBassProgram == "15") || (gTheChordProgram == "15"))){
-
-					// Special release time case case for Dulcimer
-				   	var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica">Special Note on the Dulcimer (15) Instrument</p>';
-				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Selecting the Dulcimer (15) program for either the melody, bass, or chords automatically sets all note release decay times to 4 seconds to allow the notes to ring.</p>';
-				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">This can be useful for tunes using solo melody instruments with long release times like Orchestral Harp (46) or Koto (107).</p>';
-				       	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">For those instruments played solo, set the melody instrument program as desired and the chord instrument program to Dulcimer (15).</p>';
-				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In this case, you may not want to include any chords in the ABC, as they will be played using the Dulcimer (15) instrument.</p>';
-
-				       	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
-
-						    // Focus after operation
-						    FocusAfterOperation();
-			       		
-				       	});
-				}
-			}
 			
 			gTheBassVolume = args.result.configure_bass_volume;
 			
@@ -38681,26 +38496,6 @@ function ConfigureToolSettings() {
 			}
 
 			gAlwaysInjectPrograms = args.result.configure_inject_programs;
-
-			if (gUseCustomGMSounds){
-
-				if ((gAlwaysInjectPrograms || gOverridePlayMIDIParams) && ((gTheMelodyProgram == "15") || (gTheBassProgram == "15") || (gTheChordProgram == "15"))){
-
-					// Special release time case case for Dulcimer
-				   	var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica">Special Note on the Dulcimer (15) Instrument</p>';
-				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Selecting the Dulcimer (15) program for either the melody, bass, or chords automatically sets all note release decay times to 4 seconds to allow the notes to ring.</p>';
-				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">This can be useful for tunes using solo melody instruments with long release times like Orchestral Harp (46) or Koto (107).</p>';
-				       	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">For those instruments played solo, set the melody instrument program as desired and the chord instrument program to Dulcimer (15).</p>';
-				   	   	modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In this case, you may not want to include any chords in the ABC, as they will be played using the Dulcimer (15) instrument.</p>';
-
-				       	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
-
-						    // Focus after operation
-						    FocusAfterOperation();
-			       		
-				       	});
-				}
-			}
 
 			gAlwaysInjectVolumes = args.result.configure_inject_volumes;
 			
