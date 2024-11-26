@@ -212,6 +212,9 @@ var gLastRenderedTuneName = "";
 // Additional rendering parameters
 var gABCJSRenderingParams = null;
 
+// Flag for hammered dulcimer duration extension
+var gExtendDuration = 0;
+
 // Scan tune for custom abcjs rendering parameters
 function ScanTuneForABCJSRenderingParams(theTune){
 
@@ -17673,6 +17676,11 @@ function CreateSynth(theABC) {
         });
       }
       self.duration += fadeTimeSec;
+
+      // MAE 26 Nov 2024 - For long release on hammered dulcimer or custom fade
+      //console.log("gExtendDuration = "+gExtendDuration);
+      self.duration += gExtendDuration;
+
       var totalSamples = Math.floor(activeAudioContext().sampleRate * self.duration);
 
       // There might be a previous run that needs to be turned off.

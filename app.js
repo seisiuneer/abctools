@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2126_112624_1100";
+var gVersionNumber="2127_112624_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -26304,6 +26304,129 @@ function computeFade(tuneABC){
 
 	var theFade = 200;
 
+	// By default, no duration extention
+	gExtendDuration = 0;
+
+	var searchRegExp = /^%%MIDI program.*[\r\n]*/gm
+
+	var melodyProgramRequested = tuneABC.match(searchRegExp);
+
+	if ((melodyProgramRequested) && (melodyProgramRequested.length > 0)){
+
+		var thePatchString = melodyProgramRequested[melodyProgramRequested.length-1].replace("%%MIDI program","");
+			
+		thePatchString = thePatchString.trim();
+
+		var thePatchElements = thePatchString.split(" ");
+
+		if (thePatchElements && (thePatchElements.length > 0)){
+
+			var thisPatch = thePatchElements[0];
+
+		    // Are we overriding the default GM sounds with our own?
+		    var useCustomSounds = gUseCustomGMSounds;
+
+		    // Overriden for a specific tune?
+		    if (gOverrideCustomGMSounds){
+		      useCustomSounds = gCustomGMSoundsOverride;
+		    }
+
+			// Only override the default fade for GM instruments if using our own
+			if (useCustomSounds){
+
+				// Is this one of ours?
+				switch(thisPatch){
+					case "15":   // Dulcimer
+						//console.log("Got hammered dulcimer as melody");
+						gExtendDuration = 3.8;
+						break;
+					default:
+						break;
+				}
+			}
+		}
+	}
+
+		// Now look for a bassprog
+	searchRegExp = /^%%MIDI bassprog.*[\r\n]*/gm
+
+	var chordProgramRequested = tuneABC.match(searchRegExp);
+
+	if ((chordProgramRequested) && (chordProgramRequested.length > 0)){
+
+		var thePatchString = chordProgramRequested[chordProgramRequested.length-1].replace("%%MIDI bassprog","");
+			
+		thePatchString = thePatchString.trim();
+
+		var thePatchElements = thePatchString.split(" ");
+
+		if (thePatchElements && (thePatchElements.length > 0)){
+
+			var thisPatch = thePatchElements[0];
+
+			// Special case for dulcimer on bass/chords
+		    // Are we overriding the default GM sounds with our own?
+		    var useCustomSounds = gUseCustomGMSounds;
+
+		    // Overriden for a specific tune?
+		    if (gOverrideCustomGMSounds){
+		      useCustomSounds = gCustomGMSoundsOverride;
+		    }
+
+			// Only override if using our own samples for GM sounds
+			if (useCustomSounds){
+				switch(thisPatch){
+					case "15":   // Dulcimer
+						//console.log("Got dulcimer as bassprog")
+						gExtendDuration = 3.8;
+						break;
+					default:
+						break;
+				}
+			}
+		}
+	}
+
+	// Now look for a chordprog
+	searchRegExp = /^%%MIDI chordprog.*[\r\n]*/gm
+
+	var chordProgramRequested = tuneABC.match(searchRegExp);
+
+	if ((chordProgramRequested) && (chordProgramRequested.length > 0)){
+
+		var thePatchString = chordProgramRequested[chordProgramRequested.length-1].replace("%%MIDI chordprog","");
+			
+		thePatchString = thePatchString.trim();
+
+		var thePatchElements = thePatchString.split(" ");
+
+		if (thePatchElements && (thePatchElements.length > 0)){
+
+			var thisPatch = thePatchElements[0];
+
+			// Special case for dulcimer on bass/chords
+		    // Are we overriding the default GM sounds with our own?
+		    var useCustomSounds = gUseCustomGMSounds;
+
+		    // Overriden for a specific tune?
+		    if (gOverrideCustomGMSounds){
+		      useCustomSounds = gCustomGMSoundsOverride;
+		    }
+
+			// Only override if using our own samples for GM sounds
+			if (useCustomSounds){
+				switch(thisPatch){
+					case "15":   // Dulcimer
+						//console.log("Got dulcimer as chordprog")
+						gExtendDuration = 3.8;
+						break;
+					default:
+						break;
+				}
+			}
+		}
+	}
+
 	// Is there an %abcjs_release_decay_time fade annotation?
 	searchRegExp = /^%abcjs_release_decay_time.*[\r\n]*/gm
 
@@ -26318,7 +26441,12 @@ function computeFade(tuneABC){
 		var theFadeValue = parseInt(theFade);
 
 		if (!isNaN(theFadeValue)){
+			//console.log("Got fade override: "+theFadeValue)
 			theFade = theFadeValue;
+			if (theFade > 200){
+				gExtendDuration = (theFade-200) / 1000;
+				//console.log("gExtendDuration: "+gExtendDuration);
+			}
 		}
 	}
 
