@@ -215,6 +215,8 @@ var gABCJSRenderingParams = null;
 // Flag for hammered dulcimer duration extension
 var gExtendDuration = 0;
 
+var gForceSafariHDHack = false;
+
 // Scan tune for custom abcjs rendering parameters
 function ScanTuneForABCJSRenderingParams(theTune){
 
@@ -17464,7 +17466,7 @@ function CreateSynth(theABC) {
 
       //console.log("isSafari");
 
-      if (self.flattened.tracks && (self.flattened.tracks.length == 1)){
+      if (gForceSafariHDHack || (self.flattened.tracks && (self.flattened.tracks.length == 1))){
 
         //console.log("single track");
 

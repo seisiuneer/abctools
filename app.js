@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2130_112624_1430";
+var gVersionNumber="2131_112624_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -26307,6 +26307,15 @@ function computeFade(tuneABC){
 	// By default, no duration extention
 	gExtendDuration = 0;
 
+	// No Safari hack
+	gForceSafariHDHack = false;
+
+	var gotMuteChord = false;
+
+	var gotMuteBass = false;
+
+	var gotDulcimer = false;
+
 	var searchRegExp = /^%%MIDI program.*[\r\n]*/gm
 
 	var melodyProgramRequested = tuneABC.match(searchRegExp);
@@ -26339,6 +26348,7 @@ function computeFade(tuneABC){
 					case "15":   // Dulcimer
 						//console.log("Got hammered dulcimer as melody");
 						gExtendDuration = 3.8;
+						gotDulcimer = true;
 						break;
 					default:
 						break;
@@ -26350,11 +26360,11 @@ function computeFade(tuneABC){
 		// Now look for a bassprog
 	searchRegExp = /^%%MIDI bassprog.*[\r\n]*/gm
 
-	var chordProgramRequested = tuneABC.match(searchRegExp);
+	var bassProgramRequested = tuneABC.match(searchRegExp);
 
-	if ((chordProgramRequested) && (chordProgramRequested.length > 0)){
+	if ((bassProgramRequested) && (bassProgramRequested.length > 0)){
 
-		var thePatchString = chordProgramRequested[chordProgramRequested.length-1].replace("%%MIDI bassprog","");
+		var thePatchString = bassProgramRequested[bassProgramRequested.length-1].replace("%%MIDI bassprog","");
 			
 		thePatchString = thePatchString.trim();
 
@@ -26380,6 +26390,9 @@ function computeFade(tuneABC){
 						//console.log("Got dulcimer as bassprog")
 						gExtendDuration = 3.8;
 						break;
+					case "148":
+					case "mute":
+						gotMuteBass = true; 
 					default:
 						break;
 				}
@@ -26420,11 +26433,20 @@ function computeFade(tuneABC){
 						//console.log("Got dulcimer as chordprog")
 						gExtendDuration = 3.8;
 						break;
+					case "148":
+					case "mute":
+						gotMuteChord = true; 
 					default:
 						break;
 				}
 			}
 		}
+	}
+
+	// Multi-track muted bass/chord HD track
+	if (gotDulcimer && gotMuteChord && gotMuteBass){
+		//console.log("gForceSafariHDHack is true!")
+		gForceSafariHDHack = true;
 	}
 
 	// Is there an %abcjs_release_decay_time fade annotation?
