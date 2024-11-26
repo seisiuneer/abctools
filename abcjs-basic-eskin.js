@@ -17368,7 +17368,7 @@ function CreateSynth(theABC) {
           if (useCustomSounds)
           {
             self.programOffsets = {
-              "dulcimer":95,     // 15
+              "dulcimer":95,     // 15 was 95
               "accordion": 50,   // 21
               "flute": 0,       // 73 - Was 50, now truncated
               "whistle": 0,     // 78 - Was 50, now truncated
@@ -17458,6 +17458,62 @@ function CreateSynth(theABC) {
     var cached = [];
     var errorNotes = [];
     var currentInstrument = instrumentIndexToName[0];
+
+    // Hack for single track hammered dulcimer on Safari
+    if (isSafari){
+
+      //console.log("isSafari");
+
+      if (self.flattened.tracks && (self.flattened.tracks.length == 1)){
+
+        //console.log("single track");
+
+        // If using Celtic Sound .mp3 sound fonts on Safari, set the offsets to 50 msec (Adobe Audition artifact)
+        var useCustomSounds = gUseCustomGMSounds;
+
+        // Overriden for a specific tune?
+        if (gOverrideCustomGMSounds){
+          useCustomSounds = gCustomGMSoundsOverride;
+        }
+
+        // Are we overriding the standard GM sounds with our own?
+        if (useCustomSounds)
+        { 
+          //console.log("Safari HD override");
+          self.programOffsets = {
+            "dulcimer":0,     // 15
+            "accordion": 50,   // 21
+            "flute": 0,       // 73 - Was 50, now truncated
+            "whistle": 0,     // 78 - Was 50, now truncated
+            "banjo": 0,       // 105
+            "bagpipe":0,     // 109 
+            "fiddle": 0,      // 110
+            "melodic_tom": 0,  // 117
+            "uilleann": 0,    // 129
+            "smallpipesd": 0, // 130
+            "smallpipesa":0,  // 131
+            "sackpipa": 0,    // 132
+            "concertina": 50,  // 133
+            "melodica": 50,    // 134
+            "cajun": 50,       // 135
+            "solfege": 0,      // 136 - These have no offset
+            "chorus_guitar_nylon": 0, // 137 - These have no offset
+            "chorus_guitar_steel": 0, // 138 - These have no offset
+            "bouzouki": 0,     // 139 - These have no offset
+            "bouzouki2": 0,    // 140 - These have no offset
+            "mandolin": 0,     // 141
+            "marchingdrums": 0, // 142
+            "borderpipes": 0,  // 143
+            "soprano_recorder": 0, // 144
+            "alto_recorder": 0, // 145
+            "tenor_recorder": 0, // 146
+            "bass_recorder": 0, // 147
+            "silence": 50      // 148
+          }
+        }
+      }
+    }
+ 
     // MAE 4 Jan 2024 For bass/chord instrument
     self.flattened.tracks.forEach(function (track,i) {
       //console.log("track processing i="+i);
@@ -19119,7 +19175,6 @@ var getNote = function getNote(url, instrument, name, audioContext) {
           //url = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
           url = "https://michaeleskin.com/abctools/soundfonts/percussion_1/";
           break;
-
 
         default:
           break;
