@@ -215,8 +215,6 @@ var gABCJSRenderingParams = null;
 // Flag for hammered dulcimer duration extension
 var gExtendDuration = 0;
 
-var gForceSafariHDHack = false;
-
 // Scan tune for custom abcjs rendering parameters
 function ScanTuneForABCJSRenderingParams(theTune){
 
@@ -17370,8 +17368,8 @@ function CreateSynth(theABC) {
           if (useCustomSounds)
           {
             self.programOffsets = {
-              "dulcimer":95,     // 15 
-              "accordion": 50,   // 21
+              "dulcimer":0,     // 15 
+              "accordion": 0,   // 21
               "flute": 0,       // 73 - Was 50, now truncated
               "whistle": 0,     // 78 - Was 50, now truncated
               "banjo": 0,       // 105
@@ -17382,9 +17380,9 @@ function CreateSynth(theABC) {
               "smallpipesd": 0, // 130
               "smallpipesa":0,  // 131
               "sackpipa": 0,    // 132
-              "concertina": 50,  // 133
-              "melodica": 50,    // 134
-              "cajun": 50,       // 135
+              "concertina": 0,  // 133
+              "melodica": 0,    // 134
+              "cajun": 0,       // 135
               "solfege": 0,      // 136 - These have no offset
               "chorus_guitar_nylon": 0, // 137 - These have no offset
               "chorus_guitar_steel": 0, // 138 - These have no offset
@@ -17406,9 +17404,9 @@ function CreateSynth(theABC) {
               "smallpipesd": 0, // 130
               "smallpipesa":0,  // 131
               "sackpipa": 0,    // 132
-              "concertina": 50,  // 133
-              "melodica": 50,    // 134
-              "cajun": 50,       // 135
+              "concertina": 0,  // 133
+              "melodica": 0,    // 134
+              "cajun": 0,       // 135
               "solfege": 0,      // 136 - These have no offset
               "chorus_guitar_nylon": 0, // 137 - These have no offset
               "chorus_guitar_steel": 0, // 138 - These have no offset
@@ -17460,61 +17458,6 @@ function CreateSynth(theABC) {
     var cached = [];
     var errorNotes = [];
     var currentInstrument = instrumentIndexToName[0];
-
-    // Hack for single track hammered dulcimer on Safari
-    if (isSafari){
-
-      //console.log("isSafari");
-
-      if (gForceSafariHDHack || (self.flattened.tracks && (self.flattened.tracks.length == 1))){
-
-        //console.log("single track");
-
-        // If using Celtic Sound .mp3 sound fonts on Safari, set the offsets to 50 msec (Adobe Audition artifact)
-        var useCustomSounds = gUseCustomGMSounds;
-
-        // Overriden for a specific tune?
-        if (gOverrideCustomGMSounds){
-          useCustomSounds = gCustomGMSoundsOverride;
-        }
-
-        // Are we overriding the standard GM sounds with our own?
-        if (useCustomSounds)
-        { 
-          //console.log("Safari HD override");
-          self.programOffsets = {
-            "dulcimer":0,     // 15
-            "accordion": 50,   // 21
-            "flute": 0,       // 73 - Was 50, now truncated
-            "whistle": 0,     // 78 - Was 50, now truncated
-            "banjo": 0,       // 105
-            "bagpipe":0,     // 109 
-            "fiddle": 0,      // 110
-            "melodic_tom": 0,  // 117
-            "uilleann": 0,    // 129
-            "smallpipesd": 0, // 130
-            "smallpipesa":0,  // 131
-            "sackpipa": 0,    // 132
-            "concertina": 50,  // 133
-            "melodica": 50,    // 134
-            "cajun": 50,       // 135
-            "solfege": 0,      // 136 - These have no offset
-            "chorus_guitar_nylon": 0, // 137 - These have no offset
-            "chorus_guitar_steel": 0, // 138 - These have no offset
-            "bouzouki": 0,     // 139 - These have no offset
-            "bouzouki2": 0,    // 140 - These have no offset
-            "mandolin": 0,     // 141
-            "marchingdrums": 0, // 142
-            "borderpipes": 0,  // 143
-            "soprano_recorder": 0, // 144
-            "alto_recorder": 0, // 145
-            "tenor_recorder": 0, // 146
-            "bass_recorder": 0, // 147
-            "silence": 50      // 148
-          }
-        }
-      }
-    }
  
     // MAE 4 Jan 2024 For bass/chord instrument
     self.flattened.tracks.forEach(function (track,i) {
@@ -18823,15 +18766,40 @@ var getNote = function getNote(url, instrument, name, audioContext) {
     // Are we overriding the default GM sounds with our own?
     if (useCustomSounds){
 
-      // MAE 28 June 29023 - Override Celtic Sound instruments with my own
+      // MAE 28 June 2023 - Override specific instruments with my own
       switch (instrument){
-        case "dulcimer":    // 15
-        case "accordion":   // 21
-        case "concertina":  // 133
-        case "melodica":    // 134
-        case "cajun":       // 135
         case "silence":     // 148
           url = "https://michaeleskin.com/abctools/soundfonts/";
+          isOgg = true;
+          isCustomInstrument = true;
+          break;
+
+        case "accordion": // 21
+          url = "https://michaeleskin.com/abctools/soundfonts/accordion_2/";
+          isOgg = true;
+          isCustomInstrument = true;
+          break;
+
+        case "concertina": // 133
+          url = "https://michaeleskin.com/abctools/soundfonts/concertina_1/";
+          isOgg = true;
+          isCustomInstrument = true;
+          break;
+
+        case "melodica": // 134
+          url = "https://michaeleskin.com/abctools/soundfonts/melodica_1/";
+          isOgg = true;
+          isCustomInstrument = true;
+          break;
+
+        case "cajun": // 135
+          url = "https://michaeleskin.com/abctools/soundfonts/cajun_1/";
+          isOgg = true;
+          isCustomInstrument = true;
+          break;
+
+        case "dulcimer": // 15
+          url = "https://michaeleskin.com/abctools/soundfonts/dulcimer_1/";
           isOgg = true;
           isCustomInstrument = true;
           break;
@@ -19060,11 +19028,26 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
       // MAE 28 June 29023 - Override Celtic Sound instruments with my own
       switch (instrument){        
-        case "concertina":  // 133
-        case "melodica":    // 134
-        case "cajun":       // 135
         case "silence":     // 148
           url = "https://michaeleskin.com/abctools/soundfonts/";
+          isOgg = true;
+          isCustomInstrument = true;
+          break;
+
+        case "concertina":  // 133
+          url = "https://michaeleskin.com/abctools/soundfonts/concertina_1/";
+          isOgg = true;
+          isCustomInstrument = true;
+          break;
+          
+        case "melodica": // 134
+          url = "https://michaeleskin.com/abctools/soundfonts/melodica_1/";
+          isOgg = true;
+          isCustomInstrument = true;
+          break;
+
+        case "cajun": // 135
+          url = "https://michaeleskin.com/abctools/soundfonts/cajun_1/";
           isOgg = true;
           isCustomInstrument = true;
           break;
