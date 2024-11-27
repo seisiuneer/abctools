@@ -475,7 +475,7 @@ function generateAndSaveWebsite() {
     theOutput +='<meta charset="UTF-8">\n';
 
     theOutput +='<meta name="viewport" content="width=860" />\n'; 
-
+    theOutput +='<meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png" />\n';
     theOutput +="\n";
     theOutput +="<title>"+gWebsiteTitle+"</title>\n";
     theOutput +="\n";
@@ -875,8 +875,6 @@ function generateAndSaveWebsite() {
         theOutput +='                case "noten":\n';
         theOutput +="                    if (isDulcimer){\n";
         theOutput +='                        abcInLZW = abcInLZW.replace("%%MIDI program '+gWebsiteMelodyInstrumentInject+'","%%MIDI program 15");\n';
-        theOutput +='                        abcInLZW = abcInLZW.replace("%%MIDI bassprog '+gWebsiteBassInstrumentInject+'","%%MIDI bassprog mute");\n';
-        theOutput +='                        abcInLZW = abcInLZW.replace("%%MIDI chordprog '+gWebsiteChordInstrumentInject+'","%%MIDI chordprog mute");\n';
         theOutput +="                    }\n";
         theOutput +="                    else{\n";
         theOutput +="                        return theURL;\n";
