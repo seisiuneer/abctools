@@ -36,7 +36,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
-                
+        
         <style>
         
         p {
@@ -1001,7 +1001,7 @@
                 <p>Here's how to hard-refresh a browser tab most of the popular browsers on both Windows and Mac:</p>
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/hardrefresh.jpg"/>
-                </div>                
+                </div>
                 <p class="page_break_always"></p>
                 <hr class="hidden-print" id="open_dialog">
                 <h1 class="page_break_always">Open an ABC, MusicXML, BWW, or MIDI File<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -3120,7 +3120,7 @@
                     %tab_first_voice_exclude<br/>
                     %reverb chamber 0.8 0.2<br/>
                     %ornament_divider<br/>
-                    %ornament_offset</p>
+                %ornament_offset</p>
                 <hr class="hidden-print" id="editing_pdf_tunebooks">
                 <h1 class="page_break_always">Editing PDF Tunebooks With Other Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>The PDF tunebooks created by this tool can be editing using Adobe Acrobat Pro or other PDF editing tools.</p>
@@ -3187,39 +3187,70 @@
                 <p style="text-align: center;"><strong>Disabling instrument changes on tablature change</strong></p>
                 <p>When enabling the tablature/instrument selector dropdown, if you wish to have the displayed tablature change but not the playback instrument, in the exported .html file, change this one line of Javascript from:</p>
                 <p class="code">var gAllowInstrumentChanges = true;</p>
-                <p>to:
+                <p>to:</p>
                 <p class="code">var gAllowInstrumentChanges = false;</p>
                 <p>And then save the modified .html file.</p>
                 <hr>
                 <p style="text-align: center;"><strong>Remembering and restoring the last tune the user selected</strong></p>
-                <p>If you are interested in customizing your exported websites so that when a user returns to the website, the last tune they were working with is restored, it's very simple and only requires a few additional lines of JavaScript.</p>
-                <p>Take a look at the HTML source for any of the example tunebook websites at:
+                <p>If you are interested in customizing your exported websites so that when a user returns to the website, the last tune and tab style they were working with is restored, it's very simple and only requires a few additional lines of JavaScript.</p>
+                <p>Take a look at the HTML source for any of the example tunebook websites at:</p>
                 <p style="text-align: center"><a href="https://michaeleskin.com/tunebooks.html#tunebook_websites" target="_blank">https://michaeleskin.com/tunebooks.html#tunebook_websites</a></p>
                 <p>and search in the Javascript at the bottom of the page for:</p>
                 <p class="code">localStorage</p>
-                <p>and you'll see how the last used tune URL is saved to browser local storage any time a new tune is chosen and how an initial tune URL is loaded (if one had been saved before) into the iframe when the website is first launched.</p>
-                <p>You'll see this at the bottom of the website code, which is run when the web page is launched.  It checks if there is a previously saved tune URL in localStorage, and if there is, it sets the tool's iframe to the URL:</p>
-                <p class="code">// Restore state<br/>
-                if (window.localStorage){<br/>
-                &nbsp;&nbsp;&nbsp;&nbsp;setTimeout(function(){<br/>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var theLastURL = localStorage.lastURLCarp;<br/>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (theLastURL && (theLastURL != "")){<br/>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tuneFrame.src = theLastURL;<br/>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lastURL = theLastURL;<br/>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
-                &nbsp;&nbsp;&nbsp;&nbsp;},250);<br/>
+                <p>and you'll see how the last used tune name and tab style are saved to browser local storage any time a new tune or tab style is selected.</p>
+                <p>At the very bottom of the code, you will see how an initial tune is loaded when the website is launched by reading the tune name and tab style from browser local storage and, if values are found, setting the dropdowns to match:</p>
+                <p class="code">function setSelectedTuneByName(optionText) {<br/>
+                    &nbsp;&nbsp;var gotMatch = false;<br/>
+                    &nbsp;&nbsp;for (let i = 0; i < tuneSelector.options.length; i++) {<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;if (tuneSelector.options[i].text === optionText) {<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tuneSelector.selectedIndex = i;<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gotMatch = true;<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+                    &nbsp;&nbsp;}<br/>
+                    &nbsp;&nbsp;if (gotMatch){<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;tuneSelector.dispatchEvent(new Event('change'));<br/>
+                    &nbsp;&nbsp;}<br/>
+                    }<br/>
+                    <br/>
+                    // Restore state<br/>
+                    if (window.localStorage){<br/>
+                    <br/>
+                    &nbsp;&nbsp;setTimeout(function(){<br/>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;var theLastTuneTab = localStorage.lastCarpTab;<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;if (theLastTuneTab && (theLastTuneTab != "")){<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var elem = document.getElementById('displayOptions');<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elem.value = theLastTuneTab;<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elem.dispatchEvent(new Event('change'));<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;var theLastTuneName = localStorage.lastTuneNameCarp;<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;if (theLastTuneName && (theLastTuneName != "")){<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setSelectedTuneByName(theLastTuneName);<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+                    <br/>
+                    &nbsp;&nbsp;},250);<br/>
                 }</p>
-                <p>And whenever the user chooses a new tune and a new tune URL is set for the tool's iframe, a call is made to save the newly selected URL to localStorage:</p>
-                <p class="code">tuneFrame.src = theURL;<br/>
-                lastURL = theURL;<br/><br/>
-                // Save last URL<br/>
-                if (window.localStorage){<br/>
-                &nbsp;&nbsp;&nbsp;&nbsp;localStorage.lastURLCarp = lastURL;<br/>
+                <p>And whenever the user chooses a new tune or tab style, a call is made to save the state of the dropdowns to browser local storage:</p>
+                <p class="code">// Save last tune<br/>
+                    if (window.localStorage){<br/>
+                    <br/>
+                    &nbsp;&nbsp;localStorage.lastTuneNameCarp =<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;tuneSelector.options[tuneSelector.selectedIndex].text;<br/>
+                    <br/>
+                    &nbsp;&nbsp;var theLastTuneTab =<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;document.getElementById('displayOptions').value;<br/>
+                    &nbsp;&nbsp;localStorage.lastCarpTab = theLastTuneTab;<br/>
+                    <br/>
                 }</p>
-                <p>Depending on the website export options selected in the dialog when the website was exported, you may need to add this in two or three places in the code.</p>
+                
+                <p>Depending on the website export options selected in the dialog when the website was exported, you will need to add this in two or three places in the code.</p>
                 <p>You <strong>must</strong> change all references to:</p>
-                <p class="code">lastURLCarp</p>
-                <p>present in the example code to a unique string for your website, otherwise, you'll might read back the last tune URL used for a different website!</p>
+                <p class="code">lastTuneNameCarp</p>
+                <p>and</p>
+                <p class="code">lastCarpTab</p>
+                <p>present in the example code to unique strings for your custom website, otherwise, you might read back the last tune name and tab style used for a different website!</p>
                 <p>That's really all there is to it!</p>
                 <p>Just follow the same pattern as used in the sample websites and be sure to test your work.</p>
                 <hr class="hidden-print" id="more_tools">
@@ -4081,10 +4112,10 @@
                 <p>Hides/Shows the instrument names and capo settings on the tablature.</p>
                 <p>At this time, instrument names below the tablature will only be displayed for single-voice tunes.</p>
                 <hr>
-                <p><strong>Show Recorder tab button instead of the Whistle tab button</strong>
+                <p><strong>Show Recorder tab button instead of the Whistle tab button</strong></p>
                 <p>When checked replaces the Whistle tab button with a Soprano or Alto tab button for Baroque Recorder fingering tablature.</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/qcI-DrrnKRs" title="Baroque Recorder Tablature Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p><strong>Recorder tab is for Alto in F (default is Soprano in C)</strong>
+                <p><strong>Recorder tab is for Alto in F (default is Soprano in C)</strong></p>
                 <p>When checked shows Alto fingerings when Baroque Recorder tab is selected. If unchecked, fingerings for Soprano in C are used.</p>
                 <hr id="default_player_settings">
                 <p><strong>Select Default Player Instruments and Volumes</strong></p>
@@ -4778,7 +4809,7 @@
                 <p>Here's how to hard-refresh a browser tab most of the popular browsers on both Windows and Mac:</p>
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/hardrefresh.jpg"/>
-                </div>                
+                </div>
                 <hr class="hidden-print" id="uninstall">
                 <h1 class="page_break_always">Uninstalling the Tool<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>When the tool first runs, to be able to run offline, it installs a service worker in your browser and stores the code and resources required to run the tool offline in a private browser cache.</p>
