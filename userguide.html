@@ -36,7 +36,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
-        
+         
         <style>
         
         p {
@@ -356,6 +356,7 @@
             
             <h3>Export Tunebook Website</h3>
             <a style="text-decoration:none;" href="#generate_website">Export Tunebook Website</a>
+            <a style="text-decoration:none;" href="#export_website_devnotes">Export Tunebook Website Developer Customization</a>
             
             <h3>More ABC Tools</h3>
             
@@ -630,6 +631,7 @@
                     <button class="accordion" title="Click to expand/collapse this section">Export Tunebook Website</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#generate_website">Export Tunebook Website</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#export_website_devnotes">Export Tunebook Website Developer Customization</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">More ABC Tools</button>
@@ -3149,7 +3151,7 @@
                 <p>If <strong>Add tablature/instrument selector dropdown</strong> is checked, a dropdown will be added to the website to the right of the tune selector that allows you to change which tablature style is displayed along with using a matching instrument sound for playback.</p>
                 <p>The dropdown will include:</p>
                 <p><strong>Standard Notation<br/>Note Names<br/>Mandolin<br/>Tenor Banjo<br/>GDAD Bouzouki<br/>Standard Guitar<br/>DADGAD<br/>Tin Whistle<br/>Irish Flute<br/>Hammered Dulcimer</strong></p>
-                <p>Information on modifying the behavior of the tablature dropdown by editing the exported .html file can be found in the <a href="#export_website_devnotes">Export Tunebook Website Developer Notes</a> section below.</p>
+                <p>Information on modifying the behavior of the tablature dropdown by editing the exported .html file can be found in the <a href="#export_website_devnotes">Export Tunebook Website Developer Customization</a> section below.</p>
                 <p>If <strong>Disable access to editor</strong> is checked, the generated website will prevent users from closing the fullscreen view and entering the ABC editor.</p>
                 <p>If <strong>Add a ? help icon at top-left corner</strong> is checked, a "?" with the color specified in the Hyperlink color will be shown in the upper left corner of the website.</p>
                 <p>Clicking the <strong>?</strong> on the exported website will open the URL specified in the <strong>Tunebook help URL</strong> field.</p>
@@ -3166,7 +3168,7 @@
                 <p style="text-align: center;"><a href="https://michaeleskin.com/documents/sd_cce_tunes_responsive.html" target="_blank">San Diego Comhaltas Tune Learning Tunebook Website</a></p>
                 <p style="text-align: center;"><a href="https://michaeleskin.com/tunebook_websites/ultimate_demos_7nov2024.html" target="_blank">Ultimate ABC Demos</a></p>
                 <hr id="export_website_devnotes">
-                <h1 class="h1wide">Export Tunebook Website Developer Notes</h1>
+                <h1 class="h1wide">Export Tunebook Website Developer Customization</h1>
                 <hr>
                 <p style="text-align: center;"><strong>Speeding up the Export Tunebook Website workflow by disabling rendering</strong></p>
                 <p>If you want to speed up the workflow for export of websites for very large tunebooks (over 100-200 tunes), since drawing the tunes isn't required for website export, you might find the "Disable abcjs notation rendering" option on the <strong>Advanced Settings</strong> dialog useful:</p>
@@ -3188,6 +3190,38 @@
                 <p>to:
                 <p class="code">var gAllowInstrumentChanges = false;</p>
                 <p>And then save the modified .html file.</p>
+                <hr>
+                <p style="text-align: center;"><strong>Remembering and restoring the last tune the user selected</strong></p>
+                <p>If you are interested in customizing your exported websites so that when a user returns to the website, the last tune they were working with is restored, it's very simple and only requires a few additional lines of JavaScript.</p>
+                <p>Take a look at the source for any of the example tunebooks at:
+                <p style="text-align: center"><a href="https://michaeleskin.com/tunebooks.html#tunebook_websites" target="_blank">https://michaeleskin.com/tunebooks.html#tunebook_websites</a></p>
+                <p>and search in the Javascript at the bottom of the page for:</p>
+                <p class="code">localStorage</p>
+                <p>and you'll see how the last used tune URL is saved to browser local storage any time a new tune is chosen and how an initial tune URL is loaded (if one had been saved before) into the iframe when the website is first launched.</p>
+                <p>You'll see this at the bottom of the website code, which is run when the web page is launched.  It checks if there is a previously saved tune URL in localStorage, and if there is, it sets the tool's iframe to the URL:</p>
+                <p class="code">// Restore state<br/>
+                if (window.localStorage){<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;setTimeout(function(){<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var theLastURL = localStorage.lastURLCarp;<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (theLastURL && (theLastURL != "")){<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tuneFrame.src = theLastURL;<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lastURL = theLastURL;<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;},250);<br/>
+                }</p>
+                <p>And whenever the user chooses a new tune and a new tune URL is set for the tool's iframe, a call is made to save the newly selected URL to localStorage:</p>
+                <p class="code">tuneFrame.src = theURL;<br/>
+                lastURL = theURL;<br/><br/>
+                // Save last URL<br/>
+                if (window.localStorage){<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;localStorage.lastURLCarp = lastURL;<br/>
+                }</p>
+                <p>Depending on the website export options selected in the dialog when the website was exported, you may need to add this in two or three places in the code.</p>
+                <p>You <strong>must</strong> change all references to:</p>
+                <p class="code">lastURLCarp</p>
+                <p>present in the example code to a unique string for your website, otherwise, you'll might read back the last tune URL used for a different website!</p>
+                <p>That's really all there is to it!</p>
+                <p>Just follow the same pattern as used in the sample websites and be sure to test your work.</p>
                 <hr class="hidden-print" id="more_tools">
                 <h1 class="page_break_always">More ABC Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
