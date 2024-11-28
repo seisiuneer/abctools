@@ -18991,7 +18991,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
           break;
 
         case "soprano_recorder": // 144
-          url = "https://michaeleskin.com/abctools/soundfonts/soprano_recorder_1/";
+          url = "https://michaeleskin.com/abctools/soundfonts/soprano_recorder_2/";
           isOgg = false;
           isCustomInstrument = true;
           break;
