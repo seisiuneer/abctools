@@ -778,20 +778,23 @@ function generateAndSaveWebsite() {
     theOutput +="           tuneSelector.addEventListener('change', () => {\n";
     theOutput +="\n";
     theOutput +="               var theURL = tuneSelector.value;\n";
+    theOutput +="\n";
+    theOutput +='               if (theURL == "")return;\n';
     if (gWebsiteTabSelector){
+        theOutput +="\n";
         theOutput +="               theURL = theURL.replace(/&format=([^&]+)/g,\"&format=\"+tabStyle);\n";   
-        theOutput +=" \n";
+        theOutput +="\n";
         theOutput +="               if (gAllowInstrumentChanges){\n";   
         theOutput +="                  theURL = injectInstrument(theURL);\n";
         theOutput +="               }\n"; 
     }
-    theOutput +=" \n";
+    theOutput +="\n";
     theOutput +="               tuneFrame.src = theURL;\n";
     if (gWebsiteAddFullscreen){
         theOutput +="               lastURL = theURL;\n";
     }
 
-    theOutput +=" \n";
+    theOutput +="\n";
     theOutput +="           });\n";
     theOutput +="        }\n";
     theOutput +="        else{\n";
@@ -799,53 +802,58 @@ function generateAndSaveWebsite() {
     theOutput +="           tuneSelector.style.display=\"none\";\n";
     theOutput +="\n";
     theOutput +="           setTimeout(function(){\n"; 
+    theOutput +="\n";
     theOutput +="             var theURL = tunes[0].URL;\n"
+    theOutput +="\n";
+    theOutput +='             if (theURL == "")return;\n';
+
     if (gWebsiteTabSelector){
+        theOutput +="\n";
         theOutput +="             theURL = theURL.replace(/&format=([^&]+)/g,\"&format=\"+tabStyle);\n";    
-        theOutput +=" \n";
+        theOutput +="\n";
         theOutput +="             if (gAllowInstrumentChanges){\n";   
         theOutput +="                 theURL = injectInstrument(theURL);\n";
         theOutput +="             }\n"; 
     }
-    theOutput +=" \n";
+    theOutput +="\n";
     theOutput +="             tuneFrame.src = theURL;\n";
 
     if (gWebsiteAddFullscreen){
         theOutput +="             lastURL = theURL;\n";
     }
 
-    theOutput +=" \n";
+    theOutput +="\n";
     theOutput +="           },250);\n";        
 
     theOutput +="        }\n";
-    theOutput +=" \n";
+    theOutput +="\n";
 
     if (gWebsiteTabSelector){
 
         theOutput +="        var tabStyle = \"noten\";\n";
 
-        theOutput +=" \n";
+        theOutput +="\n";
 
         theOutput +="        //\n";
         theOutput +="        // Decompress the tune LZW, replace the instrument and volumes\n";
         theOutput +="        //\n";
-        theOutput +=" \n";
+        theOutput +="\n";
         theOutput +="        function extractLZWParameter(url) {\n";
         theOutput +="           // Use a regular expression to find the part starting with &lzw= followed by any characters until the next &\n";
         theOutput +="            const match = url.match(/lzw=([^&]*)/);\n";
-        theOutput +=" \n";
+        theOutput +="\n";
         theOutput +="            // If a match is found, return the part after &lzw=\n";
         theOutput +="            return match ? match[0] : null;\n";
         theOutput +="        }\n";
-        theOutput +=" \n";
+        theOutput +="\n";
         theOutput +="        function injectInstrument(theURL){\n";
-        theOutput +=" \n";
+        theOutput +="\n";
         theOutput +="            var originalAbcInLZW = extractLZWParameter(theURL);\n";
-        theOutput +=" \n";
+        theOutput +="\n";
         theOutput +='            originalAbcInLZW = originalAbcInLZW.replace("lzw=","");\n';
-        theOutput +=" \n";
+        theOutput +="\n";
         theOutput +="            var abcInLZW = LZString.decompressFromEncodedURIComponent(originalAbcInLZW);\n";
-        theOutput +=" \n";
+        theOutput +="\n";
         theOutput +="            switch (tabStyle){\n";
         theOutput +='                case "mandolin":\n';
         theOutput +='                    if (isBanjo){\n';
@@ -881,22 +889,22 @@ function generateAndSaveWebsite() {
         theOutput +="                    }\n";
         theOutput +="                    break;\n";
         theOutput +="            }\n";
-        theOutput +=" \n";
+        theOutput +="\n";
         theOutput +='            var newLZWparam = "lzw="+LZString.compressToEncodedURIComponent(abcInLZW);\n';
-        theOutput +=" \n";
+        theOutput +="\n";
         theOutput +='            originalAbcInLZW = "lzw="+originalAbcInLZW;\n';
-        theOutput +=" \n";
+        theOutput +="\n";
         theOutput +="            theURL = theURL.replace(originalAbcInLZW,newLZWparam);\n";
-        theOutput +=" \n";
+        theOutput +="\n";
         theOutput +="            return theURL;\n";
         theOutput +="        }\n";
-        theOutput +=" \n";
+        theOutput +="\n";
 
         // Update iframe src when an option is selected
         theOutput +="        const displayOptions = document.getElementById('displayOptions');\n";
         theOutput +="\n";
         theOutput +="          displayOptions.addEventListener('change', () => {\n";
-        theOutput +=" \n";
+        theOutput +="\n";
 
         theOutput +="             var origTabStyle = tabStyle;\n";
         theOutput +="\n";
@@ -904,11 +912,11 @@ function generateAndSaveWebsite() {
         theOutput +="             if (displayOptions.value == \"-1\"){\n";
         theOutput +="                 return;\n";
         theOutput +="             }\n";
-        theOutput +=" \n";
+        theOutput +="\n";
         theOutput +="             isBanjo = false;\n";
         theOutput +="             isFlute = false;\n";
         theOutput +="             isDulcimer = false;\n";
-        theOutput +=" \n";
+        theOutput +="\n";
         theOutput +="             switch (displayOptions.value){\n";
         theOutput +="                 case \"0\": // Standard notation\n";
         theOutput +="                     tabStyle = \"noten\";\n";
@@ -957,20 +965,22 @@ function generateAndSaveWebsite() {
         theOutput +="                theURL = tunes[0].URL;\n";
         theOutput +="             }\n";
         theOutput +="\n";
+        theOutput +='             if (theURL == "")return;\n';
+        theOutput +="\n";
         theOutput +="             theURL = theURL.replace(/&format=([^&]+)/g,\"&format=\"+tabStyle);\n";
-        theOutput +=" \n";
+        theOutput +="\n";
         theOutput +="             if (gAllowInstrumentChanges){\n";   
         theOutput +="                 theURL = injectInstrument(theURL);\n";
         theOutput +="             }\n"; 
-        theOutput +=" \n";
+        theOutput +="\n";
         theOutput +="             tuneFrame.src = theURL;\n";
         if (gWebsiteAddFullscreen){
             theOutput +="             lastURL = theURL;\n";
         }
-        theOutput +=" \n";
+        theOutput +="\n";
 
         theOutput +="        });\n";
-        theOutput +=" \n";
+        theOutput +="\n";
     }
 
     theOutput +="       function getElementsTotalHeight() {\n";
