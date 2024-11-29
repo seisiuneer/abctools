@@ -737,6 +737,14 @@ function idleManageSamplesDialog(showActionButtons){
     	return theSoundFont + replaceAndCapitalize(theName);
 	}
 
+	function getLastSegment(url) {
+	    // Remove any trailing slashes at the end of the URL
+	    url = url.replace(/\/$/, "");
+	    
+	    // Split the URL by slashes and return the last part
+	    return url.substring(url.lastIndexOf('/') + 1);
+	}
+
     function fetchAndDisplayItems(showActionButtons) {
 
     	gLoadAllNotesSet = null;
@@ -774,7 +782,6 @@ function idleManageSamplesDialog(showActionButtons){
 	        } else {
 
 	            //console.log('No more entries!');
-	            //debugger;
 	            const tableBody = document.querySelector("#notes-table tbody");
 	            tableBody.innerHTML = ''; // Clear previous content
 
@@ -798,7 +805,16 @@ function idleManageSamplesDialog(showActionButtons){
 	            	basePathArray.push(thePath);
 	            });
 
-	            //debugger;
+	            // Sort them
+	            basePathArray.sort((a, b) => {
+				  let domainA = getLastSegment(a);
+				  let domainB = getLastSegment(b);
+
+				  if (domainA < domainB) return -1;
+				  if (domainA > domainB) return 1;
+				  return 0;}
+
+				);
 
 	            var duplicatesCount = countDuplicates(basePathArray);
 
