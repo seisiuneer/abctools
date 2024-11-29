@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2142_112924_0830";
+var gVersionNumber="2143_112924_1130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -22027,10 +22027,10 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 				theDroneShift = 148 + theDroneShift;
 
 				if (foldNotes){
-					postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 148 "+theDroneShift;
+					postFix = " stems=down transpose=0\n%%MIDI program 143\n%voice_tuning_cents 148 "+theDroneShift;
 				}
 				else{
-					postFix = " stems=auto transpose=0\n%%MIDI program 109\n%voice_tuning_cents 148 "+theDroneShift;					
+					postFix = " stems=down transpose=0\n%%MIDI program 109\n%voice_tuning_cents 148 "+theDroneShift;					
 				}
 			}
 			else{
@@ -22049,10 +22049,10 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 				doVisibleFolding = foldNotes;
 
 				if (foldNotes){
-					postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 100 "+theDroneShift;
+					postFix = " stems=down transpose=0\n%%MIDI program 143\n%voice_tuning_cents 100 "+theDroneShift;
 				}
 				else{
-					postFix = " stems=auto transpose=0\n%%MIDI program 109\n%voice_tuning_cents 100 "+theDroneShift;					
+					postFix = " stems=down transpose=0\n%%MIDI program 109\n%voice_tuning_cents 100 "+theDroneShift;					
 				}
 			}
 			else{
@@ -22071,10 +22071,10 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 				theDroneShift = 54 + theDroneShift;
 
 				if (foldNotes){
-					postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 54 "+theDroneShift;
+					postFix = " stems=down transpose=0\n%%MIDI program 143\n%voice_tuning_cents 54 "+theDroneShift;
 				}
 				else{
-					postFix = " stems=auto transpose=0\n%%MIDI program 109\n%voice_tuning_cents 54 "+theDroneShift;					
+					postFix = " stems=down transpose=0\n%%MIDI program 109\n%voice_tuning_cents 54 "+theDroneShift;					
 				}
 			}
 			else{
@@ -22094,10 +22094,10 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 				doVisibleFolding = foldNotes;
 
 				if (foldNotes){
-					postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents 0 "+theDroneShift;
+					postFix = " stems=down transpose=0\n%%MIDI program 143\n%voice_tuning_cents 0 "+theDroneShift;
 				}
 				else{
-					postFix = " stems=auto transpose=0\n%%MIDI program 109\n%voice_tuning_cents 0 "+theDroneShift;					
+					postFix = " stems=down transpose=0\n%%MIDI program 109\n%voice_tuning_cents 0 "+theDroneShift;					
 				}
 			}
 			else{
@@ -22117,10 +22117,10 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 				theDroneShift = 500 + theDroneShift;
 
 				if (foldNotes){
-					postFix = " stems=auto transpose=0\n%%MIDI program 143\n%voice_tuning_cents -700 "+theDroneShift;
+					postFix = " stems=down transpose=0\n%%MIDI program 143\n%voice_tuning_cents -700 "+theDroneShift;
 				}
 				else{
-					postFix = " stems=auto transpose=0\n%%MIDI program 109\n%voice_tuning_cents -700 "+theDroneShift;					
+					postFix = " stems=down transpose=0\n%%MIDI program 109\n%voice_tuning_cents -700 "+theDroneShift;					
 				}
 			}
 			else{
@@ -22141,7 +22141,7 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 					theDroneShift += 1200;
 				}
 
-				postFix = " stems=auto transpose=-7\n%%MIDI program 131\n%voice_tuning_cents 0 "+theDroneShift;
+				postFix = " stems=down transpose=-7\n%%MIDI program 131\n%voice_tuning_cents 0 "+theDroneShift;
 			}
 			else{
 				theTune = theTune.replaceAll("%%MIDI program 109","%%MIDI program 131");
@@ -22161,7 +22161,7 @@ function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,inje
 					theDroneShift += 1200;
 				}
 
-				postFix = " stems=auto transpose=-7\n%%MIDI program 130\n%voice_tuning_cents 0 "+theDroneShift;
+				postFix = " stems=down transpose=-7\n%%MIDI program 130\n%voice_tuning_cents 0 "+theDroneShift;
 			}
 			else{
 				theTune = theTune.replaceAll("%%MIDI program 109","%%MIDI program 130");
