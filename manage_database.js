@@ -566,6 +566,18 @@ function idleManageSamplesDialog(showActionButtons){
 
 	}
 
+	function startsWithDoctypeHtml(arrayBuffer) {
+	    // Create a Uint8Array from the ArrayBuffer
+	    const uint8Array = new Uint8Array(arrayBuffer);
+
+	    // Convert the first few bytes to a string (length of "<!DOCTYPE html>" is 15 characters)
+	    const textDecoder = new TextDecoder();
+	    const startString = textDecoder.decode(uint8Array.slice(0, 15)); // Get the first 15 bytes
+	    
+	    // Check if the string starts with "<!DOCTYPE html>"
+	    return startString === "<!DOCTYPE html>";
+	}
+
 	function fetchUrlsSequentially(instrumentName,urls,callback) {
 
 		document.getElementById("loading-bar-spinner").style.display = "block";
@@ -593,7 +605,9 @@ function idleManageSamplesDialog(showActionButtons){
 
 						fetch(url)
 							.then(response => {
+								//console.log("Got respose for "+url);
 								if (!response.ok) {
+									//console.log("Got error fetching sample")
 									throw new Error(`HTTP error! Status: ${response.status}`);
 								}
 								return response.arrayBuffer();
@@ -601,6 +615,12 @@ function idleManageSamplesDialog(showActionButtons){
 							.then(theBuffer => {
 
 								//console.log(`Fetched URL: ${url}`, theBuffer);
+
+								// If redirected, the buffer will contain the start of my HTML redirect page
+								if (startsWithDoctypeHtml(theBuffer)){
+									//console.log("Was from redirect");
+									throw new Error(`Sample fetch was redirected`);
+								}
 
 				                // Save the sample in the database
 				                saveSample_DB(url,theBuffer);
