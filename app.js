@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2148_120124_0800";
+var gVersionNumber="2149_120124_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -51,11 +51,12 @@ var gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
 var gIsIOS = false;
 var gIsIPad = false;
 var giPadTwoColumn = false;
-var giPadPlayerScaling = 60;
 var gIsIPhone = false;
 var gIsSafari = false;
 var gIsChrome = false;
 var gIsAndroid = false;
+
+var gPlayerScaling = 50;
 
 var gRenderingPDF = false;
 
@@ -18856,14 +18857,14 @@ function NotationSpacingExplorer(){
 
 		if (giPadTwoColumn){
 			if (isLandscapeOrientation()){
-				theWidth = windowWidth * (giPadPlayerScaling / 100);
+				theWidth = windowWidth * (gPlayerScaling / 100);
 			}
 			else{
 				theWidth = windowWidth * 0.9;	
 			}
 		}
 		else{
-			theWidth = windowWidth * 0.5;
+			theWidth = windowWidth * (gPlayerScaling / 100);
 		}
 
 		if (theWidth < 850){
@@ -24646,14 +24647,14 @@ function ExportImageDialog(theABC,callback,val,metronome_state,isWide){
 
 			if (giPadTwoColumn){
 				if (isLandscapeOrientation()){
-					theWidth = windowWidth * (giPadPlayerScaling / 100);
+					theWidth = windowWidth * (gPlayerScaling / 100);
 				}
 				else{
 					theWidth = windowWidth * 0.9;	
 				}
 			}
 			else{
-				theWidth = windowWidth * 0.5;
+				theWidth = windowWidth * (gPlayerScaling / 100);
 			}
 
 			if (theWidth < 850){
@@ -28559,14 +28560,14 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 
 				if (giPadTwoColumn){
 					if (isLandscapeOrientation()){
-						theWidth = windowWidth * (giPadPlayerScaling / 100);
+						theWidth = windowWidth * (gPlayerScaling / 100);
 					}
 					else{
 						theWidth = windowWidth * 0.9;	
 					}
 				}
 				else{
-					theWidth = windowWidth * 0.5;
+					theWidth = windowWidth * (gPlayerScaling / 100);
 				}
 
 			}
@@ -30246,14 +30247,14 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 
 			if (giPadTwoColumn){
 				if (isLandscapeOrientation()){
-					theWidth = windowWidth * (giPadPlayerScaling / 100);
+					theWidth = windowWidth * (gPlayerScaling / 100);
 				}
 				else{
 					theWidth = windowWidth * 0.9;	
 				}
 			}
 			else{
-				theWidth = windowWidth * 0.5;
+				theWidth = windowWidth * (gPlayerScaling / 100);
 			}
 
 			if (theWidth < 850){
@@ -31008,14 +31009,14 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 
 			if (giPadTwoColumn){
 				if (isLandscapeOrientation()){
-					theWidth = windowWidth * (giPadPlayerScaling / 100);
+					theWidth = windowWidth * (gPlayerScaling / 100);
 				}
 				else{
 					theWidth = windowWidth * 0.9;	
 				}
 			}
 			else{
-				theWidth = windowWidth * 0.5;
+				theWidth = windowWidth * (gPlayerScaling / 100);
 			}
 
 			if (theWidth < 850){
@@ -32014,14 +32015,14 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 
 			if (giPadTwoColumn){
 				if (isLandscapeOrientation()){
-					theWidth = windowWidth * (giPadPlayerScaling / 100);
+					theWidth = windowWidth * (gPlayerScaling / 100);
 				}
 				else{
 					theWidth = windowWidth * 0.9;	
 				}
 			}
 			else{
-				theWidth = windowWidth * 0.5;
+				theWidth = windowWidth * (gPlayerScaling / 100);
 			}
 
 			if (theWidth < 850){
@@ -32613,14 +32614,14 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 
 			if (giPadTwoColumn){
 				if (isLandscapeOrientation()){
-					theWidth = windowWidth * (giPadPlayerScaling / 100);
+					theWidth = windowWidth * (gPlayerScaling / 100);
 				}
 				else{
 					theWidth = windowWidth * 0.9;	
 				}
 			}
 			else{
-				theWidth = windowWidth * 0.5;
+				theWidth = windowWidth * (gPlayerScaling / 100);
 			}
 
 			if (theWidth < 850){
@@ -33409,7 +33410,7 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 
 			if (giPadTwoColumn){
 				if (isLandscapeOrientation()){
-					theWidth = windowWidth * (giPadPlayerScaling / 100);
+					theWidth = windowWidth * 0.6;
 				}
 				else{
 					theWidth = windowWidth * 0.9;	
@@ -34409,11 +34410,11 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState, isWide)
 			}
 			else{
 
-				theWidth = windowWidth * 0.5;
+				theWidth = windowWidth * (gPlayerScaling / 100);
 
 				if (giPadTwoColumn){
 					if (isLandscapeOrientation()){
-						theWidth = windowWidth * (giPadPlayerScaling / 100);
+						theWidth = windowWidth * (gPlayerScaling / 100);
 					}
 					else{
 						theWidth = windowWidth * 0.9;	
@@ -35680,12 +35681,17 @@ function GetInitialConfigurationSettings(){
 	}
 
 	// Default to 60% iPad player scaling
-	val = localStorage.iPadPlayerScaling;
+	val = localStorage.PlayerScaling;
 	if (val){
-		giPadPlayerScaling = val;
+		gPlayerScaling = val;
 	}
 	else{
-		giPadPlayerScaling = 60;
+		if (gIsIPad){
+			gPlayerScaling = 60;
+		}
+		else{
+			gPlayerScaling = 50;
+		}
 	}
 
 	// Save the settings, in case they were initialized
@@ -35907,7 +35913,7 @@ function SaveConfigurationSettings(){
 		localStorage.iPadTwoColumn = giPadTwoColumn;
 
 		// iPad Player scaling
-		localStorage.iPadPlayerScaling = giPadPlayerScaling;
+		localStorage.PlayerScaling = gPlayerScaling;
 
 	}
 }
@@ -38311,7 +38317,7 @@ function ConfigureToolSettings() {
 		configure_RollUseRollForIrishRoll: gRollUseRollForIrishRoll,
 		configure_allow_offline_instruments: gAllowOfflineInstruments,
 		configure_ipad_two_column: giPadTwoColumn,
-		configure_ipad_player_scaling: giPadPlayerScaling
+		configure_player_scaling: gPlayerScaling
 	};
 
 	var form = [
@@ -38321,12 +38327,12 @@ function ConfigureToolSettings() {
 	// Only show batch export delays on desktop
 	if (gIsIPad){
 		form = form.concat([
-			{name: "    iPad Side-by-Side View (similar to desktop)", id: "configure_ipad_two_column", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-  			{name: "iPad Side-by-Side Landscape Player Width (percentage) (default is 60):", id: "configure_ipad_player_scaling", type:"number", cssClass:"configure_settings_form_text"},
-		]);
+			{name: "    iPad Side-by-Side view (similar to desktop)", id: "configure_ipad_two_column", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+ 		]);
 	}
 
    form = form.concat([
+  		{name: "Player screen width (percentage) (min is 50, max is 100):", id: "configure_player_scaling", type:"number", cssClass:"configure_settings_form_text"},
 		{name: "          Show instrument tablature button bar below ABC editor", id: "configure_show_tab_buttons", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 	]);
 
@@ -38414,26 +38420,32 @@ function ConfigureToolSettings() {
 				// Two column display for iPad?
 				giPadTwoColumn = args.result.configure_ipad_two_column;
 
-				// Sanity check the iPad player scaling
-				giPadPlayerScaling = args.result.configure_ipad_player_scaling;
+			}
 
-				giPadPlayerScaling = giPadPlayerScaling.replace("%","");
-				
-				if (isNaN(parseInt(giPadPlayerScaling))){
-					giPadPlayerScaling = 60;
+			// Sanity check the player scaling
+			gPlayerScaling = args.result.configure_player_scaling;
+
+			gPlayerScaling = gPlayerScaling.replace("%","");
+			
+			if (isNaN(parseInt(gPlayerScaling))){
+				if (gIsIPad){
+					gPlayerScaling = 60;
 				}
 				else{
-					giPadPlayerScaling = parseInt(giPadPlayerScaling);
+					gPlayerScaling = 50;
 				}
+			}
+			else{
+				gPlayerScaling = parseInt(gPlayerScaling);
+			}
 
-				if (giPadPlayerScaling < 50){
-					giPadPlayerScaling = 50;
+			if (gPlayerScaling < 50){
+				gPlayerScaling = 50;
 
-				}
+			}
 
-				if (giPadPlayerScaling > 100){
-					giPadPlayerScaling = 100;
-				}
+			if (gPlayerScaling > 100){
+				gPlayerScaling = 100;
 			}
 
 			// Allow offline instruments?
