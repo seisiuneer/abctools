@@ -7077,6 +7077,7 @@ var shapeNoteGenerator = function (theABC){
                 case 7:
                 case 8:
                 case 9:
+                case 10:
                     thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
                     break;
                 default:
