@@ -946,6 +946,19 @@ padding:12px;
 	}
 }
 
+#exportall_abcbutton{
+height:42px;
+padding:12px;
+margin-right:30px;
+}
+
+@media (hover: hover) {
+	.exportall_abcbutton:hover{
+	background: palegreen;
+	}
+}
+
+
 #export_smartdrawbutton{
 height:42px;
 padding:12px;
@@ -4795,6 +4808,12 @@ margin-left:12px;
 }
 
 .btn-allmusicxmldownload{
+  --color: black;
+  --background-color: lavender;
+
+}
+
+.btn-allabcdownload{
   --color: black;
   --background-color: lavender;
 

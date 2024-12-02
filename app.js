@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2152_120124_1700";
+var gVersionNumber="2153_120124_1900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -24368,8 +24368,9 @@ function ExportAll(){
 		modal_msg += '<p class="export_all_text">';
 		modal_msg += 'Image width to export: <input id="export_width" type="number" min="0" step="1" max="4096" title="Image width to export" autocomplete="off"/>';
 		modal_msg += '</p>';
-		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export All Tunes as MusicXML</p>';
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export All Tunes as ABC or MusicXML</p>';
 		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
+		modal_msg += '<input id="exportall_abcbutton" class="exportall_abcbutton btn btn-allabcdownload" onclick="BatchABCExport();" type="button" value="Export all Tunes as ABC" title="Saves each tune in its own ABC file">'
 		modal_msg += '<input id="exportall_musicxmlbutton" class="exportall_musicxmlbutton btn btn-allmusicxmldownload" onclick="BatchMusicXMLExport();" type="button" value="Export all Tunes as MusicXML" title="Saves each tune in its own MusicXML file">'
 		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Developer Share URL Batch Export Tools</p>';
 		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
@@ -25004,6 +25005,164 @@ function ExportMusicXMLForReformat(theABC,title,callback){
 			callback(title,"");
 
 	  });
+
+}
+
+
+//
+// Export all the tunes in ABC Format
+//
+
+function BatchABCExport(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","BatchABCExport");
+
+	var totalTunesToExport;
+
+	function callback(){
+
+		//console.log("callback2 called");
+
+		nTunes--;
+
+		if (!gBatchImageExportCancelRequested){
+
+			if (nTunes != 0){
+
+				setTimeout(function(){
+
+					currentTune++;
+
+					var thisTune = getTuneByIndex(currentTune);
+
+					var title = getTuneTitle(thisTune);
+
+					gTheBatchImageExportStatusText.innerText = "Exporting ABC for tune "+ (currentTune+1) + " of "+totalTunesToExport+": "+title;
+
+					var fname = GetTuneAudioDownloadName(thisTune,".abc");
+
+					ExportOneABCTune(thisTune,fname,callback,null);
+
+				}, 250);
+
+			}
+			else{
+
+				// We're done, close the status dialog
+				gTheBatchImageExportOKButton.click();
+
+				gBatchImageExportCancelRequested = false;
+			}
+		}
+	}
+
+	// Make sure there are tunes to convert
+	var nTunes = CountTunes();
+
+	if (nTunes == 0){
+		return;
+	}
+
+	totalTunesToExport = nTunes;
+
+	var currentTune = 0;
+
+	gBatchImageExportCancelRequested = false;
+	gTheBatchImageExportOKButton = null;
+	gTheBatchImageExportStatusText = null;
+
+	var thePrompt = "Exporting ABC for tune "+ (currentTune+1) + " of "+totalTunesToExport;
+	
+	// Center the string in the prompt
+	thePrompt = makeCenteredPromptString(thePrompt);
+
+	// Put up batch running dialog
+	DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 290, scrollWithPage: (AllowDialogsToScroll()), okText:"Cancel" }).then(function(args){
+		
+		//console.log("Got cancel");
+		
+		gBatchImageExportCancelRequested = true;
+		
+	});	
+
+	var modals = document.getElementsByClassName("modal_flat_main");
+
+	var nmodals = modals.length;
+
+	modals[nmodals-1].style.zIndex = 100001;
+
+	// Find the OK button
+
+	var theOKButtons = document.getElementsByClassName("modal_flat_ok");
+
+	// Find the button that says "Cancel" to use to close the dialog when the cascade is complete
+	var theOKButton = null;
+
+	for (var i=0;i<theOKButtons.length;++i){
+
+		theOKButton = theOKButtons[i];
+
+		if (theOKButton.innerText == "Cancel"){
+
+			//console.log("Found conversion cancel button");
+			gTheBatchImageExportOKButton = theOKButton;
+
+			break;
+
+		}
+	}
+
+	// Find the status text 
+
+	var theStatusElems = document.getElementsByClassName("modal_flat_content");
+	var nStatus = theStatusElems.length;
+
+	gTheBatchImageExportStatusText = theStatusElems[nStatus-1];
+	gTheBatchImageExportStatusText.style.textAlign = "center";
+
+	var thisTune = getTuneByIndex(currentTune);
+
+	var title = getTuneTitle(thisTune);
+	
+	gTheBatchImageExportStatusText.innerText = "Exporting ABC for tune "+ (currentTune+1) + " of "+totalTunesToExport+": "+title;
+	
+	var fname = GetTuneAudioDownloadName(thisTune,".abc");
+
+	// Kick off the conversion cascade
+	ExportOneABCTune(thisTune,fname, callback,null);
+
+	return true;
+
+}
+
+// 
+// Convert and export one tune to ABC
+//
+function ExportOneABCTune(theABC,fname,callback,errorCallback){
+	
+  	//console.log("ExportOneABCTune success!")
+
+	var a = document.createElement("a");
+
+	document.body.appendChild(a);
+
+	a.style = "display: none";
+
+	var blob = new Blob([theABC], {type: "text/plain"}),
+
+	url = window.URL.createObjectURL(blob);
+	a.href = url;
+	a.download = fname;
+	a.click();
+
+	document.body.removeChild(a);
+
+	setTimeout(function() {
+	  window.URL.revokeObjectURL(url);
+	}, 1000);		
+
+	callback();
 
 }
 
