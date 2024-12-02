@@ -783,6 +783,37 @@ margin-left:24px;
 	}
 }
 
+#abcplayer_zoom_in{
+margin-top: 9px;
+padding:12px;
+padding-left:20px;
+padding-right:20px;
+height:42px;
+margin-left:24px;
+}
+
+@media (hover: hover) {
+	.abcplayer_zoom_in:hover{
+	background: palegreen;
+	}
+}
+
+#abcplayer_zoom_out{
+margin-top: 9px;
+height:42px;
+padding:12px;
+padding-left:20px;
+padding-right:20px;
+margin-right:24px;
+}
+
+@media (hover: hover) {
+	.abcplayer_zoom_out:hover{
+	background: palegreen;
+	}
+}
+
+
 #abcplayer_wavbutton{
 height:42px;
 padding:12px;
@@ -1097,6 +1128,7 @@ padding:12px;
 	background: palegreen;
 	}
 }
+
 
 #abcplayer_help{
 font-size:24pt;
@@ -4949,6 +4981,16 @@ margin-left:12px;
 }
 
 .btn-playernext{
+  --color: black;
+  --background-color: #E6E6E6;
+}
+
+.btn-playernext{
+  --color: black;
+  --background-color: #E6E6E6;
+}
+
+.btn-player_zoom{
   --color: black;
   --background-color: #E6E6E6;
 }
