@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2150_120124_1500";
+var gVersionNumber="2151_120124_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28501,7 +28501,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state,isWide){
 
 		modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioOrImage();" type="button" value="Export Audio or Image" title="Brings up a dialog where you can save the tune in various audio and image formats">';
 
-		modal_msg += '<input id="abcplayer_settingsbutton" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ShowPlayerSettings();" type="button" value="Settings" title="Brings up the Player Instrument Settings dialog where you can select the default abcjs soundfont, MIDI instruments, and MIDI volumes to use when playing tunes">';
+		modal_msg += '<input id="abcplayer_settingsbutton" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ShowPlayerSettings();" type="button" value="Settings" title="Brings up the Player Instrument Settings dialog where you can select the default abcjs soundfont, MIDI instruments, and MIDI volumes to use when playing tunes.&nbsp;&nbsp;From the dialog you can also set the Player screen width percentage.">';
 
 		modal_msg += '</p>';
 
@@ -38083,6 +38083,7 @@ function ConfigurePlayerSettings(player_callback) {
 		configure_bass_volume: theBassVolume,
 		configure_chord_volume: theChordVolume,
 		configure_override_play_midi_params: bOverridePlayMIDIParams,
+		configure_player_scaling: gPlayerScaling
 	};
 
  	const sound_font_options = [
@@ -38108,10 +38109,46 @@ function ConfigurePlayerSettings(player_callback) {
 		{name: "            Override all MIDI programs and volumes in the ABC with the defaults when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text_checkbox_fs"},
 	];
 	
+	if (player_callback){
+  		form = form.concat([
+		  		{name: "Player screen width (percentage) (min is 50, max is 100):", id: "configure_player_scaling", type:"number", cssClass:"configure_settings_form_text_fs"},
+		  	]);
+	}
+
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 790, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
+
+			// Do rescale from player
+			if (player_callback){
+
+				// Sanity check the player scaling
+				gPlayerScaling = args.result.configure_player_scaling;
+
+				gPlayerScaling = gPlayerScaling.replace("%","");
+				
+				if (isNaN(parseInt(gPlayerScaling))){
+					if (gIsIPad){
+						gPlayerScaling = 60;
+					}
+					else{
+						gPlayerScaling = 50;
+					}
+				}
+				else{
+					gPlayerScaling = parseInt(gPlayerScaling);
+				}
+
+				if (gPlayerScaling < 50){
+					gPlayerScaling = 50;
+
+				}
+
+				if (gPlayerScaling > 100){
+					gPlayerScaling = 100;
+				}
+			}
 
 			gDefaultSoundFont = args.result.configure_soundfont;
 
