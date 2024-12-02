@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2156_120224_1200";
+var gVersionNumber="2157_120224_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28605,7 +28605,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 		modal_msg += '<p style="text-align:center;margin:0px;margin-top:10px">';
 
 		if (isDesktopBrowser()){
-			modal_msg += '<input id="abcplayer_zoom_out" class="btn btn-player_zoom abcplayer_zoom_out" onclick="ZoomPlayer(false)" type="button" value="&nbsp;→&nbsp;←&nbsp;" title="Decreases the player width 10% of the window screen size">';
+			modal_msg += '<input id="abcplayer_zoom_out" class="btn btn-player_zoom abcplayer_zoom_out" onclick="ZoomPlayer(false)" type="button" value="→&nbsp;←" title="Decreases the player width 10% of the window screen size">';
 		}
 
 		modal_msg += '<input id="abcplayer_trainer" class="btn btn-looper abcplayer_trainer" onclick="TuneTrainerLaunchFromPlayer()" type="button" value="Start Tune Trainer" title="Opens the Tune Trainer for practicing tunes with increasing tempos">';
@@ -28616,7 +28616,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 		modal_msg += '<input id="abcplayer_settingsbutton" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ShowPlayerSettings();" type="button" value="Settings" title="Brings up the Player Instrument Settings dialog where you can select the default abcjs soundfont, MIDI instruments, and MIDI volumes to use when playing tunes.&nbsp;&nbsp;From the dialog you can also set the Player screen width percentage.">';
 		
 		if (isDesktopBrowser()){
-			modal_msg += '<input id="abcplayer_zoom_in" class="btn btn-player_zoom abcplayer_zoom_in" onclick="ZoomPlayer(true)" type="button" value="&nbsp;←&nbsp;→&nbsp;" title="Increases the player width 10% of the window screen size">';
+			modal_msg += '<input id="abcplayer_zoom_in" class="btn btn-player_zoom abcplayer_zoom_in" onclick="ZoomPlayer(true)" type="button" value="←&nbsp;→" title="Increases the player width 10% of the window screen size">';
 		}
 
 		modal_msg += '</p>';
