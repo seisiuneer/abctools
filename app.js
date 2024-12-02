@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2154_120224_1100";
+var gVersionNumber="2155_120224_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28604,7 +28604,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 	   	// Add the action buttons
 		modal_msg += '<p style="text-align:center;margin:0px;margin-top:10px">';
 
-		modal_msg += '<input id="abcplayer_zoom_out" class="btn btn-player_zoom abcplayer_zoom_out" onclick="ZoomPlayer(false)" type="button" value="-" title="Decreases the player width 10% of the window screen size">';
+		modal_msg += '<input id="abcplayer_zoom_out" class="btn btn-player_zoom abcplayer_zoom_out" onclick="ZoomPlayer(false)" type="button" value="&nbsp;→&nbsp;←&nbsp;" title="Decreases the player width 10% of the window screen size">';
 
 		modal_msg += '<input id="abcplayer_trainer" class="btn btn-looper abcplayer_trainer" onclick="TuneTrainerLaunchFromPlayer()" type="button" value="Start Tune Trainer" title="Opens the Tune Trainer for practicing tunes with increasing tempos">';
 		modal_msg += '<input id="abcplayer_metronomebutton" class="abcplayer_metronome button btn btn-metronome" onclick="ToggleMetronome();" type="button" value="Enable Metronome" title="Enables/disables the metronome">';
@@ -28613,7 +28613,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 
 		modal_msg += '<input id="abcplayer_settingsbutton" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ShowPlayerSettings();" type="button" value="Settings" title="Brings up the Player Instrument Settings dialog where you can select the default abcjs soundfont, MIDI instruments, and MIDI volumes to use when playing tunes.&nbsp;&nbsp;From the dialog you can also set the Player screen width percentage.">';
 		
-		modal_msg += '<input id="abcplayer_zoom_in" class="btn btn-player_zoom abcplayer_zoom_in" onclick="ZoomPlayer(true)" type="button" value="+" title="Increases the player width 10% of the window screen size">';
+		modal_msg += '<input id="abcplayer_zoom_in" class="btn btn-player_zoom abcplayer_zoom_in" onclick="ZoomPlayer(true)" type="button" value="&nbsp;←&nbsp;→&nbsp;" title="Increases the player width 10% of the window screen size">';
 
 		modal_msg += '</p>';
 
