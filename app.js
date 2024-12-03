@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2157_120224_1300";
+var gVersionNumber="2158_120324_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -42861,6 +42861,200 @@ function SplitLongTextAndTags(){
 	});
 }
 
+//
+// Split a multi-voice tune into individual voices
+//
+
+function splitVoices(abcTune) {
+
+    // Split the ABC notation into lines
+    const lines = abcTune.split('\n');
+    
+    // Store the header (X:, T:, K:, etc.) until the first voice declaration
+    let header = [];
+    
+    // Store the voices
+    let voices = {};
+    
+    // Store the current voice ID and optional additional text after the number
+    let currentVoice = null;
+    
+    // Store the key signature (to be added to all voice tunes)
+    let keySignature = '';
+    
+    // Boolean to track if we are processing a voice section
+    let isInVoice = false;
+
+    // Regex patterns to match both voice declaration formats
+    const voicePattern1 = /^V:\s*(\d+)(.*)$/; // Matches "V: number"
+    const voicePattern2 = /^\[V:\s*(\d+)\s*\](.*)$/; // Matches "[V: number]"
+    
+    // Process each line
+    lines.forEach(line => {
+
+        // Skip any lines starting with %%score
+        if (line.startsWith('%%score')) {
+            return;
+        }
+
+        let matchVoice1 = line.match(voicePattern1);
+        let matchVoice2 = line.match(voicePattern2); 
+
+        if (matchVoice1) {
+
+        	//debugger;
+            
+            // Found a voice declaration "V: number"
+            const voiceId = matchVoice1[1];
+            const extraText = matchVoice1[2].trim();
+            currentVoice = voiceId;
+
+            // Initialize this voice if not done yet
+            if (!voices[currentVoice]) {
+
+                voices[currentVoice] = [...header]; // Copy the header lines
+
+                if (extraText != ""){
+                	voices[currentVoice].push(`V:1 ${extraText}`); // Set voice to V:1 and include extra text
+                }
+            }
+
+            isInVoice = true;
+
+        } else if (matchVoice2) {
+        	
+        	//debugger;
+
+            // Found a voice declaration "[V: number]"
+            const voiceId = matchVoice2[1];
+            const extraText = matchVoice2[2].trim();
+            currentVoice = voiceId;
+
+            // Initialize this voice if not done yet
+            if (!voices[currentVoice]) {
+
+                voices[currentVoice] = [...header]; // Copy the header lines
+
+                if (extraText != ""){
+                	voices[currentVoice].push(`V:1 ${extraText}`); // Set voice to V:1 and include extra text
+                }
+            }
+            else{
+                if (extraText != ""){
+               		voices[currentVoice].push(extraText);   
+               	}       	           	
+            }
+
+            isInVoice = true;
+
+        } else if (!isInVoice) {
+
+            // If no voice has been declared yet, add the line to the header
+            header.push(line);
+
+        } else if (currentVoice) {
+
+        	//console.log("pushing "+line+" for voice "+currentVoice);
+
+            // If we are in a voice section, add the line to the current voice
+            voices[currentVoice].push(line);
+
+        }
+    });
+        
+    // Return the split voices as individual ABC tunes
+    const splitTunes = Object.keys(voices).map(voice => voices[voice].join('\n'));
+    
+    return splitTunes;
+}
+
+function SplitVoices(){
+
+	//console.log("Split Voices");
+
+	sendGoogleAnalytics("action","Split Voices");
+
+	if (!gAllowCopy){
+
+        var prompt = makeCenteredPromptString("No Tune in the ABC Editor to Split")
+ 
+        DayPilot.Modal.alert(prompt, {
+            theme: "modal_flat",
+            top: 200
+        });
+
+        return;	
+   	}
+
+	var nTunes = CountTunes();
+
+	if (nTunes > 1){
+
+        var prompt = makeCenteredPromptString("Split Voices only works with a single multi-voice tune")
+ 
+        DayPilot.Modal.alert(prompt, {
+            theme: "modal_flat",
+            top: 200
+        });
+
+        return;	
+
+	}
+
+	// Try to find the current tune
+	var theMultiVoiceABC = getTuneByIndex(0);
+
+	if (theMultiVoiceABC == ""){
+		// This should never happen
+		return;
+	}
+
+	var theSplitVoices = splitVoices(theMultiVoiceABC);
+
+	if (theSplitVoices.length < 2){
+
+        var prompt = makeCenteredPromptString("Multiple voices not found in tune")
+ 
+        DayPilot.Modal.alert(prompt, {
+            theme: "modal_flat",
+            top: 200
+        });
+
+        return;	
+
+	}
+
+	// Stuff in the split ABC voices
+	var theABC = gTheABC.value;
+    
+    theABC += "\n";
+
+	for (var i=0;i<theSplitVoices.length;++i){
+		if (i>0){
+			theABC += "\n";
+		}
+		theABC += theSplitVoices[i];
+		theABC += "\n";
+	}
+
+	gTheABC.value = theABC;
+
+	// Set dirty
+	gIsDirty = true;
+
+	// Redraw
+	RenderAsync(true,null,function(){
+
+	    var prompt = makeCenteredPromptString(theSplitVoices.length+" Voices Split")
+
+	    DayPilot.Modal.alert(prompt, {
+	        theme: "modal_flat",
+	        top: 200
+	    });
+	});
+
+}
+
 // Open the standard editor in a new tab
 function LaunchStandardEditor(){
 	var url = "https://michaeleskin.com/abctools/abctools.html";
@@ -42958,6 +43152,8 @@ function SetupContextMenu(showUpdateItem){
 				    {},
 				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 				    {},
+				    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
+				    {},
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 				    {},
@@ -43005,6 +43201,8 @@ function SetupContextMenu(showUpdateItem){
 				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 				    {},
 				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
+				    {},
+				    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
 				    {},
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
@@ -43057,6 +43255,8 @@ function SetupContextMenu(showUpdateItem){
 				    {},
 				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 				    {},
+				    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
+				    {},
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 				    {},
@@ -43104,6 +43304,8 @@ function SetupContextMenu(showUpdateItem){
 				    {},
 				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 				    {},
+				    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
+				    {},
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 				    {},
@@ -43142,6 +43344,8 @@ function SetupContextMenu(showUpdateItem){
 			    {},
 			    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 			    {},
+			    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
+			    {},
 			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 			    {},
@@ -43178,6 +43382,8 @@ function SetupContextMenu(showUpdateItem){
 			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 			    {},
 			    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
+			    {},
+			    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
 			    {},
 			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
