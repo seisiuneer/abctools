@@ -22030,7 +22030,15 @@ TabRenderer.prototype.doLayout = function () {
   var firstVoice = voices[0];
   // take lyrics into account if any
   var lyricsHeight = getLyricHeight(firstVoice);
+
+  // Default tablature padding
   var padd = 3;
+
+  // MAE 3 December 2024 - For tablature padding override
+  if (this.renderer && this.renderer.controller && (this.renderer.controller.tabPadding != undefined)){
+    padd = this.renderer.controller.tabPadding;
+  }
+  
   var prevIndex = this.staffIndex;
   var previousStaff = staffGroup.staffs[prevIndex];
   var tabTop = this.tabSize + padd - previousStaff.bottom - lyricsHeight;
@@ -28858,6 +28866,10 @@ var EngraverController = function EngraverController(paper, params) {
   if (params.jazzchords) this.jazzchords = params.jazzchords;
   if (params.germanAlphabet) this.germanAlphabet = params.germanAlphabet;
   if (params.lineThickness) this.lineThickness = params.lineThickness;
+  
+  // MAE 3 December 2024 for tablature padding override
+  if (params.tabPadding != undefined) this.tabPadding = params.tabPadding;
+
   this.renderer.controller = this; // TODO-GD needed for highlighting
   this.renderer.foregroundColor = params.foregroundColor ? params.foregroundColor : "currentColor";
   if (params.ariaLabel !== undefined) this.renderer.ariaLabel = params.ariaLabel;
