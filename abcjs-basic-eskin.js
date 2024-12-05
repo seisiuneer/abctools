@@ -19009,7 +19009,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
           break;
 
         case "bass_recorder":     // 147
-          url = "https://michaeleskin.com/abctools/soundfonts/bass_recorder_1/";
+          url = "https://michaeleskin.com/abctools/soundfonts/bass_recorder_2/";
           isOgg = false;
           isCustomInstrument = true;
           break;
@@ -19150,7 +19150,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
           break;
 
         case "bass_recorder":     // 147
-          url = "https://michaeleskin.com/abctools/soundfonts/bass_recorder_1/";
+          url = "https://michaeleskin.com/abctools/soundfonts/bass_recorder_2/";
           isOgg = false;
           isCustomInstrument = true;
           break;
