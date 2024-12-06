@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2160_120524_1200";
+var gVersionNumber="2163_120624_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -37705,10 +37705,16 @@ function idleAdvancedSettings(){
 function ShowBrowserInfo(){
 
    	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Browser Information</p>';
-    modal_msg  += '<p style="font-size:12pt;line-height:22pt;font-family:helvetica">navigator.userAgent: '+navigator.userAgent+'</p>'; 
-    modal_msg  += '<p style="font-size:12pt;line-height:22pt;font-family:helvetica">navigator.platform: '+navigator.platform+'</p>'; 
-    modal_msg  += '<p style="font-size:12pt;line-height:22pt;font-family:helvetica">navigator.vendor: '+navigator.vendor+'</p>'; 
-    modal_msg  += '<p style="font-size:12pt;line-height:22pt;font-family:helvetica">navigator.maxTouchPoints: '+navigator.maxTouchPoints+'</p>'; 
+    modal_msg  += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">navigator.userAgent: '+navigator.userAgent+'</p>'; 
+    modal_msg  += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">navigator.platform: '+navigator.platform+'</p>'; 
+    modal_msg  += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">navigator.vendor: '+navigator.vendor+'</p>'; 
+    modal_msg  += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">navigator.maxTouchPoints: '+navigator.maxTouchPoints+'</p>'; 
+    modal_msg  += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">gIsIOS: '+gIsIOS+'</p>'; 
+    modal_msg  += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">gIsIPhone: '+gIsIPhone+'</p>'; 
+    modal_msg  += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">gIsIPad: '+gIsIPad+'</p>'; 
+    modal_msg  += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">gIsAndroid: '+gIsAndroid+'</p>'; 
+    modal_msg  += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">localStorage available: '+gLocalStorageAvailable+'</p>'; 
+
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, scrollWithPage: (AllowDialogsToScroll()) });
 
@@ -41123,18 +41129,72 @@ function updateDiagnostics(){
 }
 
 //
+// Disallow Facebook iOS webview
+//
+//
+var gIsFacebook = false;
+
+function CheckFacebook_iOS(callback){
+
+    gIsFacebook = false;
+
+	if (!gIsIOS){
+		return;
+	}
+
+	var UA = navigator.userAgent;
+
+	if ((UA.indexOf("FBIOS") != -1) || ((UA.indexOf("FBAV") != -1))){
+		gIsFacebook = true;
+	}
+
+	if (gIsFacebook){
+
+	  	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;color:darkred">Facebook iOS App Browser Issue</p>';
+	    modal_msg  += '<p style="font-size:12pt;line-height:30pt;font-family:helvetica">The ABC Transcription Tools cannot run in the Facebook iOS app browser</p>'; 
+	    modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To open the ABC Transcription Tools in Safari from this view:</p>';
+	    modal_msg  += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">1) Click the&nbsp;&nbsp;<strong><span style="font-size:18pt">...</span></strong>&nbsp;&nbsp;at the top right of the screen</p>'; 
+	    modal_msg  += '<p style="font-size:12pt;line-height:12pt;font-family:helvetica">2) Click <strong>Open in external browser</strong></p>'; 
+
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, scrollWithPage: (AllowDialogsToScroll()) });
+
+		setTimeout(function(){
+
+		    var theOKButtons = document.getElementsByClassName("modal_flat_ok");
+
+			// Find the button that says "OK" and hide it
+			var theOKButton = null;
+			
+			for (var i=0;i<theOKButtons.length;++i){
+
+				theOKButton = theOKButtons[i];
+
+				if (theOKButton.innerText == "OK"){
+
+					//console.log("Found OK button");
+					theOKButton.style.display = "none";
+
+					break;
+
+				}
+			}
+		},10);
+	}
+}
+
+//
 // Fix the iOS 17 URL encoded paste issue
 //
 function FixIOS17(){
 
-	// Restrict to iOS 17
+	// Restrict to iOS 17+
 
 	var UA = navigator.userAgent;
 	
 	//alert("navigator.userAgent: "+UA);
 
 	// Checking both Safari as well as Chrome/Firefox user agent strings
-	if ((UA.indexOf("Version/17") != -1) || (UA.indexOf("OS 17") != -1) || (UA.indexOf("FxiOS") != -1)){
+	if ((UA.indexOf("Version/17") != -1) || (UA.indexOf("OS 17") != -1) || (UA.indexOf("Version/18") != -1) || (UA.indexOf("OS 18") != -1) || (UA.indexOf("FxiOS") != -1)){
 
 		//alert("Doing iOS 17 fix");
 
@@ -43511,6 +43571,14 @@ function DoStartup() {
 
 	}
 
+    // Disallow if this the Facebook embedded browser
+    CheckFacebook_iOS();
+
+    // Early exit if Facebook
+    if (gIsFacebook){
+    	return;
+    }
+
 	if (gIsIOS){
 		document.getElementById("selectabcfile").removeAttribute("accept");
 	}	
@@ -43538,7 +43606,7 @@ function DoStartup() {
 	//gIsIOS = true; 
 	//gIsIPad = true;  
 	//gIsIPhone = true;  
-	
+
 	//
 	// iOS and Android styling adaptation
 	//
