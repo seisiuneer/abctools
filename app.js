@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2165_120724_0900";
+var gVersionNumber="2166_120724_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -41156,7 +41156,7 @@ function CheckFacebook_iOS(callback){
 
 	        modal_msg  += '<p style="font-size:12pt;line-height:30pt;font-family:helvetica">The Facebook iOS app browser does not support running the ABC Tools.</p>'; 
 
-			var the_href = window.location.href;
+			var the_href = window.top.location.href;
 			
 			the_href = "x-safari-"+the_href;
 
