@@ -7744,6 +7744,10 @@ var letter_to_accent = function letter_to_accent(line, i) {
       return [1, 'segno'];
     case 'T':
       return [1, 'trill'];
+    // 7 December 2024
+    // Added half-step trill 
+    case 't':
+      return [1, 'trillh'];
   }
   return [0, 0];
 };
@@ -8215,7 +8219,8 @@ module.exports = MusicParser;
 /***/ (function(module) {
 
 // MAE 23 Dec 2023 - Added Shaped Note Singing glyphs
-module.exports.legalAccents = ['trill', 'lowermordent', 'uppermordent', 'mordent', 'pralltriller', 'accent', 'fermata', 'invertedfermata', 'tenuto', '0', '1', '2', '3', '4', '5', '+', 'wedge', 'open', 'thumb', 'snap', 'turn', 'roll', 'breath', 'shortphrase', 'mediumphrase', 'longphrase', 'segno', 'coda', 'D.S.', 'D.C.', 'fine', 'beambr1', 'beambr2', 'slide', 'slideup', 'slidedown', 'marcato', 'upbow', 'downbow', '/', '//', '///', '////', 'trem1', 'trem2', 'trem3', 'trem4', 'turnx', 'invertedturn', 'invertedturnx', 'trill(', 'trill)', 'arpeggio', 'xstem', 'mark', 'umarcato', 'style=normal', 'style=harmonic', 'style=rhythm', 'style=x', 'style=triangle', 'style=sn_do','style=sn_re','style=sn_mi','style=sn_fa','style=sn_fa_l','style=sn_fa_r','style=sn_so','style=sn_la','style=sn_ti','D.C.alcoda', 'D.C.alfine', 'D.S.alcoda', 'D.S.alfine', 'editorial', 'courtesy'];
+// MAE 7 December 2024 - Added half-step trill
+module.exports.legalAccents = ['trill', 'trillh', 'lowermordent', 'uppermordent', 'mordent', 'pralltriller', 'accent', 'fermata', 'invertedfermata', 'tenuto', '0', '1', '2', '3', '4', '5', '+', 'wedge', 'open', 'thumb', 'snap', 'turn', 'roll', 'breath', 'shortphrase', 'mediumphrase', 'longphrase', 'segno', 'coda', 'D.S.', 'D.C.', 'fine', 'beambr1', 'beambr2', 'slide', 'slideup', 'slidedown', 'marcato', 'upbow', 'downbow', '/', '//', '///', '////', 'trem1', 'trem2', 'trem3', 'trem4', 'turnx', 'invertedturn', 'invertedturnx', 'trill(', 'trill)', 'arpeggio', 'xstem', 'mark', 'umarcato', 'style=normal', 'style=harmonic', 'style=rhythm', 'style=x', 'style=triangle', 'style=sn_do','style=sn_re','style=sn_mi','style=sn_fa','style=sn_fa_l','style=sn_fa_r','style=sn_so','style=sn_la','style=sn_ti','D.C.alcoda', 'D.C.alfine', 'D.S.alcoda', 'D.S.alfine', 'editorial', 'courtesy'];
 // MAE 15 April 2024 - Added ppppp
 module.exports.volumeDecorations = ['p', 'pp', 'f', 'ff', 'mf', 'mp', 'ppp', 'pppp', 'fff', 'ffff', 'sfz', 'ppppp'];
 module.exports.dynamicDecorations = ['crescendo(', 'crescendo)', 'diminuendo(', 'diminuendo)', 'glissando(', 'glissando)', '~(', '~)'];
@@ -12801,7 +12806,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     var ret = {};
     if (elem.decoration) {
       for (var d = 0; d < elem.decoration.length; d++) {
-        if (elem.decoration[d] === 'staccato') ret.thisBreakBetweenNotes = 'staccato';else if (elem.decoration[d] === 'tenuto') ret.thisBreakBetweenNotes = 'tenuto';else if (elem.decoration[d] === 'accent') ret.velocity = Math.min(127, velocity * 1.5);else if (elem.decoration[d] === 'trill') ret.noteModification = "trill";else if (elem.decoration[d] === 'lowermordent') ret.noteModification = "lowermordent";else if (elem.decoration[d] === 'uppermordent') ret.noteModification = "mordent";else if (elem.decoration[d] === 'mordent') ret.noteModification = "mordent";else if (elem.decoration[d] === 'turn') ret.noteModification = "turn";else if (elem.decoration[d] === 'roll') ret.noteModification = "roll";else if (elem.decoration[d] === 'pralltriller') ret.noteModification = "pralltriller";
+        if (elem.decoration[d] === 'staccato') ret.thisBreakBetweenNotes = 'staccato';else if (elem.decoration[d] === 'tenuto') ret.thisBreakBetweenNotes = 'tenuto';else if (elem.decoration[d] === 'accent') ret.velocity = Math.min(127, velocity * 1.5);else if (elem.decoration[d] === 'trill') ret.noteModification = "trill";else if (elem.decoration[d] === 'trillh') ret.noteModification = "trillh";else if (elem.decoration[d] === 'lowermordent') ret.noteModification = "lowermordent";else if (elem.decoration[d] === 'uppermordent') ret.noteModification = "mordent";else if (elem.decoration[d] === 'mordent') ret.noteModification = "mordent";else if (elem.decoration[d] === 'turn') ret.noteModification = "turn";else if (elem.decoration[d] === 'roll') ret.noteModification = "roll";else if (elem.decoration[d] === 'pralltriller') ret.noteModification = "pralltriller";
       }
     }
     return ret;
@@ -12828,6 +12833,24 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             style: 'decoration'
           });
           note = note === gOrnamentOffset ? 0 : gOrnamentOffset;
+          runningDuration -= shortestNote;
+          start += shortestNote;
+        }
+        break;
+      case "trillh":
+        var note = 1;
+        while (runningDuration > 0) {
+          currentTrack.push({
+            cmd: 'note',
+            pitch: p.pitch + note,
+            volume: p.volume,
+            start: start,
+            duration: shortestNote,
+            gap: 0,
+            instrument: currentInstrument,
+            style: 'decoration'
+          });
+          note = note === 1 ? 0 : 1;
           runningDuration -= shortestNote;
           start += shortestNote;
         }
@@ -24353,6 +24376,7 @@ var stackedDecoration = function stackedDecoration(decoration, width, abselem, y
     "mediumphrase": "scripts.mediumphrase",
     "longphrase": "scripts.longphrase",
     "trill": "scripts.trill",
+    "trillh": "scripts.trill",
     "roll": "scripts.roll",
     "irishroll": "scripts.roll",
     "marcato": "scripts.umarcato",
@@ -24414,6 +24438,7 @@ var stackedDecoration = function stackedDecoration(decoration, width, abselem, y
       case "mediumphrase":
       case "longphrase":
       case "trill":
+      case "trillh":
       case "roll":
       case "irishroll":
       case "marcato":
