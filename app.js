@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2169_120724_1600";
+var gVersionNumber="2170_120824_2300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -282,6 +282,9 @@ var gIncipitsColumns = 1;
 
 // Using Comhaltas naming for notes display
 var gUseComhaltasABC = false;
+
+// Used for share link override system for Comhaltas 
+var gForceComhaltasABC = false;
 
 // Zoom banner has been hidden
 var gZoomBannerHidden = false;
@@ -5141,7 +5144,6 @@ function GetAllTuneHyperlinks(theLinks) {
 			else{
 
 				// MAE 11 July 2024 - For open in editor
-
 				if (!gOpenInEditor){
 
 					// Add play link
@@ -16855,6 +16857,10 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
 		}
 	}
 
+	if (gUseComhaltasABC){
+		url += "&cce=1"	
+	}
+
 	// If just encoding some ABC, return it now
 	if (ABCtoEncode){
 		return url;
@@ -21032,6 +21038,16 @@ function processShareLink() {
 
 		}
 
+	}
+
+	// Force Comhaltas note name tablature?
+	gForceComhaltasABC = false;
+
+	if (urlParams.has("cce")) {
+		var theCCE = urlParams.get("cce");
+		if (theCCE == "1"){
+			gForceComhaltasABC = true;
+		}
 	}
 
 	// Is editing disabled?
@@ -26995,7 +27011,7 @@ function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 
 				var Tspans = theSVG.querySelectorAll('g[data-name="tabNumber"] > text > tspan');
 
-				if (!gUseComhaltasABC){
+				if (!(gUseComhaltasABC || gForceComhaltasABC)){
 
 					if (useSharps) {
 						for (x = 0; x < Tspans.length; x++) {
@@ -38337,6 +38353,8 @@ function ConfigureToolSettings() {
 
 	var theOldComhaltas = gUseComhaltasABC;
 
+	var theOldForceComhaltas = gForceComhaltasABC;
+
 	var oldiPadTwoColumn = giPadTwoColumn;
 
 	var oldRecorderTab = gShowRecorderTab;
@@ -38664,6 +38682,9 @@ function ConfigureToolSettings() {
 				}
 			}
 
+			// If the user goes into the controls, the setting value overrides the share override
+			gForceComhaltasABC = false;
+
 			gUseComhaltasABC = args.result.configure_comhaltas;
 			
 			gRollUseRollForIrishRoll = args.result.configure_RollUseRollForIrishRoll;
@@ -38760,8 +38781,8 @@ function ConfigureToolSettings() {
 			var radiovalue = GetRadioValue("notenodertab");
 
 			// Do we need to re-render?
-			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || (gForceLeftJustifyTitles != oldLeftJustifyTitles) || (oldCGDA != gShowCGDATab) || (oldDGDAE != gShowDGDAETab) || (oldRecorderTab != gShowRecorderTab) || (gRecorderAlto != oldRecorderAlto)|| bTabForceRedraw
-				|| ((radiovalue == "notenames") && (gUseComhaltasABC != theOldComhaltas))){
+			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || (gForceLeftJustifyTitles != oldLeftJustifyTitles) || (oldCGDA != gShowCGDATab) || (oldDGDAE != gShowDGDAETab) || (oldRecorderTab != gShowRecorderTab) || (gRecorderAlto != oldRecorderAlto) || bTabForceRedraw
+				|| ((radiovalue == "notenames") && ((gUseComhaltasABC != theOldComhaltas) || (theOldForceComhaltas && (!gUseComhaltasABC))))){
 				
 				RenderAsync(true, null, function(){
 
@@ -43548,6 +43569,7 @@ function DoStartup() {
 	gForcePDFFilename = "";
 	gFullScreenScaling = 50;
 	gIsDirty = false;
+	gForceComhaltasABC = false;
 
 	// Check if online (always returns true for normal case)
 	doOnlineCheck();

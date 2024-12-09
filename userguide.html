@@ -36,7 +36,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
-         
+        
         <style>
         
         p {
@@ -4091,6 +4091,9 @@
                 <p>Check this if you want to use the Comhaltas "Blackboard ABC" standard for ABC note names (D' E' F' instead of d e f for octave notes) when in note names tab display mode.</p>
                 <p><strong>Important:</strong> While the note Names display will show the Comhaltas-preferred note names, the ABC standard requires that the second octave C in the ABC itself either be represented by c or C' so that may requires some minor changes when pasting in your Comhaltas-formatted tunes.</p>
                 <p>Note name font and size in the tab is set by the <strong>Tab number font</strong> setting in the <strong>Configure ABC Fonts dialog</strong>.</p>
+                <p>When this item is checked, share URLs will contain an additional &cce=1 parameter.</p>
+                <p>When the tool sees this specific parameter on an opened share link, when note name tablature is enabled, it will use the Comhaltas style ABC, overriding the value of the note-name preference setting for this specific tune.</p>
+                <p>If the Settings dialog is accessed after a share URL with &cce=1 parameter is opened, the note name tablature display will match the dialog setting for the current session with the tune from the Share URL.</p> 
                 <hr>
                 <p><strong>Show CGDA as the 4-string tab option (default is GDAD)</strong></p>
                 <p>When checked replaces the GDAD tab button with a CDGA tab button for CGDA-tuned Mandola.</p>
