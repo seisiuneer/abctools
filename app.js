@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2171_120824_2300";
+var gVersionNumber="2172_120924_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27611,7 +27611,10 @@ function CursorControl() {
 
 				var theScrollTarget;
 
-				theScrollTarget = 3*(containerHeight)/4;
+				// 9 December 2024 - Moved scroll target down
+				// theScrollTarget = 3*(containerHeight)/4;
+
+				theScrollTarget = 2*(containerHeight)/3;
 
 				// Check if the SVG element is above or below the container's visible area
 				if (svgRect.top < gPlayerContainerRect.top) {
