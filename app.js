@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2170_120824_2300";
+var gVersionNumber="2171_120824_2300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16857,7 +16857,8 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
 		}
 	}
 
-	if (gUseComhaltasABC){
+	// If using Comhaltas or share link forced override
+	if (gUseComhaltasABC || gForceComhaltasABC){
 		url += "&cce=1"	
 	}
 
