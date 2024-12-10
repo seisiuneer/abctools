@@ -36,7 +36,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
-         
+        
         <style>
         
         p {
@@ -401,7 +401,7 @@
             <a style="text-decoration:none;" href="#tab_dulcimer">Inject Dulcimer Tab</a>
             <a style="text-decoration:none;" href="#tab_bamboo">Inject Bamboo Flute Tab</a>
             <a style="text-decoration:none;" href="#advanced_comhaltas">Comhaltas Transform</a>
-            <a style="text-decoration:none;" href="#advanced_shapenoteshapes">Inject Shape Note/Solfège</a>
+            <a style="text-decoration:none;" href="#advanced_shapenoteshapes">Inject Shapes/Solfège/Note Names</a>
             <a style="text-decoration:none;" href="#tablature_settings">Configuring Tablature/Solfège Fonts and Settings</a>
             <a style="text-decoration:none;" href="#clearing_tablature">Clearing the Injected Tablature</a>
             <a style="text-decoration:none;" href="#tablature_limitations">Tablature/Solfège Injection Issues and Limitations</a>
@@ -692,7 +692,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#tab_dulcimer">Inject Dulcimer Tab</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#tab_bamboo">Inject Bamboo Flute Tab</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_comhaltas">Comhaltas Transform</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#advanced_shapenoteshapes">Inject Shape Note/Solfège</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_shapenoteshapes">Inject Shapes/Solfège/Note Names</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#tablature_settings">Configuring Tablature/Solfège Fonts and Settings</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#clearing_tablature">Clearing the Injected Tablature</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#tablature_limitations">Tablature/Solfège Injection Issues and Limitations</a></p>
@@ -2373,8 +2373,8 @@
                 <p>To sing the note names, you can select the Solfège instrument (136) for a voice:</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/vwIVW55WOB4" title="Using the Solfège Instrument to Sing Tunes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p class="code">% Select the Solfège instrument:<br/>%%MIDI program 136</p>
-                <p>If you have injected Fixed (Do=C) Solfège under the notes using the <strong>Inject Shape Note/Solfège</strong> dialog, the sung notes will match the displayed note names.</p>
-                <p>If you have injected either Do-based minor or La-based minor Movable Do Solfège under the notes using the <strong>Inject Shape Note/Solfège</strong> dialog, you can transpose the sound to match without changing the displayed notation by adding the following voice directive to your ABC:</p>
+                <p>If you have injected Fixed (Do=C) Solfège under the notes using the <strong>Inject Shapes/Solfège/Note Names</strong> dialog, the sung notes will match the displayed note names.</p>
+                <p>If you have injected either Do-based minor or La-based minor Movable Do Solfège under the notes using the <strong>Inject Shapes/Solfège/Note Names</strong> dialog, you can transpose the sound to match without changing the displayed notation by adding the following voice directive to your ABC:</p>
                 <p class="code">% Set the voice transpose:<br/>V:1 transpose=5<br/><br/>% Select the Solfège instrument for this voice:<br/>%%MIDI program 136</p>
                 <p>Change the 5 to whatever is required to get the displayed solfège to match the sung note names.</p>
                 <p>There if the result sounds too high, you can also shift the required offset down by 12, this would be equivalent as far as the sung note names:</p>
