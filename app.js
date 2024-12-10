@@ -23762,7 +23762,7 @@ function DoInjectTablature_ShapeNotes(){
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Shape Note&nbsp;/&nbsp;Solfège&nbsp;/&nbsp;Note Names&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_shapenoteshapes" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 	  {html: '<p style="margin-top:36px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject Shape Note shapes, Solfège note names, Pitch Names, or ABC Note Names (Standard ABC or Comhaltas ABC) into all the tunes in the ABC text area.</p>'},	  
-	  {name: "Shape Note/Solfège style:", id: "shape_note_style", type:"select", options:shape_styles, cssClass:"configure_sn_settings_select"}, 
+	  {name: "Style to inject:", id: "shape_note_style", type:"select", options:shape_styles, cssClass:"configure_sn_settings_select"}, 
 	  {html: '<p style="margin-top:24px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},	  
 
 	];
