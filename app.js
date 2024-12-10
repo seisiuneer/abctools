@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2172_120924_1200";
+var gVersionNumber="2173_120924_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -390,6 +390,9 @@ var gOpenInEditor = false;
 
 // Clean smartquotes on open or paste
 var gCleanSmartQuotes = true;
+
+// Autoscroll target percentage
+var gAutoscrollTarget = 66;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -27609,12 +27612,8 @@ function CursorControl() {
 
 				// Keep several lines visible under the currently playing line
 
-				var theScrollTarget;
-
-				// 9 December 2024 - Moved scroll target down
-				// theScrollTarget = 3*(containerHeight)/4;
-
-				theScrollTarget = 2*(containerHeight)/3;
+				// Scroll target is now user controllable
+				var theScrollTarget = containerHeight*(gAutoscrollTarget/100);
 
 				// Check if the SVG element is above or below the container's visible area
 				if (svgRect.top < gPlayerContainerRect.top) {
@@ -27757,8 +27756,8 @@ function CursorControlOneTune() {
 					var containerHeight = window.innerHeight;
 
 					// Keep several lines visible under the currently playing line
-
-					var theScrollTarget = 2*(containerHeight)/3;
+					// Scroll target is now user controllable
+					var theScrollTarget = containerHeight*(gAutoscrollTarget/100);
 
 					//console.log("top: "+svgRect.top);
 
@@ -35162,6 +35161,20 @@ function GetInitialConfigurationSettings(){
 		gAutoscrollPlayer = true;
 	}
 
+	val = localStorage.AutoscrollTarget;
+	if (val){
+		var testVal = parseFloat(val);
+		if (!isNaN(testVal)){
+			gAutoscrollTarget = testVal;
+			if ((gAutoscrollTarget < 0) || (gAutoscrollTarget > 100)){
+				gAutoscrollTarget = 66;
+			}
+		}
+	}
+	else{
+		gAutoscrollTarget = 66;
+	}
+
 	val = localStorage.AutoSwingHornpipes;
 	if (val){
 		gAutoSwingHornpipes = (val == "true");
@@ -35808,6 +35821,8 @@ function SaveConfigurationSettings(){
 
 		// Save the player autoscroll preference
 		localStorage.AutoscrollPlayer = gAutoscrollPlayer;
+
+		localStorage.AutoscrollTarget = gAutoscrollTarget;
 
 		// Save the hornpipe auto-swing setting
 		localStorage.AutoSwingHornpipes = gAutoSwingHornpipes
@@ -37756,6 +37771,7 @@ function AdvancedSettings(){
 		configure_player_status_on_left: gPlayerStatusOnLeft,
 		configure_large_player_controls: gLargePlayerControls,
 		configure_autoscrollplayer: gAutoscrollPlayer,
+		configure_autoscrolltarget: gAutoscrollTarget,
 		configure_trainer_touch_controls: gTrainerTouchControls,
 		configure_metronome_volume: gMetronomeVolume,
 		configure_mp3_bitrate: gMP3Bitrate,
@@ -37763,8 +37779,6 @@ function AdvancedSettings(){
 		configure_mp3export_delayms: gBatchMP3ExportDelayMS,
 		configure_roll2_default: gRoll2DefaultParams,
 		configure_roll3_default: gRoll3DefaultParams,
-		configure_TuneDatabaseRetryTimeMS: gTuneDatabaseRetryTimeMS,
-		configure_TuneDatabaseRetryCount: gTuneDatabaseRetryCount,
 		configure_DisableRendering: gDisableNotationRendering,
 		configure_disable_selected_play:gDisableSelectedPlay,
 		configure_show_diagnostics: gShowDiagnostics,
@@ -37787,6 +37801,7 @@ function AdvancedSettings(){
 		{name: "          Show tune rendering progress in Javascript console", id: "configure_show_render_progress", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Disable abcjs notation rendering", id: "configure_DisableRendering", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Autoscroll player when playing", id: "configure_autoscrollplayer", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+		{name: "    Player autoscroll vertical position target percentage (default is 66):", id: "configure_autoscrolltarget", type:"text", cssClass:"advanced_settings2_form_text"},
 		{name: "    Player/Tune Trainer always plays full tune even if there is a selection region", id: "configure_disable_selected_play", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Player uses large controls (easier to touch on phone/tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Player tunebook navigation controls on left side", id: "configure_player_status_on_left", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
@@ -37816,8 +37831,6 @@ function AdvancedSettings(){
 	}
 
 	form = form.concat([
-		{name: "Tune search fetch retry delay in milliseconds (default is 3000):", id: "configure_TuneDatabaseRetryTimeMS", type:"text", cssClass:"advanced_settings2_form_text"},
-		{name: "Tune search fetch retry maximum count (default is 10):", id: "configure_TuneDatabaseRetryCount", type:"text", cssClass:"advanced_settings2_form_text"},
 		{name: "Default %roll_2_params:", id: "configure_roll2_default", type:"text", cssClass:"advanced_settings2_roll_text"},
 		{name: "Default %roll_3_params:", id: "configure_roll3_default", type:"text", cssClass:"advanced_settings2_roll_text"},
 		{name: "Private TinyURL API Token:", id: "configure_tinyurl", type:"text", cssClass:"advanced_settings2_tinyurl_text"},
@@ -37905,13 +37918,20 @@ function AdvancedSettings(){
 
 			gAutoscrollPlayer = args.result.configure_autoscrollplayer;
 
+			var val = parseFloat(args.result.configure_autoscrolltarget);
+			if (!isNaN(val)){
+				if ((gAutoscrollTarget >= 0) && (gAutoscrollTarget <= 100)){
+					gAutoscrollTarget = val;
+				}
+			}
+
 			gTrainerTouchControls = args.result.configure_trainer_touch_controls;
 
 			gDisableSelectedPlay = args.result.configure_disable_selected_play;
 
 			gReverbString = args.result.configure_reverb;
 
-			var val = args.result.configure_metronome_volume;
+			val = args.result.configure_metronome_volume;
 
 			val = parseInt(val);
 
@@ -37934,22 +37954,6 @@ function AdvancedSettings(){
 				if (gMP3Bitrate > 384){
 					gMP3Bitrate = 384;
 				}
-			}
-
-			var theRetryTime = args.result.configure_TuneDatabaseRetryTimeMS;
-
-			theRetryTime = parseInt(theRetryTime);
-
-			if ((!isNaN(theRetryTime)) && (theRetryTime > 0) && (theRetryTime <= 10000)){
-				gTuneDatabaseRetryTimeMS = theRetryTime;
-			}
-
-			var theRetryCount = args.result.configure_TuneDatabaseRetryCount;
-
-			theRetryCount = parseInt(theRetryCount);
-
-			if ((!isNaN(theRetryCount)) && (theRetryCount > 0) && (theRetryTime <= 100)){
-				gTuneDatabaseRetryCount = theRetryCount;
 			}
 
 			var the_roll2_raw = args.result.configure_roll2_default;
