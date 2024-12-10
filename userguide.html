@@ -36,7 +36,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
-        
+         
         <style>
         
         p {
@@ -2380,7 +2380,7 @@
                 <p>There if the result sounds too high, you can also shift the required offset down by 12, this would be equivalent as far as the sung note names:</p>
                 <p class="code">% Set the voice transpose:<br/>V:1 transpose=-7<br/><br/>% Select the Solfège instrument for this voice:<br/>%%MIDI program 136</p>
                 <p><strong>Note:</strong> When transposed the absolute pitch of the sound when transposed will not be correct as compared with the notation, but this is the best possible at this time. At least the visual display and the sung notes will match.</p>
-                <p>For details on injecting solfège under the notes, see <a href="#advanced_shapenoteshapes">Inject Shape Note/Solfège</a>.</p>
+                <p>For details on injecting solfège under the notes, see <a href="#advanced_shapenoteshapes">Inject Shapes/Solfège/Note Names</a>.</p>
                 <hr class="hidden-print" id="voice_hiding">
                 <h1 class="page_break_always">Voice Combining and Hiding<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Here is an end-to-end walkthrough of the process of voice combining, transposition, and hiding on a three-voice version of Greensleeves for Cello and Harpsichord:</p>
@@ -3247,7 +3247,7 @@
                 <h1 class="page_break_always">More ABC Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/more_abc_tools_18.jpg"/>
+                    <img class="image" loading="lazy" src="img/more_abc_tools_19.jpg"/>
                 </div>
                 <p>If you would like to only show the buttons for the features you commonly use and hide the others, click the controls icon at the top-right of the dialog to choose features of the dialog you would like to show/hide:</p>
                 <div class="image_holder_p">
@@ -3453,10 +3453,10 @@
                 <p>To inject instrument tab into ABC in this format, you will first need to convert the Comhaltas-preferred ABC to standard ABC the <strong>Comhaltas ABC Transform</strong> dialog's <strong>Comhaltas ABC to Standard ABC</strong> button first, then do the tablature injection.</p>
                 <p>After doing the tab injection, you can then transform the ABC back into the Comhaltas-preferred format using the the <strong>Comhaltas ABC Transform</strong> dialog's <strong>Standard ABC to Comhaltas ABC</strong> button</p>
                 <hr id="advanced_shapenoteshapes">
-                <p><strong>Inject Shape Note/Solfège</strong> - Injects "4-shape" or "7-shape" style shape note shapes into the ABC along with optional "fa/sol/la/ti" (4-shape) or "do/re/me/fa/sol/la/ti" (7-shape) solfège note names.</p>
-                <p>There are also additional options for injecting pitch names, fixed solfège at Do=C with or without chromatic note names, movable solfège based on key/mode, or movable solfège based on key/mode with shift for minor La.</p>
+                <p><strong>Inject Shapes/Solfège/Note Names</strong> - Injects "4-shape" or "7-shape" style shape note shapes into the ABC along with optional "fa/sol/la/ti" (4-shape) or "do/re/me/fa/sol/la/ti" (7-shape) solfège note names.</p>
+                <p>There are also additional options for injecting fixed solfège at Do=C with or without chromatic note names, movable solfège based on key/mode, movable solfège based on key/mode with shift for minor La, raw pitch names, ABC note names, or ABC note names in Comhaltas ABC format.</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/inject_shape_notes_5.jpg"/>
+                    <img class="image" loading="lazy" src="img/inject_shape_notes_6.jpg"/>
                 </div>
                 <p>For shape notes, the ABC injected before each note name to select the note head style is one of the following:</p>
                 <p class="code">!style=sn_do! C2<br/>!style=sn_re! D2<br/>!style=sn_mi! E2<br/>!style=sn_fa! F2 <br/>!style=sn_so! G2<br/>!style=sn_la! A2<br/>!style=sn_ti! B2<br/>!style=sn_do! c2<br/>!style=sn_re! d2<br/>!style=sn_mi! e2 <br/>!style=sn_fa! f2<br/>!style=sn_so! g2<br/>!style=sn_la! a2<br/>!style=sn_ti! b2</p>
