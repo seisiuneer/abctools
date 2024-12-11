@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2177_121124_0900";
+var gVersionNumber="2178_121124_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -15362,13 +15362,13 @@ function AddABC(){
 	if (gFeaturesShowExamples){
 		modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Add an Example ABC Tune</p>';
 		modal_msg += '<p style="text-align:center;margin-top:16px;">';
-		modal_msg  += '<input id="addnewreel" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleReel();" type="button" value="Add an Example Reel" title="Adds an example reel (Cooley\'s) to the end of the ABC">';
-		modal_msg  += '<input id="addnewjig" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleJig();" type="button" value="Add an Example Jig" title="Adds an example jig (The Kesh) to the end of the ABC">';
-		modal_msg  += '<input id="addnewhornpipe" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleHornpipe();" type="button" value="Add an Example Hornpipe" title="Adds an example Hornpipe (Alexander\'s) to the end of the ABC">';
+		modal_msg  += '<input id="addnewreel" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleReel();" type="button" value="Cooley\'s (reel)" title="Adds an example reel (Cooley\'s) to the end of the ABC">';
+		modal_msg  += '<input id="addnewjig" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleJig();" type="button" value="The Kesh (jig)" title="Adds an example jig (The Kesh) to the end of the ABC">';
+		modal_msg  += '<input id="addnewhornpipe" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleHornpipe();" type="button" value="Alexander\'s (hornpipe)" title="Adds an example Hornpipe (Alexander\'s) to the end of the ABC">';
 		modal_msg += '</p>';	
 		modal_msg += '<p style="text-align:center;margin-top:16px;">';
-		modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendJSBach();" type="button" value="Add J.S. Bach Two-Part Invention #1" title="Adds the J.S. Bach 2-Part Invention #1 to the end of the ABC">';
-		modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendJSBach2();" type="button" value="Add J.S. Bach BWV570 Fantasia" title="Adds the J.S. Bach BWV570 Fantasia for Pipe Organ to the end of the ABC">';
+		modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendJSBach();" type="button" value="J.S. Bach Two-Part Invention #1" title="Adds the J.S. Bach 2-Part Invention #1 to the end of the ABC">';
+		modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendJSBach2();" type="button" value="J.S. Bach BWV570 Fantasia" title="Adds the J.S. Bach BWV570 Fantasia for Pipe Organ to the end of the ABC">';
 		modal_msg += '</p>';
 	}
 
