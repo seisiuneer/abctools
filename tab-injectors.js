@@ -1418,6 +1418,8 @@ var angloFingeringsGenerator = function (theABC, callback){
 
         var badTunes = [];
 
+        var location = parseInt(gInjectTab_TabLocation);
+
         for (var i = 0; i < nTunes; ++i) {
 
             var thisTune = angloGetTuneByIndex(theABC, i);
@@ -1460,24 +1462,12 @@ var angloFingeringsGenerator = function (theABC, callback){
 
             }
 
-            // Default directives to inject into every tune
-            //%%titlefont Palatino 22
-            //%%subtitlefont Palantino 18
-            //%%infofont Palatino 14
-            //%%staffsep 80
-            //%%musicspace 10
-
-            // %%MIDI program and %MIDI chordprog are injected by the ABC Tool at PDF export time using the
-            // %add_all_playback_links <melody program> <bass/chord program>
-            // annotation
-
-            // Inject directives
-            // Reels: Palatino 9
-            // Jigs: Palatino 11
-
             thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%staffsep " + staffSep);
             thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
-            thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%musicspace " + musicSpace);
+
+            if ((location == 0) || gInjectTab_GaryCoover){
+                thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%musicspace " + musicSpace);
+            }
 
             result += thisTune;
 
@@ -2355,6 +2345,8 @@ var boxTabGenerator = function (theABC){
 
         var result = FindPreTuneHeader(theABC);
 
+        var location = parseInt(gInjectTab_TabLocation);
+        
         for (var i = 0; i < nTunes; ++i) {
 
             var thisTune = getTuneByIndex(theABC, i);
@@ -2377,24 +2369,12 @@ var boxTabGenerator = function (theABC){
 
             thisTune = generate_tab(thisTune);
 
-            // Default directives to inject into every tune
-            //%%titlefont Palatino 22
-            //%%subtitlefont Palantino 18
-            //%%infofont Palatino 14
-            //%%staffsep 80
-            //%%musicspace 10
-
-            // %%MIDI program and %MIDI chordprog are injected by the ABC Tool at PDF export time using the
-            // %add_all_playback_links <melody program> <bass/chord program>
-            // annotation
-
-            // Inject directives
-            // Reels: Palatino 9
-            // Jigs: Palatino 11
-
             thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%staffsep " + staffSep);
             thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
-            thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%musicspace " + musicSpace);
+
+            if (location == 0){
+                thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%musicspace " + musicSpace);
+            }
 
             result += thisTune;
 
@@ -3188,7 +3168,6 @@ var bambooFluteTabGenerator = function (theABC){
 
         var fontFamily = gInjectTab_FontFamily;
         var tabFontSize = gInjectTab_TabFontSize;
-        var musicSpace = gInjectTab_MusicSpace;
         var staffSep = gInjectTab_StaffSep;
         var tabLocation = parseInt(gInjectTab_TabLocation);
         var stripChords = gInjectTab_StripChords;
@@ -3214,21 +3193,6 @@ var bambooFluteTabGenerator = function (theABC){
             }
 
             thisTune = generate_tab(thisTune);
-
-            // Default directives to inject into every tune
-            //%%titlefont Palatino 22
-            //%%subtitlefont Palantino 18
-            //%%infofont Palatino 14
-            //%%staffsep 80
-            //%%musicspace 10
-
-            // %%MIDI program and %MIDI chordprog are injected by the ABC Tool at PDF export time using the
-            // %add_all_playback_links <melody program> <bass/chord program>
-            // annotation
-
-            // Inject directives
-            // Reels: Palatino 9
-            // Jigs: Palatino 11
 
             thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%staffsep " + staffSep);
   
@@ -5012,15 +4976,16 @@ var fiddleFingeringsGenerator = function (theABC,stringNameStyle){
         // Count the tunes in the ABC
         var theTunes = theABC.split(/^X:.*$/gm);
         var nTunes = theTunes.length - 1;
-
+        var musicSpace = gInjectTab_MusicSpace;
         var fontFamily = gInjectTab_FontFamily;
         var tabFontSize = gInjectTab_TabFontSize;
-        var musicSpace = gInjectTab_MusicSpace;
         var staffSep = gInjectTab_StaffSep;
         var tabLocation = parseInt(gInjectTab_TabLocation);
         var stripChords = gInjectTab_StripChords;
 
         var result = FindPreTuneHeader(theABC);
+        
+        var location = parseInt(gInjectTab_TabLocation);
 
         for (var i = 0; i < nTunes; ++i) {
 
@@ -5042,25 +5007,14 @@ var fiddleFingeringsGenerator = function (theABC,stringNameStyle){
                 thisTune = StripChordsOne(thisTune);
             }
 
-             thisTune = generate_tab(thisTune);
-
-            // Default directives to inject into every tune
-            //%%titlefont Palatino 22
-            //%%subtitlefont Palantino 18
-            //%%infofont Palatino 14
-            //%%staffsep 80
-            //%%musicspace 10
-
-            // %%MIDI program and %MIDI chordprog are injected by the ABC Tool at PDF export time using the
-            // %add_all_playback_links <melody program> <bass/chord program>
-            // annotation
-
-            // Inject directives
-            // Reels: Palatino 9
-            // Jigs: Palatino 11
+            thisTune = generate_tab(thisTune);
 
             thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%staffsep " + staffSep);
             thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
+
+            if (location == 0){
+                thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%musicspace " + musicSpace);
+            }
 
             result += thisTune;
 
@@ -5939,7 +5893,6 @@ var MDTablatureGenerator = function (theABC){
 
         var fontFamily = gInjectTab_FontFamily;
         var tabFontSize = gInjectTab_TabFontSize;
-        var musicSpace = gInjectTab_MusicSpace;
         var staffSep = gInjectTab_StaffSep;
         var tabLocation = parseInt(gInjectTab_TabLocation);
         var stripChords = gInjectTab_StripChords;
@@ -7076,7 +7029,6 @@ var shapeNoteGenerator = function (theABC){
 
         var fontFamily = gInjectTab_FontFamily;
         var tabFontSize = gInjectTab_TabFontSize;
-        var musicSpace = gInjectTab_MusicSpace;
         var staffSep = gInjectTab_StaffSep;
 
         // Clear all the params
@@ -7917,7 +7869,6 @@ var injectABCNoteNames = function (theABC){
 
         var fontFamily = gInjectTab_FontFamily;
         var tabFontSize = gInjectTab_TabFontSize;
-        var musicSpace = gInjectTab_MusicSpace;
         var staffSep = gInjectTab_StaffSep;
  
         var nTunes = countTunes(theABC);
