@@ -479,7 +479,7 @@
             <h3>iOS-Specific Topics</h3>
             <a style="text-decoration:none;" href="#iphone_ipad_chord_entry_issue_fix">iPhone/iPad Chord Entry Issue Fix</a>
             <a style="text-decoration:none;" href="#goodreader">Using Interactive PDF Tunebooks with GoodReader</a>
-            <a style="text-decoration:none;" href="#facebook_ios">Issues with the Tool in the Facebook iOS Webview</a>            
+            <a style="text-decoration:none;" href="#facebook_ios">Issues with the Tool in the Facebook iOS Webview</a>
             <a style="text-decoration:none;" href="#iosreset">Resetting the Tool on Safari for iOS</a>
             
             <h3>ABC 2.1 Specification and Quick Reference Card</h3>
@@ -800,7 +800,7 @@
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#iphone_ipad_chord_entry_issue_fix">iPhone/iPad Chord Entry Issue Fix</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#goodreader">Using Interactive PDF Tunebooks with GoodReader</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#facebook_ios">Issues with the Tool in the Facebook iOS Webview</a></p>           
+                        <p class="toc"><a style="text-decoration:none;" href="#facebook_ios">Issues with the Tool in the Facebook iOS Webview</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#iosreset">Resetting the Tool on Safari for iOS</a></p>
                     </div>
                     
@@ -1238,6 +1238,7 @@
                 <p><strong>Notation</strong> - Standard notation only.</p>
                 <hr>
                 <p><strong>Names</strong> - Shows standard notation with note names below.</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/A0xMH4oK8XQ" title="Note Name Display Options" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>Choose between standard ABC d e f style octave notes or Comhaltas-preferred "Blackboard ABC" D' E' F' octave note display in the <strong>Settings</strong> dialog.</p>
                 <p><strong>Important:</strong> While the note Names display will show the Comhaltas-preferred note names, the ABC standard requires that the second octave C in the ABC itself either be represented by c or C' so that may requires some minor changes when pasting in your Comhaltas-formatted tunes.</p>
                 <p>Note names font and size in the tab is set by the <strong>Tab number font</strong> value in the <strong>Configure ABC Rendering Fonts</strong> dialog.</p>
@@ -4093,7 +4094,7 @@
                 <p>Note name font and size in the tab is set by the <strong>Tab number font</strong> setting in the <strong>Configure ABC Fonts dialog</strong>.</p>
                 <p>When this item is checked, share URLs will contain an additional &cce=1 parameter.</p>
                 <p>When the tool sees this specific parameter on an opened share link, when note name tablature is enabled, it will use the Comhaltas style ABC, overriding the value of the note-name preference setting for this specific tune.</p>
-                <p>If the Settings dialog is accessed after a share URL with &cce=1 parameter is opened, the note name tablature display will match the dialog setting for the current session with the tune from the Share URL.</p> 
+                <p>If the Settings dialog is accessed after a share URL with &cce=1 parameter is opened, the note name tablature display will match the dialog setting for the current session with the tune from the Share URL.</p>
                 <hr>
                 <p><strong>Show CGDA as the 4-string tab option (default is GDAD)</strong></p>
                 <p>When checked replaces the GDAD tab button with a CDGA tab button for CGDA-tuned Mandola.</p>
@@ -4421,646 +4422,646 @@
                 <p>If you enable any of these options, the tool will be restarted after the operation is complete.</p>
                 <p>If cleared, the tool settings and databases will be recreated fresh after the tool restart and repopulated as you continue to use the tool.</p>
                 <hr>
-                <p><strong>Version Number</strong>
-                    <p>The current version number for the tool is displayed on the lower left of the dialog.</p>
-                    <p>Click the version number to bring up information about your browser configuration.</p>
-                    <p>This information may be useful to copy and paste into an email if you have a support issue.</p>
-                    <hr class="hidden-print" id="configure_fonts">
-                    <h1 class="page_break_always">Configuring ABC Rendering Fonts<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>Clicking the <strong>Font Settings</strong> button in the tool settings dialog shows a subdialog where you can configure all the fonts used for rendering the ABC.</p>
-                    <div class="image_holder_p">
-                        <img class="image" loading="lazy" src="img/rendering_fonts_8.jpg"/>
-                    </div>
-                    <hr>
-                    <p>Values are saved in browser storage and restored the next time the tool is run.</p>
-                    <p>For details on the use of each font, refer to the <strong><a style="text-decoration:none;" href="#custom_font_overrides">Custom Font Overrides</a></strong> information below.</p>
-                    <hr>
-                    <p>Click <strong>Save to File</strong> to save the ABC rendering font settings to a file.</p>
-                    <hr>
-                    <p>Click <strong>Load from File</strong> to load the ABC rendering font settings from a previously saved file.</p>
-                    <hr>
-                    <p>Click <strong>Reset to Default</strong> to reset the ABC rendering font settings to their original defaults.</p>
-                    <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/UpVXfi4bF3g" title="Configure ABC Rendering Fonts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                    <hr class="hidden-print" id="musicxml">
-                    <h1 class="page_break_always">MusicXML/MIDI Import Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <div class="image_holder_p">
-                        <img class="image" loading="lazy" src="img/musicxml_8.jpg">
-                    </div>
-                    <p>These settings are also used for MIDI import since MIDI is first converted to MusicXML and then imported.</p>
-                    <p><b>Bars-per-line:</b>&nbsp;&nbsp;Sets the number of bars per line. Every line of ABC will have the specified
-                    bars (measures). When both Character-per-line and Bars-per-line options are given, Bars-per-line is ignored. Default is: 4</p>
-                    <p><b>Characters-per-line:</b>&nbsp;&nbsp;Sets the maximum line length for ABC output to <b>CPL</b> characters. An integer number of bars, at least one, is always output. How many bars fit into the maximum line length is calculated from the note line, not from the lyric lines. Line- and page breaks in MusicXML are translated to '$' after the previous barline [or volta number]. Default is: 0</p>
-                    <p><b>Measure numbers:</b>&nbsp;&nbsp;-1: No measure numbers, 1..n: Number every n-th measure, 0: Number every system. Default is: -1</p>
-                    <p><b>Include measure numbers at end of staves:</b>&nbsp;&nbsp;If checked, will add the total measure count as an ABC comment at the end of each stave. Default is: Unchecked</p>
-                    <p>Note: If "No score line breaks:" is unchecked, measure numbers will not be appended to the end of the lines since the lines are post-processed for line breaks.</p>
-                    <p><b>Unfold repeats:</b>&nbsp;&nbsp;Turns off repeat translation and unfolds simple repeats instead. Default is: Unchecked</p>
-                    <p><b>Credit text filter (level 0-6):</b>&nbsp;&nbsp;Sets the filter level of the credit filter. This filter tries to eliminate
-                        redundant T: fields. The level C goes from 0 (default) to 6 (no filtering). A higher level
-                        does less filtering. The default filters as much as possible and only includes the XML
-                        credit elements if no title of movement-title is found. Level 6 does no filtering and includes
-                    all XML credit elements as T: fields. Default is: 0</p>
-                    <p><b>Denominator unit length for L: tags:</b>&nbsp;&nbsp;Sets the unit length for the ABC output to L:1/value. This overrides the computation
-                    of the optimal unit length per voice. Default is: 4</p>
-                    <p><b>%%MIDI options:</b>&nbsp;&nbsp;0: No MIDI, 1: Only program, 2: All MIDI. Default is: 1</p>
-                    <p><b>No score line breaks:</b>&nbsp;&nbsp;Disables translation of XML line breaks. No abc score line breaks will be output and processed. Default is: Unchecked</p>
-                    <p>When this is unchecked, the tool will automatically detect that there are line break markers in the ABC generated by the MusicXML transcoder, process the ABC to find the lines delimited by injected line break characters, and then combine the lines properly to create the final result.</p>
-                    <p>The line break markers themselves are removed in the process, giving a very clean result.</p>
-                    <p><b>No pedal directions:</b>&nbsp;&nbsp;Disables translation of XML pedal elements. Default is: Unchecked</p>
-                    <p><b>All directions to first voice:</b>&nbsp;&nbsp;Allocates all XML staff directions to the first voice of the staff. Normally a staff
-                    direction is allocated to the voice of the next note after the direction (if any). Default is: Unchecked</p>
-                    <p><b>Translate stem directions:</b>&nbsp;&nbsp;Translates stem directions present in the XML. Default is: Unchecked</p>
-                    <p><b>Inject Q: tag if not present:</b>&nbsp;&nbsp;If checked, will inject a Q: temp tag if not present in the imported ABC. Default is: Checked</p>
-                    <p><b>Q: tag value to inject:</b>&nbsp;&nbsp;If <b>Inject Q: tag if not present:</b> is checked, this is the Q: tempo tag value to inject. Default is: 100</p>
-                    <p>Click <strong>Reset to Default</strong> to reset the MusicXML/MIDI import settings to their original defaults.</p>
-                    <p>Values are saved in browser storage and restored the next time the tool is run.</p>
-                    <hr class="hidden-print" id="microtonal">
-                    <h1 class="page_break_always h1wide">Importing MusicMXL With Microtonal Accidentals<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>These are the only two microtonal accidentals that abcjs can display and play and that the MusicXML transcoder can deal with, the quarter-flat and quarter-sharp.</p>
-                    <p>When importing MusicXML, for the rest of the microtonal accidentals supported by MusicXML that can't be rendered or played by abcjs, the MusicXML transcoder will now put the accidental symbol under the note using ABC annotations strings.</p>
-                    <p>Here are all the native MusicXML accidentals that the MusicXML transcoder can now handle:</p>
-                    <p style="text-align: center;"><a href="https://www.w3.org/2021/06/musicxml40/musicxml-reference/data-types/accidental-value/" target="_blank">MusicXML Native Accidentals</a></p>
-                    <p>Additionally, some software like MuseScore have their own SMUFL font-based private method for specifying microntonal accidentals and don't exclusively use the MusicXML standard accidentals.</p>
-                    <p>In this case, the tool will detect many of the more common SMUFL font glyph directives and transcode them to a ABC version, but if it does not have a mapping, the ABC will show with a ♭?  or ♯? based on parsing the glyph name requested and trying to come up with something at least showing it should be "flat-ish" or "sharp-ish".</p>
-                    <p>Here's a screenshot showing a mix of abcjs supported microtonal accidentals and injected annotations for those unsupported in abcjs from a MuseScore MusicXML export:</p>
-                    <div class="image_holder_p">
-                        <img class="image" loading="lazy" src="img/microtonal1_1.jpg">
-                    </div>
-                    <p>Here are all the MuseScore exported MusicXML supported accidentals:</p>
-                    <div class="image_holder_p">
-                        <img class="image" loading="lazy" src="img/microtonal2_1.jpg">
-                    </div>
-                    <hr class="hidden-print" id="printing_your_tunes">
-                    <h1 class="page_break_always h1wide">Printing Your Tunes Using the Browser's Built-in Print Feature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p class="hidden-print" >Overview of printing from the browser:</p>
-                    <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/6AlzAVNTRQA" title="Printing you Tunes Using the Browser-native Print-to-PDF feature" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                    <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/Q9mE84W_VhA" title="Printing you Tunes Using the Browser-native Print-to-PDF feature" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                    <p></p>
-                    <p>You may quickly print your tunes or generate a PDF using your browser's built-in print and export PDF features.</p>
-                    <p>Tunes printed or exported from the browser are limited to one tune per page.</p>
-                    <p>You may choose portrait or landscape orientation from your browser's print settings.</p>
-                    <p>Additional advanced settings such as printing multiple-pages per page and setting custom margins may be available in your browser's print settings dialog.</p>
-                    <p>Experiment with both the browser's print settings page orientation and "multiple page on one page" options to see what is possible.</p>
-                    <p><strong>Note:</strong>If you want to print a tunebook automatically formated with multiple tunes per page, you must use the tool's Export PDF feature.</p>
-                    <hr class="hidden-print" id="customabcjsparams">
-                    <h1 class="page_break_always h1wide">Adding Custom abcjs Rendering Parameters<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/9TZPTf3UW4M" title="%abcjs_render_params Overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                    <p>The abcjs renderer has many additional optional parameters that can be specified at tune render time.</p>
-                    <p>Full details on the available options are here:</p>
-                    <p style="text-align: center"><a href="https://paulrosen.github.io/abcjs/visual/render-abc-options.html" target="_blank">abcjs RenderAbc options</a></p>
-                    <p>To add custom abcjs rendering parameters to a tune, you can add the following annotation anywhere in the tune:</p>
-                    <p class="code">%abcjs_render_params (JSON parameter string)</p>
-                    <p>Where the parameter string is an Javascript object in stringified JSON format.</p>
-                    <p>Example #1: Render all the notation in green:</p>
-                    <p class="code">%abcjs_render_params {"foregroundColor":"green"}</p>
-                    <p>Example #2: Enabling Jazz Chord formatting:</p>
-                    <p class="code">%abcjs_render_params {"jazzchords":true}</p>
-                    <p>Example #3: Reduce the space between the notation and the tablature (default is 3, unit is half the vertical space between the staff lines):</p>
-                    <p class="code">%abcjs_render_params {"tabPadding":0}</p>
-                    <p>Example #4: Transpose the written notation up one full step for Bb Clarinet, but plays one note lower:</p>
-                    <p class="code">%abcjs_render_params {"visualTranspose":2}</p>
-                    <p>Example #5: Forcing 8 bars per staff (requires staffwidth parameter):</p>
-                    <p class="code">%abcjs_render_params {"staffwidth":1000,"wrap":{"minSpacing":1.8, "maxSpacing":2.7, "preferredMeasuresPerLine":8}}</p>
-                    <p>Example #6: Generating custom Open-G (G-D-G-B) 4-string Mandolin tablature:</p>
-                    <p class="code">%abcjs_render_params {"tablature": [{"instrument": "violin","label": "Open G - GDGB","tuning": ["G,", "D", "G", "B"],"highestNote": "f'","capo": 0}]}</p>
-                    <p>Example #7: Generating custom Open-G (D-G-D-G-B) 5-string Cittern tablature:</p>
-                    <p class="code">%abcjs_render_params {“tablature”: [{“instrument”: “fivestring”,“label”: “Open G - DGDGB”,“tuning”: [“D,”, “G,”, “D”, “G”, “B”],“highestNote”: “f’”,“capo”: 0}]}</p>
-                    <p>Example #8: Generating custom Open-G (D-G-D-G-B-D) 6-string Guitar tablature:</p>
-                    <p class="code">%abcjs_render_params {"tablature": [{"instrument": "guitar","label": "Open G - DGDGBD","tuning": ["D,", "G,", "D", "G", "B", "d"],"highestNote": "f'","capo": 0}]}</p>
-                    <p><strong>Note:</strong> This feature allows very low level control of the abcjs renderer. Improper parameters may cause unpredictable results or crash the tool.</p>
-                    <p>Additional, use of some low-level abcjs rendering parameters such as "staffwidth" and "wrap" may cause issues with "Highlighting" mode in the tool.</p>
-                    <hr class="hidden-print" id="expandtowidest">
-                    <h1 class="page_break_always">Opting-out of "Expand to Widest" Layout<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>The original abcjs version 6.2.2 I used for the early versions of the tool would sometimes leave ragged right edges on staves, particulary for staves with many or changing numbers of measures per staff or on complex tunes brought into the tool through MusicXML import.</p>
-                    <p>As of 20 November 2023, with the release of abcjs version 6.2.3, a significant update to the library, I defaulted to expanding all staves to the widest in the tune, which produces very clean and aligned right staff edges in nearly all cases.</p>
-                    <p>If you wish to opt-out of the "expand to widest" layout for a specific tune, I've added a new first-class (starts with %%) ABC directive that can be put into any tune to force abcjs to use the original abcjs 6.2.2 layout calculation system:</p>
-                    <p class="code">%%noexpandtowidest</p>
-                    <p>Put this anywhere in a tune to use the original staff width calculation and layout solution for that tune. </p>
-                    <hr class="hidden-print" id="largeprint">
-                    <h1 class="page_break_always">"Large Print" Edition Tune Notation<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>Most of the time, people have asked how to cram as many tunes on a page as possible, but sometimes you want to go the other way, make the notation larger.</p>
-                    <p>Maybe you need reading glasses and are using the sheet music for a gig in low light and want the notation large.</p>
-                    <p>To do this with the new layout system, you'll need to override the expandtowidest feature in abcjs 6.2.3 by adding:</p>
-                    <p class="code">%%noexpandtowidest</p>
-                    <p>to your ABC, and then play around with the values of:</p>
-                    <p class="code">%%leftmargin<br/>
-                        %%rightmargin<br/>
-                    %%staffwidth</p>
-                    <p>For example:</p>
-                    <p class="code">%%noexpandtowidest<br/>
-                        %%leftmargin 0<br/>
-                        %%rightmargin 0<br/>
-                    %%staffwidth 400</p>
-                    <p>Once you add %%noexpandtowidest, you may in some cases have to adjust your ABC to get a consistent right edge to the staves.</p>
-                    <hr class="hidden-print" id="tabtranspose">
-                    <h1 class="page_break_always h1wide">Transposing Notation Independent of Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>For some tablatures like CGDAE where instruments maybe in either standard pitch or one octave lower, if you transpose the notes down an octave to get the tab on the lower strings, but want the notation displayed an octave up, you can add the following voice annotation to the ABC:</p>
-                    <p class="code">% This shifts the displayed notation up one octave but not the playback pitch:<br/>
-                    V:1 octave=1</p>
-                    <p>You can also transpose the pitch of the played music independently from the displayed notation:</p>
-                    <p class="code">% This will cause the playback to be shifted down an octave:<br/>
-                    V:1 transpose=-12</p>
-                    <p>These can be combined:</p>
-                    <p class="code">% This will cause the notation to be displayed one octave higher, but playback to be shifted down an octave:<br/>
-                    V:1 octave=1 transpose=-12</p>
-                    <hr class="hidden-print" id="learningtunes">
-                    <h1 class="page_break_always">Learning New Tunes Part-by-Part Using ABC<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>This video shows the process I used to learn tunes part-by-part using the tool:</p>
-                    <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/rxgqRh3JunI" title="Learning Tunes Part-by-Part" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                    <hr class="hidden-print" id="clicktrack">
-                    <h1 class="page_break_always">Adding a Two-Bar Click Intro to Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>If you want to add a two-bar click intro before a tune, here are ABC pattern templates I find work well for common styles of tunes:</p>
-                    <p>Add this before the start of a reel, before any repeats:</p>
-                    <p class="code">% Reel two-bar click intro<br/>
-                        V:1<br/>
-                        V:2<br/>
-                        %%MIDI program 128<br/>
-                        ^Cz3 ^Cz3|^Cz3 ^Cz3|<br/>
-                        V:1<br/>
-                    z8|z8|</p>
-                    <p>Add this before the start of a jig, before any repeats:</p>
-                    <p class="code">% Jig two-bar click intro<br/>
-                        V:1<br/>
-                        V:2<br/>
-                        %%MIDI program 128<br/>
-                        ^Cz2 ^Cz2|^Cz2 ^Cz2|<br/>
-                        V:1<br/>
-                    z6|z6|</p>
-                    <p>Add this before the start of a slide, before any repeats:</p>
-                    <p class="code">% Slide two-bar click intro<br/>
-                        V:1<br/>
-                        V:2<br/>
-                        %%MIDI program 128<br/>
-                        ^Cz2 ^Cz2 ^Cz2 ^Cz2|<br/>
-                        V:1<br/>
-                    z12|</p>
-                    <p>Add this before the start of a slip jig, before any repeats:</p>
-                    <p class="code">% Slip Jig two-bar click intro<br/>
-                        V:1<br/>
-                        V:2<br/>
-                        %%MIDI program 128<br/>
-                        ^Cz2 ^Cz2 ^Cz2|^Cz2 ^Cz2 ^Cz2|<br/>
-                        V:1<br/>
-                    z9|z9|</p>
-                    <p>Add this before the start of a polka, before any repeats:</p>
-                    <p class="code">% Polka two-bar click intro<br/>
-                        V:1<br/>
-                        V:2<br/>
-                        %%MIDI program 128<br/>
-                        ^Cz ^Cz|^Cz ^Cz|<br/>
-                        V:1<br/>
-                    z4|z4|</p>
-                    <p>Add this before the start of a waltz, before any repeats:</p>
-                    <p class="code">% Waltz two-bar click intro<br/>
-                        V:1<br/>
-                        V:2<br/>
-                        %%MIDI program 128<br/>
-                        ^Cz ^Cz ^Cz|^Cz ^Cz ^Cz|<br/>
-                        V:1<br/>
-                    z6|z6|</p>
-                    <p>A chart showing the complete mapping of MIDI drum sounds to ABC notes is here:</p>
-                    <p style="text-align: center;"><a href="#general_midi_percussion_map">General MIDI Drum Sound ABC Note Map</a></p>
-                    <p>For example, if you want a higher pitched click, for example for the first beat of the measures, change the:</p>
-                    <p class="code">% Low Bongo<br/>^C</p>
-                    <p>values in the click intro patterns to:</p>
-                    <p class="code">% High Bongo<br/>=C</p>
-                    <p style="text-align: center;">Demos:</p>
-                    <p style="text-align: center;"><a href="https://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuDCB7RAbApgTwOQGcoCVx800UoBZcAFgHoqoAZcCGgDigGlwBRAE0QBOUeOBgCAhrwCWAFymIAduLIBSKCvEAjAMYArHAH0ciAK4LeAM0UywFlCam916sAFUcaMOIVgAgtu1BaUUwYzNeMAB3AAs0HwAHFHEMKQUAczAZWLAAW1JEXgwQdRVyAEkAETKweIFENIkcsAAmaDUVNw8vH39AgWCfMPMo2ISklPTM7O1ooJxilVLK6pmg2vqWtpdfACF4W0EpzxkzNAAaME1ELNz8wu6I1f755w7iUkzIxEvxATBtFBSbQAazAqRkdSgADUQNAYc0SuUqjU6g1xE0IM12AA9eAALwAzLjCQAfYlE-EEknQ2FQPGsEn06kkkAAIm4OXZOx2vjAO2aYG4OxJ7M5-L8OzAvB5AHERRVWQAxGjcGgVPzqnYVXwVeVKlVqjV83wyxXU0Vcnl8gVCkUc1ni3ZStAWNJ68SuzzS3xmiBgVkKircRXqi3cAkVEAkgUBgPB0P27jNNIWEnMtn2tCSgAUBO5kqzKbtnKz4rSaGlet8NGrvMVvO19arNZrYHrztd5szObz3LAhdTFtLkt4LrdsY95alPN9-sD8f9ieTFijMfnIcXnO4VBJAF0oEA&format=noten&ssp=0&pdf=multi_a4&pn=none&fp=yes&name=two-bar-click-intro-demo&play=1" target="_blank">Reel with Two-Bar Click Intro</a></p>
-                    <p style="text-align: center;"><a href="https://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuMAsCmYDSSDOCoCVwCkBLAcygFlwA2AegA4oAZcCOqVcAcQFsBDAKygBheACceAE0IAXQgHsAdjwA2UAKRqeAIwDGfDAH0MsgK7zxAMwVSw5pccLi1asAFUMKHvLABBbdtkikgpgRqbiYADuyF4ADko8AJ6E8sRgUshgXEhKsuIJIGqqZACSACLFYDEissRiXGAATNDqqq7uYJ4+fgFBXqFmkdGV8UkpaRnaCD0YBapFZRWTPVU1jc3O3gBCgjYB4yhSpkgANGCasumZ2bkJHQNLgTNOrUSpUhGyZzwiYNpKhNoANZgZJSapQABqIGgUIahRK5Uq1VqPHqEAa9AAeoIAF4NbF4gA+BPxuIahMh0KgOMohJpFMJIAARBwWd4OGAOFtCUzSkytt4fJtxDzWUhxOFiBKeYImeLNmBeUzxJtvBSWWyOVzNjy+QKhSKNeLJSrdfyOAAxRWsjgAZhADOZrNVCpVhtlSGIKCVKrVGpdYBVHDN+vZaqg-q2geFMrlXutypjTNlxHMqSVPGIPFFTM0qbAxHtFKAA&format=noten&ssp=0&pdf=multi_a4&pn=none&fp=yes&name=two-bar-click-intro-demo&play=1" target="_blank">Jig with Two-Bar Click Intro</a></p>
-                    <p>You can add an ABC template containing all of these examples from the <strong>Add</strong> dialog and then copy and paste them into your tunes.</p>
-                    <hr class="hidden-print" id="abcadditions">
-                    <h1 class="page_break_always">Additional Tool-Specific ABC Directives<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>The following ABC annotations have been added to abcjs:</p>
-                    <p class="code">% Add a slide-up indication before the note<br/>!slideup! or J</br><br/>% Slide-up examples:</br>!slideup!G2 JG2</br></br>% Add a slide-down indication after the note<br/>!slidedown! or j</br><br/>% Slide-down examples:</br>!slidedown!G2 jG2</p>
-                    <p>Examples result in:</p>
-                    <div class="image_holder_p">
-                        <img class="image" loading="lazy" src="img/slide_demo_1.jpg"/>
-                    </div>
-                    <hr class="hidden-print" id="sequential_play">
-                    <h1 class="page_break_always h1wide">Creating Sets of Tunes that Will Play Sequentially in the Player<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>This video demonstrates how to create a set of tunes that will play continuously in the player:</p>
-                    <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/ck2kbpBgXRQ" title="Creating a set of tunes for sequential playback" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                    <p>Summary of the process shown in the video:</p>
-                    <p>1) Remove the X: tags from all but the first tune.</p>
-                    <p>2) Make sure the tunes are all run together by deleting any extra blank lines between the tunes.</p>
-                    <p>3) Delete the R: tags on all but the first tune to get rid of the stacked style directives at the top.</p>
-                    <p>4) Add space above the T: tags for the tunes after the first one using a %%text directive.</p>
-                    <p>5) Add a matching %%titlefont and %%subtitle font directives to the top of the set so that all the titles display with the same font.</p>
-                    <hr class="hidden-print" id="boxplayerstemplate">
-                    <h1 class="page_break_always h1wide">Useful Symbols for Annotating Box Transcriptions<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>Here are a set of useful symbols that you can copy and paste into the ABC for box transcription annotation:</p>
-                    <p class="code">%<br/>
-                        % Danny Flynn's symbols for box fingering transcriptions<br/>
-                        %<br/>
-                        % Copy and paste these as chord annotations before the notes:<br/>
-                        %<br/>
-                        % Finger 1: "1" "①"<br/>
-                        % Finger 2: "2" "②"<br/>
-                        % Finger 3: "3" "③"<br/>
-                        % Finger 4: "4" "④"<br/>
-                        % Slide down: "➘"<br/>
-                        % Slide up: "➚"<br/>
-                        % Slide straight down: "↓"<br/>
-                        % Cross over/under: "x"<br/>
-                        % Push: "⮐"<br/>
-                        % Draw: "⮑"<br/>
-                        %<br/>
-                        % Additional symbols for button numbering tablature:<br/>
-                        %<br/>
-                        % "1" "2" "3" "4" "5" "6" "7" "8" "9" "10" "11" "↑" "↓"<br/>
-                        % "①" "②" "③" "④" "⑤" "⑥" "⑦" "⑧" "⑨" "⑩" "⑪"<br/>
-                    %</p>
-                    <hr class="hidden-print" id="shapenote">
-                    <h1 class="page_break_always">Adding Shape Note Shapes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>The tool supports the standard shape note shapes for both 4-shape and 7-shape systems.</p>
-                    <p>You can turn any note into a shape note shape by adding any of the following prefixes to the ABC note name:</p>
-                    <p class="code">!style=sn_do! C2<br/>!style=sn_re! D2<br/>!style=sn_mi! E2<br/>!style=sn_fa! F2 <br/>!style=sn_so! G2<br/>!style=sn_la! A2<br/>!style=sn_ti! B2<br/>!style=sn_do! c2<br/>!style=sn_re! d2<br/>!style=sn_mi! e2 <br/>!style=sn_fa! f2<br/>!style=sn_so! g2<br/>!style=sn_la! a2<br/>!style=sn_ti! b2</p>
-                    <p>Which produces the following notation:</p>
-                    <div class="image_holder_p">
-                        <img class="image" loading="lazy" src="img/shape_note_1.jpg"/>
-                    </div>
-                    <p>The unfilled versions of the shapes are used for longer notes:</p>
-                    <p class="code">!style=sn_do! C4<br/>!style=sn_re! D4<br/>!style=sn_mi! E4<br/>!style=sn_fa! F4 <br/>!style=sn_so! G4<br/>!style=sn_la! A4<br/>!style=sn_ti! B4<br/>!style=sn_do! c4<br/>!style=sn_re! d4<br/>!style=sn_mi! e4<br/>!style=sn_fa! f4<br/>!style=sn_so! g4<br/>!style=sn_la! a4<br/>!style=sn_ti! b4</p>
-                    <p>Produces the following notation:</p>
-                    <div class="image_holder_p">
-                        <img class="image" loading="lazy" src="img/shape_note_2.jpg"/>
-                    </div>
-                    <hr class="hidden-print" id="midi_input">
-                    <h1 class="page_break_always">Typing ABC Using a MIDI Input Device<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>If your browser supports MIDI input, you will find this additional option in the settings dialog: <strong>Allow MIDI input for ABC text entry</strong></p>
-                    <p>If checked, you can enter ABC melody notes (chords are not supported) into the editor area using a USB or Bluetooth MIDI keyboard or other MIDI input device:</p>
-                    <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/8aV_iRAj_7E" title="MIDI Keyboard Input" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                    <p>This feature has been verified to work with the desktop version of Chrome and Firefox on a Mac, other browsers may also work as well.</p>
-                    <p>This feature has been tested with both USB and Bluetooth MIDI keyboards as well as a USB WARBL wind controller on a Mac running Chrome.</p>
-                    <p>To add a space, bar line, or other common useful ABC staff construction patterns after entering a MIDI note, you can use the MIDI text macro shortcuts described below.</p>
-                    <p>There are two available modes for MIDI input, depending on whether you have also checked <strong>MIDI input is key and mode aware (if unchecked, enters note names with no accidentals)</strong>.</p>
-                    <p><strong>When unchecked:</strong></p>
-                    <p>The note text entered will have only the note name and octave without any sharp, flat, or natural indication: (G, A, B, C D E F G A B c d e f g a b c' d' etc.)</p>
-                    <p>If you require specific sharps, flats, or naturals on the notes, you will need to add them manually.</p>
-                    <p><strong>When checked:</strong></p>
-                    <p>The MIDI input is aware of the key and mode of the current tune and will enter additional sharps, flats, or naturals as required.</p>
-                    <p>Note that since these accidentals will carry forward in playback to notes afterwards in the measure.</p>
-                    <p>For example, you may have to manually edit the ABC after entering a natural note if a sharp or flat note will follow in the same measure.</p>
-                    <p><strong>For both MIDI input modes:</strong></p>
-                    <p>The range of the ABC notes for MIDI note entry is from C,, to c'' (MIDI notes 36 - 96).</p>
-                    <p>The octave below C,, starting on C,,, (MIDI note 24) is used for inserting useful common ABC text macros.</p>
-                    <p>This map shows the MIDI note number and the text inserted:</p>
-                    <p class="code">24: Space<br/>
-                        25: Backspace<br/>
-                        26: |<br/>
-                        27: /<br/>
-                        28: 2 <br/>
-                        29: 3<br/>
-                        30: 4<br/>
-                        31: (3<br/>
-                        32: |:<br/>
-                        33: :|<br/>
-                        34: ||<br/>
-                    35: |]</p>
-                    <p>When using a MIDI wind controller like the WARBL, you should set up the response curves to generate as few transient notes as possible.</p>
-                    <p>Additionally, you can map the buttons on the back of the WARBL to send three of the text macro triggers, which makes it possible to enter entire staves of ABC just from the WARBL.</p>
-                    <p>Here are the WARBL breath settings and button mappings I use:</p>
-                    <div class="image_holder_p">
-                        <img class="image" loading="lazy" src="img/warbl_settings_2.jpg"/>
-                    </div>
-                    <p>I've configured the three buttons on the back of the WARBL to insert a space, bar line, and backspace (MIDI notes 24, 26, and 25).</p>
-                    <p>Setting them to "Momentary" speeds up the button response.</p>
-                    <p>Here's a demo video showing entering the notes and bar lines for "The Kesh" jig into the tool entirely from my WARBL:</p>
-                    <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/fFWkVW9dtqc" title="WARBL ABC Input" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                    <p><strong>Note on using the MIDI Input feature on Firefox:</strong></p>
-                    <p>When first enabling MIDI input on Firefox, you will be asked by the browser to give the tool permission to access MIDI devices on your computer.</p>
-                    <p>Once you grant permission, you will need to restart Firefox for MIDI input to work.</p>
-                    <hr class="hidden-print" id="iphone_ipad_chord_entry_issue_fix">
-                    <h1 class="page_break_always">iPhone/iPad Chord Entry Issue Fix<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>If you are trying to enter ABC chords, for example "D" or "Am", on an iPhone or iPad, iOS will, by default stick in "smart quotes" instead of standard double quotes.</p>
-                    <p>To fix this, go into your device's Settings and under the General/Keyboard tab, and turn off "Smart Punctuation".</p>
-                    <p>After you do this, you will be able to add standard double quotes.</p>
-                    <hr class="hidden-print" id="goodreader">
-                    <h1 class="page_break_always h1wide">Using Interactive PDF Tunebooks with GoodReader<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>If you are using GoodReader on iOS as your PDF reader and want to be able to play the tunes in my interactive PDF tunebooks, you'll need to change this one setting, available under the gear menu at the bottom of the app:</p>
-                    <p>Enable <strong>Use Safari for Internet links</strong>:</p>
-                    <div class="image_holder_p">
-                        <img class="image" loading="lazy" src="img/goodreader_1.jpg"/>
-                    </div>
-                    <hr class="hidden-print" id="facebook_ios">
-                    <h1 class="page_break_always h1wide">Issues with the Tool in the Facebook iOS Webview<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>Some time in November 2024, Facebook changed something about how their embedded webview works and now my tool doesn't work in that context.</p>
-                    <p>If you click a share link in the Facebook iOS app, when the tool launches in their embedded webview, it will not play and generally will not work correctly.</p>
-                    <p>For iOS 17 and 18, you will be presented with a button to click to open the page in Safari instead.</p>
-                    <p>For earlier versions of iOS, you'll be prompted to click on the <strong>...</strong> menu in the Facebook webview and then "Open in External Browser" to use the tool or the exported tunebook websites.</p>
-                    <hr class="hidden-print" id="iosreset">
-                    <h1 class="page_break_always h1wide">Resetting the Tool on Safari for iOS<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>If you are having issues updating the tool on iOS or it seems to be stuck in an odd state, the best way to fix it is to delete all data from Safari for michaeleskin.com and then reload the tool.</p>
-                    <p>This video will walk you through the steps:</p>
-                    <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/MKSr3Zag8Mg" title="Clearing all tool data from Safari" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                    <hr class="hidden-print" id="abc_specification">
-                    <h1 class="page_break_always">ABC Specification<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p style="text-align: center;">The full specification for ABC notation can be found at:</p>
-                    <p style="text-align: center;"><a href="abc_standard_v2.1.pdf" target="_blank">The ABC Music Standard 2.1 (Dec 2011)</a></p>
-                    <hr class="hidden-print" id="abc_21_quick_reference_card">
-                    <h1 class="page_break_always">ABC 2.1 Quick Reference Card<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p style="text-align: center;">Handy ABC 2.1 Quick Reference Card put together by Stephen Merrony: </p>
-                    <p style="text-align: center;"><a href="ABCquickRefv0_6.pdf" target="_blank">ABC Quick Reference Card</a></p>
-                    <hr class="hidden-print" id="demovideos">
-                    <h1 class="page_break_always">Demo Videos and Tutorials<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p style="text-align: center;">The full playlist of demo videos and tutorials can be found on YouTube at:</p>
-                    <p style="text-align: center;"><a href="https://www.youtube.com/playlist?list=PLZvjgS80ixQuX2-gMv25U3ECXiceGfTdr" target="_blank">ABC Transcription Tools Demo Videos and Tutorials</a></p>
-                    <hr class="hidden-print" id="quickeditor">
-                    <h1 class="page_break_always h1wide">Single Tune Optimized "Quick Editor" Version<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/J_ECzPtnf88" title="Quick Editor" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                    <p>For those who have asked for a version of the tool that is more optimized for single tune editing and playback, I've released a limited-functionality, online-only version of the tool:</p>
-                    <p style="text-align: center;"><strong>ABC Transcription Tools Quick Editor</strong></p>
-                    <p style="text-align: center;"><a href="https://michaeleskin.com/abctools/abctools-quick-editor.html" target="_blank">https://michaeleskin.com/abctools/abctools-quick-editor.html</a></p>
-                    <p>This version is optimized for single tune editing, only shows the notation for the first tune, and has the play controls for the tune being edited immediately below the ABC text editor area.</p>
-                    <p>This version is missing the following features that are in the standard version:</p>
-                    <p>1) No dedicated playback dialog or "Tune Trainer"</p>
-                    <p>2) No ability to play selected portions of tunes</p>
-                    <p>3) No PDF Export</p>
-                    <p>Other than that, it behaves exactly like the standard version.</p>
-                    <p>ABC files saved or shared from this version can be brought back into the standard or app versions for PDF export and use of the dedicated Player and Tune Trainer.</p>
-                    <p>Other than that, it behaves exactly like the standard version.</p>
-                    <p>Snapshots are shared between the standard version and Quick Editor version for quick transfer of ABC between the two editors.</p>
-                    <p>Another way to transfer an ABC from the Quick Editor to the standard version of the tool is to click <strong>Sharing</strong> and then click <strong>Add Open in Editor</strong>, then click on <strong>Test Share URL</strong>. The ABC in the Quick Editor will then open in the Editor for the standard version of the tool.</p>
-                    <hr class="hidden-print" id="app">
-                    <h1 class="page_break_always">Using the Tool Offline (Airplane Mode)<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>This version of the tool is capable of running offline.</p>
-                    <p>On first run of this version of the tool, the tool will cache all of it's code and resources for later use offline.</p>
-                    <p>By default, when running the tool offline, all instruments will be replaced by a piano sound which is embedded in the tool source.</p>
-                    <p>Percussion, primarily for use by the metronome, is also available.</p>
-                    <p>Also by default, reverb is not available offline since it also depends on reading a settings file from a remote site.</p>
-                    <hr>
-                    <p><strong>Playing tunes offline with your preferred instruments (requires you to opt-in and be aware of the notes database):</strong></p>
-                    <p>When you open a tune in the Player, the notes and reverb settings used in the tune are automatically added to the instrument notes and reverb settings database.</p>
-                    <p>It is possible to play tunes offline using the notes and reverb settings stored in the instrument notes and reverb settings database but this is feature you have to opt-in to by checking <strong><a href="#cached_instruments">Allow instrument notes and reverb settings database to be used offline</strong></a> on the <strong>Settings</strong> dialog.</p>
-                    <p>Full details on offline playback using stored notes and managing the offline notes database are in these sections of the User Guide:</p>
-                    <p><strong><a href="#cached_instruments">Allow instrument notes and reverb settings database to be used offline</strong></a></p>
-                    <p><strong><a href="#manage_databases">Managing Notes, Reverb, and Tune Search Databases for Offline Use</a></strong></p>
-                    <hr class="hidden-print" id="updatingthetool">
-                    <h1 class="page_break_always">Updating the Tool<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>The current version number for the tool is displayed on the lower left of the <strong>Settings</strong> and <strong>Advanced Settings</strong> dialogs.</p>
-                    <p>The latest version number for the tool can be obtained by going to the following website:</p>
-                    <p style="text-align:center;"><a href="https://michaeleskin.com/abctools/abc_tools_version.json" target="_blank">Latest ABC Transcription Tools Version Number</a></p>
-                    <hr>
-                    <p style="text-align:center;"><strong>New Version Available Notifications Appear in the Dropdown Menu</strong></p>
-                    <p>In general, the tool will normally update itself when launched if a new version is available.</p>
-                    <p>Occasionally, particularly on mobile devices, that auto-update process might not happen immediately.</p>
-                    <p>If an update for the tool is available online, the following items will appear at the bottom of the hamburger dropdown menu:</p>
-                    <p><strong>A new version is available!</strong></p>
-                    <p><strong>Click here to update the tool</strong></p>
-                    <p>If you click either item, after confirmation, the version of the tool stored in your browser will be updated and the tool restarted.</p>
-                    <p>After the tool is updated and restarted, you may need to refresh the tab one more time to see the updated version.</p>
-                    <hr>
-                    <p style="text-align:center;"><strong>Forcing an Update</strong></p>
-                    <p>If you ever want to force an update to the latest version even if one isn't offered on the dropdown menu, while online:</p>
-                    <p><strong>Method #1:</strong></p>
-                    <p>Bring up the <strong>Settings</strong> dialog.</p>
-                    <p>Click on the version number at the lower left of the dialog.</p>
-                    <p>You'll be asked to verify that you want to do the update.</p>
-                    <p>Click <strong>OK</strong>.</p>
-                    <p>The tool will update itself to the latest available version and then restart itself.</p>
-                    <p>After the tool is updated and restarted, you may need to hard-refresh the browser tab one more time to see the updated version.</p>
-                    <p><strong>Method #2:</strong></p>
-                    <p>Bring up the <strong>Advanced Settings</strong> dialog.</p>
-                    <p>Click <strong>Reset Settings</strong>.</p>
-                    <p>Check <strong>Force tool update after restart</strong>.</p>
-                    <p>Click <strong>OK</strong>.</p>
-                    <p>You'll be asked to verify that you want to do the update.</p>
-                    <p>Click <strong>OK</strong>.</p>
-                    <p>The tool will update itself to the latest available version and then restart itself.</p>
-                    <p>After the tool is updated and restarted, you may need to hard-refresh the browser tab one more time to see the updated version.</p>
-                    <hr>
-                    <p style="text-align:center;"><strong>Hard refreshing a browser tab</strong></p>
-                    <p>Here's how to hard-refresh a browser tab most of the popular browsers on both Windows and Mac:</p>
-                    <div class="image_holder_p">
-                        <img class="image" loading="lazy" src="img/hardrefresh.jpg"/>
-                    </div>
-                    <hr class="hidden-print" id="cleanreinstall">
-                    <h1 class="page_break_always">Forcing a Clean Reinstall of the Tool<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>If the tool seems to not be working correctly for example, tunes aren't playing no matter what you try or the notes database isn't getting populated, it's possible that something has gotten corrupted in the tool's storage in your browser.</p>
-                    <p>Generally removing all website data for the <strong>michaeleskin.com</strong> domain in your browser's storage settings, then restarting the tool will fix the issue.</p>
-                    <p>Here is how delete all data for the tool for popular browsers:</p>
-                    <p><strong>Firefox</strong>:<br/>Settings / Privacy and Security / Cookies and Site Data / Manage Data / Click on "michaeleskin.com" / Click "Remove Selected" / Click "Save Changes"</p>
-                    <p><strong>Chrome</strong>:<br/>Settings / Privacy and Security / View permissions and data stored across sites / Click trash can icon next to "michaeleskin.com"</p>
-                    <p><strong>Mac Safari</strong>:<br/>Preferences / Privacy / Manage Website Data / Click on "michaeleskin.com" / Click "Remove"</p>
-                    <p><strong>iOS Safari</strong>:<br/>Launch the Settings App / Safari / Advanced (very bottom of the screen) / Website Data (wait for list to load) / Edit / Delete "michaeleskin.com"</p>
-                    <p>After removing all data for the domain, quit and restart your browser, then force a hard refresh of the tool.</p>
-                    <p>Here's how to hard-refresh a browser tab most of the popular browsers on both Windows and Mac:</p>
-                    <div class="image_holder_p">
-                        <img class="image" loading="lazy" src="img/hardrefresh.jpg"/>
-                    </div>
-                    <hr class="hidden-print" id="uninstall">
-                    <h1 class="page_break_always">Uninstalling the Tool<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>When the tool first runs, to be able to run offline, it installs a service worker in your browser and stores the code and resources required to run the tool offline in a private browser cache.</p>
-                    <p>To unregister the service worker and delete the cached resources, go to:</p>
-                    <p style="text-align:center"><a href="https://michaeleskin.com/abctools/uninstall.html" target="_blank">ABC Transcription Tools Uninstaller</a></p>
-                    <hr class="hidden-print" id="webdeveloper">
-                    <h1 class="page_break_always h1wide">Embedding the ABC Tools on a Web Page<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/ADnyhXFvKAM" title="Web Page Embedding Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                    <p>Using the Share URLs generated by the tool either one at a time using the Sharing dialog or doing bulk export of tune names and share URLs using the "Export All Tunes"/"Export Share URLs as JSON", it is very simple to embed the tool's tune player on a web page, which also give the user access to the Tune Trainer and other features.</p>
-                    <p>If you would like to embed the tool's player on a web page, here are a couple of simple examples with the tool running in an iframe:</p>
-                    <p><strong>Example #1:</strong>&nbsp;&nbsp;Simple tune player iframe embed with three tunes in separate iframes.</p>
-                    <p><a href="https://michaeleskin.com/tools/abc_iframe_example.html" target="_blank">Click here to launch the example</a></p>
-                    <p>The source code for this example is available on the tool's GitHub repo:</p>
-                    <p><a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">https://github.com/seisiuneer/abctools/tree/main/tools</a></p>
-                    <p>The file used for this demo in the repo is:</p>
-                    <p>abc_iframe_example.html</p>
-                    <hr>
-                    <p><strong>Example #2:</strong>&nbsp;&nbsp;Demonstration of the tool embedded in an iframe combined with the tune names and Share URLs JSON exported by the tool to create a simple player application that allows you select and play over 100 tunes.</p>
-                    <p><a href="https://michaeleskin.com/tools/abc_dynamic_iframe.html" target="_blank">Click here to launch the example</a></p>
-                    <p>The source code for this example is available on the tool's GitHub repo:</p>
-                    <p><a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">https://github.com/seisiuneer/abctools/tree/main/tools</a></p>
-                    <p>The files used for this demo in the repo are:</p>
-                    <p>abc_dynamic_iframe.html</p>
-                    <p>abc_dynamic_iframe.css</p>
-                    <p>abc_dynamic_iframe_tunes.js</p>
-                    <p>abc_dynamic_iframe.js</p>
-                    <hr class="hidden-print" id="github">
-                    <h1 class="page_break_always">Source Code Available on GitHub<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p style="text-align: center;">Full project source code may be found at:</p>
-                    <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools" target="_blank">ABC Tools on GitHub</a></p>
-                    <hr class="hidden-print" id="run_from_source">
-                    <h1 class="page_break_always h1wide">Notes on Running the Tool from the GitHub Repo<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>After downloading and unzipping the source code from the GitHub repo, you can run the tool by double-clicking the <strong>abctools.html</strong> file.</p>
-                    <p>If you require the ability to play the tunes while not connected to the internet, run the <strong>abctools-offline.html</strong> file instead.</p>
-                    <p>I can't support having all the instruments available offline, but I can include the Javascript encoded data for one instrument, an Acoustic Grand Piano, and for the percussion instrument as part of the tool source code tree.</p>
-                    <p>When you start <strong>abctools-offline.html</strong>, it immediately grabs the online/offline state.</p>
-                    <p>If an offline state is detected at tool start time, when playing tunes, all instruments are replaced with an acoustic piano sound, and the percussion sounds (MIDI program 128) are also available (for use in the metronome, primarily).</p>
-                    <p>If the online status changes in the middle of using the tool, the change won't be detected until <strong>abctools-offline.html</strong> is reloaded.</p>
-                    <p>Since these local sound resources are huge (about 4 megabytes), even bigger than the entire rest of the tool source, I don't want to burden everyone with having to load them for a case that only would be possible when running the tool from the source code in an offline state, so they are only included in <strong>abctools-offline.html</strong> as well as the offline check code.</p>
-                    <hr class="hidden-print" id="privacy">
-                    <h1 class="page_break_always">Privacy<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>My ABC tools use local browser storage to save the tool's settings, user preferences, and Snapshots.</p>
-                    <p>Google Analytics are used in the tool to provide anonymized telemetry on the frequency of the use of specific features.</p>
-                    <p>No personal data is sent with this telemetry, only event category and event name, for example that the import MusicXML or export MIDI features were used.</p>
-                    <p>I use this data to prioritize new features and to better understand how people are using the tool.</p>
-                    <p>TinyURL does allow me to see some shortened URLs as they are created using my TinyURL account API key.</p>
-                    <p>I will never redistribute or in any way use a shortened Share URL you create.</p>
-                    <hr class="hidden-print" id="support">
-                    <h1 class="page_break_always">Support<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p style="text-align: center;">Have an issue with a specific tune, want to report a bug, or suggest a new feature?</p>
-                    <p style="text-align: center;">Click here for the project support page:</p>
-                    <p style="text-align: center;"><a href="support.html" target="_blank">ABC Transcription Tools Support</a></p>
-                    <hr class="hidden-print" id="tipjars">
-                    <h1 class="page_break_always">Tip Jars<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p style="text-align: center;">If you find my ABC Transcription Tools useful,<br/>please consider tossing a few bucks into one of my virtual tip jars:</p>
-                    <p style="text-align: center;" class="notranslate">PayPal</br><a href="https://paypal.me/MichaelEskin" target="_blank">https://paypal.me/MichaelEskin</a></p>
-                    <p style="text-align: center;" class="notranslate">Venmo</br>@MichaelEskin</p>
-                    <hr class="hidden-print">
-                    
+                <p><strong>Version Number</strong></p>
+                <p>The current version number for the tool is displayed on the lower left of the dialog.</p>
+                <p>Click the version number to bring up information about your browser configuration.</p>
+                <p>This information may be useful to copy and paste into an email if you have a support issue.</p>
+                <hr class="hidden-print" id="configure_fonts">
+                <h1 class="page_break_always">Configuring ABC Rendering Fonts<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>Clicking the <strong>Font Settings</strong> button in the tool settings dialog shows a subdialog where you can configure all the fonts used for rendering the ABC.</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/rendering_fonts_8.jpg"/>
                 </div>
+                <hr>
+                <p>Values are saved in browser storage and restored the next time the tool is run.</p>
+                <p>For details on the use of each font, refer to the <strong><a style="text-decoration:none;" href="#custom_font_overrides">Custom Font Overrides</a></strong> information below.</p>
+                <hr>
+                <p>Click <strong>Save to File</strong> to save the ABC rendering font settings to a file.</p>
+                <hr>
+                <p>Click <strong>Load from File</strong> to load the ABC rendering font settings from a previously saved file.</p>
+                <hr>
+                <p>Click <strong>Reset to Default</strong> to reset the ABC rendering font settings to their original defaults.</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/UpVXfi4bF3g" title="Configure ABC Rendering Fonts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <hr class="hidden-print" id="musicxml">
+                <h1 class="page_break_always">MusicXML/MIDI Import Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/musicxml_8.jpg">
+                </div>
+                <p>These settings are also used for MIDI import since MIDI is first converted to MusicXML and then imported.</p>
+                <p><b>Bars-per-line:</b>&nbsp;&nbsp;Sets the number of bars per line. Every line of ABC will have the specified
+                bars (measures). When both Character-per-line and Bars-per-line options are given, Bars-per-line is ignored. Default is: 4</p>
+                <p><b>Characters-per-line:</b>&nbsp;&nbsp;Sets the maximum line length for ABC output to <b>CPL</b> characters. An integer number of bars, at least one, is always output. How many bars fit into the maximum line length is calculated from the note line, not from the lyric lines. Line- and page breaks in MusicXML are translated to '$' after the previous barline [or volta number]. Default is: 0</p>
+                <p><b>Measure numbers:</b>&nbsp;&nbsp;-1: No measure numbers, 1..n: Number every n-th measure, 0: Number every system. Default is: -1</p>
+                <p><b>Include measure numbers at end of staves:</b>&nbsp;&nbsp;If checked, will add the total measure count as an ABC comment at the end of each stave. Default is: Unchecked</p>
+                <p>Note: If "No score line breaks:" is unchecked, measure numbers will not be appended to the end of the lines since the lines are post-processed for line breaks.</p>
+                <p><b>Unfold repeats:</b>&nbsp;&nbsp;Turns off repeat translation and unfolds simple repeats instead. Default is: Unchecked</p>
+                <p><b>Credit text filter (level 0-6):</b>&nbsp;&nbsp;Sets the filter level of the credit filter. This filter tries to eliminate
+                    redundant T: fields. The level C goes from 0 (default) to 6 (no filtering). A higher level
+                    does less filtering. The default filters as much as possible and only includes the XML
+                    credit elements if no title of movement-title is found. Level 6 does no filtering and includes
+                all XML credit elements as T: fields. Default is: 0</p>
+                <p><b>Denominator unit length for L: tags:</b>&nbsp;&nbsp;Sets the unit length for the ABC output to L:1/value. This overrides the computation
+                of the optimal unit length per voice. Default is: 4</p>
+                <p><b>%%MIDI options:</b>&nbsp;&nbsp;0: No MIDI, 1: Only program, 2: All MIDI. Default is: 1</p>
+                <p><b>No score line breaks:</b>&nbsp;&nbsp;Disables translation of XML line breaks. No abc score line breaks will be output and processed. Default is: Unchecked</p>
+                <p>When this is unchecked, the tool will automatically detect that there are line break markers in the ABC generated by the MusicXML transcoder, process the ABC to find the lines delimited by injected line break characters, and then combine the lines properly to create the final result.</p>
+                <p>The line break markers themselves are removed in the process, giving a very clean result.</p>
+                <p><b>No pedal directions:</b>&nbsp;&nbsp;Disables translation of XML pedal elements. Default is: Unchecked</p>
+                <p><b>All directions to first voice:</b>&nbsp;&nbsp;Allocates all XML staff directions to the first voice of the staff. Normally a staff
+                direction is allocated to the voice of the next note after the direction (if any). Default is: Unchecked</p>
+                <p><b>Translate stem directions:</b>&nbsp;&nbsp;Translates stem directions present in the XML. Default is: Unchecked</p>
+                <p><b>Inject Q: tag if not present:</b>&nbsp;&nbsp;If checked, will inject a Q: temp tag if not present in the imported ABC. Default is: Checked</p>
+                <p><b>Q: tag value to inject:</b>&nbsp;&nbsp;If <b>Inject Q: tag if not present:</b> is checked, this is the Q: tempo tag value to inject. Default is: 100</p>
+                <p>Click <strong>Reset to Default</strong> to reset the MusicXML/MIDI import settings to their original defaults.</p>
+                <p>Values are saved in browser storage and restored the next time the tool is run.</p>
+                <hr class="hidden-print" id="microtonal">
+                <h1 class="page_break_always h1wide">Importing MusicMXL With Microtonal Accidentals<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>These are the only two microtonal accidentals that abcjs can display and play and that the MusicXML transcoder can deal with, the quarter-flat and quarter-sharp.</p>
+                <p>When importing MusicXML, for the rest of the microtonal accidentals supported by MusicXML that can't be rendered or played by abcjs, the MusicXML transcoder will now put the accidental symbol under the note using ABC annotations strings.</p>
+                <p>Here are all the native MusicXML accidentals that the MusicXML transcoder can now handle:</p>
+                <p style="text-align: center;"><a href="https://www.w3.org/2021/06/musicxml40/musicxml-reference/data-types/accidental-value/" target="_blank">MusicXML Native Accidentals</a></p>
+                <p>Additionally, some software like MuseScore have their own SMUFL font-based private method for specifying microntonal accidentals and don't exclusively use the MusicXML standard accidentals.</p>
+                <p>In this case, the tool will detect many of the more common SMUFL font glyph directives and transcode them to a ABC version, but if it does not have a mapping, the ABC will show with a ♭?  or ♯? based on parsing the glyph name requested and trying to come up with something at least showing it should be "flat-ish" or "sharp-ish".</p>
+                <p>Here's a screenshot showing a mix of abcjs supported microtonal accidentals and injected annotations for those unsupported in abcjs from a MuseScore MusicXML export:</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/microtonal1_1.jpg">
+                </div>
+                <p>Here are all the MuseScore exported MusicXML supported accidentals:</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/microtonal2_1.jpg">
+                </div>
+                <hr class="hidden-print" id="printing_your_tunes">
+                <h1 class="page_break_always h1wide">Printing Your Tunes Using the Browser's Built-in Print Feature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p class="hidden-print" >Overview of printing from the browser:</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/6AlzAVNTRQA" title="Printing you Tunes Using the Browser-native Print-to-PDF feature" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/Q9mE84W_VhA" title="Printing you Tunes Using the Browser-native Print-to-PDF feature" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p></p>
+                <p>You may quickly print your tunes or generate a PDF using your browser's built-in print and export PDF features.</p>
+                <p>Tunes printed or exported from the browser are limited to one tune per page.</p>
+                <p>You may choose portrait or landscape orientation from your browser's print settings.</p>
+                <p>Additional advanced settings such as printing multiple-pages per page and setting custom margins may be available in your browser's print settings dialog.</p>
+                <p>Experiment with both the browser's print settings page orientation and "multiple page on one page" options to see what is possible.</p>
+                <p><strong>Note:</strong>If you want to print a tunebook automatically formated with multiple tunes per page, you must use the tool's Export PDF feature.</p>
+                <hr class="hidden-print" id="customabcjsparams">
+                <h1 class="page_break_always h1wide">Adding Custom abcjs Rendering Parameters<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/9TZPTf3UW4M" title="%abcjs_render_params Overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>The abcjs renderer has many additional optional parameters that can be specified at tune render time.</p>
+                <p>Full details on the available options are here:</p>
+                <p style="text-align: center"><a href="https://paulrosen.github.io/abcjs/visual/render-abc-options.html" target="_blank">abcjs RenderAbc options</a></p>
+                <p>To add custom abcjs rendering parameters to a tune, you can add the following annotation anywhere in the tune:</p>
+                <p class="code">%abcjs_render_params (JSON parameter string)</p>
+                <p>Where the parameter string is an Javascript object in stringified JSON format.</p>
+                <p>Example #1: Render all the notation in green:</p>
+                <p class="code">%abcjs_render_params {"foregroundColor":"green"}</p>
+                <p>Example #2: Enabling Jazz Chord formatting:</p>
+                <p class="code">%abcjs_render_params {"jazzchords":true}</p>
+                <p>Example #3: Reduce the space between the notation and the tablature (default is 3, unit is half the vertical space between the staff lines):</p>
+                <p class="code">%abcjs_render_params {"tabPadding":0}</p>
+                <p>Example #4: Transpose the written notation up one full step for Bb Clarinet, but plays one note lower:</p>
+                <p class="code">%abcjs_render_params {"visualTranspose":2}</p>
+                <p>Example #5: Forcing 8 bars per staff (requires staffwidth parameter):</p>
+                <p class="code">%abcjs_render_params {"staffwidth":1000,"wrap":{"minSpacing":1.8, "maxSpacing":2.7, "preferredMeasuresPerLine":8}}</p>
+                <p>Example #6: Generating custom Open-G (G-D-G-B) 4-string Mandolin tablature:</p>
+                <p class="code">%abcjs_render_params {"tablature": [{"instrument": "violin","label": "Open G - GDGB","tuning": ["G,", "D", "G", "B"],"highestNote": "f'","capo": 0}]}</p>
+                <p>Example #7: Generating custom Open-G (D-G-D-G-B) 5-string Cittern tablature:</p>
+                <p class="code">%abcjs_render_params {“tablature”: [{“instrument”: “fivestring”,“label”: “Open G - DGDGB”,“tuning”: [“D,”, “G,”, “D”, “G”, “B”],“highestNote”: “f’”,“capo”: 0}]}</p>
+                <p>Example #8: Generating custom Open-G (D-G-D-G-B-D) 6-string Guitar tablature:</p>
+                <p class="code">%abcjs_render_params {"tablature": [{"instrument": "guitar","label": "Open G - DGDGBD","tuning": ["D,", "G,", "D", "G", "B", "d"],"highestNote": "f'","capo": 0}]}</p>
+                <p><strong>Note:</strong> This feature allows very low level control of the abcjs renderer. Improper parameters may cause unpredictable results or crash the tool.</p>
+                <p>Additional, use of some low-level abcjs rendering parameters such as "staffwidth" and "wrap" may cause issues with "Highlighting" mode in the tool.</p>
+                <hr class="hidden-print" id="expandtowidest">
+                <h1 class="page_break_always">Opting-out of "Expand to Widest" Layout<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>The original abcjs version 6.2.2 I used for the early versions of the tool would sometimes leave ragged right edges on staves, particulary for staves with many or changing numbers of measures per staff or on complex tunes brought into the tool through MusicXML import.</p>
+                <p>As of 20 November 2023, with the release of abcjs version 6.2.3, a significant update to the library, I defaulted to expanding all staves to the widest in the tune, which produces very clean and aligned right staff edges in nearly all cases.</p>
+                <p>If you wish to opt-out of the "expand to widest" layout for a specific tune, I've added a new first-class (starts with %%) ABC directive that can be put into any tune to force abcjs to use the original abcjs 6.2.2 layout calculation system:</p>
+                <p class="code">%%noexpandtowidest</p>
+                <p>Put this anywhere in a tune to use the original staff width calculation and layout solution for that tune. </p>
+                <hr class="hidden-print" id="largeprint">
+                <h1 class="page_break_always">"Large Print" Edition Tune Notation<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>Most of the time, people have asked how to cram as many tunes on a page as possible, but sometimes you want to go the other way, make the notation larger.</p>
+                <p>Maybe you need reading glasses and are using the sheet music for a gig in low light and want the notation large.</p>
+                <p>To do this with the new layout system, you'll need to override the expandtowidest feature in abcjs 6.2.3 by adding:</p>
+                <p class="code">%%noexpandtowidest</p>
+                <p>to your ABC, and then play around with the values of:</p>
+                <p class="code">%%leftmargin<br/>
+                    %%rightmargin<br/>
+                %%staffwidth</p>
+                <p>For example:</p>
+                <p class="code">%%noexpandtowidest<br/>
+                    %%leftmargin 0<br/>
+                    %%rightmargin 0<br/>
+                %%staffwidth 400</p>
+                <p>Once you add %%noexpandtowidest, you may in some cases have to adjust your ABC to get a consistent right edge to the staves.</p>
+                <hr class="hidden-print" id="tabtranspose">
+                <h1 class="page_break_always h1wide">Transposing Notation Independent of Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>For some tablatures like CGDAE where instruments maybe in either standard pitch or one octave lower, if you transpose the notes down an octave to get the tab on the lower strings, but want the notation displayed an octave up, you can add the following voice annotation to the ABC:</p>
+                <p class="code">% This shifts the displayed notation up one octave but not the playback pitch:<br/>
+                V:1 octave=1</p>
+                <p>You can also transpose the pitch of the played music independently from the displayed notation:</p>
+                <p class="code">% This will cause the playback to be shifted down an octave:<br/>
+                V:1 transpose=-12</p>
+                <p>These can be combined:</p>
+                <p class="code">% This will cause the notation to be displayed one octave higher, but playback to be shifted down an octave:<br/>
+                V:1 octave=1 transpose=-12</p>
+                <hr class="hidden-print" id="learningtunes">
+                <h1 class="page_break_always">Learning New Tunes Part-by-Part Using ABC<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>This video shows the process I used to learn tunes part-by-part using the tool:</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/rxgqRh3JunI" title="Learning Tunes Part-by-Part" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <hr class="hidden-print" id="clicktrack">
+                <h1 class="page_break_always">Adding a Two-Bar Click Intro to Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>If you want to add a two-bar click intro before a tune, here are ABC pattern templates I find work well for common styles of tunes:</p>
+                <p>Add this before the start of a reel, before any repeats:</p>
+                <p class="code">% Reel two-bar click intro<br/>
+                    V:1<br/>
+                    V:2<br/>
+                    %%MIDI program 128<br/>
+                    ^Cz3 ^Cz3|^Cz3 ^Cz3|<br/>
+                    V:1<br/>
+                z8|z8|</p>
+                <p>Add this before the start of a jig, before any repeats:</p>
+                <p class="code">% Jig two-bar click intro<br/>
+                    V:1<br/>
+                    V:2<br/>
+                    %%MIDI program 128<br/>
+                    ^Cz2 ^Cz2|^Cz2 ^Cz2|<br/>
+                    V:1<br/>
+                z6|z6|</p>
+                <p>Add this before the start of a slide, before any repeats:</p>
+                <p class="code">% Slide two-bar click intro<br/>
+                    V:1<br/>
+                    V:2<br/>
+                    %%MIDI program 128<br/>
+                    ^Cz2 ^Cz2 ^Cz2 ^Cz2|<br/>
+                    V:1<br/>
+                z12|</p>
+                <p>Add this before the start of a slip jig, before any repeats:</p>
+                <p class="code">% Slip Jig two-bar click intro<br/>
+                    V:1<br/>
+                    V:2<br/>
+                    %%MIDI program 128<br/>
+                    ^Cz2 ^Cz2 ^Cz2|^Cz2 ^Cz2 ^Cz2|<br/>
+                    V:1<br/>
+                z9|z9|</p>
+                <p>Add this before the start of a polka, before any repeats:</p>
+                <p class="code">% Polka two-bar click intro<br/>
+                    V:1<br/>
+                    V:2<br/>
+                    %%MIDI program 128<br/>
+                    ^Cz ^Cz|^Cz ^Cz|<br/>
+                    V:1<br/>
+                z4|z4|</p>
+                <p>Add this before the start of a waltz, before any repeats:</p>
+                <p class="code">% Waltz two-bar click intro<br/>
+                    V:1<br/>
+                    V:2<br/>
+                    %%MIDI program 128<br/>
+                    ^Cz ^Cz ^Cz|^Cz ^Cz ^Cz|<br/>
+                    V:1<br/>
+                z6|z6|</p>
+                <p>A chart showing the complete mapping of MIDI drum sounds to ABC notes is here:</p>
+                <p style="text-align: center;"><a href="#general_midi_percussion_map">General MIDI Drum Sound ABC Note Map</a></p>
+                <p>For example, if you want a higher pitched click, for example for the first beat of the measures, change the:</p>
+                <p class="code">% Low Bongo<br/>^C</p>
+                <p>values in the click intro patterns to:</p>
+                <p class="code">% High Bongo<br/>=C</p>
+                <p style="text-align: center;">Demos:</p>
+                <p style="text-align: center;"><a href="https://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuDCB7RAbApgTwOQGcoCVx800UoBZcAFgHoqoAZcCGgDigGlwBRAE0QBOUeOBgCAhrwCWAFymIAduLIBSKCvEAjAMYArHAH0ciAK4LeAM0UywFlCam916sAFUcaMOIVgAgtu1BaUUwYzNeMAB3AAs0HwAHFHEMKQUAczAZWLAAW1JEXgwQdRVyAEkAETKweIFENIkcsAAmaDUVNw8vH39AgWCfMPMo2ISklPTM7O1ooJxilVLK6pmg2vqWtpdfACF4W0EpzxkzNAAaME1ELNz8wu6I1f755w7iUkzIxEvxATBtFBSbQAazAqRkdSgADUQNAYc0SuUqjU6g1xE0IM12AA9eAALwAzLjCQAfYlE-EEknQ2FQPGsEn06kkkAAIm4OXZOx2vjAO2aYG4OxJ7M5-L8OzAvB5AHERRVWQAxGjcGgVPzqnYVXwVeVKlVqjV83wyxXU0Vcnl8gVCkUc1ni3ZStAWNJ68SuzzS3xmiBgVkKircRXqi3cAkVEAkgUBgPB0P27jNNIWEnMtn2tCSgAUBO5kqzKbtnKz4rSaGlet8NGrvMVvO19arNZrYHrztd5szObz3LAhdTFtLkt4LrdsY95alPN9-sD8f9ieTFijMfnIcXnO4VBJAF0oEA&format=noten&ssp=0&pdf=multi_a4&pn=none&fp=yes&name=two-bar-click-intro-demo&play=1" target="_blank">Reel with Two-Bar Click Intro</a></p>
+                <p style="text-align: center;"><a href="https://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUAKuMAsCmYDSSDOCoCVwCkBLAcygFlwA2AegA4oAZcCOqVcAcQFsBDAKygBheACceAE0IAXQgHsAdjwA2UAKRqeAIwDGfDAH0MsgK7zxAMwVSw5pccLi1asAFUMKHvLABBbdtkikgpgRqbiYADuyF4ADko8AJ6E8sRgUshgXEhKsuIJIGqqZACSACLFYDEissRiXGAATNDqqq7uYJ4+fgFBXqFmkdGV8UkpaRnaCD0YBapFZRWTPVU1jc3O3gBCgjYB4yhSpkgANGCasumZ2bkJHQNLgTNOrUSpUhGyZzwiYNpKhNoANZgZJSapQABqIGgUIahRK5Uq1VqPHqEAa9AAeoIAF4NbF4gA+BPxuIahMh0KgOMohJpFMJIAARBwWd4OGAOFtCUzSkytt4fJtxDzWUhxOFiBKeYImeLNmBeUzxJtvBSWWyOVzNjy+QKhSKNeLJSrdfyOAAxRWsjgAZhADOZrNVCpVhtlSGIKCVKrVGpdYBVHDN+vZaqg-q2geFMrlXutypjTNlxHMqSVPGIPFFTM0qbAxHtFKAA&format=noten&ssp=0&pdf=multi_a4&pn=none&fp=yes&name=two-bar-click-intro-demo&play=1" target="_blank">Jig with Two-Bar Click Intro</a></p>
+                <p>You can add an ABC template containing all of these examples from the <strong>Add</strong> dialog and then copy and paste them into your tunes.</p>
+                <hr class="hidden-print" id="abcadditions">
+                <h1 class="page_break_always">Additional Tool-Specific ABC Directives<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>The following ABC annotations have been added to abcjs:</p>
+                <p class="code">% Add a slide-up indication before the note<br/>!slideup! or J</br><br/>% Slide-up examples:</br>!slideup!G2 JG2</br></br>% Add a slide-down indication after the note<br/>!slidedown! or j</br><br/>% Slide-down examples:</br>!slidedown!G2 jG2</p>
+                <p>Examples result in:</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/slide_demo_1.jpg"/>
+                </div>
+                <hr class="hidden-print" id="sequential_play">
+                <h1 class="page_break_always h1wide">Creating Sets of Tunes that Will Play Sequentially in the Player<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>This video demonstrates how to create a set of tunes that will play continuously in the player:</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/ck2kbpBgXRQ" title="Creating a set of tunes for sequential playback" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>Summary of the process shown in the video:</p>
+                <p>1) Remove the X: tags from all but the first tune.</p>
+                <p>2) Make sure the tunes are all run together by deleting any extra blank lines between the tunes.</p>
+                <p>3) Delete the R: tags on all but the first tune to get rid of the stacked style directives at the top.</p>
+                <p>4) Add space above the T: tags for the tunes after the first one using a %%text directive.</p>
+                <p>5) Add a matching %%titlefont and %%subtitle font directives to the top of the set so that all the titles display with the same font.</p>
+                <hr class="hidden-print" id="boxplayerstemplate">
+                <h1 class="page_break_always h1wide">Useful Symbols for Annotating Box Transcriptions<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>Here are a set of useful symbols that you can copy and paste into the ABC for box transcription annotation:</p>
+                <p class="code">%<br/>
+                    % Danny Flynn's symbols for box fingering transcriptions<br/>
+                    %<br/>
+                    % Copy and paste these as chord annotations before the notes:<br/>
+                    %<br/>
+                    % Finger 1: "1" "①"<br/>
+                    % Finger 2: "2" "②"<br/>
+                    % Finger 3: "3" "③"<br/>
+                    % Finger 4: "4" "④"<br/>
+                    % Slide down: "➘"<br/>
+                    % Slide up: "➚"<br/>
+                    % Slide straight down: "↓"<br/>
+                    % Cross over/under: "x"<br/>
+                    % Push: "⮐"<br/>
+                    % Draw: "⮑"<br/>
+                    %<br/>
+                    % Additional symbols for button numbering tablature:<br/>
+                    %<br/>
+                    % "1" "2" "3" "4" "5" "6" "7" "8" "9" "10" "11" "↑" "↓"<br/>
+                    % "①" "②" "③" "④" "⑤" "⑥" "⑦" "⑧" "⑨" "⑩" "⑪"<br/>
+                %</p>
+                <hr class="hidden-print" id="shapenote">
+                <h1 class="page_break_always">Adding Shape Note Shapes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>The tool supports the standard shape note shapes for both 4-shape and 7-shape systems.</p>
+                <p>You can turn any note into a shape note shape by adding any of the following prefixes to the ABC note name:</p>
+                <p class="code">!style=sn_do! C2<br/>!style=sn_re! D2<br/>!style=sn_mi! E2<br/>!style=sn_fa! F2 <br/>!style=sn_so! G2<br/>!style=sn_la! A2<br/>!style=sn_ti! B2<br/>!style=sn_do! c2<br/>!style=sn_re! d2<br/>!style=sn_mi! e2 <br/>!style=sn_fa! f2<br/>!style=sn_so! g2<br/>!style=sn_la! a2<br/>!style=sn_ti! b2</p>
+                <p>Which produces the following notation:</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/shape_note_1.jpg"/>
+                </div>
+                <p>The unfilled versions of the shapes are used for longer notes:</p>
+                <p class="code">!style=sn_do! C4<br/>!style=sn_re! D4<br/>!style=sn_mi! E4<br/>!style=sn_fa! F4 <br/>!style=sn_so! G4<br/>!style=sn_la! A4<br/>!style=sn_ti! B4<br/>!style=sn_do! c4<br/>!style=sn_re! d4<br/>!style=sn_mi! e4<br/>!style=sn_fa! f4<br/>!style=sn_so! g4<br/>!style=sn_la! a4<br/>!style=sn_ti! b4</p>
+                <p>Produces the following notation:</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/shape_note_2.jpg"/>
+                </div>
+                <hr class="hidden-print" id="midi_input">
+                <h1 class="page_break_always">Typing ABC Using a MIDI Input Device<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>If your browser supports MIDI input, you will find this additional option in the settings dialog: <strong>Allow MIDI input for ABC text entry</strong></p>
+                <p>If checked, you can enter ABC melody notes (chords are not supported) into the editor area using a USB or Bluetooth MIDI keyboard or other MIDI input device:</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/8aV_iRAj_7E" title="MIDI Keyboard Input" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>This feature has been verified to work with the desktop version of Chrome and Firefox on a Mac, other browsers may also work as well.</p>
+                <p>This feature has been tested with both USB and Bluetooth MIDI keyboards as well as a USB WARBL wind controller on a Mac running Chrome.</p>
+                <p>To add a space, bar line, or other common useful ABC staff construction patterns after entering a MIDI note, you can use the MIDI text macro shortcuts described below.</p>
+                <p>There are two available modes for MIDI input, depending on whether you have also checked <strong>MIDI input is key and mode aware (if unchecked, enters note names with no accidentals)</strong>.</p>
+                <p><strong>When unchecked:</strong></p>
+                <p>The note text entered will have only the note name and octave without any sharp, flat, or natural indication: (G, A, B, C D E F G A B c d e f g a b c' d' etc.)</p>
+                <p>If you require specific sharps, flats, or naturals on the notes, you will need to add them manually.</p>
+                <p><strong>When checked:</strong></p>
+                <p>The MIDI input is aware of the key and mode of the current tune and will enter additional sharps, flats, or naturals as required.</p>
+                <p>Note that since these accidentals will carry forward in playback to notes afterwards in the measure.</p>
+                <p>For example, you may have to manually edit the ABC after entering a natural note if a sharp or flat note will follow in the same measure.</p>
+                <p><strong>For both MIDI input modes:</strong></p>
+                <p>The range of the ABC notes for MIDI note entry is from C,, to c'' (MIDI notes 36 - 96).</p>
+                <p>The octave below C,, starting on C,,, (MIDI note 24) is used for inserting useful common ABC text macros.</p>
+                <p>This map shows the MIDI note number and the text inserted:</p>
+                <p class="code">24: Space<br/>
+                    25: Backspace<br/>
+                    26: |<br/>
+                    27: /<br/>
+                    28: 2 <br/>
+                    29: 3<br/>
+                    30: 4<br/>
+                    31: (3<br/>
+                    32: |:<br/>
+                    33: :|<br/>
+                    34: ||<br/>
+                35: |]</p>
+                <p>When using a MIDI wind controller like the WARBL, you should set up the response curves to generate as few transient notes as possible.</p>
+                <p>Additionally, you can map the buttons on the back of the WARBL to send three of the text macro triggers, which makes it possible to enter entire staves of ABC just from the WARBL.</p>
+                <p>Here are the WARBL breath settings and button mappings I use:</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/warbl_settings_2.jpg"/>
+                </div>
+                <p>I've configured the three buttons on the back of the WARBL to insert a space, bar line, and backspace (MIDI notes 24, 26, and 25).</p>
+                <p>Setting them to "Momentary" speeds up the button response.</p>
+                <p>Here's a demo video showing entering the notes and bar lines for "The Kesh" jig into the tool entirely from my WARBL:</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/fFWkVW9dtqc" title="WARBL ABC Input" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p><strong>Note on using the MIDI Input feature on Firefox:</strong></p>
+                <p>When first enabling MIDI input on Firefox, you will be asked by the browser to give the tool permission to access MIDI devices on your computer.</p>
+                <p>Once you grant permission, you will need to restart Firefox for MIDI input to work.</p>
+                <hr class="hidden-print" id="iphone_ipad_chord_entry_issue_fix">
+                <h1 class="page_break_always">iPhone/iPad Chord Entry Issue Fix<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>If you are trying to enter ABC chords, for example "D" or "Am", on an iPhone or iPad, iOS will, by default stick in "smart quotes" instead of standard double quotes.</p>
+                <p>To fix this, go into your device's Settings and under the General/Keyboard tab, and turn off "Smart Punctuation".</p>
+                <p>After you do this, you will be able to add standard double quotes.</p>
+                <hr class="hidden-print" id="goodreader">
+                <h1 class="page_break_always h1wide">Using Interactive PDF Tunebooks with GoodReader<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>If you are using GoodReader on iOS as your PDF reader and want to be able to play the tunes in my interactive PDF tunebooks, you'll need to change this one setting, available under the gear menu at the bottom of the app:</p>
+                <p>Enable <strong>Use Safari for Internet links</strong>:</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/goodreader_1.jpg"/>
+                </div>
+                <hr class="hidden-print" id="facebook_ios">
+                <h1 class="page_break_always h1wide">Issues with the Tool in the Facebook iOS Webview<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>Some time in November 2024, Facebook changed something about how their embedded webview works and now my tool doesn't work in that context.</p>
+                <p>If you click a share link in the Facebook iOS app, when the tool launches in their embedded webview, it will not play and generally will not work correctly.</p>
+                <p>For iOS 17 and 18, you will be presented with a button to click to open the page in Safari instead.</p>
+                <p>For earlier versions of iOS, you'll be prompted to click on the <strong>...</strong> menu in the Facebook webview and then "Open in External Browser" to use the tool or the exported tunebook websites.</p>
+                <hr class="hidden-print" id="iosreset">
+                <h1 class="page_break_always h1wide">Resetting the Tool on Safari for iOS<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>If you are having issues updating the tool on iOS or it seems to be stuck in an odd state, the best way to fix it is to delete all data from Safari for michaeleskin.com and then reload the tool.</p>
+                <p>This video will walk you through the steps:</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/MKSr3Zag8Mg" title="Clearing all tool data from Safari" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <hr class="hidden-print" id="abc_specification">
+                <h1 class="page_break_always">ABC Specification<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p style="text-align: center;">The full specification for ABC notation can be found at:</p>
+                <p style="text-align: center;"><a href="abc_standard_v2.1.pdf" target="_blank">The ABC Music Standard 2.1 (Dec 2011)</a></p>
+                <hr class="hidden-print" id="abc_21_quick_reference_card">
+                <h1 class="page_break_always">ABC 2.1 Quick Reference Card<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p style="text-align: center;">Handy ABC 2.1 Quick Reference Card put together by Stephen Merrony: </p>
+                <p style="text-align: center;"><a href="ABCquickRefv0_6.pdf" target="_blank">ABC Quick Reference Card</a></p>
+                <hr class="hidden-print" id="demovideos">
+                <h1 class="page_break_always">Demo Videos and Tutorials<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p style="text-align: center;">The full playlist of demo videos and tutorials can be found on YouTube at:</p>
+                <p style="text-align: center;"><a href="https://www.youtube.com/playlist?list=PLZvjgS80ixQuX2-gMv25U3ECXiceGfTdr" target="_blank">ABC Transcription Tools Demo Videos and Tutorials</a></p>
+                <hr class="hidden-print" id="quickeditor">
+                <h1 class="page_break_always h1wide">Single Tune Optimized "Quick Editor" Version<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/J_ECzPtnf88" title="Quick Editor" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>For those who have asked for a version of the tool that is more optimized for single tune editing and playback, I've released a limited-functionality, online-only version of the tool:</p>
+                <p style="text-align: center;"><strong>ABC Transcription Tools Quick Editor</strong></p>
+                <p style="text-align: center;"><a href="https://michaeleskin.com/abctools/abctools-quick-editor.html" target="_blank">https://michaeleskin.com/abctools/abctools-quick-editor.html</a></p>
+                <p>This version is optimized for single tune editing, only shows the notation for the first tune, and has the play controls for the tune being edited immediately below the ABC text editor area.</p>
+                <p>This version is missing the following features that are in the standard version:</p>
+                <p>1) No dedicated playback dialog or "Tune Trainer"</p>
+                <p>2) No ability to play selected portions of tunes</p>
+                <p>3) No PDF Export</p>
+                <p>Other than that, it behaves exactly like the standard version.</p>
+                <p>ABC files saved or shared from this version can be brought back into the standard or app versions for PDF export and use of the dedicated Player and Tune Trainer.</p>
+                <p>Other than that, it behaves exactly like the standard version.</p>
+                <p>Snapshots are shared between the standard version and Quick Editor version for quick transfer of ABC between the two editors.</p>
+                <p>Another way to transfer an ABC from the Quick Editor to the standard version of the tool is to click <strong>Sharing</strong> and then click <strong>Add Open in Editor</strong>, then click on <strong>Test Share URL</strong>. The ABC in the Quick Editor will then open in the Editor for the standard version of the tool.</p>
+                <hr class="hidden-print" id="app">
+                <h1 class="page_break_always">Using the Tool Offline (Airplane Mode)<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>This version of the tool is capable of running offline.</p>
+                <p>On first run of this version of the tool, the tool will cache all of it's code and resources for later use offline.</p>
+                <p>By default, when running the tool offline, all instruments will be replaced by a piano sound which is embedded in the tool source.</p>
+                <p>Percussion, primarily for use by the metronome, is also available.</p>
+                <p>Also by default, reverb is not available offline since it also depends on reading a settings file from a remote site.</p>
+                <hr>
+                <p><strong>Playing tunes offline with your preferred instruments (requires you to opt-in and be aware of the notes database):</strong></p>
+                <p>When you open a tune in the Player, the notes and reverb settings used in the tune are automatically added to the instrument notes and reverb settings database.</p>
+                <p>It is possible to play tunes offline using the notes and reverb settings stored in the instrument notes and reverb settings database but this is feature you have to opt-in to by checking <strong><a href="#cached_instruments">Allow instrument notes and reverb settings database to be used offline</strong></a> on the <strong>Settings</strong> dialog.</p>
+                <p>Full details on offline playback using stored notes and managing the offline notes database are in these sections of the User Guide:</p>
+                <p><strong><a href="#cached_instruments">Allow instrument notes and reverb settings database to be used offline</strong></a></p>
+                <p><strong><a href="#manage_databases">Managing Notes, Reverb, and Tune Search Databases for Offline Use</a></strong></p>
+                <hr class="hidden-print" id="updatingthetool">
+                <h1 class="page_break_always">Updating the Tool<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>The current version number for the tool is displayed on the lower left of the <strong>Settings</strong> and <strong>Advanced Settings</strong> dialogs.</p>
+                <p>The latest version number for the tool can be obtained by going to the following website:</p>
+                <p style="text-align:center;"><a href="https://michaeleskin.com/abctools/abc_tools_version.json" target="_blank">Latest ABC Transcription Tools Version Number</a></p>
+                <hr>
+                <p style="text-align:center;"><strong>New Version Available Notifications Appear in the Dropdown Menu</strong></p>
+                <p>In general, the tool will normally update itself when launched if a new version is available.</p>
+                <p>Occasionally, particularly on mobile devices, that auto-update process might not happen immediately.</p>
+                <p>If an update for the tool is available online, the following items will appear at the bottom of the hamburger dropdown menu:</p>
+                <p><strong>A new version is available!</strong></p>
+                <p><strong>Click here to update the tool</strong></p>
+                <p>If you click either item, after confirmation, the version of the tool stored in your browser will be updated and the tool restarted.</p>
+                <p>After the tool is updated and restarted, you may need to refresh the tab one more time to see the updated version.</p>
+                <hr>
+                <p style="text-align:center;"><strong>Forcing an Update</strong></p>
+                <p>If you ever want to force an update to the latest version even if one isn't offered on the dropdown menu, while online:</p>
+                <p><strong>Method #1:</strong></p>
+                <p>Bring up the <strong>Settings</strong> dialog.</p>
+                <p>Click on the version number at the lower left of the dialog.</p>
+                <p>You'll be asked to verify that you want to do the update.</p>
+                <p>Click <strong>OK</strong>.</p>
+                <p>The tool will update itself to the latest available version and then restart itself.</p>
+                <p>After the tool is updated and restarted, you may need to hard-refresh the browser tab one more time to see the updated version.</p>
+                <p><strong>Method #2:</strong></p>
+                <p>Bring up the <strong>Advanced Settings</strong> dialog.</p>
+                <p>Click <strong>Reset Settings</strong>.</p>
+                <p>Check <strong>Force tool update after restart</strong>.</p>
+                <p>Click <strong>OK</strong>.</p>
+                <p>You'll be asked to verify that you want to do the update.</p>
+                <p>Click <strong>OK</strong>.</p>
+                <p>The tool will update itself to the latest available version and then restart itself.</p>
+                <p>After the tool is updated and restarted, you may need to hard-refresh the browser tab one more time to see the updated version.</p>
+                <hr>
+                <p style="text-align:center;"><strong>Hard refreshing a browser tab</strong></p>
+                <p>Here's how to hard-refresh a browser tab most of the popular browsers on both Windows and Mac:</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/hardrefresh.jpg"/>
+                </div>
+                <hr class="hidden-print" id="cleanreinstall">
+                <h1 class="page_break_always">Forcing a Clean Reinstall of the Tool<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>If the tool seems to not be working correctly for example, tunes aren't playing no matter what you try or the notes database isn't getting populated, it's possible that something has gotten corrupted in the tool's storage in your browser.</p>
+                <p>Generally removing all website data for the <strong>michaeleskin.com</strong> domain in your browser's storage settings, then restarting the tool will fix the issue.</p>
+                <p>Here is how delete all data for the tool for popular browsers:</p>
+                <p><strong>Firefox</strong>:<br/>Settings / Privacy and Security / Cookies and Site Data / Manage Data / Click on "michaeleskin.com" / Click "Remove Selected" / Click "Save Changes"</p>
+                <p><strong>Chrome</strong>:<br/>Settings / Privacy and Security / View permissions and data stored across sites / Click trash can icon next to "michaeleskin.com"</p>
+                <p><strong>Mac Safari</strong>:<br/>Preferences / Privacy / Manage Website Data / Click on "michaeleskin.com" / Click "Remove"</p>
+                <p><strong>iOS Safari</strong>:<br/>Launch the Settings App / Safari / Advanced (very bottom of the screen) / Website Data (wait for list to load) / Edit / Delete "michaeleskin.com"</p>
+                <p>After removing all data for the domain, quit and restart your browser, then force a hard refresh of the tool.</p>
+                <p>Here's how to hard-refresh a browser tab most of the popular browsers on both Windows and Mac:</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/hardrefresh.jpg"/>
+                </div>
+                <hr class="hidden-print" id="uninstall">
+                <h1 class="page_break_always">Uninstalling the Tool<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>When the tool first runs, to be able to run offline, it installs a service worker in your browser and stores the code and resources required to run the tool offline in a private browser cache.</p>
+                <p>To unregister the service worker and delete the cached resources, go to:</p>
+                <p style="text-align:center"><a href="https://michaeleskin.com/abctools/uninstall.html" target="_blank">ABC Transcription Tools Uninstaller</a></p>
+                <hr class="hidden-print" id="webdeveloper">
+                <h1 class="page_break_always h1wide">Embedding the ABC Tools on a Web Page<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/ADnyhXFvKAM" title="Web Page Embedding Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>Using the Share URLs generated by the tool either one at a time using the Sharing dialog or doing bulk export of tune names and share URLs using the "Export All Tunes"/"Export Share URLs as JSON", it is very simple to embed the tool's tune player on a web page, which also give the user access to the Tune Trainer and other features.</p>
+                <p>If you would like to embed the tool's player on a web page, here are a couple of simple examples with the tool running in an iframe:</p>
+                <p><strong>Example #1:</strong>&nbsp;&nbsp;Simple tune player iframe embed with three tunes in separate iframes.</p>
+                <p><a href="https://michaeleskin.com/tools/abc_iframe_example.html" target="_blank">Click here to launch the example</a></p>
+                <p>The source code for this example is available on the tool's GitHub repo:</p>
+                <p><a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">https://github.com/seisiuneer/abctools/tree/main/tools</a></p>
+                <p>The file used for this demo in the repo is:</p>
+                <p>abc_iframe_example.html</p>
+                <hr>
+                <p><strong>Example #2:</strong>&nbsp;&nbsp;Demonstration of the tool embedded in an iframe combined with the tune names and Share URLs JSON exported by the tool to create a simple player application that allows you select and play over 100 tunes.</p>
+                <p><a href="https://michaeleskin.com/tools/abc_dynamic_iframe.html" target="_blank">Click here to launch the example</a></p>
+                <p>The source code for this example is available on the tool's GitHub repo:</p>
+                <p><a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">https://github.com/seisiuneer/abctools/tree/main/tools</a></p>
+                <p>The files used for this demo in the repo are:</p>
+                <p>abc_dynamic_iframe.html</p>
+                <p>abc_dynamic_iframe.css</p>
+                <p>abc_dynamic_iframe_tunes.js</p>
+                <p>abc_dynamic_iframe.js</p>
+                <hr class="hidden-print" id="github">
+                <h1 class="page_break_always">Source Code Available on GitHub<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p style="text-align: center;">Full project source code may be found at:</p>
+                <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools" target="_blank">ABC Tools on GitHub</a></p>
+                <hr class="hidden-print" id="run_from_source">
+                <h1 class="page_break_always h1wide">Notes on Running the Tool from the GitHub Repo<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>After downloading and unzipping the source code from the GitHub repo, you can run the tool by double-clicking the <strong>abctools.html</strong> file.</p>
+                <p>If you require the ability to play the tunes while not connected to the internet, run the <strong>abctools-offline.html</strong> file instead.</p>
+                <p>I can't support having all the instruments available offline, but I can include the Javascript encoded data for one instrument, an Acoustic Grand Piano, and for the percussion instrument as part of the tool source code tree.</p>
+                <p>When you start <strong>abctools-offline.html</strong>, it immediately grabs the online/offline state.</p>
+                <p>If an offline state is detected at tool start time, when playing tunes, all instruments are replaced with an acoustic piano sound, and the percussion sounds (MIDI program 128) are also available (for use in the metronome, primarily).</p>
+                <p>If the online status changes in the middle of using the tool, the change won't be detected until <strong>abctools-offline.html</strong> is reloaded.</p>
+                <p>Since these local sound resources are huge (about 4 megabytes), even bigger than the entire rest of the tool source, I don't want to burden everyone with having to load them for a case that only would be possible when running the tool from the source code in an offline state, so they are only included in <strong>abctools-offline.html</strong> as well as the offline check code.</p>
+                <hr class="hidden-print" id="privacy">
+                <h1 class="page_break_always">Privacy<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>My ABC tools use local browser storage to save the tool's settings, user preferences, and Snapshots.</p>
+                <p>Google Analytics are used in the tool to provide anonymized telemetry on the frequency of the use of specific features.</p>
+                <p>No personal data is sent with this telemetry, only event category and event name, for example that the import MusicXML or export MIDI features were used.</p>
+                <p>I use this data to prioritize new features and to better understand how people are using the tool.</p>
+                <p>TinyURL does allow me to see some shortened URLs as they are created using my TinyURL account API key.</p>
+                <p>I will never redistribute or in any way use a shortened Share URL you create.</p>
+                <hr class="hidden-print" id="support">
+                <h1 class="page_break_always">Support<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p style="text-align: center;">Have an issue with a specific tune, want to report a bug, or suggest a new feature?</p>
+                <p style="text-align: center;">Click here for the project support page:</p>
+                <p style="text-align: center;"><a href="support.html" target="_blank">ABC Transcription Tools Support</a></p>
+                <hr class="hidden-print" id="tipjars">
+                <h1 class="page_break_always">Tip Jars<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p style="text-align: center;">If you find my ABC Transcription Tools useful,<br/>please consider tossing a few bucks into one of my virtual tip jars:</p>
+                <p style="text-align: center;" class="notranslate">PayPal</br><a href="https://paypal.me/MichaelEskin" target="_blank">https://paypal.me/MichaelEskin</a></p>
+                <p style="text-align: center;" class="notranslate">Venmo</br>@MichaelEskin</p>
+                <hr class="hidden-print">
                 
             </div>
             
         </div>
         
-    </body>
+    </div>
     
-    <script>
-    
-    //
-    // Expand the table of contents
-    //
-    function ExpandAll() {
-    
-    var i;
-    
-    var acc = document.getElementsByClassName("accordion");
-    
-    for (i = 0; i < acc.length; i++) {
-    var thisAcc = acc[i];
-    thisAcc.classList.add("active");
-    }
-    
-    var thePanels = document.getElementsByClassName("tocpanel");
-    
-    for (i = 0; i < thePanels.length; i++) {
-    var thisPanel = thePanels[i];
-    thisPanel.style.display = "block";
-    }
-    }
-    
-    //
-    // Collapse the table of contents
-    //
-    function CollapseAll() {
-    
-    var i;
-    
-    var acc = document.getElementsByClassName("accordion");
-    
-    for (i = 0; i < acc.length; i++) {
-    var thisAcc = acc[i];
-    thisAcc.classList.remove("active");
-    }
-    
-    var thePanels = document.getElementsByClassName("tocpanel");
-    
-    for (i = 0; i < thePanels.length; i++) {
-    var thisPanel = thePanels[i];
-    thisPanel.style.display = "none";
-    }
-    }
-    //
-    // Are we on Android?
-    //
-    function isAndroid() {
-    if (/Android/i.test(navigator.userAgent)) {
-    return true;
-    } else {
-    return false;
-    }
-    }
-    
-    //
-    // Are we on iOS?
-    //
-    function isIOS() {
-    
-    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
-    return true;
-    } else {
-    return navigator.maxTouchPoints &&
-    navigator.maxTouchPoints > 2 &&
-    /MacIntel/.test(navigator.platform);
-    }
-    }
-    
-    function DoStartup() {
-    
-    //
-    // iOS Styling adaptation
-    //
-    
-    var gIsIOS = isIOS();
-    var gIsAndroid = isAndroid();
-    
-    if (gIsIOS) {
-    // Fix the title font
-    var elem = document.getElementById("pagetitle");
-    elem.size = 5;
-    elem.style.fontFamily = "Helvetica";
-    }
-    
-    if (gIsIOS || gIsAndroid) {
-    // Hide the sidebar navigation on mobile
-    elem = document.getElementById("sidebar");
-    elem.style.display = "none";
-    elem = document.getElementById("maindiv");
-    elem.style.marginLeft = "0px";
-    
-    }
-    else{
-    // Hide the accordion navigation on desktop
-    elem = document.getElementById("mobile_table_of_contents");
-    elem.style.display = "none";
-    }
-    
-    var acc = document.getElementsByClassName("accordion");
-    var i;
-    
-    for (i = 0; i < acc.length; i++) {
-    acc[i].addEventListener("click", function() {
-    this.classList.toggle("active");
-    var panel = this.nextElementSibling;
-    if (panel.style.display === "block") {
-    panel.style.display = "none";
-    } else {
-    panel.style.display = "block";
-    }
-    });
-    }
-    
-    // Start with all topics collapsed
-    if (gIsIOS || gIsAndroid) {
-    CollapseAll();
-    }
-    }
-    
-    DoStartup();
-    
-    // If offline, hide all the YouTube videos and images
-    function removeOfflineContent() {
-    
-    if (!navigator.onLine) {
-    
-    const iframes = document.querySelectorAll('iframe');
-    
-    iframes.forEach(iframe => iframe.remove());
-    
-    // Remove all the images
-    var divs = document.querySelectorAll('div.image_holder');
-    
-    divs.forEach(div => div.remove());
-    
-    divs = document.querySelectorAll('div.image_holder_p');
-    
-    divs.forEach(div => div.remove());
-    
-    }
-    }
-    
-    // Run the function on page load
-    document.addEventListener('DOMContentLoaded', removeOfflineContent);
-    
-    </script>
-    
+</body>
+
+<script>
+
+//
+// Expand the table of contents
+//
+function ExpandAll() {
+
+var i;
+
+var acc = document.getElementsByClassName("accordion");
+
+for (i = 0; i < acc.length; i++) {
+var thisAcc = acc[i];
+thisAcc.classList.add("active");
+}
+
+var thePanels = document.getElementsByClassName("tocpanel");
+
+for (i = 0; i < thePanels.length; i++) {
+var thisPanel = thePanels[i];
+thisPanel.style.display = "block";
+}
+}
+
+//
+// Collapse the table of contents
+//
+function CollapseAll() {
+
+var i;
+
+var acc = document.getElementsByClassName("accordion");
+
+for (i = 0; i < acc.length; i++) {
+var thisAcc = acc[i];
+thisAcc.classList.remove("active");
+}
+
+var thePanels = document.getElementsByClassName("tocpanel");
+
+for (i = 0; i < thePanels.length; i++) {
+var thisPanel = thePanels[i];
+thisPanel.style.display = "none";
+}
+}
+//
+// Are we on Android?
+//
+function isAndroid() {
+if (/Android/i.test(navigator.userAgent)) {
+return true;
+} else {
+return false;
+}
+}
+
+//
+// Are we on iOS?
+//
+function isIOS() {
+
+if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+return true;
+} else {
+return navigator.maxTouchPoints &&
+navigator.maxTouchPoints > 2 &&
+/MacIntel/.test(navigator.platform);
+}
+}
+
+function DoStartup() {
+
+//
+// iOS Styling adaptation
+//
+
+var gIsIOS = isIOS();
+var gIsAndroid = isAndroid();
+
+if (gIsIOS) {
+// Fix the title font
+var elem = document.getElementById("pagetitle");
+elem.size = 5;
+elem.style.fontFamily = "Helvetica";
+}
+
+if (gIsIOS || gIsAndroid) {
+// Hide the sidebar navigation on mobile
+elem = document.getElementById("sidebar");
+elem.style.display = "none";
+elem = document.getElementById("maindiv");
+elem.style.marginLeft = "0px";
+
+}
+else{
+// Hide the accordion navigation on desktop
+elem = document.getElementById("mobile_table_of_contents");
+elem.style.display = "none";
+}
+
+var acc = document.getElementsByClassName("accordion");
+var i;
+
+for (i = 0; i < acc.length; i++) {
+acc[i].addEventListener("click", function() {
+this.classList.toggle("active");
+var panel = this.nextElementSibling;
+if (panel.style.display === "block") {
+panel.style.display = "none";
+} else {
+panel.style.display = "block";
+}
+});
+}
+
+// Start with all topics collapsed
+if (gIsIOS || gIsAndroid) {
+CollapseAll();
+}
+}
+
+DoStartup();
+
+// If offline, hide all the YouTube videos and images
+function removeOfflineContent() {
+
+if (!navigator.onLine) {
+
+const iframes = document.querySelectorAll('iframe');
+
+iframes.forEach(iframe => iframe.remove());
+
+// Remove all the images
+var divs = document.querySelectorAll('div.image_holder');
+
+divs.forEach(div => div.remove());
+
+divs = document.querySelectorAll('div.image_holder_p');
+
+divs.forEach(div => div.remove());
+
+}
+}
+
+// Run the function on page load
+document.addEventListener('DOMContentLoaded', removeOfflineContent);
+
+</script>
+
 </html>
