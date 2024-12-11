@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2176_121024_1700";
+var gVersionNumber="2177_121124_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -23739,6 +23739,9 @@ var gShapeNoteStyle = 0;
 function DoInjectTablature_ShapeNotes(){
 
  	const shape_styles = [
+	    { name: "  Pitch Names (No octave indication)", id: "6" },
+	    { name: "  ABC Note Names", id: "11" },
+	    { name: "  ABC Note Names (Comhaltas ABC)", id: "12" },
 	    { name: "  4-Shape", id: "0" },
 	    { name: "  4-Shape - Include fa/sol/la note names below", id: "1" },
 	    { name: "  4-Shape - No shapes, only fa/sol/la note names below", id: "2" },
@@ -23749,9 +23752,6 @@ function DoInjectTablature_ShapeNotes(){
 	    { name: "  Fixed (Do=C) Solfège - Include chromatics", id: "8" },
 	    { name: "  Movable Solfège Do-based Minor", id: "9" },
 	    { name: "  Movable Solfège La-based Minor", id: "10" },
-	    { name: "  Pitch Names", id: "6" },
-	    { name: "  ABC Note Names", id: "11" },
-	    { name: "  ABC Note Names (Comhaltas ABC)", id: "12" },
   	];
 
 	// Setup initial values
@@ -23760,8 +23760,8 @@ function DoInjectTablature_ShapeNotes(){
 	};
 
 	const form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Shape Note&nbsp;/&nbsp;Solfège&nbsp;/&nbsp;Note Names&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_shapenoteshapes" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
-	  {html: '<p style="margin-top:36px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject Shape Note shapes, Solfège note names, Pitch Names, or ABC Note Names (Standard ABC or Comhaltas ABC) into all the tunes in the ABC text area.</p>'},	  
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Note Names&nbsp;/&nbsp;Shape Note&nbsp;/&nbsp;Solfège<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_shapenoteshapes" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+	  {html: '<p style="margin-top:36px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject Pitch Names, ABC Note Names (Standard ABC or Comhaltas ABC), Shape Note shapes, or Solfège note names into all the tunes in the ABC text area.</p>'},	  
 	  {name: "Style to inject:", id: "shape_note_style", type:"select", options:shape_styles, cssClass:"configure_sn_settings_select"}, 
 	  {html: '<p style="margin-top:24px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},	  
 
@@ -37529,7 +37529,7 @@ function AdvancedControlsDialog(){
 		modal_msg  += '<input id="injectmd" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_MD()" type="button" value="Inject Dulcimer Tab" title="Injects Mountain Dulcimer tablature into the ABC">';
 		modal_msg  += '<input id="injectbambooflute" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Bamboo_Flute()" type="button" value="Inject Bamboo Flute Tab" title="Injects Bamboo flute tablature into the ABC">';
 		modal_msg  += '</p>';
-		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="ceoltastransform" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransformDialog()" type="button" value="Comhaltas Transform" title="Brings up a dialog where you can transform the ABC to/from Comhaltas format"><input id="injectshapenotes" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_ShapeNotes()" type="button" value="Inject Shapes/Solfège/Note Names" title="Injects Shape Note shapes, Solfège note names, or ABC note names into the ABC"><input id="configure_box_advanced" class="btn btn-subdialog configure_box_advanced " onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>';	
+		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="ceoltastransform" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransformDialog()" type="button" value="Comhaltas Transform" title="Brings up a dialog where you can transform the ABC to/from Comhaltas format"><input id="injectshapenotes" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_ShapeNotes()" type="button" value="Inject Note Names/Shapes/Solfège" title="Injects note names (Pitch Names, Standard ABC, Comhaltas ABC), Shape Note shapes, or Solfège note names into the ABC"><input id="configure_box_advanced" class="btn btn-subdialog configure_box_advanced " onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>';	
 	}
 
 	// Showing explorers?
