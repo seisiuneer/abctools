@@ -3259,8 +3259,6 @@ var bambooFluteTabGenerator = function (theABC){
 
             thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
 
-            thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%musicspace " + musicSpace);
-
             result += thisTune;
 
         }
@@ -5063,7 +5061,6 @@ var fiddleFingeringsGenerator = function (theABC,stringNameStyle){
 
             thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%staffsep " + staffSep);
             thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
-            thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%musicspace " + musicSpace);
 
             result += thisTune;
 
@@ -5993,7 +5990,6 @@ var MDTablatureGenerator = function (theABC){
 
             thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%staffsep " + staffSep);
             thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
-            thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%musicspace " + musicSpace);
 
             // Stripping out tunes that don't have complete tab solutions?
             if (gMDulcimerStripBadTunes){
@@ -7107,7 +7103,6 @@ var shapeNoteGenerator = function (theABC){
             thisTune = generate_tab(thisTune);
             
             thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%staffsep " + staffSep);
-            thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%musicspace " + musicSpace);
 
             // If injecting note names, add the annotation font directive
             switch (gShapeNoteStyle){
@@ -7944,8 +7939,7 @@ var injectABCNoteNames = function (theABC){
             thisTune = generate_tab(thisTune);
             
             thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%staffsep " + staffSep);
-            thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%musicspace " + musicSpace);
-
+ 
             // If injecting note names, add the annotation font directive
             thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
 
