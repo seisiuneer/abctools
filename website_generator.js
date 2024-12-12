@@ -1927,6 +1927,8 @@ function generateWebsiteSimple(){
       {name: "Text color (HTML color):", id: "website_textcolor", type:"text",cssClass:"configure_website_form_text2_simple"},      
       {name: "Hyperlink color (HTML color, also used for help icon):", id: "website_hyperlinkcolor", type:"text",cssClass:"configure_website_form_text2_simple"},      
       {name: "Tunebook help URL:", id: "website_helpurl", type:"text",cssClass:"configure_website_form_text_wide5_simple"},      
+      {name: "          Disable access to editor ", id: "bDisableEdit", type:"checkbox", cssClass:"configure_website_form_text2_simple"},
+      {name: "          Tunes open in player ", id: "bOpenInPlayer", type:"checkbox", cssClass:"configure_website_form_text2_simple"},
     ];
 
     const modal = DayPilot.Modal.form(form, gWebsiteConfig, { theme: "modal_flat", top: 50, width: 760, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
@@ -1969,6 +1971,14 @@ function generateWebsiteSimple(){
             gWebsiteHelpURL = args.result.website_helpurl;
             gWebsiteConfig.website_helpurl = gWebsiteHelpURL;
 
+            // Open in player
+            gWebsiteOpenInPlayer = args.result.bOpenInPlayer;
+            gWebsiteConfig.bOpenInPlayer = gWebsiteOpenInPlayer;
+
+            // Disable edit
+            gWebsiteDisableEdit = args.result.bDisableEdit
+            gWebsiteConfig.bDisableEdit = gWebsiteDisableEdit;
+
             // Restore saved settings
             SaveWebsiteSettings();
 
@@ -1985,14 +1995,14 @@ function generateWebsite(){
 
     var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:18pt;font-family:helvetica;margin-left:15px;">Export Website&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#generate_website" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
     
-    modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Basic Tune List Website</strong> to export a basic website with a centered list of tune names.</p>';
-    modal_msg  += '<p style="font-size:18px;line-height:28px;">Clicking a tune name on the website opens it in the Player in a new tab.</p>';
+    modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Basic Tune List Website</strong> to export a technically simple website with a clickable list of all tunes in the ABC.</p>';
+    modal_msg  += '<p style="font-size:18px;line-height:28px;">Clicking a tune name in the list will open the tune in a new browser tab.</p>';
     modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Full-Featured Tunebook Website</strong> to export a website with a dropdown list of tune names and optional tablature styles. Playback instruments may be optionally specified. Website remembers user\'s last selected tune and tablature setting.</p>';
-    modal_msg  += '<p style="font-size:18px;line-height:28px;margin-bottom:36px;">Clicking a tune name in the tune dropdown opens it in the Player in a frame on the same page.</p>';
+    modal_msg  += '<p style="font-size:18px;line-height:28px;margin-bottom:36px;">Clicking a tune name in the tune list dropdown opens it in a frame on the same browser tab.</p>';
 
-    modal_msg  += '<p style="text-align:center;"><input id="websitesimple" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteSimple()" type="button" value="Export Basic Tune List Website" title="Generates a website that has a list of tunes that open in a new tab when clicked.">';
+    modal_msg  += '<p style="text-align:center;"><input id="websitesimple" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteSimple()" type="button" value="Export Basic Tune List Website" title="Generates a website that has a list of tunes that open in a new browser tab when clicked.">';
 
-    modal_msg  += '<input id="websitefull" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteFull()" type="button" value="Export Full-Featured Tunebook Website" title="Generates a website that has a dropdown for the tunes.&nbsp;&nbsp;When a tune is selected from the dropwon, the tune opens in a Player in an iframe on the page."></p>';
+    modal_msg  += '<input id="websitefull" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteFull()" type="button" value="Export Full-Featured Tunebook Website" title="Generates a website that has dropdowns for the tunes and optional display tablature selection.&nbsp;&nbsp;When a tune is selected from the dropwon, the tune opens in an iframe on the page."></p>';
     
     modal_msg  += '<p style="font-size:4px;">&nbsp;</p>';
 

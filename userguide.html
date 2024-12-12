@@ -36,7 +36,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
-        
+         
         <style>
         
         p {
@@ -3180,14 +3180,14 @@
                 <p>There are two options for exporting websites:</p>
                 <p style="text-align: center;"><strong>Export Basic Tune List Website</strong></p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/generate_website_simple_1.jpg"/>
+                    <img class="image" loading="lazy" src="img/generate_website_simple_2.jpg"/>
                 </div>
                 <p>Creates a simple tune website with a centered list of tune names. Clicking on the tune names opens the tune in a new tab.</p>
                 <p style="text-align: center;"><strong>Export Full-Featured Tunebook Website</strong></p>
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/generate_website_16.jpg"/>
                 </div>
-                <p>Creates a responsive website with a dropdown list of tune names and optional tablature styles. Playback instruments may be optionally specified. Website remembers user's last selected tune and tablature setting.</p>
+                <p>Creates a responsive website with a dropdown list of tune names and optional tablature styles. Playback instruments may be optionally specified. The website remembers user's last selected tune and tablature setting and restores them the next time the user visits the website.</p>
                 <p>For both options, you may customize the title, subtitle, footers, background color/image, text color, and hyperlink color, of the player frame.</p>
                 <p>The website background color can be an HTML color, HTML gradient description, or a url('path_to_image').</p>
                 <p>Examples:</p>
@@ -3200,20 +3200,22 @@
                 <p>Path to image:</p>
                 <p class="code">url('https://michaeleskin.com/img/stars.jpg')</p>
                 <p>If using a url path to image, the background image will be centered and stretched to fit the window size.</p>
-                <p>If <strong>Add tablature/instrument selector dropdown</strong> is checked, a dropdown will be added to the website to the right of the tune selector that allows you to change which tablature style is displayed along with using a matching instrument sound for playback.</p>
-                <p>The dropdown will include:</p>
-                <p><strong>Standard Notation<br/>Note Names<br/>Mandolin<br/>Tenor Banjo<br/>GDAD Bouzouki<br/>Standard Guitar<br/>DADGAD<br/>Tin Whistle<br/>Irish Flute<br/>Hammered Dulcimer</strong></p>
-                <p>Information on modifying the behavior of the tablature dropdown by editing the exported .html file can be found in the <a href="#export_website_devnotes">Export Tunebook Website Developer Customization</a> section below.</p>
                 <p>If <strong>Disable access to editor</strong> is checked, the generated website will prevent users from closing the fullscreen view and entering the ABC editor.</p>
                 <p>If <strong>Add a ? help icon at top-left corner</strong> is checked, a "?" with the color specified in the Hyperlink color will be shown in the upper left corner of the website.</p>
                 <p>Clicking the <strong>?</strong> on the exported website will open the URL specified in the <strong>Tunebook help URL</strong> field.</p>
+                <p>If <strong>Tunes open in player</strong> is checked, for both styles of website, tunes will open in the Player, otherwise will just be displayed to fill the frame and can be played by clicking the play button at the lower right of the frame.</p>
+                <p>The tune will be initially displayed using the current notation or stringed instrument tablature setting selected at the time the website is generated.</p>
+                <p>The following options are only available if exporting a Full-Featured Website:</p>
                 <p>If <strong>Add a "Full Screen" button at top-right corner that opens the current tune in a new tab</strong> is checked, a button will be added at the top-right corner of the website when clicked will open the currently selected tune (with current tablature and playback instruments) in a new browser tab.</p>
-                <p>If <strong>Tunes open in player</strong> is checked, tunes will open in the player, otherwise will just be displayed to fill the frame and can be played by clicking the play button at the lower right of the frame.</p>
-                <p>Additionally, you may optionally select a soundfont, melody, bass, and chord instruments and volumes to inject into each tune for use when the tune is played.</p>
-                <p>The website has a tune selector at the top, selecting a tune opens the tune in the ABC Transcription Tools in the frame below the selector.</p>
+                <p>For the Full-Featured Website option, if <strong>Add tablature/instrument selector dropdown</strong> is checked, a dropdown will be added to the website to the right of the tune selector that allows you to change which tablature style is displayed along with using a matching instrument sound for playback.</p>
+                <p>The dropdown will include:</p>
+                <p><strong>Standard Notation<br/>Note Names<br/>Mandolin<br/>Tenor Banjo<br/>GDAD Bouzouki<br/>Standard Guitar<br/>DADGAD<br/>Tin Whistle<br/>Irish Flute<br/>Hammered Dulcimer</strong></p>
+                <p>Information on modifying the behavior of the tablature dropdown by editing the exported .html file can be found in the <a href="#export_website_devnotes">Export Tunebook Website Developer Customization</a> section below.</p>
+                <p>You may optionally select a soundfont, melody, bass, and chord instruments and volumes to inject into each tune for use when the tune is played.</p>
+                <p>The website exported includes a tune selector at the top, selecting a tune opens the tune in the ABC Transcription Tools in the frame below the selector.</p>
                 <p>If there is only a single tune, it will be immediately loaded in the ABC Transcription Tools in the frame.</p>
                 <p>The tune will be initially displayed using the current notation or stringed instrument tablature setting selected at the time the website is generated.</p>
-                <p>All settings are saved and restored the next time you use the feature.</p>
+                <p>For both styles of exported websites, all settings are saved and restored the next time you use the feature.</p>
                 <p>You can take the resulting .html file, customize it if you want, run it locally, or host it on your own web hosting service.</p>
                 <p>Here are examples of websites created with the feature:</p>
                 <p style="text-align: center;"><strong>Basic Tune List Website Example</strong></p>
