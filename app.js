@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2178_121124_1100";
+var gVersionNumber="2179_121224_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -41189,12 +41189,9 @@ function CheckFacebook_iOS(callback){
 	}
 
 	if (gIsFacebook){
-	  	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;color:darkred">Facebook iOS App Browser Issue</p>';
 
 		// If on iOS 17 or 18, put up button to launch into Safari
 		if ((UA.indexOf("Version/17") != -1) || (UA.indexOf("OS 17") != -1) || (UA.indexOf("Version/18") != -1) || (UA.indexOf("OS 18") != -1)){
-
-	        modal_msg  += '<p style="font-size:12pt;line-height:30pt;font-family:helvetica">The Facebook iOS app browser does not support running the ABC Tools.</p>'; 
 
 	        try{
 
@@ -41203,6 +41200,8 @@ function CheckFacebook_iOS(callback){
 				if (the_href){
 				
 					the_href = "x-safari-"+the_href;
+				  	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-top:60px;">Facebook iOS App Browser Issue</p>';
+				    modal_msg  += '<p style="font-size:12pt;line-height:30pt;font-family:helvetica;">The Facebook iOS app browser does not support running the ABC Tools.</p>'; 
 
 				    modal_msg  += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">Open the ABC Transcription Tools in Safari by clicking the button below:</p>'; 
 					
@@ -41213,7 +41212,9 @@ function CheckFacebook_iOS(callback){
 
 				// Cross-domain issue
 
-				modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To open the ABC Transcription Tools in Safari from this view:</p>';
+			  	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-top:40px;">Facebook iOS App Browser Issue</p>';
+			    modal_msg  += '<p style="font-size:12pt;line-height:30pt;font-family:helvetica;">The Facebook iOS app browser does not support running the ABC Tools.</p>'; 
+				modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;margin-top:36px;">To open the ABC Transcription Tools in Safari from this view:</p>';
 			    modal_msg  += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">1) Click the&nbsp;&nbsp;<strong><span style="font-size:18pt">...</span></strong>&nbsp;&nbsp;at the top-right of the screen</p>'; 
 			    modal_msg  += '<p style="font-size:12pt;line-height:12pt;font-family:helvetica">2) Click <strong>Open in external browser</strong></p>'; 
 
@@ -41223,7 +41224,8 @@ function CheckFacebook_iOS(callback){
 		else{
 
 			// Instructions for iOS 16 and before
-	        modal_msg  += '<p style="font-size:12pt;line-height:30pt;font-family:helvetica">The Facebook iOS app browser does not support running the ABC Tools.</p>'; 
+			var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-top:40px;">Facebook iOS App Browser Issue</p>';
+	        modal_msg  += '<p style="font-size:12pt;line-height:30pt;font-family:helvetica;">The Facebook iOS app browser does not support running the ABC Tools.</p>'; 
 			modal_msg  += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To open the ABC Transcription Tools in Safari from this view:</p>';
 		    modal_msg  += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">1) Click the&nbsp;&nbsp;<strong><span style="font-size:18pt">...</span></strong>&nbsp;&nbsp;at the top-right of the screen</p>'; 
 		    modal_msg  += '<p style="font-size:12pt;line-height:12pt;font-family:helvetica">2) Click <strong>Open in external browser</strong></p>'; 

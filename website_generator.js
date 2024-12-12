@@ -435,9 +435,9 @@ function BatchJSONExportForWebGenerator(theABC){
 }
 
 //
-// Generate the website
+// Generate a fully featured website
 //
-function generateAndSaveWebsite() {
+function generateAndSaveWebsiteFull() {
 
     var theOutput = "";
 
@@ -1221,6 +1221,388 @@ function generateAndSaveWebsite() {
 
 }
 
+//
+// Generate a simplified website
+//
+function generateAndSaveWebsiteSimple() {
+
+    var theOutput = "";
+
+    var theABC = gTheABC.value;
+
+    // For local storage naming
+    var postFix = generatePostfix();
+
+    //console.log("postFix: "+postFix);
+
+    // Any tunes to reformat?
+    if (CountTunes() == 0){
+
+        var thePrompt = "No ABC tunes to export.";
+
+        thePrompt = makeCenteredPromptString(thePrompt);
+
+        DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 200
+        });
+
+        return;
+    }
+
+    // Keep track of actions
+    sendGoogleAnalytics("action","generateWebsite");
+
+    var theJSON = BatchJSONExportForWebGenerator(theABC);
+
+    if (!theJSON){
+
+        var thePrompt = "Problem generating tune share links!";
+
+        thePrompt = makeCenteredPromptString(thePrompt);
+
+          DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 200
+        });
+
+        return;
+    }
+
+    // Create the website code
+
+    // Header
+    theOutput += "<!DOCTYPE html>\n";
+    theOutput +="\n";
+    theOutput +='<html lang="en">\n';
+    theOutput +="\n";
+    theOutput +="<head>\n";
+    theOutput +="\n";
+    theOutput +='<meta charset="UTF-8">\n';
+
+    theOutput +='<meta name="viewport" content="width=860" />\n'; 
+    theOutput +='<meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png" />\n';
+    theOutput +="\n";
+    theOutput +="<title>"+gWebsiteTitle+"</title>\n";
+    theOutput +="\n";
+
+    // CSS
+    theOutput +="<style>\n";
+    theOutput +="\n";
+    theOutput +="    body {\n";
+    theOutput +="        font-family: Arial, sans-serif;\n";
+    if ((gWebsiteColor.indexOf("gradient") == -1) && (gWebsiteColor.indexOf("url(") == -1)){
+        theOutput +="        background-color: "+gWebsiteColor+";\n";
+    }
+    else{
+        // Center the image and fill the page
+        if (gWebsiteColor.indexOf("url(") != -1){
+            theOutput +="        background: center "+gWebsiteColor+";\n";   
+            theOutput +="        background-size: cover;\n";   
+        }
+        else{
+            // Just inject the gradient
+            theOutput +="        background-image: "+gWebsiteColor+";\n";   
+        }
+    }
+    theOutput +="        margin: 0px;\n";
+    theOutput +="        padding: 0px;\n";
+    theOutput +="    }\n";
+    theOutput +="\n";
+    theOutput +="    .container {\n";
+    theOutput +="        margin: 0 auto;\n";
+    theOutput +="        text-align: center;\n";
+    theOutput +="        overflow-x: hidden;\n";
+    theOutput +="    }\n";
+    theOutput +="\n";
+    theOutput +="    h1 {\n";
+    theOutput +="        font-size: 24px;\n";
+    theOutput +="        margin-top: 24px;\n";
+    theOutput +="        margin-bottom: 0px;\n";
+    theOutput +="        color: "+gWebsiteTextColor+";\n";
+    theOutput +="    }\n";
+    theOutput +="\n";
+
+    if (gWebsiteTitle && (gWebsiteTitle != "")) {   
+        theOutput +="    h2 {\n";
+        theOutput +="        font-size: 18px;\n";
+        theOutput +="        margin-top: 18px;\n";
+        theOutput +="        margin-bottom: 24px;\n";
+        theOutput +="        color: "+gWebsiteTextColor+";\n";
+        theOutput +="    }\n";
+    }else{
+        theOutput +="    h2 {\n";
+        theOutput +="        font-size: 18px;\n";
+        theOutput +="        margin-top: 24px;\n";
+        theOutput +="        margin-bottom: 24px;\n";
+        theOutput +="        color: "+gWebsiteTextColor+";\n";
+        theOutput +="    }\n";       
+    }
+    theOutput +="\n";
+
+    theOutput +="    p {\n";
+    theOutput +="        color: "+gWebsiteTextColor+";\n";
+    theOutput +="    }\n";
+    theOutput +="\n";
+    theOutput +="    a {\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+    theOutput +="        font-size: 18px;\n";
+    theOutput +="        text-decoration: none;\n";
+    theOutput +="    }\n";
+    theOutput +="    a:link {\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+    theOutput +="    }\n";
+    theOutput +="    a:visited {\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+    theOutput +="    }\n";    
+    theOutput +="    a:hover {\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+    theOutput +="    }\n";    
+    theOutput +="    a:active {\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+    theOutput +="    }\n";
+    theOutput +="\n";
+
+    theOutput +="    #footer1{\n";
+    theOutput +="        font-size: 18px;\n";
+    theOutput +="        margin-top: 16px;\n";
+    theOutput +="        margin-bottom: 16px;\n";
+    theOutput +="        color: "+gWebsiteTextColor+";\n";
+    theOutput +="    }\n";
+    theOutput +="\n";
+    theOutput +="    #footer2{\n";
+    theOutput +="        font-size: 18px;\n";
+    theOutput +="        margin-top: 16px;\n";
+    theOutput +="        margin-bottom: 16px;\n";
+    theOutput +="        color: "+gWebsiteTextColor+";\n";
+    theOutput +="    }\n";
+    theOutput +="\n";
+
+    if (gWebsiteAddHelp){
+        // There is a title or subtitle present
+        if ((gWebsiteTitle && (gWebsiteTitle != "")) || (gWebsiteSubtitle && (gWebsiteSubtitle != ""))){
+            theOutput +="    #website_help{\n";
+            theOutput +="        font-size: 28pt;\n";
+            theOutput +="        position: absolute;\n";
+            theOutput +="        left: 16px;\n";
+            theOutput +="        top: 12px;\n";
+            theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+            theOutput +="    }\n";
+            theOutput +="\n";
+        }
+        else{
+            theOutput +="    #website_help{\n";
+            theOutput +="        font-size: 28pt;\n";
+            theOutput +="        position: absolute;\n";
+            theOutput +="        left: 16px;\n";
+            theOutput +="        top: 10px;\n";
+            theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+            theOutput +="    }\n";
+            theOutput +="\n";
+        }
+    }
+
+    theOutput +="ul{\n";
+    theOutput +="    listStyleType:none;\n";
+    theOutput +="    padding:0;\n";
+    theOutput +="    textAlign:center;\n";
+    theOutput +="}\n";
+    theOutput +="\n";
+
+    theOutput +="li{\n";
+    theOutput +="    margin-bottom: 16px;\n";
+    theOutput +="}\n";
+    theOutput +="\n";
+
+    theOutput +="</style>\n";
+    theOutput +="\n";
+    theOutput +="</head>\n";
+    theOutput +="\n";
+
+    // HTML
+    theOutput +="<body>\n";
+    theOutput +="\n";
+    theOutput +='    <div class="container">\n';
+    if (gWebsiteAddHelp){
+        theOutput +='        <a id="website_help" href="'+gWebsiteHelpURL+'" target="_blank" style="text-decoration:none;" title="Information about using this tunebook" class="cornerbutton">?</a>\n';
+    }
+    var gotTitle = false;
+    if (gWebsiteTitle && (gWebsiteTitle != "")){
+        theOutput +="        <h1 id=\"title\">"+gWebsiteTitle+"</h1>\n";
+        gotTitle = true;
+    }
+    var gotSubTitle = false;
+    if (gWebsiteSubtitle && (gWebsiteSubtitle != "")){
+        theOutput +="        <h2 id=\"subtitle\">"+gWebsiteSubtitle+"</h2>\n";
+        gotSubTitle = true;
+    }
+
+    if (gotTitle || gotSubTitle){
+        theOutput +='        <hr style="margin-top:24px;margin-bottom:24px;width:500px;color:white;">';
+    }
+
+    theOutput +='        <div id="tuneShareLinkHolder"></div>\n';  
+
+    var doHR = false;
+    if ((gWebsiteFooter1 && (gWebsiteFooter1 != "")) || (gWebsiteFooter2 && (gWebsiteFooter2 != ""))){
+        doHR = true;
+    }
+
+    if (doHR){
+        theOutput +='        <hr style="margin-top:24px;margin-bottom:24px;width:500px;color:white;">';
+    }
+      
+    var gotFooter = false;
+    if (gWebsiteFooter1 && (gWebsiteFooter1 != "")){
+        theOutput +='        <p id="footer1">'+gWebsiteFooter1+'</p>\n';
+        gotFooter = true;
+    }
+    if (gWebsiteFooter2 && (gWebsiteFooter2 != "")){
+
+        if (gotFooter){
+            theOutput +='        <p id="footer2">'+gWebsiteFooter2+'</p>\n';
+        }
+        else{
+            theOutput +='        <p id="footer2">'+gWebsiteFooter2+'</p>\n';            
+        }
+    }
+
+    if (doHR){
+        theOutput +='        <hr style="margin-top:24px;margin-bottom:24px;width:500px;color:white;">';
+    }
+
+    theOutput +="    </div>\n";
+    theOutput +="\n";
+
+    // JavaScript
+    theOutput +="    <script>\n";
+    theOutput +="\n";
+    theOutput += "    "+theJSON;
+    theOutput +="\n";
+    theOutput +="\n";
+    theOutput +="    // Populate the selector with options from JSON\n";
+    theOutput +="    document.addEventListener('DOMContentLoaded', () => {\n";
+    theOutput +="\n";
+    
+    theOutput +="        // Select the div where the links will be inserted\n"
+    theOutput +="        const holder = document.getElementById('tuneShareLinkHolder');\n"
+    theOutput +="\n";
+
+    theOutput +="        // Create an unordered list element\n"
+    theOutput +="        const ul = document.createElement('ul');\n"
+    theOutput +="\n";
+
+    theOutput +="        // Loop through the tunes array and create list items with hyperlinks\n"
+    theOutput +="        tunes.forEach(tune => {\n"
+    theOutput +="          const li = document.createElement('li');\n"
+    theOutput +="          const link = document.createElement('a');\n"
+    theOutput +="\n";
+
+    theOutput +="          // Set the text and URL of the link\n"
+    theOutput +="          link.textContent = tune.Name;\n"
+    theOutput +="          link.href = tune.URL;\n"
+    theOutput +="          link.target = '_blank';  // Opens the link in a new tab\n"
+    theOutput +="\n";
+
+    theOutput +="          // Append the link to the list item, and the list item to the ul\n"
+    theOutput +="          li.appendChild(link);\n"
+    theOutput +="          ul.appendChild(li);\n"
+    theOutput +="        });\n"
+    theOutput +="\n";
+
+    // Append the list to the div
+    theOutput +="        holder.appendChild(ul);\n";
+    theOutput +="\n";
+
+    theOutput +="    });\n";    
+    theOutput +="\n";
+    theOutput +="</script>\n";
+    theOutput +="\n";
+    theOutput +="</body>\n";
+    theOutput +="\n";
+    theOutput +="</html>\n";
+
+    var theData = theOutput
+
+    if (theData.length == 0) {
+
+        DayPilot.Modal.alert("Nothing to save!", {
+            theme: "modal_flat",
+            top: 200
+        });
+
+        return;
+    }
+
+    var thePlaceholder = gWebsiteFilename;
+    if (thePlaceholder == ""){
+        thePlaceholder = "abctools_website.html";
+    }
+
+    var thePrompt = "Please enter a filename for your output website HTML file:";
+
+    DayPilot.Modal.prompt(thePrompt, thePlaceholder, {
+        theme: "modal_flat",
+        top: 200,
+        autoFocus: false
+    }).then(function(args) {
+
+        var fname = args.result;
+
+        // If the user pressed Cancel, exit
+        if (fname == null) {
+            return null;
+        }
+
+        // Strip out any naughty HTML tag characters
+        fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+        if (fname.length == 0) {
+            return null;
+        }
+
+        // Give it a good extension
+ 
+        if (!fname.endsWith(".html")) {
+
+            // Give it a good extension
+            fname = fname.replace(/\..+$/, '');
+            fname = fname + ".html";
+
+        }
+
+        gWebsiteFilename = fname;
+
+        if (gLocalStorageAvailable){
+            localStorage.WebsiteFilename = gWebsiteFilename;
+        }
+
+        var a = document.createElement("a");
+
+        document.body.appendChild(a);
+
+        a.style = "display: none";
+
+        var blob = new Blob([theData], {
+                    type: "text/html"
+                }),
+ 
+        url = window.URL.createObjectURL(blob);
+        a.href = url;
+        a.download = fname;
+        a.click();
+
+        document.body.removeChild(a);
+
+        setTimeout(function() {
+            window.URL.revokeObjectURL(url);
+        }, 1000);
+
+    });
+
+}
+
+
 var gWebsiteSoundFont = "fluid";
 var gWebsiteInjectInstruments = true;
 var gWebsiteBassInstrument = 1;
@@ -1310,7 +1692,10 @@ var gWebsiteConfig ={
 
 }
 
-function generateWebsite(){
+//
+// Generate a website with instrument selection, tab options
+//
+function generateWebsiteFull(){
 
     // If disabled, return
     if (!gAllowWebExport){
@@ -1341,7 +1726,7 @@ function generateWebsite(){
     }
 
     var form = [
-      {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:18px">Export Tunebook Website&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#generate_website" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
+      {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:18px">Export Full-Featured Tunebook Website&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#generate_website" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
       {html: '<p style="margin-top:10px;margin-bottom:18px;font-size:12pt;line-height:14pt;font-family:helvetica">Clicking "OK" will export a tunebook player website with the settings you enter below:</p>'},  
       {name: "Website title:", id: "website_title", type:"text", cssClass:"configure_website_form_text_wide"},
       {name: "Website subtitle:", id: "website_subtitle", type:"text", cssClass:"configure_website_form_text_wide2"},
@@ -1510,9 +1895,108 @@ function generateWebsite(){
             // Restore saved settings
             SaveWebsiteSettings();
 
-            generateAndSaveWebsite();
+            generateAndSaveWebsiteFull();
 
         }
 
     });
 }
+
+//
+// Generate a simple website with a list of tunes an dlinks
+//
+function generateWebsiteSimple(){
+
+    // If disabled, return
+    if (!gAllowWebExport){
+        return;
+    }
+
+    // Restore saved settings
+    LoadWebsiteSettings();
+
+    var form = [
+      {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:18px">Export Basic Tune List Website&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#generate_website" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
+      {html: '<p style="margin-top:10px;margin-bottom:18px;font-size:12pt;line-height:14pt;font-family:helvetica">Clicking "OK" will export a tune list hyperlink website with the settings you enter below:</p>'},  
+      {name: "Website title:", id: "website_title", type:"text", cssClass:"configure_website_form_text_wide_simple"},
+      {name: "Website subtitle:", id: "website_subtitle", type:"text", cssClass:"configure_website_form_text_wide2_simple"},
+      {name: "Website footer #1:", id: "website_footer1", type:"text", cssClass:"configure_website_form_text_wide2_simple"},
+      {name: "Website footer #2:", id: "website_footer2", type:"text", cssClass:"configure_website_form_text_wide2_simple"},
+      {html: '<p style="margin-top:28px;margin-bottom:18px;font-size:12pt;line-height:14pt;font-family:helvetica">Background can be an HTML color, HTML gradient, or url(\'path_to_image\') image:</p>'},  
+      {name: "Website background:", id: "website_color", type:"text",cssClass:"configure_website_form_text_wide5_simple"},      
+      {name: "Text color (HTML color):", id: "website_textcolor", type:"text",cssClass:"configure_website_form_text2_simple"},      
+      {name: "Hyperlink color (HTML color, also used for help icon):", id: "website_hyperlinkcolor", type:"text",cssClass:"configure_website_form_text2_simple"},      
+      {name: "Tunebook help URL:", id: "website_helpurl", type:"text",cssClass:"configure_website_form_text_wide5_simple"},      
+    ];
+
+    const modal = DayPilot.Modal.form(form, gWebsiteConfig, { theme: "modal_flat", top: 50, width: 760, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+    
+        if (!args.canceled){
+
+            // Title
+            gWebsiteTitle = args.result.website_title;
+            gWebsiteConfig.website_title = gWebsiteTitle;
+
+            // Subtitle
+            gWebsiteSubtitle = args.result.website_subtitle;
+            gWebsiteConfig.website_subtitle = gWebsiteSubtitle;
+
+            // Footer 1
+            gWebsiteFooter1 = args.result.website_footer1;
+            gWebsiteConfig.website_footer1 = gWebsiteFooter1;
+
+            // Footer 2
+            gWebsiteFooter2 = args.result.website_footer2;
+            gWebsiteConfig.website_footer2 = gWebsiteFooter2;
+
+            // Background color
+            gWebsiteColor = args.result.website_color;
+            gWebsiteConfig.website_color = gWebsiteColor;
+
+            // Text color
+            gWebsiteTextColor = args.result.website_textcolor;
+            gWebsiteConfig.website_textcolor = gWebsiteTextColor;
+
+            // Hyperlink color
+            gWebsiteHyperlinkColor = args.result.website_hyperlinkcolor;
+            gWebsiteConfig.website_hyperlinkcolor = gWebsiteHyperlinkColor;
+
+            // Add help?
+            gWebsiteAddHelp = args.result.bAddHelp;
+            gWebsiteConfig.bAddHelp = gWebsiteAddHelp;
+
+            // Help URL
+            gWebsiteHelpURL = args.result.website_helpurl;
+            gWebsiteConfig.website_helpurl = gWebsiteHelpURL;
+
+            // Restore saved settings
+            SaveWebsiteSettings();
+
+            generateAndSaveWebsiteSimple();
+
+        }
+
+    });
+}
+//
+// Generate website
+//
+function generateWebsite(){
+
+    var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:18pt;font-family:helvetica;margin-left:15px;">Export Website&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#generate_website" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+    
+    modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Basic Tune List Website</strong> to export a basic website with a centered list of tune names.</p>';
+    modal_msg  += '<p style="font-size:18px;line-height:28px;">Clicking a tune name on the website opens it in the Player in a new tab.</p>';
+    modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Full-Featured Tunebook Website</strong> to export a website with a dropdown list of tune names and optional tablature styles. Playback instruments may be optionally specified. Website remembers user\'s last selected tune and tablature setting.</p>';
+    modal_msg  += '<p style="font-size:18px;line-height:28px;margin-bottom:36px;">Clicking a tune name in the tune dropdown opens it in the Player in a frame on the same page.</p>';
+
+    modal_msg  += '<p style="text-align:center;"><input id="websitesimple" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteSimple()" type="button" value="Export Basic Tune List Website" title="Generates a website that has a list of tunes that open in a new tab when clicked.">';
+
+    modal_msg  += '<input id="websitefull" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteFull()" type="button" value="Export Full-Featured Tunebook Website" title="Generates a website that has a dropdown for the tunes.&nbsp;&nbsp;When a tune is selected from the dropwon, the tune opens in a Player in an iframe on the page."></p>';
+    
+    modal_msg  += '<p style="font-size:4px;">&nbsp;</p>';
+
+    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 650,  scrollWithPage: (AllowDialogsToScroll()) });
+
+}
+

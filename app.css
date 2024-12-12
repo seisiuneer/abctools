@@ -669,13 +669,13 @@ opacity: 0.4;
 padding:12px;
 }
 
-#ceoltasdialog,#injectheaderstring,#injectallmidiparams,#injectbctab,#injectcdtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth,#injectmetronome,#injectshapenotes,#injectsectionheader,#injecttunenumbers,#addtunetitlenumbers,#compliancedialog,#ceoltastransform{
+#ceoltasdialog,#injectheaderstring,#injectallmidiparams,#injectbctab,#injectcdtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth,#injectmetronome,#injectshapenotes,#injectsectionheader,#injecttunenumbers,#addtunetitlenumbers,#compliancedialog,#ceoltastransform,#websitesimple{
 height:42px;
 padding:12px;
 margin-right:24px;
 }
 
-#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#injectlargeprint,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#injectbagpipedrones{
+#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#injectlargeprint,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#injectbagpipedrones,#websitefull{
 height:42px;
 padding:12px;
 }
@@ -4553,6 +4553,140 @@ margin-top:-9px;
 margin-left:12px;
 }
 
+.configure_website_form_text_simple{
+font-size:12pt;
+line-height:12px;
+font-family:helvetica;
+margin-top:18px;
+display:flex;
+}
+
+.configure_website_form_text_simple>input{
+font-size:12pt;
+font-family:helvetica;
+width: 100px;
+margin-top:-9px;
+margin-left:12px;
+}
+
+.configure_website_form_text_wide_simple{
+font-size:12pt;
+line-height:16px;
+font-family:helvetica;
+margin-top:22px;
+display:flex;
+}
+
+.configure_website_form_text_wide_simple>input{
+font-size:12pt;
+font-family:helvetica;
+width: 530px;
+margin-top:-9px;
+position:absolute;
+left:170px;
+}
+
+.configure_website_form_text_wide2_simple{
+font-size:12pt;
+line-height:16px;
+font-family:helvetica;
+margin-top:28px;
+display:flex;
+}
+
+.configure_website_form_text_wide2_simple>input{
+font-size:12pt;
+font-family:helvetica;
+width: 530px;
+margin-top:-9px;
+position:absolute;
+left:170px;
+}
+
+.configure_website_form_text2_simple{
+font-size:12pt;
+line-height:12px;
+font-family:helvetica;
+margin-top:10px;
+margin-bottom:18px;
+display:flex;
+}
+
+.configure_website_form_text2_simple>input{
+font-size:12pt;
+font-family:helvetica;
+width: 100px;
+margin-top:-9px;
+margin-left:12px;
+}
+
+.configure_website_form_text3_simple{
+font-size:12pt;
+line-height:12px;
+font-family:helvetica;
+margin-top:18px;
+display:flex;
+}
+
+.configure_website_form_text3_simple>input{
+font-size:12pt;
+font-family:helvetica;
+width: 100px;
+margin-top:-9px;
+margin-left:12px;
+}
+
+.configure_website_form_text4_simple{
+font-size:12pt;
+line-height:12px;
+font-family:helvetica;
+margin-top:24px;
+margin-bottom:12px;
+display:flex;
+}
+
+.configure_website_form_text4_simple>input{
+font-size:12pt;
+font-family:helvetica;
+width: 100px;
+margin-top:-9px;
+margin-left:12px;
+}
+
+.configure_website_form_text_wide5_simple{
+font-size:12pt;
+line-height:12px;
+font-family:helvetica;
+margin-top:16px;
+margin-bottom:24px;
+display:flex;
+}
+
+.configure_website_form_text_wide5_simple>input{
+font-size:12pt;
+font-family:helvetica;
+width: 495px;
+margin-top:-9px;
+margin-left:12px;
+}
+
+.configure_website_form_text6_simple{
+font-size:12pt;
+line-height:12px;
+font-family:helvetica;
+margin-top:12px;
+margin-bottom:24px;
+display:flex;
+}
+
+.configure_website_form_text6_simple>input{
+font-size:12pt;
+font-family:helvetica;
+width: 100px;
+margin-top:-9px;
+margin-left:12px;
+}
+
 /******************************************************************************/
 /* STYLES RELATED TO BUTTONS                                                  */
 /******************************************************************************/
@@ -5130,6 +5264,12 @@ margin-left:12px;
   --color: black;
   --background-color: lavender;
 }
+
+.btn-websiteexport{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
 
 @media (hover: hover) {
 	
