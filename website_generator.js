@@ -1402,16 +1402,16 @@ function generateAndSaveWebsiteSimple() {
         }
     }
 
-    theOutput +="ul{\n";
-    theOutput +="    listStyleType:none;\n";
-    theOutput +="    padding:0;\n";
-    theOutput +="    textAlign:center;\n";
-    theOutput +="}\n";
-    theOutput +="\n";
+    theOutput +="    ul{\n";
+    theOutput +="        listStyleType:none;\n";
+    theOutput +="        padding:0;\n";
+    theOutput +="        textAlign:center;\n";
+    theOutput +="    }\n";
+    theOutput +="    \n";
 
-    theOutput +="li{\n";
-    theOutput +="    margin-bottom: 16px;\n";
-    theOutput +="}\n";
+    theOutput +="    li{\n";
+    theOutput +="        margin-bottom: 16px;\n";
+    theOutput +="    }\n";
     theOutput +="\n";
 
     theOutput +="</style>\n";
@@ -1438,7 +1438,7 @@ function generateAndSaveWebsiteSimple() {
     }
 
     if (gotTitle || gotSubTitle){
-        theOutput +='        <hr style="margin-top:24px;margin-bottom:24px;width:500px;color:white;">';
+        theOutput +='        <hr style="margin-top:24px;margin-bottom:24px;width:500px;color:white;">\n';
     }
 
     theOutput +='        <div id="tuneShareLinkHolder"></div>\n';  
@@ -1449,7 +1449,7 @@ function generateAndSaveWebsiteSimple() {
     }
 
     if (doHR){
-        theOutput +='        <hr style="margin-top:24px;margin-bottom:24px;width:500px;color:white;">';
+        theOutput +='        <hr style="margin-top:24px;margin-bottom:24px;width:500px;color:white;">\n';
     }
       
     var gotFooter = false;
@@ -1468,7 +1468,7 @@ function generateAndSaveWebsiteSimple() {
     }
 
     if (doHR){
-        theOutput +='        <hr style="margin-top:24px;margin-bottom:24px;width:500px;color:white;">';
+        theOutput +='        <hr style="margin-top:24px;margin-bottom:24px;width:500px;color:white;">\n';
     }
 
     theOutput +="    </div>\n";
