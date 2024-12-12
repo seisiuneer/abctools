@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2182_121224_1300";
+var gVersionNumber="2183_121224_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -41174,7 +41174,7 @@ function updateDiagnostics(){
 //
 var gIsFacebook = false;
 
-function CheckFacebook_iOS(callback){
+function CheckFacebook_iOS(){
 
     gIsFacebook = false;
 
@@ -41258,6 +41258,7 @@ function CheckFacebook_iOS(callback){
 		},10);
 	}
 }
+
 
 //
 // Fix the iOS 17 URL encoded paste issue
