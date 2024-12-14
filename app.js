@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2183_121224_1600";
+var gVersionNumber="2184_121424_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -256,6 +256,7 @@ var gVoiceTuning = null;
 
 // Allow player to autoscroll
 var gAutoscrollPlayer = true;
+var gAutoscrollSmooth = true;
 
 // Auto-swing hornpipes
 var gAutoSwingHornpipes = true;
@@ -27632,7 +27633,18 @@ function CursorControl() {
 					//console.log("top case");
 
 					// Scroll up to make the SVG element visible at the top
-					gPlayerHolder.scrollTop += svgRect.top - gPlayerContainerRect.top;
+
+					if (gAutoscrollSmooth){
+						var theScroll = gPlayerHolder.scrollTop + svgRect.top - gPlayerContainerRect.top;
+
+						gPlayerHolder.scrollTo({
+					        top: theScroll, // Set this to the desired scrollTop value
+					        behavior: 'smooth' // Smooth scroll behavior
+					      });
+					}
+					else{
+						gPlayerHolder.scrollTop += svgRect.top - gPlayerContainerRect.top;
+					}
 
 				} else if (svgRect.bottom > theScrollTarget) {
 
@@ -27648,14 +27660,36 @@ function CursorControl() {
 						//console.log("normal case");
 
 						// Scroll down to make the SVG element visible at the bottom with additional space underneath
-						gPlayerHolder.scrollTop += svgRect.bottom - theScrollTarget;
+
+						if (gAutoscrollSmooth){
+							var theScroll = gPlayerHolder.scrollTop + svgRect.bottom - theScrollTarget;
+
+							gPlayerHolder.scrollTo({
+						        top: theScroll, // Set this to the desired scrollTop value
+						        behavior: 'smooth' // Smooth scroll behavior
+						      });
+						}
+						else{
+							gPlayerHolder.scrollTop += svgRect.bottom - theScrollTarget;
+						}
 					}
 					else{
 
 						//console.log("override case");
 
 						// Scroll up to make the SVG element visible at the top
-						gPlayerHolder.scrollTop += svgRect.top - gPlayerContainerRect.top;
+
+						if (gAutoscrollSmooth){
+							var theScroll = gPlayerHolder.scrollTop + svgRect.top - gPlayerContainerRect.top;
+
+							gPlayerHolder.scrollTo({
+						        top: theScroll, // Set this to the desired scrollTop value
+						        behavior: 'smooth' // Smooth scroll behavior
+						      });
+						}
+						else{
+							gPlayerHolder.scrollTop += svgRect.top - gPlayerContainerRect.top;
+						}
 
 					}
 				}
@@ -27778,7 +27812,17 @@ function CursorControlOneTune() {
 						//console.log("top case");
 
 						// Scroll up to make the SVG element visible at the top
-						window.scrollBy(0,svgRect.top-32); 
+						if (gAutoscrollSmooth){
+							window.scrollBy({
+						        left: 0,     // No horizontal scroll
+						        top: svgRect.top-32,  
+						        behavior: 'smooth' // Smooth scroll behavior
+						      }
+						    );
+						}
+						else{
+							window.scrollBy(0,svgRect.top-32); 
+						}
 
 					} else if (svgRect.bottom > theScrollTarget) {
 
@@ -27793,24 +27837,41 @@ function CursorControlOneTune() {
 							
 							//console.log("normal case");
 
-							// Scroll down to make the SVG element visible at the bottom with additional space underneath
-							window.scrollBy(0,svgRect.bottom - theScrollTarget);
+							if (gAutoscrollSmooth){
+								window.scrollBy({
+							        left: 0,     // No horizontal scroll
+							        top: svgRect.bottom - theScrollTarget,  
+							        behavior: 'smooth' // Smooth scroll behavior
+							      }
+							    );
+							}
+							else{
+								// Scroll down to make the SVG element visible at the bottom with additional space underneath
+								window.scrollBy(0,svgRect.bottom - theScrollTarget);
 
+							}
 						}
 						else{
 
 							//console.log("override case");
 
 							// Scroll up to make the SVG element visible at the top
-							window.scrollBy(0,svgRect.top-32);
+							if (gAutoscrollSmooth){
+								window.scrollBy({
+							        left: 0,     // No horizontal scroll
+							        top: svgRect.top-32,  
+							        behavior: 'smooth' // Smooth scroll behavior
+							      }
+							    );
+							}
+							else{
+								window.scrollBy(0,svgRect.top-32);
+							}
 						}
 					}
 				}
-
 			}
-
 		}
-
 	};
 
 	self.onFinished = function() {
@@ -35172,6 +35233,19 @@ function GetInitialConfigurationSettings(){
 		gAutoscrollPlayer = true;
 	}
 
+	val = localStorage.AutoscrollSmooth;
+	if (val){
+		gAutoscrollSmooth = (val == "true");
+	}
+	else{
+		if (isDesktopBrowser()){
+			gAutoscrollSmooth = true;
+		}
+		else{
+			gAutoscrollSmooth = false
+		}
+	}
+
 	val = localStorage.AutoscrollTarget;
 	if (val){
 		var testVal = parseFloat(val);
@@ -35832,6 +35906,7 @@ function SaveConfigurationSettings(){
 
 		// Save the player autoscroll preference
 		localStorage.AutoscrollPlayer = gAutoscrollPlayer;
+		localStorage.AutoscrollSmooth = gAutoscrollSmooth;
 
 		localStorage.AutoscrollTarget = gAutoscrollTarget;
 
@@ -37782,6 +37857,7 @@ function AdvancedSettings(){
 		configure_player_status_on_left: gPlayerStatusOnLeft,
 		configure_large_player_controls: gLargePlayerControls,
 		configure_autoscrollplayer: gAutoscrollPlayer,
+		configure_autoscrollsmooth: gAutoscrollSmooth,
 		configure_autoscrolltarget: gAutoscrollTarget,
 		configure_trainer_touch_controls: gTrainerTouchControls,
 		configure_metronome_volume: gMetronomeVolume,
@@ -37812,6 +37888,7 @@ function AdvancedSettings(){
 		{name: "          Show tune rendering progress in Javascript console", id: "configure_show_render_progress", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Disable abcjs notation rendering", id: "configure_DisableRendering", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Autoscroll player when playing", id: "configure_autoscrollplayer", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
+		{name: "    Smooth autoscroll when playing (when Autoscroll player is enabled)", id: "configure_autoscrollsmooth", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Player autoscroll vertical position target percentage (default is 66):", id: "configure_autoscrolltarget", type:"text", cssClass:"advanced_settings2_form_text"},
 		{name: "    Player/Tune Trainer always plays full tune even if there is a selection region", id: "configure_disable_selected_play", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
 		{name: "    Player uses large controls (easier to touch on phone/tablet)", id: "configure_large_player_controls", type:"checkbox", cssClass:"advanced_settings2_form_text_checkbox"},
@@ -37928,6 +38005,8 @@ function AdvancedSettings(){
 			gLargePlayerControls = args.result.configure_large_player_controls;
 
 			gAutoscrollPlayer = args.result.configure_autoscrollplayer;
+
+			gAutoscrollSmooth = args.result.configure_autoscrollsmooth;
 
 			var val = parseFloat(args.result.configure_autoscrolltarget);
 			if (!isNaN(val)){
