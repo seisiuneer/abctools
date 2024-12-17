@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2185_121524_0900";
+var gVersionNumber="2186_121624_1800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27585,6 +27585,10 @@ function CursorControl() {
 
 	var self = this;
 
+	var cursorLastScroll = -1000;
+
+	var SCROLLTHRESHOLD = 48;
+
 	self.onReady = function() {
 	};
 
@@ -27651,7 +27655,6 @@ function CursorControl() {
 			cursor.setAttribute("y1", ev.top);
 			cursor.setAttribute("y2", ev.top + ev.height);
 
-			// Don't try to autoscroll cursors larger than
 			if (gAutoscrollPlayer){
 
 				// Get the SVG element's position relative to the container
@@ -27664,6 +27667,12 @@ function CursorControl() {
 				// Scroll target is now user controllable
 				var theScrollTarget = containerHeight*(gAutoscrollTarget/100);
 
+			 	var forceScroll = false;
+			 	if ((svgRect.bottom < gPlayerContainerRect.top) || (svgRect.top > gPlayerContainerRect.bottom)){
+			 		//console.log("Force case!");
+			 		forceScroll = true;
+			 	}
+
 				// Check if the SVG element is above or below the container's visible area
 				if (svgRect.top < gPlayerContainerRect.top) {
 
@@ -27671,19 +27680,35 @@ function CursorControl() {
 
 					// Scroll up to make the SVG element visible at the top
 
-					if (gAutoscrollSmooth){
+					var theScroll = gPlayerHolder.scrollTop + svgRect.top - gPlayerContainerRect.top;
 
-						var theScroll = gPlayerHolder.scrollTop + svgRect.top - gPlayerContainerRect.top;
-						
-						// gPlayerHolder.scrollTo({
-					 	//        top: theScroll, // Set this to the desired scrollTop value
-					 	//        behavior: 'smooth' // Smooth scroll behavior
-					 	//      });
+				 	var delta = cursorLastScroll - theScroll;
 
-						throttledElementScrollTo(gPlayerHolder,0,theScroll);
-					}
-					else{
-						gPlayerHolder.scrollTop += svgRect.top - gPlayerContainerRect.top;
+				 	if (delta < 0){
+				 		delta = -delta;
+				 	}
+					 
+				 	// if (delta != 0){
+				 	// 	console.log("delta: "+delta);
+				 	// }
+
+					if ((delta > SCROLLTHRESHOLD) || forceScroll){
+
+						if (gAutoscrollSmooth){
+
+							throttledElementScrollTo(gPlayerHolder,0,theScroll);
+
+						}
+						else{
+
+							gPlayerHolder.scrollTop = theScroll;
+
+						}
+
+						if (!forceScroll){
+							cursorLastScroll = theScroll;
+						}
+
 					}
 
 				} else if (svgRect.bottom > theScrollTarget) {
@@ -27700,48 +27725,74 @@ function CursorControl() {
 						//console.log("normal case");
 
 						// Scroll down to make the SVG element visible at the bottom with additional space underneath
+						var theScroll = gPlayerHolder.scrollTop + svgRect.bottom - theScrollTarget;
 
-						if (gAutoscrollSmooth){
+					 	var delta = cursorLastScroll - theScroll;
 
-							var theScroll = gPlayerHolder.scrollTop + svgRect.bottom - theScrollTarget;
+					 	if (delta < 0){
+					 		delta = -delta;
+					 	}
+
+					 	// if (delta != 0){
+					 	// 	console.log("delta: "+delta);
+					 	// }
 						
-							// gPlayerHolder.scrollTo({
-						 	//        top: theScroll, // Set this to the desired scrollTop value
-						 	//        behavior: 'smooth' // Smooth scroll behavior
-						 	//      });
+						if ((delta > SCROLLTHRESHOLD) || forceScroll) {
 
-							throttledElementScrollTo(gPlayerHolder,0,theScroll);
+							if (gAutoscrollSmooth){
 
-						}
-						else{
-							gPlayerHolder.scrollTop += svgRect.bottom - theScrollTarget;
+								throttledElementScrollTo(gPlayerHolder,0,theScroll);
+
+						 	}
+						 	else{
+
+						 		gPlayerHolder.scrollTop = theScroll;
+
+						 	}
+
+							if (!forceScroll){
+								cursorLastScroll = theScroll;
+							}
 						}
 					}
 					else{
 
 						//console.log("override case");
 
-						// Scroll up to make the SVG element visible at the top
+						// Scroll down to make the SVG element visible at the bottom with additional space underneath
+						var theScroll = gPlayerHolder.scrollTop + svgRect.top - gPlayerContainerRect.top;
 
-						if (gAutoscrollSmooth){
+					 	var delta = cursorLastScroll - theScroll;
 
-							var theScroll = gPlayerHolder.scrollTop + svgRect.top - gPlayerContainerRect.top;
+					 	if (delta < 0){
+					 		delta = -delta;
+					 	}
 
-							// gPlayerHolder.scrollTo({
-						 	//        top: theScroll, // Set this to the desired scrollTop value
-						 	//        behavior: 'smooth' // Smooth scroll behavior
-						 	//      });
+					 	// if (delta != 0){
+					 	// 	console.log("delta: "+delta);
+					 	// }
 
-							throttledElementScrollTo(gPlayerHolder,0,theScroll);
+					 	if ((delta > SCROLLTHRESHOLD) || forceScroll) {
+
+							if (gAutoscrollSmooth){
+
+								throttledElementScrollTo(gPlayerHolder,0,theScroll);
+
+							}
+							else{
+
+								gPlayerHolder.scrollTop = theScroll;
+
+							}
+
+							if (!forceScroll){
+								cursorLastScroll = theScroll;
+							}
+
 						}
-						else{
-							gPlayerHolder.scrollTop += svgRect.top - gPlayerContainerRect.top;
-						}
-
 					}
 				}
 			}
-
 		}
 	};
 
@@ -27760,6 +27811,7 @@ function CursorControl() {
 	};
 
 }
+
 //
 // MAE 15 Jul 2024 - For quick editor
 //
@@ -27861,17 +27913,13 @@ function CursorControlOneTune() {
 						// Scroll up to make the SVG element visible at the top
 						if (gAutoscrollSmooth){
 
-							// window.scrollBy({
-							//        left: 0,     // No horizontal scroll
-							//        top: svgRect.top-32,  
-							//        behavior: 'smooth' // Smooth scroll behavior
-							//      }
-							//    );
-
 						 	throttledWindowScrollBy(0,svgRect.top-32);
+						 	
 						}
 						else{
+
 							window.scrollBy(0,svgRect.top-32); 
+
 						}
 
 					} else if (svgRect.bottom > theScrollTarget) {
@@ -27889,18 +27937,14 @@ function CursorControlOneTune() {
 
 							if (gAutoscrollSmooth){
 
-								// window.scrollBy({
-							 	//        left: 0,     // No horizontal scroll
-							 	//        top: svgRect.bottom - theScrollTarget,  
-							 	//        behavior: 'smooth' // Smooth scroll behavior
-							 	//      }
-							 	//    );
-
 						 		throttledWindowScrollBy(0,svgRect.bottom - theScrollTarget);
+
 							}
 							else{
+
 								// Scroll down to make the SVG element visible at the bottom with additional space underneath
 								window.scrollBy(0,svgRect.bottom - theScrollTarget);
+
 							}
 						}
 						else{
@@ -27910,17 +27954,13 @@ function CursorControlOneTune() {
 							// Scroll up to make the SVG element visible at the top
 							if (gAutoscrollSmooth){
 
-								// window.scrollBy({
-							 	//        left: 0,     // No horizontal scroll
-							 	//        top: svgRect.top-32,  
-							 	//        behavior: 'smooth' // Smooth scroll behavior
-							 	//      }
-							 	//    );
-
 						 		throttledWindowScrollBy(0,svgRect.top-32);
+
 							}
 							else{
+
 								window.scrollBy(0,svgRect.top-32);
+
 							}
 						}
 					}
