@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2186_121624_1800";
+var gVersionNumber="2187_121724_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -21502,10 +21502,16 @@ function OnABCTextChange(){
 
 		if (gRawMode){
 
+			// Maintain the scroll position if possible
+			var theScroll = window.scrollY;
+
 			RenderAsync(true,null,function(){
 
 				// Highlight the notes in the notation
 				fireSelectionChanged();
+
+				// Restore scroll position
+				window.scrollTo(0,theScroll);
 				
 			});
 
