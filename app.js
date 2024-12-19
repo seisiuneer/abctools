@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2187_121724_0900";
+var gVersionNumber="2188_121824_2200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -21676,7 +21676,8 @@ function complianceABCTransformer(theABC,doInverse){
 	    "%tab_first_voice_exclude",
 	    "%reverb",
 	    "%links_open_in_editor",
-	    "%abcjs_render_params"
+	    "%abcjs_render_params",
+	    "%flatten_parts_for_play"
 	];
 
 	if (doInverse){
@@ -29017,10 +29018,107 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 }
 
 //
+// Flatten all the P: tag parts in a tune
+//
+
+function flattenABCParts(abcString) {
+
+	//debugger;
+
+	// Strip all the extra spaces after P: tags
+	abcString = abcString.replace(/P: +/g, 'P:');
+
+    // Extract header text (everything before the first 'P:')
+    const headerMatch = abcString.match(/^[\s\S]*?(?=P:)/);
+    const header = headerMatch ? headerMatch[0] : '';
+    
+    // Extract part order from the first P: tag, which is followed by part labels
+    const partOrderMatch = abcString.match(/P:([^\n]+)/);
+    if (!partOrderMatch) {
+        return abcString;  // No part order found, return the original ABC
+    }
+
+    // Capture only the part order, ensure it only captures the sequence after "P:"
+    var partSequence = partOrderMatch[1].replace(/\s+/g, ' ').trim();  // Normalize spaces and trim
+
+    partSequence = partSequence.replaceAll(" ","");
+
+    // Extract each part's content (using P:[A-Z] format for parts)
+    const partPattern = /(P:[A-Z]*)([\s\S]*?)(?=P:[A-Z]|$)/g;
+    let parts = {};
+    let match;
+
+    while ((match = partPattern.exec(abcString)) !== null) {
+        const partLabel = match[1];
+        const partContent = match[2].trim();
+        parts[partLabel] = `${partLabel}\n${partContent}`; // was P:
+    }
+
+    //debugger;
+
+    // Helper function to parse part sequences (handles groups and repeats)
+    function parsePartSequence(seq) {
+        let flattenedSequence = [];
+        const groupPattern = /\(([^\)]+)\)(\d*)|([A-Z])(\d*)/g;
+        let groupMatch;
+        
+        while ((groupMatch = groupPattern.exec(seq)) !== null) {
+            if (groupMatch[3]) {
+                // Simple part like A2 or B
+                const part = groupMatch[3];
+                const repeat = parseInt(groupMatch[4], 10) || 1;
+                for (let i = 0; i < repeat; i++) {
+                    flattenedSequence.push(part);
+                }
+            } else if (groupMatch[1]) {
+                // Group like (A2B)3
+                const group = groupMatch[1];
+                const groupRepeat = parseInt(groupMatch[2], 10) || 1;
+                const parsedGroup = parsePartSequence(group);
+                for (let i = 0; i < groupRepeat; i++) {
+                    flattenedSequence = flattenedSequence.concat(parsedGroup);
+                }
+            }
+        }
+        
+        return flattenedSequence;
+    }
+
+    // Flatten the ABC according to the parsed part sequence
+    const parsedSequence = parsePartSequence(partSequence);
+    let flattenedABC = [];
+    
+    parsedSequence.forEach(part => {
+    	var fullPart = "P:"+part;
+        if (parts[fullPart]) {
+            flattenedABC.push(parts[fullPart]);
+        }
+    });
+
+    // Combine header and flattened parts
+    return header + flattenedABC.join('\n');
+}
+
+
+//
 // Based on the global injection configuration, pre-process the %%MIDI directives in the ABC
 function PreProcessPlayABC(theTune){
 	
 	//console.log("PreProcessPlayABC");
+	// Initially disable gchord use
+	var flattenParts = false;
+
+	var searchRegExp = /^%flatten_parts_for_play.*$/gm
+
+	var flattenPartsRequested = searchRegExp.test(theTune);
+
+	if (flattenPartsRequested){
+		flattenParts = true;
+	}
+
+	if (flattenParts){
+		theTune = flattenABCParts(theTune);
+	}
 
 	// Override any ABC play values?
 
