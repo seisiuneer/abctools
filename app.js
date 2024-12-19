@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2189_121924_0100";
+var gVersionNumber="2190_121924_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -29021,6 +29021,14 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 // Flatten all the P: tag parts in a tune
 //
 
+function stripNewlineIfSingleLine(str) {
+  // Check if the string ends with '\n' and does not contain any other '\n'
+  if (str.endsWith('\n') && str.indexOf('\n') === str.length - 1) {
+    return str.slice(0, -1); // Remove the trailing '\n'
+  }
+  return str;
+}
+
 function flattenABCParts(abcString) {
 
 	//debugger;
@@ -29048,13 +29056,29 @@ function flattenABCParts(abcString) {
     let parts = {};
     let match;
 
+    // Handle sequence tag in header case
+    var gotSequenceTag = false;
+    var sequenceTag = "";
+
     while ((match = partPattern.exec(abcString)) !== null) {
         const partLabel = match[1];
         const partContent = match[2].trim();
+
+        if (!gotSequenceTag){
+         	if (partLabel.length > 3){
+        		gotSequenceTag = true;
+        		sequenceTag = partLabel;
+        	}
+        }
         parts[partLabel] = `${partLabel}\n${partContent}`; // was P:
     }
 
     //debugger;
+
+    // If no sequence found, return orginal ABC
+    if (!gotSequenceTag){
+    	return abcString;
+    }
 
     // Helper function to parse part sequences (handles groups and repeats)
     function parsePartSequence(seq) {
@@ -29087,6 +29111,14 @@ function flattenABCParts(abcString) {
     // Flatten the ABC according to the parsed part sequence
     const parsedSequence = parsePartSequence(partSequence);
     let flattenedABC = [];
+
+    // Handle header case
+    if (gotSequenceTag){
+         if (parts[sequenceTag]) {
+         	var headerTagContents = stripNewlineIfSingleLine(parts[sequenceTag]);
+            flattenedABC.push(headerTagContents);
+        }
+    }
     
     parsedSequence.forEach(part => {
     	var fullPart = "P:"+part;
@@ -29117,9 +29149,12 @@ function PreProcessPlayABC(theTune){
 	}
 
 	if (flattenParts){
+		// console.log("Before:");
+		// console.log(theTune);
 		theTune = flattenABCParts(theTune);
+		// console.log("After:");
+		// console.log(theTune);
 	}
-
 	// Override any ABC play values?
 
 	// Strip any features hidden from the More Tools dialog
