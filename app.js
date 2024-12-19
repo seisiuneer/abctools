@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2188_121824_2200";
+var gVersionNumber="2189_121924_0100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -21677,7 +21677,7 @@ function complianceABCTransformer(theABC,doInverse){
 	    "%reverb",
 	    "%links_open_in_editor",
 	    "%abcjs_render_params",
-	    "%flatten_parts_for_play"
+	    "%play_flatten_parts"
 	];
 
 	if (doInverse){
@@ -29108,7 +29108,7 @@ function PreProcessPlayABC(theTune){
 	// Initially disable gchord use
 	var flattenParts = false;
 
-	var searchRegExp = /^%flatten_parts_for_play.*$/gm
+	var searchRegExp = /^%play_flatten_parts.*$/gm
 
 	var flattenPartsRequested = searchRegExp.test(theTune);
 
