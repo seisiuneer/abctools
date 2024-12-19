@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2190_121924_0930";
+var gVersionNumber="2191_121924_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -29052,7 +29052,7 @@ function flattenABCParts(abcString) {
     partSequence = partSequence.replaceAll(" ","");
 
     // Extract each part's content (using P:[A-Z] format for parts)
-    const partPattern = /(P:[A-Z]*)([\s\S]*?)(?=P:[A-Z]|$)/g;
+    const partPattern = /(P:[A-Z0-9()]*)([\s\S]*?)(?=P:[A-Z]|$)/g;
     let parts = {};
     let match;
 
@@ -29063,7 +29063,6 @@ function flattenABCParts(abcString) {
     while ((match = partPattern.exec(abcString)) !== null) {
         const partLabel = match[1];
         const partContent = match[2].trim();
-
         if (!gotSequenceTag){
          	if (partLabel.length > 3){
         		gotSequenceTag = true;
@@ -29107,6 +29106,8 @@ function flattenABCParts(abcString) {
         
         return flattenedSequence;
     }
+
+    //debugger;
 
     // Flatten the ABC according to the parsed part sequence
     const parsedSequence = parsePartSequence(partSequence);
