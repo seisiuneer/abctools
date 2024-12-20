@@ -36,7 +36,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
-        
+         
         <style>
         
         p {
@@ -2432,16 +2432,22 @@
                 <hr class="hidden-print" id="flattening_parts">
                 <h1 class="page_break_always">Flattening Parts for Playback (Experimental)<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/LwlyTsl6q7c" title="%play_flatten_parts Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>abcjs is not currently able to handle sequencing of P: tag parts.</p>
+                <p>abcjs is not currently able to natively handle sequencing of P: tag parts.</p>
                 <p>This is experimental feature that attempts to work around this abcjs limitation by duplicating the parts injected into the Player based on P: tag part sequencing.</p>
+                <p><strong>Here is the parts definition from the abcMIDI documentation:</strong></p>
+                <p>A part label must be a single character in the range A - Z. e.g.</p>
+                <p class="code">P:A</p>
+                <p>A part specifier in the header can be used to define the MIDI output as some combination of the specified parts e.g.</p>
+                <p class="code">P:ABACABA</p>
+                <p>You can use ( ) to repeat a group of parts by a specified number of times e.g. P:A(AB)6 is equivalent to P:AABABABABABAB. If there are no parentheses, just the last part is repeated, so P:AAB3 is equivalent to P:AABBB. Dots or spaces may be inserted into the part specifier to make it easier to read e.g P:A.AB.AC. If the parts specification contains any other characters such as lower case letters, then the entire specification will be ignored by abc2midi.</p>
+                <p>If there is no part specifier, the output is simply the parts (or just the unlabelled music) in the order in which it appears in the tune body.</p> 
+                <p><strong>Flattening parts for playback:</strong></p>
                 <p>To flatten all parts indicated by P:A style tags based on the part order specified in an initial P:ABC style tag, include the following annotation in your tune:</p>
                 <p class="code">%play_flatten_parts</p>
                 <p>Here is an example:</p>
                 <p class="code">% Flatten the parts<br/>%play_flatten_parts</br>%<br/>% Play the parts twice each in reverse order<br/>P:CCBBAA<br/>%<br/>% Mark Part A<br/>P:A<br/>%<br/>% ABC for Part A<br/>AAAA | AAAA<br/>%<br/>% Mark part B<br/>P:B<br/>%<br/>% ABC for Part B<br/>BBBB | BBBB<br/>%<br/>% Mark Part C<br/>P:C<br/>%<br/>% ABC for Part C<br/>CCCC | CCCC</p>
-                <p>Part tags for sequencing must be standalone P: tags (not inline) and use a capital letter from A-Z.</p>
-                <p>Repeat counts and grouping in the P: tag sequencing string are supported, for example:</p>
-                <p class="code">% Play the part group AB twice then play part C three times<br/>P:(AB)2C3</p>
                 <p>This feature can be very useful for exporting the .WAV or .MP3 audio of a tune with a specific part order.</p>
+                <p>Without the <strong>%play_flatten_parts</strong> annotation, a tune will just play straight through from start to finish as if no part or part order were specified.</p>
                 <p>Here is a nice example: "Ca La Breaza", a four part tune that plays with a ABACDBACDBA part order:</p>
                 <p style="text-align: center"><a href="https://tinyurl.com/dfc46f8x">Ca La Breaza - ABACDBACDBA Part Order</a></p>
                 <hr class="hidden-print" id="export_pdf_tunebook">

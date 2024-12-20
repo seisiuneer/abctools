@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2191_121924_1030";
+var gVersionNumber="2192_122024_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -29029,12 +29029,24 @@ function stripNewlineIfSingleLine(str) {
   return str;
 }
 
+const removeSpacesAndDotsFromPLine = (input) => {
+  return input.split('\n') // Split the input by new lines
+    .map(line => {
+      if (line.startsWith('P:')) {
+        // If the line starts with "P:", remove spaces and dots
+        return line.replace(/[ .]/g, ''); 
+      }
+      return line; // Otherwise, keep the line unchanged
+    })
+    .join('\n'); // Join the lines back into a single string
+};
+
 function flattenABCParts(abcString) {
 
 	//debugger;
 
 	// Strip all the extra spaces after P: tags
-	abcString = abcString.replace(/P: +/g, 'P:');
+	abcString = removeSpacesAndDotsFromPLine(abcString);
 
     // Extract header text (everything before the first 'P:')
     const headerMatch = abcString.match(/^[\s\S]*?(?=P:)/);
@@ -29046,10 +29058,10 @@ function flattenABCParts(abcString) {
         return abcString;  // No part order found, return the original ABC
     }
 
+    //debugger;
+
     // Capture only the part order, ensure it only captures the sequence after "P:"
     var partSequence = partOrderMatch[1].replace(/\s+/g, ' ').trim();  // Normalize spaces and trim
-
-    partSequence = partSequence.replaceAll(" ","");
 
     // Extract each part's content (using P:[A-Z] format for parts)
     const partPattern = /(P:[A-Z0-9()]*)([\s\S]*?)(?=P:[A-Z]|$)/g;
@@ -29064,6 +29076,7 @@ function flattenABCParts(abcString) {
         const partLabel = match[1];
         const partContent = match[2].trim();
         if (!gotSequenceTag){
+        	//debugger;
          	if (partLabel.length > 3){
         		gotSequenceTag = true;
         		sequenceTag = partLabel;
