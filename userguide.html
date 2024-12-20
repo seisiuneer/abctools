@@ -36,7 +36,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
-         
+        
         <style>
         
         p {
@@ -2439,7 +2439,10 @@
                 <p class="code">P:A</p>
                 <p>A part specifier in the header can be used to define the MIDI output as some combination of the specified parts e.g.</p>
                 <p class="code">P:ABACABA</p>
-                <p>You can use ( ) to repeat a group of parts by a specified number of times e.g. P:A(AB)6 is equivalent to P:AABABABABABAB. If there are no parentheses, just the last part is repeated, so P:AAB3 is equivalent to P:AABBB. Dots or spaces may be inserted into the part specifier to make it easier to read e.g P:A.AB.AC. If the parts specification contains any other characters such as lower case letters, then the entire specification will be ignored by abc2midi.</p>
+                <p>You can use ( ) to repeat a group of parts by a specified number of times e.g. P:A(AB)6 is equivalent to P:AABABABABABAB.</p>
+                <p>If there are no parentheses, just the last part is repeated, so P:AAB3 is equivalent to P:AABBB.</p>
+                <p>Dots or spaces may be inserted into the part specifier to make it easier to read e.g P:A.AB.AC.</p>
+                <p>If the parts specification contains any other characters such as lower case letters, then the entire specification will be ignored by abc2midi.</p>
                 <p>If there is no part specifier, the output is simply the parts (or just the unlabelled music) in the order in which it appears in the tune body.</p> 
                 <p><strong>Flattening parts for playback:</strong></p>
                 <p>To flatten all parts indicated by P:A style tags based on the part order specified in an initial P:ABC style tag, include the following annotation in your tune:</p>
