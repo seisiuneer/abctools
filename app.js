@@ -29046,7 +29046,7 @@ function flattenABCParts(abcString) {
 	//debugger;
 	
 	// Turn inline P: tags into discrete P: tags
-	abcString = abcString.replace(/\[P:([A-Z])\]/g, 'P:$1\n');
+	abcString = abcString.replace(/\[P:\s+([A-Z])\]/g, 'P:$1\n');
 	abcString = abcString.replaceAll("\n\n","\n");
 
 	// Strip all the extra spaces after P: tags
