@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2192_122024_0930";
+var gVersionNumber="2193_122024_1930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -29044,6 +29044,10 @@ const removeSpacesAndDotsFromPLine = (input) => {
 function flattenABCParts(abcString) {
 
 	//debugger;
+	
+	// Turn inline P: tags into discrete P: tags
+	abcString = abcString.replace(/\[P:([A-Z])\]/g, 'P:$1\n');
+	abcString = abcString.replaceAll("\n\n","\n");
 
 	// Strip all the extra spaces after P: tags
 	abcString = removeSpacesAndDotsFromPLine(abcString);
