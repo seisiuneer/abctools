@@ -2432,6 +2432,7 @@
                 <hr class="hidden-print" id="flattening_parts">
                 <h1 class="page_break_always">Flattening Parts for Playback (Experimental)<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/LwlyTsl6q7c" title="%play_flatten_parts Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/zSejc2dg7pM" title="%play_flatten_parts Quick Editor Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>abcjs is not currently able to natively handle sequencing of P: tag parts.</p>
                 <p>This is experimental feature that attempts to work around this abcjs limitation by duplicating the parts injected into the Player based on P: tag part sequencing.</p>
                 <p><strong>Here is the parts definition from the abcMIDI documentation:</strong></p>
@@ -2443,7 +2444,7 @@
                 <p>If there are no parentheses, just the last part is repeated, so P:AAB3 is equivalent to P:AABBB.</p>
                 <p>Dots or spaces may be inserted into the part specifier to make it easier to read e.g P:A.AB.AC.</p>
                 <p>If the parts specification contains any other characters such as lower case letters, then the entire specification will be ignored by abc2midi.</p>
-                <p>If there is no part specifier, the output is simply the parts (or just the unlabelled music) in the order in which it appears in the tune body.</p> 
+                <p>If there is no part specifier, the output is simply the parts (or just the unlabelled music) in the order in which it appears in the tune body.</p>
                 <p><strong>Flattening parts for playback:</strong></p>
                 <p>To flatten all parts indicated by P:A style tags based on the part order specified in an initial P:ABC style tag, include the following annotation in your tune:</p>
                 <p class="code">%play_flatten_parts</p>
