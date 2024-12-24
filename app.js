@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2196_122324_1930";
+var gVersionNumber="2197_122324_2000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16754,8 +16754,10 @@ function RenderDivClickHandler(e){
 
 			if (!gIsMaximized){
 
-				// Scroll the tune ABC into view
-			    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
+				if (!gIsQuickEditor){
+					// Scroll the tune ABC into view
+				    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
+				}
 
 			    if (isMobileBrowser()){
 			    	return;
