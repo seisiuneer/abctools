@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2194_122024_2100";
+var gVersionNumber="2195_122324_1900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -11138,7 +11138,8 @@ function fireSelectionChanged(){
 
 					gRawLastIndex = gCurrentTune;
 				}
-	    		
+
+
 	    		var engraver = gRawVisual[gRawLastIndex].engraver;
 
 	    		if (engraver){
@@ -11146,7 +11147,7 @@ function fireSelectionChanged(){
 	    			engraver.rangeHighlight(gTheABC.selectionStart, gTheABC.selectionEnd);
 
 	    		}
-	    	}
+		    }
 	    }
 	}
 }
@@ -11155,6 +11156,9 @@ function fireSelectionChanged(){
 // Main routine for rendering the notation
 //
 function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
+
+	//console.log("RenderTheNotes renderAll: "+renderAll+" tuneNumber: "+tuneNumber);
+
 	if (gIsQuickEditor){
 		// MAE 15 July 2024
 		// For the Quick Editor
@@ -11174,6 +11178,7 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 
 	// Get the rendering params
 	var params = GetABCJSParams(instrument);
+
 	if (gIsQuickEditor){
 		// MAE 15 July 2024 - For quick editor
 		params.oneSvgPerLine = false;
@@ -11906,11 +11911,11 @@ function RenderRangeAsync(start,end,callback){
 // Allow putting up a spiner before the synchronous Render() function
 //
 function RenderAsync(renderAll,tuneNumber,callback){
+
 	if (gIsQuickEditor){
 		// MAE 15 July 2024 - For Quick Editor
 		renderAll = false;
 		tuneNumber = 0;
-		
 	}
 
 	// Don't allow a re-render during PDF generation
@@ -11964,12 +11969,8 @@ function RenderAsync(renderAll,tuneNumber,callback){
 function Render(renderAll,tuneNumber) {
 
 	//console.log("Render renderAll="+renderAll+" tuneNumber="+tuneNumber); 
-	if (gIsQuickEditor){
-		// MAE 15 July 2024 - For the Quick Editor
-		renderAll = true;
-		tuneNumber = 0;
 
-	} 
+	//debugger;
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
@@ -11978,14 +11979,6 @@ function Render(renderAll,tuneNumber) {
 
 	// Idle the file status display
 	var nTunes = CountTunes();
-	if (gIsQuickEditor){
-		// MAE 15 July 2024 - For the Quick Editor
-		if (nTunes > 1){
-			nTunes = 1;
-		}
-
-
-	}
 
 	if ((gTheABC.value != "") && (nTunes > 0)) {
 
@@ -12121,15 +12114,58 @@ function Render(renderAll,tuneNumber) {
 		// Generate the rendering divs
 		// Only required if rendering all the tunes, otherwise will re-use an existing div
 		if (renderAll){
-			GenerateRenderingDivs(nTunes);
-			theNotes = gTheABC.value;
+			if (gIsQuickEditor){
+				
+				//console.log("Quick editor renderAll true");
+				GenerateRenderingDivs(1);
+
+				// Just get the ABC for the current tune
+				theNotes = getTuneByIndex(tuneNumber);
+			}
+			else{
+				GenerateRenderingDivs(nTunes);
+				theNotes = gTheABC.value;
+			}
 		}
 		else{
+			if (gIsQuickEditor){	
+				//console.log("Quick editor renderAll false");
+				GenerateRenderingDivs(1);
 
-			// Just get the ABC for the current tune
-			theNotes = getTuneByIndex(tuneNumber);
+				// Just get the ABC for the current tune
+				theNotes = getTuneByIndex(gCurrentTune);
+			}
+			else{
+				// Just get the ABC for the current tune
+				theNotes = getTuneByIndex(tuneNumber);
+			}
 		}
 
+		if (gIsQuickEditor){
+			
+			if (nTunes > 1){
+				
+				gRawMode = false;
+
+				document.getElementById("rawmodebutton").classList.remove("rawmodebutton");
+				document.getElementById("rawmodebutton").classList.add("rawmodebuttondisabled");
+
+				document.getElementById("rawmodebutton").classList.add("btn-rawmode-off");
+				document.getElementById("rawmodebutton").classList.remove("btn-rawmode-on");
+
+				document.getElementById("rawmodebutton").value = "Highlighting";
+
+				gTheABC.style.backgroundColor = "white";
+
+				// Turn off raw mode
+				gRawMode = false;
+
+				// Clear last tune highlight tracker
+				gRawLastIndex = -1;
+
+			}
+		}
+		
 		if (!gRawMode){
 
 			theNotes = processAllStripping(theNotes);
@@ -12142,7 +12178,12 @@ function Render(renderAll,tuneNumber) {
 		}
 
 		// Render the notes
-		RenderTheNotes(theNotes,radiovalue,renderAll,tuneNumber);
+		if (gIsQuickEditor){
+			RenderTheNotes(theNotes,radiovalue,false,0);
+		}
+		else{
+			RenderTheNotes(theNotes,radiovalue,renderAll,tuneNumber);
+		}	
 
 		// Maintain scroll position after render
 		window.scrollTo(0, scrollTop);
@@ -12150,8 +12191,7 @@ function Render(renderAll,tuneNumber) {
 		if (gIsQuickEditor){
 
 			// MAE 15 Jul 2024 - For quick editor
-			inlinePlayback();
-
+			inlinePlayback(); 
 		}
 
 	} else {
@@ -16595,6 +16635,12 @@ function ProcessAddTune(theValue){
 
 		var nTunes = CountTunes();
 
+		if (gIsQuickEditor){
+			
+			gCurrentTune = nTunes-1;
+
+		}
+
 		// No autoscroll on mobile
 		if (isMobileBrowser()){
 
@@ -16608,11 +16654,8 @@ function ProcessAddTune(theValue){
 
 		if (!gIsMaximized){
 
-			if (!gIsQuickEditor){
-				// Scroll the tune ABC into view
-			    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
-			}
-
+			// Scroll the tune ABC into view
+		    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
 
 		    if (isMobileBrowser()){
 		    	return;
@@ -21261,11 +21304,6 @@ function TextBoxResizeHandler(){
 //
 function findSelectedTuneIndex(){
 
-	if (gIsQuickEditor){
-		// MAE 15 July 2024 - For the Quick Editor
-		return 0;
-	}
-
 	var theNotes = gTheABC.value;
 
 	// Now find all the X: items
@@ -21335,9 +21373,26 @@ function findSelectedTuneIndex(){
 function MakeTuneVisible(forceUpdate){
 
 	if (gIsQuickEditor){
-		// MAE 15 July 2024 - For the Quick Editor
-		gCurrentTune = 0
+
+		if (gAllowCopy){
+
+			var tuneIndex = findSelectedTuneIndex();
+			
+			if (tuneIndex != gCurrentTune){
+
+				if (!gDisableNotationRendering){
+					Render(false,tuneIndex);
+				}
+
+				//console.log("MakeTuneVisible - gCurrentTune before = "+gCurrentTune);
+				gCurrentTune = tuneIndex;
+				//console.log("MakeTuneVisible - gCurrentTune after = "+gCurrentTune);
+
+			}		
+		}
+
 		return;
+
 	}
 
 	// Follows same enable semantics as copy
@@ -21494,6 +21549,10 @@ function OnABCTextChange(){
 
 	// Tune count changed, need to render all tunes
 	if (renderAllTunes){
+
+		if (gIsQuickEditor){
+			gCurrentTune = 0;
+		}
 
 		RenderAsync(true,null);
 
@@ -41942,7 +42001,8 @@ function inlinePlayback(){
 
 	setTimeout(function(){
 
-		var theABC = gTheABC.value;
+		// MAE 23 Jun 2024
+		var theABC = getTuneByIndex(gCurrentTune)
 
 		theABC = PreProcessPlayABC(theABC);
 
