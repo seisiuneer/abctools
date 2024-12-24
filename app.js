@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2199_122424_1000";
+var gVersionNumber="2200_122424_1430";
 
 var gMIDIInitStillWaiting = false;
 
@@ -12028,29 +12028,22 @@ function Render(renderAll,tuneNumber) {
 			ShowMaximizeButton();
 		}
 
+		if (isDesktopBrowser() || gIsMaximized){
+
+			// Add the play button
+			ShowPlayButton();
+
+		}
+
 		if (!gIsQuickEditor){
 
 			if (isDesktopBrowser() || gIsMaximized){
-
-				// Add the play button
-				ShowPlayButton();
 
 				// Add the PDF button
 				ShowPDFButton();
 
 			}
-		}
-		else{
-
-			if (isDesktopBrowser() || gIsMaximized){
-
-				// Add the play button
-				ShowPlayButton();
-
-			}
-
-		}
-		
+		}		
 
 		// MAE 20 July 2024 - Avoid showing bottom bar if top bar hidden
 		if (gShowAllControls && gTopBarShowing){
@@ -12093,11 +12086,9 @@ function Render(renderAll,tuneNumber) {
 		document.getElementById("copybutton").classList.remove("copybuttondisabled");
 		document.getElementById("copybutton").classList.add("copybutton");
 
-		if (!gIsQuickEditor){
-			// Enable the play button
-			document.getElementById("playbutton").classList.remove("playbuttondisabled");
-			document.getElementById("playbutton").classList.add("playbutton");
-		}
+		// Enable the play button
+		document.getElementById("playbutton").classList.remove("playbuttondisabled");
+		document.getElementById("playbutton").classList.add("playbutton");
 		
 		// Enable the raw mode button (Desktop only)
 		if (isPureDesktopBrowser()){
@@ -12224,11 +12215,9 @@ function Render(renderAll,tuneNumber) {
 		document.getElementById("copybutton").classList.remove("copybutton");
 		document.getElementById("copybutton").classList.add("copybuttondisabled");
 
-		if (!gIsQuickEditor){
-			// Disable the play button
-			document.getElementById("playbutton").classList.remove("playbutton");
-			document.getElementById("playbutton").classList.add("playbuttondisabled");
-		}
+		// Disable the play button
+		document.getElementById("playbutton").classList.remove("playbutton");
+		document.getElementById("playbutton").classList.add("playbuttondisabled");
 
 		// Disable the raw mode button
 		document.getElementById("rawmodebutton").classList.remove("rawmodebutton");
@@ -12265,6 +12254,7 @@ function Render(renderAll,tuneNumber) {
 
 			// Hide the PDF button
 			HidePDFButton();
+
 		}
 		else{
 
@@ -28353,6 +28343,35 @@ function PlayABC(e){
 
 	if (gAllowCopy){
 
+		// Clean up any inline session in process
+		if (gIsQuickEditor){
+
+			// Clean up last play operation
+			gMIDIbuffer = null;
+
+			// If on iOS and the muting controller installed, dispose it now
+			if (gIsIOS){
+
+				if (gTheMuteHandle){
+				 	gTheMuteHandle.dispose();
+						gTheMuteHandle = null;
+					}
+			}
+
+			if (gSynthControl){
+					
+				gSynthControl.destroy();
+
+				gSynthControl = null;
+
+			}	
+
+			document.getElementById("playback-audio-inline").innerHTML = "";
+
+			gCurrentTune = -1;
+
+		}
+
 		var theSelectedABC;
 
 		if (gIsMaximized){
@@ -41256,7 +41275,7 @@ function showWelcomeScreen(){
     var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica"><strong>Please visit my <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> page for complete instructions and demo videos on how to use the tools.</strong></p>';
 	   if (gIsQuickEditor){
-			modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">The Quick Editor is optimized for editing and playback of a single tune at a time.</p>';
+			modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">The Quick Editor is optimized for editing and playback of larger tunebooks.</p>';
    		}
 
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">To begin, type or paste tunes in ABC format into the text area.</p>'; 
@@ -41273,8 +41292,8 @@ function showWelcomeScreen(){
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Save" to save all the ABC text to an ABC text file.</p>';
 	   if (!gIsQuickEditor){
 			modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Export PDF" to export your tunebook in PDF format.</p>';
-			modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Play" to play or train on the tune currently being edited.</p>';
    		}
+		modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">• Click "Play" to play or train on the tune currently being edited.</p>';
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, scrollWithPage: (AllowDialogsToScroll()) });
 
@@ -41289,8 +41308,8 @@ function showZoomInstructionsScreen(){
 	sendGoogleAnalytics("dialog","showZoomInstructionsScreen");
 
    	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
-   	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Since this is your first time using the tools, here is some useful information to help you get started:</p>';
-   	   modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">In this view, you may scroll through the tune notation.</p>';
+   	    modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Since this is your first time using the tools, here is some useful information to help you get started:</p>';
+   	    modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">In this view, you may scroll through the tune notation.</p>';
 		if (!gIsQuickEditor){
 			modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">Click the Play button at the bottom-right to play or train on the current tune.</p>';
 			modal_msg  += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica">From the Player you can also export the tune image or audio in multiple formats.</p>';
