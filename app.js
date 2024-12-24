@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2201_122424_1500";
+var gVersionNumber="2202_122424_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -23933,6 +23933,11 @@ function ChangeTab(){
 		// If first time using the recorder tab, prep the recorder font for embedded SVG styles
 		PrepareRecorderFont();
 		
+	}
+
+	// Don't allow tab change after a Play reset on the Quick Player
+	if (gIsQuickEditor && (gCurrentTune == -1)){
+		return;
 	}
 
 	// If the tab changes, render all
