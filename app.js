@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2200_122424_1430";
+var gVersionNumber="2201_122424_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -1003,6 +1003,11 @@ function ToggleRawMode(){
 		return;
 	}
 
+	// Fix for toggling raw mode immediately after opening the Player
+	if (gIsQuickEditor && (gCurrentTune == -1)){
+		return;
+	}
+
 
 	// Only supported on desktop 
 	if (isMobileBrowser()){
@@ -1041,6 +1046,7 @@ function ToggleRawMode(){
 	
 		gTheABC.style.backgroundColor = "#F8FDF8";
 
+
 	}
 	else{
 
@@ -1050,10 +1056,31 @@ function ToggleRawMode(){
 		elem.classList.remove("btn-rawmode-on");
 		
 		gTheABC.style.backgroundColor = "white";
+
 	}
 
 	// Redraw the tunes
 	RenderAsync(true,null);
+
+	if (gIsQuickEditor){
+
+		if (gRawMode){
+
+			// Disable the play button
+			document.getElementById("playbutton").classList.remove("playbutton");
+			document.getElementById("playbutton").classList.add("playbuttondisabled");
+
+		}
+		else{
+
+			// Enable the play button
+			document.getElementById("playbutton").classList.remove("playbuttondisabled");
+			document.getElementById("playbutton").classList.add("playbutton");
+
+		}
+
+	}
+
 
 
 }
@@ -12087,8 +12114,17 @@ function Render(renderAll,tuneNumber) {
 		document.getElementById("copybutton").classList.add("copybutton");
 
 		// Enable the play button
-		document.getElementById("playbutton").classList.remove("playbuttondisabled");
-		document.getElementById("playbutton").classList.add("playbutton");
+		if (!gIsQuickEditor){
+			document.getElementById("playbutton").classList.remove("playbuttondisabled");
+			document.getElementById("playbutton").classList.add("playbutton");
+		}
+		else{
+			// Don't enable play button on raw mode on the Quick Editor
+			if (!gRawMode){
+				document.getElementById("playbutton").classList.remove("playbuttondisabled");
+				document.getElementById("playbutton").classList.add("playbutton");
+			}
+		}
 		
 		// Enable the raw mode button (Desktop only)
 		if (isPureDesktopBrowser()){
@@ -28345,6 +28381,12 @@ function PlayABC(e){
 
 		// Clean up any inline session in process
 		if (gIsQuickEditor){
+
+			if (gRawMode){
+
+				// Player not allowed in QuickEditor raw mode
+				return;
+			}
 
 			// Clean up last play operation
 			gMIDIbuffer = null;
