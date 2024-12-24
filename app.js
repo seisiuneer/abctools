@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2195_122324_1900";
+var gVersionNumber="2196_122324_1930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -21387,6 +21387,11 @@ function MakeTuneVisible(forceUpdate){
 				//console.log("MakeTuneVisible - gCurrentTune before = "+gCurrentTune);
 				gCurrentTune = tuneIndex;
 				//console.log("MakeTuneVisible - gCurrentTune after = "+gCurrentTune);
+
+				setTimeout(function(){
+					// Force scroll to the top
+					window.scrollTo(0,0);
+				},100);
 
 			}		
 		}
