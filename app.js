@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2198_122424_0200";
+var gVersionNumber="2199_122424_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -25149,7 +25149,7 @@ function BatchABCExport(){
 
 					ExportOneABCTune(thisTune,fname,callback,null);
 
-				}, 250);
+				}, gBatchExportDelayMS);
 
 			}
 			else{
@@ -38237,7 +38237,7 @@ function AdvancedSettings(){
 	// Only show batch export delays on desktop 
 	if (isPureDesktopBrowser()){ 
 		form = form.concat([
-			{name: "Image Batch Export Delay in milliseconds (default is 200):", id: "configure_export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
+			{name: "Image/ABC Batch Export Delay in milliseconds (default is 200):", id: "configure_export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
 			{name: "MP3 Batch Export Delay in milliseconds (default is 250):", id: "configure_mp3export_delayms", type:"text", cssClass:"advanced_settings2_form_text"},
 		]);
 	}
