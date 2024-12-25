@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2204_122524_0830";
+var gVersionNumber="2205_122524_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -394,6 +394,9 @@ var gCleanSmartQuotes = true;
 
 // Autoscroll target percentage
 var gAutoscrollTarget = 66;
+
+// Suppress the Quick Player
+var gSuppressQuickPlayer = false;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -12152,8 +12155,14 @@ function Render(renderAll,tuneNumber) {
 				//console.log("Quick editor renderAll true");
 				GenerateRenderingDivs(1);
 
-				// Just get the ABC for the current tune
-				theNotes = getTuneByIndex(tuneNumber);
+				if (!gRawMode){
+					// Just get the ABC for the current tune
+					theNotes = getTuneByIndex(tuneNumber);
+				}
+				else{
+					// Need the entire ABC for highlighting
+					theNotes = gTheABC.value;					
+				}
 			}
 			else{
 				GenerateRenderingDivs(nTunes);
@@ -12162,15 +12171,25 @@ function Render(renderAll,tuneNumber) {
 		}
 		else{
 			if (gIsQuickEditor){	
+
 				//console.log("Quick editor renderAll false");
 				GenerateRenderingDivs(1);
 
-				// Just get the ABC for the current tune
-				theNotes = getTuneByIndex(gCurrentTune);
+				if (!gRawMode){
+					// Just get the ABC for the current tune
+					theNotes = getTuneByIndex(gCurrentTune);
+				}
+				else{
+					// Need the entire ABC for highlighting
+					theNotes = gTheABC.value;
+				}
+
 			}
 			else{
+
 				// Just get the ABC for the current tune
 				theNotes = getTuneByIndex(tuneNumber);
+
 			}
 		}
 
@@ -12865,6 +12884,8 @@ function RestoreDefaults() {
 
 	gPDFFileName = "";
 	gWebsiteFilename = "";
+
+	gSuppressQuickPlayer = false;
 
 	// Reset file selectors
 	let fileElement = document.getElementById('selectabcfile');
@@ -28388,7 +28409,6 @@ function ProcessSelectRegionForPlay(theABC){
 //
 // Deactivate the Quick Editor player
 //
-var gSuppressQuickPlayer = false;
 
 function deactivateQuickPlayer(){
 
