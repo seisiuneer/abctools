@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2202_122424_1600";
+var gVersionNumber="2203_122524_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -1060,7 +1060,13 @@ function ToggleRawMode(){
 	}
 
 	// Redraw the tunes
-	RenderAsync(true,null);
+	if (gIsQuickEditor){
+		Render(true,null);
+	}
+	else{
+		RenderAsync(true,null);
+
+	}
 
 	if (gIsQuickEditor){
 
@@ -12218,7 +12224,9 @@ function Render(renderAll,tuneNumber) {
 		if (gIsQuickEditor){
 
 			// MAE 15 Jul 2024 - For quick editor
-			inlinePlayback(); 
+			if (!gSuppressQuickPlayer){
+				inlinePlayback(); 
+			}
 		}
 
 	} else {
@@ -28378,6 +28386,52 @@ function ProcessSelectRegionForPlay(theABC){
 }
 
 //
+// Deactivate the Quick Editor player
+//
+var gSuppressQuickPlayer = false;
+
+function deactivateQuickPlayer(){
+
+	if (gIsQuickEditor){
+		// Turn off raw mode if required
+		if (gRawMode){
+
+			gSuppressQuickPlayer = true;
+
+			ToggleRawMode();
+
+			gSuppressQuickPlayer = false;
+
+		}
+
+		// Clean up last play operation
+		gMIDIbuffer = null;
+
+		// If on iOS and the muting controller installed, dispose it now
+		if (gIsIOS){
+
+			if (gTheMuteHandle){
+			 	gTheMuteHandle.dispose();
+					gTheMuteHandle = null;
+				}
+		}
+
+		if (gSynthControl){
+				
+			gSynthControl.destroy();
+
+			gSynthControl = null;
+
+		}	
+
+		document.getElementById("playback-audio-inline").innerHTML = "";
+
+		gCurrentTune = -1;
+
+	}
+}
+
+//
 // Play the ABC
 //
 function PlayABC(e){
@@ -28392,32 +28446,10 @@ function PlayABC(e){
 				// Player not allowed in QuickEditor raw mode
 				return;
 			}
-
-			// Clean up last play operation
-			gMIDIbuffer = null;
-
-			// If on iOS and the muting controller installed, dispose it now
-			if (gIsIOS){
-
-				if (gTheMuteHandle){
-				 	gTheMuteHandle.dispose();
-						gTheMuteHandle = null;
-					}
-			}
-
-			if (gSynthControl){
-					
-				gSynthControl.destroy();
-
-				gSynthControl = null;
-
-			}	
-
-			document.getElementById("playback-audio-inline").innerHTML = "";
-
-			gCurrentTune = -1;
-
 		}
+
+		// Deactivate Quick Player 
+		deactivateQuickPlayer();
 
 		var theSelectedABC;
 
@@ -30390,6 +30422,9 @@ function ScanTuneForReverb(theTune){
 function SwingExplorer(){
 
 	if (gAllowCopy){
+		
+		// Deactivate Quick Player 
+		deactivateQuickPlayer();
 
 		// Play back locally
 
@@ -30932,6 +30967,9 @@ function ReverbExplorer(){
 	//console.log("ReverbExplorer");
 
 	if (gAllowCopy){
+
+		// Deactivate Quick Player 
+		deactivateQuickPlayer();
 
 		// Play back locally
 
@@ -31706,6 +31744,9 @@ var gInstrumentExplorerSoundfonts = null;
 function InstrumentExplorer(){
 
 	if (gAllowCopy){
+
+		// Deactivate Quick Player 
+		deactivateQuickPlayer();
 
 		// Try to find the current tune
 		var theSelectedABC = findSelectedTune();
@@ -32699,6 +32740,9 @@ function GraceExplorer(){
 
 	if (gAllowCopy){
 
+		// Deactivate Quick Player 
+		deactivateQuickPlayer();
+
 		// Play back locally
 
 		// Try to find the current tune
@@ -33289,6 +33333,9 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 function RollExplorer(){
 
 	if (gAllowCopy){
+
+		// Deactivate Quick Player 
+		deactivateQuickPlayer();
 
 		// Play back locally
 
@@ -34098,6 +34145,12 @@ function TuneTrainerLaunchFromPlayer(){
 function TuneTrainer(bIsFromPlayer){
 
 	if (gAllowCopy){
+
+		if (!bIsFromPlayer){
+			// Deactivate Quick Player 
+			deactivateQuickPlayer();
+
+		}
 
 		var theSelectedABC;
 
