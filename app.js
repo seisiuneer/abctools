@@ -24644,7 +24644,7 @@ function DoBatchImageExport(imageFormat){
 
 					var title = getTuneTitle(thisTune);
 
-					gTheBatchImageExportStatusText.innerHTML = "<p>Exporting "+imageFormat+" for tune "+ (currentTune+1) + " of "+totalTunesToExport+":<br/><br/>"+title+"</p>";
+					gTheBatchImageExportStatusText.innerHTML = "<p>Exporting "+imageFormat+" for tune "+ (currentTune+1) + " of "+totalTunesToExport+"<br/><br/>"+title+"</p>";
 
 					ExportImageDialog(thisTune,callback,currentTune,false);
 
@@ -24754,7 +24754,7 @@ function DoBatchImageExport(imageFormat){
 
 	var title = getTuneTitle(thisTune);
 	
-	gTheBatchImageExportStatusText.innerHTML = "<p>Exporting "+imageFormat+" for tune "+ (currentTune+1) + " of "+totalTunesToExport+":<br/><br/>"+title+"</p>";
+	gTheBatchImageExportStatusText.innerHTML = "<p>Exporting "+imageFormat+" for tune "+ (currentTune+1) + " of "+totalTunesToExport+"<br/><br/>"+title+"</p>";
 
 	// Kick off the conversion cascade
 	ExportImageDialog(thisTune,callback,currentTune,false);
@@ -25033,7 +25033,7 @@ function BatchMusicXMLRoundTripWorker(){
 
 					var title = getTuneTitle(thisTune);
 
-					gTheBatchImageExportStatusText.innerHTML = "<p>Reformatting tune "+ (currentTune+1) + " of "+totalTunesToExport+":<br/><br/>"+title+"</p>";
+					gTheBatchImageExportStatusText.innerHTML = "<p>Reformatting tune "+ (currentTune+1) + " of "+totalTunesToExport+"<br/><br/>"+title+"</p>";
 
 					ExportMusicXMLForReformat(thisTune,title,callback);
 
@@ -25132,7 +25132,7 @@ function BatchMusicXMLRoundTripWorker(){
 
 	var title = getTuneTitle(thisTune);
 	
-	gTheBatchImageExportStatusText.innerHTML = "<p>Reformatting tune "+ (currentTune+1) + " of "+totalTunesToExport+":<br/><br/>"+title+"</p>";
+	gTheBatchImageExportStatusText.innerHTML = "<p>Reformatting tune "+ (currentTune+1) + " of "+totalTunesToExport+"<br/><br/>"+title+"</p>";
 	
     document.getElementById("loading-bar-spinner").style.display = "block";
 	
@@ -25203,7 +25203,7 @@ function BatchABCExport(){
 
 					var title = getTuneTitle(thisTune);
 
-					gTheBatchImageExportStatusText.innerHTML = "<p>Exporting ABC for tune "+ (currentTune+1) + " of "+totalTunesToExport+":<br/><br/>"+title+"</p>";
+					gTheBatchImageExportStatusText.innerHTML = "<p>Exporting ABC for tune "+ (currentTune+1) + " of "+totalTunesToExport+"<br/><br/>"+title+"</p>";
 
 					var fname = GetTuneAudioDownloadName(thisTune,".abc");
 
@@ -25290,7 +25290,7 @@ function BatchABCExport(){
 
 	var title = getTuneTitle(thisTune);
 	
-	gTheBatchImageExportStatusText.innerHTML = "<p>Exporting ABC for tune "+ (currentTune+1) + " of "+totalTunesToExport+":<br/><br/>"+title+"</p>";
+	gTheBatchImageExportStatusText.innerHTML = "<p>Exporting ABC for tune "+ (currentTune+1) + " of "+totalTunesToExport+"<br/><br/>"+title+"</p>";
 	
 	var fname = GetTuneAudioDownloadName(thisTune,".abc");
 
@@ -25360,7 +25360,7 @@ function BatchMusicXMLExport(){
 
 					var title = getTuneTitle(thisTune);
 
-					gTheBatchImageExportStatusText.innerHTML = "<p>Exporting MusicXML for tune "+ (currentTune+1) + " of "+totalTunesToExport+":<br/><br/>"+title+"</p>";
+					gTheBatchImageExportStatusText.innerHTML = "<p>Exporting MusicXML for tune "+ (currentTune+1) + " of "+totalTunesToExport+"<br/><br/>"+title+"</p>";
 
 					var fname = GetTuneAudioDownloadName(thisTune,".xml");
 
@@ -25447,7 +25447,7 @@ function BatchMusicXMLExport(){
 
 	var title = getTuneTitle(thisTune);
 	
-	gTheBatchImageExportStatusText.innerHTML = "<p>Exporting MusicXML for tune "+ (currentTune+1) + " of "+totalTunesToExport+":<br/><br/>"+title+"</p>";
+	gTheBatchImageExportStatusText.innerHTML = "<p>Exporting MusicXML for tune "+ (currentTune+1) + " of "+totalTunesToExport+"<br/><br/>"+title+"</p>";
 	
 	var fname = GetTuneAudioDownloadName(thisTune,".xml");
 
@@ -26185,7 +26185,7 @@ function DoBatchMP3Export(repeatCount,doClickTrack,doInjectSilence,doIncludeReve
 
 					var title = getTuneTitle(thisTune);
 
-					gTheBatchMP3ExportStatusText.innerHTML = "<p>Exporting .MP3 for tune "+ (currentTune+1) + " of "+totalTunesToExport+":<br/><br/>"+title+"</p>";
+					gTheBatchMP3ExportStatusText.innerHTML = "<p>Exporting .MP3 for tune "+ (currentTune+1) + " of "+totalTunesToExport+"<br/><br/>"+title+"</p>";
 
 					PlayABCDialog(thisTune,callback,currentTune,false);
 
@@ -26297,7 +26297,7 @@ function DoBatchMP3Export(repeatCount,doClickTrack,doInjectSilence,doIncludeReve
 
 	var title = getTuneTitle(thisTune);
 	
-	gTheBatchMP3ExportStatusText.innerHTML = "<p>Exporting .MP3 for tune "+ (currentTune+1) + " of "+totalTunesToExport+":<br/><br/>"+title+"</p>";
+	gTheBatchMP3ExportStatusText.innerHTML = "<p>Exporting .MP3 for tune "+ (currentTune+1) + " of "+totalTunesToExport+"<br/><br/>"+title+"</p>";
 
 	// Kick off the conversion cascade
 	PlayABCDialog(thisTune,callback,currentTune,false);
