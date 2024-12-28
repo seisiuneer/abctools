@@ -8464,11 +8464,16 @@ function injectHiddenSearchText(hiddenY, isIncipits, incipitsColumn, inciptsColu
 	//console.log("injecting: "+gExportPDFTuneTitles[tunesProcessed]);
 
 	//console.log("injectHiddenSearchText hiddenY scaled: "+(hiddenY+gPAGENUMBERTOP));
+	pdf.setFont(gPDFFont,gPDFFontStyle,"normal");
+	pdf.setFontSize(HIDDENPDFTEXTSIZE);
+	pdf.setTextColor("#FFFFFF");
+
+	var hiddenTextX = gPDFHiddenTextX;
 
 	if (isIncipits && (incipitsColumn == 2)){
 
 		//console.log("incipits two column case");
-		
+
 		if (inciptsColumnNumber == 0){
 			//console.log("incipits two column case - Column 1");
 			hiddenTextX = hiddenTextX / 2;
@@ -8478,13 +8483,6 @@ function injectHiddenSearchText(hiddenY, isIncipits, incipitsColumn, inciptsColu
 			hiddenTextX = 3 * (hiddenTextX / 2);
 		}
 	}
-
-	
-	pdf.setFont(gPDFFont,gPDFFontStyle,"normal");
-	pdf.setFontSize(HIDDENPDFTEXTSIZE);
-	pdf.setTextColor("#FFFFFF");
-
-	var hiddenTextX = gPDFHiddenTextX;
 
 	pdf.text(gExportPDFTuneTitles[tunesProcessed], hiddenTextX, (hiddenY/1.55)+gPAGENUMBERTOP+(HIDDENPDFTEXTSIZE/3.1), {align:"center"});
 
