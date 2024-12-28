@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2206_122524_1600";
+var gVersionNumber="2207_122724_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -169,6 +169,10 @@ var gPageWidth = 535;
 var gRenderPixelRatio = 2.0;
 
 var gPDFFileName = "";
+
+// For injected hidden text
+var gPDFHiddenTextX;
+var HIDDENPDFTEXTSIZE = 18.0;
 
 // Include page links on tunebook index pages
 var gIncludePageLinks = true;
@@ -4659,7 +4663,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 
 	// Get all the tune titles (uses first T: tag found)
 	var theTitles = GetTunebookIndexTitles();
-
+ 
 	var thePaperHeight = pdf.internal.pageSize.getHeight();;
 	var thePaperWidth = pdf.internal.pageSize.getWidth()/1.55;
 
@@ -8453,6 +8457,41 @@ function PrimeWhistleRender(theBlocks,callback){
 		});
 }
 
+// 
+// Inject hidden text into the PDF for search
+function injectHiddenSearchText(hiddenY, isIncipits, incipitsColumn, inciptsColumnNumber){
+
+	//console.log("injecting: "+gExportPDFTuneTitles[tunesProcessed]);
+
+	//console.log("injectHiddenSearchText hiddenY scaled: "+(hiddenY+gPAGENUMBERTOP));
+
+	if (isIncipits && (incipitsColumn == 2)){
+
+		//console.log("incipits two column case");
+		
+		if (inciptsColumnNumber == 0){
+			//console.log("incipits two column case - Column 1");
+			hiddenTextX = hiddenTextX / 2;
+		}
+		else{
+			//console.log("incipits two column case - Column 2");			
+			hiddenTextX = 3 * (hiddenTextX / 2);
+		}
+	}
+
+	
+	pdf.setFont(gPDFFont,gPDFFontStyle,"normal");
+	pdf.setFontSize(HIDDENPDFTEXTSIZE);
+	pdf.setTextColor("#FFFFFF");
+
+	var hiddenTextX = gPDFHiddenTextX;
+
+	pdf.text(gExportPDFTuneTitles[tunesProcessed], hiddenTextX, (hiddenY/1.55)+gPAGENUMBERTOP+(HIDDENPDFTEXTSIZE/3.1), {align:"center"});
+
+    pdf.setTextColor("#000000");
+
+
+}
 
 //
 // Render a single SVG block to PDF and callback when done
@@ -8576,6 +8615,8 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 			// Insert a new page for each tune
 			if (theBlockID.indexOf("_0.block") != -1) {
 
+				//console.log("Got first block for tune "+gExportPDFTuneTitles[tunesProcessed]);
+
 				isFirstBlock = true;
 
 				if (!isFirstPage) {
@@ -8601,6 +8642,10 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 						document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
 
+						// Add hidden text for search
+						injectHiddenSearchText(running_height, doIncipits, gIncipitsColumns, column_number);
+
+
 					} else {
 
 						// 
@@ -8621,6 +8666,8 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 									// Place this tune in the second column
 									hoff = col1_hoff;
 
+									// Add hidden text for search
+									injectHiddenSearchText(running_height, doIncipits, gIncipitsColumns, column_number);
 								}
 								else{
 
@@ -8641,6 +8688,9 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 									// Reset the offset
 									hoff = col0_hoff;
 
+									// Add hidden text for search
+									injectHiddenSearchText(running_height, doIncipits, gIncipitsColumns, column_number);
+
 								}
 
 							}
@@ -8655,6 +8705,10 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 								pdf.addPage(paperStyle,gPDFOrientation); //... create a page in letter or a4 format, then leave a 30 pt margin at the top and continue.
 
 								document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+
+								// Add hidden text for search
+								injectHiddenSearchText(running_height, doIncipits, gIncipitsColumns, column_number);
+
 							}
 
 						}
@@ -8662,6 +8716,9 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 							// Otherwise, move it down the current page a bit
 							running_height += (BETWEENTUNESPACE / scale_factor);
+
+							// Add hidden text for search
+							injectHiddenSearchText(running_height, doIncipits, gIncipitsColumns, column_number);
 
 						}
 
@@ -8673,6 +8730,9 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
 					// Get the position for future page numbers and footers
 					calcPageNumberVerticalOffset(pdf);
+
+					// Add hidden text for search
+					injectHiddenSearchText(running_height, doIncipits, gIncipitsColumns, column_number);
 
 				}
 
@@ -8724,6 +8784,8 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 					theTunePageMap[tunesProcessed - 1] = theCurrentPageNumber;
 
 				}
+
+				//console.log("1 Adding page");
 
 				pdf.addPage(paperStyle,gPDFOrientation); //... create a page in letter or a4 format, then leave a 30 pt margin at the top and continue.
 
@@ -8910,6 +8972,8 @@ function ShowAcrobatURLSizeWarningDialog(){
 // PDF Exporter
 //
 var gOriginalWidthBeforePDFExport;
+
+var gExportPDFTuneTitles;
 
 function ExportPDF(){
 
@@ -9592,6 +9656,8 @@ function ExportNotationPDF(title) {
 	// Cache the tune titles
 	theHeaderFooterTuneNames = GetAllTuneTitles();
 
+	gExportPDFTuneTitles = GetTunebookIndexTitles();
+
 	// Init the shared globals
 	theCurrentPageNumber = 1;
 
@@ -9767,6 +9833,10 @@ function ExportNotationPDF(title) {
 
 		// Set the initial PDF display mode
 		pdf.setDisplayMode("fullpage","single","UseNone");
+
+		// For search injected hidden text, cache the text draw coordinates
+		gPDFHiddenTextX = pdf.internal.pageSize.getWidth()/3.10;
+		//console.log("gPDFHiddenTextX: "+ gPDFHiddenTextX);
 
 		// If not doing single page, find any tunes that have page break requests
 		pageBreakList = [];
