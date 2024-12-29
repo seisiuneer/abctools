@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2207_122724_1700";
+var gVersionNumber="2208_122824_1800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -401,6 +401,10 @@ var gAutoscrollTarget = 66;
 
 // Suppress the Quick Player
 var gSuppressQuickPlayer = false;
+
+// Is there an update available?
+var gUpdateAvailable = false;
+var gUpdateVersion = gVersionNumber;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -39068,8 +39072,15 @@ function ConfigureToolSettings() {
 		form.push({name: "    Allow MIDI input for ABC text entry", id: "configure_allow_midi_input", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 		form.push({name: "    MIDI input is key and mode aware (if unchecked, enters note names with no accidentals)", id: "configure_midi_chromatic", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 	};
+
+	if (gUpdateAvailable){
+
+		form.push({html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Font Settings" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML/MIDI Settings" title="Configure MusicXML/MIDI import settings"><input id="configure_developer_settings" class="btn btn-subdialog configure_developer_settings" onclick="AdvancedSettings()" type="button" value="Advanced Settings" title="Configure low level tool settings"></p><p style="font-size:10pt;font-family:helvetica;line-height:14pt;color:red;position:absolute;left:20px;bottom:20px;margin:0px;cursor:pointer;" title="Click to update to the latest version of the tool" onclick="UpdateToLatestVersion();">Click to update to the latest version<br/>Latest version: '+gUpdateVersion+'<br/>Current version: '+gVersionNumber+'</p>'});	
+	}
+	else{
 	
-	form.push({html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Font Settings" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML/MIDI Settings" title="Configure MusicXML/MIDI import settings"><input id="configure_developer_settings" class="btn btn-subdialog configure_developer_settings" onclick="AdvancedSettings()" type="button" value="Advanced Settings" title="Configure low level tool settings"></p><p style="font-size:10pt;font-family:helvetica;line-height:14pt;color:grey;position:absolute;left:20px;bottom:30px;margin:0px;cursor:pointer;" title="Click to update to the latest version of the tool" onclick="UpdateToLatestVersion();">Click to update to the latest version<br/>Current version: '+gVersionNumber+'</p>'});	
+		form.push({html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Font Settings" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML/MIDI Settings" title="Configure MusicXML/MIDI import settings"><input id="configure_developer_settings" class="btn btn-subdialog configure_developer_settings" onclick="AdvancedSettings()" type="button" value="Advanced Settings" title="Configure low level tool settings"></p><p style="font-size:10pt;font-family:helvetica;line-height:14pt;color:grey;position:absolute;left:20px;bottom:30px;margin:0px;cursor:pointer;" title="Click to update to the latest version" onclick="UpdateToLatestVersion();">Click to update to the latest version<br/>Current version: '+gVersionNumber+'</p>'});	
+	}
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 10, width: 790, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
@@ -43833,6 +43844,11 @@ function LaunchQuickEditorHelp(){
 // Check if an update is available
 // 
 function DoVersionCheck(){
+	
+	gUpdateVersion = gVersionNumber;
+	
+	gUpdateAvailable = false;
+	
 	try {
 
 		// Get the latest version JSON file	
@@ -43845,6 +43861,10 @@ function DoVersionCheck(){
 
 	    		// Yes, show update option
 	    		SetupContextMenu(true);
+
+	    		gUpdateAvailable = true;
+
+	    		gUpdateVersion = json.version;
 
 	    	}
 	    	else{
@@ -43859,6 +43879,10 @@ function DoVersionCheck(){
 		SetupContextMenu(false); 
 
 	}
+
+	// For testing
+	//gUpdateAvailable = true;
+
 
 }
 
