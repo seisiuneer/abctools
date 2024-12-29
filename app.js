@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2211_122924_0300";
+var gVersionNumber="2212_122924_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14442,7 +14442,28 @@ function searchForTunes() {
 //
 function addSearchResults(){
 
- 	var theSearchResults = document.getElementById('search_results').value;
+	var elem = document.getElementById('search_results');
+
+	var theSearchResult;
+
+	if (elem.selectionStart == elem.selectionEnd){
+
+ 		theSearchResults = elem.value;
+
+ 	}
+ 	else{
+
+  		// Get the selected text using selectionStart and selectionEnd
+    	theSearchResults = elem.value.substring(elem.selectionStart, elem.selectionEnd);
+
+    	if (gTheABC.value.length == 0){
+    		theSearchResults = theSearchResults+"\n";
+    	}
+    	else{
+   			theSearchResults = "\n"+theSearchResults+"\n";
+    	}
+		
+ 	}
 
  	if (theSearchResults && (theSearchResults.length != 0)){
 
@@ -14760,10 +14781,10 @@ function AddFromSearch(e,callback){
 	// Setup the default search collection
 	gTheCurrentTuneDatabase = gDefaultTuneDatabase;
 
-	var theHeight = window.innerHeight - 650;
+	var theHeight = window.innerHeight - 680;
 
 	if (isMobileBrowser()){
-		theHeight = window.innerHeight - 675;
+		theHeight = window.innerHeight - 705;
 	}
 
 	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Search and Add Tunes&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#search_and_add_tunes" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
@@ -14785,8 +14806,9 @@ function AddFromSearch(e,callback){
 	modal_msg+='<textarea id="search_results" style="font-family:Courier;font-size:13pt;line-height:16pt;width:724px;height:'+theHeight+'px;padding:6px" placeholder="Search results will appear here" spellcheck="false" autocorrect="off" autocapitalize="none" spellcheck="false" oninput="idleSearchResults()"></textarea>';
 
 	modal_msg+='<p style="margin-top:20px;text-align: center;">';
+	modal_msg+='Select text to add or add all text if no selection<br/><br/>';
 
-	modal_msg += '<input class="btn btn-add-search-results add-search-results-disabled" id="add-search-results" onclick="addSearchResults();" type="button" value="Add Results to Tunebook" title="Add Results to Tunebook">';
+	modal_msg += '<input class="btn btn-add-search-results add-search-results-disabled" id="add-search-results" onclick="addSearchResults();" type="button" value="Add Results to Tunebook" title="Add Results to Tunebook.&nbsp;&nbsp;If there is a text selection, only the selected text will be added, otherwise all the text will be added.">';
 
 	modal_msg+='</p>';
 
