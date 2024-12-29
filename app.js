@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2212_122924_0830";
+var gVersionNumber="2213_122924_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14446,7 +14446,11 @@ function addSearchResults(){
 
 	var theSearchResult;
 
-	if (elem.selectionStart == elem.selectionEnd){
+	var selStart = elem.selectionStart;
+
+	var selEnd = elem.selectionEnd;
+
+	if (selStart == selEnd){
 
  		theSearchResults = elem.value;
 
@@ -14454,7 +14458,7 @@ function addSearchResults(){
  	else{
 
   		// Get the selected text using selectionStart and selectionEnd
-    	theSearchResults = elem.value.substring(elem.selectionStart, elem.selectionEnd);
+    	theSearchResults = elem.value.substring(selStart, selEnd);
 
     	if (gTheABC.value.length == 0){
     		theSearchResults = theSearchResults+"\n";
@@ -14471,7 +14475,31 @@ function addSearchResults(){
 
 		var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Search Results Added to Tunebook!</p>';
 
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 700,  scrollWithPage: (AllowDialogsToScroll()) });
+		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 700,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+			//debugger;
+			
+			setTimeout(function(){
+
+				if(isPureDesktopBrowser()){
+
+					// And reset the focus
+				    elem.focus();	
+
+				}
+				else{
+
+				    // And clear the focus
+				    elem.blur();
+
+				}
+				
+				elem.selectionStart = selStart;
+				
+				elem.selectionEnd = selEnd;
+
+			},100);
+
+		});
 
 	}
 	else{
