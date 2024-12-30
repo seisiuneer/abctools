@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2213_122924_1400";
+var gVersionNumber="2214_122924_1900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14473,33 +14473,43 @@ function addSearchResults(){
 
 	 	ProcessAddTune(theSearchResults);
 
-		var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Search Results Added to Tunebook!</p>';
+	 	var buttonElem = document.getElementById('add-search-results');
 
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 700,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
-			//debugger;
+	 	if (buttonElem){
+
+	 		buttonElem.value = "Results Added to Tunebook!";
+
+	 		setTimeout(function(){
+
+	 			buttonElem = document.getElementById('add-search-results');
+
+	 			if (buttonElem){
+	 				buttonElem.value = "Add Results to Tunebook";
+	 			}
+	 		},1000);
+	 	}
+
+		setTimeout(function(){
+
+			if(isPureDesktopBrowser()){
+
+				// And reset the focus
+			    elem.focus();	
+
+			}
+			else{
+
+			    // And clear the focus
+			    elem.blur();
+
+			}
 			
-			setTimeout(function(){
+			elem.selectionStart = selStart;
+			
+			elem.selectionEnd = selEnd;
 
-				if(isPureDesktopBrowser()){
 
-					// And reset the focus
-				    elem.focus();	
-
-				}
-				else{
-
-				    // And clear the focus
-				    elem.blur();
-
-				}
-				
-				elem.selectionStart = selStart;
-				
-				elem.selectionEnd = selEnd;
-
-			},100);
-
-		});
+		},100);
 
 	}
 	else{
