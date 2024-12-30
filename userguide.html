@@ -36,7 +36,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
-        
+                
         <style>
         
         p {
@@ -461,7 +461,6 @@
             
             <h3>Advanced abcjs Rendering Options</h3>
             <a style="text-decoration:none;" href="#customabcjsparams">Adding Custom abcjs Rendering Parameters</a>
-            <a style="text-decoration:none;" href="#expandtowidest">Opting-out of "Expand to Widest" Layout</a>
             
             <h3>ABC Tricks and Tips</h3>
             <a style="text-decoration:none;" href="#largeprint">"Large Print" Edition Tune Notation</a>
@@ -776,7 +775,6 @@
                     <button class="accordion" title="Click to expand/collapse this section">Advanced abcjs Rendering Options</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#customabcjsparams">Adding Custom abcjs Rendering Parameters</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#expandtowidest">Opting-out of "Expand to Widest" Layout</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">ABC Tricks and Tips</button>
@@ -2467,7 +2465,7 @@
                 <p>It can format PDF tunebooks with one or multiple tunes per page, something the native browser's Print command cannot accomplish.</p>
                 <p>When you click <strong>Export PDF</strong>, the following dialog will appear where you select your PDF formatting preferences:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/export_pdf_tunebook_7.jpg"/>
+                    <img class="image" loading="lazy" src="img/export_pdf_tunebook_8.jpg"/>
                 </div>
                 <p>When exporting a PDF from the button on the bottom-left of the full-screen view, the <strong>Inject PDF Tunebook Features</strong> and <strong>Notation Spacing Explorer</strong> buttons are not shown on the dialog.</p>
                 <p>Since they possibly modify the ABC itself, they are only available when exporting a PDF from the ABC Editor.</p>
@@ -2606,6 +2604,14 @@
                 </div>
                 <p>Check this if you want the page number to be shown on the first page with tunes in the PDF.</p>
                 <p>Page numbers are not added to title pages, table of contents, index, or QR code pages.</p>
+                <p>Default is:&nbsp;&nbsp;On</p>
+                <hr>
+                <p><strong>Inject tune title text for PDF searchability:</strong></p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/inject_hidden_text_1.jpg"/>
+                </div>
+                <p>When checked, adds hidden title text information to each tune to facilitate searchability in Adobe Acrobat and other PDF readers.</p>
+                <p>It is recommended to leave this on unless you have a specific requirement to not have the extra text added, for example you are using another tool to index the text in your exported PDFs.</p>
                 <p>Default is:&nbsp;&nbsp;On</p>
                 <hr>
                 <p><strong>PDF Tunebook Additions Font Settings</strong></p>
@@ -3213,6 +3219,9 @@
                 <p style="text-align: center"><a href="https://www.ilovepdf.com" target="_blank">ILovePDF.com</a></p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/sRJ3wiQpjfo" title="ILovePDF.com Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>On this site you will find free tools to merge multiple PDF files, reorder pages in a PDF, extract pages from a PDF, and as well as many other useful operations.</p>
+                <hr>
+                <p>Here's an example of using Adobe Acrobat to create "Tablature-only" versions of a tune PDF:</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/Jnr8uFjCfw4" title="Creating a Tablature-only version of a tune with Adobe Acrobat" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>              
                 <hr class="hidden-print" id="generate_website">
                 <h1 class="page_break_always">Export Website<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>This will generate a complete standalone website for you from the ABC tunes in the editor without any coding required.</p>
@@ -4590,29 +4599,6 @@
                 <p class="code">%abcjs_render_params {"tablature": [{"instrument": "guitar","label": "Open G - DGDGBD","tuning": ["D,", "G,", "D", "G", "B", "d"],"highestNote": "f'","capo": 0}]}</p>
                 <p><strong>Note:</strong> This feature allows very low level control of the abcjs renderer. Improper parameters may cause unpredictable results or crash the tool.</p>
                 <p>Additional, use of some low-level abcjs rendering parameters such as "staffwidth" and "wrap" may cause issues with "Highlighting" mode in the tool.</p>
-                <hr class="hidden-print" id="expandtowidest">
-                <h1 class="page_break_always">Opting-out of "Expand to Widest" Layout<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>The original abcjs version 6.2.2 I used for the early versions of the tool would sometimes leave ragged right edges on staves, particulary for staves with many or changing numbers of measures per staff or on complex tunes brought into the tool through MusicXML import.</p>
-                <p>As of 20 November 2023, with the release of abcjs version 6.2.3, a significant update to the library, I defaulted to expanding all staves to the widest in the tune, which produces very clean and aligned right staff edges in nearly all cases.</p>
-                <p>If you wish to opt-out of the "expand to widest" layout for a specific tune, I've added a new first-class (starts with %%) ABC directive that can be put into any tune to force abcjs to use the original abcjs 6.2.2 layout calculation system:</p>
-                <p class="code">%%noexpandtowidest</p>
-                <p>Put this anywhere in a tune to use the original staff width calculation and layout solution for that tune. </p>
-                <hr class="hidden-print" id="largeprint">
-                <h1 class="page_break_always">"Large Print" Edition Tune Notation<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>Most of the time, people have asked how to cram as many tunes on a page as possible, but sometimes you want to go the other way, make the notation larger.</p>
-                <p>Maybe you need reading glasses and are using the sheet music for a gig in low light and want the notation large.</p>
-                <p>To do this with the new layout system, you'll need to override the expandtowidest feature in abcjs 6.2.3 by adding:</p>
-                <p class="code">%%noexpandtowidest</p>
-                <p>to your ABC, and then play around with the values of:</p>
-                <p class="code">%%leftmargin<br/>
-                    %%rightmargin<br/>
-                %%staffwidth</p>
-                <p>For example:</p>
-                <p class="code">%%noexpandtowidest<br/>
-                    %%leftmargin 0<br/>
-                    %%rightmargin 0<br/>
-                %%staffwidth 400</p>
-                <p>Once you add %%noexpandtowidest, you may in some cases have to adjust your ABC to get a consistent right edge to the staves.</p>
                 <hr class="hidden-print" id="tabtranspose">
                 <h1 class="page_break_always h1wide">Transposing Notation Independent of Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>For some tablatures like CGDAE where instruments maybe in either standard pitch or one octave lower, if you transpose the notes down an octave to get the tab on the lower strings, but want the notation displayed an octave up, you can add the following voice annotation to the ABC:</p>

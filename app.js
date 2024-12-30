@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2214_122924_1900";
+var gVersionNumber="2215_123024_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -167,6 +167,9 @@ var gPDFOrientation = "portrait";
 var gPDFPaperSize = "letter";
 var gPageWidth = 535;
 var gRenderPixelRatio = 2.0;
+
+// PDF hidden titles
+var gPDFIncludeHiddenTitles = true;
 
 var gPDFFileName = "";
 
@@ -8467,6 +8470,14 @@ function injectHiddenSearchText(hiddenY, isIncipits, incipitsColumn, inciptsColu
 
 	//console.log("injecting: "+gExportPDFTuneTitles[tunesProcessed]);
 
+	// Are we injecting hidden titles?
+	if (!gPDFIncludeHiddenTitles){
+		//console.log("Not injecting hidden titles");
+		return;
+	}
+
+	//console.log("Injecting hidden titles");
+
 	//console.log("injectHiddenSearchText hiddenY scaled: "+(hiddenY+gPAGENUMBERTOP));
 	pdf.setFont(gPDFFont,gPDFFontStyle,"normal");
 	pdf.setFontSize(HIDDENPDFTEXTSIZE);
@@ -11102,6 +11113,9 @@ function UpdateLocalStorage(){
 
 		// Save the last PDF orientation
 		localStorage.PDFOrientation = gPDFOrientation;
+
+		// Save the last PDF hidden titles
+		localStorage.PDFIncludeHiddenTitles = gPDFIncludeHiddenTitles;
 	}
 
 }
@@ -35941,6 +35955,11 @@ function GetInitialConfigurationSettings(){
 		gPDFOrientation = val;
 	}
 
+	val = localStorage.PDFIncludeHiddenTitles;
+	if (val){
+		gPDFIncludeHiddenTitles = (val == "true");
+	}
+
 	val = localStorage.UseComhaltasABC;
 	if (val){
 		gUseComhaltasABC = (val == "true");
@@ -37825,6 +37844,7 @@ function PDFExportDialog(){
 	  configure_pagenumberonfirstpage:theFirstPage,
 	  configure_fontname:dialog_PDFFont,
 	  configure_fontstyle:dialog_PDFFontStyle,
+	  configure_hidden_titles:gPDFIncludeHiddenTitles
 	};
 
 	var form;
@@ -37840,6 +37860,7 @@ function PDFExportDialog(){
 		  {name: "Notes Incipits Columns:", id: "configure_incipitscolumns", type:"select", options:incipits_columns_list, cssClass:"configure_pdf_incipitscolumns_select"},
 		  {name: "Page Number Location:", id: "configure_pagenumber", type:"select", options:pagenumber_list, cssClass:"configure_pdf_pagenumber_select"},
 		  {name: "            Page Number on First Page", id: "configure_pagenumberonfirstpage", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
+		  {name: "            Inject tune title text for PDF searchability", id: "configure_hidden_titles", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
 		  {html: '<p style="margin-top:36px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</strong></p>'},  
 		  {name: "Font:", id: "configure_fontname", type:"select", options:fontname_list, cssClass:"configure_pdf_fontname_select"},
 		  {name: "Font Style:", id: "configure_fontstyle", type:"select", options:fontstyle_list, cssClass:"configure_pdf_fontstyle_select"},
@@ -37855,6 +37876,7 @@ function PDFExportDialog(){
 		  {name: "Notes Incipits Columns:", id: "configure_incipitscolumns", type:"select", options:incipits_columns_list, cssClass:"configure_pdf_incipitscolumns_select"},
 		  {name: "Page Number Location:", id: "configure_pagenumber", type:"select", options:pagenumber_list, cssClass:"configure_pdf_pagenumber_select"},
 		  {name: "            Page Number on First Page", id: "configure_pagenumberonfirstpage", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
+		  {name: "            Inject tune title text for PDF searchability", id: "configure_hidden_titles", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
 		  {html: '<p style="margin-top:36px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</strong></p>'},  
 		  {name: "Font:", id: "configure_fontname", type:"select", options:fontname_list, cssClass:"configure_pdf_fontname_select"},
 		  {name: "Font Style:", id: "configure_fontstyle", type:"select", options:fontstyle_list, cssClass:"configure_pdf_fontstyle_select"},
@@ -37878,6 +37900,8 @@ function PDFExportDialog(){
 			var thePaperSize = args.result.configure_papersize;
 
 			gPDFPaperSize = thePaperSize;
+
+			gPDFIncludeHiddenTitles = args.result.configure_hidden_titles;
 
 			var theTuneLayout = args.result.configure_tunelayout;
 
