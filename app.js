@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2221_123124_0830";
+var gVersionNumber="2222_123124_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14822,6 +14822,8 @@ var gTuneDatabaseRetryCount = 10;
 function AddFromSearch(e,callback){
 	
 	//console.log("AddFromSearch");
+	const TOUCH_TIMEOUT_MILLISECONDS = 1000;
+	var touch_count = 0;
 
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","AddFromSearch");
@@ -14859,12 +14861,7 @@ function AddFromSearch(e,callback){
 
 	modal_msg+='<p style="margin-top:20px;text-align: center;">';
 	
-	if (isPureDesktopBrowser()){
-		modal_msg+='Select text to add or add all text if no selection.&nbsp;&nbsp;Triple-click to select an entire tune.<br/><br/>';
-	}
-	else{
-		modal_msg+='Select text to add or add all text if no selection.<br/><br/>';		
-	}
+	modal_msg+='Select text to add or add all text if no selection.&nbsp;&nbsp;Triple-click to select an entire tune.<br/><br/>';
 
 	modal_msg += '<input class="btn btn-add-search-results add-search-results-disabled" id="add-search-results" onclick="addSearchResults();" type="button" value="Add Results to Tunebook" title="Add Results to Tunebook.&nbsp;&nbsp;If there is a text selection, only the selected text will be added, otherwise all the text will be added.">';
 
@@ -14905,7 +14902,7 @@ function AddFromSearch(e,callback){
 	    }
 	});
 
-	if (isPureDesktopBrowser()){
+	if (!gIsIOS){
 
 		document.getElementById('search_results').addEventListener('click', function(event){
 
@@ -14932,6 +14929,47 @@ function AddFromSearch(e,callback){
 	            textarea.setSelectionRange(start, end);
 	        }
     	});
+	}
+	else{
+
+	    document.getElementById('search_results').addEventListener('touchend', function (event) {
+
+	        touch_count += 1
+
+	        setTimeout(function () {
+	            touch_count = 0
+	        }, TOUCH_TIMEOUT_MILLISECONDS);
+
+	        if (touch_count === 3) {
+
+	        	// For iOS double click delay override
+	        	setTimeout(function(){ 
+
+		            const textarea = event.target;
+		            const text = textarea.value;
+		            const selectionStart = textarea.selectionStart;
+
+		            // Find the start by searching backwards for a line that starts with 'X:'
+		            let start = text.lastIndexOf('\nX:', selectionStart);
+		            if (start === -1) {
+		                start = text.indexOf('X:', 0); // If no previous 'X:' is found, find the first
+		            } else {
+		                start++;  // Move past the newline character before 'X:'
+		            }
+
+		            // Find the end by searching for a blank line or the end of the text
+		            let end = text.indexOf('\n\n', selectionStart); // Find double newline (blank line)
+		            if (end === -1) {
+		                end = text.length; // If no blank line, go to the end of the text
+		            }
+
+		            // Select the text from 'X:' line to the blank line or end of text
+		            textarea.setSelectionRange(start, end);
+
+	        	},500);
+	        }
+
+	    });
 	}
 
 	// Load the default database
