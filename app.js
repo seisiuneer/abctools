@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2219_123124_0830";
+var gVersionNumber="2221_123124_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14859,7 +14859,7 @@ function AddFromSearch(e,callback){
 
 	modal_msg+='<p style="margin-top:20px;text-align: center;">';
 	
-	if (isPureDesktopBrowser){
+	if (isPureDesktopBrowser()){
 		modal_msg+='Select text to add or add all text if no selection.&nbsp;&nbsp;Triple-click to select an entire tune.<br/><br/>';
 	}
 	else{
