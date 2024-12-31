@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2217_123124_0830";
+var gVersionNumber="2219_123124_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14859,7 +14859,12 @@ function AddFromSearch(e,callback){
 
 	modal_msg+='<p style="margin-top:20px;text-align: center;">';
 	
-	modal_msg+='Select text to add or add all text if no selection.&nbsp;&nbsp;Triple-click to select an entire tune.<br/><br/>';
+	if (isPureDesktopBrowser){
+		modal_msg+='Select text to add or add all text if no selection.&nbsp;&nbsp;Triple-click to select an entire tune.<br/><br/>';
+	}
+	else{
+		modal_msg+='Select text to add or add all text if no selection.<br/><br/>';		
+	}
 
 	modal_msg += '<input class="btn btn-add-search-results add-search-results-disabled" id="add-search-results" onclick="addSearchResults();" type="button" value="Add Results to Tunebook" title="Add Results to Tunebook.&nbsp;&nbsp;If there is a text selection, only the selected text will be added, otherwise all the text will be added.">';
 
@@ -14900,32 +14905,34 @@ function AddFromSearch(e,callback){
 	    }
 	});
 
-	// Triple click in results selects entire tunes
-	document.getElementById('search_results').addEventListener('click', function(event){
+	if (isPureDesktopBrowser()){
 
-        if (event.detail === 3) {  // Triple-click detected
-            const textarea = event.target;
-            const text = textarea.value;
-            const selectionStart = textarea.selectionStart;
+		document.getElementById('search_results').addEventListener('click', function(event){
 
-            // Find the start by searching backwards for a line that starts with 'X:'
-            let start = text.lastIndexOf('\nX:', selectionStart);
-            if (start === -1) {
-                start = text.indexOf('X:', 0); // If no previous 'X:' is found, find the first
-            } else {
-                start++;  // Move past the newline character before 'X:'
-            }
+	        if (event.detail === 3) {  // Triple-click detected
+	            const textarea = event.target;
+	            const text = textarea.value;
+	            const selectionStart = textarea.selectionStart;
 
-            // Find the end by searching for a blank line or the end of the text
-            let end = text.indexOf('\n\n', selectionStart); // Find double newline (blank line)
-            if (end === -1) {
-                end = text.length; // If no blank line, go to the end of the text
-            }
+	            // Find the start by searching backwards for a line that starts with 'X:'
+	            let start = text.lastIndexOf('\nX:', selectionStart);
+	            if (start === -1) {
+	                start = text.indexOf('X:', 0); // If no previous 'X:' is found, find the first
+	            } else {
+	                start++;  // Move past the newline character before 'X:'
+	            }
 
-            // Select the text from 'X:' line to the blank line or end of text
-            textarea.setSelectionRange(start, end);
-        }
-	});
+	            // Find the end by searching for a blank line or the end of the text
+	            let end = text.indexOf('\n\n', selectionStart); // Find double newline (blank line)
+	            if (end === -1) {
+	                end = text.length; // If no blank line, go to the end of the text
+	            }
+
+	            // Select the text from 'X:' line to the blank line or end of text
+	            textarea.setSelectionRange(start, end);
+	        }
+    	});
+	}
 
 	// Load the default database
 	if (gTheCurrentTuneDatabase == 0){
