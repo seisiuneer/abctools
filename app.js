@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2222_123124_0930";
+var gVersionNumber="2223_010125_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14503,28 +14503,53 @@ function addSearchResults(){
 	 		},1000);
 	 	}
 
-		setTimeout(function(){
+	 	if (!gIsIOS){
 
-			if(isPureDesktopBrowser()){
+			setTimeout(function(){
 
 				// And reset the focus
 			    elem.focus();	
+				
+				elem.selectionStart = selStart;
+				
+				elem.selectionEnd = selEnd;
 
-			}
-			else{
 
-			    // And clear the focus
-			    elem.blur();
+			},100);
 
-			}
-			
+	 	}
+	 	else{
+	 		
+		  // create invisible dummy input to receive the focus first
+		  const fakeInput = document.createElement('input')
+		  fakeInput.setAttribute('type', 'text')
+		  fakeInput.style.position = 'absolute'
+		  fakeInput.style.opacity = 0
+		  fakeInput.style.height = 0
+		  fakeInput.style.fontSize = '16px' // disable auto zoom
+
+		  // you may need to append to another element depending on the browser's auto 
+		  // zoom/scroll behavior
+		  document.body.prepend(fakeInput)
+
+		  // focus so that subsequent async focus will work
+		  fakeInput.focus()
+
+		  setTimeout(function(){
+
+		    // now we can focus on the target input
+		    elem.focus()
+
 			elem.selectionStart = selStart;
 			
 			elem.selectionEnd = selEnd;
 
+		    // cleanup
+		    fakeInput.remove()
+		    
+		  }, 100);
 
-		},100);
-
+	 	}
 	}
 	else{
 
@@ -14822,6 +14847,8 @@ var gTuneDatabaseRetryCount = 10;
 function AddFromSearch(e,callback){
 	
 	//console.log("AddFromSearch");
+
+	// For tune selection
 	const TOUCH_TIMEOUT_MILLISECONDS = 1000;
 	var touch_count = 0;
 
@@ -14861,7 +14888,12 @@ function AddFromSearch(e,callback){
 
 	modal_msg+='<p style="margin-top:20px;text-align: center;">';
 	
-	modal_msg+='Select text to add or add all text if no selection.&nbsp;&nbsp;Triple-click to select an entire tune.<br/><br/>';
+	if (isPureDesktopBrowser()){
+		modal_msg+='Select text to add or add all text if no selection.&nbsp;&nbsp;Triple-click to select an entire tune.<br/><br/>';
+	}
+	else{
+		modal_msg+='Select text to add or add all text if no selection.&nbsp;&nbsp;Click once in a tune to select it.<br/><br/>';		
+	}
 
 	modal_msg += '<input class="btn btn-add-search-results add-search-results-disabled" id="add-search-results" onclick="addSearchResults();" type="button" value="Add Results to Tunebook" title="Add Results to Tunebook.&nbsp;&nbsp;If there is a text selection, only the selected text will be added, otherwise all the text will be added.">';
 
@@ -14902,7 +14934,7 @@ function AddFromSearch(e,callback){
 	    }
 	});
 
-	if (!gIsIOS){
+	if (isPureDesktopBrowser()){
 
 		document.getElementById('search_results').addEventListener('click', function(event){
 
@@ -14932,45 +14964,33 @@ function AddFromSearch(e,callback){
 	}
 	else{
 
-	    document.getElementById('search_results').addEventListener('touchend', function (event) {
+		document.getElementById('search_results').addEventListener('click', function(event){
+			
+            const textarea = event.target;
+            const text = textarea.value;
+            const selectionStart = textarea.selectionStart;
 
-	        touch_count += 1
+            // Find the start by searching backwards for a line that starts with 'X:'
+            let start = text.lastIndexOf('\nX:', selectionStart);
+            if (start === -1) {
+                start = text.indexOf('X:', 0); // If no previous 'X:' is found, find the first
+            } else {
+                start++;  // Move past the newline character before 'X:'
+            }
 
-	        setTimeout(function () {
-	            touch_count = 0
-	        }, TOUCH_TIMEOUT_MILLISECONDS);
+            // Find the end by searching for a blank line or the end of the text
+            let end = text.indexOf('\n\n', selectionStart); // Find double newline (blank line)
+            if (end === -1) {
+                end = text.length; // If no blank line, go to the end of the text
+            }
 
-	        if (touch_count === 3) {
+            // Select the text from 'X:' line to the blank line or end of text
+            textarea.setSelectionRange(start, end);
 
-	        	// For iOS double click delay override
-	        	setTimeout(function(){ 
+    	});
 
-		            const textarea = event.target;
-		            const text = textarea.value;
-		            const selectionStart = textarea.selectionStart;
-
-		            // Find the start by searching backwards for a line that starts with 'X:'
-		            let start = text.lastIndexOf('\nX:', selectionStart);
-		            if (start === -1) {
-		                start = text.indexOf('X:', 0); // If no previous 'X:' is found, find the first
-		            } else {
-		                start++;  // Move past the newline character before 'X:'
-		            }
-
-		            // Find the end by searching for a blank line or the end of the text
-		            let end = text.indexOf('\n\n', selectionStart); // Find double newline (blank line)
-		            if (end === -1) {
-		                end = text.length; // If no blank line, go to the end of the text
-		            }
-
-		            // Select the text from 'X:' line to the blank line or end of text
-		            textarea.setSelectionRange(start, end);
-
-	        	},500);
-	        }
-
-	    });
 	}
+
 
 	// Load the default database
 	if (gTheCurrentTuneDatabase == 0){
