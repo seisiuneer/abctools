@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2223_010125_0930";
+var gVersionNumber="2224_010225_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -23817,56 +23817,205 @@ function DoInjectTablature_Anglo(){
 	// Keep track of tablature injection use
 	sendGoogleAnalytics("tablature","Inject_Anglo");
 
-	SetRadioValue("notenodertab","noten");
+  	const concertina_fingerings = [
+	    { name: "  On-Row", id: "0" },
+	    { name: "  Cross-Row", id: "1" },
+  	];
 
-	gCurrentTab = "noten";
+  	const concertina_styles = [
+	    { name: "  Jeffries", id: "0" },
+	    { name: "  Wheatstone", id: "1" },
+  	];
 
-	angloFingeringsGenerator(gTheABC.value,callback);
+    const concertina_tunings = [
+	    { name: "  C/G", id: "0" },
+	    { name: "  Bb/F", id: "1" },
+	    { name: "  A/E", id: "2" },
+	    { name: "  G/D", id: "3" },
+  	];
 
-	function callback(injectedABC, wasError, errorReport){
-		
-		if (!wasError){
-			
-			gTheABC.value = injectedABC;
+	// Setup initial values
+	const theData = {
+	  configure_concertina_style:parseInt(gInjectTab_ConcertinaStyle),
+	  configure_concertina_tuning:parseInt(gInjectTab_ConcertinaTuning),
+	  configure_concertina_fingering:parseInt(gInjectTab_ConcertinaFingering),
+	  configure_gary_coover:gInjectTab_GaryCoover,
+	};
 
-			// Set dirty
-			gIsDirty = true;
+	const form = [
+	  {html: '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Anglo Concertina Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_concertina" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+	  {name: "Concertina tuning:", id: "configure_concertina_tuning", type:"select", options:concertina_tunings, cssClass:"configure_concertina_tunings_select"}, 
+	  {name: "Concertina style:", id: "configure_concertina_style", type:"select", options:concertina_styles, cssClass:"configure_tab_settings_select"}, 
+	  {name: "Preferred fingering solution:", id: "configure_concertina_fingering", type:"select", options:concertina_fingerings, cssClass:"configure_tab_settings_select"},
+	  {html: '<p style="margin-top:24px;font-size:12pt;line-height:12pt;font-family:helvetica">Fingering solutions referenced to C/G tuning:</p>'},	  
+	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">On-Row: Favors D5 and E5 on right-side C-row.</p>'},	  
+	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">Cross-Row: Favors D5 and E5 on the left-side G-row.</p>'},	  
+	  {html: '<p style="margin-top:12px;margin-bottom:24px;font-size:12pt;line-height:12pt;font-family:helvetica">Favors C5 on the left-side G-row draw, B4 on the right-side C-row draw.</p>'},	  
+	  {name: "    Gary Coover style tab (single notes only, overrides button name and direction settings)", id: "configure_gary_coover", type:"checkbox", cssClass:"configure_tab_settings_form_text"},
+	  {html: '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fingerings" class="btn btn-subdialog configure_anglo_fingerings" onclick="ConfigureAngloFingerings()" type="button" value="Configure Anglo Concertina Tablature Button Names" title="Configure the Anglo Concertina tablature button names"></p>'},
+	];
 
-			// Show the tab after an inject
-			gStripTab = false;
-			
-			RenderAsync(true,null);
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
-			// Idle the dialog
-			IdleAdvancedControls(true);
+		// Get the results and store them in the global configuration
+		if (!args.canceled){
 
-			// Idle the show tab names control
-			IdleAllowShowTabNames();
+			gInjectTab_ConcertinaStyle = args.result.configure_concertina_style;
+			gInjectTab_ConcertinaTuning = args.result.configure_concertina_tuning;
+			gInjectTab_ConcertinaFingering = args.result.configure_concertina_fingering;
+			gInjectTab_StripChords = args.result.configure_strip_chords;
+			gInjectTab_GaryCoover = args.result.configure_gary_coover;
 
-		}
-		else{
+			// Save the settings, in case they were initialized
+			SaveConfigurationSettings();
 
-            DayPilot.Modal.alert(errorReport,{ theme: "modal_flat", top: 100, scrollWithPage: true }).then(function(){
+			var concertina_transpose = 0;
+			var visual_transpose = 0;
+			var tuning_string = "C/G";
 
-	   			gTheABC.value = injectedABC;
+			switch (gInjectTab_ConcertinaTuning){
+				case "0": // C/G
+					//console.log("C/G");
+					tuning_string = "C/G";
+					break;
+				case "1": // Bb/F
+					//console.log("Bb/F");
+					concertina_transpose = 2;
+					visual_transpose = -2;
+					tuning_string = "Bb/F";
+					break;
+				case "2": // A/E
+					//console.log("A/E");
+					concertina_transpose = 3;
+					visual_transpose = -3;
+					tuning_string = "A/E";
+					break;
+				case "3": // G/D
+					//console.log("G/D");
+					concertina_transpose = 5;
+					visual_transpose = -5;
+					tuning_string = "G/D";
+					break;
+				default: // C/G
+					//console.log("Default - C/G");
+					break;
+			}
+
+			//console.log("concertina_transpose = "+concertina_transpose);
+
+			SetRadioValue("notenodertab","noten");
+
+			gCurrentTab = "noten";
+
+			//
+			// Do we need to transpose the tunes before injection?
+			//
+			if (concertina_transpose != 0){
+
+				var nTunes = CountTunes();
+
+				var theNotes = gTheABC.value;
+
+				// Get the rendering params
+				var params = GetABCJSParams();
+
+				// Find the tunes
+				var theTunes = theNotes.split(/^X:/gm);
+
+				var output = FindPreTuneHeader(theNotes);
+
+				for (var i=1;i<=nTunes;++i){
+
+					var thisTune = "X:"+theTunes[i];
+
+					var theTitle = getTuneTitle(theTunes[i]);
+
+					var visualObj = null;
+
+					// Wrap this in a try-catch since sometimes the transposer fails catastrophically
+					try {
+
+						//console.log("Transposing tune index: "+i+" title: "+theTitle+" amount: "+concertina_transpose+" semitones");
+
+						visualObj = ABCJS.renderAbc("*", thisTune, params);
+
+						thisTune = ABCJS.strTranspose(thisTune, visualObj, concertina_transpose);
+
+						thisTune = InjectStringBelowTuneHeader(thisTune,'%\n% '+tuning_string+' Anglo Concertina transpose\n%\n%abcjs_render_params {"visualTranspose":' + visual_transpose+'}\n%%MIDI transpose 0\n%');
+
+						output += thisTune;
+
+					}
+					catch (error){
+
+						//console.log("Transpose failed: "+theTitle);
+						
+						if (gShowABCJSRenderProgress){
+							console.log("Transpose failed: "+theTitle);
+						}
+
+						output += thisTune;
+
+					}
+
+				}
+
+				// Stuff in the transposed output
+				gTheABC.value = output;
 
 				// Set dirty
-				gIsDirty = true;
+				gIsDirty = true;	
 
-				// Show the tab after an inject
-				gStripTab = false;
+			}
+
+			angloFingeringsGenerator(gTheABC.value,callback);
+
+			function callback(injectedABC, wasError, errorReport){
 				
-				RenderAsync(true,null);
+				if (!wasError){
+					
+					gTheABC.value = injectedABC;
 
-				// Idle the dialog
-				IdleAdvancedControls(true);
+					// Set dirty
+					gIsDirty = true;
 
-				// Idle the show tab names control
-				IdleAllowShowTabNames();
-         	
-            });
+					// Show the tab after an inject
+					gStripTab = false;
+					
+					RenderAsync(true,null);
+
+					// Idle the dialog
+					IdleAdvancedControls(true);
+
+					// Idle the show tab names control
+					IdleAllowShowTabNames();
+
+				}
+				else{
+
+		            DayPilot.Modal.alert(errorReport,{ theme: "modal_flat", top: 100, scrollWithPage: true }).then(function(){
+
+			   			gTheABC.value = injectedABC;
+
+						// Set dirty
+						gIsDirty = true;
+
+						// Show the tab after an inject
+						gStripTab = false;
+						
+						RenderAsync(true,null);
+
+						// Idle the dialog
+						IdleAdvancedControls(true);
+
+						// Idle the show tab names control
+						IdleAllowShowTabNames();
+		         	
+		            });
+				}
+			}
 		}
-	}
+	});
 }
 
 //
@@ -35554,6 +35703,7 @@ var gInjectTab_StaffSep = 80;
 var gInjectTab_MusicSpace = 10;
 var gInjectTab_TabLocation = 1;
 var gInjectTab_ConcertinaStyle = 0;
+var gInjectTab_ConcertinaTuning = 0;
 var gInjectTab_ConcertinaFingering = 0;
 var gInjectTab_GaryCoover = false;
 var gInjectTab_BoxTabStyle = 0;
@@ -35684,6 +35834,14 @@ function GetInitialConfigurationSettings(){
 	}
 	else{
 		gInjectTab_TabLocation = 1;
+	}
+
+	val = localStorage.InjectTab_ConcertinaTuning;
+	if (val){
+		gInjectTab_ConcertinaTuning = val;
+	}
+	else{
+		gInjectTab_ConcertinaTuning = 0;
 	}
 
 	val = localStorage.InjectTab_ConcertinaStyle;
@@ -36557,6 +36715,7 @@ function SaveConfigurationSettings(){
 		localStorage.InjectTab_StaffSep = gInjectTab_StaffSep;
 		localStorage.InjectTab_MusicSpace = gInjectTab_MusicSpace;
 		localStorage.InjectTab_TabLocation = gInjectTab_TabLocation;
+		localStorage.InjectTab_ConcertinaTuning = gInjectTab_ConcertinaTuning;
 		localStorage.InjectTab_ConcertinaStyle = gInjectTab_ConcertinaStyle;
 		localStorage.InjectTab_ConcertinaFingering = gInjectTab_ConcertinaFingering;
 		localStorage.InjectTab_GaryCoover = gInjectTab_GaryCoover;
@@ -37185,16 +37344,6 @@ function ConfigureTablatureSettings(){
 	    { name: "  Push/Draw (Single quote for outside row, tab drawn below notes)", id: "1" },
   	];
 
-  	const concertina_fingerings = [
-	    { name: "  On-Row", id: "0" },
-	    { name: "  Cross-Row", id: "1" },
-  	];
-
-  	const concertina_styles = [
-	    { name: "  Jeffries", id: "0" },
-	    { name: "  Wheatstone", id: "1" },
-  	];
-
     const tab_locations = [
 	    { name: "  Above", id: "0" },
 	    { name: "  Below", id: "1" },
@@ -37207,13 +37356,10 @@ function ConfigureTablatureSettings(){
 	  configure_staffsep: gInjectTab_StaffSep,
 	  configure_musicspace: gInjectTab_MusicSpace,
 	  configure_tab_location:parseInt(gInjectTab_TabLocation),
-	  configure_concertina_style:parseInt(gInjectTab_ConcertinaStyle),
-	  configure_concertina_fingering:parseInt(gInjectTab_ConcertinaFingering),
 	  configure_strip_chords:gInjectTab_StripChords,
 	  configure_pushglyph:gInjectTab_PushGlyph,
 	  configure_drawglyph:gInjectTab_DrawGlyph,
 	  configure_use_bar_for_draw:gInjectTab_UseBarForDraw,
-	  configure_gary_coover:gInjectTab_GaryCoover,
 	  configure_box_tab_style:gInjectTab_BoxTabStyle
 	};
 
@@ -37230,17 +37376,9 @@ function ConfigureTablatureSettings(){
 	  {name: "    Use a bar over button name to indicate Draw (overrides Push and Draw characters)", id: "configure_use_bar_for_draw", type:"checkbox", cssClass:"configure_tab_settings_form_text"},
 	  {name: "Tab location relative to notation:", id: "configure_tab_location", type:"select", options:tab_locations, cssClass:"configure_tab_settings_select"},
 	  {name: "    Strip all chords and tab before injecting tab (Tab below only. Tab above always strips.)", id: "configure_strip_chords", type:"checkbox", cssClass:"configure_tab_settings_form_text"},
-	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:12pt;font-family:helvetica"><strong>Anglo Concertina Tablature Settings:</strong></p>'},	  
-	  {name: "Concertina style:", id: "configure_concertina_style", type:"select", options:concertina_styles, cssClass:"configure_tab_settings_select"}, 
-	  {name: "Preferred fingerings:", id: "configure_concertina_fingering", type:"select", options:concertina_fingerings, cssClass:"configure_tab_settings_select"},
-	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">On-Row: Favors D5 and E5 on right-side C-row.</p>'},	  
-	  {html: '<p style="margin-top:8px;font-size:12pt;line-height:12pt;font-family:helvetica">Cross-Row: Favors D5 and E5 on the left-side G-row.</p>'},	  
-	  {html: '<p style="margin-top:8px;font-size:12pt;line-height:12pt;font-family:helvetica">Favors C5 on the left-side G-row draw, B4 on the right-side C-row draw.</p>'},	  
-	  {name: "    Gary Coover style tab (single notes only, overrides button name and direction settings)", id: "configure_gary_coover", type:"checkbox", cssClass:"configure_tab_settings_form_text"},
-	  {html: '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fingerings" class="btn btn-subdialog configure_anglo_fingerings" onclick="ConfigureAngloFingerings()" type="button" value="Configure Anglo Concertina Tablature Button Names" title="Configure the Anglo Concertina tablature button names"></p>'},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 35, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -37250,10 +37388,6 @@ function ConfigureTablatureSettings(){
 			gInjectTab_StaffSep = args.result.configure_staffsep;
 			gInjectTab_MusicSpace = args.result.configure_musicspace;
 			gInjectTab_TabLocation = args.result.configure_tab_location;
-			gInjectTab_ConcertinaStyle = args.result.configure_concertina_style;
-			gInjectTab_ConcertinaFingering = args.result.configure_concertina_fingering;
-			gInjectTab_StripChords = args.result.configure_strip_chords;
-			gInjectTab_GaryCoover = args.result.configure_gary_coover;
 			gInjectTab_BoxTabStyle = args.result.configure_box_tab_style;
 
 			// Do some sanity checking on the push and draw glyphs
