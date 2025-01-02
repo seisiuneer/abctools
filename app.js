@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2224_010225_0900";
+var gVersionNumber="2225_010225_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -23863,7 +23863,6 @@ function DoInjectTablature_Anglo(){
 			gInjectTab_ConcertinaStyle = args.result.configure_concertina_style;
 			gInjectTab_ConcertinaTuning = args.result.configure_concertina_tuning;
 			gInjectTab_ConcertinaFingering = args.result.configure_concertina_fingering;
-			gInjectTab_StripChords = args.result.configure_strip_chords;
 			gInjectTab_GaryCoover = args.result.configure_gary_coover;
 
 			// Save the settings, in case they were initialized
@@ -37389,6 +37388,7 @@ function ConfigureTablatureSettings(){
 			gInjectTab_MusicSpace = args.result.configure_musicspace;
 			gInjectTab_TabLocation = args.result.configure_tab_location;
 			gInjectTab_BoxTabStyle = args.result.configure_box_tab_style;
+			gInjectTab_StripChords = args.result.configure_strip_chords;
 
 			// Do some sanity checking on the push and draw glyphs
 			gInjectTab_PushGlyph = args.result.configure_pushglyph;
