@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2225_010225_1200";
+var gVersionNumber="2226_010225_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -23907,95 +23907,83 @@ function DoInjectTablature_Anglo(){
 
 			gCurrentTab = "noten";
 
-			//
-			// Do we need to transpose the tunes before injection?
-			//
-			if (concertina_transpose != 0){
+			var nTunes = CountTunes();
 
-				var nTunes = CountTunes();
-
-				var theNotes = gTheABC.value;
-
-				// Get the rendering params
-				var params = GetABCJSParams();
-
-				// Find the tunes
-				var theTunes = theNotes.split(/^X:/gm);
-
-				var output = FindPreTuneHeader(theNotes);
-
-				for (var i=1;i<=nTunes;++i){
-
-					var thisTune = "X:"+theTunes[i];
-
-					var theTitle = getTuneTitle(theTunes[i]);
-
-					var visualObj = null;
-
-					// Wrap this in a try-catch since sometimes the transposer fails catastrophically
-					try {
-
-						//console.log("Transposing tune index: "+i+" title: "+theTitle+" amount: "+concertina_transpose+" semitones");
-
-						visualObj = ABCJS.renderAbc("*", thisTune, params);
-
-						thisTune = ABCJS.strTranspose(thisTune, visualObj, concertina_transpose);
-
-						thisTune = InjectStringBelowTuneHeader(thisTune,'%\n% '+tuning_string+' Anglo Concertina transpose\n%\n%abcjs_render_params {"visualTranspose":' + visual_transpose+'}\n%%MIDI transpose 0\n%');
-
-						output += thisTune;
-
-					}
-					catch (error){
-
-						//console.log("Transpose failed: "+theTitle);
-						
-						if (gShowABCJSRenderProgress){
-							console.log("Transpose failed: "+theTitle);
-						}
-
-						output += thisTune;
-
-					}
-
-				}
-
-				// Stuff in the transposed output
-				gTheABC.value = output;
-
-				// Set dirty
-				gIsDirty = true;	
-
+			// Only show the spinner for a large number of tunes
+			if (nTunes > 5){
+				document.getElementById("loading-bar-spinner").style.display = "block";
 			}
 
-			angloFingeringsGenerator(gTheABC.value,callback);
+			// To allow spinner to appear
+			setTimeout(function(){
 
-			function callback(injectedABC, wasError, errorReport){
-				
-				if (!wasError){
-					
-					gTheABC.value = injectedABC;
+				//
+				// Do we need to transpose the tunes before injection?
+				//
+				if (concertina_transpose != 0){
+
+
+					var theNotes = gTheABC.value;
+
+					// Get the rendering params
+					var params = GetABCJSParams();
+
+					// Find the tunes
+					var theTunes = theNotes.split(/^X:/gm);
+
+					var output = FindPreTuneHeader(theNotes);
+
+					for (var i=1;i<=nTunes;++i){
+
+						var thisTune = "X:"+theTunes[i];
+
+						var theTitle = getTuneTitle(theTunes[i]);
+
+						var visualObj = null;
+
+						// Wrap this in a try-catch since sometimes the transposer fails catastrophically
+						try {
+
+							//console.log("Transposing tune index: "+i+" title: "+theTitle+" amount: "+concertina_transpose+" semitones");
+
+							visualObj = ABCJS.renderAbc("*", thisTune, params);
+
+							thisTune = ABCJS.strTranspose(thisTune, visualObj, concertina_transpose);
+
+							thisTune = InjectStringBelowTuneHeader(thisTune,'%\n% '+tuning_string+' Anglo Concertina transpose\n%\n%abcjs_render_params {"visualTranspose":' + visual_transpose+'}\n%%MIDI transpose 0\n%');
+
+							output += thisTune;
+
+						}
+						catch (error){
+
+							//console.log("Transpose failed: "+theTitle);
+							
+							if (gShowABCJSRenderProgress){
+								console.log("Transpose failed: "+theTitle);
+							}
+
+							output += thisTune;
+
+						}
+
+					}
+
+					// Stuff in the transposed output
+					gTheABC.value = output;
 
 					// Set dirty
-					gIsDirty = true;
-
-					// Show the tab after an inject
-					gStripTab = false;
-					
-					RenderAsync(true,null);
-
-					// Idle the dialog
-					IdleAdvancedControls(true);
-
-					// Idle the show tab names control
-					IdleAllowShowTabNames();
+					gIsDirty = true;	
 
 				}
-				else{
 
-		            DayPilot.Modal.alert(errorReport,{ theme: "modal_flat", top: 100, scrollWithPage: true }).then(function(){
+				angloFingeringsGenerator(gTheABC.value,callback);
 
-			   			gTheABC.value = injectedABC;
+				function callback(injectedABC, wasError, errorReport){
+					
+					if (!wasError){
+						
+						gTheABC.value = injectedABC;
 
 						// Set dirty
 						gIsDirty = true;
@@ -24003,17 +23991,44 @@ function DoInjectTablature_Anglo(){
 						// Show the tab after an inject
 						gStripTab = false;
 						
-						RenderAsync(true,null);
+						RenderAsync(true,null,function(){
+							document.getElementById("loading-bar-spinner").style.display = "none";
+						});
 
 						// Idle the dialog
 						IdleAdvancedControls(true);
 
 						// Idle the show tab names control
 						IdleAllowShowTabNames();
-		         	
-		            });
+
+					}
+					else{
+
+			            DayPilot.Modal.alert(errorReport,{ theme: "modal_flat", top: 100, scrollWithPage: true }).then(function(){
+
+				   			gTheABC.value = injectedABC;
+
+							// Set dirty
+							gIsDirty = true;
+
+							// Show the tab after an inject
+							gStripTab = false;
+							
+							RenderAsync(true,null,function(){
+								document.getElementById("loading-bar-spinner").style.display = "none";
+							});
+
+							// Idle the dialog
+							IdleAdvancedControls(true);
+
+							// Idle the show tab names control
+							IdleAllowShowTabNames();
+			         	
+			            });
+					}
 				}
-			}
+
+			},100);
 		}
 	});
 }
