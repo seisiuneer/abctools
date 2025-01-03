@@ -383,6 +383,39 @@ function WebsiteInjectInstruments(theTune){
 }
 
 //
+// Return the .WAV or .MP3 filename
+//
+function GetWebsiteTuneName(tuneABC){
+
+    var neu = escape(tuneABC);
+
+    var Reihe = neu.split("%0D%0A");
+
+    Reihe = neu.split("%0A");
+
+    for (var j = 0; j < Reihe.length; ++j) {
+
+        Reihe[j] = unescape(Reihe[j]); /* Macht die Steuerzeichen wieder weg */
+
+        var Aktuellereihe = Reihe[j].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
+
+        if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
+
+            var fname = Reihe[j].slice(2);
+
+            fname = fname.trim();
+
+            return fname;
+
+        }
+    }
+
+    // Failed to find a tune title, return a default
+    return "Tune";
+
+}
+
+//
 // Export all the tunes Share URL in a JSON file
 //
 function BatchJSONExportForWebGenerator(theABC){
@@ -408,7 +441,7 @@ function BatchJSONExportForWebGenerator(theABC){
             thisTune = WebsiteInjectInstruments(thisTune);
         }
 
-        var title = GetTuneAudioDownloadName(thisTune,"");
+        var title = GetWebsiteTuneName(thisTune);
 
         var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
 
