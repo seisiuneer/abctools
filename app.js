@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2228_010425_1200";
+var gVersionNumber="2229_010425_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27020,12 +27020,12 @@ function ExportAudioOrImage(){
 	}
 
 	if (gPlayABCTuneCount > 1){
-		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Export All Tunes as PDF</p>';
-		modal_msg += '<p style="text-align:center;font-size:20pt;font-family:helvetica"><input id="abcplayer_pdfbutton" class="abcplayer_pdfbutton btn btn-pdfdownload" onclick="PDFExportDialog();" type="button" value="Export All Tunes as PDF" title="Exports all the tunes a PDF file"></p>'
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Export All Tunes as PDF File</p>';
+		modal_msg += '<p style="text-align:center;font-size:20pt;font-family:helvetica"><input id="abcplayer_pdfbutton" class="abcplayer_pdfbutton btn btn-pdfdownload" onclick="PDFExportDialog();" type="button" value="Export All Tunes as PDF File" title="Exports all the tunes as a PDF file"></p>'
 	}
 	else{
-		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Export Tune as PDF</p>';
-		modal_msg += '<p style="text-align:center;font-size:20pt;font-family:helvetica"><input id="abcplayer_pdfbutton" class="abcplayer_pdfbutton btn btn-pdfdownload" onclick="PDFExportDialog();" type="button" value="Export as PDF" title="Exports this tune as a PDF file"></p>'
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Export Tune as PDF File</p>';
+		modal_msg += '<p style="text-align:center;font-size:20pt;font-family:helvetica"><input id="abcplayer_pdfbutton" class="abcplayer_pdfbutton btn btn-pdfdownload" onclick="PDFExportDialog();" type="button" value="Export Tune as PDF File" title="Exports this tune as a PDF file"></p>'
 
 	}
 
