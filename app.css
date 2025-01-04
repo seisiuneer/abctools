@@ -1063,6 +1063,17 @@ padding:12px;
 	}
 }
 
+#abcplayer_pdfbutton{
+height:42px;
+padding:12px;
+}
+
+@media (hover: hover) {
+	.abcplayer_pdfbutton:hover{
+	background: palegreen;
+	}
+}
+
 #exportaudioimage_help{
 font-size:24pt;
 position:absolute;
@@ -1987,7 +1998,7 @@ float:left;
 .modal {
 display: none; /* Hidden by default */
 position: fixed; /* Stay in place */
-z-index: 102; /* Sit on top */
+z-index: 100001; /* Sit on top */
 padding-top: 200px; /* Location of the box */
 left: 0;
 top: 0;
@@ -4962,6 +4973,12 @@ margin-left:12px;
 }
 
 .btn-svgdownload{
+  --color: black;
+  --background-color: #f0fff0;
+
+}
+
+.btn-pdfdownload{
   --color: black;
   --background-color: #f0fff0;
 

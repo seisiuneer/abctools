@@ -7,7 +7,7 @@
  * 
  * MIT License
  * 
- * Copyright (c) 2024 Michael Eskin
+ * Copyright (c) 2025 Michael Eskin
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2227_010325_1200";
+var gVersionNumber="2228_010425_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -26978,41 +26978,60 @@ function ExportAudioOrImage(){
 
 	if ((format != "whistle") && (format != "recorder")){
 
-		modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export Audio or Image</p>';
+		modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export Audio, Image, or PDF</p>';
 
 	}
 	else{
 
-		modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export Audio</p>';
+		modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export Audio or PDF</p>';
 
 	}
+	if (gPlayABCTuneCount > 1){
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export Single Tune Audio</p>';
+	}
+	else{
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export Tune Audio</p>';
+	}
 
-	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export Tune Audio</p>';
 	modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
-	modal_msg += '<input id="abcplayer_wavbutton" class="abcplayer_wavbutton btn btn-wavedownload" onclick="DownloadWave();" type="button" value="Save as WAV File" title="Saves the audio for the current tune as a .WAV file">'
-	modal_msg += '<input id="abcplayer_mp3button" class="abcplayer_mp3button btn btn-mp3download" onclick="DownloadMP3();" type="button" value="Save as MP3 File" title="Saves the audio for the current tune as a .MP3 file">'
-	modal_msg += '<input id="abcplayer_midibutton" class="abcplayer_midibutton btn btn-mididownload" onclick="DownloadMIDI();" type="button" value="Save as MIDI File" title="Saves the current tune note events as a MIDI file">'
+	modal_msg += '<input id="abcplayer_wavbutton" class="abcplayer_wavbutton btn btn-wavedownload" onclick="DownloadWave();" type="button" value="Export as WAV File" title="Exports the audio for the current tune as a .WAV file">'
+	modal_msg += '<input id="abcplayer_mp3button" class="abcplayer_mp3button btn btn-mp3download" onclick="DownloadMP3();" type="button" value="Export as MP3 File" title="Exports the audio for the current tune as a .MP3 file">'
+	modal_msg += '<input id="abcplayer_midibutton" class="abcplayer_midibutton btn btn-mididownload" onclick="DownloadMIDI();" type="button" value="Export as MIDI File" title="Exports the current tune note events as a MIDI file">'
 	modal_msg  += '</p>';
 
 	modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
-	modal_msg += '<input id="abcplayer_wavreverbbutton" class="abcplayer_wavreverbbutton btn btn-wavereverbdownload" onclick="DownloadWaveWithReverb();" type="button" value="Save as WAV File with Reverb" title="Saves the audio for the current tune as a .WAV file including reverb"><input id="abcplayer_mp3reverbbutton" class="abcplayer_mp3reverbbutton btn btn-mp3reverbdownload" onclick="DownloadMP3WithReverb();" type="button" value="Save as MP3 File with Reverb" title="Saves the audio for the current tune as a .MP3 file including reverb">'
+	modal_msg += '<input id="abcplayer_wavreverbbutton" class="abcplayer_wavreverbbutton btn btn-wavereverbdownload" onclick="DownloadWaveWithReverb();" type="button" value="Export as WAV File with Reverb" title="Exports the audio for the current tune as a .WAV file including reverb"><input id="abcplayer_mp3reverbbutton" class="abcplayer_mp3reverbbutton btn btn-mp3reverbdownload" onclick="DownloadMP3WithReverb();" type="button" value="Export as MP3 File with Reverb" title="Exports the audio for the current tune as a .MP3 file including reverb">'
 	modal_msg  += '</p>';
 
 	if ((format != "whistle") && (format != "recorder")){
-
-		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Export Tune Image</p>';
-		modal_msg += '<p style="text-align:center;font-size:20pt;font-family:helvetica"><input id="abcplayer_jpgbutton" class="abcplayer_jpgbutton btn btn-jpgdownload" onclick="DownloadJPEG();" type="button" value="Save as JPEG File" title="Saves the current tune image as a JPEG file">'
-		modal_msg += '<input id="abcplayer_pngbutton" class="abcplayer_pngbutton btn btn-pngdownload" onclick="DownloadPNG();" type="button" value="Save as PNG File" title="Saves the current tune image as a PNG file">'
-		modal_msg += '<input id="abcplayer_svgbutton" class="abcplayer_svgbutton btn btn-svgdownload" onclick="DownloadSVG();" type="button" value="Save as SVG File" title="Saves the current tune image as a SVG file">'
+		if (gPlayABCTuneCount > 1){
+			modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Export Single Tune Image</p>';
+		}
+		else{
+			modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Export Tune Image</p>';			
+		}
+		modal_msg += '<p style="text-align:center;font-size:20pt;font-family:helvetica"><input id="abcplayer_jpgbutton" class="abcplayer_jpgbutton btn btn-jpgdownload" onclick="DownloadJPEG();" type="button" value="Export as JPEG File" title="Exports the current tune image as a JPEG file">'
+		modal_msg += '<input id="abcplayer_pngbutton" class="abcplayer_pngbutton btn btn-pngdownload" onclick="DownloadPNG();" type="button" value="Export as PNG File" title="Exports the current tune image as a PNG file">'
+		modal_msg += '<input id="abcplayer_svgbutton" class="abcplayer_svgbutton btn btn-svgdownload" onclick="DownloadSVG();" type="button" value="Export as SVG File" title="Exports the current tune image as a SVG file">'
 		modal_msg  += '</p>';
 		modal_msg += '<p class="export_single_text">';
 		modal_msg += 'Image width to export: <input id="export_width" type="number" min="0" step="1" max="4096" title="Image width to export" autocomplete="off"/>';
 		modal_msg += '</p>';
 	}
 
+	if (gPlayABCTuneCount > 1){
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Export All Tunes as PDF</p>';
+		modal_msg += '<p style="text-align:center;font-size:20pt;font-family:helvetica"><input id="abcplayer_pdfbutton" class="abcplayer_pdfbutton btn btn-pdfdownload" onclick="PDFExportDialog();" type="button" value="Export All Tunes as PDF" title="Exports all the tunes a PDF file"></p>'
+	}
+	else{
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Export Tune as PDF</p>';
+		modal_msg += '<p style="text-align:center;font-size:20pt;font-family:helvetica"><input id="abcplayer_pdfbutton" class="abcplayer_pdfbutton btn btn-pdfdownload" onclick="PDFExportDialog();" type="button" value="Export as PDF" title="Exports this tune as a PDF file"></p>'
+
+	}
+
 	modal_msg += '<a id="exportaudioimage_help" href="https://michaeleskin.com/abctools/userguide.html#export_audio_image" target="_blank" style="text-decoration:none;" title="Learn more about the audio and image exporter" class="dialogcornerbutton">?</a>';
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 150, scrollWithPage: (AllowDialogsToScroll()) })
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, scrollWithPage: (AllowDialogsToScroll()) })
 
 	if ((format != "whistle") && (format != "recorder")){
 		document.getElementById("export_width").value = gExportWidth;
@@ -29391,7 +29410,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 		modal_msg += '<input id="abcplayer_trainer" class="btn btn-looper abcplayer_trainer" onclick="TuneTrainerLaunchFromPlayer()" type="button" value="Start Tune Trainer" title="Opens the Tune Trainer for practicing tunes with increasing tempos">';
 		modal_msg += '<input id="abcplayer_metronomebutton" class="abcplayer_metronome button btn btn-metronome" onclick="ToggleMetronome();" type="button" value="Enable Metronome" title="Enables/disables the metronome">';
 
-		modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioOrImage();" type="button" value="Export Audio or Image" title="Brings up a dialog where you can save the tune in various audio and image formats">';
+		modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioOrImage();" type="button" value="Export Audio, Image, or PDF" title="Brings up a dialog where you can export the tune in various audio, image, and PDF formats">';
 
 		modal_msg += '<input id="abcplayer_settingsbutton" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ShowPlayerSettings();" type="button" value="Settings" title="Brings up the Player Instrument Settings dialog where you can select the default abcjs soundfont, MIDI instruments, and MIDI volumes to use when playing tunes.&nbsp;&nbsp;From the dialog you can also set the Player screen width percentage.">';
 		
@@ -29502,8 +29521,8 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 		// Change button label for export for whistle and recorder
 		if ((format == "whistle") || (format == "recorder")){
 
-			document.getElementById("abcplayer_exportbutton").value = "Export Audio";
-			document.getElementById("abcplayer_exportbutton").title = "Brings up a dialog where you can save the tune in various audio formats";
+			document.getElementById("abcplayer_exportbutton").value = "Export Audio or PDF";
+			document.getElementById("abcplayer_exportbutton").title = "Brings up a dialog where you can export the tune in various audio formats or as a PDF file";
 
 		}
 

@@ -37,6 +37,9 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-5C74XEDW40"></script>
+        
         <style>
         
         p {
@@ -316,8 +319,8 @@
             <a style="text-decoration:none;" href="#voice_tuning">Setting the Tuning Offset for Individual Voices</a>
             <a style="text-decoration:none;" href="#reverb">Adding Reverb When Playing Tunes</a>
             
-            <h3>Exporting Tune Audio or Image Files from the Player</h3>
-            <a style="text-decoration:none;" href="#export_audio_image">Exporting Tune Audio or Image Files from the Player</a>
+            <h3>Exporting Tune Audio, Image, or PDF Files from the Player</h3>
+            <a style="text-decoration:none;" href="#export_audio_image">Exporting Tune Audio, Image, or PDF Files from the Player</a>
             
             <h3>Advanced Playback Features</h3>
             <a style="text-decoration:none;" href="#adding_swing">Adding Playback Swing to Tunes</a>
@@ -585,9 +588,9 @@
                         <p class="toc"><a style="text-decoration:none;" href="#reverb">Adding Reverb When Playing Tunes</a></p>
                     </div>
                     
-                    <button class="accordion" title="Click to expand/collapse this section">Exporting Tune Audio or Image Files from the Player</button>
+                    <button class="accordion" title="Click to expand/collapse this section">Exporting Tune Audio, Image, or PDF Files from the Player</button>
                     <div class="tocpanel">
-                        <p class="toc"><a style="text-decoration:none;" href="#export_audio_image">Exporting Tune Audio or Image Files from the Player</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#export_audio_image">Exporting Tune Audio, Image, or PDF Files from the Player</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">Advanced Playback Features</button>
@@ -1334,7 +1337,7 @@
                 <p>The tool will find the tune you've clicked on and bring it up in the ABC Player for playback.</p>
                 <p>If you have selected some notes in the tune, only the selected notes will be played.</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/player_15.jpg"/>
+                    <img class="image" loading="lazy" src="img/player_16.jpg"/>
                 </div>
                 <p>Using the playback controls at the bottom, you can enable looping, rewind to start, start/pause playback, click in the progress bar to seek, or change the tempo as a percentage. </p>
                 <hr>
@@ -1358,8 +1361,8 @@
                 <hr>
                 <p>If you would prefer larger Player controls, for example for use on mobile devices, open the <strong>Advanced Settings</strong> dialog and set the check on: <strong>Player uses large controls (easier to touch on mobile and tablet)</strong></p>
                 <hr>
-                <p>Click <strong>Export Audio or Image</strong> to bring up a dialog where you can export your tune in various audio, MIDI, and image formats.</p>
-                <p>Full details below in the <a style="text-decoration:none;" href="#export_audio_image">Exporting Tune Audio or Image Files from the Player</a> section.</p>
+                <p>Click <strong>Export Audio, Image, or PDF</strong> to bring up a dialog where you can export your tune as a file in various audio, MIDI, image, or PDF formats.</p>
+                <p>Full details below in the <a style="text-decoration:none;" href="#export_audio_image">Exporting Tune Audio, Image, or PDF Files from the Player</a> section below.</p>
                 <hr>
                 <p>Click <strong>Settings</strong> to bring up a dialog where you can select your default abcjs soundfont, instruments, and instrument volumes.</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/_f2_RAcrVhk" title="Player Instrument Settings" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -1941,32 +1944,37 @@
                 <p>Once loaded, the custom reverb impulse file is saved in browser storage and will be used the next time the custom reverb style is requested.</p>
                 <p>To save the audio with the reverb effect included, use the <strong>Save WAV File With Reverb</strong> option on the player <strong>Export Audio or Image</strong> dialog as described in the next section.</p>
                 <hr class="hidden-print" id="export_audio_image">
-                <h1 class="page_break_always h1wide">Exporting Tune Audio or Image Files from the Player<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>If you click <strong>Export Audio or Image</strong> in the <strong>Player</strong>, a dialog will appear where you can save out the audio of your tune in either .WAV or .MP3 format, the note playback events as a MIDI file, or the tune image in .JPG, .PNG, or .SVG formats.</p>
+                <h1 class="page_break_always h1wide">Exporting Tune Audio, Image, or PDF Files from the Player<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>If you click <strong>Export Audio, Image, or PDF</strong> in the Player, a dialog will appear where you can export the the currently selected tune in the Player to an audio file in either .WAV or .MP3 format, the note playback events as a MIDI file, the tune image as .JPG, .PNG, or .SVG files, or all the tunes loaded in the Player as a PDF file.</p>
                 <p>The exported audio files will include any speed changes you have entered in the Player speed percentage control on the far right of the control bar.</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/export_audio_image_6.jpg"/>
+                    <img class="image" loading="lazy" src="img/export_audio_image_7.jpg"/>
                 </div>
                 <hr>
-                <p><strong>Save as WAV File</strong>: Saves the audio for the current tune to your system in .WAV format (no reverb):</p>
+                <p><strong>Export as WAV File</strong></p>
+                <p>Exports the audio for the current tune to your system in .WAV format (no reverb):</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/vESIbNZBVtE" title="Download .WAV demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <hr>
-                <p><strong>Save as MP3 File</strong>: Saves the audio for the current tune to your system in MP3 format (no reverb)</p>
+                <p><strong>Export as MP3 File</strong>:</p>
+                <p>Exports the audio for the current tune to your system in MP3 format (no reverb)</p>
                 <p>The bitrate for the MP3 file is set in the <strong>Advanced Settings</strong> dialog.</p>
                 <p>Default is: 192 kbit/sec.</p>
                 <p>This operation may take some time. The button label changes to <strong>Encoding .MP3</strong> while the audio is being encoded.</p>
                 <p>To download all the tunes at once in .MP3 format with repeats and optional two-bar click intros, use the <strong>Export all Tunes as .MP3</strong> feature in the <a style="text-decoration:none;" href="#more_tools">More ABC Tools</a> dialog.</p>
                 <hr>
-                <p><strong>Save as WAV File With Reverb</strong>: Saves the audio for the current tune to your system in .WAV format including any applied reverb effects.</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/PN2lQSntPmU" title="Save .WAV File With Reverb demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p><strong>Export as WAV File With Reverb</strong></p>
+                <p>Exports the audio for the current tune to your system in .WAV format including any applied reverb effects.</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/PN2lQSntPmU" title="Export .WAV File With Reverb demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>This operation may take some time. The button label changes to <strong>Saving WAV File With Reverb</strong> while the audio is being encoded.</p>
                 <hr>
-                <p><strong>Save as MP3 File With Reverb</strong>: Saves the audio for the current tune to your system in .MP3 format including any applied reverb effects.</p>
+                <p><strong>Export as MP3 File With Reverb</strong></p>
+                <p>Exports the audio for the current tune to your system in .MP3 format including any applied reverb effects.</p>
                 <p>The bitrate for the MP3 file is set in the <strong>Advanced Settings</strong> dialog.</p>
                 <p>Default is: 192 kbit/sec.</p>
                 <p>This operation may take some time. The button label changes to <strong>Saving MP3 File With Reverb</strong> while the audio is being encoded.</p>
                 <hr>
-                <p><strong>Save as MIDI File</strong>: Saves a MIDI file for the current tune to your system:</p>
+                <p><strong>Export as MIDI File</strong></p>
+                <p>Exports a MIDI file for the current tune to your system:</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/1o3HZD7afL8" title="Download MIDI demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p style="text-align: center;"><strong>Limits on Use of my Custom MIDI Instruments</strong></p>
                 <p>The General MIDI specification only supports MIDI program numbers as high as 128.</p>
@@ -1994,14 +2002,23 @@
                 <p>147: Bass Recorder -> 74: Recorder</p>
                 <p>Muted voices using MIDI instrument 148 or "mute" will be changed to program 0 (Acoustic Grand Piano) and the volume set to zero.</p>
                 <hr>
-                <p><strong>Save as JPEG File</strong>: Saves the image for the current tune to your system as a bitmap in JPEG format.</p>
+                <p><strong>Export as JPEG File</strong></p>
+                <p>Exports the image for the current tune to your system as a bitmap in JPEG format.</p>
                 <p>Image width is set from the <strong>Image width to export:</strong> value.</p>
                 <hr>
-                <p><strong>Save as PNG File</strong>: Saves the image for the current tune to your system as a bitmap in PNG format.</p>
+                <p><strong>Export as PNG File</strong></p>
+                <p>Exports the image for the current tune to your system as a bitmap in PNG format.</p>
                 <p>Image width is set from the <strong>Image width to export:</strong> value.</p>
                 <hr>
-                <p><strong>Save as SVG File</strong>: Saves the image for the current tune to your system as a vector representation in SVG format.</p>
+                <p><strong>Export as SVG File</strong></p>
+                <p>Exports the image for the current tune to your system as a vector representation in SVG format.</p>
                 <p>Image width is set from the <strong>Image width to export:</strong> value.</p>
+                <hr>
+                <p><strong>Export All Tunes as PDF File</strong></p>
+                <p>Exports all the tunes loaded in the player as a PDF file.</p>
+                <p>Works exactly the same as if you had clicked <strong>Export PDF</strong> in the editor.</p>
+                <p>Full details on PDF export here:</p>
+                <p style="text-align:center"><strong><a href="#export_pdf_tunebook">Exporting a PDF Tunebook</a></strong></p>
                 <hr>
                 <p style="text-align: center;"><strong>Limitations on Image Export</strong></p>
                 <p>At this time Tin Whistle tab cannot be exported as an image.</p>
@@ -3613,7 +3630,7 @@
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/notation_spacing_explorer_2.jpg"/>
                 </div>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/0xIuAByekDA" title="Notation Spacing Explorer Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>                
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/0xIuAByekDA" title="Notation Spacing Explorer Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <hr>
                 <p><strong>Staff Separation:</strong> Sets the spacing between the staves. Default depends on the default spacing set in the tool's <strong>Settings</strong> dialog.</p>
                 <hr>
