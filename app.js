@@ -29550,8 +29550,14 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 		// Change button label for export for whistle and recorder
 		if ((format == "whistle") || (format == "recorder")){
 
-			document.getElementById("abcplayer_exportbutton").value = "Export Audio or PDF";
-			document.getElementById("abcplayer_exportbutton").title = "Brings up a dialog where you can export the tune in various audio formats or as a PDF file";
+			if (!gIsQuickEditor){
+				document.getElementById("abcplayer_exportbutton").value = "Export Audio or PDF";
+				document.getElementById("abcplayer_exportbutton").title = "Brings up a dialog where you can export the tune in various audio formats or as a PDF file";
+			}
+			else{
+				document.getElementById("abcplayer_exportbutton").value = "Export Audio";
+				document.getElementById("abcplayer_exportbutton").title = "Brings up a dialog where you can export the tune in various audio formats";
+			}
 
 		}
 
