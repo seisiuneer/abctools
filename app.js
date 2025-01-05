@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2229_010425_1300";
+var gVersionNumber="2230_010525_0730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -23854,6 +23854,7 @@ function DoInjectTablature_Anglo(){
 	  {html: '<p style="margin-top:12px;margin-bottom:24px;font-size:12pt;line-height:12pt;font-family:helvetica">Favors C5 on the left-side G-row draw, B4 on the right-side C-row draw.</p>'},	  
 	  {name: "    Gary Coover style tab (single notes only, overrides button name and direction settings)", id: "configure_gary_coover", type:"checkbox", cssClass:"configure_tab_settings_form_text"},
 	  {html: '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fingerings" class="btn btn-subdialog configure_anglo_fingerings" onclick="ConfigureAngloFingerings()" type="button" value="Configure Anglo Concertina Tablature Button Names" title="Configure the Anglo Concertina tablature button names"></p>'},
+	  {html: '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Configure Anglo Concertina Tablature Fonts and Push/Draw Indications" title="Configure the Anglo Concertina tablature fonts and push/draw indications"></p>'},
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
@@ -37341,7 +37342,7 @@ function ConfigureAngloFingerings(){
 	}, 150);
 
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 160, width: 800, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 190, width: 800, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 		
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -37398,8 +37399,7 @@ function ConfigureTablatureSettings(){
 	};
 
 	const form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Tablature/Solfège Injection Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#injecting_tablature" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
-	  {html: '<p style="margin-top:18px;font-size:12pt;line-height:14pt;font-family:helvetica"><strong>Tablature/Solfège Font Settings:</strong></p>'},	  
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Tablature Injection Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#injecting_tablature" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 	  {name: "Font family (Recommended: Palatino):", id: "configure_font_family", type:"text", cssClass:"configure_tab_settings_form_text_wide"},
 	  {name: "Tablature/Solfège font size (Recommended: 10):", id: "configure_tab_font_size", type:"text", cssClass:"configure_tab_settings_form_text"},
 	  {name: "%%staffsep value (Recommended: 80):", id: "configure_staffsep", type:"text", cssClass:"configure_tab_settings_form_text"},

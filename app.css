@@ -2883,7 +2883,7 @@ margin-top:-7px;
 
 .configure_tab_settings_form_text{
 	font-size:12pt;
-	line-height:32px;
+	line-height:42px;
 	font-family:helvetica;
 	margin-top:6px;
 	display:flex;
@@ -2899,7 +2899,7 @@ margin-top:-7px;
 
 .configure_tab_settings_form_text_wide{
 	font-size:12pt;
-	line-height:32px;
+	line-height:42px;
 	font-family:helvetica;
 	margin-top:10px;
 	display:flex;
@@ -3380,7 +3380,7 @@ margin-top:-7px;
 
 #configure_anglo_fingerings{
 	height:42px;
-	margin-top: 9px;
+	margin-top: 0px;
 	padding:12px;
 }
 
@@ -3389,6 +3389,19 @@ margin-top:-7px;
 	background: palegreen;
 	}
 }
+
+#configure_anglo_fonts{
+	height:42px;
+	margin-top: 12px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.configure_anglo_fonts:hover{
+	background: palegreen;
+	}
+}
+
 
 #default_anglo_fingerings{
 	height:42px;
