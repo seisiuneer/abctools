@@ -374,6 +374,9 @@ function WebsiteInjectInstruments(theTune){
 
     // Inject chord volume
     theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI chordvol "+gWebsiteChordVolume);
+
+    // Inject play link request for tune PDF export
+    theTune = InjectStringBelowTuneHeader(theTune, "%add_all_playback_links");
     
     // Seeing extra linefeeds after the inject
     theTune = theTune.replace("\n\n","");
