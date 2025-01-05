@@ -2013,8 +2013,8 @@
                 <hr>
                 <p><strong>Export All Tunes as PDF File</strong></p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/YiWNWbvmRDQ" title="Export PDF from Player Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>    
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/ZAO_5Q00Guk" title="Export PDF With Play Links from Player Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>    
                 <p>Exports all the tunes loaded in the player as a PDF file.</p>
+                <p>If the Player was opened from clicking a PDF file tune title play link, the exported PDF file will also play if the title is clicked.</p>
                 <p>Works exactly the same as if you had clicked <strong>Export PDF</strong> in the editor.</p>
                 <p>Full details on PDF export here:</p>
                 <p style="text-align:center"><strong><a href="#export_pdf_tunebook">Exporting a PDF Tunebook</a></strong></p>
@@ -2966,6 +2966,7 @@
                 <p>This is useful for tunebooks for which you have manually specified all the MIDI soundfont, program, bassprog, and chordprog information already in the tunes and do not want them overridden when played from the play link.</p>
                 <p>Example: To have all tunes played using the FatBoy soundfont and a Harpsichord sound on the melody and a Piano sound on the bass and chords:</p>
                 <p class="code">%add_all_playback_links 6 0 0 fatboy</p>
+                <p>Additionally, if %add_all_playback_links is specified in the PDF features, each tune in the PDF will have a %add_all_playback_links added to the header so that if the user exports a PDF of a tune played from the PDF tunebook, that exported PDF tune will also play if the title is clicked.</p>
                 <p>To specify the volumes for the bass and chords to the playback links also add:</p>
                 <p class="code">%add_all_playback_volumes BASS_VOLUME CHORD_VOLUME</p>
                 <p>Range for both BASS_VOLUME and CHORD_VOLUME is 0 to 127.</p>

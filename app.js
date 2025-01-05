@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2230_010525_0730";
+var gVersionNumber="2231_010525_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -4430,10 +4430,10 @@ function processSingleTunePlaybackInjectsQR(theTune){
 		theTune = theTune.replace(searchRegExp, "");
 
 		if (gAddPlaybackHyperlinkVolumes){
-			theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI bassprog "+gPlaybackHyperlinkBassProgram+"\n"+"%%MIDI bassvol "+gPlaybackHyperlinkBassVolume+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkChordProgram+"\n"+"%%MIDI chordvol "+gPlaybackHyperlinkChordVolume+"\n"+theTune;
+			theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI bassprog "+gPlaybackHyperlinkBassProgram+"\n"+"%%MIDI bassvol "+gPlaybackHyperlinkBassVolume+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkChordProgram+"\n"+"%%MIDI chordvol "+gPlaybackHyperlinkChordVolume+"\n"+"%add_all_playback_links\n"+theTune;
 		}
 		else{
-			theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI bassprog "+gPlaybackHyperlinkBassProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkChordProgram+"\n"+theTune;
+			theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI bassprog "+gPlaybackHyperlinkBassProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkChordProgram+"\n"+"%add_all_playback_links\n"+theTune;
 		}
 
 	}
@@ -5059,10 +5059,10 @@ function GetAllTuneHyperlinks(theLinks) {
 			theTune = theTune.replace(searchRegExp, "");
 
 			if (gAddPlaybackHyperlinkVolumes){
-				theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI bassprog "+gPlaybackHyperlinkBassProgram+"\n"+"%%MIDI bassvol "+gPlaybackHyperlinkBassVolume+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkChordProgram+"\n"+"%%MIDI chordvol "+gPlaybackHyperlinkChordVolume+"\n"+theTune;
+				theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI bassprog "+gPlaybackHyperlinkBassProgram+"\n"+"%%MIDI bassvol "+gPlaybackHyperlinkBassVolume+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkChordProgram+"\n"+"%%MIDI chordvol "+gPlaybackHyperlinkChordVolume+"\n"+"%add_all_playback_links\n"+theTune;
 			}
 			else{
-				theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI bassprog "+gPlaybackHyperlinkBassProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkChordProgram+"\n"+theTune;
+				theTune = "X:1\n%abcjs_soundfont "+gPlaybackHyperlinkSoundFont+"\n"+"%%MIDI program "+gPlaybackHyperlinkMelodyProgram+"\n"+"%%MIDI bassprog "+gPlaybackHyperlinkBassProgram+"\n"+"%%MIDI chordprog "+gPlaybackHyperlinkChordProgram+"\n"+"%add_all_playback_links\n"+theTune;
 			}
 
 		}
