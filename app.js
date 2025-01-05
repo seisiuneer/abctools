@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2234_010525_1230";
+var gVersionNumber="2235_010525_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27030,7 +27030,7 @@ function ExportAudioOrImage(){
 		else{
 			modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Export Tune Image</p>';			
 		}
-		
+
 		modal_msg += '<p style="text-align:center;font-size:20pt;font-family:helvetica"><input id="abcplayer_jpgbutton" class="abcplayer_jpgbutton btn btn-jpgdownload" onclick="DownloadJPEG();" type="button" value="Export as JPEG File" title="Exports the current tune image as a JPEG file">'
 		modal_msg += '<input id="abcplayer_pngbutton" class="abcplayer_pngbutton btn btn-pngdownload" onclick="DownloadPNG();" type="button" value="Export as PNG File" title="Exports the current tune image as a PNG file">'
 		modal_msg += '<input id="abcplayer_svgbutton" class="abcplayer_svgbutton btn btn-svgdownload" onclick="DownloadSVG();" type="button" value="Export as SVG File" title="Exports the current tune image as a SVG file">'
@@ -29434,7 +29434,12 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 		modal_msg += '<input id="abcplayer_trainer" class="btn btn-looper abcplayer_trainer" onclick="TuneTrainerLaunchFromPlayer()" type="button" value="Start Tune Trainer" title="Opens the Tune Trainer for practicing tunes with increasing tempos">';
 		modal_msg += '<input id="abcplayer_metronomebutton" class="abcplayer_metronome button btn btn-metronome" onclick="ToggleMetronome();" type="button" value="Enable Metronome" title="Enables/disables the metronome">';
 
-		modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioOrImage();" type="button" value="Export Audio, Image, or PDF" title="Brings up a dialog where you can export the tune in various audio, image, and PDF formats">';
+		if (!gIsQuickEditor){
+			modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioOrImage();" type="button" value="Export Audio, Image, or PDF" title="Brings up a dialog where you can export the tune in various audio, image, and PDF formats">';
+		}
+		else{
+			modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioOrImage();" type="button" value="Export Audio or Image" title="Brings up a dialog where you can export the tune in various audio and image formats">';			
+		}
 
 		modal_msg += '<input id="abcplayer_settingsbutton" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ShowPlayerSettings();" type="button" value="Settings" title="Brings up the Player Instrument Settings dialog where you can select the default abcjs soundfont, MIDI instruments, and MIDI volumes to use when playing tunes.&nbsp;&nbsp;From the dialog you can also set the Player screen width percentage.">';
 		
