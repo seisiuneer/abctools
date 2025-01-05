@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2233_010525_1100";
+var gVersionNumber="2234_010525_1230";
 
 var gMIDIInitStillWaiting = false;
 
@@ -26977,16 +26977,34 @@ function ExportAudioOrImage(){
 	
 	var format = GetRadioValue("notenodertab");
 
-	if ((format != "whistle") && (format != "recorder")){
+	if (!gIsQuickEditor){
 
-		modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export Audio, Image, or PDF</p>';
+		if ((format != "whistle") && (format != "recorder")){
 
+			modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export Audio, Image, or PDF</p>';
+
+		}
+		else{
+
+			modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export Audio or PDF</p>';
+
+		}
 	}
 	else{
 
-		modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export Audio or PDF</p>';
+		if ((format != "whistle") && (format != "recorder")){
+
+			modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export Audio or Image</p>';
+
+		}
+		else{
+
+			modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export Audio</p>';
+
+		}
 
 	}
+
 	if (gPlayABCTuneCount > 1){
 		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export Single Tune Audio</p>';
 	}
@@ -27005,12 +27023,14 @@ function ExportAudioOrImage(){
 	modal_msg  += '</p>';
 
 	if ((format != "whistle") && (format != "recorder")){
+
 		if (gPlayABCTuneCount > 1){
 			modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Export Single Tune Image</p>';
 		}
 		else{
 			modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Export Tune Image</p>';			
 		}
+		
 		modal_msg += '<p style="text-align:center;font-size:20pt;font-family:helvetica"><input id="abcplayer_jpgbutton" class="abcplayer_jpgbutton btn btn-jpgdownload" onclick="DownloadJPEG();" type="button" value="Export as JPEG File" title="Exports the current tune image as a JPEG file">'
 		modal_msg += '<input id="abcplayer_pngbutton" class="abcplayer_pngbutton btn btn-pngdownload" onclick="DownloadPNG();" type="button" value="Export as PNG File" title="Exports the current tune image as a PNG file">'
 		modal_msg += '<input id="abcplayer_svgbutton" class="abcplayer_svgbutton btn btn-svgdownload" onclick="DownloadSVG();" type="button" value="Export as SVG File" title="Exports the current tune image as a SVG file">'
@@ -27020,14 +27040,17 @@ function ExportAudioOrImage(){
 		modal_msg += '</p>';
 	}
 
-	if (gPlayABCTuneCount > 1){
-		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Export All Tunes as PDF File</p>';
-		modal_msg += '<p style="text-align:center;font-size:20pt;font-family:helvetica"><input id="abcplayer_pdfbutton" class="abcplayer_pdfbutton btn btn-pdfdownload" onclick="PDFExportDialog();" type="button" value="Export All Tunes as PDF File" title="Exports all the tunes as a PDF file"></p>'
-	}
-	else{
-		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Export Tune as PDF File</p>';
-		modal_msg += '<p style="text-align:center;font-size:20pt;font-family:helvetica"><input id="abcplayer_pdfbutton" class="abcplayer_pdfbutton btn btn-pdfdownload" onclick="PDFExportDialog();" type="button" value="Export Tune as PDF File" title="Exports this tune as a PDF file"></p>'
+	if (!gIsQuickEditor){
 
+		if (gPlayABCTuneCount > 1){
+			modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Export All Tunes as PDF File</p>';
+			modal_msg += '<p style="text-align:center;font-size:20pt;font-family:helvetica"><input id="abcplayer_pdfbutton" class="abcplayer_pdfbutton btn btn-pdfdownload" onclick="PDFExportDialog();" type="button" value="Export All Tunes as PDF File" title="Exports all the tunes as a PDF file"></p>'
+		}
+		else{
+			modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">Export Tune as PDF File</p>';
+			modal_msg += '<p style="text-align:center;font-size:20pt;font-family:helvetica"><input id="abcplayer_pdfbutton" class="abcplayer_pdfbutton btn btn-pdfdownload" onclick="PDFExportDialog();" type="button" value="Export Tune as PDF File" title="Exports this tune as a PDF file"></p>'
+
+		}
 	}
 
 	modal_msg += '<a id="exportaudioimage_help" href="https://michaeleskin.com/abctools/userguide.html#export_audio_image" target="_blank" style="text-decoration:none;" title="Learn more about the audio and image exporter" class="dialogcornerbutton">?</a>';
