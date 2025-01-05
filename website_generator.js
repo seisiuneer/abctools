@@ -1777,7 +1777,7 @@ function generateWebsiteFull(){
       {name: "          Add a ? help icon at top-left corner ", id: "bAddHelp", type:"checkbox", cssClass:"configure_website_form_text6"},
       {name: "Tunebook help URL:", id: "website_helpurl", type:"text",cssClass:"configure_website_form_text_wide5"},      
       {name: "          Add a \"Full Screen\" button at top-right corner that opens the current tune in a new tab", id: "bAddFullscreen", type:"checkbox", cssClass:"configure_website_form_text2"},
-      {name: "          Tunes open in player ", id: "bOpenInPlayer", type:"checkbox", cssClass:"configure_website_form_text2"},
+      {name: "          Tunes open in the Player ", id: "bOpenInPlayer", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "          Add instruments and volume overrides to each tune ", id: "bInjectInstruments", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "Soundfont:", id: "sound_font", type:"select", options:sound_font_options, cssClass:"configure_setuppdftunebook_midi_program_select"},
       {name: "Melody instrument:", id: "melody_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
@@ -1964,7 +1964,7 @@ function generateWebsiteSimple(){
       {name: "Hyperlink color (HTML color, also used for help icon):", id: "website_hyperlinkcolor", type:"text",cssClass:"configure_website_form_text2_simple"},      
       {name: "Tunebook help URL:", id: "website_helpurl", type:"text",cssClass:"configure_website_form_text_wide5_simple"},      
       {name: "          Disable access to editor ", id: "bDisableEdit", type:"checkbox", cssClass:"configure_website_form_text2_simple"},
-      {name: "          Tunes open in player ", id: "bOpenInPlayer", type:"checkbox", cssClass:"configure_website_form_text2_simple"},
+      {name: "          Tunes open in the Player ", id: "bOpenInPlayer", type:"checkbox", cssClass:"configure_website_form_text2_simple"},
     ];
 
     const modal = DayPilot.Modal.form(form, gWebsiteConfig, { theme: "modal_flat", top: 50, width: 760, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
