@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2236_010525_2100";
+var gVersionNumber="2237_010725_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -44984,12 +44984,40 @@ function DoStartup() {
 		};
 
 	//
-	// Hook up the text area text change callback with debounce
-	// Doesn't work well on iOS or Android, so disabling it there 
+	// Scroll tune notation into view when clicked
+	// Select whole tune if alt key is held when clicking
 	//
 
 	document.getElementById('abc').onclick = 
-		debounce( () => {
+
+		debounce( (event) => {
+
+			if (isPureDesktopBrowser()){
+
+		        if (event.altKey) {  // Alt key held
+
+		            const textarea = event.target;
+		            const text = gTheABC.value;
+		            const selectionStart = gTheABC.selectionStart;
+
+		            // Find the start by searching backwards for a line that starts with 'X:'
+		            let start = text.lastIndexOf('\nX:', selectionStart);
+		            if (start === -1) {
+		                start = text.indexOf('X:', 0); // If no previous 'X:' is found, find the first
+		            } else {
+		                start++;  // Move past the newline character before 'X:'
+		            }
+
+		            // Find the end by searching for a blank line or the end of the text
+		            let end = text.indexOf('\n\n', selectionStart); // Find double newline (blank line)
+		            if (end === -1) {
+		                end = text.length; // If no blank line, go to the end of the text
+		            }
+
+		            // Select the text from 'X:' line to the blank line or end of text
+		            gTheABC.setSelectionRange(start, end);
+		        }
+	    	}
 
 		    MakeTuneVisible(false);
 
