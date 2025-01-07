@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2237_010725_1000";
+var gVersionNumber="2238_010725_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14889,7 +14889,7 @@ function AddFromSearch(e,callback){
 	modal_msg+='<p style="margin-top:20px;text-align: center;">';
 	
 	if (isPureDesktopBrowser()){
-		modal_msg+='Select text to add or add all text if no selection.&nbsp;&nbsp;Triple-click to select an entire tune.<br/><br/>';
+		modal_msg+='Select text to add or add all text if no selection.&nbsp;&nbsp;Triple-click or Alt-click to select an entire tune.<br/><br/>';
 	}
 	else{
 		modal_msg+='Select text to add or add all text if no selection.&nbsp;&nbsp;Click once in a tune to select it.<br/><br/>';		
@@ -14938,7 +14938,7 @@ function AddFromSearch(e,callback){
 
 		document.getElementById('search_results').addEventListener('click', function(event){
 
-	        if (event.detail === 3) {  // Triple-click detected
+	        if ((event.detail === 3) || (event.altKey)) {  // Triple-click or Alt-click detected
 	            const textarea = event.target;
 	            const text = textarea.value;
 	            const selectionStart = textarea.selectionStart;
