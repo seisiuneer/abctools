@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2238_010725_1100";
+var gVersionNumber="2239_010825_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -118,7 +118,7 @@ var gRecorderFontPrepared = false;
 var DEBOUNCEMS = 280;
 
 // Debounce time for tune autoscroll
-var AUTOSCROLLDEBOUNCEMS = 250;
+var AUTOSCROLLDEBOUNCEMS = 200;
 
 // For tune autoscroll state
 var gLastAutoScrolledTune = -1;
