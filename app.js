@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2239_010825_0900";
+var gVersionNumber="2240_010825_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -1589,6 +1589,7 @@ function DoTransposeToKey(targetKey,transposeAll) {
 			if (isSectionHeader(theTune)){
 
 				output += theTune;
+				output += "\n\n";
 				continue;
 			}
 
@@ -1694,11 +1695,13 @@ function DoTransposeToKey(targetKey,transposeAll) {
 							visualObj = ABCJS.renderAbc("*", theTune, params);
 
 							output += ABCJS.strTranspose(theTune, visualObj, transposeAmount);
+							output += "\n\n";
 
 						}
 						else{
 
 							output += theTune;
+							output += "\n\n";
 
 						}
 					}
@@ -1706,6 +1709,7 @@ function DoTransposeToKey(targetKey,transposeAll) {
 
 						//console.log("No transpose required, tune skipped");
 						output += theTune;
+						output += "\n\n";
 
 					}
 				}
@@ -1719,12 +1723,14 @@ function DoTransposeToKey(targetKey,transposeAll) {
 						visualObj = ABCJS.renderAbc("*", theTune, params);
 
 						output += ABCJS.strTranspose(theTune, visualObj, transposeAmount);
+						output += "\n\n";
 
 					}
 					else{
 
 						//console.log("No transpose required, tune skipped");
 						output += theTune;
+						output += "\n\n";
 
 					}
 
@@ -1744,6 +1750,7 @@ function DoTransposeToKey(targetKey,transposeAll) {
 				}
 				
 				output += theTune;
+				output += "\n\n";
 
 			}
 		}
