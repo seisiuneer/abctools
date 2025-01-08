@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2240_010825_1000";
+var gVersionNumber="2241_010825_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -488,9 +488,7 @@ function getTuneTitle(thisTune){
 	
 	var neu = escape(thisTune);
 
-	var Reihe = neu.split("%0D%0A");
-
-	Reihe = neu.split("%0A");
+	var Reihe = neu.split("%0A");
 
 	var title = "";
 
@@ -880,8 +878,7 @@ function GetAllTuneTitles() {
 
 	var neu = escape(verarbeiten);
 
-	var Reihe = neu.split("%0D%0A");
-	Reihe = neu.split("%0A");
+	var Reihe = neu.split("%0A");
 
 	for (i = 0; i < Reihe.length; ++i) {
 		Reihe[i] = unescape(Reihe[i]); /* Macht die Steuerzeichen wieder weg */
@@ -1843,9 +1840,7 @@ function GetAllTuneTags(theTag,totalTunes){
 
 		var neu = escape(thisTune);
 
-		var Reihe = neu.split("%0D%0A");
-
-		Reihe = neu.split("%0A");
+		var Reihe = neu.split("%0A");
 
 		var bGotTag = false;
 
@@ -3337,9 +3332,7 @@ function GetTunebookIndexTitles(){
 
 		var neu = escape(thisTune);
 
-		var Reihe = neu.split("%0D%0A");
-
-		Reihe = neu.split("%0A");
+		var Reihe = neu.split("%0A");
 
 		var bGotTitle = false;
 
@@ -13871,9 +13864,7 @@ function SortTuneSearchResults(theNotes){
 
 		var neu = escape(thisTune);
 
-		var Reihe = neu.split("%0D%0A");
-
-		Reihe = neu.split("%0A");
+		var Reihe = neu.split("%0A");
 
 		var bGotTitle = false;
 
@@ -26030,9 +26021,7 @@ function GetTuneAudioDownloadName(tuneABC,extension){
 
 	var neu = escape(tuneABC);
 
-	var Reihe = neu.split("%0D%0A");
-
-	Reihe = neu.split("%0A");
+	var Reihe = neu.split("%0A");
 
 	for (var j = 0; j < Reihe.length; ++j) {
 
@@ -26067,9 +26056,7 @@ function isJigWithNoTiming(tuneABC,millisecondsPerMeasure){
 
 	var neu = escape(tuneABC);
 
-	var Reihe = neu.split("%0D%0A");
-
-	Reihe = neu.split("%0A");
+	var Reihe = neu.split("%0A");
 
 	var bHasTempo = false;
 	var bIsJig = false;
@@ -26336,9 +26323,7 @@ function getTuneRhythmType(tuneABC){
 
 	var neu = escape(tuneABC);
 
-	var Reihe = neu.split("%0D%0A");
-
-	Reihe = neu.split("%0A");
+	var Reihe = neu.split("%0A");
 
 	var bIsJig = false;
 	var bIsSlipJig = false;
