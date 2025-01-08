@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2241_010825_1030";
+var gVersionNumber="2242_010825_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14950,9 +14950,20 @@ function AddFromSearch(e,callback){
 	            }
 
 	            // Find the end by searching for a blank line or the end of the text
-	            let end = text.indexOf('\n\n', selectionStart); // Find double newline (blank line)
-	            if (end === -1) {
+	            var end = text.indexOf('\n\n', selectionStart); // Find double newline (blank line)
+	            var end2 = text.indexOf('X:', selectionStart); // Find next tune
+
+	            if ((end===-1) && (end2===-1)) {
 	                end = text.length; // If no blank line, go to the end of the text
+	            }
+	            else{
+	            	if (end===-1){
+	            		end = end2;
+	            	}
+	            	else
+	            	if (end >= end2){
+	            		end = end2;
+	            	}
 	            }
 
 	            // Select the text from 'X:' line to the blank line or end of text
@@ -45001,9 +45012,20 @@ function DoStartup() {
 		            }
 
 		            // Find the end by searching for a blank line or the end of the text
-		            let end = text.indexOf('\n\n', selectionStart); // Find double newline (blank line)
-		            if (end === -1) {
+		            var end = text.indexOf('\n\n', selectionStart); // Find double newline (blank line)
+		            var end2 = text.indexOf('X:', selectionStart); // Find next tune
+
+		            if ((end===-1) && (end2===-1)) {
 		                end = text.length; // If no blank line, go to the end of the text
+		            }
+		            else{
+		            	if (end===-1){
+		            		end = end2;
+		            	}
+		            	else
+		            	if (end >= end2){
+		            		end = end2;
+		            	}
 		            }
 
 		            // Select the text from 'X:' line to the blank line or end of text
