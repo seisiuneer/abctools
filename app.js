@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2243_010825_2100";
+var gVersionNumber="2244_010925_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -2013,8 +2013,15 @@ function SortTunesByTag(theTag,doCase){
 	// Aggregate the results
 	for (i=0;i<nProcessed;++i){
 
-		theNotes += tunesToProcess[i].tune;
+		var thisTune = tunesToProcess[i].tune;
+
+		// Ensure there is a blank line between tunes
+		thisTune = thisTune.replace(/\n*$/, '') + '\n\n'
+
+		theNotes += thisTune;
 	}
+
+	theNotes = theNotes.replace(/\n*$/, '') + '\n'
 
 	// Put them back in the ABC area
 	gTheABC.value = theNotes; 
@@ -2251,8 +2258,15 @@ function SortTunes(){
 	// Aggregate the results
 	for (i=0;i<nProcessed;++i){
 
-		theNotes += tunesToProcess[i].tune;
+		var thisTune = tunesToProcess[i].tune;
+
+		// Ensure there is a blank line between tunes
+		thisTune = thisTune.replace(/\n*$/, '') + '\n\n'
+
+		theNotes += thisTune;;
 	}
+
+	theNotes = theNotes.replace(/\n*$/, '') + '\n'
 
 	// Put them back in the ABC area
 	gTheABC.value = theNotes; 
