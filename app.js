@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2242_010825_1300";
+var gVersionNumber="2243_010825_2100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -482,30 +482,24 @@ function isMultiVoiceTune(theTune){
     return voices.size > 1;
 }
 
-//
-// Extract the title from a single tune ABC
-function getTuneTitle(thisTune){
-	
-	var neu = escape(thisTune);
 
-	var Reihe = neu.split("%0A");
+// Extract the title from a single tune ABC
+function getTuneTitle(thisTune) {
+	
+	var lines = thisTune.split("\n"); // Split the string by new line
 
 	var title = "";
 
-	for (var j = 0; j < Reihe.length; ++j) {
+	for (var j = 0; j < lines.length; ++j) {
 
-		Reihe[j] = unescape(Reihe[j]); /* Macht die Steuerzeichen wieder weg */
+		var currentLine = lines[j].trim(); // Trim any whitespace from the line
 
-		var Aktuellereihe = Reihe[j].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
+		// Check if the line starts with "T:"
+		if (currentLine.startsWith("T:")) {
 
-		if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
-
-			title = Reihe[j].slice(2);
-
-			title = title.trim();
+			title = currentLine.slice(2).trim(); // Extract the title after "T:"
 
 			return title;
-
 		}
 	}
 
@@ -800,23 +794,17 @@ function findSelectedTune(){
 //
 function GetFirstTuneTitle(bAllowSpaces) {
 
+	var theLines = gTheABC.value.split("\n");
+
 	var title = "";
-	
-	var theABC = gTheABC.value;
-
-	theABC = escape(theABC);
-
-	var theLines = theABC.split("%0A");
 
 	for (var i = 0; i < theLines.length; ++i) {
 		
-		theLines[i] = unescape(theLines[i]); 
+		var currentLine = theLines[i].trim(); // Trim any whitespace from the line
 
-		var theChars = theLines[i].split(""); 
+		if (currentLine.startsWith("T:")) {
 
-		if (theChars[0] == "T" && theChars[1] == ":") {
-
-			title = theLines[i].slice(2);
+			title = currentLine.slice(2);
 			
 			title = title.trim();
 
@@ -873,24 +861,20 @@ function GetAllTuneTitles() {
 
 	var theTitles = [];
 
-	// Mit For Schleife Titel für Dateinamen extrahieren und Leerzeichen ersetzen und Apostrophe entfernen.
-	var verarbeiten = gTheABC.value;
+	var lines = gTheABC.value.split("\n"); // Split the string by new line
 
-	var neu = escape(verarbeiten);
+	var title = "";
 
-	var Reihe = neu.split("%0A");
+	for (var j = 0; j < lines.length; ++j) {
 
-	for (i = 0; i < Reihe.length; ++i) {
-		Reihe[i] = unescape(Reihe[i]); /* Macht die Steuerzeichen wieder weg */
+		var currentLine = lines[j].trim(); // Trim any whitespace from the line
 
-		var Aktuellereihe = Reihe[i].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
-		if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
-			var titel = Reihe[i].slice(2);
+		// Check if the line starts with "T:"
+		if (currentLine.startsWith("T:")) {
 
-			titel = titel.trim();
+			title = currentLine.slice(2).trim(); // Extract the title after "T:"
 
-			theTitles.push(titel);
-
+			theTitles.push(title);
 		}
 	}
 
@@ -900,7 +884,7 @@ function GetAllTuneTitles() {
 
 	if (nTitles > 0) {
 
-		for (i = 0; i < nTitles; ++i) {
+		for (var i = 0; i < nTitles; ++i) {
 
 			allTitles += theTitles[i];
 
@@ -1384,10 +1368,7 @@ function TransposeDown(e) {
 
 function getTuneRootKey(theTune){
 
-	// Parse out the first few measures
-	var theTune = escape(theTune);
-
-	var theLines = theTune.split("%0A");
+	var theLines = theTune.split("\n");
 
 	var nLines = theLines.length;
 
@@ -1399,9 +1380,9 @@ function getTuneRootKey(theTune){
 	// Find the key
 	for (var j=0;j<nLines;++j){
 
-		theKey = unescape(theLines[j]); 
+		theKey = theLines[j]; 
 
-		if (theKey.indexOf("K:")!= -1){
+		if (theKey.trim().indexOf("K:") != -1){
 			gotKey = true;
 			break;
 		}
@@ -1834,25 +1815,21 @@ function GetAllTuneTags(theTag,totalTunes){
 
 	var theTags = [];
 
+	var theTagToMatch = theTag+":";
+
 	for (i=0;i<totalTunes;++i){
 
 		var thisTune = getTuneByIndex(i);
 
-		var neu = escape(thisTune);
-
-		var Reihe = neu.split("%0A");
+		var theLines = thisTune.split("\n");
 
 		var bGotTag = false;
 
-		for (var j = 0; j < Reihe.length; ++j) {
+		for (var j = 0; j < theLines.length; ++j) {
 
-			Reihe[j] = unescape(Reihe[j]); 
+			if (theLines[j].trim().indexOf(theTagToMatch) == 0){
 
-			var Aktuellereihe = Reihe[j].split(""); 
-
-			if (Aktuellereihe[0] == theTag && Aktuellereihe[1] == ":") {
-
-				var tagValue = Reihe[j].slice(2);
+				var tagValue = theLines[j].slice(2);
 
 				tagValue = tagValue.trim();
 
@@ -3330,32 +3307,27 @@ function GetTunebookIndexTitles(){
 
 		var thisTune = getTuneByIndex(i);
 
-		var neu = escape(thisTune);
-
-		var Reihe = neu.split("%0A");
+		var lines = thisTune.split("\n"); // Split the string by new line
 
 		var bGotTitle = false;
 
-		for (var j = 0; j < Reihe.length; ++j) {
+		for (var j = 0; j < lines.length; ++j) {
 
-			Reihe[j] = unescape(Reihe[j]); /* Macht die Steuerzeichen wieder weg */
+			var currentLine = lines[j].trim(); // Trim any whitespace from the line
 
-			var Aktuellereihe = Reihe[j].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
+			// Check if the line starts with "T:"
+			if (currentLine.startsWith("T:")) {
 
-			if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
+				var title = currentLine.slice(2).trim(); // Extract the title after "T:"
 
-				titel = Reihe[j].slice(2);
-
-				titel = titel.trim();
-
-				// Just grab the first title foiund
-				theTitles.push(titel);
+				theTitles.push(title);
 
 				bGotTitle = true;
 
-				break
+				break;
 
 			}
+
 		}
 
 		if (!bGotTitle){
@@ -3626,10 +3598,7 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		// Strip out tempo markings
 		theTune = theTune.replace(searchRegExp, "");
 
-		// Parse out the first few measures
-		theTune = escape(theTune);
-
-		theLines = theTune.split("%0A");
+		theLines = theTune.split("\n");
 
 		nLines = theLines.length;
 
@@ -3639,7 +3608,7 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		// Find the key
 		for (j=0;j<nLines;++j){
 
-			theKey = unescape(theLines[j]); 
+			theKey = theLines[j]; 
 
 			if (theKey.indexOf("K:")!= -1){
 				break;
@@ -3667,7 +3636,7 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		// Find the first line of the tune that has measure separators
 		for (j=0;j<nLines;++j){
 
-			theTextIncipit = unescape(theLines[j]); 
+			theTextIncipit = theLines[j]; 
 
 			// Score directives can have bar characters, reject them
 			if (theTextIncipit.indexOf("%%score")!= -1){
@@ -3685,7 +3654,7 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 					// Find the second line of the tune that has measure separators
 					for (k=j+1;k<nLines;++k){
 
-						var theSecondTextIncipit = unescape(theLines[k]); 
+						var theSecondTextIncipit = theLines[k]; 
 
 						if (theSecondTextIncipit.indexOf("|")!= -1){
 
@@ -4088,9 +4057,7 @@ function GenerateFullTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideF
 		theTune = theTune.replace(searchRegExp, "");
 
 		// Parse out the first few measures
-		theTune = escape(theTune);
-
-		theLines = theTune.split("%0A");
+		theLines = theTune.split("\n");
 
 		nLines = theLines.length;
 
@@ -4100,7 +4067,7 @@ function GenerateFullTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideF
 		// Find the first line of the tune that has measure separators
 		for (j=0;j<nLines;++j){
 
-			theKey = unescape(theLines[j]); 
+			theKey = theLines[j]; 
 
 			if (theKey.indexOf("K:")!= -1){
 				break;
@@ -4127,7 +4094,7 @@ function GenerateFullTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideF
 		// Find the first line of the tune that has measure separators
 		for (k=0;k<nLines;++k){
 
-			theTextIncipit = unescape(theLines[k]);
+			theTextIncipit = theLines[k];
 
 			// Skip lines that don't have bar lines
 			if (theTextIncipit.indexOf("|") == -1){
@@ -13862,32 +13829,27 @@ function SortTuneSearchResults(theNotes){
 
 		var thisTune = getTuneForSearchSort(i);
 
-		var neu = escape(thisTune);
-
-		var Reihe = neu.split("%0A");
+		var lines = thisTune.split("\n"); // Split the string by new line
 
 		var bGotTitle = false;
 
-		for (var j = 0; j < Reihe.length; ++j) {
+		for (var j = 0; j < lines.length; ++j) {
 
-			Reihe[j] = unescape(Reihe[j]); /* Macht die Steuerzeichen wieder weg */
+			var currentLine = lines[j].trim(); // Trim any whitespace from the line
 
-			var Aktuellereihe = Reihe[j].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
+			// Check if the line starts with "T:"
+			if (currentLine.startsWith("T:")) {
 
-			if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
+				var title = currentLine.slice(2).trim(); // Extract the title after "T:"
 
-				titel = Reihe[j].slice(2);
-
-				titel = titel.trim();
-
-				// Just grab the first title foiund
-				theTitles.push(titel);
+				theTitles.push(title);
 
 				bGotTitle = true;
 
-				break
+				break;
 
 			}
+
 		}
 
 		if (!bGotTitle){
@@ -18241,9 +18203,7 @@ function InjectStringAboveTuneHeaderConditional(theTune, theDirective){
 //
 function InjectStringAboveTuneHeader(theTune, theDirective) {
 
-    var theABC = escape(theTune);
-
-    var theLines = theABC.split("%0A");
+    var theLines = theTune.split("\n");
 
     var theOutput = "";
 
@@ -18251,7 +18211,7 @@ function InjectStringAboveTuneHeader(theTune, theDirective) {
 
     for (i = 0; i < theLines.length; ++i) {
 
-        thisLine = unescape(theLines[i]);
+        thisLine = theLines[i];
 
         var theChars = thisLine.split("");
 
@@ -23513,10 +23473,12 @@ function processTuneTitleNumbers(nTunes,theNotes){
 	   	}
 
         result += modifiedTune;
+        result += "\n";
+
 
     }
 
-    result = result.replaceAll("\n\n","\n");
+    result = result.replaceAll("\n\n\n","\n\n"); 
 
     return result;
 }
@@ -23696,10 +23658,11 @@ function RemoveTuneTitleNumbers(bDoRedraw){
 	   	}
 
         result += modifiedTune;
+        result += "\n";
 
     }
 
-    result = result.replaceAll("\n\n","\n");
+    result = result.replaceAll("\n\n\n","\n\n");
 
     // Are we just stripping numbers to inject them?
     // Yes, just return the stripped version
@@ -26030,19 +25993,16 @@ var gPlayMetronome = false;
 //
 function GetTuneAudioDownloadName(tuneABC,extension){
 
-	var neu = escape(tuneABC);
+	var lines = tuneABC.split("\n"); // Split the string by new line
 
-	var Reihe = neu.split("%0A");
+	for (var j = 0; j < lines.length; ++j) {
 
-	for (var j = 0; j < Reihe.length; ++j) {
+		var currentLine = lines[j].trim(); // Trim any whitespace from the line
 
-		Reihe[j] = unescape(Reihe[j]); /* Macht die Steuerzeichen wieder weg */
+		// Check if the line starts with "T:"
+		if (currentLine.startsWith("T:")) {
 
-		var Aktuellereihe = Reihe[j].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
-
-		if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
-
-			var fname = Reihe[j].slice(2);
+			var fname = currentLine.slice(2);
 
 			fname = fname.trim();
 
@@ -26065,9 +26025,7 @@ function GetTuneAudioDownloadName(tuneABC,extension){
 //
 function isJigWithNoTiming(tuneABC,millisecondsPerMeasure){
 
-	var neu = escape(tuneABC);
-
-	var Reihe = neu.split("%0A");
+	var lines = tuneABC.split("\n");
 
 	var bHasTempo = false;
 	var bIsJig = false;
@@ -26076,23 +26034,21 @@ function isJigWithNoTiming(tuneABC,millisecondsPerMeasure){
 
 	var theMSPerMeasure  = millisecondsPerMeasure;
 
-	for (var j = 0; j < Reihe.length; ++j) {
+	for (var j = 0; j < lines.length; ++j) {
 
-		Reihe[j] = unescape(Reihe[j]); /* Macht die Steuerzeichen wieder weg */
+		var currentLine = lines[j].trim(); // Trim any whitespace from the line
 
-		var Aktuellereihe = Reihe[j].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
-
-		if (Aktuellereihe[0] == "Q" && Aktuellereihe[1] == ":") {
+		if (currentLine.startsWith("Q:")){
 
 			bHasTempo = true;
 
 		}
 
-		if (Aktuellereihe[0] == "M" && Aktuellereihe[1] == ":") {
+		if (currentLine.startsWith("M:")){
 
 			// Is this a jig variant (meter ends with /8)?
 
-			var theMeter = Reihe[j].replace("M:","");
+			var theMeter = currentLine.replace("M:","");
 			theMeter = theMeter.trim();
 
 			if ((theMeter.indexOf("12/8") != -1)){
@@ -26332,9 +26288,7 @@ function AddDuplicatesForMp3(theTune, rhythmType, count, doClickTrack, doInjectS
 //
 function getTuneRhythmType(tuneABC){
 
-	var neu = escape(tuneABC);
-
-	var Reihe = neu.split("%0A");
+	var lines = tuneABC.split("\n");
 
 	var bIsJig = false;
 	var bIsSlipJig = false;
@@ -26344,17 +26298,15 @@ function getTuneRhythmType(tuneABC){
 	var bIsWaltz = false;
 	var bIsOddJig = false;
 
-	for (var j = 0; j < Reihe.length; ++j) {
+	for (var j = 0; j < lines.length; ++j) {
 
-		Reihe[j] = unescape(Reihe[j]); /* Macht die Steuerzeichen wieder weg */
+		var currentLine = lines[j].trim(); // Trim any whitespace from the line
 
-		var Aktuellereihe = Reihe[j].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
-
-		if (Aktuellereihe[0] == "M" && Aktuellereihe[1] == ":") {
+		if (currentLine.startsWith("M:")) {
 
 			// Is this a jig variant (meter ends with /8)?
 
-			var theMeter = Reihe[j].replace("M:","");
+			var theMeter = currentLine.replace("M:","");
 			theMeter = theMeter.trim();
 
 			if ((theMeter.indexOf("3/8") != -1)){

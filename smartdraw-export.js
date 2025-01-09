@@ -64,19 +64,17 @@ function SDGenerateFullTextIncipits(){
 		theTune = theTune.replace(searchRegExp, "");
 
 		// Parse out the first few measures
-		theTune = escape(theTune);
-
-		theLines = theTune.split("%0A");
+		theLines = theTune.split("\n");
 
 		nLines = theLines.length;
 
 		// Find the key
 		theKey = "";
 
-		// Find the first line of the tune that has measure separators
+		// Find the key
 		for (j=0;j<nLines;++j){
 
-			theKey = unescape(theLines[j]); 
+			theKey = theLines[j]; 
 
 			if (theKey.indexOf("K:")!= -1){
 				break;
@@ -103,7 +101,7 @@ function SDGenerateFullTextIncipits(){
 		// Find the first line of the tune that has measure separators
 		for (k=0;k<nLines;++k){
 
-			theTextIncipit = unescape(theLines[k]);
+			theTextIncipit = theLines[k];
 
 			// Skip lines that don't have bar lines
 			if (theTextIncipit.indexOf("|") == -1){
@@ -238,9 +236,7 @@ function SDGenerateIncipits(){
 		theTune = theTune.replace(searchRegExp, "");
 
 		// Parse out the first few measures
-		theTune = escape(theTune);
-
-		theLines = theTune.split("%0A");
+		theLines = theTune.split("\n");
 
 		nLines = theLines.length;
 
@@ -250,7 +246,7 @@ function SDGenerateIncipits(){
 		// Find the key
 		for (j=0;j<nLines;++j){
 
-			theKey = unescape(theLines[j]); 
+			theKey = theLines[j]; 
 
 			if (theKey.indexOf("K:")!= -1){
 				break;
@@ -278,7 +274,7 @@ function SDGenerateIncipits(){
 		// Find the first line of the tune that has measure separators
 		for (j=0;j<nLines;++j){
 
-			theTextIncipit = unescape(theLines[j]); 
+			theTextIncipit = theLines[j]; 
 
 			// Score directives can have bar characters, reject them
 			if (theTextIncipit.indexOf("%%score")!= -1){
@@ -296,7 +292,7 @@ function SDGenerateIncipits(){
 					// Find the second line of the tune that has measure separators
 					for (k=j+1;k<nLines;++k){
 
-						var theSecondTextIncipit = unescape(theLines[k]); 
+						var theSecondTextIncipit = theLines[k]; 
 
 						if (theSecondTextIncipit.indexOf("|")!= -1){
 

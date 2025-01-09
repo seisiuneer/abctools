@@ -390,21 +390,16 @@ function WebsiteInjectInstruments(theTune){
 //
 function GetWebsiteTuneName(tuneABC){
 
-    var neu = escape(tuneABC);
+    var lines = tuneABC.split("\n"); // Split the string by new line
 
-    var Reihe = neu.split("%0D%0A");
+    for (var j = 0; j < lines.length; ++j) {
 
-    Reihe = neu.split("%0A");
+        var currentLine = lines[j].trim(); // Trim any whitespace from the line
 
-    for (var j = 0; j < Reihe.length; ++j) {
+        // Check if the line starts with "T:"
+        if (currentLine.startsWith("T:")) {
 
-        Reihe[j] = unescape(Reihe[j]); /* Macht die Steuerzeichen wieder weg */
-
-        var Aktuellereihe = Reihe[j].split(""); /* nochmal bei C. Walshaw crosschecken, ob alle mögl. ausser K: erfasst. */
-
-        if (Aktuellereihe[0] == "T" && Aktuellereihe[1] == ":") {
-
-            var fname = Reihe[j].slice(2);
+            var fname = currentLine.slice(2);
 
             fname = fname.trim();
 
