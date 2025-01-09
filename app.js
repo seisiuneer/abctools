@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2244_010925_0830";
+var gVersionNumber="2245_010925_1530";
 
 var gMIDIInitStillWaiting = false;
 
@@ -42724,6 +42724,7 @@ function inlinePlayback(){
 	},100);
 
 }
+
 //
 // Format the ABC so all the measure markers align vertically
 //
@@ -42952,6 +42953,7 @@ function AlignMeasures(bDoAll){
 	gIsDirty = true;
 
 }
+
 //
 // Align the measures from the Quick Editor dedicated button
 function QEAlignBars(e){
@@ -42969,6 +42971,245 @@ function QEAlignBars(e){
 		return;
 	}
 }
+
+
+//
+// Format the ABC so all the measure markers align vertically
+//
+function injectMIDIgchord(abcNotation,gchordTemplate) {
+
+	function findOffsets(pattern, text) {
+
+	    let regex = new RegExp(pattern, 'g'); // Create a global regex pattern
+	    let result;
+	    let offsets = [];
+	    
+	    while ((result = regex.exec(text)) !== null) {
+
+	        offsets.push({value:result[0],position: result.index});
+
+	    }
+	    
+	    return offsets;
+	}
+
+	//debugger;
+
+    // Split the ABC notation into lines
+    let lines = abcNotation.split('\n');
+    
+    // Find all measure markers and their positions
+    let markers = [];
+    
+    lines.forEach(line => {
+
+       	//debugger;
+
+        let matches = findOffsets(/\|\||:\|\[\d+|\|\[\d+|:\|:|::|:\|\d+|\|\d+|:\||\|:|\|\]|\[\||\|/g, line); 
+       
+        // No measure marker at the front of the line, push a pseudo-marker
+       	if (matches && matches.length > 0){
+
+       		if (matches[0].position > 0){
+       			matches.unshift({value:"", position:0});
+       		}
+
+       	}
+
+        markers.push(matches);
+        
+    });
+
+    //debugger;
+
+    // Adjust lines to align measure markers
+    var nLines = lines.length;
+
+    var injectedLines = [];
+
+    for (var i=0;i<nLines;++i){
+
+    	if (lines[i].length == 0){
+    		continue;
+    	}
+
+    	var thisLine = "";
+     	
+     	var thisMarker = markers[i];
+
+     	//debugger;
+   	
+    	if (markers[i].length > 1){
+
+    		for (var j=0;j<markers[i].length-1;++j){
+
+    			var thisSegment = lines[i].substring(thisMarker[j].position,thisMarker[j+1].position);
+
+    			//console.log("thisSegment before: "+thisSegment)
+
+    			thisSegment = thisSegment.replace(thisMarker[j].value,thisMarker[j].value+"[I:MIDI=gchord "+gchordTemplate+"] ");
+     			
+     			//console.log("thisSegment after: "+thisSegment)
+   			    				
+    			thisLine += thisSegment;
+ 
+    		}
+
+		    // Any leftover characters after the last measure marker?
+			if (thisMarker[thisMarker.length-1].position < lines[i].length){
+
+				thisLine += lines[i].substring(thisMarker[thisMarker.length-1].position,lines[i].length);
+
+			}
+
+    	}
+    	else{
+
+    		thisLine = lines[i];
+
+    	}
+
+    	injectedLines.push(thisLine);
+    }
+    
+    // Join lines back into a single string
+    let injectedAbcNotation = injectedLines.join('\n');
+
+    return injectedAbcNotation;
+
+}
+
+//
+// Inject %%MIDI gchord templates for the current tune
+//
+
+const midigchordinject_list = [
+    { name:"C|",  pattern:"zzzz"}, 
+    { name:"C",   pattern:"zzzzzzzz"}, 
+   	{ name:"2/2", pattern:"zzzz"},
+   	{ name:"3/2", pattern:"zzzzzz"},
+    { name:"2/4", pattern:"zzzz"}, 
+    { name:"3/4", pattern:"zzzzzz"}, 
+    { name:"4/4", pattern:"zzzzzzzz"}, 
+    { name:"5/4", pattern:"zzzzzzzzzz"}, 
+    { name:"6/4", pattern:"zzzzzzzzzzzz"}, 
+    { name:"7/4", pattern:"zzzzzzzzzzzzzz"}, 
+    { name:"2/8", pattern:"zz"}, 
+    { name:"3/8", pattern:"zzz"}, 
+    { name:"5/8", pattern:"zzzzz"},
+    { name:"6/8", pattern:"zzzzzz"}, 
+    { name:"7/8", pattern:"zzzzzzz"}, 
+    { name:"9/8", pattern:"zzzzzzzzz"},
+    { name:"10/8", pattern:"zzzzzzzzzz"},
+    { name:"11/8", pattern:"zzzzzzzzzzz"},
+    { name:"12/8", pattern:"zzzzzzzzzzzz"}
+];
+
+function InjectMIDIGChordTemplates(){
+
+	//console.log("InjectMIDIGChordTemplates");
+
+	if (!gAllowCopy){
+		return;
+	}
+
+	sendGoogleAnalytics("action","InjectMIDIGChordTemplate");
+
+	var theSelectedTuneIndex = findSelectedTuneIndex();
+
+	// Try to find the current tune
+	var theTune = findSelectedTune();
+
+	if (theTune == ""){
+		// This should never happen
+		return;
+	}
+
+	// Get the key of the tune
+    var theLines = theTune.split("\n");
+
+    var thisLine = "";
+
+    var theMeter = "";
+
+    for (i = 0; i < theLines.length; ++i) {
+
+        thisLine = theLines[i];
+
+		// Find the meter
+		searchRegExp = /^M:.*[\r\n]*/m
+
+		var thisMeter = thisLine.match(searchRegExp);
+
+		if ((thisMeter) && (thisMeter.length > 0)){
+
+			if (theMeter == ""){
+
+				theMeter = thisMeter[0].replace("M:","");
+				theMeter = theMeter.trim();
+
+			}
+		}
+	}
+
+	var theGChordTemplate = "";
+
+	// Lets see if we have a supported meter
+	for (i=0;i<midigchordinject_list.length;++i){
+
+		if (theMeter == midigchordinject_list[i].name){
+
+			theGChordTemplate = midigchordinject_list[i].pattern;
+						
+			break;
+		}
+
+	}
+
+	// Meter not supported
+	if (theGChordTemplate == ""){
+
+		if (showWarnings){
+
+			var thePrompt = "No %%MIDI gchord template pattern available for meter: "+theMeter;
+			
+			// Center the string in the prompt
+			thePrompt = makeCenteredPromptString(thePrompt);
+
+			// Nope, exit
+			DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+		}
+
+		return null;
+
+	}
+
+
+	var theInjectedTune = "";
+
+	var theNotes = JustTheNotes(theTune);
+
+	var theNotesInjected = injectMIDIgchord(theNotes,theGChordTemplate);
+
+	theInjectedTune = theTune.replace(theNotes,theNotesInjected);
+
+	theInjectedTune = theInjectedTune.trim();
+
+	// Stuff in the injected ABC
+	var theABC = gTheABC.value;
+
+	theABC = theABC.replace(theTune,theInjectedTune);
+
+	gTheABC.value = theABC;
+
+	// Force a redraw of the tune
+	RenderAsync(false,theSelectedTuneIndex,null);		
+
+	gIsDirty = true;
+
+}
+
+
 // For the QuickEditor
 function MaximizeEditor(){
 	
@@ -44281,6 +44522,8 @@ function SetupContextMenu(showUpdateItem){
 				    {},
 				    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
 				    {},
+				    { name: 'Inject MIDI gchord Templates', fn: function(target) { InjectMIDIGChordTemplates(); }},
+				    {},
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 				    {},
@@ -44383,6 +44626,8 @@ function SetupContextMenu(showUpdateItem){
 				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 				    {},
 				    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
+				    {},
+				    { name: 'Inject MIDI gchord Templates', fn: function(target) { InjectMIDIGChordTemplates(); }},
 				    {},
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
