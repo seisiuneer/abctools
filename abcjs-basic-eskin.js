@@ -215,6 +215,9 @@ var gABCJSRenderingParams = null;
 // Flag for hammered dulcimer duration extension
 var gExtendDuration = 0;
 
+// Flag to allow for lower case chords
+var gAllowLowercaseChords = false;
+
 // Scan tune for custom abcjs rendering parameters
 function ScanTuneForABCJSRenderingParams(theTune){
 
@@ -9940,9 +9943,9 @@ var flatChords = ['C', 'D♭', 'D', 'E♭', 'E', 'F', 'G♭', 'G', 'A♭', 'A', 
 var sharpChordsFree = ['C', 'C#', 'D', "D#", 'E', 'F', "F#", 'G', 'G#', 'A', 'A#', 'B'];
 var flatChordsFree = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 function transposeChordName(chord, steps, preferFlats, freeGCchord) {
+
   if (!steps || steps % 12 === 0)
-    // The chords are the same if it is an exact octave change.
-    return chord;
+      return chord;
 
   // There are two things in the chord that might need to be transposed:
   // The chord will start with a letter from A-G, and might have one accidental after it.
@@ -9956,6 +9959,7 @@ function transposeChordName(chord, steps, preferFlats, freeGCchord) {
   if (steps > 11) steps = steps % 12;
 
   // (chord name w/accidental) (a bunch of stuff) (/) (bass note) (anything else)
+
   var match = chord.match(/^([A-G][b#♭♯]?)([^\/]+)?\/?([A-G][b#♭♯]?)?(.+)?/);
   if (!match) return chord; // We don't recognize the format of the chord, so skip it.
   var name = match[1];
@@ -13570,6 +13574,12 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     var theSplits = chordName.split(":");
     
     var theChordName = theSplits[0];
+
+    // If allowing for lower case chords (for box bass/chord arrangements)
+    if (gAllowLowercaseChords){
+      theChordName = theChordName.charAt(0).toUpperCase() + theChordName.slice(1);
+    }
+
     var theInversion = theSplits[1];
 
     if (theInversion != undefined){
@@ -15901,6 +15911,12 @@ ChordTrack.prototype.processInversion = function(chordName){
   var theSplits = chordName.split(":");
   
   var theChordName = theSplits[0];
+
+  // If allowing for lower case chords (for box bass/chord arrangements)
+  if (gAllowLowercaseChords){
+    theChordName = theChordName.charAt(0).toUpperCase() + theChordName.slice(1);
+  }
+
   var theInversion = theSplits[1];
 
   if (theInversion != undefined){

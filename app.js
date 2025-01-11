@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2246_010925_1700";
+var gVersionNumber="2247_011125_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -22021,7 +22021,8 @@ function complianceABCTransformer(theABC,doInverse){
 	    "%reverb",
 	    "%links_open_in_editor",
 	    "%abcjs_render_params",
-	    "%play_flatten_parts"
+	    "%play_flatten_parts",
+	    "%allow_lowercase_chords"
 	];
 
 	if (doInverse){
@@ -29794,6 +29795,19 @@ function PreProcessPlayABC(theTune){
 		// console.log("After:");
 		// console.log(theTune);
 	}
+
+	// Allow lowercase chords?
+
+	gAllowLowercaseChords = false;
+
+	searchRegExp = /^%allow_lowercase_chords.*$/gm
+
+	var lowercaseChordsRequested = searchRegExp.test(theTune);
+
+	if (lowercaseChordsRequested){
+		gAllowLowercaseChords = true;
+	}
+
 	// Override any ABC play values?
 
 	// Strip any features hidden from the More Tools dialog
