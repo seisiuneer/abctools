@@ -2021,8 +2021,8 @@
                 <hr>
                 <p><strong>Export All Tunes as PDF File</strong></p>
                 <p>This features is only available in the full version of the editor, not the <strong>Quick Editor</strong>.</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/YiWNWbvmRDQ" title="Export PDF from Player Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>    
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/PoMOLDLA9I4" title="Export PDF from Player Play Link Carryforward" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p> 
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/YiWNWbvmRDQ" title="Export PDF from Player Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/PoMOLDLA9I4" title="Export PDF from Player Play Link Carryforward" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>Exports all the tunes loaded in the player as a PDF file.</p>
                 <p>If the Player was opened from clicking a PDF file tune title play link, the exported PDF file will also play if the title is clicked.</p>
                 <p>Works exactly the same as if you had clicked <strong>Export PDF</strong> in the editor.</p>
@@ -2344,11 +2344,14 @@
                 <p>Applying stress scaling to the rest entries will not break anything (they are silent), but using this format for the entries may make it easier to match them up to the original gchord string.</p>
                 <hr>
                 <p style="text-align: center"><strong>%%MIDI gchord Duration Scaling</strong></p>
-                <p>When a gchord command is found in the ABC, a default duration map is generated for each entry in the gchord pattern, assuming one beat unit, either 1/8th, 1/16th, or 1/32nd note depending on the gchord divider (described below) for each entry, unless the entry is followed by a number, in which its duration will be the number of beat units specified by the number.</p>
-                <p>If you wish to override the default duration map, the duration of each of the notes in the gchord pattern can be changed using the following private %%MIDI command:</p>
+                <p>When using %%MIDI gchord, the default note length for the bass and chord sounds is 1/2 of the meter denominator:</p>
+                <p>1/8th notes for */4 meters, 1/16th notes for */8 meters.</p>
+                <p>Whenever a new %%MIDI gchord command is found in the ABC, a default duration scaling map is generated for each entry in the gchord pattern, assuming one beat unit, either 1/8th, 1/16th, or 1/32nd note depending on the gchord divider (described below) for each entry, unless the entry is followed by a number, in which its duration will be the number of beat units specified by the number.</p>
+                <p>All of the duration scaling map values are set to 1.0 initially by default.</p>
+                <p>If you wish to override the default duration scaling map, the playback duration of each of the bass or chord notes in the gchord pattern can be scaled using the following private %%MIDI command:</p>
                 <p class="code">%%MIDI gchordduration duration_scale_pattern</p>
                 <p>Where duration_scale_pattern is a sequence of floating point numbers that have a 1-to-1 correspondence to the total beat length of the %%MIDI gchord control string entries.</p>
-                <p>Each value in the sequence multiplies the default duration, by default an 1/8th note unless specifying a gchord divider (described below), of each corresponding gchord entry by the specified value.</p>
+                <p>Each value in the sequence multiplies the default meter-dependent note duration of each corresponding gchord control string entry by the specified value.</p>
                 <p>If the number of values in the duration_scale_pattern is less than the gchord pattern length, it will automatically be filled out copying values from the start of the duration scale pattern as required to match the gchord pattern length.</p>
                 <p>For example, here is a pair of gchord and gchordduration commands for a reel where the second half of the pattern is played with longer notes:</p>
                 <p class="code">%%MIDI gchord fzczfzcz<br/>%%MIDI gchordduration 1.0 1.0 1.0 1.0 2.0 2.0 2.0 2.0</p>
@@ -3240,7 +3243,7 @@
                     %ornament_offset<br/>
                     %abcjs_render_params<br/>
                     %flatten_parts_for_play<br/>
-                    %allow_lowercase_chords</p>
+                %allow_lowercase_chords</p>
                 <hr class="hidden-print" id="editing_pdf_tunebooks">
                 <h1 class="page_break_always">Editing PDF Tunebooks With Other Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>The PDF tunebooks created by this tool can be editing using Adobe Acrobat Pro or other PDF editing tools.</p>
@@ -3519,7 +3522,7 @@
                     <img class="image" loading="lazy" src="img/anglo_button_names_2.jpg"/>
                 </div>
                 <p>Click <strong>Reset to Default</strong> to reset the button names to the original tool values (L1, L2, L3, ...).</p>
-                <p>Values are saved in browser storage and restored the next time the tool is run.</p>                
+                <p>Values are saved in browser storage and restored the next time the tool is run.</p>
                 <p><strong>Configure Anglo Concertina Tablature Fonts and Push/Draw Indications</strong> - Brings up the <strong>Tablature Injection Settings</strong> dialog where you can setup the fonts and push/draw indications used for the injected tablature.</p>
                 <p>See the <a href="#tablature_settings">Configuring Tablature Fonts and Settings</a> section below for full details on the Anglo Concertina tablature font, and spacing options.</p>
                 <hr class="hidden-print" id="reading_the_concertina_tablature">
