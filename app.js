@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2247_011125_1000";
+var gVersionNumber="2248_011225_0700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -42990,7 +42990,7 @@ function QEAlignBars(e){
 //
 // Format the ABC so all the measure markers align vertically
 //
-function injectMIDIgchord(abcNotation,gchordTemplate) {
+function injectMIDIgchord(abcNotation,gchordTemplate,bDoStress,theStress,bDoDuration,theDuration) {
 
 	function findOffsets(pattern, text) {
 
@@ -43061,8 +43061,18 @@ function injectMIDIgchord(abcNotation,gchordTemplate) {
 
     			//console.log("thisSegment before: "+thisSegment)
 
-    			thisSegment = thisSegment.replace(thisMarker[j].value,thisMarker[j].value+"[I:MIDI=gchord "+gchordTemplate+"] ");
-     			
+    			var toInject = "[I:MIDI=gchord "+gchordTemplate+"]"
+
+   				if (bDoStress){
+    				toInject+="[I:MIDI=gchordstress "+theStress+"]";
+    			}
+    			if (bDoDuration){
+    				toInject+="[I:MIDI=gchordduration "+theDuration+"]";
+    			}
+    			toInject += " ";
+
+    			thisSegment = thisSegment.replace(thisMarker[j].value,thisMarker[j].value+toInject);
+
      			//console.log("thisSegment after: "+thisSegment)
    			    				
     			thisLine += thisSegment;
@@ -43119,6 +43129,12 @@ const midigchordinject_list = [
     { name:"12/8", pattern:"zzzzzzzzzzzz"}
 ];
 
+var gDoInjectMIDIGChordStress = false;
+var gInjectMIDIGChordStress = 1.0;
+
+var gDoInjectMIDIGChordDuration = false;
+var gInjectMIDIGChordDuration = 1.0;
+
 function InjectMIDIGChordTemplates(){
 
 	//console.log("InjectMIDIGChordTemplates");
@@ -43127,100 +43143,133 @@ function InjectMIDIGChordTemplates(){
 		return;
 	}
 
-	sendGoogleAnalytics("action","InjectMIDIGChordTemplate");
+	// Setup initial values
+	const theData = {
+	  bDoInjectStress:gDoInjectMIDIGChordStress,
+	  injectStress:gInjectMIDIGChordStress,
+	  bDoInjectDuration:gDoInjectMIDIGChordDuration,
+	  injectDuration:gInjectMIDIGChordDuration,
+	};
 
-	var theSelectedTuneIndex = findSelectedTuneIndex();
+	const form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject MIDI gchord Templates&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#inject_midigchord" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject an inline %%MIDI gchord annotation for each measure of the current tune along with optional inline %%MIDI gchordstress and %%MIDI gchordduration values:</p>'},	  
+	  {name: "          Include inline %%MIDI gchordstress for each measure", id: "bDoInjectStress", type:"checkbox", cssClass:"configure_settings_form_text"},
+	  {name: "    %%MIDI gchordstress value:", id: "injectStress", type:"text", cssClass:"configure_settings_form_text"},
+	  {html: '<p style="margin-top:10px;font-size:4pt;font-family:helvetica">&nbsp;</p>'},	  
+	  {name: "          Include inline %%MIDI gchordduration for each measure", id: "bDoInjectDuration", type:"checkbox", cssClass:"configure_settings_form_text"},
+	  {name: "    %%MIDI gchordduration value:", id: "injectDuration", type:"text", cssClass:"configure_settings_form_text"},
+	  {html: '<p style="margin-top:24px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},	  
+	];
 
-	// Try to find the current tune
-	var theTune = findSelectedTune();
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
-	if (theTune == ""){
-		// This should never happen
-		return;
-	}
+		// Get the results and store them in the global configuration
+		if (!args.canceled){
 
-	// Get the key of the tune
-    var theLines = theTune.split("\n");
+			gDoInjectMIDIGChordStress = args.result.bDoInjectStress; 
 
-    var thisLine = "";
+			gInjectMIDIGChordStress = args.result.injectStress;
 
-    var theMeter = "";
+			gDoInjectMIDIGChordDuration = args.result.bDoInjectDuration; 
+			
+			gInjectMIDIGChordDuration = args.result.injectDuration; 
 
-    for (i = 0; i < theLines.length; ++i) {
+			sendGoogleAnalytics("action","InjectMIDIGChordTemplate");
 
-        thisLine = theLines[i];
+			var theSelectedTuneIndex = findSelectedTuneIndex();
 
-		// Find the meter
-		searchRegExp = /^M:.*[\r\n]*/m
+			// Try to find the current tune
+			var theTune = findSelectedTune();
 
-		var thisMeter = thisLine.match(searchRegExp);
+			if (theTune == ""){
+				// This should never happen
+				return;
+			}
 
-		if ((thisMeter) && (thisMeter.length > 0)){
+			// Get the key of the tune
+		    var theLines = theTune.split("\n");
 
-			if (theMeter == ""){
+		    var thisLine = "";
 
-				theMeter = thisMeter[0].replace("M:","");
-				theMeter = theMeter.trim();
+		    var theMeter = "";
+
+		    for (i = 0; i < theLines.length; ++i) {
+
+		        thisLine = theLines[i];
+
+				// Find the meter
+				searchRegExp = /^M:.*[\r\n]*/m
+
+				var thisMeter = thisLine.match(searchRegExp);
+
+				if ((thisMeter) && (thisMeter.length > 0)){
+
+					if (theMeter == ""){
+
+						theMeter = thisMeter[0].replace("M:","");
+						theMeter = theMeter.trim();
+
+					}
+				}
+			}
+
+			var theGChordTemplate = "";
+
+			// Lets see if we have a supported meter
+			for (i=0;i<midigchordinject_list.length;++i){
+
+				if (theMeter == midigchordinject_list[i].name){
+
+					theGChordTemplate = midigchordinject_list[i].pattern;
+								
+					break;
+				}
 
 			}
-		}
-	}
 
-	var theGChordTemplate = "";
+			// Meter not supported
+			if (theGChordTemplate == ""){
 
-	// Lets see if we have a supported meter
-	for (i=0;i<midigchordinject_list.length;++i){
+				if (showWarnings){
 
-		if (theMeter == midigchordinject_list[i].name){
+					var thePrompt = "No %%MIDI gchord template pattern available for meter: "+theMeter;
+					
+					// Center the string in the prompt
+					thePrompt = makeCenteredPromptString(thePrompt);
 
-			theGChordTemplate = midigchordinject_list[i].pattern;
-						
-			break;
-		}
+					// Nope, exit
+					DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+				}
 
-	}
+				return null;
 
-	// Meter not supported
-	if (theGChordTemplate == ""){
+			}
 
-		if (showWarnings){
+			var theInjectedTune = "";
 
-			var thePrompt = "No %%MIDI gchord template pattern available for meter: "+theMeter;
-			
-			// Center the string in the prompt
-			thePrompt = makeCenteredPromptString(thePrompt);
+			var theNotes = JustTheNotes(theTune);
 
-			// Nope, exit
-			DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
-		}
+			var theNotesInjected = injectMIDIgchord(theNotes,theGChordTemplate,gDoInjectMIDIGChordStress,gInjectMIDIGChordStress,gDoInjectMIDIGChordDuration,gInjectMIDIGChordDuration);
 
-		return null;
+			theInjectedTune = theTune.replace(theNotes,theNotesInjected);
 
-	}
+			theInjectedTune = theInjectedTune.trim();
 
+			// Stuff in the injected ABC
+			var theABC = gTheABC.value;
 
-	var theInjectedTune = "";
+			theABC = theABC.replace(theTune,theInjectedTune);
 
-	var theNotes = JustTheNotes(theTune);
+			gTheABC.value = theABC;
 
-	var theNotesInjected = injectMIDIgchord(theNotes,theGChordTemplate);
+			// Force a redraw of the tune
+			RenderAsync(false,theSelectedTuneIndex,null);		
 
-	theInjectedTune = theTune.replace(theNotes,theNotesInjected);
+			gIsDirty = true;
 
-	theInjectedTune = theInjectedTune.trim();
-
-	// Stuff in the injected ABC
-	var theABC = gTheABC.value;
-
-	theABC = theABC.replace(theTune,theInjectedTune);
-
-	gTheABC.value = theABC;
-
-	// Force a redraw of the tune
-	RenderAsync(false,theSelectedTuneIndex,null);		
-
-	gIsDirty = true;
-
+		};
+	});
 }
 
 
