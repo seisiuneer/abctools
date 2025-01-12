@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2248_011225_0700";
+var gVersionNumber="2249_011225_0700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -43153,7 +43153,7 @@ function InjectMIDIGChordTemplates(){
 
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject MIDI gchord Templates&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#inject_midigchord" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
-	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject an inline %%MIDI gchord annotation for each measure of the current tune along with optional inline %%MIDI gchordstress and %%MIDI gchordduration values:</p>'},	  
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject an inline meter-adaptive default %%MIDI gchord backup pattern annotation for each measure of the current tune along with optional inline %%MIDI gchordstress and %%MIDI gchordduration values:</p>'},	  
 	  {name: "          Include inline %%MIDI gchordstress for each measure", id: "bDoInjectStress", type:"checkbox", cssClass:"configure_settings_form_text"},
 	  {name: "    %%MIDI gchordstress value:", id: "injectStress", type:"text", cssClass:"configure_settings_form_text"},
 	  {html: '<p style="margin-top:10px;font-size:4pt;font-family:helvetica">&nbsp;</p>'},	  
