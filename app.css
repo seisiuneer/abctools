@@ -4740,6 +4740,25 @@ margin-top:-9px;
 margin-left:12px;
 }
 
+.inject_gchord_templates_form_text{
+	font-size:12pt;
+	line-height:11px;
+	font-family:helvetica;
+	margin-top:16px;
+	display:flex;
+}
+
+.inject_gchord_templates_form_text>input{
+	font-size:12pt;
+	font-family:helvetica;
+	position:absolute;
+	left:265px;
+	width: 285px;
+	margin-top:-9px;
+	padding:4px;
+}
+
+
 /******************************************************************************/
 /* STYLES RELATED TO BUTTONS                                                  */
 /******************************************************************************/
