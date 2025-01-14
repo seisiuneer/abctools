@@ -16394,6 +16394,9 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
     // If we changed chords at a time when we're not expecting a bass note, then add an extra bass note in.
    	var newBass = !isBoom && p !== 0 && thisPattern[0].indexOf('boom') >= 0 && (!currentChordsExpanded[p - 1] || currentChordsExpanded[p - 1].boom !== currentChordsExpanded[p].boom);
     
+    // MAE 13 Jan 2025 - Disallow extra bass note 
+    newBass = false;
+
     if (!isBoom){
       firstBoom = false;
     }
