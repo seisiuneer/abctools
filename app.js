@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2252_011325_2000";
+var gVersionNumber="2253_011425_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -6382,7 +6382,7 @@ function AppendQRCode(thePDF,paperStyle,callback){
 //
 // Get a good filename for the PDF or share name either from the current filename or tunes themselves
 //
-function getDescriptiveFileName(tuneCount,bIncludeTabInfo,bAllowSpaces){
+function getDescriptiveFileName(tuneCount,bAllowSpaces){
 
 	var title = "";
 
@@ -6434,96 +6434,6 @@ function getDescriptiveFileName(tuneCount,bIncludeTabInfo,bAllowSpaces){
 			}
 
 		}
-	}
-
-	// If additional tab info suffix requested, add them
-	if (bIncludeTabInfo){
-
-		// Now append any tablature style postfix
-
-		// Get the current instrument setting
-		var tabs = GetRadioValue("notenodertab");
-
-		var postfix = "";
-
-		switch (tabs){
-			case "noten":
-				postfix = "";
-				break;
-			case "notenames":
-				postfix = "_Note_Names";
-				break;
-			case "mandolin":
-				postfix = "_Mandolin";
-				break;
-			case "gdad":
-				postfix = "_GDAD";
-				break;
-			case "cgda":
-				postfix = "_CGDA";
-				break;
-			case "cgdae":
-				postfix = "_CGDAE";
-				break;
-			case "dgdae":
-				postfix = "_DGDAE";
-				break;
-			case "guitare":
-				postfix = "_Guitar";
-				break;
-			case "guitard":
-				postfix = "_DADGAD";
-				break;
-			case "uke":
-				postfix = "_Ukulele";
-				break;
-			case "whistle":
-				postfix = "_Whistle";
-				break;
-			case "recorder":
-				postfix = "_Recorder";
-				break;
-		}
-
-		if (bAllowSpaces){
-			postfix = postfix.replaceAll("_"," ");
-		}
-
-		title += postfix;
-
-		postfix = "";
-		
-		// Let's add some capo information to the stringed instrument tab
-		switch (tabs){
-
-			case "noten":
-			case "notenames":
-			case "whistle":
-			case "recorder":
-				break;
-
-			case "mandolin":
-			case "gdad":
-			case "cgda":
-			case "cgdae":
-			case "dgdae":
-			case "guitare":
-			case "guitard":
-			case "uke":
-				if (gCapo > 0){
-
-					if (bAllowSpaces){
-						postfix = " Capo " + gCapo;
-					}
-					else{
-						postfix = "_Capo_" + gCapo;
-					}
-				}
-				break;
-		}
-
-		title += postfix;
-
 	}
 
 	return title;
@@ -8119,7 +8029,7 @@ function ParseCommentCommands(theNotes){
 
 function ProcessHeaderFooter(str,pageNumber,pageCount){
 
-	var theFileName = getDescriptiveFileName(pageCount,true,true);
+	var theFileName = getDescriptiveFileName(pageCount,true);
 
 	// If forcing a specific PDF export name, inject it now.
 	if (gDoForcePDFFilename){
@@ -9018,7 +8928,7 @@ function ExportPDF(){
 	// Count the tunes
 	totalTunes = CountTunes();
 	
-	var title = getDescriptiveFileName(totalTunes,true,true);
+	var title = getDescriptiveFileName(totalTunes,true);
 
 	if (bQRCodesRequested){
 		
@@ -17198,7 +17108,7 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
 	// Add the tune set name
 	var theTuneCount = CountTunes();
 
-	var theName = getDescriptiveFileName(theTuneCount,false,false);
+	var theName = getDescriptiveFileName(theTuneCount,false);
 
 	url += "&name=" + theName;
 
@@ -17461,7 +17371,7 @@ function GenerateQRCode(e) {
 			var theTuneCount = CountTunes();
 
 			// Derive a suggested name from the ABC
-			theImageName = getDescriptiveFileName(theTuneCount,true,true);
+			theImageName = getDescriptiveFileName(theTuneCount,true);
 
 		}
 		
@@ -20703,7 +20613,7 @@ function SaveABC(){
 			var theTuneCount = CountTunes();
 
 			// Derive a suggested name from the ABC
-			var theName = getDescriptiveFileName(theTuneCount,false,true);
+			var theName = getDescriptiveFileName(theTuneCount,true);
 
 			var thePrompt = "Please enter a filename for your ABC file:  ";
 
@@ -20741,7 +20651,7 @@ function SaveShareURL(){
 			var theTuneCount = CountTunes();
 
 			// Derive a suggested name from the ABC
-			var theName = getDescriptiveFileName(theTuneCount,false,true);
+			var theName = getDescriptiveFileName(theTuneCount,true);
 
 			// MAE 13 Sep 2024 - Allow spaces in filenames
 			saveTextFile("Please enter a filename for your Share URL file:",theName+" Share URL.txt",theData);
@@ -21450,7 +21360,7 @@ function processShareLink() {
 			var theTuneCount = CountTunes();
 
 			// Derive the name from the ABC
-			theName = getDescriptiveFileName(theTuneCount,false,true);
+			theName = getDescriptiveFileName(theTuneCount,true);
 			
 		}
 
