@@ -4666,8 +4666,9 @@
                 <p><b>All directions to first voice:</b>&nbsp;&nbsp;Allocates all XML staff directions to the first voice of the staff. Normally a staff
                 direction is allocated to the voice of the next note after the direction (if any). Default is: Unchecked</p>
                 <p><b>Translate stem directions:</b>&nbsp;&nbsp;Translates stem directions present in the XML. Default is: Unchecked</p>
-                <p><b>Inject Q: tag if not present:</b>&nbsp;&nbsp;If checked, will inject a Q: temp tag if not present in the imported ABC. Default is: Checked</p>
-                <p><b>Q: tag value to inject:</b>&nbsp;&nbsp;If <b>Inject Q: tag if not present:</b> is checked, this is the Q: tempo tag value to inject. Default is: 100</p>
+                <p><b>Inject Q: tag if not present:</b>&nbsp;&nbsp;If checked, will inject a meter-appropriate Q: tempo tag if not present in the imported ABC. Default is: Checked</p>
+                <p><b>Q: tag value to inject:</b>&nbsp;&nbsp;If <b>Inject a Q: tag if not present:</b> is checked, this is the Q: tempo speed value to inject.  Default is: 100</p>
+                <p>The beat unit injected in the Q: tag will be one that is meter appropriate, for example for a 4/4 meter: Q:1/2=100, or for 6/8 meter: Q:3/8=100.</p>
                 <p>Click <strong>Reset to Default</strong> to reset the MusicXML/MIDI import settings to their original defaults.</p>
                 <p>Values are saved in browser storage and restored the next time the tool is run.</p>
                 <hr class="hidden-print" id="microtonal">

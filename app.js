@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2253_011425_0830";
+var gVersionNumber="2254_011525_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -39756,6 +39756,28 @@ function isBWWFile(theText){
 //
 function InjectQTag(theTune,theTempo){
 
+	const qtaginject_list = [
+	    { name:"C|",  pattern:"1/2"}, 
+	    { name:"C",   pattern:"1/2"}, 
+	   	{ name:"2/2", pattern:"1/2"},
+	   	{ name:"3/2", pattern:"1/2"},
+	    { name:"2/4", pattern:"1/4"}, 
+	    { name:"3/4", pattern:"1/4"}, 
+	    { name:"4/4", pattern:"1/2"}, 
+	    { name:"5/4", pattern:"1/4"}, 
+	    { name:"6/4", pattern:"1/2"}, 
+	    { name:"7/4", pattern:"1/4"}, 
+	    { name:"2/8", pattern:"1/8"}, 
+	    { name:"3/8", pattern:"3/8"}, 
+	    { name:"5/8", pattern:"1/8"},
+	    { name:"6/8", pattern:"3/8"}, 
+	    { name:"7/8", pattern:"1/8"}, 
+	    { name:"9/8", pattern:"3/8"},
+	    { name:"10/8", pattern:"1/8"},
+	    { name:"11/8", pattern:"1/8"},
+	    { name:"12/8", pattern:"3/8"}
+	];
+
 	var theLines = theTune.split("\n");
 
 	var nLines = theLines.length;
@@ -39776,6 +39798,7 @@ function InjectQTag(theTune,theTempo){
 
 	// Find the Meter
 	var theMeterLine = "";
+	var theMeter = null;
 
 	var bFoundMeter = false;
 
@@ -39791,6 +39814,10 @@ function InjectQTag(theTune,theTempo){
 			// Put it after the M: tag line if not at the end of the ABC
 			if (j<(nLines-1)){
 
+				theMeter = theLines[j].replace("M:","");
+
+				theMeter = theMeter.trim();
+
 				theMeterLine = theLines[j+1];
 
 			}
@@ -39801,12 +39828,39 @@ function InjectQTag(theTune,theTempo){
 
 	if (bFoundMeter){
 
+		//console.log("theMeter: "+theMeter);
+
 		var meterIndex = theTune.indexOf(theMeterLine);
 
 		var leftSide = theTune.substring(0,meterIndex);
 		var rightSide = theTune.substring(meterIndex);
 
-		theTune = leftSide + "Q:" + theTempo + "\n" + rightSide;
+		var theQTagTemplate = "";
+
+		// Lets see if we have a supported meter
+		for (var i=0;i<qtaginject_list.length;++i){
+
+			if (theMeter == qtaginject_list[i].name){
+
+				theQTagTemplate = qtaginject_list[i].pattern;
+
+				//console.log("theQTagTemplate: "+theQTagTemplate);
+							
+				break;
+			}
+
+		}
+
+		if (theQTagTemplate != ""){
+		
+			theTune = leftSide + "Q:" + theQTagTemplate + "=" + theTempo + "\n" + rightSide;
+
+		}
+		else{
+
+			theTune = leftSide + "Q:" + theTempo + "\n" + rightSide;
+
+		}
 
 	}
 	else{
