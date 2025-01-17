@@ -822,7 +822,7 @@ function generateAndSaveWebsiteFull() {
     theOutput +="    var gAllowStatePersistence = true;\n";
     theOutput +="\n";
     theOutput +="    // Set this to false to hide previous and next tune buttons\n";
-    theOutput +="    var gAllowNextPrevious = true;\n";
+    theOutput +="    var gAllowPreviousNextButtons = true;\n";
     theOutput +="\n";     
     if (gWebsiteTabSelector){
         // Add LZW library
@@ -910,7 +910,7 @@ function generateAndSaveWebsiteFull() {
     theOutput +="\n";   
     theOutput +="           });\n";
     theOutput +="\n";   
-    theOutput +="          if (gAllowNextPrevious){\n";
+    theOutput +="          if (gAllowPreviousNextButtons){\n";
     theOutput +="\n";
     theOutput +="               document.getElementById('next_tune').addEventListener('click', nextTune);\n";
     theOutput +="\n";
