@@ -685,7 +685,7 @@ function generateAndSaveWebsiteFull() {
 
     theOutput +="    #previous_tune, #next_tune{\n";
     theOutput +="        padding: 10px 15px;\n";
-    theOutput +="        background-color: #eeeeee;\n";
+    theOutput +="        background-color: #dddddd;\n";
     theOutput +="        color: black;\n";
     theOutput +="        border: none;\n";
     theOutput +="        border-radius: 5px;\n";
