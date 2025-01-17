@@ -1152,14 +1152,19 @@ function generateAndSaveWebsiteFull() {
 
     theOutput +="       function getElementsTotalHeight() {\n";
     theOutput +="\n";
-
-    if (gWebsiteTabSelector){
-        theOutput +="           const ids = ['title', 'subtitle', 'displayOptions', 'footer1', 'footer2'];\n";
-    }
-    else{
-        theOutput +="           const ids = ['title', 'subtitle', 'tuneSelector', 'footer1', 'footer2'];\n";       
-    }
-
+    theOutput +="           var ids;\n";
+    theOutput +="\n";
+    theOutput +="           if (tunes.length > 1){\n";
+    theOutput +="               if (gAllowPreviousNextButtons){\n";
+    theOutput +="                   ids = ['title', 'subtitle', 'previous_tune', 'footer1', 'footer2'];\n";
+    theOutput +="               }\n";
+    theOutput +="               else{\n";
+    theOutput +="                   ids = ['title', 'subtitle', 'tuneSelector', 'footer1', 'footer2'];\n";
+    theOutput +="               }\n";
+    theOutput +="           }\n";
+    theOutput +="           else{\n";
+    theOutput +="               ids = ['title', 'subtitle', 'displayOptions', 'footer1', 'footer2'];\n";
+    theOutput +="           }\n";
     theOutput +="\n";
     theOutput +="           let totalHeight = 0;\n";
     theOutput +="\n";
@@ -1177,12 +1182,18 @@ function generateAndSaveWebsiteFull() {
     theOutput +="                   totalHeight += elementHeight + marginTop + marginBottom + 1;\n";
     theOutput +="               }\n";
     theOutput +="           });\n";
-    if ((!gotTitle) || (!gotSubTitle)){
-    	theOutput +="           return totalHeight+5;\n";
+    theOutput +="\n";
+    theOutput +="           if ((tunes.length == 1) && (!document.getElementById('displayOptions'))){\n";
+    theOutput +="               totalHeight += 24;\n";
+    theOutput +="           }\n";
+
+    if ((!gotTitle) && (!gotSubTitle)){
+        theOutput +="           return totalHeight+12;\n";
     }
     else{
-    	theOutput +="           return totalHeight+3;\n";
+    	theOutput +="           return totalHeight+10;\n";
     }
+
     theOutput +="       }\n";
     theOutput +="\n";
     theOutput +="       function resizeIframe() {\n";
