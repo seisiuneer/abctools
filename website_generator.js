@@ -857,6 +857,22 @@ function generateAndSaveWebsiteFull() {
         theOutput +="\n";
     }
 
+    if (((!gotTitle) && gotSubTitle) || ((!gotSubTitle) && gotTitle)){
+
+        if (gWebsiteAddFullscreen){
+            theOutput +="           document.getElementById('fullscreenbutton').style.top = '8px';\n";
+            theOutput +="           document.getElementById('fullscreenbutton').style.right = '8px';\n";
+            theOutput +="\n";
+        }
+
+        if (gWebsiteAddHelp){
+            theOutput +="           document.getElementById('website_help').style.top = '4px';\n";
+            theOutput +="           document.getElementById('website_help').style.left = '12px';\n";
+            theOutput +="\n";
+        }
+        
+    }
+
     theOutput +="        const tuneSelector = document.getElementById('tuneSelector');\n";
     theOutput +="\n";
     theOutput +="        const tuneFrame = document.getElementById('tuneFrame');\n";
