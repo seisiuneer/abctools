@@ -785,7 +785,9 @@ function generateAndSaveWebsiteFull() {
         theOutput +='           <option value="6">DADGAD</option>\n';
         theOutput +='           <option value="7">Tin Whistle</option>\n';
         theOutput +='           <option value="8">Irish Flute</option>\n';
-        theOutput +='           <option value="9">Hammered Dulcimer</option>\n';
+        theOutput +='           <option value="9">Accordion</option>\n';
+        theOutput +='           <option value="10">Concertina</option>\n';
+        theOutput +='           <option value="11">Hammered Dulcimer</option>\n';
         theOutput +='        </select>\n'
     }
 
@@ -834,6 +836,8 @@ function generateAndSaveWebsiteFull() {
         theOutput +="\n";       
         theOutput +="    var isBanjo = false;\n";
         theOutput +="    var isFlute = false;\n";
+        theOutput +="    var isAccordion = false;\n";
+        theOutput +="    var isConcertina = false;\n";
         theOutput +="    var isDulcimer = false;\n";
         theOutput +="\n";
     }
@@ -1047,6 +1051,14 @@ function generateAndSaveWebsiteFull() {
         theOutput +='                    abcInLZW = abcInLZW.replace("%%MIDI chordvol '+gWebsiteChordVolume+'","%%MIDI chordvol 64");\n';
         theOutput +="                    break;\n";
         theOutput +='                case "noten":\n';
+        theOutput +="                    if (isAccordion){\n";
+        theOutput +='                        abcInLZW = abcInLZW.replace("%%MIDI program '+gWebsiteMelodyInstrumentInject+'","%%MIDI program 21");\n';
+        theOutput +="                    }\n";
+        theOutput +="                    else\n";
+        theOutput +="                    if (isConcertina){\n";
+        theOutput +='                        abcInLZW = abcInLZW.replace("%%MIDI program '+gWebsiteMelodyInstrumentInject+'","%%MIDI program 133");\n';
+        theOutput +="                    }\n";
+        theOutput +="                    else\n";
         theOutput +="                    if (isDulcimer){\n";
         theOutput +='                        abcInLZW = abcInLZW.replace("%%MIDI program '+gWebsiteMelodyInstrumentInject+'","%%MIDI program 15");\n';
         theOutput +="                    }\n";
@@ -1081,6 +1093,8 @@ function generateAndSaveWebsiteFull() {
         theOutput +="\n";
         theOutput +="             isBanjo = false;\n";
         theOutput +="             isFlute = false;\n";
+        theOutput +="             isAccordion = false;\n";
+        theOutput +="             isConcertina = false;\n";
         theOutput +="             isDulcimer = false;\n";
         theOutput +="\n";
         theOutput +="             switch (displayOptions.value){\n";
@@ -1113,7 +1127,15 @@ function generateAndSaveWebsiteFull() {
         theOutput +="                     isFlute = true;\n";
         theOutput +="                     tabStyle = \"whistle\";\n";
         theOutput +="                     break;\n";
-        theOutput +="                 case \"9\": // Hammered dulcimer\n";
+        theOutput +="                 case \"9\": // Accordion\n";
+        theOutput +="                     isAccordion = true;\n";
+        theOutput +="                     tabStyle = \"noten\";\n";
+        theOutput +="                     break;\n";
+        theOutput +="                 case \"10\": // Concertina\n";
+        theOutput +="                     isConcertina = true;\n";
+        theOutput +="                     tabStyle = \"noten\";\n";
+        theOutput +="                     break;\n";
+        theOutput +="                 case \"11\": // Hammered dulcimer\n";
         theOutput +="                     isDulcimer = true;\n";
         theOutput +="                     tabStyle = \"noten\";\n";
         theOutput +="                     break;\n";
