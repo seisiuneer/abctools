@@ -770,10 +770,10 @@ function generateAndSaveWebsiteFull() {
 
     if (gWebsiteTabSelector){
         if (gotTitle || gotSubTitle){
-            theOutput +='        <select id="displayOptions" style="width:220px;">\n';
+            theOutput +='        <select id="displayOptions" style="width:240px;">\n';
         }
         else{
-            theOutput +='        <select id="displayOptions" style="width:220px;margin-top:18px;">\n';
+            theOutput +='        <select id="displayOptions" style="width:240px;margin-top:18px;">\n';
         }
         theOutput +='           <option value="-1">Choose an Instrument</option>\n';
         theOutput +='           <option value="0">Standard Notation</option>\n';
