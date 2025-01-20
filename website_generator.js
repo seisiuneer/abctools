@@ -488,6 +488,9 @@ function getInstrumentNameForWebSelector(index){
     if (instrumentName.indexOf("Bass") != -1){
         return "Bass";
     }
+    if (instrumentName.indexOf("Organ") != -1){
+        return "Organ";
+    }
     if (instrumentName.indexOf("String") != -1){
         return "Strings";
     }
