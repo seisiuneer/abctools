@@ -466,6 +466,74 @@ function BatchJSONExportForWebGenerator(theABC){
 }
 
 //
+// Get the melody instrument name
+//
+function getInstrumentNameForWebSelector(index){
+
+    var instrumentName = website_export_midi_program_list[index+1].name.trim();
+    
+    if (instrumentName.indexOf("Piano") != -1){
+        return "Piano";
+    }
+    if (instrumentName.indexOf("Guitar") != -1){
+        return "Guitar";
+    }
+    if (instrumentName.indexOf("Bass") != -1){
+        return "Bass";
+    }
+    if (instrumentName.indexOf("String") != -1){
+        return "Strings";
+    }
+    if (instrumentName.indexOf("Harp") != -1){
+        return "Harp";
+    }
+    if (instrumentName.indexOf("Lead") != -1){
+        return "Lead";
+    }
+    if (instrumentName.indexOf("Pad") != -1){
+        return "Pad";
+    }
+    if (instrumentName.indexOf("FX") != -1){
+        return "FX";
+    }
+    if (instrumentName.indexOf("Accordion") != -1){
+        return "Accordion";
+    }
+    if (instrumentName.indexOf("Bouzouki") != -1){
+        return "Bouzouki";
+    }
+    if (instrumentName.indexOf("Smallpipes") != -1){
+        return "Smallpipes";
+    }
+    if (instrumentName.indexOf("Uilleann") != -1){
+        return "Uilleann";
+    }
+    if (instrumentName.indexOf("Recorder") != -1){
+        return "Recorder";
+    }
+    if (instrumentName.indexOf("Bells") != -1){
+        return "Bells";
+    }
+    if (instrumentName.indexOf("Drum") != -1){
+        return "Drums";
+    }
+    if (instrumentName.indexOf("Sax") != -1){
+        return "Sax";
+    }
+    if (instrumentName.indexOf("Trumpet") != -1){
+        return "Trumpet";
+    }
+    if (instrumentName.indexOf("Brass") != -1){
+        return "Brass";
+    }
+    if (instrumentName.indexOf("Hit") != -1){
+        return "Hit";
+    }
+
+    return instrumentName;
+}
+
+//
 // Generate a fully featured website
 //
 function generateAndSaveWebsiteFull() {
@@ -770,14 +838,17 @@ function generateAndSaveWebsiteFull() {
 
     if (gWebsiteTabSelector){
         if (gotTitle || gotSubTitle){
-            theOutput +='        <select id="displayOptions" style="width:240px;">\n';
+            theOutput +='        <select id="displayOptions" style="width:250px;">\n';
         }
         else{
-            theOutput +='        <select id="displayOptions" style="width:240px;margin-top:18px;">\n';
+            theOutput +='        <select id="displayOptions" style="width:250px;margin-top:18px;">\n';
         }
         theOutput +='           <option value="-1">Choose an Instrument</option>\n';
-        theOutput +='           <option value="0">Standard Notation</option>\n';
-        theOutput +='           <option value="1">Note Names</option>\n';
+
+        var instrumentName = getInstrumentNameForWebSelector(gWebsiteMelodyInstrumentInject);
+
+        theOutput +='           <option value="0">'+instrumentName+' - Notation</option>\n';
+        theOutput +='           <option value="1">'+instrumentName+' - Note Names</option>\n';
         theOutput +='           <option value="2">Mandolin</option>\n';
         theOutput +='           <option value="3">Tenor Banjo</option>\n';
         theOutput +='           <option value="4">GDAD Bouzouki</option>\n';
@@ -1851,6 +1922,8 @@ var gWebsiteConfig ={
 
 }
 
+var website_export_midi_program_list = null;
+
 //
 // Generate a website with instrument selection, tab options
 //
@@ -1864,10 +1937,15 @@ function generateWebsiteFull(){
     // Restore saved settings
     LoadWebsiteSettings();
 
-    var midi_program_list = [];
+    if (!website_export_midi_program_list){
 
-    for (var i=0;i<=MIDI_PATCH_COUNT;++i){
-        midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
+        //console.log("Generating website export MIDI program list");
+
+        website_export_midi_program_list=[];
+        
+        for (var i=0;i<=MIDI_PATCH_COUNT;++i){
+            website_export_midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
+        }
     }
 
     const sound_font_options = [
@@ -1879,10 +1957,6 @@ function generateWebsiteFull(){
         { name: "  Arachno", id: "arachno" },
         { name: "  FluidHQ", id: "fluidhq"}
     ];
-
-    for (var i=0;i<=MIDI_PATCH_COUNT;++i){
-        midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
-    }
 
     var form = [
       {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:18px">Export Full-Featured Tunebook Website&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#generate_website" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
@@ -1903,10 +1977,10 @@ function generateWebsiteFull(){
       {name: "          Tunes open in the Player ", id: "bOpenInPlayer", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "          Add instruments and volume overrides to each tune ", id: "bInjectInstruments", type:"checkbox", cssClass:"configure_website_form_text2"},
       {name: "Soundfont:", id: "sound_font", type:"select", options:sound_font_options, cssClass:"configure_setuppdftunebook_midi_program_select"},
-      {name: "Melody instrument:", id: "melody_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
-      {name: "Bass instrument:", id: "bass_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
+      {name: "Melody instrument:", id: "melody_instrument", type:"select", options:website_export_midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
+      {name: "Bass instrument:", id: "bass_instrument", type:"select", options:website_export_midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
       {name: "Bass volume (0-127):", id: "bass_volume", type:"number", cssClass:"configure_website_form_text"},
-      {name: "Chord instrument:", id: "chord_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
+      {name: "Chord instrument:", id: "chord_instrument", type:"select", options:website_export_midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
       {name: "Chord volume (0-127):", id: "chord_volume", type:"number", cssClass:"configure_website_form_text"},
     ];
 
