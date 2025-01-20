@@ -775,7 +775,7 @@ function generateAndSaveWebsiteFull() {
         else{
             theOutput +='        <select id="displayOptions" style="width:220px;margin-top:18px;">\n';
         }
-        theOutput +='           <option value="-1">Tablature Display</option>\n';
+        theOutput +='           <option value="-1">Choose an Instrument</option>\n';
         theOutput +='           <option value="0">Standard Notation</option>\n';
         theOutput +='           <option value="1">Note Names</option>\n';
         theOutput +='           <option value="2">Mandolin</option>\n';
