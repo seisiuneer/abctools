@@ -470,6 +470,10 @@ function BatchJSONExportForWebGenerator(theABC){
 //
 function getInstrumentNameForWebSelector(index){
 
+    if (index == "mute"){
+        return "Mute";
+    }
+
     var instrumentName = website_export_midi_program_list[index+1].name.trim();
     
     if (instrumentName.indexOf("Piano") != -1){
@@ -477,6 +481,9 @@ function getInstrumentNameForWebSelector(index){
     }
     if (instrumentName.indexOf("Guitar") != -1){
         return "Guitar";
+    }
+    if (instrumentName.indexOf("Recorder") != -1){
+        return "Recorder";
     }
     if (instrumentName.indexOf("Bass") != -1){
         return "Bass";
@@ -507,9 +514,6 @@ function getInstrumentNameForWebSelector(index){
     }
     if (instrumentName.indexOf("Uilleann") != -1){
         return "Uilleann";
-    }
-    if (instrumentName.indexOf("Recorder") != -1){
-        return "Recorder";
     }
     if (instrumentName.indexOf("Bells") != -1){
         return "Bells";
