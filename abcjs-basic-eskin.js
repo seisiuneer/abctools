@@ -5200,9 +5200,10 @@ var parseDirective = {};
         }
         break;
       case "newpage":
-        var pgNum = tokenizer.getInt(restOfString);
-        tuneBuilder.addNewPage(pgNum.digits === 0 ? -1 : pgNum.value);
-        break;
+      // MAE 21 Jan 2025 - No-op for my tool
+      //   var pgNum = tokenizer.getInt(restOfString);
+      //   tuneBuilder.addNewPage(pgNum.digits === 0 ? -1 : pgNum.value);
+      break;
       case "abc":
         var arr = restOfString.split(' ');
         switch (arr[0]) {
@@ -5223,29 +5224,30 @@ var parseDirective = {};
         break;
       case "header":
       case "footer":
-        var footerStr = tokenizer.getMeat(restOfString, 0, restOfString.length);
-        footerStr = restOfString.substring(footerStr.start, footerStr.end);
-        if (footerStr[0] === '"' && footerStr[footerStr.length - 1] === '"') footerStr = footerStr.substring(1, footerStr.length - 1);
-        var footerArr = footerStr.split('\t');
-        var footer = {};
-        if (footerArr.length === 1) footer = {
-          left: "",
-          center: footerArr[0],
-          right: ""
-        };else if (footerArr.length === 2) footer = {
-          left: footerArr[0],
-          center: footerArr[1],
-          right: ""
-        };else footer = {
-          left: footerArr[0],
-          center: footerArr[1],
-          right: footerArr[2]
-        };
-        if (footerArr.length > 3) warn("Too many tabs in " + cmd + ": " + footerArr.length + " found.", restOfString, 0);
-        tuneBuilder.addMetaTextObj(cmd, footer, {
-          startChar: multilineVars.iChar,
-          endChar: multilineVars.iChar + str.length
-        });
+        // MAE 21 Jan 2025 - Noops for my tool
+        // var footerStr = tokenizer.getMeat(restOfString, 0, restOfString.length);
+        // footerStr = restOfString.substring(footerStr.start, footerStr.end);
+        // if (footerStr[0] === '"' && footerStr[footerStr.length - 1] === '"') footerStr = footerStr.substring(1, footerStr.length - 1);
+        // var footerArr = footerStr.split('\t');
+        // var footer = {};
+        // if (footerArr.length === 1) footer = {
+        //   left: "",
+        //   center: footerArr[0],
+        //   right: ""
+        // };else if (footerArr.length === 2) footer = {
+        //   left: footerArr[0],
+        //   center: footerArr[1],
+        //   right: ""
+        // };else footer = {
+        //   left: footerArr[0],
+        //   center: footerArr[1],
+        //   right: footerArr[2]
+        // };
+        // if (footerArr.length > 3) warn("Too many tabs in " + cmd + ": " + footerArr.length + " found.", restOfString, 0);
+        // tuneBuilder.addMetaTextObj(cmd, footer, {
+        //   startChar: multilineVars.iChar,
+        //   endChar: multilineVars.iChar + str.length
+        // });
         break;
       case "midi":
         var midi = tokenizer.tokenize(restOfString, 0, restOfString.length, true);
