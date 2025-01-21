@@ -280,7 +280,7 @@
             <a style="text-decoration:none;" href="#getting_started">Getting Started</a>
             <a style="text-decoration:none;" href="#abc_editor">ABC Editor</a>
             <a style="text-decoration:none;" href="#abc_editor_resize">Resizing the ABC Editor</a>
-
+            
             <h3>Top Bar Buttons</h3>
             <a style="text-decoration:none;" href="#top_bar_buttons">Top Bar Buttons</a>
             <a style="text-decoration:none;" href="#top_bar_open">Open</a>
@@ -291,7 +291,7 @@
             <a style="text-decoration:none;" href="#top_bar_copy_all">Copy All</a>
             <a style="text-decoration:none;" href="#top_bar_play">Play</a>
             <a style="text-decoration:none;" href="#top_bar_highlighting">Highlighting</a>
-
+            
             <h3>☰ Dropdown Menu</h3>
             <a style="text-decoration:none;" href="#moretoolsdropdown">☰</a>
             <a style="text-decoration:none;" href="#hamburger_find">Find and Replace</a>
@@ -309,7 +309,7 @@
             <a style="text-decoration:none;" href="#hamburger_advanced_settings">Advanced Settings</a>
             <a style="text-decoration:none;" href="#hamburger_quick_editor">Launch Quick Editor</a>
             <a style="text-decoration:none;" href="#new_version_check">New Version Available Notification</a>
-
+            
             <h3>Opening and Adding ABC Files and Tunes</h3>
             <a style="text-decoration:none;" href="#open_dialog">Open an ABC, MusicXML, BWW, or MIDI File</a>
             <a style="text-decoration:none;" href="#add_templates_dialog">Adding Your Own Tunes to Your Tunebook</a>
@@ -516,6 +516,9 @@
             <h3>Mac Safari-Specific Topics</h3>
             <a style="text-decoration:none;" href="#safari_gracenotes_issue">Issues With Grace Note Rendering on Safari</a>
             
+            <h3>Google Drive PDF Reader Issues</h3>
+            <a style="text-decoration:none;" href="#google_drive_pdf_issues">Issues With the Google Drive PDF Reader</a>
+            
             <h3>ABC 2.1 Specification and Quick Reference Card</h3>
             <a style="text-decoration:none;" href="#abc_specification">ABC Specification</a>
             <a style="text-decoration:none;" href="#abc_21_quick_reference_card">ABC Quick Reference Card</a>
@@ -576,7 +579,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#abc_editor">ABC Editor</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#abc_editor_resize">Resizing the ABC Editor</a></p>
                     </div>
-
+                    
                     <button class="accordion" title="Click to expand/collapse this section">Top Bar Buttons</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#top_bar_buttons">Top Bar Buttons</a></p>
@@ -589,7 +592,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#top_bar_play">Play</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#top_bar_highlighting">Highlighting</a></p>
                     </div>
-
+                    
                     <button class="accordion" title="Click to expand/collapse this section">☰ Dropdown Menu</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#moretoolsdropdown">☰</a></p>
@@ -609,7 +612,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_quick_editor">Launch Quick Editor</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#new_version_check">New Version Available Notification</a></p>
                     </div>
-
+                    
                     <button class="accordion" title="Click to expand/collapse this section">Opening and Adding ABC Files and Tunes</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#open_dialog">Open an ABC, MusicXML, BWW, or MIDI File</a></p>
@@ -876,10 +879,15 @@
                         <p class="toc"><a style="text-decoration:none;" href="#facebook_ios">Issues with the Tool in the Facebook iOS Webview</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#iosreset">Resetting the Tool on Safari for iOS</a></p>
                     </div>
-
+                    
                     <button class="accordion" title="Click to expand/collapse this section">Mac Safari-Specific Topics</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#safari_gracenotes_issue">Issues With Grace Note Rendering on Safari</a></p>
+                    </div>
+                    
+                    <button class="accordion" title="Click to expand/collapse this section">Google Drive PDF Reader Issues</button>
+                    <div class="tocpanel">
+                        <p class="toc"><a style="text-decoration:none;" href="#google_drive_pdf_issues">Issues With the Google Drive PDF Reader</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">ABC 2.1 Specification and Quick Reference Card</button>
@@ -4947,6 +4955,13 @@
                 <h1 class="page_break_always h1wide">Issues With Grace Note Rendering on Safari<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Often times, Safari on Mac will not correctly render grace notes before notes if the browser page zoom level is not set to 100%.</p>
                 <p>At this time, the only fix is to use Chrome or Firefox instead.</p>
+                <hr class="hidden-print" id="google_drive_pdf_issues">
+                <h1 class="page_break_always h1wide">Issues With the Google Drive PDF Reader<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>If you open a share link from Google Drive to a PDF tunebook, the PDF reader used is one delivered by Google and does not properly support internal PDF hyperlink navigation.</p>
+                <p>This means that the Table of Contents and Index page links to the tunes will not work.</p>
+                <p>The solution is to save the PDF file to your system or device from Google Drive and then open that file either in the native browser PDF reader, or an external tool like Adobe Acrobat (on desktop), or a mobile PDF reader like GoodReader for iOS.</p>
+                <p>This video shows the process for both desktop and mobile browsers:</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/aHgRGETvKjI" title="Google Drive Issues Fix" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <hr class="hidden-print" id="abc_specification">
                 <h1 class="page_break_always">ABC Specification<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p style="text-align: center;">The full specification for ABC notation can be found at:</p>
