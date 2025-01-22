@@ -859,7 +859,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#abcadditions">Additional Tool-Specific ABC Directives</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#sequential_play">Creating Sets of Tunes that Will Play Sequentially in the Player</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#boxplayerstemplate">Useful Symbols for Annotating Box Transcriptions</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#abcheadersignored">ABC File Headers Before the First X: Tag Are Ignored</a></p>                        
+                        <p class="toc"><a style="text-decoration:none;" href="#abcheadersignored">ABC File Headers Before the First X: Tag Are Ignored</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">Adding Shape Note Shapes</button>
@@ -4873,7 +4873,7 @@
                 <p>When rendering the ABC, the tool now ignores all file header text in the ABC file before the first X: tag.</p>
                 <p>Previously, all file header text above the first X: tag in an ABC tunebook was being added to each tune before abcjs rendering.</p>
                 <p>This caused many issues resulting in inconsistency with the tunes as rendered in the editor and in PDF files vs. the same tunes when viewed or played from share links, either standalone, in PDF files, or on exported websites for ABC tunebooks that had directives and/or text as a pre-tune header.</p>
-                <p>This is because the aggegated header directives that were previously injected at notation rendering time are not part of the tune ABC itself, and it is the tune ABC itself in the editor that is used to create the share links.</p>
+                <p>This is because the aggregated header directives that were previously injected at notation rendering time are not part of the tune ABC itself, and it is the tune ABC itself in the editor that is used to create the share links.</p>
                 <p>There were also major issues with any text annotations in a pre-first X: tag header getting added below the title of every tune in the rendered notation.</p>
                 <p>To create a more consistent visual result in all use cases, I've decided to simply filter out all text before the first X: tag when rendering tunes.</p>
                 <p>This ensures producing the same visual result across the editor, exported PDFs, and viewing/playing of shared tunes, either standalone, from a PDF, or an exported website if there is pre-first X: tag header text present.</p>
