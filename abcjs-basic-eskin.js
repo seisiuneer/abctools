@@ -3768,10 +3768,13 @@ var bookParser = function bookParser(book) {
     // just looking for file-wide directives here (before the first tune) and inserting them at the bottom of each tune, since
     // the tune is parsed all at once. The directives will be seen before the engraver begins processing.
     var dir = tunes.shift();
-    var arrDir = dir.abc.split('\n');
-    arrDir.forEach(function (line) {
-      if (parseCommon.startsWith(line, '%%')) directives += line + '\n';
-    });
+    // 
+    // MAE 22 Jan 2025 - Not aggregating pre X: text into tunes
+    //
+    //var arrDir = dir.abc.split('\n');
+    //arrDir.forEach(function (line) {
+    //  if (parseCommon.startsWith(line, '%%')) directives += line + '\n';
+    //});
   }
   var header = directives;
 
@@ -16078,7 +16081,7 @@ ChordTrack.prototype.chordTrackEmpty = function () {
   }
   return isEmpty;
 };
-ChordTrack.prototype.resolveChords = function (startTime, endTime) {	
+ChordTrack.prototype.resolveChords = function (startTime, endTime) {  
 
   //debugger;
   //console.log("resolveChords gchordbars: "+this.gchordbars);
@@ -16394,7 +16397,7 @@ ChordTrack.prototype.resolveChords = function (startTime, endTime) {
     var isBoom = type.indexOf('boom') >= 0;
 
     // If we changed chords at a time when we're not expecting a bass note, then add an extra bass note in.
-   	var newBass = !isBoom && p !== 0 && thisPattern[0].indexOf('boom') >= 0 && (!currentChordsExpanded[p - 1] || currentChordsExpanded[p - 1].boom !== currentChordsExpanded[p].boom);
+    var newBass = !isBoom && p !== 0 && thisPattern[0].indexOf('boom') >= 0 && (!currentChordsExpanded[p - 1] || currentChordsExpanded[p - 1].boom !== currentChordsExpanded[p].boom);
     
     // MAE 13 Jan 2025 - Disallow extra bass note 
     newBass = false;
