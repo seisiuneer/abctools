@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2268_012225_1500";
+var gVersionNumber="2269_012225_2000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -18379,56 +18379,56 @@ function IdleFileHeaderInject(){
 
     arrDir.forEach(function (line) {
 
-      var theRegex = /^%%\S+font .*$/
+      var theRegex = /^%%\S+font.*$/
 
       if (theRegex.test(line)){
         //console.log("Adding font line: "+line);
         directives += line + '\n'
       }
 
-      theRegex = /^%%\S+margin .*$/
+      theRegex = /^%%\S+margin.*$/
       if (theRegex.test(line)){
         //console.log("Adding margin line: "+line)
         directives += line + '\n';
       }
 
-      theRegex = /^%%staffwidth .*$/
+      theRegex = /^%%staffwidth.*$/
       if (theRegex.test(line)){
         //console.log("Adding staffwidth line: "+line)
         directives += line + '\n';
       }   
 
-      theRegex = /^%%stretchlast .*$/
+      theRegex = /^%%stretchlast.*$/
       if (theRegex.test(line)){
         //console.log("Adding stretchlast line: "+line)
         directives += line + '\n';
       }  
 
-      theRegex = /^%%barnumbers .*$/
+      theRegex = /^%%barnumbers.*$/
       if (theRegex.test(line)){
         //console.log("Adding barnumbers: "+line)
         directives += line + '\n';
       } 
 
-      theRegex = /^%%barsperstaff .*$/
+      theRegex = /^%%barsperstaff.*$/
       if (theRegex.test(line)){
         //console.log("Adding barsperstaff: "+line)
         directives += line + '\n';
       } 
 
-      theRegex = /^%%\S+space .*$/
+      theRegex = /^%%\S+space.*$/
       if (theRegex.test(line)){
         //console.log("Adding space line: "+line)
         directives += line + '\n';
       }
 
-      theRegex = /^%%\S+sep .*$/
+      theRegex = /^%%\S+sep.*$/
       if (theRegex.test(line)){
         //console.log("Adding sep line: "+line)
         directives += line + '\n';
       }
       
-      theRegex = /^%%measure.* \S+$/
+      theRegex = /^%%measure\S+.*$/
       if (theRegex.test(line)){
         //console.log("Adding measure line: "+line)
         directives += line + '\n';
