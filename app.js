@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2267_012225_1100";
+var gVersionNumber="2268_012225_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -18342,12 +18342,125 @@ function InjectSectionHeader(){
 
 var gIdleHeaderInjectValue = "";
 
+var gFileHeaderDirectives = "";
+
 function idleHeaderInject(){
 	gIdleHeaderInjectValue = document.getElementById("headers_to_inject").value;
 }
 
 function keydownHeaderInject(e){
 	e.stopPropagation();
+}
+
+function IdleFileHeaderInject(){
+
+	gFileHeaderDirectives = "";
+    
+    var elem = document.getElementById("injectheaderstringfh_holder");
+
+    if (elem){
+    	elem.style.display = "none";
+    }
+    else{
+    	// Element not present
+    	return;
+    }
+
+	var theHeader = FindPreTuneHeader(gTheABC.value);
+
+	if (theHeader.length == 0){
+		//console.log("No header present");
+		return;
+	}
+
+	var directives = "";
+
+    var arrDir = theHeader.split('\n');
+
+    arrDir.forEach(function (line) {
+
+      var theRegex = /^%%\S+font .*$/
+
+      if (theRegex.test(line)){
+        //console.log("Adding font line: "+line);
+        directives += line + '\n'
+      }
+
+      theRegex = /^%%\S+margin .*$/
+      if (theRegex.test(line)){
+        //console.log("Adding margin line: "+line)
+        directives += line + '\n';
+      }
+
+      theRegex = /^%%staffwidth .*$/
+      if (theRegex.test(line)){
+        //console.log("Adding staffwidth line: "+line)
+        directives += line + '\n';
+      }   
+
+      theRegex = /^%%stretchlast .*$/
+      if (theRegex.test(line)){
+        //console.log("Adding stretchlast line: "+line)
+        directives += line + '\n';
+      }  
+
+      theRegex = /^%%barnumbers .*$/
+      if (theRegex.test(line)){
+        //console.log("Adding barnumbers: "+line)
+        directives += line + '\n';
+      } 
+
+      theRegex = /^%%barsperstaff .*$/
+      if (theRegex.test(line)){
+        //console.log("Adding barsperstaff: "+line)
+        directives += line + '\n';
+      } 
+
+      theRegex = /^%%\S+space .*$/
+      if (theRegex.test(line)){
+        //console.log("Adding space line: "+line)
+        directives += line + '\n';
+      }
+
+      theRegex = /^%%\S+sep .*$/
+      if (theRegex.test(line)){
+        //console.log("Adding sep line: "+line)
+        directives += line + '\n';
+      }
+      
+      theRegex = /^%%measure.* \S+$/
+      if (theRegex.test(line)){
+        //console.log("Adding measure line: "+line)
+        directives += line + '\n';
+      }      
+    });
+
+    if (directives != ""){
+
+    	gFileHeaderDirectives = directives;
+
+    	elem = document.getElementById("injectheaderstringfh_holder");;
+
+    	if (elem){
+    		elem.style.display = "block";
+    	}
+    }
+
+}
+
+function InjectABCFileHeaderDirectives(){
+
+	//console.log("InjectABCFileHeaderDirectives");
+
+	var elem = document.getElementById("headers_to_inject");
+
+	if (elem){
+
+    	elem.value += gFileHeaderDirectives;
+
+    	gIdleHeaderInjectValue = elem.value;
+   }
+
 }
 
 function InjectHeaderString(){
@@ -18376,9 +18489,18 @@ function InjectHeaderString(){
 	  {name: "Header inject location:", id: "injectlocation", type:"select", options:inject_location_list, cssClass:"configure_injectheaderstring_select"},
 	  {html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;">Header text to inject:</p><textarea id="headers_to_inject" style="font-family:Courier;font-size:13pt;line-height:16pt;width:578px;height:340px;padding:6px" placeholder="Enter header text to inject here" spellcheck="false" autocorrect="off" autocapitalize="none" oninput="idleHeaderInject()" onkeydown="keydownHeaderInject(event)"></textarea>'},
 	  {name: "          Inject all tunes", id: "injectalltunes", type:"checkbox", cssClass:"configure_injectheaderstring_form_text"},
+	  {html: '<p id="injectheaderstringfh_holder" style="text-align:center;margin-top:36px;display:none;"><input id="injectheaderstringfh" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectABCFileHeaderDirectives();" type="button" value="Add ABC File Header Font and Spacing Directives" title="Adds any font or spacing directives found in the file header to the headers to add"></p>'}
 	];
 
 	gIdleHeaderInjectValue = "";
+	gFileHeaderDirectives = "";
+
+	// Idle the file header inject button and text
+	setTimeout(function(){
+
+		IdleFileHeaderInject();
+
+	},200);
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 		
