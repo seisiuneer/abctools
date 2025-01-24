@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2269_012225_2000";
+var gVersionNumber="2270_012325_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -18433,6 +18433,12 @@ function IdleFileHeaderInject(){
         //console.log("Adding measure line: "+line)
         directives += line + '\n';
       }      
+
+      theRegex = /^[ABCDFGHILMmNORrSUZ]:/
+      if (theRegex.test(line)){
+        //console.log("Adding ABC *: line: "+line)
+        directives += line + '\n';
+      }      
     });
 
     if (directives != ""){
@@ -18489,7 +18495,7 @@ function InjectHeaderString(){
 	  {name: "Header inject location:", id: "injectlocation", type:"select", options:inject_location_list, cssClass:"configure_injectheaderstring_select"},
 	  {html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;">Header text to inject:</p><textarea id="headers_to_inject" style="font-family:Courier;font-size:13pt;line-height:16pt;width:578px;height:340px;padding:6px" placeholder="Enter header text to inject here" spellcheck="false" autocorrect="off" autocapitalize="none" oninput="idleHeaderInject()" onkeydown="keydownHeaderInject(event)"></textarea>'},
 	  {name: "          Inject all tunes", id: "injectalltunes", type:"checkbox", cssClass:"configure_injectheaderstring_form_text"},
-	  {html: '<p id="injectheaderstringfh_holder" style="text-align:center;margin-top:36px;display:none;"><input id="injectheaderstringfh" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectABCFileHeaderDirectives();" type="button" value="Add ABC File Header Font and Spacing Directives" title="Adds any font or spacing directives found in the file header to the headers to add"></p>'}
+	  {html: '<p id="injectheaderstringfh_holder" style="text-align:center;margin-top:24px;display:none;"><input id="injectheaderstringfh" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectABCFileHeaderDirectives();" type="button" value="Add ABC File Header Directives" title="Adds any ABC directives found in the file header to the text area above"></p>'}
 	];
 
 	gIdleHeaderInjectValue = "";
