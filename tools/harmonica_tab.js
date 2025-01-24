@@ -8,6 +8,10 @@
 // Michael Eskin
 // https://michaeleskin.com
 //
+// Mapping algorithm derived from of the Perl-based abc2harp utility:
+//
+// https://welltemperedstudio.wordpress.com/code/abc2harp/
+//
 // Released under CC0 - No Rights Reserved
 // https://creativecommons.org/share-your-work/public-domain/cc0/
 //
