@@ -30,7 +30,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
-    <link rel="stylesheet" href="harmonica_tab.css?v=3"/>
+    <link rel="stylesheet" href="harmonica_tab.css?v=5"/>
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
 
@@ -58,9 +58,10 @@
         <p>1)&nbsp;Click "Open an existing .ABC file" to open a file or paste one or more ABC tunes into the box below.</p>
         <p>2)&nbsp;Enter your preferred ABC font sizes, %%staffsep, and %%musicspace values</p>
         <p>3)&nbsp;Select your harmonica tuning from the "Harmonica Tuning" dropdown. (Default is C)</p>
-        <p>4)&nbsp;Click "Generate Tablature".</p>
+        <p>4)&nbsp;Select any desired octave shift (-1, 0, or +1) from the "Octave Shift" dropdown. (Default is 0)</p>
+        <p>5)&nbsp;Click "Generate Tablature".</p>
         <p>The generated ABC with tablature will appear in the "Processed ABC Output, with Tablature" box.</p>
-        <p>5)&nbsp;Save, Copy or Test the results:</p>
+        <p>6)&nbsp;Save, Copy or Test the results:</p>
         <p>Click "Save Output to a file" to save the results to a file.</p>
         <p>Click "Copy Output to the clipboard" to copy the results to the system clipboard for pasting into other applications.</p>
         <p>Click "Test Output in the ABC Transcription Tools" to open and test the results in my <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a></p>
@@ -132,6 +133,22 @@
           </select>
           
         </p>
+
+        <p>
+          
+          <span style="">Octave Shift:&nbsp;&nbsp;</span>
+          
+          <select id="octave_shift">
+            
+            <option value="-1">&nbsp;&nbsp;-1</option>
+            
+            <option value="0">&nbsp;&nbsp;0</option>
+            
+            <option value="1">&nbsp;&nbsp;+1</option>            
+            
+          </select>
+          
+        </p>
         
         <p style="margin-top:24px"><button id="generateTablature" class="btn btn-generate" onClick="generateTablature();">Generate Tablature</button></p>
         
@@ -162,7 +179,7 @@
         <h4 style="text-align:center;">How to Read the Diatonic Harmonica Tablature</h4>
         <p>Numbers coorespond to the holes on the harmonica</p>
         <p>Number alone indicates blow</p>
-        <p>Draw is indicated by ↑ after the number</p>
+        <p>Draw is indicated by - after the number</p>
         <p>Bends are indicated by ', '', or '''</p>
         <p>Overblow is indicated by o</p>
          
@@ -186,8 +203,8 @@
     
   </body>
   
-  <script src="harmonica_tab.js?v=3" type="text/javascript"></script>
-  <script type="text/javascript" src="lz-string.min.js?v=3"></script>
-  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=3"></script>
+  <script src="harmonica_tab.js?v=5" type="text/javascript"></script>
+  <script type="text/javascript" src="lz-string.min.js?v=5"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=5"></script>
   
 </html>

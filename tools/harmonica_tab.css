@@ -103,14 +103,13 @@ margin-left:0px;
 margin-right:24px;
 }
 
-#harp_key{
+#harp_key,#octave_shift{
 font-size:11pt;
 font-family:"Helvetica";
 height:32px;
 width:70px;
 margin-left:0px;
 }
-
 
 .btn {
   --color: #000000;

@@ -25,7 +25,7 @@ var keySignature = null;
 // Suggested filename for save
 var gSaveFilename = "";
 
-function generate_harmonica_tab(tuneABC,harpKey){
+function generate_harmonica_tab(tuneABC,harpKey,octaveShift){
 
     // Notes to numbers
 
@@ -204,46 +204,46 @@ function generate_harmonica_tab(tuneABC,harpKey){
     tab[0] = "x"; // unknown
 
     tab[1] = "1"; // C
-    tab[2] = "1'↑"; // C# / Db
-    tab[3] = "1↑"; // D
+    tab[2] = "1'-"; // C# / Db
+    tab[3] = "1-"; // D
     tab[4] = "1o"; // E# / Eb
     tab[5] = "2"; // E
-    tab[6] = "2''↑"; // F
-    tab[7] = "2'↑"; // F# / Gb
+    tab[6] = "2''-"; // F
+    tab[7] = "2'-"; // F# / Gb
     tab[8] = "3"; // G
-    tab[9] = "3'''↑"; // G# / Ab
-    tab[10] = "3''↑"; // A
-    tab[11] = "3'↑"; // A# / Bb
-    tab[12] = "3↑"; // B
+    tab[9] = "3'''-"; // G# / Ab
+    tab[10] = "3''-"; // A
+    tab[11] = "3'-"; // A# / Bb
+    tab[12] = "3-"; // B
 
     tab[13] = "4"; // C
-    tab[14] = "4'↑"; // C# / Db
-    tab[15] = "4↑"; // D
+    tab[14] = "4'-"; // C# / Db
+    tab[15] = "4-"; // D
     tab[16] = "4o"; // E# / Eb
     tab[17] = "5"; // E
-    tab[18] = "5↑"; // F
+    tab[18] = "5-"; // F
     tab[19] = "5o"; // F# / Gb
     tab[20] = "6"; // G
-    tab[21] = "6'↑"; // G# / Ab
-    tab[22] = "6↑"; // A
+    tab[21] = "6'-"; // G# / Ab
+    tab[22] = "6-"; // A
     tab[23] = "6o"; // A# / Bb
-    tab[24] = "7↑"; // B
+    tab[24] = "7-"; // B
 
     tab[25] = "7"; // C
-    tab[26] = "7o↑"; // C# / Db
-    tab[27] = "8↑"; // D
+    tab[26] = "7o-"; // C# / Db
+    tab[27] = "8-"; // D
     tab[28] = "8'"; // E# / Eb
     tab[29] = "8"; // E
-    tab[30] = "9↑"; // F
+    tab[30] = "9-"; // F
     tab[31] = "9'"; // F# / Gb
     tab[32] = "9"; // G
-    tab[33] = "9o↑"; // G# / Ab
-    tab[34] = "10↑"; // A
+    tab[33] = "9o-"; // G# / Ab
+    tab[34] = "10-"; // A
     tab[35] = "10''"; // A# / Bb
     tab[36] = "10'"; // B
 
     tab[37] = "10"; // C
-    tab[38] = "10o↑'"; // C#
+    tab[38] = "10o-'"; // C#
 
     // Set up defaults
     let keySig = "C";
@@ -254,6 +254,15 @@ function generate_harmonica_tab(tuneABC,harpKey){
 
     // Set the harp key
     setHarpKey(harpKey);
+
+    // Set the octave
+    if (octaveShift == "-1"){
+        octaveAdjust = -12;
+    }
+    else
+    if (octaveShift == "1"){
+        octaveAdjust = 12;
+    }
 
     var theOutput = "";
 
@@ -277,11 +286,7 @@ function generate_harmonica_tab(tuneABC,harpKey){
 
                 abcHeaderDone = true;
 
-                octaveAdjust = 0;
                 keySig = match[1];  // note for future: need to adjust for treble+-8
-
-                if (/treble\+8/.test(keySig)) { octaveAdjust = 12; }
-                if (/treble\-8/.test(keySig)) { octaveAdjust = -12; }
                 
                 keySig = keySig.replace(/\s?(treble[+-]?\d?|bass\d?|alto\d?|none|perc)/, '');
                 keySig = keySig.replace(/\s?major/, '');
@@ -320,8 +325,19 @@ function generate_harmonica_tab(tuneABC,harpKey){
 
                 if (verbose) { console.log(`Key signature: ${keySig}`); }
 
-                theOutput+=(`%%text ${harpKey} Harp\n`);
-                theOutput+=("%%text ↑=Draw, ' = Bend, o = Overbend\n");
+                if (octaveAdjust == 0){
+                    theOutput+=("%%text "+harpKey+" Harp\n");
+                }
+                else
+                if (octaveAdjust == -12){
+                    theOutput+=("%%text "+harpKey+" Harp / -1 Octave\n");
+                }
+                else
+                if (octaveAdjust == 12){
+                    theOutput+=("%%text "+harpKey+" Harp / +1 Octave\n");
+                }
+
+                theOutput+=("%%text - = Draw, ' '' ''' = Bend, o = Overbend\n");
                 theOutput+=("%%text\n");
 
 
@@ -386,7 +402,9 @@ function generate_harmonica_tab(tuneABC,harpKey){
 
                     note = tab[noteIndex];
 
-                    if (note === "x") { console.log(`Line ${lineCount}: Warning: ${abcNote} is not playable on the ${harpKey} harp`); }
+                    if (verbose){
+                        if (note === "x") { console.log(`Line ${lineCount}: Warning: ${abcNote} is not playable on the ${harpKey} harp`); }
+                    }
 
                     outNotes.push(note);
                 }
@@ -501,6 +519,7 @@ function generateTablature() {
     var musicSpace = document.getElementById('music_space').value
     var staffSep = document.getElementById('staff_sep').value;
     var harpKey = document.getElementById('harp_key').value;
+    var octaveShift = document.getElementById('octave_shift').value;
 
     var result = "";
 
@@ -508,7 +527,7 @@ function generateTablature() {
 
         var thisTune = getTuneByIndex(theABC, i);
 
-        thisTune = generate_harmonica_tab(thisTune,harpKey)
+        thisTune = generate_harmonica_tab(thisTune,harpKey,octaveShift)
 
         thisTune = InjectOneDirective(thisTune, "%%musicspace " + musicSpace);
         thisTune = InjectOneDirective(thisTune, "%%staffsep " + staffSep);
@@ -847,6 +866,7 @@ function DoStartup() {
     document.getElementById('staff_sep').value = 80;
     document.getElementById('music_space').value = 10;
     document.getElementById('harp_key').selectedIndex = 5;
+    document.getElementById('octave_shift').selectedIndex = 1;
 
     var theValue = "";
     theValue += "X: 1\n";
