@@ -516,6 +516,8 @@ function generateTablature() {
         thisTune = InjectOneDirective(thisTune, "%%infofont " + fontFamily + " " + infoFontSize);
         thisTune = InjectOneDirective(thisTune, "%%subtitlefont " + fontFamily + " " + subtitleFontSize);
         thisTune = InjectOneDirective(thisTune, "%%titlefont " + fontFamily + " " + titleFontSize);
+        thisTune = InjectOneDirective(thisTune, "%abcjs_soundfont mscore");
+        thisTune = InjectOneDirective(thisTune, "%%MIDI program 22");
 
         result += thisTune;
 
