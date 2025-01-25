@@ -843,7 +843,7 @@ function DoStartup() {
     document.getElementById('title_font_size').value = 22;
     document.getElementById('subtitle_font_size').value = 18;
     document.getElementById('info_font_size').value = 14;
-    document.getElementById('tab_font_size').value = 10;
+    document.getElementById('tab_font_size').value = 11;
     document.getElementById('staff_sep').value = 80;
     document.getElementById('music_space').value = 10;
     document.getElementById('harp_key').selectedIndex = 5;
