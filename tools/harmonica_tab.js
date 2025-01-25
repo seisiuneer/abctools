@@ -917,7 +917,7 @@ function DoStartup() {
     document.getElementById('music_space').value = 10;
     document.getElementById('harp_key').selectedIndex = 5;
     document.getElementById('octave_shift').selectedIndex = 1;
-    document.getElementById('blowPlus').checked = true;
+    document.getElementById('blowPlus').checked = false;
 
     var theValue = "";
     theValue += "X: 1\n";
