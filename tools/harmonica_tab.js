@@ -25,7 +25,7 @@ var keySignature = null;
 // Suggested filename for save
 var gSaveFilename = "";
 
-function generate_harmonica_tab(tuneABC,harpKey,octaveShift){
+function generate_harmonica_tab(tuneABC,harpKey,octaveShift,blowPlus){
 
     // Notes to numbers
 
@@ -203,47 +203,92 @@ function generate_harmonica_tab(tuneABC,harpKey,octaveShift){
 
     tab[0] = "x"; // unknown
 
-    tab[1] = "1"; // C
-    tab[2] = "–1'"; // C# / Db
-    tab[3] = "–1"; // D
-    tab[4] = "1o"; // E# / Eb
-    tab[5] = "2"; // E
-    tab[6] = "–2''"; // F
-    tab[7] = "–2'"; // F# / Gb
-    tab[8] = "3"; // G
-    tab[9] = "–3'''"; // G# / Ab
-    tab[10] = "–3''"; // A
-    tab[11] = "–3'"; // A# / Bb
-    tab[12] = "–3"; // B
+    if (!blowPlus){
+        tab[1] = "1"; // C
+        tab[2] = "–1'"; // C# / Db
+        tab[3] = "–1"; // D
+        tab[4] = "1o"; // E# / Eb
+        tab[5] = "2"; // E
+        tab[6] = "–2''"; // F
+        tab[7] = "–2'"; // F# / Gb
+        tab[8] = "3"; // G
+        tab[9] = "–3'''"; // G# / Ab
+        tab[10] = "–3''"; // A
+        tab[11] = "–3'"; // A# / Bb
+        tab[12] = "–3"; // B
 
-    tab[13] = "4"; // C
-    tab[14] = "–4'"; // C# / Db
-    tab[15] = "–4"; // D
-    tab[16] = "4o"; // E# / Eb
-    tab[17] = "5"; // E
-    tab[18] = "–5"; // F
-    tab[19] = "5o"; // F# / Gb
-    tab[20] = "6"; // G
-    tab[21] = "–6'"; // G# / Ab
-    tab[22] = "–6"; // A
-    tab[23] = "6o"; // A# / Bb
-    tab[24] = "–7"; // B
+        tab[13] = "4"; // C
+        tab[14] = "–4'"; // C# / Db
+        tab[15] = "–4"; // D
+        tab[16] = "4o"; // E# / Eb
+        tab[17] = "5"; // E
+        tab[18] = "–5"; // F
+        tab[19] = "5o"; // F# / Gb
+        tab[20] = "6"; // G
+        tab[21] = "–6'"; // G# / Ab
+        tab[22] = "–6"; // A
+        tab[23] = "6o"; // A# / Bb
+        tab[24] = "–7"; // B
 
-    tab[25] = "7"; // C
-    tab[26] = "–7o"; // C# / Db
-    tab[27] = "–8"; // D
-    tab[28] = "8'"; // E# / Eb
-    tab[29] = "8"; // E
-    tab[30] = "–9"; // F
-    tab[31] = "9'"; // F# / Gb
-    tab[32] = "9"; // G
-    tab[33] = "–9o"; // G# / Ab
-    tab[34] = "–10"; // A
-    tab[35] = "10''"; // A# / Bb
-    tab[36] = "10'"; // B
+        tab[25] = "7"; // C
+        tab[26] = "–7o"; // C# / Db
+        tab[27] = "–8"; // D
+        tab[28] = "8'"; // E# / Eb
+        tab[29] = "8"; // E
+        tab[30] = "–9"; // F
+        tab[31] = "9'"; // F# / Gb
+        tab[32] = "9"; // G
+        tab[33] = "–9o"; // G# / Ab
+        tab[34] = "–10"; // A
+        tab[35] = "10''"; // A# / Bb
+        tab[36] = "10'"; // B
 
-    tab[37] = "10"; // C
-    tab[38] = "–10o'"; // C#
+        tab[37] = "10"; // C
+        tab[38] = "–10o'"; // C#
+    }
+    else{
+        tab[1] = "+1"; // C
+        tab[2] = "–1'"; // C# / Db
+        tab[3] = "–1"; // D
+        tab[4] = "+1o"; // E# / Eb
+        tab[5] = "+2"; // E
+        tab[6] = "–2''"; // F
+        tab[7] = "–2'"; // F# / Gb
+        tab[8] = "+3"; // G
+        tab[9] = "–3'''"; // G# / Ab
+        tab[10] = "–3''"; // A
+        tab[11] = "–3'"; // A# / Bb
+        tab[12] = "–3"; // B
+
+        tab[13] = "+4"; // C
+        tab[14] = "–4'"; // C# / Db
+        tab[15] = "–4"; // D
+        tab[16] = "+4o"; // E# / Eb
+        tab[17] = "+5"; // E
+        tab[18] = "–5"; // F
+        tab[19] = "+5o"; // F# / Gb
+        tab[20] = "+6"; // G
+        tab[21] = "–6'"; // G# / Ab
+        tab[22] = "–6"; // A
+        tab[23] = "+6o"; // A# / Bb
+        tab[24] = "–7"; // B
+
+        tab[25] = "+7"; // C
+        tab[26] = "–7o"; // C# / Db
+        tab[27] = "–8"; // D
+        tab[28] = "+8'"; // E# / Eb
+        tab[29] = "+8"; // E
+        tab[30] = "–9"; // F
+        tab[31] = "+9'"; // F# / Gb
+        tab[32] = "+9"; // G
+        tab[33] = "–9o"; // G# / Ab
+        tab[34] = "–10"; // A
+        tab[35] = "+10''"; // A# / Bb
+        tab[36] = "+10'"; // B
+
+        tab[37] = "+10"; // C
+        tab[38] = "–10o'"; // C#
+    }
 
     // Set up defaults
     let keySig = "C";
@@ -337,9 +382,13 @@ function generate_harmonica_tab(tuneABC,harpKey,octaveShift){
                     theOutput+=("%%text "+harpKey+" Harp / +1 Octave\n");
                 }
 
-                theOutput+=("%%text - = Draw, ' '' ''' = Bend, o = Overbend\n");
+                if (!blowPlus){
+                    theOutput+=("%%text - = Draw, ' '' ''' = Bend, o = Overbend\n");
+                }
+                else{
+                    theOutput+=("%%text + = Blow, - = Draw, ' '' ''' = Bend, o = Overbend\n");
+                }
                 theOutput+=("%%text\n");
-
 
              }
         } else {
@@ -520,6 +569,7 @@ function generateTablature() {
     var staffSep = document.getElementById('staff_sep').value;
     var harpKey = document.getElementById('harp_key').value;
     var octaveShift = document.getElementById('octave_shift').value;
+    var blowPlus = document.getElementById('blowPlus').checked;
 
     var result = "";
 
@@ -527,7 +577,7 @@ function generateTablature() {
 
         var thisTune = getTuneByIndex(theABC, i);
 
-        thisTune = generate_harmonica_tab(thisTune,harpKey,octaveShift)
+        thisTune = generate_harmonica_tab(thisTune,harpKey,octaveShift,blowPlus)
 
         thisTune = InjectOneDirective(thisTune, "%%musicspace " + musicSpace);
         thisTune = InjectOneDirective(thisTune, "%%staffsep " + staffSep);
@@ -867,6 +917,7 @@ function DoStartup() {
     document.getElementById('music_space').value = 10;
     document.getElementById('harp_key').selectedIndex = 5;
     document.getElementById('octave_shift').selectedIndex = 1;
+    document.getElementById('blowPlus').checked = true;
 
     var theValue = "";
     theValue += "X: 1\n";
