@@ -8230,6 +8230,7 @@ var HarmonicaTabGenerator = function (theABC){
                     keySig = keySig.replace(/\s?major/, '');
                     keySig = keySig.replace(/\s?Major/, '');
                     keySig = keySig.replace(/\s?maj/, '');
+                    keySig = keySig.replace(/\s?Maj/, '');
                                     
                     keySig = keySig.replace(/^([A-G])#/, '^$1');
                     keySig = keySig.replace(/^([A-G])b/, '_$1');
