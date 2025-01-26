@@ -8319,8 +8319,8 @@ var HarmonicaTabGenerator = function (theABC){
                 harpLine = harpLine.replace(/\(([^()]*)\)/g, '$1');     // "de"-slur
                 harpLine = harpLine.replace(/\[([\^_=]*?[A-Ga-gzx][\,']*).*?\]/g, '$1');    // "de"-chord
                 harpLine = harpLine.replace(/\(\d/g, '');       // "de"-tuplet
+                harpLine = harpLine.replace(/\|\d/g, '');       // remove numbered repeats
                 harpLine = harpLine.replace(/[\|\]:]/g, '');    // remove barlines
-                harpLine = harpLine.replace(/\[\d/g, '');       // remove numbered repeats
 
                 harpLine = harpLine.replace(/([\^_=]*?[A-Ga-gzx][\,']*)\d?\/?\*?/g, '$1 ');
 
