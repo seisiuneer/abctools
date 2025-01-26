@@ -8022,6 +8022,9 @@ var HarmonicaTabGenerator = function (theABC){
 
         // Fixes the abc notes by applying the flats and sharps accordingly
         function getTrueNote(note, key) {
+
+            //debugger;
+
             let n;
             let k;
 
@@ -8035,6 +8038,13 @@ var HarmonicaTabGenerator = function (theABC){
             // Okay, let's look at the key sig
             // Sharps
             n = getNote(note);
+            
+            // MAE 26 Jan 2025
+            // Bug in first note of the harp
+            if (n==0){
+                return 1;
+            }
+
             if (/__/.test(note)) { return n; }  // double flats
             if (/\^\^/.test(note)) { return n; }    // double sharps
 
@@ -8094,92 +8104,188 @@ var HarmonicaTabGenerator = function (theABC){
 
         tab[0] = "x"; // unknown
 
-        if (!blowPlus){
-            tab[1] = "1"; // C
-            tab[2] = "–1'"; // C# / Db
-            tab[3] = "–1"; // D
-            tab[4] = "1o"; // E# / Eb
-            tab[5] = "2"; // E
-            tab[6] = "–2''"; // F
-            tab[7] = "–2'"; // F# / Gb
-            tab[8] = "3"; // G
-            tab[9] = "–3'''"; // G# / Ab
-            tab[10] = "–3''"; // A
-            tab[11] = "–3'"; // A# / Bb
-            tab[12] = "–3"; // B
+        switch (gHarmonicaStyle){
+            
+            case "0":
+            default:
 
-            tab[13] = "4"; // C
-            tab[14] = "–4'"; // C# / Db
-            tab[15] = "–4"; // D
-            tab[16] = "4o"; // E# / Eb
-            tab[17] = "5"; // E
-            tab[18] = "–5"; // F
-            tab[19] = "5o"; // F# / Gb
-            tab[20] = "6"; // G
-            tab[21] = "–6'"; // G# / Ab
-            tab[22] = "–6"; // A
-            tab[23] = "6o"; // A# / Bb
-            tab[24] = "–7"; // B
+            if (!blowPlus){
+                tab[1] = "1"; // C
+                tab[2] = "–1'"; // C# / Db
+                tab[3] = "–1"; // D
+                tab[4] = "1o"; // E# / Eb
+                tab[5] = "2"; // E
+                tab[6] = "–2''"; // F
+                tab[7] = "–2'"; // F# / Gb
+                tab[8] = "3"; // G
+                tab[9] = "–3'''"; // G# / Ab
+                tab[10] = "–3''"; // A
+                tab[11] = "–3'"; // A# / Bb
+                tab[12] = "–3"; // B
 
-            tab[25] = "7"; // C
-            tab[26] = "–7o"; // C# / Db
-            tab[27] = "–8"; // D
-            tab[28] = "8'"; // E# / Eb
-            tab[29] = "8"; // E
-            tab[30] = "–9"; // F
-            tab[31] = "9'"; // F# / Gb
-            tab[32] = "9"; // G
-            tab[33] = "–9o"; // G# / Ab
-            tab[34] = "–10"; // A
-            tab[35] = "10''"; // A# / Bb
-            tab[36] = "10'"; // B
+                tab[13] = "4"; // C
+                tab[14] = "–4'"; // C# / Db
+                tab[15] = "–4"; // D
+                tab[16] = "4o"; // E# / Eb
+                tab[17] = "5"; // E
+                tab[18] = "–5"; // F
+                tab[19] = "5o"; // F# / Gb
+                tab[20] = "6"; // G
+                tab[21] = "–6'"; // G# / Ab
+                tab[22] = "–6"; // A
+                tab[23] = "6o"; // A# / Bb
+                tab[24] = "–7"; // B
 
-            tab[37] = "10"; // C
-            tab[38] = "–10o'"; // C#
-        }
-        else{
-            tab[1] = "+1"; // C
-            tab[2] = "–1'"; // C# / Db
-            tab[3] = "–1"; // D
-            tab[4] = "+1o"; // E# / Eb
-            tab[5] = "+2"; // E
-            tab[6] = "–2''"; // F
-            tab[7] = "–2'"; // F# / Gb
-            tab[8] = "+3"; // G
-            tab[9] = "–3'''"; // G# / Ab
-            tab[10] = "–3''"; // A
-            tab[11] = "–3'"; // A# / Bb
-            tab[12] = "–3"; // B
+                tab[25] = "7"; // C
+                tab[26] = "–7o"; // C# / Db
+                tab[27] = "–8"; // D
+                tab[28] = "8'"; // E# / Eb
+                tab[29] = "8"; // E
+                tab[30] = "–9"; // F
+                tab[31] = "9'"; // F# / Gb
+                tab[32] = "9"; // G
+                tab[33] = "–9o"; // G# / Ab
+                tab[34] = "–10"; // A
+                tab[35] = "10''"; // A# / Bb
+                tab[36] = "10'"; // B
 
-            tab[13] = "+4"; // C
-            tab[14] = "–4'"; // C# / Db
-            tab[15] = "–4"; // D
-            tab[16] = "+4o"; // E# / Eb
-            tab[17] = "+5"; // E
-            tab[18] = "–5"; // F
-            tab[19] = "+5o"; // F# / Gb
-            tab[20] = "+6"; // G
-            tab[21] = "–6'"; // G# / Ab
-            tab[22] = "–6"; // A
-            tab[23] = "+6o"; // A# / Bb
-            tab[24] = "–7"; // B
+                tab[37] = "10"; // C
+                tab[38] = "–10o'"; // C#
+            }
+            else{
+                tab[1] = "+1"; // C
+                tab[2] = "–1'"; // C# / Db
+                tab[3] = "–1"; // D
+                tab[4] = "+1o"; // E# / Eb
+                tab[5] = "+2"; // E
+                tab[6] = "–2''"; // F
+                tab[7] = "–2'"; // F# / Gb
+                tab[8] = "+3"; // G
+                tab[9] = "–3'''"; // G# / Ab
+                tab[10] = "–3''"; // A
+                tab[11] = "–3'"; // A# / Bb
+                tab[12] = "–3"; // B
 
-            tab[25] = "+7"; // C
-            tab[26] = "–7o"; // C# / Db
-            tab[27] = "–8"; // D
-            tab[28] = "+8'"; // E# / Eb
-            tab[29] = "+8"; // E
-            tab[30] = "–9"; // F
-            tab[31] = "+9'"; // F# / Gb
-            tab[32] = "+9"; // G
-            tab[33] = "–9o"; // G# / Ab
-            tab[34] = "–10"; // A
-            tab[35] = "+10''"; // A# / Bb
-            tab[36] = "+10'"; // B
+                tab[13] = "+4"; // C
+                tab[14] = "–4'"; // C# / Db
+                tab[15] = "–4"; // D
+                tab[16] = "+4o"; // E# / Eb
+                tab[17] = "+5"; // E
+                tab[18] = "–5"; // F
+                tab[19] = "+5o"; // F# / Gb
+                tab[20] = "+6"; // G
+                tab[21] = "–6'"; // G# / Ab
+                tab[22] = "–6"; // A
+                tab[23] = "+6o"; // A# / Bb
+                tab[24] = "–7"; // B
 
-            tab[37] = "+10"; // C
-            tab[38] = "–10o'"; // C#
-        }
+                tab[25] = "+7"; // C
+                tab[26] = "–7o"; // C# / Db
+                tab[27] = "–8"; // D
+                tab[28] = "+8'"; // E# / Eb
+                tab[29] = "+8"; // E
+                tab[30] = "–9"; // F
+                tab[31] = "+9'"; // F# / Gb
+                tab[32] = "+9"; // G
+                tab[33] = "–9o"; // G# / Ab
+                tab[34] = "–10"; // A
+                tab[35] = "+10''"; // A# / Bb
+                tab[36] = "+10'"; // B
+
+                tab[37] = "+10"; // C
+                tab[38] = "–10o'"; // C#
+            }
+            break;
+
+            case "1":
+            if (!blowPlus){
+                tab[1] = "1"; // C
+                tab[2] = "–1'"; // C# / Db
+                tab[3] = "–1"; // D
+                tab[4] = "1o"; // E# / Eb
+                tab[5] = "2"; // E
+                tab[6] = "–2''"; // F
+                tab[7] = "–2'"; // F# / Gb
+                tab[8] = "–2"; // G
+                tab[9] = "–3'''"; // G# / Ab
+                tab[10] = "3"; // A
+                tab[11] = "–3'"; // A# / Bb
+                tab[12] = "–3"; // B
+
+                tab[13] = "4"; // C
+                tab[14] = "–4'"; // C# / Db
+                tab[15] = "–4"; // D
+                tab[16] = "4o"; // E# / Eb
+                tab[17] = "5"; // E
+                tab[18] = "–5"; // F
+                tab[19] = "5o"; // F# / Gb
+                tab[20] = "6"; // G
+                tab[21] = "–6'"; // G# / Ab
+                tab[22] = "–6"; // A
+                tab[23] = "6o"; // A# / Bb
+                tab[24] = "–7"; // B
+
+                tab[25] = "7"; // C
+                tab[26] = "–7o"; // C# / Db
+                tab[27] = "–8"; // D
+                tab[28] = "8'"; // E# / Eb
+                tab[29] = "8"; // E
+                tab[30] = "–9"; // F
+                tab[31] = "9'"; // F# / Gb
+                tab[32] = "9"; // G
+                tab[33] = "–9o"; // G# / Ab
+                tab[34] = "–10"; // A
+                tab[35] = "10''"; // A# / Bb
+                tab[36] = "10'"; // B
+
+                tab[37] = "10"; // C
+                tab[38] = "–10o'"; // C#
+            }
+            else{
+                tab[1] = "+1"; // C
+                tab[2] = "–1'"; // C# / Db
+                tab[3] = "–1"; // D
+                tab[4] = "+1o"; // E# / Eb
+                tab[5] = "+2"; // E
+                tab[6] = "–2''"; // F
+                tab[7] = "–2'"; // F# / Gb
+                tab[8] = "–2"; // G
+                tab[9] = "–3'''"; // G# / Ab
+                tab[10] = "+3"; // A
+                tab[11] = "–3'"; // A# / Bb
+                tab[12] = "–3"; // B
+
+                tab[13] = "+4"; // C
+                tab[14] = "–4'"; // C# / Db
+                tab[15] = "–4"; // D
+                tab[16] = "+4o"; // E# / Eb
+                tab[17] = "+5"; // E
+                tab[18] = "–5"; // F
+                tab[19] = "+5o"; // F# / Gb
+                tab[20] = "+6"; // G
+                tab[21] = "–6'"; // G# / Ab
+                tab[22] = "–6"; // A
+                tab[23] = "+6o"; // A# / Bb
+                tab[24] = "–7"; // B
+
+                tab[25] = "+7"; // C
+                tab[26] = "–7o"; // C# / Db
+                tab[27] = "–8"; // D
+                tab[28] = "+8'"; // E# / Eb
+                tab[29] = "+8"; // E
+                tab[30] = "–9"; // F
+                tab[31] = "+9'"; // F# / Gb
+                tab[32] = "+9"; // G
+                tab[33] = "–9o"; // G# / Ab
+                tab[34] = "–10"; // A
+                tab[35] = "+10''"; // A# / Bb
+                tab[36] = "+10'"; // B
+
+                tab[37] = "+10"; // C
+                tab[38] = "–10o'"; // C#
+            } 
+            break;   
+        }        
 
         // Set up defaults
         let keySig = "C";
@@ -8280,16 +8386,32 @@ var HarmonicaTabGenerator = function (theABC){
 
                     if (verbose) { console.log(`Key signature: ${keySig}`); }
 
-                    if (octaveAdjust == 0){
-                        theOutput+=("%%text "+harpKey+" Harp\n");
+                    if (gHarmonicaStyle == "0"){
+                        if (octaveAdjust == 0){
+                            theOutput+=("%%text "+harpKey+" Harp (Standard Richter)\n");
+                        }
+                        else
+                        if (octaveAdjust == -12){
+                            theOutput+=("%%text "+harpKey+" Harp / -1 Octave (Standard Richter)\n");
+                        }
+                        else
+                        if (octaveAdjust == 12){
+                            theOutput+=("%%text "+harpKey+" Harp / +1 Octave (Standard Richter)\n");
+                        }
                     }
-                    else
-                    if (octaveAdjust == -12){
-                        theOutput+=("%%text "+harpKey+" Harp / -1 Octave\n");
-                    }
-                    else
-                    if (octaveAdjust == 12){
-                        theOutput+=("%%text "+harpKey+" Harp / +1 Octave\n");
+                    else{
+                        if (octaveAdjust == 0){
+                            theOutput+=("%%text "+harpKey+" Harp (Paddy Richter)\n");
+                        }
+                        else
+                        if (octaveAdjust == -12){
+                            theOutput+=("%%text "+harpKey+" Harp / -1 Octave (Paddy Richter)\n");
+                        }
+                        else
+                        if (octaveAdjust == 12){
+                            theOutput+=("%%text "+harpKey+" Harp / +1 Octave (Paddy Richter)\n");
+                        }
+
                     }
 
                     theOutput+=("%%vskip 15\n");
@@ -8347,13 +8469,16 @@ var HarmonicaTabGenerator = function (theABC){
 
                         let noteIndex = getTrueNote(abcNote, keySig) + octaveAdjust + transposeHarp;
 
-                        if (verbose){console.log("abcNote: "+abcNote+" noteIndex: "+noteIndex);}
+                        //if (verbose){console.log("abcNote: "+abcNote+" noteIndex: "+noteIndex);}
                         
                         if (noteIndex < 0) { noteIndex = 0; }
 
                         if (noteIndex > 38) { noteIndex = 0; }
 
                         note = tab[noteIndex];
+
+                        if (verbose){console.log("abcNote: "+abcNote+" noteIndex: "+noteIndex+" note: "+note);}
+
 
                         if (verbose){
                             if (note === "x") { console.log(`Line ${lineCount}: Warning: ${abcNote} is not playable on the ${harpKey} harp`); }

@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2276_012525_2030";
+var gVersionNumber="2277_012625_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -23798,9 +23798,15 @@ function DoInjectHarmonicaTab(){
 	    { name: "  1", id: "1" }
   	];
 
+  	const harmonica_styles = [
+	    { name: "  Standard Richter", id: "0" },
+	    { name: "  Paddy Richter", id: "1" }
+  	];
+
 
 	// Setup initial values
 	const theData = {
+	  configure_harmonica_style:gHarmonicaStyle,
 	  configure_harmonica_key:gHarmonicaKey,
 	  configure_harmonica_octave:gHarmonicaOctave,
 	  configure_harmonica_plussign:gHarmonicaPlusSign
@@ -23808,7 +23814,8 @@ function DoInjectHarmonicaTab(){
 
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Diatonic Harmonica Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_harmonica" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
-	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject tablature for a 10-hole diatonic harmonica in the key selected below into all of the tunes in the ABC text area:</p>'},	  
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject tablature for a 10-hole diatonic harmonica in the harmonica style and key selected below into all of the tunes in the ABC text area:</p>'},	  
+	  {name: "Harmonica style:", id: "configure_harmonica_style", type:"select", options:harmonica_styles, cssClass:"configure_harmonica_style_select"}, 
 	  {name: "Harmonica key:", id: "configure_harmonica_key", type:"select", options:harmonica_keys, cssClass:"configure_harmonica_select"}, 
 	  {name: "Octave shift:", id: "configure_harmonica_octave", type:"select", options:harmonica_octaves, cssClass:"configure_harmonica_select"}, 
 	  {name: "    Include + before blow notes in tablature", id: "configure_harmonica_plussign", type:"checkbox", cssClass:"configure_harmonica_settings_form_text"},
@@ -23820,6 +23827,7 @@ function DoInjectHarmonicaTab(){
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
 
+			gHarmonicaStyle = args.result.configure_harmonica_style;
 			gHarmonicaKey = args.result.configure_harmonica_key; 
 			gHarmonicaOctave = args.result.configure_harmonica_octave; 
 			gHarmonicaPlusSign = args.result.configure_harmonica_plussign;
@@ -35910,6 +35918,7 @@ var gMDulcimerStripBadTunes = false; // Don't strip bad tunes on MD injection
 var gMDulcimerUseDashForOpenString = false; // Use a space for open strings
 
 // Harmonica tab
+var gHarmonicaStyle = "0";
 var gHarmonicaKey = "C";
 var gHarmonicaOctave = "0";
 var gHarmonicaPlusSign = false;
@@ -36160,6 +36169,14 @@ function GetInitialConfigurationSettings(){
 	}
 
 	// Harmonica
+	val = localStorage.HarmonicaStyle;
+	if (val){
+		gHarmonicaStyle = val;
+	}
+	else{
+		gHarmonicaStyle = "0";
+	}
+
 	val = localStorage.HarmonicaKey;
 	if (val){
 		gHarmonicaKey = val;
@@ -36954,6 +36971,7 @@ function SaveConfigurationSettings(){
 		localStorage.TrainerTouchControls = gTrainerTouchControls;
 
 		// Harmonica tab settings
+		localStorage.HarmonicaStyle = gHarmonicaStyle;		
 		localStorage.HarmonicaKey = gHarmonicaKey;
 		localStorage.HarmonicaOctave = gHarmonicaOctave;
 		localStorage.HarmonicaPlusSign = gHarmonicaPlusSign;
