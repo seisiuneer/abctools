@@ -8106,14 +8106,13 @@ var HarmonicaTabGenerator = function (theABC){
 
         switch (gHarmonicaStyle){
             
+            // Standard Richter
             case "0":
-            default:
 
-            if (!blowPlus){
                 tab[1] = "1"; // C
                 tab[2] = "–1'"; // C# / Db
                 tab[3] = "–1"; // D
-                tab[4] = "1o"; // E# / Eb
+                tab[4] = "1o"; // D# / Eb
                 tab[5] = "2"; // E
                 tab[6] = "–2''"; // F
                 tab[7] = "–2'"; // F# / Gb
@@ -8139,7 +8138,7 @@ var HarmonicaTabGenerator = function (theABC){
                 tab[25] = "7"; // C
                 tab[26] = "–7o"; // C# / Db
                 tab[27] = "–8"; // D
-                tab[28] = "8'"; // E# / Eb
+                tab[28] = "8'"; // D# / Eb
                 tab[29] = "8"; // E
                 tab[30] = "–9"; // F
                 tab[31] = "9'"; // F# / Gb
@@ -8151,58 +8150,15 @@ var HarmonicaTabGenerator = function (theABC){
 
                 tab[37] = "10"; // C
                 tab[38] = "–10o'"; // C#
-            }
-            else{
-                tab[1] = "+1"; // C
-                tab[2] = "–1'"; // C# / Db
-                tab[3] = "–1"; // D
-                tab[4] = "+1o"; // E# / Eb
-                tab[5] = "+2"; // E
-                tab[6] = "–2''"; // F
-                tab[7] = "–2'"; // F# / Gb
-                tab[8] = "+3"; // G
-                tab[9] = "–3'''"; // G# / Ab
-                tab[10] = "–3''"; // A
-                tab[11] = "–3'"; // A# / Bb
-                tab[12] = "–3"; // B
+ 
+                break;
 
-                tab[13] = "+4"; // C
-                tab[14] = "–4'"; // C# / Db
-                tab[15] = "–4"; // D
-                tab[16] = "+4o"; // E# / Eb
-                tab[17] = "+5"; // E
-                tab[18] = "–5"; // F
-                tab[19] = "+5o"; // F# / Gb
-                tab[20] = "+6"; // G
-                tab[21] = "–6'"; // G# / Ab
-                tab[22] = "–6"; // A
-                tab[23] = "+6o"; // A# / Bb
-                tab[24] = "–7"; // B
-
-                tab[25] = "+7"; // C
-                tab[26] = "–7o"; // C# / Db
-                tab[27] = "–8"; // D
-                tab[28] = "+8'"; // E# / Eb
-                tab[29] = "+8"; // E
-                tab[30] = "–9"; // F
-                tab[31] = "+9'"; // F# / Gb
-                tab[32] = "+9"; // G
-                tab[33] = "–9o"; // G# / Ab
-                tab[34] = "–10"; // A
-                tab[35] = "+10''"; // A# / Bb
-                tab[36] = "+10'"; // B
-
-                tab[37] = "+10"; // C
-                tab[38] = "–10o'"; // C#
-            }
-            break;
-
+            // Paddy Richter
             case "1":
-            if (!blowPlus){
                 tab[1] = "1"; // C
                 tab[2] = "–1'"; // C# / Db
                 tab[3] = "–1"; // D
-                tab[4] = "1o"; // E# / Eb
+                tab[4] = "1o"; // D# / Eb
                 tab[5] = "2"; // E
                 tab[6] = "–2''"; // F
                 tab[7] = "–2'"; // F# / Gb
@@ -8228,6 +8184,52 @@ var HarmonicaTabGenerator = function (theABC){
                 tab[25] = "7"; // C
                 tab[26] = "–7o"; // C# / Db
                 tab[27] = "–8"; // D
+                tab[28] = "8'"; // D# / Eb
+                tab[29] = "8"; // E
+                tab[30] = "–9"; // F
+                tab[31] = "9'"; // F# / Gb
+                tab[32] = "9"; // G
+                tab[33] = "–9o"; // G# / Ab
+                tab[34] = "–10"; // A
+                tab[35] = "10''"; // A# / Bb
+                tab[36] = "10'"; // B
+
+                tab[37] = "10"; // C
+                tab[38] = "–10o'"; // C#
+
+                break;   
+
+            // Easy Thirds
+            case "2":
+                tab[1] = "1"; // C
+                tab[2] = "–1'"; // C# / Db
+                tab[3] = "–1"; // D
+                tab[4] = "1o"; // D# / Eb
+                tab[5] = "2"; // E
+                tab[6] = "–2"; // F
+                tab[7] = "x"; // F# / Gb FOO was "–3''"
+                tab[8] = "3"; // G
+                tab[9] = "–3'"; // G# / Ab
+                tab[10] = "–3"; // A
+                tab[11] = "x"; // A# / Bb FOO was "–4'''"
+                tab[12] = "x"; // B FOO was "–4''"
+
+                tab[13] = "4"; // C
+                tab[14] = "–4'"; // C# / Db
+                tab[15] = "–4"; // D
+                tab[16] = "4o"; // D# / Eb
+                tab[17] = "5"; // E
+                tab[18] = "–5"; // F
+                tab[19] = "5o"; // F# / Gb
+                tab[20] = "6"; // G
+                tab[21] = "–6'"; // G# / Ab
+                tab[22] = "–6"; // A
+                tab[23] = "6o"; // A# / Bb
+                tab[24] = "–7"; // B
+
+                tab[25] = "7"; // C
+                tab[26] = "–7o"; // C# / Db
+                tab[27] = "–8"; // D
                 tab[28] = "8'"; // E# / Eb
                 tab[29] = "8"; // E
                 tab[30] = "–9"; // F
@@ -8240,51 +8242,53 @@ var HarmonicaTabGenerator = function (theABC){
 
                 tab[37] = "10"; // C
                 tab[38] = "–10o'"; // C#
-            }
-            else{
-                tab[1] = "+1"; // C
+                break;   
+            
+            // Standard Richter
+            default:
+                tab[1] = "1"; // C
                 tab[2] = "–1'"; // C# / Db
                 tab[3] = "–1"; // D
-                tab[4] = "+1o"; // E# / Eb
-                tab[5] = "+2"; // E
+                tab[4] = "1o"; // D# / Eb
+                tab[5] = "2"; // E
                 tab[6] = "–2''"; // F
                 tab[7] = "–2'"; // F# / Gb
-                tab[8] = "–2"; // G
+                tab[8] = "3"; // G
                 tab[9] = "–3'''"; // G# / Ab
-                tab[10] = "+3"; // A
+                tab[10] = "–3''"; // A
                 tab[11] = "–3'"; // A# / Bb
                 tab[12] = "–3"; // B
 
-                tab[13] = "+4"; // C
+                tab[13] = "4"; // C
                 tab[14] = "–4'"; // C# / Db
                 tab[15] = "–4"; // D
-                tab[16] = "+4o"; // E# / Eb
-                tab[17] = "+5"; // E
+                tab[16] = "4o"; // E# / Eb
+                tab[17] = "5"; // E
                 tab[18] = "–5"; // F
-                tab[19] = "+5o"; // F# / Gb
-                tab[20] = "+6"; // G
+                tab[19] = "5o"; // F# / Gb
+                tab[20] = "6"; // G
                 tab[21] = "–6'"; // G# / Ab
                 tab[22] = "–6"; // A
-                tab[23] = "+6o"; // A# / Bb
+                tab[23] = "6o"; // A# / Bb
                 tab[24] = "–7"; // B
 
-                tab[25] = "+7"; // C
+                tab[25] = "7"; // C
                 tab[26] = "–7o"; // C# / Db
                 tab[27] = "–8"; // D
-                tab[28] = "+8'"; // E# / Eb
-                tab[29] = "+8"; // E
+                tab[28] = "8'"; // D# / Eb
+                tab[29] = "8"; // E
                 tab[30] = "–9"; // F
-                tab[31] = "+9'"; // F# / Gb
-                tab[32] = "+9"; // G
+                tab[31] = "9'"; // F# / Gb
+                tab[32] = "9"; // G
                 tab[33] = "–9o"; // G# / Ab
                 tab[34] = "–10"; // A
-                tab[35] = "+10''"; // A# / Bb
-                tab[36] = "+10'"; // B
+                tab[35] = "10''"; // A# / Bb
+                tab[36] = "10'"; // B
 
-                tab[37] = "+10"; // C
+                tab[37] = "10"; // C
                 tab[38] = "–10o'"; // C#
-            } 
-            break;   
+ 
+                break;
         }        
 
         // Set up defaults
@@ -8386,33 +8390,33 @@ var HarmonicaTabGenerator = function (theABC){
 
                     if (verbose) { console.log(`Key signature: ${keySig}`); }
 
-                    if (gHarmonicaStyle == "0"){
-                        if (octaveAdjust == 0){
-                            theOutput+=("%%text "+harpKey+" Harp (Standard Richter)\n");
-                        }
-                        else
-                        if (octaveAdjust == -12){
-                            theOutput+=("%%text "+harpKey+" Harp / -1 Octave (Standard Richter)\n");
-                        }
-                        else
-                        if (octaveAdjust == 12){
-                            theOutput+=("%%text "+harpKey+" Harp / +1 Octave (Standard Richter)\n");
-                        }
-                    }
-                    else{
-                        if (octaveAdjust == 0){
-                            theOutput+=("%%text "+harpKey+" Harp (Paddy Richter)\n");
-                        }
-                        else
-                        if (octaveAdjust == -12){
-                            theOutput+=("%%text "+harpKey+" Harp / -1 Octave (Paddy Richter)\n");
-                        }
-                        else
-                        if (octaveAdjust == 12){
-                            theOutput+=("%%text "+harpKey+" Harp / +1 Octave (Paddy Richter)\n");
-                        }
+                    var postFix = "%%text "+harpKey+" Harp";
 
+                    if (octaveAdjust == 0){
+                        postFix="%%text "+harpKey+" Harp";
                     }
+                    else
+                    if (octaveAdjust == -12){
+                        postFix="%%text "+harpKey+" Harp / -1 Octave";
+                    }
+                    else
+                    if (octaveAdjust == 12){
+                        postFix="%%text "+harpKey+" Harp / +1 Octave";
+                    }
+
+                    switch (gHarmonicaStyle){
+                        case "0":
+                            postFix += " (Standard Richter)\n"
+                            break;
+                        case "1":
+                            postFix += " (Paddy Richter)\n"
+                            break;
+                        case "2":
+                            postFix += " (Easy Thirds)\n"
+                            break;
+                    }
+
+                    theOutput+=postFix;
 
                     theOutput+=("%%vskip 15\n");
 
@@ -8482,6 +8486,15 @@ var HarmonicaTabGenerator = function (theABC){
 
                         if (verbose){
                             if (note === "x") { console.log(`Line ${lineCount}: Warning: ${abcNote} is not playable on the ${harpKey} harp`); }
+                        }
+
+                        if (blowPlus){
+
+                            if (note != "x"){
+                                if (note.indexOf("–") == -1){
+                                    note = "+"+note;
+                                }
+                            }
                         }
 
                         outNotes.push(note);
