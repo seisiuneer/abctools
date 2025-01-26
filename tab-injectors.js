@@ -8251,6 +8251,7 @@ var HarmonicaTabGenerator = function (theABC){
                             break;
                         case "ador":
                         case "adorian":
+                        case "emin":
                         case "eminor":
                         case "dmix":
                         case "dmixolydian":
@@ -8260,10 +8261,20 @@ var HarmonicaTabGenerator = function (theABC){
                         case "bdorian":
                             keySig = "A";
                             break;
+                        case "amin":
+                        case "aminor":
+                        case "ddor":
+                        case "ddorian":
                         case "gmix":
                         case "gmixolydian":
                             keySig = "C";
                             break;
+                        case "gdor":
+                        case "gdorian":
+                        case "dmin":
+                        case "dminor":
+                            keySig = "F";
+                            break;                    
                     }
 
                     if (verbose) { console.log(`Key signature: ${keySig}`); }
