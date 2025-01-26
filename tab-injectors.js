@@ -7088,7 +7088,6 @@ var shapeNoteGenerator = function (theABC){
 
 }
 
-
 //
 // Inject ABC note names below the notation
 //
@@ -7908,4 +7907,554 @@ var injectABCNoteNames = function (theABC){
     return generateTablature(theABC);
 
  
+}
+
+//
+// Inject Diatonic Harmonica Tab below the notes
+//
+var HarmonicaTabGenerator = function (theABC){
+
+    var abcOutput = "";
+
+    function generate_harmonica_tab(tuneABC,harpKey,octaveShift,blowPlus){
+
+        // Notes to numbers
+
+        function getNote(n) {
+            // Remove any slashes and following characters
+            n = n.replace(/\/.*/, '');
+            // Replace sharps and flats
+            n = n.replace(/^([A-G])#/, '^$1');
+            n = n.replace(/^([A-G])b/, '_$1');
+
+            // C,=1, C=13, c=25, c'=37, etc
+            n = n.replace(/C/g, '+13');
+            n = n.replace(/D/g, '+15');
+            n = n.replace(/E/g, '+17');
+            n = n.replace(/F/g, '+18');
+            n = n.replace(/G/g, '+20');
+            n = n.replace(/A/g, '+22');
+            n = n.replace(/B/g, '+24');
+            n = n.replace(/c/g, '+25');
+            n = n.replace(/d/g, '+27');
+            n = n.replace(/e/g, '+29');
+            n = n.replace(/f/g, '+30');
+            n = n.replace(/g/g, '+32');
+            n = n.replace(/a/g, '+34');
+            n = n.replace(/b/g, '+36');
+
+            n = n.replace(/\^/g, '+1'); // sharped notes
+            n = n.replace(/_/g, '-1');  // flatted notes
+            // n = n.replace(/=/g, '');
+            n = n.replace(/,/g, '-12'); // one octave below
+            n = n.replace(/'/g, '+12'); // one octave above
+
+            try {
+                n = eval(n);
+            } catch (error) {
+                n = 0;
+            }
+
+            return n;
+        }
+
+        // Get names of note numbers based on C=1, D=3,...,B=11
+        function getNoteName(n) {
+            let ret;
+            while (n > 12) { n = n - 12; }
+            switch (n) {
+                case 1:
+                    ret = "C";
+                    break;
+                case 2:
+                    ret = "C#/Db";
+                    break;
+                case 3:
+                    ret = "D";
+                    break;
+                case 4:
+                    ret = "D#/Eb";
+                    break;
+                case 5:
+                    ret = "E";
+                    break;
+                case 6:
+                    ret = "F";
+                    break;
+                case 7:
+                    ret = "F#/Gb";
+                    break;
+                case 8:
+                    ret = "G";
+                    break;
+                case 9:
+                    ret = "G#/Ab";
+                    break;
+                case 10:
+                    ret = "A";
+                    break;
+                case 11:
+                    ret = "A#/Bb";
+                    break;
+                case 12:
+                    ret = "B";
+                    break;
+                default:
+                    ret = "";
+            }
+            return ret;
+        }
+
+        // Get relative major of the minor key
+        function min2maj(key) {
+            let k;
+            // Is this a minor key?
+            if (/m/.test(key)) {
+                key = key.replace(/m(inor)?/, '');
+                k = getNote(key);
+                k = k + 3;  // convert to relative major
+                if (k > 24) { k = k - 12; }
+            } else {
+                k = getNote(key);
+            }
+            return k;
+        }
+
+        // Fixes the abc notes by applying the flats and sharps accordingly
+        function getTrueNote(note, key) {
+            let n;
+            let k;
+
+            // First, check if it's a "natural" note. If so, return it
+            if (/=/.test(note)) {
+                note = note.replace(/=/g, '');
+                n = getNote(note);
+                return n;
+            }
+
+            // Okay, let's look at the key sig
+            // Sharps
+            n = getNote(note);
+            if (/__/.test(note)) { return n; }  // double flats
+            if (/\^\^/.test(note)) { return n; }    // double sharps
+
+            k = min2maj(key);
+            if (k === 13) { return n; }
+            if ([6, 18, 30].includes(n)) { n++; } // F -> F#
+            if (k === 20) { return n; }
+            if ([1, 13, 25, 37].includes(n)) { n++; } // C -> C#
+            if (k === 15) { return n; }
+            if ([8, 20, 32].includes(n)) { n++; } // G -> G#
+            if (k === 22) { return n; }
+            if ([3, 15, 27].includes(n)) { n++; } // D -> D#
+            if (k === 17) { return n; }
+            if ([10, 22, 34].includes(n)) { n++; } // A -> A#
+            if (k === 24) { return n; }
+            if ([5, 17, 29].includes(n)) { n++; } // E -> F
+            if (k === 19) { return n; }
+            if ([12, 24, 36].includes(n)) { n++; } // B -> C
+            if (k === 14) { return n; }
+
+            // Flats
+            n = getNote(note);
+            k = min2maj(key);
+            if ([12, 24, 36].includes(n)) { n--; } // B -> Bb
+            if (k === 18) { return n; }
+            if ([5, 17, 29].includes(n)) { n--; } // E -> Eb
+            if (k === 23) { return n; }
+            if ([10, 22, 34].includes(n)) { n--; } // A -> Ab
+            if (k === 16) { return n; }
+            if ([3, 15, 27].includes(n)) { n--; } // D -> Db
+            if (k === 21) { return n; }
+            if ([8, 20, 32].includes(n)) { n--; } // G -> Gb
+            if (k === 14) { return n; }
+            if ([1, 13, 25, 37].includes(n)) { n--; } // C -> Cb
+            if (k === 19) { return n; }
+            if ([6, 18, 30].includes(n)) { n--; } // F -> E
+            if (k === 24) { return n; }
+
+            // oops, shouldn't reach this place
+            console.log("There was an error recognising the notes. The tab will probably be wrong.");
+            return 0;
+        }
+
+        let transposeHarp = 0;
+
+        function setHarpKey(harpKey) {
+            transposeHarp = getNote(harpKey) - 12;
+            if (transposeHarp >= 8 && transposeHarp <= 12) {
+                transposeHarp = 13 - transposeHarp;
+            } else {
+                transposeHarp = 1 - transposeHarp;
+            }
+        }
+
+        // harptab layout (C harp)
+        var tab = [];
+
+        tab[0] = "x"; // unknown
+
+        if (!blowPlus){
+            tab[1] = "1"; // C
+            tab[2] = "–1'"; // C# / Db
+            tab[3] = "–1"; // D
+            tab[4] = "1o"; // E# / Eb
+            tab[5] = "2"; // E
+            tab[6] = "–2''"; // F
+            tab[7] = "–2'"; // F# / Gb
+            tab[8] = "3"; // G
+            tab[9] = "–3'''"; // G# / Ab
+            tab[10] = "–3''"; // A
+            tab[11] = "–3'"; // A# / Bb
+            tab[12] = "–3"; // B
+
+            tab[13] = "4"; // C
+            tab[14] = "–4'"; // C# / Db
+            tab[15] = "–4"; // D
+            tab[16] = "4o"; // E# / Eb
+            tab[17] = "5"; // E
+            tab[18] = "–5"; // F
+            tab[19] = "5o"; // F# / Gb
+            tab[20] = "6"; // G
+            tab[21] = "–6'"; // G# / Ab
+            tab[22] = "–6"; // A
+            tab[23] = "6o"; // A# / Bb
+            tab[24] = "–7"; // B
+
+            tab[25] = "7"; // C
+            tab[26] = "–7o"; // C# / Db
+            tab[27] = "–8"; // D
+            tab[28] = "8'"; // E# / Eb
+            tab[29] = "8"; // E
+            tab[30] = "–9"; // F
+            tab[31] = "9'"; // F# / Gb
+            tab[32] = "9"; // G
+            tab[33] = "–9o"; // G# / Ab
+            tab[34] = "–10"; // A
+            tab[35] = "10''"; // A# / Bb
+            tab[36] = "10'"; // B
+
+            tab[37] = "10"; // C
+            tab[38] = "–10o'"; // C#
+        }
+        else{
+            tab[1] = "+1"; // C
+            tab[2] = "–1'"; // C# / Db
+            tab[3] = "–1"; // D
+            tab[4] = "+1o"; // E# / Eb
+            tab[5] = "+2"; // E
+            tab[6] = "–2''"; // F
+            tab[7] = "–2'"; // F# / Gb
+            tab[8] = "+3"; // G
+            tab[9] = "–3'''"; // G# / Ab
+            tab[10] = "–3''"; // A
+            tab[11] = "–3'"; // A# / Bb
+            tab[12] = "–3"; // B
+
+            tab[13] = "+4"; // C
+            tab[14] = "–4'"; // C# / Db
+            tab[15] = "–4"; // D
+            tab[16] = "+4o"; // E# / Eb
+            tab[17] = "+5"; // E
+            tab[18] = "–5"; // F
+            tab[19] = "+5o"; // F# / Gb
+            tab[20] = "+6"; // G
+            tab[21] = "–6'"; // G# / Ab
+            tab[22] = "–6"; // A
+            tab[23] = "+6o"; // A# / Bb
+            tab[24] = "–7"; // B
+
+            tab[25] = "+7"; // C
+            tab[26] = "–7o"; // C# / Db
+            tab[27] = "–8"; // D
+            tab[28] = "+8'"; // E# / Eb
+            tab[29] = "+8"; // E
+            tab[30] = "–9"; // F
+            tab[31] = "+9'"; // F# / Gb
+            tab[32] = "+9"; // G
+            tab[33] = "–9o"; // G# / Ab
+            tab[34] = "–10"; // A
+            tab[35] = "+10''"; // A# / Bb
+            tab[36] = "+10'"; // B
+
+            tab[37] = "+10"; // C
+            tab[38] = "–10o'"; // C#
+        }
+
+        // Set up defaults
+        let keySig = "C";
+        let octaveAdjust = 0;
+        let verbose = false;
+        let lineCount = 0;
+        let abcHeaderDone = false;
+
+        // Set the harp key
+        setHarpKey(harpKey);
+
+        // Set the octave
+        if (octaveShift == "-1"){
+            octaveAdjust = -12;
+        }
+        else
+        if (octaveShift == "1"){
+            octaveAdjust = 12;
+        }
+
+        var theOutput = "";
+
+        var theLines = tuneABC.split("\n");
+     
+        for (const line of theLines) {
+
+            lineCount++;
+
+            if (/^\w:/.test(line) || /^%/.test(line) || line === "\n") {
+
+                theOutput+=(line + '\n');
+
+                // print the title
+                if (match = line.match(/^T:\s*(.*)$/)) {
+                    if (verbose) { console.log(`Title: ${match[1]}`); }
+                }
+
+                // this is an ABC field, comment or command, so just print it
+                if (match = line.match(/^K:\s*(.*)$/)) {
+
+                    abcHeaderDone = true;
+
+                    keySig = match[1]; 
+
+                    keySig = keySig.replaceAll(" ","");
+                   
+                    keySig = keySig.replace(/\s?(treble[+-]?\d?|bass\d?|alto\d?|none|perc)/, '');
+                    keySig = keySig.replace(/\s?major/, '');
+                    keySig = keySig.replace(/\s?Major/, '');
+                    keySig = keySig.replace(/\s?maj/, '');
+                                    
+                    keySig = keySig.replace(/^([A-G])#/, '^$1');
+                    keySig = keySig.replace(/^([A-G])b/, '_$1');
+
+                    switch (keySig.toLowerCase()){
+                        case "ddor":
+                        case "ddorian":
+                        case "amin":
+                        case "aminor":
+                            keySig = "C";
+                            break;
+                        case "edor":
+                        case "edorian":
+                        case "bmin":
+                        case "bminor":
+                        case "amix":
+                        case "amixolydian":
+                            keySig = "D";
+                            break;
+                        case "ador":
+                        case "adorian":
+                        case "eminor":
+                        case "dmix":
+                        case "dmixolydian":
+                            keySig = "G";
+                            break;
+                        case "bdor":
+                        case "bdorian":
+                            keySig = "A";
+                            break;
+                        case "gmix":
+                        case "gmixolydian":
+                            keySig = "C";
+                            break;
+                    }
+
+                    if (verbose) { console.log(`Key signature: ${keySig}`); }
+
+                    if (octaveAdjust == 0){
+                        theOutput+=("%%text "+harpKey+" Harp\n");
+                    }
+                    else
+                    if (octaveAdjust == -12){
+                        theOutput+=("%%text "+harpKey+" Harp / -1 Octave\n");
+                    }
+                    else
+                    if (octaveAdjust == 12){
+                        theOutput+=("%%text "+harpKey+" Harp / +1 Octave\n");
+                    }
+
+                    theOutput+=("%%vskip 15\n");
+
+                 }
+            } else {
+
+                if (line == ""){
+                    break;
+                }
+
+                // this should be a musical line
+                theOutput+=(line + '\n');
+
+                // make a copy - this will be the harp tab line
+                let harpLine = line;
+
+                harpLine = harpLine.replace(/\[\w:.*?\]/g, '');
+
+                // strip to individual notes
+                harpLine = harpLine.replace(/%.*?$/, '');   // remove trailing comments
+                harpLine = harpLine.replace(/\\/g, '');     // remove continuation lines
+
+                harpLine = harpLine.replace(/"(.*?)"/g, '');    // remove all strings
+                harpLine = harpLine.replace(/[<>\.~]/g, '');    // remove - < > . ~
+                harpLine = harpLine.replace(/!.*?!/g, '');      // remove !symbols!
+                harpLine = harpLine.replace(/{.*?}/g, '');      // remove graces {}
+                harpLine = harpLine.replace(/\(([^()]*)\)/g, '$1');     // "de"-slur
+                harpLine = harpLine.replace(/\[([\^_=]*?[A-Ga-gzx][\,']*).*?\]/g, '$1');    // "de"-chord
+                harpLine = harpLine.replace(/\(\d/g, '');       // "de"-tuplet
+                harpLine = harpLine.replace(/[\|\]:]/g, '');    // remove barlines
+                harpLine = harpLine.replace(/\[\d/g, '');       // remove numbered repeats
+
+                harpLine = harpLine.replace(/([\^_=]*?[A-Ga-gzx][\,']*)\d?\/?\*?/g, '$1 ');
+
+                harpLine = harpLine.replace(/-\s*[\^_=]*?[A-Ga-gzx][\,']*/g, '*');  // ties will be skipped
+                harpLine = harpLine.replace(/-/g, '');  // clean up extra ties
+
+                harpLine = harpLine.replace(/[zx]\d?/g, '');        // remove rests
+
+                // convert to tab
+                harpLine = harpLine.replace(/\s+/g, ' ');
+
+                let notes = harpLine.trim().split(' ');
+
+                var outNotes = [];
+                
+                for (let j = 0; j < notes.length; j++) {
+                    
+                    let note = notes[j];
+
+                    if (note !== "*") {
+
+                        let abcNote = note;
+
+                        let noteIndex = getTrueNote(abcNote, keySig) + octaveAdjust + transposeHarp;
+
+                        if (verbose){console.log("abcNote: "+abcNote+" noteIndex: "+noteIndex);}
+                        
+                        if (noteIndex < 0) { noteIndex = 0; }
+
+                        if (noteIndex > 38) { noteIndex = 0; }
+
+                        note = tab[noteIndex];
+
+                        if (verbose){
+                            if (note === "x") { console.log(`Line ${lineCount}: Warning: ${abcNote} is not playable on the ${harpKey} harp`); }
+                        }
+
+                        outNotes.push(note);
+                    }
+                }
+
+                //debugger;
+
+                harpLine = "w: " + outNotes.join(' ').trim();
+
+                harpLine = harpLine.replace(/\s+/g, ' ');       // remove extra spaces
+
+                harpLine = harpLine.trim();
+
+                if (harpLine !== "w:") { theOutput+=(`${harpLine}\n`); }
+            }
+        }
+
+        theOutput += "\n";
+
+        return theOutput;
+    }
+
+    //
+    // Count the tunes in the text area
+    //
+    function countTunes(theABC) {
+
+        // Count the tunes in the ABC
+        var theNotes = theABC;
+
+        var theTunes = theNotes.split(/^X:.*$/gm);
+
+        var nTunes = theTunes.length - 1;
+
+        return nTunes;
+
+    }
+
+    //
+    // Return the tune ABC at a specific index
+    //
+    //
+    function getTuneByIndex(theABC, tuneNumber) {
+
+        var theNotes = theABC;
+
+        // Now find all the X: items
+        var theTunes = theNotes.split(/^X:/gm);
+
+        return ("X:" + theTunes[tuneNumber + 1]);
+
+    }
+
+    function stripHarmonicaTab(input) {
+      return input.split('\n') // Split input into lines
+        .filter(line => !/^w:|^%%vskip 15$|^%%text\s\w{1,2}\sHarp/.test(line)) // Filter out lines that match the pattern
+        .join('\n'); // Join the remaining lines back into a string
+    }
+
+    //
+    // Main processor
+    //
+    function generateTablature(theABC) {
+
+        var fontFamily = gInjectTab_FontFamily;
+        var tabFontSize = gInjectTab_TabFontSize;
+        var staffSep = gInjectTab_StaffSep;
+ 
+        var nTunes = countTunes(theABC);
+
+        var result = FindPreTuneHeader(theABC);
+
+        for (var i = 0; i < nTunes; ++i) {
+
+            var thisTune = getTuneByIndex(theABC, i);
+
+            // Don't inject section header tune fragments
+            if (isSectionHeader(thisTune)){
+                result += "\n";
+                result += thisTune;
+                result += "\n";
+                continue;
+            }
+
+            // console.log("Before");
+            // console.log(thisTune);
+
+            thisTune = stripHarmonicaTab(thisTune);
+
+            // console.log("After");
+            // console.log(thisTune);
+
+            thisTune = generate_harmonica_tab(thisTune,gHarmonicaKey,gHarmonicaOctave,gHarmonicaPlusSign)
+            
+            thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%staffsep " + staffSep);
+ 
+            thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%vocalfont " + fontFamily + " " + tabFontSize);
+
+            result += thisTune;
+
+            result += "\n";
+        }
+
+        result = result.replaceAll("\n\n","\n");
+
+        return result;
+
+    }
+
+    return generateTablature(theABC);
+
 }

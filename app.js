@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2272_012325_1700";
+var gVersionNumber="2273_012525_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -23770,6 +23770,98 @@ function RemoveTuneTitleNumbers(bDoRedraw){
 }
 
 //
+// Inject Diatonic harmonica tablature
+//
+function DoInjectHarmonicaTab(){
+
+	// Keep track of tablature injection use
+	sendGoogleAnalytics("tablature","Inject_Harmonica");
+
+ 	const harmonica_keys = [
+	    { name: "  G", id: "G" },
+	    { name: "  G#", id: "G#" },
+	    { name: "  A", id: "A" },
+	    { name: "  Bb", id: "Bb" },
+	    { name: "  B", id: "B" },
+	    { name: "  C", id: "C" },
+	    { name: "  C#", id: "C#" },
+	    { name: "  D", id: "D" },
+	    { name: "  Eb", id: "Eb" },
+	    { name: "  E", id: "E" },
+	    { name: "  F", id: "F" },
+	    { name: "  F#", id: "F#" }
+  	];
+
+  	const harmonica_octaves = [
+	    { name: "  -1", id: "-1" },
+	    { name: "  0", id: "0" },
+	    { name: "  1", id: "1" }
+  	];
+
+
+	// Setup initial values
+	const theData = {
+	  configure_harmonica_key:gHarmonicaKey,
+	  configure_harmonica_octave:gHarmonicaOctave,
+	  configure_harmonica_plussign:gHarmonicaPlusSign
+	};
+
+	const form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Diatonic Harmonica Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_harmonica" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject tablature for a 10-hole diatonic harmonica in the key selected below into all of the tunes in the ABC text area:</p>'},	  
+	  {name: "Harmonica key:", id: "configure_harmonica_key", type:"select", options:harmonica_keys, cssClass:"configure_harmonica_select"}, 
+	  {name: "Octave shift:", id: "configure_harmonica_octave", type:"select", options:harmonica_octaves, cssClass:"configure_harmonica_select"}, 
+	  {name: "    Include + before blow notes in tablature", id: "configure_harmonica_plussign", type:"checkbox", cssClass:"configure_harmonica_settings_form_text"},
+	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},	  
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+
+		// Get the results and store them in the global configuration
+		if (!args.canceled){
+
+			gHarmonicaKey = args.result.configure_harmonica_key; 
+			gHarmonicaOctave = args.result.configure_harmonica_octave; 
+			gHarmonicaPlusSign = args.result.configure_harmonica_plussign;
+
+			SaveConfigurationSettings();
+
+			SetRadioValue("notenodertab","noten");
+
+			gCurrentTab = "noten";
+
+			gTheABC.value = HarmonicaTabGenerator(gTheABC.value);
+
+			// Set dirty
+			gIsDirty = true;
+			
+			RenderAsync(true,null);
+
+			// Idle the dialog
+			IdleAdvancedControls(true);
+
+		}
+
+	});
+
+}
+
+//
+// Inject Box Tablature
+//
+function DoInjectBoxTablature(){
+
+	var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Irish Button Box Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_irish_box" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+
+	modal_msg  += '<p style="text-align:center;"><input id="injectbcbox" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_BC()" type="button" value="Inject B/C Box Tab" title="Injects B/C box tablature into the ABC">';
+
+	modal_msg  += '<input id="injectcsdbox" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_CsD()" type="button" value="Inject C#/D Box Tab" title="Injects C#/D box tablature into the ABC"></p>';
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, width: 650,  scrollWithPage: (AllowDialogsToScroll()) });
+
+}
+
+//
 // Do B/C Box Tab Injection
 //
 function DoInjectTablature_BC(){
@@ -35817,6 +35909,11 @@ var gMDulcimerStyle = 0; // Default to high string
 var gMDulcimerStripBadTunes = false; // Don't strip bad tunes on MD injection
 var gMDulcimerUseDashForOpenString = false; // Use a space for open strings
 
+// Harmonica tab
+var gHarmonicaKey = "C";
+var gHarmonicaOctave = "0";
+var gHarmonicaPlusSign = false;
+
 // Get the initial configuration settings from local browser storage, if present
 function GetInitialConfigurationSettings(){
 
@@ -36060,6 +36157,31 @@ function GetInitialConfigurationSettings(){
 
 			gTrainerTouchControls = false;
 		}
+	}
+
+	// Harmonica
+	val = localStorage.HarmonicaKey;
+	if (val){
+		gHarmonicaKey = val;
+	}
+	else{
+		gHarmonicaKey = "C";
+	}
+
+	val = localStorage.HarmonicaOctave;
+	if (val){
+		gHarmonicaOctave = val;
+	}
+	else{
+		gHarmonicaOctave = "0";
+	}
+
+	val = localStorage.HarmonicaPlusSign;
+	if (val){
+		gHarmonicaPlusSign = (val == "true");
+	}
+	else{
+		gHarmonicaPlusSign = false;
 	}
 
 	// Bamboo flute
@@ -36830,6 +36952,11 @@ function SaveConfigurationSettings(){
 
 		// Trainer touch control options
 		localStorage.TrainerTouchControls = gTrainerTouchControls;
+
+		// Harmonica tab settings
+		localStorage.HarmonicaKey = gHarmonicaKey;
+		localStorage.HarmonicaOctave = gHarmonicaOctave;
+		localStorage.HarmonicaPlusSign = gHarmonicaPlusSign;
 
 		// Save the bamboo flute key
 		localStorage.BambooFluteKey =  gBambooFluteKey;
@@ -38531,8 +38658,8 @@ function AdvancedControlsDialog(){
 	// Showing tablature injectors?
 	if (gFeaturesShowTablatures){
 		modal_msg  += '<p style="text-align:center;margin-top:22px;">'
-		modal_msg  += '<input id="injectbctab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_BC()" type="button" value="Inject B/C Box Tab" title="Injects B/C box tablature into the ABC">';
-		modal_msg  += '<input id="injectcdtab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_CsD()" type="button" value="Inject C#/D Box Tab" title="Injects C#/D box tablature into the ABC">';
+		modal_msg  += '<input id="injectharmonicatab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectHarmonicaTab()" type="button" value="Inject Harmonica Tab" title="Injects 10-hole diatonic harmonica tablature into the ABC">';
+		modal_msg  += '<input id="injectboxtab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectBoxTablature()" type="button" value="Inject Irish Button Box Tab" title="Injects B/C or C#/D box tablature into the ABC">';
 		modal_msg  += '<input id="injectanglotab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Anglo()" type="button" value="Inject Anglo Concertina Tab" title="Injects Anglo Concertina tablature into the ABC">';
 		modal_msg  += '</p>';
 		modal_msg  += '<p style="text-align:center;margin-top:22px;">'

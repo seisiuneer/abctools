@@ -422,8 +422,8 @@
             
             <h3>Tablature, Comhaltas Transform, Note Name, Shape Note, and Solfège Injectors</h3>
             <a style="text-decoration:none;" href="#injecting_tablature">Tablature, Comhaltas Transform, Note Name, Shape Note, and Solfège Injectors</a>
-            <a style="text-decoration:none;" href="#tab_box_bc">Inject B/C Box Tab</a>
-            <a style="text-decoration:none;" href="#tab_box_cd">Inject C#/D Box Tab</a>
+            <a style="text-decoration:none;" href="#tab_harmonica">Inject Harmonica Tab</a>
+            <a style="text-decoration:none;" href="#tab_irish_box">Inject Irish Button Box Tab</a>
             <a style="text-decoration:none;" href="#reading_the_box_tablature">Reading the Box Tablature</a>
             <a style="text-decoration:none;" href="#tab_concertina">Inject Anglo Concertina Tab</a>
             <a style="text-decoration:none;" href="#reading_the_concertina_tablature">Reading the Anglo Concertina Tablature</a>
@@ -761,8 +761,8 @@
                     <button class="accordion" title="Click to expand/collapse this section">Tablature, Comhaltas Transform, Note Name, Shape Note, and Solfège Injectors</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#injecting_tablature">Tablature, Comhaltas Transform, Note Name, Shape Note, and Solfège Injectors</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#tab_box_bc">Inject B/C Box Tab</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#tab_box_cd">Inject C#/D Box Tab</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#tab_harmonica">Inject Harmonica Tab</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#tab_irish_box">Inject Irish Button Box Tab</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#reading_the_box_tablature">Reading the Box Tablature</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#tab_concertina">Inject Anglo Concertina Tab</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#reading_the_concertina_tablature">Reading the Anglo Concertina Tablature</a></p>
@@ -3451,7 +3451,7 @@
                 <h1 class="page_break_always">More ABC Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/more_abc_tools_20.jpg"/>
+                    <img class="image" loading="lazy" src="img/more_abc_tools_21.jpg"/>
                 </div>
                 <p>If you would like to only show the buttons for the features you commonly use and hide the others, click the controls icon at the top-right of the dialog to choose features of the dialog you would like to show/hide:</p>
                 <div class="image_holder_p">
@@ -3564,12 +3564,27 @@
                 <p style="text-align: center;"><strong>Consider saving or grabbing a Snapshot your work before injecting tab!</strong></p>
                 <p>Since the tab injectors modify your original ABC, you may want to grab a Snapshot of the entire ABC (simply click <strong>Snapshot</strong>) before doing the tab injection operation.</p>
                 <p>If you grab a Snapshot, after the tab injection operation, if there was an issue, you can click <strong>Restore</strong> to get back your original ABC.</p>
-                <hr id="tab_box_bc">
-                <p><strong>Inject B/C Box Tab</strong> - Injects B/C Box tablature into the ABC.</p>
-                <p>See the <a href="#tablature_settings">Configuring Tablature Fonts and Settings</a> section below for full details on the B/C box tablature style, font, and spacing options.</p>
-                <hr id="tab_box_cd">
-                <p><strong>Inject C#/D Box Tab</strong> - Injects C#/D Box tablature into the ABC.</p>
-                <p>See the <a href="#tablature_settings">Configuring Tablature Fonts and Settings</a> section below for full details on the C#/D box tablature style, font, and spacing options.</p>
+                <hr id="tab_harmonica">
+                <p><strong>Inject Harmonica Tab</strong> - Brings up a dialog where you can inject tab for standard 10-hole diatonic harmonica:</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/harmonica_tab_1.jpg">
+                </div>
+                <p>Choose the harmonica tuning from the <strong>Harmonica key</strong> dropdown.</p>
+                <p>If you want to shift the notation up or down one octave, select the octave shift from the <strong>Octave shift</strong> dropdown.</p>
+                <p>Blow notes can be indicated either with or without a + before the hole number.</p>
+                <p>Check <strong>Include + before blow notes in tablature</strong> if you want a + before the blow note numbers.</p>
+                <p>The tab injector will delete any harmonica tag ABC w: tags previously injected into the tunes.</p>
+                <hr>
+                <p style="text-align: center;"><strong>How to Read the Diatonic Harmonica Tablature</strong></p>
+                <p>Numbers coorespond to the holes on the harmonica.</p>
+                <p>Number alone indicates blow.</p>
+                <p>If enabled by checking "Include + before blow notes in tablature", blow is indicated by a + before the number.</p>
+                <p>Draw is indicated by - before the number.</p>
+                <p>Bends are indicated by ', '', or '''.</p>
+                <p>Overblow is indicated by o.</p>
+                <hr id="tab_irish_box">
+                <p><strong>Inject Irish Box Tab</strong> - Brings up a dialog where you can choose to inject either B/C or C#/D Irish button box tab into the ABC.</p>
+                <p>See the <a href="#tablature_settings">Configuring Tablature Fonts and Settings</a> section below for full details on the B/C and C#/D box tablature style, font, and spacing options.</p>
                 <hr class="hidden-print" id="reading_the_box_tablature">
                 <p style="text-align: center;"><strong>Reading the Box Tablature</strong></p>
                 <p><strong>B/C Box</strong> - Shows standard notation and tablature for a standard 21-button B/C tuned box.</p>
