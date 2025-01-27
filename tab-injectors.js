@@ -8207,12 +8207,12 @@ var HarmonicaTabGenerator = function (theABC){
                 tab[4] = "1o"; // D# / Eb
                 tab[5] = "2"; // E
                 tab[6] = "–2"; // F
-                tab[7] = "x"; // F# / Gb FOO was "–3''"
+                tab[7] = "2o"; // F# / Gb 
                 tab[8] = "3"; // G
                 tab[9] = "–3'"; // G# / Ab
                 tab[10] = "–3"; // A
-                tab[11] = "x"; // A# / Bb FOO was "–4'''"
-                tab[12] = "x"; // B FOO was "–4''"
+                tab[11] = "3o"; // A# / Bb
+                tab[12] = "x"; // B 
 
                 tab[13] = "4"; // C
                 tab[14] = "–4'"; // C# / Db

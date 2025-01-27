@@ -3577,15 +3577,27 @@
                 <p>Blow notes can be indicated either with or without a + before the hole number.</p>
                 <p>Check <strong>Include + before blow notes in tablature</strong> if you want a + before the blow note numbers.</p>
                 <p>The tab injector will delete any harmonica tag ABC w: tags previously injected into the tunes.</p>
-                <p><strong>Note:</strong> The ABC parser for this feature apparently doesn't know how to carry forward accidentals in a measure to the same note later in the same measure, so you may have to manually edit those cases after doing the tablature injection.</p>
                 <hr>
                 <p style="text-align: center;"><strong>How to Read the Diatonic Harmonica Tablature</strong></p>
                 <p>Numbers correspond to the holes on the harmonica.</p>
                 <p>Number alone indicates blow.</p>
                 <p>If enabled by checking <strong>Include + before blow notes in tablature</strong>, blow is indicated by a + before the number.</p>
-                <p>Draw is indicated by - before the number.</p>
+                <p>Draw is indicated by – before the number. Note that in the ABC this is an en-dash, not a hyphen (reasons explained below).</p>
                 <p>Bends are indicated by ', '', or ''' after the number.</p>
                 <p>Overblow is indicated by o after the number.</p>
+                <hr>
+                <p style="text-align: center;"><strong>Known issues and caveats for the Harmonica tablature injector</strong></p>
+                <p><strong>Accidents in a measure don't carry forward to later notes in the measure:</strong></p>
+                <p>The ABC parser for this feature apparently doesn't know how to carry forward accidentals in a measure to the same note later in the same measure, so you may have to manually edit those cases after doing the tablature injection.</p>
+                <p><strong>Draw is indicated using an "en-dash", not a hyphen:</strong></p>
+                <p>The tablature is created using the w: tag lyrics feature of ABC.</p>
+                <p>There is one tab entry per note in the line of notation.</p>
+                <p>Because hyphens are used in w: tag lyrics to extend syllables, I had to use a different character to indicate draw.</p>
+                <p>The character used instead is an "en-dash".</p>
+                <p>To enter an en-dash on Mac, hold down Option and press the hypen key.</p>
+                <p>To enter an en-dash on Windows, on the numeric keyboard hold down Ctrl and press the minus sign key.</p>
+                <p>It may be easier to just copy and paste an en-dash from another harmonica tab item.</p>
+                <p>More details on en-dash here: <a href="https://proofed.com/writing-tips/how-to-type-an-en-dash-and-em-dash-on-windows-and-mac-devices/" target="_blank">How to Type an En Dash and Em Dash on Windows and Mac Devices</a>.</p>
                 <hr id="tab_irish_box">
                 <p><strong>Inject Irish Box Tab</strong> - Brings up a dialog where you can choose to inject either B/C or C#/D Irish button box tab into the ABC.</p>
                 <p>See the <a href="#tablature_settings">Configuring Tablature Fonts and Settings</a> section below for full details on the B/C and C#/D box tablature style, font, and spacing options.</p>
