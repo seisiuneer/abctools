@@ -3594,6 +3594,13 @@ margin-top:24px;
 	display:flex;
 }
 
+.configure_harmonica_settings_form_text2{
+	font-size:12pt;
+	line-height:42px;
+	font-family:helvetica;
+	display:flex;
+}
+
 .configure_box_settings_select>select{
 display:inline;
 -webkit-appearance: none;

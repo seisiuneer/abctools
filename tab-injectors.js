@@ -7914,609 +7914,869 @@ var injectABCNoteNames = function (theABC){
 //
 var HarmonicaTabGenerator = function (theABC){
 
+    var verbose = false;
+
     var abcOutput = "";
 
-    function generate_harmonica_tab(tuneABC,harpKey,octaveShift,blowPlus){
+    // Globals
+    var keySignature = null;
 
-        // Notes to numbers
+    function log(s) {
+        if (verbose)
+            console.log(s);
+    }
 
-        function getNote(n) {
-            // Remove any slashes and following characters
-            n = n.replace(/\/.*/, '');
-            // Replace sharps and flats
-            n = n.replace(/^([A-G])#/, '^$1');
-            n = n.replace(/^([A-G])b/, '_$1');
-
-            // C,=1, C=13, c=25, c'=37, etc
-            n = n.replace(/C/g, '+13');
-            n = n.replace(/D/g, '+15');
-            n = n.replace(/E/g, '+17');
-            n = n.replace(/F/g, '+18');
-            n = n.replace(/G/g, '+20');
-            n = n.replace(/A/g, '+22');
-            n = n.replace(/B/g, '+24');
-            n = n.replace(/c/g, '+25');
-            n = n.replace(/d/g, '+27');
-            n = n.replace(/e/g, '+29');
-            n = n.replace(/f/g, '+30');
-            n = n.replace(/g/g, '+32');
-            n = n.replace(/a/g, '+34');
-            n = n.replace(/b/g, '+36');
-
-            n = n.replace(/\^/g, '+1'); // sharped notes
-            n = n.replace(/_/g, '-1');  // flatted notes
-            // n = n.replace(/=/g, '');
-            n = n.replace(/,/g, '-12'); // one octave below
-            n = n.replace(/'/g, '+12'); // one octave above
-
-            try {
-                n = eval(n);
-            } catch (error) {
-                n = 0;
-            }
-
-            return n;
-        }
-
-        // Get names of note numbers based on C=1, D=3,...,B=11
-        function getNoteName(n) {
-            let ret;
-            while (n > 12) { n = n - 12; }
-            switch (n) {
-                case 1:
-                    ret = "C";
-                    break;
-                case 2:
-                    ret = "C#/Db";
-                    break;
-                case 3:
-                    ret = "D";
-                    break;
-                case 4:
-                    ret = "D#/Eb";
-                    break;
-                case 5:
-                    ret = "E";
-                    break;
-                case 6:
-                    ret = "F";
-                    break;
-                case 7:
-                    ret = "F#/Gb";
-                    break;
-                case 8:
-                    ret = "G";
-                    break;
-                case 9:
-                    ret = "G#/Ab";
-                    break;
-                case 10:
-                    ret = "A";
-                    break;
-                case 11:
-                    ret = "A#/Bb";
-                    break;
-                case 12:
-                    ret = "B";
-                    break;
-                default:
-                    ret = "";
-            }
-            return ret;
-        }
-
-        // Get relative major of the minor key
-        function min2maj(key) {
-            let k;
-            // Is this a minor key?
-            if (/m/.test(key)) {
-                key = key.replace(/m(inor)?/, '');
-                k = getNote(key);
-                k = k + 3;  // convert to relative major
-                if (k > 24) { k = k - 12; }
-            } else {
-                k = getNote(key);
-            }
-            return k;
-        }
-
-        // Fixes the abc notes by applying the flats and sharps accordingly
-        function getTrueNote(note, key) {
-
-            //debugger;
-
-            let n;
-            let k;
-
-            // First, check if it's a "natural" note. If so, return it
-            if (/=/.test(note)) {
-                note = note.replace(/=/g, '');
-                n = getNote(note);
-                return n;
-            }
-
-            // Okay, let's look at the key sig
-            // Sharps
-            n = getNote(note);
-            
-            // MAE 26 Jan 2025
-            // Bug in first note of the harp
-            if (n==0){
-                return 1;
-            }
-
-            if (/__/.test(note)) { return n; }  // double flats
-            if (/\^\^/.test(note)) { return n; }    // double sharps
-
-            k = min2maj(key);
-            if (k === 13) { return n; }
-            if ([6, 18, 30].includes(n)) { n++; } // F -> F#
-            if (k === 20) { return n; }
-            if ([1, 13, 25, 37].includes(n)) { n++; } // C -> C#
-            if (k === 15) { return n; }
-            if ([8, 20, 32].includes(n)) { n++; } // G -> G#
-            if (k === 22) { return n; }
-            if ([3, 15, 27].includes(n)) { n++; } // D -> D#
-            if (k === 17) { return n; }
-            if ([10, 22, 34].includes(n)) { n++; } // A -> A#
-            if (k === 24) { return n; }
-            if ([5, 17, 29].includes(n)) { n++; } // E -> F
-            if (k === 19) { return n; }
-            if ([12, 24, 36].includes(n)) { n++; } // B -> C
-            if (k === 14) { return n; }
-
-            // Flats
-            n = getNote(note);
-            k = min2maj(key);
-            if ([12, 24, 36].includes(n)) { n--; } // B -> Bb
-            if (k === 18) { return n; }
-            if ([5, 17, 29].includes(n)) { n--; } // E -> Eb
-            if (k === 23) { return n; }
-            if ([10, 22, 34].includes(n)) { n--; } // A -> Ab
-            if (k === 16) { return n; }
-            if ([3, 15, 27].includes(n)) { n--; } // D -> Db
-            if (k === 21) { return n; }
-            if ([8, 20, 32].includes(n)) { n--; } // G -> Gb
-            if (k === 14) { return n; }
-            if ([1, 13, 25, 37].includes(n)) { n--; } // C -> Cb
-            if (k === 19) { return n; }
-            if ([6, 18, 30].includes(n)) { n--; } // F -> E
-            if (k === 24) { return n; }
-
-            // oops, shouldn't reach this place
-            console.log("There was an error recognising the notes. The tab will probably be wrong.");
-            return 0;
-        }
-
-        let transposeHarp = 0;
-
-        function setHarpKey(harpKey) {
-            transposeHarp = getNote(harpKey) - 12;
-            if (transposeHarp >= 8 && transposeHarp <= 12) {
-                transposeHarp = 13 - transposeHarp;
-            } else {
-                transposeHarp = 1 - transposeHarp;
-            }
-        }
-
+    //
+    // Generate the box tab
+    //
+    function generate_harmonica_tab(abcInput,harpKey,octaveShift,blowPlus){
+       
         // harptab layout (C harp)
-        var tab = [];
-
-        tab[0] = "x"; // unknown
+        var theTabMap = [];
 
         switch (gHarmonicaStyle){
             
             // Standard Richter
             case "0":
+                theTabMap[0] = "1"; // C
+                theTabMap[1] = "-1'"; // C# / Db
+                theTabMap[2] = "-1"; // D
+                theTabMap[3] = "1o"; // D# / Eb
+                theTabMap[4] = "2"; // E
+                theTabMap[5] = "-2''"; // F
+                theTabMap[6] = "-2'"; // F# / Gb
+                theTabMap[7] = "3"; // G
+                theTabMap[8] = "-3'''"; // G# / Ab
+                theTabMap[9] = "-3''"; // A
+                theTabMap[10] = "-3'"; // A# / Bb
+                theTabMap[11] = "-3"; // B
 
-                tab[1] = "1"; // C
-                tab[2] = "–1'"; // C# / Db
-                tab[3] = "–1"; // D
-                tab[4] = "1o"; // D# / Eb
-                tab[5] = "2"; // E
-                tab[6] = "–2''"; // F
-                tab[7] = "–2'"; // F# / Gb
-                tab[8] = "3"; // G
-                tab[9] = "–3'''"; // G# / Ab
-                tab[10] = "–3''"; // A
-                tab[11] = "–3'"; // A# / Bb
-                tab[12] = "–3"; // B
+                theTabMap[12] = "4"; // C
+                theTabMap[13] = "-4'"; // C# / Db
+                theTabMap[14] = "-4"; // D
+                theTabMap[15] = "4o"; // E# / Eb
+                theTabMap[16] = "5"; // E
+                theTabMap[17] = "-5"; // F
+                theTabMap[18] = "5o"; // F# / Gb
+                theTabMap[19] = "6"; // G
+                theTabMap[20] = "-6'"; // G# / Ab
+                theTabMap[21] = "-6"; // A
+                theTabMap[22] = "6o"; // A# / Bb
+                theTabMap[23] = "-7"; // B
 
-                tab[13] = "4"; // C
-                tab[14] = "–4'"; // C# / Db
-                tab[15] = "–4"; // D
-                tab[16] = "4o"; // E# / Eb
-                tab[17] = "5"; // E
-                tab[18] = "–5"; // F
-                tab[19] = "5o"; // F# / Gb
-                tab[20] = "6"; // G
-                tab[21] = "–6'"; // G# / Ab
-                tab[22] = "–6"; // A
-                tab[23] = "6o"; // A# / Bb
-                tab[24] = "–7"; // B
+                theTabMap[24] = "7"; // C
+                theTabMap[25] = "-7o"; // C# / Db
+                theTabMap[26] = "-8"; // D
+                theTabMap[27] = "8'"; // D# / Eb
+                theTabMap[28] = "8"; // E
+                theTabMap[29] = "-9"; // F
+                theTabMap[30] = "9'"; // F# / Gb
+                theTabMap[31] = "9"; // G
+                theTabMap[32] = "-9o"; // G# / Ab
+                theTabMap[33] = "-10"; // A
+                theTabMap[34] = "10''"; // A# / Bb
+                theTabMap[35] = "10'"; // B
 
-                tab[25] = "7"; // C
-                tab[26] = "–7o"; // C# / Db
-                tab[27] = "–8"; // D
-                tab[28] = "8'"; // D# / Eb
-                tab[29] = "8"; // E
-                tab[30] = "–9"; // F
-                tab[31] = "9'"; // F# / Gb
-                tab[32] = "9"; // G
-                tab[33] = "–9o"; // G# / Ab
-                tab[34] = "–10"; // A
-                tab[35] = "10''"; // A# / Bb
-                tab[36] = "10'"; // B
-
-                tab[37] = "10"; // C
-                tab[38] = "–10o'"; // C#
+                theTabMap[36] = "10"; // C
+                theTabMap[37] = "-10o'"; // C#
  
                 break;
 
             // Paddy Richter
             case "1":
-                tab[1] = "1"; // C
-                tab[2] = "–1'"; // C# / Db
-                tab[3] = "–1"; // D
-                tab[4] = "1o"; // D# / Eb
-                tab[5] = "2"; // E
-                tab[6] = "–2''"; // F
-                tab[7] = "–2'"; // F# / Gb
-                tab[8] = "–2"; // G
-                tab[9] = "–3'''"; // G# / Ab
-                tab[10] = "3"; // A
-                tab[11] = "–3'"; // A# / Bb
-                tab[12] = "–3"; // B
+                theTabMap[0] = "1"; // C
+                theTabMap[1] = "-1'"; // C# / Db
+                theTabMap[2] = "-1"; // D
+                theTabMap[3] = "1o"; // D# / Eb
+                theTabMap[4] = "2"; // E
+                theTabMap[5] = "-2''"; // F
+                theTabMap[6] = "-2'"; // F# / Gb
+                theTabMap[7] = "-2"; // G
+                theTabMap[8] = "-3'''"; // G# / Ab
+                theTabMap[9] = "3"; // A
+                theTabMap[10] = "-3'"; // A# / Bb
+                theTabMap[11] = "-3"; // B
 
-                tab[13] = "4"; // C
-                tab[14] = "–4'"; // C# / Db
-                tab[15] = "–4"; // D
-                tab[16] = "4o"; // E# / Eb
-                tab[17] = "5"; // E
-                tab[18] = "–5"; // F
-                tab[19] = "5o"; // F# / Gb
-                tab[20] = "6"; // G
-                tab[21] = "–6'"; // G# / Ab
-                tab[22] = "–6"; // A
-                tab[23] = "6o"; // A# / Bb
-                tab[24] = "–7"; // B
+                theTabMap[12] = "4"; // C
+                theTabMap[13] = "-4'"; // C# / Db
+                theTabMap[14] = "-4"; // D
+                theTabMap[15] = "4o"; // E# / Eb
+                theTabMap[16] = "5"; // E
+                theTabMap[17] = "-5"; // F
+                theTabMap[18] = "5o"; // F# / Gb
+                theTabMap[19] = "6"; // G
+                theTabMap[20] = "-6'"; // G# / Ab
+                theTabMap[21] = "-6"; // A
+                theTabMap[22] = "6o"; // A# / Bb
+                theTabMap[23] = "-7"; // B
 
-                tab[25] = "7"; // C
-                tab[26] = "–7o"; // C# / Db
-                tab[27] = "–8"; // D
-                tab[28] = "8'"; // D# / Eb
-                tab[29] = "8"; // E
-                tab[30] = "–9"; // F
-                tab[31] = "9'"; // F# / Gb
-                tab[32] = "9"; // G
-                tab[33] = "–9o"; // G# / Ab
-                tab[34] = "–10"; // A
-                tab[35] = "10''"; // A# / Bb
-                tab[36] = "10'"; // B
+                theTabMap[24] = "7"; // C
+                theTabMap[25] = "-7o"; // C# / Db
+                theTabMap[26] = "-8"; // D
+                theTabMap[27] = "8'"; // D# / Eb
+                theTabMap[28] = "8"; // E
+                theTabMap[29] = "-9"; // F
+                theTabMap[30] = "9'"; // F# / Gb
+                theTabMap[31] = "9"; // G
+                theTabMap[32] = "-9o"; // G# / Ab
+                theTabMap[33] = "-10"; // A
+                theTabMap[34] = "10''"; // A# / Bb
+                theTabMap[35] = "10'"; // B
 
-                tab[37] = "10"; // C
-                tab[38] = "–10o'"; // C#
+                theTabMap[36] = "10"; // C
+                theTabMap[37] = "-10o'"; // C#
 
                 break;   
 
             // Easy Thirds
             case "2":
-                tab[1] = "1"; // C
-                tab[2] = "–1'"; // C# / Db
-                tab[3] = "–1"; // D
-                tab[4] = "1o"; // D# / Eb
-                tab[5] = "2"; // E
-                tab[6] = "–2"; // F
-                tab[7] = "2o"; // F# / Gb 
-                tab[8] = "3"; // G
-                tab[9] = "–3'"; // G# / Ab
-                tab[10] = "–3"; // A
-                tab[11] = "3o"; // A# / Bb
-                tab[12] = "x"; // B 
+                theTabMap[0] = "1"; // C
+                theTabMap[1] = "-1'"; // C# / Db
+                theTabMap[2] = "-1"; // D
+                theTabMap[3] = "1o"; // D# / Eb
+                theTabMap[4] = "2"; // E
+                theTabMap[5] = "-2"; // F
+                theTabMap[6] = "2o"; // F# / Gb 
+                theTabMap[7] = "3"; // G
+                theTabMap[8] = "-3'"; // G# / Ab
+                theTabMap[9] = "-3"; // A
+                theTabMap[10] = "3o"; // A# / Bb
+                theTabMap[11] = "x"; // B 
 
-                tab[13] = "4"; // C
-                tab[14] = "–4'"; // C# / Db
-                tab[15] = "–4"; // D
-                tab[16] = "4o"; // D# / Eb
-                tab[17] = "5"; // E
-                tab[18] = "–5"; // F
-                tab[19] = "5o"; // F# / Gb
-                tab[20] = "6"; // G
-                tab[21] = "–6'"; // G# / Ab
-                tab[22] = "–6"; // A
-                tab[23] = "6o"; // A# / Bb
-                tab[24] = "–7"; // B
+                theTabMap[12] = "4"; // C
+                theTabMap[13] = "-4'"; // C# / Db
+                theTabMap[14] = "-4"; // D
+                theTabMap[15] = "4o"; // D# / Eb
+                theTabMap[16] = "5"; // E
+                theTabMap[17] = "-5"; // F
+                theTabMap[18] = "5o"; // F# / Gb
+                theTabMap[19] = "6"; // G
+                theTabMap[20] = "-6'"; // G# / Ab
+                theTabMap[21] = "-6"; // A
+                theTabMap[22] = "6o"; // A# / Bb
+                theTabMap[23] = "-7"; // B
 
-                tab[25] = "7"; // C
-                tab[26] = "–7o"; // C# / Db
-                tab[27] = "–8"; // D
-                tab[28] = "8'"; // E# / Eb
-                tab[29] = "8"; // E
-                tab[30] = "–9"; // F
-                tab[31] = "9'"; // F# / Gb
-                tab[32] = "9"; // G
-                tab[33] = "–9o"; // G# / Ab
-                tab[34] = "–10"; // A
-                tab[35] = "10''"; // A# / Bb
-                tab[36] = "10'"; // B
+                theTabMap[24] = "7"; // C
+                theTabMap[25] = "-7o"; // C# / Db
+                theTabMap[26] = "-8"; // D
+                theTabMap[27] = "8'"; // E# / Eb
+                theTabMap[28] = "8"; // E
+                theTabMap[29] = "-9"; // F
+                theTabMap[30] = "9'"; // F# / Gb
+                theTabMap[31] = "9"; // G
+                theTabMap[32] = "-9o"; // G# / Ab
+                theTabMap[33] = "-10"; // A
+                theTabMap[34] = "10''"; // A# / Bb
+                theTabMap[35] = "10'"; // B
 
-                tab[37] = "10"; // C
-                tab[38] = "–10o'"; // C#
+                theTabMap[36] = "10"; // C
+                theTabMap[37] = "-10o'"; // C#
                 break;   
             
             // Standard Richter
             default:
-                tab[1] = "1"; // C
-                tab[2] = "–1'"; // C# / Db
-                tab[3] = "–1"; // D
-                tab[4] = "1o"; // D# / Eb
-                tab[5] = "2"; // E
-                tab[6] = "–2''"; // F
-                tab[7] = "–2'"; // F# / Gb
-                tab[8] = "3"; // G
-                tab[9] = "–3'''"; // G# / Ab
-                tab[10] = "–3''"; // A
-                tab[11] = "–3'"; // A# / Bb
-                tab[12] = "–3"; // B
+                theTabMap[0] = "1"; // C
+                theTabMap[1] = "-1'"; // C# / Db
+                theTabMap[2] = "-1"; // D
+                theTabMap[3] = "1o"; // D# / Eb
+                theTabMap[4] = "2"; // E
+                theTabMap[5] = "-2''"; // F
+                theTabMap[6] = "-2'"; // F# / Gb
+                theTabMap[7] = "3"; // G
+                theTabMap[8] = "-3'''"; // G# / Ab
+                theTabMap[9] = "-3''"; // A
+                theTabMap[10] = "-3'"; // A# / Bb
+                theTabMap[11] = "-3"; // B
 
-                tab[13] = "4"; // C
-                tab[14] = "–4'"; // C# / Db
-                tab[15] = "–4"; // D
-                tab[16] = "4o"; // E# / Eb
-                tab[17] = "5"; // E
-                tab[18] = "–5"; // F
-                tab[19] = "5o"; // F# / Gb
-                tab[20] = "6"; // G
-                tab[21] = "–6'"; // G# / Ab
-                tab[22] = "–6"; // A
-                tab[23] = "6o"; // A# / Bb
-                tab[24] = "–7"; // B
+                theTabMap[12] = "4"; // C
+                theTabMap[13] = "-4'"; // C# / Db
+                theTabMap[14] = "-4"; // D
+                theTabMap[15] = "4o"; // E# / Eb
+                theTabMap[16] = "5"; // E
+                theTabMap[17] = "-5"; // F
+                theTabMap[18] = "5o"; // F# / Gb
+                theTabMap[19] = "6"; // G
+                theTabMap[20] = "-6'"; // G# / Ab
+                theTabMap[21] = "-6"; // A
+                theTabMap[22] = "6o"; // A# / Bb
+                theTabMap[23] = "-7"; // B
 
-                tab[25] = "7"; // C
-                tab[26] = "–7o"; // C# / Db
-                tab[27] = "–8"; // D
-                tab[28] = "8'"; // D# / Eb
-                tab[29] = "8"; // E
-                tab[30] = "–9"; // F
-                tab[31] = "9'"; // F# / Gb
-                tab[32] = "9"; // G
-                tab[33] = "–9o"; // G# / Ab
-                tab[34] = "–10"; // A
-                tab[35] = "10''"; // A# / Bb
-                tab[36] = "10'"; // B
+                theTabMap[24] = "7"; // C
+                theTabMap[25] = "-7o"; // C# / Db
+                theTabMap[26] = "-8"; // D
+                theTabMap[27] = "8'"; // D# / Eb
+                theTabMap[28] = "8"; // E
+                theTabMap[29] = "-9"; // F
+                theTabMap[30] = "9'"; // F# / Gb
+                theTabMap[31] = "9"; // G
+                theTabMap[32] = "-9o"; // G# / Ab
+                theTabMap[33] = "-10"; // A
+                theTabMap[34] = "10''"; // A# / Bb
+                theTabMap[35] = "10'"; // B
 
-                tab[37] = "10"; // C
-                tab[38] = "–10o'"; // C#
+                theTabMap[36] = "10"; // C
+                theTabMap[37] = "-10o'"; // C#
  
                 break;
-        }        
+        }    
 
-        // Set up defaults
-        let keySig = "C";
-        let octaveAdjust = 0;
-        let verbose = false;
-        let lineCount = 0;
-        let abcHeaderDone = false;
+        log("Got input:" + abcInput);
 
-        // Set the harp key
-        setHarpKey(harpKey);
+        // Find the key signature in the input
+        keySignature = findKeySignature(abcInput);
 
-        // Set the octave
-        if (octaveShift == "-1"){
-            octaveAdjust = -12;
+        if (keySignature == null) {
+            return ("ERROR: Unknown or unsupported key signature");
+        }
+
+        // Generate an array of note objects. 
+        var notes = getAbcNotes(abcInput,harpKey,octaveShift,blowPlus,theTabMap);
+
+        // Merge the chosen fingerings with the ABC notation
+        return mergeTablature(abcInput, notes);
+
+     }
+
+
+    // Note constructor
+    var Note = function(index, unNormalizedValue, normalizedValue, glyph) {
+
+        this.index = index; // Index of this note in the original ABC input string
+
+        // These values an ABC string like "G" or "^A'"
+        // Unnormalized means it's the literal note string from the ABC source.
+        this.unNormalizedValue = unNormalizedValue;
+
+        // Normalized means it's adjusted by the key signature and extra decorations are removed.
+        this.normalizedValue = normalizedValue;
+
+        this.glyph = glyph;
+    };
+
+
+
+    // Determines the key signature
+    // abcInput: ABC input string
+    // returns: key signature map to use, or null on error.
+    function findKeySignature(abcInput) {
+
+        var myMap = null;
+
+        var keyMatch = abcInput.match(/^K: *([A-G])([b#])? *(.*?)$/m);
+        if (keyMatch == null || keyMatch.length < 3) {
+            return null;
+        }
+
+        var keySignatureBase;
+        var keyExtra;
+
+        if (keyMatch[2] == undefined) {
+            keySignatureBase = keyMatch[1];
+        } else {
+            keySignatureBase = keyMatch[1] + keyMatch[2];
+        }
+        keyExtra = keyMatch[3].toLowerCase();
+
+        // Strip any trailing comments
+        var searchExp = /%.*/
+        keyExtra = keyExtra.replace(searchExp,"");
+        keyExtra = keyExtra.trim();
+
+        log("Got base key of '" + keySignatureBase + "' and extra of '" + keyExtra + "'");
+
+        // Determine musical mode
+        if (keyExtra == "" ||
+            keyExtra.search("maj") != -1 ||
+            keyExtra.search("ion") != -1) {
+            log("Mode: Ionian (major)");
+            myMap = keySignatureMap(keySignatureBase, 0);
+        } else if (keyExtra.search("mix") != -1) {
+            log("Mode: Mixolydian");
+            myMap = keySignatureMap(keySignatureBase, 1);
+        } else if (keyExtra.search("dor") != -1) {
+            log("Mode: Dorian");
+            myMap = keySignatureMap(keySignatureBase, 2);
+        } else if ((keyExtra.search("m") != -1 && keyExtra.search("mix") == -1) ||
+            keyExtra.search("min") != -1 ||
+            keyExtra.search("aeo") != -1) {
+            log("Mode: Aeolian (minor)");
+            myMap = keySignatureMap(keySignatureBase, 3);
+        } else if (keyExtra.search("phr") != -1) {
+            log("Mode: Phrygian");
+            myMap = keySignatureMap(keySignatureBase, 4);
+        } else if (keyExtra.search("loc") != -1) {
+            log("Mode: Locrian");
+            myMap = keySignatureMap(keySignatureBase, 5);
+        } else if (keyExtra.search("lyd") != -1) {
+            log("Mode: Lydian");
+            myMap = keySignatureMap(keySignatureBase, -1);
+        } else if (keyExtra.search("exp") != -1) {
+            log("(Accidentals to be explicitly specified)");
+            myMap = keySignatureMap("C", 0);
+        } else {
+            // Unknown
+            log("Failed to determine key signature mode");
+            myMap = null;
+        }
+
+        if (myMap == null) {
+            return myMap;
+        }
+
+        //Handle explicit accidentals
+        var explicitFlats = keyExtra.match(/_./g);
+        var explicitSharps = keyExtra.match(/\^./g);
+
+        for (note in explicitFlats) {
+            myMap.flats += explicitFlats[note][1].toUpperCase();
+        }
+
+        for (note in explicitSharps) {
+            myMap.sharps += explicitSharps[note][1].toUpperCase();
+        }
+
+        return myMap;
+
+    }
+
+    // Calculates a key signature map given a tonic and a mode
+    function keySignatureMap(tonic, modeFlatness) {
+        var circleOfFifths = "FCGDAEB";
+
+        var signature = {
+            sharps: "",
+            flats: ""
+        };
+
+        var baseSharpness = circleOfFifths.indexOf(tonic[0]) - 1;
+
+        if (baseSharpness == -2) {
+            log("Bad tonic: " + tonic);
+            return null;
+        }
+
+        if (tonic.slice(1) == "b") {
+            baseSharpness -= 7;
+        } else if (tonic.slice(1) == "#") {
+            baseSharpness += 7;
+        }
+
+        var totalSharpness = baseSharpness - modeFlatness;
+
+        if (totalSharpness > 7) {
+            log("Too many sharps: " + totalSharpness);
+            return null;
+        } else if (totalSharpness < -7) {
+            log("Too many flats: " + (totalSharpness * -1));
+            return null;
+        } else if (totalSharpness > 0) {
+            signature.sharps = circleOfFifths.slice(0, totalSharpness);
+        } else if (totalSharpness < 0) {
+            signature.flats = circleOfFifths.slice(totalSharpness);
+        }
+
+        signature.accidentalSharps = "";
+        signature.accidentalFlats = "";
+        signature.accidentalNaturals = "";
+
+        return signature;
+    }
+
+    //
+    // Merges the tablature with the original string input.
+    //
+    function mergeTablature(input, notes) {
+
+        var result = input;
+        
+        var insertedTotal = 0;
+
+        var theTab;
+
+        for (var i = 0; i < notes.length; ++i) {
+
+            var index = notes[i].index + insertedTotal;
+
+            var glyph = notes[i].glyph;
+
+            var glyphLen = glyph.length;
+
+            theTab = "\"_" +glyph+'"';
+
+            var tabLen = theTab.length;
+
+            //log("Merge["+i+"] index="+index+" tabLen="+tabLen+" insertedTotal="+insertedTotal);
+
+            result = result.substr(0, index) + theTab + result.substr(index);
+
+            insertedTotal += tabLen;
+        }
+
+        return result;
+    }
+
+    // Replaces parts of the given string with '*'
+    // input: string to replace
+    // start: index to start sanitizing
+    // len: length to sanitize
+    // Returns a new string
+    function sanitizeString(input, start, len) {
+        var s = "";
+        for (var i = 0; i < len; ++i) {
+            s += "*";
+        }
+
+        return input.substr(0, start) + s + input.substr(start + len);
+
+    }
+
+    //
+    // From a note name, gets the note string
+    //
+    function getNoteGlyph(note,harpKey,octaveShift,blowPlus,theTabMap){
+
+        // Standard ABC
+        var glyph_map = {
+            "C,":  0,
+            "^C,": 1,
+            "_D,": 1,
+            "D,":  2,
+            "^D,": 3,
+            "_E,": 3,
+            "E,":  4,
+            "^E,": 5,
+            "_F,": 4,
+            "F,":  5,
+            "^F,": 6,
+            "_G,": 6,
+            "G,":  7,
+            "^G,": 8,
+            "_A,": 8,
+            "A,":  9,
+            "^A,": 10,
+            "_B,": 10,
+            "B,":  11,
+            "^B,": 12,
+            "_C":  11,
+            "C":   12,
+            "^C":  13,
+            "_D":  13,
+            "D":   14,
+            "^D":  15,
+            "_E":  15,
+            "E":   16,
+            "^E":  17,
+            "_F":  16,
+            "F":   17,
+            "^F":  18,
+            "_G":  18,
+            "G":   19,
+            "^G":  20,
+            "_A":  20,
+            "A":   21,
+            "^A":  22,
+            "_B":  22,
+            "B":   23,
+            "^B":  24,
+            "_c":  23,
+            "c":   24,
+            "^c":  25,
+            "_d":  25,
+            "d":   26,
+            "^d":  27,
+            "_e":  27,
+            "e":   28,
+            "^e":  29,
+            "_f":  28,
+            "f":   29,
+            "^f":  30,
+            "_g":  30,
+            "g":   31,
+            "^g":  32,
+            "_a":  32,
+            "a":   33,
+            "^a":  34,
+            "_b":  34,
+            "b":   35,
+            "^b":  36,
+            "_c'": 35,
+            "c'":  36,
+            "^c'": 37,
+            "_d'": 37,
+            "d'":  38,
+            "^d'": 39,
+            "_e'": 39,
+            "e'":  40,
+            "^e'": 41,
+            "_F'": 40,
+            "f'":  41,
+            "^f'": 42,
+            "_g'": 42,
+            "g'":  43,
+            // Naturals
+            "=C,":  0,
+            "=D,":  2,
+            "=E,":  4,
+            "=F,":  5,
+            "=G,":  7,
+            "=A,":  9,
+            "=B,":  11,
+            "=C":   12,
+            "=D":   14,
+            "=E":   16,
+            "=F":   17,
+            "=G":   19,
+            "=A":   21,
+            "=B":   23,
+            "=c":   24,
+            "=d":   26,
+            "=e":   28,
+            "=f":   29,
+            "=g":   31,
+            "=a":   33,
+            "=b":   35,
+            "=c'":  36,
+            "=d'":  38,
+            "=e'":  40,
+            "=f'":  41,
+            "=g'":  43,
+            // Don't touch
+            "C'":   24,
+            "^C'":  25,
+            "_D'":  25,
+            "D'":   26,
+            "^D'":  27,
+            "_E'":  27,
+            "E'":   28,
+            "F'":   29,
+            "^F'":  30,
+            "_G'":  30,
+            "G'":   31,
+            "^G'":  32,
+            "_A'":  32,
+            "A'":   33,
+            "^A'":  34,
+            "_B'":  34,
+            "B'":   35,
+            "C''":  36,
+            "^C''": 37,
+            "_D''": 37,
+            "D''":  38,
+            "^D''": 39,
+            "_E''": 39,
+            "E''":  40,
+            "F''":  41,
+            "^F''": 42,
+            "_G''": 42,
+            "G''":  43,               
+            "=C'":  24,
+            "=D'":  26,
+            "=E'":  28,
+            "=F'":  29,
+            "=G'":  31,
+            "=A'":  33,
+            "=B'":  35,
+            "=C''": 36,
+            "=D''": 38,
+            "=E''": 40,
+            "=F''": 41,
+            "=G''": 43,            
+        };
+
+        var noteIndex = glyph_map[note];
+
+        // Offset for instrument key
+
+        var theOffset = 0;
+
+        switch (harpKey){
+            case "G":
+                theOffset = 5;
+                break
+            case "G#":
+                theOffset = 4;
+                break
+            case "A":
+                theOffset = 3;
+                break
+            case "Bb":
+                theOffset = 2;
+                break
+            case "B":
+                theOffset = 1;
+                break
+            case "C":
+                theOffset = 0;
+                break
+            case "C#":
+                theOffset = -1;
+                break
+            case "D":
+                theOffset = -2;
+                break
+            case "Eb":
+                theOffset = -3;
+                break
+            case "E":
+                theOffset = -4;
+                break
+            case "F":
+                theOffset = -5;
+                break
+            case "F#":
+                theOffset = -6;
+                break
+        }
+
+        noteIndex += theOffset;
+
+        // Add any octave shift        
+        if (octaveShift == "1"){
+            noteIndex += 12;
         }
         else
-        if (octaveShift == "1"){
-            octaveAdjust = 12;
+        if (octaveShift == "-1"){
+            noteIndex -= 12;
+        }            
+ 
+        if (noteIndex < 0){
+            return "x";
         }
 
-        var theOutput = "";
+        if ((noteIndex!=0) && (!noteIndex)){
+            return "x";
+        }
 
-        var theLines = tuneABC.split("\n");
-     
-        for (const line of theLines) {
+        var retVal = theTabMap[noteIndex];
 
-            lineCount++;
+        if (retVal != "x"){
 
-            if (/^\w:/.test(line) || /^%/.test(line) || line === "\n") {
-
-                theOutput+=(line + '\n');
-
-                // print the title
-                if (match = line.match(/^T:\s*(.*)$/)) {
-                    if (verbose) { console.log(`Title: ${match[1]}`); }
-                }
-
-                // this is an ABC field, comment or command, so just print it
-                if (match = line.match(/^K:\s*(.*)$/)) {
-
-                    abcHeaderDone = true;
-
-                    keySig = match[1]; 
-
-                    keySig = keySig.replaceAll(" ","");
-                   
-                    keySig = keySig.replace(/\s?(treble[+-]?\d?|bass\d?|alto\d?|none|perc)/, '');
-                    keySig = keySig.replace(/\s?major/, '');
-                    keySig = keySig.replace(/\s?Major/, '');
-                    keySig = keySig.replace(/\s?maj/, '');
-                    keySig = keySig.replace(/\s?Maj/, '');
-                                    
-                    keySig = keySig.replace(/^([A-G])#/, '^$1');
-                    keySig = keySig.replace(/^([A-G])b/, '_$1');
-
-                    switch (keySig.toLowerCase()){
-                        case "ddor":
-                        case "ddorian":
-                        case "amin":
-                        case "aminor":
-                            keySig = "C";
-                            break;
-                        case "edor":
-                        case "edorian":
-                        case "bmin":
-                        case "bminor":
-                        case "amix":
-                        case "amixolydian":
-                            keySig = "D";
-                            break;
-                        case "ador":
-                        case "adorian":
-                        case "emin":
-                        case "eminor":
-                        case "dmix":
-                        case "dmixolydian":
-                            keySig = "G";
-                            break;
-                        case "bdor":
-                        case "bdorian":
-                            keySig = "A";
-                            break;
-                        case "amin":
-                        case "aminor":
-                        case "ddor":
-                        case "ddorian":
-                        case "gmix":
-                        case "gmixolydian":
-                            keySig = "C";
-                            break;
-                        case "gdor":
-                        case "gdorian":
-                        case "dmin":
-                        case "dminor":
-                            keySig = "F";
-                            break;                    
-                    }
-
-                    if (verbose) { console.log(`Key signature: ${keySig}`); }
-
-                    var postFix = "%%text "+harpKey+" Harp";
-
-                    if (octaveAdjust == 0){
-                        postFix="%%text "+harpKey+" Harp";
+            if (!retVal){
+                return "x";
+            }
+            else{
+                // Stacked hole directions?
+                if (gHarmonicaStacking){
+                    if (retVal.indexOf("-") != -1){
+                        retVal = retVal.replace("-","");
+                        retVal += ";-";
                     }
                     else
-                    if (octaveAdjust == -12){
-                        postFix="%%text "+harpKey+" Harp / -1 Octave";
-                    }
-                    else
-                    if (octaveAdjust == 12){
-                        postFix="%%text "+harpKey+" Harp / +1 Octave";
-                    }
-
-                    switch (gHarmonicaStyle){
-                        case "0":
-                            postFix += " (Standard Richter)\n"
-                            break;
-                        case "1":
-                            postFix += " (Paddy Richter)\n"
-                            break;
-                        case "2":
-                            postFix += " (Easy Thirds)\n"
-                            break;
-                    }
-
-                    theOutput+=postFix;
-
-                    theOutput+=("%%vskip 15\n");
-
-                 }
-            } else {
-
-                if (line == ""){
-                    break;
-                }
-
-                // this should be a musical line
-                theOutput+=(line + '\n');
-
-                // make a copy - this will be the harp tab line
-                let harpLine = line;
-
-                harpLine = harpLine.replace(/\[\w:.*?\]/g, '');
-
-                // strip to individual notes
-                harpLine = harpLine.replace(/%.*?$/, '');   // remove trailing comments
-                harpLine = harpLine.replace(/\\/g, '');     // remove continuation lines
-
-                harpLine = harpLine.replace(/"(.*?)"/g, '');    // remove all strings
-                harpLine = harpLine.replace(/[<>\.~]/g, '');    // remove - < > . ~
-                harpLine = harpLine.replace(/!.*?!/g, '');      // remove !symbols!
-                harpLine = harpLine.replace(/{.*?}/g, '');      // remove graces {}
-                harpLine = harpLine.replace(/\(([^()]*)\)/g, '$1');     // "de"-slur
-                harpLine = harpLine.replace(/\[([\^_=]*?[A-Ga-gzx][\,']*).*?\]/g, '$1');    // "de"-chord
-                harpLine = harpLine.replace(/\(\d/g, '');       // "de"-tuplet
-                harpLine = harpLine.replace(/\|\d/g, '');       // remove numbered repeats
-                harpLine = harpLine.replace(/[\|\]:]/g, '');    // remove barlines
-
-                harpLine = harpLine.replace(/([\^_=]*?[A-Ga-gzx][\,']*)\d?\/?\*?/g, '$1 ');
-
-                harpLine = harpLine.replace(/-\s*[\^_=]*?[A-Ga-gzx][\,']*/g, '*');  // ties will be skipped
-                harpLine = harpLine.replace(/-/g, '');  // clean up extra ties
-
-                harpLine = harpLine.replace(/[zx]\d?/g, '');        // remove rests
-
-                // convert to tab
-                harpLine = harpLine.replace(/\s+/g, ' ');
-
-                let notes = harpLine.trim().split(' ');
-
-                var outNotes = [];
-                
-                for (let j = 0; j < notes.length; j++) {
-                    
-                    let note = notes[j];
-
-                    if (note !== "*") {
-
-                        let abcNote = note;
-
-                        let noteIndex = getTrueNote(abcNote, keySig) + octaveAdjust + transposeHarp;
-
-                        //if (verbose){console.log("abcNote: "+abcNote+" noteIndex: "+noteIndex);}
-                        
-                        if (noteIndex < 0) { noteIndex = 0; }
-
-                        if (noteIndex > 38) { noteIndex = 0; }
-
-                        note = tab[noteIndex];
-
-                        if (verbose){console.log("abcNote: "+abcNote+" noteIndex: "+noteIndex+" note: "+note);}
-
-
-                        if (verbose){
-                            if (note === "x") { console.log(`Line ${lineCount}: Warning: ${abcNote} is not playable on the ${harpKey} harp`); }
-                        }
-
-                        if (blowPlus){
-
-                            if (note != "x"){
-                                if (note.indexOf("–") == -1){
-                                    note = "+"+note;
-                                }
-                            }
-                        }
-
-                        outNotes.push(note);
+                    if (blowPlus){
+                        retVal = retVal+=";+";
                     }
                 }
+                else{
+                    if (blowPlus){
+                        if (retVal.indexOf("-") == -1){
+                            retVal = "+"+retVal;
+                        }
+                    }
 
-                //debugger;
-
-                harpLine = "w: " + outNotes.join(' ').trim();
-
-                harpLine = harpLine.replace(/\s+/g, ' ');       // remove extra spaces
-
-                harpLine = harpLine.trim();
-
-                if (harpLine !== "w:") { theOutput+=(`${harpLine}\n`); }
+                }
             }
         }
 
-        theOutput += "\n";
+        return retVal;
 
-        return theOutput;
     }
+
+    // Returns an array of Notes from the ABC string input
+    function getAbcNotes(input,harpKey,octaveShift,blowPlus,tab) {
+
+        // Sanitize the input, removing header and footer, but keeping
+        // the same offsets for the notes. We'll just replace header
+        // and footer sections with '*'.
+        var sanitizedInput = input;
+        var headerRegex = /^\w:.*$/mg;
+        var x;
+        while (x = headerRegex.exec(input)) {
+            sanitizedInput = sanitizeString(sanitizedInput, x.index, x[0].length);
+        }
+
+        // Sanitize chord markings
+        var searchRegExp = /"[^"]*"/gm
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }
+
+        // Sanitize in-abc chords in brackets
+        searchRegExp = /\[[^\]|]*\]/g
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }  
+
+        // Sanitize !*! style annotations
+        searchRegExp = /![^!\n]*!/gm 
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }
+
+        // Sanitize multi-line comments
+        searchRegExp = /^%%begintext((.|\n)*)%%endtext/gm
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+            //debugger;
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }    
+
+        // Sanitize comments
+        searchRegExp = /^%.*$/gm
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+            //debugger;
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }
+
+        // Sanitize ! 
+        sanitizedInput = sanitizedInput.replaceAll("!","*");
+
+        log("sanitized input:" + sanitizedInput);
+
+        // Find all the notes
+        var regex = /([=^_]?[a-gA-G][',]?|\|)/g;
+        var notes = [];
+        var m;
+        while (m = regex.exec(sanitizedInput)) {
+            var unNormalizedValue = m[1];
+            if (unNormalizedValue == "|") {
+                keySignature.accidentalFlats = "";
+                keySignature.accidentalSharps = "";
+                keySignature.accidentalNaturals = "";
+            } else {
+                var normalizedValue = normalize(unNormalizedValue);
+
+                log("UnNormalized=" + unNormalizedValue + " normalized=" + normalizedValue);
+                
+                var theGlyph = getNoteGlyph(normalizedValue,harpKey,octaveShift,blowPlus,tab);
+
+                notes.push(new Note((m.index), unNormalizedValue, normalizedValue, theGlyph));
+            }
+        }
+
+        return notes;
+    }
+
+
+
+    // Normalizes the given note string, given the key signature.
+    // This means making sharps or flats explicit, and removing
+    // extraneous natural signs.
+    // Returns the normalized note string.
+    function normalize(value) {
+
+        // Find note base name
+        var i = value.search(/[A-G]/i);
+        if (i == -1) {
+            log("Failed to find basename for value!");
+            return value;
+        }
+        var baseName = value.substr(i, 1).toUpperCase();
+
+        // Does it have a natural?
+        if (value.substr(0, 1) == "=") {
+            keySignature.accidentalFlats = keySignature.accidentalFlats.replace(baseName, "");
+            keySignature.accidentalSharps = keySignature.accidentalSharps.replace(baseName, "");
+            keySignature.accidentalNaturals += baseName;
+            return value.substr(1);
+        }
+
+        // Does it already have an accidental?
+        if (value.substr(0, 1) == "_") {
+            keySignature.accidentalFlats += baseName;
+            keySignature.accidentalSharps = keySignature.accidentalSharps.replace(baseName, "");
+            keySignature.accidentalNaturals = keySignature.accidentalNaturals.replace(baseName, "");
+            return value;
+        }
+
+        if (value.substr(0, 1) == "^") {
+            keySignature.accidentalFlats = keySignature.accidentalFlats.replace(baseName, "");
+            keySignature.accidentalNaturals = keySignature.accidentalNaturals.replace(baseName, "");
+            keySignature.accidentalSharps += baseName;
+            return value;
+        }
+
+        // Transform to key signature
+
+        if (keySignature.accidentalNaturals.search(baseName) != -1) {
+            return value;
+        }
+
+        if (keySignature.sharps.search(baseName) != -1 ||
+            keySignature.accidentalSharps.search(baseName) != -1) {
+            return "^" + value;
+        }
+
+        if (keySignature.flats.search(baseName) != -1 ||
+            keySignature.accidentalFlats.search(baseName) != -1) {
+            return "_" + value;
+        }
+
+        return value;
+    }
+
 
     //
     // Count the tunes in the text area
@@ -8551,7 +8811,7 @@ var HarmonicaTabGenerator = function (theABC){
 
     function stripHarmonicaTab(input) {
       return input.split('\n') // Split input into lines
-        .filter(line => !/^w:|^%%vskip 15$|^%%vocalfont|^%%text\s\w{1,2}\sHarp/.test(line)) // Filter out lines that match the pattern
+        .filter(line => !/^w:|^%%vskip 15$|^%%annotationfont|^%%text\s\w{1,2}\sHarp/.test(line)) // Filter out lines that match the pattern
         .join('\n'); // Join the remaining lines back into a string
     }
 
@@ -8559,6 +8819,8 @@ var HarmonicaTabGenerator = function (theABC){
     // Main processor
     //
     function generateTablature(theABC) {
+
+        //debugger;
 
         var fontFamily = gInjectTab_FontFamily;
         var tabFontSize = gInjectTab_TabFontSize;
@@ -8585,6 +8847,9 @@ var HarmonicaTabGenerator = function (theABC){
 
             thisTune = stripHarmonicaTab(thisTune);
 
+            // Strip any existing tab
+            thisTune = StripTabOne(thisTune);
+
             // console.log("After");
             // console.log(thisTune);
 
@@ -8592,7 +8857,37 @@ var HarmonicaTabGenerator = function (theABC){
             
             thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%staffsep " + staffSep);
  
-            thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%vocalfont " + fontFamily + " " + tabFontSize);
+            thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
+
+            var harpInfo = "%%text "+gHarmonicaKey+" Harp";
+
+            if (gHarmonicaOctave == 0){
+                harpInfo="%%text "+gHarmonicaKey+" Harp";
+            }
+            else
+            if (gHarmonicaOctave == "-1"){
+                harpInfo="%%text "+gHarmonicaKey+" Harp / -1 Octave";
+            }
+            else
+            if (gHarmonicaOctave == "1"){
+                harpInfo="%%text "+gHarmonicaKey+" Harp / +1 Octave";
+            }
+
+            switch (gHarmonicaStyle){
+                case "0":
+                    harpInfo += " (Standard Richter)\n"
+                    break;
+                case "1":
+                    harpInfo += " (Paddy Richter)\n"
+                    break;
+                case "2":
+                    harpInfo += " (Easy Thirds)\n"
+                    break;
+            }
+
+            thisTune = InjectStringBelowTuneHeaderConditional(thisTune, harpInfo);
+
+            thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%vskip 15");
 
             result += thisTune;
 

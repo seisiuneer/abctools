@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2280_012725_0800";
+var gVersionNumber="2281_012725_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -23810,7 +23810,8 @@ function DoInjectHarmonicaTab(){
 	  configure_harmonica_style:gHarmonicaStyle,
 	  configure_harmonica_key:gHarmonicaKey,
 	  configure_harmonica_octave:gHarmonicaOctave,
-	  configure_harmonica_plussign:gHarmonicaPlusSign
+	  configure_harmonica_plussign:gHarmonicaPlusSign,
+	  configure_harmonica_stacking:gHarmonicaStacking
 	};
 
 	const form = [
@@ -23819,11 +23820,12 @@ function DoInjectHarmonicaTab(){
 	  {name: "Harmonica style:", id: "configure_harmonica_style", type:"select", options:harmonica_styles, cssClass:"configure_harmonica_style_select"}, 
 	  {name: "Harmonica key:", id: "configure_harmonica_key", type:"select", options:harmonica_keys, cssClass:"configure_harmonica_select"}, 
 	  {name: "Octave shift:", id: "configure_harmonica_octave", type:"select", options:harmonica_octaves, cssClass:"configure_harmonica_select"}, 
-	  {name: "    Include + before blow notes in tablature", id: "configure_harmonica_plussign", type:"checkbox", cssClass:"configure_harmonica_settings_form_text"},
+	  {name: "    Include + for blow notes in the tablature", id: "configure_harmonica_plussign", type:"checkbox", cssClass:"configure_harmonica_settings_form_text"},
+	  {name: "    Blow/Draw indications under the hole number (unchecked is before hole number)", id: "configure_harmonica_stacking", type:"checkbox", cssClass:"configure_harmonica_settings_form_text2"},
 	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},	  
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 700, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -23832,6 +23834,7 @@ function DoInjectHarmonicaTab(){
 			gHarmonicaKey = args.result.configure_harmonica_key; 
 			gHarmonicaOctave = args.result.configure_harmonica_octave; 
 			gHarmonicaPlusSign = args.result.configure_harmonica_plussign;
+			gHarmonicaStacking = args.result.configure_harmonica_stacking;
 
 			SaveConfigurationSettings();
 
@@ -35923,6 +35926,7 @@ var gHarmonicaStyle = "0";
 var gHarmonicaKey = "C";
 var gHarmonicaOctave = "0";
 var gHarmonicaPlusSign = false;
+var gHarmonicaStacking = true;
 
 // Get the initial configuration settings from local browser storage, if present
 function GetInitialConfigurationSettings(){
@@ -36200,6 +36204,14 @@ function GetInitialConfigurationSettings(){
 	}
 	else{
 		gHarmonicaPlusSign = false;
+	}
+
+	val = localStorage.HarmonicaStacking;
+	if (val){
+		gHarmonicaStacking = (val == "true");
+	}
+	else{
+		gHarmonicaStacking = true;
 	}
 
 	// Bamboo flute
@@ -36976,6 +36988,7 @@ function SaveConfigurationSettings(){
 		localStorage.HarmonicaKey = gHarmonicaKey;
 		localStorage.HarmonicaOctave = gHarmonicaOctave;
 		localStorage.HarmonicaPlusSign = gHarmonicaPlusSign;
+		localStorage.HarmonicaStacking = gHarmonicaStacking;
 
 		// Save the bamboo flute key
 		localStorage.BambooFluteKey =  gBambooFluteKey;

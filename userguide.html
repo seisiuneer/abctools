@@ -3568,51 +3568,24 @@
                 <hr id="tab_harmonica">
                 <p><strong>Inject Harmonica Tab</strong> - Brings up a dialog where you can inject tab for standard 10-hole diatonic harmonica:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/harmonica_tab_2.jpg">
+                    <img class="image" loading="lazy" src="img/harmonica_tab_3.jpg">
                 </div>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/kSczTn19pB8" title="Harmonica Tab Injection Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>Choose the harmonica style (Standard Richter, Paddy Richter, or Easy Thirds) from the <strong>Harmonica style</strong> dropdown.
                 <p>Choose the harmonica tuning from the <strong>Harmonica key</strong> dropdown.</p>
                 <p>If you want to shift the position on the harmonica up or down one octave, select the octave shift from the <strong>Octave shift</strong> dropdown.</p>
                 <p>Blow notes can be indicated either with or without a + before the hole number.</p>
-                <p>Check <strong>Include + before blow notes in tablature</strong> if you want a + before the blow note numbers.</p>
-                <p>The tab injector will delete any harmonica tag ABC w: tags previously injected into the tunes.</p>
+                <p>Check <strong>Include + for blow notes in the tablature</strong> if you want a + before the blow note numbers. (default is unchecked)</p>
+                <p>Check <strong>Blow/Draw indications under the hole number (unchecked is before hole number)</strong> if you want the + or - drawn below the hole numbers instead of before them. (default is checked)</p>
+                <p>The tab injector will delete any harmonica tab previously injected into the tunes.</p>
                 <hr>
                 <p style="text-align: center;"><strong>How to Read the Diatonic Harmonica Tablature</strong></p>
                 <p>Numbers correspond to the holes on the harmonica.</p>
                 <p>Number alone indicates blow.</p>
-                <p>If enabled by checking <strong>Include + before blow notes in tablature</strong>, blow is indicated by a + before the number.</p>
-                <p>Draw is indicated by – before the number. Note that in the ABC this is an en-dash, not a hyphen (reasons explained below).</p>
+                <p>If enabled by checking <strong>Include + for blow notes in the tablature</strong>, blow is indicated by a + .</p>
+                <p>Draw is indicated by – .</p>
                 <p>Bends are indicated by ', '', or ''' after the number.</p>
                 <p>Overblow is indicated by o after the number.</p>
-                <hr>
-                <p style="text-align: center;"><strong>Known issues and caveats for the Harmonica tablature injector</strong></p>
-                <p><strong>Accidents in a measure don't carry forward to later notes in the measure:</strong></p>
-                <p>The ABC parser for this feature apparently doesn't know how to carry forward accidentals in a measure to the same note later in the same measure, so you may have to manually edit those cases after doing the tablature injection.</p>
-                <p><strong>Draw is indicated using an "en-dash", not a hyphen:</strong></p>
-                <p>The tablature is created using the w: tag lyrics feature of ABC.</p>
-                <p>There is one tab entry per note in the line of notation.</p>
-                <p>Because hyphens are used in w: tag lyrics to extend syllables, I had to use a different character to indicate draw.</p>
-                <p>The character used instead is an "en-dash".</p>
-                <p>To enter an en-dash on Mac, hold down Option and press the hyphen key.</p>
-                <p>To enter an en-dash on Windows, you'll need to copy and paste an en-dash from another item since the normal Ctrl - is assigned to browser zoom.</p>
-                <p>It often may be easier to simply copy and paste an en-dash from another harmonica tab item.</p>
-                <p>More details on en-dash here: <a href="https://proofed.com/writing-tips/how-to-type-an-en-dash-and-em-dash-on-windows-and-mac-devices/" target="_blank">How to Type an En Dash and Em Dash on Windows and Mac Devices</a>.</p>
-                <p><strong>Tab injector strips all w: lines from the ABC before injection:</strong></p>
-                <p>The tab injector strips all w: lines from the ABC before injecting new harmonica tablature.</p>
-                <p>If you have a tune that already has lyrics using w: tags, they will be stripped as well.</p>
-                <p>To avoid this, before injecting the harmonica tab, use the <strong>Find and Replace</strong> feature in the tool to replace all your lyric w: lines with a prefixed comment, for example:</p>
-                <p class="code">%FOOw:My song lyrics</p>
-                <p>then do the harmonica tab injection.</p>
-                <p>Finally, use <strong>Find and Replace</strong> to replace your prefixed comment (%FOO in the example above) with an empty string, restoring the original w: lyrics lines.</p>
-                <p><strong>Harmonica tab can't be hidden or stripped using the Hide/Strip Injected Tab features:</strong></p>
-                <p>Harmonica tab uses a w: tag lyrics line to inject the tab.</p>
-                <p>The other tab styles use ABC text annotations.</p>
-                <p>As a result you can't use the <strong>Hide/Strip Injected Tab</strong> features on the <strong>More Tools</strong> dialog with the harmonic tab since those features only work for ABC text annotations.</p>
-                <p>To strip the harmonica tab, you can use a regular expression in the <strong>Find and Replace</strong> dialog:</p>
-                <p class="code">w:.*\n</p>
-                <p>Enter this as the Find string, check the <strong>Match using regular expression</strong> box, and leave the Replace string blank.</p>
-                <p>Click <strong>Replace All</strong> to strip all the harmonica tab w: lines.</p>
                 <hr id="tab_irish_box">
                 <p><strong>Inject Irish Box Tab</strong> - Brings up a dialog where you can choose to inject either B/C or C#/D Irish button box tab into the ABC.</p>
                 <p>See the <a href="#tablature_settings">Configuring Tablature Fonts and Settings</a> section below for full details on the B/C and C#/D box tablature style, font, and spacing options.</p>
