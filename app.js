@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2282_012725_1300";
+var gVersionNumber="2283_012825_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -23801,7 +23801,10 @@ function DoInjectHarmonicaTab(){
   	const harmonica_styles = [
 	    { name: "  Standard Richter", id: "0" },
 	    { name: "  Paddy Richter", id: "1" },
-	    { name: "  Easy Thirds", id: "2" }
+	    { name: "  Easy Thirds", id: "2" },
+	    { name: "  Melody Maker", id: "3" },
+	    { name: "  Country (Major 7th)", id: "4" },
+	    { name: "  Natural Minor", id: "5" }
   	];
 
 

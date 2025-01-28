@@ -8072,7 +8072,145 @@ var HarmonicaTabGenerator = function (theABC){
                 theTabMap[36] = "10"; // C
                 theTabMap[37] = "-10o'"; // C#
                 break;   
-            
+
+            // Melody Maker
+            case "3":
+                theTabMap[0] = "1"; // C
+                theTabMap[1] = "-1'"; // C# / Db
+                theTabMap[2] = "-1"; // D
+                theTabMap[3] = "1o"; // D# / Eb
+                theTabMap[4] = "2"; // E
+                theTabMap[5] = "-2''"; // F
+                theTabMap[6] = "-2'"; // F# / Gb
+                theTabMap[7] = "-2"; // G
+                theTabMap[8] = "2o"; // G# / Ab
+                theTabMap[9] = "3"; // A
+                theTabMap[10] = "-3'"; // A# / Bb
+                theTabMap[11] = "-3"; // B
+
+                theTabMap[12] = "4"; // C
+                theTabMap[13] = "-4'"; // C# / Db
+                theTabMap[14] = "-4"; // D
+                theTabMap[15] = "4o"; // E# / Eb
+                theTabMap[16] = "5"; // E
+                theTabMap[17] = "-5'"; // F
+                theTabMap[18] = "-5"; // F# / Gb
+                theTabMap[19] = "6"; // G
+                theTabMap[20] = "-6'"; // G# / Ab
+                theTabMap[21] = "-6"; // A
+                theTabMap[22] = "6o"; // A# / Bb
+                theTabMap[23] = "-7"; // B
+
+                theTabMap[24] = "7"; // C
+                theTabMap[25] = "-7o"; // C# / Db
+                theTabMap[26] = "-8"; // D
+                theTabMap[27] = "8'"; // D# / Eb
+                theTabMap[28] = "8"; // E
+                theTabMap[29] = "-8o"; // F
+                theTabMap[30] = "-9"; // F# / Gb
+                theTabMap[31] = "9"; // G
+                theTabMap[32] = "-9o"; // G# / Ab
+                theTabMap[33] = "-10"; // A
+                theTabMap[34] = "10''"; // A# / Bb
+                theTabMap[35] = "10'"; // B
+
+                theTabMap[36] = "10"; // C
+                theTabMap[37] = "-10o'"; // C#
+ 
+                break;    
+
+            // Country
+            case "4":
+                theTabMap[0] = "1"; // C
+                theTabMap[1] = "-1'"; // C# / Db
+                theTabMap[2] = "-1"; // D
+                theTabMap[3] = "1o"; // D# / Eb
+                theTabMap[4] = "2"; // E
+                theTabMap[5] = "-2''"; // F
+                theTabMap[6] = "-2'"; // F# / Gb
+                theTabMap[7] = "-2"; // G
+                theTabMap[8] = "-3'''"; // G# / Ab
+                theTabMap[9] = "-3''"; // A
+                theTabMap[10] = "-3'"; // A# / Bb
+                theTabMap[11] = "-3"; // B
+
+                theTabMap[12] = "4"; // C
+                theTabMap[13] = "-4'"; // C# / Db
+                theTabMap[14] = "-4"; // D
+                theTabMap[15] = "4o"; // E# / Eb
+                theTabMap[16] = "5"; // E
+                theTabMap[17] = "-5'"; // F
+                theTabMap[18] = "-5"; // F# / Gb
+                theTabMap[19] = "6"; // G
+                theTabMap[20] = "-6'"; // G# / Ab
+                theTabMap[21] = "-6"; // A
+                theTabMap[22] = "6o"; // A# / Bb
+                theTabMap[23] = "-7"; // B
+
+                theTabMap[24] = "7"; // C
+                theTabMap[25] = "-7o"; // C# / Db
+                theTabMap[26] = "-8"; // D
+                theTabMap[27] = "8'"; // D# / Eb
+                theTabMap[28] = "8"; // E
+                theTabMap[29] = "-9"; // F
+                theTabMap[30] = "9'"; // F# / Gb
+                theTabMap[31] = "9"; // G
+                theTabMap[32] = "-9o"; // G# / Ab
+                theTabMap[33] = "-10"; // A
+                theTabMap[34] = "10''"; // A# / Bb
+                theTabMap[35] = "10'"; // B
+
+                theTabMap[36] = "10"; // C
+                theTabMap[37] = "-10o'"; // C#
+ 
+                break;
+
+            // Natural Minor
+            case "5":
+                theTabMap[0] = "1"; // C
+                theTabMap[1] = "-1'"; // C# / Db
+                theTabMap[2] = "-1"; // D
+                theTabMap[3] = "2"; // D# / Eb
+                theTabMap[4] = "-2'''"; // E
+                theTabMap[5] = "-2''"; // F
+                theTabMap[6] = "-2'"; // F# / Gb
+                theTabMap[7] = "-2"; // G
+                theTabMap[8] = "-3''"; // G# / Ab
+                theTabMap[9] = "-3'"; // A
+                theTabMap[10] = "-3"; // A# / Bb
+                theTabMap[11] = "3o"; // B
+
+                theTabMap[12] = "4"; // C
+                theTabMap[13] = "-4'"; // C# / Db
+                theTabMap[14] = "-4"; // D
+                theTabMap[15] = "5"; // E# / Eb
+                theTabMap[16] = "-5'"; // E
+                theTabMap[17] = "-5"; // F
+                theTabMap[18] = "5o"; // F# / Gb
+                theTabMap[19] = "6"; // G
+                theTabMap[20] = "-6'"; // G# / Ab
+                theTabMap[21] = "-6"; // A
+                theTabMap[22] = "-7"; // A# / Bb
+                theTabMap[23] = "7'"; // B
+
+                theTabMap[24] = "7"; // C
+                theTabMap[25] = "-7o"; // C# / Db
+                theTabMap[26] = "-8"; // D
+                theTabMap[27] = "8"; // D# / Eb
+                theTabMap[28] = "-8o"; // E
+                theTabMap[29] = "-9"; // F
+                theTabMap[30] = "9'"; // F# / Gb
+                theTabMap[31] = "9"; // G
+                theTabMap[32] = "-9o"; // G# / Ab
+                theTabMap[33] = "-10"; // A
+                theTabMap[34] = "10''"; // A# / Bb
+                theTabMap[35] = "10'"; // B
+
+                theTabMap[36] = "10"; // C
+                theTabMap[37] = "-10o'"; // C#
+ 
+                break;
+
             // Standard Richter
             default:
                 theTabMap[0] = "1"; // C
@@ -8882,6 +9020,17 @@ var HarmonicaTabGenerator = function (theABC){
                     break;
                 case "2":
                     harpInfo += " (Easy Thirds)\n"
+                    break;
+                case "3":
+                    harpInfo += " (Melody Maker)\n"
+                    break;
+                case "4":
+                    harpInfo += " (Country - Major 7th)\n"
+                    break;
+                case "5":
+                    harpInfo += " (Natural Minor)\n"
+                    break;
+                default:
                     break;
             }
 
