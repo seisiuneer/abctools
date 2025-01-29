@@ -7934,7 +7934,7 @@ var HarmonicaTabGenerator = function (theABC){
         // harptab layout (C harp)
         var theTabMap = [];
 
-        switch (gHarmonicaStyle){
+        switch (gHarmonicaTuning){
             
             // Standard Richter
             case "0":
@@ -8210,6 +8210,11 @@ var HarmonicaTabGenerator = function (theABC){
                 theTabMap[37] = "-10o'"; // C#
  
                 break;
+
+            // Custom
+            case "6": 
+                theTabMap = gHarmonicaCustom.noteMap;
+                break; 
 
             // Standard Richter
             default:
@@ -9011,7 +9016,7 @@ var HarmonicaTabGenerator = function (theABC){
                 harpInfo="%%text "+gHarmonicaKey+" Harp / +1 Octave";
             }
 
-            switch (gHarmonicaStyle){
+            switch (gHarmonicaTuning){
                 case "0":
                     harpInfo += " (Standard Richter)\n"
                     break;
@@ -9029,6 +9034,9 @@ var HarmonicaTabGenerator = function (theABC){
                     break;
                 case "5":
                     harpInfo += " (Natural Minor)\n"
+                    break;
+                case "6":
+                    harpInfo += " ("+gHarmonicaCustom.name+")\n"
                     break;
                 default:
                     break;

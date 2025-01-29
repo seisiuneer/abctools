@@ -3416,6 +3416,43 @@ margin-top:-7px;
 	}
 }
 
+#load_custom_harmonica_tuning{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.load_custom_harmonica_tuning:hover{
+	background: palegreen;
+	}
+}
+
+#save_custom_harmonica_tuning{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+	margin-right:24px;
+}
+
+@media (hover: hover) {
+	.save_custom_harmonica_tuning:hover{
+	background: palegreen;
+	}
+}
+
+#configure_harmonica_custom{
+	height:42px;
+	margin-top: 0px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.configure_harmonica_custom:hover{
+	background: palegreen;
+	}
+}
+
 #default_musicxml_settings{
 	height:42px;
 	margin-top: 9px;
@@ -3550,7 +3587,7 @@ padding-left:10px;
 margin-top:-7px;
 }
 
-.configure_harmonica_style_select{
+.configure_harmonica_tuning_select{
 font-size:11pt;
 font-family:"Helvetica";
 display:flex;
@@ -3558,7 +3595,7 @@ margin-right:12px;
 margin-top:32px;
 }
 
-.configure_harmonica_style_select>select{
+.configure_harmonica_tuning_select>select{
 display:inline;
 -webkit-appearance: none;
 -moz-appearance: none;
@@ -3572,7 +3609,7 @@ color:black;
 font-size:11pt;
 font-family:"Helvetica";
 height:32px;
-width:190px;
+width:250px;
 margin-left:10px;
 padding-left:10px;
 margin-top:-7px;
@@ -4006,6 +4043,16 @@ padding: 3px;
 .anglobuttonnames {
   width:66px;
 }
+
+.harmonicacustomnames{
+  width:57px;
+}
+
+.harmonicacustomlabel{
+  margin-left:12px;
+  width:400px;
+}
+
 
 #playerstatus {
 font-family:helvetica;

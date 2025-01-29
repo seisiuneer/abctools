@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2283_012825_1000";
+var gVersionNumber="2284_012925_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -23769,6 +23769,459 @@ function RemoveTuneTitleNumbers(bDoRedraw){
 
 }
 
+
+//
+// Save the custom harmonica settings to a file
+//
+function saveCustomHarmonica(){
+
+	// Keep track of actions
+	sendGoogleAnalytics("action","saveCustomHarmonica");
+
+	var theCustomHarmonicaJSON = JSON.stringify(gHarmonicaCustom);
+
+	saveTextFile("Please enter a filename for your custom harmonica tuning:", gHarmonicaCustom.name+".txt", theCustomHarmonicaJSON);
+	
+}
+
+//
+// Load the custom harmonica tuning
+//
+function loadCustomHarmonicaClickHandler(){
+
+	var elem = document.getElementById("load_custom_harmonica_tuning_fs");
+
+	elem.click();
+
+}
+
+function loadCustomHarmonica(file){
+
+	// Keep track of actions
+	sendGoogleAnalytics("action","loadCustomHarmonica");
+
+	const reader = new FileReader();
+
+	reader.addEventListener('load', (event) => {
+
+		var theText = event.target.result;
+
+		try{
+
+			var theParsedHarmonicaTuning = JSON.parse(theText);
+
+			// Sanity check a couple of fields
+			if ((!theParsedHarmonicaTuning.type) || (theParsedHarmonicaTuning.type != "CustomHarmonica" )){
+
+				var thePrompt = "This is not a valid custom harmonica tuning file.";
+
+				// Center the string in the prompt
+				thePrompt = makeCenteredPromptString(thePrompt);
+
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+				return;
+
+			}
+
+			// Save the new tuning
+			gHarmonicaCustom = theParsedHarmonicaTuning;
+
+			// Idle the custom harmonica dialog with the new values
+			initCustomHarmonicaSettings();
+
+		}
+		catch(error){
+
+			var thePrompt = "This is not a valid custom harmonica tuning file.";
+
+			// Center the string in the prompt
+			thePrompt = makeCenteredPromptString(thePrompt);
+
+			DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+			return;
+
+		}
+	});
+
+	reader.readAsText(file);
+}
+//
+// Initialize the custom harmonica setting
+//
+function resetHarmonicaCustom(){
+
+ 	gHarmonicaCustom = JSON.parse(JSON.stringify(gHarmonicaCustomDefault));
+
+}
+
+//
+//
+// Reset the custom harmonica settings to the default with confirmation
+//
+function defaultCustomHarmonica(){
+
+	// Keep track of actions
+	sendGoogleAnalytics("action","defaultCustomHarmonica");
+
+	var thePrompt = "Are you sure you want to reset the custom harmonica tuning?";
+
+	// Center the string in the prompt
+	thePrompt = makeCenteredPromptString(thePrompt);
+
+	DayPilot.Modal.confirm(thePrompt ,{ top:180, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+
+		if (!args.canceled){
+
+			var i;
+
+		    resetHarmonicaCustom();
+
+		    var id = "r0c1";
+		    document.getElementById(id).value = gHarmonicaCustom.name;
+
+		    for (i=0;i<12;++i){
+		        var id = "r1c"+(i+1);
+		        document.getElementById(id).value = gHarmonicaCustom.noteMap[i];
+		    }
+		    
+		    for (i=0;i<12;++i){
+		        var id = "r2c"+(i+1);
+		        document.getElementById(id).value = gHarmonicaCustom.noteMap[i+12];
+		    }
+
+		    for (i=0;i<12;++i){
+		        var id = "r3c"+(i+1);
+		        document.getElementById(id).value = gHarmonicaCustom.noteMap[i+24];
+		    }
+
+		    for (i=0;i<2;++i){
+		        var id = "r4c"+(i+1);
+		        document.getElementById(id).value = gHarmonicaCustom.noteMap[i+36];
+		    }		    
+		}
+
+	});
+}
+
+//
+// Change handler for custom harmonica input fields
+//
+function customHarmonicaChangeHandler(){
+
+	// Walk the current map and inject the requested note names
+    var i;
+
+    var id = "r0c1";
+    gHarmonicaCustom.name = document.getElementById(id).value;
+
+    for (i=0;i<12;++i){
+        var id = "r1c"+(i+1);
+        gHarmonicaCustom.noteMap[i] = document.getElementById(id).value;
+    }
+    
+    for (i=0;i<12;++i){
+        var id = "r2c"+(i+1);
+        gHarmonicaCustom.noteMap[i+12] = document.getElementById(id).value;
+    }
+
+    for (i=0;i<12;++i){
+        var id = "r3c"+(i+1);
+        gHarmonicaCustom.noteMap[i+24] = document.getElementById(id).value;
+    }
+
+    for (i=0;i<2;++i){
+        var id = "r4c"+(i+1);
+        gHarmonicaCustom.noteMap[i+36] = document.getElementById(id).value;
+    }
+}
+
+//
+// Init the harmonica settings matrix
+//
+function initCustomHarmonicaSettings(){
+
+    var i;
+
+    var id = "r0c1";
+    document.getElementById(id).value = gHarmonicaCustom.name;
+
+    for (i=0;i<12;++i){
+        var id = "r1c"+(i+1);
+        document.getElementById(id).value = gHarmonicaCustom.noteMap[i];
+    }
+    
+    for (i=0;i<12;++i){
+        var id = "r2c"+(i+1);
+        document.getElementById(id).value = gHarmonicaCustom.noteMap[i+12];
+    }
+
+    for (i=0;i<12;++i){
+        var id = "r3c"+(i+1);
+        document.getElementById(id).value = gHarmonicaCustom.noteMap[i+24];
+    }
+
+    for (i=0;i<2;++i){
+        var id = "r4c"+(i+1);
+        document.getElementById(id).value = gHarmonicaCustom.noteMap[i+36];
+    }
+
+}
+
+//
+// Handler for the custom harmonica tunings file open control
+//
+function idleOpenCustomHarmonica(){
+
+	//
+	// Setup the custom harmonica tunings file import control
+	//
+	document.getElementById("load_custom_harmonica_tuning_fs").onchange = () => {
+
+		let fileElement = document.getElementById("load_custom_harmonica_tuning_fs");
+
+		// check if user had selected a file
+		if (fileElement.files.length === 0) {
+
+			var thePrompt = "Please select a custom harmonica tuning file";
+
+			// Center the string in the prompt
+			thePrompt = makeCenteredPromptString(thePrompt);
+
+			DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+			return;
+
+		}
+
+		let file = fileElement.files[0];
+
+		// Read the custom tuning file
+		loadCustomHarmonica(file);
+
+		// Reset file selectors
+		fileElement.value = "";
+
+	}
+}
+
+//
+// Edit the custom harmonica settings
+//
+function EditCustomHarmonica(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","EditCustomHarmonica");
+
+	const theData = {};
+
+	// Save off the original setting
+	var gHarmonicaCustomOriginal = JSON.parse(JSON.stringify(gHarmonicaCustom));
+
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:32px">Edit Custom Harmonica Tuning Tab&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_harmonica_custom" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+	modal_msg += '<div id="harmonica-custom-dialog">';
+	modal_msg += '<p style="font-size:12pt;font-family:helvetica;"">Custom tuning name:<input class="harmonicacustomlabel" type="text" id="r0c1" onchange="customHarmonicaChangeHandler()"><p>\n';
+	modal_msg += '<table style="margin-bottom:24px;text-align:center;">\n';	
+	modal_msg += '<tr>\n'
+    modal_msg += '<td colspan="3" style="text-align: left; font-size:12pt;font-family:helvetica;">Octave 1:</td>\n';
+  	modal_msg += '</tr>\n';	
+	modal_msg += '<tr>\n'
+    modal_msg += '<td style="text-align: center; font-size:2pt;font-family:helvetica;">&nbsp;</td>\n';
+  	modal_msg += '</tr>\n';	
+ 	modal_msg += '<tr>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">C</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">C#/Db</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">D</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">D#/Eb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">E</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">F</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">F#/Gb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">G</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">G#/Ab</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">A</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">A#/Bb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">B</td>\n';
+	modal_msg += '</tr>\n';
+  	modal_msg += '<tr>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r1c1" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r1c2" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r1c3" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r1c4" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r1c5" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r1c6" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r1c7" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r1c8" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r1c9" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r1c10" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r1c11" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r1c12" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '</tr>\n';
+	modal_msg += '<tr>\n'
+    modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">&nbsp;</td>\n';
+  	modal_msg += '</tr>\n';	
+	modal_msg += '<tr>\n'
+    modal_msg += '<td colspan="3" style="text-align: left; font-size:12pt;font-family:helvetica;">Octave 2:</td>\n';
+  	modal_msg += '</tr>\n';	
+	modal_msg += '<tr>\n'
+    modal_msg += '<td style="text-align: center; font-size:2pt;font-family:helvetica;">&nbsp;</td>\n';
+  	modal_msg += '</tr>\n';	
+  	modal_msg += '<tr>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">C</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">C#/Db</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">D</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">D#/Eb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">E</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">F</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">F#/Gb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">G</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">G#/Ab</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">A</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">A#/Bb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">B</td>\n';
+	modal_msg += '</tr>\n';
+	modal_msg += '<tr>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r2c1" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r2c2" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r2c3" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r2c4" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r2c5" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r2c6" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r2c7" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r2c8" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r2c9" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r2c10" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r2c11" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r2c12" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '</tr>\n';
+	modal_msg += '<tr>\n'
+    modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">&nbsp;</td>\n';
+  	modal_msg += '</tr>\n';	
+    modal_msg += '<td colspan="3" style="text-align: left; font-size:12pt;font-family:helvetica;">Octave 3:</td>\n';
+  	modal_msg += '</tr>\n';	
+	modal_msg += '<tr>\n'
+    modal_msg += '<td style="text-align: center; font-size:2pt;font-family:helvetica;">&nbsp;</td>\n';
+  	modal_msg += '</tr>\n';	
+  	modal_msg += '<tr>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">C</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">C#/Db</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">D</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">D#/Eb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">E</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">F</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">F#/Gb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">G</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">G#/Ab</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">A</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">A#/Bb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">B</td>\n';
+	modal_msg += '</tr>\n';
+	modal_msg += '<tr>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r3c1" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r3c2" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r3c3" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r3c4" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r3c5" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r3c6" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r3c7" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r3c8" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r3c9" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r3c10" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r3c11" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r3c12" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '</tr>\n';
+	modal_msg += '<tr>\n'
+    modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">&nbsp;</td>\n';
+  	modal_msg += '</tr>\n';	
+	modal_msg += '<tr>\n'
+    modal_msg += '<td colspan="3" style="text-align: left; font-size:12pt;font-family:helvetica;">Octave 4:</td>\n';
+  	modal_msg += '</tr>\n';	
+	modal_msg += '<tr>\n'
+    modal_msg += '<td style="text-align: center; font-size:2pt;font-family:helvetica;">&nbsp;</td>\n';
+  	modal_msg += '</tr>\n';	
+  	modal_msg += '<tr>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">C</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">C#/Db</td>\n';
+	modal_msg += '</tr>\n';
+	modal_msg += '<tr>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r4c1" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r4c2" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '</tr>\n';
+	modal_msg += '</table>\n';
+	modal_msg += '</div>\n';
+	modal_msg += '<p style="text-align:center;margin-top:22px;"><input type="file" id="load_custom_harmonica_tuning_fs" accept=".txt,.TXT" hidden/><input id="save_custom_harmonica_tuning" class="btn btn-subdialog save_custom_harmonica_tuning" onclick="saveCustomHarmonica()" type="button" value="Save Custom Harmonica Tuning" title="Save a custom harmonica tuning file"><input id="load_custom_harmonica_tuning" class="btn btn-subdialog load_custom_harmonica_tuning" onclick="loadCustomHarmonicaClickHandler()" type="button" value="Load Custom Harmonica Tuning" title="Load a custom harmonica tuning file"></p>\n';
+	modal_msg += '<p style="text-align:center;margin-top:22px;"><input id="default_anglo_fingerings" class="btn btn-clearbutton default_anglo_fingerings" onclick="defaultCustomHarmonica()" type="button" value="Reset to Default (Standard Richter)" title="Resets the custom tuning to Standard Richter"></p>\n';
+
+	const form = [
+	  {html: modal_msg}
+	];
+
+
+	setTimeout(function(){
+
+		initCustomHarmonicaSettings();
+
+		idleOpenCustomHarmonica();
+
+	}, 150);
+
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50, width: 800, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+		
+		// Get the results and store them in the global configuration
+		if (!args.canceled){
+
+			// Sanity check the entries
+		    if (gHarmonicaCustom.name == ""){
+		        gHarmonicaCustom.name = "Custom";
+		    }
+
+		    for (var i=0;i<38;++i){
+
+		    	// No blank items
+		        if (gHarmonicaCustom.noteMap[i] == ""){
+		            gHarmonicaCustom.noteMap[i] = " ";
+		        }
+
+		        // Turn any double quotes into two single quotes
+		        gHarmonicaCustom.noteMap[i] = gHarmonicaCustom.noteMap[i].replaceAll('"',"''")
+		    }
+
+
+		    // Save the custom button naming map
+		    if (gLocalStorageAvailable){
+
+		        localStorage.HarmonicaCustom = JSON.stringify(gHarmonicaCustom);
+
+		    }
+
+		    // Reset the dropdown item
+			let selectElements = document.getElementsByName('configure_harmonica_tuning');
+
+			if (selectElements){
+
+				let selectElement = selectElements[0]; 		    
+
+				if (selectElement){
+
+					const option = selectElement.querySelector(`option[value="6"]`);
+		    
+				    if (option) {
+				      option.text = gHarmonicaCustom.name; // Update the displayed text
+				    }
+				}
+			}
+		}
+		else{
+
+			// Cancelled, reset the original values
+			gHarmonicaCustom = JSON.parse(JSON.stringify(gHarmonicaCustomOriginal));
+
+		}
+
+	});
+}
+
 //
 // Inject Diatonic harmonica tablature
 //
@@ -23798,19 +24251,20 @@ function DoInjectHarmonicaTab(){
 	    { name: "  1", id: "1" }
   	];
 
-  	const harmonica_styles = [
+  	const harmonica_tunings = [
 	    { name: "  Standard Richter", id: "0" },
 	    { name: "  Paddy Richter", id: "1" },
 	    { name: "  Easy Thirds", id: "2" },
 	    { name: "  Melody Maker", id: "3" },
 	    { name: "  Country (Major 7th)", id: "4" },
-	    { name: "  Natural Minor", id: "5" }
+	    { name: "  Natural Minor", id: "5" },
+	    { name: gHarmonicaCustom.name, id: "6" }
   	];
 
 
 	// Setup initial values
 	const theData = {
-	  configure_harmonica_style:gHarmonicaStyle,
+	  configure_harmonica_tuning:gHarmonicaTuning,
 	  configure_harmonica_key:gHarmonicaKey,
 	  configure_harmonica_octave:gHarmonicaOctave,
 	  configure_harmonica_plussign:gHarmonicaPlusSign,
@@ -23819,13 +24273,13 @@ function DoInjectHarmonicaTab(){
 
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Diatonic Harmonica Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_harmonica" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
-	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject tablature for a 10-hole diatonic harmonica in the harmonica style and key selected below into all of the tunes in the ABC text area:</p>'},	  
-	  {name: "Harmonica style:", id: "configure_harmonica_style", type:"select", options:harmonica_styles, cssClass:"configure_harmonica_style_select"}, 
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject tablature for a 10-hole diatonic harmonica in the harmonica tuning and key selected below into all of the tunes in the ABC text area:</p>'},	  
+	  {name: "Harmonica tuning:", id: "configure_harmonica_tuning", type:"select", options:harmonica_tunings, cssClass:"configure_harmonica_tuning_select"}, 
 	  {name: "Harmonica key:", id: "configure_harmonica_key", type:"select", options:harmonica_keys, cssClass:"configure_harmonica_select"}, 
 	  {name: "Octave shift:", id: "configure_harmonica_octave", type:"select", options:harmonica_octaves, cssClass:"configure_harmonica_select"}, 
 	  {name: "    Include + for blow notes in the tablature", id: "configure_harmonica_plussign", type:"checkbox", cssClass:"configure_harmonica_settings_form_text"},
 	  {name: "    Blow/Draw indications under the hole number (unchecked is before hole number)", id: "configure_harmonica_stacking", type:"checkbox", cssClass:"configure_harmonica_settings_form_text2"},
-	  {html: '<p style="margin-top:12px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},	  
+	  {html: '<p style="text-align:center;margin-top:18px;"><input id="configure_harmonica_custom" class="btn btn-subdialog configure_harmonica_custom" onclick="EditCustomHarmonica()" type="button" value="Edit Custom Harmonica Tuning Tab" title="Edit the custom harmonica tuning tab symbols for each scale note"></p>'},
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 700, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
@@ -23833,7 +24287,7 @@ function DoInjectHarmonicaTab(){
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
 
-			gHarmonicaStyle = args.result.configure_harmonica_style;
+			gHarmonicaTuning = args.result.configure_harmonica_tuning;
 			gHarmonicaKey = args.result.configure_harmonica_key; 
 			gHarmonicaOctave = args.result.configure_harmonica_octave; 
 			gHarmonicaPlusSign = args.result.configure_harmonica_plussign;
@@ -35925,11 +36379,62 @@ var gMDulcimerStripBadTunes = false; // Don't strip bad tunes on MD injection
 var gMDulcimerUseDashForOpenString = false; // Use a space for open strings
 
 // Harmonica tab
-var gHarmonicaStyle = "0";
+var gHarmonicaTuning = "0";
 var gHarmonicaKey = "C";
 var gHarmonicaOctave = "0";
 var gHarmonicaPlusSign = false;
 var gHarmonicaStacking = true;
+
+//
+// For custom harmonica tuning option
+//
+var gHarmonicaCustom;
+
+const gHarmonicaCustomDefault = {
+	version:1,
+	type:"CustomHarmonica",
+	name:"Custom",
+	noteMap:[
+		"1", // C
+	    "-1'", // C# / Db
+	    "-1", // D
+	    "1o", // D# / Eb
+	    "2", // E
+	    "-2''", // F
+	    "-2'", // F# / Gb
+	    "3", // G
+	    "-3'''", // G# / Ab
+	    "-3''", // A
+	    "-3'", // A# / Bb
+	    "-3", // B
+	    "4", // C
+	    "-4'", // C# / Db
+	    "-4", // D
+	    "4o", // E# / Eb
+	    "5", // E
+	    "-5", // F
+	    "5o", // F# / Gb
+	    "6", // G
+	    "-6'", // G# / Ab
+	    "-6", // A
+	    "6o", // A# / Bb
+	    "-7", // B
+	    "7", // C
+	    "-7o", // C# / Db
+	    "-8", // D
+	    "8'", // D# / Eb
+	    "8", // E
+	    "-9", // F
+	    "9'", // F# / Gb
+	    "9", // G
+	    "-9o", // G# / Ab
+	    "-10", // A
+	    "10''", // A# / Bb
+	    "10'", // B
+	    "10", // C
+	    "-10o'" //C#
+    ] 
+}
 
 // Get the initial configuration settings from local browser storage, if present
 function GetInitialConfigurationSettings(){
@@ -36177,12 +36682,12 @@ function GetInitialConfigurationSettings(){
 	}
 
 	// Harmonica
-	val = localStorage.HarmonicaStyle;
+	val = localStorage.HarmonicaTuning;
 	if (val){
-		gHarmonicaStyle = val;
+		gHarmonicaTuning = val;
 	}
 	else{
-		gHarmonicaStyle = "0";
+		gHarmonicaTuning = "0";
 	}
 
 	val = localStorage.HarmonicaKey;
@@ -36216,6 +36721,15 @@ function GetInitialConfigurationSettings(){
 	else{
 		gHarmonicaStacking = true;
 	}
+
+	var theCustomHarmonica = localStorage.HarmonicaCustom;
+
+    if (theCustomHarmonica){
+        gHarmonicaCustom = JSON.parse(theCustomHarmonica);
+    }
+    else{
+    	resetHarmonicaCustom();
+    }
 
 	// Bamboo flute
 	val = localStorage.BambooFluteKey;
@@ -36987,11 +37501,14 @@ function SaveConfigurationSettings(){
 		localStorage.TrainerTouchControls = gTrainerTouchControls;
 
 		// Harmonica tab settings
-		localStorage.HarmonicaStyle = gHarmonicaStyle;		
+		localStorage.HarmonicaTuning = gHarmonicaTuning;		
 		localStorage.HarmonicaKey = gHarmonicaKey;
 		localStorage.HarmonicaOctave = gHarmonicaOctave;
 		localStorage.HarmonicaPlusSign = gHarmonicaPlusSign;
 		localStorage.HarmonicaStacking = gHarmonicaStacking;
+
+		// Custom harmonica settings
+		localStorage.HarmonicaCustom = JSON.stringify(gHarmonicaCustom);
 
 		// Save the bamboo flute key
 		localStorage.BambooFluteKey =  gBambooFluteKey;
@@ -37162,6 +37679,8 @@ function SaveConfigurationSettings(){
 
 		// Player scaling
 		localStorage.PlayerScaling = gPlayerScaling;
+
+
 
 	}
 }
@@ -37705,7 +38224,7 @@ function idleOpenFonts(){
 
 		let file = fileElement.files[0];
 
-		// Read the file and append it to the editor
+		// Read the font settings file
 		loadFontSettings(file);
 
 		// Reset file selectors
