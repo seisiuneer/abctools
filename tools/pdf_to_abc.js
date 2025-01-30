@@ -440,7 +440,8 @@ function DoStartup() {
 
                     links.forEach(link => {
 
-                        if (link.indexOf("lzw=") != -1){
+                        // Look for lzw params but exclude any with dx=1
+                        if ((link.indexOf("lzw=") != -1) && (link.indexOf("dx=1") == -1)){
 
                             var originalAbcInLZW = extractLZWParameter(link);
 
