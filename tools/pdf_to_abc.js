@@ -357,13 +357,15 @@ function DoStartup() {
 
     document.getElementById('selectpdffile').addEventListener('change', async (event) => {
 
-        //debugger;
-
         const file = event.target.files[0];
 
         if (file) {
 
-            //debugger;
+            // Grab the name for later file save placeholder
+            gSaveFilename = file.name;
+            gSaveFilename = gSaveFilename.replace(".pdf","");
+            gSaveFilename = gSaveFilename.replace(".PDF","");
+            gSaveFilename += ".abc";
 
             // Read the file as an ArrayBuffer
             const reader = new FileReader();
