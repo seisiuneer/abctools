@@ -7979,6 +7979,16 @@ var HarmonicaTabGenerator = function (theABC){
 
                 theTabMap[36] = "10"; // C
                 theTabMap[37] = "-10o'"; // C#
+                theTabMap[38] = "x"; // D
+                theTabMap[39] = "x"; // D# / Eb
+                theTabMap[40] = "x"; // E
+                theTabMap[41] = "x"; // F
+                theTabMap[42] = "x"; // F# / Gb
+                theTabMap[43] = "x"; // G
+                theTabMap[44] = "x"; // G# / Ab
+                theTabMap[45] = "x"; // A
+                theTabMap[46] = "x"; // A# / Bb
+                theTabMap[47] = "x"; // B
  
                 break;
 
@@ -8025,6 +8035,16 @@ var HarmonicaTabGenerator = function (theABC){
 
                 theTabMap[36] = "10"; // C
                 theTabMap[37] = "-10o'"; // C#
+                theTabMap[38] = "x"; // D
+                theTabMap[39] = "x"; // D# / Eb
+                theTabMap[40] = "x"; // E
+                theTabMap[41] = "x"; // F
+                theTabMap[42] = "x"; // F# / Gb
+                theTabMap[43] = "x"; // G
+                theTabMap[44] = "x"; // G# / Ab
+                theTabMap[45] = "x"; // A
+                theTabMap[46] = "x"; // A# / Bb
+                theTabMap[47] = "x"; // B
 
                 break;   
 
@@ -8071,6 +8091,16 @@ var HarmonicaTabGenerator = function (theABC){
 
                 theTabMap[36] = "10"; // C
                 theTabMap[37] = "-10o'"; // C#
+                theTabMap[38] = "x"; // D
+                theTabMap[39] = "x"; // D# / Eb
+                theTabMap[40] = "x"; // E
+                theTabMap[41] = "x"; // F
+                theTabMap[42] = "x"; // F# / Gb
+                theTabMap[43] = "x"; // G
+                theTabMap[44] = "x"; // G# / Ab
+                theTabMap[45] = "x"; // A
+                theTabMap[46] = "x"; // A# / Bb
+                theTabMap[47] = "x"; // B
                 break;   
 
             // Melody Maker
@@ -8116,6 +8146,16 @@ var HarmonicaTabGenerator = function (theABC){
 
                 theTabMap[36] = "10"; // C
                 theTabMap[37] = "-10o'"; // C#
+                theTabMap[38] = "x"; // D
+                theTabMap[39] = "x"; // D# / Eb
+                theTabMap[40] = "x"; // E
+                theTabMap[41] = "x"; // F
+                theTabMap[42] = "x"; // F# / Gb
+                theTabMap[43] = "x"; // G
+                theTabMap[44] = "x"; // G# / Ab
+                theTabMap[45] = "x"; // A
+                theTabMap[46] = "x"; // A# / Bb
+                theTabMap[47] = "x"; // B
  
                 break;    
 
@@ -8162,6 +8202,16 @@ var HarmonicaTabGenerator = function (theABC){
 
                 theTabMap[36] = "10"; // C
                 theTabMap[37] = "-10o'"; // C#
+                theTabMap[38] = "x"; // D
+                theTabMap[39] = "x"; // D# / Eb
+                theTabMap[40] = "x"; // E
+                theTabMap[41] = "x"; // F
+                theTabMap[42] = "x"; // F# / Gb
+                theTabMap[43] = "x"; // G
+                theTabMap[44] = "x"; // G# / Ab
+                theTabMap[45] = "x"; // A
+                theTabMap[46] = "x"; // A# / Bb
+                theTabMap[47] = "x"; // B
  
                 break;
 
@@ -8208,6 +8258,16 @@ var HarmonicaTabGenerator = function (theABC){
 
                 theTabMap[36] = "10"; // C
                 theTabMap[37] = "-10o'"; // C#
+                theTabMap[38] = "x"; // D
+                theTabMap[39] = "x"; // D# / Eb
+                theTabMap[40] = "x"; // E
+                theTabMap[41] = "x"; // F
+                theTabMap[42] = "x"; // F# / Gb
+                theTabMap[43] = "x"; // G
+                theTabMap[44] = "x"; // G# / Ab
+                theTabMap[45] = "x"; // A
+                theTabMap[46] = "x"; // A# / Bb
+                theTabMap[47] = "x"; // B
  
                 break;
 
@@ -8259,6 +8319,16 @@ var HarmonicaTabGenerator = function (theABC){
 
                 theTabMap[36] = "10"; // C
                 theTabMap[37] = "-10o'"; // C#
+                theTabMap[38] = "x"; // D
+                theTabMap[39] = "x"; // D# / Eb
+                theTabMap[40] = "x"; // E
+                theTabMap[41] = "x"; // F
+                theTabMap[42] = "x"; // F# / Gb
+                theTabMap[43] = "x"; // G
+                theTabMap[44] = "x"; // G# / Ab
+                theTabMap[45] = "x"; // A
+                theTabMap[46] = "x"; // A# / Bb
+                theTabMap[47] = "x"; // B
  
                 break;
         }    
@@ -8556,6 +8626,13 @@ var HarmonicaTabGenerator = function (theABC){
             "^f'": 42,
             "_g'": 42,
             "g'":  43,
+            "^g'": 44,
+            "_a'": 44,
+            "a'":  45,
+            "^a'": 46,
+            "_b'": 46,
+            "b'":  47,
+
             // Naturals
             "=C,":  0,
             "=D,":  2,
@@ -8583,6 +8660,8 @@ var HarmonicaTabGenerator = function (theABC){
             "=e'":  40,
             "=f'":  41,
             "=g'":  43,
+            "=a'":  45,
+            "=b'":  47,
             // Don't touch
             "C'":   24,
             "^C'":  25,
@@ -8612,6 +8691,8 @@ var HarmonicaTabGenerator = function (theABC){
             "^F''": 42,
             "_G''": 42,
             "G''":  43,               
+            "A''":  45,               
+            "B''":  47,               
             "=C'":  24,
             "=D'":  26,
             "=E'":  28,
@@ -8624,6 +8705,8 @@ var HarmonicaTabGenerator = function (theABC){
             "=E''": 40,
             "=F''": 41,
             "=G''": 43,            
+            "=A''": 45,            
+            "=B''": 47,            
         };
 
         var noteIndex = glyph_map[note];
