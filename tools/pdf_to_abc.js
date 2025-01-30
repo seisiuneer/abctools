@@ -8,6 +8,8 @@
 // https://creativecommons.org/share-your-work/public-domain/cc0/
 //
 
+var gSaveFilename = "";
+
 //
 // Save the Output to a .abc file
 //
@@ -26,7 +28,7 @@ function saveOutput() {
     }
 
     if (gSaveFilename == "") {
-        gSaveFilename = "harmonica_tab";
+        gSaveFilename = "pdf_to_abc.abc";
     }
 
     var thePlaceholder = gSaveFilename;
@@ -46,9 +48,6 @@ function saveOutput() {
         if (fname == null) {
             return null;
         }
-
-        // Strip out any naughty HTML tag characters
-        fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
 
         if (fname.length == 0) {
             return null;
