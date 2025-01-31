@@ -24219,10 +24219,6 @@ function EditCustomHarmonica(){
 		        // Turn any double quotes into two single quotes
 		        gHarmonicaCustom.noteMap[i] = gHarmonicaCustom.noteMap[i].replaceAll('"',"''")
 
-		        // Clean illegal chars
-		        gHarmonicaCustom.noteMap[i] = gHarmonicaCustom.noteMap[i].replaceAll('_',"");
-		        gHarmonicaCustom.noteMap[i] = gHarmonicaCustom.noteMap[i].replaceAll('^',"");
-
 		    	// No blank items
 		        if (gHarmonicaCustom.noteMap[i] == ""){
 		            gHarmonicaCustom.noteMap[i] = " ";
@@ -24798,10 +24794,6 @@ function EditCustomTab(){
 
 		        // Turn any double quotes into two single quotes
 		        gCustomTab.noteMap[i] = gCustomTab.noteMap[i].replaceAll('"',"''");
-
-		        // Clean illegal chars
-		        gCustomTab.noteMap[i] = gCustomTab.noteMap[i].replaceAll('_',"");
-		        gCustomTab.noteMap[i] = gCustomTab.noteMap[i].replaceAll('^',"");
 
 		        if (gCustomTab.noteMap[i] == ""){
 		            gCustomTab.noteMap[i] = " ";
