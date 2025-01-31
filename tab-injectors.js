@@ -9037,7 +9037,7 @@ var HarmonicaTabGenerator = function (theABC){
 
     function stripHarmonicaTab(input) {
       return input.split('\n') // Split input into lines
-        .filter(line => !/^w:|^%%vskip 15$|^%%annotationfont|^%%text\s\w{1,2}\sHarp/.test(line)) // Filter out lines that match the pattern
+        .filter(line => !/^%%vskip 15$|^%%annotationfont|^%%text\s\w{1,2}\sHarp/.test(line)) // Filter out lines that match the pattern
         .join('\n'); // Join the remaining lines back into a string
     }
 
