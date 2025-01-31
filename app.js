@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2287_013025_1600";
+var gVersionNumber="2289_013025_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -23769,6 +23769,9 @@ function RemoveTuneTitleNumbers(bDoRedraw){
 
 }
 
+//
+// Harmonica Tablature Injection
+//
 
 //
 // Save the custom harmonica settings to a file
@@ -24215,6 +24218,15 @@ function EditCustomHarmonica(){
 
 		        // Turn any double quotes into two single quotes
 		        gHarmonicaCustom.noteMap[i] = gHarmonicaCustom.noteMap[i].replaceAll('"',"''")
+
+		        // Clean illegal chars
+		        gHarmonicaCustom.noteMap[i] = gHarmonicaCustom.noteMap[i].replaceAll('_',"");
+		        gHarmonicaCustom.noteMap[i] = gHarmonicaCustom.noteMap[i].replaceAll('^',"");
+
+		    	// No blank items
+		        if (gHarmonicaCustom.noteMap[i] == ""){
+		            gHarmonicaCustom.noteMap[i] = " ";
+		        }
 		    }
 
 
@@ -24309,7 +24321,9 @@ function DoInjectHarmonicaTab(){
 	  {name: "Octave shift:", id: "configure_harmonica_octave", type:"select", options:harmonica_octaves, cssClass:"configure_harmonica_select"}, 
 	  {name: "    Include + for blow notes in the tablature", id: "configure_harmonica_plussign", type:"checkbox", cssClass:"configure_harmonica_settings_form_text"},
 	  {name: "    Blow/Draw indications under the hole number (unchecked is before hole number)", id: "configure_harmonica_stacking", type:"checkbox", cssClass:"configure_harmonica_settings_form_text2"},
+      {html: '<p style="text-align: center; font-size:4pt;font-family:helvetica;">&nbsp;</p>'},
 	  {html: '<p style="text-align:center;margin-top:18px;"><input id="configure_harmonica_custom" class="btn btn-subdialog configure_harmonica_custom" onclick="EditCustomHarmonica()" type="button" value="Edit Custom Harmonica Tuning Tab" title="Edit the custom harmonica tuning tab symbols for each scale note"></p>'},
+	  {html: '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>'},
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 700, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
@@ -24345,6 +24359,568 @@ function DoInjectHarmonicaTab(){
 
 }
 
+//
+// Custom Tablature Injection
+//
+
+//
+// Save the custom tab settings to a file
+//
+function saveCustomTab(){
+
+	// Keep track of actions
+	sendGoogleAnalytics("action","saveCustomTab");
+
+	var theCustomTabJSON = JSON.stringify(gCustomTab);
+
+	saveTextFile("Please enter a filename for your custom tab:", gCustomTab.name+".txt", theCustomTabJSON);
+	
+}
+
+//
+// Load the custom tab
+//
+function loadCustomTabClickHandler(){
+
+	var elem = document.getElementById("load_custom_tab_fs");
+
+	elem.click();
+
+}
+
+function loadCustomTab(file){
+
+	// Keep track of actions
+	sendGoogleAnalytics("action","loadCustomTab");
+
+	const reader = new FileReader();
+
+	reader.addEventListener('load', (event) => {
+
+		var theText = event.target.result;
+
+		try{
+
+			var theParsedTab = JSON.parse(theText);
+
+			// Sanity check a couple of fields
+			if ((!theParsedTab.type) || (theParsedTab.type != "CustomTab" )){
+
+				var thePrompt = "This is not a valid custom tab definition file.";
+
+				// Center the string in the prompt
+				thePrompt = makeCenteredPromptString(thePrompt);
+
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+				return;
+
+			}
+
+			// Save the new tuning
+			gCustomTab = theParsedTab;
+
+			// Idle the custom tab dialog with the new values
+			initCustomTabSettings();
+
+		}
+		catch(error){
+
+			var thePrompt = "This is not a valid custom tab definition file.";
+
+			// Center the string in the prompt
+			thePrompt = makeCenteredPromptString(thePrompt);
+
+			DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+			return;
+
+		}
+	});
+
+	reader.readAsText(file);
+}
+//
+// Initialize the custom tab setting
+//
+function resetCustomTab(){
+
+ 	gCustomTab = JSON.parse(JSON.stringify(gCustomTabDefault));
+
+}
+
+//
+//
+// Reset the custom tab settings to the default with confirmation
+//
+function defaultCustomTab(){
+
+	// Keep track of actions
+	sendGoogleAnalytics("action","defaultCustomTab");
+
+	var thePrompt = "Are you sure you want to reset the custom tab settings?";
+
+	// Center the string in the prompt
+	thePrompt = makeCenteredPromptString(thePrompt);
+
+	DayPilot.Modal.confirm(thePrompt ,{ top:180, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+
+		if (!args.canceled){
+
+			var i;
+
+		    resetCustomTab();
+
+		    var id = "r0c1";
+		    document.getElementById(id).value = gCustomTab.name;
+
+		    for (i=0;i<12;++i){
+		        var id = "r1c"+(i+1);
+		        document.getElementById(id).value = gCustomTab.noteMap[i];
+		    }
+		    
+		    for (i=0;i<12;++i){
+		        var id = "r2c"+(i+1);
+		        document.getElementById(id).value = gCustomTab.noteMap[i+12];
+		    }
+
+		    for (i=0;i<12;++i){
+		        var id = "r3c"+(i+1);
+		        document.getElementById(id).value = gCustomTab.noteMap[i+24];
+		    }
+
+		    for (i=0;i<12;++i){
+		        var id = "r4c"+(i+1);
+		        document.getElementById(id).value = gCustomTab.noteMap[i+36];
+		    }		    
+		}
+
+	});
+}
+
+//
+// Change handler for custom tab input fields
+//
+function customTabChangeHandler(){
+
+	// Walk the current map and inject the requested note names
+    var i;
+
+    var id = "r0c1";
+    gCustomTab.name = document.getElementById(id).value;
+
+    for (i=0;i<12;++i){
+        var id = "r1c"+(i+1);
+        gCustomTab.noteMap[i] = document.getElementById(id).value;
+    }
+    
+    for (i=0;i<12;++i){
+        var id = "r2c"+(i+1);
+        gCustomTab.noteMap[i+12] = document.getElementById(id).value;
+    }
+
+    for (i=0;i<12;++i){
+        var id = "r3c"+(i+1);
+        gCustomTab.noteMap[i+24] = document.getElementById(id).value;
+    }
+
+    for (i=0;i<12;++i){
+        var id = "r4c"+(i+1);
+        gCustomTab.noteMap[i+36] = document.getElementById(id).value;
+    }
+}
+
+//
+// Init the tab settings matrix
+//
+function initCustomTabSettings(){
+
+    var i;
+
+    var id = "r0c1";
+    document.getElementById(id).value = gCustomTab.name;
+
+    for (i=0;i<12;++i){
+        var id = "r1c"+(i+1);
+        document.getElementById(id).value = gCustomTab.noteMap[i];
+    }
+    
+    for (i=0;i<12;++i){
+        var id = "r2c"+(i+1);
+        document.getElementById(id).value = gCustomTab.noteMap[i+12];
+    }
+
+    for (i=0;i<12;++i){
+        var id = "r3c"+(i+1);
+        document.getElementById(id).value = gCustomTab.noteMap[i+24];
+    }
+
+    for (i=0;i<12;++i){
+        var id = "r4c"+(i+1);
+        document.getElementById(id).value = gCustomTab.noteMap[i+36];
+    }
+
+}
+
+//
+// Handler for the custom tab tunings file open control
+//
+function idleOpenCustomTab(){
+
+	//
+	// Setup the custom tab file import control
+	//
+	document.getElementById("load_custom_tab_fs").onchange = () => {
+
+		let fileElement = document.getElementById("load_custom_tab_fs");
+
+		// check if user had selected a file
+		if (fileElement.files.length === 0) {
+
+			var thePrompt = "Please select a custom tab settings file";
+
+			// Center the string in the prompt
+			thePrompt = makeCenteredPromptString(thePrompt);
+
+			DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+			return;
+
+		}
+
+		let file = fileElement.files[0];
+
+		// Read the custom tab file
+		loadCustomTab(file);
+
+		// Reset file selectors
+		fileElement.value = "";
+
+	}
+}
+
+//
+// Edit the custom tab settings
+//
+function EditCustomTab(){
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","EditCustomTab");
+
+	const theData = {};
+
+	// Save off the original setting
+	var gCustomTabOriginal = JSON.parse(JSON.stringify(gCustomTab));
+
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:32px">Edit Custom Tablature Note Names&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_custom_edit" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+	modal_msg += '<div id="tab-custom-dialog">';
+	modal_msg += '<p style="font-size:12pt;font-family:helvetica;"">Custom tab name:<input class="customtablabel" type="text" id="r0c1" onchange="customTabChangeHandler()"><p>\n';
+	modal_msg += '<table style="margin-bottom:24px;text-align:center;">\n';	
+	modal_msg += '<tr>\n'
+    modal_msg += '<td colspan="3" style="text-align: left; font-size:12pt;font-family:helvetica;">Octave 1:</td>\n';
+  	modal_msg += '</tr>\n';	
+	modal_msg += '<tr>\n'
+    modal_msg += '<td style="text-align: center; font-size:2pt;font-family:helvetica;">&nbsp;</td>\n';
+  	modal_msg += '</tr>\n';	
+ 	modal_msg += '<tr>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">C</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">C#/Db</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">D</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">D#/Eb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">E</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">F</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">F#/Gb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">G</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">G#/Ab</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">A</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">A#/Bb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">B</td>\n';
+	modal_msg += '</tr>\n';
+  	modal_msg += '<tr>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r1c1" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r1c2" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r1c3" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r1c4" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r1c5" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r1c6" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r1c7" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r1c8" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r1c9" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r1c10" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r1c11" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r1c12" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '</tr>\n';
+	modal_msg += '<tr>\n'
+    modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">&nbsp;</td>\n';
+  	modal_msg += '</tr>\n';	
+	modal_msg += '<tr>\n'
+    modal_msg += '<td colspan="3" style="text-align: left; font-size:12pt;font-family:helvetica;">Octave 2:</td>\n';
+  	modal_msg += '</tr>\n';	
+	modal_msg += '<tr>\n'
+    modal_msg += '<td style="text-align: center; font-size:2pt;font-family:helvetica;">&nbsp;</td>\n';
+  	modal_msg += '</tr>\n';	
+  	modal_msg += '<tr>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">C</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">C#/Db</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">D</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">D#/Eb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">E</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">F</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">F#/Gb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">G</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">G#/Ab</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">A</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">A#/Bb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">B</td>\n';
+	modal_msg += '</tr>\n';
+	modal_msg += '<tr>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r2c1" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r2c2" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r2c3" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r2c4" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r2c5" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r2c6" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r2c7" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r2c8" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r2c9" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r2c10" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r2c11" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r2c12" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '</tr>\n';
+	modal_msg += '<tr>\n'
+    modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">&nbsp;</td>\n';
+  	modal_msg += '</tr>\n';	
+    modal_msg += '<td colspan="3" style="text-align: left; font-size:12pt;font-family:helvetica;">Octave 3:</td>\n';
+  	modal_msg += '</tr>\n';	
+	modal_msg += '<tr>\n'
+    modal_msg += '<td style="text-align: center; font-size:2pt;font-family:helvetica;">&nbsp;</td>\n';
+  	modal_msg += '</tr>\n';	
+  	modal_msg += '<tr>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">C</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">C#/Db</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">D</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">D#/Eb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">E</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">F</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">F#/Gb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">G</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">G#/Ab</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">A</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">A#/Bb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">B</td>\n';
+	modal_msg += '</tr>\n';
+	modal_msg += '<tr>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r3c1" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r3c2" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r3c3" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r3c4" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r3c5" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r3c6" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r3c7" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r3c8" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r3c9" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r3c10" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r3c11" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r3c12" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '</tr>\n';
+	modal_msg += '<tr>\n'
+    modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">&nbsp;</td>\n';
+  	modal_msg += '</tr>\n';	
+	modal_msg += '<tr>\n'
+    modal_msg += '<td colspan="3" style="text-align: left; font-size:12pt;font-family:helvetica;">Octave 4:</td>\n';
+  	modal_msg += '</tr>\n';	
+	modal_msg += '<tr>\n'
+    modal_msg += '<td style="text-align: center; font-size:2pt;font-family:helvetica;">&nbsp;</td>\n';
+  	modal_msg += '</tr>\n';	
+  	modal_msg += '<tr>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">C</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">C#/Db</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">D</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">D#/Eb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">E</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">F</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">F#/Gb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">G</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">G#/Ab</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">A</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">A#/Bb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">B</td>\n';
+	modal_msg += '</tr>\n';
+	modal_msg += '<tr>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r4c1" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r4c2" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r4c3" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r4c4" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r4c5" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r4c6" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r4c7" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r4c8" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r4c9" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r4c10" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r4c11" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r4c12" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '</tr>\n';
+	modal_msg += '</table>\n';
+	modal_msg += '</div>\n';
+	modal_msg += '<p style="text-align:center;margin-top:22px;"><input type="file" id="load_custom_tab_fs" accept=".txt,.TXT" hidden/><input id="save_custom_tab" class="btn btn-subdialog save_custom_tab" onclick="saveCustomTab()" type="button" value="Save Custom Tab Settings" title="Save a custom tab settings file"><input id="load_custom_tab" class="btn btn-subdialog load_custom_tab" onclick="loadCustomTabClickHandler()" type="button" value="Load Custom Tab Settings" title="Load a custom tab settings file"></p>\n';
+	modal_msg += '<p style="text-align:center;margin-top:22px;"><input id="default_anglo_fingerings" class="btn btn-clearbutton default_anglo_fingerings" onclick="defaultCustomTab()" type="button" value="Reset to Default (Scale Semitone Numbers)" title="Resets the custom tab setting to scale semitone numbers"></p>\n';
+
+	const form = [
+	  {html: modal_msg}
+	];
+
+
+	setTimeout(function(){
+
+		initCustomTabSettings();
+
+		idleOpenCustomTab();
+
+	}, 150);
+
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50, width: 800, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+		
+		// Get the results and store them in the global configuration
+		if (!args.canceled){
+
+			// Sanity check the entries
+		    if (gCustomTab.name == ""){
+		        gCustomTab.name = "Custom";
+		    }
+
+		    for (var i=0;i<48;++i){
+
+		    	// No blank items
+		        if (gCustomTab.noteMap[i] == ""){
+		            gCustomTab.noteMap[i] = " ";
+		        }
+
+		        // Turn any double quotes into two single quotes
+		        gCustomTab.noteMap[i] = gCustomTab.noteMap[i].replaceAll('"',"''");
+
+		        // Clean illegal chars
+		        gCustomTab.noteMap[i] = gCustomTab.noteMap[i].replaceAll('_',"");
+		        gCustomTab.noteMap[i] = gCustomTab.noteMap[i].replaceAll('^',"");
+
+		        if (gCustomTab.noteMap[i] == ""){
+		            gCustomTab.noteMap[i] = " ";
+		        }
+		    }
+
+
+		    // Save the custom button naming map
+		    if (gLocalStorageAvailable){
+
+		        localStorage.CustomTab = JSON.stringify(gCustomTab);
+
+		    }
+
+		    // Reset the displayed custom tab name in the dialog
+		    var elem = document.getElementById("currentCustomTab");
+		    if (elem){
+		    	elem.innerText = gCustomTab.name;
+		    }
+
+		}
+		else{
+
+			// Cancelled, reset the original values
+			gCustomTab = JSON.parse(JSON.stringify(gCustomTabOriginal));
+
+		}
+
+	});
+}
+
+//
+// Inject custom tablature
+//
+function DoInjectCustomTab(){
+
+	// Keep track of tablature injection use
+	sendGoogleAnalytics("tablature","Inject_Custom_Tab");
+
+ 	const custom_tab_keys = [
+	    { name: "  -11", id: "-11" },
+	    { name: "  -10", id: "-10" },
+	    { name: "  -9", id: "-9" },
+	    { name: "  -8", id: "-8" },
+	    { name: "  -7", id: "-7" },
+	    { name: "  -6", id: "-6" },
+	    { name: "  -5", id: "-5" },
+	    { name: "  -4", id: "-4" },
+	    { name: "  -3", id: "-3" },
+	    { name: "  -2", id: "-2" },
+	    { name: "  -1", id: "-1" },
+	    { name: "  0", id: "0" },
+	    { name: "  1", id: "1" },
+	    { name: "  2", id: "2" },
+	    { name: "  3", id: "3" },
+	    { name: "  4", id: "4" },
+	    { name: "  5", id: "5" },
+	    { name: "  6", id: "6" },
+	    { name: "  7", id: "7" },
+	    { name: "  8", id: "8" },
+	    { name: "  9", id: "9" },
+	    { name: "  10", id: "10" },
+	    { name: "  11", id: "11" }
+  	];
+
+  	const custom_tab_octaves = [
+	    { name: "  -2", id: "-2" },
+	    { name: "  -1", id: "-1" },
+	    { name: "  0", id: "0" },
+	    { name: "  1", id: "1" },
+	    { name: "  2", id: "2" }
+  	];
+
+	// Setup initial values
+	const theData = {
+	  configure_custom_tab_key:gCustomTabKey,
+	  configure_custom_tab_octave:gCustomTabOctave,
+	};
+
+	const form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Custom Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_custom" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject custom tablature offset by the octave and semitone values selected below into all of the tunes in the ABC text area:</p>'},	  
+	  {html: '<p style="margin-top:24px;margin-bottom:42px;font-size:12pt;line-height:18pt;font-family:helvetica">Currently loaded custom tab:&nbsp;&nbsp;<span id="currentCustomTab">'+gCustomTab.name+'</span></p>'},	  
+	  {name: "Octave shift:", id: "configure_custom_tab_octave", type:"select", options:custom_tab_octaves, cssClass:"configure_custom_tab_select"}, 
+	  {name: "Semitone offset:", id: "configure_custom_tab_key", type:"select", options:custom_tab_keys, cssClass:"configure_custom_tab_select"}, 
+      {html: '<p style="text-align: center; font-size:4pt;font-family:helvetica;">&nbsp;</p>'},
+	  {html: '<p style="text-align:center;margin-top:18px;"><input id="configure_custom_tab" class="btn btn-subdialog configure_custom_tab" onclick="EditCustomTab()" type="button" value="Edit Custom Tablature Note Names" title="Edit the custom tab symbols for each scale note"></p>'},
+	  {html: '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>'},
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 700, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+
+		// Get the results and store them in the global configuration
+		if (!args.canceled){
+
+			gCustomTabKey = args.result.configure_custom_tab_key; 
+			gCustomTabOctave = args.result.configure_custom_tab_octave; 
+
+			SaveConfigurationSettings();
+
+			SetRadioValue("notenodertab","noten");
+
+			gCurrentTab = "noten";
+
+			gTheABC.value = CustomTabGenerator(gTheABC.value);
+
+			// Set dirty
+			gIsDirty = true;
+			
+			RenderAsync(true,null);
+
+			// Idle the dialog
+			IdleAdvancedControls(true);
+
+		}
+
+	});
+
+}
 //
 // Inject Box Tablature
 //
@@ -36476,6 +37052,72 @@ const gHarmonicaCustomDefault = {
     ] 
 }
 
+
+// Custom tab
+var gCustomTabKey = "0";
+var gCustomTabOctave = "0";
+
+//
+// For custom tab option
+//
+var gCustomTab;
+
+const gCustomTabDefault = {
+	version:1,
+	type:"CustomTab",
+	name:"Default (Scale Semitone Numbers)",
+	noteMap:[
+		"0", // C
+	    "1", // C# / Db
+	    "2", // D
+	    "3", // D# / Eb
+	    "4", // E
+	    "5", // F
+	    "6", // F# / Gb
+	    "7", // G
+	    "8", // G# / Ab
+	    "9", // A
+	    "10", // A# / Bb
+	    "11", // B
+	    "12", // C
+	    "13", // C# / Db
+	    "14", // D
+	    "15", // E# / Eb
+	    "16", // E
+	    "17", // F
+	    "18", // F# / Gb
+	    "19", // G
+	    "20", // G# / Ab
+	    "21", // A
+	    "22", // A# / Bb
+	    "23", // B
+	    "24", // C
+	    "25", // C# / Db
+	    "26", // D
+	    "27", // D# / Eb
+	    "28", // E
+	    "29", // F
+	    "30", // F# / Gb
+	    "31", // G
+	    "32", // G# / Ab
+	    "33", // A
+	    "34", // A# / Bb
+	    "35", // B
+	    "36", // C
+	    "37", //C#,
+	    "38", // D
+	    "39", // D# / Eb
+	    "40", // E
+	    "41", // F
+	    "42", // F# / Gb
+	    "43", // G
+	    "44", // G# / Ab
+	    "45", // A
+	    "46", // A# / Bb
+	    "47"  // B
+    ] 
+}
+
 // Get the initial configuration settings from local browser storage, if present
 function GetInitialConfigurationSettings(){
 
@@ -36783,6 +37425,34 @@ function GetInitialConfigurationSettings(){
     }
     else{
     	resetHarmonicaCustom();
+    }
+
+	// Custom tab
+	val = localStorage.CustomTabKey;
+	if (val){
+		gCustomTabKey = val;
+	}
+	else{
+		gCustomTabKey = "0";
+	}
+
+	val = localStorage.CustomTabOctave;
+	if (val){
+		gCustomTabOctave = val;
+	}
+	else{
+		gCustomTabOctave = "0";
+	}
+
+	var theCustomTab = localStorage.CustomTab;
+
+    if (theCustomTab){
+
+        gCustomTab = JSON.parse(theCustomTab);
+
+    }
+    else{
+    	resetCustomTab();
     }
 
 	// Bamboo flute
@@ -37563,6 +38233,13 @@ function SaveConfigurationSettings(){
 
 		// Custom harmonica settings
 		localStorage.HarmonicaCustom = JSON.stringify(gHarmonicaCustom);
+
+		// Custom tab settings
+		localStorage.CustomTabKey = gCustomTabKey;
+		localStorage.CustomTabOctave = gCustomTabOctave;
+
+		// Custom tab settings
+		localStorage.CustomTab = JSON.stringify(gCustomTab);
 
 		// Save the bamboo flute key
 		localStorage.BambooFluteKey =  gBambooFluteKey;
@@ -39275,7 +39952,7 @@ function AdvancedControlsDialog(){
 		modal_msg  += '<input id="injectmd" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_MD()" type="button" value="Inject Dulcimer Tab" title="Injects Mountain Dulcimer tablature into the ABC">';
 		modal_msg  += '<input id="injectbambooflute" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Bamboo_Flute()" type="button" value="Inject Bamboo Flute Tab" title="Injects Bamboo flute tablature into the ABC">';
 		modal_msg  += '</p>';
-		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="ceoltastransform" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransformDialog()" type="button" value="Comhaltas Transform" title="Brings up a dialog where you can transform the ABC to/from Comhaltas format"><input id="injectshapenotes" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_ShapeNotes()" type="button" value="Inject Note Names/Shapes/Solfège" title="Injects note names (Pitch Names, Standard ABC, Comhaltas ABC), Shape Note shapes, or Solfège note names into the ABC"><input id="configure_box_advanced" class="btn btn-subdialog configure_box_advanced " onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>';	
+		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="ceoltastransform" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransformDialog()" type="button" value="Comhaltas Transform" title="Brings up a dialog where you can transform the ABC to/from Comhaltas format"><input id="injectshapenotes" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_ShapeNotes()" type="button" value="Inject Note Names/Shapes/Solfège" title="Injects note names (Pitch Names, Standard ABC, Comhaltas ABC), Shape Note shapes, or Solfège note names into the ABC"><input id="injectcustomtab" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectCustomTab()" type="button" value="Inject Custom Tab" title="Injects custom tablature into the ABC"></p>';	
 	}
 
 	// Showing explorers?

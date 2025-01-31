@@ -439,6 +439,7 @@
             <a style="text-decoration:none;" href="#tab_bamboo">Inject Bamboo Flute Tab</a>
             <a style="text-decoration:none;" href="#advanced_comhaltas">Comhaltas Transform</a>
             <a style="text-decoration:none;" href="#advanced_shapenoteshapes">Inject Note Names/Shapes/Solfège</a>
+            <a style="text-decoration:none;" href="#tab_custom">Inject Custom Tab</a>
             <a style="text-decoration:none;" href="#tablature_settings">Configuring Tablature Fonts and Settings</a>
             <a style="text-decoration:none;" href="#clearing_tablature">Clearing the Injected Tablature</a>
             <a style="text-decoration:none;" href="#tablature_limitations">Tablature/Solfège Injection Issues and Limitations</a>
@@ -789,6 +790,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#tab_bamboo">Inject Bamboo Flute Tab</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_comhaltas">Comhaltas Transform</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_shapenoteshapes">Inject Note Names/Shapes/Solfège</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#tab_custom">Inject Custom Tab</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#tablature_settings">Configuring Tablature Fonts and Settings</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#clearing_tablature">Clearing the Injected Tablature</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#tablature_limitations">Tablature/Solfège Injection Issues and Limitations</a></p>
@@ -3486,7 +3488,7 @@
                 <h1 class="page_break_always">More ABC Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/more_abc_tools_21.jpg"/>
+                    <img class="image" loading="lazy" src="img/more_abc_tools_22.jpg"/>
                 </div>
                 <p>If you would like to only show the buttons for the features you commonly use and hide the others, click the controls icon at the top-right of the dialog to choose features of the dialog you would like to show/hide:</p>
                 <div class="image_holder_p">
@@ -3601,20 +3603,33 @@
                 <p>If you grab a Snapshot, after the tab injection operation, if there was an issue, you can click <strong>Restore</strong> to get back your original ABC.</p>
                 <hr id="tab_harmonica">
                 <p><strong>Inject Harmonica Tab</strong> - Brings up a dialog where you can inject tab for standard 10-hole diatonic harmonica:</p>
-                <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/harmonica_tab_4.jpg">
-                </div>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/YcYAi1Ba3mo" title="Harmonica Tab Injection Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>Choose the harmonica tuning (Standard Richter, Paddy Richter, Easy Thirds, Melody Maker, Country (Major 7th), Natural Minor, or Custom) from the <strong>Harmonica tuning</strong> dropdown.
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/harmonica_tab_5.jpg">
+                </div>
+                 <p>Choose the harmonica tuning (Standard Richter, Paddy Richter, Easy Thirds, Melody Maker, Country (Major 7th), Natural Minor, or Custom) from the <strong>Harmonica tuning</strong> dropdown.
                 <p>Choose the harmonica key from the <strong>Harmonica key</strong> dropdown.</p>
                 <p>If you want to shift the position on the harmonica up or down one octave, select the octave shift from the <strong>Octave shift</strong> dropdown.</p>
                 <p>Blow notes can be indicated either with or without a + along with the hole number.</p>
                 <p>Check <strong>Include + for blow notes in the tablature</strong> if you want a + along with the note numbers for blow notes. (default is unchecked)</p>
                 <p>Check <strong>Blow/Draw indications under the hole number (unchecked is before hole number)</strong> if you want the + or - drawn below the hole numbers instead of before them. (default is checked)</p>
-                <p>The tab injector will delete any harmonica tab previously injected into the tunes.</p>
-                <p>The tab size is set by the %%annotationfont value injected at the top of the tunes.</p>
+                <p>The harmonica tab injector will delete any harmonica tab previously injected into the tunes.</p>
+                <p>The harmonica tab size is set by the %%annotationfont value injected at the top of the tunes.</p>
                 <p>This value is taken from the <a href="#tablature_settings">Tablature Injection Settings</a> dialog Tablature/Solfège font size field.</p>
                 <p>Injected harmonica tab can be removed from all tunes with one click using the <strong>Strip Injected Tab</strong> button at the top of the <strong>More Tools</strong> dialog.</p>
+                <p>Click <strong>Tablature Injection Settings</strong> to edit the font sized used for the tab and choose whether you want the tab displayed above or below the notation.</p>
+                <hr id="tab_harmonica_custom">
+                <p>Click <strong>Edit Custom Harmonica Tuning Tab</strong> to bring up a dialog where you can set the text used for the harmonica tab for every scale note, and save or load custom tuning tab settings:</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/1ex41_ocMl4" title="Custom Harmonica Tab Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/harmonica_custom_2.jpg">
+                </div>
+                <p>When entering custom tablature strings, if you are indicating a multiple bend, best to use multiple single quote characters '' rather than double quotes "</p>
+                <p>Additionally, the following characters are not allowed in the ABC annotation and will be filtered out: ^ _</p>
+                <p>Any double-quote " characters entered will be replaced by two single quotes ' '</p>
+                <p>Click <strong>Save Custom Harmonica Tuning</strong> to save your custom tuning to a file.</p>
+                <p>Click <strong>Load Custom Harmonica Tuning</strong> to load a previously saved custom tuning from a file.</p>
+                <p>Click <strong>Reset to Default (Standard Richter)</strong> to reset the custom setting to a Standard Richter tuning that you can modify and rename.</p>         
                 <hr>
                 <p style="text-align: center;"><strong>How to Read the Diatonic Harmonica Tablature</strong></p>
                 <p>Numbers correspond to the holes on the harmonica.</p>
@@ -3623,17 +3638,7 @@
                 <p>Draw is indicated by – .</p>
                 <p>Bends are indicated by ', '', or ''' after the number.</p>
                 <p>Overblow is indicated by o after the number.</p>
-                <hr id="tab_harmonica_custom">
-                <p>Click <strong>Edit Custom Harmonica Tuning Tab</strong> to bring up a dialog where you can set the string used for the harmonica tab for every scale note, and save or load custom tuning tab settings:</p>
-                <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/harmonica_custom_2.jpg">
-                </div>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/1ex41_ocMl4" title="Custom Harmonica Tab Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>When entering custom tablature strings, if you are indicating a multiple bend, best to use multiple single quote characters: ' rather than double quotes: "</p>
-                <p>Click <strong>Save Custom Harmonica Tuning</strong> to save your custom tuning to a file.</p>
-                <p>Click <strong>Load Custom Harmonica Tuning</strong> to load a previously saved custom tuning from a file.</p>
-                <p>Click <strong>Reset to Default (Standard Richter)</strong> to reset the custom setting to a Standard Richter tuning that you can modify and rename.</p>         
-                 <hr id="tab_irish_box">
+                <hr id="tab_irish_box">
                 <p><strong>Inject Irish Box Tab</strong> - Brings up a dialog where you can choose to inject either B/C or C#/D Irish button box tab into the ABC.</p>
                 <p>See the <a href="#tablature_settings">Configuring Tablature Fonts and Settings</a> section below for full details on the B/C and C#/D box tablature style, font, and spacing options.</p>
                 <hr class="hidden-print" id="reading_the_box_tablature">
@@ -3664,10 +3669,10 @@
                 <p></p>
                 <hr id="tab_concertina">
                 <p><strong>Inject Anglo Concertina Tab</strong> - Injects Anglo Concertina tablature into the ABC.</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/5sdzg1cdQmM" title="Anglo Concertina Tablature Injection Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/inject_concertina_tab_2.jpg">
                 </div>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/5sdzg1cdQmM" title="Anglo Concertina Tablature Injection Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>Select your instrument tuning: (C/G, Bb/F, A/E, or G/D) from the <strong>Concertina tuning</strong> selection menu.</p>
                 <p>Select your instrument style: (Jeffries or Wheatstone) from the <strong>Concertina style</strong> selection menu.</p>
                 <p>Select your preferred fingering solution from the <strong>Preferred fingering solution</strong> selection menu:</p>
@@ -3782,10 +3787,34 @@
                 <p>This video demonstrates the process:</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/ms1K0tvTL9o" title="Showing injected note names below the staves" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>See the <a href="#tablature_settings">Configuring Tablature Fonts and Settings</a> section below for full details on the tablature font and spacing options.</p>
+                <hr class="hidden-print" id="tab_custom">
+                <h1 class="page_break_always">Inject Custom Tab<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p><strong>Inject Custom Tab</strong> - Brings up a dialog where you can inject user-defined custom tablature text for each note:</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/kovfJqIpvpE" title="Custom Tab Injection Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/custom_tab_1.jpg">
+                </div>
+                <p>This allows the creation of custom tab for instruments not already supported by the tool.</p>
+                <p>If you want to shift the tablature up or down one or two octaves, select the octave shift from the <strong>Octave shift</strong> dropdown.</p>
+                <p>Choose the tablature semitone offset from the <strong>Semitone offset</strong> dropdown.</p>
+                <p>The custom tab injector will delete any custom tab previously injected into the tunes.</p>
+                <p>The custom tab size is set by the %%annotationfont value injected at the top of the tunes.</p>
+                <p>This value is taken from the <a href="#tablature_settings">Tablature Injection Settings</a> dialog Tablature/Solfège font size field.</p>
+                <p>Injected custom tab can be removed from all tunes with one click using the <strong>Strip Injected Tab</strong> button at the top of the <strong>More Tools</strong> dialog.</p>
+                <p>Click <strong>Tablature Injection Settings</strong> to edit the font sized used for the tab and choose whether you want the tab displayed above or below the notation.</p>
+                <hr id="tab_custom_edit">
+                <p>Click <strong>Edit Custom Tablature Note Names</strong> to bring up a dialog where you can set the text used for the custom tab for each scale note, and save or load custom tab settings:</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/custom_tab_edit_1.jpg">
+                </div>
+                <p>When entering custom tab values, the following characters are not allowed in the ABC annotation and will be filtered out: ^ _</p>
+                <p>Any double-quote " characters entered will be replaced by two single quotes ' '</p>
+                <p>Click <strong>Save Custom Tab Settings</strong> to save your custom tab settings to a file.</p>
+                <p>Click <strong>Load Custom Tab Settings</strong> to load previously saved custom tab settings from a file.</p>
+                <p>Click <strong>Reset to Default (Scale Semitone Numbers)</strong> to reset the custom tab setting to per-scale degree numbers that you can modify and rename.</p>
                 <hr class="hidden-print" id="tablature_settings">
                 <h1 class="page_break_always h1wide">Configuring Tablature Fonts and Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>To configure the tablature/solfège fonts and other settings, first click the tool's Settings button, then click <strong>Tablature Injection Settings</strong> at the bottom of the dialog to bring up the tablature/solfège injection settings dialog:</p>
-                <p>There is also a button for this feature on the <strong>More Tools</strong> dialog.</p>
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/tab_injection_settings_10.jpg"/>
                 </div>
@@ -3802,6 +3831,7 @@
                 <p><strong>Note:</strong> Setting either value blank restores the original default "↓" for Push and "↑" for Draw character values.</p>
                 <p><strong>Use a bar over button name to indicate Draw (overrides Push and Draw characters)</strong> - If checked, draws a bar over the button name for a bellows Draw and no bar for bellows Push.</p>
                 <p>If checked, overrides the use of the Push or Draw characters entered above.</p>
+                <p>Most of the tablature injectors support drawing the tablature either above or below the notation.</p>
                 <p>Select your preferred tablature position relative to the notation (Above or Below) from the selection menu.</p>
                 <p>When injecting tablature below the notation, you have the option to strip all existing chords and tablature from the ABC before injecting the new tab.</p>
                 <p>Injecting tablature above the notation always strips existing chords and tablature from the ABC before injecting the new tab.</p>

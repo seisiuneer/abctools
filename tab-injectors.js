@@ -8506,15 +8506,22 @@ var HarmonicaTabGenerator = function (theABC){
 
         var theTab;
 
+        var location = parseInt(gInjectTab_TabLocation);
+
         for (var i = 0; i < notes.length; ++i) {
 
             var index = notes[i].index + insertedTotal;
 
             var glyph = notes[i].glyph;
 
-            var glyphLen = glyph.length;
-
-            theTab = "\"_" +glyph+'"';
+            switch (location){
+                case 0:
+                    theTab = "\"^" +glyph+'"';
+                    break;
+                case 1:
+                    theTab = "\"_" +glyph+'"';
+                    break;
+            }
 
             var tabLen = theTab.length;
 
@@ -9051,6 +9058,8 @@ var HarmonicaTabGenerator = function (theABC){
         var fontFamily = gInjectTab_FontFamily;
         var tabFontSize = gInjectTab_TabFontSize;
         var staffSep = gInjectTab_StaffSep;
+        var tabLocation = parseInt(gInjectTab_TabLocation);
+        var stripChords = gInjectTab_StripChords;
  
         var nTunes = countTunes(theABC);
 
@@ -9061,7 +9070,7 @@ var HarmonicaTabGenerator = function (theABC){
             var thisTune = getTuneByIndex(theABC, i);
 
             // Don't inject section header tune fragments
-            if (isSectionHeader(thisTune)){
+            if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
                 result += "\n";
                 result += thisTune;
                 result += "\n";
@@ -9075,6 +9084,13 @@ var HarmonicaTabGenerator = function (theABC){
 
             // Strip any existing tab
             thisTune = StripTabOne(thisTune);
+            
+            // Strip chords? 
+            // Above always strips
+            // Below only strips if specified in the settings
+            if ((tabLocation == 0) || ((tabLocation == 1) && (stripChords))){
+                thisTune = StripChordsOne(thisTune);
+            }
 
             // console.log("After");
             // console.log(thisTune);
@@ -9126,6 +9142,797 @@ var HarmonicaTabGenerator = function (theABC){
             }
 
             thisTune = InjectStringBelowTuneHeaderConditional(thisTune, harpInfo);
+
+            thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%vskip 15");
+
+            result += thisTune;
+
+            result += "\n";
+        }
+
+        result = result.replaceAll("\n\n","\n");
+
+        return result;
+
+    }
+
+    return generateTablature(theABC);
+
+}
+
+//
+// Inject Custom Tab below the notes
+//
+var CustomTabGenerator = function (theABC){
+
+    var verbose = false;
+
+    var abcOutput = "";
+
+    // Globals
+    var keySignature = null;
+
+    function log(s) {
+        if (verbose)
+            console.log(s);
+    }
+
+    //
+    // Generate the box tab
+    //
+    function generate_custom_tab(abcInput,customTabKey,octaveShift){
+       
+        var theTabMap = gCustomTab.noteMap;
+
+        log("Got input:" + abcInput);
+
+        // Find the key signature in the input
+        keySignature = findKeySignature(abcInput);
+
+        if (keySignature == null) {
+            return ("ERROR: Unknown or unsupported key signature");
+        }
+
+        // Generate an array of note objects. 
+        var notes = getAbcNotes(abcInput,customTabKey,octaveShift,theTabMap);
+
+        // Merge the chosen fingerings with the ABC notation
+        return mergeTablature(abcInput, notes);
+
+     }
+
+
+    // Note constructor
+    var Note = function(index, unNormalizedValue, normalizedValue, glyph) {
+
+        this.index = index; // Index of this note in the original ABC input string
+
+        // These values an ABC string like "G" or "^A'"
+        // Unnormalized means it's the literal note string from the ABC source.
+        this.unNormalizedValue = unNormalizedValue;
+
+        // Normalized means it's adjusted by the key signature and extra decorations are removed.
+        this.normalizedValue = normalizedValue;
+
+        this.glyph = glyph;
+    };
+
+
+
+    // Determines the key signature
+    // abcInput: ABC input string
+    // returns: key signature map to use, or null on error.
+    function findKeySignature(abcInput) {
+
+        var myMap = null;
+
+        var keyMatch = abcInput.match(/^K: *([A-G])([b#])? *(.*?)$/m);
+        if (keyMatch == null || keyMatch.length < 3) {
+            return null;
+        }
+
+        var keySignatureBase;
+        var keyExtra;
+
+        if (keyMatch[2] == undefined) {
+            keySignatureBase = keyMatch[1];
+        } else {
+            keySignatureBase = keyMatch[1] + keyMatch[2];
+        }
+        keyExtra = keyMatch[3].toLowerCase();
+
+        // Strip any trailing comments
+        var searchExp = /%.*/
+        keyExtra = keyExtra.replace(searchExp,"");
+        keyExtra = keyExtra.trim();
+
+        log("Got base key of '" + keySignatureBase + "' and extra of '" + keyExtra + "'");
+
+        // Determine musical mode
+        if (keyExtra == "" ||
+            keyExtra.search("maj") != -1 ||
+            keyExtra.search("ion") != -1) {
+            log("Mode: Ionian (major)");
+            myMap = keySignatureMap(keySignatureBase, 0);
+        } else if (keyExtra.search("mix") != -1) {
+            log("Mode: Mixolydian");
+            myMap = keySignatureMap(keySignatureBase, 1);
+        } else if (keyExtra.search("dor") != -1) {
+            log("Mode: Dorian");
+            myMap = keySignatureMap(keySignatureBase, 2);
+        } else if ((keyExtra.search("m") != -1 && keyExtra.search("mix") == -1) ||
+            keyExtra.search("min") != -1 ||
+            keyExtra.search("aeo") != -1) {
+            log("Mode: Aeolian (minor)");
+            myMap = keySignatureMap(keySignatureBase, 3);
+        } else if (keyExtra.search("phr") != -1) {
+            log("Mode: Phrygian");
+            myMap = keySignatureMap(keySignatureBase, 4);
+        } else if (keyExtra.search("loc") != -1) {
+            log("Mode: Locrian");
+            myMap = keySignatureMap(keySignatureBase, 5);
+        } else if (keyExtra.search("lyd") != -1) {
+            log("Mode: Lydian");
+            myMap = keySignatureMap(keySignatureBase, -1);
+        } else if (keyExtra.search("exp") != -1) {
+            log("(Accidentals to be explicitly specified)");
+            myMap = keySignatureMap("C", 0);
+        } else {
+            // Unknown
+            log("Failed to determine key signature mode");
+            myMap = null;
+        }
+
+        if (myMap == null) {
+            return myMap;
+        }
+
+        //Handle explicit accidentals
+        var explicitFlats = keyExtra.match(/_./g);
+        var explicitSharps = keyExtra.match(/\^./g);
+
+        for (note in explicitFlats) {
+            myMap.flats += explicitFlats[note][1].toUpperCase();
+        }
+
+        for (note in explicitSharps) {
+            myMap.sharps += explicitSharps[note][1].toUpperCase();
+        }
+
+        return myMap;
+
+    }
+
+    // Calculates a key signature map given a tonic and a mode
+    function keySignatureMap(tonic, modeFlatness) {
+        var circleOfFifths = "FCGDAEB";
+
+        var signature = {
+            sharps: "",
+            flats: ""
+        };
+
+        var baseSharpness = circleOfFifths.indexOf(tonic[0]) - 1;
+
+        if (baseSharpness == -2) {
+            log("Bad tonic: " + tonic);
+            return null;
+        }
+
+        if (tonic.slice(1) == "b") {
+            baseSharpness -= 7;
+        } else if (tonic.slice(1) == "#") {
+            baseSharpness += 7;
+        }
+
+        var totalSharpness = baseSharpness - modeFlatness;
+
+        if (totalSharpness > 7) {
+            log("Too many sharps: " + totalSharpness);
+            return null;
+        } else if (totalSharpness < -7) {
+            log("Too many flats: " + (totalSharpness * -1));
+            return null;
+        } else if (totalSharpness > 0) {
+            signature.sharps = circleOfFifths.slice(0, totalSharpness);
+        } else if (totalSharpness < 0) {
+            signature.flats = circleOfFifths.slice(totalSharpness);
+        }
+
+        signature.accidentalSharps = "";
+        signature.accidentalFlats = "";
+        signature.accidentalNaturals = "";
+
+        return signature;
+    }
+
+    //
+    // Merges the tablature with the original string input.
+    //
+    function mergeTablature(input, notes) {
+
+        var result = input;
+        
+        var insertedTotal = 0;
+
+        var location = parseInt(gInjectTab_TabLocation);
+
+        var theTab;
+
+        for (var i = 0; i < notes.length; ++i) {
+
+            var index = notes[i].index + insertedTotal;
+
+            var glyph = notes[i].glyph;
+
+            var glyphLen = glyph.length;
+
+
+            switch (location){
+                case 0:
+                    theTab = "\"^" +glyph+'"';
+                    break;
+                case 1:
+                    theTab = "\"_" +glyph+'"';
+                    break;
+
+            }
+
+            var tabLen = theTab.length;
+
+            //log("Merge["+i+"] index="+index+" tabLen="+tabLen+" insertedTotal="+insertedTotal);
+
+            result = result.substr(0, index) + theTab + result.substr(index);
+
+            insertedTotal += tabLen;
+        }
+
+        return result;
+    }
+
+    // Replaces parts of the given string with '*'
+    // input: string to replace
+    // start: index to start sanitizing
+    // len: length to sanitize
+    // Returns a new string
+    function sanitizeString(input, start, len) {
+        var s = "";
+        for (var i = 0; i < len; ++i) {
+            s += "*";
+        }
+
+        return input.substr(0, start) + s + input.substr(start + len);
+
+    }
+
+    //
+    // From a note name, gets the note string
+    //
+    function getNoteGlyph(note,customTabKey,octaveShift,theTabMap){
+
+        // Standard ABC
+        var glyph_map = {
+            "C,":  0,
+            "^C,": 1,
+            "_D,": 1,
+            "D,":  2,
+            "^D,": 3,
+            "_E,": 3,
+            "E,":  4,
+            "^E,": 5,
+            "_F,": 4,
+            "F,":  5,
+            "^F,": 6,
+            "_G,": 6,
+            "G,":  7,
+            "^G,": 8,
+            "_A,": 8,
+            "A,":  9,
+            "^A,": 10,
+            "_B,": 10,
+            "B,":  11,
+            "^B,": 12,
+            "_C":  11,
+            "C":   12,
+            "^C":  13,
+            "_D":  13,
+            "D":   14,
+            "^D":  15,
+            "_E":  15,
+            "E":   16,
+            "^E":  17,
+            "_F":  16,
+            "F":   17,
+            "^F":  18,
+            "_G":  18,
+            "G":   19,
+            "^G":  20,
+            "_A":  20,
+            "A":   21,
+            "^A":  22,
+            "_B":  22,
+            "B":   23,
+            "^B":  24,
+            "_c":  23,
+            "c":   24,
+            "^c":  25,
+            "_d":  25,
+            "d":   26,
+            "^d":  27,
+            "_e":  27,
+            "e":   28,
+            "^e":  29,
+            "_f":  28,
+            "f":   29,
+            "^f":  30,
+            "_g":  30,
+            "g":   31,
+            "^g":  32,
+            "_a":  32,
+            "a":   33,
+            "^a":  34,
+            "_b":  34,
+            "b":   35,
+            "^b":  36,
+            "_c'": 35,
+            "c'":  36,
+            "^c'": 37,
+            "_d'": 37,
+            "d'":  38,
+            "^d'": 39,
+            "_e'": 39,
+            "e'":  40,
+            "^e'": 41,
+            "_F'": 40,
+            "f'":  41,
+            "^f'": 42,
+            "_g'": 42,
+            "g'":  43,
+            "^g'": 44,
+            "_a'": 44,
+            "a'":  45,
+            "^a'": 46,
+            "_b'": 46,
+            "b'":  47,
+
+            // Naturals
+            "=C,":  0,
+            "=D,":  2,
+            "=E,":  4,
+            "=F,":  5,
+            "=G,":  7,
+            "=A,":  9,
+            "=B,":  11,
+            "=C":   12,
+            "=D":   14,
+            "=E":   16,
+            "=F":   17,
+            "=G":   19,
+            "=A":   21,
+            "=B":   23,
+            "=c":   24,
+            "=d":   26,
+            "=e":   28,
+            "=f":   29,
+            "=g":   31,
+            "=a":   33,
+            "=b":   35,
+            "=c'":  36,
+            "=d'":  38,
+            "=e'":  40,
+            "=f'":  41,
+            "=g'":  43,
+            "=a'":  45,
+            "=b'":  47,
+            // Don't touch
+            "C'":   24,
+            "^C'":  25,
+            "_D'":  25,
+            "D'":   26,
+            "^D'":  27,
+            "_E'":  27,
+            "E'":   28,
+            "F'":   29,
+            "^F'":  30,
+            "_G'":  30,
+            "G'":   31,
+            "^G'":  32,
+            "_A'":  32,
+            "A'":   33,
+            "^A'":  34,
+            "_B'":  34,
+            "B'":   35,
+            "C''":  36,
+            "^C''": 37,
+            "_D''": 37,
+            "D''":  38,
+            "^D''": 39,
+            "_E''": 39,
+            "E''":  40,
+            "F''":  41,
+            "^F''": 42,
+            "_G''": 42,
+            "G''":  43,               
+            "A''":  45,               
+            "B''":  47,               
+            "=C'":  24,
+            "=D'":  26,
+            "=E'":  28,
+            "=F'":  29,
+            "=G'":  31,
+            "=A'":  33,
+            "=B'":  35,
+            "=C''": 36,
+            "=D''": 38,
+            "=E''": 40,
+            "=F''": 41,
+            "=G''": 43,            
+            "=A''": 45,            
+            "=B''": 47,            
+        };
+
+        var noteIndex = glyph_map[note];
+
+        // Offset for instrument key
+
+        var theOffset = 0;
+
+        theOffset = parseInt(customTabKey,10);
+
+        noteIndex += theOffset;
+
+        // Add any octave shift        
+        if (octaveShift == "1"){
+            noteIndex += 12;
+        }
+        else
+        if (octaveShift == "-1"){
+            noteIndex -= 12;
+        }  
+        else          
+        if (octaveShift == "2"){
+            noteIndex += 24;
+        }
+        else
+        if (octaveShift == "-2"){
+            noteIndex -= 24;
+        }            
+ 
+        if (noteIndex < 0){
+            return "x";
+        }
+
+        if ((noteIndex!=0) && (!noteIndex)){
+            return "x";
+        }
+
+        var retVal = theTabMap[noteIndex];
+
+        if (!retVal){
+            return "x";
+        }
+
+        return retVal;
+
+    }
+
+    // Returns an array of Notes from the ABC string input
+    function getAbcNotes(input,customTabKey,octaveShift,tab) {
+
+        // Sanitize the input, removing header and footer, but keeping
+        // the same offsets for the notes. We'll just replace header
+        // and footer sections with '*'.
+        var sanitizedInput = input;
+        var headerRegex = /^\w:.*$/mg;
+        var x;
+        while (x = headerRegex.exec(input)) {
+            sanitizedInput = sanitizeString(sanitizedInput, x.index, x[0].length);
+        }
+
+        // Sanitize chord markings
+        var searchRegExp = /"[^"]*"/gm
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }
+
+        // Sanitize in-abc chords in brackets
+        searchRegExp = /\[[^\]|]*\]/g
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }  
+
+        // Sanitize !*! style annotations
+        searchRegExp = /![^!\n]*!/gm 
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }
+
+        // Sanitize multi-line comments
+        searchRegExp = /^%%begintext((.|\n)*)%%endtext/gm
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+            //debugger;
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }    
+
+        // Sanitize comments
+        searchRegExp = /^%.*$/gm
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+            //debugger;
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }
+
+        // Sanitize ! 
+        sanitizedInput = sanitizedInput.replaceAll("!","*");
+
+        log("sanitized input:" + sanitizedInput);
+
+        // Find all the notes
+        var regex = /([=^_]?[a-gA-G][',]?|\|)/g;
+        var notes = [];
+        var m;
+        while (m = regex.exec(sanitizedInput)) {
+            var unNormalizedValue = m[1];
+            if (unNormalizedValue == "|") {
+                keySignature.accidentalFlats = "";
+                keySignature.accidentalSharps = "";
+                keySignature.accidentalNaturals = "";
+            } else {
+                var normalizedValue = normalize(unNormalizedValue);
+
+                log("UnNormalized=" + unNormalizedValue + " normalized=" + normalizedValue);
+                
+                var theGlyph = getNoteGlyph(normalizedValue,customTabKey,octaveShift,tab);
+
+                notes.push(new Note((m.index), unNormalizedValue, normalizedValue, theGlyph));
+            }
+        }
+
+        return notes;
+    }
+
+
+
+    // Normalizes the given note string, given the key signature.
+    // This means making sharps or flats explicit, and removing
+    // extraneous natural signs.
+    // Returns the normalized note string.
+    function normalize(value) {
+
+        // Find note base name
+        var i = value.search(/[A-G]/i);
+        if (i == -1) {
+            log("Failed to find basename for value!");
+            return value;
+        }
+        var baseName = value.substr(i, 1).toUpperCase();
+
+        // Does it have a natural?
+        if (value.substr(0, 1) == "=") {
+            keySignature.accidentalFlats = keySignature.accidentalFlats.replace(baseName, "");
+            keySignature.accidentalSharps = keySignature.accidentalSharps.replace(baseName, "");
+            keySignature.accidentalNaturals += baseName;
+            return value.substr(1);
+        }
+
+        // Does it already have an accidental?
+        if (value.substr(0, 1) == "_") {
+            keySignature.accidentalFlats += baseName;
+            keySignature.accidentalSharps = keySignature.accidentalSharps.replace(baseName, "");
+            keySignature.accidentalNaturals = keySignature.accidentalNaturals.replace(baseName, "");
+            return value;
+        }
+
+        if (value.substr(0, 1) == "^") {
+            keySignature.accidentalFlats = keySignature.accidentalFlats.replace(baseName, "");
+            keySignature.accidentalNaturals = keySignature.accidentalNaturals.replace(baseName, "");
+            keySignature.accidentalSharps += baseName;
+            return value;
+        }
+
+        // Transform to key signature
+
+        if (keySignature.accidentalNaturals.search(baseName) != -1) {
+            return value;
+        }
+
+        if (keySignature.sharps.search(baseName) != -1 ||
+            keySignature.accidentalSharps.search(baseName) != -1) {
+            return "^" + value;
+        }
+
+        if (keySignature.flats.search(baseName) != -1 ||
+            keySignature.accidentalFlats.search(baseName) != -1) {
+            return "_" + value;
+        }
+
+        return value;
+    }
+
+
+    //
+    // Count the tunes in the text area
+    //
+    function countTunes(theABC) {
+
+        // Count the tunes in the ABC
+        var theNotes = theABC;
+
+        var theTunes = theNotes.split(/^X:.*$/gm);
+
+        var nTunes = theTunes.length - 1;
+
+        return nTunes;
+
+    }
+
+    //
+    // Return the tune ABC at a specific index
+    //
+    //
+    function getTuneByIndex(theABC, tuneNumber) {
+
+        var theNotes = theABC;
+
+        // Now find all the X: items
+        var theTunes = theNotes.split(/^X:/gm);
+
+        return ("X:" + theTunes[tuneNumber + 1]);
+
+    }
+
+    function stripCustomTab(input) {
+      return input.split('\n') // Split input into lines
+        .filter(line => !/^%%vskip 15$|^%%text Tab:|^%%annotationfont/.test(line)) // Filter out lines that match the pattern
+        .join('\n'); // Join the remaining lines back into a string
+    }
+
+    //
+    // Main processor
+    //
+    function generateTablature(theABC) {
+
+        var fontFamily = gInjectTab_FontFamily;
+        var tabFontSize = gInjectTab_TabFontSize;
+        var staffSep = gInjectTab_StaffSep;
+        var tabLocation = parseInt(gInjectTab_TabLocation);
+        var stripChords = gInjectTab_StripChords;
+ 
+        var nTunes = countTunes(theABC);
+
+        var result = FindPreTuneHeader(theABC);
+
+        for (var i = 0; i < nTunes; ++i) {
+
+            var thisTune = getTuneByIndex(theABC, i);
+
+            // Don't inject section header tune fragments or multi-voice tunes
+            if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
+                result += "\n";
+                result += thisTune;
+                result += "\n";
+                continue;
+            }
+
+            // console.log("Before");
+            // console.log(thisTune);
+
+            thisTune = stripCustomTab(thisTune);
+
+            // Strip any existing tab
+            thisTune = StripTabOne(thisTune);
+
+            // Strip chords? 
+            // Above always strips
+            // Below only strips if specified in the settings
+            if ((tabLocation == 0) || ((tabLocation == 1) && (stripChords))){
+                thisTune = StripChordsOne(thisTune);
+            }
+
+            // console.log("After");
+            // console.log(thisTune);
+
+            thisTune = generate_custom_tab(thisTune,gCustomTabKey,gCustomTabOctave)
+            
+            thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%staffsep " + staffSep);
+ 
+            thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
+
+            var tabInfo = "%%text Tab: "+gCustomTab.name;
+
+            var prefix = "";
+            var octaveprefix = "";
+
+            if (gCustomTabKey.indexOf("-") == -1){
+                prefix = "+";
+            }
+
+            if (gCustomTabOctave.indexOf("-") == -1){
+                octaveprefix = "+";
+            }
+
+            if (gCustomTabKey != "0"){
+ 
+                if (gCustomTabOctave == "0"){
+                    tabInfo = "%%text Tab: "+gCustomTab.name+" / Semitones = "+prefix+gCustomTabKey;
+                }
+                else{
+                    tabInfo="%%text Tab: "+gCustomTab.name+" / Octave = "+octaveprefix+gCustomTabOctave+" / Semitones = "+prefix+gCustomTabKey;
+                }
+            }
+            else{
+                if (gCustomTabOctave == "0"){
+                    tabInfo = "%%text Tab: "+gCustomTab.name;
+                }
+                else {
+                    tabInfo="%%text Tab: "+gCustomTab.name+" / Octave = "+octaveprefix+gCustomTabOctave;
+                }
+            }
+
+            thisTune = InjectStringBelowTuneHeaderConditional(thisTune, tabInfo);
 
             thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%vskip 15");
 

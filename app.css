@@ -3320,6 +3320,17 @@ margin-top:-7px;
 	}
 }
 
+#injectcustomtab{
+	height:42px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.injectcustomtab:hover{
+	background: palegreen;
+	}
+}
+
 #configure_batch_mp3_export{
 	height:42px;
 	padding:12px;
@@ -3449,6 +3460,43 @@ margin-top:-7px;
 
 @media (hover: hover) {
 	.configure_harmonica_custom:hover{
+	background: palegreen;
+	}
+}
+
+#load_custom_tab{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.load_custom_tab:hover{
+	background: palegreen;
+	}
+}
+
+#save_custom_tab{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+	margin-right:24px;
+}
+
+@media (hover: hover) {
+	.save_custom_tab:hover{
+	background: palegreen;
+	}
+}
+
+#configure_custom_tab{
+	height:42px;
+	margin-top:15px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.configure_custom_tab:hover{
 	background: palegreen;
 	}
 }
@@ -3615,6 +3663,35 @@ padding-left:10px;
 margin-top:-7px;
 }
 
+.configure_custom_tab_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:32px;
+}
+
+.configure_custom_tab_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:75px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+
 .configure_box_settings_select{
 font-size:11pt;
 font-family:"Helvetica";
@@ -3632,6 +3709,21 @@ margin-top:24px;
 }
 
 .configure_harmonica_settings_form_text2{
+	font-size:12pt;
+	line-height:42px;
+	font-family:helvetica;
+	display:flex;
+}
+
+.configure_custom_tab_settings_form_text{
+	font-size:12pt;
+	line-height:42px;
+	font-family:helvetica;
+	margin-top:24px;
+	display:flex;
+}
+
+.configure_custom_tab_settings_form_text2{
 	font-size:12pt;
 	line-height:42px;
 	font-family:helvetica;
@@ -4053,6 +4145,14 @@ padding: 3px;
   width:400px;
 }
 
+.customtabnames{
+  width:57px;
+}
+
+.customtablabel{
+  margin-left:12px;
+  width:400px;
+}
 
 #playerstatus {
 font-family:helvetica;
