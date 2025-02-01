@@ -455,7 +455,7 @@ function ImportPDFOrWebsite(){
 	// Save off the original setting
 	var gCustomTabOriginal = JSON.parse(JSON.stringify(gCustomTab));
 
-	var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;margin-bottom:32px">Import Tunes from an Exported PDF or Website&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#import_pdf_web" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+	var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;margin-bottom:32px">Import Tunes from an Exported PDF or Website&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#hamburger_extracting_pdf_website" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 
 	modal_msg += '<p style="margin-top:36px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">Click the buttons below to import all the tunes from a tunebook .PDF file with play links or a tunebook .html website previously exported using this tool.</p>';	
     
