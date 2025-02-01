@@ -3,14 +3,11 @@
 //
 //
 //
-//
-// Updated 1 February 2025 at 0800
-//
-//
+// Updated 1 February 2025 at 1500
 //
 //
 
-const cacheName = 'abctoolscache-2290';
+const cacheName = 'abctoolscache-2291';
 
 const contentToCache = [
     'abctools.html',
@@ -49,6 +46,7 @@ const contentToCache = [
     'bww2abc.js',
     'manage_database.js',
     'website_generator.js',
+    'pdf-website-import.js',
     'context-menu.js',
 	'api-keys.js',
     'img/zoomin.png',

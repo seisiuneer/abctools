@@ -3501,6 +3501,31 @@ margin-top:-7px;
 	}
 }
 
+#import_website{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.import_website:hover{
+	background: palegreen;
+	}
+}
+
+#import_pdf{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+	margin-right:24px;
+}
+
+@media (hover: hover) {
+	.import_pdf:hover{
+	background: palegreen;
+	}
+}
+
 #default_musicxml_settings{
 	height:42px;
 	margin-top: 9px;

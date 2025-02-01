@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2290_020125_0800";
+var gVersionNumber="2291_020125_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -24032,7 +24032,7 @@ function EditCustomHarmonica(){
 	// Save off the original setting
 	var gHarmonicaCustomOriginal = JSON.parse(JSON.stringify(gHarmonicaCustom));
 
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:32px">Edit Custom Harmonica Tuning Tab&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_harmonica_custom" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+	var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;margin-bottom:32px">Edit Custom Harmonica Tuning Tab&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_harmonica_custom" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 	modal_msg += '<div id="harmonica-custom-dialog">';
 	modal_msg += '<p style="font-size:12pt;font-family:helvetica;"">Custom tuning name:<input class="harmonicacustomlabel" type="text" id="r0c1" onchange="customHarmonicaChangeHandler()"><p>\n';
 	modal_msg += '<table style="margin-bottom:24px;text-align:center;">\n';	
@@ -24436,6 +24436,7 @@ function loadCustomTab(file){
 
 	reader.readAsText(file);
 }
+
 //
 // Initialize the custom tab setting
 //
@@ -24608,7 +24609,7 @@ function EditCustomTab(){
 	// Save off the original setting
 	var gCustomTabOriginal = JSON.parse(JSON.stringify(gCustomTab));
 
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:32px">Edit Custom Tablature Note Names&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_custom_edit" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+	var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;margin-bottom:32px">Edit Custom Tablature Note Names&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_custom_edit" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 	modal_msg += '<div id="tab-custom-dialog">';
 	modal_msg += '<p style="font-size:12pt;font-family:helvetica;"">Custom tab name:<input class="customtablabel" type="text" id="r0c1" onchange="customTabChangeHandler()"><p>\n';
 	modal_msg += '<table style="margin-bottom:24px;text-align:center;">\n';	
@@ -46085,7 +46086,6 @@ function SetupContextMenu(showUpdateItem){
 
 	var items;
 
-
 	if (isDesktopBrowser()){
 
 		if (gIsQuickEditor){
@@ -46119,6 +46119,8 @@ function SetupContextMenu(showUpdateItem){
 				    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
 				    {},
 				    { name: 'Inject MIDI gchord Templates', fn: function(target) { InjectMIDIGChordTemplates(); }},
+				    {},
+				    { name: 'Import from PDF or Website', fn: function(target) { ImportPDFOrWebsite(); }},
 				    {},
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
@@ -46224,6 +46226,8 @@ function SetupContextMenu(showUpdateItem){
 				    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
 				    {},
 				    { name: 'Inject MIDI gchord Templates', fn: function(target) { InjectMIDIGChordTemplates(); }},
+				    {},
+				    { name: 'Import from PDF or Website', fn: function(target) { ImportPDFOrWebsite(); }},
 				    {},
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
