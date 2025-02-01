@@ -463,7 +463,7 @@ function ImportPDFOrWebsite(){
 
     modal_msg += '<p style="margin-top:24px;margin-bottom:48px;font-size:12pt;line-height:18pt;font-family:helvetica">Tunes will not be extracted from tunebook websites created with the <strong>Disable access to editor</strong> option selected.</p>';  
 
-	modal_msg += '<p style="text-align:center;margin-top:22px;"><input type="file" id="import_pdf_fs" accept=".pdf,.PDF" hidden/><input type="file" id="import_website_fs" accept=".html,.HTML" hidden/><input id="import_pdf" class="btn btn-subdialog import_pdf" onclick="importPDFClickHandler()" type="button" value="Import Tunes from a PDF File" title="Loads tunes from a previously exported ABC Transcription Tools PDF file with Play links"><input id="import_website" class="btn btn-subdialog import_website" onclick="importWebsiteClickHandler()" type="button" value="Import Tunes from a Website" title="Loads tunes from a previously exported ABC Transcription Tools website"></p>\n';
+	modal_msg += '<p style="text-align:center;margin-top:22px;"><input type="file" id="import_pdf_fs" accept=".pdf,.PDF" hidden/><input type="file" id="import_website_fs" accept=".html,.HTML" hidden/><input id="import_pdf" class="btn btn-subdialog import_pdf" onclick="importPDFClickHandler()" type="button" value="Import Tunes from a PDF File" title="Import tunes from a previously exported ABC Transcription Tools PDF file with Play links"><input id="import_website" class="btn btn-subdialog import_website" onclick="importWebsiteClickHandler()" type="button" value="Import Tunes from a Website" title="Import tunes from a previously exported ABC Transcription Tools website"></p>\n';
 
 	modal_msg += '<p style="font-size:12pt;line-height:12pt;font-family:helvetica">&nbsp;</p>';	
 	
