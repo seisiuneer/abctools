@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2289_013025_1700";
+var gVersionNumber="2290_020125_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -23302,7 +23302,7 @@ function DoCeoltasTransformDialog(){
 
 	modal_msg  += '<input id="ceoltasdialoginverse" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransform(true)" type="button" value="Comhaltas ABC to Standard ABC" title="Transforms the Comhaltas format to standard ABC format"></p>';
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, width: 650,  scrollWithPage: (AllowDialogsToScroll()) });
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 150, width: 650,  scrollWithPage: (AllowDialogsToScroll()) });
 
 }
 
@@ -24924,7 +24924,9 @@ function DoInjectBoxTablature(){
 
 	modal_msg  += '<input id="injectcsdbox" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_CsD()" type="button" value="Inject C#/D Box Tab" title="Injects C#/D box tablature into the ABC"></p>';
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, width: 650,  scrollWithPage: (AllowDialogsToScroll()) });
+	modal_msg  += '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>';
+
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 150, width: 650,  scrollWithPage: (AllowDialogsToScroll()) });
 
 }
 
@@ -25038,7 +25040,7 @@ function DoInjectTablature_Anglo(){
 	  {html: '<p style="margin-top:12px;margin-bottom:24px;font-size:12pt;line-height:12pt;font-family:helvetica">Favors C5 on the left-side G-row draw, B4 on the right-side C-row draw.</p>'},	  
 	  {name: "    Gary Coover style tab (single notes only, overrides button name and direction settings)", id: "configure_gary_coover", type:"checkbox", cssClass:"configure_tab_settings_form_text"},
 	  {html: '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fingerings" class="btn btn-subdialog configure_anglo_fingerings" onclick="ConfigureAngloFingerings()" type="button" value="Configure Anglo Concertina Tablature Button Names" title="Configure the Anglo Concertina tablature button names"></p>'},
-	  {html: '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Configure Anglo Concertina Tablature Fonts and Push/Draw Indications" title="Configure the Anglo Concertina tablature fonts and push/draw indications"></p>'},
+	  {html: '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>'},
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
@@ -25244,11 +25246,11 @@ function DoInjectTablature_Bamboo_Flute(){
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Bamboo Flute Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://en.m.wikipedia.org/wiki/Numbered_musical_notation" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 	  {html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject numeric notation tablature for a bamboo flute in the key selected below into all of the tunes in the ABC text area:</p>'},	  
 	  {name: "Bamboo flute key:", id: "configure_bamboo_flute_key", type:"select", options:bamboo_flute_keys, cssClass:"configure_box_settings_select"}, 
-	  {html: '<p style="margin-top:24px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},	  
+	  {html: '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>'},
 
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 500, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 150, width: 500, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -25298,8 +25300,10 @@ function DoInjectTablature_Fiddle_Fingerings_Dialog(){
 	modal_msg  += '<p style="text-align:center;"><input id="fiddlefingeringsdialog3" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(2)" type="button" value="String Name + Finger Number (Name over Number)" title="Injects string name (G, D, A, E) + finger number (0, 1, 2, 3, 4) stacked vertically Name over Number.&nbsp;&nbsp;0 is an open string."></p>';
 
 	modal_msg  += '<p style="text-align:center;"><input id="fiddlefingeringsdialog4" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(3)" type="button" value="String Name + Finger Number (Number over Name)" title="Injects string name (G, D, A, E) + finger number (0, 1, 2, 3, 4) stacked vertically Number over Name.&nbsp;&nbsp;0 is an open string."></p>';
+	
+	modal_msg  += '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>';
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, width: 650,  scrollWithPage: (AllowDialogsToScroll()) });
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 650,  scrollWithPage: (AllowDialogsToScroll()) });
 
 }
 
@@ -25395,11 +25399,11 @@ function DoInjectTablature_MD(){
 	  {name: "Style:", id: "configure_dulcimer_style", type:"select", options:mountain_dulcimer_styles, cssClass:"configure_md_settings_select"}, 
 	  {name: "          Use - for open strings (default is leave blank using a space)", id: "open_string_symbol", type:"checkbox", cssClass:"configure_md_settings_form_text"},
 	  {name: "          Strip tunes from the result that have no complete tablature solution", id: "strip_bad_tunes", type:"checkbox", cssClass:"configure_md_settings_form_text"},
-	  {html: '<p style="margin-top:24px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},	  
+	  {html: '<p style="text-align:center;margin-top:36px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>'},
 
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -25480,11 +25484,10 @@ function DoInjectTablature_ShapeNotes(){
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Note Names&nbsp;/&nbsp;Shape Note&nbsp;/&nbsp;Solfège<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_shapenoteshapes" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 	  {html: '<p style="margin-top:36px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject Pitch Names, ABC Note Names (Standard ABC or Comhaltas ABC), Shape Note shapes, or Solfège note names into all the tunes in the ABC text area.</p>'},	  
 	  {name: "Style to inject:", id: "shape_note_style", type:"select", options:shape_styles, cssClass:"configure_sn_settings_select"}, 
-	  {html: '<p style="margin-top:24px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},	  
-
+	  {html: '<p style="text-align:center;margin-top:36px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>'},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 680, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 150, width: 680, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -38859,16 +38862,18 @@ function ConfigureTablatureSettings(){
 
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Tablature Injection Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tablature_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+	  {html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>General Tablature Formatting Settings:</strong></p>'},	  
 	  {name: "Font family (Recommended: Palatino):", id: "configure_font_family", type:"text", cssClass:"configure_tab_settings_form_text_wide"},
 	  {name: "Tablature/Solfège font size (Recommended: 10):", id: "configure_tab_font_size", type:"text", cssClass:"configure_tab_settings_form_text"},
 	  {name: "%%staffsep value (Recommended: 80):", id: "configure_staffsep", type:"text", cssClass:"configure_tab_settings_form_text"},
 	  {name: "%%musicspace value (Recommended: 10):", id: "configure_musicspace", type:"text", cssClass:"configure_tab_settings_form_text"},
+	  {name: "Tab location relative to notation:", id: "configure_tab_location", type:"select", options:tab_locations, cssClass:"configure_tab_settings_select"},
+	  {name: "    Strip all chords and tab before injecting tab (Tab below only. Tab above always strips.)", id: "configure_strip_chords", type:"checkbox", cssClass:"configure_tab_settings_form_text"},
+	  {html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;margin-top:24px;"><strong>Irish Button Box and Anglo Concertina-specific Tablature Settings:</strong></p>'},	  
 	  {name: "Box tab style:", id: "configure_box_tab_style", type:"select", options:box_tab_styles, cssClass:"configure_tab_settings_select_box_style"}, 
 	  {name: "Character(s) for Push indication (Clearing this field will reset to ↓ ):", id: "configure_pushglyph", type:"text", cssClass:"configure_tab_settings_form_text"},
 	  {name: "Character(s) for Draw indication (Clearing this field will reset to ↑ ):", id: "configure_drawglyph", type:"text", cssClass:"configure_tab_settings_form_text"},
 	  {name: "    Use a bar over button name to indicate Draw (overrides Push and Draw characters)", id: "configure_use_bar_for_draw", type:"checkbox", cssClass:"configure_tab_settings_form_text"},
-	  {name: "Tab location relative to notation:", id: "configure_tab_location", type:"select", options:tab_locations, cssClass:"configure_tab_settings_select"},
-	  {name: "    Strip all chords and tab before injecting tab (Tab below only. Tab above always strips.)", id: "configure_strip_chords", type:"checkbox", cssClass:"configure_tab_settings_form_text"},
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
