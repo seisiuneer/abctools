@@ -207,7 +207,7 @@ function extractWebsiteTunes(file){
             catch(error){
                 DayPilot.Modal.alert("Unable to extract website tunes!", {
                     theme: "modal_flat",
-                    top: 50
+                    top: 150
                 });
             }
 
@@ -294,7 +294,7 @@ function extractWebsiteTunes(file){
 		// Center the string in the prompt
 		thePrompt = makeCenteredPromptString(thePrompt);
 
-		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 150, scrollWithPage: (AllowDialogsToScroll()) });
     };
 }
 
@@ -318,7 +318,7 @@ function idleImportPDFOrWebsite(){
 			// Center the string in the prompt
 			thePrompt = makeCenteredPromptString(thePrompt);
 
-			DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+			DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 150, scrollWithPage: (AllowDialogsToScroll()) });
 
 			return;
 
@@ -351,7 +351,7 @@ function idleImportPDFOrWebsite(){
 			// Center the string in the prompt
 			thePrompt = makeCenteredPromptString(thePrompt);
 
-			DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+			DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 150, scrollWithPage: (AllowDialogsToScroll()) });
 
 			return;
 
@@ -384,7 +384,7 @@ function importPDFClickHandler(){
 		// Center the string in the prompt
 		thePrompt = makeCenteredPromptString(thePrompt);
 
-		DayPilot.Modal.confirm(thePrompt,{ top:200, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+		DayPilot.Modal.confirm(thePrompt,{ top:150, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
 
 			if (!args.canceled){
 
@@ -420,7 +420,7 @@ function importWebsiteClickHandler(){
 		// Center the string in the prompt
 		thePrompt = makeCenteredPromptString(thePrompt);
 
-		DayPilot.Modal.confirm(thePrompt,{ top:200, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+		DayPilot.Modal.confirm(thePrompt,{ top:150, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
 
 			if (!args.canceled){
 
@@ -477,6 +477,6 @@ function ImportPDFOrWebsite(){
 
 	}, 150);
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 150, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } );
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } );
 
 }
