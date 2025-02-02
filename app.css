@@ -1965,7 +1965,7 @@ top: 35%;
 margin-top: -23px;
 position: fixed;
 z-index: 100100 !important;
-animation: loading-bar-spinner 400ms linear infinite;
+animation: loading-bar-spinner 400ms linear infinite; 
 display:none;
 }
 

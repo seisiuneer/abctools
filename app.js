@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2294_020125_1530";
+var gVersionNumber="2295_020225_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -409,6 +409,9 @@ var gSuppressQuickPlayer = false;
 var gUpdateAvailable = false;
 var gUpdateVersion = gVersionNumber;
 
+// Spinner timeout
+var gSpinnerDelay = 25;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -447,6 +450,40 @@ function getFirstPage(){
 //
 // Tune utility functions
 // 
+
+//
+// Show the spinner
+// 
+function showTheSpinner(){
+
+	//console.log("showTheSpinner");
+	
+	var elem = document.getElementById("loading-bar-spinner");
+
+	var currentState = elem.style.display;
+
+	if (currentState != "block"){
+		elem.style.display = "block";
+	}
+
+}
+
+//
+// Hide the spinner
+// 
+function hideTheSpinner(){
+	
+	//console.log("hideTheSpinner");
+
+	var elem = document.getElementById("loading-bar-spinner");
+
+	var currentState = elem.style.display;
+
+	if (currentState != "none"){
+		elem.style.display = "none";
+	}
+
+}
 
 //
 // Clean a filename
@@ -1214,7 +1251,7 @@ function Transpose(transposeAmount) {
 
 	// Only show the spinner for a large number of tunes
 	if (nToTranspose > 5){
-		document.getElementById("loading-bar-spinner").style.display = "block";
+		showTheSpinner();
 	}
 
 	// Need a timeout to allow the spinner to show before processing the ABC,
@@ -1318,7 +1355,7 @@ function Transpose(transposeAmount) {
 		}, 0);
 
 
-	},0);
+	},gSpinnerDelay);
 	
 }
 
@@ -1531,7 +1568,7 @@ function DoTransposeToKey(targetKey,transposeAll) {
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","TransposeToKey");
 
-	document.getElementById("loading-bar-spinner").style.display = "block";
+	showTheSpinner();
 
 	// Need a timeout to allow the spinner to show before processing the ABC,
 	setTimeout(function(){
@@ -1802,7 +1839,7 @@ function DoTransposeToKey(targetKey,transposeAll) {
 
 		},0);
 
-	},0);
+	},gSpinnerDelay);
 	
 }
 
@@ -11885,7 +11922,7 @@ function RenderRangeAsync(start,end,callback){
 	}
 
 	// Start with spinner hidden
-	document.getElementById("loading-bar-spinner").style.display = "none";
+	hideTheSpinner();
 
 	// Show the spinner for a large number of tunes
 	var showSpinner = false;
@@ -11896,7 +11933,7 @@ function RenderRangeAsync(start,end,callback){
 
 	if (showSpinner){
 
-		document.getElementById("loading-bar-spinner").style.display = "block";
+		showTheSpinner();
 
 	}
 
@@ -11910,13 +11947,13 @@ function RenderRangeAsync(start,end,callback){
 		}
 
 		// Hide the spinner
-		document.getElementById("loading-bar-spinner").style.display = "none";
+		hideTheSpinner();
 
 		if (callback && (callback != undefined)){
 			callback();
 		}
 
-	}, 10);
+	}, gSpinnerDelay);  
 
 }
 
@@ -11942,19 +11979,19 @@ function RenderAsync(renderAll,tuneNumber,callback){
 	//console.log("RenderAsync renderAll = "+renderAll+" tuneNumber = "+tuneNumber);
 	
 	// Start with spinner hidden
-	document.getElementById("loading-bar-spinner").style.display = "none";
+	hideTheSpinner();
 
 	// Show the spinner
 	if (renderAll){
 
-		document.getElementById("loading-bar-spinner").style.display = "block";
+		showTheSpinner();
 
 		// Render after a short delay
 		setTimeout(function(){
 
 			Render(renderAll,tuneNumber);
 
-			document.getElementById("loading-bar-spinner").style.display = "none";
+			hideTheSpinner();
 			
 			// Recalc the top tune position and scroll it into view if required
 			MakeTuneVisible(true);
@@ -11964,7 +12001,7 @@ function RenderAsync(renderAll,tuneNumber,callback){
 			}
 
 
-		}, 10);
+		}, gSpinnerDelay); 
 	}
 	else{
 
@@ -12304,7 +12341,7 @@ function Render(renderAll,tuneNumber) {
 		}
 
 		// Hide the spinner
-		document.getElementById("loading-bar-spinner").style.display = "none";
+		hideTheSpinner();
 
 		var fileSelected = document.getElementById('abc-selected');
 
@@ -12330,7 +12367,6 @@ function Render(renderAll,tuneNumber) {
 			document.getElementById("playback-audio-inline").innerHTML = "";
 
 		}
-
 
 	}
 
@@ -17448,7 +17484,7 @@ function RoundTripMusicXML(){
 	
 	var theTitle = GetFirstTuneTitle(true);
 
-	document.getElementById("loading-bar-spinner").style.display = "block";
+	showTheSpinner();
 
 	try{
 		fetch(`https://seisiuneer.pythonanywhere.com/abc2xml`, {
@@ -17461,12 +17497,12 @@ function RoundTripMusicXML(){
 		.then(data => {
 			gTheABC.value = theHeader + importMusicXML(data,theTitle);
 			RenderAsync(true,null,function(){
-				document.getElementById("loading-bar-spinner").style.display = "none";
+				hideTheSpinner();
 			});
 		});
 	}
 	catch(err){
-		document.getElementById("loading-bar-spinner").style.display = "none";
+		hideTheSpinner();
 	}
 }
 
@@ -25099,7 +25135,7 @@ function DoInjectTablature_Anglo(){
 
 			// Only show the spinner for a large number of tunes
 			if (nTunes > 5){
-				document.getElementById("loading-bar-spinner").style.display = "block";
+				showTheSpinner();
 			}
 
 			// To allow spinner to appear
@@ -25109,7 +25145,6 @@ function DoInjectTablature_Anglo(){
 				// Do we need to transpose the tunes before injection?
 				//
 				if (concertina_transpose != 0){
-
 
 					var theNotes = gTheABC.value;
 
@@ -25180,7 +25215,7 @@ function DoInjectTablature_Anglo(){
 						gStripTab = false;
 						
 						RenderAsync(true,null,function(){
-							document.getElementById("loading-bar-spinner").style.display = "none";
+							hideTheSpinner();
 						});
 
 						// Idle the dialog
@@ -25203,7 +25238,7 @@ function DoInjectTablature_Anglo(){
 							gStripTab = false;
 							
 							RenderAsync(true,null,function(){
-								document.getElementById("loading-bar-spinner").style.display = "none";
+								hideTheSpinner();
 							});
 
 							// Idle the dialog
@@ -25216,7 +25251,7 @@ function DoInjectTablature_Anglo(){
 					}
 				}
 
-			},100);
+			},gSpinnerDelay);
 		}
 	});
 }
@@ -26549,7 +26584,7 @@ function BatchMusicXMLRoundTripCurrentTune(){
 	var theTitle = getTuneTitle(theTune);
 
 	// Put up the spinner
-    document.getElementById("loading-bar-spinner").style.display = "block";
+	showTheSpinner();
 
 	try{
 		fetch(`https://seisiuneer.pythonanywhere.com/abc2xml`, {
@@ -26573,14 +26608,14 @@ function BatchMusicXMLRoundTripCurrentTune(){
 			if (gRawMode){
 
 				RenderAsync(true,null,function(){
-					document.getElementById("loading-bar-spinner").style.display = "none";
+					hideTheSpinner();
 				});
 
 			}
 			else{
 
 				RenderAsync(true,theSelectedTuneIndex,function(){
-					document.getElementById("loading-bar-spinner").style.display = "none";
+					hideTheSpinner();
 				});
 
 			}
@@ -26590,7 +26625,7 @@ function BatchMusicXMLRoundTripCurrentTune(){
 		});
 	}
 	catch(err){
-		document.getElementById("loading-bar-spinner").style.display = "none";
+		hideTheSpinner();
 	}
 }
 
@@ -26642,7 +26677,7 @@ function BatchMusicXMLRoundTripWorker(){
 				gTheABC.value = gBatchMusicXMLRoundTripAccum;
 
 				RenderAsync(true,null,function(){
-					document.getElementById("loading-bar-spinner").style.display = "none";
+					hideTheSpinner();
 				});
 
 				gIsDirty = true;
@@ -26653,7 +26688,7 @@ function BatchMusicXMLRoundTripWorker(){
 		else{
 
 			// Take down the spinner
-			document.getElementById("loading-bar-spinner").style.display = "none";
+			hideTheSpinner();
 
 		}
 	}
@@ -26726,7 +26761,7 @@ function BatchMusicXMLRoundTripWorker(){
 	
 	gTheBatchImageExportStatusText.innerHTML = "<p>Reformatting tune "+ (currentTune+1) + " of "+totalTunesToExport+"<br/><br/>"+title+"</p>";
 	
-    document.getElementById("loading-bar-spinner").style.display = "block";
+	showTheSpinner();
 	
 	// Kick off the conversion cascade
 	ExportMusicXMLForReformat(thisTune,title,callback);
@@ -28010,7 +28045,7 @@ function DownloadMP3(callback,val){
 			}
 		}
 		
-		document.getElementById("loading-bar-spinner").style.display = "block";
+		showTheSpinner();
 
 		// Give the UI a chance to update
 		setTimeout(async function(){
@@ -28060,7 +28095,7 @@ function DownloadMP3(callback,val){
 
 				}
 
-				document.getElementById("loading-bar-spinner").style.display = "none";
+				hideTheSpinner();
 
 				gInDownloadMP3 = false;
 
@@ -28072,7 +28107,7 @@ function DownloadMP3(callback,val){
 
 			fileReader.readAsArrayBuffer(wavData);
 
-		},100);
+		},gSpinnerDelay);
 	}	
     ).catch((function(e) {
 
@@ -28093,7 +28128,7 @@ function DownloadMP3(callback,val){
 
 		}
 
-		document.getElementById("loading-bar-spinner").style.display = "none";
+		hideTheSpinner();
 
 		gInDownloadMP3 = false;
 
@@ -30512,7 +30547,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 				}).catch(function (error) {
 					
 			        // MAE 10 Jul 2024 - Hide the spinner
-			        document.getElementById("loading-bar-spinner").style.display = "none";
+					hideTheSpinner();
         			gMIDIInitStillWaiting = false;
  
 					console.log("Problem loading audio for this tune");
@@ -30522,7 +30557,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 		}).catch(function (error) {
 
 	        // MAE 10 Jul 2024 - Hide the spinner
-	        document.getElementById("loading-bar-spinner").style.display = "none";
+			hideTheSpinner();
         	gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
@@ -32399,7 +32434,7 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 				}).catch(function (error) {
 					
 			        // MAE 10 Jul 2024 - Hide the spinner
-			        document.getElementById("loading-bar-spinner").style.display = "none";
+					hideTheSpinner();
         			gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
@@ -32408,7 +32443,7 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 		}).catch(function (error) {
 
 	        // MAE 10 Jul 2024 - Hide the spinner
-	        document.getElementById("loading-bar-spinner").style.display = "none";
+			hideTheSpinner();
         	gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
@@ -33150,7 +33185,7 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 				}).catch(function (error) {
 					
 			        // MAE 10 Jul 2024 - Hide the spinner
-			        document.getElementById("loading-bar-spinner").style.display = "none";
+					hideTheSpinner();
         			gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
@@ -33159,7 +33194,7 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 		}).catch(function (error) {
 
 	        // MAE 10 Jul 2024 - Hide the spinner
-	        document.getElementById("loading-bar-spinner").style.display = "none";
+			hideTheSpinner();
         	gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
@@ -34173,7 +34208,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 				}).catch(function (error) {
 					
 			        // MAE 10 Jul 2024 - Hide the spinner
-			        document.getElementById("loading-bar-spinner").style.display = "none";
+					hideTheSpinner();
         			gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
@@ -34182,7 +34217,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 		}).catch(function (error) {
 
 	        // MAE 10 Jul 2024 - Hide the spinner
-	        document.getElementById("loading-bar-spinner").style.display = "none";
+			hideTheSpinner();
         	gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
@@ -34782,7 +34817,7 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 				}).catch(function (error) {
 					
 			        // MAE 10 Jul 2024 - Hide the spinner
-			        document.getElementById("loading-bar-spinner").style.display = "none";
+					hideTheSpinner();
         			gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
@@ -34791,7 +34826,7 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 		}).catch(function (error) {
 
 	        // MAE 10 Jul 2024 - Hide the spinner
-	        document.getElementById("loading-bar-spinner").style.display = "none";
+			hideTheSpinner();
         	gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
@@ -35551,7 +35586,7 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 				}).catch(function (error) {
 					
 			        // MAE 10 Jul 2024 - Hide the spinner
-			        document.getElementById("loading-bar-spinner").style.display = "none";
+					hideTheSpinner();
         			gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
@@ -35560,7 +35595,7 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 		}).catch(function (error) {
 
 	        // MAE 10 Jul 2024 - Hide the spinner
-	        document.getElementById("loading-bar-spinner").style.display = "none";
+			hideTheSpinner();
         	gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
@@ -36152,7 +36187,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 				}).catch(function (error) {
 					
 			        // MAE 10 Jul 2024 - Hide the spinner
-			        document.getElementById("loading-bar-spinner").style.display = "none";
+					hideTheSpinner();
         			gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
@@ -36161,7 +36196,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 		}).catch(function (error) {
 
 	        // MAE 10 Jul 2024 - Hide the spinner
-	        document.getElementById("loading-bar-spinner").style.display = "none";
+			hideTheSpinner();
         	gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
@@ -42030,7 +42065,7 @@ function DoFileRead(file,doAppend){
 					}
 				}
 
-				document.getElementById("loading-bar-spinner").style.display = "block";
+				showTheSpinner();
 
 				const reader = new FileReader();
 
@@ -42040,7 +42075,7 @@ function DoFileRead(file,doAppend){
 
 					if (midiData.byteLength > 40960){
 
-						document.getElementById("loading-bar-spinner").style.display = "none";
+						hideTheSpinner();
 
 						try{
 							midiOKButton.click();
@@ -42069,7 +42104,7 @@ function DoFileRead(file,doAppend){
 
 				reader.onerror = function() {
 
-					document.getElementById("loading-bar-spinner").style.display = "none";
+					hideTheSpinner();
 
 					try{
 						midiOKButton.click();
@@ -42121,7 +42156,7 @@ function DoFileRead(file,doAppend){
 						.then(data => {
 
 							//debugger;
-							document.getElementById("loading-bar-spinner").style.display = "none";
+							hideTheSpinner();
 
 							try{
 								midiOKButton.click();
@@ -42155,7 +42190,7 @@ function DoFileRead(file,doAppend){
 					})
 					.catch(error => {
 
-						document.getElementById("loading-bar-spinner").style.display = "none";
+						hideTheSpinner();
 
 						try{
 							midiOKButton.click();
@@ -44174,7 +44209,7 @@ function inlinePlayback(){
 						
 				        // MAE 10 Jul 2024 - Hide the spinner
 		      			gMIDIInitStillWaiting = false;
-				        document.getElementById("loading-bar-spinner").style.display = "none";
+						hideTheSpinner();
 
 						console.log("Problem loading audio for this tune");
 
@@ -44187,7 +44222,7 @@ function inlinePlayback(){
 		        // MAE 10 Jul 2024 - Hide the spinner
 				gMIDIInitStillWaiting = false;
 
-		        document.getElementById("loading-bar-spinner").style.display = "none";
+				hideTheSpinner();
 
 				console.log("Problem loading audio for this tune");
 
@@ -46438,7 +46473,16 @@ function DoStartup() {
 	// Get platform info for later UI adaption
 
 	// Are we on Safari?
-	gIsSafari = false;
+
+	// Fix issues with spinner on Safari
+	// For all other browsers
+	gSpinnerDelay = 25;
+
+	gIsSafari = isSafari();
+	if (gIsSafari){
+		//console.log("Setting spinner delay to 200");
+		gSpinnerDelay = 200;
+	}
 
 	// Are we on Chrome?
 	gIsChrome = false;
