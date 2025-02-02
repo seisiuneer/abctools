@@ -137,16 +137,22 @@ function extractPDFTunes(file){
         // Add them to the work area
         gTheABC.value = outVal;
 
-        // And render 
-        RenderAsync(true,null);
+        showTheSpinner();
 
-        // Mark work area dirty
-        gIsDirty = true;
+        setTimeout(function(){
 
-        // Reset file selectors
-        let fileElement = document.getElementById('import_pdf_fs');
+            // And render 
+            RenderAsync(true,null);
 
-        fileElement.value = "";
+            // Mark work area dirty
+            gIsDirty = true;
+
+            // Reset file selectors
+            let fileElement = document.getElementById('import_pdf_fs');
+
+            fileElement.value = "";
+            
+        },gSpinnerDelay)
 
     };
 
@@ -274,16 +280,22 @@ function extractWebsiteTunes(file){
         // Add them to the work area
         gTheABC.value = outVal;
 
-        // And render 
-        RenderAsync(true,null);
+        showTheSpinner();
 
-        // Mark work area dirty
-        gIsDirty = true;
+        setTimeout(function(){
 
-        // Reset file selectors
-        let fileElement = document.getElementById('import_website_fs');
+            // And render 
+            RenderAsync(true,null);
 
-        fileElement.value = "";
+            // Mark work area dirty
+            gIsDirty = true;
+
+            // Reset file selectors
+            let fileElement = document.getElementById('import_website_fs');
+
+            fileElement.value = "";
+
+        },gSpinnerDelay)
 
     };
 

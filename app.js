@@ -46480,8 +46480,8 @@ function DoStartup() {
 
 	gIsSafari = isSafari();
 	if (gIsSafari){
-		//console.log("Setting spinner delay to 200");
-		gSpinnerDelay = 200;
+		//console.log("Setting spinner delay to 250");
+		gSpinnerDelay = 250;
 	}
 
 	// Are we on Chrome?
