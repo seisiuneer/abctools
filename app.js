@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2295_020225_1400";
+var gVersionNumber="2296_020325_0600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -2114,11 +2114,11 @@ function DoSortTunesByMeter() {
 					elem.value = "Sort by Tag";
 				}
 
-			},1000);
+			},500);
 
 		});
 
-	},750);
+	},250);
 
 }
 
@@ -2163,11 +2163,11 @@ function DoSortTunesByKey() {
 					elem.value = "Sort by Tag";
 				}
 
-			},1000);
+			},500);
 
 		});
 
-	},750);
+	},250);
 
 }
 
@@ -2357,11 +2357,11 @@ function DoSortTunesByName() {
 					elem.value = "Sort by Tag";
 				}
 
-			},1000);
+			},500);
 
 		});
 
-	},750);
+	},250);
 
 }
 
@@ -2405,11 +2405,11 @@ function DoSortTunesByRhythm() {
 					elem.value = "Sort by Tag";
 				}
 
-			},1000);
+			},500);
 
 		});
 
-	},750);
+	},250);
 
 }
 
@@ -2453,11 +2453,11 @@ function DoSortTunesByCTag() {
 					elem.value = "Sort by Tag";
 				}
 
-			},1000);
+			},500);
 
 		});
 
-	},750);
+	},250);
 
 }
 
@@ -2501,11 +2501,11 @@ function DoSortTunesByNTag() {
 					elem.value = "Sort by Tag";
 				}
 
-			},1000);
+			},500);
 
 		});
 
-	},750);
+	},250);
 
 }
 
@@ -2549,11 +2549,11 @@ function DoSortTunesByOTag() {
 					elem.value = "Sort by Tag";
 				}
 
-			},1000);
+			},500);
 
 		});
 
-	},750);
+	},250);
 
 }
 
@@ -2597,11 +2597,11 @@ function DoSortTunesByID() {
 					elem.value = "Sort by Tag";
 				}
 
-			},1000);
+			},500);
 
 		});
 
-	},750);
+	},250);
 
 }
 
@@ -2940,7 +2940,7 @@ function SaveSnapshot(e){
 
 			document.getElementById("snapshotbutton").value = "Snapshot";
 
-		},1000);
+		},500);
 	}
 	else{
 
@@ -3096,7 +3096,7 @@ function RestoreSnapshot(e, bRestoreAutoSnapshot,bIsAddDialogButton){
 
 									document.getElementById("restorebutton").value = "Restore";
 
-								},1000);
+								},500);
 
 								// Reset the current tune
 								// Force a raw mode visual refresh
@@ -3105,7 +3105,7 @@ function RestoreSnapshot(e, bRestoreAutoSnapshot,bIsAddDialogButton){
 
 							});
 
-						},750);
+						},250);
 					}
 					else{
 
@@ -3125,7 +3125,6 @@ function RestoreSnapshot(e, bRestoreAutoSnapshot,bIsAddDialogButton){
 								elem.value = "Restoring from Snapshot";
 							}
 						}
-
 
 						setTimeout(function(){
 
@@ -3180,7 +3179,7 @@ function RestoreSnapshot(e, bRestoreAutoSnapshot,bIsAddDialogButton){
 										}
 									}
 
-								},1000);
+								},500);
 
 								// Reset the current tune
 								// Force a raw mode visual refresh
@@ -3190,7 +3189,7 @@ function RestoreSnapshot(e, bRestoreAutoSnapshot,bIsAddDialogButton){
 
 							});
 
-						},750);
+						},250);
 					}
 				}
 			});
@@ -9504,9 +9503,9 @@ function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform, bDoQRCodes)
 						// Clear the PDF rendering global
 						gRenderingPDF = false;
 
-					},1500);
+					},500);
 
-				},2000);
+				},500);
 			};
 		}
 
@@ -10108,11 +10107,11 @@ function ExportNotationPDF(title) {
 								}
 
 								// If the QR code generation failed, leave more time for a status update
-								var statusDelay = 1000;
+								var statusDelay = 500;
 
 								if (!status){
 
-									statusDelay = 4000;
+									statusDelay = 3000;
 								}
 
 								// Delay for final QR code UI status update
@@ -10202,7 +10201,7 @@ function ExportNotationPDF(title) {
 									 	// Clean up and finish
 									 	postSaveCallback();
 
-									},2000);
+									},500);
 								}
 
 								function postSaveCallback(){
@@ -10284,7 +10283,7 @@ function ExportNotationPDF(title) {
 
 								return;
 
-							},2000);
+							},500);
 						}
 					} // End of rasterize_callback()
 
@@ -10574,7 +10573,7 @@ async function createSplitPDFs(thePDF,pageMap,totalPages,TOCDelta,thePostSaveCal
 
 	     			thePostSaveCallback();
 	  			
-	    		},2000);
+	    		},500);
 
 	    		return;
 
@@ -10651,7 +10650,7 @@ async function createSplitPDFs(thePDF,pageMap,totalPages,TOCDelta,thePostSaveCal
 
 	    }
 
-	}, 1000);
+	}, 500);
 }
 
 function getNextSiblings(el, filter) {
@@ -14420,7 +14419,7 @@ function addSearchResults(){
 	 			if (buttonElem){
 	 				buttonElem.value = "Add Results to Tunebook";
 	 			}
-	 		},1000);
+	 		},500);
 	 	}
 
 	 	if (!gIsIOS){
@@ -20537,7 +20536,7 @@ function CopyABC(){
 
   			document.getElementById("copybutton").value = "Copy All";
 
-  		},750);
+  		},500);
 
   	}
 }
@@ -20571,9 +20570,9 @@ function ShortenURLFallback(){
 
 			document.getElementById("shortenurl").value = "Shorten URL";
 			
-		},1000);
+		},500);
 
-	},2000);
+	},250);
 
 }
 
@@ -20758,7 +20757,7 @@ function CopyShareURL(){
 
 		document.getElementById("copyurl").value = "Copy Share URL";
 		
-	},750);
+	},500);
 
 }
 
@@ -23631,7 +23630,7 @@ function AddTuneTitleNumbers(){
 					elem.value = "Add Numbers to Tune Titles";
 				}
 				
-			},750);
+			},500);
 		}
 
 	});
@@ -23796,7 +23795,7 @@ function RemoveTuneTitleNumbers(bDoRedraw){
 						elem.value = "Remove Added Tune Title Numbers";
 					}
 					
-				},750);
+				},500);
 			}
 
 		});
@@ -25810,7 +25809,7 @@ function DownloadSVG(callback,val){
 
    		setTimeout(function(){
    			document.getElementById("abcplayer_svgbutton").value = "Save as SVG File";
-   		},750);
+   		},500);
 
    	}
 
@@ -25961,7 +25960,7 @@ function DownloadJPEG(callback, val){
 
 	   		setTimeout(function(){
 	   			document.getElementById("abcplayer_jpgbutton").value = "Save as JPG File";
-	   		},750);
+	   		},500);
 
 	   	}
 
@@ -26114,7 +26113,7 @@ function DownloadPNG(callback, val){
 
 	   		setTimeout(function(){
 	   			document.getElementById("abcplayer_pngbutton").value = "Save as PNG File";
-	   		},750);
+	   		},500);
 
 	   	}
 	};
@@ -26664,7 +26663,7 @@ function BatchMusicXMLRoundTripWorker(){
 
 					ExportMusicXMLForReformat(thisTune,title,callback);
 
-				}, 1000);
+				}, 250);
 
 			}
 			else{
@@ -26993,7 +26992,7 @@ function BatchMusicXMLExport(){
 
 					ExportMusicXML(thisTune,fname,callback,null);
 
-				}, 1000);
+				}, 250);
 
 			}
 			else{
@@ -39294,7 +39293,7 @@ function AddAutoPlay(){
 			elem.value = "Add Auto-Play";
 		}
 
-	},1500);
+	},500);
 
 }
 
@@ -39321,7 +39320,7 @@ function AddDisableEditing(){
 			elem.value = "Add Disable Editing";
 		}
 
-	},1500);
+	},500);
 
 }
 
@@ -39348,7 +39347,7 @@ function AddOpenInEditor(){
 			elem.value = "Add Open in Editor";
 		}
 
-	},1500);
+	},500);
 
 }
 
