@@ -1091,7 +1091,7 @@ function updateButtons () {
 
 function changeTitle () {
 	var nameEl = document.getElementById("name");
-	var name = prompt('Enter new title:', nameEl.textContent);
+	var name = prompt('Enter the title that will appear at the top of the printed output:', nameEl.textContent);
 	if (name !== null) {
 		nameEl.textContent = name;
 		document.title = name + ' - 12 Hole Ocarina Tabs Creator';
@@ -1231,7 +1231,7 @@ function shareUrl () {
 }
 
 function shareLink () {
-	prompt("Share-Link:", shareUrl());
+	prompt("Share link for this tablature:", shareUrl());
 }
 
 function escapeHtml (s) {
@@ -1241,7 +1241,7 @@ function escapeHtml (s) {
 }
 
 function shareEmbed () {
-	prompt("Embed-Code:", '<iframe src="'+escapeHtml(shareUrl())+
+	prompt("HTML code for embedding:", '<iframe src="'+escapeHtml(shareUrl())+
 		'" style="width:800px;height:800px;border:1px solid lightgray;border-radius:5px;"></iframe>');
 }
 

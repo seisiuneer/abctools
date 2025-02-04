@@ -18,7 +18,7 @@
 		<link rel="apple-touch-icon" sizes="48x48" href="/ocarina_tabs/app/ocarina_tabs/icon48.png"/>
 		<link rel="apple-touch-icon" sizes="64x64" href="/ocarina_tabs/app/ocarina_tabs/icon64.png"/>
 		<link rel="apple-touch-icon" sizes="128x128" href="/ocarina_tabs/app/ocarina_tabs/icon128.png"/>
-		
+
 	    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
 
 	    <script>
@@ -210,11 +210,8 @@
 			}
 
 			#name {
-				position:absolute;
-				bottom:24px;
-				left:24px;
 				text-align: center;
-				display: block;
+				display: none;
 			}
 
 			@media print {
@@ -271,12 +268,12 @@
 						<option value="G">G</option>
 					</select>
 
-					<button type="button" onclick="changeTitle();" title="Change Title">Title...</button>
+					<button style="margin-left:12px;" type="button" onclick="changeTitle();" title="Change Title">Title for Print...</button>
 				</span>
 
 				<span class="controls-line">
 					<button class="btn" type="button" onclick="undoEdit();" title="Undo">Undo</button>
-					<button style="margin-right:12px;" class="btn" type="button" onclick="redoEdit();" title="Redo">Redo</button>
+					<button style="margin-right:18px;" class="btn" type="button" onclick="redoEdit();" title="Redo">Redo</button>
 
 					<span class="btn file-button" title="Open Text or ABC File">
 						<span style="font-size:9pt;">Open Text or ABC File</span>
