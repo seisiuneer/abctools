@@ -236,7 +236,7 @@
 				display: none;
 			}
 		</style>
-		<script type="text/javascript" src="main.js"></script>
+		<script type="text/javascript" src="main.js?v=2"></script>
 	</head>
 	<body onload="init();">
 		<div class="controls">
@@ -257,15 +257,15 @@
 						<option value="pc">pc</option>
 					</select>
 
-					<select id="font" onchange="updateStyle();" title="Font Variant">
-						<option value="1" selected>1</option>
-						<option value="2">2</option>
+					<select style="margin-left:12px;" id="font" onchange="updateStyle();" title="Font Variant">
+						<option value="1" selected>Font Style #1</option>
+						<option value="2">Font Style #2</option>
 					</select>
 
-					<select id="key" onchange="updateButtons();" title="Key">
-						<option value="C" selected>C</option>
-						<option value="F">F</option>
-						<option value="G">G</option>
+					<select style="margin-left:12px;" id="key" onchange="updateButtons();" title="Key">
+						<option value="C" selected>Key: C</option>
+						<option value="F">Key: F</option>
+						<option value="G">Key: G</option>
 					</select>
 
 					<button style="margin-left:12px;" type="button" onclick="changeTitle();" title="Change Title">Title for Print...</button>

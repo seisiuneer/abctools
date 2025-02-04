@@ -1397,7 +1397,19 @@ function openTextFile (input) {
 		var text = reader.result;
 
 		if (isABC){
-			text = abc_to_text(text);
+            
+            var name = file.name;
+
+            name = name.replace(".abc","");
+
+            var nameEl = document.getElementById("name");
+            
+            nameEl.textContent = name;
+            
+            document.title = name + ' - 12 Hole Ocarina Tabs Creator';
+            
+            text = abc_to_text(text);
+
 		}
 
 		editor.focus();
