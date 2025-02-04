@@ -629,7 +629,7 @@ function generateAndSaveWebsiteFull() {
     theOutput +="    }\n";
     theOutput +="\n";
     theOutput +="    .container {\n";
-    theOutput +="        margin: 0 auto;\n";
+    theOutput +="        margin: 0px auto;\n";
     theOutput +="        text-align: center;\n";
     theOutput +="        overflow-x: hidden;\n";
     theOutput +="    }\n";
@@ -1547,7 +1547,7 @@ function generateAndSaveWebsiteSimple() {
     theOutput +="    }\n";
     theOutput +="\n";
     theOutput +="    .container {\n";
-    theOutput +="        margin: 0 auto;\n";
+    theOutput +="        margin: 0px auto;\n";
     theOutput +="        text-align: center;\n";
     theOutput +="        overflow-x: hidden;\n";
     theOutput +="    }\n";
@@ -1640,9 +1640,9 @@ function generateAndSaveWebsiteSimple() {
     }
 
     theOutput +="    ul{\n";
-    theOutput +="        listStyleType:none;\n";
-    theOutput +="        padding:0;\n";
-    theOutput +="        textAlign:center;\n";
+    theOutput +="        list-style-type:none;\n";
+    theOutput +="        padding:0px;\n";
+    theOutput +="        text-align:center;\n";
     theOutput +="    }\n";
     theOutput +="    \n";
 
