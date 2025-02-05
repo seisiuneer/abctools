@@ -235,9 +235,19 @@
 			.readonly .controls {
 				display: none;
 			}
+
+			.injectbarlines{
+			    display: inline-block; /* Ensures block-level control of the label */
+			    margin: 0px;             /* Removes extra margin */
+			    vertical-align: middle; /* Aligns the text with the checkbox */			
+			}
+
 		</style>
-		<script type="text/javascript" src="main.js?v=2"></script>
+
+		<script type="text/javascript" src="main.js?v=5"></script>
+
 	</head>
+
 	<body onload="init();">
 		<div class="controls">
 			<span class="controls-cell controls-cell-buttons">
@@ -274,13 +284,13 @@
 				<span class="controls-line">
 					<button class="btn" type="button" onclick="undoEdit();" title="Undo">Undo</button>
 					<button style="margin-right:18px;" class="btn" type="button" onclick="redoEdit();" title="Redo">Redo</button>
-
+					<input id="injectbarlines" class="btn injectbarlines" type="checkbox" title="Inject bar lines for ABC" checked/><span style="font-size:10pt;margin-right:18px">&nbsp;&nbsp;Inject bar lines for ABC</span>
 					<span class="btn file-button" title="Open Text or ABC File">
-						<span style="font-size:9pt;">Open Text or ABC File</span>
+						<span style="font-size:10pt;">Open Text or ABC File</span>
 						<input id="openfile_fs" type="file" onchange="openTextFile(this);"/>
 					</span>
 					<span style="margin-right:12px;" class="dropdown-button" id="save-as-dropdown">
-						<button type="button" class="btn dropdown-button-default" onclick="saveAsFile();" title="Save File">Save</button><button
+						<button style="margin-left:18px;" type="button" class="btn dropdown-button-default" onclick="saveAsFile();" title="Save File">Save</button><button
 						        type="button" class="btn dropdown-button-arrow" onclick="toggleMenu('save-as-dropdown');">Save As</button>
 						<span class="dropdown-menu">
 							<button type="button" onclick="saveAsImage();hideMenu('save-as-dropdown');">Save as Image</button>

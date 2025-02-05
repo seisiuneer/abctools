@@ -354,13 +354,41 @@ var CustomTabGenerator = function (theABC){
 	  for (let i = 0; i < lineStartIndices.length; i++) {
 	    // If the offset is before the start of the next line, return the current line number
 	    if (i === lineStartIndices.length - 1 || offset < lineStartIndices[i + 1]) {
-	      return i + 1; // Line numbers are 1-based
+	      return i; // Line numbers are 1-based
 	    }
 	  }
 	  
 	  // If the offset exceeds the text length, return -1 (invalid offset)
 	  return -1;
 	}
+
+    function getBarIndices(text) {
+        let indices = [];
+        let overallIndex = 0;  // Tracks the index relative to the start of the text
+
+        const lines = text.split('\n');  // Split the text into lines
+
+        lines.forEach(line => {
+            let lineIndices = [];
+            let inPipe = false;  // Track whether we are in a sequence of '|' characters
+
+            for (let i = 0; i < line.length; i++) {
+                if (line[i] === '|') {
+                    if (!inPipe) {
+                        lineIndices.push(overallIndex + i);  // Add the index of the first '|' in a sequence
+                        inPipe = true;  // Mark that we're inside a pipe sequence
+                    }
+                } else {
+                    inPipe = false;  // Reset if the character is not '|'
+                }
+            }
+
+            indices.push(lineIndices);  // Add the indices for this line to the result
+            overallIndex += line.length + 1;  // Update the overall index (account for '\n')
+        });
+
+        return indices;
+    }
 
     //
     // Merges the tablature with the original string input.
@@ -375,7 +403,21 @@ var CustomTabGenerator = function (theABC){
         
         var insertedTotal = 0;
 
+        var doBarlines = document.getElementById("injectbarlines").checked;
+
+        var theBarLines = getBarIndices(input);
+ 
         var currentLine = getLineNumberAtOffset(input,notes[0].index);
+
+        var currentLineBars = theBarLines[currentLine];
+
+        var currentLineBarOffset = -1;
+
+        var currentLineBarsIndex = 0;
+
+        if (currentLineBars.length!=0){
+            currentLineBarOffset = currentLineBars[currentLineBarsIndex];
+        }
 
         for (var i = 0; i < notes.length; ++i) {
 
@@ -383,14 +425,55 @@ var CustomTabGenerator = function (theABC){
 
         	// Split the staves
         	if (lineNumber != currentLine){
-        		result += "\n";
-        		currentLine = lineNumber;
+
+                if (doBarlines){
+        		  result += "|\n";
+                }
+                else{
+                  result += "\n";
+                }
+        		
+                currentLine = lineNumber;
+
+                currentLineBars = theBarLines[currentLine];
+                
+                currentLineBarOffset = -1;
+                
+                if (currentLineBars.length!=0){
+                    currentLineBarOffset = currentLineBars[0];
+                }
+                
+                currentLineBarsIndex = 0;
+
         	}
+
+            if ((currentLineBarOffset != -1) && (notes[i].index > currentLineBarOffset)){
+
+                if (doBarlines){
+                    result = result + "|";
+                }
+
+                currentLineBarsIndex++;
+
+                if (currentLineBarsIndex < currentLineBars.length){
+                    currentLineBarOffset = currentLineBars[currentLineBarsIndex];
+                }
+                else{
+                   currentLineBarOffset = -1; 
+                }
+            }
 
             var glyph = notes[i].glyph;
 
             result = result + glyph;
 
+        }
+
+        if (doBarlines){
+            result += "|\n";
+        }
+        else{
+            result += "\n";
         }
 
         return result;
@@ -889,8 +972,6 @@ var CustomTabGenerator = function (theABC){
 
             // Don't inject section header tune fragments or multi-voice tunes
             if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
-                result += "\n";
-                result += thisTune;
                 result += "\n";
                 continue;
             }
