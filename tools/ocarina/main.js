@@ -1264,6 +1264,7 @@ function changeTitle () {
         		nameEl.textContent = name;
                 setTitleText(name);
         		document.title = name + ' - 12 Hole Ocarina Tab Creator';
+                gLastFilename = name;
         	}
         }
 
