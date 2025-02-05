@@ -1182,15 +1182,21 @@ function init() {
 		document.body.appendChild(link);
 	}
 
-	if (window.chrome && window.chrome.app && !window.chrome.app.isInstalled) {
-//		document.getElementById("install_app").style.display = "";
-	}
-
 	editor.addEventListener("paste", function (event) {
 		event.preventDefault();
 
 		var text = event.clipboardData.getData("text/plain");
+
+        // Does this look like ABC?
+        if ((text.indexOf("X:") != -1) && (text.indexOf("K:") != -1)){
+
+            // Yes, try converting it to ocarina tab before the paste
+            text = abc_to_text(text);
+
+        }
+
 		document.execCommand('insertText', false, text);
+
 	}, false);
 
 	editor.addEventListener("drop", function (event) {
