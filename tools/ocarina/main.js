@@ -1255,7 +1255,7 @@ function changeTitle () {
 
 	var nameEl = document.getElementById("name");
 
-    DayPilot.Modal.prompt("Enter the title that will appear at the top of the printed output:", nameEl.textContent,{ theme: "modal_flat", top: 200, autoFocus: true, scrollWithPage: false }).then(function(args) {
+    DayPilot.Modal.prompt("Enter the title that will appear above the tablature:", nameEl.textContent,{ theme: "modal_flat", top: 200, autoFocus: true, scrollWithPage: false }).then(function(args) {
 
         if (!args.canceled){
 

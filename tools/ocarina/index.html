@@ -56,7 +56,7 @@
 			.tabs {
 				font-family: "Open 12 Hole Ocarina 1", monospace;
 				white-space: pre;
-				padding: 95px 20px 20px 20px;
+				padding: 130px 20px 20px 20px;
 				outline: none;
 				box-sizing: border-box;
 				min-height: 100%;
@@ -204,12 +204,15 @@
 
 			#name {
 				text-align: center;
-				display: none;
+				position:fixed;
+				top:100px;
+				right:50%;
+				transform: translate(50%, 0);
 			}
 
 			@media print {
 				.tabs {
-					padding: 20px;
+					padding: 40px;
 				}
 
 				.controls {
@@ -217,7 +220,7 @@
 				}
 
 				#name {
-					display: block;
+					top:0px;
 				}
 			}
 
@@ -259,8 +262,8 @@
 
 		</style>
 
-		<script type="text/javascript" src="main.js?v=21"></script>
-		<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=21"></script>
+		<script type="text/javascript" src="main.js?v=25"></script>
+		<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=25"></script>
 
 	</head>
 
@@ -294,8 +297,8 @@
 						<option value="G">Key: G</option>
 					</select>
 
-					<button style="margin-left:12px;" type="button" onclick="changeTitle();" title="Enter Title for Print...">Enter Title for Print...</button>
-					<button id="title_print" class="title_print" type="button" onclick="changeTitle();" title="Title">Title:</button>
+					<button style="margin-left:12px;" type="button" onclick="changeTitle();" title="Enter Title...">Enter Title...</button>
+					<button id="title_print" class="title_print" type="button" onclick="changeTitle();" title="Title">Title: New Tune</button>
 				</span>
 
 				<span class="controls-line">
@@ -320,7 +323,7 @@
 			</span>
 
 		</div>
-		<div id="name"></div>
+		<div id="name">New Tune</div>
 		<div class="tabs" id="editor" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contentEditable="true"></div>
 	</body>
 </html>
