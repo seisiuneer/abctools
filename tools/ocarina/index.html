@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8"/>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-		<meta name="viewport" content="width=800, initial-scale=1"/>
+		<meta name="viewport" content="width=1300, initial-scale=1"/>
 		<meta name="description" content="Create fingering tabs for 12 hole ocarinas."/>
 		<meta name="keywords" content="ocarina, tabs"/>
 		<meta name="author" content="Mathias Panzenb&ouml;ck"/>
@@ -244,7 +244,7 @@
 
 		</style>
 
-		<script type="text/javascript" src="main.js?v=7"></script>
+		<script type="text/javascript" src="main.js?v=10"></script>
 
 	</head>
 
@@ -257,7 +257,7 @@
 
 			<span class="controls-cell">
 				<span class="controls-line">
-					<input type="number" id="font_size" onchange="updateStyle();" value="64" title="Font Size"/>
+					<input type="number" id="font_size" onchange="updateStyle();" value="60" title="Font Size"/>
 					<select id="font_size_unit" onchange="updateStyle();" title="Font Size Unit">
 						<option value="px" selected>px</option>
 						<option value="mm">mm</option>
@@ -293,8 +293,9 @@
 						<button type="button" class="btn dropdown-button-default" onclick="saveAsFile();" title="Save File">Save</button><button
 						        type="button" class="btn dropdown-button-arrow" onclick="toggleMenu('save-as-dropdown');">Save As</button>
 						<span class="dropdown-menu">
-							<button type="button" onclick="saveAsImage();hideMenu('save-as-dropdown');">Save as Image</button>
 							<button type="button" onclick="saveAsTextFile();hideMenu('save-as-dropdown');">Save as Text File</button>
+							<button type="button" onclick="saveAsImage(false);hideMenu('save-as-dropdown');">Save as PNG</button>
+							<button type="button" onclick="saveAsImage(true);hideMenu('save-as-dropdown');">Save as JPG</button>
 						</span>
 					</span>
 					<button class="btn" type="button" onclick="shareLink();" title="Share Link">Share</button>

@@ -1374,22 +1374,59 @@ function saveUrlAs (url, filename) {
 }
 
 function saveCanvasImage (canvas, filename, type) {
-	if (canvas.toBlob) {
-		canvas.toBlob(function (blob) {
-			var url = URL.createObjectURL(blob);
-			saveUrlAs(url, filename);
-			setTimeout(function () {
-				URL.revokeObjectURL(url);
-			}, 0);
-		}, type);
-	}
-	else {
-		var url = canvas.toDataURL(type);
-		saveUrlAs(url, filename);
-	}
+
+    if (type == "image/png"){
+    	if (canvas.toBlob) {
+    		canvas.toBlob(function (blob) {
+    			var url = URL.createObjectURL(blob);
+    			saveUrlAs(url, filename);
+    			setTimeout(function () {
+    				URL.revokeObjectURL(url);
+    			}, 1000);
+    		}, type);
+    	}
+    	else {
+    		var url = canvas.toDataURL(type);
+    		saveUrlAs(url, filename);
+            setTimeout(function () {
+                URL.revokeObjectURL(url);
+            }, 1000);
+    	}
+    }
+    else{
+        // JPEG image quality
+        var theQuality = 0.8;
+
+        if (canvas.toBlob) {
+            canvas.toBlob(function (blob) {
+                var url = URL.createObjectURL(blob);
+                saveUrlAs(url, filename);
+                setTimeout(function () {
+                    URL.revokeObjectURL(url);
+                }, 1000);
+            }, type, theQuality);
+        }
+        else {
+            var url = canvas.toDataURL(type,theQuality);
+            saveUrlAs(url, filename);
+            setTimeout(function () {
+                URL.revokeObjectURL(url);
+            }, 1000);
+        }
+
+    }
 }
 
-function saveAsImage () {
+function saveAsJPEGImage(){
+    saveAsImage(true);
+}
+
+function saveAsPNGImage(){
+    saveAsImage(false);
+}
+
+function saveAsImage(isJPEG) {
+
 	var size = Number(document.getElementById("font_size").value);
 	var unit = document.getElementById("font_size_unit").value;
 	var editor = document.getElementById("editor");
@@ -1445,8 +1482,15 @@ function saveAsImage () {
 		y += line_height;
 	}
 
-	saveCanvasImage(canvas, "12_hole_ocarina_tabs.png", "image/png");
-	saveAsFile = saveAsImage;
+    if (isJPEG){
+	   saveCanvasImage(canvas, "12_hole_ocarina_tabs.jpg", "image/jpg");
+       saveAsFile = saveAsJPEGImage;
+    }
+    else{
+       saveCanvasImage(canvas, "12_hole_ocarina_tabs.png", "image/png");
+       saveAsFile = saveAsPNGImage;
+    }
+
 }
 
 function saveAsTextFile () {
@@ -1458,12 +1502,12 @@ function saveAsTextFile () {
 	saveUrlAs(url, "12_hole_ocarina_tabs.txt");
 	setTimeout(function () {
 		URL.revokeObjectURL(url);
-	}, 0);
+	}, 1000);
 
 	saveAsFile = saveAsTextFile;
 }
 
-var saveAsFile = saveAsImage;
+var saveAsFile = saveAsJPEGImage;
 
 function openTextFile (input) {
 
