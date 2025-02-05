@@ -236,9 +236,10 @@
 			}
 
 			.title_print{
-				margin-left: 18px;
+				margin-left: 8px;
 				font-size: 10pt;
 				vertical-align: middle;
+				border-width: 0px;
 			}
 
 			/* For modal dialog prompt replacement */
@@ -258,8 +259,8 @@
 
 		</style>
 
-		<script type="text/javascript" src="main.js?v=20"></script>
-		<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=20"></script>
+		<script type="text/javascript" src="main.js?v=21"></script>
+		<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=21"></script>
 
 	</head>
 
@@ -293,8 +294,8 @@
 						<option value="G">Key: G</option>
 					</select>
 
-					<button style="margin-left:12px;" type="button" onclick="changeTitle();" title="Change Title">Title for Print...</button>
-					<span id="title_print" class="title_print">Title:</span>
+					<button style="margin-left:12px;" type="button" onclick="changeTitle();" title="Enter Title for Print...">Enter Title for Print...</button>
+					<button id="title_print" class="title_print" type="button" onclick="changeTitle();" title="Title">Title:</button>
 				</span>
 
 				<span class="controls-line">
