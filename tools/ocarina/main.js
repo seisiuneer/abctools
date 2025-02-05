@@ -1053,7 +1053,7 @@ function init() {
 
 	if (params.name) {
 		name.textContent = params.name;
-		document.title = params.name + ' - 12 Hole Ocarina Tabs Creator';
+		document.title = params.name + ' - 12 Hole Ocarina Tab Creator';
 	}
 
 	if (params.size) {
@@ -1175,7 +1175,7 @@ function changeTitle () {
 	var name = prompt('Enter the title that will appear at the top of the printed output:', nameEl.textContent);
 	if (name !== null) {
 		nameEl.textContent = name;
-		document.title = name + ' - 12 Hole Ocarina Tabs Creator';
+		document.title = name + ' - 12 Hole Ocarina Tab Creator';
 	}
 }
 
@@ -1487,7 +1487,7 @@ function openTextFile (input) {
             
             nameEl.textContent = name;
             
-            document.title = name + ' - 12 Hole Ocarina Tabs Creator';
+            document.title = name + ' - 12 Hole Ocarina Tab Creator';
             
             text = abc_to_text(text);
 
