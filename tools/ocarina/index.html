@@ -174,17 +174,6 @@
 				text-align: left;
 			}
 
-			.dropdown-button .dropdown-button-default {
-				border-bottom-right-radius: 0;
-				border-top-right-radius: 0;
-				border-right: none;
-			}
-
-			.dropdown-button .dropdown-button-arrow {
-				border-bottom-left-radius: 0;
-				border-top-left-radius: 0;
-			}
-
 			.file-button {
 				position: relative;
 				overflow: hidden;
@@ -242,9 +231,25 @@
 			    vertical-align: middle; /* Aligns the text with the checkbox */			
 			}
 
+			/* For modal dialog prompt replacement */
+			.modal_flat_background { background-color: #000; opacity: 0.4; }
+			.modal_flat_main { border: 1px solid #333; box-shadow: 0px 0px 15px -2px rgba(0,0,0,0.75);  }
+
+			/* font size only */
+			.modal_flat_main, .modal_flat_main input, .modal_flat_main button {  font-size: 16px; }
+			.modal_flat_main button {  padding: 5px; box-sizing: border-box; }
+			.modal_flat_main input  {  padding: 18px 8px 18px 8px;box-sizing: border-box; }
+			.modal_flat_inner { padding: 30px; background: #fff; color: #000; }
+			.modal_flat_content { font-family:"Helvetica"; margin: 20px 0px;}
+			.modal_flat_input { margin: 20px 0px;}
+			.modal_flat_buttons { text-align:center;margin-top: 40px; }
+			.modal_flat_main button { background-color: #ccc; color: #000; padding: 10px 20px; border: 0px; cursor: pointer; outline: none; width: 100px; height:36px;  }
+			.modal_flat_cancel {margin-left: 5px;}
+
 		</style>
 
-		<script type="text/javascript" src="main.js?v=10"></script>
+		<script type="text/javascript" src="main.js?v=18"></script>
+		<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=18"></script>
 
 	</head>
 
@@ -287,15 +292,13 @@
 					<input id="injectbarlines" class="btn injectbarlines" type="checkbox" title="Inject bar lines for ABC" checked/><span style="font-size:10pt;margin-right:18px">&nbsp;&nbsp;Inject bar lines for ABC</span>
 					<span class="btn file-button" title="Open Text or ABC File">
 						<span style="font-size:10pt;">Open Text or ABC File</span>
-						<input id="openfile_fs" type="file" onchange="openTextFile(this);"/>
+						<input id="openfile_fs" type="file" accept=".abc,.ABC,.txt,.TXT" onchange="openTextFile(this);"/>
 					</span>
 					<span style="margin-right:12px;" class="dropdown-button" id="save-as-dropdown">
-						<button type="button" class="btn dropdown-button-default" onclick="saveAsFile();" title="Save File">Save</button><button
-						        type="button" class="btn dropdown-button-arrow" onclick="toggleMenu('save-as-dropdown');">Save As</button>
+						<button type="button" class="btn dropdown-button-arrow" onclick="toggleMenu('save-as-dropdown');">Save As</button>
 						<span class="dropdown-menu">
-							<button type="button" onclick="saveAsTextFile();hideMenu('save-as-dropdown');">Save as Text File</button>
-							<button type="button" onclick="saveAsImage(false);hideMenu('save-as-dropdown');">Save as PNG</button>
-							<button type="button" onclick="saveAsImage(true);hideMenu('save-as-dropdown');">Save as JPG</button>
+							<button type="button" onclick="saveAsTextFile();hideMenu('save-as-dropdown');">Save as Text</button>
+							<button type="button" onclick="saveAsImage();hideMenu('save-as-dropdown');">Save as Image</button>
 						</span>
 					</span>
 					<button class="btn" type="button" onclick="shareLink();" title="Share Link">Share</button>

@@ -144,6 +144,74 @@ function isMultiVoiceTune(theTune){
 }
 
 //
+// Copy to Clipboard Polyfill
+//
+function CopyToClipboard(textToCopy) {
+
+    //
+    // Put this in a try/catch just to be safe
+    //
+    try {
+
+        // navigator clipboard api needs a secure context (https)
+        if (navigator.clipboard && window.isSecureContext) {
+        
+            // navigator clipboard api method'
+            return navigator.clipboard.writeText(textToCopy);
+        
+        } else {
+        
+            // text area method
+        
+            let textArea = document.createElement("textarea");
+        
+            textArea.value = textToCopy;
+        
+            // make the textarea out of viewport
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            textArea.style.top = "-999999px";
+        
+            document.body.appendChild(textArea);
+        
+            textArea.focus();
+            textArea.select();
+        
+            return new Promise((res, rej) => {
+                // here the magic happens
+                document.execCommand('copy') ? res() : rej();
+                textArea.remove();
+            });
+        }
+    } 
+    catch (error){
+
+        console.log("CopyToClipboard error: "+error);
+
+    }
+}
+
+//
+// Create a centered prompt string
+//
+function makeCenteredPromptString(thePrompt){
+    return '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">'+thePrompt+'</p>';
+}
+
+//
+// Are we on iOS?
+//
+function isIOS() {
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+        return true;
+    } else {
+        return navigator.maxTouchPoints &&
+            navigator.maxTouchPoints > 2 &&
+            /MacIntel/.test(navigator.platform);
+    }
+}
+
+//
 // Inject Custom Tab below the notes
 //
 var CustomTabGenerator = function (theABC){
@@ -1146,6 +1214,12 @@ function init() {
 			menu.style.display = 'none';
 		}
 	}, false);
+
+    // Allow file opener to work on iOS
+    if (isIOS()){
+        document.getElementById("openfile_fs").removeAttribute("accept");
+    }  
+
 }
 
 function updateButtons () {
@@ -1171,12 +1245,17 @@ function updateButtons () {
 }
 
 function changeTitle () {
+
 	var nameEl = document.getElementById("name");
-	var name = prompt('Enter the title that will appear at the top of the printed output:', nameEl.textContent);
-	if (name !== null) {
-		nameEl.textContent = name;
-		document.title = name + ' - 12 Hole Ocarina Tab Creator';
-	}
+
+    DayPilot.Modal.prompt("Enter the title that will appear at the top of the printed output:", nameEl.textContent,{ theme: "modal_flat", top: 200, autoFocus: true, scrollWithPage: false }).then(function(args) {
+
+        var name = args.result;
+    	if (name !== null) {
+    		nameEl.textContent = name;
+    		document.title = name + ' - 12 Hole Ocarina Tab Creator';
+    	}
+    });
 }
 
 function addButtons (parent, keys) {
@@ -1312,7 +1391,13 @@ function shareUrl () {
 }
 
 function shareLink () {
-	prompt("Share link for this tablature:", shareUrl());
+    
+    CopyToClipboard(shareUrl());
+
+    var thePrompt = makeCenteredPromptString("Share link copied to the clipboard!");
+
+    DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: false });
+
 }
 
 function escapeHtml (s) {
@@ -1322,8 +1407,14 @@ function escapeHtml (s) {
 }
 
 function shareEmbed () {
-	prompt("HTML code for embedding:", '<iframe src="'+escapeHtml(shareUrl())+
-		'" style="width:800px;height:800px;border:1px solid lightgray;border-radius:5px;"></iframe>');
+
+    CopyToClipboard('<iframe src="'+escapeHtml(shareUrl())+
+        '" style="width:800px;height:800px;border:1px solid lightgray;border-radius:5px;"></iframe>');
+    
+    var thePrompt = makeCenteredPromptString("HTML code for embedding copied to the clipboard!");
+
+    DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: false });
+
 }
 
 function getPlainText (element) {
@@ -1373,141 +1464,177 @@ function saveUrlAs (url, filename) {
 	document.body.removeChild(link);
 }
 
-function saveCanvasImage (canvas, filename, type) {
+function saveCanvasImage (canvas, filename) {
 
-    if (type == "image/png"){
-    	if (canvas.toBlob) {
-    		canvas.toBlob(function (blob) {
-    			var url = URL.createObjectURL(blob);
-    			saveUrlAs(url, filename);
-    			setTimeout(function () {
-    				URL.revokeObjectURL(url);
-    			}, 1000);
-    		}, type);
-    	}
-    	else {
-    		var url = canvas.toDataURL(type);
-    		saveUrlAs(url, filename);
-            setTimeout(function () {
-                URL.revokeObjectURL(url);
-            }, 1000);
-    	}
-    }
-    else{
-        // JPEG image quality
-        var theQuality = 0.8;
-
-        if (canvas.toBlob) {
-            canvas.toBlob(function (blob) {
-                var url = URL.createObjectURL(blob);
-                saveUrlAs(url, filename);
-                setTimeout(function () {
-                    URL.revokeObjectURL(url);
-                }, 1000);
-            }, type, theQuality);
-        }
-        else {
-            var url = canvas.toDataURL(type,theQuality);
-            saveUrlAs(url, filename);
-            setTimeout(function () {
-                URL.revokeObjectURL(url);
-            }, 1000);
-        }
-
-    }
-}
-
-function saveAsJPEGImage(){
-    saveAsImage(true);
-}
-
-function saveAsPNGImage(){
-    saveAsImage(false);
-}
-
-function saveAsImage(isJPEG) {
-
-	var size = Number(document.getElementById("font_size").value);
-	var unit = document.getElementById("font_size_unit").value;
-	var editor = document.getElementById("editor");
-	var lines = getPlainText(editor).split("\n");
-	var canvas = document.createElement("canvas");
-	canvas.width  = Math.max(editor.offsetWidth, editor.scrollWidth||0);
-	canvas.height = Math.max(editor.offsetHeight, editor.scrollHeight||0);
-
-	var ctx = canvas.getContext("2d");
-	var line_width = 0;
-	var font = size+unit+" "+getFontFamily();
-	ctx.font = font;
-	ctx.textBaseline = "top";
-
-	for (var i = 0; i < lines.length; ++ i) {
-		var metrics = ctx.measureText(lines[i]);
-		if (metrics.width > line_width) {
-			line_width = metrics.width;
-		}
+	if (canvas.toBlob) {
+		canvas.toBlob(function (blob) {
+			var url = URL.createObjectURL(blob);
+			saveUrlAs(url, filename);
+			setTimeout(function () {
+				URL.revokeObjectURL(url);
+			}, 1000);
+		}, "image/png");
+	}
+	else {
+		var url = canvas.toDataURL("image/png");
+		saveUrlAs(url, filename);
+        setTimeout(function () {
+            URL.revokeObjectURL(url);
+        }, 1000);
 	}
 
-	var measureEl = document.createElement("div");
-	var style = getComputedStyle(editor, null);
+}
 
-	measureEl.style.font = style.getPropertyValue("font");
-	measureEl.style.lineHeight = style.getPropertyValue("line-height");
-	measureEl.style.whiteSpace = "nowrap";
-	measureEl.style.visibility = "hidden";
-	measureEl.style.position = "absolute";
-	measureEl.style.right = "0";
-	measureEl.style.bottom = "0";
-	measureEl.appendChild(document.createTextNode("A- "));
-	document.body.appendChild(measureEl);
-	var line_height = measureEl.offsetHeight;
-	document.body.removeChild(measureEl);
+// Keep the last filename
+var gLastFilename = "";
 
-	canvas.width  = line_width + 40;
-	canvas.height = line_height * lines.length + 40;
+function saveAsImage() {
 
-	ctx = canvas.getContext("2d");
-	ctx.font = font;
-	ctx.textBaseline = "top";
+    var thePrompt = "Save PNG image as:";
+    var thePlaceHolder = "12_hole_ocarina_tab.png";
 
-	ctx.fillStyle = '#FFFFFF';
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (gLastFilename != ""){
+        
+        thePlaceHolder = gLastFilename;
 
-	ctx.fillStyle = '#000000';
+        if ((!thePlaceHolder.endsWith(".png")) && (!thePlaceHolder.endsWith(".PNG"))){
 
-	var y = 20;
-	for (var i = 0; i < lines.length; ++ i) {
-		var line = lines[i];
-		ctx.fillText(line, 20, y);
-		y += line_height;
-	}
+            // Give it a good extension
+            thePlaceHolder = thePlaceHolder.replace(/\..+$/, '');
+            thePlaceHolder = thePlaceHolder + ".png";
 
-    if (isJPEG){
-	   saveCanvasImage(canvas, "12_hole_ocarina_tabs.jpg", "image/jpg");
-       saveAsFile = saveAsJPEGImage;
-    }
-    else{
-       saveCanvasImage(canvas, "12_hole_ocarina_tabs.png", "image/png");
-       saveAsFile = saveAsPNGImage;
+        }
+  
     }
 
+    DayPilot.Modal.prompt(thePrompt, thePlaceHolder,{ theme: "modal_flat", top: 200, autoFocus: true, scrollWithPage: false }).then(function(args) {
+
+        var fname = args.result;
+
+        // If the user pressed Cancel, exit
+        if (fname == null){
+          return null;
+        }
+
+       if ((!fname.endsWith(".png")) && (!fname.endsWith(".PNG"))){
+
+            // Give it a good extension
+            fname = fname.replace(/\..+$/, '');
+            fname = fname + ".png";
+
+        }
+
+        gLastFilename = fname;
+
+    	var size = Number(document.getElementById("font_size").value);
+    	var unit = document.getElementById("font_size_unit").value;
+    	var editor = document.getElementById("editor");
+    	var lines = getPlainText(editor).split("\n");
+    	var canvas = document.createElement("canvas");
+    	canvas.width  = Math.max(editor.offsetWidth, editor.scrollWidth||0);
+    	canvas.height = Math.max(editor.offsetHeight, editor.scrollHeight||0);
+
+    	var ctx = canvas.getContext("2d");
+    	var line_width = 0;
+    	var font = size+unit+" "+getFontFamily();
+    	ctx.font = font;
+    	ctx.textBaseline = "top";
+
+    	for (var i = 0; i < lines.length; ++ i) {
+    		var metrics = ctx.measureText(lines[i]);
+    		if (metrics.width > line_width) {
+    			line_width = metrics.width;
+    		}
+    	}
+
+    	var measureEl = document.createElement("div");
+    	var style = getComputedStyle(editor, null);
+
+    	measureEl.style.font = style.getPropertyValue("font");
+    	measureEl.style.lineHeight = style.getPropertyValue("line-height");
+    	measureEl.style.whiteSpace = "nowrap";
+    	measureEl.style.visibility = "hidden";
+    	measureEl.style.position = "absolute";
+    	measureEl.style.right = "0";
+    	measureEl.style.bottom = "0";
+    	measureEl.appendChild(document.createTextNode("A- "));
+    	document.body.appendChild(measureEl);
+    	var line_height = measureEl.offsetHeight;
+    	document.body.removeChild(measureEl);
+
+    	canvas.width  = line_width + 40;
+    	canvas.height = line_height * lines.length + 40;
+
+    	ctx = canvas.getContext("2d");
+    	ctx.font = font;
+    	ctx.textBaseline = "top";
+
+    	ctx.fillStyle = '#FFFFFF';
+    	ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    	ctx.fillStyle = '#000000';
+
+    	var y = 20;
+    	for (var i = 0; i < lines.length; ++ i) {
+    		var line = lines[i];
+    		ctx.fillText(line, 20, y);
+    		y += line_height;
+    	}
+        
+        saveCanvasImage(canvas, fname);
+
+    });
 }
 
 function saveAsTextFile () {
-	var editor = document.getElementById("editor");
-	var text = getPlainText(editor);
-	var blob = new Blob([text], {type : 'text/plain;charset=UTF-8'});
 
-	var url = URL.createObjectURL(blob);
-	saveUrlAs(url, "12_hole_ocarina_tabs.txt");
-	setTimeout(function () {
-		URL.revokeObjectURL(url);
-	}, 1000);
+    var thePrompt = "Save text file as:";
+    var thePlaceHolder = "12_hole_ocarina_tab.txt";
 
-	saveAsFile = saveAsTextFile;
+    if (gLastFilename != ""){
+        
+        thePlaceHolder = gLastFilename;
+
+        if ((!thePlaceHolder.endsWith(".txt")) && (!thePlaceHolder.endsWith(".TXT"))){
+
+            // Give it a good extension
+            thePlaceHolder = thePlaceHolder.replace(/\..+$/, '');
+            thePlaceHolder = thePlaceHolder + ".txt";
+
+        }
+    }
+
+    DayPilot.Modal.prompt(thePrompt, thePlaceHolder,{ theme: "modal_flat", top: 200, autoFocus: true, scrollWithPage: false }).then(function(args) {
+
+        var fname = args.result;
+
+        // If the user pressed Cancel, exit
+        if (fname == null){
+          return null;
+        }
+
+        if ((!fname.endsWith(".txt")) && (!fname.endsWith(".TXT"))){
+
+            // Give it a good extension
+            fname = fname.replace(/\..+$/, '');
+            fname = fname + ".txt";
+
+        }
+
+        gLastFilename = fname;
+
+    	var editor = document.getElementById("editor");
+    	var text = getPlainText(editor);
+    	var blob = new Blob([text], {type : 'text/plain;charset=UTF-8'});
+
+    	var url = URL.createObjectURL(blob);
+    	saveUrlAs(url, fname);
+    	setTimeout(function () {
+    		URL.revokeObjectURL(url);
+    	}, 1000);
+
+    });
 }
-
-var saveAsFile = saveAsJPEGImage;
 
 function openTextFile (input) {
 
@@ -1519,31 +1646,46 @@ function openTextFile (input) {
 
 	var reader = new FileReader();
 	reader.onload = function () {
+
 		var text = reader.result;
 
+        var name = file.name;
+
 		if (isABC){
-            
-            var name = file.name;
 
             name = name.replace(".abc","");
 
-            var nameEl = document.getElementById("name");
-            
-            nameEl.textContent = name;
-            
-            document.title = name + ' - 12 Hole Ocarina Tab Creator';
-            
             text = abc_to_text(text);
 
 		}
+        else{
 
+            name = name.replace(".txt","");
+
+        }
+
+        var nameEl = document.getElementById("name");
+        
+        nameEl.textContent = name;
+
+        document.title = name + ' - 12 Hole Ocarina Tab Creator';
+
+        // Use this as the placeholder filename
+        gLastFilename = name;
+ 
 		editor.focus();
+
 		document.execCommand('selectAll', false, null);
 		document.execCommand('insertText', false, text);
 	};
+
 	reader.onerror = function () {
-		alert(this.error);
+
+        var thePrompt = makeCenteredPromptString(this.error);
+
+        DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: false });
 	}
+
 	reader.readAsText(file);
 
 	// clear input
