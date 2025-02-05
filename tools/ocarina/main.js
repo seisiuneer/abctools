@@ -275,6 +275,24 @@ function clearAll(){
 }
 
 //
+// Checks if some text is probably ABC
+//
+function textIsABC(text) {
+
+  // Use regular expressions to match lines starting with X: and K:
+  const xPattern = /^X:/m;
+  const kPattern = /^K:/m;
+
+  // Test for both patterns in the text
+  const hasX = xPattern.test(text);
+  const hasK = kPattern.test(text);
+
+  // Return true if both are found, false otherwise
+  return hasX && hasK;
+
+}
+
+//
 // Inject Custom Tab below the notes
 //
 var CustomTabGenerator = function (theABC){
@@ -1244,7 +1262,7 @@ function init() {
 		var text = event.clipboardData.getData("text/plain");
 
         // Does this look like ABC?
-        if ((text.indexOf("X:") != -1) && (text.indexOf("K:") != -1)){
+        if (textIsABC(text)){
 
             // If editor is empty, set the name
             var editor = document.getElementById("editor");
@@ -1762,12 +1780,17 @@ function openTextFile (input) {
 
             name = name.replace(".abc","");
 
-            text = abc_to_text(text);
-
 		}
         else{
 
             name = name.replace(".txt","");
+
+        }
+
+        // Allow for ABC from .txt files
+        if (textIsABC(text)){
+
+            text = abc_to_text(text);
 
         }
 
