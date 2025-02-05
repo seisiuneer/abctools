@@ -219,6 +219,62 @@ function setTitleText(theTitle){
 }
 
 //
+// Get the title of the first tune
+//
+function GetFirstTuneTitle(theABC) {
+
+    var theLines = theABC.split("\n");
+
+    var title = "";
+
+    for (var i = 0; i < theLines.length; ++i) {
+        
+        var currentLine = theLines[i].trim(); // Trim any whitespace from the line
+
+        if (currentLine.startsWith("T:")) {
+
+            title = currentLine.slice(2);
+            
+            title = title.trim();
+
+            break;
+        }
+    }
+    
+    return title;
+}
+
+//
+// Clear the editor
+//
+function clearAll(){
+
+    var thePrompt = "Are you sure you want to clear all the tab and start over?";
+
+    // Center the string in the prompt
+    thePrompt = makeCenteredPromptString(thePrompt);
+
+    DayPilot.Modal.confirm(thePrompt,{ top:200, theme: "modal_flat", scrollWithPage: false }).then(function(args){
+
+        if (!args.canceled){
+
+            document.execCommand('selectAll', false, null);
+            document.execCommand('insertText', false, "");
+
+            var nameEl = document.getElementById("name");
+
+            // Reset the title and status
+            nameEl.textContent = "New Tune";
+            setTitleText("New Tune");
+            document.title = "12 Hole Ocarina Tab Creator";
+            gLastFilename = "";
+        }
+
+    });
+   
+}
+
+//
 // Inject Custom Tab below the notes
 //
 var CustomTabGenerator = function (theABC){
@@ -1189,6 +1245,26 @@ function init() {
 
         // Does this look like ABC?
         if ((text.indexOf("X:") != -1) && (text.indexOf("K:") != -1)){
+
+            // If editor is empty, set the name
+            var editor = document.getElementById("editor");
+
+            var theEditorText = getPlainText(editor);
+
+            theEditorText = theEditorText.trim();
+
+            if (theEditorText.length == 0){
+
+                var theABCTitle = GetFirstTuneTitle(text);
+
+                var nameEl = document.getElementById("name");
+
+                nameEl.textContent = theABCTitle;
+                setTitleText(theABCTitle);
+                document.title = theABCTitle + ' - 12 Hole Ocarina Tab Creator';
+                gLastFilename = theABCTitle;
+ 
+            }
 
             // Yes, try converting it to ocarina tab before the paste
             text = abc_to_text(text);

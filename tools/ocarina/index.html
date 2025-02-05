@@ -262,8 +262,8 @@
 
 		</style>
 
-		<script type="text/javascript" src="main.js?v=27"></script>
-		<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=27"></script>
+		<script type="text/javascript" src="main.js?v=30"></script>
+		<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=30"></script>
 
 	</head>
 
@@ -297,11 +297,12 @@
 						<option value="G">Key: G</option>
 					</select>
 
-					<button style="margin-left:12px;" type="button" onclick="changeTitle();" title="Enter Title...">Enter Title...</button>
-					<button id="title_print" class="title_print" type="button" onclick="changeTitle();" title="Title">Title: New Tune</button>
+					<button style="margin-left:12px;" type="button" onclick="changeTitle();" title="Click to edit the title">Edit Title</button>
+					<button id="title_print" class="title_print" type="button" onclick="changeTitle();" title="Click to edit the title">Title: New Tune</button>
 				</span>
 
 				<span class="controls-line">
+					<button class="btn" type="button" onclick="clearAll();" title="Clear the tablature">Clear</button>
 					<button class="btn" type="button" onclick="undoEdit();" title="Undo">Undo</button>
 					<button style="margin-right:12px;" class="btn" type="button" onclick="redoEdit();" title="Redo">Redo</button>
 					<input id="injectbarlines" class="btn injectbarlines" type="checkbox" title="Inject bar lines for ABC" checked/><span style="font-size:10pt;margin-right:12px">&nbsp;&nbsp;Inject bar lines for ABC</span>
@@ -323,7 +324,7 @@
 			</span>
 
 		</div>
-		<div id="name">New Tune</div>
+		<div id="name" onclick="changeTitle();" title="Click to edit the title">New Tune</div>
 		<div class="tabs" id="editor" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contentEditable="true"></div>
 	</body>
 </html>
