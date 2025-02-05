@@ -1257,6 +1257,10 @@ function init() {
 
                 var theABCTitle = GetFirstTuneTitle(text);
 
+                if (theABCTitle == ""){
+                    theABCTitle = "No Title";
+                }
+
                 var nameEl = document.getElementById("name");
 
                 nameEl.textContent = theABCTitle;
