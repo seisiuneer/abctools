@@ -212,6 +212,13 @@ function isIOS() {
 }
 
 //
+// Set the title text
+//
+function setTitleText(theTitle){
+    var elem = document.getElementById("title_print").textContent = "Title: "+theTitle;
+}
+
+//
 // Inject Custom Tab below the notes
 //
 var CustomTabGenerator = function (theABC){
@@ -1250,11 +1257,16 @@ function changeTitle () {
 
     DayPilot.Modal.prompt("Enter the title that will appear at the top of the printed output:", nameEl.textContent,{ theme: "modal_flat", top: 200, autoFocus: true, scrollWithPage: false }).then(function(args) {
 
-        var name = args.result;
-    	if (name !== null) {
-    		nameEl.textContent = name;
-    		document.title = name + ' - 12 Hole Ocarina Tab Creator';
-    	}
+        if (!args.canceled){
+
+            var name = args.result;
+        	if (name !== null) {
+        		nameEl.textContent = name;
+                setTitleText(name);
+        		document.title = name + ' - 12 Hole Ocarina Tab Creator';
+        	}
+        }
+
     });
 }
 
@@ -1509,11 +1521,15 @@ function saveAsImage() {
 
     DayPilot.Modal.prompt(thePrompt, thePlaceHolder,{ theme: "modal_flat", top: 200, autoFocus: true, scrollWithPage: false }).then(function(args) {
 
+        if (args.canceled){
+            return;
+        }
+
         var fname = args.result;
 
         // If the user pressed Cancel, exit
         if (fname == null){
-          return null;
+          return;
         }
 
        if ((!fname.endsWith(".png")) && (!fname.endsWith(".PNG"))){
@@ -1606,11 +1622,15 @@ function saveAsTextFile () {
 
     DayPilot.Modal.prompt(thePrompt, thePlaceHolder,{ theme: "modal_flat", top: 200, autoFocus: true, scrollWithPage: false }).then(function(args) {
 
+        if (args.canceled){
+            return;
+        }
+
         var fname = args.result;
 
         // If the user pressed Cancel, exit
         if (fname == null){
-          return null;
+          return;
         }
 
         if ((!fname.endsWith(".txt")) && (!fname.endsWith(".TXT"))){
@@ -1667,6 +1687,8 @@ function openTextFile (input) {
         var nameEl = document.getElementById("name");
         
         nameEl.textContent = name;
+
+        setTitleText(name);
 
         document.title = name + ' - 12 Hole Ocarina Tab Creator';
 

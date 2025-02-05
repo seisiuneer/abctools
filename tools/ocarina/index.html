@@ -235,6 +235,12 @@
 			    vertical-align: middle; /* Aligns the text with the checkbox */			
 			}
 
+			.title_print{
+				margin-left: 18px;
+				font-size: 10pt;
+				vertical-align: middle;
+			}
+
 			/* For modal dialog prompt replacement */
 			.modal_flat_background { background-color: #000; opacity: 0.4; }
 			.modal_flat_main { border: 1px solid #333; box-shadow: 0px 0px 15px -2px rgba(0,0,0,0.75);  }
@@ -252,8 +258,8 @@
 
 		</style>
 
-		<script type="text/javascript" src="main.js?v=18"></script>
-		<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=18"></script>
+		<script type="text/javascript" src="main.js?v=20"></script>
+		<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=20"></script>
 
 	</head>
 
@@ -288,6 +294,7 @@
 					</select>
 
 					<button style="margin-left:12px;" type="button" onclick="changeTitle();" title="Change Title">Title for Print...</button>
+					<span id="title_print" class="title_print">Title:</span>
 				</span>
 
 				<span class="controls-line">
