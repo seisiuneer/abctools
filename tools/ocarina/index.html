@@ -152,8 +152,8 @@
 			}
 			
 			.dropdown-button {
-				position: relative;
-				display: inline-block;
+				position: relative; */
+				display: inline;
 			}
 
 			.dropdown-button .dropdown-menu {
@@ -244,7 +244,7 @@
 
 		</style>
 
-		<script type="text/javascript" src="main.js?v=5"></script>
+		<script type="text/javascript" src="main.js?v=6"></script>
 
 	</head>
 
@@ -290,7 +290,7 @@
 						<input id="openfile_fs" type="file" onchange="openTextFile(this);"/>
 					</span>
 					<span style="margin-right:12px;" class="dropdown-button" id="save-as-dropdown">
-						<button style="margin-left:18px;" type="button" class="btn dropdown-button-default" onclick="saveAsFile();" title="Save File">Save</button><button
+						<button type="button" class="btn dropdown-button-default" onclick="saveAsFile();" title="Save File">Save</button><button
 						        type="button" class="btn dropdown-button-arrow" onclick="toggleMenu('save-as-dropdown');">Save As</button>
 						<span class="dropdown-menu">
 							<button type="button" onclick="saveAsImage();hideMenu('save-as-dropdown');">Save as Image</button>
