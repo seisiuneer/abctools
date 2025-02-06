@@ -179,24 +179,8 @@
 				text-align: left;
 			}
 
-			.file-button {
-				position: relative;
-				overflow: hidden;
-				margin-right:12px;
-			}
-
-			.file-button input[type=file] {
-				-webkit-appearance: none;
-				-moz-appearance: none;
-				appearance: none;
-				margin: 0;
-				padding: 0;
-				border: none;
-				position: absolute;
-				right: 0;
-				top: 0;
-				cursor: pointer;
-				opacity: 0;
+			.openfile_fs{
+				display:none;
 			}
 
 			.controls-cell-buttons {
@@ -307,10 +291,8 @@
 					<button class="btn" type="button" onclick="undoEdit();" title="Undo">Undo</button>
 					<button style="margin-right:12px;" class="btn" type="button" onclick="redoEdit();" title="Redo">Redo</button>
 					<input id="injectbarlines" class="btn injectbarlines" type="checkbox" title="Inject bar lines for ABC" checked/><span style="font-size:10pt;margin-right:12px">&nbsp;&nbsp;Inject bar lines for ABC</span>
-					<span class="btn file-button" title="Open Text or ABC File">
-						<span style="font-size:10pt;">Open Text or ABC File</span>
-						<input id="openfile_fs" type="file" accept=".abc,.ABC,.txt,.TXT" onchange="openTextFile(this);"/>
-					</span>
+					<input id="openfile_fs" class="openfile_fs" type="file" accept=".abc,.ABC,.txt,.TXT" onchange="openTextFile(this);" hidden />
+					<input style="margin-right:12px" class="btn" title="Opens an existing Text or ABC file." onclick="fileOpenIntercept(event);" type="button" value="Open Text or ABC File"/>
 					<span style="margin-right:12px;" class="dropdown-button" id="save-as-dropdown">
 						<button type="button" class="btn dropdown-button-arrow" onclick="toggleMenu('save-as-dropdown');">Save As</button>
 						<span class="dropdown-menu">

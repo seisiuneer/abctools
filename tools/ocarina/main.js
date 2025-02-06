@@ -293,6 +293,17 @@ function textIsABC(text) {
 }
 
 //
+// File open intercept alert
+//
+function fileOpenIntercept(e){
+
+    var elem = document.getElementById("openfile_fs");
+
+    elem.click();
+
+}
+
+//
 // Inject Custom Tab below the notes
 //
 var CustomTabGenerator = function (theABC){
