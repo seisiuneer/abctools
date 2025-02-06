@@ -247,8 +247,8 @@
 
 		</style>
 
-		<script type="text/javascript" src="main.js?v=37"></script>
-		<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=37"></script>
+		<script type="text/javascript" src="main.js?v=38"></script>
+		<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=38"></script>
 
 	</head>
 
@@ -261,8 +261,8 @@
 
 			<span class="controls-cell">
 				<span class="controls-line" style="margin-top:0px;height:21px">
-					<input type="number" id="font_size" onchange="updateStyle();" value="60" title="Font Size"/>
-					<select id="font_size_unit" onchange="updateStyle();" title="Font Size Unit">
+					<input type="number" id="font_size" onchange="updateStyle();" value="60" title="Display font size"/>
+					<select id="font_size_unit" onchange="updateStyle();" title="Font size unit">
 						<option value="px" selected>px</option>
 						<option value="mm">mm</option>
 						<option value="cm">cm</option>
@@ -271,12 +271,12 @@
 						<option value="pc">pc</option>
 					</select>
 
-					<select style="margin-left:12px;" id="font" onchange="updateStyle();" title="Font Variant">
+					<select style="margin-left:12px;" id="font" onchange="updateStyle();" title="Display font variant">
 						<option value="1" selected>Font Style #1</option>
 						<option value="2">Font Style #2</option>
 					</select>
 
-					<select style="margin-left:12px;" id="key" onchange="updateButtons();" title="Key">
+					<select style="margin-left:12px;" id="key" onchange="updateButtons();" title="Select the key of your Ocarina">
 						<option value="C" selected>Key: C</option>
 						<option value="F">Key: F</option>
 						<option value="G">Key: G</option>
@@ -294,14 +294,14 @@
 					<input id="openfile_fs" class="openfile_fs" type="file" accept=".abc,.ABC,.txt,.TXT" onchange="openTextFile(this);" hidden />
 					<input style="margin-right:12px" class="btn" title="Opens an existing Text or ABC file." onclick="fileOpenIntercept(event);" type="button" value="Open Text or ABC File"/>
 					<span style="margin-right:12px;" class="dropdown-button" id="save-as-dropdown">
-						<button type="button" class="btn dropdown-button-arrow" onclick="toggleMenu('save-as-dropdown');">Save As</button>
+						<button type="button" class="btn dropdown-button-arrow" title="Click to save the tablature as text or a PNG image" onclick="toggleMenu('save-as-dropdown');">Save As</button>
 						<span class="dropdown-menu">
-							<button type="button" onclick="saveAsTextFile();hideMenu('save-as-dropdown');">Save as Text</button>
-							<button type="button" onclick="saveAsImage();hideMenu('save-as-dropdown');">Save as Image</button>
+							<button type="button" title="Saves the tablature as a text file" onclick="saveAsTextFile();hideMenu('save-as-dropdown');">Save as Text</button>
+							<button type="button" title="Saves the tablature as a PNG image" onclick="saveAsImage();hideMenu('save-as-dropdown');">Save as Image</button>
 						</span>
 					</span>
-					<button class="btn" type="button" onclick="shareLink();" title="Share Link">Share</button>
-					<button style="margin-right:12px;" class="btn" type="button" onclick="shareEmbed();" title="Embed">Embed</button>
+					<button class="btn" type="button" onclick="shareLink();" title="Copy a share link to the tablature to the clipboard">Share</button>
+					<button style="margin-right:12px;" class="btn" type="button" onclick="shareEmbed();" title="Copy website embed HTML for the tablature to the clipboard">Embed</button>
 					<button style="margin-right:12px;" class="btn" type="button" onclick="window.print();" title="Print">Print</button>
 					<button style="margin-right:12px;" class="btn" type="button" onclick="window.open('https://michaeleskin.com/abctools/tipjars.html');" title="Michael Eskin's Online Tip Jars">Tip Jars</button>
 					<button class="btn" type="button" onclick="window.open('https://www.youtube.com/playlist?list=PLZvjgS80ixQtM1o10P1Y7lJCaV99lG6Aw');" title="Demo and Tutorial Videos on YouTube">?</button>
