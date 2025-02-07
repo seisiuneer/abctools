@@ -1212,8 +1212,9 @@ function init() {
 	}
 
 	if (params.name) {
-		name.textContent = decodeURIComponent(params.name);
-		document.title = params.name + ' - 12 Hole Ocarina Tab Creator';
+        var decodedName = decodeURIComponent(params.name)
+		name.textContent = decodedName;
+		document.title = decodedName + ' - 12 Hole Ocarina Tab Creator';
 	}
 
 	if (params.size) {
