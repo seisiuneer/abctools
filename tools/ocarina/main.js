@@ -1212,7 +1212,7 @@ function init() {
 	}
 
 	if (params.name) {
-		name.textContent = params.name;
+		name.textContent = decodeURIComponent(params.name);
 		document.title = params.name + ' - 12 Hole Ocarina Tab Creator';
 	}
 
@@ -1506,7 +1506,7 @@ function formValues () {
 	var key  = document.getElementById("key").value;
 	var font = document.getElementById("font").value;
 	var editor = document.getElementById("editor");
-	var name = document.getElementById("name").textContent;
+	var name = encodeURIComponent(document.getElementById("name").textContent);
 
     var theEncodedTabs = encodeURIComponent(getPlainText(editor));
 
@@ -1540,17 +1540,6 @@ function escapeHtml (s) {
 	return s.replace(/[<>"&]/g, function (ch) {
 		return HTML_CHARS[ch];
 	});
-}
-
-function shareEmbed () {
-
-    CopyToClipboard('<iframe src="'+escapeHtml(shareUrl())+
-        '" style="width:800px;height:800px;border:1px solid lightgray;border-radius:5px;"></iframe>');
-    
-    var thePrompt = makeCenteredPromptString("HTML code for embedding copied to the clipboard!");
-
-    DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: false });
-
 }
 
 function getPlainText (element) {
