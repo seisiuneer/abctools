@@ -1238,8 +1238,13 @@ function init() {
 	editor.style.fontFamily = getFontFamily();
 
 	if (params.tabs) {
+
 		editor.innerHTML = '';
-		var tabs = params.tabs.split("\n");
+
+		var decodedTabs = decodeURIComponent(params.tabs);
+
+        var tabs = decodedTabs.split("\n");
+
 		for (var i = 0; i < tabs.length; ++ i) {
 			var div  = document.createElement("div");
 			var line = tabs[i];
@@ -1502,8 +1507,11 @@ function formValues () {
 	var font = document.getElementById("font").value;
 	var editor = document.getElementById("editor");
 	var name = document.getElementById("name").textContent;
+
+    var theEncodedTabs = encodeURIComponent(getPlainText(editor));
+
 	var values = {
-		tabs: getPlainText(editor),
+		tabs: theEncodedTabs,
 		size: size+unit,
 		key:  key,
 		font: font
