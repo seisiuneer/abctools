@@ -32,32 +32,37 @@
 <p><strong>Open Source Info:</strong></p>
 <p>The converter uses open source Javascript libraries and forks of other projects:</p>
 <p><a href="https://www.abctransposer.de/" target="_blank">Jens Wollschlager's ABC Transposer</a> was the initial inspiration for the development of this tool.</p> 
-<p><a href="https://www.abcjs.net/">abcjs</a> by Paul Rosen and Gregory Dyke to convert abc to sheet music.</p>
-<p><a href="https://www.npmjs.com/package/html-to-image">html-to-image</a> is used to prepare the html sheet music for PDF conversion.</p>
-<p><a href="https://github.com/parallax/jsPDF">jsPDF</a> is used to actually create the PDF.</p>
-<p><a href="https://github.com/OMerkel/tin_whistle/tree/master/res/font">Tin Whistle Fingering Font</a> by Paul Merke is used to generate the whistle tabs.</p> 
-<p><a href="https://davidshimjs.github.io/qrcodejs/">qrcode.js</a> is used to generate the QR codes.</p> 
-<p><a href="https://github.com/pieroxy/lz-string">lz-string.js</a> is used to for LZW compression of the tunes for share links.</p> 
+<p><a href="https://www.abcjs.net/" target="_blank">abcjs</a> by Paul Rosen and Gregory Dyke to convert abc to sheet music.</p>
+<p><a href="https://www.npmjs.com/package/html-to-image" target="_blank">html-to-image</a> is used to prepare the html sheet music for PDF conversion.</p>
+<p><a href="https://github.com/parallax/jsPDF" target="_blank">jsPDF</a> is used to create the PDF.</p>
+<p><a href="https://github.com/Hopding/pdf-lib" target="_blank">pdf-lib</a> is used to split PDF tunebooks into individual PDF files.</p>
+<p><a href="https://github.com/OMerkel/tin_whistle/tree/master/res/font" target="_blank">Tin Whistle Fingering Font</a> by Paul Merke is used to generate the whistle tabs.</p> 
+<p><a href="https://davidshimjs.github.io/qrcodejs" target="_blank">qrcode.js</a> is used to generate the QR codes.</p> 
+<p><a href="https://github.com/pieroxy/lz-string" target="_blank">lz-string.js</a> is used to for LZW compression of the tunes for share links.</p> 
 <p><a href="https://wim.vree.org/js/xml2abc-js_index.html" target="_blank">xml2abc.js</a> is used to for converting MusicXML format to ABC.</p> 
-<p><a href="https://wim.vree.org/svgParse/abc2xml.html" target="_blank">abc2xml</a> is used for the ABC format to MusicXML transcoding web service.</p> 
+<p><a href="https://wim.vree.org/svgParse/abc2xml.html" target="_blank">abc2xml</a> is used for the ABC format to MusicXML transcoding Python web service.</p> 
 <p><a href="https://github.com/cuthbertLab/music21" target="_blank">Music21</a> is used for the MIDI to MusicXML transcoding Python web service.</p> 
-<p><a href="http://moinejf.free.fr/bww2abc" title="bww2abc" target="_blank">bww2abc</a> by Jean-Francois Moine is used for BWW to ABC conversion under a <a href="https://michaeleskin.com/abctools/gpl3.txt" target="_blank">GPL3+</a> license.</p>
 <p><a href="https://stuk.github.io/jszip/" target="_blank">jszip.js</a> is used to unzip compressed .mxl files.</p>
-<p><a href="https://github.com/zhuker/lamejs" target="_blank">lame.js</a> is used to for converting .wav format to .mp3.</p>  
+<p><a href="https://github.com/zhuker/lamejs" target="_blank">lame.js</a> is used to for converting .wav format to .mp3.</p> 
 <p><a href="https://github.com/swevans/unmute" target="_blank">umute.js</a> is used to for fixing the iOS tab switch audio mute issue.</p> 
 <p><a href="https://musescore.org/en/handbook/3/soundfonts-and-sfz-files" target="_blank">MuseScore General</a> is the basis for the rendered MuseScore soundfont.</p> 
-<p>Ui icons created by <a href="https://www.flaticon.com/free-icons/ui" title="ui icons"> Karacis - Flaticon</a>.</p>
+<p><a href="https://github.com/marmooo/midi2abc" target="_blank">midi2abc</a> is used for the standalone MIDI to ABC transcoding.</p> 
+<p><a href="http://moinejf.free.fr/bww2abc" title="bww2abc" target="_blank">bww2abc</a> by Jean-Francois Moine is used for BWW to ABC conversion under a <a href="https://michaeleskin.com/abctools/gpl3.txt" target="_blank">GPL3+</a> license.</p>
+<p><a href="https://johnresig.com/files/titleCaps.js" target="_blank">Title Caps</a> by John Resig is used for MusicXML title generation.</p> 
+<p><a href="https://modal.daypilot.org" target="_blank">DayPilot Modal</a> is used for modal dialog replacements.</p> 
+<p><a href="https://github.com/mturco/context-menu" target="_blank">context-menu</a> is used for dropdown menus.</p>
+<p><a href="https://github.com/panzi/ocarina_tabs" target="_blank">ocarina_tabs</a> by panzi was the starting point for the 12-Hole Ocarina Tab Creator tool.</p>
+<p><a href="https://www.fontspace.com/recorders-font-f18231" target="_blank">Hiawatha's Recorder Fingering Font</a> is used for Baroque Recorder fingering tablature.</p>
+<p><a href="https://versilian-studios.com/vcsl/" target="_blank">Versilian Community Sample Library</a> CC0 Baroque Recorder samples were the starting point for the SATB Recorder instruments.</p>
+<p>Ui icons created by <a href="https://www.flaticon.com/free-icons/ui" title="ui icons" target="_blank"> PDF and Karacis - Flaticon</a>.</p>
 <p>Options icon by Marie Van den Broeck from <a href="https://thenounproject.com/browse/icons/term/options/" target="_blank" title="options Icons">Noun Project</a> (CC BY 3.0)</p>
-<p>This product includes <a href="https://modal.daypilot.org" target="_blank">DayPilot Modal</a> for modal dialog replacements.</p>
 <p>Anglo Concertina fingering solution and ABC parsing methods used by the tab injectors originally developed by <a href="https://jvandonsel.github.io/fingering/fingering.html" target="_blank">Jim Van Donsel</a>.</p>
+<p>Diatonic harmonica mapping algorithm derived from: <a href="https://welltemperedstudio.wordpress.com/code/abc2harp/" target="_blank">abc2harp</a> by Gek Siong Low.</p>       
 <p><a href="https://github.com/TomWyllie/folkfriend" title="FolkFriend" target="_blank">FolkFriend.app Tune Collection</a> by Tom Wyllie, used for the search engine, used under <a href="https://michaeleskin.com/abctools/gpl3.txt" title="GPL3" target="_blank">GPL3</a> licensing.</p>
 <p><a href="https://freesound.org/people/bosone/packs/4209/" title="Bodhran Samples by Bosone" target="_blank">Bodhran Samples by Bosone</a> used under <a href="https://creativecommons.org/licenses/by-nc/4.0/" title="by-nc" target="_blank">CC BY-NC 4.0</a> licensing.</p>
 <p><a href="https://ko-fi.com/s/573c321432" title="Irish Bouzouki (Kontakt Sample Instrument)" target="_blank">Irish Bouzouki (Kontakt Sample Instrument)</a> by Eamon Coughlan (sampled from an instrument built by Daniel Hoban) used as the basis for the Irish Bouzouki 2 instrument.</p>
 <p><a href="https://www.arachnosoft.com/main/soundfont.php?documentation=fullscreen#copyright" title="Arachno Soundfont Licenses" target="_blank">Arachno Soundfont</a> used under a variety of non-commercial use licenses.</p>
-<p><a href="https://github.com/marmooo/midi2abc" target="_blank">midi2abc</a> is used for the standalone MIDI to ABC transcoding.</p> 
-<p><a href="https://www.fontspace.com/recorders-font-f18231" target="_blank">Hiawatha's Recorder Fingering Font</a> is used for Baroque Recorder fingering tablature.</p>
-<p><a href="https://versilian-studios.com/vcsl/" target="_blank">Versilian Community Sample Library</a> CC0 Baroque Recorder samples were the starting point for the SATB Recorder instruments.</p>
-<p>Without these free open-source resources this project would not have been possible.</p><p></p>
+<p>Without these free open-source resources this project would not have been possible.</p>
 <hr>
 <p><strong>Project Contributors:</strong></p>
 <p>Thank you to Philip McGarvey for the share link export feature addition!</p>

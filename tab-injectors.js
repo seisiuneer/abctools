@@ -7990,6 +7990,19 @@ var HarmonicaTabGenerator = function (theABC){
                 theTabMap[46] = "x"; // A# / Bb
                 theTabMap[47] = "x"; // B
  
+                theTabMap[48] = "x"; // C
+                theTabMap[49] = "x"; // C#
+                theTabMap[50] = "x"; // D
+                theTabMap[51] = "x"; // D# / Eb
+                theTabMap[52] = "x"; // E
+                theTabMap[53] = "x"; // F
+                theTabMap[54] = "x"; // F# / Gb
+                theTabMap[55] = "x"; // G
+                theTabMap[56] = "x"; // G# / Ab
+                theTabMap[57] = "x"; // A
+                theTabMap[58] = "x"; // A# / Bb
+                theTabMap[59] = "x"; // B
+
                 break;
 
             // Paddy Richter
@@ -8046,6 +8059,19 @@ var HarmonicaTabGenerator = function (theABC){
                 theTabMap[46] = "x"; // A# / Bb
                 theTabMap[47] = "x"; // B
 
+                theTabMap[48] = "x"; // C
+                theTabMap[49] = "x"; // C#
+                theTabMap[50] = "x"; // D
+                theTabMap[51] = "x"; // D# / Eb
+                theTabMap[52] = "x"; // E
+                theTabMap[53] = "x"; // F
+                theTabMap[54] = "x"; // F# / Gb
+                theTabMap[55] = "x"; // G
+                theTabMap[56] = "x"; // G# / Ab
+                theTabMap[57] = "x"; // A
+                theTabMap[58] = "x"; // A# / Bb
+                theTabMap[59] = "x"; // B
+
                 break;   
 
             // Easy Thirds
@@ -8101,6 +8127,19 @@ var HarmonicaTabGenerator = function (theABC){
                 theTabMap[45] = "x"; // A
                 theTabMap[46] = "x"; // A# / Bb
                 theTabMap[47] = "x"; // B
+
+                theTabMap[48] = "x"; // C
+                theTabMap[49] = "x"; // C#
+                theTabMap[50] = "x"; // D
+                theTabMap[51] = "x"; // D# / Eb
+                theTabMap[52] = "x"; // E
+                theTabMap[53] = "x"; // F
+                theTabMap[54] = "x"; // F# / Gb
+                theTabMap[55] = "x"; // G
+                theTabMap[56] = "x"; // G# / Ab
+                theTabMap[57] = "x"; // A
+                theTabMap[58] = "x"; // A# / Bb
+                theTabMap[59] = "x"; // B
                 break;   
 
             // Melody Maker
@@ -8157,6 +8196,19 @@ var HarmonicaTabGenerator = function (theABC){
                 theTabMap[46] = "x"; // A# / Bb
                 theTabMap[47] = "x"; // B
  
+                theTabMap[48] = "x"; // C
+                theTabMap[49] = "x"; // C#
+                theTabMap[50] = "x"; // D
+                theTabMap[51] = "x"; // D# / Eb
+                theTabMap[52] = "x"; // E
+                theTabMap[53] = "x"; // F
+                theTabMap[54] = "x"; // F# / Gb
+                theTabMap[55] = "x"; // G
+                theTabMap[56] = "x"; // G# / Ab
+                theTabMap[57] = "x"; // A
+                theTabMap[58] = "x"; // A# / Bb
+                theTabMap[59] = "x"; // B
+
                 break;    
 
             // Country
@@ -8212,6 +8264,19 @@ var HarmonicaTabGenerator = function (theABC){
                 theTabMap[45] = "x"; // A
                 theTabMap[46] = "x"; // A# / Bb
                 theTabMap[47] = "x"; // B
+
+                theTabMap[48] = "x"; // C
+                theTabMap[49] = "x"; // C#
+                theTabMap[50] = "x"; // D
+                theTabMap[51] = "x"; // D# / Eb
+                theTabMap[52] = "x"; // E
+                theTabMap[53] = "x"; // F
+                theTabMap[54] = "x"; // F# / Gb
+                theTabMap[55] = "x"; // G
+                theTabMap[56] = "x"; // G# / Ab
+                theTabMap[57] = "x"; // A
+                theTabMap[58] = "x"; // A# / Bb
+                theTabMap[59] = "x"; // B
  
                 break;
 
@@ -8268,6 +8333,19 @@ var HarmonicaTabGenerator = function (theABC){
                 theTabMap[45] = "x"; // A
                 theTabMap[46] = "x"; // A# / Bb
                 theTabMap[47] = "x"; // B
+
+                theTabMap[48] = "x"; // C
+                theTabMap[49] = "x"; // C#
+                theTabMap[50] = "x"; // D
+                theTabMap[51] = "x"; // D# / Eb
+                theTabMap[52] = "x"; // E
+                theTabMap[53] = "x"; // F
+                theTabMap[54] = "x"; // F# / Gb
+                theTabMap[55] = "x"; // G
+                theTabMap[56] = "x"; // G# / Ab
+                theTabMap[57] = "x"; // A
+                theTabMap[58] = "x"; // A# / Bb
+                theTabMap[59] = "x"; // B
  
                 break;
 
@@ -8329,6 +8407,19 @@ var HarmonicaTabGenerator = function (theABC){
                 theTabMap[45] = "x"; // A
                 theTabMap[46] = "x"; // A# / Bb
                 theTabMap[47] = "x"; // B
+
+                theTabMap[48] = "x"; // C
+                theTabMap[49] = "x"; // C#
+                theTabMap[50] = "x"; // D
+                theTabMap[51] = "x"; // D# / Eb
+                theTabMap[52] = "x"; // E
+                theTabMap[53] = "x"; // F
+                theTabMap[54] = "x"; // F# / Gb
+                theTabMap[55] = "x"; // G
+                theTabMap[56] = "x"; // G# / Ab
+                theTabMap[57] = "x"; // A
+                theTabMap[58] = "x"; // A# / Bb
+                theTabMap[59] = "x"; // B
  
                 break;
         }    
@@ -8628,7 +8719,7 @@ var HarmonicaTabGenerator = function (theABC){
             "_e'": 39,
             "e'":  40,
             "^e'": 41,
-            "_F'": 40,
+            "_f'": 40,
             "f'":  41,
             "^f'": 42,
             "_g'": 42,
@@ -8639,6 +8730,27 @@ var HarmonicaTabGenerator = function (theABC){
             "^a'": 46,
             "_b'": 46,
             "b'":  47,
+            "^b'":  48,
+            "_c''": 47,
+            "c''":  48,
+            "^c''": 49,
+            "_d''": 49,
+            "d''":  50,
+            "^d''": 51,
+            "_e''": 51,
+            "e''":  52,
+            "^e''": 53,
+            "_f''": 52,
+            "f''":  53,
+            "^f''": 54,
+            "_g''": 54,
+            "g''":  55,
+            "^g''": 56,
+            "_a''": 56,
+            "a''":  57,
+            "^a''": 58,
+            "_b''": 58,
+            "b''":  59,
 
             // Naturals
             "=C,":  0,
@@ -8669,6 +8781,14 @@ var HarmonicaTabGenerator = function (theABC){
             "=g'":  43,
             "=a'":  45,
             "=b'":  47,
+            "=c''":  48,
+            "=d''":  50,
+            "=e''":  52,
+            "=f''":  53,
+            "=g''":  55,
+            "=a''":  57,
+            "=b''":  59,
+
             // Don't touch
             "C'":   24,
             "^C'":  25,
@@ -8929,7 +9049,7 @@ var HarmonicaTabGenerator = function (theABC){
         log("sanitized input:" + sanitizedInput);
 
         // Find all the notes
-        var regex = /([=^_]?[a-gA-G][',]?|\|)/g;
+        var regex = /([=^_]?[a-gA-G][',']*['']*|\|)/g;
         var notes = [];
         var m;
         while (m = regex.exec(sanitizedInput)) {
@@ -8951,8 +9071,6 @@ var HarmonicaTabGenerator = function (theABC){
 
         return notes;
     }
-
-
 
     // Normalizes the given note string, given the key signature.
     // This means making sharps or flats explicit, and removing
@@ -9410,7 +9528,6 @@ var CustomTabGenerator = function (theABC){
     //
     function getNoteGlyph(note,customTabKey,octaveShift,theTabMap){
 
-        // Standard ABC
         var glyph_map = {
             "C,":  0,
             "^C,": 1,
@@ -9483,7 +9600,7 @@ var CustomTabGenerator = function (theABC){
             "_e'": 39,
             "e'":  40,
             "^e'": 41,
-            "_F'": 40,
+            "_f'": 40,
             "f'":  41,
             "^f'": 42,
             "_g'": 42,
@@ -9494,6 +9611,27 @@ var CustomTabGenerator = function (theABC){
             "^a'": 46,
             "_b'": 46,
             "b'":  47,
+            "^b'":  48,
+            "_c''": 47,
+            "c''":  48,
+            "^c''": 49,
+            "_d''": 49,
+            "d''":  50,
+            "^d''": 51,
+            "_e''": 51,
+            "e''":  52,
+            "^e''": 53,
+            "_f''": 52,
+            "f''":  53,
+            "^f''": 54,
+            "_g''": 54,
+            "g''":  55,
+            "^g''": 56,
+            "_a''": 56,
+            "a''":  57,
+            "^a''": 58,
+            "_b''": 58,
+            "b''":  59,
 
             // Naturals
             "=C,":  0,
@@ -9524,6 +9662,14 @@ var CustomTabGenerator = function (theABC){
             "=g'":  43,
             "=a'":  45,
             "=b'":  47,
+            "=c''":  48,
+            "=d''":  50,
+            "=e''":  52,
+            "=f''":  53,
+            "=g''":  55,
+            "=a''":  57,
+            "=b''":  59,
+
             // Don't touch
             "C'":   24,
             "^C'":  25,
@@ -9570,6 +9716,7 @@ var CustomTabGenerator = function (theABC){
             "=A''": 45,            
             "=B''": 47,            
         };
+
 
         var noteIndex = glyph_map[note];
 
@@ -9731,7 +9878,7 @@ var CustomTabGenerator = function (theABC){
         log("sanitized input:" + sanitizedInput);
 
         // Find all the notes
-        var regex = /([=^_]?[a-gA-G][',]?|\|)/g;
+        var regex = /([=^_]?[a-gA-G][',']*['']*|\|)/g;
         var notes = [];
         var m;
         while (m = regex.exec(sanitizedInput)) {

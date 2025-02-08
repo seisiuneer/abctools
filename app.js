@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2299_020525_0715";
+var gVersionNumber="2300_020825_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -23868,9 +23868,19 @@ function loadCustomHarmonica(file){
 			if (gHarmonicaCustom.version == 1){
 
 				// Upgrade any older custom tuning maps
-				gHarmonicaCustom.version = 2;
+				gHarmonicaCustom.version = 3;
 				
-				for (var i=0;i<10;++i){
+				for (var i=0;i<22;++i){
+					gHarmonicaCustom.noteMap.push("x");
+				}
+			}
+			else
+			if (gHarmonicaCustom.version == 2){
+
+				// Upgrade any older custom tuning maps
+				gHarmonicaCustom.version = 3;
+				
+				for (var i=0;i<12;++i){
 					gHarmonicaCustom.noteMap.push("x");
 				}
 			}
@@ -23947,6 +23957,11 @@ function defaultCustomHarmonica(){
 		    for (i=0;i<12;++i){
 		        var id = "r4c"+(i+1);
 		        document.getElementById(id).value = gHarmonicaCustom.noteMap[i+36];
+		    }	
+
+		    for (i=0;i<12;++i){
+		        var id = "r5c"+(i+1);
+		        document.getElementById(id).value = gHarmonicaCustom.noteMap[i+48];
 		    }		    
 		}
 
@@ -23983,6 +23998,12 @@ function customHarmonicaChangeHandler(){
         var id = "r4c"+(i+1);
         gHarmonicaCustom.noteMap[i+36] = document.getElementById(id).value;
     }
+
+    for (i=0;i<12;++i){
+        var id = "r5c"+(i+1);
+        gHarmonicaCustom.noteMap[i+48] = document.getElementById(id).value;
+    }
+
 }
 
 //
@@ -24013,6 +24034,11 @@ function initCustomHarmonicaSettings(){
     for (i=0;i<12;++i){
         var id = "r4c"+(i+1);
         document.getElementById(id).value = gHarmonicaCustom.noteMap[i+36];
+    }
+
+    for (i=0;i<12;++i){
+        var id = "r5c"+(i+1);
+        document.getElementById(id).value = gHarmonicaCustom.noteMap[i+48];
     }
 
 }
@@ -24215,7 +24241,43 @@ function EditCustomHarmonica(){
 	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r4c11" onchange="customHarmonicaChangeHandler()"></td>\n';
 	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r4c12" onchange="customHarmonicaChangeHandler()"></td>\n';
 	modal_msg += '</tr>\n';
-	modal_msg += '</table>\n';
+	modal_msg += '<tr>\n'
+    modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">&nbsp;</td>\n';
+  	modal_msg += '</tr>\n';	
+	modal_msg += '<tr>\n'
+    modal_msg += '<td colspan="3" style="text-align: left; font-size:12pt;font-family:helvetica;">Octave 5:</td>\n';
+  	modal_msg += '</tr>\n';	
+	modal_msg += '<tr>\n'
+    modal_msg += '<td style="text-align: center; font-size:2pt;font-family:helvetica;">&nbsp;</td>\n';
+  	modal_msg += '</tr>\n';	
+  	modal_msg += '<tr>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">C</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">C#/Db</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">D</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">D#/Eb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">E</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">F</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">F#/Gb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">G</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">G#/Ab</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">A</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">A#/Bb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">B</td>\n';
+	modal_msg += '</tr>\n';
+	modal_msg += '<tr>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r5c1" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r5c2" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r5c3" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r5c4" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r5c5" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r5c6" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r5c7" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r5c8" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r5c9" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r5c10" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r5c11" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="harmonicacustomnames" type="text" id="r5c12" onchange="customHarmonicaChangeHandler()"></td>\n';
+	modal_msg += '</tr>\n';	modal_msg += '</table>\n';
 	modal_msg += '</div>\n';
 	modal_msg += '<p style="text-align:center;margin-top:22px;"><input type="file" id="load_custom_harmonica_tuning_fs" accept=".txt,.TXT" hidden/><input id="save_custom_harmonica_tuning" class="btn btn-subdialog save_custom_harmonica_tuning" onclick="saveCustomHarmonica()" type="button" value="Save Custom Harmonica Tuning" title="Save a custom harmonica tuning file"><input id="load_custom_harmonica_tuning" class="btn btn-subdialog load_custom_harmonica_tuning" onclick="loadCustomHarmonicaClickHandler()" type="button" value="Load Custom Harmonica Tuning" title="Load a custom harmonica tuning file"></p>\n';
 	modal_msg += '<p style="text-align:center;margin-top:22px;"><input id="default_anglo_fingerings" class="btn btn-clearbutton default_anglo_fingerings" onclick="defaultCustomHarmonica()" type="button" value="Reset to Default (Standard Richter)" title="Resets the custom tuning to Standard Richter"></p>\n';
@@ -24244,7 +24306,7 @@ function EditCustomHarmonica(){
 		        gHarmonicaCustom.name = "Custom";
 		    }
 
-		    for (var i=0;i<48;++i){
+		    for (var i=0;i<60;++i){
 
 		    	// No blank items
 		        if (gHarmonicaCustom.noteMap[i] == ""){
@@ -24451,6 +24513,17 @@ function loadCustomTab(file){
 			// Save the new tuning
 			gCustomTab = theParsedTab;
 
+			if (gCustomTab.version == 1){
+
+				// Upgrade any older custom tuning maps
+				gCustomTab.version = 2;
+				
+				for (var i=0;i<12;++i){
+					gCustomTab.noteMap.push("x");
+				}
+
+			}
+
 			// Idle the custom tab dialog with the new values
 			initCustomTabSettings();
 
@@ -24524,6 +24597,11 @@ function defaultCustomTab(){
 		    for (i=0;i<12;++i){
 		        var id = "r4c"+(i+1);
 		        document.getElementById(id).value = gCustomTab.noteMap[i+36];
+		    }	
+
+		    for (i=0;i<12;++i){
+		        var id = "r5c"+(i+1);
+		        document.getElementById(id).value = gCustomTab.noteMap[i+48];
 		    }		    
 		}
 
@@ -24560,6 +24638,11 @@ function customTabChangeHandler(){
         var id = "r4c"+(i+1);
         gCustomTab.noteMap[i+36] = document.getElementById(id).value;
     }
+
+    for (i=0;i<12;++i){
+        var id = "r5c"+(i+1);
+        gCustomTab.noteMap[i+48] = document.getElementById(id).value;
+    }
 }
 
 //
@@ -24592,6 +24675,10 @@ function initCustomTabSettings(){
         document.getElementById(id).value = gCustomTab.noteMap[i+36];
     }
 
+    for (i=0;i<12;++i){
+        var id = "r5c"+(i+1);
+        document.getElementById(id).value = gCustomTab.noteMap[i+48];
+    }
 }
 
 //
@@ -24792,7 +24879,43 @@ function EditCustomTab(){
 	modal_msg += '<td><input class="customtabnames" type="text" id="r4c11" onchange="customTabChangeHandler()"></td>\n';
 	modal_msg += '<td><input class="customtabnames" type="text" id="r4c12" onchange="customTabChangeHandler()"></td>\n';
 	modal_msg += '</tr>\n';
-	modal_msg += '</table>\n';
+	modal_msg += '<tr>\n'
+    modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">&nbsp;</td>\n';
+  	modal_msg += '</tr>\n';	
+	modal_msg += '<tr>\n'
+    modal_msg += '<td colspan="3" style="text-align: left; font-size:12pt;font-family:helvetica;">Octave 5:</td>\n';
+  	modal_msg += '</tr>\n';	
+	modal_msg += '<tr>\n'
+    modal_msg += '<td style="text-align: center; font-size:2pt;font-family:helvetica;">&nbsp;</td>\n';
+  	modal_msg += '</tr>\n';	
+  	modal_msg += '<tr>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">C</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">C#/Db</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">D</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">D#/Eb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">E</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">F</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">F#/Gb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">G</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">G#/Ab</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">A</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">A#/Bb</td>\n';
+	modal_msg += '<td style="text-align: center; font-size:11pt;font-family:helvetica;">B</td>\n';
+	modal_msg += '</tr>\n';
+	modal_msg += '<tr>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r5c1" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r5c2" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r5c3" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r5c4" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r5c5" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r5c6" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r5c7" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r5c8" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r5c9" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r5c10" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r5c11" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '<td><input class="customtabnames" type="text" id="r5c12" onchange="customTabChangeHandler()"></td>\n';
+	modal_msg += '</tr>\n';	modal_msg += '</table>\n';
 	modal_msg += '</div>\n';
 	modal_msg += '<p style="text-align:center;margin-top:22px;"><input type="file" id="load_custom_tab_fs" accept=".txt,.TXT" hidden/><input id="save_custom_tab" class="btn btn-subdialog save_custom_tab" onclick="saveCustomTab()" type="button" value="Save Custom Tab Settings" title="Save a custom tab settings file"><input id="load_custom_tab" class="btn btn-subdialog load_custom_tab" onclick="loadCustomTabClickHandler()" type="button" value="Load Custom Tab Settings" title="Load a custom tab settings file"></p>\n';
 	modal_msg += '<p style="text-align:center;margin-top:22px;"><input id="default_anglo_fingerings" class="btn btn-clearbutton default_anglo_fingerings" onclick="defaultCustomTab()" type="button" value="Reset to Default (Scale Semitone Numbers)" title="Resets the custom tab setting to scale semitone numbers"></p>\n';
@@ -24821,7 +24944,7 @@ function EditCustomTab(){
 		        gCustomTab.name = "Custom";
 		    }
 
-		    for (var i=0;i<48;++i){
+		    for (var i=0;i<60;++i){
 
 		    	// No blank items
 		        if (gCustomTab.noteMap[i] == ""){
@@ -37027,7 +37150,7 @@ var gHarmonicaStacking = true;
 var gHarmonicaCustom;
 
 const gHarmonicaCustomDefault = {
-	version:2,
+	version:3,
 	type:"CustomHarmonica",
 	name:"Custom",
 	noteMap:[
@@ -37078,6 +37201,18 @@ const gHarmonicaCustomDefault = {
 	    "x", // G# / Ab
 	    "x", // A
 	    "x", // A# / Bb
+	    "x",  // B
+	    "x", // C
+	    "x", //C#,
+	    "x", // D
+	    "x", // D# / Eb
+	    "x", // E
+	    "x", // F
+	    "x", // F# / Gb
+	    "x", // G
+	    "x", // G# / Ab
+	    "x", // A
+	    "x", // A# / Bb
 	    "x"  // B
     ] 
 }
@@ -37093,7 +37228,7 @@ var gCustomTabOctave = "0";
 var gCustomTab;
 
 const gCustomTabDefault = {
-	version:1,
+	version:2,
 	type:"CustomTab",
 	name:"Default (Scale Semitone Numbers)",
 	noteMap:[
@@ -37144,7 +37279,19 @@ const gCustomTabDefault = {
 	    "44", // G# / Ab
 	    "45", // A
 	    "46", // A# / Bb
-	    "47"  // B
+	    "47",  // B
+	    "48", // C
+	    "49", //C#,
+	    "50", // D
+	    "51", // D# / Eb
+	    "52", // E
+	    "53", // F
+	    "54", // F# / Gb
+	    "55", // G
+	    "56", // G# / Ab
+	    "57", // A
+	    "58", // A# / Bb
+	    "59"  // B
     ] 
 }
 
@@ -37440,12 +37587,24 @@ function GetInitialConfigurationSettings(){
 
         gHarmonicaCustom = JSON.parse(theCustomHarmonica);
 
-    	if (gHarmonicaCustom.version == 1){
-			
-			// Upgrade older custom tuning maps
-			gHarmonicaCustom.version = 2;
+		if (gHarmonicaCustom.version == 1){
 
-			for (var i=0;i<10;++i){
+			// Upgrade any older custom tuning maps
+			gHarmonicaCustom.version = 3;
+			
+			for (var i=0;i<22;++i){
+				gHarmonicaCustom.noteMap.push("x");
+			}
+
+			localStorage.HarmonicaCustom = JSON.stringify(gHarmonicaCustom);
+		}
+		else
+		if (gHarmonicaCustom.version == 2){
+
+			// Upgrade any older custom tuning maps
+			gHarmonicaCustom.version = 3;
+			
+			for (var i=0;i<12;++i){
 				gHarmonicaCustom.noteMap.push("x");
 			}
 
@@ -37479,6 +37638,18 @@ function GetInitialConfigurationSettings(){
     if (theCustomTab){
 
         gCustomTab = JSON.parse(theCustomTab);
+
+        if (gCustomTab.version == 1){
+
+			// Upgrade any older custom tuning maps
+			gCustomTab.version = 2;
+			
+			for (var i=0;i<12;++i){
+				gCustomTab.noteMap.push("x");
+			}
+
+			localStorage.CustomTab = JSON.stringify(gCustomTab);
+		}
 
     }
     else{
