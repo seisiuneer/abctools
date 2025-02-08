@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2300_020825_0900";
+var gVersionNumber="2301_020825_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -25019,11 +25019,13 @@ function DoInjectCustomTab(){
   	];
 
   	const custom_tab_octaves = [
+	    { name: "  -3", id: "-3" },
 	    { name: "  -2", id: "-2" },
 	    { name: "  -1", id: "-1" },
 	    { name: "  0", id: "0" },
 	    { name: "  1", id: "1" },
-	    { name: "  2", id: "2" }
+	    { name: "  2", id: "2" },
+	    { name: "  3", id: "3" }
   	];
 
 	// Setup initial values

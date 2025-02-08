@@ -9743,6 +9743,14 @@ var CustomTabGenerator = function (theABC){
         else
         if (octaveShift == "-2"){
             noteIndex -= 24;
+        }   
+        else         
+        if (octaveShift == "3"){
+            noteIndex += 36;
+        }
+        else
+        if (octaveShift == "-3"){
+            noteIndex -= 36;
         }            
  
         if (noteIndex < 0){
