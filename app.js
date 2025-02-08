@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2301_020825_1000";
+var gVersionNumber="2302_020825_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -24381,9 +24381,13 @@ function DoInjectHarmonicaTab(){
   	];
 
   	const harmonica_octaves = [
+	    { name: "  -3", id: "-3" },
+	    { name: "  -2", id: "-2" },
 	    { name: "  -1", id: "-1" },
 	    { name: "  0", id: "0" },
-	    { name: "  1", id: "1" }
+	    { name: "  1", id: "1" },
+	    { name: "  2", id: "2" },
+	    { name: "  3", id: "3" },
   	];
 
   	const harmonica_tunings = [

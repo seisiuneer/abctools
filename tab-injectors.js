@@ -8891,7 +8891,23 @@ var HarmonicaTabGenerator = function (theABC){
         if (octaveShift == "-1"){
             noteIndex -= 12;
         }            
- 
+        else 
+        if (octaveShift == "2"){
+            noteIndex += 24;
+        }
+        else
+        if (octaveShift == "-2"){
+            noteIndex -= 24;
+        }            
+        else
+        if (octaveShift == "3"){
+            noteIndex += 36;
+        }
+        else
+        if (octaveShift == "-3"){
+            noteIndex -= 36;
+        }            
+
         if (noteIndex < 0){
             return "x";
         }
@@ -9231,6 +9247,22 @@ var HarmonicaTabGenerator = function (theABC){
             else
             if (gHarmonicaOctave == "1"){
                 harpInfo="%%text "+gHarmonicaKey+" Harp / +1 Octave";
+            }
+            else
+            if (gHarmonicaOctave == "-2"){
+                harpInfo="%%text "+gHarmonicaKey+" Harp / -2 Octave";
+            }
+            else
+            if (gHarmonicaOctave == "2"){
+                harpInfo="%%text "+gHarmonicaKey+" Harp / +2 Octave";
+            }
+            else
+            if (gHarmonicaOctave == "-3"){
+                harpInfo="%%text "+gHarmonicaKey+" Harp / -3 Octave";
+            }
+            else
+            if (gHarmonicaOctave == "3"){
+                harpInfo="%%text "+gHarmonicaKey+" Harp / +3 Octave";
             }
 
             switch (gHarmonicaTuning){
