@@ -9250,19 +9250,19 @@ var HarmonicaTabGenerator = function (theABC){
             }
             else
             if (gHarmonicaOctave == "-2"){
-                harpInfo="%%text "+gHarmonicaKey+" Harp / -2 Octave";
+                harpInfo="%%text "+gHarmonicaKey+" Harp / -2 Octaves";
             }
             else
             if (gHarmonicaOctave == "2"){
-                harpInfo="%%text "+gHarmonicaKey+" Harp / +2 Octave";
+                harpInfo="%%text "+gHarmonicaKey+" Harp / +2 Octaves";
             }
             else
             if (gHarmonicaOctave == "-3"){
-                harpInfo="%%text "+gHarmonicaKey+" Harp / -3 Octave";
+                harpInfo="%%text "+gHarmonicaKey+" Harp / -3 Octaves";
             }
             else
             if (gHarmonicaOctave == "3"){
-                harpInfo="%%text "+gHarmonicaKey+" Harp / +3 Octave";
+                harpInfo="%%text "+gHarmonicaKey+" Harp / +3 Octaves";
             }
 
             switch (gHarmonicaTuning){
