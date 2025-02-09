@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2305_020825_2000";
+var gVersionNumber="2306_020925_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -21556,32 +21556,43 @@ function processShareLink() {
 			// Playback requested?
 			if (doPlay){
 
-				// Keep track of share play presentation
-				sendGoogleAnalytics("show_player","from_share");
+				// Open in player
+				if (!gOpenLinksInTrainer){
 
-				// Get the current tune index and tune count
-				gPlayABCTuneCount = CountTunes();
+					// Keep track of share play presentation
+					sendGoogleAnalytics("show_player","from_share");
 
-				gPlayABCGotMaximizedPlay = true;
+					// Get the current tune index and tune count
+					gPlayABCTuneCount = CountTunes();
 
-				var theABCToPlay = gTheABC.value;
+					gPlayABCGotMaximizedPlay = true;
 
-				// If index specified, 
-				if (gotIndex){
-					theABCToPlay = getTuneByIndex(gPlayABCTuneIndex)
+					var theABCToPlay = gTheABC.value;
+
+					// If index specified, 
+					if (gotIndex){
+						theABCToPlay = getTuneByIndex(gPlayABCTuneIndex)
+					}
+					else{
+						// Added 27 Feb 2024 for share links with multiple tunes and GM override bug
+						theABCToPlay = getTuneByIndex(0);					
+					}
+
+					// Pre-process the ABC to inject any requested programs or volumes
+					var theProcessedABC = PreProcessPlayABC(theABCToPlay);
+
+					// Play back locally in-tool	
+					PlayABCDialog(theProcessedABC, null, null, false);
+
+				}else{
+
+					// Open in Tune Trainer
+					// Keep track of share play presentation
+					sendGoogleAnalytics("show_trainer","from_share");
+
+					TuneTrainer(false);
+
 				}
-				else{
-					// Added 27 Feb 2024 for share links with multiple tunes and GM override bug
-					theABCToPlay = getTuneByIndex(0);					
-				}
-
-				// Pre-process the ABC to inject any requested programs or volumes
-				var theProcessedABC = PreProcessPlayABC(theABCToPlay);
-
-				// Play back locally in-tool	
-				PlayABCDialog(theProcessedABC, null, null, false);
-
-
 			}
 			else{
 				if (openInEditor){
@@ -37120,6 +37131,8 @@ var gTheChordVolume = 64;
 var gOverridePlayMIDIParams = false;
 var gInjectTab_StripChords = true;
 
+var gOpenLinksInTrainer = false;
+
 // Box and concertina tab global state
 var gInjectTab_FontFamily = "Palatino";
 var gInjectTab_TabFontSize = 11;
@@ -37312,13 +37325,16 @@ const gCustomTabDefault = {
 // Get the initial configuration settings from local browser storage, if present
 function GetInitialConfigurationSettings(){
 
-	var val = localStorage.AlwaysInjectPrograms;
-	if (val){
-		gAlwaysInjectPrograms = (val == "true");
-	}
-	else{
-		gAlwaysInjectPrograms = true;
-	}
+	// MAE 9 Feb 2025 - This setting makes no sense any more, setting it to true.
+	// var val = localStorage.AlwaysInjectPrograms;
+	// if (val){
+	// 	gAlwaysInjectPrograms = (val == "true");
+	// }
+	// else{
+	// 	gAlwaysInjectPrograms = true;
+	// }
+	
+	gAlwaysInjectPrograms = true;
 
 	val = localStorage.TheMelodyProgram;
 	if (val){
@@ -37344,13 +37360,24 @@ function GetInitialConfigurationSettings(){
 		gTheChordProgram = 0;
 	}
 
-	val = localStorage.AlwaysInjectVolumes;
+	// MAE 9 Feb 2025 - This setting makes no sense any more, setting it to true.
+	// val = localStorage.AlwaysInjectVolumes;
+	// if (val){
+	// 	gAlwaysInjectVolumes = (val == "true");
+	// }
+	// else{
+	// 	gAlwaysInjectVolumes = true;
+	// }
+
+	gAlwaysInjectVolumes = true
+
+	val = localStorage.OpenLinksInTrainer;
 	if (val){
-		gAlwaysInjectVolumes = (val == "true");
-	}
+	 	gOpenLinksInTrainer = (val == "true");
+    }
 	else{
-		gAlwaysInjectVolumes = true;
-	}
+	 	gOpenLinksInTrainer = false;
+    }
 
 	val = localStorage.TheBassVolume;
 	if (val){
@@ -38397,11 +38424,18 @@ function SaveConfigurationSettings(){
 	//
 	if (gLocalStorageAvailable){
 
-		localStorage.AlwaysInjectPrograms = gAlwaysInjectPrograms;
+		// MAE 9 Feb 2025 - This setting makes no sense any more, setting it to true.
+		//localStorage.AlwaysInjectPrograms = gAlwaysInjectPrograms;
+
 		localStorage.TheMelodyProgram = gTheMelodyProgram;
 		localStorage.TheBassProgram = gTheBassProgram;
 		localStorage.TheChordProgram = gTheChordProgram;
-		localStorage.AlwaysInjectVolumes = gAlwaysInjectVolumes;
+
+		// MAE 9 Feb 2025 - This setting makes no sense any more, setting it to true.
+		//localStorage.AlwaysInjectVolumes = gAlwaysInjectVolumes;
+
+		localStorage.OpenLinksInTrainer = gOpenLinksInTrainer;
+		
 		localStorage.TheBassVolume = gTheBassVolume;
 		localStorage.TheChordVolume = gTheChordVolume;
 		localStorage.OverridePlayMIDIParams = gOverridePlayMIDIParams;
@@ -40730,8 +40764,6 @@ function ConfigurePlayerSettings(player_callback) {
 
 	var theOldSoundFont = gDefaultSoundFont;
 
-	var bAlwaysInjectPrograms = gAlwaysInjectPrograms;
-
 	var theMelodyProgram = gTheMelodyProgram;
 
 	var selectedMelodyProgram;
@@ -41010,10 +41042,6 @@ function ConfigureToolSettings() {
 
 	var theOldFeaturesShowTabButtons = gFeaturesShowTabButtons;
 
-	var bAlwaysInjectPrograms = gAlwaysInjectPrograms;
-
-	var bAlwaysInjectVolumes = gAlwaysInjectVolumes;
-
 	var theOldComhaltas = gUseComhaltasABC;
 
 	var theOldForceComhaltas = gForceComhaltasABC;
@@ -41035,8 +41063,7 @@ function ConfigureToolSettings() {
 		configure_capo: gCapo,
 		configure_show_tab_names: gShowTabNames,
 		configure_use_custom_gm_sounds: gUseCustomGMSounds,
-		configure_inject_programs: bAlwaysInjectPrograms,
-		configure_inject_volumes: bAlwaysInjectVolumes,
+		configure_open_links_in_trainer: gOpenLinksInTrainer,
 		configure_auto_swing_hornpipes: gAutoSwingHornpipes,	  
 		configure_auto_swing_factor: gAutoSwingFactor,	
 		configure_allow_midi_input: gAllowMIDIInput,
@@ -41091,11 +41118,10 @@ function ConfigureToolSettings() {
 		{html: '<p style="text-align:center;"><input id="abcplayer_settingsbutton" style="margin-left:0px" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ConfigurePlayerSettings(null);" type="button" value="Select Default Player Instruments and Volumes" title="Brings up the Player Instrument Settings dialog where you can select the default abcjs soundfont, MIDI instruments, and MIDI volumes to use when playing tunes"><input id="managedatabases" class="btn btn-managedatabases managedatabases" onclick="ManageDatabasesDialog()" type="button" value="Manage Notes, Reverb, and Tune Search Databases" title="Opens a dialog where you can manage the instrument notes, reverb settings, and tune search engine collection databases"></p>'},
 		{name: "    Allow instrument notes and reverb settings database to be used offline", id: "configure_allow_offline_instruments", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "    Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-		{name: "            Use Default Melody and Bass/Chord programs when playing tunes", id: "configure_inject_programs", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-		{name: "            Use Default Bass/Chord volumes when playing tunes", id: "configure_inject_volumes", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "            Automatically swing Hornpipes when playing (enabled if R:Hornpipe is found in the tune)", id: "configure_auto_swing_hornpipes", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "Auto-swing scale factor (range is -0.9 to 0.9, default for Hornpipes is 0.25):", id: "configure_auto_swing_factor", type:"number", cssClass:"configure_settings_form_text"},
 		{name: "    Rolls indicated in the ABC with ~ use the custom abcjs roll playback solution", id: "configure_RollUseRollForIrishRoll", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+		{name: "            Open exported PDF and Website play links in the Tune Trainer", id: "configure_open_links_in_trainer", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 	]);
 
 	if (browserSupportsMIDI()){
@@ -41260,10 +41286,8 @@ function ConfigureToolSettings() {
 				gSoundsCacheABCJS = {};				
 			}
 
-			gAlwaysInjectPrograms = args.result.configure_inject_programs;
+			gOpenLinksInTrainer = args.result.configure_open_links_in_trainer;
 
-			gAlwaysInjectVolumes = args.result.configure_inject_volumes;
-			
 			gAutoSwingHornpipes = args.result.configure_auto_swing_hornpipes;
 
 			// Sanity check the autoswing factor value
