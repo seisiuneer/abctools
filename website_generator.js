@@ -2154,7 +2154,27 @@ function generateWebsiteSimple(){
 
     // Restore saved settings
     LoadWebsiteSettings();
+    
+    if (!website_export_midi_program_list){
 
+        //console.log("Generating website export MIDI program list");
+
+        website_export_midi_program_list=[];
+        
+        for (var i=0;i<=MIDI_PATCH_COUNT;++i){
+            website_export_midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
+        }
+    }
+
+    const sound_font_options = [
+        { name: "  Fluid", id: "fluid" },
+        { name: "  Musyng Kite", id: "musyng" },
+        { name: "  FatBoy", id: "fatboy" },
+        { name: "  Canvas", id: "canvas" },
+        { name: "  MScore", id: "mscore" },
+        { name: "  Arachno", id: "arachno" },
+        { name: "  FluidHQ", id: "fluidhq"}
+    ];
     var form = [
       {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:18px">Export Basic Tune List Website&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#generate_website" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
       {html: '<p style="margin-top:10px;margin-bottom:18px;font-size:12pt;line-height:14pt;font-family:helvetica">Clicking "OK" will export a tune list hyperlink website with the settings you enter below:</p>'},  
@@ -2169,6 +2189,13 @@ function generateWebsiteSimple(){
       {name: "Tunebook help URL:", id: "website_helpurl", type:"text",cssClass:"configure_website_form_text_wide5_simple"},      
       {name: "          Disable access to editor ", id: "bDisableEdit", type:"checkbox", cssClass:"configure_website_form_text2_simple"},
       {name: "          Tunes open in the Player ", id: "bOpenInPlayer", type:"checkbox", cssClass:"configure_website_form_text2_simple"},
+      {name: "          Add instruments and volume overrides to each tune ", id: "bInjectInstruments", type:"checkbox", cssClass:"configure_website_form_text2"},
+      {name: "Soundfont:", id: "sound_font", type:"select", options:sound_font_options, cssClass:"configure_setuppdftunebook_midi_program_select"},
+      {name: "Melody instrument:", id: "melody_instrument", type:"select", options:website_export_midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
+      {name: "Bass instrument:", id: "bass_instrument", type:"select", options:website_export_midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
+      {name: "Bass volume (0-127):", id: "bass_volume", type:"number", cssClass:"configure_website_form_text"},
+      {name: "Chord instrument:", id: "chord_instrument", type:"select", options:website_export_midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
+      {name: "Chord volume (0-127):", id: "chord_volume", type:"number", cssClass:"configure_website_form_text"},
     ];
 
     const modal = DayPilot.Modal.form(form, gWebsiteConfig, { theme: "modal_flat", top: 50, width: 760, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
@@ -2219,6 +2246,91 @@ function generateWebsiteSimple(){
             gWebsiteDisableEdit = args.result.bDisableEdit
             gWebsiteConfig.bDisableEdit = gWebsiteDisableEdit;
 
+            // Add instruments?
+            gWebsiteInjectInstruments = args.result.bInjectInstruments;
+            gWebsiteConfig.bInjectInstruments = gWebsiteInjectInstruments;
+
+            // Soundfont
+            gWebsiteSoundFont = args.result.sound_font;
+            gWebsiteConfig.sound_font = gWebsiteSoundFont;
+
+            // Melody Instrument
+            gWebsiteMelodyInstrument = args.result.melody_instrument;
+            gWebsiteConfig.melody_instrument = gWebsiteMelodyInstrument;
+
+            // Bass Instrument
+            gWebsiteBassInstrument = args.result.bass_instrument;
+            gWebsiteConfig.bass_instrument = gWebsiteBassInstrument;
+
+            // Bass volume
+            gWebsiteBassVolume = args.result.bass_volume;
+            gWebsiteConfig.bass_volume = gWebsiteBassVolume;
+
+            // Chord Instrument
+            gWebsiteChordInstrument = args.result.chord_instrument;
+            gWebsiteConfig.chord_instrument = gWebsiteChordInstrument;
+
+            // Chord volume
+            gWebsiteChordVolume = args.result.chord_volume;
+            gWebsiteConfig.chord_volume = gWebsiteChordVolume;
+
+            if (gWebsiteInjectInstruments){
+                
+                // Special case for muting voices
+                if (gWebsiteMelodyInstrument == 0){
+
+                    gWebsiteMelodyInstrumentInject = "mute";
+
+                }
+                else{
+
+                    gWebsiteMelodyInstrumentInject = gWebsiteMelodyInstrument - 1;
+
+                    if ((gWebsiteMelodyInstrumentInject < 0) || (gWebsiteMelodyInstrumentInject > MIDI_PATCH_COUNT)){
+
+                        gWebsiteMelodyInstrumentInject = 0;
+
+                    }
+                }
+
+                // Special case for muting voices
+                if (gWebsiteBassInstrument == 0){
+
+                    gWebsiteBassInstrumentInject = "mute";
+
+                }
+                else{
+
+                    gWebsiteBassInstrumentInject = gWebsiteBassInstrument - 1;
+
+                    if ((gWebsiteBassInstrumentInject < 0) || (gWebsiteBassInstrumentInject > MIDI_PATCH_COUNT)){
+
+                        gWebsiteBassInstrumentInject = 0;
+
+                    }
+
+                }
+
+                // Special case for muting voices
+                if (gWebsiteChordInstrument == 0){
+
+                    gWebsiteChordInstrumentInject = "mute";
+
+                }
+                else{
+
+                    gWebsiteChordInstrumentInject = gWebsiteChordInstrument - 1;
+
+                    if ((gWebsiteChordInstrumentInject < 0) || (gWebsiteChordInstrumentInject > MIDI_PATCH_COUNT)){
+
+                        gWebsiteChordInstrumentInject = 0;
+
+                    }
+
+                }
+
+            }
+
             // Restore saved settings
             SaveWebsiteSettings();
 
@@ -2228,6 +2340,7 @@ function generateWebsiteSimple(){
 
     });
 }
+
 //
 // Generate website
 //
