@@ -444,6 +444,7 @@ function BatchJSONExportForWebGenerator(theABC){
         var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
 
         var titleURL = title.replaceAll(" ","_");
+        titleURL = titleURL.replaceAll("#","^");
 
         theURL+="&name="+titleURL;
 

@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2304_020825_1830";
+var gVersionNumber="2305_020825_2000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -489,7 +489,7 @@ function hideTheSpinner(){
 // Clean a filename
 //
 function cleanFileName(fname){
-	return fname.replace(/[^a-zA-Z'áÁóÓúÚíÍéÉäÄöÖüÜÀàÈèÌìÒòÙù0-9_\-. ]+/ig, '');
+	return fname.replace(/[^a-zA-Z'áÁóÓúÚíÍéÉäÄöÖüÜÀàÈèÌìÒòÙù0-9_\-.# ]+/ig, '');
 }
 
 //
@@ -17145,6 +17145,9 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
 
 	var theName = getDescriptiveFileName(theTuneCount,false);
 
+	// Replace hashes
+	theName = theName.replaceAll("#","^");
+
 	url += "&name=" + theName;
 
 	// Hide the QR code
@@ -21516,6 +21519,9 @@ function processShareLink() {
 
 			// Inject spaces back into the name
 			theName = theName.replaceAll("_"," ");
+
+			// Inject hashes back into the name
+			theName = theName.replaceAll("^","#");
 
 		}
 		else{
@@ -27297,6 +27303,7 @@ function BatchJSONExport(){
 		var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
 
 		var titleURL = title.replaceAll(" ","_");
+		titleURL = titleURL.replaceAll("#","^");
 
 		theURL+="&name="+titleURL+"&play=1";
 
@@ -27334,6 +27341,7 @@ function BatchCSVExport(){
 		var title = GetTuneAudioDownloadName(thisTune,"");
 
 		var titleURL = title.replaceAll(" ","_");
+		titleURL = titleURL.replaceAll("#","^");
 
 		var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
 		
