@@ -367,6 +367,7 @@
             
             <h3>PDF Tunebook Generation</h3>
             <a style="text-decoration:none;" href="#export_pdf_tunebook">Exporting a PDF Tunebook</a>
+            <a style="text-decoration:none;" href="#inject_pdf_tunebook_features">Inject PDF Tunebook Features</a>
             <a style="text-decoration:none;" href="#pdf_font_override_settings">PDF Font Override Settings</a>
             <a style="text-decoration:none;" href="#pdf_quality_setting">PDF Quality Setting</a>
             <a style="text-decoration:none;" href="#pdf_tunebook_spacing_overrides">PDF Tunebook Tune Size and Layout Spacing Overrides</a>
@@ -551,6 +552,9 @@
             <h3>abc2svg-based ABC Editors</h3>
             <a style="text-decoration:none;" href="#abc2svg_editors">abc2svg-based ABC Editors</a>
             
+            <h3>Differences Between this Tool and Other ABC Tools</h3>
+            <a style="text-decoration:none;" href="#tool_differences">Differences Between this Tool and Other ABC Tools</a>
+            
             <h3>Source Code, Privacy, Support, and Tip Jars</h3>
             <a style="text-decoration:none;" href="#github">Source Code Available on GitHub</a>
             <a style="text-decoration:none;" href="#run_from_source">Notes on Running the Tool from the GitHub Repo</a>
@@ -691,6 +695,7 @@
                     <button class="accordion" title="Click to expand/collapse this section">PDF Tunebook Generation</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#export_pdf_tunebook">Exporting a PDF Tunebook</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#inject_pdf_tunebook_features">Inject PDF Tunebook Features</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#pdf_font_override_settings">PDF Font Override Settings</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#pdf_quality_setting">PDF Quality Setting</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#pdf_tunebook_spacing_overrides">PDF Tunebook Tune Size and Layout Spacing Overrides</a></p>
@@ -947,6 +952,11 @@
                         <p class="toc"><a style="text-decoration:none;" href="#abc2svg_editors">abc2svg-based ABC Editors</a></p>
                     </div>
                     
+                    <button class="accordion" title="Click to expand/collapse this section">Differences Between this Tool and Other ABC Tools</button>
+                    <div class="tocpanel">
+                        <p class="toc"><a style="text-decoration:none;" href="#tool_differences">Differences Between this Tool and Other ABC Tools</a></p>
+                    </div>
+                    
                     <button class="accordion" title="Click to expand/collapse this section">Source Code, Privacy, Support, and Tip Jars</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#github">Source Code Available on GitHub</a></p>
@@ -973,6 +983,8 @@
                 <p>You can fully customize the look of your notation using the standard ABC spacing and font annotations.</p>
                 <p>Easily share your tunes with others via Share URLs and QR Codes.</p>
                 <p>After first run, the tool runs both online and offline (Airplane mode).</p>
+                <p>If you are coming from another ABC tool like EasyABC, please read the following section to decide if this tool will meet your needs:</p>
+                <p style="text-align: center;"><a href="#tool_differences"><strong>Differences Between this Tool and Other ABC Tools</strong></a></p>
                 <hr class="hidden-print" id="getting_started">
                 <h1 class="page_break_always">Getting Started<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>On desktop browsers, when the tool is run, you should be seeing a side-by-side view with the ABC editor on the left and the notation on the right:</p>
@@ -5233,194 +5245,218 @@
                 <p>Here are some abc2svg-based tools you might consider using instead of this one:</p>
                 <p style="text-align:center"><a href="https://abctosheet.my.to/" target="_blank">ABC to Sheet Music Converter</a></p>
                 <p style="text-align:center"><a href="https://zn-next.zupfnoter.de/" target="_blank">zn-next.zupfnoter.de</a></p>
-                <hr class="hidden-print" id="github">
-                <h1 class="page_break_always">Source Code Available on GitHub<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p style="text-align: center;">Full project source code may be found at:</p>
-                <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools" target="_blank">ABC Tools on GitHub</a></p>
-                <hr class="hidden-print" id="run_from_source">
-                <h1 class="page_break_always h1wide">Notes on Running the Tool from the GitHub Repo<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>After downloading and unzipping the source code from the GitHub repo, you can run the tool by double-clicking the <strong>abctools.html</strong> file.</p>
-                <p>If you require the ability to play the tunes while not connected to the internet, run the <strong>abctools-offline.html</strong> file instead.</p>
-                <p>I can't support having all the instruments available offline, but I can include the Javascript encoded data for one instrument, an Acoustic Grand Piano, and for the percussion instrument as part of the tool source code tree.</p>
-                <p>When you start <strong>abctools-offline.html</strong>, it immediately grabs the online/offline state.</p>
-                <p>If an offline state is detected at tool start time, when playing tunes, all instruments are replaced with an acoustic piano sound, and the percussion sounds (MIDI program 128) are also available (for use in the metronome, primarily).</p>
-                <p>If the online status changes in the middle of using the tool, the change won't be detected until <strong>abctools-offline.html</strong> is reloaded.</p>
-                <p>Since these local sound resources are huge (about 4 megabytes), even bigger than the entire rest of the tool source, I don't want to burden everyone with having to load them for a case that only would be possible when running the tool from the source code in an offline state, so they are only included in <strong>abctools-offline.html</strong> as well as the offline check code.</p>
-                <hr class="hidden-print" id="privacy">
-                <h1 class="page_break_always">Privacy<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>My ABC tools use local browser storage to save the tool's settings, user preferences, and Snapshots.</p>
-                <p>Google Analytics are used in the tool to provide anonymized telemetry on the frequency of the use of specific features.</p>
-                <p>No personal data is sent with this telemetry, only event category and event name, for example that the import MusicXML or export MIDI features were used.</p>
-                <p>I use this data to prioritize new features and to better understand how people are using the tool.</p>
-                <p>TinyURL does allow me to see some shortened URLs as they are created using my TinyURL account API key.</p>
-                <p>I will never redistribute or in any way use a shortened Share URL you create.</p>
-                <hr class="hidden-print" id="support">
-                <h1 class="page_break_always">Support<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p style="text-align: center;">Have an issue with a specific tune, want to report a bug, or suggest a new feature?</p>
-                <p style="text-align: center;">Click here for the project support page:</p>
-                <p style="text-align: center;"><a href="support.html" target="_blank">ABC Transcription Tools Support</a></p>
-                <hr class="hidden-print" id="tipjars">
-                <h1 class="page_break_always">Tip Jars<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p style="text-align: center;">If you find my ABC Transcription Tools useful,<br/>please consider tossing a few bucks into one of my virtual tip jars:</p>
-                <p style="text-align: center;" class="notranslate">PayPal</br><a href="https://paypal.me/MichaelEskin" target="_blank">https://paypal.me/MichaelEskin</a></p>
-                <p style="text-align: center;" class="notranslate">Venmo</br>@MichaelEskin</p>
-                <hr class="hidden-print">
+                <hr class="hidden-print" id="tool_differences">
+                <h1 class="page_break_always h1wide">Differences Between this Tool and Other ABC Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>For those coming from other ABC tools, this tool may or may not meet your needs.</p>
+                <p>Here are some differences between this tool and others:</p>
+                <hr>
+                <p><strong>The ABC file header and any ABC directives between tunes are ignored</strong></p>
+                <p>If you are using the ABC file header to setup common settings for all your tunes, you'll instead need to use the <strong><a href="#advanced_injectabcheader">Inject ABC Header Text</a></strong> feature to inject those settings into the tunes themselves.</p>
+                <p>This dialog can identify and suggest any available and tool compatible ABC file header directives to inject to simplify the process.</p>
+                <p>A very common use of the ABC file header is to select the common fonts used for the tunes.</p>
+                <p>In this tool, you'll setup your shared font settings using the <strong><a href="#configure_fonts">Configuring ABC Rendering Fonts</a></strong> dialog.</p>
+                <p>You can then, if required, manually override the font defaults for specific tunes by including ABC font directives in the header of the tunes themselves.</p>
+                <p>This can be done manually or using the <strong><a href="#advanced_inject_font_settings">Inject Font Settings</a></strong> dialog.</p>
+                <p>Additionally, when exporting a PDF tunebook with play links, you can specify in the <strong><a href="#inject_pdf_tunebook_features">Inject PDF Tunebook Features</a></strong> dialog that the fonts required for each tune be automatically injected into the tunes used for the play links.</p>
+                <p>If you are using the ABC file header for setting up MIDI playback settings to be used for all tunes, those are setup via the <strong>Select Default Player Instruments and Volumes</strong> option on the <strong><a href="#settings_dialog">ABC Transcription Tools Settings</a></strong> dialog and automatically injected into the tunes at playback time.</p>
+                <hr>
+                <p><strong>If you are using a lot of ABC page layout and spacing options, this tool may not meet your needs or produce the formatted output you expect.</strong>
+                    <p>If you are doing a lot of very specific page layout using the ABC file header, ABC spacing annotations between tunes, relying on the %%scale annotation, then this tool most likely will not meet your needs and you should stick with whatever you are currently using.</p>
+                    <p>While it is often possible to make some minimal changes to existing ABC files that have extensive formatting directives to make them produce good results with this tool, the additional work may not be worth the trouble.</p>
+                    <hr>
+                    <p><strong>If absolute minimimum PDF file size is a priority, this tool will not meet your needs.</strong>
+                        <p>Because of the requirement to rasterize the tunes as images in the exported PDF files, the exported PDF files will typically be between 100K and 300K bytes per page depending on the quality specified in the PDF export settings.</p>
+                        <p>Smaller vector-based PDFs can be exported using the browser's native print-to-PDF feature, but the resulting PDF files will not have any of the added features available in the tool's PDF exporter, including internally hyperlinked table-of-contents and index, pages and play links.</p>
+                        <hr>
+                        <p><strong>If you are using a lot of abc2svg-specific formatting or MIDI playback commmands, this tool will not meet your needs.</strong>
+                            <hr class="hidden-print" id="github">
+                            <h1 class="page_break_always">Source Code Available on GitHub<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                            <p style="text-align: center;">Full project source code may be found at:</p>
+                            <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools" target="_blank">ABC Tools on GitHub</a></p>
+                            <hr class="hidden-print" id="run_from_source">
+                            <h1 class="page_break_always h1wide">Notes on Running the Tool from the GitHub Repo<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                            <p>After downloading and unzipping the source code from the GitHub repo, you can run the tool by double-clicking the <strong>abctools.html</strong> file.</p>
+                            <p>If you require the ability to play the tunes while not connected to the internet, run the <strong>abctools-offline.html</strong> file instead.</p>
+                            <p>I can't support having all the instruments available offline, but I can include the Javascript encoded data for one instrument, an Acoustic Grand Piano, and for the percussion instrument as part of the tool source code tree.</p>
+                            <p>When you start <strong>abctools-offline.html</strong>, it immediately grabs the online/offline state.</p>
+                            <p>If an offline state is detected at tool start time, when playing tunes, all instruments are replaced with an acoustic piano sound, and the percussion sounds (MIDI program 128) are also available (for use in the metronome, primarily).</p>
+                            <p>If the online status changes in the middle of using the tool, the change won't be detected until <strong>abctools-offline.html</strong> is reloaded.</p>
+                            <p>Since these local sound resources are huge (about 4 megabytes), even bigger than the entire rest of the tool source, I don't want to burden everyone with having to load them for a case that only would be possible when running the tool from the source code in an offline state, so they are only included in <strong>abctools-offline.html</strong> as well as the offline check code.</p>
+                            <hr class="hidden-print" id="privacy">
+                            <h1 class="page_break_always">Privacy<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                            <p>My ABC tools use local browser storage to save the tool's settings, user preferences, and Snapshots.</p>
+                            <p>Google Analytics are used in the tool to provide anonymized telemetry on the frequency of the use of specific features.</p>
+                            <p>No personal data is sent with this telemetry, only event category and event name, for example that the import MusicXML or export MIDI features were used.</p>
+                            <p>I use this data to prioritize new features and to better understand how people are using the tool.</p>
+                            <p>TinyURL does allow me to see some shortened URLs as they are created using my TinyURL account API key.</p>
+                            <p>I will never redistribute or in any way use a shortened Share URL you create.</p>
+                            <hr class="hidden-print" id="support">
+                            <h1 class="page_break_always">Support<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                            <p style="text-align: center;">Have an issue with a specific tune, want to report a bug, or suggest a new feature?</p>
+                            <p style="text-align: center;">Click here for the project support page:</p>
+                            <p style="text-align: center;"><a href="support.html" target="_blank">ABC Transcription Tools Support</a></p>
+                            <hr class="hidden-print" id="tipjars">
+                            <h1 class="page_break_always">Tip Jars<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                            <p style="text-align: center;">If you find my ABC Transcription Tools useful,<br/>please consider tossing a few bucks into one of my virtual tip jars:</p>
+                            <p style="text-align: center;" class="notranslate">PayPal</br><a href="https://paypal.me/MichaelEskin" target="_blank">https://paypal.me/MichaelEskin</a></p>
+                            <p style="text-align: center;" class="notranslate">Venmo</br>@MichaelEskin</p>
+                            <hr class="hidden-print">
+                            
+                        </div>
+                        
+                    </div>
+                    
+                </div>
                 
-            </div>
+            </body>
             
-        </div>
-        
-    </div>
-    
-</body>
-
-<script>
-
-//
-// Expand the table of contents
-//
-function ExpandAll() {
-
-var i;
-
-var acc = document.getElementsByClassName("accordion");
-
-for (i = 0; i < acc.length; i++) {
-var thisAcc = acc[i];
-thisAcc.classList.add("active");
-}
-
-var thePanels = document.getElementsByClassName("tocpanel");
-
-for (i = 0; i < thePanels.length; i++) {
-var thisPanel = thePanels[i];
-thisPanel.style.display = "block";
-}
-}
-
-//
-// Collapse the table of contents
-//
-function CollapseAll() {
-
-var i;
-
-var acc = document.getElementsByClassName("accordion");
-
-for (i = 0; i < acc.length; i++) {
-var thisAcc = acc[i];
-thisAcc.classList.remove("active");
-}
-
-var thePanels = document.getElementsByClassName("tocpanel");
-
-for (i = 0; i < thePanels.length; i++) {
-var thisPanel = thePanels[i];
-thisPanel.style.display = "none";
-}
-}
-//
-// Are we on Android?
-//
-function isAndroid() {
-if (/Android/i.test(navigator.userAgent)) {
-return true;
-} else {
-return false;
-}
-}
-
-//
-// Are we on iOS?
-//
-function isIOS() {
-
-if (/iPad|iPhone|iPod/.test(navigator.platform)) {
-return true;
-} else {
-return navigator.maxTouchPoints &&
-navigator.maxTouchPoints > 2 &&
-/MacIntel/.test(navigator.platform);
-}
-}
-
-function DoStartup() {
-
-//
-// iOS Styling adaptation
-//
-
-var gIsIOS = isIOS();
-var gIsAndroid = isAndroid();
-
-if (gIsIOS) {
-// Fix the title font
-var elem = document.getElementById("pagetitle");
-elem.size = 5;
-elem.style.fontFamily = "Helvetica";
-}
-
-if (gIsIOS || gIsAndroid) {
-// Hide the sidebar navigation on mobile
-elem = document.getElementById("sidebar");
-elem.style.display = "none";
-elem = document.getElementById("maindiv");
-elem.style.marginLeft = "0px";
-
-}
-else{
-// Hide the accordion navigation on desktop
-elem = document.getElementById("mobile_table_of_contents");
-elem.style.display = "none";
-}
-
-var acc = document.getElementsByClassName("accordion");
-var i;
-
-for (i = 0; i < acc.length; i++) {
-acc[i].addEventListener("click", function() {
-this.classList.toggle("active");
-var panel = this.nextElementSibling;
-if (panel.style.display === "block") {
-panel.style.display = "none";
-} else {
-panel.style.display = "block";
-}
-});
-}
-
-// Start with all topics collapsed
-if (gIsIOS || gIsAndroid) {
-CollapseAll();
-}
-}
-
-DoStartup();
-
-// If offline, hide all the YouTube videos and images
-function removeOfflineContent() {
-
-if (!navigator.onLine) {
-
-const iframes = document.querySelectorAll('iframe');
-
-iframes.forEach(iframe => iframe.remove());
-
-// Remove all the images
-var divs = document.querySelectorAll('div.image_holder');
-
-divs.forEach(div => div.remove());
-
-divs = document.querySelectorAll('div.image_holder_p');
-
-divs.forEach(div => div.remove());
-
-}
-}
-
-// Run the function on page load
-document.addEventListener('DOMContentLoaded', removeOfflineContent);
-
-</script>
-
-</html>
+            <script>
+            
+            //
+            // Expand the table of contents
+            //
+            function ExpandAll() {
+            
+            var i;
+            
+            var acc = document.getElementsByClassName("accordion");
+            
+            for (i = 0; i < acc.length; i++) {
+            var thisAcc = acc[i];
+            thisAcc.classList.add("active");
+            }
+            
+            var thePanels = document.getElementsByClassName("tocpanel");
+            
+            for (i = 0; i < thePanels.length; i++) {
+            var thisPanel = thePanels[i];
+            thisPanel.style.display = "block";
+            }
+            }
+            
+            //
+            // Collapse the table of contents
+            //
+            function CollapseAll() {
+            
+            var i;
+            
+            var acc = document.getElementsByClassName("accordion");
+            
+            for (i = 0; i < acc.length; i++) {
+            var thisAcc = acc[i];
+            thisAcc.classList.remove("active");
+            }
+            
+            var thePanels = document.getElementsByClassName("tocpanel");
+            
+            for (i = 0; i < thePanels.length; i++) {
+            var thisPanel = thePanels[i];
+            thisPanel.style.display = "none";
+            }
+            }
+            //
+            // Are we on Android?
+            //
+            function isAndroid() {
+            if (/Android/i.test(navigator.userAgent)) {
+            return true;
+            } else {
+            return false;
+            }
+            }
+            
+            //
+            // Are we on iOS?
+            //
+            function isIOS() {
+            
+            if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+            return true;
+            } else {
+            return navigator.maxTouchPoints &&
+            navigator.maxTouchPoints > 2 &&
+            /MacIntel/.test(navigator.platform);
+            }
+            }
+            
+            function DoStartup() {
+            
+            //
+            // iOS Styling adaptation
+            //
+            
+            var gIsIOS = isIOS();
+            var gIsAndroid = isAndroid();
+            
+            if (gIsIOS) {
+            // Fix the title font
+            var elem = document.getElementById("pagetitle");
+            elem.size = 5;
+            elem.style.fontFamily = "Helvetica";
+            }
+            
+            if (gIsIOS || gIsAndroid) {
+            // Hide the sidebar navigation on mobile
+            elem = document.getElementById("sidebar");
+            elem.style.display = "none";
+            elem = document.getElementById("maindiv");
+            elem.style.marginLeft = "0px";
+            
+            }
+            else{
+            // Hide the accordion navigation on desktop
+            elem = document.getElementById("mobile_table_of_contents");
+            elem.style.display = "none";
+            }
+            
+            var acc = document.getElementsByClassName("accordion");
+            var i;
+            
+            for (i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.display === "block") {
+            panel.style.display = "none";
+            } else {
+            panel.style.display = "block";
+            }
+            });
+            }
+            
+            // Start with all topics collapsed
+            if (gIsIOS || gIsAndroid) {
+            CollapseAll();
+            }
+            }
+            
+            DoStartup();
+            
+            // If offline, hide all the YouTube videos and images
+            function removeOfflineContent() {
+            
+            if (!navigator.onLine) {
+            
+            const iframes = document.querySelectorAll('iframe');
+            
+            iframes.forEach(iframe => iframe.remove());
+            
+            // Remove all the images
+            var divs = document.querySelectorAll('div.image_holder');
+            
+            divs.forEach(div => div.remove());
+            
+            divs = document.querySelectorAll('div.image_holder_p');
+            
+            divs.forEach(div => div.remove());
+            
+            }
+            }
+            
+            // Run the function on page load
+            document.addEventListener('DOMContentLoaded', removeOfflineContent);
+            
+            </script>
+            
+        </html>
