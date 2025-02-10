@@ -5268,7 +5268,15 @@
                 <p>Because of the requirement to rasterize the tunes as images in the exported PDF files, the exported PDF files will typically be between 100K and 300K bytes per page depending on the quality specified in the PDF export settings.</p>
                 <p>Smaller vector-based PDFs can be exported using the browser's native print-to-PDF feature, but the resulting PDF files will not have any of the added features available in the tool's PDF exporter, including internally hyperlinked table-of-contents and index, pages and play links.</p>
                 <hr>
+                <p><strong>Include files are not supported by this tool or any other web-based ABC tool.</strong></p> 
+                <p>If you have include directives in your ABC, for example:</p>
+                <p class="code">%%abc-include ./Header.abc</p>
+                <p>you will need to copy and paste the directives in the included file directly into the ABC for the tunes.</p>
+                <p>It may be best to use the <strong><a href="#advanced_injectabcheader">Inject ABC Header Text</a></strong> feature to inject the values in the included file directly into the tunes themselves.</p>
+                <hr>
                 <p><strong>If you are using a lot of abc2svg-specific formatting or MIDI playback commands, this tool will not meet your needs.</strong></p>
+                <p>abc2svg has many custom ABC directives that are outside the ABC 2.1 spec.</p>
+                <p>They will not work in this tool.</p>
                 <hr class="hidden-print" id="github">
                 <h1 class="page_break_always">Source Code Available on GitHub<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p style="text-align: center;">Full project source code may be found at:</p>
