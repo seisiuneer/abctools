@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2308_021025_0900";
+var gVersionNumber="2309_021025_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27311,6 +27311,11 @@ function BatchJSONExport(){
 
 		//debugger;
 
+        // If section header, strip the *
+        if (title.startsWith('*')) {
+            title = title.substring(1);
+        }
+
 		var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
 
 		var titleURL = title.replaceAll(" ","_");
@@ -27350,6 +27355,12 @@ function BatchCSVExport(){
 		var thisTune = getTuneByIndex(i);
 
 		var title = GetTuneAudioDownloadName(thisTune,"");
+
+		// If section header, strip the *
+        if (title.startsWith('*')) {
+            title = title.substring(1);
+        }
+
 
 		var titleURL = title.replaceAll(" ","_");
 		titleURL = titleURL.replaceAll("#","^");

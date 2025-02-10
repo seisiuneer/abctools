@@ -441,6 +441,11 @@ function BatchJSONExportForWebGenerator(theABC){
 
         var title = GetWebsiteTuneName(thisTune);
 
+        // If section header, strip the *
+        if (title.startsWith('*')) {
+            title = title.substring(1);
+        }
+
         var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
 
         var titleURL = title.replaceAll(" ","_");
