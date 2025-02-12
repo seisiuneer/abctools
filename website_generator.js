@@ -1997,7 +1997,7 @@ function generateWebsiteFull(){
       {name: "Chord volume (0-127):", id: "chord_volume", type:"number", cssClass:"configure_website_form_text"},
     ];
 
-    const modal = DayPilot.Modal.form(form, gWebsiteConfig, { theme: "modal_flat", top: 10, width: 760, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+    const modal = DayPilot.Modal.form(form, gWebsiteConfig, { theme: "modal_flat", top: 10, width: 760, scrollWithPage: (AllowDialogsToScroll()), okText: "Export", autoFocus: false } ).then(function(args){
     
         if (!args.canceled){
 
@@ -2204,7 +2204,7 @@ function generateWebsiteSimple(){
       {name: "Chord volume (0-127):", id: "chord_volume", type:"number", cssClass:"configure_website_form_text"},
     ];
 
-    const modal = DayPilot.Modal.form(form, gWebsiteConfig, { theme: "modal_flat", top: 50, width: 760, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+    const modal = DayPilot.Modal.form(form, gWebsiteConfig, { theme: "modal_flat", top: 50, width: 760, scrollWithPage: (AllowDialogsToScroll()), okText: "Export", autoFocus: false } ).then(function(args){
     
         if (!args.canceled){
 
@@ -2365,7 +2365,7 @@ function generateWebsite(){
     
     modal_msg  += '<p style="font-size:4px;">&nbsp;</p>';
 
-    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 650,  scrollWithPage: (AllowDialogsToScroll()) });
+    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 650,  okText: "Cancel", scrollWithPage: (AllowDialogsToScroll()) });
 
 }
 

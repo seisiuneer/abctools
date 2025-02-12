@@ -676,7 +676,7 @@ padding:12px;
 margin-right:24px;
 }
 
-#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#injectlargeprint,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#injectbagpipedrones,#websitefull,#injectheaderstringfh,#injectcsdbox{
+#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#injectlargeprint,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#injectbagpipedrones,#websitefull,#injectheaderstringfh,#injectcsdbox,#pdfusebrowserprint{
 height:42px;
 padding:12px;
 }
@@ -2112,6 +2112,14 @@ left:-5000px;
       	flex-flow: unset;
 
     } 
+    
+    .modal_flat_background{
+    	display:none !important;
+    }
+
+    .modal_flat_main{
+    	display:none !important;
+    }
 }
 
 /* For modal dialog prompt replacement */

@@ -31,7 +31,7 @@
  **/
 
 // Version number for the advanced settings dialog hidden field
-var gVersionNumber="2309_021025_1500";
+var gVersionNumber="2310_021225_1130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -13417,7 +13417,7 @@ function PDFTunebookBuilder(){
 
 	}, 150);
 
-	const modal = DayPilot.Modal.form(form, gPDFTunebookConfig, { theme: "modal_flat", top: 10, width: 690, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, gPDFTunebookConfig, { theme: "modal_flat", top: 10, width: 690, scrollWithPage: (AllowDialogsToScroll()), okText: "Inject", autoFocus: false } ).then(function(args){
 	
 		if (!args.canceled){
 
@@ -21293,7 +21293,11 @@ function processShareLink() {
 	// If edit disabled, hide the zoom arrows
 	gDisableEditFromPlayLink = false;
 
-	const urlParams = new URLSearchParams(window.location.search);
+	// MAE 12 Feb 2025 - For browser print-to-PDF injected share links
+	var theSearchURL = window.location.search;
+	theSearchURL = theSearchURL.replaceAll("&amp;","&");
+
+	const urlParams = new URLSearchParams(theSearchURL);
 
 	// Process URL params
 
@@ -39842,21 +39846,40 @@ function PDFExportDialog(){
 
 	if (bShowTopButtons){
 
-		form = [
-		  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Export PDF Tunebook&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#export_pdf_tunebook" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'}, 
-		  {html: '<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Inject PDF Tunebook Features" title="Inject commands at the top of your PDF tunebook for adding a Title Page, Table of Contents, Index, Page Headers, Page Footers, Playback Links, and Custom QR Code"><input id="pdfinjectlargeprint" class="advancedcontrols btn btn-injectcontrols-headers-pdf" onclick="NotationSpacingExplorer()" type="button" value="Notation Spacing Explorer" title="Find the right spacing and scale values for your notation"></p>'},
-		  {name: "Paper Size:", id: "configure_papersize", type:"select", options:papersize_list, cssClass:"configure_pdf_papersize_select"},
-		  {name: "Orientation:", id: "configure_orientation", type:"select", options:orientation_list, cssClass:"configure_pdf_orientation_select"},
-		  {name: "Tune Layout:", id: "configure_tunelayout", type:"select", options:tunelayout_list, cssClass:"configure_pdf_tunelayout_select"},
-		  {name: "Notes Incipits Columns:", id: "configure_incipitscolumns", type:"select", options:incipits_columns_list, cssClass:"configure_pdf_incipitscolumns_select"},
-		  {name: "Page Number Location:", id: "configure_pagenumber", type:"select", options:pagenumber_list, cssClass:"configure_pdf_pagenumber_select"},
-		  {name: "            Page Number on First Page", id: "configure_pagenumberonfirstpage", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
-		  {name: "            Inject tune title text for PDF searchability", id: "configure_hidden_titles", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
-		  {html: '<p style="margin-top:36px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</strong></p>'},  
-		  {name: "Font:", id: "configure_fontname", type:"select", options:fontname_list, cssClass:"configure_pdf_fontname_select"},
-		  {name: "Font Style:", id: "configure_fontstyle", type:"select", options:fontstyle_list, cssClass:"configure_pdf_fontstyle_select"},
-		  {html: '<p style="font-size:3pt;">&nbsp;</p>'}	
-		];
+		if (isPureDesktopBrowser()){
+			form = [
+			  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Export PDF Tunebook&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#export_pdf_tunebook" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'}, 
+			  {html: '<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Inject PDF Tunebook Features" title="Inject commands at the top of your PDF tunebook for adding a Title Page, Table of Contents, Index, Page Headers, Page Footers, Playback Links, and Custom QR Code"><input id="pdfusebrowserprint" class="advancedcontrols btn btn-injectcontrols-headers-pdf" onclick="Do_Browser_PDF_Export();return;" type="button" value="Browser Print-to-PDF with Play Links" title="Quickly export a PDF tunebook using the browser\'s native Print-to-PDF feature with one tune per page and play links when you click the title.&nbsp;&nbsp;Does not include a Title Page, Table of Contents, Index, or QR Code."></p>'},
+			  {name: "Paper Size:", id: "configure_papersize", type:"select", options:papersize_list, cssClass:"configure_pdf_papersize_select"},
+			  {name: "Orientation:", id: "configure_orientation", type:"select", options:orientation_list, cssClass:"configure_pdf_orientation_select"},
+			  {name: "Tune Layout:", id: "configure_tunelayout", type:"select", options:tunelayout_list, cssClass:"configure_pdf_tunelayout_select"},
+			  {name: "Notes Incipits Columns:", id: "configure_incipitscolumns", type:"select", options:incipits_columns_list, cssClass:"configure_pdf_incipitscolumns_select"},
+			  {name: "Page Number Location:", id: "configure_pagenumber", type:"select", options:pagenumber_list, cssClass:"configure_pdf_pagenumber_select"},
+			  {name: "            Page Number on First Page", id: "configure_pagenumberonfirstpage", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
+			  {name: "            Inject tune title text for PDF searchability", id: "configure_hidden_titles", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
+			  {html: '<p style="margin-top:36px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</strong></p>'},  
+			  {name: "Font:", id: "configure_fontname", type:"select", options:fontname_list, cssClass:"configure_pdf_fontname_select"},
+			  {name: "Font Style:", id: "configure_fontstyle", type:"select", options:fontstyle_list, cssClass:"configure_pdf_fontstyle_select"},
+			  {html: '<p style="font-size:3pt;">&nbsp;</p>'}	
+			];
+		}
+		else{
+			form = [
+			  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Export PDF Tunebook&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#export_pdf_tunebook" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'}, 
+			  {html: '<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" style="margin-right:0px" onclick="PDFTunebookBuilder();" type="button" value="Inject PDF Tunebook Features" title="Inject commands at the top of your PDF tunebook for adding a Title Page, Table of Contents, Index, Page Headers, Page Footers, Playback Links, and Custom QR Code"></p>'},
+			  {name: "Paper Size:", id: "configure_papersize", type:"select", options:papersize_list, cssClass:"configure_pdf_papersize_select"},
+			  {name: "Orientation:", id: "configure_orientation", type:"select", options:orientation_list, cssClass:"configure_pdf_orientation_select"},
+			  {name: "Tune Layout:", id: "configure_tunelayout", type:"select", options:tunelayout_list, cssClass:"configure_pdf_tunelayout_select"},
+			  {name: "Notes Incipits Columns:", id: "configure_incipitscolumns", type:"select", options:incipits_columns_list, cssClass:"configure_pdf_incipitscolumns_select"},
+			  {name: "Page Number Location:", id: "configure_pagenumber", type:"select", options:pagenumber_list, cssClass:"configure_pdf_pagenumber_select"},
+			  {name: "            Page Number on First Page", id: "configure_pagenumberonfirstpage", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
+			  {name: "            Inject tune title text for PDF searchability", id: "configure_hidden_titles", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
+			  {html: '<p style="margin-top:36px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</strong></p>'},  
+			  {name: "Font:", id: "configure_fontname", type:"select", options:fontname_list, cssClass:"configure_pdf_fontname_select"},
+			  {name: "Font Style:", id: "configure_fontstyle", type:"select", options:fontstyle_list, cssClass:"configure_pdf_fontstyle_select"},
+			  {html: '<p style="font-size:3pt;">&nbsp;</p>'}	
+			];
+		}
 	}
 	else{
 		form = [
@@ -39882,7 +39905,7 @@ function PDFExportDialog(){
 
 	}, 150);
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 80, width: 760, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 80, width: 760, scrollWithPage: (AllowDialogsToScroll()), okText: "Export", autoFocus: false } ).then(function(args){
 	
 		if (!args.canceled){
 
@@ -40044,6 +40067,149 @@ function PDFExportDialog(){
 		}
 
 	});
+}
+
+
+//
+// Browser-based PDF export with play links
+//
+function Do_Browser_PDF_Export(){
+
+	// Find the Cancel button
+
+	var theCancelButtons = document.getElementsByClassName("modal_flat_cancel");
+
+	// Find the button that says "OK" to use to close the dialog when changing UI settings
+	var theCancelButton = null;
+	
+	for (var i=0;i<theCancelButtons.length;++i){
+
+		theCancelButton = theCancelButtons[i];
+
+		if (theCancelButton.innerText == "Cancel"){
+
+			break;
+
+		}
+	}
+
+	if (theCancelButton){
+		theCancelButton.click();
+	}
+	else{
+		return;
+	}
+
+	// Keep track of use of the native PDF exporter
+	sendGoogleAnalytics("export","PrintToPDF");
+	
+	setTimeout(function(){
+
+		// Get all the tune Hyperlinks
+
+		// Make sure there are tunes to convert
+		var nTunes = CountTunes();
+
+		if (nTunes == 0){
+			return;
+		}
+
+		var theJSON = [];
+
+		for (var i=0;i<nTunes;++i){
+
+			var thisTune = getTuneByIndex(i);
+
+			var title = GetTuneAudioDownloadName(thisTune,"");
+
+			//debugger;
+
+	        // If section header, strip the *
+	        if (title.startsWith('*')) {
+	            title = title.substring(1);
+	        }
+
+			var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
+
+			var titleURL = title.replaceAll(" ","_");
+			titleURL = titleURL.replaceAll("#","^");
+
+			theURL = theURL.replaceAll("&","&amp;");
+			theURL+="&amp;name="+titleURL+"&amp;play=1";
+
+			// For testing
+			//theURL = theURL.replace("https://michaeleskin.com/abctools/abctools.html","https://michaeleskin.com/abctools2/abctools.html");
+
+			//console.log("theURL: "+theURL);
+			
+			theJSON.push({Name:title,URL:theURL});
+
+		}
+
+		for (var i=0;i<nTunes;++i){
+
+			var div = document.getElementById('notation'+i);
+
+			// Find all SVG elements within the div
+			var svgs = div.querySelectorAll('svg');
+
+			var theSVG = svgs[0];
+		    
+		    if (theSVG) {
+
+		        // Create the <a> element
+		        const link = document.createElement('a');
+
+		        link.href = theJSON[i].URL;
+
+		        link.style.textDecoration = "none";
+		        
+		        // Insert the <a> before the textElement and move the textElement inside the <a>
+		        theSVG.parentNode.insertBefore(link, theSVG);
+
+		        link.appendChild(theSVG);
+		    }
+
+		}
+
+		setTimeout(function(){
+
+			window.print();
+
+			// Clean up the injected links fromthe SVG
+			setTimeout(function(){
+
+				//debugger;
+
+				for (var i=0;i<nTunes;++i){
+
+					var div = document.getElementById('notation'+i);
+
+				    // Find all <a> elements that contain a svg element inside
+				    var links = div.querySelectorAll('a > svg');
+
+				    //debugger;
+
+				    links.forEach(theSVG => {
+
+				    	//debugger;
+
+				        var link = theSVG.parentNode;
+				        
+				        // Move the svg element outside the <a> tag (replace <a> with its content)
+				        link.parentNode.insertBefore(theSVG, link);
+				        
+				        // Remove the <a> tag
+				        link.remove();
+
+				    });
+				}
+
+			},100);
+			    
+		},100);
+
+	},100);
 }
 
 //

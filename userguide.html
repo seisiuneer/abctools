@@ -363,11 +363,12 @@
             <a style="text-decoration:none;" href="#sung_solfege">Select the Solfège Instrument to Sing Note Names</a>
             <a style="text-decoration:none;" href="#voice_hiding">Voice Combining and Hiding</a>
             <a style="text-decoration:none;" href="#highlighting_control">Controlling Note Highlighting in the Player</a>
-            <a style="text-decoration:none;" href="#flattening_parts">Flattening Parts for Playback (Experimental)</a>
+            <a style="text-decoration:none;" href="#flattening_parts">Flattening Parts for Playback</a>
             
             <h3>PDF Tunebook Generation</h3>
             <a style="text-decoration:none;" href="#export_pdf_tunebook">Exporting a PDF Tunebook</a>
             <a style="text-decoration:none;" href="#inject_pdf_tunebook_features">Inject PDF Tunebook Features</a>
+            <a style="text-decoration:none;" href="#browser_print_to_pdf">Browser Print-to-PDF with Play Links</a>
             <a style="text-decoration:none;" href="#pdf_font_override_settings">PDF Font Override Settings</a>
             <a style="text-decoration:none;" href="#pdf_quality_setting">PDF Quality Setting</a>
             <a style="text-decoration:none;" href="#pdf_tunebook_spacing_overrides">PDF Tunebook Tune Size and Layout Spacing Overrides</a>
@@ -688,7 +689,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#sung_solfege">Select the Solfège Instrument to Sing Note Names</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#voice_hiding">Voice Combining and Hiding</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#highlighting_control">Controlling Note Highlighting in the Player</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#flattening_parts">Flattening Parts for Playback (Experimental)</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#flattening_parts">Flattening Parts for Playback</a></p>
                         
                     </div>
                     
@@ -696,6 +697,7 @@
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#export_pdf_tunebook">Exporting a PDF Tunebook</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#inject_pdf_tunebook_features">Inject PDF Tunebook Features</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#browser_print_to_pdf">Browser Print-to-PDF with Play Links</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#pdf_font_override_settings">PDF Font Override Settings</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#pdf_quality_setting">PDF Quality Setting</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#pdf_tunebook_spacing_overrides">PDF Tunebook Tune Size and Layout Spacing Overrides</a></p>
@@ -2606,7 +2608,7 @@
                 <p>If you want to disable all highlighting of notes during playback, you can add the following comment-based annotation anywhere in the tune ABC:</p>
                 <p class="code">%disable_play_highlight</p>
                 <hr class="hidden-print" id="flattening_parts">
-                <h1 class="page_break_always">Flattening Parts for Playback (Experimental)<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <h1 class="page_break_always">Flattening Parts for Playback<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/LwlyTsl6q7c" title="%play_flatten_parts Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/zSejc2dg7pM" title="%play_flatten_parts Quick Editor Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>abcjs is not currently able to natively handle sequencing of P: tag parts.</p>
@@ -2637,14 +2639,14 @@
                 <p>It can format PDF tunebooks with one or multiple tunes per page, something the native browser's Print command cannot accomplish.</p>
                 <p>When you click <strong>Export PDF</strong>, the following dialog will appear where you select your PDF formatting preferences:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/export_pdf_tunebook_8.jpg"/>
+                    <img class="image" loading="lazy" src="img/export_pdf_tunebook_9.jpg"/>
                 </div>
-                <p>When exporting a PDF from the button on the bottom-left of the full-screen view, the <strong>Inject PDF Tunebook Features</strong> and <strong>Notation Spacing Explorer</strong> buttons are not shown on the dialog.</p>
-                <p>Since they possibly modify the ABC itself, they are only available when exporting a PDF from the ABC Editor.</p>
+                <p>When exporting a PDF from the button on the bottom-left of the full-screen view, the <strong>Inject PDF Tunebook Features</strong> and <strong>Browser Print-to-PDF with Play Links</strong> buttons are not shown on the dialog.</p>
                 <hr>
-                <p id="inject_pdf_tunebook_features"><strong>Inject PDF Tunebook Features</strong> - Brings up a dialog that you can use to inject commands at the top of the ABC that will add an optional Title Page, Table of Contents, Index, Page Header, Page Footer, playback links, required fonts for ABC in playback links, and/or QR code to an exported PDF tunebook:</p>
+                <p id="inject_pdf_tunebook_features"><strong>Inject PDF Tunebook Features</strong></p>
+                <p>Brings up a dialog that you can use to inject commands at the top of the ABC that will add an optional Title Page, Table of Contents, Index, Page Header, Page Footer, playback links, required fonts for ABC in playback links, and/or QR code to an exported PDF tunebook:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/inject_pdf_tunebook_features_1.jpg"/>
+                    <img class="image" loading="lazy" src="img/inject_pdf_tunebook_features_2.jpg"/>
                 </div>
                 <p>Leave any text fields blank for features you don't want in your PDF tunebook.</p>
                 <p>The PDF features are added using the tool's ABC comment-based annotations to the top of the ABC.</p>
@@ -2667,8 +2669,14 @@
                 <p>Additionally, if the complete tunebook playback Share URL is larger than the maximum allowed by Adobe Acrobat (2076 characters), after the PDF export is complete you will be presented with a warning that the links may not work in Adobe Acrobat but will work with browser-native and many other PDF readers.</p>
                 <p>This will probably happen quite frequently for tunebooks with 5 or more tunes.</p>
                 <hr>
-                <p><strong>Notation Spacing Explorer:</strong> Brings up a dialog where you can experiment with spacing values for the notation and then optionally inject the values into one or all of the tunes.</p>
-                <p>For complete details, see <a href="#advanced_notationspacingexplorer">Notation Spacing Explorer</a>.</p>
+                <p id="browser_print_to_pdf"><strong>Browser Print-to-PDF with Play Links</strong> (Desktop browsers only)</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/sYLSlUd3SmU" title="Browser Print-to-PDF with Play Links" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>This is the fastest way to create the smallest possible vector-based PDF file that includes the ability to play the tunes by clicking the title.</p>
+                <p>This feature first injects play links for each of the tunes into the notation and then opens the browser's native print dialog.</p>
+                <p>On the browser's native print dialog, find and choose the Print-to-PDF option to quickly export a PDF with play links included on the titles of each tune.</p>
+                <p>You can choose page scaling, margins, page orientation, and other page layout options in your browser's native Print-to-PDF dialog.</p>
+                <p>This option unfortunately does not have the ability to add Title pages, Table of Contents, Index, or QR Codes in the PDF.</p>
+                <p>None of the other options listed below for the tool's custom PDF export feature apply if you select the browser-native PDF export option.</p>
                 <hr>
                 <p><strong>Paper Size:</strong></p>
                 <p>Choose between Letter or A4 paper size:</p>
@@ -3406,13 +3414,13 @@
                 <p>There are two options for exporting websites:</p>
                 <p style="text-align: center;"><strong>Export Basic Tune List Website</strong></p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/generate_website_simple_4.jpg"/>
+                    <img class="image" loading="lazy" src="img/generate_website_simple_5.jpg"/>
                 </div>
                 <p>Creates a simple tune website with a centered list of tune names. Clicking on the tune names opens the tune in a new tab.</p>
                 <p>Playback instruments may be optionally specified.</p>
                 <p style="text-align: center;"><strong>Export Full-Featured Tunebook Website</strong></p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/generate_website_17.jpg"/>
+                    <img class="image" loading="lazy" src="img/generate_website_18.jpg"/>
                 </div>
                 <p>Creates a responsive website with a dropdown list of tune names and optional tablature styles. Playback instruments may be optionally specified. The website remembers user's last selected tune and tablature setting and restores them the next time the user visits the website.</p>
                 <p>For both options, you may customize the title, subtitle, footers, background color/image, text color, and hyperlink color, of the player frame.</p>
@@ -4858,6 +4866,7 @@
                 <p></p>
                 <p>You may quickly print your tunes or generate a PDF using your browser's built-in print and export PDF features.</p>
                 <p>Tunes printed or exported from the browser are limited to one tune per page.</p>
+                <p>If you use the <a href="#browser_print_to_pdf">Browser Print-to-PDF with Play Links</a> option on the <a href="#export_pdf_tunebook">Exporting PDF Tunebook</a> dialog, the native browser PDF file will include play links on the titles of each tune.</p>
                 <p>You may choose portrait or landscape orientation from your browser's print settings.</p>
                 <p>Additional advanced settings such as printing multiple-pages per page and setting custom margins may be available in your browser's print settings dialog.</p>
                 <p>Experiment with both the browser's print settings page orientation and "multiple page on one page" options to see what is possible.</p>
@@ -5268,7 +5277,7 @@
                 <hr>
                 <p><strong>If absolute minimum PDF file size is a priority, this tool will not meet your needs.</strong></p>
                 <p>Because of the requirement to rasterize the tunes as images in the exported PDF files, the exported PDF files will typically be between 100K and 300K bytes per page depending on the quality specified in the PDF export settings.</p>
-                <p>Smaller vector-based PDFs can be exported using the browser's native print-to-PDF feature, but the resulting PDF files will not have any of the added features available in the tool's PDF exporter, including internally hyperlinked table-of-contents and index, pages and play links.</p>
+                <p>Smaller vector-based PDFs can be exported using the browser's native print-to-PDF feature, but the resulting PDF files will not have any of the added features available in the tool's PDF exporter, including title page, internally hyperlinked table-of-contents and index pages, or QR codes.</p>
                 <hr>
                 <p><strong>Include files are not supported by this tool or any other web-based ABC tool.</strong></p> 
                 <p>If you have include directives in your ABC, for example:</p>
