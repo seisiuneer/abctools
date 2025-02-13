@@ -40130,7 +40130,7 @@ function Do_Browser_PDF_Export(){
 	        }
 
 	        // Inject play link request for future tune PDF export
-		    thisTune = InjectStringBelowTuneHeader(thisTune, "%add_all_playback_links");
+		    thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%add_all_playback_links");
 		    
 		    // Seeing extra linefeeds after the inject
 		    thisTune = thisTune.replace("\n\n","");
