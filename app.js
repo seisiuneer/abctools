@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2311_021225_1700";
+var gVersionNumber="2312_021325_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -1490,7 +1490,7 @@ function TransposeToKeyDialog(){
 	  {html: '<p style="font-size:12pt;font-family:helvetica">&nbsp;</p>'},	  
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat_wide", top: 200, width: 600, scrollWithPage: (AllowDialogsToScroll()), okText: "Transpose",autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -2691,7 +2691,7 @@ function SortDialog(){
 	  {html: '<p style="font-size:12pt;font-family:helvetica">&nbsp;</p>'},	  
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 500, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 500, scrollWithPage: (AllowDialogsToScroll()), okText: "Sort",autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -13386,7 +13386,7 @@ function PDFTunebookBuilder(){
 
 	var form = [
 	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:18px">Inject PDF Tunebook Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#inject_pdf_tunebook_features" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
-	  {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:14pt;font-family:helvetica">Clicking "OK" will inject PDF tunebook feature commands at the top of your ABC.</p>'},  
+	  {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:14pt;font-family:helvetica">Clicking "Inject" will inject PDF tunebook feature commands at the top of your ABC.</p>'},  
 	  {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:14pt;font-family:helvetica">Leave any text fields blank for features you don\'t want in your PDF tunebook.</p>'},  
 	  {name: "PDF quality:", id: "pdfquality", type:"select", options:pdf_quality_list, cssClass:"configure_pdfquality_select"},
 	  {name: "Space between tunes (in 1/72\"):", id: "pdf_between_tune_space", type:"number", cssClass:"configure_setuppdftunebook_form_text3"},
@@ -18053,7 +18053,7 @@ function InjectRepeatsAndClickTrackAll(){
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:18pt;font-family:helvetica">If there is a repeat at the end of the first part of a tune, either standalone or in a first ending, there must be a matching |: bar at the start of the tune for the tune repeats to work properly.</p>'},	  
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 760, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 760, scrollWithPage: (AllowDialogsToScroll()), okText: "Inject",autoFocus: false } ).then(function(args){
 		
 		if (!args.canceled){
 		
@@ -18337,7 +18337,7 @@ function InjectSectionHeader(){
 	  {name: "Section name to inject", id: "configure_sectionheader", type:"text", cssClass:"configure_sectionheader_form_text"}, 
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 760, scrollWithPage: (AllowDialogsToScroll()), autoFocus: true } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 760, scrollWithPage: (AllowDialogsToScroll()), okText: "Inject", autoFocus: true } ).then(function(args){
 		
 		if (!args.canceled){
 
@@ -18529,7 +18529,7 @@ function InjectHeaderString(){
 
 	var form = [
 	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Inject ABC Header Text&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_injectabcheader" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
-	  {html: '<p style="margin-top:24px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">Clicking "OK" will inject the text into the header of your ABC tune(s).</p>'},  
+	  {html: '<p style="margin-top:24px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">Clicking "Inject" will inject the text into the header of your ABC tune(s).</p>'},  
 	  {name: "Header inject location:", id: "injectlocation", type:"select", options:inject_location_list, cssClass:"configure_injectheaderstring_select"},
 	  {html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;">Header text to inject:</p><textarea id="headers_to_inject" style="font-family:Courier;font-size:13pt;line-height:16pt;width:578px;height:340px;padding:6px" placeholder="Enter header text to inject here" spellcheck="false" autocorrect="off" autocapitalize="none" oninput="idleHeaderInject()" onkeydown="keydownHeaderInject(event)"></textarea>'},
 	  {name: "          Inject all tunes", id: "injectalltunes", type:"checkbox", cssClass:"configure_injectheaderstring_form_text"},
@@ -18546,7 +18546,7 @@ function InjectHeaderString(){
 
 	},200);
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 650, scrollWithPage: (AllowDialogsToScroll()), okText: "Inject", autoFocus: false } ).then(function(args){
 		
 		// Keep track of dialogs
 		sendGoogleAnalytics("action","InjectHeaderString");
@@ -18697,7 +18697,7 @@ function InjectStaffWidth(){
 	  {name: "            Inject all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_staffwidth_form_text"},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), okText: "Inject",autoFocus: false } ).then(function(args){
 		
 		if (!args.canceled){
 
@@ -18821,7 +18821,7 @@ function InjectFontSettings(){
 
 	var form = [
 	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Inject Font Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_inject_font_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
-	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">Click "OK" to inject the checked fonts below from your Font Settings into the tunes.</p>'},  
+	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">Click "Inject" to inject the checked fonts below from your Font Settings into the tunes.</p>'},  
 	  {name: "Title font: "+gRenderingFonts.titlefont, id: "configure_titlefont", type:"checkbox", cssClass:"configure_injectfontstring_form_text"},
 	  {name: "Subtitle font: "+gRenderingFonts.subtitlefont, id: "configure_subtitlefont", type:"checkbox", cssClass:"configure_injectfontstring_form_text"},
 	  {name: "Info font: "+gRenderingFonts.infofont, id: "configure_infofont", type:"checkbox", cssClass:"configure_injectfontstring_form_text"},
@@ -18842,7 +18842,7 @@ function InjectFontSettings(){
 	  {name: "Inject all tunes ", id: "configure_injectall", type:"checkbox", cssClass:"configure_injectfontstring_form_text"},
 	];
 
-	const modal = DayPilot.Modal.form(form, gTheFontInjectData, { theme: "modal_flat", top: 75, width: 675, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, gTheFontInjectData, { theme: "modal_flat", top: 75, width: 675, scrollWithPage: (AllowDialogsToScroll()), okText: "Inject", autoFocus: false } ).then(function(args){
 		
 		// Keep track of dialogs
 		sendGoogleAnalytics("action","InjectFontSettings");
@@ -19884,7 +19884,7 @@ function InjectAllMIDIParams(){
 	  {name: "            Inject all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_midi_program_form_text"},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 20, width: 760, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 20, width: 760, scrollWithPage: (AllowDialogsToScroll()), okText: "Inject",autoFocus: false } ).then(function(args){
 		
 		if (!args.canceled){
 
@@ -20425,7 +20425,7 @@ function InjectMetronome(){
 	  {name: "            Inject metronome into all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_metronome_form_text"},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 760, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 760, scrollWithPage: (AllowDialogsToScroll()), okText: "Inject",autoFocus: false } ).then(function(args){
 		
 		if (!args.canceled){
 
@@ -23162,7 +23162,7 @@ function InjectBagpipeSounds(){
 
 	var form = [
 	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Inject Bagpipe Sounds<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_injectbagpipesounds" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
-	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:16pt;font-family:helvetica;">Clicking "OK" will change the melody sound to the selected bagpipe instrument and optionally inject drones as a second voice of the tune(s).</p>'},  
+	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:16pt;font-family:helvetica;">Clicking "Inject" will change the melody sound to the selected bagpipe instrument and optionally inject drones as a second voice of the tune(s).</p>'},  
 	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:16pt;font-family:helvetica;">Bagpipe tunes imported from a BWW files assume the drones are consonant with the note A in the ABC notation for all styles of injected bagpipes.</p>'},
 	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:16pt;font-family:helvetica;">For all other tunes, the Great Highland Bagpipe, Border Pipes, and Smallpipes drones are consonant with the note A in the ABC notation and the Säckpipa, and Uilleann Pipes drones are consonant with the note D in the ABC notation.</p>'},  
 	  {html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:16pt;font-family:helvetica;">In these cases, you may need to transpose your tunes before using this feature to sound best with the drones, for example transposing a D Mixolydian tune to A Mixolydian or the inverse.</p>'},  
@@ -23176,7 +23176,7 @@ function InjectBagpipeSounds(){
 	  {name: "          Inject all tunes", id: "injectalltunes", type:"checkbox", cssClass:"configure_injectdrones_form_text"},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 75, width: 685, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 75, width: 685, scrollWithPage: (AllowDialogsToScroll()), okText: "Inject",autoFocus: false } ).then(function(args){
 		
 		// Keep track of dialogs
 		sendGoogleAnalytics("action","InjectBagpipeSounds");
@@ -23396,7 +23396,7 @@ function IncipitsBuilderDialog(){
 
 	var form = [
 		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Incipits Builder&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#incipits_builder" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
-		{html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;">Clicking OK will extensively reformat the ABC, so you may want to grab a Snapshot or save the ABC before using this feature.</p>'},
+		{html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;">Clicking "Build" will extensively reformat the ABC, so you may want to grab a Snapshot or save the ABC before using this feature.</p>'},
 		{html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;margin-bottom:24px;">The reformatted ABC can be exported as first-line Notes Incipits from the Export PDF dialog.</p>'},
   		{name: "Number of bars: (Default is 3)", id: "IncipitsBuilderBars", type:"number", cssClass:"incipits_builder_form_text"},
   		{name: "Staff width: (Default is 400, full width is 556)", id: "IncipitsBuilderWidth", type:"number", cssClass:"incipits_builder_form_text"},
@@ -23404,7 +23404,7 @@ function IncipitsBuilderDialog(){
 		{name: "    Add numbers before titles", id: "IncipitsBuilderInjectNumbers", type:"checkbox", cssClass:"incipits_builder_form_text_checkbox"},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 600, scrollWithPage: (AllowDialogsToScroll()), okText: "Build",autoFocus: false } ).then(function(args){
 
 		if (!args.canceled){
 
@@ -24444,7 +24444,7 @@ function DoInjectHarmonicaTab(){
 	  {html: '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>'},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 700, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 700, scrollWithPage: (AllowDialogsToScroll()), okText: "Inject",autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -25070,7 +25070,7 @@ function DoInjectCustomTab(){
 	  {html: '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>'},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 700, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 700, scrollWithPage: (AllowDialogsToScroll()), okText: "Inject",autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -25229,7 +25229,7 @@ function DoInjectTablature_Anglo(){
 	  {html: '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>'},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 720, scrollWithPage: (AllowDialogsToScroll()), okText: "Inject",autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -25435,7 +25435,7 @@ function DoInjectTablature_Bamboo_Flute(){
 
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 150, width: 500, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 150, width: 500, scrollWithPage: (AllowDialogsToScroll()), okText: "Inject",autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -25488,7 +25488,7 @@ function DoInjectTablature_Fiddle_Fingerings_Dialog(){
 	
 	modal_msg  += '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>';
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 650,  scrollWithPage: (AllowDialogsToScroll()) });
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 650, scrollWithPage: (AllowDialogsToScroll()) });
 
 }
 
@@ -25588,7 +25588,7 @@ function DoInjectTablature_MD(){
 
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), okText: "Inject",autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -25672,7 +25672,7 @@ function DoInjectTablature_ShapeNotes(){
 	  {html: '<p style="text-align:center;margin-top:36px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>'},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 150, width: 680, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 150, width: 680, scrollWithPage: (AllowDialogsToScroll()), okText: "Inject",autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -27842,7 +27842,7 @@ function BatchMP3Export(){
 	  {html: '<p style="margin-top:16px;font-size:12pt;line-height:18pt;font-family:helvetica">If there is a repeat at the end of the first part of a tune, either standalone or in a first ending, there must be a matching |: bar at the start of the tune for the tune repeats to work properly.</p>'},	  
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 760, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 760, scrollWithPage: (AllowDialogsToScroll()), okText: "Export",autoFocus: false } ).then(function(args){
 		
 		if (!args.canceled){
 		
@@ -45185,7 +45185,7 @@ function InjectMIDIGChordTemplates(){
 	  {html: '<p style="margin-top:24px;font-size:12pt;line-height:18pt;font-family:helvetica">&nbsp;</p>'},	  
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), okText: "Inject", autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){

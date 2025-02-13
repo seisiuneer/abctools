@@ -462,8 +462,6 @@ function ImportPDFOrWebsite(){
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","ImportPDFOrWebsite");
 
-	const theData = {};
-
 	// Save off the original setting
 	var gCustomTabOriginal = JSON.parse(JSON.stringify(gCustomTab));
 
@@ -479,16 +477,12 @@ function ImportPDFOrWebsite(){
 
 	modal_msg += '<p style="font-size:12pt;line-height:12pt;font-family:helvetica">&nbsp;</p>';	
 	
-	const form = [
-	  {html: modal_msg}
-	];
-
 	setTimeout(function(){
 
 		idleImportPDFOrWebsite();
 
 	}, 150);
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } );
+	const modal = DayPilot.Modal.alert(modal_msg, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } );
 
 }
