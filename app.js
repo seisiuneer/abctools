@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2313_021325_1200";
+var gVersionNumber="2314_021325_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -26695,7 +26695,7 @@ function BatchMusicXMLRoundTrip(){
 	  {name: "          Reformat all tunes", id: "reformatall", type:"checkbox", cssClass:"configure_xmlroundtrip_text"},
 	];
 
-	const modal = DayPilot.Modal.form(form, {}, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, {}, { theme: "modal_flat_wide", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), okText: "Reformat",autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -46324,7 +46324,7 @@ function SplitLongTextAndTags(){
 	  {name: "          Split all tunes", id: "bSplitAllTunes", type:"checkbox", cssClass:"splitlongtextandtags"},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat_wide", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), okText: "Split",autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
