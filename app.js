@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2312_021325_1000";
+var gVersionNumber="2313_021325_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -40073,7 +40073,134 @@ function PDFExportDialog(){
 //
 // Browser-based PDF export with play links
 //
+
+//
+// Inject the MIDI parameters into this tune
+//
+function BrowserPDFInjectInstruments(theTune){
+
+	var progNumMelody = gPDFTunebookConfig.melody_instrument;
+
+	var progNumBass = gPDFTunebookConfig.bass_instrument;
+
+	var progNumChord = gPDFTunebookConfig.chord_instrument;
+
+	// Special case for muting voices
+	if (progNumMelody == 0){
+
+		progNumMelody = "mute";
+
+	}
+	else{
+
+		progNumMelody = progNumMelody - 1;
+
+		if ((progNumMelody < 0) || (progNumMelody > MIDI_PATCH_COUNT)){
+
+			progNumMelody = 0;
+
+		}
+
+	}
+
+	// Special case for muting voices
+	if (progNumBass == 0){
+
+		progNumBass = "mute";
+
+	}
+	else{
+
+		progNumBass = progNumBass - 1;
+
+		if ((progNumBass < 0) || (progNumBass > MIDI_PATCH_COUNT)){
+
+			progNumBass = 0;
+
+		}
+
+	}
+
+	// Special case for muting voices
+	if (progNumChord == 0){
+
+		progNumChord = "mute";
+
+	}
+	else{
+
+		progNumChord = progNumChord - 1;
+
+		if ((progNumChord < 0) || (progNumChord > MIDI_PATCH_COUNT)){
+
+			progNumChord = 0;
+
+		}
+
+	}
+
+	var volBass = gPDFTunebookConfig.bass_volume;
+
+	var volChord = gPDFTunebookConfig.chord_volume;
+
+    // Inject soundfont
+    switch (gPDFTunebookConfig.sound_font){
+
+        case "fluid":
+            theTune = InjectStringBelowTuneHeaderConditional(theTune, "%abcjs_soundfont fluid");
+            break;
+        case "musyng":
+            theTune = InjectStringBelowTuneHeaderConditional(theTune, "%abcjs_soundfont musyng");
+            break;
+        case "fatboy":
+            theTune = InjectStringBelowTuneHeaderConditional(theTune, "%abcjs_soundfont fatboy");
+            break;
+        case "canvas":
+            theTune = InjectStringBelowTuneHeaderConditional(theTune, "%abcjs_soundfont canvas");
+            break;
+        case "mscore":
+            theTune = InjectStringBelowTuneHeaderConditional(theTune, "%abcjs_soundfont mscore");
+            break;
+        case "arachno":
+            theTune = InjectStringBelowTuneHeaderConditional(theTune, "%abcjs_soundfont arachno");
+            break;
+        case "fluidhq":
+            theTune = InjectStringBelowTuneHeaderConditional(theTune, "%abcjs_soundfont fluidhq");
+            break;
+        default:
+            theTune = InjectStringBelowTuneHeaderConditional(theTune, "%abcjs_soundfont fluid");
+            break;
+    }
+
+    // Inject instrument
+    // Offset by one to deal with mute instrument at offset zero
+    theTune = InjectStringBelowTuneHeaderConditional(theTune, "%%MIDI program "+progNumMelody);
+ 
+    theTune = InjectStringBelowTuneHeaderConditional(theTune, "%%MIDI bassprog "+progNumBass);
+    
+    theTune = InjectStringBelowTuneHeaderConditional(theTune, "%%MIDI chordprog "+progNumChord);
+   
+    // Inject bass volume
+    theTune = InjectStringBelowTuneHeaderConditional(theTune, "%%MIDI bassvol "+volBass);
+
+    // Inject chord volume
+    theTune = InjectStringBelowTuneHeaderConditional(theTune, "%%MIDI chordvol "+volChord);
+
+    // Inject play link request for tune PDF export
+    theTune = InjectStringBelowTuneHeaderConditional(theTune, "%add_all_playback_links");
+    
+    // Seeing extra linefeeds after the inject
+    theTune = theTune.replace("\n\n","");
+
+    return(theTune);
+
+}
 function Do_Browser_PDF_Export(){
+
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
 
 	// Find the Cancel button
 
@@ -40102,120 +40229,193 @@ function Do_Browser_PDF_Export(){
 
 	// Keep track of use of the native PDF exporter
 	sendGoogleAnalytics("export","PrintToPDF");
+
+	// sound_font was added later, make sure the field is present
+	if ((!gPDFTunebookConfig.sound_font) || (gPDFTunebookConfig.sound_font == "")){
+		gPDFTunebookConfig.sound_font = "fluid";
+	}
+
+	// bass_instrument was added later, make sure the field is present
+	if ((!gPDFTunebookConfig.bass_instrument) || (gPDFTunebookConfig.bass_instrument == "")){
+		gPDFTunebookConfig.bass_instrument = 1;
+	}
+
+	// bass and chord volume was added later, make sure the field is present
+	if ((!gPDFTunebookConfig.bass_volume) || (gPDFTunebookConfig.bass_volume == "")){
+		gPDFTunebookConfig.bass_volume = "64";
+	}
+
+	if ((!gPDFTunebookConfig.chord_volume) || (gPDFTunebookConfig.chord_volume == "")){
+		gPDFTunebookConfig.chord_volume = "64";
+	}
+
+	var midi_program_list = [];
+
+  	for (var i=0;i<=MIDI_PATCH_COUNT;++i){
+  		midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
+  	}
+
+ 	const sound_font_options = [
+	    { name: "  Fluid", id: "fluid" },
+	    { name: "  Musyng Kite", id: "musyng" },
+	    { name: "  FatBoy", id: "fatboy" },
+ 	    { name: "  Canvas", id: "canvas" },
+ 	    { name: "  MScore", id: "mscore" },
+ 	    { name: "  Arachno", id: "arachno" },
+ 	    { name: "  FluidHQ", id: "fluidhq"}
+ 	];
+
+  	for (var i=0;i<=MIDI_PATCH_COUNT;++i){
+  		midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
+  	}
+
+	var form = [
+	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:36px">Browser Print-to-PDF with Play Links&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#browser_print_to_pdf" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
+      {html: '<p style="margin-top:10px;margin-bottom:30px;font-size:12pt;line-height:18pt;font-family:helvetica">Clicking "Export" will use the browser\'s native PDF exporter to export a PDF with play links on each tune using the playback instruments and volumes selected below:</p>'},  
+	  {name: "Soundfont for playback links:", id: "sound_font", type:"select", options:sound_font_options, cssClass:"configure_setuppdftunebook_midi_program_select"},
+	  {name: "Melody instrument for playback links:", id: "melody_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
+	  {name: "Bass instrument for playback links:", id: "bass_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
+	  {name: "Bass volume (0-127):", id: "bass_volume", type:"number", cssClass:"configure_setuppdftunebook_form_text"},
+	  {name: "Chord instrument for playback links:", id: "chord_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
+	  {name: "Chord volume (0-127):", id: "chord_volume", type:"number", cssClass:"configure_setuppdftunebook_form_text"},
+	];
+
+	const modal = DayPilot.Modal.form(form, gPDFTunebookConfig, { theme: "modal_flat", top: 100, width: 690, scrollWithPage: (AllowDialogsToScroll()), okText: "Export", autoFocus: false } ).then(function(args){
 	
-	setTimeout(function(){
+		if (!args.canceled){
 
-		// Get all the tune Hyperlinks
+			gPDFTunebookConfig.sound_font = args.result.sound_font;
 
-		// Make sure there are tunes to convert
-		var nTunes = CountTunes();
+			// Melody Instrument
+			gPDFTunebookConfig.melody_instrument = args.result.melody_instrument;
 
-		if (nTunes == 0){
-			return;
-		}
+			// Bass Instrument
+			gPDFTunebookConfig.bass_instrument = args.result.bass_instrument;
 
-		var theJSON = [];
+			// Bass volume
+			gPDFTunebookConfig.bass_volume = args.result.bass_volume;
 
-		for (var i=0;i<nTunes;++i){
+			// Chord Instrument
+			gPDFTunebookConfig.chord_instrument = args.result.chord_instrument;
 
-			var thisTune = getTuneByIndex(i);
+			// Chord volume
+			gPDFTunebookConfig.chord_volume = args.result.chord_volume;
 
-			var title = GetTuneAudioDownloadName(thisTune,"");
+			// Save the settings
+			SaveConfigurationSettings();
 
-			//debugger;
-
-	        // If section header, strip the *
-	        if (title.startsWith('*')) {
-	            title = title.substring(1);
-	        }
-
-	        // Inject play link request for future tune PDF export
-		    thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%add_all_playback_links");
-		    
-		    // Seeing extra linefeeds after the inject
-		    thisTune = thisTune.replace("\n\n","");
-
-			var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
-
-			var titleURL = title.replaceAll(" ","_");
-			titleURL = titleURL.replaceAll("#","^");
-
-			theURL = theURL.replaceAll("&","&amp;");
-			theURL+="&amp;name="+titleURL+"&amp;play=1";
-
-			// For testing
-			//theURL = theURL.replace("https://michaeleskin.com/abctools/abctools.html","https://michaeleskin.com/abctools2/abctools.html");
-
-			//console.log("theURL: "+theURL);
-			
-			theJSON.push({Name:title,URL:theURL});
-
-		}
-
-		for (var i=0;i<nTunes;++i){
-
-			var div = document.getElementById('notation'+i);
-
-			// Find all SVG elements within the div
-			var svgs = div.querySelectorAll('svg');
-
-			var theSVG = svgs[0];
-		    
-		    if (theSVG) {
-
-		        // Create the <a> element
-		        const link = document.createElement('a');
-
-		        link.href = theJSON[i].URL;
-
-		        link.style.textDecoration = "none";
-		        
-		        // Insert the <a> before the textElement and move the textElement inside the <a>
-		        theSVG.parentNode.insertBefore(link, theSVG);
-
-		        link.appendChild(theSVG);
-		    }
-
-		}
-
-		setTimeout(function(){
-
-			window.print();
-
-			// Clean up the injected links fromthe SVG
 			setTimeout(function(){
 
-				//debugger;
+				// Get all the tune Hyperlinks
+
+				// Make sure there are tunes to convert
+				var nTunes = CountTunes();
+
+				if (nTunes == 0){
+					return;
+				}
+
+				var theJSON = [];
+
+				for (var i=0;i<nTunes;++i){
+
+					var thisTune = getTuneByIndex(i);
+
+					var title = GetTuneAudioDownloadName(thisTune,"");
+
+					//debugger;
+
+			        // If section header, strip the *
+			        if (title.startsWith('*')) {
+			            title = title.substring(1);
+			        }
+
+			        // Inject the playback instruments
+            		thisTune = BrowserPDFInjectInstruments(thisTune);
+
+					var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
+
+					var titleURL = title.replaceAll(" ","_");
+					titleURL = titleURL.replaceAll("#","^");
+
+					theURL = theURL.replaceAll("&","&amp;");
+					theURL+="&amp;name="+titleURL+"&amp;play=1";
+
+					// For testing
+					//theURL = theURL.replace("https://michaeleskin.com/abctools/abctools.html","https://michaeleskin.com/abctools2/abctools.html");
+
+					//console.log("theURL: "+theURL);
+					
+					theJSON.push({Name:title,URL:theURL});
+
+				}
 
 				for (var i=0;i<nTunes;++i){
 
 					var div = document.getElementById('notation'+i);
 
-				    // Find all <a> elements that contain a svg element inside
-				    var links = div.querySelectorAll('a > svg');
+					// Find all SVG elements within the div
+					var svgs = div.querySelectorAll('svg');
 
-				    //debugger;
+					var theSVG = svgs[0];
+				    
+				    if (theSVG) {
 
-				    links.forEach(theSVG => {
+				        // Create the <a> element
+				        const link = document.createElement('a');
 
-				    	//debugger;
+				        link.href = theJSON[i].URL;
 
-				        var link = theSVG.parentNode;
+				        link.style.textDecoration = "none";
 				        
-				        // Move the svg element outside the <a> tag (replace <a> with its content)
-				        link.parentNode.insertBefore(theSVG, link);
-				        
-				        // Remove the <a> tag
-				        link.remove();
+				        // Insert the <a> before the textElement and move the textElement inside the <a>
+				        theSVG.parentNode.insertBefore(link, theSVG);
 
-				    });
+				        link.appendChild(theSVG);
+				    }
+
 				}
 
-			},100);
-			    
-		},100);
+				setTimeout(function(){
 
-	},100);
+					window.print();
+
+					// Clean up the injected links fromthe SVG
+					setTimeout(function(){
+
+						//debugger;
+
+						for (var i=0;i<nTunes;++i){
+
+							var div = document.getElementById('notation'+i);
+
+						    // Find all <a> elements that contain a svg element inside
+						    var links = div.querySelectorAll('a > svg');
+
+						    //debugger;
+
+						    links.forEach(theSVG => {
+
+						    	//debugger;
+
+						        var link = theSVG.parentNode;
+						        
+						        // Move the svg element outside the <a> tag (replace <a> with its content)
+						        link.parentNode.insertBefore(theSVG, link);
+						        
+						        // Remove the <a> tag
+						        link.remove();
+
+						    });
+						}
+
+					},100);
+					    
+				},100);
+
+			},100);
+		};
+	});
 }
 
 //
