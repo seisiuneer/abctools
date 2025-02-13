@@ -30,8 +30,8 @@
  * 
  **/
 
-// Version number for the advanced settings dialog hidden field
-var gVersionNumber="2310_021225_1130";
+// Version number for the settings dialog
+var gVersionNumber="2311_021225_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -40128,6 +40128,12 @@ function Do_Browser_PDF_Export(){
 	        if (title.startsWith('*')) {
 	            title = title.substring(1);
 	        }
+
+	        // Inject play link request for future tune PDF export
+		    thisTune = InjectStringBelowTuneHeader(thisTune, "%add_all_playback_links");
+		    
+		    // Seeing extra linefeeds after the inject
+		    thisTune = thisTune.replace("\n\n","");
 
 			var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
 
