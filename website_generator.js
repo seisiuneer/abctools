@@ -2365,7 +2365,7 @@ function generateWebsite(){
     
     modal_msg  += '<p style="font-size:4px;">&nbsp;</p>';
 
-    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 650,  okText: "Cancel", scrollWithPage: (AllowDialogsToScroll()) });
+    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 650, scrollWithPage: (AllowDialogsToScroll()) });
 
 }
 
