@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2315_021325_1700";
+var gVersionNumber="2316_021425_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -38426,6 +38426,15 @@ function GetInitialConfigurationSettings(){
 		}
 	}
 
+	// Allow abcjs to parse the ABC file header
+	val = localStorage.ProcessABCFileHeader
+	if (val){
+		gProcessABCFileHeader = (val == "true");
+	}
+	else{
+		gProcessABCFileHeader = false;
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -38675,7 +38684,8 @@ function SaveConfigurationSettings(){
 		// Player scaling
 		localStorage.PlayerScaling = gPlayerScaling;
 
-
+		// abcjs ABC header processing
+		localStorage.ProcessABCFileHeader = gProcessABCFileHeader;
 
 	}
 }
@@ -41437,6 +41447,8 @@ function ConfigureToolSettings() {
 
 	var oldTabSelected = GetRadioValue("notenodertab");
 
+	var oldProcessABCFileHeader = gProcessABCFileHeader;
+
 	// Setup initial values
 	const theData = {
 		configure_save_exit_snapshot: gSaveLastAutoSnapShot,
@@ -41460,7 +41472,8 @@ function ConfigureToolSettings() {
 		configure_RollUseRollForIrishRoll: gRollUseRollForIrishRoll,
 		configure_allow_offline_instruments: gAllowOfflineInstruments,
 		configure_ipad_two_column: giPadTwoColumn,
-		configure_player_scaling: gPlayerScaling
+		configure_player_scaling: gPlayerScaling,
+		configure_process_abc_file_header: gProcessABCFileHeader
 	};
 
 	var form = [
@@ -41511,6 +41524,8 @@ function ConfigureToolSettings() {
 		form.push({name: "    Allow MIDI input for ABC text entry", id: "configure_allow_midi_input", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 		form.push({name: "    MIDI input is key and mode aware (if unchecked, enters note names with no accidentals)", id: "configure_midi_chromatic", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 	};
+
+	form.push({name: "            Allow abcjs to process the ABC file header (see User Guide for limitations)", id: "configure_process_abc_file_header", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 
 	// For testing
 	// gUpdateAvailable = true;
@@ -41827,6 +41842,9 @@ function ConfigureToolSettings() {
 				}
 			}
 
+			// Allow abcjs to process the file header?
+			gProcessABCFileHeader = args.result.configure_process_abc_file_header; 
+
 			// Update local storage
 			SaveConfigurationSettings();
 
@@ -41864,7 +41882,8 @@ function ConfigureToolSettings() {
 
 			// Do we need to re-render?
 			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || (gForceLeftJustifyTitles != oldLeftJustifyTitles) || (oldCGDA != gShowCGDATab) || (oldDGDAE != gShowDGDAETab) || (oldRecorderTab != gShowRecorderTab) || (gRecorderAlto != oldRecorderAlto) || bTabForceRedraw
-				|| ((radiovalue == "notenames") && ((gUseComhaltasABC != theOldComhaltas) || (theOldForceComhaltas && (!gUseComhaltasABC))))){
+				|| ((radiovalue == "notenames") && ((gUseComhaltasABC != theOldComhaltas) || (theOldForceComhaltas && (!gUseComhaltasABC))))
+				|| (oldProcessABCFileHeader != gProcessABCFileHeader)){
 				
 				RenderAsync(true, null, function(){
 

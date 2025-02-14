@@ -4415,7 +4415,7 @@
                 <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_58.jpg"/>
+                    <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_59.jpg"/>
                 </div>
                 <hr id="ipad_side_by_side">
                 <p><strong>iPad Side-by-Side View (similar to desktop)</strong> (iPad only)</p>
@@ -4522,6 +4522,14 @@
                 <p>For example, if you want to always use a Whistle sound for the Melody and a Piano sound for the Bass and Chords, set your default Melody instrument to Whistle and your default Bass and Chords instruments to Acoustic Grand Piano. Then enable <strong>Override all MIDI programs and volumes in the ABC when playing tunes</strong>.</p>
                 <p>To mute the melody, select the Mute program.</p>
                 <p>To mute the bass and chords, select the Mute program.</p>
+                <hr>
+                <p><strong>Allow abcjs to process the ABC file header (see User Guide for limitations)</strong></p>
+                <p>When checked, allows abcjs to inject any font and spacing directives in the ABC file header text above the first X: tag found into each tune when rendering all the tunes.</p>
+                <p>"Floating" ABC directives between tunes are ignored, only the ABC file header is processed.</p>
+                <p>This feature is extremely limited and will most likely cause unexpected results when editing individual tunes since when redrawing individual tunes, the ABC file header directives are not injected.</p>
+                <p>Additionally, share links for tunes in exported PDF files and websites will not include the injected ABC file header directives.</p>
+                <p>To work around that, you can use the <a href="#advanced_injectabcheader">Inject ABC Header Text</a> feature to identify and inject any font or spacing directives found in the ABC file header into each of the individual tunes.</p>
+                <p>If this feature is enabled, after making a change to the ABC file header, to see the results, force a full redraw of the tunes by clicking <strong>Snapshot</strong> and then <strong>Restore</strong>.
                 <hr id="manage_databases">
                 <p><strong>Manage Notes, Reverb, and Tune Search Databases</strong></p>
                 <p>Click this button on the <strong>Settings</strong> dialog to bring up a dialog with several options for managing the instrument notes, reverb,  and tune search engine databases in the tool for offline use.</p>
@@ -5266,7 +5274,8 @@
                 <p>For those coming from other ABC tools, this tool may or may not meet your needs.</p>
                 <p>Here are some differences between this tool and others:</p>
                 <hr>
-                <p><strong>The ABC file header and any ABC directives between tunes are ignored</strong></p>
+                <p><strong>The ABC file header and any ABC directives between tunes are ignored by default (but can be enabled, see below for details).</strong></p>
+                <p>
                 <p>If you are using the ABC file header to setup common settings for all your tunes, you'll instead need to use the <strong><a href="#advanced_injectabcheader">Inject ABC Header Text</a></strong> feature to inject those settings into the tunes themselves.</p>
                 <p>This dialog can identify and suggest any available and tool compatible ABC file header directives to inject to simplify the process.</p>
                 <p>A very common use of the ABC file header is to select the common fonts used for the tunes.</p>
@@ -5275,6 +5284,14 @@
                 <p>This can be done manually or using the <strong><a href="#advanced_inject_font_settings">Inject Font Settings</a></strong> dialog.</p>
                 <p>Additionally, when exporting a PDF tunebook with play links, you can specify in the <strong><a href="#inject_pdf_tunebook_features">Inject PDF Tunebook Features</a></strong> dialog that the fonts required for each tune be automatically injected into the tunes used for the play links.</p>
                 <p>If you are using the ABC file header for setting up MIDI playback settings to be used for all tunes, those are setup via the <strong>Select Default Player Instruments and Volumes</strong> option on the <strong><a href="#settings_dialog">ABC Transcription Tools Settings</a></strong> dialog and automatically injected into the tunes at playback time.</p>
+                <hr>
+                <p>Given the caveats above, if you still want to use an ABC file header for common font and spacing directives, there is an option on the <strong>Settings</strong> dialog: <p><strong>Allow abcjs to process the ABC file header (see User Guide for limitations)</strong></p>
+                <p>When checked, allows abcjs to inject any font and spacing directives in the ABC file header text above the first X: tag found into each tune when rendering all the tunes.</p>
+                <p>"Floating" ABC directives between tunes are ignored, only the ABC file header is processed</p>
+                <p>This feature is extremely limited and will most likely cause unexpected results when editing individual tunes since when redrawing individual tunes, the ABC file header directives are not injected.</p>
+                <p>Additionally, share links for tunes in exported PDF files and websites will not include the injected ABC file header directives.</p>
+                <p>To work around that, as described above, you can use the <a href="#advanced_injectabcheader">Inject ABC Header Text</a> feature to identify and inject any font or spacing directives found in the ABC file header into each of the individual tunes.</p>
+                <p>If this feature is enabled, after making a change to the ABC file header, to see the results, force a full redraw of the tunes by clicking <strong>Snapshot</strong> and then <strong>Restore</strong>.
                 <hr>
                 <p><strong>If you are using a lot of ABC page layout and spacing options, this tool may not meet your needs or produce the formatted output you expect.</strong></p>
                 <p>If you are doing a lot of very specific page layout using the ABC file header, ABC spacing annotations between tunes, relying on the %%scale annotation, then this tool most likely will not meet your needs and you should stick with whatever you are currently using.</p>
