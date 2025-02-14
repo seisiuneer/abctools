@@ -4524,12 +4524,13 @@
                 <p>To mute the bass and chords, select the Mute program.</p>
                 <hr>
                 <p><strong>Allow abcjs to process the ABC file header (see User Guide for limitations)</strong></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/ZJHh2jWC81Q" title="Allow abcjs to process the ABC file header" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>When checked, allows abcjs to inject any font and spacing directives in the ABC file header text above the first X: tag found into each tune when rendering all the tunes.</p>
                 <p>"Floating" ABC directives between tunes are ignored, only the ABC file header is processed.</p>
                 <p>This feature is extremely limited and will most likely cause unexpected results when editing individual tunes since when redrawing individual tunes, the ABC file header directives are not injected.</p>
                 <p>Additionally, share links for tunes in exported PDF files and websites will not include the injected ABC file header directives.</p>
                 <p>To work around that, you can use the <a href="#advanced_injectabcheader">Inject ABC Header Text</a> feature to identify and inject any font or spacing directives found in the ABC file header into each of the individual tunes.</p>
-                <p>If this feature is enabled, after making a change to the ABC file header, to see the results, force a full redraw of the tunes by clicking <strong>Snapshot</strong> and then <strong>Restore</strong>.
+                <p>If this feature is enabled, after making a change to the ABC file header, to see the results, force a full redraw of the tunes by clicking <strong>Snapshot</strong> and then <strong>Restore</strong>.</p>
                 <hr id="manage_databases">
                 <p><strong>Manage Notes, Reverb, and Tune Search Databases</strong></p>
                 <p>Click this button on the <strong>Settings</strong> dialog to bring up a dialog with several options for managing the instrument notes, reverb,  and tune search engine databases in the tool for offline use.</p>
@@ -5275,7 +5276,6 @@
                 <p>Here are some differences between this tool and others:</p>
                 <hr>
                 <p><strong>The ABC file header and any ABC directives between tunes are ignored by default (but can be enabled, see below for details).</strong></p>
-                <p>
                 <p>If you are using the ABC file header to setup common settings for all your tunes, you'll instead need to use the <strong><a href="#advanced_injectabcheader">Inject ABC Header Text</a></strong> feature to inject those settings into the tunes themselves.</p>
                 <p>This dialog can identify and suggest any available and tool compatible ABC file header directives to inject to simplify the process.</p>
                 <p>A very common use of the ABC file header is to select the common fonts used for the tunes.</p>
@@ -5286,12 +5286,13 @@
                 <p>If you are using the ABC file header for setting up MIDI playback settings to be used for all tunes, those are setup via the <strong>Select Default Player Instruments and Volumes</strong> option on the <strong><a href="#settings_dialog">ABC Transcription Tools Settings</a></strong> dialog and automatically injected into the tunes at playback time.</p>
                 <hr>
                 <p>Given the caveats above, if you still want to use an ABC file header for common font and spacing directives, there is an option on the <strong>Settings</strong> dialog: <p><strong>Allow abcjs to process the ABC file header (see User Guide for limitations)</strong></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/ZJHh2jWC81Q" title="Allow abcjs to process the ABC file header" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>When checked, allows abcjs to inject any font and spacing directives in the ABC file header text above the first X: tag found into each tune when rendering all the tunes.</p>
                 <p>"Floating" ABC directives between tunes are ignored, only the ABC file header is processed</p>
                 <p>This feature is extremely limited and will most likely cause unexpected results when editing individual tunes since when redrawing individual tunes, the ABC file header directives are not injected.</p>
                 <p>Additionally, share links for tunes in exported PDF files and websites will not include the injected ABC file header directives.</p>
                 <p>To work around that, as described above, you can use the <a href="#advanced_injectabcheader">Inject ABC Header Text</a> feature to identify and inject any font or spacing directives found in the ABC file header into each of the individual tunes.</p>
-                <p>If this feature is enabled, after making a change to the ABC file header, to see the results, force a full redraw of the tunes by clicking <strong>Snapshot</strong> and then <strong>Restore</strong>.
+                <p>If this feature is enabled, after making a change to the ABC file header, to see the results, force a full redraw of the tunes by clicking <strong>Snapshot</strong> and then <strong>Restore</strong>.</p>
                 <hr>
                 <p><strong>If you are using a lot of ABC page layout and spacing options, this tool may not meet your needs or produce the formatted output you expect.</strong></p>
                 <p>If you are doing a lot of very specific page layout using the ABC file header, ABC spacing annotations between tunes, relying on the %%scale annotation, then this tool most likely will not meet your needs and you should stick with whatever you are currently using.</p>
