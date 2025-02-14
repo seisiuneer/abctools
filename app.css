@@ -5033,6 +5033,49 @@ margin-left:12px;
 	padding:4px;
 }
 
+.configure_nativepdftunebook_midi_program_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:22px;
+}
+
+.configure_nativepdftunebook_midi_program_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:220px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
+.configure_nativepdftunebook_form_text{
+font-size:12pt;
+line-height:12px;
+font-family:helvetica;
+margin-top:22px;
+display:flex;
+}
+
+.configure_nativepdftunebook_form_text>input{
+font-size:12pt;
+font-family:helvetica;
+width: 40px;
+margin-top:-9px;
+margin-left:12px;
+}
 
 /******************************************************************************/
 /* STYLES RELATED TO BUTTONS                                                  */

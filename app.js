@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2314_021325_1500";
+var gVersionNumber="2315_021325_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -40272,12 +40272,12 @@ function Do_Browser_PDF_Export(){
 	var form = [
 	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:36px">Browser Print-to-PDF with Play Links&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#browser_print_to_pdf" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
       {html: '<p style="margin-top:10px;margin-bottom:30px;font-size:12pt;line-height:18pt;font-family:helvetica">Clicking "Export" will use the browser\'s native PDF exporter to export a PDF with play links on each tune using the playback instruments and volumes selected below:</p>'},  
-	  {name: "Soundfont for playback links:", id: "sound_font", type:"select", options:sound_font_options, cssClass:"configure_setuppdftunebook_midi_program_select"},
-	  {name: "Melody instrument for playback links:", id: "melody_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
-	  {name: "Bass instrument for playback links:", id: "bass_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
-	  {name: "Bass volume (0-127):", id: "bass_volume", type:"number", cssClass:"configure_setuppdftunebook_form_text"},
-	  {name: "Chord instrument for playback links:", id: "chord_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
-	  {name: "Chord volume (0-127):", id: "chord_volume", type:"number", cssClass:"configure_setuppdftunebook_form_text"},
+	  {name: "Soundfont for playback links:", id: "sound_font", type:"select", options:sound_font_options, cssClass:"configure_nativepdftunebook_midi_program_select"},
+	  {name: "Melody instrument for playback links:", id: "melody_instrument", type:"select", options:midi_program_list, cssClass:"configure_nativepdftunebook_midi_program_select"},
+	  {name: "Bass instrument for playback links:", id: "bass_instrument", type:"select", options:midi_program_list, cssClass:"configure_nativepdftunebook_midi_program_select"},
+	  {name: "Bass volume (0-127):", id: "bass_volume", type:"number", cssClass:"configure_nativepdftunebook_form_text"},
+	  {name: "Chord instrument for playback links:", id: "chord_instrument", type:"select", options:midi_program_list, cssClass:"configure_nativepdftunebook_midi_program_select"},
+	  {name: "Chord volume (0-127):", id: "chord_volume", type:"number", cssClass:"configure_nativepdftunebook_form_text"},
 	];
 
 	const modal = DayPilot.Modal.form(form, gPDFTunebookConfig, { theme: "modal_flat", top: 100, width: 690, scrollWithPage: (AllowDialogsToScroll()), okText: "Export", autoFocus: false } ).then(function(args){
