@@ -129,7 +129,7 @@ class ContextMenu {
   show(e) {
 
     // Keep the context menu from going off the right of the screen
-    if (isMobileBrowser() && (!gIsQuickEditor)){
+    if (isMobileBrowser()){
       this.menu.style.left = `${e.pageX-200}px`;
       this.menu.style.top = `${e.pageY}px`;
     }
