@@ -505,7 +505,6 @@
             <a style="text-decoration:none;" href="#abcadditions">Additional Tool-Specific ABC Directives</a>
             <a style="text-decoration:none;" href="#sequential_play">Creating Sets of Tunes that Will Play Sequentially in the Player</a>
             <a style="text-decoration:none;" href="#boxplayerstemplate">Useful Symbols for Annotating Box Transcriptions</a>
-            <a style="text-decoration:none;" href="#abcheadersignored">ABC File Headers Before the First X: Tag Are Ignored</a>
             
             <h3>Adding Shape Note Shapes</h3>
             <a style="text-decoration:none;" href="#shapenote">Adding Shape Note Shapes</a>
@@ -876,7 +875,6 @@
                         <p class="toc"><a style="text-decoration:none;" href="#abcadditions">Additional Tool-Specific ABC Directives</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#sequential_play">Creating Sets of Tunes that Will Play Sequentially in the Player</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#boxplayerstemplate">Useful Symbols for Annotating Box Transcriptions</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#abcheadersignored">ABC File Headers Before the First X: Tag Are Ignored</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">Adding Shape Note Shapes</button>
@@ -4525,11 +4523,11 @@
                 <hr>
                 <p><strong>Allow abcjs to process the ABC file header (see User Guide for limitations)</strong></p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/ZJHh2jWC81Q" title="Allow abcjs to process the ABC file header" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>When checked, allows abcjs to inject any font and spacing directives in the ABC file header text above the first X: tag found into each tune when rendering all the tunes.</p>
+                <p>When checked, allows abcjs to inject any font, spacing, and *: ABC directives in the ABC file header text above the first X: tag found into each tune when rendering all the tunes.</p>
                 <p>"Floating" ABC directives between tunes are ignored, only the ABC file header is processed.</p>
                 <p>This feature is extremely limited and will most likely cause unexpected results when editing individual tunes since when redrawing individual tunes, the ABC file header directives are not injected.</p>
                 <p>Additionally, share links for tunes in exported PDF files and websites will not include the injected ABC file header directives.</p>
-                <p>To work around that, you can use the <a href="#advanced_injectabcheader">Inject ABC Header Text</a> feature to identify and inject any font or spacing directives found in the ABC file header into each of the individual tunes.</p>
+                <p>To work around that, you can use the <a href="#advanced_injectabcheader">Inject ABC Header Text</a> feature to identify and inject any font, spacing, and *: ABC directives found in the ABC file header into each of the individual tunes.</p>
                 <p>If this feature is enabled, after making a change to the ABC file header, to see the results, force a full redraw of the tunes by clicking <strong>Snapshot</strong> and then <strong>Restore</strong>.</p>
                 <hr id="manage_databases">
                 <p><strong>Manage Notes, Reverb, and Tune Search Databases</strong></p>
@@ -5030,21 +5028,6 @@
                     % "1" "2" "3" "4" "5" "6" "7" "8" "9" "10" "11" "↑" "↓"<br/>
                     % "①" "②" "③" "④" "⑤" "⑥" "⑦" "⑧" "⑨" "⑩" "⑪"<br/>
                 %</p>
-                <hr class="hidden-print" id="abcheadersignored">
-                <h1 class="page_break_always h1wide">ABC File Headers Before the First X: Tag Are Ignored<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>When rendering the ABC, the tool now ignores all file header text in the ABC file before the first X: tag.</p>
-                <p>Previously, all file header text above the first X: tag in an ABC tunebook was being added to each tune before abcjs rendering.</p>
-                <p>This caused many issues resulting in inconsistency with the tunes as rendered in the editor and in PDF files vs. the same tunes when viewed or played from share links, either standalone, in PDF files, or on exported websites for ABC tunebooks that had directives and/or text as a pre-tune header.</p>
-                <p>This is because the aggregated header directives that were previously injected at notation rendering time are not part of the tune ABC itself, and it is the tune ABC itself in the editor that is used to create the share links.</p>
-                <p>There were also major issues with any text annotations in a pre-first X: tag header getting added below the title of every tune in the rendered notation.</p>
-                <p>To create a more consistent visual result in all use cases, I've decided to simply filter out all text before the first X: tag when rendering tunes.</p>
-                <p>This ensures producing the same visual result across the editor, exported PDFs, and viewing/playing of shared tunes, either standalone, from a PDF, or an exported website if there is pre-first X: tag header text present.</p>
-                <p>If you relied on operations like setting all fonts, margins, or staffwidth for the tunes by using a pre-first X: tag ABC header directive, you will instead need to inject those directives directly into each tune via the <strong><a href="#advanced_injectabcheader">Inject ABC Header Text</a></strong> command (or using one of the other feature-specific header injectors) on the <strong><a href="#more_tools">More Tools</a></strong> dialog.</p>
-                <p>If you have considerable pre-first X: tag header text using the various ABC text directives:</p>
-                <p class="code">%%text Here is some text<br/>%%center Here is some centered text<br/>%%begintext<br/>Text line 1<br/>Text line 2</br>Text line 3</br>%%endtext</p>
-                <p>that you want to display before the tunes in an exported PDF or website, the simplest work around for this tool is to turn the entire block of text into a "pseudo-tune" by prepending it with an X: tag:</p>
-                <p class="code">X:1<br/>%%text Here is some text<br/>%%center Here is some centered text<br/>%%begintext<br/>Text line 1<br/>Text line 2</br>Text line 3</br>%%endtext</p>
-                <p>tag which will cause the text to be rendered as if it were in a tune.</p>
                 <hr class="hidden-print" id="shapenote">
                 <h1 class="page_break_always">Adding Shape Note Shapes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>The tool supports the standard shape note shapes for both 4-shape and 7-shape systems.</p>
@@ -5287,11 +5270,11 @@
                 <hr>
                 <p>Given the caveats above, if you still want to use an ABC file header for common font and spacing directives, there is an option on the <strong>Settings</strong> dialog: <p><strong>Allow abcjs to process the ABC file header (see User Guide for limitations)</strong></p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/ZJHh2jWC81Q" title="Allow abcjs to process the ABC file header" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>When checked, allows abcjs to inject any font and spacing directives in the ABC file header text above the first X: tag found into each tune when rendering all the tunes.</p>
+                <p>When checked, allows abcjs to inject any font, spacing, and *: ABC directives in the ABC file header text above the first X: tag found into each tune when rendering all the tunes.</p>
                 <p>"Floating" ABC directives between tunes are ignored, only the ABC file header is processed</p>
                 <p>This feature is extremely limited and will most likely cause unexpected results when editing individual tunes since when redrawing individual tunes, the ABC file header directives are not injected.</p>
                 <p>Additionally, share links for tunes in exported PDF files and websites will not include the injected ABC file header directives.</p>
-                <p>To work around that, as described above, you can use the <a href="#advanced_injectabcheader">Inject ABC Header Text</a> feature to identify and inject any font or spacing directives found in the ABC file header into each of the individual tunes.</p>
+                <p>To work around that, as described above, you can use the <a href="#advanced_injectabcheader">Inject ABC Header Text</a> feature to identify and inject any font, spacing, or *: ABC directives found in the ABC file header into each of the individual tunes.</p>
                 <p>If this feature is enabled, after making a change to the ABC file header, to see the results, force a full redraw of the tunes by clicking <strong>Snapshot</strong> and then <strong>Restore</strong>.</p>
                 <hr>
                 <p><strong>If you are using a lot of ABC page layout and spacing options, this tool may not meet your needs or produce the formatted output you expect.</strong></p>
