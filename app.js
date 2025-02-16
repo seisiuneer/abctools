@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2317_021425_0900";
+var gVersionNumber="2318_021525_2200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -5192,6 +5192,8 @@ function GetAllTuneHyperlinks(theLinks) {
 
 			}
 
+			tuneWithPatch = GetABCFileHeader() + tuneWithPatch;
+
 			// Create a share URL for this tune
 			var theURL = FillUrlBoxWithAbcInLZW(tuneWithPatch,false);
 
@@ -5364,6 +5366,8 @@ function GetAllTuneHyperlinks(theLinks) {
 
 				tuneWithPatch = "X:1\n%abcjs_soundfont "+theSoundFont+"\n"+"%%MIDI program "+theMelodyPatch+"\n"+"%%MIDI bassprog "+theBassPatch+"\n"+"%%MIDI chordprog "+theChordPatch+"\n"+tuneWithPatch;
 			}
+
+			tuneWithPatch = GetABCFileHeader() + tuneWithPatch;
 
 			// Create a share URL for this tune
 			var theURL = FillUrlBoxWithAbcInLZW(tuneWithPatch,false);
@@ -6034,6 +6038,8 @@ function AppendPDFTuneQRCode(thePDF,paperStyle,theABC,theTitle,callback){
 	//console.log("theABC: \n"+theABC);
 
 	var theURL;
+ 
+    theABC = GetABCFileHeader() + theABC;
 
 	// Can we make a QR code from the current share link URL?
 	theURL = FillUrlBoxWithAbcInLZW(theABC,false);
@@ -12170,7 +12176,7 @@ function Render(renderAll,tuneNumber) {
 
 				if (!gRawMode){
 					// Just get the ABC for the current tune
-					theNotes = getTuneByIndex(tuneNumber);
+					theNotes = GetABCFileHeader() + getTuneByIndex(tuneNumber);
 				}
 				else{
 					// Need the entire ABC for highlighting
@@ -12190,7 +12196,7 @@ function Render(renderAll,tuneNumber) {
 
 				if (!gRawMode){
 					// Just get the ABC for the current tune
-					theNotes = getTuneByIndex(gCurrentTune);
+					theNotes = GetABCFileHeader() + getTuneByIndex(gCurrentTune);
 				}
 				else{
 					// Need the entire ABC for highlighting
@@ -12201,7 +12207,7 @@ function Render(renderAll,tuneNumber) {
 			else{
 
 				// Just get the ABC for the current tune
-				theNotes = getTuneByIndex(tuneNumber);
+				theNotes = GetABCFileHeader() + getTuneByIndex(tuneNumber);
 
 			}
 		}
@@ -12241,6 +12247,8 @@ function Render(renderAll,tuneNumber) {
 			theNotes = theNotes.replace(searchRegExp, "X:1\n%%staffsep " + gStaffSpacing);
 
 		}
+
+		//console.log("theNotes for RenderTheNotes:"+theNotes);
 
 		// Render the notes
 		if (gIsQuickEditor){
@@ -18390,25 +18398,16 @@ function keydownHeaderInject(e){
 	e.stopPropagation();
 }
 
-function IdleFileHeaderInject(){
-
-	gFileHeaderDirectives = "";
-    
-    var elem = document.getElementById("injectheaderstringfh_holder");
-
-    if (elem){
-    	elem.style.display = "none";
-    }
-    else{
-    	// Element not present
-    	return;
-    }
+//
+// Find all ABC file header annotations compatible with abcjs
+//
+function GetABCFileHeader(){
 
 	var theHeader = FindPreTuneHeader(gTheABC.value);
 
 	if (theHeader.length == 0){
 		//console.log("No header present");
-		return;
+		return "";
 	}
 
 	var directives = "";
@@ -18470,7 +18469,7 @@ function IdleFileHeaderInject(){
       if (theRegex.test(line)){
         //console.log("Adding measure line: "+line)
         directives += line + '\n';
-      }      
+      }  
 
       theRegex = /^[ABCDFGHILMmNORrSUZ]:/
       if (theRegex.test(line)){
@@ -18478,6 +18477,30 @@ function IdleFileHeaderInject(){
         directives += line + '\n';
       }      
     });
+
+    // Put some space between the injected directives and the tune ABC
+    if (directives != ""){
+    	directives += "\n";
+    }
+
+    return directives; 
+}
+
+function IdleFileHeaderInject(){
+
+	gFileHeaderDirectives = "";
+    
+    var elem = document.getElementById("injectheaderstringfh_holder");
+
+    if (elem){
+    	elem.style.display = "none";
+    }
+    else{
+    	// Element not present
+    	return;
+    }
+
+    var directives = GetABCFileHeader();
 
     if (directives != ""){
 
@@ -19307,7 +19330,6 @@ function NotationSpacingExplorer(){
 
 	var testMatch = theABC.match(searchRegExp);
 
-
 	if ((testMatch) && (testMatch.length > 0)){
 
 		var theVal = testMatch[0].replace("%%leftmargin","");
@@ -19417,6 +19439,8 @@ function NotationSpacingExplorer(){
 		// Strip titlespace
 		theABC = theABC.replace(/%%titlespace\s.*\r?\n/g, '');
 
+		theABC = GetABCFileHeader() + theABC;
+
 		var visualObj = ABCJS.renderAbc("notationspacingexplorer-paper", theABC, abcOptions)[0];
 
 		// Post process whistle or note name tab
@@ -19431,6 +19455,8 @@ function NotationSpacingExplorer(){
 	// Strip titlespace
 	theABC = theABC.replace(/%%titlespace\s.*\r?\n/g, '');
 
+	theABC = GetABCFileHeader() + theABC;
+	
 	var visualObj = ABCJS.renderAbc("notationspacingexplorer-paper", theABC, abcOptions)[0];
 
 	// Post process whistle or note name tab
@@ -26629,6 +26655,9 @@ function ExportImageDialog(theABC,callback,val,metronome_state){
 			}
 		}
 
+		// Add the file header
+		theABC = GetABCFileHeader() + theABC;
+
 		var visualObj = ABCJS.renderAbc("playback-paper", theABC, abcOptions)[0];
 
 		// Post process whistle or note name tab
@@ -27320,6 +27349,8 @@ function BatchJSONExport(){
             title = title.substring(1);
         }
 
+        thisTune = GetABCFileHeader() + thisTune;
+
 		var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
 
 		var titleURL = title.replaceAll(" ","_");
@@ -27368,6 +27399,8 @@ function BatchCSVExport(){
 
 		var titleURL = title.replaceAll(" ","_");
 		titleURL = titleURL.replaceAll("#","^");
+
+        thisTune = GetABCFileHeader() + thisTune;
 
 		var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
 		
@@ -31173,7 +31206,7 @@ function flattenABCParts(abcString) {
 //
 // Based on the global injection configuration, pre-process the %%MIDI directives in the ABC
 function PreProcessPlayABC(theTune){
-	
+
 	//console.log("PreProcessPlayABC");
 	// Initially disable gchord use
 	var flattenParts = false;
@@ -31373,6 +31406,8 @@ function PreProcessPlayABC(theTune){
 
 	// Strip titlespace
 	theTune = theTune.replace(/%%titlespace\s.*\r?\n/g, '');
+
+	theTune = GetABCFileHeader() + theTune;
 
 	return(theTune);
 
@@ -34236,7 +34271,7 @@ function InstrumentExplorerDialogInjectThisTune(theTune){
 
 	// Inject chord volume
 	theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI chordvol "+gInstrumentExplorerChordVolume);
-	
+
 	// Seeing extra linefeeds after the inject
 	theTune = theTune.replace("\n\n","");
 
@@ -34302,6 +34337,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 		return;
 	}
 	
+
 	var instrument = GetRadioValue("notenodertab");
 
 	var abcOptions = GetABCJSParams(instrument);
@@ -34323,6 +34359,8 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 
 		// Strip titlespace
 		var strippedABC = theProcessedABC.replace(/%%titlespace\s.*\r?\n/g, '');
+
+		strippedABC = GetABCFileHeader() + strippedABC;
 
 		var visualObj = ABCJS.renderAbc("playback-paper", strippedABC, abcOptions)[0];
 
@@ -38426,15 +38464,6 @@ function GetInitialConfigurationSettings(){
 		}
 	}
 
-	// Allow abcjs to parse the ABC file header
-	val = localStorage.ProcessABCFileHeader
-	if (val){
-		gProcessABCFileHeader = (val == "true");
-	}
-	else{
-		gProcessABCFileHeader = false;
-	}
-
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -38683,9 +38712,6 @@ function SaveConfigurationSettings(){
 
 		// Player scaling
 		localStorage.PlayerScaling = gPlayerScaling;
-
-		// abcjs ABC header processing
-		localStorage.ProcessABCFileHeader = gProcessABCFileHeader;
 
 	}
 }
@@ -40343,6 +40369,8 @@ function Do_Browser_PDF_Export(){
 			        // Inject the playback instruments
             		thisTune = BrowserPDFInjectInstruments(thisTune);
 
+            		thisTune = GetABCFileHeader() + thisTune;
+
 					var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
 
 					var titleURL = title.replaceAll(" ","_");
@@ -41447,8 +41475,6 @@ function ConfigureToolSettings() {
 
 	var oldTabSelected = GetRadioValue("notenodertab");
 
-	var oldProcessABCFileHeader = gProcessABCFileHeader;
-
 	// Setup initial values
 	const theData = {
 		configure_save_exit_snapshot: gSaveLastAutoSnapShot,
@@ -41473,7 +41499,6 @@ function ConfigureToolSettings() {
 		configure_allow_offline_instruments: gAllowOfflineInstruments,
 		configure_ipad_two_column: giPadTwoColumn,
 		configure_player_scaling: gPlayerScaling,
-		configure_process_abc_file_header: gProcessABCFileHeader
 	};
 
 	var form = [
@@ -41524,8 +41549,6 @@ function ConfigureToolSettings() {
 		form.push({name: "    Allow MIDI input for ABC text entry", id: "configure_allow_midi_input", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 		form.push({name: "    MIDI input is key and mode aware (if unchecked, enters note names with no accidentals)", id: "configure_midi_chromatic", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 	};
-
-	form.push({name: "            Allow abcjs to process the ABC file header (see User Guide for limitations)", id: "configure_process_abc_file_header", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 
 	// For testing
 	// gUpdateAvailable = true;
@@ -41882,8 +41905,7 @@ function ConfigureToolSettings() {
 
 			// Do we need to re-render?
 			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || (gForceLeftJustifyTitles != oldLeftJustifyTitles) || (oldCGDA != gShowCGDATab) || (oldDGDAE != gShowDGDAETab) || (oldRecorderTab != gShowRecorderTab) || (gRecorderAlto != oldRecorderAlto) || bTabForceRedraw
-				|| ((radiovalue == "notenames") && ((gUseComhaltasABC != theOldComhaltas) || (theOldForceComhaltas && (!gUseComhaltasABC))))
-				|| (oldProcessABCFileHeader != gProcessABCFileHeader)){
+				|| ((radiovalue == "notenames") && ((gUseComhaltasABC != theOldComhaltas) || (theOldForceComhaltas && (!gUseComhaltasABC))))){
 				
 				RenderAsync(true, null, function(){
 

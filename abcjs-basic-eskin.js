@@ -218,9 +218,6 @@ var gExtendDuration = 0;
 // Flag to allow for lower case chords
 var gAllowLowercaseChords = false;
 
-// Flag to allow processing of ABC file header
-var gProcessABCFileHeader = false;
-
 // Scan tune for custom abcjs rendering parameters
 function ScanTuneForABCJSRenderingParams(theTune){
 
@@ -3772,80 +3769,78 @@ var bookParser = function bookParser(book) {
     // the tune is parsed all at once. The directives will be seen before the engraver begins processing.
     
     // 
-    // MAE 14 Feb 2025 - Allowing "opt-in" for ABC file header handling
+    // MAE 15 Feb 2025 - Filtered ABC header handler
     //
 
     var dir = tunes.shift();
 
-    if (gProcessABCFileHeader){
+    var arrDir = dir.abc.split('\n');
 
-      var arrDir = dir.abc.split('\n');
+    arrDir.forEach(function (line) {
 
-      arrDir.forEach(function (line) {
+      var theRegex = /^%%\S+font.*$/
 
-        var theRegex = /^%%\S+font.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding font line: "+line);
+        directives += line + '\n'
+      }
 
-        if (theRegex.test(line)){
-          //console.log("Adding font line: "+line);
-          directives += line + '\n'
-        }
+      theRegex = /^%%\S+margin.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding margin line: "+line)
+        directives += line + '\n';
+      }
 
-        theRegex = /^%%\S+margin.*$/
-        if (theRegex.test(line)){
-          //console.log("Adding margin line: "+line)
-          directives += line + '\n';
-        }
+      theRegex = /^%%staffwidth.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding staffwidth line: "+line)
+        directives += line + '\n';
+      }   
 
-        theRegex = /^%%staffwidth.*$/
-        if (theRegex.test(line)){
-          //console.log("Adding staffwidth line: "+line)
-          directives += line + '\n';
-        }   
+      theRegex = /^%%stretchlast.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding stretchlast line: "+line)
+        directives += line + '\n';
+      }  
 
-        theRegex = /^%%stretchlast.*$/
-        if (theRegex.test(line)){
-          //console.log("Adding stretchlast line: "+line)
-          directives += line + '\n';
-        }  
+      theRegex = /^%%barnumbers.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding barnumbers: "+line)
+        directives += line + '\n';
+      } 
 
-        theRegex = /^%%barnumbers.*$/
-        if (theRegex.test(line)){
-          //console.log("Adding barnumbers: "+line)
-          directives += line + '\n';
-        } 
+      theRegex = /^%%barsperstaff.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding barsperstaff: "+line)
+        directives += line + '\n';
+      } 
 
-        theRegex = /^%%barsperstaff.*$/
-        if (theRegex.test(line)){
-          //console.log("Adding barsperstaff: "+line)
-          directives += line + '\n';
-        } 
+      theRegex = /^%%\S+space.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding space line: "+line)
+        directives += line + '\n';
+      }
 
-        theRegex = /^%%\S+space.*$/
-        if (theRegex.test(line)){
-          //console.log("Adding space line: "+line)
-          directives += line + '\n';
-        }
+      theRegex = /^%%\S+sep.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding sep line: "+line)
+        directives += line + '\n';
+      }
+      
+      theRegex = /^%%measure\S+.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding measure line: "+line)
+        directives += line + '\n';
+      }      
 
-        theRegex = /^%%\S+sep.*$/
-        if (theRegex.test(line)){
-          //console.log("Adding sep line: "+line)
-          directives += line + '\n';
-        }
-        
-        theRegex = /^%%measure\S+.*$/
-        if (theRegex.test(line)){
-          //console.log("Adding measure line: "+line)
-          directives += line + '\n';
-        }      
-
-        theRegex = /^[ABCDFGHILMmNORrSUZ]:/
-        if (theRegex.test(line)){
-          //console.log("Adding ABC *: line: "+line)
-          directives += line + '\n';
-        }      
-      });
-    }
+      theRegex = /^[ABCDFGHILMmNORrSUZ]:/
+      if (theRegex.test(line)){
+        //console.log("Adding ABC *: line: "+line)
+        directives += line + '\n';
+      }      
+    });
   }
+  
 
   var header = directives;
 

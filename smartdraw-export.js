@@ -420,6 +420,8 @@ function SDEncodeABCToolsShareURL(theABC,setName,displayFormat,staffSpacing,addP
     // Strip the extension
     setName = setName.replace(/\..+$/, '');
 
+    theABC = GetABCFileHeader() + theABC;
+
     // Encode the ABC into LZW format with URI syntax
     var abcInLZW = LZString.compressToEncodedURIComponent(theABC);
 
@@ -734,6 +736,8 @@ function SDExportImageDialog(theABC,callback,val,metronome_state,isWide){
 
 			}
 		}
+		
+		theABC = GetABCFileHeader() + theABC;
 
 		var visualObj = ABCJS.renderAbc("playback-paper", theABC, abcOptions)[0];
 

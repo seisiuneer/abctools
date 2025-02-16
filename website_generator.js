@@ -446,6 +446,8 @@ function BatchJSONExportForWebGenerator(theABC){
             title = title.substring(1);
         }
 
+        thisTune = GetABCFileHeader() + thisTune;
+
         var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
 
         var titleURL = title.replaceAll(" ","_");
