@@ -496,6 +496,7 @@
             
             <h3>Advanced abcjs Rendering Options</h3>
             <a style="text-decoration:none;" href="#customabcjsparams">Adding Custom abcjs Rendering Parameters</a>
+            <a style="text-decoration:none;" href="#left_justify_titles">Forcing Left-Justified Titles and Subtitles</a>
             
             <h3>ABC Tricks, Tips, and Limitations</h3>
             <a style="text-decoration:none;" href="#largeprint">"Large Print" Edition Tune Notation</a>
@@ -864,6 +865,7 @@
                     <button class="accordion" title="Click to expand/collapse this section">Advanced abcjs Rendering Options</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#customabcjsparams">Adding Custom abcjs Rendering Parameters</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#left_justify_titles">Forcing Left-Justified Titles and Subtitles</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">ABC Tricks, Tips, and Limitations</button>
@@ -3397,7 +3399,7 @@
                     %abcjs_render_params<br/>
                     %flatten_parts_for_play<br/>
                     %allow_lowercase_chords<br/>
-                    %left_justify_titles</p>
+                %left_justify_titles</p>
                 <hr class="hidden-print" id="editing_pdf_tunebooks">
                 <h1 class="page_break_always">Editing PDF Tunebooks With Other Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>The PDF tunebooks created by this tool can be editing using Adobe Acrobat Pro or other PDF editing tools.</p>
@@ -4450,6 +4452,11 @@
                 <hr>
                 <p><strong>Left-justify all titles and subtitles</strong></p>
                 <p>When checked, draws all titles and subtitles left-justified instead of centered above the notation.</p>
+                <p>This only applies to the notation display of tunes while in the editor or on as drawn on pages in exported PDF tunebooks.</p>
+                <p>If you want to make sure as well that the tunes are displayed with left-justified titles when opened from play links, you'll want to inject the:</p>
+                <p class="code">% Left justify titles<br/>%left_justify_titles</p>
+                <p>annotation into each tune.</p>
+                <p>Full details here: <a href="#left_justify_titles">Forcing Left-Justified Titles and Subtitles</a></p>
                 <hr>
                 <p><strong>Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)</strong></p>
                 <p>Check this if you want to use the Comhaltas "Blackboard ABC" standard for ABC note names (D' E' F' instead of d e f for octave notes) when in note names tab display mode.</p>
@@ -4902,6 +4909,11 @@
                 <p class="code">%abcjs_render_params {"tablature": [{"instrument": "guitar","label": "Open G - DGDGBD","tuning": ["D,", "G,", "D", "G", "B", "d"],"highestNote": "f'","capo": 0}]}</p>
                 <p><strong>Note:</strong> This feature allows very low level control of the abcjs renderer. Improper parameters may cause unpredictable results or crash the tool.</p>
                 <p>Additional, use of some low-level abcjs rendering parameters such as "staffwidth" and "wrap" may cause issues with "Highlighting" mode in the tool.</p>
+                <hr class="hidden-print" id="left_justify_titles">
+                <h1 class="page_break_always h1wide">Forcing Left-Justified Titles and Subtitles<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>You may force left-justification of the titles and subtitles in a single tune by adding the following annotation anywhere in the tune:</p>
+                <p class="code">% Left justify titles<br/>%left_justify_titles</p>
+                <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have left justified titles and subtitles.</p>
                 <hr class="hidden-print" id="tabtranspose">
                 <h1 class="page_break_always h1wide">Transposing Notation Independent of Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>For some tablatures like CGDAE where instruments maybe in either standard pitch or one octave lower, if you transpose the notes down an octave to get the tab on the lower strings, but want the notation displayed an octave up, you can add the following voice annotation to the ABC:</p>
@@ -4986,9 +4998,6 @@
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/slide_demo_1.jpg"/>
                 </div>
-                <hr>
-                <p><strong>Left-justify the titles and subtitles in a single tune:</strong></p>
-                <p class="code">% Left justify titles<br/>%left_justify_titles</p>
                 <hr class="hidden-print" id="sequential_play">
                 <h1 class="page_break_always h1wide">Creating Sets of Tunes that Will Play Sequentially in the Player<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>This video demonstrates how to create a set of tunes that will play continuously in the player:</p>
