@@ -66,6 +66,9 @@ var gOrnamentOffset = 2;
 // MAE 16 Dec 2023 - For forcing left justified titles
 var gForceLeftJustifyTitles = false;
 
+// Flag to left justify titles on one tune
+var gLeftJustifyTitlesOneTune = false;
+
 // MAE 2 Jan 2024 - For Solfege instrument
 var gTheSolfegeABC = null;
 
@@ -257,6 +260,27 @@ function ScanTuneForABCJSRenderingParams(theTune){
   return null;
 
 }
+
+// Scan tune for left align titles
+
+function ScanTuneForLeftAlignTitles(theTune){
+
+  //console.log("ScanTuneForLeftAlignTitles");
+
+  var searchRegExp = /^%left_justify_titles.*$/gm
+
+  var isLeftAlignTitles = searchRegExp.test(theTune);
+
+  if (isLeftAlignTitles){
+    //console.log("Found %left_justify_titles")
+    return true;
+  }
+
+  //console.log("No %left_justify_titles found")
+
+  return false;
+}
+
 
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
@@ -1020,7 +1044,6 @@ var tunebook = {};
 
           var workingParams = params;
 
-          //debugger;
 
           // Merge any params overrides
           gABCJSRenderingParams = null;
@@ -1035,6 +1058,9 @@ var tunebook = {};
                 workingParams[key] = gABCJSRenderingParams[key];
             });
           }
+
+          gLeftJustifyTitlesOneTune = false;
+          gLeftJustifyTitlesOneTune = ScanTuneForLeftAlignTitles(book.tunes[currentTune].abc);
 
           abcParser.parse(book.tunes[currentTune].abc, workingParams, book.tunes[currentTune].startPos - book.header.length);
           var tune = abcParser.getTune();
@@ -25598,7 +25624,7 @@ function Subtitle(spaceAbove, formatting, info, center, paddingLeft, getTextSize
   var tLeft = formatting.titleleft ? paddingLeft : center;
 
   // MAE 16 Dec 2023 - For forced left-justified titles/subtitles
-  if (gForceLeftJustifyTitles){
+  if (gForceLeftJustifyTitles || gLeftJustifyTitlesOneTune){
     tAnchor = 'start';
     tLeft = paddingLeft;
   }
@@ -25939,7 +25965,7 @@ function TopText(metaText, metaTextInfo, formatting, lines, width, isPrint, padd
   var tLeft = formatting.titleleft ? paddingLeft : paddingLeft + width / 2;
 
     // MAE 16 Dec 2023 - For forced left-justified titles/subtitles
-  if (gForceLeftJustifyTitles){
+  if (gForceLeftJustifyTitles || gLeftJustifyTitlesOneTune){
     tAnchor = 'start';
     tLeft = paddingLeft;
   }
@@ -29199,7 +29225,7 @@ EngraverController.prototype.engraveTune = function (abcTune, tuneNumber, lineOf
 
                   //console.log("Got centered subtitle: "+entry.subtitle.text);
                   // MAE 16 Sep 2024 - Fixed left justified subtitles
-                  if (gForceLeftJustifyTitles){
+                  if (gForceLeftJustifyTitles || gLeftJustifyTitlesOneTune){
                     thisRow.left = this.renderer.padding.left;
                   }
                   else{

@@ -3396,7 +3396,8 @@
                     %ornament_offset<br/>
                     %abcjs_render_params<br/>
                     %flatten_parts_for_play<br/>
-                %allow_lowercase_chords</p>
+                    %allow_lowercase_chords<br/>
+                    %left_justify_titles</p>
                 <hr class="hidden-print" id="editing_pdf_tunebooks">
                 <h1 class="page_break_always">Editing PDF Tunebooks With Other Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>The PDF tunebooks created by this tool can be editing using Adobe Acrobat Pro or other PDF editing tools.</p>
@@ -4127,15 +4128,14 @@
                 <h1 class="page_break_always">Incipits Builder<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Brings up a dialog where you can easily format the ABC specifically for notation incipits PDF export with only a couple of bars per tune:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/incipits_builder_4.jpg"/>
+                    <img class="image" loading="lazy" src="img/incipits_builder_5.jpg"/>
                 </div>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/1Je325kS2UQ" title="Incipits Builder" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>Since this modifies the ABC, you may want to grab a <strong>Snapshot</strong> or save the ABC before running this command.</p>
                 <p><strong>Bars per staff</strong> - Sets the number of measures shown in the incipit. Default is 3.</p>
                 <p><strong>Staff width</strong> - Compresses the horizontal size of the incipit notation compared to the standard of 556. Default is 400.</p>
                 <p><strong>Add tune title numbers</strong> - When checked, prepends the tune titles with incrementing numbers.</p>
-                <p><strong>Left justify titles</strong> - When checked, will enable the "Left-justify all titles and subtitles" in the tool's <strong>Settings</strong>.</p>
-                <p>When <strong>Left justify titles</strong> is checked, you will need to manually uncheck the "Left justify all titles and subtitles" setting in the tool's settings after exporting the incipits as a PDF or just reload the tool to restore the title default center justification.</p>
+                <p><strong>Left justify titles</strong> - When checked, will add a %left_justify_titles annotation to each tune.</p>
                 <p>Here is an example of a two-column notation incipits PDF exported using the default settings:</p>
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/incipits_builder_example_2.jpg"/>
@@ -4986,6 +4986,9 @@
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/slide_demo_1.jpg"/>
                 </div>
+                <hr>
+                <p><strong>Left-justify the titles and subtitles in a single tune:</strong></p>
+                <p class="code">% Left justify titles<br/>%left_justify_titles</p>
                 <hr class="hidden-print" id="sequential_play">
                 <h1 class="page_break_always h1wide">Creating Sets of Tunes that Will Play Sequentially in the Player<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>This video demonstrates how to create a set of tunes that will play continuously in the player:</p>

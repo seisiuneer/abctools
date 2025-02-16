@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2318_021525_2200";
+var gVersionNumber="2319_021625_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -22142,7 +22142,8 @@ function complianceABCTransformer(theABC,doInverse){
 	    "%links_open_in_editor",
 	    "%abcjs_render_params",
 	    "%play_flatten_parts",
-	    "%allow_lowercase_chords"
+	    "%allow_lowercase_chords",
+	    "%left_justify_titles"
 	];
 
 	if (doInverse){
@@ -23426,7 +23427,7 @@ function IncipitsBuilderDialog(){
 		{html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;margin-bottom:24px;">The reformatted ABC can be exported as first-line Notes Incipits from the Export PDF dialog.</p>'},
   		{name: "Number of bars: (Default is 3)", id: "IncipitsBuilderBars", type:"number", cssClass:"incipits_builder_form_text"},
   		{name: "Staff width: (Default is 400, full width is 556)", id: "IncipitsBuilderWidth", type:"number", cssClass:"incipits_builder_form_text"},
-		{name: "    Left justify incipits titles. Requires manual reset after in the Settings.", id: "IncipitsBuilderLeftJustify", type:"checkbox", cssClass:"incipits_builder_form_text_checkbox"},
+		{name: "    Left justify incipits titles.", id: "IncipitsBuilderLeftJustify", type:"checkbox", cssClass:"incipits_builder_form_text_checkbox"},
 		{name: "    Add numbers before titles", id: "IncipitsBuilderInjectNumbers", type:"checkbox", cssClass:"incipits_builder_form_text_checkbox"},
 	];
 
@@ -23482,19 +23483,19 @@ function IncipitsBuilderDialog(){
 				var theTune = "X:"+theTunes[i];
 
 				// Inject an easily identified block of annotations
-				var stringToInject = "%incipits_inject_start\n%%noexpandtowidest\n%%barsperstaff "+nBars+"\n%%staffwidth "+theWidth+"\n%incipits_inject_end";
+				var stringToInject; 
+				if (gIncipitsBuilderLeftJustify){
+					stringToInject = "%incipits_inject_start\n%%noexpandtowidest\n%%barsperstaff "+nBars+"\n%%staffwidth "+theWidth+"\n%left_justify_titles\n%incipits_inject_end";
+				}
+				else{
+					stringToInject = "%incipits_inject_start\n%%noexpandtowidest\n%%barsperstaff "+nBars+"\n%%staffwidth "+theWidth+"\n%incipits_inject_end";					
+				}
 
 				output += InjectStringBelowTuneHeader(theTune,stringToInject);
 
 			}
 
 			gTheABC.value = output;
-
-			if (gIncipitsBuilderLeftJustify){
-
-				gForceLeftJustifyTitles = true;
-
-			}
 
 			if (gIncipitsBuilderInjectNumbers){
 				
