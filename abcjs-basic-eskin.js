@@ -226,6 +226,9 @@ function ScanTuneForABCJSRenderingParams(theTune){
 
   //console.log("ScanTuneForABCJSRenderingParams");
 
+  // Allow compliant version
+  theTune = theTune.replace("%%abctt:abcjs_render_params","%abcjs_render_params");
+
   var searchRegExp = /^%abcjs_render_params.*$/gm
 
   var isRenderParams = theTune.match(searchRegExp);
@@ -267,6 +270,8 @@ function ScanTuneForLeftAlignTitles(theTune){
 
   //console.log("ScanTuneForLeftAlignTitles");
 
+  theTune = theTune.replace("%%abctt:left_justify_titles","%left_justify_titles");
+
   var searchRegExp = /^%left_justify_titles.*$/gm
 
   var isLeftAlignTitles = searchRegExp.test(theTune);
@@ -276,7 +281,7 @@ function ScanTuneForLeftAlignTitles(theTune){
     return true;
   }
 
-  //console.log("No %left_justify_titles found")
+  //console.log("No %%abctt:left_justify_titles")
 
   return false;
 }
