@@ -383,8 +383,8 @@
             <a style="text-decoration:none;" href="#custom_font_overrides">Custom Font Overrides</a>
             <a style="text-decoration:none;" href="#inject_fonts_into_share_links">Automatically Inject Fonts into Share Links</a>
             
-            <h3>All Available PDF Tunebook Annotations</h3>
-            <a style="text-decoration:none;" href="#all_pdf_annotations">All Available PDF Tunebook Annotations</a>
+            <h3>All Available Tunebook Annotations</h3>
+            <a style="text-decoration:none;" href="#all_pdf_annotations">All Available Tunebook Annotations</a>
             
             <h3>Editing PDF Tunebooks With Other Tools</h3>
             <a style="text-decoration:none;" href="#editing_pdf_tunebooks">Editing PDF Tunebooks With Other Tools</a>
@@ -715,9 +715,9 @@
                         <p class="toc"><a style="text-decoration:none;" href="#inject_fonts_into_share_links">Automatically Inject Fonts into Share Links</a></p>
                     </div>
                     
-                    <button class="accordion" title="Click to expand/collapse this section">All Available PDF Tunebook Annotations</button>
+                    <button class="accordion" title="Click to expand/collapse this section">All Available Tunebook Annotations</button>
                     <div class="tocpanel">
-                        <p class="toc"><a style="text-decoration:none;" href="#all_pdf_annotations">All Available PDF Tunebook Annotations</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#all_pdf_annotations">All Available Tunebook Annotations</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">Editing PDF Tunebooks With Other Tools</button>
@@ -3321,8 +3321,8 @@
                 <p>This forces the tune opened by a share link to use the same fonts as when it was exported originally to the PDF file by injecting any required ABC font annotations at the top of the ABC for the tune.</p>
                 <p>Any fonts specified in the ABC will override the user's default fonts when they open the share link.</p>
                 <hr class="hidden-print" id="all_pdf_annotations">
-                <h1 class="page_break_always">All Available PDF Tunebook Annotations<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>Here are examples of all the possible PDF comment-based annotations in the tool:</p>
+                <h1 class="page_break_always">All Available Tunebook Annotations<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>Here are examples of all the possible comment-based annotations in the tool:</p>
                 <p class="code">
                     %pdfquality .75<br/>
                     %pdf_between_tune_space 20<br/>
@@ -3399,7 +3399,10 @@
                     %abcjs_render_params<br/>
                     %flatten_parts_for_play<br/>
                     %allow_lowercase_chords<br/>
-                %left_justify_titles</p>
+                    %<br/>
+                    % These directives can be added to each tune or added to the ABC file header:<br/>
+                    %left_justify_titles<br/>
+                %abcjs_render_params {custom rendering parameters JSON}</p>
                 <hr class="hidden-print" id="editing_pdf_tunebooks">
                 <h1 class="page_break_always">Editing PDF Tunebooks With Other Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>The PDF tunebooks created by this tool can be editing using Adobe Acrobat Pro or other PDF editing tools.</p>
