@@ -3859,6 +3859,12 @@ var bookParser = function bookParser(book) {
       if (theRegex.test(line)){
         //console.log("Adding measure line: "+line)
         directives += line + '\n';
+      }     
+
+      theRegex = /^%left_justify_titles.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding left_justify_titles line: "+line)
+        directives += line + '\n';
       }      
 
       theRegex = /^[ABCDFGHILMmNORrSUZ]:/
