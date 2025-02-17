@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2321_021625_1230";
+var gVersionNumber="2322_021725_0730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -38181,12 +38181,6 @@ function GetInitialConfigurationSettings(){
 		gRawHighlightColor = val;
 	}
 
-	gForceLeftJustifyTitles = false;
-	val = localStorage.ForceLeftJustifyTitles;
-	if (val){
-		gForceLeftJustifyTitles = (val == "true");
-	}
-
 	gPlayerStatusOnLeft = false;
 	val = localStorage.PlayerStatusOnLeft;
 	if (val){
@@ -38634,9 +38628,6 @@ function SaveConfigurationSettings(){
 
 		// Save the raw highlight color
 		localStorage.RawHighlightColor = gRawHighlightColor;
-
-		// Save the force left-justify titles setting
-		localStorage.ForceLeftJustifyTitles = gForceLeftJustifyTitles;
 
 		// Save the player status on left
 		localStorage.PlayerStatusOnLeft = gPlayerStatusOnLeft;
@@ -41452,8 +41443,6 @@ function ConfigureToolSettings() {
 
 	var theOldStaffSpacing = gStaffSpacing - STAFFSPACEOFFSET;
 
-	var oldLeftJustifyTitles = gForceLeftJustifyTitles;
-
 	var theOldShowTabNames = gShowTabNames;
 
 	var theOldCapo = gCapo;
@@ -41481,7 +41470,6 @@ function ConfigureToolSettings() {
 		configure_save_exit_snapshot: gSaveLastAutoSnapShot,
 		configure_editor_fontsize: gABCEditorFontsize,
 		configure_staff_spacing: theOldStaffSpacing,
-		configure_left_justify_titles: gForceLeftJustifyTitles,
 		configure_capo: gCapo,
 		configure_show_tab_names: gShowTabNames,
 		configure_use_custom_gm_sounds: gUseCustomGMSounds,
@@ -41529,7 +41517,6 @@ function ConfigureToolSettings() {
 
 	form = form.concat([
 		{name: "Space between the staves (default is 10, minimum is -40):", id: "configure_staff_spacing", type:"number", cssClass:"configure_settings_form_text"},
-		{name: "          Left-justify all titles and subtitles", id: "configure_left_justify_titles", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "    Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)", id: "configure_comhaltas", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "          Show CGDA as the 4-string tab option (default is GDAD)", id: "configure_show_cgda", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "          Show DGDAE as the 5-string tab option (default is CGDAE)", id: "configure_show_dgdae", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
@@ -41680,9 +41667,6 @@ function ConfigureToolSettings() {
 				}
 
 			}
-
-			// Left justify titles/subtitles?
-			gForceLeftJustifyTitles = args.result.configure_left_justify_titles;
 
 			// Sanity check the new capo value
 			var testCapo = args.result.configure_capo;
@@ -41905,7 +41889,7 @@ function ConfigureToolSettings() {
 			var radiovalue = GetRadioValue("notenodertab");
 
 			// Do we need to re-render?
-			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || (gForceLeftJustifyTitles != oldLeftJustifyTitles) || (oldCGDA != gShowCGDATab) || (oldDGDAE != gShowDGDAETab) || (oldRecorderTab != gShowRecorderTab) || (gRecorderAlto != oldRecorderAlto) || bTabForceRedraw
+			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || (oldCGDA != gShowCGDATab) || (oldDGDAE != gShowDGDAETab) || (oldRecorderTab != gShowRecorderTab) || (gRecorderAlto != oldRecorderAlto) || bTabForceRedraw
 				|| ((radiovalue == "notenames") && ((gUseComhaltasABC != theOldComhaltas) || (theOldForceComhaltas && (!gUseComhaltasABC))))){
 				
 				RenderAsync(true, null, function(){

@@ -63,9 +63,6 @@ var gRoll3Volume3 = 1.0;
 var gOrnamentDivider = 32;
 var gOrnamentOffset = 2;
 
-// MAE 16 Dec 2023 - For forcing left justified titles
-var gForceLeftJustifyTitles = false;
-
 // Flag to left justify titles on one tune
 var gLeftJustifyTitlesOneTune = false;
 
@@ -25629,7 +25626,7 @@ function Subtitle(spaceAbove, formatting, info, center, paddingLeft, getTextSize
   var tLeft = formatting.titleleft ? paddingLeft : center;
 
   // MAE 16 Dec 2023 - For forced left-justified titles/subtitles
-  if (gForceLeftJustifyTitles || gLeftJustifyTitlesOneTune){
+  if (gLeftJustifyTitlesOneTune){
     tAnchor = 'start';
     tLeft = paddingLeft;
   }
@@ -25970,7 +25967,7 @@ function TopText(metaText, metaTextInfo, formatting, lines, width, isPrint, padd
   var tLeft = formatting.titleleft ? paddingLeft : paddingLeft + width / 2;
 
     // MAE 16 Dec 2023 - For forced left-justified titles/subtitles
-  if (gForceLeftJustifyTitles || gLeftJustifyTitlesOneTune){
+  if (gLeftJustifyTitlesOneTune){
     tAnchor = 'start';
     tLeft = paddingLeft;
   }
@@ -29230,7 +29227,7 @@ EngraverController.prototype.engraveTune = function (abcTune, tuneNumber, lineOf
 
                   //console.log("Got centered subtitle: "+entry.subtitle.text);
                   // MAE 16 Sep 2024 - Fixed left justified subtitles
-                  if (gForceLeftJustifyTitles || gLeftJustifyTitlesOneTune){
+                  if (gLeftJustifyTitlesOneTune){
                     thisRow.left = this.renderer.padding.left;
                   }
                   else{
