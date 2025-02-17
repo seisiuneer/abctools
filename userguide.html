@@ -4901,6 +4901,9 @@
                 <p class="code">%abcjs_render_params {"tablature": [{"instrument": "guitar","label": "Open G - DGDGBD","tuning": ["D,", "G,", "D", "G", "B", "d"],"highestNote": "f'","capo": 0}]}</p>
                 <p><strong>Note:</strong> This feature allows very low level control of the abcjs renderer. Improper parameters may cause unpredictable results or crash the tool.</p>
                 <p>Additional, use of some low-level abcjs rendering parameters such as "staffwidth" and "wrap" may cause issues with "Highlighting" mode in the tool.</p>
+                <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
+                <p>Only the first instance of %abcjs_render_params found in a tune will be used.</p>
+                <p>If present both in the tune and the ABC file header, the file header version will be used.</p>
                 <hr class="hidden-print" id="left_justify_titles">
                 <h1 class="page_break_always h1wide">Forcing Left-Justified Titles and Subtitles<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>You may force left-justification of the titles and subtitles in a single tune by adding the following annotation anywhere in the tune:</p>
