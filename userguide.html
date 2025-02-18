@@ -458,6 +458,8 @@
             <a style="text-decoration:none;" href="#export_all_abc">Export All Tunes as ABC</a>
             <a style="text-decoration:none;" href="#export_all_musicxml">Export All Tunes as MusicXML</a>
             <a style="text-decoration:none;" href="#export_all_developer">Developer Share URL Batch Export Tools</a>
+            <a style="text-decoration:none;" href="#export_all_as_json">Export all Share URLs as JSON</a>
+            <a style="text-decoration:none;" href="#export_all_as_csv">Export all Share URLs as CSV</a>
             
             <h3>SmartDraw Set List Builder</h3>
             <a style="text-decoration:none;" href="#smartdraw_export">SmartDraw Set List Builder</a>
@@ -810,7 +812,8 @@
                         <p class="toc"><a style="text-decoration:none;" href="#export_all_abc">Export All Tunes as ABC</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#export_all_musicxml">Export All Tunes as MusicXML</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#export_all_developer">Developer Share URL Batch Export Tools</a></p>
-                        
+                        <p class="toc"><a style="text-decoration:none;" href="#export_all_as_json">Export all Share URLs as JSON</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#export_all_as_csv">Export all Share URLs as CSV</a></p>                       
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">SmartDraw Set List Builder</button>
@@ -1087,10 +1090,12 @@
                 <p>Also available by pressing ⌘+F on Mac or Ctrl+F on Windows/Linux when working in the ABC editor.</p>
                 <p>Basic operation:</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/_0-0wrNvwJs" title="Find and Replace - Basic Operation" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>Use of regular expressions:</p>
+                <p>Example of using of regular expressions:</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/ZWuY9sZgcFM" title="Find and Replace - Regular Expressions" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>Use of regular expression capture groups for complex find and replace operations:</p>
+                <p>Example of using of regular expression capture groups for complex find and replace operations:</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/m7CAACS_qK4" title="Find and Replace - Using Regular Expression Capture Groups" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>Example of using regular expressions and capture groups for title extraction from a large tunebook:</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/_3FVs0EEtlI" title="Find and Replace - Title Extraction" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <hr id="hamburger_toggle_top_bottom">
                 <p><strong>Toggle Top/Bottom Toolbars</strong></p>
                 <p>Hides/shows the header at the top and any visible controls below the ABC text area so you can have more room to work on your music.</p>
@@ -4088,10 +4093,13 @@
                 <p><strong>Name</strong> - Contains the tune name matching the image name (minus extension) that is created by the batch image exporters.</p>
                 <p><strong>URL</strong> - Contains the Share URL for the tune.</p>
                 <p>The Share URL is the same as would be generated for each tune using the Sharing dialog and includes the &play=1 parameter so that tunes open in the Player.</p>
-                <hr>
+                <hr id="export_all_as_json">
                 <p><strong>Export all Share URLs as JSON</strong>: Exports tune names and Share URLs for all of the tunes in a JSON file.</p>
-                <hr>
+                <hr id="export_all_as_csv">
                 <p><strong>Export all Share URLs as CSV</strong>: Exports tune names and Share URLs for all of the tunes in a CSV file.</p>
+                <p>When imported into a spreadsheet program, the first column will contain the tune names, the second column will contain the share URLs.</p>
+                <p>Example of using Export all Share URLs as CSV for title extraction from a large tunebook:</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/vzHuvRYEtaY" title="Export all Share URLs as CSV - Title Extraction" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <hr class="hidden-print" id="smartdraw_export">
                 <h1 class="page_break_always">SmartDraw Set List Builder<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Brings up a dialog where you can build tune sets and then export them in SmartDraw format.</p>
