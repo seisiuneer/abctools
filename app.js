@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2325_021825_1000";
+var gVersionNumber="2326_021825_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -26368,7 +26368,7 @@ function ExportAll(){
 
 	modal_msg += '<a id="exportall_help" href="https://michaeleskin.com/abctools/userguide.html#export_all" target="_blank" style="text-decoration:none;" title="Learn more about the audio and image exporter" class="dialogcornerbutton">?</a>';
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, scrollWithPage: (AllowDialogsToScroll()) })
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 670, scrollWithPage: (AllowDialogsToScroll()) })
 
 	if ((format != "whistle") && (format != "recorder")){
 		document.getElementById("export_width").value = gExportWidthAll;
