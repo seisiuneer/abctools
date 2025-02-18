@@ -986,6 +986,16 @@ margin-right:30px;
 	}
 }
 
+#export_tunetitlesbutton{
+height:42px;
+padding:12px;
+}
+
+@media (hover: hover) {
+	.export_tunetitlesbutton:hover{
+	background: palegreen;
+	}
+}
 
 #export_smartdrawbutton{
 height:42px;
@@ -5392,6 +5402,12 @@ margin-left:12px;
 .btn-smartdraw{
   --color: black;
   --background-color: #F0F0F0;
+
+}
+
+.btn-exporttunetitles{
+  --color: black;
+  --background-color: lavender;
 
 }
 

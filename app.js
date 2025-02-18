@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2324_021725_0830";
+var gVersionNumber="2325_021825_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -26331,16 +26331,16 @@ function ExportAll(){
 	
 	var modal_msg = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export All Tunes</p>';
 
-	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export All Tunes as Audio/MIDI</p>';
-	modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
+	modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:28px;">Export All Tunes as Audio/MIDI</p>';
+	modal_msg  += '<p style="text-align:center;font-size:18pt;font-family:helvetica;">';
 	modal_msg += '<input id="exportall_mp3button" class="exportall_mp3button btn btn-allmp3download" onclick="BatchMP3Export();" type="button" value="Export all as MP3 Audio" title="Saves the audio for all the tunes as .MP3 files">'
 	modal_msg += '<input id="exportall_midibutton" class="exportall_midibutton btn btn-allmididownload" onclick="BatchMIDIExport();" type="button" value="Export all as MIDI" title="Saves the MIDI file for all the tunes">'
 	modal_msg  += '</p>';
 
 	if ((format != "whistle") && (format != "recorder")){
 
-		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export All Tunes as Images</p>';
-		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:28px;">Export All Tunes as Images</p>';
+		modal_msg  += '<p style="text-align:center;font-size:18pt;font-family:helvetica;">';
 		modal_msg += '<input id="exportall_jpegbutton" class="exportall_jpegbutton btn btn-alljpegdownload" onclick="BatchJPEGExport();" type="button" value="Export all as JPEG" title="Saves the images for all the tunes as bitmap JPEG files">'
 		modal_msg += '<input id="exportall_pngbutton" class="exportall_pngbutton btn btn-allpngdownload" onclick="BatchPNGExport();" type="button" value="Export all as PNG" title="Saves the images for all the tunes as bitmap PNG files">'
 		modal_msg += '<input id="exportall_svgbutton" class="exportall_svgbutton btn btn-allsvgdownload" onclick="BatchSVGExport();" type="button" value="Export all as SVG" title="Saves the images for all the tunes as vector format SVG files">'
@@ -26348,16 +26348,19 @@ function ExportAll(){
 		modal_msg += '<p class="export_all_text">';
 		modal_msg += 'Image width to export: <input id="export_width" type="number" min="0" step="1" max="4096" title="Image width to export" autocomplete="off"/>';
 		modal_msg += '</p>';
-		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Export All Tunes as ABC or MusicXML</p>';
-		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:28px;">Export All Tunes as ABC or MusicXML</p>';
+		modal_msg  += '<p style="text-align:center;font-size:18pt;font-family:helvetica;">';
 		modal_msg += '<input id="exportall_abcbutton" class="exportall_abcbutton btn btn-allabcdownload" onclick="BatchABCExport();" type="button" value="Export all Tunes as ABC" title="Saves each tune in its own ABC file">'
 		modal_msg += '<input id="exportall_musicxmlbutton" class="exportall_musicxmlbutton btn btn-allmusicxmldownload" onclick="BatchMusicXMLExport();" type="button" value="Export all Tunes as MusicXML" title="Saves each tune in its own MusicXML file">'
-		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">Developer Share URL Batch Export Tools</p>';
-		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:28px;">Export All Tunes Titles</p>';
+		modal_msg  += '<p style="text-align:center;font-size:18pt;font-family:helvetica;">';
+		modal_msg += '<input id="export_tunetitlesbutton" class="export_tunetitlesbutton btn btn-exporttunetitles" onclick="ExportAllTuneTitles();" type="button" value="Export All Tune Titles" title="Saves a text file with all the tune titles">'
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:28px;">Developer Share URL Batch Export Tools</p>';
+		modal_msg  += '<p style="text-align:center;font-size:18pt;font-family:helvetica;">';
 		modal_msg += '<input id="exportall_jsonbutton" class="exportall_jsonbutton btn btn-alljsondownload" onclick="BatchJSONExport();" type="button" value="Export all Share URLs as JSON" title="Saves the Share URLs for all the tunes as a JSON file">'
 		modal_msg += '<input id="exportall_csvbutton" class="exportall_csvbutton btn btn-allcsvdownload" onclick="BatchCSVExport();" type="button" value="Export all Share URLs as CSV" title="Saves the Share URLs for all the tunes as a CSV file">'
-		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:32px;">SmartDraw Set List Builder</p>';
-		modal_msg  += '<p style="text-align:center;font-size:20pt;font-family:helvetica;">';
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:28px;">SmartDraw Set List Builder</p>';
+		modal_msg  += '<p style="text-align:center;font-size:18pt;font-family:helvetica;">';
 		modal_msg += '<input id="export_smartdrawbutton" class="export_smartdrawbutton btn btn-smartdraw" onclick="SmartDrawExport();" type="button" value="SmartDraw Set List Builder" title="Build a SmartDraw set list using drag and drop">'
 		modal_msg += '</p>';
 
@@ -27434,7 +27437,43 @@ function BatchCSVExport(){
 }
 
 
+//
+// Export all the tunes names as a text file
+//
+function ExportAllTuneTitles(){
 
+	// Make sure there are tunes to convert
+	var nTunes = CountTunes();
+
+	if (nTunes == 0){
+		return;
+	}
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","ExportAllTuneTitles");
+
+	var theTuneTitles = "";
+
+	for (var i=0;i<nTunes;++i){
+
+		var thisTune = getTuneByIndex(i);
+
+		var title = GetTuneAudioDownloadName(thisTune,"");
+
+		// If section header, strip the *
+        if (title.startsWith('*')) {
+            title = title.substring(1);
+        }
+
+		theTuneTitles += title;
+	
+		theTuneTitles += "\n";
+
+	}
+
+	saveTextFileDeveloper("Please enter a filename for your tune titles text file:","All_Tune_Titles.txt",theTuneTitles);
+
+}
 
 // 
 // Download the current tune as a .WAV file
