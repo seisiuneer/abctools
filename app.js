@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2326_021825_1200";
+var gVersionNumber="2327_021925_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -452,6 +452,17 @@ function getFirstPage(){
 // 
 
 //
+// Set the editor text
+//
+function setABCEditorText(theText){
+	
+	clearGetTuneByIndexCache();
+
+	gTheABC.value = theText;
+
+}
+
+//
 // Show the spinner
 // 
 function showTheSpinner(){
@@ -614,8 +625,6 @@ function removeABCTuneHeaders(abcTune) {
 
 }
 
-
-
 //
 // Detect a T:* or T: * section header
 //
@@ -710,8 +719,35 @@ function findTuneByOffset(start){
 //
 //
 
-function getLinesUpToFirstBlank(text) {
-    const lines = text.split('\n');
+// Used to hold cached split tunes
+var gGetTuneByIndexCache = null;
+
+function clearGetTuneByIndexCache(){
+
+	//console.log("clearGetTuneByIndexCache")
+
+	gGetTuneByIndexCache = null;
+
+}
+
+function getTuneByIndex(tuneNumber){
+
+	if (gGetTuneByIndexCache == null){
+
+		//console.log("Regerating split tunes cache")
+
+		var theNotes = gTheABC.value;
+
+	    // Now find all the X: items
+	    gGetTuneByIndexCache = theNotes.split(/^X:/gm);
+
+	}
+
+	//console.log("getTuneByIndex "+tuneNumber);
+
+ 	var theTune = "X:"+gGetTuneByIndexCache[tuneNumber+1];
+
+ 	const lines = theTune.split('\n');
     let result = [];
 
     for (let line of lines) {
@@ -722,20 +758,6 @@ function getLinesUpToFirstBlank(text) {
     }
 
     return result.join('\n');
-}
-
-function getTuneByIndex(tuneNumber){
-
-	var theNotes = gTheABC.value;
-
-    // Now find all the X: items
-    var theTunes = theNotes.split(/^X:/gm);
-
- 	var theTune = "X:"+theTunes[tuneNumber+1];
-
- 	theTune = getLinesUpToFirstBlank(theTune);
-
- 	return theTune;
 
 }
 
@@ -1168,6 +1190,8 @@ function getTuneRangeForTranspose(){
 // Support function for restoring the selection point after the transpose operation
 //
 function resetSelectionAfterTranspose(start,end){
+
+	clearGetTuneByIndexCache();
 	
 	// Get the first tune index
 	var theStartIndex = findTuneOffsetByIndex(start);
@@ -1312,7 +1336,7 @@ function Transpose(transposeAmount) {
 		}
 
 		// Stuff in the transposed output
-		gTheABC.value = output;
+		setABCEditorText(output);
 
 		// Set dirty
 		gIsDirty = true;
@@ -1771,7 +1795,7 @@ function DoTransposeToKey(targetKey,transposeAll) {
 		}
 
 		// Stuff in the transposed output
-		gTheABC.value = output;
+		setABCEditorText(output);
 
 		// Set dirty
 		gIsDirty = true;
@@ -2061,7 +2085,7 @@ function SortTunesByTag(theTag,doCase){
 	theNotes = theNotes.replace(/\n*$/, '') + '\n'
 
 	// Put them back in the ABC area
-	gTheABC.value = theNotes; 
+	setABCEditorText(theNotes);
 
     // Set dirty
 	gIsDirty = true;
@@ -2306,7 +2330,7 @@ function SortTunes(){
 	theNotes = theNotes.replace(/\n*$/, '') + '\n'
 
 	// Put them back in the ABC area
-	gTheABC.value = theNotes; 
+	setABCEditorText(theNotes);
 
 	// Set dirty
 	gIsDirty = true;
@@ -2640,7 +2664,7 @@ function RenumberXTags() {
 	}
 
 	// Put them back in the ABC area
-	gTheABC.value = theNotes; 
+	setABCEditorText(theNotes);
 
 	// Set dirty
 	gIsDirty = true;
@@ -2843,7 +2867,7 @@ function Clear() {
 //
 function ClearNoRender() {
 
-	gTheABC.value = "";
+	setABCEditorText("");
 
 	// Save it for the status update display
 	gDisplayedName = "No ABC file selected";
@@ -3075,7 +3099,7 @@ function RestoreSnapshot(e, bRestoreAutoSnapshot,bIsAddDialogButton){
 
 						setTimeout(function(){
 
-							gTheABC.value = theSnapshot;
+							setABCEditorText(theSnapshot);
 
 							// Not from share
 							gIsFromShare = false;
@@ -3128,8 +3152,8 @@ function RestoreSnapshot(e, bRestoreAutoSnapshot,bIsAddDialogButton){
 
 						setTimeout(function(){
 
-							gTheABC.value = theSnapshot;
-							
+							setABCEditorText(theSnapshot);
+
 							// Not from share
 							gIsFromShare = false;
 
@@ -9234,6 +9258,8 @@ function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform, bDoQRCodes)
 
 				gRenderingPDF = false;
 
+				clearGetTuneByIndexCache();
+
 				// Hide the PDF status modal
 				var pdfstatus = document.getElementById("pdf-controls");
 				pdfstatus.style.display = "none";
@@ -9508,6 +9534,8 @@ function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform, bDoQRCodes)
 
 						// Clear the PDF rendering global
 						gRenderingPDF = false;
+
+						clearGetTuneByIndexCache();
 
 					},500);
 
@@ -9832,6 +9860,8 @@ function ExportNotationPDF(title) {
 				if (gPDFCancelRequested){
 
 					gRenderingPDF = false;
+
+					clearGetTuneByIndexCache();
 
 					// Fix up any display width changes done for the PDF export
 					gTheNotation.style.width = gOriginalWidthBeforePDFExport;
@@ -10222,6 +10252,8 @@ function ExportNotationPDF(title) {
 
 											gRenderingPDF = false;
 
+											clearGetTuneByIndexCache();
+
 											// Fix up any display width changes done for the PDF export
 											gTheNotation.style.width = gOriginalWidthBeforePDFExport;
 
@@ -10243,6 +10275,8 @@ function ExportNotationPDF(title) {
 										finalize_pdf_export_stage_2();
 
 										gRenderingPDF = false;
+
+										clearGetTuneByIndexCache();
 
 										// Fix up any display width changes done for the PDF export
 										gTheNotation.style.width = gOriginalWidthBeforePDFExport;
@@ -11437,7 +11471,7 @@ function StripAnnotations(){
 	theNotes = StripAnnotationsOne(theNotes);
 
 	// Replace the ABC
-	gTheABC.value = theNotes;
+	setABCEditorText(theNotes);
 
 	// Set dirty
 	gIsDirty = true;
@@ -11535,7 +11569,7 @@ function StripTextAnnotations(){
 	theNotes = StripTextAnnotationsOne(theNotes);
 
 	// Replace the ABC
-	gTheABC.value = theNotes;
+	setABCEditorText(theNotes);
 
 	// Set dirty
 	gIsDirty = true;
@@ -11576,7 +11610,7 @@ function StripChords(){
 	theNotes = StripChordsOne(theNotes);
 
 	// Replace the ABC
-	gTheABC.value = theNotes;
+	setABCEditorText(theNotes);
 
 	// Set dirty
 	gIsDirty = true;
@@ -11695,7 +11729,7 @@ function StripTab(){
 	theNotes = StripTabOne(theNotes);
 
 	// Replace the ABC
-	gTheABC.value = theNotes;
+	setABCEditorText(theNotes);
 
 	// Set dirty
 	gIsDirty = true;
@@ -11739,7 +11773,7 @@ function StripOrnaments(theNotes){
 	theNotes = StripOrnamentsOne(theNotes,true);
 
 	// Replace the ABC
-	gTheABC.value = theNotes;
+	setABCEditorText(theNotes);
 
 	// Set dirty
 	gIsDirty = true;
@@ -11981,6 +12015,9 @@ function RenderAsync(renderAll,tuneNumber,callback){
 		return;
 	}
 
+	// Clear the split tunes cache
+	clearGetTuneByIndexCache();
+
 	//console.log("RenderAsync renderAll = "+renderAll+" tuneNumber = "+tuneNumber);
 	
 	// Start with spinner hidden
@@ -12031,6 +12068,9 @@ function Render(renderAll,tuneNumber) {
 	if (gRenderingPDF) {
 		return;
 	}
+
+	// Clear the split tunes cache
+	clearGetTuneByIndexCache();
 
 	// Idle the file status display
 	var nTunes = CountTunes();
@@ -12915,6 +12955,9 @@ function RestoreDefaults() {
 	// Clear the QR code
 	clearQRCode();
 
+	// Clear the split tunes cache
+	clearGetTuneByIndexCache();
+
 	// Recalculate the notation top position
 	UpdateNotationTopPosition();
 
@@ -13706,7 +13749,8 @@ function PDFTunebookBuilder(){
 
 			header_to_add += theNotes;
 
-			gTheABC.value = header_to_add;
+			// Replace the ABC
+			setABCEditorText(header_to_add);
 
 			// Set dirty
 			gIsDirty = true;
@@ -15135,7 +15179,7 @@ function ChangeTuneOrderMobile(){
     		}
 
     		// Stuff in the new result
-    		gTheABC.value = result;
+    		setABCEditorText(result);
 
     		RenderAsync(true,null, function(){
 
@@ -15260,7 +15304,7 @@ function ChangeTuneOrder(){
     		}
 
     		// Stuff in the new result
-    		gTheABC.value = result;
+    		setABCEditorText(result);
 
     		RenderAsync(true,null, function(){
 
@@ -15492,7 +15536,7 @@ function CullTunes(){
 			    		}
 
 			    		// Stuff in the new result
-			    		gTheABC.value = result;
+			    		setABCEditorText(result);
 
 			    		RenderAsync(true,null, function(){
 
@@ -16846,7 +16890,7 @@ function ProcessAddTune(theValue){
 	var theOriginalLength = gTheABC.value.length; 
 
 	// Add the tune to the ABC
-	gTheABC.value = gTheABC.value+theValue;
+	setABCEditorText(gTheABC.value+theValue);
 
 	// Set dirty
 	gIsDirty = true;
@@ -17505,7 +17549,9 @@ function RoundTripMusicXML(){
 		    return response.text();
 		})
 		.then(data => {
-			gTheABC.value = theHeader + importMusicXML(data,theTitle);
+
+			setABCEditorText(theHeader + importMusicXML(data,theTitle));
+
 			RenderAsync(true,null,function(){
 				hideTheSpinner();
 			});
@@ -18129,7 +18175,7 @@ function InjectRepeatsAndClickTrackAll(){
 			}
 
 			// Stuff in the output
-			gTheABC.value = output;
+			setABCEditorText(output);
 
 			// Set dirty
 			gIsDirty = true;
@@ -18361,7 +18407,7 @@ function InjectSectionHeader(){
 			
 			var rightSide = gTheABC.value.substring(theSelectionStart);
 
-			gTheABC.value = leftSide + "\nX:1\nT:*" + sectionHeader + "\n" + rightSide;
+			setABCEditorText(leftSide + "\nX:1\nT:*" + sectionHeader + "\n" + rightSide);
 
 			// Set dirty
 			gIsDirty = true;
@@ -18626,8 +18672,8 @@ function InjectHeaderString(){
 					}
 
 					// Stuff in the output
-					gTheABC.value = output;
-					
+					setABCEditorText(output);
+
 					// Set dirty
 					gIsDirty = true;
 
@@ -18676,7 +18722,7 @@ function InjectHeaderString(){
 					var theABC = gTheABC.value;
 					theABC = theABC.replace(theSelectedABC,theInjectedTune);
 
-					gTheABC.value = theABC;
+					setABCEditorText(theABC);
 
 					// Set dirty
 					gIsDirty = true;
@@ -18772,7 +18818,7 @@ function InjectStaffWidth(){
 				}
 
 				// Stuff in the output
-				gTheABC.value = output;
+				setABCEditorText(output);
 
 				// Set dirty
 				gIsDirty = true;
@@ -18797,7 +18843,7 @@ function InjectStaffWidth(){
 				
 				var rightSide = gTheABC.value.substring(theSelectionStart);
 
-				gTheABC.value = leftSide + "%%staffwidth " + staffwidth + "\n" + rightSide;
+				setABCEditorText(leftSide + "%%staffwidth " + staffwidth + "\n" + rightSide);
 
 				// Set dirty
 				gIsDirty = true;
@@ -19008,7 +19054,7 @@ function InjectFontSettings(){
 					}
 
 					// Stuff in the output
-					gTheABC.value = output;
+					setABCEditorText(output);
 					
 					// Set dirty
 					gIsDirty = true;
@@ -19051,7 +19097,7 @@ function InjectFontSettings(){
 					var theABC = gTheABC.value;
 					theABC = theABC.replace(theSelectedABC,theInjectedTune);
 
-					gTheABC.value = theABC;
+					setABCEditorText(theABC);
 
 					// Set dirty
 					gIsDirty = true;
@@ -19147,7 +19193,7 @@ function NotationSpacingInject(){
 		}
 
 		// Stuff in the output
-		gTheABC.value = output;
+		setABCEditorText(output);
 		
 		// Set dirty
 		gIsDirty = true;
@@ -19196,7 +19242,7 @@ function NotationSpacingInject(){
 		var theABC = gTheABC.value;
 		theABC = theABC.replace(theSelectedABC,theInjectedTune);
 
-		gTheABC.value = theABC;
+		setABCEditorText(theABC);
 
 		// Set dirty
 		gIsDirty = true;
@@ -20076,7 +20122,7 @@ function InjectAllMIDIParams(){
 					}
 
 					// Stuff in the output
-					gTheABC.value = output;
+					setABCEditorText(output);
 
 					// Set dirty
 					gIsDirty = true;
@@ -20104,7 +20150,7 @@ function InjectAllMIDIParams(){
 					}
 
 					// Stuff in the output
-					gTheABC.value = output;
+					setABCEditorText(output);
 
 					// Set dirty
 					gIsDirty = true;
@@ -20130,7 +20176,7 @@ function InjectAllMIDIParams(){
 					}
 
 					// Stuff in the output
-					gTheABC.value = output;
+					setABCEditorText(output);
 
 					// Set dirty
 					gIsDirty = true;
@@ -20156,7 +20202,7 @@ function InjectAllMIDIParams(){
 					}
 
 					// Stuff in the output
-					gTheABC.value = output;
+					setABCEditorText(output);
 
 					// Set dirty
 					gIsDirty = true;
@@ -20214,7 +20260,7 @@ function InjectAllMIDIParams(){
 
 					toInject += "\n";
 
-					gTheABC.value = leftSide + toInject + rightSide;
+					setABCEditorText(leftSide + toInject + rightSide);
 
 					// Set dirty
 					gIsDirty = true;
@@ -20242,7 +20288,7 @@ function InjectAllMIDIParams(){
 
 					toInject += "\n";
 
-					gTheABC.value = leftSide + toInject + rightSide;
+					setABCEditorText(leftSide + toInject + rightSide);
 
 					// Set dirty
 					gIsDirty = true;
@@ -20265,7 +20311,7 @@ function InjectAllMIDIParams(){
 					
 					var rightSide = gTheABC.value.substring(theSelectionStart);
 					
-					gTheABC.value = leftSide + "% Melody instrument: "+thePatchName+"\n"+ "%%MIDI program " + progNum + "\n" + rightSide;	
+					setABCEditorText(leftSide + "% Melody instrument: "+thePatchName+"\n"+ "%%MIDI program " + progNum + "\n" + rightSide);
 
 					// Set dirty
 					gIsDirty = true;
@@ -20278,7 +20324,7 @@ function InjectAllMIDIParams(){
 					
 					var rightSide = gTheABC.value.substring(theSelectionStart);
 
-					gTheABC.value = leftSide + "% Soundfont: "+soundFontToInject+"\n"+"%abcjs_soundfont " + soundFontToInject + "\n" + rightSide;
+					setABCEditorText(leftSide + "% Soundfont: "+soundFontToInject+"\n"+"%abcjs_soundfont " + soundFontToInject + "\n" + rightSide);
 
 					// Set dirty
 					gIsDirty = true;
@@ -20493,7 +20539,7 @@ function InjectMetronome(){
 				}
 
 				// Stuff in the output
-				gTheABC.value = output;
+				setABCEditorText(output);
 
 				// Set dirty
 				gIsDirty = true;
@@ -20533,7 +20579,7 @@ function InjectMetronome(){
 				var theABC = gTheABC.value;
 				theABC = theABC.replace(theSelectedABC,theStrippedABC);
 
-				gTheABC.value = theABC;
+				setABCEditorText(theABC);
 
 				// Set dirty
 				gIsDirty = true;
@@ -20726,7 +20772,7 @@ function ShortenURL(e){
 			}
 
 			// Stuff in the output
-			gTheABC.value = output;
+			setABCEditorText(output);
 			
 			// Set dirty
 			gIsDirty = true;
@@ -20886,7 +20932,7 @@ function TestShareURL(){
 //
 function SetAbcText(txt) {
 
-	gTheABC.value = txt;
+	setABCEditorText(txt);
 
 }
 
@@ -22063,7 +22109,7 @@ function DoCeoltasTransform(doInverse){
 		sendGoogleAnalytics("tablature","DoCeoltasTransform");
 	}
 
-	gTheABC.value = ceoltasABCTransformer(gTheABC.value,doInverse,false);
+	setABCEditorText(ceoltasABCTransformer(gTheABC.value,doInverse,false));
 
 	// Set dirty
 	gIsDirty = true;
@@ -22192,7 +22238,7 @@ function DoComplianceTransform(doInverse){
 		sendGoogleAnalytics("action","DoComplianceTransform");
 	}
 
-	gTheABC.value = complianceABCTransformer(gTheABC.value,doInverse);
+	setABCEditorText(complianceABCTransformer(gTheABC.value,doInverse));
 
 	// Set dirty
 	gIsDirty = true;
@@ -23262,7 +23308,7 @@ function InjectBagpipeSounds(){
 				if (doRenderAfterInject){
 
 					// Stuff in the output
-					gTheABC.value = output;
+					setABCEditorText(output);
 					
 					// Set dirty
 					gIsDirty = true;
@@ -23330,7 +23376,7 @@ function InjectBagpipeSounds(){
 					var theABC = gTheABC.value;
 					theABC = theABC.replace(theSelectedABC,theInjectedTune);
 
-					gTheABC.value = theABC;
+					setABCEditorText(theABC);
 
 					// Set dirty
 					gIsDirty = true;
@@ -23507,20 +23553,20 @@ function IncipitsBuilderDialog(){
 
 			}
 
-			gTheABC.value = output;
+			setABCEditorText(output);
 
 			if (gIncipitsBuilderInjectNumbers){
 				
 				// First remove any existing tune title numers
 				var theNotes = RemoveTuneTitleNumbers(false);
 
-				// Stuff it back in the work area so getTuneByIndex() returns st
-			    gTheABC.value = theNotes;
+				// Stuff it back in the work area so getTuneByIndex() returns correct value
+			    setABCEditorText(theNotes);
 
 			    var result = processTuneTitleNumbers(nTunes,theNotes);
 
 			    // Stuff the final result back in the editor
-			    gTheABC.value = result;
+			    setABCEditorText(result);
 
 			}
 
@@ -23655,12 +23701,12 @@ function AddTuneTitleNumbers(){
 	var theNotes = RemoveTuneTitleNumbers(false);
 
 	// Stuff it back in the work area so getTuneByIndex() returns st
-    gTheABC.value = theNotes;
+	setABCEditorText(theNotes);
 
     result = processTuneTitleNumbers(nTunes,theNotes);
 
     // Stuff the final result back in the editor
-    gTheABC.value = result;
+	setABCEditorText(result);
 
 	// Set dirty
 	gIsDirty = true;
@@ -23824,7 +23870,7 @@ function RemoveTuneTitleNumbers(bDoRedraw){
     	//console.log("RemoveTuneTitleNumbers render");
 
 	    // Stuff the final result back in the editor
-	    gTheABC.value = result;
+		setABCEditorText(result);
 
 		// Set dirty
 		gIsDirty = true;
@@ -24500,7 +24546,7 @@ function DoInjectHarmonicaTab(){
 
 			gCurrentTab = "noten";
 
-			gTheABC.value = HarmonicaTabGenerator(gTheABC.value);
+			setABCEditorText(HarmonicaTabGenerator(gTheABC.value));
 
 			// Set dirty
 			gIsDirty = true;
@@ -25123,7 +25169,7 @@ function DoInjectCustomTab(){
 
 			gCurrentTab = "noten";
 
-			gTheABC.value = CustomTabGenerator(gTheABC.value);
+			setABCEditorText(CustomTabGenerator(gTheABC.value));
 
 			// Set dirty
 			gIsDirty = true;
@@ -25169,7 +25215,7 @@ function DoInjectTablature_BC(){
 
 	gInjectTab_BoxStyle = "0";
 
-	gTheABC.value = boxTabGenerator(gTheABC.value);
+	setABCEditorText(boxTabGenerator(gTheABC.value));
 
 	// Set dirty
 	gIsDirty = true;
@@ -25202,7 +25248,7 @@ function DoInjectTablature_CsD(){
 
 	gInjectTab_BoxStyle = "1";
 
-	gTheABC.value = boxTabGenerator(gTheABC.value);
+	setABCEditorText(boxTabGenerator(gTheABC.value));
 
 	// Set dirty
 	gIsDirty = true;
@@ -25381,7 +25427,7 @@ function DoInjectTablature_Anglo(){
 					}
 
 					// Stuff in the transposed output
-					gTheABC.value = output;
+					setABCEditorText(output);
 
 					// Set dirty
 					gIsDirty = true;	
@@ -25394,7 +25440,7 @@ function DoInjectTablature_Anglo(){
 					
 					if (!wasError){
 						
-						gTheABC.value = injectedABC;
+						setABCEditorText(injectedABC);
 
 						// Set dirty
 						gIsDirty = true;
@@ -25417,7 +25463,7 @@ function DoInjectTablature_Anglo(){
 
 			            DayPilot.Modal.alert(errorReport,{ theme: "modal_flat", top: 100, scrollWithPage: true }).then(function(){
 
-				   			gTheABC.value = injectedABC;
+							setABCEditorText(injectedABC);
 
 							// Set dirty
 							gIsDirty = true;
@@ -25488,7 +25534,7 @@ function DoInjectTablature_Bamboo_Flute(){
 
 			gCurrentTab = "noten";
 
-			gTheABC.value = bambooFluteTabGenerator(gTheABC.value);
+			setABCEditorText(bambooFluteTabGenerator(gTheABC.value));
 
 			// Set dirty
 			gIsDirty = true;
@@ -25543,7 +25589,7 @@ function DoInjectTablature_Fiddle_Fingerings(tab_style){
 
 	gCurrentTab = "noten";
 
-	gTheABC.value = fiddleFingeringsGenerator(gTheABC.value,tab_style);
+	setABCEditorText(fiddleFingeringsGenerator(gTheABC.value,tab_style));
 
 	// Set dirty
 	gIsDirty = true;
@@ -25648,7 +25694,7 @@ function DoInjectTablature_MD(){
 			// Clear the excluded list
 			gExcludedFromMDSolution = [];
 
-			gTheABC.value = MDTablatureGenerator(gTheABC.value);
+			setABCEditorText(MDTablatureGenerator(gTheABC.value));
 
 			// Set dirty
 			gIsDirty = true;
@@ -25730,12 +25776,12 @@ function DoInjectTablature_ShapeNotes(){
 
 			if (gShapeNoteStyle <= 10){
 
-				gTheABC.value = shapeNoteGenerator(gTheABC.value);
+				setABCEditorText(shapeNoteGenerator(gTheABC.value));
 
 			}
 			else{
 
-				gTheABC.value = injectABCNoteNames(gTheABC.value);
+				setABCEditorText(injectABCNoteNames(gTheABC.value));
 
 			}
 
@@ -26327,6 +26373,9 @@ function ExportAll(){
 
 	}
 
+	// Clear the split tunes cache
+	clearGetTuneByIndexCache();
+
 	var format = GetRadioValue("notenodertab");
 	
 	var modal_msg = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export All Tunes</p>';
@@ -26475,7 +26524,12 @@ function DoBatchImageExport(imageFormat){
 				gTheBatchImageExportOKButton.click();
 
 				gBatchImageExportCancelRequested = false;
+
+				clearGetTuneByIndexCache();
 			}
+		}
+		else{
+			clearGetTuneByIndexCache();
 		}
 	}
 
@@ -26797,7 +26851,7 @@ function BatchMusicXMLRoundTripCurrentTune(){
 
 			theABC = theABC.replace(theTune,data);
 
-			gTheABC.value = theABC;
+			setABCEditorText(theABC);
 
 			if (gRawMode){
 
@@ -26868,13 +26922,15 @@ function BatchMusicXMLRoundTripWorker(){
 
 				gBatchImageExportCancelRequested = false;
 
-				gTheABC.value = gBatchMusicXMLRoundTripAccum;
+				setABCEditorText(gBatchMusicXMLRoundTripAccum);
 
 				RenderAsync(true,null,function(){
 					hideTheSpinner();
 				});
 
 				gIsDirty = true;
+
+				clearGetTuneByIndexCache()
 
 			}
 
@@ -26883,6 +26939,8 @@ function BatchMusicXMLRoundTripWorker(){
 
 			// Take down the spinner
 			hideTheSpinner();
+
+			clearGetTuneByIndexCache();
 
 		}
 	}
@@ -27039,7 +27097,12 @@ function BatchABCExport(){
 				gTheBatchImageExportOKButton.click();
 
 				gBatchImageExportCancelRequested = false;
+
+				clearGetTuneByIndexCache();
 			}
+		}
+		else{
+			clearGetTuneByIndexCache();
 		}
 	}
 
@@ -27196,7 +27259,14 @@ function BatchMusicXMLExport(){
 				gTheBatchImageExportOKButton.click();
 
 				gBatchImageExportCancelRequested = false;
+
+				clearGetTuneByIndexCache();
 			}
+		}
+		else{
+
+			clearGetTuneByIndexCache();
+
 		}
 	}
 
@@ -27382,6 +27452,8 @@ function BatchJSONExport(){
 
 	saveTextFileDeveloper("Please enter a filename for your batch Share URL JSON file:","All_Share_URLs_JSON.txt",theJSONString);
 
+	clearGetTuneByIndexCache();
+
 }
 
 //
@@ -27434,6 +27506,8 @@ function BatchCSVExport(){
 
 	saveTextFileDeveloper("Please enter a filename for your batch Share URL CSV file:","All_Share_URLs_CSV.txt",theCSV);
 
+	clearGetTuneByIndexCache();
+
 }
 
 
@@ -27472,6 +27546,8 @@ function ExportAllTuneTitles(){
 	}
 
 	saveTextFileDeveloper("Please enter a filename for your tune titles text file:","All_Tune_Titles.txt",theTuneTitles);
+
+	clearGetTuneByIndexCache();
 
 }
 
@@ -32525,7 +32601,7 @@ function SwingExplorerInject(){
 
 		theABC = theABC.replace(gPlayerABCSwingExplorerOriginal,tuneWithSwing);
 		
-		gTheABC.value = theABC;
+		setABCEditorText(theABC);
 
 		// Set dirty
 		gIsDirty = true;
@@ -33191,7 +33267,7 @@ function ReverbExplorerInject(){
 
 		theABC = theABC.replace(gPlayerReverbExplorerOriginal,tuneWithReverb);
 		
-		gTheABC.value = theABC;
+		setABCEditorText(theABC);
 
 		// Set dirty
 		gIsDirty = true;
@@ -34140,7 +34216,7 @@ function InstrumentExplorerInject(){
 
 		theABC = theABC.replace(gPlayerABCInstrumentExplorerOriginal,gPlayerABCInstrumentExplorerInjected);
 		
-		gTheABC.value = theABC;
+		setABCEditorText(theABC);
 
 		// Set dirty
 		gIsDirty = true;
@@ -34210,7 +34286,7 @@ function InstrumentExplorerInject(){
 		}
 
 		// Stuff in the output
-		gTheABC.value = output;
+		setABCEditorText(output);
 
 		// Set dirty
 		gIsDirty = true;
@@ -34841,7 +34917,7 @@ function GraceExplorerInject(){
 
 			theABC = theABC.replace(gPlayerABCGraceExplorerOriginal,tuneWithGrace);
 			
-			gTheABC.value = theABC;
+			setABCEditorText(theABC);
 
 			// Set dirty
 			gIsDirty = true;
@@ -34917,7 +34993,7 @@ function GraceExplorerInject(){
 			}
 
 			// Stuff in the output
-			gTheABC.value = output;
+			setABCEditorText(output);
 
 			// Set dirty
 			gIsDirty = true;
@@ -35524,7 +35600,7 @@ function RollExplorerInject(){
 
 		theABC = theABC.replace(gPlayerABCRollExplorerOriginal,tuneWithRoll);
 		
-		gTheABC.value = theABC;
+		setABCEditorText(theABC);
 
 		// Set dirty
 		gIsDirty = true;
@@ -39908,6 +39984,8 @@ function PDFExportDialog(){
 
 	}
 
+	clearGetTuneByIndexCache();
+
 	// Setup initial values
 	const theData = {
 	  configure_papersize:thePaperSize,
@@ -40140,7 +40218,7 @@ function PDFExportDialog(){
 			SavePDFSettings();
 
 			// Transform any ABC standard private headers to private
-			gTheABC.value = TransformABCCompliantDirectives(gTheABC.value);
+			setABCEditorText(TransformABCCompliantDirectives(gTheABC.value));
 
 			ExportPDF();				
 		}
@@ -42481,6 +42559,8 @@ function DoReadCommon(theText,doAppend){
 
 	}
 
+	clearGetTuneByIndexCache();
+
 	// Refocus back on the ABC
 	FocusABC();
 
@@ -42565,7 +42645,7 @@ function DoFileRead(file,doAppend){
 		// Clean up the notation while the new file is loading
 		if (!doAppend){
 
-			gTheABC.value = "";
+			setABCEditorText("");
 
 			Render(true,null);
 		}
@@ -43844,7 +43924,7 @@ function MIDI_NoteOn(data){
 			
 			var rightSide = gTheABC.value.substring(theSelectionEnd);
 
-			gTheABC.value = leftSide + theNoteName + rightSide;
+			setABCEditorText(leftSide + theNoteName + rightSide);
 			
 			// Set dirty
 			gIsDirty = true;
@@ -43870,7 +43950,7 @@ function MIDI_NoteOn(data){
 			
 				var rightSide = gTheABC.value.substring(theSelectionEnd);
 
-				gTheABC.value = leftSide + rightSide;
+				setABCEditorText(leftSide + rightSide);
 
 				// Set dirty
 				gIsDirty = true;
@@ -44320,8 +44400,8 @@ function CleanSmartQuotes(){
 	// Single quotes
 	val = val.replaceAll('‘',"'");
 	val = val.replaceAll('’',"'");
-
-	gTheABC.value = val;
+	
+	setABCEditorText(val);
 
 	// Also clear the diagnostics area
     elem = document.getElementById("diagnostics");
@@ -44496,7 +44576,7 @@ function FixIOS17(){
 		val = val.replaceAll("%3A",":")		
 		val = val.replaceAll("x:","X:");
 
-		gTheABC.value = val;
+		setABCEditorText(val);
 		
 	}
 
@@ -45129,7 +45209,7 @@ function AlignMeasures(bDoAll){
 
 		}
 
-		gTheABC.value = output;
+		setABCEditorText(output);
 
 		// Redraw
 		RenderAsync(true,null);
@@ -45162,7 +45242,7 @@ function AlignMeasures(bDoAll){
 
 		theABC = theABC.replace(theTune,theInjectedTune);
 
-		gTheABC.value = theABC;
+		setABCEditorText(theABC);
 
 		// Force a redraw of the tune
 		RenderAsync(false,theSelectedTuneIndex,null);		
@@ -45498,7 +45578,7 @@ function InjectMIDIGChordTemplates(){
 
 			theABC = theABC.replace(theTune,theInjectedTune);
 
-			gTheABC.value = theABC;
+			setABCEditorText(theABC);
 
 			// Force a redraw of the tune
 			RenderAsync(false,theSelectedTuneIndex,null);		
@@ -45823,12 +45903,14 @@ function SR_replaceOne() {
     const startIndex = gSR_matchIndexes[gSR_currentIndex].offset;
     
     if (!isRegex){
-    	gTheABC.value = gTheABC.value.slice(0, startIndex) + replaceValue + gTheABC.value.slice(startIndex + searchValue.length);
+
+    	setABCEditorText(gTheABC.value.slice(0, startIndex) + replaceValue + gTheABC.value.slice(startIndex + searchValue.length));
+
     }
     else{
 
     	replaceValue = SR_processMatches(replaceValue,gSR_matchIndexes[gSR_currentIndex].matches);
-     	gTheABC.value = gTheABC.value.slice(0, startIndex) + replaceValue + gTheABC.value.slice(startIndex + gSR_matchIndexes[gSR_currentIndex].length);   	
+    	setABCEditorText(gTheABC.value.slice(0, startIndex) + replaceValue + gTheABC.value.slice(startIndex + gSR_matchIndexes[gSR_currentIndex].length));
     }
 
     SR_findMatches();
@@ -45959,7 +46041,7 @@ function SR_replaceAll(callback) {
    		return;
    	}
 
-	gTheABC.value = gTheABC.value.replace(regex, replaceValue);
+	setABCEditorText(gTheABC.value.replace(regex, replaceValue));
 
     SR_findMatches();
 
@@ -46450,7 +46532,7 @@ function SplitLongTextAndTags(){
 				}
 
 				// Stuff in the output
-				gTheABC.value = output;
+				setABCEditorText(output);
 
 				// Set dirty
 				gIsDirty = true;
@@ -46493,7 +46575,7 @@ function SplitLongTextAndTags(){
 				var theABC = gTheABC.value;
 				theABC = theABC.replace(theSelectedABC,theSplitABC);
 
-				gTheABC.value = theABC;
+				setABCEditorText(theABC);
 
 				// Set dirty
 				gIsDirty = true;
@@ -46692,7 +46774,7 @@ function SplitVoices(){
 		theABC += "\n";
 	}
 
-	gTheABC.value = theABC;
+	setABCEditorText(theABC);
 
 	// Set dirty
 	gIsDirty = true;

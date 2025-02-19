@@ -908,8 +908,10 @@ function DeleteSmartDrawSetName(){
 //
 function saveVSON(fname, theData) {
 
-    if (theData.length == 0) {
+	clearGetTuneByIndexCache();
 
+    if (theData.length == 0) {
+		
         DayPilot.Modal.alert("Nothing to save!", {
             theme: "modal_flat",
             top: 200
@@ -1374,6 +1376,8 @@ function SmartDrawExport(){
 	SDTuneArray = [];
 	SmartDrawTuneCurrent = null;
 	SmartDrawTitles = null;
+
+	clearGetTuneByIndexCache();
 
 	totalTunes = CountTunes();
 

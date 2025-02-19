@@ -430,6 +430,8 @@ function BatchJSONExportForWebGenerator(theABC){
 
     var theJSON = [];
 
+    clearGetTuneByIndexCache();
+
     for (var i=0;i<nTunes;++i){
 
         var thisTune = getTuneByIndex(i);
@@ -482,6 +484,11 @@ function getInstrumentNameForWebSelector(index){
         return "Mute";
     }
 
+    index = parseInt(index)
+    if (isNaN(index)){
+        index = 0;
+    }
+    
     var instrumentName = website_export_midi_program_list[index+1].name.trim();
     
     if (instrumentName.indexOf("Piano") != -1){
@@ -565,6 +572,8 @@ function generateAndSaveWebsiteFull() {
     // Any tunes to reformat?
     if (CountTunes() == 0){
 
+        clearGetTuneByIndexCache();
+
         var thePrompt = "No ABC tunes to export.";
 
         thePrompt = makeCenteredPromptString(thePrompt);
@@ -583,6 +592,8 @@ function generateAndSaveWebsiteFull() {
     var theJSON = BatchJSONExportForWebGenerator(theABC);
 
     if (!theJSON){
+
+        clearGetTuneByIndexCache();
 
         var thePrompt = "Problem generating tune share links!";
 
@@ -1390,6 +1401,8 @@ function generateAndSaveWebsiteFull() {
 
     if (theData.length == 0) {
 
+        clearGetTuneByIndexCache();
+
         DayPilot.Modal.alert("Nothing to save!", {
             theme: "modal_flat",
             top: 200
@@ -1410,6 +1423,8 @@ function generateAndSaveWebsiteFull() {
         top: 200,
         autoFocus: false
     }).then(function(args) {
+
+        clearGetTuneByIndexCache();
 
         var fname = args.result;
 
@@ -1483,6 +1498,8 @@ function generateAndSaveWebsiteSimple() {
     // Any tunes to reformat?
     if (CountTunes() == 0){
 
+        clearGetTuneByIndexCache();
+
         var thePrompt = "No ABC tunes to export.";
 
         thePrompt = makeCenteredPromptString(thePrompt);
@@ -1501,6 +1518,8 @@ function generateAndSaveWebsiteSimple() {
     var theJSON = BatchJSONExportForWebGenerator(theABC);
 
     if (!theJSON){
+
+        clearGetTuneByIndexCache();
 
         var thePrompt = "Problem generating tune share links!";
 
@@ -1771,6 +1790,8 @@ function generateAndSaveWebsiteSimple() {
 
     if (theData.length == 0) {
 
+        clearGetTuneByIndexCache();
+
         DayPilot.Modal.alert("Nothing to save!", {
             theme: "modal_flat",
             top: 200
@@ -1791,6 +1812,8 @@ function generateAndSaveWebsiteSimple() {
         top: 200,
         autoFocus: false
     }).then(function(args) {
+
+        clearGetTuneByIndexCache();
 
         var fname = args.result;
 

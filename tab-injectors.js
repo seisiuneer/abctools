@@ -1373,21 +1373,6 @@ var angloFingeringsGenerator = function (theABC, callback){
 
     }
 
-    //
-    // Return the tune ABC at a specific index
-    //
-    //
-    function angloGetTuneByIndex(theABC, tuneNumber) {
-
-        var theNotes = theABC;
-
-        // Now find all the X: items
-        var theTunes = theNotes.split(/^X:/gm);
-
-        return ("X:" + theTunes[tuneNumber + 1]);
-
-    }
-
     // Glyphs for bellows push and draw indications
     var PUSH_NAME = "↓";
     var DRAW_NAME = "↑";
@@ -1420,9 +1405,11 @@ var angloFingeringsGenerator = function (theABC, callback){
 
         var location = parseInt(gInjectTab_TabLocation);
 
+        clearGetTuneByIndexCache();
+
         for (var i = 0; i < nTunes; ++i) {
 
-            var thisTune = angloGetTuneByIndex(theABC, i);
+            var thisTune = getTuneByIndex(i);
 
             var originalTune = thisTune;
 
@@ -2303,22 +2290,6 @@ var boxTabGenerator = function (theABC){
 
     }
 
-    //
-    // Return the tune ABC at a specific index
-    //
-    //
-    function getTuneByIndex(theABC, tuneNumber) {
-
-        var theNotes = theABC;
-
-        // Now find all the X: items
-        var theTunes = theNotes.split(/^X:/gm);
-
-        return ("X:" + theTunes[tuneNumber + 1]);
-
-    }
-
-
     // Glyph(s) to use for the bellows push or draw indication
     var PUSH_NAME = "↓";
     var DRAW_NAME = "↑";
@@ -2346,10 +2317,12 @@ var boxTabGenerator = function (theABC){
         var result = FindPreTuneHeader(theABC);
 
         var location = parseInt(gInjectTab_TabLocation);
+
+        clearGetTuneByIndexCache();
         
         for (var i = 0; i < nTunes; ++i) {
 
-            var thisTune = getTuneByIndex(theABC, i);
+            var thisTune = getTuneByIndex(i);
 
             // Don't inject section header tune fragments or multi-voice tunes
             if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
@@ -3142,22 +3115,6 @@ var bambooFluteTabGenerator = function (theABC){
     }
 
     //
-    // Return the tune ABC at a specific index
-    //
-    //
-    function getTuneByIndex(theABC, tuneNumber) {
-
-        var theNotes = theABC;
-
-        // Now find all the X: items
-        var theTunes = theNotes.split(/^X:/gm);
-
-        return ("X:" + theTunes[tuneNumber + 1]);
-
-    }
-
-
-    //
     // Main processor
     //
     function generateBambooFluteTab(theABC) {
@@ -3174,9 +3131,11 @@ var bambooFluteTabGenerator = function (theABC){
 
         var result = FindPreTuneHeader(theABC);
 
+        clearGetTuneByIndexCache();
+
         for (var i = 0; i < nTunes; ++i) {
 
-            var thisTune = getTuneByIndex(theABC, i);
+            var thisTune = getTuneByIndex(i);
 
             // Don't inject section header tune fragments or multi-voice tunes
             if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
@@ -4157,21 +4116,6 @@ var ceoltasABCTransformer = function (theABC,doInverse,isForPDF){
     }
 
     //
-    // Return the tune ABC at a specific index
-    //
-    //
-    function getTuneByIndex(theABC, tuneNumber) {
-
-        var theNotes = theABC;
-
-        // Now find all the X: items
-        var theTunes = theNotes.split(/^X:/gm);
-
-        return ("X:" + theTunes[tuneNumber + 1]);
-
-    }
-
-    //
     // Main processor
     //
     function generateTablature(theABC,doInverse) {
@@ -4180,9 +4124,11 @@ var ceoltasABCTransformer = function (theABC,doInverse,isForPDF){
 
         var result = FindPreTuneHeader(theABC);
 
+        clearGetTuneByIndexCache();
+
         for (var i = 0; i < nTunes; ++i) {
 
-            var thisTune = getTuneByIndex(theABC, i);
+            var thisTune = getTuneByIndex(i);
 
             // Don't inject section header tune fragments or multi-voice tunes
             if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
@@ -4951,23 +4897,6 @@ var fiddleFingeringsGenerator = function (theABC,stringNameStyle){
 
     }
 
-
-
-    //
-    // Return the tune ABC at a specific index
-    //
-    //
-    function getTuneByIndex(theABC, tuneNumber) {
-
-        var theNotes = theABC;
-
-        // Now find all the X: items
-        var theTunes = theNotes.split(/^X:/gm);
-
-        return ("X:" + theTunes[tuneNumber + 1]);
-
-    }
-
     //
     // Main processor
     //
@@ -4987,9 +4916,11 @@ var fiddleFingeringsGenerator = function (theABC,stringNameStyle){
         
         var location = parseInt(gInjectTab_TabLocation);
 
+        clearGetTuneByIndexCache();
+
         for (var i = 0; i < nTunes; ++i) {
 
-            var thisTune = getTuneByIndex(theABC, i);
+            var thisTune = getTuneByIndex(i);
 
             // Don't inject section header tune fragments or multi-voice tunes
             if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
@@ -5868,21 +5799,6 @@ var MDTablatureGenerator = function (theABC){
     }
 
     //
-    // Return the tune ABC at a specific index
-    //
-    //
-    function getTuneByIndex(theABC, tuneNumber) {
-
-        var theNotes = theABC;
-
-        // Now find all the X: items
-        var theTunes = theNotes.split(/^X:/gm);
-
-        return ("X:" + theTunes[tuneNumber + 1]);
-
-    }
-
-    //
     // Main processor
     //
     function generateMDtab(theABC) {
@@ -5901,9 +5817,11 @@ var MDTablatureGenerator = function (theABC){
 
         gExcludedFromMDSolution = [];
 
+        clearGetTuneByIndexCache();
+
         for (var i = 0; i < nTunes; ++i) {
 
-            var thisTune = getTuneByIndex(theABC, i);
+            var thisTune = getTuneByIndex(i);
 
             // Don't inject section header tune fragments or multi-voice tunes
             if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
@@ -7006,22 +6924,6 @@ var shapeNoteGenerator = function (theABC){
 
     }
 
-
-    //
-    // Return the tune ABC at a specific index
-    //
-    //
-    function getTuneByIndex(theABC, tuneNumber) {
-
-        var theNotes = theABC;
-
-        // Now find all the X: items
-        var theTunes = theNotes.split(/^X:/gm);
-
-        return ("X:" + theTunes[tuneNumber + 1]);
-
-    }
-
     //
     // Main processor
     //
@@ -7040,9 +6942,11 @@ var shapeNoteGenerator = function (theABC){
 
         var result = FindPreTuneHeader(theABC);
 
+        clearGetTuneByIndexCache();
+
         for (var i = 0; i < nTunes; ++i) {
 
-            var thisTune = getTuneByIndex(theABC, i);
+            var thisTune = getTuneByIndex(i);
 
             // Don't inject section header tune fragments
             if (isSectionHeader(thisTune)){
@@ -7847,21 +7751,6 @@ var injectABCNoteNames = function (theABC){
     }
 
     //
-    // Return the tune ABC at a specific index
-    //
-    //
-    function getTuneByIndex(theABC, tuneNumber) {
-
-        var theNotes = theABC;
-
-        // Now find all the X: items
-        var theTunes = theNotes.split(/^X:/gm);
-
-        return ("X:" + theTunes[tuneNumber + 1]);
-
-    }
-
-    //
     // Main processor
     //
     function generateTablature(theABC) {
@@ -7874,9 +7763,11 @@ var injectABCNoteNames = function (theABC){
 
         var result = FindPreTuneHeader(theABC);
 
+        clearGetTuneByIndexCache();
+
         for (var i = 0; i < nTunes; ++i) {
 
-            var thisTune = getTuneByIndex(theABC, i);
+            var thisTune = getTuneByIndex(i);
 
             // Don't inject section header tune fragments
             if (isSectionHeader(thisTune)){
@@ -9161,21 +9052,6 @@ var HarmonicaTabGenerator = function (theABC){
 
     }
 
-    //
-    // Return the tune ABC at a specific index
-    //
-    //
-    function getTuneByIndex(theABC, tuneNumber) {
-
-        var theNotes = theABC;
-
-        // Now find all the X: items
-        var theTunes = theNotes.split(/^X:/gm);
-
-        return ("X:" + theTunes[tuneNumber + 1]);
-
-    }
-
     function stripHarmonicaTab(input) {
       return input.split('\n') // Split input into lines
         .filter(line => !/^%%vskip 15$|^%%annotationfont|^%%text\s\w{1,2}\sHarp/.test(line)) // Filter out lines that match the pattern
@@ -9199,9 +9075,11 @@ var HarmonicaTabGenerator = function (theABC){
 
         var result = FindPreTuneHeader(theABC);
 
+        clearGetTuneByIndexCache();
+
         for (var i = 0; i < nTunes; ++i) {
 
-            var thisTune = getTuneByIndex(theABC, i);
+            var thisTune = getTuneByIndex(i);
 
             // Don't inject section header tune fragments
             if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
@@ -10016,21 +9894,6 @@ var CustomTabGenerator = function (theABC){
 
     }
 
-    //
-    // Return the tune ABC at a specific index
-    //
-    //
-    function getTuneByIndex(theABC, tuneNumber) {
-
-        var theNotes = theABC;
-
-        // Now find all the X: items
-        var theTunes = theNotes.split(/^X:/gm);
-
-        return ("X:" + theTunes[tuneNumber + 1]);
-
-    }
-
     function stripCustomTab(input) {
       return input.split('\n') // Split input into lines
         .filter(line => !/^%%vskip 15$|^%%text Tab:|^%%annotationfont/.test(line)) // Filter out lines that match the pattern
@@ -10052,9 +9915,11 @@ var CustomTabGenerator = function (theABC){
 
         var result = FindPreTuneHeader(theABC);
 
+        clearGetTuneByIndexCache();
+
         for (var i = 0; i < nTunes; ++i) {
 
-            var thisTune = getTuneByIndex(theABC, i);
+            var thisTune = getTuneByIndex(i);
 
             // Don't inject section header tune fragments or multi-voice tunes
             if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
