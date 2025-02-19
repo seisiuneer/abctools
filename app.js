@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2327_021925_1000";
+var gVersionNumber="2328_021925_1130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -1617,6 +1617,8 @@ function DoTransposeToKey(targetKey,transposeAll) {
 		var gotError = false;
 		var errorList = [];
 		var theTitle;
+
+		clearGetTuneByIndexCache();
 
 		for (var i=0;i<nTunes;++i){
 
@@ -18160,6 +18162,8 @@ function InjectRepeatsAndClickTrackAll(){
 
 			var output = FindPreTuneHeader(theNotes);
 
+			clearGetTuneByIndexCache();
+
 			for (var i=0;i<nTunes;++i){
 
 				var thisTune = getTuneByIndex(i);
@@ -20520,6 +20524,8 @@ function InjectMetronome(){
 				var isOneTune = (nTunes == 1);
 
 				var output = "";
+
+				clearGetTuneByIndexCache();
 
 				for (var i=0;i<nTunes;++i){
 
@@ -23286,6 +23292,8 @@ function InjectBagpipeSounds(){
 
 				var output = FindPreTuneHeader(theNotes);
 
+				clearGetTuneByIndexCache();
+
 				for (var i=0;i<nTunes;++i){
 
 					var theTune = getTuneByIndex(i);
@@ -23304,6 +23312,8 @@ function InjectBagpipeSounds(){
 					output += theTune + "\n\n";
 
 				}
+
+				clearGetTuneByIndexCache();
 
 				if (doRenderAfterInject){
 
@@ -40472,6 +40482,8 @@ function Do_Browser_PDF_Export(){
 					return;
 				}
 
+				clearGetTuneByIndexCache();
+
 				var theJSON = [];
 
 				for (var i=0;i<nTunes;++i){
@@ -40543,6 +40555,8 @@ function Do_Browser_PDF_Export(){
 					setTimeout(function(){
 
 						//debugger;
+
+						clearGetTuneByIndexCache();
 
 						for (var i=0;i<nTunes;++i){
 
@@ -45184,6 +45198,8 @@ function AlignMeasures(bDoAll){
 	}
 
 	sendGoogleAnalytics("action","AlignMeasures");
+
+	clearGetTuneByIndexCache();
 
 	if (bDoAll){
 
