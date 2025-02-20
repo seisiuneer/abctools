@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2328_021925_1130";
+var gVersionNumber="2329_022025_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -1212,7 +1212,7 @@ function resetSelectionAfterTranspose(start,end){
 }
 
 // 
-// Warn if there were any tunes excluded fromt he transpose
+// Warn if there were any tunes excluded from the transpose
 //
 function ShowTransposeWarningDialog(errorList){
 
@@ -1307,11 +1307,14 @@ function Transpose(transposeAmount) {
 				// Wrap this in a try-catch since sometimes the transposer fails catastrophically
 				try {
 
-					//console.log("Transposing tune "+i);
+					//console.log("Transposing tune before "+i); // MAE FOOFOO 20 Feb 2025
 
 					visualObj = ABCJS.renderAbc("*", theTunes[i], params);
 
+					//console.log("Transposing tune after "+i); // MAE FOOFOO 20 Feb 2025
+
 					output += ABCJS.strTranspose(theTunes[i], visualObj, transposeAmount);
+					
 				}
 				catch (error){
 					

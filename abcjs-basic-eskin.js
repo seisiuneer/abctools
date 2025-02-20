@@ -28079,9 +28079,13 @@ function setPaperSize(renderer, maxwidth, scale, responsive) {
     renderer.paper.setAttribute("aria-label", label);
   }
 
+  // MAE 20 Feb 2025 - Commented out start
   // for dragging - don't select during drag
-  var styles = ["-webkit-touch-callout: none;", "-webkit-user-select: none;", "-khtml-user-select: none;", "-moz-user-select: none;", "-ms-user-select: none;", "user-select: none;"];
-  renderer.paper.insertStyles(".abcjs-dragging-in-progress text, .abcjs-dragging-in-progress tspan {" + styles.join(" ") + "}");
+  //var styles = ["-webkit-touch-callout: none;", "-webkit-user-select: none;", "-khtml-user-select: none;", "-moz-user-select: none;", "-ms-user-select: none;", "user-select: none;"];
+  //renderer.paper.insertStyles(".abcjs-dragging-in-progress text, .abcjs-dragging-in-progress tspan {" + styles.join(" ") + "}");
+  renderer.paper.insertStyles(""); // MAE 20 Feb 2025 - Not setting any styles
+  // MAE 20 Feb 2025 - Commented out end
+
   var parentStyles = {
     overflow: "hidden"
   };
@@ -29288,6 +29292,12 @@ EngraverController.prototype.engraveTune = function (abcTune, tuneNumber, lineOf
   setupSelection(this, this.svgs);
 };
 function splitSvgIntoLines(renderer, output, title, responsive) {
+
+  //
+  // MAE 20 Feb 2025 - Optimization work
+  //console.log("splitSvgIntoLines");
+  //
+
   // Each line is a top level <g> in the svg. To split it into separate
   // svgs iterate through each of those and put them in a new svg. Since
   // they are placed absolutely, the viewBox needs to be manipulated to
@@ -29297,7 +29307,16 @@ function splitSvgIntoLines(renderer, output, title, responsive) {
   if (!title) title = "Untitled";
   var source = output.querySelector("svg");
   if (responsive === 'resize') output.style.paddingBottom = '';
-  var style = source.querySelector("style");
+  
+  //
+  // MAE 20 Feb 2025 - Made this conditional
+  var style = source.querySelector("style"); 
+  //console.log(style.innerHTML);
+  var addStyle = (style.innerHTML != ""); 
+  //console.log("addStyle: "+addStyle);
+  //
+  //
+
   var width = responsive === 'resize' ? source.viewBox.baseVal.width : source.getAttribute("width");
   var sections = output.querySelectorAll("svg > g"); // each section is a line, or the top matter or the bottom matter, or text that has been inserted.
   var nextTop = 0; // There are often gaps between the elements for spacing, so the actual top and height needs to be inferred.
@@ -29320,7 +29339,12 @@ function splitSvgIntoLines(renderer, output, title, responsive) {
     // TODO-PER: Hack! Not sure why this is needed.
     var viewBoxHeight = renderer.firefox112 ? height + 1 : height;
     svg.setAttribute("viewBox", "0 " + nextTop + " " + width + " " + viewBoxHeight);
-    svg.appendChild(style.cloneNode(true));
+    //
+    // MAE 20 Feb 2025 - Made this conditional
+    if (addStyle){
+      svg.appendChild(style.cloneNode(true));
+    }
+    //
     var titleEl = document.createElement("title");
     titleEl.innerText = fullTitle;
     svg.appendChild(titleEl);
