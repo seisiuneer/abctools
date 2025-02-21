@@ -149,6 +149,8 @@ function extractTags(theTune){
     var DTag = "";
     var STag = "";
     var ZTag = "";
+    var NTag = "";
+    var rTag = "";
     var shareURL = "";
 
     XTag = extractTag(theTune,"X");
@@ -163,10 +165,12 @@ function extractTags(theTune){
     DTag = extractTag(theTune,"D");
     STag = extractTag(theTune,"S");
     ZTag = extractTag(theTune,"Z");
+    NTag = extractTag(theTune,"N");
+    rTag = extractTag(theTune,"r");
 
     shareURL = getAbcInLZW(theTune);
 
-    return XTag+","+TTag+","+CTag+","+OTag+","+RTag+","+LTag+","+MTag+","+QTag+","+KTag+","+DTag+","+STag+","+ZTag+","+gOriginalFilename+","+shareURL+"\n";
+    return XTag+","+TTag+","+CTag+","+OTag+","+RTag+","+LTag+","+MTag+","+QTag+","+KTag+","+DTag+","+STag+","+ZTag+","+NTag+","+rTag+","+gOriginalFilename+","+shareURL+"\n";
 
 }
 
@@ -192,7 +196,7 @@ function extractCSV() {
 
     }
 
-    var result = "X:,T:,C:,O:,R:,L:,M:,Q:,K:,D:,S:,Z:,Filename,ShareURL\n";
+    var result = "X:,T:,C:,O:,R:,L:,M:,Q:,K:,D:,S:,Z:,N:,r:,Filename,ShareURL\n";
 
     for (var i = 0; i < nTunes; ++i) {
 
@@ -478,6 +482,8 @@ function DoStartup() {
         reader.addEventListener('load', (event) => {
 
             document.getElementById('input').value = event.target.result;
+
+            document.getElementById('output').value = "";
 
             // Reset file selectors
             let fileElement = document.getElementById('selectabcfile');
