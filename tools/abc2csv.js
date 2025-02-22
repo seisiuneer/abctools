@@ -190,6 +190,7 @@ function extractTags(theTune,fileName) {
     var ZTag = "";
     var NTag = "";
     var rTag = "";
+    var FTag = "";
     var shareURL = "";
 
     XTag = extractTag(theTune, "X");
@@ -207,10 +208,11 @@ function extractTags(theTune,fileName) {
     ZTag = extractTag(theTune, "Z");
     NTag = extractTag(theTune, "N");
     rTag = extractTag(theTune, "r");
+    FTag = extractTag(theTune, "F");
 
     shareURL = getAbcInLZW(theTune);
 
-    return fileName + "," + XTag + "," + TTag + "," + SubtitlesTag + "," + CTag + "," + OTag + "," + RTag + "," + LTag + "," + MTag + "," + QTag + "," + KTag + "," + DTag + "," + STag + "," + ZTag + "," + NTag + "," + rTag + "," + shareURL + "\n";
+    return fileName + "," + XTag + "," + TTag + "," + SubtitlesTag + "," + CTag + "," + OTag + "," + RTag + "," + LTag + "," + MTag + "," + QTag + "," + KTag + "," + DTag + "," + STag + "," + ZTag + "," + NTag + "," + rTag + "," + FTag + "," + shareURL + "\n";
 
 }
 
@@ -536,7 +538,7 @@ function DoStartup() {
 
                     fileElement.value = "";
 
-                    var csv_result = "Filename,X:,T:,Subtitles,C:,O:,R:,L:,M:,Q:,K:,D:,S:,Z:,N:,r:,ShareURL\n";
+                    var csv_result = "Filename,X:,T:,Subtitles,C:,O:,R:,L:,M:,Q:,K:,D:,S:,Z:,N:,r:,F:,ShareURL\n";
 
                     // Process the ABC
                     var nFiles = results.length;
