@@ -112,13 +112,20 @@ function getMatchingTags(text, tag) {
 //
 function extractTag(theTune, theTag) {
 
-    var result = getMatchingTags(theTune, theTag)
+    var result = getMatchingTags(theTune, theTag);
 
-    if (result.length > 1) {
-        result = result.join(" / ");
+    if (result.length == 0){
+        return "";
     }
-
-    return result;
+    else
+    if (result.length == 1){
+        return result[0];
+    }
+    else
+    if (result.length > 1) {
+        var resultJoined = result.join(" / ");
+        return resultJoined;
+    }
 }
 
 //
@@ -126,13 +133,19 @@ function extractTag(theTune, theTag) {
 //
 function extractTTag(theTune) {
 
-    var result = getMatchingTags(theTune, "T")
+    var result = getMatchingTags(theTune, "T");
 
-    if (result.length > 1) {
-        result = result[0];
+    if (result.length == 0){
+        return "";
     }
-
-    return result;
+    else
+    if (result.length == 1){
+        return result[0];
+    }
+    else
+    if (result.length > 1) {
+        return result[0];
+    }
 }
 
 //
@@ -140,20 +153,22 @@ function extractTTag(theTune) {
 //
 function extractSubtitlesTags(theTune) {
 
-    var result = getMatchingTags(theTune, "T")
+    var result = getMatchingTags(theTune, "T");
 
+    if (result.length == 0){
+        return "";
+    }
+    else
     if (result.length > 1) {
         result.shift();
-        result = result.join(" / ");
+        var resultJoined = result.join(" / ");
+        return resultJoined;
     }
     else{
-        result = "";
+        return "";
     }
 
-    return result;
 }
-
-
 
 //
 // Batch tag extractor
