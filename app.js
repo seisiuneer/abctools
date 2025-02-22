@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2329_022025_0930";
+var gVersionNumber="2330_022225_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -26368,6 +26368,20 @@ function DownloadPNG(callback, val){
 }
 
 //
+// Launch the CSV tag extractor
+//
+function LaunchCSVTagExtractor(){
+	
+	//console.log("LaunchCSVTagExtractor");
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","LaunchCSVTagExtractor");
+
+	window.open("https://michaeleskin.com/tools/abc2csv.html");
+
+}
+
+//
 // Export All Audio and Images
 //
 function ExportAll(){
@@ -26402,7 +26416,7 @@ function ExportAll(){
 	if ((format != "whistle") && (format != "recorder")){
 
 		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:28px;">Export All Tunes as Images</p>';
-		modal_msg  += '<p style="text-align:center;font-size:18pt;font-family:helvetica;">';
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;">';
 		modal_msg += '<input id="exportall_jpegbutton" class="exportall_jpegbutton btn btn-alljpegdownload" onclick="BatchJPEGExport();" type="button" value="Export all as JPEG" title="Saves the images for all the tunes as bitmap JPEG files">'
 		modal_msg += '<input id="exportall_pngbutton" class="exportall_pngbutton btn btn-allpngdownload" onclick="BatchPNGExport();" type="button" value="Export all as PNG" title="Saves the images for all the tunes as bitmap PNG files">'
 		modal_msg += '<input id="exportall_svgbutton" class="exportall_svgbutton btn btn-allsvgdownload" onclick="BatchSVGExport();" type="button" value="Export all as SVG" title="Saves the images for all the tunes as vector format SVG files">'
@@ -26411,18 +26425,23 @@ function ExportAll(){
 		modal_msg += 'Image width to export: <input id="export_width" type="number" min="0" step="1" max="4096" title="Image width to export" autocomplete="off"/>';
 		modal_msg += '</p>';
 		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:28px;">Export All Tunes as ABC or MusicXML</p>';
-		modal_msg  += '<p style="text-align:center;font-size:18pt;font-family:helvetica;">';
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;">';
 		modal_msg += '<input id="exportall_abcbutton" class="exportall_abcbutton btn btn-allabcdownload" onclick="BatchABCExport();" type="button" value="Export all Tunes as ABC" title="Saves each tune in its own ABC file">'
 		modal_msg += '<input id="exportall_musicxmlbutton" class="exportall_musicxmlbutton btn btn-allmusicxmldownload" onclick="BatchMusicXMLExport();" type="button" value="Export all Tunes as MusicXML" title="Saves each tune in its own MusicXML file">'
+		modal_msg += '</p>';
 		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:28px;">Export All Tunes Titles</p>';
-		modal_msg  += '<p style="text-align:center;font-size:18pt;font-family:helvetica;">';
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;">';
 		modal_msg += '<input id="export_tunetitlesbutton" class="export_tunetitlesbutton btn btn-exporttunetitles" onclick="ExportAllTuneTitles();" type="button" value="Export All Tune Titles" title="Saves a text file with all the tune titles">'
 		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:28px;">Developer Share URL Batch Export Tools</p>';
-		modal_msg  += '<p style="text-align:center;font-size:18pt;font-family:helvetica;">';
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;">';
 		modal_msg += '<input id="exportall_jsonbutton" class="exportall_jsonbutton btn btn-alljsondownload" onclick="BatchJSONExport();" type="button" value="Export all Share URLs as JSON" title="Saves the Share URLs for all the tunes as a JSON file">'
 		modal_msg += '<input id="exportall_csvbutton" class="exportall_csvbutton btn btn-allcsvdownload" onclick="BatchCSVExport();" type="button" value="Export all Share URLs as CSV" title="Saves the Share URLs for all the tunes as a CSV file">'
+		modal_msg += '</p>';
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;">';
+		modal_msg += '<input id="launchcsvextractor" class="launchcsvextractor btn btn-launchcsvextractor" onclick="LaunchCSVTagExtractor();");" type="button" value="Launch the ABC Tags to CSV Extractor Utility" title="Extract all ABC tags from one or more files to a CSV file">';
+		modal_msg += '</p>';
 		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:28px;">SmartDraw Set List Builder</p>';
-		modal_msg  += '<p style="text-align:center;font-size:18pt;font-family:helvetica;">';
+		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;">';
 		modal_msg += '<input id="export_smartdrawbutton" class="export_smartdrawbutton btn btn-smartdraw" onclick="SmartDrawExport();" type="button" value="SmartDraw Set List Builder" title="Build a SmartDraw set list using drag and drop">'
 		modal_msg += '</p>';
 
@@ -26430,7 +26449,7 @@ function ExportAll(){
 
 	modal_msg += '<a id="exportall_help" href="https://michaeleskin.com/abctools/userguide.html#export_all" target="_blank" style="text-decoration:none;" title="Learn more about the audio and image exporter" class="dialogcornerbutton">?</a>';
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 670, scrollWithPage: (AllowDialogsToScroll()) })
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 37, width: 670, scrollWithPage: (AllowDialogsToScroll()) })
 
 	if ((format != "whistle") && (format != "recorder")){
 		document.getElementById("export_width").value = gExportWidthAll;
