@@ -122,12 +122,47 @@ function extractTag(theTune, theTag) {
 }
 
 //
+// Special case for T Tag extractor
+//
+function extractTTag(theTune) {
+
+    var result = getMatchingTags(theTune, "T")
+
+    if (result.length > 1) {
+        result = result[0];
+    }
+
+    return result;
+}
+
+//
+// Special case for T Tag subtitle extractor
+//
+function extractSubtitlesTags(theTune) {
+
+    var result = getMatchingTags(theTune, "T")
+
+    if (result.length > 1) {
+        result.shift();
+        result = result.join(" / ");
+    }
+    else{
+        result = "";
+    }
+
+    return result;
+}
+
+
+
+//
 // Batch tag extractor
 //
 function extractTags(theTune,fileName) {
 
     var XTag = "";
     var TTag = "";
+    var SubtitlesTag = "";
     var CTag = "";
     var OTag = "";
     var RTag = "";
@@ -143,7 +178,8 @@ function extractTags(theTune,fileName) {
     var shareURL = "";
 
     XTag = extractTag(theTune, "X");
-    TTag = extractTag(theTune, "T");
+    TTag = extractTTag(theTune);
+    SubtitlesTag = extractSubtitlesTags(theTune);
     CTag = extractTag(theTune, "C");
     OTag = extractTag(theTune, "O");
     RTag = extractTag(theTune, "R");
@@ -159,7 +195,7 @@ function extractTags(theTune,fileName) {
 
     shareURL = getAbcInLZW(theTune);
 
-    return fileName + "," + XTag + "," + TTag + "," + CTag + "," + OTag + "," + RTag + "," + LTag + "," + MTag + "," + QTag + "," + KTag + "," + DTag + "," + STag + "," + ZTag + "," + NTag + "," + rTag + "," + shareURL + "\n";
+    return fileName + "," + XTag + "," + TTag + "," + SubtitlesTag + "," + CTag + "," + OTag + "," + RTag + "," + LTag + "," + MTag + "," + QTag + "," + KTag + "," + DTag + "," + STag + "," + ZTag + "," + NTag + "," + rTag + "," + shareURL + "\n";
 
 }
 
@@ -485,7 +521,7 @@ function DoStartup() {
 
                     fileElement.value = "";
 
-                    var csv_result = "Filename,X:,T:,C:,O:,R:,L:,M:,Q:,K:,D:,S:,Z:,N:,r:,ShareURL\n";
+                    var csv_result = "Filename,X:,T:,Subtitles,C:,O:,R:,L:,M:,Q:,K:,D:,S:,Z:,N:,r:,ShareURL\n";
 
                     // Process the ABC
                     var nFiles = results.length;
