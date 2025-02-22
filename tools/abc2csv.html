@@ -31,7 +31,7 @@
     <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
     <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-    <link rel="stylesheet" href="abc2csv.css?v=2"/>
+    <link rel="stylesheet" href="abc2csv.css?v=4"/>
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
 
@@ -54,48 +54,26 @@
           <h2>Extracts all ABC Header tags to a CSV file</h2>
         </div>
         
-        <h4 style="margin-top:32px;">Instructions:&nbsp;&nbsp;<a href="#abcinput">Jump to Tool</a></h4>
-        <p>1)&nbsp;Click "Open an existing .ABC file" to open a file or paste one or more ABC tunes into the box below.</p>
-        <p>2)&nbsp;Click "Extract Tags to CSV".</p>
-        <p>The extracted tags will appear in the "Extracted Tags as CSV" box.</p>
-        <p>3)&nbsp;Save the results:</p>
-        <p>Click "Save CSV File" to save the CSV to a file.</p>
+        <h4 style="margin-top:32px;">Instructions:&nbsp;&nbsp;</h4>
+        <p>1)&nbsp;Click "Open One or Multiple .ABC Files for Tag Extraction" to open one or multiple files containing ABC tunes.</p>
+        <p>2)&nbsp;Select the ABC files you want to extract the tags from.</p>
+    	<p>3)&nbsp;Click "Open".</p>
+        <p>3)&nbsp;When requested, enter a filename for the exported CSV file.</p>
+        <p>4)&nbsp;Click "Save".</p>
         
       </div>
       
       <hr id="abcinput">
       
-      <div style="text-align:left">
-        
-        <h4>ABC Input:</h4>
+      <div style="text-align:center">
         
         <div style="margin-top:28px;margin-bottom:36px;">
           <p>
-            <input type="file" id="selectabcfile" accept=".abc,.txt,.ABC,.TXT"  hidden/>
-            <label class="abcupload btn btn-controls" for="selectabcfile" title="Opens an existing ABC file">Open an existing .ABC file</label>
+            <input type="file" id="selectabcfile" accept=".abc,.txt,.ABC,.TXT" multiple hidden/>
+            <label class="abcupload btn btn-controls" for="selectabcfile" title="Open one or multiple ABC files for CSV tag extraction">Open One or Multiple .ABC Files for Tag Extraction</label>
           </p>
         </div>
-        
-        <p>
-          <textarea id="input" placeholder="Enter ABC notation here" spellcheck="false" autocorrect="off" autocapitalize="none">
-          </textarea>
-        </p>
-        
-        <p style="margin-top:24px"><button id="extractCSV" class="btn btn-generate" onClick="extractCSV();">Extract Tags to CSV</button></p>
-        
-        <div style="margin-bottom: 18px;">
-          
-          <h4>Extracted Tags as CSV:</h4>
-          
-        </div>
-        
-        <textarea id="output" placeholder="Output results will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea>
-        
-        <p style="margin-top:20px;">
-          
-          <button class="btn btn-controls" onClick="saveOutput();">Save CSV File</button>
-                    
-        </p>
+       
         
       </div>
       
@@ -120,7 +98,7 @@
     
   </body>
   
-  <script src="abc2csv.js?v=2" type="text/javascript"></script>
-  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=2"></script>
+  <script src="abc2csv.js?v=4" type="text/javascript"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=4"></script>
   
 </html>
