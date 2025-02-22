@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2330_022225_0930";
+var gVersionNumber="2331_022225_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46945,6 +46945,8 @@ function SetupContextMenu(showUpdateItem){
 				    {},
 				    { name: 'Import from PDF or Website', fn: function(target) { ImportPDFOrWebsite(); }},
 				    {},
+				    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
+				    {},
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 				    {},
@@ -46994,6 +46996,8 @@ function SetupContextMenu(showUpdateItem){
 				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 				    {},
 				    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
+				    {},
+				    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
 				    {},
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
@@ -47052,6 +47056,8 @@ function SetupContextMenu(showUpdateItem){
 				    {},
 				    { name: 'Import from PDF or Website', fn: function(target) { ImportPDFOrWebsite(); }},
 				    {},
+				    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
+				    {},
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 				    {},
@@ -47101,6 +47107,8 @@ function SetupContextMenu(showUpdateItem){
 				    {},
 				    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
 				    {},
+				    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
+				    {},
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 				    {},
@@ -47141,6 +47149,8 @@ function SetupContextMenu(showUpdateItem){
 			    {},
 			    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
 			    {},
+			    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
+			    {},
 			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 			    {},
@@ -47179,6 +47189,8 @@ function SetupContextMenu(showUpdateItem){
 			    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 			    {},
 			    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
+			    {},
+			    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
 			    {},
 			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
