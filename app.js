@@ -26438,7 +26438,7 @@ function ExportAll(){
 		modal_msg += '<input id="exportall_csvbutton" class="exportall_csvbutton btn btn-allcsvdownload" onclick="BatchCSVExport();" type="button" value="Export all Share URLs as CSV" title="Saves the Share URLs for all the tunes as a CSV file">'
 		modal_msg += '</p>';
 		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;">';
-		modal_msg += '<input id="launchcsvextractor" class="launchcsvextractor btn btn-launchcsvextractor" onclick="LaunchCSVTagExtractor();");" type="button" value="Launch the ABC Tags to CSV Extractor Utility" title="Extract all ABC tags from one or more files to a CSV file">';
+		modal_msg += '<input id="launchcsvextractor" class="launchcsvextractor btn btn-launchcsvextractor" onclick="LaunchCSVTagExtractor();");" type="button" value="Launch the ABC Tags to CSV Extractor Utility" title="Extract all ABC tags from one or more ABC files to a CSV file">';
 		modal_msg += '</p>';
 		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:28px;">SmartDraw Set List Builder</p>';
 		modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;">';
