@@ -17856,6 +17856,54 @@ function saveTextFileDeveloper(thePrompt, thePlaceholder, theData){
 }
 
 //
+// Save a text file with an arbitrary extension
+//
+function saveCSVFile(thePrompt, thePlaceholder, theData){
+
+	DayPilot.Modal.prompt(thePrompt, thePlaceholder,{ theme: "modal_flat", top: 200, autoFocus: false, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args) {
+
+		var fname = args.result;
+
+		// If the user pressed Cancel, exit
+		if (fname == null){
+		  return null;
+		}
+
+		// Strip out any naughty HTML tag characters
+		fname = cleanFileName(fname);
+
+		if (fname.length == 0){
+		  return null;
+		}      
+
+		// Give it a CSV extension
+		fname = fname.replace(/\..+$/, '');
+		fname = fname + ".csv";
+
+		var a = document.createElement("a");
+
+		document.body.appendChild(a);
+
+		a.style = "display: none";
+
+		var blob = new Blob([theData], {type: "text/csv"}),
+
+		url = window.URL.createObjectURL(blob);
+		a.href = url;
+		a.download = fname;
+		a.click();
+
+		document.body.removeChild(a);
+
+		setTimeout(function() {
+		  window.URL.revokeObjectURL(url);
+		}, 1000);
+
+	});
+
+}
+
+//
 // Copy to Clipboard Polyfill
 //
 function CopyToClipboard(textToCopy) {
@@ -27555,7 +27603,7 @@ function BatchCSVExport(){
 
 	}
 
-	saveTextFileDeveloper("Please enter a filename for your batch Share URL CSV file:","All_Share_URLs_CSV.txt",theCSV);
+	saveCSVFile("Please enter a filename for your batch Share URL CSV file:","All_Share_URLs_CSV.csv",theCSV);
 
 	clearGetTuneByIndexCache();
 
