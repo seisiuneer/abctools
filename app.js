@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2332_022225_1630";
+var gVersionNumber="2333_022325_1330";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27488,9 +27488,28 @@ function BatchJSONExport(){
 
 }
 
+
 //
 // Export all the tunes Share URL in a CSV file
 //
+
+function escapeForCSV(str) {
+
+    if (typeof str !== 'string') {
+        return str;
+    }
+
+    // Escape double quotes by doubling them
+    let escapedStr = str.replace(/"/g, '""');
+
+    // If the string contains commas, double quotes, or newlines, wrap it in double quotes
+    if (/[",]/.test(escapedStr)) {
+        escapedStr = `"${escapedStr}"`;
+    }
+
+    return escapedStr;
+}
+
 function BatchCSVExport(){
 
 	// Make sure there are tunes to convert
@@ -27524,13 +27543,13 @@ function BatchCSVExport(){
 
 		var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
 		
-		theCSV += title;
+		theCSV += escapeForCSV(title);
 
 		theCSV += ",";
 
 		theURL+="&name="+titleURL+"&play=1";
 
-		theCSV += theURL;
+		theCSV += escapeForCSV(theURL);
 		
 		theCSV += "\n";
 
