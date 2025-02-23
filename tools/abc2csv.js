@@ -97,10 +97,16 @@ function getMatchingTags(text, tag) {
         const match = line.match(regex);
 
         if (match) {
-            // Strip commas
-            var res = match[1].replaceAll(",", "");
-            res = res.replaceAll('"',"'");
+            // Transform double quotes into single quotes
+            var res = match[1].replaceAll('"',"'");
+
+            // If there is a comma in the tag, wrap it in double quotes as per the CSV spec
+            if (res.indexOf(",") != -1){
+                res = '"' + res + '"';
+            }
+
             res = res.trim();
+
             result.push(res); // Add the captured content without leading/trailing whitespace
         }
 
