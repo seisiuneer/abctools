@@ -292,6 +292,8 @@ function extractTags(theTune,fileName) {
 
     if (gIncludeFilenames){
 
+        fileName = escapeForCSV(fileName);
+
         theResult = fileName + ",";
 
     }
@@ -301,6 +303,8 @@ function extractTags(theTune,fileName) {
     if (gIncludeShareURLs){
 
         shareURL = getAbcInLZW(theTune);
+
+        shareURL = escapeForCSV(shareURL);        
 
         theResult += "," + shareURL;
     }
