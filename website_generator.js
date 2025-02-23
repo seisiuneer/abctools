@@ -452,7 +452,8 @@ function BatchJSONExportForWebGenerator(theABC){
 
         var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
 
-        var titleURL = title.replaceAll(" ","_");
+        var titleURL = title.replaceAll("&","");
+        titleURL = titleURL.replaceAll(" ","_");
         titleURL = titleURL.replaceAll("#","^");
 
         theURL+="&name="+titleURL;
@@ -1869,7 +1870,6 @@ function generateAndSaveWebsiteSimple() {
     });
 
 }
-
 
 var gWebsiteSoundFont = "fluid";
 var gWebsiteInjectInstruments = true;

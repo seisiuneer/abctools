@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2333_022325_1330";
+var gVersionNumber="2334_022325_1430";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27486,6 +27486,33 @@ function ExportMusicXML(theABC,fname,callback,errorCallback){
 }
 
 //
+// Return the CSV or JSON tune name
+//
+function Get_CSV_JSON_TuneName(tuneABC){
+
+	var lines = tuneABC.split("\n"); // Split the string by new line
+
+	for (var j = 0; j < lines.length; ++j) {
+
+		var currentLine = lines[j].trim(); // Trim any whitespace from the line
+
+		// Check if the line starts with "T:"
+		if (currentLine.startsWith("T:")) {
+
+			var fname = currentLine.slice(2);
+
+			fname = fname.trim();
+
+			return fname;
+
+		}
+	}
+
+	// Failed to find a tune title, return a default
+	return "Gan Ainm";
+
+}
+//
 // Export all the tunes Share URL in a JSON file
 //
 function BatchJSONExport(){
@@ -27506,9 +27533,7 @@ function BatchJSONExport(){
 
 		var thisTune = getTuneByIndex(i);
 
-		var title = GetTuneAudioDownloadName(thisTune,"");
-
-		//debugger;
+		var title = Get_CSV_JSON_TuneName(thisTune);
 
         // If section header, strip the *
         if (title.startsWith('*')) {
@@ -27519,7 +27544,8 @@ function BatchJSONExport(){
 
 		var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
 
-		var titleURL = title.replaceAll(" ","_");
+		var titleURL = title.replaceAll("&","");
+		titleURL = titleURL.replaceAll(" ","_");
 		titleURL = titleURL.replaceAll("#","^");
 
 		theURL+="&name="+titleURL+"&play=1";
@@ -27535,7 +27561,6 @@ function BatchJSONExport(){
 	clearGetTuneByIndexCache();
 
 }
-
 
 //
 // Export all the tunes Share URL in a CSV file
@@ -27576,21 +27601,21 @@ function BatchCSVExport(){
 
 		var thisTune = getTuneByIndex(i);
 
-		var title = GetTuneAudioDownloadName(thisTune,"");
+		var title = Get_CSV_JSON_TuneName(thisTune);
 
 		// If section header, strip the *
         if (title.startsWith('*')) {
             title = title.substring(1);
         }
 
-
-		var titleURL = title.replaceAll(" ","_");
-		titleURL = titleURL.replaceAll("#","^");
-
         thisTune = GetABCFileHeader() + thisTune;
 
 		var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
-		
+
+		var titleURL = title.replaceAll("&","");
+		titleURL = titleURL.replaceAll(" ","_");
+		titleURL = titleURL.replaceAll("#","^");
+
 		theCSV += escapeForCSV(title);
 
 		theCSV += ",";
@@ -27631,7 +27656,7 @@ function ExportAllTuneTitles(){
 
 		var thisTune = getTuneByIndex(i);
 
-		var title = GetTuneAudioDownloadName(thisTune,"");
+		var title = Get_CSV_JSON_TuneName(thisTune);
 
 		// If section header, strip the *
         if (title.startsWith('*')) {
