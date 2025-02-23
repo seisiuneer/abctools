@@ -17,11 +17,15 @@ var LZString=function(){function o(o,r){if(!t[o]){t[o]={};for(var n=0;n<o.length
 //
 // Generate a share link for either all the tunes or just what's passed in
 //
-function getAbcInLZW(ABCtoEncode) {
+function getAbcInLZW(ABCtoEncode,title) {
 
     var abcInLZW = LZString.compressToEncodedURIComponent(ABCtoEncode);
 
-    var url = "https://michaeleskin.com/abctools/abctools.html?lzw=" + abcInLZW + "&format=noten&ssp=10&play=1";
+    var titleURL = title.replaceAll("&","");
+    titleURL = titleURL.replaceAll(" ","_");
+    titleURL = titleURL.replaceAll("#","^");
+
+    var url = "https://michaeleskin.com/abctools/abctools.html?lzw=" + abcInLZW + "&format=noten&ssp=10&name="+titleURL+"&play=1";
 
     // If just encoding some ABC, return it now
     return url;
@@ -188,6 +192,32 @@ function extractTTag(theTune) {
 }
 
 //
+// Get the raw tune name for the URL
+//
+function extractRawTTag(theTune) {
+
+    var result = getMatchingTags(theTune, "T");
+
+    if (result.length == 0){
+        return "No Name";
+    }
+    else
+    if (result.length == 1){
+
+        var res = result[0];
+
+        return res;
+    }
+    else
+    if (result.length > 1) {
+
+        var res = result[0];
+
+        return res;
+    }
+}
+
+//
 // Tag extractor
 //
 function extractTagSpaceDelimiter(theTune, theTag) {
@@ -301,8 +331,14 @@ function extractTags(theTune,fileName) {
     theResult = theResult + XTag + "," + TTag + "," + SubtitlesTag + "," + CTag + "," + OTag + "," + ATag + "," + RTag + "," + LTag + "," + MTag + "," + QTag + "," + KTag + "," + DTag + "," + STag + "," + ZTag + "," + NTag + "," + HTag + ","+ rTag + "," + FTag;
 
     if (gIncludeShareURLs){
+        
+        var tuneName = extractRawTTag(theTune);
 
-        shareURL = getAbcInLZW(theTune);
+        if ((!tuneName) || (tuneName == "")){
+            tuneName = "No Name";
+        }
+
+        shareURL = getAbcInLZW(theTune,tuneName);
 
         shareURL = escapeForCSV(shareURL);        
 
