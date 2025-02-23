@@ -85,6 +85,24 @@ function countTunes(theABC) {
 
 }
 
+function escapeForCSV(str) {
+
+    if (typeof str !== 'string') {
+        return str;
+    }
+
+    // Escape double quotes by doubling them
+    let escapedStr = str.replace(/"/g, '""');
+
+    // If the string contains commas, double quotes, or newlines, wrap it in double quotes
+    if (/[",\n]/.test(escapedStr)) {
+        escapedStr = `"${escapedStr}"`;
+    }
+
+    return escapedStr;
+}
+
+
 function getMatchingTags(text, tag) {
 
     const lines = text.split(/\r?\n/); // Split text into lines
@@ -98,10 +116,7 @@ function getMatchingTags(text, tag) {
 
         if (match) {
             
-            // Transform double quotes into two double quotes
-            var res = match[1].replaceAll('"','""');
-
-            res = res.trim();
+            var res = match[1].trim();
 
             result.push(res); // Add the captured content without leading/trailing whitespace
         }
@@ -125,12 +140,9 @@ function extractTag(theTune, theTag) {
     else
     if (result.length == 1){
 
-        var res = result[0]
+        var res = result[0];
 
-        // If there is a comma in the tag, wrap it in double quotes as per the CSV spec
-        if (res.indexOf(",") != -1){
-            res = '"' + res + '"';
-        }
+        res = escapeForCSV(res);
 
         return res;
     }
@@ -139,10 +151,7 @@ function extractTag(theTune, theTag) {
         
         var resultJoined = result.join(" / ");
 
-        // If there is a comma in the tag, wrap it in double quotes as per the CSV spec
-        if (resultJoined.indexOf(",") != -1){
-            resultJoined = '"' + resultJoined + '"';
-        }
+        resultJoined = escapeForCSV(resultJoined);
 
         return resultJoined;
     }
@@ -161,12 +170,9 @@ function extractTTag(theTune) {
     else
     if (result.length == 1){
 
-        var res = result[0]
+        var res = result[0];
 
-        // If there is a comma in the tag, wrap it in double quotes as per the CSV spec
-        if (res.indexOf(",") != -1){
-            res = '"' + res + '"';
-        }
+        res = escapeForCSV(res);
 
         return res;
     }
@@ -175,10 +181,7 @@ function extractTTag(theTune) {
 
         var res = result[0]
 
-        // If there is a comma in the tag, wrap it in double quotes as per the CSV spec
-        if (res.indexOf(",") != -1){
-            res = '"' + res + '"';
-        }
+        res = escapeForCSV(res);
 
         return res;
     }
@@ -199,10 +202,7 @@ function extractTagSpaceDelimiter(theTune, theTag) {
 
         var res = result[0]
 
-        // If there is a comma in the tag, wrap it in double quotes as per the CSV spec
-        if (res.indexOf(",") != -1){
-            res = '"' + res + '"';
-        }
+        res = escapeForCSV(res);
 
         return res;
     }
@@ -211,10 +211,7 @@ function extractTagSpaceDelimiter(theTune, theTag) {
         
         var resultJoined = result.join(" ");
 
-        // If there is a comma in the tag, wrap it in double quotes as per the CSV spec
-        if (resultJoined.indexOf(",") != -1){
-            resultJoined = '"' + resultJoined + '"';
-        }
+        resultJoined = escapeForCSV(resultJoined);
 
         return resultJoined;
     }
@@ -237,10 +234,7 @@ function extractSubtitlesTags(theTune) {
         
         var resultJoined = result.join(" / ");
 
-        // If there is a comma in the tag, wrap it in double quotes as per the CSV spec
-        if (resultJoined.indexOf(",") != -1){
-            resultJoined = '"' + resultJoined + '"';
-        }
+        resultJoined = escapeForCSV(resultJoined);
 
         return resultJoined;
     }
