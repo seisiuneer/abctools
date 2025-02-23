@@ -179,7 +179,7 @@ function extractTTag(theTune) {
     else
     if (result.length > 1) {
 
-        var res = result[0]
+        var res = result[0];
 
         res = escapeForCSV(res);
 
@@ -200,7 +200,7 @@ function extractTagSpaceDelimiter(theTune, theTag) {
     else
     if (result.length == 1){
 
-        var res = result[0]
+        var res = result[0];
 
         res = escapeForCSV(res);
 
