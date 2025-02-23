@@ -95,7 +95,7 @@ function escapeForCSV(str) {
     let escapedStr = str.replace(/"/g, '""');
 
     // If the string contains commas, double quotes, or newlines, wrap it in double quotes
-    if (/[",\n]/.test(escapedStr)) {
+    if (/[",]/.test(escapedStr)) {
         escapedStr = `"${escapedStr}"`;
     }
 
