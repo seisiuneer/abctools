@@ -100,11 +100,6 @@ function getMatchingTags(text, tag) {
             // Transform double quotes into single quotes
             var res = match[1].replaceAll('"',"'");
 
-            // If there is a comma in the tag, wrap it in double quotes as per the CSV spec
-            if (res.indexOf(",") != -1){
-                res = '"' + res + '"';
-            }
-
             res = res.trim();
 
             result.push(res); // Add the captured content without leading/trailing whitespace
@@ -128,11 +123,26 @@ function extractTag(theTune, theTag) {
     }
     else
     if (result.length == 1){
-        return result[0];
+
+        var res = result[0]
+
+        // If there is a comma in the tag, wrap it in double quotes as per the CSV spec
+        if (res.indexOf(",") != -1){
+            res = '"' + res + '"';
+        }
+
+        return res;
     }
     else
     if (result.length > 1) {
+        
         var resultJoined = result.join(" / ");
+
+        // If there is a comma in the tag, wrap it in double quotes as per the CSV spec
+        if (resultJoined.indexOf(",") != -1){
+            resultJoined = '"' + resultJoined + '"';
+        }
+
         return resultJoined;
     }
 }
@@ -149,11 +159,63 @@ function extractTTag(theTune) {
     }
     else
     if (result.length == 1){
-        return result[0];
+
+        var res = result[0]
+
+        // If there is a comma in the tag, wrap it in double quotes as per the CSV spec
+        if (res.indexOf(",") != -1){
+            res = '"' + res + '"';
+        }
+
+        return res;
     }
     else
     if (result.length > 1) {
-        return result[0];
+
+        var res = result[0]
+
+        // If there is a comma in the tag, wrap it in double quotes as per the CSV spec
+        if (res.indexOf(",") != -1){
+            res = '"' + res + '"';
+        }
+
+        return res;
+    }
+}
+
+//
+// Tag extractor
+//
+function extractTagSpaceDelimiter(theTune, theTag) {
+
+    var result = getMatchingTags(theTune, theTag);
+
+    if (result.length == 0){
+        return "";
+    }
+    else
+    if (result.length == 1){
+
+        var res = result[0]
+
+        // If there is a comma in the tag, wrap it in double quotes as per the CSV spec
+        if (res.indexOf(",") != -1){
+            res = '"' + res + '"';
+        }
+
+        return res;
+    }
+    else
+    if (result.length > 1) {
+        
+        var resultJoined = result.join(" ");
+
+        // If there is a comma in the tag, wrap it in double quotes as per the CSV spec
+        if (resultJoined.indexOf(",") != -1){
+            resultJoined = '"' + resultJoined + '"';
+        }
+
+        return resultJoined;
     }
 }
 
@@ -169,8 +231,16 @@ function extractSubtitlesTags(theTune) {
     }
     else
     if (result.length > 1) {
+
         result.shift();
+        
         var resultJoined = result.join(" / ");
+
+        // If there is a comma in the tag, wrap it in double quotes as per the CSV spec
+        if (resultJoined.indexOf(",") != -1){
+            resultJoined = '"' + resultJoined + '"';
+        }
+
         return resultJoined;
     }
     else{
@@ -189,6 +259,7 @@ function extractTags(theTune,fileName) {
     var SubtitlesTag = "";
     var CTag = "";
     var OTag = "";
+    var ATag = "";
     var RTag = "";
     var LTag = "";
     var MTag = "";
@@ -198,6 +269,7 @@ function extractTags(theTune,fileName) {
     var STag = "";
     var ZTag = "";
     var NTag = "";
+    var HTag = "";
     var rTag = "";
     var FTag = "";
     var shareURL = "";
@@ -206,18 +278,20 @@ function extractTags(theTune,fileName) {
     TTag = extractTTag(theTune);
     SubtitlesTag = extractSubtitlesTags(theTune);
     CTag = extractTag(theTune, "C");
-    OTag = extractTag(theTune, "O");
+    OTag = extractTagSpaceDelimiter(theTune, "O");
+    ATag = extractTagSpaceDelimiter(theTune, "A");
     RTag = extractTag(theTune, "R");
     LTag = extractTag(theTune, "L");
     MTag = extractTag(theTune, "M");
     QTag = extractTag(theTune, "Q");
     KTag = extractTag(theTune, "K");
-    DTag = extractTag(theTune, "D");
-    STag = extractTag(theTune, "S");
-    ZTag = extractTag(theTune, "Z");
-    NTag = extractTag(theTune, "N");
-    rTag = extractTag(theTune, "r");
-    FTag = extractTag(theTune, "F");
+    DTag = extractTagSpaceDelimiter(theTune, "D");
+    STag = extractTagSpaceDelimiter(theTune, "S");
+    ZTag = extractTagSpaceDelimiter(theTune, "Z");
+    NTag = extractTagSpaceDelimiter(theTune, "N");
+    HTag = extractTagSpaceDelimiter(theTune, "H");
+    rTag = extractTagSpaceDelimiter(theTune, "r");
+    FTag = extractTagSpaceDelimiter(theTune, "F");
 
     var theResult = "";
 
@@ -227,7 +301,7 @@ function extractTags(theTune,fileName) {
 
     }
 
-    theResult = theResult + XTag + "," + TTag + "," + SubtitlesTag + "," + CTag + "," + OTag + "," + RTag + "," + LTag + "," + MTag + "," + QTag + "," + KTag + "," + DTag + "," + STag + "," + ZTag + "," + NTag + "," + rTag + "," + FTag;
+    theResult = theResult + XTag + "," + TTag + "," + SubtitlesTag + "," + CTag + "," + OTag + "," + ATag + "," + RTag + "," + LTag + "," + MTag + "," + QTag + "," + KTag + "," + DTag + "," + STag + "," + ZTag + "," + NTag + "," + HTag + ","+ rTag + "," + FTag;
 
     if (gIncludeShareURLs){
 
@@ -565,8 +639,8 @@ function DoStartup() {
                         csv_result = "Filename,";
 
                     }
-
-                    csv_result = csv_result + "X:,T:,Subtitles,C:,O:,R:,L:,M:,Q:,K:,D:,S:,Z:,N:,r:,F:";
+                    
+                    csv_result = csv_result + "X:,T:,Subtitles,C:,O:,A:,R:,L:,M:,Q:,K:,D:,S:,Z:,N:,H:,r:,F:";
 
                     if (gIncludeShareURLs){
 
