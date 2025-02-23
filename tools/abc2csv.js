@@ -97,8 +97,9 @@ function getMatchingTags(text, tag) {
         const match = line.match(regex);
 
         if (match) {
-            // Transform double quotes into single quotes
-            var res = match[1].replaceAll('"',"'");
+            
+            // Transform double quotes into two double quotes
+            var res = match[1].replaceAll('"','""');
 
             res = res.trim();
 
