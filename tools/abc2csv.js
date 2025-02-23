@@ -220,7 +220,7 @@ function extractTags(theTune,fileName) {
 
     }
 
-    theResult = theResult + FTag + "," + XTag + "," + TTag + "," + SubtitlesTag + "," + CTag + "," + OTag + "," + RTag + "," + LTag + "," + MTag + "," + QTag + "," + KTag + "," + DTag + "," + STag + "," + ZTag + "," + NTag + "," + rTag;
+    theResult = theResult + XTag + "," + TTag + "," + SubtitlesTag + "," + CTag + "," + OTag + "," + RTag + "," + LTag + "," + MTag + "," + QTag + "," + KTag + "," + DTag + "," + STag + "," + ZTag + "," + NTag + "," + rTag + "," + FTag;
 
     if (gIncludeShareURLs){
 
@@ -559,7 +559,7 @@ function DoStartup() {
 
                     }
 
-                    csv_result = csv_result + "F:,X:,T:,Subtitles,C:,O:,R:,L:,M:,Q:,K:,D:,S:,Z:,N:,r:";
+                    csv_result = csv_result + "X:,T:,Subtitles,C:,O:,R:,L:,M:,Q:,K:,D:,S:,Z:,N:,r:,F:";
 
                     if (gIncludeShareURLs){
 
