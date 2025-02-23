@@ -99,6 +99,7 @@ function getMatchingTags(text, tag) {
         if (match) {
             // Strip commas
             var res = match[1].replaceAll(",", "");
+            res = res.replaceAll('"',"'");
             res = res.trim();
             result.push(res); // Add the captured content without leading/trailing whitespace
         }
