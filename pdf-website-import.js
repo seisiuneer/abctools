@@ -18,6 +18,8 @@ function extractPDFTunes(file){
 
     sendGoogleAnalytics("dialog","extractPDFTunes");
 
+    showTheSpinner();
+
     // Read the file as an ArrayBuffer
     const reader = new FileReader();
 
@@ -137,8 +139,6 @@ function extractPDFTunes(file){
         // Add them to the work area
         gTheABC.value = outVal;
 
-        showTheSpinner();
-
         setTimeout(function(){
 
             // And render 
@@ -165,6 +165,8 @@ function extractPDFTunes(file){
 
 		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 
+        hideTheSpinner();
+
     };
 }
 
@@ -174,6 +176,8 @@ function extractPDFTunes(file){
 function extractWebsiteTunes(file){
 
     sendGoogleAnalytics("dialog","extractWebsiteTunes");
+
+    showTheSpinner();
 
     // Read the file as text
     const reader = new FileReader();
@@ -217,6 +221,8 @@ function extractWebsiteTunes(file){
                     theme: "modal_flat",
                     top: 150
                 });
+
+                hideTheSpinner();
             }
 
         }
@@ -282,8 +288,6 @@ function extractWebsiteTunes(file){
         // Add them to the work area
         gTheABC.value = outVal;
 
-        showTheSpinner();
-
         setTimeout(function(){
 
             // And render 
@@ -309,6 +313,9 @@ function extractWebsiteTunes(file){
 		thePrompt = makeCenteredPromptString(thePrompt);
 
 		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 150, scrollWithPage: (AllowDialogsToScroll()) });
+
+        hideTheSpinner();
+
     };
 }
 
@@ -395,6 +402,8 @@ function extractCSVTunes(file){
     //console.log("extractCSVTunes");
     sendGoogleAnalytics("dialog","extractCSVTunes");
 
+    showTheSpinner();
+
     // Read the file as text
     const reader = new FileReader();
 
@@ -468,8 +477,6 @@ function extractCSVTunes(file){
         // Add them to the work area
         gTheABC.value = outVal;
 
-        showTheSpinner();
-
         setTimeout(function(){
 
             // And render 
@@ -494,6 +501,9 @@ function extractCSVTunes(file){
         thePrompt = makeCenteredPromptString(thePrompt);
 
         DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 150, scrollWithPage: (AllowDialogsToScroll()) });
+
+        hideTheSpinner();
+
     };
 
 }
