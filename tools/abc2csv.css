@@ -110,6 +110,33 @@ margin-right:24px;
 }
 
 
+/* Spinner */
+#loading-bar-spinner.spinner {
+left: 50%;
+margin-left: -23px;
+top: 25%;
+margin-top: -23px;
+position: fixed;
+z-index: 100100 !important;
+animation: loading-bar-spinner 400ms linear infinite; 
+display:none;
+}
+
+#loading-bar-spinner.spinner .spinner-icon {
+width: 46px;
+height: 46px;
+border:  solid 4px transparent;
+border-top-color:  #00C8B1 !important;
+border-left-color: #00C8B1 !important;
+border-radius: 50%;
+}
+
+@keyframes loading-bar-spinner {
+0%   { transform: rotate(0deg);   transform: rotate(0deg); }
+100% { transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+
 .btn {
   --color: #000000;
   --background-color: #d8d8d8;

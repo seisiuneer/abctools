@@ -81,6 +81,40 @@ function makeCenteredPromptString(thePrompt){
 }
 
 //
+// Show the spinner
+// 
+function showTheSpinner(){
+
+    //console.log("showTheSpinner");
+    
+    var elem = document.getElementById("loading-bar-spinner");
+
+    var currentState = elem.style.display;
+
+    if (currentState != "block"){
+        elem.style.display = "block";
+    }
+
+}
+
+//
+// Hide the spinner
+// 
+function hideTheSpinner(){
+    
+    //console.log("hideTheSpinner");
+
+    var elem = document.getElementById("loading-bar-spinner");
+
+    var currentState = elem.style.display;
+
+    if (currentState != "none"){
+        elem.style.display = "none";
+    }
+
+}
+
+//
 // Count the tunes in the text area
 //
 function countTunes(theABC) {
@@ -396,6 +430,8 @@ function extractCSV(theABC,fileName) {
 // Save the Output to a .csv file
 //
 function saveCSVOutput(theData) {
+    
+    hideTheSpinner();
 
     if (theData.length == 0) {
 
@@ -633,7 +669,7 @@ function DoStartup() {
                 theme: "modal_flat",
                 top: 200
             });
-
+            
             return;
         }
 
@@ -763,6 +799,8 @@ function DoStartup() {
                         top: 200
                     });
 
+                    hideTheSpinner();
+
                     return;
                 }
             };
@@ -774,7 +812,10 @@ function DoStartup() {
 
         gTotalTunes = 0;
 
+        showTheSpinner();
+
         readFiles();
+
 
     }
 }
