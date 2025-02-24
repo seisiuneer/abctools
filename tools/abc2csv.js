@@ -635,21 +635,35 @@ function DoStartup() {
             // A function to read each file and process when all are done
             const readFile = (file) => {
 
+                // Check the file extension
+                const validExtensions = ['.abc', '.ABC', '.txt', '.TXT'];
+                const extension = file.name.slice(-4);
+
+                console.log("name: "+file.name+" extension: "+extension);
+
+                if (!validExtensions.includes(extension)) {
+                    // Resolve immediately if the file doesn't have a valid extension
+                    return Promise.resolve({
+                        filename: file.name,
+                        content: null
+                    });
+                }
+
+                // Proceed to read the file if the extension is valid
                 return new Promise((resolve, reject) => {
-                
                     const reader = new FileReader();
-                
+
                     reader.onload = () => resolve({
                         filename: file.name,
                         content: reader.result
                     });
-                
+
                     reader.onerror = () => reject(`Error reading ${file.name}`);
-                
+
                     reader.readAsText(file);
-                
                 });
             };
+
 
             // Use Promise.all to wait for all files to be read
             const readAllFiles = async () => {
@@ -690,7 +704,11 @@ function DoStartup() {
 
                     for (var i=0;i<nFiles;++i){
 
-                        csv_result += extractCSV(results[i].content,results[i].filename);
+                        if (results[i].content){
+
+                            csv_result += extractCSV(results[i].content,results[i].filename);
+
+                        }
 
                     }
 
