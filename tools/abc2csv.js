@@ -716,7 +716,7 @@ function DoStartup() {
                 const validExtensions = ['.abc', '.ABC', '.txt', '.TXT'];
                 const extension = file.name.slice(-4);
 
-                console.log("name: "+file.name+" extension: "+extension);
+                //console.log("name: "+file.name+" extension: "+extension);
 
                 if (!validExtensions.includes(extension)) {
                     // Resolve immediately if the file doesn't have a valid extension
