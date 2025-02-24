@@ -556,6 +556,16 @@ function isChrome() {
 }
 
 //
+// Are we on Brave?
+//
+async function isBraveBrowser() {
+  if (navigator.brave) {
+    return await navigator.brave.isBrave();
+  }
+  return false;
+}
+
+//
 // Globals
 //
 var gIsIOS = false;
@@ -586,8 +596,18 @@ function DoStartup() {
         gIsAndroid = true;
     }
 
+    // Brave user agent looks like iPad Safari
     if (gIsIOS) {
-        document.getElementById("selectabcfile").removeAttribute("accept");
+        isBraveBrowser().then(isBrave => {
+            if (!isBrave) {
+                document.getElementById("selectabcfile").removeAttribute("accept");
+            }
+        }).catch(error => {
+           DayPilot.Modal.alert(makeCenteredPromptString("Error detecting Brave browser!"), {
+                theme: "modal_flat",
+                top: 200
+            });
+        });
     }
 
     // Are we on Safari?
