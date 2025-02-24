@@ -814,7 +814,12 @@ function DoStartup() {
 
         showTheSpinner();
 
-        readFiles();
+        // Give some time for the spinner to show
+        setTimeout(function(){
+
+            readFiles();
+
+        },100);
 
 
     }
