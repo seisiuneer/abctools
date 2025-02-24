@@ -3580,6 +3580,18 @@ margin-top:-7px;
 	}
 }
 
+#import_csv{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.import_csv:hover{
+	background: palegreen;
+	}
+}
+
 #default_musicxml_settings{
 	height:42px;
 	margin-top: 9px;

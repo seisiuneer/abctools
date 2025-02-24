@@ -305,7 +305,7 @@
             <a style="text-decoration:none;" href="#hamburger_reformat_xml">Reformat Using MusicXML</a>
             <a style="text-decoration:none;" href="#hamburger_split_voices">Split Voices</a>
             <a style="text-decoration:none;" href="#hamburger_midigchord">Inject MIDI gchord Templates</a>
-            <a style="text-decoration:none;" href="#hamburger_extracting_pdf_website">Import from PDF or Website</a>
+            <a style="text-decoration:none;" href="#hamburger_extracting_pdf_website">Import PDF, Website, or CSV</a>
             <a style="text-decoration:none;" href="#hamburger_abc_to_csv">Launch ABC Tags to CSV</a>
             <a style="text-decoration:none;" href="#hamburger_settings">Settings</a>
             <a style="text-decoration:none;" href="#hamburger_advanced_settings">Advanced Settings</a>
@@ -463,7 +463,7 @@
             <a style="text-decoration:none;" href="#export_all_as_json">Export all Share URLs as JSON</a>
             <a style="text-decoration:none;" href="#export_all_as_csv">Export all Share URLs as CSV</a>
             <a style="text-decoration:none;" href="#abc_to_csv">Launch the ABC Tags to CSV Extractor Utility</a>
-
+            
             <h3>SmartDraw Set List Builder</h3>
             <a style="text-decoration:none;" href="#smartdraw_export">SmartDraw Set List Builder</a>
             
@@ -624,7 +624,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_reformat_xml">Reformat Using MusicXML</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_split_voices">Split Voices</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_midigchord">Inject MIDI gchord Templates</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#hamburger_extracting_pdf_website">Import from PDF or Website</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#hamburger_extracting_pdf_website">Import PDF, Website, or CSV</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_abc_to_csv">Launch ABC Tags to CSV</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_settings">Settings</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_advanced_settings">Advanced Settings</a></p>
@@ -818,7 +818,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#export_all_tune_titles">Export All Tune Titles</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#export_all_developer">Developer Share URL Batch Export Tools</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#export_all_as_json">Export all Share URLs as JSON</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#export_all_as_csv">Export all Share URLs as CSV</a></p>                       
+                        <p class="toc"><a style="text-decoration:none;" href="#export_all_as_csv">Export all Share URLs as CSV</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#abc_to_csv">Launch the ABC Tags to CSV Extractor Utility</a></p>
                     </div>
                     
@@ -1088,7 +1088,7 @@
                 <p><strong>☰</strong></p>
                 <p>"Hamburger" dropdown menu that brings up additional useful commands:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/moretools_18.jpg"/>
+                    <img class="image" loading="lazy" src="img/moretools_19.jpg"/>
                 </div>
                 <hr id="hamburger_find">
                 <p><strong>Find and Replace</strong> (Desktop browsers only)</p>
@@ -1163,12 +1163,12 @@
                 <p>Full details below on the use of %%MIDI gchordstress and %%MIDI gchordduration for gchord dynamics and duration scaling:</p>
                 <p style="text-align: center"><a href="#midigchorddynamics">Controlling %%MIDI gchord-based Backup Dynamics</a></p>
                 <hr id="hamburger_extracting_pdf_website">
-                <p id="extracting_pdf_website"><strong>Import from PDF or Website</strong> (Desktop browsers only)</p>
+                <p id="extracting_pdf_website"><strong>Import PDF, Website, or CSV</strong> (Desktop browsers only)</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/l8lIYJmiLhM" title="Import from PDF or Website Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/import_pdf_website_2.jpg"/>
+                    <img class="image" loading="lazy" src="img/import_pdf_website_3.jpg"/>
                 </div>
-                <p>Click the buttons to import all the tunes from a tunebook .PDF file with play links or a tunebook .html website previously exported using this tool.</p>
+                <p>Click the buttons to import all the tunes from a tunebook .PDF file with play links, a tunebook .html website, or a CSV file previously exported using this tool or the <strong>ABC Tags to CSV Extractor</strong> tool.</p>
                 <p>This only works with PDF tunebooks using the tool's own custom PDF exporter, not those created using the browser native PDF export with play links option.</p>
                 <p>Tunes will not be extracted from PDF tunebooks created with the:</p>
                 <p class="code">%no_edit_allowed</p>
@@ -1177,6 +1177,12 @@
                 <p>Mobile users can still use the original standalone tools to import all of the ABC tunes from a PDF file or website exported by the ABC Transcription Tools:</p>
                 <p style="text-align: center"><a href="https://michaeleskin.com/tools/pdf_to_abc.html" target="_blank">ABC Transcription Tools PDF-to-ABC Extraction Tool</a></p>
                 <p style="text-align: center"><a href="https://michaeleskin.com/tools/website_to_abc.html" target="_blank">ABC Transcription Tools Website-to-ABC Extraction Tool</a></p>
+                <hr>
+                <p><strong>CSV File Import and Spreadsheet Processing Requirements</strong></p>
+                <p>The CSV tune importer relies on there being a CSV header column in either the first or second row of the file labeled:</p>
+                <p class="code">ShareURL</p>
+                <p>with the rest of the cells in the column containing valid ABC Transcription Tool ShareURL links.</p>
+                <p>If using a spreadsheet to sort or otherwise process a CSV file exported from the tool or the <strong>ABC Tags to CSV Extractor</strong> tool, be sure when exporting back to CSV that the header line is preserved if you intend to import the CSV file back into the ABC Transcription Tools.</p>
                 <hr id="hamburger_abc_to_csv">
                 <p><strong>Launch ABC Tags to CSV</strong></p>
                 <p>If you want to extract all the ABC tags for the all the tunes in one or multiple ABC files into a CSV file, click this button to launch a standalone web-based utility that will do the job:</p>

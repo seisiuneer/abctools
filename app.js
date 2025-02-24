@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2334_022325_1430";
+var gVersionNumber="2335_022325_1730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27595,7 +27595,7 @@ function BatchCSVExport(){
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","BatchCSVExport");
 
-	var theCSV = "Name,URL\n";
+	var theCSV = "Name,ShareURL\n";
 
 	for (var i=0;i<nTunes;++i){
 
@@ -47035,7 +47035,7 @@ function SetupContextMenu(showUpdateItem){
 				    {},
 				    { name: 'Inject MIDI gchord Templates', fn: function(target) { InjectMIDIGChordTemplates(); }},
 				    {},
-				    { name: 'Import from PDF or Website', fn: function(target) { ImportPDFOrWebsite(); }},
+				    { name: 'Import PDF, Website, or CSV', fn: function(target) { ImportPDF_CSV_Website(); }},
 				    {},
 				    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
 				    {},
@@ -47146,7 +47146,7 @@ function SetupContextMenu(showUpdateItem){
 				    {},
 				    { name: 'Inject MIDI gchord Templates', fn: function(target) { InjectMIDIGChordTemplates(); }},
 				    {},
-				    { name: 'Import from PDF or Website', fn: function(target) { ImportPDFOrWebsite(); }},
+				    { name: 'Import PDF, Website, or CSV', fn: function(target) { ImportPDF_CSV_Website(); }},
 				    {},
 				    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
 				    {},
