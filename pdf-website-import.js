@@ -18,8 +18,6 @@ function extractPDFTunes(file){
 
     sendGoogleAnalytics("dialog","extractPDFTunes");
 
-    showTheSpinner();
-
     // Read the file as an ArrayBuffer
     const reader = new FileReader();
 
@@ -176,8 +174,6 @@ function extractPDFTunes(file){
 function extractWebsiteTunes(file){
 
     sendGoogleAnalytics("dialog","extractWebsiteTunes");
-
-    showTheSpinner();
 
     // Read the file as text
     const reader = new FileReader();
@@ -402,8 +398,6 @@ function extractCSVTunes(file){
     //console.log("extractCSVTunes");
     sendGoogleAnalytics("dialog","extractCSVTunes");
 
-    showTheSpinner();
-
     // Read the file as text
     const reader = new FileReader();
 
@@ -537,8 +531,13 @@ function idleImportPDFOrWebsite(){
 		let file = fileElement.files[0];
 
 		if (file){
-			// Extract the tunes from the PDF file
-			extractPDFTunes(file);
+
+            showTheSpinner();
+
+            setTimeout(function(){
+    			// Extract the tunes from the PDF file
+			    extractPDFTunes(file);
+            },100);
 		}
 
 		// Reset file selectors
@@ -570,8 +569,13 @@ function idleImportPDFOrWebsite(){
 		let file = fileElement.files[0];
 
 		if (file){
-			// Extract the tunes from the website
-			extractWebsiteTunes(file);
+
+            showTheSpinner();
+
+            setTimeout(function(){
+                // Extract the tunes from the website
+                extractWebsiteTunes(file);
+            },100);
 		}
 
 		// Reset file selectors
@@ -604,8 +608,13 @@ function idleImportPDFOrWebsite(){
         let file = fileElement.files[0];
 
         if (file){
-            // Extract the tunes from the CSV file
-            extractCSVTunes(file);
+            
+            showTheSpinner();
+
+            setTimeout(function(){
+                // Extract the tunes from the CSV file
+                extractCSVTunes(file);
+            },100);
         }
 
         // Reset file selectors
