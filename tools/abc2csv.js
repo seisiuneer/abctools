@@ -500,6 +500,7 @@ function extractTags(theTune,fileName) {
     var ZTag = "";
     var NTag = "";
     var HTag = "";
+    var BTag = "";
     var rTag = "";
     var FTag = "";
     var shareURL = "";
@@ -520,6 +521,7 @@ function extractTags(theTune,fileName) {
     ZTag = extractTagSpaceDelimiter(theTune, "Z");
     NTag = extractTagSpaceDelimiter(theTune, "N");
     HTag = extractTagSpaceDelimiter(theTune, "H");
+    BTag = extractTagSpaceDelimiter(theTune, "B");
     rTag = extractTagSpaceDelimiter(theTune, "r");
     FTag = extractTagSpaceDelimiter(theTune, "F");
 
@@ -533,7 +535,7 @@ function extractTags(theTune,fileName) {
 
     }
 
-    theResult = theResult + XTag + "," + TTag + "," + SubtitlesTag + "," + CTag + "," + OTag + "," + ATag + "," + RTag + "," + LTag + "," + MTag + "," + QTag + "," + KTag + "," + DTag + "," + STag + "," + ZTag + "," + NTag + "," + HTag + ","+ rTag + "," + FTag;
+    theResult = theResult + XTag + "," + TTag + "," + SubtitlesTag + "," + CTag + "," + OTag + "," + ATag + "," + RTag + "," + LTag + "," + MTag + "," + QTag + "," + KTag + "," + DTag + "," + STag + "," + ZTag + "," + NTag + "," + HTag + ","+ BTag + ","+ rTag + "," + FTag;
 
     if (gIncludeShareURLs){
         
@@ -946,7 +948,7 @@ function DoStartup() {
 
                     }
                     
-                    csv_result = csv_result + "X:,T:,Subtitles,C:,O:,A:,R:,L:,M:,Q:,K:,D:,S:,Z:,N:,H:,r:,F:";
+                    csv_result = csv_result + "X:,T:,Subtitles,C:,O:,A:,R:,L:,M:,Q:,K:,D:,S:,Z:,N:,H:,B:,r:,F:";
 
                     if (gIncludeShareURLs){
 
