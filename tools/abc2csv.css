@@ -151,29 +151,11 @@ outline: none !important;
 margin-bottom:8px;
 }
 
-.accordion::after {
-content: "+";
-font-size: 14pt;
-font-weight: bold;
-position: absolute;
-right: 14px; /* Adjust this value as needed */
-top: 50%;
-transform: translateY(-50%);
-}
 
 .active {
 background-color: #eee;
 }
 
-.active::after {
-content: "-";
-font-size: 18pt;
-font-weight: bold;
-position: absolute;
-right: 14px; /* Adjust this value as needed */
-top: 50%;
-transform: translateY(-50%);
-}
 
 @media not all and (pointer: coarse) {
 .accordion:hover {
