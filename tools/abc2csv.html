@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <link rel="profile" href="http://gmpg.org/xfn/11">
-    <title>ABC Tags to CSV Extractor</title>
+    <title>ABC Tags to CSV Extractor Utilities</title>
     <link rel='dns-prefetch' href='//fonts.googleapis.com' />
     <link rel='dns-prefetch' href='//s.w.org' />
     <link rel='preconnect' href='https://secureservercdn.net' crossorigin />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="ABC Tags to CSV Extractor" />
-    <meta property="og:description" content="ABC Tags to CSV Extractor" />
+    <meta property="og:title" content="ABC Tags to CSV Extractor Utilities" />
+    <meta property="og:description" content="ABC Tags to CSV Extractor Utilities" />
     <meta property="og:url" content="https://michaeleskin.com/tools/abc2csv.html" />
-    <meta property="og:site_name" content="ABC Tags to CSV Extractor" />
+    <meta property="og:site_name" content="ABC Tags to CSV Extractor Utilities" />
     <meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png"/>
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
@@ -31,7 +31,7 @@
     <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
     <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-    <link rel="stylesheet" href="abc2csv.css?v=40"/>
+    <link rel="stylesheet" href="abc2csv.css?v=42"/>
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
 
@@ -56,26 +56,30 @@
       <div>
         
         <div style="text-align: center;">
-          <h1>ABC Tags to CSV Extractor</h1>
-          <h2>Extracts all ABC Header tags to a CSV file</h2>
+          <h1>ABC Tags to CSV Extractor Utilities</h1>
         </div>
         
-        <h4 style="margin-top:32px;">Instructions:</h4>
+      </div>
+      
+      <hr id="abcinput">
+      <h4 style="text-align:center;">ABC Tune Header Tags to CSV Extractor</h4>
+      <p style="text-align:center;margin-bottom:18px;">Extracts all the ABC Tune Header tags from one/multiple ABC files and saves them as a CSV file</p>
+
+      <button class="accordion" title="Click to expand/collapse this section">Click to show/hide the instructions</button>
+
+      <div class="tocpanel">
         <p>1)&nbsp;If you want the original source file name as first column of the CSV file, check the box labeled "Include filenames for each tune as the first CSV column" (default is checked).</p>
         <p>2)&nbsp;If you want ShareURLs to my <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a> for each tune as the last column of the CSV file, check the box labeled "Include ShareURLs for each tune as the last CSV column" (default is checked).</p>
         <p>3)&nbsp;If you want to inject a copy of any ABC file header font, spacing, and *: annotations found in each file into each tune found in the file just below the tune's X: tag, check the box labeled "Inject ABC file header font, spacing, and *: annotations below the X: tag of each tune" (default is unchecked).
         <p>If this box is checked, any *: ABC annotations found in the ABC file header will be aggregated in the tag extraction results for the tunes in the file.</p>
-        <p>4)&nbsp;Click "Open One or Multiple .ABC Files for Tag Extraction" to open one or multiple .abc or .txt files containing ABC tunes.</p>
+        <p>4)&nbsp;Click "Open One or Multiple .ABC Files for Tag Extraction and Save to a CSV File" to open one or multiple .abc or .txt files containing ABC tunes.</p>
         <p>5)&nbsp;Select the ABC files you want to extract the tags from.</p>
-    	  <p>6)&nbsp;Click "Open".</p>
+        <p>6)&nbsp;Click "Open".</p>
         <p>7)&nbsp;When requested, enter a filename for the exported CSV file.</p>
         <p>8)&nbsp;Click "Save".</p>
         <p>The complete set of possible ABC tag columns in the saved CSV are:</p>
         <p>Filename,X:,T:,Subtitles,C:,O:,A:,R:,L:,M:,Q:,K:,D:,S:,Z:,N:,H:,B:,G:,r:,F:,ShareURL</p>
-
       </div>
-      
-      <hr id="abcinput">
 
       <p><input type="checkbox" id="includeFilenames" checked>&nbsp;&nbsp;Include filenames for each tune as the first CSV column</p>
       <p><input type="checkbox" id="includeShareURLs" checked>&nbsp;&nbsp;Include ShareURLs for each tune as the last CSV column</p>
@@ -86,7 +90,33 @@
         <div style="margin-top:32px;margin-bottom:40px;">
           <p>
             <input type="file" id="selectabcfile" accept=".abc,.txt,.ABC,.TXT" multiple hidden/>
-            <label class="abcupload btn btn-controls" for="selectabcfile" title="Open one or multiple ABC files for CSV tag extraction">Open One or Multiple .ABC Files for Tag Extraction</label>
+            <label class="abcupload btn btn-controls" for="selectabcfile" title="Open one or multiple ABC files tag extraction and saving to a CSV file">Open One or Multiple .ABC Files for Tag Extraction and Save to a CSV File</label>
+          </p>
+        </div>
+       
+        
+      </div>
+      
+      <hr>
+      <h4 style="text-align:center">CSV to ABC Tunes Extractor</h4>
+      <p style="text-align:center;margin-bottom:18px;">Extracts and saves all the ABC tunes from a previously exported CSV file and saves them as an ABC file</p>
+
+      <button class="accordion" title="Click to expand/collapse this section">Click to show/hide the instructions</button>
+
+      <div class="tocpanel">
+        <p>1)&nbsp;Click "Open a Previously Exported CSV File, Extract and Save the ABC Tunes" to open a previously exported CSV file that contains ABC tunes in a CSV ShareURL column.</p>
+        <p>2)&nbsp;Select the CSV file you want to extract the tunes from.</p>
+        <p>3)&nbsp;Click "Open".</p>
+        <p>4)&nbsp;When requested, enter a filename for the exported ABC file.</p>
+        <p>5)&nbsp;Click "Save".</p>
+      </div>
+
+      <div style="text-align:center">
+        
+        <div style="margin-top:32px;margin-bottom:40px;">
+          <p>
+            <input type="file" id="selectcsvfile" accept=".csv,.CSV" hidden/>
+            <label class="abcupload btn btn-controls" for="selectcsvfile" title="Open a previously exported CSV file, extract and save the ABC tunes">Open a Previously Exported CSV File, Extract and Save the ABC Tunes</label>
           </p>
         </div>
        
@@ -122,7 +152,7 @@
     
   </body>
   
-  <script src="abc2csv.js?v=40" type="text/javascript"></script>
-  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=40"></script>
+  <script src="abc2csv.js?v=42" type="text/javascript"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=42"></script>
   
 </html>

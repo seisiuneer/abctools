@@ -7,55 +7,63 @@
 // https://michaeleskin.com
 //
 
-// Suggested filename for save
-var gSaveFilename = "";
 var gIncludeShareURLs = true;
 var gIncludeFilenames = true;
 var gInjectABCFileHeader = false;
+var gSaveCSVFilename = "";
+var gSaveABCFilename = "";
 var gTotalTunes = 0;
 
 var LZString=function(){function o(o,r){if(!t[o]){t[o]={};for(var n=0;n<o.length;n++)t[o][o.charAt(n)]=n}return t[o][r]}var r=String.fromCharCode,n="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",e="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-$",t={},i={compressToBase64:function(o){if(null==o)return"";var r=i._compress(o,6,function(o){return n.charAt(o)});switch(r.length%4){default:case 0:return r;case 1:return r+"===";case 2:return r+"==";case 3:return r+"="}},decompressFromBase64:function(r){return null==r?"":""==r?null:i._decompress(r.length,32,function(e){return o(n,r.charAt(e))})},compressToUTF16:function(o){return null==o?"":i._compress(o,15,function(o){return r(o+32)})+" "},decompressFromUTF16:function(o){return null==o?"":""==o?null:i._decompress(o.length,16384,function(r){return o.charCodeAt(r)-32})},compressToUint8Array:function(o){for(var r=i.compress(o),n=new Uint8Array(2*r.length),e=0,t=r.length;t>e;e++){var s=r.charCodeAt(e);n[2*e]=s>>>8,n[2*e+1]=s%256}return n},decompressFromUint8Array:function(o){if(null===o||void 0===o)return i.decompress(o);for(var n=new Array(o.length/2),e=0,t=n.length;t>e;e++)n[e]=256*o[2*e]+o[2*e+1];var s=[];return n.forEach(function(o){s.push(r(o))}),i.decompress(s.join(""))},compressToEncodedURIComponent:function(o){return null==o?"":i._compress(o,6,function(o){return e.charAt(o)})},decompressFromEncodedURIComponent:function(r){return null==r?"":""==r?null:(r=r.replace(/ /g,"+"),i._decompress(r.length,32,function(n){return o(e,r.charAt(n))}))},compress:function(o){return i._compress(o,16,function(o){return r(o)})},_compress:function(o,r,n){if(null==o)return"";var e,t,i,s={},p={},u="",c="",a="",l=2,f=3,h=2,d=[],m=0,v=0;for(i=0;i<o.length;i+=1)if(u=o.charAt(i),Object.prototype.hasOwnProperty.call(s,u)||(s[u]=f++,p[u]=!0),c=a+u,Object.prototype.hasOwnProperty.call(s,c))a=c;else{if(Object.prototype.hasOwnProperty.call(p,a)){if(a.charCodeAt(0)<256){for(e=0;h>e;e++)m<<=1,v==r-1?(v=0,d.push(n(m)),m=0):v++;for(t=a.charCodeAt(0),e=0;8>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}else{for(t=1,e=0;h>e;e++)m=m<<1|t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t=0;for(t=a.charCodeAt(0),e=0;16>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}l--,0==l&&(l=Math.pow(2,h),h++),delete p[a]}else for(t=s[a],e=0;h>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;l--,0==l&&(l=Math.pow(2,h),h++),s[c]=f++,a=String(u)}if(""!==a){if(Object.prototype.hasOwnProperty.call(p,a)){if(a.charCodeAt(0)<256){for(e=0;h>e;e++)m<<=1,v==r-1?(v=0,d.push(n(m)),m=0):v++;for(t=a.charCodeAt(0),e=0;8>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}else{for(t=1,e=0;h>e;e++)m=m<<1|t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t=0;for(t=a.charCodeAt(0),e=0;16>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}l--,0==l&&(l=Math.pow(2,h),h++),delete p[a]}else for(t=s[a],e=0;h>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;l--,0==l&&(l=Math.pow(2,h),h++)}for(t=2,e=0;h>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;for(;;){if(m<<=1,v==r-1){d.push(n(m));break}v++}return d.join("")},decompress:function(o){return null==o?"":""==o?null:i._decompress(o.length,32768,function(r){return o.charCodeAt(r)})},_decompress:function(o,n,e){var t,i,s,p,u,c,a,l,f=[],h=4,d=4,m=3,v="",w=[],A={val:e(0),position:n,index:1};for(i=0;3>i;i+=1)f[i]=i;for(p=0,c=Math.pow(2,2),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;switch(t=p){case 0:for(p=0,c=Math.pow(2,8),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;l=r(p);break;case 1:for(p=0,c=Math.pow(2,16),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;l=r(p);break;case 2:return""}for(f[3]=l,s=l,w.push(l);;){if(A.index>o)return"";for(p=0,c=Math.pow(2,m),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;switch(l=p){case 0:for(p=0,c=Math.pow(2,8),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;f[d++]=r(p),l=d-1,h--;break;case 1:for(p=0,c=Math.pow(2,16),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;f[d++]=r(p),l=d-1,h--;break;case 2:return w.join("")}if(0==h&&(h=Math.pow(2,m),m++),f[l])v=f[l];else{if(l!==d)return null;v=s+s.charAt(0)}w.push(v),f[d++]=s+v.charAt(0),h--,s=v,0==h&&(h=Math.pow(2,m),m++)}}};return i}();"function"==typeof define&&define.amd?define(function(){return LZString}):"undefined"!=typeof module&&null!=module&&(module.exports=LZString);
 
+
 //
 // Generate a share link for either all the tunes or just what's passed in
 //
-function getAbcInLZW(ABCtoEncode,title) {
+function getAbcInLZW(ABCtoEncode, title) {
 
     var abcInLZW = LZString.compressToEncodedURIComponent(ABCtoEncode);
 
-    var titleURL = title.replaceAll("&","");
-    titleURL = titleURL.replaceAll(" ","_");
-    titleURL = titleURL.replaceAll("#","^");
+    var titleURL = title.replaceAll("&", "");
+    titleURL = titleURL.replaceAll(" ", "_");
+    titleURL = titleURL.replaceAll("#", "^");
 
-    var url = "https://michaeleskin.com/abctools/abctools.html?lzw=" + abcInLZW + "&format=noten&ssp=10&name="+titleURL+"&play=1";
+    var url = "https://michaeleskin.com/abctools/abctools.html?lzw=" + abcInLZW + "&format=noten&ssp=10&name=" + titleURL + "&play=1";
 
     // If just encoding some ABC, return it now
     return url;
 
 }
 
+function extractLZWParameter(url) {
+   // Use a regular expression to find the part starting with &lzw= followed by any characters until the next &
+    const match = url.match(/lzw=([^&]*)/);
+
+    // If a match is found, return the part after &lzw=
+    return match ? match[0] : null;
+}
+
 //
 // Find all text before the first tune 
 //
-function FindPreTuneHeader(theABC){
+function FindPreTuneHeader(theABC) {
 
     var theResult;
 
-    var searchRegExp = /^X:.*[\r\n]*/m 
+    var searchRegExp = /^X:.*[\r\n]*/m
 
     var firstTuneIndex = theABC.search(searchRegExp);
 
     // No tunes, or first string is a tune so no header
-    if ((firstTuneIndex == -1) || (firstTuneIndex == 0)){
+    if ((firstTuneIndex == -1) || (firstTuneIndex == 0)) {
 
         return "";
 
+    } else {
+
+        theResult = theABC.substring(0, firstTuneIndex);
+
     }
-    else{
-
-        theResult = theABC.substring(0,firstTuneIndex);
-
-    } 
 
     return theResult;
 }
@@ -63,11 +71,11 @@ function FindPreTuneHeader(theABC){
 //
 // Find all ABC file header annotations compatible with abcjs
 //
-function GetABCFileHeader(theText){
+function GetABCFileHeader(theText) {
 
     var theHeader = FindPreTuneHeader(theText);
 
-    if (theHeader.length == 0){
+    if (theHeader.length == 0) {
         //console.log("No header present");
         return "";
     }
@@ -76,83 +84,83 @@ function GetABCFileHeader(theText){
 
     var arrDir = theHeader.split('\n');
 
-    arrDir.forEach(function (line) {
+    arrDir.forEach(function(line) {
 
-      var theRegex = /^%%\S+font.*$/
+        var theRegex = /^%%\S+font.*$/
 
-      if (theRegex.test(line)){
-        //console.log("Adding font line: "+line);
-        directives += line + '\n'
-      }
+        if (theRegex.test(line)) {
+            //console.log("Adding font line: "+line);
+            directives += line + '\n'
+        }
 
-      theRegex = /^%%\S+margin.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding margin line: "+line)
-        directives += line + '\n';
-      }
+        theRegex = /^%%\S+margin.*$/
+        if (theRegex.test(line)) {
+            //console.log("Adding margin line: "+line)
+            directives += line + '\n';
+        }
 
-      theRegex = /^%%staffwidth.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding staffwidth line: "+line)
-        directives += line + '\n';
-      }   
+        theRegex = /^%%staffwidth.*$/
+        if (theRegex.test(line)) {
+            //console.log("Adding staffwidth line: "+line)
+            directives += line + '\n';
+        }
 
-      theRegex = /^%%stretchlast.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding stretchlast line: "+line)
-        directives += line + '\n';
-      }  
+        theRegex = /^%%stretchlast.*$/
+        if (theRegex.test(line)) {
+            //console.log("Adding stretchlast line: "+line)
+            directives += line + '\n';
+        }
 
-      theRegex = /^%%barnumbers.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding barnumbers: "+line)
-        directives += line + '\n';
-      } 
+        theRegex = /^%%barnumbers.*$/
+        if (theRegex.test(line)) {
+            //console.log("Adding barnumbers: "+line)
+            directives += line + '\n';
+        }
 
-      theRegex = /^%%barsperstaff.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding barsperstaff: "+line)
-        directives += line + '\n';
-      } 
+        theRegex = /^%%barsperstaff.*$/
+        if (theRegex.test(line)) {
+            //console.log("Adding barsperstaff: "+line)
+            directives += line + '\n';
+        }
 
-      theRegex = /^%%\S+space.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding space line: "+line)
-        directives += line + '\n';
-      }
+        theRegex = /^%%\S+space.*$/
+        if (theRegex.test(line)) {
+            //console.log("Adding space line: "+line)
+            directives += line + '\n';
+        }
 
-      theRegex = /^%%\S+sep.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding sep line: "+line)
-        directives += line + '\n';
-      }
-      
-      theRegex = /^%%measure\S+.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding measure line: "+line)
-        directives += line + '\n';
-      }  
-      
-      theRegex = /^%left_justify_titles.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding left_justify_titles line: "+line)
-        directives += line + '\n';
-      }    
+        theRegex = /^%%\S+sep.*$/
+        if (theRegex.test(line)) {
+            //console.log("Adding sep line: "+line)
+            directives += line + '\n';
+        }
 
-      theRegex = /^%abcjs_render_params.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding abcjs_render_params line: "+line)
-        directives += line + '\n';
-      }      
+        theRegex = /^%%measure\S+.*$/
+        if (theRegex.test(line)) {
+            //console.log("Adding measure line: "+line)
+            directives += line + '\n';
+        }
 
-      theRegex = /^[ABCDFGHILMmNORrSUZ]:/
-      if (theRegex.test(line)){
-        //console.log("Adding ABC *: line: "+line)
-        directives += line + '\n';
-      }      
+        theRegex = /^%left_justify_titles.*$/
+        if (theRegex.test(line)) {
+            //console.log("Adding left_justify_titles line: "+line)
+            directives += line + '\n';
+        }
+
+        theRegex = /^%abcjs_render_params.*$/
+        if (theRegex.test(line)) {
+            //console.log("Adding abcjs_render_params line: "+line)
+            directives += line + '\n';
+        }
+
+        theRegex = /^[ABCDFGHILMmNORrSUZ]:/
+        if (theRegex.test(line)) {
+            //console.log("Adding ABC *: line: "+line)
+            directives += line + '\n';
+        }
     });
 
-    return directives; 
+    return directives;
 }
 
 //
@@ -240,22 +248,22 @@ function getTuneByIndex(theNotes, tuneNumber) {
 //
 // Create a centered prompt string
 //
-function makeCenteredPromptString(thePrompt){
-    return '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">'+thePrompt+'</p>';
+function makeCenteredPromptString(thePrompt) {
+    return '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">' + thePrompt + '</p>';
 }
 
 //
 // Show the spinner
 // 
-function showTheSpinner(){
+function showTheSpinner() {
 
     //console.log("showTheSpinner");
-    
+
     var elem = document.getElementById("loading-bar-spinner");
 
     var currentState = elem.style.display;
 
-    if (currentState != "block"){
+    if (currentState != "block") {
         elem.style.display = "block";
     }
 
@@ -264,15 +272,15 @@ function showTheSpinner(){
 //
 // Hide the spinner
 // 
-function hideTheSpinner(){
-    
+function hideTheSpinner() {
+
     //console.log("hideTheSpinner");
 
     var elem = document.getElementById("loading-bar-spinner");
 
     var currentState = elem.style.display;
 
-    if (currentState != "none"){
+    if (currentState != "none") {
         elem.style.display = "none";
     }
 
@@ -324,7 +332,7 @@ function getMatchingTags(text, tag) {
         const match = line.match(regex);
 
         if (match) {
-            
+
             var res = match[1].trim();
 
             result.push(res); // Add the captured content without leading/trailing whitespace
@@ -343,21 +351,19 @@ function extractTag(theTune, theTag) {
 
     var result = getMatchingTags(theTune, theTag);
 
-    if (result.length == 0){
+    if (result.length == 0) {
         return "";
-    }
-    else
-    if (result.length == 1){
+    } else
+    if (result.length == 1) {
 
         var res = result[0];
 
         res = escapeForCSV(res);
 
         return res;
-    }
-    else
+    } else
     if (result.length > 1) {
-        
+
         var resultJoined = result.join(" / ");
 
         resultJoined = escapeForCSV(resultJoined);
@@ -373,19 +379,17 @@ function extractTTag(theTune) {
 
     var result = getMatchingTags(theTune, "T");
 
-    if (result.length == 0){
+    if (result.length == 0) {
         return "";
-    }
-    else
-    if (result.length == 1){
+    } else
+    if (result.length == 1) {
 
         var res = result[0];
 
         res = escapeForCSV(res);
 
         return res;
-    }
-    else
+    } else
     if (result.length > 1) {
 
         var res = result[0];
@@ -403,17 +407,15 @@ function extractRawTTag(theTune) {
 
     var result = getMatchingTags(theTune, "T");
 
-    if (result.length == 0){
+    if (result.length == 0) {
         return "No Name";
-    }
-    else
-    if (result.length == 1){
+    } else
+    if (result.length == 1) {
 
         var res = result[0];
 
         return res;
-    }
-    else
+    } else
     if (result.length > 1) {
 
         var res = result[0];
@@ -429,21 +431,19 @@ function extractTagSpaceDelimiter(theTune, theTag) {
 
     var result = getMatchingTags(theTune, theTag);
 
-    if (result.length == 0){
+    if (result.length == 0) {
         return "";
-    }
-    else
-    if (result.length == 1){
+    } else
+    if (result.length == 1) {
 
         var res = result[0];
 
         res = escapeForCSV(res);
 
         return res;
-    }
-    else
+    } else
     if (result.length > 1) {
-        
+
         var resultJoined = result.join(" ");
 
         resultJoined = escapeForCSV(resultJoined);
@@ -459,21 +459,19 @@ function extractSubtitlesTags(theTune) {
 
     var result = getMatchingTags(theTune, "T");
 
-    if (result.length == 0){
+    if (result.length == 0) {
         return "";
-    }
-    else
+    } else
     if (result.length > 1) {
 
         result.shift();
-        
+
         var resultJoined = result.join(" / ");
 
         resultJoined = escapeForCSV(resultJoined);
 
         return resultJoined;
-    }
-    else{
+    } else {
         return "";
     }
 
@@ -482,7 +480,7 @@ function extractSubtitlesTags(theTune) {
 //
 // Batch tag extractor
 //
-function extractTags(theTune,fileName) {
+function extractTags(theTune, fileName) {
 
     var XTag = "";
     var TTag = "";
@@ -529,7 +527,7 @@ function extractTags(theTune,fileName) {
 
     var theResult = "";
 
-    if (gIncludeFilenames){
+    if (gIncludeFilenames) {
 
         fileName = escapeForCSV(fileName);
 
@@ -537,19 +535,19 @@ function extractTags(theTune,fileName) {
 
     }
 
-    theResult = theResult + XTag + "," + TTag + "," + SubtitlesTag + "," + CTag + "," + OTag + "," + ATag + "," + RTag + "," + LTag + "," + MTag + "," + QTag + "," + KTag + "," + DTag + "," + STag + "," + ZTag + "," + NTag + "," + HTag + ","+ BTag + ","+ GTag + ","+ rTag + "," + FTag;
+    theResult = theResult + XTag + "," + TTag + "," + SubtitlesTag + "," + CTag + "," + OTag + "," + ATag + "," + RTag + "," + LTag + "," + MTag + "," + QTag + "," + KTag + "," + DTag + "," + STag + "," + ZTag + "," + NTag + "," + HTag + "," + BTag + "," + GTag + "," + rTag + "," + FTag;
 
-    if (gIncludeShareURLs){
-        
+    if (gIncludeShareURLs) {
+
         var tuneName = extractRawTTag(theTune);
 
-        if ((!tuneName) || (tuneName == "")){
+        if ((!tuneName) || (tuneName == "")) {
             tuneName = "No Name";
         }
 
-        shareURL = getAbcInLZW(theTune,tuneName);
+        shareURL = getAbcInLZW(theTune, tuneName);
 
-        shareURL = escapeForCSV(shareURL);        
+        shareURL = escapeForCSV(shareURL);
 
         theResult += "," + shareURL;
     }
@@ -563,7 +561,7 @@ function extractTags(theTune,fileName) {
 //
 // Main processor
 //
-function extractCSV(theABC,fileName) {
+function extractCSV(theABC, fileName) {
 
     result = "";
 
@@ -581,26 +579,26 @@ function extractCSV(theABC,fileName) {
 
     var theABCFileHeader = "";
 
-    if (gInjectABCFileHeader){
+    if (gInjectABCFileHeader) {
 
         theABCFileHeader = GetABCFileHeader(theABC);
-        
+
     }
 
-    fileName = fileName.replaceAll(",","");
+    fileName = fileName.replaceAll(",", "");
 
     for (var i = 0; i < nTunes; ++i) {
 
         var thisTune = getTuneByIndex(theABC, i);
 
         // Inject the ABC header if requested
-        if (gInjectABCFileHeader){
+        if (gInjectABCFileHeader) {
 
-            thisTune = InjectStringAboveTuneHeader(thisTune,theABCFileHeader);
+            thisTune = InjectStringAboveTuneHeader(thisTune, theABCFileHeader);
 
         }
 
-        var extractedTags = extractTags(thisTune,fileName);
+        var extractedTags = extractTags(thisTune, fileName);
 
         result += extractedTags;
     }
@@ -609,11 +607,152 @@ function extractCSV(theABC,fileName) {
 
 }
 
+// Helper function to correctly parse a CSV row, handling quoted fields with commas
+function parseCSVShareURLRow(row) {
+
+    const result = [];
+    let inQuotes = false;
+    let value = '';
+
+    for (let i = 0; i < row.length; i++) {
+        const char = row[i];
+
+        if (char === '"') {
+            // Toggle the inQuotes flag if we encounter a double quote
+            inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+            // If we encounter a comma outside of quotes, finalize the current value
+            result.push(value.trim());
+            value = '';
+        } else {
+            // Otherwise, add the character to the current value
+            value += char;
+        }
+    }
+
+    // Add the last value to the result
+    result.push(value.trim());
+
+    // Ensure all columns are returned, including empty ones
+    return result;
+}
+
+
+function parseCSVShareURLs(csvText) {
+
+    // Split the input text into rows
+    const rows = csvText.trim().split('\n');
+    
+    // Extract the header row and split it into column names (handle commas inside quotes)
+    var headers = parseCSVShareURLRow(rows[0]);
+
+    // Find the index of the 'ShareURL' column
+    var shareURLIndex = headers.indexOf('ShareURL');
+
+    var sliceIndex = 1;
+
+    // If 'ShareURL' column doesn't exist in the first row, try the second row
+    if (shareURLIndex === -1) {
+
+        if (rows.length > 1){
+            headers = parseCSVShareURLRow(rows[1])
+            shareURLIndex = headers.indexOf('ShareURL');
+        }
+        else{
+            return [];
+        }
+
+        // If the ShareURL column still not found, return empty
+        if (shareURLIndex === -1){
+            return [];
+        }
+
+        sliceIndex = 2;
+    }
+
+    // Iterate through each row (skipping the header) and collect the 'ShareURL' values
+    const shareURLs = rows.slice(sliceIndex).map(row => {
+
+        const columns = parseCSVShareURLRow(row);
+        
+        return columns[shareURLIndex];
+
+    });
+
+    return shareURLs;
+}
+
+function extractABC(theCSV,filename) {
+
+    var bFoundTunes = false;
+
+    var links = parseCSVShareURLs(theCSV);
+
+    if (links && (links.length > 0)){
+        bFoundTunes = true;
+    }
+
+    var nFound = 0;
+
+    var outVal = "";
+
+    if (links.length > 0) {
+
+        links.forEach(link => {
+
+            // Look for lzw params but exclude any with dx=1
+            if ((link.indexOf("lzw=") != -1) && (link.indexOf("dx=1") == -1)){
+
+                var originalAbcInLZW = extractLZWParameter(link);
+
+                originalAbcInLZW = originalAbcInLZW.replace("lzw=","");
+            
+                var abcInLZW = LZString.decompressFromEncodedURIComponent(originalAbcInLZW);
+
+                // Sometimes the LZW decompress fails if the link is too long for the PDF or some other issue
+                if (abcInLZW){
+
+                    nFound++;
+
+                    outVal += `${abcInLZW}\n\n`;
+
+                }
+
+            }
+
+        });
+    }
+
+    if (nFound == 0){
+
+        outVal = '%\n% No tunes found in the CSV.\n%\n';
+
+    }
+    else{
+
+        if (nFound == 1){
+            outVal = "%\n% "+nFound+" tune found in "+filename+"\n%\n\n"+outVal;
+        }
+        else{
+            outVal = "%\n% "+nFound+" tunes found in "+filename+"\n%\n\n"+outVal; 
+        }
+
+    }
+
+    // Strip extra linefeeds
+    outVal = outVal.replaceAll("\n\n\n","\n\n");
+
+    gTotalTunes = nFound;
+
+    return outVal;
+
+}
+
 //
 // Save the Output to a .csv file
 //
 function saveCSVOutput(theData) {
-    
+
     hideTheSpinner();
 
     if (theData.length == 0) {
@@ -628,7 +767,7 @@ function saveCSVOutput(theData) {
 
     if (gTotalTunes == 0) {
 
-        DayPilot.Modal.alert(makeCenteredPromptString("No ABC tunes found the the selected files!"), {
+        DayPilot.Modal.alert(makeCenteredPromptString("No ABC tunes found in the selected files!"), {
             theme: "modal_flat",
             top: 200
         });
@@ -636,19 +775,18 @@ function saveCSVOutput(theData) {
         return;
     }
 
-    if (gSaveFilename == "") {
-        gSaveFilename = "abc_to_csv_output.csv";
+    if (gSaveCSVFilename == "") {
+        gSaveCSVFilename = "abc_to_csv_output.csv";
     }
 
-    var thePlaceholder = gSaveFilename;
+    var thePlaceholder = gSaveCSVFilename;
 
-    var thePrompt = "Please enter a filename for your CSV file containing "+gTotalTunes;
-    
-    if (gTotalTunes == 1){
+    var thePrompt = "Please enter a filename for your CSV file containing " + gTotalTunes;
+
+    if (gTotalTunes == 1) {
         thePrompt += " tune:";
-    }
-    else{
-       thePrompt += " tunes:";
+    } else {
+        thePrompt += " tunes:";
     }
 
     DayPilot.Modal.prompt(thePrompt, thePlaceholder, {
@@ -688,8 +826,104 @@ function saveCSVOutput(theData) {
         a.style = "display: none";
 
         var blob = new Blob([theData], {
-                type: "text/csv"
-            });
+            type: "text/csv"
+        });
+
+        var url = window.URL.createObjectURL(blob);
+        a.href = url;
+        a.download = fname;
+        a.click();
+
+        document.body.removeChild(a);
+
+        setTimeout(function() {
+            window.URL.revokeObjectURL(url);
+        }, 1000);
+
+    });
+
+}
+
+//
+// Save the Output to a .abc file
+//
+function saveABCOutput(theData) {
+
+    hideTheSpinner();
+
+    if (theData.length == 0) {
+
+        DayPilot.Modal.alert(makeCenteredPromptString("Nothing to save!"), {
+            theme: "modal_flat",
+            top: 200
+        });
+
+        return;
+    }
+
+    if (gTotalTunes == 0) {
+
+        DayPilot.Modal.alert(makeCenteredPromptString("No ABC tunes found in the CSV file!"), {
+            theme: "modal_flat",
+            top: 200
+        });
+
+        return;
+    }
+
+    if (gSaveABCFilename == "") {
+        gSaveABCFilename = "csv_to_abc_output.abc";
+    }
+
+    var thePlaceholder = gSaveABCFilename;
+
+    var thePrompt = "Please enter a filename for your ABC file containing " + gTotalTunes;
+
+    if (gTotalTunes == 1) {
+        thePrompt += " tune:";
+    } else {
+        thePrompt += " tunes:";
+    }
+
+    DayPilot.Modal.prompt(thePrompt, thePlaceholder, {
+        theme: "modal_flat",
+        top: 194,
+        autoFocus: false,
+        okText: "Save"
+    }).then(function(args) {
+
+        var fname = args.result;
+
+        // If the user pressed Cancel, exit
+        if (fname == null) {
+            return null;
+        }
+
+        // Strip out any naughty HTML tag characters
+        fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+        if (fname.length == 0) {
+            return null;
+        }
+
+        // Give it a good extension
+        if ((!fname.endsWith(".abc")) && (!fname.endsWith(".ABC"))) {
+
+            // Give it a good extension
+            fname = fname.replace(/\..+$/, '');
+            fname = fname + ".abc";
+
+        }
+
+        var a = document.createElement("a");
+
+        document.body.appendChild(a);
+
+        a.style = "display: none";
+
+        var blob = new Blob([theData], {
+            type: "text/plain"
+        });
 
         var url = window.URL.createObjectURL(blob);
         a.href = url;
@@ -778,10 +1012,10 @@ function isChrome() {
 // Are we on Brave?
 //
 async function isBraveBrowser() {
-  if (navigator.brave) {
-    return await navigator.brave.isBrave();
-  }
-  return false;
+    if (navigator.brave) {
+        return await navigator.brave.isBrave();
+    }
+    return false;
 }
 
 //
@@ -820,9 +1054,10 @@ function DoStartup() {
         isBraveBrowser().then(isBrave => {
             if (!isBrave) {
                 document.getElementById("selectabcfile").removeAttribute("accept");
+                document.getElementById("selectcsvfile").removeAttribute("accept");
             }
         }).catch(error => {
-           DayPilot.Modal.alert(makeCenteredPromptString("Error detecting Brave browser!"), {
+            DayPilot.Modal.alert(makeCenteredPromptString("Error detecting Brave browser!"), {
                 theme: "modal_flat",
                 top: 200
             });
@@ -843,8 +1078,24 @@ function DoStartup() {
             gIsChrome = true;
         }
     }
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.display === "block") {
+                panel.style.display = "none";
+            } else {
+                panel.style.display = "block";
+            }
+        });
+    }
 
     document.getElementById("selectabcfile").onchange = () => {
+
+        let fileElement = document.getElementById('selectabcfile');
 
         if (fileElement.files.length === 0) {
 
@@ -852,34 +1103,33 @@ function DoStartup() {
                 theme: "modal_flat",
                 top: 200
             });
-            
+
             return;
         }
 
-        if (fileElement.files.length == 1){
+        if (fileElement.files.length == 1) {
 
             let file = fileElement.files[0];
 
-            gSaveFilename = file.name;
+            gSaveCSVFilename = file.name;
 
             // Trim any whitespace
-            gSaveFilename = gSaveFilename.trim();
+            gSaveCSVFilename = gSaveCSVFilename.trim();
 
             // Strip out any naughty HTML tag characters
-            gSaveFilename = gSaveFilename.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+            gSaveCSVFilename = gSaveCSVFilename.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
 
             // Replace any spaces
-            gSaveFilename = gSaveFilename.replace(/\s/g, '_');
+            gSaveCSVFilename = gSaveCSVFilename.replace(/\s/g, '_');
 
             // Strip the extension
-            gSaveFilename = gSaveFilename.replace(/\..+$/, '');
+            gSaveCSVFilename = gSaveCSVFilename.replace(/\..+$/, '');
 
-            gSaveFilename += ".csv";
+            gSaveCSVFilename += ".csv";
 
-        }
-        else{
+        } else {
 
-            gSaveFilename = "multiple_abc_files.csv";
+            gSaveCSVFilename = "multiple_abc_files.csv";
 
         }
 
@@ -887,14 +1137,14 @@ function DoStartup() {
         gIncludeShareURLs = document.getElementById("includeShareURLs").checked;
         gInjectABCFileHeader = document.getElementById("injectABCFileHeader").checked;
 
-        function readFiles() {
+        function readABCFiles() {
 
             const input = document.getElementById('selectabcfile');
             const files = input.files;
             const fileContentsArray = [];
 
             // A function to read each file and process when all are done
-            const readFile = (file) => {
+            const readABCFile = (file) => {
 
                 // Check the file extension
                 const validExtensions = ['.abc', '.ABC', '.txt', '.TXT'];
@@ -927,16 +1177,14 @@ function DoStartup() {
 
 
             // Use Promise.all to wait for all files to be read
-            const readAllFiles = async () => {
+            const readAllABCFiles = async () => {
 
                 try {
 
-                    //debugger;
-
-                    const promises = Array.from(files).map(file => readFile(file));
+                    const promises = Array.from(files).map(file => readABCFile(file));
 
                     const results = await Promise.all(promises);
-    
+
                     // Reset file selectors
                     let fileElement = document.getElementById('selectabcfile');
 
@@ -944,15 +1192,15 @@ function DoStartup() {
 
                     var csv_result = "";
 
-                    if (gIncludeFilenames){
+                    if (gIncludeFilenames) {
 
                         csv_result = "Filename,";
 
                     }
-                    
+
                     csv_result = csv_result + "X:,T:,Subtitles,C:,O:,A:,R:,L:,M:,Q:,K:,D:,S:,Z:,N:,H:,B:,G:,r:,F:";
 
-                    if (gIncludeShareURLs){
+                    if (gIncludeShareURLs) {
 
                         csv_result += ",ShareURL";
 
@@ -963,11 +1211,11 @@ function DoStartup() {
                     // Process the ABC
                     var nFiles = results.length;
 
-                    for (var i=0;i<nFiles;++i){
+                    for (var i = 0; i < nFiles; ++i) {
 
-                        if (results[i].content){
+                        if (results[i].content) {
 
-                            csv_result += extractCSV(results[i].content,results[i].filename);
+                            csv_result += extractCSV(results[i].content, results[i].filename);
 
                         }
 
@@ -978,6 +1226,7 @@ function DoStartup() {
 
                 } catch (error) {
 
+                    
                     DayPilot.Modal.alert(makeCenteredPromptString("An error occurred during ABC tag extraction!"), {
                         theme: "modal_flat",
                         top: 200
@@ -989,7 +1238,7 @@ function DoStartup() {
                 }
             };
 
-            readAllFiles();
+            readAllABCFiles();
         }
 
         gGetTuneByIndexCache = null;
@@ -999,11 +1248,125 @@ function DoStartup() {
         showTheSpinner();
 
         // Give some time for the spinner to show
-        setTimeout(function(){
+        setTimeout(function() {
 
-            readFiles();
+            readABCFiles();
 
-        },100);
+        }, 100);
+
+
+    }
+
+    document.getElementById("selectcsvfile").onchange = () => {
+
+        let fileElement = document.getElementById('selectcsvfile');
+
+        if (fileElement.files.length === 0) {
+
+            DayPilot.Modal.alert(makeCenteredPromptString("No CSV file selected!"), {
+                theme: "modal_flat",
+                top: 200
+            });
+
+            return;
+        }
+
+        var gSaveABCFilename = fileElement.files[0].name;
+
+        // Give it a good extension
+        gSaveABCFilename = gSaveABCFilename.replace(/\..+$/, '');
+        gSaveABCFilename = gSaveABCFilename + ".abc";
+
+        function readCSVFiles() {
+
+            const input = document.getElementById('selectcsvfile');
+            const files = input.files;
+            const fileContentsArray = [];
+
+            // A function to read each file and process when all are done
+            const readCSVFile = (file) => {
+
+                // Proceed to read the file if the extension is valid
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+
+                    reader.onload = () => resolve({
+                        filename: file.name,
+                        content: reader.result
+                    });
+
+                    reader.onerror = () => reject(`Error reading ${file.name}`);
+
+                    reader.readAsText(file);
+                });
+            };
+
+            // Use Promise.all to wait for all files to be read
+            const readAllCSVFiles = async () => {
+
+                try {
+
+                    const promises = Array.from(files).map(file => readCSVFile(file));
+
+                    const results = await Promise.all(promises);
+
+                    // Reset file selectors
+                    let fileElement = document.getElementById('selectcsvfile');
+
+                    fileElement.value = "";
+
+                    var abc_result = "";
+
+                    // Process the ABC
+                    var nFiles = results.length;
+
+                    for (var i = 0; i < nFiles; ++i) {
+
+                        //debugger;
+
+                        if (results[i].content) {
+
+                            // debugger;
+
+                            abc_result += extractABC(results[i].content,results[i].filename);
+
+                        }
+
+                    }
+
+                    saveABCOutput(abc_result);
+
+
+                } catch (error) {
+
+                    debugger;
+
+                    DayPilot.Modal.alert(makeCenteredPromptString("An error occurred during ABC tune extraction!"), {
+                        theme: "modal_flat",
+                        top: 200
+                    });
+
+                    hideTheSpinner();
+
+                    return;
+                }
+            };
+
+            readAllCSVFiles();
+        }
+
+        gGetTuneByIndexCache = null;
+
+        gTotalTunes = 0;
+
+        showTheSpinner();
+
+        // Give some time for the spinner to show
+        setTimeout(function() {
+
+            readCSVFiles();
+
+        }, 100);
 
 
     }
