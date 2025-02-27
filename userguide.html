@@ -112,29 +112,9 @@
         outline: none !important;
         margin-bottom:8px;
         }
-        
-        .accordion::after {
-        content: "+";
-        font-size: 14pt;
-        font-weight: bold;
-        position: absolute;
-        right: 14px; /* Adjust this value as needed */
-        top: 50%;
-        transform: translateY(-50%);
-        }
-        
+         
         .active {
         background-color: #eee;
-        }
-        
-        .active::after {
-        content: "-";
-        font-size: 18pt;
-        font-weight: bold;
-        position: absolute;
-        right: 14px; /* Adjust this value as needed */
-        top: 50%;
-        transform: translateY(-50%);
         }
         
         @media not all and (pointer: coarse) {
@@ -5344,27 +5324,26 @@
 </body>
 
 <script>
-
 //
 // Expand the table of contents
 //
 function ExpandAll() {
 
-var i;
+    var i;
 
-var acc = document.getElementsByClassName("accordion");
+    var acc = document.getElementsByClassName("accordion");
 
-for (i = 0; i < acc.length; i++) {
-var thisAcc = acc[i];
-thisAcc.classList.add("active");
-}
+    for (i = 0; i < acc.length; i++) {
+        var thisAcc = acc[i];
+        thisAcc.classList.add("active");
+    }
 
-var thePanels = document.getElementsByClassName("tocpanel");
+    var thePanels = document.getElementsByClassName("tocpanel");
 
-for (i = 0; i < thePanels.length; i++) {
-var thisPanel = thePanels[i];
-thisPanel.style.display = "block";
-}
+    for (i = 0; i < thePanels.length; i++) {
+        var thisPanel = thePanels[i];
+        thisPanel.style.display = "block";
+    }
 }
 
 //
@@ -5372,31 +5351,31 @@ thisPanel.style.display = "block";
 //
 function CollapseAll() {
 
-var i;
+    var i;
 
-var acc = document.getElementsByClassName("accordion");
+    var acc = document.getElementsByClassName("accordion");
 
-for (i = 0; i < acc.length; i++) {
-var thisAcc = acc[i];
-thisAcc.classList.remove("active");
-}
+    for (i = 0; i < acc.length; i++) {
+        var thisAcc = acc[i];
+        thisAcc.classList.remove("active");
+    }
 
-var thePanels = document.getElementsByClassName("tocpanel");
+    var thePanels = document.getElementsByClassName("tocpanel");
 
-for (i = 0; i < thePanels.length; i++) {
-var thisPanel = thePanels[i];
-thisPanel.style.display = "none";
-}
+    for (i = 0; i < thePanels.length; i++) {
+        var thisPanel = thePanels[i];
+        thisPanel.style.display = "none";
+    }
 }
 //
 // Are we on Android?
 //
 function isAndroid() {
-if (/Android/i.test(navigator.userAgent)) {
-return true;
-} else {
-return false;
-}
+    if (/Android/i.test(navigator.userAgent)) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 //
@@ -5404,64 +5383,63 @@ return false;
 //
 function isIOS() {
 
-if (/iPad|iPhone|iPod/.test(navigator.platform)) {
-return true;
-} else {
-return navigator.maxTouchPoints &&
-navigator.maxTouchPoints > 2 &&
-/MacIntel/.test(navigator.platform);
-}
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+        return true;
+    } else {
+        return navigator.maxTouchPoints &&
+            navigator.maxTouchPoints > 2 &&
+            /MacIntel/.test(navigator.platform);
+    }
 }
 
 function DoStartup() {
 
-//
-// iOS Styling adaptation
-//
+    //
+    // iOS Styling adaptation
+    //
 
-var gIsIOS = isIOS();
-var gIsAndroid = isAndroid();
+    var gIsIOS = isIOS();
+    var gIsAndroid = isAndroid();
 
-if (gIsIOS) {
-// Fix the title font
-var elem = document.getElementById("pagetitle");
-elem.size = 5;
-elem.style.fontFamily = "Helvetica";
-}
+    if (gIsIOS) {
+        // Fix the title font
+        var elem = document.getElementById("pagetitle");
+        elem.size = 5;
+        elem.style.fontFamily = "Helvetica";
+    }
 
-if (gIsIOS || gIsAndroid) {
-// Hide the sidebar navigation on mobile
-elem = document.getElementById("sidebar");
-elem.style.display = "none";
-elem = document.getElementById("maindiv");
-elem.style.marginLeft = "0px";
+    if (gIsIOS || gIsAndroid) {
+        // Hide the sidebar navigation on mobile
+        elem = document.getElementById("sidebar");
+        elem.style.display = "none";
+        elem = document.getElementById("maindiv");
+        elem.style.marginLeft = "0px";
 
-}
-else{
-// Hide the accordion navigation on desktop
-elem = document.getElementById("mobile_table_of_contents");
-elem.style.display = "none";
-}
+    } else {
+        // Hide the accordion navigation on desktop
+        elem = document.getElementById("mobile_table_of_contents");
+        elem.style.display = "none";
+    }
 
-var acc = document.getElementsByClassName("accordion");
-var i;
+    var acc = document.getElementsByClassName("accordion");
+    var i;
 
-for (i = 0; i < acc.length; i++) {
-acc[i].addEventListener("click", function() {
-this.classList.toggle("active");
-var panel = this.nextElementSibling;
-if (panel.style.display === "block") {
-panel.style.display = "none";
-} else {
-panel.style.display = "block";
-}
-});
-}
+    for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.display === "block") {
+                panel.style.display = "none";
+            } else {
+                panel.style.display = "block";
+            }
+        });
+    }
 
-// Start with all topics collapsed
-if (gIsIOS || gIsAndroid) {
-CollapseAll();
-}
+    // Start with all topics collapsed
+    if (gIsIOS || gIsAndroid) {
+        CollapseAll();
+    }
 }
 
 DoStartup();
@@ -5469,22 +5447,22 @@ DoStartup();
 // If offline, hide all the YouTube videos and images
 function removeOfflineContent() {
 
-if (!navigator.onLine) {
+    if (!navigator.onLine) {
 
-const iframes = document.querySelectorAll('iframe');
+        const iframes = document.querySelectorAll('iframe');
 
-iframes.forEach(iframe => iframe.remove());
+        iframes.forEach(iframe => iframe.remove());
 
-// Remove all the images
-var divs = document.querySelectorAll('div.image_holder');
+        // Remove all the images
+        var divs = document.querySelectorAll('div.image_holder');
 
-divs.forEach(div => div.remove());
+        divs.forEach(div => div.remove());
 
-divs = document.querySelectorAll('div.image_holder_p');
+        divs = document.querySelectorAll('div.image_holder_p');
 
-divs.forEach(div => div.remove());
+        divs.forEach(div => div.remove());
 
-}
+    }
 }
 
 // Run the function on page load
