@@ -218,6 +218,9 @@ var gExtendDuration = 0;
 // Flag to allow for lower case chords
 var gAllowLowercaseChords = false;
 
+// Flag to hide labels on information text
+var gHideInformationLabels = false;
+
 // Scan tune for custom abcjs rendering parameters
 function ScanTuneForABCJSRenderingParams(theTune){
 
@@ -279,6 +282,28 @@ function ScanTuneForLeftAlignTitles(theTune){
   }
 
   //console.log("No %%abctt:left_justify_titles")
+
+  return false;
+}
+
+// Scan tune for information label suppression
+
+function ScanTuneForHideInformationLabels(theTune){
+
+  //console.log("ScanTuneForHideInformationLabels");
+
+  theTune = theTune.replace("%%abctt:hide_information_labels","%hide_information_labels");
+
+  var searchRegExp = /^%hide_information_labels.*$/gm
+
+  var isHideAnnotations = searchRegExp.test(theTune);
+
+  if (isHideAnnotations){
+    //console.log("Found %hide_information_labels")
+    return true;
+  }
+
+  //console.log("No %hide_information_labels")
 
   return false;
 }
@@ -1063,6 +1088,9 @@ var tunebook = {};
 
           gLeftJustifyTitlesOneTune = false;
           gLeftJustifyTitlesOneTune = ScanTuneForLeftAlignTitles(book.tunes[currentTune].abc);
+
+          gHideInformationLabels = false;
+          gHideInformationLabels = ScanTuneForHideInformationLabels(book.tunes[currentTune].abc);
 
           abcParser.parse(book.tunes[currentTune].abc, workingParams, book.tunes[currentTune].startPos - book.header.length);
           var tune = abcParser.getTune();
@@ -3882,6 +3910,12 @@ var bookParser = function bookParser(book) {
       theRegex = /^%abcjs_render_params.*$/
       if (theRegex.test(line)){
         //console.log("Adding abcjs_render_params line: "+line)
+        directives += line + '\n';
+      }      
+
+      theRegex = /^%hide_information_labels.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding hide_information_labels line: "+line)
         directives += line + '\n';
       }      
 
@@ -25149,15 +25183,30 @@ BottomText.prototype.unalignedWords = function (unalignedWords, paddingLeft, spa
 };
 BottomText.prototype.extraText = function (metaText, marginLeft, spacing, getTextSize) {
   var extraText = "";
-  if (metaText.book) extraText += "Book: " + metaText.book + "\n";
-  if (metaText.source) extraText += "Source: " + metaText.source + "\n";
-  if (metaText.discography) extraText += "Discography: " + metaText.discography + "\n";
-  if (metaText.notes) extraText += "Notes: " + metaText.notes + "\n";
-  if (metaText.transcription) extraText += "Transcription: " + metaText.transcription + "\n";
-  if (metaText.history) extraText += "History: " + metaText.history + "\n";
-  if (metaText['abc-copyright']) extraText += "Copyright: " + metaText['abc-copyright'] + "\n";
-  if (metaText['abc-creator']) extraText += "Creator: " + metaText['abc-creator'] + "\n";
-  if (metaText['abc-edited-by']) extraText += "Edited By: " + metaText['abc-edited-by'] + "\n";
+
+  if (gHideInformationLabels){
+    if (metaText.book) extraText += metaText.book + "\n";
+    if (metaText.source) extraText += metaText.source + "\n";
+    if (metaText.discography) extraText += metaText.discography + "\n";
+    if (metaText.notes) extraText += metaText.notes + "\n";
+    if (metaText.transcription) extraText += metaText.transcription + "\n";
+    if (metaText.history) extraText += metaText.history + "\n";
+    if (metaText['abc-copyright']) extraText += metaText['abc-copyright'] + "\n";
+    if (metaText['abc-creator']) extraText += metaText['abc-creator'] + "\n";
+    if (metaText['abc-edited-by']) extraText += metaText['abc-edited-by'] + "\n";
+  }
+  else{
+    if (metaText.book) extraText += "Book: " + metaText.book + "\n";
+    if (metaText.source) extraText += "Source: " + metaText.source + "\n";
+    if (metaText.discography) extraText += "Discography: " + metaText.discography + "\n";
+    if (metaText.notes) extraText += "Notes: " + metaText.notes + "\n";
+    if (metaText.transcription) extraText += "Transcription: " + metaText.transcription + "\n";
+    if (metaText.history) extraText += "History: " + metaText.history + "\n";
+    if (metaText['abc-copyright']) extraText += "Copyright: " + metaText['abc-copyright'] + "\n";
+    if (metaText['abc-creator']) extraText += "Creator: " + metaText['abc-creator'] + "\n";
+    if (metaText['abc-edited-by']) extraText += "Edited By: " + metaText['abc-edited-by'] + "\n";
+  }
+
   if (extraText.length > 0) {
     addTextIf(this.rows, {
       marginLeft: marginLeft,

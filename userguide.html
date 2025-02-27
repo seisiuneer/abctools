@@ -482,6 +482,7 @@
             <h3>Advanced abcjs Rendering Options</h3>
             <a style="text-decoration:none;" href="#customabcjsparams">Adding Custom abcjs Rendering Parameters</a>
             <a style="text-decoration:none;" href="#left_justify_titles">Forcing Left-Justified Titles and Subtitles</a>
+            <a style="text-decoration:none;" href="#hide_information_labels">Hiding Information Labels</a>
             
             <h3>ABC Tricks, Tips, and Limitations</h3>
             <a style="text-decoration:none;" href="#largeprint">"Large Print" Edition Tune Notation</a>
@@ -855,6 +856,7 @@
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#customabcjsparams">Adding Custom abcjs Rendering Parameters</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#left_justify_titles">Forcing Left-Justified Titles and Subtitles</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#hide_information_labels">Hiding Information Labels</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">ABC Tricks, Tips, and Limitations</button>
@@ -3405,7 +3407,8 @@
                     %allow_lowercase_chords<br/>
                     %<br/>
                     % These directives can be added to each tune or added to the ABC file header:<br/>
-                    %left_justify_titles<br/>
+                    %left_justify_titles,<br/>
+                    %hide_information_labels<br/>
                 %abcjs_render_params {custom rendering parameters JSON}</p>
                 <hr class="hidden-print" id="editing_pdf_tunebooks">
                 <h1 class="page_break_always">Editing PDF Tunebooks With Other Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -4930,6 +4933,18 @@
                 <p>You may force left-justification of the titles and subtitles in a single tune by adding the following annotation anywhere in the tune:</p>
                 <p class="code">% Left justify titles<br/>%left_justify_titles</p>
                 <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have left justified titles and subtitles.</p>
+                <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
+                <hr class="hidden-print" id="hide_information_labels">
+                <h1 class="page_break_always h1wide">Hiding Information Labels<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>You may hide the labels before the Book, Source, Discography, Notes, Transcription, History, Copyright, Creator, and Edited by metadata information tags in a single tune by adding the following annotation anywhere in the tune:</p>
+                <p class="code">% Hide information labels<br/>%hide_information_labels</p>
+                <p>For example by default the following ABC:</p>
+                <p class="code">Z:Transcribed by Michael Eskin<br/>N:This is the first version</p>
+                <p>By default, abcjs puts information labels before the information tags in the text below the notation:</p> 
+                <p class="code">Transcription: Transcribed by Michael Eskin</br>Notes: This is the first version</p>
+                <p>With the %hide_information_labels annotation in the tune the above example would just show as:</p>
+                <p class="code">Transcribed by Michael Eskin</br>This is the first version</p>
+                <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have hidden information labels.</p>
                 <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
                 <hr class="hidden-print" id="tabtranspose">
                 <h1 class="page_break_always h1wide">Transposing Notation Independent of Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
