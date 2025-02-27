@@ -221,6 +221,9 @@ var gAllowLowercaseChords = false;
 // Flag to hide labels on information text
 var gHideInformationLabels = false;
 
+// Flag to hide the R: tag display
+var gHideRhythmTag = false;
+
 // Scan tune for custom abcjs rendering parameters
 function ScanTuneForABCJSRenderingParams(theTune){
 
@@ -287,7 +290,6 @@ function ScanTuneForLeftAlignTitles(theTune){
 }
 
 // Scan tune for information label suppression
-
 function ScanTuneForHideInformationLabels(theTune){
 
   //console.log("ScanTuneForHideInformationLabels");
@@ -308,6 +310,26 @@ function ScanTuneForHideInformationLabels(theTune){
   return false;
 }
 
+// Scan tune for rhythm tag draw suppression
+function ScanTuneForHideRhythmTag(theTune){
+
+  //console.log("ScanTuneForHideRhythmTag");
+
+  theTune = theTune.replace("%%abctt:hide_rhythm_tag","%hide_rhythm_tag");
+
+  var searchRegExp = /^%hide_rhythm_tag.*$/gm
+
+  var isHideRhythm = searchRegExp.test(theTune);
+
+  if (isHideRhythm){
+    //console.log("Found %hide_rhythm_tag")
+    return true;
+  }
+
+  //console.log("No %hide_rhythm_tag")
+
+  return false;
+}
 
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
@@ -1091,6 +1113,9 @@ var tunebook = {};
 
           gHideInformationLabels = false;
           gHideInformationLabels = ScanTuneForHideInformationLabels(book.tunes[currentTune].abc);
+
+          gHideRhythmTag = false;
+          gHideRhythmTag = ScanTuneForHideRhythmTag(book.tunes[currentTune].abc);
 
           abcParser.parse(book.tunes[currentTune].abc, workingParams, book.tunes[currentTune].startPos - book.header.length);
           var tune = abcParser.getTune();
@@ -3919,6 +3944,12 @@ var bookParser = function bookParser(book) {
         directives += line + '\n';
       }      
 
+      theRegex = /^%hide_rhythm_tag.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding hide_rhythm_tag line: "+line)
+        directives += line + '\n';
+      }      
+
       theRegex = /^[ABCDFGHILMmNORrSUZ]:/
       if (theRegex.test(line)){
         //console.log("Adding ABC *: line: "+line)
@@ -3927,7 +3958,6 @@ var bookParser = function bookParser(book) {
     });
   }
   
-
   var header = directives;
 
   // Now, the tune ends at a blank line, so truncate it if needed. There may be "intertune" stuff.
@@ -5999,6 +6029,15 @@ var ParseHeader = function ParseHeader(tokenizer, warn, multilineVars, tune, tun
   this.parseHeader = function (line) {
     var field = metaTextHeaders[line[0]];
     if (field !== undefined) {
+      if (field == 'rhythm'){
+        if (!gHideRhythmTag){
+          tuneBuilder.addMetaText(field, tokenizer.translateString(tokenizer.stripComment(line.substring(2))), {
+            startChar: multilineVars.iChar,
+            endChar: multilineVars.iChar + line.length
+          });
+        }
+      }
+      else
       if (field === 'unalignedWords') tuneBuilder.addMetaTextArray(field, parseDirective.parseFontChangeLine(tokenizer.translateString(tokenizer.stripComment(line.substring(2)))), {
         startChar: multilineVars.iChar,
         endChar: multilineVars.iChar + line.length

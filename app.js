@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2340_022725_0830";
+var gVersionNumber="2341_022725_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -18602,6 +18602,12 @@ function GetABCFileHeader(){
         directives += line + '\n';
       }      
 
+      theRegex = /^%hide_rhythm_tag.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding hide_rhythm_tag line: "+line)
+        directives += line + '\n';
+      }      
+
       theRegex = /^[ABCDFGHILMmNORrSUZ]:/
       if (theRegex.test(line)){
         //console.log("Adding ABC *: line: "+line)
@@ -22277,7 +22283,8 @@ function complianceABCTransformer(theABC,doInverse){
 	    "%play_flatten_parts",
 	    "%allow_lowercase_chords",
 	    "%left_justify_titles",
-	    "%hide_information_labels"
+	    "%hide_information_labels",
+	    "%hide_rhythm_tag"
 	];
 
 	if (doInverse){
