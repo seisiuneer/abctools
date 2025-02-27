@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2338_022525_1230";
+var gVersionNumber="2339_0225725_0700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -18571,6 +18571,18 @@ function GetABCFileHeader(){
         //console.log("Adding measure line: "+line)
         directives += line + '\n';
       }  
+
+      theRegex = /^%%printtempo.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding printtempo: "+line)
+        directives += line + '\n';
+      } 
+
+      theRegex = /^%%titleleft.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding titleleft: "+line)
+        directives += line + '\n';
+      } 
       
       theRegex = /^%left_justify_titles.*$/
       if (theRegex.test(line)){
