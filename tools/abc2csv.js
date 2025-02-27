@@ -906,12 +906,22 @@ function saveABCOutput(theData) {
             return null;
         }
 
-        // Give it a good extension
-        if ((!fname.endsWith(".abc")) && (!fname.endsWith(".ABC"))) {
+        if (gIsIOS || gIsAndroid){
+
+            fname = fname.replace(/\..+$/, '');
+            fname = fname + ".txt";
+
+        }
+        else{
 
             // Give it a good extension
-            fname = fname.replace(/\..+$/, '');
-            fname = fname + ".abc";
+            if ((!fname.endsWith(".abc")) && (!fname.endsWith(".ABC"))) {
+
+                // Give it a good extension
+                fname = fname.replace(/\..+$/, '');
+                fname = fname + ".abc";
+
+            }
 
         }
 
