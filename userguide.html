@@ -4953,6 +4953,9 @@
                 <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have the rhythm value in the R: tag hidden.</p>
                 <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
                 <p>Note: This is just a stopgap measure to hide the R: tag value until abcjs adds the ABC %%writefields command.</p>
+                <p>This only hides the R: tag value in the generated notation, it doesn't have any effect on the automatic swinging of hornpipes when</p>
+                <p class="code">R:Hornpipe</p>
+                <p>or a lower-case equivalent with or without spaces after an R: tag is found in a tune.</p>
                 <hr class="hidden-print" id="tabtranspose">
                 <h1 class="page_break_always h1wide">Transposing Notation Independent of Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>For some tablatures like CGDAE where instruments maybe in either standard pitch or one octave lower, if you transpose the notes down an octave to get the tab on the lower strings, but want the notation displayed an octave up, you can add the following voice annotation to the ABC:</p>
