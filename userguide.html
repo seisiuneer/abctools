@@ -2235,6 +2235,61 @@
                 <p>66 is triplet swing 2:1</p>
                 <p>60 is swing with a ratio of 3:2</p>
                 <p>75 is the maximum swing where the first eighth is played as a dotted eighth and the second as a sixteenth</p>
+                <p>Note: The abcjs native %%MIDI swing solution only works with */4 meters, no swing is added if specifying %%MIDI swing for */8 meters.</p>
+                <hr>
+                <p style="text-align: center;"><strong>Special considerations for using swing with pickup notes</strong></p>
+                <p>When working with swing, other than pickup notes in the very first measure before a repeat bar (or other complete bar if there are no repeats) at the start of the tune, you must have complete measures in the rest of the tune.</p>
+                <p>A tune with a pickup note constructed like this will cause the tune to not play with proper swing:</p>
+                <p class="code">X: 66<br/>
+                T: Garster's Dream<br/>
+                C: Trad<br/>
+                R: Jig<br/>
+                O: Shetland<br/>
+                Q: 3/8=110<br/>
+                M: 6/8<br/>
+                L: 1/8<br/>
+                K: G<br/>
+                %swing 0.75<br/>
+                |: D | G2B BGB | cdc BAG | FGA ABA | AdB AFD |<br/>
+                       G2B BGB | cdc BAG | F2E DEF | G3  G2 :|<br/>
+                |: "G"gag gdB | "D7"ABA AGE | "G"gag gdB | "G"ded "D"def |</br>
+                "G"gag gdB | "C"AcB "Am"AGE | "C"G2E "D7"DEF | "G"G3  G2 d:|</p>
+                <p>The single eighth note D pickup partial measure inside the repeat is what confuses the swing algorithm.</p>
+                <p>If you're going to have partial measure pickup notes and repeated sections, then you need to use this form for the tune, moving the D pickup note outside the first repeat and then using a first and second ending on the A part to provide complete measures for the pickup into the B part:</p>
+                <p class="code">X: 66<br/>
+                T: Garster's Dream<br/>
+                C: Trad<br/>
+                R: Jig<br/>
+                O: Shetland<br/>
+                Q: 3/8=110<br/>
+                M: 6/8<br/>
+                L: 1/8<br/>
+                K: G<br/>
+                %swing 0.75<br/>
+                D|: "G"G2B BGB | "C"cdc "G"BAG | "D7"FGA ABA | "D7"AdB AFD |<br/>
+                    "G"G2B BGB | "C"cdc "G"BAG | "D7"F2E DEF |1 "G"G3  G2D :|2"G"G3  G2d ||<br/>
+                |: "G"gag gdB | "D7"ABA AGE | "G"gag gdB | "G"ded "D"def |<br/>
+                   "G"gag gdB | "C"AcB "Am"AGE | "C"G2E "D7"DEF | "G"G3  G2 d:|</p>
+                <p>You generally can have notes before the first repeat (or other complete) bar and they will be properly accounted for in the swing generation solution.</p>
+                <hr>
+                <p style="text-align: center;"><strong>Special considerations for using swing with pickup notes and two-bar click track injection</strong></p>
+                <p>If you're adding a two-bar click track (or silence) from the batch .mp3 export (or manually from <strong>Inject Repeats + Intros</strong> feature) and you are also using swing, then you have to make sure that you pad out any pickup notes so that they are a multiple of three eighth notes for */8 meters, or multiple of two notes for */4 meters.</p>
+                <p>This is because the click track injector actually adds additional measures of ABC before the tune to create the two-bar click track and if not padded, the pickup, like the above example, ends up being a partial measure in the middle of the tune, breaking the swing algorithm.</p>
+                <p>For this example, for two-bar click injection, the one note D pickup has been padded out with a preceeding z2 rest to a full three eighth notes:</p>
+                <p class="code">X: 66<br/>
+                T: Garster's Dream<br/>
+                C: Trad<br/>
+                R: Jig<br/>
+                O: Shetland<br/>
+                Q: 3/8=110<br/>
+                M: 6/8<br/>
+                L: 1/8<br/>
+                K: G<br/>
+                %swing 0.75<br/>
+                z2D|: "G"G2B BGB | "C"cdc "G"BAG | "D7"FGA ABA | "D7"AdB AFD |<br/>
+                    "G"G2B BGB | "C"cdc "G"BAG | "D7"F2E DEF |1 "G"G3  G2D :|2"G"G3  G2d ||<br/>
+                |: "G"gag gdB | "D7"ABA AGE | "G"gag gdB | "G"ded "D"def |<br/>
+                   "G"gag gdB | "C"AcB "Am"AGE | "C"G2E "D7"DEF | "G"G3  G2 d:|</p>
                 <hr>
                 <p style="text-align: center;"><strong>Only one swing value is supported for a tune</strong></p>
                 <p>Since swing is applied after all the tune notes are generated, there can only be one swing value for a tune.</p>
