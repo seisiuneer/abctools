@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2341_022725_1000";
+var gVersionNumber="2342_030125_0700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28924,100 +28924,137 @@ function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 			Tspans = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g[data-name="tabNumber"] > text > tspan');
 		}
 
-		for (x = 0; x < Tspans.length; x++) {
-			
-			Tspans[x].setAttribute("class", "whistle");
+		for (var x = 0; x < Tspans.length; x++) {
 
-			// This fixes the + cutoff issue below the second octave notes
-			Tspans[x].setAttribute("dy","-7");
+		    Tspans[x].setAttribute("class", "whistle");
 
-			if (Tspans[x].innerHTML == "0") {
-				Tspans[x].innerHTML = "g";
-			} else if (Tspans[x].innerHTML == "1") {
-				Tspans[x].innerHTML = "m";
-			} else if (Tspans[x].innerHTML == "2") {
-				Tspans[x].innerHTML = "a";
-			} else if (Tspans[x].innerHTML == "3") {
-				Tspans[x].innerHTML = "i";
-			} else if (Tspans[x].innerHTML == "4") {
-				Tspans[x].innerHTML = "b";
-			} else if (Tspans[x].innerHTML == "5") {
-				Tspans[x].innerHTML = "c";
-			} else if (Tspans[x].innerHTML == "6") {
-				Tspans[x].innerHTML = "j";
-			} else if (Tspans[x].innerHTML == "7") {
-				Tspans[x].innerHTML = "d";
-			} else if (Tspans[x].innerHTML == "8") {
-				Tspans[x].innerHTML = "k";
-			} else if (Tspans[x].innerHTML == "9") {
-				Tspans[x].innerHTML = "e";
-			} else if (Tspans[x].innerHTML == "10") {
-				Tspans[x].innerHTML = "f";
-			} else if (Tspans[x].innerHTML == "11") {
-				Tspans[x].innerHTML = "l";
-			} else if (Tspans[x].innerHTML == "12") {
-				Tspans[x].innerHTML = "g";
-			} else if (Tspans[x].innerHTML == "13") {
-				Tspans[x].innerHTML = "m";
-			} else if (Tspans[x].innerHTML == "14") {
-				Tspans[x].innerHTML = "a";
-			} else if (Tspans[x].innerHTML == "15") {
-				Tspans[x].innerHTML = "i";
-			} else if (Tspans[x].innerHTML == "16") {
-				Tspans[x].innerHTML = "b";
-			} else if (Tspans[x].innerHTML == "17") {
-				Tspans[x].innerHTML = "c";
-			} else if (Tspans[x].innerHTML == "18") {
-				Tspans[x].innerHTML = "j";
-			} else if (Tspans[x].innerHTML == "19") {
-				Tspans[x].innerHTML = "D";
-			} else if (Tspans[x].innerHTML == "20") {
-				Tspans[x].innerHTML = "K";
-			} else if (Tspans[x].innerHTML == "21") {
-				Tspans[x].innerHTML = "E";
-			} else if (Tspans[x].innerHTML == "22") {
-				Tspans[x].innerHTML = "F";
-			} else if (Tspans[x].innerHTML == "23") {
-				Tspans[x].innerHTML = "L";
-			} else if (Tspans[x].innerHTML == "24") {
-				Tspans[x].innerHTML = "G";
-			} else if (Tspans[x].innerHTML == "25") {
-				Tspans[x].innerHTML = "M";
-			} else if (Tspans[x].innerHTML == "26") {
-				Tspans[x].innerHTML = "A";
-			} else if (Tspans[x].innerHTML == "27") {
-				Tspans[x].innerHTML = "I";
-			} else if (Tspans[x].innerHTML == "28") {
-				Tspans[x].innerHTML = "B";
-			} else if (Tspans[x].innerHTML == "29") {
-				Tspans[x].innerHTML = "C";
-			} else if (Tspans[x].innerHTML == "30") {
-				Tspans[x].innerHTML = "J";
-			} else if (Tspans[x].innerHTML == "31") {
-				Tspans[x].innerHTML = "D";
-			} else if (Tspans[x].innerHTML == "32") {
-				Tspans[x].innerHTML = "K";
-			} else if (Tspans[x].innerHTML == "33") {
-				Tspans[x].innerHTML = "E";
-			} else if (Tspans[x].innerHTML == "34") {
-				Tspans[x].innerHTML = "F";
-			} else if (Tspans[x].innerHTML == "35") {
-				Tspans[x].innerHTML = "L";
-			} else if (Tspans[x].innerHTML == "36") {
-				Tspans[x].innerHTML = "G";
-			} else if (Tspans[x].innerHTML == "37") {
-				Tspans[x].innerHTML = "M";
-			} else if (Tspans[x].innerHTML == "38") {
-				Tspans[x].innerHTML = "A";
-			}
-			else {
-				// No mapped note, put an x
-				Tspans[x].setAttribute("class", "whistle_small");
-				
-				Tspans[x].setAttribute("dy","-23");
+		    // This fixes the + cutoff issue below the second octave notes
+		    Tspans[x].setAttribute("dy", "-7");
 
-				Tspans[x].innerHTML = "x";
-			}
+		    switch (Tspans[x].innerHTML) {
+		        case "0":
+		            Tspans[x].innerHTML = "g";
+		            break;
+		        case "1":
+		            Tspans[x].innerHTML = "m";
+		            break;
+		        case "2":
+		            Tspans[x].innerHTML = "a";
+		            break;
+		        case "3":
+		            Tspans[x].innerHTML = "i";
+		            break;
+		        case "4":
+		            Tspans[x].innerHTML = "b";
+		            break;
+		        case "5":
+		            Tspans[x].innerHTML = "c";
+		            break;
+		        case "6":
+		            Tspans[x].innerHTML = "j";
+		            break;
+		        case "7":
+		            Tspans[x].innerHTML = "d";
+		            break;
+		        case "8":
+		            Tspans[x].innerHTML = "k";
+		            break;
+		        case "9":
+		            Tspans[x].innerHTML = "e";
+		            break;
+		        case "10":
+		            Tspans[x].innerHTML = "f";
+		            break;
+		        case "11":
+		            Tspans[x].innerHTML = "l";
+		            break;
+		        case "12":
+		            Tspans[x].innerHTML = "g";
+		            break;
+		        case "13":
+		            Tspans[x].innerHTML = "m";
+		            break;
+		        case "14":
+		            Tspans[x].innerHTML = "a";
+		            break;
+		        case "15":
+		            Tspans[x].innerHTML = "i";
+		            break;
+		        case "16":
+		            Tspans[x].innerHTML = "b";
+		            break;
+		        case "17":
+		            Tspans[x].innerHTML = "c";
+		            break;
+		        case "18":
+		            Tspans[x].innerHTML = "j";
+		            break;
+		        case "19":
+		            Tspans[x].innerHTML = "D";
+		            break;
+		        case "20":
+		            Tspans[x].innerHTML = "K";
+		            break;
+		        case "21":
+		            Tspans[x].innerHTML = "E";
+		            break;
+		        case "22":
+		            Tspans[x].innerHTML = "F";
+		            break;
+		        case "23":
+		            Tspans[x].innerHTML = "L";
+		            break;
+		        case "24":
+		            Tspans[x].innerHTML = "G";
+		            break;
+		        case "25":
+		            Tspans[x].innerHTML = "M";
+		            break;
+		        case "26":
+		            Tspans[x].innerHTML = "A";
+		            break;
+		        case "27":
+		            Tspans[x].innerHTML = "I";
+		            break;
+		        case "28":
+		            Tspans[x].innerHTML = "B";
+		            break;
+		        case "29":
+		            Tspans[x].innerHTML = "C";
+		            break;
+		        case "30":
+		            Tspans[x].innerHTML = "J";
+		            break;
+		        case "31":
+		            Tspans[x].innerHTML = "D";
+		            break;
+		        case "32":
+		            Tspans[x].innerHTML = "K";
+		            break;
+		        case "33":
+		            Tspans[x].innerHTML = "E";
+		            break;
+		        case "34":
+		            Tspans[x].innerHTML = "F";
+		            break;
+		        case "35":
+		            Tspans[x].innerHTML = "L";
+		            break;
+		        case "36":
+		            Tspans[x].innerHTML = "G";
+		            break;
+		        case "37":
+		            Tspans[x].innerHTML = "M";
+		            break;
+		        case "38":
+		            Tspans[x].innerHTML = "A";
+		            break;
+		        default:
+		            // No mapped note, put an x
+		            Tspans[x].setAttribute("class", "whistle_small");
+		            Tspans[x].setAttribute("dy", "-23");
+		            Tspans[x].innerHTML = "x";
+		    }
 		}
 	}
 
@@ -29039,196 +29076,111 @@ function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 			Tspans = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g[data-name="tabNumber"] > text > tspan');
 		}
 
-		for (x = 0; x < Tspans.length; x++) {
+		for (var x = 0; x < Tspans.length; x++) {
 
-			Tspans[x].setAttribute("class", "recorder");
+		    Tspans[x].setAttribute("class", "recorder");
 
-			//This fixes the + cutoff issue below the second octave notes
-			Tspans[x].setAttribute("dy","-8"); 
+		    // This fixes the + cutoff issue below the second octave notes
+		    Tspans[x].setAttribute("dy","-8"); 
 
-			if (gRecorderAlto){
-
-				// Alto recorder fingerings
-				if (Tspans[x].innerHTML == "0") {
-					Tspans[x].innerHTML = "3";
-				} else if (Tspans[x].innerHTML == "1") {
-					Tspans[x].innerHTML = "4";
-				} else if (Tspans[x].innerHTML == "2") {
-					Tspans[x].innerHTML = "5";
-				} else if (Tspans[x].innerHTML == "3") {
-					Tspans[x].innerHTML = "6";
-				} else if (Tspans[x].innerHTML == "4") {
-					Tspans[x].innerHTML = "7";
-				} else if (Tspans[x].innerHTML == "5") {
-					Tspans[x].innerHTML = "8";
-				} else if (Tspans[x].innerHTML == "6") {
-					Tspans[x].innerHTML = "9";
-				} else if (Tspans[x].innerHTML == "7") {
-					Tspans[x].innerHTML = "0";
-				} else if (Tspans[x].innerHTML == "8") {
-					Tspans[x].innerHTML = "-";
-				} else if (Tspans[x].innerHTML == "9") {
-					Tspans[x].innerHTML = "=";
-				} else if (Tspans[x].innerHTML == "10") {
-					Tspans[x].innerHTML = "1";
-				} else if (Tspans[x].innerHTML == "11") {
-					Tspans[x].innerHTML = "2";
-				} else if (Tspans[x].innerHTML == "12") {
-					Tspans[x].innerHTML = "3";
-				} else if (Tspans[x].innerHTML == "13") {
-					Tspans[x].innerHTML = "4";
-				} else if (Tspans[x].innerHTML == "14") {
-					Tspans[x].innerHTML = "5";
-				} else if (Tspans[x].innerHTML == "15") {
-					Tspans[x].innerHTML = "6";
-				} else if (Tspans[x].innerHTML == "16") {
-					Tspans[x].innerHTML = "7";
-				} else if (Tspans[x].innerHTML == "17") {
-					Tspans[x].innerHTML = "8";
-				} else if (Tspans[x].innerHTML == "18") {
-					Tspans[x].innerHTML = "9";
-				} else if (Tspans[x].innerHTML == "19") {
-					Tspans[x].innerHTML = "0";
-				} else if (Tspans[x].innerHTML == "20") {
-					Tspans[x].innerHTML = "-";
-				} else if (Tspans[x].innerHTML == "21") {
-					Tspans[x].innerHTML = "=";
-				} else if (Tspans[x].innerHTML == "22") {
-					Tspans[x].innerHTML = "q";
-				} else if (Tspans[x].innerHTML == "23") {
-					Tspans[x].innerHTML = "w";
-				} else if (Tspans[x].innerHTML == "24") {
-					Tspans[x].innerHTML = "e";
-				} else if (Tspans[x].innerHTML == "25") {
-					Tspans[x].innerHTML = "r";
-				} else if (Tspans[x].innerHTML == "26") {
-					Tspans[x].innerHTML = "t";
-				} else if (Tspans[x].innerHTML == "27") {
-					Tspans[x].innerHTML = "y";
-				} else if (Tspans[x].innerHTML == "28") {
-					Tspans[x].innerHTML = "u";
-				} else if (Tspans[x].innerHTML == "29") {
-					Tspans[x].innerHTML = "i";
-				} else if (Tspans[x].innerHTML == "30") {
-					Tspans[x].innerHTML = "o";
-				} else if (Tspans[x].innerHTML == "31") {
-					Tspans[x].innerHTML = "p";
-				} else if (Tspans[x].innerHTML == "32") {
-					Tspans[x].innerHTML = "[";
-				} else if (Tspans[x].innerHTML == "33") {
-					Tspans[x].innerHTML = "]";
-				} else if (Tspans[x].innerHTML == "34") {
-					Tspans[x].innerHTML = "a";
-				} else if (Tspans[x].innerHTML == "35") {
-					Tspans[x].innerHTML = "s";
-				} else if (Tspans[x].innerHTML == "36") {
-					Tspans[x].innerHTML = "d";
-				} else if (Tspans[x].innerHTML == "37") {
-					Tspans[x].innerHTML = "f";
-				} else if (Tspans[x].innerHTML == "38") {
-					Tspans[x].innerHTML = "g";
-				} else if (Tspans[x].innerHTML == "39") {
-					Tspans[x].innerHTML = "h";
-				} else if (Tspans[x].innerHTML == "40") {
-					Tspans[x].innerHTML = "j";
-				} else if (Tspans[x].innerHTML == "41") {
-					Tspans[x].innerHTML = "k";
-				}
-				else {
-					// No mapped note, put an x
-					Tspans[x].setAttribute("class", "whistle_small");
-					
-					Tspans[x].setAttribute("dy","-23");
-
-					Tspans[x].innerHTML = "x";
-				}
-			}
-			else{
-				// Soprano recorder fingerings
-				if (Tspans[x].innerHTML == "0") {
-					Tspans[x].innerHTML = "8";
-				} else if (Tspans[x].innerHTML == "1") {
-					Tspans[x].innerHTML = "9";
-				} else if (Tspans[x].innerHTML == "2") {
-					Tspans[x].innerHTML = "0";
-				} else if (Tspans[x].innerHTML == "3") {
-					Tspans[x].innerHTML = "-";
-				} else if (Tspans[x].innerHTML == "4") {
-					Tspans[x].innerHTML = "=";
-				} else if (Tspans[x].innerHTML == "5") {
-					Tspans[x].innerHTML = "1";
-				} else if (Tspans[x].innerHTML == "6") {
-					Tspans[x].innerHTML = "2";
-				} else if (Tspans[x].innerHTML == "7") {
-					Tspans[x].innerHTML = "3";
-				} else if (Tspans[x].innerHTML == "8") {
-					Tspans[x].innerHTML = "4";
-				} else if (Tspans[x].innerHTML == "9") {
-					Tspans[x].innerHTML = "5";
-				} else if (Tspans[x].innerHTML == "10") {
-					Tspans[x].innerHTML = "6";
-				} else if (Tspans[x].innerHTML == "11") {
-					Tspans[x].innerHTML = "7";
-				} else if (Tspans[x].innerHTML == "12") {
-					Tspans[x].innerHTML = "8";
-				} else if (Tspans[x].innerHTML == "13") {
-					Tspans[x].innerHTML = "9";
-				} else if (Tspans[x].innerHTML == "14") {
-					Tspans[x].innerHTML = "0";
-				} else if (Tspans[x].innerHTML == "15") {
-					Tspans[x].innerHTML = "-";
-				} else if (Tspans[x].innerHTML == "16") {
-					Tspans[x].innerHTML = "=";
-				} else if (Tspans[x].innerHTML == "17") {
-					Tspans[x].innerHTML = "q";
-				} else if (Tspans[x].innerHTML == "18") {
-					Tspans[x].innerHTML = "w";
-				} else if (Tspans[x].innerHTML == "19") {
-					Tspans[x].innerHTML = "e";
-				} else if (Tspans[x].innerHTML == "20") {
-					Tspans[x].innerHTML = "r";
-				} else if (Tspans[x].innerHTML == "21") {
-					Tspans[x].innerHTML = "t";
-				} else if (Tspans[x].innerHTML == "22") {
-					Tspans[x].innerHTML = "y";
-				} else if (Tspans[x].innerHTML == "23") {
-					Tspans[x].innerHTML = "u";
-				} else if (Tspans[x].innerHTML == "24") {
-					Tspans[x].innerHTML = "i";
-				} else if (Tspans[x].innerHTML == "25") {
-					Tspans[x].innerHTML = "o";
-				} else if (Tspans[x].innerHTML == "26") {
-					Tspans[x].innerHTML = "p";
-				} else if (Tspans[x].innerHTML == "27") {
-					Tspans[x].innerHTML = "[";
-				} else if (Tspans[x].innerHTML == "28") {
-					Tspans[x].innerHTML = "]";
-				} else if (Tspans[x].innerHTML == "29") {
-					Tspans[x].innerHTML = "a";
-				} else if (Tspans[x].innerHTML == "30") {
-					Tspans[x].innerHTML = "s";
-				} else if (Tspans[x].innerHTML == "31") {
-					Tspans[x].innerHTML = "d";
-				} else if (Tspans[x].innerHTML == "32") {
-					Tspans[x].innerHTML = "f";
-				} else if (Tspans[x].innerHTML == "33") {
-					Tspans[x].innerHTML = "g";
-				} else if (Tspans[x].innerHTML == "34") {
-					Tspans[x].innerHTML = "h";
-				} else if (Tspans[x].innerHTML == "35") {
-					Tspans[x].innerHTML = "j";
-				} else if (Tspans[x].innerHTML == "36") {
-					Tspans[x].innerHTML = "k";
-				}
-				else {
-					// No mapped note, put an x
-					Tspans[x].setAttribute("class", "whistle_small");
-					
-					Tspans[x].setAttribute("dy","-23");
-
-					Tspans[x].innerHTML = "x";
-				}				
-			}
+		    if (gRecorderAlto) {
+		        // Alto recorder fingerings
+		        switch (Tspans[x].innerHTML) {
+		            case "0":  Tspans[x].innerHTML = "3"; break;
+		            case "1":  Tspans[x].innerHTML = "4"; break;
+		            case "2":  Tspans[x].innerHTML = "5"; break;
+		            case "3":  Tspans[x].innerHTML = "6"; break;
+		            case "4":  Tspans[x].innerHTML = "7"; break;
+		            case "5":  Tspans[x].innerHTML = "8"; break;
+		            case "6":  Tspans[x].innerHTML = "9"; break;
+		            case "7":  Tspans[x].innerHTML = "0"; break;
+		            case "8":  Tspans[x].innerHTML = "-"; break;
+		            case "9":  Tspans[x].innerHTML = "="; break;
+		            case "10": Tspans[x].innerHTML = "1"; break;
+		            case "11": Tspans[x].innerHTML = "2"; break;
+		            case "12": Tspans[x].innerHTML = "3"; break;
+		            case "13": Tspans[x].innerHTML = "4"; break;
+		            case "14": Tspans[x].innerHTML = "5"; break;
+		            case "15": Tspans[x].innerHTML = "6"; break;
+		            case "16": Tspans[x].innerHTML = "7"; break;
+		            case "17": Tspans[x].innerHTML = "8"; break;
+		            case "18": Tspans[x].innerHTML = "9"; break;
+		            case "19": Tspans[x].innerHTML = "0"; break;
+		            case "20": Tspans[x].innerHTML = "-"; break;
+		            case "21": Tspans[x].innerHTML = "="; break;
+		            case "22": Tspans[x].innerHTML = "q"; break;
+		            case "23": Tspans[x].innerHTML = "w"; break;
+		            case "24": Tspans[x].innerHTML = "e"; break;
+		            case "25": Tspans[x].innerHTML = "r"; break;
+		            case "26": Tspans[x].innerHTML = "t"; break;
+		            case "27": Tspans[x].innerHTML = "y"; break;
+		            case "28": Tspans[x].innerHTML = "u"; break;
+		            case "29": Tspans[x].innerHTML = "i"; break;
+		            case "30": Tspans[x].innerHTML = "o"; break;
+		            case "31": Tspans[x].innerHTML = "p"; break;
+		            case "32": Tspans[x].innerHTML = "["; break;
+		            case "33": Tspans[x].innerHTML = "]"; break;
+		            case "34": Tspans[x].innerHTML = "a"; break;
+		            case "35": Tspans[x].innerHTML = "s"; break;
+		            case "36": Tspans[x].innerHTML = "d"; break;
+		            case "37": Tspans[x].innerHTML = "f"; break;
+		            case "38": Tspans[x].innerHTML = "g"; break;
+		            case "39": Tspans[x].innerHTML = "h"; break;
+		            case "40": Tspans[x].innerHTML = "j"; break;
+		            case "41": Tspans[x].innerHTML = "k"; break;
+		            default:
+		                Tspans[x].setAttribute("class", "whistle_small");
+		                Tspans[x].setAttribute("dy", "-23");
+		                Tspans[x].innerHTML = "x";
+		                break;
+		        }
+		    } else {
+		        // Soprano recorder fingerings
+		        switch (Tspans[x].innerHTML) {
+		            case "0":  Tspans[x].innerHTML = "8"; break;
+		            case "1":  Tspans[x].innerHTML = "9"; break;
+		            case "2":  Tspans[x].innerHTML = "0"; break;
+		            case "3":  Tspans[x].innerHTML = "-"; break;
+		            case "4":  Tspans[x].innerHTML = "="; break;
+		            case "5":  Tspans[x].innerHTML = "1"; break;
+		            case "6":  Tspans[x].innerHTML = "2"; break;
+		            case "7":  Tspans[x].innerHTML = "3"; break;
+		            case "8":  Tspans[x].innerHTML = "4"; break;
+		            case "9":  Tspans[x].innerHTML = "5"; break;
+		            case "10": Tspans[x].innerHTML = "6"; break;
+		            case "11": Tspans[x].innerHTML = "7"; break;
+		            case "12": Tspans[x].innerHTML = "8"; break;
+		            case "13": Tspans[x].innerHTML = "9"; break;
+		            case "14": Tspans[x].innerHTML = "0"; break;
+		            case "15": Tspans[x].innerHTML = "-"; break;
+		            case "16": Tspans[x].innerHTML = "="; break;
+		            case "17": Tspans[x].innerHTML = "q"; break;
+		            case "18": Tspans[x].innerHTML = "w"; break;
+		            case "19": Tspans[x].innerHTML = "e"; break;
+		            case "20": Tspans[x].innerHTML = "r"; break;
+		            case "21": Tspans[x].innerHTML = "t"; break;
+		            case "22": Tspans[x].innerHTML = "y"; break;
+		            case "23": Tspans[x].innerHTML = "u"; break;
+		            case "24": Tspans[x].innerHTML = "i"; break;
+		            case "25": Tspans[x].innerHTML = "o"; break;
+		            case "26": Tspans[x].innerHTML = "p"; break;
+		            case "27": Tspans[x].innerHTML = "["; break;
+		            case "28": Tspans[x].innerHTML = "]"; break;
+		            case "29": Tspans[x].innerHTML = "a"; break;
+		            case "30": Tspans[x].innerHTML = "s"; break;
+		            case "31": Tspans[x].innerHTML = "d"; break;
+		            case "32": Tspans[x].innerHTML = "f"; break;
+		            case "33": Tspans[x].innerHTML = "g"; break;
+		            case "34": Tspans[x].innerHTML = "h"; break;
+		            case "35": Tspans[x].innerHTML = "j"; break;
+		            case "36": Tspans[x].innerHTML = "k"; break;
+		            default:
+		                Tspans[x].setAttribute("class", "whistle_small");
+		                Tspans[x].setAttribute("dy", "-23");
+		                Tspans[x].innerHTML = "x";
+		                break;
+		        }
+		    }
 		}
 	}
 
@@ -29288,359 +29240,448 @@ function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 				if (!(gUseComhaltasABC || gForceComhaltasABC)){
 
 					if (useSharps) {
-						for (x = 0; x < Tspans.length; x++) {
-							if (Tspans[x].innerHTML == "0") {
-								Tspans[x].innerHTML = "G,";
-							} else if (Tspans[x].innerHTML == "1") {
-								Tspans[x].innerHTML = "G♯,";
-							} else if (Tspans[x].innerHTML == "2") {
-								Tspans[x].innerHTML = "A,";
-							} else if (Tspans[x].innerHTML == "3") {
-								Tspans[x].innerHTML = "A♯,";
-							} else if (Tspans[x].innerHTML == "4") {
-								Tspans[x].innerHTML = "B,";
-							} else if (Tspans[x].innerHTML == "5") {
-								Tspans[x].innerHTML = "C";
-							} else if (Tspans[x].innerHTML == "6") {
-								Tspans[x].innerHTML = "C♯";
-							} else if (Tspans[x].innerHTML == "7") {
-								Tspans[x].innerHTML = "D";
-							} else if (Tspans[x].innerHTML == "8") {
-								Tspans[x].innerHTML = "D♯";
-							} else if (Tspans[x].innerHTML == "9") {
-								Tspans[x].innerHTML = "E";
-							} else if (Tspans[x].innerHTML == "10") {
-								Tspans[x].innerHTML = "F";
-							} else if (Tspans[x].innerHTML == "11") {
-								Tspans[x].innerHTML = "F♯";
-							} else if (Tspans[x].innerHTML == "12") {
-								Tspans[x].innerHTML = "G";
-							} else if (Tspans[x].innerHTML == "13") {
-								Tspans[x].innerHTML = "G♯";
-							} else if (Tspans[x].innerHTML == "14") {
-								Tspans[x].innerHTML = "A";
-							} else if (Tspans[x].innerHTML == "15") {
-								Tspans[x].innerHTML = "A♯";
-							} else if (Tspans[x].innerHTML == "16") {
-								Tspans[x].innerHTML = "B";
-							} else if (Tspans[x].innerHTML == "17") {
-								Tspans[x].innerHTML = "c";
-							} else if (Tspans[x].innerHTML == "18") {
-								Tspans[x].innerHTML = "c♯";
-							} else if (Tspans[x].innerHTML == "19") {
-								Tspans[x].innerHTML = "d";
-							} else if (Tspans[x].innerHTML == "20") {
-								Tspans[x].innerHTML = "d♯";
-							} else if (Tspans[x].innerHTML == "21") {
-								Tspans[x].innerHTML = "e";
-							} else if (Tspans[x].innerHTML == "22") {
-								Tspans[x].innerHTML = "f";
-							} else if (Tspans[x].innerHTML == "23") {
-								Tspans[x].innerHTML = "f♯";
-							} else if (Tspans[x].innerHTML == "24") {
-								Tspans[x].innerHTML = "g";
-							} else if (Tspans[x].innerHTML == "25") {
-								Tspans[x].innerHTML = "g♯";
-							} else if (Tspans[x].innerHTML == "26") {
-								Tspans[x].innerHTML = "a";
-							} else if (Tspans[x].innerHTML == "27") {
-								Tspans[x].innerHTML = "a♯";
-							} else if (Tspans[x].innerHTML == "28") {
-								Tspans[x].innerHTML = "b";
-							} else if (Tspans[x].innerHTML == "29") {
-								Tspans[x].innerHTML = "c'";
-							} else if (Tspans[x].innerHTML == "30") {
-								Tspans[x].innerHTML = "c♯'";
-							} else if (Tspans[x].innerHTML == "31") {
-								Tspans[x].innerHTML = "d'";
-							} else if (Tspans[x].innerHTML == "32") {
-								Tspans[x].innerHTML = "d♯'";
-							} else if (Tspans[x].innerHTML == "33") {
-								Tspans[x].innerHTML = "e'";
-							} else if (Tspans[x].innerHTML == "34") {
-								Tspans[x].innerHTML = "f'";
-							} else if (Tspans[x].innerHTML == "35") {
-								Tspans[x].innerHTML = "f♯'";
-							} else if (Tspans[x].innerHTML == "36") {
-								Tspans[x].innerHTML = "g'";
-							} else if (Tspans[x].innerHTML == "37") {
-								Tspans[x].innerHTML = "g♯'";
-							} else if (Tspans[x].innerHTML == "38") {
-								Tspans[x].innerHTML = "a'";
-							} else if (Tspans[x].innerHTML == "39") {
-								Tspans[x].innerHTML = "a♯'";
-							} else if (Tspans[x].innerHTML == "40") {
-								Tspans[x].innerHTML = "b'";
-							} else {
-								Tspans[x].innerHTML = "?";
-							}
+						for (var x = 0; x < Tspans.length; x++) {
+						    switch (Tspans[x].innerHTML) {
+						        case "0": Tspans[x].innerHTML = "G,"; break;
+						        case "1": Tspans[x].innerHTML = "G♯,"; break;
+						        case "2": Tspans[x].innerHTML = "A,"; break;
+						        case "3": Tspans[x].innerHTML = "A♯,"; break;
+						        case "4": Tspans[x].innerHTML = "B,"; break;
+						        case "5": Tspans[x].innerHTML = "C"; break;
+						        case "6": Tspans[x].innerHTML = "C♯"; break;
+						        case "7": Tspans[x].innerHTML = "D"; break;
+						        case "8": Tspans[x].innerHTML = "D♯"; break;
+						        case "9": Tspans[x].innerHTML = "E"; break;
+						        case "10": Tspans[x].innerHTML = "F"; break;
+						        case "11": Tspans[x].innerHTML = "F♯"; break;
+						        case "12": Tspans[x].innerHTML = "G"; break;
+						        case "13": Tspans[x].innerHTML = "G♯"; break;
+						        case "14": Tspans[x].innerHTML = "A"; break;
+						        case "15": Tspans[x].innerHTML = "A♯"; break;
+						        case "16": Tspans[x].innerHTML = "B"; break;
+						        case "17": Tspans[x].innerHTML = "c"; break;
+						        case "18": Tspans[x].innerHTML = "c♯"; break;
+						        case "19": Tspans[x].innerHTML = "d"; break;
+						        case "20": Tspans[x].innerHTML = "d♯"; break;
+						        case "21": Tspans[x].innerHTML = "e"; break;
+						        case "22": Tspans[x].innerHTML = "f"; break;
+						        case "23": Tspans[x].innerHTML = "f♯"; break;
+						        case "24": Tspans[x].innerHTML = "g"; break;
+						        case "25": Tspans[x].innerHTML = "g♯"; break;
+						        case "26": Tspans[x].innerHTML = "a"; break;
+						        case "27": Tspans[x].innerHTML = "a♯"; break;
+						        case "28": Tspans[x].innerHTML = "b"; break;
+						        case "29": Tspans[x].innerHTML = "c'"; break;
+						        case "30": Tspans[x].innerHTML = "c♯'"; break;
+						        case "31": Tspans[x].innerHTML = "d'"; break;
+						        case "32": Tspans[x].innerHTML = "d♯'"; break;
+						        case "33": Tspans[x].innerHTML = "e'"; break;
+						        case "34": Tspans[x].innerHTML = "f'"; break;
+						        case "35": Tspans[x].innerHTML = "f♯'"; break;
+						        case "36": Tspans[x].innerHTML = "g'"; break;
+						        case "37": Tspans[x].innerHTML = "g♯'"; break;
+						        case "38": Tspans[x].innerHTML = "a'"; break;
+						        case "39": Tspans[x].innerHTML = "a♯'"; break;
+						        case "40": Tspans[x].innerHTML = "b'"; break;
+						        default: Tspans[x].innerHTML = "?"; break;
+						    }
 						}
 					} else {
-						for (x = 0; x < Tspans.length; x++) {
-							if (Tspans[x].innerHTML == "0") {
-								Tspans[x].innerHTML = "G,";
-							} else if (Tspans[x].innerHTML == "1") {
-								Tspans[x].innerHTML = "A♭,";
-							} else if (Tspans[x].innerHTML == "2") {
-								Tspans[x].innerHTML = "A,";
-							} else if (Tspans[x].innerHTML == "3") {
-								Tspans[x].innerHTML = "B♭,";
-							} else if (Tspans[x].innerHTML == "4") {
-								Tspans[x].innerHTML = "B,";
-							} else if (Tspans[x].innerHTML == "5") {
-								Tspans[x].innerHTML = "C";
-							} else if (Tspans[x].innerHTML == "6") {
-								Tspans[x].innerHTML = "D♭";
-							} else if (Tspans[x].innerHTML == "7") {
-								Tspans[x].innerHTML = "D";
-							} else if (Tspans[x].innerHTML == "8") {
-								Tspans[x].innerHTML = "E♭";
-							} else if (Tspans[x].innerHTML == "9") {
-								Tspans[x].innerHTML = "E";
-							} else if (Tspans[x].innerHTML == "10") {
-								Tspans[x].innerHTML = "F";
-							} else if (Tspans[x].innerHTML == "11") {
-								Tspans[x].innerHTML = "G♭";
-							} else if (Tspans[x].innerHTML == "12") {
-								Tspans[x].innerHTML = "G";
-							} else if (Tspans[x].innerHTML == "13") {
-								Tspans[x].innerHTML = "A♭";
-							} else if (Tspans[x].innerHTML == "14") {
-								Tspans[x].innerHTML = "A";
-							} else if (Tspans[x].innerHTML == "15") {
-								Tspans[x].innerHTML = "B♭";
-							} else if (Tspans[x].innerHTML == "16") {
-								Tspans[x].innerHTML = "B";
-							} else if (Tspans[x].innerHTML == "17") {
-								Tspans[x].innerHTML = "c";
-							} else if (Tspans[x].innerHTML == "18") {
-								Tspans[x].innerHTML = "d♭";
-							} else if (Tspans[x].innerHTML == "19") {
-								Tspans[x].innerHTML = "d";
-							} else if (Tspans[x].innerHTML == "20") {
-								Tspans[x].innerHTML = "e♭";
-							} else if (Tspans[x].innerHTML == "21") {
-								Tspans[x].innerHTML = "e";
-							} else if (Tspans[x].innerHTML == "22") {
-								Tspans[x].innerHTML = "f";
-							} else if (Tspans[x].innerHTML == "23") {
-								Tspans[x].innerHTML = "g♭";
-							} else if (Tspans[x].innerHTML == "24") {
-								Tspans[x].innerHTML = "g";
-							} else if (Tspans[x].innerHTML == "25") {
-								Tspans[x].innerHTML = "a♭";
-							} else if (Tspans[x].innerHTML == "26") {
-								Tspans[x].innerHTML = "a";
-							} else if (Tspans[x].innerHTML == "27") {
-								Tspans[x].innerHTML = "b♭";
-							} else if (Tspans[x].innerHTML == "28") {
-								Tspans[x].innerHTML = "b";
-							} else if (Tspans[x].innerHTML == "29") {
-								Tspans[x].innerHTML = "c'";
-							} else if (Tspans[x].innerHTML == "30") {
-								Tspans[x].innerHTML = "d♭'";
-							} else if (Tspans[x].innerHTML == "31") {
-								Tspans[x].innerHTML = "d'";
-							} else if (Tspans[x].innerHTML == "32") {
-								Tspans[x].innerHTML = "e♭'";
-							} else if (Tspans[x].innerHTML == "33") {
-								Tspans[x].innerHTML = "e'";
-							} else if (Tspans[x].innerHTML == "34") {
-								Tspans[x].innerHTML = "f'";
-							} else if (Tspans[x].innerHTML == "35") {
-								Tspans[x].innerHTML = "g♭'";
-							} else if (Tspans[x].innerHTML == "36") {
-								Tspans[x].innerHTML = "g'";
-							} else if (Tspans[x].innerHTML == "37") {
-								Tspans[x].innerHTML = "a♭'";
-							} else if (Tspans[x].innerHTML == "38") {
-								Tspans[x].innerHTML = "a'";
-							} else if (Tspans[x].innerHTML == "39") {
-								Tspans[x].innerHTML = "b♭'";
-							} else if (Tspans[x].innerHTML == "40") {
-								Tspans[x].innerHTML = "b'";
-							} else {
-								Tspans[x].innerHTML = "?";
-							}
+						for (var x = 0; x < Tspans.length; x++) {
+						    switch (Tspans[x].innerHTML) {
+						        case "0":
+						            Tspans[x].innerHTML = "G,";
+						            break;
+						        case "1":
+						            Tspans[x].innerHTML = "A♭,";
+						            break;
+						        case "2":
+						            Tspans[x].innerHTML = "A,";
+						            break;
+						        case "3":
+						            Tspans[x].innerHTML = "B♭,";
+						            break;
+						        case "4":
+						            Tspans[x].innerHTML = "B,";
+						            break;
+						        case "5":
+						            Tspans[x].innerHTML = "C";
+						            break;
+						        case "6":
+						            Tspans[x].innerHTML = "D♭";
+						            break;
+						        case "7":
+						            Tspans[x].innerHTML = "D";
+						            break;
+						        case "8":
+						            Tspans[x].innerHTML = "E♭";
+						            break;
+						        case "9":
+						            Tspans[x].innerHTML = "E";
+						            break;
+						        case "10":
+						            Tspans[x].innerHTML = "F";
+						            break;
+						        case "11":
+						            Tspans[x].innerHTML = "G♭";
+						            break;
+						        case "12":
+						            Tspans[x].innerHTML = "G";
+						            break;
+						        case "13":
+						            Tspans[x].innerHTML = "A♭";
+						            break;
+						        case "14":
+						            Tspans[x].innerHTML = "A";
+						            break;
+						        case "15":
+						            Tspans[x].innerHTML = "B♭";
+						            break;
+						        case "16":
+						            Tspans[x].innerHTML = "B";
+						            break;
+						        case "17":
+						            Tspans[x].innerHTML = "c";
+						            break;
+						        case "18":
+						            Tspans[x].innerHTML = "d♭";
+						            break;
+						        case "19":
+						            Tspans[x].innerHTML = "d";
+						            break;
+						        case "20":
+						            Tspans[x].innerHTML = "e♭";
+						            break;
+						        case "21":
+						            Tspans[x].innerHTML = "e";
+						            break;
+						        case "22":
+						            Tspans[x].innerHTML = "f";
+						            break;
+						        case "23":
+						            Tspans[x].innerHTML = "g♭";
+						            break;
+						        case "24":
+						            Tspans[x].innerHTML = "g";
+						            break;
+						        case "25":
+						            Tspans[x].innerHTML = "a♭";
+						            break;
+						        case "26":
+						            Tspans[x].innerHTML = "a";
+						            break;
+						        case "27":
+						            Tspans[x].innerHTML = "b♭";
+						            break;
+						        case "28":
+						            Tspans[x].innerHTML = "b";
+						            break;
+						        case "29":
+						            Tspans[x].innerHTML = "c'";
+						            break;
+						        case "30":
+						            Tspans[x].innerHTML = "d♭'";
+						            break;
+						        case "31":
+						            Tspans[x].innerHTML = "d'";
+						            break;
+						        case "32":
+						            Tspans[x].innerHTML = "e♭'";
+						            break;
+						        case "33":
+						            Tspans[x].innerHTML = "e'";
+						            break;
+						        case "34":
+						            Tspans[x].innerHTML = "f'";
+						            break;
+						        case "35":
+						            Tspans[x].innerHTML = "g♭'";
+						            break;
+						        case "36":
+						            Tspans[x].innerHTML = "g'";
+						            break;
+						        case "37":
+						            Tspans[x].innerHTML = "a♭'";
+						            break;
+						        case "38":
+						            Tspans[x].innerHTML = "a'";
+						            break;
+						        case "39":
+						            Tspans[x].innerHTML = "b♭'";
+						            break;
+						        case "40":
+						            Tspans[x].innerHTML = "b'";
+						            break;
+						        default:
+						            Tspans[x].innerHTML = "?";
+						    }
 						}
+
 					}	
 				}
 				else{
 					if (useSharps) {
-						for (x = 0; x < Tspans.length; x++) {
-							if (Tspans[x].innerHTML == "0") {
-								Tspans[x].innerHTML = "G,";
-							} else if (Tspans[x].innerHTML == "1") {
-								Tspans[x].innerHTML = "G♯,";
-							} else if (Tspans[x].innerHTML == "2") {
-								Tspans[x].innerHTML = "A,";
-							} else if (Tspans[x].innerHTML == "3") {
-								Tspans[x].innerHTML = "A♯,";
-							} else if (Tspans[x].innerHTML == "4") {
-								Tspans[x].innerHTML = "B,";
-							} else if (Tspans[x].innerHTML == "5") {
-								Tspans[x].innerHTML = "C,";
-							} else if (Tspans[x].innerHTML == "6") {
-								Tspans[x].innerHTML = "C♯,";
-							} else if (Tspans[x].innerHTML == "7") {
-								Tspans[x].innerHTML = "D";
-							} else if (Tspans[x].innerHTML == "8") {
-								Tspans[x].innerHTML = "D♯";
-							} else if (Tspans[x].innerHTML == "9") {
-								Tspans[x].innerHTML = "E";
-							} else if (Tspans[x].innerHTML == "10") {
-								Tspans[x].innerHTML = "F";
-							} else if (Tspans[x].innerHTML == "11") {
-								Tspans[x].innerHTML = "F♯";
-							} else if (Tspans[x].innerHTML == "12") {
-								Tspans[x].innerHTML = "G";
-							} else if (Tspans[x].innerHTML == "13") {
-								Tspans[x].innerHTML = "G♯";
-							} else if (Tspans[x].innerHTML == "14") {
-								Tspans[x].innerHTML = "A";
-							} else if (Tspans[x].innerHTML == "15") {
-								Tspans[x].innerHTML = "A♯";
-							} else if (Tspans[x].innerHTML == "16") {
-								Tspans[x].innerHTML = "B";
-							} else if (Tspans[x].innerHTML == "17") {
-								Tspans[x].innerHTML = "C";
-							} else if (Tspans[x].innerHTML == "18") {
-								Tspans[x].innerHTML = "C♯";
-							} else if (Tspans[x].innerHTML == "19") {
-								Tspans[x].innerHTML = "D'";
-							} else if (Tspans[x].innerHTML == "20") {
-								Tspans[x].innerHTML = "D♯'";
-							} else if (Tspans[x].innerHTML == "21") {
-								Tspans[x].innerHTML = "E'";
-							} else if (Tspans[x].innerHTML == "22") {
-								Tspans[x].innerHTML = "F'";
-							} else if (Tspans[x].innerHTML == "23") {
-								Tspans[x].innerHTML = "F♯'";
-							} else if (Tspans[x].innerHTML == "24") {
-								Tspans[x].innerHTML = "G'";
-							} else if (Tspans[x].innerHTML == "25") {
-								Tspans[x].innerHTML = "G♯'";
-							} else if (Tspans[x].innerHTML == "26") {
-								Tspans[x].innerHTML = "A'";
-							} else if (Tspans[x].innerHTML == "27") {
-								Tspans[x].innerHTML = "A♯'";
-							} else if (Tspans[x].innerHTML == "28") {
-								Tspans[x].innerHTML = "B'";
-							} else if (Tspans[x].innerHTML == "29") {
-								Tspans[x].innerHTML = "C'";
-							} else if (Tspans[x].innerHTML == "30") {
-								Tspans[x].innerHTML = "C♯'";
-							} else if (Tspans[x].innerHTML == "31") {
-								Tspans[x].innerHTML = "D''";
-							} else if (Tspans[x].innerHTML == "32") {
-								Tspans[x].innerHTML = "D♯''";
-							} else if (Tspans[x].innerHTML == "33") {
-								Tspans[x].innerHTML = "E''";
-							} else if (Tspans[x].innerHTML == "34") {
-								Tspans[x].innerHTML = "F''";
-							} else if (Tspans[x].innerHTML == "35") {
-								Tspans[x].innerHTML = "F♯''";
-							} else if (Tspans[x].innerHTML == "36") {
-								Tspans[x].innerHTML = "G''";
-							} else if (Tspans[x].innerHTML == "37") {
-								Tspans[x].innerHTML = "G♯''";
-							} else if (Tspans[x].innerHTML == "38") {
-								Tspans[x].innerHTML = "A''";
-							} else if (Tspans[x].innerHTML == "39") {
-								Tspans[x].innerHTML = "A♯''";
-							} else if (Tspans[x].innerHTML == "40") {
-								Tspans[x].innerHTML = "B''";
-							} else {
-								Tspans[x].innerHTML = "?";
-							}
+						for (var x = 0; x < Tspans.length; x++) {
+						    switch (Tspans[x].innerHTML) {
+						        case "0":
+						            Tspans[x].innerHTML = "G,";
+						            break;
+						        case "1":
+						            Tspans[x].innerHTML = "G♯,";
+						            break;
+						        case "2":
+						            Tspans[x].innerHTML = "A,";
+						            break;
+						        case "3":
+						            Tspans[x].innerHTML = "A♯,";
+						            break;
+						        case "4":
+						            Tspans[x].innerHTML = "B,";
+						            break;
+						        case "5":
+						            Tspans[x].innerHTML = "C,";
+						            break;
+						        case "6":
+						            Tspans[x].innerHTML = "C♯,";
+						            break;
+						        case "7":
+						            Tspans[x].innerHTML = "D";
+						            break;
+						        case "8":
+						            Tspans[x].innerHTML = "D♯";
+						            break;
+						        case "9":
+						            Tspans[x].innerHTML = "E";
+						            break;
+						        case "10":
+						            Tspans[x].innerHTML = "F";
+						            break;
+						        case "11":
+						            Tspans[x].innerHTML = "F♯";
+						            break;
+						        case "12":
+						            Tspans[x].innerHTML = "G";
+						            break;
+						        case "13":
+						            Tspans[x].innerHTML = "G♯";
+						            break;
+						        case "14":
+						            Tspans[x].innerHTML = "A";
+						            break;
+						        case "15":
+						            Tspans[x].innerHTML = "A♯";
+						            break;
+						        case "16":
+						            Tspans[x].innerHTML = "B";
+						            break;
+						        case "17":
+						            Tspans[x].innerHTML = "C";
+						            break;
+						        case "18":
+						            Tspans[x].innerHTML = "C♯";
+						            break;
+						        case "19":
+						            Tspans[x].innerHTML = "D'";
+						            break;
+						        case "20":
+						            Tspans[x].innerHTML = "D♯'";
+						            break;
+						        case "21":
+						            Tspans[x].innerHTML = "E'";
+						            break;
+						        case "22":
+						            Tspans[x].innerHTML = "F'";
+						            break;
+						        case "23":
+						            Tspans[x].innerHTML = "F♯'";
+						            break;
+						        case "24":
+						            Tspans[x].innerHTML = "G'";
+						            break;
+						        case "25":
+						            Tspans[x].innerHTML = "G♯'";
+						            break;
+						        case "26":
+						            Tspans[x].innerHTML = "A'";
+						            break;
+						        case "27":
+						            Tspans[x].innerHTML = "A♯'";
+						            break;
+						        case "28":
+						            Tspans[x].innerHTML = "B'";
+						            break;
+						        case "29":
+						            Tspans[x].innerHTML = "C'";
+						            break;
+						        case "30":
+						            Tspans[x].innerHTML = "C♯'";
+						            break;
+						        case "31":
+						            Tspans[x].innerHTML = "D''";
+						            break;
+						        case "32":
+						            Tspans[x].innerHTML = "D♯''";
+						            break;
+						        case "33":
+						            Tspans[x].innerHTML = "E''";
+						            break;
+						        case "34":
+						            Tspans[x].innerHTML = "F''";
+						            break;
+						        case "35":
+						            Tspans[x].innerHTML = "F♯''";
+						            break;
+						        case "36":
+						            Tspans[x].innerHTML = "G''";
+						            break;
+						        case "37":
+						            Tspans[x].innerHTML = "G♯''";
+						            break;
+						        case "38":
+						            Tspans[x].innerHTML = "A''";
+						            break;
+						        case "39":
+						            Tspans[x].innerHTML = "A♯''";
+						            break;
+						        case "40":
+						            Tspans[x].innerHTML = "B''";
+						            break;
+						        default:
+						            Tspans[x].innerHTML = "?";
+						            break;
+						    }
 						}
+
 					} else {
-						for (x = 0; x < Tspans.length; x++) {
-							if (Tspans[x].innerHTML == "0") {
-								Tspans[x].innerHTML = "G,";
-							} else if (Tspans[x].innerHTML == "1") {
-								Tspans[x].innerHTML = "A♭,";
-							} else if (Tspans[x].innerHTML == "2") {
-								Tspans[x].innerHTML = "A,";
-							} else if (Tspans[x].innerHTML == "3") {
-								Tspans[x].innerHTML = "B♭,";
-							} else if (Tspans[x].innerHTML == "4") {
-								Tspans[x].innerHTML = "B,";
-							} else if (Tspans[x].innerHTML == "5") {
-								Tspans[x].innerHTML = "C,";
-							} else if (Tspans[x].innerHTML == "6") {
-								Tspans[x].innerHTML = "D♭";
-							} else if (Tspans[x].innerHTML == "7") {
-								Tspans[x].innerHTML = "D";
-							} else if (Tspans[x].innerHTML == "8") {
-								Tspans[x].innerHTML = "E♭";
-							} else if (Tspans[x].innerHTML == "9") {
-								Tspans[x].innerHTML = "E";
-							} else if (Tspans[x].innerHTML == "10") {
-								Tspans[x].innerHTML = "F";
-							} else if (Tspans[x].innerHTML == "11") {
-								Tspans[x].innerHTML = "G♭";
-							} else if (Tspans[x].innerHTML == "12") {
-								Tspans[x].innerHTML = "G";
-							} else if (Tspans[x].innerHTML == "13") {
-								Tspans[x].innerHTML = "A♭";
-							} else if (Tspans[x].innerHTML == "14") {
-								Tspans[x].innerHTML = "A";
-							} else if (Tspans[x].innerHTML == "15") {
-								Tspans[x].innerHTML = "B♭";
-							} else if (Tspans[x].innerHTML == "16") {
-								Tspans[x].innerHTML = "B";
-							} else if (Tspans[x].innerHTML == "17") {
-								Tspans[x].innerHTML = "C";
-							} else if (Tspans[x].innerHTML == "18") {
-								Tspans[x].innerHTML = "D♭'";
-							} else if (Tspans[x].innerHTML == "19") {
-								Tspans[x].innerHTML = "D'";
-							} else if (Tspans[x].innerHTML == "20") {
-								Tspans[x].innerHTML = "E♭'";
-							} else if (Tspans[x].innerHTML == "21") {
-								Tspans[x].innerHTML = "E'";
-							} else if (Tspans[x].innerHTML == "22") {
-								Tspans[x].innerHTML = "F'";
-							} else if (Tspans[x].innerHTML == "23") {
-								Tspans[x].innerHTML = "G♭'";
-							} else if (Tspans[x].innerHTML == "24") {
-								Tspans[x].innerHTML = "G'";
-							} else if (Tspans[x].innerHTML == "25") {
-								Tspans[x].innerHTML = "A♭'";
-							} else if (Tspans[x].innerHTML == "26") {
-								Tspans[x].innerHTML = "A'";
-							} else if (Tspans[x].innerHTML == "27") {
-								Tspans[x].innerHTML = "B♭'";
-							} else if (Tspans[x].innerHTML == "28") {
-								Tspans[x].innerHTML = "B'";
-							} else if (Tspans[x].innerHTML == "29") {
-								Tspans[x].innerHTML = "C'";
-							} else if (Tspans[x].innerHTML == "30") {
-								Tspans[x].innerHTML = "D♭''";
-							} else if (Tspans[x].innerHTML == "31") {
-								Tspans[x].innerHTML = "D''";
-							} else if (Tspans[x].innerHTML == "32") {
-								Tspans[x].innerHTML = "E♭''";
-							} else if (Tspans[x].innerHTML == "33") {
-								Tspans[x].innerHTML = "E''";
-							} else if (Tspans[x].innerHTML == "34") {
-								Tspans[x].innerHTML = "F''";
-							} else if (Tspans[x].innerHTML == "35") {
-								Tspans[x].innerHTML = "G♭''";
-							} else if (Tspans[x].innerHTML == "36") {
-								Tspans[x].innerHTML = "G''";
-							} else if (Tspans[x].innerHTML == "37") {
-								Tspans[x].innerHTML = "A♭''";
-							} else if (Tspans[x].innerHTML == "38") {
-								Tspans[x].innerHTML = "A''";
-							} else if (Tspans[x].innerHTML == "39") {
-								Tspans[x].innerHTML = "B♭''";
-							} else if (Tspans[x].innerHTML == "40") {
-								Tspans[x].innerHTML = "B''";
-							} else {
-								Tspans[x].innerHTML = "?";
-							}
+						for (var x = 0; x < Tspans.length; x++) {
+						    switch (Tspans[x].innerHTML) {
+						        case "0":
+						            Tspans[x].innerHTML = "G,";
+						            break;
+						        case "1":
+						            Tspans[x].innerHTML = "A♭,";
+						            break;
+						        case "2":
+						            Tspans[x].innerHTML = "A,";
+						            break;
+						        case "3":
+						            Tspans[x].innerHTML = "B♭,";
+						            break;
+						        case "4":
+						            Tspans[x].innerHTML = "B,";
+						            break;
+						        case "5":
+						            Tspans[x].innerHTML = "C,";
+						            break;
+						        case "6":
+						            Tspans[x].innerHTML = "D♭";
+						            break;
+						        case "7":
+						            Tspans[x].innerHTML = "D";
+						            break;
+						        case "8":
+						            Tspans[x].innerHTML = "E♭";
+						            break;
+						        case "9":
+						            Tspans[x].innerHTML = "E";
+						            break;
+						        case "10":
+						            Tspans[x].innerHTML = "F";
+						            break;
+						        case "11":
+						            Tspans[x].innerHTML = "G♭";
+						            break;
+						        case "12":
+						            Tspans[x].innerHTML = "G";
+						            break;
+						        case "13":
+						            Tspans[x].innerHTML = "A♭";
+						            break;
+						        case "14":
+						            Tspans[x].innerHTML = "A";
+						            break;
+						        case "15":
+						            Tspans[x].innerHTML = "B♭";
+						            break;
+						        case "16":
+						            Tspans[x].innerHTML = "B";
+						            break;
+						        case "17":
+						            Tspans[x].innerHTML = "C";
+						            break;
+						        case "18":
+						            Tspans[x].innerHTML = "D♭'";
+						            break;
+						        case "19":
+						            Tspans[x].innerHTML = "D'";
+						            break;
+						        case "20":
+						            Tspans[x].innerHTML = "E♭'";
+						            break;
+						        case "21":
+						            Tspans[x].innerHTML = "E'";
+						            break;
+						        case "22":
+						            Tspans[x].innerHTML = "F'";
+						            break;
+						        case "23":
+						            Tspans[x].innerHTML = "G♭'";
+						            break;
+						        case "24":
+						            Tspans[x].innerHTML = "G'";
+						            break;
+						        case "25":
+						            Tspans[x].innerHTML = "A♭'";
+						            break;
+						        case "26":
+						            Tspans[x].innerHTML = "A'";
+						            break;
+						        case "27":
+						            Tspans[x].innerHTML = "B♭'";
+						            break;
+						        case "28":
+						            Tspans[x].innerHTML = "B'";
+						            break;
+						        case "29":
+						            Tspans[x].innerHTML = "C'";
+						            break;
+						        case "30":
+						            Tspans[x].innerHTML = "D♭''";
+						            break;
+						        case "31":
+						            Tspans[x].innerHTML = "D''";
+						            break;
+						        case "32":
+						            Tspans[x].innerHTML = "E♭''";
+						            break;
+						        case "33":
+						            Tspans[x].innerHTML = "E''";
+						            break;
+						        case "34":
+						            Tspans[x].innerHTML = "F''";
+						            break;
+						        case "35":
+						            Tspans[x].innerHTML = "G♭''";
+						            break;
+						        case "36":
+						            Tspans[x].innerHTML = "G''";
+						            break;
+						        case "37":
+						            Tspans[x].innerHTML = "A♭''";
+						            break;
+						        case "38":
+						            Tspans[x].innerHTML = "A''";
+						            break;
+						        case "39":
+						            Tspans[x].innerHTML = "B♭''";
+						            break;
+						        case "40":
+						            Tspans[x].innerHTML = "B''";
+						            break;
+						        default:
+						            Tspans[x].innerHTML = "?";
+						            break;
+						    }
 						}
 					}						
 				}
