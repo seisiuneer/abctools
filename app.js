@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2342_030125_0700";
+var gVersionNumber="2343_030125_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -10721,6 +10721,9 @@ function GetABCJSParams(instrument){
 	// Let's add some capo information to the stringed instrument tab
 	if (instrument){
 
+		// Do we allow whistle transpose?
+		gAllowWhistleTabTranspose = (instrument == "whistle");
+
 		if (gShowTabNames){
 
 			if (gCapo > 0){
@@ -18608,6 +18611,18 @@ function GetABCFileHeader(){
         directives += line + '\n';
       }      
 
+      theRegex = /^%whistle_tab_octave.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding whistle_tab_octave line: "+line)
+        directives += line + '\n';
+      }    
+
+      theRegex = /^%whistle_tab_key.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding whistle_tab_key line: "+line)
+        directives += line + '\n';
+      }    
+
       theRegex = /^[ABCDFGHILMmNORrSUZ]:/
       if (theRegex.test(line)){
         //console.log("Adding ABC *: line: "+line)
@@ -22284,7 +22299,9 @@ function complianceABCTransformer(theABC,doInverse){
 	    "%allow_lowercase_chords",
 	    "%left_justify_titles",
 	    "%hide_information_labels",
-	    "%hide_rhythm_tag"
+	    "%hide_rhythm_tag",
+	    "%whistle_tab_octave",
+	    "%whistle_tab_key"
 	];
 
 	if (doInverse){

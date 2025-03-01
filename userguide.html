@@ -484,7 +484,8 @@
             <a style="text-decoration:none;" href="#left_justify_titles">Forcing Left-Justified Titles and Subtitles</a>
             <a style="text-decoration:none;" href="#hide_information_labels">Hiding Information Labels</a>
             <a style="text-decoration:none;" href="#hide_rhythm_tag">Hiding Rhythm Display</a>
-            
+            <a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a>
+           
             <h3>ABC Tricks, Tips, and Limitations</h3>
             <a style="text-decoration:none;" href="#tabtranspose">Transposing Notation Independent of Tablature</a>
             <a style="text-decoration:none;" href="#learningtunes">Learning New Tunes Part-by-Part Using ABC</a>
@@ -858,6 +859,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#left_justify_titles">Forcing Left-Justified Titles and Subtitles</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hide_information_labels">Hiding Information Labels</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hide_rhythm_tag">Hiding Rhythm Display</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">ABC Tricks, Tips, and Limitations</button>
@@ -1399,7 +1401,9 @@
                 <p>The instrument tablature button bar is shown by default, but can be hidden if desired.</p>
                 <p>See the <a href="#settings_dialog">ABC Transcription Tools Settings</a> section for details.</p>
                 <p>It is possible to generate custom stringed instrument tablature for alternate tunings (advanced feature).</p>
-                <p>See the <a style="text-decoration:none;" href="#customabcjsparams">Adding Custom abcjs Rendering Parameters</a> section for more details.</p>
+                <p>See the <a style="text-decoration:none;" href="#customabcjsparams">Adding Custom abcjs Rendering Parameters</a> section below for more details.</p>
+                <p>It is possible to show whistle tablature for whistles in keys other than D.</p>
+                <p>See the <a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a> section below for more details.</p>
                 <hr>
                 <p><strong>Notation</strong> - Standard notation only.</p>
                 <hr>
@@ -1426,6 +1430,8 @@
                 <hr>
                 <p><strong>Whistle</strong> - Shows standard notation and fingering tablature for Tin Whistle in the key of D.</p>
                 <p>Note: For notes that go below D on of the whistle (lowest note supported is the G below middle-C), the suggested "folded" octave-up fingerings are shown.</p>
+                <p>It is possible to show whistle tablature for whistles in keys other than D.</p>
+                <p>See the <a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a> section below for more details.</p>
                 <p>This can be changed to <strong>Soprano</strong> for Soprano Baroque Recorder or <strong>Alto</strong> for Alto Baroque Recorder in the tool's Settings dialog.</strong></p>
                 <hr>
                 <p><strong>Soprano</strong> - Shows standard notation and fingering tablature for Soprano Baroque Recorder.</p>
@@ -3465,6 +3471,8 @@
                     %left_justify_titles,<br/>
                     %hide_information_labels<br/>
                     %hide_rhythm_tag<br/>
+                    %whistle_tab_key<br/>
+                    %whistle_tab_octave<br/>
                 %abcjs_render_params {custom rendering parameters JSON}</p>
                 <hr class="hidden-print" id="editing_pdf_tunebooks">
                 <h1 class="page_break_always">Editing PDF Tunebooks With Other Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -5011,6 +5019,22 @@
                 <p>This only hides the R: tag value in the generated notation, it doesn't have any effect on the automatic swinging of hornpipes when</p>
                 <p class="code">R:Hornpipe</p>
                 <p>or a lower-case equivalent with or without spaces after an R: tag is found in a tune.</p>
+                <hr class="hidden-print" id="whistletabkey">
+                <h1 class="page_break_always h1wide">Changing the Tin Whistle Tablature Key and Octave<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/DLeYGl6jidU" title="Changing the tin whistle tablature key" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>The tin whistle tablature displayed when clicking the <strong>Whistle</strong> tab selector button is for a tin whistle in the key of D by default.</p>
+                <p>To optionally change the key of the displayed whistle tab, you can include the following annotation anywhere in the ABC for a tune:</p>
+                <p class="code">% Change the whistle tab key<br>%whistle_tab_key (key)</p>
+                <p>Where key is the letter name pitch of the whistle.</p>
+                <p>For example, to change the tin whistle tablature to be displayed for a tin whistle in the key of F:</p>
+                <p class="code">%whistle_tab_key F</p>
+                <p>Another example, to change the tin whistle tablature to be displayed for a tin whistle in the key of Bb:</p>
+                <p class="code">%whistle_tab_key Bb</p>
+                <p>If you wish to shift the tablature up or down an octave, you can include the following annotation anywhere in the ABC for a tune:</p>
+                <p class="code">% Change the whistle tab octave<br>%whistle_tab_octave (integer)</p>
+                <p>For example, to change the tin whistle tablature to be displayed for a tin whistle in the key of G, but shifted up an octave:</p>
+                <p class="code">%whistle_tab_key G<br/>%whistle_tab_octave 1</p>
+                <p>If either annotation is placed in the ABC file header, they will apply to all of the tunes.</p>
                 <hr class="hidden-print" id="tabtranspose">
                 <h1 class="page_break_always h1wide">Transposing Notation Independent of Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>For some tablatures like CGDAE where instruments maybe in either standard pitch or one octave lower, if you transpose the notes down an octave to get the tab on the lower strings, but want the notation displayed an octave up, you can add the following voice annotation to the ABC:</p>

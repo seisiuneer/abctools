@@ -224,6 +224,11 @@ var gHideInformationLabels = false;
 // Flag to hide the R: tag display
 var gHideRhythmTag = false;
 
+// Tab octave and semitone shifts
+var gAllowWhistleTabTranspose = false;
+var gWhistleTabShiftOctave = 0;
+var gWhistleTabShiftSemitone = 0;
+
 // Scan tune for custom abcjs rendering parameters
 function ScanTuneForABCJSRenderingParams(theTune){
 
@@ -329,6 +334,141 @@ function ScanTuneForHideRhythmTag(theTune){
   //console.log("No %hide_rhythm_tag")
 
   return false;
+}
+
+// Scan tune for whistle tab shift octave
+function ScanTuneForWhistleTabShiftOctave(theTune){
+
+  //console.log("ScanTuneForWhistleTabShiftOctave");
+
+  theTune = theTune.replace("%%abctt:whistle_tab_octave","%whistle_tab_octave");
+
+  // Next search for an whistle_tab_octave override
+  searchRegExp = /^%whistle_tab_octave.*$/gm
+
+  // Detect whistle_tab_octave annotation
+  var foundExp  = theTune.match(searchRegExp);
+
+  if ((foundExp) && (foundExp.length > 0)){
+
+    var theParamString = foundExp[0].replace("%whistle_tab_octave","");
+
+    theParamString = theParamString.trim();
+
+    var theParams = theParamString.split(" ");
+
+    if (theParams.length >= 1){
+
+      var theOctaveShiftFound = theParams[0];
+
+      var octaveShift = parseInt(theOctaveShiftFound);
+
+      if (!isNaN(octaveShift)){
+
+        return octaveShift;
+
+      }
+    }
+  }
+
+  return 0;
+
+}
+
+// Scan tune for whistle tab shift semitone
+function ScanTuneForWhistleTabShiftSemitone(theTune){
+
+  //console.log("ScanTuneForTabShiftSemitone");
+
+  theTune = theTune.replace("%%abctt:whistle_tab_key","%whistle_tab_key");
+
+  // Next search for an whistle_tab_key override
+  searchRegExp = /^%whistle_tab_key.*$/gm
+
+  // Detect whistle_tab_key annotation
+  var foundExp  = theTune.match(searchRegExp);
+
+  if ((foundExp) && (foundExp.length > 0)){
+
+    var theParamString = foundExp[0].replace("%whistle_tab_key","");
+
+    theParamString = theParamString.trim();
+
+    var theParams = theParamString.split(" ");
+
+    if (theParams.length >= 1){
+
+      var theSemitoneShiftFound = theParams[0];
+
+      var semitoneShift = theSemitoneShiftFound.toLowerCase().trim();
+
+      var shift = 0;
+
+      switch (semitoneShift){
+        case "c":
+          shift = 2;
+          break;
+        case "c#":
+          shift = 1;
+          break;
+        case "db":
+          shift = 1;
+          break;
+        case "d":
+          shift = 0;
+          break;
+        case "d#":
+          shift = -1;
+          break;
+        case "eb":
+          shift = -1;
+          break;
+        case "e":
+          shift = -2;
+          break;
+        case "f":
+          shift = -3;
+          break;
+        case "f#":
+          shift = -4;
+          break;
+        case "gb":
+          shift = -4;
+          break;
+        case "g":
+          shift = -5;
+          break;
+        case "g#":
+          shift = -6;
+          break;
+        case "ab":
+          shift = -6;
+          break;
+        case "a":
+          shift = -7;
+          break;
+        case "a#":
+          shift = -8;
+          break;
+        case "bb":
+          shift = -8;
+          break;
+        case "b":
+          shift = -9;
+          break;
+        default:
+          shift = 0;
+          break;
+      }
+
+      return shift;
+      
+    }
+
+  }
+
+  return 0;
+
 }
 
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -1116,6 +1256,16 @@ var tunebook = {};
 
           gHideRhythmTag = false;
           gHideRhythmTag = ScanTuneForHideRhythmTag(book.tunes[currentTune].abc);
+          
+          // If showing whistle tab, allow checking for transpose params
+          if (gAllowWhistleTabTranspose){
+
+            gWhistleTabShiftOctave = 0;
+            gWhistleTabShiftOctave = ScanTuneForWhistleTabShiftOctave(book.tunes[currentTune].abc);
+            
+            gWhistleTabShiftSemitone = 0;
+            gWhistleTabShiftSemitone = ScanTuneForWhistleTabShiftSemitone(book.tunes[currentTune].abc);
+          }
 
           abcParser.parse(book.tunes[currentTune].abc, workingParams, book.tunes[currentTune].startPos - book.header.length);
           var tune = abcParser.getTune();
@@ -3852,7 +4002,6 @@ var bookParser = function bookParser(book) {
     // 
     // MAE 15 Feb 2025 - Filtered ABC header handler
     //
-
     var dir = tunes.shift();
 
     var arrDir = dir.abc.split('\n');
@@ -3948,7 +4097,19 @@ var bookParser = function bookParser(book) {
       if (theRegex.test(line)){
         //console.log("Adding hide_rhythm_tag line: "+line)
         directives += line + '\n';
-      }      
+      }    
+
+      theRegex = /^%whistle_tab_key.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding whistle_tab_key line: "+line)
+        directives += line + '\n';
+      }    
+
+      theRegex = /^%whistle_tab_octave.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding whistle_tab_octave line: "+line)
+        directives += line + '\n';
+      }    
 
       theRegex = /^[ABCDFGHILMmNORrSUZ]:/
       if (theRegex.test(line)){
@@ -21117,6 +21278,12 @@ StringPatterns.prototype.notesToNumber = function (notes, graces) {
         note.checkKeyAccidentals(this.accidentals, this.measureAccidentals);
         number = toNumber(this, note);
         if (number) {
+          if (gAllowWhistleTabTranspose){
+            // MAE 1 March 2025 - For tab shifting
+            if (!isNaN(parseInt(number.num,10))){
+              number.num += (gWhistleTabShiftOctave*12) + gWhistleTabShiftSemitone;
+            }
+          }
           retNotes.push(number);
         } else {
           invalidNumber(retNotes, note);
@@ -21134,6 +21301,12 @@ StringPatterns.prototype.notesToNumber = function (notes, graces) {
       note.checkKeyAccidentals(this.accidentals, this.measureAccidentals);
       number = toNumber(this, note);
       if (number) {
+        if (gAllowWhistleTabTranspose){
+          // MAE 1 March 2025 - For tab shifting
+          if (!isNaN(parseInt(number.num,10))){
+             number.num += (gWhistleTabShiftOctave*12) + gWhistleTabShiftSemitone;
+          }
+        }
         retGraces.push(number);
       } else {
         invalidNumber(retGraces, note);
