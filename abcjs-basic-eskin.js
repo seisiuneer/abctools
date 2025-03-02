@@ -4261,6 +4261,18 @@ var bookParser = function bookParser(book) {
         directives += line + '\n';
       }    
 
+      theRegex = /^%recorder_tab_key.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding recorder_tab_key line: "+line)
+        directives += line + '\n';
+      }    
+
+      theRegex = /^%recorder_tab_octave.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding recorder_tab_octave line: "+line)
+        directives += line + '\n';
+      }    
+
       theRegex = /^[ABCDFGHILMmNORrSUZ]:/
       if (theRegex.test(line)){
         //console.log("Adding ABC *: line: "+line)
