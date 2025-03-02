@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2343_030125_1030";
+var gVersionNumber="2344_030225_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -386,9 +386,6 @@ var gShowCGDATab = false;
 
 // Show Recorder tab
 var gShowRecorderTab = false;
-
-// Recorder tab is alto
-var gRecorderAlto = false;
 
 // Confirm clear
 var gConfirmClear = true;
@@ -10724,6 +10721,9 @@ function GetABCJSParams(instrument){
 		// Do we allow whistle transpose?
 		gAllowWhistleTabTranspose = (instrument == "whistle");
 
+		// Do we allow recorder transpose?
+		gAllowRecorderTabTranspose = (instrument == "recorder");
+
 		if (gShowTabNames){
 
 			if (gCapo > 0){
@@ -10957,7 +10957,7 @@ function GetABCJSParams(instrument){
 			tablature: [{
 				instrument: 'violin',
 				label: theLabel,
-				tuning: ['G,'],
+				tuning: ['G,,,'],
 				highestNote: "^a'",
 				hideTabSymbol:true
 			}],
@@ -10974,7 +10974,7 @@ function GetABCJSParams(instrument){
 			tablature: [{
 				instrument: 'violin',
 				label: theLabel,
-				tuning: ['G,'],
+				tuning: ['C,,'],
 				highestNote: "^a'",
 				hideTabSymbol:true
 			}],
@@ -17180,16 +17180,6 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
 
 	url += postfix;
 
-	// Transmit recorder format
-	if (format == "recorder"){
-		if (gRecorderAlto){
-			url += "&alto=1";
-		}
-		else{
-			url += "&alto=0";			
-		}
-	}
-
 	// If using Comhaltas or share link forced override
 	if (gUseComhaltasABC || gForceComhaltasABC){
 		url += "&cce=1"	
@@ -18620,6 +18610,18 @@ function GetABCFileHeader(){
       theRegex = /^%whistle_tab_key.*$/
       if (theRegex.test(line)){
         //console.log("Adding whistle_tab_key line: "+line)
+        directives += line + '\n';
+      }   
+
+      theRegex = /^%recorder_tab_octave.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding recorder_tab_octave line: "+line)
+        directives += line + '\n';
+      }    
+
+      theRegex = /^%recorder_tab_key.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding recorder_tab_key line: "+line)
         directives += line + '\n';
       }    
 
@@ -21551,26 +21553,6 @@ function processShareLink() {
 
 		if (format == "recorder"){
 
-			// Is this for alto recorder?
-			if (urlParams.has("alto")) {
-				var alto = urlParams.get("alto");
-				var testAlto = parseInt(alto);
-				if (!isNaN(testAlto)){
-					if (testAlto == 1){
-						gRecorderAlto = true;
-					}
-					else{
-						gRecorderAlto = false;	
-					}
-				}
-				else{
-					gRecorderAlto = false;				
-				}
-			}
-			else{
-				gRecorderAlto = false;
-			}
-
 			// If first time using the recorder tab, prep the recorder font for embedded SVG styles
 			setupRecorderTab();
 			PrepareRecorderFont();
@@ -22301,7 +22283,9 @@ function complianceABCTransformer(theABC,doInverse){
 	    "%hide_information_labels",
 	    "%hide_rhythm_tag",
 	    "%whistle_tab_octave",
-	    "%whistle_tab_key"
+	    "%whistle_tab_key",
+	    "%recorder_tab_octave",
+	    "%recorder_tab_key"
 	];
 
 	if (doInverse){
@@ -29100,104 +29084,46 @@ function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 		    // This fixes the + cutoff issue below the second octave notes
 		    Tspans[x].setAttribute("dy","-8"); 
 
-		    if (gRecorderAlto) {
-		        // Alto recorder fingerings
-		        switch (Tspans[x].innerHTML) {
-		            case "0":  Tspans[x].innerHTML = "3"; break;
-		            case "1":  Tspans[x].innerHTML = "4"; break;
-		            case "2":  Tspans[x].innerHTML = "5"; break;
-		            case "3":  Tspans[x].innerHTML = "6"; break;
-		            case "4":  Tspans[x].innerHTML = "7"; break;
-		            case "5":  Tspans[x].innerHTML = "8"; break;
-		            case "6":  Tspans[x].innerHTML = "9"; break;
-		            case "7":  Tspans[x].innerHTML = "0"; break;
-		            case "8":  Tspans[x].innerHTML = "-"; break;
-		            case "9":  Tspans[x].innerHTML = "="; break;
-		            case "10": Tspans[x].innerHTML = "1"; break;
-		            case "11": Tspans[x].innerHTML = "2"; break;
-		            case "12": Tspans[x].innerHTML = "3"; break;
-		            case "13": Tspans[x].innerHTML = "4"; break;
-		            case "14": Tspans[x].innerHTML = "5"; break;
-		            case "15": Tspans[x].innerHTML = "6"; break;
-		            case "16": Tspans[x].innerHTML = "7"; break;
-		            case "17": Tspans[x].innerHTML = "8"; break;
-		            case "18": Tspans[x].innerHTML = "9"; break;
-		            case "19": Tspans[x].innerHTML = "0"; break;
-		            case "20": Tspans[x].innerHTML = "-"; break;
-		            case "21": Tspans[x].innerHTML = "="; break;
-		            case "22": Tspans[x].innerHTML = "q"; break;
-		            case "23": Tspans[x].innerHTML = "w"; break;
-		            case "24": Tspans[x].innerHTML = "e"; break;
-		            case "25": Tspans[x].innerHTML = "r"; break;
-		            case "26": Tspans[x].innerHTML = "t"; break;
-		            case "27": Tspans[x].innerHTML = "y"; break;
-		            case "28": Tspans[x].innerHTML = "u"; break;
-		            case "29": Tspans[x].innerHTML = "i"; break;
-		            case "30": Tspans[x].innerHTML = "o"; break;
-		            case "31": Tspans[x].innerHTML = "p"; break;
-		            case "32": Tspans[x].innerHTML = "["; break;
-		            case "33": Tspans[x].innerHTML = "]"; break;
-		            case "34": Tspans[x].innerHTML = "a"; break;
-		            case "35": Tspans[x].innerHTML = "s"; break;
-		            case "36": Tspans[x].innerHTML = "d"; break;
-		            case "37": Tspans[x].innerHTML = "f"; break;
-		            case "38": Tspans[x].innerHTML = "g"; break;
-		            case "39": Tspans[x].innerHTML = "h"; break;
-		            case "40": Tspans[x].innerHTML = "j"; break;
-		            case "41": Tspans[x].innerHTML = "k"; break;
-		            default:
-		                Tspans[x].setAttribute("class", "whistle_small");
-		                Tspans[x].setAttribute("dy", "-23");
-		                Tspans[x].innerHTML = "x";
-		                break;
-		        }
-		    } else {
-		        // Soprano recorder fingerings
-		        switch (Tspans[x].innerHTML) {
-		            case "0":  Tspans[x].innerHTML = "8"; break;
-		            case "1":  Tspans[x].innerHTML = "9"; break;
-		            case "2":  Tspans[x].innerHTML = "0"; break;
-		            case "3":  Tspans[x].innerHTML = "-"; break;
-		            case "4":  Tspans[x].innerHTML = "="; break;
-		            case "5":  Tspans[x].innerHTML = "1"; break;
-		            case "6":  Tspans[x].innerHTML = "2"; break;
-		            case "7":  Tspans[x].innerHTML = "3"; break;
-		            case "8":  Tspans[x].innerHTML = "4"; break;
-		            case "9":  Tspans[x].innerHTML = "5"; break;
-		            case "10": Tspans[x].innerHTML = "6"; break;
-		            case "11": Tspans[x].innerHTML = "7"; break;
-		            case "12": Tspans[x].innerHTML = "8"; break;
-		            case "13": Tspans[x].innerHTML = "9"; break;
-		            case "14": Tspans[x].innerHTML = "0"; break;
-		            case "15": Tspans[x].innerHTML = "-"; break;
-		            case "16": Tspans[x].innerHTML = "="; break;
-		            case "17": Tspans[x].innerHTML = "q"; break;
-		            case "18": Tspans[x].innerHTML = "w"; break;
-		            case "19": Tspans[x].innerHTML = "e"; break;
-		            case "20": Tspans[x].innerHTML = "r"; break;
-		            case "21": Tspans[x].innerHTML = "t"; break;
-		            case "22": Tspans[x].innerHTML = "y"; break;
-		            case "23": Tspans[x].innerHTML = "u"; break;
-		            case "24": Tspans[x].innerHTML = "i"; break;
-		            case "25": Tspans[x].innerHTML = "o"; break;
-		            case "26": Tspans[x].innerHTML = "p"; break;
-		            case "27": Tspans[x].innerHTML = "["; break;
-		            case "28": Tspans[x].innerHTML = "]"; break;
-		            case "29": Tspans[x].innerHTML = "a"; break;
-		            case "30": Tspans[x].innerHTML = "s"; break;
-		            case "31": Tspans[x].innerHTML = "d"; break;
-		            case "32": Tspans[x].innerHTML = "f"; break;
-		            case "33": Tspans[x].innerHTML = "g"; break;
-		            case "34": Tspans[x].innerHTML = "h"; break;
-		            case "35": Tspans[x].innerHTML = "j"; break;
-		            case "36": Tspans[x].innerHTML = "k"; break;
-		            default:
-		                Tspans[x].setAttribute("class", "whistle_small");
-		                Tspans[x].setAttribute("dy", "-23");
-		                Tspans[x].innerHTML = "x";
-		                break;
-		        }
-		    }
+	        // Recorder fingerings
+	        switch (Tspans[x].innerHTML) {
+	            case "0":  Tspans[x].innerHTML = "1"; break;
+	            case "1":  Tspans[x].innerHTML = "2"; break;
+	            case "2":  Tspans[x].innerHTML = "3"; break;
+	            case "3":  Tspans[x].innerHTML = "4"; break;
+	            case "4":  Tspans[x].innerHTML = "5"; break;
+	            case "5":  Tspans[x].innerHTML = "6"; break;
+	            case "6":  Tspans[x].innerHTML = "7"; break;
+	            case "7":  Tspans[x].innerHTML = "8"; break;
+	            case "8":  Tspans[x].innerHTML = "9"; break;
+	            case "9":  Tspans[x].innerHTML = "0"; break;
+	            case "10": Tspans[x].innerHTML = "-"; break;
+	            case "11": Tspans[x].innerHTML = "="; break;
+	            case "12": Tspans[x].innerHTML = "q"; break;
+	            case "13": Tspans[x].innerHTML = "w"; break;
+	            case "14": Tspans[x].innerHTML = "e"; break;
+	            case "15": Tspans[x].innerHTML = "r"; break;
+	            case "16": Tspans[x].innerHTML = "t"; break;
+	            case "17": Tspans[x].innerHTML = "y"; break;
+	            case "18": Tspans[x].innerHTML = "u"; break;
+	            case "19": Tspans[x].innerHTML = "i"; break;
+	            case "20": Tspans[x].innerHTML = "o"; break;
+	            case "21": Tspans[x].innerHTML = "p"; break;
+	            case "22": Tspans[x].innerHTML = "["; break;
+	            case "23": Tspans[x].innerHTML = "]"; break;
+	            case "24": Tspans[x].innerHTML = "a"; break;
+	            case "25": Tspans[x].innerHTML = "s"; break;
+	            case "26": Tspans[x].innerHTML = "d"; break;
+	            case "27": Tspans[x].innerHTML = "f"; break;
+	            case "28": Tspans[x].innerHTML = "g"; break;
+	            case "29": Tspans[x].innerHTML = "h"; break;
+	            case "30": Tspans[x].innerHTML = "j"; break;
+	            case "31": Tspans[x].innerHTML = "k"; break;
+	            default:
+	                Tspans[x].setAttribute("class", "whistle_small");
+	                Tspans[x].setAttribute("dy", "-23");
+	                Tspans[x].innerHTML = "x";
+	                break;
+	        }
 		}
 	}
 
@@ -37493,16 +37419,9 @@ function setupRecorderTab(){
 	elem.value = "recorder";
 	elem = document.getElementById("b9label");
 
-	if (gRecorderAlto){
-		elem.title = "Shows Baroque Recorder (Alto in F) tablature";
-		elem.innerHTML = "Alto";
-		elem.style.padding = "0.8rem 22px 0.7rem 22px";
-	}
-	else{
-		elem.title = "Shows Baroque Recorder (Soprano in C) tablature";
-		elem.innerHTML = "Soprano";		
-		elem.style.padding = "0.8rem 7px 0.7rem 7px";
-	}
+	elem.title = "Shows Baroque Recorder tablature";
+	elem.innerHTML = "Recorder";		
+	elem.style.padding = "0.8rem 7px 0.7rem 7px";
 }
 
 //
@@ -38727,13 +38646,6 @@ function GetInitialConfigurationSettings(){
 		}
 	}
 
-	// Recorder tab is in F
-	gRecorderAlto = false;
-	val = localStorage.RecorderAlto;
-	if (val){
-		gRecorderAlto = (val == "true");
-	}
-
 	// Show Recorder Tab
 	gShowRecorderTab = false;
 	val = localStorage.ShowRecorderTab;
@@ -39021,9 +38933,6 @@ function SaveConfigurationSettings(){
 
 		// Show the recorder tab
 		localStorage.ShowRecorderTab = gShowRecorderTab;
-
-		// Recorder tab is Alto
-		localStorage.RecorderAlto = gRecorderAlto;
 
 		// Confirm Clear
 		localStorage.ConfirmClear = gConfirmClear;
@@ -41802,8 +41711,6 @@ function ConfigureToolSettings() {
 
 	var oldRecorderTab = gShowRecorderTab;
 
-	var oldRecorderAlto = gRecorderAlto;
-
 	var oldTabSelected = GetRadioValue("notenodertab");
 
 	// Setup initial values
@@ -41823,7 +41730,6 @@ function ConfigureToolSettings() {
 		configure_show_dgdae: gShowDGDAETab,
 		configure_show_cgda: gShowCGDATab,
 		configure_show_recorder: gShowRecorderTab,
-		configure_recorder_alto: gRecorderAlto,
 		configure_comhaltas: gUseComhaltasABC,	
 		configure_RollUseRollForIrishRoll: gRollUseRollForIrishRoll,
 		configure_allow_offline_instruments: gAllowOfflineInstruments,
@@ -41864,7 +41770,6 @@ function ConfigureToolSettings() {
 		{name: "Stringed instrument capo fret position:", id: "configure_capo", type:"number", cssClass:"configure_settings_form_text"},
 		{name: "    Show stringed instrument names on tablature (single-voice tunes only, not shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "          Show Recorder tab button instead of the Whistle tab button", id: "configure_show_recorder", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-		{name: "          Recorder tab is for Alto in F (default is Soprano in C)", id: "configure_recorder_alto", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{html: '<p style="text-align:center;"><input id="abcplayer_settingsbutton" style="margin-left:0px" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ConfigurePlayerSettings(null);" type="button" value="Select Default Player Instruments and Volumes" title="Brings up the Player Instrument Settings dialog where you can select the default abcjs soundfont, MIDI instruments, and MIDI volumes to use when playing tunes"><input id="managedatabases" class="btn btn-managedatabases managedatabases" onclick="ManageDatabasesDialog()" type="button" value="Manage Notes, Reverb, and Tune Search Databases" title="Opens a dialog where you can manage the instrument notes, reverb settings, and tune search engine collection databases"></p>'},
 		{name: "    Allow instrument notes and reverb settings database to be used offline", id: "configure_allow_offline_instruments", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "    Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
@@ -42099,9 +42004,6 @@ function ConfigureToolSettings() {
 			// For tab format change detect
 			gShowRecorderTab = args.result.configure_show_recorder;
 
-			// Is alto?
-			gRecorderAlto = args.result.configure_recorder_alto;
-
 			if (gShowRecorderTab){
 				setupRecorderTab();
 			}
@@ -42109,7 +42011,7 @@ function ConfigureToolSettings() {
 				setupWhistleTab();				
 			}
 
-			if ((gShowRecorderTab != oldRecorderTab) || (gRecorderAlto != oldRecorderAlto)){
+			if (gShowRecorderTab != oldRecorderTab){
 				
 				gWhistleFontPrepared = false;
 				gRecorderFontPrepared = false;
@@ -42230,7 +42132,7 @@ function ConfigureToolSettings() {
 			var radiovalue = GetRadioValue("notenodertab");
 
 			// Do we need to re-render?
-			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || (oldCGDA != gShowCGDATab) || (oldDGDAE != gShowDGDAETab) || (oldRecorderTab != gShowRecorderTab) || (gRecorderAlto != oldRecorderAlto) || bTabForceRedraw
+			if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || (oldCGDA != gShowCGDATab) || (oldDGDAE != gShowDGDAETab) || (oldRecorderTab != gShowRecorderTab) || bTabForceRedraw
 				|| ((radiovalue == "notenames") && ((gUseComhaltasABC != theOldComhaltas) || (theOldForceComhaltas && (!gUseComhaltasABC))))){
 				
 				RenderAsync(true, null, function(){

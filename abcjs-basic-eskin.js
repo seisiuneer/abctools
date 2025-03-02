@@ -224,10 +224,16 @@ var gHideInformationLabels = false;
 // Flag to hide the R: tag display
 var gHideRhythmTag = false;
 
-// Tab octave and semitone shifts
+// Whistle tab octave and semitone shifts
 var gAllowWhistleTabTranspose = false;
 var gWhistleTabShiftOctave = 0;
 var gWhistleTabShiftSemitone = 0;
+
+// Recorder tab octave and semitone shifts
+var gAllowRecorderTabTranspose = false;
+var gRecorderTabShiftOctave = 0;
+var gRecorderTabShiftSemitone = 0;
+
 
 // Scan tune for custom abcjs rendering parameters
 function ScanTuneForABCJSRenderingParams(theTune){
@@ -365,13 +371,13 @@ function ScanTuneForWhistleTabShiftOctave(theTune){
 
       if (!isNaN(octaveShift)){
 
-        return octaveShift;
+        return octaveShift-2;
 
       }
     }
   }
 
-  return 0;
+  return -2;
 
 }
 
@@ -455,6 +461,141 @@ function ScanTuneForWhistleTabShiftSemitone(theTune){
           break;
         case "b":
           shift = -9;
+          break;
+        default:
+          shift = 0;
+          break;
+      }
+
+      return shift;
+      
+    }
+
+  }
+
+  return 0;
+
+}
+
+// Scan tune for recorder tab shift octave
+function ScanTuneForRecorderTabShiftOctave(theTune){
+
+  //console.log("ScanTuneForRecorderTabShiftOctave");
+
+  theTune = theTune.replace("%%abctt:recorder_tab_octave","%recorder_tab_octave");
+
+  // Next search for an recorder_tab_octave override
+  searchRegExp = /^%recorder_tab_octave.*$/gm
+
+  // Detect recorder_tab_octave annotation
+  var foundExp  = theTune.match(searchRegExp);
+
+  if ((foundExp) && (foundExp.length > 0)){
+
+    var theParamString = foundExp[0].replace("%recorder_tab_octave","");
+
+    theParamString = theParamString.trim();
+
+    var theParams = theParamString.split(" ");
+
+    if (theParams.length >= 1){
+
+      var theOctaveShiftFound = theParams[0];
+
+      var octaveShift = parseInt(theOctaveShiftFound);
+
+      if (!isNaN(octaveShift)){
+
+        return octaveShift-2;
+
+      }
+    }
+  }
+
+  return -2;
+
+}
+
+// Scan tune for recorder tab shift semitone
+function ScanTuneForRecorderTabShiftSemitone(theTune){
+
+  //console.log("ScanTuneForRecorderTabShiftSemitone");
+
+  theTune = theTune.replace("%%abctt:recorder_tab_key","%recorder_tab_key");
+
+  // Next search for an recorder_tab_key override
+  searchRegExp = /^%recorder_tab_key.*$/gm
+
+  // Detect recorder_tab_key annotation
+  var foundExp  = theTune.match(searchRegExp);
+
+  if ((foundExp) && (foundExp.length > 0)){
+
+    var theParamString = foundExp[0].replace("%recorder_tab_key","");
+
+    theParamString = theParamString.trim();
+
+    var theParams = theParamString.split(" ");
+
+    if (theParams.length >= 1){
+
+      var theSemitoneShiftFound = theParams[0];
+
+      var semitoneShift = theSemitoneShiftFound.toLowerCase().trim();
+
+      var shift = 0;
+
+      switch (semitoneShift){
+        case "c":
+          shift = 0;
+          break;
+        case "c#":
+          shift = -1;
+          break;
+        case "db":
+          shift = -1;
+          break;
+        case "d":
+          shift = -2;
+          break;
+        case "d#":
+          shift = -3;
+          break;
+        case "eb":
+          shift = -3;
+          break;
+        case "e":
+          shift = -4;
+          break;
+        case "f":
+          shift = -5;
+          break;
+        case "f#":
+          shift = -6;
+          break;
+        case "gb":
+          shift = -6;
+          break;
+        case "g":
+          shift = -7;
+          break;
+        case "g#":
+          shift = -8;
+          break;
+        case "ab":
+          shift = -8;
+          break;
+        case "a":
+          shift = -9;
+          break;
+        case "a#":
+          shift = -10;
+          break;
+        case "bb":
+          shift = -10;
+          break;
+        case "b":
+          shift = -11;
           break;
         default:
           shift = 0;
@@ -1265,6 +1406,15 @@ var tunebook = {};
             
             gWhistleTabShiftSemitone = 0;
             gWhistleTabShiftSemitone = ScanTuneForWhistleTabShiftSemitone(book.tunes[currentTune].abc);
+          }
+          // If showing recorder tab, allow checking for transpose params
+          if (gAllowRecorderTabTranspose){
+
+            gRecorderTabShiftOctave = 0;
+            gRecorderTabShiftOctave = ScanTuneForRecorderTabShiftOctave(book.tunes[currentTune].abc);
+            
+            gRecorderTabShiftSemitone = 0;
+            gRecorderTabShiftSemitone = ScanTuneForRecorderTabShiftSemitone(book.tunes[currentTune].abc);
           }
 
           abcParser.parse(book.tunes[currentTune].abc, workingParams, book.tunes[currentTune].startPos - book.header.length);
@@ -21284,6 +21434,12 @@ StringPatterns.prototype.notesToNumber = function (notes, graces) {
               number.num += (gWhistleTabShiftOctave*12) + gWhistleTabShiftSemitone;
             }
           }
+          if (gAllowRecorderTabTranspose){
+            // MAE 2 March 2025 - For tab shifting
+            if (!isNaN(parseInt(number.num,10))){
+              number.num += (gRecorderTabShiftOctave*12) + gRecorderTabShiftSemitone;
+            }
+          }
           retNotes.push(number);
         } else {
           invalidNumber(retNotes, note);
@@ -21305,6 +21461,12 @@ StringPatterns.prototype.notesToNumber = function (notes, graces) {
           // MAE 1 March 2025 - For tab shifting
           if (!isNaN(parseInt(number.num,10))){
              number.num += (gWhistleTabShiftOctave*12) + gWhistleTabShiftSemitone;
+          }
+        }
+        if (gAllowRecorderTabTranspose){
+          // MAE 2 March 2025 - For tab shifting
+          if (!isNaN(parseInt(number.num,10))){
+            number.num += (gRecorderTabShiftOctave*12) + gRecorderTabShiftSemitone;
           }
         }
         retGraces.push(number);

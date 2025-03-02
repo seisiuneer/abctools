@@ -37,6 +37,9 @@
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
         
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-5C74XEDW40"></script>
+        
         <style>
         
         p {
@@ -485,6 +488,7 @@
             <a style="text-decoration:none;" href="#hide_information_labels">Hiding Information Labels</a>
             <a style="text-decoration:none;" href="#hide_rhythm_tag">Hiding Rhythm Display</a>
             <a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a>
+            <a style="text-decoration:none;" href="#recordertabkey">Changing the Recorder Tablature Key and Octave</a>
            
             <h3>ABC Tricks, Tips, and Limitations</h3>
             <a style="text-decoration:none;" href="#tabtranspose">Transposing Notation Independent of Tablature</a>
@@ -860,6 +864,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#hide_information_labels">Hiding Information Labels</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hide_rhythm_tag">Hiding Rhythm Display</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#recordertabkey">Changing the Recorder Tablature Key and Octave</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">ABC Tricks, Tips, and Limitations</button>
@@ -1400,10 +1405,6 @@
                 </div>
                 <p>The instrument tablature button bar is shown by default, but can be hidden if desired.</p>
                 <p>See the <a href="#settings_dialog">ABC Transcription Tools Settings</a> section for details.</p>
-                <p>It is possible to generate custom stringed instrument tablature for alternate tunings (advanced feature).</p>
-                <p>See the <a style="text-decoration:none;" href="#customabcjsparams">Adding Custom abcjs Rendering Parameters</a> section below for more details.</p>
-                <p>It is possible to show whistle tablature for whistles in keys other than D.</p>
-                <p>See the <a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a> section below for more details.</p>
                 <hr>
                 <p><strong>Notation</strong> - Standard notation only.</p>
                 <hr>
@@ -1432,15 +1433,12 @@
                 <p>Note: For notes that go below D on of the whistle (lowest note supported is the G below middle-C), the suggested "folded" octave-up fingerings are shown.</p>
                 <p>It is possible to show whistle tablature for whistles in keys other than D.</p>
                 <p>See the <a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a> section below for more details.</p>
-                <p>This can be changed to <strong>Soprano</strong> for Soprano Baroque Recorder or <strong>Alto</strong> for Alto Baroque Recorder in the tool's Settings dialog.</strong></p>
+                <p>This can be changed to <strong>Recorder</strong> for Baroque Recorder fingering tablature in the tool's Settings dialog.</strong></p>
                 <hr>
-                <p><strong>Soprano</strong> - Shows standard notation and fingering tablature for Soprano Baroque Recorder.</p>
+                <p><strong>Recorder</strong> - Shows standard notation and fingering tablature for Soprano Baroque Recorder in C.</p>
                 <p>This can be changed to <strong>Whistle</strong> for Tin Whistle in the key of D in the tool's Settings dialog.</strong></p>
-                <p>Note: For notes that go below C on the recorder (lowest note supported is the G below middle-C), the suggested "folded" octave-up fingerings are shown.</p>
-                <hr>
-                <p><strong>Alto</strong> - Shows standard notation and fingering tablature for Alto Baroque Recorder.</p>
-                <p>This can be changed to <strong>Whistle</strong> for Tin Whistle in the key of D in the tool's Settings dialog.</strong></p>
-                <p>Note: For notes that go below F on the recorder (lowest note supported is the G below middle-C), the suggested "folded" octave-up fingerings are shown.</p>
+                <p>It is possible to show Baroque Recorder tablature for recorders in keys other than C.</p>
+                <p>See the <a style="text-decoration:none;" href="#recordertabkey">Changing the Recorder Tablature Key and Octave</a> section below for more details.</p>
                 <hr>
                 <p>Up to 8 voices may be displayed with tablature.</p>
                 <hr>
@@ -3473,6 +3471,8 @@
                     %hide_rhythm_tag<br/>
                     %whistle_tab_key<br/>
                     %whistle_tab_octave<br/>
+                    %recorder_tab_key<br/>
+                    %recorder_tab_octave<br/>
                 %abcjs_render_params {custom rendering parameters JSON}</p>
                 <hr class="hidden-print" id="editing_pdf_tunebooks">
                 <h1 class="page_break_always">Editing PDF Tunebooks With Other Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -4503,7 +4503,7 @@
                 <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_61.jpg"/>
+                    <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_62.jpg"/>
                 </div>
                 <hr id="ipad_side_by_side">
                 <p><strong>iPad Side-by-Side View (similar to desktop)</strong> (iPad only)</p>
@@ -4559,10 +4559,8 @@
                 <p>At this time, instrument names below the tablature will only be displayed for single-voice tunes.</p>
                 <hr>
                 <p><strong>Show Recorder tab button instead of the Whistle tab button</strong></p>
-                <p>When checked replaces the Whistle tab button with a Soprano or Alto tab button for Baroque Recorder fingering tablature.</p>
+                <p>When checked replaces the Whistle tab button with a Recorder button for Baroque Recorder fingering tablature.</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/qcI-DrrnKRs" title="Baroque Recorder Tablature Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p><strong>Recorder tab is for Alto in F (default is Soprano in C)</strong></p>
-                <p>When checked shows Alto fingerings when Baroque Recorder tab is selected. If unchecked, fingerings for Soprano in C are used.</p>
                 <hr id="default_player_settings">
                 <p><strong>Select Default Player Instruments and Volumes</strong></p>
                 <p>Brings up a dialog where you can select default MIDI soundfont, programs, and volumes to use for the Melody, Bass, and Chords:</p>
@@ -5032,8 +5030,25 @@
                 <p class="code">%whistle_tab_key Bb</p>
                 <p>If you wish to shift the tablature up or down an octave, you can include the following annotation anywhere in the ABC for a tune:</p>
                 <p class="code">% Change the whistle tab octave<br>%whistle_tab_octave (integer)</p>
-                <p>For example, to change the tin whistle tablature to be displayed for a tin whistle in the key of G, but shifted up an octave:</p>
+                <p>For example, to change the tin whistle tablature to be displayed for a tin whistle in the key of G, with the pitch to fingering mapping shifted up an octave:</p>
                 <p class="code">%whistle_tab_key G<br/>%whistle_tab_octave 1</p>
+                <p>If either annotation is placed in the ABC file header, they will apply to all of the tunes.</p>
+                <hr class="hidden-print" id="recordertabkey">
+                <h1 class="page_break_always h1wide">Changing the Recorder Tablature Key and Octave<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/Iil2XiyRVyg" title="Changing the Baroque recorder tablature key and octave" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>The recorder tablature displayed when clicking the <strong>Recorder</strong> tab selector button is by default for a Baroque Soprano recorder in the key of C.</p>
+                <p>To optionally change the key of the displayed recorder tab, you can include the following annotation anywhere in the ABC for a tune:</p>
+                <p class="code">% Change the recorder tab key<br>%recorder_tab_key (key)</p>
+                <p>Where key is the letter name pitch of the recorder.</p>
+                <p>For example, to change the recorder tablature to be displayed for an Alto recorder in the key of F:</p>
+                <p class="code">%recorder_tab_key F</p>
+                <p>If you wish to shift the tablature up or down one or more octaves, you can include the following annotation anywhere in the ABC for a tune:</p>
+                <p class="code">% Change the recorder tab octave<br>%recorder_tab_octave (integer)</p>
+                <p>For example, to change the recorder tablature to be displayed for a Bass recorder in the key of F, with the pitch to fingering mapping shifted up two octaves:</p>
+                <p class="code">%recorder_tab_key F<br/>%recorder_tab_octave 2</p>
+                <p>Note: If after shifting the octaves, particularly when using bass clef, you see a display issue where the tablature partially overlays the notation, you can shift the tablature display down by adding the following command in the ABC for the tune:</p>
+                <p class="code">% Shift the tab display down<br/>%abcjs_render_params {"tabPadding":8}</p>
+                <p>Experiment with the tabPadding value until you get the result you want.</p>
                 <p>If either annotation is placed in the ABC file header, they will apply to all of the tunes.</p>
                 <hr class="hidden-print" id="tabtranspose">
                 <h1 class="page_break_always h1wide">Transposing Notation Independent of Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
