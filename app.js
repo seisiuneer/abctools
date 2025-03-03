@@ -16329,7 +16329,7 @@ function AppendTuneTempate(){
 	theValue += 'L: 1/8\n';
 	theValue += '%\n';
 	theValue += '% Tempo:\n';
-	theValue += 'Q: 1/8=120\n';
+	theValue += 'Q: 1/4=120\n';
 	theValue += '%\n';
 	theValue += '% Key:\n';
 	theValue += 'K: C\n';
