@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2345_030225_1030";
+var gVersionNumber="2346_030425_1230";
 
 var gMIDIInitStillWaiting = false;
 
@@ -497,7 +497,14 @@ function hideTheSpinner(){
 // Clean a filename
 //
 function cleanFileName(fname){
-	return fname.replace(/[^a-zA-Z'áÁóÓúÚíÍéÉäÄöÖüÜÀàÈèÌìÒòÙù0-9_\-.# ]+/ig, '');
+
+	// Clean filename chars
+	var theStr = fname.replace(/[^a-zA-Z'áÁóÓúÚíÍéÉäÄöÖüÜÀàÈèÌìÒòÙù0-9_\-. ]+/ig, '');
+
+	// Reduce multiple spaces to one space
+	theStr = theStr.replace(/\s+/g, ' ');
+
+	return theStr;
 }
 
 //
@@ -26155,21 +26162,42 @@ function DownloadJPEG(callback, val){
 		sendGoogleAnalytics("export","DownloadJPEG");
 	}
 
-	var theWidth = document.getElementById("export_width").value;
+	var isWebsiteExport = false;
 
-	theWidth = parseInt(theWidth);
+	var elem = document.getElementById("export_width");
 
-	if (isNaN(theWidth)){
-		theWidth = 2400;
+	if (!elem){
+		isWebsiteExport = true;
+	}
+
+	var theWidth;
+
+	if (!isWebsiteExport){
+
+		theWidth = document.getElementById("export_width").value;
+
+		theWidth = parseInt(theWidth);
+
+		if (isNaN(theWidth)){
+			theWidth = 2400;
+		}
+	}
+	else{
+		// Render website images at high resolution
+		theWidth = gWebsiteImageWidth*2;
 	}
 
 	if (!callback){
 
-		gExportWidth = theWidth;
+		if (!isWebsiteExport){
 
-		// Save off the last entered width for next time
-		if (gLocalStorageAvailable){
-			localStorage.ExportWidth = theWidth;
+			gExportWidth = theWidth;
+
+			// Save off the last entered width for next time
+			if (gLocalStorageAvailable){
+				localStorage.ExportWidth = theWidth;
+			}
+
 		}
 
 	}
@@ -26550,7 +26578,7 @@ function BatchJPEGExport(){
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","BatchJPEGExport");
 
-	DoBatchImageExport("JPEG");
+	DoBatchImageExport("JPEG",null);
 }
 
 function BatchPNGExport(){
@@ -26558,7 +26586,7 @@ function BatchPNGExport(){
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","BatchPNGExport");
 
-	DoBatchImageExport("PNG");
+	DoBatchImageExport("PNG",null);
 }
 
 function BatchSVGExport(){
@@ -26566,7 +26594,7 @@ function BatchSVGExport(){
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","BatchSVGExport");
 
-	DoBatchImageExport("SVG");
+	DoBatchImageExport("SVG",null);
 }
 
 function BatchMIDIExport(){
@@ -26574,27 +26602,32 @@ function BatchMIDIExport(){
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","BatchMIDIExport");
 
-	DoBatchImageExport("MIDI");
+	DoBatchImageExport("MIDI",null);
 }
 
-function DoBatchImageExport(imageFormat){
+function DoBatchImageExport(imageFormat,website_callback){
 
 	var totalTunesToExport;
 
-	if (imageFormat != "MIDI"){
+	var isWebsiteExport = false;
 
-		gExportWidthAll = document.getElementById("export_width").value;
-		gExportWidthAll = parseInt(gExportWidthAll);
+	if (!website_callback){
 
-		if (isNaN(gExportWidthAll)){
-			gExportWidthAll = 2400;
+		if (imageFormat != "MIDI"){
+
+			gExportWidthAll = document.getElementById("export_width").value;
+			gExportWidthAll = parseInt(gExportWidthAll);
+
+			if (isNaN(gExportWidthAll)){
+				gExportWidthAll = 2400;
+			}
+
+			// Save off the last entered width for next time
+			if (gLocalStorageAvailable){
+				localStorage.ExportWidthAll = gExportWidthAll;
+			}
+
 		}
-
-		// Save off the last entered width for next time
-		if (gLocalStorageAvailable){
-			localStorage.ExportWidthAll = gExportWidthAll;
-		}
-
 	}
 
 	function callback2(theOKButton){
@@ -26633,16 +26666,28 @@ function DoBatchImageExport(imageFormat){
 				gBatchImageExportCancelRequested = false;
 
 				clearGetTuneByIndexCache();
+
+				if (website_callback){
+
+					website_callback(false);
+
+				}
+
 			}
 		}
 		else{
+
 			clearGetTuneByIndexCache();
+
+			if (website_callback){
+
+				website_callback(true);
+
+			}
 		}
 	}
 
 	function callback(result,theOKButton){
-
-		//console.log("callback called result = "+result);
 
 		switch (imageFormat){
 			case "MIDI":
@@ -47435,6 +47480,7 @@ function DoStartup() {
 		}
 		
 	}
+
 	//
 	// Uncomment these lines for mobile simulation testing
 	//

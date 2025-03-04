@@ -211,6 +211,14 @@ function LoadWebsiteSettings(){
             gWebsiteAddFullscreen = true;
         }
 
+        val = localStorage.WebsiteImageWidth;
+        if (val){
+            gWebsiteImageWidth = val;
+        }
+        else{
+            gWebsiteImageWidth = 800;
+        }
+
         // Stuff the updated config
         gWebsiteConfig ={
 
@@ -272,7 +280,10 @@ function LoadWebsiteSettings(){
             website_helpurl: gWebsiteHelpURL,
 
             // Add fullscreen
-            bAddFullscreen: gWebsiteAddFullscreen
+            bAddFullscreen: gWebsiteAddFullscreen,
+
+            // Add image width
+            image_width: gWebsiteImageWidth
 
         }
     }
@@ -324,6 +335,7 @@ function SaveWebsiteSettings(){
         localStorage.WebsiteAddHelp = gWebsiteAddHelp;
         localStorage.WebsiteHelpURL = gWebsiteHelpURL;
         localStorage.WebsiteAddFullscreen = gWebsiteAddFullscreen;
+        localStorage.WebsiteImageWidth = gWebsiteImageWidth;
     }
 }
 
@@ -477,6 +489,71 @@ function BatchJSONExportForWebGenerator(theABC){
 }
 
 //
+// Export all the tunes displayed name, filename, and Share URL in a JSON file
+//
+function BatchJSONExportForWebGalleryGenerator(theABC){
+
+    // Make sure there are tunes to convert
+
+    var theTunes = theABC.split(/^X:.*$/gm);
+
+    var nTunes = theTunes.length - 1;
+
+    if (nTunes == 0){
+        return null;
+    }
+
+    var theJSON = [];
+
+    clearGetTuneByIndexCache();
+
+    for (var i=0;i<nTunes;++i){
+
+        var thisTune = getTuneByIndex(i);
+
+        if (gWebsiteInjectInstruments){
+
+            thisTune = WebsiteInjectInstruments(thisTune);
+        }
+
+        var title = GetWebsiteTuneName(thisTune);
+
+        // If section header, strip the *
+        if (title.startsWith('*')) {
+            title = title.substring(1);
+        }
+
+        var fileName = GetTuneAudioDownloadName(thisTune,".jpg")
+
+        thisTune = GetABCFileHeader() + thisTune;
+
+        var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
+
+        var titleURL = title.replaceAll("&","");
+        titleURL = titleURL.replaceAll(" ","_");
+        titleURL = titleURL.replaceAll("#","^");
+
+        theURL+="&name="+titleURL;
+
+        if (gWebsiteOpenInPlayer){
+            theURL+="&play=1";
+        }
+
+        if (gWebsiteDisableEdit){
+            theURL+="&dx=1";
+        }
+
+        theJSON.push({Name:title,Filename:fileName,URL:theURL});
+
+    }
+
+    var theJSONString = "const tunes="+JSON.stringify(theJSON)+";";
+
+    return theJSONString;
+
+}
+
+//
 // Get the melody instrument name
 //
 function getInstrumentNameForWebSelector(index){
@@ -587,9 +664,6 @@ function generateAndSaveWebsiteFull() {
         return;
     }
 
-    // Keep track of actions
-    sendGoogleAnalytics("action","generateWebsite");
-
     var theJSON = BatchJSONExportForWebGenerator(theABC);
 
     if (!theJSON){
@@ -607,6 +681,9 @@ function generateAndSaveWebsiteFull() {
 
         return;
     }
+
+    // Keep track of actions
+    sendGoogleAnalytics("action","SaveWebsiteFull");
 
     // Create the website code
 
@@ -1513,9 +1590,6 @@ function generateAndSaveWebsiteSimple() {
         return;
     }
 
-    // Keep track of actions
-    sendGoogleAnalytics("action","generateWebsite");
-
     var theJSON = BatchJSONExportForWebGenerator(theABC);
 
     if (!theJSON){
@@ -1533,6 +1607,9 @@ function generateAndSaveWebsiteSimple() {
 
         return;
     }
+
+    // Keep track of actions
+    sendGoogleAnalytics("action","SaveWebsiteSimple");
 
     // Create the website code
 
@@ -1745,7 +1822,7 @@ function generateAndSaveWebsiteSimple() {
     theOutput += "    "+theJSON;
     theOutput +="\n";
     theOutput +="\n";
-    theOutput +="    // Populate the selector with options from JSON\n";
+    theOutput +="    // Populate the tunes div with options from JSON\n";
     theOutput +="    document.addEventListener('DOMContentLoaded', () => {\n";
     theOutput +="\n";
     
@@ -1767,6 +1844,7 @@ function generateAndSaveWebsiteSimple() {
     theOutput +="          link.textContent = tune.Name;\n"
     theOutput +="          link.href = tune.URL;\n"
     theOutput +="          link.target = '_blank';  // Opens the link in a new tab\n"
+    theOutput +="          link.title = 'Click to play \"'+tune.Name+'\"';\n"
     theOutput +="\n";
 
     theOutput +="          // Append the link to the list item, and the list item to the ul\n"
@@ -1871,6 +1949,427 @@ function generateAndSaveWebsiteSimple() {
 
 }
 
+
+//
+// Generate an image gallery website
+//
+function generateAndSaveWebsiteImageGallery() {
+
+    var theOutput = "";
+
+    var theABC = gTheABC.value;
+
+    // For local storage naming
+    var postFix = generatePostfix();
+
+    //console.log("postFix: "+postFix);
+
+    // Any tunes to reformat?
+    if (CountTunes() == 0){
+
+        clearGetTuneByIndexCache();
+
+        var thePrompt = "No ABC tunes to export.";
+
+        thePrompt = makeCenteredPromptString(thePrompt);
+
+        DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 200
+        });
+
+        return;
+    }
+
+    var theJSON = BatchJSONExportForWebGalleryGenerator(theABC);
+
+    if (!theJSON){
+
+        clearGetTuneByIndexCache();
+
+        var thePrompt = "Problem generating tune share links!";
+
+        thePrompt = makeCenteredPromptString(thePrompt);
+
+          DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 200
+        });
+
+        return;
+    }
+
+    // Keep track of actions
+    sendGoogleAnalytics("action","SaveWebsiteImageGallery");
+
+    // Create the website code
+
+    // Header
+    theOutput += "<!DOCTYPE html>\n";
+    theOutput +="\n";
+    theOutput +='<html lang="en">\n';
+    theOutput +="\n";
+    theOutput +="<head>\n";
+    theOutput +="\n";
+    theOutput +='<meta charset="UTF-8">\n';
+
+    theOutput +='<meta name="viewport" content="width=860" />\n'; 
+    theOutput +='<meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png" />\n';
+    theOutput +="\n";
+    theOutput +="<title>"+gWebsiteTitle+"</title>\n";
+    theOutput +="\n";
+
+    // CSS
+    theOutput +="<style>\n";
+    theOutput +="\n";
+    theOutput +="    body {\n";
+    theOutput +="        font-family: Arial, sans-serif;\n";
+    if ((gWebsiteColor.indexOf("gradient") == -1) && (gWebsiteColor.indexOf("url(") == -1)){
+        theOutput +="        background-color: "+gWebsiteColor+";\n";
+    }
+    else{
+        // Center the image and fill the page
+        if (gWebsiteColor.indexOf("url(") != -1){
+            theOutput +="        background: center "+gWebsiteColor+";\n";   
+            theOutput +="        background-size: cover;\n";   
+        }
+        else{
+            // Just inject the gradient
+            theOutput +="        background-image: "+gWebsiteColor+";\n";   
+        }
+    }
+    theOutput +="        margin: 0px;\n";
+    theOutput +="        padding: 0px;\n";
+    theOutput +="    }\n";
+    theOutput +="\n";
+    theOutput +="    .container {\n";
+    theOutput +="        margin: 0px auto;\n";
+    theOutput +="        text-align: center;\n";
+    theOutput +="        overflow-x: hidden;\n";
+    theOutput +="    }\n";
+    theOutput +="\n";
+    theOutput +="    h1 {\n";
+    theOutput +="        font-size: 24px;\n";
+    theOutput +="        margin-top: 24px;\n";
+    theOutput +="        margin-bottom: 0px;\n";
+    theOutput +="        color: "+gWebsiteTextColor+";\n";
+    theOutput +="    }\n";
+    theOutput +="\n";
+
+    if (gWebsiteTitle && (gWebsiteTitle != "")) {   
+        theOutput +="    h2 {\n";
+        theOutput +="        font-size: 18px;\n";
+        theOutput +="        margin-top: 18px;\n";
+        theOutput +="        margin-bottom: 24px;\n";
+        theOutput +="        color: "+gWebsiteTextColor+";\n";
+        theOutput +="    }\n";
+    }else{
+        theOutput +="    h2 {\n";
+        theOutput +="        font-size: 18px;\n";
+        theOutput +="        margin-top: 24px;\n";
+        theOutput +="        margin-bottom: 24px;\n";
+        theOutput +="        color: "+gWebsiteTextColor+";\n";
+        theOutput +="    }\n";       
+    }
+    theOutput +="\n";
+
+    theOutput +="    p {\n";
+    theOutput +="        color: "+gWebsiteTextColor+";\n";
+    theOutput +="    }\n";
+    theOutput +="\n";
+    theOutput +="    a {\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+    theOutput +="        font-size: 18px;\n";
+    theOutput +="        text-decoration: none;\n";
+    theOutput +="    }\n";
+    theOutput +="    a:link {\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+    theOutput +="    }\n";
+    theOutput +="    a:visited {\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+    theOutput +="    }\n";    
+    theOutput +="    a:hover {\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+    theOutput +="    }\n";    
+    theOutput +="    a:active {\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+    theOutput +="    }\n";
+    theOutput +="\n";
+
+    theOutput +="    #footer1{\n";
+    theOutput +="        font-size: 18px;\n";
+    theOutput +="        margin-top: 16px;\n";
+    theOutput +="        margin-bottom: 16px;\n";
+    theOutput +="        color: "+gWebsiteTextColor+";\n";
+    theOutput +="    }\n";
+    theOutput +="\n";
+    theOutput +="    #footer2{\n";
+    theOutput +="        font-size: 18px;\n";
+    theOutput +="        margin-top: 16px;\n";
+    theOutput +="        margin-bottom: 16px;\n";
+    theOutput +="        color: "+gWebsiteTextColor+";\n";
+    theOutput +="    }\n";
+    theOutput +="\n";
+
+    theOutput +="    .image-container {\n";
+    theOutput +="      margin: 20px 0;\n";
+    theOutput +="      text-align: center;\n";
+    theOutput +="    }\n";
+    theOutput +="\n";
+
+    if (gWebsiteImageWidth >= 800){
+        theOutput +="    .image-container img {\n";
+        theOutput +="      max-width: 100%;\n";
+        theOutput +="      height: auto;\n";
+        theOutput +="      cursor: pointer;\n";
+        theOutput +="      border-left: 18px solid white;\n";
+        theOutput +="      border-right: 18px solid white;\n";
+        theOutput +="      border-bottom: 32px solid white;\n";
+        theOutput +="    }\n";
+        theOutput +="\n";
+    }
+    else{
+        theOutput +="    .image-container img {\n";
+        theOutput +="      max-width: 100%;\n";
+        theOutput +="      height: auto;\n";
+        theOutput +="      cursor: pointer;\n";
+        theOutput +="      border-left: 12px solid white;\n";
+        theOutput +="      border-right: 12px solid white;\n";
+        theOutput +="      border-bottom: 26px solid white;\n";
+        theOutput +="    }\n";
+        theOutput +="\n";
+    }
+
+    if (gWebsiteAddHelp){
+        // There is a title or subtitle present
+        if ((gWebsiteTitle && (gWebsiteTitle != "")) || (gWebsiteSubtitle && (gWebsiteSubtitle != ""))){
+            theOutput +="    #website_help{\n";
+            theOutput +="        font-size: 28pt;\n";
+            theOutput +="        position: absolute;\n";
+            theOutput +="        left: 16px;\n";
+            theOutput +="        top: 12px;\n";
+            theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+            theOutput +="    }\n";
+            theOutput +="\n";
+        }
+        else{
+            theOutput +="    #website_help{\n";
+            theOutput +="        font-size: 28pt;\n";
+            theOutput +="        position: absolute;\n";
+            theOutput +="        left: 16px;\n";
+            theOutput +="        top: 10px;\n";
+            theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+            theOutput +="    }\n";
+            theOutput +="\n";
+        }
+    }
+
+    theOutput +="</style>\n";
+    theOutput +="\n";
+    theOutput +="</head>\n";
+    theOutput +="\n";
+
+    // HTML
+    theOutput +="<body>\n";
+    theOutput +="\n";
+    theOutput +='    <div class="container">\n';
+    if (gWebsiteAddHelp){
+        theOutput +='        <a id="website_help" href="'+gWebsiteHelpURL+'" target="_blank" style="text-decoration:none;" title="Information about using this tunebook" class="cornerbutton">?</a>\n';
+    }
+    var gotTitle = false;
+    if (gWebsiteTitle && (gWebsiteTitle != "")){
+        theOutput +="        <h1 id=\"title\">"+gWebsiteTitle+"</h1>\n";
+        gotTitle = true;
+    }
+    var gotSubTitle = false;
+    if (gWebsiteSubtitle && (gWebsiteSubtitle != "")){
+        theOutput +="        <h2 id=\"subtitle\">"+gWebsiteSubtitle+"</h2>\n";
+        gotSubTitle = true;
+    }
+
+    if (gotTitle || gotSubTitle){
+        theOutput +='        <hr style="margin-top:24px;margin-bottom:24px;width:500px;color:white;">\n';
+    }
+
+    theOutput +='        <div id="image_gallery"></div>\n';  
+
+    var doHR = false;
+    if ((gWebsiteFooter1 && (gWebsiteFooter1 != "")) || (gWebsiteFooter2 && (gWebsiteFooter2 != ""))){
+        doHR = true;
+    }
+
+    if (doHR){
+        theOutput +='        <hr style="margin-top:24px;margin-bottom:24px;width:500px;color:white;">\n';
+    }
+      
+    var gotFooter = false;
+    if (gWebsiteFooter1 && (gWebsiteFooter1 != "")){
+        theOutput +='        <p id="footer1">'+gWebsiteFooter1+'</p>\n';
+        gotFooter = true;
+    }
+    if (gWebsiteFooter2 && (gWebsiteFooter2 != "")){
+
+        if (gotFooter){
+            theOutput +='        <p id="footer2">'+gWebsiteFooter2+'</p>\n';
+        }
+        else{
+            theOutput +='        <p id="footer2">'+gWebsiteFooter2+'</p>\n';            
+        }
+    }
+
+    if (doHR){
+        theOutput +='        <hr style="margin-top:24px;margin-bottom:24px;width:500px;color:white;">\n';
+    }
+
+    theOutput +="    </div>\n";
+    theOutput +="\n";
+
+    // JavaScript
+    theOutput +="    <script>\n";
+    theOutput +="\n";
+    theOutput += "    "+theJSON;
+    theOutput +="\n";
+    theOutput +="\n";
+    theOutput +="    // Populate the tunes div with images from JSON\n";
+    theOutput +="    document.addEventListener('DOMContentLoaded', () => {\n";
+    theOutput +="\n";  
+    theOutput +="        // Select the div where the images will be inserted\n"
+    theOutput +="        gallery = document.getElementById('image_gallery');\n"
+    theOutput +="\n";
+    theOutput +="        // Loop through the array and create img elements\n"
+    theOutput +="        tunes.forEach(item => {\n"
+    theOutput +="\n";
+    theOutput +="          // Create a div to hold each image\n"
+    theOutput +="          const div = document.createElement('div');\n"
+    theOutput +="          div.classList.add('image-container');\n"
+    theOutput +="\n";
+    theOutput +="          // Create an img element\n"
+    theOutput +="          const img = document.createElement('img');\n"
+    theOutput +="          img.src = item.Filename;\n"
+    theOutput +="          img.alt = item.Name;\n"
+    theOutput +="          img.title = 'Click to play \"'+item.Name+'\"';\n"
+    theOutput +="          img.setAttribute('loading', 'lazy');\n"
+    theOutput +="          img.setAttribute('width', '"+gWebsiteImageWidth+"');\n"
+    theOutput +="\n";
+    theOutput +="          // Add click event to open the link\n"
+    theOutput +="          img.addEventListener('click', () => {\n"
+    theOutput +="            window.open(item.URL, '_blank');\n"
+    theOutput +="          });\n"
+    theOutput +="\n";
+    theOutput +="          // Append the img to the div\n"
+    theOutput +="          div.appendChild(img);\n"
+    theOutput +="\n";
+    theOutput +="          // Append the div to the gallery\n"
+    theOutput +="          gallery.appendChild(div);\n"
+    theOutput +="\n";
+    theOutput +="        });\n"
+    theOutput +="\n";
+    theOutput +="    });\n";    
+    theOutput +="\n";
+    theOutput +="</script>\n";
+    theOutput +="\n";
+    theOutput +="</body>\n";
+    theOutput +="\n";
+    theOutput +="</html>\n";
+
+    var theData = theOutput
+
+    if (theData.length == 0) {
+
+        clearGetTuneByIndexCache();
+
+        DayPilot.Modal.alert("Nothing to save!", {
+            theme: "modal_flat",
+            top: 200
+        });
+
+        return;
+    }
+
+    var thePlaceholder = gWebsiteFilename;
+    if (thePlaceholder == ""){
+        thePlaceholder = "abctools_website.html";
+    }
+
+    var thePrompt = "Please enter a filename for your output website HTML file:";
+
+    DayPilot.Modal.prompt(thePrompt, thePlaceholder, {
+        theme: "modal_flat",
+        top: 200,
+        autoFocus: false
+    }).then(function(args) {
+
+        clearGetTuneByIndexCache();
+
+        var fname = args.result;
+
+        // If the user pressed Cancel, exit
+        if (fname == null) {
+            return null;
+        }
+
+        DoBatchImageExport("JPEG",function(cancelRequested){
+
+            if (!cancelRequested){
+
+                var fname = args.result;
+
+                // If the user pressed Cancel, exit
+                if (fname == null) {
+                    return null;
+                }
+
+                // Strip out any naughty HTML tag characters
+                fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+                if (fname.length == 0) {
+                    return null;
+                }
+
+                // Give it a good extension
+         
+                if (!fname.endsWith(".html")) {
+
+                    // Give it a good extension
+                    fname = fname.replace(/\..+$/, '');
+                    fname = fname + ".html";
+
+                }
+
+                gWebsiteFilename = fname;
+
+                if (gLocalStorageAvailable){
+                    localStorage.WebsiteFilename = gWebsiteFilename;
+                }
+
+                var a = document.createElement("a");
+
+                document.body.appendChild(a);
+
+                a.style = "display: none";
+
+                var blob = new Blob([theData], {
+                            type: "text/html"
+                        }),
+         
+                url = window.URL.createObjectURL(blob);
+                a.href = url;
+                a.download = fname;
+                a.click();
+
+                document.body.removeChild(a);
+
+                setTimeout(function() {
+                    window.URL.revokeObjectURL(url);
+                }, 1000);
+            }
+
+        });
+
+    });
+
+}
+
 var gWebsiteSoundFont = "fluid";
 var gWebsiteInjectInstruments = true;
 var gWebsiteBassInstrument = 1;
@@ -1895,6 +2394,7 @@ var gWebsiteTabSelector = true;
 var gWebsiteAddHelp = false;
 var gWebsiteHelpURL = "";
 var gWebsiteAddFullscreen = true;
+var gWebsiteImageWidth = 800;
 
 var gWebsiteConfig ={
 
@@ -1956,7 +2456,10 @@ var gWebsiteConfig ={
     website_helpurl: gWebsiteHelpURL,
 
     // Add fullscreen
-    bAddFullscreen: gWebsiteAddFullscreen
+    bAddFullscreen: gWebsiteAddFullscreen,
+
+    // Image width
+    image_width: gWebsiteImageWidth
 
 }
 
@@ -2220,7 +2723,7 @@ function generateWebsiteSimple(){
       {name: "Tunebook help URL:", id: "website_helpurl", type:"text",cssClass:"configure_website_form_text_wide5_simple"},      
       {name: "          Disable access to editor ", id: "bDisableEdit", type:"checkbox", cssClass:"configure_website_form_text2_simple"},
       {name: "          Tunes open in the Player ", id: "bOpenInPlayer", type:"checkbox", cssClass:"configure_website_form_text2_simple"},
-      {name: "          Add instruments and volume overrides to each tune ", id: "bInjectInstruments", type:"checkbox", cssClass:"configure_website_form_text2"},
+      {name: "          Add instruments and volume overrides to each tune ", id: "bInjectInstruments", type:"checkbox", cssClass:"configure_website_form_text2_simple"},
       {name: "Soundfont:", id: "sound_font", type:"select", options:sound_font_options, cssClass:"configure_setuppdftunebook_midi_program_select"},
       {name: "Melody instrument:", id: "melody_instrument", type:"select", options:website_export_midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
       {name: "Bass instrument:", id: "bass_instrument", type:"select", options:website_export_midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
@@ -2373,18 +2876,235 @@ function generateWebsiteSimple(){
 }
 
 //
+// Generate a simple website with images and links
+//
+function generateWebsiteImageGallery(){
+
+    // If disabled, return
+    if (!gAllowWebExport){
+        return;
+    }
+
+    // Restore saved settings
+    LoadWebsiteSettings();
+
+    if (!website_export_midi_program_list){
+
+        //console.log("Generating website export MIDI program list");
+
+        website_export_midi_program_list=[];
+        
+        for (var i=0;i<=MIDI_PATCH_COUNT;++i){
+            website_export_midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
+        }
+    }
+
+    const sound_font_options = [
+        { name: "  Fluid", id: "fluid" },
+        { name: "  Musyng Kite", id: "musyng" },
+        { name: "  FatBoy", id: "fatboy" },
+        { name: "  Canvas", id: "canvas" },
+        { name: "  MScore", id: "mscore" },
+        { name: "  Arachno", id: "arachno" },
+        { name: "  FluidHQ", id: "fluidhq"}
+    ];
+
+    var form = [
+      {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:18px">Export Tune Image Gallery Website&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#generate_website" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
+      {html: '<p style="margin-top:10px;margin-bottom:18px;font-size:12pt;line-height:14pt;font-family:helvetica">Clicking "Export" will export a tune image vertical gallery website with the settings you enter below:</p>'},  
+      {name: "Website title:", id: "website_title", type:"text", cssClass:"configure_website_form_text_wide_gallery"},
+      {name: "Website subtitle:", id: "website_subtitle", type:"text", cssClass:"configure_website_form_text_wide2_gallery"},
+      {name: "Website footer #1:", id: "website_footer1", type:"text", cssClass:"configure_website_form_text_wide2_gallery"},
+      {name: "Website footer #2:", id: "website_footer2", type:"text", cssClass:"configure_website_form_text_wide2_gallery"},
+      {html: '<p style="margin-top:28px;margin-bottom:18px;font-size:12pt;line-height:14pt;font-family:helvetica">Background can be an HTML color, HTML gradient, or url(\'path_to_image\') image:</p>'},  
+      {name: "Website background:", id: "website_color", type:"text",cssClass:"configure_website_form_text_wide5_gallery"},      
+      {name: "Text color (HTML color):", id: "website_textcolor", type:"text",cssClass:"configure_website_form_text2_gallery"},      
+      {name: "Hyperlink color (HTML color, also used for help icon):", id: "website_hyperlinkcolor", type:"text",cssClass:"configure_website_form_text2_gallery"},
+      {name: "Tune image display width in pixels:", id: "image_width", type:"number", cssClass:"configure_website_form_text2_gallery"},
+      {name: "Tunebook help URL:", id: "website_helpurl", type:"text",cssClass:"configure_website_form_text_wide5_gallery"},      
+      {name: "          Disable access to editor ", id: "bDisableEdit", type:"checkbox", cssClass:"configure_website_form_text2_gallery"},
+      {name: "          Tunes open in the Player ", id: "bOpenInPlayer", type:"checkbox", cssClass:"configure_website_form_text2_gallery"},
+      {name: "          Add instruments and volume overrides to each tune ", id: "bInjectInstruments", type:"checkbox", cssClass:"configure_website_form_text2_gallery"},
+      {name: "Soundfont:", id: "sound_font", type:"select", options:sound_font_options, cssClass:"configure_setuppdftunebook_midi_program_select"},
+      {name: "Melody instrument:", id: "melody_instrument", type:"select", options:website_export_midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
+      {name: "Bass instrument:", id: "bass_instrument", type:"select", options:website_export_midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
+      {name: "Bass volume (0-127):", id: "bass_volume", type:"number", cssClass:"configure_website_form_text"},
+      {name: "Chord instrument:", id: "chord_instrument", type:"select", options:website_export_midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
+      {name: "Chord volume (0-127):", id: "chord_volume", type:"number", cssClass:"configure_website_form_text"},
+    ];
+
+    const modal = DayPilot.Modal.form(form, gWebsiteConfig, { theme: "modal_flat", top: 10, width: 760, scrollWithPage: (AllowDialogsToScroll()), okText: "Export", autoFocus: false } ).then(function(args){
+    
+        if (!args.canceled){
+
+            clearGetTuneByIndexCache();
+
+            gWebsiteImageWidth = args.result.image_width
+            gWebsiteConfig.image_width = gWebsiteImageWidth;
+
+            // Title
+            gWebsiteTitle = args.result.website_title;
+            gWebsiteConfig.website_title = gWebsiteTitle;
+
+            // Subtitle
+            gWebsiteSubtitle = args.result.website_subtitle;
+            gWebsiteConfig.website_subtitle = gWebsiteSubtitle;
+
+            // Footer 1
+            gWebsiteFooter1 = args.result.website_footer1;
+            gWebsiteConfig.website_footer1 = gWebsiteFooter1;
+
+            // Footer 2
+            gWebsiteFooter2 = args.result.website_footer2;
+            gWebsiteConfig.website_footer2 = gWebsiteFooter2;
+
+            // Background color
+            gWebsiteColor = args.result.website_color;
+            gWebsiteConfig.website_color = gWebsiteColor;
+
+            // Text color
+            gWebsiteTextColor = args.result.website_textcolor;
+            gWebsiteConfig.website_textcolor = gWebsiteTextColor;
+
+            // Hyperlink color
+            gWebsiteHyperlinkColor = args.result.website_hyperlinkcolor;
+            gWebsiteConfig.website_hyperlinkcolor = gWebsiteHyperlinkColor;
+
+            // Add help?
+            gWebsiteAddHelp = args.result.bAddHelp;
+            gWebsiteConfig.bAddHelp = gWebsiteAddHelp;
+
+            // Help URL
+            gWebsiteHelpURL = args.result.website_helpurl;
+            gWebsiteConfig.website_helpurl = gWebsiteHelpURL;
+
+            // Open in player
+            gWebsiteOpenInPlayer = args.result.bOpenInPlayer;
+            gWebsiteConfig.bOpenInPlayer = gWebsiteOpenInPlayer;
+
+            // Disable edit
+            gWebsiteDisableEdit = args.result.bDisableEdit
+            gWebsiteConfig.bDisableEdit = gWebsiteDisableEdit;
+
+            // Add instruments?
+            gWebsiteInjectInstruments = args.result.bInjectInstruments;
+            gWebsiteConfig.bInjectInstruments = gWebsiteInjectInstruments;
+
+            // Soundfont
+            gWebsiteSoundFont = args.result.sound_font;
+            gWebsiteConfig.sound_font = gWebsiteSoundFont;
+
+            // Melody Instrument
+            gWebsiteMelodyInstrument = args.result.melody_instrument;
+            gWebsiteConfig.melody_instrument = gWebsiteMelodyInstrument;
+
+            // Bass Instrument
+            gWebsiteBassInstrument = args.result.bass_instrument;
+            gWebsiteConfig.bass_instrument = gWebsiteBassInstrument;
+
+            // Bass volume
+            gWebsiteBassVolume = args.result.bass_volume;
+            gWebsiteConfig.bass_volume = gWebsiteBassVolume;
+
+            // Chord Instrument
+            gWebsiteChordInstrument = args.result.chord_instrument;
+            gWebsiteConfig.chord_instrument = gWebsiteChordInstrument;
+
+            // Chord volume
+            gWebsiteChordVolume = args.result.chord_volume;
+            gWebsiteConfig.chord_volume = gWebsiteChordVolume;
+
+            if (gWebsiteInjectInstruments){
+                
+                // Special case for muting voices
+                if (gWebsiteMelodyInstrument == 0){
+
+                    gWebsiteMelodyInstrumentInject = "mute";
+
+                }
+                else{
+
+                    gWebsiteMelodyInstrumentInject = gWebsiteMelodyInstrument - 1;
+
+                    if ((gWebsiteMelodyInstrumentInject < 0) || (gWebsiteMelodyInstrumentInject > MIDI_PATCH_COUNT)){
+
+                        gWebsiteMelodyInstrumentInject = 0;
+
+                    }
+                }
+
+                // Special case for muting voices
+                if (gWebsiteBassInstrument == 0){
+
+                    gWebsiteBassInstrumentInject = "mute";
+
+                }
+                else{
+
+                    gWebsiteBassInstrumentInject = gWebsiteBassInstrument - 1;
+
+                    if ((gWebsiteBassInstrumentInject < 0) || (gWebsiteBassInstrumentInject > MIDI_PATCH_COUNT)){
+
+                        gWebsiteBassInstrumentInject = 0;
+
+                    }
+
+                }
+
+                // Special case for muting voices
+                if (gWebsiteChordInstrument == 0){
+
+                    gWebsiteChordInstrumentInject = "mute";
+
+                }
+                else{
+
+                    gWebsiteChordInstrumentInject = gWebsiteChordInstrument - 1;
+
+                    if ((gWebsiteChordInstrumentInject < 0) || (gWebsiteChordInstrumentInject > MIDI_PATCH_COUNT)){
+
+                        gWebsiteChordInstrumentInject = 0;
+
+                    }
+
+                }
+
+            }
+
+            // Restore saved settings
+            SaveWebsiteSettings();
+
+            generateAndSaveWebsiteImageGallery();
+
+        }
+
+    });
+}
+
+
+//
 // Generate website
 //
 function generateWebsite(){
 
     var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:18pt;font-family:helvetica;margin-left:15px;">Export Website&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#generate_website" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
     
-    modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Basic Tune List Website</strong> to export a technically simple website with a clickable list of all tunes in the ABC. Playback instruments may be optionally specified.</p>';
+    modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Basic Tune List Website</strong> to export a technically simple website with a list of all tunes in the ABC vertically down the center of the page. Playback instruments may be optionally specified.</p>';
     modal_msg  += '<p style="font-size:18px;line-height:28px;">Clicking a tune name in the list will open the tune in a new browser tab.</p>';
-    modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Full-Featured Tunebook Website</strong> to export a website with a dropdown list of tune names and optional tablature styles. Playback instruments may be optionally specified. Website remembers user\'s last selected tune and tablature setting.</p>';
+
+    if (isPureDesktopBrowser()){
+        modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Tune Image Gallery Website</strong> to export a website with tune notation images of all the tunes in the ABC vertically down the center of the page. Playback instruments may be optionally specified.</p>';
+        modal_msg  += '<p style="font-size:18px;line-height:28px;">Clicking a tune image will open the tune in a new browser tab.</p>';
+    }
+
+    modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Full-Featured Tunebook Website</strong> to export a website with a dropdown list of tune names and optional tablature styles. Playback instruments may be optionally specified. The website remembers the user\'s last selected tune and tablature setting.</p>';
     modal_msg  += '<p style="font-size:18px;line-height:28px;margin-bottom:36px;">Clicking a tune name in the tune list dropdown opens it in a frame on the same browser tab.</p>';
 
     modal_msg  += '<p style="text-align:center;"><input id="websitesimple" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteSimple()" type="button" value="Export Basic Tune List Website" title="Generates a website that has a list of tunes that open in a new browser tab when clicked.">';
+    
+    if (isPureDesktopBrowser()){
+        modal_msg  += '<input id="websiteimages" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteImageGallery()" type="button" value="Export Tune Image Gallery Website" title="Generates a website that has the images of the tunes that open for playback in a new browser tab when clicked."></p><p style="text-align:center;margin-top:32px;">';
+    }
 
     modal_msg  += '<input id="websitefull" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteFull()" type="button" value="Export Full-Featured Tunebook Website" title="Generates a website that has dropdowns for the tunes and optional display tablature selection.&nbsp;&nbsp;When a tune is selected from the dropdown, the tune opens in an iframe on the page."></p>';
     
