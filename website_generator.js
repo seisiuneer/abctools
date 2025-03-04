@@ -219,6 +219,20 @@ function LoadWebsiteSettings(){
             gWebsiteImageWidth = 800;
         }
 
+        val = localStorage.WebsiteImageWidthIsPercentage;
+        if (val){
+            gWebsiteImageWidthIsPercentage = (val == "true");
+        }
+        else{
+
+            if (gWebsiteImageWidth.indexOf("%") != -1){
+                gWebsiteImageWidthIsPercentage = true;
+            }
+            else{
+                gWebsiteImageWidthIsPercentage = false;
+            }
+        }
+
         // Stuff the updated config
         gWebsiteConfig ={
 
@@ -283,7 +297,10 @@ function LoadWebsiteSettings(){
             bAddFullscreen: gWebsiteAddFullscreen,
 
             // Add image width
-            image_width: gWebsiteImageWidth
+            image_width: gWebsiteImageWidth,
+
+            // Is it a percentage
+            image_width_is_percentage: gWebsiteImageWidthIsPercentage
 
         }
     }
@@ -336,6 +353,7 @@ function SaveWebsiteSettings(){
         localStorage.WebsiteHelpURL = gWebsiteHelpURL;
         localStorage.WebsiteAddFullscreen = gWebsiteAddFullscreen;
         localStorage.WebsiteImageWidth = gWebsiteImageWidth;
+        localStorage.WebsiteImageWidthIsPercentage = gWebsiteImageWidthIsPercentage;
     }
 }
 
@@ -2117,7 +2135,7 @@ function generateAndSaveWebsiteImageGallery() {
     theOutput +="    }\n";
     theOutput +="\n";
 
-    if (gWebsiteImageWidth >= 800){
+    if (gWebsiteImageWidthIsPercentage || (gWebsiteImageWidth >= 800)){
         theOutput +="    .image-container img {\n";
         theOutput +="      max-width: 100%;\n";
         theOutput +="      height: auto;\n";
@@ -2395,6 +2413,7 @@ var gWebsiteAddHelp = false;
 var gWebsiteHelpURL = "";
 var gWebsiteAddFullscreen = true;
 var gWebsiteImageWidth = 800;
+var gWebsiteImageWidthIsPercentage = false;
 
 var gWebsiteConfig ={
 
@@ -2459,7 +2478,10 @@ var gWebsiteConfig ={
     bAddFullscreen: gWebsiteAddFullscreen,
 
     // Image width
-    image_width: gWebsiteImageWidth
+    image_width: gWebsiteImageWidth,
+
+    // Image width is a percentage
+    image_width_is_percentage: gWebsiteImageWidthIsPercentage
 
 }
 
@@ -2920,7 +2942,7 @@ function generateWebsiteImageGallery(){
       {name: "Website background:", id: "website_color", type:"text",cssClass:"configure_website_form_text_wide5_gallery"},      
       {name: "Text color (HTML color):", id: "website_textcolor", type:"text",cssClass:"configure_website_form_text2_gallery"},      
       {name: "Hyperlink color (HTML color, also used for help icon):", id: "website_hyperlinkcolor", type:"text",cssClass:"configure_website_form_text2_gallery"},
-      {name: "Tune image display width in pixels:", id: "image_width", type:"number", cssClass:"configure_website_form_text2_gallery"},
+      {name: "Tune image width (number for fixed width, number with % for responsive):", id: "image_width", type:"number", cssClass:"configure_website_form_text2_gallery"},
       {name: "Tunebook help URL:", id: "website_helpurl", type:"text",cssClass:"configure_website_form_text_wide5_gallery"},      
       {name: "          Disable access to editor ", id: "bDisableEdit", type:"checkbox", cssClass:"configure_website_form_text2_gallery"},
       {name: "          Tunes open in the Player ", id: "bOpenInPlayer", type:"checkbox", cssClass:"configure_website_form_text2_gallery"},
@@ -2941,6 +2963,15 @@ function generateWebsiteImageGallery(){
 
             gWebsiteImageWidth = args.result.image_width
             gWebsiteConfig.image_width = gWebsiteImageWidth;
+
+            if (gWebsiteImageWidth.indexOf("%") != -1){
+                gWebsiteImageWidthIsPercentage = true;
+            }
+            else{
+                gWebsiteImageWidthIsPercentage = false;
+            }
+
+            gWebsiteConfig.image_width_is_percentage = gWebsiteImageWidthIsPercentage;
 
             // Title
             gWebsiteTitle = args.result.website_title;

@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2347_030425_1300";
+var gVersionNumber="2348_030425_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -26183,8 +26183,15 @@ function DownloadJPEG(callback, val){
 		}
 	}
 	else{
+
 		// Render website images at high resolution
-		theWidth = gWebsiteImageWidth*2;
+		if (!gWebsiteImageWidthIsPercentage){
+			theWidth = gWebsiteImageWidth*2;
+		}
+		else{
+			// For responsive sites, render at a fixed size of 2400
+			theWidth = 2400;
+		}
 	}
 
 	if (!callback){
