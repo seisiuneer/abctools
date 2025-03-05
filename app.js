@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2349_030425_1800";
+var gVersionNumber="2350_030525_0100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -26209,7 +26209,16 @@ function DownloadJPEG(callback, val){
 
 		// Render website images at high resolution
 		if (!gWebsiteImageWidthIsPercentage){
-			theWidth = gWebsiteImageWidth*2;
+
+			theWidth = parseInt(gWebsiteImageWidth);
+			
+			if (!isNaN(theWidth)){
+				theWidth = theWidth*2;
+			}
+			else{
+				theWidth = 2400;
+			}
+
 		}
 		else{
 			// For responsive sites, render at a fixed size of 2400

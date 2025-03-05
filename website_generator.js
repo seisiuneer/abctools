@@ -224,13 +224,7 @@ function LoadWebsiteSettings(){
             gWebsiteImageWidthIsPercentage = (val == "true");
         }
         else{
-
-            if (gWebsiteImageWidth.indexOf("%") != -1){
-                gWebsiteImageWidthIsPercentage = true;
-            }
-            else{
-                gWebsiteImageWidthIsPercentage = false;
-            }
+            gWebsiteImageWidthIsPercentage = false;
         }
 
         // Stuff the updated config
