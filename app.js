@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2348_030425_1400";
+var gVersionNumber="2349_030425_1800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -20793,134 +20793,157 @@ function ShortenURL(e){
 		return;
 	}
 
-	// If you hold down the Shift and Alt key when clicking the shorten button, it will inject a %hyperlink annotation into the tune
-	var autoInject = false;
+	if (!gDoTinyURLAPIKeyOverride){
 
-	if (e && e.shiftKey && e.altKey){
-		autoInject = true;
-	}
+		var thePrompt = '<p style="text-align:center;font-size:12pt;line-height:18pt;font-family:helvetica">I get a very few number of free TinyURL shortening sessions per month that are shared across all users of the tool.</p><p style="text-align:center;font-size:12pt;line-height:18pt;font-family:helvetica">Do you absolutely need a shortened URL?</p><p style="text-align:center;font-size:12pt;line-height:18pt;font-family:helvetica">If not, please consider just copy and pasting the full Share URL instead.</p><p style="text-align:center;font-size:12pt;line-height:18pt;font-family:helvetica">If you need to create many shortened URLs, please get your own TinyURL key and enter it in the <strong>Advanced Settings</strong> dialog to avoid this alert.</p><p style="text-align:center;font-size:12pt;line-height:18pt;font-family:helvetica">The process for getting your own TinyURL API key is described here:</p><p style="text-align:center;font-size:12pt;line-height:18pt;font-family:helvetica"><a href="https://michaeleskin.com/abctools/userguide.html#private_tinyurl_token" target="_blank">Private TinyURL API Token</a></p><p style="text-align:center;font-size:12pt;line-height:18pt;font-family:helvetica">Warning: Do not post TinyURL links from this tool on Facebook!</p><p style="text-align:center;font-size:12pt;line-height:18pt;font-family:helvetica">Facebook considers shortened URLs as intellectual property theft since they strip away Facebook\'s added URL tracking parameters and have been known to temporarily suspend the accounts of those using them in posts.</p>';
 
-	// Keep track of URL shortening
-	sendGoogleAnalytics("sharing","shorten_share_url");
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
 
-	var theURL = document.getElementById("urltextbox");
+		DayPilot.Modal.confirm(thePrompt,{ top:100, theme: "modal_flat", okText:"Proceed", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
 
-	var theData = theURL.value;
+			if (!args.canceled){
 
-	let body = {
-
-	  url: theData
-	
-	}
-
-	// Either use my own or the user's TinyURL key
-	var theAPIKey = gTinyURLAPIKey;
-
-	if (gDoTinyURLAPIKeyOverride){
-
-		theAPIKey = "Bearer "+gTinyURLAPIKeyOverride;
+				doShortenURL();
+			}
+		});
 
 	}
+	else{
+		doShortenURL();
+	}
 
-	fetch(`https://api.tinyurl.com/create`, {
-	    method: `POST`,
-	    headers: {
-	      accept: `application/json`,
-	      authorization: theAPIKey,
-	      'content-type': `application/json`,
-	    },
-	    body: JSON.stringify(body)
-	  })
-	  .then(response => {
+	function doShortenURL(){
 
-	  	// If it fails, go back to the old way
-	    if (response.status != 200){
+		// If you hold down the Shift and Alt key when clicking the shorten button, it will inject a %hyperlink annotation into the tune
+		var autoInject = false;
 
-	    	ShortenURLFallback();
-
-	    	return;
-
-	    };
-
-	    return response.json()
-
-	  })
-	  .then(data => {
-
-	  	// Copy the shortened
-		CopyToClipboard(data.data.tiny_url);
-
-		var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica">Shortened URL Copied to the Clipboard</p>';
-	   	modal_msg += '<p style="text-align:center;font-size:14pt;line-height:19pt;font-family:helvetica">Short URL:</p>';
-	   	modal_msg += '<p style="text-align:center;font-size:14pt;line-height:19pt;font-family:helvetica"><a href="'+data.data.tiny_url+'" target="_blank">'+data.data.tiny_url+'</a></p>';
-
-		DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
-
-		// Auto-injecting the shortened URL as a hyperlink?
-		if (autoInject){
-
-			var nTunes = CountTunes();
-
-			var theNotes = gTheABC.value;
-
-			// Find the tunes
-			var theTunes = theNotes.split(/^X:/gm);
-
-			var output = FindPreTuneHeader(theNotes);
-
-			for (var i=1;i<=nTunes;++i){
-
-				var theTune = "X:"+theTunes[i];
-
-				output += InjectStringBelowTuneHeader(theTune,"%hyperlink "+data.data.tiny_url);
-
-			}
-
-			// Stuff in the output
-			setABCEditorText(output);
-			
-			// Set dirty
-			gIsDirty = true;
-
-			// Force a redraw
-			RenderAsync(true,null,function(){
-
-				// Set the select point
-				gTheABC.selectionStart = 0;
-			    gTheABC.selectionEnd = 0;
-
-			    // Focus after operation
-			    FocusAfterOperation();
-
-			});
-		}
-			
-		if (!gDoTinyURLAPIKeyOverride){
-
-			// Keep track of default TinyURL token use
-			gTinyURLCount++;
-
-			if (gLocalStorageAvailable){
-				localStorage.TinyURLCount = gTinyURLCount;
-			}
-
-			// Remind them on 5th use about custom TinyURL tokens
-			if ((gTinyURLCount == 5) || (gTinyURLCount == 10)){
-
-				TinyURLReminderDialog();
-
-			}
+		if (e && e.shiftKey && e.altKey){
+			autoInject = true;
 		}
 
-	  })
-	  .catch(
-	  	error => {
+		// Keep track of URL shortening
+		sendGoogleAnalytics("sharing","shorten_share_url");
 
-	  		ShortenURLFallback();
+		var theURL = document.getElementById("urltextbox");
 
-	    	return;
+		var theData = theURL.value;
 
-	  });
+		let body = {
+
+		  url: theData
+		
+		}
+
+		// Either use my own or the user's TinyURL key
+		var theAPIKey = gTinyURLAPIKey;
+
+		if (gDoTinyURLAPIKeyOverride){
+
+			theAPIKey = "Bearer "+gTinyURLAPIKeyOverride;
+
+		}
+
+		fetch(`https://api.tinyurl.com/create`, {
+		    method: `POST`,
+		    headers: {
+		      accept: `application/json`,
+		      authorization: theAPIKey,
+		      'content-type': `application/json`,
+		    },
+		    body: JSON.stringify(body)
+		  })
+		  .then(response => {
+
+		  	// If it fails, go back to the old way
+		    if (response.status != 200){
+
+		    	ShortenURLFallback();
+
+		    	return;
+
+		    };
+
+		    return response.json()
+
+		  })
+		  .then(data => {
+
+		  	// Copy the shortened
+			CopyToClipboard(data.data.tiny_url);
+
+			var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica">Shortened URL Copied to the Clipboard</p>';
+		   	modal_msg += '<p style="text-align:center;font-size:14pt;line-height:19pt;font-family:helvetica">Short URL:</p>';
+		   	modal_msg += '<p style="text-align:center;font-size:14pt;line-height:19pt;font-family:helvetica"><a href="'+data.data.tiny_url+'" target="_blank">'+data.data.tiny_url+'</a></p>';
+
+			DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+			// Auto-injecting the shortened URL as a hyperlink?
+			if (autoInject){
+
+				var nTunes = CountTunes();
+
+				var theNotes = gTheABC.value;
+
+				// Find the tunes
+				var theTunes = theNotes.split(/^X:/gm);
+
+				var output = FindPreTuneHeader(theNotes);
+
+				for (var i=1;i<=nTunes;++i){
+
+					var theTune = "X:"+theTunes[i];
+
+					output += InjectStringBelowTuneHeader(theTune,"%hyperlink "+data.data.tiny_url);
+
+				}
+
+				// Stuff in the output
+				setABCEditorText(output);
+				
+				// Set dirty
+				gIsDirty = true;
+
+				// Force a redraw
+				RenderAsync(true,null,function(){
+
+					// Set the select point
+					gTheABC.selectionStart = 0;
+				    gTheABC.selectionEnd = 0;
+
+				    // Focus after operation
+				    FocusAfterOperation();
+
+				});
+			}
+				
+			if (!gDoTinyURLAPIKeyOverride){
+
+				// Keep track of default TinyURL token use
+				gTinyURLCount++;
+
+				if (gLocalStorageAvailable){
+					localStorage.TinyURLCount = gTinyURLCount;
+				}
+
+				// Remind them on 5th use about custom TinyURL tokens
+				if ((gTinyURLCount == 5) || (gTinyURLCount == 10)){
+
+					TinyURLReminderDialog();
+
+				}
+			}
+
+		  })
+		  .catch(
+		  	error => {
+
+		  		ShortenURLFallback();
+
+		    	return;
+
+		  });
+	}
 }
 
 //
