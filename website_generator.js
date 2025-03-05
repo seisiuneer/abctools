@@ -216,15 +216,7 @@ function LoadWebsiteSettings(){
             gWebsiteImageWidth = val;
         }
         else{
-            gWebsiteImageWidth = 800;
-        }
-
-        val = localStorage.WebsiteImageWidthIsPercentage;
-        if (val){
-            gWebsiteImageWidthIsPercentage = (val == "true");
-        }
-        else{
-            gWebsiteImageWidthIsPercentage = false;
+            gWebsiteImageWidth = "800";
         }
 
         // Stuff the updated config
@@ -291,10 +283,7 @@ function LoadWebsiteSettings(){
             bAddFullscreen: gWebsiteAddFullscreen,
 
             // Add image width
-            image_width: gWebsiteImageWidth,
-
-            // Is it a percentage
-            image_width_is_percentage: gWebsiteImageWidthIsPercentage
+            image_width: gWebsiteImageWidth
 
         }
     }
@@ -347,7 +336,6 @@ function SaveWebsiteSettings(){
         localStorage.WebsiteHelpURL = gWebsiteHelpURL;
         localStorage.WebsiteAddFullscreen = gWebsiteAddFullscreen;
         localStorage.WebsiteImageWidth = gWebsiteImageWidth;
-        localStorage.WebsiteImageWidthIsPercentage = gWebsiteImageWidthIsPercentage;
     }
 }
 
@@ -2129,7 +2117,18 @@ function generateAndSaveWebsiteImageGallery() {
     theOutput +="    }\n";
     theOutput +="\n";
 
-    if (gWebsiteImageWidthIsPercentage || (gWebsiteImageWidth >= 800)){
+    var tuneImageWidth = gWebsiteImageWidth;
+
+    if (!gWebsiteImageWidthIsPercentage){
+
+        tuneImageWidth = parseInt(tuneImageWidth);
+
+        if (isNaN(tuneImageWidth)){
+            tuneImageWidth = 800;
+        }
+    }
+
+    if (gWebsiteImageWidthIsPercentage || (tuneImageWidth >= 800)){
         theOutput +="    .image-container img {\n";
         theOutput +="      max-width: 100%;\n";
         theOutput +="      height: auto;\n";
@@ -2472,10 +2471,7 @@ var gWebsiteConfig ={
     bAddFullscreen: gWebsiteAddFullscreen,
 
     // Image width
-    image_width: gWebsiteImageWidth,
-
-    // Image width is a percentage
-    image_width_is_percentage: gWebsiteImageWidthIsPercentage
+    image_width: gWebsiteImageWidth
 
 }
 
@@ -2964,8 +2960,6 @@ function generateWebsiteImageGallery(){
             else{
                 gWebsiteImageWidthIsPercentage = false;
             }
-
-            gWebsiteConfig.image_width_is_percentage = gWebsiteImageWidthIsPercentage;
 
             // Title
             gWebsiteTitle = args.result.website_title;
