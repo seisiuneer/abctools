@@ -4970,7 +4970,7 @@ font-size:12pt;
 line-height:12px;
 font-family:helvetica;
 margin-top:10px;
-margin-bottom:18px;
+margin-bottom:12px;
 display:flex;
 }
 
@@ -5101,7 +5101,7 @@ left:170px;
 
 .configure_website_form_text2_gallery{
 font-size:12pt;
-line-height:20px;
+line-height:12px;
 font-family:helvetica;
 margin-top:10px;
 margin-bottom:12px;
@@ -5112,7 +5112,7 @@ display:flex;
 font-size:12pt;
 font-family:helvetica;
 width: 100px;
-margin-top:-6px;
+margin-top:-10px;
 margin-left:12px;
 }
 
