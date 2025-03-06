@@ -236,6 +236,7 @@ var gRecorderTabShiftSemitone = 0;
 
 // Add hyperlinks to tunes
 var gAddSVGHyperLinks = false
+var gDisableSVGHyperLinks = false
 
 //
 // Find any hyperlinks in the tune and replace them with SVG links
@@ -695,6 +696,28 @@ function ScanTuneForSVGHyperlinks(theTune){
 
   return false;
 }
+
+// Scan tune for SVG disable hyperlinks
+function ScanTuneForSVGDisableHyperlinks(theTune){
+
+  //console.log("ScanTuneForSVGDisableHyperlinks");
+
+  theTune = theTune.replace("%%abctt:disable_hyperlinks","%disable_hyperlinks");
+
+  var searchRegExp = /^%disable_hyperlinks.*$/gm
+
+  var noHyperlinkParsing = searchRegExp.test(theTune);
+
+  if (noHyperlinkParsing){
+    //console.log("Found %disable_hyperlinks")
+    return true;
+  }
+
+  //console.log("No %disable_hyperlinks")
+
+  return false;
+}
+
 
 
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -1505,6 +1528,10 @@ var tunebook = {};
           // Allow hyperlink parsing?
           gAddSVGHyperLinks = false;
           gAddSVGHyperLinks = ScanTuneForSVGHyperlinks(book.tunes[currentTune].abc);
+          
+          // Disable hyperlink parsing?
+          gDisableSVGHyperLinks = false;
+          gDisableSVGHyperLinks = ScanTuneForSVGDisableHyperlinks(book.tunes[currentTune].abc);
 
           abcParser.parse(book.tunes[currentTune].abc, workingParams, book.tunes[currentTune].startPos - book.header.length);
           var tune = abcParser.getTune();
@@ -1818,11 +1845,12 @@ var renderAbc = function renderAbc(output, abc, parserParams, engraverParams, re
       tune = doLineWrapping(div, tune, tuneNumber, abcString, workingParams);
       return tune;
     }
+    
     if (workingParams.afterParsing) workingParams.afterParsing(tune, tuneNumber, abcString);
     renderOne(div, tune, workingParams, tuneNumber, 0);
     
-    // MAE 5 Mar 2025 - Add any SVG hyperlinks found
-    if (gAddSVGHyperLinks){
+    // MAE 5 Mar 2025 - Add any SVG hyperlinks found unless disabled for this tune
+    if (gAddSVGHyperLinks && (!gDisableSVGHyperLinks)){
       replaceTextLinksWithSvgLinks(div);
     }
 
@@ -4371,6 +4399,12 @@ var bookParser = function bookParser(book) {
       theRegex = /^%enable_hyperlinks.*$/
       if (theRegex.test(line)){
         //console.log("Adding enable_hyperlinks line: "+line)
+        directives += line + '\n';
+      }   
+
+      theRegex = /^%disable_hyperlinks.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding disable_hyperlinks line: "+line)
         directives += line + '\n';
       }    
 
