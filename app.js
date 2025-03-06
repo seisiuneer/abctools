@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2353_030525_1000";
+var gVersionNumber="2354_030525_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -18630,6 +18630,12 @@ function GetABCFileHeader(){
       if (theRegex.test(line)){
         //console.log("Adding recorder_tab_key line: "+line)
         directives += line + '\n';
+      }  
+
+      theRegex = /^%enable_hyperlinks.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding enable_hyperlinks line: "+line)
+        directives += line + '\n';
       }    
 
       theRegex = /^[ABCDFGHILMmNORrSUZ]:/
@@ -22315,7 +22321,8 @@ function complianceABCTransformer(theABC,doInverse){
 	    "%whistle_tab_octave",
 	    "%whistle_tab_key",
 	    "%recorder_tab_octave",
-	    "%recorder_tab_key"
+	    "%recorder_tab_key",
+	    "%enable_hyperlinks"
 	];
 
 	if (doInverse){

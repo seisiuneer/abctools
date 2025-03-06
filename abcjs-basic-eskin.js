@@ -234,6 +234,69 @@ var gAllowRecorderTabTranspose = false;
 var gRecorderTabShiftOctave = 0;
 var gRecorderTabShiftSemitone = 0;
 
+// Add hyperlinks to tunes
+var gAddSVGHyperLinks = false
+
+//
+// Find any hyperlinks in the tune and replace them with SVG links
+//
+
+function replaceTextLinksWithSvgLinks(div) {
+
+  // Define the regular expression to match http:// and https:// links
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+  // Recursive function to crawl through the DOM
+  function crawlNode(node) {
+    // Process only text nodes (nodeType === 3)
+    if (node.nodeType === Node.TEXT_NODE) {
+      const textContent = node.textContent;
+      let match;
+
+      // Check for URLs in the text content
+      const matches = [...textContent.matchAll(urlRegex)];
+      if (matches.length > 0) {
+        const newElements = document.createDocumentFragment();
+        let lastIndex = 0;
+
+        matches.forEach(match => {
+          const url = match[0];
+          const startIndex = match.index;
+
+          // Add any text before the URL
+          if (startIndex > lastIndex) {
+            newElements.appendChild(document.createTextNode(textContent.slice(lastIndex, startIndex)));
+          }
+
+          // Create the SVG hyperlink
+          const linkElement = document.createElementNS('http://www.w3.org/2000/svg', 'a');
+          linkElement.setAttributeNS(null, 'href', url);
+          linkElement.setAttributeNS(null, 'target', '_blank');
+          linkElement.textContent = url;
+
+          // Append the SVG link to the document fragment
+          newElements.appendChild(linkElement);
+
+          lastIndex = startIndex + url.length;
+        });
+
+        // Add any remaining text after the last URL
+        if (lastIndex < textContent.length) {
+          newElements.appendChild(document.createTextNode(textContent.slice(lastIndex)));
+        }
+
+        // Replace the original text node with the new fragment
+        node.parentNode.replaceChild(newElements, node);
+      }
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      // Recurse over child nodes for element nodes
+      Array.from(node.childNodes).forEach(crawlNode);
+    }
+  }
+
+  // Start the crawl from the passed div element
+  crawlNode(div);
+}
 
 // Scan tune for custom abcjs rendering parameters
 function ScanTuneForABCJSRenderingParams(theTune){
@@ -611,6 +674,28 @@ function ScanTuneForRecorderTabShiftSemitone(theTune){
   return 0;
 
 }
+
+// Scan tune for SVG hyperlinks
+function ScanTuneForSVGHyperlinks(theTune){
+
+  //console.log("ScanTuneForSVGHyperlinks");
+
+  theTune = theTune.replace("%%abctt:enable_hyperlinks","%enable_hyperlinks");
+
+  var searchRegExp = /^%enable_hyperlinks.*$/gm
+
+  var isHyperlinkParsing = searchRegExp.test(theTune);
+
+  if (isHyperlinkParsing){
+    //console.log("Found %enable_hyperlinks")
+    return true;
+  }
+
+  //console.log("No %enable_hyperlinks")
+
+  return false;
+}
+
 
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
@@ -1417,6 +1502,10 @@ var tunebook = {};
             gRecorderTabShiftSemitone = ScanTuneForRecorderTabShiftSemitone(book.tunes[currentTune].abc);
           }
 
+          // Allow hyperlink parsing?
+          gAddSVGHyperLinks = false;
+          gAddSVGHyperLinks = ScanTuneForSVGHyperlinks(book.tunes[currentTune].abc);
+
           abcParser.parse(book.tunes[currentTune].abc, workingParams, book.tunes[currentTune].startPos - book.header.length);
           var tune = abcParser.getTune();
           //
@@ -1731,6 +1820,12 @@ var renderAbc = function renderAbc(output, abc, parserParams, engraverParams, re
     }
     if (workingParams.afterParsing) workingParams.afterParsing(tune, tuneNumber, abcString);
     renderOne(div, tune, workingParams, tuneNumber, 0);
+    
+    // MAE 5 Mar 2025 - Add any SVG hyperlinks found
+    if (gAddSVGHyperLinks){
+      replaceTextLinksWithSvgLinks(div);
+    }
+
     if (removeDiv) div.parentNode.removeChild(div);
 
     return null;
@@ -4270,6 +4365,12 @@ var bookParser = function bookParser(book) {
       theRegex = /^%recorder_tab_octave.*$/
       if (theRegex.test(line)){
         //console.log("Adding recorder_tab_octave line: "+line)
+        directives += line + '\n';
+      }   
+
+      theRegex = /^%enable_hyperlinks.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding enable_hyperlinks line: "+line)
         directives += line + '\n';
       }    
 

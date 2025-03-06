@@ -486,6 +486,7 @@
             <a style="text-decoration:none;" href="#hide_rhythm_tag">Hiding Rhythm Display</a>
             <a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a>
             <a style="text-decoration:none;" href="#recordertabkey">Changing the Recorder Tablature Key and Octave</a>
+            <a style="text-decoration:none;" href="#detect_hyperlinks">Making Hyperlinks in ABC Tag Text Clickable</a>
            
             <h3>ABC Tricks, Tips, and Limitations</h3>
             <a style="text-decoration:none;" href="#tabtranspose">Transposing Notation Independent of Tablature</a>
@@ -865,6 +866,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#hide_rhythm_tag">Hiding Rhythm Display</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#recordertabkey">Changing the Recorder Tablature Key and Octave</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#detect_hyperlinks">Making Hyperlinks in ABC Tag Text Clickable</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">ABC Tricks, Tips, and Limitations</button>
@@ -3478,6 +3480,7 @@
                     %whistle_tab_octave<br/>
                     %recorder_tab_key<br/>
                     %recorder_tab_octave<br/>
+                    %enable_hyperlinks<br/>
                 %abcjs_render_params {custom rendering parameters JSON}</p>
                 <hr class="hidden-print" id="editing_pdf_tunebooks">
                 <h1 class="page_break_always">Editing PDF Tunebooks With Other Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -5081,6 +5084,14 @@
                 <p class="code">% Shift the tab display down<br/>%abcjs_render_params {"tabPadding":8}</p>
                 <p>Experiment with the tabPadding value until you get the result you want.</p>
                 <p>If either annotation is placed in the ABC file header, they will apply to all of the tunes.</p>
+                <hr class="hidden-print" id="detect_hyperlinks">
+                <h1 class="page_break_always h1wide">Making Hyperlinks in ABC Tag Text Clickable<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/EO6lLYfnrns" title="Clickable hyperlinks demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>To optionally detect any http:// or https:// hyperlinks in any ABC tags in a tune and make them clickable links in the notation, you can include the following annotation anywhere in the ABC for a tune:</p>
+                <p class="code">% Detect any hyperlinks in the ABC tags and make them clickable<br>%enable_hyperlinks</p>
+                <p>This will make the hyperlinks clickable for all on-screen display of a tune, for tunes in the Player/Tune Trainer, and in native browser exported PDF files.</p>
+                <p>It will not make the hyperlinks clickable if using the tool's own PDF exporter.</p>
+                <p>If this annotation is placed in the ABC file header, it will apply to all of the tunes.</p>
                 <hr class="hidden-print" id="tabtranspose">
                 <h1 class="page_break_always h1wide">Transposing Notation Independent of Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>For some tablatures like CGDAE where instruments maybe in either standard pitch or one octave lower, if you transpose the notes down an octave to get the tab on the lower strings, but want the notation displayed an octave up, you can add the following voice annotation to the ABC:</p>
