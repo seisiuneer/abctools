@@ -1531,7 +1531,11 @@ var tunebook = {};
           
           // Disable hyperlink parsing?
           gDisableSVGHyperLinks = false;
-          gDisableSVGHyperLinks = ScanTuneForSVGDisableHyperlinks(book.tunes[currentTune].abc);
+
+          // Only scan for disable if enable detected (optimization)
+          if (gAddSVGHyperLinks){
+            gDisableSVGHyperLinks = ScanTuneForSVGDisableHyperlinks(book.tunes[currentTune].abc);
+          }
 
           abcParser.parse(book.tunes[currentTune].abc, workingParams, book.tunes[currentTune].startPos - book.header.length);
           var tune = abcParser.getTune();
