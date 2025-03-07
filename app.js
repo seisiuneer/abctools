@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2355_030625_0630";
+var gVersionNumber="2356_030625_1730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -26098,14 +26098,45 @@ function DownloadSVG(callback,val){
 		sendGoogleAnalytics("export","DownloadSVG");
 	}
 
-	var theWidth = document.getElementById("export_width").value;
+   var isWebsiteExport = false;
 
-	theWidth = parseInt(theWidth);
+	var elem = document.getElementById("export_width");
 
-	if (isNaN(theWidth)){
-		theWidth = 2400;
+	if (!elem){
+		isWebsiteExport = true;
 	}
 
+	if (!isWebsiteExport){
+
+		theWidth = document.getElementById("export_width").value;
+
+		theWidth = parseInt(theWidth);
+
+		if (isNaN(theWidth)){
+			theWidth = 2400;
+		}
+	}
+	else{
+
+		// Render website images at high resolution
+		if (!gWebsiteImageWidthIsPercentage){
+
+			theWidth = parseInt(gWebsiteImageWidth);
+			
+			if (!isNaN(theWidth)){
+				theWidth = theWidth*2;
+			}
+			else{
+				theWidth = 2400;
+			}
+
+		}
+		else{
+			// For responsive sites, render at a fixed size of 2400
+			theWidth = 2400;
+		}
+	}
+	
 	if (!callback){
 		
 		gExportWidth = theWidth;

@@ -523,7 +523,7 @@ function BatchJSONExportForWebGalleryGenerator(theABC){
             title = title.substring(1);
         }
 
-        var fileName = GetTuneAudioDownloadName(thisTune,".jpg")
+        var fileName = GetTuneAudioDownloadName(thisTune,".svg")
 
         thisTune = GetABCFileHeader() + thisTune;
 
@@ -2136,6 +2136,7 @@ function generateAndSaveWebsiteImageGallery() {
         theOutput +="      border-left: 18px solid white;\n";
         theOutput +="      border-right: 18px solid white;\n";
         theOutput +="      border-bottom: 32px solid white;\n";
+        theOutput +="      background: white;\n";
         theOutput +="    }\n";
         theOutput +="\n";
     }
@@ -2147,6 +2148,7 @@ function generateAndSaveWebsiteImageGallery() {
         theOutput +="      border-left: 12px solid white;\n";
         theOutput +="      border-right: 12px solid white;\n";
         theOutput +="      border-bottom: 26px solid white;\n";
+        theOutput +="      background: white;\n";
         theOutput +="    }\n";
         theOutput +="\n";
     }
@@ -2259,7 +2261,7 @@ function generateAndSaveWebsiteImageGallery() {
     theOutput +="          img.src = item.Filename;\n"
     theOutput +="          img.alt = item.Name;\n"
     theOutput +="          img.title = 'Click to play \"'+item.Name+'\"';\n"
-    theOutput +="          img.setAttribute('loading', 'lazy');\n"
+    //theOutput +="          img.setAttribute('loading', 'lazy');\n"
     theOutput +="          img.setAttribute('width', '"+gWebsiteImageWidth+"');\n"
     theOutput +="\n";
     theOutput +="          // Add click event to open the link\n"
@@ -2319,7 +2321,7 @@ function generateAndSaveWebsiteImageGallery() {
             return null;
         }
 
-        DoBatchImageExport("JPEG",function(cancelRequested){
+        DoBatchImageExport("SVG",function(cancelRequested){
 
             if (!cancelRequested){
 
