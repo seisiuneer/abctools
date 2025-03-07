@@ -3528,6 +3528,11 @@
                 <p>If there are more than 25 tunes on the website, the images are "lazy" loaded for viewing only when scrolled into view, speeding the load time for the website.</p>
                 <p>If you print or export a PDF of a fixed image size gallery website using the browser's native Print command, the title and subtitle will be printed on a cover page, and the website footers will be hidden, providing a nice option for creating a tunebook from a website.</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/cKqJhGNPFJQ" title="Tune Image Gallery Website Tunebook Printing" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>                
+                <p>To force the tunes in an image gallery website to each be on their own page when using the browser's native Print feature, (default is to fit multiple tunes per page if possible) add this CSS to the 
+                <p class="code">@media print {</p>
+                <p>CSS section found near the top of the website's .html file:</p>
+                <p class="code">.image-container {<br/>&nbsp;&nbsp;margin: 20px 0;<br/>&nbsp;&nbsp;text-align: center;<br/> &nbsp;&nbsp;page-break-after: always;<br/>}</p>
+                <p>and then save and re-deploy the modified .html file.</p>
                 <hr>
                 <p style="text-align: center;"><strong>Export Full-Featured Tunebook Website</strong></p>
                 <div class="image_holder_p">
