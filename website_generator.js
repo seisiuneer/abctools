@@ -1964,8 +1964,10 @@ function generateAndSaveWebsiteImageGallery() {
 
     //console.log("postFix: "+postFix);
 
+    var number_of_tunes = CountTunes();
+
     // Any tunes to reformat?
-    if (CountTunes() == 0){
+    if (number_of_tunes == 0){
 
         clearGetTuneByIndexCache();
 
@@ -2261,7 +2263,12 @@ function generateAndSaveWebsiteImageGallery() {
     theOutput +="          img.src = item.Filename;\n"
     theOutput +="          img.alt = item.Name;\n"
     theOutput +="          img.title = 'Click to play \"'+item.Name+'\"';\n"
-    //theOutput +="          img.setAttribute('loading', 'lazy');\n"
+    
+    // On large tunebooks, make the image load lazy
+    if (number_of_tunes > 25){
+        theOutput +="          img.setAttribute('loading', 'lazy');\n"
+    }
+
     theOutput +="          img.setAttribute('width', '"+gWebsiteImageWidth+"');\n"
     theOutput +="\n";
     theOutput +="          // Add click event to open the link\n"
