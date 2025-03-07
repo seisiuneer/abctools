@@ -2119,6 +2119,54 @@ function generateAndSaveWebsiteImageGallery() {
     theOutput +="    }\n";
     theOutput +="\n";
 
+    theOutput +="    @media print {\n";
+    theOutput +="        .hidden-print {\n";
+    theOutput +="            display: none !important;\n";
+    theOutput +="        }\n";
+    theOutput +="\n";
+
+    // If there is both a title and a subtitle
+    if ((gWebsiteTitle && (gWebsiteTitle != "")) && (gWebsiteSubtitle && (gWebsiteSubtitle != ""))){
+        theOutput +="        .print-title {\n";
+        theOutput +="          color: black;\n";
+        theOutput +="          text-align: center;\n";
+        theOutput +="          margin-top: 40vh;\n";
+        theOutput +="          font-size: 2em;\n";
+        theOutput +="        }\n";
+        theOutput +="\n";
+        theOutput +="        .print-subtitle {\n";
+        theOutput +="          color: black;\n";
+        theOutput +="          page-break-after: always;\n";
+        theOutput +="          text-align: center;\n";
+        theOutput +="          font-size: 1.5em;\n";
+        theOutput +="        }\n";
+    }
+    else
+    // Just a title?
+    if (gWebsiteTitle && (gWebsiteTitle != "")){
+        theOutput +="        .print-title {\n";
+        theOutput +="          color: black;\n";
+        theOutput +="          page-break-after: always;\n";
+        theOutput +="          text-align: center;\n";
+        theOutput +="          margin-top: 40vh;\n";
+        theOutput +="          font-size: 2em;\n";
+        theOutput +="        }\n";  
+    }
+    else
+    // Just a subtitle?
+    if (gWebsiteSubtitle && (gWebsiteSubtitle != "")){
+        theOutput +="        .print-subtitle {\n"
+        theOutput +="          color: black;\n";
+        theOutput +="          page-break-after: always;\n";
+        theOutput +="          margin-top: 40vh;\n";
+        theOutput +="          text-align: center;\n";
+        theOutput +="          font-size: 2em;\n";
+        theOutput +="        }\n";
+    }
+
+    theOutput +="    }\n";
+    theOutput +="\n";
+
     var tuneImageWidth = gWebsiteImageWidth;
 
     if (!gWebsiteImageWidthIsPercentage){
@@ -2189,21 +2237,21 @@ function generateAndSaveWebsiteImageGallery() {
     theOutput +="\n";
     theOutput +='    <div class="container">\n';
     if (gWebsiteAddHelp){
-        theOutput +='        <a id="website_help" href="'+gWebsiteHelpURL+'" target="_blank" style="text-decoration:none;" title="Information about using this tunebook" class="cornerbutton">?</a>\n';
+        theOutput +='        <a class="hidden-print" id="website_help" href="'+gWebsiteHelpURL+'" target="_blank" style="text-decoration:none;" title="Information about using this tunebook" class="cornerbutton">?</a>\n';
     }
     var gotTitle = false;
     if (gWebsiteTitle && (gWebsiteTitle != "")){
-        theOutput +="        <h1 id=\"title\">"+gWebsiteTitle+"</h1>\n";
+        theOutput +="        <h1 class=\"print-title\" id=\"title\">"+gWebsiteTitle+"</h1>\n";
         gotTitle = true;
     }
     var gotSubTitle = false;
     if (gWebsiteSubtitle && (gWebsiteSubtitle != "")){
-        theOutput +="        <h2 id=\"subtitle\">"+gWebsiteSubtitle+"</h2>\n";
+        theOutput +="        <h2 class=\"print-subtitle\" id=\"subtitle\">"+gWebsiteSubtitle+"</h2>\n";
         gotSubTitle = true;
     }
 
     if (gotTitle || gotSubTitle){
-        theOutput +='        <hr style="margin-top:24px;margin-bottom:24px;width:500px;color:white;">\n';
+        theOutput +='        <hr class="hidden-print" style="margin-top:24px;margin-bottom:24px;width:500px;color:white;">\n';
     }
 
     theOutput +='        <div id="image_gallery"></div>\n';  
@@ -2214,26 +2262,26 @@ function generateAndSaveWebsiteImageGallery() {
     }
 
     if (doHR){
-        theOutput +='        <hr style="margin-top:24px;margin-bottom:24px;width:500px;color:white;">\n';
+        theOutput +='        <hr class="hidden-print" style="margin-top:24px;margin-bottom:24px;width:500px;color:white;">\n';
     }
       
     var gotFooter = false;
     if (gWebsiteFooter1 && (gWebsiteFooter1 != "")){
-        theOutput +='        <p id="footer1">'+gWebsiteFooter1+'</p>\n';
+        theOutput +='        <p class="hidden-print" id="footer1">'+gWebsiteFooter1+'</p>\n';
         gotFooter = true;
     }
     if (gWebsiteFooter2 && (gWebsiteFooter2 != "")){
 
         if (gotFooter){
-            theOutput +='        <p id="footer2">'+gWebsiteFooter2+'</p>\n';
+            theOutput +='        <p class="hidden-print" id="footer2">'+gWebsiteFooter2+'</p>\n';
         }
         else{
-            theOutput +='        <p id="footer2">'+gWebsiteFooter2+'</p>\n';            
+            theOutput +='        <p class="hidden-print" id="footer2">'+gWebsiteFooter2+'</p>\n';            
         }
     }
 
     if (doHR){
-        theOutput +='        <hr style="margin-top:24px;margin-bottom:24px;width:500px;color:white;">\n';
+        theOutput +='        <hr class="hidden-print" style="margin-top:24px;margin-bottom:24px;width:500px;color:white;">\n';
     }
 
     theOutput +="    </div>\n";
