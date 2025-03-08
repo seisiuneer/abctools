@@ -2142,6 +2142,14 @@ function generateAndSaveWebsiteImageGallery() {
     theOutput +="            background-color: white !important;\n";
     theOutput +="            background-image: none !important;\n";
     theOutput +="        }\n";
+    
+    theOutput +="\n";
+    
+    theOutput +="        body, html {\n";
+    theOutput +="            margin: 0 !important;;\n";
+    theOutput +="            padding: 0 !important;;\n";
+    theOutput +="            width: 100% !important;;\n";
+    theOutput +="        }\n";
 
     theOutput +="\n";
 
@@ -2150,15 +2158,15 @@ function generateAndSaveWebsiteImageGallery() {
         theOutput +="        .print-title {\n";
         theOutput +="          color: black;\n";
         theOutput +="          text-align: center;\n";
-        theOutput +="          margin-top: 40vh;\n";
-        theOutput +="          font-size: 2em;\n";
+        theOutput +="          margin-top: 32vh;\n";
+        theOutput +="          font-size: 1.9em;\n";
         theOutput +="        }\n";
         theOutput +="\n";
         theOutput +="        .print-subtitle {\n";
         theOutput +="          color: black;\n";
         theOutput +="          page-break-after: always;\n";
         theOutput +="          text-align: center;\n";
-        theOutput +="          font-size: 1.5em;\n";
+        theOutput +="          font-size: 1.25em;\n";
         theOutput +="        }\n";
     }
     else
@@ -2168,8 +2176,8 @@ function generateAndSaveWebsiteImageGallery() {
         theOutput +="          color: black;\n";
         theOutput +="          page-break-after: always;\n";
         theOutput +="          text-align: center;\n";
-        theOutput +="          margin-top: 40vh;\n";
-        theOutput +="          font-size: 2em;\n";
+        theOutput +="          margin-top: 32vh;\n";
+        theOutput +="          font-size: 1.9em;\n";
         theOutput +="        }\n";  
     }
     else
@@ -2178,20 +2186,47 @@ function generateAndSaveWebsiteImageGallery() {
         theOutput +="        .print-subtitle {\n"
         theOutput +="          color: black;\n";
         theOutput +="          page-break-after: always;\n";
-        theOutput +="          margin-top: 40vh;\n";
+        theOutput +="          margin-top: 32vh;\n";
         theOutput +="          text-align: center;\n";
-        theOutput +="          font-size: 2em;\n";
+        theOutput +="          font-size: 1.9em;\n";
         theOutput +="        }\n";
     }
 
     if (gWebsiteOneTunePerPage){
         theOutput +="\n";
         theOutput +="        .image-container {\n"
-        theOutput +="          margin: 20px 0;\n"
+        theOutput +="          width: 100%;\n"
+        theOutput +="          border: 0px !important;\n"
+        theOutput +="          margin: 0px !important;\n"
+        theOutput +="          padding: 0px !important;\n"
         theOutput +="          text-align: center;\n"
         theOutput +="          page-break-after: always;\n"
         theOutput +="        }\n"
     }
+    else{
+        theOutput +="\n";
+        theOutput +="        .image-container {\n"
+        theOutput +="          width: 100%;\n"
+        theOutput +="          border: 0px !important;\n"
+        theOutput +="          margin: 0px !important;\n"
+        theOutput +="          padding: 0px !important;\n"
+        theOutput +="          text-align: center;\n"
+        theOutput +="        }\n"
+    }
+    
+    theOutput +="\n";
+
+    theOutput +="        .image-container img {\n"
+    theOutput +="          max-width: 100%;\n"
+    theOutput +="          height: auto;\n"
+    theOutput +="          cursor: pointer;\n"
+    theOutput +="          border: 0px !important;\n"
+    theOutput +="          margin: 0px !important;\n"
+    theOutput +="          padding: 0px !important;\n"
+    theOutput +="          background: white;\n"
+    theOutput +="        }\n"
+
+    theOutput +="\n";
 
     theOutput +="    }\n";
     theOutput +="\n";
