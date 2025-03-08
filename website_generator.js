@@ -219,6 +219,14 @@ function LoadWebsiteSettings(){
             gWebsiteImageWidth = "800";
         }
 
+        val = localStorage.WebsiteOneTunePerPage;
+        if (val){
+            gWebsiteOneTunePerPage = (val == "true");
+        }
+        else{
+            gWebsiteOneTunePerPage = false;
+        }
+
         // Stuff the updated config
         gWebsiteConfig ={
 
@@ -283,7 +291,10 @@ function LoadWebsiteSettings(){
             bAddFullscreen: gWebsiteAddFullscreen,
 
             // Add image width
-            image_width: gWebsiteImageWidth
+            image_width: gWebsiteImageWidth,
+
+            // One tune per page on print
+            bOne_tune_per_page: gWebsiteOneTunePerPage
 
         }
     }
@@ -336,6 +347,7 @@ function SaveWebsiteSettings(){
         localStorage.WebsiteHelpURL = gWebsiteHelpURL;
         localStorage.WebsiteAddFullscreen = gWebsiteAddFullscreen;
         localStorage.WebsiteImageWidth = gWebsiteImageWidth;
+        localStorage.WebsiteOneTunePerPage = gWebsiteOneTunePerPage;
     }
 }
 
@@ -2164,6 +2176,15 @@ function generateAndSaveWebsiteImageGallery() {
         theOutput +="        }\n";
     }
 
+    if (gWebsiteOneTunePerPage){
+        theOutput +="\n";
+        theOutput +="        .image-container {\n"
+        theOutput +="          margin: 20px 0;\n"
+        theOutput +="          text-align: center;\n"
+        theOutput +="          page-break-after: always;\n"
+        theOutput +="        }\n"
+    }
+
     theOutput +="    }\n";
     theOutput +="\n";
 
@@ -2464,6 +2485,7 @@ var gWebsiteHelpURL = "";
 var gWebsiteAddFullscreen = true;
 var gWebsiteImageWidth = 800;
 var gWebsiteImageWidthIsPercentage = false;
+var gWebsiteOneTunePerPage = false;
 
 var gWebsiteConfig ={
 
@@ -2528,7 +2550,10 @@ var gWebsiteConfig ={
     bAddFullscreen: gWebsiteAddFullscreen,
 
     // Image width
-    image_width: gWebsiteImageWidth
+    image_width: gWebsiteImageWidth,
+
+    // One tune per page on print
+    bOne_tune_per_page: gWebsiteOneTunePerPage
 
 }
 
@@ -2991,6 +3016,7 @@ function generateWebsiteImageGallery(){
       {name: "Text color (HTML color):", id: "website_textcolor", type:"text",cssClass:"configure_website_form_text2_gallery"},      
       {name: "Hyperlink color (HTML color, also used for help icon):", id: "website_hyperlinkcolor", type:"text",cssClass:"configure_website_form_text2_gallery"},
       {name: "Tune image width (number for fixed width, number with % for responsive):", id: "image_width", type:"number", cssClass:"configure_website_form_text2_gallery"},
+      {name: "          Tunes print one tune per page ", id: "bOne_tune_per_page", type:"checkbox", cssClass:"configure_website_form_text2_gallery"},
       {name: "          Add a ? help icon at top-left corner ", id: "bAddHelp", type:"checkbox", cssClass:"configure_website_form_text2_gallery"},
       {name: "Tunebook help URL:", id: "website_helpurl", type:"text",cssClass:"configure_website_form_text_wide5_gallery"},      
       {name: "          Disable access to editor ", id: "bDisableEdit", type:"checkbox", cssClass:"configure_website_form_text2_gallery"},
@@ -3047,6 +3073,10 @@ function generateWebsiteImageGallery(){
             // Hyperlink color
             gWebsiteHyperlinkColor = args.result.website_hyperlinkcolor;
             gWebsiteConfig.website_hyperlinkcolor = gWebsiteHyperlinkColor;
+
+            // One tune per printed page
+            gWebsiteOneTunePerPage = args.result.bOne_tune_per_page;
+            gWebsiteConfig.bOne_tune_per_page = gWebsiteOneTunePerPage;
 
             // Add help?
             gWebsiteAddHelp = args.result.bAddHelp;
