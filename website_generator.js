@@ -2359,39 +2359,39 @@ function generateAndSaveWebsiteImageGallery() {
     theOutput +="    // Populate the tunes div with images from JSON\n";
     theOutput +="    document.addEventListener('DOMContentLoaded', () => {\n";
     theOutput +="\n";  
-    theOutput +="        // Select the div where the images will be inserted\n"
-    theOutput +="        gallery = document.getElementById('image_gallery');\n"
+    theOutput +="        // Select the div where the images will be inserted\n";
+    theOutput +="        gallery = document.getElementById('image_gallery');\n";
     theOutput +="\n";
-    theOutput +="        // Loop through the array and create img elements\n"
-    theOutput +="        tunes.forEach(item => {\n"
+    theOutput +="        // Loop through the array and create img elements\n";
+    theOutput +="        tunes.forEach(item => {\n";
     theOutput +="\n";
-    theOutput +="          // Create a div to hold each image\n"
-    theOutput +="          const div = document.createElement('div');\n"
-    theOutput +="          div.classList.add('image-container');\n"
+    theOutput +="          // Create a div to hold each image\n";
+    theOutput +="          const div = document.createElement('div');\n";
+    theOutput +="          div.classList.add('image-container');\n";
     theOutput +="\n";
-    theOutput +="          // Create an img element\n"
-    theOutput +="          const img = document.createElement('img');\n"
-    theOutput +="          img.src = item.Filename;\n"
-    theOutput +="          img.alt = item.Name;\n"
-    theOutput +="          img.title = 'Click to play \"'+item.Name+'\"';\n"
+    theOutput +="          const link = document.createElement('a');\n";
+    theOutput +="          link.href = item.URL;\n";
+    theOutput +="          link.target = '_blank';\n";
+    theOutput +="          link.title = 'Click to play \"'+item.Name+'\"';\n";
+
+    theOutput +="          // Create an img element\n";
+    theOutput +="          const img = document.createElement('img');\n";
+    theOutput +="          img.src = item.Filename;\n";
+    theOutput +="          img.alt = item.Name;\n";
     
     // On large tunebooks, make the image load lazy
     if (number_of_tunes > 25){
-        theOutput +="          img.setAttribute('loading', 'lazy');\n"
+        theOutput +="          img.setAttribute('loading', 'lazy');\n";
     }
 
-    theOutput +="          img.setAttribute('width', '"+gWebsiteImageWidth+"');\n"
+    theOutput +="          img.setAttribute('width', '"+gWebsiteImageWidth+"');\n";
     theOutput +="\n";
-    theOutput +="          // Add click event to open the link\n"
-    theOutput +="          img.addEventListener('click', () => {\n"
-    theOutput +="            window.open(item.URL, '_blank');\n"
-    theOutput +="          });\n"
+    theOutput +="          link.appendChild(img);\n";
     theOutput +="\n";
-    theOutput +="          // Append the img to the div\n"
-    theOutput +="          div.appendChild(img);\n"
+    theOutput +="          div.appendChild(link);\n";    
     theOutput +="\n";
-    theOutput +="          // Append the div to the gallery\n"
-    theOutput +="          gallery.appendChild(div);\n"
+    theOutput +="          // Append the div to the gallery\n";
+    theOutput +="          gallery.appendChild(div);\n";
     theOutput +="\n";
     theOutput +="        });\n"
     theOutput +="\n";
