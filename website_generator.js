@@ -2218,6 +2218,7 @@ function generateAndSaveWebsiteImageGallery() {
 
     theOutput +="        .image-container img {\n"
     theOutput +="          max-width: 100%;\n"
+    theOutput +="          width: 100% !important;\n"
     theOutput +="          height: auto;\n"
     theOutput +="          cursor: pointer;\n"
     theOutput +="          border: 0px !important;\n"
@@ -2225,8 +2226,6 @@ function generateAndSaveWebsiteImageGallery() {
     theOutput +="          padding: 0px !important;\n"
     theOutput +="          background: white;\n"
     theOutput +="        }\n"
-
-    theOutput +="\n";
 
     theOutput +="    }\n";
     theOutput +="\n";
