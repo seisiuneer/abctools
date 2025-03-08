@@ -2135,6 +2135,14 @@ function generateAndSaveWebsiteImageGallery() {
     theOutput +="        .hidden-print {\n";
     theOutput +="            display: none !important;\n";
     theOutput +="        }\n";
+
+    theOutput +="\n";
+
+    theOutput +="        body {\n";
+    theOutput +="            background-color: white !important;\n";
+    theOutput +="            background-image: none !important;\n";
+    theOutput +="        }\n";
+
     theOutput +="\n";
 
     // If there is both a title and a subtitle
