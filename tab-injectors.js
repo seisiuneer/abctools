@@ -4118,36 +4118,51 @@ var ceoltasABCTransformer = function (theABC,doInverse,isForPDF){
     //
     // Main processor
     //
-    function generateTablature(theABC,doInverse) {
+    function generateTablature(theABC,doInverse,isForPDF) {
 
-        var nTunes = countTunes(theABC);
+        if (!isForPDF){
 
-        var result = FindPreTuneHeader(theABC);
+            var nTunes = countTunes(theABC);
 
-        clearGetTuneByIndexCache();
+            var result = FindPreTuneHeader(theABC);
 
-        for (var i = 0; i < nTunes; ++i) {
+            clearGetTuneByIndexCache();
 
-            var thisTune = getTuneByIndex(i);
+            for (var i = 0; i < nTunes; ++i) {
 
-            // Don't inject section header tune fragments or multi-voice tunes
-            if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
+                var thisTune = getTuneByIndex(i);
+
+                // Don't inject section header tune fragments or multi-voice tunes
+                if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
+                    result += thisTune;
+                    continue;
+                }
+
+
+                thisTune = transformABC(thisTune,doInverse,isForPDF);
+
                 result += thisTune;
-                continue;
+
+                result += "\n\n";
+
+
             }
 
+            result = result.replaceAll("\n\n\n","\n\n");
 
-            thisTune = transformABC(thisTune,doInverse,isForPDF);
-
-            result += thisTune;
-
+            return result;
         }
+        else{
 
-        return result;
+            var thisTune = transformABC(theABC,doInverse,isForPDF);
+
+            return thisTune;
+           
+        }
     }
 
 
-    return generateTablature(theABC,doInverse);
+    return generateTablature(theABC,doInverse,isForPDF);
 
 }
 
