@@ -2639,6 +2639,10 @@ function generateAndSaveWebsiteLightbox() {
     theOutput +="        margin: 7px;\n";
     theOutput +="        padding: 10px 20px;\n";
     theOutput +="        font-size: 14px;\n";
+    theOutput +="        border-radius: 0px;\n";
+    theOutput +="        color:black;\n";
+    theOutput +="        background:white;\n";
+    theOutput +="        -webkit-appearance: none;\n";
     theOutput +="    }\n";
 
     theOutput +="\n";
