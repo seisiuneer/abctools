@@ -2711,6 +2711,7 @@ function generateAndSaveWebsiteLightbox() {
     theOutput +="\n";
 
     theOutput +="        body {\n";
+    theOutput +="            display:block !important;\n";
     theOutput +="            background-color: white !important;\n";
     theOutput +="            background-image: none !important;\n";
     theOutput +="            justify-content: unset !important;\n";
@@ -2911,6 +2912,40 @@ function generateAndSaveWebsiteLightbox() {
     theOutput +="    "+theJSON;
     theOutput +="\n";
     theOutput +="\n";
+
+    theOutput +='    function isIOS() {\n';
+    theOutput +='        if (/iPad|iPhone|iPod/.test(navigator.platform)) {\n';
+    theOutput +='            return true;\n';
+    theOutput +='        } else {\n';
+    theOutput +='            return navigator.maxTouchPoints &&\n';
+    theOutput +='                navigator.maxTouchPoints > 2 &&\n';
+    theOutput +='                /MacIntel/.test(navigator.platform);\n';
+    theOutput +='        }\n';
+    theOutput +='    }\n';
+
+    theOutput +="\n";
+
+    theOutput +='    function isIPad() {\n';
+    theOutput +='        return (\n';
+    theOutput +='            (navigator.maxTouchPoints && navigator.maxTouchPoints > 2 && /MacIntel/.test(navigator.platform))\n';
+    theOutput +='            ||\n';
+    theOutput +='            (navigator.maxTouchPoints && navigator.maxTouchPoints > 2 && /iPad/.test(navigator.platform))\n';
+    theOutput +='        );\n';
+    theOutput +='    }\n';  
+
+    theOutput +="\n";
+
+    theOutput +='    function isAndroid(){\n';
+    theOutput +='        if (/Android/i.test(navigator.userAgent)) {\n';
+    theOutput +='            return true;\n';
+    theOutput +='        }\n';
+    theOutput +='        else{\n';
+    theOutput +='            return false;\n';
+    theOutput +='        }\n';
+    theOutput +='    }\n';
+
+    theOutput +="\n";
+ 
     theOutput +="    // Populate the image lightbox from JSON\n";
     theOutput +="    document.addEventListener('DOMContentLoaded', () => {\n";
     theOutput +="\n"; 
@@ -2923,6 +2958,7 @@ function generateAndSaveWebsiteLightbox() {
     theOutput +='        const nextButton = document.getElementById("next");\n';
     theOutput +='        const lastButton = document.getElementById("last");\n';
     theOutput +='        const tuneSelector = document.getElementById("tuneselector");\n';
+    theOutput +='        const viewerElem = document.getElementById("viewer");\n';
     if (gotTitle){
         theOutput +='        const titleElement = document.getElementById("title");\n';
     }
@@ -2936,9 +2972,46 @@ function generateAndSaveWebsiteLightbox() {
 
         // Add an element to the front of the tunes array
         theOutput +='        tunes.unshift({"Name":"Title Page","Filename":null,"URL":null});\n';
+        theOutput +="\n"; 
     }
 
-    theOutput +="\n";    
+    theOutput +='        var gIsIOS = false;\n';
+    theOutput +='        if (isIOS()) {\n';
+    theOutput +='           gIsIOS = true;\n';
+    theOutput +='        }\n';
+
+    theOutput +="\n";     
+    
+    theOutput +='        var gIsIPad = false;\n';
+    theOutput +='        if (isIPad()) {\n';
+    theOutput +='           gIsIPad = true;\n';
+    theOutput +='        }\n';
+
+    theOutput +="\n"; 
+
+    theOutput +='        var gIsAndroid = false;\n';
+    theOutput +='        if (isAndroid()){\n';
+    theOutput +='            gIsAndroid = true;\n';
+    theOutput +='        }\n';
+
+    theOutput +="\n"; 
+
+    theOutput +='        if ((gIsAndroid || gIsIOS) && (!gIsIPad)){\n';
+    theOutput +='            firstButton.style.display = "none";\n';
+    theOutput +='            prevButton.style.display = "none";\n';
+    theOutput +='            nextButton.style.display = "none";\n';
+    theOutput +='            lastButton.style.display = "none";\n';
+    theOutput +='            viewerElem.style.marginTop = "0px";\n';
+    theOutput +='        }\n';
+
+    theOutput +="\n"; 
+
+    theOutput +='        if (gIsIPad){\n';
+    theOutput +='            viewerElem.style.marginTop = "0px";\n';
+    theOutput +='        }\n';
+
+    theOutput +="\n"; 
+
     theOutput +='        // Function to update the viewer with the selected image\n';
     theOutput +='        function selectTune() {\n';
     theOutput +='            currentIndex = parseInt(tuneSelector.value);\n';
